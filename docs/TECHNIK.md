@@ -497,7 +497,7 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 6 | Upsert + Kursabgleich (§6.6) in **einer** Transaktion | – |
 | 7 | Schüler ohne aktive Teilnahme in einem aktiven Kurs | `403`, Seite `fehler/kurs-gesperrt.html` (keine Sitzung) |
 | 8 | Sitzung setzen (§6.4), das jeweils **andere** Sitzungs-Cookie löschen (geteilte Tablets) | – |
-| 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`) | – |
+| 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`). Ein `ziel`, das nicht zur Rolle passt, wird verworfen (→ Startseite der Rolle): Schüler nicht `/lehrer…`, `/beamer…`; Lehrkraft/Superadmin nicht `/spiel…`, `/funkraum…`, `/werkstatt…` (`/labor` ist für beide, §11.1) – sonst Weiterleitungsschleife über das SSO | – |
 
 Der Kopf `X-Kryptos-Grund` enthält nur die Grundkennung (für Tests und Fehlersuche), nie Token-Inhalte. Die drei
 Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform); ihr Link „⌂ Zum Portal“ zeigt auf `GET /sso/portal`
@@ -521,10 +521,13 @@ mit 503 (nur im Testmodus möglich).
 - **API ohne Sitzung:** `401 { error, anmelden: true, sso: "/sso/start" }`; der Client leitet auf
   `/sso/start?ziel=<location.pathname + location.hash>` (ziel URL-kodiert; Hash bleibt so erhalten).
 - **Seiten-Wächter** (serverseitig, vor `sendFile`): `/spiel`, `/labor`, `/funkraum`, `/werkstatt` brauchen `kr_s`
-  (Lehrkraft-Sitzung → `302 /lehrer`); `/lehrer`, `/lehrer/urkunden`, `/beamer/*` brauchen `kr_l`; ohne Sitzung **still**
+  (Lehrkraft-Sitzung → `302 /lehrer`); `/lehrer`, `/lehrer/urkunden`, `/beamer/*` brauchen `kr_l` (Schüler-Sitzung →
+  `302 /spiel`, sonst Schleife Wächter → SSO → `/sso/ende` → Wächter …); ohne Sitzung **still**
   `302 /sso/start?ziel=<Pfad>`. Öffentlich: `/`, `/gast`, `/themen`, `/datenschutz`, `/board/:schluessel`, `/healthz`,
   `/api/plattform`, `/akten/*`, `/static/*`, `/robots.txt`.
-- **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen).
+- **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen). Kurswahl und
+  Rückfall auf die erste aktive Teilnahme **verlängern die Sitzung nicht**: Das neue `kr_s` übernimmt das `exp` des
+  bisherigen Cookies, `Max-Age` = Restlaufzeit. Nur `/sso/ende` setzt eine Sitzung mit voller Laufzeit.
 - **Abmelden:** `POST /api/abmelden { ueberall: bool }` löscht `kr_s` und `kr_l`; Antwort `{ weiter: "/" }` bzw.
   `{ weiter: "<PORTAL_URL>/sso/abmelden?ruecksprung=<PLATTFORM_URL>/" }`; der Client navigiert. Kopfzeile: „Abmelden“,
   „Überall abmelden“, „⌂ Portal“ (Link auf `PORTAL_URL`). Bei `ueberall: true` wird zusätzlich `konten.session_gen` der

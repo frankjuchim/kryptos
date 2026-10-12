@@ -101,7 +101,11 @@ Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
   Task 7: `waechter(rolle)` (Seiten-Wächter), `gesperrt(req)` (nur Teilnahmen in gesperrten Kursen → 403),
   `routen(api, …)` mit `GET /api/sitzung` (§13.1), `POST /api/sitzung/kurs` (nur eigene aktive Teilnahme in aktivem
   Kurs, sonst 404; 30/min) und `POST /api/abmelden { ueberall }` → `{ weiter }`; bei `ueberall: true` steigt
-  `konten.session_gen` (Sitzungen auf anderen Geräten enden, Task 8).
+  `konten.session_gen` (Sitzungen auf anderen Geräten enden, Task 8). Review M1: `waechter('lehrkraft')` leitet eine
+  gültige Schüler-Sitzung auf `/spiel` (keine SSO-Schleife); Kurswahl und Rückfall auf die erste aktive Teilnahme
+  übernehmen das `exp` des bisherigen `kr_s` (Max-Age = Restlaufzeit, keine Verlängerung).
+- `sso.js` (Review M1): `zielFuerRolle(ziel, rolle)` – `/sso/ende` verwirft ein `ziel` der anderen Rolle (Schüler:
+  `/lehrer…`, `/beamer…` → `/spiel`; Lehrkraft/Superadmin: `/spiel…`, `/funkraum…`, `/werkstatt…` → `/lehrer`).
 - `verbund.js` (Task 8): `createVerbundRouter` – Verbund-API nach TECHNIK §6.7 (`/loeschen`, `/kurse/:kursId/uebersicht`,
   `/kurse/:kursId`), Middleware `verbund(zweck)` (Bearer, `jwt.pruefe` mit `maxDauerSek: 60`, `sub = portal`, `zweck`,
   `jti` persistent in `sso_jti` mit Präfix `v:`; jede Verletzung `401 { error: 'Token ungültig.' }`), eigenes

@@ -106,3 +106,48 @@ test('Rate-Limit: Prüfen 90 / Minute je Teilnahme', async () => {
   for (let i = 0; i < 91; i++) r = await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: ['b'] });
   assert.equal(r.status, 429);
 });
+
+/* ---------- Review M1: keine Verlängerung beim Erneuern des Cookies (W3) ---------- */
+
+/** exp (ms) des neu gesetzten kr_s-Cookies und Max-Age (s) aus der Antwort. */
+function neuesSchuelerCookie(r) {
+  const roh = (r.headers['set-cookie'] || []).find((x) => x.startsWith('kr_s=') && !x.startsWith('kr_s=;'));
+  assert.ok(roh, 'kr_s neu gesetzt');
+  const p = S.verify(decodeURIComponent(roh.split(';')[0].slice(5)), H.SECRET);
+  const maxAge = Number(/Max-Age=(\d+)/i.exec(roh)[1]);
+  return { exp: p.exp, maxAge };
+}
+
+test('Kurswahl verlängert die Sitzung nicht: ursprüngliches exp bleibt, Max-Age = Restlaufzeit', async () => {
+  const app = H.makeApp();
+  const a = H.kurs(app, 'Alpha-Kurs');
+  const b = H.kurs(app, 'Beta-Kurs');
+  const sub = H.konto(app, 'schueler', 'Mika R.');
+  const ta = H.teilnahme(app, a, sub, 'Mika R.');
+  H.teilnahme(app, b, sub, 'Mika R.');
+  const c = H.client(app);
+  const exp = Date.now() + 24 * 3600 * 1000; // noch ein Tag Restlaufzeit
+  c.jar.setCookie(`kr_s=${S.sign({ sub, g: 1, t: ta, exp }, H.SECRET)}; Path=/`, '127.0.0.1', '/');
+  const r = await c.post('/api/sitzung/kurs').send({ kurs: b.kurs }).expect(200);
+  const neu = neuesSchuelerCookie(r);
+  assert.equal(neu.exp, exp, 'exp unverändert');
+  assert.ok(neu.maxAge <= 24 * 3600 && neu.maxAge > 24 * 3600 - 60, `Max-Age ${neu.maxAge} = Restlaufzeit`);
+});
+
+test('Rückfall auf die erste aktive Teilnahme verlängert die Sitzung nicht', async () => {
+  const app = H.makeApp();
+  const a = H.kurs(app, 'Alpha-Kurs');
+  const b = H.kurs(app, 'Beta-Kurs');
+  const sub = H.konto(app, 'schueler', 'Mika R.');
+  const ta = H.teilnahme(app, a, sub, 'Mika R.');
+  H.teilnahme(app, b, sub, 'Mika R.');
+  const c = H.client(app);
+  const exp = Date.now() + 2 * 3600 * 1000;
+  c.jar.setCookie(`kr_s=${S.sign({ sub, g: 1, t: ta, exp }, H.SECRET)}; Path=/`, '127.0.0.1', '/');
+  app.locals.db.prepare('UPDATE schueler SET aktiv = 0 WHERE id = ?').run(ta);
+  const r = await c.get('/api/profil').expect(200);
+  assert.equal(r.body.kurs.name, 'Beta-Kurs');
+  const neu = neuesSchuelerCookie(r);
+  assert.equal(neu.exp, exp, 'exp unverändert');
+  assert.ok(neu.maxAge <= 2 * 3600 && neu.maxAge > 2 * 3600 - 60, `Max-Age ${neu.maxAge}`);
+});

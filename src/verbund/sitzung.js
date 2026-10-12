@@ -1,6 +1,7 @@
 'use strict';
 // Kern-Kandidat lab-kern: Sitzungen nach der Portal-Anmeldung (TECHNIK §6.4).
 //   kr_s (Schüler):              S.sign({ sub, g, t })  – g = konten.session_gen, t = id der aktiven Teilnahme, 30 Tage
+//                                (Kurswahl/Rückfall setzen t neu, behalten aber exp – keine Verlängerung)
 //   kr_l (Lehrkraft/Superadmin): S.sign({ sub, g })                                                         8 Stunden
 // helpers.schueler(req) liefert die Teilnahme-Zeile (Tabelle „schueler“), damit alle Kerndienste unverändert mit
 // s.id/s.kurs_id arbeiten; helpers.lehrkraft(req) liefert { konto, kurse } (lokale Kurs-ids, Superadmin: alle).
@@ -49,7 +50,7 @@ function createSitzung({ db, secret }) {
     let t = Number.isInteger(p.t) ? teilnahmeStmt.get(p.t, k.sub) : null;
     if (!t) {
       t = ersteStmt.get(k.sub);
-      if (t && res) setzeSchueler(req, res, k, t.id);
+      if (t && res) setzeSchueler(req, res, k, t.id, p.exp); // Restlaufzeit bleibt (keine Verlängerung)
     }
     return t || null;
   }
@@ -65,8 +66,21 @@ function createSitzung({ db, secret }) {
     return { konto: k, kurse };
   }
 
-  function setzeSchueler(req, res, k, teilnahmeId) {
-    S.setCookie(req, res, S.COOKIE_SCHUELER, { sub: k.sub, g: k.session_gen, t: teilnahmeId }, secret, SCHUELER_MS);
+  /**
+   * kr_s setzen. Ohne `exp`: neue Sitzung mit voller Laufzeit (nur /sso/ende). Mit `exp` (ms, aus dem bisherigen
+   * Cookie): Teilnahme wechseln ohne Verlängerung – exp bleibt, Max-Age = Restlaufzeit (Kurswahl, Rückfall).
+   */
+  function setzeSchueler(req, res, k, teilnahmeId, exp) {
+    const nutzlast = { sub: k.sub, g: k.session_gen, t: teilnahmeId };
+    if (!Number.isFinite(exp)) return S.setCookie(req, res, S.COOKIE_SCHUELER, nutzlast, secret, SCHUELER_MS);
+    const ende = Math.min(exp, Date.now() + SCHUELER_MS);
+    res.cookie(S.COOKIE_SCHUELER, S.sign({ ...nutzlast, exp: ende }, secret), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: req.secure,
+      path: '/',
+      maxAge: Math.max(0, ende - Date.now())
+    });
   }
 
   function setzeLehrkraft(req, res, k) {
@@ -85,7 +99,8 @@ function createSitzung({ db, secret }) {
 
   /**
    * Seiten-Wächter (vor sendFile): rolle 'schueler' braucht kr_s (Lehrkraft-Sitzung → 302 /lehrer), rolle 'lehrkraft'
-   * braucht kr_l. Ohne Sitzung still 302 /sso/start?ziel=<Pfad> (ungültiges Cookie wird gelöscht).
+   * braucht kr_l (Schüler-Sitzung → 302 /spiel – sonst Schleife über das SSO, weil das Portal den Schüler wieder als
+   * Schüler anmeldet). Ohne Sitzung still 302 /sso/start?ziel=<Pfad> (ungültiges Cookie wird gelöscht).
    */
   function waechter(rolle) {
     return (req, res, next) => {
@@ -95,6 +110,7 @@ function createSitzung({ db, secret }) {
         if (req.sS) S.clearCookie(req, res, S.COOKIE_SCHUELER);
       } else {
         if (lehrkraft(req)) return next();
+        if (schueler(req, res)) return res.redirect(302, '/spiel');
         if (req.sL) S.clearCookie(req, res, S.COOKIE_LEHRKRAFT);
       }
       res.set('Cache-Control', 'no-store');
@@ -158,7 +174,7 @@ function createSitzung({ db, secret }) {
         .prepare('SELECT s.id, k.kurs_id, k.name FROM schueler s JOIN kurse k ON k.id = s.kurs_id WHERE s.sub = ? AND k.kurs_id = ? AND s.aktiv = 1 AND k.aktiv = 1')
         .get(s.sub, kurs);
       if (!t) throw new V.NotFoundError('Kurs nicht gefunden.');
-      setzeSchueler(req, res, kontoStmt.get(s.sub), t.id);
+      setzeSchueler(req, res, kontoStmt.get(s.sub), t.id, req.sS.exp); // keine Verlängerung
       res.json({ ok: true, kurs: { id: t.kurs_id, name: t.name } });
     });
 

@@ -428,13 +428,14 @@ test('Seiten-Wächter: ohne Sitzung still 302 /sso/start?ziel=<Pfad>; öffentlic
   }
 });
 
-test('Seiten-Wächter: Schüler-Sitzung → /spiel 200, /lehrer → SSO; Lehrkraft-Sitzung → /lehrer 200, /spiel → /lehrer', async () => {
+test('Seiten-Wächter: Schüler-Sitzung → /spiel 200, /lehrer → /spiel; Lehrkraft-Sitzung → /lehrer 200, /spiel → /lehrer', async () => {
   const app = H.makeApp();
   const s = await H.sso(app);
   assert.equal((await s.get('/spiel')).status, 200);
   const r = await s.get('/lehrer');
   assert.equal(r.status, 302);
-  assert.equal(r.headers.location, '/sso/start?ziel=%2Flehrer');
+  assert.equal(r.headers.location, '/spiel', 'keine SSO-Schleife');
+  assert.equal((await s.get('/lehrer/urkunden')).headers.location, '/spiel');
   const lk = await H.sso(app, LK);
   assert.equal((await lk.get('/lehrer')).status, 200);
   assert.equal((await lk.get('/lehrer/urkunden')).status, 200);
@@ -446,6 +447,60 @@ test('Seiten-Wächter: Schüler-Sitzung → /spiel 200, /lehrer → SSO; Lehrkra
   const r3 = await s.get('/spiel');
   assert.equal(r3.headers.location, '/sso/start?ziel=%2Fspiel');
   assert.match((r3.headers['set-cookie'] || []).join(';'), /kr_s=;/);
+});
+
+test('/sso/ende: ziel, das nicht zur Rolle passt, wird verworfen (Startseite der Rolle)', async () => {
+  const app = H.makeApp();
+  for (const [ziel, erwartet] of [
+    ['/lehrer', '/spiel'],
+    ['/lehrer/urkunden', '/spiel'],
+    ['/lehrer?x=1', '/spiel'],
+    ['/lehrer#/kurse', '/spiel'],
+    ['/beamer/funkraum/3', '/spiel'],
+    ['/labor', '/labor'],
+    ['/spiel?welt=2', '/spiel?welt=2'],
+    ['/lehrerzimmer', '/lehrerzimmer']
+  ]) {
+    const c = await H.sso(app, {}, { ziel });
+    assert.equal(c.antwort.headers.location, erwartet, `Schüler ${ziel}`);
+  }
+  for (const [ziel, erwartet] of [
+    ['/spiel', '/lehrer'],
+    ['/spiel?welt=2', '/lehrer'],
+    ['/funkraum', '/lehrer'],
+    ['/werkstatt/x', '/lehrer'],
+    ['/labor?werkzeug=skytale', '/labor?werkzeug=skytale'],
+    ['/lehrer/urkunden', '/lehrer/urkunden'],
+    ['/beamer/funkraum/3', '/beamer/funkraum/3']
+  ]) {
+    const c = await H.sso(app, LK, { ziel });
+    assert.equal(c.antwort.headers.location, erwartet, `Lehrkraft ${ziel}`);
+  }
+});
+
+test('Komplette Kette ohne Schleife: Schüler ohne Sitzung ruft /lehrer auf → SSO → /spiel', async () => {
+  const app = H.makeApp();
+  const c = H.client(app);
+  let url = '/lehrer';
+  const besucht = [];
+  for (let i = 0; i < 6; i++) {
+    assert.ok(!besucht.includes(url), `Schleife bei ${url}`);
+    besucht.push(url);
+    const r = await c.get(url);
+    if (r.status === 200) break;
+    assert.equal(r.status, 302, url);
+    const loc = r.headers.location;
+    if (loc.startsWith(H.PORTAL + '/sso/autorisieren')) {
+      // Portal: Schüler hat noch eine Portal-Sitzung → Token sofort
+      const u = new URL(loc);
+      url = H.endeUrl({ token: H.ssoToken({}, { app }), state: u.searchParams.get('state'), ziel: u.searchParams.get('ziel') });
+    } else url = loc;
+  }
+  assert.equal(besucht.at(-1), '/spiel');
+  assert.equal((await c.get('/spiel')).status, 200);
+  // mit Sitzung: /lehrer → /spiel direkt
+  const r = await c.get('/lehrer');
+  assert.deepEqual([r.status, r.headers.location], [302, '/spiel']);
 });
 
 test('API ohne Sitzung → 401 { anmelden: true, sso: "/sso/start" }', async () => {

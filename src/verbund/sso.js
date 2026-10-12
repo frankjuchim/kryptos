@@ -24,6 +24,22 @@ function sicheresZiel(z) {
   return typeof z === 'string' && z.length <= 300 && /^\/(?![/\\])/.test(z) && !/[\u0000-\u001f\u007f]/.test(z) ? z : '/';
 }
 
+/** Seiten, die nur die jeweils andere Rolle öffnen darf (TECHNIK §6.4/§11.1; /labor ist für beide). */
+const NUR_LEHRKRAFT = ['/lehrer', '/beamer'];
+const NUR_SCHUELER = ['/spiel', '/funkraum', '/werkstatt'];
+const unter = (pfad, basis) => pfad === basis || pfad.startsWith(basis + '/');
+
+/**
+ * ziel (nach sicheresZiel) für die Rolle: Seiten der anderen Rolle und „/“ → Startseite der Rolle (Schüler /spiel,
+ * Lehrkraft/Superadmin /lehrer). Verhindert die Schleife Schüler → /lehrer → SSO → /lehrer → …
+ */
+function zielFuerRolle(ziel, rolle) {
+  const start = rolle === 'schueler' ? '/spiel' : '/lehrer';
+  const pfad = ziel.split(/[?#]/)[0];
+  const verboten = rolle === 'schueler' ? NUR_LEHRKRAFT : NUR_SCHUELER;
+  return ziel === '/' || verboten.some((b) => unter(pfad, b)) ? start : ziel;
+}
+
 /** Inhalt des Tokens nach TECHNIK §6.3 Schritt 5. */
 function pruefeInhalt(t) {
   if (typeof t.sub !== 'string' || !/^[asl]:\d{1,15}$/.test(t.sub)) return false;
@@ -135,7 +151,7 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
       return k;
     })();
 
-    const ziel = sicheresZiel(q.ziel);
+    const ziel = zielFuerRolle(sicheresZiel(q.ziel), t.rolle);
     if (t.rolle === 'schueler') {
       // 7. Schüler ohne aktive Teilnahme in einem aktiven Kurs: keine Sitzung
       const teilnahme = sitzung.ersteTeilnahme(konto.sub);
@@ -144,11 +160,11 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
       sitzung.setzeSchueler(req, res, konto, teilnahme.id);
       sitzung.loescheLehrkraft(req, res);
       // 9. Weiterleitung
-      return res.redirect(302, ziel === '/' ? '/spiel' : ziel);
+      return res.redirect(302, ziel);
     }
     sitzung.setzeLehrkraft(req, res, konto);
     sitzung.loescheSchueler(req, res);
-    res.redirect(302, ziel === '/' ? '/lehrer' : ziel);
+    res.redirect(302, ziel);
   });
 
   r.get('/portal', (req, res) => {
@@ -159,4 +175,4 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
   return r;
 }
 
-module.exports = { createSsoRouter, sicheresZiel, pruefeInhalt, STATE_MS };
+module.exports = { createSsoRouter, sicheresZiel, zielFuerRolle, pruefeInhalt, STATE_MS };
