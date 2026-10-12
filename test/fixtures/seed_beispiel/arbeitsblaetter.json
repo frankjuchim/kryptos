@@ -1,0 +1,50 @@
+{
+ "_hinweis": "Kern-Fixture: Verzeichnis der Schülermaterialien der Testwelt 9 (PDFs in test/fixtures/materialien/Arbeitsblaetter_PDF).",
+ "werkzeugkarten": {
+  "titel": "Werkzeugkarten (Test)",
+  "quelle": "Werkzeuge/KR_Werkzeugkarten_Test.docx",
+  "datei": "00_Werkzeugkarten/KR_Werkzeugkarten_Test.pdf"
+ },
+ "welten": [
+  {
+   "welt": 9,
+   "ordner": "Welt_9_Testwelt",
+   "arbeitsblaetter": [
+    {
+     "nr": 1,
+     "titel": "Blöcke und Lücken",
+     "ds": [
+      1
+     ],
+     "quelle": "Welt9_Testwelt/KR_W9_AB1.docx",
+     "datei": "KR_W9-AB1_Bloecke_und_Luecken.pdf"
+    },
+    {
+     "nr": 2,
+     "titel": "Alle Interaktionen",
+     "ds": [
+      2,
+      3
+     ],
+     "quelle": "Welt9_Testwelt/KR_W9_AB2.docx",
+     "datei": "KR_W9-AB2_Alle_Interaktionen.pdf"
+    }
+   ],
+   "weitere": [
+    {
+     "art": "boss",
+     "titel": "Papier-Boss „Der Testdrache“ (60 min)",
+     "quelle": "Welt9_Testwelt/KR_W9_Boss.docx",
+     "datei": "KR_W9-Boss_Der_Testdrache.pdf"
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten (Test)",
+     "quelle": "Welt9_Testwelt/KR_W9_Warmup.docx",
+     "datei": "KR_W9-Warm-up-Karten.pdf",
+     "ohneLoesungsteil": true
+    }
+   ]
+  }
+ ]
+}

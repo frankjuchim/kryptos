@@ -1,0 +1,16 @@
+# Ins Image kommen nur src/, public/, seed/, scripts/, docs/AUFGABENFORMAT.md, materialien/Arbeitsblaetter_PDF (öffentlich)
+# sowie materialien/Loesungen_Portal und materialien/Lehrkraft_PDF (nur für angemeldete Lehrkräfte, siehe Dockerfile).
+.git
+node_modules
+data
+test
+materialien/*
+!materialien/Arbeitsblaetter_PDF
+!materialien/Loesungen_Portal
+!materialien/Lehrkraft_PDF
+quellen
+docs/*.png
+*.log
+.DS_Store
+__pycache__
+werkzeuge

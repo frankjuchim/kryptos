@@ -1,0 +1,116 @@
+{
+ "version": 2,
+ "welt": 8,
+ "titel": "Probe-Level",
+ "farbe": "#1F4E79",
+ "_hinweis": "Gastmodus (/gast): eigene Demo-Aufgaben, die in den Welten 0–6 nicht vorkommen. Werden NICHT in die Datenbank geladen, nichts wird gespeichert.",
+ "levels": [
+  {
+   "id": "W8-L1",
+   "nr": "Probe",
+   "titel": "Reinschnuppern: sechs Aufgabenarten",
+   "intro": [
+    {"t": "hinweis", "md": "**So funktioniert’s:** Antwort eingeben, **Prüfen** drücken. Ein **Tipp** hilft weiter (kostet im echten Lab Punkte), **Lösung zeigen** deckt alles auf. Nach dem Lösen gibt es eine Erklärung. Im Gastmodus wird nichts gespeichert."}
+   ],
+   "aufgaben": ["W8-L1-01", "W8-L1-02", "W8-L1-03", "W8-L1-04", "W8-L1-05", "W8-L1-06"]
+  }
+ ],
+ "aufgaben": [
+  {
+   "id": "W8-L1-01",
+   "titel": "Tracetabelle: Gold verdoppeln",
+   "stufe": 1,
+   "kategorie": "verschluesseln",
+   "fallen": ["P8"],
+   "inhalt": [
+    {"t": "text", "md": "Ein Held verdoppelt sein Gold, bis er mindestens 30 Münzen hat. Führe die Tracetabelle: **eine Zeile an jeder mit `// → Tabellenzeile` markierten Stelle**."},
+    {"t": "code", "code": "int gold = 4;\nint runde = 0;              // → Tabellenzeile (Startwerte)\nwhile (gold < 30) {\n    gold = gold * 2;\n    runde++;                // → Tabellenzeile\n}", "nummern": true},
+    {"t": "tabelle", "kopf": ["gold", "runde"], "zeilen": [["4", "0"], ["[[g1]]", "1"], ["[[g2]]", "2"], ["[[g3]]", "[[r3]]"]]}
+   ],
+   "interaktion": {"kind": "gaps", "felder": {"g1": {"typ": "zahl", "breite": 4}, "g2": {"typ": "zahl", "breite": 4}, "g3": {"typ": "zahl", "breite": 4}, "r3": {"typ": "zahl", "breite": 4}}},
+   "loesung": {"g1": ["8"], "g2": ["16"], "g3": ["32"], "r3": ["3"]},
+   "tipps": ["Am Ende jedes Schleifendurchlaufs: gold ist doppelt so groß wie in der Zeile davor."],
+   "erklaerung": [{"t": "text", "md": "gold: 4 → 8 → 16 → 32, runde: 0 → 1 → 2 → 3. Danach ist `32 < 30` falsch, die Schleife endet. In die Tabelle gehören **nur Variablen** – keine Spalte für die Bedingung (P8)."}]
+  },
+  {
+   "id": "W8-L1-02",
+   "titel": "Struktogramm nach EH §5 ergänzen",
+   "stufe": 2,
+   "kategorie": "struktogramm",
+   "fallen": ["P9"],
+   "inhalt": [
+    {"t": "text", "md": "Das Struktogramm addiert alle **positiven** Werte der Reihung `r`. Ergänze die Lücken."},
+    {"t": "struktogramm", "kopf": "summePositiv(r: Reihung von Ganzzahl): Ganzzahl", "rumpf": [
+     {"anw": "summe [[g1]] 0"},
+     {"zaehle": "i von 0 bis [[g2]]", "rumpf": [
+      {"wenn": "r[i] > 0", "dann": [{"anw": "summe ← summe + r[i]"}]}
+     ]},
+     {"gib": "summe"}
+    ]}
+   ],
+   "interaktion": {"kind": "gaps", "felder": {"g1": {"typ": "auswahl", "optionen": ["←", "=", "==", ":="]}, "g2": {"typ": "auswahl", "optionen": ["länge(r) − 1", "länge(r)", "länge(r) + 1"]}}},
+   "loesung": {"g1": ["←"], "g2": ["länge(r) − 1"]},
+   "tipps": ["Im Struktogramm gibt es keine Java-Syntax: Wie wird eine Zuweisung geschrieben?", "Der letzte Index einer Reihung der Länge n ist n − 1."],
+   "erklaerung": [{"t": "text", "md": "Zuweisungen werden im Struktogramm mit **←** geschrieben (P9). Die Zählschleife läuft **von 0 bis länge(r) − 1** – sonst würde auf einen Index hinter dem Ende zugegriffen (P6)."}]
+  },
+  {
+   "id": "W8-L1-03",
+   "titel": "Bug-Hunt: Wo steckt der Fehler?",
+   "stufe": 2,
+   "kategorie": "implementierung",
+   "fallen": ["P10"],
+   "inhalt": [
+    {"t": "text", "md": "Die Methode soll die Summe aller **positiven** Werte liefern. Für `{3, -2, 5}` kommt aber `-2` heraus."},
+    {"t": "code", "code": "public static int summePositiv(int[] r) {\n    int summe = 0;\n    for (int i = 0; i < r.length; i++) {\n        if (r[i] < 0) {\n            summe = summe + r[i];\n        }\n    }\n    return summe;\n}", "nummern": true},
+    {"t": "text", "md": "**b)** Korrigierte Bedingung: `if (r[i]` [[g1]] `0)`"}
+   ],
+   "interaktion": [
+    {"kind": "lines", "block": 1, "anzahl": 1, "frage": "a) Tippe die fehlerhafte Zeile an."},
+    {"kind": "gaps", "felder": {"g1": {"typ": "auswahl", "optionen": [">", "<", ">=", "=="]}}, "frage": "b) Korrigiere die Bedingung."}
+   ],
+   "loesung": [{"zeilen": [4]}, {"g1": [">"]}],
+   "tipps": ["Welche Werte werden mit der jetzigen Bedingung addiert?"],
+   "erklaerung": [{"t": "text", "md": "In Zeile 4 werden die **negativen** Werte addiert (`r[i] < 0`). Richtig ist `r[i] > 0` – dann ergibt `{3, -2, 5}` die Summe **8**."}]
+  },
+  {
+   "id": "W8-L1-04",
+   "titel": "Inorder im Suchbaum",
+   "stufe": 1,
+   "kategorie": "einordnen",
+   "fallen": ["P7"],
+   "inhalt": [{"t": "text", "md": "Klicke die Knoten in **Inorder** (links – Wurzel – rechts) an."}],
+   "interaktion": {"kind": "tree", "modus": "klick", "baum": "20(10(5,15),30(-,40))"},
+   "loesung": {"folge": ["LL", "L", "LR", "", "R", "RR"]},
+   "tipps": ["Fang ganz links unten an: Erst kommt der linke Teilbaum vollständig, dann die Wurzel."],
+   "erklaerung": [{"t": "text", "md": "Inorder: **5, 10, 15, 20, 30, 40** – bei einem Suchbaum liefert die Inorder-Traversierung die Werte immer sortiert."}]
+  },
+  {
+   "id": "W8-L1-05",
+   "titel": "Stapel simulieren",
+   "stufe": 1,
+   "kategorie": "protokoll",
+   "fallen": ["P2"],
+   "inhalt": [
+    {"t": "adt", "art": "stapel", "inhalt": [2, 9]},
+    {"t": "code", "code": "s.push(4);\ns.pop();\ns.push(7);\ns.push(1);", "nummern": true},
+    {"t": "text", "md": "Baue den Endzustand des Stapels (unten → oben)."}
+   ],
+   "interaktion": {"kind": "adtsim", "art": "stapel", "start": [2, 9]},
+   "loesung": {"inhalt": ["2", "9", "7", "1"]},
+   "tipps": ["`pop()` nimmt immer das **oberste** Element weg – hier die 4."],
+   "erklaerung": [{"t": "text", "md": "4 wird oben abgelegt und sofort wieder entfernt, dann kommen 7 und 1 oben drauf: **2, 9, 7, 1** (unten → oben). Stapel = LIFO."}]
+  },
+  {
+   "id": "W8-L1-06",
+   "titel": "Bubblesort: erster Durchlauf",
+   "stufe": 2,
+   "kategorie": "transposition",
+   "fallen": ["P6"],
+   "inhalt": [{"t": "text", "md": "Führe den **1. Durchlauf** von Bubblesort (aufsteigend) aus: Tippe zwei benachbarte Felder an, um sie zu tauschen. Fertig? Dann „Fertig – prüfen“."}],
+   "interaktion": {"kind": "array", "modus": "tausch", "start": [7, 3, 9, 2], "fertigKnopf": true},
+   "loesung": {"tausche": [[0, 1], [2, 3]]},
+   "tipps": ["Vergleiche von links nach rechts immer zwei Nachbarn und tausche nur, wenn der linke größer ist."],
+   "erklaerung": [{"t": "text", "md": "7 > 3 → tauschen: 3, 7, 9, 2. 7 < 9 → bleibt. 9 > 2 → tauschen: **3, 7, 2, 9**. Nach dem ersten Durchlauf steht das Maximum ganz rechts."}]
+  }
+ ]
+}

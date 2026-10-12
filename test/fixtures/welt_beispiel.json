@@ -1,0 +1,389 @@
+{
+  "version": 2,
+  "welt": 9,
+  "titel": "Die Testwelt",
+  "farbe": "#5B6B7C",
+  "levels": [
+    {
+      "id": "W9-L1",
+      "nr": "9.1",
+      "titel": "Blöcke und Lücken",
+      "ds": [1],
+      "ab": "AB 1 – Beispiel, Teil A",
+      "ide": "AQ_W9_Beispiel_Geruest.txt – Level 9.1",
+      "intro": [
+        { "t": "hinweis", "md": "**Merke:** Hier werden alle Blocktypen gezeigt. Lücken füllst du direkt im Text, im Code, im Struktogramm oder in der Tabelle aus." }
+      ],
+      "aufgaben": ["W9-L1-01", "W9-L1-02", "W9-L1-03", "W9-L1-04", "W9-L1-05", "W9-L1-06"]
+    },
+    {
+      "id": "W9-L2",
+      "nr": "9.2",
+      "titel": "Alle Interaktionen",
+      "ds": [2, 3],
+      "ab": "AB 2 – Beispiel, Teil B",
+      "ide": "",
+      "intro": [{ "t": "text", "md": "Puzzle, Bug-Hunt, Bäume, Reihungen, Raster und ADT-Simulation." }],
+      "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09"]
+    }
+  ],
+  "boss": {
+    "id": "W9-BOSS",
+    "titel": "Der Testdrache",
+    "dauerMin": 10,
+    "anzahl": 5,
+    "mix": { "1": 2, "2": 2, "3": 1 },
+    "pool": ["W9-B-01", "W9-B-02", "W9-B-03", "W9-B-04", "W9-B-05", "W9-B-06"]
+  },
+  "aufgaben": [
+    {
+      "id": "W9-L1-01",
+      "titel": "Reihung lesen",
+      "stufe": 1,
+      "punkte": 10,
+      "kategorie": "modulo",
+      "fallen": ["P6"],
+      "inhalt": [
+        { "t": "text", "md": "Gegeben ist die Reihung `r`. Der **gold** markierte Wert steht an Index 2." },
+        { "t": "reihung", "werte": [5, 2, 9, 4], "indizes": true, "markiert": { "2": "gold" } },
+        { "t": "text", "md": "- Wert an Index 2: [[g1]]\n- Index des Werts 4: [[g2]]\n- `r.length` ist [[g3]]\n- So heißt das Attribut für die Länge: `r.`[[g4]]" },
+        { "t": "hinweis", "md": "Der erste Index ist **0**, der letzte `r.length − 1`." }
+      ],
+      "interaktion": {
+        "kind": "gaps",
+        "felder": {
+          "g1": { "typ": "zahl", "breite": 4 },
+          "g2": { "typ": "zahl", "breite": 4 },
+          "g3": { "typ": "auswahl", "optionen": ["3", "4", "5"] },
+          "g4": { "typ": "text", "breite": 8 }
+        }
+      },
+      "loesung": { "g1": ["9"], "g2": ["3"], "g3": ["4"], "g4": ["length"] },
+      "tipps": ["Zähle die Indizes ab 0: 0, 1, 2, 3."],
+      "erklaerung": [{ "t": "text", "md": "Index 2 enthält **9**, der Wert 4 steht an Index **3**, die Länge ist **4** (P6: Off-by-one beachten)." }]
+    },
+    {
+      "id": "W9-L1-02",
+      "titel": "Trace einer Zählschleife",
+      "stufe": 2,
+      "kategorie": "verschluesseln",
+      "fallen": ["P8"],
+      "inhalt": [
+        { "t": "code", "code": "int s = 0;\nfor (int i = 1; i <= 3; i++) {\n    s = s + i;\n}", "nummern": true, "markiere": [3] },
+        { "t": "tabelle", "kopf": ["i", "s"], "zeilen": [["–", "0"], ["1", "[[c1]]"], ["2", "[[c2]]"], ["3", "[[c3]]"]] },
+        { "t": "text", "md": "Welche Schleifenart ist das? [[art]]" },
+        { "t": "code", "code": "for (int i = 0; i [[op]] r.length; i++) { … }", "nummern": false }
+      ],
+      "interaktion": {
+        "kind": "gaps",
+        "felder": {
+          "c1": { "typ": "zahl", "breite": 3 },
+          "c2": { "typ": "zahl", "breite": 3 },
+          "c3": { "typ": "zahl", "breite": 3 },
+          "art": { "typ": "text", "norm": "text", "breite": 14 },
+          "op": { "typ": "text", "breite": 3 }
+        }
+      },
+      "loesung": { "c1": ["1"], "c2": ["3"], "c3": ["6"], "art": ["Zählschleife", "for-Schleife", "for"], "op": ["<"] },
+      "tipps": ["Trage nach jedem Schleifendurchlauf den neuen Wert von s ein.", "s wächst um 1, dann um 2, dann um 3."],
+      "erklaerung": [{ "t": "text", "md": "s: 0 → 1 → 3 → 6. Für alle Indizes einer Reihung gilt `i < r.length` (P6)." }]
+    },
+    {
+      "id": "W9-L1-03",
+      "titel": "Struktogramm ergänzen",
+      "stufe": 2,
+      "kategorie": "struktogramm",
+      "fallen": ["P9"],
+      "inhalt": [
+        { "t": "text", "md": "Das Struktogramm zählt die geraden Zahlen von 1 bis n und gibt die Anzahl zurück." },
+        {
+          "t": "struktogramm",
+          "kopf": "zaehleGerade(n: Ganzzahl): Ganzzahl",
+          "rumpf": [
+            { "anw": "anzahl ← 0" },
+            { "anw": "i ← 1" },
+            {
+              "solange": "i [[g1]] n",
+              "rumpf": [
+                { "wenn": "i mod 2 = 0", "dann": [{ "anw": "anzahl ← anzahl + 1" }], "sonst": [{ "aufruf": "zeige(i)" }] },
+                { "anw": "i ← i + 1" }
+              ]
+            },
+            { "zaehle": "k von 1 bis 2", "rumpf": [{ "anw": "// nur zur Anschauung" }] },
+            { "wiederhole": [{ "anw": "anzahl ← anzahl + 0" }], "bis": "wahr" },
+            { "gib": "[[g2]]" }
+          ]
+        }
+      ],
+      "interaktion": {
+        "kind": "gaps",
+        "felder": {
+          "g1": { "typ": "auswahl", "optionen": ["<", "≤", ">", "≥"] },
+          "g2": { "typ": "text", "breite": 8 }
+        }
+      },
+      "loesung": { "g1": ["≤"], "g2": ["anzahl"] },
+      "erklaerung": [{ "t": "text", "md": "Die Schleife läuft **solange i ≤ n**; zurückgegeben wird `anzahl` („gib anzahl zurück“, P9)." }]
+    },
+    {
+      "id": "W9-L1-04",
+      "titel": "Konstruktor erkennen",
+      "stufe": 1,
+      "kategorie": "begriffe",
+      "fallen": [],
+      "inhalt": [
+        { "t": "klassenkarte", "name": "Held", "attribute": ["- name: Zeichenkette", "- leben: Ganzzahl"], "methoden": ["+ c Held(name: Zeichenkette)", "+ getName(): Zeichenkette", "+ nimmSchaden(schaden: Ganzzahl): nichts"] },
+        { "t": "text", "md": "Welche Zeile beschreibt den **Konstruktor**?" }
+      ],
+      "interaktion": {
+        "kind": "choice",
+        "mehrfach": false,
+        "optionen": [
+          { "id": "a", "md": "`+ c Held(name: Zeichenkette)`" },
+          { "id": "b", "md": "`+ getName(): Zeichenkette`" },
+          { "id": "c", "md": "`- leben: Ganzzahl`" }
+        ]
+      },
+      "loesung": { "richtig": ["a"] },
+      "erklaerung": [{ "t": "text", "md": "Konstruktoren tragen im Klassendiagramm ein vorangestelltes **c** und heißen wie die Klasse." }]
+    },
+    {
+      "id": "W9-L1-05",
+      "titel": "Stapel und Raster",
+      "stufe": 2,
+      "kategorie": "protokoll",
+      "fallen": ["P1"],
+      "inhalt": [
+        { "t": "adt", "art": "stapel", "inhalt": [4, 9, 2] },
+        { "t": "raster", "zeilen": [[1, 7, 3], [6, 2, 8]] },
+        { "t": "text", "md": "Welche Aussagen stimmen? (Mehrere sind richtig.)" }
+      ],
+      "interaktion": {
+        "kind": "choice",
+        "mehrfach": true,
+        "optionen": [
+          { "id": "a", "md": "`top()` liefert 2." },
+          { "id": "b", "md": "`pop()` entfernt die 4." },
+          { "id": "c", "md": "Im Raster gilt `r[1][2] == 8`." },
+          { "id": "d", "md": "Das Raster hat 3 Zeilen." }
+        ]
+      },
+      "loesung": { "richtig": ["a", "c"] },
+      "tipps": ["Beim Stapel ist das letzte Element oben."],
+      "erklaerung": [{ "t": "text", "md": "Oben liegt die **2**; das Raster hat 2 Zeilen und 3 Spalten, `r[1][2]` ist 8." }]
+    },
+    {
+      "id": "W9-L1-06",
+      "titel": "Baumbegriffe zuordnen",
+      "stufe": 1,
+      "kategorie": "einordnen",
+      "fallen": [],
+      "inhalt": [{ "t": "baum", "baum": "8(3(1,6(4,7)),10(-,14(13,-)))" }, { "t": "text", "md": "Ordne jedem Knoten den passenden Begriff zu." }],
+      "interaktion": {
+        "kind": "match",
+        "elemente": [
+          { "id": "e1", "md": "Knoten **8**" },
+          { "id": "e2", "md": "Knoten **13**" },
+          { "id": "e3", "md": "Knoten **6**" }
+        ],
+        "kategorien": [
+          { "id": "w", "md": "Wurzel" },
+          { "id": "b", "md": "Blatt" },
+          { "id": "i", "md": "innerer Knoten" }
+        ]
+      },
+      "loesung": { "e1": "w", "e2": "b", "e3": "i" },
+      "erklaerung": [{ "t": "text", "md": "8 ist die Wurzel, 13 hat keine Kinder (Blatt), 6 hat Kinder und einen Elternknoten (innerer Knoten)." }]
+    },
+    {
+      "id": "W9-L2-01",
+      "titel": "Maximum-Puzzle",
+      "stufe": 2,
+      "kategorie": "implementierung",
+      "fallen": ["P1"],
+      "inhalt": [{ "t": "text", "md": "Bringe die Zeilen in die richtige Reihenfolge, sodass `m` am Ende das Maximum der (nicht leeren) Reihung `r` ist. **Eine Zeile wird nicht gebraucht.**" }],
+      "interaktion": {
+        "kind": "order",
+        "teile": [
+          { "id": "a", "code": "int m = r[0];" },
+          { "id": "b", "code": "for (int i = 1; i < r.length; i++) {" },
+          { "id": "c", "code": "    if (r[i] > m) m = r[i];" },
+          { "id": "d", "code": "}" },
+          { "id": "e", "code": "return m;" },
+          { "id": "x", "code": "return r[0];" }
+        ]
+      },
+      "loesung": { "reihenfolgen": [["a", "b", "c", "d", "e"]] },
+      "erklaerung": [{ "t": "text", "md": "Start mit dem ersten Element, dann alle weiteren vergleichen. `return r[0];` ist ein Distraktor." }]
+    },
+    {
+      "id": "W9-L2-02",
+      "titel": "Bug-Hunt: Summe",
+      "stufe": 3,
+      "kategorie": "implementierung",
+      "fallen": ["P6"],
+      "inhalt": [
+        { "t": "text", "md": "Die Methode soll die Summe aller Werte liefern, stürzt aber ab." },
+        { "t": "code", "code": "public static int summe(int[] r) {\n    int s = 0;\n    for (int i = 0; i <= r.length; i++) {\n        s = s + r[i];\n    }\n    return s;\n}", "nummern": true },
+        { "t": "text", "md": "Korrektur der Bedingung: `i` [[g1]] `r.length`" }
+      ],
+      "interaktion": [
+        { "kind": "lines", "block": 1, "anzahl": 1, "frage": "a) Tippe die fehlerhafte Zeile an." },
+        { "kind": "gaps", "felder": { "g1": { "typ": "text", "breite": 4 } }, "frage": "b) Korrigiere die Bedingung." }
+      ],
+      "loesung": [{ "zeilen": [3] }, { "g1": ["<"] }],
+      "tipps": ["Welcher Index ist bei einer Reihung der Länge n der letzte?"],
+      "erklaerung": [{ "t": "text", "md": "In Zeile 3 greift `i <= r.length` im letzten Durchlauf auf `r[r.length]` zu → Laufzeitfehler (P6). Richtig: `i < r.length`." }]
+    },
+    {
+      "id": "W9-L2-03",
+      "titel": "Preorder anklicken",
+      "stufe": 1,
+      "kategorie": "einordnen",
+      "fallen": ["P7"],
+      "inhalt": [{ "t": "text", "md": "Klicke die Knoten in **Preorder** (Wurzel – links – rechts) an." }],
+      "interaktion": { "kind": "tree", "modus": "klick", "baum": "8(3(1,6(4,7)),10(-,14(13,-)))" },
+      "loesung": { "folge": ["", "L", "LL", "LR", "LRL", "LRR", "R", "RR", "RRL"] },
+      "erklaerung": [{ "t": "text", "md": "Preorder: 8, 3, 1, 6, 4, 7, 10, 14, 13." }]
+    },
+    {
+      "id": "W9-L2-04",
+      "titel": "Suchbaum bauen",
+      "stufe": 2,
+      "kategorie": "einordnen",
+      "fallen": [],
+      "inhalt": [{ "t": "text", "md": "Füge nacheinander **4, 9, 1** in den Suchbaum ein." }],
+      "interaktion": { "kind": "tree", "modus": "bauen", "start": "5(3,8)", "werte": ["4", "9", "1"] },
+      "loesung": { "baum": "5(3(1,4),8(-,9))" },
+      "erklaerung": [{ "t": "text", "md": "4 < 5 und 4 > 3 → rechts von 3; 9 > 5 und 9 > 8 → rechts von 8; 1 → links von 3." }]
+    },
+    {
+      "id": "W9-L2-05",
+      "titel": "Bubblesort: 1. Durchlauf",
+      "stufe": 2,
+      "kategorie": "transposition",
+      "fallen": ["P6"],
+      "inhalt": [{ "t": "text", "md": "Führe den **1. Durchlauf** von Bubblesort (aufsteigend) aus: Tippe zwei Felder an, um sie zu tauschen." }],
+      "interaktion": { "kind": "array", "modus": "tausch", "start": [5, 1, 4, 2, 8], "fertigKnopf": true },
+      "loesung": { "tausche": [[0, 1], [1, 2], [2, 3]] },
+      "erklaerung": [{ "t": "text", "md": "5 wandert nach rechts: (0↔1), (1↔2), (2↔3); 5 < 8 bleibt stehen." }]
+    },
+    {
+      "id": "W9-L2-06",
+      "titel": "Binäre Suche nach 23",
+      "stufe": 1,
+      "kategorie": "transposition",
+      "fallen": ["P4"],
+      "inhalt": [{ "t": "text", "md": "Tippe die Felder an, die nacheinander als `mitte = (lo + hi) / 2` untersucht werden, wenn nach **23** gesucht wird." }],
+      "interaktion": { "kind": "array", "modus": "klick", "start": [2, 5, 8, 12, 16, 23, 38, 56, 72, 91] },
+      "loesung": { "folge": [4, 7, 5] },
+      "erklaerung": [{ "t": "text", "md": "lo=0, hi=9 → mitte 4 (16); lo=5 → mitte 7 (56); hi=6 → mitte 5 (23) gefunden." }]
+    },
+    {
+      "id": "W9-L2-07",
+      "titel": "Raster markieren",
+      "stufe": 1,
+      "kategorie": "transposition",
+      "fallen": [],
+      "inhalt": [{ "t": "text", "md": "Markiere alle Zellen mit einem Wert **größer als 5**." }],
+      "interaktion": { "kind": "grid", "raster": [[1, 7, 3, 9], [6, 2, 8, 4], [5, 5, 10, 0]] },
+      "loesung": { "zellen": [[0, 1], [0, 3], [1, 0], [1, 2], [2, 2]], "reihenfolge": false },
+      "erklaerung": [{ "t": "text", "md": "7, 9, 6, 8 und 10 sind größer als 5." }]
+    },
+    {
+      "id": "W9-L2-08",
+      "titel": "Schlange simulieren",
+      "stufe": 2,
+      "kategorie": "protokoll",
+      "fallen": ["P2"],
+      "inhalt": [
+        { "t": "adt", "art": "schlange", "inhalt": [3, 7] },
+        { "t": "code", "code": "q.enqueue(5);\nq.dequeue();\nq.enqueue(1);", "nummern": true },
+        { "t": "text", "md": "Baue den Endzustand der Schlange (vorn → hinten)." }
+      ],
+      "interaktion": { "kind": "adtsim", "art": "schlange", "start": [3, 7] },
+      "loesung": { "inhalt": ["7", "5", "1"] },
+      "erklaerung": [{ "t": "text", "md": "5 hinten anstellen, 3 vorne entfernen, 1 hinten anstellen → 7, 5, 1." }]
+    },
+    {
+      "id": "W9-L2-09",
+      "titel": "Dynamische Reihung",
+      "stufe": 3,
+      "kategorie": "protokoll",
+      "fallen": ["P1", "P6"],
+      "inhalt": [
+        { "t": "adt", "art": "dynarray", "inhalt": ["A", "B", "C"] },
+        { "t": "code", "code": "d.insertAt(1, \"X\");\nd.delete(3);\nd.append(\"Y\");", "nummern": true }
+      ],
+      "interaktion": { "kind": "adtsim", "art": "dynarray", "start": ["A", "B", "C"] },
+      "loesung": { "inhalt": ["A", "X", "B", "Y"] },
+      "erklaerung": [{ "t": "text", "md": "Nach insertAt: A X B C; delete(3) entfernt C; append hängt Y an → A, X, B, Y." }]
+    },
+    {
+      "id": "W9-B-01",
+      "titel": "Ganzzahlige Division",
+      "stufe": 1,
+      "kategorie": "modulo",
+      "fallen": ["P4"],
+      "inhalt": [{ "t": "text", "md": "Welchen Wert hat `17 / 5` in Java? [[g1]]" }],
+      "interaktion": { "kind": "gaps", "felder": { "g1": { "typ": "zahl" } } },
+      "loesung": { "g1": ["3"] },
+      "erklaerung": [{ "t": "text", "md": "Ganzzahl / Ganzzahl ist ganzzahlig: 3 (P4)." }]
+    },
+    {
+      "id": "W9-B-02",
+      "titel": "Rest",
+      "stufe": 1,
+      "kategorie": "modulo",
+      "fallen": [],
+      "inhalt": [{ "t": "text", "md": "Welchen Wert hat `17 % 5`? [[g1]]" }],
+      "interaktion": { "kind": "gaps", "felder": { "g1": { "typ": "zahl" } } },
+      "loesung": { "g1": ["2"] },
+      "erklaerung": [{ "t": "text", "md": "17 = 3 · 5 + 2." }]
+    },
+    {
+      "id": "W9-B-03",
+      "titel": "Vergleich von Zeichenketten",
+      "stufe": 2,
+      "kategorie": "implementierung",
+      "fallen": ["P5"],
+      "inhalt": [{ "t": "text", "md": "Womit vergleicht man Zeichenketten im Abitur?" }],
+      "interaktion": { "kind": "choice", "mehrfach": false, "optionen": [{ "id": "a", "md": "`==`" }, { "id": "b", "md": "`equals(...)`" }] },
+      "loesung": { "richtig": ["b"] },
+      "erklaerung": [{ "t": "text", "md": "Immer `equals` (P5)." }]
+    },
+    {
+      "id": "W9-B-04",
+      "titel": "Stapel",
+      "stufe": 2,
+      "kategorie": "protokoll",
+      "fallen": ["P1"],
+      "inhalt": [{ "t": "code", "code": "s.push(1);\ns.push(2);\ns.pop();\ns.push(3);", "nummern": true }],
+      "interaktion": { "kind": "adtsim", "art": "stapel", "start": [] },
+      "loesung": { "inhalt": ["1", "3"] },
+      "erklaerung": [{ "t": "text", "md": "Unten 1, oben 3." }]
+    },
+    {
+      "id": "W9-B-05",
+      "titel": "Inorder",
+      "stufe": 3,
+      "kategorie": "einordnen",
+      "fallen": [],
+      "inhalt": [{ "t": "text", "md": "Klicke die Knoten in **Inorder** an." }],
+      "interaktion": { "kind": "tree", "modus": "klick", "baum": "2(1,3)" },
+      "loesung": { "folge": ["L", "", "R"] },
+      "erklaerung": [{ "t": "text", "md": "Inorder: 1, 2, 3." }]
+    },
+    {
+      "id": "W9-B-06",
+      "titel": "Höhe",
+      "stufe": 3,
+      "kategorie": "einordnen",
+      "fallen": ["P7"],
+      "inhalt": [{ "t": "baum", "baum": "5(3(1,-),8)" }, { "t": "text", "md": "Höhe des Baums (Blatt = 1): [[g1]]" }],
+      "interaktion": { "kind": "gaps", "felder": { "g1": { "typ": "zahl" } } },
+      "loesung": { "g1": ["3"] },
+      "erklaerung": [{ "t": "text", "md": "Längster Pfad 5 → 3 → 1: Höhe 3." }]
+    }
+  ]
+}

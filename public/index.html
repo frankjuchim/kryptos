@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1F4E79">
+<title>Algo Quest Lab – Start</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/style.css?v=2.8.2">
+</head>
+<body class="tor">
+<a class="skip" href="#haupt">Zum Inhalt springen</a>
+<main class="narrow" id="haupt">
+  <div class="hero">
+    <div class="glut" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="fackel links" aria-hidden="true"></div>
+    <div class="fackel rechts" aria-hidden="true"></div>
+    <div class="brand-mark" aria-hidden="true">AQ</div>
+    <h1>Algo Quest Lab</h1>
+    <p class="muted">Das Dungeon der Datenstrukturen · Übungsplattform Informatik LK</p>
+  </div>
+  <section class="card" id="weiter-box" hidden>
+    <p>Du bist angemeldet als <strong id="weiter-name"></strong>.</p>
+    <a class="btn big gold" href="/spiel">▶ Weiterspielen</a>
+  </section>
+  <section class="card" id="code-box" hidden aria-live="assertive">
+    <h2>🎉 Willkommen, <span id="code-name"></span>!</h2>
+    <p><strong>Notiere dir jetzt deinen persönlichen Code.</strong> Mit deinem Namen und diesem Code spielst du auf jedem Gerät weiter.</p>
+    <div class="center"><span class="code-gross" id="code-wert"></span></div>
+    <p class="small muted">Kurs: <span id="code-kurs"></span> · Name: <span id="code-name2"></span></p>
+    <label class="check"><input type="checkbox" id="code-ok"> Ich habe meinen Code notiert (Heft, Foto …).</label>
+    <a class="btn big" id="code-los" href="/spiel" aria-disabled="true">Los geht’s →</a>
+  </section>
+  <section class="card" id="portal-box" hidden>
+    <h2>Anmeldung über InfoLabs</h2>
+    <p>Du hast ein Konto im Portal InfoLabs? Dann melde dich dort an – ohne Kurscode und Code hier.</p>
+    <a class="btn big gold" href="/sso/start?ziel=%2Fspiel">⌂ Über InfoLabs anmelden</a>
+  </section>
+  <div id="formulare">
+    <div class="tabs" role="tablist" aria-label="Anmeldung">
+      <button type="button" role="tab" id="tab-neu" aria-selected="true" aria-controls="form-neu">Kurs beitreten</button>
+      <button type="button" role="tab" id="tab-weiter" aria-selected="false" aria-controls="form-weiter">Weiterspielen</button>
+    </div>
+    <form class="card" id="form-neu" role="tabpanel" aria-labelledby="tab-neu" autocomplete="off">
+      <h2>Neu im Kurs?</h2>
+      <p class="callout gold small" id="kurs-info" hidden></p>
+      <div class="field">
+        <label for="neu-kurs">Kurscode</label>
+        <input type="text" id="neu-kurs" required maxlength="12" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7MX2Q">
+      </div>
+      <div class="field">
+        <label for="neu-name">Dein Name</label>
+        <input type="text" id="neu-name" required minlength="2" maxlength="30" spellcheck="false" autocomplete="off" placeholder="Vorname + Initial, z. B. Lena S.">
+        <p class="hint">Empfehlung: Vorname + Initial des Nachnamens (z. B. „Lena S.“). Der Name ist im Kurs-Scoreboard sichtbar.</p>
+      </div>
+      <p class="callout warn" id="neu-fehler" hidden role="alert"></p>
+      <button class="btn big" type="submit">Beitreten</button>
+    </form>
+    <form class="card" id="form-weiter" role="tabpanel" aria-labelledby="tab-weiter" autocomplete="off" hidden>
+      <h2>Weiterspielen</h2>
+      <p class="hint">Du brauchst nur deinen Namen und deinen persönlichen Code – keinen Kurscode.</p>
+      <div class="field">
+        <label for="w-name">Dein Name</label>
+        <input type="text" id="w-name" required maxlength="30" spellcheck="false" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="w-code">Dein persönlicher Code</label>
+        <input type="text" id="w-code" required maxlength="8" autocapitalize="characters" spellcheck="false" placeholder="ABC-123">
+      </div>
+      <div class="field" id="w-kurs-feld" hidden>
+        <label for="w-kurs">Kurscode</label>
+        <input type="text" id="w-kurs" maxlength="12" autocapitalize="characters" spellcheck="false">
+        <p class="hint">Nur nötig, wenn dein Name mit diesem Code in mehreren Kursen vorkommt.</p>
+      </div>
+      <p class="callout warn" id="w-fehler" hidden role="alert"></p>
+      <button class="btn big" type="submit">Weiterspielen</button>
+      <p class="hint">Code vergessen? Deine Lehrkraft kann ihn dir anzeigen.</p>
+    </form>
+  </div>
+  <p class="center btn-row center-row"><a class="btn secondary" href="/gast">👀 Ohne Anmeldung reinschnuppern</a> <a class="btn secondary" href="/themen">📚 Themen und Arbeitsblätter</a></p>
+  <p class="center small"><a href="/lehrer">Bereich für Lehrkräfte</a> · <a href="/datenschutz">Datenschutz</a></p>
+</main>
+<script src="/static/js/common.js?v=2.8.2"></script>
+<script src="/static/js/start.js?v=2.8.2"></script>
+</body>
+</html>

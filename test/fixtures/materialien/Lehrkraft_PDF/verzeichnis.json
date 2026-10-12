@@ -1,0 +1,130 @@
+{
+ "_hinweis": "Kern-Fixture: Verzeichnis der Lehrkraft-Downloads für die Testwelt 9 (kein echtes Material).",
+ "allgemein": [
+  {
+   "art": "hinweise",
+   "titel": "Gesamtübersicht (Test)",
+   "dateien": [
+    {
+     "label": "Lehrerhinweise",
+     "pfad": "Lehrkraft_PDF/00_Allgemein/KR_Gesamtuebersicht_Test.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarten (Test)",
+   "dateien": [
+    {
+     "label": "Werkzeugkarten",
+     "pfad": "Arbeitsblaetter_PDF/00_Werkzeugkarten/KR_Werkzeugkarten_Test.pdf"
+    }
+   ]
+  }
+ ],
+ "welten": [
+  {
+   "welt": 9,
+   "ordner": "Welt_9_Testwelt",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Testwelt“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_9_Testwelt/KR_W9-Praesentation_Testwelt.pdf"
+      }
+     ]
+    },
+    {
+     "art": "hinweise",
+     "titel": "Lehrerhinweise Welt 9",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_9_Testwelt/KR_W9-Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "ab",
+     "titel": "AB 1: Blöcke und Lücken",
+     "ds": [
+      1
+     ],
+     "dateien": [
+      {
+       "label": "Arbeitsblatt",
+       "pfad": "Arbeitsblaetter_PDF/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken_Loesung.pdf"
+      }
+     ]
+    },
+    {
+     "art": "ab",
+     "titel": "AB 2: Alle Interaktionen",
+     "ds": [
+      2,
+      3
+     ],
+     "dateien": [
+      {
+       "label": "Arbeitsblatt",
+       "pfad": "Arbeitsblaetter_PDF/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen_Loesung.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss „Der Testdrache“",
+     "dateien": [
+      {
+       "label": "Papier-Boss",
+       "pfad": "Arbeitsblaetter_PDF/Welt_9_Testwelt/KR_W9-Boss_Der_Testdrache.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_9_Testwelt/KR_W9-Boss_Der_Testdrache_Erwartungshorizont.pdf"
+      }
+     ]
+    },
+    {
+     "art": "klausur",
+     "titel": "Klausur „Testklausur“",
+     "dateien": [
+      {
+       "label": "Klausur",
+       "pfad": "Lehrkraft_PDF/Welt_9_Testwelt/KR_W9-Klausur_Testklausur.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_9_Testwelt/KR_W9-Klausur_Testklausur_Erwartungshorizont.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten (Test)",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Arbeitsblaetter_PDF/Welt_9_Testwelt/KR_W9-Warm-up-Karten.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_9_Testwelt/KR_W9-Warm-up-Karten_Loesungen.pdf"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

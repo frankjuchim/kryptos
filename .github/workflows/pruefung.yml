@@ -1,0 +1,23 @@
+# Prüfung bei jedem Push und Pull Request (Kryptos; Jobs krypto/inhalte folgen in Task 2, TECHNIK §16.1).
+# Hinweis: Die Live-App baut CapRover direkt bei jedem Push auf main – diese Prüfung blockiert das nicht.
+# Deshalb auf Feature-Branches arbeiten und erst nach grüner Prüfung nach main übernehmen.
+name: Prüfung
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  app:
+    name: App (Tests und Inhalts-Validator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run validate
+

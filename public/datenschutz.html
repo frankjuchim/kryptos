@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Datenschutz – Algo Quest Lab</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/style.css?v=2.8.2">
+</head>
+<body>
+<main class="mittel">
+  <p><a href="/">← Zur Startseite</a></p>
+  <article class="card md">
+    <h1>Datenschutzhinweise für „Algo Quest Lab“</h1>
+    <p class="callout warn"><strong>Entwurf:</strong> Diese Hinweise beschreiben die Verarbeitung so, wie die Plattform technisch arbeitet. Die Angaben in [eckigen Klammern] und die Rechtsgrundlage müssen noch von der Schule (Schulleitung, Datenschutzbeauftragte:r) ergänzt bzw. bestätigt werden.</p>
+
+    <h2>1. Verantwortliche Stelle</h2>
+    <p>Max-Planck-Gymnasium Delmenhorst, [Anschrift], vertreten durch die Schulleitung [Name].<br>
+    Datenschutzbeauftragte:r der Schule: [Name, E-Mail].<br>
+    Ansprechpartner für die Plattform: die Informatik-Lehrkraft des Kurses.</p>
+
+    <h2>2. Zweck</h2>
+    <p>Algo Quest Lab ist eine Übungsplattform für den Informatik-Unterricht (Leistungskurs, Einheit „Algorithmik und Datenstrukturen“). Schülerinnen und Schüler bearbeiten automatisch geprüfte Übungsaufgaben; die Lehrkraft sieht den Lernstand ihres Kurses, um den Unterricht zu planen und gezielt zu üben. Punkte, Ränge und Abzeichen dienen nur der Motivation. Die Ergebnisse fließen <strong>nicht</strong> in die Notengebung ein.</p>
+
+    <h2>3. Welche Daten werden verarbeitet?</h2>
+    <ul>
+      <li><strong>Schülerinnen und Schüler:</strong> ein selbst gewählter Name (2–30 Zeichen; Empfehlung: Vorname + Initial, z. B. „Lena S.“ – ein Spitzname ist ebenso möglich), ein zufällig erzeugter persönlicher Code, die Zugehörigkeit zu einem Kurs sowie der Lernstand: gelöste und angesehene Aufgaben, Zahl der Fehlversuche und genutzten Tipps, Punkte, Abzeichen, Ergebnisse der Boss-Kämpfe und des Trainingsplatzes, die Warm-up-Kartei, das Häkchen „Online-IDE erledigt“ und der Zeitpunkt der letzten Aktivität. Es werden keine E-Mail-Adressen, keine Geburtsdaten und keine Pflichtangaben zum vollständigen Namen erhoben.</li>
+      <li><strong>Aufgabenstatistik:</strong> Für die Auswertung im Kurs wird gezählt, welche falschen Antworten bei einer Aufgabe wie oft gegeben wurden – ohne Bezug zu einer Person.</li>
+      <li><strong>Lehrkräfte:</strong> Name, dienstliche E-Mail-Adresse, Schule, eine optionale Nachricht zur Registrierung und ein Passwort (nur als scrypt-Hash gespeichert, nie im Klartext).</li>
+      <li><strong>Anmeldung über das Portal InfoLabs</strong> (wenn die Schule es nutzt): Konten, Passwörter, persönliche Codes und Kurszugehörigkeiten verwaltet das Portal <a href="https://labs.frankjuchim.de/datenschutz">labs.frankjuchim.de</a> (dort die zentrale Datenschutzerklärung). Algo Quest erhält bei der Anmeldung nur eine pseudonyme Kennung, den Anzeigenamen, die Rolle und die freigeschalteten Kurse und speichert dazu den Lernstand. An das Portal gehen nur Kennzahlen je Kurs (Punkte, Zahl gelöster Aufgaben, Anteil, letzte Aktivität) – keine Antworten. Löscht das Portal ein Konto oder einen Kurs, löscht Algo Quest die zugehörigen Daten sofort. Ein weiteres Cookie (<code>aq_sso</code>) merkt sich nur, dass die letzte Anmeldung über das Portal lief; während der Anmeldung schützt ein 10-Minuten-Cookie vor Fälschung.</li>
+      <li><strong>Technisch:</strong> Ein Sitzungs-Cookie (signiert, httpOnly, SameSite=Lax, über HTTPS „secure“) hält die Anmeldung – bei Schülerinnen und Schülern 30 Tage, bei Lehrkräften 8 Stunden. Zum Schutz vor Missbrauch (Begrenzung von Anmeldeversuchen) wird die IP-Adresse kurzzeitig im Arbeitsspeicher gezählt (je nach Vorgang 1 bis 60 Minuten, danach automatisch gelöscht) und nicht in der Datenbank gespeichert. Es gibt keine Tracking- oder Werbe-Cookies und keine externen Schriftarten, Skripte oder CDNs; Suchmaschinen werden an der Indexierung gehindert. Das Server-Protokoll enthält nur technische Meldungen (Start, Fehler), keine Antworten oder Namen.</li>
+    </ul>
+
+    <h2>4. Sichtbarkeit</h2>
+    <ul>
+      <li>Der gewählte Name, die Punktzahl und die Zahl der Abzeichen sind für die Mitglieder des eigenen Kurses im Scoreboard sichtbar, sofern die Lehrkraft das Scoreboard aktiviert hat.</li>
+      <li>Ein Beamer-Board (Top 15, Kursfortschritt, letzte Erfolge) ist nur über den Kurscode und nur dann abrufbar, wenn die Lehrkraft es aktiviert.</li>
+      <li>Am Ende der Einheit kann die Lehrkraft Urkunden mit Name, Rang, Punkten und Abzeichen drucken.</li>
+      <li>Lehrkräfte sehen nur ihre eigenen Kurse. Der Administrator der Plattform hat technischen Zugriff auf alle Daten; er gibt keine Daten an Dritte weiter.</li>
+    </ul>
+
+    <h2>5. Rechtsgrundlage</h2>
+    <p>[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG (Verarbeitung im Rahmen des Bildungsauftrags) oder Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO.]</p>
+
+    <h2>6. Speicherort, Speicherdauer und Löschung</h2>
+    <p>Die Daten liegen in einer Datenbank auf einem Server von [Hoster, Standort in der EU]; die Verbindung ist mit HTTPS verschlüsselt. Es werden keine Daten an Dritte übermittelt.</p>
+    <ul>
+      <li>Die Lehrkraft kann jederzeit einzelne Schülerkonten, alle Schülerkonten eines Kurses oder den ganzen Kurs löschen; dabei wird der gesamte zugehörige Lernstand gelöscht.</li>
+      <li>Die Daten eines Kurses werden spätestens [z. B. drei Monate nach Ende des Schuljahres] gelöscht.</li>
+      <li>Wird ein Lehrkraft-Konto gelöscht, werden auch alle seine Kurse mit allen Schülerdaten gelöscht.</li>
+      <li>Sicherungskopien: [z. B. keine / Aufbewahrung höchstens … Tage].</li>
+    </ul>
+
+    <h2>7. Rechte der Betroffenen</h2>
+    <p>Betroffene haben das Recht auf Auskunft, Berichtigung (z. B. Umbenennen durch die Lehrkraft), Löschung, Einschränkung der Verarbeitung und Widerspruch sowie das Recht auf Beschwerde bei der Aufsichtsbehörde: Die Landesbeauftragte für den Datenschutz Niedersachsen, Prinzenstraße 5, 30159 Hannover. Ansprechpartner ist die Lehrkraft des Kurses bzw. die oder der Datenschutzbeauftragte der Schule.</p>
+
+    <p><em>Stand: Oktober 2026</em></p>
+  </article>
+</main>
+</body>
+</html>
