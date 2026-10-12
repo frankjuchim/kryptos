@@ -16,6 +16,7 @@ const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
+const { createSsoRouter } = require('./verbund/sso');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const ROOT_DIR = path.join(__dirname, '..');
@@ -123,8 +124,11 @@ function createApp(opts) {
 
   app.get('/robots.txt', (req, res) => res.type('text').send('User-agent: *\nDisallow: /\n'));
 
+  /* ---------- SSO (VERTRAG §5, TECHNIK §6.2–§6.3) ---------- */
+  app.use('/sso', createSsoRouter({ db, svc, konfig, sitzung, secret, now: ctx.now }));
+
   /* ---------- Helfer für die Routen ---------- */
-  // SSO (/sso/*) und Verbund-API (/api/verbund/*) folgen in src/verbund/ (Plan Tasks 5–8).
+  // Verbund-API (/api/verbund/*) folgt in src/verbund/ (Plan Task 8).
   const helpers = {
     svc,
     now: ctx.now,
@@ -243,7 +247,8 @@ function createApp(opts) {
     if (err && err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Ungültiges JSON.' });
     if (err && err.type === 'entity.too.large') return res.status(413).json({ error: 'Datei zu groß.' });
     const status = err && Number.isInteger(err.status) ? err.status : 500;
-    if (status >= 500) log(err && err.stack ? err.stack : String(err));
+    // SSO: nie URL oder Token loggen – nur die Meldung (TECHNIK §6.3)
+    if (status >= 500) log(req.path.startsWith('/sso/') ? `SSO-Fehler: ${err && err.message ? err.message : 'unbekannt'}` : err && err.stack ? err.stack : String(err));
     const body = { error: status >= 500 ? 'Interner Fehler.' : err.message };
     if (err && err.details) body.details = err.details;
     if (err && err.extra) Object.assign(body, err.extra);

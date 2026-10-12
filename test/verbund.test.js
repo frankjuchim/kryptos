@@ -11,7 +11,7 @@ const { pruefeManifest } = require('../scripts/vertrag_pruefen');
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
 
 test('Manifest: öffentlich, vertragsgemäß, Version wie /healthz, CORS für das Portal', async () => {
-  const app = H.makeApp({ seedDir: SEED });
+  const app = H.makeApp({ seedDir: SEED, portalPublicKey: null }); // ohne Portal-Schlüssel
   const r = await request(app).get('/api/plattform').expect(200);
   assert.equal(r.headers['access-control-allow-origin'], '*');
   const m = r.body;

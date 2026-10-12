@@ -2,20 +2,29 @@
 // Gemeinsame Test-Helfer (node:test + supertest).
 // Kryptos kennt keine lokale Anmeldung mehr: Konten, Kurse und Teilnahmen legen die Helfer direkt in der Datenbank an
 // (wie es /sso/ende tun wird, TECHNIK §6.6) und geben Clients mit gültigen Sitzungs-Cookies kr_s/kr_l (TECHNIK §6.4).
-// Die SSO-Helfer sso()/verbundToken() (TECHNIK §15) kommen mit Plan Task 5.
+// SSO-Helfer (TECHNIK §15): je Lauf ein Ed25519-Testschlüsselpaar des „Portals“, ssoToken()/sso() für /sso/ende,
+// verbundToken() für die Verbund-API.
 
 const path = require('node:path');
+const crypto = require('node:crypto');
 const request = require('supertest');
 const S = require('../src/security');
 const V = require('../src/validate');
 const { createApp } = require('../src/app');
 const { STANDARD_EINSTELLUNGEN } = require('../src/domain');
 const { SCHUELER_MS, LEHRKRAFT_MS } = require('../src/verbund/sitzung');
+const { signiere } = require('../src/jwt');
 
 const SECRET = 'test-secret-0123456789abcdef-0123456789';
 const HOST = 'lab.test';
 const ORIGIN = 'http://' + HOST;
 const FIXTURE = path.join(__dirname, 'fixtures', 'welt_beispiel.json');
+
+/* ---------- Portal (Test) ---------- */
+const PORTAL = 'https://portal.test';
+const PLATTFORM = 'https://kryptos.test';
+const PORTAL_SCHLUESSEL = crypto.generateKeyPairSync('ed25519');
+const PORTAL_PEM = PORTAL_SCHLUESSEL.publicKey.export({ type: 'spki', format: 'pem' });
 
 /** Steuerbare Uhr für Timer-Tests. */
 function uhr(start = Date.parse('2026-10-08T08:00:00Z')) {
@@ -38,6 +47,9 @@ function makeApp(extra = {}) {
     seedDir: null,
     weltDateien: [FIXTURE],
     trustProxy: false,
+    portalUrl: PORTAL,
+    plattformUrl: PLATTFORM,
+    portalPublicKey: PORTAL_PEM,
     ...extra
   });
   app.locals.testZaehler = 0;
@@ -154,8 +166,87 @@ async function szenario(extra = {}) {
   return { app, admin, lk, kurs: k, s };
 }
 
+/* ---------- SSO und Verbund (TECHNIK §15) ---------- */
+
+let jtiZaehler = 0;
+const neueJti = () => `jti-${process.pid}-${++jtiZaehler}-${crypto.randomBytes(8).toString('hex')}`;
+/** Sekunden der App-Uhr (Tokens passen so auch zu uhr()). */
+const appSek = (app) => Math.floor((app && app.locals.ctx ? app.locals.ctx.now() : Date.now()) / 1000);
+
+/**
+ * SSO-Token wie vom Portal (VERTRAG §5). felder überschreiben die Standardwerte (Schüler s:1042 in k:17);
+ * o.key: anderer privater Schlüssel, o.app: Uhr der App für iat/exp.
+ */
+function ssoToken(felder = {}, { key = PORTAL_SCHLUESSEL.privateKey, app = null } = {}) {
+  const iat = appSek(app);
+  return signiere(
+    {
+      iss: PORTAL,
+      aud: 'kryptos',
+      sub: 's:1042',
+      rolle: 'schueler',
+      name: 'Lena S.',
+      kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'mitglied' }],
+      iat,
+      exp: iat + 90,
+      jti: neueJti(),
+      v: 1,
+      ...felder
+    },
+    key
+  );
+}
+
+/** Verbund-Token (VERTRAG §6): sub „portal“, zweck, 60 s. */
+function verbundToken(zweck, extra = {}, { key = PORTAL_SCHLUESSEL.privateKey, app = null } = {}) {
+  const iat = appSek(app);
+  return signiere({ iss: PORTAL, aud: 'kryptos', sub: 'portal', zweck, iat, exp: iat + 60, jti: neueJti(), v: 1, ...extra }, key);
+}
+
+/** /sso/start aufrufen; liefert die Portal-URL der Weiterleitung (der Client hat danach das state-Cookie). */
+async function ssoStart(c, ziel = '/') {
+  const r = await c.get('/sso/start?ziel=' + encodeURIComponent(ziel));
+  if (r.status !== 302) throw new Error(`/sso/start: ${r.status}`);
+  return new URL(r.headers.location);
+}
+
+/** URL für /sso/ende mit Token und state (Parameter wie vom Portal). */
+function endeUrl({ token, state, ziel = '/', fehler } = {}) {
+  const q = new URLSearchParams();
+  if (fehler !== undefined) q.set('fehler', fehler);
+  if (token !== undefined) q.set('token', token);
+  if (state !== undefined) q.set('state', state);
+  if (ziel !== undefined && fehler === undefined) q.set('ziel', ziel);
+  return '/sso/ende?' + q;
+}
+
+/**
+ * Kompletter SSO-Ablauf /sso/start → Token → /sso/ende. Liefert den Client (Cookies gesetzt) mit
+ * c.antwort (Antwort von /sso/ende), c.sub und – bei Schülern – c.id (aktive Teilnahme aus dem Cookie).
+ * Mit o.client wird ein vorhandener Client weiterverwendet (z. B. geteiltes Tablet).
+ */
+async function sso(app, felder = {}, { ziel = '/', client: c = client(app) } = {}) {
+  const u = await ssoStart(c, ziel);
+  const token = ssoToken(felder, { app });
+  const r = await c.get(endeUrl({ token, state: u.searchParams.get('state'), ziel: u.searchParams.get('ziel') }));
+  c.antwort = r;
+  c.sub = felder.sub || 's:1042';
+  const roh = (r.headers['set-cookie'] || []).find((x) => x.startsWith(S.COOKIE_SCHUELER + '=') && !x.startsWith(S.COOKIE_SCHUELER + '=;'));
+  if (roh) c.id = S.verify(decodeURIComponent(roh.split(';')[0].split('=')[1]), SECRET).t;
+  return c;
+}
+
 module.exports = {
   makeApp,
+  ssoToken,
+  verbundToken,
+  ssoStart,
+  endeUrl,
+  sso,
+  PORTAL,
+  PLATTFORM,
+  PORTAL_SCHLUESSEL,
+  PORTAL_PEM,
   client,
   konto,
   kurs,
