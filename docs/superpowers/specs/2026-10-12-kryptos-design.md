@@ -191,8 +191,11 @@ Jedes Level, jede Akte, jede Lab-Aufgabe und jede Boss-Aufgabe trägt ein Feld `
 Die Lehrkraft stellt je Kurs **Niveau gA oder eA** ein. gA blendet `eA`-Level aus (sie bleiben in der Lehrkraft-Vorschau
 sichtbar); Boss-Pools ziehen nur passende Aufgaben; Punkte und Ränge rechnen nur über sichtbare Level. Ergänzung und
 Kür sollen nicht für Rang-Schwellen zählen (fairer Vergleich im Portal), geben aber Punkte und Abzeichen. **Vertragsbindung:**
-Diese Regel gilt erst ab Vertrag v1.2 (Vorschlag (c), Schalter `VERTRAG_VERSION`); unter v1.1 rechnen Rang und
-`anteil` vertragsgemäß über alle sichtbaren Level der freigeschalteten Welten (TECHNIK §6.10, §8.3).
+Verbindlich ist der labs-Vertrag v1.2 (Entscheidung der Lehrkraft, 12.10.2026); er rechnet Rang und `anteil` über die
+Level-Punkte der freigeschalteten Welten und regelt Ergänzung/Kür nicht. Deshalb zählen sie bis auf Weiteres mit (alle
+sichtbaren Level); die Regel „nur Kern/eA“ ist Vorschlag V2 in `docs/VERTRAG_VORSCHLAEGE.md` (TECHNIK §6.10, §8.3).
+Nach labs v1.2 §9 zeigt Kryptos ohne Anmeldung eine **Niveau-Übersicht** (`/themen#niveaus`): welche Welten, Level,
+Aufgaben, Bosse und Akten für gA und eA sind.
 
 ### 3.3 Fallen P1–P10 (Kryptologie)
 
@@ -256,7 +259,7 @@ Legende Niveau: K = Kern (gA+eA) · eA · E = Ergänzung · Kür. 🔴 = Live-Sz
 | 18 | W6 | **Generalprobe:** Probeklausur im Block-2-Format (eA 30 BE / gA 25 BE, 70 bzw. 55 min) + Besprechung mit Erwartungshorizont | 6.3 | K | Papier-Boss W6 |
 | – | – | **Klausur** (2 Aufgaben im Format 2A/2E: klassisch + modern, eA 2 × 30 BE / gA 2 × 25 BE) + Nachschreibklausur | – | K | – |
 
-**Kür-Level** (jederzeit freischaltbar, keine Rangrelevanz ab Vertrag v1.2): K1 „Friedmans Formel herleiten“ (W2), K2 „Die Enigma“
+**Kür-Level** (jederzeit freischaltbar; Rangrelevanz nach Vertrag – derzeit zählen sie mit, Vorschlag V2): K1 „Friedmans Formel herleiten“ (W2), K2 „Die Enigma“
 (W3), K3 „Euklids Erbe – erweiterter Euklid und schnelles Potenzieren“ (W4).
 
 **Puffer:** Die DS 5, 8, 11 und 13 enthalten je ein Fremde-Chiffre- bzw. Boss-Segment, das bei Zeitnot in die
@@ -542,7 +545,7 @@ Kontrast – die Atmosphäre liegt im Rahmen, nicht im Lesetext.
 an übernommenen Kerndateien wird in `docs/KERN_ABWEICHUNGEN.md` mit Grund protokolliert. Begründung der Abweichung
 vom SOLL im README (Kern dreifach vorhanden, Auslagerung als gemeinsames Vorhaben aller Plattformen geplant).
 
-### 9.2 Verbund (VERTRAG v1.1)
+### 9.2 Verbund (VERTRAG v1.2)
 
 - **Konfiguration (§8):** `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` (fest konfiguriert, mehrere
   PEM-Blöcke erlaubt), `PLATTFORM_ID=kryptos`, `PLATTFORM_URL=https://kryptos.frankjuchim.de`, `AUTH_MODUS=portal`,
@@ -555,15 +558,16 @@ vom SOLL im README (Kern dreifach vorhanden, Auslagerung als gemeinsames Vorhabe
 - **Verbund-API (§6):** `POST /api/verbund/loeschen` (MUSS, idempotent, innerhalb der Anfrage, umfasst auch
   Funkraum- und Arena-Daten), `GET /api/verbund/kurse/:kursId/uebersicht` (SOLL, nur Kennzahlen),
   `POST /api/verbund/kurse/:kursId` (SOLL, umbenennen/sperren).
-- **Manifest (§7)** `GET /api/plattform`: `vertrag "1.1"`, `id "kryptos"`, `name "Kryptos"`,
+- **Manifest (§7)** `GET /api/plattform`: `vertrag "1.2"`, `id "kryptos"`, `name "Kryptos"`,
   `titel "Kryptos – Die Zeitreise der Geheimschriften"`, `themenfeld "Kryptologie"`,
-  `kurs "Informatik eA und gA, Niedersachsen, Abitur ab 2027"`, `farbe "#B07D2B"`, `urls` inkl. `ssoStart`/`ssoEnde`,
+  `kurs "Informatik eA und gA, Niedersachsen, Abitur ab 2027"`, `niveaus ["eA", "gA"]`, `farbe "#B07D2B"`, `urls` inkl. `ssoStart`/`ssoEnde`/`niveaus` (`/themen#niveaus`),
   `auth {modus: "portal", portal, sso: true}`, `umfang`, `welten`, `faehigkeiten`:
   `gast, themen, lehrkraft-materialien, boss, training, warmup, scoreboard, beamer, urkunden, fallen-profil` + neu
   `labor, funkraum, arena, niveau`.
-- **Vertragsänderungen:** keine MUSS-Abweichung. Vorschlag v1.2 (Niveau-Feld, Registry der Fähigkeiten,
-  Löschregel für zwischen Konten ausgetauschte Inhalte, Themenfarben) in `docs/VERTRAG_VORSCHLAG_v1.2.md` – Umsetzung
-  erst nach Annahme im Portal-Repo.
+- **Niveau-Übersicht (§9):** ohne Anmeldung auf `/themen#niveaus` (Daten `GET /api/niveaus`).
+- **Vertragsänderungen:** keine MUSS-Abweichung. Weitere Wünsche (Niveau-Feld in der Kursübersicht, Rang nur Kern/eA,
+  Registry der Fähigkeiten, Löschregel für zwischen Konten ausgetauschte Inhalte, Themenfarben) als mögliche Vorschläge in
+  `docs/VERTRAG_VORSCHLAEGE.md` – Umsetzung erst nach Aufnahme im Portal-Repo.
 
 ### 9.3 Datenmodell (Ergänzungen zum Kern)
 
@@ -696,7 +700,7 @@ keine externen Ressourcen, kein Tracking. Keine Klarnamen in Beispieldaten, Scre
 | O7 | Toy-Verfahren (KRYPTOS-16, Toy-Hash) dürfen nicht mit echten Abituraufgaben verwechselt werden | eigene, klar benannte Verfahren; keine Abituraufgaben kopieren (Urheberrecht) |
 | O8 | Abituraufgaben als Übungsmaterial | nur als Verweis/Quelle für die Lehrkraft, nicht auf der Plattform veröffentlichen |
 | O9 | Lizenz der Materialien und Schriften (Fußzeile „© Frank Juchim · für den Unterricht“; Atkinson Hyperlegible: Lizenz vor der Selbst-Hostung prüfen, Fraunces und JetBrains Mono OFL) | Lehrkraft entscheidet vor der Veröffentlichung; Lizenztexte nach `public/static/fonts/LIZENZEN/` |
-| O10 | Rangregel „nur Kern/eA zählen“ ist erst als Vertrag v1.2 vorgeschlagen | bis zur Annahme `VERTRAG_VERSION=1.1` (Rang über alle sichtbaren Level), Vorschlag (c) mit dem Portal abstimmen |
+| O10 | Rangregel „nur Kern/eA zählen“ steht nicht im labs-Vertrag v1.2 | Rang über alle sichtbaren Level (vertragsnah); Vorschlag V2 (`docs/VERTRAG_VORSCHLAEGE.md`) mit dem Portal abstimmen |
 | O11 | „Krypto-Werkstatt“ von André Bodendiek (enigma.andrebodendiek.de/werkstatt; Fork `frankjuchim/<WERKSTATT-FORK>`): direkte Bedienung der Objekte, Nachspielen in Einzelschritten | in M6 Bedienidee, Grafiken und Nachspiel-Modus ins Kryptolabor übernehmen, Rechnungen über `krypto.js`; vorher Lizenz/Erlaubnis und Namensnennung klären; bis dahin als Link in Themenseite und Lehrerhinweisen W0 |
 
 ---

@@ -1,11 +1,53 @@
-# Vorschlag: Vertrag des Plattform-Verbunds InfoLabs – Version 1.2
+# Vorschläge für den Vertrag des Plattform-Verbunds InfoLabs (Kryptos)
 
-> ⚠️ **Überholt in der Nummerierung (Hinweis vom 12.10.2026):** Das Portal-Repo `frankjuchim/labs` hat inzwischen eine
-> **andere** Version 1.2 von `VERTRAG.md` angenommen (Commit `3f48c5c`: Anforderungsniveaus – jede Plattform für eA und
-> gA mit Niveau-Übersicht nach §9 als MUSS, Manifest-Feld `urls.niveaus` SOLL, `niveaus` KANN). Dieser Kryptos-Vorschlag
-> ist damit **nicht** labs v1.2 und muss neu nummeriert (z. B. v1.3) und mit dem Portal neu abgestimmt werden – Teil A
-> überschneidet sich mit dem angenommenen `niveaus`. **Entscheidung der Lehrkraft offen.** Bis dahin läuft Kryptos mit
-> `VERTRAG_VERSION=1.1`; der Wert `1.2` bricht den Start ab (TECHNIK §6.1/§6.10). Der Text unten ist unverändert.
+> **Durch labs-Vertrag v1.2 überstimmt (Entscheidung der Lehrkraft, 12.10.2026).** Verbindlich ist
+> `frankjuchim/labs/VERTRAG.md` **Version 1.2** (Commit `3f48c5c`: Anforderungsniveaus – jede Plattform ist für eA und gA,
+> Niveau-Übersicht ohne Anmeldung nach §9, Manifest-Felder `niveaus` KANN und `urls.niveaus` SOLL). Kryptos erfüllt diese
+> Fassung vollständig (`vertrag: "1.2"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`, `GET /api/niveaus`;
+> TECHNIK §6.1, §6.9, §6.10). Der frühere Kryptos-Entwurf „Version 1.2“ (unten, Teile A–H, **nur noch Archiv**) gilt
+> **nicht**: Nichts davon wird still umgesetzt, und keine Regel daraus geht dem labs-Vertrag vor. Die Datei hieß bis
+> dahin `docs/VERTRAG_VORSCHLAG_v1.2.md`.
+
+## Was labs v1.2 regelt und was daraus für Kryptos folgt
+
+| Punkt | labs v1.2 | Kryptos |
+|---|---|---|
+| Niveaus im Manifest | `niveaus` (KANN): für welche Niveaus die Plattform gedacht ist, ohne Angabe eA und gA | `["eA", "gA"]` |
+| Niveau-Übersicht | §9 MUSS: ohne Anmeldung, welche Welten, Level, Aufgaben, Materialien für welches Niveau; `urls.niveaus` (SOLL) | `/themen#niveaus` (Seite) + `GET /api/niveaus` (Daten) |
+| `anteil` und Rangschwellen | §6/§9: Anteil an den **Level-Punkten der freigeschalteten Welten** – nichts zu Niveau, Ergänzung oder Kür | alle für den Kurs **sichtbaren** Level-Aufgaben der freigeschalteten Welten (Ergänzung und Kür zählen mit; eA-Aufgaben im gA-Kurs sind ausgeblendet) – TECHNIK §8.3 |
+| Kursübersicht | Format §6 ohne Feld `niveau` | **kein** Feld `niveau` |
+| Fähigkeiten | freie Liste | `labor`, `funkraum`, `arena`, `niveau` (freie Werte, kein Verzeichnis) |
+
+## Mögliche Vorschläge für eine spätere Version (Abstimmung mit dem Portal)
+
+Nicht übernommene Punkte des alten Entwurfs, die weiterhin sinnvoll wären. Sie gelten erst, wenn das Portal-Repo sie in
+`VERTRAG.md` aufnimmt (neue Version, Eintrag in §14); bis dahin richtet sich Kryptos nach labs v1.2.
+
+1. **V1 – Kursniveau in der Kursübersicht** (alter Teil A.4): optionales Feld `"niveau": "eA" | "gA"` in
+   `GET /api/verbund/kurse/:kursId/uebersicht`, damit das Portal Anteile von gA- und eA-Kursen nicht ungekennzeichnet
+   nebeneinanderstellt. Dazu Begriff „Niveau“ in §2 (alter Teil A.2).
+2. **V2 – `anteil`/Rang nur über bewertete Inhalte** (alter Teil A.4, früher „Vorschlag (c)“): Ergänzungen (RSA, DH) und
+   Kür zählen in `punkte`, aber nicht in `anteil` und in den Rangschwellen (Design §3.2: fairer Vergleich). labs v1.2
+   lässt offen, ob freiwillige Inhalte zu den „Level-Punkten der freigeschalteten Welten“ gehören; Kryptos rechnet bis zur
+   Klärung vertragsnah mit allen sichtbaren Level-Aufgaben. Vorschlagstext für §9 „Vergleichbarkeit“: „Inhalte, die die
+   Plattform als freiwillig kennzeichnet (Ergänzung, Kür), zählen in `punkte`, aber nicht in `anteil` und Rangschwellen.“
+3. **V3 – Verzeichnis der Fähigkeiten** (alter Teil B, §7.1) mit `labor`, `funkraum`, `arena`, `niveau`, damit das
+   Portal sie anzeigen kann.
+4. **V4 – Regeln für zwischen Konten ausgetauschte Inhalte** (alter Teil C: Kursgrenze, Whitelist, Ausblenden,
+   Löschfristen 24 h/30 Tage, Einschluss in `loeschen`). Kryptos hält diese Regeln als **eigene, strengere** Festlegung
+   ohnehin ein (TECHNIK §9, §12) – sie widersprechen dem Vertrag nicht.
+5. **V5 – Oberfläche** (alter Teil D): Portal-Link, Touch-Ziele, Kontraste als MUSS; eigenes Designsystem mit Begründung
+   erlaubt. Bis dahin bleibt es bei der begründeten SOLL-Abweichung im README.
+6. **V6 – Gemeinsamer Kern `lab-kern`** (alter Teil E): Naht-Regel, Abweichungsprotokoll, Auslagerung in drei Schritten.
+7. **V7 – `vertrag_pruefen.js`** (alter Teil F): Prüfung der Fähigkeiten-Kennungen und `pruefeKursuebersicht`.
+8. **V8 – Kursniveau aus dem Portal** (offene Frage 2 unten): Portal führt LK/GK je Kurs und gibt es per `kurs-aendern` weiter.
+
+Eine neue Version würde frühestens **1.3** heißen; der Text unten müsste dafür an labs v1.2 angepasst werden (Teil A
+überschneidet sich mit dem angenommenen `niveaus`, das dort „gedacht für“ statt „je Kurs unterschieden“ bedeutet).
+
+---
+
+## Archiv: früherer Kryptos-Entwurf (unverändert, überholt)
 
 > **Von:** Plattform Kryptos (`kryptos`) · **An:** Portal-Repo `frankjuchim/labs`, Datei `VERTRAG.md` (derzeit v1.1)
 > **Stand:** 12.10.2026 · **Art:** Nebenversion (nur Ergänzungen und Präzisierungen; keine MUSS-Pflicht entfällt oder

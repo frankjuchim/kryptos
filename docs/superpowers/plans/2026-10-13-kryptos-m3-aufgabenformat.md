@@ -25,7 +25,7 @@ W3 §0a (KRYPTOS-16), W5 §0a (KRYPTOS-Hash) · Gesamtplan Teil A (M3) und Teil 
 
 ## Global Constraints
 
-- Alle Constraints des Gesamtplans gelten weiter (VERTRAG **1.1**, Naht-Regel, keine neuen Abhängigkeiten, CSP, kein
+- Alle Constraints des Gesamtplans gelten weiter (labs-VERTRAG **1.2**, Naht-Regel, keine neuen Abhängigkeiten, CSP, kein
   `innerHTML`, Deutsch, keine Klarnamen, Prüfung nur serverseitig, Spec-Vektor-first).
 - **Quellenrang:** Design-Spec > Welt-Spec > Delta (`AUFGABENFORMAT_KRYPTO.md`) > TECHNIK > Kern-Format. Widerspricht eine
   niedrigere Quelle einer höheren, wird die niedrigere **im selben Commit** korrigiert (Abschnitt „Entscheidungen“ unten).
@@ -51,7 +51,8 @@ W3 §0a (KRYPTOS-16), W5 §0a (KRYPTOS-Hash) · Gesamtplan Teil A (M3) und Teil 
    `matrix`) ist ein Validator-**Fehler** mit erwarteter Ausgabe (Tasks 24–29, Negativ-Fixtures).
 3. **Niveau-Lecks** – im gA-Kurs liefern Level-Liste, Level-Seite, Aufgaben-API und Boss-Ziehung keine `eA`-Inhalte
    (404 statt 403, damit nichts verraten wird); Lehrkraft-Vorschau zeigt alles (Tasks 34, 35).
-4. **Vertrag 1.1** – `rangrelevant = sichtbar` unter `VERTRAG_VERSION=1.1`; Kursübersicht ohne `niveau`-Feld (Task 35).
+4. **Vertrag labs v1.2** – `rangrelevant = sichtbar` (Rang/`anteil` über die Level-Punkte der freigeschalteten Welten, keine
+   Versionsweiche mehr; „nur Kern/eA“ ist Vorschlag V2 in `docs/VERTRAG_VORSCHLAEGE.md`); Kursübersicht ohne `niveau`-Feld (Task 35).
 5. **Antwortformen** – Umlaute, Leerzeichen, Ziffern, leere Kästchen, zu lange Listen, fremde Schlüssel: definierte
    Normalisierung oder 400 `AntwortFehler`, nie ein Absturz und nie ein gezählter Fehlversuch bei leerer Antwort.
 6. **Registry-Reihenfolge** – `registriere()` läuft vor dem Seed (createApp) und vor dem Validator-CLI; ein Kern ohne
@@ -442,7 +443,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
 - Produces:
   - `require('./src/krypto').registriere()` – idempotent; registriert Normen `krypto` (`(s) => K.normalisieren(s)`) und `bits`
     (`(s) => K.normBits(s)`); spätere Tasks hängen ihre Registrierungen hier an (Blöcke, Interaktionen, Validierung, Diagnose, Generatoren)
-  - `require('./src/krypto').dienstOptionen({ vertragVersion = '1.1' } = {}) → {}` (Gerüst, Task 33 füllt)
+  - `require('./src/krypto').dienstOptionen() → {}` (Gerüst, Task 33 füllt; ohne Vertragsversion – labs v1.2 kennt keine Weiche)
   - `src/krypto/werkzeuge.js`: `WERKZEUGE` (eingefroren, exakt TECHNIK §10.2: `[{ id, titel, welt, voreinstellung: [schluessel…], gast }]`
     für `skytale, scheibe, haeufigkeit, substitution, vigenere, bitlupe, runden, modulo, rsa, hash, signatur`), `WERKZEUG_IDS`,
     `werkzeug(id) → Eintrag | null`
@@ -1586,7 +1587,7 @@ Negativ-Fixtures dieser Task:
 - Produces:
   - `services/index.js`: `STANDARD_OPTIONEN = { diagnose: false, fallenAusErgebnis: (a) => a.fallen, sichtbar: () => true, rangrelevant: () => true, bossPool: (pool) => pool, bossBezug: () => true, generatorSichtbar: () => true, zusatzAbzeichen: () => [], zusatzBedingungen: () => new Set() }`;
     `createServices(ctx)` setzt `ctx.optionen = { ...STANDARD_OPTIONEN, ...(ctx.optionen || {}) }` (Kern ohne Krypto = Standard)
-  - `app.js`: Konfiguration **vor** `createServices`; `ctx.optionen = { ...require('./krypto').dienstOptionen({ vertragVersion: konfig.vertragVersion }), ...(opts.optionen || {}) }` (`opts.optionen` nur für Tests)
+  - `app.js`: Konfiguration **vor** `createServices`; `ctx.optionen = { ...require('./krypto').dienstOptionen(), ...(opts.optionen || {}) }` (`opts.optionen` nur für Tests)
   - `krypto.dienstOptionen()` liefert in dieser Task `{ diagnose: true, fallenAusErgebnis }`; `fallenAusErgebnis(a, erg)` = eindeutige
     `p` aus `erg.diagnose` und `erg.teile[].diagnose`, sonst `a.fallen`
   - `lernen.pruefen`, `training.pruefen`, `gast.pruefen`: `C.pruefeAufgabe(a, antwort, { teilweise, teil, diagnose: optionen.diagnose })`;
@@ -1651,7 +1652,8 @@ Negativ-Fixtures dieser Task:
   - `niveauVon(x) = x._niveau ?? x.niveau ?? 'kern'`
   - `sichtbar(x, einst)`: `kern`/`ergaenzung` → true; `eA` → `einst.niveau !== 'gA'`; `kuer` → `einst.kuer !== 'gesperrt'`
   - `levelSichtbar(level, einst, aufgabeVon: (id) => aufgabe)`: `sichtbar(level)` und mindestens eine sichtbare Aufgabe
-  - `rangrelevant(a, einst, vertragVersion = '1.1')`: `vertragVersion >= '1.2'` → `sichtbar && niveau ∈ {kern, eA}`, sonst `sichtbar`
+  - `rangrelevant(a, einst)` = `sichtbar(a, einst)` (labs-Vertrag v1.2 §6/§9: Level-Punkte der freigeschalteten Welten, Ergänzung/Kür
+    zählen mit; eigene Funktion als Erweiterungsstelle für Vorschlag V2 „nur Kern/eA“, TECHNIK §8.1)
   - `bossPool(aufgaben, einst)`: gA → nur `kern`; eA → `kern` + `eA`
   - `bossBezug(a, einst)`: `kern` oder (`eA` und `einst.niveau !== 'gA'`) – unabhängig von der Vertragsversion
   - `generatorSichtbar(gen, einst)`: `gen.niveau === 'eA'` → `einst.niveau !== 'gA'`; `kuer` → `einst.kuer !== 'gesperrt'`; sonst true
@@ -1682,14 +1684,14 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 - [ ] **Step 1: Failing tests** (`niveau.test.js` ergänzen):
   ```js
   const N = require('../src/krypto/niveau');
-  test('niveau.js: Sichtbarkeit, Rangrelevanz (1.1 vs 1.2), Boss-Pool, Generatoren', () => {
+  test('niveau.js: Sichtbarkeit, Rangrelevanz (= sichtbar, labs v1.2), Boss-Pool, Generatoren', () => {
     const eA = { niveau: 'eA', kuer: 'frei' }, gA = { niveau: 'gA', kuer: 'frei' }, gesperrt = { niveau: 'eA', kuer: 'gesperrt' };
     assert.deepEqual(['kern', 'eA', 'ergaenzung', 'kuer'].map((n) => N.sichtbar({ niveau: n }, gA)), [true, false, true, true]);
     assert.equal(N.sichtbar({ niveau: 'kuer' }, gesperrt), false);
     assert.equal(N.sichtbar({}, gA), true, 'Standard kern');
-    assert.equal(N.rangrelevant({ niveau: 'ergaenzung' }, eA, '1.1'), true, 'v1.1: rangrelevant = sichtbar');
-    assert.equal(N.rangrelevant({ niveau: 'ergaenzung' }, eA, '1.2'), false);
-    assert.equal(N.rangrelevant({ niveau: 'eA' }, gA, '1.2'), false);
+    assert.equal(N.rangrelevant({ niveau: 'ergaenzung' }, eA), true, 'labs v1.2: rangrelevant = sichtbar');
+    assert.equal(N.rangrelevant({ niveau: 'kuer' }, gesperrt), false, 'gesperrte Kür ist unsichtbar');
+    assert.equal(N.rangrelevant({ niveau: 'eA' }, gA), false, 'eA im gA-Kurs unsichtbar');
     assert.deepEqual(N.bossPool([{ id: 1, _niveau: 'kern' }, { id: 2, _niveau: 'eA' }], gA).map((a) => a.id), [1]);
     assert.equal(N.bossBezug({ niveau: 'eA' }, eA), true);
     assert.equal(N.bossBezug({ niveau: 'ergaenzung' }, eA), false);
@@ -1727,7 +1729,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 ### Task 35: Niveau – Rang, Anteil, Boss-Freischaltung und -Ziehung, Kursübersicht, Abzeichen, Matrix (TECHNIK §8.2/§8.3)
 
 **Files:**
-- Modify: `src/krypto/index.js` (`dienstOptionen`: `rangrelevant` mit `vertragVersion`, `bossPool`, `bossBezug`), `src/services/stand.js`
+- Modify: `src/krypto/index.js` (`dienstOptionen`: `rangrelevant` (= sichtbar), `bossPool`, `bossBezug`), `src/services/stand.js`
   (K07), `src/services/boss.js` (K08), `src/services/lernen.js` (K06), `src/services/auswertung.js` (K14)
 - Test: `test/niveau.test.js`, `test/abzeichen_scoreboard.test.js`
 
@@ -1735,7 +1737,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 - Produces:
   - `stand.staende`: je Eintrag zusätzlich `aufgabenPunkte: Map<aufgabeId, punkte>` (Level-Aufgaben, ohne Archivfund)
   - `stand.bezug(einst) → Map<welt, { max, ids: Set }>` über sichtbare Level-Aufgaben sichtbarer Level mit
-    `optionen.rangrelevant(a, einst)` (unter v1.1 = sichtbar)
+    `optionen.rangrelevant(a, einst)` (= sichtbar, labs v1.2)
   - `stand.rangVon(e, einst)`: ist/max über `bezug` der freigeschalteten Welten (TECHNIK §8.3)
   - `stand.bossZugang(einst, e, nr)`: `noetig = ceil(0.6 · Σ punkte der sichtbaren Level-Aufgaben mit optionen.bossBezug)`, `ist` = Summe
     der erreichten Punkte genau dieser Aufgaben
@@ -1744,7 +1746,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   - `boss.starten`: `ziehe(w.boss, einst)` mit `optionen.bossPool(poolAufgaben, einst)`; `anzahl = min(anzahl, gefilterter Pool)` (ersetzt die
     gA-Sonderlogik aus Task 23)
   - `lernen.welten`/`profil`: Welt-`anteil`, `maxPunkte` über `bezug`
-  - `auswertung.kursUebersicht`: `bezugsMax(w)` und `ist` über `stand.bezug(einst)` (TECHNIK §6.8, unter v1.1 sichtbare Level-Punkte;
+  - `auswertung.kursUebersicht`: `bezugsMax(w)` und `ist` über `stand.bezug(einst)` (TECHNIK §6.8, sichtbare Level-Punkte nach labs v1.2;
     **kein** Feld `niveau`); `auswertung.matrix(k)`: nur sichtbare Level, Antwort `auswertung()` enthält `niveau: einst.niveau`; Board-Welt-Anteile über `bezug`
 
 - [ ] **Step 1: Failing tests** (`niveau.test.js`; Hilfsfunktion aus der Fixture: `punkte(a) = a.punkte ?? {1:10,2:20,3:30}[a.stufe]`,
@@ -1754,7 +1756,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   const P = (a) => a.punkte ?? { 1: 10, 2: 20, 3: 30 }[a.stufe];
   const AUF = Object.fromEntries(W.aufgaben.map((a) => [a.id, a]));
   const summe = (filter) => W.levels.flatMap((l) => l.aufgaben.map((id) => [AUF[id], l])).filter(([a, l]) => filter(a.niveau ?? l.niveau ?? 'kern', l)).reduce((x, [a]) => x + P(a), 0);
-  test('Rang und Kursübersicht unter VERTRAG 1.1: Bezug = sichtbare Level-Aufgaben', async () => {
+  test('Rang und Kursübersicht nach labs-Vertrag v1.2: Bezug = sichtbare Level-Aufgaben', async () => {
     const { s, lk, kurs } = await H.szenario();
     assert.equal((await s.get('/api/profil')).body.rang.maxPunkte, summe(() => true));
     await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA', kuer: 'gesperrt' } }).expect(200);
@@ -1762,7 +1764,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.equal((await s.get('/api/profil')).body.rang.maxPunkte, gA);
     await s.post('/api/aufgaben/W9-L5-10/pruefen').send({ antwort: { c: '31' } }).expect(200);
     const p = (await s.get('/api/profil')).body;
-    assert.equal(p.rang.punkte, 20, 'Ergänzung zählt unter v1.1');
+    assert.equal(p.rang.punkte, 20, 'Ergänzung zählt (labs v1.2)');
   });
   test('Boss-Freischaltung über kern (+ eA im eA-Kurs), unabhängig von Ergänzung/Kür', async () => {
     const { s, lk, kurs } = await H.szenario();
@@ -1771,7 +1773,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
     assert.equal(await noetig(), Math.ceil(0.6 * summe((n, l) => n === 'kern' && l.niveau !== 'eA')));
   });
-  test('Kursübersicht im gA-Kurs: anteil über die gA-Bezugsmenge, kein Feld niveau (v1.1)', async () => {
+  test('Kursübersicht im gA-Kurs: anteil über die gA-Bezugsmenge, kein Feld niveau (labs v1.2)', async () => {
     const app = H.makeApp();
     const k = H.kurs(app, 'GK 12', { einstellungen: { ...require('../src/domain').STANDARD_EINSTELLUNGEN, niveau: 'gA' } });
     const mika = H.konto(app, 'schueler', 'Mika R.');
@@ -2354,7 +2356,7 @@ Tasks 24–29 erweitern dieselbe Fixture und `antworten.js` – **nacheinander**
 | TECHNIK §5.2 | Verfahrens-Objekt, `varianten` als Diagnose-Kandidaten | 25 |
 | TECHNIK §7.1 | Spalten `aufgaben.niveau`, `aufgaben.archivfund` | 32 |
 | TECHNIK §7.2 | Einstellungen `niveau`, `kuer` (Werkzeuge → M6) | 23 |
-| TECHNIK §8.1–§8.3 | Niveau: Sichtbarkeit, Rangrelevanz (v1.1/v1.2), Boss-Filter, Freischaltung, Kursübersicht, Abzeichen, Training | 23, 34, 35, 36 |
+| TECHNIK §8.1–§8.3 | Niveau: Sichtbarkeit, Rangrelevanz (= sichtbar, labs v1.2), Boss-Filter, Freischaltung, Kursübersicht, Abzeichen, Training | 23, 34, 35, 36 |
 | TECHNIK §10.2 | Server-Liste der Werkzeuge (für Validator) | 22 |
 | TECHNIK §13.1 | `/api/archivfund/:welt …`, `/api/welten`-Felder, Prüfantwort mit `diagnose`/`zeichen`/`bits`/`anteil` | 32, 33, 34 |
 | TECHNIK §15 | Testdateien `pruefer`, `validator`, `niveau`, `lernen`, `boss`, `generatoren` (+ neue) | alle |

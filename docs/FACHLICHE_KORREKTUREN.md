@@ -41,7 +41,7 @@ Abituranalyse (außerhalb des Pakets): `quellen/analyse/abitur_eA.md` nennt 300 
 | M2 | TECHNIK, AUFGABENFORMAT, Plan Task 12 | `skytale` Standard-Füllzeichen X (WTPIEARNSHDSAEXLNX) |
 | M3 | SPEC W0/W2/W6, Akte W2·3, Akte K1, Lehrerhinweise W2 | Fallen nach Design §3.3: Paarzählung im Koinzidenzindex P4 statt P2; Struktogramm ordnen P4 statt P9; Schubfach P10 statt P9; Umformung K1 ohne P3 |
 | M4 | SPEC W5 · W5-L2-07 | Aussage (4) auf „lesen“ umformuliert; Erklärung: Verschlüsselung schützt nicht vor Fälschung bei schwachem Hash |
-| M5 | TECHNIK §6, §8, Design §3.2, Plan | Rang/`anteil` unter Vertrag v1.1 über alle sichtbaren Level; „rangrelevant“ erst mit `VERTRAG_VERSION=1.2` |
+| M5 | TECHNIK §6, §8, Design §3.2, Plan | Rang/`anteil` unter Vertrag v1.1 über alle sichtbaren Level; „rangrelevant“ erst mit `VERTRAG_VERSION=1.2` – **überholt (12.10.2026):** labs-Vertrag v1.2 ist verbindlich, Rang/`anteil` bleiben über alle sichtbaren Level, „nur Kern/eA“ ist Vorschlag V2 (`docs/VERTRAG_VORSCHLAEGE.md`) |
 | M6 | dieses Dokument, `quellen/analyse/`, Plan Task 18 | fehlende Dateien angelegt; Prüfwerte-Task mit CI-Abgleich ergänzt; LAB_LEVELS in M5 |
 | M7 | Video 05; Video 03 | V05 mit eigenen Zahlen (11 Hütten → 55/22, Tabelle 4/11/50/1000, 12. Hütte +11/+2); V03: Anklang an den W0-Archivfund als bewusster Rückbezug dokumentiert (kein Lösungsverrat) |
 | M8 | Akte W0·1, Akte W1·1 | Fundstück-Kasten mit Archivfund-Geheimtext; W1: Auftrag 6 b) löst ihn |

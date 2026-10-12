@@ -18,9 +18,9 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   assert.equal(r.headers['cache-control'], 'public, max-age=300');
   const m = r.body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.deepEqual(Object.keys(m), ['vertrag', 'id', 'name', 'titel', 'themenfeld', 'kurs', 'beschreibung', 'farbe', 'version', 'basis', 'icon', 'urls', 'auth', 'umfang', 'welten', 'faehigkeiten']);
-  assert.equal(m.vertrag, '1.1', 'VERTRAG_VERSION Standard 1.1');
-  assert.equal(m.niveaus, undefined, 'unter v1.1 ohne niveaus');
+  assert.deepEqual(Object.keys(m), ['vertrag', 'id', 'name', 'titel', 'themenfeld', 'kurs', 'niveaus', 'beschreibung', 'farbe', 'version', 'basis', 'icon', 'urls', 'auth', 'umfang', 'welten', 'faehigkeiten']);
+  assert.equal(m.vertrag, '1.2', 'labs-Vertrag v1.2');
+  assert.deepEqual(m.niveaus, ['eA', 'gA'], 'VERTRAG §7/§9: für eA und gA');
   assert.equal(m.id, 'kryptos');
   assert.equal(m.name, 'Kryptos');
   assert.equal(m.titel, 'Kryptos – Die Zeitreise der Geheimschriften');
@@ -30,7 +30,7 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   assert.equal(m.farbe, '#B07D2B');
   assert.equal(m.basis, 'https://kryptos.test');
   assert.equal(m.icon, '/static/favicon.svg');
-  assert.deepEqual(m.urls, { start: '/', gast: '/gast', themen: '/themen', lehrkraft: '/lehrer', datenschutz: '/datenschutz', healthz: '/healthz', ssoStart: '/sso/start', ssoEnde: '/sso/ende' });
+  assert.deepEqual(m.urls, { start: '/', gast: '/gast', themen: '/themen', lehrkraft: '/lehrer', datenschutz: '/datenschutz', healthz: '/healthz', ssoStart: '/sso/start', ssoEnde: '/sso/ende', niveaus: '/themen#niveaus' });
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.test', sso: true });
   assert.deepEqual(m.umfang, { welten: 1, level: 2, aufgaben: 21, bosse: 1 }, 'aus dem Katalog berechnet');
   assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: 2 }]);
@@ -47,15 +47,16 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   for (const v of ['loesung', 'Mika', 'LK 13', 'kurscode']) assert.ok(!text.toLowerCase().includes(v.toLowerCase()), v);
 });
 
-test('Manifest: basis aus PLATTFORM_URL; VERTRAG_VERSION 1.2 vorerst abgelehnt (labs v1.2 noch nicht umgesetzt)', async () => {
+test('Manifest: basis aus PLATTFORM_URL; VERTRAG_VERSION nur 1.2 (ältere Fassungen abgelehnt)', async () => {
   const app = H.makeApp({ seedDir: SEED, plattformUrl: 'https://kryptos.example', portalUrl: 'https://portal.example' });
   const m = (await request(app).get('/api/plattform')).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.equal(m.vertrag, '1.1');
-  assert.equal(m.niveaus, undefined);
+  assert.equal(m.vertrag, '1.2');
+  assert.deepEqual(m.niveaus, ['eA', 'gA']);
   assert.equal(m.basis, 'https://kryptos.example');
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
-  assert.throws(() => H.makeApp({ vertragVersion: '1.2' }), /Vertrag 1\.2 \(labs\) noch nicht umgesetzt/);
+  assert.equal((await request(H.makeApp({ seedDir: SEED, vertragVersion: '1.2' })).get('/api/plattform')).body.vertrag, '1.2');
+  assert.throws(() => H.makeApp({ vertragVersion: '1.1' }), /VERTRAG_VERSION muss 1\.2 sein/);
 });
 
 test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgemäß', async () => {

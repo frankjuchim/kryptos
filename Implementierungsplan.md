@@ -20,17 +20,17 @@ ein unabhängiger Python-Zwilling prüft sie.
 `docs/TECHNIK.md` (Architektur, Schnittstellen, Datenmodell, API, Tests – **verbindliche Detailquelle für alle Namen**) ·
 `docs/AUFGABENFORMAT_KRYPTO.md` (Delta zum Kern-Aufgabenformat) · `docs/DESIGNSYSTEM.md` · Welt-Specs
 `quellen/specs/SPEC_Kryptos_W0…W6*.md` (Inhalte, Testvektoren in §0a/§12) · Vertrag
-https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (v1.1) + `docs/INTEGRATION.md` des Portals.
+https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (v1.2) + `docs/INTEGRATION.md` des Portals.
 
 ## Global Constraints
 
-- Verbindlich: VERTRAG v1.1 (MUSS ohne Ausnahme); Abweichungen nur als Textvorschlag (`docs/VERTRAG_VORSCHLAG_v1.2.md`), nie still.
+- Verbindlich: VERTRAG v1.2 aus `frankjuchim/labs` (MUSS ohne Ausnahme; Entscheidung der Lehrkraft vom 12.10.2026, überstimmt den früheren Kryptos-Entwurf): Manifest mit `niveaus`/`urls.niveaus`, Niveau-Übersicht ohne Anmeldung (`/themen#niveaus`, `GET /api/niveaus`, TECHNIK §6.10). Wünsche an den Vertrag nur als Vorschlag (`docs/VERTRAG_VORSCHLAEGE.md`), nie still.
 - `AUTH_MODUS=portal` – **kein eigenes Login**, keine lokalen Passwörter oder Codes; Superadmin kommt vom Portal.
 - `src/jwt.js` und `scripts/vertrag_pruefen.js` **byte-gleich** aus `frankjuchim/labs` (SHA-256 in `test/fixtures/labs_hashes.json`).
 - Keine neuen Laufzeit-Abhängigkeiten außer `express`, `helmet`, `better-sqlite3`, `qrcode`; Dev: `supertest`, `playwright-core`.
 - Vanilla-JS ohne Build, keine CDNs/externen Ressourcen, strikte CSP ohne Inline-Skripte/-Styles, `X-Robots-Tag: noindex`.
 - Prüfung ausschließlich serverseitig; Lösungen, Erklärungen, ungenutzte Tipps erst nach Lösen/Aufdecken; Boss-Aufgaben nur im Kampf.
-- Punkteformel `round(punkte × max(0.25, 1 − 0.25·Fehlversuche − 0.2·Tipps))`, Stufen 10/20/30, Rangschwellen 0/10/30/55/80 % der Level-Punkte der freigeschalteten Welten (unter `VERTRAG_VERSION=1.1` alle sichtbaren Level, erst ab 1.2 nur rangrelevante – TECHNIK §8.3).
+- Punkteformel `round(punkte × max(0.25, 1 − 0.25·Fehlversuche − 0.2·Tipps))`, Stufen 10/20/30, Rangschwellen 0/10/30/55/80 % der Level-Punkte der freigeschalteten Welten = alle für den Kurs sichtbaren Level-Aufgaben inkl. Ergänzung/Kür (labs v1.2; „nur Kern/eA“ ist Vorschlag V2 – TECHNIK §8.3).
 - Begriffe: „Kurs“, „Kurscode“, „persönlicher Code“, „Lehrkraft“, „Warm-up“, „Team“; keine XP; Lernende duzen, Prüfungsaufgaben siezen.
 - Konventionen Design-Spec §6: A = 1 … Z = 26 für Papierrechnungen, `mod` = kleinster nicht negativer Rest, Verschiebung k ∈ {0…25} (Schlüsselbuchstabe A = 0), Geheimtext GROSS in Fünfergruppen, Klartext klein.
 - Naht-Regel (TECHNIK §3): jede Änderung an übernommenen Kerndateien im selben Commit in `docs/KERN_ABWEICHUNGEN.md`.
@@ -62,8 +62,8 @@ TECHNIK.md und den Welt-Specs); Teil B dieses Dokuments enthält die Detailaufga
 | **M1** | Verbund und SSO | `AUTH_MODUS=portal`, `/sso/*`, Verbund-API, Manifest, Dev-Portal; alle Testfälle TECHNIK §6.12 grün; `vertrag_pruefen.js` gegen lokale Instanz leer | M0 |
 | **M2** | Krypto-Bibliothek | `shared/krypto.js` vollständig (TECHNIK §5.2), Python-Zwilling, Vergleich ≥ 2000 Fälle/Funktion grün, alle Testvektoren der Specs, Prüfwerte der Materialien grün (Task 18) | M0 |
 | **M3** | Aufgabenformat | Hooks (TECHNIK §4), neue Blöcke/Interaktionen/Normalisierungen, Fallen-Diagnose, Validator-Neuberechnung, Niveau, 12 Generatoren, Fixture Welt 9 deckt alles ab | M2 |
-| **M4** | Oberfläche | Designsystem (Tokens, Schriften, Epochen), alle Seiten TECHNIK §11.1, Renderer der neuen Blöcke/Interaktionen, Lehrkraft-Ansicht inkl. Niveau/Werkzeuge; Vorlage: `prototyp/kryptos_prototyp.html` | M1, M3 |
-| **M5** | Inhalte W0–W2 + Akten-Anbindung | `seed/welten/welt0–2.json`, Bosse, Warm-up W0–W2, Gast-Demo, `seed/akten.json`, PDFs aus `materialien/` | M3, M4 |
+| **M4** | Oberfläche | Designsystem (Tokens, Schriften, Epochen), alle Seiten TECHNIK §11.1 (Themenseite mit Niveau-Übersicht `#niveaus` im Designsystem, Inhalt aus `GET /api/niveaus`), Renderer der neuen Blöcke/Interaktionen, Lehrkraft-Ansicht inkl. Niveau/Werkzeuge; Vorlage: `prototyp/kryptos_prototyp.html` | M1, M3 |
+| **M5** | Inhalte W0–W2 + Akten-Anbindung | `seed/welten/welt0–2.json` (mit `niveau` je Level/Aufgabe – die Niveau-Übersicht liest dann den Katalog statt `WELT_PLAN`; Abweichungen vom Plan klären), Bosse, Warm-up W0–W2, Gast-Demo, `seed/akten.json`, PDFs aus `materialien/` | M3, M4 |
 | **M6** | Kryptolabor | 11 Werkzeuge (Design §7.3), Freigaben je Kurs, Sperre im Boss, Einbettung in Aufgaben | M2, M4 |
 | **M7** | Funkraum + Werkstatt/Arena | 5 Szenarien, Beamer, Moderation, Löschung; Baukasten, Einreichung, Angriffe, Abzeichen | M1, M4 |
 | **M8** | Inhalte W3–W6 | Seeds W3–W6, Bosse, Warm-up, Trainingsplatz vollständig, Abdeckungsskript `scripts/abdeckung.js` grün | M5 |
@@ -259,7 +259,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: Manifest exakt TECHNIK §6.9 (`umfang`/`welten` aus dem Katalog berechnet), `npm run dev` startet Kryptos (3000) + Dev-Portal (3100)
 
-- [ ] **Step 1: Failing tests**: alle Routen aus TECHNIK §6.5 → 404; `pruefeManifest(m)` aus `scripts/vertrag_pruefen.js` liefert `[]`; `m.auth = { modus: 'portal', portal: 'https://portal.test', sso: true }`; `m.faehigkeiten` enthält `labor, funkraum, arena, niveau`; Manifest-JSON enthält kein `k:` und kein `loesung`; `m.version === (await get('/healthz')).body.version`.
+- [ ] **Step 1: Failing tests**: alle Routen aus TECHNIK §6.5 → 404; `pruefeManifest(m)` aus `scripts/vertrag_pruefen.js` liefert `[]`; `m.auth = { modus: 'portal', portal: 'https://portal.test', sso: true }`; `m.faehigkeiten` enthält `labor, funkraum, arena, niveau`; (nachgetragen mit labs v1.2) `m.vertrag === '1.2'`, `m.niveaus = ['eA', 'gA']`, `m.urls.niveaus = '/themen#niveaus'`; Manifest-JSON enthält kein `k:` und kein `loesung`; `m.version === (await get('/healthz')).body.version`.
 - [ ] **Step 2: Run** → FAIL.
 - [ ] **Step 3: Implement**; Dev-Portal nach TECHNIK §16.4 (Pseudonyme „Mika R.“, „Ida K.“; Kurse `k:1` „LK 13 (eA)“, `k:2` „GK 12 (gA)“).
 - [ ] **Step 4: Run** `npm test` → PASS; manuell `npm run dev` → Anmeldung als Schüler landet auf `/spiel`; `node scripts/vertrag_pruefen.js http://localhost:3000` → keine Befunde.
@@ -467,7 +467,7 @@ Wir bauen Kryptos, eine Plattform des Verbunds InfoLabs (Kryptologie, Informatik
 (Lesezugriff außerdem auf frankjuchim/<WERKSTATT-FORK> – erst in M6 relevant, siehe Plan Teil C.)
 Lies zuerst CLAUDE.md, dann docs/superpowers/specs/2026-10-12-kryptos-design.md, docs/TECHNIK.md und
 docs/superpowers/plans/2026-10-12-kryptos-plattform.md. Verbindlich ist der Vertrag
-https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (v1.1). Arbeite den Plan ab Task 1 mit
+https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (v1.2). Arbeite den Plan ab Task 1 mit
 superpowers:subagent-driven-development ab, auf dem Branch feature/m0-kern. Nie ohne Freigabe auf main pushen.
 Zu Beginn von M3 erstellst du mit superpowers:writing-plans den Detailplan für die nächste Phase.
 ```

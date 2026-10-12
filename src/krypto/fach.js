@@ -125,4 +125,64 @@ const TEAM_NAMEN = [
   'Team Kompass'
 ];
 
-module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, RAENGE, TEAM_NAMEN };
+/**
+ * Niveau-Kategorien (Design §3.2) für die Niveau-Übersicht nach VERTRAG v1.2 §9: gA = Grundkurs, eA = Leistungskurs.
+ * gA/eA = für welches Kursniveau die Inhalte gedacht sind (true = gefordert, 'frei' = freiwillig, false = nicht im Kurs).
+ */
+const NIVEAU_KATEGORIEN = [
+  { id: 'kern', kurz: 'Kern', lang: 'verbindlich für gA und eA', gA: true, eA: true },
+  { id: 'eA', kurz: 'eA', lang: 'nur erhöhtes Anforderungsniveau (Leistungskurs); im gA-Kurs ausgeblendet', gA: false, eA: true },
+  { id: 'ergaenzung', kurz: 'E', lang: 'KC-Ergänzung (RSA, Diffie-Hellman) – freiwillig für gA und eA, nie Rechnungen im Online-Boss', gA: 'frei', eA: 'frei' },
+  { id: 'kuer', kurz: 'Kür', lang: 'Vertiefung über das Abitur hinaus – freiwillig für gA und eA', gA: 'frei', eA: 'frei' }
+];
+
+/**
+ * Plan der Welten (Design §5, §5.1; Welt-Specs quellen/specs/SPEC_Kryptos_W<n>_*.md): Level mit Niveau, Akte und Zahl
+ * der Lab-Aufgaben je Niveau (ohne Archivfund), Online-Boss mit Pool je Niveau. Rückfall der Niveau-Übersicht
+ * (src/krypto/niveauUebersicht.js), solange eine Welt noch nicht im Seed steht (Seeds kommen mit M5); danach gilt der
+ * Katalog. Enthält nur Titel und Anzahlen – keine Aufgaben, keine Lösungen.
+ */
+const WELT_PLAN = [
+  { nr: 0, levels: [
+    { id: '0.1', titel: 'Die Skytale von Sparta', niveau: 'kern', akte: 'W0·1', akteHinweis: 'Auftrag 7: eA', aufgaben: { kern: 8 } },
+    { id: '0.2', titel: 'Caesars Botschaft', niveau: 'kern', akte: 'W0·2', aufgaben: { kern: 8 } },
+    { id: '0.3', titel: 'Die Werkstatt des Schreibers', niveau: 'kern', akte: 'W0·3', akteHinweis: 'Aufträge 4 und 7: eA; Online-IDE-Stufe Experte: eA', aufgaben: { kern: 7 } },
+    { id: '0.4', titel: 'Fremde Chiffre I: Polybios und Atbash', niveau: 'kern', akte: 'W0·4', aufgaben: { kern: 7 } }
+  ], boss: { titel: 'Der Bote des Feldherrn', pool: { kern: 15 } } },
+  { nr: 1, levels: [
+    { id: '1.1', titel: 'Al-Kindis Handschrift', niveau: 'kern', akte: 'W1·1', aufgaben: { kern: 8 } },
+    { id: '1.2', titel: 'Die Gegenmittel', niveau: 'kern', akte: 'W1·2', akteHinweis: 'Auftrag 7: eA', aufgaben: { kern: 8 } },
+    { id: '1.3', titel: 'Fremde Chiffre II: Der Nomenklator', niveau: 'kern', akte: 'W1·3', akteHinweis: 'Auftrag 7: eA', aufgaben: { kern: 7 } }
+  ], boss: { titel: 'Der Kalif und der Kurier', pool: { kern: 15 } } },
+  { nr: 2, levels: [
+    { id: '2.1', titel: 'Das unentzifferbare Quadrat', niveau: 'kern', akte: 'W2·1', aufgaben: { kern: 8 } },
+    { id: '2.2', titel: 'Kasiskis Spur', niveau: 'kern', akte: 'W2·2', aufgaben: { kern: 8 } },
+    { id: '2.3', titel: 'Friedmans Zufall', niveau: 'eA', akte: 'W2·3', aufgaben: { eA: 7 } },
+    { id: '2.4', titel: 'Fremde Chiffre III: Playfair und Kreuzquadrat', niveau: 'kern', akte: 'W2·4', aufgaben: { kern: 8 } },
+    { id: 'K1', titel: 'Kür: Friedmans Formel', niveau: 'kuer', akte: 'W2·K1', aufgaben: { kuer: 7 } }
+  ], boss: { titel: 'Die Venezianische Depesche', pool: { kern: 13, eA: 2 } } },
+  { nr: 3, levels: [
+    { id: '3.1', titel: 'Vernams Lochstreifen', niveau: 'kern', akte: 'W3·1', aufgaben: { kern: 8 } },
+    { id: '3.2', titel: 'Der Blockchiffre-Baukasten', niveau: 'eA', akte: 'W3·2', aufgaben: { eA: 8 } },
+    { id: '3.3', titel: 'Die Chiffren-Werkstatt', niveau: 'eA', akte: 'W3·3', aufgaben: { eA: 7 } },
+    { id: '3.4', titel: 'Fremde Chiffre IV: ADFGVX', niveau: 'kern', akte: 'W3·4', aufgaben: { kern: 7 } },
+    { id: 'K2', titel: 'Kür: Die Enigma', niveau: 'kuer', akte: 'W3·K2', aufgaben: { kuer: 5 } }
+  ], boss: { titel: 'Der Fernschreiber', pool: { kern: 10, eA: 5 } } },
+  { nr: 4, levels: [
+    { id: '4.1', titel: 'Das Schlüsselproblem', niveau: 'kern', akte: 'W4·1', akteHinweis: 'Aufträge 4–5: Ergänzung, Auftrag 6: eA', aufgaben: { kern: 5, ergaenzung: 2, eA: 1 } },
+    { id: '4.2', titel: 'RSA und das hybride Prinzip', niveau: 'kern', akte: 'W4·2', akteHinweis: 'Aufträge 1, 2, 5: Ergänzung', aufgaben: { kern: 5, ergaenzung: 3 } },
+    { id: 'K3', titel: 'Kür: Euklids Erbe', niveau: 'kuer', akte: 'W4·K3', aufgaben: { kuer: 7 } }
+  ], boss: { titel: 'Der Schlüsseltausch', pool: { kern: 13, eA: 2 } } },
+  { nr: 5, levels: [
+    { id: '5.1', titel: 'Fingerabdrücke', niveau: 'kern', akte: 'W5·1', aufgaben: { kern: 8 } },
+    { id: '5.2', titel: 'Das Siegel', niveau: 'kern', akte: 'W5·2', akteHinweis: 'Auftrag 3: Ergänzung, Auftrag 6: eA', aufgaben: { kern: 6, ergaenzung: 1 } },
+    { id: '5.3', titel: 'Mallory im Netz', niveau: 'kern', akte: 'W5·3', akteHinweis: 'Auftrag 7: eA bzw. Ergänzung', aufgaben: { kern: 8 } }
+  ], boss: { titel: 'Das Siegel der Stadt', pool: { kern: 14, eA: 1 } } },
+  { nr: 6, levels: [
+    { id: '6.1', titel: 'Fallenjagd', niveau: 'kern', akte: 'W6·1', aufgaben: { kern: 12 } },
+    { id: '6.2', titel: 'Eves Chiffre', niveau: 'kern', akte: 'W6·2', aufgabenHinweis: 'Aufgabe 10 mit eA-Teil', aufgaben: { kern: 10 } },
+    { id: '6.3', titel: 'Generalprobe', niveau: 'kern', akte: 'W6·3', aufgaben: { kern: 8 } }
+  ], boss: { titel: 'Generalprobe online', pool: { kern: 14, eA: 1 } } }
+];
+
+module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, RAENGE, TEAM_NAMEN, NIVEAU_KATEGORIEN, WELT_PLAN };

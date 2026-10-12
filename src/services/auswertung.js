@@ -241,9 +241,9 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   const runde2 = (x) => Math.round(x * 100) / 100;
 
   /**
-   * Erreichbare Level-Punkte je Welt nach der Bezugsmenge B (TECHNIK §8.3). Unter VERTRAG_VERSION 1.1: alle sichtbaren
-   * Level-Aufgaben der Welt (der Kern blendet noch nichts nach Niveau aus, daher = Maximum der Welt). Die Filterung nach
-   * Niveau/Kür und ab 1.2 nach Rangrelevanz kommt mit src/krypto/niveau.js (TECHNIK §8).
+   * Erreichbare Level-Punkte je Welt nach der Bezugsmenge B (TECHNIK §8.3). Nach labs-Vertrag v1.2 (§6, §9): alle
+   * sichtbaren Level-Aufgaben der freigeschalteten Welten (der Kern blendet noch nichts nach Niveau aus, daher = Maximum
+   * der Welt). Die Filterung nach Sichtbarkeit (Niveau/Kür) kommt mit src/krypto/niveau.js (TECHNIK §8).
    */
   function bezugsMax(w) {
     return w.maxPunkte || 0;

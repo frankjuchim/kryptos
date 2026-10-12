@@ -14,6 +14,7 @@ const { createThemen } = require('./services/themen');
 const { createLehrkraftMaterial, URL_LEHRKRAFT } = require('./services/lehrkraftMaterial');
 const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
+const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -69,6 +70,7 @@ function createApp(opts) {
   const secret = opts.sessionSecret || konfig.sessionSecret;
   const sitzung = createSitzung({ db, secret });
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });
+  const niveaus = createNiveauUebersicht({ inhalte: svc.inhalte });
   // Wartungsjob (TECHNIK §7.4): server.js startet ihn (wartung.starte()); Tests rufen wartung.lauf() direkt
   const wartung = createWartung({ db, svc, now: ctx.now, log });
 
@@ -211,6 +213,9 @@ function createApp(opts) {
 
   /* Öffentliche Themenübersicht (ohne Lösungen) */
   api.get('/themen', (req, res) => res.json(themen.uebersicht()));
+
+  /* Öffentliche Niveau-Übersicht gA/eA (VERTRAG v1.2 §9, Manifest urls.niveaus): nur Titel, Niveaus, Anzahlen */
+  api.get('/niveaus', (req, res) => res.json(niveaus.uebersicht()));
 
   /* Öffentliches Beamer-Board mit Board-Schlüssel (nur wenn im Kurs aktiviert) */
   api.get('/board/:schluessel', (req, res) => {

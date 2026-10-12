@@ -47,7 +47,7 @@ docs/
   AUFGABENFORMAT_KRYPTO.md        Delta zum AlgoQuest-Aufgabenformat
   DESIGNSYSTEM.md                 Designsystem „Chronoskop“ (Plattform, Akten, Folien)
   MATERIALFORMAT.md               JSON-Format der Materialquellen
-  VERTRAG_VORSCHLAG_v1.2.md       Textvorschlag für den Verbundvertrag
+  VERTRAG_VORSCHLAEGE.md          mögliche Vorschläge für eine spätere Vertragsversion
   FACHLICHE_KORREKTUREN.md        Fehler im Altmaterial; Korrekturen nach der Verifikation
 quellen/
   specs/                          Welt-Specs W0–W6, Prüfungen, Werkzeugkarten (Aufgaben, Lösungen, Prüfprotokolle)
@@ -93,14 +93,16 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 ## 5. Verbund InfoLabs
 
 Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag
-[VERTRAG.md v1.1](https://github.com/frankjuchim/labs/blob/main/VERTRAG.md), angeschlossen nach
+[VERTRAG.md v1.2](https://github.com/frankjuchim/labs/blob/main/VERTRAG.md), angeschlossen nach
 [INTEGRATION.md](https://github.com/frankjuchim/labs/blob/main/docs/INTEGRATION.md):
 
-- Single Sign-on mit Ed25519-JWT (§5), Manifest `GET /api/plattform` (§7), Verbund-API (§6: Löschen, Kursübersicht,
-  Kursänderung).
+- Single Sign-on mit Ed25519-JWT (§5), Manifest `GET /api/plattform` (§7, `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`,
+  `urls.niveaus`), Verbund-API (§6: Löschen, Kursübersicht, Kursänderung).
+- Anforderungsniveaus (§9): Kryptos ist für Grund- und Leistungskurs; die Niveau-Übersicht „Was ist für welches
+  Niveau?“ steht ohne Anmeldung unter `/themen#niveaus` (Daten: `GET /api/niveaus`).
 - Konfiguration (§8): `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` (Inhalt von
   `/sso/schluessel.pem` des Portals), `PLATTFORM_ID=kryptos`, `PLATTFORM_URL=https://kryptos.frankjuchim.de`,
-  `AUTH_MODUS=portal`, dazu `SESSION_SECRET` und `VERTRAG_VERSION=1.1`.
+  `AUTH_MODUS=portal`, dazu `SESSION_SECRET` (`VERTRAG_VERSION` nicht nötig; nur `1.2` erlaubt).
 - `src/jwt.js` und `scripts/vertrag_pruefen.js` unverändert aus `frankjuchim/labs`.
 - Nach dem Deploy: Superadmin trägt die Plattform im Portal unter „Plattformen“ ein, bestätigt
   `https://kryptos.frankjuchim.de/sso/ende` und schaltet die Lehrkräfte frei.
@@ -109,12 +111,13 @@ Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag
 
 | Vertragsstelle | Abweichung | Begründung |
 |---|---|---|
-| §9 Oberfläche (Hausfarben/gemeinsames Erscheinungsbild) | eigenes Designsystem „Chronoskop“ (Tinte `#14213D`, Messing, Papier, Epochenfarben) | Das Thema lebt von den Epochen: Jede Welt hat Farbe, Ornament und Schriftbild ihrer Zeit; das trägt den Sachkontext Zeitreise. Eingehalten werden die verbindlichen Teile: Link „⌂ Portal“ in der Kopfzeile, Plattformfarbe `#B07D2B` im Manifest, Kontraste ≥ WCAG AA (geprüft je Epochenfarbe), Touch-Ziele ≥ 44 px, Begriffe, Gastmodus, Themenseite. Vorschlag „Themenfarben“ in `docs/VERTRAG_VORSCHLAG_v1.2.md` |
+| §9 Oberfläche (Hausfarben/gemeinsames Erscheinungsbild) | eigenes Designsystem „Chronoskop“ (Tinte `#14213D`, Messing, Papier, Epochenfarben) | Das Thema lebt von den Epochen: Jede Welt hat Farbe, Ornament und Schriftbild ihrer Zeit; das trägt den Sachkontext Zeitreise. Eingehalten werden die verbindlichen Teile: Link „⌂ Portal“ in der Kopfzeile, Plattformfarbe `#B07D2B` im Manifest, Kontraste ≥ WCAG AA (geprüft je Epochenfarbe), Touch-Ziele ≥ 44 px, Begriffe, Gastmodus, Themenseite. möglicher Vorschlag V5 in `docs/VERTRAG_VORSCHLAEGE.md` |
 | §13.3 gemeinsamer Kern | Kern als Kopie aus AlgoQuest statt gemeinsamer Bibliothek | Ein `lab-kern`-Paket existiert noch nicht. Die Naht-Regel hält alles Krypto-Spezifische in eigenen Ordnern und protokolliert jede Kernänderung in `docs/KERN_ABWEICHUNGEN.md`, damit eine spätere Rückführung nur Diffs braucht |
 
-Weitere Wünsche an den Vertrag (Fähigkeiten `labor`, `funkraum`, `arena`, `niveau`; Feld `niveau` in der
-Kursübersicht; Rang nur über Kern-/eA-Inhalte) stehen als Text in `docs/VERTRAG_VORSCHLAG_v1.2.md` und werden erst
-nach Annahme im Portal umgesetzt.
+Weitere Wünsche an den Vertrag (Feld `niveau` in der Kursübersicht; Rang/`anteil` nur über Kern-/eA-Inhalte;
+Verzeichnis der Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` …) stehen als mögliche Vorschläge in
+`docs/VERTRAG_VORSCHLAEGE.md` und werden erst nach Aufnahme in den Vertrag umgesetzt; bis dahin gilt labs v1.2 (Rang und
+`anteil` über alle sichtbaren Level-Aufgaben der freigeschalteten Welten).
 
 ## 6. Betrieb
 

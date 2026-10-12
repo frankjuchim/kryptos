@@ -25,3 +25,21 @@ h1 { font-family: Georgia, "Times New Roman", serif; font-size: 1.75rem; line-he
 }
 .btn.secondary { background: transparent; color: var(--tinte); border: 1px solid var(--tinte); }
 .btn:focus-visible { outline: 3px solid var(--messing); outline-offset: 2px; }
+
+/* Niveau-Übersicht /themen#niveaus (VERTRAG v1.2 §9) – schlicht bis M4 */
+h2 { font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; line-height: 1.3; margin: 0 0 0.75rem; }
+.abschnitt { margin-top: 1.25rem; }
+a { color: inherit; }
+.niveau-legende { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 0.75rem; margin: 0 0 1rem; }
+.niveau-legende dd { margin: 0; }
+.niveau-chip { display: inline-block; min-width: 2.75rem; padding: 0.05rem 0.45rem; border-radius: 999px; border: 1px solid currentColor; font-size: 0.85rem; font-weight: 600; text-align: center; white-space: nowrap; }
+.niveau-kern { color: #1B2433; }
+.niveau-eA { color: #7A2E2E; }
+.niveau-ergaenzung { color: #1E5F3A; }
+.niveau-kuer { color: #6B4A12; }
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.niveau-tabelle { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.niveau-tabelle th, .niveau-tabelle td { text-align: left; vertical-align: top; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--linie); }
+.niveau-tabelle ul { margin: 0; padding-left: 1.1rem; }
+.niveau-welt { border-left: 4px solid var(--welt, var(--messing)); padding-left: 0.75rem; margin: 1.25rem 0 0.5rem; }
+.klein { font-size: 0.85rem; }

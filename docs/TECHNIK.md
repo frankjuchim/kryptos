@@ -2,10 +2,10 @@
 
 > **Stand:** 12.10.2026 · **Geltung:** verbindlich für die Implementierung durch Claude Code im Repo
 > `frankjuchim/Kryptos`. Übergeordnet: `docs/superpowers/specs/2026-10-12-kryptos-design.md` (Design-Spec, oberste
-> Quelle), Verbundvertrag `frankjuchim/labs/VERTRAG.md` **v1.1** und `docs/INTEGRATION.md` des Portals. Aufgabenformat:
+> Quelle), Verbundvertrag `frankjuchim/labs/VERTRAG.md` **v1.2** und `docs/INTEGRATION.md` des Portals. Aufgabenformat:
 > `docs/AUFGABENFORMAT.md` (Kern, unverändert übernommen) + `docs/AUFGABENFORMAT_KRYPTO.md` (Delta).
-> Vertragsänderungen, die Kryptos braucht: `docs/VERTRAG_VORSCHLAG_v1.2.md` – **erst nach Annahme im Portal-Repo umsetzen**;
-> bis dahin hält Kryptos v1.1 ein (siehe §6.10).
+> Verbindlich ist labs v1.2 (Entscheidung der Lehrkraft, 12.10.2026); er überstimmt den früheren Kryptos-Entwurf.
+> Weitere Wünsche an den Vertrag: `docs/VERTRAG_VORSCHLAEGE.md` – **erst nach Annahme im Portal-Repo umsetzen** (§6.10).
 >
 > Basis der Übernahme: Algo Quest Lab **2.8.2** (Commit `60fe4a1`, aktueller `main` bei Task 1; ursprünglich geplant 2.5.0/`0159b7d`), Portal InfoLabs (Commit `3f48c5c`; ursprünglich `c7115af`).
 
@@ -109,7 +109,7 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `docs/AUFGABENFORMAT.md` | U | Kern-Format |
 | `docs/ONLINE-IDE_TESTPROTOKOLL.md` | E | für die drei Kryptos-Gerüste |
 | `materialien/`, `quellen/` | E | Kryptos-Material (Cowork), Algo-Quest-Material nie kopieren |
-| `README.md`, `CLAUDE.md` | E | nach Muster Algo Quest, mit Verweis auf VERTRAG v1.1, Naht-Regel, Begründung der SOLL-Abweichungen (Design §14 O2/O3) |
+| `README.md`, `CLAUDE.md` | E | nach Muster Algo Quest, mit Verweis auf VERTRAG v1.2, Naht-Regel, Begründung der SOLL-Abweichungen (Design §14 O2/O3) |
 
 ### 2.4 Neue Dateien (Ordnerbaum, nur Neues und Ersetztes)
 
@@ -124,7 +124,8 @@ src/
   wartung.js                   Wartungsjob (§7.4)
   krypto/                      ALLES Krypto-Spezifische des Servers
     index.js                   registriere(): Blöcke, Interaktionen, Normalisierungen, Validator-, Abzeichen-Hooks
-    fach.js                    WELTEN, LAB_KATEGORIEN(+Namen), FALLEN, RAENGE, TEAM_NAMEN, PLATTFORM
+    fach.js                    WELTEN, LAB_KATEGORIEN(+Namen), FALLEN, RAENGE, TEAM_NAMEN, PLATTFORM, NIVEAU_KATEGORIEN, WELT_PLAN
+    niveauUebersicht.js        öffentliche Niveau-Übersicht GET /api/niveaus (VERTRAG v1.2 §9, §6.10)
     bloecke.js                 Validierung + Lücken-Texte der neuen Blöcke (Delta §7)
     interaktionen/             chiffre.js, zuordnung.js, schaubild.js, bits.js (Delta §8)
     diagnose.js                Fallen-Diagnose (Delta §9), feste Texte
@@ -158,7 +159,7 @@ public/
                     gast.js start.js board.js themen.js urkunden.js
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
-docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAG_v1.2.md DESIGNSYSTEM.md
+docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
 ```
 
 ---
@@ -456,7 +457,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen) |
 | `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende |
 | `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
-| `VERTRAG_VERSION` | `1.1` | nein (Std. `1.1`) | **vorerst nur `1.1`**; `1.2` → Startabbruch „Vertrag 1.2 (labs) noch nicht umgesetzt: Niveau-Übersicht und urls.niveaus fehlen“ (auch im Testmodus). Grund: labs hat inzwischen ein **anderes** v1.2 angenommen (Niveau-Übersicht §9 MUSS, `urls.niveaus` SOLL, `niveaus` KANN), nicht den Kryptos-Vorschlag (§6.10). Der Code für die Felder/Regeln des Kryptos-Vorschlags (§6.8 `niveau`, §6.9 `niveaus`, §8.3 Bezugsmenge) bleibt vorbereitet, ist aber nicht einschaltbar |
+| `VERTRAG_VERSION` | `1.2` | nein (Std. `1.2`) | **nur `1.2`** (labs-Vertrag v1.2); jeder andere Wert (auch `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.2 sein …“ (auch im Testmodus). Der Wert schaltet nichts um – er verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.2"` |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
 | `DATA_DIR` | `/app/data` | nein | DB `kryptos.db` |
@@ -527,7 +528,7 @@ mit 503 (nur im Testmodus möglich).
   (Lehrkraft-Sitzung → `302 /lehrer`); `/lehrer`, `/lehrer/urkunden`, `/beamer/*` brauchen `kr_l` (Schüler-Sitzung →
   `302 /spiel`, sonst Schleife Wächter → SSO → `/sso/ende` → Wächter …); ohne Sitzung **still**
   `302 /sso/start?ziel=<Pfad>`. Öffentlich: `/`, `/gast`, `/themen`, `/datenschutz`, `/board/:schluessel`, `/healthz`,
-  `/api/plattform`, `/akten/*`, `/static/*`, `/robots.txt`.
+  `/api/plattform`, `/api/niveaus`, `/api/themen`, `/akten/*`, `/static/*`, `/robots.txt`.
 - **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen). Kurswahl und
   Rückfall auf die erste aktive Teilnahme **verlängern die Sitzung nicht**: Das neue `kr_s` übernimmt das `exp` des
   bisherigen Cookies, `Max-Age` = Restlaufzeit. Nur `/sso/ende` setzt eine Sitzung mit voller Laufzeit.
@@ -599,11 +600,11 @@ werden beendet (Inhalte gelöscht, §12.7); das Beamer-Board des Kurses (`/api/b
 
 - `schueler`: alle Teilnahmen des Kurses (aktiv und inaktiv; das Portal filtert auf Mitglieder). `punkte` = Gesamtpunkte
   (Level + Boss + Training, wie Scoreboard), `geloest` = gelöste Level-Aufgaben, `anteil` = Level-Punkte /
-  erreichbare Level-Punkte der freigeschalteten Welten nach der **Bezugsmenge aus §8.3** (unter v1.1 alle sichtbaren
-  Level-Aufgaben wie im Vertrag; erst ab `VERTRAG_VERSION=1.2` nur rangrelevante), `zuletzt` = `last_active_at`.
+  erreichbare Level-Punkte der freigeschalteten Welten nach der **Bezugsmenge aus §8.3** (alle für den Kurs sichtbaren
+  Level-Aufgaben, wie VERTRAG v1.2 §6/§9 „Level-Punkte der freigeschalteten Welten“), `zuletzt` = `last_active_at`.
 - `welten`: nur freigeschaltete Welten; `anteil` = Mittelwert der Schüler-Anteile dieser Welt (0…1, 2 Nachkommastellen).
 - **Keine** Antworten, Lösungen, Freitexte, Teamnamen, Funkraum-/Arena-Inhalte.
-- **Ab `VERTRAG_VERSION=1.2`** zusätzlich `"niveau": "eA" | "gA"` (VERTRAG_VORSCHLAG (a)); vorher nicht ausliefern.
+- **Kein** Feld `niveau`: labs v1.2 kennt es nicht (nur als Vorschlag V1 in `docs/VERTRAG_VORSCHLAEGE.md`).
 
 ### 6.9 Manifest `GET /api/plattform` (MUSS)
 
@@ -612,19 +613,20 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
 
 ```json
 {
-  "vertrag": "1.1",
+  "vertrag": "1.2",
   "id": "kryptos",
   "name": "Kryptos",
   "titel": "Kryptos – Die Zeitreise der Geheimschriften",
   "themenfeld": "Kryptologie",
   "kurs": "Informatik eA und gA, Niedersachsen, Abitur ab 2027",
+  "niveaus": ["eA", "gA"],
   "beschreibung": "Eine Zeitreise durch 2500 Jahre Geheimschriften: von der Skytale über Vigenère und das One-Time-Pad bis zu Signaturen und Zertifikaten – mit automatisch geprüften Aufgaben im Abitur-Stil, Kryptolabor, Live-Szenarien im Funkraum, Knack-Arena, Bossen und Warm-up-Karten.",
   "farbe": "#B07D2B",
   "version": "1.0.0",
   "basis": "https://kryptos.frankjuchim.de",
   "icon": "/static/favicon.svg",
   "urls": { "start": "/", "gast": "/gast", "themen": "/themen", "lehrkraft": "/lehrer", "datenschutz": "/datenschutz",
-            "healthz": "/healthz", "ssoStart": "/sso/start", "ssoEnde": "/sso/ende" },
+            "healthz": "/healthz", "ssoStart": "/sso/start", "ssoEnde": "/sso/ende", "niveaus": "/themen#niveaus" },
   "auth": { "modus": "portal", "portal": "https://labs.frankjuchim.de", "sso": true },
   "umfang": { "welten": 7, "level": 26, "aufgaben": "<aus dem Seed gezählt>", "bosse": 7 },
   "welten": [
@@ -641,27 +643,42 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
 }
 ```
 
-`umfang.aufgaben` = Level-Aufgaben + Boss-Pools, **beim Start aus dem Seed gezählt** (nie fest eintragen; Stand der Specs ca. 307 = 202 Level- + 105 Boss-Aufgaben; Archivfund-Aufgaben zählen nicht). **Ab v1.2:**
-`"vertrag": "1.2"` und `"niveaus": ["eA", "gA"]`. Das Manifest enthält nie Kurs-, Schüler- oder Lösungsdaten (Test).
+`umfang.aufgaben` = Level-Aufgaben + Boss-Pools, **beim Start aus dem Seed gezählt** (nie fest eintragen; Stand der Specs ca. 307 = 202 Level- + 105 Boss-Aufgaben; Archivfund-Aufgaben zählen nicht). `niveaus` (KANN, v1.2) =
+`["eA", "gA"]`, `urls.niveaus` (SOLL, v1.2) = `/themen#niveaus` (§6.10). Das Manifest enthält nie Kurs-, Schüler- oder
+Lösungsdaten (Test).
 
 ### 6.10 Vertragsstand
 
-> **Achtung (Stand 12.10.2026):** labs (`VERTRAG.md`, Commit `3f48c5c`) hat inzwischen eine **eigene** Version 1.2
-> angenommen: Anforderungsniveaus – jede Plattform ist für eA **und** gA und zeigt eine Niveau-Übersicht (§9, MUSS),
-> Manifest-Felder `urls.niveaus` (SOLL) und `niveaus` (KANN). Das ist **nicht** der Kryptos-Vorschlag
-> `docs/VERTRAG_VORSCHLAG_v1.2.md`; dieser muss neu nummeriert (z. B. als v1.3) und mit dem Portal abgestimmt werden.
-> Die Entscheidung der Lehrkraft ist offen. Bis dahin läuft Kryptos mit `VERTRAG_VERSION=1.1`; `1.2` bricht den Start
-> ab (§6.1). Alle Stellen in diesem Dokument, die „ab v1.2“ / „`VERTRAG_VERSION=1.2`“ sagen, meinen den
-> **Kryptos-Vorschlag**, nicht labs v1.2.
+Verbindlich ist **labs `VERTRAG.md` v1.2** (Commit `3f48c5c`; Entscheidung der Lehrkraft vom 12.10.2026). Er überstimmt
+den früheren Kryptos-Entwurf „v1.2“ (jetzt Archiv in `docs/VERTRAG_VORSCHLAEGE.md`). Kryptos erfüllt v1.2 ohne
+MUSS-Abweichung:
 
-Kryptos erfüllt v1.1 ohne MUSS-Abweichung, **solange `VERTRAG_VERSION=1.1`** gilt: Dann werden `anteil` und Rang
-vertragsgemäß über alle sichtbaren Level-Punkte der freigeschalteten Welten berechnet (§8.3), und weder `niveau` noch
-`niveaus` werden ausgeliefert. Die fachlich bessere Regel „nur rangrelevante Punkte“ (ohne Ergänzung/Kür) wird erst mit
-`VERTRAG_VERSION=1.2` aktiv (Vorschlag (c)); bis dahin ist sie mit dem Portal abzustimmen, nicht still umzusetzen. SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes
-Designsystem statt Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit
-Naht-Regel). Die Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind unter v1.1 zulässig (freie Liste); ihre
-Registrierung, das Feld `niveaus`, `niveau` in der Kursübersicht und die Regel für ausgetauschte Inhalte schlägt
-`docs/VERTRAG_VORSCHLAG_v1.2.md` vor.
+- **Manifest (§7):** `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
+  Niveaus. `scripts/vertrag_pruefen.js` (byte-gleich aus labs) prüft beide Felder.
+- **Niveau-Übersicht (§9 MUSS, ohne Anmeldung):** Abschnitt `#niveaus` auf `/themen` (bis M4 schlicht, Skript
+  `public/static/js/krypto/niveaus.js`) mit den Daten aus `GET /api/niveaus` (öffentlich, `src/krypto/niveauUebersicht.js`):
+  `{ niveaus, kategorien: [{ id, kurz, lang, gA, eA }], welten: [{ nr, titel, epoche, farbe, quelle, levels: [{ id, titel,
+  niveau, aufgaben: { kern?, eA?, ergaenzung?, kuer? }, hinweis, akte: { name, niveau, hinweis } | null }], boss: { titel,
+  pool: { … } } | null }], weitere: [{ titel, text }] }` – Kategorien `kern`/`eA`/`ergaenzung`/`kuer` nach Design §3.2,
+  je Welt Level, Zahl der Lab-Aufgaben je Niveau, Akte, Online-Boss-Pool je Niveau; dazu Hinweise zu Bossen, Akten,
+  Papier-Bossen, Klausuren, Trainingsplatz, Werkstatt/Arena und Kursniveau. Nur Titel, Niveaus und Anzahlen – keine
+  Aufgabentexte, Lösungen, Kurs- oder Schülerdaten, für alle Besucher gleich (Test `test/niveaus.test.js`).
+  **Quelle je Welt:** der Katalog (Seed, `level.niveau`, effektives `aufgabe.niveau`, Boss-Pool), sobald die Welt dort
+  Level hat; sonst der Plan `WELT_PLAN` in `src/krypto/fach.js` (Design §5.1 + Welt-Specs, Stand der Specs: 202
+  Level-Aufgaben, 7 × 15 Boss-Aufgaben). Begründung: Die Seeds kommen erst mit M5, die Übersicht ist aber schon jetzt
+  Pflicht; der Katalog bleibt die maßgebliche Quelle, der Plan nur Rückfall (Akten-Hinweise kommen bis zu einem
+  Akten-Feld im Seed aus dem Plan). Kern-Werte `alle`/`plus` (bis M3 Task 23) werden als `kern`/`kuer` gelesen.
+- **Kursübersicht (§6) und Rang (§9):** `anteil` und Rangschwellen über die **Level-Punkte der freigeschalteten Welten**
+  = alle für den Kurs sichtbaren Level-Aufgaben (§8.3; Ergänzung und Kür zählen mit, eA-Aufgaben im gA-Kurs sind
+  ausgeblendet). Kein Feld `niveau` in der Kursübersicht.
+
+Der Vertrag lässt offen, ob freiwillige Inhalte (Ergänzung, Kür) in `anteil` und Rang zählen; Kryptos nimmt die
+vertragsnähere Lesart (alle sichtbaren Level-Aufgaben). Die fachlich gewünschte Regel „nur Kern/eA“ (Design §3.2), das
+Feld `niveau` in der Kursübersicht, ein Verzeichnis der Fähigkeiten, Regeln für ausgetauschte Inhalte und die
+Präzisierung „Oberfläche“ stehen als **mögliche Vorschläge V1–V8** in `docs/VERTRAG_VORSCHLAEGE.md` und gelten erst nach
+Aufnahme in den Vertrag. SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes Designsystem statt
+Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit Naht-Regel). Die
+Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste).
 
 ### 6.11 Superadmin und Gastmodus
 
@@ -692,12 +709,13 @@ Registrierung, das Feld `niveaus`, `niveau` in der Kursübersicht und die Regel 
 | Zusatz | `/sso/start`: state-Format, Cookie-Attribute, Weiterleitungs-URL zeichengenau | – |
 | Zusatz | Abmelden/Überall abmelden | Cookies gelöscht, `weiter`-URL |
 | Zusatz | `loeschen {kurs}` entfernt Kurs, Teilnahmen, Teams, Funkraum, Arena; `{sub}` entfernt Konto, Teilnahmen, Lernstand, Teammitgliedschaft, eigene Funkraum-Nachrichten und Arena-Versuche (§7.3) | Zählungen in allen Tabellen |
-| Zusatz | Kursübersicht: Format, keine Freitexte/Teamnamen; 404 unbekannt; `anteil` niveau-gefiltert **ab M3 (`src/krypto/niveau.js`, nur unter v1.2)** – bis dahin über alle Level-Aufgaben der freigeschalteten Welten | – |
+| Zusatz | Kursübersicht: Format, keine Freitexte/Teamnamen; 404 unbekannt; `anteil` über die sichtbaren Level-Aufgaben der freigeschalteten Welten (Sichtbarkeit nach Niveau ab M3, `src/krypto/niveau.js`); kein Feld `niveau` | – |
 | Zusatz | state falsch mit gültigem Token → 401 `state`, `jti` verbraucht; 500 in `/sso/*` loggt nur die Meldung (nie Token/URL/Stack) | – |
 | Zusatz | Verbund-API: Flut ohne Token, danach gültiger Auftrag → 200; kaputtes JSON ohne Token → 401; `jti` nach echtem Neustart (zweite App-Instanz, gleiche DB-Datei) verbraucht | – |
 | Zusatz | Schüler ruft `/lehrer` auf → kein SSO-Kreis (Wächter `302 /spiel`, `/sso/ende` verwirft ziel der anderen Rolle) | – |
 | Zusatz | `kurs-aendern`: Name übernommen, `aktiv:false` sperrt Schüler-API (403), `true` entsperrt | – |
-| Zusatz | Manifest: `pruefeManifest(m)` leer, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.2`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| Zusatz | Niveau-Übersicht `GET /api/niveaus` und `/themen#niveaus` ohne Anmeldung; keine Lösungen/Kursdaten; nicht personalisiert; Katalog vor Plan (`test/niveaus.test.js`) | – |
 
 ---
 
@@ -968,9 +986,10 @@ Test: `test/wartung.test.js` mit steuerbarer Uhr.
 - **Effektives Niveau** einer Aufgabe = `aufgabe.niveau ?? level.niveau ?? 'kern'` (beim Seed in `aufgaben.niveau`).
 - **sichtbar(x, einst)**: `kern`, `ergaenzung` → immer; `eA` → nur `einst.niveau === 'eA'`; `kuer` → `einst.kuer === 'frei'`.
   Ein Level ist sichtbar, wenn es selbst sichtbar ist **und** mindestens eine sichtbare Aufgabe hat.
-- **rangrelevant(aufgabe, einst)**: sichtbar **und** Niveau ∈ {`kern`, `eA`} (Ergänzung/Kür nie, Design §3.2) –
-  **wirksam erst ab `VERTRAG_VERSION=1.2`**. Unter v1.1 gilt `rangrelevant = sichtbar` (Vertrag §9: Bezug auf die
-  Level-Punkte der freigeschalteten Welten). Die Boss-Freischaltung (60 %) nutzt immer die Kern/eA-Menge, weil sie
+- **rangrelevant(aufgabe, einst)** = **sichtbar** (labs-Vertrag v1.2 §6/§9: Bezug auf die Level-Punkte der
+  freigeschalteten Welten; ob Ergänzung/Kür ausgenommen werden dürfen, regelt der Vertrag nicht). Die fachlich gewünschte
+  Regel „nur Kern/eA“ (Design §3.2) ist Vorschlag V2 in `docs/VERTRAG_VORSCHLAEGE.md` und wird erst nach Aufnahme in den
+  Vertrag umgesetzt; die Funktion bleibt als eigene Erweiterungsstelle bestehen. Die Boss-Freischaltung (60 %) nutzt immer die Kern/eA-Menge, weil sie
   plattformintern ist und den Vertrag nicht berührt.
 
 ### 8.2 Wirkung
@@ -982,14 +1001,14 @@ Test: `test/wartung.test.js` mit steuerbarer Uhr.
 | Boss-Ziehung | Pool gefiltert auf `kern`; Mix je Stufe, Auffüllen aus dem gefilterten Rest; `anzahl` = min(anzahl, gefilterter Pool) | `kern` + `eA` |
 | Boss-Freischaltung `auto` | 60 % der Level-Punkte der Welt aus `kern` (+ `eA` im eA-Kurs), unabhängig von der Vertragsversion | dito |
 | Punkte (Scoreboard, Profil „Punkte“) | alle erspielten Punkte (inkl. Ergänzung/Kür und bereits gelöster, jetzt ausgeblendeter eA-Aufgaben) | dito |
-| Rang, Kursübersicht `anteil`, Welt-Fortschrittsring | v1.1: alle sichtbaren Level-Punkte / Maximum aller sichtbaren Level-Aufgaben freigeschalteter Welten; ab v1.2: nur rangrelevante | dito |
+| Rang, Kursübersicht `anteil`, Welt-Fortschrittsring | alle sichtbaren Level-Punkte / Maximum aller sichtbaren Level-Aufgaben freigeschalteter Welten (VERTRAG v1.2 §6/§9; Ergänzung und Kür zählen mit) | dito |
 | Abzeichen „Welt gemeistert“ | alle rangrelevanten Aufgaben der Welt gelöst | dito |
 | Trainingsplatz | Generatoren mit `niveau: 'ergaenzung'` (DH/RSA) bleiben verfügbar, Generatoren `eA` (KRYPTOS-16) nur im eA-Kurs | |
 | Auswertung (Lehrkraft) | Matrix zeigt sichtbare Level; Spalte „Niveau: gA“ im Kopf | |
 
 ### 8.3 Rechenvorschrift (für `stand.staende` und Kursübersicht)
 
-Bezugsmenge B = `VERTRAG_VERSION` ≥ 1.2 ? rangrelevante : sichtbare Level-Aufgaben. Je Teilnahme und Welt:
+Bezugsmenge B = rangrelevante (= sichtbare, §8.1) Level-Aufgaben. Je Teilnahme und Welt:
 `ist_w = Σ punkte` gelöster Aufgaben aus B, `max_w = Σ aufgabe.punkte` aller Aufgaben aus B. Rang-Anteil = `Σ_w frei ist_w / Σ_w frei max_w` (Schwellen 0/0,1/0,3/0,55/0,8 wie
 VERTRAG §9). Archivfund-Aufgaben zählen nirgends. Wechselt die Lehrkraft das Niveau, rechnen alle Anzeigen ab sofort
 neu (keine gespeicherten Ränge).
@@ -1175,7 +1194,7 @@ Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 | `lehrer.html` | `/lehrer` | Lehrkraft/Superadmin | Kurse, Einstellungen (Welten, Boss, Niveau, Werkzeuge, Kür, Scoreboard, Beamer), Auswertung, Vorschau, Materialien, Teams, Funkraum-Regie, Arena-Regie, Urkunden; Superadmin: Inhalte, Backup, Warm-up, Wartung |
 | `urkunden.html` | `/lehrer/urkunden` | Lehrkraft | Druck A4 quer (DESIGNSYSTEM §10) |
 | `board.html` | `/board/:schluessel` | öffentlich (wenn aktiviert) | Scoreboard-Beamer (Kern) |
-| `themen.html` | `/themen` | öffentlich | Welten, Level, Akten-PDFs, Querschnitte Kategorien/Fallen |
+| `themen.html` | `/themen` | öffentlich | Welten, Level, Akten-PDFs, Querschnitte Kategorien/Fallen; Abschnitt `#niveaus` = Niveau-Übersicht nach VERTRAG v1.2 §9 (Manifest `urls.niveaus`, §6.10) |
 | `gast.html` | `/gast` | öffentlich | Demo-Aufgaben, Demo-Kurs, Chiffrierscheibe |
 | `datenschutz.html` | `/datenschutz` | öffentlich | Kryptos-Besonderheiten (Design §12) + Link auf `PORTAL_URL/datenschutz` |
 | `404.html`, `fehler/*.html` | – | – | statisch |
@@ -1385,6 +1404,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 
 | Methode · Pfad | Rechte | Request | Response | Limit |
 |---|---|---|---|---|
+| `GET /api/niveaus` | alle (ohne Anmeldung) | – | Niveau-Übersicht (§6.10): Kategorien, je Welt Level mit Niveau, Aufgabenzahl je Niveau, Akte, Boss-Pool je Niveau; keine Lösungen/Kursdaten | – |
 | `GET /api/sitzung` | alle | – | `{ rolle: 'schueler'\|'lehrkraft'\|'superadmin'\|null, name, kurs: { id: 'k:17', name, niveau } \| null, kurse: [{ id, name, aktiv }], portal: PORTAL_URL, version }` | – |
 | `POST /api/sitzung/kurs` | Schüler | `{ kurs: 'k:17' }` | `{ ok, kurs }` | 30/min |
 | `POST /api/abmelden` | alle | `{ ueberall?: bool }` | `{ weiter }` | – |
@@ -1640,6 +1660,6 @@ Live-Deploy.
 | T3 | ~~Levelzahl~~ – **erledigt** (Design-Spec 1.1: 26 Level) | Manifest zählt aus dem Seed |
 | T4 | ~~W6-Farbe~~ – **erledigt** (Design-Spec 1.1: `#8A5F1A`, Plattformfarbe `#B07D2B`) | – |
 | T5 | Lizenz der Atkinson-Hyperlegible-Fassung | vor dem Einbinden prüfen (§11.4) |
-| T6 | Vertrag v1.2 | mit `VERTRAG_VERSION=1.1` keine `niveaus`/`niveau`-Felder und `anteil` über alle sichtbaren Level-Punkte; mit `1.2` Felder vorhanden und `anteil` nur rangrelevant (§6.8–§6.10, §8.3) |
-| T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (VERTRAG_VORSCHLAG (e)) |
+| T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
+| T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
 | T8 | Fremdcode „Krypto-Werkstatt“ (Fork `frankjuchim/<WERKSTATT-FORK>`) | in M6: Registry (§10.2) um `nachspielen(schritte)` erweitern (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`); Werkstatt-Komponenten nur als Darstellung, Rechnung über `Krypto.*`; CSP-konform umbauen; Herkunft, Lizenz und Commit in `docs/FREMDCODE.md` (Design O11) |

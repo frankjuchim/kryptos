@@ -27,7 +27,7 @@ test('gültige Konfiguration: Standardwerte und Felder', () => {
   assert.ok(k.schluessel[0] instanceof crypto.KeyObject);
   assert.match(k.portalPublicKey, /^-----BEGIN PUBLIC KEY-----/);
   assert.equal(k.sessionSecret, 's'.repeat(32));
-  assert.equal(k.vertragVersion, '1.1');
+  assert.equal(k.vertragVersion, '1.2');
   assert.equal(k.authModus, 'portal');
   assert.equal(k.port, 80);
   assert.equal(k.trustProxy, 1);
@@ -55,13 +55,12 @@ test('PLATTFORM_ID Format', () => {
   assert.throws(() => ladeKonfig({ ...gueltig, PLATTFORM_ID: 'Kryptos!' }), /PLATTFORM_ID/);
   assert.equal(ladeKonfig({ ...gueltig, PLATTFORM_ID: 'kryptos-test' }).plattformId, 'kryptos-test');
 });
-test('VERTRAG_VERSION: vorerst nur 1.1 (Standard); 1.2 bricht mit klarer Meldung ab (labs v1.2 ≠ Kryptos-Vorschlag), sonst Abbruch', () => {
-  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: '1.1' }).vertragVersion, '1.1');
-  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: undefined }).vertragVersion, '1.1');
+test('VERTRAG_VERSION: nur 1.2 (labs-Vertrag, Standard); 1.1 und andere Werte brechen ab – auch im Testmodus', () => {
+  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: '1.2' }).vertragVersion, '1.2');
+  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: undefined }).vertragVersion, '1.2');
   for (const test of [false, true]) {
-    assert.throws(() => ladeKonfig({ ...gueltig, VERTRAG_VERSION: '1.2' }, { test }), /Vertrag 1\.2 \(labs\) noch nicht umgesetzt: Niveau-Übersicht und urls\.niveaus fehlen/);
+    for (const v of ['1.1', '1.0', '1.3', '2.0']) assert.throws(() => ladeKonfig({ ...gueltig, VERTRAG_VERSION: v }, { test }), /VERTRAG_VERSION muss 1\.2 sein/, v);
   }
-  assert.throws(() => ladeKonfig({ ...gueltig, VERTRAG_VERSION: '2.0' }), /VERTRAG_VERSION/);
 });
 test('ADMIN_EMAIL/ADMIN_PASSWORD werden nicht gelesen', () => {
   const k = ladeKonfig({ ...gueltig, ADMIN_EMAIL: 'admin', ADMIN_PASSWORD: 'geheim-1234567' });

@@ -1,8 +1,9 @@
 'use strict';
 // Plattform-Manifest nach dem Verbundvertrag (VERTRAG §7, TECHNIK §6.9): öffentlich unter GET /api/plattform.
 // Das Portal liest es, um Plattformen zu verlinken, ihren Stand anzuzeigen und die Vertragsversion zu prüfen.
-// vertrag = VERTRAG_VERSION (Standard 1.1); umfang/welten werden aus dem Katalog berechnet (nie fest eingetragen).
-// Ab v1.2 zusätzlich „niveaus“. Das Manifest enthält nie Kurs-, Schüler- oder Lösungsdaten.
+// vertrag = 1.2 (labs-Vertrag; VERTRAG_VERSION lässt nur 1.2 zu); umfang/welten werden aus dem Katalog berechnet (nie fest
+// eingetragen). v1.2: niveaus (für eA und gA) und urls.niveaus (Niveau-Übersicht /themen#niveaus, VERTRAG §7/§9).
+// Das Manifest enthält nie Kurs-, Schüler- oder Lösungsdaten.
 
 const { PLATTFORM } = require('../domain');
 
@@ -22,12 +23,14 @@ function createManifest({ inhalte, version, konfig }) {
     const welten = [...kat.welten.values()].sort((a, b) => a.nr - b.nr);
     const zaehle = (ids) => ids.filter((id) => !istArchivfund(kat.aufgaben.get(id) || { id })).length;
     const m = {
-      vertrag: konfig.vertragVersion || '1.1',
+      vertrag: konfig.vertragVersion || '1.2',
       id: konfig.plattformId || PLATTFORM.id,
       name: PLATTFORM.name,
       titel: PLATTFORM.titel,
       themenfeld: PLATTFORM.themenfeld,
       kurs: PLATTFORM.kurs,
+      // Anforderungsniveaus (VERTRAG §7 KANN, §9): Kryptos ist für Leistungs- und Grundkurs
+      niveaus: ['eA', 'gA'],
       beschreibung: BESCHREIBUNG,
       farbe: PLATTFORM.farbe,
       version,
@@ -41,7 +44,9 @@ function createManifest({ inhalte, version, konfig }) {
         datenschutz: '/datenschutz',
         healthz: '/healthz',
         ssoStart: '/sso/start',
-        ssoEnde: '/sso/ende'
+        ssoEnde: '/sso/ende',
+        // Niveau-Übersicht ohne Anmeldung (VERTRAG §7 SOLL, §9)
+        niveaus: '/themen#niveaus'
       },
       // Kryptos kennt nur die Anmeldung über das Portal (AUTH_MODUS=portal, TECHNIK §6.1)
       auth: { modus: 'portal', portal: konfig.portalUrl, sso: true },
@@ -54,7 +59,6 @@ function createManifest({ inhalte, version, konfig }) {
       welten: welten.map((w) => ({ nr: w.nr, titel: w.titel, farbe: w.farbe, level: w.levels.length })),
       faehigkeiten: [...FAEHIGKEITEN]
     };
-    if (m.vertrag === '1.2') m.niveaus = ['eA', 'gA'];
     return m;
   };
 }
