@@ -18,17 +18,19 @@ const PLATTFORM = {
 const FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil'];
 
 /**
- * @param {{inhalte: object, version: string, konfig: object}} opt  konfig aus verbundKonfig()
+ * @param {{inhalte: object, version: string, konfig: object}} opt  konfig aus src/verbund/konfig.js (ladeKonfig)
  */
 function createManifest({ inhalte, version, konfig }) {
   return function manifest(basis) {
     const welten = [...inhalte.katalog.welten.values()].sort((a, b) => a.nr - b.nr);
+    // Kryptos: Anmeldung nur über das Portal (AUTH_MODUS=portal); SSO aktiv, sobald Portal und Schlüssel konfiguriert sind
+    const sso = !!konfig.portalUrl && konfig.schluessel.length > 0;
     return {
       vertrag: VERTRAG,
       ...PLATTFORM,
-      id: konfig.id,
+      id: konfig.plattformId,
       version,
-      basis: konfig.url || basis,
+      basis: konfig.plattformUrl || basis,
       icon: '/static/favicon.svg',
       urls: {
         start: '/',
@@ -37,11 +39,11 @@ function createManifest({ inhalte, version, konfig }) {
         lehrkraft: '/lehrer',
         datenschutz: '/datenschutz',
         healthz: '/healthz',
-        ssoStart: konfig.sso ? '/sso/start' : null,
-        ssoEnde: konfig.sso ? '/sso/ende' : null,
+        ssoStart: sso ? '/sso/start' : null,
+        ssoEnde: sso ? '/sso/ende' : null,
         niveaus: '/themen#niveaus'
       },
-      auth: { modus: konfig.modus, portal: konfig.portal, sso: konfig.sso },
+      auth: { modus: konfig.authModus, portal: konfig.portalUrl, sso },
       umfang: {
         welten: welten.length,
         level: welten.reduce((s, w) => s + w.levels.length, 0),

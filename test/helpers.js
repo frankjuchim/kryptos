@@ -1,13 +1,18 @@
 'use strict';
 // Gemeinsame Test-Helfer (node:test + supertest).
-process.env.AQL_SCRYPT_N = process.env.AQL_SCRYPT_N || '1024'; // schnelleres Hashing nur in Tests
+// Kryptos kennt keine lokale Anmeldung mehr: Konten, Kurse und Teilnahmen legen die Helfer direkt in der Datenbank an
+// (wie es /sso/ende tun wird, TECHNIK §6.6) und geben Clients mit gültigen Sitzungs-Cookies kr_s/kr_l (TECHNIK §6.4).
+// Die SSO-Helfer sso()/verbundToken() (TECHNIK §15) kommen mit Plan Task 5.
 
 const path = require('node:path');
 const request = require('supertest');
+const S = require('../src/security');
+const V = require('../src/validate');
 const { createApp } = require('../src/app');
+const { STANDARD_EINSTELLUNGEN } = require('../src/domain');
+const { SCHUELER_MS, LEHRKRAFT_MS } = require('../src/verbund/sitzung');
 
-const ADMIN_EMAIL = 'admin';
-const ADMIN_PW = 'admin-passwort-123';
+const SECRET = 'test-secret-0123456789abcdef-0123456789';
 const HOST = 'lab.test';
 const ORIGIN = 'http://' + HOST;
 const FIXTURE = path.join(__dirname, 'fixtures', 'welt_beispiel.json');
@@ -27,70 +32,145 @@ function uhr(start = Date.parse('2026-10-08T08:00:00Z')) {
 }
 
 function makeApp(extra = {}) {
-  return createApp({
+  const app = createApp({
     dbFile: ':memory:',
-    sessionSecret: 'test-secret-0123456789abcdef',
-    adminEmail: ADMIN_EMAIL,
-    adminPassword: ADMIN_PW,
+    sessionSecret: SECRET,
     seedDir: null,
     weltDateien: [FIXTURE],
     trustProxy: false,
     ...extra
   });
+  app.locals.testZaehler = 0;
+  return app;
 }
 
 /** supertest-Agent mit Cookie-Speicher und gleicher Herkunft (Origin = Host). */
 function client(app) {
   const agent = request.agent(app);
   agent.set('Host', HOST).set('Origin', ORIGIN);
+  agent.app = app;
   return agent;
 }
 
-async function adminClient(app) {
-  const c = client(app);
-  const r = await c.post('/api/lehrer/anmelden').send({ email: ADMIN_EMAIL, passwort: ADMIN_PW });
-  if (r.status !== 200) throw new Error('Admin-Login fehlgeschlagen: ' + r.status + ' ' + JSON.stringify(r.body));
+const jetzt = () => new Date().toISOString();
+const naechsteNr = (app) => 1000 + ++app.locals.testZaehler;
+
+/** Konto anlegen (rolle schueler | lehrkraft | superadmin). Liefert die sub. */
+function konto(app, rolle, name, sub) {
+  const praefix = { schueler: 's', lehrkraft: 'l', superadmin: 'a' }[rolle];
+  const s = sub || `${praefix}:${naechsteNr(app)}`;
+  app.locals.db.prepare('INSERT INTO konten (sub, rolle, name, created_at) VALUES (?, ?, ?, ?)').run(s, rolle, name, jetzt());
+  return s;
+}
+
+/** Kurs (vom Portal) anlegen. Liefert { id, kurs: 'k:<n>', name, boardSchluessel, einstellungen }. */
+function kurs(app, name = 'LK Informatik 13', { einstellungen = STANDARD_EINSTELLUNGEN, aktiv = true } = {}) {
+  const kursId = `k:${naechsteNr(app)}`;
+  const boardSchluessel = S.zufallsText(9);
+  const info = app.locals.db
+    .prepare('INSERT INTO kurse (kurs_id, name, einstellungen, aktiv, board_schluessel, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(kursId, name, JSON.stringify(einstellungen), aktiv ? 1 : 0, boardSchluessel, jetzt(), jetzt());
+  return { id: Number(info.lastInsertRowid), kurs: kursId, name, boardSchluessel, einstellungen: app.locals.services.kurse.einstellungen(JSON.stringify(einstellungen)) };
+}
+
+/** Teilnahme eines Schülerkontos an einem Kurs. Liefert die Teilnahme-id (schueler.id). */
+function teilnahme(app, k, sub, name, { aktiv = true } = {}) {
+  const { name: n, key } = V.schuelerName(name);
+  const info = app.locals.db
+    .prepare('INSERT INTO schueler (kurs_id, sub, name, name_key, aktiv, created_at, last_active_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+    .run(k.id, sub, n, key, aktiv ? 1 : 0, jetzt(), jetzt());
+  return Number(info.lastInsertRowid);
+}
+
+/** Lehrkraft einem Kurs zuordnen (wie die Kursliste im SSO-Token). */
+function zuordnen(app, k, sub, { aktiv = true } = {}) {
+  app.locals.db.prepare('INSERT INTO kurs_lehrkraefte (kurs_id, sub, aktiv) VALUES (?, ?, ?) ON CONFLICT(kurs_id, sub) DO UPDATE SET aktiv = excluded.aktiv').run(k.id, sub, aktiv ? 1 : 0);
+}
+
+/** Cookie-Wert wie src/verbund/sitzung.js (S.sign mit exp). */
+function cookieWert(payload, ms) {
+  return S.sign({ ...payload, exp: Date.now() + ms }, SECRET);
+}
+
+/** Client mit gesetztem Sitzungs-Cookie (im Cookie-Speicher des Agents). */
+function mitCookie(c, name, wert) {
+  c.jar.setCookie(`${name}=${wert}; Path=/`, '127.0.0.1', '/');
   return c;
 }
 
-/** Lehrkraft registrieren, vom Superadmin freigeben lassen und anmelden. */
-async function lehrkraftClient(app, admin, email = 'lena.lehrer@schule.de', pw = 'lehrkraft-pw-123') {
-  const c = client(app);
-  const r = await c.post('/api/lehrer/registrieren').send({ name: 'Frau Lehrer', email, schule: 'MPG', passwort: pw, nachricht: 'Hallo' });
-  if (r.status !== 201) throw new Error('Registrierung fehlgeschlagen: ' + JSON.stringify(r.body));
-  const liste = (await admin.get('/api/admin/lehrkraefte')).body;
-  const lk = liste.find((x) => x.email === email);
-  const f = await admin.post(`/api/admin/lehrkraefte/${lk.id}/status`).send({ status: 'aktiv' });
-  if (f.status !== 200) throw new Error('Freigabe fehlgeschlagen: ' + JSON.stringify(f.body));
-  const l = await c.post('/api/lehrer/anmelden').send({ email, passwort: pw });
-  if (l.status !== 200) throw new Error('Login fehlgeschlagen: ' + JSON.stringify(l.body));
-  c.lkId = lk.id;
+/** Sitzung als Schüler (sub) mit Teilnahme t – neuer Client, wenn keiner übergeben wird. */
+function alsSchueler(app, sub, t, c = client(app)) {
+  const g = app.locals.db.prepare('SELECT session_gen FROM konten WHERE sub = ?').get(sub).session_gen;
+  return mitCookie(c, S.COOKIE_SCHUELER, cookieWert({ sub, g, t }, SCHUELER_MS));
+}
+
+function alsLehrkraft(app, sub, c = client(app)) {
+  const g = app.locals.db.prepare('SELECT session_gen FROM konten WHERE sub = ?').get(sub).session_gen;
+  return mitCookie(c, S.COOKIE_LEHRKRAFT, cookieWert({ sub, g }, LEHRKRAFT_MS));
+}
+
+/** Superadmin (Konto a:<n> aus dem Portal) mit Sitzung. */
+async function adminClient(app, name = 'Admin') {
+  const sub = konto(app, 'superadmin', name);
+  const c = alsLehrkraft(app, sub);
+  c.sub = sub;
   return c;
 }
 
-async function kursAnlegen(lk, name = 'LK Informatik 13') {
-  const r = await lk.post('/api/lehrer/kurse').send({ name });
-  if (r.status !== 201) throw new Error('Kurs anlegen fehlgeschlagen: ' + JSON.stringify(r.body));
-  return r.body;
-}
-
-async function schuelerClient(app, kurscode, name = 'Lena S.') {
-  const c = client(app);
-  const r = await c.post('/api/schueler/beitreten').send({ kurscode, name });
-  if (r.status !== 201) throw new Error('Beitritt fehlgeschlagen: ' + r.status + ' ' + JSON.stringify(r.body));
-  c.code = r.body.code;
-  c.name = r.body.name;
+/** Lehrkraft (Konto l:<n>) mit Sitzung; optional gleich Kursen zugeordnet. */
+async function lehrkraftClient(app, { name = 'Frau Lehrer', kurse = [] } = {}) {
+  const sub = konto(app, 'lehrkraft', name);
+  for (const k of kurse) zuordnen(app, k, sub);
+  const c = alsLehrkraft(app, sub);
+  c.sub = sub;
   return c;
 }
 
-/** Komplett: App + Admin + Lehrkraft + Kurs + Schüler. */
+/** Kurs anlegen und der Lehrkraft (Client aus lehrkraftClient) zuordnen. */
+async function kursAnlegen(lk, name = 'LK Informatik 13', o) {
+  const k = kurs(lk.app, name, o);
+  zuordnen(lk.app, k, lk.sub);
+  return k;
+}
+
+/** Neues Schülerkonto mit Teilnahme am Kurs und Sitzung. Client-Felder: sub, id (Teilnahme), name. */
+async function schuelerClient(app, k, name = 'Lena S.') {
+  const sub = konto(app, 'schueler', name);
+  const t = teilnahme(app, k, sub, name);
+  const c = alsSchueler(app, sub, t);
+  c.sub = sub;
+  c.id = t;
+  c.name = name;
+  return c;
+}
+
+/** Komplett: App + Superadmin + Lehrkraft + Kurs + Schüler. */
 async function szenario(extra = {}) {
   const app = makeApp(extra);
   const admin = await adminClient(app);
-  const lk = await lehrkraftClient(app, admin);
-  const kurs = await kursAnlegen(lk);
-  const s = await schuelerClient(app, kurs.code);
-  return { app, admin, lk, kurs, s };
+  const lk = await lehrkraftClient(app);
+  const k = await kursAnlegen(lk);
+  const s = await schuelerClient(app, k);
+  return { app, admin, lk, kurs: k, s };
 }
 
-module.exports = { makeApp, client, adminClient, lehrkraftClient, kursAnlegen, schuelerClient, szenario, uhr, ADMIN_EMAIL, ADMIN_PW, HOST, ORIGIN, FIXTURE };
+module.exports = {
+  makeApp,
+  client,
+  konto,
+  kurs,
+  teilnahme,
+  zuordnen,
+  alsSchueler,
+  alsLehrkraft,
+  adminClient,
+  lehrkraftClient,
+  kursAnlegen,
+  schuelerClient,
+  szenario,
+  uhr,
+  SECRET,
+  HOST,
+  ORIGIN,
+  FIXTURE
+};

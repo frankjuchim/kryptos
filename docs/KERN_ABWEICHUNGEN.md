@@ -25,20 +25,23 @@ Spalte **Art**: `Hook` (generische Erweiterungsstelle) · `Verbund` (SSO/Portal)
 | K07 | src/services/stand.js | Rangrelevanz (ohne Ergänzung/Kür), Abzeichen-Hook `zusatzAbzeichen` | Niveau, Artefakte | Hook | ja (Hook) | geplant |
 | K08 | src/services/boss.js | niveau-gefilterte Ziehung, Diagnose in der Auswertung | Niveau gA/eA | Hook | teilweise | geplant |
 | K09 | src/services/inhalte.js | neue Felder (`niveau`, `rolle`, `kuer`, `werkzeug`, `akte`, `video`, Welt-Felder), `SEED_VERSION` | Kryptos-Inhalte | Fach | teilweise | geplant |
-| K10 | src/db.js | Migrationsliste, `APP_KENNUNG = 'kryptos'`, v1-Erkennung entfernt | eigenes Schema, Fehlerkennung alter DBs | Verbund | ja (Migrationsliste) | geplant |
-| K11 | src/security.js | lokale Anmeldung (Passwort-/Code-Funktionen) entfernt, Cookies `kr_*`, `zufallsText` | Login nur über das Portal | Verbund | ja | geplant |
-| K12 | src/services/kurse.js, src/services/konten.js | ersetzt: Kurse/Konten kommen vom Portal (`upsert`, `teilnahmen`) | VERTRAG §5/§6 | Verbund | ja (Kern-Kandidat) | geplant |
-| K13 | src/app.js | Seitenliste/Seiten-Wächter, SSO- und Verbund-Router, Manifest; `createApp(opts)` nimmt die Verbund-Konfiguration als `opts.konfig` (Server) bzw. baut sie im Testmodus aus `opts.portalUrl`/`portalPublicKey`/`plattformUrl` (`app.locals.konfig`) | Verbund, neue Seiten | Verbund | ja | teilweise (K20; Konfiguration Task 3) |
-| K14 | src/services/auswertung.js | `board(schluessel)` statt Kurscode, Kursübersicht für das Portal | Verbund | Verbund | ja | geplant |
+| K10 | src/db.js | Schema als Migrationsliste `MIGRATIONEN` (nur anhängen, Muster Portal), Migration 1 = vollständiges Schema TECHNIK §7.1 (Kern-Lernstandstabellen unverändert, `konten`/`kurse`/`kurs_lehrkraefte`/`schueler` als Teilnahme, `sso_jti`, `aufgaben` + `archivfund`/`niveau`, Teams, Funkraum, Arena); `APP_KENNUNG = 'kryptos'`, `SCHEMA_VERSION` = Anzahl Migrationen; v1-Erkennung (`istAlteDatenbank`, `sichereAlteDatenbank`) und Spalten-Nachrüstung entfernt; Start bricht ab bei `meta.app ≠ 'kryptos'`, bei fremder Datei ohne `meta` und bei neuerem Schema (Datei bleibt unverändert); `TABLES` = Backup-Liste §7.1 | eigenes Schema, fremde DBs nie umbenennen | Verbund | ja (Migrationsliste) | umgesetzt (Task 4) |
+| K11 | src/security.js | Passwort-/Code-Funktionen (`SCRYPT`, `hashPasswort*`, `pruefePasswort*`, `kursCode`, `schuelerCode`, `normSchuelerCode`, `einmalPasswort`) entfernt; Cookie-Namen `kr_s`, `kr_l`, neu `COOKIE_SSO_STATE = 'kr_sso_state'`; neu `zufallsText(bytes)` (base64url); `Limiter`, `sameOriginCheck`, `sign/verify`, Cookies, `safeEqual` unverändert | Login nur über das Portal | Verbund | ja | umgesetzt (Task 4, vorgezogen aus Task 5) |
+| K12 | src/services/kurse.js, src/services/konten.js | ersetzt (Art E): `konten` nach `sub` (`row`, `ansicht`, `teilnahmen`), `kurse` mit Portal-Kurs-ID (`kursFuer` nur aktive `kurs_lehrkraefte`, Superadmin alle; `kursListe`; `kursAendern` nur Einstellungen, `name` → 400; `kursPerBoardSchluessel`; Einstellung `anmeldung` wird ignoriert); Registrierung, Passwörter, Freigabe, Beitritt, Kurscodes, Kurs anlegen/löschen, Schüler umbenennen/neuer Code/löschen entfernt | VERTRAG §5/§6 | Verbund | ja (Kern-Kandidat) | teilweise (Task 4; `konten.upsert`, `kurse.upsertAusToken` folgen in Task 6) |
+| K13 | src/app.js | Seitenliste/Seiten-Wächter, SSO- und Verbund-Router, Manifest; `createApp(opts)` nimmt die Verbund-Konfiguration als `opts.konfig` (Server) bzw. baut sie im Testmodus aus `opts.portalUrl`/`portalPublicKey`/`plattformUrl` (`app.locals.konfig`); Sitzungen über `src/verbund/sitzung.js` (`helpers.schueler(req, res)` = Teilnahme-Zeile, `helpers.lehrkraft(req)` = `{ konto, kurse }`); kein Superadmin aus `ADMIN_*`; Seite `/k/:code` entfernt, `/board/:schluessel`, `/api/board/:schluessel`; `/api/sitzung` ohne lokale Anmeldung (Kurse aus `konten.teilnahmen`) | Verbund, neue Seiten | Verbund | ja | teilweise (K20; Konfiguration Task 3, Sitzungen Task 4; SSO/Verbund-Router und Seiten-Wächter Tasks 5–8) |
+| K14 | src/services/auswertung.js | `board(schluessel)` über `kurse.kursPerBoardSchluessel` statt Kurscode (Antwort ohne Code); Schülerliste und CSV-Übersicht ohne persönlichen Code (Spalte `Code` entfällt, dafür `aktiv` der Teilnahme in der Liste); Kursübersicht für das Portal | Verbund | Verbund | ja | teilweise (Task 4; Kursübersicht Task 8) |
 | K15 | src/services/themen.js, src/services/lehrkraftMaterial.js | Akten statt Arbeitsblätter (`seed/akten.json`, `/akten/`, `Akten_PDF/`) | Kryptos-Material | Fach | teilweise | teilweise (Akten-Ordner, siehe K20) |
-| K16 | src/routes/* | lokale Anmeldung, Beitritt, Kurs-/Schülerverwaltung entfernt | Login nur über das Portal | Entfernt | ja | geplant |
+| K16 | src/routes/* | entfernt: `schueler.js` – `/kurs/:code`, Beitritt, Anmeldung, Abmelden, `/kurs-wechseln` (→ `/api/sitzung/kurs`, Task 7); `lehrer.js` – Registrierung, Anmeldung, Abmelden, Passwort, Kurs anlegen/löschen, Schüler umbenennen/neuer Code/löschen/alle löschen, Beitritts-QR (`qrcode` wird im Server nicht mehr benutzt); `admin.js` – Lehrkraft-Verwaltung, Einmal-Passwort, Verbund-Zuordnung (Phase 2); 401-Antworten mit `{ anmelden: true, sso: '/sso/start' }`; CSV-/Backup-Dateinamen `kryptos_…` | Login nur über das Portal | Entfernt | ja | teilweise (Task 4; 404 auch ohne Sitzung prüft Task 9) |
 | K17 | src/domain.js | Listen aus `src/krypto/fach.js` (`WELTEN`, `LAB_KATEGORIEN`, `KATA_KATEGORIEN`, `FALLEN`, `RAENGE`), neue Exporte `PLATTFORM`, `LAB_KATEGORIE_NAMEN`, `TEAM_NAMEN`; Punkteformel, Boss-Konstanten, Leitner unverändert | Fachlisten Kryptos | Fach | Struktur ja, Inhalte nein | umgesetzt (Task 1, 8149545) |
 | K18 | src/content/generators.js | nur die `kategorie`-Werte der übernommenen Generatoren auf Kryptos-Slugs (`protokoll`, `einordnen`, `transposition`, `modulo`), damit der Validator sie annimmt; Rahmen unverändert | Übergang bis zum Ersatz (Art E, Krypto-Generatoren in `src/krypto/generatoren/`) | Fach | nein (wird ersetzt) | umgesetzt (Task 1, 8149545) |
 | K19 | public/static/js/common.js, render.js, interact.js, aufgabe.js, shared/baum.js | Kopfkommentar „Algo Quest Lab – …“ → „Lab-Kern – …“; in render.js „nie innerHTML“ → „nie als HTML-Zeichenkette“ (sonst schlägt `seiten.test.js` an) | kein „Algo Quest“ in `public/**` (TECHNIK §3.4, §15) | Fach | ja (neutraler Kern-Name) | umgesetzt (Task 2) |
 | K20 | src/app.js | Hinweisseite „Nur nach Anmeldung“: Titel „– Kryptos“, Stylesheet `basis.css` statt `style.css`; PDF-Ordner-Kandidaten zuerst `akten/` (Image) und `materialien/Akten_PDF` (Repo), Kern-Pfade als Rückfall | alte Oberfläche entfernt; Image-Pfad `/app/akten` (TECHNIK §16.2) | Fach | ja (Pfadliste konfigurierbar machen) | umgesetzt (Task 2) |
 | K21 | Dockerfile, .dockerignore | `ENV AUTH_MODUS=portal PLATTFORM_ID=kryptos`; nur `scripts/validate.js` + `vertrag_pruefen.js`, `docs/AUFGABENFORMAT.md` + `AUFGABENFORMAT_KRYPTO.md`; `materialien/Akten_PDF → ./akten` statt Arbeitsblätter; `.dockerignore` mit Ausnahmen für genau diese Dateien/Ordner, zusätzlich `prototyp`, `.github`, `.env*` | TECHNIK §16.2 | Betrieb | nein (plattformspezifisch) | umgesetzt (Task 2) |
 | K22 | .github/workflows/pruefung.yml | Jobs `app`, `krypto`, `inhalte` (TECHNIK §16.1); Push auf allen Branches, PR nach `main`; `krypto`/`inhalte` vorerst nur mit vorhandenen Schritten | Kryptos-Prüfkette | Betrieb | nein | teilweise (Task 2; Schritte folgen mit M2/Material-Pipeline) |
-| K23 | src/server.js | liest die Verbund-Konfiguration über `src/verbund/konfig.js` (`ladeKonfig`), bricht ohne `PLATTFORM_URL`/`PORTAL_URL`/`PORTAL_PUBLIC_KEY`/`SESSION_SECRET` (≥ 32) oder mit `AUTH_MODUS ≠ portal` mit deutscher Meldung ab (außer `NODE_ENV=test`); DB-Datei `kryptos.db`; keine `ADMIN_*`-Variablen mehr | Login nur über das Portal, strenger Start (TECHNIK §2.1, §6.1) | Verbund | ja (mit konfigurierbarer App-Kennung) | umgesetzt (Task 3); Wartungsjob folgt (TECHNIK §7.4) |
+| K23 | src/server.js | liest die Verbund-Konfiguration über `src/verbund/konfig.js` (`ladeKonfig`), bricht ohne `PLATTFORM_URL`/`PORTAL_URL`/`PORTAL_PUBLIC_KEY`/`SESSION_SECRET` (≥ 32) oder mit `AUTH_MODUS ≠ portal` mit deutscher Meldung ab (außer `NODE_ENV=test`); DB-Datei `kryptos.db`; keine `ADMIN_*`-Variablen mehr; Abbruch mit Meldung auch bei fremder Datenbank (Task 4) | Login nur über das Portal, strenger Start (TECHNIK §2.1, §6.1) | Verbund | ja (mit konfigurierbarer App-Kennung) | umgesetzt (Tasks 3–4); Wartungsjob folgt (TECHNIK §7.4) |
+| K24 | src/services/lernen.js | Profil ohne `code`/`portal`, `kurs` nur mit Namen | keine persönlichen Codes | Verbund | ja | umgesetzt (Task 4) |
+| K25 | src/services/index.js | Backup-Kennung `{ app: 'kryptos', format: 1 }` (Tabellenliste aus `db.js`); Dienst `verbund` (Algo-Quest-Anbindung) entfernt – Ersatz in `src/verbund/` | eigenes Backup-Format, kein Mischen mit Algo-Quest-Backups | Verbund | ja (App-Kennung konfigurierbar) | umgesetzt (Task 4) |
+| K26 | src/services/manifest.js | liest die neue Verbund-Konfiguration (`plattformId`, `plattformUrl`, `portalUrl`, `authModus`); `auth.sso` = Portal und Schlüssel konfiguriert | Übergang bis zum Kryptos-Manifest (TECHNIK §6.9, Task 9) | Verbund | ja | teilweise (Task 4; Inhalte Task 9) |
 
 ### Hinweise zu K21 (Image)
 
@@ -56,18 +59,39 @@ Lehrkraft-Downloads ohne `verzeichnis.json`). `.gitkeep` landet im Image, wird a
   `shared/baum.js`) bleibt (nur K19). Der e2e-Durchlauf `test/e2e/e2e.js` (Algo-Quest-Oberfläche) läuft bis M4 nicht.
 - **Inhalte (Task 1):** `seed/` ohne Algo-Quest-Inhalte (leere Platzhalter).
 
-## Algo-Quest-eigene Verbund-Dateien (werden in M1 ersetzt)
+## Algo-Quest-eigene Verbund-Dateien (in M1 ersetzt)
 
-AlgoQuest 2.8.2 bringt bereits eine eigene Anbindung an InfoLabs mit (README Teil H dort, Phase 1). Diese Dateien sind
-mitkopiert, damit der Kern startet und die Tests laufen; sie werden in M1 durch `src/verbund/` (TECHNIK §2.4,
-Kern-Kandidat „lab-kern“) ersetzt bzw. entfernt und hier dann als `Entfernt` vermerkt:
+AlgoQuest 2.8.2 bringt bereits eine eigene Anbindung an InfoLabs mit (README Teil H dort, Phase 1). Sie arbeitete auf dem
+alten Schema (`lehrkraefte`, `kurse.portal_id`, `schueler.code`) und ist mit dem Kryptos-Schema (Task 4) entfernt; der
+Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
 
 | Datei | Inhalt in AlgoQuest 2.8.2 | Verbleib |
 |---|---|---|
-| `src/verbundKonfig.js` | Umgebungsvariablen `AUTH_MODUS`, `PORTAL_*` | ersetzt durch `src/verbund/konfig.js` (Task 3); bleibt nur als Übergang, solange `src/routes/sso.js` sie liest – `createApp` füttert sie aus der neuen Konfiguration |
-| `src/routes/sso.js` | `/sso/start`, `/sso/ende`, `/sso/abmelden`, Verbund-API `/api/verbund/…` | → `src/verbund/sso.js`, `src/verbund/verbund.js` (Tasks 5–7); in Task 2 nur Titel/Stylesheet der Hinweisseite angepasst („– Kryptos“, `basis.css`) |
-| `src/services/verbund.js` | Upsert nach `sub`, Kurse/Mitgliedschaften, Löschen, Übersicht | → `src/verbund/verbund.js`, `src/verbund/loeschen.js` |
-| `src/services/konten.js` | lokale Konten **und** Portal-Konten (`sub`) | → K12 |
-| `src/services/kurse.js` | lokale Kurse mit Kurscode **und** Portal-Kurse | → K12 |
-| `src/services/manifest.js` | Manifest „Algo Quest“ | → Kryptos-Manifest (TECHNIK §6.9) |
+| `src/verbundKonfig.js` | Umgebungsvariablen `AUTH_MODUS`, `PORTAL_*` | **entfernt** (Task 4); Ersatz `src/verbund/konfig.js` (Task 3) |
+| `src/routes/sso.js` | `/sso/start`, `/sso/ende`, `/sso/abmelden`, Verbund-API `/api/verbund/…` | **entfernt** (Task 4); Ersatz `src/verbund/sso.js`, `src/verbund/verbund.js` (Tasks 5–8) |
+| `src/services/verbund.js` | Upsert nach `sub`, Kurse/Mitgliedschaften, Löschen, Übersicht, Phase-2-Zuordnung | **entfernt** (Task 4); Ersatz `src/verbund/verbund.js`, `src/verbund/loeschen.js`, `konten.upsert`/`kurse.upsertAusToken` (Tasks 6, 8) |
+| `src/services/konten.js` | lokale Konten **und** Portal-Konten (`sub`) | ersetzt (K12) |
+| `src/services/kurse.js` | lokale Kurse mit Kurscode **und** Portal-Kurse | ersetzt (K12) |
+| `src/services/manifest.js` | Manifest „Algo Quest“ | K26; Kryptos-Manifest (TECHNIK §6.9) in Task 9 |
 | `src/jwt.js` | Kopie aus labs (identisch mit labs `3f48c5c`) | bleibt (byte-gleich, `kern_kopien.test.js`) |
+
+## Neu in `src/verbund/` (Kern-Kandidat lab-kern)
+
+- `konfig.js` (Task 3): `ladeKonfig(env, { test })` nach TECHNIK §6.1.
+- `sitzung.js` (Task 4, vorgezogen aus Task 7): Cookies `kr_s { sub, g, t }`, `kr_l { sub, g }`, `schueler(req, res)`,
+  `lehrkraft(req)`, `setzeSchueler/setzeLehrkraft`, `loesche…` (TECHNIK §6.4). Seiten-Wächter, Kurswahl und Abmelden
+  folgen in Task 7.
+
+## Entfernte Kern-Tests (Task 4)
+
+Die Funktionen sind nach TECHNIK §6.5 entfernt; die Tests dazu entfallen bzw. werden in Tasks 5–9 neu geschrieben:
+
+- `test/anmeldung.test.js` (Beitritt mit Kurscode, Namenskonflikt, Wiederanmeldung mit Code, Rate-Limits für Beitritt/
+  Login/Registrierung, neuer Code, Abmelden). Erhalten und nach `test/sitzung.test.js` verschoben: Prüf-Rate-Limit
+  90/min, gefälschte/abgelaufene Cookies, Cookie-Attribute.
+- `test/sso.test.js` (Algo-Quest-SSO, Verbund-API, Phase-2-Zuordnung, Schema-3-Upgrade) – neu in Tasks 5–8.
+- `test/rechte.test.js`: Freigabe-Workflow, Einmal-Passwort, Superadmin aus `ADMIN_*`, scrypt-Hashes.
+- `test/verwaltung.test.js`: Kurs anlegen/Kurscode, Schüler umbenennen, Löschen einzelner/aller Schüler und des Kurses,
+  Superadmin löscht Lehrkraft, Beitritts-QR (Löschung kommt über die Verbund-API, Task 8).
+- `test/upgrade_seed.test.js`: v1-Upgrade (Sicherung alter Datenbanken) – ersetzt durch „fremde Datenbank → Abbruch“.
+- `test/fixtures/schema_v1_0.sql` (nur für den v1-Upgrade-Test).

@@ -14,14 +14,11 @@ const { createThemen } = require('./services/themen');
 const { createLehrkraftMaterial, URL_LEHRKRAFT } = require('./services/lehrkraftMaterial');
 const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
-const { verbundKonfig } = require('./verbundKonfig');
 const { ladeKonfig } = require('./verbund/konfig');
-const { ssoRoutes } = require('./routes/sso');
+const { createSitzung } = require('./verbund/sitzung');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const ROOT_DIR = path.join(__dirname, '..');
-const LEHRKRAFT_SESSION_MS = 8 * 3600 * 1000; // 8 Stunden
-const SCHUELER_SESSION_MS = 30 * 24 * 3600 * 1000; // 30 Tage
 const VERSION = require('../package.json').version;
 
 /**
@@ -29,8 +26,8 @@ const VERSION = require('../package.json').version;
  * @param {object} opts
  * @param {string} opts.dbFile            SQLite-Datei oder ':memory:'
  * @param {string} opts.sessionSecret     Geheimnis zum Signieren der Cookies
- * @param {string} [opts.adminEmail]      Superadmin-Login (Standard „admin“)
- * @param {string} [opts.adminPassword]   Superadmin-Passwort (leer = Superadmin-Login gesperrt)
+ * @param {object} [opts.konfig]          Verbund-Konfiguration aus ladeKonfig (Server); fehlt sie (Tests), wird sie im
+ *                                         Testmodus aus opts.portalUrl, opts.portalPublicKey, opts.plattformUrl gebildet
  * @param {string|null} [opts.seedDir]    Ordner mit welten/*.json und kata/*.json
  * @param {string[]} [opts.weltDateien]   zusätzliche Welt-Dateien (Tests/Entwicklung)
  * @param {string|number|boolean} [opts.trustProxy]
@@ -48,10 +45,6 @@ function createApp(opts) {
   const db = openDatabase(opts.dbFile, { log });
   const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed };
   const svc = createServices(ctx);
-  const secret = opts.sessionSecret;
-  const superadminAktiv = !!opts.adminPassword;
-
-  svc.konten.sichereSuperadmin(opts.adminEmail || 'admin', opts.adminPassword || '');
   ladeInhalte(svc, opts, log);
   const abDir = arbeitsblaetterOrdner(opts);
   // Ohne Anmeldung nur die Demo-PDFs aus seed/demo_materialien.json (Gastmodus, Themenseite)
@@ -64,20 +57,14 @@ function createApp(opts) {
   const material = createLehrkraftMaterial({ materialienDir: materialienOrdner(opts), abDir, demo, log });
   const gast = createGast(ctx, { datei: gastDatei(opts), inhalte: svc.inhalte, material, log });
   // Verbund-Konfiguration (TECHNIK §6.1): vom Server (ladeKonfig) oder – in Tests – aus opts (Testmodus, ohne Abbruch).
-  const vkonfig =
+  const konfig =
     opts.konfig ||
     ladeKonfig(
       { PORTAL_URL: opts.portalUrl, PORTAL_PUBLIC_KEY: opts.portalPublicKey, PLATTFORM_URL: opts.plattformUrl, PLATTFORM_ID: opts.plattformId, SESSION_SECRET: opts.sessionSecret, VERTRAG_VERSION: opts.vertragVersion },
       { test: true }
     );
-  // Übergang bis Task 5–9: die mitkopierte Algo-Quest-Anbindung (verbundKonfig, routes/sso.js) liest weiter ihr Format.
-  const konfig = verbundKonfig(
-    opts.umgebung ||
-      (opts.konfig
-        ? { AUTH_MODUS: 'portal', PLATTFORM_ID: vkonfig.plattformId, PLATTFORM_URL: vkonfig.plattformUrl || '', PORTAL_URL: vkonfig.portalUrl || '', PORTAL_PUBLIC_KEY: vkonfig.portalPublicKey || '' }
-        : process.env),
-    log
-  );
+  const secret = opts.sessionSecret || konfig.sessionSecret;
+  const sitzung = createSitzung({ db, secret });
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });
 
   const app = express();
@@ -112,11 +99,9 @@ function createApp(opts) {
     next();
   });
 
-  /* ---------- Sitzungen lesen ---------- */
+  /* ---------- Sitzungen lesen (kr_s / kr_l, TECHNIK §6.4) ---------- */
   app.use((req, res, next) => {
-    const cookies = S.parseCookies(req.headers.cookie);
-    req.sS = cookies[S.COOKIE_SCHUELER] ? S.verify(cookies[S.COOKIE_SCHUELER], secret) : null;
-    req.sL = cookies[S.COOKIE_LEHRKRAFT] ? S.verify(cookies[S.COOKIE_LEHRKRAFT], secret) : null;
+    sitzung.lesen(req);
     next();
   });
 
@@ -138,41 +123,34 @@ function createApp(opts) {
 
   app.get('/robots.txt', (req, res) => res.type('text').send('User-agent: *\nDisallow: /\n'));
 
-  /* ---------- Plattform-Verbund: SSO und Verbund-API (eigene Router, vor der übrigen API) ---------- */
+  /* ---------- Helfer für die Routen ---------- */
+  // SSO (/sso/*) und Verbund-API (/api/verbund/*) folgen in src/verbund/ (Plan Tasks 5–8).
   const helpers = {
     svc,
-    secret,
-    superadminAktiv,
     now: ctx.now,
     konfig,
-    setSchuelerCookie: (req, res, row, o = {}) => S.setCookie(req, res, S.COOKIE_SCHUELER, { s: row.id, g: row.session_gen, ...(o.portal ? { p: 1 } : {}) }, secret, SCHUELER_SESSION_MS),
-    setLehrkraftCookie: (req, res, row, o = {}) => S.setCookie(req, res, S.COOKIE_LEHRKRAFT, { l: row.id, g: row.session_gen, ...(o.portal ? { p: 1 } : {}) }, secret, LEHRKRAFT_SESSION_MS),
-    clearSchueler: (req, res) => S.clearCookie(req, res, S.COOKIE_SCHUELER),
-    clearLehrkraft: (req, res) => S.clearCookie(req, res, S.COOKIE_LEHRKRAFT),
-    schueler: (req) => {
-      const r = req.sS && Number.isInteger(req.sS.s) ? svc.kurse.ausSession(req.sS.s, req.sS.g) : null;
-      return r && r.sub && !konfig.sso ? null : r;
-    },
-    lehrkraft: (req) => (req.sL && Number.isInteger(req.sL.l) ? svc.konten.ausSession(req.sL.l, req.sL.g, { superadminAktiv, portalAktiv: konfig.sso }) : null),
+    sitzung,
+    clearSchueler: sitzung.loescheSchueler,
+    clearLehrkraft: sitzung.loescheLehrkraft,
+    schueler: sitzung.schueler,
+    lehrkraft: sitzung.lehrkraft,
     material,
     gast,
-    reload: () => ladeInhalte(svc, opts, log),
-    sichereAdmin: () => svc.konten.sichereSuperadmin(opts.adminEmail || 'admin', opts.adminPassword || '')
+    reload: () => ladeInhalte(svc, opts, log)
   };
-  const sso = ssoRoutes(app, helpers, konfig);
 
   /* ---------- Seiten ---------- */
   const page = (file) => (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.sendFile(path.join(PUBLIC_DIR, file));
   };
+  // Seiten-Wächter (stille Weiterleitung zu /sso/start) folgen mit Plan Task 7 (TECHNIK §6.4).
   app.get('/', page('index.html'));
-  app.get('/k/:code', page('index.html'));
-  app.get('/spiel', sso.stillAnmelden('s'), page('spiel.html'));
-  app.get('/lehrer', sso.stillAnmelden('l'), page('lehrer.html'));
-  app.get('/lehrer/urkunden', sso.stillAnmelden('l'), page('urkunden.html'));
+  app.get('/spiel', page('spiel.html'));
+  app.get('/lehrer', page('lehrer.html'));
+  app.get('/lehrer/urkunden', page('urkunden.html'));
   app.get('/admin', (req, res) => res.redirect('/lehrer#/admin'));
-  app.get('/board/:code', page('board.html'));
+  app.get('/board/:schluessel', page('board.html'));
   app.get('/datenschutz', page('datenschutz.html'));
   app.get('/themen', page('themen.html'));
   app.get('/gast', page('gast.html'));
@@ -217,24 +195,25 @@ function createApp(opts) {
     let schueler = null;
     if (s) {
       const k = svc.kurse.kursRow(s.kurs_id);
-      schueler = { name: s.name, kurs: k ? k.name : '', portal: !!s.sub, kurse: svc.verbund.kurseVon(s) };
+      const kurse = svc.konten.teilnahmen(s.sub).filter((t) => t.aktiv).map((t) => ({ kurs: t.kurs, name: t.name, aktuell: t.id === s.id }));
+      schueler = { name: s.name, kurs: k ? k.name : '', kurse };
     }
     res.json({
       schueler,
-      lehrkraft: l ? svc.konten.ansicht(l) : null,
+      lehrkraft: l ? svc.konten.ansicht(l.konto) : null,
       version: VERSION,
-      // Verbund: Link „⌂ Portal“, Knopf „Über InfoLabs anmelden“, lokale Anmeldung erlaubt?
-      verbund: { portal: konfig.portal, sso: konfig.sso, lokal: konfig.lokal }
+      // Verbund: Link „⌂ Portal“; Anmeldung nur über das Portal
+      verbund: { portal: konfig.portalUrl, sso: '/sso/start' }
     });
   });
 
   /* Öffentliche Themenübersicht (ohne Lösungen) */
   api.get('/themen', (req, res) => res.json(themen.uebersicht()));
 
-  /* Öffentliches Beamer-Board (nur wenn im Kurs aktiviert) */
-  api.get('/board/:code', (req, res) => {
-    const b = svc.auswertung.board(req.params.code);
-    if (!b) return res.status(404).json({ error: 'Kein Board für diesen Kurscode (oder im Kurs nicht aktiviert).' });
+  /* Öffentliches Beamer-Board mit Board-Schlüssel (nur wenn im Kurs aktiviert) */
+  api.get('/board/:schluessel', (req, res) => {
+    const b = svc.auswertung.board(req.params.schluessel);
+    if (!b) return res.status(404).json({ error: 'Kein Board für diesen Schlüssel (oder im Kurs nicht aktiviert).' });
     res.json(b);
   });
 
@@ -243,7 +222,7 @@ function createApp(opts) {
     const l = helpers.lehrkraft(req);
     const rel = [].concat(req.params.datei).join('/');
     // Lehrkraft-Dateien nur angemeldet – außer den wenigen Demo-Dateien des Gastmodus
-    const abs = (l && !l.muss_pw_aendern) || demo.lehrkraft.has(rel) ? material.datei(rel) : null;
+    const abs = l || demo.lehrkraft.has(rel) ? material.datei(rel) : null;
     res.set('Cache-Control', 'private, no-store');
     if (!abs) return res.status(404).type('text').send('Nicht gefunden.');
     res.sendFile(abs);
@@ -273,7 +252,7 @@ function createApp(opts) {
   });
 
   app.locals.db = db;
-  app.locals.konfig = vkonfig;
+  app.locals.konfig = konfig;
   app.locals.services = svc;
   app.locals.ctx = ctx;
   return app;

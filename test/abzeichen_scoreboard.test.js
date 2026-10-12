@@ -103,8 +103,8 @@ test('Fleißig (50), Unermüdlich (150), Ohne Tipp (20 × Stufe 3) mit einer gro
 
 test('Scoreboard: Sichtbarkeit, Filter je Welt, eigener Eintrag, gleiche Punkte = gleicher Platz, keine ids', async () => {
   const { app, s, lk, kurs } = await H.szenario();
-  const t = await H.schuelerClient(app, kurs.code, 'Tim T.');
-  const u = await H.schuelerClient(app, kurs.code, 'Uta U.');
+  const t = await H.schuelerClient(app, kurs, 'Tim T.');
+  const u = await H.schuelerClient(app, kurs, 'Uta U.');
   await s.post('/api/aufgaben/W9-L1-01/pruefen').send({ antwort: RICHTIG['W9-L1-01'] }); // 10
   await t.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] }); // 10
   await u.post('/api/aufgaben/W9-L1-02/pruefen').send({ antwort: RICHTIG['W9-L1-02'] }); // 20
@@ -121,18 +121,18 @@ test('Scoreboard: Sichtbarkeit, Filter je Welt, eigener Eintrag, gleiche Punkte 
   assert.equal((await lk.get(`/api/lehrer/kurse/${kurs.id}/scoreboard`)).status, 200, 'Lehrkraft sieht es weiterhin');
   // anderer Kurs sieht nichts davon
   const k2 = await H.kursAnlegen(lk, 'Anderer Kurs');
-  const x = await H.schuelerClient(app, k2.code, 'Xaver X.');
+  const x = await H.schuelerClient(app, k2, 'Xaver X.');
   assert.deepEqual((await x.get('/api/scoreboard')).body.liste.map((r) => r.name), ['Xaver X.']);
 });
 
 test('Beamer-Board: nur wenn aktiviert; Top 15, Weltfortschritt, letzte 8 Erfolge', async () => {
   const { app, s, lk, kurs } = await H.szenario();
   const pub = H.client(app);
-  assert.equal((await pub.get('/api/board/' + kurs.code)).status, 404);
+  assert.equal((await pub.get('/api/board/' + kurs.boardSchluessel)).status, 404);
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { beamer: true } });
-  for (let i = 0; i < 17; i++) await H.schuelerClient(app, kurs.code, 'Spieler ' + i);
+  for (let i = 0; i < 17; i++) await H.schuelerClient(app, kurs, 'Spieler ' + i);
   for (const id of LEVEL_AUFGABEN.slice(0, 3)) await s.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
-  const b = (await pub.get('/api/board/' + kurs.code.toLowerCase())).body;
+  const b = (await pub.get('/api/board/' + kurs.boardSchluessel)).body;
   assert.equal(b.liste.length, 15);
   assert.equal(b.liste[0].name, 'Lena S.');
   assert.equal(b.schueler, 18);
@@ -140,15 +140,17 @@ test('Beamer-Board: nur wenn aktiviert; Top 15, Weltfortschritt, letzte 8 Erfolg
   assert.ok(w.anteil > 0 && w.anteil < 0.1);
   assert.ok(b.erfolge.length >= 2 && b.erfolge.length <= 8);
   assert.ok(b.erfolge.some((e) => e.text === 'Lena S. hat das Abzeichen „Erste Schritte“ erhalten'));
-  // Umbenennen wirkt auch rückwirkend in den Erfolgen
-  const sid = (await lk.get(`/api/lehrer/kurse/${kurs.id}/schueler`)).body.find((x) => x.name === 'Lena S.').id;
-  await lk.patch(`/api/lehrer/kurse/${kurs.id}/schueler/${sid}`).send({ name: 'Lena M.' });
-  const b2 = (await pub.get('/api/board/' + kurs.code)).body;
+  // Umbenennen (im Portal, bei der nächsten Anmeldung übernommen) wirkt auch rückwirkend in den Erfolgen
+  app.locals.db.prepare("UPDATE schueler SET name = 'Lena M.', name_key = 'lena m.' WHERE id = ?").run(s.id);
+  const b2 = (await pub.get('/api/board/' + kurs.boardSchluessel)).body;
   assert.ok(b2.erfolge.every((e) => !e.text.includes('Lena S.')));
-  assert.ok(!JSON.stringify(b2).includes('"code"') || !JSON.stringify(b2.liste).includes('-'), 'keine Schülercodes');
-  assert.ok(!JSON.stringify(b2).includes(s.code), 'Schülercode taucht nicht auf');
+  assert.ok(b2.erfolge.some((e) => e.text.includes('Lena M.')));
+  const text = JSON.stringify(b2);
+  for (const geheim of [s.sub, kurs.kurs, kurs.boardSchluessel, '"id"']) assert.ok(!text.includes(geheim), `keine internen Kennungen: ${geheim}`);
+  // nur der genaue Board-Schlüssel (nicht der Kurs-ID oder ein anderer Schlüssel)
+  for (const falsch of [kurs.kurs, 'AAAAAAAAAAAA', kurs.boardSchluessel.slice(0, -1)]) assert.equal((await pub.get('/api/board/' + encodeURIComponent(falsch))).status, 404, falsch);
   // Seite selbst
-  const seite = await pub.get('/board/' + kurs.code);
+  const seite = await pub.get('/board/' + kurs.boardSchluessel);
   assert.equal(seite.status, 200);
   assert.match(seite.text, /noindex/);
 });

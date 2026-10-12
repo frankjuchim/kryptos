@@ -19,15 +19,22 @@ const SEED_DIR = process.env.SEED_DIR || path.join(__dirname, '..', 'seed');
 // Nur für Entwicklung/Tests: zusätzliche Welt-Dateien (durch Komma getrennt), z. B. test/fixtures/welt_beispiel.json
 const WELT_DATEIEN = (process.env.WELT_DATEIEN || '').split(',').map((s) => s.trim()).filter(Boolean);
 
-const app = createApp({
-  dbFile: path.join(konfig.dataDir, 'kryptos.db'),
-  sessionSecret: konfig.sessionSecret,
-  konfig,
-  seedDir: SEED_DIR,
-  weltDateien: WELT_DATEIEN.map((f) => path.resolve(f)),
-  trustProxy: konfig.trustProxy,
-  log
-});
+let app;
+try {
+  app = createApp({
+    dbFile: path.join(konfig.dataDir, 'kryptos.db'),
+    sessionSecret: konfig.sessionSecret,
+    konfig,
+    seedDir: SEED_DIR,
+    weltDateien: WELT_DATEIEN.map((f) => path.resolve(f)),
+    trustProxy: konfig.trustProxy,
+    log
+  });
+} catch (e) {
+  // z. B. fremde Datenbank (meta.app ≠ kryptos) oder neueres Schema (src/db.js)
+  console.error(`Kryptos startet nicht. ${e.message}`);
+  process.exit(1);
+}
 
 const server = app.listen(konfig.port, () => log(`Kryptos ${VERSION} läuft auf Port ${konfig.port} (Daten: ${konfig.dataDir}, Portal: ${konfig.portalUrl})`));
 

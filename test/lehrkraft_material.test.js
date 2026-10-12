@@ -59,10 +59,10 @@ test('Gäste und Schüler: keine Übersicht, keine Lösungs-PDFs (404); keine Pf
   await s.get(url).expect(404);
   await H.client(app).get('/api/lehrer/materialien').expect(401);
   await s.get('/api/lehrer/materialien').expect(401);
-  // nach dem Abmelden ist die Datei wieder weg
+  // nach dem Ende der Sitzung (z. B. „Überall abmelden“: neue session_gen) ist die Datei wieder weg
   const lk2 = await H.adminClient(app);
   await lk2.get(url).expect(200);
-  await lk2.post('/api/lehrer/abmelden').send({}).expect(200);
+  app.locals.db.prepare('UPDATE konten SET session_gen = session_gen + 1 WHERE sub = ?').run(lk2.sub);
   await lk2.get(url).expect(404);
   // Pfad-Tricks und nicht verzeichnete Dateien
   for (const u of [

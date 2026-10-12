@@ -12,7 +12,6 @@ const { createBoss } = require('./boss');
 const { createTraining } = require('./training');
 const { createAuswertung } = require('./auswertung');
 const { createKata } = require('./kata');
-const { createVerbund } = require('./verbund');
 
 function createServices(ctx) {
   const inhalte = createInhalte(ctx);
@@ -25,11 +24,12 @@ function createServices(ctx) {
   const auswertung = createAuswertung(ctx, { inhalte, kurse, stand, lernen });
   const kata = createKata(ctx);
   const daten = createDaten(ctx, { inhalte });
-  const verbund = createVerbund(ctx, { kurse, stand, inhalte });
-  return { inhalte, konten, kurse, stand, lernen, boss, training, auswertung, kata, daten, verbund };
+  return { inhalte, konten, kurse, stand, lernen, boss, training, auswertung, kata, daten };
 }
 
 /* ---------- Backup / Restore (JSON, nur Superadmin) ---------- */
+// Kennung { app: 'kryptos', format: 1 } (TECHNIK §7.1); Tabellenliste aus db.js (ohne sso_jti und flüchtige Funkraum-Tabellen).
+const BACKUP_FORMAT = 1;
 
 function createDaten(ctx, { inhalte }) {
   const { db } = ctx;
@@ -37,12 +37,12 @@ function createDaten(ctx, { inhalte }) {
   function exportieren() {
     const tables = {};
     for (const t of TABLES) tables[t] = db.prepare(`SELECT * FROM ${t}`).all();
-    return { app: APP_KENNUNG, format: 2, schemaVersion: SCHEMA_VERSION, exportedAt: new Date(ctx.now()).toISOString(), tables };
+    return { app: APP_KENNUNG, format: BACKUP_FORMAT, schemaVersion: SCHEMA_VERSION, exportedAt: new Date(ctx.now()).toISOString(), tables };
   }
 
   function wiederherstellen(data) {
-    if (!data || data.app !== APP_KENNUNG || data.format !== 2 || !data.tables || typeof data.tables !== 'object') {
-      throw new V.ValidationError('Ungültige Backup-Datei (erwartet: Algo-Quest-Lab-Backup, Format 2).');
+    if (!data || data.app !== APP_KENNUNG || data.format !== BACKUP_FORMAT || !data.tables || typeof data.tables !== 'object') {
+      throw new V.ValidationError('Ungültige Backup-Datei (erwartet: Kryptos-Backup, Format 1).');
     }
     const columns = {};
     for (const k of Object.keys(data.tables)) if (!TABLES.includes(k)) throw new V.ValidationError(`Backup: unbekannte Tabelle ${k}.`);

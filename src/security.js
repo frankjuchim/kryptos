@@ -1,9 +1,10 @@
 'use strict';
 const crypto = require('node:crypto');
 
-/* ---------- Cookies: getrennt für Schüler und Lehrkräfte ---------- */
-const COOKIE_SCHUELER = 'aql_s';
-const COOKIE_LEHRKRAFT = 'aql_l';
+/* ---------- Cookies: getrennt für Schüler und Lehrkräfte (Kryptos: kr_*, TECHNIK §6.4) ---------- */
+const COOKIE_SCHUELER = 'kr_s';
+const COOKIE_LEHRKRAFT = 'kr_l';
+const COOKIE_SSO_STATE = 'kr_sso_state';
 
 function b64url(buf) {
   return Buffer.from(buf).toString('base64url');
@@ -70,53 +71,6 @@ function safeEqual(a, b) {
   const ha = crypto.createHash('sha256').update(String(a)).digest();
   const hb = crypto.createHash('sha256').update(String(b)).digest();
   return crypto.timingSafeEqual(ha, hb);
-}
-
-/* ---------- Passwörter: scrypt ---------- */
-// Parameter: N = 2^15 (Kosten), r = 8, p = 1, Schlüssellänge 64 Byte, Salt 16 Byte (zufällig je Passwort).
-// Format in der Datenbank: scrypt$N$r$p$<salt base64>$<hash base64>
-// (Nur für automatische Tests kann N über AQL_SCRYPT_N verkleinert werden.)
-const SCRYPT = { N: Number(process.env.AQL_SCRYPT_N) || 32768, r: 8, p: 1, keylen: 64, maxmem: 64 * 1024 * 1024 };
-
-function hashPasswortSync(pw) {
-  const salt = crypto.randomBytes(16);
-  const hash = crypto.scryptSync(String(pw), salt, SCRYPT.keylen, { N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p, maxmem: SCRYPT.maxmem });
-  return `scrypt$${SCRYPT.N}$${SCRYPT.r}$${SCRYPT.p}$${salt.toString('base64')}$${hash.toString('base64')}`;
-}
-
-function hashPasswort(pw) {
-  return new Promise((resolve, reject) => {
-    const salt = crypto.randomBytes(16);
-    crypto.scrypt(String(pw), salt, SCRYPT.keylen, { N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p, maxmem: SCRYPT.maxmem }, (err, hash) => {
-      if (err) return reject(err);
-      resolve(`scrypt$${SCRYPT.N}$${SCRYPT.r}$${SCRYPT.p}$${salt.toString('base64')}$${hash.toString('base64')}`);
-    });
-  });
-}
-
-function parseHash(stored) {
-  const parts = String(stored || '').split('$');
-  if (parts.length !== 6 || parts[0] !== 'scrypt') return null;
-  const [, N, r, p, salt, hash] = parts;
-  return { N: Number(N), r: Number(r), p: Number(p), salt: Buffer.from(salt, 'base64'), hash: Buffer.from(hash, 'base64') };
-}
-
-function pruefePasswortSync(pw, stored) {
-  const h = parseHash(stored);
-  if (!h) return false;
-  const got = crypto.scryptSync(String(pw), h.salt, h.hash.length, { N: h.N, r: h.r, p: h.p, maxmem: SCRYPT.maxmem });
-  return crypto.timingSafeEqual(got, h.hash);
-}
-
-/** Passwort prüfen (asynchron). Ohne gültigen Hash wird trotzdem gerechnet (gleiche Antwortzeit). */
-function pruefePasswort(pw, stored) {
-  return new Promise((resolve) => {
-    const h = parseHash(stored) || { N: SCRYPT.N, r: SCRYPT.r, p: SCRYPT.p, salt: Buffer.alloc(16), hash: Buffer.alloc(64), dummy: true };
-    crypto.scrypt(String(pw), h.salt, h.hash.length, { N: h.N, r: h.r, p: h.p, maxmem: SCRYPT.maxmem }, (err, got) => {
-      if (err || h.dummy) return resolve(false);
-      resolve(crypto.timingSafeEqual(got, h.hash));
-    });
-  });
 }
 
 /* ---------- Rate-Limits (im Speicher) ---------- */
@@ -193,60 +147,24 @@ function sameOriginCheck(req, res, next) {
   next();
 }
 
-/* ---------- Zufallscodes ---------- */
+/* ---------- Zufall ---------- */
 
-const KURS_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // ohne 0/O/1/I
-const CODE_BUCHSTABEN = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // ohne I/O
-const CODE_ZIFFERN = '23456789'; // ohne 0/1
-
-function randomFrom(alphabet, len) {
-  let s = '';
-  for (let i = 0; i < len; i++) s += alphabet[crypto.randomInt(alphabet.length)];
-  return s;
-}
-
-function kursCode() {
-  return randomFrom(KURS_ALPHABET, 6);
-}
-
-/** Persönlicher Schülercode im Format ABC-123. */
-function schuelerCode() {
-  return `${randomFrom(CODE_BUCHSTABEN, 3)}-${randomFrom(CODE_ZIFFERN, 3)}`;
-}
-
-/** Eingabe eines Schülercodes vereinheitlichen ("abc123", "ABC 123" → "ABC-123"). */
-function normSchuelerCode(v) {
-  const s = String(v || '')
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '');
-  if (!/^[A-Z]{3}[0-9]{3}$/.test(s)) return null;
-  return `${s.slice(0, 3)}-${s.slice(3)}`;
-}
-
-function einmalPasswort() {
-  // gut abtippbar, 12 Zeichen aus dem eindeutigen Alphabet, in Vierergruppen
-  const s = randomFrom(KURS_ALPHABET.toLowerCase().replace(/[^a-z2-9]/g, '') + KURS_ALPHABET, 12);
-  return `${s.slice(0, 4)}-${s.slice(4, 8)}-${s.slice(8)}`;
+/** Zufallstext aus `bytes` Zufallsbytes, base64url (z. B. 9 Byte → 12 Zeichen für den Board-Schlüssel). */
+function zufallsText(bytes) {
+  return crypto.randomBytes(bytes).toString('base64url');
 }
 
 module.exports = {
   COOKIE_SCHUELER,
   COOKIE_LEHRKRAFT,
+  COOKIE_SSO_STATE,
   sign,
   verify,
   parseCookies,
   setCookie,
   clearCookie,
   safeEqual,
-  SCRYPT,
-  hashPasswort,
-  hashPasswortSync,
-  pruefePasswort,
-  pruefePasswortSync,
   Limiter,
   sameOriginCheck,
-  kursCode,
-  schuelerCode,
-  normSchuelerCode,
-  einmalPasswort
+  zufallsText
 };

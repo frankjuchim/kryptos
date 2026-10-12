@@ -7,15 +7,14 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   const { db } = ctx;
   const kat = () => inhalte.katalog;
 
-  /** Schülerliste für die Kursverwaltung (Name, Code, Punkte, gelöst, zuletzt aktiv). */
+  /** Schülerliste für die Kursverwaltung (Name, Punkte, gelöst, aktiv, zuletzt aktiv) – Kryptos: ohne persönlichen Code. */
   function schuelerListe(lk, kursId) {
     const k = kurse.kursFuer(lk, kursId);
     const map = stand.staende(k.id);
     return [...map.values()].map((e) => ({
       id: e.id,
       name: e.name,
-      code: e.row.code,
-      portal: !!e.row.sub,
+      aktiv: e.row.aktiv === 1,
       punkte: e.gesamt,
       geloest: e.geloest,
       abzeichen: e.abzeichen,
@@ -169,10 +168,9 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     }
     const map = stand.staende(k.id);
     const welten = [...kat().welten.values()];
-    const kopf = ['Name', 'Code', 'Punkte gesamt', 'Level-Punkte', 'Boss-Punkte', 'Training', 'Rang', 'gelöste Aufgaben', 'Abzeichen', ...welten.map((w) => `Welt ${w.nr} Level`), ...welten.filter((w) => w.boss).map((w) => `Boss ${w.nr} (bester)`), 'zuletzt aktiv'];
+    const kopf = ['Name', 'Punkte gesamt', 'Level-Punkte', 'Boss-Punkte', 'Training', 'Rang', 'gelöste Aufgaben', 'Abzeichen', ...welten.map((w) => `Welt ${w.nr} Level`), ...welten.filter((w) => w.boss).map((w) => `Boss ${w.nr} (bester)`), 'zuletzt aktiv'];
     const zeilen = [...map.values()].map((e) => [
       e.name,
-      e.row.code,
       e.gesamt,
       e.punkteLevel,
       e.punkteBoss,
@@ -189,8 +187,9 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
 
   /* ---------- Beamer-Board ---------- */
 
-  function board(code) {
-    const k = kurse.kursPerCode(code);
+  /** Beamer-Board zum Board-Schlüssel des Kurses (ersetzt den Kurscode, TECHNIK §2.1). */
+  function board(schluessel) {
+    const k = kurse.kursPerBoardSchluessel(schluessel);
     if (!k || !k.einstellungen.beamer) return null;
     const liste = lernen.scoreboard(k.id).slice(0, 15).map(({ id, ich, ...r }) => r);
     const map = stand.staende(k.id);
@@ -206,7 +205,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       .prepare('SELECT e.text, e.at, s.name FROM erfolge e JOIN schueler s ON s.id = e.schueler_id WHERE e.kurs_id = ? ORDER BY e.id DESC LIMIT 8')
       .all(k.id)
       .map((r) => ({ text: r.text.split('{name}').join(r.name), at: r.at }));
-    return { kurs: { name: k.name, code: k.code }, schueler: n, liste, welten, erfolge };
+    return { kurs: { name: k.name }, schueler: n, liste, welten, erfolge };
   }
 
   /** Daten für die Abschluss-Urkunden (eine je Schüler). */

@@ -1,88 +1,45 @@
 'use strict';
-// Kursverwaltung: Einstellungen, Löschfunktionen, QR-Code, CSV, Auswertung, Backup/Restore, Kata.
+// Kursverwaltung: Einstellungen, Schülerliste, CSV, Auswertung, Backup/Restore, Kata, Urkunden, Vorschau.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const H = require('./helpers');
 const { RICHTIG, FALSCH } = require('./fixtures/antworten');
 
-test('Kurs anlegen: Kurscode 6 Zeichen ohne 0/O/1/I; Standard-Einstellungen; Validierung', async () => {
-  const { lk } = await H.szenario();
-  const k = await H.kursAnlegen(lk, 'Kurs B');
-  assert.match(k.code, /^[A-HJ-NP-Z2-9]{6}$/);
-  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, anmeldung: true, kursart: 'eA' });
-  assert.equal((await lk.post('/api/lehrer/kurse').send({ name: '' })).status, 400);
+test('Kurs vom Portal: Kurs-ID, Board-Schlüssel, Standard-Einstellungen (ohne „anmeldung“), Validierung', async () => {
+  const { lk, kurs } = await H.szenario();
+  const k = (await lk.get(`/api/lehrer/kurse/${kurs.id}`).expect(200)).body;
+  assert.match(k.kurs, /^k:\d+$/);
+  assert.match(k.boardSchluessel, /^[A-Za-z0-9_-]{12}$/);
+  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, kursart: 'eA' });
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { boss: 'irgendwie' } })).status, 400);
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: 'alle' } })).status, 400);
-  const r = await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ name: 'Kurs B2', einstellungen: { welten: [4, 4, 2], scoreboard: false } });
+  const r = await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: [4, 4, 2], scoreboard: false, anmeldung: false } });
   assert.deepEqual(r.body.einstellungen.welten, [2, 4]);
-  assert.equal(r.body.name, 'Kurs B2');
+  assert.equal(r.body.einstellungen.scoreboard, false);
+  assert.ok(!('anmeldung' in r.body.einstellungen), 'Einstellung „anmeldung“ wird ignoriert (TECHNIK §6.5)');
 });
 
-test('Schülerliste: Name, Code, Punkte, gelöst, zuletzt aktiv; umbenennen mit Konfliktprüfung', async () => {
+test('Schülerliste: Name, Punkte, gelöst, Teilnahme aktiv, zuletzt aktiv – ohne Codes und Kennungen', async () => {
   const { app, s, lk, kurs } = await H.szenario();
-  await H.schuelerClient(app, kurs.code, 'Tim T.');
+  await H.schuelerClient(app, kurs, 'Tim T.');
+  const weg = H.konto(app, 'schueler', 'Uta U.');
+  H.teilnahme(app, kurs, weg, 'Uta U.', { aktiv: false }); // Kurs fehlt im letzten Token: Lernstand bleibt sichtbar
   await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] });
   const liste = (await lk.get(`/api/lehrer/kurse/${kurs.id}/schueler`)).body;
+  assert.deepEqual(liste.map((x) => x.name).sort(), ['Lena S.', 'Tim T.', 'Uta U.']);
   const lena = liste.find((x) => x.name === 'Lena S.');
-  assert.equal(lena.code, s.code);
   assert.equal(lena.punkte, 10);
   assert.equal(lena.geloest, 1);
+  assert.equal(lena.aktiv, true);
   assert.ok(lena.zuletztAktiv);
-  assert.equal((await lk.patch(`/api/lehrer/kurse/${kurs.id}/schueler/${lena.id}`).send({ name: 'tim t.' })).status, 409);
-  assert.equal((await lk.patch(`/api/lehrer/kurse/${kurs.id}/schueler/${lena.id}`).send({ name: 'Lena M.' })).body.name, 'Lena M.');
-  assert.equal((await s.get('/api/profil')).body.name, 'Lena M.', 'Sitzung bleibt gültig');
-});
-
-test('Löschen: einzelner Schüler (mit Lernstand), alle Schüler (Bestätigung), Kurs (Bestätigung)', async () => {
-  const { app, s, lk, kurs } = await H.szenario();
-  const db = app.locals.db;
-  await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: FALSCH['W9-L1-04'] });
-  await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] });
-  const t = await H.schuelerClient(app, kurs.code, 'Tim T.');
-  await t.post('/api/aufgaben/W9-L1-01/pruefen').send({ antwort: FALSCH['W9-L1-01'] });
-  const liste = (await lk.get(`/api/lehrer/kurse/${kurs.id}/schueler`)).body;
-  const lena = liste.find((x) => x.name === 'Lena S.');
-  assert.equal((await lk.delete(`/api/lehrer/kurse/${kurs.id}/schueler/${lena.id}`)).status, 200);
-  assert.equal((await s.get('/api/profil')).status, 401);
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM fortschritt WHERE schueler_id = ?').get(lena.id).n, 0);
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM abzeichen WHERE schueler_id = ?').get(lena.id).n, 0);
-  // alle löschen: falsche Bestätigung
-  assert.equal((await lk.post(`/api/lehrer/kurse/${kurs.id}/alle-schueler-loeschen`).send({ bestaetigung: 'falsch' })).status, 400);
-  const r = await lk.post(`/api/lehrer/kurse/${kurs.id}/alle-schueler-loeschen`).send({ bestaetigung: 'LK Informatik 13' });
-  assert.deepEqual(r.body, { geloescht: 1 });
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM falsche_antworten').get().n, 0, 'Statistik-Antworten gelöscht');
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM fallen_zaehler').get().n, 0);
-  // Kurs löschen
-  assert.equal((await lk.delete(`/api/lehrer/kurse/${kurs.id}`).send({ bestaetigung: 'nein' })).status, 400);
-  assert.equal((await lk.delete(`/api/lehrer/kurse/${kurs.id}`).send({ bestaetigung: ' LK Informatik 13 ' })).status, 200);
-  assert.equal((await lk.get(`/api/lehrer/kurse/${kurs.id}`)).status, 404);
-});
-
-test('Superadmin löscht Lehrkraft samt Kursen und Schülern', async () => {
-  const { app, admin, lk, kurs } = await H.szenario();
-  const db = app.locals.db;
-  assert.equal((await admin.delete(`/api/admin/lehrkraefte/${lk.lkId}`)).status, 200);
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM kurse WHERE id = ?').get(kurs.id).n, 0);
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM schueler').get().n, 0);
-  assert.equal((await lk.get('/api/lehrer/kurse')).status, 401);
-});
-
-test('QR-Code: SVG mit Beitritts-Link', async () => {
-  const { lk, kurs } = await H.szenario();
-  const r = await lk.get(`/api/lehrer/kurse/${kurs.id}/qr.svg`).buffer(true).parse((res, cb) => {
-    let d = '';
-    res.on('data', (c) => (d += c));
-    res.on('end', () => cb(null, d));
-  });
-  assert.equal(r.status, 200);
-  assert.match(r.headers['content-type'], /image\/svg\+xml/);
-  assert.match(r.body, /^<svg/);
-  assert.match(r.body, /<path/);
+  assert.equal(liste.find((x) => x.name === 'Uta U.').aktiv, false);
+  const text = JSON.stringify(liste);
+  assert.ok(!text.includes('"code"') && !text.includes(s.sub), 'keine Codes, keine sub');
 });
 
 test('Auswertung: Matrix, Boss, Aufgabenstatistik (inkl. häufiger falscher Antworten), Fallen-Profil', async () => {
   const { app, s, lk, kurs } = await H.szenario();
-  const t = await H.schuelerClient(app, kurs.code, 'Tim T.');
+  const t = await H.schuelerClient(app, kurs, 'Tim T.');
   await s.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: FALSCH['W9-L1-03'] });
   await t.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: FALSCH['W9-L1-03'] });
   await t.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: RICHTIG['W9-L1-03'] });
@@ -105,7 +62,7 @@ test('Auswertung: Matrix, Boss, Aufgabenstatistik (inkl. häufiger falscher Antw
 
 test('CSV-Export: Übersicht/Matrix/Aufgaben, Semikolon, UTF-8-BOM, Formel-Injektion entschärft', async () => {
   const { app, s, lk, kurs } = await H.szenario();
-  await H.schuelerClient(app, kurs.code, '-Minus M.');
+  await H.schuelerClient(app, kurs, '-Minus M.');
   await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] });
   const get = (art) =>
     lk
@@ -120,11 +77,11 @@ test('CSV-Export: Übersicht/Matrix/Aufgaben, Semikolon, UTF-8-BOM, Formel-Injek
   const u = await get('uebersicht');
   assert.equal(u.status, 200);
   assert.match(u.headers['content-type'], /text\/csv/);
-  assert.match(u.headers['content-disposition'], /attachment; filename="algoquest-lab_uebersicht_LK_Informatik_13\.csv"/);
+  assert.match(u.headers['content-disposition'], /attachment; filename="kryptos_uebersicht_LK_Informatik_13\.csv"/);
   assert.equal(u.body.charCodeAt(0), 0xfeff);
   const zeilen = u.body.slice(1).trim().split('\r\n');
-  assert.match(zeilen[0], /^Name;Code;Punkte gesamt;/);
-  assert.ok(zeilen.some((z) => z.startsWith(`Lena S.;${s.code};10;10;0;0;`)), zeilen.join('\n'));
+  assert.match(zeilen[0], /^Name;Punkte gesamt;/);
+  assert.ok(zeilen.some((z) => z.startsWith('Lena S.;10;10;0;0;')), zeilen.join('\n'));
   assert.ok(zeilen.some((z) => z.startsWith("'-Minus M.;")), 'führendes - wird entschärft');
   const m = await get('matrix');
   assert.match(m.body, /9\.1 Blöcke und Lücken \(%\)/);
@@ -132,36 +89,38 @@ test('CSV-Export: Übersicht/Matrix/Aufgaben, Semikolon, UTF-8-BOM, Formel-Injek
   assert.match(a.body, /W9-L1-04;Konstruktor erkennen;9;W9-L1;1;begriffe;;1;1;0;100;0/);
 });
 
-test('Backup/Restore (JSON): vollständige Rücksicherung, Schutz vor fremden Formaten', async () => {
+test('Backup/Restore (JSON): Kennung kryptos/1, Tabellenliste ohne flüchtige Tabellen, vollständige Rücksicherung', async () => {
   const { app, admin, s, kurs } = await H.szenario();
+  const { TABLES } = require('../src/db');
   await s.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] });
   const backup = (await admin.get('/api/admin/backup')).body;
-  assert.equal(backup.app, 'algoquest-lab');
-  assert.equal(backup.format, 2);
+  assert.equal(backup.app, 'kryptos');
+  assert.equal(backup.format, 1);
+  assert.deepEqual(Object.keys(backup.tables), TABLES);
+  for (const t of ['sso_jti', 'funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse']) assert.ok(!(t in backup.tables), t);
   assert.equal(backup.tables.schueler.length, 1);
+  assert.equal(backup.tables.konten.length, 3);
   // Daten verändern, dann wiederherstellen
-  await H.schuelerClient(app, kurs.code, 'Später S.');
-  assert.equal((await admin.post('/api/admin/restore').send({ app: 'algoquest', format: 1, tables: {} })).status, 400);
-  assert.equal((await admin.post('/api/admin/restore').send({ ...backup, tables: { ...backup.tables, boese: [] } })).status, 400);
+  await H.schuelerClient(app, kurs, 'Später S.');
+  assert.equal((await admin.post('/api/admin/restore').send({ app: 'algoquest-lab', format: 2, tables: {} })).status, 400);
+  assert.equal((await admin.post('/api/admin/restore').send({ ...backup, format: 2 })).status, 400);
+  assert.equal((await admin.post('/api/admin/restore').send({ ...backup, tables: { ...backup.tables, sso_jti: [] } })).status, 400, 'flüchtige Tabellen nie im Backup');
   assert.equal((await admin.post('/api/admin/restore').send({ ...backup, tables: { ...backup.tables, schueler: [{ ...backup.tables.schueler[0], hack: 1 }] } })).status, 400);
   const r = await admin.post('/api/admin/restore').send(backup);
   assert.equal(r.status, 200, JSON.stringify(r.body));
   assert.equal(app.locals.db.prepare('SELECT COUNT(*) AS n FROM schueler').get().n, 1);
-  // Schüler kann weiterspielen, Punkte sind da
-  const c = H.client(app);
-  assert.equal((await c.post('/api/schueler/anmelden').send({ kurscode: kurs.code, name: 'Lena S.', code: s.code })).status, 200);
-  assert.equal((await c.get('/api/profil')).body.punkte.gesamt, 10);
-  // Admin-Login funktioniert weiter
-  assert.equal((await H.client(app).post('/api/lehrer/anmelden').send({ email: H.ADMIN_EMAIL, passwort: H.ADMIN_PW })).status, 200);
+  // Sitzung bleibt gültig (Konto und session_gen sind im Backup), Punkte sind da
+  assert.equal((await s.get('/api/profil')).body.punkte.gesamt, 10);
+  assert.equal((await admin.get('/api/admin/inhalte')).status, 200);
 });
 
 test('Kata: Seed aus seed/warmup, Ziehen/Antworten (Leitner), Import nur für Superadmin', async () => {
   const path = require('node:path');
   const app = H.makeApp({ seedDir: path.join(__dirname, 'fixtures', 'seed_beispiel') });
   const admin = await H.adminClient(app);
-  const lk = await H.lehrkraftClient(app, admin);
+  const lk = await H.lehrkraftClient(app);
   const kurs = await H.kursAnlegen(lk);
-  const s = await H.schuelerClient(app, kurs.code);
+  const s = await H.schuelerClient(app, kurs);
   const meta = (await s.get('/api/kata/meta')).body;
   const gesamt = meta.welten.reduce((x, w) => x + w.anzahl, 0);
   assert.equal(gesamt, 4, 'alle Warm-up-Karten der Fixture geladen: ' + gesamt);
@@ -182,7 +141,7 @@ test('Kata: Seed aus seed/warmup, Ziehen/Antworten (Leitner), Import nur für Su
 
 test('Urkunden: je Schüler Name, Rang, Punkte, Platz, Abzeichen; nur eigene Kurse', async () => {
   const { app, admin, s, lk, kurs } = await H.szenario();
-  const t = await H.schuelerClient(app, kurs.code, 'Tim T.');
+  const t = await H.schuelerClient(app, kurs, 'Tim T.');
   await s.post('/api/aufgaben/W9-L1-02/pruefen').send({ antwort: RICHTIG['W9-L1-02'] });
   await t.post('/api/aufgaben/W9-L1-04/pruefen').send({ antwort: RICHTIG['W9-L1-04'] });
   const d = (await lk.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).body;
@@ -191,9 +150,9 @@ test('Urkunden: je Schüler Name, Rang, Punkte, Platz, Abzeichen; nur eigene Kur
   assert.equal(d.anzahl, 2);
   assert.deepEqual(d.schueler.map((x) => [x.name, x.platz, x.punkte, x.rang]), [['Lena S.', 1, 20, 'Lehrling'], ['Tim T.', 2, 10, 'Lehrling']]);
   assert.deepEqual(d.schueler[0].abzeichen.map((b) => b.name).sort(), ['Erste Schritte', 'Weltenbummler']);
-  assert.ok(!JSON.stringify(d).includes(s.code), 'keine Schülercodes auf Urkunden');
+  assert.ok(!JSON.stringify(d).includes(s.sub), 'keine Konto-Kennungen auf Urkunden');
   assert.equal((await s.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 401);
-  const andere = await H.lehrkraftClient(app, admin, 'andere@schule.de');
+  const andere = await H.lehrkraftClient(app, { name: 'Herr Andere' });
   assert.equal((await andere.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 404);
   assert.equal((await admin.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 200);
   const seite = await lk.get('/lehrer/urkunden?kurs=' + kurs.id);

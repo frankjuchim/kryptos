@@ -98,7 +98,7 @@ test('12-h-Sperre nach einem Kampf; bester Versuch zählt; besiegt ab 50 %; Make
   const keys = p.abzeichen.filter((a) => a.erhalten).map((a) => a.key);
   assert.ok(keys.includes('boss9_besiegt') && keys.includes('makellos'));
   // Beamer-Board-Erfolg
-  const b = (await H.client(app).get('/api/board/' + kurs.code)).body;
+  const b = (await H.client(app).get('/api/board/' + kurs.boardSchluessel)).body;
   assert.ok(b.erfolge.some((x) => x.text === 'Lena S. hat den Testwelt-Boss besiegt'), JSON.stringify(b.erfolge));
 });
 
@@ -134,7 +134,7 @@ test('Fremde Kämpfe sind nicht abrufbar', async () => {
   const { app, s, lk, kurs } = await bossSzenario();
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen' } });
   const k = (await s.post('/api/boss/9/start').send({})).body;
-  const t = await H.schuelerClient(app, kurs.code, 'Tim T.');
+  const t = await H.schuelerClient(app, kurs, 'Tim T.');
   assert.equal((await t.get(`/api/boss/kampf/${k.id}`)).status, 404);
   assert.equal((await t.post(`/api/boss/kampf/${k.id}/beenden`).send({})).status, 404);
 });

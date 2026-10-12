@@ -16,13 +16,13 @@ test('Manifest: öffentlich, vertragsgemäß, Version wie /healthz, CORS für da
   assert.equal(r.headers['access-control-allow-origin'], '*');
   const m = r.body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.equal(m.id, 'algoquest');
+  assert.equal(m.id, 'kryptos');
   assert.equal(m.vertrag, '1.2');
   assert.deepEqual(m.niveaus, ['eA', 'gA']);
   assert.match(m.kurs, /eA und gA/);
   assert.equal(m.urls.niveaus, '/themen#niveaus');
-  assert.equal(m.urls.ssoStart, null);
-  assert.equal(m.auth.modus, 'lokal');
+  assert.equal(m.urls.ssoStart, null, 'ohne Portal-Schlüssel (Test) kein SSO');
+  assert.equal(m.auth.modus, 'portal');
   assert.equal(m.auth.sso, false);
   assert.equal(m.umfang.welten, 1);
   assert.equal(m.umfang.aufgaben, 21, 'Fixture Welt 9: 15 Level-Aufgaben + 6 Boss-Aufgaben');
@@ -33,12 +33,15 @@ test('Manifest: öffentlich, vertragsgemäß, Version wie /healthz, CORS für da
   for (const v of ['loesung', 'kurscode', 'schueler', 'code"']) assert.ok(!text.toLowerCase().includes(v), v);
 });
 
-test('Manifest: Umgebung (PORTAL_URL, AUTH_MODUS, PLATTFORM_URL) wird übernommen', async () => {
-  const app = H.makeApp({ seedDir: SEED, umgebung: { PORTAL_URL: 'https://portal.example', AUTH_MODUS: 'beides', PLATTFORM_URL: 'https://algoquest.example' } });
+test('Manifest: Verbund-Konfiguration (PORTAL_URL, PLATTFORM_URL, Schlüssel) wird übernommen; Modus immer portal', async () => {
+  const crypto = require('node:crypto');
+  const pem = crypto.generateKeyPairSync('ed25519').publicKey.export({ type: 'spki', format: 'pem' });
+  const app = H.makeApp({ seedDir: SEED, portalUrl: 'https://portal.example', plattformUrl: 'https://kryptos.example', portalPublicKey: pem });
   const m = (await request(app).get('/api/plattform')).body;
-  assert.equal(m.auth.portal, 'https://portal.example');
-  assert.equal(m.auth.modus, 'beides');
-  assert.equal(m.basis, 'https://algoquest.example');
+  assert.deepEqual(pruefeManifest(m), []);
+  assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
+  assert.equal(m.urls.ssoStart, '/sso/start');
+  assert.equal(m.basis, 'https://kryptos.example');
 });
 
 test('pruefeManifest erkennt Vertragsverstöße', () => {

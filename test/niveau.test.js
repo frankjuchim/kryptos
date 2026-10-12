@@ -59,14 +59,14 @@ test('API: Niveau an Weltkarte, Level, Aufgabe und Themen; Kursart als Einstellu
 test('Grundkurs: Boss zieht nur Aufgaben für alle (ohne eA-Aufgaben), Leistungskurs aus dem ganzen Pool', async () => {
   const app = H.makeApp({ weltDateien: [niveauWelt()] });
   const admin = await H.adminClient(app);
-  const lk = await H.lehrkraftClient(app, admin);
+  const lk = await H.lehrkraftClient(app);
   const kurs = await H.kursAnlegen(lk);
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen', kursart: 'gA' } }).expect(200);
   const kat = app.locals.services.inhalte.katalog;
   const eaImPool = kat.welten.get(9).boss.pool.filter((id) => kat.aufgaben.get(id)._niveau !== 'alle');
   assert.ok(eaImPool.length >= 3);
   for (let i = 0; i < 6; i++) {
-    const s = await H.schuelerClient(app, kurs.code, `Gast ${String.fromCharCode(65 + i)}.`);
+    const s = await H.schuelerClient(app, kurs, `Gast ${String.fromCharCode(65 + i)}.`);
     const k = (await s.post('/api/boss/9/start').send({}).expect(201)).body;
     const ids = k.aufgaben.map((a) => a.id);
     assert.ok(ids.length > 0);

@@ -1,9 +1,8 @@
 'use strict';
-// API für den Superadmin: Anfragen bestätigen/ablehnen, Lehrkräfte verwalten, Einmal-Passwort,
-// Backup/Restore (JSON), Kata-Import, Inhalte neu laden.
+// API für den Superadmin (Konto a:<n> aus dem Portal): Backup/Restore (JSON), Warm-up-Import, Inhalte neu laden.
+// Lehrkraft-Verwaltung und Einmal-Passwort gibt es in Kryptos nicht (Portal, TECHNIK §6.5).
 
 const express = require('express');
-const V = require('../validate');
 
 function adminRoutes(api, h) {
   const { svc } = h;
@@ -11,41 +10,19 @@ function adminRoutes(api, h) {
   r.use((req, res, next) => {
     const l = h.lehrkraft(req);
     if (!l) return res.status(401).json({ error: 'Bitte anmelden.', anmelden: true });
-    if (l.rolle !== 'superadmin') return res.status(403).json({ error: 'Nur für den Superadmin.' });
+    if (l.konto.rolle !== 'superadmin') return res.status(403).json({ error: 'Nur für den Superadmin.' });
     req.lk = l;
     next();
   });
 
-  const lid = (req) => V.id(req.params.id, 'Lehrkraft');
-
-  r.get('/lehrkraefte', (req, res) => res.json(svc.konten.liste()));
-  r.post('/lehrkraefte/:id/status', (req, res) => {
-    const status = (req.body || {}).status;
-    if (!['aktiv', 'abgelehnt', 'deaktiviert'].includes(status)) throw new V.ValidationError('status muss aktiv, abgelehnt oder deaktiviert sein.');
-    res.json(svc.konten.setzeStatus(lid(req), status));
-  });
-  r.post('/lehrkraefte/:id/einmalpasswort', async (req, res) => res.json(await svc.konten.einmalPasswort(lid(req))));
-  r.delete('/lehrkraefte/:id', (req, res) => {
-    svc.konten.loeschen(lid(req));
-    res.json({ ok: true });
-  });
-
   r.get('/backup', (req, res) => {
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
-    res.set('Content-Disposition', `attachment; filename="algoquest-lab_backup_${stamp}.json"`);
+    res.set('Content-Disposition', `attachment; filename="kryptos_backup_${stamp}.json"`);
     res.json(svc.daten.exportieren());
   });
   r.post('/restore', (req, res) => {
     const counts = svc.daten.wiederherstellen(req.body);
-    // Superadmin aus der Umgebung sicherstellen (falls das Backup ein anderes Passwort enthält)
-    h.sichereAdmin();
     res.json({ ok: true, counts });
-  });
-
-  // Verbund Phase 2: Zuordnung aus dem Portal einspielen ({ zuordnung, probelauf })
-  r.post('/verbund/zuordnung', (req, res) => {
-    const b = req.body || {};
-    res.json(svc.verbund.zuordnungEinspielen(b.zuordnung, { plattformId: h.konfig.id, portal: h.konfig.portal, probelauf: b.probelauf !== false }));
   });
 
   r.get('/katas', (req, res) => res.json(svc.kata.liste({ welt: req.query.welt, kategorie: req.query.kategorie })));

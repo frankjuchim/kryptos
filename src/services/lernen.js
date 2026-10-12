@@ -280,9 +280,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     }));
     return {
       name: s.name,
-      code: s.code,
-      portal: !!s.sub,
-      kurs: { name: k.name, code: k.code },
+      kurs: { name: k.name },
       punkte: { gesamt: e.gesamt, level: e.punkteLevel, boss: e.punkteBoss, training: e.punkteTraining },
       geloest: e.geloest,
       rang,

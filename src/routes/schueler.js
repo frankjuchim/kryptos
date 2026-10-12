@@ -1,5 +1,5 @@
 'use strict';
-// API für Schüler: Beitritt, Anmeldung, Lernen, Training, Boss, Profil, Scoreboard, Kata.
+// API für Schüler: Lernen, Training, Boss, Profil, Scoreboard, Kata. Anmeldung nur über das Portal (SSO, TECHNIK §6.5).
 
 const S = require('../security');
 
@@ -10,65 +10,15 @@ function zuViele(res, limiter, key, text, jetzt) {
 
 function schuelerRoutes(api, h) {
   const { svc } = h;
-  const beitrittIp = new S.Limiter({ max: 60, windowMs: 10 * 60 * 1000 }); // eine Schule = oft eine IP
-  const loginIpFehler = new S.Limiter({ max: 100, windowMs: 15 * 60 * 1000 });
-  const loginKontoFehler = new S.Limiter({ max: 8, windowMs: 15 * 60 * 1000 });
-  const kursInfoIp = new S.Limiter({ max: 120, windowMs: 10 * 60 * 1000 });
   const pruefLimit = new S.Limiter({ max: 90, windowMs: 60 * 1000 });
-
-  /* ---------- Öffentlich ---------- */
-
-  api.get('/kurs/:code', (req, res) => {
-    const key = 'ip:' + req.ip;
-    if (!kursInfoIp.take(key)) return zuViele(res, kursInfoIp, key);
-    const k = svc.kurse.kursPerCode(req.params.code);
-    if (!k) return res.status(404).json({ error: 'Diesen Kurscode gibt es nicht.' });
-    res.json({ name: k.name, anmeldung: !!k.einstellungen.anmeldung });
-  });
-
-  // AUTH_MODUS=portal: Beitritt und Anmeldung nur über das Portal InfoLabs
-  const nurPortal = (req, res, next) => (h.konfig.lokal ? next() : res.status(403).json({ error: 'Die Anmeldung läuft über das Portal InfoLabs.', portal: true }));
-
-  api.post('/schueler/beitreten', nurPortal, (req, res) => {
-    const key = 'ip:' + req.ip;
-    if (!beitrittIp.take(key)) return zuViele(res, beitrittIp, key, 'Zu viele Anmeldungen von diesem Netzwerk. Bitte warte ein paar Minuten.');
-    const b = req.body || {};
-    const r = svc.kurse.beitreten(b.kurscode, b.name);
-    h.setSchuelerCookie(req, res, r.row);
-    res.status(201).json({ name: r.schueler.name, code: r.schueler.code, kurs: r.kurs.name, kurscode: r.kurs.code });
-  });
-
-  api.post('/schueler/anmelden', nurPortal, (req, res) => {
-    const b = req.body || {};
-    const ipKey = 'ip:' + req.ip;
-    const kontoKey = `n:${String(b.name || '').trim().toLowerCase()}`;
-    if (loginIpFehler.isBlocked(ipKey)) return zuViele(res, loginIpFehler, ipKey);
-    if (loginKontoFehler.isBlocked(kontoKey)) return zuViele(res, loginKontoFehler, kontoKey, 'Zu viele Fehlversuche für diesen Namen. Warte 15 Minuten oder frag deine Lehrkraft nach deinem Code.');
-    // Weiterspielen: Name + persönlicher Code; Kurscode nur nötig, wenn beides zu mehreren Kursen passt (alte Codes)
-    const row = svc.kurse.anmelden(b.name, b.code, b.kurscode);
-    if (!row) {
-      loginIpFehler.hit(ipKey);
-      loginKontoFehler.hit(kontoKey);
-      return res.status(401).json({ error: b.kurscode ? 'Kurscode, Name oder Code stimmen nicht.' : 'Name oder Code stimmen nicht.' });
-    }
-    loginKontoFehler.reset(kontoKey);
-    h.setSchuelerCookie(req, res, row);
-    const k = svc.kurse.kursRow(row.kurs_id);
-    res.json({ name: row.name, kurs: k.name });
-  });
-
-  api.post('/schueler/abmelden', (req, res) => {
-    h.clearSchueler(req, res);
-    res.json({ ok: true });
-  });
 
   /* ---------- Angemeldet ---------- */
 
   const auth = (req, res, next) => {
-    const s = h.schueler(req);
+    const s = h.schueler(req, res);
     if (!s) {
       if (req.sS) h.clearSchueler(req, res);
-      return res.status(401).json({ error: 'Bitte melde dich an.', anmelden: true });
+      return res.status(401).json({ error: 'Bitte melde dich an.', anmelden: true, sso: '/sso/start' });
     }
     req.schueler = s;
     svc.kurse.aktiv(s.id);
@@ -109,14 +59,6 @@ function schuelerRoutes(api, h) {
   st.post('/boss/:welt/start', (req, res) => res.status(201).json(svc.boss.starten(req.schueler, req.params.welt)));
 
   st.get('/profil', (req, res) => res.json(svc.lernen.profil(req.schueler)));
-  // Portal-Schüler in mehreren Kursen: Kurs wechseln (gleiche sub, eigene Zeile je Kurs)
-  st.post('/kurs-wechseln', (req, res) => {
-    const kursId = (req.body || {}).kursId;
-    if (!Number.isInteger(kursId)) return res.status(400).json({ error: 'kursId fehlt.' });
-    const row = svc.verbund.kursWechseln(req.schueler, kursId);
-    h.setSchuelerCookie(req, res, row, { portal: true });
-    res.json({ ok: true });
-  });
   st.get('/scoreboard', (req, res) => res.json(svc.lernen.scoreboardFuerSchueler(req.schueler, req.query.welt)));
 
   const kataFilter = (q) => ({
