@@ -201,7 +201,7 @@
   },
   {
    "titel": "Jetzt du: die Leuchtturmkette",
-   "notizen": "[Kapitel: Selbst ausprobieren]\n\nSPRECHERTEXT: Jetzt du. Dreizehn Leuchttürme an einer Küste wollen paarweise verschlüsselt funken. Bestimme die Anzahl der Schlüssel – symmetrisch und asymmetrisch. Und wie viele kommen jeweils hinzu, wenn ein vierzehnter Leuchtturm gebaut wird? Halte das Video an.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nSPRECHERTEXT: Jetzt du. Siebzehn Leuchttürme an einer Küste wollen paarweise verschlüsselt funken. Bestimme die Anzahl der Schlüssel – symmetrisch und asymmetrisch. Und wie viele kommen jeweils hinzu, wenn ein achtzehnter Leuchtturm gebaut wird? Halte das Video an.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
    "video": true,
    "abschnitt": "Selbst ausprobieren",
    "layout": "auftrag",
@@ -214,7 +214,7 @@
      "links": [
       {
        "t": "p",
-       "md": "**13 Leuchttürme** wollen paarweise verschlüsselt funken. **Bestimme** die Anzahl der Schlüssel symmetrisch und asymmetrisch. Wie viele kommen jeweils hinzu, wenn ein 14. Leuchtturm dazukommt?"
+       "md": "**17 Leuchttürme** wollen paarweise verschlüsselt funken. **Bestimme** die Anzahl der Schlüssel symmetrisch und asymmetrisch. Wie viele kommen jeweils hinzu, wenn ein 18. Leuchtturm dazukommt?"
       }
      ],
      "rechts": [
@@ -239,7 +239,7 @@
   },
   {
    "titel": "Auflösung: Leuchttürme",
-   "notizen": "SPRECHERTEXT: Die Auflösung. Symmetrisch: dreizehn mal zwölf durch zwei, achtundsiebzig Schlüssel. Asymmetrisch: zwei mal dreizehn, sechsundzwanzig. Kommt der vierzehnte Leuchtturm dazu, braucht er symmetrisch dreizehn neue Schlüssel, asymmetrisch nur zwei. Die typischen Fehler sind Falle P7: das Durch-zwei vergessen, oder ein Schlüsselpaar als einen einzigen Schlüssel zählen.",
+   "notizen": "SPRECHERTEXT: Die Auflösung. Symmetrisch: siebzehn mal sechzehn durch zwei, hundertsechsunddreißig Schlüssel. Asymmetrisch: zwei mal siebzehn, vierunddreißig. Kommt der achtzehnte Leuchtturm dazu, braucht er symmetrisch siebzehn neue Schlüssel, asymmetrisch nur zwei. Die typischen Fehler sind Falle P7: das Durch-zwei vergessen, oder ein Schlüsselpaar als einen einzigen Schlüssel zählen.",
    "video": true,
    "abschnitt": null,
    "layout": "inhalt",
@@ -253,13 +253,13 @@
      ],
      "zeilen": [
       [
-       "13 Leuchttürme",
-       "13 · 12 / 2 = **78**",
-       "2 · 13 = **26**"
+       "17 Leuchttürme",
+       "17 · 16 / 2 = **136**",
+       "2 · 17 = **34**"
       ],
       [
-       "der 14. kommt dazu",
-       "**+ 13**",
+       "der 18. kommt dazu",
+       "**+ 17**",
        "**+ 2**"
       ]
      ],
@@ -274,7 +274,7 @@
     },
     {
      "t": "p",
-     "md": "Falle **P7**: 13 · 12 = 156 ohne „/ 2“ · Schlüsselpaar als **einen** Schlüssel gezählt (13)"
+     "md": "Falle **P7**: 17 · 16 = 272 ohne „/ 2“ · Schlüsselpaar als **einen** Schlüssel gezählt (17)"
     }
    ]
   },

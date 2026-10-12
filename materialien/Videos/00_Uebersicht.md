@@ -92,7 +92,7 @@ Stand bei Erstellung – maßgeblich ist das Feld `beispiele` der jeweiligen `vi
 | 02 | Schlüsselwort **ZIFFER** (Alphabet ZIFERABCDGHJKLMNOPQSTUVWXY) · Brief „Die neue Abschrift der Sternentafeln ist fertig. … Verbrenne diesen Brief, sobald du ihn gelesen hast.“ (295 Buchstaben) |
 | 03 | Vigenère-Schlüssel **KRYPTOS** · Brief „Die Flotte läuft morgen bei Sonnenaufgang aus. … denn die Feinde lesen mit.“ (222 Buchstaben) |
 | 04 | XOR-Einstieg mit „J“ und Schlüssel 1001 1100 · OTP-Doppelnutzung „NEU“/„ALT“ · Mini-Blockchiffre WIRBEL-8 · ECB/CBC an „OHO“ (Einzelheiten in der `video.json`) |
-| 05 | Bergwacht mit 11 Hütten, 13 Leuchttürme · Diffie-Hellman p = 29, g = 2, a = 5, b = 8 · RSA p = 7, q = 19, e = 5, m = 10 |
+| 05 | Bergwacht mit 11 Hütten, 17 Leuchttürme · Diffie-Hellman p = 29, g = 2, a = 5, b = 8 · RSA p = 7, q = 19, e = 5, m = 10 |
 | 06 | Mühlrad-Hash (Start 5, h ← (3 · h + Wert) mod 32) mit MOND, LINKS, RECHTS, KAUF/KAUE, ET |
 | 07 | „Schaukel-Chiffre“ (Blockwende + Schaukel) mit „eule“, „nachtfalter“, „sternwarte“ |
 

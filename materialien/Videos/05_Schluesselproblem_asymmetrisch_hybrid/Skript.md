@@ -22,15 +22,15 @@
 
 ## Beispiele (eigens für dieses Video – nicht in Lab, Akten, Bossen, Warm-up, Klausuren verwenden)
 
-- Schlüsselanzahl: Bergwacht mit 11 Hütten → 55 / 22; Tabelle n = 4, 11, 50, 1000; Pause: 13 Leuchttürme → 78 / 26, der 14. bringt + 13 / + 2
+- Schlüsselanzahl: Bergwacht mit 11 Hütten → 55 / 22; Tabelle n = 4, 11, 50, 1000; Pause: 17 Leuchttürme → 136 / 34, der 18. bringt + 17 / + 2
 - Diffie-Hellman mit Farben: Sonnengelb (öffentlich), Türkis (Alice), Magenta (Bob)
 - Diffie-Hellman mit Zahlen: p = 29, g = 2, a = 5, b = 8 → A = 3, B = 24, K = 7 (Pause: Bobs Seite 3⁸ mod 29)
 - RSA: p = 7, q = 19, N = 133, φ(N) = 108, e = 5, d = 65; m = 10 → c = 117
 
 ## Hinweise für die Aufnahme und Prüfvermerke
 
-- Alle Beispiele sind eigens für das Video gewählt: Bergwacht mit 11 Hütten, Pause mit 13 Leuchttürmen, Farben Sonnengelb/Türkis/Magenta, Diffie-Hellman mit p = 29, g = 2, a = 5, b = 8, RSA mit p = 7, q = 19, e = 5, m = 10. Bewusst NICHT die Zahlen des bisherigen Unterrichtsmaterials (DH p = 11, g = 7; RSA p = 17, q = 23) nicht n = 5/6 aus dem Abitur 2026 und nicht n = 7, 8, 9, 30 aus Akte W4·1, Bossen, Warm-up und Klausuren (Verifikation M7).
-- ✔ nachgerechnet Schlüsselanzahl (Python, scratchpad/videos2/v05_rechnen.py): n = 4: 6 / 8 · n = 5: 10 / 10 · n = 11: 55 / 22 · n = 13: 78 / 26 · n = 50: 1225 / 100 · n = 1000: 499 500 / 2000. Ab n = 6 braucht symmetrisch mehr Schlüssel. 12. Hütte kommt dazu: symmetrisch + 11, asymmetrisch + 2. 14. Leuchtturm: + 13 bzw. + 2.
+- Alle Beispiele sind eigens für das Video gewählt: Bergwacht mit 11 Hütten, Pause mit 17 Leuchttürmen, Farben Sonnengelb/Türkis/Magenta, Diffie-Hellman mit p = 29, g = 2, a = 5, b = 8, RSA mit p = 7, q = 19, e = 5, m = 10. Bewusst NICHT die Zahlen des bisherigen Unterrichtsmaterials (DH p = 11, g = 7; RSA p = 17, q = 23) nicht n = 5/6 aus dem Abitur 2026 und nicht n = 7, 8, 9, 12, 13, 14, 15, 16, 30 aus Akte W4·1, Bossen, Warm-up und Klausuren (n = 12/13 Nachschreibklausur, 14 · 13 = 182 Boss W4, 15 und 16 Boss-Pool W4) (Verifikation M7).
+- ✔ nachgerechnet Schlüsselanzahl (Python, scratchpad/videos2/v05_rechnen.py): n = 4: 6 / 8 · n = 5: 10 / 10 · n = 11: 55 / 22 · n = 17: 136 / 34 · n = 50: 1225 / 100 · n = 1000: 499 500 / 2000. Ab n = 6 braucht symmetrisch mehr Schlüssel. 12. Hütte kommt dazu: symmetrisch + 11, asymmetrisch + 2. 18. Leuchtturm: + 17 bzw. + 2 (n = 18: 153 / 36).
 - ✔ nachgerechnet Diffie-Hellman: g = 2 ist Primitivwurzel mod 29 (Ordnung 28). A = 2⁵ mod 29 = 32 mod 29 = 3; B = 2⁸ mod 29 = 256 mod 29 = 24; Alice: K = 24⁵ mod 29 über 24² = 576 → 25, 25² = 625 → 16, 16 · 24 = 384 → 7; Bob (Pause): K = 3⁸ mod 29 über 3⁴ = 81 → 23, 23² = 529 → 7. K = 7.
 - ✔ nachgerechnet Eve-Tabelle 2ˣ mod 29: x = 1 … 5 → 2, 4, 8, 16, 3 (a = 5 gefunden). Mallory-Ausblick: mit eigenem m = 3 (M = 8) hätte Mallory mit Alice den Schlüssel 27 und mit Bob den Schlüssel 20 (nur in den Hinweisen, im Video nur qualitativ).
 - ✔ nachgerechnet RSA: N = 7 · 19 = 133, φ(N) = 6 · 18 = 108, ggT(5, 108) = 1, d = 65 (5 · 65 = 325 = 3 · 108 + 1). m = 10: 10² = 100, 10⁴ = 10 000 mod 133 = 25, 10⁵ = 250 mod 133 = 117 → c = 117; 117⁶⁵ mod 133 = 10. Für alle m = 0 … 132 Ver- und Entschlüsselung geprüft.
@@ -166,7 +166,7 @@ Asymmetrisch hat jede Hütte ein Schlüsselpaar: einen öffentlichen und einen p
 
 **Folie:**
 
-⏸ **Video anhalten – Aufgabe:** **13 Leuchttürme** wollen paarweise verschlüsselt funken. **Bestimme** die Anzahl der Schlüssel symmetrisch und asymmetrisch. Wie viele kommen jeweils hinzu, wenn ein 14. Leuchtturm dazukommt?
+⏸ **Video anhalten – Aufgabe:** **17 Leuchttürme** wollen paarweise verschlüsselt funken. **Bestimme** die Anzahl der Schlüssel symmetrisch und asymmetrisch. Wie viele kommen jeweils hinzu, wenn ein 18. Leuchtturm dazukommt?
 
 > **Kasten · Tipp** (Messing)
 > - Schlüsselpaar = **2** Schlüssel
@@ -174,7 +174,7 @@ Asymmetrisch hat jede Hütte ein Schlüsselpaar: einen öffentlichen und einen p
 
 **Sprechertext:**
 
-Jetzt du. Dreizehn Leuchttürme an einer Küste wollen paarweise verschlüsselt funken. Bestimme die Anzahl der Schlüssel – symmetrisch und asymmetrisch. Und wie viele kommen jeweils hinzu, wenn ein vierzehnter Leuchtturm gebaut wird? Halte das Video an.
+Jetzt du. Siebzehn Leuchttürme an einer Küste wollen paarweise verschlüsselt funken. Bestimme die Anzahl der Schlüssel – symmetrisch und asymmetrisch. Und wie viele kommen jeweils hinzu, wenn ein achtzehnter Leuchtturm gebaut wird? Halte das Video an.
 
 *(⏸ 5 s Denkpause – im Schnitt Einblendung „Video anhalten“; Auflösung auf der nächsten Folie)*
 
@@ -186,14 +186,14 @@ Jetzt du. Dreizehn Leuchttürme an einer Küste wollen paarweise verschlüsselt 
 
 |   | symmetrisch | asymmetrisch |
 |---|---|---|
-| 13 Leuchttürme | 13 · 12 / 2 = **78** | 2 · 13 = **26** |
-| der 14. kommt dazu | **+ 13** | **+ 2** |
+| 17 Leuchttürme | 17 · 16 / 2 = **136** | 2 · 17 = **34** |
+| der 18. kommt dazu | **+ 17** | **+ 2** |
 
-- Falle **P7**: 13 · 12 = 156 ohne „/ 2“ · Schlüsselpaar als **einen** Schlüssel gezählt (13)
+- Falle **P7**: 17 · 16 = 272 ohne „/ 2“ · Schlüsselpaar als **einen** Schlüssel gezählt (17)
 
 **Sprechertext:**
 
-Die Auflösung. Symmetrisch: dreizehn mal zwölf durch zwei, achtundsiebzig Schlüssel. Asymmetrisch: zwei mal dreizehn, sechsundzwanzig. Kommt der vierzehnte Leuchtturm dazu, braucht er symmetrisch dreizehn neue Schlüssel, asymmetrisch nur zwei. Die typischen Fehler sind Falle P7: das Durch-zwei vergessen, oder ein Schlüsselpaar als einen einzigen Schlüssel zählen.
+Die Auflösung. Symmetrisch: siebzehn mal sechzehn durch zwei, hundertsechsunddreißig Schlüssel. Asymmetrisch: zwei mal siebzehn, vierunddreißig. Kommt der achtzehnte Leuchtturm dazu, braucht er symmetrisch siebzehn neue Schlüssel, asymmetrisch nur zwei. Die typischen Fehler sind Falle P7: das Durch-zwei vergessen, oder ein Schlüsselpaar als einen einzigen Schlüssel zählen.
 
 ### Folie 7 · 02:50 – Asymmetrisch: das Prinzip
 
