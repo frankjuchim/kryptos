@@ -85,5 +85,16 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '0' }, erwartet: [['P2', 'null_statt_z']] },
   { aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '25' }, erwartet: [] }
 );
+// Task 27: Interaktion zuordnung (Delta §8.2, §9.3)
+const ZU = { A: 'h', B: 'i', F: 'l', G: 'a', H: 'c', I: 'd', J: 'm', K: 'n', L: 'o', N: 'f', Q: 'r', R: 's', S: 'g', T: 't', U: 'u', Z: 'z' };
+Object.assign(RICHTIG, { 'W9-L3-01': { zuordnung: ZU }, 'W9-L3-02': { A: 'H', B: 'I', D: 'K', F: 'L', J: 'M', K: 'N', M: 'E', N: 'F', Q: 'R', S: 'G', T: 'T' } });
+Object.assign(FALSCH, { 'W9-L3-01': { zuordnung: { ...ZU, A: 'x' } }, 'W9-L3-02': { A: 'H', B: 'I', D: 'K', F: 'L', J: 'M', K: 'N', M: 'E', N: 'F', Q: 'S', S: 'G', T: 'T' } });
+DIAGNOSE.push(
+  // Klar → Geheim eingetragen (Verschlüsselungsrichtung); M bleibt Vorgabe – 9 entscheidbare Paare, alle erklärt
+  { aufgabe: 'W9-L3-01', antwort: { zuordnung: { A: 'G', B: 'E', F: 'N', G: 'S', H: 'A', I: 'B', J: 'C', K: 'D', L: 'F', N: 'K', Q: 'P', R: 'Q', S: 'R', T: 'T', U: 'U', Z: 'Z' } }, erwartet: [['P3', 'richtung']] },
+  // alle 16 vergebenen Paare eine Stelle weiter
+  { aufgabe: 'W9-L3-01', antwort: { zuordnung: { A: 'I', B: 'J', F: 'M', G: 'B', H: 'D', I: 'E', J: 'N', K: 'O', L: 'P', N: 'G', Q: 'S', R: 'T', S: 'H', T: 'U', U: 'V', Z: 'A' } }, erwartet: [['P1', 'zaehlbasis']] },
+  { aufgabe: 'W9-L3-01', antwort: { zuordnung: { A: 'X', B: 'Q' } }, erwartet: [] }
+);
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
 module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };

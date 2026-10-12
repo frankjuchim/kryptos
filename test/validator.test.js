@@ -238,3 +238,13 @@ test('_fehlmuster: Format und kein Treffer auf eine akzeptierte Lösung', () => 
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.gibts = [{ wert: '1', p: 'P2', code: 'x' }]; }, /_fehlmuster.*gibts/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P11'; }, /P1–P10/);
 });
+
+test('zuordnung-Validator: Neuberechnung, Injektivität, Abdeckung, Vorgabe, P6-Hinweis', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-02').loesung.klartext = 'GEHEIMTREFFENIMKELLEX'; }, /Neuberechnung ergibt GEHEIMTREFFENIMKELLER/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-02').loesung.zuordnung.A = 'E'; }, /injektiv/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L3-02').loesung.zuordnung.T; }, /alle Geheimtextbuchstaben|deckt/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-01').interaktion.vorgabe = { M: 'x' }; }, /vorgabe/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-02').interaktion.geheimtext = 'SMAMB'; }, /20/);
+  const w = basis(); aufgabe(w, 'W9-L3-02').kategorie = 'haeufigkeitsanalyse';
+  assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /P6/);
+});

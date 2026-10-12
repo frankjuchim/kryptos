@@ -33,6 +33,7 @@
       "intro": [{ "t": "text", "md": "Puzzle, Bug-Hunt, Bäume, Reihungen, Raster und ADT-Simulation." }],
       "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09"]
     },
+    { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "aufgaben": ["W9-L3-01", "W9-L3-02"] },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
     { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09"] }
   ],
@@ -340,6 +341,19 @@
       "loesung": { "q1": ["S"] },
       "erklaerung": [{ "t": "text", "md": "Das Quadrat ohne Schlüsselwort enthält die Buchstaben der Reihe nach (I = J)." }]
     },
+    { "id": "W9-L3-01", "titel": "Die Werkbank", "stufe": 3, "kategorie": "haeufigkeitsanalyse", "fallen": ["P6"],
+      "inhalt": [ { "t": "text", "md": "Ordne den Geheimtextbuchstaben Klartextbuchstaben zu." },
+        { "t": "haeufigkeit", "quelle": "text", "text": "IMQRH AGTZF BMSTU KTMQI MJGFT MKFMU HATTU QJGJK LQIUN MQSFM BHAAB KTMQI MQIUK M", "referenz": "deutsch", "sortierung": "absteigend", "einheit": "prozent", "markiert": ["M"] },
+        { "t": "werkzeug", "id": "haeufigkeit", "voreinstellung": { "text": "IMQRH AGTZF", "ansicht": "absteigend" } } ],
+      "interaktion": { "kind": "zuordnung", "geheimtext": "IMQRH AGTZF BMSTU KTMQI MJGFT MKFMU HATTU QJGJK LQIUN MQSFM BHAAB KTMQI MQIUK M", "vorgabe": { "M": "e" }, "haeufigkeit": true },
+      "loesung": { "zuordnung": { "A": "H", "B": "I", "F": "L", "G": "A", "H": "C", "I": "D", "J": "M", "K": "N", "L": "O", "M": "E", "N": "F", "Q": "R", "R": "S", "S": "G", "T": "T", "U": "U", "Z": "Z" },
+                   "klartext": "DERSCHATZLIEGTUNTERDEMALTENLEUCHTTURMAMNORDUFERGLEICHHINTERDERDUNE" },
+      "erklaerung": [ { "t": "text", "md": "Schlüsselwort-Alphabet **GEHEIMNIS**: M → e, Q → r …" } ] },
+    { "id": "W9-L3-02", "titel": "Kurze Werkbank", "stufe": 2, "kategorie": "substitution-mono", "fallen": ["P3"],
+      "inhalt": [ { "t": "text", "md": "Prüfe deine Zuordnung Buchstabe für Buchstabe." } ],
+      "interaktion": { "kind": "zuordnung", "geheimtext": "SMAMB JTQMN NMKBJ DMFFM Q", "pruefen": "zuordnung", "feedback": "buchstaben" },
+      "loesung": { "zuordnung": { "A": "H", "B": "I", "D": "K", "F": "L", "J": "M", "K": "N", "M": "E", "N": "F", "Q": "R", "S": "G", "T": "T" }, "klartext": "GEHEIMTREFFENIMKELLER" },
+      "erklaerung": [ { "t": "text", "md": "Dasselbe Geheimalphabet wie in der Werkbank." } ] },
     { "id": "W9-A-01", "titel": "Die Testdepesche", "stufe": 1, "kategorie": "entschluesseln", "fallen": ["P3"],
       "inhalt": [ { "t": "text", "md": "Nummerierung: A = 1 … Z = 26. Entschlüssele die Depesche mit Caesar, k = 7." } ],
       "interaktion": { "kind": "chiffre", "richtung": "ent", "verfahren": { "typ": "caesar", "k": 7 }, "eingabe": "AYLMM WBURA" },

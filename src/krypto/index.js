@@ -9,6 +9,7 @@ const V = require('../content/validator');
 const K = require('../../public/static/js/shared/krypto');
 const bloecke = require('./bloecke');
 const chiffre = require('./interaktionen/chiffre');
+const zuordnung = require('./interaktionen/zuordnung');
 const D = require('./diagnose');
 const validierung = require('./validierung');
 
@@ -25,6 +26,8 @@ function registriere() {
   bloecke.registriere(F);
   // Delta §8.1: Interaktion chiffre (mit Fallen-Diagnose §9.2)
   chiffre.registriere(F);
+  // Delta §8.2: Interaktion zuordnung (Diagnose §9.3)
+  zuordnung.registriere(F);
   // Delta §9.6: erwartete Fehlantworten in gaps (loesung._fehlmuster) und ihre Prüfung im Validator
   F.registriereDiagnose('gaps', D.gapsFehlmuster);
   V.registriereValidierung(validierung);

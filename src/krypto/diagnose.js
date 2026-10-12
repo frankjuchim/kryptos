@@ -12,6 +12,7 @@ const PRIORITAET = Object.freeze(['P3', 'P1', 'P2', 'P4', 'P9']);
 /** Feste Texte, Schlüssel `art:code`, Rückfall `*:code` (Tasks 27–29 ergänzen weitere Interaktionen). */
 const TEXTE = Object.freeze({
   'chiffre:richtung': 'Du hast in die falsche Richtung verschoben – beim Entschlüsseln wird zurückgerechnet.',
+  'zuordnung:richtung': 'Du hast die Tabelle in der falschen Richtung gelesen – gesucht ist zu jedem Geheimtextbuchstaben der Klartextbuchstabe.',
   '*:reihenfolge': 'Die Stufen müssen in umgekehrter Reihenfolge zurückgerechnet werden.',
   '*:permutation': 'Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).',
   '*:zaehlbasis': 'Alle Zeichen liegen genau eine Stelle daneben – prüfe die Nummerierung (A = 1 oder A = 0).',
@@ -159,6 +160,45 @@ function chiffre(ia, lo, antwort, { teilweise = false, ersteFalschePosition = nu
   return auswaehlen('chiffre', treffer);
 }
 
+/** Zuordnung (Objekt) groß: Schlüssel und Werte je ein Buchstabe, sonst übersprungen. */
+function grossePaare(z) {
+  const out = {};
+  if (!z || typeof z !== 'object') return out;
+  for (const [k, v] of Object.entries(z)) {
+    if (typeof k !== 'string' || typeof v !== 'string') continue;
+    const kk = K.nurBuchstaben(k);
+    const vv = K.nurBuchstaben(v);
+    if (kk.length === 1 && vv.length === 1) out[kk] = vv;
+  }
+  return out;
+}
+
+/**
+ * Diagnose der Interaktion zuordnung (Delta §9.3, präzisiert E11). V = vergebene Paare (g → x) ohne Vorgaben.
+ * P3 richtung: D = falsche Paare aus V, deren x selbst ein Geheimbuchstabe der Lösung ist (nur diese sind entscheidbar);
+ * |D| ≥ 3 und ≥ 80 % von D erfüllen loesung[x] = g. P1 zaehlbasis: |V| ≥ 3 und für ein d ∈ {+1, −1} liegen ≥ 80 % von V
+ * genau d Alphabetstellen neben der Lösung (mod 26).
+ */
+function zuordnung(ia, lo, a) {
+  if (!ia || ia.diagnose === false) return [];
+  const loZu = grossePaare(lo && lo.zuordnung);
+  const vorgabe = grossePaare(ia.vorgabe);
+  const V = Object.entries((a && a.zuordnung) || {}).filter(([g]) => !(g in vorgabe) && g in loZu);
+  const treffer = [];
+  const D = V.filter(([g, x]) => x !== loZu[g] && x in loZu);
+  if (D.length >= 3 && D.filter(([g, x]) => loZu[x] === g).length / D.length >= 0.8 - 1e-9) treffer.push({ p: 'P3', code: 'richtung' });
+  if (V.length >= 3) {
+    for (const d of [1, -1]) {
+      const n = V.filter(([g, x]) => x === K.buchstabe(K.wert(loZu[g], 1) + d, 1)).length;
+      if (n / V.length >= 0.8 - 1e-9) {
+        treffer.push({ p: 'P1', code: 'zaehlbasis' });
+        break;
+      }
+    }
+  }
+  return auswaehlen('zuordnung', treffer);
+}
+
 /**
  * Zusatzdiagnose für gaps (Delta §9.6): erwartete Fehlantworten je Feld aus loesung._fehlmuster. Ein Feld, das falsch
  * beantwortet ist und einem Fehlmuster gleicht (gleiche Normalisierung wie die Prüfung), liefert dessen Falle.
@@ -178,4 +218,4 @@ function gapsFehlmuster(ia, lo, a, ergebnis) {
   return auswaehlen('gaps', treffer);
 }
 
-module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster };
+module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung };

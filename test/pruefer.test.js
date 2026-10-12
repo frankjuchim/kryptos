@@ -226,3 +226,18 @@ test('chiffre: Schrittprüfung (Präfix) und Abschaltung', () => {
   assert.equal(C.pruefeAufgabe(a, 'ZUVERLAESSIG', { teilweise: true }).vollstaendig, true);
   assert.throws(() => C.pruefeAufgabe({ ...a, interaktion: { ...a.interaktion, schritt: false } }, 'Z', { teilweise: true }), (e) => e.status === 400);
 });
+test('zuordnung: Vorgaben erzwungen, anteil, buchstaben, Modus zuordnung, 400 bei fremden Buchstaben', () => {
+  const a = A['W9-L3-01'];
+  assert.equal(C.pruefeAufgabe(a, {}).leer, true, 'nur Vorgabe → leer');
+  const r = C.pruefeAufgabe(a, { zuordnung: { M: 'x', T: 't', Q: 'x' } });
+  assert.equal(r.ok, false);
+  assert.equal(r.antworten[0].zuordnung.M, 'E', 'Vorgabe überschreibt');
+  assert.ok(Math.abs(r.anteil - 18 / 66) < 1e-12, 'M (11) + T (7) richtig');
+  assert.equal(r.buchstaben, undefined, 'feedback anteil');
+  const b = C.pruefeAufgabe(A['W9-L3-02'], { M: 'E', S: 'g', A: 'X' });
+  assert.deepEqual(b.buchstaben, { A: false, M: true, S: true });
+  assert.ok(Math.abs(b.anteil - 7 / 21) < 1e-12);
+  assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], { C: 'E' }), (e) => e.status === 400);
+  assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], { M: 'EE' }), (e) => e.status === 400);
+  assert.equal(C.pruefeAufgabe(a, { zuordnung: { ...RICHTIG['W9-L3-01'].zuordnung } }).ok, true);
+});

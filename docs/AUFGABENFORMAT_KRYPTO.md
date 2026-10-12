@@ -726,6 +726,11 @@ eingeschlossen), **P2** `ueberlauf` bzw. `negativ` (Bibliothek: `varianten` lief
 | Richtung der Tabelle vertauscht (Klar → Geheim eingetragen) | die **invertierte** Antwortzuordnung erklärt ≥ 80 % der Paare | **P3** · `richtung` |
 | konsequent um 1 verschoben | ≥ 80 % der vergebenen Paare liegen genau eine Alphabetstelle neben der Lösung, in dieselbe Richtung | **P1** · `zaehlbasis` |
 
+Präzisierung (V = vergebene Paare g → x ohne Vorgaben): **P3 `richtung`** zählt nur die *entscheidbaren* falschen Paare
+D ⊆ V, deren x selbst ein Geheimbuchstabe der Lösung ist (für andere x lässt sich die Umkehrung nicht prüfen); Treffer,
+wenn |D| ≥ 3 und ≥ 80 % von D `loesung.zuordnung[x] = g` erfüllen. **P1 `zaehlbasis`**: |V| ≥ 3 und für ein
+d ∈ {+1, −1} gilt bei ≥ 80 % von V: x = Buchstabe(Wert(`loesung.zuordnung[g]`) + d) (mod 26).
+
 ### 9.4 `bits-rechnen`
 
 | Fehlmuster | Kandidat | Falle · `code` |
