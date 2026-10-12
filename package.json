@@ -6,7 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "ADMIN_EMAIL=admin ADMIN_PASSWORD=admin1234 SESSION_SECRET=dev-secret-nur-lokal-123 DATA_DIR=./data PORT=3000 node src/server.js",
+    "dev": "node test/devportal/dev.js",
     "test": "node --test test/*.test.js",
     "validate": "node scripts/validate.js",
     "e2e": "node test/e2e/e2e.js",

@@ -92,19 +92,6 @@ function schuelerName(value) {
   return { name: v, key: v.toLocaleLowerCase('de-DE') };
 }
 
-function email(value) {
-  const v = str(value, 'E-Mail', { min: 3, max: 200 }).toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) throw new ValidationError('Bitte eine gültige E-Mail-Adresse angeben.');
-  return v;
-}
-
-function passwort(value, field = 'Passwort') {
-  if (typeof value !== 'string') throw new ValidationError(`${field} fehlt.`);
-  if (value.length < 10) throw new ValidationError(`${field} muss mindestens 10 Zeichen lang sein.`);
-  if (value.length > 200) throw new ValidationError(`${field} ist zu lang.`);
-  return value;
-}
-
 function idList(value, field) {
   if (!Array.isArray(value) || value.length === 0) throw new ValidationError(`${field}: mindestens eine Auswahl nötig.`);
   if (value.length > 500) throw new ValidationError(`${field}: zu viele Einträge.`);
@@ -131,4 +118,4 @@ class ConflictError extends Error {
   }
 }
 
-module.exports = { ValidationError, NotFoundError, ForbiddenError, ConflictError, str, int, num, bool, id, color, date, schuelerName, email, passwort, idList, today };
+module.exports = { ValidationError, NotFoundError, ForbiddenError, ConflictError, str, int, num, bool, id, color, date, schuelerName, idList, today };

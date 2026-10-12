@@ -7,41 +7,61 @@ const request = require('supertest');
 const H = require('./helpers');
 const { pruefeManifest } = require('../scripts/vertrag_pruefen');
 
-// Kryptos: bis zu den eigenen Welten (M5) zählt das Manifest die Kern-Fixture Welt 9.
+// Bis zu den eigenen Welten (M5) zählt das Manifest die Kern-Fixture Welt 9 (15 Level-Aufgaben, 6 Boss-Aufgaben).
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
+const FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil', 'labor', 'funkraum', 'arena', 'niveau'];
 
-test('Manifest: öffentlich, vertragsgemäß, Version wie /healthz, CORS für das Portal', async () => {
-  const app = H.makeApp({ seedDir: SEED, portalPublicKey: null }); // ohne Portal-Schlüssel
+test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /healthz, CORS und Cache', async () => {
+  const app = H.makeApp({ seedDir: SEED });
   const r = await request(app).get('/api/plattform').expect(200);
   assert.equal(r.headers['access-control-allow-origin'], '*');
+  assert.equal(r.headers['cache-control'], 'public, max-age=300');
   const m = r.body;
   assert.deepEqual(pruefeManifest(m), []);
+  assert.deepEqual(Object.keys(m), ['vertrag', 'id', 'name', 'titel', 'themenfeld', 'kurs', 'beschreibung', 'farbe', 'version', 'basis', 'icon', 'urls', 'auth', 'umfang', 'welten', 'faehigkeiten']);
+  assert.equal(m.vertrag, '1.1', 'VERTRAG_VERSION Standard 1.1');
+  assert.equal(m.niveaus, undefined, 'unter v1.1 ohne niveaus');
   assert.equal(m.id, 'kryptos');
-  assert.equal(m.vertrag, '1.2');
-  assert.deepEqual(m.niveaus, ['eA', 'gA']);
-  assert.match(m.kurs, /eA und gA/);
-  assert.equal(m.urls.niveaus, '/themen#niveaus');
-  assert.equal(m.urls.ssoStart, null, 'ohne Portal-Schlüssel (Test) kein SSO');
-  assert.equal(m.auth.modus, 'portal');
-  assert.equal(m.auth.sso, false);
-  assert.equal(m.umfang.welten, 1);
-  assert.equal(m.umfang.aufgaben, 21, 'Fixture Welt 9: 15 Level-Aufgaben + 6 Boss-Aufgaben');
+  assert.equal(m.name, 'Kryptos');
+  assert.equal(m.titel, 'Kryptos – Die Zeitreise der Geheimschriften');
+  assert.equal(m.themenfeld, 'Kryptologie');
+  assert.equal(m.kurs, 'Informatik eA und gA, Niedersachsen, Abitur ab 2027');
+  assert.match(m.beschreibung, /^Eine Zeitreise durch 2500 Jahre Geheimschriften/);
+  assert.equal(m.farbe, '#B07D2B');
+  assert.equal(m.basis, 'https://kryptos.test');
+  assert.equal(m.icon, '/static/favicon.svg');
+  assert.deepEqual(m.urls, { start: '/', gast: '/gast', themen: '/themen', lehrkraft: '/lehrer', datenschutz: '/datenschutz', healthz: '/healthz', ssoStart: '/sso/start', ssoEnde: '/sso/ende' });
+  assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.test', sso: true });
+  assert.deepEqual(m.umfang, { welten: 1, level: 2, aufgaben: 21, bosse: 1 }, 'aus dem Katalog berechnet');
+  assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: 2 }]);
+  assert.deepEqual(m.faehigkeiten, FAEHIGKEITEN);
+  for (const f of ['labor', 'funkraum', 'arena', 'niveau']) assert.ok(m.faehigkeiten.includes(f), f);
   const h = (await request(app).get('/healthz')).body;
   assert.equal(h.version, m.version);
-  // keine Lösungen, keine Kurs- oder Schülerdaten
-  const text = JSON.stringify(m);
-  for (const v of ['loesung', 'kurscode', 'schueler', 'code"']) assert.ok(!text.toLowerCase().includes(v), v);
+  // nie Kurs-, Schüler- oder Lösungsdaten
+  const k = H.kurs(app, 'LK 13');
+  H.teilnahme(app, k, H.konto(app, 'schueler', 'Mika R.'), 'Mika R.');
+  const text = JSON.stringify((await request(app).get('/api/plattform')).body);
+  assert.ok(!text.includes('k:'), 'keine Kurs-ID');
+  assert.doesNotMatch(text, /\b[asl]:\d/, 'keine sub');
+  for (const v of ['loesung', 'Mika', 'LK 13', 'kurscode']) assert.ok(!text.toLowerCase().includes(v.toLowerCase()), v);
 });
 
-test('Manifest: Verbund-Konfiguration (PORTAL_URL, PLATTFORM_URL, Schlüssel) wird übernommen; Modus immer portal', async () => {
-  const crypto = require('node:crypto');
-  const pem = crypto.generateKeyPairSync('ed25519').publicKey.export({ type: 'spki', format: 'pem' });
-  const app = H.makeApp({ seedDir: SEED, portalUrl: 'https://portal.example', plattformUrl: 'https://kryptos.example', portalPublicKey: pem });
+test('Manifest: VERTRAG_VERSION 1.2 → vertrag 1.2 und niveaus; basis aus PLATTFORM_URL', async () => {
+  const app = H.makeApp({ seedDir: SEED, vertragVersion: '1.2', plattformUrl: 'https://kryptos.example', portalUrl: 'https://portal.example' });
   const m = (await request(app).get('/api/plattform')).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
-  assert.equal(m.urls.ssoStart, '/sso/start');
+  assert.equal(m.vertrag, '1.2');
+  assert.deepEqual(m.niveaus, ['eA', 'gA']);
   assert.equal(m.basis, 'https://kryptos.example');
+  assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
+});
+
+test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgemäß', async () => {
+  const app = H.makeApp({ seedDir: null, weltDateien: [] });
+  const m = (await request(app).get('/api/plattform')).body;
+  assert.deepEqual(pruefeManifest(m), []);
+  assert.deepEqual(m.umfang, { welten: 0, level: 0, aufgaben: 0, bosse: 0 });
 });
 
 test('pruefeManifest erkennt Vertragsverstöße', () => {

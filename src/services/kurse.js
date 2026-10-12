@@ -107,6 +107,8 @@ function createKurse(ctx) {
     const k = kursFuer(lk, kursId);
     const b = input || {};
     if (b.name !== undefined) throw new ValidationError('Den Kursnamen ändern Sie im Portal.');
+    // vom Portal gesperrt (Verbund kurs-aendern aktiv:false, TECHNIK §6.7): nur lesend
+    if (!k.aktiv) throw new V.ForbiddenError('Kryptos ist für diesen Kurs im Portal abgeschaltet. Der Kurs ist nur lesbar.');
     const e = b.einstellungen === undefined ? k.einstellungen : pruefeEinstellungen(k.einstellungen, b.einstellungen);
     db.prepare('UPDATE kurse SET einstellungen = ?, updated_at = ? WHERE id = ?').run(JSON.stringify(e), iso(), k.id);
     return kursAnsicht(kursRow(k.id));

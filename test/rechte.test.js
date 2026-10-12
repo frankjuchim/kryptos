@@ -154,7 +154,11 @@ test('Entfernte Routen (TECHNIK §6.5) liefern auch ohne Sitzung 404 statt 401',
     ['post', '/api/schueler/beitreten'],
     ['post', '/api/schueler/anmelden'],
     ['get', '/api/kurs/ABCDEF'],
-    ['post', '/api/kurs-wechseln']
+    ['post', '/api/kurs-wechseln'],
+    ['post', '/api/lehrer/abmelden'],
+    ['post', '/api/schueler/abmelden'],
+    ['post', '/api/admin/lehrkraefte'],
+    ['post', '/api/admin/verbund/zuordnung']
   ]) {
     const r = await c[m](url).send({});
     assert.equal(r.status, 404, `${m} ${url}`);
@@ -162,4 +166,22 @@ test('Entfernte Routen (TECHNIK §6.5) liefern auch ohne Sitzung 404 statt 401',
   // vorhandene Routen ohne Sitzung weiterhin 401
   assert.equal((await c.get('/api/lehrer/kurse')).status, 401);
   assert.equal((await c.get('/api/admin/backup')).status, 401);
+});
+
+test('Gesperrter Kurs (Verbund aktiv:false): Lehrkraft sieht ihn nur lesend – Einstellungen ändern → 403', async () => {
+  const { app, lk, kurs } = await H.szenario();
+  app.locals.db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(kurs.id);
+  const g = await lk.get(`/api/lehrer/kurse/${kurs.id}`).expect(200);
+  assert.equal(g.body.aktiv, false);
+  assert.equal((await lk.get(`/api/lehrer/kurse/${kurs.id}/auswertung`)).status, 200);
+  const r = await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { beamer: true } });
+  assert.equal(r.status, 403);
+  assert.match(r.body.error, /abgeschaltet/);
+});
+
+test('Einstellung „anmeldung“ (Kern) wird ignoriert und nicht angezeigt (TECHNIK §6.5)', async () => {
+  const { lk, kurs } = await H.szenario();
+  const r = await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { anmeldung: false, beamer: true } }).expect(200);
+  assert.equal(r.body.einstellungen.anmeldung, undefined);
+  assert.equal(r.body.einstellungen.beamer, true);
 });

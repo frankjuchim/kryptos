@@ -1558,7 +1558,11 @@ CMD ["node", "src/server.js"]
 Lehrkraft, Superadmin; Kurse `k:1` „LK 13 (eA)“, `k:2` „GK 12 (gA)“) und leitet mit Token zurück; `/sso/abmelden`;
 Verbund-Aufrufe per Knopf (Löschen, Umbenennen, Übersicht). `npm run dev` startet über `test/devportal/dev.js` beide
 Prozesse (Kryptos auf 3000 mit `NODE_ENV=development`, `PORTAL_URL=http://localhost:3100`, Schlüssel aus der Datei,
-`WELT_DATEIEN` optional). Das Dev-Portal nutzt `src/jwt.js` (`signiere`) und dient auch dem e2e-Test.
+`WELT_DATEIEN` optional). Das Dev-Portal nutzt `src/jwt.js` (`signiere`) und dient auch dem e2e-Test
+(`createDevPortal({ portalUrl, plattformUrl, fetch })` liefert die Express-App ohne Port, `test/devportal.test.js`).
+Konten: `s:1` „Mika R.“ (Kurse `k:1`, `k:2`), `s:2` „Ida K.“ (`k:2`), `l:1` „Frau M.“ (Lehrkraft in `k:1`, `k:2`),
+`a:1` „Admin“; zusätzlich die Antworten `fehler=keine_berechtigung` und `fehler=abgebrochen`. Rücksprung nur
+zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
