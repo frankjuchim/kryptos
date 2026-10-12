@@ -2189,7 +2189,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   test('AQR.raster mit Buchstabenköpfen', () => {
     const { AQR } = lade();
     const t = AQR.raster([['a', 'b']], null, { kopf: ['X', 'Y'] });
-    assert.deepEqual(t.kinder[0].kinder[0].kinder.slice(1).map((th) => th.kinder[0]), ['X', 'Y']);
+    assert.deepEqual(t.kinder[0].kinder[0].kinder[0].kinder.slice(1).map((th) => th.kinder[0]), ['X', 'Y']); // div.scroll-x › table › thead › tr
   });
   test('AQI.registriere, schrittArten, teilFuer, gapBesitzer', () => {
     const { AQI } = lade();

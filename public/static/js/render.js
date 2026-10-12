@@ -270,7 +270,7 @@ const AQR = (() => {
     const tab = h(
       'table',
       { class: 'raster', role: opt.klick ? 'grid' : 'table', 'aria-label': `Raster mit ${zeilen.length} Zeilen und ${spalten} Spalten` },
-      h('thead', null, h('tr', null, h('th', null, ''), Array.from({ length: spalten }, (_, c) => h('th', { scope: 'col' }, String(c))))),
+      h('thead', null, h('tr', null, h('th', null, ''), Array.from({ length: spalten }, (_, c) => h('th', { scope: 'col' }, Array.isArray(opt.kopf) && opt.kopf[c] !== undefined ? String(opt.kopf[c]) : String(c))))),
       h(
         'tbody',
         null,
@@ -421,6 +421,16 @@ const AQR = (() => {
 
   /* ---------- Blöcke ---------- */
 
+  /** Kern-Blocktypen (nicht überschreibbar) und Registry der Plattform-Blöcke (K04). */
+  const KERN_TYPEN = new Set(['text', 'hinweis', 'code', 'struktogramm', 'tabelle', 'baum', 'reihung', 'raster', 'klassenkarte', 'adt']);
+  const REGISTRY = new Map();
+  /** registriere(typ, fn: (b, ctx) => Element) – Kern-Typen und Dopplungen werfen. */
+  function registriere(typ, fn) {
+    if (typeof typ !== 'string' || !typ || typeof fn !== 'function') throw new Error('Block-Registrierung ungültig.');
+    if (KERN_TYPEN.has(typ) || REGISTRY.has(typ)) throw new Error(`Block „${typ}“ ist bereits registriert.`);
+    REGISTRY.set(typ, fn);
+  }
+
   function block(b, i, ctx) {
     if (!b || typeof b !== 'object') return null;
     let el;
@@ -458,7 +468,7 @@ const AQR = (() => {
         el = reihung(b, ctx);
         break;
       case 'raster':
-        el = raster(Array.isArray(b.zeilen) ? b.zeilen : [], ctx);
+        el = raster(Array.isArray(b.zeilen) ? b.zeilen : [], ctx, Array.isArray(b.kopf) ? { kopf: b.kopf } : {});
         break;
       case 'klassenkarte':
         el = h('div', { class: 'scroll-x' }, klassenkarte(b, ctx));
@@ -466,8 +476,11 @@ const AQR = (() => {
       case 'adt':
         el = h('div', { class: 'scroll-x' }, adt(b.art, b.inhalt, ctx));
         break;
-      default:
-        el = h('p', { class: 'muted' }, `(unbekannter Block „${b.t}“)`);
+      default: {
+        // Erweiterungs-Hook (K04, TECHNIK §4.4): registrierte Blöcke der Plattform; ctx (inkl. modus) unverändert
+        const fn = REGISTRY.get(b.t);
+        el = fn ? fn(b, ctx) : h('p', { class: 'muted' }, `(unbekannter Block „${b.t}“)`);
+      }
     }
     if (el) el.classList.add('block', 'block-' + b.t);
     return el;
@@ -485,5 +498,5 @@ const AQR = (() => {
     return box;
   }
 
-  return { GAP_RE, md, inline, mitLuecken, code, struktogramm, tabelle, reihung, raster, klassenkarte, adt, baumSvg, block, bloecke };
+  return { GAP_RE, md, inline, mitLuecken, code, struktogramm, tabelle, reihung, raster, klassenkarte, adt, baumSvg, block, bloecke, registriere };
 })();

@@ -10,7 +10,21 @@ const AQI = (() => {
     if (!ia) return '';
     return ia.kind === 'tree' || ia.kind === 'array' ? `${ia.kind}:${ia.modus}` : ia.kind;
   }
-  const SCHRITT = ['tree:klick', 'array:tausch', 'array:klick', 'order'];
+  /** Arten mit Schrittprüfung (K05: Plattform darf ergänzen, z. B. AQI.schrittArten.add('chiffre')). */
+  const schrittArten = new Set(['tree:klick', 'array:tausch', 'array:klick', 'order']);
+  /** Kern-Arten (nicht überschreibbar) und Registry der Plattform-Interaktionen (K05, TECHNIK §4.4). */
+  const KERN_ARTEN = new Set(['gaps', 'choice', 'order', 'lines', 'match', 'tree:klick', 'tree:bauen', 'array:tausch', 'array:klick', 'grid', 'adtsim']);
+  const REGISTRY = new Map();
+  /** registriere(art, fabrik: (ia, kontext, nr) => Teil) – Kern-Arten und Dopplungen werfen. */
+  function registriere(artName, fabrik) {
+    if (typeof artName !== 'string' || !artName || typeof fabrik !== 'function') throw new Error('Interaktions-Registrierung ungültig.');
+    if (KERN_ARTEN.has(artName) || REGISTRY.has(artName)) throw new Error(`Interaktion „${artName}“ ist bereits registriert.`);
+    REGISTRY.set(artName, fabrik);
+  }
+  /** Erster Teil, der die Lücke id besitzt (Kern: gaps; Plattform-Teile mit besitzt()/feld()). */
+  function gapBesitzer(teile, id) {
+    return (teile || []).find((t) => t && typeof t.besitzt === 'function' && t.besitzt(id));
+  }
 
   function knopf(text, onclick, cls = 'btn secondary small', attrs = {}) {
     return h('button', { type: 'button', class: cls, onclick, ...attrs }, text);
@@ -861,6 +875,38 @@ const AQI = (() => {
     return self;
   }
 
+  /** Teil zu einer Interaktion: Kern-Arten, sonst Registry (K05), sonst Platzhalter „Unbekannte Interaktion.“ */
+  function teilFuer(ia, kontext, nr) {
+    switch (art(ia)) {
+      case 'gaps':
+        return teilGaps(ia, kontext);
+      case 'choice':
+        return teilChoice(ia, kontext);
+      case 'order':
+        return teilOrder(ia, kontext, nr);
+      case 'lines':
+        return teilLines(ia, kontext);
+      case 'match':
+        return teilMatch(ia, kontext);
+      case 'tree:klick':
+        return teilTreeKlick(ia, kontext, nr);
+      case 'tree:bauen':
+        return teilTreeBauen(ia, kontext);
+      case 'array:tausch':
+      case 'array:klick':
+        return teilArray(ia, kontext, nr);
+      case 'grid':
+        return teilGrid(ia, kontext);
+      case 'adtsim':
+        return teilAdtsim(ia, kontext);
+      default: {
+        const fabrik = REGISTRY.get(art(ia));
+        if (fabrik) return fabrik(ia, kontext, nr);
+        return { kind: '?', ui: h('p', { class: 'muted' }, 'Unbekannte Interaktion.'), antwort: () => null, leer: () => true, setze() {}, feedback() {}, loesung() {}, sperren() {} };
+      }
+    }
+  }
+
   /* ================= Aufgabe (alle Teile) ================= */
 
   /**
@@ -871,46 +917,20 @@ const AQI = (() => {
     const ias = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
     const mehrteilig = Array.isArray(a.interaktion);
     const schrittSchalter = h('input', { type: 'checkbox' });
-    const schrittArten = ias.filter((ia) => SCHRITT.includes(art(ia)));
-    schrittSchalter.checked = AQ.lade('aql_schritt', true) && schrittArten.some((ia) => art(ia) !== 'order');
+    const schrittTeile = ias.filter((ia) => schrittArten.has(art(ia)));
+    schrittSchalter.checked = AQ.lade('aql_schritt', true) && schrittTeile.some((ia) => art(ia) !== 'order');
     schrittSchalter.addEventListener('change', () => AQ.speichere('aql_schritt', schrittSchalter.checked));
     const kontext = {
       vorschau: !!opt.vorschau, // Lehrkraft-Vorschau: Lösung direkt in die Interaktion einsetzen
       geaendert: () => opt.onChange && opt.onChange(),
-      schrittAktiv: (teil) => !!opt.schritt && schrittSchalter.checked && SCHRITT.includes(teil.kind),
+      schrittAktiv: (teil) => !!opt.schritt && schrittSchalter.checked && schrittArten.has(teil.kind),
       schritt: (nr, antwort) => opt.schritt(nr, antwort)
     };
-    const teile = ias.map((ia, i) => {
-      switch (art(ia)) {
-        case 'gaps':
-          return teilGaps(ia, kontext);
-        case 'choice':
-          return teilChoice(ia, kontext);
-        case 'order':
-          return teilOrder(ia, kontext, i);
-        case 'lines':
-          return teilLines(ia, kontext);
-        case 'match':
-          return teilMatch(ia, kontext);
-        case 'tree:klick':
-          return teilTreeKlick(ia, kontext, i);
-        case 'tree:bauen':
-          return teilTreeBauen(ia, kontext);
-        case 'array:tausch':
-        case 'array:klick':
-          return teilArray(ia, kontext, i);
-        case 'grid':
-          return teilGrid(ia, kontext);
-        case 'adtsim':
-          return teilAdtsim(ia, kontext);
-        default:
-          return { kind: '?', ui: h('p', { class: 'muted' }, 'Unbekannte Interaktion.'), antwort: () => null, leer: () => true, setze() {}, feedback() {}, loesung() {}, sperren() {} };
-      }
-    });
+    const teile = ias.map((ia, i) => teilFuer(ia, kontext, i));
     const ctx = {
       gap(id) {
-        const t = teile.find((x) => x.kind === 'gaps' && x.besitzt(id));
-        return t ? t.feld(id) : null;
+        const t = gapBesitzer(teile, id);
+        return t && typeof t.feld === 'function' ? t.feld(id) : null;
       },
       zeilenWahl(blockIndex) {
         const t = teile.find((x) => x.kind === 'lines' && x.block === blockIndex);
@@ -1047,5 +1067,5 @@ const AQI = (() => {
     };
   }
 
-  return { aufgabe, art };
+  return { aufgabe, art, registriere, schrittArten, teilFuer, gapBesitzer };
 })();

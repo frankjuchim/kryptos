@@ -88,7 +88,7 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 |---|---|---|
 | `public/static/js/common.js` | A | Globale `AQ` bleibt (Kern-Name); `api()` behandelt `401 {anmelden: true}` mit Weiterleitung auf `/sso/start?ziel=<Pfad+Hash>`; neu `AQ.einstellung()` (Bewegung/Dunkelmodus, `localStorage` mit try/catch) |
 | `public/static/js/render.js` | A | Registry `AQR.registriere(typ, fn)` (§4.4); Kern-Blöcke unverändert, `raster` bekommt optionale Buchstabenköpfe |
-| `public/static/js/interact.js` | A | Registry `AQI.registriere(art, fn)`; `ctx.gap()` sucht alle Teile mit `besitzt()` (nicht nur `gaps`); `SCHRITT` aus der Registry |
+| `public/static/js/interact.js` | A | Registry `AQI.registriere(art, fn)`; `ctx.gap()` sucht alle Teile mit `besitzt()` (nicht nur `gaps`); `SCHRITT` wird zum Set `AQI.schrittArten` (Plattform ergänzt per `add`); `AQI.teilFuer`, `AQI.gapBesitzer` |
 | `public/static/js/aufgabe.js` | A | zeigt Fallen-Diagnose als Chip „P3 Umkehrung“ + Text; „Lösung zeigen“ mit Bestätigung; Werkzeug-Dialog |
 | `public/static/js/shared/baum.js` | U | wird geladen, solange Kern-Interaktionen es brauchen (Validator), in Kryptos-Seiten nicht eingebunden |
 | `public/*.html`, `public/static/css/*`, `spiel.js`, `lehrer.js`, `gast.js`, `start.js`, `board.js`, `themen.js`, `urkunden.js` | **E** | komplett neue Oberfläche im Designsystem „Chronoskop“ (§11) |
