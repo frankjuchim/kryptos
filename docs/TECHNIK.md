@@ -384,15 +384,15 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `DEUTSCH` | Objekt Buchstabe → Prozent (eine feste Tabelle, Quelle im Kommentar; Summe 100 ± 0,5) |
 | `haeufigkeiten(text)` | `{A: n, …, Z: n}` (immer 26 Schlüssel) |
 | `anteile(text)` | relative Häufigkeiten (Summe 1) |
-| `rangfolge(text)` | Buchstaben absteigend nach Häufigkeit, bei Gleichstand alphabetisch |
+| `rangfolge(text)` | vorkommende Buchstaben absteigend nach Häufigkeit, bei Gleichstand alphabetisch |
 | `teiltexte(text, k)` | k Teiltexte (jede k-te Stelle ab Position 0 … k−1) |
-| `bigramme(text, { top = 10 })` | häufigste Bigramme (überlappend) |
+| `bigramme(text, { top = 10 })` | häufigste Bigramme (überlappend) als `[{ bigramm, anzahl }]`, Gleichstand alphabetisch |
 | `koinzidenzindex(text)` | `Σ nᵢ(nᵢ−1) / (n(n−1))`; n < 2 → `null` |
-| `friedman(text, { iD = 0.076, iZ = 0.038 })` | `(iD − iZ)·n / ((n − 1)·I − iZ·n + iD)` (Design §6.4; **iZ = 0,038 wie in allen Materialien, nicht 1/26**), Rückgabe Zahl (nicht gerundet). Tests über `friedmanWert(n, I)`: (1001; 0,0475) → 3,99 · (501; 0,0456) → 4,96 · (601; 0,0507) → 2,98 |
+| `friedman(text, { iD = 0.076, iZ = 0.038 })` | `(iD − iZ)·n / ((n − 1)·I − iZ·n + iD)` (Design §6.4; **iZ = 0,038 wie in allen Materialien, nicht 1/26**), Rückgabe Zahl (nicht gerundet; Text mit n < 2 → `null`). Tests über `friedmanWert(n, I)`: (1001; 0,0475) → 3,99 · (501; 0,0456) → 4,96 · (601; 0,0507) → 2,98 |
 | `friedmanWert(n, I, { iD = 0.076, iZ = 0.038 })` | dieselbe Formel mit gegebenem n und I (für Aufgaben, die nur Kennzahlen nennen) |
-| `kasiski(text, { min = 3, max = 6 })` | `{ wiederholungen: [{ folge, positionen (ab 0), abstaende }], teiler: {2: n, …, 20: n}, vorschlag: [k…] }`; Teiler 2–20 |
-| `verschiebungSchaetzen(teiltext)` | k mit minimaler χ²-Abweichung zu `DEUTSCH` (+ Liste aller 26 Werte) |
-| `chiQuadrat(text)` | Abweichung von `DEUTSCH` |
+| `kasiski(text, { min = 3, anzahl = 30 })` | nach SPEC W2 §9 (Reiter 3): Mindestlänge `min` 3–6, **ohne Obergrenze** (bis n/2), nur **maximale** Wiederholungen (mit denselben Positionen in einer längeren enthalten → entfällt), sortiert nach Länge, Anzahl, erster Position, höchstens `anzahl`. `{ wiederholungen: [{ folge, positionen (ab 0), abstaende (aufeinanderfolgende Vorkommen) }], abstaende, teiler: {2: n, …, 20: n}, vorschlag: [k…] }`; `abstaende` = Grundlage der Teilertabelle (ein Paar, das in einer längeren Folge mit gleichem Abstand steckt, zählt nicht doppelt – Eves Brief: 9 Abstände); `vorschlag` = Teiler mit Anzahl > 0, absteigend nach Anzahl, bei Gleichstand größerer zuerst. *(Korrigiert nach SPEC W2 §9; vorher `max = 6`.)* |
+| `verschiebungSchaetzen(teiltext)` | nach SPEC W2 §9 (Reiter 6) **Korrelation** mit `DEUTSCH`: χ(v) = Σₓ p_D(x) · f_T((x + v) mod 26), Vorschlag = v mit größtem χ (Gleichstand kleineres v); `{ k, buchstabe, werte (26), kandidaten (3 beste) }` – Tests: Eves Brief k = 5 → WACHS, Lab-Text k = 4 → GOLD. *(Korrigiert nach SPEC W2 §9; vorher minimale χ²-Abweichung.)* |
+| `chiQuadrat(text)` | Abweichung von `DEUTSCH`: Σ (nᵢ − Eᵢ)²/Eᵢ mit Eᵢ = n · pᵢ; leerer Text → `null` |
 
 **Zahlentheorie, asymmetrisch, Schlüsselzahl**
 

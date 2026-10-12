@@ -1377,3 +1377,246 @@ test('kryptosHash.kollisionSuchen (Schubfach-Experiment)', () => {
   assert.equal(K.kryptosHash.kollisionSuchen('heute', { alphabet: 'a', max: 5 }), null);
   assert.throws(() => K.kryptosHash.kollisionSuchen('x', { alphabet: '' }), K.KryptoFehler);
 });
+
+// ───────────────────────────── Task 14: Kryptoanalyse ─────────────────────────────
+
+const EVES_BRIEF = `ZIGNS HEGYW WUUCW JEFPY ARTLA YHVKW JHCMW JAOHT ANFKW NGGZS
+JDVLT NIPNL ZIGIJ EEHLV ARFPH HOOHL ENFPW XRKLX AEPAZ WLVLF
+ZIGUS IEPKW NVGYT QEPKW PEPPF CEPBS HEUAV EEDYA AFGLJ OTUWS
+ATKUV ARPHU DTWUV RETIJ ANPAV EEDYA AFGKS JAEOV EEIHD AETLK
+AGGSL WMOVJ CEPDW ETGYF WCJNW JUC`;
+const GOLD_TEXT = 'JSCGU UPHSD QDKBR WJWPJ KGLQJ HPQGA DRTBE DMRTH MSDDT REHTP CLTUP QKRWH MSDFN SYNKO FVMSY XGRTH CONKK OXWUF OHYDL OGGEH YYPQT HOLKU PVGBO WKBYL IVEXT RWDKG DWJWP JKGLQ JHPQT ONKJS CPKGD HNSCH OB';
+const WETTKNACKEN = `DHCPQ NRUMV UDNCU DODIA PBRPR PMAUD OUIRD UBUGU CMOUI OPBQI
+RIPYC ONDUQ UAUMN UOZUI RDUNY CMDSO UIRUM BMDUY CUIQI RKUMN
+UMDIR DUPMP ADNYC UNKMP YCUQI RNPHH UGIRP NVDNN UIRUM BPIZU
+IVUGO UDIUN PAUIR NSDIR UOUDI EQIBU MNYCM UDAUM UDIUI AMDUS
+RUIID UHPIR GUNUI FPIIE URUMA QYCNO PAUDN ORQMY CUDIU IPIRU
+MUIUM NUOZO RUMNY CMUDA UMUMD IIUMO NDYCP IRDUG UCMUR UNKCD
+GJNJK CUIPG FDIRD HPIZP UCGOV DUJSO EURUN ZUDYC UITJM FJHHO
+DIEUR UMNKM PYCUB DAOUN AQYCN OPAUI RDUNU CMCPU QSDBN DIRQI
+RPIRU MURDU NUGOU IUMNY CUDIU IVUMB UIQBO UWOCP OSDIR UONJN
+YCMDO OSQUM NYCMD OORUI BPIZU INYCG QUNNU G`;
+const r2 = (x) => Math.round(x * 100) / 100;
+const r3 = (x) => Math.round(x * 1000) / 1000;
+const r4 = (x) => Math.round(x * 10000) / 10000;
+
+test('DEUTSCH Beutelspacher', () => {
+  assert.equal(K.DEUTSCH.E, 17.40);
+  assert.ok(Math.abs(Object.values(K.DEUTSCH).reduce((a, b) => a + b, 0) - 100) < 0.5);
+});
+
+test('DEUTSCH: SPEC W1 §12 / W2 §0.9 (Summe, Σp², Top 5/7/10)', () => {
+  assert.equal(Object.keys(K.DEUTSCH).length, 26);
+  assert.equal(Object.keys(K.DEUTSCH).sort().join(''), K.ALPHABET);
+  assert.equal(r2(Object.values(K.DEUTSCH).reduce((a, b) => a + b, 0)), 100);
+  assert.equal(r4(Object.values(K.DEUTSCH).reduce((a, p) => a + (p / 100) ** 2, 0)), 0.0762);
+  const v = Object.values(K.DEUTSCH).sort((a, b) => b - a);
+  const top = (k) => r2(v.slice(0, k).reduce((a, b) => a + b, 0));
+  assert.deepEqual([top(5), top(7), top(10)], [49, 61.66, 75.85]);
+  assert.deepEqual(Object.entries(K.DEUTSCH).sort((a, b) => b[1] - a[1]).slice(0, 7).map((e) => e[0]).join(''), 'ENISRAT');
+  assert.ok(Object.isFrozen(K.DEUTSCH));
+});
+
+test('haeufigkeiten, anteile, rangfolge, bigramme: Wettknacken (SPEC W1 §9.3)', () => {
+  const h = K.haeufigkeiten(WETTKNACKEN);
+  assert.equal(Object.keys(h).length, 26);
+  assert.equal(Object.values(h).reduce((a, b) => a + b, 0), 486);
+  assert.equal(h.U, 94);
+  assert.equal(h.L, 0);
+  assert.equal(K.rangfolge(WETTKNACKEN).join(''), 'UIDNMROCPYQABGHSJZKVEFTW'); // Gleichstand alphabetisch, nur vorkommende
+  assert.deepEqual(K.bigramme(WETTKNACKEN, { top: 6 }).map((b) => [b.bigramm, b.anzahl]), [['UI', 21], ['IR', 20], ['UM', 20], ['YC', 17], ['RU', 14], ['DI', 13]]);
+  assert.equal(K.bigramme(WETTKNACKEN).length, 10);
+  assert.equal(r4(K.koinzidenzindex(WETTKNACKEN)), 0.0844);
+  const a = K.anteile(WETTKNACKEN);
+  assert.ok(Math.abs(Object.values(a).reduce((x, y) => x + y, 0) - 1) < 1e-12);
+  assert.equal(a.U, 94 / 486);
+  // Klartext mit PAPYRUS: Rangfolge E N I S R (Klartext-Häufigkeiten aus der Spec)
+  const klar = K.substitution(WETTKNACKEN, K.schluesselwortAlphabet('PAPYRUS'), 'ent');
+  assert.ok(klar.startsWith('IMHAUSDERWEISHEITINBAGDAD'));
+  const hk = K.haeufigkeiten(klar);
+  assert.deepEqual(['E', 'N', 'I', 'S', 'R', 'D', 'T', 'A', 'H', 'C', 'U'].map((c) => hk[c]), [94, 52, 42, 37, 36, 32, 28, 27, 27, 17, 14]);
+});
+
+test('haeufigkeiten und bigramme: SPEC W1 §12 (Akte W1·1 A4 ZEDER, W1-L1-07, Archivfund)', () => {
+  const c4 = `RAPIZ JGBQD FGDIS AGLAI ZPZVZ LALZD FEZQP ZQGAS PZACS QAGRA
+NBABB APTLR NZNGA PGLRA PLZDF SPZQS ASQGA ZLAGL APMZQ AAGLR
+GAEUA PQSAD ISQGD FFGLS APRAL YAJSA LTLRV ZPSAS EGQRG AVZAD
+FSAPQ DFJZB ALRMD FRAPH TLCAI TPGAP EAKAP ISGFL TLRQD FJZAC
+SZJZP K`;
+  const h = K.haeufigkeiten(c4);
+  const soll = { A: 36, Z: 19, P: 18, G: 17, L: 17, S: 15, Q: 12, R: 11, D: 10, F: 10, I: 6, B: 5, J: 5, T: 5, E: 4, C: 3, N: 3, V: 3, K: 2, M: 2, H: 1, U: 1, Y: 1 };
+  for (const c of K.ALPHABET) assert.equal(h[c], soll[c] || 0, c);
+  assert.equal(K.rangfolge(c4).slice(0, 5).join(''), 'AZPGL');
+  const bg = Object.fromEntries(K.bigramme(c4, { top: 1000 }).map((b) => [b.bigramm, b.anzahl]));
+  assert.deepEqual([bg.AP, bg.DF, bg.SA, bg.GA, bg.LR], [11, 8, 7, 6, 6]);
+  assert.equal(K.bigramme(c4, { top: 1 })[0].bigramm, 'AP');
+  const c7 = 'TDAPQ AOIAP QACAI CAGGR AUAOT AOPQS TQRIT TDAWS LCABA CQDCO AORIT A';
+  const h7 = K.haeufigkeiten(c7);
+  assert.deepEqual(['A', 'T', 'C', 'O', 'Q', 'I', 'D', 'P', 'R'].map((c) => h7[c]), [14, 6, 5, 5, 5, 4, 3, 3, 3]);
+  assert.equal(K.rangfolge(c7).slice(0, 5).join(''), 'ATCOQ');
+  assert.equal(K.rangfolge('ZPUCG URDUZ UDYCU IQIRR QSDIR UNORU INYCG QUNNU G')[0], 'U'); // Archivfund: U 9 × ≙ e
+  assert.equal(K.haeufigkeiten('ZPUCG URDUZ UDYCU IQIRR QSDIR UNORU INYCG QUNNU G').U, 9);
+});
+
+test('haeufigkeiten u. a.: Grenzfälle', () => {
+  assert.equal(Object.values(K.haeufigkeiten('')).reduce((a, b) => a + b, 0), 0);
+  assert.deepEqual(Object.values(K.anteile('')), new Array(26).fill(0));
+  assert.deepEqual(K.rangfolge(''), []);
+  assert.deepEqual(K.bigramme('A'), []);
+  assert.deepEqual(K.bigramme('AAA'), [{ bigramm: 'AA', anzahl: 2 }]); // überlappend
+  assert.equal(K.haeufigkeiten('Grüße').S, 2);
+});
+
+test('koinzidenzindex BALLADE = 2/21', () => assert.ok(Math.abs(K.koinzidenzindex('BALLADE') - 2 / 21) < 1e-12));
+
+test('koinzidenzindex n<2 → null', () => {
+  assert.equal(K.koinzidenzindex('A'), null);
+  assert.equal(K.koinzidenzindex(''), null);
+});
+
+test('koinzidenzindex: SPEC W2 §12', () => {
+  const gleich = (t, x) => assert.ok(Math.abs(K.koinzidenzindex(t) - x) < 1e-12, t);
+  gleich('ANANAS', 8 / 30);
+  gleich('SERENISSIMA', 10 / 110);
+  gleich('LAGUNE', 0);
+  gleich('KANALBANK', 10 / 72);
+  for (const t of ['ABBA', 'ANNA', 'OTTO', 'RWWR']) gleich(t, 4 / 12);
+  gleich('AOPD', 0);
+  assert.equal(r3(K.koinzidenzindex('ANANAS')), 0.267);
+  assert.equal(r3(K.koinzidenzindex('SERENISSIMA')), 0.091);
+  assert.equal(r3(K.koinzidenzindex('KANALBANK')), 0.139);
+  // Caesar lässt I unverändert, Vigenère nicht (W2-L23-03)
+  assert.equal(K.koinzidenzindex(K.caesar('otto', 3)), K.koinzidenzindex('otto'));
+  assert.equal(K.koinzidenzindex(K.vigenere('anna', 'ABCD')), 0);
+  // Archivfund LAGUNE: I(Klartext) 0,0665, I(Geheimtext) 0,0496
+  assert.equal(r4(K.koinzidenzindex('derratvonvenedigliestunserebriefebenutzeabjetztnurnochdasquadrat')), 0.0665);
+  assert.equal(r4(K.koinzidenzindex('OEXLN XGOTP RRPDO AYMPS ZOAWP RKVEM PFKVR RFTFY NFUEZ TGRFR TIPLO AYKHE ORGN')), 0.0496);
+  // Eves Brief: I = 2434/51756; Lab-Text GOLD: I = 1132/26082
+  gleich(EVES_BRIEF, 2434 / 51756);
+  gleich(GOLD_TEXT, 1132 / 26082);
+});
+
+test('friedman Standardwerte iD 0,076 / iZ 0,038 (nicht 1/26)', () => {
+  assert.equal(r2(K.friedmanWert(601, 0.0507)), 2.98);
+  assert.equal(r2(K.friedmanWert(1001, 0.0475)), 3.99);
+  assert.equal(r2(K.friedmanWert(501, 0.0456)), 4.96);
+});
+
+test('friedman: SPEC W2 §12 (Level 2.3, Akten W2·3, Kür K1, P04, Generator)', () => {
+  assert.equal(r2(K.friedmanWert(1001, 0.057)), 2.0);
+  assert.equal(r2(K.friedmanWert(1001, 0.0418)), 9.91);
+  assert.equal(r3(K.friedmanWert(400, 0.076)), 1);
+  assert.equal(Math.round(K.friedmanWert(400, 0.038) * 10) / 10, 400);
+  // Kür K1: 66 Paare, davon 18 im selben Teiltext → erwartetes I = 0,0484 → k = 3 zurück
+  const I = (18 * 0.076 + 48 * 0.038) / 66;
+  assert.equal(r4(I), 0.0484);
+  assert.equal(r3(K.friedmanWert(12, I)), 3);
+  // P04: I = 410/9900 → ≈ 10,1 (0,076/0,038) bzw. ≈ 11,6 (0,0765/0,0385)
+  assert.equal(Math.round(K.friedmanWert(100, 410 / 9900) * 10) / 10, 10.1);
+  assert.equal(Math.round(K.friedmanWert(100, 410 / 9900, { iD: 0.0765, iZ: 0.0385 }) * 10) / 10, 11.6);
+  // Generator 8: für n ∈ {501, 1001}, k = 2 … 8 rundet die Formel auf k zurück (14 Kombinationen)
+  let ok = 0;
+  for (const n of [501, 1001]) for (let k = 2; k <= 8; k++) {
+    const Ik = Math.round((((n - k) * 0.076 + n * (k - 1) * 0.038) / ((n - 1) * k)) * 10000) / 10000;
+    if (Math.round(K.friedmanWert(n, Ik)) === k) ok++;
+  }
+  assert.equal(ok, 14);
+  // aus dem Text: Eves Brief ≈ 4,15, Lab-Text GOLD ≈ 6,78
+  assert.equal(r2(K.friedman(EVES_BRIEF)), 4.15);
+  assert.equal(r2(K.friedman(GOLD_TEXT)), 6.78);
+  assert.equal(K.friedman('A'), null);
+  assert.throws(() => K.friedmanWert(1, 0.05), K.KryptoFehler);
+  assert.throws(() => K.friedmanWert(100, -1), K.KryptoFehler);
+});
+
+test('teiltexte ab Position 0', () => assert.equal(K.teiltexte('YLYTXEBYWUTPRP', 3)[1], 'LXYTP'));
+
+test('teiltexte: SPEC W2 (W2-L22-01, Warm-up, Teiltext-Probe, Teiltext-Maxima)', () => {
+  assert.deepEqual(K.teiltexte('VCVIZ TSWLE UKXMY', 3), ['VISEX', 'CZWUM', 'VTLKY']);
+  assert.deepEqual(K.teiltexte('QWERT ZUIOP AS', 3), ['QRUP', 'WTIA', 'EZOS']);
+  assert.deepEqual(K.teiltexte('ABC', 5), ['A', 'B', 'C', '', '']);
+  assert.throws(() => K.teiltexte('ABC', 0), K.KryptoFehler);
+  // mittlerer Teiltext-Koinzidenzindex Eves Brief, k = 1 … 10 (W2-L23-06) und k = 5 / 10 genau (§9 Testfall 1)
+  const mittel = (t, k) => K.teiltexte(t, k).map(K.koinzidenzindex).reduce((a, b) => a + b, 0) / k;
+  assert.deepEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((k) => r3(mittel(EVES_BRIEF, k))), [0.047, 0.046, 0.046, 0.048, 0.096, 0.044, 0.047, 0.047, 0.042, 0.099]);
+  assert.equal(r4(mittel(EVES_BRIEF, 5)), 0.0961);
+  assert.equal(r4(mittel(EVES_BRIEF, 10)), 0.0988);
+  assert.equal(r4(mittel(GOLD_TEXT, 4)), 0.0914);
+  // häufigste Buchstaben je Teiltext: Eves Brief k = 5; GOLD k = 4 (je die zwei häufigsten)
+  const spitze = (t) => {
+    const h = K.haeufigkeiten(t);
+    return K.rangfolge(t).slice(0, 2).map((c) => [c, h[c]]);
+  };
+  assert.deepEqual(K.teiltexte(EVES_BRIEF, 5).map((t) => spitze(t)[0]), [['A', 11], ['E', 15], ['G', 10], ['L', 7], ['W', 10]]);
+  assert.deepEqual(K.teiltexte(GOLD_TEXT, 4).map(spitze), [[['K', 10], ['T', 7]], [['S', 7], ['B', 5]], [['P', 8], ['D', 5]], [['H', 9], ['Q', 6]]]);
+});
+
+test('kasiski Eves Brief', () => {
+  const r = K.kasiski(EVES_BRIEF);
+  assert.deepEqual(r.wiederholungen.find((w) => w.folge === 'ZIG').positionen, [0, 60, 100]);
+  assert.equal(r.vorschlag[0], 5);
+});
+
+test('kasiski: SPEC W2 §9 Testfälle 1 und 2, Akte W2·2', () => {
+  const r = K.kasiski(EVES_BRIEF);
+  // nur maximale Wiederholungen, sortiert nach Länge, dann Anzahl, dann erster Position
+  assert.deepEqual(r.wiederholungen.map((w) => [w.folge, w.positionen]), [
+    ['AVEEDYAAFG', [133, 173]], ['EPKW', [106, 116]], ['ZIG', [0, 60, 100]], ['VEE', [134, 174, 189]],
+    ['SHE', [4, 129]], ['KWN', [43, 108]], ['VAR', [69, 154]], ['CEP', [125, 210]],
+  ]);
+  assert.deepEqual(r.wiederholungen.find((w) => w.folge === 'ZIG').abstaende, [60, 40]);
+  assert.deepEqual(r.wiederholungen.find((w) => w.folge === 'VEE').abstaende, [40, 15]);
+  // Teilertabelle über die neun Abstände 40, 10, 60, 40, 125, 65, 85, 85, 15 (Akte W2·2 A3c)
+  assert.deepEqual(r.abstaende.slice().sort((a, b) => a - b), [10, 15, 40, 40, 60, 65, 85, 85, 125]);
+  assert.deepEqual([2, 3, 4, 5, 6, 7, 8, 9, 10].map((t) => r.teiler[t]), [4, 2, 3, 9, 1, 0, 2, 0, 4]);
+  assert.deepEqual(Object.keys(r.teiler).map(Number), Array.from({ length: 19 }, (_, i) => i + 2));
+  const g = K.kasiski(GOLD_TEXT);
+  assert.deepEqual([g.wiederholungen[0].folge, g.wiederholungen[0].positionen], ['WJWPJKGLQJHPQ', [15, 131]]);
+  assert.equal(g.abstaende.length, 7);
+  assert.deepEqual([g.teiler[2], g.teiler[4]], [7, 7]);
+  // Gleichstand: größerer Teiler zuerst (wie der ggT) – GOLD hat Länge 4
+  assert.deepEqual(g.vorschlag.slice(0, 2), [4, 2]);
+  for (const [f, p] of [['HMSD', [39, 59]], ['RTH', [37, 77]], ['PQT', [102, 142]], ['KGD', [128, 152]]]) {
+    assert.deepEqual(g.wiederholungen.find((w) => w.folge === f).positionen, p, f);
+  }
+});
+
+test('kasiski: Optionen und Grenzfälle', () => {
+  const r = K.kasiski(EVES_BRIEF, { min: 4 });
+  assert.deepEqual(r.wiederholungen.map((w) => w.folge), ['AVEEDYAAFG', 'EPKW']);
+  const leer = K.kasiski('ABCDEFG');
+  assert.deepEqual(leer.wiederholungen, []);
+  assert.deepEqual(leer.abstaende, []);
+  assert.deepEqual(leer.vorschlag, []);
+  assert.equal(leer.teiler[2], 0);
+  assert.equal(K.kasiski('').wiederholungen.length, 0);
+  assert.equal(K.kasiski(EVES_BRIEF, { anzahl: 3 }).wiederholungen.length, 3);
+  assert.throws(() => K.kasiski('ABC', { min: 2 }), K.KryptoFehler);
+  assert.throws(() => K.kasiski('ABC', { min: 7 }), K.KryptoFehler);
+  // Länge höchstens n/2: ABCABCABC → ABC (0, 3, 6), Abstände 3, 3
+  assert.deepEqual(K.kasiski('ABCABCABC').wiederholungen.map((w) => [w.folge, w.positionen]), [['ABC', [0, 3, 6]]]);
+  assert.deepEqual(K.kasiski('ABCABCABC').abstaende, [3, 3]);
+});
+
+test('verschiebungSchaetzen: Korrelation mit DEUTSCH (SPEC W2 §9 Reiter 6)', () => {
+  const vorschlag = (t, k) => K.teiltexte(t, k).map((tt) => K.verschiebungSchaetzen(tt).buchstabe).join('');
+  assert.equal(vorschlag(EVES_BRIEF, 5), 'WACHS');
+  assert.equal(vorschlag(GOLD_TEXT, 4), 'GOLD');
+  const v = K.verschiebungSchaetzen(K.caesar('diekurierewartenanderbrueckenebendemfischmarktaufdenabend', 19));
+  assert.equal(v.k, 19);
+  assert.equal(v.buchstabe, 'T');
+  assert.equal(v.werte.length, 26);
+  assert.equal(v.kandidaten.length, 3);
+  assert.equal(v.kandidaten[0].k, 19);
+  assert.ok(v.kandidaten[0].wert >= v.kandidaten[1].wert);
+  assert.equal(K.verschiebungSchaetzen('').k, 0); // Gleichstand → kleineres v
+});
+
+test('chiQuadrat', () => {
+  const klar = 'diekurierewartenanderbrueckenebendemfischmarktaufdenabend';
+  assert.ok(K.chiQuadrat(klar) < K.chiQuadrat(K.caesar(klar, 7)));
+  assert.equal(K.chiQuadrat(''), null);
+  const h = K.haeufigkeiten('EEN');
+  const erwartet = K.ALPHABET.split('').reduce((s, c) => s + (h[c] - (3 * K.DEUTSCH[c]) / 100) ** 2 / ((3 * K.DEUTSCH[c]) / 100), 0);
+  assert.ok(Math.abs(K.chiQuadrat('EEN') - erwartet) < 1e-9);
+});

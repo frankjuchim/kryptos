@@ -1055,6 +1055,190 @@
     return null;
   };
 
+  // ───────────────────────────── Kryptoanalyse ─────────────────────────────
+
+  /**
+   * Buchstabenhäufigkeiten deutscher Texte in Prozent.
+   * Quelle: A. Beutelspacher, Kryptologie (Springer Spektrum) – identisch in SPEC W1 und W2 §0.9; Summe 100,00 %
+   * (ß als ss gezählt), I_D = Σ p² = 0,0762.
+   */
+  const DEUTSCH = Object.freeze({
+    A: 6.51, B: 1.89, C: 3.06, D: 5.08, E: 17.4, F: 1.66, G: 3.01, H: 4.76, I: 7.55, J: 0.27, K: 1.21, L: 3.44, M: 2.53,
+    N: 9.78, O: 2.51, P: 0.79, Q: 0.02, R: 7.0, S: 7.27, T: 6.15, U: 4.35, V: 0.67, W: 1.89, X: 0.03, Y: 0.04, Z: 1.13,
+  });
+
+  /** absolute Häufigkeiten {A: n, …, Z: n} (immer 26 Schlüssel) */
+  function haeufigkeiten(text) {
+    const h = {};
+    for (const c of ALPHABET) h[c] = 0;
+    for (const c of nurBuchstaben(text)) h[c]++;
+    return h;
+  }
+
+  /** relative Häufigkeiten (Summe 1; leerer Text: alle 0) */
+  function anteile(text) {
+    const h = haeufigkeiten(text);
+    const n = Object.values(h).reduce((a, b) => a + b, 0);
+    const a = {};
+    for (const c of ALPHABET) a[c] = n ? h[c] / n : 0;
+    return a;
+  }
+
+  /** vorkommende Buchstaben absteigend nach Häufigkeit, bei Gleichstand alphabetisch */
+  function rangfolge(text) {
+    const h = haeufigkeiten(text);
+    return [...ALPHABET].filter((c) => h[c] > 0).sort((a, b) => h[b] - h[a] || (a < b ? -1 : 1));
+  }
+
+  /** k Teiltexte: Teiltext j enthält die Positionen j, j + k, j + 2k, … (ab 0) */
+  function teiltexte(text, k) {
+    pruefeGanzzahl(k, 'Die Anzahl der Teiltexte');
+    if (k < 1) throw new KryptoFehler('Die Anzahl der Teiltexte muss mindestens 1 sein.');
+    const t = nurBuchstaben(text);
+    const aus = new Array(k).fill('');
+    for (let i = 0; i < t.length; i++) aus[i % k] += t[i];
+    return aus;
+  }
+
+  /** häufigste Bigramme (überlappend gezählt): [{ bigramm, anzahl }], Gleichstand alphabetisch */
+  function bigramme(text, { top = 10 } = {}) {
+    pruefeGanzzahl(top, 'Anzahl');
+    const t = nurBuchstaben(text);
+    const z = new Map();
+    for (let i = 0; i + 1 < t.length; i++) z.set(t.slice(i, i + 2), (z.get(t.slice(i, i + 2)) || 0) + 1);
+    return [...z]
+      .map(([bigramm, anzahl]) => ({ bigramm, anzahl }))
+      .sort((a, b) => b.anzahl - a.anzahl || (a.bigramm < b.bigramm ? -1 : 1))
+      .slice(0, Math.max(0, top));
+  }
+
+  /** I = Σ nᵢ(nᵢ − 1) / (n(n − 1)); n < 2 → null */
+  function koinzidenzindex(text) {
+    const h = haeufigkeiten(text);
+    const n = Object.values(h).reduce((a, b) => a + b, 0);
+    if (n < 2) return null;
+    return Object.values(h).reduce((s, x) => s + x * (x - 1), 0) / (n * (n - 1));
+  }
+
+  /** Friedman: k ≈ (iD − iZ)·n / ((n − 1)·I − iZ·n + iD) (Design §6.4: iZ = 0,038, nie 1/26) */
+  function friedmanWert(n, I, { iD = 0.076, iZ = 0.038 } = {}) {
+    pruefeGanzzahl(n, 'Textlänge n');
+    if (n < 2) throw new KryptoFehler('Die Textlänge muss mindestens 2 sein.');
+    if (typeof I !== 'number' || !Number.isFinite(I) || I < 0 || I > 1) throw new KryptoFehler('Der Koinzidenzindex liegt zwischen 0 und 1.');
+    return ((iD - iZ) * n) / ((n - 1) * I - iZ * n + iD);
+  }
+
+  function friedman(text, optionen = {}) {
+    const n = nurBuchstaben(text).length;
+    const I = koinzidenzindex(text);
+    return I === null ? null : friedmanWert(n, I, optionen);
+  }
+
+  /**
+   * Kasiski (SPEC W2 §9, Reiter 3): Wiederholungen ab Länge `min` (3–6) ohne Obergrenze (bis n/2), nur maximale
+   * (eine Folge, die mit denselben Positionen in einer längeren enthalten ist, entfällt), sortiert nach Länge,
+   * Anzahl, erster Position; höchstens `anzahl`. abstaende je Folge: zwischen aufeinanderfolgenden Vorkommen.
+   * Gesamt-abstaende (Grundlage der Teilertabelle 2–20): jedes Paar aufeinanderfolgender Vorkommen einmal – ein Paar,
+   * das schon in einer längeren Folge mit demselben Abstand steckt, zählt nicht erneut. vorschlag: Teiler mit
+   * Anzahl > 0, absteigend nach Anzahl, bei Gleichstand größerer Teiler zuerst.
+   */
+  function kasiski(text, { min = 3, anzahl = 30 } = {}) {
+    pruefeGanzzahl(min, 'Mindestlänge');
+    if (min < 3 || min > 6) throw new KryptoFehler('Die Mindestlänge liegt zwischen 3 und 6.');
+    pruefeGanzzahl(anzahl, 'Anzahl');
+    const t = nurBuchstaben(text);
+    const n = t.length;
+    const gruppen = []; // { laenge, positionen }
+    // Gruppen gleicher Folgen der Länge L; nur wiederholte Positionen werden verlängert
+    let L = min;
+    let aktuell = new Map();
+    for (let i = 0; i + L <= n; i++) {
+      const f = t.slice(i, i + L);
+      if (!aktuell.has(f)) aktuell.set(f, []);
+      aktuell.get(f).push(i);
+    }
+    while (L <= Math.floor(n / 2)) {
+      const wiederholt = [...aktuell.values()].filter((p) => p.length >= 2);
+      if (wiederholt.length === 0) break;
+      for (const p of wiederholt) gruppen.push({ laenge: L, positionen: p });
+      const naechste = new Map();
+      for (const p of wiederholt) {
+        for (const i of p) {
+          if (i + L + 1 > n) continue;
+          const f = t.slice(i, i + L + 1);
+          if (!naechste.has(f)) naechste.set(f, []);
+          naechste.get(f).push(i);
+        }
+      }
+      aktuell = naechste;
+      L++;
+    }
+    // maximal: weder alle Vorkommen nach rechts noch alle nach links mit demselben Zeichen verlängerbar
+    const maximal = gruppen.filter(({ laenge, positionen: p }) => {
+      const rechts = p.every((i) => i + laenge < n && t[i + laenge] === t[p[0] + laenge]);
+      const links = p.every((i) => i > 0 && t[i - 1] === t[p[0] - 1]);
+      return !rechts && !links;
+    });
+    maximal.sort((a, b) => b.laenge - a.laenge || b.positionen.length - a.positionen.length || a.positionen[0] - b.positionen[0]);
+    const wiederholungen = maximal.slice(0, Math.max(0, anzahl)).map(({ laenge, positionen }) => ({
+      folge: t.slice(positionen[0], positionen[0] + laenge),
+      positionen: positionen.slice(),
+      abstaende: positionen.slice(1).map((p, i) => p - positionen[i]),
+    }));
+    // Gesamt-Abstände ohne Doppelzählung (Paare, die in einer längeren Folge mit gleichem Abstand liegen)
+    const abstaende = [];
+    const paare = []; // { a, ende, d }
+    for (const w of wiederholungen) {
+      const l = w.folge.length;
+      for (let i = 1; i < w.positionen.length; i++) {
+        const a = w.positionen[i - 1];
+        const d = w.positionen[i] - a;
+        const gedeckt = paare.some((q) => q.d === d && q.a <= a && a + l <= q.ende);
+        if (!gedeckt) {
+          abstaende.push(d);
+          paare.push({ a, ende: a + l, d });
+        }
+      }
+    }
+    const teiler = {};
+    for (let k = 2; k <= 20; k++) teiler[k] = abstaende.filter((d) => d % k === 0).length;
+    const vorschlag = Object.keys(teiler)
+      .map(Number)
+      .filter((k) => teiler[k] > 0)
+      .sort((a, b) => teiler[b] - teiler[a] || b - a);
+    return { wiederholungen, abstaende, teiler, vorschlag };
+  }
+
+  /**
+   * Verschiebung eines Teiltexts schätzen (SPEC W2 §9, Reiter 6): Korrelation mit DEUTSCH
+   * χ(v) = Σₓ p_D(x) · f_T((x + v) mod 26); Vorschlag = v mit größtem χ (bei Gleichstand kleineres v).
+   */
+  function verschiebungSchaetzen(teiltext) {
+    const f = anteile(teiltext);
+    const werte = [];
+    for (let v = 0; v < 26; v++) {
+      let chi = 0;
+      for (let x = 0; x < 26; x++) chi += (DEUTSCH[ALPHABET[x]] / 100) * f[ALPHABET[(x + v) % 26]];
+      werte.push(chi);
+    }
+    const reihenfolge = werte.map((w, v) => v).sort((a, b) => werte[b] - werte[a] || a - b);
+    const kandidaten = reihenfolge.slice(0, 3).map((v) => ({ k: v, buchstabe: ALPHABET[v], wert: werte[v] }));
+    return { k: reihenfolge[0], buchstabe: ALPHABET[reihenfolge[0]], werte, kandidaten };
+  }
+
+  /** χ²-Abweichung der Häufigkeiten von DEUTSCH: Σ (nᵢ − Eᵢ)² / Eᵢ mit Eᵢ = n · pᵢ; leerer Text → null */
+  function chiQuadrat(text) {
+    const h = haeufigkeiten(text);
+    const n = Object.values(h).reduce((a, b) => a + b, 0);
+    if (n === 0) return null;
+    let s = 0;
+    for (const c of ALPHABET) {
+      const e = (n * DEUTSCH[c]) / 100;
+      s += (h[c] - e) ** 2 / e;
+    }
+    return s;
+  }
+
   return {
     // Grundlagen
     ALPHABET,
@@ -1118,5 +1302,18 @@
     // Moderne Toy-Verfahren
     kryptos16,
     kryptosHash,
+    // Kryptoanalyse
+    DEUTSCH,
+    haeufigkeiten,
+    anteile,
+    rangfolge,
+    teiltexte,
+    bigramme,
+    koinzidenzindex,
+    friedman,
+    friedmanWert,
+    kasiski,
+    verschiebungSchaetzen,
+    chiQuadrat,
   };
 });
