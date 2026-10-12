@@ -697,7 +697,8 @@ Registrierung, das Feld `niveaus`, `niveau` in der Kursübersicht und die Regel 
 
 Unverändert aus Algo Quest (Definition dort): `meta`, `welten`, `fortschritt`, `fallen_zaehler`, `falsche_antworten`,
 `ide_erledigt`, `abzeichen`, `erfolge`, `training`, `boss_versuche`, `katas`, `leitner`. Alle Fremdschlüssel
-`ON DELETE CASCADE`, `PRAGMA foreign_keys = ON`.
+`ON DELETE CASCADE`, `PRAGMA foreign_keys = ON`, `PRAGMA secure_delete = ON` (gelöschte Inhalte werden in der Datei
+überschrieben). Schema-Änderungen nur als neue Migration am Ende von `MIGRATIONEN` (Migration 2: `loeschungen`).
 
 ```sql
 -- ===== Konten und Kurse (ersetzt lehrkraefte, kurse, schueler aus Algo Quest) =====
@@ -747,6 +748,14 @@ CREATE INDEX idx_schueler_sub ON schueler(sub);
 CREATE TABLE sso_jti (               -- verwendete Token-ids (SSO „s:“, Verbund „v:“) bis zum Ablauf
   jti TEXT PRIMARY KEY,
   exp INTEGER NOT NULL               -- Sekunden seit 1970
+);
+
+-- Migration 2: Löschvermerke der Verbund-Löschungen (nur Kennung + Zeit, kein Name; nie im Backup, §7.3)
+CREATE TABLE loeschungen (
+  art        TEXT NOT NULL CHECK (art IN ('sub', 'kurs')),
+  schluessel TEXT NOT NULL,          -- „s:1042“ bzw. „k:17“
+  zeit       TEXT NOT NULL,          -- ISO-Zeitpunkt der (letzten) Löschung
+  PRIMARY KEY (art, schluessel)
 );
 
 -- ===== Inhalte (Erweiterung der Kern-Tabelle) =====
@@ -877,8 +886,11 @@ CREATE INDEX idx_arena_v ON arena_versuche(chiffre_id, team_id, zeit);
 
 Backup-Tabellenliste (`TABLES`) in Abhängigkeitsreihenfolge: `meta, konten, kurse, kurs_lehrkraefte, schueler, welten,
 aufgaben, fortschritt, fallen_zaehler, falsche_antworten, ide_erledigt, abzeichen, erfolge, training, boss_versuche,
-katas, leitner, teams, team_mitglieder, funk_teilnahmen, arena, arena_chiffren, arena_versuche` – **ohne** `sso_jti` und
-**ohne** `funk_szenarien/_rollen/_nachrichten/_ereignisse` (flüchtig, nie in Backups). Backup-Kennung
+katas, leitner, teams, team_mitglieder, funk_teilnahmen, arena, arena_chiffren, arena_versuche` – **ohne** `sso_jti`,
+**ohne** `loeschungen` (bleiben bei einer Rücksicherung stehen) und **ohne** `funk_szenarien/_rollen/_nachrichten/_ereignisse`
+(flüchtig, nie in Backups). **Rücksicherung:** Nach dem Einspielen werden alle Konten/Kurse mit Löschvermerk samt
+abhängigen Zeilen wieder entfernt (`loeschen.nachSub`/`nachKurs` ohne neuen Vermerk) und `konten.session_gen` aller Konten
+um 1 erhöht (alle Sitzungen enden); `counts` = Zeilen je Tabelle nach dem Filtern. Backup-Kennung
 `{ "app": "kryptos", "format": 1 }`.
 
 **Abweichung von Design §9.3 (begründet):** Teammitglieder stehen nicht als `sub`-Liste in `funk_teams`, sondern
@@ -915,7 +927,13 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 | Kurs gesperrt (`aktiv:false`) | laufendes Funkraum-Szenario und offene Arena des Kurses | wie „Beenden“/„Arena löschen“ |
 | Arena „Löschen“ (Lehrkraft) bzw. **30 Tage** nach `geschlossen_at` | Arena mit Chiffren, Beurteilungen, Versuchen | Route/Wartungsjob |
 | Teilnahme inaktiv | nichts (Lernstand bleibt bis Löschung, VERTRAG §5) | – |
+| jede Verbund-Löschung (`sub` bzw. `kurs`) | – (zusätzlich **Löschvermerk** in `loeschungen`: nur Kennung + Zeit, kein Name) | Backup/Restore filtert vermerkte Konten/Kurse heraus (§7.1); Vermerke nach **400 Tagen** gelöscht (Wartungsjob) |
 | `sso_jti` | Einträge mit `exp` < jetzt − 60 s | Wartungsjob |
+
+`falsche_antworten` (`kurs_id, aufgabe_id, antwort, anzahl`) hat **keinen Personenbezug-Schlüssel**: Es gibt keine Spalte
+für Teilnahme oder Konto, die Zeilen sind kursweite Zähler je Antworttext (Aufgabenstatistik der Lehrkraft). Sie bleiben
+bei `loeschen {sub}` stehen und werden mit dem Kurs gelöscht (Kaskade über `kurs_id`). Allgemein gilt `PRAGMA
+secure_delete = ON`, damit gelöschte Zeilen nicht in freien Seiten der Datei weiterleben.
 
 ### 7.4 Wartungsjob (`src/wartung.js`)
 
@@ -926,7 +944,8 @@ Speicher für `/api/admin/wartung` (Zeitpunkt, Anzahlen, Fehler):
 2. Arena: `DELETE FROM arena WHERE status = 'geschlossen' AND geschlossen_at < jetzt − 30 Tage`.
 3. `DELETE FROM sso_jti WHERE exp < jetztSek − 60`.
 4. Laufende Boss-Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion `boss.raeumeAuf` für alle betroffenen Teilnahmen).
-5. `PRAGMA optimize` (wöchentlich).
+5. Löschvermerke: `DELETE FROM loeschungen WHERE zeit < jetzt − 400 Tage` (Bericht `anzahlen.loeschungen`).
+6. `PRAGMA optimize` (wöchentlich).
 
 Test: `test/wartung.test.js` mit steuerbarer Uhr.
 

@@ -87,10 +87,10 @@ function createVerbundRouter({ db, svc, konfig, now }) {
     if (hatSub === hatKurs) return fehler400(res, 'Bitte genau eins angeben: sub oder kurs.');
     if (hatSub) {
       if (typeof b.sub !== 'string' || !L.SUB_MUSTER.test(b.sub)) return fehler400(res, 'sub ungültig.');
-      return res.json({ geloescht: L.nachSub(db, b.sub) });
+      return res.json({ geloescht: L.nachSub(db, b.sub, { jetzt: new Date(now()).toISOString() }) });
     }
     if (typeof b.kurs !== 'string' || !L.KURS_MUSTER.test(b.kurs)) return fehler400(res, 'kurs ungültig.');
-    res.json({ geloescht: L.nachKurs(db, b.kurs) });
+    res.json({ geloescht: L.nachKurs(db, b.kurs, { jetzt: new Date(now()).toISOString() }) });
   });
 
   r.get('/kurse/:kursId/uebersicht', verbund('kurs-uebersicht'), (req, res) => {

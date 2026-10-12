@@ -12,6 +12,7 @@ const { createBoss } = require('./boss');
 const { createTraining } = require('./training');
 const { createAuswertung } = require('./auswertung');
 const { createKata } = require('./kata');
+const L = require('../verbund/loeschen');
 
 function createServices(ctx) {
   const inhalte = createInhalte(ctx);
@@ -74,6 +75,15 @@ function createDaten(ctx, { inhalte }) {
         }
         setMeta(db, 'schema_version', SCHEMA_VERSION);
         setMeta(db, 'app', APP_KENNUNG);
+        // Vom Portal gelöschte Konten/Kurse (Löschvermerke, TECHNIK §7.3) samt abhängigen Zeilen wieder entfernen –
+        // ein älteres Backup darf Gelöschte nie zurückholen. Vermerke bleiben unverändert.
+        for (const { art, schluessel } of db.prepare('SELECT art, schluessel FROM loeschungen').all()) {
+          if (art === 'sub') L.nachSub(db, schluessel, { merken: false });
+          else L.nachKurs(db, schluessel, { merken: false });
+        }
+        // Alle Sitzungen beenden: Cookies mit der session_gen aus dem Backup gelten nicht mehr
+        db.prepare('UPDATE konten SET session_gen = session_gen + 1').run();
+        for (const t of TABLES) counts[t] = db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get().n;
       })();
     } catch (e) {
       if (e instanceof V.ValidationError) throw e;

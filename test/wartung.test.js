@@ -67,6 +67,18 @@ test('Wartung: sso_jti-Einträge 60 s nach Ablauf entfernt', () => {
   assert.deepEqual(db.prepare('SELECT jti FROM sso_jti').all().map((r) => r.jti), ['v:neu']);
 });
 
+test('Wartung: Löschvermerke (loeschungen) nach 400 Tagen entfernt, jüngere bleiben', () => {
+  const { uhr, app, db, iso } = aufbau();
+  db.prepare("INSERT INTO loeschungen (art, schluessel, zeit) VALUES ('sub', 's:1', ?), ('kurs', 'k:2', ?), ('sub', 's:3', ?)").run(
+    iso(uhr() - 401 * TAG),
+    iso(uhr() - 400 * TAG + STUNDE),
+    iso(uhr() - 10 * TAG)
+  );
+  const w = createWartung({ db, svc: app.locals.services, now: uhr });
+  assert.equal(w.lauf().anzahlen.loeschungen, 1);
+  assert.deepEqual(db.prepare('SELECT schluessel FROM loeschungen ORDER BY schluessel').all().map((r) => r.schluessel), ['k:2', 's:3']);
+});
+
 test('Wartung: abgelaufene Boss-Kämpfe werden ausgewertet, laufende nicht', () => {
   const { uhr, app, db, iso, t } = aufbau();
   const neu = (deadline) =>
@@ -121,5 +133,5 @@ test('Wartungsbericht nur für den Superadmin: GET /api/admin/wartung', async ()
   app.locals.wartung.lauf();
   const r = await admin.get('/api/admin/wartung').expect(200);
   assert.ok(r.body.bericht.zeit);
-  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'boss', 'funkraum', 'jti']);
+  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'boss', 'funkraum', 'jti', 'loeschungen']);
 });

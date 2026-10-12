@@ -2,20 +2,34 @@
 // Kern-Kandidat lab-kern: Löschregeln nach VERTRAG §6 und TECHNIK §7.3 (Verbund `loeschen`, Kurs sperren).
 // Alles läuft über die Fremdschlüssel-Kaskaden des Schemas (PRAGMA foreign_keys = ON, src/db.js), je Aufruf eine
 // Transaktion. Rückgabe = Anzahl gelöschter Konten + Teilnahmen (nachSub) bzw. Kurse + Teilnahmen (nachKurs).
+// Jede Löschung hinterlässt einen Löschvermerk in `loeschungen` (nur Kennung + Zeit, kein Name): Eine spätere
+// Rücksicherung eines älteren Backups filtert diese Konten/Kurse wieder heraus (TECHNIK §7.3).
 
 const SUB_MUSTER = /^[asl]:\d{1,15}$/;
 const KURS_MUSTER = /^k:\d{1,15}$/;
+
+/** Löschvermerk schreiben bzw. Zeit aktualisieren (in der Transaktion des Aufrufers). */
+function vermerke(db, art, schluessel, jetztIso) {
+  db.prepare('INSERT INTO loeschungen (art, schluessel, zeit) VALUES (?, ?, ?) ON CONFLICT(art, schluessel) DO UPDATE SET zeit = excluded.zeit').run(
+    art,
+    schluessel,
+    jetztIso || new Date().toISOString()
+  );
+}
 
 /**
  * Konto mit allem, was daran hängt: Teilnahmen (Kaskade: Lernstand, Teammitgliedschaften, eigene Funkraum-Nachrichten
  * `von_schueler_id`, Funkraum-Teilnahmen, eigene Arena-Versuche, Erfolge), `kurs_lehrkraefte`, das Konto selbst.
  * Danach Teams, die dadurch leer geworden sind, samt deren Funkraum-Rollen/-Nachrichten und Arena-Chiffren/-Versuchen
  * (Kaskade über teams.id). Teams mit verbleibenden Mitgliedern behalten ihre Team-Ergebnisse (ohne Personenbezug).
+ * @param {{ jetzt?: string, merken?: boolean }} [o]  jetzt = ISO-Zeit des Löschvermerks; merken: false beim
+ *   Herausfiltern während einer Rücksicherung (Vermerk bleibt unverändert)
  * @returns {number} gelöschte Konten + Teilnahmen (idempotent: zweiter Aufruf 0)
  */
-function nachSub(db, sub) {
+function nachSub(db, sub, { jetzt, merken = true } = {}) {
   if (typeof sub !== 'string' || !SUB_MUSTER.test(sub)) throw new Error('loeschen.nachSub: ungültige sub');
   return db.transaction(() => {
+    if (merken) vermerke(db, 'sub', sub, jetzt);
     const teams = db
       .prepare('SELECT DISTINCT m.team_id AS id FROM team_mitglieder m JOIN schueler s ON s.id = m.schueler_id WHERE s.sub = ?')
       .all(sub)
@@ -33,11 +47,13 @@ function nachSub(db, sub) {
  * Kurs und alles darunter (Kaskade über kurse.id: Teilnahmen + Lernstand, kurs_lehrkraefte, Teams, Funkraum, Arena,
  * falsche_antworten, erfolge). Konten bleiben – das Portal löscht kurslose Schüler separat.
  * @param {string} kursId  Portal-Kurs-ID „k:<n>“
+ * @param {{ jetzt?: string, merken?: boolean }} [o]  wie nachSub
  * @returns {number} gelöschte Kurse + Teilnahmen
  */
-function nachKurs(db, kursId) {
+function nachKurs(db, kursId, { jetzt, merken = true } = {}) {
   if (typeof kursId !== 'string' || !KURS_MUSTER.test(kursId)) throw new Error('loeschen.nachKurs: ungültige Kurs-ID');
   return db.transaction(() => {
+    if (merken) vermerke(db, 'kurs', kursId, jetzt);
     const k = db.prepare('SELECT id FROM kurse WHERE kurs_id = ?').get(kursId);
     if (!k) return 0;
     const teilnahmen = db.prepare('SELECT COUNT(*) AS n FROM schueler WHERE kurs_id = ?').get(k.id).n;

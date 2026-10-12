@@ -16,7 +16,7 @@ const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'kryptos-'));
 const TABELLEN = [
   'meta', 'welten', 'fortschritt', 'fallen_zaehler', 'falsche_antworten', 'ide_erledigt', 'abzeichen', 'erfolge', 'training',
   'boss_versuche', 'katas', 'leitner',
-  'konten', 'kurse', 'kurs_lehrkraefte', 'schueler', 'sso_jti',
+  'konten', 'kurse', 'kurs_lehrkraefte', 'schueler', 'sso_jti', 'loeschungen',
   'aufgaben',
   'teams', 'team_mitglieder',
   'funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse', 'funk_teilnahmen',
@@ -33,7 +33,32 @@ test('Datenmodell: frische DB hat meta.app = kryptos, schema_version = Anzahl Mi
   assert.deepEqual([...tabellen].sort(), [...TABELLEN].sort());
   for (const alt of ['lehrkraefte', 'guilds']) assert.ok(!tabellen.includes(alt), alt);
   assert.equal(db.pragma('foreign_keys', { simple: true }), 1);
+  assert.equal(db.pragma('secure_delete', { simple: true }), 1, 'gelöschte Inhalte werden überschrieben');
   db.close();
+});
+
+test('Migration 2: Datenbank mit Schema 1 bekommt die Tabelle loeschungen (Daten bleiben), secure_delete an', () => {
+  const dir = tmp();
+  const datei = path.join(dir, 'kryptos.db');
+  try {
+    const Database = require('better-sqlite3');
+    const alt = new Database(datei);
+    alt.exec(MIGRATIONEN[0]);
+    alt.prepare("INSERT INTO meta (key, value) VALUES ('app', 'kryptos'), ('schema_version', '1')").run();
+    alt.prepare("INSERT INTO konten (sub, rolle, name, created_at) VALUES ('s:1', 'schueler', 'Mika R.', '2026-10-01')").run();
+    alt.close();
+    const db = openDatabase(datei);
+    assert.equal(getMeta(db, 'schema_version'), String(SCHEMA_VERSION));
+    assert.ok(SCHEMA_VERSION >= 2);
+    assert.equal(db.prepare('SELECT COUNT(*) AS n FROM konten').get().n, 1);
+    const spalten = db.prepare('PRAGMA table_info(loeschungen)').all().map((c) => c.name);
+    assert.deepEqual(spalten, ['art', 'schluessel', 'zeit']);
+    assert.throws(() => db.prepare("INSERT INTO loeschungen VALUES ('name', 'x', 'y')").run(), /CHECK/);
+    assert.equal(db.pragma('secure_delete', { simple: true }), 1);
+    db.close();
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('Datenmodell: Spalten der Konten/Kurse/Teilnahmen, Fremdschlüssel mit Kaskade', () => {

@@ -313,14 +313,25 @@ const MIGRATIONEN = [
     zeit        TEXT NOT NULL
   );
   CREATE INDEX idx_arena_v ON arena_versuche(chiffre_id, team_id, zeit);
+  `,
+  // Migration 2 (Review M1): Löschvermerke der Verbund-Löschungen – nur Kennung (sub bzw. Portal-Kurs-ID) und Zeit, kein
+  // Name. Eine Rücksicherung (Backup/Restore) filtert diese Konten/Kurse heraus; nie im Backup; Wartung nach 400 Tagen.
+  `
+  CREATE TABLE loeschungen (
+    art        TEXT NOT NULL CHECK (art IN ('sub', 'kurs')),
+    schluessel TEXT NOT NULL,                                -- „s:1042“ bzw. „k:17“
+    zeit       TEXT NOT NULL,                                -- ISO-Zeitpunkt der (letzten) Löschung
+    PRIMARY KEY (art, schluessel)
+  );
   `
 ];
 
 const SCHEMA_VERSION = MIGRATIONEN.length;
 
 /**
- * Tabellen in Abhängigkeitsreihenfolge (Backup/Restore, TECHNIK §7.1) – ohne sso_jti und ohne die flüchtigen
- * Funkraum-Tabellen funk_szenarien/_rollen/_nachrichten/_ereignisse (nie in Backups).
+ * Tabellen in Abhängigkeitsreihenfolge (Backup/Restore, TECHNIK §7.1) – ohne sso_jti, ohne loeschungen (Löschvermerke
+ * bleiben bei einer Rücksicherung stehen) und ohne die flüchtigen Funkraum-Tabellen funk_szenarien/_rollen/_nachrichten/
+ * _ereignisse (nie in Backups).
  */
 const TABLES = [
   'meta',
@@ -376,6 +387,7 @@ function openDatabase(dbFile, { log = () => {} } = {}) {
     if (version > SCHEMA_VERSION) throw new Error(`Datenbank-Schema ${version} ist neuer als diese Version von Kryptos (${SCHEMA_VERSION}).`);
     if (dbFile !== ':memory:') db.pragma('journal_mode = WAL');
     db.pragma('foreign_keys = ON');
+    db.pragma('secure_delete = ON'); // gelöschte Inhalte (Verbund-Löschung, Funkraum) in der Datei überschreiben
     db.pragma('busy_timeout = 5000');
     while (version < SCHEMA_VERSION) {
       const sql = MIGRATIONEN[version];

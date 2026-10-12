@@ -6,13 +6,15 @@
 //   2. Arena: geschlossene Arenen 30 Tage nach `geschlossen_at` löschen (Kaskade: Chiffren, Beurteilungen, Versuche)
 //   3. sso_jti: Einträge mit exp < jetzt − 60 s
 //   4. Boss: laufende Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion boss.raeumeAuf je Teilnahme)
-//   5. PRAGMA optimize (höchstens wöchentlich)
+//   5. Löschvermerke (loeschungen) 400 Tage nach der Löschung entfernen
+//   6. PRAGMA optimize (höchstens wöchentlich)
 
 const { BOSS_KULANZ_MS } = require('./domain');
 
 const STUNDE_MS = 3600 * 1000;
 const ARENA_FRIST_MS = 30 * 24 * STUNDE_MS;
 const OPTIMIZE_MS = 7 * 24 * STUNDE_MS;
+const LOESCHVERMERK_MS = 400 * 24 * STUNDE_MS;
 
 /**
  * @param {object} o
@@ -29,7 +31,7 @@ function createWartung({ db, svc, now = () => Date.now(), log = () => {} }) {
   function lauf() {
     const t = now();
     const iso = (ms) => new Date(ms).toISOString();
-    const anzahlen = { funkraum: 0, arena: 0, jti: 0, boss: 0 };
+    const anzahlen = { funkraum: 0, arena: 0, jti: 0, boss: 0, loeschungen: 0 };
     const fehler = [];
     const schritt = (name, fn) => {
       try {
@@ -52,6 +54,8 @@ function createWartung({ db, svc, now = () => Date.now(), log = () => {} }) {
       }
       return faellig.length;
     });
+
+    schritt('loeschungen', () => db.prepare('DELETE FROM loeschungen WHERE zeit < ?').run(iso(t - LOESCHVERMERK_MS)).changes);
 
     let optimiert = false;
     if (optimiertAm === null || t - optimiertAm >= OPTIMIZE_MS) {

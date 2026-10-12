@@ -109,9 +109,11 @@ test('Backup/Restore (JSON): Kennung kryptos/1, Tabellenliste ohne flüchtige Ta
   const r = await admin.post('/api/admin/restore').send(backup);
   assert.equal(r.status, 200, JSON.stringify(r.body));
   assert.equal(app.locals.db.prepare('SELECT COUNT(*) AS n FROM schueler').get().n, 1);
-  // Sitzung bleibt gültig (Konto und session_gen sind im Backup), Punkte sind da
-  assert.equal((await s.get('/api/profil')).body.punkte.gesamt, 10);
-  assert.equal((await admin.get('/api/admin/inhalte')).status, 200);
+  // Nach der Rücksicherung enden alle Sitzungen (session_gen + 1); neue Sitzung → Punkte sind da
+  assert.equal((await s.get('/api/profil')).status, 401);
+  assert.equal((await admin.get('/api/admin/inhalte')).status, 401);
+  const neu = H.alsSchueler(app, s.sub, s.id);
+  assert.equal((await neu.get('/api/profil')).body.punkte.gesamt, 10);
 });
 
 test('Kata: Seed aus seed/warmup, Ziehen/Antworten (Leitner), Import nur für Superadmin', async () => {
