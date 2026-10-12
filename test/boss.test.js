@@ -24,7 +24,9 @@ test('Freischaltung: automatisch erst ab 60 % der Level-Punkte; „offen“/„g
   // nötige Punkte aus dem Grund lesen (fixture-unabhängig) und Level-Aufgaben der Reihe nach lösen
   const noetig = Number(st.grund.match(/\((\d+) von (\d+) nötigen Punkten\)/)[2]);
   let summe = 0;
-  for (const id of LEVEL_AUFGABEN) {
+  // nur kern/eA zählen für die Freischaltung (TECHNIK §8.2: ohne Ergänzung und Kür)
+  const NIV = Object.fromEntries(W.levels.flatMap((l) => l.aufgaben.map((id) => [id, W.aufgaben.find((a) => a.id === id).niveau ?? l.niveau ?? 'kern'])));
+  for (const id of LEVEL_AUFGABEN.filter((x) => ['kern', 'eA'].includes(NIV[x]))) {
     if (summe >= noetig) break;
     await s.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
     summe += PUNKTE[id];

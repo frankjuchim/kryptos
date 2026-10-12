@@ -1,7 +1,8 @@
 'use strict';
 // Boss-Kampf (SPEC §7): Ziehung nach Mix, serverseitiger Timer (+30 s Kulanz), kein Feedback während des Kampfes,
 // Auswertung am Ende, bester Versuch zählt, neuer Versuch frühestens 12 h nach dem Ende des letzten.
-// K08: Fallen-Diagnose nur in der Auswertung (ergebnis[i].diagnose), bereinige mit Kontext { aufgabe }.
+// K08: Fallen-Diagnose nur in der Auswertung (ergebnis[i].diagnose), bereinige mit Kontext { aufgabe }; Ziehung aus
+// optionen.bossPool(pool, einst) (Niveau, TECHNIK §8.2).
 
 const crypto = require('node:crypto');
 const V = require('../validate');
@@ -27,11 +28,11 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
 
   /**
    * Aufgaben gemäß mix aus dem Pool ziehen (fehlende Stufen werden aus dem Rest aufgefüllt).
-   * Kursniveau gA: Pool nur aus kern-Aufgaben, Anzahl höchstens dessen Größe (Delta §10).
+   * Pool nach optionen.bossPool(aufgaben, einst) gefiltert (Kryptos: gA-Kurs nur kern, Delta §10), Anzahl höchstens
+   * dessen Größe, Mix aus dem gefilterten Pool.
    */
-  function ziehe(boss, { niveau = 'eA' } = {}) {
-    let pool = boss.pool.map((id) => kat().aufgaben.get(id)).filter(Boolean);
-    if (niveau === 'gA') pool = pool.filter((a) => (a._niveau || 'kern') === 'kern');
+  function ziehe(boss, einst = {}) {
+    const pool = ctx.optionen.bossPool(boss.pool.map((id) => kat().aufgaben.get(id)).filter(Boolean), einst) || [];
     const anzahl = Math.min(boss.anzahl, pool.length);
     const gewaehlt = [];
     const rest = new Set(pool.map((a) => a.id));
@@ -149,7 +150,7 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     if (!st.frei) throw new ForbiddenError(st.grund || 'Der Boss ist noch gesperrt.');
     if (st.gesperrtBis) throw new ConflictError(`Ein neuer Versuch ist erst ab ${new Date(st.gesperrtBis).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} möglich (12 Stunden Pause).`);
     const w = kat().welten.get(st.welt.nr);
-    const ids = ziehe(w.boss, { niveau: lernen.einstellungenVon(s).niveau });
+    const ids = ziehe(w.boss, lernen.einstellungenVon(s));
     if (!ids.length) throw new NotFoundError('Der Boss-Pool ist leer.');
     const max = ids.reduce((sum, id) => sum + kat().aufgaben.get(id).punkte, 0);
     const t = ctx.now();

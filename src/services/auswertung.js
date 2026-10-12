@@ -1,5 +1,6 @@
 'use strict';
 // Auswertungen für Lehrkräfte (Fortschrittsmatrix, Boss-Ergebnisse, Aufgabenstatistik, Fallen-Profil, CSV) und Beamer-Board.
+// K14: Niveau (TECHNIK §8.2/§8.3) – Matrix nur sichtbare Level, Board-Anteile und Kursübersicht über stand.bezug.
 
 const { FALLEN, RAENGE } = require('../domain');
 
@@ -11,6 +12,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   function schuelerListe(lk, kursId) {
     const k = kurse.kursFuer(lk, kursId);
     const map = stand.staende(k.id);
+    const b = stand.bezug(k.einstellungen);
     return [...map.values()].map((e) => ({
       id: e.id,
       name: e.name,
@@ -18,15 +20,24 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       punkte: e.gesamt,
       geloest: e.geloest,
       abzeichen: e.abzeichen,
-      rang: stand.rangVon(e, k.einstellungen).name,
+      rang: stand.rangVon(e, k.einstellungen, b).name,
       erstellt: e.row.created_at,
       zuletztAktiv: e.row.last_active_at
     }));
   }
 
+  /** Fortschrittsmatrix: nur die im Kurs sichtbaren Level, Punkte und Maximum nur über deren sichtbare Aufgaben. */
   function matrix(k) {
+    const einst = k.einstellungen;
     const levels = [];
-    for (const w of kat().welten.values()) for (const l of w.levels) levels.push({ id: l.id, nr: l.nr, titel: l.titel, welt: w.nr, farbe: w.farbe, maxPunkte: l.maxPunkte });
+    const sichtbarIds = new Set();
+    for (const w of kat().welten.values()) {
+      for (const l of stand.sichtbareLevels(w, einst)) {
+        const ids = stand.sichtbareAufgaben(l, einst);
+        ids.forEach((id) => sichtbarIds.add(id));
+        levels.push({ id: l.id, nr: l.nr, titel: l.titel, welt: w.nr, farbe: w.farbe, maxPunkte: ids.reduce((x, id) => x + kat().aufgaben.get(id).punkte, 0) });
+      }
+    }
     const sch = db.prepare('SELECT id, name, aktiv FROM schueler WHERE kurs_id = ? ORDER BY name_key').all(k.id);
     const rows = db
       .prepare('SELECT f.schueler_id AS sid, f.aufgabe_id AS aid, f.punkte, f.status, f.nachgeloest FROM fortschritt f JOIN schueler s ON s.id = f.schueler_id WHERE s.kurs_id = ?')
@@ -34,7 +45,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     const proSchueler = new Map(sch.map((s) => [s.id, {}]));
     for (const r of rows) {
       const a = kat().aufgaben.get(r.aid);
-      if (!a || !a._level || !proSchueler.has(r.sid)) continue;
+      if (!a || !a._level || !sichtbarIds.has(a.id) || !proSchueler.has(r.sid)) continue;
       const m = proSchueler.get(r.sid);
       const z = (m[a._level] = m[a._level] || { punkte: 0, geloest: 0, angesehen: 0 });
       z.punkte += r.punkte;
@@ -134,7 +145,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
 
   function auswertung(lk, kursId) {
     const k = kurse.kursFuer(lk, kursId);
-    return { kurs: k, matrix: matrix(k), boss: bossErgebnisse(k), aufgaben: aufgabenStatistik(k), fallen: fallenProfil(k) };
+    return { kurs: k, niveau: k.einstellungen.niveau === 'gA' ? 'gA' : 'eA', matrix: matrix(k), boss: bossErgebnisse(k), aufgaben: aufgabenStatistik(k), fallen: fallenProfil(k) };
   }
 
   /* ---------- CSV (Semikolon, UTF-8 mit BOM, Excel-tauglich, Formel-Injektion entschärft) ---------- */
@@ -168,6 +179,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       };
     }
     const map = stand.staende(k.id);
+    const b = stand.bezug(k.einstellungen);
     const welten = [...kat().welten.values()];
     const kopf = ['Name', 'Punkte gesamt', 'Level-Punkte', 'Boss-Punkte', 'Training', 'Rang', 'gelöste Aufgaben', 'Abzeichen', ...welten.map((w) => `Welt ${w.nr} Level`), ...welten.filter((w) => w.boss).map((w) => `Boss ${w.nr} (bester)`), 'zuletzt aktiv'];
     const zeilen = [...map.values()].map((e) => [
@@ -176,7 +188,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       e.punkteLevel,
       e.punkteBoss,
       e.punkteTraining,
-      stand.rangVon(e, k.einstellungen).name,
+      stand.rangVon(e, k.einstellungen, b).name,
       e.geloest,
       e.abzeichen,
       ...welten.map((w) => e.level[w.nr] || 0),
@@ -196,11 +208,13 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     // nur aktive Teilnahmen (Kryptos: inaktive erscheinen auf dem Board nicht)
     const map = new Map([...stand.staende(k.id)].filter(([, e]) => e.row.aktiv === 1));
     const n = map.size;
+    const b = stand.bezug(k.einstellungen);
     const welten = [...kat().welten.values()]
       .filter((w) => stand.istFrei(k.einstellungen, w.nr))
       .map((w) => {
+        const x = b.get(w.nr);
         let summe = 0;
-        for (const e of map.values()) summe += w.maxPunkte ? Math.min(1, (e.level[w.nr] || 0) / w.maxPunkte) : 0;
+        for (const e of map.values()) summe += x.max ? Math.min(1, stand.istVon(e, x.ids) / x.max) : 0;
         return { nr: w.nr, titel: w.titel, farbe: w.farbe, anteil: n ? summe / n : 0 };
       });
     const erfolge = db
@@ -214,6 +228,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   function urkunden(lk, kursId) {
     const k = kurse.kursFuer(lk, kursId);
     const map = stand.staende(k.id);
+    const b = stand.bezug(k.einstellungen);
     const platz = new Map(lernen.scoreboard(k.id, null, null, { inaktive: true }).map((r) => [r.id, r.platz]));
     const defs = new Map(stand.definitionen().map((d) => [d.key, d]));
     const abz = new Map();
@@ -228,7 +243,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       name: e.name,
       punkte: e.gesamt,
       geloest: e.geloest,
-      rang: stand.rangVon(e, k.einstellungen).name,
+      rang: stand.rangVon(e, k.einstellungen, b).name,
       platz: platz.get(e.id),
       abzeichen: abz.get(e.id) || []
     }));
@@ -241,15 +256,6 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   const runde2 = (x) => Math.round(x * 100) / 100;
 
   /**
-   * Erreichbare Level-Punkte je Welt nach der Bezugsmenge B (TECHNIK §8.3). Nach labs-Vertrag v1.2 (§6, §9): alle
-   * sichtbaren Level-Aufgaben der freigeschalteten Welten (der Kern blendet noch nichts nach Niveau aus, daher = Maximum
-   * der Welt). Die Filterung nach Sichtbarkeit (Niveau/Kür) kommt mit src/krypto/niveau.js (TECHNIK §8).
-   */
-  function bezugsMax(w) {
-    return w.maxPunkte || 0;
-  }
-
-  /**
    * Kennzahlen eines Kurses nach Portal-Kurs-ID („k:17“) oder null (unbekannt). Nur Zahlen und sub – keine Namen,
    * Antworten, Lösungen, Freitexte, Teamnamen, Funkraum- oder Arena-Inhalte. schueler: alle Teilnahmen (auch inaktive).
    */
@@ -257,15 +263,17 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     const r = typeof kursId === 'string' ? db.prepare('SELECT * FROM kurse WHERE kurs_id = ?').get(kursId) : null;
     if (!r) return null;
     const einst = kurse.einstellungen(r.einstellungen);
-    const welten = [...kat().welten.values()].filter((w) => stand.istFrei(einst, w.nr)).sort((a, b) => a.nr - b.nr);
-    const max = welten.reduce((s, w) => s + bezugsMax(w), 0);
+    // Bezugsmenge B (TECHNIK §8.3; labs-Vertrag v1.2 §6/§9): sichtbare Level-Aufgaben der freigeschalteten Welten
+    const b = stand.bezug(einst);
+    const welten = [...kat().welten.values()].filter((w) => stand.istFrei(einst, w.nr)).sort((x, y) => x.nr - y.nr);
+    const max = welten.reduce((s, w) => s + b.get(w.nr).max, 0);
     const st = [...stand.staende(r.id).values()];
-    const weltAnteil = (e, w) => (bezugsMax(w) ? Math.min(1, (e.level[w.nr] || 0) / bezugsMax(w)) : 0);
+    const weltAnteil = (e, w) => (b.get(w.nr).max ? Math.min(1, stand.istVon(e, b.get(w.nr).ids) / b.get(w.nr).max) : 0);
     return {
       kurs: r.kurs_id,
       stand: new Date(ctx.now()).toISOString(),
       schueler: st.map((e) => {
-        const ist = welten.reduce((s, w) => s + Math.min(e.level[w.nr] || 0, bezugsMax(w)), 0);
+        const ist = welten.reduce((s, w) => s + stand.istVon(e, b.get(w.nr).ids), 0);
         return { sub: e.row.sub, punkte: e.gesamt, geloest: e.geloest, anteil: max ? runde2(Math.min(1, ist / max)) : 0, zuletzt: e.row.last_active_at || null };
       }),
       welten: welten.map((w) => ({ nr: w.nr, titel: w.titel, anteil: st.length ? runde2(st.reduce((s, e) => s + weltAnteil(e, w), 0) / st.length) : 0 }))

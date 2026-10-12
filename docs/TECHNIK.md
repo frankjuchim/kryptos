@@ -998,8 +998,9 @@ Test: `test/wartung.test.js` mit steuerbarer Uhr.
 - **rangrelevant(aufgabe, einst)** = **sichtbar** (labs-Vertrag v1.2 §6/§9: Bezug auf die Level-Punkte der
   freigeschalteten Welten; ob Ergänzung/Kür ausgenommen werden dürfen, regelt der Vertrag nicht). Die fachlich gewünschte
   Regel „nur Kern/eA“ (Design §3.2) ist Vorschlag V2 in `docs/VERTRAG_VORSCHLAEGE.md` und wird erst nach Aufnahme in den
-  Vertrag umgesetzt; die Funktion bleibt als eigene Erweiterungsstelle bestehen. Die Boss-Freischaltung (60 %) nutzt immer die Kern/eA-Menge, weil sie
-  plattformintern ist und den Vertrag nicht berührt.
+  Vertrag umgesetzt; die Funktion bleibt als eigene Erweiterungsstelle bestehen. Die Boss-Freischaltung (60 %) und das
+  Abzeichen „Welt gemeistert“ nutzen immer die Kern/eA-Menge (**bossBezug**: `kern`, im eA-Kurs zusätzlich `eA`, ohne
+  Ergänzung/Kür; `stand.bossBezugsmenge(einst)`), weil sie plattformintern sind und den Vertrag nicht berühren.
 
 ### 8.2 Wirkung
 
@@ -1011,7 +1012,7 @@ Test: `test/wartung.test.js` mit steuerbarer Uhr.
 | Boss-Freischaltung `auto` | 60 % der Level-Punkte der Welt aus `kern` (+ `eA` im eA-Kurs), unabhängig von der Vertragsversion | dito |
 | Punkte (Scoreboard, Profil „Punkte“) | alle erspielten Punkte (inkl. Ergänzung/Kür und bereits gelöster, jetzt ausgeblendeter eA-Aufgaben) | dito |
 | Rang, Kursübersicht `anteil`, Welt-Fortschrittsring | alle sichtbaren Level-Punkte / Maximum aller sichtbaren Level-Aufgaben freigeschalteter Welten (VERTRAG v1.2 §6/§9; Ergänzung und Kür zählen mit) | dito |
-| Abzeichen „Welt gemeistert“ | alle rangrelevanten Aufgaben der Welt gelöst | dito |
+| Abzeichen „Welt gemeistert“ | alle sichtbaren `kern`-Aufgaben der Welt gelöst (ohne Ergänzung/Kür) | alle `kern`- und `eA`-Aufgaben der Welt gelöst (ohne Ergänzung/Kür) |
 | Trainingsplatz | Generatoren mit `niveau: 'ergaenzung'` (DH/RSA) bleiben verfügbar, Generatoren `eA` (KRYPTOS-16) nur im eA-Kurs | |
 | Auswertung (Lehrkraft) | Matrix zeigt sichtbare Level; Spalte „Niveau: gA“ im Kopf | |
 

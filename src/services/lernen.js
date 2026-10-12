@@ -30,14 +30,9 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     return r.status;
   }
 
-  /* ---------- Sichtbarkeit nach Niveau (optionen.sichtbar, TECHNIK §8.1/§8.2) ---------- */
+  /* ---------- Sichtbarkeit nach Niveau (optionen.sichtbar, TECHNIK §8.1/§8.2; Helfer aus stand.js) ---------- */
 
-  const sichtbar = (x, einst) => !!x && ctx.optionen.sichtbar(x, einst) !== false;
-  /** Sichtbare Aufgaben-ids eines Levels (Reihenfolge des Levels). */
-  const sichtbareAufgaben = (l, einst) => l.aufgaben.filter((id) => sichtbar(kat().aufgaben.get(id), einst));
-  /** Level sichtbar ⇔ selbst sichtbar und mindestens eine sichtbare Aufgabe. */
-  const levelSichtbar = (l, einst) => !!l && sichtbar(l, einst) && sichtbareAufgaben(l, einst).length > 0;
-  const sichtbareLevels = (w, einst) => w.levels.filter((l) => levelSichtbar(l, einst));
+  const { sichtbar, sichtbareAufgaben, levelSichtbar, sichtbareLevels } = stand;
 
   /* ---------- Weltkarte ---------- */
 
@@ -45,6 +40,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const einst = einstellungenVon(s);
     const fm = fortschrittMap(s.id);
     const e = stand.stand(s);
+    const b = stand.bezug(einst);
     const out = [];
     for (const w of kat().welten.values()) {
       const frei = stand.istFrei(einst, w.nr);
@@ -79,9 +75,10 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         frei,
         levels,
         boss,
+        // erspielte Punkte; Maximum und Fortschrittsring über die Bezugsmenge (TECHNIK §8.2/§8.3)
         punkte: e.level[w.nr] || 0,
-        maxPunkte: w.maxPunkte,
-        anteil: w.maxPunkte ? (e.level[w.nr] || 0) / w.maxPunkte : 0,
+        maxPunkte: b.get(w.nr).max,
+        anteil: b.get(w.nr).max ? Math.min(1, stand.istVon(e, b.get(w.nr).ids) / b.get(w.nr).max) : 0,
         training: generatorenFuerWelt(w.nr).length > 0
       });
     }
@@ -335,7 +332,8 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
   function profil(s) {
     const einst = einstellungenVon(s);
     const e = stand.stand(s);
-    const rang = stand.rangVon(e, einst);
+    const b = stand.bezug(einst);
+    const rang = stand.rangVon(e, einst, b);
     const k = kurse.kursRow(s.kurs_id);
     const fallenRows = db.prepare('SELECT falle, anzahl FROM fallen_zaehler WHERE schueler_id = ?').all(s.id);
     const fm = new Map(fallenRows.map((r) => [r.falle, r.anzahl]));
@@ -345,7 +343,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
       farbe: w.farbe,
       frei: stand.istFrei(einst, w.nr),
       punkte: e.level[w.nr] || 0,
-      maxPunkte: w.maxPunkte,
+      maxPunkte: b.get(w.nr).max,
       boss: e.boss[w.nr] || null,
       training: e.training[w.nr] || 0
     }));

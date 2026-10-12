@@ -1751,10 +1751,14 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   - `stand.bezug(einst) → Map<welt, { max, ids: Set }>` über sichtbare Level-Aufgaben sichtbarer Level mit
     `optionen.rangrelevant(a, einst)` (= sichtbar, labs v1.2)
   - `stand.rangVon(e, einst)`: ist/max über `bezug` der freigeschalteten Welten (TECHNIK §8.3)
+  - `stand.bossBezugsmenge(einst) → Map<welt, { max, ids: Set }>` wie `bezug`, aber mit `optionen.bossBezug` (kern, im eA-Kurs + eA)
   - `stand.bossZugang(einst, e, nr)`: `noetig = ceil(0.6 · Σ punkte der sichtbaren Level-Aufgaben mit optionen.bossBezug)`, `ist` = Summe
-    der erreichten Punkte genau dieser Aufgaben
-  - `stand.pruefeAbzeichen`: „Welt gemeistert“ ⇔ alle `bezug(einst).get(w).ids` gelöst; Definitionen += `optionen.zusatzAbzeichen(katalog)`;
-    erfüllte Schlüssel += `optionen.zusatzBedingungen(sid, db)`
+    der erreichten Punkte genau dieser Aufgaben (= `bossBezugsmenge`)
+  - `stand.pruefeAbzeichen`: „Welt gemeistert“ ⇔ alle `bossBezugsmenge(einst).get(w).ids` gelöst (Kern, im eA-Kurs + eA, ohne
+    Ergänzung/Kür – Entscheidung des Orchestrators, plattformintern wie die Boss-Freischaltung; TECHNIK §8.1/§8.2 angeglichen);
+    Definitionen += `optionen.zusatzAbzeichen(katalog)`; erfüllte Schlüssel += `optionen.zusatzBedingungen(sid, db)`
+  - `stand` exportiert die Sichtbarkeits-Helfer `sichtbar`, `sichtbareAufgaben`, `levelSichtbar`, `sichtbareLevels` und `istVon(e, ids)`
+    (lernen und auswertung nutzen sie gemeinsam)
   - `boss.starten`: `ziehe(w.boss, einst)` mit `optionen.bossPool(poolAufgaben, einst)`; `anzahl = min(anzahl, gefilterter Pool)` (ersetzt die
     gA-Sonderlogik aus Task 23)
   - `lernen.welten`/`profil`: Welt-`anteil`, `maxPunkte` über `bezug`
@@ -1796,6 +1800,8 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.equal(u.schueler[0].anteil, Math.round((10 / gA) * 100) / 100);
     assert.equal('niveau' in u, false);
   });
+  // umgesetzt mit der Kern(+eA)-Regel: gelöst werden nur die kern-Aufgaben sichtbarer Level (Ergänzung/Kür nicht nötig),
+  // vorher fehlt das Abzeichen; zusätzlich Tests „Lehrkraft-Auswertung“ (Matrix, niveau, Board) und „ausgeblendete eA-Aufgabe“
   test('Abzeichen „Welt gemeistert“ im gA-Kurs ohne eA-Aufgaben; zusatzAbzeichen-Hook', async () => {
     const app = H.makeApp({ optionen: { zusatzAbzeichen: () => [{ key: 'test_artefakt', icon: 'siegel', name: 'Testartefakt', beschreibung: 'Test' }], zusatzBedingungen: () => new Set(['test_artefakt']) } });
     const lk = await H.lehrkraftClient(app);

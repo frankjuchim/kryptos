@@ -56,7 +56,15 @@ function fallenAusErgebnis(a, erg) {
 
 /** Dienst-Optionen für den Kern (TECHNIK §4.2); Niveau nach TECHNIK §8 (src/krypto/niveau.js). */
 function dienstOptionen() {
-  return { diagnose: true, fallenAusErgebnis, sichtbar: N.sichtbar, generatorSichtbar: N.generatorSichtbar };
+  return {
+    diagnose: true,
+    fallenAusErgebnis,
+    sichtbar: N.sichtbar,
+    rangrelevant: N.rangrelevant,
+    bossPool: N.bossPool,
+    bossBezug: N.bossBezug,
+    generatorSichtbar: N.generatorSichtbar
+  };
 }
 
 module.exports = { registriere, dienstOptionen, fallenAusErgebnis };
