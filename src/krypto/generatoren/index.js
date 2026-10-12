@@ -8,7 +8,12 @@ const MODULE = [
   require('./schluesselpaar'),
   require('./modulo'),
   require('./affin'),
-  require('./schluesselwort')
+  require('./schluesselwort'),
+  require('./vigenere'),
+  require('./kasiski'),
+  require('./koinzidenz'),
+  require('./xor'),
+  require('./kryptos16')
 ];
 
 /** Alle Generatoren der Module in der Registry des Kerns eintragen (G = src/content/generators). */

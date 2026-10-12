@@ -197,3 +197,89 @@ test('Trainingsplatz Welt 0: caesar_ver mit Diagnose über die API', async () =>
   const r = (await s.post(`/api/training/aufgabe/${t.id}/pruefen`).send({ antwort: p3 })).body;
   assert.equal(r.diagnose[0].p, 'P3');
 });
+
+/* ---------- Welt 2 und 3 (Task 38) ---------- */
+
+test('vigenere: c = p + s (A = 0) je Stelle', () => {
+  const richtungen = new Set();
+  for (const a of grundpruefung('vigenere')) {
+    const s = az(a.interaktion.verfahren.schluessel);
+    const [p, c] = a.interaktion.richtung === 'ver' ? [a.interaktion.eingabe, a.loesung.text] : [a.loesung.text, a.interaktion.eingabe];
+    assert.equal(za(az(p).map((x, i) => x + s[i % s.length])), za(az(c)));
+    assert.match(a.inhalt[0].md, /Nummerierung: A = 1/);
+    assert.equal(a.stufe, a.interaktion.richtung === 'ver' ? 1 : 2);
+    richtungen.add(a.interaktion.richtung);
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+});
+
+test('kasiski: Teilertabelle liefert k an erster Stelle; ohne Störabstand ist ggT = k', () => {
+  const ggt = (x, y) => (y ? ggt(y, x % y) : x);
+  let stoer = 0;
+  for (const a of grundpruefung('kasiski')) {
+    const d = /Abstände ([\d, ]+)\./.exec(a.inhalt[0].md)[1].split(/,\s*/).map(Number);
+    const k = Number(a.loesung.k[0]);
+    assert.ok(k >= 3 && k <= 8);
+    const tab = [...Array(19).keys()].map((i) => i + 2).map((t) => [t, d.filter((x) => x % t === 0).length]).sort((x, y) => y[1] - x[1] || y[0] - x[0]);
+    assert.equal(tab[0][0], k, d.join());
+    if (a.stufe !== 3) assert.equal(d.reduce(ggt), k);
+    else { stoer++; assert.equal(d.filter((x) => x % k !== 0).length, 1, 'genau ein Störabstand'); }
+    const fm = a.loesung._fehlmuster.k.map((f) => Number(f.wert));
+    assert.ok(fm.length <= 5 && !fm.includes(k));
+    if (2 * k <= 20) assert.ok(fm.includes(2 * k));
+  }
+  assert.ok(stoer >= 45 && stoer <= 135, `Stufe 3: ${stoer} von 300`);
+});
+
+test('koinzidenz: gekürzter Bruch (BALLADE 2/21)', () => {
+  const ggt = (x, y) => (y ? ggt(y, x % y) : x);
+  const gesehen = new Map();
+  for (const a of grundpruefung('koinzidenz')) {
+    const w = /von \*\*([A-Z]+)\*\*/.exec(a.inhalt[0].md)[1];
+    const h = {}; for (const c of w) h[c] = (h[c] || 0) + 1;
+    const zae = Object.values(h).reduce((s, x) => s + x * (x - 1), 0), nen = w.length * (w.length - 1), g = ggt(zae, nen);
+    assert.deepEqual([a.loesung.z[0], a.loesung.n[0]], [String(zae / g), String(nen / g)]);
+    gesehen.set(w, `${a.loesung.z[0]}/${a.loesung.n[0]}`);
+  }
+  assert.equal(gesehen.get('BALLADE'), '2/21');
+  assert.equal(gesehen.get('ANANAS'), '4/15');
+  assert.equal(G.GENERATOREN.koinzidenz.niveau, 'eA');
+});
+
+test('xor_bytes: bitweise mit ^', () => {
+  const laengen = new Set();
+  for (const a of grundpruefung('xor_bytes')) {
+    const [x, y] = a.interaktion.operanden.map((o) => o.replace(/ /g, ''));
+    assert.match(a.interaktion.operanden[0], /^[01]{4}( [01]{4})+$/, 'Vierergruppen');
+    assert.equal(a.loesung.bits, (parseInt(x, 2) ^ parseInt(y, 2)).toString(2).padStart(x.length, '0'));
+    laengen.add(x.length);
+  }
+  assert.deepEqual([...laengen].sort(), [16, 8]);
+});
+
+test('kryptos16_runde: eigene Runde nach W3 §0a, keine schwachen Schlüssel, Niveau eA', () => {
+  const S = [0xc, 0xf, 0x3, 0x9, 0x7, 0xa, 0x8, 0x6, 0x1, 0x2, 0x4, 0xe, 0xb, 0x5, 0xd, 0x0];
+  const nib = (x) => [12, 8, 4, 0].map((s) => (x >> s) & 0xf);
+  const ausNib = (n) => (n[0] << 12) | (n[1] << 8) | (n[2] << 4) | n[3];
+  const trans = (x) => { const b = x.toString(2).padStart(16, '0'); let o = ''; for (let s = 0; s < 4; s++) for (let z = 0; z < 4; z++) o += b[z * 4 + s]; return parseInt(o, 2); };
+  const runde = (x, k) => trans(ausNib(nib(x ^ k).map((v) => S[v])));
+  const rot = (k) => ((k << 4) | (k >>> 12)) & 0xffff;
+  assert.equal(runde(0x4f4b, 0xa36d), 0xd86e, 'Testvektor W3 §0a');
+  for (const a of grundpruefung('kryptos16_runde')) {
+    let x = parseInt(a.interaktion.block.replace(/ /g, ''), 2), k = parseInt(a.interaktion.schluessel.replace(/ /g, ''), 2);
+    const [, xy] = /auf „([A-Z]{2})“/.exec(a.inhalt[0].md);
+    assert.equal(x, (xy.charCodeAt(0) << 8) | xy.charCodeAt(1), 'Block = ASCII der zwei Buchstaben');
+    assert.ok(new Set(nib(k)).size > 1, 'kein schwacher Schlüssel');
+    for (let r = 0; r < a.interaktion.runden; r++) { x = runde(x, k); k = rot(k); }
+    assert.equal(a.loesung.bits, x.toString(2).padStart(16, '0'));
+  }
+  assert.equal(G.GENERATOREN.kryptos16_runde.niveau, 'eA');
+});
+
+test('Trainingsplatz Welt 2: koinzidenz (eA) fehlt im gA-Kurs', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  assert.ok((await s.get('/api/training/2')).body.generatoren.some((g) => g.key === 'koinzidenz'));
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.deepEqual((await s.get('/api/training/2')).body.generatoren.map((g) => g.key), ['vigenere', 'kasiski']);
+  assert.equal((await s.post('/api/training/3/neu').send({ generator: 'kryptos16_runde' })).status, 400);
+});
