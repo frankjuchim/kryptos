@@ -124,6 +124,7 @@ Ein Level, dessen Aufgaben im gA-Kurs **alle** unsichtbar wären (Level `kern`, 
 | `pruefnachweis` | optional; Verweis auf den unabhängigen Python-Nachweis (`quellen/pruefwerte/W<n>.json#<id>` oder `werkzeuge/krypto/fremde_verfahren.py:<name>`). **Pflicht (Fehler)**, wenn die Aufgabe ein Verfahren `{"typ": "frei"}` oder `bits-rechnen` mit `operation: "frei"` enthält, sonst überflüssig (die Neuberechnung ersetzt den Nachweis) |
 | `punkte` | wie Kern (1–200, Standard 10/20/30); **Archivfund-Aufgaben: `punkte` weglassen** (immer 0) |
 | `id` | Kern-Formate `W<n>-L<k>-<nn>`, `W<n>-B-<nn>` plus **neu `W<n>-A-<nn>`** (Archivfund) |
+| `schluesselVerdeckt` | optional, `true`/`false` (auch je `chiffre`-Interaktion, dort mit Vorrang): Schlüssel der `chiffre`-Teile vor dem Lösen verdeckt (§8.1). Ohne Angabe automatisch `true` für Aufgaben eines Levels mit `rolle: "kryptoanalyse"`, sonst `false` |
 
 Inhaltsregeln (aus Design §6, vom Validator als Hinweis geprüft, wo maschinell möglich):
 
@@ -474,6 +475,7 @@ und `frage`/`inhalt` je Teil funktionieren unverändert.
 | `schritt` | bool | nein (Std. `true`) | Schrittprüfung erlaubt (Client-Schalter Std. **aus**, wie `order`) |
 | `diagnose` | bool | nein (Std. `true`) | Fallen-Diagnose an/aus |
 | `gruppe` | 0 \| 5 (Std. bei `ver`) | nein | Anzeige der Eingabe/Antwort in Fünfergruppen |
+| `schluesselVerdeckt` | bool | nein (Std. wie Aufgabenfeld, sonst `true` im Kryptoanalyse-Level) | **Knack-Aufgaben:** Der Client erhält vor dem Lösen nur `verfahren.typ` (und `verfahren.name`), keine Parameter (`k`, `schluessel` …) – in Lab, Boss-Kampf, Training und Gastmodus; die Lehrkraft-Vorschau zeigt alles. Nach dem Lösen/Aufdecken nennen Lösung und Erklärung den Schlüssel. Verdeckt + Hilfszeile `schluessel` → Fehler |
 
 **Lösung:** `{ "text": "ELRFQJHNVNNMSUSEY", "alternativen": ["…"] }` – `text` normalisiert (Buchstaben bzw. Hex ohne
 Leerzeichen bzw. Zahlen durch Leerzeichen getrennt bei `ausgabe: zahlen`); `alternativen` optional (z. B. mit/ohne
@@ -524,6 +526,10 @@ gültiger Geheimtext sein (Playfair gerade Länge, Polybios-Paare aus dem Kopf �
 `Krypto.verfahren.anwenden(verfahren, eingabe, richtung, {basis})` muss **gleich `loesung.text`** sein (Fehler mit
 erwarteter Ausgabe); jede `alternative` muss sich von `text` unterscheiden und (Hinweis) durch eine bekannte Variante
 erklärbar sein (Füllzeichen weggelassen/angehängt, I/J). Bei `typ: frei`: keine Neuberechnung, `pruefnachweis` Pflicht.
+**Verdeckter Schlüssel:** `schluesselVerdeckt` muss bool sein; ist der Schlüssel verdeckt (explizit oder automatisch
+im Kryptoanalyse-Level), ist `hilfszeilen: ["schluessel"]` ein Fehler. Hinweis, wenn eine Aufgabe der Kategorien
+`entschluesseln`, `haeufigkeitsanalyse`, `kasiski-friedman` oder `fremde-chiffre` „Schlüssel“ zusammen mit „bestimme“,
+„ermittle“ oder „finde“ formuliert, der Schlüssel eines `chiffre`-Teils aber nicht verdeckt ist.
 
 **Schrittprüfung:** ja (`SCHRITT_ARTEN` += `chiffre`). **Boss:** Antwort wird nur bereinigt und gespeichert, kein
 Feedback, keine Diagnose im Kampf; Schrittprüfung im Boss abgelehnt (400, wie Kern). Hilfszeilen `schluessel` sind in
@@ -834,7 +840,7 @@ jeder Block mit Test). Sie muss enthalten:
 | Welt | alle Welt-Felder (§2) inkl. `archivfund` (`W9-A-01`, `chiffre`) und `kapitel` |
 | Level | `W9-L1` `kern`/`kryptografie` mit `werkzeug` und `akte`; `W9-L2` `kern`/`kryptoanalyse`; `W9-L3` **`eA`**; `W9-L4` **`kuer`** mit `kuer: true`; ein Level mit einer `ergaenzung`-Aufgabe und einer `eA`-Aufgabe in einem `kern`-Level |
 | Blöcke | jeder Kern-Block, der in Kryptos genutzt wird (`text`, `hinweis`, `code`, `struktogramm`, `tabelle`, `reihung`, `raster`), dazu **jeder neue Block** mit allen Varianten: `alphabet` (basis 1 und 0, mit Lücken), `haeufigkeit` (`text`/`werte`, mit Referenz), `quadrat` (`vigenere`+`ausschnitt`, `playfair`, `polybios` 6×6 ADFGVX, `frei` mit Lücke), `bits` (mit `pruefe: xor` und mit Lücke), `schaubild` (4 Akteure inkl. Angreifer und CA), `matrix` (Spaltentransposition mit `reihenfolge: true` und unvollständiger Zeile; Fleißner mit `zeige: stellungen`), `werkzeug` |
-| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `bits-rechnen` (`xor`, `ascii` beide Richtungen, `kryptos16`, `lawine`) |
+| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`, Knack-Aufgabe `W9-L2-10` im Kryptoanalyse-Level mit automatisch verdecktem Schlüssel), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `bits-rechnen` (`xor`, `ascii` beide Richtungen, `kryptos16`, `lawine`) |
 | Diagnose | je Zeile der Tabellen §9.2–§9.5 eine Aufgabe, an der `test/pruefer.test.js` die Fehlantwort einspeist und die P-Nummer erwartet (Antworten in `test/fixtures/antworten.js`: richtige, falsche, Fehlmuster je Aufgabe) |
 | Boss | `W9-BOSS`, Pool 6 Aufgaben (3 `kern`, 3 `eA`, davon 3 `fremde-chiffre`), `anzahl` 3, `mix` 1/1/1, `dauerMin` 25 – damit sind gA- und eA-Ziehung testbar |
 | Negativ-Fixtures | `test/fixtures/fehler/*.json`: je Validator-Fehler aus §11 eine kleine **Änderungsdatei** `{ "beschreibung", "erwartet" (RegExp-Quelle), "alsWelt"?, "aenderungen": [{ "pfad", "wert" \| "loeschen" \| "anhaengen" }] }`, die die Fixture verändert (falsche Neuberechnung, Kontrast, Boss mit Werkzeug, kuer-Inkonsistenz …); `pfad` mit Punkten, `liste#ID` wählt nach `id`, Zahl = Index; `alsWelt` schreibt `W9-`/`W9·` auf die Welt um (Pflichtfelder der Inhaltswelten 0–6). `test/validator.test.js` prüft je Datei den erwarteten Fehler |

@@ -10,6 +10,7 @@ const F = require('../content/format');
 const { validiereWelt, aufgabePunkte } = require('../content/validator');
 const { punkteFuer, FALLEN, rangFuer } = require('../domain');
 const { NotFoundError, ValidationError } = require('../validate');
+const { ohneInterna } = require('./inhalte');
 
 const DEMO_NAMEN = ['Lena S.', 'Tom K.', 'Aylin D.', 'Jonas B.', 'Mia W.', 'Noah F.', 'Emma R.', 'Ben T.'];
 
@@ -37,6 +38,8 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
         data.aufgaben.map((a) => [a.id, { ...a, punkte: aufgabePunkte(a), fallen: a.fallen || [], tipps: Array.isArray(a.tipps) ? a.tipps : [] }])
       );
       const level = data.levels[0];
+      // Rolle des Demo-Levels an den Aufgaben (Hook oeffentlich: verdeckter Schlüssel, Review M3 W1)
+      for (const id of level.aufgaben || []) if (aufgaben.has(id)) aufgaben.get(id)._rolle = level.rolle;
       demo = { titel: data.titel, farbe: data.farbe, level: { titel: level.titel, intro: level.intro || [], aufgaben: level.aufgaben.filter((id) => aufgaben.has(id)) }, aufgaben };
     } catch (e) {
       log(`Gastmodus: Demo-Aufgaben nicht ladbar: ${e.message}`);
@@ -203,7 +206,8 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
   /** Aufgaben-Vorschau der Demo-Aufgaben mit Lösung (die Demo-Aufgaben sind ohnehin öffentlich). */
   function vorschau(id) {
     const a = demoAufgabe(id);
-    return { aufgabe: inhalte.oeffentlich(a), ...inhalte.loesungsteil(a), tipps: a.tipps };
+    // wie die Lehrkraft-Vorschau: vollständige Interaktion (auch ein verdeckter Schlüssel), ohne interne Prüfdaten
+    return { aufgabe: { ...inhalte.oeffentlich(a), interaktion: ohneInterna(a.interaktion) }, ...inhalte.loesungsteil(a), tipps: a.tipps };
   }
 
   return { schueler, aufgabe, pruefen, tipp, aufdecken, lehrkraft, vorschau, vorhanden: () => !!demo };

@@ -135,7 +135,7 @@ test('CLI: node scripts/validate.js <datei> – Exit-Code 0 bzw. 1 mit verständ
   const skript = path.join(__dirname, '..', 'scripts', 'validate.js');
   const ok = execFileSync(process.execPath, [skript, H.FIXTURE], { encoding: 'utf8' });
   assert.match(ok, /Alles in Ordnung/);
-  assert.match(ok, /W9-L2 Alle Interaktionen: 9 Aufgaben/);
+  assert.match(ok, /W9-L2 Alle Interaktionen: 10 Aufgaben/);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'aql-cli-'));
   const kaputt = path.join(dir, 'welt9.json');
   const w = basis();

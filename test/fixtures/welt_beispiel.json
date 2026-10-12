@@ -36,7 +36,7 @@
       "ab": "AB 2 – Beispiel, Teil B",
       "ide": "",
       "intro": [{ "t": "text", "md": "Puzzle, Bug-Hunt, Bäume, Reihungen, Raster und ADT-Simulation." }],
-      "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09"]
+      "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09", "W9-L2-10"]
     },
     { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "aufgaben": ["W9-L3-01", "W9-L3-02", "W9-L3-03", "W9-L3-04"] },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
@@ -334,6 +334,14 @@
       "interaktion": { "kind": "adtsim", "art": "dynarray", "start": ["A", "B", "C"] },
       "loesung": { "inhalt": ["A", "X", "B", "Y"] },
       "erklaerung": [{ "t": "text", "md": "Nach insertAt: A X B C; delete(3) entfernt C; append hängt Y an → A, X, B, Y." }]
+    },
+    {
+      "id": "W9-L2-10", "titel": "Der abgefangene Bote", "stufe": 2, "kategorie": "entschluesseln", "fallen": ["P3"],
+      "inhalt": [ { "t": "text", "md": "Ein Bote trägt die Caesar-Nachricht `GYVUO XJSOR OXKEP` bei sich. Bestimme den Schlüssel und gib den Klartext ein." } ],
+      "interaktion": { "kind": "chiffre", "richtung": "ent", "verfahren": { "typ": "caesar", "k": 10 }, "eingabe": "GYVUO XJSOR OXKEP", "hilfszeilen": ["positionen"] },
+      "loesung": { "text": "wolkenziehenauf" },
+      "tipps": ["Probiere die häufigsten Buchstaben: Welcher Buchstabe könnte für e stehen?"],
+      "erklaerung": [ { "t": "text", "md": "O steht dreimal – vermutlich für e, also k = 10. Zurückgerechnet: wolkenziehenauf." } ]
     },
     {
       "id": "W9-L4-01", "titel": "Quadrate und Schablonen", "stufe": 2, "kategorie": "transposition", "fallen": ["P4"],

@@ -9,6 +9,7 @@ const C = require('../content/checker');
 const F = require('../content/format');
 const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
 const { WERKZEUG_IDS } = require('./werkzeuge');
+const CHIFFRE = require('./interaktionen/chiffre');
 
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const CODE = /^[a-z_]{1,30}$/;
@@ -83,9 +84,47 @@ function rechnetMitZahlen(a) {
   return F.teile(a).some(({ interaktion: ia }) => istObjekt(ia) && ia.kind === 'chiffre' && ((istObjekt(ia.verfahren) && ia.verfahren.typ === 'affin') || ia.ausgabe === 'zahlen'));
 }
 
-/** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, Inhalts-Hinweise. */
-function aufgabe(a, fa, wa) {
+/** Kategorien, in denen „bestimme den Schlüssel“ eine Knack-Aufgabe ankündigt (Review M3 W1). */
+const KNACK_KATEGORIEN = ['entschluesseln', 'haeufigkeitsanalyse', 'kasiski-friedman', 'fremde-chiffre'];
+const KNACK_OPERATOR = /\b(bestimme|ermittle|finde)\b/i;
+const SCHLUESSEL_WORT = /schlüssel/i;
+
+/** Rolle des Levels, in dem die Aufgabe steht (oder null). */
+function rolleVon(id, data) {
+  const l = (istObjekt(data) && Array.isArray(data.levels) ? data.levels : []).find((x) => istObjekt(x) && Array.isArray(x.aufgaben) && x.aufgaben.includes(id));
+  return l ? l.rolle : null;
+}
+
+/**
+ * Verdeckter Schlüssel (Delta §8.1, Review M3 W1): schluesselVerdeckt boolean; verdeckt (explizit oder automatisch im
+ * Kryptoanalyse-Level) verträgt keine Hilfszeile schluessel (Fehler); Knack-Formulierung ohne Verdecken → Hinweis.
+ */
+function pruefeVerdeckt(a, fa, wa, data) {
+  if (a.schluesselVerdeckt !== undefined && typeof a.schluesselVerdeckt !== 'boolean') fa('schluesselVerdeckt', 'schluesselVerdeckt muss true oder false sein.');
+  const kontext = { ...a, _rolle: rolleVon(a.id, data) };
+  const teile = F.teile(a);
+  let offen = false;
+  teile.forEach(({ interaktion: ia }, i) => {
+    if (!istObjekt(ia) || ia.kind !== 'chiffre') return;
+    const ort = teile.length > 1 ? `interaktion[${i}]` : 'interaktion';
+    if (CHIFFRE.schluesselVerdeckt(ia, kontext)) {
+      if (Array.isArray(ia.hilfszeilen) && ia.hilfszeilen.includes('schluessel')) {
+        fa(ort, 'hilfszeilen: schluessel verrät den verdeckten Schlüssel (Kryptoanalyse-Level bzw. schluesselVerdeckt) – Hilfszeile entfernen oder schluesselVerdeckt: false setzen.');
+      }
+    } else offen = true;
+  });
+  if (offen && KNACK_KATEGORIEN.includes(a.kategorie)) {
+    const texte = fliesstexte(a).filter((t) => !(Array.isArray(a.tipps) && a.tipps.includes(t)));
+    if (texte.some((t) => SCHLUESSEL_WORT.test(t) && KNACK_OPERATOR.test(t))) {
+      wa('interaktion', 'Knack-Aufgabe? Der Schlüssel ist nicht verdeckt und steht im Verfahren für den Client – schluesselVerdeckt: true setzen (Delta §8.1).');
+    }
+  }
+}
+
+/** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, verdeckter Schlüssel, Inhalts-Hinweise. */
+function aufgabe(a, fa, wa, { data } = {}) {
   const id = typeof a.id === 'string' ? a.id : '';
+  pruefeVerdeckt(a, fa, wa, data);
   // Archivfund (Delta §2, §4.1): 0 Punkte, niveau kern
   if (ARCHIVFUND.test(id)) {
     if (a.punkte !== undefined) fa('punkte', 'Archivfund-Aufgaben haben keine punkte (immer 0).');

@@ -4,6 +4,8 @@
 // Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
 // M3 Task 33: oeffentlich/loesungsteil filtern interne Prüfdaten (fehlmuster, _fehlmuster) für alle Clients.
 // M3 Task 34: Lehrkraft-Vorschau zeigt alles, je Level und Aufgabe gAAusgeblendet (TECHNIK §8.2).
+// Review M3 W1: oeffentlich ruft den optionalen Vertrags-Hook oeffentlich(ia, { aufgabe }) (verdeckter Schlüssel),
+// a._rolle = Rolle des Levels; die Vorschau zeigt die vollständige Interaktion.
 
 const crypto = require('node:crypto');
 const { validiereWelt, aufgabePunkte } = require('../content/validator');
@@ -254,6 +256,8 @@ function createInhalte(ctx) {
         // effektives Niveau a._niveau aus der Spalte aufgaben.niveau (Seed: a.niveau ?? level.niveau ?? 'kern', TECHNIK §8)
         lv.niveau = NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'kern';
         lv.gemischt = lv.aufgaben.some((id) => k.aufgaben.get(id)._niveau !== lv.niveau);
+        // Rolle des Levels an der Aufgabe (Hook oeffentlich: Knack-Aufgaben im Kryptoanalyse-Level, Review M3 W1)
+        for (const id of lv.aufgaben) k.aufgaben.get(id)._rolle = lv.rolle;
         welt.levels.push(lv);
         k.levels.set(lv.id, lv);
       }
@@ -276,6 +280,18 @@ function createInhalte(ctx) {
 
   /* ---------- Ansichten ---------- */
 
+  /**
+   * Interaktion(en) für Clients: optionaler Vertrags-Hook oeffentlich(ia, { aufgabe }) (z. B. chiffre: verdeckter
+   * Schlüssel bei Knack-Aufgaben, Review M3 W1), danach ohne interne Prüfdaten.
+   */
+  function oeffentlicheInteraktion(a) {
+    const eine = (ia) => {
+      const v = ia && typeof ia === 'object' && !Array.isArray(ia) ? F.interaktionVertrag(F.artVon(ia)) : null;
+      return ohneInterna(v && typeof v.oeffentlich === 'function' ? v.oeffentlich(ia, { aufgabe: a }) : ia);
+    };
+    return Array.isArray(a.interaktion) ? a.interaktion.map(eine) : eine(a.interaktion);
+  }
+
   /** Aufgabe ohne Lösung, Tipps und Erklärung (für den Client). */
   function oeffentlich(a) {
     const out = {
@@ -287,7 +303,7 @@ function createInhalte(ctx) {
       niveau: a._niveau || a.niveau || 'kern',
       fallen: a.fallen || [],
       inhalt: a.inhalt,
-      interaktion: ohneInterna(a.interaktion),
+      interaktion: oeffentlicheInteraktion(a),
       tippsAnzahl: Array.isArray(a.tipps) ? a.tipps.length : 0
     };
     return out;
@@ -345,7 +361,8 @@ function createInhalte(ctx) {
     const i = liste.indexOf(a.id);
     const l = a._level ? katalog.levels.get(a._level) : null;
     return {
-      aufgabe: oeffentlich(a),
+      // Vorschau der Lehrkraft: vollständige Interaktion (auch ein verdeckter Schlüssel), nur ohne interne Prüfdaten
+      aufgabe: { ...oeffentlich(a), interaktion: ohneInterna(a.interaktion) },
       ...loesungsteil(a),
       tipps: a.tipps,
       ort: {

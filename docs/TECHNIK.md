@@ -224,6 +224,7 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |
 | `services/index.js` | `STANDARD_OPTIONEN` (alle Hooks oben mit Standardwert); `createServices` setzt `ctx.optionen = { ...STANDARD_OPTIONEN, ...ctx.optionen }`; `app.js` füllt `ctx.optionen` aus `src/krypto/index.js → dienstOptionen()` (Tests: `opts.optionen` überschreibt) | Kern ohne `src/krypto/` = Standard |
 | `inhalte.js` | – (fest) | `oeffentlich`/`loesungsteil` entfernen interne Prüfdaten (`fehlmuster`, `_fehlmuster`, Delta §9.6) für alle Clients (Lab, Boss, Training, Gast, Vorschau) |
+| `inhalte.js`, `gast.js` | Vertrags-Hook `oeffentlich(ia, { aufgabe })` (§4.3) | `oeffentlich` gibt die Interaktion über den Hook aus (Review M3 W1: Knack-Aufgaben ohne Schlüssel, `a._rolle` aus dem Level); Lehrkraft- und Gast-Vorschau zeigen die vollständige Interaktion |
 
 ### 4.3 Vertrag einer registrierten Interaktion (Server)
 
@@ -236,7 +237,9 @@ registriereInteraktion('chiffre', {
   validiere(ia, lo, aufgabe, ort, fa, wa) {}, // Struktur + Neuberechnung
   schritt: true,                          // Schrittprüfung erlaubt?
   lueckenFelder(ia) {},                   // optional: Feld-ids, die Lücken [[id]] besitzen (schaubild-ergaenzen)
-  boss: { erlaubt: true }                 // optional: false → Validator-Fehler im Boss-Pool
+  boss: { erlaubt: true },                // optional: false → Validator-Fehler im Boss-Pool
+  oeffentlich(ia, { aufgabe }) {}         // optional: Client-Fassung der Interaktion (chiffre: verdeckter Schlüssel,
+                                          // Delta §8.1; aufgabe._rolle = Rolle des Levels) – nie in der Lehrkraft-Vorschau
 });
 ```
 

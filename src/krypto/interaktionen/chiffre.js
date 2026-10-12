@@ -135,8 +135,31 @@ function bekannteVariante(text, alt) {
   return ij(text) === ij(alt) || alt === text + 'X' || text === alt + 'X';
 }
 
+/**
+ * Ist der Schlüssel dieser chiffre-Interaktion vor dem Lösen verdeckt (Delta §8.1, Review M3 W1)? Vorrang:
+ * interaktion.schluesselVerdeckt, dann aufgabe.schluesselVerdeckt, sonst automatisch im Kryptoanalyse-Level
+ * (aufgabe._rolle setzt der Katalog bzw. der Gastmodus aus dem Level).
+ */
+function schluesselVerdeckt(ia, aufgabe = {}) {
+  if (istObjekt(ia) && typeof ia.schluesselVerdeckt === 'boolean') return ia.schluesselVerdeckt;
+  if (istObjekt(aufgabe) && typeof aufgabe.schluesselVerdeckt === 'boolean') return aufgabe.schluesselVerdeckt;
+  return !!aufgabe && aufgabe._rolle === 'kryptoanalyse';
+}
+
+/** Client-Fassung (Hook oeffentlich): bei verdecktem Schlüssel nur verfahren.typ (und Anzeige-Name), keine Parameter. */
+function oeffentlich(ia, { aufgabe } = {}) {
+  if (!istObjekt(ia) || !schluesselVerdeckt(ia, aufgabe)) return ia;
+  const v = istObjekt(ia.verfahren) ? ia.verfahren : {};
+  const verfahren = { typ: v.typ };
+  if (typeof v.name === 'string') verfahren.name = v.name;
+  const out = { ...ia, verfahren, schluesselVerdeckt: true };
+  if (Array.isArray(ia.hilfszeilen)) out.hilfszeilen = ia.hilfszeilen.filter((h) => h !== 'schluessel');
+  return out;
+}
+
 function validiere(ia, lo, aufgabe, ort, fa, wa) {
   const lort = ort.replace('interaktion', 'loesung');
+  if (ia.schluesselVerdeckt !== undefined && typeof ia.schluesselVerdeckt !== 'boolean') fa(ort, 'schluesselVerdeckt muss true oder false sein.');
   if (!RICHTUNGEN.includes(ia.richtung)) fa(ort, 'richtung muss ver oder ent sein.');
   const v = ia.verfahren;
   let verfahrenOk = false;
@@ -227,6 +250,7 @@ const vertrag = Object.freeze({
   pruefe,
   muster,
   validiere,
+  oeffentlich,
   schritt: (ia) => ia.schritt !== false,
   boss: Object.freeze({ erlaubt: true })
 });
@@ -235,4 +259,4 @@ function registriere(F) {
   F.registriereInteraktion('chiffre', vertrag);
 }
 
-module.exports = { vertrag, registriere, kanonisch };
+module.exports = { vertrag, registriere, kanonisch, schluesselVerdeckt, oeffentlich, HILFSZEILEN };
