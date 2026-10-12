@@ -159,4 +159,23 @@ function chiffre(ia, lo, antwort, { teilweise = false, ersteFalschePosition = nu
   return auswaehlen('chiffre', treffer);
 }
 
-module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen };
+/**
+ * Zusatzdiagnose für gaps (Delta §9.6): erwartete Fehlantworten je Feld aus loesung._fehlmuster. Ein Feld, das falsch
+ * beantwortet ist und einem Fehlmuster gleicht (gleiche Normalisierung wie die Prüfung), liefert dessen Falle.
+ */
+function gapsFehlmuster(ia, lo, a, ergebnis) {
+  const C = require('../content/checker');
+  const fm = lo && lo._fehlmuster;
+  if (!fm || typeof fm !== 'object' || !ergebnis || !ergebnis.felder) return [];
+  const treffer = [];
+  for (const [id, feld] of Object.entries((ia && ia.felder) || {})) {
+    if (ergebnis.felder[id] !== false || !Array.isArray(fm[id])) continue;
+    const eingabe = a && a[id] !== undefined ? a[id] : '';
+    for (const m of fm[id]) {
+      if (m && (typeof m.wert === 'string' || typeof m.wert === 'number') && C.feldRichtig(feld, eingabe, [m.wert])) treffer.push({ p: m.p, code: m.code });
+    }
+  }
+  return auswaehlen('gaps', treffer);
+}
+
+module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster };

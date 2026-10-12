@@ -5,9 +5,12 @@
 // doppelter Registrierung.
 
 const F = require('../content/format');
+const V = require('../content/validator');
 const K = require('../../public/static/js/shared/krypto');
 const bloecke = require('./bloecke');
 const chiffre = require('./interaktionen/chiffre');
+const D = require('./diagnose');
+const validierung = require('./validierung');
 
 let registriert = false;
 
@@ -22,6 +25,9 @@ function registriere() {
   bloecke.registriere(F);
   // Delta §8.1: Interaktion chiffre (mit Fallen-Diagnose §9.2)
   chiffre.registriere(F);
+  // Delta §9.6: erwartete Fehlantworten in gaps (loesung._fehlmuster) und ihre Prüfung im Validator
+  F.registriereDiagnose('gaps', D.gapsFehlmuster);
+  V.registriereValidierung(validierung);
 }
 
 /** Dienst-Optionen für den Kern (TECHNIK §4.2) – Gerüst, Task 33 füllt sie. */

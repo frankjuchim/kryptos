@@ -232,3 +232,9 @@ test('chiffre-Validator: Neuberechnung, Parameter, Alternativen, frei', () => {
   const w = basis(); aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFIKRHIT'];
   assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /bekannte Variante/);
 });
+
+test('_fehlmuster: Format und kein Treffer auf eine akzeptierte Lösung', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].wert = '26'; }, /_fehlmuster gleicht einer akzeptierten Lösung/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.gibts = [{ wert: '1', p: 'P2', code: 'x' }]; }, /_fehlmuster.*gibts/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P11'; }, /P1–P10/);
+});

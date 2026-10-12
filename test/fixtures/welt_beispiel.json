@@ -34,7 +34,7 @@
       "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09"]
     },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
-    { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08"] }
+    { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09"] }
   ],
   "boss": {
     "id": "W9-BOSS",
@@ -395,6 +395,14 @@
       "interaktion": { "kind": "chiffre", "richtung": "ver", "verfahren": { "typ": "frei", "name": "spiegelcaesar" }, "eingabe": "ebbe und flut" },
       "loesung": { "text": "UVMGEOVFCCF", "fehlmuster": [ { "text": "FCCFVOEGMVU", "p": "P4", "code": "regel" }, { "text": "STKECMTDAAD", "p": "P3", "code": "richtung" } ] },
       "erklaerung": [ { "t": "text", "md": "Rückwärts: tulfdnuebbe, dann +1: UVMGE OVFCC F." } ] },
+    { "id": "W9-L5-09", "titel": "Die Alphabetleiste", "stufe": 1, "kategorie": "substitution-mono", "fallen": ["P2"],
+      "inhalt": [ { "t": "text", "md": "Ergänze die Geheimtextzeile für Caesar mit k = 3." },
+        { "t": "alphabet", "basis": 1, "zeilen": [ { "label": "Klartext", "werte": "abcdefghijklmnopqrstuvwxyz" }, { "label": "Geheimtext", "werte": ["D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","[[g1]]","[[g2]]","[[g3]]"] } ], "markiert": [23, 24, 25] },
+        { "t": "alphabet", "basis": 0, "zeilen": [ { "label": "Klartext", "werte": "abcdefghijklmnopqrstuvwxyz" } ], "titel": "Zum Vergleich: A = 0" },
+        { "t": "text", "md": "Bei A = 1 hat Z den Zahlenwert [[wert]]." } ],
+      "interaktion": { "kind": "gaps", "felder": { "g1": { "typ": "text", "norm": "krypto" }, "g2": { "typ": "text", "norm": "krypto" }, "g3": { "typ": "text", "norm": "krypto" }, "wert": { "typ": "zahl" } } },
+      "loesung": { "g1": ["A"], "g2": ["B"], "g3": ["C"], "wert": ["26"], "_fehlmuster": { "wert": [ { "wert": "0", "p": "P2", "code": "null_statt_z" } ] } },
+      "erklaerung": [ { "t": "text", "md": "Nach Z geht es bei A weiter: x → A, y → B, z → C. Z hat bei A = 1 den Wert 26." } ] },
     {
       "id": "W9-B-01",
       "titel": "Ganzzahlige Division",

@@ -78,5 +78,12 @@ const DIAGNOSE = [
   { aufgabe: 'W9-L5-08', antwort: 'FCCFVOEGMVU', erwartet: [['P4', 'regel']] },
   { aufgabe: 'W9-L5-08', antwort: 'STKECMTDAAD', erwartet: [['P3', 'richtung']] }
 ];
+// Task 26: erwartete Fehlantworten in gaps (Delta §9.6)
+RICHTIG['W9-L5-09'] = { g1: 'a', g2: 'B', g3: ' c ', wert: '26' };
+FALSCH['W9-L5-09'] = { g1: 'A', g2: 'B', g3: 'C', wert: '0' };
+DIAGNOSE.push(
+  { aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '0' }, erwartet: [['P2', 'null_statt_z']] },
+  { aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '25' }, erwartet: [] }
+);
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
 module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };
