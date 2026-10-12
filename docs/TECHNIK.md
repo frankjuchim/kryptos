@@ -286,7 +286,7 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `normalisieren(text, { ziffern = true } = {})` | Delta §5.1 (NFC, Umlaute → AE/OE/UE/SS, groß, Diakritika weg, nur A–Z[0–9]) |
 | `nurBuchstaben(text)` | `normalisieren(text, { ziffern: false })` |
 | `normBits(text)` | Delta §5.2 |
-| `gruppieren(text, n = 5, trenner = ' ')` | Fünfergruppen |
+| `gruppieren(text, n = 5, trenner = ' ')` | Fünfergruppen (Leerraum der Eingabe wird vorher entfernt, sonst keine Normalisierung; `n < 1` → `KryptoFehler`) |
 | `klein(text)` | Kleinschreibung für Klartext-Anzeige |
 | `zahlen(text, basis = 1)` | Liste der Buchstabenwerte |
 | `ausZahlen(liste, basis = 1)` | Umkehrung (mit `mod`) |
@@ -296,9 +296,9 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | Funktion | Semantik |
 |---|---|
 | `caesar(text, k, richtung = 'ver')` | jeder Buchstabe um `k` (`ent`: −k) verschoben, mod 26 |
-| `alleCaesar(text)` | Liste `[{k, text}]` für k = 0…25 (Brute-Force-Liste der Chiffrierscheibe) |
+| `alleCaesar(text)` | Liste `[{k, text}]` für k = 0…25 (Brute-Force-Liste der Chiffrierscheibe); `text` = **Entschlüsselung** mit k (`alleCaesar('GTVAMPTVAX')[19].text` = `NACHTWACHE`) |
 | `atbash(text)` | A↔Z (involutorisch) |
-| `affin(text, a, b = 0, richtung = 'ver', basis = 0)` | **Standard A = 0** (Design §6, W1; Caesar/Vigenère bleiben bei A = 1). Test: `affin('dattel', 5, 6)` = `VGXXAJ`. `ver`: `c = buchstabe(a·wert(p,basis) + b, basis)`; `ent`: `p = buchstabe(a⁻¹·(wert(c,basis) − b), basis)`; `a` teilerfremd zu 26, sonst `KryptoFehler` |
+| `affin(text, a, b = 0, richtung = 'ver', basis = 0)` | **Standard A = 0** (Design §6, W1; Caesar/Vigenère bleiben bei A = 1). Test: `affin('dattel', 5, 6)` = `VGXXAJ`. `ver`: `c = buchstabe(a·wert(p,basis) + b, basis)`; `ent`: `p = buchstabe(a⁻¹·(wert(c,basis) − b), basis)`; `a` teilerfremd zu 26, sonst `KryptoFehler`; `basis` nur 0 oder 1 |
 | `affinSchluesselGueltig(a)` | ggT(a, 26) = 1 |
 | `schluesselwortAlphabet(wort, { rest = 'alphabetisch' })` | Schlüsselwort ohne Doppelte, dann restliche Buchstaben alphabetisch (`ab_letztem`: ab dem Buchstaben nach dem letzten Schlüsselwortbuchstaben zyklisch) → 26 Zeichen |
 | `substitution(text, geheimalphabet, richtung = 'ver')` | `geheimalphabet[i]` ist Bild von `ALPHABET[i]`; `ent` invers |
@@ -310,15 +310,15 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 |---|---|
 | `vigenere(text, schluessel, richtung = 'ver')` | Position i: Verschiebung `verschiebung(schluessel[i mod L])` (nur über Buchstaben gezählt) |
 | `autokey(text, schluessel, richtung = 'ver')` | Schlüsselstrom = Schlüssel + Klartext (beim Entschlüsseln fortlaufend rekonstruiert) |
-| `porta(text, schluessel)` | Porta-Tafel: Schlüsselbuchstabe mit Index s (A = 0) → j = ⌊s/2⌋; Klartextindex x: x < 13 → c = 13 + ((x − j) mod 13), sonst c = (x − 13 + j) mod 13; involutorisch. Tests: `porta('BKPWEZP','SIEGEL')` = `STEMPEL`, `porta('nachtwache','LUNA')` = `FQWULGUPPU`, `porta('serenissima','PORTA')` = `MXMVAOMAZZT` |
-| `quadrat(schluessel = '', { groesse = 5, ij = 'I' })` | 5×5 (ohne J, J → I) bzw. 6×6 (A–Z0–9) aus Schlüsselwort ohne Doppelte + Rest → Liste von Zeilen |
-| `playfairPaare(text, { fuellzeichen = 'X', fuellzeichenX = 'Q', ij = 'I' })` | Paare bilden: J → I, gleiches Paar „AA“ → „AX“ + Rest neu paaren (bei „XX“: „XQ“), ungerade Länge → Füllzeichen anhängen |
-| `playfair(text, schluessel, richtung = 'ver', optionen)` | gleiche Zeile: rechts (`ent` links), gleiche Spalte: darunter (`ent` darüber), sonst Rechteck: Buchstabe in eigener Zeile, Spalte des Partners; `ent` entfernt **keine** Füllzeichen |
-| `kreuzquadrat(text, oben, unten, richtung = 'ver', { fuellzeichen = 'X' })` | Level 2.4 / Akte W2·4 (SPEC W2 Archivwissen 3). Quadrate O (oben) und U (unten) aus Schlüsselwörtern (I = J); ungerade Länge → Füllzeichen anhängen. Paar (a, b): a in O bei (zₐ, sₐ), b in U bei (z_b, s_b) → c₁ = U[zₐ][s_b], c₂ = O[z_b][sₐ]. `ent`: c₁ in U bei (r₁, t₁), c₂ in O bei (r₂, t₂) → a = O[r₁][t₂], b = U[r₂][t₁]. Tests (O = GONDEL, U = MURANO): `mehl` → `KCFQ`, `seidenballen` → `TBIANEDNOQNE`, `fa` → `DE`, `ent('FBNSROBNCM')` = `KONTORBUCH` |
-| `zweiQuadratZahl(text, q1, q2, zahlenschluessel, richtung = 'ver')` | Papier-Boss W2 „Das Zwei-Quadrat“ (SPEC W2 §6): Klartextbuchstabe in Q1 bei (z, s), Ziffer k (zyklisch aus dem Zahlenschlüssel, nur Ziffern 0–4) → Geheimtextbuchstabe Q2[(z + k) mod 5][s] (0-basiert); `ent` sucht in Q2 und rechnet (z − k) mod 5 in Q1. Tests (Q1 = BRIEFTAUBE, Q2 = KOMPASS): `h`/3142 → `O`, `anna`/2222 → `QKKQ`, `rat`/3142 → `QGK` |
+| `porta(text, schluessel, richtung = 'ver')` | Porta-Tafel (`richtung` wird nur geprüft – involutorisch): Schlüsselbuchstabe mit Index s (A = 0) → j = ⌊s/2⌋; Klartextindex x: x < 13 → c = 13 + ((x − j) mod 13), sonst c = (x − 13 + j) mod 13; involutorisch. Tests: `porta('BKPWEZP','SIEGEL')` = `STEMPEL`, `porta('nachtwache','LUNA')` = `FQWULGUPPU`, `porta('serenissima','PORTA')` = `MXMVAOMAZZT` |
+| `quadrat(schluessel = '', { groesse = 5, ij = 'I' })` | 5×5 (ohne J, J → I; `ij: 'J'`: ohne I, I → J) bzw. 6×6 (A–Z0–9) aus Schlüsselwort ohne Doppelte + Rest → Liste von Zeilen (Strings); ein fertiges Quadrat (25/36 Zeichen oder Zeilenliste) ergibt sich selbst |
+| `playfairPaare(text, { fuellzeichen = 'X', fuellzeichenX = 'Q', ij = 'I' })` | Paare bilden: J → I, gleiches Paar „AA“ → „AX“ + Rest neu paaren (bei „XX“: „XQ“), ungerade Länge → Füllzeichen anhängen (ist der letzte Buchstabe selbst das Füllzeichen: `fuellzeichenX`); Füllzeichen verschieden und je ein Buchstabe des Quadrats, sonst `KryptoFehler` |
+| `playfair(text, schluessel, richtung = 'ver', optionen)` | gleiche Zeile: rechts (`ent` links), gleiche Spalte: darunter (`ent` darüber), sonst Rechteck: Buchstabe in eigener Zeile, Spalte des Partners; `ent` entfernt **keine** Füllzeichen; `ent` mit ungerader Länge oder einem Paar aus zwei gleichen Buchstaben → `KryptoFehler` |
+| `kreuzquadrat(text, oben, unten, richtung = 'ver', { fuellzeichen = 'X' })` | Level 2.4 / Akte W2·4 (SPEC W2 Archivwissen 3). Quadrate O (oben) und U (unten) aus Schlüsselwörtern (I = J); ungerade Länge → Füllzeichen anhängen. Paar (a, b): a in O bei (zₐ, sₐ), b in U bei (z_b, s_b) → c₁ = U[zₐ][s_b], c₂ = O[z_b][sₐ]. `ent`: c₁ in U bei (r₁, t₁), c₂ in O bei (r₂, t₂) → a = O[r₁][t₂], b = U[r₂][t₁]. Tests (O = GONDEL, U = MURANO): `mehl` → `KCFQ`, `seidenballen` → `TBIANEDNOQNE`, `fa` → `DE`, `ent('FBNSROBNCM')` = `KONTORBUCH`; keine Regel für Doppelbuchstaben; `ent` mit ungerader Länge → `KryptoFehler` |
+| `zweiQuadratZahl(text, q1, q2, zahlenschluessel, richtung = 'ver')` | Papier-Boss W2 „Das Zwei-Quadrat“ (SPEC W2 §6): Klartextbuchstabe in Q1 bei (z, s), Ziffer k (zyklisch aus dem Zahlenschlüssel, nur Ziffern 0–4) → Geheimtextbuchstabe Q2[(z + k) mod 5][s] (0-basiert); `ent` sucht in Q2 und rechnet (z − k) mod 5 in Q1. Zahlenschlüssel als Ziffernfolge (`'3142'`) oder Liste (`[3,1,4,2]`), leer oder Ziffer > 4 → `KryptoFehler`. Tests (Q1 = BRIEFTAUBE, Q2 = KOMPASS): `h`/3142 → `O`, `anna`/2222 → `QKKQ`, `rat`/3142 → `QGK` |
 | *(kein `zweiQuadrat`)* | Das klassische Zwei-Quadrat (Spalten tauschen) nutzt kein Level; bewusst **nicht** implementieren, um die Namenskollision mit Kreuzquadrat und Papier-Boss zu vermeiden (Verifikation H2) |
-| `polybios(text, { schluessel = '', kopf = '12345', ij = 'I' }, richtung = 'ver')` | `ver`: Paare „Zeilenkopf Spaltenkopf“ (ohne Leerzeichen); `ent`: aus Paaren zurück |
-| `adfgvx(text, quadrat36, schluessel, richtung = 'ver')` | Polybios 6×6 mit Kopf `ADFGVX` → `spaltentransposition(…, schluessel)`; `ent` umgekehrt (erst Transposition invertieren, dann Paare lesen) |
+| `polybios(text, { schluessel = '', kopf = '12345', ij = 'I' }, richtung = 'ver')` | `ver`: Paare „Zeilenkopf Spaltenkopf“ (ohne Leerzeichen); `ent`: aus Paaren zurück. Die Kopflänge (5 oder 6 verschiedene Zeichen, z. B. `ADFGX`, `ADFGVX`) bestimmt die Quadratgröße; bei 5×5 fallen Ziffern im Klartext weg, bei 6×6 bleiben sie. `ent`: ungerade Länge oder Zeichen außerhalb des Kopfs → `KryptoFehler` |
+| `adfgvx(text, quadrat36, schluessel, richtung = 'ver')` | Polybios 6×6 mit Kopf `ADFGVX` → `spaltentransposition(…, schluessel)` (ohne Auffüllen); `ent` umgekehrt (erst Transposition invertieren, dann Paare lesen). `quadrat36`: 36-Zeichen-Quadrat, Zeilenliste oder Schlüsselwort (ergänzt wie `quadrat(…, { groesse: 6 })`, z. B. `ZEPPELIN18`); `schluessel`: Wort oder Zahlenfolge wie bei `spaltenReihenfolge` |
 
 **Transposition**
 

@@ -383,3 +383,390 @@ test('ver∘ent = id (500 Zufallsfälle je Verfahren) – monoalphabetisch', () 
     assert.equal(K.substitution(K.substitution(t, alpha), K.umkehrAlphabet(alpha)), n);
   }
 });
+
+// ───────────────────────────── Task 11: Polyalphabetisch ─────────────────────────────
+
+test('vigenere (Plan, Boss W2-B-02/06)', () => {
+  assert.equal(K.vigenere('kanal', 'ROT'), 'BOGRZ');
+  assert.equal(K.vigenere('HEDKZRMAGP', 'VELA', 'ent'), 'MASKENBALL');
+});
+
+test('vigenere: SPEC W2 §12 Prüfprotokoll', () => {
+  // A = 1-Rechnungen: r/K → B, w/H → D, z/B → A, t/M → F, m/D → P, s/N → F
+  for (const [p, s, c] of [['r', 'K', 'B'], ['w', 'H', 'D'], ['z', 'B', 'A'], ['t', 'M', 'F'], ['m', 'D', 'P'], ['s', 'N', 'F']]) {
+    assert.equal(K.vigenere(p, s), c, `${p}/${s}`);
+  }
+  // Archivfund LAGUNE (64 Zeichen)
+  const af = 'derratvonvenedigliestunserebriefebenutzeabjetztnurnochdasquadrat';
+  const afC = 'OEXLN XGOTP RRPDO AYMPS ZOAWP RKVEM PFKVR RFTFY NFUEZ TGRFR TIPLO AYKHE ORGN';
+  assert.equal(K.vigenere(af, 'LAGUNE'), GROSS(afC));
+  assert.equal(K.vigenere(afC, 'LAGUNE', 'ent'), GROSS(af));
+  // Merkkasten DAME
+  assert.equal(K.vigenere('markusplatz', 'DAME'), GROSS('PADOX SBPDT L'));
+  // Vigenère 2.1
+  assert.equal(K.vigenere('anna', 'BBC'), 'BOPB');
+  assert.equal(K.vigenere('gondel', 'BOTE'), 'HCGHFZ');
+  assert.equal(K.vigenere('r', 'K') + K.vigenere('w', 'H') + K.vigenere('z', 'B'), 'BDA');
+  assert.equal(K.vigenere('JSADV BZAER WL', 'ROSA', 'ent'), 'SEIDENHANDEL');
+  assert.equal(K.vigenere('seidenhandel', 'ROSA'), GROSS('JSADV BZAER WL'));
+  assert.equal(K.vigenere('kanalsperre', 'NEBEL'), GROSS('XEOEW FTFVC R'));
+  assert.equal(K.vigenere('WYISX MRZWN VWHGD FFIIS XH', 'TURM', 'ent'), GROSS('dergesandtekommtmorgen'));
+  assert.equal(K.vigenere('kanalwache', 'RIVA'), GROSS('BIIAC EVCYM'));
+  assert.equal(K.vigenere('venedig', 'DDDD'), GROSS('YHQHG LJ'));
+  assert.equal(K.vigenere('hafenwache', 'ABAB'), GROSS('HBFFN XADHF'));
+  assert.equal(K.vigenere('hafenwache', 'AB'), GROSS('HBFFN XADHF'));
+  // Known-Plaintext: hafenmauer ↔ AOWXB DTIVK, Schlüsselstrom TORTORTORT
+  assert.equal(K.vigenere('AOWXB DTIVK', 'hafenmauer', 'ent'), 'TORTORTORT');
+  assert.equal(K.vigenere('hafenmauer', 'TOR'), GROSS('AOWXB DTIVK'));
+  // Akte W2·1 A4c: Vigenère statt Autokey – Fehler an Position 1 bleibt lokal
+  assert.equal(K.vigenere('dogenpalast', 'MURANO'), 'PIXEADMFRSG');
+  assert.equal(K.vigenere('PAXEADMFRSG', 'MURANO', 'ent'), 'DGGENPALAST');
+  // Teiltext-Aufgabe: VCVIZ TSWLE UKXMY ↔ ruderbootamsteg (EIS); Akte W2·2 A2: die/CHS → FPW
+  assert.equal(K.vigenere('VCVIZ TSWLE UKXMY', 'EIS', 'ent'), 'RUDERBOOTAMSTEG');
+  assert.equal(K.vigenere('die', 'CHS'), 'FPW');
+  // Mehrfach-Vigenère: AB dann CDE = CEEDDF
+  assert.equal(K.vigenere('seidenstoffeundglasperlen', 'CEEDDF'), GROSS('UIMGH SUXSI IJWRH JOFUT IUOJP'));
+  // Depeschen-Chiffre P-Falle: gewöhnliches Vigenère liefert XSXEYFSQBOFEC (nicht XSXEZ …)
+  assert.equal(K.vigenere('gefahramkanal', 'ROSE'), 'XSXEYFSQBOFEC');
+  // Warm-up: bote/LUNA → MIGE; ebbe/BBCC → FCDG
+  assert.equal(K.vigenere('bote', 'LUNA'), 'MIGE');
+  assert.equal(K.vigenere('ebbe', 'BBCC'), 'FCDG');
+});
+
+test('mehrfach-vigenere = vigenere mit Summenschlüssel', () => {
+  assert.equal(K.vigenere(K.vigenere('seidenstoffeundglasperlen', 'AB'), 'CDE'), 'UIMGHSUXSIIJWRHJOFUTIUOJP');
+});
+
+test('vigenere: lange Texte W2 (Eves Brief WACHS 228, Lab-Text GOLD 162, L2.2-06)', () => {
+  const E = `ZIGNS HEGYW WUUCW JEFPY ARTLA YHVKW JHCMW JAOHT ANFKW NGGZS
+JDVLT NIPNL ZIGIJ EEHLV ARFPH HOOHL ENFPW XRKLX AEPAZ WLVLF
+ZIGUS IEPKW NVGYT QEPKW PEPPF CEPBS HEUAV EEDYA AFGLJ OTUWS
+ATKUV ARPHU DTWUV RETIJ ANPAV EEDYA AFGKS JAEOV EEIHD AETLK
+AGGSL WMOVJ CEPDW ETGYF WCJNW JUC`;
+  const klar = 'diegaleereausvenedigerreichtdenhafenamabenddergesandtebringtdiebriefederdiplomatindiebriefeenthaltendienamenderverbuendeteningenualestdiebriefeerstspaetindernachtundverbrenntdiebriefedanachdiegaleeresegeltammorgenweiternachgenua';
+  assert.equal(K.nurBuchstaben(E).length, 228);
+  assert.equal(K.vigenere(E, 'WACHS', 'ent'), GROSS(klar));
+  assert.equal(K.vigenere(klar, 'WACHS'), GROSS(E));
+  const e7 = 'JSCGU UPHSD QDKBR WJWPJ KGLQJ HPQGA DRTBE DMRTH MSDDT REHTP CLTUP QKRWH MSDFN SYNKO FVMSY XGRTH CONKK OXWUF OHYDL OGGEH YYPQT HOLKU PVGBO WKBYL IVEXT RWDKG DWJWP JKGLQ JHPQT ONKJS CPKGD HNSCH OB';
+  assert.equal(K.nurBuchstaben(e7).length, 162);
+  const d7 = K.vigenere(e7, 'GOLD', 'ent');
+  assert.equal(d7.slice(0, 16), 'DERDOGEEMPFAENGT');
+  assert.equal(K.vigenere(d7, 'GOLD'), GROSS(e7));
+  const tt = 'WBXDN KBXKX PTKMX GTGWX KUKNX VDXGX UXGWX FYBLV AFTKD MTNYW XGTUX GW';
+  assert.equal(K.caesar(tt, 19, 'ent'), GROSS('diekurierewartenanderbrueckenebendemfischmarktaufdenabend'));
+  assert.equal(K.vigenere(tt, 'T', 'ent'), K.caesar(tt, 19, 'ent'));
+});
+
+test('vigenere: Video 03, W3 (FUNKGITTER, W3-L3-05), Warm-up W3', () => {
+  assert.equal(K.vigenere('die', 'KRY'), 'NZC');
+  assert.equal([...'KRYPTOS'].map((s) => K.vigenere('e', s)).join(''), 'OVCTXSW');
+  assert.equal(K.vigenere('Wetterbericht fuer die Nordsee', 'FUNKE'), 'BYGDIWVRBMHBGPYJLQSISIENWJY');
+  assert.equal(K.vigenere('morgenrot', 'LUNA'), 'XIEGPHEOE');
+  assert.equal(K.caesar(K.vigenere('morgenrot', 'LUNA'), 5), 'CNJLUMJTJ');
+  assert.equal(K.vigenere('morgenrot', 'QZSF'), 'CNJLUMJTJ');
+  assert.equal(K.vigenere('n', 'F'), 'S');
+});
+
+test('grenzfaelle_vigenere', () => {
+  assert.equal(K.vigenere('abc', 'A'), 'ABC');
+  assert.equal(K.vigenere('abc', 'AAAA'), 'ABC');
+  assert.equal(K.vigenere('', 'KEY'), '');
+  assert.equal(K.vigenere('a b-c!', 'b'), 'BCD'); // nur über Buchstaben gezählt
+  assert.equal(K.vigenere('aaa', 'Ä'), 'AEA'); // Schlüssel normalisiert: Ä → AE
+  assert.throws(() => K.vigenere('abc', ''), K.KryptoFehler);
+  assert.throws(() => K.vigenere('abc', '123'), K.KryptoFehler);
+  assert.throws(() => K.vigenere('abc', 'KEY', 'zurueck'), K.KryptoFehler);
+  assert.throws(() => K.vigenere('abc', null), K.KryptoFehler);
+});
+
+test('autokey (Plan, SPEC W2 §12)', () => {
+  assert.equal(K.autokey('ALVEHRA', 'ZU', 'ent'), 'BRUNNEN');
+  assert.equal(K.autokey('brunnen', 'ZU'), 'ALVEHRA');
+  assert.equal(K.autokey('palazzo', 'RIO'), GROSS('GIZPZ KO'));
+  assert.equal(K.autokey('dogenpalast', 'MURANO'), GROSS('PIXEA DDZGW G'));
+  assert.equal(K.autokey('galeerenimhafen', 'ZUG'), GROSS('FURKE CIRZQ UIRLN'));
+  // Fehlerfortpflanzung: Fehler an Position 1 → Fehler an Position 1 und 7
+  assert.equal(K.autokey('PAXEADDZGWG', 'MURANO', 'ent'), 'DGGENPATAST');
+  assert.equal(K.autokey('', 'ZU'), '');
+  assert.equal(K.autokey('abc', 'AAAA'), 'ABC'); // Schlüssel länger als Text
+  assert.throws(() => K.autokey('abc', ''), K.KryptoFehler);
+});
+
+test('porta (W2-Tafel)', () => {
+  assert.equal(K.porta('BKPWEZP', 'SIEGEL'), 'STEMPEL');
+  assert.equal(K.porta('nachtwache', 'LUNA'), 'FQWULGUPPU');
+  assert.equal(K.porta('serenissima', 'PORTA'), 'MXMVAOMAZZT');
+  assert.equal(K.porta('FQWULGUPPU', 'LUNA'), 'NACHTWACHE');
+  assert.equal(K.porta('stempel', 'SIEGEL'), GROSS('BKPWE ZP'));
+  // Akte W2·1 Abi b: a mit A → N, a mit C → Z; W2-L21-07: Schlüssel A und B gleichwertig
+  assert.equal(K.porta('a', 'A'), 'N');
+  assert.equal(K.porta('a', 'C'), 'Z');
+  assert.equal(K.porta('hafen', 'A'), K.porta('hafen', 'B'));
+  // optionale Richtung wird angenommen (involutorisch)
+  assert.equal(K.porta('FQWULGUPPU', 'LUNA', 'ent'), 'NACHTWACHE');
+  assert.throws(() => K.porta('abc', 'KEY', 'quer'), K.KryptoFehler);
+  assert.throws(() => K.porta('abc', ''), K.KryptoFehler);
+  assert.equal(K.porta('', 'LUNA'), '');
+});
+
+test('porta: involutorisch und ohne Fixpunkte (alle 26 × 26)', () => {
+  for (const s of K.ALPHABET) {
+    for (const p of K.ALPHABET) {
+      const c = K.porta(p, s);
+      assert.notEqual(c, p, `${p}/${s}`);
+      assert.equal(K.porta(c, s), p);
+    }
+  }
+});
+
+// ───────────────────────────── Quadrate, Bigramme ─────────────────────────────
+
+test('quadrat 5×5 und 6×6 (SPEC W0, W2, W3)', () => {
+  assert.deepEqual(K.quadrat('RIALTO'), ['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('GONDEL'), ['GONDE', 'LABCF', 'HIKMP', 'QRSTU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('MURANO'), ['MURAN', 'OBCDE', 'FGHIK', 'LPQST', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('BRIEFTAUBE'), ['BRIEF', 'TAUCD', 'GHKLM', 'NOPQS', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('KOMPASS'), ['KOMPA', 'SBCDE', 'FGHIL', 'NQRTU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('ATHEN'), ['ATHEN', 'BCDFG', 'IKLMO', 'PQRSU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('KORINTH'), ['KORIN', 'THABC', 'DEFGL', 'MPQSU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('FERNSCHREIBER'), ['FERNS', 'CHIBA', 'DGKLM', 'OPQTU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat(), ['ABCDE', 'FGHIK', 'LMNOP', 'QRSTU', 'VWXYZ']);
+  assert.deepEqual(K.quadrat('ZEPPELIN18', { groesse: 6 }), ['ZEPLIN', '18ABCD', 'FGHJKM', 'OQRSTU', 'VWXY02', '345679']);
+  assert.deepEqual(K.quadrat('FERNSPRECHER9', { groesse: 6 }), ['FERNSP', 'CH9ABD', 'GIJKLM', 'OQTUVW', 'XYZ012', '345678']);
+  assert.deepEqual(K.quadrat('JOJO'), ['IOABC', 'DEFGH', 'KLMNP', 'QRSTU', 'VWXYZ']); // J → I
+  assert.deepEqual(K.quadrat('', { ij: 'J' }), ['ABCDE', 'FGHJK', 'LMNOP', 'QRSTU', 'VWXYZ']);
+  assert.throws(() => K.quadrat('ABC', { groesse: 4 }), K.KryptoFehler);
+  assert.throws(() => K.quadrat('ABC', { ij: 'K' }), K.KryptoFehler);
+});
+
+test('playfairPaare ballett', () => assert.deepEqual(K.playfairPaare('ballett'), ['BA', 'LX', 'LE', 'TX', 'TX']));
+
+test('playfairPaare: SPEC W2 (Akte W2·4 A2, Warm-up, ballon) und Grenzfälle', () => {
+  assert.equal(K.playfairPaare('dasschiffsegeltmorgen').join(' '), 'DA SX SC HI FX FS EG EL TM OR GE NX');
+  assert.equal(K.playfairPaare('kaffee').join(' '), 'KA FX FE EX');
+  assert.equal(K.playfairPaare('ballon').join(' '), 'BA LX LO NX');
+  assert.equal(K.playfairPaare('wasserweg').join(' '), 'WA SX SE RW EG');
+  assert.equal(K.playfairPaare('jagd').join(' '), 'IA GD');
+  assert.deepEqual(K.playfairPaare(''), []);
+  assert.deepEqual(K.playfairPaare('a'), ['AX']);
+  assert.deepEqual(K.playfairPaare('xx'), ['XQ', 'XQ']); // „XX“-Paar → XQ, auch beim Auffüllen
+  assert.deepEqual(K.playfairPaare('abx'), ['AB', 'XQ']); // ungerade Länge, letzter Buchstabe X
+  assert.deepEqual(K.playfairPaare('aaa'), ['AX', 'AX', 'AX']);
+  assert.deepEqual(K.playfairPaare('aab', { fuellzeichen: 'Q', fuellzeichenX: 'Z' }), ['AQ', 'AB']);
+  assert.throws(() => K.playfairPaare('abc', { fuellzeichen: 'XY' }), K.KryptoFehler);
+  assert.throws(() => K.playfairPaare('abc', { fuellzeichen: 'X', fuellzeichenX: 'X' }), K.KryptoFehler);
+  assert.throws(() => K.playfairPaare('abc', { fuellzeichen: 'J' }), K.KryptoFehler);
+});
+
+test('playfair RIALTO', () => {
+  const q = 'RIALTOBCDEFGHKMNPQSUVWXYZ';
+  assert.equal(K.playfair('HU', 'RIALTO'), 'MQ');
+  assert.equal(K.playfair('WI', 'RIALTO'), 'IB');
+  assert.equal(K.playfair('HU', q), 'MQ'); // fertiges Quadrat als Schlüssel ergibt dasselbe
+});
+
+test('playfair: SPEC W2 §12 Prüfprotokoll', () => {
+  assert.deepEqual(['OD', 'BG', 'RS'].map((p) => K.playfair(p, 'RIALTO')), ['BE', 'GP', 'LN']);
+  assert.equal(K.playfair('wasserweg', 'RIALTO'), GROSS('XIQYU DIVBM'));
+  assert.equal(K.playfair('dasschiffsegeltmorgen', 'RIALTO'), GROSS('CLQYQ DGAHV KNBMD TEUFO MBQV'));
+  assert.equal(K.playfair('HLIRO UUQTB AY', 'RIALTO', 'ent'), 'KARTENSPIELX'); // ent entfernt keine Füllzeichen
+  assert.equal(K.playfair('GAURO TEOFH RDDHO UEZTF', 'RIALTO', 'ent'), GROSS('hinterdemglockenturm'));
+  assert.equal(K.playfair('jagd', 'RIALTO'), 'ALKB');
+  // AB → XY ⇒ BA → YX; kein Doppel im Geheimtextpaar; kein Fixbuchstabe
+  const L = K.quadrat('RIALTO').join('');
+  for (const a of L) {
+    for (const b of L) {
+      if (a === b) continue;
+      const c = K.playfair(a + b, 'RIALTO');
+      assert.equal(K.playfair(b + a, 'RIALTO'), c[1] + c[0]);
+      assert.notEqual(c[0], c[1]);
+      assert.ok(c[0] !== a && c[1] !== b);
+    }
+  }
+});
+
+test('grenzfaelle_playfair', () => {
+  assert.equal(K.playfair('', 'RIALTO'), '');
+  assert.equal(K.playfair('xx', 'RIALTO').length, 4);
+  assert.equal(K.playfair(K.playfair('xx', 'RIALTO'), 'RIALTO', 'ent'), 'XQXQ');
+  assert.equal(K.playfair(K.playfair('abc', 'RIALTO'), 'RIALTO', 'ent'), 'ABCX');
+  assert.throws(() => K.playfair('ABC', 'RIALTO', 'ent'), K.KryptoFehler); // ungerade Länge
+  assert.throws(() => K.playfair('AABB', 'RIALTO', 'ent'), K.KryptoFehler); // Doppel kann kein Geheimtext sein
+  assert.throws(() => K.playfair('ab', 'RIALTO', 'seitwaerts'), K.KryptoFehler);
+});
+
+test('kreuzquadrat GONDEL/MURANO', () => {
+  assert.equal(K.kreuzquadrat('mehl', 'GONDEL', 'MURANO'), 'KCFQ');
+  assert.equal(K.kreuzquadrat('seidenballen', 'GONDEL', 'MURANO'), 'TBIANEDNOQNE');
+  assert.equal(K.kreuzquadrat('fa', 'GONDEL', 'MURANO'), 'DE');
+  assert.equal(K.kreuzquadrat('FBNSROBNCM', 'GONDEL', 'MURANO', 'ent'), 'KONTORBUCH');
+});
+
+test('kreuzquadrat: SPEC W2 §12, Level 2.4, Akte W2·4', () => {
+  assert.equal(K.kreuzquadrat('kommandant', 'GONDEL', 'MURANO'), GROSS('FBFDE OADNS'));
+  assert.equal(K.kreuzquadrat('kontorbuch', 'GONDEL', 'MURANO'), GROSS('FBNSR OBNCM'));
+  assert.equal(K.kreuzquadrat('TBIAN EDNOQ NE', 'GONDEL', 'MURANO', 'ent'), GROSS('seidenballen'));
+  // O = U (GONDEL): EE → EE, GO → OG, GL → GL
+  assert.deepEqual(['EE', 'GO', 'GL'].map((p) => K.kreuzquadrat(p, 'GONDEL', 'GONDEL')), ['EE', 'OG', 'GL']);
+  // 18 von 625 Paaren bleiben unverändert
+  const L = K.quadrat('GONDEL').join('');
+  let fix = 0;
+  for (const a of L) for (const b of L) if (K.kreuzquadrat(a + b, 'GONDEL', 'MURANO') === a + b) fix++;
+  assert.equal(fix, 18);
+});
+
+test('grenzfaelle_kreuzquadrat', () => {
+  assert.equal(K.kreuzquadrat('', 'GONDEL', 'MURANO'), '');
+  assert.equal(K.kreuzquadrat('m', 'GONDEL', 'MURANO'), K.kreuzquadrat('mx', 'GONDEL', 'MURANO'));
+  assert.equal(K.kreuzquadrat('m', 'GONDEL', 'MURANO', 'ver', { fuellzeichen: 'Q' }), K.kreuzquadrat('mq', 'GONDEL', 'MURANO'));
+  assert.equal(K.kreuzquadrat('ja', 'GONDEL', 'MURANO'), K.kreuzquadrat('ia', 'GONDEL', 'MURANO'));
+  assert.throws(() => K.kreuzquadrat('ABC', 'GONDEL', 'MURANO', 'ent'), K.KryptoFehler);
+  assert.throws(() => K.kreuzquadrat('ab', 'GONDEL', 'MURANO', 'ver', { fuellzeichen: '1' }), K.KryptoFehler);
+});
+
+test('zweiQuadratZahl (Papier-Boss W2)', () => {
+  assert.equal(K.zweiQuadratZahl('h', 'BRIEFTAUBE', 'KOMPASS', '3142'), 'O');
+  assert.equal(K.zweiQuadratZahl('anna', 'BRIEFTAUBE', 'KOMPASS', '2222'), 'QKKQ');
+  assert.equal(K.zweiQuadratZahl('rat', 'BRIEFTAUBE', 'KOMPASS', '3142'), 'QGK');
+  assert.equal(K.zweiQuadratZahl('QGK', 'BRIEFTAUBE', 'KOMPASS', '3142', 'ent'), 'RAT');
+});
+
+test('zweiQuadratZahl: SPEC W2 §6, §12', () => {
+  const zq = (t, s, r = 'ver') => K.zweiQuadratZahl(t, 'BRIEFTAUBE', 'KOMPASS', s, r);
+  assert.equal(zq('nachtwache', '3142'), GROSS('SGPWV OOTOD'));
+  assert.equal(zq('WVCIQ XDQVA', '3142', 'ent'), 'ANKERPLATZ');
+  assert.equal(zq('ankerplatz', '3142'), 'WVCIQXDQVA');
+  // Gegenbeispiel doppelt: rat → QGK → DNC
+  assert.equal(zq(zq('rat', '3142'), '3142'), 'DNC');
+  // Q1 = Q2: 3142 dann 1203 = 4340
+  const zz = (t, s) => K.zweiQuadratZahl(t, 'BRIEFTAUBE', 'BRIEFTAUBE', s);
+  assert.equal(zz(zz('abcdefghik', '3142'), '1203'), zz('abcdefghik', '4340'));
+  // Fixpunkte bei k = 0: N, V, W, X, Y, Z
+  const L = K.quadrat('BRIEFTAUBE').join('');
+  assert.equal([...L].filter((c) => zq(c, '0') === c).join(''), 'NVWXYZ');
+  // silberflotte: Fehlerfortpflanzung (ein Geheimtextbuchstabe fehlt → ab dort falsch)
+  const g = zq('silberflotte', '3142');
+  assert.equal(zq(g.slice(0, 3) + g.slice(4), '3142', 'ent'), 'SILCOSEWVVQ');
+  // kein einzelner Zahlenschlüssel ersetzt die doppelte Verschlüsselung mit 3142 (Brute Force über 625)
+  let ersatz = 0;
+  for (let n = 0; n < 625; n++) {
+    const s = [n % 5, Math.floor(n / 5) % 5, Math.floor(n / 25) % 5, Math.floor(n / 125)].join('');
+    if ([...L].every((c) => zq(c.repeat(4), s) === zq(zq(c.repeat(4), '3142'), '3142'))) ersatz++;
+  }
+  assert.equal(ersatz, 0);
+});
+
+test('grenzfaelle_zweiQuadratZahl', () => {
+  const zq = (t, s, r) => K.zweiQuadratZahl(t, 'BRIEFTAUBE', 'KOMPASS', s, r);
+  assert.equal(zq('', '3142'), '');
+  assert.equal(zq('anna', [2, 2, 2, 2]), 'QKKQ'); // Liste von Ziffern
+  assert.equal(zq('jagd', '0'), zq('iagd', '0'));
+  assert.throws(() => zq('abc', '35'), K.KryptoFehler); // Ziffer 5 nicht erlaubt
+  assert.throws(() => zq('abc', ''), K.KryptoFehler);
+  assert.throws(() => zq('abc', '3a'), K.KryptoFehler);
+  assert.throws(() => zq('abc', [1, 7]), K.KryptoFehler);
+});
+
+test('polybios: SPEC W0 §12 (Standard, KORINTH, Fackelchiffre ATHEN)', () => {
+  assert.equal(K.polybios('rom'), '423432');
+  assert.equal(K.polybios('troia'), '4442342411');
+  assert.equal(K.polybios('legion'), ohne('31 15 22 24 34 33'));
+  assert.equal(K.polybios('olympia'), ohne('34 31 54 32 35 24 11'));
+  assert.equal(K.polybios('forum'), ohne('21 34 42 45 32'));
+  assert.equal(K.polybios('33 15 43 44 34 42', {}, 'ent'), 'NESTOR');
+  assert.equal(K.polybios('21 34 42 45 32', {}, 'ent'), 'FORUM');
+  assert.equal(K.polybios('sieg', { schluessel: 'KORINTH' }), ohne('44 14 32 34'));
+  // Fackelchiffre: Atbash, dann Polybios mit Quadrat ATHEN (KORINTH)
+  const fackel = (t, s) => K.polybios(K.atbash(t), { schluessel: s });
+  assert.equal(fackel('feuer', 'ATHEN'), ohne('45 51 24 51 31'));
+  assert.equal(fackel('hilfe', 'ATHEN'), ohne('44 43 35 45 51'));
+  assert.equal(fackel('quelle', 'ATHEN'), ohne('31 24 51 35 35 51'));
+  assert.equal(fackel('rauch', 'ATHEN'), ohne('31 55 24 53 44'));
+  assert.equal(fackel('perser', 'KORINTH'), ohne('11 51 14 22 51 14'));
+  assert.equal(K.atbash(K.polybios('13 43 12 34 55 35', { schluessel: 'ATHEN' }, 'ent')), 'SIGNAL');
+  // W0-L4-07: q und r ergeben beide 31 (Atbash q → J = I)
+  assert.equal(fackel('q', 'ATHEN'), '31');
+  assert.equal(fackel('r', 'ATHEN'), '31');
+});
+
+test('polybios: Kopf ADFGX/ADFGVX (SPEC W3 §12)', () => {
+  assert.equal(K.polybios('wolke', { schluessel: 'FERNSCHREIBER', kopf: 'ADFGX' }), 'XDGAFGFFAD');
+  assert.equal(K.polybios('post', { schluessel: 'ZEPPELIN18', kopf: 'ADFGVX' }), 'AFGAGGGV');
+  assert.equal(K.polybios('AAGXFD', { schluessel: 'ZEPPELIN18', kopf: 'ADFGVX' }, 'ent'), 'ZUG');
+  assert.equal(K.polybios('nebel4', { schluessel: 'ZEPPELIN18', kopf: 'ADFGVX' }), 'AXADDGADAGXD');
+  assert.equal(K.polybios('ankunft8', { schluessel: 'ZEPPELIN18', kopf: 'ADFGVX' }), 'DFAXFVGXAXFAGVDD');
+  assert.equal(K.polybios('tor', { schluessel: 'FERNSPRECHER9', kopf: 'ADFGVX' }), 'GFGAAF');
+});
+
+test('grenzfaelle_polybios', () => {
+  assert.equal(K.polybios(''), '');
+  assert.equal(K.polybios('j'), K.polybios('i'));
+  assert.equal(K.polybios('Café – 12'), K.polybios('cafe')); // 5×5: Ziffern fallen weg
+  assert.throws(() => K.polybios('123', {}, 'ent'), K.KryptoFehler); // ungerade Länge
+  assert.throws(() => K.polybios('16', {}, 'ent'), K.KryptoFehler); // 6 nicht im Kopf
+  assert.throws(() => K.polybios('ab', { kopf: '1234' }), K.KryptoFehler);
+  assert.throws(() => K.polybios('ab', { kopf: '11234' }), K.KryptoFehler);
+  assert.throws(() => K.polybios('ab', {}, 'quer'), K.KryptoFehler);
+});
+
+test('adfgvx: SPEC W3 §12 (Level 3.4, Akte W3·4)', () => {
+  assert.equal(K.adfgvx('nebel4', 'ZEPPELIN18', 'KARL'), 'XGGADADDDAAX');
+  assert.equal(K.adfgvx('DGDVA AAVFG FX', 'ZEPPELIN18', 'BAUM', 'ent'), 'WOLKE5');
+  assert.equal(K.adfgvx('XFDGA DXFGA XGFA', 'ZEPPELIN18', 'HAND', 'ent'), 'MORGEN6');
+  assert.equal(K.adfgvx('ankunft8', 'ZEPPELIN18', 'WOLF'), GROSS('XXADA GFDFV XVDFA G'));
+  assert.equal(K.adfgvx('funk2', 'ZEPPELIN18', 'TOR'), 'AAVGXVFXFX');
+  assert.equal(K.adfgvx('GADGF DDGVF VGGDF AADXA', 'ZEPPELIN18', 'TOR', 'ent'), 'BRIEFTAUBE');
+  // fertiges 36-Zeichen-Quadrat und Zeilenliste wirken wie das Schlüsselwort
+  const q36 = 'ZEPLIN18ABCDFGHJKMOQRSTUVWXY02345679';
+  assert.equal(K.adfgvx('nebel4', q36, 'KARL'), 'XGGADADDDAAX');
+  assert.equal(K.adfgvx('nebel4', K.quadrat('ZEPPELIN18', { groesse: 6 }), 'KARL'), 'XGGADADDDAAX');
+});
+
+test('grenzfaelle_adfgvx', () => {
+  assert.equal(K.adfgvx('', 'ZEPPELIN18', 'KARL'), '');
+  assert.equal(K.adfgvx('a', 'ZEPPELIN18', 'KARLSRUHE'), 'FD'); // Schlüssel länger als Text: Spalte A (Rang 1) zuerst
+  assert.equal(K.adfgvx('FD', 'ZEPPELIN18', 'KARLSRUHE', 'ent'), 'A');
+  // gleiche Buchstaben: links zuerst (AAAA = Reihenfolge 1 2 3 4, ANNA = 1 3 4 2); Zahlenfolge wird übernommen
+  assert.equal(K.adfgvx('nebel4', 'ZEPPELIN18', 'AAAA'), 'ADAXGGAAXDDD');
+  assert.equal(K.adfgvx('nebel4', 'ZEPPELIN18', [1, 2, 3, 4]), 'ADAXGGAAXDDD');
+  assert.equal(K.adfgvx('nebel4', 'ZEPPELIN18', 'ANNA'), K.adfgvx('nebel4', 'ZEPPELIN18', [1, 3, 4, 2]));
+  assert.equal(K.adfgvx('nebel4', 'ZEPPELIN18', 'KARL'), K.adfgvx('nebel4', 'ZEPPELIN18', [2, 1, 4, 3]));
+  assert.throws(() => K.adfgvx('abc', 'ZEPPELIN18', [1, 1, 2]), K.KryptoFehler);
+  assert.throws(() => K.adfgvx('abc', 'ZEPPELIN18', ''), K.KryptoFehler);
+  assert.throws(() => K.adfgvx('ADF', 'ZEPPELIN18', 'KARL', 'ent'), K.KryptoFehler);
+  assert.throws(() => K.adfgvx('ADFB', 'ZEPPELIN18', 'KARL', 'ent'), K.KryptoFehler);
+});
+
+test('kein zweiQuadrat (Namenskollision, Verifikation H2)', () => {
+  assert.equal(K.zweiQuadrat, undefined);
+});
+
+test('ver∘ent = id (500 Zufallsfälle je Verfahren) – polyalphabetisch und Bigramme', () => {
+  const ohneJ = (s) => s.replace(/J/g, 'I');
+  for (let i = 0; i < RUNDEN; i++) {
+    const t = zufallsText();
+    const n = K.nurBuchstaben(t);
+    const s = zufallsWort(1, 8);
+    assert.equal(K.vigenere(K.vigenere(t, s), s, 'ent'), n, `vigenere ${JSON.stringify(t)} ${s}`);
+    assert.equal(K.vigenere(K.vigenere(n, s, 'ent'), s), n);
+    assert.equal(K.autokey(K.autokey(t, s), s, 'ent'), n, `autokey ${JSON.stringify(t)} ${s}`);
+    assert.equal(K.autokey(K.autokey(n, s, 'ent'), s), n);
+    assert.equal(K.porta(K.porta(t, s), s), n, `porta ${JSON.stringify(t)} ${s}`);
+    // Playfair: ent liefert die vorbereiteten Paare (Füllzeichen bleiben stehen)
+    const w1 = zufallsWort(0, 10);
+    const w2 = zufallsWort(0, 10);
+    assert.equal(K.playfair(K.playfair(t, w1), w1, 'ent'), K.playfairPaare(t).join(''), `playfair ${JSON.stringify(t)} ${w1}`);
+    // Kreuzquadrat: ent liefert den Text mit I = J und angehängtem X bei ungerader Länge
+    const kq = ohneJ(n) + (n.length % 2 ? 'X' : '');
+    assert.equal(K.kreuzquadrat(K.kreuzquadrat(t, w1, w2), w1, w2, 'ent'), kq, `kreuzquadrat ${JSON.stringify(t)} ${w1}/${w2}`);
+    const zs = Array.from({ length: ganz(1, 6) }, () => ganz(0, 4)).join('');
+    assert.equal(K.zweiQuadratZahl(K.zweiQuadratZahl(t, w1, w2, zs), w1, w2, zs, 'ent'), ohneJ(n), `zweiQuadratZahl ${zs}`);
+    assert.equal(K.polybios(K.polybios(t, { schluessel: w1 }), { schluessel: w1 }, 'ent'), ohneJ(n));
+    const t6 = zufallsText(40, 'abcxyzäöü0123456789 ,.');
+    const n6 = K.normalisieren(t6);
+    const opt6 = { schluessel: w1 + '1', kopf: 'ADFGVX' };
+    assert.equal(K.polybios(K.polybios(t6, opt6), opt6, 'ent'), n6);
+    const sp = zufallsWort(1, 9);
+    assert.equal(K.adfgvx(K.adfgvx(t6, w2 + '9', sp), w2 + '9', sp, 'ent'), n6, `adfgvx ${JSON.stringify(t6)} ${sp}`);
+  }
+});

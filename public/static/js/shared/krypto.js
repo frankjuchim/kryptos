@@ -229,6 +229,329 @@
     return aus;
   }
 
+  // ───────────────────────────── Polyalphabetisch ─────────────────────────────
+
+  function schluesselBuchstaben(schluessel) {
+    const s = nurBuchstaben(pruefeText(schluessel, 'Schlüssel'));
+    if (s.length === 0) throw new KryptoFehler('Der Schlüssel muss mindestens einen Buchstaben enthalten.');
+    return s;
+  }
+
+  /** Vigenère: Position i (nur über Buchstaben gezählt) um verschiebung(schluessel[i mod L]) verschoben */
+  function vigenere(text, schluessel, richtung = 'ver') {
+    const s = schluesselBuchstaben(schluessel);
+    pruefeRichtung(richtung);
+    const t = nurBuchstaben(text);
+    const vz = richtung === 'ver' ? 1 : -1;
+    let aus = '';
+    for (let i = 0; i < t.length; i++) {
+      aus += ALPHABET[mod(ALPHABET.indexOf(t[i]) + vz * ALPHABET.indexOf(s[i % s.length]), 26)];
+    }
+    return aus;
+  }
+
+  /** Autokey: Schlüsselstrom = Schlüssel + Klartext (beim Entschlüsseln fortlaufend rekonstruiert) */
+  function autokey(text, schluessel, richtung = 'ver') {
+    const s = schluesselBuchstaben(schluessel);
+    pruefeRichtung(richtung);
+    const t = nurBuchstaben(text);
+    const strom = [...s];
+    let aus = '';
+    for (let i = 0; i < t.length; i++) {
+      const k = ALPHABET.indexOf(strom[i]);
+      if (richtung === 'ver') {
+        aus += ALPHABET[(ALPHABET.indexOf(t[i]) + k) % 26];
+        strom.push(t[i]);
+      } else {
+        const p = ALPHABET[mod(ALPHABET.indexOf(t[i]) - k, 26)];
+        aus += p;
+        strom.push(p);
+      }
+    }
+    return aus;
+  }
+
+  /**
+   * Porta-Tafel (W2): Schlüsselbuchstabe mit Index s (A = 0) → j = ⌊s/2⌋; Klartextindex x:
+   * x < 13 → 13 + ((x − j) mod 13), sonst (x − 13 + j) mod 13. Involutorisch; die Richtung wird nur geprüft.
+   */
+  function porta(text, schluessel, richtung = 'ver') {
+    const s = schluesselBuchstaben(schluessel);
+    pruefeRichtung(richtung);
+    const t = nurBuchstaben(text);
+    let aus = '';
+    for (let i = 0; i < t.length; i++) {
+      const j = Math.floor(ALPHABET.indexOf(s[i % s.length]) / 2);
+      const x = ALPHABET.indexOf(t[i]);
+      aus += ALPHABET[x < 13 ? 13 + mod(x - j, 13) : mod(x - 13 + j, 13)];
+    }
+    return aus;
+  }
+
+  // ───────────────────────────── Quadrate und Bigramme ─────────────────────────────
+
+  const ZIFFERN = '0123456789';
+
+  function pruefeIJ(ij) {
+    if (ij !== 'I' && ij !== 'J') throw new KryptoFehler('Die Option ij muss „I“ (J → I) oder „J“ (I → J) sein.');
+    return ij;
+  }
+
+  /** Text für ein Quadrat vorbereiten: 5×5 nur Buchstaben mit I/J-Zusammenfassung, 6×6 Buchstaben und Ziffern */
+  function quadratText(text, groesse, ij) {
+    if (groesse === 6) return normalisieren(pruefeText(text));
+    const t = nurBuchstaben(text);
+    return ij === 'I' ? t.replace(/J/g, 'I') : t.replace(/I/g, 'J');
+  }
+
+  /** Schlüsselquadrat 5×5 (ohne J bzw. ohne I) oder 6×6 (A–Z0–9) → Liste von Zeilen */
+  function quadrat(schluessel = '', { groesse = 5, ij = 'I' } = {}) {
+    if (groesse !== 5 && groesse !== 6) throw new KryptoFehler('Ein Quadrat hat die Größe 5 (5 × 5) oder 6 (6 × 6).');
+    pruefeIJ(ij);
+    if (Array.isArray(schluessel)) schluessel = schluessel.join('');
+    const zeichen = [];
+    let vorrat;
+    if (groesse === 6) vorrat = ALPHABET + ZIFFERN;
+    else vorrat = ij === 'I' ? ALPHABET.replace('J', '') : ALPHABET.replace('I', '');
+    for (const c of quadratText(pruefeText(schluessel, 'Schlüssel'), groesse, ij) + vorrat) {
+      if (!zeichen.includes(c)) zeichen.push(c);
+    }
+    const zeilen = [];
+    for (let z = 0; z < groesse; z++) zeilen.push(zeichen.slice(z * groesse, (z + 1) * groesse).join(''));
+    return zeilen;
+  }
+
+  /** Zeilenliste → Positionstabelle Zeichen → [Zeile, Spalte] (0-basiert) */
+  function positionen(zeilen) {
+    const pos = new Map();
+    zeilen.forEach((zeile, z) => [...zeile].forEach((c, s) => pos.set(c, [z, s])));
+    return pos;
+  }
+
+  function pruefeFuellzeichen(f, name, ij = 'I') {
+    if (typeof f !== 'string' || !/^[A-Z]$/.test(f.toUpperCase())) {
+      throw new KryptoFehler(`${name} muss genau ein Buchstabe A–Z sein.`);
+    }
+    const g = f.toUpperCase();
+    if (g === (ij === 'I' ? 'J' : 'I')) throw new KryptoFehler(`${name} kommt im Quadrat nicht vor.`);
+    return g;
+  }
+
+  /** Playfair-Paare: J → I; gleiches Paar AA → AX + Rest neu paaren (bei XX: XQ); ungerade Länge auffüllen */
+  function playfairPaare(text, { fuellzeichen = 'X', fuellzeichenX = 'Q', ij = 'I' } = {}) {
+    pruefeIJ(ij);
+    const f = pruefeFuellzeichen(fuellzeichen, 'Das Füllzeichen', ij);
+    const fx = pruefeFuellzeichen(fuellzeichenX, 'Das Ersatz-Füllzeichen', ij);
+    if (f === fx) throw new KryptoFehler('Füllzeichen und Ersatz-Füllzeichen müssen verschieden sein.');
+    const t = quadratText(text, 5, ij);
+    const paare = [];
+    let i = 0;
+    while (i < t.length) {
+      const a = t[i];
+      const b = t[i + 1];
+      if (b === undefined || a === b) {
+        paare.push(a + (a === f ? fx : f));
+        i += 1;
+      } else {
+        paare.push(a + b);
+        i += 2;
+      }
+    }
+    return paare;
+  }
+
+  /** Playfair: Zeile → rechts (ent links), Spalte → darunter (ent darüber), sonst Rechteck; ent entfernt keine Füllzeichen */
+  function playfair(text, schluessel, richtung = 'ver', optionen = {}) {
+    pruefeRichtung(richtung);
+    const opt = optionen || {};
+    const ij = pruefeIJ(opt.ij === undefined ? 'I' : opt.ij);
+    const q = quadrat(schluessel, { groesse: 5, ij });
+    const pos = positionen(q);
+    let paare;
+    if (richtung === 'ver') {
+      paare = playfairPaare(text, opt);
+    } else {
+      const t = quadratText(text, 5, ij);
+      if (t.length % 2) throw new KryptoFehler('Ein Playfair-Geheimtext hat eine gerade Anzahl von Buchstaben.');
+      paare = [];
+      for (let i = 0; i < t.length; i += 2) {
+        if (t[i] === t[i + 1]) {
+          throw new KryptoFehler('Ein Playfair-Geheimtext enthält kein Paar aus zwei gleichen Buchstaben.');
+        }
+        paare.push(t[i] + t[i + 1]);
+      }
+    }
+    const d = richtung === 'ver' ? 1 : 4; // 4 ≡ −1 (mod 5)
+    let aus = '';
+    for (const p of paare) {
+      const [z1, s1] = pos.get(p[0]);
+      const [z2, s2] = pos.get(p[1]);
+      if (z1 === z2) aus += q[z1][(s1 + d) % 5] + q[z2][(s2 + d) % 5];
+      else if (s1 === s2) aus += q[(z1 + d) % 5][s1] + q[(z2 + d) % 5][s2];
+      else aus += q[z1][s2] + q[z2][s1];
+    }
+    return aus;
+  }
+
+  /**
+   * Kreuzquadrat (Level 2.4, Akte W2·4): Paar (a, b), a in O bei (zₐ, sₐ), b in U bei (z_b, s_b)
+   * → c₁ = U[zₐ][s_b], c₂ = O[z_b][sₐ]; ungerade Länge → Füllzeichen anhängen; keine Regel für Doppelbuchstaben.
+   */
+  function kreuzquadrat(text, oben, unten, richtung = 'ver', { fuellzeichen = 'X' } = {}) {
+    pruefeRichtung(richtung);
+    const f = pruefeFuellzeichen(fuellzeichen, 'Das Füllzeichen');
+    const O = quadrat(oben);
+    const U = quadrat(unten);
+    const posO = positionen(O);
+    const posU = positionen(U);
+    let t = quadratText(text, 5, 'I');
+    if (t.length % 2) {
+      if (richtung === 'ent') throw new KryptoFehler('Ein Kreuzquadrat-Geheimtext hat eine gerade Anzahl von Buchstaben.');
+      t += f;
+    }
+    let aus = '';
+    for (let i = 0; i < t.length; i += 2) {
+      if (richtung === 'ver') {
+        const [za, sa] = posO.get(t[i]);
+        const [zb, sb] = posU.get(t[i + 1]);
+        aus += U[za][sb] + O[zb][sa];
+      } else {
+        const [r1, t1] = posU.get(t[i]);
+        const [r2, t2] = posO.get(t[i + 1]);
+        aus += O[r1][t2] + U[r2][t1];
+      }
+    }
+    return aus;
+  }
+
+  function zahlenschluesselListe(zahlenschluessel) {
+    let liste;
+    if (Array.isArray(zahlenschluessel)) liste = zahlenschluessel;
+    else if (typeof zahlenschluessel === 'string') liste = [...zahlenschluessel.replace(/\s+/g, '')].map((c) => (/^[0-9]$/.test(c) ? Number(c) : NaN));
+    else if (Number.isInteger(zahlenschluessel)) liste = [...String(zahlenschluessel)].map(Number);
+    else throw new KryptoFehler('Der Zahlenschlüssel muss aus den Ziffern 0 bis 4 bestehen.');
+    if (liste.length === 0 || !liste.every((k) => Number.isInteger(k) && k >= 0 && k <= 4)) {
+      throw new KryptoFehler('Der Zahlenschlüssel muss aus den Ziffern 0 bis 4 bestehen.');
+    }
+    return liste;
+  }
+
+  /**
+   * Zwei-Quadrat mit Zahlenschlüssel (Papier-Boss W2, SPEC W2 §6): Klartextbuchstabe in Q1 bei (z, s),
+   * Ziffer k (zyklisch) → Q2[(z + k) mod 5][s]; ent sucht in Q2 und rechnet (z − k) mod 5 in Q1.
+   */
+  function zweiQuadratZahl(text, q1, q2, zahlenschluessel, richtung = 'ver') {
+    pruefeRichtung(richtung);
+    const ks = zahlenschluesselListe(zahlenschluessel);
+    const Q1 = quadrat(q1);
+    const Q2 = quadrat(q2);
+    const pos1 = positionen(Q1);
+    const pos2 = positionen(Q2);
+    const t = quadratText(text, 5, 'I');
+    let aus = '';
+    for (let i = 0; i < t.length; i++) {
+      const k = ks[i % ks.length];
+      if (richtung === 'ver') {
+        const [z, s] = pos1.get(t[i]);
+        aus += Q2[(z + k) % 5][s];
+      } else {
+        const [z, s] = pos2.get(t[i]);
+        aus += Q1[mod(z - k, 5)][s];
+      }
+    }
+    return aus;
+  }
+
+  /** Polybios: ver → Paare „Zeilenkopf Spaltenkopf“ ohne Leerzeichen; ent aus Paaren zurück. Kopf mit 5 oder 6 Zeichen. */
+  function polybios(text, optionen = {}, richtung = 'ver') {
+    const { schluessel = '', kopf = '12345', ij = 'I' } = optionen || {};
+    pruefeRichtung(richtung);
+    pruefeIJ(ij);
+    const k = normalisieren(pruefeText(String(kopf), 'Kopf'));
+    if ((k.length !== 5 && k.length !== 6) || new Set(k).size !== k.length) {
+      throw new KryptoFehler('Der Kopf muss aus 5 oder 6 verschiedenen Zeichen bestehen.');
+    }
+    const groesse = k.length;
+    const q = quadrat(schluessel, { groesse, ij });
+    if (richtung === 'ver') {
+      const pos = positionen(q);
+      let aus = '';
+      for (const c of quadratText(text, groesse, ij)) {
+        const [z, s] = pos.get(c);
+        aus += k[z] + k[s];
+      }
+      return aus;
+    }
+    const t = normalisieren(pruefeText(text));
+    if (t.length % 2) throw new KryptoFehler('Ein Polybios-Geheimtext besteht aus Paaren von Koordinaten.');
+    let aus = '';
+    for (let i = 0; i < t.length; i += 2) {
+      const z = k.indexOf(t[i]);
+      const s = k.indexOf(t[i + 1]);
+      if (z < 0 || s < 0) throw new KryptoFehler(`Im Geheimtext dürfen nur die Zeichen ${k.split('').join(', ')} vorkommen.`);
+      aus += q[z][s];
+    }
+    return aus;
+  }
+
+  // Spaltentransposition (intern für ADFGVX; Konvention W3: gleiche Buchstaben von links nach rechts, ohne Auffüllen)
+  function rangfolge(schluessel) {
+    if (Array.isArray(schluessel)) {
+      const n = schluessel.length;
+      const ok = n > 0 && schluessel.every((r) => Number.isInteger(r) && r >= 1 && r <= n) && new Set(schluessel).size === n;
+      if (!ok) throw new KryptoFehler('Eine Zahlenfolge als Schlüssel muss jede Zahl von 1 bis n genau einmal enthalten.');
+      return schluessel.slice();
+    }
+    const w = schluesselBuchstaben(schluessel);
+    const idx = [...w].map((c, i) => i).sort((a, b) => (w[a] < w[b] ? -1 : w[a] > w[b] ? 1 : a - b));
+    const rang = new Array(w.length);
+    idx.forEach((i, r) => (rang[i] = r + 1));
+    return rang;
+  }
+
+  function spaltenLesen(t, rang) {
+    const n = rang.length;
+    let aus = '';
+    for (let r = 1; r <= n; r++) {
+      const sp = rang.indexOf(r);
+      for (let i = sp; i < t.length; i += n) aus += t[i];
+    }
+    return aus;
+  }
+
+  function spaltenZurueck(c, rang) {
+    const n = rang.length;
+    const L = c.length;
+    const spalten = new Array(n);
+    let p = 0;
+    for (let r = 1; r <= n; r++) {
+      const sp = rang.indexOf(r);
+      const laenge = Math.floor(L / n) + (sp < L % n ? 1 : 0);
+      spalten[sp] = c.slice(p, p + laenge);
+      p += laenge;
+    }
+    let aus = '';
+    for (let i = 0; i < L; i++) aus += spalten[i % n][Math.floor(i / n)];
+    return aus;
+  }
+
+  /**
+   * ADFGVX: Polybios 6×6 mit Kopf ADFGVX, dann Spaltentransposition (unvollständige letzte Zeile, ohne Auffüllen);
+   * ent: erst Transposition invertieren, dann Paare lesen. quadrat36: 36-Zeichen-Quadrat, Zeilenliste oder
+   * Schlüsselwort (wird wie bei quadrat(…, { groesse: 6 }) ergänzt).
+   */
+  function adfgvx(text, quadrat36, schluessel, richtung = 'ver') {
+    pruefeRichtung(richtung);
+    const q = quadrat(quadrat36, { groesse: 6 }).join('');
+    const rang = rangfolge(schluessel);
+    const opt = { schluessel: q, kopf: 'ADFGVX' };
+    if (richtung === 'ver') return spaltenLesen(polybios(text, opt), rang);
+    const c = normalisieren(pruefeText(text));
+    if (/[^ADFGVX]/.test(c)) throw new KryptoFehler('Im Geheimtext dürfen nur die Zeichen A, D, F, G, V, X vorkommen.');
+    if (c.length % 2) throw new KryptoFehler('Ein ADFGVX-Geheimtext hat eine gerade Anzahl von Zeichen.');
+    return polybios(spaltenZurueck(c, rang), opt, 'ent');
+  }
+
   return {
     // Grundlagen
     ALPHABET,
@@ -253,5 +576,16 @@
     schluesselwortAlphabet,
     substitution,
     umkehrAlphabet,
+    // Polyalphabetisch und Bigramme (kein zweiQuadrat – Namenskollision, Verifikation H2)
+    vigenere,
+    autokey,
+    porta,
+    quadrat,
+    playfairPaare,
+    playfair,
+    kreuzquadrat,
+    zweiQuadratZahl,
+    polybios,
+    adfgvx,
   };
 });
