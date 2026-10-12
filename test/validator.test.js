@@ -140,3 +140,56 @@ test('CLI: node scripts/validate.js <datei> – Exit-Code 0 bzw. 1 mit verständ
   const j = spawnSync(process.execPath, [skript, '--json', H.FIXTURE], { encoding: 'utf8' });
   assert.equal(JSON.parse(j.stdout)[0].fehler.length, 0);
 });
+
+const V = require('../src/content/validator');
+const F = require('../src/content/format');
+V.registriereValidierung({
+  welt: (d, f) => { if (d.titel === 'Hooktest' && !d.testfeld) f('datei', 'testfeld', 'testfeld fehlt.'); },
+  level: (l, o, f, w, { data }) => { if (data.titel === 'Hooktest' && !l.rolle) f('level', o, 'rolle fehlt.'); },
+  aufgabe: (a, fa, wa, { data }) => { if (data.titel === 'Hooktest' && a.stufe === 3) wa('stufe', 'Stufe 3 im Hooktest.'); },
+  boss: (b, f, w, { data }) => { if (data.titel === 'Hooktest') w('boss', 'boss', 'Boss-Hook lief.'); },
+  dateien: (eintraege, ergebnisse) => { for (const r of ergebnisse) if (r.datei === 'hook.json') r.warnungen.push({ datei: r.datei, ebene: 'datei', ort: '', meldung: 'Dateien-Hook lief.', aufgabe: null }); }
+});
+const hookWelt = () => ({ ...basis(), titel: 'Hooktest' });
+
+test('Validator-Hooks: welt, level, aufgabe, boss, dateien', () => {
+  const r = validiereWelt(hookWelt(), { datei: 'hook.json' });
+  const t = (x) => x.map((e) => e.meldung).join(' | ');
+  assert.match(t(r.fehler), /testfeld fehlt/);
+  assert.match(t(r.fehler), /rolle fehlt/);
+  assert.match(t(r.warnungen), /Stufe 3 im Hooktest/);
+  assert.match(t(r.warnungen), /Boss-Hook lief/);
+  const fs2 = require('node:fs'); const os2 = require('node:os');
+  const d = fs2.mkdtempSync(path.join(os2.tmpdir(), 'kr-hook-')); const p = path.join(d, 'hook.json');
+  fs2.writeFileSync(p, JSON.stringify(hookWelt()));
+  assert.match(t(V.validiereDateien([p])[0].warnungen), /Dateien-Hook lief/);
+  assert.equal(validiereWelt(basis(), { datei: 'x.json' }).fehler.length, 0, 'andere Welten unberührt');
+});
+
+test('Archivfund-ids W<n>-A-<nn>: gültig, nicht in Level/Boss, kein Hinweis „nicht verwendet“', () => {
+  // id W9-A-09: die Fixture bekommt in Task 25 ihren echten Archivfund W9-A-01 – dieser Test bleibt davon unberührt
+  const w = basis();
+  w.aufgaben.push({ ...aufgabe(w, 'W9-L1-04'), id: 'W9-A-09' });
+  const r = validiereWelt(w, { datei: 't.json' });
+  assert.deepEqual(r.fehler, []);
+  assert.ok(!r.warnungen.some((x) => x.ort === 'W9-A-09' && /in keinem Level/.test(x.meldung)));
+  erwarteFehler((x) => { x.aufgaben.push({ ...aufgabe(x, 'W9-L1-04'), id: 'W9-A-09' }); x.levels[0].aufgaben.push('W9-A-09'); }, /Archivfund-Aufgabe „W9-A-09“ darf in keinem Level/);
+  erwarteFehler((x) => { x.aufgaben.push({ ...aufgabe(x, 'W9-L1-04'), id: 'W9-A-09' }); x.boss.pool.push('W9-A-09'); }, /Archivfund-Aufgabe „W9-A-09“ darf in keinem Level/);
+});
+
+test('Registrierte Blöcke/Interaktionen: Validierung, Lücken-Besitz über lueckenFelder, _-Lösungsschlüssel, NORMEN', () => {
+  F.registriereBlock('vtestblock', { texte: (b) => [b.text], validiere: (b, fe) => { if (!b.text) fe('text fehlt.'); } });
+  F.registriereInteraktion('vtestia', { bereinige: (ia, a) => a, istLeer: () => false, pruefe: (ia, lo, a) => ({ ok: a === 'x' }), muster: () => 'x', validiere: (ia, lo, a, ort, fa) => { if (!ia.pflicht) fa(ort, 'pflicht fehlt.'); }, lueckenFelder: (ia) => Object.keys(ia.felder || {}) });
+  erwarteFehler((x) => { aufgabe(x, 'W9-L1-04').inhalt.push({ t: 'vtestblock' }); }, /text fehlt/);
+  erwarteFehler((x) => { const a = aufgabe(x, 'W9-L1-04'); a.interaktion = { kind: 'vtestia' }; a.loesung = {}; }, /pflicht fehlt/);
+  const w = basis(); const a = aufgabe(w, 'W9-L1-04');
+  a.inhalt.push({ t: 'vtestblock', text: 'Feld [[z1]]' }); a.interaktion = { kind: 'vtestia', pflicht: true, felder: { z1: {} } }; a.loesung = {};
+  assert.deepEqual(fehlerVon(w), [], 'Lücke z1 gehört der registrierten Interaktion');
+  erwarteFehler((x) => { aufgabe(x, 'W9-L1-04').inhalt.push({ t: 'vtestblock', text: '[[zz]]' }); }, /Lücke \[\[zz\]\] hat kein Feld/);
+  const g = basis(); aufgabe(g, 'W9-L1-01').loesung._fehlmuster = {};
+  assert.ok(!validiereWelt(g, { datei: 't' }).warnungen.some((x) => /_fehlmuster/.test(x.meldung)));
+  F.registriereNorm('vtestnorm', (s) => s);
+  const n = basis(); aufgabe(n, 'W9-L1-01').interaktion.felder.g1.norm = 'vtestnorm';
+  assert.deepEqual(fehlerVon(n), []);
+  erwarteFehler((x) => { aufgabe(x, 'W9-L1-01').interaktion.felder.g1.norm = 'gibtsnicht'; }, /norm „gibtsnicht“ unbekannt/);
+});

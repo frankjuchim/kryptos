@@ -58,7 +58,7 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/validate.js` | U | Eingabeprüfung, Fehlerklassen |
 | `src/content/format.js` | A | Hook-Registry (§4.2): `BLOCK_TYPEN`, `INTERAKTIONEN`, `SCHRITT_ARTEN` erweiterbar; `normText` kennt `krypto`/`bits` (delegiert an `shared/krypto.js`); `blockTexte` und neue Funktion `lueckenFelder(ia)` fragen registrierte Typen |
 | `src/content/checker.js` | A | `bereinige`/`istLeer`/`pruefeTeil`/`musterantwort` delegieren unbekannte Arten an die Registry; `pruefeAufgabe` reicht `diagnose`, `zeichen`, `bits`, `anteil` je Teil durch; Kern-Interaktionen unverändert |
-| `src/content/validator.js` | A | `AUFGABE_ID` += `A` (Archivfund); `LEVEL_ID` unverändert; Welt-/Level-/Aufgabenfelder §2–§4 des Delta über Hook `validiereWeltZusatz`/`validiereLevelZusatz`/`validiereAufgabeZusatz`; Blöcke/Interaktionen über Registry; Lücken-Besitz über `F.lueckenFelder` |
+| `src/content/validator.js` | A | `AUFGABE_ID` += `A` (Archivfund); `LEVEL_ID` unverändert; Welt-/Level-/Aufgabenfelder §2–§4 des Delta über `registriereValidierung({ welt, level, aufgabe, boss, dateien })` (§4.2); Blöcke/Interaktionen über Registry; Lücken-Besitz über `F.lueckenFelder` |
 | `src/content/generators.js` | E | Rahmen (`mulberry32`, `zufall`, `erzeuge`, `generatorenFuerWelt`, Rückgabeformat) **unverändert übernommen**, alle Algo-Quest-Generatoren entfernt; Krypto-Generatoren in `src/krypto/generatoren/*.js` registriert (Design §7.6, 12 Stück) |
 | `src/services/index.js` | A | `konten` (neu, §6.6) statt lokaler Konten; zusätzliche Dienste `funkraum`, `arena`, `labor`, `teams`, `verbund`; Backup-Kennung `kryptos`, Tabellenliste aus `db.js` |
 | `src/services/inhalte.js` | A | übernimmt `niveau`, `rolle`, `kuer`, `werkzeug`, `akte`, `video`, Welt-Felder; Archivfund-Aufgaben aktiv halten; Spalte `aufgaben.niveau` (effektiv) füllen; `SEED_VERSION = 'kryptos-1'` |
@@ -213,7 +213,7 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `format.js` | `registriereBlock(typ, { texte(b) → string[] })` | Blocktyp bekannt machen; `texte` liefert Felder mit erlaubten Lücken |
 | `format.js` | `registriereInteraktion(art, vertrag)` | Interaktion (Vertrag §4.3); `art` ist `kind` (ohne Modus) |
 | `format.js` | `registriereNorm(name, fn)` | `krypto`, `bits` |
-| `validator.js` | `registriereValidierung({ welt?, level?, aufgabe?, boss?, dateien? })` | Zusatzprüfungen (Delta §11); Signatur wie intern `(daten, f, w, stats)` |
+| `validator.js` | `registriereValidierung({ welt?, level?, aufgabe?, boss?, dateien? })` (mehrfach erlaubt) | Zusatzprüfungen (Delta §11): `welt(data, f, w, { stats, opt })`, `level(l, ort, f, w, { data, aufgaben, opt })`, `aufgabe(a, fa, wa, { data, welt, opt })`, `boss(b, f, w, { data, aufgaben, opt })`, `dateien(eintraege, ergebnisse)` |
 | `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`) |
 | `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level\|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |

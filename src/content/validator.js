@@ -1,6 +1,8 @@
 'use strict';
 // Inhalts-Validator für seed/welten/*.json (SPEC §3–§5, §9).
 // Nutzbar als Modul (validiereWelt, validiereDateien) und über scripts/validate.js.
+// K03: Zusatzprüfungen über registriereValidierung (TECHNIK §4.2), registrierte Blöcke/Interaktionen (format.js),
+// Archivfund-Aufgaben W<n>-A-<nn> (nie in Level oder Boss-Pool).
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -9,7 +11,31 @@ const F = require('./format');
 const C = require('./checker');
 const { LAB_KATEGORIEN, FALLEN_IDS, STUFEN_PUNKTE, NIVEAU_IDS } = require('../domain');
 
-const AUFGABE_ID = /^W(\d)-(L\d{1,2}[a-z]?|B)-\d{2,3}$/;
+const AUFGABE_ID = /^W(\d)-(L\d{1,2}[a-z]?|B|A)-\d{2,3}$/;
+const ARCHIVFUND_ID = /^W\d-A-\d{2,3}$/;
+
+/* ---------- Hooks (K03) ---------- */
+
+const HOOKS = [];
+const HOOK_ARTEN = ['welt', 'level', 'aufgabe', 'boss', 'dateien'];
+
+/**
+ * Zusatzprüfungen registrieren (mehrfach erlaubt, Aufruf in Registrierungsreihenfolge):
+ * welt(data, f, w, { stats, opt }), level(l, ort, f, w, { data, aufgaben, opt }), aufgabe(a, fa, wa, { data, welt, opt }),
+ * boss(b, f, w, { data, aufgaben, opt }), dateien(eintraege, ergebnisse).
+ */
+function registriereValidierung(hooks) {
+  if (!istObjekt(hooks)) throw new Error('registriereValidierung: Objekt mit Hooks erwartet.');
+  for (const [k, fn] of Object.entries(hooks)) {
+    if (!HOOK_ARTEN.includes(k)) throw new Error(`registriereValidierung: unbekannter Hook „${k}“.`);
+    if (typeof fn !== 'function') throw new Error(`registriereValidierung: Hook „${k}“ ist keine Funktion.`);
+  }
+  HOOKS.push(hooks);
+}
+
+function rufeHooks(art, ...args) {
+  for (const h of HOOKS) if (h[art]) h[art](...args);
+}
 const LEVEL_ID = /^W(\d)-L\d{1,2}[a-z]?$/;
 const FARBE = /^#[0-9A-Fa-f]{6}$/;
 const BEDINGUNGSSPALTE = /(<=|>=|==|!=|(?<![-<])<(?![-=])|(?<![-=])>(?!=)|≤|≥|≠|Bedingung|w\/f|wahr\/falsch)/;
@@ -52,7 +78,10 @@ function validiereWelt(data, opt = {}) {
   if (data.farbe === undefined) w('datei', 'farbe', 'farbe fehlt – es wird die Standardfarbe der Welt verwendet.');
   if (!Array.isArray(data.levels)) f('datei', 'levels', 'levels muss eine Liste sein.');
   if (!Array.isArray(data.aufgaben)) f('datei', 'aufgaben', 'aufgaben muss eine Liste sein.');
-  if (fehler.length) return { fehler, warnungen, stats };
+  // Welt-Hooks laufen auch nach Kern-Dateifehlern; abgebrochen wird nur wegen der Kern-Fehler (Struktur fehlt)
+  const kernDateiFehler = fehler.length;
+  rufeHooks('welt', data, f, w, { stats, opt });
+  if (kernDateiFehler) return { fehler, warnungen, stats };
 
   /* ---------- Aufgaben ---------- */
   const aufgaben = new Map();
@@ -64,6 +93,11 @@ function validiereWelt(data, opt = {}) {
     if (aufgaben.has(id)) return f('aufgabe', id, `id „${id}“ kommt doppelt vor.`, id);
     aufgaben.set(id, a);
     validiereAufgabe(a, id, welt, f, w, stats);
+    if (HOOKS.length) {
+      const fa = (ort, m) => f('aufgabe', `${id}${ort ? ' › ' + ort : ''}`, m, id);
+      const wa = (ort, m) => w('aufgabe', `${id}${ort ? ' › ' + ort : ''}`, m, id);
+      rufeHooks('aufgabe', a, fa, wa, { data, welt, opt });
+    }
   });
 
   /* ---------- Levels ---------- */
@@ -72,6 +106,12 @@ function validiereWelt(data, opt = {}) {
   data.levels.forEach((l, i) => {
     const ort = `levels[${i}]`;
     if (!istObjekt(l)) return f('level', ort, 'Level ist kein Objekt.');
+    const o = (typeof l.id === 'string' && l.id) || ort;
+    validiereLevel(l, ort);
+    rufeHooks('level', l, o, f, w, { data, aufgaben, opt });
+  });
+
+  function validiereLevel(l, ort) {
     const lid = typeof l.id === 'string' ? l.id : '';
     const o = lid || ort;
     if (!LEVEL_ID.test(lid)) f('level', o, `Level-id „${lid}“ hat nicht das Format W<n>-L<k> (z. B. W4-L1).`);
@@ -95,6 +135,7 @@ function validiereWelt(data, opt = {}) {
         continue;
       }
       if (/-B-/.test(aid)) f('level', o, `Boss-Aufgabe „${aid}“ darf nicht in einem Level stehen.`);
+      if (ARCHIVFUND_ID.test(aid)) f('level', o, `Archivfund-Aufgabe „${aid}“ darf in keinem Level und keinem Boss-Pool stehen.`);
       if (verwendet.has(aid)) f('level', o, `Aufgabe „${aid}“ wird mehrfach verwendet (auch in ${verwendet.get(aid)}).`);
       verwendet.set(aid, lid);
       if (lid && !aid.startsWith(lid + '-')) w('level', o, `Aufgabe „${aid}“ gehört dem Namen nach nicht zu Level ${lid}.`);
@@ -107,7 +148,7 @@ function validiereWelt(data, opt = {}) {
     st.interaktionen = [...st.interaktionen];
     stats.jeLevel.push(st);
     stats.levels++;
-  });
+  }
 
   /* ---------- Boss ---------- */
   if (data.boss !== undefined && data.boss !== null) {
@@ -128,6 +169,7 @@ function validiereWelt(data, opt = {}) {
           continue;
         }
         if (verwendet.has(aid)) f('boss', o, `Aufgabe „${aid}“ steht im Boss-Pool und in ${verwendet.get(aid)} – Boss-Aufgaben müssen eigene Aufgaben sein.`);
+        if (ARCHIVFUND_ID.test(aid)) f('boss', o, `Archivfund-Aufgabe „${aid}“ darf in keinem Level und keinem Boss-Pool stehen.`);
         verwendet.set(aid, 'boss');
         if (!/-B-/.test(aid)) w('boss', o, `Boss-Aufgabe „${aid}“ sollte die id-Form W<n>-B-<nn> haben.`);
         const st = aufgaben.get(aid).stufe;
@@ -151,10 +193,11 @@ function validiereWelt(data, opt = {}) {
       } else if (Number.isInteger(b.anzahl) && Array.isArray(b.pool) && b.pool.length < b.anzahl) {
         f('boss', o, `pool enthält nur ${b.pool.length} Aufgaben, anzahl ist ${b.anzahl}.`);
       }
+      rufeHooks('boss', b, f, w, { data, aufgaben, opt });
     }
   }
 
-  for (const id of aufgaben.keys()) if (!verwendet.has(id)) w('aufgabe', id, `Aufgabe „${id}“ wird in keinem Level und keinem Boss-Pool verwendet.`, id);
+  for (const id of aufgaben.keys()) if (!verwendet.has(id) && !ARCHIVFUND_ID.test(id)) w('aufgabe', id, `Aufgabe „${id}“ wird in keinem Level und keinem Boss-Pool verwendet.`, id);
   stats.aufgaben = aufgaben.size;
   return { fehler, warnungen, stats };
 }
@@ -167,7 +210,7 @@ function validiereAufgabe(a, id, welt, f, w, stats) {
   const fa = (ort, m) => f('aufgabe', `${id}${ort ? ' › ' + ort : ''}`, m, id);
   const wa = (ort, m) => w('aufgabe', `${id}${ort ? ' › ' + ort : ''}`, m, id);
   const m = AUFGABE_ID.exec(id);
-  if (!m) fa('id', `id „${id}“ hat nicht das Format W<n>-L<k>-<nn> bzw. W<n>-B-<nn>.`);
+  if (!m) fa('id', `id „${id}“ hat nicht das Format W<n>-L<k>-<nn>, W<n>-B-<nn> bzw. W<n>-A-<nn>.`);
   else if (Number(m[1]) !== welt) fa('id', `id „${id}“ passt nicht zu welt ${welt}.`);
   if (!istText(a.titel)) fa('titel', 'titel fehlt.');
   if (![1, 2, 3].includes(a.stufe)) fa('stufe', 'stufe muss 1, 2 oder 3 sein.');
@@ -214,11 +257,9 @@ function validiereAufgabe(a, id, welt, f, w, stats) {
     if (fehlerZaehler.n !== n0) fehlerVorher++;
     const art = F.artVon(t.interaktion);
     stats.interaktionen[art] = (stats.interaktionen[art] || 0) + 1;
-    if (art === 'gaps' && istObjekt(t.interaktion.felder)) {
-      for (const fid of Object.keys(t.interaktion.felder)) {
-        if (felderBesitzer.has(fid)) fa(ort, `Feld „${fid}“ ist in mehreren Teilen definiert.`);
-        felderBesitzer.set(fid, i);
-      }
+    for (const fid of lueckenFelderSicher(t.interaktion)) {
+      if (felderBesitzer.has(fid)) fa(ort, `Feld „${fid}“ ist in mehreren Teilen definiert.`);
+      felderBesitzer.set(fid, i);
     }
     if (istText(t.interaktion && t.interaktion.frage) === false && t.interaktion && t.interaktion.frage !== undefined) fa(ort, 'frage muss Text sein.');
     if (t.interaktion && t.interaktion.inhalt !== undefined) validiereBloecke(t.interaktion.inhalt, `${id} › ${ort} › inhalt`, f, w, id, stats);
@@ -229,7 +270,7 @@ function validiereAufgabe(a, id, welt, f, w, stats) {
   const gezaehlt = new Map();
   for (const v of vorkommen) gezaehlt.set(v.id, (gezaehlt.get(v.id) || 0) + 1);
   for (const [gid, n] of gezaehlt) {
-    if (!felderBesitzer.has(gid)) fa('inhalt', `Lücke [[${gid}]] hat kein Feld in einer gaps-Interaktion.`);
+    if (!felderBesitzer.has(gid)) fa('inhalt', `Lücke [[${gid}]] hat kein Feld in einer Interaktion.`);
     if (n > 1) fa('inhalt', `Lücke [[${gid}]] kommt ${n}-mal vor (jede Lücke genau einmal).`);
   }
   for (const fid of felderBesitzer.keys()) if (!gezaehlt.has(fid)) fa('interaktion', `Feld „${fid}“ hat keine Lücke [[${fid}]] im Inhalt.`);
@@ -246,11 +287,22 @@ function validiereAufgabe(a, id, welt, f, w, stats) {
 }
 const fehlerZaehler = { n: 0 };
 
+/** Feld-ids mit Lücken-Besitz; ein fehlerhafter Vertrag darf den Validator nicht abstürzen lassen. */
+function lueckenFelderSicher(ia) {
+  try {
+    return F.lueckenFelder(ia).filter((x) => typeof x === 'string');
+  } catch {
+    return [];
+  }
+}
+
 function validiereInteraktion(ia, lo, aufgabe, ort, fa, wa) {
   if (!istObjekt(ia)) return fa(ort, 'Interaktion ist kein Objekt.');
   if (!F.INTERAKTIONEN.includes(ia.kind)) return fa(ort, `unbekannte kind „${ia.kind}“ (erlaubt: ${F.INTERAKTIONEN.join(', ')}).`);
   const lort = ort.replace('interaktion', 'loesung');
   if (!istObjekt(lo)) return fa(lort, 'Lösung dieses Teils muss ein Objekt sein.');
+  const vertrag = F.interaktionVertrag(ia.kind);
+  if (vertrag) return vertrag.validiere(ia, lo, aufgabe, ort, fa, wa);
   switch (ia.kind) {
     case 'gaps': {
       if (!istObjekt(ia.felder) || !Object.keys(ia.felder).length) return fa(ort, 'felder fehlt oder ist leer.');
@@ -263,7 +315,7 @@ function validiereInteraktion(ia, lo, aufgabe, ort, fa, wa) {
         }
         const typ = feld.typ || 'text';
         if (!['text', 'zahl', 'auswahl'].includes(typ)) fa(o, `typ „${feld.typ}“ unbekannt (text | zahl | auswahl).`);
-        if (feld.norm !== undefined && !['code', 'text', 'exakt'].includes(feld.norm)) fa(o, `norm „${feld.norm}“ unbekannt (code | text | exakt).`);
+        if (feld.norm !== undefined && !F.NORMEN.includes(feld.norm)) fa(o, `norm „${feld.norm}“ unbekannt (${F.NORMEN.join(' | ')}).`);
         if (feld.breite !== undefined && (!Number.isInteger(feld.breite) || feld.breite < 1 || feld.breite > 80)) fa(o, 'breite muss eine ganze Zahl 1–80 sein.');
         if (typ === 'auswahl' && (!Array.isArray(feld.optionen) || feld.optionen.length < 2 || !feld.optionen.every(istSkalar))) {
           fa(o, 'auswahl braucht optionen (Liste mit mind. 2 Texten).');
@@ -283,7 +335,8 @@ function validiereInteraktion(ia, lo, aufgabe, ort, fa, wa) {
           fa(`${lort}.${fid}`, 'Lösung eines auswahl-Feldes muss eine der optionen sein.');
         }
       }
-      for (const k of Object.keys(lo)) if (!(k in ia.felder)) wa(lort, `Lösung enthält unbekanntes Feld „${k}“.`);
+      // Schlüssel mit „_“ (z. B. _fehlmuster) gehören Erweiterungen und werden dort geprüft
+      for (const k of Object.keys(lo)) if (!(k in ia.felder) && !k.startsWith('_')) wa(lort, `Lösung enthält unbekanntes Feld „${k}“.`);
       break;
     }
     case 'choice': {
@@ -415,6 +468,12 @@ function validiereBloecke(bloecke, ort, f, w, aufgabe, stats, opt = {}) {
     if (!F.BLOCK_TYPEN.includes(b.t)) return f(ebene, o, `unbekannter Blocktyp t: „${b.t}“ (erlaubt: ${F.BLOCK_TYPEN.join(', ')}).`, aufgabe);
     if (stats) stats.bloecke[b.t] = (stats.bloecke[b.t] || 0) + 1;
     const fe = (m) => f(ebene, `${o} (${b.t})`, m, aufgabe);
+    const bv = F.blockVertrag(b.t);
+    if (bv) {
+      if (bv.validiere) bv.validiere(b, fe, (m) => w(ebene, o, m, aufgabe), { aufgabe, ebene });
+      if (opt.lueckenVerboten && F.luecken([b]).length) fe('Lücken [[…]] sind hier nicht erlaubt.');
+      return;
+    }
     switch (b.t) {
       case 'text':
       case 'hinweis':
@@ -516,7 +575,7 @@ function validiereKnoten(knoten, fe, tiefe) {
  * Mehrere Welten gemeinsam prüfen (zusätzlich: doppelte Weltnummern, doppelte ids über Dateien hinweg).
  * @param {{datei: string, data?: object, parseFehler?: string}[]} eintraege
  */
-function validiereWelten(eintraege) {
+function validiereWelten(eintraege, opt = {}) {
   const ergebnisse = [];
   const weltNr = new Map();
   const ids = new Map();
@@ -525,7 +584,7 @@ function validiereWelten(eintraege) {
       ergebnisse.push({ datei: e.datei, fehler: [{ datei: e.datei, ebene: 'datei', ort: '', meldung: e.parseFehler, aufgabe: null }], warnungen: [], stats: null });
       continue;
     }
-    const r = validiereWelt(e.data, { datei: e.datei });
+    const r = validiereWelt(e.data, { ...opt, datei: e.datei });
     if (e.data && Number.isInteger(e.data.welt)) {
       if (weltNr.has(e.data.welt)) r.fehler.push({ datei: e.datei, ebene: 'datei', ort: 'welt', meldung: `welt ${e.data.welt} ist auch in ${weltNr.get(e.data.welt)} definiert.`, aufgabe: null });
       weltNr.set(e.data.welt, e.datei);
@@ -539,6 +598,7 @@ function validiereWelten(eintraege) {
     }
     ergebnisse.push({ datei: e.datei, ...r });
   }
+  rufeHooks('dateien', eintraege, ergebnisse);
   return ergebnisse;
 }
 
@@ -559,8 +619,8 @@ function leseDatei(pfad) {
   }
 }
 
-function validiereDateien(pfade) {
-  return validiereWelten(pfade.map(leseDatei));
+function validiereDateien(pfade, opt = {}) {
+  return validiereWelten(pfade.map(leseDatei), opt);
 }
 
 /** Ergebnis als lesbarer Text (für CLI und Logs). */
@@ -589,4 +649,4 @@ function formatiere(ergebnisse, { warnungen = true } = {}) {
   return zeilen.join('\n');
 }
 
-module.exports = { validiereWelt, validiereWelten, validiereDateien, leseDatei, formatiere, aufgabePunkte };
+module.exports = { validiereWelt, validiereWelten, validiereDateien, leseDatei, formatiere, aufgabePunkte, registriereValidierung, AUFGABE_ID };
