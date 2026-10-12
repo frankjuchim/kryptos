@@ -3,7 +3,13 @@
 // (Niveau ergaenzung). Jedes Modul exportiert { key: { titel, welten, niveau, make(z) } }; Rechnungen nur über
 // public/static/js/shared/krypto.js.
 
-const MODULE = [];
+const MODULE = [
+  require('./caesar'),
+  require('./schluesselpaar'),
+  require('./modulo'),
+  require('./affin'),
+  require('./schluesselwort')
+];
 
 /** Alle Generatoren der Module in der Registry des Kerns eintragen (G = src/content/generators). */
 function registriere(G) {
