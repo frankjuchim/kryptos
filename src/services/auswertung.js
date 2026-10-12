@@ -27,7 +27,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   function matrix(k) {
     const levels = [];
     for (const w of kat().welten.values()) for (const l of w.levels) levels.push({ id: l.id, nr: l.nr, titel: l.titel, welt: w.nr, farbe: w.farbe, maxPunkte: l.maxPunkte });
-    const sch = db.prepare('SELECT id, name FROM schueler WHERE kurs_id = ? ORDER BY name_key').all(k.id);
+    const sch = db.prepare('SELECT id, name, aktiv FROM schueler WHERE kurs_id = ? ORDER BY name_key').all(k.id);
     const rows = db
       .prepare('SELECT f.schueler_id AS sid, f.aufgabe_id AS aid, f.punkte, f.status, f.nachgeloest FROM fortschritt f JOIN schueler s ON s.id = f.schueler_id WHERE s.kurs_id = ?')
       .all(k.id);
@@ -46,6 +46,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       zeilen: sch.map((s) => ({
         id: s.id,
         name: s.name,
+        aktiv: s.aktiv === 1, // Kryptos: inaktive Teilnahme (Kurs fehlt im letzten Token) gekennzeichnet
         werte: levels.map((l) => {
           const z = proSchueler.get(s.id)[l.id] || { punkte: 0, geloest: 0, angesehen: 0 };
           return { anteil: l.maxPunkte ? z.punkte / l.maxPunkte : 0, punkte: z.punkte, geloest: z.geloest, angesehen: z.angesehen };
@@ -56,7 +57,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
 
   function bossErgebnisse(k) {
     const welten = [...kat().welten.values()].filter((w) => w.boss).map((w) => ({ nr: w.nr, titel: w.boss.titel }));
-    const sch = db.prepare('SELECT id, name FROM schueler WHERE kurs_id = ? ORDER BY name_key').all(k.id);
+    const sch = db.prepare('SELECT id, name, aktiv FROM schueler WHERE kurs_id = ? ORDER BY name_key').all(k.id);
     const rows = db
       .prepare('SELECT b.schueler_id AS sid, b.welt, b.punkte, b.max_punkte, b.ende_at FROM boss_versuche b JOIN schueler s ON s.id = b.schueler_id WHERE s.kurs_id = ? AND b.ende_at IS NOT NULL')
       .all(k.id);
@@ -72,7 +73,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     }
     return {
       welten,
-      zeilen: sch.map((s) => ({ id: s.id, name: s.name, werte: welten.map((w) => best.get(`${s.id}:${w.nr}`) || null) }))
+      zeilen: sch.map((s) => ({ id: s.id, name: s.name, aktiv: s.aktiv === 1, werte: welten.map((w) => best.get(`${s.id}:${w.nr}`) || null) }))
     };
   }
 
@@ -192,7 +193,8 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     const k = kurse.kursPerBoardSchluessel(schluessel);
     if (!k || !k.einstellungen.beamer) return null;
     const liste = lernen.scoreboard(k.id).slice(0, 15).map(({ id, ich, ...r }) => r);
-    const map = stand.staende(k.id);
+    // nur aktive Teilnahmen (Kryptos: inaktive erscheinen auf dem Board nicht)
+    const map = new Map([...stand.staende(k.id)].filter(([, e]) => e.row.aktiv === 1));
     const n = map.size;
     const welten = [...kat().welten.values()]
       .filter((w) => stand.istFrei(k.einstellungen, w.nr))
@@ -202,7 +204,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
         return { nr: w.nr, titel: w.titel, farbe: w.farbe, anteil: n ? summe / n : 0 };
       });
     const erfolge = db
-      .prepare('SELECT e.text, e.at, s.name FROM erfolge e JOIN schueler s ON s.id = e.schueler_id WHERE e.kurs_id = ? ORDER BY e.id DESC LIMIT 8')
+      .prepare('SELECT e.text, e.at, s.name FROM erfolge e JOIN schueler s ON s.id = e.schueler_id WHERE e.kurs_id = ? AND s.aktiv = 1 ORDER BY e.id DESC LIMIT 8')
       .all(k.id)
       .map((r) => ({ text: r.text.split('{name}').join(r.name), at: r.at }));
     return { kurs: { name: k.name }, schueler: n, liste, welten, erfolge };
@@ -212,7 +214,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   function urkunden(lk, kursId) {
     const k = kurse.kursFuer(lk, kursId);
     const map = stand.staende(k.id);
-    const platz = new Map(lernen.scoreboard(k.id).map((r) => [r.id, r.platz]));
+    const platz = new Map(lernen.scoreboard(k.id, null, null, { inaktive: true }).map((r) => [r.id, r.platz]));
     const defs = new Map(stand.definitionen().map((d) => [d.key, d]));
     const abz = new Map();
     for (const r of db.prepare('SELECT a.schueler_id AS sid, a.schluessel, a.at FROM abzeichen a JOIN schueler s ON s.id = a.schueler_id WHERE s.kurs_id = ? ORDER BY a.at').all(k.id)) {

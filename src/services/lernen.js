@@ -292,10 +292,13 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     };
   }
 
-  /** Scoreboard eines Kurses: gesamt oder je Welt. Gleichstand → gleicher Platz. */
-  function scoreboard(kursId, welt = null, eigeneId = null) {
+  /**
+   * Scoreboard eines Kurses: gesamt oder je Welt. Gleichstand → gleicher Platz. Kryptos: inaktive Teilnahmen (Kurs fehlt
+   * im letzten SSO-Token) erscheinen nicht – außer mit { inaktive: true } (Urkunden der Lehrkraft).
+   */
+  function scoreboard(kursId, welt = null, eigeneId = null, { inaktive = false } = {}) {
     const map = stand.staende(kursId);
-    const rows = [...map.values()].map((e) => ({
+    const rows = [...map.values()].filter((e) => inaktive || e.row.aktiv === 1).map((e) => ({
       id: e.id,
       name: e.name,
       punkte: welt === null ? e.gesamt : stand.weltPunkte(e, welt),

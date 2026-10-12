@@ -138,6 +138,7 @@ function createApp(opts) {
     clearLehrkraft: sitzung.loescheLehrkraft,
     schueler: sitzung.schueler,
     lehrkraft: sitzung.lehrkraft,
+    gesperrt: sitzung.gesperrt,
     material,
     gast,
     reload: () => ladeInhalte(svc, opts, log)
@@ -148,11 +149,16 @@ function createApp(opts) {
     res.set('Cache-Control', 'no-store');
     res.sendFile(path.join(PUBLIC_DIR, file));
   };
-  // Seiten-Wächter (stille Weiterleitung zu /sso/start) folgen mit Plan Task 7 (TECHNIK §6.4).
+  // Seiten-Wächter (TECHNIK §6.4): ohne passende Sitzung still 302 /sso/start?ziel=<Pfad>. Weitere geschützte Seiten
+  // kommen mit ihren Phasen hinzu – Schüler: /labor, /funkraum, /werkstatt (waechterSchueler); Lehrkraft: /beamer/*
+  // (waechterLehrkraft). Öffentlich: /, /gast, /themen, /datenschutz, /board/:schluessel, /healthz, /api/plattform,
+  // /akten/*, /static/*, /robots.txt.
+  const waechterSchueler = sitzung.waechter('schueler');
+  const waechterLehrkraft = sitzung.waechter('lehrkraft');
   app.get('/', page('index.html'));
-  app.get('/spiel', page('spiel.html'));
-  app.get('/lehrer', page('lehrer.html'));
-  app.get('/lehrer/urkunden', page('urkunden.html'));
+  app.get('/spiel', waechterSchueler, page('spiel.html'));
+  app.get('/lehrer', waechterLehrkraft, page('lehrer.html'));
+  app.get('/lehrer/urkunden', waechterLehrkraft, page('urkunden.html'));
   app.get('/admin', (req, res) => res.redirect('/lehrer#/admin'));
   app.get('/board/:schluessel', page('board.html'));
   app.get('/datenschutz', page('datenschutz.html'));
@@ -193,23 +199,8 @@ function createApp(opts) {
     next();
   });
 
-  api.get('/sitzung', (req, res) => {
-    const s = helpers.schueler(req);
-    const l = helpers.lehrkraft(req);
-    let schueler = null;
-    if (s) {
-      const k = svc.kurse.kursRow(s.kurs_id);
-      const kurse = svc.konten.teilnahmen(s.sub).filter((t) => t.aktiv).map((t) => ({ kurs: t.kurs, name: t.name, aktuell: t.id === s.id }));
-      schueler = { name: s.name, kurs: k ? k.name : '', kurse };
-    }
-    res.json({
-      schueler,
-      lehrkraft: l ? svc.konten.ansicht(l.konto) : null,
-      version: VERSION,
-      // Verbund: Link „⌂ Portal“; Anmeldung nur über das Portal
-      verbund: { portal: konfig.portalUrl, sso: '/sso/start' }
-    });
-  });
+  // Sitzung: GET /api/sitzung, Kurswahl, Abmelden (TECHNIK §6.4, §13.1)
+  sitzung.routen(api, { svc, konfig, version: VERSION });
 
   /* Öffentliche Themenübersicht (ohne Lösungen) */
   api.get('/themen', (req, res) => res.json(themen.uebersicht()));

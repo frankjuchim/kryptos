@@ -73,6 +73,11 @@ const AQ = (() => {
     let data = null;
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('application/json')) data = await res.json();
+    if (res.status === 401 && data && data.anmelden) {
+      // Kryptos: keine eigene Anmeldung – still über das Portal neu anmelden (TECHNIK §6.4); Hash bleibt im ziel erhalten
+      location.href = '/sso/start?ziel=' + encodeURIComponent(location.pathname + location.hash);
+      return new Promise(() => {}); // Seite wechselt; keine Fehlermeldung anzeigen
+    }
     if (!res.ok) {
       const err = new Error((data && data.error) || `Fehler ${res.status}`);
       err.status = res.status;

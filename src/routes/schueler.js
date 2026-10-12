@@ -17,6 +17,8 @@ function schuelerRoutes(api, h) {
   const auth = (req, res, next) => {
     const s = h.schueler(req, res);
     if (!s) {
+      // Kurs vom Portal gesperrt (Verbund kurs-aendern aktiv:false): 403, Sitzung bleibt
+      if (h.gesperrt(req)) return res.status(403).json({ error: 'Kryptos ist für deinen Kurs abgeschaltet.' });
       if (req.sS) h.clearSchueler(req, res);
       return res.status(401).json({ error: 'Bitte melde dich an.', anmelden: true, sso: '/sso/start' });
     }

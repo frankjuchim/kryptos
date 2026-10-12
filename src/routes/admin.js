@@ -6,14 +6,20 @@ const express = require('express');
 
 function adminRoutes(api, h) {
   const { svc } = h;
-  const r = express.Router();
-  r.use((req, res, next) => {
+  // Anmeldepflicht je Route (nicht mit r.use): entfernte Routen liefern auch ohne Sitzung 404 (TECHNIK §6.5).
+  const auth = (req, res, next) => {
     const l = h.lehrkraft(req);
-    if (!l) return res.status(401).json({ error: 'Bitte anmelden.', anmelden: true });
+    if (!l) return res.status(401).json({ error: 'Bitte anmelden.', anmelden: true, sso: '/sso/start' });
     if (l.konto.rolle !== 'superadmin') return res.status(403).json({ error: 'Nur für den Superadmin.' });
     req.lk = l;
     next();
-  });
+  };
+  const router = express.Router();
+  const r = {
+    get: (p, ...f) => router.get(p, auth, ...f),
+    post: (p, ...f) => router.post(p, auth, ...f),
+    delete: (p, ...f) => router.delete(p, auth, ...f)
+  };
 
   r.get('/backup', (req, res) => {
     const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
@@ -45,7 +51,7 @@ function adminRoutes(api, h) {
     res.json({ ok: true, bericht: e.welten, kata: e.kata });
   });
 
-  api.use('/admin', r);
+  api.use('/admin', router);
 }
 
 module.exports = { adminRoutes };

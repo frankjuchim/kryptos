@@ -4,8 +4,10 @@
 //   kr_l (Lehrkraft/Superadmin): S.sign({ sub, g })                                                         8 Stunden
 // helpers.schueler(req) liefert die Teilnahme-Zeile (Tabelle „schueler“), damit alle Kerndienste unverändert mit
 // s.id/s.kurs_id arbeiten; helpers.lehrkraft(req) liefert { konto, kurse } (lokale Kurs-ids, Superadmin: alle).
+// Dazu: Seiten-Wächter (stille Weiterleitung zu /sso/start), GET /api/sitzung, Kurswahl, Abmelden (TECHNIK §6.4, §13.1).
 
 const S = require('../security');
+const V = require('../validate');
 
 const SCHUELER_MS = 30 * 24 * 3600 * 1000; // 30 Tage
 const LEHRKRAFT_MS = 8 * 3600 * 1000; // 8 Stunden
@@ -71,14 +73,113 @@ function createSitzung({ db, secret }) {
     S.setCookie(req, res, S.COOKIE_LEHRKRAFT, { sub: k.sub, g: k.session_gen }, secret, LEHRKRAFT_MS);
   }
 
+  /**
+   * Hat die Schüler-Sitzung (gültiges Konto) nur noch Teilnahmen in gesperrten Kursen? Dann 403 statt 401
+   * („Kryptos ist für deinen Kurs abgeschaltet“), solange keine aktive Teilnahme in einem aktiven Kurs besteht.
+   */
+  function gesperrt(req) {
+    const k = konto(req.sS, ['schueler']);
+    if (!k) return false;
+    return !!db.prepare('SELECT 1 FROM schueler s JOIN kurse k ON k.id = s.kurs_id WHERE s.sub = ? AND s.aktiv = 1 AND k.aktiv = 0 LIMIT 1').get(k.sub);
+  }
+
+  /**
+   * Seiten-Wächter (vor sendFile): rolle 'schueler' braucht kr_s (Lehrkraft-Sitzung → 302 /lehrer), rolle 'lehrkraft'
+   * braucht kr_l. Ohne Sitzung still 302 /sso/start?ziel=<Pfad> (ungültiges Cookie wird gelöscht).
+   */
+  function waechter(rolle) {
+    return (req, res, next) => {
+      if (rolle === 'schueler') {
+        if (schueler(req, res)) return next();
+        if (lehrkraft(req)) return res.redirect(302, '/lehrer');
+        if (req.sS) S.clearCookie(req, res, S.COOKIE_SCHUELER);
+      } else {
+        if (lehrkraft(req)) return next();
+        if (req.sL) S.clearCookie(req, res, S.COOKIE_LEHRKRAFT);
+      }
+      res.set('Cache-Control', 'no-store');
+      res.redirect(302, '/sso/start?ziel=' + encodeURIComponent(req.originalUrl));
+    };
+  }
+
   /** Erste aktive Teilnahme in einem aktiven Kurs (alphabetisch nach Kursname) oder null – für /sso/ende. */
   function ersteTeilnahme(sub) {
     return ersteStmt.get(sub) || null;
   }
 
+  /**
+   * API-Routen der Sitzung (TECHNIK §13.1): GET /sitzung, POST /sitzung/kurs, POST /abmelden.
+   * @param {import('express').Router} api   API-Router (mit Origin-Prüfung und JSON-Pflicht)
+   * @param {{ svc: object, konfig: object, version: string }} o
+   */
+  function routen(api, { svc, konfig, version }) {
+    const kurswahlLimit = new S.Limiter({ max: 30, windowMs: 60 * 1000 });
+
+    api.get('/sitzung', (req, res) => {
+      const basis = { rolle: null, name: null, kurs: null, kurse: [], portal: konfig.portalUrl || null, version };
+      const s = schueler(req, res);
+      if (s) {
+        const k = svc.kurse.kursRow(s.kurs_id);
+        const e = svc.kurse.einstellungen(k.einstellungen);
+        return res.json({
+          ...basis,
+          rolle: 'schueler',
+          name: s.name,
+          kurs: { id: k.kurs_id, name: k.name, niveau: e.kursart === 'gA' ? 'gA' : 'eA' },
+          kurse: svc.konten.teilnahmen(s.sub).map((t) => ({ id: t.kurs, name: t.name, aktiv: t.aktiv }))
+        });
+      }
+      const l = lehrkraft(req);
+      if (l) {
+        return res.json({
+          ...basis,
+          rolle: l.konto.rolle,
+          name: l.konto.name,
+          kurse: svc.kurse.kursListe(l).map((k) => ({ id: k.kurs, name: k.name, aktiv: k.aktiv }))
+        });
+      }
+      res.json(basis);
+    });
+
+    api.post('/sitzung/kurs', (req, res) => {
+      const s = schueler(req, res);
+      if (!s) {
+        if (gesperrt(req)) return res.status(403).json({ error: 'Kryptos ist für deinen Kurs abgeschaltet.' });
+        return res.status(401).json({ error: 'Bitte melde dich an.', anmelden: true, sso: '/sso/start' });
+      }
+      const key = 'k:' + s.sub;
+      if (!kurswahlLimit.take(key)) {
+        res.set('Retry-After', String(kurswahlLimit.retryAfterSec(key)));
+        return res.status(429).json({ error: 'Zu viele Kurswechsel. Bitte warte kurz.' });
+      }
+      const kurs = (req.body || {}).kurs;
+      if (typeof kurs !== 'string' || !/^k:\d{1,15}$/.test(kurs)) throw new V.ValidationError('Bitte einen Kurs angeben.');
+      const t = db
+        .prepare('SELECT s.id, k.kurs_id, k.name FROM schueler s JOIN kurse k ON k.id = s.kurs_id WHERE s.sub = ? AND k.kurs_id = ? AND s.aktiv = 1 AND k.aktiv = 1')
+        .get(s.sub, kurs);
+      if (!t) throw new V.NotFoundError('Kurs nicht gefunden.');
+      setzeSchueler(req, res, kontoStmt.get(s.sub), t.id);
+      res.json({ ok: true, kurs: { id: t.kurs_id, name: t.name } });
+    });
+
+    api.post('/abmelden', (req, res) => {
+      const ueberall = (req.body || {}).ueberall;
+      if (ueberall !== undefined && typeof ueberall !== 'boolean') throw new V.ValidationError('ueberall muss true oder false sein.');
+      S.clearCookie(req, res, S.COOKIE_SCHUELER);
+      S.clearCookie(req, res, S.COOKIE_LEHRKRAFT);
+      if (ueberall && konfig.portalUrl && konfig.plattformUrl) {
+        return res.json({ weiter: `${konfig.portalUrl}/sso/abmelden?ruecksprung=${encodeURIComponent(konfig.plattformUrl + '/')}` });
+      }
+      res.json({ weiter: '/' });
+    });
+  }
+
   return {
     lesen,
     ersteTeilnahme,
+    gesperrt,
+    waechter,
+    routen,
     schueler,
     lehrkraft,
     setzeSchueler,

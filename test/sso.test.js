@@ -404,3 +404,191 @@ test('/sso/*: Token und URL landen nie im Log', async () => {
     assert.ok(!m.includes('/sso/ende'), 'URL im Log');
   }
 });
+
+/* ---------- Sitzung, Seiten-Wächter, Kurswahl, Abmelden (TECHNIK §6.4, §13.1) ---------- */
+
+const LK = { sub: 'l:5', rolle: 'lehrkraft', name: 'Frau Lehrer', kurse: LK_KURSE };
+
+test('Seiten-Wächter: ohne Sitzung still 302 /sso/start?ziel=<Pfad>; öffentliche Seiten frei', async () => {
+  const app = H.makeApp();
+  const c = H.client(app);
+  for (const [pfad, ziel] of [
+    ['/spiel', '%2Fspiel'],
+    ['/lehrer', '%2Flehrer'],
+    ['/lehrer/urkunden', '%2Flehrer%2Furkunden'],
+    ['/spiel?welt=2', '%2Fspiel%3Fwelt%3D2']
+  ]) {
+    const r = await c.get(pfad);
+    assert.equal(r.status, 302, pfad);
+    assert.equal(r.headers.location, '/sso/start?ziel=' + ziel, pfad);
+    assert.match(r.headers['cache-control'], /no-store/);
+  }
+  for (const pfad of ['/', '/gast', '/themen', '/datenschutz', '/board/ABCDEFGHIJKL', '/healthz', '/api/plattform', '/robots.txt', '/static/favicon.svg']) {
+    assert.equal((await c.get(pfad)).status, 200, pfad);
+  }
+});
+
+test('Seiten-Wächter: Schüler-Sitzung → /spiel 200, /lehrer → SSO; Lehrkraft-Sitzung → /lehrer 200, /spiel → /lehrer', async () => {
+  const app = H.makeApp();
+  const s = await H.sso(app);
+  assert.equal((await s.get('/spiel')).status, 200);
+  const r = await s.get('/lehrer');
+  assert.equal(r.status, 302);
+  assert.equal(r.headers.location, '/sso/start?ziel=%2Flehrer');
+  const lk = await H.sso(app, LK);
+  assert.equal((await lk.get('/lehrer')).status, 200);
+  assert.equal((await lk.get('/lehrer/urkunden')).status, 200);
+  const r2 = await lk.get('/spiel');
+  assert.equal(r2.status, 302);
+  assert.equal(r2.headers.location, '/lehrer');
+  // abgelaufene/ungültige Sitzung → still neu anmelden, Cookie gelöscht
+  app.locals.db.prepare("UPDATE konten SET session_gen = session_gen + 1 WHERE sub = 's:1042'").run();
+  const r3 = await s.get('/spiel');
+  assert.equal(r3.headers.location, '/sso/start?ziel=%2Fspiel');
+  assert.match((r3.headers['set-cookie'] || []).join(';'), /kr_s=;/);
+});
+
+test('API ohne Sitzung → 401 { anmelden: true, sso: "/sso/start" }', async () => {
+  const c = H.client(H.makeApp());
+  for (const url of ['/api/welten', '/api/profil', '/api/lehrer/kurse', '/api/admin/inhalte']) {
+    const r = await c.get(url);
+    assert.equal(r.status, 401, url);
+    assert.equal(r.body.anmelden, true, url);
+    assert.equal(r.body.sso, '/sso/start', url);
+  }
+  assert.equal((await c.post('/api/sitzung/kurs').send({ kurs: 'k:17' })).status, 401);
+});
+
+test('Rollenwechsel auf einem Gerät (geteiltes Tablet): neue Anmeldung löscht das andere Cookie', async () => {
+  const app = H.makeApp();
+  const c = await H.sso(app);
+  assert.equal((await c.get('/api/welten')).status, 200);
+  // Lehrkraft meldet sich auf demselben Gerät an
+  await H.sso(app, LK, { client: c });
+  assert.equal(c.antwort.headers.location, '/lehrer');
+  assert.equal((await c.get('/api/welten')).status, 401, 'Schüler-Sitzung beendet');
+  assert.equal((await c.get('/api/lehrer/kurse')).status, 200);
+  assert.equal((await c.get('/api/sitzung')).body.rolle, 'lehrkraft');
+  // wieder ein Schüler (ein anderer) → Lehrkraft-Sitzung weg; sieht nie die Ansicht der Lehrkraft
+  await H.sso(app, { sub: 's:2000', name: 'Mika R.' }, { client: c });
+  assert.equal((await c.get('/api/lehrer/kurse')).status, 401, 'Lehrkraft-Sitzung beendet');
+  assert.equal((await c.get('/lehrer')).status, 302);
+  const sitz = (await c.get('/api/sitzung')).body;
+  assert.deepEqual([sitz.rolle, sitz.name], ['schueler', 'Mika R.']);
+  assert.equal((await c.get('/api/profil')).body.name, 'Mika R.');
+});
+
+test('/api/sitzung: Format nach TECHNIK §13.1 für Schüler, Lehrkraft und ohne Sitzung', async () => {
+  const app = H.makeApp();
+  const leer = (await H.client(app).get('/api/sitzung').expect(200)).body;
+  assert.deepEqual(leer, { rolle: null, name: null, kurs: null, kurse: [], portal: 'https://portal.test', version: require('../package.json').version });
+  const s = await H.sso(app, { kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'mitglied' }, { id: 'k:18', name: 'AG Krypto', rolle: 'mitglied' }] });
+  const b = (await s.get('/api/sitzung')).body;
+  assert.equal(b.rolle, 'schueler');
+  assert.equal(b.name, 'Lena S.');
+  assert.deepEqual(b.kurs, { id: 'k:18', name: 'AG Krypto', niveau: 'eA' });
+  assert.deepEqual(b.kurse, [
+    { id: 'k:18', name: 'AG Krypto', aktiv: true },
+    { id: 'k:17', name: 'LK Informatik 13', aktiv: true }
+  ]);
+  assert.equal(b.portal, 'https://portal.test');
+  const lk = await H.sso(app, LK);
+  const l = (await lk.get('/api/sitzung')).body;
+  assert.deepEqual([l.rolle, l.name, l.kurs], ['lehrkraft', 'Frau Lehrer', null]);
+  assert.deepEqual(l.kurse.map((k) => k.id).sort(), ['k:17', 'k:18']);
+  assert.ok(l.kurse.every((k) => k.aktiv === true && typeof k.name === 'string'));
+  // keine internen Felder
+  for (const x of [b, l]) assert.doesNotMatch(JSON.stringify(x), /session_gen|"sub"/);
+});
+
+test('Kurswahl: nur eigene aktive Teilnahme; fremde/inaktive → 404, Format → 400', async () => {
+  const app = H.makeApp();
+  const db = app.locals.db;
+  const zwei = [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'mitglied' }, { id: 'k:18', name: 'AG Krypto', rolle: 'mitglied' }];
+  const s = await H.sso(app, { kurse: zwei });
+  assert.equal((await s.get('/api/sitzung')).body.kurs.id, 'k:18');
+  const r = await s.post('/api/sitzung/kurs').send({ kurs: 'k:17' }).expect(200);
+  assert.deepEqual(r.body, { ok: true, kurs: { id: 'k:17', name: 'LK Informatik 13' } });
+  assert.match(r.headers['set-cookie'].join(';'), /kr_s=[^;]+/);
+  assert.equal((await s.get('/api/sitzung')).body.kurs.id, 'k:17');
+  assert.equal((await s.get('/api/profil')).body.kurs.name, 'LK Informatik 13');
+  // fremder Kurs (es gibt ihn, aber ohne eigene Teilnahme) → 404
+  await H.sso(app, { sub: 's:3000', name: 'Ida K.', kurse: [{ id: 'k:99', name: 'Fremdkurs', rolle: 'mitglied' }] });
+  assert.equal((await s.post('/api/sitzung/kurs').send({ kurs: 'k:99' })).status, 404);
+  assert.equal((await s.post('/api/sitzung/kurs').send({ kurs: 'k:12345' })).status, 404);
+  // eigene, aber inaktive Teilnahme bzw. gesperrter Kurs → 404
+  db.prepare("UPDATE schueler SET aktiv = 0 WHERE sub = 's:1042' AND kurs_id = (SELECT id FROM kurse WHERE kurs_id = 'k:18')").run();
+  assert.equal((await s.post('/api/sitzung/kurs').send({ kurs: 'k:18' })).status, 404);
+  db.prepare("UPDATE schueler SET aktiv = 1 WHERE sub = 's:1042'").run();
+  db.prepare("UPDATE kurse SET aktiv = 0 WHERE kurs_id = 'k:18'").run();
+  assert.equal((await s.post('/api/sitzung/kurs').send({ kurs: 'k:18' })).status, 404);
+  for (const kurs of [undefined, 17, '17', 'k:', 'k:17x', ['k:17']]) assert.equal((await s.post('/api/sitzung/kurs').send({ kurs })).status, 400, JSON.stringify(kurs));
+  // Lehrkraft hat keine Kurswahl
+  const lk = await H.sso(app, LK);
+  assert.equal((await lk.post('/api/sitzung/kurs').send({ kurs: 'k:17' })).status, 401);
+});
+
+test('Abmelden: löscht kr_s und kr_l → { weiter: "/" }; überall → Portal-Abmeldung mit Rücksprung', async () => {
+  const app = H.makeApp();
+  const s = await H.sso(app);
+  const r = await s.post('/api/abmelden').send({}).expect(200);
+  assert.deepEqual(r.body, { weiter: '/' });
+  const cookies = r.headers['set-cookie'].join('\n');
+  assert.match(cookies, /kr_s=;/);
+  assert.match(cookies, /kr_l=;/);
+  assert.equal((await s.get('/api/welten')).status, 401);
+  const lk = await H.sso(app, LK);
+  const u = await lk.post('/api/abmelden').send({ ueberall: true }).expect(200);
+  assert.deepEqual(u.body, { weiter: 'https://portal.test/sso/abmelden?ruecksprung=https%3A%2F%2Fkryptos.test%2F' });
+  assert.equal((await lk.get('/api/lehrer/kurse')).status, 401);
+  // auch ohne Sitzung möglich; CSRF-Schutz gilt
+  assert.equal((await H.client(app).post('/api/abmelden').send({ ueberall: false })).body.weiter, '/');
+  assert.equal((await H.client(app).post('/api/abmelden').set('Origin', 'http://boese.example').send({})).status, 403);
+  assert.equal((await H.client(app).post('/api/abmelden').send({ ueberall: 'ja' })).status, 400);
+});
+
+test('Gesperrter Kurs: Schüler-API 403 „Kryptos ist für deinen Kurs abgeschaltet“, entsperrt wieder 200', async () => {
+  const app = H.makeApp();
+  const s = await H.sso(app);
+  app.locals.db.prepare("UPDATE kurse SET aktiv = 0 WHERE kurs_id = 'k:17'").run();
+  for (const url of ['/api/welten', '/api/profil']) {
+    const r = await s.get(url);
+    assert.equal(r.status, 403, url);
+    assert.equal(r.body.error, 'Kryptos ist für deinen Kurs abgeschaltet.');
+  }
+  assert.equal((await s.get('/api/sitzung')).body.rolle, null);
+  app.locals.db.prepare("UPDATE kurse SET aktiv = 1 WHERE kurs_id = 'k:17'").run();
+  assert.equal((await s.get('/api/welten')).status, 200);
+});
+
+test('Inaktive Teilnahmen: nicht im Scoreboard und auf dem Board; Lehrkraft-Liste zeigt sie gekennzeichnet', async () => {
+  const app = H.makeApp();
+  const db = app.locals.db;
+  const k17 = { id: 'k:17', name: 'LK Informatik 13', rolle: 'mitglied' };
+  const a = await H.sso(app, { sub: 's:1', name: 'Mika R.', kurse: [k17] });
+  await H.sso(app, { sub: 's:2', name: 'Ida K.', kurse: [k17] });
+  // Ida verlässt den Kurs im Portal (nächstes Token ohne k:17)
+  await H.sso(app, { sub: 's:2', name: 'Ida K.', kurse: [{ id: 'k:20', name: 'Anderer Kurs', rolle: 'mitglied' }] });
+  const liste = (await a.get('/api/scoreboard').expect(200)).body.liste;
+  assert.deepEqual(liste.map((x) => x.name), ['Mika R.']);
+  const kurs = db.prepare("SELECT * FROM kurse WHERE kurs_id = 'k:17'").get();
+  db.prepare('UPDATE kurse SET einstellungen = ? WHERE id = ?').run(JSON.stringify({ ...JSON.parse(kurs.einstellungen), beamer: true }), kurs.id);
+  const board = (await H.client(app).get('/api/board/' + kurs.board_schluessel).expect(200)).body;
+  assert.equal(board.schueler, 1);
+  assert.deepEqual(board.liste.map((x) => x.name), ['Mika R.']);
+  const lk = await H.sso(app, { ...LK, kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'lehrkraft' }] });
+  const sl = (await lk.get(`/api/lehrer/kurse/${kurs.id}/schueler`).expect(200)).body;
+  assert.deepEqual(sl.map((x) => [x.name, x.aktiv]).sort(), [['Ida K.', false], ['Mika R.', true]]);
+  assert.deepEqual((await lk.get(`/api/lehrer/kurse/${kurs.id}/scoreboard`)).body.liste.map((x) => x.name), ['Mika R.']);
+  // Auswertung: alle Teilnahmen, inaktive gekennzeichnet
+  const aw = (await lk.get(`/api/lehrer/kurse/${kurs.id}/auswertung`).expect(200)).body;
+  for (const teil of ['matrix', 'boss']) {
+    const zeilen = aw[teil] && aw[teil].zeilen;
+    assert.ok(Array.isArray(zeilen), teil);
+    assert.deepEqual(zeilen.map((x) => [x.name, x.aktiv]).sort(), [['Ida K.', false], ['Mika R.', true]], teil);
+  }
+  // Urkunden: alle Teilnahmen (auch inaktive) mit Platz
+  const u = (await lk.get(`/api/lehrer/kurse/${kurs.id}/urkunden`).expect(200)).body;
+  assert.equal(u.anzahl, 2);
+  assert.ok(u.schueler.every((x) => Number.isInteger(x.platz)));
+});

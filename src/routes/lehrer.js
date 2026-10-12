@@ -9,8 +9,9 @@ const V = require('../validate');
 function lehrerRoutes(api, h) {
   const { svc } = h;
 
-  const r = express.Router();
-  r.use((req, res, next) => {
+  // Anmeldepflicht je Route (nicht mit r.use): unbekannte bzw. entfernte Routen liefern so auch ohne Sitzung 404
+  // statt 401 (TECHNIK §6.5).
+  const auth = (req, res, next) => {
     const l = h.lehrkraft(req);
     if (!l) {
       if (req.sL) h.clearLehrkraft(req, res);
@@ -18,7 +19,12 @@ function lehrerRoutes(api, h) {
     }
     req.lk = l;
     next();
-  });
+  };
+  const router = express.Router();
+  const r = {
+    get: (p, ...f) => router.get(p, auth, ...f),
+    patch: (p, ...f) => router.patch(p, auth, ...f)
+  };
 
   r.get('/ich', (req, res) => res.json(svc.konten.ansicht(req.lk.konto)));
 
@@ -65,7 +71,7 @@ function lehrerRoutes(api, h) {
     res.send(text);
   });
 
-  api.use('/lehrer', r);
+  api.use('/lehrer', router);
 }
 
 module.exports = { lehrerRoutes };

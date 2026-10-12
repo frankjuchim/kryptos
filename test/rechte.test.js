@@ -137,3 +137,29 @@ test('Rate-Limiter: abgelaufene Einträge (IP-Adressen) werden entfernt, Aufräu
   assert.equal(l.aufraeumer.hasRef(), false);
   clearInterval(l.aufraeumer);
 });
+
+test('Entfernte Routen (TECHNIK §6.5) liefern auch ohne Sitzung 404 statt 401', async () => {
+  const app = H.makeApp();
+  const c = H.client(app);
+  for (const [m, url] of [
+    ['post', '/api/lehrer/registrieren'],
+    ['post', '/api/lehrer/anmelden'],
+    ['post', '/api/lehrer/passwort'],
+    ['post', '/api/lehrer/kurse'],
+    ['delete', '/api/lehrer/kurse/1'],
+    ['get', '/api/lehrer/kurse/1/qr.svg'],
+    ['post', '/api/lehrer/kurse/1/schueler/1/neuer-code'],
+    ['get', '/api/admin/lehrkraefte'],
+    ['post', '/api/admin/lehrkraefte/1/einmalpasswort'],
+    ['post', '/api/schueler/beitreten'],
+    ['post', '/api/schueler/anmelden'],
+    ['get', '/api/kurs/ABCDEF'],
+    ['post', '/api/kurs-wechseln']
+  ]) {
+    const r = await c[m](url).send({});
+    assert.equal(r.status, 404, `${m} ${url}`);
+  }
+  // vorhandene Routen ohne Sitzung weiterhin 401
+  assert.equal((await c.get('/api/lehrer/kurse')).status, 401);
+  assert.equal((await c.get('/api/admin/backup')).status, 401);
+});

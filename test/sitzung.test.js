@@ -1,6 +1,6 @@
 'use strict';
-// Sitzungen kr_s / kr_l (TECHNIK §6.4, src/verbund/sitzung.js) – vorgezogen aus Plan Task 7; die SSO-Seite (/sso/ende,
-// Seiten-Wächter, Kurswahl, Abmelden) folgt dort in test/sso.test.js.
+// Sitzungen kr_s / kr_l (TECHNIK §6.4, src/verbund/sitzung.js) mit Cookies aus den Test-Helfern; SSO, Seiten-Wächter,
+// Kurswahl und Abmelden prüft test/sso.test.js.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const S = require('../src/security');
@@ -64,7 +64,7 @@ test('Teilnahme inaktiv oder Kurs gesperrt: erste aktive Teilnahme (nach Kursnam
   const ta = H.teilnahme(app, alpha, sub, 'Mika R.');
   const tb = H.teilnahme(app, beta, sub, 'Mika R.');
   const c = H.alsSchueler(app, sub, tz);
-  assert.equal((await c.get('/api/sitzung')).body.schueler.kurs, 'Zebra-Kurs');
+  assert.equal((await c.get('/api/sitzung')).body.kurs.name, 'Zebra-Kurs');
   db.prepare('UPDATE schueler SET aktiv = 0 WHERE id = ?').run(tz);
   const r = await c.get('/api/profil').expect(200);
   assert.equal(r.body.kurs.name, 'Alpha-Kurs');
@@ -75,13 +75,22 @@ test('Teilnahme inaktiv oder Kurs gesperrt: erste aktive Teilnahme (nach Kursnam
   // gesperrter Kurs (Verbund kurs-aendern aktiv:false) zählt nicht
   db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(alpha.id);
   assert.equal((await c.get('/api/profil')).body.kurs.name, 'Beta-Kurs');
-  const kurse = (await c.get('/api/sitzung')).body.schueler.kurse;
-  assert.deepEqual(kurse, [{ kurs: beta.kurs, name: 'Beta-Kurs', aktuell: true }]);
+  const sitz = (await c.get('/api/sitzung')).body;
+  assert.equal(sitz.kurs.id, beta.kurs);
+  assert.deepEqual(sitz.kurse, [
+    { id: alpha.kurs, name: 'Alpha-Kurs', aktiv: false },
+    { id: beta.kurs, name: 'Beta-Kurs', aktiv: true },
+    { id: zebra.kurs, name: 'Zebra-Kurs', aktiv: false }
+  ]);
   db.prepare('UPDATE schueler SET aktiv = 0 WHERE id = ?').run(tb);
+  // nur noch die Teilnahme im gesperrten Alpha-Kurs → 403 (Sitzung bleibt, Task 7)
+  const gesperrt = await c.get('/api/welten');
+  assert.equal(gesperrt.status, 403);
+  assert.doesNotMatch((gesperrt.headers['set-cookie'] || []).join(';'), /kr_s=;/);
+  db.prepare('UPDATE schueler SET aktiv = 0 WHERE id = ?').run(ta);
   const weg = await c.get('/api/welten');
   assert.equal(weg.status, 401);
   assert.match((weg.headers['set-cookie'] || []).join(';'), /kr_s=;/, 'Cookie gelöscht');
-  assert.ok(ta);
 });
 
 test('Lehrkraft-Sitzung: /api/lehrer/ich zeigt das Konto ohne interne Felder', async () => {
