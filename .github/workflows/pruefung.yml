@@ -39,9 +39,11 @@ jobs:
       - run: npm ci
       - name: Fachlisten (src/krypto/fach.js)
         run: node --test test/fach.test.js
-      # folgen mit M2 (Plan Tasks 10–18):
-      #   python3 -I werkzeuge/krypto/test_krypto.py
-      #   npm run krypto:vergleich -- --anzahl 2000
+      - name: Python-Zwilling, feste Vektoren
+        run: python3 -I werkzeuge/krypto/test_krypto.py
+      - name: Zwilling-Vergleich JS ↔ Python (2000 Fälle je Funktion)
+        run: npm run krypto:vergleich -- --anzahl 2000
+      # folgen (Plan Task 18 ff.):
       #   python3 werkzeuge/krypto/seed_pruefen.py
       #   python3 werkzeuge/krypto/pruefwerte.py
 
