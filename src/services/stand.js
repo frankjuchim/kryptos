@@ -1,5 +1,6 @@
 'use strict';
 // Punktestand, Ränge, Abzeichen (SPEC §2, §8) – Regeln im Code.
+// K07: Archivfund-Aufgaben (Delta §2) zählen weder bei geloest noch bei Punkten, Abzeichen oder Weltenbummler.
 
 const { rangFuer, BOSS_AUTO_ANTEIL, BOSS_BESIEGT_ANTEIL, FALLEN_IDS } = require('../domain');
 
@@ -32,7 +33,7 @@ function createStand(ctx, { inhalte, kurse }) {
     for (const r of f) {
       const a = k.aufgaben.get(r.aid);
       const e = map.get(r.sid);
-      if (!a || a._boss || !e) continue;
+      if (!a || a._boss || a._archivfund || !e) continue;
       e.level[a._welt] = (e.level[a._welt] || 0) + r.punkte;
       if (r.status === 'geloest' || r.nachgeloest) e.geloest++;
     }
@@ -134,7 +135,7 @@ function createStand(ctx, { inhalte, kurse }) {
     const geloest = [];
     for (const r of rows) {
       const a = k.aufgaben.get(r.aufgabe_id);
-      if (!a || a._boss) continue;
+      if (!a || a._boss || a._archivfund) continue;
       if (r.status === 'geloest' || r.nachgeloest) geloest.push({ a, r });
     }
     const n = geloest.length;

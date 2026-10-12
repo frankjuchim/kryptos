@@ -48,6 +48,12 @@ function schuelerRoutes(api, h) {
   st.post('/aufgaben/:id/tipp', limit, (req, res) => res.json(svc.lernen.tipp(req.schueler, req.params.id)));
   st.post('/aufgaben/:id/aufdecken', limit, (req, res) => res.json(svc.lernen.aufdecken(req.schueler, req.params.id)));
 
+  // Archivfund je Welt (Delta §2): eigene Routen, Kern-Limit wie beim Prüfen der Aufgaben
+  st.get('/archivfund/:welt', (req, res) => res.json(svc.lernen.archivfund(req.schueler, req.params.welt)));
+  st.post('/archivfund/:welt/pruefen', limit, (req, res) => res.json(svc.lernen.archivfundPruefen(req.schueler, req.params.welt, req.body)));
+  st.post('/archivfund/:welt/tipp', limit, (req, res) => res.json(svc.lernen.archivfundTipp(req.schueler, req.params.welt)));
+  st.post('/archivfund/:welt/aufdecken', limit, (req, res) => res.json(svc.lernen.archivfundAufdecken(req.schueler, req.params.welt)));
+
   st.get('/training/aufgabe/:id', (req, res) => res.json(svc.training.holen(req.schueler, req.params.id)));
   st.post('/training/aufgabe/:id/pruefen', limit, (req, res) => res.json(svc.training.pruefen(req.schueler, req.params.id, req.body)));
   st.post('/training/aufgabe/:id/aufdecken', limit, (req, res) => res.json(svc.training.aufdecken(req.schueler, req.params.id)));

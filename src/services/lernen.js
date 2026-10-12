@@ -1,5 +1,6 @@
 'use strict';
 // Schüler-Seite: Weltkarte, Level, Aufgaben prüfen/Tipps/Aufdecken, IDE-Häkchen, Profil, Scoreboard.
+// K06: Archivfund je Welt (Delta §2: 0 Punkte, zählt für nichts, wird gespeichert), Welt-Felder auf der Weltkarte.
 
 const V = require('../validate');
 const C = require('../content/checker');
@@ -47,7 +48,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
             if (r.status === 'geloest' || r.nachgeloest) geloest++;
           }
         }
-        return { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, anzahl: l.aufgaben.length, geloest, punkte, maxPunkte: l.maxPunkte, anteil: l.maxPunkte ? punkte / l.maxPunkte : 0 };
+        return { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, anzahl: l.aufgaben.length, geloest, punkte, maxPunkte: l.maxPunkte, anteil: l.maxPunkte ? punkte / l.maxPunkte : 0 };
       });
       const boss = w.boss ? bossKurz(s, w, einst, e) : null;
       out.push({
@@ -55,6 +56,12 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         titel: w.titel,
         name: w.name,
         farbe: w.farbe,
+        epoche: w.epoche,
+        jahr: w.jahr,
+        akzentHell: w.akzentHell,
+        archivfund: w.archivfund ? { titel: w.archivfund.titel, status: statusVon(fm.get(w.archivfund.aufgabe)) } : null,
+        // Kapiteltext erst nach besiegtem Boss (Delta §2)
+        kapitel: boss && boss.besiegt ? w.kapitel : null,
         frei,
         levels,
         boss,
@@ -127,12 +134,24 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
 
   /* ---------- Aufgaben ---------- */
 
-  /** Level-Aufgabe für den Schüler (Boss-Aufgaben sind nur im Boss-Kampf zugänglich). */
+  /**
+   * Level-Aufgabe für den Schüler (Boss-Aufgaben sind nur im Boss-Kampf zugänglich). Archivfund-Aufgaben werden für
+   * pruefen/tipp/aufdecken angenommen; angezeigt werden sie nur über archivfund(s, welt).
+   */
   function levelAufgabe(s, id) {
     const a = kat().aufgaben.get(String(id));
-    if (!a || a._boss || !a._level) throw new NotFoundError('Aufgabe nicht gefunden.');
+    if (!a || a._boss || (!a._level && !a._archivfund)) throw new NotFoundError('Aufgabe nicht gefunden.');
     pruefeWeltFrei(s, a._welt);
     return a;
+  }
+
+  /** Archivfund-Aufgabe einer Welt (Welt ohne Archivfund → 404, gesperrte Welt → 403). */
+  function archivfundAufgabe(s, weltRoh) {
+    const nr = V.int(weltRoh, 'Welt', { min: 0, max: 9 });
+    const w = kat().welten.get(nr);
+    if (!w || !w.archivfund || !kat().aufgaben.has(w.archivfund.aufgabe)) throw new NotFoundError('Für diese Welt gibt es keinen Archivfund.');
+    pruefeWeltFrei(s, nr);
+    return { w, a: kat().aufgaben.get(w.archivfund.aufgabe) };
   }
 
   function zeile(sid, aid) {
@@ -159,6 +178,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
 
   function aufgabe(s, id) {
     const a = levelAufgabe(s, id);
+    if (a._archivfund) throw new NotFoundError('Aufgabe nicht gefunden.');
     const r = zeile(s.id, a.id);
     const l = kat().levels.get(a._level);
     const w = kat().welten.get(a._welt);
@@ -179,9 +199,12 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     };
   }
 
+  /** Archivfund: zählt für nichts (Delta §2) – auch nicht für die Serie (Abzeichen „Zehnerserie“). */
+  const serieZaehlt = (a) => !a._archivfund;
+
   function fehlerVerbuchen(s, a, r, antworten, voll) {
     db.prepare('UPDATE fortschritt SET fehlversuche = fehlversuche + 1, updated_at = ? WHERE schueler_id = ? AND aufgabe_id = ?').run(iso(), s.id, a.id);
-    db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
+    if (serieZaehlt(a)) db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
     const up = db.prepare('INSERT INTO fallen_zaehler (schueler_id, falle, anzahl) VALUES (?, ?, 1) ON CONFLICT(schueler_id, falle) DO UPDATE SET anzahl = anzahl + 1');
     for (const p of a.fallen) up.run(s.id, p);
     if (voll) {
@@ -213,8 +236,10 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         else if (fertig) {
           const p = punkteFuer(a.punkte, r.fehlversuche, Math.min(r.tipps, a.tipps.length));
           db.prepare("UPDATE fortschritt SET status = 'geloest', punkte = ?, geloest_at = ?, updated_at = ? WHERE schueler_id = ? AND aufgabe_id = ?").run(p, iso(), iso(), s.id, a.id);
-          if (r.fehlversuche === 0) db.prepare('UPDATE schueler SET serie = serie + 1, serie_max = MAX(serie_max, serie + 1) WHERE id = ?').run(s.id);
-          else db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
+          if (serieZaehlt(a)) {
+            if (r.fehlversuche === 0) db.prepare('UPDATE schueler SET serie = serie + 1, serie_max = MAX(serie_max, serie + 1) WHERE id = ?').run(s.id);
+            else db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
+          }
           neu.geloest = true;
           neu.punkte = p;
         }
@@ -254,10 +279,28 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const r = sichereZeile(s.id, a.id);
     if (r.status === 'offen') {
       db.prepare("UPDATE fortschritt SET status = 'angesehen', punkte = 0, updated_at = ? WHERE schueler_id = ? AND aufgabe_id = ?").run(iso(), s.id, a.id);
-      db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
+      if (serieZaehlt(a)) db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
     }
     return { zustand: zustand(a, zeile(s.id, a.id)), ...inhalte.loesungsteil(a) };
   }
+
+  /* ---------- Archivfund (Delta §2) ---------- */
+
+  function archivfund(s, welt) {
+    const { w, a } = archivfundAufgabe(s, welt);
+    const z = zustand(a, zeile(s.id, a.id));
+    return {
+      welt: { nr: w.nr, titel: w.titel, farbe: w.farbe },
+      titel: w.archivfund.titel,
+      aufgabe: inhalte.oeffentlich(a),
+      zustand: z,
+      ...(z.status !== 'offen' ? inhalte.loesungsteil(a) : {})
+    };
+  }
+
+  const archivfundPruefen = (s, welt, body) => pruefen(s, archivfundAufgabe(s, welt).a.id, body);
+  const archivfundTipp = (s, welt) => tipp(s, archivfundAufgabe(s, welt).a.id);
+  const archivfundAufdecken = (s, welt) => aufdecken(s, archivfundAufgabe(s, welt).a.id);
 
   /* ---------- Profil und Scoreboard ---------- */
 
@@ -325,7 +368,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     return { welt, liste, welten: [...kat().welten.values()].filter((w) => stand.istFrei(einst, w.nr)).map((w) => ({ nr: w.nr, titel: w.titel })) };
   }
 
-  return { welten, level, ideSetzen, aufgabe, pruefen, tipp, aufdecken, profil, scoreboard, scoreboardFuerSchueler, einstellungenVon, pruefeWeltFrei };
+  return { welten, level, ideSetzen, aufgabe, levelAufgabe, pruefen, tipp, aufdecken, archivfund, archivfundPruefen, archivfundTipp, archivfundAufdecken, profil, scoreboard, scoreboardFuerSchueler, einstellungenVon, pruefeWeltFrei };
 }
 
 module.exports = { createLernen };

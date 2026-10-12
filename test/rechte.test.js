@@ -185,3 +185,12 @@ test('Einstellung „anmeldung“ (Kern) wird ignoriert und nicht angezeigt (TEC
   assert.equal(r.body.einstellungen.anmeldung, undefined);
   assert.equal(r.body.einstellungen.beamer, true);
 });
+
+test('Archivfund-Routen (Delta §2): nur für Schüler – Lehrkraft und ohne Sitzung 401', async () => {
+  const { app, lk } = await H.szenario();
+  const ohne = H.client(app);
+  for (const c of [lk, ohne]) {
+    assert.equal((await c.get('/api/archivfund/9')).status, 401);
+    for (const p of ['pruefen', 'tipp', 'aufdecken']) assert.equal((await c.post(`/api/archivfund/9/${p}`).send({ antwort: 'x' })).status, 401, p);
+  }
+});

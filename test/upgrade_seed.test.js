@@ -197,3 +197,15 @@ test('Fehlerhafte Seed-Dateien: App startet trotzdem; kaputte Aufgaben werden au
   assert.deepEqual(bericht.map((b) => b.status), ['übersprungen', 'übersprungen', 'geladen']);
   assert.match(bericht[2].fehler[0], /kategorie/);
 });
+
+test('Seed: Spalten niveau (effektiv) und archivfund', async () => {
+  const app = H.makeApp();
+  const z = (id) => app.locals.db.prepare('SELECT niveau, archivfund, aktiv, punkte, level_id FROM aufgaben WHERE id = ?').get(id);
+  assert.deepEqual(z('W9-A-01'), { niveau: 'kern', archivfund: 1, aktiv: 1, punkte: 0, level_id: null });
+  assert.equal(z('W9-L3-01').niveau, 'eA', 'erbt vom Level');
+  assert.equal(z('W9-L4-01').niveau, 'kuer');
+  assert.equal(z('W9-L1-01').niveau, 'kern');
+  assert.equal(z('W9-B-02').niveau, 'eA');
+  const l = app.locals.services.inhalte.katalog.levels.get('W9-L1');
+  assert.deepEqual([l.rolle, l.werkzeug, l.akte], ['kryptografie', ['scheibe'], 'Akte W9·1 – Blöcke und Lücken']);
+});

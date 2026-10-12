@@ -1413,7 +1413,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/sitzung` | alle | – | `{ rolle: 'schueler'\|'lehrkraft'\|'superadmin'\|null, name, kurs: { id: 'k:17', name, niveau } \| null, kurse: [{ id, name, aktiv }], portal: PORTAL_URL, version }` | – |
 | `POST /api/sitzung/kurs` | Schüler | `{ kurs: 'k:17' }` | `{ ok, kurs }` | 30/min |
 | `POST /api/abmelden` | alle | `{ ueberall?: bool }` | `{ weiter }` | – |
-| `GET /api/welten` | Schüler | – | Kern + je Welt `epoche`, `jahr`, `akzentHell`, `archivfund: { titel, status }`, Level mit `niveau`, `rolle`, `kuer`, `werkzeug`; nur sichtbare Level | – |
+| `GET /api/welten` | Schüler | – | Kern + je Welt `epoche`, `jahr`, `akzentHell`, `archivfund: { titel, status } \| null`, `kapitel` (erst nach besiegtem Boss, sonst `null`), Level mit `niveau`, `rolle`, `kuer`, `werkzeug`; nur sichtbare Level | – |
 | `GET /api/archivfund/:welt` · `POST …/pruefen` · `…/tipp` · `…/aufdecken` | Schüler | wie Aufgaben | wie Aufgaben, `punkte` immer 0 | 90/min (Kern-Limit) |
 | `POST /api/aufgaben/:id/pruefen` | Schüler | Kern + Delta §14 | Kern + `diagnose`, `zeichen`, `bits`, `anteil` | 90/min |
 | `GET /api/labor` | Schüler | – | `{ werkzeuge: [{ id, titel, welt, frei, grund }] }` | – |

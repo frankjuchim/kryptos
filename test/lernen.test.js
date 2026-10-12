@@ -172,3 +172,37 @@ test('Bug-Hunt gestuft: Teil a) (Zeilenwahl) einzeln prüfbar – falsch = Fehlv
   r = await s.post('/api/aufgaben/W9-L2-02/pruefen').send({ antwort: [[3], { g1: '<' }] }).expect(200);
   assert.equal(r.body.geloest, true);
 });
+
+test('Archivfund: 0 Punkte, zählt für nichts, wird aber gespeichert (Delta §2)', async () => {
+  const { s } = await H.szenario();
+  const a = (await s.get('/api/archivfund/9').expect(200)).body;
+  assert.equal(a.titel, 'Die Testdepesche');
+  assert.equal(a.aufgabe.punkte, 0);
+  assert.ok(!JSON.stringify(a).includes('TREFFPUNKT'), 'keine Lösung vorab');
+  await s.get('/api/aufgaben/W9-A-01').expect(404);
+  let r = (await s.post('/api/archivfund/9/pruefen').send({ antwort: 'HFSTTDIBYH' }).expect(200)).body;
+  assert.equal(r.ok, false);
+  r = (await s.post('/api/archivfund/9/pruefen').send({ antwort: 'treffpunkt' }).expect(200)).body;
+  assert.deepEqual([r.ok, r.geloest, r.punkteErhalten], [true, true, 0]);
+  const p = (await s.get('/api/profil')).body;
+  assert.deepEqual([p.punkte.gesamt, p.geloest], [0, 0]);
+  assert.deepEqual(p.abzeichen.filter((x) => x.erhalten), [], 'kein „Erste Schritte“ durch den Archivfund');
+  const w9 = (await s.get('/api/welten')).body.welten.find((w) => w.nr === 9);
+  assert.deepEqual(w9.archivfund, { titel: 'Die Testdepesche', status: 'geloest' });
+  assert.equal(w9.epoche, 'Testepoche, 1900 – 2000');
+  assert.equal(w9.kapitel, null, 'erst nach besiegtem Boss');
+  await s.get('/api/archivfund/4').expect(404);
+});
+
+test('Archivfund: Tipp/Aufdecken über die eigene Route, gesperrte Welt 403, Kapitel ohne Boss null', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  const d = (await s.post('/api/archivfund/9/aufdecken').send({}).expect(200)).body;
+  assert.equal(d.zustand.status, 'angesehen');
+  assert.ok(d.loesung, 'Lösungsteil nach dem Aufdecken');
+  assert.equal((await s.get('/api/archivfund/9').expect(200)).body.zustand.status, 'angesehen');
+  assert.equal((await s.get('/api/profil')).body.serie.serie, 0);
+  await s.get('/api/archivfund/x').expect(400);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { welten: [0] } }).expect(200);
+  await s.get('/api/archivfund/9').expect(403);
+  await s.post('/api/archivfund/9/pruefen').send({ antwort: 'treffpunkt' }).expect(403);
+});

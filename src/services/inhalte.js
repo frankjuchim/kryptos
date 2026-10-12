@@ -1,5 +1,7 @@
 'use strict';
 // Inhalte: Seed-Upsert der Welt-Dateien, Katalog im Speicher, Ansichten ohne Lösung.
+// K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video),
+// Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
 
 const crypto = require('node:crypto');
 const { validiereWelt, aufgabePunkte } = require('../content/validator');
@@ -7,7 +9,34 @@ const C = require('../content/checker');
 const F = require('../content/format');
 const { WELT_MAP, STUFEN_PUNKTE, NIVEAU_IDS } = require('../domain');
 
-const SEED_VERSION = 'lab-2.0.0';
+const SEED_VERSION = 'kryptos-1';
+const ARCHIVFUND_ID = /^W\d-A-\d{2,3}$/;
+const ROLLEN = ['kryptografie', 'kryptoanalyse'];
+
+/** Kryptos-Felder eines Levels (Delta §3); werkzeug immer als Liste. */
+function levelFelder(l) {
+  const werkzeug = Array.isArray(l.werkzeug) ? l.werkzeug : typeof l.werkzeug === 'string' ? [l.werkzeug] : [];
+  return {
+    rolle: ROLLEN.includes(l.rolle) ? l.rolle : null,
+    kuer: l.kuer === true,
+    werkzeug: werkzeug.filter((x) => typeof x === 'string'),
+    akte: typeof l.akte === 'string' ? l.akte : '',
+    video: l.video && typeof l.video === 'object' && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: String(l.video.titel || '') } : null
+  };
+}
+
+/** Kryptos-Felder einer Welt (Delta §2); fehlende Felder als null. */
+function weltFelder(d) {
+  const obj = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : null);
+  const jahr = obj(d.jahr);
+  const kapitel = obj(d.kapitel);
+  return {
+    epoche: typeof d.epoche === 'string' ? d.epoche : null,
+    jahr: jahr ? { von: jahr.von, bis: jahr.bis, anzeige: String(jahr.anzeige || '') } : null,
+    akzentHell: typeof d.akzentHell === 'string' ? d.akzentHell : null,
+    kapitel: kapitel ? { titel: String(kapitel.titel || ''), md: String(kapitel.md || '') } : null
+  };
+}
 
 function createInhalte(ctx) {
   const { db } = ctx;
@@ -79,6 +108,7 @@ function createInhalte(ctx) {
           ab: typeof l.ab === 'string' ? l.ab : '',
           ide: typeof l.ide === 'string' ? l.ide : '',
           niveau: NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'kern',
+          ...levelFelder(l),
           intro: Array.isArray(l.intro) ? l.intro : [],
           aufgaben: (Array.isArray(l.aufgaben) ? l.aufgaben : []).filter((id) => guteIds.has(id) && !/-B-/.test(id))
         }));
@@ -99,8 +129,21 @@ function createInhalte(ctx) {
         }
       }
       const imPool = new Set(boss ? boss.pool : []);
+      // Archivfund (Delta §2): eigene Aufgabe der Datei, in keinem Level und keinem Boss-Pool
+      const af = data.archivfund && typeof data.archivfund === 'object' ? data.archivfund : null;
+      const archivId = af && typeof af.aufgabe === 'string' && ARCHIVFUND_ID.test(af.aufgabe) && guteIds.has(af.aufgabe) && !levelVon.has(af.aufgabe) && !imPool.has(af.aufgabe) ? af.aufgabe : null;
+      const levelNiveau = new Map(levels.map((l) => [l.id, l.niveau]));
       const jetzt = new Date(ctx.now()).toISOString();
-      const weltDaten = { version: 2, welt: data.welt, titel: data.titel, farbe: data.farbe, levels, boss };
+      const weltDaten = {
+        version: 2,
+        welt: data.welt,
+        titel: data.titel,
+        farbe: data.farbe,
+        ...weltFelder(data),
+        archivfund: archivId ? { aufgabe: archivId, titel: String(af.titel || '') } : null,
+        levels,
+        boss
+      };
       const standard = WELT_MAP[data.welt] || {};
       db.transaction(() => {
         db.prepare(
@@ -110,21 +153,27 @@ function createInhalte(ctx) {
         ).run(data.welt, String(data.titel || standard.titel || `Welt ${data.welt}`), String(data.farbe || standard.farbe || '#1F4E79'), JSON.stringify(weltDaten), q.name, hash, jetzt);
         db.prepare('UPDATE aufgaben SET aktiv = 0 WHERE welt = ?').run(data.welt);
         const up = db.prepare(
-          `INSERT INTO aufgaben (id, welt, level_id, boss, stufe, punkte, kategorie, fallen, daten, aktiv, updated_at)
-           VALUES (@id, @welt, @level, @boss, @stufe, @punkte, @kategorie, @fallen, @daten, @aktiv, @jetzt)
+          `INSERT INTO aufgaben (id, welt, level_id, boss, archivfund, niveau, stufe, punkte, kategorie, fallen, daten, aktiv, updated_at)
+           VALUES (@id, @welt, @level, @boss, @archivfund, @niveau, @stufe, @punkte, @kategorie, @fallen, @daten, @aktiv, @jetzt)
            ON CONFLICT(id) DO UPDATE SET welt = excluded.welt, level_id = excluded.level_id, boss = excluded.boss,
-             stufe = excluded.stufe, punkte = excluded.punkte, kategorie = excluded.kategorie, fallen = excluded.fallen,
+             archivfund = excluded.archivfund, niveau = excluded.niveau, stufe = excluded.stufe, punkte = excluded.punkte, kategorie = excluded.kategorie, fallen = excluded.fallen,
              daten = excluded.daten, aktiv = excluded.aktiv, updated_at = excluded.updated_at`
         );
         for (const a of gute) {
-          const aktiv = levelVon.has(a.id) || imPool.has(a.id);
+          const archiv = a.id === archivId;
+          const aktiv = levelVon.has(a.id) || imPool.has(a.id) || archiv;
+          // effektives Niveau (TECHNIK §8.1): Level-Aufgabe a.niveau ?? level.niveau, sonst a.niveau ?? 'kern'
+          const eigenes = NIVEAU_IDS.includes(a.niveau) ? a.niveau : null;
+          const niveau = archiv ? 'kern' : eigenes || (levelVon.has(a.id) ? levelNiveau.get(levelVon.get(a.id)) : null) || 'kern';
           up.run({
             id: a.id,
             welt: data.welt,
             level: levelVon.get(a.id) || null,
             boss: imPool.has(a.id) ? 1 : 0,
+            archivfund: archiv ? 1 : 0,
+            niveau,
             stufe: a.stufe,
-            punkte: aufgabePunkte(a),
+            punkte: archiv ? 0 : aufgabePunkte(a),
             kategorie: a.kategorie,
             fallen: JSON.stringify(Array.isArray(a.fallen) ? a.fallen : []),
             daten: JSON.stringify(a),
@@ -156,6 +205,8 @@ function createInhalte(ctx) {
       a._welt = row.welt;
       a._level = row.level_id;
       a._boss = row.boss === 1;
+      a._archivfund = row.archivfund === 1;
+      a._niveau = row.niveau;
       k.aufgaben.set(a.id, a);
     }
     for (const row of db.prepare('SELECT * FROM welten ORDER BY nr').all()) {
@@ -171,19 +222,20 @@ function createInhalte(ctx) {
         titel: row.titel,
         name: std.name || row.titel.replace(/^(Der|Die|Das)\s+/, ''),
         farbe: row.farbe,
+        ...weltFelder(d),
+        archivfund: null,
         levels: [],
         boss: null
       };
+      if (d.archivfund && k.aufgaben.has(d.archivfund.aufgabe) && k.aufgaben.get(d.archivfund.aufgabe)._archivfund) {
+        welt.archivfund = { aufgabe: d.archivfund.aufgabe, titel: d.archivfund.titel };
+      }
       for (const l of d.levels || []) {
-        const lv = { ...l, welt: row.nr, aufgaben: (l.aufgaben || []).filter((id) => k.aufgaben.has(id) && !k.aufgaben.get(id)._boss) };
+        const lv = { ...l, ...levelFelder(l), welt: row.nr, aufgaben: (l.aufgaben || []).filter((id) => k.aufgaben.has(id) && !k.aufgaben.get(id)._boss && !k.aufgaben.get(id)._archivfund) };
         lv.maxPunkte = lv.aufgaben.reduce((s, id) => s + k.aufgaben.get(id).punkte, 0);
         // Niveau: Level-Angabe (Standard kern), einzelne Aufgaben können abweichen (gemischtes Level);
-        // effektives Niveau a._niveau = a.niveau ?? level.niveau ?? 'kern' (TECHNIK §8)
+        // effektives Niveau a._niveau aus der Spalte aufgaben.niveau (Seed: a.niveau ?? level.niveau ?? 'kern', TECHNIK §8)
         lv.niveau = NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'kern';
-        for (const id of lv.aufgaben) {
-          const a = k.aufgaben.get(id);
-          a._niveau = NIVEAU_IDS.includes(a.niveau) ? a.niveau : lv.niveau;
-        }
         lv.gemischt = lv.aufgaben.some((id) => k.aufgaben.get(id)._niveau !== lv.niveau);
         welt.levels.push(lv);
         k.levels.set(lv.id, lv);
@@ -191,11 +243,7 @@ function createInhalte(ctx) {
       if (d.boss) {
         const pool = (d.boss.pool || []).filter((id) => k.aufgaben.has(id) && k.aufgaben.get(id)._boss);
         if (pool.length) {
-          // Boss: kein Boss-Niveau mehr, jede Pool-Aufgabe a.niveau ?? 'kern' (Delta §10)
-          for (const id of pool) {
-            const a = k.aufgaben.get(id);
-            a._niveau = NIVEAU_IDS.includes(a.niveau) ? a.niveau : 'kern';
-          }
+          // Boss: kein Boss-Niveau mehr, jede Pool-Aufgabe a.niveau ?? 'kern' (Delta §10, Spalte aufgaben.niveau)
           const boss = { ...d.boss, pool, anzahl: Math.min(d.boss.anzahl || 8, pool.length), gemischt: pool.some((id) => k.aufgaben.get(id)._niveau !== 'kern') };
           delete boss.niveau;
           welt.boss = boss;
@@ -251,9 +299,14 @@ function createInhalte(ctx) {
       nr: w.nr,
       titel: w.titel,
       farbe: w.farbe,
+      epoche: w.epoche,
+      jahr: w.jahr,
+      akzentHell: w.akzentHell,
+      kapitel: w.kapitel,
+      archivfund: w.archivfund ? { ...w.archivfund, aufgabe: kurzInfo(katalog.aufgaben.get(w.archivfund.aufgabe)) } : null,
       maxPunkte: w.maxPunkte,
       aufgabenAnzahl: w.aufgabenAnzahl,
-      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, aufgaben: l.aufgaben.map((id) => kurzInfo(katalog.aufgaben.get(id))) })),
+      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, aufgaben: l.aufgaben.map((id) => kurzInfo(katalog.aufgaben.get(id))) })),
       boss: w.boss ? { id: w.boss.id, titel: w.boss.titel, gemischt: w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, mix: w.boss.mix || null, pool: w.boss.pool.map((id) => kurzInfo(katalog.aufgaben.get(id))) } : null
     }));
   }
