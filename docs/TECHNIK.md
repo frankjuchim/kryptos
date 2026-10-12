@@ -55,7 +55,7 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/security.js` | A | Cookie-Namen `kr_s`, `kr_l`, neu `kr_sso_state`; Passwort-/Code-Funktionen (`hashPasswort*`, `pruefePasswort*`, `kursCode`, `schuelerCode`, `normSchuelerCode`, `einmalPasswort`) **entfernt**; `Limiter`, `sameOriginCheck`, `sign/verify`, `parseCookies`, `setCookie`, `clearCookie`, `safeEqual` unverändert; neu `zufallsText(bytes)` (base64url) |
 | `src/db.js` | A | Schema Kryptos (§7) als **Migrationsliste** (nur anhängen, wie Portal `src/db.js`), `APP_KENNUNG = 'kryptos'`, `SCHEMA_VERSION` = Anzahl Migrationen; Algo-Quest-v1-Erkennung (`istAlteDatenbank`, `sichereAlteDatenbank`) **entfernt** (würde eine Kryptos-DB mit `schema_version ≤ 2` fälschlich umbenennen); Start bricht ab, wenn `meta.app ≠ 'kryptos'` |
 | `src/domain.js` | A | Struktur bleibt (Exporte gleichnamig), Inhalte aus `src/krypto/fach.js`: `WELTEN`, `LAB_KATEGORIEN`, `KATA_KATEGORIEN`, `FALLEN`, `RAENGE` (Lehrling → Schreiber → Chiffreur → Kryptoanalytiker → Meister der Chiffren, Schwellen 0/0,1/0,3/0,55/0,8 unverändert); neu `PLATTFORM` (id, name, titel, farbe …, Design §2.1), `STANDARD_EINSTELLUNGEN` erweitert (§7.2), `NIVEAUS`, `TEAM_NAMEN`. Punkteformel, Boss-Konstanten, Leitner **unverändert** |
-| `src/validate.js` | U | Eingabeprüfung, Fehlerklassen |
+| `src/validate.js` | A | Eingabeprüfung, Fehlerklassen; `email()` und `passwort()` **entfernt** (keine Registrierung/Passwörter, K29) |
 | `src/content/format.js` | A | Hook-Registry (§4.2): `BLOCK_TYPEN`, `INTERAKTIONEN`, `SCHRITT_ARTEN` erweiterbar; `normText` kennt `krypto`/`bits` (delegiert an `shared/krypto.js`); `blockTexte` und neue Funktion `lueckenFelder(ia)` fragen registrierte Typen |
 | `src/content/checker.js` | A | `bereinige`/`istLeer`/`pruefeTeil`/`musterantwort` delegieren unbekannte Arten an die Registry; `pruefeAufgabe` reicht `diagnose`, `zeichen`, `bits`, `anteil` je Teil durch; Kern-Interaktionen unverändert |
 | `src/content/validator.js` | A | `AUFGABE_ID` += `A` (Archivfund); `LEVEL_ID` unverändert; Welt-/Level-/Aufgabenfelder §2–§4 des Delta über `registriereValidierung({ welt, level, aufgabe, boss, dateien })` (§4.2); Blöcke/Interaktionen über Registry; Lücken-Besitz über `F.lueckenFelder` |
@@ -78,7 +78,6 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/routes/lehrer.js` | A | Registrierung/Anmeldung/Passwort, Kurs anlegen/löschen, Schüler umbenennen/neuer Code/löschen, QR **entfernt**; Einstellungen erweitert; Teams, Funkraum-Regie, Arena-Regie neu (in `src/krypto/…/routes.js`, hier nur eingehängt) |
 | `src/routes/admin.js` | A | Lehrkraft-Verwaltung und Einmal-Passwort **entfernt**; bleiben: Backup/Restore, Warm-up-Import/-Liste, Inhalte/Seed-Bericht/Neu laden; neu: Wartungsbericht |
 | `src/routes/gast.js` | U | |
-| `src/validate.js` | U | |
 | `scripts/validate.js` | A | `require('../src/krypto').registriere()` vor dem Validieren (K31; Krypto-Formate im CLI) |
 | `src/jwt.js` | **U aus labs** | `frankjuchim/labs/src/jwt.js` byte-gleich (Test vergleicht SHA-256 mit der in `test/fixtures/labs_hashes.json` notierten Fassung) |
 | `scripts/vertrag_pruefen.js` | **U aus labs** | byte-gleich wie `jwt.js` |

@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Archivfund-Aufgabe mit niveau eA",
+  "erwartet": "Archivfund",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-A-01.niveau",
+      "wert": "eA"
+    }
+  ]
+}

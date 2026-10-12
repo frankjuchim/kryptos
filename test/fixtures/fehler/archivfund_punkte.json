@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Archivfund-Aufgabe mit punkte",
+  "erwartet": "keine punkte",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-A-01.punkte",
+      "wert": 10
+    }
+  ]
+}

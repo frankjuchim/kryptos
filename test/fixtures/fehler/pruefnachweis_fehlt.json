@@ -1,0 +1,10 @@
+{
+  "beschreibung": "fremde Chiffre ohne pruefnachweis",
+  "erwartet": "pruefnachweis fehlt",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-08.pruefnachweis",
+      "loeschen": true
+    }
+  ]
+}

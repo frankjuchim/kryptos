@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Boss-Aufgabe mit niveau ergaenzung",
+  "erwartet": "ergaenzung",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-01.niveau",
+      "wert": "ergaenzung"
+    }
+  ]
+}

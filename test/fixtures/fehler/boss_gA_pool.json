@@ -1,0 +1,10 @@
+{
+  "beschreibung": "gA-Pool kleiner als anzahl",
+  "erwartet": "gA-Pool",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-05.niveau",
+      "wert": "eA"
+    }
+  ]
+}

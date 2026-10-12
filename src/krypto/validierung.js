@@ -1,7 +1,7 @@
 'use strict';
 // Krypto-Zusatzprüfungen für den Validator (Hooks nach TECHNIK §4.2, registriert in src/krypto/index.js).
 // Welt- und Level-Felder (Delta §2, §3), Kontraste (WCAG 2.1), loesung._fehlmuster in gaps-Teilen (Delta §9.6);
-// Task 31 ergänzt Aufgaben-, Boss- und Dateiregeln (Delta §4, §10, §11).
+// Aufgaben-, Boss- und Dateiregeln (Delta §4, §5.3, §10, §11). Alle Fehler- und Hinweistexte ohne Lösungszeichen.
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -42,13 +42,105 @@ function pruefeFehlmuster(ia, lo, lort, fa) {
   }
 }
 
-/** Hook aufgabe: je gaps-Teil mit _fehlmuster. */
-function aufgabe(a, fa) {
+/* ---------- Aufgaben (Delta §4, §5.3) ---------- */
+
+const ARCHIVFUND = /^W\d-A-\d{2,3}$/;
+const PRUEFNACHWEIS = [/^quellen\/pruefwerte\/W\d\.json#[A-Za-z0-9-]+$/, /^werkzeuge\/krypto\/fremde_verfahren\.py:[a-z_][a-z0-9_]*$/];
+const NUMMERIERUNG = /Nummerierung:\s*A\s*=\s*[01]/;
+const ALTBEGRIFFE = { Chiffrat: 'Geheimtext', Friedmann: 'Friedman', Merkel: 'Merkle', Kerkhoff: 'Kerckhoffs' };
+const ALTBEGRIFF = /\b(Chiffrat\w*|Friedmann|Merkel|Kerkhoffs?)\b/g;
+const FUENFERGRUPPEN = /^[A-Z]{5}( [A-Z]{5})*( [A-Z]{1,5})?$/;
+const KERN_BLOECKE = ['baum', 'adt', 'klassenkarte'];
+
+/** Alle Blöcke einer Aufgabe (Inhalt, Teil-Inhalte, Erklärung). */
+function alleBloecke(a, { erklaerung = true } = {}) {
+  const liste = (x) => (Array.isArray(x) ? x.filter(istObjekt) : []);
+  const out = [...liste(a.inhalt)];
+  for (const t of F.teile(a)) if (istObjekt(t.interaktion)) out.push(...liste(t.interaktion.inhalt));
+  if (erklaerung) out.push(...liste(a.erklaerung));
+  return out;
+}
+
+/** Fließtexte (Text-/Hinweisblöcke, Fragen, Tipps) – Grundlage der Inhalts-Hinweise. */
+function fliesstexte(a) {
+  const out = [];
+  for (const b of alleBloecke(a)) if ((b.t === 'text' || b.t === 'hinweis') && typeof b.md === 'string') out.push(b.md);
+  for (const t of F.teile(a)) {
+    const ia = t.interaktion;
+    if (istObjekt(ia)) for (const k of ['frage', 'md']) if (typeof ia[k] === 'string') out.push(ia[k]);
+  }
+  if (Array.isArray(a.tipps)) for (const t of a.tipps) if (typeof t === 'string') out.push(t);
+  return out;
+}
+
+/** Enthält die Aufgabe ein fremdes Verfahren (chiffre typ frei, bits-rechnen operation frei)? */
+function hatFrei(a) {
+  return F.teile(a).some(({ interaktion: ia }) => istObjekt(ia) && ((ia.kind === 'chiffre' && istObjekt(ia.verfahren) && ia.verfahren.typ === 'frei') || (ia.kind === 'bits-rechnen' && ia.operation === 'frei')));
+}
+
+/** Wird mit Buchstabenwerten gerechnet (chiffre affin oder ausgabe zahlen)? */
+function rechnetMitZahlen(a) {
+  return F.teile(a).some(({ interaktion: ia }) => istObjekt(ia) && ia.kind === 'chiffre' && ((istObjekt(ia.verfahren) && ia.verfahren.typ === 'affin') || ia.ausgabe === 'zahlen'));
+}
+
+/** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, Inhalts-Hinweise. */
+function aufgabe(a, fa, wa) {
+  const id = typeof a.id === 'string' ? a.id : '';
+  // Archivfund (Delta §2, §4.1): 0 Punkte, niveau kern
+  if (ARCHIVFUND.test(id)) {
+    if (a.punkte !== undefined) fa('punkte', 'Archivfund-Aufgaben haben keine punkte (immer 0).');
+    if (a.niveau !== undefined && a.niveau !== 'kern') fa('niveau', 'Archivfund-Aufgaben haben niveau kern.');
+  }
+  // pruefnachweis (Delta §4.1): Pflicht bei frei (prüfen die Interaktionen), Format, sonst überflüssig
+  if (a.pruefnachweis !== undefined) {
+    if (typeof a.pruefnachweis !== 'string' || !PRUEFNACHWEIS.some((r) => r.test(a.pruefnachweis))) {
+      fa('pruefnachweis', 'pruefnachweis muss auf quellen/pruefwerte/W<n>.json#<id> oder werkzeuge/krypto/fremde_verfahren.py:<name> verweisen.');
+    } else if (!hatFrei(a)) wa('pruefnachweis', 'pruefnachweis ist überflüssig – die Neuberechnung ersetzt den Nachweis.');
+  }
+  // _fehlmuster in gaps-Teilen (Delta §9.6)
   F.teile(a).forEach((t, i, alle) => {
     const ia = t.interaktion;
     const lo = t.loesung;
     if (!istObjekt(ia) || ia.kind !== 'gaps' || !istObjekt(lo) || lo._fehlmuster === undefined) return;
     pruefeFehlmuster(ia, lo, alle.length > 1 ? `loesung[${i}]` : 'loesung', fa);
+  });
+  const texte = fliesstexte(a);
+  // Nummerierung (P1)
+  if (rechnetMitZahlen(a) && !alleBloecke(a, { erklaerung: false }).some((b) => b.t === 'alphabet') && !texte.some((t) => NUMMERIERUNG.test(t))) {
+    wa('inhalt', 'P1: Nummerierung nicht genannt (Block alphabet oder „Nummerierung: A = 1 … Z = 26“).');
+  }
+  // Altbegriffe und Geheimtexte in Fünfergruppen (Design §6)
+  const alt = new Set();
+  for (const t of texte) for (const m of t.matchAll(ALTBEGRIFF)) alt.add(m[1]);
+  for (const x of alt) {
+    const ersatz = ALTBEGRIFFE[Object.keys(ALTBEGRIFFE).find((k) => x.startsWith(k))];
+    wa('inhalt', `Altbegriff „${x}“ – bitte „${ersatz}“ schreiben.`);
+  }
+  for (const t of texte) {
+    for (const m of t.matchAll(/`([^`]+)`/g)) {
+      const g = m[1];
+      if (/^[A-Z ]+$/.test(g) && g.replace(/ /g, '').length >= 6 && !FUENFERGRUPPEN.test(g)) wa('inhalt', `Geheimtext „${g}“ steht nicht in Fünfergruppen.`);
+    }
+  }
+  // Kern-Bestandteile ohne Kryptos-Verwendung (Delta §1)
+  const kern = new Set();
+  for (const { interaktion: ia } of F.teile(a)) {
+    if (!istObjekt(ia)) continue;
+    if (ia.kind === 'tree' || ia.kind === 'adtsim') kern.add(ia.kind);
+    if (ia.kind === 'array' && ia.modus === 'tausch') kern.add('array:tausch');
+  }
+  for (const b of alleBloecke(a)) if (KERN_BLOECKE.includes(b.t)) kern.add(b.t);
+  for (const k of kern) wa('', `Kern-Bestandteil „${k}“ wird in Kryptos-Inhalten nicht verwendet (Delta §1).`);
+  // norm krypto: akzeptierte Lösungen nach Normalisierung nicht leer und verschieden (Delta §5.3)
+  F.teile(a).forEach(({ interaktion: ia, loesung: lo }, i, alle) => {
+    if (!istObjekt(ia) || ia.kind !== 'gaps' || !istObjekt(ia.felder) || !istObjekt(lo)) return;
+    for (const [fid, feld] of Object.entries(ia.felder)) {
+      if (!istObjekt(feld) || feld.norm !== 'krypto' || lo[fid] === undefined) continue;
+      const werte = (Array.isArray(lo[fid]) ? lo[fid] : [lo[fid]]).map((x) => F.normText(x, 'krypto'));
+      const o = `${alle.length > 1 ? `loesung[${i}]` : 'loesung'}.${fid}`;
+      if (werte.some((x) => x === '')) wa(o, 'leere Lösung nach Normalisierung (norm krypto).');
+      if (new Set(werte).size !== werte.length) wa(o, 'doppelte Lösung nach Normalisierung (norm krypto).');
+    }
   });
 }
 
@@ -174,6 +266,18 @@ function level(l, o, f, w, { aufgaben, opt }) {
     const praefix = m ? `Akte W${m[1]}·${m[2]}` : 'Akte W';
     if (typeof l.akte !== 'string' || !l.akte.startsWith(praefix)) wl(`akte muss mit „${praefix}“ beginnen.`);
   }
+  // Kryptoanalyse-Level: Werkzeug-Voreinstellung darf den Schlüssel nicht verraten (Delta §7.7)
+  if (l.rolle === 'kryptoanalyse' && Array.isArray(l.aufgaben) && aufgaben instanceof Map) {
+    for (const id of l.aufgaben) {
+      const a = aufgaben.get(id);
+      if (!istObjekt(a)) continue;
+      for (const b of alleBloecke(a)) {
+        if (b.t === 'werkzeug' && istObjekt(b.voreinstellung) && ('schluessel' in b.voreinstellung || 'k' in b.voreinstellung)) {
+          wl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
+        }
+      }
+    }
+  }
   // Niveau-Regeln Level ↔ Aufgabe (Delta §3)
   if (!NIVEAU_IDS.includes(l.niveau) || !Array.isArray(l.aufgaben) || !(aufgaben instanceof Map)) return;
   const liste = l.aufgaben.filter((id) => aufgaben.has(id)).map((id) => [id, effektivesNiveau(aufgaben.get(id), l)]);
@@ -185,7 +289,79 @@ function level(l, o, f, w, { aufgaben, opt }) {
   if (l.niveau === 'kern' && liste.length && liste.every(([, n]) => n === 'eA')) fl(`Level ${l.id} wäre im gA-Kurs leer (nur eA-Aufgaben).`);
 }
 
-/** Hooks für registriereValidierung (TECHNIK §4.2). */
-const HOOKS = Object.freeze({ welt, level, aufgabe });
+/* ---------- Boss (Delta §10) ---------- */
 
-module.exports = { HOOKS, aufgabe, welt, level, kontrast, PAPIER, TINTE, DUNKELPAPIER };
+const BOSS_NIVEAUS = ['kern', 'eA'];
+const STANDARD_MIX = { 1: 3, 2: 3, 3: 2 };
+
+/** Hook boss: Niveau je Pool-Aufgabe, verbotene Bestandteile, gA-Pool, fremde Chiffren, Standardwerte. */
+function boss(b, f, w, { data, aufgaben }) {
+  const fb = (m, aid) => f('boss', aid ? `boss › ${aid}` : 'boss', m, aid);
+  const wb = (m) => w('boss', 'boss', m);
+  if (b.niveau !== undefined) wb('boss.niveau ist entfallen – Niveau je Aufgabe (Pool-Aufgaben tragen niveau kern oder eA).');
+  const pool = (Array.isArray(b.pool) ? b.pool : []).filter((id) => aufgaben instanceof Map && istObjekt(aufgaben.get(id))).map((id) => aufgaben.get(id));
+  for (const a of pool) {
+    const aid = a.id;
+    if (a.niveau === undefined) fb('niveau fehlt (Boss-Aufgaben: kern | eA).', aid);
+    else if (!BOSS_NIVEAUS.includes(a.niveau)) fb(`niveau ${a.niveau} ist im Boss nicht erlaubt (nur kern | eA).`, aid);
+    if (alleBloecke(a, { erklaerung: false }).some((x) => x.t === 'werkzeug')) fb('Block werkzeug ist in Boss-Aufgaben nicht erlaubt.', aid);
+    for (const { interaktion: ia } of F.teile(a)) {
+      if (!istObjekt(ia)) continue;
+      if (ia.kind === 'zuordnung' && ia.haeufigkeit === true) fb('zuordnung mit haeufigkeit: true ist in Boss-Aufgaben nicht erlaubt.', aid);
+      const v = F.interaktionVertrag(ia.kind);
+      if (v && istObjekt(v.boss) && v.boss.erlaubt === false) fb(`Interaktion „${ia.kind}“ ist in Boss-Aufgaben nicht erlaubt.`, aid);
+    }
+  }
+  // gA-Pool (nur kern) und fremde Chiffren
+  const gA = pool.filter((a) => a.niveau === 'kern');
+  if (Number.isInteger(b.anzahl) && gA.length < b.anzahl) fb(`gA-Pool (nur kern) hat ${gA.length} Aufgaben, anzahl ist ${b.anzahl}.`);
+  const fremd = pool.filter((a) => a.kategorie === 'fremde-chiffre');
+  if (fremd.length < 3) fb(`Mindestens 3 Pool-Aufgaben mit kategorie fremde-chiffre nötig (gefunden: ${fremd.length}).`);
+  else if (fremd.filter((a) => a.niveau === 'kern').length < 2) fb(`Von den Aufgaben mit kategorie fremde-chiffre müssen mindestens 2 niveau kern haben (gefunden: ${fremd.filter((a) => a.niveau === 'kern').length}).`);
+  if (istObjekt(b.mix)) {
+    for (const [st, n] of Object.entries(b.mix)) {
+      const da = gA.filter((a) => String(a.stufe) === st).length;
+      if (Number.isInteger(n) && da < n) wb(`gA-Pool: Mix nicht je Stufe erfüllbar – Stufe ${st} verlangt ${n}, im gA-Pool ${da}.`);
+    }
+  }
+  // Standardwerte der Inhaltswelten (Hinweise)
+  if (!istInhaltswelt(data.welt)) return;
+  const n = Array.isArray(b.pool) ? b.pool.length : 0;
+  if (n < 14 || n > 16) wb(`Pool hat ${n} Aufgaben (Standard 14–16).`);
+  if (b.anzahl !== 8) wb(`anzahl ${b.anzahl} weicht vom Standard 8 ab.`);
+  const mix = istObjekt(b.mix) ? b.mix : {};
+  if (!['1', '2', '3'].every((st) => mix[st] === STANDARD_MIX[st]) || Object.keys(mix).length !== 3) {
+    wb(`mix ${['1', '2', '3'].map((st) => mix[st] ?? 0).join('/')} weicht vom Standard 3/3/2 ab.`);
+  }
+  const dauer = data.welt === 6 ? 30 : 25;
+  if (b.dauerMin !== dauer) wb(`dauerMin ${b.dauerMin} weicht vom Standard ${dauer} ab.`);
+}
+
+/* ---------- Dateiübergreifend (Delta §2, §11) ---------- */
+
+/** Hook dateien: Zeitleiste aufsteigend, Abdeckung fremde Chiffre je Inhaltswelt (Hinweise). */
+function dateien(eintraege, ergebnisse) {
+  const hinweis = (i, meldung) => ergebnisse[i].warnungen.push({ datei: ergebnisse[i].datei, ebene: 'datei', ort: '', meldung, aufgabe: null });
+  const welten = eintraege
+    .map((e, i) => ({ i, d: e && e.data }))
+    .filter(({ i, d }) => ergebnisse[i] && istObjekt(d) && istInhaltswelt(d.welt))
+    .sort((x, y) => x.d.welt - y.d.welt);
+  let vorher = null;
+  for (const x of welten) {
+    const von = istObjekt(x.d.jahr) && Number.isInteger(x.d.jahr.von) ? x.d.jahr.von : null;
+    if (von === null) continue;
+    if (vorher && von < vorher.von) hinweis(x.i, `Zeitleiste nicht aufsteigend: Welt ${x.d.welt} beginnt (${von}) vor Welt ${vorher.welt} (${vorher.von}).`);
+    vorher = { welt: x.d.welt, von };
+  }
+  for (const x of welten) {
+    const auf = Array.isArray(x.d.aufgaben) ? x.d.aufgaben.filter(istObjekt) : [];
+    if (!auf.some((a) => a.kategorie === 'fremde-chiffre' && typeof a.id === 'string' && !ARCHIVFUND.test(a.id))) {
+      hinweis(x.i, `Abdeckung fremde Chiffre: Welt ${x.d.welt} hat keine Level- oder Boss-Aufgabe mit kategorie fremde-chiffre (Design §1).`);
+    }
+  }
+}
+
+/** Hooks für registriereValidierung (TECHNIK §4.2). */
+const HOOKS = Object.freeze({ welt, level, aufgabe, boss, dateien });
+
+module.exports = { HOOKS, aufgabe, welt, level, boss, dateien, kontrast, PAPIER, TINTE, DUNKELPAPIER };

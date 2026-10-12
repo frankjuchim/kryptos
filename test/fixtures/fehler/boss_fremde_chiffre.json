@@ -1,0 +1,10 @@
+{
+  "beschreibung": "nur zwei fremde Chiffren im Pool",
+  "erwartet": "fremde-chiffre",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-03.kategorie",
+      "wert": "modulo"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Boss-Aufgabe ohne niveau",
+  "erwartet": "niveau",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-01.niveau",
+      "loeschen": true
+    }
+  ]
+}

@@ -304,7 +304,7 @@ test('Fixture auch als Welt 0 fehlerfrei (alle Pflichtfelder einer Inhaltswelt)'
 
 test('Negativ-Fixtures: je Datei der erwartete Fehler (Delta §11, §13)', () => {
   const dateien = fs.readdirSync(FEHLER_DIR).filter((d) => d.endsWith('.json')).sort();
-  assert.ok(dateien.length >= 22, `nur ${dateien.length} Negativ-Fixtures`);
+  assert.ok(dateien.length >= 32, `nur ${dateien.length} Negativ-Fixtures`);
   for (const d of dateien) {
     const spec = JSON.parse(fs.readFileSync(path.join(FEHLER_DIR, d), 'utf8'));
     const f = fehlerVon(wendeAn(ladeWelt(spec.alsWelt), spec.aenderungen));
@@ -328,4 +328,87 @@ test('Welt/Level-Hinweise: akte, ab, kapitel, video', () => {
   const k = require('../src/krypto/validierung');
   assert.equal(Math.round(k.kontrast('#8A5F1A', '#FBF7EE') * 100) / 100, 5.26);
   assert.equal(Math.round(k.kontrast('#B07D2B', '#FBF7EE') * 100) / 100, 3.38);
+});
+
+/* ---------- Task 31: Aufgaben, Boss-Regeln, dateiübergreifende Hinweise (Delta §4, §5.3, §10, §11) ---------- */
+
+test('Aufgaben-Hinweise: Nummerierung, Altbegriffe, Fünfergruppen, Kern-Bestandteile, doppelte krypto-Lösung', () => {
+  const hin = (w) => validiereWelt(w, { datei: 't' }).warnungen.map((x) => `${x.ort}: ${x.meldung}`).join('\n');
+  let w = basis();
+  aufgabe(w, 'W9-L5-03').inhalt[0].md = 'Verschlüssele mit c = (5 · p + 6) mod 26.';
+  assert.match(hin(w), /W9-L5-03.*P1: Nummerierung nicht genannt/);
+  w = basis();
+  aufgabe(w, 'W9-L5-01').tipps = ['Das Chiffrat ist kurz.'];
+  assert.match(hin(w), /Altbegriff.*Chiffrat/);
+  w = basis();
+  aufgabe(w, 'W9-L5-01').inhalt[0].md += ' Geheimtext: `CXYHUOD HVVLJ`';
+  assert.match(hin(w), /Fünfergruppen/);
+  assert.match(hin(basis()), /W9-L2-03.*tree/);
+  w = basis();
+  aufgabe(w, 'W9-L5-09').loesung.g1 = ['A', 'a'];
+  assert.match(hin(w), /doppelte Lösung nach Normalisierung/);
+  w = basis();
+  aufgabe(w, 'W9-L3-01').inhalt[2].voreinstellung = { text: 'IMQRH', schluessel: 'GEHEIMNIS' };
+  assert.match(hin(w), /verrät den Schlüssel/);
+  assert.doesNotMatch(hin(basis()), /W9-L5-0[1-8].*Nummerierung/);
+});
+
+test('Boss: zuordnung mit Häufigkeitsleiste verboten', () => {
+  erwarteFehler((w) => {
+    const z = { ...aufgabe(w, 'W9-L3-01'), id: 'W9-B-07', niveau: 'kern' };
+    w.aufgaben.push(z);
+    w.boss.pool.push('W9-B-07');
+  }, /haeufigkeit/);
+});
+
+test('Boss: Interaktion mit boss.erlaubt === false verboten; boss.niveau entfallen (Hinweis)', () => {
+  F.registriereInteraktion('vtestohneboss', { bereinige: (ia, a) => a, istLeer: () => false, pruefe: (ia, lo, a) => ({ ok: a === 'x' }), muster: () => 'x', validiere: () => {}, boss: { erlaubt: false } });
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-B-01');
+    a.interaktion = { kind: 'vtestohneboss' };
+    a.loesung = {};
+    a.inhalt = [{ t: 'text', md: 'Test' }];
+  }, /vtestohneboss.*Boss/);
+  const w = basis();
+  w.boss.niveau = 'kern';
+  assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /boss\.niveau ist entfallen.*Niveau je Aufgabe/);
+});
+
+test('Boss-Hinweise der Inhaltswelten: Pool-Größe, anzahl, mix, dauerMin; gA-Mix', () => {
+  const hin = (w) => validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | ');
+  const w0 = ladeWelt(0);
+  const h = hin(w0);
+  assert.match(h, /Pool.*14–16/);
+  assert.match(h, /anzahl.*8/);
+  assert.match(h, /mix.*3\/3\/2/);
+  assert.doesNotMatch(h, /dauerMin/);
+  w0.boss.dauerMin = 30;
+  assert.match(hin(w0), /dauerMin.*25/);
+  assert.doesNotMatch(hin(basis()), /14–16/, 'Welt 9: keine Standard-Hinweise');
+  const g = basis();
+  aufgabe(g, 'W9-B-03').stufe = 1;
+  assert.match(hin(g), /gA-Pool.*Stufe 2/);
+});
+
+test('Dateien: Zeitleiste und Abdeckung fremde Chiffre (Hinweise)', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-zeit-'));
+  const a = (() => {
+    const w = JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8').replace(/W9-/g, 'W0-').replace(/W9·/g, 'W0·'));
+    w.welt = 0;
+    w.jahr = { von: 1900, bis: 2000, anzeige: 'x' };
+    return w;
+  })();
+  const b = (() => {
+    const w = JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8').replace(/W9-/g, 'W1-').replace(/W9·/g, 'W1·'));
+    w.welt = 1;
+    w.jahr = { von: -500, bis: 0, anzeige: 'x' };
+    for (const x of w.aufgaben) if (x.kategorie === 'fremde-chiffre') x.kategorie = 'modulo';
+    return w;
+  })();
+  fs.writeFileSync(path.join(tmp, 'a.json'), JSON.stringify(a));
+  fs.writeFileSync(path.join(tmp, 'b.json'), JSON.stringify(b));
+  const r = require('../src/content/validator').validiereDateien([path.join(tmp, 'a.json'), path.join(tmp, 'b.json')]);
+  const alle = r.flatMap((x) => x.warnungen.map((y) => y.meldung)).join(' | ');
+  assert.match(alle, /Zeitleiste nicht aufsteigend/);
+  assert.match(alle, /Abdeckung fremde Chiffre/);
 });

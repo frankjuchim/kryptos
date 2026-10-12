@@ -1,0 +1,13 @@
+{
+  "beschreibung": "Werkzeug-Block in einer Boss-Aufgabe",
+  "erwartet": "werkzeug",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-01.inhalt",
+      "anhaengen": {
+        "t": "werkzeug",
+        "id": "scheibe"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "beschreibung": "nur eine fremde Chiffre auf Kern-Niveau",
+  "erwartet": "kern",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-B-03.niveau",
+      "wert": "eA"
+    }
+  ]
+}

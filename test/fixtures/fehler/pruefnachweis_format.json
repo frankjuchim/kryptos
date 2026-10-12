@@ -1,0 +1,10 @@
+{
+  "beschreibung": "pruefnachweis zeigt auf keinen Python-Nachweis",
+  "erwartet": "pruefnachweis",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-08.pruefnachweis",
+      "wert": "irgendwo.txt"
+    }
+  ]
+}

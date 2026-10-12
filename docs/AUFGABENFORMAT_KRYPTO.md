@@ -62,6 +62,9 @@ werden in Kryptos-Inhalten aber nicht verwendet (Validator-Hinweis, kein Fehler)
 
 Hinweis Welt 8/9: `epoche`, `jahr`, `akzentHell` sind dort optional; `farbe` bleibt Pflicht (Kontrastregel gilt).
 
+Archivfund-ids: technisch immer `W<n>-A-<nn>` (in der Regel `W<n>-A-01`). Die Bezeichnungen in den Welt-Specs
+(`W0-AF`, `W1-AF`, `W2-A`, `W3-L1-00`) sind Arbeitsnamen und werden beim Seed-Bau (M5/M8) auf diese Form abgebildet.
+
 ---
 
 ## 3. Level
@@ -770,7 +773,8 @@ Validator: unterscheidet sich von `text`). Dasselbe Feld `fehlmuster` ist bei `g
   wenn der Mix im gA-Pool nicht je Stufe erfüllbar ist.
 - **Mindestens 3** Pool-Aufgaben mit `kategorie: "fremde-chiffre"` (Fehler, Design §7.6), davon mindestens 2 `kern`.
 - Verboten in Boss-Aufgaben (Fehler): Block `werkzeug`, `zuordnung` mit `haeufigkeit: true`, Aufgaben-`niveau`
-  `ergaenzung`/`kuer`.
+  `ergaenzung`/`kuer`, Interaktionen, deren Vertrag `boss.erlaubt: false` meldet. Ein Feld `niveau` am Boss selbst ist
+  entfallen (Hinweis „Niveau je Aufgabe“).
 - Im Kampf: kein Feedback, keine Diagnose, keine Werkzeuge, keine Schrittprüfung (Kern). In der Auswertung nach dem
   Kampf: Lösung, Erklärung und – neu – die Diagnose falscher Antworten (wird beim Auswerten berechnet und im Ergebnis
   gespeichert; zählt **nicht** in `fallen_zaehler`, wie im Kern).
