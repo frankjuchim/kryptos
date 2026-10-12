@@ -1,6 +1,7 @@
 'use strict';
 // Schüler-Seite: Weltkarte, Level, Aufgaben prüfen/Tipps/Aufdecken, IDE-Häkchen, Profil, Scoreboard.
-// K06: Archivfund je Welt (Delta §2: 0 Punkte, zählt für nichts, wird gespeichert), Welt-Felder auf der Weltkarte.
+// K06: Archivfund je Welt (Delta §2: 0 Punkte, zählt für nichts, wird gespeichert), Welt-Felder auf der Weltkarte;
+// Fallen-Diagnose (optionen.diagnose, fallenAusErgebnis); Sichtbarkeit nach Niveau (optionen.sichtbar, TECHNIK §8).
 
 const V = require('../validate');
 const C = require('../content/checker');
@@ -29,6 +30,15 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     return r.status;
   }
 
+  /* ---------- Sichtbarkeit nach Niveau (optionen.sichtbar, TECHNIK §8.1/§8.2) ---------- */
+
+  const sichtbar = (x, einst) => !!x && ctx.optionen.sichtbar(x, einst) !== false;
+  /** Sichtbare Aufgaben-ids eines Levels (Reihenfolge des Levels). */
+  const sichtbareAufgaben = (l, einst) => l.aufgaben.filter((id) => sichtbar(kat().aufgaben.get(id), einst));
+  /** Level sichtbar ⇔ selbst sichtbar und mindestens eine sichtbare Aufgabe. */
+  const levelSichtbar = (l, einst) => !!l && sichtbar(l, einst) && sichtbareAufgaben(l, einst).length > 0;
+  const sichtbareLevels = (w, einst) => w.levels.filter((l) => levelSichtbar(l, einst));
+
   /* ---------- Weltkarte ---------- */
 
   function welten(s) {
@@ -38,17 +48,21 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const out = [];
     for (const w of kat().welten.values()) {
       const frei = stand.istFrei(einst, w.nr);
-      const levels = w.levels.map((l) => {
+      // nur sichtbare Level, Zahlen nur über sichtbare Aufgaben (TECHNIK §8.2)
+      const levels = sichtbareLevels(w, einst).map((l) => {
+        const ids = sichtbareAufgaben(l, einst);
         let punkte = 0;
         let geloest = 0;
-        for (const id of l.aufgaben) {
+        let maxPunkte = 0;
+        for (const id of ids) {
+          maxPunkte += kat().aufgaben.get(id).punkte;
           const r = fm.get(id);
           if (r) {
             punkte += r.punkte;
             if (r.status === 'geloest' || r.nachgeloest) geloest++;
           }
         }
-        return { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, anzahl: l.aufgaben.length, geloest, punkte, maxPunkte: l.maxPunkte, anteil: l.maxPunkte ? punkte / l.maxPunkte : 0 };
+        return { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, anzahl: ids.length, geloest, punkte, maxPunkte, anteil: maxPunkte ? punkte / maxPunkte : 0 };
       });
       const boss = w.boss ? bossKurz(s, w, einst, e) : null;
       out.push({
@@ -89,19 +103,28 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
 
   /* ---------- Level ---------- */
 
-  function level(s, levelId) {
+  /** Sichtbares Level oder 404 (unsichtbar = nicht vorhanden, damit nichts verraten wird), danach Welt-Freischaltung (403). */
+  function sichtbaresLevel(s, levelId) {
     const l = kat().levels.get(String(levelId));
-    if (!l) throw new NotFoundError('Level nicht gefunden.');
+    if (!l || !levelSichtbar(l, einstellungenVon(s))) throw new NotFoundError('Level nicht gefunden.');
     const einst = pruefeWeltFrei(s, l.welt);
+    return { l, einst };
+  }
+
+  function level(s, levelId) {
+    const { l, einst } = sichtbaresLevel(s, levelId);
     const w = kat().welten.get(l.welt);
     const fm = fortschrittMap(s.id);
-    const idx = w.levels.findIndex((x) => x.id === l.id);
+    const levels = sichtbareLevels(w, einst);
+    const idx = levels.findIndex((x) => x.id === l.id);
+    const ids = sichtbareAufgaben(l, einst);
+    const maxPunkte = ids.reduce((x, id) => x + kat().aufgaben.get(id).punkte, 0);
     const ide = db.prepare('SELECT 1 FROM ide_erledigt WHERE schueler_id = ? AND level_id = ?').get(s.id, l.id);
     return {
       welt: { nr: w.nr, titel: w.titel, farbe: w.farbe },
       niveau: einst.niveau === 'gA' ? 'gA' : 'eA',
-      level: { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte },
-      aufgaben: l.aufgaben.map((id) => {
+      level: { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte },
+      aufgaben: ids.map((id) => {
         const a = kat().aufgaben.get(id);
         const r = fm.get(id);
         return {
@@ -118,15 +141,13 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         };
       }),
       ideErledigt: !!ide,
-      vorher: idx > 0 ? { id: w.levels[idx - 1].id, titel: w.levels[idx - 1].titel } : null,
-      nachher: idx >= 0 && idx < w.levels.length - 1 ? { id: w.levels[idx + 1].id, titel: w.levels[idx + 1].titel } : null
+      vorher: idx > 0 ? { id: levels[idx - 1].id, titel: levels[idx - 1].titel } : null,
+      nachher: idx >= 0 && idx < levels.length - 1 ? { id: levels[idx + 1].id, titel: levels[idx + 1].titel } : null
     };
   }
 
   function ideSetzen(s, levelId, erledigt) {
-    const l = kat().levels.get(String(levelId));
-    if (!l) throw new NotFoundError('Level nicht gefunden.');
-    pruefeWeltFrei(s, l.welt);
+    const { l } = sichtbaresLevel(s, levelId);
     if (V.bool(erledigt, 'erledigt')) db.prepare('INSERT OR IGNORE INTO ide_erledigt (schueler_id, level_id, at) VALUES (?, ?, ?)').run(s.id, l.id, iso());
     else db.prepare('DELETE FROM ide_erledigt WHERE schueler_id = ? AND level_id = ?').run(s.id, l.id);
     return { erledigt: V.bool(erledigt, 'erledigt') };
@@ -141,6 +162,9 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
   function levelAufgabe(s, id) {
     const a = kat().aufgaben.get(String(id));
     if (!a || a._boss || (!a._level && !a._archivfund)) throw new NotFoundError('Aufgabe nicht gefunden.');
+    // Niveau (TECHNIK §8.2): unsichtbare Aufgabe oder Aufgabe eines unsichtbaren Levels → 404 (nicht 403)
+    const einst = einstellungenVon(s);
+    if (!sichtbar(a, einst) || (a._level && !levelSichtbar(kat().levels.get(a._level), einst))) throw new NotFoundError('Aufgabe nicht gefunden.');
     pruefeWeltFrei(s, a._welt);
     return a;
   }
@@ -182,7 +206,8 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const r = zeile(s.id, a.id);
     const l = kat().levels.get(a._level);
     const w = kat().welten.get(a._welt);
-    const i = l.aufgaben.indexOf(a.id);
+    const liste = sichtbareAufgaben(l, einstellungenVon(s));
+    const i = liste.indexOf(a.id);
     const z = zustand(a, r);
     return {
       aufgabe: inhalte.oeffentlich(a),
@@ -192,9 +217,9 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         welt: { nr: w.nr, titel: w.titel, farbe: w.farbe },
         level: { id: l.id, nr: l.nr, titel: l.titel },
         index: i,
-        anzahl: l.aufgaben.length,
-        vorher: i > 0 ? l.aufgaben[i - 1] : null,
-        nachher: i < l.aufgaben.length - 1 ? l.aufgaben[i + 1] : null
+        anzahl: liste.length,
+        vorher: i > 0 ? liste[i - 1] : null,
+        nachher: i < liste.length - 1 ? liste[i + 1] : null
       }
     };
   }

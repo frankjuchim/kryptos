@@ -1672,6 +1672,8 @@ Negativ-Fixtures dieser Task:
   (`NotFoundError('Level nicht gefunden.')`) für unsichtbare Level, Aufgabenliste nur sichtbar, `vorher`/`nachher` nur über sichtbare
   Level; `levelAufgabe()` → 404 für unsichtbare Aufgabe oder unsichtbares Level
 - `inhalte.vorschauWelten()`: alles, zusätzlich je Level und Aufgabe `gAAusgeblendet: !sichtbar(x, { niveau: 'gA', kuer: 'frei' })`
+  (Level wie im Lab: sichtbar nur mit mindestens einer sichtbaren Aufgabe; umgesetzt über `optionen.sichtbar`, damit der Kern ohne
+  Krypto nichts ausblendet)
 
 Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 ```json

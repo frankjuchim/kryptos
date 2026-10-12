@@ -123,5 +123,8 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L3-03', antwort: '1010 0001 1001 1011', erwartet: [['P3', 'richtung']] },
   { aufgabe: 'W9-L3-04', antwort: [3, 5, 7], erwartet: [] }
 );
+// Task 34: Niveau – Ergänzung (RSA) und eA-Aufgabe im kern-Level W9-L5
+Object.assign(RICHTIG, { 'W9-L5-10': { c: '31' }, 'W9-L5-11': ['a'] });
+Object.assign(FALSCH, { 'W9-L5-10': { c: '64' }, 'W9-L5-11': ['b'] });
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
 module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };

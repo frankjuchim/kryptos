@@ -14,6 +14,7 @@ const schaubild = require('./interaktionen/schaubild');
 const bits = require('./interaktionen/bits');
 const D = require('./diagnose');
 const validierung = require('./validierung');
+const N = require('./niveau');
 
 let registriert = false;
 
@@ -53,9 +54,9 @@ function fallenAusErgebnis(a, erg) {
   return p.size ? [...p] : a.fallen || [];
 }
 
-/** Dienst-Optionen für den Kern (TECHNIK §4.2). */
+/** Dienst-Optionen für den Kern (TECHNIK §4.2); Niveau nach TECHNIK §8 (src/krypto/niveau.js). */
 function dienstOptionen() {
-  return { diagnose: true, fallenAusErgebnis };
+  return { diagnose: true, fallenAusErgebnis, sichtbar: N.sichtbar, generatorSichtbar: N.generatorSichtbar };
 }
 
 module.exports = { registriere, dienstOptionen, fallenAusErgebnis };

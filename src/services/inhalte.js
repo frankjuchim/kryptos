@@ -3,6 +3,7 @@
 // K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video),
 // Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
 // M3 Task 33: oeffentlich/loesungsteil filtern interne Prüfdaten (fehlmuster, _fehlmuster) für alle Clients.
+// M3 Task 34: Lehrkraft-Vorschau zeigt alles, je Level und Aufgabe gAAusgeblendet (TECHNIK §8.2).
 
 const crypto = require('node:crypto');
 const { validiereWelt, aufgabePunkte } = require('../content/validator');
@@ -310,6 +311,11 @@ function createInhalte(ctx) {
     return { id: a.id, titel: a.titel, stufe: a.stufe, punkte: a.punkte, kategorie: a.kategorie, niveau: a._niveau || 'kern', fallen: a.fallen, arten: F.teile(a).map((t) => F.artVon(t.interaktion)) };
   }
 
+  /** Hinweis „im gA-Kurs ausgeblendet“ (TECHNIK §8.2): Sichtbarkeit nach optionen.sichtbar in einem gA-Kurs mit freier Kür. */
+  const GA = Object.freeze({ niveau: 'gA', kuer: 'frei' });
+  const gASichtbar = (x) => !!x && (!ctx.optionen || ctx.optionen.sichtbar(x, GA) !== false);
+  const gALevelSichtbar = (l) => gASichtbar(l) && l.aufgaben.some((id) => gASichtbar(katalog.aufgaben.get(id)));
+
   function vorschauWelten() {
     return [...katalog.welten.values()].map((w) => ({
       nr: w.nr,
@@ -322,7 +328,7 @@ function createInhalte(ctx) {
       archivfund: w.archivfund ? { ...w.archivfund, aufgabe: kurzInfo(katalog.aufgaben.get(w.archivfund.aufgabe)) } : null,
       maxPunkte: w.maxPunkte,
       aufgabenAnzahl: w.aufgabenAnzahl,
-      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, aufgaben: l.aufgaben.map((id) => kurzInfo(katalog.aufgaben.get(id))) })),
+      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, gAAusgeblendet: !gALevelSichtbar(l), aufgaben: l.aufgaben.map((id) => ({ ...kurzInfo(katalog.aufgaben.get(id)), gAAusgeblendet: !gASichtbar(katalog.aufgaben.get(id)) })) })),
       boss: w.boss ? { id: w.boss.id, titel: w.boss.titel, gemischt: w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, mix: w.boss.mix || null, pool: w.boss.pool.map((id) => kurzInfo(katalog.aufgaben.get(id))) } : null
     }));
   }
