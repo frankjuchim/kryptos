@@ -165,6 +165,12 @@ function createSitzung({ db, secret }) {
     api.post('/abmelden', (req, res) => {
       const ueberall = (req.body || {}).ueberall;
       if (ueberall !== undefined && typeof ueberall !== 'boolean') throw new V.ValidationError('ueberall muss true oder false sein.');
+      // „Überall abmelden“: session_gen erhöhen → Sitzungen dieses Kontos auf anderen Geräten (geteilte Tablets) enden
+      if (ueberall) {
+        const subs = new Set([konto(req.sS, ['schueler']), konto(req.sL, ['lehrkraft', 'superadmin'])].filter(Boolean).map((k) => k.sub));
+        const erhoehe = db.prepare('UPDATE konten SET session_gen = session_gen + 1 WHERE sub = ?');
+        for (const sub of subs) erhoehe.run(sub);
+      }
       S.clearCookie(req, res, S.COOKIE_SCHUELER);
       S.clearCookie(req, res, S.COOKIE_LEHRKRAFT);
       if (ueberall && konfig.portalUrl && konfig.plattformUrl) {

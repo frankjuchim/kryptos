@@ -17,6 +17,7 @@ const { createManifest } = require('./services/manifest');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
+const { createVerbundRouter } = require('./verbund/verbund');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const ROOT_DIR = path.join(__dirname, '..');
@@ -127,8 +128,10 @@ function createApp(opts) {
   /* ---------- SSO (VERTRAG §5, TECHNIK §6.2–§6.3) ---------- */
   app.use('/sso', createSsoRouter({ db, svc, konfig, sitzung, secret, now: ctx.now }));
 
+  /* ---------- Verbund-API (VERTRAG §6, TECHNIK §6.7): vor dem API-Router, ohne Origin-Prüfung ---------- */
+  app.use('/api/verbund', createVerbundRouter({ db, svc, konfig, now: ctx.now }));
+
   /* ---------- Helfer für die Routen ---------- */
-  // Verbund-API (/api/verbund/*) folgt in src/verbund/ (Plan Task 8).
   const helpers = {
     svc,
     now: ctx.now,

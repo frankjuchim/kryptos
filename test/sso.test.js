@@ -547,6 +547,31 @@ test('Abmelden: löscht kr_s und kr_l → { weiter: "/" }; überall → Portal-A
   assert.equal((await H.client(app).post('/api/abmelden').send({ ueberall: 'ja' })).status, 400);
 });
 
+test('Überall abmelden erhöht konten.session_gen: Sitzungen auf anderen Geräten enden, einfaches Abmelden nicht', async () => {
+  const app = H.makeApp();
+  const gen = (sub) => app.locals.db.prepare('SELECT session_gen FROM konten WHERE sub = ?').get(sub).session_gen;
+  const tablet = await H.sso(app);
+  const handy = await H.sso(app);
+  const g0 = gen('s:1042');
+  await tablet.post('/api/abmelden').send({}).expect(200);
+  assert.equal(gen('s:1042'), g0, 'einfaches Abmelden lässt andere Geräte angemeldet');
+  assert.equal((await handy.get('/api/welten')).status, 200);
+  const tablet2 = await H.sso(app);
+  await tablet2.post('/api/abmelden').send({ ueberall: true }).expect(200);
+  assert.equal(gen('s:1042'), g0 + 1);
+  assert.equal((await handy.get('/api/welten')).status, 401, 'anderes Gerät abgemeldet');
+  assert.equal((await H.sso(app).then((c) => c.get('/api/welten'))).status, 200, 'neue Anmeldung geht');
+  // Lehrkraft ebenso
+  const lkA = await H.sso(app, LK);
+  const lkB = await H.sso(app, LK);
+  await lkA.post('/api/abmelden').send({ ueberall: true }).expect(200);
+  assert.equal((await lkB.get('/api/lehrer/kurse')).status, 401);
+  // ohne gültige Sitzung: nichts erhöht
+  const g1 = gen('s:1042');
+  await H.client(app).post('/api/abmelden').send({ ueberall: true }).expect(200);
+  assert.equal(gen('s:1042'), g1);
+});
+
 test('Gesperrter Kurs: Schüler-API 403 „Kryptos ist für deinen Kurs abgeschaltet“, entsperrt wieder 200', async () => {
   const app = H.makeApp();
   const s = await H.sso(app);

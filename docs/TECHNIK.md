@@ -525,7 +525,9 @@ mit 503 (nur im Testmodus möglich).
 - **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen).
 - **Abmelden:** `POST /api/abmelden { ueberall: bool }` löscht `kr_s` und `kr_l`; Antwort `{ weiter: "/" }` bzw.
   `{ weiter: "<PORTAL_URL>/sso/abmelden?ruecksprung=<PLATTFORM_URL>/" }`; der Client navigiert. Kopfzeile: „Abmelden“,
-  „Überall abmelden“, „⌂ Portal“ (Link auf `PORTAL_URL`).
+  „Überall abmelden“, „⌂ Portal“ (Link auf `PORTAL_URL`). Bei `ueberall: true` wird zusätzlich `konten.session_gen` der
+  angemeldeten Konten (Cookie `kr_s` bzw. `kr_l` mit gültiger Sitzung) um 1 erhöht – damit enden die Sitzungen dieses
+  Kontos auch auf anderen Geräten (z. B. geteilte Tablets); einfaches Abmelden lässt andere Geräte angemeldet.
 - **Sitzungsablauf:** abgelaufene Cookies werden von `S.verify` verworfen → nächste Anfrage startet SSO still (Portal-
   Sitzung besteht meist noch → ohne Anmeldeseite zurück).
 

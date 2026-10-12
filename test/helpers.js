@@ -236,7 +236,70 @@ async function sso(app, felder = {}, { ziel = '/', client: c = client(app) } = {
   return c;
 }
 
+/**
+ * Kurs mit Daten in allen kurs- und personenbezogenen Tabellen füllen (Lernstand, Teams, Funkraum, Arena) – für
+ * Löschtests (TECHNIK §7.3). teilnahmen: Teilnahme-ids (schueler.id); je Teilnahme ein eigenes Team (nr 1, 2, …),
+ * mit o.gemeinsamesTeam alle im Team 1. Liefert { teams, szenario, arena, chiffren }.
+ */
+function befuelle(app, k, teilnahmen, { gemeinsamesTeam = false } = {}) {
+  const db = app.locals.db;
+  const t0 = jetzt();
+  const id = (info) => Number(info.lastInsertRowid);
+  db.prepare("INSERT OR IGNORE INTO katas (id, welt, kategorie, titel, aufgabe, loesung) VALUES ('test-kata', 9, 'modulo', 'Karte', 'Frage', 'Antwort')").run();
+  db.prepare('INSERT INTO falsche_antworten (kurs_id, aufgabe_id, antwort, anzahl) VALUES (?, ?, ?, 1)').run(k.id, 'W9-L1-01', 'FALSCH' + k.id);
+  const teams = [];
+  const team = (nr) => {
+    if (!teams[nr - 1]) teams[nr - 1] = id(db.prepare('INSERT INTO teams (kurs_id, nr, name) VALUES (?, ?, ?)').run(k.id, nr, `Team Skytale ${nr}`));
+    return teams[nr - 1];
+  };
+  teilnahmen.forEach((sid, i) => {
+    db.prepare("INSERT INTO fortschritt (schueler_id, aufgabe_id, status, punkte, geloest_at, updated_at) VALUES (?, 'W9-L1-01', 'geloest', 10, ?, ?)").run(sid, t0, t0);
+    db.prepare("INSERT INTO fallen_zaehler (schueler_id, falle, anzahl) VALUES (?, 'P2', 1)").run(sid);
+    db.prepare("INSERT INTO ide_erledigt (schueler_id, level_id, at) VALUES (?, 'W9-L1', ?)").run(sid, t0);
+    db.prepare("INSERT INTO abzeichen (schueler_id, schluessel, at) VALUES (?, 'erste_schritte', ?)").run(sid, t0);
+    db.prepare("INSERT INTO erfolge (kurs_id, schueler_id, text, at) VALUES (?, ?, '{name} hat das Abzeichen „Erste Schritte“ erhalten', ?)").run(k.id, sid, t0);
+    db.prepare("INSERT INTO training (schueler_id, welt, generator, seed, daten, tag, created_at) VALUES (?, 9, 'g', 1, '{}', '2026-10-12', ?)").run(sid, t0);
+    db.prepare("INSERT INTO boss_versuche (schueler_id, welt, aufgaben, start_at, deadline_at, ende_at, punkte, max_punkte) VALUES (?, 9, '[]', ?, ?, ?, 5, 10)").run(sid, t0, t0, t0);
+    db.prepare("INSERT INTO leitner (schueler_id, kata_id, due_at) VALUES (?, 'test-kata', ?)").run(sid, t0);
+    db.prepare("INSERT INTO funk_teilnahmen (schueler_id, typ, at) VALUES (?, 'botenlauf', ?)").run(sid, t0);
+    db.prepare('INSERT INTO team_mitglieder (team_id, schueler_id) VALUES (?, ?)').run(team(gemeinsamesTeam ? 1 : i + 1), sid);
+  });
+  if (teams.length < 2) team(teams.length + 1); // zweites Team (ohne Mitglieder) als Gegenüber
+  const ende = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+  const szenario = id(
+    db.prepare("INSERT INTO funk_szenarien (kurs_id, typ, status, phase, konfig, endet_spaetestens, created_at, gestartet_at) VALUES (?, 'botenlauf', 'laeuft', 'senden', '{\"salz\":\"x\"}', ?, ?, ?)").run(k.id, ende, t0, t0)
+  );
+  teams.forEach((tid, i) => db.prepare("INSERT INTO funk_rollen (szenario_id, team_id, rolle, zustand) VALUES (?, ?, ?, '{\"schluessel\":7}')").run(szenario, tid, i === 0 ? 'alice' : 'bob'));
+  teilnahmen.forEach((sid, i) => {
+    const von = teams[gemeinsamesTeam ? 0 : i];
+    const an = teams.find((x) => x !== von) || null;
+    db.prepare("INSERT INTO funk_nachrichten (szenario_id, von_team_id, an_team_id, von_schueler_id, art, inhalt, klartext_hash, version, zeit) VALUES (?, ?, ?, ?, 'nachricht', 'GEHEIMTEXT', 'hash', 1, ?)").run(szenario, von, an, sid, t0);
+  });
+  db.prepare("INSERT INTO funk_ereignisse (szenario_id, code, version, zeit) VALUES (?, 'phase', 1, ?)").run(szenario, t0);
+  const arena = id(db.prepare("INSERT INTO arena (kurs_id, status, salz, created_at) VALUES (?, 'angriff', 'salz', ?)").run(k.id, t0));
+  const chiffren = teams.map((tid) =>
+    id(
+      db
+        .prepare("INSERT INTO arena_chiffren (arena_id, team_id, verfahren, beschreibung, geheimtext, klartext_hash, klartext_laenge, beurteilung, eingereicht_at) VALUES (?, ?, '{}', 'Verfahren', 'ABCDE', 'h', 5, 'gut', ?)")
+        .run(arena, tid, t0)
+    )
+  );
+  teilnahmen.forEach((sid, i) => {
+    const eigenes = teams[gemeinsamesTeam ? 0 : i];
+    const ziel = chiffren[teams.findIndex((x) => x !== eigenes)];
+    db.prepare("INSERT INTO arena_versuche (arena_id, chiffre_id, team_id, schueler_id, art, erfolg, zeit) VALUES (?, ?, ?, ?, 'klartext', 0, ?)").run(arena, ziel, eigenes, sid, t0);
+  });
+  return { teams, szenario, arena, chiffren };
+}
+
+/** Anzahl Zeilen einer Tabelle (optional mit WHERE-Bedingung). */
+function zaehle(app, tabelle, where = '1', ...p) {
+  return app.locals.db.prepare(`SELECT COUNT(*) AS n FROM ${tabelle} WHERE ${where}`).get(...p).n;
+}
+
 module.exports = {
+  befuelle,
+  zaehle,
   makeApp,
   ssoToken,
   verbundToken,

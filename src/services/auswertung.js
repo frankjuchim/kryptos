@@ -236,7 +236,43 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
     return { kurs: { id: k.id, name: k.name }, raenge: RAENGE.map((r) => r.name), anzahl: schueler.length, schueler };
   }
 
-  return { schuelerListe, auswertung, urkunden, exportCsv, board, matrix, aufgabenStatistik, fallenProfil, bossErgebnisse };
+  /* ---------- Kursübersicht für das Portal (VERTRAG §6, TECHNIK §6.8) ---------- */
+
+  const runde2 = (x) => Math.round(x * 100) / 100;
+
+  /**
+   * Erreichbare Level-Punkte je Welt nach der Bezugsmenge B (TECHNIK §8.3). Unter VERTRAG_VERSION 1.1: alle sichtbaren
+   * Level-Aufgaben der Welt (der Kern blendet noch nichts nach Niveau aus, daher = Maximum der Welt). Die Filterung nach
+   * Niveau/Kür und ab 1.2 nach Rangrelevanz kommt mit src/krypto/niveau.js (TECHNIK §8).
+   */
+  function bezugsMax(w) {
+    return w.maxPunkte || 0;
+  }
+
+  /**
+   * Kennzahlen eines Kurses nach Portal-Kurs-ID („k:17“) oder null (unbekannt). Nur Zahlen und sub – keine Namen,
+   * Antworten, Lösungen, Freitexte, Teamnamen, Funkraum- oder Arena-Inhalte. schueler: alle Teilnahmen (auch inaktive).
+   */
+  function kursUebersicht(kursId) {
+    const r = typeof kursId === 'string' ? db.prepare('SELECT * FROM kurse WHERE kurs_id = ?').get(kursId) : null;
+    if (!r) return null;
+    const einst = kurse.einstellungen(r.einstellungen);
+    const welten = [...kat().welten.values()].filter((w) => stand.istFrei(einst, w.nr)).sort((a, b) => a.nr - b.nr);
+    const max = welten.reduce((s, w) => s + bezugsMax(w), 0);
+    const st = [...stand.staende(r.id).values()];
+    const weltAnteil = (e, w) => (bezugsMax(w) ? Math.min(1, (e.level[w.nr] || 0) / bezugsMax(w)) : 0);
+    return {
+      kurs: r.kurs_id,
+      stand: new Date(ctx.now()).toISOString(),
+      schueler: st.map((e) => {
+        const ist = welten.reduce((s, w) => s + Math.min(e.level[w.nr] || 0, bezugsMax(w)), 0);
+        return { sub: e.row.sub, punkte: e.gesamt, geloest: e.geloest, anteil: max ? runde2(Math.min(1, ist / max)) : 0, zuletzt: e.row.last_active_at || null };
+      }),
+      welten: welten.map((w) => ({ nr: w.nr, titel: w.titel, anteil: st.length ? runde2(st.reduce((s, e) => s + weltAnteil(e, w), 0) / st.length) : 0 }))
+    };
+  }
+
+  return { schuelerListe, auswertung, urkunden, exportCsv, board, matrix, aufgabenStatistik, fallenProfil, bossErgebnisse, kursUebersicht };
 }
 
 module.exports = { createAuswertung };
