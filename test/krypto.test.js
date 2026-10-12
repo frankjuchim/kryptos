@@ -1801,3 +1801,271 @@ test('dh: SPEC W4 §12, W5 §12 (MitM), Video 05', () => {
   assert.throws(() => K.dh.dlogKlein(2, 3, 10007), K.KryptoFehler); // p < 10 000
   assert.throws(() => K.dh.oeffentlich(2, 3, 1), K.KryptoFehler);
 });
+
+// ───────────────────────────── Task 16: Verfahrens-Objekt und Baukasten ─────────────────────────────
+
+const BK = K.baukasten;
+const FUNKGITTER = { version: 1, name: 'Funkgitter', stufen: [{ typ: 'vigenere', param: { schluessel: '$wort' } }, { typ: 'spaltentransposition', param: { schluessel: '$wort' } }] };
+
+test('baukasten: Musterverfahren FUNKGITTER (SPEC W3 Tabelle B)', () => {
+  const r = BK.verschluesseln(FUNKGITTER, { wort: 'FUNKE' }, 'Wetterbericht fuer die Nordsee');
+  assert.equal(r.geheimtext, GROSS('IMYIW BWHJS JDBPS NGRGQ EYVBL IY'));
+  assert.deepEqual(r.zwischen, ['BYGDIWVRBMHBGPYJLQSISIENWJY', GROSS('IMYIW BWHJS JDBPS NGRGQ EYVBL IY')]);
+  assert.equal(BK.entschluesseln(FUNKGITTER, { wort: 'FUNKE' }, 'IMYIW BWHJS JDBPS NGRGQ EYVBL IY'), GROSS('wetterberichtfuerdienordsee'));
+  const p = BK.pruefe(FUNKGITTER, { wort: 'FUNKE' });
+  assert.deepEqual([p.ok, p.fehler], [true, []]);
+});
+
+test('baukasten: Beispiele SPEC W3 Level 3.3 (WALZE, FUNK/AB, L3-04, L3-05, L3-06, L3-07)', () => {
+  const v1 = (typ, param) => ({ version: 1, stufen: [{ typ, param }] });
+  assert.equal(BK.verschluesseln(v1('substitution', { schluesselwort: 'WALZE' }), {}, 'FUNKER').geheimtext, 'BSKHEP');
+  assert.equal(BK.verschluesseln(v1('xor', { schluessel: 'AB' }), {}, 'FUNK').geheimtext, '07170F09');
+  assert.equal(BK.entschluesseln(v1('xor', { schluessel: 'AB' }), {}, '07 17 0F 09'), 'FUNK');
+  const l304 = { version: 1, stufen: [{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }] };
+  assert.deepEqual(BK.verschluesseln(l304, {}, 'boje'), { geheimtext: 'HMRE', zwischen: ['EJOB', 'HMRE'] });
+  const l305 = { version: 1, stufen: [{ typ: 'vigenere', param: { schluessel: 'LUNA' } }, { typ: 'caesar', param: { k: 5 } }] };
+  assert.deepEqual(BK.verschluesseln(l305, {}, 'morgenrot').zwischen, ['XIEGPHEOE', 'CNJLUMJTJ']);
+  assert.equal(BK.entschluesseln(v1('spaltentransposition', { schluessel: 'TAL' }), {}, 'OKTCA ELHRN'), 'LOCHKARTEN');
+  const l307 = { version: 1, stufen: [{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: '$k' } }] };
+  assert.equal(BK.entschluesseln(l307, { k: 11 }, 'MLSNT WEVYP FAPEF PSECS PLQRF KESNL YCPO'), GROSS('dernachtzugfaehrtheutepuenktlichab'));
+  // Gartenzaun, Blockrotation im Baukasten
+  assert.equal(BK.verschluesseln(v1('gartenzaun', { zeilen: 3 }), {}, 'versorgung kommt spaet').geheimtext, GROSS('VONMP ESRUG OMSAT RGKTE'));
+  assert.equal(BK.verschluesseln(v1('blockrotation', { block: 4, um: 1 }), {}, 'baumhoehle').geheimtext, 'AUMBOEHHEL');
+  // protokoll: je Stufe Typ, Kürzel, eingesetzte Parameter, Ergebnis
+  const pr = BK.verschluesseln(l307, { k: 11 }, 'ab', { protokoll: true });
+  assert.deepEqual(pr.stufen.map((s) => [s.typ, s.kuerzel, s.param, s.ergebnis]), [['umkehrung', 'UMK', {}, 'BA'], ['caesar', 'CAE', { k: 11 }, 'ML']]);
+});
+
+test('baukasten.STUFEN: Katalog SPEC W3 Tabelle B (8 Stufen, Wertebereiche)', () => {
+  assert.deepEqual(BK.STUFEN.map((s) => s.kuerzel), ['CAE', 'SUB', 'VIG', 'SPA', 'ZAU', 'ROT', 'UMK', 'XOR']);
+  assert.deepEqual(BK.STUFEN.map((s) => s.typ), ['caesar', 'substitution', 'vigenere', 'spaltentransposition', 'gartenzaun', 'blockrotation', 'umkehrung', 'xor']);
+  const st = Object.fromEntries(BK.STUFEN.map((s) => [s.typ, s]));
+  assert.deepEqual(st.caesar.parameter.k, { art: 'zahl', min: 0, max: 25 });
+  assert.deepEqual(st.substitution.parameter.schluesselwort, { art: 'wort', min: 1, max: 26 });
+  assert.deepEqual(st.vigenere.parameter.schluessel, { art: 'wort', min: 1, max: 20 });
+  assert.deepEqual(st.spaltentransposition.parameter.schluessel, { art: 'wort', min: 2, max: 10 });
+  assert.deepEqual(st.gartenzaun.parameter.zeilen, { art: 'zahl', min: 2, max: 6 });
+  assert.deepEqual(st.blockrotation.parameter.block, { art: 'zahl', min: 2, max: 9 });
+  assert.deepEqual(st.xor.parameter.schluessel, { art: 'wort', min: 1, max: 20 });
+  assert.equal(st.xor.nurZuletzt, true);
+  assert.equal(st.xor.ausgabe, 'bytes');
+  assert.deepEqual(BK.STUFEN.map((s) => s.einordnung), ['mono', 'mono', 'poly', 'transposition', 'transposition', 'transposition', 'transposition', 'poly']);
+  assert.ok(Object.isFrozen(BK.STUFEN));
+  assert.equal(BK.MAX_STUFEN, 4);
+});
+
+test('baukasten.pruefe: Fehler (statisch)', () => {
+  const f = (v, s = {}) => BK.pruefe(v, s).fehler;
+  // XOR nicht als letzte Stufe
+  const xorVorn = { version: 1, stufen: [{ typ: 'xor', param: { schluessel: 'AB' } }, { typ: 'umkehrung' }] };
+  assert.equal(BK.pruefe(xorVorn, {}).ok, false);
+  assert.ok(f(xorVorn).some((t) => /XOR/.test(t)));
+  assert.throws(() => BK.verschluesseln(xorVorn, {}, 'abc'), K.KryptoFehler);
+  // zweimal XOR
+  assert.ok(f({ version: 1, stufen: [{ typ: 'xor', param: { schluessel: 'A' } }, { typ: 'xor', param: { schluessel: 'B' } }] }).length > 0);
+  // Bereiche nach SPEC W3
+  const eine = (typ, param) => ({ version: 1, stufen: [{ typ, param }] });
+  assert.ok(f(eine('caesar', { k: 26 })).length > 0);
+  assert.ok(f(eine('caesar', { k: 1.5 })).length > 0);
+  assert.ok(f(eine('gartenzaun', { zeilen: 7 })).length > 0); // W3: 2–6
+  assert.ok(f(eine('spaltentransposition', { schluessel: 'ABCDEFGHIJK' })).length > 0); // W3: 2–10
+  assert.ok(f(eine('spaltentransposition', { schluessel: 'A' })).length > 0);
+  assert.ok(f(eine('vigenere', { schluessel: 'A'.repeat(21) })).length > 0); // W3: 1–20
+  assert.ok(f(eine('vigenere', { schluessel: 'ÄBC' })).length > 0); // nur A–Z
+  assert.ok(f(eine('blockrotation', { block: 4, um: 4 })).length > 0);
+  assert.ok(f(eine('blockrotation', { block: 10, um: 1 })).length > 0); // W3: 2–9
+  assert.ok(f(eine('substitution', {})).length > 0); // Pflichtparameter fehlt
+  assert.ok(f(eine('caesar', { k: 3, z: 1 })).length > 0); // unbekannter Parameter
+  assert.ok(f(eine('playfair', { schluessel: 'X' })).length > 0); // keine Baukasten-Stufe
+  // Stufenzahl 1–4, Version, Name
+  assert.ok(f({ version: 1, stufen: [] }).length > 0);
+  assert.ok(f({ version: 1, stufen: new Array(5).fill({ typ: 'umkehrung' }) }).length > 0);
+  assert.ok(f({ version: 2, stufen: [{ typ: 'umkehrung' }] }).length > 0);
+  assert.ok(f({ version: 1, name: 'x'.repeat(41), stufen: [{ typ: 'umkehrung' }] }).length > 0);
+  assert.ok(f({ version: 1, name: '<b>', stufen: [{ typ: 'umkehrung' }] }).length > 0);
+  // Platzhalter: fehlt im Schlüssel, ungenutzter Schlüsselwert, ungültiger Name
+  assert.ok(f(FUNKGITTER, {}).length > 0);
+  assert.ok(f(FUNKGITTER, { wort: 'FUNKE', rest: 3 }).length > 0);
+  assert.ok(f(eine('caesar', { k: '$K' }), { K: 3 }).length > 0);
+  assert.ok(f(FUNKGITTER, { wort: 'F' }).length > 0); // F ist für SPA zu kurz (2–10)
+  assert.equal(BK.pruefe(null, {}).ok, false);
+});
+
+test('baukasten.pruefe: Hinweise P6/P7/P8 (SPEC W3 Werkstatt-Hinweise)', () => {
+  const hinweise = (v, s = {}, o) => BK.pruefe(v, s, o).hinweise.map((h) => h.p);
+  const caeCae = { version: 1, stufen: [{ typ: 'caesar', param: { k: 3 } }, { typ: 'caesar', param: { k: 5 } }] };
+  assert.ok(hinweise(caeCae).includes('P8'));
+  assert.equal(BK.pruefe(caeCae, {}).ok, true); // Hinweise blockieren nicht
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'vigenere', param: { schluessel: 'LUNA' } }, { typ: 'caesar', param: { k: 5 } }] }).includes('P8'));
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'substitution', param: { schluesselwort: 'A' } }, { typ: 'substitution', param: { schluesselwort: 'B' } }] }).includes('P8'));
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'umkehrung' }, { typ: 'umkehrung' }] }).includes('P8'));
+  assert.ok(!hinweise({ version: 1, stufen: [{ typ: 'caesar', param: { k: 3 } }, { typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }] }).includes('P8'));
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'caesar', param: { k: 0 } }] }).includes('P7'));
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'vigenere', param: { schluessel: 'AAA' } }] }).includes('P7'));
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'xor', param: { schluessel: 'A' } }] }).includes('P7'));
+  // Spaltenschlüssel alphabetisch und mindestens so lang wie der Text: nur mit Klartext prüfbar
+  const spa = { version: 1, stufen: [{ typ: 'spaltentransposition', param: { schluessel: 'ABCDE' } }] };
+  assert.ok(hinweise(spa, {}, { klartext: 'abc' }).includes('P7'));
+  assert.ok(!hinweise(spa, {}, { klartext: 'abcdefgh' }).includes('P7'));
+  // nur Transpositionen → P6; nur Substitutionen → Hinweis ohne Falle
+  assert.ok(hinweise({ version: 1, stufen: [{ typ: 'gartenzaun', param: { zeilen: 3 } }, { typ: 'umkehrung' }] }).includes('P6'));
+  const nurSub = BK.pruefe({ version: 1, stufen: [{ typ: 'vigenere', param: { schluessel: 'LUNA' } }] }, {}).hinweise;
+  assert.ok(nurSub.some((h) => h.p === null && /Reihenfolge/.test(h.text)));
+  assert.deepEqual(hinweise(FUNKGITTER, { wort: 'FUNKE' }), []);
+});
+
+test('baukasten: Umkehrbarkeitsprüfung (dynamisch) und Zufallsverfahren', () => {
+  const p = BK.pruefe(FUNKGITTER, { wort: 'FUNKE' }, { klartext: 'Ebbe und Flut, Wind und Wetter' });
+  assert.equal(p.ok, true);
+  // 300 zufällige gültige Verfahren: ver∘ent = id auf Prüftexten
+  const typen = ['caesar', 'substitution', 'vigenere', 'spaltentransposition', 'gartenzaun', 'blockrotation', 'umkehrung'];
+  for (let i = 0; i < 300; i++) {
+    const n = ganz(1, 4);
+    const stufen = [];
+    for (let j = 0; j < n; j++) {
+      const typ = j === n - 1 && zufall() < 0.2 ? 'xor' : typen[ganz(0, typen.length - 1)];
+      const param = {};
+      if (typ === 'caesar') param.k = ganz(0, 25);
+      if (typ === 'substitution') param.schluesselwort = zufallsWort(1, 12);
+      if (typ === 'vigenere' || typ === 'xor') param.schluessel = zufallsWort(1, 12);
+      if (typ === 'spaltentransposition') param.schluessel = zufallsWort(2, 10);
+      if (typ === 'gartenzaun') param.zeilen = ganz(2, 6);
+      if (typ === 'blockrotation') { param.block = ganz(2, 9); param.um = ganz(1, param.block - 1); }
+      stufen.push(typ === 'umkehrung' ? { typ } : { typ, param });
+    }
+    const v = { version: 1, stufen };
+    const t = zufallsText(80);
+    const pr = BK.pruefe(v, {}, { klartext: t });
+    assert.equal(pr.ok, true, JSON.stringify([v, pr.fehler]));
+    const g = BK.verschluesseln(v, {}, t).geheimtext;
+    assert.equal(BK.entschluesseln(v, {}, g), K.nurBuchstaben(t), JSON.stringify(v));
+  }
+});
+
+// ───────────────────────────── Verfahrens-Objekt ─────────────────────────────
+
+test('verfahren.TYPEN: Katalog AUFGABENFORMAT_KRYPTO §6', () => {
+  const typen = ['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair', 'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'xor', 'baukasten', 'frei'];
+  assert.deepEqual(Object.keys(K.verfahren.TYPEN), typen);
+  assert.deepEqual(typen.filter((t) => K.verfahren.TYPEN[t].involutorisch), ['atbash', 'porta', 'umkehrung']);
+  assert.deepEqual(K.verfahren.TYPEN.gartenzaun.parameter.zeilen, { art: 'zahl', pflicht: true, min: 2, max: 10 }); // Delta: 2–10 (Baukasten W3: 2–6)
+  assert.deepEqual(K.verfahren.TYPEN.blockrotation.parameter.block, { art: 'zahl', pflicht: true, min: 2, max: 16 });
+  assert.deepEqual(K.verfahren.TYPEN.skytale.parameter.umfang, { art: 'zahl', pflicht: true, min: 2, max: 20 });
+  assert.ok(Object.isFrozen(K.verfahren.TYPEN));
+});
+
+test('verfahren.pruefe', () => {
+  const ok = (v) => K.verfahren.pruefe(v).ok;
+  assert.equal(ok({ typ: 'caesar', k: 3 }), true);
+  assert.equal(ok({ typ: 'caesar' }), false);
+  assert.equal(ok({ typ: 'caesar', k: 26 }), false);
+  assert.equal(ok({ typ: 'caesar', k: 3, x: 1 }), false);
+  assert.equal(ok({ typ: 'affin', a: 5, b: 6 }), true);
+  assert.equal(ok({ typ: 'affin', a: 13 }), false);
+  assert.equal(ok({ typ: 'affin', a: 5, basis: 2 }), false);
+  assert.equal(ok({ typ: 'substitution', schluesselwort: 'KALIF' }), true);
+  assert.equal(ok({ typ: 'substitution', alphabet: K.schluesselwortAlphabet('KALIF') }), true);
+  assert.equal(ok({ typ: 'substitution', alphabet: 'ABC' }), false);
+  assert.equal(ok({ typ: 'substitution' }), false);
+  assert.equal(ok({ typ: 'substitution', alphabet: K.ALPHABET, schluesselwort: 'A' }), false); // genau eins von beiden
+  assert.equal(ok({ typ: 'gartenzaun', zeilen: 10 }), true); // Delta §6: 2–10
+  assert.equal(ok({ typ: 'gartenzaun', zeilen: 11 }), false);
+  assert.equal(ok({ typ: 'blockrotation', block: 16, um: 15 }), true);
+  assert.equal(ok({ typ: 'blockrotation', block: 4, um: 0 }), false);
+  assert.equal(ok({ typ: 'skytale', umfang: 3, fuellzeichen: null }), true);
+  assert.equal(ok({ typ: 'fleissner', groesse: 4, schablone: [[1, 3], [2, 2], [3, 1], [4, 4]] }), true);
+  assert.equal(ok({ typ: 'fleissner', groesse: 4, schablone: [[1, 1], [1, 4], [2, 2], [3, 3]] }), false);
+  assert.equal(ok({ typ: 'fleissner', groesse: 5, schablone: [] }), false);
+  assert.equal(ok({ typ: 'adfgvx', quadrat: 'ZEPLIN18ABCDFGHJKMOQRSTUVWXY02345679', schluessel: 'KARL' }), true);
+  assert.equal(ok({ typ: 'adfgvx', quadrat: 'ZEPPELIN18', schluessel: 'KARL' }), false); // Delta: 36 Zeichen Pflicht
+  assert.equal(ok({ typ: 'zweiquadrat_zahl', q1: 'BRIEFTAUBE', q2: 'KOMPASS', zahlenschluessel: '3142' }), true);
+  assert.equal(ok({ typ: 'zweiquadrat_zahl', q1: 'BRIEFTAUBE', q2: 'KOMPASS', zahlenschluessel: '3152' }), false);
+  assert.equal(ok({ typ: 'xor', schluessel: 'AB' }), true);
+  assert.equal(ok({ typ: 'xor', schluesselBits: '0100 0001' }), true);
+  assert.equal(ok({ typ: 'xor', schluesselBits: '0100' }), false);
+  assert.equal(ok({ typ: 'xor' }), false);
+  assert.equal(ok({ typ: 'spaltentransposition', schluessel: [3, 1, 2] }), true);
+  assert.equal(ok({ typ: 'spaltentransposition', schluessel: [3, 3, 2] }), false);
+  assert.equal(ok({ typ: 'baukasten', verfahren: FUNKGITTER, schluessel: { wort: 'FUNKE' } }), true);
+  assert.equal(ok({ typ: 'baukasten', verfahren: FUNKGITTER, schluessel: {} }), false);
+  assert.equal(ok({ typ: 'frei', name: 'domino' }), true);
+  assert.equal(ok({ typ: 'enigma' }), false);
+  assert.equal(ok(null), false);
+});
+
+test('verfahren.anwenden: Dispatcher (Werte aus W0–W3)', () => {
+  const an = K.verfahren.anwenden;
+  assert.equal(an({ typ: 'caesar', k: 6 }, 'treffpunktambrunnen', 'ver'), 'ZXKLLVATQZGSHXATTKT');
+  assert.equal(an({ typ: 'caesar', k: 11 }, 'RPSPT XMZED NSLQE', 'ent'), 'GEHEIMBOTSCHAFT');
+  assert.equal(an({ typ: 'atbash' }, 'caesar', 'ver'), 'XZVHZI');
+  assert.equal(an({ typ: 'affin', a: 5, b: 6 }, 'dattel', 'ver'), 'VGXXAJ'); // Standard A = 0
+  assert.equal(an({ typ: 'affin', a: 5, b: 6, basis: 1 }, 'dattel', 'ver'), K.affin('dattel', 5, 6, 'ver', 1));
+  assert.equal(an({ typ: 'substitution', schluesselwort: 'KALIF' }, 'mond', 'ver'), 'MONI');
+  assert.equal(an({ typ: 'substitution', schluesselwort: 'KALIF', rest: 'ab_letztem' }, 'z', 'ver'), 'E');
+  assert.equal(an({ typ: 'substitution', alphabet: K.schluesselwortAlphabet('SULTAN') }, 'harun', 'ver'), 'CSORI');
+  assert.equal(an({ typ: 'vigenere', schluessel: 'ROT' }, 'kanal', 'ver'), 'BOGRZ');
+  assert.equal(an({ typ: 'autokey', schluessel: 'ZU' }, 'ALVEHRA', 'ent'), 'BRUNNEN');
+  assert.equal(an({ typ: 'porta', schluessel: 'SIEGEL' }, 'BKPWEZP', 'ent'), 'STEMPEL');
+  assert.equal(an({ typ: 'playfair', schluessel: 'RIALTO' }, 'wasserweg', 'ver'), 'XIQYUDIVBM');
+  assert.equal(an({ typ: 'kreuzquadrat', oben: 'GONDEL', unten: 'MURANO' }, 'mehl', 'ver'), 'KCFQ');
+  assert.equal(an({ typ: 'zweiquadrat_zahl', q1: 'BRIEFTAUBE', q2: 'KOMPASS', zahlenschluessel: '3142' }, 'rat', 'ver'), 'QGK');
+  assert.equal(an({ typ: 'polybios' }, 'rom', 'ver'), '423432');
+  assert.equal(an({ typ: 'polybios', schluessel: 'ATHEN' }, '45 51 24 51 31', 'ent'), K.atbash('feuer'));
+  assert.equal(an({ typ: 'adfgvx', quadrat: 'ZEPLIN18ABCDFGHJKMOQRSTUVWXY02345679', schluessel: 'KARL' }, 'nebel4', 'ver'), 'XGGADADDDAAX');
+  assert.equal(an({ typ: 'gartenzaun', zeilen: 3 }, 'die mauer haelt stand', 'ver'), 'DAHTNIMURALSADEEET');
+  assert.equal(an({ typ: 'skytale', umfang: 3 }, 'wir halten den pass', 'ver'), 'WTPIEARNSHDSAEXLNX');
+  assert.equal(an({ typ: 'fleissner', groesse: 4, schablone: [[1, 3], [2, 2], [3, 1], [4, 4]] }, 'athen sendet hilfe', 'ver'), 'DNAILTSEHFTENHEE');
+  assert.equal(an({ typ: 'spaltentransposition', schluessel: 'TAL' }, 'OKTCAELHRN', 'ent'), 'LOCHKARTEN');
+  assert.equal(an({ typ: 'umkehrung' }, 'boje', 'ver'), 'EJOB');
+  assert.equal(an({ typ: 'blockrotation', block: 4, um: 1 }, 'baumhoehle', 'ver'), 'AUMBOEHHEL');
+  assert.equal(an({ typ: 'xor', schluessel: 'AB' }, 'FUNK', 'ver'), '07170F09');
+  assert.equal(an({ typ: 'xor', schluesselBits: '0100 0001 0100 0010' }, '07170F09', 'ent'), 'FUNK');
+  assert.equal(an({ typ: 'baukasten', verfahren: FUNKGITTER, schluessel: { wort: 'FUNKE' } }, 'Wetterbericht fuer die Nordsee', 'ver'), GROSS('IMYIW BWHJS JDBPS NGRGQ EYVBL IY'));
+  assert.equal(an({ typ: 'baukasten', verfahren: FUNKGITTER, schluessel: { wort: 'FUNKE' } }, 'IMYIWBWHJSJDBPSNGRGQEYVBLIY', 'ent'), GROSS('wetterberichtfuerdienordsee'));
+  // Zahlenausgabe (Std. basis 1: Z = 26)
+  assert.deepEqual(an({ typ: 'caesar', k: 3 }, 'W', 'ver', { ausgabe: 'zahlen' }), [26]);
+  assert.deepEqual(an({ typ: 'caesar', k: 3 }, 'W', 'ver', { ausgabe: 'zahlen', basis: 0 }), [25]);
+  assert.throws(() => an({ typ: 'frei', name: 'domino' }, 'abc', 'ver'), K.KryptoFehler);
+  assert.throws(() => an({ typ: 'caesar', k: 99 }, 'abc', 'ver'), K.KryptoFehler);
+  assert.throws(() => an({ typ: 'caesar', k: 3 }, 'abc', 'ver', { ausgabe: 'roemisch' }), K.KryptoFehler);
+});
+
+test('verfahren.varianten: Fehlrechnungen (Delta §9.2)', () => {
+  const va = (v, t, r, o) => K.verfahren.varianten(v, t, r, o);
+  const c = va({ typ: 'caesar', k: 6 }, 'treffpunkt', 'ver');
+  const finde = (liste, p, code) => liste.filter((x) => x.p === p && x.code === code).map((x) => x.text);
+  assert.deepEqual(finde(c, 'P3', 'richtung'), [K.caesar('treffpunkt', 6, 'ent')]); // −k statt +k
+  assert.deepEqual(finde(c, 'P1', 'zaehlbasis').sort(), [K.caesar('treffpunkt', 5), K.caesar('treffpunkt', 7)].sort()); // Abweichung 1
+  assert.ok(c.every((x) => x.text !== K.caesar('treffpunkt', 6)));
+  // Vigenère: Schlüsselbuchstabe A = 1 (+1) und versetzter Schlüssel
+  const v = va({ typ: 'vigenere', schluessel: 'ROT' }, 'kanal', 'ver');
+  assert.ok(finde(v, 'P1', 'zaehlbasis').includes(K.vigenere('kanal', 'SPU')));
+  assert.ok(finde(v, 'P1', 'position').includes(K.vigenere('kanal', 'OTR')));
+  // affin: andere Zählbasis
+  assert.ok(finde(va({ typ: 'affin', a: 5, b: 6 }, 'dattel', 'ver'), 'P1', 'zaehlbasis').includes(K.affin('dattel', 5, 6, 'ver', 1)));
+  // Transposition: Permutation nicht umgekehrt, Füllzeichen
+  const sk = va({ typ: 'skytale', umfang: 3 }, 'wirhaltendenpass', 'ver');
+  assert.ok(finde(sk, 'P3', 'permutation').length === 1);
+  assert.ok(finde(sk, 'P4', 'fuellung').includes(K.skytale('wirhaltendenpass', 3, 'ver', { fuellzeichen: null })));
+  const fl = va({ typ: 'fleissner', groesse: 4, schablone: [[1, 3], [2, 2], [3, 1], [4, 4]] }, 'athensendethilfe', 'ver');
+  assert.ok(finde(fl, 'P3', 'permutation').includes(K.fleissner('athensendethilfe', 4, [[1, 3], [2, 2], [3, 1], [4, 4]], 'ver', { drehung: 'links' })));
+  // Mehrstufig: Stufen in falscher Reihenfolge zurückgerechnet (W3-L3-03)
+  const v303 = { version: 1, stufen: [{ typ: 'gartenzaun', param: { zeilen: 3 } }, { typ: 'vigenere', param: { schluessel: 'LUNA' } }, { typ: 'umkehrung' }] };
+  const g303 = K.baukasten.verschluesseln(v303, {}, 'sternenhimmel').geheimtext;
+  const falsch = K.umkehrung(K.vigenere(K.gartenzaun(g303, 3, 'ent'), 'LUNA', 'ent')); // Stufen vorwärts invertiert
+  const vb = va({ typ: 'baukasten', verfahren: v303, schluessel: {} }, g303, 'ent');
+  assert.deepEqual(finde(vb, 'P3', 'reihenfolge'), [falsch]);
+  assert.notEqual(falsch, 'STERNENHIMMEL');
+  // Playfair: Doppelbuchstaben nicht getrennt
+  const pf = va({ typ: 'playfair', schluessel: 'RIALTO' }, 'ballett', 'ver');
+  assert.ok(finde(pf, 'P4', 'paare').length >= 1);
+  // Zahlenausgabe: 0 statt Z, Überlauf, negativer Rest
+  const z = va({ typ: 'caesar', k: 3 }, 'WXY', 'ver', { ausgabe: 'zahlen' });
+  assert.deepEqual(finde(z, 'P2', 'null_statt_z'), [[0, 1, 2]]);
+  assert.deepEqual(finde(z, 'P2', 'ueberlauf'), [[26, 27, 28]]);
+  const zn = va({ typ: 'caesar', k: 3 }, 'ABC', 'ent', { ausgabe: 'zahlen' });
+  assert.deepEqual(finde(zn, 'P2', 'negativ'), [[-2, -1, 0]]);
+  // keine Kandidaten für frei und involutorische Richtungsfehler
+  assert.deepEqual(va({ typ: 'frei' }, 'abc', 'ver'), []);
+  assert.deepEqual(finde(va({ typ: 'atbash' }, 'abc', 'ver'), 'P3', 'richtung'), []);
+});

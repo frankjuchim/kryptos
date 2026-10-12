@@ -414,14 +414,14 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 
 | Funktion | Semantik |
 |---|---|
-| `verfahren.TYPEN` | Katalog aller `typ` aus Delta §6 mit Parameter-Schema und `involutorisch`-Kennzeichen |
-| `verfahren.pruefe(v)` | `{ ok, fehler: [] }` – Parameterprüfung |
-| `verfahren.anwenden(v, text, richtung, { basis = 1, ausgabe = 'buchstaben' })` | Dispatcher auf die Einzelfunktionen; `frei` → `KryptoFehler` |
-| `verfahren.varianten(v, text, richtung, optionen)` | Kandidaten typischer Fehlrechnungen `[{ p, code, text }]` (für die Diagnose, Delta §9.2) |
-| `baukasten.STUFEN` | Stufen-Katalog (§9.2) mit `eingabe`/`ausgabe` (`buchstaben`/`bytes`), Parameter-Schema |
-| `baukasten.pruefe(verfahren, schluessel)` | `{ ok, fehler: [], hinweise: [{ p: 'P7'\|'P8', text }] }` (§9.3) |
-| `baukasten.verschluesseln(verfahren, schluessel, klartext, { protokoll })` | `{ geheimtext, zwischen: [...] }` |
-| `baukasten.entschluesseln(verfahren, schluessel, geheimtext)` | Stufen rückwärts, jede invertiert |
+| `verfahren.TYPEN` | Katalog aller `typ` aus Delta §6 (Wertebereiche **nach Delta §6**, z. B. `gartenzaun.zeilen` 2–10) als `{ typ: { parameter: { name: { art, pflicht, min?, max?, werte? } }, einsVon?, involutorisch, art } }` (eingefroren) |
+| `verfahren.pruefe(v)` | `{ ok, fehler: [] }` – Parameterprüfung: Pflichtparameter, unbekannte Parameter, Bereiche; `substitution` genau eins von `alphabet`/`schluesselwort`, `xor` genau eins von `schluessel`/`schluesselBits`; `affin.a` teilerfremd; `adfgvx.quadrat` genau 36 Zeichen; `fleissner.schablone` gültig; `baukasten` über `baukasten`-Prüfung |
+| `verfahren.anwenden(v, text, richtung, { basis = 1, ausgabe = 'buchstaben' })` | Dispatcher auf die Einzelfunktionen (ungültiges Verfahren oder `frei` → `KryptoFehler`). `affin` rechnet mit `v.basis` (Std. **0**); die Option `basis` wirkt nur auf `ausgabe: 'zahlen'` (Buchstabenwerte, nur für Buchstabenergebnisse). `xor`: `ver` normalisiert die Eingabe (`krypto`), `ent` erwartet Hex |
+| `verfahren.varianten(v, text, richtung, optionen)` | Kandidaten typischer Fehlrechnungen `[{ p, code, text }]` (für die Diagnose, Delta §9.2), Reihenfolge P3, P1, P2, P4, ohne Duplikate und ohne die richtige Lösung: P3 `richtung`/`permutation` (Gegenrichtung; Fleißner auch andere Drehrichtung), P3 `reihenfolge` (`baukasten`/`adfgvx` beim Entschlüsseln), P1 `zaehlbasis` (Caesar k ± 1, Schlüsselbuchstaben + 1, affin andere Basis), P1 `position` (Vigenère-Schlüssel um eine Stelle versetzt), P2 `null_statt_z`/`ueberlauf`/`negativ` (nur `ausgabe: 'zahlen'`, Basis 1, Caesar/Vigenère), P4 `paare` (Playfair ohne Trennen der Doppelbuchstaben), P4 `fuellung` (Skytale/Spaltentransposition mit umgeschaltetem Füllzeichen) |
+| `baukasten.STUFEN`, `baukasten.MAX_STUFEN` | Stufen-Katalog nach **SPEC W3 Tabelle B** (§9.2): `[{ typ, kuerzel, name, parameter, einordnung, ausgabe, nurZuletzt }]` (eingefroren); höchstens 4 Stufen |
+| `baukasten.pruefe(verfahren, schluessel, { klartext })` | `{ ok, fehler: [], hinweise: [{ p: 'P6'\|'P7'\|'P8'\|null, text }] }` (§9.3) |
+| `baukasten.verschluesseln(verfahren, schluessel, klartext, { protokoll })` | `{ geheimtext, zwischen: [Ergebnis je Stufe] }`, mit `protokoll: true` zusätzlich `stufen: [{ typ, kuerzel, param, ergebnis }]`; ungültiges Verfahren → `KryptoFehler`. Test FUNKGITTER: `IMYIWBWHJSJDBPSNGRGQEYVBLIY` |
+| `baukasten.entschluesseln(verfahren, schluessel, geheimtext)` | Stufen rückwärts, jede invertiert (bei XOR als letzter Stufe ist der Geheimtext Hex) |
 
 ### 5.3 Python-Zwilling `werkzeuge/krypto/krypto.py`
 
@@ -976,40 +976,55 @@ gespeichert wird erst die Einreichung in eine Arena.
   "schluessel": { "wort": "LICHT", "zeilen": 3 } }
 ```
 
-- `stufen`: 1–6 Einträge. Ein Parameterwert ist entweder eine **Konstante** (Teil des öffentlichen Verfahrens) oder ein
+- `stufen`: 1–4 Einträge (SPEC W3 Tabelle B, „Kombination: 1 bis 4 Stufen“; vorher 1–6). Ein Parameterwert ist entweder eine **Konstante** (Teil des öffentlichen Verfahrens) oder ein
   **Platzhalter** `"$name"` (`^[a-z][a-z0-9]{0,11}$`), dessen Wert im geheimen `schluessel` steht. Jeder Platzhalter muss
   im Schlüssel vorkommen, jeder Schlüsselwert muss verwendet werden; derselbe Platzhalter darf in mehreren Stufen stehen.
 - `name` ≤ 40 Zeichen, nur Buchstaben/Ziffern/Leerzeichen/Bindestrich (wird Teamnamen nicht ersetzen).
 
-**Stufen-Katalog** (`Krypto.baukasten.STUFEN`; Feinheiten und ggf. weitere Stufen aus `SPEC_Kryptos_W3_Maschinen.md`, die
-bei Erstellung dieses Dokuments noch nicht vorlag – Abweichungen dort gehen vor):
+**Stufen-Katalog** (`Krypto.baukasten.STUFEN`) – verbindlich ist **SPEC W3 Tabelle B** (Level 3.3); die frühere Fassung
+dieser Tabelle ist danach korrigiert:
 
-| `typ` | Parameter (Typ, Bereich) | Eingabe → Ausgabe | umkehrbar, wenn |
+| `typ` (Kürzel) | Parameter (Typ, Bereich nach W3) | Eingabe → Ausgabe | Einordnung |
 |---|---|---|---|
-| `caesar` | `k` Ganzzahl 0–25 | Buchstaben → Buchstaben | immer |
-| `substitution` | `schluesselwort` 1–26 Buchstaben | Buchstaben → Buchstaben | immer (Doppelte werden entfernt) |
-| `vigenere` | `schluessel` 1–26 Buchstaben | Buchstaben → Buchstaben | immer |
-| `spaltentransposition` | `schluessel` 2–12 Buchstaben | Buchstaben/Bytes → gleich | immer (unvollständige Matrix, kein Füllzeichen) |
-| `gartenzaun` | `zeilen` 2–10 | Buchstaben/Bytes → gleich | immer |
-| `xor` | `schluessel` 1–16 Zeichen (ASCII 32–126) | Buchstaben/Bytes → **Bytes** | immer |
-| `umkehrung` | – | beliebig → gleich | immer |
-| `blockrotation` | `block` 2–16, `um` 1…block−1 | beliebig → gleich | immer |
+| `caesar` (CAE) | `k` Ganzzahl 0–25 | Buchstaben → Buchstaben | monoalphabetisch |
+| `substitution` (SUB) | `schluesselwort` 1–26 Buchstaben A–Z | Buchstaben → Buchstaben | monoalphabetisch |
+| `vigenere` (VIG) | `schluessel` 1–20 Buchstaben A–Z | Buchstaben → Buchstaben | polyalphabetisch |
+| `spaltentransposition` (SPA) | `schluessel` 2–10 Buchstaben A–Z | Buchstaben → Buchstaben | Transposition (unvollständige Matrix, nie auffüllen) |
+| `gartenzaun` (ZAU) | `zeilen` 2–6 | Buchstaben → Buchstaben | Transposition |
+| `blockrotation` (ROT) | `block` 2–9, `um` 1…block−1 | Buchstaben → Buchstaben | Transposition |
+| `umkehrung` (UMK) | – | Buchstaben → Buchstaben | Transposition (selbstinvers) |
+| `xor` (XOR) | `schluessel` 1–20 Buchstaben A–Z | Buchstaben → **Hex** | polyalphabetisch auf Bitebene |
 
-Typregel: Nach der ersten `xor`-Stufe sind nur noch Stufen mit Eingabe „Bytes“ erlaubt (`spaltentransposition`,
-`gartenzaun`, `xor`, `umkehrung`, `blockrotation`). Geheimtext-Darstellung: Buchstaben → GROSS in Fünfergruppen;
-Bytes → Hex in Zweiergruppen (beides erfüllt `^[A-Z0-9 ]+$`).
+Typregel (W3): `xor` höchstens einmal und **nur als letzte Stufe**; es wird nie mit X aufgefüllt, alle Stufen außer XOR
+erhalten die Länge. Geheimtext-Darstellung: Buchstaben → GROSS in Fünfergruppen; nach XOR Hex in Zweiergruppen (beides
+erfüllt `^[A-Z0-9 ]+$`). Die frühere Typregel („nach `xor` nur Stufen mit Eingabe Bytes“) entfällt.
+
+**Unterschiede Baukasten (SPEC W3) ↔ Verfahrens-Objekt (AUFGABENFORMAT_KRYPTO §6)** – bewusst getrennt, kein Abgleich
+der Spec-Dokumente: `baukasten.STUFEN` folgt W3, `verfahren.TYPEN` folgt Delta §6.
+
+| Parameter | Baukasten (W3) | Verfahrens-Objekt (Delta §6) |
+|---|---|---|
+| `gartenzaun.zeilen` | 2–6 | 2–10 |
+| `blockrotation.block` | 2–9 | 2–16 |
+| `vigenere.schluessel` | 1–20 Buchstaben A–Z | Buchstaben (ohne Längengrenze) |
+| `spaltentransposition.schluessel` | Wort 2–10 Buchstaben A–Z | Wort oder Zahlenfolge (ohne Längengrenze), optional `fuellzeichen` |
+| `xor.schluessel` | Wort 1–20 Buchstaben A–Z, nur letzte Stufe | Text (ASCII 32–126) **oder** `schluesselBits` |
+| Stufenzahl | 1–4 | – (ein Verfahren; `typ: "baukasten"` verweist auf das W3-Format) |
 
 ### 9.3 Umkehrbarkeits- und Qualitätsprüfung (`baukasten.pruefe` + Server)
 
 1. **Statisch:** Schema, Bereiche, Typregel, Platzhalter vollständig → `fehler`.
-2. **Dynamisch:** `entschluesseln(verschluesseln(t)) = t` für den eingereichten Klartext und drei feste Prüftexte
-   (unterschiedliche Längen inkl. Länge, die kein Vielfaches der Block-/Spaltenlängen ist) → sonst Fehler.
-3. **Hinweise** (keine Fehler, für den Rückblick; erst ab Phase `beurteilung` sichtbar):
-   P7 – schwache Schlüssel (`k = 0`, Schlüsselwort aus lauter gleichen Buchstaben, `xor`-Schlüssel aus Nullbytes, Zeilen ≥
-   Textlänge); P8 – wirkungslose Kombinationen (zwei Caesar-Stufen, Caesar + Vigenère, zwei Umkehrungen, Blockrotation mit
-   `um` = 0 mod block, zwei gleiche Transpositionen hintereinander); P6 – nur Transpositionsstufen
-   („Häufigkeitsverteilung bleibt erhalten“).
-4. Klartext: 40–300 Buchstaben nach `nurBuchstaben` (Deutsch, keine Ziffern); Geheimtext ≤ 900 Zeichen in Darstellung.
+2. **Dynamisch** (SPEC W3 Level 3.3): `entschluesseln(verschluesseln(t)) = nurBuchstaben(t)` für den eigenen Text
+   (Option `klartext`), „Ebbe und Flut“ und einen Text der Länge 1 → sonst Fehler.
+3. **Hinweise** nach den Werkstatt-Hinweisen von SPEC W3 (keine Fehler; in der Arena erst ab Phase `beurteilung`
+   sichtbar): P7 – schwache Schlüssel (Caesar `k = 0`; Vigenère-Schlüssel nur aus A bzw. aus lauter gleichen Buchstaben;
+   XOR-Wort aus nur einem Buchstaben; Spaltenschlüssel in alphabetischer Reihenfolge bei Länge ≥ Textlänge – nur mit
+   `klartext`); P8 – Kombination verschmilzt (zwei benachbarte Stufen aus {Caesar, Vigenère}, zweimal Substitution
+   nebeneinander, zweimal Umkehrung nebeneinander); P6 – nur Transpositionsstufen („Häufigkeitsverteilung bleibt
+   erhalten“); ohne Falle (`p: null`) – nur Substitutionsstufen („Wortgrenzen und Reihenfolge bleiben“). *(Korrigiert
+   nach SPEC W3; die frühere Liste nannte u. a. Nullbytes, Zeilen ≥ Textlänge und zwei gleiche Transpositionen.)*
+4. Klartext (Server, Arena): 150–300 Buchstaben nach `nurBuchstaben` (Deutsch, keine Ziffern; Mindestlänge nach SPEC W3
+   §9.4 „≥ 150 Buchstaben“, vorher 40); Geheimtext ≤ 900 Zeichen in Darstellung. Die Bibliothek prüft die Länge nicht.
 
 ### 9.4 Einreichung (Phase `werkstatt`)
 

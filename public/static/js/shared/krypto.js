@@ -367,7 +367,6 @@
     const opt = optionen || {};
     const ij = pruefeIJ(opt.ij === undefined ? 'I' : opt.ij);
     const q = quadrat(schluessel, { groesse: 5, ij });
-    const pos = positionen(q);
     let paare;
     if (richtung === 'ver') {
       paare = playfairPaare(text, opt);
@@ -382,6 +381,12 @@
         paare.push(t[i] + t[i + 1]);
       }
     }
+    return playfairRechne(q, paare, richtung);
+  }
+
+  /** Playfair-Regeln auf fertige Paare anwenden (gleiche Buchstaben werden wie „gleiche Zeile“ behandelt) */
+  function playfairRechne(q, paare, richtung) {
+    const pos = positionen(q);
     const d = richtung === 'ver' ? 1 : 4; // 4 ≡ −1 (mod 5)
     let aus = '';
     for (const p of paare) {
@@ -1381,6 +1386,484 @@
     return ggT(a, b);
   }
 
+  // ───────────────────────────── Baukasten (SPEC W3 Tabelle B, TECHNIK §9.2) ─────────────────────────────
+
+  function tiefFrieren(o) {
+    if (o && typeof o === 'object') {
+      Object.values(o).forEach(tiefFrieren);
+      Object.freeze(o);
+    }
+    return o;
+  }
+
+  const istObjekt = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
+
+  /**
+   * Stufen-Katalog nach SPEC W3 Tabelle B (verbindlich für Plattform, Gerüst, Arena, Papier). Wertebereiche hier nach
+   * W3; das Verfahrens-Objekt (verfahren.TYPEN) folgt AUFGABENFORMAT_KRYPTO §6 – Unterschiede: TECHNIK §9.2.
+   */
+  const STUFEN = tiefFrieren([
+    { typ: 'caesar', kuerzel: 'CAE', name: 'Caesar', parameter: { k: { art: 'zahl', min: 0, max: 25 } }, einordnung: 'mono', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'substitution', kuerzel: 'SUB', name: 'Schlüsselwort-Substitution', parameter: { schluesselwort: { art: 'wort', min: 1, max: 26 } }, einordnung: 'mono', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'vigenere', kuerzel: 'VIG', name: 'Vigenère', parameter: { schluessel: { art: 'wort', min: 1, max: 20 } }, einordnung: 'poly', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'spaltentransposition', kuerzel: 'SPA', name: 'Spaltentransposition', parameter: { schluessel: { art: 'wort', min: 2, max: 10 } }, einordnung: 'transposition', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'gartenzaun', kuerzel: 'ZAU', name: 'Gartenzaun', parameter: { zeilen: { art: 'zahl', min: 2, max: 6 } }, einordnung: 'transposition', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'blockrotation', kuerzel: 'ROT', name: 'Blockrotation', parameter: { block: { art: 'zahl', min: 2, max: 9 }, um: { art: 'zahl', min: 1, max: 8, kleinerAls: 'block' } }, einordnung: 'transposition', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'umkehrung', kuerzel: 'UMK', name: 'Umkehrung', parameter: {}, einordnung: 'transposition', ausgabe: 'buchstaben', nurZuletzt: false },
+    { typ: 'xor', kuerzel: 'XOR', name: 'XOR mit Schlüsselwort', parameter: { schluessel: { art: 'wort', min: 1, max: 20 } }, einordnung: 'poly', ausgabe: 'bytes', nurZuletzt: true },
+  ]);
+  const MAX_STUFEN = 4;
+  const PRUEFTEXTE = ['Ebbe und Flut', 'A'];
+
+  function stufeNach(typ) {
+    return STUFEN.find((s) => s.typ === typ);
+  }
+
+  /** Wert gegen eine Parameterbeschreibung { art: 'zahl'|'wort', min, max } prüfen → Fehlertext oder null */
+  function wertFehler(name, wert, spec) {
+    if (spec.art === 'zahl') {
+      if (!Number.isInteger(wert) || wert < spec.min || wert > spec.max) return `„${name}“ muss eine ganze Zahl von ${spec.min} bis ${spec.max} sein.`;
+    } else if (spec.art === 'wort') {
+      if (typeof wert !== 'string' || !/^[A-Za-z]+$/.test(wert) || wert.length < spec.min || wert.length > spec.max) {
+        return `„${name}“ muss ein Wort aus ${spec.min} bis ${spec.max} Buchstaben A–Z sein.`;
+      }
+    }
+    return null;
+  }
+
+  /** statische Prüfung und Auflösung der Platzhalter → { fehler, stufen: [{ typ, param }] } */
+  function baukastenAufloesen(verfahren, schluessel) {
+    const fehler = [];
+    const stufen = [];
+    if (!istObjekt(verfahren)) return { fehler: ['Das Verfahren muss ein Objekt sein.'], stufen };
+    const s = schluessel === undefined || schluessel === null ? {} : schluessel;
+    if (!istObjekt(s)) return { fehler: ['Der Schlüssel muss ein Objekt sein.'], stufen };
+    if (verfahren.version !== 1) fehler.push('Unbekannte Version des Verfahrens (erwartet: 1).');
+    if (verfahren.name !== undefined && (typeof verfahren.name !== 'string' || verfahren.name.length > 40 || !/^[A-Za-zÄÖÜäöüß0-9 -]*$/.test(verfahren.name))) {
+      fehler.push('Der Name hat höchstens 40 Zeichen (Buchstaben, Ziffern, Leerzeichen, Bindestrich).');
+    }
+    const liste = verfahren.stufen;
+    if (!Array.isArray(liste) || liste.length < 1 || liste.length > MAX_STUFEN) {
+      fehler.push(`Ein Verfahren besteht aus 1 bis ${MAX_STUFEN} Stufen.`);
+      return { fehler, stufen };
+    }
+    const benutzt = new Set();
+    liste.forEach((st, i) => {
+      const nr = i + 1;
+      const def = istObjekt(st) ? stufeNach(st.typ) : null;
+      if (!def) {
+        fehler.push(`Stufe ${nr}: unbekannte Stufe.`);
+        return;
+      }
+      const roh = st.param === undefined ? {} : st.param;
+      if (!istObjekt(roh)) {
+        fehler.push(`Stufe ${nr}: Parameter müssen ein Objekt sein.`);
+        return;
+      }
+      const param = {};
+      for (const name of Object.keys(roh)) if (!(name in def.parameter)) fehler.push(`Stufe ${nr}: unbekannter Parameter „${name}“.`);
+      for (const [name, spec] of Object.entries(def.parameter)) {
+        let wert = roh[name];
+        if (wert === undefined) {
+          fehler.push(`Stufe ${nr}: Parameter „${name}“ fehlt.`);
+          continue;
+        }
+        if (typeof wert === 'string' && wert.startsWith('$')) {
+          if (!/^\$[a-z][a-z0-9]{0,11}$/.test(wert)) {
+            fehler.push(`Stufe ${nr}: ungültiger Platzhalter „${wert}“.`);
+            continue;
+          }
+          const schl = wert.slice(1);
+          if (!(schl in s)) {
+            fehler.push(`Stufe ${nr}: Der Schlüssel enthält keinen Wert für „${wert}“.`);
+            continue;
+          }
+          benutzt.add(schl);
+          wert = s[schl];
+        }
+        const f = wertFehler(name, wert, spec);
+        if (f) fehler.push(`Stufe ${nr}: ${f}`);
+        else param[name] = spec.art === 'wort' ? wert.toUpperCase() : wert;
+      }
+      if (def.typ === 'blockrotation' && Number.isInteger(param.block) && Number.isInteger(param.um) && param.um >= param.block) {
+        fehler.push(`Stufe ${nr}: Die Drehung muss kleiner als die Blocklänge sein.`);
+      }
+      stufen.push({ typ: def.typ, param });
+    });
+    for (const k of Object.keys(s)) if (!benutzt.has(k)) fehler.push(`Der Schlüsselwert „${k}“ wird in keiner Stufe verwendet.`);
+    const xorStellen = stufen.map((st, i) => (st.typ === 'xor' ? i : -1)).filter((i) => i >= 0);
+    if (xorStellen.length > 1) fehler.push('XOR darf höchstens einmal vorkommen.');
+    if (xorStellen.some((i) => i !== liste.length - 1)) fehler.push('XOR darf nur als letzte Stufe stehen (die Ausgabe ist kein Buchstabentext mehr).');
+    return { fehler, stufen };
+  }
+
+  function stufeAnwenden(typ, p, t, richtung) {
+    switch (typ) {
+      case 'caesar': return caesar(t, p.k, richtung);
+      case 'substitution': return substitution(t, schluesselwortAlphabet(p.schluesselwort), richtung);
+      case 'vigenere': return vigenere(t, p.schluessel, richtung);
+      case 'spaltentransposition': return spaltentransposition(t, p.schluessel, richtung);
+      case 'gartenzaun': return gartenzaun(t, p.zeilen, richtung);
+      case 'blockrotation': return blockrotation(t, p.block, p.um, richtung);
+      case 'umkehrung': return umkehrung(t);
+      case 'xor': return richtung === 'ver' ? xor(t, p.schluessel) : xor(t, p.schluessel, 'ent');
+      default: throw new KryptoFehler('Unbekannte Stufe.');
+    }
+  }
+
+  function baukastenStufen(verfahren, schluessel) {
+    const { fehler, stufen } = baukastenAufloesen(verfahren, schluessel);
+    if (fehler.length) throw new KryptoFehler(fehler[0]);
+    return stufen;
+  }
+
+  /** { geheimtext, zwischen: [Ergebnis je Stufe] }; protokoll: zusätzlich stufen: [{ typ, kuerzel, param, ergebnis }] */
+  function baukastenVerschluesseln(verfahren, schluessel, klartext, { protokoll = false } = {}) {
+    const stufen = baukastenStufen(verfahren, schluessel);
+    let t = nurBuchstaben(klartext);
+    const zwischen = [];
+    const protokollListe = [];
+    for (const st of stufen) {
+      t = stufeAnwenden(st.typ, st.param, t, 'ver');
+      zwischen.push(t);
+      if (protokoll) protokollListe.push({ typ: st.typ, kuerzel: stufeNach(st.typ).kuerzel, param: { ...st.param }, ergebnis: t });
+    }
+    const erg = { geheimtext: t, zwischen };
+    if (protokoll) erg.stufen = protokollListe;
+    return erg;
+  }
+
+  /** Stufen rückwärts, jede invertiert (bei XOR als letzter Stufe ist der Geheimtext Hex) */
+  function baukastenEntschluesseln(verfahren, schluessel, geheimtext) {
+    const stufen = baukastenStufen(verfahren, schluessel);
+    let t = pruefeText(geheimtext);
+    for (let i = stufen.length - 1; i >= 0; i--) t = stufeAnwenden(stufen[i].typ, stufen[i].param, t, 'ent');
+    return nurBuchstaben(t);
+  }
+
+  /**
+   * Umkehrbarkeits- und Qualitätsprüfung (SPEC W3 Level 3.3, TECHNIK §9.3): { ok, fehler, hinweise: [{ p, text }] }.
+   * Fehler: Format, Bereiche, XOR nur einmal und zuletzt, Platzhalter; Rundreise für den eigenen Text, „Ebbe und Flut“
+   * und einen Text der Länge 1. Hinweise (blockieren nicht): P7, P8, P6 sowie „nur Substitutionsstufen“ (p: null).
+   */
+  function baukastenPruefe(verfahren, schluessel, { klartext = null } = {}) {
+    const { fehler, stufen } = baukastenAufloesen(verfahren, schluessel);
+    const hinweise = [];
+    if (fehler.length === 0) {
+      const texte = (klartext === null ? [] : [pruefeText(klartext)]).concat(PRUEFTEXTE);
+      for (const t of texte) {
+        try {
+          const g = baukastenVerschluesseln(verfahren, schluessel, t).geheimtext;
+          if (baukastenEntschluesseln(verfahren, schluessel, g) !== nurBuchstaben(t)) fehler.push(`Entschlüsseln liefert für „${t.slice(0, 20)}“ nicht den Klartext.`);
+        } catch (e) {
+          if (!(e instanceof KryptoFehler)) throw e;
+          fehler.push(`Umkehrbarkeit nicht prüfbar: ${e.message}`);
+        }
+      }
+      const n = klartext === null ? null : nurBuchstaben(klartext).length;
+      stufen.forEach((st, i) => {
+        const p = st.param;
+        if (st.typ === 'caesar' && p.k === 0) hinweise.push({ p: 'P7', text: `Stufe ${i + 1}: Caesar mit k = 0 verändert nichts.` });
+        if (st.typ === 'vigenere' && /^A+$/.test(p.schluessel)) hinweise.push({ p: 'P7', text: `Stufe ${i + 1}: Ein Vigenère-Schlüssel nur aus A verändert nichts.` });
+        else if (st.typ === 'vigenere' && p.schluessel.length > 1 && new Set(p.schluessel).size === 1) hinweise.push({ p: 'P7', text: `Stufe ${i + 1}: Lauter gleiche Schlüsselbuchstaben – das ist nur eine Caesar-Verschiebung.` });
+        if (st.typ === 'xor' && new Set(p.schluessel).size === 1) hinweise.push({ p: 'P7', text: `Stufe ${i + 1}: XOR mit nur einem Schlüsselbuchstaben ist monoalphabetisch.` });
+        if (st.typ === 'spaltentransposition' && n !== null && p.schluessel.length >= n && spaltenReihenfolge(p.schluessel).every((r, j) => r === j + 1)) {
+          hinweise.push({ p: 'P7', text: `Stufe ${i + 1}: Spaltenschlüssel in alphabetischer Reihenfolge und mindestens so lang wie der Text – die Reihenfolge bleibt.` });
+        }
+        if (i > 0) {
+          const a = stufen[i - 1].typ;
+          const b = st.typ;
+          const verschiebung = ['caesar', 'vigenere'];
+          if (verschiebung.includes(a) && verschiebung.includes(b)) hinweise.push({ p: 'P8', text: `Stufen ${i} und ${i + 1} verschmelzen zu einer Verschiebung (kein Gewinn an Sicherheit).` });
+          if (a === 'substitution' && b === 'substitution') hinweise.push({ p: 'P8', text: `Stufen ${i} und ${i + 1}: Zwei Substitutionen ergeben wieder eine Substitution.` });
+          if (a === 'umkehrung' && b === 'umkehrung') hinweise.push({ p: 'P8', text: `Stufen ${i} und ${i + 1}: Zweimal umkehren hebt sich auf.` });
+        }
+      });
+      const arten = stufen.map((st) => stufeNach(st.typ).einordnung);
+      if (arten.every((a) => a === 'transposition')) hinweise.push({ p: 'P6', text: 'Nur Transpositionsstufen: Die Häufigkeitsverteilung bleibt erhalten.' });
+      else if (arten.every((a) => a !== 'transposition')) hinweise.push({ p: null, text: 'Nur Substitutionsstufen: Wortgrenzen und Reihenfolge der Buchstaben bleiben erhalten.' });
+    }
+    return { ok: fehler.length === 0, fehler, hinweise };
+  }
+
+  const baukasten = {
+    STUFEN,
+    MAX_STUFEN,
+    pruefe: baukastenPruefe,
+    verschluesseln: baukastenVerschluesseln,
+    entschluesseln: baukastenEntschluesseln,
+  };
+
+  // ───────────────────────────── Verfahrens-Objekt (AUFGABENFORMAT_KRYPTO §6) ─────────────────────────────
+
+  const P = (art, weiteres = {}) => ({ art, pflicht: false, ...weiteres });
+  const PF = (art, weiteres = {}) => ({ art, pflicht: true, ...weiteres });
+
+  const TYPEN = tiefFrieren({
+    caesar: { parameter: { k: PF('zahl', { min: 0, max: 25 }) }, involutorisch: false, art: 'substitution' },
+    atbash: { parameter: {}, involutorisch: true, art: 'substitution' },
+    affin: { parameter: { a: PF('zahl', { min: 1, max: 25 }), b: P('zahl', { min: 0, max: 25 }), basis: P('auswahl', { werte: [0, 1] }) }, involutorisch: false, art: 'substitution' },
+    substitution: { parameter: { alphabet: P('alphabet'), schluesselwort: P('wort'), rest: P('auswahl', { werte: ['alphabetisch', 'ab_letztem'] }) }, einsVon: ['alphabet', 'schluesselwort'], involutorisch: false, art: 'substitution' },
+    vigenere: { parameter: { schluessel: PF('wort') }, involutorisch: false, art: 'substitution' },
+    autokey: { parameter: { schluessel: PF('wort') }, involutorisch: false, art: 'substitution' },
+    porta: { parameter: { schluessel: PF('wort') }, involutorisch: true, art: 'substitution' },
+    playfair: { parameter: { schluessel: PF('wort'), fuellzeichen: P('buchstabe'), fuellzeichenX: P('buchstabe'), ij: P('auswahl', { werte: ['I', 'J'] }) }, involutorisch: false, art: 'substitution' },
+    kreuzquadrat: { parameter: { oben: PF('wort'), unten: PF('wort'), fuellzeichen: P('buchstabe') }, involutorisch: false, art: 'substitution' },
+    zweiquadrat_zahl: { parameter: { q1: PF('wort'), q2: PF('wort'), zahlenschluessel: PF('zahlenschluessel') }, involutorisch: false, art: 'substitution' },
+    polybios: { parameter: { schluessel: P('text'), kopf: P('kopf'), ij: P('auswahl', { werte: ['I', 'J'] }) }, involutorisch: false, art: 'substitution' },
+    adfgvx: { parameter: { quadrat: PF('quadrat36'), schluessel: PF('wortOderZahlen') }, involutorisch: false, art: 'kombination' },
+    gartenzaun: { parameter: { zeilen: PF('zahl', { min: 2, max: 10 }) }, involutorisch: false, art: 'transposition' },
+    skytale: { parameter: { umfang: PF('zahl', { min: 2, max: 20 }), fuellzeichen: P('buchstabeOderNull') }, involutorisch: false, art: 'transposition' },
+    fleissner: { parameter: { groesse: PF('auswahl', { werte: [4, 6, 8] }), schablone: PF('schablone'), drehung: P('auswahl', { werte: ['rechts', 'links'] }), fuellzeichen: P('buchstabe') }, involutorisch: false, art: 'transposition' },
+    spaltentransposition: { parameter: { schluessel: PF('wortOderZahlen'), fuellzeichen: P('buchstabeOderNull') }, involutorisch: false, art: 'transposition' },
+    umkehrung: { parameter: {}, involutorisch: true, art: 'transposition' },
+    blockrotation: { parameter: { block: PF('zahl', { min: 2, max: 16 }), um: PF('zahl', { min: 1, max: 15, kleinerAls: 'block' }) }, involutorisch: false, art: 'transposition' },
+    xor: { parameter: { schluessel: P('ascii'), schluesselBits: P('bits') }, einsVon: ['schluessel', 'schluesselBits'], involutorisch: false, art: 'substitution' },
+    baukasten: { parameter: { verfahren: PF('objekt'), schluessel: PF('objekt') }, involutorisch: false, art: 'kombination' },
+    frei: { parameter: { name: P('text') }, involutorisch: false, art: 'frei' },
+  });
+
+  function typWertFehler(name, w, spec, v) {
+    const f = `„${name}“`;
+    switch (spec.art) {
+      case 'zahl':
+        if (!Number.isInteger(w) || w < spec.min || w > spec.max) return `${f} muss eine ganze Zahl von ${spec.min} bis ${spec.max} sein.`;
+        if (spec.kleinerAls && Number.isInteger(v[spec.kleinerAls]) && w >= v[spec.kleinerAls]) return `${f} muss kleiner als „${spec.kleinerAls}“ sein.`;
+        return null;
+      case 'auswahl':
+        return spec.werte.includes(w) ? null : `${f} muss einer der Werte ${spec.werte.join(', ')} sein.`;
+      case 'wort':
+        return typeof w === 'string' && nurBuchstaben(w).length > 0 ? null : `${f} muss mindestens einen Buchstaben enthalten.`;
+      case 'text':
+        return typeof w === 'string' ? null : `${f} muss eine Zeichenkette sein.`;
+      case 'buchstabe':
+        return typeof w === 'string' && /^[A-Za-z]$/.test(w) ? null : `${f} muss genau ein Buchstabe sein.`;
+      case 'buchstabeOderNull':
+        return w === null || (typeof w === 'string' && /^[A-Za-z]$/.test(w)) ? null : `${f} muss ein Buchstabe oder null sein.`;
+      case 'alphabet':
+        return typeof w === 'string' && nurBuchstaben(w).length === 26 && new Set(nurBuchstaben(w)).size === 26 ? null : `${f} muss alle 26 Buchstaben genau einmal enthalten.`;
+      case 'zahlenschluessel':
+        try { zahlenschluesselListe(w); return null; } catch (e) { return `${f}: ${e.message}`; }
+      case 'kopf': {
+        const k = typeof w === 'string' ? normalisieren(w) : '';
+        return (k.length === 5 || k.length === 6) && new Set(k).size === k.length ? null : `${f} muss aus 5 oder 6 verschiedenen Zeichen bestehen.`;
+      }
+      case 'quadrat36': {
+        const q = typeof w === 'string' ? normalisieren(w) : '';
+        return q.length === 36 && new Set(q).size === 36 ? null : `${f} muss aus den 36 Zeichen A–Z und 0–9 bestehen (jedes genau einmal).`;
+      }
+      case 'wortOderZahlen':
+        try { spaltenReihenfolge(w); return null; } catch (e) { return `${f}: ${e.message}`; }
+      case 'schablone': {
+        const r = schablonePruefen(v.groesse, w);
+        return r.ok ? null : `${f}: ${r.fehler[0]}`;
+      }
+      case 'ascii':
+        try { if (typeof w !== 'string' || w.length === 0) throw new KryptoFehler('mindestens ein Zeichen.'); textZuBytes(w); return null; } catch (e) { return `${f} muss aus ASCII-Zeichen 32–126 bestehen.`; }
+      case 'bits': {
+        const b = typeof w === 'string' ? normBits(w) : '';
+        return /^[01]+$/.test(b) && b.length % 8 === 0 ? null : `${f} muss aus ganzen Bytes (Vielfache von 8 Bits) bestehen.`;
+      }
+      case 'objekt':
+        return istObjekt(w) ? null : `${f} muss ein Objekt sein.`;
+      default:
+        return `${f}: unbekannte Parameterart.`;
+    }
+  }
+
+  /** Parameterprüfung eines Verfahrens-Objekts: { ok, fehler } */
+  function verfahrenPruefe(v) {
+    if (!istObjekt(v)) return { ok: false, fehler: ['Das Verfahren muss ein Objekt mit „typ“ sein.'] };
+    const def = Object.prototype.hasOwnProperty.call(TYPEN, v.typ) ? TYPEN[v.typ] : null;
+    if (!def) return { ok: false, fehler: [`Unbekannter Verfahrenstyp „${v.typ}“.`] };
+    const fehler = [];
+    for (const k of Object.keys(v)) if (k !== 'typ' && !(k in def.parameter)) fehler.push(`Unbekannter Parameter „${k}“.`);
+    for (const [name, spec] of Object.entries(def.parameter)) {
+      if (v[name] === undefined) {
+        if (spec.pflicht) fehler.push(`Parameter „${name}“ fehlt.`);
+        continue;
+      }
+      const f = typWertFehler(name, v[name], spec, v);
+      if (f) fehler.push(f);
+    }
+    if (def.einsVon) {
+      const da = def.einsVon.filter((n) => v[n] !== undefined);
+      if (da.length !== 1) fehler.push(`Genau einer der Parameter ${def.einsVon.map((n) => `„${n}“`).join(' oder ')} ist anzugeben.`);
+    }
+    if (v.typ === 'affin' && Number.isInteger(v.a) && !affinSchluesselGueltig(v.a)) fehler.push('„a“ muss teilerfremd zu 26 sein.');
+    if (v.typ === 'baukasten' && fehler.length === 0) fehler.push(...baukastenAufloesen(v.verfahren, v.schluessel).fehler);
+    return { ok: fehler.length === 0, fehler };
+  }
+
+  function bitsZuBytes(bits) {
+    const b = normBits(bits);
+    const aus = [];
+    for (let i = 0; i < b.length; i += 8) aus.push(parseInt(b.slice(i, i + 8), 2));
+    return aus;
+  }
+
+  function opt(v, felder) {
+    const o = {};
+    for (const f of felder) if (v[f] !== undefined) o[f] = v[f];
+    return o;
+  }
+
+  /** reine Berechnung ohne Prüfung (für anwenden und varianten) */
+  function rechne(v, text, richtung) {
+    switch (v.typ) {
+      case 'caesar': return caesar(text, v.k, richtung);
+      case 'atbash': return atbash(text);
+      case 'affin': return affin(text, v.a, v.b === undefined ? 0 : v.b, richtung, v.basis === undefined ? 0 : v.basis);
+      case 'substitution': {
+        const g = v.alphabet !== undefined ? v.alphabet : schluesselwortAlphabet(v.schluesselwort, opt(v, ['rest']));
+        return substitution(text, g, richtung);
+      }
+      case 'vigenere': return vigenere(text, v.schluessel, richtung);
+      case 'autokey': return autokey(text, v.schluessel, richtung);
+      case 'porta': return porta(text, v.schluessel, richtung);
+      case 'playfair': return playfair(text, v.schluessel, richtung, opt(v, ['fuellzeichen', 'fuellzeichenX', 'ij']));
+      case 'kreuzquadrat': return kreuzquadrat(text, v.oben, v.unten, richtung, opt(v, ['fuellzeichen']));
+      case 'zweiquadrat_zahl': return zweiQuadratZahl(text, v.q1, v.q2, v.zahlenschluessel, richtung);
+      case 'polybios': return polybios(text, opt(v, ['schluessel', 'kopf', 'ij']), richtung);
+      case 'adfgvx': return adfgvx(text, v.quadrat, v.schluessel, richtung);
+      case 'gartenzaun': return gartenzaun(text, v.zeilen, richtung);
+      case 'skytale': return skytale(text, v.umfang, richtung, opt(v, ['fuellzeichen']));
+      case 'fleissner': return fleissner(text, v.groesse, v.schablone, richtung, opt(v, ['drehung', 'fuellzeichen']));
+      case 'spaltentransposition': return spaltentransposition(text, v.schluessel, richtung, opt(v, ['fuellzeichen']));
+      case 'umkehrung': return umkehrung(text);
+      case 'blockrotation': return blockrotation(text, v.block, v.um, richtung);
+      case 'xor': {
+        const k = v.schluessel !== undefined ? v.schluessel : bitsZuBytes(v.schluesselBits);
+        return richtung === 'ver' ? xor(normalisieren(text), k) : xor(text, k, 'ent');
+      }
+      case 'baukasten':
+        return richtung === 'ver' ? baukastenVerschluesseln(v.verfahren, v.schluessel, text).geheimtext : baukastenEntschluesseln(v.verfahren, v.schluessel, text);
+      default:
+        throw new KryptoFehler('Für eine fremde Chiffre („frei“) gibt es keine Berechnung.');
+    }
+  }
+
+  function pruefeAusgabe(ausgabe, basis) {
+    if (ausgabe !== 'buchstaben' && ausgabe !== 'zahlen') throw new KryptoFehler('Die Ausgabe muss „buchstaben“ oder „zahlen“ sein.');
+    if (basis !== 0 && basis !== 1) throw new KryptoFehler('Die Zählbasis muss 0 oder 1 sein.');
+  }
+
+  function ausgeben(ergebnis, ausgabe, basis) {
+    if (ausgabe === 'buchstaben') return ergebnis;
+    if (!/^[A-Z]*$/.test(ergebnis)) throw new KryptoFehler('Eine Zahlenausgabe gibt es nur für Ergebnisse aus Buchstaben.');
+    return zahlen(ergebnis, basis);
+  }
+
+  /** Dispatcher: prüft das Verfahren und wendet es an; ausgabe 'zahlen' liefert Buchstabenwerte zur Zählbasis basis */
+  function verfahrenAnwenden(v, text, richtung = 'ver', { basis = 1, ausgabe = 'buchstaben' } = {}) {
+    pruefeRichtung(richtung);
+    pruefeAusgabe(ausgabe, basis);
+    const pr = verfahrenPruefe(v);
+    if (!pr.ok) throw new KryptoFehler(pr.fehler[0]);
+    if (v.typ === 'frei') throw new KryptoFehler('Für eine fremde Chiffre („frei“) gibt es keine Berechnung.');
+    return ausgeben(rechne(v, text, richtung), ausgabe, basis);
+  }
+
+  const TRANSPOSITIONEN = ['gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'blockrotation'];
+
+  /**
+   * Kandidaten typischer Fehlrechnungen (Delta §9.2): [{ p, code, text }] – text ist die Ausgabe in der gewählten
+   * Ausgabeform; Reihenfolge P3, P1, P2, P4; Kandidaten gleich der richtigen Lösung oder doppelt entfallen.
+   */
+  function verfahrenVarianten(v, text, richtung = 'ver', { basis = 1, ausgabe = 'buchstaben' } = {}) {
+    let korrekt;
+    try {
+      korrekt = verfahrenAnwenden(v, text, richtung, { basis, ausgabe });
+    } catch (e) {
+      if (e instanceof KryptoFehler) return [];
+      throw e;
+    }
+    const gegen = richtung === 'ver' ? 'ent' : 'ver';
+    const def = TYPEN[v.typ];
+    const liste = [];
+    const gesehen = new Set([JSON.stringify(korrekt)]);
+    const dazu = (p, code, berechne) => {
+      let t;
+      try {
+        t = berechne();
+      } catch (e) {
+        if (e instanceof KryptoFehler) return;
+        throw e;
+      }
+      const s = JSON.stringify(t);
+      if (gesehen.has(s)) return;
+      gesehen.add(s);
+      liste.push({ p, code, text: t });
+    };
+    const aus = (erg) => ausgeben(erg, ausgabe, basis);
+    // P3: Richtung, Reihenfolge, Permutation
+    if (v.typ === 'baukasten' && richtung === 'ent') {
+      dazu('P3', 'reihenfolge', () => {
+        let t = text;
+        for (const st of baukastenStufen(v.verfahren, v.schluessel)) t = stufeAnwenden(st.typ, st.param, t, 'ent');
+        return aus(nurBuchstaben(t));
+      });
+    } else if (v.typ === 'adfgvx' && richtung === 'ent') {
+      const q = quadrat(v.quadrat, { groesse: 6 }).join('');
+      dazu('P3', 'reihenfolge', () => aus(spaltentransposition(polybios(text, { schluessel: q, kopf: 'ADFGVX' }, 'ent'), v.schluessel, 'ent')));
+    } else if (!def.involutorisch && v.typ !== 'baukasten') {
+      const code = TRANSPOSITIONEN.includes(v.typ) ? 'permutation' : 'richtung';
+      dazu('P3', code, () => {
+        try {
+          return aus(rechne(v, text, gegen));
+        } catch (e) {
+          if (v.typ === 'skytale' && e instanceof KryptoFehler) return aus(rechne({ ...v, fuellzeichen: null }, text, gegen));
+          throw e;
+        }
+      });
+      if (v.typ === 'fleissner') dazu('P3', 'permutation', () => aus(rechne({ ...v, drehung: v.drehung === 'links' ? 'rechts' : 'links' }, text, richtung)));
+    }
+    // P1: Zählbasis und Position
+    if (v.typ === 'caesar') {
+      dazu('P1', 'zaehlbasis', () => aus(caesar(text, v.k + 1, richtung)));
+      dazu('P1', 'zaehlbasis', () => aus(caesar(text, v.k - 1, richtung)));
+    }
+    if (['vigenere', 'autokey', 'porta'].includes(v.typ)) {
+      dazu('P1', 'zaehlbasis', () => aus(rechne({ ...v, schluessel: caesar(v.schluessel, 1) }, text, richtung)));
+    }
+    if (v.typ === 'affin') dazu('P1', 'zaehlbasis', () => aus(rechne({ ...v, basis: v.basis === 1 ? 0 : 1 }, text, richtung)));
+    if (v.typ === 'vigenere') {
+      const s = nurBuchstaben(v.schluessel);
+      if (s.length > 1) dazu('P1', 'position', () => aus(vigenere(text, s.slice(1) + s[0], richtung)));
+    }
+    // P2: nur Zahlenausgabe mit A = 1 (Caesar, Vigenère)
+    if (ausgabe === 'zahlen' && basis === 1 && (v.typ === 'caesar' || v.typ === 'vigenere')) {
+      const t = nurBuchstaben(text);
+      const s = v.typ === 'caesar' ? null : nurBuchstaben(v.schluessel);
+      const vz = richtung === 'ver' ? 1 : -1;
+      const roh = [...t].map((c, i) => wert(c) + vz * (s === null ? v.k : verschiebung(s[i % s.length])));
+      dazu('P2', 'null_statt_z', () => korrekt.map((z) => (z === 26 ? 0 : z)));
+      if (richtung === 'ver') dazu('P2', 'ueberlauf', () => roh.map((r, i) => (r > 26 ? r : korrekt[i])));
+      else dazu('P2', 'negativ', () => roh.map((r, i) => (r < 1 ? r : korrekt[i])));
+    }
+    // P4: Paarbildung (Playfair) und Füllzeichen (Transposition)
+    if (v.typ === 'playfair' && richtung === 'ver') {
+      dazu('P4', 'paare', () => {
+        const ij = v.ij === undefined ? 'I' : v.ij;
+        let t = quadratText(text, 5, ij);
+        if (t.length % 2) t += (v.fuellzeichen || 'X').toUpperCase();
+        const paare = [];
+        for (let i = 0; i < t.length; i += 2) paare.push(t.slice(i, i + 2));
+        return aus(playfairRechne(quadrat(v.schluessel, { groesse: 5, ij }), paare, 'ver'));
+      });
+    }
+    if (v.typ === 'skytale') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen === null ? 'X' : null }, text, richtung)));
+    if (v.typ === 'spaltentransposition') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen ? null : 'X' }, text, richtung)));
+    return liste;
+  }
+
+  const verfahren = {
+    TYPEN,
+    pruefe: verfahrenPruefe,
+    anwenden: verfahrenAnwenden,
+    varianten: verfahrenVarianten,
+  };
+
   return {
     // Grundlagen
     ALPHABET,
@@ -1466,5 +1949,8 @@
     rsa,
     dh,
     schluesselanzahl,
+    // Verfahrens-Objekt und Baukasten
+    verfahren,
+    baukasten,
   };
 });
