@@ -1,0 +1,285 @@
+{
+ "typ": "warmup",
+ "welt": 5,
+ "kennung": "WARM-UP W5",
+ "titel": "Das Netz",
+ "datei": "KR_W5_Warmup",
+ "karten": [
+  {
+   "id": "WU-W5-01",
+   "titel": "Mini-Hash",
+   "minuten": 2,
+   "kategorie": "hash",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "KRYPTOS-Hash (A = 1 … Z = 26, Start h = 0, je Buchstabe h ← (3 · h + w) mod 29): Bestimme KH(„ja“)."
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: hash*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "j: 3 · 0 + 10 = 10; a: 3 · 10 + 1 = 31 → 31 − 29 = **2**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-02",
+   "titel": "Wer siegelt womit?",
+   "minuten": 1,
+   "kategorie": "signatur",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Mit welchem Schlüssel erstellt Alice eine Signatur, mit welchem prüft Bob sie?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: signatur*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Erstellen: **privater Schlüssel von Alice**; prüfen: **öffentlicher Schlüssel von Alice** (P9)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-03",
+   "titel": "Vertauscht",
+   "minuten": 2,
+   "kategorie": "hash",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "S(t) = (Σ w~i~) mod 29 (A = 1 … Z = 26). Berechne S(„ab“) und S(„ba“). Was folgt?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: hash*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Beide **3** → die Summen-Prüfsumme erkennt Vertauschungen nicht (**permutationsinvariant**)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-04",
+   "titel": "Drei Ziele",
+   "minuten": 2,
+   "kategorie": "signatur",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Welche Schutzziele erreicht eine digitale Signatur, welches nicht?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: signatur*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Erreicht: **Integrität, Authentizität** (+ Verbindlichkeit); nicht: **Vertraulichkeit**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-05",
+   "titel": "Was das Schloss sagt",
+   "minuten": 2,
+   "kategorie": "zertifikat",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Was bestätigt das Zertifikat einer Website – und was nicht?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: zertifikat*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Bestätigt: Der öffentliche Schlüssel gehört zur Domain (signiert von einer CA). **Nicht:** dass die Seite ehrlich/harmlos ist."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-06",
+   "titel": "So lange wie nötig",
+   "minuten": 1,
+   "kategorie": "gesellschaft",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Welcher DSGVO-Grundsatz verlangt, Daten zu löschen, wenn sie nicht mehr gebraucht werden?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: gesellschaft*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Speicherbegrenzung**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-07",
+   "titel": "TLS halb und halb",
+   "minuten": 2,
+   "kategorie": "protokoll",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Was läuft bei HTTPS asymmetrisch, was symmetrisch?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: protokoll*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Asymmetrisch: Zertifikatsprüfung (Signaturen) und Vereinbarung des Sitzungsschlüssels; symmetrisch: alle Nutzdaten."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-08",
+   "titel": "Mallorys Trick",
+   "minuten": 2,
+   "kategorie": "protokoll",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Was schiebt Mallory beim Man-in-the-Middle-Angriff unter, und wem?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: protokoll*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Ihren **eigenen öffentlichen Schlüssel**, den sie Alice als Bobs (und ggf. Bob als Alices) ausgibt."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-09",
+   "titel": "Schubfach",
+   "minuten": 2,
+   "kategorie": "hash",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Ein Hash hat 8 Bit. Ab wie vielen verschiedenen Nachrichten ist eine Kollision sicher?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: hash*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "2^8^ = 256 Werte → ab **257** Nachrichten."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-10",
+   "titel": "Hybrid (W4)",
+   "minuten": 1,
+   "kategorie": "hybrid",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Womit verschlüsselt Alice beim Hybridverfahren den Sitzungsschlüssel für Bob?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: hybrid*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Mit **Bobs öffentlichem Schlüssel**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-11",
+   "titel": "Vigenère-Rückblick (W2)",
+   "minuten": 1,
+   "kategorie": "substitution-poly",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Vigenère, Schlüsselbuchstabe C (Verschiebung 2, A = Verschiebung 0). Verschlüssele den Klartextbuchstaben e."
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: substitution-poly*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "e (5) + 2 = 7 → **G**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W5-12",
+   "titel": "Schlüsselanzahl (W4)",
+   "minuten": 2,
+   "kategorie": "schluesselraum",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Neun Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Kategorie: schluesselraum*"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Symmetrisch 9 · 8 / 2 = **36**, asymmetrisch 2 · 9 = **18** (9 Schlüsselpaare)."
+    }
+   ]
+  }
+ ]
+}

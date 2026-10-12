@@ -1,0 +1,334 @@
+{
+ "typ": "pruefung",
+ "welt": 0,
+ "kennung": "PAPIER-BOSS W0",
+ "titel": "Das Mosaik von Pompeji",
+ "datei": "KR_W0_Boss0_Mosaik_von_Pompeji",
+ "niveau": "kern",
+ "ds": "3",
+ "zeit": "60 Minuten",
+ "hilfsmittel": "Anlage (Alphabet A = 1 … Z = 26, ASCII-Tabelle); kein Taschenrechner",
+ "rahmen": "In einer Villa in Pompeji haben Archäologen ein Mosaikband gefunden, dessen Steine Buchstaben tragen. Die Reihenfolge der Steine ergibt keinen Sinn. Eine Wachstafel aus derselben Villa beschreibt das Verfahren, mit dem der Hausherr seine Botschaften „in Stein legte“ (siehe Material).",
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "Das MOSAIK-Verfahren",
+   "material": [
+    {
+     "t": "kasten",
+     "kopf": "MATERIAL · DAS MOSAIK-VERFAHREN",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Nummerierung: A = 1 … Z = 26. Schlüssel: ein Paar (b, k) mit der **Breite** b ∈ {2, 3, …, 8} und der **Verschiebung** k ∈ {0, 1, …, 25}."
+      },
+      {
+       "t": "p",
+       "md": "**Stufe 1 (Legen):** Der Klartext wird in Zeilen der Breite b geschrieben – die 1. Zeile von links nach rechts, die 2. Zeile von rechts nach links, die 3. wieder von links nach rechts usw. („Schlangenlinie“). Ist die letzte Zeile nicht voll, wird sie in Schreibrichtung mit X aufgefüllt. Anschließend wird **spaltenweise** von oben nach unten ausgelesen, beginnend mit der linken Spalte."
+      },
+      {
+       "t": "p",
+       "md": "**Stufe 2 (Färben):** Jeder Buchstabe des Zwischentextes wird mit dem Caesar-Verfahren um k verschoben: c = ((p + k − 1) mod 26) + 1."
+      },
+      {
+       "t": "p",
+       "md": "**Beispiel:** Klartext „brot und spiele“, Schlüssel (4, 2):"
+      },
+      {
+       "t": "tabelle",
+       "zeilen": [
+        [
+         "`B`",
+         "`R`",
+         "`O`",
+         "`T`",
+         "*Zeile 1: →*"
+        ],
+        [
+         "`S`",
+         "`D`",
+         "`N`",
+         "`U`",
+         "*Zeile 2: ←, geschrieben u n d s von rechts*"
+        ],
+        [
+         "`P`",
+         "`I`",
+         "`E`",
+         "`L`",
+         "*Zeile 3: →*"
+        ],
+        [
+         "`X`",
+         "`X`",
+         "`X`",
+         "`E`",
+         "*Zeile 4: ←, geschrieben e x x x von rechts*"
+        ]
+       ],
+       "breiten": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        9.0
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Zwischentext (spaltenweise): `BSPXR DIXON EXTUL E` · Geheimtext (k = 2): **`DURZT FKZQP GZVWN G`**"
+      }
+     ]
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den Geheimtext zum Klartext „der vesuv raucht“ mit dem Schlüssel (3, 5).",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Raster in Schlangenlinie `D E R / S E V / U V R / C U A / H T X` (Zeilen 2 und 4 von rechts nach links, ein X)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "spaltenweise ausgelesen: Zwischentext `DSUCH EEVUT RVRAX`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Caesar mit k = 5: **`IXZHM JJAZY WAWFC`**",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "X nicht mitverschoben oder Schlangenlinie vergessen (P4)."
+    },
+    {
+     "bez": "b)",
+     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `PRKVW PSEOO JXRDH`, der mit dem Schlüssel (5, 10) erzeugt wurde. Dokumentieren Sie Ihren Lösungsweg.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Reihenfolge: erst Stufe 2 rückgängig, dann Stufe 1",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Caesar zurück (um 10): `FHALM FIUEE ZNHTX`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "15 : 5 = 3 Zeilen; spaltenweise eintragen: `F L I E H / H M U Z T / A F E N X`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Zeile 2 von rechts lesen: **„flieht zum hafen“** (+ X)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Stufen nicht in umgekehrter Reihenfolge, Zeile 2 nicht rückwärts gelesen (P3)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie begründet** für jede Stufe, ob es sich um eine Transposition oder eine Substitution handelt, und ob das Gesamtverfahren mono- oder polyalphabetisch ist.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Stufe 1 Transposition (Buchstaben bleiben, Positionen ändern sich); Stufe 2 Substitution",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "insgesamt monoalphabetisch, da jeder Buchstabe um dasselbe k verschoben wird (die Transposition ändert daran nichts)",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "„polyalphabetisch, weil zwei Stufen“ (P5)."
+    },
+    {
+     "bez": "d)",
+     "text": "**Bestimmen Sie** die Anzahl möglicher Schlüssel und **beurteilen Sie** die Sicherheit des Verfahrens gegenüber einem Brute-Force-Angriff.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "7 Breiten · 26 Verschiebungen = **182** Schlüssel (schwach: k = 0 → nur Transposition)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "182 Versuche sind mit Rechner sofort, von Hand in einigen Stunden machbar; außerdem lässt sich der Raum aufteilen (siehe e)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Urteil: unsicher",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„26 · 8“ (b = 1 mitgezählt) (P7); Urteil fehlt (P10)."
+    },
+    {
+     "bez": "e)",
+     "text": "Einem Angreifer liegt ein langer, mit MOSAIK verschlüsselter deutscher Text vor; der Schlüssel ist unbekannt. **Entwickeln Sie** ein Vorgehen, mit dem er zuerst k und danach b bestimmen kann.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Stufe 1 erhält die Häufigkeiten (P6), Stufe 2 verschiebt alle Buchstaben gleich → häufigster Geheimtextbuchstabe ≙ e → k (ggf. mit n, i, s, r prüfen)",
+       "afb": "III",
+       "be": 2
+      },
+      {
+       "punkt": "danach Stufe 2 rückgängig machen und nur noch b ∈ {2, …, 8} durchprobieren (7 Versuche), Erfolg an sinnvollem Text erkennen",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Voraussetzung: langer Text, Sprache bekannt; der Angriff zerlegt 182 in 26 + 7",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "Auch „erst b, dann k“ mit 182 Versuchen ist vollständig richtig, aber nur 2 BE (kein Ausnutzen der Häufigkeit).",
+     "fehler": "Häufigkeitsanalyse „funktioniert nicht wegen der Transposition“ (P6)."
+    },
+    {
+     "bez": "f)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Vertauscht man die Reihenfolge der beiden Stufen, entsteht bei gleichem Schlüssel immer derselbe Geheimtext.“",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Entscheidung: falsch",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Begründung: Ohne Füllzeichen wäre das Ergebnis gleich (Caesar wirkt auf jeden Buchstaben unabhängig von der Position); mit Füllzeichen nicht – in der Originalreihenfolge werden die X mitverschoben, in der vertauschten Reihenfolge nicht",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Beispiel a): Original endet auf …WAWFC, vertauscht auf …WAWFX",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„richtig, weil beide Stufen unabhängig sind“ ohne Füllzeichen zu bedenken (P4)."
+    },
+    {
+     "bez": "g)",
+     "text": "**Analysieren Sie**, wie sich beim Entschlüsseln (1) ein bei der Übertragung **verfälschter** Buchstabe und (2) ein bei der Übertragung **verlorener** Buchstabe auf den Klartext auswirken.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "(1) Ein verfälschter Buchstabe ergibt genau einen falschen Klartextbuchstaben (an anderer Position), keine Ausbreitung",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) Ein verlorener Buchstabe: Die Länge ist kein Vielfaches von b mehr bzw. alle folgenden Buchstaben rutschen in andere Spalten",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "→ ab der Fehlerstelle ist der Klartext weitgehend unlesbar (Fehler breitet sich aus)",
+       "afb": "II",
+       "be": 1
+      }
+     ]
+    },
+    {
+     "bez": "h)",
+     "text": "Ein Sklave schlägt vor, jede Botschaft zweimal mit MOSAIK zu verschlüsseln, zuerst mit (b, k~1~), dann mit (b, k~2~). **Beurteilen Sie** diesen Vorschlag.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Stufe 1 zweimal mit gleichem b ist eine feste Umordnung, die nur von b abhängt; die Verschiebungen addieren sich zu k~1~ + k~2~ mod 26",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Der Angreifer muss weiterhin nur 7 · 26 Fälle (bzw. 26 + 7) prüfen → kein Sicherheitsgewinn (P8)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„doppelt = 182²“ (P8)."
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   23
+  ],
+  [
+   14,
+   22
+  ],
+  [
+   13,
+   21
+  ],
+  [
+   12,
+   20
+  ],
+  [
+   11,
+   18
+  ],
+  [
+   10,
+   17
+  ],
+  [
+   9,
+   16
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   6,
+   12
+  ],
+  [
+   5,
+   11
+  ],
+  [
+   4,
+   10
+  ],
+  [
+   3,
+   8
+  ],
+  [
+   2,
+   7
+  ],
+  [
+   1,
+   5
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "Viel Erfolg – das Mosaik wartet!"
+}

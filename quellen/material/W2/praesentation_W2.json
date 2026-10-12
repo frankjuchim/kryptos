@@ -1,0 +1,1222 @@
+{
+ "typ": "praesentation",
+ "welt": 2,
+ "titel": "Le chiffre indéchiffrable",
+ "datei": "KR_W2_Praesentation_Renaissance",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Le chiffre indéchiffrable",
+   "untertitel": "Renaissance bis 19. Jahrhundert · Welt 2 · Kryptos",
+   "oberzeile": "WELT 2 · VENEDIG · UM 1600",
+   "notizen": "1 min. Zeitleiste zeigen: Sprung von Bagdad (Welt 1, Al-Kindi, um 850) nach Venedig um 1600.\nImpuls: „Al-Kindis Methode war 700 Jahre unschlagbar. Was tun die Diplomaten der Renaissance, wenn jeder Spion die Häufigkeitsanalyse kennt?“\nErwartete Antworten: Schlüssel öfter wechseln, mehrere Alphabete, Codewörter. Noch nicht auflösen – der Archivfund folgt."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Archivfund: Brief einer Diplomatin",
+   "label": "VENEDIG · VERSIEGELT · 64 ZEICHEN",
+   "groesse": 24,
+   "geheimtext": "OEXLNXGOTPRRPDOAYMPSZOAWPRKVEMPFKVRRFTFYNFUEZTGRFRTIPLOAYKHEORGN",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Rückseite: *„Der Schlüssel ist das Wasser, auf dem die Stadt steht.“*  ·  **Knackt ihn wie Al-Kindi!**"
+    }
+   ],
+   "notizen": "5 min Murmelgruppen (Dreier). Auftrag: Häufigkeiten zählen wie in Welt 1.\nErwartet: R ist mit 8 am häufigsten, dann O und P mit je 6. Vermutung „R ist e“ → Verschiebung 13 → Unsinn.\nNoch NICHT das Rätsel auflösen – erst die Beobachtung auf der nächsten Folie sichern.\nFalle P6 (Häufigkeitsanalyse pauschal) wird hier erlebt, nicht erklärt."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Warum Al-Kindi hier scheitert",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "haeufigkeit",
+       "text": "DERRATVONVENEDIGLIESTUNSEREBRIEFEBENUTZEABJETZTNURNOCHDASQUADRAT",
+       "titel": "Klartext: E ragt heraus (11-mal)",
+       "hoehe": 3.3
+      }
+     ],
+     "rechts": [
+      {
+       "t": "haeufigkeit",
+       "text": "OEXLNXGOTPRRPDOAYMPSZOAWPRKVEMPFKVRRFTFYNFUEZTGRFRTIPLOAYKHEORGN",
+       "titel": "Geheimtext: flach (R 8, O 6, P 6)",
+       "hoehe": 3.3
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Das **e** des Klartexts wurde zu `E`, `R`, `P`, `K` und `Y` – ein Buchstabe, viele Gesichter.",
+     "zentriert": true
+    }
+   ],
+   "notizen": "4 min. Erst nur das rechte Diagramm zeigen (Geheimtext, flach), dann das linke aufdecken (Klartext, E ragt heraus).\nImpuls: „Was ist hier anders als bei Caesar?“ Erwartet: Derselbe Klartextbuchstabe hat verschiedene Geheimtextbuchstaben – die Häufigkeiten werden verschmiert.\nDann das Rätsel (1 min Murmeln): Venedig steht auf der LAGUNE – 6 Buchstaben, das Schlüsselwort.\nNur für die Lehrkraft (Vorgriff DS 8): Koinzidenzindex Klartext 0,0665, Geheimtext 0,0496."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Mono- und polyalphabetisch",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Monoalphabetisch:** Jeder Klartextbuchstabe wird **immer** gleich ersetzt."
+    },
+    {
+     "t": "p",
+     "md": "**Polyalphabetisch:** Derselbe Klartextbuchstabe wird je nach Position **verschieden** ersetzt."
+    },
+    {
+     "t": "p",
+     "md": "Prüffrage (P5): *Wird derselbe Buchstabe immer gleich ersetzt?*"
+    }
+   ],
+   "notizen": "2 min Mitschrift.\nHinweis: Ein einziges Gegenbeispiel genügt für „polyalphabetisch“ (im Archivfund: e → E, R, P, K, Y).\nVerweis Akte W2·1, Archivwissen 1."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Vigenère mit dem Quadrat der Anlage",
+   "inhalt": [
+    {
+     "t": "quadrat",
+     "zeilen": [
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "DEFGHIJKLMNOPQRSTUVWXYZABC",
+      "EFGHIJKLMNOPQRSTUVWXYZABCD",
+      "MNOPQRSTUVWXYZABCDEFGHIJKL"
+     ],
+     "kopfzeile": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z"
+     ],
+     "kopfspalte": [
+      "A",
+      "D",
+      "E",
+      "M"
+     ],
+     "ecke": "",
+     "hervor": [
+      [
+       1,
+       12
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "==1==  Schlüsselwort **DAME** wiederholt unter *markusplatz* schreiben"
+    },
+    {
+     "t": "p",
+     "md": "==2==  **Zeile** = Schlüsselbuchstabe, **Spalte** = Klartextbuchstabe"
+    },
+    {
+     "t": "p",
+     "md": "==3==  Kreuzung = Geheimtextbuchstabe: m/D → P, a/A → A  →  `PADOX SBPDT L`"
+    }
+   ],
+   "notizen": "6 min. Animation Buchstabe für Buchstabe: m in Zeile D → P; a in Zeile A → A („A verschiebt um 0!“); r in Zeile M → D; k in Zeile E → O.\nAusschnitt des Quadrats: nur die Zeilen A, D, E, M. Das vollständige Quadrat steht in der Abitur-Anlage, auf WK1 und in Akte W2·1, Seite 2.\nJetzt WK1 austeilen. Ergebnis: PADOX SBPDT L.\nFalle P3 vorbereiten: Beim Entschlüsseln in der Zeile des Schlüsselbuchstabens SUCHEN, nicht noch einmal verschieben."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "nr": "P1/P2",
+   "titel": "Rechnen mit A = 1",
+   "regel": "Schlüsselbuchstabe s verschiebt um **s − 1**: **c = ((p + s − 2) mod 26) + 1**",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "t (20) + M (13) = 33\n33 mod 26 = 7 → **G**"
+    },
+    {
+     "t": "p",
+     "md": "z (26) mit B (2) → „0“ oder Z"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "((20 + 13 − 2) mod 26) + 1 = 6 → **F**"
+    },
+    {
+     "t": "p",
+     "md": "((26 + 2 − 2) mod 26) + 1 = 1 → **A**"
+    }
+   ],
+   "notizen": "4 min. Formel herleiten: „− 1“, weil der Schlüsselbuchstabe A um 0 verschiebt; ein weiteres „− 1 … + 1“, weil das Alphabet bei 1 beginnt und mod Werte von 0 bis 25 liefert.\nEntschlüsseln: p = ((c − s) mod 26) + 1.\nTypische Fehler: K als Verschiebung 11 lesen (P1), Rest 0 als „0“ oder Z deuten (P2)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Der Brief der Diplomatin",
+   "sozialform": "Partnerarbeit",
+   "zeit": "15 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Akte W2·1, **Aufträge 1 und 2**"
+    },
+    {
+     "t": "geheimtext",
+     "text": "OEXLNXGOTPRRPDOAYMPS",
+     "label": "DIE ERSTEN 20 BUCHSTABEN"
+    },
+    {
+     "t": "p",
+     "md": "Schlüsselwort: **das Rätsel!**  ·  Wer fertig ist: der ganze Brief"
+    }
+   ],
+   "notizen": "15 min. Umhergehen, P3-Fehler (doppelt verschieben statt suchen) abfangen.\nLösung: Schlüsselwort LAGUNE; „Der Rat von Venedig liest unsere Briefe. Benutze ab jetzt nur noch das Quadrat.“\nAuftrag 2: kanalsperre mit NEBEL → XEOEW FTFVC R; 6. Buchstabe s mit N → F (nicht G, P1)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Autokey: Der Schlüssel schreibt sich selbst",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift_folie": 18,
+     "zeilen": [
+      [
+       "Klartext",
+       "g",
+       "a",
+       "l",
+       "e",
+       "e",
+       "r",
+       "e",
+       "n",
+       "i",
+       "m",
+       "h",
+       "a",
+       "f",
+       "e",
+       "n"
+      ],
+      [
+       "Schlüssel",
+       "Z",
+       "U",
+       "G",
+       "==G==",
+       "==A==",
+       "==L==",
+       "==E==",
+       "==E==",
+       "==R==",
+       "==E==",
+       "==N==",
+       "==I==",
+       "==M==",
+       "==H==",
+       "==A=="
+      ],
+      [
+       "Geheimtext",
+       "F",
+       "U",
+       "R",
+       "K",
+       "E",
+       "C",
+       "I",
+       "R",
+       "Z",
+       "Q",
+       "U",
+       "I",
+       "R",
+       "L",
+       "N"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65,
+      0.65
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**+** kein periodischer Schlüssel – Kasiski greift nicht direkt"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**−** ein Übertragungsfehler pflanzt sich fort"
+      }
+     ]
+    }
+   ],
+   "notizen": "3 min. Experten A erklären (Akte W2·1, Auftrag 4).\nSchlüsselwort ZUG, danach der Klartext selbst (hervorgehoben): galeerenimhafen → FURKE CIRZQ UIRLN.\nImpuls: „Was passiert beim Entschlüsseln, wenn ein Buchstabe falsch ankommt?“ Erwartet: Der falsche Klartextbuchstabe wird später als Schlüssel benutzt → Folgefehler (dogenpalast: Fehler an Position 1 und 7). Vigenère: nur ein Fehler."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Portas Tauschalphabete",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.6,
+     "links": [
+      {
+       "t": "tabelle",
+       "mono": true,
+       "kopfspalte": true,
+       "schrift_folie": 14,
+       "kopf": [
+        "Schl.",
+        "oben",
+        "unten"
+       ],
+       "zeilen": [
+        [
+         "A, B",
+         "A B C D E F G H I J K L M",
+         "N O P Q R S T U V W X Y Z"
+        ],
+        [
+         "C, D",
+         "A B C D E F G H I J K L M",
+         "Z N O P Q R S T U V W X Y"
+        ],
+        [
+         "E, F",
+         "A B C D E F G H I J K L M",
+         "Y Z N O P Q R S T U V W X"
+        ],
+        [
+         "G, H",
+         "A B C D E F G H I J K L M",
+         "X Y Z N O P Q R S T U V W"
+        ],
+        [
+         "I, J",
+         "A B C D E F G H I J K L M",
+         "W X Y Z N O P Q R S T U V"
+        ],
+        [
+         "K, L",
+         "A B C D E F G H I J K L M",
+         "V W X Y Z N O P Q R S T U"
+        ],
+        [
+         "M, N",
+         "A B C D E F G H I J K L M",
+         "U V W X Y Z N O P Q R S T"
+        ],
+        [
+         "O, P",
+         "A B C D E F G H I J K L M",
+         "T U V W X Y Z N O P Q R S"
+        ],
+        [
+         "Q, R",
+         "A B C D E F G H I J K L M",
+         "S T U V W X Y Z N O P Q R"
+        ],
+        [
+         "S, T",
+         "A B C D E F G H I J K L M",
+         "R S T U V W X Y Z N O P Q"
+        ],
+        [
+         "U, V",
+         "A B C D E F G H I J K L M",
+         "Q R S T U V W X Y Z N O P"
+        ],
+        [
+         "W, X",
+         "A B C D E F G H I J K L M",
+         "P Q R S T U V W X Y Z N O"
+        ],
+        [
+         "Y, Z",
+         "A B C D E F G H I J K L M",
+         "O P Q R S T U V W X Y Z N"
+        ]
+       ],
+       "breiten": [
+        1.0,
+        3.2,
+        3.2
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "==1==  Zeile zum Schlüsselbuchstaben wählen"
+      },
+      {
+       "t": "p",
+       "md": "==2==  Buchstabe oben ↔ unten **tauschen**"
+      },
+      {
+       "t": "p",
+       "md": "*nachtwache* / LUNA"
+      },
+      {
+       "t": "geheimtext",
+       "text": "FQWULGUPPU"
+      },
+      {
+       "t": "p",
+       "md": "Entschlüsseln = **genauso**"
+      }
+     ]
+    }
+   ],
+   "notizen": "3 min. Experten B erklären (Akte W2·1, Auftrag 5).\nBeispiel: Schlüssel L → Zeile K, L: a ↔ V, n ↔ F. nachtwache mit LUNA → FQWUL GUPPU.\nFrage: „Wie entschlüsselt man?“ → genauso (involutorisch).\nZusatz: Kein Buchstabe wird auf sich selbst abgebildet (A–M ↔ N–Z). Historisch: della Porta 1563, im Original mit lateinischem Alphabet; wir nutzen die moderne Fassung mit 26 Buchstaben."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "nr": "P7/P8",
+   "titel": "Schwache Schlüssel",
+   "regel": "Nicht die Länge zählt, sondern die Zahl **verschiedener Alphabete**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "==•==  AAAA – „vier Buchstaben, also sicher“"
+    },
+    {
+     "t": "p",
+     "md": "==•==  DDDD, ABAB – „Länge 4“"
+    },
+    {
+     "t": "p",
+     "md": "==•==  Porta zweimal – „doppelt sicher“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "==•==  AAAA → keine Verschlüsselung"
+    },
+    {
+     "t": "p",
+     "md": "==•==  DDDD → Caesar 3 · ABAB = AB"
+    },
+    {
+     "t": "p",
+     "md": "==•==  Porta: A = B; zweimal = Klartext"
+    }
+   ],
+   "notizen": "3 min. Auftrag 6 sichern.\nSchlüsselraum: Vigenère 26⁵ = 11 881 376 Schlüsselwörter der Länge 5, Porta nur 13⁵ = 371 293 (je zwei Buchstaben wählen dasselbe Alphabet).\nVergleich Welt 1: 26! Alphabete – trotzdem geknackt. Größe allein beweist nichts (P7). Zweimal Porta = Klartext (P8)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 6 · Das Quadrat",
+   "titel": "Wer hat es erfunden?",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Jahr",
+      "Wer",
+      "Was"
+     ],
+     "kopfspalte": true,
+     "schrift_folie": 18,
+     "zeilen": [
+      [
+       "1553",
+       "Giovan Battista Bellaso",
+       "wiederholtes Schlüsselwort – das heutige „Vigenère-Verfahren“"
+      ],
+      [
+       "1563",
+       "Giambattista della Porta",
+       "Tafel mit Tauschalphabeten"
+      ],
+      [
+       "1586",
+       "Blaise de Vigenère",
+       "„Traicté des chiffres“ mit Autokey-Variante"
+      ],
+      [
+       "bis 1863",
+       "–",
+       "fast 300 Jahre „le chiffre indéchiffrable“"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      3.6,
+      6.9
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Der Name „Vigenère-Verfahren“ **gilt als Fehlzuschreibung**."
+    }
+   ],
+   "notizen": "2 min. Zuschreibungsproblem: Geschichte schreibt nicht immer die Erfinder auf – das Schlüsselwort-Verfahren ist eher Bellasos Idee.\nVorsichtig formulieren: keine Zitate erfinden. Ausblick: Babbage soll es um 1854 gebrochen haben, veröffentlichte aber nichts; Kasiski veröffentlichte 1863."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Kasiskis Spur",
+   "untertitel": "1863 · Ein preußischer Offizier findet die Schwachstelle",
+   "notizen": "Ende DS 6: Ausblick, Hausaufgabe Lab-Level 2.1 (mind. 5 Aufgaben) + Abi-Check W2·1. Impuls: „300 Jahre unknackbar – wie hat Eve es dann doch geschafft?“\nAnfang DS 7: Rückgriff auf diese Frage. Friedrich Wilhelm Kasiski veröffentlichte 1863 „Die Geheimschriften und die Dechiffrir-Kunst“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Wenn Eve die Länge kennt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Schlüssellänge 3 → jede 3. Stelle mit **demselben** Schlüsselbuchstaben verschlüsselt"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zentriert": true,
+     "schrift_folie": 20,
+     "kopf": [
+      "Position",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14"
+     ],
+     "zeilen": [
+      [
+       "Geheimtext",
+       "==V==",
+       "C",
+       "V",
+       "==I==",
+       "Z",
+       "T",
+       "==S==",
+       "W",
+       "L",
+       "==E==",
+       "U",
+       "K",
+       "==X==",
+       "M",
+       "Y"
+      ],
+      [
+       "Teiltext",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~"
+      ]
+     ],
+     "breiten": [
+      1.9,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68,
+      0.68
+     ]
+    },
+    {
+     "t": "p",
+     "md": "T~1~ `VISEX` · T~2~ `CZWUM` · T~3~ `VTLKY` – **jeder Teiltext ist ein Caesar-Text!**"
+    }
+   ],
+   "notizen": "5 min. Akte W2·2, Auftrag 1. Positionen ab 0: T₁ = Positionen 0, 3, 6, …; T₂ = 1, 4, 7, … (P1: „2. Buchstabe“ = Position 1).\nBob verrät das Schlüsselwort EIS → Verschiebungen 4, 8, 18 → ruderbootamsteg.\nKernidee: Kennt Eve die Länge, ist alles Welt-1-Handwerk."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Warum sich Folgen wiederholen",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zentriert": true,
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Position",
+       "0",
+       "1",
+       "2",
+       "…",
+       "60",
+       "61",
+       "62",
+       "…",
+       "100",
+       "101",
+       "102"
+      ],
+      [
+       "Klartext",
+       "d",
+       "i",
+       "e",
+       "…",
+       "d",
+       "i",
+       "e",
+       "…",
+       "d",
+       "i",
+       "e"
+      ],
+      [
+       "Schlüssel",
+       "W",
+       "A",
+       "C",
+       "…",
+       "W",
+       "A",
+       "C",
+       "…",
+       "W",
+       "A",
+       "C"
+      ],
+      [
+       "Geheimtext",
+       "==Z==",
+       "==I==",
+       "==G==",
+       "…",
+       "==Z==",
+       "==I==",
+       "==G==",
+       "…",
+       "==Z==",
+       "==I==",
+       "==G=="
+      ]
+     ],
+     "breiten": [
+      2.0,
+      0.9,
+      0.9,
+      0.9,
+      0.6,
+      0.9,
+      0.9,
+      0.9,
+      0.6,
+      0.9,
+      0.9,
+      0.9
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Gleiche Klartextfolge + **gleicher Schlüsselabschnitt** → gleiche Geheimtextfolge"
+    },
+    {
+     "t": "p",
+     "md": "Abstände **60** und **40** – beide Vielfache der Schlüssellänge **5**"
+    }
+   ],
+   "notizen": "5 min. Impuls: „Wann wird *die* zweimal gleich verschlüsselt?“ Erwartet: wenn es auf dieselben Schlüsselbuchstaben fällt, also wenn der Abstand ein Vielfaches der Schlüssellänge ist.\nGegenprobe (Auftrag 2): *die* an Position 2 fiele auf C, H, S → FPW, nicht ZIG."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Der Kasiski-Test",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "==1==  **Wiederholungen** aus mindestens 3 Zeichen suchen"
+    },
+    {
+     "t": "p",
+     "md": "==2==  **Abstände** messen (Anfang bis Anfang)"
+    },
+    {
+     "t": "p",
+     "md": "==3==  **Teilertabelle** für t = 2 … 20"
+    },
+    {
+     "t": "p",
+     "md": "==4==  Teiler, der (fast) **alle** Abstände teilt → Schlüssellänge"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift_folie": 18,
+     "kopf": [
+      "Abstände 40, 65, 85, 125, 15 · t",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "zeilen": [
+      [
+       "teilbar",
+       "1",
+       "1",
+       "1",
+       "==5==",
+       "0",
+       "0",
+       "1",
+       "0",
+       "1"
+      ]
+     ],
+     "breiten": [
+      4.4,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85
+     ]
+    }
+   ],
+   "notizen": "6 min. Mini-Beispiel: Abstände 40, 65, 85, 125, 15 → nur 5 teilt alle fünf (hier zugleich der ggT).\nHilfreich: Primfaktorzerlegung, z. B. 85 = 5 · 17, 65 = 5 · 13.\nAkte W2·2, Archivwissen 3."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 7 · Kasiski",
+   "nr": "P6",
+   "titel": "Zufall und Vielfache",
+   "regel": "Teilertabelle statt stur ggT aller Abstände – **Ausreißer begründet streichen**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Abstände 42, 63, 105, 84, 50\nggT = 1 → Schlüssellänge 1?"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "50 ist ein **Zufallstreffer**\nggT(42, 63, 105, 84) = 21 → 3, 7 oder 21?\n**Teiltexte entscheiden**"
+    }
+   ],
+   "notizen": "4 min. Nicht stur den ggT aller Abstände bilden (wäre 1). Den Ausreißer begründet aussortieren: Zwei verschiedene Klartextfolgen können zufällig dieselbe Geheimtextfolge ergeben.\nVielfache (21 statt 7) und Teiler (3) sind ebenfalls verträglich – den kleinsten plausiblen Teiler bevorzugen und mit den Teiltexten prüfen.\nLab W2-L22-05."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Eves abgefangener Brief",
+   "sozialform": "Partnerarbeit",
+   "zeit": "25 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Akte W2·2, **Aufträge 3–5** · Gesucht: **Schlüssellänge** und **Schlüsselwort**"
+    },
+    {
+     "t": "haeufigkeit",
+     "text": "ZIGNSHEGYWWUUCWJEFPYARTLAYHVKWJHCMWJAOHTANFKWNGGZSJDVLTNIPNLZIGIJEEHLVARFPHHOOHLENFPWXRKLXAEPAZWLVLFZIGUSIEPKWNVGYTQEPKWPEPPFCEPBSHEUAVEEDYAAFGLJOTUWSATKUVARPHUDTWUVRETIJANPAVEEDYAAFGKSJAEOVEEIHDAETLKAGGSLWMOVJCEPDWETGYFWCJNWJUC",
+     "referenz": true,
+     "titel": "Eves Brief (228 Zeichen) – flach wie erwartet",
+     "hoehe": 3.2
+    },
+    {
+     "t": "p",
+     "md": "Kontrolle an der **Vigenère-Werkbank** (Beamer)"
+    }
+   ],
+   "notizen": "25 min, Wettbewerb möglich (erste Gruppe mit richtigem Schlüsselwort gewinnt).\nWerkbank erst nach 15 min am Beamer zeigen („Eve knackt live“, siehe Lehrerhinweise): Reiter 3 Kasiski (Teilertabelle: Maximum bei 5), Schalter „Zufallstreffer ausschließen“, Reiter 4 Histogramme bei k = 5, Reiter 6 Vorschläge W, A, C, H, S, Reiter 7 absichtlich falscher Buchstabe → Spalte unlesbar → korrigieren.\nLösung: Schlüssellänge 5, Schlüsselwort WACHS; Klartext beginnt „Die Galeere aus Venedig erreicht den Hafen am Abend …“."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 7 · Kasiski",
+   "titel": "Kasiski in einem Satz",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Gleiche Klartextfolge + gleicher Schlüsselabschnitt → gleiche Geheimtextfolge; die **Schlüssellänge teilt die Abstände**."
+    },
+    {
+     "t": "p",
+     "md": "Dann: **Teiltexte → Häufigkeitsanalyse → Schlüsselwort.**"
+    }
+   ],
+   "notizen": "2 min Mitschrift; Abi-Check a) mündlich: „Erläutern Sie, wie beim Vigenère-Verfahren gleiche Folgen im Geheimtext entstehen können.“ (Bedingung, Vielfaches, Beispiel – 3 BE).\nDanach 10 min Lab-Level 2.2 starten (Aufgaben 01–04), Rest Hausaufgabe."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 8 · Friedman",
+   "titel": "Friedmans Zufall",
+   "untertitel": "um 1920 · Zwei Buchstaben, zufällig gezogen",
+   "notizen": "DS 8, eA-Kurs: Folien 19–22. gA-Kurs: Folie 20 nur als Ausblick (5 min), dann weiter mit Folie 23 (Playfair).\nWilliam F. Friedman führt um 1920 den Koinzidenzindex ein."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 8 · Friedman",
+   "titel": "Der Koinzidenzindex",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**I = Σ n~i~(n~i~ − 1) / (n(n − 1))**"
+    },
+    {
+     "t": "p",
+     "md": "ANANAS (A 3, N 2, S 1): I = (6 + 2 + 0)/30 = 8/30 ≈ **0,267**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Deutsch I~D~",
+      "Zufall I~Z~",
+      "Caesar",
+      "Vigenère"
+     ],
+     "zentriert": true,
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "≈ 0,076",
+       "1/26 ≈ 0,038",
+       "I bleibt",
+       "I sinkt"
+      ]
+     ],
+     "breiten": [
+      2.9,
+      2.9,
+      2.9,
+      2.9
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Quelle der Referenzwerte: berechnet aus der Häufigkeitstabelle von Beutelspacher",
+     "klein": true
+    }
+   ],
+   "notizen": "5 min. Laplace: gleiche Paare / alle Paare. Zähler zählt geordnete Paare gleicher Buchstaben (6 AA + 2 NN), Nenner alle geordneten Paare (6 · 5 = 30).\nKorrekturhinweis zur alten Folie P04: Dort steht im Nenner n(n − 1)/2 – Zähler und Nenner zählen dann verschieden, das Ergebnis ist doppelt so groß (ANANAS 0,533; Deutsch ≈ 0,152). Richtig ist I = Σ nᵢ(nᵢ − 1)/(n(n − 1)). Lehrerhinweise §10.6.\nCaesar ändert I nicht (otto und RWWR: 4/12), Vigenère senkt I (anna 4/12 → AOPD 0)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 8 · Friedman",
+   "titel": "Friedman-Schätzung",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**k ≈ (I~D~ − I~Z~) · n / ((n − 1) · I − I~Z~ · n + I~D~)**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "n = 1001, I = 0,0475",
+      "Rechnung",
+      "Ergebnis"
+     ],
+     "kopfspalte": true,
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Zähler",
+       "0,038 · 1001",
+       "38,038"
+      ],
+      [
+       "(n − 1) · I",
+       "1000 · 0,0475",
+       "47,5"
+      ],
+      [
+       "Nenner",
+       "47,5 − 38,038 + 0,076",
+       "9,538"
+      ],
+      [
+       "k",
+       "38,038 : 9,538",
+       "≈ 3,99 ≈ **4**"
+      ]
+     ],
+     "breiten": [
+      3.4,
+      4.6,
+      3.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Eine **Schätzung** – bei kurzen Texten ungenau"
+    }
+   ],
+   "notizen": "5 min. Rechenvorlage zeigen; im Abitur gäbe es solche Rechenhilfen. Überschlag beim Teilen genügt (38 : 9,5 ≈ 4).\nTypische Fehler: n statt n − 1, 0,038 · n vergessen.\nAkte W2·3, Archivwissen 4 und Auftrag 4."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 8 · Friedman",
+   "titel": "Drei Wege zur Schlüssellänge",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.45,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Kasiski** → Teiler (exakt, braucht echte Wiederholungen)"
+      },
+      {
+       "t": "p",
+       "md": "**Friedman** → Schätzung (Eves Brief: **4,15**)"
+      },
+      {
+       "t": "p",
+       "md": "**Teiltext-Probe** → Sprung beim richtigen k"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "zentriert": true,
+       "kopf": [
+        "k",
+        "mittlerer I der Teiltexte"
+       ],
+       "schrift_folie": 20,
+       "zeilen": [
+        [
+         "1 … 4",
+         "0,046 – 0,048"
+        ],
+        [
+         "**5**",
+         "==0,096=="
+        ],
+        [
+         "6 … 9",
+         "0,042 – 0,047"
+        ],
+        [
+         "10",
+         "==0,099== (Vielfaches!)"
+        ]
+       ],
+       "breiten": [
+        1.4,
+        4.6
+       ]
+      }
+     ]
+    }
+   ],
+   "notizen": "5 min. Akte W2·3, Auftrag 5: Eves Brief (n = 228, I = 0,0470).\nTeiltext-Probe: k = 1: 0,047 · 2: 0,046 · 3: 0,046 · 4: 0,048 · 5: 0,096 · 6: 0,044 · 7: 0,047 · 8: 0,047 · 9: 0,042 · 10: 0,099. Das kleinste k mit hohem Wert gewinnt → 5.\nFazit: kombinieren – Kasiski liefert Kandidaten, Friedman eine grobe Schätzung, die Teiltexte entscheiden."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 8 · Fremde Chiffre III",
+   "titel": "Playfair: Paare statt Buchstaben",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.36,
+     "links": [
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "RIALT",
+        "OBCDE",
+        "FGHKM",
+        "NPQSU",
+        "VWXYZ"
+       ],
+       "hervor": [
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         3
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "==1==  **Vorbereiten:** I = J, X zwischen Doppelbuchstaben im Paar, X am Ende"
+      },
+      {
+       "t": "p",
+       "md": "==2==  **Zeile** → rechter Nachbar: `OD` → `BE`"
+      },
+      {
+       "t": "p",
+       "md": "==3==  **Spalte** → darunter: `BG` → `GP`"
+      },
+      {
+       "t": "p",
+       "md": "==4==  **Rechteck** → Ecke in der eigenen Zeile: `RS` → `LN`"
+      }
+     ]
+    }
+   ],
+   "notizen": "6 min. Quadrat RIALTO (Schlüsselwort zeilenweise, Rest alphabetisch, J fehlt).\nBeispiele OD → BE (gleiche Zeile), BG → GP (gleiche Spalte), RS → LN (Rechteck).\nEntschlüsseln: Zeile → links, Spalte → oben, Rechteck wie beim Verschlüsseln (P3).\nHistorisch: 1854 von Charles Wheatstone erfunden, nach Lyon Playfair benannt; u. a. im Burenkrieg und im Ersten Weltkrieg eingesetzt."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 8 · Fremde Chiffre III",
+   "nr": "P4",
+   "titel": "Playfair-Regeln",
+   "regel": "Regeln **abhaken**, bevor du rechnest.",
+   "falsch": [
+    {
+     "t": "geheimtext",
+     "text": "BA LL ET T",
+     "gruppen": 0
+    },
+    {
+     "t": "p",
+     "md": "Rechteck-Ecke in der **Spalte**"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "geheimtext",
+     "text": "BA LX LE TX TX",
+     "gruppen": 0
+    },
+    {
+     "t": "p",
+     "md": "Ecke in der **eigenen Zeile**"
+    }
+   ],
+   "notizen": "3 min. ballett: Das X wird nur innerhalb eines Paars eingefügt, danach verschiebt sich die Paarbildung; am Ende wird aufgefüllt.\nHäufigster Fehler im Abitur bei Regelverfahren: Regeln nicht abgehakt.\nLab W2-L24-02/03."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 8 · Fremde Chiffre III",
+   "titel": "Fremde Chiffre: das Kreuzquadrat",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**O** (GONDEL)",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "GONDE",
+        "LABCF",
+        "HIKMP",
+        "QRSTU",
+        "VWXYZ"
+       ],
+       "hervor": [
+        [
+         0,
+         4
+        ],
+        [
+         1,
+         4
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**U** (MURANO)",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "MURAN",
+        "OBCDE",
+        "FGHIK",
+        "LPQST",
+        "VWXYZ"
+       ],
+       "hervor": [
+        [
+         0,
+         3
+        ],
+        [
+         1,
+         3
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**1** a oben, b unten suchen · **2** c~1~ = **U** (Zeile a, Spalte b) · **3** c~2~ = **O** (Zeile b, Spalte a) · FA → `DE`",
+     "zentriert": true
+    }
+   ],
+   "notizen": "5 min. 5-Schritte-Methode (WK2): erst das Material lesen, dann das Material-Beispiel nachrechnen!\nFA: f oben in Zeile 2, Spalte 5; a unten in Zeile 1, Spalte 4 → c₁ = unten Zeile 2, Spalte 4 = D; c₂ = oben Zeile 1, Spalte 5 = E.\nAkte W2·4, Aufträge 5–6 (kommandant → FBFDE OADNS; FBNSR OBNCM → kontorbuch)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 8 · Fremde Chiffre III",
+   "titel": "Bigramm-Verfahren einordnen",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Substitution**, monoalphabetisch **auf Bigrammen**: gleiches Paar → gleiches Paar."
+    },
+    {
+     "t": "p",
+     "md": "Angriff: **Bigramm-Häufigkeiten** (en, er, ch, ei)."
+    },
+    {
+     "t": "p",
+     "md": "Schwache Schlüssel prüfen (Kreuzquadrat mit O = U)."
+    }
+   ],
+   "notizen": "3 min. Abi-Check W2·4 b) mündlich: Playfair ist auf Einzelbuchstaben bezogen nicht immer gleich (e in EG → B, in EL → D), auf Paare bezogen immer gleich → monoalphabetisch auf Bigrammen; Bezugsgröße nennen (P5).\nAusblick: „Zwei Quadrate“ heißt nicht automatisch Bigramm-Verfahren – siehe Papier-Boss „Das Zwei-Quadrat“ (buchstabenweise polyalphabetisch)."
+  },
+  {
+   "layout": "dunkel",
+   "abschnitt": "DS 8 · Boss",
+   "titel": "Boss: Die Venezianische Depesche",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Zeit",
+       "25 min · 8 Aufgaben · ohne Werkzeuge"
+      ],
+      [
+       "Besiegt",
+       "ab 50 %"
+      ],
+      [
+       "Artefakt",
+       "Vigenère-Tafel"
+      ],
+      [
+       "Danach",
+       "Video 📼03 · Kür K1 · Papier-Boss „Das Zwei-Quadrat“"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      9.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Venedig, 1605: Hält Alices neue **Depeschen-Chiffre**, was sie verspricht?"
+    }
+   ],
+   "notizen": "1 min. Boss starten (Lehrkraft-Freigabe im Lab). Ziehung 8 aus 15 (★ 3, ★★ 3, ★★★ 2), niveau-gefiltert: gA zieht B09 und B14 nicht.\nWie im Abitur: ohne Werkzeuge, Vigenère-Quadrat der Anlage erlaubt.\nDanach: Video 📼03 „Vigenère knacken: Kasiski-Test und Friedman-Test“, Kür K1 für Mathe-Begeisterte, Papier-Boss als Übungsklausur (60 min) in der Folgestunde oder als Hausaufgabe."
+  }
+ ]
+}

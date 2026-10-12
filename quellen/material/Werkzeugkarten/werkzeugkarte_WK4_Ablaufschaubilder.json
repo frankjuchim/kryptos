@@ -1,0 +1,306 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK4",
+ "titel": "Ablaufschaubilder",
+ "datei": "KR_WK4_Ablaufschaubilder",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "p",
+   "md": "**Zeichenregeln (wie im Abitur):** Akteure als beschriftete Kästen (links Absender, rechts Empfänger, in der Mitte Dritte: CA „Trent“, Angreifer „Mallory“). Jeder Pfeil trägt eine **Nummer** (Reihenfolge) und eine **Beschriftung** (was wird übertragen bzw. getan). Schlüssel immer mit **Art und Inhaber** angeben: „privater Schlüssel von Alice“ – nie nur „Schlüssel“."
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "h",
+     "md": "4.1 Digitale Signatur"
+    },
+    {
+     "t": "p",
+     "md": "Bei Alice: Nachricht N und privater Schlüssel von Alice · bei Bob: öffentlicher Schlüssel von Alice",
+     "klein": true,
+     "nach": 0
+    },
+    {
+     "t": "schaubild",
+     "breite_cm": 8.1,
+     "_W": 620,
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert h = H(N) bilden"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "h mit dem privaten Schlüssel von Alice verschlüsseln → Signatur S"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "N und S senden"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "S mit dem öffentlichen Schlüssel von Alice entschlüsseln → h'"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "h'' = H(N) selbst bilden"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "h' = h''? → ja: N unverändert (Integrität) und von Alice (Authentizität)"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Typische Lücken: Schlüssel in 2 und 4, Aktion in 5 und 6. **Signieren privat, prüfen öffentlich – beides vom Absender.** Ohne Schritt 5/6 (Hashvergleich) ist nichts geprüft (P9).",
+     "klein": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "4.2 Hybridverfahren"
+    },
+    {
+     "t": "p",
+     "md": "Bei Alice: Datei D · bei Bob: Schlüsselpaar von Bob",
+     "klein": true,
+     "nach": 0
+    },
+    {
+     "t": "schaubild",
+     "breite_cm": 8.1,
+     "_W": 620,
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice"
+      },
+      {
+       "id": "B",
+       "name": "Bob"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "zufälligen Sitzungsschlüssel K erzeugen"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "D symmetrisch mit K verschlüsseln → C_D (schnell)"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "A",
+       "text": "K mit dem öffentlichen Schlüssel von Bob verschlüsseln → C_K"
+      },
+      {
+       "nr": 4,
+       "von": "A",
+       "nach": "B",
+       "text": "C_D und C_K senden"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "C_K mit dem privaten Schlüssel von Bob entschlüsseln → K"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "C_D symmetrisch mit K entschlüsseln → D"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Mustersatz: „Das Hybridverfahren verbindet die Geschwindigkeit symmetrischer Verfahren für große Datenmengen mit dem Schlüsselaustausch ohne geheimen Kanal, den asymmetrische Verfahren ermöglichen.“",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "4.3 Zertifikat und Zertifizierungsstelle (CA)"
+  },
+  {
+   "t": "p",
+   "md": "Bei Alice (bzw. in ihrem Browser) ist der öffentliche Schlüssel der CA vorinstalliert.",
+   "klein": true,
+   "nach": 0
+  },
+  {
+   "t": "schaubild",
+   "breite_cm": 14.0,
+   "_W": 1000,
+   "akteure": [
+    {
+     "id": "B",
+     "name": "Bob"
+    },
+    {
+     "id": "T",
+     "name": "Trent (CA)"
+    },
+    {
+     "id": "A",
+     "name": "Alice"
+    }
+   ],
+   "schritte": [
+    {
+     "nr": 1,
+     "von": "B",
+     "nach": "T",
+     "text": "öffentlichen Schlüssel von Bob + Identitätsnachweis (z. B. Ausweis) vorlegen"
+    },
+    {
+     "nr": 2,
+     "von": "T",
+     "nach": "T",
+     "text": "Identität prüfen; Zertifikat erstellen: Name Bob + öffentlicher Schlüssel von Bob + Gültigkeit, signiert mit dem privaten Schlüssel der CA"
+    },
+    {
+     "nr": 3,
+     "von": "T",
+     "nach": "B",
+     "text": "Zertifikat ausstellen"
+    },
+    {
+     "nr": 4,
+     "von": "B",
+     "nach": "A",
+     "text": "Zertifikat senden"
+    },
+    {
+     "nr": 5,
+     "von": "A",
+     "nach": "A",
+     "text": "Signatur des Zertifikats mit dem öffentlichen Schlüssel der CA prüfen; Name und Gültigkeit prüfen"
+    },
+    {
+     "nr": 6,
+     "von": "A",
+     "nach": "B",
+     "text": "bei Erfolg: mit dem zertifizierten öffentlichen Schlüssel von Bob verschlüsseln bzw. seine Signaturen prüfen"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Zertifikatskette:** Der öffentliche Schlüssel einer Zwischen-CA ist selbst von einer Wurzel-CA zertifiziert; vertraut wird letztlich nur den vorinstallierten Wurzelschlüsseln. **Ein Zertifikat bestätigt die Zuordnung Schlüssel ↔ Identität – nicht, dass die Person ehrlich ist** (P9).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "4.4 Man-in-the-Middle-Angriff (ohne Zertifikat)"
+  },
+  {
+   "t": "p",
+   "md": "Alle Nachrichten zwischen Alice und Bob laufen über Mallory.",
+   "klein": true,
+   "nach": 0
+  },
+  {
+   "t": "schaubild",
+   "breite_cm": 14.0,
+   "_W": 1000,
+   "akteure": [
+    {
+     "id": "A",
+     "name": "Alice"
+    },
+    {
+     "id": "M",
+     "name": "Mallory"
+    },
+    {
+     "id": "B",
+     "name": "Bob"
+    }
+   ],
+   "schritte": [
+    {
+     "nr": 1,
+     "von": "A",
+     "nach": "M",
+     "text": "öffentlichen Schlüssel von Alice senden (für Bob gedacht)"
+    },
+    {
+     "nr": 2,
+     "von": "M",
+     "nach": "B",
+     "text": "eigenen öffentlichen Schlüssel als „Schlüssel von Alice“ weitergeben"
+    },
+    {
+     "nr": 3,
+     "von": "B",
+     "nach": "M",
+     "text": "Nachricht, verschlüsselt mit dem vermeintlichen Schlüssel von Alice (in Wahrheit Mallorys)"
+    },
+    {
+     "nr": 4,
+     "von": "M",
+     "nach": "M",
+     "text": "mit dem privaten Schlüssel von Mallory entschlüsseln, lesen, ggf. ändern"
+    },
+    {
+     "nr": 5,
+     "von": "M",
+     "nach": "A",
+     "text": "Nachricht mit dem öffentlichen Schlüssel von Alice verschlüsseln und weiterleiten"
+    },
+    {
+     "nr": 6,
+     "von": "A",
+     "nach": "A",
+     "text": "entschlüsselt mit ihrem privaten Schlüssel – bemerkt nichts"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Wirkung:** Vertraulichkeit verletzt (Mallory liest), Integrität verletzt (Mallory ändert), Authentizität verletzt (Bob hält Mallorys Schlüssel für den von Alice). **Abwehr:** Zertifikate (4.3) – in Schritt 2 hätte Mallory kein von der CA signiertes Zertifikat auf den Namen Alice.",
+   "klein": true
+  }
+ ]
+}

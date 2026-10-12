@@ -1,0 +1,991 @@
+{
+ "typ": "akte",
+ "welt": 1,
+ "kennung": "AKTE W1·2",
+ "titel": "Die Gegenmittel",
+ "ds": "5",
+ "niveau": "kern",
+ "level": "1.2",
+ "datei": "KR_W1_Akte2_Die_Gegenmittel",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Die Nachricht von Al-Kindis Methode hat sich herumgesprochen. Die Schreiber des Kalifen suchen nach **Gegenmitteln**: ein Alphabet, das man mit Zahlen **berechnen** kann, statt es aufzuschreiben; **mehrere Zeichen** für das verräterische e. Heute rechnest du wie die Mathematiker des Hauses der Weisheit – **ohne Taschenrechner**, wie im Abitur – und prüfst, ob die Gegenmittel Eve wirklich aufhalten."
+  },
+  {
+   "t": "falle",
+   "nr": "P1",
+   "titel": "Diese Chiffre zählt A = 0 … Z = 25",
+   "md": "Die affine Chiffre nummeriert **A = 0 … Z = 25** – **nicht** wie die Abitur-Anlage (A = 1 … Z = 26). Lies bei jeder Aufgabe zuerst die Zeile „Nummerierung“. Mit A = 0 entsprechen die Reste 0 … 25 von mod 26 genau den 26 Buchstaben: **Rest 0 ist A**."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Die affine Chiffre",
+   "inhalt": [
+    {
+     "t": "alphabet",
+     "nummerierung": 0
+    },
+    {
+     "t": "p",
+     "md": "Schlüssel (m, t). **Verschlüsseln:**"
+    },
+    {
+     "t": "formel",
+     "md": "**c = (m · p + t) mod 26**"
+    },
+    {
+     "t": "p",
+     "md": "Für t = 0 heißt sie **multiplikative Chiffre**, für m = 1 ist sie **Caesar**."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* (m, t) = (7, 3), Klartext `sultan`:"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      3.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "s",
+       "u",
+       "l",
+       "t",
+       "a",
+       "n"
+      ],
+      [
+       "p",
+       "18",
+       "20",
+       "11",
+       "19",
+       "0",
+       "13"
+      ],
+      [
+       "7 · p + 3",
+       "129",
+       "143",
+       "80",
+       "136",
+       "3",
+       "94"
+      ],
+      [
+       "mod 26",
+       "25",
+       "13",
+       "2",
+       "6",
+       "3",
+       "16"
+      ],
+      [
+       "Geheimtext",
+       "**Z**",
+       "**N**",
+       "**C**",
+       "**G**",
+       "**D**",
+       "**Q**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext `ZNCGD Q`."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Welche m sind erlaubt? Der inverse Schlüssel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zwei verschiedene Klartextbuchstaben dürfen **nie** denselben Geheimtextbuchstaben bekommen. *Gegenbeispiel* m = 2 (t = 0): a = 0 → 0 = **A** und n = 13 → 26 mod 26 = 0 = **A** – Bob weiß nicht, ob a oder n gemeint war."
+    },
+    {
+     "t": "p",
+     "md": "Allgemein funktioniert m nur, wenn **ggT(m, 26) = 1**: m ∈ {1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25} → 12 Faktoren, **12 · 26 = 312 Schlüssel** (m, t)."
+    },
+    {
+     "t": "p",
+     "md": "**Entschlüsseln:**"
+    },
+    {
+     "t": "formel",
+     "md": "**p = m^−1^ · (c − t) mod 26**,   wobei m^−1^ · m mod 26 = 1"
+    },
+    {
+     "t": "p",
+     "md": "**m^−1^ finden ohne Taschenrechner:** Welche der Zahlen 27, 53, 79, 105, 131, 157, 183, 209, 235 (Vielfache von 26 plus 1) ist durch m teilbar? *Beispiel* m = 7: 105 = 7 · 15 → **m^−1^ = 15**."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "m",
+       "1",
+       "3",
+       "5",
+       "7",
+       "9",
+       "11",
+       "15",
+       "17",
+       "19",
+       "21",
+       "23",
+       "25"
+      ],
+      [
+       "m^−1^",
+       "1",
+       "9",
+       "21",
+       "15",
+       "3",
+       "19",
+       "7",
+       "23",
+       "11",
+       "5",
+       "17",
+       "25"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Bei **negativen** Zwischenwerten 26 (oder ein Vielfaches) addieren (Falle P2). Reihenfolge beim Entschlüsseln: **erst − t, dann · m^−1^** (Falle P3)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Homophone Substitution",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Häufige Klartextbuchstaben bekommen **mehrere Geheimzeichen (Homophone)**, seltene eines. Jedes Geheimzeichen steht für genau einen Buchstaben – die Entschlüsselung ist eindeutig. Tabelle **„Kalifenschrift“** (Kryptos-Regel: die Homophone eines Buchstabens werden **der Reihe nach** benutzt, danach wieder von vorn):"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 9.5,
+     "kopf": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m"
+     ],
+     "zeilen": [
+      [
+       "21, 64",
+       "37",
+       "58",
+       "13",
+       "42, 77, 19, 85",
+       "30",
+       "66",
+       "49",
+       "15, 92",
+       "71",
+       "26",
+       "53",
+       "88"
+      ]
+     ],
+     "breiten": [
+      1.2,
+      1.0,
+      1.0,
+      1.0,
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.4,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 9.5,
+     "kopf": [
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z"
+     ],
+     "zeilen": [
+      [
+       "34, 60",
+       "97",
+       "45",
+       "11",
+       "72, 28",
+       "56, 83",
+       "39, 94",
+       "24",
+       "62",
+       "17",
+       "79",
+       "50",
+       "35"
+      ]
+     ],
+     "breiten": [
+      1.4,
+      1.0,
+      1.0,
+      1.0,
+      1.4,
+      1.4,
+      1.4,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "(35 verschiedene Zahlen, keine doppelt.) *Beispiel* `erreichen` → **42 72 28 77 15 58 49 19 34**: Die drei e erscheinen als 42, 77, 19."
+    },
+    {
+     "t": "p",
+     "md": "**Einordnung:** Nach dem Kriterium „Wird derselbe Klartextbuchstabe immer gleich ersetzt?“ ist die homophone Substitution **nicht** monoalphabetisch; polyalphabetisch im Sinne von Vigenère ist sie aber auch **nicht** (ein einziges Zuordnungsalphabet, keine schlüsselgesteuerte Folge von Alphabeten). Man nennt sie **homophone Substitution** und begründet die Einordnung (Falle P5)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Was bleibt sichtbar?",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Homophone glätten die **Einzelhäufigkeiten**, aber nicht die **Nachbarschaften**: c und h haben je ein Zeichen, also erscheint „ch“ immer als **58 49**. Bei langen Texten findet man Gruppen von Zeichen, die in denselben Umgebungen auftreten (die Homophone von e)."
+    },
+    {
+     "t": "p",
+     "md": "Die affine Chiffre ist trotz Formel **monoalphabetisch** – Häufigkeitsanalyse und **zwei vermutete Paare** genügen für den Schlüssel."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Das Minarett",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: **A = 0 … Z = 25**. **Verschlüssele** `minarett` mit (m, t) = (11, 4)."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.2,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7
+     ],
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "Klartext",
+       "m",
+       "i",
+       "n",
+       "a",
+       "r",
+       "e",
+       "t",
+       "t"
+      ],
+      [
+       "p",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "11 · p + 4",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "mod 26",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.2,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "m",
+       "i",
+       "n",
+       "a",
+       "r",
+       "e",
+       "t",
+       "t"
+      ],
+      [
+       "p",
+       "12",
+       "8",
+       "13",
+       "0",
+       "17",
+       "4",
+       "19",
+       "19"
+      ],
+      [
+       "11 · p + 4",
+       "136",
+       "92",
+       "147",
+       "4",
+       "191",
+       "48",
+       "213",
+       "213"
+      ],
+      [
+       "mod 26",
+       "6",
+       "14",
+       "17",
+       "4",
+       "9",
+       "22",
+       "5",
+       "5"
+      ],
+      [
+       "Geheimtext",
+       "G",
+       "O",
+       "R",
+       "E",
+       "J",
+       "W",
+       "F",
+       "F"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext **GOREJ WFF**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler (P1):* mit A = 1 gerechnet → anderer Text."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Gegenstücke ohne Taschenrechner",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bestimme** ohne Taschenrechner die inversen Schlüssel zu m = 5, 9, 11, 17 mod 26. Notiere den Weg mit den Zahlen 27, 53, 79, …"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      1.6,
+      11.0,
+      2.2
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "m",
+      "Weg (welche Zahl 26 · k + 1 ist durch m teilbar?)",
+      "m^−1^"
+     ],
+     "zeilen": [
+      [
+       "5",
+       "",
+       ""
+      ],
+      [
+       "9",
+       "",
+       ""
+      ],
+      [
+       "11",
+       "",
+       ""
+      ],
+      [
+       "17",
+       "",
+       ""
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      1.6,
+      11.0,
+      2.2
+     ],
+     "kopf": [
+      "m",
+      "Weg",
+      "m^−1^"
+     ],
+     "zeilen": [
+      [
+       "5",
+       "5 · 21 = 105 = 4 · 26 + 1",
+       "**21**"
+      ],
+      [
+       "9",
+       "9 · 3 = 27 = 26 + 1",
+       "**3**"
+      ],
+      [
+       "11",
+       "11 · 19 = 209 = 8 · 26 + 1",
+       "**19**"
+      ],
+      [
+       "17",
+       "17 · 23 = 391 = 15 · 26 + 1",
+       "**23**"
+      ]
+     ]
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Ein Fluss im Geheimtext",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: **A = 0 … Z = 25**. **Entschlüssele** `RWEZW I` mit (m, t) = (9, 2)."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.6,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2
+     ],
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "R",
+       "W",
+       "E",
+       "Z",
+       "W",
+       "I"
+      ],
+      [
+       "c",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "c − 2",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "m^−1^ · (c − 2) mod 26",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Klartext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "m^−1^ = 3 (9 · 3 = 27)."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.6,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2,
+      2.2
+     ],
+     "zeilen": [
+      [
+       "Geheimtext",
+       "R",
+       "W",
+       "E",
+       "Z",
+       "W",
+       "I"
+      ],
+      [
+       "c",
+       "17",
+       "22",
+       "4",
+       "25",
+       "22",
+       "8"
+      ],
+      [
+       "c − 2",
+       "15",
+       "20",
+       "2",
+       "23",
+       "20",
+       "6"
+      ],
+      [
+       "3 · (c − 2) mod 26",
+       "45 → 19",
+       "60 → 8",
+       "6",
+       "69 → 17",
+       "60 → 8",
+       "18"
+      ],
+      [
+       "Klartext",
+       "t",
+       "i",
+       "g",
+       "r",
+       "i",
+       "s"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Klartext **tigris**."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler (P3):* mit m statt m^−1^ multipliziert; erst multipliziert, dann t abgezogen."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Verbotene Faktoren",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Zeige** an einem selbst gewählten Gegenbeispiel, dass m = 2 kein brauchbarer Schlüssel ist, und **gib** alle Buchstaben **an**, die mit m = 13, t = 0 zu A werden (Nummerierung A = 0 … Z = 25)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "z. B. b = 1 → 2 = C und o = 14 → 28 mod 26 = 2 = C (allgemein p und p + 13 kollidieren)."
+    },
+    {
+     "t": "p",
+     "md": "m = 13: alle Buchstaben mit gerader Nummer werden zu A: **a, c, e, g, i, k, m, o, q, s, u, w, y** (die ungeraden zu N)."
+    }
+   ],
+   "fallen": [
+    "P7",
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Zwei Paare genügen",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 Ein langer affin verschlüsselter Text (A = 0 … Z = 25) hat die häufigsten Buchstaben **Y** und **T**. **Bestimme** den Schlüssel unter der Annahme e → Y, n → T. (Hinweis: 9^−1^ mod 26 = 3.) **Prüfe** dein Ergebnis an e."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "e = 4 → Y = 24: 4m + t ≡ 24; n = 13 → T = 19: 13m + t ≡ 19 (mod 26)."
+    },
+    {
+     "t": "p",
+     "md": "Differenz: 9m ≡ −5 ≡ 21 → m = 3 · 21 = 63 mod 26 = **11**; t = 24 − 44 = −20 ≡ **6** → **(m, t) = (11, 6)**."
+    },
+    {
+     "t": "p",
+     "md": "Probe e: 11 · 4 + 6 = 50 mod 26 = 24 = Y ✔."
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 1,
+   "titel": "Kalifenschrift",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Benutze die Tabelle „Kalifenschrift“ aus Archivwissen 3."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** `gelehrte`.",
+      "**Entschlüssele** `17 42 56 15 72 77 92 53 39`."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **66 42 53 77 49 72 39 19** (e der Reihe nach: 42, 77, 19)."
+    },
+    {
+     "t": "p",
+     "md": "b) **wesir eilt**."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Doppelt hält besser?",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Schreiber verschlüsselt `karawane` erst affin mit (3, 5), dann das Ergebnis affin mit (7, 2) (Nummerierung A = 0 … Z = 25)."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** den Geheimtext.",
+      "**Zeige**, dass dasselbe Ergebnis mit einem einzigen Schlüssel (m, t) entsteht, und **gib** ihn **an**.",
+      "**Beurteile** die Doppelverschlüsselung."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) (3, 5): `karawane` → Zwischentext `JFEFT FSR`; dann (7, 2) → **NLELF LYR**."
+    },
+    {
+     "t": "p",
+     "md": "b) c = 7 · (3p + 5) + 2 = 21p + 37 ≡ 21p + 11 → **(m, t) = (21, 11)**; Verschlüsselung mit (21, 11) ergibt ebenfalls `NLELFLYR`."
+    },
+    {
+     "t": "p",
+     "md": "c) Kein Sicherheitsgewinn: Das Ergebnis ist eine gewöhnliche affine Chiffre, der Schlüsselraum bleibt 312, die Häufigkeitsanalyse wirkt unverändert (P8)."
+    }
+   ],
+   "fallen": [
+    "P8"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min",
+   "material": [
+    {
+     "t": "kasten",
+     "kopf": "MATERIAL · ZAHLENCHIFFRE-29",
+     "farbe": "14213D",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Nummerierung: **A = 1 … Z = 26**. Schlüssel: eine ganze Zahl m mit 1 ≤ m ≤ 28. Jeder Buchstabe mit der Nummer p wird durch die zweistellige Zahl **c = (p · m) mod 29** ersetzt. Zum Entschlüsseln benötigt man den inversen Schlüssel d mit (m · d) mod 29 = 1; dann gilt **p = (c · d) mod 29**."
+      },
+      {
+       "t": "p",
+       "md": "Inverse mod 29 (Auszug): 4 ↔ 22 · 5 ↔ 6 · 7 ↔ 25 · 9 ↔ 13"
+      }
+     ]
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den Geheimtext zum Klartext „basar“ mit m = 4.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "b = 2 → 8, a = 1 → 4, s = 19 → 76 mod 29 = 18, a → 4, r = 18 → 72 mod 29 = 14: **08 04 18 04 14** [2]"
+      }
+     ],
+     "fallen": [
+      "P1"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `20 03 26 24` für m = 6.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "d = 5 (6 · 5 = 30 ≡ 1): 20 · 5 = 100 mod 29 = 13 → m; 3 · 5 = 15 → o; 26 · 5 = 130 mod 29 = 14 → n; 24 · 5 = 120 mod 29 = 4 → d → **mond** [3]"
+      }
+     ],
+     "fallen": [
+      "P3"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Begründen Sie**, dass bei ZAHLENCHIFFRE-29 jeder Schlüssel m ∈ {1, …, 28} eine eindeutige Entschlüsselung erlaubt, und **zeigen Sie** an einem Gegenbeispiel, dass dies bei der Variante c = (p · m) mod 26 (A = 1 … Z = 26) nicht für jedes m gilt.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "29 ist eine Primzahl, also ggT(m, 29) = 1 für jedes m ∈ {1, …, 28}; damit gibt es zu jedem m ein Inverses d, und aus c lässt sich p eindeutig berechnen (verschiedene p ergeben verschiedene c). Gegenbeispiel mod 26, m = 2: A (1) → 2, N (14) → 28 mod 26 = 2 – gleiche Geheimzahl. [Begründung 2, Gegenbeispiel 2]"
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Beurteilen Sie** die Sicherheit von ZAHLENCHIFFRE-29.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Monoalphabetisch: gleiche Buchstaben → gleiche Zahlen → Häufigkeitsanalyse; nur 28 Schlüssel (m = 1 lässt die Nummern unverändert – schwacher Schlüssel) → Brute Force sogar von Hand; ein bekanntes Paar (p, c) genügt: m = c · p^−1^. Urteil: unsicher. [3]"
+      }
+     ],
+     "fallen": [
+      "P7",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "1.2",
+   "md": "Level 1.2 „Die Gegenmittel“ im Kryptolabor (ohne Rechenhilfe für mod – wie im Abitur). Trainingsplatz: „Affine Chiffre“ und „Inverser Schlüssel“. Werkzeug: Häufigkeits-Analysator zum Vergleich der Histogramme."
+  }
+ ]
+}

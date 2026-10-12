@@ -1,0 +1,568 @@
+{
+ "typ": "akte",
+ "welt": 1,
+ "kennung": "AKTE W1·3",
+ "titel": "Fremde Chiffre II: Der Nomenklator",
+ "ds": "5",
+ "niveau": "kern",
+ "level": "1.3",
+ "datei": "KR_W1_Akte3_Fremde_Chiffre_II",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Im Archiv liegt neben Al-Kindis Schrift ein dickes Heft: eine Liste von Wörtern mit Zahlen dahinter. Solche Codebücher – man nennt sie **Nomenklatoren** – wurden erst Jahrhunderte später in den Kanzleien Europas berühmt. Sie wurden genau **gegen Al-Kindis Methode** gebaut: Wenn die häufigsten Wörter gar nicht mehr als Buchstaben auftauchen, was soll Eve dann zählen? Wende die **5-Schritte-Methode** an und finde es heraus."
+  },
+  {
+   "t": "kasten",
+   "kopf": "MATERIAL · NOMEN-850",
+   "farbe": "14213D",
+   "hintergrund": "FFFFFF",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Codebuch:**"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "mono": false,
+     "zeilen": [
+      [
+       "Wort",
+       "bagdad",
+       "basra",
+       "der",
+       "die",
+       "gold",
+       "kalif"
+      ],
+      [
+       "Code",
+       "35",
+       "90",
+       "39",
+       "58",
+       "27",
+       "47"
+      ],
+      [
+       "Wort",
+       "karawane",
+       "morgen",
+       "nacht",
+       "seide",
+       "und",
+       "wesir"
+      ],
+      [
+       "Code",
+       "62",
+       "74",
+       "81",
+       "53",
+       "16",
+       "18"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Blender:** `00` und `99` (bedeutungslos)."
+    },
+    {
+     "t": "p",
+     "md": "**Buchstabenteil:** Schlüsselwort-Alphabet zu `TUSCHE`:"
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "TUSCHEABDFGIJKLMNOPQRVWXYZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Regeln:** Jedes Wort des Klartextes wird, wenn es im Codebuch steht, durch seine zweistellige Zahl ersetzt, sonst Buchstabe für Buchstabe substituiert. Wortgrenzen entfallen; Blender dürfen nach jedem Wort eingefügt werden. Der Geheimtext wird in Fünfergruppen geschrieben (Ziffern und Buchstaben gemischt). Zahlen sind immer zweistellig."
+    },
+    {
+     "t": "p",
+     "md": "**Beispiel:** „die karawane erreicht basra am morgen“ → `5862H OOHDS BQ90T J74`"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "titel": "Code und Chiffre",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein **Code** ersetzt ganze Wörter oder Silben nach einem Codebuch, eine **Chiffre** ersetzt Buchstaben nach einer Regel. Ist das Codebuch **geheim**, ist es ein Teil des **Schlüssels** – also Verschlüsselung, keine öffentliche Codierung. **Blender** (Nullen) sind bedeutungslose Zeichen, die Muster verwischen sollen."
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "DIE 5-SCHRITTE-METHODE (WERKZEUGKARTE WK2)",
+   "farbe": "8A5F1A",
+   "hintergrund": "FBF3E2",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Lesen und nachrechnen** – das Beispiel des Materials selbst nachrechnen.",
+      "**Anwenden** – verschlüsseln, jede Regel abhaken.",
+      "**Umkehren** – entschlüsseln, jede Stufe rückgängig machen.",
+      "**Einordnen** – Transposition/Substitution? mono/poly? Code/Codierung?",
+      "**Beurteilen** – Kriterien prüfen (WK3), begründen, Urteil formulieren."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Schritt 1 · Lesen und nachrechnen",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Rechne** das Beispiel des Materials (`5862H OOHDS BQ90T J74`) **nach**: Wie wird jedes Wort behandelt?"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.0,
+      4.6,
+      9.2
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "Wort",
+      "Code oder Buchstaben?",
+      "Ergebnis"
+     ],
+     "zeilen": [
+      [
+       "die",
+       "",
+       ""
+      ],
+      [
+       "karawane",
+       "",
+       ""
+      ],
+      [
+       "erreicht",
+       "",
+       ""
+      ],
+      [
+       "basra",
+       "",
+       ""
+      ],
+      [
+       "am",
+       "",
+       ""
+      ],
+      [
+       "morgen",
+       "",
+       ""
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.0,
+      4.6,
+      9.2
+     ],
+     "kopf": [
+      "Wort",
+      "Code oder Buchstaben?",
+      "Ergebnis"
+     ],
+     "zeilen": [
+      [
+       "die",
+       "Code",
+       "58"
+      ],
+      [
+       "karawane",
+       "Code",
+       "62"
+      ],
+      [
+       "erreicht",
+       "Buchstaben",
+       "e → H, r → O, r → O, e → H, i → D, c → S, h → B, t → Q = `HOOHDSBQ`"
+      ],
+      [
+       "basra",
+       "Code",
+       "90"
+      ],
+      [
+       "am",
+       "Buchstaben",
+       "`TJ`"
+      ],
+      [
+       "morgen",
+       "Code",
+       "74"
+      ]
+     ]
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Schritt 2 · Anwenden",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** „die seide liegt in basra“ und füge nach „liegt“ den Blender `00` ein. Schreibe in Fünfergruppen."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "58 · 53 · `IDHAQ` (liegt) · 00 · `DK` (in) · 90 → **5853I DHAQ0 0DK90**"
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Schritt 3 · Umkehren",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 **Entschlüssele** den abgefangenen Brief. **Beschreibe**, wie du Ziffern und Buchstaben zerlegt hast."
+    },
+    {
+     "t": "geheimtext",
+     "text": "39470 0PSBD SGQ27 KTSB3 5",
+     "gruppen": 0,
+     "label": "ABGEFANGEN · NOMEN-850"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "39 · 47 · 00 · `PSBDSGQ` · 27 · `KTSB` · 35 → **der kalif schickt gold nach bagdad**."
+    },
+    {
+     "t": "p",
+     "md": "Zerlegung: Ziffern immer **paarweise** ab dem Beginn einer Ziffernfolge; jede Buchstabenfolge mit dem umgekehrten TUSCHE-Alphabet; 00 streichen; Wortgrenzen durch Lesen."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Schritt 4 · Einordnen",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Ordne** den Nomenklator **ein**: Transposition oder Substitution? Mono- oder polyalphabetisch? Code oder Codierung? **Begründe** jeweils."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Keine Transposition (Reihenfolge bleibt). Buchstabenteil: **monoalphabetische Substitution**. Codeteil: Substitution ganzer Wörter durch Zahlen (**Code**); da das Codebuch geheim ist, ist es **Teil des Schlüssels** → insgesamt symmetrische Verschlüsselung, keine Codierung. Gleiche Wörter → gleiche Codes, gleiche Buchstaben → gleiche Zeichen (monoalphabetisch)."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Schritt 5a · Al-Kindi gegen das Codebuch",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Erläutere**, wie sich das Codebuch auf eine Häufigkeitsanalyse auswirkt. Welche Buchstaben fehlen im Buchstabenteil besonders?"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Die häufigsten Wörter (der, die, und) werden zu Zahlen; dadurch fehlen im Buchstabenteil viele **e, d, r, n, i, u** → die Häufigkeiten passen schlechter zur Tabelle. Aber: Lange Texte enthalten genug andere Wörter; die **Codes selbst haben Häufigkeiten** (16, 39, 58 sehr oft) und verraten häufige Wörter."
+    }
+   ],
+   "fallen": [
+    "P6"
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Schritt 5b · Das Urteil",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beurteile** den Nomenklator nach diesen Kriterien und formuliere ein Urteil:"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      4.4,
+      12.4
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "Kriterium",
+      "Bewertung"
+     ],
+     "zeilen": [
+      [
+       "Häufigkeitsanalyse",
+       "\n"
+      ],
+      [
+       "Known-Plaintext",
+       "\n"
+      ],
+      [
+       "Kerckhoffs-Prinzip",
+       "\n"
+      ],
+      [
+       "Schlüsselaustausch (Größe des Codebuchs)",
+       "\n"
+      ],
+      [
+       "Blender",
+       "\n"
+      ],
+      [
+       "**Urteil**",
+       "\n"
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      4.4,
+      12.4
+     ],
+     "kopf": [
+      "Kriterium",
+      "Bewertung"
+     ],
+     "zeilen": [
+      [
+       "Häufigkeitsanalyse",
+       "erschwert, nicht verhindert: Buchstabenteil bleibt monoalphabetisch, Codes sind zählbar"
+      ],
+      [
+       "Known-Plaintext",
+       "deckt Codes und Buchstabenzuordnungen auf"
+      ],
+      [
+       "Kerckhoffs-Prinzip",
+       "Regeln dürfen bekannt sein; die Sicherheit liegt in Codebuch + Alphabet"
+      ],
+      [
+       "Schlüsselaustausch (Größe des Codebuchs)",
+       "Codebuch groß → geheimer Austausch und Wechsel aufwendig; Verlust eines Codebuchs kompromittiert alle Nachrichten"
+      ],
+      [
+       "Blender",
+       "nur wirksam, wenn häufig und unauffällig, sonst leicht zu erkennen (00/99 immer gleich)"
+      ],
+      [
+       "**Urteil**",
+       "besser als eine einfache Substitution, aber **unsicher**"
+      ]
+     ]
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Ein besserer Nomenklator",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entwirf** zwei Verbesserungen des NOMEN-850, die gezielt die Schwächen aus Auftrag 6 angreifen, und **erläutere** jeweils, was Eve dadurch schwerer fällt und welcher neue Nachteil entsteht."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "liste",
+     "items": [
+      "**Homophone Codes:** mehrere Codes je häufigem Wort → Codehäufigkeiten flacher; Nachteil: größeres Codebuch.",
+      "**Mehr Blender** aus dem normalen Zahlenvorrat (mehrere verschiedene Nullen) → schwer von Codes zu unterscheiden; Nachteil: längere Nachrichten.",
+      "**Codebuch regelmäßig wechseln** → Known-Plaintext veraltet; Nachteil: Schlüsselaustausch.",
+      "**Buchstabenteil homophon** → Einzelhäufigkeiten flacher; Nachteil: größere Tabelle."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Bewertung nach Plausibilität (Schwäche benannt, Wirkung auf Eve, neuer Nachteil)."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min · Material NOMEN-850",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `7400O HDQHQ 3918J DQ003 962KT SB90`.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "74 · 00 · `OHDQHQ` · 39 · 18 · `JDQ` · 00 · 39 · 62 · `KTSB` · 90 → **morgen reitet der wesir mit der karawane nach basra** [3]"
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern Sie** die Aufgabe der Blender `00` und `99`.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Bedeutungslose Zeichen, die Muster (Abstände, Häufigkeiten, Zahlenfolgen) stören und einen Angreifer verwirren sollen; der Empfänger kennt sie und streicht sie. [2]"
+      }
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Erbeutet Eve einen einzigen Klartext mit zugehörigem Geheimtext, kann sie alle künftigen Nachrichten vollständig lesen.“",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch: Eve kennt danach nur die vorgekommenen Codes und Buchstabenzuordnungen; Wörter mit unbekannten Codes und nicht vorgekommene Buchstaben bleiben offen (sie kann aber viel ergänzen) – „vollständig“ trifft nicht zu. [3]"
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Beurteilen Sie** die Sicherheit des Verfahrens unter Berücksichtigung des Kerckhoffs-Prinzips.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Nach Kerckhoffs: Regeln bekannt, Sicherheit hängt an Codebuch + Alphabet. Buchstabenteil monoalphabetisch → Häufigkeitsanalyse bei langen Texten; Codes wiederholen sich → Wortstatistik; Known-Plaintext; großes Codebuch muss sicher verteilt werden (Schlüsselaustauschproblem); Blender konstant und erkennbar. Urteil: Gegen einfache Angriffe besser als reine Substitution, insgesamt unsicher. [Kerckhoffs 1, zwei Angriffe 2, Urteil 1]"
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "1.3",
+   "md": "Level 1.3 „Fremde Chiffre II: Der Nomenklator“ im Kryptolabor; danach wartet der **Boss „Der Kalif und der Kurier“** (frei ab 60 % der Level-Punkte). Werkzeug: Substitutions-Werkbank (für den Buchstabenteil)."
+  }
+ ]
+}

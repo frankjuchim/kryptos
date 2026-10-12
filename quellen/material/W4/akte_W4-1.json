@@ -1,0 +1,886 @@
+{
+ "typ": "akte",
+ "welt": 4,
+ "kennung": "AKTE W4·1",
+ "titel": "Das Schlüsselproblem",
+ "ds": "12",
+ "niveau": "kern",
+ "level": "4.1",
+ "datei": "KR_W4_Akte1_Schluesselproblem",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Stanford, Herbst 1976. Auf dem Schreibtisch liegt das Fernschreiben – ihr habt es geknackt: Der Kurier mit dem neuen Schlüssel kam nie an. Die Bank hat **30 Filialen**, und jede soll mit jeder vertraulich kommunizieren können. Wie viele Kuriere bräuchte man dafür? Und geht es auch ganz ohne Kurier?"
+    },
+    {
+     "t": "geheimtext",
+     "label": "FERNSCHREIBEN · NOTVERFAHREN – NUR VERSCHIEBUNG · Nummerierung A = 1 … Z = 26",
+     "text": "TDARN ATJVW RNJWB LQUDN BBNUE NAUXA NW"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Wie viele Schlüssel braucht man?",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Symmetrische** Verfahren (Caesar, Vigenère, XOR, Blockchiffren) benutzen zum Ver- und Entschlüsseln **denselben** Schlüssel. Sollen n Personen paarweise vertraulich kommunizieren, braucht jedes Paar einen eigenen Schlüssel:"
+    },
+    {
+     "t": "liste",
+     "items": [
+      "Jede Person hat n − 1 Partner → n · (n − 1) „Enden“; jede Verbindung hat zwei Enden → **Anzahl symmetrischer Schlüssel = n(n − 1)/2**.",
+      "Bei einem **asymmetrischen** Verfahren hat jede Person **ein Schlüsselpaar** (öffentlich + privat) → **Anzahl asymmetrischer Schlüssel = 2n** (n Schlüsselpaare)."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "n",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "10",
+      "30"
+     ],
+     "zeilen": [
+      [
+       "symmetrisch n(n − 1)/2",
+       "1",
+       "3",
+       "6",
+       "10",
+       "15",
+       "45",
+       "435"
+      ],
+      [
+       "asymmetrisch 2n",
+       "4",
+       "6",
+       "8",
+       "10",
+       "12",
+       "20",
+       "60"
+      ]
+     ],
+     "breiten": [
+      4.6,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.7,
+      1.8,
+      1.9
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Noch wichtiger als die Anzahl: Alle symmetrischen Schlüssel müssen **vorher geheim** übertragen werden (Kurier, Treffen). Öffentliche Schlüssel dürfen dagegen jeder und jedem bekannt sein."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P7",
+   "titel": "Schlüsselanzahl",
+   "md": "n(n − 1) statt **n(n − 1)/2** rechnen (jede Verbindung doppelt gezählt) oder ein Schlüsselpaar als „einen Schlüssel“ zählen. Bei 10 Personen sind es symmetrisch 45 (nicht 90) und asymmetrisch 20 (nicht 10) Schlüssel."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Jede mit jedem",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.7,
+     "nur_schueler": true,
+     "links": [
+      {
+       "t": "liste",
+       "buchstaben": true,
+       "items": [
+        "Zeichne für n = 4 Personen alle Verbindungen ein und zähle sie.",
+        "**Begründe** die Formel n(n − 1)/2 in einem Satz.",
+        "Berechne die Anzahl symmetrischer und asymmetrischer Schlüssel für die Bank mit 30 Filialen."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "a) Anzahl der Verbindungen: [[luecke:8]]"
+      },
+      {
+       "t": "p",
+       "md": "b) [[luecke:52]]"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:56]]"
+      },
+      {
+       "t": "p",
+       "md": "c) symmetrisch: [[luecke:10]]   asymmetrisch: [[luecke:10]]"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W4/bilder/W4_vier_personen_leer.png",
+       "breite_cm": 4.4
+      }
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.7,
+     "nur_loesung": true,
+     "links": [
+      {
+       "t": "liste",
+       "buchstaben": true,
+       "items": [
+        "Zeichne für n = 4 Personen alle Verbindungen ein und zähle sie.",
+        "**Begründe** die Formel n(n − 1)/2 in einem Satz.",
+        "Berechne die Anzahl symmetrischer und asymmetrischer Schlüssel für die Bank mit 30 Filialen."
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W4/bilder/W4_vier_personen_loesung.png",
+       "breite_cm": 4.4
+      }
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **6** Verbindungen (siehe Zeichnung)."
+    },
+    {
+     "t": "p",
+     "md": "b) Jede der n Personen braucht mit n − 1 anderen einen Schlüssel; dabei wird jede Verbindung zweimal gezählt (von beiden Enden), also n(n − 1)/2."
+    },
+    {
+     "t": "p",
+     "md": "c) symmetrisch 30 · 29/2 = **435**, asymmetrisch 2 · 30 = **60**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* 870 (Halbierung vergessen, P7)."
+    }
+   ],
+   "fallen": [
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Wer spart wann?",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„In einer Gruppe aus 4 Personen braucht man asymmetrisch mehr Schlüssel als symmetrisch, in einer Gruppe aus 8 Personen ist es umgekehrt.“"
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Erläutere** die Richtigkeit der Aussage mit Rechnung.",
+      "**Bestimme**, ab welcher Gruppengröße asymmetrisch weniger Schlüssel benötigt werden.",
+      "Kommt in der 8er-Gruppe eine neunte Person hinzu: Wie viele **neue** Schlüssel braucht man jeweils? **Begründe**, warum dieser Unterschied für die Praxis noch wichtiger ist als die Gesamtzahl."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) n = 4: symmetrisch 4 · 3/2 = 6, asymmetrisch 8 → asymmetrisch mehr ✓; n = 8: symmetrisch 8 · 7/2 = 28, asymmetrisch 16 → symmetrisch mehr ✓. Die Aussage ist **korrekt**."
+    },
+    {
+     "t": "p",
+     "md": "b) n(n − 1)/2 < 2n ⇔ n − 1 < 4 ⇔ n < 5; bei n = 5 gleich (10 = 10), **ab n = 6** braucht asymmetrisch weniger."
+    },
+    {
+     "t": "p",
+     "md": "c) symmetrisch **+8** (36 statt 28: die neue Person braucht mit jeder der 8 einen Schlüssel), asymmetrisch **+2** (ihr eigenes Paar). Begründung: Jeder neue symmetrische Schlüssel muss geheim zu einer bereits vorhandenen Person gebracht werden (8 Treffen/Kuriere), beim asymmetrischen Verfahren muss die neue Person nur ihren öffentlichen Schlüssel veröffentlichen."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* Ergebnis ohne Rechnung („weil asymmetrisch besser ist“) → P10."
+    }
+   ],
+   "fallen": [
+    "P7",
+    "P10"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Das asymmetrische Prinzip",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Briefkasten/Vorhängeschloss:** Bob verteilt offene Vorhängeschlösser (= **öffentlicher Schlüssel**). Jeder kann damit eine Kiste verschließen, aber nur Bob besitzt den passenden Schlüssel (= **privater Schlüssel**).",
+      "**Schlüsselpaar:** Öffentlicher und privater Schlüssel gehören mathematisch zusammen, aber der private Schlüssel kann aus dem öffentlichen **praktisch nicht** berechnet werden.",
+      "**Vertraulich an Bob:** verschlüsseln mit dem **öffentlichen Schlüssel von Bob**, entschlüsseln mit dem **privaten Schlüssel von Bob**.",
+      "**Einwegfunktion:** leicht zu berechnen, aber praktisch nicht umkehrbar. Beispiel: f(x) = 3^x^ mod 17 ist schnell ausgerechnet; zu einem gegebenen Funktionswert x zu finden heißt *diskreter Logarithmus* und ist bei großen Zahlen nicht effizient lösbar. Eine **Einwegfunktion mit Falltür** lässt sich mit einer Zusatzinformation (dem privaten Schlüssel) doch umkehren – das braucht man für asymmetrische Verschlüsselung.",
+      "**Analogie und Grenze:** Ein echtes Schloss kann man aufbrechen; bei Einwegfunktionen gibt es (nach heutigem Wissen) keinen schnellen „Brecheisen-Algorithmus“ – man kann nur alle Möglichkeiten durchprobieren."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P9",
+   "titel": "Wessen Schlüssel?",
+   "md": "Nie „mit Alices Schlüssel“ an Bob verschlüsseln. Für Vertraulichkeit gilt immer: **öffentlicher Schlüssel des Empfängers** zum Verschlüsseln, **privater Schlüssel des Empfängers** zum Entschlüsseln."
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 1,
+   "titel": "Lückentext Schlüsselrollen",
+   "sozialform": "Einzelarbeit · 6 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ergänze den Lückentext: „Alice will Bob eine vertrauliche Nachricht schicken. Sie besorgt sich [[luecke:28]] und verschlüsselt damit. Eve kennt diesen Schlüssel ebenfalls, kann aber nicht entschlüsseln, weil dafür [[luecke:28]] nötig ist, den nur [[luecke:10]] besitzt. Der private Schlüssel muss nie übertragen werden, deshalb [[luecke:50]].“"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "„… den **öffentlichen Schlüssel von Bob** … weil dafür **der private Schlüssel von Bob** nötig ist, den nur **Bob** besitzt. … deshalb **kann er auch nicht beim Austausch abgefangen werden / entfällt das Schlüsselverteilungsproblem für geheime Schlüssel**.“"
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* Alices privater Schlüssel (P9)."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Diffie-Hellman: ein gemeinsamer Schlüssel über einen öffentlichen Kanal · Ergänzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "*Farbmischen:* Alice und Bob einigen sich öffentlich auf Gelb. Alice mischt geheim Rot hinein, Bob geheim Blau. Sie tauschen die Mischungen öffentlich aus. Jede gibt nun die eigene Geheimfarbe in die Mischung der anderen Person – beide erhalten dieselbe Endfarbe Gelb + Rot + Blau. Eve sieht Gelb, Gelb + Rot und Gelb + Blau, kann die Farben aber nicht „entmischen“."
+    },
+    {
+     "t": "p",
+     "md": "*Mit Zahlen* (öffentlich: Primzahl p und Basis g; geheim: a und b):"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Schritt",
+      "Alice",
+      "öffentlich (Eve sieht alles)",
+      "Bob"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "",
+       "p = 17, g = 3",
+       ""
+      ],
+      [
+       "2",
+       "wählt geheim a = 4",
+       "",
+       "wählt geheim b = 6"
+      ],
+      [
+       "3",
+       "A = 3^4^ mod 17 = 81 mod 17 = **13**",
+       "A = 13 →",
+       ""
+      ],
+      [
+       "4",
+       "",
+       "← B = 15",
+       "B = 3^6^ mod 17 = 729 mod 17 = **15**"
+      ],
+      [
+       "5",
+       "K = 15^4^ mod 17 = **16**",
+       "",
+       "K = 13^6^ mod 17 = **16**"
+      ]
+     ],
+     "breiten": [
+      1.5,
+      5.4,
+      4.3,
+      5.6
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Beide erhalten **K = g^ab^ mod p**, weil (g^b^)^a^ = (g^a^)^b^. **Rechentrick ohne Taschenrechner:** nach jeder Multiplikation sofort mod p reduzieren, z. B. 15² = 225 = 13 · 17 + 4 → 4; 15^4^ = 4² = 16. g sollte eine **Primitivwurzel** mod p sein (die Potenzen g^1^, g^2^, …, g^p−1^ durchlaufen alle Reste 1 … p − 1; 3 ist Primitivwurzel mod 17). In der Praxis hat p über 600 Dezimalstellen (2048 Bit)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Diffie-Hellman zu zweit",
+   "sozialform": "Partnerarbeit · 10 min",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Rollen: eine Person Alice, eine Person Bob. Öffentlich: **p = 19, g = 2**. Alice wählt geheim a = 7, Bob wählt geheim b = 5. Rechenvorlage (nach jeder Multiplikation mod 19 reduzieren):"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_schueler": true,
+     "kopf": [
+      "Schritt s",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+     ],
+     "zeilen": [
+      [
+       "2^s^ mod 19",
+       "2",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_loesung": true,
+     "kopf": [
+      "Schritt s",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+     ],
+     "zeilen": [
+      [
+       "2^s^ mod 19",
+       "2",
+       "4",
+       "8",
+       "16",
+       "13",
+       "7",
+       "14"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9,
+      1.9
+     ]
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Alice berechnet A, Bob berechnet B; tauscht die Werte aus.",
+      "Beide berechnen K.",
+      "Vergleicht."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) A = 2^7^ mod 19 = **14**, B = 2^5^ mod 19 = **13**."
+    },
+    {
+     "t": "p",
+     "md": "b) Alice: K = 13^7^ mod 19: 13, 13² = 169 mod 19 = 17, · 13 = 221 mod 19 = 12, · 13 = 156 mod 19 = 4, · 13 = 52 mod 19 = 14, · 13 = 182 mod 19 = 11, · 13 = 143 mod 19 = **10**."
+    },
+    {
+     "t": "p",
+     "md": "Bob: K = 14^5^ mod 19: 14, 196 mod 19 = 6, 84 mod 19 = 8, 112 mod 19 = 17, 238 mod 19 = **10**."
+    },
+    {
+     "t": "p",
+     "md": "c) Beide erhalten **K = 10**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* K = A^a^ statt B^a^ (eigene statt fremde Zahl potenzieren, P3); nicht reduziert (P2)."
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Eve hört mit",
+   "sozialform": "Einzelarbeit · 10 min · Rolle 🔍 Eve",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eve hat mitgehört: **p = 19, g = 2, A = 14, B = 13**."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Erstelle die Wertetabelle 2^x^ mod 19 für x = 1 … 18 und **bestimme** a.",
+      "Berechne K.",
+      "**Erläutere**, warum dieser Angriff in der Praxis scheitert, und **nenne** den Fachbegriff für die Eigenschaft der Funktion x ↦ g^x^ mod p."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_schueler": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "x",
+       "1",
+       "2",
+       "3",
+       "4",
+       "5",
+       "6",
+       "7",
+       "8",
+       "9"
+      ],
+      [
+       "2^x^ mod 19",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "x",
+       "10",
+       "11",
+       "12",
+       "13",
+       "14",
+       "15",
+       "16",
+       "17",
+       "18"
+      ],
+      [
+       "2^x^ mod 19",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.56
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_loesung": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "x",
+       "1",
+       "2",
+       "3",
+       "4",
+       "5",
+       "6",
+       "7",
+       "8",
+       "9"
+      ],
+      [
+       "2^x^ mod 19",
+       "2",
+       "4",
+       "8",
+       "16",
+       "13",
+       "7",
+       "**14**",
+       "9",
+       "18"
+      ],
+      [
+       "x",
+       "10",
+       "11",
+       "12",
+       "13",
+       "14",
+       "15",
+       "16",
+       "17",
+       "18"
+      ],
+      [
+       "2^x^ mod 19",
+       "17",
+       "15",
+       "11",
+       "3",
+       "6",
+       "12",
+       "5",
+       "10",
+       "1"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.53,
+      1.56
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) A = 14 steht bei x = 7 → **a = 7**."
+    },
+    {
+     "t": "p",
+     "md": "b) K = 13^7^ mod 19 = **10**."
+    },
+    {
+     "t": "p",
+     "md": "c) Bei p mit über 600 Dezimalstellen hätte die Tabelle etwa 10^600^ Einträge – mehr als es Atome im beobachtbaren Universum gibt (Größenordnung 10^80^); ein schnelleres Verfahren zur Umkehrung ist nicht bekannt. Fachbegriff: **Einwegfunktion** (Umkehrung = diskreter Logarithmus). Alice und Bob brauchen dagegen nur einige Tausend Multiplikationen (schnelles Potenzieren, Kür K3)."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Das Doppelschloss mit XOR",
+   "sozialform": "Partnerarbeit · 12 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Fremdes Protokoll „Doppelschloss“.** Mit echten Vorhängeschlössern geht es ohne gemeinsamen Schlüssel: Alice schließt die Kiste mit ihrem Schloss, Bob hängt sein Schloss dazu, Alice nimmt ihres ab, Bob öffnet seines. Ein Agent schlägt vor, das mit XOR nachzubauen:"
+    },
+    {
+     "t": "p",
+     "md": "(1) Alice → Bob: C~1~ = M ⊕ A · (2) Bob → Alice: C~2~ = C~1~ ⊕ B · (3) Alice → Bob: C~3~ = C~2~ ⊕ A · (4) Bob berechnet C~3~ ⊕ B."
+    },
+    {
+     "t": "p",
+     "md": "Werte: M = `0101 0010`, A = `1100 0110`, B = `1001 1101`."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Wende** das Protokoll **an** (C~1~, C~2~, C~3~, Bobs Ergebnis).",
+      "**Zeige**, dass Eve aus C~1~, C~2~, C~3~ die Nachricht berechnen kann.",
+      "**Begründe** allgemein mit den Rechenregeln von XOR, warum das immer klappt."
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.52,
+     "links": [
+      {
+       "t": "p",
+       "md": "**a) Alice und Bob**",
+       "klein": true
+      },
+      {
+       "t": "bits",
+       "zeilen": [
+        {
+         "label": "M",
+         "bits": "0101 0010"
+        },
+        {
+         "label": "⊕ A",
+         "bits": "1100 0110"
+        },
+        {
+         "label": "C₁",
+         "bits": "1001 0100",
+         "strich": true,
+         "leer": true
+        },
+        {
+         "label": "⊕ B",
+         "bits": "1001 1101"
+        },
+        {
+         "label": "C₂",
+         "bits": "0000 1001",
+         "strich": true,
+         "leer": true
+        },
+        {
+         "label": "⊕ A",
+         "bits": "1100 0110"
+        },
+        {
+         "label": "C₃",
+         "bits": "1100 1111",
+         "strich": true,
+         "leer": true
+        },
+        {
+         "label": "⊕ B",
+         "bits": "1001 1101"
+        },
+        {
+         "label": "Bob",
+         "bits": "0101 0010",
+         "strich": true,
+         "leer": true
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**b) Eve** (kennt nur C~1~, C~2~, C~3~)",
+       "klein": true
+      },
+      {
+       "t": "bits",
+       "zeilen": [
+        {
+         "label": "C₁",
+         "bits": "1001 0100",
+         "leer": true
+        },
+        {
+         "label": "⊕ C₂",
+         "bits": "0000 1001",
+         "leer": true
+        },
+        {
+         "label": "= B",
+         "bits": "1001 1101",
+         "strich": true,
+         "leer": true
+        },
+        {
+         "label": "C₃",
+         "bits": "1100 1111",
+         "leer": true
+        },
+        {
+         "label": "⊕ B",
+         "bits": "1001 1101",
+         "leer": true
+        },
+        {
+         "label": "= M",
+         "bits": "0101 0010",
+         "strich": true,
+         "leer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "c)",
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) C~1~ = `1001 0100`, C~2~ = `0000 1001`, C~3~ = `1100 1111`, Bob: C~3~ ⊕ B = `0101 0010` = M."
+    },
+    {
+     "t": "p",
+     "md": "b) Eve: C~1~ ⊕ C~2~ = `1001 1101` = B; C~3~ ⊕ B = `0101 0010` = M."
+    },
+    {
+     "t": "p",
+     "md": "c) C~1~ ⊕ C~2~ = (M ⊕ A) ⊕ (M ⊕ A ⊕ B) = B, weil x ⊕ x = 0 und XOR vertauschbar ist; danach C~3~ ⊕ B = M ⊕ B ⊕ B = M. Mit Vorhängeschlössern sieht Eve nur verschlossene Kisten, mit XOR sieht sie Bitfolgen, die sie kombinieren kann (P8: Kombination überschätzt)."
+    }
+   ],
+   "fallen": [
+    "P8"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Beschreiben Sie** das Prinzip asymmetrischer Verschlüsselungsverfahren.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Jede Person besitzt ein Schlüsselpaar aus öffentlichem und privatem Schlüssel (1). Der öffentliche Schlüssel wird bekannt gegeben und zum Verschlüsseln verwendet, der private bleibt geheim und dient zum Entschlüsseln (1). Wer an Bob schreibt, verschlüsselt mit Bobs öffentlichem Schlüssel; nur Bob kann mit seinem privaten Schlüssel entschlüsseln, ein geheimer Schlüsselaustausch entfällt (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "„Wenn 7 Mitarbeitende einer Agentur paarweise vertraulich kommunizieren, benötigen sie bei symmetrischer Verschlüsselung 21 Schlüssel, bei asymmetrischer Verschlüsselung dagegen nur 14.“ **Erläutern Sie** die Richtigkeit dieser Aussage und **begründen Sie**, dass beim Hinzukommen einer achten Person der Unterschied weiter wächst.",
+     "be": 5,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "symmetrisch je Paar ein Schlüssel: 7 · 6/2 = 21 (1); asymmetrisch je Person ein Paar: 2 · 7 = 14 (1) → Aussage korrekt (1). Achte Person: symmetrisch 8 · 7/2 = 28 (+7), asymmetrisch 16 (+2) (1); allgemein wächst der symmetrische Bedarf um n, der asymmetrische nur um 2 je neuer Person, der Abstand wächst also mit jeder Person (1)."
+      }
+     ],
+     "fallen": [
+      "P7",
+      "P10"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Erläutern Sie**, warum der private Schlüssel nicht mit vertretbarem Aufwand aus dem öffentlichen Schlüssel berechenbar sein darf, und **nennen Sie** den Fachbegriff für die mathematische Grundlage.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Der öffentliche Schlüssel ist allen bekannt, auch Eve (1); wäre der private daraus berechenbar, könnte jeder entschlüsseln (1). Grundlage: **Einwegfunktion mit Falltür** (leicht berechenbar, ohne Zusatzwissen praktisch nicht umkehrbar) (1)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "4.1",
+   "md": "Level 4.1 „Das Schlüsselproblem“ im Kryptolabor (Werkzeug **Modulo-Uhr & Farbmischer**). Trainingsplatz: „Schlüsselzähler“ (5 Aufgaben); Ergänzung: „DH-Tausch“ (3 Aufgaben)."
+  }
+ ]
+}

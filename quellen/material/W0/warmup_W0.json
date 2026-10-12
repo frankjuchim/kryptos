@@ -1,0 +1,305 @@
+{
+ "typ": "warmup",
+ "welt": 0,
+ "kennung": "WARM-UP W0",
+ "titel": "Warm-up-Karten · Die Antike",
+ "datei": "KR_W0_Warmup",
+ "karten": [
+  {
+   "id": "WU-W0-01",
+   "titel": "Zwei Seiten",
+   "minuten": 1,
+   "kategorie": "begriffe",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Wer betreibt Kryptografie, wer Kryptoanalyse: Alice, Bob, Eve? Wie heißt der Oberbegriff?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: begriffe",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Alice und Bob: **Kryptografie**; Eve: **Kryptoanalyse**; Oberbegriff **Kryptologie**."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-02",
+   "titel": "Geheim oder nicht?",
+   "minuten": 1,
+   "kategorie": "begriffe",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Ist der ASCII-Code eine Verschlüsselung? Begründe in einem Satz."
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: begriffe",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Nein – öffentliche **Codierung** ohne geheimen Schlüssel; jeder kann die Tabelle nachschlagen (P5)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-03",
+   "titel": "Mini-Skytale",
+   "minuten": 2,
+   "kategorie": "transposition",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Skytale, Umfang u = 2 (2 Zeilen, zeilenweise schreiben, spaltenweise lesen, Füllzeichen X):"
+    },
+    {
+     "t": "klartext",
+     "text": "eilbote"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: transposition",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Raster `eilb / otex` → **`EOITL EBX`**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-04",
+   "titel": "Mini-Zaun",
+   "minuten": 2,
+   "kategorie": "transposition",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Gartenzaun mit 2 Schienen:"
+    },
+    {
+     "t": "klartext",
+     "text": "seeschlacht"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: transposition",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Schiene 1 `seclct`, Schiene 2 `eshah` → **`SECLC TESHA H`**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-05",
+   "titel": "Drei Buchstaben",
+   "minuten": 1,
+   "kategorie": "verschluesseln",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. Caesar, k = 5:"
+    },
+    {
+     "t": "klartext",
+     "text": "tor"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: verschluesseln",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**`YTW`**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-06",
+   "titel": "Die Null",
+   "minuten": 1,
+   "kategorie": "modulo",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. Berechne (22 + 4) mod 26 und gib den Buchstaben an, der bei Caesar mit k = 4 aus V wird."
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: modulo",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(22 + 4) mod 26 = 0 → **Z** (26); Formel: ((22 + 4 − 1) mod 26) + 1 = 26 (P2)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-07",
+   "titel": "Wie viele?",
+   "minuten": 1,
+   "kategorie": "schluesselraum",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Wie viele Schlüssel hat Caesar, wie viele davon sind sinnvoll – und warum?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: schluesselraum",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**26** Schlüssel (0–25), **25** sinnvoll; k = 0 lässt den Klartext unverändert (P7)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-08",
+   "titel": "Kerckhoffs",
+   "minuten": 1,
+   "kategorie": "sicherheit-beurteilen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Formuliere das Kerckhoffs-Prinzip in einem Satz."
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: sicherheit-beurteilen",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Die Sicherheit eines Verfahrens darf **nur von der Geheimhaltung des Schlüssels** abhängen, nicht von der des Verfahrens."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-09",
+   "titel": "Doppelschritt",
+   "minuten": 1,
+   "kategorie": "sicherheit-beurteilen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Ein Text wird mit Caesar k = 7 und danach mit k = 19 verschlüsselt. Was kommt heraus?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: sicherheit-beurteilen",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(7 + 19) mod 26 = 0 → wieder **der Klartext** (P8)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-10",
+   "titel": "ASCII-Rechnen",
+   "minuten": 1,
+   "kategorie": "implementierung",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "`G` hat den ASCII-Wert 71. Welchen Wert hat G im Programm (A = 0) und in der Anlage (A = 1)?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: implementierung",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**6** und **7** (P1)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-11",
+   "titel": "Java-Rest",
+   "minuten": 1,
+   "kategorie": "modulo",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Was liefert Java für `-5 % 26`, und was ist −5 mod 26 nach der Anlage?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: modulo",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Java: **−5**; Anlage: **21** (P2)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W0-12",
+   "titel": "Spiegel",
+   "minuten": 2,
+   "kategorie": "substitution-mono",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Atbash (A ↔ Z, B ↔ Y, …):"
+    },
+    {
+     "t": "klartext",
+     "text": "mond"
+    },
+    {
+     "t": "p",
+     "md": "Was passiert, wenn du das Ergebnis noch einmal mit Atbash verschlüsselst?"
+    },
+    {
+     "t": "p",
+     "md": "Kategorie: substitution-mono",
+     "klein": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**`NLMW`**; zweimal Atbash ergibt wieder `mond` (involutorisch, P8)."
+    }
+   ]
+  }
+ ]
+}

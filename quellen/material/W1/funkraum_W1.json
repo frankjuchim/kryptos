@@ -1,0 +1,550 @@
+{
+ "typ": "dokument",
+ "welt": 1,
+ "kennung": "FUNKRAUM W1",
+ "titel": "Wettknacken",
+ "datei": "KR_W1_Funkraum_Wettknacken",
+ "ds": "4",
+ "ordner": "Werkzeuge/Funkraum",
+ "mit_loesung": true,
+ "namenszeile": false,
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "SZENARIO",
+   "md": "**Wettknacken** (DS 4, 25 min) – alle Teams knacken **denselben** langen Geheimtext (monoalphabetische Substitution, 486 Buchstaben) mit Häufigkeits-Analysator und Substitutions-Werkbank. Der Beamer zeigt den Fortschritt jedes Teams. **Lernziel:** Die Häufigkeitsanalyse bricht eine monoalphabetische Substitution trotz 26! Schlüsseln – Schritt für Schritt, ohne Brute Force."
+  },
+  {
+   "t": "h",
+   "md": "Rollen und Ablauf"
+  },
+  {
+   "t": "p",
+   "md": "Alle Teams sind **Eve-Teams**, die Lehrkraft führt **Regie**. Teams = feste Tischgruppen."
+  },
+  {
+   "t": "verlauf",
+   "kopf": [
+    "Schritt",
+    "Zeit",
+    "Was passiert",
+    "Plattform"
+   ],
+   "breiten": [
+    2.6,
+    1.3,
+    9.4,
+    3.5
+   ],
+   "zeilen": [
+    [
+     "0 Start",
+     "1",
+     "Lehrkraft startet „Wettknacken“; Häufigkeits-Analysator und Werkbank werden für das Szenario freigeschaltet.",
+     "Funkraum-Regie"
+    ],
+    [
+     "1 Analyse",
+     "5",
+     "Teams zählen (Analysator), notieren die Rangfolge, ordnen U ≙ e zu.",
+     "Werkbank im Funkraum-Modus"
+    ],
+    [
+     "2 Knacken",
+     "14",
+     "Bigramme/Trigramme, Musterwörter, Lesen. Der Beamer zeigt je Team einen **Fortschrittsbalken** (Anteil korrekt entschlüsselter Positionen, serverseitig berechnet) – keine Inhalte.",
+     "Beamer-Board, Polling 2 s"
+    ],
+    [
+     "3 Hinweise (optional)",
+     "bei Bedarf",
+     "Nach 8 min darf die Lehrkraft zentral Hinweise senden: (1) „U ≙ e“, (2) „YC ≙ ch“, (3) „RUM ≙ der“.",
+     "Regie: Hinweisknopf"
+    ],
+    [
+     "4 Ziellinie",
+     "–",
+     "Ein Team ist fertig, wenn ≥ 95 % der Positionen stimmen; Platzierung nach Zeit. Keine Punkte (Abzeichen „Funkraum-Veteran“, ggf. „Erstes Knacken“).",
+     "–"
+    ],
+    [
+     "5 Auswertung",
+     "5",
+     "Beamer: Fortschrittskurven aller Teams; „Welcher Schritt hat den Sprung gebracht?“ (erwartet: e, dann ch/sch/der). Archivfund mit gleichem Schlüssel lesen (Folie 15).",
+     "Auswertung; „Beenden“ löscht Szenario-Daten"
+    ]
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "PAPIER-ALTERNATIVE",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Geheimtextkarte (Seite 3) je Team auf **A3** vergrößert drucken; die **vorgezählte Häufigkeitstabelle** (Seite 4) als Rückseite – für langsamere Gruppen „aufklappen“. Hinweiskarten 1–3 nach 8 min bei Bedarf austeilen."
+    },
+    {
+     "t": "p",
+     "md": "**Fortschritt:** Die Lehrkraft prüft auf Zuruf fünf zufällige Wörter. **Siegerteam** = erstes Team mit korrektem erstem Satz und vollständigem Alphabet."
+    }
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "VORBEREITUNG UND DATENSCHUTZ",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Analysator und Werkbank erst ab DS 4 freigeben (sonst wird der Archivfund vorab geknackt). Szenario „Wettknacken“ vorab anlegen. Übertragen wird nur die Zuordnungstabelle (26 Zeichen), keine Freitexte; Löschung beim Beenden, spätestens nach 24 h."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Rollenkarten zum Ausschneiden"
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "EVE-TEAM · EUER AUFTRAG",
+     "farbe": "B5523B",
+     "hintergrund": "FDF3F2",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Ihr habt einen langen Brief aus dem Haus der Weisheit abgefangen. Jeder Buchstabe wurde durch einen anderen ersetzt – **immer durch denselben**."
+      },
+      {
+       "t": "liste",
+       "nummeriert": true,
+       "items": [
+        "**Zählen:** Rangfolge der Geheimtextbuchstaben notieren.",
+        "**Häufigster** Buchstabe ≙ e.",
+        "**Paare und Dreiergruppen** suchen: er, en, ch, sch, der, und.",
+        "**Lesen:** Wörter ergänzen, Zuordnung verbessern."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Ziel: ≥ 95 % richtig – schneller als die anderen Teams.",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "REGIE · LEHRKRAFT",
+     "farbe": "8A5F1A",
+     "hintergrund": "FBF3E2",
+     "inhalt": [
+      {
+       "t": "liste",
+       "items": [
+        "Szenario starten, Werkzeuge freischalten.",
+        "Fortschrittsbalken am Beamer zeigen – keine Inhalte.",
+        "Ab Minute 8 bei Bedarf Hinweise 1–3 senden.",
+        "Ziellinie ≥ 95 %; danach Auswertung und Archivfund."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Papier: fünf Wörter auf Zuruf prüfen.",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Teamrollen (optional, Vorschlag):** In Tischgruppen ab drei Personen helfen feste Aufgaben.",
+   "klein": true
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "TEAMROLLE · ZÄHLMEISTER/IN",
+     "farbe": "1F4E8C",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Du bedienst den **Häufigkeits-Analysator** (oder zählst auf Papier) und führst die **Rangliste**. Du meldest: „Häufigster ist …, dann …“."
+      }
+     ]
+    },
+    {
+     "t": "kasten",
+     "kopf": "TEAMROLLE · LESER/IN",
+     "farbe": "1F4E8C",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Du liest den **teilweise entschlüsselten** Text laut vor und **ergänzt Wörter**. Du trägst neue Zuordnungen in die Werkbank bzw. die Zuordnungsleiste ein."
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "TEAMROLLE · MUSTERJÄGER/IN",
+     "farbe": "1F4E8C",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Du suchst **Bigramme** und **Dreiergruppen**: Welches Zeichen steht fast immer vor demselben Zeichen (ch)? Welche Dreiergruppe kommt oft vor (der, und, sch)?"
+      }
+     ]
+    },
+    {
+     "t": "kasten",
+     "kopf": "SPIELREGELN",
+     "farbe": "14213D",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "liste",
+       "items": [
+        "Kein Brute Force – nur denken und zählen.",
+        "Zuordnungen dürfen geändert werden.",
+        "Fertig bei ≥ 95 % bzw. korrektem erstem Satz und vollständigem Alphabet."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Hinweiskarten** (Papier-Alternative, ab Minute 8 bei Bedarf):",
+   "klein": true
+  },
+  {
+   "t": "kasten",
+   "kopf": "HINWEISKARTEN · einzeln ausschneiden",
+   "farbe": "1F4E8C",
+   "hintergrund": "EEF3FA",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 14,
+     "kopf": [
+      "HINWEIS 1",
+      "HINWEIS 2",
+      "HINWEIS 3"
+     ],
+     "zeilen": [
+      [
+       "`U` ≙ **e**",
+       "`YC` ≙ **ch**",
+       "`RUM` ≙ **der**"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "kasten",
+   "kopf": "GEHEIMTEXTKARTE · WETTKNACKEN · auf A3 vergrößern",
+   "farbe": "14213D",
+   "hintergrund": "FFFFFF",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Abgefangen im Haus der Weisheit · monoalphabetische Substitution · **486 Buchstaben**"
+    },
+    {
+     "t": "geheimtext",
+     "text": "DHCPQNRUMVUDNCUDODIAPBRPRPMAUDOUIRDUBUGUCMOUIOPBQIRIPYCONDUQUAUMNUOZUIRDUNYCMDSOUIRUMBMDUYCUIQIRKUMNUMDIRDUPMPADNYCUNKMPYCUQIRNPHHUGIRPNVDNNUIRUMBPIZUIVUGOUDIUNPAUIRNSDIRUOUDIEQIBUMNYCMUDAUMUDIUIAMDUSRUIIDUHPIRGUNUIFPIIEURUMAQYCNOPAUDNORQMYCUDIUIPIRUMUIUMNUOZORUMNYCMUDAUMUMDIIUMONDYCPIRDUGUCMURUNKCDGJNJKCUIPGFDIRDHPIZPUCGOVDUJSOEURUNZUDYCUITJMFJHHODIEURUMNKMPYCUBDAOUNAQYCNOPAUIRDUNUCMCPUQSDBNDIRQIRPIRUMURDUNUGOUIUMNYCUDIUIVUMBUIQBOUWOCPOSDIRUONJNYCMDOOSQUMNYCMDOORUIBPIZUINYCGQUNNUG",
+     "groesse": 12.5,
+     "gruppen_pro_zeile": 8,
+     "schreiblinien": true
+    },
+    {
+     "t": "p",
+     "md": "**Zuordnungsleiste** (Geheimtext → Klartext):",
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      1.4,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59
+     ],
+     "kopf": [
+      "geheim",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "klar",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      1.4,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59
+     ],
+     "kopf": [
+      "geheim",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "klar",
+       "b",
+       "g",
+       "h",
+       "i",
+       "j",
+       "k",
+       "l",
+       "m",
+       "n",
+       "o",
+       "p",
+       "–",
+       "r",
+       "s",
+       "t",
+       "a",
+       "u",
+       "d",
+       "f",
+       "v",
+       "e",
+       "w",
+       "x",
+       "–",
+       "c",
+       "z"
+      ]
+     ],
+     "nur_loesung": true
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "kasten",
+   "kopf": "RÜCKSEITE · VORGEZÄHLT (erst bei Bedarf aufklappen)",
+   "farbe": "8A5F1A",
+   "hintergrund": "FBF3E2",
+   "inhalt": [
+    {
+     "t": "haeufigkeit",
+     "text": "DHCPQNRUMVUDNCUDODIAPBRPRPMAUDOUIRDUBUGUCMOUIOPBQIRIPYCONDUQUAUMNUOZUIRDUNYCMDSOUIRUMBMDUYCUIQIRKUMNUMDIRDUPMPADNYCUNKMPYCUQIRNPHHUGIRPNVDNNUIRUMBPIZUIVUGOUDIUNPAUIRNSDIRUOUDIEQIBUMNYCMUDAUMUDIUIAMDUSRUIIDUHPIRGUNUIFPIIEURUMAQYCNOPAUDNORQMYCUDIUIPIRUMUIUMNUOZORUMNYCMUDAUMUMDIIUMONDYCPIRDUGUCMURUNKCDGJNJKCUIPGFDIRDHPIZPUCGOVDUJSOEURUNZUDYCUITJMFJHHODIEURUMNKMPYCUBDAOUNAQYCNOPAUIRDUNUCMCPUQSDBNDIRQIRPIRUMURDUNUGOUIUMNYCUDIUIVUMBUIQBOUWOCPOSDIRUONJNYCMDOOSQUMNYCMDOORUIBPIZUINYCGQUNNUG",
+     "referenz": true,
+     "titel": "Häufigkeiten im Geheimtext (absolut) neben Deutsch (%)"
+    },
+    {
+     "t": "p",
+     "md": "**Häufigkeiten:** U 94 · I 52 · D 42 · N 37 · M 36 · R 32 · O 28 · C 27 · P 27 · Y 17 · Q 14 · A 13 · B 11 · G 11 · H 7 · S 7 · J 6 · Z 6 · K 5 · V 5 · E 4 · F 3 · T 1 · W 1 (24 verschiedene Zeichen)."
+    },
+    {
+     "t": "p",
+     "md": "**Häufigste Bigramme:** UI 21 · IR 20 · UM 20 · YC 17 · RU 14 · DI 13. **Häufigste Dreiergruppen:** RUM, UMN, NYC je 8 ×."
+    },
+    {
+     "t": "p",
+     "md": "Zum Vergleich – Deutsch (Beutelspacher): E 17,40 · N 9,78 · I 7,55 · S 7,27 · R 7,00 · A 6,51 · T 6,15 · D 5,08 · H 4,76 · U 4,35 %.",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "LÖSUNG · NUR FÜR DIE LEHRKRAFT",
+   "farbe": "B3261E",
+   "nur_loesung": true,
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Schlüsselwort PAPYRUS**, Geheimtextalphabet `PAYRUSBCDEFGHIJKLMNOQTVWXZ` (Rest ab A)."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "PAYRUSBCDEFGHIJKLMNOQTVWXZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Klartext:** Im Haus der Weisheit in Bagdad arbeiten die Gelehrten Tag und Nacht. Sie uebersetzen die Schriften der Griechen und Perser in die arabische Sprache und sammeln das Wissen der ganzen Welt. Eines Abends findet ein junger Schreiber einen Brief, den niemand lesen kann. Jeder Buchstabe ist durch einen anderen ersetzt. Der Schreiber erinnert sich an die Lehre des Philosophen Al-Kindi: Man zaehlt, wie oft jedes Zeichen vorkommt. In jeder Sprache gibt es Buchstaben, die sehr haeufig sind, und andere, die selten erscheinen. Wer genug Text hat, findet so Schritt fuer Schritt den ganzen Schluessel."
+    },
+    {
+     "t": "p",
+     "md": "**Erster Satz zum Prüfen (Papier):** im = `DH` · haus = `CPQN` · der = `RUM` · weisheit = `VUDNCUDO` · in = `DI` · bagdad = `APBRPR` · arbeiten = `PMAUDOUI` · die = `RDU` · gelehrten = `BUGUCMOUI` · tag = `OPB` · und = `QIR` · nacht = `IPYCO`."
+    },
+    {
+     "t": "p",
+     "md": "**Knackbarkeit (nachgerechnet):** Klartext E 94 · N 52 · I 42 · S 37 · R 36 – die ersten fünf Ränge genau wie in der Tabelle (E 19,3 %). Bigramme UI = en, IR = nd, UM = er, YC = ch, RU = de, DI = in; Trigramme RUM = der, UMN = ers, NYC = sch. L und X kommen nicht vor (q, y fehlen im Klartext). Die Schlüsselwort-Struktur verrät sich selbst: ab g folgen B C D … (Rest des Alphabets ab A). Koinzidenzindex 0,0844.",
+     "klein": true
+    },
+    {
+     "t": "p",
+     "md": "**Archivfund** (gleicher Schlüssel): `ZPUCG URDUZ UDYCU IQIRR QSDIR UNORU INYCG QUNNU G` → **zaehle die zeichen und du findest den schluessel**."
+    }
+   ]
+  }
+ ]
+}

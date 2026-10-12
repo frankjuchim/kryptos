@@ -1,0 +1,255 @@
+{
+ "typ": "warmup",
+ "welt": 3,
+ "kennung": "WARM-UP W3",
+ "titel": "Das Maschinenzeitalter",
+ "datei": "KR_W3_Warmup",
+ "karten": [
+  {
+   "id": "WU-W3-01",
+   "titel": "Bits lesen",
+   "minuten": 2,
+   "kategorie": "bits-xor",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Welches Zeichen hat die ASCII-Bitfolge `0100 1110`?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "64 + 8 + 4 + 2 = 78 → **N**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-02",
+   "titel": "XOR im Kopf",
+   "minuten": 2,
+   "kategorie": "bits-xor",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Berechne:"
+    },
+    {
+     "t": "bits",
+     "zeilen": [
+      {
+       "label": "",
+       "bits": "1001 0110"
+      },
+      {
+       "label": "⊕",
+       "bits": "0101 1010"
+      },
+      {
+       "label": "=",
+       "bits": "1100 1100",
+       "strich": true,
+       "leer": true
+      }
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`1100 1100`"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-03",
+   "titel": "Hin und zurück",
+   "minuten": 2,
+   "kategorie": "begriffe",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Warum entschlüsselt Bob mit **derselben** XOR-Operation und demselben Schlüssel?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a ⊕ k ⊕ k = a, weil k ⊕ k = 0 und a ⊕ 0 = a (XOR ist selbstinvers)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-04",
+   "titel": "Vier Gebote",
+   "minuten": 2,
+   "kategorie": "sicherheit-beurteilen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Nenne die vier Bedingungen an den Schlüssel eines One-Time-Pads."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "echt zufällig · so lang wie die Nachricht · nur einmal benutzt · geheim"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-05",
+   "titel": "Was bleibt übrig?",
+   "minuten": 2,
+   "kategorie": "sicherheit-beurteilen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Zwei Nachrichten wurden mit demselben Einmalschlüssel K verschlüsselt. Was erhält Eve aus C1 ⊕ C2?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**M1 ⊕ M2** – der Schlüssel fällt heraus; mit geratenen Wörtern lassen sich beide Texte rekonstruieren."
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-06",
+   "titel": "S-Box",
+   "minuten": 2,
+   "kategorie": "blockchiffre",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "KRYPTOS-16: Bestimme S(0110) und S⁻¹(1000) mit dem S-Box-Handout."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "S(0110) = `1000`, S⁻¹(1000) = `0110`"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-07",
+   "titel": "Spiegeln",
+   "minuten": 2,
+   "kategorie": "transposition",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Transponiere `1111 0000 0000 0000` (Zeile 1 = erste Vierergruppe)."
+    },
+    {
+     "t": "quadrat",
+     "schrift": 10,
+     "zeilen": [
+      "1111",
+      "0000",
+      "0000",
+      "0000"
+     ],
+     "zellbreite": 0.55
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`1000 1000 1000 1000`"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-08",
+   "titel": "Muster oder Rauschen?",
+   "minuten": 2,
+   "kategorie": "blockchiffre",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "In welchem Betriebsmodus werden gleiche Klartextblöcke zu gleichen Geheimtextblöcken – und warum ist das ein Problem?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**ECB**; Wiederholungen und Bildumrisse bleiben sichtbar. CBC verhindert das."
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-09",
+   "titel": "Spirale W0",
+   "minuten": 3,
+   "kategorie": "entschluesseln",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `KDIHQ`."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**hafen** (K − 3 = H …)"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-10",
+   "titel": "Spirale W2",
+   "minuten": 2,
+   "kategorie": "substitution-poly",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Vigenère mit dem Quadrat der Anlage: Klartextbuchstabe n, Schlüsselbuchstabe F. Geheimtextbuchstabe?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**S** (F = Verschiebung 5; n = 14 → 19 = S mit A = 1)"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-11",
+   "titel": "Spirale W2",
+   "minuten": 2,
+   "kategorie": "kasiski-friedman",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Kasiski: Wiederholungen im Abstand 12, 18 und 30. Welche Schlüssellänge ist am wahrscheinlichsten?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "ggT = **6** (auch 2 oder 3 möglich)"
+    }
+   ]
+  },
+  {
+   "id": "WU-W3-12",
+   "titel": "ADFGVX",
+   "minuten": 2,
+   "kategorie": "fremde-chiffre",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Quadrat ZEPPELIN18 (Akte W3·4): Welches Buchstabenpaar steht für die Ziffer 8, welches Zeichen für GV?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "8 = **DD**, GV = **T**"
+    }
+   ]
+  }
+ ]
+}

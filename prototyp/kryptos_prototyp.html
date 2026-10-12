@@ -1,0 +1,1974 @@
+<title>Kryptos Prototyp</title>
+<meta name="description" content="Klickbarer Design-Prototyp der Lernplattform Kryptos – Die Zeitreise der Geheimschriften">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,400..700&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;700&family=Inconsolata:wght@400;700&display=swap">
+<style>
+/* Layout: Rahmen aus Tinte und Messing (themenunabhängig), Inhalte auf Papier (hell/dunkel); je Epoche ein Akzent über [data-ep]. */
+:root{
+  /* Rahmen – bleibt in beiden Themen gleich */
+  --tinte:#14213D; --nacht:#0B1426; --tinte-2:#22335A; --tinte-3:#2D4170;
+  --messing:#B07D2B; --messing-hell:#D9A441;
+  --auf-tinte:#FBF7EE; --auf-tinte-2:#C9C3B5; --fehler-hell:#F28B82; --ok-hell:#7BC67E;
+  /* Inhalt (hell) */
+  --papier:#FBF7EE; --papier-2:#F2EADB; --karte:#FFFDF8; --linie:#D8CDB8;
+  --text:#1B1B1F; --text-2:#4A4A55;
+  --ok:#2E7D32; --ok-flaeche:#E6F2E4; --fehler:#B3261E; --fehler-flaeche:#FBE8E5;
+  --hinweis:#1F4E8C; --hinweis-flaeche:#E6EEF8; --auf-hinweis:#FFFFFF;
+  --messing-text:#8A5F1A; --auf-akzent:#FFFFFF; --fokus:#1F4E8C;
+  --schreibtisch:#DDD3BF;
+  --hl1:#F5D58A; --hl2:#BCD9F2; --hl3:#F3C0BC; --hl4:#C6E4BF; --hl5:#DFCBEF; --hl6:#F8CBA2;
+  /* Druck (Akte bleibt immer weiß wie Papier) */
+  --druck-papier:#FFFFFF; --druck-text:#1B1B1F; --druck-2:#F2EADB; --druck-linie:#D8CDB8; --druck-grau:#4A4A55;
+  /* Epochen-Standard: Renaissance */
+  --e-p:#7A2E2E; --e-t:#D98C8C; --akzent:var(--e-p);
+  /* Schrift */
+  --f-display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --f-text:'Atkinson Hyperlegible', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --f-mono:'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --f-akte-serif:Georgia, 'Gelasio', 'Times New Roman', serif;
+  --f-akte-text:Calibri, Carlito, 'Atkinson Hyperlegible', 'Segoe UI', sans-serif;
+  --f-akte-mono:Consolas, 'Inconsolata', ui-monospace, monospace;
+  --r-karte:14px; --r-knopf:10px;
+  --schatten:0 6px 24px rgba(11,20,38,.25);
+  --rand:clamp(16px, 4vw, 32px);
+  --textur:none;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papier:#1A2238; --papier-2:#232D48; --karte:#1F2840; --linie:#3A4767;
+    --text:#ECE6D8; --text-2:#BDB7A9;
+    --ok:#7BC67E; --ok-flaeche:#1F3A2A; --fehler:#F28B82; --fehler-flaeche:#43252B;
+    --hinweis:#8FB4EA; --hinweis-flaeche:#22355A; --auf-hinweis:#0B1426;
+    --messing-text:#D9A441; --auf-akzent:#0B1426; --fokus:#8FB4EA;
+    --schreibtisch:#0F1830;
+    --hl1:#6B5420; --hl2:#23496B; --hl3:#6E3532; --hl4:#2E5934; --hl5:#53396A; --hl6:#6E4626;
+    color-scheme:dark;
+  }
+  :root:not([data-theme="light"]) [data-ep]{--akzent:var(--e-t)}
+}
+:root[data-theme="dark"]{
+  --papier:#1A2238; --papier-2:#232D48; --karte:#1F2840; --linie:#3A4767;
+  --text:#ECE6D8; --text-2:#BDB7A9;
+  --ok:#7BC67E; --ok-flaeche:#1F3A2A; --fehler:#F28B82; --fehler-flaeche:#43252B;
+  --hinweis:#8FB4EA; --hinweis-flaeche:#22355A; --auf-hinweis:#0B1426;
+  --messing-text:#D9A441; --auf-akzent:#0B1426; --fokus:#8FB4EA;
+  --schreibtisch:#0F1830;
+  --hl1:#6B5420; --hl2:#23496B; --hl3:#6E3532; --hl4:#2E5934; --hl5:#53396A; --hl6:#6E4626;
+  color-scheme:dark;
+}
+:root[data-theme="dark"] [data-ep]{--akzent:var(--e-t)}
+
+[data-ep="0"]{--e-p:#B5523B; --e-t:#E8957B; --textur:var(--tex-0)}
+[data-ep="1"]{--e-p:#1F4E8C; --e-t:#7FA8E0; --textur:var(--tex-1)}
+[data-ep="2"]{--e-p:#7A2E2E; --e-t:#D98C8C; --textur:var(--tex-2)}
+[data-ep="3"]{--e-p:#556B2F; --e-t:#A9C27A; --textur:var(--tex-3)}
+[data-ep="4"]{--e-p:#1E7B4F; --e-t:#5FD39A; --textur:var(--tex-4)}
+[data-ep="5"]{--e-p:#0E7C86; --e-t:#5CC8D2; --textur:var(--tex-5)}
+[data-ep="6"]{--e-p:#8A5F1A; --e-t:#D9A441; --textur:var(--tex-6)}
+[data-ep]{--akzent:var(--e-p)}
+
+html{font-size:106.25%}
+body{background:var(--papier); color:var(--text); font-family:var(--f-text); font-size:1rem; line-height:1.55; -webkit-font-smoothing:antialiased}
+*,*::before,*::after{box-sizing:border-box}
+h1,h2,h3,h4{font-family:var(--f-display); font-weight:600; line-height:1.15; margin:0; text-wrap:balance; letter-spacing:-.005em}
+h1{font-size:2rem} h2{font-size:1.5rem} h3{font-size:1.15rem}
+p{margin:0}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+a{color:var(--hinweis)}
+:focus-visible{outline:3px solid var(--fokus); outline-offset:2px; border-radius:4px}
+.tinte,.nachtflaeche{--fokus:var(--messing-hell)}
+.sr{position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.wrap{max-width:1120px; margin-inline:auto; padding-inline:var(--rand)}
+.mono{font-family:var(--f-mono)}
+.zahl{font-variant-numeric:tabular-nums}
+.etikett{font-family:var(--f-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase}
+
+/* ---------- Demo-Leiste (Prototyp-Rahmen) ---------- */
+.demo{position:sticky; top:env(safe-area-inset-top,0px); z-index:60; background:var(--nacht); color:var(--auf-tinte-2);
+  border-bottom:1px dashed rgba(217,164,65,.45); display:flex; align-items:center; gap:10px; padding:6px var(--rand); --fokus:var(--messing-hell)}
+.demo-marke{font-family:var(--f-mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--messing-hell); white-space:nowrap}
+.demo-tabs{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; flex:1; min-width:0; padding-block:2px}
+.demo-tabs::-webkit-scrollbar{display:none}
+.demo-tab{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.04em; white-space:nowrap; padding:0 12px; min-height:38px;
+  border-radius:999px; border:1px solid rgba(201,195,181,.25); background:transparent; color:var(--auf-tinte-2); transition:background .2s,color .2s}
+.demo-tab:hover{border-color:var(--messing-hell); color:var(--auf-tinte)}
+.demo-tab[aria-current="page"]{background:var(--messing-hell); color:var(--nacht); border-color:var(--messing-hell); font-weight:700}
+.demo-tab b{opacity:.6; font-weight:400; margin-right:4px}
+.thema-knopf{min-height:38px; min-width:38px; border-radius:999px; border:1px solid rgba(201,195,181,.3); background:transparent; color:var(--auf-tinte); display:grid; place-items:center; padding:0 10px; font-size:.75rem; font-family:var(--f-mono); gap:6px; grid-auto-flow:column}
+.thema-knopf svg{width:16px; height:16px}
+
+/* ---------- Kopfzeile der Plattform ---------- */
+.kopf{background:var(--textur), var(--tinte); color:var(--auf-tinte); border-bottom:3px solid var(--e-t); transition:border-color .5s}
+.kopf-innen{display:flex; align-items:center; gap:16px; min-height:60px; padding-block:6px}
+.logo{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--auf-tinte); background:none; border:0; padding:4px 2px}
+.logo svg{width:34px; height:34px; color:var(--messing-hell); transition:transform .6s cubic-bezier(.5,0,.2,1)}
+.logo span{font-family:var(--f-display); font-weight:600; letter-spacing:.2em; font-size:1.05rem}
+.kopf-epoche{display:flex; align-items:center; gap:8px; font-size:.92rem; color:var(--auf-tinte-2); min-width:0; flex:1; justify-content:center}
+.kopf-epoche i{width:10px; height:10px; border-radius:50%; background:var(--e-t); flex:none; box-shadow:0 0 0 3px rgba(255,255,255,.08); transition:background .5s}
+.kopf-epoche span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.kopf-nav{display:flex; align-items:center; gap:4px}
+.kopf-link{display:flex; align-items:center; gap:6px; min-height:44px; padding:0 10px; border-radius:var(--r-knopf); color:var(--auf-tinte); background:none; border:0; font-size:.88rem; text-decoration:none}
+.kopf-link:hover{background:rgba(255,255,255,.07)}
+.kopf-link svg{width:18px; height:18px}
+.puls{width:8px; height:8px; border-radius:50%; background:var(--fehler-hell); box-shadow:0 0 0 0 rgba(242,139,130,.7); animation:puls 1.8s infinite}
+@keyframes puls{70%{box-shadow:0 0 0 8px rgba(242,139,130,0)}100%{box-shadow:0 0 0 0 rgba(242,139,130,0)}}
+.rang{display:flex; align-items:center; gap:8px; padding:4px 12px 4px 4px; border-radius:999px; background:var(--tinte-2); border:1px solid rgba(217,164,65,.4); min-height:44px}
+.rang svg{width:34px; height:34px}
+.rang-text{display:grid; line-height:1.15}
+.rang-text b{font-size:.84rem; color:var(--messing-hell)}
+.rang-text small{font-size:.72rem; color:var(--auf-tinte-2)}
+
+/* ---------- Ansichten ---------- */
+.view:not([hidden]){animation:einblenden .35s ease-out}
+@keyframes einblenden{from{opacity:.25; transform:translateY(6px)}to{opacity:1; transform:none}}
+
+/* Knöpfe & Chips */
+.knopf{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:0 18px; border-radius:var(--r-knopf);
+  border:1.5px solid transparent; font-weight:700; font-size:.95rem; text-decoration:none; transition:transform .15s, background .2s, border-color .2s}
+.knopf:active{transform:translateY(1px)}
+.knopf svg{width:18px; height:18px}
+.knopf-primaer{background:var(--akzent); color:var(--auf-akzent)}
+.knopf-primaer:hover{filter:brightness(1.08)}
+.knopf-zweit{background:transparent; border-color:var(--linie); color:var(--text)}
+.knopf-zweit:hover{border-color:var(--akzent)}
+.knopf-leise{background:transparent; color:var(--text-2); border-color:transparent; padding:0 10px}
+.knopf-leise:hover{color:var(--text); background:var(--papier-2)}
+.knopf-messing{background:var(--messing-hell); color:var(--nacht)}
+.demo-hilfe{border:1.5px dashed var(--messing); color:var(--messing-text); font-weight:400; font-size:.85rem}
+.knopf-messing:hover{background:#E6B657}
+.knopf-glas{background:rgba(255,255,255,.04); border-color:rgba(251,247,238,.35); color:var(--auf-tinte)}
+.knopf-glas:hover{border-color:var(--messing-hell); background:rgba(255,255,255,.08)}
+.chip{display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:2px 10px; font-size:.76rem; font-weight:700; line-height:1.6; white-space:nowrap; border:1px solid transparent}
+.chip-K{background:#14213D; color:#FBF7EE; border-color:rgba(251,247,238,.25)}
+.chip-eA{background:#7A2E2E; color:#FFFFFF}
+.chip-E{background:#1F4E8C; color:#FFFFFF}
+.chip-Kuer{background:#8A5F1A; color:#FFFFFF}
+.chip-rolle{background:var(--papier-2); color:var(--text); border-color:var(--linie); font-weight:400}
+.chip-falle{color:var(--fehler); border-color:var(--fehler); background:transparent}
+.chip-falle.aktiv{background:var(--fehler); color:var(--papier)}
+.chip-neutral{background:var(--papier-2); color:var(--text-2); border-color:var(--linie); font-weight:400}
+
+/* Geheimtext-Stil (DESIGNSYSTEM §3) */
+.gt{font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.12em; word-spacing:.4ch; color:var(--text);
+  background:var(--papier-2); border-left:3px solid var(--akzent); padding:10px 14px; border-radius:0 6px 6px 0; overflow-wrap:anywhere}
+.klartext{color:var(--text-2); font-family:var(--f-mono); letter-spacing:.06em}
+
+/* ---------- 1 Start ---------- */
+#v-start{background:var(--textur), radial-gradient(120% 90% at 85% 10%, #1D2D52 0%, var(--tinte) 55%, var(--nacht) 100%); color:var(--auf-tinte)}
+.start-grid{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:48px; align-items:center; padding-block:72px 64px}
+.start-text{display:grid; gap:22px; justify-items:start}
+.start-logo{display:flex; align-items:center; gap:18px}
+.start-logo svg{width:72px; height:72px; color:var(--messing-hell)}
+.start-logo h1{font-size:clamp(2.6rem, 7vw, 4.6rem); letter-spacing:.2em; font-weight:600; font-variation-settings:'opsz' 144; margin-right:-.2em}
+.entsiegeln-zeile{font-family:var(--f-mono); color:var(--messing-hell); font-size:clamp(.82rem, 2.2vw, 1.08rem); letter-spacing:.18em; min-height:1.6em; cursor:pointer; background:none; border:0; padding:0; text-align:left}
+.entsiegeln-zeile span{display:inline-block; min-width:.62em}
+.entsiegeln-zeile .roh{color:var(--e-t); opacity:.85}
+.start-lead{font-size:1.12rem; max-width:52ch; color:var(--auf-tinte-2)}
+.start-lead b{color:var(--auf-tinte)}
+.start-knoepfe{display:flex; flex-wrap:wrap; gap:12px; margin-top:6px}
+.start-knoepfe .knopf{min-height:52px; padding:0 22px; font-size:1rem}
+.start-fakten{display:grid; grid-template-columns:repeat(4, auto); justify-content:start; gap:20px 32px; margin-top:18px; padding-top:22px; border-top:1px solid rgba(217,164,65,.25)}
+.start-fakten div{display:grid}
+.start-fakten b{font-family:var(--f-display); font-size:1.8rem; color:var(--messing-hell); line-height:1}
+.start-fakten span{font-size:.82rem; color:var(--auf-tinte-2)}
+.start-ring{position:relative; aspect-ratio:1; max-width:100%; width:min(440px, 100%); justify-self:center; color:var(--messing-hell)}
+.start-ring svg{position:absolute; inset:0; width:100%; height:100%}
+.start-ring .innen{animation:drehen 120s linear infinite; transform-origin:50% 50%}
+@keyframes drehen{to{transform:rotate(-360deg)}}
+.start-ring figcaption{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; font-family:var(--f-mono); font-size:.75rem; letter-spacing:.14em; color:var(--auf-tinte-2); width:46%}
+.start-ring figcaption b{display:block; font-family:var(--f-display); font-size:2.3rem; letter-spacing:0; color:var(--auf-tinte); font-weight:600}
+.start-fuss{border-top:1px solid rgba(217,164,65,.2); padding-block:18px; font-size:.82rem; color:var(--auf-tinte-2); display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between}
+.figuren{display:flex; flex-wrap:wrap; gap:10px}
+.figur{display:flex; align-items:center; gap:8px; padding:6px 12px 6px 6px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid rgba(251,247,238,.14); font-size:.85rem}
+.figur i{width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-style:normal; font-family:var(--f-mono); font-weight:700; font-size:.78rem; background:var(--tinte-3); color:var(--auf-tinte)}
+.figur.eve i{background:transparent; border:2px solid var(--fehler-hell); color:var(--fehler-hell)}
+
+/* ---------- 2 Zeitleiste ---------- */
+#v-zeitleiste{background:var(--nacht); color:var(--auf-tinte)}
+.zl-kopf{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:end; padding-block:40px 8px}
+.zl-kopf h1{font-size:clamp(1.6rem, 3.4vw, 2.3rem)}
+.zl-kopf p{color:var(--auf-tinte-2); max-width:60ch; margin-top:8px}
+.rangleiter{background:var(--tinte); border:1px solid rgba(217,164,65,.3); border-radius:var(--r-karte); padding:14px 16px; display:grid; gap:10px; min-width:min(330px,100%)}
+.rangleiter ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(5,1fr); gap:4px}
+.rangleiter li{display:grid; gap:4px; justify-items:center; text-align:center; font-size:.66rem; color:var(--auf-tinte-2); line-height:1.2}
+.rangleiter li i{height:6px; width:100%; border-radius:3px; background:var(--tinte-3)}
+.rangleiter li.erreicht i{background:var(--messing)}
+.rangleiter li.jetzt i{background:var(--messing-hell); box-shadow:0 0 0 2px rgba(217,164,65,.3)}
+.rangleiter li.jetzt{color:var(--messing-hell); font-weight:700}
+.rangleiter-kopf{display:flex; justify-content:space-between; align-items:baseline; gap:12px}
+.rangleiter-kopf b{font-family:var(--f-display); font-size:1.15rem; color:var(--messing-hell)}
+.rangleiter-kopf span{font-size:.8rem; color:var(--auf-tinte-2)}
+.zeitachse{position:relative; padding-block:28px 20px; background:
+  radial-gradient(60% 120% at 50% 0%, rgba(34,51,90,.55), transparent 70%)}
+.zeitachse-hinweis{display:flex; justify-content:space-between; gap:12px; color:var(--auf-tinte-2); font-size:.78rem; margin-bottom:8px}
+.tore{--spalt:clamp(6px, 1.4vw, 18px); list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:var(--spalt); position:relative}
+.tor-achse{position:relative; width:calc(100% + var(--spalt)); height:14px; display:grid; place-items:center; margin-top:2px}
+.tor-achse::before{content:""; position:absolute; left:0; right:0; top:6px; height:2px; background:var(--messing)}
+.tor-li:first-child .tor-achse::before{left:50%; background:linear-gradient(90deg, var(--messing), var(--messing))}
+.tor-li:last-child .tor-achse::before{right:50%}
+.tor-li:last-child .tor-achse::after{content:""; position:absolute; left:50%; right:-10px; top:6px; height:2px; background:linear-gradient(90deg, var(--messing), rgba(217,164,65,0))}
+.tor-li{position:relative; z-index:1; min-width:0}
+.tor{display:grid; justify-items:center; gap:4px; width:100%; background:none; border:0; padding:6px 2px; color:var(--auf-tinte); border-radius:12px; text-align:center; transition:transform .25s}
+.tor:hover:not(.gesperrt){transform:translateY(-4px)}
+.tor:hover .tor-bogen .tor-rand{stroke-width:3}
+.tor-bild{position:relative; width:100%; max-width:132px}
+.tor-bogen{display:block; width:100%; height:auto; overflow:visible}
+.tor-flaeche{fill:var(--tinte)}
+.tor-rand{fill:none; stroke:var(--e-t); stroke-width:2; transition:stroke-width .2s}
+.tor-orn{color:var(--e-t); opacity:.16}
+.tor-ring-bg{fill:none; stroke:rgba(251,247,238,.1); stroke-width:6}
+.tor-ring{fill:none; stroke:var(--e-t); stroke-width:6; stroke-linecap:round; transform:rotate(-90deg); transform-origin:60px 74px; transition:stroke-dashoffset 1s ease-out}
+.tor-prozent{fill:var(--auf-tinte); font-family:var(--f-display); font-weight:600; font-size:19px; text-anchor:middle}
+.tor-artefakt{color:var(--messing-hell)}
+.tor.gesperrt .tor-flaeche{fill:var(--nacht)}
+.tor.gesperrt .tor-rand{stroke:rgba(201,195,181,.35); stroke-dasharray:4 5}
+.tor.gesperrt{cursor:not-allowed}
+.tor-siegel{position:absolute; right:-6%; bottom:4%; width:38%; max-width:46px; aspect-ratio:1}
+.tor-siegel svg{width:100%; height:100%; display:block}
+.tor-punkt{width:14px; height:14px; border-radius:50%; background:var(--nacht); border:2px solid var(--messing-hell); position:relative; z-index:2}
+.tor:not(.gesperrt) .tor-punkt{background:var(--messing-hell); box-shadow:0 0 0 4px rgba(217,164,65,.18)}
+.tor.gesperrt .tor-punkt{border-color:rgba(201,195,181,.4)}
+.tor-jahr{font-family:var(--f-mono); font-size:.72rem; color:var(--e-t); letter-spacing:.06em}
+.tor.gesperrt .tor-jahr{color:var(--auf-tinte-2)}
+.tor-name{font-family:var(--f-display); font-weight:600; font-size:clamp(.82rem, 1.3vw, 1rem); line-height:1.2; min-height:2.4em; display:flex; align-items:flex-start; justify-content:center}
+.tor.gesperrt .tor-name{font-family:var(--f-mono); font-weight:400; letter-spacing:.1em; color:var(--auf-tinte-2); font-size:.76rem}
+.tor-status{font-size:.72rem; color:var(--auf-tinte-2); line-height:1.3}
+.tor-neu{position:absolute; left:50%; top:-8px; transform:translateX(-50%); background:var(--messing-hell); color:var(--nacht); font-family:var(--f-mono); font-size:.62rem; font-weight:700; letter-spacing:.12em; padding:1px 8px; border-radius:999px}
+.zl-unten{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:20px; padding-block:24px 56px}
+.panel-tinte{background:var(--tinte); border:1px solid rgba(217,164,65,.22); border-radius:var(--r-karte); padding:20px; display:grid; gap:14px; align-content:start}
+.panel-tinte h2{font-size:1.2rem}
+.weiter-karte{display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; align-items:center}
+.weiter-karte .mini-ring{width:64px; height:64px}
+.weiter-karte p{color:var(--auf-tinte-2); font-size:.92rem}
+.weiter-karte .knoepfe{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:10px}
+.regal{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px}
+.artefakt{display:grid; justify-items:center; gap:6px; text-align:center; font-size:.68rem; color:var(--auf-tinte-2); line-height:1.25}
+.artefakt svg{width:100%; max-width:56px; aspect-ratio:1}
+.artefakt.hat{color:var(--auf-tinte)}
+.kapitel-liste{display:grid; gap:10px}
+.kapitel{background:var(--papier); color:var(--text); border-radius:10px; padding:12px 14px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; align-items:baseline}
+.kapitel .mono{color:var(--akzent); font-size:.78rem; font-weight:700; grid-row:span 2}
+.kapitel b{font-family:var(--f-display); font-weight:600}
+.kapitel p{font-size:.88rem; color:var(--text-2)}
+.kapitel.zu{background:transparent; border:1px dashed rgba(201,195,181,.35); color:var(--auf-tinte-2)}
+.kapitel.zu .mono{color:var(--auf-tinte-2)}
+.kapitel.zu p{color:var(--auf-tinte-2); font-family:var(--f-mono); letter-spacing:.12em; font-size:.8rem}
+
+/* ---------- 3 Epoche ---------- */
+.ep-kopf{background:var(--textur), linear-gradient(180deg, var(--tinte) 0%, var(--nacht) 100%); color:var(--auf-tinte); position:relative; overflow:hidden; border-bottom:6px solid var(--e-t)}
+.ep-kopf-innen{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center; padding-block:36px 30px; position:relative; z-index:1}
+.ep-orn-gross{position:absolute; right:-40px; top:-30px; width:340px; height:340px; color:var(--e-t); opacity:.09; z-index:0}
+.ep-kopf .etikett{color:var(--e-t)}
+.ep-kopf h1{font-size:clamp(1.8rem, 4.4vw, 2.8rem); font-style:italic; font-variation-settings:'opsz' 144; margin-top:6px}
+.ep-kopf p{color:var(--auf-tinte-2); max-width:62ch; margin-top:10px}
+.ep-wechsel{display:flex; flex-wrap:wrap; gap:6px; margin-top:18px}
+.ep-pille{display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:0 14px; border-radius:999px; border:1px solid rgba(251,247,238,.2); background:rgba(11,20,38,.4); color:var(--auf-tinte-2); font-size:.84rem}
+.ep-pille i{width:9px; height:9px; border-radius:50%; background:var(--e-t)}
+.ep-pille[aria-pressed="true"]{border-color:var(--e-t); color:var(--auf-tinte); background:rgba(255,255,255,.08)}
+.ep-pille:hover{color:var(--auf-tinte)}
+.ep-fortschritt{display:grid; justify-items:center; gap:4px; text-align:center}
+.ep-fortschritt svg{width:120px; height:120px}
+.ep-fortschritt small{color:var(--auf-tinte-2); font-size:.78rem}
+.ornamentband{height:14px; background:var(--papier-2); color:var(--akzent); opacity:.9}
+.ornamentband svg{display:block; width:100%; height:14px}
+.ep-inhalt{padding-block:28px 56px; display:grid; gap:28px}
+.abschnitt-kopf{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:12px}
+.abschnitt-kopf h2{font-size:1.3rem}
+.abschnitt-kopf span{color:var(--text-2); font-size:.86rem}
+.fund-reihe{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:stretch}
+.archivfund{background:var(--textur), var(--tinte); color:var(--auf-tinte); border-radius:var(--r-karte); padding:26px 24px; position:relative; overflow:hidden; display:grid; gap:14px; box-shadow:var(--schatten)}
+.archivfund .etikett{color:var(--e-t)}
+.dokument{background:var(--papier); color:var(--text); padding:16px 18px 14px; border-radius:3px; transform:rotate(-1.5deg); box-shadow:0 10px 28px rgba(0,0,0,.35); position:relative; max-width:520px}
+.dokument::before{content:""; position:absolute; inset:5px; border:1px solid var(--linie); pointer-events:none}
+.dokument .gt{background:transparent; border-left:0; padding:4px 0; font-size:1.02rem; line-height:1.9}
+.dokument .stempel{position:absolute; right:12px; bottom:-14px; transform:rotate(-8deg); border:2px solid var(--ok); color:var(--ok); font-family:var(--f-mono); font-weight:700; font-size:.7rem; letter-spacing:.14em; padding:2px 8px; border-radius:4px; background:var(--papier)}
+.dokument small{display:block; color:var(--text-2); font-size:.76rem; margin-bottom:4px}
+.archivfund details{font-size:.9rem; color:var(--auf-tinte-2)}
+.archivfund summary{cursor:pointer; min-height:36px; display:flex; align-items:center; color:var(--auf-tinte)}
+.boss-karte{background:var(--textur), radial-gradient(120% 120% at 100% 0%, #2B1A22 0%, var(--tinte) 60%); color:var(--auf-tinte); border-radius:var(--r-karte); padding:22px; display:grid; gap:12px; align-content:start; position:relative; overflow:hidden; border:1px solid rgba(217,164,65,.35); box-shadow:var(--schatten)}
+.boss-karte .etikett{color:var(--messing-hell)}
+.boss-karte h3{font-size:1.45rem}
+.boss-karte ul{margin:0; padding:0; list-style:none; display:grid; gap:4px; color:var(--auf-tinte-2); font-size:.88rem}
+.boss-karte ul li::before{content:"· "; color:var(--messing-hell)}
+.boss-siegel{position:absolute; right:14px; top:14px; width:76px; height:76px}
+.boss-status{display:inline-flex; align-items:center; gap:6px; font-size:.82rem; color:var(--ok-hell); font-weight:700}
+.boss-karte .knopf{justify-self:start}
+.akten{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 248px), 1fr)); gap:16px}
+.akte-karte{background:var(--karte); border:1px solid var(--linie); border-radius:var(--r-karte); overflow:hidden; display:grid; grid-template-rows:6px auto 1fr auto; text-align:left; padding:0; color:var(--text); position:relative; transition:transform .2s, box-shadow .2s}
+.akte-karte:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(11,20,38,.12)}
+.akte-band{background:var(--akzent)}
+.akte-kopf{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:12px 16px 0}
+.akte-kopf .mono{font-size:.74rem; font-weight:700; color:var(--akzent); letter-spacing:.06em}
+.akte-koerper{padding:6px 16px 12px; display:grid; gap:8px; align-content:start}
+.akte-koerper h3{font-size:1.12rem}
+.akte-koerper p{font-size:.86rem; color:var(--text-2)}
+.akte-chips{display:flex; flex-wrap:wrap; gap:6px}
+.akte-fuss{display:flex; align-items:center; gap:10px; padding:10px 16px 14px; border-top:1px dashed var(--linie)}
+.fortschritt-balken{flex:1; height:6px; background:var(--papier-2); border-radius:3px; overflow:hidden}
+.fortschritt-balken i{display:block; height:100%; background:var(--akzent); border-radius:3px}
+.akte-fuss .zahl{font-size:.82rem; font-weight:700; color:var(--text-2)}
+.akte-siegel{position:absolute; right:12px; top:34px; width:46px; height:46px; transform:rotate(-12deg)}
+.akte-karte.erledigt .akte-koerper h3{padding-right:46px}
+.akte-karte.aus{opacity:.55}
+.akte-link{font-size:.8rem; color:var(--text-2); text-decoration:underline; text-underline-offset:3px; background:none; border:0; padding:6px 0; min-height:32px}
+.dreier{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px}
+.karte{background:var(--karte); border:1px solid var(--linie); border-radius:var(--r-karte); padding:18px; display:grid; gap:10px; align-content:start}
+.karte h3{font-size:1.1rem}
+.karte p{font-size:.9rem; color:var(--text-2)}
+.karte .etikett{color:var(--akzent)}
+.generator-liste{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:.88rem}
+.generator-liste li{display:flex; justify-content:space-between; gap:8px; border-bottom:1px dashed var(--linie); padding-bottom:6px}
+.generator-liste span{color:var(--text-2)}
+.tagesbalken{display:flex; align-items:center; gap:10px; font-size:.8rem; color:var(--text-2)}
+.video-bild{position:relative; aspect-ratio:16/9; max-width:100%; border-radius:10px; overflow:hidden; background:var(--textur), linear-gradient(135deg, var(--tinte), var(--nacht)); display:grid; place-items:center; color:var(--auf-tinte); border:0; padding:0; width:100%}
+.video-bild .gt{position:absolute; left:12px; right:12px; top:12px; background:rgba(251,247,238,.06); color:var(--auf-tinte); border-left-color:var(--e-t); font-size:.72rem; padding:6px 10px; text-align:left}
+.video-bild .play{width:56px; height:56px; border-radius:50%; background:var(--messing-hell); color:var(--nacht); display:grid; place-items:center}
+.video-bild .play svg{width:22px; height:22px; margin-left:3px}
+.video-bild .dauer{position:absolute; right:10px; bottom:8px; font-family:var(--f-mono); font-size:.72rem; background:rgba(11,20,38,.8); padding:1px 6px; border-radius:4px}
+
+/* ---------- 4 Aufgabe ---------- */
+.auf-seite{padding-block:22px 64px; display:grid; gap:18px}
+.brotkrumen{display:flex; flex-wrap:wrap; gap:6px; font-size:.84rem; color:var(--text-2); align-items:center}
+.brotkrumen button{background:none; border:0; padding:4px 2px; color:var(--hinweis); text-decoration:underline; text-underline-offset:3px; min-height:32px}
+.auf-raster{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start}
+.aufgabe{background:var(--karte); border:1px solid var(--linie); border-radius:var(--r-karte); overflow:hidden}
+.auf-kopf{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; padding:14px 20px; background:var(--papier-2); border-bottom:1px solid var(--linie)}
+.sterne{color:var(--messing-text); letter-spacing:.1em; font-size:1rem}
+.auf-kopf .punkte{font-weight:700; font-size:.9rem}
+.auf-kopf .kat{font-family:var(--f-mono); font-size:.76rem; color:var(--text-2)}
+.auf-kopf .rechts{margin-left:auto; display:flex; gap:6px; flex-wrap:wrap}
+.auf-koerper{padding:20px; display:grid; gap:18px}
+.auf-koerper h1{font-size:1.5rem}
+.auf-story{max-width:68ch}
+.nummerierung{display:inline-flex; align-items:center; gap:8px; font-family:var(--f-mono); font-size:.8rem; background:var(--hinweis-flaeche); color:var(--hinweis); padding:4px 10px; border-radius:6px; font-weight:700}
+.chiffre{display:grid; grid-template-columns:76px repeat(10, minmax(0, 54px)); gap:6px 5px; align-items:center; overflow-x:auto; padding-bottom:4px}
+.chiffre .zl{font-size:.74rem; color:var(--text-2); font-family:var(--f-mono); letter-spacing:.04em}
+.ch-gt{font-family:var(--f-mono); font-weight:700; font-size:1.3rem; text-align:center; background:var(--papier-2); border-bottom:3px solid var(--akzent); padding:6px 0; border-radius:6px 6px 0 0}
+.ch-gt.markiert{background:var(--akzent); color:var(--auf-akzent)}
+.ch-sl{font-family:var(--f-mono); text-align:center; color:var(--messing-text); font-weight:700; font-size:1rem; line-height:1.1}
+.ch-sl small{display:block; font-size:.7rem; color:var(--text-2); font-weight:400; visibility:hidden}
+.zeige-versch .ch-sl small{visibility:visible}
+.ch-ein{width:100%; min-width:0; height:52px; text-align:center; font-family:var(--f-mono); font-size:1.3rem; text-transform:lowercase; border:2px solid var(--linie); border-radius:8px; background:var(--papier); color:var(--text); padding:0; caret-color:var(--akzent)}
+.ch-ein:focus{border-color:var(--akzent); outline:3px solid var(--fokus); outline-offset:1px}
+.ch-ein.ok{border-color:var(--ok); background:var(--ok-flaeche)}
+.ch-ein.falsch{border-color:var(--fehler); background:var(--fehler-flaeche)}
+.ch-mark{text-align:center; font-weight:700; font-size:.95rem; min-height:1.4em}
+.ch-mark.ok{color:var(--ok)} .ch-mark.falsch{color:var(--fehler)}
+.alphabet{display:grid; grid-template-columns:repeat(26, minmax(0,1fr)); border:1px solid var(--linie); border-radius:8px; overflow:hidden}
+.alphabet div{display:grid; text-align:center; border-right:1px solid var(--linie); padding:4px 0; transition:background .15s}
+.alphabet div:last-child{border-right:0}
+.alphabet b{font-family:var(--f-mono); font-size:.92rem}
+.alphabet small{font-size:.68rem; color:var(--text-2); font-variant-numeric:tabular-nums}
+.alphabet div.aktiv{background:var(--akzent); color:var(--auf-akzent)}
+.alphabet div.aktiv small{color:var(--auf-akzent)}
+.auf-fuss{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:14px 20px; border-top:1px solid var(--linie); background:var(--papier)}
+.auf-fuss .rechts{margin-left:auto; display:flex; gap:10px; flex-wrap:wrap}
+.rueckmeldung{border-radius:10px; padding:14px 16px; display:grid; gap:8px; border:1.5px solid var(--linie); background:var(--papier)}
+.rueckmeldung.ok{border-color:var(--ok); background:var(--ok-flaeche)}
+.rueckmeldung.falsch{border-color:var(--fehler); background:var(--fehler-flaeche)}
+.rueckmeldung.tipp{border-color:var(--hinweis); background:var(--hinweis-flaeche)}
+.rueckmeldung b.titel{display:flex; align-items:center; gap:8px}
+.falle-box{display:grid; gap:6px; border-left:4px solid var(--fehler); padding:8px 12px; background:var(--karte); border-radius:0 8px 8px 0}
+.falle-box .bsp{font-family:var(--f-mono); font-size:.84rem}
+.bestaetigen{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:12px 14px; background:var(--papier-2); border-radius:10px; border:1px solid var(--linie)}
+.siegel-stempel{width:84px; height:84px; animation:stempeln .5s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes stempeln{from{transform:scale(1.8) rotate(-20deg); opacity:0}to{transform:scale(1) rotate(-8deg); opacity:1}}
+.seitenleiste{display:grid; gap:14px}
+.seitenleiste .karte{padding:16px}
+.mini-liste{list-style:none; padding:0; margin:0; display:grid; gap:4px; font-size:.86rem}
+.mini-liste li{display:flex; gap:8px; align-items:center; padding:5px 6px; border-radius:6px}
+.mini-liste li.jetzt{background:var(--papier-2); font-weight:700}
+.mini-liste i{width:18px; height:18px; border-radius:50%; border:2px solid var(--linie); display:grid; place-items:center; font-style:normal; font-size:.66rem; flex:none}
+.mini-liste i.ok{background:var(--ok); border-color:var(--ok); color:var(--papier)}
+.mini-liste i.halb{border-color:var(--akzent)}
+.quadrat-box{border:1px solid var(--linie); border-radius:var(--r-karte); background:var(--karte)}
+.quadrat-box > summary{list-style:none; cursor:pointer; padding:14px 18px; display:flex; align-items:center; gap:10px; font-weight:700; min-height:48px}
+.quadrat-box > summary::-webkit-details-marker{display:none}
+.quadrat-box > summary svg{width:18px; height:18px; transition:transform .2s; color:var(--akzent)}
+.quadrat-box[open] > summary svg{transform:rotate(90deg)}
+.quadrat-box > summary small{font-weight:400; color:var(--text-2); margin-left:auto; font-size:.8rem}
+.quadrat-scroll{overflow-x:auto; padding:0 18px 18px}
+.quadrat{border-collapse:collapse; font-family:var(--f-mono); font-size:.74rem; margin-inline:auto}
+.quadrat th,.quadrat td{width:22px; height:22px; min-width:22px; text-align:center; padding:0; border:1px solid var(--linie)}
+.quadrat thead th{background:var(--papier-2); color:var(--text-2); font-weight:400}
+.quadrat tbody th{background:var(--papier-2); color:var(--messing-text)}
+.quadrat td.zeile,.quadrat td.spalte{background:color-mix(in srgb, var(--akzent) 16%, transparent)}
+.quadrat th.zeile,.quadrat th.spalte{background:var(--akzent); color:var(--auf-akzent)}
+.quadrat td.kreuz{background:var(--akzent); color:var(--auf-akzent); font-weight:700}
+.quadrat td.schluesselzeile{background:color-mix(in srgb, var(--messing) 18%, transparent)}
+.quadrat-info{font-size:.8rem; color:var(--text-2); padding:0 18px 14px; min-height:1.5em}
+.quadrat:focus-visible{outline-offset:4px}
+
+/* ---------- 5 Labor ---------- */
+.lab-kopf{background:var(--textur), var(--tinte); color:var(--auf-tinte); border-bottom:6px solid var(--e-t)}
+.lab-kopf-innen{display:flex; flex-wrap:wrap; justify-content:space-between; gap:16px; align-items:end; padding-block:22px 18px}
+.lab-kopf .etikett{color:var(--e-t)}
+.lab-kopf h1{font-size:clamp(1.5rem, 3.6vw, 2.1rem); margin-top:4px}
+.lab-kopf p{color:var(--auf-tinte-2); font-size:.92rem; max-width:62ch; margin-top:6px}
+.werkzeuge{display:flex; gap:6px; flex-wrap:wrap}
+.werkzeug{min-height:40px; padding:0 12px; border-radius:999px; font-size:.8rem; border:1px solid rgba(251,247,238,.2); background:transparent; color:var(--auf-tinte-2)}
+.werkzeug[aria-pressed="true"]{background:var(--e-t); color:var(--nacht); border-color:var(--e-t); font-weight:700}
+.lab-inhalt{padding-block:22px 24px; display:grid; gap:20px}
+.lab-karte{background:var(--karte); border:1px solid var(--linie); border-radius:var(--r-karte); padding:18px; display:grid; gap:12px; align-content:start; min-width:0}
+.lab-karte h2{font-size:1.15rem; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.lab-karte h2 .schritt{font-family:var(--f-mono); font-size:.72rem; color:var(--akzent); font-weight:700; letter-spacing:.1em}
+.lab-karte > p{font-size:.9rem; color:var(--text-2); max-width:72ch}
+.gt-block{font-family:var(--f-mono); font-size:.95rem; line-height:2; background:var(--papier-2); border-left:3px solid var(--akzent); padding:10px 14px; border-radius:0 8px 8px 0; display:grid; gap:2px}
+.gt-zeile{display:grid; grid-template-columns:3.2ch minmax(0,1fr); gap:12px; align-items:baseline}
+.gt-pos{font-size:.66rem; color:var(--text-2); text-align:right; font-variant-numeric:tabular-nums}
+.gt-gruppen{display:flex; flex-wrap:wrap; column-gap:1.2ch}
+.gt-gruppe{letter-spacing:.12em; white-space:nowrap}
+.gt-gruppe span{border-radius:2px; transition:background .15s, box-shadow .15s}
+.gt-gruppe span.wdh{box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.gt-block.fokus span.wdh{opacity:.35}
+.gt-block.fokus span.wdh.an{opacity:1; outline:2px solid var(--text); outline-offset:0}
+.h1b{background:var(--hl1)} .h2b{background:var(--hl2)} .h3b{background:var(--hl3)} .h4b{background:var(--hl4)} .h5b{background:var(--hl5)} .h6b{background:var(--hl6)}
+.lab-zeile{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:start}
+.tabelle-scroll{overflow-x:auto; border:1px solid var(--linie); border-radius:10px}
+table.daten{border-collapse:collapse; width:100%; font-size:.84rem; font-variant-numeric:tabular-nums}
+table.daten th,table.daten td{padding:6px 5px; text-align:center; border-bottom:1px solid var(--linie); white-space:nowrap}
+table.daten thead th{background:var(--papier-2); font-weight:700; font-size:.78rem; color:var(--text-2); position:sticky; top:0}
+table.daten td.folge{font-family:var(--f-mono); font-weight:700; text-align:left; letter-spacing:.08em}
+table.daten td.folge i{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle}
+table.daten td.pos{font-family:var(--f-mono); font-size:.78rem; color:var(--text-2); text-align:left}
+table.daten td.teilt{color:var(--akzent); font-weight:700}
+table.daten tr.summe td{background:var(--papier-2); font-weight:700; border-bottom:0}
+table.daten tbody tr{cursor:default}
+table.daten tbody tr:hover td,table.daten tbody tr:focus-within td{background:color-mix(in srgb, var(--akzent) 8%, transparent)}
+table.daten tbody tr[tabindex]:focus-visible{outline:3px solid var(--fokus); outline-offset:-3px}
+table.daten td.max{background:var(--akzent)!important; color:var(--auf-akzent)}
+.mehr-knopf{justify-self:start}
+.ki-wert{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.ki-wert b{font-family:var(--f-display); font-size:2.2rem; line-height:1}
+.ki-skala{position:relative; height:44px}
+.ki-skala svg{width:100%; height:44px; display:block; overflow:visible}
+.formel{font-family:var(--f-mono); font-size:.86rem; background:var(--papier-2); padding:8px 12px; border-radius:8px; overflow-x:auto; white-space:nowrap}
+.k-wahl{display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:4px}
+.k-knopf{display:grid; justify-items:center; gap:2px; padding:6px 0 4px; min-height:64px; border:1.5px solid var(--linie); background:var(--papier); border-radius:8px; color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; position:relative}
+.k-knopf[aria-pressed="true"]{border-color:var(--akzent); background:color-mix(in srgb, var(--akzent) 12%, var(--papier))}
+.k-knopf .saeule{width:60%; height:28px; display:flex; align-items:flex-end; background:var(--papier-2); border-radius:2px}
+.k-knopf .saeule i{display:block; width:100%; background:var(--text-2); border-radius:2px}
+.k-knopf[aria-pressed="true"] .saeule i{background:var(--akzent)}
+.k-knopf .tipp-punkt{position:absolute; top:3px; right:4px; width:6px; height:6px; border-radius:50%; background:var(--messing)}
+.k-legende{display:flex; flex-wrap:wrap; gap:4px 16px; font-size:.78rem; color:var(--text-2)}
+.spalten{display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap:12px}
+.spalte{border:1px solid var(--linie); border-radius:10px; padding:10px 10px 8px; display:grid; gap:6px; background:var(--papier); min-width:0}
+.spalte-kopf{display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:.78rem; color:var(--text-2)}
+.spalte-kopf b{font-family:var(--f-mono); color:var(--text)}
+.spalte svg{width:100%; height:auto; display:block}
+.spalte .balken{fill:var(--akzent)}
+.spalte .ref{fill:none; stroke:var(--text); stroke-width:1.2; stroke-dasharray:3 2; opacity:.75}
+.spalte .ref-p{fill:var(--text)}
+.spalte .achse{fill:var(--text-2); font-family:var(--f-mono); font-size:7px; text-anchor:middle}
+.spalte .grund{stroke:var(--linie); stroke-width:1}
+.verschieber{display:grid; grid-template-columns:44px minmax(0,1fr) 44px; align-items:center; gap:4px}
+.verschieber button{height:40px; border:1px solid var(--linie); background:var(--karte); border-radius:8px; color:var(--text); display:grid; place-items:center}
+.verschieber button svg{width:16px; height:16px}
+.verschieber output{text-align:center; font-family:var(--f-mono); line-height:1.15}
+.verschieber output b{font-size:1.25rem; color:var(--akzent); display:block}
+.verschieber output small{font-size:.7rem; color:var(--text-2)}
+.verschieber output.geaendert b{color:var(--messing-text)}
+.schluessel-anzeige{display:flex; flex-wrap:wrap; gap:4px}
+.schluessel-anzeige span{font-family:var(--f-mono); font-weight:700; font-size:1.4rem; width:1.7em; height:1.9em; display:grid; place-items:center; border:1.5px solid var(--akzent); border-radius:6px; color:var(--akzent); background:var(--papier)}
+.klar-ausgabe{font-family:var(--f-mono); font-size:.95rem; line-height:1.9; color:var(--text); background:var(--papier); border:1px solid var(--linie); border-radius:10px; padding:12px 14px; overflow-wrap:anywhere; letter-spacing:.04em}
+.steuerleiste{position:sticky; bottom:0; z-index:20; background:var(--textur), var(--tinte); color:var(--auf-tinte); border-top:3px solid var(--e-t); padding-bottom:env(safe-area-inset-bottom,0px)}
+.steuer-innen{display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; padding-block:10px}
+.steuer-innen .etikett{color:var(--auf-tinte-2)}
+.steuer-schluessel{font-family:var(--f-mono); font-size:1.3rem; font-weight:700; letter-spacing:.2em; color:var(--e-t)}
+.steuer-innen .rechts{margin-left:auto; display:flex; flex-wrap:wrap; gap:8px}
+textarea.gt-eingabe{width:100%; min-height:120px; font-family:var(--f-mono); font-size:.88rem; letter-spacing:.06em; border:1.5px solid var(--linie); border-radius:10px; background:var(--papier); color:var(--text); padding:10px 12px; resize:vertical}
+.lab-details > summary{cursor:pointer; min-height:40px; display:flex; align-items:center; gap:8px; font-weight:700; font-size:.9rem; color:var(--hinweis)}
+.statuszeile{display:flex; flex-wrap:wrap; gap:6px 18px; font-size:.84rem; color:var(--text-2)}
+.statuszeile b{color:var(--text)}
+.vorschlag{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:.9rem; padding:10px 12px; background:var(--hinweis-flaeche); color:var(--text); border-radius:8px}
+.vorschlag svg{width:18px; height:18px; color:var(--hinweis); flex:none}
+.teiler-diagramm svg{width:100%; height:auto; display:block}
+.teiler-diagramm .bar{fill:var(--text-2)}
+.teiler-diagramm .bar.max{fill:var(--akzent)}
+.teiler-diagramm text{fill:var(--text-2); font-family:var(--f-text); font-size:11px; text-anchor:middle}
+.teiler-diagramm text.wert{fill:var(--text); font-weight:700}
+
+/* ---------- 6 Funkraum ---------- */
+#v-funkraum{background:var(--nacht); color:var(--auf-tinte); --fokus:var(--messing-hell)}
+.fr-kopf{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; padding-block:18px 10px; border-bottom:1px solid rgba(251,247,238,.1)}
+.fr-titel{display:flex; align-items:center; gap:14px}
+.fr-titel svg{width:44px; height:44px; color:var(--e-t)}
+.fr-titel .etikett{color:var(--e-t)}
+.fr-titel h1{font-size:clamp(1.3rem, 3vw, 1.9rem)}
+.fr-uhr{display:flex; align-items:center; gap:14px}
+.fr-uhr .zeit{font-family:var(--f-mono); font-size:clamp(1.8rem, 4.5vw, 2.8rem); font-weight:700; color:var(--messing-hell); font-variant-numeric:tabular-nums; letter-spacing:.04em; line-height:1}
+.fr-uhr small{display:block; font-size:.7rem; color:var(--auf-tinte-2); font-family:var(--f-mono); letter-spacing:.12em; text-transform:uppercase}
+.fr-raster{display:grid; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr); gap:18px; padding-block:16px 40px}
+.fr-netz{display:grid; align-items:center; position:relative; background:radial-gradient(60% 60% at 50% 52%, rgba(232,149,123,.08), transparent 70%), var(--textur); border:1px solid rgba(251,247,238,.08); border-radius:var(--r-karte); min-width:0}
+.fr-netz svg{width:100%; height:auto; display:block}
+.fr-kante{stroke:rgba(201,195,181,.22); stroke-width:1.5}
+.fr-kante.aktiv{stroke:var(--e-t); stroke-width:2.5}
+.fr-lausch{stroke:var(--fehler-hell); stroke-width:1.5; stroke-dasharray:4 5; opacity:0; transition:opacity .4s}
+.fr-lausch.an{opacity:.75}
+.fr-knoten circle.k{fill:var(--tinte-2); stroke:var(--e-t); stroke-width:3}
+.fr-knoten text{fill:var(--auf-tinte); font-family:var(--f-text); font-size:23px; text-anchor:middle; font-weight:700}
+.fr-knoten text.sub{font-size:16px; font-weight:400; fill:var(--auf-tinte-2); font-family:var(--f-mono)}
+.fr-knoten use{color:var(--e-t)}
+.fr-eve circle.k{fill:#2A1620; stroke:var(--fehler-hell); stroke-width:3}
+.fr-eve.blitz circle.k{animation:eveblitz .7s}
+@keyframes eveblitz{50%{stroke-width:8; fill:#5A2430}}
+.fr-eve text{fill:var(--fehler-hell)}
+.fr-nachricht circle{fill:var(--messing-hell)}
+.fr-nachricht rect{fill:rgba(11,20,38,.88); stroke:rgba(217,164,65,.6)}
+.fr-nachricht text{fill:var(--auf-tinte); font-family:var(--f-mono); font-size:19px; letter-spacing:.1em}
+.fr-seite{display:grid; gap:14px; align-content:start; min-width:0}
+.fr-statistik{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.fr-statistik div{background:var(--tinte); border-radius:10px; padding:10px 12px; border:1px solid rgba(251,247,238,.08)}
+.fr-statistik b{display:block; font-family:var(--f-display); font-size:1.8rem; line-height:1.05; font-variant-numeric:tabular-nums}
+.fr-statistik span{font-size:.74rem; color:var(--auf-tinte-2)}
+.fr-statistik .rot b{color:var(--fehler-hell)}
+.fr-log{background:var(--tinte); border-radius:var(--r-karte); border:1px solid rgba(251,247,238,.08); padding:14px; display:grid; gap:8px}
+.fr-log h2{font-size:1.05rem; display:flex; justify-content:space-between; align-items:center}
+.fr-log ol{list-style:none; margin:0; padding:0; display:grid; gap:6px; max-height:360px; overflow:auto}
+.fr-log li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:2px 10px; font-size:.86rem; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.03); border-left:3px solid var(--e-t); animation:logrein .4s ease-out}
+@keyframes logrein{from{transform:translateX(10px); opacity:.2}}
+.fr-log li time{font-family:var(--f-mono); font-size:.72rem; color:var(--auf-tinte-2); grid-row:span 2}
+.fr-log li .gtx{font-family:var(--f-mono); letter-spacing:.1em; color:var(--auf-tinte-2); font-size:.78rem; overflow-wrap:anywhere}
+.fr-log li.eve{border-left-color:var(--fehler-hell); background:rgba(242,139,130,.08)}
+.fr-log li.eve b{color:var(--fehler-hell)}
+.fr-log li.eve .gtx{color:var(--auf-tinte)}
+.fr-lerneffekt{border:1px dashed rgba(217,164,65,.45); border-radius:var(--r-karte); padding:12px 14px; font-size:.88rem; color:var(--auf-tinte-2)}
+.fr-lerneffekt b{color:var(--messing-hell)}
+
+/* ---------- 7 Lehrkraft ---------- */
+.lk-kopf{background:var(--textur), var(--tinte); color:var(--auf-tinte)}
+.lk-kopf-innen{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; padding-block:22px}
+.lk-kopf .etikett{color:var(--messing-hell)}
+.lk-kopf h1{font-size:clamp(1.5rem, 3.4vw, 2rem); margin-top:4px}
+.lk-kopf p{color:var(--auf-tinte-2); font-size:.9rem}
+.segment{display:inline-flex; border:1px solid rgba(251,247,238,.3); border-radius:999px; padding:3px; gap:2px; background:rgba(11,20,38,.4)}
+.segment button{min-height:38px; min-width:64px; border-radius:999px; border:0; background:transparent; color:var(--auf-tinte-2); font-weight:700; padding:0 14px}
+.segment button[aria-pressed="true"]{background:var(--messing-hell); color:var(--nacht)}
+.lk-raster{display:grid; grid-template-columns:330px minmax(0,1fr); gap:20px; padding-block:22px 56px; align-items:start}
+.lk-links,.lk-rechts{display:grid; gap:16px; min-width:0}
+.kacheln{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+.kachel{background:var(--karte); border:1px solid var(--linie); border-radius:var(--r-karte); padding:14px 16px; display:grid; gap:2px}
+.kachel span{font-size:.78rem; color:var(--text-2)}
+.kachel b{font-family:var(--f-display); font-size:1.7rem; font-weight:600; line-height:1.1; font-variant-numeric:tabular-nums}
+.kachel small{font-size:.78rem; color:var(--text-2)}
+.kachel.warn b{color:var(--fehler)}
+.schalter-liste{list-style:none; margin:0; padding:0; display:grid; gap:2px 24px; grid-template-columns:repeat(auto-fill, minmax(min(100%, 230px), 1fr))}
+.schalter-liste li{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px dashed var(--linie); font-size:.88rem}
+.schalter-liste li small{display:block; color:var(--text-2); font-size:.74rem}
+.schalter{position:relative; width:46px; height:28px; border-radius:999px; border:1.5px solid var(--linie); background:var(--papier-2); flex:none; padding:0}
+.schalter::after{content:""; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:var(--text-2); transition:transform .2s, background .2s}
+.schalter[aria-checked="true"]{background:var(--ok); border-color:var(--ok)}
+.schalter[aria-checked="true"]::after{transform:translateX(18px); background:var(--papier)}
+.welten-chips{display:flex; flex-wrap:wrap; gap:6px}
+.welt-chip{min-height:38px; border-radius:999px; padding:0 12px; border:1.5px solid var(--linie); background:var(--papier); display:inline-flex; align-items:center; gap:6px; font-size:.82rem; color:var(--text)}
+.welt-chip i{width:9px; height:9px; border-radius:50%; background:var(--akzent)}
+.welt-chip[aria-pressed="false"]{color:var(--text-2); border-style:dashed}
+.welt-chip[aria-pressed="false"] i{background:transparent; border:1.5px solid var(--text-2)}
+.szenarien{display:grid; gap:6px}
+.szenario{display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px; padding:8px 10px; border:1.5px solid var(--linie); border-radius:10px; font-size:.86rem; background:var(--papier)}
+.szenario:has(input:checked){border-color:var(--akzent)}
+.szenario input{width:18px; height:18px; accent-color:var(--hinweis)}
+.szenario small{display:block; color:var(--text-2); font-size:.74rem}
+.szenario.aus{opacity:.6}
+.matrix-scroll{overflow-x:auto}
+table.matrix{border-collapse:separate; border-spacing:3px; font-size:.78rem; font-variant-numeric:tabular-nums; min-width:100%}
+table.matrix th{font-weight:700; color:var(--text-2); font-size:.72rem; padding:2px 4px; white-space:nowrap}
+table.matrix thead th{font-family:var(--f-mono)}
+table.matrix thead th.boss{color:var(--messing-text)}
+table.matrix tbody th{text-align:left; color:var(--text); font-size:.8rem; position:sticky; left:0; background:var(--karte); z-index:1; padding-right:8px}
+table.matrix tbody tr.ich th{color:var(--akzent)}
+table.matrix td{width:42px; min-width:38px; height:32px; text-align:center; border-radius:6px; font-weight:700}
+table.matrix td.leer{background:var(--papier-2); color:var(--text-2); font-weight:400}
+table.matrix td.boss{box-shadow:inset 0 0 0 1.5px var(--messing)}
+table.matrix th.welt{font-family:var(--f-text); text-align:center; border-bottom:2px solid var(--linie); padding-bottom:4px}
+.matrix-legende{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.76rem; color:var(--text-2); align-items:center}
+.matrix-legende i{display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:4px}
+.fallen-balken{display:grid; gap:6px}
+.fb{display:grid; grid-template-columns:2.6em minmax(0,11em) minmax(0,1fr) 2.4em; gap:8px; align-items:center; font-size:.82rem}
+.fb b{font-family:var(--f-mono)}
+.fb span{color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.fb .spur{height:14px; background:var(--papier-2); border-radius:3px; overflow:hidden}
+.fb .spur i{display:block; height:100%; background:var(--text-2); border-radius:3px}
+.fb.top .spur i{background:var(--fehler)}
+.fb.top b,.fb.top output{color:var(--fehler)}
+.fb output{text-align:right; font-weight:700; font-variant-numeric:tabular-nums}
+
+/* ---------- 8 Akte ---------- */
+#v-akte{background:var(--schreibtisch)}
+.akte-buehne{padding-block:28px 64px; display:grid; gap:16px; justify-items:center}
+.akte-leiste{display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; width:100%; max-width:820px; font-size:.86rem; color:var(--text-2)}
+.akte-leiste b{color:var(--text)}
+.blatt-scroll{width:100%; max-width:820px; overflow-x:auto; padding:4px 4px 20px}
+.blatt{width:100%; min-width:540px; aspect-ratio:210/297; background:var(--druck-papier); color:var(--druck-text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 18px 48px rgba(11,20,38,.28); container-type:inline-size; position:relative; overflow:hidden; font-family:var(--f-akte-text)}
+.blatt-innen{position:absolute; inset:0; padding:4.6cqw 6.7cqw 3.6cqw 7.4cqw; display:flex; flex-direction:column; gap:1.25cqw; font-size:1.6cqw; line-height:1.36}
+.lochrand{position:absolute; left:2.4cqw; top:0; bottom:0; display:flex; flex-direction:column; justify-content:center; gap:28cqw}
+.lochrand i{width:2.2cqw; height:2.2cqw; border-radius:50%; background:var(--schreibtisch); box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}
+.kopfband{border-collapse:collapse; width:100%}
+.kopfband td{padding:.8cqw 1.2cqw; vertical-align:middle}
+.kopfband .z1 td{background:var(--e-p); color:#FFFFFF; font-family:var(--f-akte-serif); font-size:1.22cqw; letter-spacing:.1em; white-space:nowrap; text-transform:uppercase}
+.kopfband .z1 td:last-child{text-align:right; white-space:nowrap}
+.kopfband .z2 td{background:var(--druck-2); border-bottom:.3cqw solid var(--e-p)}
+.kopfband .az{font-family:var(--f-akte-mono); font-weight:700; font-size:1.8cqw; white-space:nowrap}
+.kopfband .ti{font-family:var(--f-akte-serif); font-weight:700; font-size:2.9cqw; color:var(--e-p); text-align:center}
+.kopfband .ni{text-align:right; white-space:nowrap; font-size:1.5cqw}
+.kopfband .ni em{font-style:normal; font-weight:700; border:.2cqw solid var(--druck-text); padding:.1cqw .8cqw; border-radius:.4cqw; margin-right:1.2cqw; font-size:1.3cqw; letter-spacing:.1em}
+.akte-lead{font-size:1.6cqw; color:var(--druck-text)}
+.kasten{border-top:.55cqw double var(--e-p); padding:.8cqw 1.4cqw 1cqw; display:grid; gap:.55cqw}
+.kasten-kopf{font-family:var(--f-akte-serif); font-weight:700; font-size:1.86cqw; color:var(--e-p); letter-spacing:.06em; font-variant:small-caps; text-transform:lowercase; display:flex; justify-content:space-between; gap:2cqw}
+.kasten-kopf .initial{font-variant:normal}
+.kasten.wissen{background:var(--druck-2)}
+.kasten.check{border:.18cqw solid var(--druck-linie); border-top:.55cqw double var(--e-p)}
+.kasten.falle{border:.25cqw solid #B3261E; border-top-width:.25cqw}
+.kasten.falle .kasten-kopf{color:#B3261E}
+.kasten ol,.kasten ul{margin:0; padding-left:2.6cqw; display:grid; gap:.3cqw}
+.akte-gt{font-family:var(--f-akte-mono); font-size:1.85cqw; background:#F3F1EC; padding:.6cqw 1.4cqw .9cqw; display:grid; gap:.5cqw}
+.akte-zeile{display:flex; justify-content:space-between}
+.akte-zeile .g{display:grid; letter-spacing:.3cqw; line-height:1.2}
+.akte-zeile small{font-size:1.1cqw; color:#6E6E78; letter-spacing:0}
+.akte-tabelle{border-collapse:collapse; width:100%; font-size:1.45cqw}
+.akte-tabelle th,.akte-tabelle td{border:.12cqw solid var(--druck-linie); padding:.35cqw .6cqw; text-align:center; height:2.8cqw}
+.akte-tabelle th{background:var(--druck-2); font-weight:700}
+.schreiblinie{border-bottom:.12cqw solid #9A9AA5; height:3cqw}
+.akte-zwei{display:grid; grid-template-columns:minmax(0,1fr) 12cqw; gap:2cqw; align-items:center}
+.qr{width:11cqw; height:11cqw; display:block}
+.akte-url{font-family:var(--f-akte-mono); font-size:1.4cqw; color:var(--druck-grau)}
+.akte-fusszeile{margin-top:auto; display:flex; justify-content:space-between; gap:2cqw; font-size:1.25cqw; color:var(--druck-grau); border-top:.12cqw solid var(--druck-linie); padding-top:.8cqw}
+.be{float:right; font-weight:700}
+.sterne-akte{color:#8A5F1A; letter-spacing:.1em}
+
+/* ---------- Zeitsprung & Toast ---------- */
+.zeitsprung{position:fixed; inset:0; z-index:100; display:grid; place-items:center; background:radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--e-t) 26%, transparent) 0%, rgba(11,20,38,.96) 46%, var(--nacht) 100%); color:var(--e-t); pointer-events:none}
+.zeitsprung[hidden]{display:none!important}
+.zeitsprung svg{width:min(70vmin, 520px); height:min(70vmin, 520px); grid-area:1/1}
+.zeitsprung .ring-dreh{transform-origin:0 0; animation:zsdreh .7s cubic-bezier(.6,0,.2,1) both}
+.zeitsprung .ring-dreh-2{transform-origin:0 0; animation:zsdreh2 .7s cubic-bezier(.6,0,.2,1) both}
+.zeitsprung-text{grid-area:1/1; text-align:center; color:var(--auf-tinte); animation:zstext .7s ease both}
+.zeitsprung-text .mono{color:var(--e-t); font-size:.9rem; letter-spacing:.2em}
+.zeitsprung-text b{display:block; font-family:var(--f-display); font-size:clamp(1.6rem, 5vw, 2.6rem); font-style:italic; font-weight:600}
+.zeitsprung.an{animation:zsfade .75s ease both}
+@keyframes zsdreh{from{transform:rotate(0)}to{transform:rotate(200deg)}}
+@keyframes zsdreh2{from{transform:rotate(0) scale(.9)}to{transform:rotate(-140deg) scale(1)}}
+@keyframes zstext{0%{opacity:0; transform:scale(.94)}35%,70%{opacity:1; transform:none}100%{opacity:0}}
+@keyframes zsfade{0%{opacity:0}18%{opacity:1}75%{opacity:1}100%{opacity:0}}
+.toast{position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:90; background:var(--tinte); color:var(--auf-tinte); border:1px solid rgba(217,164,65,.5); border-radius:12px; padding:12px 16px; font-size:.9rem; box-shadow:var(--schatten); max-width:min(520px, calc(100vw - 32px)); display:flex; gap:10px; align-items:flex-start}
+.toast svg{width:18px; height:18px; color:var(--messing-hell); flex:none; margin-top:2px}
+
+/* ---------- Responsiv ---------- */
+@media (max-width: 1000px){
+  .auf-raster{grid-template-columns:minmax(0,1fr)}
+  .lk-raster{grid-template-columns:minmax(0,1fr)}
+  .fr-raster{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 860px){
+  .start-grid{grid-template-columns:minmax(0,1fr); padding-block:44px 36px; gap:28px}
+  .start-ring{width:min(300px, 80%); order:-1}
+  .fund-reihe,.lab-zeile,.zl-unten{grid-template-columns:minmax(0,1fr)}
+  .dreier{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .kopf-epoche{display:none}
+  .kopf-innen{justify-content:space-between}
+  .zl-kopf{grid-template-columns:minmax(0,1fr)}
+  .k-wahl{grid-template-columns:repeat(6, minmax(0,1fr))}
+}
+@media (max-width: 640px){
+  .tore{grid-template-columns:minmax(0,1fr); gap:6px; padding-left:22px}
+  .tore::after{content:""; position:absolute; left:6px; top:0; bottom:0; width:2px; background:linear-gradient(180deg, rgba(217,164,65,0), var(--messing) 4%, var(--messing) 96%, rgba(217,164,65,0))}
+  .tor-achse{position:absolute; left:-22px; top:56px; width:14px; margin:0}
+  .tor-achse::before,.tor-li:last-child .tor-achse::after{display:none}
+  .tor{grid-template-columns:86px minmax(0,1fr); grid-template-rows:auto auto auto 1fr; justify-items:start; text-align:left; column-gap:16px; row-gap:2px; align-items:start; padding:6px 0}
+  .tor-bild{grid-row:1/5; width:86px}
+  .tor-name{min-height:0; justify-content:flex-start; font-size:1.08rem; order:-1}
+  .tor.gesperrt .tor-name{font-size:.86rem}
+  .tor-jahr{order:-2}
+  .tor-status{font-size:.82rem}
+  .tor:hover:not(.gesperrt){transform:translateX(3px)}
+  .regal{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .dreier{grid-template-columns:minmax(0,1fr)}
+  .ep-kopf-innen{grid-template-columns:minmax(0,1fr)}
+  .ep-fortschritt{justify-self:start; grid-template-columns:auto auto; align-items:center; text-align:left; gap:12px}
+  .ep-fortschritt svg{width:84px; height:84px}
+  .chiffre{grid-template-columns:repeat(10, minmax(0,1fr)); gap:4px 3px}
+  .chiffre .zl{display:none}
+  .ch-gt{font-size:1.05rem}
+  .ch-ein{height:46px; font-size:1.1rem}
+  .alphabet{grid-template-columns:repeat(13, minmax(0,1fr))}
+  .alphabet div:nth-child(13){border-right:0}
+  .alphabet div:nth-child(-n+13){border-bottom:1px solid var(--linie)}
+  .auf-koerper,.auf-kopf,.auf-fuss{padding-inline:14px}
+  .kacheln{gap:8px}
+  .kachel{padding:10px}
+  .kachel b{font-size:1.25rem}
+  .kachel small{display:none}
+  .start-fakten{grid-template-columns:repeat(2, auto)}
+  .entsiegeln-zeile{letter-spacing:.08em; font-size:.8rem}
+  .start-ring{width:min(220px, 70%)}
+  .steuer-innen{gap:6px 12px}
+  .steuer-innen .rechts{margin-left:0; width:100%}
+  .steuer-innen .rechts .knopf{flex:1; min-height:40px; padding:0 8px; font-size:.8rem; white-space:nowrap}
+  .blatt{min-width:0}
+  .fr-statistik b{font-size:1.4rem}
+  .fb{grid-template-columns:2.4em minmax(0,1fr) 2.2em}
+  .fb span{grid-column:2; grid-row:1}
+  .fb .spur{grid-column:1/-1; grid-row:2}
+  .fb output{grid-column:3; grid-row:1}
+  .rang-text{display:none}
+  .rang{padding:4px}
+  .kopf-link .lang{display:none}
+  .demo-marke{display:none}
+  .k-wahl{grid-template-columns:repeat(6, minmax(0,1fr))}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important}
+  .start-ring .innen{animation:none}
+}
+</style>
+
+<!-- Symbol-Sprite: Ornamente, Artefakte, Icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs id="sprite">
+    <symbol id="o-maeander" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter"><path d="M6 42V6h36v30H16V16h16v10h-8"/></g></symbol>
+    <symbol id="o-girih" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="11" y="11" width="26" height="26"/><rect x="11" y="11" width="26" height="26" transform="rotate(45 24 24)"/><circle cx="24" cy="24" r="5.5"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6"/></g></symbol>
+    <symbol id="o-ranke" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 40c9-1 14-7 15-15s6-14 14-14c6 0 9 4 9 8.5S39.5 26 36 26s-5.5-2.2-5.5-4.6 1.8-3.6 3.6-3.6"/><path d="M20 27c-6-1-10 2-10 6s3 5 5 4"/><path d="M27 36c4-1 7 1 7 5"/><path d="M13 16c2-4 6-5 8-3-2 3-5 4-8 3z"/></g></symbol>
+    <symbol id="o-lochstreifen" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12h42M3 36h42"/></g><g fill="currentColor"><circle cx="9" cy="18" r="2.6"/><circle cx="17" cy="18" r="2.6"/><circle cx="33" cy="18" r="2.6"/><circle cx="25" cy="30" r="2.6"/><circle cx="41" cy="30" r="2.6"/><circle cx="9" cy="30" r="2.6"/><circle cx="41" cy="18" r="2.6"/><circle cx="9" cy="24" r="1.2"/><circle cx="17" cy="24" r="1.2"/><circle cx="25" cy="24" r="1.2"/><circle cx="33" cy="24" r="1.2"/><circle cx="41" cy="24" r="1.2"/></g></symbol>
+    <symbol id="o-scan" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M6 9h30l6 6v24H6z"/></g><g fill="currentColor"><rect x="11" y="15" width="2.6" height="5"/><rect x="17" y="15" width="2.6" height="5"/><rect x="29" y="15" width="2.6" height="5"/><rect x="14" y="23" width="2.6" height="5"/><rect x="23" y="23" width="2.6" height="5"/><rect x="35" y="23" width="2.6" height="5"/><rect x="11" y="31" width="2.6" height="5"/><rect x="26" y="31" width="2.6" height="5"/><rect x="32" y="31" width="2.6" height="5"/></g></symbol>
+    <symbol id="o-netz" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M10 11l14 13 14-15M24 24L12 38M24 24l14 12M10 11l2 27M38 9v27M12 38h26"/></g><g fill="currentColor"><circle cx="10" cy="11" r="3.6"/><circle cx="38" cy="9" r="3.6"/><circle cx="24" cy="24" r="4.4"/><circle cx="12" cy="38" r="3.6"/><circle cx="38" cy="36" r="3.6"/></g></symbol>
+    <symbol id="a-skytale" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14 42L34 6"/><path d="M12 33l14 3M15.5 26.5l14 3M19 20l14 3M22.5 13.5l12 2.6"/></g></symbol>
+    <symbol id="a-manuskript" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M12 8h22a4 4 0 0 1 4 4v28H16a4 4 0 0 1-4-4z"/><path d="M12 36a4 4 0 0 1 4-4h22"/><path d="M18 15h14M18 20h14M18 25h9"/></g></symbol>
+    <symbol id="a-tafel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="30" height="30" rx="1"/><path d="M9 16.5h30M9 24h30M9 31.5h30M16.5 9v30M24 9v30M31.5 9v30"/></g><rect x="16.5" y="24" width="7.5" height="7.5" fill="currentColor"/></symbol>
+    <symbol id="a-schluessel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="14" cy="15" r="6"/><path d="M18.5 19.5L36 37M31 32l3.5-3.5M27 28l3-3"/><circle cx="34" cy="14" r="5" stroke-dasharray="3 2.5"/><path d="M30.5 17.5L14 34M18 30l-3-3"/></g></symbol>
+    <symbol id="i-portal" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-labor" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3M7 15h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-funk" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M8.5 15.5a5 5 0 0 1 0-7M15.5 8.5a5 5 0 0 1 0 7M5.6 18.4a9 9 0 0 1 0-12.8M18.4 5.6a9 9 0 0 1 0 12.8"/></g></symbol>
+    <symbol id="i-pfeil" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-pfeil-l" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></g></symbol>
+    <symbol id="i-sonne" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></symbol>
+    <symbol id="i-mond" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></g><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
+    <symbol id="i-lupe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></g></symbol>
+  </defs>
+</svg>
+
+<div id="app" lang="de" data-ep="6">
+
+<nav class="demo" aria-label="Prototyp-Ansichten">
+  <span class="demo-marke">Prototyp · Ansicht</span>
+  <div class="demo-tabs" id="demo-tabs">
+    <button class="demo-tab" data-view="start"><b>1</b>Start</button>
+    <button class="demo-tab" data-view="zeitleiste"><b>2</b>Zeitleiste</button>
+    <button class="demo-tab" data-view="epoche"><b>3</b>Epoche</button>
+    <button class="demo-tab" data-view="aufgabe"><b>4</b>Aufgabe</button>
+    <button class="demo-tab" data-view="labor"><b>5</b>Kryptolabor</button>
+    <button class="demo-tab" data-view="funkraum"><b>6</b>Funkraum</button>
+    <button class="demo-tab" data-view="lehrkraft"><b>7</b>Lehrkraft</button>
+    <button class="demo-tab" data-view="akte"><b>8</b>Akte</button>
+  </div>
+  <button class="thema-knopf" id="thema-knopf" aria-label="Farbschema: System. Umschalten"><svg><use href="#i-auto"/></svg><span id="thema-text">System</span></button>
+</nav>
+
+<header class="kopf tinte" hidden>
+  <div class="wrap kopf-innen">
+    <button class="logo" data-go="zeitleiste" aria-label="Kryptos – zur Zeitleiste"><svg><use href="#logo-ring"/></svg><span>KRYPTOS</span></button>
+    <div class="kopf-epoche" aria-live="polite"><i></i><span id="kopf-epoche-text">Archiv der verborgenen Schriften</span></div>
+    <nav class="kopf-nav" aria-label="Plattform">
+      <button class="kopf-link" data-toast="Zurück ins InfoLabs-Portal (im Prototyp nicht verlinkt)."><svg><use href="#i-portal"/></svg><span class="lang">Portal</span></button>
+      <button class="kopf-link" data-go="labor"><svg><use href="#i-labor"/></svg><span class="lang">Labor</span></button>
+      <button class="kopf-link" data-go="funkraum" aria-label="Funkraum – Szenario läuft"><svg><use href="#i-funk"/></svg><span class="lang">Funkraum</span><span class="puls" aria-hidden="true"></span></button>
+      <button class="rang" data-go="zeitleiste" aria-label="Profil: Chronist 7, Rang Chiffreur, 1 085 Punkte">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#14213D" stroke="#D9A441" stroke-width="2"/><path d="M12 24l8-5 8 5M12 18l8-5 8 5" fill="none" stroke="#D9A441" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="29" r="1.8" fill="#D9A441"/></svg>
+        <span class="rang-text"><b>Chiffreur</b><small>Chronist 7 · 1 085 P</small></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="haupt">
+
+<!-- ==================== 1 START ==================== -->
+<section class="view tinte" id="v-start" data-ep="6" aria-labelledby="start-h">
+  <div class="wrap start-grid">
+    <div class="start-text">
+      <div class="start-logo">
+        <svg aria-hidden="true"><use href="#logo-ring"/></svg>
+        <h1 id="start-h">KRYPTOS</h1>
+      </div>
+      <button class="entsiegeln-zeile" id="start-titel" aria-label="Die Zeitreise der Geheimschriften. Erneut entschlüsseln"></button>
+      <p class="start-lead">Seit Jahrtausenden schreiben sich <b>Alice</b> und <b>Bob</b> geheime Botschaften – und seit Jahrtausenden lauscht <b>Eve</b>. Reise mit dem Chronoskop durch sieben Epochen, sichere Botschaften als Kryptografin oder Kryptograf und knacke sie als Kryptoanalytikerin oder Kryptoanalytiker.</p>
+      <div class="start-knoepfe">
+        <button class="knopf knopf-messing" data-go="zeitleiste"><svg><use href="#i-portal"/></svg>Mit InfoLabs anmelden</button>
+        <button class="knopf knopf-glas" data-go="aufgabe" data-gast="1">Ohne Anmeldung reinschnuppern<svg><use href="#i-pfeil"/></svg></button>
+      </div>
+      <div class="figuren" aria-label="Figuren der Rahmenhandlung">
+        <span class="figur"><i>A</i>Alice · sendet</span>
+        <span class="figur"><i>B</i>Bob · empfängt</span>
+        <span class="figur eve"><i>E</i>Eve · lauscht</span>
+      </div>
+      <div class="start-fakten">
+        <div><b class="zahl">7</b><span>Epochen von Sparta bis heute</span></div>
+        <div><b class="zahl">26</b><span>Level, davon 3 Kür</span></div>
+        <div><b class="zahl">11</b><span>Werkzeuge im Kryptolabor</span></div>
+        <div><b class="zahl">5</b><span>Funkraum-Szenarien</span></div>
+      </div>
+    </div>
+    <figure class="start-ring" aria-hidden="true">
+      <svg viewBox="-50 -50 100 100"><use href="#ring-aussen" x="-50" y="-50" width="100" height="100"/></svg>
+      <svg viewBox="-50 -50 100 100" class="innen"><use href="#ring-innen" x="-50" y="-50" width="100" height="100"/></svg>
+      <figcaption>VERSCHIEBUNG<b>+3</b>A → D</figcaption>
+    </figure>
+  </div>
+  <div class="wrap start-fuss">
+    <span>Eine Plattform im InfoLabs-Verbund · Informatik Sek II · Niedersachsen</span>
+    <span>Gastmodus: sechs Demo-Aufgaben, nichts wird gespeichert</span>
+  </div>
+</section>
+
+<!-- ==================== 2 ZEITLEISTE ==================== -->
+<section class="view nachtflaeche" id="v-zeitleiste" hidden aria-labelledby="zl-h">
+  <div class="wrap zl-kopf">
+    <div>
+      <span class="etikett" style="color:var(--messing-hell)">Archiv der verborgenen Schriften</span>
+      <h1 id="zl-h">Willkommen zurück, Chronist 7.</h1>
+      <p>Das Chronoskop steht in der Renaissance. Zwei Aufgaben trennen dich vom Siegel für <b style="color:var(--auf-tinte)">Kasiskis Spur</b> – danach wartet die Venezianische Depesche.</p>
+    </div>
+    <div class="rangleiter" aria-label="Rang: Chiffreur, 41 Prozent der Level-Punkte">
+      <div class="rangleiter-kopf"><b>Chiffreur</b><span class="zahl">1 085 Punkte · 41 %</span></div>
+      <ol>
+        <li class="erreicht"><i></i>Lehrling</li>
+        <li class="erreicht"><i></i>Schreiber</li>
+        <li class="jetzt"><i></i>Chiffreur</li>
+        <li><i></i>Krypto&shy;analytiker</li>
+        <li><i></i>Meister der Chiffren</li>
+      </ol>
+    </div>
+  </div>
+  <div class="zeitachse">
+    <div class="wrap">
+      <div class="zeitachse-hinweis"><span class="etikett">−500 · Zeitleiste der Kryptologie · heute</span><span>nicht maßstäblich</span></div>
+      <ol class="tore" id="tore"></ol>
+    </div>
+  </div>
+  <div class="wrap zl-unten">
+    <div class="panel-tinte">
+      <span class="etikett" style="color:var(--e-t)" data-ep="2">Weiter, wo du warst</span>
+      <div class="weiter-karte" data-ep="2">
+        <svg class="mini-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="none" stroke="rgba(251,247,238,.12)" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="#D98C8C" stroke-width="6" stroke-linecap="round" stroke-dasharray="116.7 163.4" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" fill="#FBF7EE" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700">5/7</text></svg>
+        <div><h2>2.2 Kasiskis Spur</h2><p>Teiltexte und Kasiski-Test · 🔍 Kryptoanalyse · nächste Aufgabe: Abstände und Teiler im Kryptolabor</p></div>
+        <div class="knoepfe"><button class="knopf knopf-messing" data-go="labor">Im Labor weiterarbeiten<svg><use href="#i-pfeil"/></svg></button><button class="knopf knopf-glas" data-goep="2">Zur Epoche</button></div>
+      </div>
+      <span class="etikett" style="color:var(--messing-hell); margin-top:6px">Artefakte</span>
+      <div class="regal" id="regal"></div>
+    </div>
+    <div class="panel-tinte">
+      <span class="etikett" style="color:var(--messing-hell)">Entsiegelte Kapitel der Kryptogeschichte</span>
+      <div class="kapitel-liste" id="kapitel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3 EPOCHE ==================== -->
+<section class="view" id="v-epoche" hidden aria-labelledby="ep-h">
+  <div class="ep-kopf tinte">
+    <svg class="ep-orn-gross" aria-hidden="true"><use id="ep-orn-gross" href="#o-ranke"/></svg>
+    <div class="wrap ep-kopf-innen">
+      <div>
+        <span class="etikett" id="ep-etikett">Welt 2 · Venedig &amp; Paris · 16.–19. Jahrhundert</span>
+        <h1 id="ep-h">Le chiffre indéchiffrable</h1>
+        <p id="ep-text"></p>
+        <div class="ep-wechsel" id="ep-wechsel" aria-label="Epoche wechseln"></div>
+      </div>
+      <div class="ep-fortschritt" id="ep-fortschritt"></div>
+    </div>
+  </div>
+  <div class="ornamentband" aria-hidden="true"><svg id="ornamentband"></svg></div>
+  <div class="wrap ep-inhalt" id="ep-inhalt"></div>
+</section>
+
+<!-- ==================== 4 AUFGABE ==================== -->
+<section class="view" id="v-aufgabe" hidden data-ep="2" aria-labelledby="auf-h">
+  <div class="wrap auf-seite">
+    <nav class="brotkrumen" aria-label="Brotkrümel"><button data-go="zeitleiste">Zeitleiste</button><span aria-hidden="true">›</span><button data-goep="2">Renaissance</button><span aria-hidden="true">›</span><span>2.1 Das unentzifferbare Quadrat</span><span aria-hidden="true">›</span><span>Aufgabe 4 von 7</span></nav>
+    <div class="auf-raster">
+      <div style="display:grid; gap:18px; min-width:0">
+        <article class="aufgabe" id="aufgabe">
+          <div class="auf-kopf">
+            <span class="sterne" aria-label="Stufe 2 von 3">★★<span style="opacity:.3">★</span></span>
+            <span class="punkte zahl" id="auf-punkte">20 Punkte möglich</span>
+            <span class="kat">entschluesseln · substitution-poly</span>
+            <span class="rechts"><span class="chip chip-rolle">🛡 Kryptografie</span><span class="chip chip-K">K</span><span class="chip chip-falle" title="Typische Falle in dieser Aufgabe">P1</span><span class="chip chip-falle" title="Typische Falle in dieser Aufgabe">P3</span></span>
+          </div>
+          <div class="auf-koerper">
+            <h1 id="auf-h">Bobs Nachricht aus Venedig</h1>
+            <p class="auf-story">Bob hat einen Zettel von Alice erhalten. Das Schlüsselwort haben die beiden vorher unter vier Augen vereinbart: <b class="mono" style="color:var(--messing-text)">BRIEF</b>. Entschlüssele die Nachricht Zeichen für Zeichen.</p>
+            <span class="nummerierung"><svg width="16" height="16" aria-hidden="true"><use href="#i-info"/></svg>Nummerierung: A = 1 … Z = 26 · Schlüsselbuchstabe A bedeutet Verschiebung 0</span>
+            <div class="chiffre" id="chiffre" role="group" aria-label="Geheimtext entschlüsseln"></div>
+            <div aria-label="Alphabetleiste, A = 1" role="img" class="alphabet" id="alphabet"></div>
+            <div id="auf-meldung" aria-live="polite" style="display:grid; gap:12px"></div>
+          </div>
+          <div class="auf-fuss">
+            <button class="knopf knopf-leise" id="auf-tipp">Tipp <span class="chip chip-neutral">−20 %</span></button>
+            <button class="knopf knopf-leise demo-hilfe" id="auf-p3" title="Nur im Prototyp: füllt die Felder so, als hätte jemand verschlüsselt statt entschlüsselt">Demo: Falle P3 auslösen</button>
+            <span class="rechts"><button class="knopf knopf-zweit" id="auf-loesung">Lösung zeigen</button><button class="knopf knopf-primaer" id="auf-pruefen">Prüfen</button></span>
+          </div>
+        </article>
+        <details class="quadrat-box" id="auf-quadrat-box">
+          <summary><svg aria-hidden="true"><use href="#i-pfeil"/></svg>Vigenère-Quadrat (Anlage)<small>Zeile = Schlüssel, Spalte = Klartext</small></summary>
+          <div class="quadrat-scroll" id="auf-quadrat"></div>
+          <p class="quadrat-info" id="auf-quadrat-info" aria-live="polite">Fahre über eine Zelle oder nutze die Pfeiltasten.</p>
+        </details>
+      </div>
+      <aside class="seitenleiste">
+        <div class="karte">
+          <span class="etikett">Level 2.1 · 7 Aufgaben</span>
+          <h3>Das unentzifferbare Quadrat</h3>
+          <ol class="mini-liste">
+            <li><i class="ok">✓</i>Ein Schlüssel, viele Alphabete</li>
+            <li><i class="ok">✓</i>Verschlüsseln mit dem Quadrat</li>
+            <li><i class="ok">✓</i>Schlüsselwort wiederholen</li>
+            <li class="jetzt"><i class="halb"></i>Bobs Nachricht aus Venedig</li>
+            <li><i></i>Autokey: der Text als Schlüssel</li>
+            <li><i></i>Porta – ein Verwandter</li>
+            <li><i></i>Mono oder poly? (P5)</li>
+          </ol>
+        </div>
+        <div class="karte">
+          <span class="etikett">Archivwissen</span>
+          <p style="color:var(--text)"><b>Entschlüsseln = zurückverschieben.</b> Zu jedem Geheimtextbuchstaben gehört der Schlüsselbuchstabe darüber. Er sagt, um wie viele Stellen du im Alphabet <b>zurück</b> gehst.</p>
+          <p class="formel" style="white-space:normal; font-size:.8rem">p = ((c − k − 1) mod 26) + 1</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5 LABOR ==================== -->
+<section class="view" id="v-labor" hidden data-ep="2" aria-labelledby="lab-h">
+  <div class="lab-kopf tinte">
+    <div class="wrap lab-kopf-innen">
+      <div>
+        <span class="etikett">Kryptolabor · Werkzeug der Welt 2</span>
+        <h1 id="lab-h">Vigenère-Werkbank</h1>
+        <p>Eve hat einen langen Brief der Gesandtschaft abgefangen. Finde die Schlüssellänge mit dem Kasiski-Test und dem Koinzidenzindex, dann knacke jede Spalte einzeln.</p>
+      </div>
+      <div class="werkzeuge" aria-label="Werkzeuge">
+        <button class="werkzeug" aria-pressed="false" data-toast="Chiffrierscheibe (Welt 0) – im Prototyp nicht enthalten.">Chiffrierscheibe</button>
+        <button class="werkzeug" aria-pressed="false" data-toast="Häufigkeits-Analysator (Welt 1) – im Prototyp nicht enthalten.">Häufigkeiten</button>
+        <button class="werkzeug" aria-pressed="true">Vigenère-Werkbank</button>
+        <button class="werkzeug" aria-pressed="false" data-toast="Bit-Lupe (Welt 3) – für deinen Kurs noch nicht freigegeben.">Bit-Lupe 🔒</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap lab-inhalt">
+    <div class="lab-karte">
+      <h2><span class="schritt">SCHRITT 1</span>Geheimtext und Wiederholungen</h2>
+      <div class="statuszeile" id="lab-status"></div>
+      <div class="gt-block" id="lab-gt" aria-label="Geheimtext, in Fünfergruppen"></div>
+      <details class="lab-details">
+        <summary>Eigenen Geheimtext einfügen oder bearbeiten</summary>
+        <label for="lab-eingabe" class="sr">Geheimtext</label>
+        <textarea id="lab-eingabe" class="gt-eingabe" spellcheck="false"></textarea>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px"><button class="knopf knopf-zweit" id="lab-neu">Beispiel mit neuem Schlüssel erzeugen</button><button class="knopf knopf-leise" id="lab-reset">Ursprüngliches Beispiel</button></div>
+      </details>
+    </div>
+    <div class="lab-zeile">
+      <div class="lab-karte">
+        <h2><span class="schritt">SCHRITT 2</span>Kasiski-Test</h2>
+        <p>Gleiche Folgen aus mindestens drei Buchstaben entstehen oft, wenn gleicher Klartext unter demselben Schlüsselabschnitt liegt. Ihr Abstand ist dann ein Vielfaches der Schlüssellänge.</p>
+        <div class="tabelle-scroll"><table class="daten" id="kasiski-tabelle"></table></div>
+        <button class="knopf knopf-leise mehr-knopf" id="kasiski-mehr"></button>
+      </div>
+      <div style="display:grid; gap:20px; min-width:0">
+        <div class="lab-karte">
+          <h2>Wie oft teilt welche Zahl?</h2>
+          <div class="teiler-diagramm" id="teiler-diagramm"></div>
+          <div class="vorschlag" id="kasiski-vorschlag"></div>
+        </div>
+        <div class="lab-karte">
+          <h2><span class="schritt">SCHRITT 3</span>Koinzidenzindex</h2>
+          <div class="formel" aria-label="Formel: I gleich Summe n i mal n i minus 1, geteilt durch n mal n minus 1">I = Σ nᵢ(nᵢ − 1) / (n(n − 1))</div>
+          <div class="ki-wert" id="ki-wert"></div>
+          <div class="ki-skala" id="ki-skala"></div>
+        </div>
+      </div>
+    </div>
+    <div class="lab-karte">
+      <h2><span class="schritt">SCHRITT 4</span>Schlüssellänge wählen</h2>
+      <p>Jede Säule zeigt den mittleren Koinzidenzindex der Teiltexte für diese Länge. Bei der richtigen Länge sieht jeder Teiltext aus wie deutscher Text (≈ 0,076).</p>
+      <div class="k-wahl" id="k-wahl" role="group" aria-label="Schlüssellänge"></div>
+      <div class="k-legende"><span><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--messing); margin-right:4px"></span>Kasiski-Vermutung</span><span>Säule: Ø Koinzidenzindex der Teiltexte</span></div>
+    </div>
+    <div class="lab-karte">
+      <h2><span class="schritt">SCHRITT 5</span>Jede Spalte wie eine Caesar-Chiffre knacken</h2>
+      <p>Balken: Häufigkeit im Teiltext. Gestrichelt: deutsche Buchstabenhäufigkeit, um die vorgeschlagene Verschiebung versetzt. Passen beide zusammen, stimmt der Schlüsselbuchstabe.</p>
+      <div class="spalten" id="spalten"></div>
+      <details class="lab-details"><summary>Häufigkeiten als Tabelle</summary><div class="tabelle-scroll" id="spalten-tabelle"></div></details>
+    </div>
+    <div class="lab-karte">
+      <h2><span class="schritt">SCHRITT 6</span>Live-Entschlüsselung</h2>
+      <div class="klar-ausgabe" id="klar-ausgabe" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="steuerleiste tinte" aria-label="Steuerleiste">
+    <div class="wrap steuer-innen">
+      <span class="etikett">Schlüssel</span>
+      <span class="steuer-schluessel" id="steuer-schluessel">·····</span>
+      <span class="etikett" id="steuer-k">k = 5</span>
+      <span class="rechts"><button class="knopf knopf-glas" id="lab-vorschlag">Vorschlag übernehmen</button><button class="knopf knopf-messing" id="lab-pruefen">Klartext prüfen</button></span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 6 FUNKRAUM ==================== -->
+<section class="view" id="v-funkraum" hidden data-ep="0" aria-labelledby="fr-h">
+  <div class="wrap">
+    <div class="fr-kopf">
+      <div class="fr-titel">
+        <svg aria-hidden="true"><use href="#i-funk"/></svg>
+        <div><span class="etikett">Funkraum · Beamer · Informatik LK 12</span><h1 id="fr-h">Szenario „Botenlauf“ · Caesar</h1></div>
+      </div>
+      <div class="fr-uhr">
+        <div><small>Restzeit</small><span class="zeit" id="fr-zeit" role="timer" aria-live="off">13:42</span></div>
+        <button class="knopf knopf-glas" id="fr-pause">Pause</button>
+        <button class="knopf knopf-glas" data-go="lehrkraft">Regie</button>
+      </div>
+    </div>
+    <div class="fr-raster">
+      <div class="fr-netz">
+        <svg viewBox="0 0 1000 780" id="fr-svg" role="img" aria-label="Netz: fünf Teams tauschen Caesar-verschlüsselte Nachrichten, Eve in der Mitte hört alle Kanten ab."></svg>
+      </div>
+      <div class="fr-seite">
+        <div class="fr-statistik">
+          <div><b id="fr-n">0</b><span>Nachrichten</span></div>
+          <div class="rot"><b id="fr-geknackt">0</b><span>von Eve geknackt</span></div>
+          <div><b>25</b><span>mögliche Schlüssel</span></div>
+        </div>
+        <div class="fr-log">
+          <h2>Ereignisse <span class="etikett" style="color:var(--auf-tinte-2)">live</span></h2>
+          <ol id="fr-log" aria-live="polite"></ol>
+        </div>
+        <p class="fr-lerneffekt"><b>Frage an den Kurs:</b> Warum braucht Eve nie länger als 25 Versuche – obwohl sie keinen einzigen Schlüssel kennt?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 7 LEHRKRAFT ==================== -->
+<section class="view" id="v-lehrkraft" hidden data-ep="6" aria-labelledby="lk-h">
+  <div class="lk-kopf tinte">
+    <div class="wrap lk-kopf-innen">
+      <div>
+        <span class="etikett">Lehrkraft · Kursübersicht</span>
+        <h1 id="lk-h">Informatik LK 12 <span style="font-weight:400; font-size:.6em; color:var(--auf-tinte-2)">Demo-Kurs</span></h1>
+        <p>8 Lernende · Doppelstunde 8 von 18 · Welt 2 läuft</p>
+      </div>
+      <div style="display:grid; gap:6px; justify-items:end">
+        <span class="etikett" style="color:var(--auf-tinte-2)" id="niveau-label">Niveau des Kurses</span>
+        <div class="segment" role="group" aria-labelledby="niveau-label"><button aria-pressed="true" data-niveau="eA">eA</button><button aria-pressed="false" data-niveau="gA">gA</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap lk-raster">
+    <div class="lk-links">
+      <div class="karte">
+        <span class="etikett">Funkraum-Regie</span>
+        <h3>Szenario wählen</h3>
+        <div class="szenarien" id="szenarien"></div>
+        <button class="knopf knopf-primaer" id="fr-start" style="width:100%"><svg><use href="#i-funk"/></svg>Funkraum-Szenario starten</button>
+      </div>
+      <div class="karte">
+        <span class="etikett">Freigeschaltete Welten</span>
+        <div class="welten-chips" id="welten-chips"></div>
+      </div>
+    </div>
+    <div class="lk-rechts">
+      <div class="kacheln" id="kacheln"></div>
+      <div class="karte">
+        <div class="abschnitt-kopf" style="margin:0"><h2 style="font-size:1.2rem">Fortschritt je Level</h2><span id="matrix-hinweis">eA: alle Level sichtbar</span></div>
+        <div class="matrix-scroll"><table class="matrix" id="matrix"></table></div>
+        <div class="matrix-legende" id="matrix-legende"></div>
+      </div>
+      <div class="karte">
+        <div class="abschnitt-kopf" style="margin:0"><h2 style="font-size:1.2rem">Fallen-Profil des Kurses</h2><span>412 geprüfte Abgaben</span></div>
+        <div class="fallen-balken" id="fallen-balken"></div>
+      </div>
+      <div class="karte">
+        <div class="abschnitt-kopf" style="margin:0"><h2 style="font-size:1.2rem">Werkzeug-Freigaben</h2><span>Im Boss sind alle Werkzeuge gesperrt</span></div>
+        <ul class="schalter-liste" id="werkzeug-freigaben"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 8 AKTE ==================== -->
+<section class="view" id="v-akte" hidden data-ep="2" aria-labelledby="akte-h">
+  <div class="wrap akte-buehne">
+    <div class="akte-leiste"><span><b id="akte-h">Akte W2·2 · Kasiskis Spur</b> · Arbeitsblatt, Seite 1 von 2 (HTML-Nachbildung der .docx-Vorlage)</span><span>A4 hoch · Georgia / Calibri / Consolas</span></div>
+    <div class="blatt-scroll">
+      <article class="blatt" aria-label="Arbeitsblatt Akte W2·2">
+        <div class="lochrand" aria-hidden="true"><i></i><i></i></div>
+        <div class="blatt-innen">
+          <table class="kopfband">
+            <tr class="z1"><td colspan="2">Kryptos · Die Zeitreise der Geheimschriften · Welt 2 · Renaissance</td><td>DS 7</td></tr>
+            <tr class="z2"><td class="az">AKTE W2·2</td><td class="ti">Kasiskis Spur</td><td class="ni"><em>KERN</em>Name: ______________</td></tr>
+          </table>
+          <p class="akte-lead">Eve hat drei Briefe der venezianischen Gesandtschaft abgefangen. Alle sind mit demselben Vigenère-Schlüssel verschlüsselt – nur seine Länge kennt sie nicht. Doch im Geheimtext tauchen manche Buchstabenfolgen mehrfach auf …</p>
+          <div class="kasten wissen">
+            <div class="kasten-kopf"><span>Archivwissen 1 · Der Kasiski-Test</span></div>
+            <p>Wird dieselbe Klartextfolge zweimal mit demselben Abschnitt des Schlüssels verschlüsselt, entsteht dieselbe Geheimtextfolge. Ihr <b>Abstand</b> ist dann ein <b>Vielfaches der Schlüssellänge</b>.</p>
+            <ol>
+              <li>Suche Folgen aus mindestens drei Buchstaben, die mehrfach vorkommen.</li>
+              <li>Bestimme die Abstände ihrer Anfangspositionen (Positionen zählen ab 0).</li>
+              <li>Der Teiler, der die meisten Abstände teilt, ist ein guter Kandidat für die Schlüssellänge.</li>
+            </ol>
+            <p style="color:var(--druck-grau); font-size:1.45cqw">Das Verfahren wird dem preußischen Offizier F. W. Kasiski zugeschrieben, der es 1863 veröffentlichte.</p>
+          </div>
+          <div class="kasten">
+            <div class="kasten-kopf"><span>Auftrag 1 <span class="sterne-akte">★★</span></span><span style="font-variant:normal; text-transform:none; color:var(--druck-grau); font-size:1.4cqw; letter-spacing:0">Einzelarbeit · 15 min</span></div>
+            <p>Markiere im Geheimtext alle Folgen aus mindestens drei Buchstaben, die mehrfach vorkommen. Trage Positionen und Abstände ein und kreuze die Teiler an.</p>
+            <div class="akte-gt" id="akte-gt"></div>
+            <table class="akte-tabelle">
+              <tr><th>Folge</th><th>Pos. 1</th><th>Pos. 2</th><th>Abstand</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </table>
+          </div>
+          <div class="kasten">
+            <div class="kasten-kopf"><span>Auftrag 2 <span class="sterne-akte">★★★</span></span><span style="font-variant:normal; text-transform:none; color:var(--druck-grau); font-size:1.4cqw; letter-spacing:0">Partnerarbeit · 10 min</span></div>
+            <p>Bestimme die wahrscheinlichste Schlüssellänge. Begründe deine Wahl mit den Abständen aus Auftrag 1.</p>
+            <div class="schreiblinie"></div><div class="schreiblinie"></div>
+          </div>
+          <div class="kasten falle">
+            <div class="kasten-kopf"><span>Achtung Falle P1 · Zählbasis</span></div>
+            <p>Positionen im Text zählen ab 0, Buchstabenwerte ab A = 1. Für den Abstand ist das egal – solange du überall gleich zählst.</p>
+          </div>
+          <div class="kasten check">
+            <div class="kasten-kopf"><span>Abi-Check</span></div>
+            <p>Erläutern Sie, warum der Kasiski-Test keinen Hinweis auf die Schlüssellänge liefert, wenn der Schlüssel genauso lang ist wie der Klartext. <span class="be">[4 BE]</span></p>
+            <div class="schreiblinie"></div><div class="schreiblinie"></div>
+          </div>
+          <div class="kasten">
+            <div class="kasten-kopf"><span>Im Lab üben</span></div>
+            <div class="akte-zwei">
+              <div style="display:grid; gap:.6cqw">
+                <p>Öffne die <b>Vigenère-Werkbank</b>: Sie markiert Wiederholungen farbig und zählt die Teiler. Vergleiche mit deiner Tabelle aus Auftrag 1.</p>
+                <p class="akte-url">kryptos.frankjuchim.de/level/2.2</p>
+              </div>
+              <svg class="qr" id="qr" viewBox="0 0 29 29" role="img" aria-label="QR-Code-Platzhalter"></svg>
+            </div>
+          </div>
+          <div class="akte-fusszeile"><span>Kryptos · Akte W2·2 · Kasiskis Spur</span><span>Seite 1 von 2</span><span>© Frank Juchim · für den Unterricht</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="zeitsprung" id="zeitsprung" hidden aria-hidden="true">
+  <svg viewBox="-50 -50 100 100"><g class="ring-dreh"><use href="#ring-aussen" x="-50" y="-50" width="100" height="100"/></g></svg>
+  <svg viewBox="-50 -50 100 100" style="width:min(48vmin,360px); height:min(48vmin,360px)"><g class="ring-dreh-2"><use href="#ring-innen" x="-50" y="-50" width="100" height="100"/></g></svg>
+  <div class="zeitsprung-text"><span class="mono" id="zs-jahr">16. JH.</span><b id="zs-titel">Renaissance</b></div>
+</div>
+<div class="toast tinte" id="toast" role="status" hidden><svg aria-hidden="true"><use href="#i-info"/></svg><span id="toast-text"></span></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const ruhig = () => RM.matches;
+const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const SVGNS = 'http://www.w3.org/2000/svg';
+document.documentElement.lang = 'de';
+
+const norm = t => t.toUpperCase().replace(/Ä/g, 'AE').replace(/Ö/g, 'OE').replace(/Ü/g, 'UE').replace(/ß/g, 'SS').replace(/[^A-Z]/g, '');
+const mod = (a, n) => ((a % n) + n) % n;
+const vig = (t, k, r = 1) => { let o = ''; for (let i = 0; i < t.length; i++) o += ABC[mod(t.charCodeAt(i) - 65 + r * (k.charCodeAt(i % k.length) - 65), 26)]; return o; };
+const caesar = (t, k) => t.replace(/[A-Z]/g, c => ABC[mod(c.charCodeAt(0) - 65 + k, 26)]);
+const gruppen = (t, n = 5) => (t.match(new RegExp('.{1,' + n + '}', 'g')) || []).join(' ');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = (x, d = 3) => x.toFixed(d).replace('.', ',');
+const pct = x => Math.round(x) + ' %';
+
+/* ---------- Sprite: generierte Symbole ---------- */
+function zahnradPfad(n, ro, ri, cx = 24, cy = 24) {
+  let d = ''; const t = 2 * Math.PI / n;
+  for (let i = 0; i < n; i++) {
+    const a = i * t - Math.PI / 2;
+    const p = [[ri, a], [ro, a + t * .14], [ro, a + t * .42], [ri, a + t * .56]];
+    p.forEach(([r, w], j) => { d += (i === 0 && j === 0 ? 'M' : 'L') + (cx + r * Math.cos(w)).toFixed(2) + ' ' + (cy + r * Math.sin(w)).toFixed(2); });
+  }
+  return d + 'Z';
+}
+function siegelPfad(R, a, n, cx = 24, cy = 24) {
+  let d = '';
+  for (let i = 0; i <= 120; i++) { const w = i / 120 * 2 * Math.PI; const r = R + a * Math.sin(n * w) + a * .4 * Math.sin(3 * w + 1); d += (i ? 'L' : 'M') + (cx + r * Math.cos(w)).toFixed(2) + ' ' + (cy + r * Math.sin(w)).toFixed(2); }
+  return d + 'Z';
+}
+(function sprite() {
+  const defs = $('#sprite');
+  let s = '';
+  s += `<symbol id="o-zahnrad" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="${zahnradPfad(12, 15, 12, 19, 21)}"/><circle cx="19" cy="21" r="4.5"/><path d="${zahnradPfad(8, 10, 7.6, 36, 36)}"/><circle cx="36" cy="36" r="2.6"/></g></symbol>`;
+  s += `<symbol id="a-siegel" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2"><path d="${siegelPfad(18, 1.6, 11)}"/><circle cx="24" cy="24" r="12"/></g><path d="M18 26l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>`;
+  s += `<symbol id="a-kern" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.2"><path d="${zahnradPfad(14, 20, 17)}"/><circle cx="24" cy="24" r="10"/><path d="M24 14v4M24 30v4M14 24h4M30 24h4"/><circle cx="24" cy="24" r="2.5" fill="currentColor"/></g></symbol>`;
+  // Logo: kleiner Ziffernring
+  let ticks = '';
+  for (let i = 0; i < 26; i++) { const w = i / 26 * 2 * Math.PI; const r1 = i % 13 === 0 ? 11 : 15, r2 = 19; ticks += `<path d="M${(24 + r1 * Math.sin(w)).toFixed(2)} ${(24 - r1 * Math.cos(w)).toFixed(2)}L${(24 + r2 * Math.sin(w)).toFixed(2)} ${(24 - r2 * Math.cos(w)).toFixed(2)}"/>`; }
+  s += `<symbol id="logo-ring" viewBox="0 0 48 48"><g fill="none" stroke="currentColor"><circle cx="24" cy="24" r="22" stroke-width="2.4"/><circle cx="24" cy="24" r="8.5" stroke-width="2"/><g stroke-width="1.6" stroke-linecap="round">${ticks}</g></g><path d="M24 2.5l2.6 4.4h-5.2z" fill="currentColor"/></symbol>`;
+  // Große Ringe (Chiffrierscheibe)
+  const ringTxt = (r, fs, versatz, klein) => { let o = ''; for (let i = 0; i < 26; i++) { const w = (i / 26) * 360; const b = ABC[(i + versatz) % 26]; o += `<text transform="rotate(${w.toFixed(2)}) translate(0 ${-r})" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-family="JetBrains Mono, monospace" font-weight="700" fill="currentColor">${klein ? b.toLowerCase() : b}</text>`; } return o; };
+  let striche = ''; for (let i = 0; i < 26; i++) { const w = (i + .5) / 26 * 2 * Math.PI; striche += `<path d="M${(46 * Math.sin(w)).toFixed(2)} ${(-46 * Math.cos(w)).toFixed(2)}L${(40 * Math.sin(w)).toFixed(2)} ${(-40 * Math.cos(w)).toFixed(2)}"/>`; }
+  let feine = ''; for (let i = 0; i < 78; i++) { const w = i / 78 * 2 * Math.PI; feine += `<path d="M${(48.4 * Math.sin(w)).toFixed(2)} ${(-48.4 * Math.cos(w)).toFixed(2)}L${(47.2 * Math.sin(w)).toFixed(2)} ${(-47.2 * Math.cos(w)).toFixed(2)}"/>`; }
+  s += `<symbol id="ring-aussen" viewBox="-50 -50 100 100" overflow="visible"><g fill="none" stroke="currentColor"><circle r="49" stroke-width=".5" opacity=".6"/><circle r="46" stroke-width=".9"/><circle r="40" stroke-width=".6"/><g stroke-width=".5" opacity=".7">${striche}</g><g stroke-width=".35" opacity=".6">${feine}</g></g><g>${ringTxt(43, 4.6, 0)}</g><path d="M0 -52.5l2.2 3.6h-4.4z" fill="currentColor"/></symbol>`;
+  let speichen = ''; for (let i = 0; i < 26; i++) { const w = (i + .5) / 26 * 2 * Math.PI; speichen += `<path d="M${(38.5 * Math.sin(w)).toFixed(2)} ${(-38.5 * Math.cos(w)).toFixed(2)}L${(31.5 * Math.sin(w)).toFixed(2)} ${(-31.5 * Math.cos(w)).toFixed(2)}"/>`; }
+  s += `<symbol id="ring-innen" viewBox="-50 -50 100 100" overflow="visible"><g fill="none" stroke="currentColor"><circle r="38.5" stroke-width=".6"/><circle r="31.5" stroke-width=".6" opacity=".7"/><g stroke-width=".35" opacity=".6">${speichen}</g><circle r="22" stroke-width=".4" stroke-dasharray="1 1.6" opacity=".7"/></g><g opacity=".85">${ringTxt(35, 3.8, 3, true)}</g></symbol>`;
+  defs.insertAdjacentHTML('beforeend', s);
+})();
+
+/* ---------- Texturen (≤ 6 % Deckkraft, nur im Rahmen) ---------- */
+(function texturen() {
+  const u = (w, h, inner) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>${inner}</svg>`)}")`;
+  const st = `fill='none' stroke='#FBF7EE' stroke-opacity='.06' stroke-width='1.4'`;
+  const T = {
+    0: u(28, 28, `<path ${st} d='M0 26h6V8h16v12H12v-6h6'/>`),
+    1: u(26, 26, `<g fill='#D9A441' fill-opacity='.06'><circle cx='4' cy='4' r='1.3'/><circle cx='17' cy='17' r='1'/></g><path ${st} d='M13 4l3 9-3 9-3-9z'/>`),
+    2: u(90, 90, `<g fill='#FBF7EE' fill-opacity='.05'><circle cx='14' cy='20' r='3.5'/><circle cx='19' cy='23' r='1.4'/><circle cx='62' cy='64' r='5'/><circle cx='69' cy='60' r='1.6'/><circle cx='55' cy='71' r='1'/></g><path ${st} d='M30 70c6-12 18-12 18-2s-10 8-10 2 6-4 6 0'/>`),
+    3: u(18, 18, `<path ${st} stroke-width='1' d='M0 .5h18M.5 0v18'/>`),
+    4: u(4, 4, `<path fill='none' stroke='#FBF7EE' stroke-opacity='.05' d='M0 .5h4'/>`),
+    5: u(14, 14, `<circle cx='7' cy='7' r='1' fill='#FBF7EE' fill-opacity='.06'/>`),
+    6: u(10, 10, `<path fill='none' stroke='#FBF7EE' stroke-opacity='.045' d='M-2 12L12 -2M3 13L13 3M-3 7L7 -3'/>`)
+  };
+  for (const k in T) document.documentElement.style.setProperty('--tex-' + k, T[k]);
+})();
+
+/* ---------- Daten ---------- */
+const EP = [
+  { id: 0, kurz: 'Antike', titel: 'Die Antike', ort: 'Sparta & Rom', zeit: 'um 500 v. Chr. – 50 v. Chr.', jahr: '−500', orn: 'o-maeander', art: 'a-skytale', artName: 'Skytale', p: '#B5523B', t: '#E8957B', boss: 'besiegt', bossName: 'Der Bote des Feldherrn', bossErg: 78, text: 'Botschaften am Stab, verschobene Alphabete und die erste Brute-Force-Rechnung der Geschichte. Hier beginnt jede Reise des Chronoskops.', fund: 'Botschaft am Stab' },
+  { id: 1, kurz: 'Bagdad', titel: 'Das Haus der Weisheit', ort: 'Bagdad', zeit: 'um 850', jahr: '850', orn: 'o-girih', art: 'a-manuskript', artName: 'Al-Kindis Manuskript', p: '#1F4E8C', t: '#7FA8E0', boss: 'besiegt', bossName: 'Der Kalif und der Kurier', bossErg: 64, text: 'In den Bibliotheken Bagdads entsteht die Häufigkeitsanalyse – und mit ihr das Ende der einfachen Substitution.', fund: 'Al-Kindis Manuskript' },
+  { id: 2, kurz: 'Renaissance', titel: 'Le chiffre indéchiffrable', ort: 'Venedig & Paris', zeit: '16.–19. Jahrhundert', jahr: '16. Jh.', orn: 'o-ranke', art: 'a-tafel', artName: 'Vigenère-Tafel', p: '#7A2E2E', t: '#D98C8C', boss: 'bereit', bossName: 'Die Venezianische Depesche', text: 'Diplomatinnen und Gesandte schreiben mit vielen Alphabeten zugleich. Drei Jahrhunderte lang gilt das Quadrat als unknackbar – bis jemand die Wiederholungen zählt.', fund: 'Brief einer Diplomatin' },
+  { id: 3, kurz: 'Maschinen\u00ADzeitalter', titel: 'Das Maschinenzeitalter', ort: 'Fernschreiber & Walzen', zeit: '1917 – 1977', jahr: '1917', orn: 'o-lochstreifen', art: 'o-lochstreifen', artName: 'Lochstreifen', p: '#556B2F', t: '#A9C27A', boss: 'gesperrt', bossName: 'Der Fernschreiber', neu: true, text: 'Bits auf Lochstreifen, XOR und der einzige beweisbar sichere Schlüssel – solange man ihn nur einmal benutzt.', fund: 'Lochstreifen von 1917' },
+  { id: 4, kurz: 'Stanford 1976', titel: 'Das Schlüsselproblem', zeit: '1976', jahr: '1976', orn: 'o-scan', art: 'a-schluessel', artName: 'Schlüsselpaar', p: '#1E7B4F', t: '#5FD39A', gesperrt: true },
+  { id: 5, kurz: 'Das Netz', titel: 'Das Netz', zeit: 'heute', jahr: 'heute', orn: 'o-netz', art: 'a-siegel', artName: 'Siegel', p: '#0E7C86', t: '#5CC8D2', gesperrt: true },
+  { id: 6, kurz: 'Zeitmaschine', titel: 'Die Zeitmaschine', zeit: 'Endgegner', jahr: 'Ziel', orn: 'o-zahnrad', art: 'a-kern', artName: 'Chronoskop-Kern', p: '#8A5F1A', t: '#D9A441', gesperrt: true }
+];
+const LEVEL = {
+  0: [['0.1', 'Die Skytale von Sparta', 'K', 'Grundbegriffe, Transposition: Skytale, Gartenzaun, Fleißner', '🛡', 7], ['0.2', 'Caesars Botschaft', 'K', 'Caesar mit A = 1, mod, Brute Force, Schlüsselraum, Kerckhoffs', '🔍', 7], ['0.3', 'Die Werkstatt des Schreibers', 'K', 'Caesar als Struktogramm und in Java, ASCII', '🛡', 7], ['0.4', 'Fremde Chiffre I: Polybios und Atbash', 'K', 'Die 5-Schritte-Methode zum ersten Mal', '🔍', 7]],
+  1: [['1.1', 'Al-Kindis Handschrift', 'K', 'Schlüsselwort-Alphabet, 26!, Häufigkeitsanalyse', '🔍', 7], ['1.2', 'Die Gegenmittel', 'K', 'Affine Chiffre, Inverses mod 26, Homophonie, Bigramme', '🛡', 7], ['1.3', 'Fremde Chiffre II: Der Nomenklator', 'K', 'Ein fremdes monoalphabetisches Verfahren beurteilen', '🔍', 7]],
+  2: [['2.1', 'Das unentzifferbare Quadrat', 'K', 'Vigenère mit dem Quadrat der Anlage, Autokey, Porta', '🛡', 7], ['2.2', 'Kasiskis Spur', 'K', 'Teiltexte bilden, Kasiski-Test', '🔍', 5], ['2.3', 'Friedmans Zufall', 'eA', 'Koinzidenzindex und Friedman-Test', '🔍', 3], ['2.4', 'Fremde Chiffre III: Playfair und Kreuzquadrat', 'K', 'Bigramm-Substitution und ihre Regeln (P4)', '🛡', 2], ['K1', 'Kür: Friedmans Formel', 'Kür', 'Herleitung der Schlüssellängen-Schätzung', '🔍', 0]],
+  3: [['3.1', 'Vernams Lochstreifen', 'K', 'Bits, ASCII, XOR, One-Time-Pad, Schlüsselwiederverwendung', '🛡', 0], ['3.2', 'Der Blockchiffre-Baukasten', 'eA', 'Runden, Konfusion und Diffusion, ECB und CBC', '🛡', 0], ['3.3', 'Die Chiffren-Werkstatt', 'eA', 'Eigenes Verfahren entwerfen, implementieren, angreifen', '🛡', 0], ['3.4', 'Fremde Chiffre IV: ADFGVX', 'K', 'Polybios und Spaltentransposition, Einordnung je Stufe', '🔍', 0], ['K2', 'Kür: Die Enigma', 'Kür', 'Walzen, Reflektor, keine Fixpunkte', '🔍', 0]]
+};
+const fortschritt = id => { const L = (LEVEL[id] || []).filter(l => l[2] !== 'Kür'); if (!L.length) return 0; return Math.round(L.reduce((s, l) => s + l[5], 0) / (L.length * 7) * 100); };
+EP.forEach(e => { if (!e.gesperrt) e.fort = fortschritt(e.id); });
+
+/* ---------- Toast ---------- */
+let toastT;
+function toast(text) { const t = $('#toast'); $('#toast-text').textContent = text; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3800); }
+
+/* ---------- Farbschema ---------- */
+const THEMEN = [['system', 'System', 'i-auto'], ['light', 'Hell', 'i-sonne'], ['dark', 'Dunkel', 'i-mond']];
+let themaIdx = 0;
+try { const g = localStorage.getItem('kryptos-thema'); const i = THEMEN.findIndex(t => t[0] === g); if (i > 0) themaIdx = i; } catch (e) {}
+function themaSetzen() {
+  const [id, name, icon] = THEMEN[themaIdx];
+  if (id === 'system') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = id;
+  $('#thema-text').textContent = name; $('#thema-knopf use').setAttribute('href', '#' + icon);
+  $('#thema-knopf').setAttribute('aria-label', 'Farbschema: ' + name + '. Umschalten');
+  try { localStorage.setItem('kryptos-thema', id); } catch (e) {}
+}
+$('#thema-knopf').addEventListener('click', () => { themaIdx = (themaIdx + 1) % THEMEN.length; themaSetzen(); });
+themaSetzen();
+
+/* ---------- Entsiegeln (Buchstabe für Buchstabe, Caesar-Rotation) ---------- */
+function entsiegeln(el, text, { schritt = 42, versatz = 34, dauerMax = 2200 } = {}) {
+  el.innerHTML = '';
+  const spans = [...text].map((ch, i) => { const s = document.createElement('span'); s.setAttribute('aria-hidden', 'true'); if (/[A-ZÄÖÜ]/.test(ch) && ABC.includes(ch)) { const r = 3 + (i * 7) % 11; s.dataset.ziel = ch; s.dataset.r = r; s.textContent = ABC[mod(ch.charCodeAt(0) - 65 - r, 26)]; s.className = 'roh'; } else s.textContent = ch === ' ' ? ' ' : ch; el.appendChild(s); return s; });
+  if (ruhig()) { spans.forEach(s => { if (s.dataset.ziel) { s.textContent = s.dataset.ziel; s.className = ''; } }); return; }
+  const t0 = performance.now(); const fak = Math.min(1, dauerMax / (text.length * versatz + 14 * schritt));
+  const tick = now => {
+    let fertig = true;
+    spans.forEach((s, i) => {
+      if (!s.dataset.ziel) return;
+      const r = +s.dataset.r; const n = Math.floor(Math.max(0, now - t0 - i * versatz * fak) / (schritt * fak));
+      if (n >= r) { if (s.className) { s.textContent = s.dataset.ziel; s.className = ''; } }
+      else { fertig = false; s.textContent = ABC[mod(s.dataset.ziel.charCodeAt(0) - 65 - r + n, 26)]; }
+    });
+    if (!fertig) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ---------- Navigation ---------- */
+const VIEWS = ['start', 'zeitleiste', 'epoche', 'aufgabe', 'labor', 'funkraum', 'lehrkraft', 'akte'];
+const MIT_KOPF = new Set(['zeitleiste', 'epoche', 'aufgabe', 'labor']);
+let aktuell = null, aktEpoche = 2;
+const app = $('#app');
+function kopfSetzen(name) {
+  let ep = 6, txt = 'Archiv der verborgenen Schriften';
+  if (name === 'epoche') { ep = aktEpoche; txt = 'Welt ' + ep + ' · ' + EP[ep].kurz; }
+  if (name === 'aufgabe' || name === 'labor') { ep = 2; txt = name === 'labor' ? 'Kryptolabor · Renaissance' : 'Welt 2 · Renaissance'; }
+  if (name === 'funkraum') ep = 0;
+  if (name === 'akte') ep = 2;
+  app.dataset.ep = ep; $('#kopf-epoche-text').textContent = txt;
+}
+function zeige(name, opt = {}) {
+  if (!VIEWS.includes(name)) name = 'start';
+  VIEWS.forEach(v => { $('#v-' + v).hidden = v !== name; });
+  $('.kopf').hidden = !MIT_KOPF.has(name);
+  $$('.demo-tab').forEach(b => b.setAttribute('aria-current', b.dataset.view === name ? 'page' : 'false'));
+  kopfSetzen(name);
+  if (location.hash.slice(1) !== name) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
+  if (!opt.keinScroll) window.scrollTo(0, 0);
+  const vorher = aktuell; aktuell = name;
+  if (name === 'start' && vorher !== 'start') entsiegeln($('#start-titel'), 'DIE ZEITREISE DER GEHEIMSCHRIFTEN');
+  if (name === 'zeitleiste') zeitleisteBetreten();
+  if (name === 'funkraum') frStart(); else frStop();
+  if (name === 'labor') laborZeichnen();
+  const tab = $('.demo-tab[aria-current="page"]'); if (tab) tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+}
+function zeitsprung(ep, danach) {
+  const e = EP[ep];
+  if (ruhig()) { danach(); return; }
+  const z = $('#zeitsprung');
+  z.dataset.ep = ep; $('#zs-jahr').textContent = (e.zeit || '').toUpperCase(); $('#zs-titel').textContent = e.kurz;
+  z.hidden = false; z.classList.remove('an'); void z.offsetWidth; z.classList.add('an');
+  $$('.ring-dreh, .ring-dreh-2', z).forEach(g => { g.style.animation = 'none'; void g.getBoundingClientRect(); g.style.animation = ''; });
+  const logo = $('.logo svg'); if (logo) logo.style.transform = 'rotate(' + (ep * 51.4) + 'deg)';
+  setTimeout(danach, 300);
+  setTimeout(() => { z.hidden = true; z.classList.remove('an'); }, 760);
+}
+function epocheOeffnen(ep) {
+  if (EP[ep].gesperrt) { toast('„' + EP[ep].kurz + '“ ist noch verschlüsselt. Die Lehrkraft schaltet diese Epoche frei.'); return; }
+  zeitsprung(ep, () => { aktEpoche = ep; epocheZeichnen(); zeige('epoche'); });
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('[data-go],[data-goep],[data-toast]');
+  if (!b) return;
+  if (b.dataset.toast) { toast(b.dataset.toast); return; }
+  if (b.dataset.goep) { epocheOeffnen(+b.dataset.goep); return; }
+  if (b.dataset.gast) toast('Gastmodus: Demo-Aufgabe „Vigenère mit dem Quadrat“ – nichts wird gespeichert.');
+  zeige(b.dataset.go);
+});
+$$('.demo-tab').forEach(b => b.addEventListener('click', () => { if (b.dataset.view === 'epoche' && aktuell !== 'epoche') { epocheOeffnen(aktEpoche); return; } zeige(b.dataset.view); }));
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h !== aktuell && VIEWS.includes(h)) { if (h === 'epoche') epocheZeichnen(); zeige(h); } });
+
+/* ---------- Siegel / Medaillen ---------- */
+function medaille(orn, zustand, groesse = 48) {
+  // zustand: 'voll' | 'umriss' | 'bereit'
+  const voll = zustand === 'voll';
+  return `<svg viewBox="0 0 48 48" width="${groesse}" height="${groesse}" aria-hidden="true">
+    <path d="${siegelPfad(21, 1.2, 14)}" fill="${voll ? '#B07D2B' : 'none'}" stroke="${voll ? '#D9A441' : (zustand === 'bereit' ? '#D9A441' : 'rgba(201,195,181,.45)')}" stroke-width="1.6" ${zustand === 'umriss' ? 'stroke-dasharray="3 3"' : ''}/>
+    <circle cx="24" cy="24" r="15" fill="${voll ? '#8A5F1A' : 'none'}" stroke="${voll ? '#E6C27A' : (zustand === 'bereit' ? '#D9A441' : 'rgba(201,195,181,.35)')}" stroke-width="1"/>
+    <g style="color:${voll ? '#FBEFD2' : (zustand === 'bereit' ? '#D9A441' : 'rgba(201,195,181,.55)')}"><use href="#${orn}" x="13" y="13" width="22" height="22"/></g></svg>`;
+}
+
+/* ---------- 2 Zeitleiste ---------- */
+function torSVG(e) {
+  const r = 30, U = 2 * Math.PI * r, f = e.fort || 0;
+  const bogen = 'M6 166V64a54 54 0 0 1 108 0v102z';
+  let innen;
+  if (e.gesperrt) {
+    innen = `<g transform="translate(60 78)" fill="none" stroke="rgba(201,195,181,.55)" stroke-width="2.4" stroke-linecap="round"><rect x="-13" y="-4" width="26" height="20" rx="3"/><path d="M-8 -4v-6a8 8 0 0 1 16 0v6"/><circle cx="0" cy="6" r="2" fill="rgba(201,195,181,.55)" stroke="none"/></g>`;
+  } else {
+    innen = `<circle class="tor-ring-bg" cx="60" cy="74" r="${r}"/><circle class="tor-ring" cx="60" cy="74" r="${r}" stroke-dasharray="${U.toFixed(1)}" stroke-dashoffset="${(U * (1 - f / 100)).toFixed(1)}" ${f === 0 ? 'opacity="0"' : ''}/><text class="tor-prozent" x="60" y="81">${f}<tspan font-size="11" dx="1">%</tspan></text>`;
+  }
+  return `<svg class="tor-bogen" viewBox="0 0 120 170" aria-hidden="true">
+    <defs><clipPath id="tor-clip-${e.id}"><path d="${bogen}"/></clipPath></defs>
+    <path class="tor-flaeche" d="${bogen}"/>
+    <g clip-path="url(#tor-clip-${e.id})"><g class="tor-orn">${[0, 1, 2, 3].map(i => `<use href="#${e.orn}" x="${-6 + (i % 2) * 66}" y="${14 + Math.floor(i / 2) * 76}" width="66" height="66"/>`).join('')}</g>
+      <rect x="0" y="0" width="120" height="170" fill="url(#tor-glanz)" /></g>
+    <path class="tor-rand" d="${bogen}"/>
+    <path d="M18 64a42 42 0 0 1 84 0" fill="none" stroke="var(--e-t)" stroke-width="1" opacity="${e.gesperrt ? .15 : .45}"/>
+    ${innen}
+    <g class="tor-artefakt" style="color:${e.gesperrt ? 'rgba(201,195,181,.4)' : 'var(--e-t)'}"><use href="#${e.orn}" x="47" y="124" width="26" height="26"/></g>
+  </svg>`;
+}
+function zeitleisteZeichnen() {
+  const ol = $('#tore');
+  ol.innerHTML = `<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="tor-glanz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF7EE" stop-opacity=".07"/><stop offset=".6" stop-color="#FBF7EE" stop-opacity="0"/></linearGradient></defs></svg>`;
+  EP.forEach(e => {
+    const li = document.createElement('li'); li.className = 'tor-li';
+    const status = e.gesperrt ? 'noch verschlüsselt' : e.boss === 'besiegt' ? 'Boss besiegt · ' + e.artName : e.boss === 'bereit' ? 'Boss bereit · ' + e.fort + ' %' : e.neu ? 'neu freigeschaltet' : 'Boss ab 60 %';
+    const siegel = e.gesperrt ? '' : `<span class="tor-siegel">${medaille(e.orn, e.boss === 'besiegt' ? 'voll' : e.boss === 'bereit' ? 'bereit' : 'umriss')}</span>`;
+    const name = e.gesperrt ? caesar(norm(e.kurz).slice(0, 10), 7 + e.id) : e.kurz;
+    li.innerHTML = `<button class="tor${e.gesperrt ? ' gesperrt' : ''}" data-ep="${e.id}" aria-label="${e.gesperrt ? 'Epoche ' + (e.id + 1) + ', noch verschlüsselt' : esc(e.kurz) + ', ' + e.zeit + ', ' + e.fort + ' Prozent, ' + status}" ${e.gesperrt ? 'aria-disabled="true"' : ''}>
+      <span class="tor-bild">${e.neu ? '<span class="tor-neu">NEU</span>' : ''}${torSVG(e)}${siegel}</span>
+      <span class="tor-achse" aria-hidden="true"><span class="tor-punkt"></span></span>
+      <span class="tor-jahr">${esc(e.jahr)}</span>
+      <span class="tor-name" ${e.neu ? 'id="tor-neu-name"' : ''}>${esc(name)}</span>
+      <span class="tor-status">${status}</span></button>`;
+    ol.appendChild(li);
+  });
+  $$('.tor', ol).forEach(b => b.addEventListener('click', () => epocheOeffnen(+b.dataset.ep)));
+  // Artefakt-Regal
+  $('#regal').innerHTML = EP.map(e => { const hat = e.boss === 'besiegt'; return `<div class="artefakt${hat ? ' hat' : ''}" title="${esc(e.artName)}">${medaille(e.art, hat ? 'voll' : (e.boss === 'bereit' ? 'bereit' : 'umriss'), 56)}<span>${hat ? esc(e.artName) : (e.boss === 'bereit' ? 'bereit' : '?')}</span></div>`; }).join('');
+  const kap = [
+    ['−500', 'Der Stab der Spartaner', 'Ein Lederstreifen um einen Stab gewickelt: Die Skytale gilt als eines der ältesten Transpositionsverfahren.', 0],
+    ['um 850', 'Zählen statt raten', 'Al-Kindi wird die erste schriftliche Beschreibung der Häufigkeitsanalyse zugeschrieben.', 1],
+    ['1863', 'Die Spur der Wiederholungen', '', 2],
+    ['1917', 'Ein Schlüssel, nur einmal', '', 3]
+  ];
+  $('#kapitel').innerHTML = kap.map(([j, t, p, ep]) => p ? `<div class="kapitel" data-ep="${ep}"><span class="mono">${j}</span><b>${t}</b><p>${p}</p></div>` : `<div class="kapitel zu" data-ep="${ep}"><span class="mono">${j}</span><b>${t}</b><p>${gruppen(caesar(norm(t), 11))}</p></div>`).join('');
+}
+let neuEntsiegelt = false;
+function zeitleisteBetreten() {
+  // Ringe animiert füllen
+  if (!ruhig()) $$('.tor-ring').forEach(c => { const z = c.getAttribute('stroke-dashoffset'); c.style.transition = 'none'; c.style.strokeDashoffset = c.getAttribute('stroke-dasharray'); void c.getBoundingClientRect(); c.style.transition = ''; requestAnimationFrame(() => { c.style.strokeDashoffset = z; }); });
+  const el = $('#tor-neu-name');
+  if (el) { el.style.fontFamily = 'var(--f-mono)'; entsiegeln(el, 'MASCHINENZEITALTER', { schritt: 50, versatz: 40 }); setTimeout(() => { el.style.fontFamily = ''; el.textContent = 'Maschinen\u00ADzeitalter'; }, ruhig() ? 0 : 2300); }
+}
+
+/* ---------- 3 Epoche ---------- */
+function ringSVG(f, gross = 120) {
+  const r = 48, U = 2 * Math.PI * r;
+  return `<svg viewBox="0 0 120 120" width="${gross}" height="${gross}" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(251,247,238,.12)" stroke-width="8"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--e-t)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${U.toFixed(1)}" stroke-dashoffset="${(U * (1 - f / 100)).toFixed(1)}" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" fill="#FBF7EE" font-family="Fraunces, Georgia, serif" font-weight="600" font-size="26">${f}<tspan font-size="14">%</tspan></text></svg>`;
+}
+const FUND = {
+  0: ['DTTMI EBOEL ENFAI DLENA OUEUT FUS', 'die flotte laeuft bei neumond aus · Skytale, Umfang 4'],
+  1: ['ZPUCG URDUZ UDYCU IQIRR QSDIR UNORU INYCG QUNNU G', 'zaehle die zeichen und du findest den schluessel · Schlüsselwort PAPYRUS'],
+  2: ['OEXLN XGOTP RRPDO AYMPS ZOAWP RKVEM PFKVR RFTFY NFUEZ TGRFR TIPLO AYKHE ORGN', 'der rat von venedig liest unsere briefe benutze ab jetzt nur noch das quadrat · Schlüssel LAGUNE'],
+  3: ['1111 0100 · 0110 1100 · 1000 1011 · 0010 0101', 'noch nicht geknackt – der Schlüsselstreifen liegt daneben']
+};
+const FUND_DS = { 0: 1, 1: 4, 2: 6, 3: 9 };
+function epocheZeichnen() {
+  const e = EP[aktEpoche];
+  const sec = $('#v-epoche'); sec.dataset.ep = e.id;
+  $('#ep-etikett').textContent = 'Welt ' + e.id + ' · ' + (e.ort ? e.ort + ' · ' : '') + e.zeit;
+  $('#ep-h').textContent = e.titel; $('#ep-text').textContent = e.text || '';
+  $('#ep-orn-gross').setAttribute('href', '#' + e.orn);
+  $('#ep-wechsel').innerHTML = EP.filter(x => !x.gesperrt).map(x => `<button class="ep-pille" data-ep="${x.id}" aria-pressed="${x.id === e.id}"><i></i>${x.kurz}</button>`).join('');
+  $$('#ep-wechsel .ep-pille').forEach(b => b.addEventListener('click', () => { if (+b.dataset.ep !== aktEpoche) epocheOeffnen(+b.dataset.ep); }));
+  $('#ep-fortschritt').innerHTML = ringSVG(e.fort) + `<small>${e.fort} % der Level-Punkte<br>${e.boss === 'besiegt' ? 'Boss besiegt' : e.boss === 'bereit' ? 'Boss ist bereit' : 'Boss frei ab 60 %'}</small>`;
+  // Ornamentband
+  const band = $('#ornamentband'); band.setAttribute('viewBox', '0 0 1200 14'); band.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  band.innerHTML = Array.from({ length: 86 }, (_, i) => `<use href="#${e.orn}" x="${i * 14}" y="0" width="14" height="14"/>`).join('');
+  const L = LEVEL[e.id] || [];
+  const levelKarten = L.map(([id, titel, niv, kern, rolle, done]) => {
+    const fertig = done === 7, aktiv = done > 0 && !fertig;
+    const ziel = id === '2.1' ? 'aufgabe' : (id === '2.2' || id === '2.3') ? 'labor' : '';
+    const nivChip = niv === 'Kür' ? '<span class="chip chip-Kuer">Kür</span>' : niv === 'eA' ? '<span class="chip chip-eA">eA</span>' : '<span class="chip chip-K">K</span>';
+    return `<article class="akte-karte${fertig ? ' erledigt' : ''}">
+      <span class="akte-band"></span>
+      <div class="akte-kopf"><span class="mono">AKTE W${e.id}·${id.replace(/^\d\./, '')}</span>${nivChip}</div>
+      <div class="akte-koerper"><h3>${id} ${esc(titel)}</h3><p>${esc(kern)}</p><div class="akte-chips"><span class="chip chip-rolle">${rolle} ${rolle === '🛡' ? 'Kryptografie' : 'Kryptoanalyse'}</span>${aktiv ? '<span class="chip chip-neutral">in Arbeit</span>' : ''}</div></div>
+      <div class="akte-fuss"><span class="fortschritt-balken" aria-hidden="true"><i style="width:${done / 7 * 100}%"></i></span><span class="zahl" aria-label="${done} von 7 Aufgaben">${done}/7</span>
+        <button class="knopf ${aktiv ? 'knopf-primaer' : 'knopf-zweit'}" style="min-height:40px; padding:0 12px" ${ziel ? `data-go="${ziel}"` : `data-toast="Level ${id} – im Prototyp ist Level 2.1 (Aufgabe) und 2.2 (Kryptolabor) ausgearbeitet."`} aria-label="Level ${id} ${fertig ? 'wiederholen' : 'öffnen'}">${fertig ? 'Wiederholen' : aktiv ? 'Weiter' : 'Öffnen'}</button></div>
+      ${fertig ? `<span class="akte-siegel">${medaille(e.orn, 'voll', 46)}</span>` : ''}
+    </article>`;
+  }).join('');
+  const [fundGT, fundKlar] = FUND[e.id] || ['', ''];
+  const bossZ = e.boss === 'besiegt' ? `<span class="boss-status">✓ Besiegt mit ${e.bossErg} %</span>` : e.boss === 'bereit' ? `<span class="boss-status">✓ Bereit – du hast ${e.fort} % der Level-Punkte</span>` : `<span class="boss-status" style="color:var(--auf-tinte-2)">Frei ab 60 % der Level-Punkte</span>`;
+  $('#ep-inhalt').innerHTML = `
+    <div class="fund-reihe">
+      <div class="archivfund tinte">
+        <span class="etikett">Archivfund · Einstieg der Welt</span>
+        <h2 style="font-size:1.4rem">${esc(e.fund || '')}</h2>
+        <div class="dokument"><small>${e.id === 2 ? 'Abgefangen in Venedig · Siegel gebrochen' : 'Fundstück aus dem Archiv'}</small><div class="gt" aria-label="Geheimtext, buchstabiert">${fundGT}</div>${e.id !== 3 ? '<span class="stempel">GEKNACKT · DS ' + FUND_DS[e.id] + '</span>' : ''}</div>
+        <details><summary>Lösung des Kurses anzeigen</summary><p class="mono" style="margin-top:6px">${esc(fundKlar)}</p></details>
+      </div>
+      <div class="boss-karte tinte">
+        <span class="boss-siegel">${medaille(e.orn, e.boss === 'besiegt' ? 'voll' : e.boss === 'bereit' ? 'bereit' : 'umriss', 76)}</span>
+        <span class="etikett">Boss · Abi-Probe online</span>
+        <h3>${esc(e.bossName || '')}</h3>
+        <ul><li>25 Minuten, 8 Aufgaben (★ 3 · ★★ 3 · ★★★ 2)</li><li>ohne Laborwerkzeuge – wie im Abitur</li><li>mindestens 3 Aufgaben mit fremder Chiffre</li><li>dazu der Papier-Boss mit Erwartungshorizont</li></ul>
+        ${bossZ}
+        <button class="knopf knopf-messing" data-toast="Boss-Probe startet: 25 Minuten, kein Feedback während der Probe. (Im Prototyp nicht enthalten.)">${e.boss === 'besiegt' ? 'Erneut antreten' : 'Boss herausfordern'}</button>
+      </div>
+    </div>
+    <div>
+      <div class="abschnitt-kopf"><h2>Akten dieser Epoche</h2><span>${L.length} Level · Niveau eA</span></div>
+      <div class="akten">${levelKarten}</div>
+    </div>
+    <div class="dreier">
+      <div class="karte">
+        <span class="etikett">Trainingsplatz</span>
+        <h3>Zufallsaufgaben, so viele du willst</h3>
+        <ul class="generator-liste"><li>Vigenère ver- und entschlüsseln <span>★–★★</span></li><li>Kasiski-Abstände → Schlüssellänge <span>★★</span></li><li>Koinzidenzindex kleiner Texte <span>★★</span></li></ul>
+        <div class="tagesbalken"><span class="fortschritt-balken"><i style="width:40%"></i></span><span class="zahl">heute 12 / 30 P</span></div>
+        <button class="knopf knopf-zweit" data-go="aufgabe">Zufallsaufgabe ziehen</button>
+      </div>
+      <div class="karte">
+        <span class="etikett">Erklärvideo 03</span>
+        <button class="video-bild" data-toast="Das Video erscheint auf dem Kanal „frankjuchim“. Im Prototyp nicht verlinkt." aria-label="Video abspielen: Vigenère knacken"><span class="gt">KSMEH ZBBLK SMEMP OGAJX</span><span class="play"><svg><use href="#i-play"/></svg></span><span class="dauer">≈ 11 min</span></button>
+        <h3>Vigenère knacken: Kasiski und Friedman</h3>
+        <p>Vom Abstand zur Schlüssellänge, dann jede Spalte wie Caesar – mit der Werkbank am Beamer.</p>
+      </div>
+      <div class="karte">
+        <span class="etikett">Kryptolabor</span>
+        <h3>Vigenère-Werkbank</h3>
+        <p>Wiederholungen markieren, Teiler zählen, Koinzidenzindex live, jede Spalte einzeln knacken.</p>
+        <button class="knopf knopf-primaer" data-go="labor"><svg><use href="#i-labor"/></svg>Werkbank öffnen</button>
+        <button class="akte-link" data-go="akte">Akte W2·2 als Arbeitsblatt ansehen</button>
+      </div>
+    </div>`;
+}
+
+/* ---------- 4 Aufgabe: Interaktion „chiffre“ ---------- */
+const AUF = { klar: 'TREFFPUNKT', key: 'BRIEF', basis: 20 };
+AUF.gt = vig(AUF.klar, AUF.key);
+let aufFehl = 0, aufTipps = 0, aufGeloest = false, aufLoesungGezeigt = false;
+function aufgabeAufbauen() {
+  const box = $('#chiffre'); const n = AUF.gt.length;
+  let h = '<span class="zl">Geheimtext</span>';
+  for (let i = 0; i < n; i++) h += `<span class="ch-gt" id="gt-${i}" aria-hidden="true">${AUF.gt[i]}</span>`;
+  h += '<span class="zl">Schlüssel</span>';
+  for (let i = 0; i < n; i++) { const k = AUF.key[i % AUF.key.length]; h += `<span class="ch-sl" aria-hidden="true">${k}<small>−${k.charCodeAt(0) - 65}</small></span>`; }
+  h += '<span class="zl">Klartext</span>';
+  for (let i = 0; i < n; i++) { const k = AUF.key[i % AUF.key.length]; h += `<input class="ch-ein" id="ein-${i}" maxlength="1" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="text" aria-label="Klartextbuchstabe ${i + 1} von ${n}: Geheimtext ${AUF.gt[i]}, Schlüssel ${k}">`; }
+  h += '<span class="zl"></span>';
+  for (let i = 0; i < n; i++) h += `<span class="ch-mark" id="mk-${i}"></span>`;
+  box.innerHTML = h;
+  $('#alphabet').innerHTML = [...ABC].map((c, i) => `<div data-b="${c}"><b>${c}</b><small>${i + 1}</small></div>`).join('');
+  $('#alphabet').setAttribute('aria-label', 'Alphabetleiste: A gleich 1 bis Z gleich 26');
+  const ein = $$('.ch-ein', box);
+  ein.forEach((inp, i) => {
+    inp.addEventListener('focus', () => { inp.select(); markiere(i); });
+    inp.addEventListener('blur', () => markiere(-1));
+    inp.addEventListener('input', () => {
+      const v = inp.value.replace(/[^a-zA-ZäöüÄÖÜ]/g, '').slice(-1).toLowerCase(); inp.value = v;
+      inp.classList.remove('ok', 'falsch'); $('#mk-' + i).textContent = ''; $('#mk-' + i).className = 'ch-mark';
+      if (v && i < ein.length - 1) ein[i + 1].focus();
+    });
+    inp.addEventListener('keydown', ev => {
+      if (ev.key === 'Backspace' && !inp.value && i > 0) { ev.preventDefault(); ein[i - 1].focus(); ein[i - 1].value = ''; }
+      else if (ev.key === 'ArrowLeft' && i > 0) { ev.preventDefault(); ein[i - 1].focus(); }
+      else if (ev.key === 'ArrowRight' && i < ein.length - 1) { ev.preventDefault(); ein[i + 1].focus(); }
+      else if (ev.key === 'Enter') { ev.preventDefault(); pruefen(); }
+    });
+  });
+  // drei Zeichen vorbelegt (realistischer Arbeitsstand)
+  'tre'.split('').forEach((c, i) => { ein[i].value = c; });
+  $('#auf-tipp').addEventListener('click', tipp);
+  $('#auf-pruefen').addEventListener('click', pruefen);
+  $('#auf-loesung').addEventListener('click', loesungFragen);
+  $('#auf-p3').addEventListener('click', () => { const enc = vig(AUF.gt, AUF.key, 1).toLowerCase(); ein.forEach((inp, i) => { inp.value = i < 2 ? AUF.klar[i].toLowerCase() : enc[i]; inp.classList.remove('ok', 'falsch'); }); pruefen(); });
+  punkteAnzeigen();
+}
+function markiere(i) {
+  $$('#alphabet div').forEach(d => d.classList.remove('aktiv'));
+  $$('.ch-gt').forEach(d => d.classList.remove('markiert'));
+  if (i < 0) { quadratSchluesselZeile(null); return; }
+  $(`#alphabet div[data-b="${AUF.gt[i]}"]`).classList.add('aktiv');
+  $('#gt-' + i).classList.add('markiert');
+  quadratSchluesselZeile(AUF.key[i % AUF.key.length]);
+}
+function aufPunkte() { if (aufLoesungGezeigt) return 0; return Math.round(AUF.basis * Math.max(.25, 1 - .25 * aufFehl - .2 * aufTipps)); }
+function punkteAnzeigen() { $('#auf-punkte').textContent = aufGeloest ? aufPunkte() + ' Punkte erhalten' : aufPunkte() + ' von ' + AUF.basis + ' Punkten möglich'; }
+function tipp() {
+  if (aufGeloest) return;
+  aufTipps = Math.min(aufTipps + 1, 2); punkteAnzeigen();
+  const m = $('#auf-meldung');
+  if (aufTipps === 1) { $('#chiffre').classList.add('zeige-versch'); m.innerHTML = `<div class="rueckmeldung tipp"><b class="titel">Tipp 1 von 2</b><p>Unter jedem Schlüsselbuchstaben steht jetzt seine Verschiebung: A = 0, B = 1, … Entschlüsseln heißt, um diesen Wert im Alphabet <b>zurück</b> zu gehen.</p></div>`; }
+  else { m.innerHTML = `<div class="rueckmeldung tipp"><b class="titel">Tipp 2 von 2</b><p>Beispiel für das erste Zeichen: Geheimtext <b class="mono">${AUF.gt[0]}</b> = ${AUF.gt.charCodeAt(0) - 64}, Schlüssel <b class="mono">B</b> → Verschiebung 1. Also ${AUF.gt.charCodeAt(0) - 64} − 1 = ${AUF.klar.charCodeAt(0) - 64} = <b class="mono">${AUF.klar[0].toLowerCase()}</b>. Läuft die Rechnung unter 1, addiere 26.</p></div>`; $('#auf-tipp').disabled = true; }
+}
+function pruefen() {
+  if (aufGeloest) return;
+  const ein = $$('.ch-ein'); const n = ein.length;
+  let richtig = 0, leer = 0, p3 = 0, p1 = 0; const falschIdx = [];
+  const enc = vig(AUF.gt, AUF.key, 1);
+  ein.forEach((inp, i) => {
+    const v = inp.value.toUpperCase(); const mk = $('#mk-' + i);
+    inp.classList.remove('ok', 'falsch'); mk.className = 'ch-mark';
+    if (!v) { leer++; mk.textContent = ''; return; }
+    if (v === AUF.klar[i]) { richtig++; inp.classList.add('ok'); mk.classList.add('ok'); mk.textContent = '✓'; mk.setAttribute('aria-label', 'richtig'); }
+    else {
+      falschIdx.push(i); inp.classList.add('falsch'); mk.classList.add('falsch'); mk.textContent = '✗'; mk.setAttribute('aria-label', 'falsch');
+      if (v === enc[i]) p3++;
+      const pv = AUF.klar.charCodeAt(i) - 65, vv = v.charCodeAt(0) - 65; if (mod(vv - pv, 26) === 1 || mod(pv - vv, 26) === 1) p1++;
+    }
+  });
+  const m = $('#auf-meldung');
+  if (richtig === n) {
+    aufGeloest = true; punkteAnzeigen();
+    m.innerHTML = `<div class="rueckmeldung ok" style="grid-template-columns:auto minmax(0,1fr); align-items:center; gap:16px">
+      <svg class="siegel-stempel" viewBox="0 0 48 48" aria-hidden="true"><path d="${siegelPfad(21, 1.4, 13)}" fill="#7A2E2E"/><circle cx="24" cy="24" r="15" fill="none" stroke="#D98C8C" stroke-width="1"/><g style="color:#F5D6D6"><use href="#o-ranke" x="13" y="13" width="22" height="22"/></g></svg>
+      <div style="display:grid; gap:6px"><b class="titel" style="color:var(--ok)">✓ Entschlüsselt: „treffpunkt“ · +${aufPunkte()} Punkte</b>
+      <p>Jeder Geheimtextbuchstabe wurde um den Wert seines Schlüsselbuchstabens zurückverschoben. Weil das Schlüsselwort sich alle fünf Zeichen wiederholt, wird derselbe Klartextbuchstabe verschieden verschlüsselt: Beide <b class="mono">t</b> stehen im Geheimtext als <b class="mono">${AUF.gt[0]}</b> und <b class="mono">${AUF.gt[9]}</b>. Genau das macht Vigenère polyalphabetisch (Falle P5).</p>
+      <p style="font-size:.86rem; color:var(--text-2)">Typische Falle bei dieser Aufgabe: <span class="chip chip-falle">P3 Umkehrung</span> – wer +k statt −k rechnet, verschlüsselt ein zweites Mal.</p></div></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap"><button class="knopf knopf-primaer" data-go="labor">Weiter: Kasiskis Spur im Labor<svg><use href="#i-pfeil"/></svg></button><button class="knopf knopf-leise" id="auf-neu">Aufgabe zurücksetzen</button></div>`;
+    $('#auf-neu').addEventListener('click', aufReset);
+    return;
+  }
+  if (leer === n) { m.innerHTML = `<div class="rueckmeldung"><b class="titel">Noch nichts eingetragen</b><p>Trage für jedes Geheimtextzeichen den Klartextbuchstaben ein. Mit Tab oder den Pfeiltasten springst du weiter.</p></div>`; return; }
+  if (falschIdx.length) aufFehl++;
+  punkteAnzeigen();
+  let falle = '';
+  if (p3 >= 2 && p3 >= falschIdx.length / 2) {
+    const i = falschIdx[0];
+    const c = AUF.gt.charCodeAt(i) - 64, k = AUF.key.charCodeAt(i % AUF.key.length) - 65;
+    falle = `<div class="falle-box"><span><span class="chip chip-falle aktiv">P3 Umkehrung</span></span>
+      <p>An ${p3} Stelle${p3 > 1 ? 'n' : ''} hast du um <b>+k</b> verschoben statt um <b>−k</b>. Das ist Verschlüsseln, nicht Entschlüsseln – der Text wird dadurch ein zweites Mal verschlüsselt.</p>
+      <p class="bsp">Stelle ${i + 1}: ${AUF.gt[i]} (${c}) ${k ? '+ ' + k : ''} → ${ABC[mod(c - 1 + k, 26)]} ✗ &nbsp;·&nbsp; richtig: ${c} − ${k} = ${mod(c - 1 - k, 26) + 1} → ${AUF.klar[i].toLowerCase()} ✓</p></div>`;
+  } else if (p1 >= 2 && p1 >= falschIdx.length / 2) {
+    falle = `<div class="falle-box"><span><span class="chip chip-falle aktiv">P1 Zählbasis</span></span><p>Deine falschen Buchstaben liegen genau eine Stelle daneben. Prüfe die Nummerierung: Schlüsselbuchstabe A bedeutet Verschiebung 0, B Verschiebung 1 – nicht 2.</p></div>`;
+  }
+  m.innerHTML = `<div class="rueckmeldung falsch"><b class="titel" style="color:var(--fehler)">✗ ${richtig} von ${n} Zeichen richtig${leer ? ', ' + leer + ' noch leer' : ''}</b>
+    <p>Die markierten Felder stimmen noch nicht. Für den nächsten Versuch sinkt die mögliche Punktzahl auf ${aufPunkte()}.</p>${falle}</div>`;
+}
+function loesungFragen() {
+  if (aufGeloest) return;
+  const m = $('#auf-meldung');
+  m.innerHTML = `<div class="bestaetigen" role="alertdialog" aria-label="Lösung zeigen bestätigen"><span>Lösung zeigen? Die Aufgabe gibt dann <b>0 Punkte</b>.</span><button class="knopf knopf-primaer" id="auf-ja">Ja, Lösung zeigen</button><button class="knopf knopf-leise" id="auf-nein">Abbrechen</button></div>`;
+  $('#auf-ja').focus();
+  $('#auf-ja').addEventListener('click', () => { aufLoesungGezeigt = true; $$('.ch-ein').forEach((inp, i) => { inp.value = AUF.klar[i].toLowerCase(); }); pruefen(); });
+  $('#auf-nein').addEventListener('click', () => { m.innerHTML = ''; $('#auf-loesung').focus(); });
+}
+function aufReset() { aufFehl = 0; aufTipps = 0; aufGeloest = false; aufLoesungGezeigt = false; $('#auf-tipp').disabled = false; $('#chiffre').classList.remove('zeige-versch'); $('#auf-meldung').innerHTML = ''; $$('.ch-ein').forEach(i => { i.value = ''; i.classList.remove('ok', 'falsch'); }); $$('.ch-mark').forEach(m => { m.textContent = ''; m.className = 'ch-mark'; }); punkteAnzeigen(); $('#ein-0').focus(); }
+
+/* ---------- Vigenère-Quadrat (26 × 26) ---------- */
+function quadratBauen(ziel, infoEl) {
+  let h = '<table class="quadrat" tabindex="0" aria-label="Vigenère-Quadrat: Zeilen Schlüsselbuchstaben, Spalten Klartextbuchstaben. Mit Pfeiltasten bewegen."><thead><tr><th scope="col" aria-label="Schlüssel / Klartext">⁄</th>';
+  for (let c = 0; c < 26; c++) h += `<th scope="col" data-c="${c}">${ABC[c].toLowerCase()}</th>`;
+  h += '</tr></thead><tbody>';
+  for (let r = 0; r < 26; r++) { h += `<tr><th scope="row" data-r="${r}">${ABC[r]}</th>`; for (let c = 0; c < 26; c++) h += `<td data-r="${r}" data-c="${c}">${ABC[(r + c) % 26]}</td>`; h += '</tr>'; }
+  h += '</tbody></table>';
+  ziel.innerHTML = h;
+  const tab = $('table', ziel); let cur = null;
+  const setze = (r, c) => {
+    $$('.zeile,.spalte,.kreuz', tab).forEach(x => x.classList.remove('zeile', 'spalte', 'kreuz'));
+    if (r == null) { cur = null; return; }
+    cur = [r, c];
+    $$(`[data-r="${r}"]`, tab).forEach(x => x.classList.add('zeile'));
+    $$(`[data-c="${c}"]`, tab).forEach(x => x.classList.add('spalte'));
+    const td = $(`td[data-r="${r}"][data-c="${c}"]`, tab); td.classList.remove('zeile', 'spalte'); td.classList.add('kreuz');
+    if (infoEl) infoEl.textContent = `Schlüssel ${ABC[r]} (Verschiebung ${r}) · Klartext ${ABC[c].toLowerCase()} → Geheimtext ${ABC[(r + c) % 26]}`;
+  };
+  tab.addEventListener('mouseover', ev => { const td = ev.target.closest('td'); if (td) setze(+td.dataset.r, +td.dataset.c); });
+  tab.addEventListener('mouseleave', () => { if (document.activeElement !== tab) setze(null); });
+  tab.addEventListener('focus', () => { if (!cur) setze(0, 0); });
+  tab.addEventListener('keydown', ev => {
+    const d = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[ev.key]; if (!d) return;
+    ev.preventDefault(); const [r, c] = cur || [0, 0]; setze(mod(r + d[0], 26), mod(c + d[1], 26));
+  });
+  return tab;
+}
+let aufQuadrat;
+function quadratSchluesselZeile(b) {
+  if (!aufQuadrat) return;
+  $$('.schluesselzeile', aufQuadrat).forEach(x => x.classList.remove('schluesselzeile'));
+  if (b) $$(`td[data-r="${b.charCodeAt(0) - 65}"]`, aufQuadrat).forEach(x => x.classList.add('schluesselzeile'));
+}
+
+/* ---------- 5 Kryptolabor: Vigenère-Werkbank ---------- */
+const DE = [6.51, 1.89, 3.06, 5.08, 17.40, 1.66, 3.01, 4.76, 7.55, 0.27, 1.21, 3.44, 2.53, 9.78, 2.51, 0.79, 0.02, 7.00, 7.27, 6.15, 4.35, 0.67, 1.89, 0.03, 0.04, 1.13];
+const BRIEF = 'Werter Freund, die Gesandtschaft aus Venedig wird am Abend des dritten Tages in der Stadt eintreffen. Der Kurier trägt die Briefe im Futter seines Mantels und spricht mit niemandem ein Wort. Haltet die Pferde am Nordtor bereit und sorgt dafür, dass die Wachen des Herzogs nichts von der Ankunft erfahren. Wenn die Glocken der Kirche zweimal schlagen, öffnet ihr das Tor. Verbrennt diesen Brief, sobald ihr ihn gelesen habt, denn die Spione des Rates lesen jede Nachricht, die sie abfangen können.';
+const BRIEF_KEY = 'DOGEN';
+const LAB = { gt: '', k: 5, verschiebung: [], vorschlag: [], alleZeigen: false, kasiski: null, fokus: null };
+function ic(t) { const n = t.length; if (n < 2) return 0; const z = new Array(26).fill(0); for (const c of t) z[c.charCodeAt(0) - 65]++; return z.reduce((s, x) => s + x * (x - 1), 0) / (n * (n - 1)); }
+function zaehle(t) { const z = new Array(26).fill(0); for (const c of t) z[c.charCodeAt(0) - 65]++; return z; }
+function teiltexte(t, k) { const s = Array.from({ length: k }, () => ''); for (let i = 0; i < t.length; i++) s[i % k] += t[i]; return s; }
+function besteVerschiebung(sp) {
+  const z = zaehle(sp), n = sp.length || 1; let best = 0, bw = -1; const werte = [];
+  for (let s = 0; s < 26; s++) { let w = 0; for (let i = 0; i < 26; i++) w += (z[(i + s) % 26] / n) * DE[i]; werte.push(w); if (w > bw) { bw = w; best = s; } }
+  return best;
+}
+function kasiski(t) {
+  const maxL = 8, seqs = [];
+  const map = new Map();
+  for (let L = maxL; L >= 3; L--) {
+    map.clear();
+    for (let i = 0; i + L <= t.length; i++) { const s = t.substr(i, L); if (!map.has(s)) map.set(s, []); map.get(s).push(i); }
+    for (const [s, pos] of map) {
+      if (pos.length < 2) continue;
+      const abgedeckt = pos.every(p => seqs.some(q => q.s.length > L && q.pos.some(qp => p >= qp && p + L <= qp + q.s.length)));
+      if (!abgedeckt) seqs.push({ s, pos });
+    }
+  }
+  const zeilen = []; const teiler = new Array(13).fill(0);
+  seqs.forEach(q => { for (let j = 1; j < q.pos.length; j++) { const d = q.pos[j] - q.pos[j - 1]; zeilen.push({ q, a: q.pos[j - 1], b: q.pos[j], d }); for (let x = 2; x <= 12; x++) if (d % x === 0) teiler[x]++; } });
+  seqs.sort((a, b) => b.s.length - a.s.length || b.pos.length - a.pos.length || a.pos[0] - b.pos[0]);
+  const ordnung = new Map(seqs.map((q, i) => [q, i]));
+  zeilen.sort((x, y) => ordnung.get(x.q) - ordnung.get(y.q) || x.a - y.a);
+  let max = 0; for (let x = 2; x <= 12; x++) max = Math.max(max, teiler[x]);
+  let vermutung = 0; for (let x = 12; x >= 2; x--) if (teiler[x] >= .8 * max && max > 0) { vermutung = x; break; }
+  return { seqs, zeilen, teiler, max, vermutung };
+}
+function laborSetzen(text) {
+  LAB.gt = norm(text);
+  $('#lab-eingabe').value = gruppen(LAB.gt);
+  LAB.kasiski = kasiski(LAB.gt);
+  LAB.k = LAB.kasiski.vermutung || 5;
+  LAB.fokus = null; LAB.alleZeigen = false;
+  spaltenVorschlag();
+  laborZeichnen(true);
+}
+function spaltenVorschlag() { LAB.vorschlag = teiltexte(LAB.gt, LAB.k).map(besteVerschiebung); LAB.verschiebung = LAB.vorschlag.slice(); }
+let laborGezeichnet = false;
+function laborZeichnen(erzwingen) {
+  if (!erzwingen && laborGezeichnet) return; laborGezeichnet = true;
+  const t = LAB.gt, K = LAB.kasiski;
+  if (t.length < 30) { $('#lab-gt').innerHTML = '<p>Der Text ist zu kurz für eine Analyse. Füge mindestens 30 Buchstaben ein – besser über 200.</p>'; return; }
+  // Farben für die (bis zu 6) stärksten Folgen
+  const farbe = new Array(t.length).fill(0); const seqFarbe = new Map();
+  K.seqs.slice(0, 6).forEach((q, i) => { seqFarbe.set(q, i + 1); q.pos.forEach(p => { for (let j = 0; j < q.s.length; j++) if (!farbe[p + j]) farbe[p + j] = i + 1; }); });
+  const seqVon = new Array(t.length).fill(null); K.seqs.slice(0, 6).forEach(q => q.pos.forEach(p => { for (let j = 0; j < q.s.length; j++) if (!seqVon[p + j]) seqVon[p + j] = q.s; }));
+  let h = '';
+  for (let z = 0; z < t.length; z += 50) {
+    h += `<div class="gt-zeile"><span class="gt-pos">${z}</span><span class="gt-gruppen">`;
+    for (let g = z; g < Math.min(z + 50, t.length); g += 5) { h += '<span class="gt-gruppe">'; for (let i = g; i < Math.min(g + 5, t.length); i++) h += farbe[i] ? `<span class="wdh h${farbe[i]}b" data-s="${seqVon[i]}">${t[i]}</span>` : `<span>${t[i]}</span>`; h += '</span>'; }
+    h += '</span></div>';
+  }
+  $('#lab-gt').innerHTML = h;
+  $('#lab-gt').setAttribute('aria-label', 'Geheimtext mit ' + t.length + ' Buchstaben, in Fünfergruppen. Farbig: wiederholte Folgen.');
+  const I = ic(t);
+  $('#lab-status').innerHTML = `<span><b class="zahl">${t.length}</b> Buchstaben</span><span><b class="zahl">${K.seqs.length}</b> wiederholte Folgen (≥ 3)</span><span>Koinzidenzindex <b class="zahl">${fmt(I)}</b></span>`;
+  // Kasiski-Tabelle
+  const zeilen = LAB.alleZeigen ? K.zeilen : K.zeilen.slice(0, 9);
+  let tb = '<thead><tr><th scope="col" style="text-align:left">Folge</th><th scope="col" style="text-align:left">Positionen</th><th scope="col">Abstand</th>';
+  for (let x = 2; x <= 12; x++) tb += `<th scope="col">${x}</th>`;
+  tb += '</tr></thead><tbody>';
+  zeilen.forEach(z => {
+    const f = seqFarbe.get(z.q);
+    tb += `<tr ${f ? `tabindex="0" data-s="${z.q.s}"` : ''}><td class="folge">${f ? `<i class="h${f}b"></i>` : '<i style="border:1px solid var(--linie)"></i>'}${z.q.s}</td><td class="pos">${z.a} → ${z.b}</td><td><b>${z.d}</b></td>`;
+    for (let x = 2; x <= 12; x++) tb += z.d % x === 0 ? `<td class="teilt" aria-label="teilbar durch ${x}">●</td>` : '<td aria-hidden="true"></td>';
+    tb += '</tr>';
+  });
+  tb += `<tr class="summe"><td colspan="3" style="text-align:left">Summe (alle ${K.zeilen.length} Abstände)</td>`;
+  for (let x = 2; x <= 12; x++) tb += `<td class="${x === K.vermutung ? 'max' : ''}">${K.teiler[x]}</td>`;
+  tb += '</tr></tbody>';
+  $('#kasiski-tabelle').innerHTML = tb;
+  const mk = $('#kasiski-mehr'); mk.hidden = K.zeilen.length <= 9; mk.textContent = LAB.alleZeigen ? 'Weniger anzeigen' : `Alle ${K.zeilen.length} Abstände anzeigen`;
+  $$('#kasiski-tabelle tr[data-s]').forEach(tr => {
+    const an = () => fokusFolge(tr.dataset.s), aus = () => fokusFolge(null);
+    tr.addEventListener('mouseenter', an); tr.addEventListener('focus', an); tr.addEventListener('mouseleave', aus); tr.addEventListener('blur', aus);
+  });
+  // Teiler-Diagramm
+  const W = 330, H = 150, pad = 22, bw = (W - 2 * pad) / 11;
+  let sv = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Häufigkeit der Teiler 2 bis 12: ${[...Array(11)].map((_, i) => (i + 2) + ': ' + K.teiler[i + 2]).join(', ')}">`;
+  sv += `<line x1="${pad}" y1="${H - 24}" x2="${W - pad}" y2="${H - 24}" stroke="var(--linie)"/>`;
+  for (let x = 2; x <= 12; x++) {
+    const v = K.teiler[x], hh = K.max ? (v / K.max) * (H - 54) : 0, xx = pad + (x - 2) * bw + 4;
+    sv += `<rect class="bar${x === K.vermutung ? ' max' : ''}" x="${xx.toFixed(1)}" y="${(H - 24 - hh).toFixed(1)}" width="${(bw - 8).toFixed(1)}" height="${hh.toFixed(1)}" rx="2"/>`;
+    sv += `<text x="${(xx + (bw - 8) / 2).toFixed(1)}" y="${H - 8}">${x}</text>`;
+    if (v) sv += `<text class="wert" x="${(xx + (bw - 8) / 2).toFixed(1)}" y="${(H - 30 - hh).toFixed(1)}">${v}</text>`;
+  }
+  $('#teiler-diagramm').innerHTML = sv + '</svg>';
+  $('#kasiski-vorschlag').innerHTML = K.vermutung ? `<svg><use href="#i-lupe"/></svg><span>Kasiski-Vermutung: <b>k = ${K.vermutung}</b> – teilt ${K.teiler[K.vermutung]} von ${K.zeilen.length} Abständen. ${K.teiler[2] >= K.teiler[K.vermutung] && K.vermutung !== 2 ? ' Die 2 teilt jeden geraden Abstand und sagt deshalb wenig.' : ''} Zufällige Wiederholungen sorgen für Ausreißer.</span>` : '<span>Keine Wiederholungen gefunden.</span>';
+  // Koinzidenzindex
+  const n = t.length, ID = .076, IZ = .038;
+  const fried = (ID - IZ) * n / ((n - 1) * I - IZ * n + ID);
+  $('#ki-wert').innerHTML = `<b class="zahl">${fmt(I)}</b><span>bei n = ${n} · Friedman-Schätzung k ≈ <b>${fmt(fried, 1)}</b></span>`;
+  const sx = v => 10 + (Math.min(Math.max(v, .03), .085) - .03) / .055 * 300;
+  $('#ki-skala').innerHTML = `<svg viewBox="0 0 320 44" role="img" aria-label="Skala: Zufallstext 0,038, dieser Text ${fmt(I)}, deutscher Text 0,076">
+    <rect x="10" y="12" width="300" height="8" rx="4" fill="var(--papier-2)" stroke="var(--linie)"/>
+    <line x1="${sx(IZ)}" y1="6" x2="${sx(IZ)}" y2="26" stroke="var(--text-2)" stroke-width="1.5"/><text x="${sx(IZ)}" y="40" text-anchor="middle" font-size="10" fill="var(--text-2)">Zufall 0,038</text>
+    <line x1="${sx(ID)}" y1="6" x2="${sx(ID)}" y2="26" stroke="var(--text-2)" stroke-width="1.5"/><text x="${sx(ID)}" y="40" text-anchor="middle" font-size="10" fill="var(--text-2)">Deutsch 0,076</text>
+    <circle cx="${sx(I)}" cy="16" r="7" fill="var(--akzent)" stroke="var(--karte)" stroke-width="2"/></svg>`;
+  // k-Wahl mit Ø-IC
+  let kw = ''; const ics = [];
+  for (let k = 1; k <= 12; k++) { const sp = teiltexte(t, k); ics.push(sp.reduce((s, x) => s + ic(x), 0) / k); }
+  ics.forEach((v, i) => { const k = i + 1, hh = Math.max(6, Math.min(1, Math.max(0, (v - .036) / .042)) * 100); kw += `<button class="k-knopf" data-k="${k}" aria-pressed="${k === LAB.k}" aria-label="Schlüssellänge ${k}, mittlerer Koinzidenzindex ${fmt(v)}${k === K.vermutung ? ', Kasiski-Vermutung' : ''}">${k === K.vermutung ? '<span class="tipp-punkt"></span>' : ''}<span class="saeule" aria-hidden="true"><i style="height:${hh.toFixed(0)}%"></i></span><span>${k}</span></button>`; });
+  $('#k-wahl').innerHTML = kw;
+  $$('#k-wahl .k-knopf').forEach(b => b.addEventListener('click', () => { LAB.k = +b.dataset.k; spaltenVorschlag(); laborZeichnen(true); }));
+  spaltenZeichnen();
+}
+function fokusFolge(s) {
+  const blk = $('#lab-gt'); blk.classList.toggle('fokus', !!s);
+  $$('span.wdh', blk).forEach(x => x.classList.toggle('an', !!s && x.dataset.s === s));
+}
+function spaltenZeichnen() {
+  const t = LAB.gt, k = LAB.k, sp = teiltexte(t, k);
+  const W = 208, H = 92, bw = 7.4, x0 = 8;
+  let html = '', tab = '<table class="daten"><thead><tr><th scope="col">Spalte</th>' + [...ABC].map(c => `<th scope="col">${c}</th>`).join('') + '</tr></thead><tbody>';
+  sp.forEach((s, j) => {
+    const z = zaehle(s), n = s.length, v = LAB.verschiebung[j], mx = Math.max(...z.map(x => x / n * 100), 20);
+    let svg = `<svg viewBox="0 0 ${W} ${H + 14}" role="img" aria-label="Spalte ${j + 1}: ${n} Buchstaben, häufigster ${ABC[z.indexOf(Math.max(...z))]}. Verschiebung ${v} entspricht Schlüsselbuchstabe ${ABC[v]}.">`;
+    svg += `<line class="grund" x1="${x0}" y1="${H}" x2="${x0 + 26 * bw}" y2="${H}"/>`;
+    let pfad = '';
+    for (let i = 0; i < 26; i++) {
+      const h = z[i] / n * 100 / mx * (H - 8), x = x0 + i * bw;
+      svg += `<rect class="balken" x="${(x + .8).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${(bw - 1.6).toFixed(1)}" height="${h.toFixed(1)}" rx="1"/>`;
+      const r = DE[mod(i - v, 26)] / mx * (H - 8);
+      pfad += (i ? 'L' : 'M') + (x + bw / 2).toFixed(1) + ' ' + (H - r).toFixed(1);
+      if (i % 2 === 0 || i === 25) svg += `<text class="achse" x="${(x + bw / 2).toFixed(1)}" y="${H + 10}">${ABC[i]}</text>`;
+    }
+    svg += `<path class="ref" d="${pfad}"/>`;
+    const eX = x0 + mod(4 + v, 26) * bw + bw / 2; svg += `<circle class="ref-p" cx="${eX.toFixed(1)}" cy="${(H - DE[4] / mx * (H - 8)).toFixed(1)}" r="2.4"/>`;
+    svg += '</svg>';
+    const geaendert = v !== LAB.vorschlag[j];
+    html += `<div class="spalte"><div class="spalte-kopf"><span>Spalte <b>${j + 1}</b> · ${n} Zeichen</span><span>Ø I ${fmt(ic(s))}</span></div>${svg}
+      <div class="verschieber"><button data-j="${j}" data-d="-1" aria-label="Spalte ${j + 1}: Verschiebung verringern"><svg><use href="#i-pfeil-l"/></svg></button>
+      <output class="${geaendert ? 'geaendert' : ''}" aria-live="polite"><b>${ABC[v]}</b><small>Verschiebung ${v}${geaendert ? ' · Vorschlag ' + ABC[LAB.vorschlag[j]] : ''}</small></output>
+      <button data-j="${j}" data-d="1" aria-label="Spalte ${j + 1}: Verschiebung erhöhen"><svg><use href="#i-pfeil"/></svg></button></div></div>`;
+    tab += `<tr><th scope="row">${j + 1}</th>${z.map(x => `<td>${x}</td>`).join('')}</tr>`;
+  });
+  $('#spalten').innerHTML = html; $('#spalten-tabelle').innerHTML = tab + '</tbody></table>';
+  $$('#spalten .verschieber button').forEach(b => b.addEventListener('click', () => { const j = +b.dataset.j; LAB.verschiebung[j] = mod(LAB.verschiebung[j] + +b.dataset.d, 26); spaltenZeichnen(); const nb = $(`#spalten button[data-j="${j}"][data-d="${b.dataset.d}"]`); if (nb) nb.focus(); }));
+  const key = LAB.verschiebung.map(v => ABC[v]).join('');
+  $('#steuer-schluessel').textContent = key; $('#steuer-k').textContent = 'k = ' + k;
+  const klar = vig(t, key, -1).toLowerCase();
+  $('#klar-ausgabe').textContent = klar;
+}
+$('#kasiski-mehr').addEventListener('click', () => { LAB.alleZeigen = !LAB.alleZeigen; laborZeichnen(true); });
+$('#lab-vorschlag').addEventListener('click', () => { LAB.verschiebung = LAB.vorschlag.slice(); spaltenZeichnen(); toast('Vorschlag übernommen: Schlüssel ' + LAB.verschiebung.map(v => ABC[v]).join('') + '.'); });
+$('#lab-pruefen').addEventListener('click', () => {
+  const key = LAB.verschiebung.map(v => ABC[v]).join(''); const klar = vig(LAB.gt, key, -1);
+  const deutsch = ic(klar) > .06 && /(DIE|DER|UND|EIN)/.test(klar);
+  toast(deutsch ? '✓ Das sieht nach deutschem Klartext aus. Schlüssel ' + key + ' – trage ihn in Aufgabe 6 ein.' : 'Der Klartext ist noch nicht lesbar. Prüfe Schlüssellänge und Spalten.');
+});
+let labTimer;
+$('#lab-eingabe').addEventListener('input', ev => { clearTimeout(labTimer); labTimer = setTimeout(() => { LAB.gt = norm(ev.target.value); LAB.kasiski = kasiski(LAB.gt); LAB.k = LAB.kasiski.vermutung || 5; spaltenVorschlag(); laborZeichnen(true); }, 350); });
+$('#lab-neu').addEventListener('click', () => { let k = ''; for (let i = 0; i < 5; i++) k += ABC[Math.floor(Math.random() * 26)]; laborSetzen(vig(norm(BRIEF), k)); toast('Neuer Geheimtext mit einem zufälligen Schlüssel der Länge 5 erzeugt.'); });
+$('#lab-reset').addEventListener('click', () => laborSetzen(vig(norm(BRIEF), BRIEF_KEY)));
+
+/* ---------- 6 Funkraum ---------- */
+const FR = { teams: [], eve: { x: 500, y: 405 }, kanten: [], msgs: [], laeuft: false, pause: false, rest: 13 * 60 + 42, nr: 4, n: 4, geknackt: 3, raf: 0, spawnT: 0, uhrT: 0, start: Date.now() };
+const FR_TEAMS = ['Team Skytale', 'Team Scheibe', 'Team Quadrat', 'Team Walze', 'Team Lochkarte'];
+const FR_TEXTE = ['TREFFEN AM BRUNNEN', 'WIR KOMMEN UM ACHT', 'DAS TOR BLEIBT ZU', 'BRINGT DIE KARTE MIT', 'LIEFERUNG MORGEN FRUEH', 'ALLES RUHIG IM NORDEN', 'WARTET AUF DAS SIGNAL', 'DER BOTE IST UNTERWEGS', 'NEUER PLAN AB MITTAG'];
+function frUhrzeit(off = 0) { const d = new Date(2026, 9, 12, 10, 14, 5 + Math.floor((Date.now() - FR.start) / 1000) + off); return d.toTimeString().slice(0, 8); }
+function frAufbauen() {
+  const svg = $('#fr-svg'); const cx = 500, cy = 385, rx = 370, ry = 290;
+  FR.teams = FR_TEAMS.map((name, i) => { const w = -Math.PI / 2 + i * 2 * Math.PI / 5; return { name, x: cx + rx * Math.cos(w), y: cy + ry * Math.sin(w) + 10 }; });
+  FR.kanten = []; for (let a = 0; a < 5; a++) for (let b = a + 1; b < 5; b++) FR.kanten.push([a, b]);
+  let h = '<g id="fr-kanten">' + FR.kanten.map(([a, b], i) => `<line class="fr-kante" id="fr-k-${a}-${b}" x1="${FR.teams[a].x}" y1="${FR.teams[a].y}" x2="${FR.teams[b].x}" y2="${FR.teams[b].y}"/>`).join('') + '</g>';
+  h += '<line class="fr-lausch" id="fr-lausch" x1="0" y1="0" x2="500" y2="405"/>';
+  h += `<g class="fr-eve" id="fr-eve" transform="translate(${FR.eve.x} ${FR.eve.y})"><circle class="k" r="62"/><text y="2" font-size="34" font-weight="700" text-anchor="middle" font-family="Fraunces, Georgia, serif">Eve</text><text class="sub" y="28" text-anchor="middle" font-size="15" fill="#F28B82" font-family="JetBrains Mono, monospace">LAUSCHT</text></g>`;
+  h += FR.teams.map((t, i) => `<g class="fr-knoten" transform="translate(${t.x.toFixed(1)} ${t.y.toFixed(1)})"><circle class="k" r="46"/><use href="#${['a-skytale', 'logo-ring', 'a-tafel', 'o-zahnrad', 'o-scan'][i]}" x="-24" y="-24" width="48" height="48"/><text y="74">${t.name}</text><text class="sub" y="96">Tisch ${i + 1}</text></g>`).join('');
+  h += '<g id="fr-msgs"></g>';
+  svg.innerHTML = h;
+  // Startzustand: Ereignisse aus den ersten Minuten
+  const log = $('#fr-log'); log.innerHTML = '';
+  [['10:12:41', 'Team Skytale → Team Quadrat', caesar('TREFFEN AM BRUNNEN', 3), 0], ['10:12:58', 'Team Walze → Team Scheibe', caesar('DAS TOR BLEIBT ZU', 11), 0], ['10:13:20', 'Eve hat Nachricht 1 geknackt – Schlüssel 3', '»TREFFEN AM BRUNNEN«', 1], ['10:13:37', 'Team Lochkarte → Team Skytale', caesar('ALLES RUHIG IM NORDEN', 19), 0], ['10:13:52', 'Eve hat Nachricht 2 geknackt – Schlüssel 11', '»DAS TOR BLEIBT ZU«', 1], ['10:14:01', 'Eve hat Nachricht 3 geknackt – Schlüssel 7', '»WIR KOMMEN UM ACHT«', 1]].forEach(e => frLog(...e, true));
+  $('#fr-n').textContent = FR.n; $('#fr-geknackt').textContent = FR.geknackt;
+  // Statische Nachricht (sichtbar auch ohne Bewegung)
+  frNachricht(true);
+}
+function frLog(zeit, titel, text, eve, still) {
+  const li = document.createElement('li'); if (eve) li.className = 'eve';
+  li.innerHTML = `<time>${zeit}</time><b>${esc(titel)}</b><span class="gtx">${esc(text)}</span>`;
+  if (still) li.style.animation = 'none';
+  const log = $('#fr-log'); log.prepend(li); while (log.children.length > 14) log.lastChild.remove();
+}
+function frNachricht(stehend) {
+  const [a, b] = FR.kanten[Math.floor(Math.random() * FR.kanten.length)];
+  const [von, nach] = Math.random() < .5 ? [a, b] : [b, a];
+  const key = 1 + Math.floor(Math.random() * 25), klar = FR_TEXTE[Math.floor(Math.random() * FR_TEXTE.length)], gt = caesar(klar, key);
+  const g = document.createElementNS(SVGNS, 'g'); g.setAttribute('class', 'fr-nachricht');
+  const vorschau = gt.replace(/ /g, '').slice(0, 10);
+  g.innerHTML = `<rect x="-${vorschau.length * 7.6 + 16}" y="-56" width="${vorschau.length * 15.2 + 32}" height="34" rx="8"/><text x="0" y="-33" text-anchor="middle">${vorschau}…</text><circle r="10"/>`;
+  $('#fr-msgs').appendChild(g);
+  const m = { von, nach, key, klar, gt, g, t0: performance.now(), dauer: 3000, nr: ++FR.nr, gelauscht: false, stehend };
+  FR.msgs.push(m);
+  const kante = $(`#fr-k-${Math.min(a, b)}-${Math.max(a, b)}`); if (kante) kante.classList.add('aktiv');
+  m.kante = kante;
+  frPos(m, stehend ? .55 : 0);
+}
+function frPos(m, p) { const A = FR.teams[m.von], B = FR.teams[m.nach]; m.x = A.x + (B.x - A.x) * p; m.y = A.y + (B.y - A.y) * p; m.g.setAttribute('transform', `translate(${m.x.toFixed(1)} ${m.y.toFixed(1)})`); }
+function frTick(now) {
+  if (!FR.laeuft) return;
+  if (!FR.pause) {
+    if (now - FR.spawnT > 2300) { FR.spawnT = now; if (FR.msgs.length < 3) frNachricht(ruhig()); }
+    FR.msgs.slice().forEach(m => {
+      const p = (now - m.t0) / m.dauer;
+      if (!m.stehend) frPos(m, Math.min(p, 1));
+      if (p > .45 && !m.gelauscht) { m.gelauscht = true; const l = $('#fr-lausch'); l.setAttribute('x1', m.x); l.setAttribute('y1', m.y); l.classList.add('an'); setTimeout(() => l.classList.remove('an'), 700); }
+      if (p >= 1) {
+        m.g.remove(); if (m.kante) m.kante.classList.remove('aktiv'); FR.msgs.splice(FR.msgs.indexOf(m), 1);
+        FR.n++; $('#fr-n').textContent = FR.n;
+        frLog(frUhrzeit(), FR.teams[m.von].name + ' → ' + FR.teams[m.nach].name, m.gt);
+        if (Math.random() < .85) setTimeout(() => { if (!FR.laeuft) return; FR.geknackt++; $('#fr-geknackt').textContent = FR.geknackt; frLog(frUhrzeit(), `Eve hat Nachricht ${m.nr} geknackt – Schlüssel ${m.key}`, '»' + m.klar + '«', 1); const e = $('#fr-eve'); e.classList.remove('blitz'); void e.getBoundingClientRect(); e.classList.add('blitz'); }, 1200 + Math.random() * 1800);
+      }
+    });
+  }
+  FR.raf = requestAnimationFrame(frTick);
+}
+function frStart() {
+  if (FR.laeuft) return; if (!FR.teams.length) frAufbauen();
+  FR.laeuft = true; FR.spawnT = performance.now(); FR.msgs.forEach(m => { m.t0 = performance.now() - (m.stehend ? 0 : 0); });
+  FR.raf = requestAnimationFrame(frTick);
+  FR.uhrT = setInterval(() => { if (FR.pause) return; FR.rest = Math.max(0, FR.rest - 1); $('#fr-zeit').textContent = String(Math.floor(FR.rest / 60)).padStart(2, '0') + ':' + String(FR.rest % 60).padStart(2, '0'); }, 1000);
+}
+function frStop() { FR.laeuft = false; cancelAnimationFrame(FR.raf); clearInterval(FR.uhrT); }
+$('#fr-pause').addEventListener('click', ev => { FR.pause = !FR.pause; ev.currentTarget.textContent = FR.pause ? 'Weiter' : 'Pause'; if (!FR.pause) { const now = performance.now(); FR.msgs.forEach(m => { m.t0 = now - .5 * m.dauer; }); } });
+
+/* ---------- 7 Lehrkraft ---------- */
+const LK_SP = [['0.1', 0], ['0.2', 0], ['0.3', 0], ['0.4', 0], ['B0', 0, 1], ['1.1', 1], ['1.2', 1], ['1.3', 1], ['B1', 1, 1], ['2.1', 2], ['2.2', 2], ['2.3', 2, 0, 'eA'], ['2.4', 2], ['K1', 2, 0, 'Kür']];
+const LK_DATEN = [
+  ['Chronist 1', [100, 100, 100, 100, 82, 100, 100, 100, 71, 100, 100, 57, 43, 14]],
+  ['Chronist 2', [100, 100, 100, 100, 64, 100, 100, 86, 58, 100, 71, 29, 0, 0]],
+  ['Chronist 3', [100, 100, 86, 100, 55, 100, 86, 71, 52, 86, 43, 0, 0, 0]],
+  ['Chronist 4', [100, 100, 100, 100, 91, 100, 100, 100, 88, 100, 100, 100, 71, 43]],
+  ['Chronist 5', [100, 86, 71, 86, 48, 86, 71, 57, 0, 57, 14, 0, 0, 0]],
+  ['Chronist 6', [100, 100, 100, 100, 73, 100, 100, 100, 66, 100, 86, 43, 14, 0]],
+  ['Chronist 7', [100, 100, 100, 100, 78, 100, 100, 100, 64, 100, 71, 43, 29, 0]],
+  ['Chronist 8', [100, 100, 100, 71, 60, 100, 71, 71, 50, 71, 29, 0, 0, 0]]
+];
+const FALLEN = [['P1', 'Zählbasis verwechselt', 14], ['P2', 'Modulo falsch', 9], ['P3', 'Umkehrung falsch', 23], ['P4', 'Verfahrensregel übersehen', 6], ['P5', 'Falsch eingeordnet', 11], ['P6', 'Häufigkeitsanalyse pauschal', 8], ['P7', 'Schlüsselraum falsch', 5], ['P8', 'Kombination überschätzt', 3], ['P9', 'Schlüsselrollen verwechselt', 0], ['P10', 'Operator verfehlt', 4]];
+const WERKZEUGE = [['Skytale & Gitter', 0, true], ['Chiffrierscheibe', 0, true], ['Häufigkeits-Analysator', 1, true], ['Substitutions-Werkbank', 1, true], ['Vigenère-Werkbank', 2, true], ['Bit-Lupe', 3, false], ['Runden-Labor', 3, false], ['Modulo-Uhr & Farbmischer', 4, false], ['RSA-Rechenwerk', 4, false], ['Hash-Labor', 5, false], ['Signatur- & Zertifikats-Simulator', 5, false]];
+const SZEN = [['Botenlauf', 2, 'Caesar · Eve knackt per Brute Force', true], ['Wettknacken', 4, 'Substitution · Häufigkeiten', false], ['Der doppelte Schlüssel', 9, 'One-Time-Pad zweimal benutzt', false], ['Schlüsseltausch vor Eves Augen', 12, 'Diffie-Hellman mit kleinen Zahlen', false], ['Mallory im Netz', 16, 'Man-in-the-Middle, Zertifikate', false]];
+let LK_NIVEAU = 'eA';
+function lehrkraftZeichnen() {
+  const sicht = LK_SP.map((s, i) => [s, i]).filter(([s]) => !(LK_NIVEAU === 'gA' && s[3] === 'eA'));
+  let h = '<thead><tr><th></th>';
+  [[0, 'Antike'], [1, 'Bagdad'], [2, 'Renaissance']].forEach(([w, n]) => { const c = sicht.filter(([s]) => s[1] === w).length; h += `<th class="welt" colspan="${c}" data-ep="${w}" style="color:var(--akzent)">${n}</th>`; });
+  h += '</tr><tr><th scope="col" style="text-align:left">Pseudonym</th>' + sicht.map(([s]) => `<th scope="col" class="${s[2] ? 'boss' : ''}">${s[2] ? 'Boss' : s[0]}${s[3] ? `<br><span class="chip ${s[3] === 'eA' ? 'chip-eA' : 'chip-Kuer'}" style="font-size:.6rem; padding:0 5px">${s[3]}</span>` : ''}</th>`).join('') + '</tr></thead><tbody>';
+  LK_DATEN.forEach(([name, w]) => {
+    h += `<tr class="${name === 'Chronist 7' ? 'ich' : ''}"><th scope="row">${name}</th>`;
+    sicht.forEach(([s, i]) => {
+      const v = w[i];
+      if (!v) { h += `<td class="leer${s[2] ? ' boss' : ''}" aria-label="nicht begonnen">–</td>`; return; }
+      const st = 18 + v * .72; const dunkel = v >= 60;
+      const label = s[2] ? (v >= 50 ? '✓' : '') + v : v;
+      h += `<td class="${s[2] ? 'boss' : ''}" style="background:color-mix(in srgb, var(--hinweis) ${st.toFixed(0)}%, var(--karte)); color:${dunkel ? 'var(--auf-hinweis)' : 'var(--text)'}" aria-label="${v} Prozent${s[2] && v >= 50 ? ', besiegt' : ''}">${label}</td>`;
+    });
+    h += '</tr>';
+  });
+  $('#matrix').innerHTML = h + '</tbody>';
+  $('#matrix-hinweis').textContent = LK_NIVEAU === 'gA' ? 'gA: eA-Level 2.3 ausgeblendet' : 'eA: alle Level sichtbar';
+  $('#matrix-legende').innerHTML = `<span><i style="background:var(--papier-2)"></i>nicht begonnen</span><span><i style="background:color-mix(in srgb, var(--hinweis) 40%, var(--karte))"></i>in Arbeit</span><span><i style="background:color-mix(in srgb, var(--hinweis) 90%, var(--karte))"></i>abgeschlossen (%)</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--messing)"></i>Boss · ✓ ab 50 % besiegt</span>`;
+  const w2 = sicht.filter(([s]) => s[1] === 2 && !s[2] && s[3] !== 'Kür').map(([, i]) => i);
+  const avg = LK_DATEN.reduce((s, [, w]) => s + w2.reduce((a, i) => a + w[i], 0) / w2.length, 0) / LK_DATEN.length;
+  const boss1 = LK_DATEN.filter(([, w]) => w[8] >= 50).length;
+  const top = FALLEN.reduce((a, b) => b[2] > a[2] ? b : a);
+  $('#kacheln').innerHTML = `<div class="kachel"><span>Ø Fortschritt Renaissance</span><b>${pct(avg)}</b><small>über ${w2.length} Level (${LK_NIVEAU})</small></div><div class="kachel"><span>Boss Bagdad besiegt</span><b>${boss1} von 8</b><small>1 Person ohne Versuch</small></div><div class="kachel warn"><span>Häufigste Falle</span><b>${top[0]}</b><small>${top[1]} · ${top[2]}×</small></div>`;
+  const mx = Math.max(...FALLEN.map(f => f[2]));
+  $('#fallen-balken').innerHTML = FALLEN.map(([p, t, n]) => `<div class="fb${n === mx ? ' top' : ''}"><b>${p}</b><span>${t}</span><span class="spur" aria-hidden="true"><i style="width:${(n / mx * 100).toFixed(0)}%"></i></span><output aria-label="${n} Mal">${n}</output></div>`).join('');
+}
+function lehrkraftAufbauen() {
+  $$('.segment button').forEach(b => b.addEventListener('click', () => { LK_NIVEAU = b.dataset.niveau; $$('.segment button').forEach(x => x.setAttribute('aria-pressed', x === b)); lehrkraftZeichnen(); toast(LK_NIVEAU === 'gA' ? 'Niveau gA: eA-Level werden für Lernende ausgeblendet (in der Vorschau sichtbar).' : 'Niveau eA: alle Level sichtbar.'); }));
+  $('#welten-chips').innerHTML = EP.map(e => `<button class="welt-chip" data-ep="${e.id}" aria-pressed="${!e.gesperrt}"><i></i>W${e.id} ${e.kurz}</button>`).join('');
+  $$('#welten-chips .welt-chip').forEach(b => b.addEventListener('click', () => { const an = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', an); toast((an ? 'Freigeschaltet: ' : 'Gesperrt: ') + EP[+b.dataset.ep].kurz + ' (nur im Prototyp).'); }));
+  $('#werkzeug-freigaben').innerHTML = WERKZEUGE.map(([n, w, an], i) => `<li><span>${n}<small>Welt ${w}</small></span><button class="schalter" role="switch" aria-checked="${an}" aria-label="${n} freigeben" id="wz-${i}"></button></li>`).join('');
+  $$('#werkzeug-freigaben .schalter').forEach(b => b.addEventListener('click', () => b.setAttribute('aria-checked', b.getAttribute('aria-checked') !== 'true')));
+  $('#szenarien').innerHTML = SZEN.map(([n, ds, t, an], i) => `<label class="szenario${an ? '' : ' aus'}"><input type="radio" name="szenario" id="sz-${i}" ${an ? 'checked' : 'disabled'}><span><b>${n}</b><small>DS ${ds} · ${t}</small></span><span class="chip chip-neutral">${an ? '~20 min' : 'Prototyp'}</span></label>`).join('');
+  $('#fr-start').addEventListener('click', () => { zeige('funkraum'); toast('Szenario „Botenlauf“ gestartet. Die Teams sehen ihre Rollen auf dem Tablet.'); });
+  lehrkraftZeichnen();
+}
+
+/* ---------- 8 Akte ---------- */
+function akteAufbauen() {
+  const t = vig(norm(BRIEF), BRIEF_KEY).slice(0, 100);
+  let h = '';
+  for (let z = 0; z < t.length; z += 50) {
+    h += '<div class="akte-zeile">';
+    for (let g = z; g < Math.min(z + 50, t.length); g += 5) h += `<span class="g"><small>${g}</small>${t.slice(g, g + 5)}</span>`;
+    h += '</div>';
+  }
+  $('#akte-gt').innerHTML = h;
+  $('#akte-gt').setAttribute('aria-label', 'Geheimtext, buchstabiert: ' + gruppen(t));
+  // QR-Platzhalter (deterministisch, kein echter Code)
+  const N = 29; let q = ''; let s = 7;
+  const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7" fill="#1B1B1F"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#FFFFFF"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" fill="#1B1B1F"/>`;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const inF = (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9); if (!inF && rnd() < .48) q += `<rect x="${x}" y="${y}" width="1" height="1" fill="#1B1B1F"/>`; }
+  $('#qr').innerHTML = `<rect width="${N}" height="${N}" fill="#FFFFFF"/>` + q + finder(0, 0) + finder(N - 7, 0) + finder(0, N - 7);
+}
+
+/* ---------- Start ---------- */
+zeitleisteZeichnen();
+epocheZeichnen();
+$('#start-titel').addEventListener('click', () => entsiegeln($('#start-titel'), 'DIE ZEITREISE DER GEHEIMSCHRIFTEN'));
+aufgabeAufbauen();
+aufQuadrat = quadratBauen($('#auf-quadrat'), $('#auf-quadrat-info'));
+laborSetzen(vig(norm(BRIEF), BRIEF_KEY));
+lehrkraftAufbauen();
+akteAufbauen();
+const h0 = location.hash.slice(1);
+zeige(VIEWS.includes(h0) ? h0 : 'start', { keinScroll: true });
+})();
+</script>

@@ -1,0 +1,9 @@
+# Material-Pipeline Kryptos (Python ≥ 3.10)
+# Systempakete: LibreOffice (soffice, für PDF), Schriften Carlito/Gelasio/Inconsolata
+# (Debian/Ubuntu: fonts-crosextra-carlito, fonts-crosextra-caladea; Gelasio und Inconsolata aus Google Fonts),
+# DejaVu Sans (Glyphen-Ersatz), Cairo (für cairosvg).
+python-docx==1.2.0
+qrcode==8.2
+CairoSVG==2.9.1
+fonttools==4.65.0
+Pillow==12.3.0

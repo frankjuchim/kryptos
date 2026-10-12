@@ -1,0 +1,711 @@
+{
+ "typ": "akte",
+ "welt": 6,
+ "kennung": "AKTE W6·3",
+ "titel": "Generalprobe",
+ "ds": "17 (HA) / 18",
+ "niveau": "kern",
+ "level": "6.3",
+ "datei": "KR_W6_Akte3_Generalprobe",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Das Chronoskop läuft wieder. Die Archivarin lächelt: „Jetzt kennst du jede Epoche. Bleibt die letzte Reise – die ins Abitur.“ Dort zählt nicht nur, was du weißt, sondern wie du es aufschreibst: in der richtigen Zeit, mit dem richtigen Operator, mit einer Begründung, die jede Korrektorin abhaken kann. 🛡 Heute schützt du deine Punkte."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Dein Zeitplan",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "eA",
+      "gA"
+     ],
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      5.2,
+      5.6,
+      5.6
+     ],
+     "zeilen": [
+      [
+       "Gesamtzeit Abitur / BE",
+       "270 min / 120 BE",
+       "220 min / 100 BE"
+      ],
+      [
+       "Minuten je BE",
+       "**2,25**",
+       "**2,2**"
+      ],
+      [
+       "Krypto-Aufgabe Block 2",
+       "30 BE ≈ 67,5 min",
+       "25 BE ≈ 55 min"
+      ],
+      [
+       "Teilaufgabe 2 / 3 / 4 / 5 / 6 BE",
+       "4,5 / 6,75 / 9 / 11,25 / 13,5 min",
+       "4,4 / 6,6 / 8,8 / 11 / 13,2 min"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Vorgehen:**"
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Aufgabe überfliegen (3 min).",
+      "Material markieren, Beispiel nachrechnen (5 min).",
+      "Teilaufgaben nach BE takten, sichere Teile zuerst.",
+      "Bei Rückstand: Stichpunkte statt Prosa, später ergänzen.",
+      "5 min Kontrolle (Checkliste der Akte W6·1)."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Operatoren-Kompass (die acht häufigsten im Krypto-Block)",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Operator",
+      "erwartet",
+      "Mustersatz-Anfang"
+     ],
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      3.4,
+      6.0,
+      6.8
+     ],
+     "zeilen": [
+      [
+       "bestimmen",
+       "Lösungsweg + Ergebnis",
+       "„Nummerierung A = 1 … Rechnung: … Ergebnis: …“"
+      ],
+      [
+       "beschreiben",
+       "Sachverhalt in eigenen Worten mit Fachsprache",
+       "„Beim … wird zunächst …, anschließend …“"
+      ],
+      [
+       "erläutern",
+       "verständlich machen, mit Beispiel",
+       "„…, das heißt … . Zum Beispiel …“"
+      ],
+      [
+       "begründen",
+       "auf Ursachen/Gesetzmäßigkeiten zurückführen",
+       "„…, weil … . Daraus folgt …“"
+      ],
+      [
+       "analysieren / untersuchen",
+       "Eigenschaften unter einer Fragestellung herausarbeiten",
+       "„Betrachtet man …, so zeigt sich …“"
+      ],
+      [
+       "entscheiden (begründet)",
+       "Entscheidung + Begründung + Beleg",
+       "„Die Aussage ist korrekt/falsch, denn … . Beleg: …“"
+      ],
+      [
+       "vergleichen",
+       "Gemeinsamkeiten und Unterschiede nach Kriterien",
+       "„Hinsichtlich … gilt bei beiden …; dagegen …“"
+      ],
+      [
+       "beurteilen",
+       "Kriterien, Begründung, ausdrückliches Urteil",
+       "„Nach dem Kriterium … ist …; insgesamt ist das Verfahren …“"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Vollständige Liste aller 18 Operatoren: Werkzeugkarte WK5.",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "„Entscheiden Sie begründet …“ in drei Schritten",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "*Entscheidung* gleich zu Beginn: „Die Aussage ist falsch.“",
+      "*Begründung* mit Fachbegriff und kausalem Zusammenhang: „Caesar ersetzt jeden Buchstaben unabhängig von der Position; zwei Verschiebungen addieren sich daher zu einer Verschiebung.“",
+      "*Beleg*: Rechnung, Beispiel oder Gegenbeispiel: „k = 7 und k = 11 ergeben k = 18; abc → STU in beiden Fällen.“"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P10",
+   "titel": "Richtige Entscheidung, null Punkte",
+   "md": "Eine Entscheidung **ohne Begründung** erhält 0 BE – auch wenn sie stimmt. Umgekehrt kostet zu viel Zeit: „**Nennen** Sie …“ verlangt eine Aufzählung, keine halbe Seite. Unterstreiche den Operator und liefere genau seine Leistung."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "BE-Plan",
+   "sozialform": "Einzelarbeit · 5 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die Probeklausur (DS 18) hat im eA die Teilaufgaben a)–i) mit 3, 4, 3, 3, 3, 5, 4, 3, 2 BE, im gA mit 3, 4, 3, 3, 3, 3, 2, 2, 2 BE. **Erstelle** für dein Niveau einen Zeitplan (Minuten je Teilaufgabe, kumuliert), runde auf halbe Minuten."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      4.0,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "Teilaufgabe",
+      "a)",
+      "b)",
+      "c)",
+      "d)",
+      "e)",
+      "f)",
+      "g)",
+      "h)",
+      "i)"
+     ],
+     "zeilen": [
+      [
+       "BE eA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "5",
+       "4",
+       "3",
+       "2"
+      ],
+      [
+       "BE gA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "3",
+       "2",
+       "2",
+       "2"
+      ],
+      [
+       "Minuten (mein Niveau)",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "gerundet",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "kumuliert",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      4.0,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42,
+      1.42
+     ],
+     "nur_loesung": true,
+     "kopf": [
+      "Teilaufgabe",
+      "a)",
+      "b)",
+      "c)",
+      "d)",
+      "e)",
+      "f)",
+      "g)",
+      "h)",
+      "i)"
+     ],
+     "zeilen": [
+      [
+       "BE eA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "5",
+       "4",
+       "3",
+       "2"
+      ],
+      [
+       "eA: Minuten",
+       "6,75",
+       "9",
+       "6,75",
+       "6,75",
+       "6,75",
+       "11,25",
+       "9",
+       "6,75",
+       "4,5"
+      ],
+      [
+       "eA: gerundet",
+       "7",
+       "9",
+       "7",
+       "7",
+       "7",
+       "11",
+       "9",
+       "7",
+       "4,5"
+      ],
+      [
+       "eA: kumuliert",
+       "7",
+       "16",
+       "23",
+       "30",
+       "37",
+       "48",
+       "57",
+       "64",
+       "68,5"
+      ],
+      [
+       "BE gA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "3",
+       "2",
+       "2",
+       "2"
+      ],
+      [
+       "gA: Minuten",
+       "6,6",
+       "8,8",
+       "6,6",
+       "6,6",
+       "6,6",
+       "6,6",
+       "4,4",
+       "4,4",
+       "4,4"
+      ],
+      [
+       "gA: gerundet",
+       "6,5",
+       "9",
+       "6,5",
+       "6,5",
+       "6,5",
+       "6,5",
+       "4,5",
+       "4,5",
+       "4,5"
+      ],
+      [
+       "gA: kumuliert",
+       "6,5",
+       "15,5",
+       "22",
+       "28,5",
+       "35",
+       "41,5",
+       "46",
+       "50,5",
+       "55"
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "eA: 6,75 · 9 · 6,75 · 6,75 · 6,75 · 11,25 · 9 · 6,75 · 4,5 = 67,5 min; gerundet 7 · 9 · 7 · 7 · 7 · 11 · 9 · 7 · 4,5; kumuliert 7 – 16 – 23 – 30 – 37 – 48 – 57 – 64 – 68,5 (Rest bis 70 = Kontrolle)."
+    },
+    {
+     "t": "p",
+     "md": "gA: 6,6 · 8,8 · 6,6 · 6,6 · 6,6 · 6,6 · 4,4 · 4,4 · 4,4 = 55 min; gerundet 6,5 · 9 · 6,5 · 6,5 · 6,5 · 6,5 · 4,5 · 4,5 · 4,5 = 55."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Operator-Detektiv",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bewertet** jede Antwort (volle, halbe, keine BE?) und **verbessert** sie."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "„**Erläutern** Sie das Prinzip der Häufigkeitsanalyse.“ – „Man zählt die Buchstaben.“",
+      "„**Begründen** Sie, dass der Schlüsselraum des Caesar-Verfahrens zu klein ist.“ – „Er hat nur 26 Schlüssel.“",
+      "„**Vergleichen** Sie Caesar und Vigenère hinsichtlich der Häufigkeitsanalyse.“ – „Vigenère ist sicherer.“",
+      "„**Nennen** Sie zwei Schutzziele.“ – eine halbe Seite über die Geschichte der Kryptografie, darin die Wörter Vertraulichkeit und Integrität."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 6,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) höchstens halbe BE: Ziel und Beispiel fehlen – „Man bestimmt die Häufigkeiten der Geheimtextbuchstaben und vergleicht sie mit der bekannten Verteilung der Sprache; bei Caesar entspricht der häufigste Geheimtextbuchstabe vermutlich E, z. B. H → Verschiebung 3.“"
+    },
+    {
+     "t": "p",
+     "md": "b) Ursache fehlt: „… nur 25 sinnvolle Schlüssel; ein Angreifer kann alle in kurzer Zeit ausprobieren (Brute Force), deshalb …“."
+    },
+    {
+     "t": "p",
+     "md": "c) keine Kriterien: „Caesar: eine Verschiebung, Verteilung nur verschoben → direkt angreifbar; Vigenère: mehrere Verschiebungen, Verteilung verwischt → erst Teiltexte bilden.“"
+    },
+    {
+     "t": "p",
+     "md": "d) volle BE, aber Zeitverlust: „nennen“ = aufzählen (P10)."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Fünf Aussagen",
+   "sozialform": "Einzelarbeit · 12 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entscheide** jeweils **begründet** (drei Schritte):"
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Caesar mit der Verschiebung 13 ist involutorisch: Zweimal verschlüsseln liefert den Klartext.",
+      "Ein One-Time-Pad bleibt sicher, wenn derselbe Schlüssel für zwei Nachrichten verwendet wird.",
+      "Bei einer Spaltentransposition liefert die Häufigkeitsanalyse der Einzelbuchstaben den Schlüssel.",
+      "Mit einem Zertifikat bestätigt eine Zertifizierungsstelle, dass ein öffentlicher Schlüssel zu der genannten Person gehört.",
+      "Ein Hashwert kann mit dem passenden Schlüssel wieder entschlüsselt werden."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 8,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(1) **korrekt**: 13 + 13 = 26 ≡ 0 – zweimal verschoben ist gar nicht verschoben."
+    },
+    {
+     "t": "p",
+     "md": "(2) **falsch**: C~1~ ⊕ C~2~ = M~1~ ⊕ M~2~ – der Schlüssel fällt heraus, Eve kann Wortteile raten (W3, „Der doppelte Schlüssel“)."
+    },
+    {
+     "t": "p",
+     "md": "(3) **falsch**: Die Häufigkeiten bleiben erhalten; man erkennt die Transposition, nicht den Schlüssel (P6)."
+    },
+    {
+     "t": "p",
+     "md": "(4) **korrekt**: Zuordnung Schlüssel ↔ Identität, signiert von der CA (P9)."
+    },
+    {
+     "t": "p",
+     "md": "(5) **falsch**: Hashfunktionen sind Einwegfunktionen ohne Schlüssel; es gibt nichts zu entschlüsseln (P9)."
+    }
+   ],
+   "fallen": [
+    "P6",
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 3,
+   "titel": "Abi-Duell vorbereiten",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Formuliert** zu zwei verschiedenen Welten je eine Aussage im Abitur-Stil (eine korrekte, eine falsche, beide nicht offensichtlich) und schreibt die vollständige Musterentscheidung (drei Schritte) dazu. Die Aussagen werden im Abi-Duell eingesetzt."
+    },
+    {
+     "t": "kasten",
+     "kopf": "DUELL-KARTE 1 · für das Abi-Duell",
+     "farbe": "8A5F1A",
+     "nur_schueler": true,
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Welt: [[luecke:10]]   Die Aussage ist: ☐ korrekt   ☐ falsch"
+      },
+      {
+       "t": "p",
+       "md": "**Aussage** (im Abitur-Stil):"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "**Musterentscheidung** – 1 Entscheidung · 2 Begründung · 3 Beleg:"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "t": "kasten",
+     "kopf": "DUELL-KARTE 2 · für das Abi-Duell",
+     "farbe": "8A5F1A",
+     "nur_schueler": true,
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Welt: [[luecke:10]]   Die Aussage ist: ☐ korrekt   ☐ falsch"
+      },
+      {
+       "t": "p",
+       "md": "**Aussage** (im Abitur-Stil):"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "**Musterentscheidung** – 1 Entscheidung · 2 Begründung · 3 Beleg:"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:76]]",
+       "vor": 6
+      }
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "individuell; Kriterium: Aussage eindeutig entscheidbar, Musterentscheidung mit Beleg. Beispiele für gelungene Karten: Abi-Duell-Karten (`KR_W6_Funkraum_Abi-Duell`)."
+    }
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "**Entscheiden** Sie jeweils begründet, ob die Aussage korrekt oder falsch ist."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "„Verschlüsselt man einen Text mit Vigenère zuerst mit dem Schlüsselwort AB und danach mit BA, entspricht das einer Caesar-Verschlüsselung.“",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 2,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**korrekt** (1): Vigenère-Verschiebungen addieren sich stellenweise: A + B = B, B + A = B; die kombinierte Folge ist BB… – an jeder Stelle Verschiebung 1 = Caesar mit k = 1 (abcdef → BCDEFG) (1)."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "„Bei 20 Teilnehmenden benötigt ein symmetrisches Verfahren für paarweise verschlüsselte Kommunikation 380 Schlüssel.“",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 2,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**falsch** (1): 20 · 19 / 2 = 190; 380 = 20 · 19 zählt jedes Paar doppelt (1)."
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "„Signiert Alice eine Nachricht mit Bobs öffentlichem Schlüssel, so ist die Authentizität der Nachricht gesichert.“",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 2,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**falsch** (1): Mit Bobs öffentlichem Schlüssel kann jeder verschlüsseln – das sichert (höchstens) Vertraulichkeit; Authentizität erfordert Alices privaten Schlüssel (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "6.3",
+   "md": "Level 6.3 „Generalprobe“ im Kryptolabor: Zeitplan, Operatoren, Entscheiden. Trainingsplatz „Zeitplan“ (G-W6-2); danach der Boss „Generalprobe online“ (30 min, ohne Werkzeuge, nur WK1)."
+  }
+ ]
+}

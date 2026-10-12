@@ -1,0 +1,12 @@
+{
+  "name": "kryptos-material",
+  "private": true,
+  "description": "Material-Pipeline Kryptos: Präsentationen (pptx) aus JSON-Quellen",
+  "license": "UNLICENSED",
+  "scripts": {
+    "folien": "node kr_pptx.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  }
+}

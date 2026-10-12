@@ -1,0 +1,780 @@
+{
+ "typ": "dokument",
+ "welt": 6,
+ "kennung": "LEHRERHINWEISE W6",
+ "titel": "Die Zeitmaschine – Endgegner",
+ "datei": "KR_W6_Lehrerhinweise",
+ "ds": "17–18",
+ "namenszeile": false,
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "ÜBERBLICK",
+   "md": "Welt 6 ist der **Endgegner**: In DS 17 jagen die Lernenden die zehn Fallen P1–P10 und knacken **Eves Uhrwerk** (Ring-Transposition + Pendel-Vigenère) mit der vollständigen 5-Schritte-Methode; DS 18 ist die **Generalprobe** – die Probeklausur KETTENSCHRIFT unter Abiturbedingungen (Papier-Boss der Welt). Danach folgen Klausur (zwei Aufgaben im Format 2A/2E) und Abitur. Artefakt: **Chronoskop-Kern** (für den bestandenen Online-Boss „Generalprobe online“). Archivfund-Lösung: `TAZLL ZZLYL VIHAV K` → **zeitreisebeendet** (t = 3, Pendelwort UHR)."
+  },
+  {
+   "t": "h",
+   "md": "1 Ziele"
+  },
+  {
+   "t": "p",
+   "md": "Die Lernenden wenden die 5-Schritte-Methode selbstständig auf ein unbekanntes Verfahren an, kennen ihre persönlichen Fallen, planen ihre Prüfungszeit und erfüllen Operatoren – insbesondere „beurteilen“ und „entscheiden (begründet)“."
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz („Die Schülerinnen und Schüler …“)",
+    "Phase/Niveau",
+    "in W6"
+   ],
+   "schrift": 9,
+   "breiten": [
+    10.2,
+    2.4,
+    4.2
+   ],
+   "zeilen": [
+    [
+     "beurteilen die Sicherheit eines gegebenen symmetrischen Verschlüsselungsverfahrens",
+     "Q · gA/eA",
+     "Schwerpunkt: 6.2, Probeklausur"
+    ],
+    [
+     "beschreiben das Prinzip der Transposition und der Substitution …",
+     "EP · gA/eA",
+     "Wiederholung: 6.1, 6.2"
+    ],
+    [
+     "beurteilen die Sicherheit einfacher Verschlüsselungsverfahren",
+     "EP · gA/eA",
+     "6.1 (P6–P8), 6.2"
+    ],
+    [
+     "beschreiben das Prinzip der polyalphabetischen Substitution, u. a. am Beispiel des Vigenère-Verfahrens",
+     "Q · gA/eA",
+     "6.2 (Pendel = Vigenère)"
+    ],
+    [
+     "beschreiben und unterscheiden die Prinzipien der symmetrischen und asymmetrischen Verschlüsselung; beschreiben Anwendungsbereiche",
+     "Q · gA/eA",
+     "6.2 (Schlüsselanzahl, Hybrid), Boss"
+    ],
+    [
+     "erläutern das Prinzip von digitalen Signaturen und Zertifikaten",
+     "Q · gA/eA",
+     "6.1 (P9), 6.2, Boss"
+    ],
+    [
+     "erläutern die prinzipielle Funktionsweise eines modernen symmetrischen Blockchiffreverfahrens",
+     "eA",
+     "6.2 (Diffusion), Boss B-13"
+    ],
+    [
+     "prozessbezogen: PK3.3 begründen, PK1.4 beurteilen nach Kriterien",
+     "–",
+     "6.3 (Operatoren, „Entscheiden Sie begründet“)"
+    ]
+   ]
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Level",
+    "Titel",
+    "Rolle",
+    "DS",
+    "Kern"
+   ],
+   "schrift": 9,
+   "breiten": [
+    1.3,
+    2.9,
+    1.3,
+    2.0,
+    9.3
+   ],
+   "kopfspalte": true,
+   "zeilen": [
+    [
+     "6.1",
+     "Fallenjagd",
+     "🔍",
+     "17",
+     "P1–P10 an Mini-Fällen („Finde den Fehler in dieser Schülerlösung“), 12 Aufgaben"
+    ],
+    [
+     "6.2",
+     "Eves Chiffre",
+     "🔍",
+     "17",
+     "Eves Uhrwerk mit voller 5-Schritte-Methode; moderne Bausteine im Abi-Mix, 10 Aufgaben"
+    ],
+    [
+     "6.3",
+     "Generalprobe",
+     "🛡",
+     "17/18 (HA)",
+     "Zeitplanung, Operatoren (WK5), „Entscheiden Sie begründet …“, 8 Aufgaben"
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "2 Verlauf"
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 17 – Fallenjagd und Eves Chiffre (90 min)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "Leitner-Karten WU-W6-01 bis -06 (Fallen-Schnelltest, spiralförmig W0–W5)",
+     "EA",
+     "Lab Warm-up / `KR_W6_Warmup`"
+    ],
+    [
+     "Archivfund",
+     "10",
+     "Folie „Eves Chiffre“: Der Ring steht still. Impuls: „Was wisst ihr, was fehlt?“ → Material lesen, Kurs entschlüsselt gemeinsam die ersten vier Zeichen (Stufe 2 rückwärts: T − U = Z, A − H = T, Z − R = I, L − H = E); Rest in Auftrag 2 der Akte W6·2",
+     "PL",
+     "Folien 1–6, Lab-Archivfund"
+    ],
+    [
+     "Fallenjagd",
+     "25",
+     "Video 07 (Ausschnitt „Die zehn Fallen“, 6 min) → Level 6.1 im Lab bzw. Akte W6·1 Aufträge 1–3 in Partnerarbeit; Sicherung: jede Partnergruppe nennt „ihre“ gefährlichste Falle mit Gegenmittel (passende Fallen-Folie zeigen)",
+     "PA, PL",
+     "Video 07, Lab 6.1, Akte W6·1, Folien 7–20"
+    ],
+    [
+     "Eves Chiffre",
+     "35",
+     "Akte W6·2: Archivwissen 1 lesen, Beispiel nachrechnen (Schritt 1), Archivfund vollständig entschlüsseln (Schritt 3), einordnen und beurteilen (Schritte 4–5); schnelle Lernende: Auftrag 5 (eA) und Lab 6.2",
+     "EA → PA",
+     "Akte W6·2, Lab 6.2, WK2, WK3, Folien 21–22"
+    ],
+    [
+     "Abschluss",
+     "10",
+     "Sicherung „Das Uhrwerk in 5 Schritten“; Hausaufgabe: Level 6.3 und „Generalprobe online“ (30 min, Abi-Bedingungen: ohne Werkzeuge, nur WK1); Hinweis auf die Probeklausur in DS 18",
+     "PL",
+     "Folien 23–25"
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 18 – Generalprobe (Probeklausur, 90 min)",
+   "zeilen": [
+    [
+     "Briefing",
+     "8",
+     "Zeitplan (2,25 min/BE eA, 2,2 min/BE gA), Vorgehen „Überfliegen – Material markieren – Beispiel nachrechnen – BE-Plan – Reserve“, Operatoren-Kompass, Fallen-Checkliste; das Warm-up entfällt heute (Ersatz: Briefing)",
+     "PL",
+     "Folien 26–30, WK5"
+    ],
+    [
+     "Probeklausur",
+     "70 (gA 55)",
+     "Probeklausur KETTENSCHRIFT unter Abiturbedingungen (nur WK1, kein Taschenrechner)",
+     "EA",
+     "`KR_W6_Probeklausur_eA/gA`, Folie 31"
+    ],
+    [
+     "Erste Auswertung",
+     "12 (gA 27)",
+     "Lösungen der Rechenteile a), b) zeigen, Kernpunkte-Bogen austeilen, Selbstkorrektur als Hausaufgabe; gA zusätzlich: Besprechung c)–g) im Plenum",
+     "EA, PL",
+     "Folien 32–34, Kernpunkte-Bogen (EH ohne Musterrechnungen)"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "*Folgestunde (vor der Klausur, optional 45 min):* Peer-Check nach Kernpunkten, Fallen-Strichliste im Team, **Abi-Duell** als Wiederholung (`KR_W6_Funkraum_Abi-Duell`)."
+  },
+  {
+   "t": "h",
+   "md": "3 Typische Schwierigkeiten"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Falle",
+    "Wo",
+    "Schwierigkeit und Gegenmittel"
+   ],
+   "kopfspalte": true,
+   "schrift": 9,
+   "breiten": [
+    1.4,
+    3.4,
+    12.0
+   ],
+   "zeilen": [
+    [
+     "P3",
+     "Ring zurück (W6·2)",
+     "Zeichen j des Zwischentextes gehört auf Feld (t · j) mod 8, nicht auf Feld j; mit der Ring-Schablone (Anhang Akte W6·2) vormachen. Reihenfolge: erst Pendel, dann Ring."
+    ],
+    [
+     "P4",
+     "Pendel (W6·2)",
+     "Endbuchstaben werden doppelt geschrieben (UHRRHU …) oder das Wort zyklisch wiederholt (UHRUHR …); Folie „Stufe 2: Das Pendel“ und Fallen-Folie P4 betonen."
+    ],
+    [
+     "P1",
+     "Vigenère-Quadrat",
+     "Schlüsselbuchstabe Z = Verschiebung 25, nicht 26; Schlüsselbuchstabe A = Verschiebung 0."
+    ],
+    [
+     "P10",
+     "„beurteilen“",
+     "Lernende hören nach den Kriterien auf; Urteil einfordern („Insgesamt ist …“). Bei „Entscheiden Sie begründet“ ohne Begründung: 0 BE."
+    ],
+    [
+     "P4/P3",
+     "Probeklausur b)",
+     "Vorgänger ist das **Geheimtext**zeichen; häufigster Fehler im Probelauf erwartet."
+    ],
+    [
+     "P2",
+     "Rechnen mod 26",
+     "Rest 0 → Z bei A = 1; negative Reste + 26 (Akte W6·1 A1, Warm-up WU-W6-03)."
+    ],
+    [
+     "P7",
+     "Schlüsselanzahl",
+     "n(n − 1) statt n(n − 1)/2; Vergleich symmetrisch/asymmetrisch kippt erst ab n = 6 (bei n = 5 gleich)."
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "4 Differenzierung gA/eA"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**gA:** Probeklausur gA (`SPEC_Kryptos_Pruefungen.md` §2) mit Hinweisen in den Vorlagen; Akte W6·2 Auftrag 5 entfällt; im Online-Boss wird W6-B-13 nicht gezogen (gA-Pool: 14 Aufgaben).",
+    "**eA / schnell:** Akte W6·2 Auftrag 5, Lab 6.2 Aufgaben 06 und 10, Abi-Duell-Karten zu Blockchiffre und Betriebsmodus (K10–K12).",
+    "**langsam:** Akte W6·1 Aufträge 1–3 und Lab 6.1 ★-Aufgaben zuerst; Archivfund mit vorgefüllter Pendelzeile (`UHRHUHRHUHRHUHRH`) – in der Akte-Vorlage eintragen."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "5 Kürzungsvariante (15 DS)"
+  },
+  {
+   "t": "p",
+   "md": "DS 17 und 18 werden zusammengelegt: Fallenjagd und Level 6.2 als Hausaufgabe (mit Video 07), in der Stunde nur Briefing (8 min) und Probeklausur; Besprechung in der Folgestunde. Alternativ entfällt die Probeklausur und die Klausur übernimmt ihre Funktion (dann „Generalprobe online“ als verpflichtende Vorbereitung)."
+  },
+  {
+   "t": "h",
+   "md": "6 Vorbereitung und Technik"
+  },
+  {
+   "t": "liste",
+   "haken": true,
+   "items": [
+    "Probeklausur eA/gA in Kursstärke drucken (mit Vorlagen); Kernpunkte-Bogen (EH ohne Musterrechnungen) für die Selbstkorrektur.",
+    "WK1 je Person (laminiert, keine Notizen darauf); Ring-Schablonen (Anhang Akte W6·2) kopieren.",
+    "Im Lab Welt 6 und den Boss „Generalprobe online“ freischalten; Werkzeuge für den Boss sperren (Standard).",
+    "Video 07 bereitstellen; Uhr mit Restzeit für den Beamer (DS 18).",
+    "Optional: Abi-Duell vorbereiten (Rollenkarten, Antwortkarten, Karten K1–K12 ausschneiden)."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "7 Bezug zum Abitur"
+  },
+  {
+   "t": "p",
+   "md": "Trainiert werden das Grundmuster **„fremde Chiffre“** (anwenden, umkehren, einordnen, beurteilen), **„Entscheiden Sie begründet“** (2025, 2026), Varianten/Mehrfachanwendung (2024), Fehlerfortpflanzung (2024, 2025), Prüfsummen/Kollisionen (2024 NT, 2025 NT), Signatur/Zertifikat (2022 E, 2025 NT), Schlüsselanzahl und Hybrid (2026). Die Zeitansätze folgen der EB-AVO-GOBAK (eA 270 min, gA 220 min). Abituraufgaben selbst werden nicht verteilt (nur Verweis für die Lehrkraft)."
+  },
+  {
+   "t": "p",
+   "md": "**Probeklausur KETTENSCHRIFT** (Papier-Boss W6, Blockrotation + Kette, Kontext Geocaching-Verein):"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Teil",
+    "Operator",
+    "eA BE",
+    "gA BE",
+    "Inhalt"
+   ],
+   "schrift": 9,
+   "breiten": [
+    1.1,
+    4.4,
+    1.3,
+    1.3,
+    8.7
+   ],
+   "kopfspalte": true,
+   "zeilen": [
+    [
+     "a",
+     "bestimmen",
+     "3",
+     "3",
+     "felsspalte verschlüsseln → `GSYRH AMGHM`"
+    ],
+    [
+     "b",
+     "bestimmen",
+     "4",
+     "4",
+     "`TXCDU PUMYD P` entschlüsseln → anderquelle"
+    ],
+    [
+     "c",
+     "entscheiden (gA: erläutern + entscheiden)",
+     "3",
+     "3",
+     "Transposition / polyalphabetische Substitution"
+    ],
+    [
+     "d",
+     "analysieren",
+     "3",
+     "3",
+     "Fehlerfortpflanzung (zwei falsche Zeichen)"
+    ],
+    [
+     "e",
+     "zeigen (gA: zeigen + begründen)",
+     "3",
+     "3",
+     "Zwischentext ab Zeichen 2 ohne S"
+    ],
+    [
+     "f",
+     "entwickeln + beurteilen (gA: beurteilen)",
+     "5",
+     "3",
+     "Angriff, 130 Schlüssel, Urteil"
+    ],
+    [
+     "g",
+     "entscheiden",
+     "4",
+     "2",
+     "Stufen vertauschen (falsch); b-fache Blockrotation = Identität (falsch wegen des kürzeren letzten Blocks)"
+    ],
+    [
+     "h",
+     "zeigen",
+     "3",
+     "2",
+     "Prüfzeichen-Kollision (insel/linse → R)"
+    ],
+    [
+     "i",
+     "erläutern",
+     "2",
+     "2",
+     "digitale Signatur statt Prüfzeichen"
+    ],
+    [
+     "Σ",
+     "",
+     "**30**",
+     "**25**",
+     "AFB eA 9/15/6, gA 8/13/4"
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "8 Werkzeuge und Funkraum"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**Labor-Werkzeuge** (kleine Erweiterungen, keine neuen): *Skytale & Gitter* im Modus „Ring“ (Blocklänge 4–12, Ringschritt t; Sprünge als Pfeile; bei ggT(t, n) > 1 werden die nie gelesenen Felder rot markiert: „nicht umkehrbar – t und n müssen teilerfremd sein“). *Vigenère-Werkbank* mit Schlüsselfolge „Pendel“ (Anzeige der Folge und der Periode 2L − 2) und „frei“; Teiltext-Histogramme nutzen die tatsächliche Periode. In Bossen gesperrt.",
+    "**Papier-Alternative:** Ring-Schablone (Kreis mit 8 Feldern) im Anhang der Akte W6·2.",
+    "**Funkraum:** kein Szenario – optional **Abi-Duell** (20–25 min): Teams sind abwechselnd Prüfungskommission und Prüflinge, die Lehrkraft ist Zweitkorrektorin; Drei-Schritt Entscheidung – Begründung – Beleg, je 1 BE; Strichliste an der Tafel, keine Lab-Punkte. Ablauf, Paarungsplan, Rollenkarten, Antwortkarten und zwölf Reserve-Karten: `Werkzeuge/Funkraum/KR_W6_Funkraum_Abi-Duell`.",
+    "**Werkzeugkarten:** WK1 (Anlage) in allen Prüfungsformaten; WK2 (5 Schritte), WK3 (Beurteilungsraster) und WK5 (Operatoren) in DS 17/18."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "9 Materialübersicht Welt 6"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Material",
+    "Datei",
+    "Ort"
+   ],
+   "schrift": 9,
+   "breiten": [
+    4.6,
+    7.6,
+    4.6
+   ],
+   "zeilen": [
+    [
+     "Präsentation (34 Folien)",
+     "`KR_W6_Praesentation_Zeitmaschine`",
+     "1_Praesentation"
+    ],
+    [
+     "Akte W6·1 Fallenjagd (+ LSG)",
+     "`KR_W6_Akte1_Fallenjagd`",
+     "2_Akten / 5_Loesungen"
+    ],
+    [
+     "Akte W6·2 Eves Chiffre (+ LSG, Ring-Schablonen)",
+     "`KR_W6_Akte2_Eves_Chiffre`",
+     "2_Akten / 5_Loesungen"
+    ],
+    [
+     "Akte W6·3 Generalprobe (+ LSG)",
+     "`KR_W6_Akte3_Generalprobe`",
+     "2_Akten / 5_Loesungen"
+    ],
+    [
+     "Probeklausur eA/gA (+ EH) = Papier-Boss",
+     "`KR_W6_Probeklausur_eA/gA`",
+     "4_Boss / 5_Loesungen"
+    ],
+    [
+     "Warm-up-Karten WU-W6-01 bis -12 (+ LSG)",
+     "`KR_W6_Warmup`",
+     "Werkzeuge/Warm-up-Karten"
+    ],
+    [
+     "Abi-Duell (Funkraum-Ersatz)",
+     "`KR_W6_Funkraum_Abi-Duell`",
+     "Werkzeuge/Funkraum"
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "10 Abdeckungsmatrix"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz",
+    "Level-Aufgaben",
+    "Akte-Auftrag",
+    "Boss",
+    "Probeklausur"
+   ],
+   "schrift": 8.5,
+   "breiten": [
+    4.4,
+    3.4,
+    4.0,
+    2.4,
+    2.6
+   ],
+   "zeilen": [
+    [
+     "beschreiben das Prinzip der Transposition und der Substitution",
+     "W6-L1-06, -07; W6-L2-01, -05",
+     "W6·1 A3; W6·2 A4a, Abi-Check b",
+     "B-02",
+     "c (Stufe 1/2)"
+    ],
+    [
+     "implementieren monoalphabetische Verfahren, u. a. Caesar",
+     "W6-L1-02 (Positionen)",
+     "W6·1 A1",
+     "B-01",
+     "– (Klausur A1 h: Struktogramm)"
+    ],
+    [
+     "erläutern das Prinzip der Häufigkeitsanalyse",
+     "W6-L1-08",
+     "W6·1 A4d; W6·3 A2a",
+     "B-07",
+     "f (Alternative)"
+    ],
+    [
+     "beurteilen die Sicherheit einfacher Verschlüsselungsverfahren",
+     "W6-L1-10, -12",
+     "W6·1 A5a, Abi-Check c",
+     "B-03, B-12",
+     "f"
+    ],
+    [
+     "beschreiben das Prinzip der polyalphabetischen Substitution (Vigenère)",
+     "W6-L1-04; W6-L2-02, -06",
+     "W6·2 A4c; W6·3 Abi-Check a",
+     "B-06, B-15",
+     "c"
+    ],
+    [
+     "beurteilen die Sicherheit eines gegebenen symmetrischen Verfahrens",
+     "W6-L2-06, -10",
+     "W6·2 A4, A5, Abi-Check c, d",
+     "B-09, B-10, B-12",
+     "d, e, f, g"
+    ],
+    [
+     "beschreiben und unterscheiden symmetrisch/asymmetrisch",
+     "W6-L1-09; W6-L2-07; W6-L3-08",
+     "W6·2 A6a; W6·3 Abi-Check b",
+     "B-04",
+     "–"
+    ],
+    [
+     "beschreiben Anwendungsbereiche symmetrischer/asymmetrischer Verfahren",
+     "W6-L2-08",
+     "W6·2 A6b",
+     "B-04",
+     "–"
+    ],
+    [
+     "erläutern das Prinzip von digitalen Signaturen und Zertifikaten",
+     "W6-L1-11; W6-L2-09",
+     "W6·1 A5b; W6·2 A6c; W6·3 A3(4), Abi-Check c",
+     "B-05, B-11, B-14",
+     "i (h: Prüfzeichen/Hash)"
+    ],
+    [
+     "erläutern die Funktionsweise einer Blockchiffre (eA)",
+     "W6-L2-10 (D)",
+     "W6·2 A6d",
+     "B-13",
+     "–"
+    ],
+    [
+     "entwerfen und implementieren ein symmetrisches Verfahren (eA)",
+     "–",
+     "W6·2 A5 (Variante beurteilen)",
+     "–",
+     "–"
+    ],
+    [
+     "PK3.3 begründen / Operatoren",
+     "W6-L3-01 … -08",
+     "W6·3 A1–A4",
+     "alle",
+     "alle Teilaufgaben"
+    ]
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Anhang A · Boss online „Generalprobe online“ (30 min, Pool 15, Ziehung 8: ★3 / ★★3 / ★★★2)"
+  },
+  {
+   "t": "p",
+   "md": "*Rahmentext (geduzt):* Das Chronoskop läuft wieder – aber bevor es dich ins Abitur schickt, prüft es dich ein letztes Mal: acht Aufgaben aus allen Epochen, von Sparta bis zum Netz, 30 Minuten, ohne Werkzeuge, nur mit der Anlage. Lies jede Aufgabe genau, achte auf die Nummerierung und denk an die zehn Fallen. Wer besteht, erhält den Chronoskop-Kern.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "ID",
+    "Stufe",
+    "Niv.",
+    "Kategorie",
+    "Aufgabe (gekürzt, gesiezt)",
+    "Lösung",
+    "Bezug"
+   ],
+   "schrift": 8,
+   "breiten": [
+    1.7,
+    1.45,
+    0.9,
+    1.9,
+    6.35,
+    2.8,
+    1.7
+   ],
+   "zeilen": [
+    [
+     "W6-B-01",
+     "★",
+     "kern",
+     "verschlüsseln",
+     "**Wenden** Sie das Caesar-Verfahren mit k = 4 auf „dachs“ **an**.",
+     "`HEGLW`",
+     "W0"
+    ],
+    [
+     "W6-B-02",
+     "★",
+     "kern",
+     "einordnen",
+     "Blöcke zu fünf Zeichen, jeder Block rückwärts notiert: Welches Prinzip? (A Transposition, B mono-, C polyalphabetische Substitution, D Codierung)",
+     "**A**",
+     "W0, P5"
+    ],
+    [
+     "W6-B-03",
+     "★",
+     "kern",
+     "Schlüsselraum",
+     "Anzahl der Schlüssel einer allgemeinen monoalphabetischen Substitution? (A 25, B 26, C 26², D 26! ≈ 4 · 10²⁶)",
+     "**D**",
+     "W1, P7"
+    ],
+    [
+     "W6-B-04",
+     "★",
+     "kern",
+     "Schlüsselraum",
+     "Neun Personen, paarweise: Schlüssel symmetrisch / asymmetrisch?",
+     "**36**; **18**",
+     "W4, P7"
+    ],
+    [
+     "W6-B-05",
+     "★",
+     "kern",
+     "Signatur",
+     "Mit welchem Schlüssel verschlüsselt Alice beim Signieren den Hashwert? (A Bobs öffentlichem, B Bobs privatem, C ihrem öffentlichen, D ihrem privaten)",
+     "**D**",
+     "W5, P9"
+    ],
+    [
+     "W6-B-06",
+     "★★",
+     "kern",
+     "Vigenère",
+     "**Wenden** Sie Vigenère mit dem Schlüsselwort TAU auf „kerze“ **an**.",
+     "`DELSE`",
+     "W2"
+    ],
+    [
+     "W6-B-07",
+     "★★",
+     "kern",
+     "Kasiski",
+     "Wiederholungen in den Abständen 18, 30 und 42: wahrscheinlichste Schlüssellänge? (A 3, B 6, C 12, D 90)",
+     "**B** (ggT 6)",
+     "W2"
+    ],
+    [
+     "W6-B-08",
+     "★★",
+     "kern",
+     "XOR",
+     "**Berechnen** Sie `0110 1100 ⊕ 1010 0101`.",
+     "`1100 1001`",
+     "W3"
+    ],
+    [
+     "W6-B-09",
+     "★★",
+     "kern",
+     "fremde Chiffre",
+     "MULTIPLIKATIONSRAD (A = 1): Geheimwert = (Wert · 3) mod 26, Rest 0 → 26; Entschlüsseln: · 9 mod 26. Klartext zu `GCPK`?",
+     "**kanu**",
+     "W1, P2"
+    ],
+    [
+     "W6-B-10",
+     "★★",
+     "kern",
+     "fremde Chiffre",
+     "SPIEGELPAAR (A = 1): Stufe 1 Wert → 27 − Wert, Stufe 2 Caesar + 2. Klartext zu `MTOJXQ`?",
+     "**pinsel** (falsche Reihenfolge: LEJOAH)",
+     "P3"
+    ],
+    [
+     "W6-B-11",
+     "★★",
+     "kern",
+     "Hash",
+     "Welche Aussage über kryptografische Hashfunktionen ist korrekt? (A entschlüsselbar, B kollisionsfrei, C Einweg + zwangsläufig Kollisionen, D so lang wie die Nachricht)",
+     "**C**",
+     "W5, P9"
+    ],
+    [
+     "W6-B-12",
+     "★★★",
+     "kern",
+     "fremde Chiffre",
+     "TREPPE: Verschiebungen 1, 2, 3, 1, 2, 3, … („leuchte“ → MGXDJWF). Welche Aussage ist korrekt? (A mono, B = Vigenère BCD ohne geheimen Schlüssel – keine Sicherheit, C Transposition, D sicherer als Vigenère)",
+     "**B**",
+     "W2, P5"
+    ],
+    [
+     "W6-B-13",
+     "★★★",
+     "eA",
+     "Blockchiffre",
+     "Toy-Blockchiffre, 8 Bit, 4 Runden (⊕ Rundenschlüssel, Rotation um 2): Ein Klartextbit gekippt – wie viele Geheimtextbits ändern sich? (A genau 1, B genau 2, C etwa 4, D alle 8)",
+     "**A**",
+     "W3, P8"
+    ],
+    [
+     "W6-B-14",
+     "★★★",
+     "kern",
+     "Zertifikat",
+     "Man-in-the-Middle-Angriff: fünf Schritte ordnen (Alice sendet Schlüssel → Mallory tauscht ihn aus → Bob verschlüsselt → Mallory liest/ändert → Mallory leitet weiter).",
+     "Reihenfolge wie angegeben",
+     "W5"
+    ],
+    [
+     "W6-B-15",
+     "★★★",
+     "kern",
+     "Vigenère",
+     "Vigenère zuerst mit AB, dann mit CDE: Länge und Schlüsselwort der gleichwertigen Einzelverschlüsselung?",
+     "Länge **6**, `CEEDDF`",
+     "W2, P8"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Mix: ★ 5 (01–05) · ★★ 6 (06–11) · ★★★ 4 (12–15); fremde Chiffre: 09, 10, 12. gA-Pool: 14 Aufgaben (ohne 13), ★★★ 3. „Besiegt“ ab 50 %, Freischaltung ab 60 % der Level-Punkte von W6.",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Anhang B · Trainingsplatz-Generatoren der Welt 6"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Generator",
+    "Parameter und Aufgabe",
+    "Lösung / Prüfregel"
+   ],
+   "kopfspalte": true,
+   "schrift": 8.5,
+   "breiten": [
+    2.6,
+    8.4,
+    5.8
+   ],
+   "zeilen": [
+    [
+     "G-W6-1 „Eves Uhrwerk“",
+     "Ringschritt t ∈ {3, 5, 7}; Pendelwort aus {UHR, TAG, RAD, SAND, ZEIT, KERN, NACHT}; Klartext aus deutschen Wörtern/Komposita (6–16 Buchstaben, ohne Umlaute); Richtung ver/ent (Seed-gesteuert). „Verschlüssele „<klartext>“ mit Eves Uhrwerk (t = <t>, Pendelwort <W>).“ bzw. „Entschlüssele <GEHEIMTEXT> …“. Beispiel: „zahnradwerk“, t = 3, UHR → Zwischentext `ZNDAR WHAEX XRXXK X` → `TUUHL DYHYE OYREB E`.",
+     "`eve_enc`/`eve_dec` (shared/krypto.js), Fünfergruppen; Normalisierung `krypto`, angehängte X toleriert. Fallen-Diagnose: Stufen vertauscht → P3; Wort zyklisch statt Pendel → P4; inverse statt gleicher Lesereihenfolge → P3."
+    ],
+    [
+     "G-W6-2 „Zeitplan“",
+     "Niveau eA (2,25 min/BE) oder gA (2,2 min/BE); BE-Liste aus 7–10 Teilaufgaben mit 2–6 BE, Summe 30 bzw. 25; Frage: Minuten für Teilaufgabe x · kumulierte Minuten bis x · Rückstand nach m Minuten bei b erledigten BE.",
+     "BE · Takt; kumuliert Summe; Rückstand m − b · Takt. Dezimalzahl mit Komma oder Punkt, Toleranz ± 0,5 min."
+    ],
+    [
+     "G-W6-3 „Fallen-Mix“",
+     "Basisgenerator (Caesar ver/ent mit A = 1, mod-Rechnen, Vigenère ver/ent, Schlüsselanzahl, XOR-Bytes) + zufällige Falle aus {P1, P2, P3, P7}; erzeugt eine Schülerlösung mit genau diesem Fehler. „In dieser Lösung steckt genau eine Falle. Welche? Gib außerdem das richtige Ergebnis an.“",
+     "Fallen-Nummer (choice) **und** korrektes Ergebnis (normalisiert) müssen stimmen; 1 Punkt."
+    ]
+   ]
+  }
+ ]
+}

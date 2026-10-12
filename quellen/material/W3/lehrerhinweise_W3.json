@@ -1,0 +1,850 @@
+{
+ "typ": "dokument",
+ "welt": 3,
+ "kennung": "LEHRERHINWEISE W3",
+ "titel": "Das Maschinenzeitalter",
+ "datei": "KR_W3_Lehrerhinweise",
+ "ds": "9–11",
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "ZIELE DER WELT 3",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Bitebene** sicher beherrschen: ASCII, Dualzahlen, XOR (kern).",
+      "Das **One-Time-Pad** als einziges beweisbar sicheres Verfahren kennen und seine Grenzen begründen: Schlüsselproblem, Einmaligkeit, C1 ⊕ C2 = M1 ⊕ M2 (kern).",
+      "(eA) Die prinzipielle Funktionsweise einer **Blockchiffre** an KRYPTOS-16 erläutern: Runden, S-Box, Transposition, Konfusion/Diffusion, Lawineneffekt, Betriebsmodi, Auffüllen, Fehlerfortpflanzung.",
+      "(eA) Ein **eigenes Verfahren** entwerfen, implementieren (Online-IDE), angreifen lassen (Knack-Arena) und mit WK3 beurteilen.",
+      "Das Abitur-Grundmuster an **ADFGVX** (Fremde Chiffre IV) anwenden: lesen/nachrechnen, anwenden, umkehren, einordnen, beurteilen (kern)."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "schrift": 9,
+     "kopf": [
+      "DS",
+      "Thema",
+      "Level",
+      "Niveau",
+      "Highlight"
+     ],
+     "zeilen": [
+      [
+       "9",
+       "Vernams Lochstreifen",
+       "3.1",
+       "kern",
+       "Archivfund, Funkraum „Der doppelte Schlüssel“, Video 04 (Teil 1)"
+      ],
+      [
+       "10",
+       "Der Blockchiffre-Baukasten",
+       "3.2",
+       "eA",
+       "Runden-Labor: 1 Bit kippt → Lawine; ECB-Pixelbild, Video 04 (Teil 2)"
+      ],
+      [
+       "11",
+       "Die Chiffren-Werkstatt · Fremde Chiffre IV",
+       "3.3 · 3.4",
+       "eA · kern",
+       "Knack-Arena, Boss W3 freigeschaltet"
+      ],
+      [
+       "Kür",
+       "Die Enigma",
+       "K2",
+       "kuer",
+       "jederzeit freischaltbar, keine Rangrelevanz"
+      ]
+     ],
+     "breiten": [
+      1.2,
+      4.8,
+      1.6,
+      1.8,
+      7.4
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Verlauf der Doppelstunden"
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 9 – Vernams Lochstreifen (Level 3.1, kern)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "4 Karten aus WU-W2 (Spirale) + WU-W3-01 (ASCII) im Leitner-Trainer",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Archivfund",
+     "10",
+     "„Der Lochstreifen von 1917“: zwei Streifen vergleichen, Regel „gleich → 0, verschieden → 1“ finden, ASCII-Tabelle der Anlage → **FUNK**; Impuls „Zwei Kerben – was, wenn der Schlüssel zweimal benutzt wurde?“",
+     "UG",
+     "Folie 2–3, Akte W3·1 S. 1"
+    ],
+    [
+     "Erarbeitung I",
+     "15",
+     "Archivwissen 1–2 (Bits, Dualzahlen, ASCII, XOR, Selbstinversität); Aufträge 1–2",
+     "EA → PA",
+     "Akte W3·1, Bit-Lupe"
+    ],
+    [
+     "Erarbeitung II",
+     "10",
+     "Archivwissen 3 (Vernam 1917, One-Time-Pad, vier Bedingungen, perfekte Sicherheit); Auftrag 4 „HALT oder LAUF?“",
+     "PA, UG",
+     "Folien 6–8"
+    ],
+    [
+     "Funkraum",
+     "25",
+     "**„Der doppelte Schlüssel“**: Funksprüche mit Einmalschlüssel; ein Team spart Schlüssel; Eve deckt auf",
+     "Teams",
+     "Funkraum, Beamer, Rollenkarten"
+    ],
+    [
+     "Sicherung",
+     "12",
+     "C1 ⊕ C2 = M1 ⊕ M2 an der Tafel herleiten; Auftrag 5 (Crib „UHR“) anbahnen; Schlüsselproblem; Hinweis auf historische Fälle (Venona)",
+     "UG",
+     "Folien 10–12"
+    ],
+    [
+     "Abschluss",
+     "8",
+     "Merke-Folie; HA: Akte W3·1 Aufträge 5–6, Lab 3.1, Video 04 (Teil 1)",
+     "EA",
+     "Folie 12, Lab"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 10 – Der Blockchiffre-Baukasten (Level 3.2, eA)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W3-02, -03, -04, -11",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Einstieg",
+     "10",
+     "„Der OTP-Schlüssel ist so lang wie die Nachricht – geht es mit 16 Bit Schlüssel für beliebig lange Texte?“ → Idee Blockchiffre; Shannon: Konfusion und Diffusion",
+     "UG",
+     "Folien 13–14"
+    ],
+    [
+     "Erarbeitung",
+     "25",
+     "Archivwissen 1–3 und Werkzeugkasten (Block als 4×4-Matrix, Runde = XOR · S-Box · Transposition, Schlüsselplan); Runde 1 des Beispiels „OK“ gemeinsam; Auftrag 4 (KRYPTOS-16/2 für „JA“)",
+     "UG → PA",
+     "Akte W3·2, Folien 15–16, Vorlage"
+    ],
+    [
+     "Labor",
+     "15",
+     "Runden-Labor: im eigenen Ergebnis 1 Bit des Klartextes kippen, Lawinenzähler nach 1–4 Runden notieren (Auftrag 5)",
+     "PA",
+     "Runden-Labor"
+    ],
+    [
+     "Betriebsmodi",
+     "20",
+     "Pixelbild „Schlüssel“ in ECB vs. CBC, Auffüllen, Fehlerfortpflanzung (Aufträge 6–7)",
+     "UG, PA",
+     "Folien 17–18, Runden-Labor"
+    ],
+    [
+     "Sicherung",
+     "10",
+     "Abi-Check (a, b); Ausblick DES/AES/Feistel (Folie 20); HA: Lab 3.2, Video 04 (Teil 2)",
+     "EA, UG",
+     "Akte W3·2"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 11 – Die Chiffren-Werkstatt · Fremde Chiffre IV (Level 3.3 eA, Level 3.4 kern)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W3-05, -06, -07, -12",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Auftrag",
+     "5",
+     "Regeln der Werkstatt und Arena, Kerckhoffs: „Euer Verfahren wird öffentlich – nur der Schlüssel bleibt geheim“",
+     "UG",
+     "Folien 21–22, Akte W3·3"
+    ],
+    [
+     "Entwerfen",
+     "20",
+     "Teams kombinieren 2–4 Stufen im Baukasten, notieren die Verfahrensbeschreibung (Abitur-Stil), verschlüsseln einen eigenen deutschen Text ≥ 150 Buchstaben, reichen Verfahren + Geheimtext ein",
+     "Teams",
+     "Baukasten, Akte W3·3 Auftrag 1–2"
+    ],
+    [
+     "Knack-Arena",
+     "25",
+     "Angriffe auf die Verfahren der anderen Teams; Lehrkraft schließt nach 25 min",
+     "Teams",
+     "Arena, Beamer, Dokument Knack-Arena"
+    ],
+    [
+     "Beurteilen",
+     "10",
+     "Jedes Team beurteilt sein Verfahren mit WK3 (Akte W3·3 Auftrag 3); Auflösung „Unknackbar“/„Arena-Knacker“",
+     "Teams, UG",
+     "Beurteilungsbogen"
+    ],
+    [
+     "Fremde Chiffre IV",
+     "17",
+     "ADFGVX: Archivwissen + Aufträge 1–2 (Stufe 1 und 2), Einordnung je Stufe",
+     "PA",
+     "Akte W3·4, Folien 25–27"
+    ],
+    [
+     "Abschluss",
+     "3",
+     "HA: Online-IDE `KR_W3_ChiffrenWerkstatt` (eA, bis DS 12), Akte W3·4 Rest, Boss W3 freigeschaltet",
+     "–",
+     "Folie 28"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "gA-VARIANTE (EINE DS STATT DS 10 + 11)",
+   "md": "Warm-up 10 · ADFGVX (Akte W3·4 vollständig) 40 · Wiederholung OTP und Fehlerfortpflanzung (Akte W3·1 Auftrag 6, Abi-Check) 15 · Boss W3 online (gA-Pool) 25 = 90 min. Level 3.2 und 3.3 bleiben in gA-Kursen ausgeblendet."
+  },
+  {
+   "t": "h",
+   "md": "Typische Schwierigkeiten"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9.5,
+   "kopf": [
+    "Falle",
+    "Wo in Welt 3",
+    "Abhilfe"
+   ],
+   "zeilen": [
+    [
+     "**P1** Zählbasis",
+     "ASCII-Wert (A = 65) vs. Alphabet A = 1 (Anlage) vs. A = 0 (Programm); Bitnummern b1…b16 ab 1, Zeichenpositionen ab 0",
+     "Merksatz „Großbuchstaben beginnen mit 010, der Rest ist die Alphabetnummer“ (A = 00001); Stellenwerttabelle 128 … 1 als Kopfzeile jeder Bitvorlage (dual ↔ dezimal ohne Taschenrechner)"
+    ],
+    [
+     "**P3** Umkehrung",
+     "KRYPTOS-16 rückwärts (je Runde Transposition, dann S⁻¹ – nicht S! –, dann XOR); ADFGVX erst Spalten zurück, dann Quadrat",
+     "Schrittfolge-Karte „T → S⁻¹ → XOR, Runden rückwärts“; „erst Spalten, dann Quadrat“"
+    ],
+    [
+     "**P4** Verfahrensregel",
+     "Matrix transponieren (Zeilen/Spalten verwechselt); Auffüllen bei ungerader Zeichenzahl; ungleich lange Spalten bei ADFGVX/Spaltentransposition; Blockbildung (2 Zeichen = 1 Block)",
+     "Vorlage mit beschrifteten Zeilen/Spalten; „längere Spalten stehen links, nicht die zuerst gelesenen“"
+    ],
+    [
+     "**P5** Einordnung",
+     "XOR/S-Box = Substitution, Transposition/Rotation = Transposition; ADFGVX Stufe 1 trotz Paaren monoalphabetisch; XOR mit 1-Byte-Schlüssel monoalphabetisch, mit Schlüsselwort polyalphabetisch",
+     "Leitfrage: „Bleiben die Zeichen gleich und ändern nur ihren Platz?“"
+    ],
+    [
+     "**P7** Schlüsselraum",
+     "Schlüssel `0000 0000`; KRYPTOS-16-Schlüssel mit vier gleichen Vierergruppen (16 Stück); Rotationsschlüssel mit kurzer Periode",
+     "Schwache Schlüssel ausdrücklich suchen lassen (Akte W3·2 A3, B-13)"
+    ],
+    [
+     "**P8** Kombination",
+     "„Zwei Schlüssel = doppelte Sicherheit“: XOR mit k₁, dann k₂ = XOR mit k₁ ⊕ k₂; Caesar nach Vigenère = Vigenère; Umkehrung zweimal = Identität",
+     "Werkstatt-Hinweise der Plattform; Lab W3-L1-08, W3-L3-05, B-14"
+    ],
+    [
+     "**P10** Operator",
+     "„Beurteilen“ der eigenen Chiffre ohne Kriterien/Urteil; „begründen“ der Diffusion ohne Bit-Argument",
+     "Satzbaustein des Beurteilungsbogens ist verpflichtend"
+    ],
+    [
+     "Funkraum",
+     "Eve-Team ist überfordert",
+     "nach 5 min Tipp „Sucht das Paar mit den meisten Bytes, die mit 000 beginnen“, nach 8 min das Crib „UHR“"
+    ]
+   ],
+   "breiten": [
+    2.6,
+    7.4,
+    6.8
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Differenzierung"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**gA:** Level 3.1 und 3.4 vollständig, 3.2/3.3 ausgeblendet (gA-Variante oben). Papier-Boss verkürzt (Teilaufgaben a–c, e, h, i; 14 BE, 35 min). Boss-Pool gA-gefiltert (10 Aufgaben).",
+    "**eA schnell:** Akte W3·2 Auftrag 6 (CBC von Hand), Lab W3-L2-08, Kür K2, IDE-Stufe Experte (Spaltentransposition zurück, XOR-Hex), Papier-Boss f) + g).",
+    "**eA langsam:** KRYPTOS-16/1 statt /2 in Auftrag 4; Runden-Labor zur Kontrolle jedes Schritts; IDE nur Stufe Basis + MeineChiffre aus Caesar und Umkehrung."
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "KÜRZUNGSVARIANTE (Z. B. 15-DS-KURS)",
+   "md": "DS 10 und 11 zu einer DS zusammenlegen: KRYPTOS-16 nur Runde 1 + Lawine im Labor (35 min), Werkstatt ohne Arena als Hausaufgabe (Baukasten + Beurteilung), ADFGVX 30 min, Boss als HA. Funkraum in DS 9 ggf. als Demonstration am Beamer mit dem vorbereiteten Beispiel (Funkraum-Dokument, 10 min)."
+  },
+  {
+   "t": "h",
+   "md": "Vorbereitung und Technik"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**Material:** Akten W3·1–W3·4 (+ Kür K2), S-Box-Handout (DIN A5, laminiert – Werkzeugkasten aus Akte W3·2), Vorlagen mit 4×4-Kästchen, ASCII-Anlage, Rollenkarten Funkraum (bei Papier-Alternative Schlüsselblätter drucken), Beurteilungsbogen (Dokument Knack-Arena).",
+    "**Technik:** Funkraum vor DS 9 im Lehrkraft-Bereich vorbereiten (Teams einteilen, Sparschwein-Paar festlegen), Bit-Lupe und Runden-Labor freigeben, Arena vor DS 11 anlegen (öffnet mit „Werkstatt starten“). Online-IDE-Workspace `KR_W3_ChiffrenWerkstatt` an den Kurs verteilen (eA).",
+    "**Video 04** „XOR, One-Time-Pad und Blockchiffren“ als Vor-/Nachbereitung (eigene Beispiele des Videos, nicht die der Akten).",
+    "**Präsentation** `KR_W3_Praesentation_Maschinenzeitalter.pptx` (28 Folien, Sprechernotizen mit Zeiten, Impulsen und Lösungen)."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Werkzeuge, Funkraum und Arena"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "Werkzeug",
+    "Was es zeigt / kann",
+    "Grenzen"
+   ],
+   "zeilen": [
+    [
+     "**Bit-Lupe** (3.1)",
+     "Zeichen ↔ ASCII ↔ Bits/Hex; XOR untereinander, Schritt-Modus Bit für Bit; Modi OTP und Wiederholung („kein One-Time-Pad“); Doppelnutzung: C1 ⊕ C2 mit Färbung (Nullbytes grün, Bytes < 32 grau), Crib-Schieber",
+     "nur ASCII 32–126; ≤ 24 Zeichen; zeigt nie den Schlüssel, markiert Crib-Treffer nicht automatisch"
+    ],
+    [
+     "**Runden-Labor** (3.2, Boss, Kür)",
+     "KRYPTOS-16 Runde für Runde als 4×4-Matrizen; Bit kippen + Lawinenzähler; Bit-Verfolgung; ECB vs. CBC am Pixelbild „Schlüssel“ (K = 2B7E, IV = 1917); Fehler einbauen (Bit kippen/löschen); Optionen „ohne S-Box“ und „RM-16“; Mini-Enigma",
+     "genau KRYPTOS-16 nach Spezifikation; keine Mittelwerte über viele Klartexte"
+    ],
+    [
+     "**Baukasten + Arena** (3.3)",
+     "8 Stufen kombinieren, Umkehrbarkeitsprüfung, Werkstatt-Hinweise mit Fallen-Chips, Arena mit Hash-Prüfung",
+     "XOR nur als letzte Stufe; nie Auffüllen"
+    ]
+   ],
+   "breiten": [
+    3.2,
+    9.0,
+    4.6
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Funkraum „Der doppelte Schlüssel“** (DS 9, 25 min): Ablauf, Regie-Hinweise, Rollenkarten, Wortkarten, Demonstrationsbeispiel und Papier-Alternative im Dokument `Werkzeuge/Funkraum/KR_W3_Funkraum_Der_doppelte_Schluessel.docx`. **Knack-Arena** (DS 11, 25 min): Phasen, Regeln, Beurteilungsbogen (WK3), Verfahrenskarte und Lösungszettel im Dokument `Werkzeuge/Funkraum/KR_W3_Funkraum_Knack-Arena.docx` (Muster-Beurteilung in `_LSG`)."
+  },
+  {
+   "t": "p",
+   "md": "**Online-IDE „Chiffren-Werkstatt“ (eA):** Gerüst `3_Online-IDE/KR_W3_ChiffrenWerkstatt_Geruest.txt` (Hilfe, Bausteine Basis/Erweiterung/Experte, `MeineChiffre`, Tests `L33BausteineTest` 13 und `L33MeineChiffreTest` 6), Musterlösung `5_Loesungen/KR_W3_ChiffrenWerkstatt_LSG.txt` (FUNKGITTER, 19/19 Tests grün mit javac geprüft). *Offen:* Probelauf in der echten Online-IDE (`static final`-Konstanten, `char`-Vergleich mit `<`, Zeichenliterale)."
+  },
+  {
+   "t": "h",
+   "md": "Bezug zum Abitur (trainierte Formate)"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "Format",
+    "Jahrgänge",
+    "Material in Welt 3"
+   ],
+   "zeilen": [
+    [
+     "XOR/ASCII von Hand",
+     "2023 E, 2023 NE, 2026",
+     "Akte W3·1, Lab 3.1, Boss B-01/02/10/15"
+    ],
+    [
+     "Blockchiffre mit Runden von Hand, Bit-Verfolgung, Schlüsselbits markieren, Diffusion begründen, beliebig lange Texte",
+     "2022 E, 2023 E, 2023 NE, 2026",
+     "Akte W3·2, Papier-Boss b), d), e), i)"
+    ],
+    [
+     "Fehlerfortpflanzung",
+     "2024 A, 2025 A",
+     "Akte W3·2 A7, W3·4 A4, Papier-Boss h), Lab W3-L2-07, B-12"
+    ],
+    [
+     "Schwache Schlüssel",
+     "2022 E (Schlüssel 00000000), 2024 A",
+     "Lab W3-L2-05, B-13, Abi-Check W3·2 d)"
+    ],
+    [
+     "Mehrfachverschlüsselung bringt nichts",
+     "2021 NB, 2024 A h",
+     "Lab W3-L1-08, W3-L3-05, B-14"
+    ],
+    [
+     "„Entscheiden Sie begründet, ob die Aussage korrekt ist“",
+     "mehrfach",
+     "Abi-Checks W3·1 c, W3·2 d, W3·3 c, W3·4 d, Papier-Boss f)"
+    ],
+    [
+     "Zweistufige fremde Chiffre (Substitution + Transposition, Umkehrung in umgekehrter Reihenfolge)",
+     "2022 NA (AbiCrypt, ADFGVX-artig)",
+     "Akte W3·4, Lab 3.4 – mit eigenen Quadraten, Schlüsseln und Texten"
+    ],
+    [
+     "Kerckhoffs-Prinzip",
+     "2023 NE",
+     "Level 3.3, Arena"
+    ],
+    [
+     "Entwurf und Implementierung (nicht im Abitur, aber KC eA)",
+     "–",
+     "Werkstatt, Online-IDE"
+    ]
+   ],
+   "breiten": [
+    6.6,
+    4.0,
+    6.2
+   ]
+  },
+  {
+   "t": "h",
+   "md": "KRYPTOS-16 und RM-16 – Referenz für die Lehrkraft"
+  },
+  {
+   "t": "p",
+   "md": "KRYPTOS-16 ist eine eigens entworfene Spielzeug-Blockchiffre (Substitutions-Permutations-Netz): 16-Bit-Block als 4×4-Bitmatrix (Zeile z = Vierergruppe z), Rundenschlüssel durch Rotation um 4 Bit nach links, Runde = XOR · S-Box (S = C F 3 9 7 A 8 6 1 2 4 E B 5 D 0) · Transposition, Standard R = 4, kein abschließender Schritt. S-Box: bijektiv, ohne Fixpunkt, nicht selbstinvers, je gekipptem Eingangsbit 2–4 Ausgangsbits. **Prüfwerte** (Hex) für die Kontrolle von Schülerrechnungen und Plattform:"
+  },
+  {
+   "t": "tabelle",
+   "mono": true,
+   "zentriert": true,
+   "schrift": 9,
+   "kopf": [
+    "Klartext",
+    "Schlüssel K",
+    "R = 1",
+    "R = 2",
+    "R = 3",
+    "R = 4"
+   ],
+   "zeilen": [
+    [
+     "„OK“ 4F4B",
+     "A36D",
+     "D86E",
+     "EF3D",
+     "116D",
+     "F5F8"
+    ],
+    [
+     "„OJ“ 4F4A",
+     "A36D",
+     "C97E",
+     "0311",
+     "E635",
+     "F24D"
+    ],
+    [
+     "„JA“ 4A41",
+     "5C9E",
+     "CA8A",
+     "E804",
+     "68A1",
+     "240D"
+    ],
+    [
+     "„OK“ 4F4B",
+     "0000",
+     "1BBA",
+     "EFE8",
+     "AA0B",
+     "3F10"
+    ],
+    [
+     "weiß 0000",
+     "2B7E",
+     "57E9",
+     "FF18",
+     "744F",
+     "4081"
+    ],
+    [
+     "schwarz FFFF",
+     "2B7E",
+     "1D5F",
+     "2F21",
+     "E7C4",
+     "DA61"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Lawineneffekt** (1 Klartextbit gekippt, Mittel über alle Klartexte, K = 2B7E): 2,63 / 6,89 / 7,71 / 7,90 Bits nach 1–4 Runden (16,4 / 43,1 / 48,2 / 49,4 %). **Schwache Schlüssel:** 16 mit vier gleichen Vierergruppen, 240 der Form k₁ k₂ k₁ k₂. **Bewusste Vereinfachung:** Nach der letzten Runde folgt kein Schlüssel-XOR – S-Box und Transposition der letzten Runde tragen nichts zur Sicherheit bei (Lab W3-L2-08). Schlüsselraum 2^16^ = 65 536: nur Lernmodell. **RM-16** (Papier-Boss) ersetzt die S-Box durch eine Zeilenrotation (3 Runden) und ist daher linear: C = π(P) ⊕ Z (Known-Plaintext-Angriff, Teilaufgabe f)."
+  },
+  {
+   "t": "h",
+   "md": "Abdeckungsmatrix"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8.5,
+   "kopf": [
+    "KC-Kompetenz",
+    "Level-Aufgaben",
+    "Akte-Auftrag",
+    "Boss online",
+    "Papier-Boss"
+   ],
+   "zeilen": [
+    [
+     "beurteilen die Sicherheit eines gegebenen symmetrischen Verfahrens (Q, kern)",
+     "W3-L1-03, -06, -07, -08; W3-L3-07; W3-L4-05, -07; W3-K2-03, -05",
+     "W3·1 A4–A6, Abi-Check b–d; W3·4 A3–A5, Abi-Check b–d",
+     "B-03, B-06, B-11, B-13, B-14, B-15",
+     "e, f, h"
+    ],
+    [
+     "entwerfen und implementieren ein symmetrisches Verfahren (eA)",
+     "W3-L3-01 … -07; IDE `L33BausteineTest`, `L33MeineChiffreTest`",
+     "W3·3 A1–A4",
+     "– (praktische Kompetenz; Boss prüft Beurteilung)",
+     "–"
+    ],
+    [
+     "erläutern die prinzipielle Funktionsweise eines modernen symmetrischen Blockchiffreverfahrens (eA)",
+     "W3-L2-01 … -08",
+     "W3·2 A1–A7, Abi-Check a–d",
+     "B-04, B-07, B-08, B-09, B-12",
+     "a, b, c, d, g, i"
+    ],
+    [
+     "beschreiben das Prinzip der Transposition und der Substitution (EP, kern; Bitebene)",
+     "W3-L2-03; W3-L3-02; W3-L4-03, -05",
+     "W3·3 Abi-Check a; W3·4 A3",
+     "B-05, B-11",
+     "c, e"
+    ],
+    [
+     "Codierung: Dualzahlen, ASCII (EP, angrenzend)",
+     "W3-L1-01, -02, -04, -05",
+     "W3·1 A1–A3",
+     "B-01, B-02, B-10",
+     "–"
+    ],
+    [
+     "beurteilen die Sicherheit einfacher Verfahren / Fremde Chiffre (Grundmuster)",
+     "W3-L4-01 … -07",
+     "W3·4 A1–A6",
+     "B-05, B-10, B-11, B-13, B-15",
+     "ganze Aufgabe (fremdes Verfahren RM-16)"
+    ],
+    [
+     "Kür: Enigma",
+     "W3-K2-01 … -05",
+     "Kür-Akte K2",
+     "–",
+     "–"
+    ]
+   ],
+   "breiten": [
+    4.4,
+    3.6,
+    3.6,
+    3.0,
+    2.2
+   ]
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Fallen-Abdeckung:** P1 (L1-01, L2-04, L4-02), P2 (L3-04), P3 (L1-05, L2-02, L3-03, L4-04, K2-02, Papier-Boss c), P4 (L2-03, L2-07, L3-06, L4-01, L4-03, L4-06), P5 (L1-08, L3-02, L4-05), P6 (L3-07, L4-07), P7 (L1-08, L2-05, L4-07, K2-05), P8 (L1-07, L1-08, L3-05), P10 (L1-03, L2-08, L3-01, L4-07, K2-03). P9 kommt in Welt 3 nicht vor (Welt 5)."
+  },
+  {
+   "t": "h",
+   "md": "Anhang A · Boss online „Der Fernschreiber“"
+  },
+  {
+   "t": "p",
+   "md": "**Rahmen (geduzt):** Das Chronoskop springt in ein Fernschreibamt der 1960er. Auf allen Leitungen rattern verschlüsselte Telegramme – manche mit Einmalschlüssel, manche mit der neuen Blockchiffre, und eines mit einem seltsamen Verfahren namens TELEX-ROT. 25 Minuten, keine Werkzeuge – nur die ASCII-Tabelle und die S-Box. **Ziehung:** 8 Aufgaben (★ 3, ★★ 3, ★★★ 2), niveau-gefiltert. **gA-Pool (kern):** ★ 01, 02, 03, 05 · ★★ 06, 10, 11 · ★★★ 13, 14, 15. Fremde Chiffre: 05, 10, 11, 13, 15."
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.55,
+   "links": [
+    {
+     "t": "p",
+     "md": "**TELEX-ROT:** Jedes Zeichen wird als 8-Bit-ASCII-Wert mit einem Schlüsselbyte per XOR verknüpft. Für das erste Zeichen ist das Schlüsselbyte der Schlüssel k; für jedes weitere Zeichen wird das vorige Schlüsselbyte um eine Stelle zyklisch nach links rotiert. Beispiel k = `0100 0011`: `0100 0011`, `1000 0110`, `0000 1101`, `0001 1010`, …"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "zentriert": true,
+     "md": "ADFGVX-Quadrat des Bosses (FERNSPRECHER9)"
+    },
+    {
+     "t": "quadrat",
+     "schrift": 10,
+     "kopfzeile": [
+      "A",
+      "D",
+      "F",
+      "G",
+      "V",
+      "X"
+     ],
+     "kopfspalte": [
+      "A",
+      "D",
+      "F",
+      "G",
+      "V",
+      "X"
+     ],
+     "zeilen": [
+      "FERNSP",
+      "CH9ABD",
+      "GIJKLM",
+      "OQTUVW",
+      "XYZ012",
+      "345678"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8.5,
+   "kopf": [
+    "ID",
+    "Stufe · Niveau",
+    "Aufgabe (gesiezt)",
+    "Lösung"
+   ],
+   "zeilen": [
+    [
+     "B-01",
+     "★ kern",
+     "**Bestimmen** Sie den ASCII-Wert und die 8-Bit-Darstellung des Zeichens R.",
+     "82, `0101 0010`"
+    ],
+    [
+     "B-02",
+     "★ kern",
+     "**Berechnen** Sie `1011 0110 ⊕ 0110 1101`.",
+     "`1101 1011`"
+    ],
+    [
+     "B-03",
+     "★ kern",
+     "Welche Bedingung ist für die perfekte Sicherheit des One-Time-Pads **nicht** erforderlich? (A) zufällig (B) mindestens so lang wie die Nachricht (C) Verfahren geheim (D) nur einmal verwendet",
+     "C (Kerckhoffs)"
+    ],
+    [
+     "B-04",
+     "★ eA",
+     "Welche Aussage beschreibt Diffusion? (A) Jedes Klartextbit beeinflusst möglichst viele Geheimtextbits. (B) Schlüssel in Rundenschlüssel zerlegt. (C) Gleiche Blöcke gleich verschlüsselt. (D) Geheimtext länger als Klartext.",
+     "A"
+    ],
+    [
+     "B-05",
+     "★ kern",
+     "**Wenden** Sie Stufe 1 von ADFGVX mit dem Quadrat des Materials auf „tor“ **an**.",
+     "**GFGAAF** (T = GF, O = GA, R = AF)"
+    ],
+    [
+     "B-06",
+     "★★ kern",
+     "C1 ⊕ C2 = `0000 0001 · 0001 0110 · 0000 0001` (gleicher Einmalschlüssel), erste Nachricht OST. **Bestimmen** Sie die zweite Nachricht.",
+     "`0100 1110 · 0100 0101 · 0101 0101` = **NEU**"
+    ],
+    [
+     "B-07",
+     "★★ eA",
+     "Zustand nach dem Schlüssel-XOR: `1011 0100 0011 1001`. **Wenden** Sie S-Box und Transposition **an**.",
+     "S: `1110 0111 1001 0010`; T: **`1010 1100 1101 0110`**"
+    ],
+    [
+     "B-08",
+     "★★ eA",
+     "**Bestimmen** Sie K~3~ für K = `0011 1010 1100 0101`.",
+     "**`1100 0101 0011 1010`**"
+    ],
+    [
+     "B-09",
+     "★★ eA",
+     "Vier Blöcke mit P~1~ = P~3~. In welchem Modus gilt sicher C~1~ = C~3~? (A) ECB (B) CBC (C) beide (D) keiner",
+     "A"
+    ],
+    [
+     "B-10",
+     "★★ kern",
+     "**Wenden** Sie TELEX-ROT mit k = `0100 0011` auf „TOR“ **an**.",
+     "**`0001 0111 · 1100 1001 · 0101 1111`**"
+    ],
+    [
+     "B-11",
+     "★★ kern",
+     "**Entscheiden** Sie, wie TELEX-ROT einzuordnen ist (k = `0100 0011`): (A) Transposition (B) monoalphabetisch (C) polyalphabetisch mit Periode 8 (D) One-Time-Pad",
+     "C"
+    ],
+    [
+     "B-12",
+     "★★★ eA",
+     "Fünf Blöcke in CBC; ein Bit in C~3~ kippt. **Geben** Sie **an**, welche Klartextblöcke fehlerhaft sind und welcher nur in genau einem Bit.",
+     "P~3~ und P~4~; P~4~ nur in einem Bit"
+    ],
+    [
+     "B-13",
+     "★★★ kern",
+     "a) Anzahl der Schlüssel k, bei denen sich die Schlüsselbytes von TELEX-ROT spätestens nach 2 Zeichen wiederholen? b) Bei welchen ist TELEX-ROT monoalphabetisch?",
+     "a) **4**: `0000 0000`, `1111 1111`, `0101 0101`, `1010 1010` b) `0000 0000` und `1111 1111`"
+    ],
+    [
+     "B-14",
+     "★★★ kern",
+     "„Erst mit k~1~, dann mit k~2~ per XOR (je ein Byte für alle Zeichen) ist so sicher wie ein 16-Bit-Schlüssel.“ (A) korrekt (B) falsch, wirkt wie k~1~ ⊕ k~2~ (C) falsch, XOR nicht umkehrbar",
+     "B"
+    ],
+    [
+     "B-15",
+     "★★★ kern",
+     "XOR mit Schlüsselwort der Länge 3: `0000 1010 · 0000 0100 · 0001 0001 · 0001 0110 · 0000 0100 · 0000 0101 · 0000 0000 · 0000 0100 · 0000 1010 · 0000 0110`; Klartext beginnt mit HEU. **Bestimmen** Sie Schlüsselwort und Klartext.",
+     "**BAD**, **HEUTEABEND**"
+    ]
+   ],
+   "breiten": [
+    1.2,
+    1.9,
+    8.9,
+    4.8
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Anhang B · Trainingsplatz-Generatoren"
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "Deterministisch per Seed, serverseitig geprüft, 1 Punkt, höchstens 30 je Tag. Wortliste (ohne Video-Wörter): BOJE, HAFEN, NORD, SUED, OST, WEST, ZUG, FUNK, KABEL, WOLKE, MORGEN, ABEND, LICHT, NEBEL, ANKER, TURM, BRIEF, KARTE, TELEX, SIGNAL."
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8.5,
+   "kopf": [
+    "Name",
+    "Parameterbereich",
+    "Aufgabenmuster",
+    "Prüfregel / Diagnose"
+   ],
+   "zeilen": [
+    [
+     "`ascii_bits`",
+     "Zeichen A–Z; Richtung Zeichen → Bits oder Bits → Zeichen",
+     "„Gib die 8-Bit-ASCII-Folge von {Z} an.“ / „Welches Zeichen hat die ASCII-Folge {B}?“",
+     "Bits ohne Leerzeichen; Wert = Alphabetnummer statt ASCII → P1"
+    ],
+    [
+     "`xor_bytes`",
+     "zwei zufällige Bytes (★★: je zwei Bytes)",
+     "„Berechne {a} ⊕ {b}.“",
+     "bitweise; Diagnose OR statt XOR (1 ⊕ 1 = 1)"
+    ],
+    [
+     "`otp`",
+     "Wort (3–5 Buchstaben), zufälliger Schlüssel gleicher Länge; ver/ent",
+     "„Verschlüssele {W} mit dem Einmalschlüssel {K}.“ / „Entschlüssele {C} mit {K}.“",
+     "Bits bzw. Wort (Groß/Klein egal)"
+    ],
+    [
+     "`otp_doppelt`",
+     "zwei Wörter gleicher Länge (4–6), D = C1 ⊕ C2 und M1 gegeben",
+     "„C1 ⊕ C2 = {D}, die erste Nachricht lautet {M1}. Bestimme die zweite.“",
+     "Wort exakt"
+    ],
+    [
+     "`kryptos16_teilschritt`",
+     "Zustand 16 Bit; Schritt S-Box, S⁻¹, Transposition oder Rundenschlüssel K~i~ (i = 2…4)",
+     "„Wende auf {X} den Schritt {S} an.“",
+     "bitweise; Diagnose S statt S⁻¹ (P3), Zeilen statt Spalten, Rotation falsch herum"
+    ],
+    [
+     "`kryptos16_runde`",
+     "Klartext 2 Zeichen oder 16 Bit, Schlüssel ohne schwache Schlüssel, R ∈ {1, 2}",
+     "„Wende KRYPTOS-16/{R} auf {P} mit K = {K} an.“",
+     "Endzustand bitweise; Zwischenzustände als Teilpunkte im Feedback"
+    ],
+    [
+     "`adfgvx_stufe1`",
+     "Quadrat aus Schlüsselwort oder ZEPPELIN18; 3–6 Zeichen A–Z/0–9; ver/ent",
+     "„Wende Stufe 1 von ADFGVX auf {T} an.“",
+     "exakt; Diagnose Zeile/Spalte vertauscht (P1/P4)"
+    ],
+    [
+     "`spaltentransposition`",
+     "Schlüsselwort 3–5 Buchstaben (auch doppelte), Text 8–15 Buchstaben, ver/ent, ohne Auffüllen",
+     "„Verschlüssele {T} mit der Spaltentransposition (Schlüsselwort {W}).“",
+     "exakt; Diagnose gleich lange Spalten (P4), Reihenfolge rückwärts"
+    ]
+   ],
+   "breiten": [
+    3.9,
+    4.1,
+    4.8,
+    4.0
+   ]
+  }
+ ]
+}

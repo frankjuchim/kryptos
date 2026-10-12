@@ -1,0 +1,642 @@
+{
+ "typ": "pruefung",
+ "welt": 3,
+ "kennung": "PAPIER-BOSS W3",
+ "titel": "Die Rundenmaschine",
+ "datei": "KR_W3_Boss3_Rundenmaschine",
+ "niveau": "eA",
+ "ds": "nach 11",
+ "zeit": "60 Minuten (gA-Fassung: Teilaufgaben a–c, e, h, i, 35 Minuten)",
+ "hilfsmittel": "Anlage der Abiturprüfung (ASCII-Tabelle); kein Taschenrechner",
+ "info": [
+  [
+   "Name",
+   ""
+  ]
+ ],
+ "rahmen_kopf": "AUSGANGSLAGE",
+ "rahmen": "Das Chronoskop landet in einem Rechenzentrum der 1970er-Jahre. Zwischen Magnetbandschränken liegt ein Handbuch mit der Aufschrift **RM-16 – Rundenmaschine**. Der Oberingenieur bittet dich, das Verfahren zu prüfen, bevor es in Betrieb geht. *RM-16 ist ein eigens erfundenes Lernverfahren.*",
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "Die Rundenmaschine RM-16",
+   "material": [
+    {
+     "t": "p",
+     "md": "In einem Rechenzentrum der 1970er-Jahre wurde die Blockchiffre **RM-16** („Rundenmaschine“) eingesetzt, um Messwerte verschlüsselt zu übertragen. Das Verfahren ist im Material beschrieben. Abbildung 2 zeigt ein vollständiges Beispiel; die Markierung eines Bits spielt erst in Teilaufgabe d) eine Rolle."
+    },
+    {
+     "t": "kasten",
+     "kopf": "ABBILDUNG 1 · DAS VERFAHREN RM-16",
+     "farbe": "14213D",
+     "inhalt": [
+      {
+       "t": "liste",
+       "items": [
+        "Klartextblock, Schlüssel und Geheimtextblock bestehen aus je 16 Bit und werden als 4×4-Matrix geschrieben: Zeile 1 enthält die Bits 1–4, Zeile 2 die Bits 5–8 usw.",
+        "**Rundenschlüssel:** K~1~ = K. Den Rundenschlüssel K~i+1~ erhält man aus K~i~, indem man alle Zeilen zyklisch um eine Zeile nach oben verschiebt (Zeile 1 wird zu Zeile 4).",
+        "**Eine Runde** besteht aus drei Schritten:"
+       ]
+      },
+      {
+       "t": "liste",
+       "nummeriert": true,
+       "items": [
+        "**XOR** der Matrix mit dem Rundenschlüssel K~i~ (XOR ist genau dann 1, wenn genau eines der Bits 1 ist).",
+        "**Zeilenrotation:** Zeile z wird um z − 1 Stellen zyklisch nach links verschoben (Zeile 1 bleibt, Zeile 2 um 1, Zeile 3 um 2, Zeile 4 um 3 Stellen).",
+        "**Transposition:** Die Zeilen werden zu Spalten (Zeile 1 wird Spalte 1, …)."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "RM-16 verschlüsselt mit **drei Runden**."
+      }
+     ]
+    },
+    {
+     "t": "kasten",
+     "kopf": "ABBILDUNG 2 · VOLLSTÄNDIGES BEISPIEL",
+     "farbe": "14213D",
+     "inhalt": [
+      {
+       "t": "zweispaltig",
+       "anteil": 0.5,
+       "links": [
+        {
+         "t": "p",
+         "zentriert": true,
+         "md": "Klartextblock P = `0110 1100 1010 0011`"
+        },
+        {
+         "t": "quadrat",
+         "schrift": 11,
+         "kopfzeile": [
+          "1",
+          "2",
+          "3",
+          "4"
+         ],
+         "kopfspalte": [
+          "1",
+          "2",
+          "3",
+          "4"
+         ],
+         "zeilen": [
+          "0110",
+          "1100",
+          "1010",
+          "0011"
+         ],
+         "hervor": [
+          [
+           2,
+           1
+          ]
+         ]
+        },
+        {
+         "t": "p",
+         "klein": true,
+         "zentriert": true,
+         "md": "grau markiert: Bit in Zeile 3, Spalte 2"
+        }
+       ],
+       "rechts": [
+        {
+         "t": "p",
+         "zentriert": true,
+         "md": "Schlüssel K = `1001 0110 0011 1101`"
+        },
+        {
+         "t": "quadrat",
+         "schrift": 11,
+         "kopfzeile": [
+          "1",
+          "2",
+          "3",
+          "4"
+         ],
+         "kopfspalte": [
+          "1",
+          "2",
+          "3",
+          "4"
+         ],
+         "zeilen": [
+          "1001",
+          "0110",
+          "0011",
+          "1101"
+         ]
+        }
+       ]
+      },
+      {
+       "t": "tabelle",
+       "mono": true,
+       "zentriert": true,
+       "schrift": 10,
+       "kopf": [
+        "Runde",
+        "Rundenschlüssel K~i~",
+        "nach (1) XOR",
+        "nach (2) Zeilenrotation",
+        "nach (3) Transposition"
+       ],
+       "zeilen": [
+        [
+         "1",
+         "1001\n0110\n0011\n1101",
+         "1111\n1010\n1001\n1110",
+         "1111\n0101\n0110\n0111",
+         "1000\n1111\n1011\n1101"
+        ],
+        [
+         "2",
+         "0110\n0011\n1101\n1001",
+         "1110\n1100\n0110\n0100",
+         "1110\n1001\n1001\n0010",
+         "1110\n1000\n1001\n0110"
+        ],
+        [
+         "3",
+         "0011\n1101\n1001\n0110",
+         "1101\n0101\n0000\n0000",
+         "1101\n1010\n0000\n0000",
+         "1100\n1000\n0100\n1000"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        3.6,
+        3.4,
+        3.8,
+        3.8
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Geheimtextblock C = `1100 1000 0100 1000`"
+      }
+     ]
+    },
+    {
+     "t": "kasten",
+     "kopf": "ABBILDUNG 4 · S-BOX (FÜR TEILAUFGABE g)",
+     "farbe": "14213D",
+     "inhalt": [
+      {
+       "t": "tabelle",
+       "mono": true,
+       "kopfspalte": true,
+       "schrift": 9,
+       "kopf": [
+        "x",
+        "0000",
+        "0001",
+        "0010",
+        "0011",
+        "0100",
+        "0101",
+        "0110",
+        "0111"
+       ],
+       "zeilen": [
+        [
+         "S(x)",
+         "1100",
+         "1111",
+         "0011",
+         "1001",
+         "0111",
+         "1010",
+         "1000",
+         "0110"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85
+       ]
+      },
+      {
+       "t": "tabelle",
+       "mono": true,
+       "kopfspalte": true,
+       "schrift": 9,
+       "kopf": [
+        "x",
+        "1000",
+        "1001",
+        "1010",
+        "1011",
+        "1100",
+        "1101",
+        "1110",
+        "1111"
+       ],
+       "zeilen": [
+        [
+         "S(x)",
+         "0001",
+         "0010",
+         "0100",
+         "1110",
+         "1011",
+         "0101",
+         "1101",
+         "0000"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85,
+        1.85
+       ]
+      }
+     ]
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Geben** Sie für den Schlüssel aus Abbildung 3 die Rundenschlüssel K~2~ und K~3~ **an**.",
+     "be": 2,
+     "material": [
+      {
+       "t": "kasten",
+       "kopf": "ABBILDUNG 3 · VORLAGE ZU a) UND b)",
+       "farbe": "14213D",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Schlüssel K = `0111 0001 1010 1100` · Klartextblock P = `1010 0111 0101 1000`"
+        },
+        {
+         "t": "tabelle",
+         "mono": true,
+         "zentriert": true,
+         "kopfspalte": true,
+         "schrift": 10,
+         "kopf": [
+          "Runde 1",
+          "K~1~",
+          "nach (1)",
+          "nach (2)",
+          "nach (3)"
+         ],
+         "zeilen": [
+          [
+           "Zeile 1",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 2",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 3",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 4",
+           "",
+           "",
+           "",
+           ""
+          ]
+         ],
+         "breiten": [
+          2.2,
+          3.4,
+          3.4,
+          3.4,
+          3.4
+         ]
+        },
+        {
+         "t": "tabelle",
+         "mono": true,
+         "zentriert": true,
+         "kopfspalte": true,
+         "schrift": 10,
+         "kopf": [
+          "Runde 2",
+          "K~2~",
+          "nach (1)",
+          "nach (2)",
+          "nach (3)"
+         ],
+         "zeilen": [
+          [
+           "Zeile 1",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 2",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 3",
+           "",
+           "",
+           "",
+           ""
+          ],
+          [
+           "Zeile 4",
+           "",
+           "",
+           "",
+           ""
+          ]
+         ],
+         "breiten": [
+          2.2,
+          3.4,
+          3.4,
+          3.4,
+          3.4
+         ]
+        },
+        {
+         "t": "p",
+         "md": "K~3~ = [[luecke:30]]"
+        }
+       ]
+      }
+     ],
+     "erwartung": [
+      {
+       "punkt": "K~2~ = `0001 1010 1100 0111`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "K~3~ = `1010 1100 0111 0001`",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Zeilen nach unten statt nach oben verschoben (P4)."
+    },
+    {
+     "bez": "b)",
+     "text": "**Wenden** Sie RM-16 auf den Klartextblock und den Schlüssel aus Abbildung 3 für die ersten beiden Runden **an**. Nutzen Sie die Vorlage.",
+     "be": 5,
+     "erwartung": [
+      {
+       "punkt": "Runde 1: K~1~ = `0111 / 0001 / 1010 / 1100`; nach (1) `1101 / 0110 / 1111 / 0100`; nach (2) `1101 / 1100 / 1111 / 0010`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Runde 1: nach (3) `1110 / 1110 / 0011 / 1010`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Runde 2: K~2~ = `0001 / 1010 / 1100 / 0111`; nach (1) `1111 / 0100 / 1111 / 1101`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Runde 2: nach (2) `1111 / 1000 / 1111 / 1110`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Runde 2: nach (3) `1111 / 1011 / 1011 / 1010`",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "alternativen": "Alternative Gewichtung: je Runde 2,5 BE. Folgefehler werden nur einmal abgezogen.",
+     "fehler": "Zeilen nach rechts rotiert oder Zeile 1 mitrotiert (P4); K~1~ in Runde 2 (P4)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Beschreiben** Sie, wie ein mit RM-16 erzeugter Geheimtextblock bei bekanntem Schlüssel entschlüsselt wird.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Runden in umgekehrter Reihenfolge (3, 2, 1) mit K~3~, K~2~, K~1~",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "je Runde die Schritte rückwärts: (3) Transposition (selbstinvers), (2) Zeile z um z − 1 Stellen nach **rechts** rotieren, (1) XOR mit K~i~",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Reihenfolge der Runden vorwärts, Rotation nicht umgekehrt (P3)."
+    },
+    {
+     "bez": "d)",
+     "text": "Jedes Klartextbit ändert im Laufe des Verfahrens seine Position und wird mit Bits des Schlüssels verknüpft. **Untersuchen** Sie anhand von Abbildung 2 für das grau markierte Klartextbit, an welcher Position der Matrix es sich nach jeder der drei Runden befindet und mit welchen Bits der ursprünglichen Schlüsselmatrix K es verknüpft wird.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Positionen: nach Runde 1 Zeile 4, Spalte 3; nach Runde 2 Zeile 4, Spalte 4; nach Runde 3 Zeile 1, Spalte 4",
+       "afb": "II",
+       "be": 2
+      },
+      {
+       "punkt": "Schlüsselbits: Runde 1 K(Zeile 3, Spalte 2), Runde 2 K(Zeile 1, Spalte 3) – K~2~ ist um eine Zeile verschoben –, Runde 3 K(Zeile 2, Spalte 4)",
+       "afb": "II",
+       "be": 2
+      }
+     ],
+     "alternativen": "Nachweis auch durch Kippen des markierten Bits und Vergleichen der Matrizen.",
+     "fehler": "Position in K~2~ statt in K angegeben; Schlüsselbits aus der falschen Zeile (Verschiebung nach unten statt oben) (P1/P4)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Begründen** Sie, dass RM-16 die Eigenschaft der Diffusion („möglichst jedes Bit des Klartextblocks beeinflusst alle Bits des Geheimtextblocks“) nicht erfüllt.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Alle Schritte verschieben Bits nur oder verknüpfen sie mit Schlüsselbits; kein Schritt verknüpft zwei Klartextbits miteinander",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Jedes Geheimtextbit hängt daher von genau **einem** Klartextbit ab (Beispiel d: das markierte Bit wirkt nur auf Bit 4 des Geheimtextblocks)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Nur „die Bits werden vertauscht“ ohne Bezug auf die Abhängigkeit (P10)."
+    },
+    {
+     "bez": "f)",
+     "text": "„Kennt ein Angreifer einen einzigen Klartextblock und den zugehörigen Geheimtextblock, kann er jeden weiteren mit demselben Schlüssel erzeugten Geheimtextblock entschlüsseln, ohne den Schlüssel K zu bestimmen.“ **Entscheiden** Sie **begründet**, ob diese Aussage korrekt ist.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Entscheidung: **korrekt**",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Zeilenrotation und Transposition sind feste, öffentlich bekannte Umordnungen; das XOR mit Schlüsselbits kann man hinter die Umordnungen ziehen. Daher gilt C = π(P) ⊕ Z, wobei π die bekannte Umordnung aller drei Runden ist und Z nur vom Schlüssel abhängt. Aus einem Paar folgt Z = C ⊕ π(P); jeder weitere Block: P′ = π⁻¹(C′ ⊕ Z)",
+       "afb": "III",
+       "be": 2
+      }
+     ],
+     "alternativen": "Zwei Klartexte, die sich in einem Bit unterscheiden, liefern Geheimtexte, die sich unabhängig vom Schlüssel an der umgeordneten Stelle unterscheiden.",
+     "fehler": "„falsch, weil 2^16^ Schlüssel“ – der Schlüsselraum ist hier irrelevant (P7/P10)."
+    },
+    {
+     "bez": "g)",
+     "text": "In einer verbesserten Fassung wird zwischen den Schritten (1) und (2) jeder Runde jede Zeile mithilfe der S-Box aus Abbildung 4 ersetzt. **Erläutern** Sie, wie dadurch Diffusion erreicht werden kann.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Jedes Ausgangsbit der S-Box hängt von allen vier Bits einer Zeile ab (Bits werden vermischt, nichtlinear)",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Rotation und Transposition verteilen die Bits einer Zeile auf verschiedene Zeilen der nächsten Runde, deren S-Boxen sie wieder vermischen → nach wenigen Runden beeinflusst jedes Klartextbit (nahezu) alle Geheimtextbits",
+       "afb": "III",
+       "be": 1
+      }
+     ]
+    },
+    {
+     "bez": "h)",
+     "text": "Bei der Übertragung eines Geheimtextblocks wird ein einzelnes Bit verfälscht. **Vergleichen** Sie die Auswirkungen auf den entschlüsselten Klartextblock bei RM-16 und bei der verbesserten Fassung aus g).",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "RM-16: genau ein Bit des Klartextblocks falsch (an der zurückgerechneten Position), Rest korrekt",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "verbesserte Fassung: das falsche Bit durchläuft beim Entschlüsseln die (inversen) S-Boxen → viele Bits des Blocks falsch (Lawineneffekt, im Mittel etwa die Hälfte); andere Blöcke in beiden Fällen unberührt",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„ein falsches Bit = ein falsches Zeichen“ auch für die verbesserte Fassung."
+    },
+    {
+     "bez": "i)",
+     "text": "Die Messwerte enthalten lange Folgen gleicher Werte. **Erläutern** Sie, warum der Text nicht blockweise unabhängig voneinander (Betriebsmodus ECB) verschlüsselt werden sollte, und **beschreiben** Sie eine Abhilfe.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Gleiche Klartextblöcke ergeben in ECB gleiche Geheimtextblöcke → Muster und Wiederholungen der Messreihe bleiben sichtbar",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Abhilfe: Betriebsmodus CBC (jeder Block vor dem Verschlüsseln mit dem vorigen Geheimtextblock bzw. einem zufälligen IV verknüpft)",
+       "afb": "II",
+       "be": 1
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   23
+  ],
+  [
+   14,
+   22
+  ],
+  [
+   13,
+   21
+  ],
+  [
+   12,
+   20
+  ],
+  [
+   11,
+   18
+  ],
+  [
+   10,
+   17
+  ],
+  [
+   9,
+   16
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   6,
+   12
+  ],
+  [
+   5,
+   11
+  ],
+  [
+   4,
+   10
+  ],
+  [
+   3,
+   8
+  ],
+  [
+   2,
+   7
+  ],
+  [
+   1,
+   5
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "Viel Erfolg – möge die Rundenmaschine Ihnen gehorchen!"
+}

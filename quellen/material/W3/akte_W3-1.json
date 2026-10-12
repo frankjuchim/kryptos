@@ -1,0 +1,1426 @@
+{
+ "typ": "akte",
+ "welt": 3,
+ "kennung": "AKTE W3·1",
+ "titel": "Vernams Lochstreifen",
+ "ds": "9",
+ "niveau": "kern",
+ "level": "3.1",
+ "datei": "KR_W3_Akte1_Vernams_Lochstreifen",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Die Archivarin hat den Lochstreifen von 1917 entschlüsselt: **FUNK**. Doch wie funktioniert die Maschine, die Nachricht und Schlüssel Loch für Loch verknüpft – und warum stand auf dem Schlüssel „nach Gebrauch vernichten“? In dieser Akte lernst du die Sprache der Maschinen: **Bits**. Du baust das einzige Verfahren, das nachweislich nicht zu knacken ist – und erfährst, wie es trotzdem fällt."
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Hilfsmittel:** ASCII-Tabelle der Abitur-Anlage. Bits schreiben wir in Vierergruppen, das höchstwertige Bit links; XOR-Zeichen ⊕."
+  },
+  {
+   "t": "kasten",
+   "kopf": "ARCHIVFUND · DER LOCHSTREIFEN VON 1917",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zwei Streifen aus einer Blechdose: acht Spuren nebeneinander, **Loch = 1**, kein Loch = 0. Jede Zeile ist ein Zeichen."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Geheimtext-Streifen**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "schrift": 10,
+       "kopfzeile": [
+        "128",
+        "64",
+        "32",
+        "16",
+        "8",
+        "4",
+        "2",
+        "1"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zeilen": [
+        [
+         "●",
+         "●",
+         "●",
+         "●",
+         "·",
+         "●",
+         "·",
+         "·"
+        ],
+        [
+         "·",
+         "●",
+         "●",
+         "·",
+         "●",
+         "●",
+         "·",
+         "·"
+        ],
+        [
+         "●",
+         "·",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●",
+         "●"
+        ],
+        [
+         "·",
+         "·",
+         "●",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●"
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Schlüssel-Streifen** ==„nach Gebrauch vernichten!“==",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "schrift": 10,
+       "kopfzeile": [
+        "128",
+        "64",
+        "32",
+        "16",
+        "8",
+        "4",
+        "2",
+        "1"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zeilen": [
+        [
+         "●",
+         "·",
+         "●",
+         "●",
+         "·",
+         "·",
+         "●",
+         "·"
+        ],
+        [
+         "·",
+         "·",
+         "●",
+         "●",
+         "●",
+         "·",
+         "·",
+         "●"
+        ],
+        [
+         "●",
+         "●",
+         "·",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●"
+        ],
+        [
+         "·",
+         "●",
+         "●",
+         "·",
+         "●",
+         "●",
+         "●",
+         "·"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Vergleiche die Streifen **Spalte für Spalte**. Finde eine Regel, die aus Geheimtext und Schlüssel ein sinnvolles Zeichen macht (Tipp: Großbuchstaben beginnen mit `010`)."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopf": [
+      "Zeichen",
+      "Geheimtext",
+      "Schlüssel",
+      "Ergebnis der Regel",
+      "ASCII-Wert",
+      "Zeichen"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "1111 0100",
+       "1011 0010",
+       "",
+       "",
+       ""
+      ],
+      [
+       "2",
+       "0110 1100",
+       "0011 1001",
+       "",
+       "",
+       ""
+      ],
+      [
+       "3",
+       "1000 1011",
+       "1100 0101",
+       "",
+       "",
+       ""
+      ],
+      [
+       "4",
+       "0010 0101",
+       "0110 1110",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      1.6,
+      3.0,
+      3.0,
+      3.6,
+      2.4,
+      2.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopf": [
+      "Zeichen",
+      "Geheimtext",
+      "Schlüssel",
+      "Ergebnis der Regel",
+      "ASCII-Wert",
+      "Zeichen"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "1111 0100",
+       "1011 0010",
+       "0100 0110",
+       "70",
+       "**F**"
+      ],
+      [
+       "2",
+       "0110 1100",
+       "0011 1001",
+       "0101 0101",
+       "85",
+       "**U**"
+      ],
+      [
+       "3",
+       "1000 1011",
+       "1100 0101",
+       "0100 1110",
+       "78",
+       "**N**"
+      ],
+      [
+       "4",
+       "0010 0101",
+       "0110 1110",
+       "0100 1011",
+       "75",
+       "**K**"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      3.0,
+      3.0,
+      3.6,
+      2.4,
+      2.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "p",
+     "md": "Regel: [[luecke:40]]",
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "Regel: **gleich → 0, verschieden → 1** (XOR). Nachricht: **FUNK**. Die „zwei Kerben“ auf dem Schlüsselstreifen führen zum Funkraum „Der doppelte Schlüssel“.",
+     "nur_loesung": true
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Zeichen werden Bits",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** mit der ASCII-Tabelle der Anlage und den Stellenwerten 128, 64, …, 1 die ASCII-Werte und Bits von B, O, J, E. Kontrolliere danach mit Archivwissen 1.",
+      "**Bestimme** umgekehrt das Zeichen zu `0101 0111` und zu `0100 1000`."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Zeichen",
+      "B",
+      "O",
+      "J",
+      "E",
+      "?",
+      "?"
+     ],
+     "zeilen": [
+      [
+       "ASCII",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Bits",
+       "",
+       "",
+       "",
+       "",
+       "0101 0111",
+       "0100 1000"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.4,
+      2.4,
+      2.4,
+      2.4,
+      2.6,
+      2.6
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Zeichen",
+      "B",
+      "O",
+      "J",
+      "E",
+      "**W**",
+      "**H**"
+     ],
+     "zeilen": [
+      [
+       "ASCII",
+       "66",
+       "79",
+       "74",
+       "69",
+       "87",
+       "72"
+      ],
+      [
+       "Bits",
+       "0100 0010",
+       "0100 1111",
+       "0100 1010",
+       "0100 0101",
+       "0101 0111",
+       "0100 1000"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.4,
+      2.4,
+      2.4,
+      2.4,
+      2.6,
+      2.6
+     ],
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "B 66 `0100 0010`, O 79 `0100 1111`, J 74 `0100 1010`, E 69 `0100 0101`; `0101 0111` = 64 + 16 + 4 + 2 + 1 = 87 = **W**, `0100 1000` = 64 + 8 = 72 = **H**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* A = 1 statt 65 (P1)."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Zeichen als Bits",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein **Bit** hat den Wert 0 oder 1. Acht Bits (ein **Byte**) stellen eine Zahl von 0 bis 255 als Dualzahl dar; die Stellen haben von links die Werte 128, 64, 32, 16, 8, 4, 2, 1. Der **ASCII-Code** (Anlage) ordnet jedem Zeichen eine Zahl zu: A = 65, B = 66, …, Z = 90, Leerzeichen = 32."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel:* B = 66 = 64 + 2 = `0100 0010`. Wir schreiben Bits in **Vierergruppen**, das höchstwertige Bit links."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Zeichen",
+      "ASCII",
+      "128",
+      "64",
+      "32",
+      "16",
+      "8",
+      "4",
+      "2",
+      "1",
+      "Bits"
+     ],
+     "zeilen": [
+      [
+       "B",
+       "66",
+       "0",
+       "1",
+       "0",
+       "0",
+       "0",
+       "0",
+       "1",
+       "0",
+       "0100 0010"
+      ],
+      [
+       "O",
+       "79",
+       "0",
+       "1",
+       "0",
+       "0",
+       "1",
+       "1",
+       "1",
+       "1",
+       "0100 1111"
+      ],
+      [
+       "J",
+       "74",
+       "0",
+       "1",
+       "0",
+       "0",
+       "1",
+       "0",
+       "1",
+       "0",
+       "0100 1010"
+      ],
+      [
+       "E",
+       "69",
+       "0",
+       "1",
+       "0",
+       "0",
+       "0",
+       "1",
+       "0",
+       "1",
+       "0100 0101"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      1.5,
+      1.05,
+      1.05,
+      1.05,
+      1.05,
+      1.05,
+      1.05,
+      1.05,
+      1.05,
+      2.8
+     ],
+     "schrift": 9.5
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "**Merksatz:** *Großbuchstaben beginnen mit `010`, die restlichen 5 Bits sind die Nummer im Alphabet* (O = 15 → `010 01111`). Die vollständige ASCII-Tabelle steht in der Anlage."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P1",
+   "titel": "Drei Zählweisen",
+   "md": "Der **ASCII-Wert** von A ist **65** – nicht 1 (Alphabetleiste der Anlage, A = 1 … Z = 26) und nicht 0 (Verschiebung bzw. Programm, A = 0). Wer O als 15 = `0000 1111` codiert, verschlüsselt ein anderes Zeichen."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "XOR – exklusives Oder",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.42,
+     "links": [
+      {
+       "t": "tabelle",
+       "mono": true,
+       "zentriert": true,
+       "kopf": [
+        "a",
+        "b",
+        "a ⊕ b"
+       ],
+       "zeilen": [
+        [
+         "0",
+         "0",
+         "0"
+        ],
+        [
+         "0",
+         "1",
+         "1"
+        ],
+        [
+         "1",
+         "0",
+         "1"
+        ],
+        [
+         "1",
+         "1",
+         "0"
+        ]
+       ],
+       "breiten": [
+        1.5,
+        1.5,
+        2.2
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "XOR (Zeichen ⊕) verknüpft zwei Bits: kurz **gleich → 0, verschieden → 1**. Bitfolgen werden **Stelle für Stelle** verknüpft."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* `0100 1111 ⊕ 1010 0110 = 1110 1001`."
+      },
+      {
+       "t": "p",
+       "md": "Wichtige Regeln: a ⊕ 0 = a, a ⊕ a = 0 und deshalb"
+      },
+      {
+       "t": "formel",
+       "md": "**a ⊕ k ⊕ k = a**"
+      },
+      {
+       "t": "p",
+       "md": "XOR ist **selbstinvers**: Wer mit k verschlüsselt, entschlüsselt mit derselben Operation und demselben k."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Gleich oder verschieden?",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Berechne** beide Verknüpfungen. **Begründe** mit einer Regel aus Archivwissen 2, dass das zweite Ergebnis vorhersehbar war."
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "bits",
+       "zeilen": [
+        {
+         "label": "",
+         "bits": "1100 1010"
+        },
+        {
+         "label": "⊕",
+         "bits": "0110 0110"
+        },
+        {
+         "label": "=",
+         "bits": "1010 1100",
+         "strich": true,
+         "leer": true
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bits",
+       "zeilen": [
+        {
+         "label": "",
+         "bits": "1100 1010"
+        },
+        {
+         "label": "⊕",
+         "bits": "1100 1010"
+        },
+        {
+         "label": "=",
+         "bits": "0000 0000",
+         "strich": true,
+         "leer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`1100 1010 ⊕ 0110 0110 = 1010 1100`; `1100 1010 ⊕ 1100 1010 = 0000 0000`, weil **a ⊕ a = 0** gilt – jedes Bit trifft auf ein gleiches Bit."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Vernam und das One-Time-Pad",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Gilbert Vernam ließ 1917 eine Fernschreibmaschine jedes Zeichen der Nachricht mit einem Zeichen eines Schlüssel-Lochstreifens verknüpfen (damals im 5-Bit-Fernschreibcode, wir benutzen ASCII):"
+    },
+    {
+     "t": "formel",
+     "md": "**C = M ⊕ K**          **M = C ⊕ K**"
+    },
+    {
+     "t": "p",
+     "md": "Das Verfahren heißt **One-Time-Pad** (Einmalschlüssel), wenn der Schlüssel **(1) echt zufällig** erzeugt wird, **(2) mindestens so lang wie die Nachricht** ist, **(3) nur ein einziges Mal** benutzt wird und **(4) geheim** bleibt (nur Alice und Bob kennen ihn)."
+    },
+    {
+     "t": "p",
+     "md": "Dann ist es **perfekt sicher** (Claude Shannon, 1949): Zu einem Geheimtext passt **jeder** Klartext gleicher Länge mit genau einem Schlüssel, und alle Schlüssel sind gleich wahrscheinlich. Eve lernt aus dem Geheimtext nichts außer der Länge – auch mit beliebig viel Rechenzeit nicht. Der Preis ist das **Schlüsselproblem**: Ebenso viel geheimes Schlüsselmaterial wie Nachrichten muss vorher sicher übergeben werden."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Der doppelte Schlüssel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Benutzt jemand denselben Schlüssel K für zwei Nachrichten, gilt"
+    },
+    {
+     "t": "formel",
+     "md": "C1 ⊕ C2 = (M1 ⊕ K) ⊕ (M2 ⊕ K) = **M1 ⊕ M2**"
+    },
+    {
+     "t": "p",
+     "md": "Der Schlüssel fällt heraus. Eve rät ein Wort (engl. *crib*), das in einer Nachricht vorkommen könnte, verknüpft es an jeder Position mit C1 ⊕ C2 und prüft, ob dort ein sinnvolles Stück der anderen Nachricht erscheint (**Crib-Dragging**). Das Byte `0000 0000` in C1 ⊕ C2 heißt: An dieser Stelle sind beide Klartextzeichen gleich. Genau so wurden ab den 1940er-Jahren Nachrichten entschlüsselt, deren Einmalschlüssel mehrfach benutzt worden waren (bekannt unter dem Namen Venona)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Alice verschlüsselt BOJE",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice verschlüsselt BOJE mit dem Einmalschlüssel `0110 1001 · 1111 0000 · 0011 0011 · 1010 0101`."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** den Geheimtext.",
+      "Bob entschlüsselt – **zeige** an einem Zeichen, dass er wieder BOJE erhält."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "B",
+      "O",
+      "J",
+      "E"
+     ],
+     "zeilen": [
+      [
+       "Klartext M",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Schlüssel K",
+       "0110 1001",
+       "1111 0000",
+       "0011 0011",
+       "1010 0101"
+      ],
+      [
+       "C = M ⊕ K",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.2,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "B",
+      "O",
+      "J",
+      "E"
+     ],
+     "zeilen": [
+      [
+       "Klartext M",
+       "0100 0010",
+       "0100 1111",
+       "0100 1010",
+       "0100 0101"
+      ],
+      [
+       "Schlüssel K",
+       "0110 1001",
+       "1111 0000",
+       "0011 0011",
+       "1010 0101"
+      ],
+      [
+       "C = M ⊕ K",
+       "**0010 1011**",
+       "**1011 1111**",
+       "**0111 1001**",
+       "**1110 0000**"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Geheimtext `0010 1011 · 1011 1111 · 0111 1001 · 1110 0000`."
+    },
+    {
+     "t": "p",
+     "md": "b) z. B. 1. Zeichen: `0010 1011 ⊕ 0110 1001 = 0100 0010` = 66 = **B** – XOR mit demselben Schlüsselbyte macht die Verschlüsselung rückgängig."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "HALT oder LAUF?",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eve fängt den OTP-Geheimtext `0001 1110 · 1101 1010 · 0110 0111 · 1001 0001` ab."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** den Schlüssel, für den der Klartext HALT lautet, und den Schlüssel, für den er LAUF lautet.",
+      "**Erläutere** damit, was „perfekt sicher“ bedeutet."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "Zeichen 1",
+      "Zeichen 2",
+      "Zeichen 3",
+      "Zeichen 4"
+     ],
+     "zeilen": [
+      [
+       "Geheimtext C",
+       "0001 1110",
+       "1101 1010",
+       "0110 0111",
+       "1001 0001"
+      ],
+      [
+       "HALT",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "K~HALT~ = C ⊕ HALT",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "LAUF",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "K~LAUF~ = C ⊕ LAUF",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.8,
+      2.9,
+      2.9,
+      2.9,
+      2.9
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "Zeichen 1",
+      "Zeichen 2",
+      "Zeichen 3",
+      "Zeichen 4"
+     ],
+     "zeilen": [
+      [
+       "Geheimtext C",
+       "0001 1110",
+       "1101 1010",
+       "0110 0111",
+       "1001 0001"
+      ],
+      [
+       "HALT",
+       "0100 1000",
+       "0100 0001",
+       "0100 1100",
+       "0101 0100"
+      ],
+      [
+       "K~HALT~ = C ⊕ HALT",
+       "**0101 0110**",
+       "**1001 1011**",
+       "**0010 1011**",
+       "**1100 0101**"
+      ],
+      [
+       "LAUF",
+       "0100 1100",
+       "0100 0001",
+       "0101 0101",
+       "0100 0110"
+      ],
+      [
+       "K~LAUF~ = C ⊕ LAUF",
+       "**0101 0010**",
+       "**1001 1011**",
+       "**0011 0010**",
+       "**1101 0111**"
+      ]
+     ],
+     "breiten": [
+      3.8,
+      2.9,
+      2.9,
+      2.9,
+      2.9
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) K~HALT~ = `0101 0110 · 1001 1011 · 0010 1011 · 1100 0101`, K~LAUF~ = `0101 0010 · 1001 1011 · 0011 0010 · 1101 0111`."
+    },
+    {
+     "t": "p",
+     "md": "b) Beide Schlüssel sind gleich wahrscheinlich (zufällig erzeugt). Der Geheimtext liefert also keinen Hinweis, welche Nachricht gesendet wurde; jeder Klartext der Länge 4 ist möglich. Auch Brute Force liefert nur alle Wörter der Länge 4 – ohne Entscheidung."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Der doppelte Schlüssel",
+   "sozialform": "Gruppenarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zwei Funksprüche wurden mit **demselben** Einmalschlüssel verschlüsselt (Zeichenpositionen ab 0):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9,
+     "kopf": [
+      "Position",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+     ],
+     "zeilen": [
+      [
+       "C1",
+       "1001 0011",
+       "0111 0011",
+       "1110 1001",
+       "0000 0001",
+       "1011 0100",
+       "0101 0110",
+       "1100 0100"
+      ],
+      [
+       "C2",
+       "1000 0100",
+       "0111 0111",
+       "1110 0100",
+       "0001 0010",
+       "1010 0111",
+       "0101 1011",
+       "1101 1000"
+      ],
+      [
+       "D = C1 ⊕ C2",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9,
+     "kopf": [
+      "Position",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+     ],
+     "zeilen": [
+      [
+       "C1",
+       "1001 0011",
+       "0111 0011",
+       "1110 1001",
+       "0000 0001",
+       "1011 0100",
+       "0101 0110",
+       "1100 0100"
+      ],
+      [
+       "C2",
+       "1000 0100",
+       "0111 0111",
+       "1110 0100",
+       "0001 0010",
+       "1010 0111",
+       "0101 1011",
+       "1101 1000"
+      ],
+      [
+       "D = C1 ⊕ C2",
+       "**0001 0111**",
+       "**0000 0100**",
+       "**0000 1101**",
+       "**0001 0011**",
+       "**0001 0011**",
+       "**0000 1101**",
+       "**0001 1100**"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** D = C1 ⊕ C2.",
+      "Eve vermutet in einer Nachricht das Wort UHR (U = `0101 0101`, H = `0100 1000`, R = `0101 0010`). Verknüpft UHR mit D an den Positionen 0 bis 4 (**eine Position je Person**) und notiert die Zeichen.",
+      "**Gib** beide Nachrichten **an**."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zentriert": true,
+     "kopf": [
+      "UHR ab Position",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "zeilen": [
+      [
+       "Zeichen",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "sinnvoll?",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.4,
+      2.6,
+      2.6,
+      2.6,
+      2.6,
+      2.6
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "UHR ab Position",
+      "Bits (UHR ⊕ D)",
+      "Zeichen",
+      "sinnvoll?"
+     ],
+     "zeilen": [
+      [
+       "0",
+       "0100 0010 · 0100 1100 · 0101 1111",
+       "B L _",
+       "kaum"
+      ],
+      [
+       "1",
+       "0101 0001 · 0100 0101 · 0100 0001",
+       "Q E A",
+       "nein"
+      ],
+      [
+       "2",
+       "0101 1000 · 0101 1011 · 0100 0001",
+       "X [ A",
+       "nein"
+      ],
+      [
+       "3",
+       "0100 0110 · 0101 1011 · 0101 1111",
+       "F [ _",
+       "nein"
+      ],
+      [
+       "4",
+       "0100 0110 · 0100 0101 · 0100 1110",
+       "**F E N**",
+       "**ja**"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      8.2,
+      2.6,
+      2.6
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) D = `0001 0111 · 0000 0100 · 0000 1101 · 0001 0011 · 0001 0011 · 0000 1101 · 0001 1100`."
+    },
+    {
+     "t": "p",
+     "md": "b) Tabelle oben: Nur Position 4 liefert ein sinnvolles Wortstück **FEN** (Positionen 2 und 3 enthalten sogar Nicht-Buchstaben)."
+    },
+    {
+     "t": "p",
+     "md": "c) Eine Nachricht endet auf UHR, die andere auf FEN; Eve rät weiter (z. B. HAFEN) und erhält **VIERUHR** und **AMHAFEN**."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler:* Positionen ab 1 zählen (P1); D mit dem Schlüssel verwechseln."
+    }
+   ],
+   "fallen": [
+    "P1",
+    "P8"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Sparversion",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Fernschreibamt spart Schlüssel und verknüpft jedes Zeichen mit demselben Byte k = `0010 0001`."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** EBBE (als Bits).",
+      "**Entscheide begründet**, ob dieses Verfahren mono- oder polyalphabetisch ist, und **erläutere** einen Angriff."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "k = `0010 0001`",
+      "E",
+      "B",
+      "B",
+      "E"
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.2,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "k = `0010 0001`",
+      "E",
+      "B",
+      "B",
+      "E"
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "0100 0101",
+       "0100 0010",
+       "0100 0010",
+       "0100 0101"
+      ],
+      [
+       "Geheimtext",
+       "**0110 0100**",
+       "**0110 0011**",
+       "**0110 0011**",
+       "**0110 0100**"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) EBBE → `0110 0100 · 0110 0011 · 0110 0011 · 0110 0100` (als Zeichen „dccd“)."
+    },
+    {
+     "t": "p",
+     "md": "b) **Monoalphabetisch:** Gleiche Klartextzeichen (B, B) ergeben gleiche Geheimtextbytes. Angriff: Häufigkeitsanalyse der Bytes (häufigstes Byte ≙ E bzw. Leerzeichen) oder Brute Force über nur 256 Schlüssel."
+    },
+    {
+     "t": "p",
+     "md": "*Merke (P8):* Auch zweimal XOR mit k~1~ und k~2~ hilft nicht: (M ⊕ k~1~) ⊕ k~2~ = M ⊕ (k~1~ ⊕ k~2~) wirkt wie **ein** Schlüssel."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen** Sie die Bitfolge des Geheimtextes, der entsteht, wenn das Wort OST (ASCII) mit dem Schlüssel `1010 0110 0101 1100 1111 0000` durch XOR verschlüsselt wird.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "O, S, T = `0100 1111 0101 0011 0101 0100`; Geheimtext **`1110 1001 0000 1111 1010 0100`**. [ASCII korrekt 1, XOR korrekt 2]"
+      }
+     ],
+     "fallen": [
+      "P1"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern** Sie, unter welchen Bedingungen an den Schlüssel die XOR-Verschlüsselung perfekt sicher ist.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Schlüssel echt zufällig, mindestens so lang wie die Nachricht, nur einmal verwendet, geheim; dann passt zu einem Geheimtext jeder Klartext gleicher Länge (mit genau einem, gleich wahrscheinlichen Schlüssel). [je Bedingung 0,5; Erläuterung 1]"
+      }
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "„Wird derselbe Einmalschlüssel für zwei Nachrichten verwendet, kann ein Angreifer Informationen über die Klartexte gewinnen, ohne den Schlüssel zu kennen.“ **Entscheiden** Sie **begründet**, ob diese Aussage korrekt ist.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**Korrekt** [1]: C1 ⊕ C2 = M1 ⊕ M2, der Schlüssel fällt heraus; aus Nullbytes erkennt man gleiche Zeichen, mit vermuteten Wörtern (Crib) lassen sich Teile beider Klartexte gewinnen [2]."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Begründen** Sie, dass eine XOR-Verschlüsselung, bei der jedes Zeichen mit demselben 8-Bit-Schlüssel verknüpft wird, mit einer Häufigkeitsanalyse angreifbar ist.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Gleiche Zeichen → gleiche Bytes (monoalphabetisch) [1]; die Verteilung der Bytes entspricht der Buchstabenverteilung der Sprache, das häufigste Byte steht für E (bzw. Leerzeichen) [1]. *Typischer Fehler P10:* nur „weil der Schlüssel kurz ist“."
+      }
+     ],
+     "fallen": [
+      "P5",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "3.1",
+   "md": "Level 3.1 „Vernams Lochstreifen“ im Kryptolabor mit der **Bit-Lupe** (Zeichen ↔ Bits, XOR, Doppelnutzungs-Modus mit Crib-Schieber). Trainingsplatz: „XOR-Bytes“ und „Einmalschlüssel doppelt“."
+  }
+ ]
+}

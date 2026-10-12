@@ -1,0 +1,1598 @@
+{
+ "typ": "akte",
+ "welt": 5,
+ "kennung": "AKTE W5·1",
+ "titel": "Fingerabdrücke",
+ "ds": "14",
+ "niveau": "kern",
+ "level": "5.1",
+ "datei": "KR_W5_Akte1_Fingerabdruecke",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die gefälschte Update-Seite hat euch gezeigt: Ein Fingerabdruck verrät jede Veränderung einer Datei – wenn er etwas taugt. Die Archivarin legt euch ein selbst gebautes Prüfverfahren vor, den **KRYPTOS-Hash**, und fordert euch heraus: „Prüft, welche Anforderungen er erfüllt. Und findet heraus, wie Mallory ihn austricksen würde.“"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "offizielle Seite `archiv.chronoskop.example`",
+      "Datei aus der E-Mail"
+     ],
+     "schrift": 8.5,
+     "kopfspalte": true,
+     "breiten": [
+      2.2,
+      7.0,
+      7.0
+     ],
+     "zeilen": [
+      [
+       "Datei",
+       "`chronoskop-update-v7.zip`",
+       "`chronoskop-update-v7.zip`"
+      ],
+      [
+       "SHA-256",
+       "`03a20cc0cc22e8e2968e321a68205a4afc7aa9ba5e2d80aecaf9aaba0134dae7`",
+       "`03d0d35577d04206db84932bae7138627f2f3146cbb29110110bebc88f2ad39e`"
+      ],
+      [
+       "Verbindung",
+       "Schloss-Symbol, Zertifikat für `archiv.chronoskop.example`",
+       "Schloss-Symbol, Zertifikat für `chronoskop-archiv.example`"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Zur Erinnerung – der Archivfund: Nur die ersten zwei Zeichen stimmen überein, der Domainname ist ein anderer, und beide Seiten zeigen ein Schloss.*"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Hashfunktionen und ihre Anforderungen",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eine **Hashfunktion** ordnet jeder Nachricht beliebiger Länge einen **Hashwert fester Länge** zu (Fingerabdruck, Prüfwert). Kryptografische Hashfunktionen sollen:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Anforderung",
+      "Bedeutung"
+     ],
+     "breiten": [
+      4.2,
+      11.6
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "feste Länge",
+       "Hashwert immer gleich lang (SHA-256: 256 Bit = 64 Hexadezimalziffern)"
+      ],
+      [
+       "effizient berechenbar",
+       "auch für große Dateien schnell"
+      ],
+      [
+       "Einwegeigenschaft",
+       "zu einem Hashwert lässt sich praktisch keine passende Nachricht finden"
+      ],
+      [
+       "Kollisionsresistenz",
+       "zwei verschiedene Nachrichten mit gleichem Hashwert lassen sich praktisch nicht finden"
+      ],
+      [
+       "Lawineneffekt",
+       "eine winzige Änderung (ein Bit) ändert im Mittel etwa die Hälfte der Bits des Hashwerts"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel SHA-256:* „heute“ → `b748a919 … 66b4bc7e`, „heutf“ → `1751ffd9 … 79bd0dc3` – **134 der 256 Bits** sind verschieden."
+    },
+    {
+     "t": "p",
+     "md": "Heute verwendet man **SHA-256** (SHA-2-Familie) oder **SHA-3**. **MD5 und SHA-1 gelten als gebrochen** – für beide sind praktische Kollisionen bekannt (MD5 ab 2004, SHA-1 2017)."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P9",
+   "titel": "Hash ≠ Verschlüsselung",
+   "md": "Beim Hashen gibt es **keinen Schlüssel**, und weil unendlich viele Nachrichten auf endlich viele Hashwerte abgebildet werden, kann man die Nachricht **nicht zurückgewinnen** – auch nicht die Besitzerin. Ein Hashwert dient zum **Prüfen** (Integrität), nicht zum Geheimhalten."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Der KRYPTOS-Hash (von Hand)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Text normalisieren (nur Kleinbuchstaben a–z; ä → ae, ö → oe, ü → ue, ß → ss; Leerzeichen, Ziffern und Satzzeichen entfallen). **Nummerierung: A = 1 … Z = 26.** Start **h = 0**. Für jeden Buchstaben mit Wert w von links: "
+    },
+    {
+     "t": "formel",
+     "md": "**h ← (3 · h + w) mod 29**"
+    },
+    {
+     "t": "p",
+     "md": "Der letzte Zustand ist der Hashwert KH(text) ∈ {0, 1, …, 28}. Rechenvorlage am Beispiel „nebel“:"
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`n`",
+         "14",
+         "0 + 14 = 14",
+         "14"
+        ],
+        [
+         "`e`",
+         "5",
+         "42 + 5 = 47",
+         "18"
+        ],
+        [
+         "`b`",
+         "2",
+         "54 + 2 = 56",
+         "27"
+        ],
+        [
+         "`e`",
+         "5",
+         "81 + 5 = 86",
+         "28"
+        ],
+        [
+         "`l`",
+         "12",
+         "84 + 12 = 96",
+         "**9**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      },
+      {
+       "t": "p",
+       "md": "KH(„nebel“) = **9**",
+       "klein": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "klein": true,
+       "md": "**Rechentipp:** 3 · h + w ist höchstens 3 · 28 + 26 = 110 – ziehe also 29, 58 oder 87 ab. Nach **jeder** Runde reduzieren (P2)."
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "**Beispiel Runde 4:** h = 27, w = 5 (e): 3 · 27 + 5 = 86; 86 − 58 = **28**."
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "**Leerer Text:** KH = 0. Zahlen immer als Wort schreiben – Ziffern entfallen beim Normalisieren (P4)."
+      }
+     ],
+     "anteil": 0.55
+    },
+    {
+     "t": "struktogramm",
+     "breite_cm": 14.5,
+     "kopf": "kryptosHash(text: Zeichenkette): Ganzzahl",
+     "elemente": [
+      {
+       "kommentar": "text ist bereits normalisiert (nur Kleinbuchstaben a–z)"
+      },
+      {
+       "anw": "h ← 0"
+      },
+      {
+       "fuer": "i von 0 bis Länge(text) − 1",
+       "rumpf": [
+        {
+         "anw": "w ← ASCII-Wert(Zeichen an Position i von text) − 96     // a = 1 … z = 26"
+        },
+        {
+         "anw": "h ← (3 · h + w) mod 29"
+        }
+       ]
+      },
+      {
+       "gib": "h"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Kollisionen sind unvermeidlich – und manchmal leicht",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Schubfachprinzip:** Verteilt man mehr Gegenstände als Schubfächer, liegen in einem Fach mindestens zwei. Der KRYPTOS-Hash hat 29 „Fächer“: Unter 30 verschiedenen Nachrichten haben **sicher** zwei denselben Hash. Jede Hashfunktion hat Kollisionen – gute Hashfunktionen machen sie nur **unauffindbar**.",
+      "**Gezielte Kollision beim KRYPTOS-Hash:** Der vorletzte Buchstabe geht mit Faktor 3, der letzte mit Faktor 1 in den Hash ein. Erhöht man den **vorletzten um 1** und verringert den **letzten um 3**, ändert sich nichts: „nebel“ → „neb**fi**“ (e → f, l → i)."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      3.2,
+      1.6,
+      1.6,
+      1.6,
+      1.6,
+      1.6
+     ],
+     "schrift": 10,
+     "hervor": [
+      [
+       1,
+       4
+      ],
+      [
+       1,
+       5
+      ]
+     ],
+     "kopf": [
+      "Zustände",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+     ],
+     "zeilen": [
+      [
+       "nebel",
+       "14",
+       "18",
+       "27",
+       "28",
+       "**9**"
+      ],
+      [
+       "nebfi",
+       "14",
+       "18",
+       "27",
+       "0",
+       "**9**"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Prüfsummen und Passwörter",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Summen-Prüfsumme** S(t) = (Σ w~i~) mod 29: erkennt geänderte Buchstaben, aber **keine Vertauschungen** (permutationsinvariant).",
+      "**Gewichtete Prüfsumme** G(t) = (1 · w~1~ + 2 · w~2~ + 3 · w~3~ + …) mod 29: Vertauschungen ändern den Wert.",
+      "**Passwort-Hashing:** Bei der Registrierung erzeugt der Dienst ein zufälliges **Salz** und speichert Salz und Hash(Salz + Passwort), **nie das Passwort**. Beim Login hängt er das Salz an das eingegebene Passwort, hasht und vergleicht. Gleiche Passwörter ergeben so verschiedene gespeicherte Werte, vorab berechnete Tabellen nutzen Angreifern nichts. In der Praxis: absichtlich langsame Verfahren wie **Argon2** oder **bcrypt**."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Zwei Wörter, ein Fingerabdruck?",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Berechne KH(„anker“) und KH(„tor“) mit der Rechenvorlage. Was fällt auf? Welche Anforderung ist damit verletzt?"
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`a`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`n`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`k`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`e`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`r`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`t`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`o`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`r`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "anteil": 0.5,
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`a`",
+         "1",
+         "0 + 1 = 1",
+         "1"
+        ],
+        [
+         "`n`",
+         "14",
+         "3 + 14 = 17",
+         "17"
+        ],
+        [
+         "`k`",
+         "11",
+         "51 + 11 = 62",
+         "4"
+        ],
+        [
+         "`e`",
+         "5",
+         "12 + 5 = 17",
+         "17"
+        ],
+        [
+         "`r`",
+         "18",
+         "51 + 18 = 69",
+         "**11**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`t`",
+         "20",
+         "0 + 20 = 20",
+         "20"
+        ],
+        [
+         "`o`",
+         "15",
+         "60 + 15 = 75",
+         "17"
+        ],
+        [
+         "`r`",
+         "18",
+         "51 + 18 = 69",
+         "**11**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "Beide Wörter haben den Hashwert **11**: gleicher Hashwert für verschiedene Nachrichten = **Kollision** → die **Kollisionsresistenz** ist verletzt."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* 62 mod 29 = 33 (nur einmal 29 abgezogen, P2)."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Ein Buchstabe Unterschied",
+   "sozialform": "Partnerarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Berechne KH(„kiste“) und KH(„kistf“).",
+      "**Untersuche**, ob der KRYPTOS-Hash den Lawineneffekt erfüllt, und vergleiche mit SHA-256 (Archivwissen 1).",
+      "**Begründe**, warum ein fehlender Lawineneffekt einem Angreifer hilft."
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`i`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`s`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`t`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`e`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`i`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`s`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`t`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`f`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "anteil": 0.5,
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "11",
+         "0 + 11 = 11",
+         "11"
+        ],
+        [
+         "`i`",
+         "9",
+         "33 + 9 = 42",
+         "13"
+        ],
+        [
+         "`s`",
+         "19",
+         "39 + 19 = 58",
+         "0"
+        ],
+        [
+         "`t`",
+         "20",
+         "0 + 20 = 20",
+         "20"
+        ],
+        [
+         "`e`",
+         "5",
+         "60 + 5 = 65",
+         "**7**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "11",
+         "0 + 11 = 11",
+         "11"
+        ],
+        [
+         "`i`",
+         "9",
+         "33 + 9 = 42",
+         "13"
+        ],
+        [
+         "`s`",
+         "19",
+         "39 + 19 = 58",
+         "0"
+        ],
+        [
+         "`t`",
+         "20",
+         "0 + 20 = 20",
+         "20"
+        ],
+        [
+         "`f`",
+         "6",
+         "60 + 6 = 66",
+         "**8**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "a) KH(„kiste“) = **7**, KH(„kistf“) = **8**."
+    },
+    {
+     "t": "p",
+     "md": "b) Eine Änderung des letzten Buchstabens um 1 ändert den Hash nur um 1 → **kein Lawineneffekt**. SHA-256: ein Buchstabe anders („heute“/„heutf“) → 134 von 256 Bits verschieden → Lawineneffekt erfüllt."
+    },
+    {
+     "t": "p",
+     "md": "c) Ohne Lawineneffekt sieht man, wie sich Änderungen auswirken, und kann sie gezielt ausgleichen – also Kollisionen konstruieren (Auftrag 4)."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Schubfächer",
+   "sozialform": "Einzelarbeit · 6 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Begründe**, dass es beim KRYPTOS-Hash Kollisionen geben muss, ohne eine einzige zu berechnen.",
+      "Wie viele verschiedene Nachrichten braucht man mindestens, um bei SHA-256 **mit Sicherheit** eine Kollision zu haben?",
+      "Warum ist SHA-256 trotzdem kollisionsresistent?"
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Es gibt nur 29 mögliche Hashwerte, aber unendlich viele Nachrichten – nach dem **Schubfachprinzip** müssen mehrere Nachrichten denselben Hashwert haben."
+    },
+    {
+     "t": "p",
+     "md": "b) 2^256^ + 1 Nachrichten."
+    },
+    {
+     "t": "p",
+     "md": "c) Kollisionen **existieren**, aber es ist kein Verfahren bekannt, eine zu **finden**; Ausprobieren bräuchte etwa 2^128^ Versuche (Geburtstagseffekt) – praktisch unmöglich."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 3,
+   "titel": "Mallorys Kollisionsbaukasten",
+   "sozialform": "Partnerarbeit · 12 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Zeige** allgemein: Ist h der Zustand vor dem vorletzten Buchstaben (Wert v) und dem letzten Buchstaben (Wert l), dann ist der Hashwert (9 · h + 3 · v + l) mod 29. Folgere daraus die Regel „vorletzter +1, letzter −3“.",
+      "KH(„post“) = 6. **Bestimme** mit der Regel eine Kollision und prüfe sie mit einer Rechenvorlage.",
+      "**Bestimme** eine Nachricht, die mit „ab“ beginnt und den KRYPTOS-Hash 20 hat. Welche Anforderung ist damit verletzt?"
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "p",
+       "md": "b) Kollision zu „post“: [[luecke:12]]",
+       "nur_schueler": true
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "c) Nachricht „ab_“: [[luecke:12]]",
+       "nur_schueler": true
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`a`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`b`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "anteil": 0.5,
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Vorletzte Runde: h~1~ = 3h + v, letzte Runde: h~2~ = 3h~1~ + l = 9h + 3v + l (jeweils mod 29). Mit v + 1 und l − 3: 9h + 3(v + 1) + (l − 3) = 9h + 3v + l → **gleicher Hash** (solange v + 1 ≤ 26 und l − 3 ≥ 1)."
+    },
+    {
+     "t": "p",
+     "md": "b) „post“: s → t, t → q ergibt **„potq“**:"
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`p`",
+         "16",
+         "0 + 16 = 16",
+         "16"
+        ],
+        [
+         "`o`",
+         "15",
+         "48 + 15 = 63",
+         "5"
+        ],
+        [
+         "`t`",
+         "20",
+         "15 + 20 = 35",
+         "6"
+        ],
+        [
+         "`q`",
+         "17",
+         "18 + 17 = 35",
+         "**6**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "c) Gesucht w mit (3 · 5 + w) mod 29 = 20 → w = 5 = e:"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`a`",
+         "1",
+         "0 + 1 = 1",
+         "1"
+        ],
+        [
+         "`b`",
+         "2",
+         "3 + 2 = 5",
+         "5"
+        ],
+        [
+         "`e`",
+         "5",
+         "15 + 5 = 20",
+         "**20**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "c) KH(„ab“) = 5 (Zustände 1, 5); w = 20 − 15 = 5 → **„abe“** hat KH = 20. Die **Einwegeigenschaft** ist verletzt: Zu einem Hashwert lässt sich direkt eine Nachricht berechnen."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Rabe oder Bear?",
+   "sozialform": "Partnerarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Lager vergibt Codewörter. Statt „rabe“ kommt beim Empfänger „bear“ an (Buchstaben vertauscht)."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Berechne S und G für beide Wörter.",
+      "**Untersuche**, welche Prüfsumme den Fehler bemerkt.",
+      "Berechne auch den KRYPTOS-Hash beider Wörter und **erläutere**, warum er die Vertauschung bemerkt."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Wort",
+      "Werte w~i~",
+      "S(t)",
+      "G(t)",
+      "KH(t)"
+     ],
+     "zentriert": true,
+     "kopfspalte": true,
+     "breiten": [
+      2.2,
+      4.0,
+      3.2,
+      4.2,
+      3.2
+     ],
+     "zeilen": [
+      [
+       "`rabe`",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "`bear`",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Wort",
+      "Werte w~i~",
+      "S(t)",
+      "G(t)",
+      "KH(t)"
+     ],
+     "zentriert": true,
+     "kopfspalte": true,
+     "breiten": [
+      2.2,
+      3.2,
+      3.6,
+      4.6,
+      3.2
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "`rabe`",
+       "18, 1, 2, 5",
+       "26",
+       "18 + 2 + 6 + 20 = 46 → **17**",
+       "18 → 26 → 22 → **13**"
+      ],
+      [
+       "`bear`",
+       "2, 5, 1, 18",
+       "26",
+       "2 + 10 + 3 + 72 = 87 → **0**",
+       "2 → 11 → 5 → **4**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "b) Nur **G** bemerkt die Vertauschung; S ist **permutationsinvariant** (die Summe hängt nicht von der Reihenfolge ab)."
+    },
+    {
+     "t": "p",
+     "md": "c) KH(„rabe“): 18 → 55 → 26 → 80 → 22 → 71 → **13**; KH(„bear“): 2 → 11 → 34 → 5 → 33 → **4**. Jeder Buchstabe geht mit einem **positionsabhängigen Faktor 3^j^** ein, daher ändern Vertauschungen in der Regel den Hash."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Salz in der Datenbank",
+   "sozialform": "Einzelarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Dienst nutzt (nur zum Üben) den KRYPTOS-Hash für Passwörter. Gespeichert ist:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Konto",
+      "Salz",
+      "gespeicherter Wert KH(Salz + Passwort)"
+     ],
+     "breiten": [
+      3,
+      3,
+      8
+     ],
+     "zentriert": true,
+     "zeilen": [
+      [
+       "Ole",
+       "`qx`",
+       "13"
+      ],
+      [
+       "Kim",
+       "`kz`",
+       "11"
+      ]
+     ]
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Kim meldet sich mit dem Passwort „sonne“ an. **Beschreibe** die Prüfung des Servers und führe sie durch.",
+      "Ole hat dasselbe Passwort. Woran erkennt ein Angreifer mit Zugriff auf die Datenbank das **nicht**?",
+      "Ein zweiter Dienst speichert **ohne Salz**: KH(„sonne“) = 0. Ein Angreifer probiert das Passwort „geheim“. **Untersuche**, ob er hineinkommt, und **erläutere**, was das über die Länge echter Passwort-Hashes aussagt."
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`z`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`s`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`o`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`n`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`n`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`e`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`g`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`e`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`h`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`e`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`i`",
+         "",
+         "",
+         ""
+        ],
+        [
+         "`m`",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "nur_schueler": true
+      }
+     ],
+     "anteil": 0.5,
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "p",
+       "md": "a) KH(„kz“ + „sonne“):"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`k`",
+         "11",
+         "0 + 11 = 11",
+         "11"
+        ],
+        [
+         "`z`",
+         "26",
+         "33 + 26 = 59",
+         "1"
+        ],
+        [
+         "`s`",
+         "19",
+         "3 + 19 = 22",
+         "22"
+        ],
+        [
+         "`o`",
+         "15",
+         "66 + 15 = 81",
+         "23"
+        ],
+        [
+         "`n`",
+         "14",
+         "69 + 14 = 83",
+         "25"
+        ],
+        [
+         "`n`",
+         "14",
+         "75 + 14 = 89",
+         "2"
+        ],
+        [
+         "`e`",
+         "5",
+         "6 + 5 = 11",
+         "**11**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "c) KH(„geheim“):"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "Wert w",
+        "3 · h + w",
+        "h"
+       ],
+       "zeilen": [
+        [
+         "`g`",
+         "7",
+         "0 + 7 = 7",
+         "7"
+        ],
+        [
+         "`e`",
+         "5",
+         "21 + 5 = 26",
+         "26"
+        ],
+        [
+         "`h`",
+         "8",
+         "78 + 8 = 86",
+         "28"
+        ],
+        [
+         "`e`",
+         "5",
+         "84 + 5 = 89",
+         "2"
+        ],
+        [
+         "`i`",
+         "9",
+         "6 + 9 = 15",
+         "15"
+        ],
+        [
+         "`m`",
+         "13",
+         "45 + 13 = 58",
+         "**0**"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.6,
+        3.0,
+        2.0
+       ],
+       "zentriert": true,
+       "schrift": 10
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "a) Der Server liest Kims Salz „kz“, hängt das eingegebene Passwort an („kzsonne“), berechnet KH = **11** und vergleicht mit dem gespeicherten Wert 11 → Anmeldung erfolgreich."
+    },
+    {
+     "t": "p",
+     "md": "b) Durch das unterschiedliche Salz sind die gespeicherten Werte verschieden (13 bzw. 11)."
+    },
+    {
+     "t": "p",
+     "md": "c) KH(„geheim“) = **0** = KH(„sonne“) → der Angreifer kommt mit einem **falschen** Passwort hinein (Kollision). Echte Passwort-Hashes müssen so lang sein (z. B. 256 Bit), dass solche Zufallstreffer praktisch ausgeschlossen sind."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 1,
+   "titel": "Das verschlüsselte Tagebuch?",
+   "sozialform": "Einzelarbeit · 4 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„Ich speichere meine Tagebucheinträge als SHA-256-Hash, dann sind sie verschlüsselt.“ **Nimm Stellung** mit zwei fachlichen Argumenten."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Falsch: (1) Ein Hash hat **keinen Schlüssel** – die Einträge können auch von der Besitzerin nicht wiederhergestellt werden; (2) viele Texte haben denselben Hashwert, eine eindeutige Rückgewinnung ist unmöglich. Geeignet wäre eine Verschlüsselung (z. B. AES mit einem aus dem Passwort abgeleiteten Schlüssel). Ein Hash eignet sich nur zum **Prüfen** (Integrität)."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "Ein Mitschüler schlägt vor, vertrauliche Nachrichten zu schützen, indem statt der Nachricht nur ihr SHA-256-Hashwert gesendet wird. **Beurteilen Sie** diesen Vorschlag.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Der Empfänger kann aus dem Hashwert die Nachricht nicht zurückgewinnen, da es keinen Schlüssel gibt und die Funktion nicht umkehrbar ist (1); wegen der festen Länge haben unendlich viele Nachrichten denselben Hashwert, die Nachricht ist also nicht eindeutig bestimmt (1); Urteil: ungeeignet – Hashfunktionen dienen der Integritätsprüfung, für Vertraulichkeit braucht man Verschlüsselung (1)."
+      }
+     ],
+     "fallen": [
+      "P9",
+      "P10"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Bestimmen Sie** den KRYPTOS-Hash der Nachricht „hafen“.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "8 → 24 + 1 = 25 → 75 + 6 = 81 → 23 → 69 + 5 = 74 → 16 → 48 + 14 = 62 → **4** (Rechenweg 1, Ergebnis 1)."
+      }
+     ],
+     "fallen": [
+      "P2"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Untersuchen Sie**, ob der KRYPTOS-Hash den Lawineneffekt erfüllt.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Beispiel: Eine Änderung des letzten Buchstabens um 1 ändert den Hashwert nur um 1, z. B. KH(„kiste“) = 7, KH(„kistf“) = 8 (1); der Lawineneffekt ist nicht erfüllt (1)."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Beschreiben Sie**, wie ein Online-Dienst Passwörter mithilfe einer Hashfunktion und eines Salzes prüfen kann, ohne sie im Klartext zu speichern.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Registrierung: zufälliges Salz erzeugen, Hash(Salz + Passwort) und Salz speichern (1); Login: Salz laden, an das eingegebene Passwort anhängen, hashen (1); mit dem gespeicherten Wert vergleichen, bei Gleichheit Zugang (1)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "5.1",
+   "md": "Level 5.1 „Fingerabdrücke“ im Kryptolabor mit dem **Hash-Labor** (Lawinen-Vergleich, Kollisionssuche). Trainingsplatz: „KRYPTOS-Hash“ (5 Aufgaben), „Kollisionsbau“ (3 Aufgaben), „Prüfsummen“ (2 Aufgaben)."
+  }
+ ]
+}

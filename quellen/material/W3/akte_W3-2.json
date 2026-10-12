@@ -1,0 +1,1128 @@
+{
+ "typ": "akte",
+ "welt": 3,
+ "kennung": "AKTE W3·2",
+ "titel": "Der Blockchiffre-Baukasten",
+ "ds": "10",
+ "niveau": "eA",
+ "level": "3.2",
+ "datei": "KR_W3_Akte2_Blockchiffre_Baukasten",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "1949 beschrieb Claude Shannon, wie man aus einfachen Bausteinen starke Chiffren baut. Zwanzig Jahre später rechneten Computer mit Blöcken aus Bits. Die Archivarin hat im Rechenzentrum eine kleine Maschine gefunden: **KRYPTOS-16**. Sie verschlüsselt immer zwei Zeichen auf einmal – mit einem Schlüssel von nur 16 Bit, egal wie lang die Nachricht ist. Du lernst, wie sie arbeitet, und warum ein einziges gekipptes Bit eine Lawine auslöst."
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Hilfsmittel:** ASCII-Tabelle der Anlage; Werkzeugkasten KRYPTOS-16 (ein Lernmodell, kein reales Verfahren)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Block und Bitmatrix",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.66,
+     "links": [
+      {
+       "t": "p",
+       "md": "KRYPTOS-16 verschlüsselt Blöcke aus **16 Bit = 2 ASCII-Zeichen**. Der Block wird als **4×4-Matrix** gedacht: Zeile 1 = erste Vierergruppe, …, Zeile 4 = vierte Vierergruppe. Das erste Zeichen füllt die Zeilen 1–2, das zweite die Zeilen 3–4."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel* „OK“: O = 79 = `0100 1111`, K = 75 = `0100 1011` → Block `0100 1111 0100 1011` (rechts)."
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Bitnummern b1 … b16 zählen ab 1 (b1 links oben, b5 = Zeile 2, Spalte 1), Zeichenpositionen ab 0 (Falle P1)."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "mono": true,
+       "zentriert": true,
+       "kopfspalte": true,
+       "schrift": 10,
+       "kopf": [
+        "z \\ s",
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zeilen": [
+        [
+         "1",
+         "0",
+         "1",
+         "0",
+         "0"
+        ],
+        [
+         "2",
+         "1",
+         "1",
+         "1",
+         "1"
+        ],
+        [
+         "3",
+         "0",
+         "1",
+         "0",
+         "0"
+        ],
+        [
+         "4",
+         "1",
+         "0",
+         "1",
+         "1"
+        ]
+       ],
+       "breiten": [
+        1.5,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+       ],
+       "zentriert_tabelle": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "WERKZEUGKASTEN KRYPTOS-16 · EINE RUNDE",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Schlüssel-XOR:** Zustand ⊕ Rundenschlüssel K~i~.",
+      "**S-Box:** jede Zeile (Vierergruppe) nach der Tabelle ersetzen – Substitution.",
+      "**Transposition:** Zeilen werden Spalten (Matrix an der Diagonalen spiegeln) – Transposition."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Rundenschlüssel:** K~1~ = K; für die nächste Runde wandert die **erste Vierergruppe ans Ende**: k~1~ k~2~ k~3~ k~4~ → k~2~ k~3~ k~4~ k~1~."
+    },
+    {
+     "t": "p",
+     "md": "**Rundenzahl:** 4; von Hand rechnen wir **KRYPTOS-16/2** (2 Runden). Nach der letzten Runde folgt kein weiterer Schritt."
+    },
+    {
+     "t": "p",
+     "md": "**Entschlüsseln:** Runden **rückwärts** (R, …, 1), je Runde: **Transposition** (selbstinvers) → **S⁻¹** → **XOR mit K~i~**. *Falle P3:* S statt S⁻¹ benutzen oder die Schritte in Vorwärtsreihenfolge ausführen."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Beispiel „OK“ mit KRYPTOS-16/2",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Schlüssel K = `1010 0011 0110 1101`, Klartext „OK“ = `0100 1111 0100 1011` (Eingang Runde 1); Eingang von Runde 2 = Ergebnis von Runde 1:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "schrift": 8.5,
+     "kopf": [
+      "Runde",
+      "K~i~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transposition"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "1010 0011 0110 1101",
+       "1110 1100 0010 0110",
+       "1101 1011 0011 1000",
+       "1101 1000 0110 1110"
+      ],
+      [
+       "2",
+       "0011 0110 1101 1010",
+       "1110 1110 1011 0100",
+       "1101 1101 1110 0111",
+       "**1110 1111 0011 1101**"
+      ]
+     ],
+     "breiten": [
+      1.2,
+      3.75,
+      3.75,
+      3.75,
+      3.75
+     ]
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Transposition: neue Zeile 1 = alte Spalte 1 = erstes Bit jeder Vierergruppe von oben nach unten (Runde 1: `1101 1011 0011 1000` → 1, 1, 0, 1 → `1101 …`)."
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "WERKZEUGKASTEN KRYPTOS-16 · S-BOX S UND INVERSE S-BOX S⁻¹",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 8.5,
+     "kopf": [
+      "x",
+      "0000",
+      "0001",
+      "0010",
+      "0011",
+      "0100",
+      "0101",
+      "0110",
+      "0111"
+     ],
+     "zeilen": [
+      [
+       "S(x)",
+       "1100",
+       "1111",
+       "0011",
+       "1001",
+       "0111",
+       "1010",
+       "1000",
+       "0110"
+      ],
+      [
+       "S⁻¹(x)",
+       "1111",
+       "1000",
+       "1001",
+       "0010",
+       "1010",
+       "1101",
+       "0111",
+       "0100"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 8.5,
+     "kopf": [
+      "x",
+      "1000",
+      "1001",
+      "1010",
+      "1011",
+      "1100",
+      "1101",
+      "1110",
+      "1111"
+     ],
+     "zeilen": [
+      [
+       "S(x)",
+       "0001",
+       "0010",
+       "0100",
+       "1110",
+       "1011",
+       "0101",
+       "1101",
+       "0000"
+      ],
+      [
+       "S⁻¹(x)",
+       "0110",
+       "0011",
+       "0101",
+       "1100",
+       "0000",
+       "1110",
+       "1011",
+       "0001"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85,
+      1.85
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Die S-Box nachschlagen",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bestimme** S(0000), S(1111), S(1001) sowie S⁻¹(1001), S⁻¹(0110). **Zeige** an S(0110), dass die S-Box nicht selbstinvers ist: S(S(x)) ≠ x."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "S(0000) = `1100`, S(1111) = `0000`, S(1001) = `0010`; S⁻¹(1001) = `0011`, S⁻¹(0110) = `0111`."
+    },
+    {
+     "t": "p",
+     "md": "S(0110) = `1000`, aber S(1000) = `0001` ≠ `0110` → nicht selbstinvers; zum Entschlüsseln braucht man S⁻¹ (P3)."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Zeilen werden Spalten",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Transponiere** den Zustand `0010 0110 0001 1100` und gib das Ergebnis als Bitfolge an."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "klein": true,
+       "zentriert": true,
+       "md": "vorher"
+      },
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "zeilen": [
+        "0010",
+        "0110",
+        "0001",
+        "1100"
+       ],
+       "zellbreite": 0.7
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "klein": true,
+       "zentriert": true,
+       "md": "nachher"
+      },
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "zeilen": [
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "zellbreite": 0.7,
+       "nur_schueler": true
+      },
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "zeilen": [
+        "0001",
+        "0101",
+        "1100",
+        "0010"
+       ],
+       "zellbreite": 0.7,
+       "nur_loesung": true
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Ergebnis: [[luecke:30]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Spalten von oben nach unten: (0,0,0,1), (0,1,0,1), (1,1,0,0), (0,0,1,0) → **`0001 0101 1100 0010`**."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Der Schlüsselplan",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** für K = `0101 1100 1001 1110` die Rundenschlüssel K~2~, K~3~, K~4~.",
+      "**Untersuche**, welche Schlüssel vier gleiche Rundenschlüssel liefern, und **gib** ihre Anzahl **an**."
+     ]
+    },
+    {
+     "t": "bits",
+     "zeilen": [
+      {
+       "label": "K~1~ = K",
+       "bits": "0101 1100 1001 1110"
+      },
+      {
+       "label": "K~2~",
+       "bits": "1100 1001 1110 0101",
+       "leer": true
+      },
+      {
+       "label": "K~3~",
+       "bits": "1001 1110 0101 1100",
+       "leer": true
+      },
+      {
+       "label": "K~4~",
+       "bits": "1110 0101 1100 1001",
+       "leer": true
+      }
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) K~2~ = `1100 1001 1110 0101`, K~3~ = `1001 1110 0101 1100`, K~4~ = `1110 0101 1100 1001`."
+    },
+    {
+     "t": "p",
+     "md": "b) Genau die Schlüssel aus **vier gleichen Vierergruppen** (z. B. `0111 0111 0111 0111`): Die Rotation ändert sie nicht. Für eine Vierergruppe gibt es 2^4^ = **16** Möglichkeiten → 16 schwache Schlüssel; bei K = `0000 …` wirkt der Schlüssel gar nicht (P7)."
+    }
+   ],
+   "fallen": [
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Zwei Runden von Hand",
+   "sozialform": "Partnerarbeit · 10 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Wende** KRYPTOS-16/2 auf den Klartext „JA“ mit dem Schlüssel K = `0101 1100 1001 1110` **an**. Jede Spalte der Vorlage ist eine 4×4-Matrix (Zeile 1 oben)."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Runde 1",
+      "Eingang „JA“",
+      "K~1~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transposition"
+     ],
+     "zeilen": [
+      [
+       "Zeile 1",
+       "",
+       "0101",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 2",
+       "",
+       "1100",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 3",
+       "",
+       "1001",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 4",
+       "",
+       "1110",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.9,
+      2.6,
+      2.9,
+      2.9,
+      3.4
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Runde 2",
+      "Eingang",
+      "K~2~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transposition"
+     ],
+     "zeilen": [
+      [
+       "Zeile 1",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 2",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 3",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zeile 4",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.9,
+      2.6,
+      2.9,
+      2.9,
+      3.4
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Runde 1",
+      "Eingang „JA“",
+      "K~1~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transposition"
+     ],
+     "zeilen": [
+      [
+       "Zeile 1",
+       "0100",
+       "0101",
+       "0001",
+       "1111",
+       "1100"
+      ],
+      [
+       "Zeile 2",
+       "1010",
+       "1100",
+       "0110",
+       "1000",
+       "1010"
+      ],
+      [
+       "Zeile 3",
+       "0100",
+       "1001",
+       "1101",
+       "0101",
+       "1000"
+      ],
+      [
+       "Zeile 4",
+       "0001",
+       "1110",
+       "1111",
+       "0000",
+       "1010"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.9,
+      2.6,
+      2.9,
+      2.9,
+      3.4
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Runde 2",
+      "Eingang",
+      "K~2~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transposition"
+     ],
+     "zeilen": [
+      [
+       "Zeile 1",
+       "1100",
+       "1100",
+       "0000",
+       "1100",
+       "**1110**"
+      ],
+      [
+       "Zeile 2",
+       "1010",
+       "1001",
+       "0011",
+       "1001",
+       "**1000**"
+      ],
+      [
+       "Zeile 3",
+       "1000",
+       "1110",
+       "0110",
+       "1000",
+       "**0000**"
+      ],
+      [
+       "Zeile 4",
+       "1010",
+       "0101",
+       "1111",
+       "0000",
+       "**0100**"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.9,
+      2.6,
+      2.9,
+      2.9,
+      3.4
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext: [[luecke:30]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "„JA“ = `0100 1010 0100 0001`. Runde 1 → `1100 1010 1000 1010`; Runde 2 mit K~2~ = `1100 1001 1110 0101` → Geheimtext **`1110 1000 0000 0100`**."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler:* K~1~ statt K~2~ in Runde 2; Zeilen statt Spalten gelesen (P4)."
+    }
+   ],
+   "fallen": [
+    "P1",
+    "P4"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Konfusion, Diffusion, Lawine",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die S-Box ist eine kleine, nichtlineare Substitution: Ändert sich ein Eingangsbit, ändern sich **2 bis 4** Ausgangsbits. Sie sorgt mit dem Schlüssel-XOR für **Konfusion** (der Zusammenhang Schlüssel ↔ Geheimtext wird verschleiert). Die Transposition verteilt die vier Ausgangsbits einer S-Box auf vier verschiedene Zeilen – in der nächsten Runde also auf vier S-Boxen: **Diffusion**. Nach 2 Runden hängt jedes Geheimtextbit von jedem Klartextbit ab."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9,
+     "kopf": [
+      "Runden",
+      "1",
+      "2",
+      "3",
+      "4",
+      "ideal"
+     ],
+     "zeilen": [
+      [
+       "gekippte Geheimtextbits (Mittel), wenn 1 Klartextbit kippt",
+       "16 %",
+       "43 %",
+       "48 %",
+       "49 %",
+       "50 %"
+      ]
+     ],
+     "breiten": [
+      8.2,
+      1.6,
+      1.6,
+      1.6,
+      1.6,
+      1.6
+     ]
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Kippt ein Bit, kippt am Ende etwa die Hälfte: der **Lawineneffekt**."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Die Lawine zählen",
+   "sozialform": "Partnerarbeit · Runden-Labor",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Kippe im Runden-Labor im Klartext „JA“ (Schlüssel aus Auftrag 4) das letzte Bit („JA“ → „J@“) und notiere für 1, 2, 3, 4 Runden die Anzahl gekippter Geheimtextbits. **Erläutere** den Lawineneffekt mit Konfusion und Diffusion."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Runden",
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "zeilen": [
+      [
+       "gekippte Bits",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.4,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Runden",
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "zeilen": [
+      [
+       "gekippte Bits",
+       "**3**",
+       "**7**",
+       "**9**",
+       "**7**"
+      ]
+     ],
+     "breiten": [
+      3.4,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "„J@“ = `0100 1010 0100 0000`: **3 / 7 / 9 / 7** gekippte Bits (Werte des Runden-Labors)."
+    },
+    {
+     "t": "p",
+     "md": "Runde 1 betrifft nur eine S-Box (2–4 Bits, Konfusion); die Transposition verteilt diese Bits auf alle Zeilen, ab Runde 2 sind alle S-Boxen betroffen (Diffusion); danach schwankt der Anteil um 50 %."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Lange Texte: Auffüllen und Betriebsmodi",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Text wird in 2-Zeichen-Blöcke zerlegt. Es wird **immer** aufgefüllt: ungerade Zeichenzahl → Byte `0000 0001`, gerade → Block `0000 0010 0000 0010` (das letzte Byte sagt, wie viele Füllbytes entfernt werden). Beispiel „OST“ → `0100 1111 0101 0011 | 0101 0100 0000 0001`."
+    },
+    {
+     "t": "p",
+     "md": "**ECB:** jeder Block einzeln – gleiche Klartextblöcke ergeben gleiche Geheimtextblöcke. **CBC:** Vor dem Verschlüsseln wird jeder Block mit dem vorigen Geheimtextblock verknüpft (beim ersten mit einem zufälligen Startwert IV, der mitgesendet wird): **C~j~ = E(P~j~ ⊕ C~j−1~)**. Gleiche Blöcke werden verschieden verschlüsselt."
+    },
+    {
+     "t": "bild",
+     "pfad": "/home/claude/kryptos/quellen/material/W3/bilder/W3_pixel_ecb_cbc.png",
+     "breite_cm": 9.5,
+     "unterschrift": "Pixelbild „Schlüssel“ (32 × 32, eine 4×4-Kachel = ein Block) – Original · ECB · CBC (KRYPTOS-16, K = 2B7E, IV = 1917)"
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "ECB gegen CBC",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Text „JAJA“ (ohne Auffüllen betrachtet) soll mit **KRYPTOS-16/1** (nur eine Runde, K~1~ = `0101 1100 1001 1110`) verschlüsselt werden."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Gib** die beiden Geheimtextblöcke im Modus ECB **an** (Auftrag 4, Runde 1 hilft).",
+      "**Bestimme** die Geheimtextblöcke im Modus CBC mit IV = `0011 0000 1100 0011`.",
+      "**Erläutere**, was Eve in a) erkennt und in b) nicht."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "kopf": [
+      "CBC",
+      "P~j~ ⊕ C~j−1~",
+      "⊕ K~1~",
+      "nach S-Box",
+      "C~j~ (nach T)"
+     ],
+     "zeilen": [
+      [
+       "Block 1",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Block 2",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.2,
+      3.6,
+      3.6,
+      3.6,
+      3.6
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "kopf": [
+      "CBC",
+      "P~j~ ⊕ C~j−1~",
+      "⊕ K~1~",
+      "nach S-Box",
+      "C~j~ (nach T)"
+     ],
+     "zeilen": [
+      [
+       "Block 1",
+       "0111 1010 1000 0010",
+       "0010 0110 0001 1100",
+       "0011 1000 1111 1011",
+       "**0111 0010 1011 1011**"
+      ],
+      [
+       "Block 2",
+       "0011 1000 1111 1010",
+       "0110 0100 0110 0100",
+       "1000 0111 1000 0111",
+       "**1010 0101 0101 0101**"
+      ]
+     ],
+     "breiten": [
+      2.2,
+      3.6,
+      3.6,
+      3.6,
+      3.6
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Beide Blöcke **`1100 1010 1000 1010`** (= Runde 1 aus Auftrag 4)."
+    },
+    {
+     "t": "p",
+     "md": "b) Block 1: P~1~ ⊕ IV = `0111 1010 1000 0010` … → **C~1~ = `0111 0010 1011 1011`**; Block 2: P~2~ ⊕ C~1~ = `0011 1000 1111 1010` … → **C~2~ = `1010 0101 0101 0101`** (Zwischenschritte in der Tabelle)."
+    },
+    {
+     "t": "p",
+     "md": "c) In ECB sieht Eve, dass beide Blöcke gleich sind (Wiederholungen, Muster, Bildumrisse); in CBC hängen gleiche Blöcke vom Vorgänger ab und werden verschieden verschlüsselt."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 2,
+   "titel": "Fehlerfortpflanzung",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„SEHR GUT“ (4 Datenblöcke und 1 Füllblock; KRYPTOS-16, K = A36D, IV = 1917) wurde verschlüsselt; Bit 5 des 2. Geheimtextblocks kippt. Nach dem Entschlüsseln erhält Bob in **ECB** „SE?? GUT“ mit 12 falschen Bits im 2. Block, in **CBC** „SEQp(GUT“. **Analysiere** beide Ergebnisse (Tipp: P~j~ = D~K~(C~j~) ⊕ C~j−1~) und **vergleiche** mit dem One-Time-Pad."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**ECB:** nur Block 2 („HR“) unbrauchbar (Lawine in D~K~), Rest korrekt. **CBC:** Block 2 unbrauchbar („Qp“, 5 falsche Bits), in Block 3 genau das gekippte Bit 5 („ “ → „(“), Blöcke 1 und 4 korrekt – C~2~ geht in P~2~ über D~K~ und in P~3~ nur über das XOR ein."
+    },
+    {
+     "t": "p",
+     "md": "**One-Time-Pad:** nur das eine Bit ist falsch, nichts breitet sich aus. Verlorene Bits (statt gekippter) verschieben dagegen in allen Verfahren die Blockgrenzen → alles danach unbrauchbar."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Erläutern** Sie den Begriff Diffusion am Beispiel von KRYPTOS-16.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Jedes Klartextbit soll möglichst viele/alle Geheimtextbits beeinflussen [1]; bei KRYPTOS-16 verteilt die Transposition die Ausgangsbits einer S-Box auf vier Zeilen, also vier S-Boxen der nächsten Runde [1]."
+      }
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen** Sie, dass KRYPTOS-16 ohne den Schritt S-Box die Diffusion nicht erfüllt, obwohl Bits in jeder Runde ihre Position wechseln.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Ohne S-Box bleiben nur XOR und Transposition [1]: Jedes Bit wird nur verschoben und mit Schlüsselbits verknüpft, es wirkt auf genau ein Geheimtextbit (kein Vermischen mehrerer Bits) [1]; kippt ein Klartextbit, kippt genau ein Geheimtextbit [1]."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Erläutern** Sie, wie mit KRYPTOS-16 ein beliebig langer Klartext verschlüsselt werden kann.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Zerlegen in 2-Zeichen-Blöcke [1], Auffüllen nach der Füllregel [1], Verschlüsseln im Betriebsmodus (CBC mit IV; ECB möglich, aber Muster bleiben sichtbar) [1]."
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "„Bei KRYPTOS-16 mit dem Schlüssel `0111 0111 0111 0111` werden in allen Runden dieselben Rundenschlüssel verwendet.“ **Entscheiden** Sie **begründet**, ob die Aussage korrekt ist.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**Korrekt** [1]: Die Rotation um eine Vierergruppe ändert `0111 0111 0111 0111` nicht – schwacher Schlüssel [1] (P7)."
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "3.2",
+   "md": "Level 3.2 „Der Blockchiffre-Baukasten“ im Kryptolabor mit dem **Runden-Labor** (Runde für Runde, Bit kippen, Lawinenzähler, ECB vs. CBC). Trainingsplatz: „KRYPTOS-16-Runde“ und „KRYPTOS-16-Teilschritt“."
+  }
+ ]
+}

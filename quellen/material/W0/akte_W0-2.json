@@ -1,0 +1,699 @@
+{
+ "typ": "akte",
+ "welt": 0,
+ "kennung": "AKTE W0·2",
+ "titel": "Caesars Botschaft",
+ "ds": "2",
+ "niveau": "kern",
+ "level": "0.2",
+ "datei": "KR_W0_Akte2_Caesars_Botschaft",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Rom, 52 v. Chr. Ein Brief aus Gallien erreicht den Senat: `UXHFN CXJLQ VODJH U`. Diesmal ist nichts vertauscht – die Buchstaben selbst sind falsch. Der Biograf Sueton berichtet, Caesar habe in vertraulichen Briefen jeden Buchstaben durch den dritten danach ersetzt. Heute wirst du zu Caesars Schreiber – und danach zu Eve, die jede seiner Botschaften in Minuten liest."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Caesar an der Alphabetleiste",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: **A = 1 … Z = 26** (wie in der Abitur-Anlage)."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1,
+     "zeilen": [
+      {
+       "label": "k = 3",
+       "werte": "DEFGHIJKLMNOPQRSTUVWXYZABC"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Caesar mit Schlüssel k:** Jeder Buchstabe wird um k Stellen nach rechts verschoben, nach Z geht es mit A weiter. k ∈ {0, 1, …, 25}. Entschlüsseln: um k nach links (= um 26 − k nach rechts)."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* k = 3: `rueckzug ins lager` → **UXHFN CXJLQ VODJH U** (der Brief aus dem Auftakt)."
+    },
+    {
+     "t": "p",
+     "md": "Jeder Klartextbuchstabe wird immer durch denselben Geheimtextbuchstaben ersetzt: **monoalphabetische Substitution**."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Die Formel und die Z-Falle",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**c = ((p + k − 1) mod 26) + 1**"
+    },
+    {
+     "t": "p",
+     "md": "Mit A = 1 … Z = 26. `mod` ist der Rest bei der Division durch 26 (immer 0 … 25).",
+     "zentriert": true,
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Klartext",
+      "p",
+      "k",
+      "(p + k) mod 26",
+      "Formel c",
+      "Geheimtext"
+     ],
+     "zeilen": [
+      [
+       "W",
+       "23",
+       "3",
+       "0 ⚠",
+       "((23 + 3 − 1) mod 26) + 1 = 25 + 1 = 26",
+       "**Z**"
+      ],
+      [
+       "X",
+       "24",
+       "5",
+       "3",
+       "((24 + 5 − 1) mod 26) + 1 = 2 + 1 = 3",
+       "**C**"
+      ],
+      [
+       "Z",
+       "26",
+       "1",
+       "1",
+       "((26 + 1 − 1) mod 26) + 1 = 0 + 1 = 1",
+       "**A**"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      1.0,
+      1.0,
+      2.6,
+      7.6,
+      2.2
+     ],
+     "zentriert": true
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P2",
+   "titel": "Die Null",
+   "md": "Wer nur (p + k) mod 26 rechnet, bekommt für W + 3 den Wert 0 – den gibt es im Alphabet nicht. **Rest 0 bedeutet Z (26).** Die Formel mit „− 1 … + 1“ vermeidet das."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Brute Force, Schlüsselraum, Kerckhoffs",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der **Schlüsselraum** ist die Menge aller Schlüssel: bei Caesar {0, …, 25}, also 26 Schlüssel. k = 0 ändert nichts (**schwacher Schlüssel**), es bleiben **25 sinnvolle**. Ein **Brute-Force-Angriff** probiert alle Schlüssel aus, bis ein sinnvoller Text erscheint – bei Caesar höchstens 25 Versuche, also ohne Rechner in wenigen Minuten."
+    },
+    {
+     "t": "p",
+     "md": "**Kerckhoffs-Prinzip** (Auguste Kerckhoffs, 1883): Die Sicherheit eines Verfahrens darf **nur von der Geheimhaltung des Schlüssels** abhängen, nicht von der Geheimhaltung des Verfahrens. Verfahren sprechen sich herum (Boten werden gefangen, Geräte erbeutet). Darum muss der Schlüsselraum so groß sein, dass Brute Force aussichtslos ist."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Doppelt verschlüsselt?",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Wer erst mit k~1~ und dann mit k~2~ verschlüsselt, verschiebt insgesamt um **(k~1~ + k~2~) mod 26** – das ist wieder ein Caesar-Schlüssel. Eve muss also nicht mehr ausprobieren als vorher (Falle P8)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Die Legion zieht",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. **Verschlüssele** mit k = 7: `die legion zieht nach norden`"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**KPLSL NPVUG PLOAU HJOUV YKLU**"
+    },
+    {
+     "t": "p",
+     "md": "*P3:* nach links verschoben."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Nachricht aus dem Lager",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. **Entschlüssele** mit k = 10:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "GSBLBKEMROXWORBGKCCOB",
+     "schreiblinien": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**„wir brauchen mehr wasser“** (Entschlüsseln = 16 nach rechts)."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Wo schnappt die Z-Falle zu?",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. **Berechne** mit der Formel und trage ein. Markiere, wo die Z-Falle zuschnappt."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "p",
+      "(p + k) mod 26",
+      "Formelwert c",
+      "Geheimtextbuchstabe"
+     ],
+     "zeilen": [
+      [
+       "(a) T, k = 6",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(b) Y, k = 1",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(c) H, k = 25",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(d) N, k = 12",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.6,
+      3.6,
+      3.6,
+      4.6
+     ],
+     "kopfspalte": true,
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "p",
+      "(p + k) mod 26",
+      "Formelwert c",
+      "Geheimtextbuchstabe"
+     ],
+     "zeilen": [
+      [
+       "(a) T, k = 6",
+       "20",
+       "0 ⚠",
+       "26",
+       "**Z**"
+      ],
+      [
+       "(b) Y, k = 1",
+       "25",
+       "0 ⚠",
+       "26",
+       "**Z**"
+      ],
+      [
+       "(c) H, k = 25",
+       "8",
+       "7",
+       "7",
+       "**G**"
+      ],
+      [
+       "(d) N, k = 12",
+       "14",
+       "0 ⚠",
+       "26",
+       "**Z**"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.6,
+      3.6,
+      3.6,
+      4.6
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Tabelle. Die Z-Falle schnappt bei (a), (b) und (d) zu: (p + k) mod 26 = 0, richtig ist Z (26)."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Eve am Tor",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 Eve fängt ab: `LXGTM MTZMA XNMX`. **Bestimme** Schlüssel und Klartext mit einem Brute-Force-Angriff. Nutze die Tabelle (Entschlüsseln mit k = 1 … 25, je die ersten 5 Buchstaben). Nummerierung: A = 1 … Z = 26."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "",
+       "6",
+       "",
+       "11",
+       "",
+       "16",
+       "",
+       "21",
+       ""
+      ],
+      [
+       "2",
+       "",
+       "7",
+       "",
+       "12",
+       "",
+       "17",
+       "",
+       "22",
+       ""
+      ],
+      [
+       "3",
+       "",
+       "8",
+       "",
+       "13",
+       "",
+       "18",
+       "",
+       "23",
+       ""
+      ],
+      [
+       "4",
+       "",
+       "9",
+       "",
+       "14",
+       "",
+       "19",
+       "",
+       "24",
+       ""
+      ],
+      [
+       "5",
+       "",
+       "10",
+       "",
+       "15",
+       "",
+       "20",
+       "",
+       "25",
+       ""
+      ]
+     ],
+     "breiten": [
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang",
+      "k",
+      "Anfang"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "kwfsl",
+       "6",
+       "frang",
+       "11",
+       "amvib",
+       "16",
+       "vhqdw",
+       "21",
+       "qclyr"
+      ],
+      [
+       "2",
+       "jverk",
+       "7",
+       "eqzmf",
+       "12",
+       "zluha",
+       "17",
+       "ugpcv",
+       "22",
+       "pbkxq"
+      ],
+      [
+       "3",
+       "iudqj",
+       "8",
+       "dpyle",
+       "13",
+       "yktgz",
+       "18",
+       "tfobu",
+       "23",
+       "oajwp"
+      ],
+      [
+       "4",
+       "htcpi",
+       "9",
+       "coxkd",
+       "14",
+       "xjsfy",
+       "19",
+       "**senat**",
+       "24",
+       "nzivo"
+      ],
+      [
+       "5",
+       "gsboh",
+       "10",
+       "bnwjc",
+       "15",
+       "wirex",
+       "20",
+       "rdmzs",
+       "25",
+       "myhun"
+      ]
+     ],
+     "breiten": [
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46,
+      0.9,
+      2.46
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "p",
+     "md": "Schlüssel k = [[luecke:6]]   Klartext: [[luecke:40]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Nur k = 19 liefert Deutsch: **„senat tagt heute“** (alle 26 Verschiebungen geprüft)."
+    }
+   ],
+   "fallen": [
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Ein bekannter Satzanfang",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 Ein erbeuteter Brief beginnt mit dem bekannten Satzanfang Caesars `gallia est omnis divisa`. Der Geheimtext beginnt mit `RLWWT LPDEZ XYTDO TGTDL`. **Bestimme** den Schlüssel und **erläutere**, warum ein einziges bekanntes Paar genügt."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "g = 7 → R = 18: **k = 11**; Kontrolle a = 1 → L = 12 ✔. Klartext und Geheimtext passen vollständig zu k = 11."
+    },
+    {
+     "t": "p",
+     "md": "Ein Paar genügt, weil alle Buchstaben um **denselben** Wert verschoben werden (monoalphabetisch, nur ein Schlüsselparameter) → Known-Plaintext-Angriff."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Doppelt hält besser?",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** `hilfe` erst mit k = 9, dann das Ergebnis mit k = 20. **Vergleiche** mit einer einzigen Verschlüsselung mit k = 3."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "k = 9: **QRUON**; danach k = 20: **KLOIH**; direkt mit k = 3: **KLOIH** – identisch, weil (9 + 20) mod 26 = 3. Kein Sicherheitsgewinn (P8)."
+    }
+   ],
+   "fallen": [
+    "P8"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Der Händler aus Ostia",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Händler in Ostia „verschlüsselt“ seine Preislisten mit Caesar, k = 3, und sagt: „Mein Verfahren kennt niemand, also ist es sicher.“ **Beurteile** diese Aussage mithilfe des Kerckhoffs-Prinzips und des Schlüsselraums. Schlage eine Verbesserung vor, die das Problem wirklich löst – oder **begründe**, warum es mit Caesar keine gibt."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Kerckhoffs: Sicherheit darf nicht auf der Geheimhaltung des Verfahrens beruhen – Caesar ist seit 2000 Jahren bekannt, und auch ein „eigenes“ Verfahren wird früher oder später bekannt (Mitarbeiter, Diebstahl). Bleibt nur der Schlüssel: 25 sinnvolle Schlüssel → Brute Force in Minuten. **Urteil: unsicher.**"
+    },
+    {
+     "t": "p",
+     "md": "Eine Verbesserung innerhalb von Caesar gibt es nicht (Doppel-Caesar = Caesar, P8); nötig ist ein Verfahren mit großem Schlüsselraum (Ausblick Welt 1: 26! Schlüssel)."
+    },
+    {
+     "t": "p",
+     "md": "*P10:* Urteil ohne Kriterium."
+    }
+   ],
+   "fallen": [
+    "P8",
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26",
+     "klein": true
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den Geheimtext zum Klartext „bote“ mit dem Caesar-Schlüssel k = 25.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "b → A, o → N, t → S, e → D: **ANSD** [2]."
+      }
+     ],
+     "fallen": [
+      "P2"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen Sie**, dass das Caesar-Verfahren ohne Rechner durch einen Brute-Force-Angriff gebrochen werden kann.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Schlüsselraum nur 26 Schlüssel, davon 25 sinnvoll; je Schlüssel genügt es, die ersten Buchstaben zu prüfen; ein sinnvoller deutscher Text tritt praktisch nur beim richtigen Schlüssel auf → wenige Minuten von Hand [Schlüsselraum 1, Vorgehen 1, Erkennen des Klartexts 1]."
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Wer einen Text erst mit dem Schlüssel 9 und anschließend mit dem Schlüssel 20 verschlüsselt, erhält eine sicherere Verschlüsselung als mit nur einem Schlüssel.“",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch: Verschiebung um 9 und dann um 20 = Verschiebung um 29 mod 26 = 3; das Ergebnis ist eine gewöhnliche Caesar-Verschlüsselung mit k = 3, der Schlüsselraum bleibt 26 [Entscheidung 1, Rechnung 1, Schlüsselraum 1]."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Erläutern Sie** das Kerckhoffs-Prinzip am Beispiel des Caesar-Verfahrens.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Prinzip wiedergeben; bei Caesar ist das Verfahren bekannt, die gesamte Sicherheit läge im Schlüssel k – mit 26 Möglichkeiten zu wenig → Caesar erfüllt die Forderung „sicher trotz bekanntem Verfahren“ nicht [3]."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "0.2",
+   "md": "Level 0.2 „Caesars Botschaft“. Trainingsplatz „Caesar ver-/entschlüsseln“, „Schlüssel aus Paar“, „mod-Rechnen A = 1“. Werkzeug im Kryptolabor: **Chiffrierscheibe** (mit Brute-Force-Liste). Video 📼 01 „Caesar und Modulo“."
+  }
+ ]
+}

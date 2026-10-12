@@ -1,0 +1,113 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK3",
+ "titel": "Beurteilungsraster Sicherheit",
+ "datei": "KR_WK3_Beurteilungsraster",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "p",
+   "md": "**So benutzt du das Raster:** Gehe die Kriterien von oben nach unten durch, wähle die **zwei bis vier**, die für das Verfahren entscheidend sind, begründe jedes mit einem Fachargument und – wo möglich – mit einer Zahl oder einem Beispiel. Schließe immer mit einem **Urteil**."
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Kriterium",
+    "Leitfragen",
+    "Mustersatz (Prüfungsstil)"
+   ],
+   "schrift": 9.5,
+   "kopfspalte": true,
+   "breiten": [
+    3.7,
+    6.1,
+    7.0
+   ],
+   "zeilen": [
+    [
+     "Schlüsselraum / Brute Force",
+     "Wie viele Schlüssel gibt es (multiplizieren!)? Sind alle verschieden wirksam? Kann man sie alle ausprobieren?",
+     "„Da es nur … verschiedene Schlüssel gibt, kann ein Angreifer alle in kurzer Zeit ausprobieren (Brute-Force-Angriff).“"
+    ],
+    [
+     "Häufigkeitsanalyse",
+     "Bleibt die Buchstabenverteilung erhalten (Transposition, monoalphabetisch)? Wird sie nur verschoben? Muss man erst Teiltexte bilden (polyalphabetisch, Periode bekannt?) oder Paare zählen (bigraphisch)? Ist der Text lang genug?",
+     "„Weil jeder Buchstabe stets gleich ersetzt wird, bleibt die Häufigkeitsverteilung des Deutschen erhalten; der häufigste Geheimtextbuchstabe entspricht vermutlich E.“ / „Da sich die Verschiebung mit Periode … wiederholt, zerlegt man den Geheimtext in … Teiltexte und analysiert jeden einzeln.“"
+    ],
+    [
+     "Schwache / äquivalente Schlüssel",
+     "Gibt es Schlüssel ohne Wirkung (k = 0, AAAA, Werte ≡ 0 mod 26, t = 1)? Ergeben verschiedene Schlüssel dasselbe (k und k + 26, symmetrische Pendelwörter)?",
+     "„Der Schlüssel … ist schwach, denn er lässt … unverändert; der wirksame Schlüsselraum ist dadurch kleiner als …“"
+    ],
+    [
+     "Mehrfachanwendung / Kombination",
+     "Ist die Kombination wieder ein Verfahren derselben Art (Caesar ∘ Caesar = Caesar)? Hebt sie sich auf (Involution, Rotation n-mal)? Spielt die Reihenfolge der Stufen eine Rolle?",
+     "„Die doppelte Anwendung entspricht einer einfachen Anwendung mit dem Schlüssel …; ein Sicherheitsgewinn entsteht nicht.“"
+    ],
+    [
+     "Known-Plaintext",
+     "Verrät ein bekanntes Klartext-Geheimtext-Paar den Schlüssel (oder einen Teil)?",
+     "„Kennt ein Angreifer ein Wort des Klartextes, kann er aus … den Schlüssel … unmittelbar berechnen.“"
+    ],
+    [
+     "Fehlerfortpflanzung / Diffusion",
+     "Was bewirkt ein falsches, was ein fehlendes Geheimtextzeichen? Ändert eine kleine Klartextänderung viele Geheimtextzeichen (Diffusion)?",
+     "„Ein falsches Zeichen wirkt sich nur auf … aus; umgekehrt ändert eine Änderung im Klartext nur … Zeichen – das Verfahren besitzt keine Diffusion.“"
+    ],
+    [
+     "Kerckhoffs-Prinzip",
+     "Ist jede Stufe schlüsselabhängig? Bliebe das Verfahren sicher, wenn der Angreifer es kennt?",
+     "„Nach dem Kerckhoffs-Prinzip ist das Verfahren als bekannt anzunehmen; die schlüsselunabhängige Stufe … trägt daher nichts zur Sicherheit bei.“"
+    ],
+    [
+     "*modern:* Schlüsselverteilung",
+     "Wie viele Schlüssel braucht man bei n Beteiligten (n(n − 1)/2 bzw. 2n)? Wie werden sie sicher ausgetauscht?",
+     "„Bei n Beteiligten sind symmetrisch n(n − 1)/2 Schlüssel nötig, die über einen sicheren Kanal verteilt werden müssen.“"
+    ],
+    [
+     "*modern:* Hash/Signatur",
+     "Feste Länge → Kollisionen unvermeidbar – sind sie leicht findbar? Einweg? Wer kann signieren, wer prüfen? Ist der öffentliche Schlüssel zertifiziert?",
+     "„Da sich Kollisionen leicht konstruieren lassen (z. B. …), kann eine signierte Nachricht unbemerkt ersetzt werden.“"
+    ]
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "merke",
+   "titel": "Urteil formulieren (Satzbaukasten)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Zusammenfassen:** „Insgesamt zeigt sich, dass …“",
+      "**Gewichten:** „Entscheidend ist dabei …, weil …“",
+      "**Urteil mit Bezug zum Einsatzzweck:** „Das Verfahren ist daher **(un)sicher** / nur geeignet für …, nicht jedoch für …“",
+      "*Optional* **Verbesserung:** „Ein Sicherheitsgewinn ließe sich erreichen, indem …“"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "BEISPIEL · CAESAR-VERFAHREN",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„Es gibt nur 25 sinnvolle Schlüssel, die ein Angreifer in wenigen Minuten ausprobieren kann. Außerdem bleibt die Häufigkeitsverteilung erhalten, sodass schon ein kurzer Geheimtext über den häufigsten Buchstaben (E) gebrochen werden kann. Ein bekanntes Klartextzeichen verrät den Schlüssel sofort. Insgesamt ist das Caesar-Verfahren daher unsicher und schützt nur vor zufälligen Mitlesern.“",
+     "nach": 0
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P6 · P7 · P8 · P10",
+   "titel": "Typische Punktverluste",
+   "md": "nur Kriterien aufzählen ohne Urteil (P10) · „Häufigkeitsanalyse geht“ ohne Wie (P6) · Schlüssel falsch gezählt (P7) · „zweimal verschlüsselt = sicherer“ (P8)."
+  }
+ ]
+}

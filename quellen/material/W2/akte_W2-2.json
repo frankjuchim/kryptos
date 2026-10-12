@@ -1,0 +1,533 @@
+{
+ "typ": "akte",
+ "welt": 2,
+ "kennung": "AKTE W2·2",
+ "titel": "Kasiskis Spur",
+ "ds": "7",
+ "niveau": "kern",
+ "level": "2.2",
+ "datei": "KR_W2_Akte2_Kasiskis_Spur",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Venedig, ein Jahr später. Eve hat einen neuen Brief der Gesandten abgefangen, 228 Buchstaben lang. Das Rätsel fehlt diesmal, das Siegel trägt nur Wachsspuren. Eve schaut genauer hin und entdeckt: Einige Buchstabenfolgen tauchen **mehrfach** auf. Zufall? Ein preußischer Offizier namens Kasiski hätte gelächelt. Du wechselst die Seite: 🔍 Heute bist du Eve."
+  },
+  {
+   "t": "geheimtext",
+   "label": "EVES ABGEFANGENER BRIEF · Vigenère, Schlüsselwort unbekannt · Positionen ab 0",
+   "positionen": true,
+   "text": "ZIGNSHEGYWWUUCWJEFPYARTLAYHVKWJHCMWJAOHTANFKWNGGZSJDVLTNIPNLZIGIJEEHLVARFPHHOOHLENFPWXRKLXAEPAZWLVLFZIGUSIEPKWNVGYTQEPKWPEPPFCEPBSHEUAVEEDYAAFGLJOTUWSATKUVARPHUDTWUVRETIJANPAVEEDYAAFGKSJAEOVEEIHDAETLKAGGSLWMOVJCEPDWETGYFWCJNWJUC"
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Teiltexte bei bekannter Schlüssellänge",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Hat das Schlüsselwort die Länge k, wird der 1., (k + 1)., (2k + 1). … Buchstabe mit dem **ersten** Schlüsselbuchstaben verschlüsselt, der 2., (k + 2). … mit dem zweiten usw. Diese Buchstaben bilden die **Teiltexte** T~1~, T~2~, …, T~k~."
+    },
+    {
+     "t": "p",
+     "md": "Mit Positionen ab 0: T~1~ = Positionen 0, k, 2k, …; T~2~ = Positionen 1, k + 1, … Jeder Teiltext ist eine **Caesar-Verschiebung** – dort hilft die Häufigkeitsanalyse aus Welt 1 wieder."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel:* `VCVIZ TSWLE UKXMY` mit k = 3 → T~1~ = `VISEX`, T~2~ = `CZWUM`, T~3~ = `VTLKY`."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Warum sich Geheimtextfolgen wiederholen",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Steht dieselbe Klartextfolge zweimal so im Text, dass sie beide Male auf **dieselben** Schlüsselbuchstaben fällt, entsteht dieselbe Geheimtextfolge. Das passiert genau dann, wenn der Abstand ein **Vielfaches der Schlüssellänge** ist. Beispiel aus Eves Brief (Schlüssel später bekannt):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Position",
+       "0",
+       "1",
+       "2",
+       "…",
+       "60",
+       "61",
+       "62",
+       "…",
+       "100",
+       "101",
+       "102"
+      ],
+      [
+       "Klartext",
+       "d",
+       "i",
+       "e",
+       "…",
+       "d",
+       "i",
+       "e",
+       "…",
+       "d",
+       "i",
+       "e"
+      ],
+      [
+       "Schlüssel",
+       "W",
+       "A",
+       "C",
+       "…",
+       "W",
+       "A",
+       "C",
+       "…",
+       "W",
+       "A",
+       "C"
+      ],
+      [
+       "Geheimtext",
+       "Z",
+       "I",
+       "G",
+       "…",
+       "Z",
+       "I",
+       "G",
+       "…",
+       "Z",
+       "I",
+       "G"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.2,
+      1.2,
+      1.2,
+      1.0,
+      1.4,
+      1.4,
+      1.4,
+      1.0,
+      1.4,
+      1.4,
+      1.4
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Die Abstände 60 und 40 sind Vielfache der Schlüssellänge 5."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Der Kasiski-Test in vier Schritten",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Wiederholungen suchen:** Folgen aus **mindestens 3** Buchstaben, die mehrfach vorkommen (längere sind aussagekräftiger).",
+      "**Abstände messen:** von Anfang zu Anfang (spätere Position − frühere Position).",
+      "**Teilertabelle:** Für jeden möglichen Teiler t (2 bis 20) zählen, wie viele Abstände durch t teilbar sind. Hilfreich: Primfaktorzerlegung (z. B. 85 = 5 · 17).",
+      "**Entscheiden:** Die Schlüssellänge ist ein Teiler, der (fast) **alle** Abstände teilt. Auch Teiler und Vielfache davon passen – prüfe mit den Teiltexten."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P6",
+   "titel": "Zufallstreffer und Vielfache (Archivwissen 4)",
+   "md": "Nicht jede Wiederholung ist echt: Zwei **verschiedene** Klartextfolgen können zufällig dieselbe Geheimtextfolge ergeben. Ein solcher Abstand passt dann zu keinem Muster. Deshalb **nicht** stur den ggT **aller** Abstände bilden, sondern den Teiler suchen, der fast alle Abstände teilt, und Ausreißer begründet aussortieren. Je kürzer die Folge (3 Zeichen) und je länger der Text, desto eher ist ein Treffer zufällig. Umgekehrt teilt jeder Teiler der Schlüssellänge die Abstände ebenfalls (k = 5 → auch 1), und Vielfache wie 10 können „zufällig“ viele Abstände teilen."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 5,
+   "titel": "Teiltexte knacken",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Für jeden Teiltext: häufigsten Buchstaben c bestimmen, annehmen, dass er für e (Nummer 5) steht, und den Schlüsselbuchstaben berechnen:"
+    },
+    {
+     "t": "formel",
+     "md": "**s = ((c − 5) mod 26) + 1**     (Nummerierung: A = 1 … Z = 26)"
+    },
+    {
+     "t": "p",
+     "md": "Kontrolle: Der zweithäufigste Buchstabe sollte zu n, i, s, r oder a passen. Häufigste deutsche Buchstaben (Beutelspacher): E 17,40 % · N 9,78 % · I 7,55 % · S 7,27 % · R 7,00 % · A 6,51 % · T 6,15 %."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Jede dritte Stelle",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Geheimtext `VCVIZ TSWLE UKXMY` hat die Schlüssellänge 3."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Bilde T~1~, T~2~ und T~3~.",
+      "Bob verrät dir das Schlüsselwort EIS. Entschlüssele die drei Teiltexte jeweils als Caesar-Text und setze den Klartext zusammen."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) T~1~ = `VISEX`, T~2~ = `CZWUM`, T~3~ = `VTLKY`."
+    },
+    {
+     "t": "p",
+     "md": "b) E = Verschiebung 4, I = 8, S = 18: T~1~ → *reoat*, T~2~ → *urome*, T~3~ → *dbtsg*; reißverschlussartig zusammengesetzt: **ruderbootamsteg**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* Teiltexte ab dem 2. Buchstaben beginnen (P1)."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Gleiche Folgen erklären",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Erkläre** mithilfe der Tabelle in Archivwissen 2, warum `ZIG` dreimal vorkommt. **Begründe**, warum *die* an Position 2 (statt 0) **nicht** zu `ZIG` geworden wäre."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "*die* an den Positionen 0, 60, 100 fällt jeweils auf W, A, C (60 und 100 sind Vielfache von 5) → gleiche Geheimtextfolge `ZIG`. An Position 2 fiele *die* auf C, H, S → andere Folge (d + C = F, i + H = P, e + S = W, also `FPW`)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Kasiski an Eves Brief",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eve hat schon gefunden: `AVEEDYAAFG` (Positionen 133 und 173), `EPKW` (106, 116), `ZIG` (0, 60, 100)."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Suche die Folgen `KWN`, `VAR`, `CEP` und `SHE` (je zweimal) und notiere ihre Positionen.",
+      "Berechne alle Abstände.",
+      "Fülle die Teilertabelle für t = 2 bis 10 und bestimme die wahrscheinlichste Schlüssellänge."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "t",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "zeilen": [
+      [
+       "Anzahl",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "t",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "zeilen": [
+      [
+       "Anzahl",
+       "4",
+       "2",
+       "3",
+       "**9**",
+       "1",
+       "0",
+       "2",
+       "0",
+       "4"
+      ]
+     ],
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) `KWN` 43 und 108; `VAR` 69 und 154; `CEP` 125 und 210; `SHE` 4 und 129."
+    },
+    {
+     "t": "p",
+     "md": "b) Abstände: `AVEEDYAAFG` 40, `EPKW` 10, `ZIG` 60 und 40, `KWN` 65, `VAR` 85, `CEP` 85, `SHE` 125 (Zusatzfund: `VEE` kommt ein drittes Mal bei 189 vor, Abstand 15 zu 174)."
+    },
+    {
+     "t": "p",
+     "md": "c) Teilertabelle für die neun Abstände 40, 10, 60, 40, 125, 65, 85, 85, 15 (siehe oben): Schlüssellänge **5** – teilt alle Abstände."
+    }
+   ],
+   "fallen": [
+    "P6"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Zufall oder Spur?",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Angenommen, Eve hätte zusätzlich eine Folge mit dem Abstand 37 gefunden. Wie gehst du damit um?",
+      "Auch der Teiler 10 teilt vier Abstände. **Begründe**, warum du dich trotzdem für 5 entscheidest."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) 37 ist eine Primzahl, kein Vielfaches von 5 → Zufallstreffer; aussortieren und begründen, **nicht** den ggT aller Abstände (dann 1) bilden."
+    },
+    {
+     "t": "p",
+     "md": "b) 10 teilt nur 4 der 9 Abstände (z. B. nicht 65, 85, 125); außerdem wäre jede Länge-10-Verschlüsselung mit einem „verdoppelten“ 5er-Schlüssel denkbar – man nimmt den kleinsten Teiler, der alle echten Abstände teilt. Kontrolle über Teiltexte (Akte W2·3: mittlerer Koinzidenzindex bei k = 5 ≈ 0,096)."
+    }
+   ],
+   "fallen": [
+    "P6"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Das Schlüsselwort",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die Teiltexte (k = 5) haben diese häufigsten Buchstaben:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Teiltext",
+      "häufigste Buchstaben (Anzahl)"
+     ],
+     "zeilen": [
+      [
+       "T~1~",
+       "A 11 · J 6 · E 6"
+      ],
+      [
+       "T~2~",
+       "E 15 · I 4 · R 4"
+      ],
+      [
+       "T~3~",
+       "G 10 · P 9 · F 4"
+      ],
+      [
+       "T~4~",
+       "L 7 · Y 5 · K 5"
+      ],
+      [
+       "T~5~",
+       "W 10 · S 6 · V 6"
+      ]
+     ],
+     "breiten": [
+      2.5,
+      8
+     ],
+     "kopfspalte": true
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Bestimme die fünf Schlüsselbuchstaben (Archivwissen 5).",
+      "Kontrolliere T~3~ mit dem zweithäufigsten Buchstaben.",
+      "Entschlüssele die ersten drei Fünfergruppen."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) T~1~: A (1) → ((1 − 5) mod 26) + 1 = 23 → **W**; T~2~: E → **A**; T~3~: G (7) → **C**; T~4~: L (12) → **H**; T~5~: W (23) → **S**. Schlüsselwort **WACHS**."
+    },
+    {
+     "t": "p",
+     "md": "b) T~3~: Verschiebung 2; P (16) − 2 = 14 → n, der zweithäufigste deutsche Buchstabe – passt. (Ebenso T~1~: J (10) − 22 → n.)"
+    },
+    {
+     "t": "p",
+     "md": "c) `ZIGNS HEGYW WUUCW` → *diegaleereausve* („Die Galeere aus Ve…“). Gesamter Klartext: *diegaleereausvenedigerreichtdenhafenamabenddergesandtebringtdiebriefederdiplomatindiebriefeenthaltendienamenderverbuendeteningenualestdiebriefeerstspaetindernachtundverbrenntdiebriefedanachdiegaleeresegeltammorgenweiternachgenua*."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* T~2~ hat E als häufigsten Buchstaben → Schlüsselbuchstabe **A** (Verschiebung 0), nicht E."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Erläutern Sie**, wie beim Vigenère-Verfahren gleiche Folgen im Geheimtext entstehen können.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Gleiche Klartextfolge (z. B. häufige Wörter wie *die*, *der*) + gleicher Schlüsselabschnitt → gleiche Geheimtextfolge; das tritt ein, wenn der Abstand der Klartextfolgen ein Vielfaches der Schlüssellänge ist; Beispiel. [Bedingung 1, Vielfaches 1, Beispiel 1]"
+      }
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "Bei einem Vigenère-Geheimtext wurden wiederholte Folgen mit den Abständen 28, 42, 70 und 33 gefunden. **Bestimmen Sie** plausible Schlüssellängen.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "ggT(28, 42, 70) = 14; 33 passt nicht (Zufallstreffer) → plausibel 14 oder 7 (Teiler von 14); 2 ist theoretisch möglich, aber sehr kurz; Entscheidung über Teiltexte. [Ausreißer 1, ggT/Teiler 1, Kandidaten mit Begründung 1]"
+      }
+     ],
+     "fallen": [
+      "P6"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entwickeln Sie** eine Vorgehensweise, mit der ein Angreifer bei bekannter Schlüssellänge 6 einen langen deutschen Vigenère-Geheimtext entschlüsseln kann.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Geheimtext in 6 Teiltexte zerlegen (Positionen mod 6); jeder Teiltext ist mit einer Verschiebung verschlüsselt; je Teiltext Häufigkeitsanalyse, häufigster Buchstabe ↦ e, Verschiebung ablesen (Kontrolle mit n, i, s, r); die 6 Verschiebungen ergeben das Schlüsselwort; entschlüsseln und auf Sinn prüfen."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Entscheiden Sie begründet**, ob der Kasiski-Test bei einem Geheimtext von 30 Buchstaben zuverlässig ist.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Nein [1]: Bei 30 Buchstaben gibt es kaum echte Wiederholungen, einzelne Treffer können zufällig sein; die Teiltexte wären nur 5–6 Zeichen lang, Häufigkeiten aussagelos [1]."
+      }
+     ],
+     "fallen": [
+      "P6"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "2.2",
+   "md": "Level 2.2 „Kasiskis Spur“ im Kryptolabor: Vigenère-Werkbank (Wiederholungen markieren, Teilertabelle). Trainingsplatz: „Kasiski-Abstände → Schlüssellänge“ und „Teiltext bilden“."
+  }
+ ]
+}

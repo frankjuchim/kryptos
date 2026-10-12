@@ -1,0 +1,1419 @@
+{
+ "typ": "praesentation",
+ "welt": 0,
+ "titel": "Die Antike",
+ "datei": "KR_W0_Praesentation_Antike",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Die Antike",
+   "oberzeile": "−405 · SPARTA – −52 · ROM",
+   "untertitel": "Welt 0 · Transposition und Substitution",
+   "notizen": "F1 · 30 s. Zeitsprung: Das Chronoskop springt auf −405. (In der Plattform läuft die Zeitsprung-Animation des Chronoskops.) Direkt weiter zum Archivfund."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Die Botschaft am Stab",
+   "label": "LEDERSTREIFEN · GEFUNDEN IM GEPÄCK EINES SPARTANISCHEN BOTEN",
+   "geheimtext": "DTTMI EBOEL ENFAI DLENA OUEUT FUS",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Stab des Boten: genau **4 Zeilen**."
+    },
+    {
+     "t": "p",
+     "md": "*Was soll die Flotte tun?*"
+    }
+   ],
+   "notizen": "F2 · 8 min. Archivfund-Text vorlesen (Archivarin):\n„Das Chronoskop surrt, die Zahlen auf dem Ring springen auf ‚−405‘. Im Archiv liegt ein schmaler Lederstreifen, beschrieben mit einer einzigen langen Buchstabenreihe. Daneben ein Zettel: ‚Gefunden im Gepäck eines spartanischen Boten.‘ Spartanische Feldherren sollen solche Streifen um einen Holzstab gewickelt haben – so berichtet es jedenfalls der Geschichtsschreiber Plutarch, Jahrhunderte später. Nur wer einen Stab mit demselben Umfang besaß, konnte die Botschaft lesen. Auf dem Streifen steht: DTTMI EBOEL ENFAI DLENA OUEUT FUS. Der Bote hatte einen Stab bei sich, um den genau vier Zeilen passen. Was wollte der Feldherr seiner Flotte mitteilen?“\nPapierstreifen (A4 längs, 1,5 cm breit) um Stift/Rundholz wickeln lassen; Teams probieren.\nErwartung: erst Verwirrung, dann „spaltenweise in 4 Zeilen schreiben“. Erste Lösung vorstellen lassen (u = 4)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Die Lösung: 4 Zeilen, 7 Spalten",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "28 Zeichen : 4 Zeilen = 7 Spalten. Geheimtext **spaltenweise** eintragen, **zeilenweise** lesen:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "Sp. 1",
+      "Sp. 2",
+      "Sp. 3",
+      "Sp. 4",
+      "Sp. 5",
+      "Sp. 6",
+      "Sp. 7"
+     ],
+     "zeilen": [
+      [
+       "Zeile 1",
+       "d",
+       "i",
+       "e",
+       "f",
+       "l",
+       "o",
+       "t"
+      ],
+      [
+       "Zeile 2",
+       "t",
+       "e",
+       "l",
+       "a",
+       "e",
+       "u",
+       "f"
+      ],
+      [
+       "Zeile 3",
+       "t",
+       "b",
+       "e",
+       "i",
+       "n",
+       "e",
+       "u"
+      ],
+      [
+       "Zeile 4",
+       "m",
+       "o",
+       "n",
+       "d",
+       "a",
+       "u",
+       "s"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 24,
+     "hervor": [
+      [
+       0,
+       1
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       1
+      ],
+      [
+       3,
+       1
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Klartext: ==die flotte laeuft bei neumond aus==",
+     "zentriert": true
+    }
+   ],
+   "notizen": "F3 · 2 min. Spalte 1 von oben nach unten = D, T, T, M – die ersten vier Geheimtextbuchstaben.\nBegriffe am Fund benennen: Klartext (die flotte …), Geheimtext (DTTMI …), Schlüssel = Umfang des Stabes = 4 Zeilen.\nHistorische Vorsicht: Die Skytale ist durch Plutarch (Lysander-Biografie, um 100 n. Chr.) und frühere Erwähnungen überliefert; ob sie tatsächlich der Geheimhaltung diente, ist in der Forschung umstritten – „gilt als“, „wird überliefert“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Die Sprache der Kryptologie",
+   "inhalt": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "kennt den Schlüssel"
+      },
+      {
+       "id": "E",
+       "name": "Eve",
+       "unter": "kennt ihn nicht"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "kennt den Schlüssel"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "verschlüsselt den Klartext mit Verfahren + Schlüssel"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "B",
+       "text": "sendet nur den Geheimtext"
+      },
+      {
+       "nr": 3,
+       "von": "E",
+       "nach": "E",
+       "text": "fängt den Geheimtext ab"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "entschlüsselt mit Verfahren + Schlüssel"
+      }
+     ],
+     "breite_folie": 8.2
+    },
+    {
+     "t": "p",
+     "md": "verschlüsseln / entschlüsseln (älter: *chiffrieren / dechiffrieren*)",
+     "zentriert": true
+    }
+   ],
+   "notizen": "F4 · 3 min. Begriffe an der Tafel festhalten: Klartext → [Verfahren + Schlüssel] → Geheimtext → [Verfahren + Schlüssel] → Klartext.\nSchreibweise: Klartext klein (hilfe), Geheimtext GROSS in Fünfergruppen, Leer- und Satzzeichen fallen weg, ä → ae, ö → oe, ü → ue, ß → ss.\nFachbegriffe zählen im Abitur – die Story nicht."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Kryptologie = Kryptografie + Kryptoanalyse",
+   "links": [
+    {
+     "t": "h",
+     "md": "🛡 Kryptografie"
+    },
+    {
+     "t": "p",
+     "md": "**Entwurf und Anwendung** von Verfahren – Alice und Bob."
+    },
+    {
+     "t": "geheimtext",
+     "label": "SKYTALE, u = 4",
+     "text": "die flotte … → DTTMI EBOEL …",
+     "gruppen": 0,
+     "groesse": 18
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "🔍 Kryptoanalyse"
+    },
+    {
+     "t": "p",
+     "md": "**Brechen ohne Kenntnis des Schlüssels** („knacken“) – Eve."
+    },
+    {
+     "t": "geheimtext",
+     "label": "UMFANG UNBEKANNT",
+     "text": "DTTMI EBOEL … → ?",
+     "gruppen": 0,
+     "groesse": 18
+    }
+   ],
+   "notizen": "F5 · 2 min. Rolle der Stunde: 🛡 Kryptografie (Level 0.1). „Knacken“ ist umgangssprachlich; in Prüfungsaufgaben heißt es „ohne Kenntnis des Schlüssels entschlüsseln“."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Codierung ≠ Verschlüsselung",
+   "links": [
+    {
+     "t": "h",
+     "md": "Codierung"
+    },
+    {
+     "t": "p",
+     "md": "**öffentliche** Vorschrift – jeder kann nachschlagen"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Beispiel",
+      "Darstellung von A"
+     ],
+     "zeilen": [
+      [
+       "Morsecode",
+       "`·−`"
+      ],
+      [
+       "ASCII",
+       "`65`"
+      ],
+      [
+       "QR-Code",
+       "Pixelmuster"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      3.0
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "Verschlüsselung"
+    },
+    {
+     "t": "p",
+     "md": "braucht einen **geheimen Schlüssel**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Verfahren",
+      "geheim ist …"
+     ],
+     "zeilen": [
+      [
+       "Skytale",
+       "der Umfang u"
+      ],
+      [
+       "Gartenzaun",
+       "die Schienenzahl n"
+      ],
+      [
+       "Caesar",
+       "die Verschiebung k"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      3.0
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "F6 · 4 min Murmelrunde: „Ist Morsecode geheim?“ – „Ist ASCII eine Verschlüsselung?“ – „Und die Skytale?“\nErwartung: Morsecode steht im Lexikon, ASCII sogar in der Abitur-Anlage → nichts ist geheim. Bei der Skytale ist der Umfang geheim.\nLeitfrage für immer: „Was ist geheim?“ – Falle P5 (Codierung mit Verschlüsselung verwechseln). Rückbezug auf K2: Dort fiel das Wort „Code“."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Transposition oder Substitution?",
+   "links": [
+    {
+     "t": "h",
+     "md": "Transposition"
+    },
+    {
+     "t": "p",
+     "md": "Buchstaben bleiben, was sie sind – aber **nicht, wo** sie sind."
+    },
+    {
+     "t": "geheimtext",
+     "label": "SKYTALE, u = 2",
+     "text": "rom → RMOX",
+     "gruppen": 0,
+     "groesse": 20
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "Substitution"
+    },
+    {
+     "t": "p",
+     "md": "Buchstaben werden **durch andere Zeichen ersetzt**."
+    },
+    {
+     "t": "geheimtext",
+     "label": "CAESAR, k = 3",
+     "text": "rom → URP",
+     "gruppen": 0,
+     "groesse": 20
+    }
+   ],
+   "notizen": "F7 · 2 min. Merksatz vorlesen lassen: „Bei einer Transposition bleiben die Buchstaben, was sie sind, aber nicht, wo sie sind. Bei einer Substitution werden Buchstaben ersetzt.“\nBeispiele: Skytale u = 2: rom → Raster ro / mx → spaltenweise RMOX (Füllzeichen X). Caesar k = 3: rom → URP.\nKontrollfrage: Woran erkennt man eine Transposition am Geheimtext? → Es stehen genau die Buchstaben des Klartextes da (plus Füllzeichen); die Häufigkeiten bleiben gleich (P6)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Der Gartenzaun",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Klartext im **Zickzack** auf n Schienen schreiben (oben beginnend), dann Schiene für Schiene lesen. Kein Füllzeichen."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Schiene 1",
+       "v",
+       "·",
+       "·",
+       "·",
+       "o",
+       "·",
+       "·",
+       "·",
+       "n",
+       "·",
+       "·",
+       "·",
+       "m",
+       "·",
+       "·",
+       "·",
+       "p",
+       "·",
+       "·",
+       "·"
+      ],
+      [
+       "Schiene 2",
+       "·",
+       "e",
+       "·",
+       "s",
+       "·",
+       "r",
+       "·",
+       "u",
+       "·",
+       "g",
+       "·",
+       "o",
+       "·",
+       "m",
+       "·",
+       "s",
+       "·",
+       "a",
+       "·",
+       "t"
+      ],
+      [
+       "Schiene 3",
+       "·",
+       "·",
+       "r",
+       "·",
+       "·",
+       "·",
+       "g",
+       "·",
+       "·",
+       "·",
+       "k",
+       "·",
+       "·",
+       "·",
+       "t",
+       "·",
+       "·",
+       "·",
+       "e",
+       "·"
+      ]
+     ],
+     "breiten": [
+      1.8,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52,
+      0.52
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "geheimtext",
+     "label": "versorgung kommt spaet · n = 3",
+     "text": "VONMP ESRUG OMSAT RGKTE"
+    }
+   ],
+   "notizen": "F8 · 2 min. Zickzack 1-2-3-2-1-2-3-…; Schienen: vonmp · esrugomsat · rgkte → VONMP ESRUG OMSAT RGKTE.\nDie Schienen sind verschieden lang (5 / 10 / 5) – beim Entschlüsseln erst das Muster zeichnen und Plätze je Schiene zählen (Akte W0·1, Auftrag 5)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Die Fleißner-Schablone",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.36,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Schablone** (Grundstellung)",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         "",
+         "●",
+         "",
+         ""
+        ],
+        [
+         "●",
+         "",
+         "●",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         "●"
+        ]
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "hervor": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         3
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "● Löcher **zeilenweise** beschriften"
+      },
+      {
+       "t": "p",
+       "md": "● Schablone **um 90° im Uhrzeigersinn** drehen – viermal"
+      },
+      {
+       "t": "p",
+       "md": "● Drehung: Feld (z, s) → (s, 5 − z)"
+      },
+      {
+       "t": "p",
+       "md": "● Raster zeilenweise auslesen"
+      },
+      {
+       "t": "geheimtext",
+       "label": "boten warten am tor",
+       "text": "TBNMO TTWOE ANRRA E"
+      }
+     ]
+    }
+   ],
+   "notizen": "F8b · 2 min. Drehrichtung festlegen: **im Uhrzeigersinn**, Löcher in jeder Stellung zeilenweise (oben links → unten rechts) beschriften, Rest mit X (P4).\nStellung 1: (1,2) b, (2,1) o, (2,3) t, (4,4) e · Stellung 2: (1,3) n, (2,4) w, (3,3) a, (4,1) r · Stellung 3: (1,1) t, (3,2) e, (3,4) n, (4,3) a · Stellung 4: (1,4) m, (2,2) t, (3,1) o, (4,2) r → Raster TBNM / OTTW / OEAN / RRAE.\nEine Schablone ist nur brauchbar, wenn die vier Stellungen jedes Feld genau einmal freigeben (eA: es gibt 256 brauchbare). Danach Akte W0·1 (Aufträge 2–5, Schnelle 6–7; Schablone ausschneiden)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 1 · Skytale",
+   "nr": "P4",
+   "titel": "Füllzeichen",
+   "regel": "Erst Länge zählen, Spaltenzahl s = Länge : u **aufrunden**, Rest mit **X** füllen.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "`wir halten den pass`, u = 3 (16 Buchstaben)"
+    },
+    {
+     "t": "geheimtext",
+     "text": "wirhal / tenden / pass",
+     "gruppen": 0,
+     "groesse": 18
+    },
+    {
+     "t": "p",
+     "md": "Spalten 5 und 6 zu kurz",
+     "klein": true
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "s = 16 : 3 → **6** Spalten, 2 × X"
+    },
+    {
+     "t": "geheimtext",
+     "text": "wirhal / tenden / passxx",
+     "gruppen": 0,
+     "groesse": 18
+    },
+    {
+     "t": "geheimtext",
+     "text": "WTPIE ARNSH DSAEX LNX",
+     "groesse": 18
+    }
+   ],
+   "notizen": "Folie zum Herumgehen während der Übungsphase (Akte W0·1). Beispiel = Lab-Aufgabe W0-L1-03. Beim Gartenzaun gibt es kein Füllzeichen."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Ausblick",
+   "untertitel": "„Caesar hat nicht vertauscht – er hat ersetzt.“",
+   "notizen": "F9 · 1 min. Nächste Stunde: Funkraum! Hausaufgabe: Level 0.1 fertig, Video 📼 00."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Ein Brief aus Gallien",
+   "label": "ROM, 52 V. CHR. · AN DEN SENAT",
+   "geheimtext": "UXHFN CXJLQ VODJH U",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Diesmal ist **nichts vertauscht**. Was ist passiert?"
+    }
+   ],
+   "notizen": "F10 · 3 min (DS 2 nach dem Warm-up). Erwartung: „Die Buchstaben sind verschoben/ersetzt.“ Wer schon einen Verdacht hat: ausprobieren lassen (U → r?)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Caesars Trick",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Biograf **Sueton** berichtet: Caesar ersetzte in vertraulichen Briefen jeden Buchstaben durch den **dritten danach**."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "DEFGHIJKLMNOPQRSTUVWXYZABC"
+      }
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "U",
+       "X",
+       "H",
+       "F",
+       "N",
+       "C",
+       "X",
+       "J",
+       "…"
+      ],
+      [
+       "Klartext",
+       "r",
+       "u",
+       "e",
+       "c",
+       "k",
+       "z",
+       "u",
+       "g",
+       "…"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ],
+     "schrift_folie": 22
+    },
+    {
+     "t": "abstand",
+     "pt": 8
+    },
+    {
+     "t": "p",
+     "md": "`UXHFN CXJLQ VODJH U` → ==rueckzug ins lager==",
+     "zentriert": true
+    }
+   ],
+   "notizen": "F11 · 2 min. Gemeinsam die ersten Buchstaben entschlüsseln: obere Zeile = Klartext, untere = Geheimtext; zum Entschlüsseln unten suchen, oben ablesen (3 nach links).\nQuelle vorsichtig: Sueton überliefert die Verschiebung um 3."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Die Alphabetleiste",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: **A = 1 … Z = 26** (wie in der Abitur-Anlage)"
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1,
+     "zeilen": [
+      {
+       "label": "k = 3",
+       "werte": "DEFGHIJKLMNOPQRSTUVWXYZABC"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "● Verschlüsseln: k Stellen **nach rechts**, nach Z geht es mit A weiter"
+    },
+    {
+     "t": "p",
+     "md": "● Entschlüsseln: k Stellen **nach links** (= 26 − k nach rechts)"
+    },
+    {
+     "t": "p",
+     "md": "● Schlüssel k ∈ {0, 1, …, 25}"
+    }
+   ],
+   "notizen": "F12 · 3 min. Werkzeug „Chiffrierscheibe“ am Beamer drehen (Kryptolabor). Schalter steht auf A = 1 … Z = 26 wie in der Anlage.\nJede Aufgabe mit Buchstabenrechnung nennt die Nummerierung in einer Zeile – zuerst lesen (P1)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Caesar",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Jeder Buchstabe wird um **k** verschoben, nach Z folgt A. Schlüssel **k ∈ {0, …, 25}**."
+    },
+    {
+     "t": "p",
+     "md": "Entschlüsseln: um k zurück. Derselbe Klartextbuchstabe wird **immer gleich** ersetzt – **monoalphabetische Substitution**."
+    }
+   ],
+   "notizen": "F13 · 1 min. „Monoalphabetisch“: e wird an jeder Stelle gleich ersetzt (das wird in Welt 1 zur Schwachstelle)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Die Formel",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**c = ((p + k − 1) mod 26) + 1**"
+    },
+    {
+     "t": "p",
+     "md": "p = Nummer des Klartextbuchstabens, c = Nummer des Geheimtextbuchstabens, `mod` = Rest bei Division durch 26",
+     "klein": true,
+     "zentriert": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Klartext",
+      "p",
+      "k",
+      "Rechnung",
+      "c",
+      "Geheimtext"
+     ],
+     "zeilen": [
+      [
+       "X",
+       "24",
+       "5",
+       "((24 + 5 − 1) mod 26) + 1 = 2 + 1",
+       "3",
+       "**C**"
+      ],
+      [
+       "Z",
+       "26",
+       "1",
+       "((26 + 1 − 1) mod 26) + 1 = 0 + 1",
+       "1",
+       "**A**"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      0.9,
+      0.9,
+      6.2,
+      0.9,
+      1.7
+     ],
+     "zentriert": true,
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "F14 · 4 min. mod = Rest bei Division durch 26; kurz Division mit Rest wiederholen: 28 : 26 = 1 Rest 2 → 28 mod 26 = 2.\nWarum „− 1 … + 1“? Damit kein Rest 0 entsteht – nächste Folie."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 2 · Caesar",
+   "nr": "P2",
+   "titel": "Die Null",
+   "regel": "Rest 0 ist **kein Buchstabe** – mit A = 1 bedeutet Rest 0 den Buchstaben **Z** (26).",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "W (23), k = 3:"
+    },
+    {
+     "t": "formel",
+     "md": "(23 + 3) mod 26 = **0** → „?“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "W (23), k = 3:"
+    },
+    {
+     "t": "formel",
+     "md": "((23 + 3 − 1) mod 26) + 1 = **26** → **Z**"
+    }
+   ],
+   "notizen": "F15 · 2 min. „0 ist kein Buchstabe. Rest 0 heißt Z.“ Die Formel mit − 1 … + 1 verhindert die 0. Das Lab erkennt diese Falle (Diagnose P2)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Caesar von Hand",
+   "sozialform": "Partnerarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Akte W0·2**, Aufträge 1–3"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Auftrag",
+      "Was?"
+     ],
+     "zeilen": [
+      [
+       "1 ★",
+       "verschlüsseln mit k = 7"
+      ],
+      [
+       "2 ★",
+       "entschlüsseln mit k = 10"
+      ],
+      [
+       "3 ★★",
+       "Formel-Tabelle: Wo schnappt die Z-Falle zu?"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      8
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "F16 · 10 min. Schnelle: Auftrag 3 mit Formel und Leiste gegenprüfen. Lösungen: A1 KPLSL NPVUG PLOAU HJOUV YKLU · A2 wir brauchen mehr wasser · A3 Z-Falle bei (a), (b), (d)."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Funkraum: Botenlauf",
+   "qr": "https://kryptos.frankjuchim.de/funkraum",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Rolle",
+      "Auftrag"
+     ],
+     "zeilen": [
+      [
+       "🛡 Alice-Teams",
+       "Befehle mit Caesar verschlüsseln und senden"
+      ],
+      [
+       "🛡 Bob-Teams",
+       "entschlüsseln, verschlüsselte Quittung senden"
+      ],
+      [
+       "🔍 Eve-Teams",
+       "alles mitlesen und knacken – ihr wisst: alle benutzen Caesar"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      6.6
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Drei Runden à 6 min. Schlüssel nur auf eurer **Schlüsselkarte**!"
+    }
+   ],
+   "notizen": "F17 · 25 min, Ablauf im Dokument KR_W0_Funkraum_Botenlauf (Rollenkarten). Szenario in der Funkraum-Regie starten, Teams zuweisen (2–3 Paare Alice/Bob, 1–2 Eve-Teams).\n1 Schlüssel ziehen (2 min) · 2 Runde 1 (6 min) · 3 Abfangmeldungen laufend · 4 Runde 2 mit neuer Schlüsselkarte (6 min) · 5 Runde 3 mit Sonderkarten: Paar A verschlüsselt zweimal, Paar B nimmt heimlich den Gartenzaun mit 3 Schienen (6 min) · 6 Auswertung am Beamer (5 min).\nPapier-Alternative: Boten tragen Zettel, Eve-Team sitzt am „Stadttor“ und darf jeden Zettel 30 s abschreiben."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Wie hat Eve das geschafft?",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Höchstens **25 Versuche** – Eve probiert jeden Schlüssel aus: ==Brute-Force-Angriff=="
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopf": [
+      "k",
+      "Anfang des Klartexts?"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "kwfsl …"
+      ],
+      [
+       "2",
+       "jverk …"
+      ],
+      [
+       "3",
+       "iudqj …"
+      ],
+      [
+       "…",
+       "…"
+      ],
+      [
+       "18",
+       "tfobu …"
+      ],
+      [
+       "**19**",
+       "**senat tagt heute**"
+      ]
+     ],
+     "breiten": [
+      1.2,
+      5
+     ],
+     "schrift_folie": 20,
+     "hervor": [
+      [
+       5,
+       0
+      ],
+      [
+       5,
+       1
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Schlüsselraum** = Menge aller möglichen Schlüssel",
+     "klein": true
+    }
+   ],
+   "notizen": "F18 · 4 min. Beispiel = Akte W0·2, Auftrag 4 (LXGTM MTZMA XNMX). Erwartung: „Sie hat alle Verschiebungen ausprobiert.“ Oft reichen die ersten 5 Buchstaben, um eine Zeile zu verwerfen.\nWie lange brauchte das Eve-Team im Botenlauf? (1–3 min je Nachricht)"
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Schlüsselraum",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Caesar: **26 Schlüssel**, davon **25 sinnvoll** – k = 0 ist ein **schwacher Schlüssel** (Geheimtext = Klartext)."
+    },
+    {
+     "t": "p",
+     "md": "Ein **Brute-Force-Angriff** probiert alle Schlüssel aus."
+    }
+   ],
+   "notizen": "F19 · 2 min. Falle P7: 25 oder 26? Beides nennen: 26 im Schlüsselraum, 25 sinnvoll."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Kerckhoffs-Prinzip",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die Sicherheit eines Verfahrens darf **nur von der Geheimhaltung des Schlüssels** abhängen – nicht von der Geheimhaltung des Verfahrens."
+    },
+    {
+     "t": "p",
+     "md": "*Auguste Kerckhoffs, 1883*",
+     "klein": true
+    }
+   ],
+   "notizen": "F20 · 3 min. Frage: „Hat Eve das Verfahren gekannt?“ – Ja. Trotzdem müsste ein gutes Verfahren sicher sein. Caesar besteht den Test nicht: Bei bekanntem Verfahren bleiben 25 Schlüssel.\nBotenlauf Runde 3, Paar B (Gartenzaun als „geheimes Verfahren“): Eve merkte an den Häufigkeiten, dass nur umgestellt wurde – Geheimhaltung des Verfahrens verzögert nur. Verfahren sprechen sich herum (Boten werden gefangen, Geräte erbeutet)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 2 · Caesar",
+   "nr": "P8",
+   "titel": "Doppelt hält nicht besser",
+   "regel": "Zwei Caesar-Schritte sind **ein** Caesar-Schritt: Verschiebung um (k~1~ + k~2~) mod 26.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "k = 9, dann k = 20 – „doppelt so sicher“"
+    },
+    {
+     "t": "geheimtext",
+     "text": "hilfe → QRUON → KLOIH",
+     "gruppen": 0,
+     "groesse": 18
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "(9 + 20) mod 26 = **3** – direkt mit k = 3:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "hilfe → KLOIH",
+     "gruppen": 0,
+     "groesse": 18
+    }
+   ],
+   "notizen": "F21 · 2 min. Botenlauf Runde 3, Paar A: genauso schnell geknackt. Hausaufgabe: Akte W0·2 Aufträge 4–7 + Abi-Check, Level 0.2 (01–05), Video 📼 01."
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "DS 3 · Werkstatt",
+   "titel": "Die Werkstatt des Schreibers",
+   "oberzeile": "WELT 0 · ROM · SCHREIBSTUBE",
+   "untertitel": "Vom Papier zur Maschine",
+   "notizen": "F22 · 30 s (DS 3 nach dem Warm-up). Auftakt: Jede Botschaft musste ein Schreiber von Hand verschieben – wir bauen ihm eine Maschine, erst als Struktogramm (wie im Abitur), dann in Java."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 3 · Werkstatt",
+   "titel": "Zeichen sind Zahlen",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "h",
+     "md": "ASCII (Anlage)"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "Zeichen",
+      "A",
+      "K",
+      "Z",
+      "a",
+      "z"
+     ],
+     "zeilen": [
+      [
+       "ASCII",
+       "65",
+       "75",
+       "90",
+       "97",
+       "122"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.9
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "Zwei Zählbasen"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Umrechnung",
+      "K"
+     ],
+     "zeilen": [
+      [
+       "**Anlage:** A = 1",
+       "ASCII − 64",
+       "11"
+      ],
+      [
+       "**Programm:** A = 0",
+       "ASCII − 65",
+       "10"
+      ]
+     ],
+     "breiten": [
+      2.8,
+      2.2,
+      0.8
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Immer zuerst prüfen: **Welche Nummerierung gilt?**",
+     "klein": true
+    }
+   ],
+   "notizen": "F23 · 3 min. Falle P1 ankündigen: Auf Papier und in der Anlage A = 1 … Z = 26, im Programm A = 0 … Z = 25 (weil (int) 'A' = 65). Kleinbuchstaben liegen 32 höher (a = 97).\nMit A = 0 ist die Formel einfach: neu = (wert + k) mod 26."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 3 · Werkstatt",
+   "titel": "Caesar als Struktogramm",
+   "inhalt": [
+    {
+     "t": "struktogramm",
+     "kopf": "verschluesseln(klartext: Zeichenkette, k: Ganzzahl): Zeichenkette",
+     "elemente": [
+      {
+       "kommentar": "klartext besteht nur aus Kleinbuchstaben a … z"
+      },
+      {
+       "anw": "geheimtext ← \"\""
+      },
+      {
+       "fuer": "i von 0 bis Länge von klartext − 1",
+       "rumpf": [
+        {
+         "anw": "z ← Zeichen an Position i von klartext"
+        },
+        {
+         "anw": "wert ← ASCII-Wert von z − 97      // a = 0 … z = 25"
+        },
+        {
+         "anw": "wert ← (wert + k) mod 26"
+        },
+        {
+         "anw": "geheimtext ← geheimtext verbunden mit Zeichen zum ASCII-Wert (wert + 65)"
+        }
+       ]
+      },
+      {
+       "gib": "geheimtext"
+      }
+     ],
+     "breite_folie": 9.2
+    },
+    {
+     "t": "p",
+     "md": "Kein „Zeichen ersetzen“ – der Geheimtext wächst durch **Verbinden**.",
+     "klein": true,
+     "zentriert": true
+    }
+   ],
+   "notizen": "F24 · 6 min. Nur die Zeichenketten-Operationen der EH-Anlage: Länge, Zeichen an Position i (ab 0), Teilzeichenkette, Verbinden, Vergleiche, ASCII-Wert ↔ Zeichen. „Zeichen an Position ersetzen“ ist seit der EH-Fassung 2025 entfallen.\nTrace gemeinsam: verschluesseln(\"hof\", 4): i = 0: h → 7 → 11 → L; i = 1: o → 14 → 18 → LS; i = 2: f → 5 → 9 → LSJ. Rückgabe LSJ.\nTracetabelle: nur Variablen (i, z, wert, geheimtext), keine Bedingungsspalte."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 3 · Werkstatt",
+   "nr": "P2",
+   "titel": "Java rechnet anders",
+   "regel": "`mod` der Anlage ist nie negativ – Java-`%` schon. Beim Entschlüsseln erst **+ 26**.",
+   "falsch": [
+    {
+     "t": "code",
+     "text": "wert = (wert - k) % 26;\n// -3 % 26 ergibt -3"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "code",
+     "text": "wert = (wert - k + 26) % 26;\n// Anlage: -3 mod 26 = 23"
+    }
+   ],
+   "notizen": "F25 · 2 min. Danach Online-IDE (20 min): Gerüst KR_W0_CaesarWerkstatt_Geruest.txt importieren, Stufe Basis (+ Erweiterung, wer schneller ist). Test entschluesseln(\"ABC\", 3) = \"xyz\" prüft genau diese Falle."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 3 · Werkstatt",
+   "titel": "Online-IDE: Caesar-Werkstatt",
+   "sozialform": "Einzel/Partner",
+   "zeit": "20 min",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Stufe",
+      "Testklasse",
+      "Methoden"
+     ],
+     "zeilen": [
+      [
+       "Basis",
+       "`CaesarBasisTest`",
+       "buchstabeZuZahl, zahlZuBuchstabe, alphabetNummer, verschiebe"
+      ],
+      [
+       "Erweiterung",
+       "`CaesarErweiterungTest`",
+       "grossbuchstabe, verschluesseln, entschluesseln"
+      ],
+      [
+       "Experte (eA)",
+       "`CaesarExperteTest`",
+       "fuenfergruppen, bruteForce, findeSchluessel, rateSchluessel"
+      ]
+     ],
+     "breiten": [
+      2.2,
+      3.6,
+      6.2
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "Gerüst importieren · nur im Abschnitt **DEIN TEIL** arbeiten · Tests im Reiter **Testrunner** starten"
+    }
+   ],
+   "notizen": "Zusatzfolie zur Implementierungsphase (Akte W0·3, Aufträge 5–7). Online-IDE: online-ide.de, println ohne System.out. Erlaubt nur length, charAt, substring, +, equals, contains, compareTo, (int) c, (char) n. Die IDE bringt keine Lab-Punkte; grüne Tests sind die Rückmeldung.\nExperte: Test experte_rateSchluessel_grenze – „Hannibal ante portas“ enthält 4 × a, nur 1 × e: Grenze der Häufigkeitsanalyse bei kurzen Texten (P6, Brücke zu Welt 1)."
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "DS 3 · Fremde Chiffre",
+   "titel": "Fremde Chiffre I",
+   "oberzeile": "WELT 0 · DAS ABITURFORMAT",
+   "untertitel": "Ein Verfahren, das du noch nie gesehen hast – wie im Abitur.",
+   "notizen": "F26 · 30 s."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 3 · Fremde Chiffre",
+   "titel": "Polybios und Atbash",
+   "anteil": 0.46,
+   "links": [
+    {
+     "t": "quadrat",
+     "zeilen": [
+      "ABCDE",
+      "FGHIK",
+      "LMNOP",
+      "QRSTU",
+      "VWXYZ"
+     ],
+     "kopfzeile": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+     ],
+     "kopfspalte": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+     ],
+     "hervor": [
+      [
+       1,
+       3
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Erst **Zeile**, dann **Spalte** · **I = J** · `rom` → `42 34 32`",
+     "klein": true,
+     "zentriert": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "Atbash"
+    },
+    {
+     "t": "p",
+     "md": "Spiegel: A ↔ Z, B ↔ Y, …"
+    },
+    {
+     "t": "formel",
+     "md": "c = 27 − p"
+    },
+    {
+     "t": "geheimtext",
+     "text": "caesar → XZVHZI",
+     "gruppen": 0,
+     "groesse": 20
+    },
+    {
+     "t": "p",
+     "md": "kein Schlüssel · zweimal angewendet = Klartext",
+     "klein": true
+    }
+   ],
+   "notizen": "F27 · 4 min. Polybios (um 200–120 v. Chr.) beschreibt in seinen „Historien“ ein Fackel-Signalverfahren, aus dem das Quadrat abgeleitet wird. Atbash stammt aus der hebräischen Tradition (gängige Deutung einer Stelle im Buch Jeremia).\nBeispiele: rom → 42 34 32; caesar → XZVHZI. Ohne Schlüsselwort ist das Polybios-Quadrat nur eine Codierung; mit Schlüsselwort (z. B. ATHEN) eine Verschlüsselung."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 3 · Fremde Chiffre",
+   "titel": "Die 5-Schritte-Methode",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Schritt",
+      "Leitfrage"
+     ],
+     "zeilen": [
+      [
+       "**1**",
+       "Lesen und nachrechnen",
+       "Nummerierung? Füllzeichen? I = J?"
+      ],
+      [
+       "**2**",
+       "Anwenden",
+       "Regeln abgehakt?"
+      ],
+      [
+       "**3**",
+       "Umkehren",
+       "rückwärts, in umgekehrter Reihenfolge"
+      ],
+      [
+       "**4**",
+       "Einordnen",
+       "Transposition/Substitution? mono/poly?"
+      ],
+      [
+       "**5**",
+       "Beurteilen",
+       "Kriterien → **Urteil**"
+      ]
+     ],
+     "breiten": [
+      0.7,
+      4.0,
+      6.5
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "F28 · 2 min. Werkzeugkarte WK2 austeilen. Danach Akte W0·4 (Fackelchiffre). Schritt 5 mit dem Beurteilungsraster: Schlüsselraum/Brute Force, Häufigkeitsanalyse, schwache Schlüssel, Mehrfachanwendung, Known-Plaintext, Kerckhoffs – dann ein Urteil (P10)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 3 · Fremde Chiffre",
+   "titel": "Die Fackelchiffre",
+   "sozialform": "Partnerarbeit",
+   "zeit": "18 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Akte W0·4** – Schritt 1 bis 5 · Stufe 1: Atbash · Stufe 2: Polybios mit Schlüsselwort ATHEN"
+    },
+    {
+     "t": "geheimtext",
+     "label": "BEISPIEL DES MATERIALS",
+     "text": "feuer → uvfvi → 45 51 24 51 31",
+     "gruppen": 0,
+     "groesse": 20
+    },
+    {
+     "t": "p",
+     "md": "Was fällt beim Entschlüsseln von `31 24 51 35 35 51` auf?",
+     "klein": true
+    }
+   ],
+   "notizen": "F29 · 18 min. Besprechung Schritt 4/5 im Plenum: Gesamtverfahren monoalphabetische Substitution; Atbash bringt nach Kerckhoffs nichts (nur ein umsortiertes Quadrat, P8); q und r landen nach Atbash auf j/i – wegen I = J im selben Feld 31 → Entschlüsselung nicht eindeutig (quelle/ruelle, P4). Urteil: unsicher (Häufigkeitsanalyse)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 3 · Fremde Chiffre",
+   "titel": "Die Antike ist entsiegelt",
+   "untertitel": "Transposition · Substitution · Schlüsselraum · Kerckhoffs   →   Nächste Epoche: Bagdad",
+   "notizen": "F30 · 2 min. Rückblick Antike. Ausblick Bagdad: „Caesar fiel durch Ausprobieren. Was, wenn es 400 Quadrillionen Schlüssel gibt?“ (26! ≈ 4 · 10^26).\nBoss „Der Bote des Feldherrn“ ist jetzt frei (ab 60 % der Level-Punkte, 25 min, auch zu Hause) – Artefakt Skytale. Hausaufgabe: Online-IDE Erweiterung (Experte freiwillig/eA), Boss W0, Papier-Boss „Das Mosaik von Pompeji“ als Übung (optional)."
+  }
+ ]
+}

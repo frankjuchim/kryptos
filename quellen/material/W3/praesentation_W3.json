@@ -1,0 +1,1159 @@
+{
+ "typ": "praesentation",
+ "welt": 3,
+ "titel": "Das Maschinenzeitalter",
+ "datei": "KR_W3_Praesentation_Maschinenzeitalter",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Das Maschinenzeitalter",
+   "oberzeile": "WELT 3 · 1917 – 1977 · FUNK & FERNSCHREIBER",
+   "untertitel": "Welt 3 · Wenn Maschinen verschlüsseln",
+   "notizen": "1 min. Begrüßung, Zeitsprung ins Jahr 1917.\nImpuls: „Was ändert sich, wenn nicht mehr Menschen, sondern Maschinen verschlüsseln?“\nErwartete Antworten: schneller; Bits statt Buchstaben; viel mehr Nachrichten; Funk kann jeder abhören – also muss die Verschlüsselung besser werden.\nÜberleitung: „Das Chronoskop hält in einer Fernschreibstelle …“"
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Der Lochstreifen von 1917",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Geheimtext-Streifen**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "kopfzeile": [
+        "128",
+        "64",
+        "32",
+        "16",
+        "8",
+        "4",
+        "2",
+        "1"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zeilen": [
+        [
+         "●",
+         "●",
+         "●",
+         "●",
+         "·",
+         "●",
+         "·",
+         "·"
+        ],
+        [
+         "·",
+         "●",
+         "●",
+         "·",
+         "●",
+         "●",
+         "·",
+         "·"
+        ],
+        [
+         "●",
+         "·",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●",
+         "●"
+        ],
+        [
+         "·",
+         "·",
+         "●",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●"
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Schlüssel – nach Gebrauch vernichten!**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "kopfzeile": [
+        "128",
+        "64",
+        "32",
+        "16",
+        "8",
+        "4",
+        "2",
+        "1"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zeilen": [
+        [
+         "●",
+         "·",
+         "●",
+         "●",
+         "·",
+         "·",
+         "●",
+         "·"
+        ],
+        [
+         "·",
+         "·",
+         "●",
+         "●",
+         "●",
+         "·",
+         "·",
+         "●"
+        ],
+        [
+         "●",
+         "●",
+         "·",
+         "·",
+         "·",
+         "●",
+         "·",
+         "●"
+        ],
+        [
+         "·",
+         "●",
+         "●",
+         "·",
+         "●",
+         "●",
+         "●",
+         "·"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Loch = 1. Welche Regel macht aus Geheimtext und Schlüssel wieder die Nachricht?"
+    }
+   ],
+   "notizen": "8 min. Archivfund-Text vorlesen: „Das Chronoskop hält in einer Fernschreibstelle des Jahres 1917. Zwischen Kabelrollen und Stapeln von Formularen findet die Archivarin eine Blechdose mit zwei schmalen Papierstreifen. Beide sind mit Reihen kleiner Löcher gestanzt – acht Spuren nebeneinander, Loch heißt 1, kein Loch heißt 0. Auf dem einen Streifen steht ‚Geheimtext‘, auf dem anderen in roter Schrift: ‚Schlüssel – nach Gebrauch vernichten!‘ Offenbar hat jemand diese Anweisung nicht befolgt. … ‚Eine Maschine hat hier Zeichen für Zeichen zwei Streifen verknüpft. Welche Regel macht aus Geheimtext und Schlüssel wieder die Nachricht?‘ Und dann, leiser: ‚Auf dem Schlüsselstreifen sind zwei Kerben. Wurde er etwa zweimal benutzt?‘“\nPaare vergleichen Spalte für Spalte (Akte W3·1, S. 1). Erwartet: „gleich → 0, verschieden → 1“. Mit der ASCII-Tabelle der Anlage: 0100 0110 = 70 = F, 0101 0101 = 85 = U, 0100 1110 = 78 = N, 0100 1011 = 75 = K → FUNK.\nNoch nicht verraten, dass die Regel XOR heißt – erst auf Folie 4. Die „zwei Kerben“ als Cliffhanger für den Funkraum stehen lassen.\nHintergrund: Vernam arbeitete 1917 mit dem 5-Bit-Fernschreibcode, nicht mit ASCII (1960er) – wir verwenden bewusst den 8-Bit-ASCII-Code der Anlage."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Zeichen als Bits",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Stellenwert",
+      "128",
+      "64",
+      "32",
+      "16",
+      "8",
+      "4",
+      "2",
+      "1"
+     ],
+     "zeilen": [
+      [
+       "B = 66",
+       "0",
+       "1",
+       "0",
+       "0",
+       "0",
+       "0",
+       "1",
+       "0"
+      ],
+      [
+       "O = 79",
+       "0",
+       "1",
+       "0",
+       "0",
+       "1",
+       "1",
+       "1",
+       "1"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "•  8 Bit = 1 Byte, Werte 0 … 255; Vierergruppen, höchstwertiges Bit links"
+    },
+    {
+     "t": "p",
+     "md": "•  ASCII (Anlage): A = 65 … Z = 90, Leerzeichen = 32"
+    },
+    {
+     "t": "p",
+     "md": "•  B = 66 = 64 + 2 = `0100 0010`"
+    },
+    {
+     "t": "p",
+     "md": "•  **Falle P1:** ASCII A = 65 ≠ Alphabet A = 1 ≠ Programm A = 0"
+    }
+   ],
+   "notizen": "4 min. Wiederholung Sek I (Dualzahlen).\nTafel: Stellenwerttabelle 128 … 1; gemeinsam O = 79 = 64 + 8 + 4 + 2 + 1 umrechnen.\nErwartete Schwierigkeit: dezimal → dual ohne Taschenrechner. Trick: „Großbuchstaben beginnen mit 010, die restlichen 5 Bits sind die Nummer im Alphabet“ (O = 15 → 010 01111).\nFalle P1 ausdrücklich: drei Zählweisen (ASCII 65, Anlage A = 1, Programm A = 0)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "XOR – exklusives Oder",
+   "anteil": 0.38,
+   "links": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "a",
+      "b",
+      "a ⊕ b"
+     ],
+     "zeilen": [
+      [
+       "0",
+       "0",
+       "0"
+      ],
+      [
+       "0",
+       "1",
+       "1"
+      ],
+      [
+       "1",
+       "0",
+       "1"
+      ],
+      [
+       "1",
+       "1",
+       "0"
+      ]
+     ],
+     "schrift_folie": 22
+    },
+    {
+     "t": "p",
+     "md": "**gleich → 0, verschieden → 1**",
+     "zentriert": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "bits",
+     "zeilen": [
+      {
+       "label": "",
+       "bits": "0100 1111"
+      },
+      {
+       "label": "⊕",
+       "bits": "1010 0110"
+      },
+      {
+       "label": "=",
+       "bits": "1110 1001",
+       "strich": true
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "a ⊕ 0 = a     a ⊕ a = 0"
+    },
+    {
+     "t": "formel",
+     "md": "**a ⊕ k ⊕ k = a**"
+    }
+   ],
+   "notizen": "4 min. Rückbezug Archivfund: Die Regel des Kurses heißt XOR („exklusives Oder“ – entweder das eine oder das andere, nicht beide).\nBeispiel Spalte für Spalte vorrechnen.\nFrage: „Warum braucht Bob keine eigene Entschlüsselungsoperation?“ → a ⊕ k ⊕ k = a, weil k ⊕ k = 0 und a ⊕ 0 = a: XOR ist selbstinvers.\nAbgrenzung zu Caesar: dort braucht man die Gegenrichtung (P3)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Akte W3·1, Aufträge 1–3",
+   "sozialform": "Einzelarbeit → Partnerarbeit",
+   "zeit": "12 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "1.  ASCII-Werte und Bits von B, O, J, E"
+    },
+    {
+     "t": "p",
+     "md": "2.  XOR üben: `1100 1010 ⊕ 0110 0110`"
+    },
+    {
+     "t": "p",
+     "md": "3.  Alice verschlüsselt **BOJE** mit dem Einmalschlüssel"
+    },
+    {
+     "t": "p",
+     "md": "Kontrolle mit der **Bit-Lupe** erst danach!"
+    }
+   ],
+   "notizen": "12 min. Lösungen: A1 B 0100 0010, O 0100 1111, J 0100 1010, E 0100 0101; W, H. A2 1010 1100 und 0000 0000 (a ⊕ a = 0). A3 Geheimtext 0010 1011 · 1011 1111 · 0111 1001 · 1110 0000.\nSchnelle: Auftrag 6 (Sparversion).\nTypischer Fehler: A = 1 statt 65 (P1)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Vernam 1917 und das One-Time-Pad",
+   "anteil": 0.42,
+   "links": [
+    {
+     "t": "formel",
+     "md": "**C = M ⊕ K**"
+    },
+    {
+     "t": "formel",
+     "md": "**M = C ⊕ K**"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Vernam nutzte den 5-Bit-Fernschreibcode, wir ASCII."
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "Der Schlüssel ist"
+    },
+    {
+     "t": "p",
+     "md": "1.  **echt zufällig**"
+    },
+    {
+     "t": "p",
+     "md": "2.  **so lang wie die Nachricht**"
+    },
+    {
+     "t": "p",
+     "md": "3.  **nur einmal** benutzt"
+    },
+    {
+     "t": "p",
+     "md": "4.  **geheim**"
+    }
+   ],
+   "notizen": "3 min. Historie vorsichtig formulieren: Gilbert Vernam (AT&T) entwickelte 1917 die Fernschreib-Chiffre (Patent 1919); die Forderung nach einem zufälligen, nie wiederholten Schlüssel wird Joseph Mauborgne zugeschrieben.\nKerckhoffs-Rückgriff: Das Verfahren XOR ist öffentlich – geheim ist nur der Schlüssel."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Perfekte Sicherheit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zu einem OTP-Geheimtext passt **jeder** Klartext gleicher Länge – mit genau einem Schlüssel."
+    },
+    {
+     "t": "p",
+     "md": "Eve lernt nur die **Länge**. Claude Shannon bewies das 1949."
+    }
+   ],
+   "notizen": "2 min. Abgrenzung: „perfekt“ heißt nicht „praktisch“ – das Schlüsselproblem folgt (Folie 12).\nAuch unbegrenzte Rechenleistung hilft nicht: Brute Force liefert alle Klartexte gleicher Länge, ohne Entscheidung."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "HALT oder LAUF?",
+   "sozialform": "Partnerarbeit",
+   "zeit": "6 min",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift_folie": 22,
+     "kopf": [
+      "",
+      "Zeichen 1",
+      "Zeichen 2",
+      "Zeichen 3",
+      "Zeichen 4"
+     ],
+     "zeilen": [
+      [
+       "C",
+       "0001 1110",
+       "1101 1010",
+       "0110 0111",
+       "1001 0001"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Bestimmt einen Schlüssel, für den der Klartext **HALT** lautet, und einen für **LAUF**."
+    },
+    {
+     "t": "p",
+     "md": "Was bedeutet das für Eve?"
+    }
+   ],
+   "notizen": "6 min (Akte W3·1, Auftrag 4).\nLösung: K_HALT = C ⊕ HALT = 0101 0110 · 1001 1011 · 0010 1011 · 1100 0101; K_LAUF = 0101 0010 · 1001 1011 · 0011 0010 · 1101 0111.\nPointe: Beide Schlüssel sind gleich wahrscheinlich → Eve kann nicht entscheiden, welche Nachricht gesendet wurde. Das ist perfekte Sicherheit."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Funkraum: Der doppelte Schlüssel",
+   "qr": "https://kryptos.frankjuchim.de/funkraum",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "•  **Funkpaare** (Alice-Team + Bob-Team) mit gemeinsamem Schlüsselblock"
+    },
+    {
+     "t": "p",
+     "md": "•  **Eve** sieht alle Funksprüche am Beamer"
+    },
+    {
+     "t": "p",
+     "md": "•  Funkspruch-Baukasten: HEUTE · MORGEN · UM · UHR · HAFEN · BAHNHOF …"
+    },
+    {
+     "t": "p",
+     "md": "•  **Regel: Jeder Schlüsselblock nur einmal!**"
+    }
+   ],
+   "notizen": "25 min, Ablauf siehe Funkraum-Dokument KR_W3_Funkraum_Der_doppelte_Schluessel.\nSchritte: 1 Rollen (3 min) · 2 Funken (7 min) · 3 Lauschen (10 min) · 4 Auflösung (5 min).\nDie Lehrkraft teilt dem „Sparschwein“-Paar die Zusatzanweisung verdeckt zu (Rollenkarte: denselben Abschnitt zweimal verwenden).\nEve-Tipps: nach 5 min „Sucht das Paar mit den meisten Bytes, die mit 000 beginnen“, nach 8 min das Crib „UHR“.\nOhne Plattform: Papier-Alternative mit Buchstaben-OTP (30 min)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Wie Eve gewann",
+   "anteil": 0.52,
+   "links": [
+    {
+     "t": "p",
+     "md": "1.  C1 ⊕ C2 = (M1 ⊕ K) ⊕ (M2 ⊕ K) = **M1 ⊕ M2**"
+    },
+    {
+     "t": "p",
+     "md": "2.  Byte `0000 0000` → gleiche Zeichen"
+    },
+    {
+     "t": "p",
+     "md": "3.  Wort raten (**Crib**), an jede Position legen"
+    },
+    {
+     "t": "p",
+     "md": "4.  sinnvoller Text → Treffer, weiterraten"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Position",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+     ],
+     "zeilen": [
+      [
+       "C1 ⊕ C2",
+       "62",
+       "14",
+       "00",
+       "1C",
+       "68"
+      ],
+      [
+       "Crib „ UHR “",
+       "20",
+       "55",
+       "48",
+       "52",
+       "20"
+      ],
+      [
+       "⊕ ergibt",
+       "**B**",
+       "**A**",
+       "**H**",
+       "**N**",
+       "**H**"
+      ]
+     ],
+     "schrift_folie": 20,
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Demonstrationsbeispiel (Hex): M1 = HEUTE 8 UHR AM HAFEN, M2 = MORGEN BAHNHOF NORD"
+    }
+   ],
+   "notizen": "6 min. Tafel: Herleitung C1 ⊕ C2 = M1 ⊕ M2 – der Schlüssel fällt heraus.\nBeispiel aus dem vorbereiteten Funkraum-Datensatz: Crib „ UHR “ (mit Leerzeichen) an Position 7 liefert „BAHNH“ → Vermutung BAHNHOF in M2; Crib „MORGEN “ an Position 0 liefert „HEUTE 8“. An allen anderen Positionen entstehen Sonderzeichen.\nHistorischer Hinweis: Venona – ab den 1940er-Jahren wurden Nachrichten entschlüsselt, deren Einmalschlüssel mehrfach benutzt worden waren.\nÜberleitung zu Auftrag 5 (Crib „UHR“) als Hausaufgabe."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 9 · Vernam",
+   "nr": "P5 · P8",
+   "titel": "Sparen am Schlüssel",
+   "regel": "Ein **wiederholter** Schlüssel ist kein One-Time-Pad – und zwei Schlüssel sind nicht doppelt so sicher.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Ein 8-Bit-Schlüssel für alle Zeichen ist auch eine Art OTP.“"
+    },
+    {
+     "t": "p",
+     "md": "„Zweimal XOR mit k~1~, k~2~ ist doppelt sicher.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Gleiche Zeichen → gleiche Bytes: **monoalphabetisch**, nur 256 Schlüssel."
+    },
+    {
+     "t": "p",
+     "md": "(M ⊕ k~1~) ⊕ k~2~ = M ⊕ (k~1~ ⊕ k~2~): **ein** Schlüssel."
+    }
+   ],
+   "notizen": "3 min. Beispiel: EBBE mit 0010 0001 → dccd (0110 0100 · 0110 0011 · 0110 0011 · 0110 0100) – die beiden B werden gleich verschlüsselt.\nAngriff: Häufigkeitsanalyse der Bytes oder Brute Force über 256 Schlüssel (P5, P7, P8)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 9 · Vernam",
+   "titel": "Das Schlüsselproblem",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das One-Time-Pad ist **perfekt sicher** – aber jeder Schlüssel muss so lang wie die Nachricht, zufällig und einmalig sein und **vorher sicher übergeben** werden."
+    },
+    {
+     "t": "p",
+     "md": "Moderne Verfahren suchen **kurze Schlüssel**."
+    }
+   ],
+   "notizen": "2 min. Ausblick: Das Schlüsselproblem öffnet Welt 4.\nHA: Akte W3·1 Aufträge 5–6, Lab 3.1 „Vernams Lochstreifen“, Video 04 (Teil 1)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "DS 10 · Der Blockchiffre-Baukasten",
+   "untertitel": "Konfusion und Diffusion – Claude Shannon, 1949",
+   "notizen": "1 min. Brücke: „Der OTP-Schlüssel ist so lang wie die Nachricht. Geht es mit einem 16-Bit-Schlüssel für beliebig lange Texte?“ → Idee der Blockchiffre: kurzer Schlüssel, viele Runden aus einfachen Bausteinen."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "KRYPTOS-16",
+   "anteil": 0.47,
+   "links": [
+    {
+     "t": "p",
+     "md": "Block = 2 Zeichen = 16 Bit = **4×4-Matrix**"
+    },
+    {
+     "t": "p",
+     "md": "1.  **XOR** mit K~i~"
+    },
+    {
+     "t": "p",
+     "md": "2.  **S-Box** je Zeile"
+    },
+    {
+     "t": "p",
+     "md": "3.  **Transponieren**"
+    },
+    {
+     "t": "p",
+     "md": "K~i+1~: erste Vierergruppe ans Ende · 4 Runden (von Hand 2)"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "struktogramm",
+     "kopf": "verschluesseln(P, K, R): Block",
+     "elemente": [
+      {
+       "anw": "z ← P;  k ← K"
+      },
+      {
+       "fuer": "i von 1 bis R",
+       "rumpf": [
+        {
+         "anw": "z ← z XOR k"
+        },
+        {
+         "anw": "jede Zeile von z ← S(Zeile)"
+        },
+        {
+         "anw": "z ← transponiert(z)"
+        },
+        {
+         "anw": "k ← k um 4 Bit nach links rotiert"
+        }
+       ]
+      },
+      {
+       "gib": "z"
+      }
+     ]
+    }
+   ],
+   "notizen": "5 min. S-Box-Tabelle als Handout (DIN A5, laminiert) austeilen.\nWichtig: KRYPTOS-16 ist ein eigens für Kryptos entworfenes Lernmodell, kein reales Verfahren (und keine Abituraufgabe).\nS-Box (Eingang 0000 … 1111): 1100 1111 0011 1001 0111 1010 1000 0110 0001 0010 0100 1110 1011 0101 1101 0000.\nRundenschlüssel: K₁ = K, danach wandert die erste Vierergruppe ans Ende (Rotation um 4 Bit nach links).\nNach der letzten Runde folgt kein weiterer Schritt (bewusste Vereinfachung)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "Beispiel „OK“ mit KRYPTOS-16/2",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "K = `1010 0011 0110 1101` · „OK“ = `0100 1111 0100 1011`"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "schrift_folie": 17,
+     "kopf": [
+      "Runde",
+      "Eingang",
+      "K~i~",
+      "nach XOR",
+      "nach S-Box",
+      "nach Transp."
+     ],
+     "zeilen": [
+      [
+       "1",
+       "0100\n1111\n0100\n1011",
+       "1010\n0011\n0110\n1101",
+       "1110\n1100\n0010\n0110",
+       "1101\n1011\n0011\n1000",
+       "1101\n1000\n0110\n1110"
+      ],
+      [
+       "2",
+       "1101\n1000\n0110\n1110",
+       "0011\n0110\n1101\n1010",
+       "1110\n1110\n1011\n0100",
+       "1101\n1101\n1110\n0111",
+       "1110\n1111\n0011\n1101"
+      ]
+     ]
+    }
+   ],
+   "notizen": "8 min. Runde 1 gemeinsam an der Tafel, Runde 2 rechnen Paare selbst.\nJede Zelle ist eine 4×4-Matrix (Zeile 1 oben).\nTransposition zeigen: neue Zeile 1 = alte Spalte 1 = erstes Bit jeder Zeile (1, 1, 0, 1).\nTypischer Fehler: Spalten falsch abgelesen (P4); in Runde 2 noch K₁ benutzt.\nGeheimtext: 1110 1111 0011 1101."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "Zwei Runden von Hand",
+   "sozialform": "Partnerarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Akte W3·2, Auftrag 4: KRYPTOS-16/2 für **„JA“**"
+    },
+    {
+     "t": "bits",
+     "zeilen": [
+      {
+       "label": "K",
+       "bits": "0101 1100 1001 1110"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Vorlage mit 4×4-Matrizen je Schritt nutzen. Schnelle: Auftrag 3 (Schlüsselplan)."
+    }
+   ],
+   "notizen": "10 min. Lösung: „JA“ = 0100 1010 0100 0001; Runde 1 → 1100 1010 1000 1010; Runde 2 mit K₂ = 1100 1001 1110 0101 → 1110 1000 0000 0100.\nSchnelle: Auftrag 3 (Schlüsselplan, schwache Schlüssel: 16 Schlüssel mit vier gleichen Vierergruppen).\nLangsame: nur Runde 1 (KRYPTOS-16/1), Kontrolle im Runden-Labor."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "Die Lawine",
+   "anteil": 0.55,
+   "links": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Runden",
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "zeilen": [
+      [
+       "„OK“ ↔ „OJ“",
+       "3",
+       "8",
+       "10",
+       "8"
+      ],
+      [
+       "Mittel",
+       "16 %",
+       "43 %",
+       "48 %",
+       "49 %"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "gekippte Geheimtextbits, wenn **1** Klartextbit kippt · ideal 50 %",
+     "klein": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "**Konfusion:** S-Box + Schlüssel-XOR verschleiern den Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "**Diffusion:** Transposition verteilt jedes Bit auf alle S-Boxen der nächsten Runde"
+    }
+   ],
+   "notizen": "5 min, danach Runden-Labor 15 min (Akte W3·2, Auftrag 5: „JA“ → „J@“, erwartet 3 / 7 / 9 / 7).\nErklärung: Runde 1 betrifft nur eine S-Box (2–4 Bits), die Transposition verteilt diese auf alle vier Zeilen → ab Runde 2 alle S-Boxen betroffen. Nach 2 Runden hängt jedes Geheimtextbit von jedem Klartextbit ab.\nMittelwerte: über alle 65 536 Klartexte und 16 Bitpositionen bei K = 2B7E."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "ECB oder CBC?",
+   "inhalt": [
+    {
+     "t": "bild",
+     "pfad": "quellen/material/W3/bilder/W3_pixel_ecb_cbc.png",
+     "breite_folie": 9.6,
+     "alt": "Pixelbild Schlüssel: Original, ECB mit sichtbarem Umriss, CBC als Rauschen"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopf": [
+      "Original",
+      "ECB: 39 weiße → 39 gleiche Kacheln",
+      "CBC: C~j~ = E(P~j~ ⊕ C~j−1~), C~0~ = IV"
+     ],
+     "zeilen": [
+      [
+       "23 verschiedene Kacheln",
+       "Umriss bleibt sichtbar",
+       "64 verschiedene Kacheln"
+      ]
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "8 min. Bilder aus dem Runden-Labor (KRYPTOS-16, R = 4, K = 2B7E, IV = 1917; eine 4×4-Pixel-Kachel = ein Block). Alle 39 weißen Kacheln werden in ECB zu 0100 0000 1000 0001 – der Schlüssel-Umriss bleibt erkennbar.\nAuffüllen: ungerade Zeichenzahl → Byte 0000 0001, gerade → ganzer Block 0000 0010 0000 0010.\nDanach Aufträge 6/7 (ECB gegen CBC „JAJA“, Fehlerfortpflanzung „SEHR GUT“ → in CBC „SEQp(GUT“)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "nr": "P3",
+   "titel": "Umkehrung",
+   "regel": "Entschlüsseln heißt: **Runden rückwärts**, je Runde die Schritte rückwärts und invertiert.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Runde 1 zuerst zurückrechnen, **S-Box** statt S⁻¹"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Runden R … 1, je Runde: Transposition → **S⁻¹** → XOR K~i~"
+    }
+   ],
+   "notizen": "2 min. Mini-Beispiel: S(0110) = 1000, aber S(1000) = 0001 ≠ 0110 – die S-Box ist nicht selbstinvers, Entschlüsseln braucht S⁻¹.\nTransposition und XOR sind selbstinvers."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 10 · Blockchiffre",
+   "titel": "Echte Blockchiffren",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "KRYPTOS-16",
+      "DES (1977)",
+      "AES (2001)"
+     ],
+     "zeilen": [
+      [
+       "Block",
+       "16 Bit (4×4 Bit)",
+       "64 Bit",
+       "128 Bit (4×4 Byte)"
+      ],
+      [
+       "Schlüssel",
+       "16 Bit",
+       "56 Bit – heute zu kurz",
+       "128 / 192 / 256 Bit"
+      ],
+      [
+       "Runden",
+       "4",
+       "16 (Feistel)",
+       "10 / 12 / 14"
+      ],
+      [
+       "Aufbau",
+       "XOR · S-Box · Transposition",
+       "Feistel: Hälften, Rundenfunktion, Tausch",
+       "S-Box · Zeilenrotation · Spaltenmischung · XOR"
+      ]
+     ],
+     "schrift_folie": 17
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Feistel: Block in Hälften L/R, nur eine Hälfte durch die Rundenfunktion, dann tauschen. AES ist Ergänzung (nicht prüfungsrelevant)."
+    }
+   ],
+   "notizen": "4 min, Ergänzung. DES: 1977 US-Standard, Grundlage Lucifer (Horst Feistel u. a., IBM); Entschlüsseln mit derselben Struktur, Rundenschlüssel rückwärts; heute per Brute Force angreifbar.\nAES (Rijndael, Daemen und Rijmen): KRYPTOS-16 ist ein „AES im Kleinen“ ohne MixColumns. Betrieb heute in Modi wie CBC oder GCM, nie ECB.\nAbi-Check a, b (Akte W3·2) als Ausgang; HA: Lab 3.2, Video 04 (Teil 2)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 11 · Werkstatt",
+   "titel": "DS 11 · Die Chiffren-Werkstatt",
+   "untertitel": "Jetzt baut ihr.",
+   "notizen": "1 min. Kerckhoffs als Leitsatz: „Euer Verfahren wird öffentlich – nur der Schlüssel bleibt geheim.“"
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 11 · Werkstatt",
+   "titel": "Der Baukasten",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopf": [
+      "Substitution",
+      "Transposition",
+      "Bitebene"
+     ],
+     "zeilen": [
+      [
+       "Caesar · Schlüsselwort-Substitution · Vigenère",
+       "Spalten · Gartenzaun · Blockrotation · Umkehrung",
+       "XOR (nur als letzte Stufe)"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "•  **1–4 Stufen** kombinieren, nie auffüllen"
+    },
+    {
+     "t": "p",
+     "md": "•  **Kerckhoffs:** Verfahren öffentlich, Schlüssel geheim"
+    },
+    {
+     "t": "p",
+     "md": "•  Text **≥ 150 Buchstaben**, selbst formuliert"
+    }
+   ],
+   "notizen": "4 min. Werkstatt-Hinweise erklären: Caesar mit k = 0, Wort „AAAA“, Spaltenschlüssel alphabetisch (P7 – schwache Schlüssel); CAE + VIG nebeneinander, zweimal UMK (P8 – Stufen verschmelzen); nur Transpositionen (P6 – Häufigkeiten bleiben).\nUmkehrbarkeitsprüfung läuft automatisch vor dem Einreichen.\nDann 20 min Entwurfsphase (Akte W3·3, Aufträge 1–2)."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "DS 11 · Werkstatt",
+   "titel": "Knack-Arena",
+   "qr": "https://kryptos.frankjuchim.de/arena",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "•  Verfahren + Geheimtext jedes Teams sind **öffentlich**"
+    },
+    {
+     "t": "p",
+     "md": "•  Angreifen mit allen Labor-Werkzeugen"
+    },
+    {
+     "t": "p",
+     "md": "•  Lösung zählt bei **exakt passendem** Klartext"
+    },
+    {
+     "t": "p",
+     "md": "•  Abzeichen „Arena-Knacker“ und „Unknackbar“"
+    }
+   ],
+   "notizen": "25 min, Ablauf siehe Dokument KR_W3_Funkraum_Knack-Arena. Fortschritt am Beamer; Lehrkraft schließt nach 25 min.\nHöchstens 1 Versuch je 30 s und Verfahren.\nErfahrungswerte: Nur-Transpositionen fallen schnell (deutsche Häufigkeiten); Caesar/Substitution allein in Minuten; Vigenère + Spaltentransposition mit langen Schlüsseln bleibt oft „unknackbar“ – dann diskutieren: „unknackbar in 25 Minuten ≠ sicher“."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 11 · Werkstatt",
+   "titel": "Beurteilt euer Verfahren",
+   "sozialform": "Team",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "zeilen": [
+      [
+       "Schlüsselraum",
+       "Häufigkeitsanalyse",
+       "schwache Schlüssel",
+       "Kombination"
+      ],
+      [
+       "Known-Plaintext",
+       "Fehlerfortpflanzung",
+       "Kerckhoffs / Arena",
+       "**→ Urteil**"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "„Unser Verfahren ist gegen … sicher/unsicher, weil …; am meisten gefährdet durch …; verbessern würden wir …“"
+    }
+   ],
+   "notizen": "10 min. Beurteilungsraster WK3 (Akte W3·3, Auftrag 3).\nP10: Ohne Urteil keine volle Punktzahl – Satzbaustein ist verpflichtend.\nAuflösung: „Unknackbar“ und „Arena-Knacker“ würdigen."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 11 · ADFGVX",
+   "titel": "ADFGVX · Stufe 1",
+   "anteil": 0.48,
+   "links": [
+    {
+     "t": "quadrat",
+     "kopfzeile": [
+      "A",
+      "D",
+      "F",
+      "G",
+      "V",
+      "X"
+     ],
+     "kopfspalte": [
+      "A",
+      "D",
+      "F",
+      "G",
+      "V",
+      "X"
+     ],
+     "zeilen": [
+      "ZEPLIN",
+      "18ABCD",
+      "FGHJKM",
+      "OQRSTU",
+      "VWXY02",
+      "345679"
+     ],
+     "hervor": [
+      [
+       1,
+       2
+      ],
+      [
+       0,
+       5
+      ]
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "Quadrat ZEPPELIN18: A–Z und 0–9"
+    },
+    {
+     "t": "p",
+     "md": "Jedes Zeichen → **Zeile, dann Spalte**"
+    },
+    {
+     "t": "p",
+     "md": "„ankunft8“ → `DF AX FV GX AX FA GV DD`"
+    },
+    {
+     "t": "p",
+     "md": "monoalphabetisch, aber **fraktioniert**"
+    }
+   ],
+   "notizen": "5 min. Historie: 1918 im deutschen Heer eingeführt, Entwicklung wird dem Funkoffizier Fritz Nebel zugeschrieben. A, D, F, G, V, X sind im Morsecode gut unterscheidbar.\nMarkiert: A = DF, N = AX.\nFremde Chiffre IV – 5-Schritte-Methode: lesen/nachrechnen, anwenden, umkehren, einordnen, beurteilen."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 11 · ADFGVX",
+   "titel": "ADFGVX · Stufe 2",
+   "anteil": 0.4,
+   "links": [
+    {
+     "t": "quadrat",
+     "kopfzeile": [
+      "W·4",
+      "O·3",
+      "L·2",
+      "F·1"
+     ],
+     "zeilen": [
+      "DFAX",
+      "FVGX",
+      "AXFA",
+      "GVDD"
+     ],
+     "hervor": [
+      [
+       0,
+       3
+      ],
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "Schlüsselwort WOLF: F = 1, L = 2, O = 3, W = 4"
+    },
+    {
+     "t": "p",
+     "md": "Spalten in dieser Reihenfolge lesen:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "XXADAGFDFVXVDFAG"
+    },
+    {
+     "t": "p",
+     "md": "Entschlüsseln: **erst Spalten, dann Quadrat**"
+    }
+   ],
+   "notizen": "5 min. Die Transposition trennt die beiden Hälften jedes Zeichens – das macht ADFGVX stark.\nDanach Akte W3·4, Aufträge 1–2 (7 min): „funk2“ mit TOR → AAVGX VFXFX; GADGF DDGVF VGGDF AADXA → brieftaube."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 11 · ADFGVX",
+   "nr": "P4",
+   "titel": "Ungleiche Spalten",
+   "regel": "Bei L = n · z + r sind die **ersten r Spalten von links** eine Zeile länger.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Die zuerst gelesene Spalte ist die längere.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "20 Zeichen, TOR: 20 = 3 · 6 + 2 → **T und O** je 7, R 6"
+    }
+   ],
+   "notizen": "2 min. Typischer Fehler in Auftrag 2: Spalte O wird als kurze Spalte angenommen, weil sie zuerst gelesen wird.\nKein Auffüllen mit X – die letzte Zeile darf unvollständig sein."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 11 · ADFGVX",
+   "titel": "Welt 3 in vier Sätzen",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "•  **One-Time-Pad:** perfekt sicher – aber nur einmal!"
+    },
+    {
+     "t": "p",
+     "md": "•  **Blockchiffre:** Runden aus XOR, S-Box, Transposition → Konfusion und Diffusion; CBC statt ECB"
+    },
+    {
+     "t": "p",
+     "md": "•  **Eigenes Verfahren:** Stufen rückwärts, Kriterien, Urteil"
+    },
+    {
+     "t": "p",
+     "md": "•  Kür: die Enigma"
+    }
+   ],
+   "notizen": "3 min. HA: Online-IDE KR_W3_ChiffrenWerkstatt (eA, bis DS 12), Akte W3·4 Rest, Boss W3 „Der Fernschreiber“ ist freigeschaltet.\nKür K2 (Mini-Enigma) jederzeit freischaltbar, keine Rangrelevanz.\nAusblick: Das Schlüsselproblem (One-Time-Pad und n(n − 1)/2 Schlüssel) eröffnet Welt 4."
+  }
+ ]
+}

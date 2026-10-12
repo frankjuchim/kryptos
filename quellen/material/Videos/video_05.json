@@ -1,0 +1,951 @@
+{
+ "typ": "praesentation",
+ "welt": 4,
+ "titel": "Das Schlüsselproblem",
+ "datei": "KR_Video_05_Schluesselproblem_asymmetrisch_hybrid_Folien",
+ "ordner": "Videos/05_Schluesselproblem_asymmetrisch_hybrid",
+ "folien": [
+  {
+   "titel": "Das Schlüsselproblem",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie Welt 4 (Terminal-Optik, Scanlines).\n\nSPRECHERTEXT: Willkommen in Welt vier! Seit Jahrtausenden haben Alice und Bob dasselbe Problem: Bevor sie geheim schreiben können, müssen sie einen gemeinsamen Schlüssel haben. Aber wie kommt der Schlüssel sicher zu Bob, wenn Eve jeden Kanal belauscht? In den 1970er-Jahren wurde dafür eine verblüffende Lösung gefunden. Darum geht es heute – und um das Verfahren, mit dem fast jede verschlüsselte Verbindung im Netz arbeitet.",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "Asymmetrische Verfahren, Diffie-Hellman, RSA und das Hybridverfahren",
+   "oberzeile": "VIDEO 05 · STANFORD · 1976"
+  },
+  {
+   "titel": "Das fragt das Abitur",
+   "notizen": "SPRECHERTEXT: Im Abitur kommt dieses Thema in letzter Zeit häufig vor. Du sollst die Anzahl der Schlüssel berechnen und begründen. Du sollst das Prinzip asymmetrischer Verfahren beschreiben und in einem Schema eintragen, wessen Schlüssel wo benutzt wird. Und ganz wichtig: das Hybridverfahren. Diffie-Hellman und RSA sind Ergänzungen zum Kerncurriculum. Sie helfen dir beim Verstehen – rechnen musst du sie im Abitur bisher nicht.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "„**Erläutern Sie** die Richtigkeit der Aussage … Schlüssel …“ – **Schlüsselanzahl**",
+        "„**Beschreiben Sie** das Prinzip der asymmetrischen Verschlüsselung.“",
+        "„**Ergänzen Sie** im Schema die Schlüsselart und den Inhaber.“",
+        "„**Beschreiben Sie** das **Hybridverfahren**.“",
+        "Diffie-Hellman und RSA: **Ergänzung** – das Prinzip zählt, nicht die Rechnung"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Schlüssel zählen"
+        },
+        {
+         "t": "p",
+         "md": "Öffentlich und privat"
+        },
+        {
+         "t": "p",
+         "md": "Ergänzung: Diffie-Hellman"
+        },
+        {
+         "t": "p",
+         "md": "Ergänzung: RSA"
+        },
+        {
+         "t": "p",
+         "md": "Hybridverfahren"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das Schlüsselproblem",
+   "notizen": "[Kapitel: Schlüssel zählen]\n\nREGIE: Rechts elf Hütten als Punkte im Kreis; Verbindungslinien nacheinander einblenden.\n\nSPRECHERTEXT: Stell dir eine Bergwacht mit elf Hütten vor. Jede Hütte will mit jeder anderen verschlüsselt funken – und zwar so, dass die übrigen Hütten nicht mitlesen können. Symmetrisch braucht jedes Paar einen eigenen geheimen Schlüssel. Jede Hütte hat also zehn Partner. Elf mal zehn sind hundertzehn. Aber Vorsicht: Der Schlüssel zwischen Hütte eins und Hütte zwei ist derselbe wie zwischen zwei und eins. Jeder Schlüssel ist doppelt gezählt. Also hundertzehn durch zwei, fünfundfünfzig Schlüssel. Allgemein: n mal n minus eins, durch zwei. Und jeder davon muss vorher auf geheimem Weg übergeben werden.",
+   "video": true,
+   "abschnitt": "Schlüssel zählen",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Symmetrisch: **ein** gemeinsamer geheimer Schlüssel je Paar",
+        "Er muss vorher **geheim** ausgetauscht werden",
+        "Bergwacht mit **11 Hütten** – jede funkt mit jeder:",
+        "  - jede Hütte braucht 10 Schlüssel: 11 · 10 = 110",
+        "  - jeder Schlüssel doppelt gezählt: 110 / 2 = **55**",
+        "Allgemein: **n(n − 1)/2**"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "BILD",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "11 Punkte im Kreis,"
+        },
+        {
+         "t": "p",
+         "md": "jede Verbindungslinie = ein Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "→ 55 Linien"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Symmetrisch gegen asymmetrisch",
+   "notizen": "SPRECHERTEXT: Asymmetrisch hat jede Hütte ein Schlüsselpaar: einen öffentlichen und einen privaten Schlüssel. Das sind zwei Schlüssel pro Teilnehmer, also zwei n. Bei elf Hütten zweiundzwanzig statt fünfundfünfzig. Schau dir die Tabelle an: Bei vier Teilnehmenden braucht symmetrisch sogar weniger. Aber mit wachsendem n explodiert die symmetrische Zahl, bei tausend sind es fast eine halbe Million. Für eine Begründung im Abitur hilft der Blick auf einen Neuen: Kommt eine zwölfte Hütte dazu, braucht sie symmetrisch elf neue geheime Schlüssel, je einen pro Partner. Asymmetrisch nur ein neues Paar, also zwei.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Teilnehmende n",
+        "symmetrisch n(n − 1)/2",
+        "asymmetrisch 2n"
+       ],
+       "zeilen": [
+        [
+         "4",
+         "6",
+         "8"
+        ],
+        [
+         "11",
+         "55",
+         "22"
+        ],
+        [
+         "50",
+         "1 225",
+         "100"
+        ],
+        [
+         "1000",
+         "499 500",
+         "2000"
+        ]
+       ],
+       "breiten": [
+        2.2,
+        2.9,
+        2.4
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 18,
+       "hervor": [
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         1,
+         2
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "12. HÜTTE KOMMT DAZU",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "symmetrisch: **+ 11** neue geheime Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "asymmetrisch: **+ 2** (ein neues Schlüsselpaar)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: die Leuchtturmkette",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nSPRECHERTEXT: Jetzt du. Dreizehn Leuchttürme an einer Küste wollen paarweise verschlüsselt funken. Bestimme die Anzahl der Schlüssel – symmetrisch und asymmetrisch. Und wie viele kommen jeweils hinzu, wenn ein vierzehnter Leuchtturm gebaut wird? Halte das Video an.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": "Selbst ausprobieren",
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "**13 Leuchttürme** wollen paarweise verschlüsselt funken. **Bestimme** die Anzahl der Schlüssel symmetrisch und asymmetrisch. Wie viele kommen jeweils hinzu, wenn ein 14. Leuchtturm dazukommt?"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Schlüsselpaar = **2** Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "Durch 2 nicht vergessen!"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung: Leuchttürme",
+   "notizen": "SPRECHERTEXT: Die Auflösung. Symmetrisch: dreizehn mal zwölf durch zwei, achtundsiebzig Schlüssel. Asymmetrisch: zwei mal dreizehn, sechsundzwanzig. Kommt der vierzehnte Leuchtturm dazu, braucht er symmetrisch dreizehn neue Schlüssel, asymmetrisch nur zwei. Die typischen Fehler sind Falle P7: das Durch-zwei vergessen, oder ein Schlüsselpaar als einen einzigen Schlüssel zählen.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "symmetrisch",
+      "asymmetrisch"
+     ],
+     "zeilen": [
+      [
+       "13 Leuchttürme",
+       "13 · 12 / 2 = **78**",
+       "2 · 13 = **26**"
+      ],
+      [
+       "der 14. kommt dazu",
+       "**+ 13**",
+       "**+ 2**"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.6,
+      2.4
+     ],
+     "mono": false,
+     "zentriert": false,
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "Falle **P7**: 13 · 12 = 156 ohne „/ 2“ · Schlüsselpaar als **einen** Schlüssel gezählt (13)"
+    }
+   ]
+  },
+  {
+   "titel": "Asymmetrisch: das Prinzip",
+   "notizen": "[Kapitel: Öffentlich und privat]\n\nSPRECHERTEXT: Wie funktioniert das mit zwei Schlüsseln? Bob erzeugt ein Schlüsselpaar. Den öffentlichen Schlüssel darf die ganze Welt kennen, den privaten behält er für sich. Was mit Bobs öffentlichem Schlüssel verschlüsselt wurde, kann nur Bobs privater Schlüssel wieder entschlüsseln. Denk an einen Briefkasten: Einwerfen kann jeder, öffnen nur, wer den Schlüssel hat. Dahinter steckt eine Einwegfunktion – leicht zu berechnen, aber ohne ein Geheimnis praktisch nicht umzukehren. Die Idee haben Whitfield Diffie und Martin Hellman 1976 veröffentlicht, mit Vorarbeiten von Ralph Merkle. Beim britischen Geheimdienst war Ähnliches wohl schon früher entwickelt, aber geheim gehalten worden.",
+   "video": true,
+   "abschnitt": "Öffentlich und privat",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Bob erzeugt ein **Schlüsselpaar**",
+        "  - **öffentlicher** Schlüssel: darf jeder kennen",
+        "  - **privater** Schlüssel: bleibt bei Bob",
+        "Was mit Bobs öffentlichem Schlüssel verschlüsselt ist, kann **nur** Bobs privater Schlüssel entschlüsseln",
+        "Grundlage: **Einwegfunktion** – leicht zu berechnen, ohne Geheimnis kaum umzukehren"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "BILD",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Briefkasten: Einwerfen kann jeder,"
+        },
+        {
+         "t": "p",
+         "md": "öffnen nur, wer den Schlüssel hat."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Asymmetrisch verschlüsseln: wessen Schlüssel?",
+   "notizen": "REGIE: Eve sitzt in der Mitte unter Pfeil 1 und 3 und sieht beides mit – Pfeile nacheinander aufdecken.\n\nSPRECHERTEXT: So sieht das als Schaubild mit nummerierten Pfeilen aus, wie im Abitur. Eins: Bob schickt Alice seinen öffentlichen Schlüssel – ganz offen, Eve darf ihn sehen. Zwei: Alice verschlüsselt ihre Nachricht mit dem öffentlichen Schlüssel von Bob. Drei: Sie schickt den Geheimtext. Vier: Bob entschlüsselt mit seinem privaten Schlüssel. Und fünf: Eve hat alles gesehen, was über die Leitung ging – und kann trotzdem nichts lesen. Wichtig für die Punkte: Nenn immer die Schlüsselart und den Inhaber. Nur „öffentlicher Schlüssel“ reicht nicht. Es muss heißen: öffentlicher Schlüssel von Bob.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        },
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        },
+        {
+         "id": "eve",
+         "name": "Eve",
+         "unter": "lauscht"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "bob",
+         "nach": "alice",
+         "text": "öffentlicher Schlüssel von Bob"
+        },
+        {
+         "nr": 2,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt M mit dem öffentlichen Schlüssel von Bob"
+        },
+        {
+         "nr": 3,
+         "von": "alice",
+         "nach": "bob",
+         "text": "Geheimtext C"
+        },
+        {
+         "nr": 4,
+         "von": "bob",
+         "nach": "bob",
+         "text": "entschlüsselt C mit dem privaten Schlüssel von Bob"
+        },
+        {
+         "nr": 5,
+         "von": "eve",
+         "nach": "eve",
+         "text": "sieht den öffentlichen Schlüssel von Bob und C – kann C nicht entschlüsseln"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "FALLE P9",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Immer **Schlüsselart + Inhaber** nennen:"
+        },
+        {
+         "t": "p",
+         "md": "„öffentlicher Schlüssel **von Bob**“"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ergänzung · Diffie-Hellman mit Farben",
+   "notizen": "[Kapitel: Diffie-Hellman]\n\nREGIE: Animation: drei Farbtöpfe, Mischungen wandern über die Leitung; Eve hält nur die zwei Zwischenmischungen in der Hand.\n\nSPRECHERTEXT: Diffie und Hellman haben gezeigt, wie zwei Menschen sich über eine offene Leitung auf einen gemeinsamen Schlüssel einigen können. Mit Farben klappt das so: Alle kennen die Farbe Sonnengelb. Alice mischt heimlich Türkis dazu und schickt die Mischung los. Bob mischt heimlich Magenta dazu und schickt seine Mischung. Jetzt gibt jeder seine geheime Farbe noch zur Mischung des anderen. Beide haben am Ende denselben Farbton: Gelb, Türkis und Magenta. Eve sieht nur Gelb und die beiden Zwischenmischungen. Um die geheimen Farben herauszubekommen, müsste sie Farben wieder entmischen. Und das ist schwer – das ist unsere Einwegfunktion.",
+   "video": true,
+   "abschnitt": "Diffie-Hellman",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Öffentlich: **Sonnengelb**",
+      "Alice mischt geheim **Türkis** dazu → schickt Gelb + Türkis",
+      "Bob mischt geheim **Magenta** dazu → schickt Gelb + Magenta",
+      "Jede Seite gibt ihre geheime Farbe dazu:",
+      "  - beide haben **Gelb + Türkis + Magenta**",
+      "Eve sieht nur Mischungen – **Entmischen** ist schwer"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ergänzung · Diffie-Hellman mit Zahlen",
+   "notizen": "SPRECHERTEXT: Jetzt dasselbe mit Zahlen. Öffentlich sind eine Primzahl p gleich neunundzwanzig und eine Basis g gleich zwei. Alice wählt geheim a gleich fünf und rechnet zwei hoch fünf modulo neunundzwanzig: Zweiunddreißig, Rest drei. Bob wählt geheim b gleich acht: Zwei hoch acht sind zweihundertsechsundfünfzig, modulo neunundzwanzig bleibt vierundzwanzig. Die beiden schicken drei und vierundzwanzig offen hin und her. Alice rechnet jetzt vierundzwanzig hoch ihre geheime Fünf modulo neunundzwanzig. Mit dem Trick, nach jedem Schritt den Rest zu nehmen, bleibt alles klein: Vierundzwanzig zum Quadrat ist fünfhundertsechsundsiebzig, Rest fünfundzwanzig. Fünfundzwanzig zum Quadrat ergibt Rest sechzehn. Mal vierundzwanzig, Rest sieben. Der gemeinsame Schlüssel ist sieben.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "öffentlich: p = 29, g = 2"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Alice",
+      "Bob"
+     ],
+     "zeilen": [
+      [
+       "geheim",
+       "a = 5",
+       "b = 8"
+      ],
+      [
+       "berechnet",
+       "A = 2⁵ mod 29 = 32 mod 29 = **3**",
+       "B = 2⁸ mod 29 = 256 mod 29 = **24**"
+      ],
+      [
+       "schickt offen",
+       "A = 3 →",
+       "← B = 24"
+      ],
+      [
+       "Schlüssel",
+       "K = 24⁵ mod 29 = **7**",
+       "K = 3⁸ mod 29 = ?"
+      ]
+     ],
+     "breiten": [
+      1.7,
+      3.3,
+      3.3
+     ],
+     "mono": false,
+     "zentriert": false,
+     "schrift_folie": 16
+    },
+    {
+     "t": "p",
+     "md": "Rechenweg Alice: 24² = 576 → 25 · 25² = 625 → 16 · 16 · 24 = 384 → 7"
+    },
+    {
+     "t": "p",
+     "md": "Formel: K = Bᵃ mod p = Aᵇ mod p"
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: Bobs Seite",
+   "notizen": "SPRECHERTEXT: Jetzt rechnest du Bobs Seite. Bob kennt A gleich drei und sein geheimes b gleich acht. Berechne drei hoch acht modulo neunundzwanzig – ohne Taschenrechner. Tipp: Rechne erst drei hoch vier und quadriere dann. Halte das Video an.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": null,
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Bob hat A = 3 empfangen und kennt sein geheimes b = 8. **Berechne** K = 3⁸ mod 29."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "3⁸ = (3⁴)²"
+        },
+        {
+         "t": "p",
+         "md": "Nach jedem Schritt mod 29 rechnen"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung – und was Eve sieht",
+   "notizen": "SPRECHERTEXT: Die Auflösung: Drei hoch vier ist einundachtzig, modulo neunundzwanzig bleibt dreiundzwanzig. Dreiundzwanzig zum Quadrat ist fünfhundertneunundzwanzig, modulo neunundzwanzig bleibt sieben. Bob hat also denselben Schlüssel wie Alice, ohne dass er je über die Leitung ging. Und Eve? Sie kennt p, g, A und B. Sie müsste herausfinden, mit welchem Exponenten zwei den Rest drei ergibt. Bei unseren kleinen Zahlen probiert sie einfach: zwei, vier, acht, sechzehn, drei – nach fünf Schritten ist sie fertig. Echte Primzahlen haben aber Hunderte Stellen, und dann ist dieses Rückwärtsrechnen praktisch unmöglich. Einen Haken gibt es noch: Wer sich dazwischenschaltet, kann mit beiden getrennt tauschen. Dazu mehr im nächsten Video.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.7,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Bob rechnet",
+        ""
+       ],
+       "zeilen": [
+        [
+         "3⁴ = 81",
+         "81 mod 29 = 23"
+        ],
+        [
+         "23² = 529",
+         "529 mod 29 = **7**"
+        ],
+        [
+         "also K = 7",
+         "derselbe Schlüssel wie bei Alice ✓"
+        ]
+       ],
+       "breiten": [
+        2.4,
+        3.8
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 17
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "EVE KENNT P, G, A, B",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Sie sucht a mit 2ᵃ mod 29 = 3"
+        },
+        {
+         "t": "p",
+         "md": "2, 4, 8, 16, **3** → a = 5: bei kleinen Zahlen leicht"
+        },
+        {
+         "t": "p",
+         "md": "bei Zahlen mit Hunderten Stellen: praktisch unmöglich"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ergänzung · RSA mit kleinen Zahlen",
+   "notizen": "[Kapitel: RSA]\n\nREGIE: Rechenweg für c als Einblendung: 10² = 100 · 10⁴ = 10 000 mod 133 = 25 · 10⁵ = 25 · 10 = 250 mod 133 = 117. Entschlüsselung nur als Ergebnis (RSA-Rechenwerk, Kür K3).\n\nSPRECHERTEXT: Diffie-Hellman tauscht nur einen Schlüssel aus. RSA – benannt nach Rivest, Shamir und Adleman, 1977 – kann direkt verschlüsseln. Wir nehmen zwei Primzahlen, sieben und neunzehn. Ihr Produkt N ist hundertdreiunddreißig. Phi von N ist sechs mal achtzehn, also hundertacht. Wir wählen e gleich fünf, das ist teilerfremd zu hundertacht. Dazu gehört d gleich fünfundsechzig, denn fünf mal fünfundsechzig ist dreihundertfünfundzwanzig, und das lässt bei Division durch hundertacht den Rest eins. Der öffentliche Schlüssel ist das Paar N, e, der private das Paar N, d. Die Klarzahl zehn wird zu zehn hoch fünf modulo hundertdreiunddreißig, also hundertsiebzehn. Und hundertsiebzehn hoch fünfundsechzig modulo hundertdreiunddreißig ergibt wieder zehn. Die Sicherheit beruht darauf, dass man ein riesiges N kaum in seine Primfaktoren zerlegen kann. Rechnen musst du RSA im Abitur bisher nicht. Aber das Beispiel zeigt dir genau, was ein Schlüsselpaar ist: zwei Zahlen, die zusammenpassen, von denen nur eine öffentlich ist.",
+   "video": true,
+   "abschnitt": "RSA",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "Rechnung"
+     ],
+     "zeilen": [
+      [
+       "1. Primzahlen",
+       "p = 7, q = 19"
+      ],
+      [
+       "2. RSA-Modul",
+       "N = 7 · 19 = 133"
+      ],
+      [
+       "3. φ(N)",
+       "(7 − 1) · (19 − 1) = 108"
+      ],
+      [
+       "4. e teilerfremd zu 108",
+       "e = 5"
+      ],
+      [
+       "5. d mit e · d mod 108 = 1",
+       "d = 65, denn 5 · 65 = 325 = 3 · 108 + 1"
+      ],
+      [
+       "öffentlich / privat",
+       "(N, e) = (133, 5) · (N, d) = (133, 65)"
+      ],
+      [
+       "Verschlüsseln m = 10",
+       "c = 10⁵ mod 133 = **117**"
+      ],
+      [
+       "Entschlüsseln",
+       "117⁶⁵ mod 133 = **10** ✓"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      4.8
+     ],
+     "mono": false,
+     "zentriert": false,
+     "schrift_folie": 15,
+     "hervor": [
+      [
+       5,
+       0
+      ],
+      [
+       5,
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Symmetrisch und asymmetrisch im Vergleich",
+   "notizen": "[Kapitel: Vergleich]\n\nSPRECHERTEXT: Halten wir den Vergleich fest, denn genau den verlangt das Kerncurriculum: beschreiben und unterscheiden. Symmetrisch gibt es einen gemeinsamen geheimen Schlüssel, der vorher auf geheimem Weg ausgetauscht werden muss. Asymmetrisch hat jeder ein Schlüsselpaar, und der öffentliche Teil darf offen verschickt werden. Bei vielen Teilnehmenden braucht asymmetrisch weniger Schlüssel. Aber in einer Zeile gewinnt symmetrisch klar: beim Tempo. Asymmetrische Verfahren rechnen mit riesigen Zahlen und sind deshalb sehr viel langsamer.",
+   "video": true,
+   "abschnitt": "Vergleich",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "symmetrisch",
+      "asymmetrisch"
+     ],
+     "zeilen": [
+      [
+       "Schlüssel",
+       "ein gemeinsamer geheimer",
+       "Paar: öffentlich + privat"
+      ],
+      [
+       "Austausch",
+       "vorher geheim nötig",
+       "öffentlicher Schlüssel offen"
+      ],
+      [
+       "Anzahl bei n",
+       "n(n − 1)/2",
+       "2n"
+      ],
+      [
+       "Tempo",
+       "**schnell**",
+       "**langsam**"
+      ],
+      [
+       "Beispiele",
+       "Caesar, Vigenère, AES",
+       "RSA"
+      ]
+     ],
+     "breiten": [
+      1.9,
+      3.0,
+      3.0
+     ],
+     "mono": false,
+     "zentriert": false,
+     "schrift_folie": 17,
+     "hervor": [
+      [
+       3,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       3,
+       2
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das Hybridverfahren",
+   "notizen": "[Kapitel: Hybridverfahren]\n\nREGIE: Pfeile nacheinander aufdecken; Sitzungsschlüssel k als kleiner goldener Schlüssel, Nachricht als großer Umschlag.\n\nSPRECHERTEXT: Also: Symmetrisch ist schnell, hat aber das Schlüsselproblem. Asymmetrisch löst das Schlüsselproblem, ist aber langsam. Die Lösung kombiniert beides: das Hybridverfahren. Eins: Alice besorgt sich Bobs öffentlichen Schlüssel. Zwei: Sie erzeugt einen zufälligen Sitzungsschlüssel. Drei: Damit verschlüsselt sie die eigentliche Nachricht symmetrisch – schnell, auch bei großen Datenmengen. Vier: Den kleinen Sitzungsschlüssel verschlüsselt sie asymmetrisch mit Bobs öffentlichem Schlüssel. Fünf: Beides geht an Bob. Sechs: Bob entschlüsselt den Sitzungsschlüssel mit seinem privaten Schlüssel. Sieben: Damit entschlüsselt er die Nachricht.",
+   "video": true,
+   "abschnitt": "Hybridverfahren",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        },
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "bob",
+         "nach": "alice",
+         "text": "öffentlicher Schlüssel von Bob"
+        },
+        {
+         "nr": 2,
+         "von": "alice",
+         "nach": "alice",
+         "text": "erzeugt zufälligen Sitzungsschlüssel k"
+        },
+        {
+         "nr": 3,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt die Nachricht M symmetrisch mit k"
+        },
+        {
+         "nr": 4,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt k asymmetrisch mit dem öffentlichen Schlüssel von Bob"
+        },
+        {
+         "nr": 5,
+         "von": "alice",
+         "nach": "bob",
+         "text": "verschlüsselte Nachricht + verschlüsselter Sitzungsschlüssel"
+        },
+        {
+         "nr": 6,
+         "von": "bob",
+         "nach": "bob",
+         "text": "entschlüsselt k mit dem privaten Schlüssel von Bob"
+        },
+        {
+         "nr": 7,
+         "von": "bob",
+         "nach": "bob",
+         "text": "entschlüsselt M symmetrisch mit k"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "WARUM?",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "asymmetrisch: einfacher Schlüsseltausch, aber **langsam**"
+        },
+        {
+         "t": "p",
+         "md": "symmetrisch: **schnell**, aber Schlüsselproblem"
+        },
+        {
+         "t": "p",
+         "md": "hybrid: das Beste aus beiden"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Hybrid im Abitur: so beschreibst du es",
+   "notizen": "SPRECHERTEXT: Im Abitur heißt es dann zum Beispiel: Beschreiben Sie das Hybridverfahren. Eine gute Antwort hat drei Sätze. Die Nachricht wird symmetrisch mit einem zufälligen Sitzungsschlüssel verschlüsselt, weil das schnell ist. Der Sitzungsschlüssel wird mit dem öffentlichen Schlüssel des Empfängers asymmetrisch verschlüsselt, sodass kein geheimer Kanal nötig ist. Der Empfänger gewinnt ihn mit seinem privaten Schlüssel zurück. Genau so arbeiten verschlüsselte Webseiten, E-Mail-Verschlüsselung und Messenger.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Die **Nachricht** wird **symmetrisch** mit einem zufälligen **Sitzungsschlüssel** verschlüsselt, **weil** das schnell ist.",
+      "Der **Sitzungsschlüssel** wird mit dem **öffentlichen Schlüssel des Empfängers** asymmetrisch verschlüsselt, **sodass** kein geheimer Kanal nötig ist.",
+      "Der Empfänger gewinnt ihn mit seinem **privaten** Schlüssel zurück.",
+      "Anwendungen: HTTPS/TLS, E-Mail-Verschlüsselung, Messenger"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Typische Fehler – und wie du sie vermeidest",
+   "notizen": "[Kapitel: Typische Fehler]\n\nSPRECHERTEXT: Die typischen Fehler. P7: bei der Schlüsselanzahl das Durch-zwei vergessen oder ein Schlüsselpaar als einen Schlüssel zählen. P9: Alice verschlüsselt mit ihrem eigenen Schlüssel statt mit dem öffentlichen Schlüssel des Empfängers – oder sie schreibt nur öffentlicher Schlüssel, ohne zu sagen, wessen. P5: Das Hybridverfahren ist kein drittes Verfahren, sondern die Kombination von symmetrisch und asymmetrisch. Und P2: Modulo heißt kleinster nicht negativer Rest – zweihundertsechsundfünfzig modulo neunundzwanzig ist vierundzwanzig, keine Kommazahl.",
+   "video": true,
+   "abschnitt": "Typische Fehler",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**P7** n(n − 1) statt n(n − 1)/2 · Schlüsselpaar als **einen** Schlüssel gezählt",
+        "**P9** Verschlüsseln mit dem **eigenen** statt mit dem öffentlichen Schlüssel **des Empfängers**",
+        "**P9** Nur „öffentlicher Schlüssel“ – ohne Inhaber",
+        "**P5** Hybrid ist kein neues Verfahren, sondern **symmetrisch + asymmetrisch** kombiniert",
+        "**P2** mod falsch: 256 mod 29 = **24** – der Rest, nicht der Quotient 8,8…"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ABI-CHECK",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Durch 2 bei symmetrisch?"
+        },
+        {
+         "t": "p",
+         "md": "Schlüsselart + Inhaber?"
+        },
+        {
+         "t": "p",
+         "md": "Was ist schnell, was ist langsam?"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nSPRECHERTEXT: Das nimmst du mit. Erstens: Symmetrisch braucht man n mal n minus eins durch zwei Schlüssel, asymmetrisch zwei n. Zweitens: Verschlüsselt wird mit dem öffentlichen Schlüssel des Empfängers, entschlüsselt mit seinem privaten. Drittens: Diffie-Hellman und RSA beruhen auf Einwegfunktionen. Viertens: Beim Hybridverfahren wird die Nachricht symmetrisch und nur der Sitzungsschlüssel asymmetrisch verschlüsselt.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Schlüsselanzahl: symmetrisch **n(n − 1)/2**, asymmetrisch **2n** (n Schlüsselpaare)"
+    },
+    {
+     "t": "p",
+     "md": "Verschlüsseln mit dem **öffentlichen** Schlüssel des Empfängers, entschlüsseln mit dessen **privatem**"
+    },
+    {
+     "t": "p",
+     "md": "Diffie-Hellman und RSA beruhen auf **Einwegfunktionen** (Ergänzung)"
+    },
+    {
+     "t": "p",
+     "md": "**Hybrid**: Nachricht symmetrisch, Sitzungsschlüssel asymmetrisch"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Danach 20 s Endcard (siehe Kopf).\n\nSPRECHERTEXT: Weiter im Lab: In Level vier Punkt eins zählst du Schlüssel und tauschst mit Diffie-Hellman, in Level vier Punkt zwei geht es um RSA und das Hybridverfahren. Mit dem Farbmischer und dem RSA-Rechenwerk kannst du alles nachrechnen. Im nächsten Video tritt Mallory auf – und wir klären, wie Bob sicher sein kann, dass ein öffentlicher Schlüssel wirklich von Alice stammt. Bis dann!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 4.1 „Das Schlüsselproblem“ und Level 4.2 „RSA und das hybride Prinzip“ (Kür K3 „Euklids Erbe“)"
+      ],
+      [
+       "Akte",
+       "Akten W4·1 und W4·2"
+      ],
+      [
+       "Kryptolabor",
+       "Modulo-Uhr & Farbmischer, RSA-Rechenwerk"
+      ],
+      [
+       "Funkraum",
+       "Szenario „Schlüsseltausch vor Eves Augen“ im Unterricht"
+      ],
+      [
+       "Online",
+       "kryptos.frankjuchim.de"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 06 · Hash, Signatur, Zertifikat: Vertrauen im Netz"
+    }
+   ]
+  }
+ ]
+}

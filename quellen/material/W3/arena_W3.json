@@ -1,0 +1,463 @@
+{
+ "typ": "dokument",
+ "welt": 3,
+ "kennung": "KNACK-ARENA W3",
+ "titel": "Knack-Arena",
+ "datei": "KR_W3_Funkraum_Knack-Arena",
+ "ordner": "Werkzeuge/Funkraum",
+ "ds": "11",
+ "niveau": "eA",
+ "mit_loesung": true,
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "ÜBERBLICK FÜR DIE LEHRKRAFT",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Lernziel",
+       "Teams **entwerfen** aus dem Baukasten ein symmetrisches Verfahren, stellen es nach dem **Kerckhoffs-Prinzip** öffentlich zur Diskussion, greifen fremde Verfahren an und **beurteilen** ihr eigenes mit dem Raster WK3 (KC eA: entwerfen und implementieren ein symmetrisches Verfahren)."
+      ],
+      [
+       "Zeit",
+       "Werkstatt 20 min · Arena 25 min · Beurteilen 10 min (DS 11, vor ADFGVX)"
+      ],
+      [
+       "Teams",
+       "2–4 Personen je Team (feste Tischgruppen)"
+      ],
+      [
+       "Plattform",
+       "Level 3.3: Baukasten mit Umkehrbarkeitsprüfung, Arena (Lehrkraft-Bereich: „Werkstatt starten“, „Arena öffnen“, „Arena schließen“), alle Labor-Werkzeuge"
+      ],
+      [
+       "Material",
+       "Akte W3·3 (Baukasten, Arena-Regeln, Raster), Beurteilungsbogen (Seite 3); ohne Plattform: Verfahrenskarten, Umschläge, Lösungszettel, zwei Stempel"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      13.6
+     ]
+    }
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "Ablauf",
+   "kopf": [
+    "Phase",
+    "Zeit",
+    "Regeln",
+    "Wer",
+    "Material"
+   ],
+   "zeilen": [
+    [
+     "Werkstatt",
+     "20 min",
+     "Teams bauen im Baukasten ein Verfahren aus 1–4 Stufen, schreiben einen **selbst formulierten deutschen Text mit ≥ 150 Buchstaben** (nach Normalisierung; keine Personennamen, keine kopierten Texte), lassen die Umkehrbarkeitsprüfung laufen, geben eine Verfahrensbeschreibung (Abitur-Stil) ein und reichen ein. Gespeichert werden Stufenliste, Beschreibung, Geheimtext und ein **Hash** des normalisierten Klartextes; Schlüssel und Klartext bleiben im Browser des Teams.",
+     "Teams",
+     "Baukasten, Akte W3·3 A1–A2"
+    ],
+    [
+     "Arena offen",
+     "25 min",
+     "Alle Verfahren mit Beschreibung und Geheimtext sind für alle sichtbar (Kerckhoffs). Angriffe mit allen Labor-Werkzeugen (Häufigkeits-Analysator, Vigenère-Werkbank, Bit-Lupe, Baukasten im Testmodus). Je fremdem Verfahren beliebig viele Lösungsversuche, höchstens **1 Versuch je 30 s**.",
+     "Teams",
+     "Arena, Beamer"
+    ],
+    [
+     "Prüfung",
+     "sofort",
+     "Der Server normalisiert den eingereichten Text (Großbuchstaben, ae/oe/ue/ss, nur A–Z) und vergleicht den Hash. Bei Übereinstimmung: „geknackt“, Zeit wird notiert, Abzeichen **„Arena-Knacker“** für alle Mitglieder des angreifenden Teams.",
+     "Plattform",
+     "–"
+    ],
+    [
+     "Schluss",
+     "nach 25 min",
+     "Lehrkraft schließt die Arena. Ungeknackte Verfahren erhalten **„Unknackbar“**. Beamer zeigt je Verfahren Stufen, Knackzeit und Angreifer.",
+     "Lehrkraft",
+     "Beamer, Folie 23"
+    ],
+    [
+     "Beurteilen",
+     "10 min",
+     "Jedes Team füllt den Beurteilungsbogen (WK3) aus – Befund je Kriterium und ein **Urteil**. Die Lehrkraft sieht alle Beurteilungen gesammelt.",
+     "Teams",
+     "Beurteilungsbogen"
+    ]
+   ],
+   "breiten": [
+    2.2,
+    1.5,
+    8.4,
+    1.6,
+    3.1
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "HINWEISE FÜR DIE LEHRKRAFT",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Verfahren **nur aus Transpositionsstufen** sind meist schnell erkannt (deutsche Häufigkeiten bleiben erhalten, P6).",
+      "**Caesar oder Substitution allein** fällt in Minuten (26 Schlüssel bzw. Häufigkeitsanalyse).",
+      "**Vigenère + Spaltentransposition** mit langen Schlüsseln bleibt oft „unknackbar“ – genau dann lohnt die Diskussion: **„unknackbar in 25 Minuten ≠ sicher“** (Rechnerangriff, Schlüsselraum, Strukturschwächen).",
+      "**XOR-Verfahren** werden als Hex angezeigt; Hilfe für Angreifer: Bit-Lupe (Wiederholungs-Modus) und Kasiski auf Bytes.",
+      "Werkstatt-Hinweise der Plattform blockieren nicht: k = 0, Wort „AAAA“, alphabetischer Spaltenschlüssel (P7); CAE + VIG nebeneinander, zweimal UMK (P8).",
+      "**Datenschutz:** Arena-Daten bleiben kursintern und werden mit dem Arena-Ende gelöscht (spätestens mit Kurs/Konto), Beschreibungen und Beurteilungen mit."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ARENA-REGELN (FÜR ALLE TEAMS)",
+   "farbe": "556B2F",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Kerckhoffs:** Euer Verfahren und euer Geheimtext sind öffentlich – geheim bleibt nur der Schlüssel.",
+      "Euer Klartext ist ein **selbst formulierter deutscher Text mit mindestens 150 Buchstaben** (keine Namen von Personen, keine Zitate aus dem Netz).",
+      "1 bis 4 Stufen aus dem Baukasten, XOR nur als letzte Stufe, es wird nie aufgefüllt.",
+      "Eine Lösung zählt, wenn der eingereichte Klartext nach Normalisierung **exakt** übereinstimmt. Höchstens ein Versuch je 30 Sekunden und Verfahren.",
+      "Abzeichen: **„Arena-Knacker“** für jedes Team, das ein fremdes Verfahren knackt; **„Unknackbar“** für jedes Verfahren, das bei Arena-Schluss ungeknackt ist."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Beurteilungsbogen nach WK3"
+  },
+  {
+   "t": "p",
+   "md": "Team: [[luecke:24]]   Verfahren (Stufen): [[luecke:36]]"
+  },
+  {
+   "t": "p",
+   "md": "Ergebnis in der Arena:  ☐ unknackbar   ☐ geknackt nach [[luecke:6]] min von Team [[luecke:16]] mit [[luecke:20]]"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9.5,
+   "kopf": [
+    "Kriterium",
+    "Leitfrage",
+    "Unser Befund"
+   ],
+   "zeilen": [
+    [
+     "Schlüsselraum",
+     "Wie viele Schlüssel gibt es (je Stufe, gesamt)? Ist Brute Force von Hand / mit dem Rechner möglich?",
+     "\n\n"
+    ],
+    [
+     "Häufigkeitsanalyse",
+     "Bleibt die Buchstabenverteilung erhalten (Transposition)? Mono- oder polyalphabetisch? Helfen Teiltexte oder Bigramme?",
+     "\n\n"
+    ],
+    [
+     "Schwache / äquivalente Schlüssel",
+     "Gibt es Schlüssel, die nichts bewirken oder gleich wirken (k = 0, AAAA, Wort in alphabetischer Reihenfolge)?",
+     "\n\n"
+    ],
+    [
+     "Kombination der Stufen",
+     "Verschmelzen Stufen (Caesar + Vigenère)? Heben sie sich auf (Umkehrung zweimal)?",
+     "\n\n"
+    ],
+    [
+     "Known-Plaintext",
+     "Kann Eve aus einem bekannten Klartextstück den Schlüssel gewinnen?",
+     "\n\n"
+    ],
+    [
+     "Fehlerfortpflanzung",
+     "Was passiert bei einem falschen und bei einem fehlenden Geheimtextzeichen?",
+     "\n\n"
+    ],
+    [
+     "Kerckhoffs / Arena",
+     "Hielt das Verfahren in der Arena, obwohl es öffentlich war? Womit wurde angegriffen?",
+     "\n\n"
+    ]
+   ],
+   "breiten": [
+    3.4,
+    6.6,
+    6.8
+   ],
+   "nur_schueler": true
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "Kriterium",
+    "Leitfrage",
+    "Muster-Befund für „FUNKGITTER“ (VIG + SPA, Schlüsselwort FUNKE)"
+   ],
+   "zeilen": [
+    [
+     "Schlüsselraum",
+     "Wie viele Schlüssel? Brute Force?",
+     "Wörter der Länge 5 aus 26 Buchstaben → 26^5^ ≈ 11,9 Millionen – mit dem Rechner durchsuchbar, von Hand nicht."
+    ],
+    [
+     "Häufigkeitsanalyse",
+     "Verteilung erhalten? Mono/poly?",
+     "Stufe 1 polyalphabetisch mit Periode = Wortlänge; Stufe 2 zerstört die Reihenfolge – Teiltexte (jede 5. Stelle, Positionen ab 0) erst nach Rückgängigmachen der Transposition bildbar."
+    ],
+    [
+     "Schwache Schlüssel",
+     "k = 0, AAAA, alphabetisch?",
+     "AAAAA (Stufe 1 wirkungslos) und Wörter in alphabetischer Reihenfolge wie ABCDE (Spalten in natürlicher Reihenfolge)."
+    ],
+    [
+     "Kombination",
+     "Verschmelzen? Aufheben?",
+     "Substitution + Transposition ergänzen sich."
+    ],
+    [
+     "Known-Plaintext",
+     "Schlüssel aus bekanntem Stück?",
+     "Bekannter Klartext an bekannter Stelle erlaubt, Schlüsselbuchstaben zu testen, sobald die Spaltenreihenfolge geraten ist."
+    ],
+    [
+     "Fehlerfortpflanzung",
+     "Falsches / fehlendes Zeichen?",
+     "Ein falsches Zeichen → ein falsches Klartextzeichen; ein fehlendes Zeichen → ab der betroffenen Spalte verschoben."
+    ],
+    [
+     "Kerckhoffs / Arena",
+     "Hielt es?",
+     "Gegen Angriffe von Hand in 25 min meist „unknackbar“."
+    ]
+   ],
+   "breiten": [
+    3.0,
+    4.4,
+    9.4
+   ],
+   "nur_loesung": true
+  },
+  {
+   "t": "kasten",
+   "kopf": "UNSER URTEIL",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„Unser Verfahren ist gegen [[luecke:28]] sicher / unsicher, weil [[luecke:40]];"
+    },
+    {
+     "t": "p",
+     "md": "am meisten gefährdet ist es durch [[luecke:40]];"
+    },
+    {
+     "t": "p",
+     "md": "verbessern würden wir [[luecke:52]].“"
+    },
+    {
+     "t": "p",
+     "md": "**Muster-Urteil FUNKGITTER:** gegen Angriffe von Hand in der Arena gut, für Rechnerangriffe zu klein und strukturell schwach (Wortlänge = Periode = Spaltenzahl verrät viel); Verbesserung: zwei verschiedene, längere Schlüssel.",
+     "nur_loesung": true
+    },
+    {
+     "t": "liste",
+     "haken": true,
+     "items": [
+      "Jedes Kriterium hat einen Befund mit Begründung.",
+      "Wir haben ein **Urteil** formuliert (ohne Urteil keine volle Punktzahl – Falle P10).",
+      "Wir haben einen konkreten Verbesserungsvorschlag."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Papier-Alternative (ohne Plattform)"
+  },
+  {
+   "t": "kasten",
+   "kopf": "ABLAUF „ARENA-WAND“",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Jedes Team schreibt Verfahrensbeschreibung und Geheimtext (Fünfergruppen, von Hand verschlüsselt, Text ≥ 150 Buchstaben – bei Zeitnot ≥ 80) auf eine **Verfahrenskarte**.",
+      "Den Klartext gibt das Team im **verschlossenen Umschlag** bei der Lehrkraft ab.",
+      "Die Karten hängen an der Tafel („Arena-Wand“). Angreifende Teams geben ihren Lösungsvorschlag auf einem **Lösungszettel** ab.",
+      "Die Lehrkraft vergleicht mit dem Umschlag und stempelt „Arena-Knacker“ auf die Karte; ungeknackte Karten erhalten am Ende den Stempel „Unknackbar“.",
+      "Plattform-Abzeichen werden nachträglich **nicht** vergeben (nur automatisch im Lab) – die Papier-Fassung ist ein Spiel ohne Plattformpunkte. Beurteilung mit dem Bogen oben."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "VERFAHRENSKARTE",
+   "farbe": "556B2F",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Team: [[luecke:30]]          Anzahl Buchstaben: [[luecke:8]]"
+    },
+    {
+     "t": "p",
+     "md": "**Verfahrensbeschreibung** (Schlüsselformat, Vorbereitung, Stufe 1, Stufe 2, … – Abitur-Stil):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "**Geheimtext** (Fünfergruppen):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:78]]",
+     "nach": 6
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopf": [
+      "Stempel „Arena-Knacker“ (Team, Zeit)",
+      "Stempel „Unknackbar“"
+     ],
+     "zeilen": [
+      [
+       "\n\n\n",
+       "\n\n\n"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "LÖSUNGSZETTEL",
+     "farbe": "B3261E",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Angreifendes Team: [[luecke:18]]"
+      },
+      {
+       "t": "p",
+       "md": "Ziel-Verfahren (Team): [[luecke:16]]"
+      },
+      {
+       "t": "p",
+       "md": "Uhrzeit: [[luecke:8]]"
+      },
+      {
+       "t": "p",
+       "md": "Klartext:"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:36]]",
+       "nach": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:36]]",
+       "nach": 6
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "LÖSUNGSZETTEL",
+     "farbe": "B3261E",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Angreifendes Team: [[luecke:18]]"
+      },
+      {
+       "t": "p",
+       "md": "Ziel-Verfahren (Team): [[luecke:16]]"
+      },
+      {
+       "t": "p",
+       "md": "Uhrzeit: [[luecke:8]]"
+      },
+      {
+       "t": "p",
+       "md": "Klartext:"
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:36]]",
+       "nach": 6
+      },
+      {
+       "t": "p",
+       "md": "[[luecke:36]]",
+       "nach": 6
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

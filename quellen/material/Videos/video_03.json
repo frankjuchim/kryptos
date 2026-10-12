@@ -1,0 +1,1230 @@
+{
+ "typ": "praesentation",
+ "welt": 2,
+ "titel": "Vigenère knacken: Kasiski-Test und Friedman-Test",
+ "datei": "KR_Video_03_Vigenere_knacken_Folien",
+ "ordner": "Videos/03_Vigenere_knacken",
+ "folien": [
+  {
+   "titel": "Vigenère knacken: Kasiski-Test und Friedman-Test",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie mit Ochsenblut-Akzent und Wachssiegel.\n\nSPRECHERTEXT: Le chiffre indéchiffrable – die unentzifferbare Chiffre. So nannte man das Vigenère-Verfahren. Rund dreihundert Jahre lang galt es als sicher. Heute knacken wir es – und zwar mit Ideen, die du im Abitur brauchst: Teiltexte bilden, die Schlüssellänge bestimmen und für jeden Teiltext die Häufigkeitsanalyse anwenden. Willkommen in der Renaissance!",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "Schlüssellänge finden, Teiltexte bilden, Caesar knacken – siebenmal",
+   "oberzeile": "VIDEO 03 · EUROPA · 1553–1863"
+  },
+  {
+   "titel": "Vigenère im Abitur",
+   "notizen": "REGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Im Abitur taucht Vigenère in fünf von siebzehn Aufgaben auf erhöhtem Niveau als Baustein oder Vergleich auf. In vier Aufgaben geht es um periodische Teiltexte bei bekannter Schlüssellänge. Und einmal hieß es sinngemäß: Begründen Sie, ob der Angriff auch bei unbekannter Schlüssellänge gelingt. Die Namen Kasiski und Friedman stehen in keiner Aufgabe – aber genau ihre Ideen liefern dir die Antwort.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Vigenère als Baustein oder Vergleich: **5 von 17** eA-Aufgaben (2021–2026)",
+        "**Periodische Teiltexte** bei bekannter Schlüssellänge: **4 von 17**",
+        "Sinngemäß (2021): Gelingt der Angriff auch bei **unbekannter** Schlüssellänge? **Begründen** Sie.",
+        "Die Namen Kasiski und Friedman fallen nie – die **Ideen** brauchst du trotzdem"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Vigenère in einer Minute"
+        },
+        {
+         "t": "p",
+         "md": "Warum Zählen nicht reicht"
+        },
+        {
+         "t": "p",
+         "md": "Kasiski-Test"
+        },
+        {
+         "t": "p",
+         "md": "Friedman-Test (eA)"
+        },
+        {
+         "t": "p",
+         "md": "Teiltexte knacken"
+        },
+        {
+         "t": "p",
+         "md": "Fallen"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Vigenère in einer Minute",
+   "notizen": "[Kapitel: Vigenère in einer Minute]\n\nREGIE: Im Quadrat Zeile K und Spalte D zeigen, Schnittpunkt N.\n\nSPRECHERTEXT: Kurz zur Erinnerung: Bei Vigenère schreibst du das Schlüsselwort immer wieder unter den Klartext. Unser Schlüsselwort ist KRYPTOS, sieben Buchstaben. Jeder Schlüsselbuchstabe bestimmt eine Caesar-Verschiebung – und zwar so wie im Quadrat der Abitur-Anlage: A bedeutet Verschiebung null, K bedeutet zehn. Der erste Klartextbuchstabe ist d. Im Quadrat gehst du in die Zeile K und die Spalte D und findest N. Dann i mit R: Verschiebung siebzehn, ergibt Z. Dann e mit Y: Verschiebung vierundzwanzig, ergibt C. Nach sieben Buchstaben beginnt das Schlüsselwort von vorn.",
+   "video": true,
+   "abschnitt": "Vigenère in einer Minute",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Schlüsselwort **KRYPTOS** wird wiederholt · Schlüsselbuchstabe = Verschiebung (**A = 0**)"
+      },
+      {
+       "t": "quadrat",
+       "art": "vigenere",
+       "hervor": [
+        [
+         10,
+         0
+        ],
+        [
+         10,
+         1
+        ],
+        [
+         10,
+         2
+        ],
+        [
+         10,
+         3
+        ],
+        [
+         10,
+         4
+        ],
+        [
+         10,
+         5
+        ],
+        [
+         10,
+         6
+        ],
+        [
+         10,
+         7
+        ],
+        [
+         10,
+         8
+        ],
+        [
+         10,
+         9
+        ],
+        [
+         10,
+         10
+        ],
+        [
+         10,
+         11
+        ],
+        [
+         10,
+         12
+        ],
+        [
+         10,
+         13
+        ],
+        [
+         10,
+         14
+        ],
+        [
+         10,
+         15
+        ],
+        [
+         10,
+         16
+        ],
+        [
+         10,
+         17
+        ],
+        [
+         10,
+         18
+        ],
+        [
+         10,
+         19
+        ],
+        [
+         10,
+         20
+        ],
+        [
+         10,
+         21
+        ],
+        [
+         10,
+         22
+        ],
+        [
+         10,
+         23
+        ],
+        [
+         10,
+         24
+        ],
+        [
+         10,
+         25
+        ],
+        [
+         0,
+         3
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         3,
+         3
+        ],
+        [
+         4,
+         3
+        ],
+        [
+         5,
+         3
+        ],
+        [
+         6,
+         3
+        ],
+        [
+         7,
+         3
+        ],
+        [
+         8,
+         3
+        ],
+        [
+         9,
+         3
+        ],
+        [
+         10,
+         3
+        ],
+        [
+         11,
+         3
+        ],
+        [
+         12,
+         3
+        ],
+        [
+         13,
+         3
+        ],
+        [
+         14,
+         3
+        ],
+        [
+         15,
+         3
+        ],
+        [
+         16,
+         3
+        ],
+        [
+         17,
+         3
+        ],
+        [
+         18,
+         3
+        ],
+        [
+         19,
+         3
+        ],
+        [
+         20,
+         3
+        ],
+        [
+         21,
+         3
+        ],
+        [
+         22,
+         3
+        ],
+        [
+         23,
+         3
+        ],
+        [
+         24,
+         3
+        ],
+        [
+         25,
+         3
+        ]
+       ],
+       "max_hoehe": 4.3
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DIE ERSTEN BUCHSTABEN",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "d + **K** (10) → N"
+        },
+        {
+         "t": "p",
+         "md": "i + **R** (17) → 26 → Z"
+        },
+        {
+         "t": "p",
+         "md": "e + **Y** (24) → 29 → 3 → C"
+        },
+        {
+         "t": "p",
+         "md": "Geheimtext: NZCUE CL…"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Eves Problem",
+   "notizen": "[Kapitel: Warum Zählen nicht reicht]\n\nREGIE: Geheimtext ruhig stehen lassen; beim Erklären mit dem Zeiger den Gruppen folgen.\n\nSPRECHERTEXT: Eve hat diesen Brief abgefangen: zweihundertzweiundzwanzig Buchstaben. Sie weiß, dass er mit Vigenère verschlüsselt ist und dass der Klartext deutsch ist. Mehr nicht – weder das Schlüsselwort noch wie lang es ist.",
+   "video": true,
+   "abschnitt": "Warum Zählen nicht reicht",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bekannt: Vigenère, deutscher Text. Unbekannt: der Schlüssel – und seine Länge."
+    },
+    {
+     "t": "geheimtext",
+     "text": "NZCUECLDVJPXIXDDMGZSFLVGHHBFOEYJYUSXXYJLRAOWJDMHWRRROPCWVWQRAWXPVSCWRAOWJDMHWGRPIXHSEWCXGNWSTFTGJGWKSGFKWXEBPLNWSTFTGJGWKSGFYGWDRHXUWVEYAESKMYGUYSFKTFHNSVOEFPEHWNZCHXBSMYPXVVLQVFTBAMXUTTKPJOELTWSFLIGTYRWXEBXXTWSEBTESKOEKXM",
+     "groesse": 18
+    }
+   ]
+  },
+  {
+   "titel": "Warum Zählen hier nicht reicht",
+   "notizen": "REGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Probieren wir Al-Kindis Methode. Das Histogramm sieht ganz anders aus als im letzten Video: Kein Buchstabe sticht heraus, der häufigste, W, kommt gerade auf neun Prozent. Der Grund: Je nachdem, unter welchem Schlüsselbuchstaben ein e steht, wird es zu O, V, C, T, X, S oder W. Derselbe Klartextbuchstabe wird also verschieden ersetzt – das Verfahren ist polyalphabetisch. Die Häufigkeiten verteilen sich auf viele Buchstaben und verwischen.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "haeufigkeit",
+       "werte": {
+        "W": 20,
+        "X": 16,
+        "S": 15,
+        "E": 13,
+        "G": 13,
+        "T": 12,
+        "F": 11,
+        "H": 9,
+        "R": 9,
+        "V": 9,
+        "Y": 9,
+        "J": 8,
+        "K": 8,
+        "P": 8,
+        "L": 7,
+        "M": 7,
+        "O": 7,
+        "B": 6,
+        "C": 6,
+        "D": 6,
+        "A": 5,
+        "N": 5,
+        "U": 5,
+        "I": 3,
+        "Z": 3,
+        "Q": 2
+       },
+       "text": null,
+       "titel": "Geheimtext des Flotten-Briefs",
+       "sortiert": true,
+       "referenz": true,
+       "hoehe": 3.2
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DAS E VERSTECKT SICH",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "e unter K R Y P T O S → **O V C T X S W**"
+        },
+        {
+         "t": "p",
+         "md": "Häufigster Buchstabe W: nur 9,0 %"
+        },
+        {
+         "t": "p",
+         "md": "Polyalphabetisch: Die Verteilung **verwischt**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Der Plan: Teile und herrsche",
+   "notizen": "REGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Aber es gibt einen Ausweg. Wenn wir wüssten, wie lang das Schlüsselwort ist, sagen wir L, dann stünde jeder L-te Buchstabe unter demselben Schlüsselbuchstaben. Wir könnten den Text in L Teiltexte zerlegen – und jeder davon wäre nur eine Caesar-Verschiebung. Die knacken wir mit der Häufigkeitsanalyse. Teile und herrsche! Bleibt die entscheidende Frage: Wie finden wir die Schlüssellänge? Dafür gibt es zwei Werkzeuge: den Kasiski-Test und den Friedman-Test.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Ist die Schlüssellänge **L** bekannt, steht jeder **L-te** Buchstabe unter **demselben** Schlüsselbuchstaben",
+        "Also: Text in **L Teiltexte** zerlegen – jeder ist eine **Caesar-Verschiebung**",
+        "Je Teiltext: Häufigkeitsanalyse → Verschiebung → Schlüsselbuchstabe",
+        "Offene Frage: Wie finden wir **L**?"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ZWEI WERKZEUGE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**Kasiski-Test** – Wiederholungen"
+        },
+        {
+         "t": "p",
+         "md": "**Friedman-Test** – Koinzidenzindex (eA)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Kasiski-Test: Wiederholungen suchen",
+   "notizen": "[Kapitel: Kasiski-Test]\n\nREGIE: Die beiden Paare nacheinander farbig einkreisen: RAOWJDMHW (Ochsenblut), NWSTFTGJGWKSGF (Lapis).\n\nSPRECHERTEXT: Achtzehnhundertdreiundsechzig veröffentlichte der preußische Offizier Friedrich Wilhelm Kasiski eine Methode, nach der man nur genau hinschauen muss. Charles Babbage soll schon einige Jahre vorher auf dieselbe Idee gekommen sein, hat sie aber nicht veröffentlicht. Die Idee: Wir suchen im Geheimtext Buchstabenfolgen, die mehrfach vorkommen. Und tatsächlich: R A O W J D M H W steht zweimal da – neun Buchstaben lang. Und N W S T F T G J G W K S G F sogar vierzehn Buchstaben lang. Das ist kein Zufall.",
+   "video": true,
+   "abschnitt": "Kasiski-Test",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Gesucht: gleiche Buchstabenfolgen (ab 3 Buchstaben) im Geheimtext"
+    },
+    {
+     "t": "geheimtext",
+     "text": "NZCUECLDVJPXIXDDMGZSFLVGHHBFOEYJYUSXXYJLRAOWJDMHWRRROPCWVWQRAWXPVSCWRAOWJDMHWGRPIXHSEWCXGNWSTFTGJGWKSGFKWXEBPLNWSTFTGJGWKSGFYGWDRHXUWVEYAESKMYGUYSFKTFHNSVOEFPEHWNZCHXBSMYPXVVLQVFTBAMXUTTKPJOELTWSFLIGTYRWXEBXXTWSEBTESKOEKXM",
+     "groesse": 18
+    }
+   ]
+  },
+  {
+   "titel": "Warum wiederholt sich etwas?",
+   "notizen": "REGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: Warum wiederholt sich etwas? Hinter beiden Stellen steckt derselbe Klartext: die flotte. Und beide Male steht er unter denselben Schlüsselbuchstaben, nämlich O S K R Y P T O S. Dann muss auch derselbe Geheimtext herauskommen. Das klappt aber nur, wenn das Schlüsselwort zwischen den beiden Stellen genau ein paar Mal komplett durchgelaufen ist. Der Abstand – hier achtundzwanzig – ist also ein Vielfaches der Schlüssellänge.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Beide Male steht derselbe Klartext unter denselben Schlüsselbuchstaben:"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Stelle 41 … 49",
+        "Stelle 69 … 77"
+       ],
+       "zeilen": [
+        [
+         "Klartext",
+         "d i e f l o t t e",
+         "d i e f l o t t e"
+        ],
+        [
+         "Schlüssel",
+         "O S K R Y P T O S",
+         "O S K R Y P T O S"
+        ],
+        [
+         "Geheimtext",
+         "R A O W J D M H W",
+         "R A O W J D M H W"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        2.9,
+        2.9
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 20
+      },
+      {
+       "t": "p",
+       "md": "Abstand 69 − 41 = **28** = 4 · 7 – ein **Vielfaches der Schlüssellänge**"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "KASISKI",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "gleicher Klartext + gleiche Stelle im Schlüssel → gleicher Geheimtext"
+        },
+        {
+         "t": "p",
+         "md": "Abstand = Vielfaches von L"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Abstände und Teiler",
+   "notizen": "REGIE: Spalte „Teiler“ von oben nach unten durchgehen, die 7 jeweils antippen; letzte Zeile (16) als Ausreißer markieren.\n\nSPRECHERTEXT: Jetzt sammeln wir alle Wiederholungen ab drei Buchstaben, notieren die Abstände und deren Teiler. Achtundzwanzig, einundzwanzig, achtundneunzig, siebenundsiebzig, hunderteinundsechzig, hundertfünfundsiebzig – alle durch sieben teilbar. Nur die letzte Zeile passt nicht: Abstand sechzehn. Schauen wir nach, steckt dahinter verschiedener Klartext, einmal e d e, einmal f e i. Ein Zufallstreffer. Die gibt es immer, deshalb entscheidet die Mehrheit: Die Schlüssellänge ist sieben. Theoretisch käme auch ein Vielfaches wie vierzehn in Frage, aber vierzehn teilt nur zwei der Abstände.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wiederholung",
+        "Stellen",
+        "Abstand",
+        "Teiler (> 1)"
+       ],
+       "zeilen": [
+        [
+         "RAOWJDMHW",
+         "41 und 69",
+         "28",
+         "2, 4, **7**, 14, 28"
+        ],
+        [
+         "NWSTFTGJGWKSGF",
+         "90 und 111",
+         "21",
+         "3, **7**, 21"
+        ],
+        [
+         "WXEB",
+         "105 und 203",
+         "98",
+         "2, **7**, 14, 49, 98"
+        ],
+        [
+         "ESK",
+         "138 und 215",
+         "77",
+         "**7**, 11, 77"
+        ],
+        [
+         "NZC",
+         "1 und 162",
+         "161",
+         "**7**, 23, 161"
+        ],
+        [
+         "SFL",
+         "20 und 195",
+         "175",
+         "5, **7**, 25, 35, 175"
+        ],
+        [
+         "TWS",
+         "193 und 209",
+         "16",
+         "2, 4, 8, 16"
+        ]
+       ],
+       "breiten": [
+        2.3,
+        1.4,
+        1.0,
+        2.6
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 15,
+       "hervor": [
+        [
+         6,
+         0
+        ],
+        [
+         6,
+         1
+        ],
+        [
+         6,
+         2
+        ],
+        [
+         6,
+         3
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ERGEBNIS",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**7** teilt 6 von 7 Abständen"
+        },
+        {
+         "t": "p",
+         "md": "16: **Zufallstreffer**"
+        },
+        {
+         "t": "p",
+         "md": "→ Schlüssellänge **7**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Friedman: Wie bunt ist ein Text?",
+   "notizen": "[Kapitel: Friedman-Test (eA)]\n\nREGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Das zweite Werkzeug stammt von William Friedman aus den zwanziger Jahren des zwanzigsten Jahrhunderts – im Kurs ist es Stoff für das erhöhte Niveau. Friedman fragt: Wenn ich zwei Buchstaben zufällig aus dem Text ziehe, wie wahrscheinlich sind sie gleich? Das ist der Koinzidenzindex I. Du berechnest ihn mit der Formel auf der Folie. In deutschem Text ist I ungefähr null Komma null sieben sechs, weil e und n so häufig sind. In einem völlig zufälligen Text ist I ein Sechsundzwanzigstel, etwa null Komma null drei acht. Eine monoalphabetische Verschlüsselung benennt die Buchstaben nur um – I bleibt gleich. Polyalphabetisch verwischt die Verteilung, und I sinkt. Je länger der Schlüssel, desto näher an null Komma null drei acht.",
+   "video": true,
+   "abschnitt": "Friedman-Test (eA)",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**Koinzidenzindex**: Wahrscheinlichkeit, dass zwei zufällig gewählte Buchstaben **gleich** sind",
+        "**I = Σ nᵢ(nᵢ − 1) / (n(n − 1))** – nᵢ: Anzahl des i-ten Buchstabens, n: Textlänge",
+        "Deutscher Text: **I_D ≈ 0,076** · Zufallstext: **I_Z = 1/26 ≈ 0,038**",
+        "Monoalphabetisch bleibt I gleich, polyalphabetisch sinkt I – je länger der Schlüssel, desto tiefer"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "UNSER BRIEF",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Klartext: I ≈ 0,0745"
+        },
+        {
+         "t": "p",
+         "md": "mit Caesar: I ≈ 0,0745"
+        },
+        {
+         "t": "p",
+         "md": "mit Vigenère: I ≈ 0,0434"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Friedman-Test für unseren Brief",
+   "notizen": "REGIE: Zeile für Zeile aufdecken; bei „Ergebnis“ auf den Kasten rechts zeigen.\n\nSPRECHERTEXT: Rechnen wir das für unseren Brief. Der Text hat zweihundertzweiundzwanzig Buchstaben. Für die Summe nimmst du jede Anzahl mal die Anzahl minus eins: W kommt zwanzigmal vor, also zwanzig mal neunzehn, X sechzehnmal, also sechzehn mal fünfzehn, und so weiter. Zusammen ergibt das zweitausendeinhundertdreißig. Geteilt durch zweihundertzweiundzwanzig mal zweihunderteinundzwanzig ergibt I ungefähr null Komma null vier drei vier. Das liegt deutlich unter dem Wert für Deutsch – ein klares Zeichen für ein polyalphabetisches Verfahren. Friedmans Formel schätzt daraus die Schlüssellänge: Eingesetzt erhalten wir etwa sechs Komma acht fünf, also ungefähr sieben. Aber Vorsicht: Bei so kurzen Texten ist das nur eine grobe Schätzung. Zusammen mit Kasiski sind wir uns aber sicher: Die Schlüssellänge ist sieben.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Schritt",
+        "Rechnung"
+       ],
+       "zeilen": [
+        [
+         "Textlänge",
+         "n = 222"
+        ],
+        [
+         "Summe",
+         "Σ nᵢ(nᵢ − 1) = 20·19 + 16·15 + 15·14 + … = 2130"
+        ],
+        [
+         "Nenner",
+         "n(n − 1) = 222 · 221 = 49 062"
+        ],
+        [
+         "Koinzidenzindex",
+         "I = 2130 / 49 062 ≈ **0,0434**"
+        ],
+        [
+         "Formel",
+         "k ≈ (I_D − I_Z) · n / ((n − 1) · I − I_Z · n + I_D)"
+        ],
+        [
+         "Einsetzen",
+         "k ≈ 0,038 · 222 / (221 · 0,0434 − 0,038 · 222 + 0,076)"
+        ],
+        [
+         "Ergebnis",
+         "k ≈ 8,436 / 1,2314 ≈ **6,85 ≈ 7**"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        5.4
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 15,
+       "hervor": [
+        [
+         6,
+         0
+        ],
+        [
+         6,
+         1
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "PASST ZU KASISKI",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Friedman: **Schätzung** ≈ 7"
+        },
+        {
+         "t": "p",
+         "md": "Kasiski: Kandidat **7**"
+        },
+        {
+         "t": "p",
+         "md": "→ Schlüssellänge 7"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Teiltext 7: jeder siebte Buchstabe",
+   "notizen": "[Kapitel: Teiltexte knacken]\n\nREGIE: Geheimtext ruhig stehen lassen; beim Erklären mit dem Zeiger den Gruppen folgen.\n\nSPRECHERTEXT: Jetzt zerlegen wir den Text in sieben Teiltexte. Teiltext sieben besteht aus dem siebten, vierzehnten, einundzwanzigsten Buchstaben und so weiter. Alle stehen unter demselben Schlüsselbuchstaben – das ist also ein ganz normaler Caesar-Text. Hier sticht W heraus: zehn von einunddreißig Buchstaben. Wir vermuten: W steht für e. W hat die Nummer dreiundzwanzig, e die Nummer fünf. Die Differenz ist achtzehn, also Verschiebung achtzehn. Und welcher Schlüsselbuchstabe gehört zur Verschiebung achtzehn? Weil A für null steht, ist es der neunzehnte Buchstabe: S.",
+   "video": true,
+   "abschnitt": "Teiltexte knacken",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Buchstaben Nr. 7, 14, 21, … – alle unter demselben Schlüsselbuchstaben:"
+      },
+      {
+       "t": "geheimtext",
+       "text": "LXFFSAWWXAWSWGWWGGWKFVWSLMJFWWK",
+       "groesse": 24
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "CAESAR KNACKEN",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "häufigster Buchstabe: **W** (10 von 31)"
+        },
+        {
+         "t": "p",
+         "md": "Annahme W = e"
+        },
+        {
+         "t": "p",
+         "md": "23 − 5 = **18** → Verschiebung 18"
+        },
+        {
+         "t": "p",
+         "md": "Schlüsselbuchstabe **S** (A = 0)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: Teiltext 4",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nREGIE: Einblendung „⏸ Video anhalten“.\n\nSPRECHERTEXT: Jetzt bist du dran. Hier ist Teiltext vier, also der vierte, elfte, achtzehnte Buchstabe und so weiter. Die Häufigkeiten stehen schon darunter. Halte das Video an und bestimme den Schlüsselbuchstaben. Achte auf die Zählbasis! Danach geht es weiter.\n\nPAUSE: 8 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": "Selbst ausprobieren",
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Bestimme den Schlüsselbuchstaben von Teiltext 4 (Buchstaben Nr. 4, 11, 18, …). Annahme: häufigster Buchstabe = e. Nummerierung A = 1, Schlüsselbuchstabe A = Verschiebung 0."
+      },
+      {
+       "t": "geheimtext",
+       "text": "UPGHJJDORCDIXTGPTGHAUHPHXTTTTXTX"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Buchstabe",
+        "T",
+        "H",
+        "X",
+        "P",
+        "G"
+       ],
+       "zeilen": [
+        [
+         "Anzahl",
+         "7",
+         "4",
+         "4",
+         "3",
+         "3"
+        ]
+       ],
+       "breiten": null,
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 18
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Verschiebung = Nummer − 5"
+        },
+        {
+         "t": "p",
+         "md": "Schlüsselbuchstabe = Verschiebung + 1"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung – und alle sieben Teiltexte",
+   "notizen": "REGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: Die Auflösung: In Teiltext vier ist T am häufigsten. T hat die Nummer zwanzig, minus fünf ergibt fünfzehn. Verschiebung fünfzehn gehört zum sechzehnten Buchstaben: P. Wenn du O herausbekommen hast, hast du die Verschiebung fünfzehn direkt als Nummer genommen – das ist Falle P1. Machen wir das für alle sieben Teiltexte, erhalten wir K, A, B, P, T, O, S. Fünf davon sehen vernünftig aus. Bei A und B setze ich aber ein Fragezeichen: Die Teiltexte sind nur zweiunddreißig Buchstaben lang, und da muss der häufigste Buchstabe nicht unbedingt das e sein.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Teiltext",
+        "häufigster",
+        "Verschiebung, wenn = e",
+        "Schlüsselbuchstabe"
+       ],
+       "zeilen": [
+        [
+         "1",
+         "O (6×)",
+         "15 − 5 = 10",
+         "**K**"
+        ],
+        [
+         "2",
+         "E (8×)",
+         "5 − 5 = 0",
+         "A ?"
+        ],
+        [
+         "3",
+         "F (5×)",
+         "6 − 5 = 1",
+         "B ?"
+        ],
+        [
+         "4",
+         "T (7×)",
+         "20 − 5 = 15",
+         "**P**"
+        ],
+        [
+         "5",
+         "X (5×)",
+         "24 − 5 = 19",
+         "**T**"
+        ],
+        [
+         "6",
+         "S (6×)",
+         "19 − 5 = 14",
+         "**O**"
+        ],
+        [
+         "7",
+         "W (10×)",
+         "23 − 5 = 18",
+         "**S**"
+        ]
+       ],
+       "breiten": [
+        1.2,
+        1.6,
+        2.4,
+        2.0
+       ],
+       "mono": false,
+       "zentriert": false,
+       "schrift_folie": 16,
+       "hervor": [
+        [
+         3,
+         0
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         3,
+         2
+        ],
+        [
+         3,
+         3
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ACHTUNG",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Teiltext 2 und 3: nur 32 Buchstaben"
+        },
+        {
+         "t": "p",
+         "md": "der häufigste muss **nicht** e sein"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Lücken schließen wie im Kreuzworträtsel",
+   "notizen": "REGIE: Geheimtext ruhig stehen lassen; beim Erklären mit dem Zeiger den Gruppen folgen.\n\nSPRECHERTEXT: Entschlüsseln wir trotzdem einmal mit K A B P T O S. Heraus kommt: d z b flott v i aeuft d l rgen. Fünf von sieben Buchstaben stimmen, und der Rest ist ein Kreuzworträtsel: Das heißt natürlich die flotte läuft morgen. An Stelle zwei steht Z, gemeint ist i. Sechsundzwanzig minus neun ergibt Verschiebung siebzehn, also R. An Stelle drei steht C, gemeint ist e. Drei minus fünf ergibt minus zwei, plus sechsundzwanzig gleich Verschiebung vierundzwanzig, also Y. Das Schlüsselwort lautet KRYPTOS. Übrigens: So heißt auch eine Skulptur von Jim Sanborn vor dem Hauptquartier der CIA. Zwei ihrer vier Teile sind mit einer Variante von Vigenère verschlüsselt, und der letzte Teil hat Rätselfreunde jahrzehntelang beschäftigt.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Entschlüsselt mit **K A B P T O S** – Teiltexte 2 und 3 markiert:"
+      },
+      {
+       "t": "geheimtext",
+       "text": "NZCUECLDVJPXIXDDMGZSFLVGHHBFOEYJYUSXXYJLRA",
+       "groesse": 24
+      },
+      {
+       "t": "klartext",
+       "text": "dzbflottviaeuftdlrgenbvfsonneexufganxxusdi"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "„DIE FLOTTE …“",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Stelle 2: Z soll i sein: 26 − 9 = 17 → **R**"
+        },
+        {
+         "t": "p",
+         "md": "Stelle 3: C soll e sein: 3 − 5 = −2 → 24 → **Y**"
+        },
+        {
+         "t": "p",
+         "md": "Schlüssel: **KRYPTOS**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Zählbasis verwechselt",
+   "notizen": "[Kapitel: Typische Fehler]\n\nREGIE: Erst die Spalte ✗ „So nicht“ zeigen, kurze Pause, dann ✓ „So geht’s“ und die Regel einblenden.\n\nSPRECHERTEXT: Damit zu den Fallen. Die wichtigste bei Vigenère ist P1, die Zählbasis. Der Schlüsselbuchstabe K hat zwar die Nummer elf, bedeutet aber Verschiebung zehn – denn im Quadrat der Anlage steht A für Verschiebung null. Wer mit elf rechnet, macht aus dem d ein O statt ein N, und zwar bei jedem K im ganzen Text. Merke: Verschiebung gleich Nummer minus eins – und auf dem Rückweg Nummer gleich Verschiebung plus eins.",
+   "video": true,
+   "abschnitt": "Typische Fehler",
+   "layout": "falle",
+   "nr": "P1",
+   "regel": "Verschiebung = Nummer des Schlüsselbuchstabens − 1.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "K hat die Nummer 11 → Verschiebung **11**"
+    },
+    {
+     "t": "p",
+     "md": "d + 11 → **O**"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Quadrat der Anlage: Zeile **A = Verschiebung 0**"
+    },
+    {
+     "t": "p",
+     "md": "K → Verschiebung **10**: d + 10 → **N**"
+    },
+    {
+     "t": "p",
+     "md": "Rückweg: Verschiebung 18 → **S** (19. Buchstabe)"
+    }
+   ]
+  },
+  {
+   "titel": "Weitere Fallen – und dein Abi-Check",
+   "notizen": "REGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Noch vier Fallen. P5: Vigenère ist polyalphabetisch, weil derselbe Klartextbuchstabe je nach Stelle verschieden ersetzt wird. P6: Die Häufigkeitsanalyse wendest du nicht auf den ganzen Text an, sondern erst nach dem Bestimmen der Schlüssellänge auf jeden Teiltext. P7: Der Schlüsselraum ist mit sechsundzwanzig hoch sieben riesig – aber wer die Länge kennt, braucht nur sieben mal sechsundzwanzig Versuche. Kurze Schlüssel sind deshalb schwach. Und P10: Wenn gefragt ist, ob der Angriff auch bei unbekannter Schlüssellänge klappt, genügt kein „ja“. Du begründest: Die Länge lässt sich mit Wiederholungen oder dem Koinzidenzindex bestimmen, danach geht es mit Teiltexten weiter.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**P5** Vigenère ist **polyalphabetisch**: Derselbe Klartextbuchstabe wird je nach Stelle verschieden ersetzt",
+        "**P6** Häufigkeitsanalyse **nicht** auf den ganzen Text – erst Schlüssellänge, dann **je Teiltext**",
+        "**P7** Schlüsselraum 26⁷ ≈ 8 · 10⁹ – mit bekannter Länge nur 7 · 26 Versuche; kurze Schlüssel sind schwach",
+        "**P10** „Auch bei unbekannter Schlüssellänge?“ – nicht nur „ja“: **Länge mit Kasiski/Friedman bestimmen, dann Teiltexte**"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ABI-CHECK",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Zählbasis des Materials?"
+        },
+        {
+         "t": "p",
+         "md": "Teiltexte statt Gesamttext?"
+        },
+        {
+         "t": "p",
+         "md": "Zufallstreffer aussortiert?"
+        },
+        {
+         "t": "p",
+         "md": "Begründung mit „weil“?"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nREGIE: Merksätze nacheinander einblenden; ruhig und etwas langsamer sprechen.\n\nSPRECHERTEXT: Das nimmst du mit: Vigenère ist polyalphabetisch – jeder Buchstabe des Schlüsselworts ist eine eigene Caesar-Verschiebung. Kennst du die Schlüssellänge, zerlegst du den Text in Teiltexte und knackst jeden mit der Häufigkeitsanalyse. Die Länge findest du mit dem Kasiski-Test über die Abstände von Wiederholungen. Und auf erhöhtem Niveau schätzt du sie zusätzlich mit dem Koinzidenzindex nach Friedman.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Vigenère ist **polyalphabetisch**: Schlüsselwort wiederholt, jeder Schlüsselbuchstabe eine Caesar-Verschiebung (A = 0)"
+    },
+    {
+     "t": "p",
+     "md": "Bekannte Schlüssellänge L → **L Teiltexte** → je Teiltext Häufigkeitsanalyse"
+    },
+    {
+     "t": "p",
+     "md": "**Kasiski**: Abstände gleicher Geheimtextstücke → gemeinsamer Teiler = Schlüssellänge (Zufallstreffer aussortieren)"
+    },
+    {
+     "t": "p",
+     "md": "**Friedman** (eA): I = Σ nᵢ(nᵢ − 1) / (n(n − 1)); deutsch ≈ 0,076, zufällig ≈ 0,038 → Schätzung der Länge"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Endcard über die letzten 20 s legen.\n\nSPRECHERTEXT: Weiter geht es im Lab mit Level zwei Punkt zwei, Kasiskis Spur, und auf erhöhtem Niveau mit Level zwei Punkt drei. Die Vigenère-Werkbank im Kryptolabor markiert dir Wiederholungen und rechnet den Koinzidenzindex. Im nächsten Video springen wir ins Maschinenzeitalter: zu Bits, XOR und dem einzigen Verfahren, das beweisbar sicher ist. Bis dann im Archiv!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 2.2 „Kasiskis Spur“, Level 2.3 „Friedmans Zufall“ (eA), Kür K1 „Friedmans Formel“"
+      ],
+      [
+       "Akte",
+       "Akten W2·2 und W2·3"
+      ],
+      [
+       "Kryptolabor",
+       "Vigenère-Werkbank: Wiederholungen markieren, Abstände, Koinzidenzindex, Teiltexte"
+      ],
+      [
+       "Online",
+       "kryptos.frankjuchim.de"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 04 · XOR, One-Time-Pad und Blockchiffren"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,582 @@
+{
+ "typ": "dokument",
+ "welt": 0,
+ "kennung": "FUNKRAUM W0",
+ "titel": "Botenlauf",
+ "datei": "KR_W0_Funkraum_Botenlauf",
+ "ds": "2",
+ "ordner": "Werkzeuge/Funkraum",
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "ÜBERBLICK · DS 2 · 25 MINUTEN",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Lernziel:** Der Caesar-Schlüsselraum ist so klein, dass ein Angreifer, der das Verfahren kennt, jede Nachricht in Minuten liest. Geheimhaltung des Verfahrens oder doppelte Verschlüsselung retten nicht (Kerckhoffs, P8)."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Rolle",
+      "Wer",
+      "Auftrag (Rollenkarte)"
+     ],
+     "zeilen": [
+      [
+       "🛡 **Alice-Team**",
+       "2–3 Teams (Tischgruppen)",
+       "Befehle mit Caesar und eurem geheimen Schlüssel verschlüsseln und an euer Bob-Team schicken. Eve darf nichts verstehen."
+      ],
+      [
+       "🛡 **Bob-Team**",
+       "je ein Partner-Team",
+       "Befehle entschlüsseln und mit einer verschlüsselten Quittung antworten."
+      ],
+      [
+       "🔍 **Eve-Team**",
+       "1–2 Teams",
+       "Alle Nachrichten mitlesen (Verfahren: Caesar) und so viele Befehle wie möglich knacken und melden. Chiffrierscheibe mit Brute-Force-Liste freigegeben."
+      ],
+      [
+       "**Trent** (Lehrkraft)",
+       "Regie",
+       "startet Runden, verteilt Schlüsselkarten, beendet das Szenario."
+      ]
+     ],
+     "breiten": [
+      3.4,
+      3.6,
+      9.4
+     ],
+     "schrift": 9.5
+    },
+    {
+     "t": "p",
+     "md": "**Material:** Rollenkarten (S. 3), Schlüsselkarten 1–25 (je Paar 3 Karten, S. 4), Befehlskarten je Alice-Team (S. 4), Sonderkarten Runde 3, Brute-Force-Bogen für Eve (S. 5), Chiffrierscheiben aus Pappe bzw. Werkzeug „Chiffrierscheibe“, Tablets."
+    }
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "Ablauf",
+   "kopf": [
+    "Schritt",
+    "Zeit",
+    "Was passiert",
+    "Plattform"
+   ],
+   "breiten": [
+    3.0,
+    1.6,
+    7.6,
+    4.2
+   ],
+   "zeilen": [
+    [
+     "0 Vorbereitung",
+     "vor der Stunde",
+     "Lehrkraft legt Teams fest (Paare Alice/Bob + Eve-Team(s)), druckt Rollen-, Schlüssel- und Befehlskarten.",
+     "Funkraum-Regie: Szenario „Botenlauf“, Teams zuweisen"
+    ],
+    [
+     "1 Schlüssel ziehen",
+     "2 min",
+     "Jedes Paar zieht geheim eine Schlüsselkarte. Alice und Bob einigen sich ohne Netz („beim Abschied in Rom“).",
+     "–"
+    ],
+    [
+     "2 Runde 1",
+     "6 min",
+     "Alice verschlüsselt einen Befehl (15–40 Buchstaben) auf Papier und sendet nur den Geheimtext. Bob entschlüsselt und sendet die verschlüsselte Quittung `befehl erhalten`. Eve sammelt und knackt.",
+     "Nachrichten A–Z/0–9/Leerzeichen, ≤ 160 Zeichen; Beamer zeigt fliegende Nachrichten mit Geheimtext-Vorschau"
+    ],
+    [
+     "3 Abfangmeldung",
+     "laufend",
+     "Eve meldet „geknackt: {Absender-Team} – {Klartext}“; das Absender-Team bestätigt mit „stimmt“ / „stimmt nicht“.",
+     "Zeit vom Senden bis zur Bestätigung je Nachricht wird angezeigt"
+    ],
+    [
+     "4 Runde 2",
+     "6 min",
+     "Paare ziehen eine **neue** Schlüsselkarte („Hilft ein neuer Schlüssel?“).",
+     "–"
+    ],
+    [
+     "5 Runde 3",
+     "6 min",
+     "Lehrkraft gibt heimlich je einem Paar eine Sonderkarte: Paar A verschlüsselt **zweimal** (zwei Schlüsselkarten), Paar B benutzt statt Caesar heimlich den **Gartenzaun mit 3 Schienen** („geheimes Verfahren“).",
+     "–"
+    ],
+    [
+     "6 Auswertung",
+     "5 min",
+     "Beamer: Tabelle Nachricht · geknackt ja/nein · Zeit. Welche Nachrichten waren am schnellsten geknackt? Was hat Paar A, was hat Paar B geholfen?",
+     "Auswertungsansicht; danach „Beenden“ → alle Nachrichten gelöscht"
+    ]
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ERWARTETE AUSWERTUNG (SICHERUNG, 15 MIN, FOLIEN F18–F21)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Runde 1/2:** Eve knackt fast alles in 1–3 min je Nachricht (≤ 25 Versuche, oft weniger, weil die Brute-Force-Liste nach wenigen Zeilen Sinn ergibt). Ein neuer Schlüssel hilft nicht – der Schlüsselraum bleibt 25.",
+      "**Runde 3, Paar A:** genauso schnell – zwei Caesar-Schritte sind ein Caesar-Schritt (P8).",
+      "**Runde 3, Paar B:** Eve scheitert zunächst mit Caesar, merkt aber an den Häufigkeiten (viele e, n), dass nur umgestellt wurde, und findet mit Probieren die Schienenzahl. Kerckhoffs: Geheimhaltung des Verfahrens verzögert nur.",
+      "**Merksätze:** Schlüsselraum, Brute-Force-Angriff, Kerckhoffs-Prinzip."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "PAPIER-ALTERNATIVE (OHNE TABLETS/NETZ)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Boten (je ein Lernender pro Paar) tragen Zettel quer durch den Raum; das Eve-Team sitzt am „**Stadttor**“ (Tisch in der Mitte) und darf jeden Zettel **30 Sekunden** abschreiben. Die Lehrkraft notiert an der Tafel bzw. im Auswertungsbogen (S. 5): Nachricht, Abschrift, geknackt nach … min. Chiffrierscheiben aus Pappe; Eve nutzt den Brute-Force-Bogen."
+    }
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "DATENSCHUTZ UND SCHUTZ",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Inhalte nur A–Z, 0–9, Leerzeichen; Teamnamen aus fester Liste; die Lehrkraft kann jede Nachricht ausblenden; Löschung beim Beenden, spätestens nach 24 h. Keine Punkte – nur das Abzeichen „Funkraum-Veteran“."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Rollenkarten zum Ausschneiden"
+  },
+  {
+   "t": "kasten",
+   "kopf": "🛡 ROLLENKARTE · ALICE-TEAM",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr schickt Befehle an euer **Bob-Team**. Verschlüsselt mit **Caesar** und eurem **geheimen Schlüssel**. Eve darf nichts verstehen."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Zieht mit eurem Bob-Team **geheim** eine Schlüsselkarte (nicht laut sagen!).",
+      "Wählt einen Befehl von eurer Befehlskarte und verschlüsselt ihn auf Papier (Nummerierung: A = 1 … Z = 26, Geheimtext GROSS in Fünfergruppen).",
+      "Sendet **nur den Geheimtext** ins Netz.",
+      "Meldet Eve einen geknackten Befehl, bestätigt ihr mit „stimmt“ oder „stimmt nicht“."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "🛡 ROLLENKARTE · BOB-TEAM",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr empfangt die Befehle eures **Alice-Teams**."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Den Schlüssel kennt ihr von der gemeinsamen Schlüsselkarte.",
+      "Entschlüsselt jeden Befehl, der für euch ankommt (um k nach **links**).",
+      "Antwortet mit der verschlüsselten Quittung `befehl erhalten` – mit demselben Schlüssel."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "🔍 ROLLENKARTE · EVE-TEAM",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr seht **alle** Nachrichten im Netz. Ihr wisst: **Alle benutzen Caesar.** Den Schlüssel kennt ihr nicht."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Schreibt jede abgefangene Nachricht ab.",
+      "Probiert die Verschiebungen aus (Chiffrierscheibe, Brute-Force-Liste oder Brute-Force-Bogen).",
+      "Meldet: „geknackt: {Absender-Team} – {Klartext}“.",
+      "Notiert, wie lange ihr je Nachricht gebraucht habt."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Ziel: so viele Befehle wie möglich lesen!",
+     "klein": true
+    }
+   ],
+   "farbe": "B3261E"
+  },
+  {
+   "t": "kasten",
+   "kopf": "TRENT · REGIEKARTE (LEHRKRAFT)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Runden starten und beenden (je 6 min), Zeiten ansagen.",
+      "Runde 2: neue Schlüsselkarten ziehen lassen.",
+      "Runde 3: Sonderkarten **heimlich** an Paar A und Paar B geben.",
+      "Am Ende „Beenden“ → alle Nachrichten werden gelöscht."
+     ]
+    }
+   ],
+   "farbe": "8A5F1A"
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "SONDERKARTE RUNDE 3 · PAAR A",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Verschlüsselt jeden Befehl **zweimal**: erst mit Schlüsselkarte 1, dann das Ergebnis noch einmal mit Schlüsselkarte 2. Bob entschlüsselt in umgekehrter Reihenfolge."
+      },
+      {
+       "t": "p",
+       "md": "*Doppelt hält besser?*",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "SONDERKARTE RUNDE 3 · PAAR B",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "Benutzt heimlich **nicht** Caesar, sondern den **Gartenzaun mit 3 Schienen** (Zickzack, oben beginnend, Schienen nacheinander lesen). Sagt niemandem, welches Verfahren ihr nehmt."
+      },
+      {
+       "t": "p",
+       "md": "*Hilft ein geheimes Verfahren?*",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Schlüsselkarten (Zahlenkarten zum Ausschneiden, je Paar 3 Karten)"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "schrift": 22,
+   "zeilen": [
+    [
+     "**1**",
+     "**2**",
+     "**3**",
+     "**4**",
+     "**5**"
+    ],
+    [
+     "**6**",
+     "**7**",
+     "**8**",
+     "**9**",
+     "**10**"
+    ],
+    [
+     "**11**",
+     "**12**",
+     "**13**",
+     "**14**",
+     "**15**"
+    ],
+    [
+     "**16**",
+     "**17**",
+     "**18**",
+     "**19**",
+     "**20**"
+    ],
+    [
+     "**21**",
+     "**22**",
+     "**23**",
+     "**24**",
+     "**25**"
+    ]
+   ],
+   "breiten": [
+    3.28,
+    3.28,
+    3.28,
+    3.28,
+    3.28
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Tipp: auf farbigen Karton drucken und in Umschläge stecken. Der Wert 0 fehlt absichtlich (schwacher Schlüssel).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Befehlskarten (Textkarten für die Alice-Teams)"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 12,
+   "zeilen": [
+    [
+     "`marschiert nach norden`",
+     "`haltet den pass`"
+    ],
+    [
+     "`schickt zwei kohorten`",
+     "`wartet auf das signal`"
+    ],
+    [
+     "`brecht das lager ab`",
+     "`rueckt bei sonnenaufgang vor`"
+    ],
+    [
+     "Quittung (Bob): `befehl erhalten`",
+     "eigener Befehl (15–40 Buchstaben): [[luecke:20]]"
+    ]
+   ],
+   "breiten": [
+    8.2,
+    8.2
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Brute-Force-Bogen für das Eve-Team"
+  },
+  {
+   "t": "p",
+   "md": "Nachricht: [[luecke:40]]   Zeit: [[luecke:8]]"
+  },
+  {
+   "t": "p",
+   "md": "Entschlüssele die ersten 5 Buchstaben mit jedem Schlüssel k (um k nach links). Sobald eine Zeile Deutsch ergibt: ganze Nachricht entschlüsseln und melden.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "mono": true,
+   "zentriert": true,
+   "kopf": [
+    "k",
+    "Anfang",
+    "k",
+    "Anfang",
+    "k",
+    "Anfang",
+    "k",
+    "Anfang",
+    "k",
+    "Anfang"
+   ],
+   "zeilen": [
+    [
+     "1",
+     "",
+     "6",
+     "",
+     "11",
+     "",
+     "16",
+     "",
+     "21",
+     ""
+    ],
+    [
+     "2",
+     "",
+     "7",
+     "",
+     "12",
+     "",
+     "17",
+     "",
+     "22",
+     ""
+    ],
+    [
+     "3",
+     "",
+     "8",
+     "",
+     "13",
+     "",
+     "18",
+     "",
+     "23",
+     ""
+    ],
+    [
+     "4",
+     "",
+     "9",
+     "",
+     "14",
+     "",
+     "19",
+     "",
+     "24",
+     ""
+    ],
+    [
+     "5",
+     "",
+     "10",
+     "",
+     "15",
+     "",
+     "20",
+     "",
+     "25",
+     ""
+    ]
+   ],
+   "breiten": [
+    0.9,
+    2.38,
+    0.9,
+    2.38,
+    0.9,
+    2.38,
+    0.9,
+    2.38,
+    0.9,
+    2.38
+   ],
+   "schrift": 11
+  },
+  {
+   "t": "alphabet",
+   "nummerierung": 1
+  },
+  {
+   "t": "h",
+   "md": "Auswertungsbogen (Lehrkraft / Tafel)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Runde",
+    "Absender-Team",
+    "Nachricht (Klartext)",
+    "geknackt?",
+    "nach … min",
+    "Besonderheit"
+   ],
+   "zeilen": [
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "breiten": [
+    1.5,
+    2.8,
+    5.4,
+    1.9,
+    2.0,
+    2.8
+   ]
+  }
+ ]
+}

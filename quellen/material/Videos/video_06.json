@@ -1,0 +1,862 @@
+{
+ "typ": "praesentation",
+ "welt": 5,
+ "titel": "Hash, Signatur, Zertifikat",
+ "datei": "KR_Video_06_Hash_Signatur_Zertifikat_Folien",
+ "ordner": "Videos/06_Hash_Signatur_Zertifikat",
+ "folien": [
+  {
+   "titel": "Hash, Signatur, Zertifikat",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie Welt 5 (Netzknoten, Cyan).\n\nSPRECHERTEXT: Willkommen im Netz! Bisher ging es darum, dass Eve nicht mitlesen kann. Jetzt kommt jemand Gefährlicheres: Mallory. Mallory liest nicht nur, Mallory fälscht – und schaltet sich heimlich zwischen Alice und Bob. Heute lernst du die Werkzeuge, mit denen man sich dagegen wehrt: Hashwerte als Fingerabdrücke, die digitale Signatur als Siegel und Zertifikate als Ausweis für Schlüssel.",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "Vertrauen im Netz: Schutzziele, Fingerabdrücke, das digitale Siegel und Mallory in der Mitte",
+   "oberzeile": "VIDEO 06 · DAS NETZ · HEUTE"
+  },
+  {
+   "titel": "Das fragt das Abitur",
+   "notizen": "SPRECHERTEXT: Dieser Teil ist im Abitur in den letzten Jahren immer wichtiger geworden. Typisch sind vier Aufgaben: Schutzziele erläutern. Einen einfachen Hashwert berechnen und beurteilen, ob die Hashfunktion gute Eigenschaften hat. Ein Schaubild zur digitalen Signatur vervollständigen. Und erläutern, warum gefälschte öffentliche Schlüssel gefährlich sind und was Zertifikate dagegen tun. Genau diese vier Dinge üben wir jetzt.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "„**Erläutern Sie** die Schutzziele …“",
+        "„**Bestimmen Sie** den Hashwert …“ – „**Beurteilen Sie**, ob die Hashfunktion … erfüllt.“",
+        "„**Vervollständigen Sie** das Schaubild zur digitalen Signatur.“",
+        "„**Erläutern Sie**, wie gefälschte öffentliche Schlüssel … und welche Bedeutung Zertifikate haben.“"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Schutzziele"
+        },
+        {
+         "t": "p",
+         "md": "Hashfunktionen und Kollisionen"
+        },
+        {
+         "t": "p",
+         "md": "Digitale Signatur"
+        },
+        {
+         "t": "p",
+         "md": "Man-in-the-Middle"
+        },
+        {
+         "t": "p",
+         "md": "Zertifikate und TLS"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Die Schutzziele",
+   "notizen": "[Kapitel: Schutzziele]\n\nSPRECHERTEXT: Zuerst die Fachbegriffe. Vertraulichkeit heißt: Nur Berechtigte können die Nachricht lesen – dafür sorgt Verschlüsselung. Integrität heißt: Die Nachricht ist unterwegs nicht verändert worden. Authentizität heißt: Die Nachricht stammt wirklich von dem, der als Absender dasteht. Dazu kommt als Ergänzung die Verbindlichkeit: Der Absender kann später nicht abstreiten, dass er sie geschickt hat. Eve bedroht die Vertraulichkeit, sie hört nur zu. Mallory greift Integrität und Authentizität an – er verändert und fälscht. Ein Beispiel: Bei einer Überweisung willst du, dass niemand den Betrag sieht, dass niemand ihn ändert und dass die Bank sicher weiß, dass der Auftrag von dir kommt.",
+   "video": true,
+   "abschnitt": "Schutzziele",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schutzziel",
+      "bedeutet",
+      "erreicht durch"
+     ],
+     "zeilen": [
+      [
+       "Vertraulichkeit",
+       "nur Berechtigte können lesen",
+       "Verschlüsselung"
+      ],
+      [
+       "Integrität",
+       "Nachricht ist unverändert",
+       "Hashwert, Signatur"
+      ],
+      [
+       "Authentizität",
+       "Absender ist der, der er vorgibt",
+       "Signatur, Zertifikat"
+      ],
+      [
+       "Verbindlichkeit (Ergänzung)",
+       "Absender kann es nicht abstreiten",
+       "Signatur"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      3.2,
+      2.2
+     ],
+     "mono": false,
+     "zentriert": false
+    },
+    {
+     "t": "p",
+     "md": "Eve **liest** (passiv) · Mallory **fälscht und schaltet sich dazwischen** (aktiv)"
+    }
+   ]
+  },
+  {
+   "titel": "Hashfunktion: der Fingerabdruck",
+   "notizen": "[Kapitel: Hashfunktionen]\n\nSPRECHERTEXT: Eine Hashfunktion bildet eine beliebig lange Nachricht auf einen Wert fester Länge ab – wie einen Fingerabdruck. Bei SHA-256 sind das immer zweihundertsechsundfünfzig Bit. Eine gute Hashfunktion ist schnell berechenbar. Sie ist eine Einwegfunktion: Aus dem Hashwert kommt man nicht zur Nachricht zurück. Sie ist kollisionsresistent: Man findet praktisch keine zwei Nachrichten mit demselben Hashwert. Und sie hat einen Lawineneffekt: Rechts siehst du KAUF und KAUE – ein Buchstabe anders, und der Hashwert ist völlig verschieden. Wichtig: Eine Hashfunktion hat keinen Schlüssel. Ein Hash ist keine Verschlüsselung.",
+   "video": true,
+   "abschnitt": "Hashfunktionen",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Beliebig lange Eingabe → Hashwert **fester Länge** (SHA-256: 256 Bit)",
+        "**schnell** berechenbar",
+        "**Einweg**: vom Hashwert nicht zurück zur Nachricht",
+        "**kollisionsresistent**: praktisch keine zwei Nachrichten mit gleichem Hashwert findbar",
+        "**Lawineneffekt**: kleine Änderung → völlig anderer Hashwert",
+        "Kein Schlüssel – ein Hash ist **keine** Verschlüsselung"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "SHA-256, ANFANG (HEX)",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "KAUF → `8b77a12d503f0275…`"
+        },
+        {
+         "t": "p",
+         "md": "KAUE → `bdccb5a0224041b6…`"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Der Mühlrad-Hash (nur für dieses Video)",
+   "notizen": "REGIE: Einblendung: „Spielzeug-Hash, nur für dieses Video – nicht sicher.“ Zeilen nacheinander aufdecken.\n\nSPRECHERTEXT: Im Abitur bekommst du oft eine kleine Spielzeug-Hashfunktion zum Rechnen. Für dieses Video habe ich den Mühlrad-Hash erfunden. Wir starten mit h gleich fünf. Für jeden Buchstaben rechnen wir: drei mal h plus Buchstabenwert, und davon der Rest bei Division durch zweiunddreißig. Das Wort MOND: M hat den Wert dreizehn. Drei mal fünf plus dreizehn ist achtundzwanzig. O hat den Wert fünfzehn: drei mal achtundzwanzig plus fünfzehn ist neunundneunzig, modulo zweiunddreißig bleibt drei. N: neun plus vierzehn, dreiundzwanzig. D: neunundsechzig plus vier ist dreiundsiebzig, Rest neun. Der Hashwert von MOND ist neun.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Start h = 5 · für jeden Buchstaben: **h ← (3 · h + Wert) mod 32** · Nummerierung A = 1 … Z = 26"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Buchstabe",
+      "Wert",
+      "3 · h + Wert",
+      "mod 32 → h"
+     ],
+     "zeilen": [
+      [
+       "(Start)",
+       "",
+       "",
+       "5"
+      ],
+      [
+       "M",
+       "13",
+       "15 + 13 = 28",
+       "28"
+      ],
+      [
+       "O",
+       "15",
+       "84 + 15 = 99",
+       "3"
+      ],
+      [
+       "N",
+       "14",
+       "9 + 14 = 23",
+       "23"
+      ],
+      [
+       "D",
+       "4",
+       "69 + 4 = 73",
+       "**9**"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      1.0,
+      2.6,
+      1.8
+     ],
+     "mono": false,
+     "zentriert": false
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: Hashwert von LINKS",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nSPRECHERTEXT: Jetzt du. Bestimme den Mühlrad-Hash des Wortes LINKS. Die Buchstabenwerte stehen auf der Folie. Denk daran, nach jedem Buchstaben modulo zweiunddreißig zu rechnen. Halte das Video an.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": "Selbst ausprobieren",
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Bestimme** den Mühlrad-Hash des Wortes **LINKS**."
+      },
+      {
+       "t": "code",
+       "text": "Start h = 5\nh ← (3 · h + Wert) mod 32\nL = 12, I = 9, N = 14, K = 11, S = 19"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Nach **jedem** Buchstaben mod 32"
+        },
+        {
+         "t": "p",
+         "md": "32, 64, 96 abziehen genügt"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung – und eine böse Überraschung",
+   "notizen": "SPRECHERTEXT: Die Auflösung. L: fünfzehn plus zwölf, siebenundzwanzig. I: einundachtzig plus neun ist neunzig, Rest sechsundzwanzig. N: achtundsiebzig plus vierzehn ist zweiundneunzig, Rest achtundzwanzig. K: vierundachtzig plus elf ist fünfundneunzig, Rest einunddreißig. S: dreiundneunzig plus neunzehn ist hundertzwölf, Rest sechzehn. Der Hashwert von LINKS ist sechzehn. Und jetzt rechne ich RECHTS – und bekomme ebenfalls sechzehn! Zwei ganz verschiedene Nachrichten, derselbe Fingerabdruck. Das nennt man eine Kollision. Ein Tipp fürs Abitur: Schreib beim Bestimmen jeden Zwischenwert auf. Dann sieht man deinen Rechenweg, und ein Flüchtigkeitsfehler kostet dich nicht alle Punkte.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Zwischenwerte h",
+        "Hash"
+       ],
+       "zeilen": [
+        [
+         "LINKS",
+         "27 · 26 · 28 · 31 · 16",
+         "**16**"
+        ],
+        [
+         "RECHTS",
+         "1 · 8 · 27 · 25 · 31 · 16",
+         "**16**"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        4.4,
+        1.2
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "KOLLISION!",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Zwei verschiedene Nachrichten,"
+        },
+        {
+         "t": "p",
+         "md": "derselbe Hashwert."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Kollisionen und das Beurteilen eines Hashs",
+   "notizen": "[Kapitel: Kollisionen]\n\nSPRECHERTEXT: Kollisionen sind übrigens unvermeidbar. Es gibt unendlich viele Nachrichten, aber beim Mühlrad-Hash nur zweiunddreißig Hashwerte. Spätestens unter dreiunddreißig Nachrichten haben zwei denselben Wert – das ist das Schubfachprinzip. Auch SHA-256 hat Kollisionen, aber bei zwei hoch zweihundertsechsundfünfzig möglichen Werten findet man praktisch keine. Beurteilen wir den Mühlrad-Hash: Er ist nicht kollisionsresistent, wie LINKS und RECHTS zeigen. Er ist nicht einweg – zum Hashwert sechzehn findest du in Sekunden eine Nachricht, zum Beispiel ET. Und er hat keinen Lawineneffekt: KAUF ergibt zwölf, KAUE elf. Also: Kriterien, Begründung, Urteil – als Fingerabdruck ungeeignet.",
+   "video": true,
+   "abschnitt": "Kollisionen",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Schubfachprinzip**: unendlich viele Nachrichten, nur 32 Hashwerte → Kollisionen **müssen** existieren",
+      "Auch SHA-256 hat Kollisionen – aber bei 2²⁵⁶ Werten findet man **praktisch keine**",
+      "Mühlrad-Hash beurteilt:",
+      "  - **nicht** kollisionsresistent (LINKS/RECHTS)",
+      "  - **nicht** einweg: zu 16 passt z. B. „ET“",
+      "  - **kein** Lawineneffekt: KAUF → 12, KAUE → 11",
+      "**Urteil**: als Fingerabdruck ungeeignet"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Passwörter hashen",
+   "notizen": "SPRECHERTEXT: Eine wichtige Anwendung: Passwörter. Ein ordentlicher Server speichert nicht dein Passwort, sondern nur dessen Hashwert. Beim Anmelden hasht er, was du eintippst, und vergleicht. Wird die Datenbank gestohlen, stehen dort keine Passwörter im Klartext. Zusätzlich hängt man an jedes Passwort einen zufälligen Zusatz, das Salz. Dann haben zwei Menschen mit demselben Passwort trotzdem verschiedene Hashwerte, und vorberechnete Tabellen helfen Angreifern nicht mehr. Außerdem nimmt man für Passwörter absichtlich langsame Hashfunktionen. Für dich beim Anmelden ist das kaum spürbar – wer aber Milliarden Passwörter durchprobieren will, braucht dann ewig.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Der Server speichert **nicht** das Passwort, sondern seinen **Hashwert**",
+      "Beim Anmelden: eingegebenes Passwort hashen → mit gespeichertem Wert **vergleichen**",
+      "Datenbank gestohlen → Passwörter nicht direkt lesbar",
+      "**Salz**: zufälliger Zusatz je Nutzer → gleiche Passwörter, verschiedene Hashwerte; vorberechnete Tabellen nutzlos",
+      "Passwort-Hashfunktionen sind **absichtlich langsam** → Durchprobieren wird teuer"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Die digitale Signatur",
+   "notizen": "[Kapitel: Signatur]\n\nREGIE: Pfeile einzeln aufdecken; Pfeil 6 mit grünem Haken. Linke Hälfte „erstellen“, rechte Hälfte „prüfen“ beschriften.\n\nSPRECHERTEXT: Jetzt das Siegel: die digitale Signatur. Eins: Alice berechnet den Hashwert ihrer Nachricht. Zwei: Sie verschlüsselt diesen Hashwert mit ihrem privaten Schlüssel – das ist die Signatur. Drei: Sie schickt Nachricht und Signatur an Bob. Vier: Bob berechnet selbst den Hashwert der empfangenen Nachricht. Fünf: Er entschlüsselt die Signatur mit Alices öffentlichem Schlüssel. Sechs: Er vergleicht die beiden Werte. Stimmen sie überein, ist die Nachricht unverändert und stammt von Alice. Achtung, Falle P9: Signiert wird mit dem privaten Schlüssel des Absenders, geprüft mit dessen öffentlichem. Genau andersherum als beim Verschlüsseln.",
+   "video": true,
+   "abschnitt": "Signatur",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        },
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "alice",
+         "nach": "alice",
+         "text": "berechnet den Hashwert h(M) der Nachricht"
+        },
+        {
+         "nr": 2,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt h(M) mit dem privaten Schlüssel von Alice → Signatur S"
+        },
+        {
+         "nr": 3,
+         "von": "alice",
+         "nach": "bob",
+         "text": "Nachricht M + Signatur S"
+        },
+        {
+         "nr": 4,
+         "von": "bob",
+         "nach": "bob",
+         "text": "berechnet selbst den Hashwert h(M)"
+        },
+        {
+         "nr": 5,
+         "von": "bob",
+         "nach": "bob",
+         "text": "entschlüsselt S mit dem öffentlichen Schlüssel von Alice → h′"
+        },
+        {
+         "nr": 6,
+         "von": "bob",
+         "nach": "bob",
+         "text": "vergleicht: h(M) = h′ → echt und unverändert"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "FALLE P9",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**Signieren**: privater Schlüssel des **Absenders**"
+        },
+        {
+         "t": "p",
+         "md": "**Prüfen**: öffentlicher Schlüssel des **Absenders**"
+        },
+        {
+         "t": "p",
+         "md": "Vergleich nicht vergessen!"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Was die Signatur leistet – und was nicht",
+   "notizen": "SPRECHERTEXT: Was bringt das? Ändert Mallory die Nachricht, berechnet Bob einen anderen Hashwert, und der Vergleich schlägt fehl. Eine neue Signatur kann Mallory nicht bauen, denn dafür bräuchte er Alices privaten Schlüssel. Aber jetzt siehst du, warum Kollisionen so gefährlich sind: Hätte Alice mit dem Mühlrad-Hash LINKS signiert, könnte Mallory einfach RECHTS daraus machen – gleicher Hashwert, die Prüfung gelingt. Und noch etwas: Die Signatur macht nichts geheim – die Nachricht selbst ist lesbar.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Mallory ändert M → Bobs Hashwert passt nicht → **Integrität** geschützt",
+      "Mallory kann keine neue Signatur bilden – ihm fehlt Alices **privater** Schlüssel → **Authentizität**",
+      "**Aber**: Kollision! Signiertes LINKS gegen RECHTS getauscht → Prüfung gelingt trotzdem",
+      "Die Signatur macht **nichts geheim**: M ist lesbar",
+      "  - Vertraulichkeit zusätzlich: verschlüsseln mit Bobs **öffentlichem** Schlüssel"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Signieren und verschlüsseln: alle drei Schutzziele",
+   "notizen": "REGIE: Alices Schlüssel in einer Farbe, Bobs Schlüssel in einer zweiten Farbe markieren.\n\nSPRECHERTEXT: Im Abitur wird gern gefragt, wie man alle drei Schutzziele gleichzeitig erreicht. Die Antwort: signieren und verschlüsseln. Eins: Alice signiert den Hashwert mit ihrem privaten Schlüssel. Zwei: Dann verschlüsselt sie Nachricht und Signatur mit Bobs öffentlichem Schlüssel – in der Praxis natürlich hybrid. Drei: Der Geheimtext geht an Bob. Vier: Bob entschlüsselt mit seinem privaten Schlüssel. Fünf: Er prüft die Signatur mit Alices öffentlichem Schlüssel und vergleicht die Hashwerte. Merk dir: Es sind vier Schlüssel aus zwei Paaren im Spiel. Alices Paar sorgt für Authentizität und Integrität, Bobs Paar für Vertraulichkeit.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        },
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "alice",
+         "nach": "alice",
+         "text": "signiert: h(M) mit dem privaten Schlüssel von Alice → S"
+        },
+        {
+         "nr": 2,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt M und S mit dem öffentlichen Schlüssel von Bob (in der Praxis hybrid)"
+        },
+        {
+         "nr": 3,
+         "von": "alice",
+         "nach": "bob",
+         "text": "Geheimtext"
+        },
+        {
+         "nr": 4,
+         "von": "bob",
+         "nach": "bob",
+         "text": "entschlüsselt mit dem privaten Schlüssel von Bob → M und S"
+        },
+        {
+         "nr": 5,
+         "von": "bob",
+         "nach": "bob",
+         "text": "prüft S mit dem öffentlichen Schlüssel von Alice und vergleicht die Hashwerte"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "VIER SCHLÜSSEL, ZWEI PAARE",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Alices Paar → **Authentizität, Integrität**"
+        },
+        {
+         "t": "p",
+         "md": "Bobs Paar → **Vertraulichkeit**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Mallory in der Mitte",
+   "notizen": "[Kapitel: Man-in-the-Middle]\n\nREGIE: Mallory in der Mitte in Fehler-Rot umrandet; Alice und Bob mit Sprechblasen „alles normal“.\n\nSPRECHERTEXT: Und jetzt der gefährlichste Angriff. Eins: Bob schickt seinen öffentlichen Schlüssel, aber Mallory fängt ihn ab. Zwei: Mallory schickt Alice seinen eigenen öffentlichen Schlüssel und behauptet, er sei von Bob. Drei: Alice verschlüsselt ahnungslos mit Mallorys Schlüssel. Vier: Mallory entschlüsselt, liest die Nachricht und verändert sie vielleicht. Fünf: Dann verschlüsselt er sie mit Bobs echtem Schlüssel und schickt sie weiter. Alice und Bob merken nichts. Für deine Antwort im Abitur: Die Vertraulichkeit ist ausgehebelt, weil Mallory alles lesen kann. Die Integrität ist ausgehebelt, weil er die Nachricht unbemerkt verändern kann. Und die Authentizität, weil Alice glaubt, mit Bob zu sprechen. Das eigentliche Problem: Ein öffentlicher Schlüssel trägt kein Namensschild.",
+   "video": true,
+   "abschnitt": "Man-in-the-Middle",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        },
+        {
+         "id": "mallory",
+         "name": "Mallory",
+         "unter": "fälscht, schaltet sich dazwischen"
+        },
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "bob",
+         "nach": "mallory",
+         "text": "öffentlicher Schlüssel von Bob (abgefangen)"
+        },
+        {
+         "nr": 2,
+         "von": "mallory",
+         "nach": "alice",
+         "text": "öffentlicher Schlüssel von Mallory – angeblich von Bob"
+        },
+        {
+         "nr": 3,
+         "von": "alice",
+         "nach": "mallory",
+         "text": "M, verschlüsselt mit dem öffentlichen Schlüssel von Mallory"
+        },
+        {
+         "nr": 4,
+         "von": "mallory",
+         "nach": "mallory",
+         "text": "entschlüsselt mit dem privaten Schlüssel von Mallory, liest und ändert M"
+        },
+        {
+         "nr": 5,
+         "von": "mallory",
+         "nach": "bob",
+         "text": "M′, verschlüsselt mit dem öffentlichen Schlüssel von Bob"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DAS PROBLEM",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Alice kann nicht erkennen,"
+        },
+        {
+         "t": "p",
+         "md": "**wem** der öffentliche Schlüssel gehört."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das Zertifikat: ein Ausweis für Schlüssel",
+   "notizen": "[Kapitel: Zertifikate]\n\nREGIE: Trent als Siegel-Symbol oben in der Mitte; Pfeile einzeln aufdecken.\n\nSPRECHERTEXT: Die Lösung ist ein Zertifikat – ein Ausweis für Schlüssel. Eins: Bob geht mit seinem öffentlichen Schlüssel zu einer Zertifizierungsstelle, kurz CA, und weist sich aus. Zwei: Die CA prüft seine Identität und signiert die Zuordnung Bob gehört zu diesem öffentlichen Schlüssel – mit ihrem privaten Schlüssel. Drei: Bob bekommt das Zertifikat. Vier: Er schickt es an Alice. Fünf: Alice prüft die Signatur mit dem öffentlichen Schlüssel der CA, der in Browser und Betriebssystem schon vorinstalliert ist. Sechs: Erst dann verschlüsselt sie mit dem Schlüssel aus dem Zertifikat. Mallory kann kein Zertifikat auf Bobs Namen mit seinem eigenen Schlüssel fälschen, denn ihm fehlt der private Schlüssel der CA.",
+   "video": true,
+   "abschnitt": "Zertifikate",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "bob",
+         "name": "Bob",
+         "unter": "empfängt"
+        },
+        {
+         "id": "trent",
+         "name": "CA (Trent)",
+         "unter": "Zertifizierungsstelle, beglaubigt"
+        },
+        {
+         "id": "alice",
+         "name": "Alice",
+         "unter": "sendet"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "bob",
+         "nach": "trent",
+         "text": "öffentlicher Schlüssel von Bob + Identitätsnachweis"
+        },
+        {
+         "nr": 2,
+         "von": "trent",
+         "nach": "trent",
+         "text": "prüft die Identität, signiert „Bob ↔ öffentlicher Schlüssel von Bob“ mit dem privaten Schlüssel der CA"
+        },
+        {
+         "nr": 3,
+         "von": "trent",
+         "nach": "bob",
+         "text": "Zertifikat"
+        },
+        {
+         "nr": 4,
+         "von": "bob",
+         "nach": "alice",
+         "text": "Zertifikat"
+        },
+        {
+         "nr": 5,
+         "von": "alice",
+         "nach": "alice",
+         "text": "prüft die Signatur mit dem öffentlichen Schlüssel der CA (vorinstalliert)"
+        },
+        {
+         "nr": 6,
+         "von": "alice",
+         "nach": "alice",
+         "text": "verschlüsselt mit dem öffentlichen Schlüssel von Bob aus dem Zertifikat"
+        }
+       ],
+       "titel": null
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "MALLORY SCHEITERT",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Ein Zertifikat auf Bobs Namen mit Mallorys Schlüssel kann er nicht signieren – ihm fehlt der private Schlüssel der CA."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Zertifikatskette und ein Blick auf TLS",
+   "notizen": "[Kapitel: TLS]\n\nSPRECHERTEXT: In der Praxis gibt es Zertifikatsketten: Eine Wurzel-CA, deren Schlüssel im Browser steckt, beglaubigt Zwischenstellen, und die beglaubigen die Zertifikate einzelner Websites. Beim Aufruf einer HTTPS-Seite passiert ungefähr Folgendes: Der Browser prüft das Zertifikat – die Kette, den Namen und die Gültigkeit. Dann vereinbaren Browser und Server einen Sitzungsschlüssel, asymmetrisch oder mit Diffie-Hellman. Und danach läuft alles symmetrisch. Erkennst du es? Das ist ein Hybridverfahren. Aber Vorsicht: Das Schloss im Browser bestätigt nur, dass der Schlüssel zu diesem Namen gehört. Ob die Seite seriös ist, sagt es nicht.",
+   "video": true,
+   "abschnitt": "TLS",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Kette**: Wurzel-CA (im Browser) → Zwischen-CA → Zertifikat der Website",
+      "HTTPS/TLS im Überblick:",
+      "  - 1. Browser prüft das Zertifikat: Kette, Name, Gültigkeit",
+      "  - 2. Schlüsselvereinbarung (asymmetrisch bzw. Diffie-Hellman) → Sitzungsschlüssel",
+      "  - 3. Daten **symmetrisch** verschlüsselt → **hybrid**",
+      "Zertifikat bestätigt **Schlüssel ↔ Name** – nicht, dass die Seite **seriös** ist (P9)"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Typische Fehler – und wie du sie vermeidest",
+   "notizen": "[Kapitel: Typische Fehler]\n\nSPRECHERTEXT: Die typischen Fehler, fast alle unter P9, Schlüsselrollen verwechselt: Signieren mit dem öffentlichen Schlüssel. Prüfen mit Bobs statt mit Alices Schlüssel. Den Vergleich der Hashwerte vergessen. Hash und Verschlüsselung gleichsetzen. Oder glauben, ein Zertifikat mache eine Person vertrauenswürdig – es bindet nur einen Schlüssel an eine Identität. Beim Rechnen mit einem Toy-Hash ist P2 die Falle: Rechne den Rest genau dann, wenn das Material es verlangt. Und ordne die Schutzziele sauber zu: Eine Signatur schafft keine Vertraulichkeit.",
+   "video": true,
+   "abschnitt": "Typische Fehler",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**P9** Signieren mit dem **öffentlichen** Schlüssel · Prüfen mit **Bobs** statt Alices Schlüssel",
+        "**P9** Hashwert-**Vergleich** vergessen · „Hash = Verschlüsselung“",
+        "**P9** „Zertifikat = Person ist vertrauenswürdig“ – es bindet nur **Schlüssel an Identität**",
+        "**P2** mod beim Toy-Hash vergessen oder erst am Ende gerechnet – **Material genau lesen**",
+        "Schutzziel falsch zugeordnet: Signatur schafft **keine** Vertraulichkeit"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ABI-CHECK",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Schlüsselart + Inhaber?"
+        },
+        {
+         "t": "p",
+         "md": "Vergleich der Hashwerte?"
+        },
+        {
+         "t": "p",
+         "md": "Welches Schutzziel?"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nSPRECHERTEXT: Das nimmst du mit. Erstens: Ein Hashwert ist ein Fingerabdruck fester Länge – einweg, kollisionsresistent, mit Lawineneffekt. Kollisionen gibt es immer, man darf sie nur nicht finden können. Zweitens: Signiert wird mit dem privaten Schlüssel des Absenders, geprüft mit dessen öffentlichem, und dann wird verglichen. Drittens: Beim Man-in-the-Middle-Angriff wird ein falscher öffentlicher Schlüssel untergeschoben. Viertens: Ein Zertifikat bindet einen Schlüssel an eine Identität, und TLS ist ein Hybridverfahren.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Hashwert = Fingerabdruck fester Länge: einweg, kollisionsresistent, Lawineneffekt; Kollisionen gibt es immer (Schubfach)"
+    },
+    {
+     "t": "p",
+     "md": "Signatur: Hash mit dem **privaten** Schlüssel des Absenders, Prüfung mit dessen **öffentlichem** + Vergleich"
+    },
+    {
+     "t": "p",
+     "md": "Man-in-the-Middle: untergeschobener öffentlicher Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "Zertifikat: CA signiert **Schlüssel ↔ Identität**; TLS ist ein Hybridverfahren"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Danach 20 s Endcard (siehe Kopf).\n\nSPRECHERTEXT: Ab ins Lab! In Level fünf Punkt eins jagst du im Hash-Labor nach Kollisionen, in Level fünf Punkt zwei signierst und prüfst du, und in Level fünf Punkt drei triffst du Mallory – im Funkraum sogar live mit deinem Kurs. Im nächsten und letzten Video bereiten wir dich auf den Endgegner vor: fremde Chiffren im Abitur und die zehn Fallen. Bis dann!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 5.1 „Fingerabdrücke“, 5.2 „Das Siegel“ und 5.3 „Mallory im Netz“"
+      ],
+      [
+       "Akte",
+       "Akten W5·1 bis W5·3 · Werkzeugkarte WK4 „Ablaufschaubilder“"
+      ],
+      [
+       "Kryptolabor",
+       "Hash-Labor (Kollisionssuche, Salz) und Signatur- & Zertifikats-Simulator"
+      ],
+      [
+       "Funkraum",
+       "Szenario „Mallory im Netz“ im Unterricht"
+      ],
+      [
+       "Online",
+       "kryptos.frankjuchim.de"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 07 · Abi-Check: Fremde Chiffren in 5 Schritten + die 10 Fallen"
+    }
+   ]
+  }
+ ]
+}

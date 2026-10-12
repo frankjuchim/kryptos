@@ -1,0 +1,801 @@
+{
+ "typ": "akte",
+ "welt": 4,
+ "kennung": "AKTE W4·2",
+ "titel": "RSA und das hybride Prinzip",
+ "ds": "13",
+ "niveau": "kern",
+ "level": "4.2",
+ "datei": "KR_W4_Akte2_RSA_und_Hybrid",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Ein Jahr später, 1977: Drei Forscher am MIT haben eine Falltür gefunden – das **Multiplizieren zweier Primzahlen**. Damit kann Bob ein echtes Schlüsselpaar erzeugen. Doch die Bank ist enttäuscht: Das neue Verfahren ist so langsam, dass ein Monatsbericht Stunden zum Verschlüsseln bräuchte. Die Archivarin lächelt: „Man muss nicht alles asymmetrisch verschlüsseln. Nur den Schlüssel.“"
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "RSA in fünf Schritten · Ergänzung",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Schritt",
+      "allgemein",
+      "Beispiel"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "zwei verschiedene Primzahlen p, q wählen",
+       "p = 7, q = 11"
+      ],
+      [
+       "2",
+       "N = p · q",
+       "N = 77"
+      ],
+      [
+       "3",
+       "φ(N) = (p − 1)(q − 1)",
+       "φ(N) = 6 · 10 = 60"
+      ],
+      [
+       "4",
+       "e mit 1 < e < φ(N), teilerfremd zu φ(N)",
+       "e = 7 (ggT(7, 60) = 1)"
+      ],
+      [
+       "5",
+       "d mit e · d mod φ(N) = 1",
+       "d = 43, Probe: 7 · 43 = 301 = 5 · 60 + 1"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      7.4,
+      7.8
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Öffentlicher Schlüssel **(N, e) = (77, 7)**, privater Schlüssel **(N, d) = (77, 43)**."
+    },
+    {
+     "t": "p",
+     "md": "**Verschlüsseln** der Klarzahl m = 9 (m < N): c = 9^7^ mod 77. 9² = 81 mod 77 = 4, 9^4^ = 4² = 16, 9^7^ = 9^4^ · 9² · 9^1^ → 16 · 4 = 64, 64 · 9 = 576 = 7 · 77 + 37 → **c = 37**."
+    },
+    {
+     "t": "p",
+     "md": "**Entschlüsseln** m = 37^43^ mod 77 mit der Rechenvorlage „fortgesetztes Quadrieren“ (43 = 32 + 8 + 2 + 1):"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Potenz",
+      "37^1^",
+      "37^2^",
+      "37^4^",
+      "37^8^",
+      "37^16^",
+      "37^32^"
+     ],
+     "zeilen": [
+      [
+       "mod 77",
+       "37",
+       "60",
+       "58",
+       "53",
+       "37",
+       "60"
+      ],
+      [
+       "gebraucht?",
+       "✓",
+       "✓",
+       "–",
+       "✓",
+       "–",
+       "✓"
+      ]
+     ],
+     "breiten": [
+      2.8,
+      2.3,
+      2.3,
+      2.3,
+      2.3,
+      2.3,
+      2.3
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Produktkette: 37 · 60 = 2220 → 64; 64 · 53 = 3392 → 4; 4 · 60 = 240 → **9** = m."
+    },
+    {
+     "t": "p",
+     "md": "**Warum sicher?** Wer d berechnen will, braucht φ(N) und damit p und q. N in seine Primfaktoren zu zerlegen ist bei über 600-stelligen Zahlen praktisch unmöglich (Falltür: Multiplizieren leicht, Faktorisieren schwer). Wie man d findet, zeigt die Kür K3 (erweiterter Euklid)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Ein eigenes Schlüsselpaar",
+   "sozialform": "Einzelarbeit · 6 min",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Erzeuge ein RSA-Schlüsselpaar mit **p = 3, q = 17, e = 3**. Bestimme N und φ(N), **zeige**, dass d = 11 passt, und gib öffentlichen und privaten Schlüssel an."
+    },
+    {
+     "t": "p",
+     "md": "N = [[luecke:8]]   φ(N) = [[luecke:12]]   Probe: [[luecke:30]]",
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "öffentlicher Schlüssel ( [[luecke:5]] , [[luecke:5]] )   privater Schlüssel ( [[luecke:5]] , [[luecke:5]] )",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "N = 51, φ(N) = 2 · 16 = 32, ggT(3, 32) = 1; 3 · 11 = 33 = 1 · 32 + 1 → d = 11 passt. Öffentlich **(51, 3)**, privat **(51, 11)**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* φ(N) = 51 − 1 = 50 (P2/P7)."
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Verschlüsseln und zurück",
+   "sozialform": "Partnerarbeit · 10 min",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Person 1 verschlüsselt die Klarzahl **m = 4** mit dem öffentlichen Schlüssel aus Auftrag 1.",
+      "Person 2 entschlüsselt mit der Rechenvorlage (11 = 8 + 2 + 1).",
+      "Was fällt bei c^4^ auf? **Erläutere**, warum man trotzdem nicht einfach jeden Exponenten „abkürzen“ darf, ohne φ(N) zu kennen."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_schueler": true,
+     "kopf": [
+      "Potenz",
+      "c^1^",
+      "c^2^",
+      "c^4^",
+      "c^8^"
+     ],
+     "zeilen": [
+      [
+       "mod 51",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      2.4,
+      2.4,
+      2.4,
+      2.4
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "nur_loesung": true,
+     "kopf": [
+      "Potenz",
+      "c^1^",
+      "c^2^",
+      "c^4^",
+      "c^8^"
+     ],
+     "zeilen": [
+      [
+       "mod 51",
+       "13",
+       "16",
+       "1",
+       "1"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      2.4,
+      2.4,
+      2.4,
+      2.4
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) c = 4³ mod 51 = 64 mod 51 = **13**."
+    },
+    {
+     "t": "p",
+     "md": "b) c^1^ = 13, c² = 169 mod 51 = 16, c^4^ = 256 mod 51 = 1, c^8^ = 1; m = 13 · 16 · 1 = 208 mod 51 = **4**."
+    },
+    {
+     "t": "p",
+     "md": "c) 13^4^ mod 51 = 1, ab dort wiederholt sich alles (13^8^ = 1). Das ist ein Zufall dieser Klarzahl; im Allgemeinen kennt nur, wer φ(N) (also p und q) kennt, den passenden Exponenten d. Eve kann ohne Faktorisierung nicht „abkürzen“."
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Das Hybridverfahren",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Asymmetrische Verfahren sind um **Größenordnungen langsamer** als symmetrische (z. B. AES) und eignen sich nur für kurze Daten. Symmetrische Verfahren sind schnell, haben aber das Schlüsselverteilungsproblem. Das **Hybridverfahren** verbindet beide Vorteile:"
+    },
+    {
+     "t": "schaubild",
+     "breite_cm": 11.5,
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Senderin"
+      },
+      {
+       "id": "E",
+       "name": "Eve",
+       "unter": "liest den Kanal mit"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Sitzungsschlüssel K zufällig erzeugen; Nachricht symmetrisch mit K verschlüsseln → Geheimtext"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "K asymmetrisch mit dem öffentlichen Schlüssel von Bob verschlüsseln → K verschlüsselt"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Geheimtext + K verschlüsselt über den unsicheren Kanal"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "K verschlüsselt mit dem privaten Schlüssel von Bob entschlüsseln → K"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Geheimtext symmetrisch mit K entschlüsseln → Nachricht"
+      }
+     ],
+     "_W": 640
+    },
+    {
+     "t": "p",
+     "md": "**Begründung:** Geschwindigkeit (die lange Nachricht läuft symmetrisch) + Schlüsselverteilung (K reist geschützt durch das asymmetrische Verfahren, kein Treffen nötig). Für jede Verbindung wird ein **neues K** erzeugt."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P5",
+   "titel": "Hybrid falsch eingeordnet",
+   "md": "Beim Hybridverfahren wird **nicht** die Nachricht asymmetrisch verschlüsselt, sondern nur der kurze Sitzungsschlüssel K. Die Nachricht selbst läuft **symmetrisch** mit K. Und: K muss **nicht** vorab über einen sicheren Kanal ausgetauscht werden – er reist asymmetrisch geschützt mit."
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 1,
+   "titel": "Das Schaubild ergänzen",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ergänze im Schaubild an den Pfeilen ②, ④ und ⑤ jeweils **Schlüsselart** (öffentlich/privat/Sitzungsschlüssel) und **Inhaber**."
+    },
+    {
+     "t": "schaubild",
+     "breite_cm": 12.0,
+     "nur_schueler": true,
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice"
+      },
+      {
+       "id": "E",
+       "name": "Eve"
+      },
+      {
+       "id": "B",
+       "name": "Bob"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht symmetrisch verschlüsseln mit Sitzungsschlüssel K"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "K asymmetrisch verschlüsseln mit ________________________"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Geheimtext + K verschlüsselt"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "K entschlüsseln mit ________________________"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Geheimtext symmetrisch entschlüsseln mit ________________"
+      }
+     ],
+     "_W": 640
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "② **öffentlicher Schlüssel von Bob**, ④ **privater Schlüssel von Bob**, ⑤ **Sitzungsschlüssel K** (von Alice erzeugt, beiden bekannt; ebenso bei ①)."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* ② mit Alices privatem Schlüssel (P9)."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Zwei schlechte Vorschläge",
+   "sozialform": "Partnerarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eine Firma überlegt: „Wir verschlüsseln einfach alle Kundendaten mit RSA – dann brauchen wir keinen Schlüsselaustausch.“ Eine zweite schlägt vor: „Wir nehmen AES und schicken den Schlüssel per E-Mail.“ **Beurteile** beide Vorschläge und **begründe**, warum das Hybridverfahren die Nachteile beider vermeidet."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Vorschlag 1: kein geheimer Austausch nötig (+), aber RSA ist um Größenordnungen langsamer und für große Datenmengen ungeeignet (−). Vorschlag 2: AES ist schnell (+), aber der Schlüssel reist ungeschützt per E-Mail – wer die E-Mail mitliest, kann alles entschlüsseln (−)."
+    },
+    {
+     "t": "p",
+     "md": "Hybrid: Daten mit AES (schnell), nur der kurze AES-Schlüssel mit RSA (keine geheime Übergabe nötig) → beide Nachteile vermieden. Urteil mit den Kriterien Geschwindigkeit und Schlüsselverteilung (P10)."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Toy-Hybrid",
+   "sozialform": "Partnerarbeit · 12 min",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bobs Schlüssel: öffentlich **(77, 7)**, privat **(77, 43)**. Alice wählt den Sitzungsschlüssel **K = 5** und verschlüsselt die Nachricht mit Caesar, Verschiebung 5 (Nummerierung A = 1 … Z = 26). Sie sendet den Geheimtext und den verschlüsselten Sitzungsschlüssel c~K~ = 5^7^ mod 77:"
+    },
+    {
+     "t": "geheimtext",
+     "label": "ALICE → BOB · NACHRICHT (CAESAR MIT K)",
+     "text": "FGMTQ ZSLRT WLJS",
+     "schreiblinien": true
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Berechne c~K~ (Hilfe: 5² mod 77 = 25, 5^4^ mod 77 = 9).",
+      "Bob entschlüsselt c~K~ mit d = 43. Vorgegeben: 47² mod 77 = 53, 47^8^ mod 77 = 60, 47^32^ mod 77 = 53.",
+      "Entschlüssele die Nachricht.",
+      "**Beurteile** die Sicherheit dieses Toy-Hybrids (zwei Schwachstellen)."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) 5^7^ = 5^4^ · 5² · 5 → 9 · 25 = 225 mod 77 = 71; 71 · 5 = 355 mod 77 = **47** = c~K~."
+    },
+    {
+     "t": "p",
+     "md": "b) 43 = 32 + 8 + 2 + 1: 47 · 53 = 2491 mod 77 = 27; 27 · 60 = 1620 mod 77 = 3; 3 · 53 = 159 mod 77 = **5** = K."
+    },
+    {
+     "t": "p",
+     "md": "c) Caesar mit −5: `FGMTQ ZSLRT WLJS` → **abholungmorgen**."
+    },
+    {
+     "t": "p",
+     "md": "d) (1) Caesar als symmetrisches Verfahren hat nur 26 Schlüssel → Brute Force (W0); real: AES. (2) N = 77 = 7 · 11 ist sofort faktorisiert → Eve berechnet d; real: N mit über 600 Stellen. (Auch zulässig: Sitzungsschlüssel K = 5 ist zu klein, kein Zufall.)"
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Anwendungsbereiche",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "Prinzip",
+      "typische Anwendungsbereiche",
+      "Grund"
+     ],
+     "zeilen": [
+      [
+       "symmetrisch",
+       "Festplatten-/Dateiverschlüsselung, WLAN-Verkehr (gemeinsames Passwort), Datenübertragung innerhalb einer bestehenden Sitzung, Backups",
+       "sehr schnell, Schlüssel ist schon geteilt oder nur eine Person beteiligt"
+      ],
+      [
+       "asymmetrisch",
+       "Übertragen bzw. Vereinbaren von Sitzungsschlüsseln, digitale Signaturen (W5), Zertifikate (W5)",
+       "kleine Datenmengen, Partner ohne gemeinsames Geheimnis"
+      ],
+      [
+       "hybrid",
+       "HTTPS/TLS, verschlüsselte E-Mail (z. B. OpenPGP, S/MIME), Messenger mit Ende-zu-Ende-Verschlüsselung",
+       "fremde Partner + große Datenmengen"
+      ]
+     ],
+     "breiten": [
+      2.5,
+      9.2,
+      5.1
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Szenario-Karten",
+   "sozialform": "Gruppenarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ordnet zu (**symmetrisch / asymmetrisch / hybrid**) und **begründet** jeweils in einem Satz."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "nur_schueler": true,
+     "kopf": [
+      "Nr.",
+      "Szenario",
+      "Prinzip",
+      "Begründung"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "verschlüsselter USB-Stick",
+       "",
+       ""
+      ],
+      [
+       "2",
+       "Online-Banking im Browser",
+       "",
+       ""
+      ],
+      [
+       "3",
+       "eine Firma signiert ihre Software-Updates",
+       "",
+       ""
+      ],
+      [
+       "4",
+       "zwei Agenten mit vorher persönlich vereinbartem One-Time-Pad",
+       "",
+       ""
+      ],
+      [
+       "5",
+       "Ende-zu-Ende-verschlüsselter Messenger",
+       "",
+       ""
+      ],
+      [
+       "6",
+       "Bob veröffentlicht seinen Schlüssel auf seiner Website",
+       "",
+       ""
+      ],
+      [
+       "7",
+       "nächtliches Backup des Schulservers",
+       "",
+       ""
+      ],
+      [
+       "8",
+       "Austausch eines AES-Schlüssels zwischen zwei Servern, die sich nie begegnet sind",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      0.8,
+      9.8,
+      2.2,
+      4.0
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "nur_loesung": true,
+     "kopf": [
+      "Nr.",
+      "Szenario",
+      "Prinzip",
+      "Begründung"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "verschlüsselter USB-Stick",
+       "symmetrisch",
+       "nur eine Person, große Datenmenge"
+      ],
+      [
+       "2",
+       "Online-Banking im Browser",
+       "hybrid",
+       "fremder Server, viele Daten (TLS)"
+      ],
+      [
+       "3",
+       "eine Firma signiert ihre Software-Updates",
+       "asymmetrisch",
+       "Signatur mit privatem Schlüssel, Prüfung mit öffentlichem (W5)"
+      ],
+      [
+       "4",
+       "zwei Agenten mit vorher persönlich vereinbartem One-Time-Pad",
+       "symmetrisch",
+       "Schlüssel schon persönlich geteilt"
+      ],
+      [
+       "5",
+       "Ende-zu-Ende-verschlüsselter Messenger",
+       "hybrid",
+       "Schlüsselvereinbarung asymmetrisch, Nachrichten symmetrisch"
+      ],
+      [
+       "6",
+       "Bob veröffentlicht seinen Schlüssel auf seiner Website",
+       "asymmetrisch",
+       "nur öffentliche Schlüssel dürfen veröffentlicht werden"
+      ],
+      [
+       "7",
+       "nächtliches Backup des Schulservers",
+       "symmetrisch",
+       "Daten bleiben beim Besitzer"
+      ],
+      [
+       "8",
+       "Austausch eines AES-Schlüssels zwischen zwei Servern, die sich nie begegnet sind",
+       "asymmetrisch",
+       "Schlüsseltransport bzw. Diffie-Hellman – kleine Datenmenge, kein gemeinsames Geheimnis"
+      ]
+     ],
+     "breiten": [
+      0.9,
+      6.4,
+      2.4,
+      7.1
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Tabelle. *Typischer Fehler:* „asymmetrisch, weil sicherer“ ohne Bezug auf Datenmenge/Schlüsselverteilung (P5, P10)."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Nur so stark wie …?",
+   "sozialform": "Einzelarbeit · 6 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entscheide** begründet, ob die Aussage korrekt ist: „Beim Hybridverfahren ist die Nachricht nur so sicher wie das schwächere der beiden verwendeten Verfahren.“"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Im Kern **korrekt**: Eve muss nur eines der beiden Verfahren brechen – entweder den Sitzungsschlüssel aus dem asymmetrisch verschlüsselten Teil gewinnen oder die symmetrische Verschlüsselung direkt angreifen. Deshalb müssen beide Teile stark sein (z. B. AES mit 128/256 Bit und RSA mit mindestens 2048 Bit). Gute Antwort nennt beide Angriffswege."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Beschreiben Sie** das Hybridverfahren.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Die Nachricht wird mit einem zufällig erzeugten Sitzungsschlüssel symmetrisch verschlüsselt (1); der Sitzungsschlüssel wird mit dem öffentlichen Schlüssel des Empfängers asymmetrisch verschlüsselt und mitgesendet (1); der Empfänger entschlüsselt zuerst den Sitzungsschlüssel mit seinem privaten Schlüssel und damit die Nachricht (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen Sie**, warum in der Praxis nicht ausschließlich asymmetrisch verschlüsselt wird.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Asymmetrische Verfahren sind deutlich rechenaufwendiger/langsamer (1) und daher für große Datenmengen ungeeignet; symmetrische Verfahren sind schnell (1)."
+      }
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie** begründet, ob die folgende Aussage korrekt ist: „Beim Hybridverfahren muss der Sitzungsschlüssel vorab über einen sicheren Kanal ausgetauscht werden.“",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch (1): Der Sitzungsschlüssel wird mit dem öffentlichen Schlüssel des Empfängers verschlüsselt und kann daher über den unsicheren Kanal übertragen werden; nur der Empfänger kann ihn mit seinem privaten Schlüssel entschlüsseln (1)."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Nennen Sie** je einen Anwendungsbereich für symmetrische und für asymmetrische Verschlüsselung und **begründen Sie** Ihre Zuordnung.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "z. B. symmetrisch: Verschlüsselung einer Festplatte (1) – große Datenmenge, Schlüssel muss nicht verteilt werden (1); asymmetrisch: Übertragung eines Sitzungsschlüssels oder digitale Signatur (1) – kleine Datenmenge, Kommunikationspartner ohne gemeinsames Geheimnis (1). Jede fachlich richtige Zuordnung mit Begründung zählt."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "4.2",
+   "md": "Level 4.2 „RSA und das hybride Prinzip“ im Kryptolabor (Werkzeug **RSA-Rechenwerk**), danach **Boss W4 „Der Schlüsseltausch“**. Trainingsplatz: „Schlüsselzähler“; Ergänzung: „RSA-Schlüssel“, „RSA-Verschlüsseln“. Schnelle Lernende: Kür K3 „Euklids Erbe“."
+  }
+ ]
+}

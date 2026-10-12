@@ -1,0 +1,611 @@
+{
+ "typ": "dokument",
+ "welt": 5,
+ "kennung": "FUNKRAUM W5",
+ "titel": "Mallory im Netz",
+ "ds": "16",
+ "datei": "KR_W5_Funkraum_Mallory_im_Netz",
+ "ordner": "Werkzeuge/Funkraum",
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "AUF EINEN BLICK",
+   "farbe": "0E7C86",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      3.4,
+      12.6
+     ],
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Lernziel",
+       "Erleben, dass Verschlüsselung ohne geprüfte Schlüssel nutzlos ist (**Man-in-the-Middle**), und dass eine vertrauenswürdige dritte Stelle (**Trent**) mit Signaturen auf Schlüsseln (**Zertifikaten**) den Angriff aufdeckt."
+      ],
+      [
+       "Einsatz",
+       "DS 16, Phase „Funkraum“ · **25 min** (Phase 1: 9 min · Phase 2: 9 min · Auswertung: 7 min) · Folien 23–24"
+      ],
+      [
+       "Rollen",
+       "**Alice-Teams** (senden Aufträge) und **Bob-Teams** (führen Aufträge aus) in Paaren, z. B. 2–3 Paare · **Mallory-Team** (1 Team; bei mehr als 8 Teams 2) sitzt **zwischen** allen Paaren · **Trent:** die Lehrkraft (ab Phase 2)"
+      ],
+      [
+       "Varianten",
+       "**digital** im Funkraum der Plattform (Tablets, Beamer) oder **Papier** mit Umschlägen, Schloss-Aufklebern und Stempel (Abschnitt 4 und 7)"
+      ],
+      [
+       "Datenschutz",
+       "nur vorgegebene Auftragskarten bzw. A–Z/0–9, kursintern, Löschung beim Beenden; keine Punkte (Abzeichen „Funkraum-Veteran“)"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "1 · Vorbereitung"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**Digital:** In der Funkraum-Regie das Szenario „Mallory im Netz“ anlegen, Paare (Alice-Team ↔ Bob-Team) und das Mallory-Team einteilen; QR-Code auf Folie 23 zeigen.",
+    "**Papier:** Material aus Abschnitt 4 und 7 bereitlegen – Umschläge (ca. 3 je Alice-Team), Schloss-Aufkleber und Schlüsselkarten ausschneiden, Stempel bzw. farbigen Stift für Trent.",
+    "**Auftragskarten** (Abschnitt 6) ausschneiden und verdeckt an die Alice-Teams verteilen; Rollenkarten (Abschnitt 5) an alle Teams.",
+    "Tafel bzw. Folie für die Auflösung vorbereiten: Tabelle **Original | empfangen | verändert?** je Paar (Vorlage Abschnitt 8)."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "2 · Ablauf für die Lehrkraft (digital)"
+  },
+  {
+   "t": "p",
+   "md": "**Technik:** Jedes Bob-Team besitzt ein Schlüsselpaar, das die Plattform verwaltet; der öffentliche Schlüssel erscheint als Schlüsselnummer (z. B. `S23`). „Verschlüsseln mit S23“ erzeugt einen Umschlag `UMSCHLAG S23`, den nur der Besitzer von S23 öffnen kann. Mallory besitzt eigene Schlüssel (`S41`, `S42`, …) und die Funktionen „weiterleiten“, „Schlüsselnummer ersetzen“, „öffnen (falls eigener Schlüssel)“, „neu verschließen“. Nachrichten nur A–Z, 0–9, Leerzeichen."
+  },
+  {
+   "t": "verlauf",
+   "titel": "Phase 1 – ohne Zertifikate (9 min)",
+   "kopf": [
+    "Schritt",
+    "Zeit",
+    "Was passiert",
+    "Wer",
+    "Lehrkraft"
+   ],
+   "breiten": [
+    1.6,
+    1.2,
+    8.8,
+    2.4,
+    2.8
+   ],
+   "zeilen": [
+    [
+     "1",
+     "2 min",
+     "Bob-Teams veröffentlichen ihre Schlüsselnummer im „Schlüsselverzeichnis“ – das Verzeichnis wird von **Mallorys Station** ausgeliefert.",
+     "Bob-Teams",
+     "nichts verraten"
+    ],
+    [
+     "2",
+     "5 min",
+     "Alice-Teams fordern Bobs Schlüssel an, verschlüsseln ihren Auftrag und senden. Mallory ersetzt nach Belieben Schlüsselnummern durch eigene, öffnet, ändert, verschließt neu mit Bobs echtem Schlüssel.",
+     "Alice-Teams, Mallory",
+     "Zeit ansagen"
+    ],
+    [
+     "3",
+     "2 min",
+     "Bob-Teams melden, welchen Auftrag sie erhalten haben. Auflösung am Beamer: Original vs. empfangen. Erwartung: Mallory hat mehrere Aufträge **unbemerkt** verändert.",
+     "Bob-Teams",
+     "Beamer: Original/empfangen"
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "Phase 2 – Trent siegelt Schlüssel (9 min)",
+   "kopf": [
+    "Schritt",
+    "Zeit",
+    "Was passiert",
+    "Wer",
+    "Lehrkraft"
+   ],
+   "breiten": [
+    1.6,
+    1.2,
+    8.8,
+    2.4,
+    2.8
+   ],
+   "zeilen": [
+    [
+     "1",
+     "3 min",
+     "Trent bestätigt jedem Bob-Team in der Regie seine Schlüsselnummer: Zertifikat `ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE` mit Trents Siegel (die Plattform signiert mit Trents Schlüssel; Prüfung automatisch auf Alices Tablet mit Trents „vorinstalliertem“ öffentlichem Schlüssel).",
+     "Trent",
+     "Zertifikate ausstellen"
+    ],
+    [
+     "2",
+     "5 min",
+     "Alice-Teams verschlüsseln nur noch mit Schlüsseln, deren Zertifikat **grün** geprüft ist (Name passt, Siegel gültig). Mallory versucht: eigene Schlüsselnummer ohne Zertifikat (→ rot), eigenes Zertifikat `TEAM MALLORY S41` (→ Name passt nicht), verändertes Zertifikat (→ Siegel ungültig).",
+     "Alice-Teams, Mallory",
+     "Mallory anfeuern"
+    ],
+    [
+     "3",
+     "1 min",
+     "Bob-Teams melden die Aufträge: alle unverändert.",
+     "Bob-Teams",
+     "Beamer"
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "3 · Auswertung (7 min, Folie 24)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Impuls",
+    "erwartete Antwort"
+   ],
+   "breiten": [
+    7.0,
+    9.0
+   ],
+   "schrift": 10,
+   "zeilen": [
+    [
+     "Was hat Mallory in Phase 1 gebrochen?",
+     "**kein Verfahren** – die Zuordnung Schlüssel ↔ Person"
+    ],
+    [
+     "Welche Schutzziele waren verletzt?",
+     "Vertraulichkeit, Integrität, Authentizität"
+    ],
+    [
+     "Was leistet Trent, was nicht?",
+     "bestätigt die **Zuordnung**; garantiert **nicht**, dass Bob ehrlich ist (P9)"
+    ],
+    [
+     "Was wäre, wenn Mallory Trents Siegel stehlen oder einen eigenen „Trent“ in Alices Tablet installieren könnte?",
+     "Der **Vertrauensanker** ist die Achillesferse – wer ihn kontrolliert, kontrolliert alles."
+    ],
+    [
+     "Transfer: Wo passiert das täglich?",
+     "Browser, Zertifikatskette, TLS (Folien 25–27, Akte W5·3)"
+    ]
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "BRÜCKE ZUR KOLLISION (OPTIONAL)",
+   "md": "Wer mag, zeigt zum Abschluss im Signatur-Simulator (Modus „schwacher Hash“): „ueberweise zwei euro“ und „ueberweise tausend euro“ haben denselben KRYPTOS-Hash 18 – eine gültige Signatur bleibt gültig. Auch der beste Vertrauensanker hilft nicht gegen einen schwachen Hash."
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "4 · Papier-Alternative (ohne Tablets)"
+  },
+  {
+   "t": "tabelle",
+   "kopfspalte": true,
+   "breiten": [
+    3.0,
+    13.0
+   ],
+   "schrift": 10,
+   "zeilen": [
+    [
+     "Material",
+     "Briefumschläge; „**Schloss-Aufkleber**“ (Klebezettel mit Nummer, z. B. „SCHLOSS 23“) und passende „**Schlüsselkarten**“ (gleiche Nummer) für jedes Bob-Team; Mallory erhält eigene Schlösser/Schlüssel (41, 42) und **leere** Schloss-Aufkleber; Trent einen Stempel bzw. einen farbigen Stift, den nur die Lehrkraft besitzt."
+    ],
+    [
+     "Regel",
+     "Ein Umschlag mit Schloss-Aufkleber Nr. X darf **nur** von der Person geöffnet werden, die die Schlüsselkarte X hat (Ehrenregel, Spielleitung kontrolliert). Mallory ist das **Postamt**: Sie sitzt in der Mitte, alle Umschläge und alle Schloss-Aufkleber (Bob → Alice) wandern durch ihre Hände."
+    ],
+    [
+     "Phase 1",
+     "Bob gibt offene Schloss-Aufkleber an das Postamt für Alice. Mallory darf Aufkleber durch eigene ersetzen (und „gehört Team Scheibe“ daraufschreiben). Alice klebt den erhaltenen Aufkleber auf den Umschlag. Mallory öffnet Umschläge mit ihren Schlössern, ändert den Auftrag, steckt ihn in einen neuen Umschlag mit Bobs echtem Schloss."
+    ],
+    [
+     "Phase 2",
+     "Trent **stempelt** jeden echten Schloss-Aufkleber mit dem Namen des Teams und seinem Stempel. Alice verwendet nur gestempelte Aufkleber mit dem richtigen Namen. Mallorys Aufkleber sind ungestempelt oder tragen ihren Namen."
+    ],
+    [
+     "Zeit",
+     "wie digital (9 + 9 + 7 min); Auswertung identisch"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Zuordnung der Beispiel-Teams** (anpassen an die Kursgröße):"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Paar",
+    "Alice-Team (sendet)",
+    "Bob-Team (empfängt)",
+    "Bobs Schloss/Schlüssel"
+   ],
+   "zentriert": true,
+   "breiten": [
+    1.6,
+    4.8,
+    4.8,
+    4.8
+   ],
+   "zeilen": [
+    [
+     "1",
+     "Team Polybios",
+     "Team Scheibe",
+     "23"
+    ],
+    [
+     "2",
+     "Team Kasiski",
+     "Team Skytale",
+     "27"
+    ],
+    [
+     "3",
+     "Team Enigma",
+     "Team Tafel",
+     "31"
+    ],
+    [
+     "–",
+     "–",
+     "Mallory-Team (Postamt)",
+     "41, 42 + leere Aufkleber"
+    ]
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "5 · Rollenkarten zum Ausschneiden"
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ROLLE · ALICE-TEAM",
+     "farbe": "0E7C86",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**Ihr sendet einen Auftrag** an euer Bob-Team. Ziel: Bob führt **genau euren** Auftrag aus."
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Zieht verdeckt eine Auftragskarte. Niemand außer euch und eurem Bob-Team darf sie kennen.",
+        "Fordert Bobs öffentlichen Schlüssel (Schloss-Nummer) beim Schlüsselverzeichnis an.",
+        "Verschlüsselt euren Auftrag damit und sendet ihn ab.",
+        "**Phase 2:** Verwendet nur Schlüssel mit **grün geprüftem Zertifikat** (Papier: Trents Stempel + richtiger Teamname)."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Ihr wisst nicht, wer sonst noch im Netz sitzt …*",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ROLLE · BOB-TEAM",
+     "farbe": "14213D",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**Ihr empfangt einen Auftrag** von eurem Alice-Team und führt ihn aus."
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Veröffentlicht eure Schloss-Nummer im Schlüsselverzeichnis (Papier: gebt einen offenen Schloss-Aufkleber ans Postamt).",
+        "Öffnet nur Umschläge mit **eurer** Nummer – die Schlüsselkarte bleibt bei euch.",
+        "Notiert den empfangenen Auftrag wörtlich und meldet ihn der Spielleitung.",
+        "**Phase 2:** Lasst euch von Trent ein Zertifikat ausstellen (Papier: Stempel auf euren Aufkleber)."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Eure Schlüsselkarte gebt ihr niemals aus der Hand.*",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "anteil": 0.5
+  },
+  {
+   "t": "abstand",
+   "pt": 10
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ROLLE · MALLORY-TEAM (POSTAMT)",
+     "farbe": "B3261E",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**Ihr sitzt zwischen allen Paaren.** Alle Nachrichten und alle Schlüssel laufen über euch. Ziel: Aufträge **unbemerkt** verändern (z. B. `TOR 3` → `TOR 8`)."
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Ersetzt Bobs Schloss-Nummer durch eure eigene (41, 42) – gern mit „gehört Team …“ daraufgeschrieben.",
+        "Öffnet Umschläge mit **euren** Schlössern, lest, ändert, verschließt neu mit **Bobs echtem** Schloss.",
+        "Leitet alles andere ganz normal weiter – niemand soll etwas merken.",
+        "**Phase 2:** Versucht es weiter: Schlüssel ohne Zertifikat, Zertifikat auf euren Namen, verändertes Zertifikat …"
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Ihr brecht kein Verfahren – ihr tauscht nur Schlüssel.*",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ROLLE · TRENT (LEHRKRAFT)",
+     "farbe": "8A5F1A",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**Du bist die Zertifizierungsstelle** – ab Phase 2."
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Prüfe die Identität jedes Bob-Teams persönlich (Teamname + Schlüsselnummer).",
+        "Stelle ein Zertifikat aus: `ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE` + dein Siegel (Papier: Stempel/Farbstift auf dem Schloss-Aufkleber).",
+        "Dein „öffentlicher Schlüssel“ ist bei allen Alice-Teams **vorinstalliert**: Sie kennen deinen Stempel.",
+        "Stelle **niemals** Mallory ein Zertifikat auf einen fremden Namen aus."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Du bestätigst die Zuordnung – nicht die Ehrlichkeit.*",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "anteil": 0.5
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "6 · Auftragskarten (Alice-Teams ziehen verdeckt)"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "mono": true,
+   "schrift": 14,
+   "breiten": [
+    8.0,
+    8.0
+   ],
+   "zeilen": [
+    [
+     "LIEFERE 5 KISTEN AN TOR 3",
+     "TREFFEN UM 14 UHR AM HAFEN"
+    ],
+    [
+     "ZAHLE 20 TALER AN TEAM SKYTALE",
+     "OEFFNE LAGER 7 UM 9 UHR"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Je Paar eine Karte; bei mehr als vier Paaren Karten doppelt drucken. Nur A–Z, 0–9 und Leerzeichen (wie im digitalen Funkraum).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "7 · Zahlen- und Textkarten (Papier-Variante)"
+  },
+  {
+   "t": "p",
+   "md": "**Schloss-Aufkleber** (auf Klebezettel übertragen oder ausschneiden und mit Klebestreifen fixieren) – je Bob-Team zwei Stück (Phase 1 und Phase 2), für Mallory eigene Schlösser 41/42 und leere Aufkleber; bei Bedarf mehrfach drucken:"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "mono": true,
+   "schrift": 13,
+   "breiten": [
+    4.0,
+    4.0,
+    4.0,
+    4.0
+   ],
+   "zeilen": [
+    [
+     "SCHLOSS 23",
+     "SCHLOSS 23",
+     "SCHLOSS 27",
+     "SCHLOSS 27"
+    ],
+    [
+     "SCHLOSS 31",
+     "SCHLOSS 31",
+     "SCHLOSS 41",
+     "SCHLOSS 42"
+    ],
+    [
+     "SCHLOSS ____",
+     "SCHLOSS ____",
+     "SCHLOSS ____",
+     "SCHLOSS ____"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Die Zeile „SCHLOSS ____“ sind die **leeren Aufkleber für Mallory**.",
+   "klein": true
+  },
+  {
+   "t": "p",
+   "md": "**Schlüsselkarten** (bleiben beim Besitzer):"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "mono": true,
+   "schrift": 10.5,
+   "breiten": [
+    3.2,
+    3.2,
+    3.2,
+    3.2,
+    3.2
+   ],
+   "zeilen": [
+    [
+     "SCHLÜSSEL 23",
+     "SCHLÜSSEL 27",
+     "SCHLÜSSEL 31",
+     "SCHLÜSSEL 41",
+     "SCHLÜSSEL 42"
+    ],
+    [
+     "Team Scheibe",
+     "Team Skytale",
+     "Team Tafel",
+     "Mallory",
+     "Mallory"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Zertifikatskarten für Trent** (Phase 2; nur echte Bob-Teams erhalten eine):"
+  },
+  {
+   "t": "tabelle",
+   "mono": true,
+   "schrift": 10.5,
+   "breiten": [
+    5.33,
+    5.33,
+    5.34
+   ],
+   "zeilen": [
+    [
+     "ZERTIFIKAT",
+     "ZERTIFIKAT",
+     "ZERTIFIKAT"
+    ],
+    [
+     "TEAM SCHEIBE · S23",
+     "TEAM SKYTALE · S27",
+     "TEAM TAFEL · S31"
+    ],
+    [
+     "GUELTIG HEUTE",
+     "GUELTIG HEUTE",
+     "GUELTIG HEUTE"
+    ],
+    [
+     "Siegel Trent: ________",
+     "Siegel Trent: ________",
+     "Siegel Trent: ________"
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "8 · Auflösung: Original und empfangen"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Paar",
+    "Original (Alice-Team)",
+    "empfangen (Bob-Team)",
+    "verändert?"
+   ],
+   "breiten": [
+    2.6,
+    5.5,
+    5.5,
+    2.4
+   ],
+   "zentriert": true,
+   "zeilen": [
+    [
+     "Phase 1 · 1",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ],
+    [
+     "Phase 1 · 2",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ],
+    [
+     "Phase 1 · 3",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ],
+    [
+     "Phase 2 · 1",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ],
+    [
+     "Phase 2 · 2",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ],
+    [
+     "Phase 2 · 3",
+     "",
+     "",
+     "☐ ja ☐ nein"
+    ]
+   ]
+  }
+ ]
+}

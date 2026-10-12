@@ -1,0 +1,1588 @@
+{
+ "typ": "praesentation",
+ "welt": 5,
+ "titel": "Das Netz",
+ "datei": "KR_W5_Praesentation_Das_Netz",
+ "folien": [
+  {
+   "layout": "titel",
+   "titel": "Das Netz",
+   "oberzeile": "WELT 5 · HEUTE · ÜBERALL",
+   "untertitel": "Wem kannst du trauen, wenn jeder alles fälschen kann?",
+   "notizen": "1 min. Begrüßung in der Gegenwart: Das Chronoskop ist im Netz gelandet. Neue Figur ankündigen: MALLORY, die aktive Angreiferin – Eve hört nur zu, Mallory fälscht, ändert, schiebt unter. Überblick über drei Doppelstunden: DS 14 Fingerabdrücke (Hash), DS 15 das Siegel (Signatur), DS 16 Mallory im Netz (Zertifikat, TLS, Datenschutz). Artefakt dieser Welt: das Siegel."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Die gefälschte Website",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "*E-Mail: „Wichtiges Sicherheitsupdate für Ihr Chronoskop! Jetzt herunterladen.“*"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "offizielle Seite",
+      "Datei aus der E-Mail"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      5.0,
+      5.0
+     ],
+     "schrift_folie": 17,
+     "zeilen": [
+      [
+       "Domain",
+       "`archiv.chronoskop.example`",
+       "`chronoskop-archiv.example`"
+      ],
+      [
+       "Datei",
+       "`chronoskop-update-v7.zip`",
+       "`chronoskop-update-v7.zip`"
+      ],
+      [
+       "SHA-256",
+       "`03a20cc0 … 0134dae7`",
+       "`03d0d355 … 8f2ad39e`"
+      ],
+      [
+       "Schloss",
+       "🔒 Zertifikat für `archiv.chronoskop.example`",
+       "🔒 Zertifikat für `chronoskop-archiv.example`"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Ist die Datei echt? Woran erkennt ihr das?**"
+    }
+   ],
+   "notizen": "10 min (Archivfund). Partnerarbeit, 3 min vergleichen lassen, dann Plenum. Erwartete Befunde: (1) Die Hashwerte stimmen nur in den ersten zwei Zeichen überein → die Datei ist verändert (winzige Änderung, völlig anderer Fingerabdruck = Lawineneffekt). (2) Der Domainname ist ein anderer (Buchstabendreher in der Reihenfolge der Wörter). (3) Auch die gefälschte Seite hat ein Schloss-Symbol – ein Zertifikat bestätigt nur, WEM der Schlüssel gehört, nicht, dass die Seite vertrauenswürdig ist (Falle P9). Impuls: „Was ist ein Fingerabdruck einer Datei? Was müsste er können?“ → Anforderungsliste an der Tafel sammeln (Folie 4). Leitfrage der Welt festhalten: „Was, wenn Mallory auch den Fingerabdruck auf der Seite fälscht?“ → Signatur (DS 15) und Zertifikat (DS 16). Prüfwerte: SHA-256 der Zeichenkette „chronoskop-update-v7.zip“ ohne bzw. mit angehängtem Leerzeichen (Stellvertreter für den Dateiinhalt)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Warm-up",
+   "sozialform": "Einzelarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lab → **Warm-up W5** – drei Karten, dann Kurzvergleich."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Doppelstunde",
+      "Karten",
+      "Themen"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.6,
+      4.6,
+      4.9
+     ],
+     "schrift_folie": 19,
+     "zeilen": [
+      [
+       "DS 14",
+       "WU-W5-01 · 10 · 12",
+       "Mini-Hash · Hybrid · Schlüsselanzahl"
+      ],
+      [
+       "DS 15",
+       "WU-W5-02 · 04 · 11",
+       "Wer siegelt womit? · Schutzziele · Vigenère"
+      ],
+      [
+       "DS 16",
+       "WU-W5-05 · 07 · 08",
+       "Zertifikat · TLS · Mallorys Trick"
+      ]
+     ]
+    }
+   ],
+   "notizen": "Je DS 10 min am Stundenanfang (§1 der Spezifikation). Karten als Papier: KR_W5_Warmup.docx (Lösungen auf der Rückseite in KR_W5_Warmup_LSG). Spiralförmig: W2 (Vigenère) und W4 (Hybrid, Schlüsselanzahl n(n − 1)/2 bzw. 2n). WU-W5-01: KH(„ja“) = 2 – die Rundenformel wird erst auf Folie 7 erklärt; in DS 14 deshalb die Karte nach Folie 7 lösen oder die Formel kurz vorgeben."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Was muss ein Fingerabdruck können?",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Anforderung",
+      "Bedeutung"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.6,
+      8.5
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "feste Länge",
+       "Hashwert immer gleich lang (SHA-256: 256 Bit = 64 Hexziffern)"
+      ],
+      [
+       "effizient berechenbar",
+       "auch für große Dateien schnell"
+      ],
+      [
+       "Einwegeigenschaft",
+       "zum Hashwert praktisch keine passende Nachricht findbar"
+      ],
+      [
+       "Kollisionsresistenz",
+       "praktisch keine zwei Nachrichten mit gleichem Hashwert findbar"
+      ],
+      [
+       "Lawineneffekt",
+       "ein Bit anders → etwa die Hälfte der Bits anders"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Eine **Hashfunktion** macht aus einer beliebig langen Nachricht einen **Hashwert fester Länge**.",
+     "klein": true
+    }
+   ],
+   "notizen": "5 min. Die Tafelliste aus dem Archivfund ordnen und den Fachbegriffen zuordnen (typische Schülerformulierungen: „immer gleich lang“, „man kann nicht zurückrechnen“, „zwei Dateien sollen nicht denselben haben“, „kleine Änderung, großer Unterschied“). Hinweis: Kollisionsresistenz heißt NICHT „es gibt keine Kollisionen“ (kommt auf Folie 8)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Lawineneffekt bei SHA-256",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "p",
+       "md": "„**heute**“ →"
+      },
+      {
+       "t": "geheimtext",
+       "text": "b748a919ad3e0a2ce7499df93f42e4a9babab9c7f28fff798b66b53466b4bc7e",
+       "gruppen": 8,
+       "groesse": 19
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "„**heutf**“ →"
+      },
+      {
+       "t": "geheimtext",
+       "text": "1751ffd9a4d1d9b3e14e3209a9fe839e516bf7a6000e14cf76b6f21e79bd0dc3",
+       "gruppen": 8,
+       "groesse": 19
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "Ein Buchstabe anders → **134 von 256 Bits** verschieden.",
+     "zentriert": true
+    }
+   ],
+   "notizen": "4 min. Live im Hash-Labor (Ansicht „Lawinen-Vergleich“) eintippen lassen: Das 256-Bit-Raster zeigt die verschiedenen Bits farbig. Erwartung ≈ 128 (die Hälfte) – hier 134. Bezug W3: Diffusion im Runden-Labor (eine kleine Änderung breitet sich über alle Runden aus). Schüler dürfen eigene Wortpaare testen (z. B. Namen mit Groß-/Kleinschreibung)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fingerabdrücke",
+   "nr": "P9",
+   "titel": "Hash ist keine Verschlüsselung",
+   "regel": "Ein Hashwert dient zum **Prüfen** (Integrität), nicht zum **Geheimhalten**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Ich speichere nur den Hash meines Tagebuchs – dann ist es **verschlüsselt**.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "liste",
+     "items": [
+      "kein Schlüssel",
+      "nicht umkehrbar",
+      "viele Nachrichten je Hashwert"
+     ]
+    },
+    {
+     "t": "p",
+     "md": "heute: **SHA-256**, SHA-3 · gebrochen: **MD5, SHA-1**",
+     "klein": true
+    }
+   ],
+   "notizen": "4 min. „Gebrochen“ heißt: Es wurden praktische Kollisionen veröffentlicht (MD5 ab 2004, SHA-1 im Jahr 2017). Für Passwörter: absichtlich langsame Verfahren mit Salz (Argon2, bcrypt, scrypt – nur nennen, Folie 11). Abitur: „Begründen Sie, dass sich eine Hashfunktion nicht zur Verschlüsselung eignet“ (vgl. 2024 NT c)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Der KRYPTOS-Hash",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "formel",
+       "md": "h ← (3 · h + w) mod 29"
+      },
+      {
+       "t": "p",
+       "md": "Start h = 0 · Nummerierung **A = 1 … Z = 26**",
+       "klein": true
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "breiten": [
+        2.2,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+       ],
+       "schrift_folie": 19,
+       "zeilen": [
+        [
+         "Buchstabe",
+         "`n`",
+         "`e`",
+         "`b`",
+         "`e`",
+         "`l`"
+        ],
+        [
+         "Wert w",
+         "14",
+         "5",
+         "2",
+         "5",
+         "12"
+        ],
+        [
+         "3 · h + w",
+         "14",
+         "47",
+         "56",
+         "86",
+         "96"
+        ],
+        [
+         "h",
+         "14",
+         "18",
+         "27",
+         "28",
+         "**9**"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "KH(„nebel“) = **9** · Tipp: 29, 58 oder 87 abziehen",
+       "klein": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "struktogramm",
+       "_breite": 470,
+       "kopf": "kryptosHash(text: Zeichenkette): Ganzzahl",
+       "elemente": [
+        {
+         "anw": "h ← 0"
+        },
+        {
+         "fuer": "i von 0 bis Länge(text) − 1",
+         "rumpf": [
+          {
+           "anw": "w ← ASCII-Wert(Zeichen an Position i von text) − 96"
+          },
+          {
+           "anw": "h ← (3 · h + w) mod 29"
+          }
+         ]
+        },
+        {
+         "gib": "h"
+        }
+       ]
+      }
+     ],
+     "anteil": 0.47
+    }
+   ],
+   "notizen": "8 min. Gemeinsam rechnen, Runde für Runde: n: 3 · 0 + 14 = 14; e: 3 · 14 + 5 = 47 → 18; b: 54 + 2 = 56 → 27; e: 81 + 5 = 86 → 28; l: 84 + 12 = 96 → 9. Rechentipp: 3 · h + w ist höchstens 110, also 29, 58 oder 87 abziehen – nach JEDER Runde reduzieren (P2). Normalisierung: nur a–z, Umlaute ersetzen, Ziffern entfallen (P4) → Zahlen in Aufgaben immer als Wort. Struktogramm: a = 1 über ASCII-Wert − 96 (Kleinbuchstaben). Danach Akte W5·1 Auftrag 1–2 (anker/tor: Kollision! kiste/kistf: kein Lawineneffekt). Der KRYPTOS-Hash ist ein Spielzeug-Hash – kein Abitur-Verfahren."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Kollision!",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Fach (Hashwert)",
+      "4",
+      "9",
+      "11",
+      "22"
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      2.9,
+      2.3,
+      2.3,
+      2.3,
+      2.3
+     ],
+     "hervor": [
+      [
+       0,
+       4
+      ]
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Nachrichten",
+       "hafen, eis, zoo, bear",
+       "nebel, nebfi",
+       "anker, tor",
+       "**heute, morgen**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Nur **29** mögliche Hashwerte, aber unendlich viele Nachrichten → **Schubfachprinzip**: Unter 30 Nachrichten haben sicher zwei denselben Hash."
+    },
+    {
+     "t": "p",
+     "md": "Jede Hashfunktion hat Kollisionen – gute machen sie **unauffindbar**."
+    }
+   ],
+   "notizen": "7 min. Hash-Labor „Kollisionssuche (Schubfach)“ am Beamer: Der Kurs ruft Wörter zu, jedes landet in seinem Fach 0 … 28; meist kracht es schon nach wenigen Wörtern (Geburtstagseffekt: bei 7 zufälligen Wörtern schon über 50 %). Spätestens beim 30. Wort ist eine Kollision sicher. Bei SHA-256 gibt es 2^256 Fächer – Kollisionen existieren, man findet sie aber nicht (≈ 2^128 Versuche)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Kollisionen bauen",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "KH = (9 · h + 3 · v + l) mod 29"
+    },
+    {
+     "t": "p",
+     "md": "v = vorletzter, l = letzter Buchstabe: **vorletzter +1, letzter −3** → 3 · 1 − 3 = 0, der Hash bleibt.",
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Zustände",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      2.6,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3
+     ],
+     "hervor": [
+      [
+       1,
+       4
+      ],
+      [
+       1,
+       5
+      ]
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "`nebel`",
+       "14",
+       "18",
+       "27",
+       "28",
+       "**9**"
+      ],
+      [
+       "`nebfi`",
+       "14",
+       "18",
+       "27",
+       "0",
+       "**9**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Folge: **keine Kollisionsresistenz**, **kein Lawineneffekt**, keine Einwegeigenschaft."
+    }
+   ],
+   "notizen": "8 min. Akte W5·1 Auftrag 3–4. Herleitung (eA): vorletzte Runde h1 = 3h + v, letzte Runde h2 = 3h1 + l = 9h + 3v + l. Mit v + 1 und l − 3 bleibt die Summe gleich (solange v + 1 ≤ 26 und l − 3 ≥ 1). Einwegeigenschaft verletzt: Zu jedem Ziel z und Anfang mit Zustand h wählt man den letzten Buchstaben w = (z − 3h) mod 29 – Beispiel „ab“ (h = 5), Ziel 20 → „abe“. Kollisionsbaukasten im Hash-Labor für Schnelle."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Prüfsummen",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "h",
+       "md": "Summe S(t) = (Σ w~i~) mod 29"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wort",
+        "S"
+       ],
+       "zentriert": true,
+       "breiten": [
+        2.2,
+        3.3
+       ],
+       "schrift_folie": 19,
+       "zeilen": [
+        [
+         "`rabe`",
+         "18 + 1 + 2 + 5 = **26**"
+        ],
+        [
+         "`bear`",
+         "2 + 5 + 1 + 18 = **26**"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "→ Vertauschung **unbemerkt** (permutationsinvariant)"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "h",
+       "md": "gewichtet G(t) = (Σ i · w~i~) mod 29"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wort",
+        "G"
+       ],
+       "zentriert": true,
+       "breiten": [
+        2.2,
+        3.3
+       ],
+       "schrift_folie": 19,
+       "zeilen": [
+        [
+         "`rabe`",
+         "46 → **17**"
+        ],
+        [
+         "`bear`",
+         "87 → **0**"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "→ Vertauschung **bemerkt**"
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "Auch der KRYPTOS-Hash bemerkt sie: KH(„rabe“) = 13, KH(„bear“) = 4.",
+     "zentriert": true,
+     "klein": true
+    }
+   ],
+   "notizen": "7 min. Akte W5·1 Auftrag 5. Fachwort permutationsinvariant: Die Summe hängt nicht von der Reihenfolge ab. Gewichtung nach Position (1, 2, 3, …) bzw. beim KRYPTOS-Hash mit Faktoren 3^j macht die Reihenfolge sichtbar. Wichtig: Prüfsummen schützen gegen ZUFÄLLIGE Fehler (Übertragung, Tippfehler), kryptografische Hashes gegen ANGREIFER (P5). Abitur-Bezug: Summe vs. Stellenwert (2025 NT f)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Passwörter speichern",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "p",
+       "md": "**1.**  **Registrierung:** zufälliges Salz erzeugen"
+      },
+      {
+       "t": "p",
+       "md": "**2.**  Hash(Salz + Passwort) und Salz speichern – **nie das Passwort**"
+      },
+      {
+       "t": "p",
+       "md": "**3.**  **Login:** Salz + Eingabe hashen"
+      },
+      {
+       "t": "p",
+       "md": "**4.**  mit dem gespeicherten Wert **vergleichen**"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Konto",
+        "Salz",
+        "KH(Salz + Passwort)"
+       ],
+       "zentriert": true,
+       "breiten": [
+        1.6,
+        1.3,
+        2.9
+       ],
+       "schrift_folie": 18,
+       "zeilen": [
+        [
+         "Ole",
+         "`qx`",
+         "13"
+        ],
+        [
+         "Kim",
+         "`kz`",
+         "11"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Beide: Passwort „sonne“ – man sieht es nicht.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Praxis: **Argon2, bcrypt** – langsam mit Absicht",
+       "klein": true
+      }
+     ],
+     "anteil": 0.55
+    }
+   ],
+   "notizen": "8 min. Akte W5·1 Auftrag 5–6. Ohne Salz: KH(„sonne“) = KH(„geheim“) = 0 → ein Angreifer kommt mit einem FALSCHEN Passwort hinein (Kollision) – echte Passwort-Hashes sind deshalb lang (256 Bit). Das Salz ist nicht geheim, macht aber vorab berechnete Tabellen („Rainbow Tables“) wertlos, und gleiche Passwörter sind nicht erkennbar. DSGVO-Bezug für DS 16 vorbereiten: Grundsatz „Integrität und Vertraulichkeit“. Abitur: Passwort-Hashing beschreiben (2024 NT h)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Fingerabdrücke",
+   "titel": "Level 5.1 · Fingerabdrücke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Hashwert = Fingerabdruck fester Länge.** Gute Hashfunktionen: einweg, kollisionsresistent, Lawineneffekt."
+    },
+    {
+     "t": "p",
+     "md": "**Kollisionen gibt es immer** (Schubfach) – gute Hashfunktionen machen sie unauffindbar."
+    },
+    {
+     "t": "p",
+     "md": "**Hash ≠ Verschlüsselung.** Passwörter nur **gesalzen gehasht** speichern."
+    }
+   ],
+   "notizen": "2 min. Sicherung, Abi-Check a) der Akte W5·1 gemeinsam. Hausaufgabe: Lab Level 5.1 und Abi-Check b)–d)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Das Siegel",
+   "titel": "Das Siegel",
+   "untertitel": "DS 15 · digitale Signatur, Schutzziele, signieren und verschlüsseln",
+   "notizen": "DS 15. Artefakt dieser Welt: das Siegel. Warm-up: WU-W5-02, -04, -11 (Folie 3)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Mallory rechnet mit",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "M",
+         "name": "Mallory",
+         "unter": "Angreiferin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "_W": 760,
+       "_gr": 22,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "M",
+         "text": "Datei + Hashwert"
+        },
+        {
+         "nr": 2,
+         "von": "M",
+         "nach": "M",
+         "text": "ändert die Datei und berechnet den neuen Hashwert"
+        },
+        {
+         "nr": 3,
+         "von": "M",
+         "nach": "B",
+         "text": "gefälschte Datei + neuer Hashwert"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "B",
+         "text": "Hashwert berechnen und vergleichen: passt!"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "Bob vergleicht – **alles passt**."
+      },
+      {
+       "t": "p",
+       "md": "Der mitgeschickte Hashwert schützt nur gegen **zufällige** Fehler."
+      },
+      {
+       "t": "p",
+       "md": "**Was fehlt?**"
+      }
+     ],
+     "anteil": 0.64
+    }
+   ],
+   "notizen": "10 min Einstieg. Impuls: „Mallory ändert die Datei – und berechnet einfach den neuen Hashwert mit. Was nun?“ Erwartet: „Nur Alice darf den Fingerabdruck erzeugen können“ / „Den Hashwert müsste man verschlüsseln.“ → Das Schlüsselpaar aus W4 in umgekehrter Rolle: Nur Alice besitzt den privaten Schlüssel, jeder kann mit dem öffentlichen prüfen. Bild: das Siegel einer Kanzlei – nur sie hat den Siegelring."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Signatur erstellen",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "_W": 760,
+       "_gr": 24,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "A",
+         "text": "Nachricht → Hashfunktion → Hashwert"
+        },
+        {
+         "nr": 2,
+         "von": "A",
+         "nach": "A",
+         "text": "Hashwert verschlüsseln mit privatem Schlüssel von Alice → Signatur"
+        },
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "B",
+         "text": "Nachricht + Signatur"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**1.**  Hashwert der Nachricht berechnen"
+      },
+      {
+       "t": "p",
+       "md": "**2.**  Hashwert mit **Alices privatem Schlüssel** verschlüsseln = **Signatur**"
+      },
+      {
+       "t": "p",
+       "md": "**3.**  Nachricht + Signatur senden"
+      }
+     ],
+     "anteil": 0.55
+    }
+   ],
+   "notizen": "8 min. Schaubild mit nummerierten Pfeilen an der Tafel entwickeln – genau wie im Abitur. Immer Schlüsselart UND Inhaber nennen („privater Schlüssel von Alice“, nicht nur „privater Schlüssel“). Warum der Hashwert und nicht die ganze Nachricht? Kurz, feste Länge, schnell zu verschlüsseln. Die Nachricht selbst bleibt lesbar!"
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Signatur prüfen",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "_W": 760,
+       "_gr": 24,
+       "schritte": [
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "B",
+         "text": "Nachricht + Signatur"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "B",
+         "text": "Nachricht → Hashfunktion → H₁"
+        },
+        {
+         "nr": 5,
+         "von": "B",
+         "nach": "B",
+         "text": "Signatur entschlüsseln mit öffentlichem Schlüssel von Alice → H₂"
+        },
+        {
+         "nr": 6,
+         "von": "B",
+         "nach": "B",
+         "text": "H₁ = H₂? → gültig"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**4**  Bob: Hashwert H~1~ der **empfangenen** Nachricht"
+      },
+      {
+       "t": "p",
+       "md": "**5**  Signatur mit **Alices öffentlichem Schlüssel** entschlüsseln → H~2~"
+      },
+      {
+       "t": "p",
+       "md": "**6**  **H~1~ = H~2~?** gleich → gültig, sonst ungültig"
+      }
+     ],
+     "anteil": 0.55
+    }
+   ],
+   "notizen": "12 min. Signatur-Simulator: Alice signiert, Bob prüft – dann ändert Mallory ein Zeichen → H1 ≠ H2 → ungültig. Weitere Knöpfe: Signatur ändern, neuen Hashwert statt Signatur senden, mit Mallorys privatem Schlüssel signieren → jeweils ungültig. Akte W5·2 Auftrag 1–2 in Partnerarbeit (Replay in Auftrag 2d: bleibt gültig → Zeitstempel/Nummer mitsignieren). Falle P9: der Vergleich in ⑥ wird oft vergessen."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Schutzziele",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schutzziel",
+      "Bedeutung",
+      "durch Signatur?"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.4,
+      5.4,
+      3.3
+     ],
+     "schrift_folie": 21,
+     "zeilen": [
+      [
+       "Vertraulichkeit",
+       "nur Befugte können lesen",
+       "✗ – nur durch Verschlüsselung"
+      ],
+      [
+       "Integrität",
+       "unverändert",
+       "✓"
+      ],
+      [
+       "Authentizität",
+       "echter Absender",
+       "✓"
+      ],
+      [
+       "Verbindlichkeit",
+       "nicht abstreitbar",
+       "✓"
+      ]
+     ]
+    }
+   ],
+   "notizen": "10 min. Akte W5·2 Auftrag 4 (Tabelle ✓/✗ für „nur verschlüsseln“, „nur signieren“, „beides“). Merkhilfen: „integer“ = unversehrt, „authentisch“ = echt. Verbindlichkeit ist Ergänzung (KC nennt drei Schutzziele). Falle P10: Schutzziele nicht nur aufzählen, sondern am Szenario erläutern."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Signieren und verschlüsseln",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "_W": 820,
+       "_gr": 23,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "A",
+         "text": "Hash signieren mit privatem Schlüssel von Alice"
+        },
+        {
+         "nr": 2,
+         "von": "A",
+         "nach": "A",
+         "text": "Nachricht + Signatur hybrid verschlüsseln (k mit öffentl. Schlüssel von Bob)"
+        },
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "B",
+         "text": "Geheimtext + verschlüsselter k"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "B",
+         "text": "k entschlüsseln mit privatem Schlüssel von Bob, dann Nachricht + Signatur"
+        },
+        {
+         "nr": 5,
+         "von": "B",
+         "nach": "B",
+         "text": "Signatur prüfen mit öffentlichem Schlüssel von Alice"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Jedes Schlüsselpaar hat genau eine Aufgabe:**"
+      },
+      {
+       "t": "p",
+       "md": "▪  Alices Paar → **Signatur**"
+      },
+      {
+       "t": "p",
+       "md": "▪  Bobs Paar → **Vertraulichkeit**"
+      },
+      {
+       "t": "p",
+       "md": "Bob macht alles in **umgekehrter Reihenfolge** rückgängig (P3).",
+       "klein": true
+      }
+     ],
+     "anteil": 0.6
+    }
+   ],
+   "notizen": "15 min mit Akte W5·2 Auftrag 5 (Lückenschaubild (1)–(4) zuerst ohne Archivwissen). Alice: signieren mit privatem Schlüssel von Alice, dann hybrid verschlüsseln (Sitzungsschlüssel mit öffentlichem Schlüssel von Bob). Bob: entschlüsseln mit privatem Schlüssel von Bob, prüfen mit öffentlichem Schlüssel von Alice. Erst signieren, dann verschlüsseln: Die Signatur bezieht sich auf den Klartext und ist für Mallory unsichtbar. Merksatz: Vertraulichkeit → Schlüssel des Empfängers · Signatur → Schlüssel der Absenderin. Abitur: V + I + A gleichzeitig (2024 NT g)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Das Siegel",
+   "titel": "Zwei Euro oder tausend?",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Nachricht",
+      "KH",
+      "Signatur",
+      "Bob prüft"
+     ],
+     "zentriert": true,
+     "breiten": [
+      5.2,
+      1.4,
+      2.6,
+      2.9
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Alice: „ueberweise zwei euro“",
+       "18",
+       "s von Alice",
+       "gültig"
+      ],
+      [
+       "Mallory: „ueberweise tausend euro“",
+       "18",
+       "**dieselbe** s",
+       "**gültig!**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Mallory braucht Alices privaten Schlüssel **nicht** – die alte Signatur passt zum gleichen Hashwert."
+    },
+    {
+     "t": "p",
+     "md": "**Eine Signatur ist nur so stark wie die Kollisionsresistenz der Hashfunktion.**"
+    }
+   ],
+   "notizen": "15 min. Signatur-Simulator, Modus „schwacher Hash“, Knopf „Kollision einsetzen“. Ergänzung mit RSA-Zahlen (nur wenn W4.2 RSA gerechnet wurde): Alice (55, 3)/(55, 27), s = 18^27 mod 55 = 17, Bob prüft 17^3 mod 55 = 18 = KH beider Nachrichten → gültig. Akte W5·2 Auftrag 3 (treffen um fuenf/zehn uhr, KH 8, s = 2). Folge für die Praxis: Signaturen nur mit kollisionsresistenten Hashes (SHA-256), MD5 und SHA-1 sind für Signaturen nicht mehr zulässig. Zahlen in Nachrichten immer als Wort – Ziffern entfallen beim Normalisieren."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Das Siegel",
+   "nr": "P9",
+   "titel": "Schlüsselrollen",
+   "regel": "Signatur → Schlüssel der **Absenderin** · Vertraulichkeit → Schlüssel des **Empfängers**",
+   "falsch": [
+    {
+     "t": "liste",
+     "items": [
+      "„Alice signiert mit Bobs öffentlichem Schlüssel.“",
+      "„Bob prüft, indem er die Signatur entschlüsselt.“"
+     ]
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "▪  Alice signiert mit **ihrem privaten** Schlüssel."
+    },
+    {
+     "t": "p",
+     "md": "▪  Bob entschlüsselt **und vergleicht** H~1~ mit H~2~."
+    }
+   ],
+   "notizen": "2 min. Häufigster Punktverlust bei Schaubildern im Abitur: Schlüssel ohne Inhaber, Bobs statt Alices Schlüssel, fehlender Vergleich. Gegenmittel: Schaubilder immer mit Schlüsselart + Inhaber beschriften lassen."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Das Siegel",
+   "titel": "Level 5.2 · Das Siegel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Signieren:** Hashwert mit dem **privaten** Schlüssel der Absenderin verschlüsseln."
+    },
+    {
+     "t": "p",
+     "md": "**Prüfen:** Hash selbst berechnen, Signatur mit ihrem **öffentlichen** Schlüssel entschlüsseln, **vergleichen**."
+    },
+    {
+     "t": "p",
+     "md": "Signatur → Integrität, Authentizität, Verbindlichkeit. **Vertraulichkeit nur durch Verschlüsselung.**"
+    }
+   ],
+   "notizen": "2 min. Hausaufgabe: Lab Level 5.2 und Abi-Check der Akte W5·2."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Mallory im Netz",
+   "untertitel": "DS 16 · Man-in-the-Middle, Zertifikate, TLS, Datenschutz",
+   "notizen": "DS 16. Warm-up: WU-W5-05, -07, -08 (Folie 3). Danach direkt in den Funkraum."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Funkraum: Mallory im Netz",
+   "qr": "https://kryptos.frankjuchim.de/funkraum",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Rolle",
+      "Aufgabe"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.0,
+      6.3
+     ],
+     "schrift_folie": 16,
+     "zeilen": [
+      [
+       "Alice-Teams",
+       "senden einen geheimen Auftrag"
+      ],
+      [
+       "Bob-Teams",
+       "führen den Auftrag aus"
+      ],
+      [
+       "Mallory-Team",
+       "Postamt – sitzt zwischen allen"
+      ],
+      [
+       "Trent",
+       "Lehrkraft – siegelt Schlüssel"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Phase 1:** ohne Zertifikate · **Phase 2:** Trent siegelt Schlüssel"
+    }
+   ],
+   "notizen": "25 min, Ablauf und Rollenkarten in KR_W5_Funkraum_Mallory_im_Netz.docx (Werkzeuge/Funkraum). Phase 1 (9 min): Bob-Teams veröffentlichen Schlüsselnummern – das Verzeichnis liefert Mallorys Station aus; Mallory ersetzt Schlüssel, öffnet, ändert (z. B. TOR 3 → TOR 8), verschließt neu mit Bobs echtem Schlüssel. Auflösung: Original vs. empfangen. Phase 2 (9 min): Trent stellt Zertifikate aus (ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE), Alice nutzt nur grün geprüfte Schlüssel – Mallory fällt auf. Papier-Variante mit Umschlägen, Schloss-Aufklebern und Stempel. Keine Punkte, Abzeichen „Funkraum-Veteran“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Was ist passiert?",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "M",
+         "name": "Mallory",
+         "unter": "Angreiferin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "_W": 900,
+       "_gr": 23,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "B",
+         "nach": "M",
+         "text": "Bobs öffentlicher Schlüssel"
+        },
+        {
+         "nr": 2,
+         "von": "M",
+         "nach": "A",
+         "text": "Mallorys öffentlicher Schlüssel als „Bobs“"
+        },
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "M",
+         "text": "verschlüsselt mit Mallorys öffentlichem Schlüssel"
+        },
+        {
+         "nr": 4,
+         "von": "M",
+         "nach": "M",
+         "text": "entschlüsselt mit privatem Schlüssel von Mallory, liest, ändert"
+        },
+        {
+         "nr": 5,
+         "von": "M",
+         "nach": "B",
+         "text": "verschlüsselt mit Bobs öffentlichem Schlüssel"
+        },
+        {
+         "nr": 6,
+         "von": "B",
+         "nach": "B",
+         "text": "entschlüsselt – merkt nichts"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "▪  Mallory hat **kein Verfahren** gebrochen – sie hat Schlüssel **vertauscht**."
+      },
+      {
+       "t": "p",
+       "md": "▪  gebrochen: Vertraulichkeit, Integrität, Authentizität"
+      },
+      {
+       "t": "p",
+       "md": "▪  Rettung: Eine **dritte Stelle** bestätigt, wem ein Schlüssel gehört."
+      }
+     ],
+     "anteil": 0.64
+    }
+   ],
+   "notizen": "7 min Auswertung des Funkraums. Fragen: Was hat Mallory in Phase 1 gebrochen? (kein Verfahren – die Zuordnung Schlüssel ↔ Person) · Welche Schutzziele waren verletzt? · Was leistet Trent, was nicht? (bestätigt die Zuordnung; garantiert nicht, dass Bob ehrlich ist) · Was wäre, wenn Mallory Trents Siegel stehlen oder einen eigenen „Trent“ installieren könnte? (Vertrauensanker = Achillesferse). Bezug W4: Auch Diffie-Hellman ohne Prüfung ist so angreifbar (Akte W5·3 Auftrag 7, eA). Akte W5·3 Auftrag 1."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Trent siegelt Bobs Schlüssel",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        },
+        {
+         "id": "T",
+         "name": "Trent",
+         "unter": "Zertifizierungsstelle (CA)"
+        }
+       ],
+       "_W": 900,
+       "_gr": 23,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "B",
+         "nach": "T",
+         "text": "Antrag: Name + Bobs öffentlicher Schlüssel"
+        },
+        {
+         "nr": 2,
+         "von": "T",
+         "nach": "T",
+         "text": "prüft Identität, signiert mit privatem Schlüssel von Trent"
+        },
+        {
+         "nr": 3,
+         "von": "T",
+         "nach": "B",
+         "text": "Zertifikat"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "A",
+         "text": "Zertifikat"
+        },
+        {
+         "nr": 5,
+         "von": "A",
+         "nach": "A",
+         "text": "prüft mit öffentlichem Schlüssel von Trent (vorinstalliert)"
+        },
+        {
+         "nr": 6,
+         "von": "A",
+         "nach": "B",
+         "text": "verschlüsselt mit Bobs Schlüssel"
+        }
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Zertifikat** = Name + öffentlicher Schlüssel + Gültigkeit, **signiert von der CA**."
+      },
+      {
+       "t": "p",
+       "md": "Alice prüft mit **Trents öffentlichem Schlüssel** – der ist vorinstalliert."
+      }
+     ],
+     "anteil": 0.62
+    }
+   ],
+   "notizen": "5 min. Das Funkraum-Erlebnis als Schaubild mit nummerierten Pfeilen: Antrag ①, Identitätsprüfung und Signatur der CA ②, Ausgabe ③, Vorlage beim Verbindungsaufbau ④, Prüfung bei Alice ⑤, dann erst verschlüsseln ⑥. Eine Signatur wird immer mit dem öffentlichen Schlüssel dessen geprüft, der sie erstellt hat. Lückenfassung: Akte W5·3, Archivwissen 2 / Auftrag 3a. Abitur: Zertifikate gegen gefälschte öffentliche Schlüssel (2022 E c, gA 2023 E b, gA 2025 NT f)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Das Zertifikat",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "breiten": [
+        2.6,
+        3.6
+       ],
+       "schrift_folie": 15,
+       "zeilen": [
+        [
+         "Inhaber",
+         "`bank-chronopolis.example`"
+        ],
+        [
+         "öffentl. Schlüssel",
+         "RSA 2048 Bit, `30 82 01 0A …`"
+        ],
+        [
+         "Aussteller",
+         "Chronopolis CA"
+        ],
+        [
+         "gültig",
+         "01.09.2026 – 15.03.2027"
+        ],
+        [
+         "Signatur der CA",
+         "Hashwert aller Angaben, verschlüsselt mit dem privaten Schlüssel der CA"
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Prüfung im Browser:**"
+      },
+      {
+       "t": "p",
+       "md": "**1.**  Signatur mit dem **öffentlichen Schlüssel der CA**"
+      },
+      {
+       "t": "p",
+       "md": "**2.**  Name = aufgerufene Domain?"
+      },
+      {
+       "t": "p",
+       "md": "**3.**  heute gültig?"
+      },
+      {
+       "t": "p",
+       "md": "**4.**  nicht widerrufen?"
+      }
+     ],
+     "anteil": 0.52
+    }
+   ],
+   "notizen": "8 min. Live ein echtes Zertifikat im Browser anzeigen (Schloss → Verbindung sicher → Zertifikat) und die Felder suchen lassen: Inhaber (Common Name/Subject Alternative Name), Aussteller, Gültigkeit, öffentlicher Schlüssel, Signaturalgorithmus (z. B. sha256WithRSAEncryption – Hash + Signatur!). Private Schlüssel stehen NIE im Zertifikat. Akte W5·3 Auftrag 2 (drei Zertifikate Z1–Z3)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Kette und Vertrauensanker",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "breiten": [
+      3.2,
+      1.0,
+      3.2,
+      1.0,
+      3.7
+     ],
+     "schrift_folie": 19,
+     "zeilen": [
+      [
+       "**Trent Root CA**",
+       "→",
+       "**Chronopolis CA**",
+       "→",
+       "`bank-chronopolis.example`"
+      ],
+      [
+       "Wurzelzertifikat · im Browser **vorinstalliert**",
+       "signiert",
+       "Zwischenzertifikat",
+       "signiert",
+       "Serverzertifikat"
+      ]
+     ]
+    },
+    {
+     "t": "abstand",
+     "pt": 8
+    },
+    {
+     "t": "p",
+     "md": "▪  Ein Zertifikat bestätigt, **wem** der Schlüssel gehört – nicht, dass die Seite harmlos ist (P9)."
+    },
+    {
+     "t": "p",
+     "md": "▪  Alternative ohne zentrale CA: **Web of Trust** (z. B. OpenPGP)."
+    }
+   ],
+   "notizen": "6 min. Prüfung von rechts nach links: Serverzertifikat mit dem öffentlichen Schlüssel der Chronopolis CA, Zwischenzertifikat mit dem öffentlichen Schlüssel der Trent Root CA; die Wurzel ist als Vertrauensanker vorinstalliert – irgendwem muss man ohne Prüfung vertrauen. Archivfund aufgreifen: Auch chronoskop-archiv.example hatte ein Schloss (P9). Selbst signiertes Zertifikat → Browser warnt. Gestohlener privater Schlüssel → nur Widerruf hilft. Akte W5·3 Auftrag 3."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "TLS im Überblick",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Schritt",
+      "Verfahren"
+     ],
+     "zentriert": false,
+     "breiten": [
+      0.7,
+      7.7,
+      3.7
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "1",
+       "Browser: Hallo + unterstützte Verfahren",
+       "–"
+      ],
+      [
+       "2",
+       "Server schickt sein Zertifikat (mit Kette)",
+       "–"
+      ],
+      [
+       "3",
+       "Prüfung bis zum Vertrauensanker, Name, Gültigkeit",
+       "Signaturen prüfen"
+      ],
+      [
+       "4",
+       "Sitzungsschlüssel vereinbaren",
+       "**asymmetrisch**"
+      ],
+      [
+       "5",
+       "alle Daten verschlüsseln",
+       "**symmetrisch** (z. B. AES)"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**TLS = Zertifikatsprüfung + Hybridverfahren**",
+     "zentriert": true
+    }
+   ],
+   "notizen": "6 min. Akte W5·3 Auftrag 4 (Kärtchen ordnen). Warum Zertifikat VOR der Schlüsselvereinbarung? Sonst vereinbart der Browser womöglich einen Schlüssel mit Mallory. Heute (TLS 1.3): Diffie-Hellman, der Server signiert seinen Teil mit dem Schlüssel aus dem Zertifikat; technisch laufen Zertifikatsversand und Schlüsselvereinbarung fast gleichzeitig – im Schulmodell genügt diese Reihenfolge. Schloss-Symbol = verschlüsselt mit dem Inhaber des Zertifikats, nicht „diese Seite ist harmlos“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Datenschutz: die DSGVO",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Grundsatz (Art. 5 DSGVO)",
+      "Kurzform"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      5.0,
+      7.1
+     ],
+     "schrift_folie": 18,
+     "zeilen": [
+      [
+       "Rechtmäßigkeit, Treu und Glauben, Transparenz",
+       "Rechtsgrundlage, nachvollziehbar"
+      ],
+      [
+       "Zweckbindung",
+       "nur für festgelegte Zwecke"
+      ],
+      [
+       "Datenminimierung",
+       "nur so viel wie nötig"
+      ],
+      [
+       "Richtigkeit",
+       "falsche Daten berichtigen"
+      ],
+      [
+       "Speicherbegrenzung",
+       "nur so lange wie nötig"
+      ],
+      [
+       "Integrität und Vertraulichkeit",
+       "Verschlüsselung, Zugriffsschutz, Passwort-Hashing"
+      ],
+      [
+       "Rechenschaftspflicht",
+       "Einhaltung nachweisen"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Recht auf **informationelle Selbstbestimmung** (BVerfG 1983) · DSGVO seit 25. Mai 2018",
+     "klein": true
+    }
+   ],
+   "notizen": "6 min. Fallkarten aus Akte W5·3 Auftrag 5 (Messenger „Funkspruch“). Informationelle Selbstbestimmung: Volkszählungsurteil des Bundesverfassungsgerichts 1983 – jede und jeder bestimmt grundsätzlich selbst über Preisgabe und Verwendung der eigenen Daten. Betroffenenrechte: Auskunft, Berichtigung, Löschung, Widerspruch. Brücke zur Kryptologie: Verschlüsselung und gesalzene Passwort-Hashes sind technische Maßnahmen für „Integrität und Vertraulichkeit“. Abitur: DSGVO-Grundsätze nennen (2024 NT i)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Scannen vor dem Verschlüsseln?",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "h",
+       "md": "Argumente dafür"
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Schutz von Opfern schwerer Straftaten",
+        "Ermittlungen dürfen nicht durch Technik verschwinden",
+        "Verantwortung der Anbieter"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "h",
+       "md": "Argumente dagegen"
+      },
+      {
+       "t": "liste",
+       "items": [
+        "anlassloses Durchsuchen aller Nachrichten",
+        "Fehlalarme treffen Unschuldige",
+        "Missbrauch der Prüffunktion",
+        "Vertraulichkeit untergraben"
+       ]
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "md": "Erörtern heißt: beide Seiten abwägen, **eigenes begründetes Urteil**.",
+     "zentriert": true,
+     "klein": true
+    }
+   ],
+   "notizen": "4 min, Erörterung als Hausaufgabe (Akte W5·3 Auftrag 6). Neutral moderieren, beide Seiten gleich gewichten, keine eigene Position vorgeben – bewertet wird die Qualität der Argumentation (P10), jede begründete Position ist zulässig. Sachverhalt: Die EU diskutiert seit 2022 eine Verordnung zur Bekämpfung von Darstellungen sexuellen Kindesmissbrauchs, die Anbieter zum Durchsuchen von Nachrichten verpflichten könnte – auch vor der Ende-zu-Ende-Verschlüsselung auf dem Gerät („Client-Side-Scanning“, umgangssprachlich „Chatkontrolle“). Fachlich: Das Verfahren wird nicht gebrochen, die Prüfung setzt vor der Verschlüsselung an. Historischer Bezug: „Crypto Wars“ der 1990er-Jahre. AKTUELLEN STAND DER EU-GESETZGEBUNG VOR DER STUNDE PRÜFEN und die Folie ggf. anpassen."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Mallory im Netz",
+   "titel": "Boss: Das Siegel der Stadt",
+   "sozialform": "Einzelarbeit",
+   "zeit": "25 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lab → Welt 5 → **Boss** · ohne Werkzeuge"
+    },
+    {
+     "t": "p",
+     "md": "Mallory will das Siegel der Stadt fälschen. Ab **50 %** gehört das Artefakt **„Siegel“** dir."
+    },
+    {
+     "t": "p",
+     "md": "*Ausblick: Welt 6 – die Zeitmaschine und Eves eigene Chiffre.*",
+     "klein": true
+    }
+   ],
+   "notizen": "25 min. Boss online: 15 Aufgaben im Pool (5 × ★, 6 × ★★, 4 × ★★★), fremde Verfahren Produkt-Hash, Tausch-Siegel, Kurz-Signatur. gA ohne W5-B-15. Papier-Boss „Der Messenger“ (KR_W5_Boss5_Messenger, 24 BE, 60 min) als Hausaufgabe oder Übungsklausur, Erwartungshorizont in 5_Loesungen."
+  }
+ ]
+}

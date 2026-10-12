@@ -1,0 +1,589 @@
+{
+ "typ": "akte",
+ "welt": 0,
+ "kennung": "AKTE W0·4",
+ "titel": "Fremde Chiffre I: Die Fackelchiffre",
+ "ds": "3",
+ "niveau": "kern",
+ "level": "0.4",
+ "datei": "KR_W0_Akte4_Fremde_Chiffre_I",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Im Archiv liegt ein Bericht des Geschichtsschreibers Polybios über Fackelsignale, mit denen man Buchstaben über weite Entfernungen übermitteln konnte. Daneben ein Zettel eines unbekannten Schreibers: Er hat das Fackelquadrat mit einem uralten Spiegeltrick kombiniert und hält das Ergebnis für unknackbar. Im Abitur bekommst du genau so etwas vorgelegt: ein Verfahren, das du noch nie gesehen hast. Heute lernst du die Methode, mit der du jedes fremde Verfahren in den Griff bekommst."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Das Polybios-Quadrat",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "25 Buchstaben in einem 5 × 5-Quadrat; **I und J teilen sich ein Feld**. Jeder Buchstabe wird durch **Zeilennummer, dann Spaltennummer** ersetzt."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Standardquadrat**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E"
+        ],
+        [
+         "F",
+         "G",
+         "H",
+         "I/J",
+         "K"
+        ],
+        [
+         "L",
+         "M",
+         "N",
+         "O",
+         "P"
+        ],
+        [
+         "Q",
+         "R",
+         "S",
+         "T",
+         "U"
+        ],
+        [
+         "V",
+         "W",
+         "X",
+         "Y",
+         "Z"
+        ]
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "zellbreite": 0.9,
+       "schrift": 11
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* `olympia` → **34 31 54 32 35 24 11**",
+       "zentriert": true,
+       "klein": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Mit Schlüsselwort ATHEN**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         "A",
+         "T",
+         "H",
+         "E",
+         "N"
+        ],
+        [
+         "B",
+         "C",
+         "D",
+         "F",
+         "G"
+        ],
+        [
+         "I/J",
+         "K",
+         "L",
+         "M",
+         "O"
+        ],
+        [
+         "P",
+         "Q",
+         "R",
+         "S",
+         "U"
+        ],
+        [
+         "V",
+         "W",
+         "X",
+         "Y",
+         "Z"
+        ]
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "zellbreite": 0.9,
+       "schrift": 11
+      },
+      {
+       "t": "p",
+       "md": "erst das Schlüsselwort (jeder Buchstabe nur einmal, J als I), dann der Rest des Alphabets",
+       "zentriert": true,
+       "klein": true
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Ohne Schlüsselwort ist das Polybios-Quadrat eine öffentliche **Codierung**; erst das geheime Schlüsselwort macht es zur **Verschlüsselung**."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Atbash",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das Alphabet wird gespiegelt: A ↔ Z, B ↔ Y, C ↔ X, … , M ↔ N. Nummerierung: A = 1 … Z = 26 → **c = 27 − p**."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1,
+     "zeilen": [
+      {
+       "label": "Atbash",
+       "werte": "ZYXWVUTSRQPONMLKJIHGFEDCBA"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel:* `caesar` → **XZVHZI**. Atbash hat **keinen Schlüssel**; zweimal angewendet ergibt es den Klartext (**involutorisch**)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Die 5-Schritte-Methode für fremde Chiffren (Werkzeugkarte WK2)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Lesen und nachrechnen:** Material genau lesen, das Beispiel selbst nachrechnen (Nummerierung? Leserichtung? Füllzeichen? Sonderregeln wie I = J?).",
+      "**Anwenden:** Regeln abhaken, sauber notieren.",
+      "**Umkehren:** Entschlüsseln = alle Schritte **rückwärts in umgekehrter Reihenfolge**, jeden Schritt umkehren (P3).",
+      "**Einordnen:** je Stufe Transposition oder Substitution? Insgesamt mono- oder polyalphabetisch? (Kriterium: Wird derselbe Klartextbuchstabe immer gleich ersetzt?) Symmetrisch?",
+      "**Beurteilen:** Schlüsselraum/Brute Force · Häufigkeitsanalyse · schwache Schlüssel · Mehrfachanwendung · Known-Plaintext · Kerckhoffs → **Urteil formulieren** (P10)."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "MATERIAL · DIE FACKELCHIFFRE (FREMDES VERFAHREN)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Schlüssel: ein Schlüsselwort. Nummerierung: A = 1 … Z = 26."
+    },
+    {
+     "t": "p",
+     "md": "**Stufe 1:** Jeder Klartextbuchstabe wird mit Atbash ersetzt (c = 27 − p)."
+    },
+    {
+     "t": "p",
+     "md": "**Stufe 2:** Jeder Buchstabe des Zwischentextes wird durch sein Ziffernpaar (Zeile, Spalte) im Polybios-Quadrat zum Schlüsselwort ersetzt (I = J). Die Ziffernpaare werden durch Leerzeichen getrennt."
+    },
+    {
+     "t": "p",
+     "md": "**Beispiel** (Schlüsselwort ATHEN): `feuer` → Stufe 1: `uvfvi` → Stufe 2: **45 51 24 51 31**"
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P3",
+   "titel": "Umkehren in umgekehrter Reihenfolge",
+   "md": "Wer mehrstufig verschlüsselt hat, muss beim Entschlüsseln mit der **letzten** Stufe beginnen. Bei der Fackelchiffre heißt das: erst die Ziffernpaare im Quadrat zurück in Buchstaben, dann Atbash."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Schritt 1: Nachrechnen",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Rechne** das Beispiel des Materials Buchstabe für Buchstabe **nach** (Zwischentext und Ziffernpaare)."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "Klartext",
+       "f",
+       "e",
+       "u",
+       "e",
+       "r"
+      ],
+      [
+       "p",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "27 − p",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zwischentext",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Ziffernpaar (ATHEN)",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      4.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+     ],
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "f (6) → 21 = u → 45; e (5) → 22 = v → 51; u (21) → 6 = f → 24; e → v → 51; r (18) → 9 = i → 31."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Übung Polybios",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Standardquadrat: a) **Verschlüssele** `legion`. b) **Entschlüssele** `33 15 43 44 34 42`."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **31 15 22 24 34 33** · b) **nestor**"
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 1,
+   "titel": "Übung Atbash",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** `mauer` mit Atbash und **entschlüssele** das Ergebnis wieder."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**NZFVI**, zurück: `mauer` (Atbash ist involutorisch)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Schritt 2: Anwenden",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** mit der Fackelchiffre (Schlüsselwort ATHEN): `hilfe`"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Atbash `hilfe` → `srouv` → **44 43 35 45 51**."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Schritt 3: Umkehren",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 **Entschlüssele** (Schlüsselwort ATHEN): `13 43 12 34 55 35`. Notiere, in welcher Reihenfolge du die Stufen umkehrst."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Reihenfolge umkehren: erst Stufe 2 zurück (Ziffernpaare → Buchstaben im ATHEN-Quadrat): `hrtmzo`, dann Stufe 1 zurück (Atbash): **signal**."
+    },
+    {
+     "t": "p",
+     "md": "*P3:* Wer zuerst „Atbash“ auf die Ziffern anwenden will, scheitert."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Schritt 4: Einordnen",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Ordne** jede Stufe und das Gesamtverfahren **ein** (Transposition/Substitution, mono/poly)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Stufe 1: monoalphabetische Substitution (ohne Schlüssel). Stufe 2: monoalphabetische Substitution (Buchstabe → Ziffernpaar). Gesamt: **monoalphabetische Substitution** – jeder Klartextbuchstabe wird immer durch dasselbe Ziffernpaar ersetzt; keine Transposition (Reihenfolge bleibt). Symmetrisch (gleiches Schlüsselwort)."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Schritt 5: Beurteilen",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beurteile** die Fackelchiffre. Gehe ein auf:"
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "den Beitrag von Stufe 1 zur Sicherheit,",
+      "die Häufigkeitsanalyse,",
+      "die Ziffernpaare beim Entschlüsseln von `31 24 51 35 35 51` und `31 55 24 53 44` (Was fällt am Anfang auf?),",
+      "den Schlüsselraum."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Formuliere ein **Urteil**."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(a) Atbash ist öffentlich und schlüssellos; Atbash + Quadrat ist nur ein anderes (umsortiertes) Quadrat → kein Gewinn (P8, Kerckhoffs)."
+    },
+    {
+     "t": "p",
+     "md": "(b) Monoalphabetisch: Die Ziffernpaare haben die Häufigkeiten der Buchstaben; das häufigste Paar steht für e → Häufigkeitsanalyse wie bei jeder einfachen Substitution."
+    },
+    {
+     "t": "p",
+     "md": "(c) Beide beginnen mit `31`: `quelle` (Zwischentext `jfvoov`) und `rauch` (`izfxs`) – nach Atbash werden q → j und r → i; wegen I = J landen beide im selben Feld → die Entschlüsselung ist **nicht eindeutig** (P4)."
+    },
+    {
+     "t": "p",
+     "md": "(d) Schlüssel ist das Schlüsselwort; die Zahl möglicher Quadrate ist riesig (bis zu 25! Anordnungen), aber Brute Force ist gar nicht nötig, weil (b) genügt. **Urteil: unsicher**; außerdem fehlerhaft konstruiert (q/r)."
+    }
+   ],
+   "fallen": [
+    "P4",
+    "P8",
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "Material: Fackelchiffre wie oben. Nummerierung: A = 1 … Z = 26.",
+     "klein": true
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** mit der Fackelchiffre und dem Schlüsselwort KORINTH den Geheimtext zum Klartext „perser“. Das Quadrat zu KORINTH lautet zeilenweise: K O R I N / T H A B C / D E F G L / M P Q S U / V W X Y Z.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Atbash `perser` → `kvihvi`; KORINTH-Quadrat: k = 11, v = 51, i = 14, h = 22 → **11 51 14 22 51 14** [3]."
+      }
+     ],
+     "fallen": [
+      "P3"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen Sie**, dass Stufe 1 (Atbash) nach dem Kerckhoffs-Prinzip nichts zur Sicherheit beiträgt.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Kerckhoffs: Der Angreifer kennt das Verfahren, also auch Atbash; Atbash hat keinen Schlüssel und lässt sich von jedem umkehren; damit steckt die gesamte Sicherheit im Quadrat [3]."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Erläutern Sie**, wie ein Angreifer einen langen deutschen Geheimtext der Fackelchiffre ohne Kenntnis des Schlüsselworts entschlüsseln kann.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Gleiche Ziffernpaare = gleiche Klartextbuchstaben (monoalphabetisch); Paare zählen, häufigstes Paar ↦ e, dann n, i, s, r; Bigramme (ch, er, en) und Wortanfänge prüfen; Atbash am Schluss anwenden oder gleich das „verschobene“ Quadrat rekonstruieren; Voraussetzung: langer Text, Sprache bekannt [4]."
+      }
+     ],
+     "fallen": [
+      "P6"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Führt man die Stufen in umgekehrter Reihenfolge aus, entsteht derselbe Geheimtext.“",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch: Nach Stufe 2 liegen Ziffern vor; Atbash ist nur für Buchstaben definiert – die Stufen lassen sich nicht vertauschen [2]."
+      },
+      {
+       "t": "p",
+       "md": "*P3, P4, P10.*"
+      }
+     ],
+     "fallen": [
+      "P3",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "0.4",
+   "md": "Level 0.4 „Fremde Chiffre I: Polybios und Atbash“; danach wartet der **Boss „Der Bote des Feldherrn“** (25 min) – besiegst du ihn, gehört die **Skytale** dir. Werkzeugkarte WK2 (5-Schritte-Methode)."
+  }
+ ]
+}

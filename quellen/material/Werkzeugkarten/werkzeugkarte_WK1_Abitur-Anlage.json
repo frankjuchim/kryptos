@@ -1,0 +1,462 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK1",
+ "titel": "Abitur-Anlage kompakt",
+ "datei": "KR_WK1_Abitur-Anlage",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "p",
+   "md": "==Seite 1 = Prüfungsfassung:== nur Inhalte der Anlage zu den Ergänzenden Hinweisen zum KC Informatik (Juni 2025) – in Probeklausur, Klausur und Abitur-Training **einziges Hilfsmittel**. Keine Notizen darauf (laminiert ausgeben).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "1 Alphabet mit Nummerierung"
+  },
+  {
+   "t": "alphabet",
+   "nummerierung": 1
+  },
+  {
+   "t": "h",
+   "md": "2 Vigenère-Quadrat"
+  },
+  {
+   "t": "p",
+   "md": "Zeile = **Schlüsselbuchstabe** (links), Spalte = **Klartextbuchstabe** (oben), Kreuzung = **Geheimtextbuchstabe**. Entschlüsseln: In der Zeile des Schlüsselbuchstabens den Geheimtextbuchstaben suchen, oben den Klartextbuchstaben ablesen.",
+   "klein": true,
+   "nach": 2
+  },
+  {
+   "t": "quadrat",
+   "art": "vigenere"
+  },
+  {
+   "t": "h",
+   "md": "3 ASCII-Tabelle (Auszug 32–126)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen",
+    "Wert Zeichen"
+   ],
+   "zeilen": [
+    [
+     "32 ␣",
+     "33 !",
+     "34 \"",
+     "35 #",
+     "36 $",
+     "37 %",
+     "38 &",
+     "39 '"
+    ],
+    [
+     "40 (",
+     "41 )",
+     "42 *",
+     "43 +",
+     "44 ,",
+     "45 -",
+     "46 .",
+     "47 /"
+    ],
+    [
+     "**48 0**",
+     "**49 1**",
+     "**50 2**",
+     "**51 3**",
+     "**52 4**",
+     "**53 5**",
+     "**54 6**",
+     "**55 7**"
+    ],
+    [
+     "**56 8**",
+     "**57 9**",
+     "58 :",
+     "59 ;",
+     "60 <",
+     "61 =",
+     "62 >",
+     "63 ?"
+    ],
+    [
+     "64 @",
+     "**65 A**",
+     "**66 B**",
+     "**67 C**",
+     "**68 D**",
+     "**69 E**",
+     "**70 F**",
+     "**71 G**"
+    ],
+    [
+     "**72 H**",
+     "**73 I**",
+     "**74 J**",
+     "**75 K**",
+     "**76 L**",
+     "**77 M**",
+     "**78 N**",
+     "**79 O**"
+    ],
+    [
+     "**80 P**",
+     "**81 Q**",
+     "**82 R**",
+     "**83 S**",
+     "**84 T**",
+     "**85 U**",
+     "**86 V**",
+     "**87 W**"
+    ],
+    [
+     "**88 X**",
+     "**89 Y**",
+     "**90 Z**",
+     "91 [",
+     "92 \\",
+     "93 ]",
+     "94 ^",
+     "95 _"
+    ],
+    [
+     "96 `",
+     "97 a",
+     "98 b",
+     "99 c",
+     "100 d",
+     "101 e",
+     "102 f",
+     "103 g"
+    ],
+    [
+     "104 h",
+     "105 i",
+     "106 j",
+     "107 k",
+     "108 l",
+     "109 m",
+     "110 n",
+     "111 o"
+    ],
+    [
+     "112 p",
+     "113 q",
+     "114 r",
+     "115 s",
+     "116 t",
+     "117 u",
+     "118 v",
+     "119 w"
+    ],
+    [
+     "120 x",
+     "121 y",
+     "122 z",
+     "123 {",
+     "124 |",
+     "125 }",
+     "126 ~",
+     ""
+    ]
+   ],
+   "mono": true,
+   "zentriert": true,
+   "schrift": 8,
+   "breiten": [
+    2.1,
+    2.1,
+    2.1,
+    2.1,
+    2.1,
+    2.1,
+    2.1,
+    2.1
+   ]
+  },
+  {
+   "t": "p",
+   "md": "␣ = Leerzeichen",
+   "klein": true
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "p",
+   "md": "==Seite 2:== Abschnitte 4 und 5 stehen ebenfalls in der Anlage der Ergänzenden Hinweise (im Abitur zugelassen). Alles ab „Lernhilfe“ ist **nicht** Teil der Anlage – nicht in Prüfungen verwenden.",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "4 Mathematische Operationen"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "Der Operator **/** steht bei der Verwendung mit zwei ganzen Zahlen für die **ganzzahlige Division ohne Rest**: 17 / 5 = 3.",
+    "Der Operator **mod** steht für den **(kleinsten, nicht negativen) Rest** der ganzzahligen Division: 17 mod 5 = 2; 26 mod 26 = 0; −3 mod 26 = 23."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "5 Zeichen und Zeichenketten (Operationen der Anlage)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Operation",
+    "Bedeutung (sprachunabhängig, z. B. im Struktogramm)",
+    "Java (Online-IDE)"
+   ],
+   "schrift": 8.5,
+   "breiten": [
+    3.6,
+    8.6,
+    4.6
+   ],
+   "kopfspalte": true,
+   "zeilen": [
+    [
+     "Länge",
+     "Anzahl der Zeichen: Länge von „KERN“ = 4",
+     "`s.length()`"
+    ],
+    [
+     "Zeichen an Position",
+     "Positionen beginnen bei 0: Zeichen an Position 1 von „KERN“ = E",
+     "`s.charAt(i)`"
+    ],
+    [
+     "Teilzeichenkette",
+     "Bereich von Position a (einschließlich) bis b (ausschließlich): „KERN“, 1 bis 3 → „ER“",
+     "`s.substring(a, b)`"
+    ],
+    [
+     "Verbinden",
+     "„KE“ verbunden mit „RN“ = „KERN“",
+     "`s + t`"
+    ],
+    [
+     "Gleichheit",
+     "„KERN“ gleich „KERN“ → wahr",
+     "`s.equals(t)`"
+    ],
+    [
+     "enthält Teilzeichenkette",
+     "„KERN“ enthält „ER“ → wahr",
+     "`s.contains(t)`"
+    ],
+    [
+     "lexikographischer Vergleich",
+     "„KERN“ vor „KERZE“? → ja (N vor Z)",
+     "`s.compareTo(t)` (negativ = vorher)"
+    ],
+    [
+     "ASCII-Wert ↔ Zeichen",
+     "ASCII-Wert von „A“ = 65; Zeichen zum ASCII-Wert 90 = „Z“",
+     "`(int) c`, `(char) n`"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Nicht in der Anlage (daher nicht verwenden): Zeichen an einer Position ersetzen, `toUpperCase`, `indexOf`, `split`, `replace`, `trim`.",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Lernhilfe: Drei Zählweisen – nie verwechseln (Falle P1)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Zählweise",
+    "Beginn",
+    "Wo?",
+    "Beispiel"
+   ],
+   "schrift": 8.5,
+   "kopfspalte": true,
+   "breiten": [
+    3.4,
+    2.6,
+    6.8,
+    4.0
+   ],
+   "zeilen": [
+    [
+     "Buchstabenwert der Anlage",
+     "A = 1 … Z = 26",
+     "Papierrechnungen, Abituraufgaben mit Nummerierung A = 1",
+     "K = 11"
+    ],
+    [
+     "Verschiebung",
+     "A = 0 … Z = 25",
+     "Vigenère-Quadrat (Schlüsselbuchstabe A verschiebt nicht), Caesar-Schlüssel k, Java: `(int) c − 65`",
+     "Schlüsselbuchstabe K verschiebt um 10"
+    ],
+    [
+     "Position in einer Zeichenkette",
+     "0, 1, 2, …",
+     "Struktogramme, Java",
+     "„KERN“: K steht an Position 0"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Rechnen mit A = 1 (Falle P2):** Werte addieren bzw. subtrahieren, `mod 26` bilden, **Rest 0 bedeutet Z (26)**. Verschiebung um k: neuer Wert = ((Wert + k − 1) mod 26) + 1. Beispiel: X (24) um 5 → ((24 + 5 − 1) mod 26) + 1 = 2 + 1 = 3 = C. **Beim Entschlüsseln** negative Zwischenergebnisse durch +26 in 1 … 26 bringen: C (3) − 5 = −2 → 24 = X.",
+   "klein": true
+  },
+  {
+   "t": "p",
+   "md": "**Merkhilfe ASCII:** Großbuchstaben 65–90 (A = 65, also ASCII − 64 = Wert nach der Anlage, ASCII − 65 = Verschiebung); Ziffern 48–57; Leerzeichen 32; Kleinbuchstaben = Großbuchstabe + 32.",
+   "klein": true
+  },
+  {
+   "t": "p",
+   "md": "**Großbuchstaben: ASCII dezimal und binär (8 Bit)** – Lernhilfe, nicht Teil der Anlage",
+   "nach": 2
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Zeichen",
+    "ASCII",
+    "binär",
+    "Zeichen",
+    "ASCII",
+    "binär"
+   ],
+   "zentriert": true,
+   "schrift": 8,
+   "breiten": [
+    1.8,
+    1.6,
+    3.2,
+    1.8,
+    1.6,
+    3.2
+   ],
+   "zeilen": [
+    [
+     "`A`",
+     "65",
+     "`0100 0001`",
+     "`N`",
+     "78",
+     "`0100 1110`"
+    ],
+    [
+     "`B`",
+     "66",
+     "`0100 0010`",
+     "`O`",
+     "79",
+     "`0100 1111`"
+    ],
+    [
+     "`C`",
+     "67",
+     "`0100 0011`",
+     "`P`",
+     "80",
+     "`0101 0000`"
+    ],
+    [
+     "`D`",
+     "68",
+     "`0100 0100`",
+     "`Q`",
+     "81",
+     "`0101 0001`"
+    ],
+    [
+     "`E`",
+     "69",
+     "`0100 0101`",
+     "`R`",
+     "82",
+     "`0101 0010`"
+    ],
+    [
+     "`F`",
+     "70",
+     "`0100 0110`",
+     "`S`",
+     "83",
+     "`0101 0011`"
+    ],
+    [
+     "`G`",
+     "71",
+     "`0100 0111`",
+     "`T`",
+     "84",
+     "`0101 0100`"
+    ],
+    [
+     "`H`",
+     "72",
+     "`0100 1000`",
+     "`U`",
+     "85",
+     "`0101 0101`"
+    ],
+    [
+     "`I`",
+     "73",
+     "`0100 1001`",
+     "`V`",
+     "86",
+     "`0101 0110`"
+    ],
+    [
+     "`J`",
+     "74",
+     "`0100 1010`",
+     "`W`",
+     "87",
+     "`0101 0111`"
+    ],
+    [
+     "`K`",
+     "75",
+     "`0100 1011`",
+     "`X`",
+     "88",
+     "`0101 1000`"
+    ],
+    [
+     "`L`",
+     "76",
+     "`0100 1100`",
+     "`Y`",
+     "89",
+     "`0101 1001`"
+    ],
+    [
+     "`M`",
+     "77",
+     "`0100 1101`",
+     "`Z`",
+     "90",
+     "`0101 1010`"
+    ]
+   ]
+  }
+ ]
+}

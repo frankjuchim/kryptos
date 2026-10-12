@@ -1,0 +1,657 @@
+{
+ "nr": 1,
+ "kurz": "Caesar_und_Modulo",
+ "titel": "Caesar, das Alphabet A = 1 und Modulo",
+ "untertitel": "Verschieben, im Kreis rechnen, entschlüsseln – und warum Caesar trotzdem fällt",
+ "welt": 0,
+ "weltname": "Welt 0 · Die Antike",
+ "farbe": "#B5523B",
+ "farbe_hell": "#E8957B",
+ "laenge": "8–10 min",
+ "niveau": "Kern (gA und eA)",
+ "zielgruppe": "Informatik gA/eA, Epoche Antike; auch zur Wiederholung vor Boss, Klausur und Abitur",
+ "einsatz": "Welt 0 · DS 2 · Lab-Level 0.2 „Caesars Botschaft“ · Akte W0·2 · Kryptolabor „Chiffrierscheibe“ · Funkraum „Botenlauf“",
+ "lernziel": "Du verschlüsselst und entschlüsselst mit dem Caesar-Verfahren sicher im Alphabet A = 1 … Z = 26 mit mod 26 und beurteilst seine Sicherheit.",
+ "lernziele": [
+  "Klartext, Geheimtext, Schlüssel, Kryptografie und Kryptoanalyse unterscheiden",
+  "Caesar als monoalphabetische Substitution beschreiben und einordnen (P5)",
+  "Mit der Nummerierung A = 1 … Z = 26 der Abitur-Anlage und mod 26 ver- und entschlüsseln – auch bei Rest 0 und negativen Zwischenergebnissen (P1, P2, P3)",
+  "Den Schlüsselraum bestimmen, einen Brute-Force-Angriff durchführen und die Sicherheit mit Kriterium und Urteil beurteilen (P7, P10, Kerckhoffs-Prinzip)"
+ ],
+ "beispiele": [
+  "Klartext „treffpunktambrunnen“ mit k = 6 → ZXKLL VATQZ GSHXA TTKT (Hauptbeispiel)",
+  "Pause-Aufgabe: Geheimtext RPSPT XMZED NSLQE mit k = 11 → „geheimbotschaft“",
+  "Brute Force: GTVAM PTVAX (Klartext „nachtwache“, k = 19)"
+ ],
+ "hinweise": [
+  "✔ doppelt geprüft: alle Werte im Python-Prüfstand (assert im Erzeugungsskript) und unabhängig in JavaScript (Node) nachgerechnet – wie Design-Spezifikation §13 verlangt.",
+  "✔ nachgerechnet (Python-Prüfstand, A = 1, mod = kleinster nicht negativer Rest): „treffpunktambrunnen“ mit k = 6 → ZXKLL VATQZ GSHXA TTKT; Entschlüsseln mit k = 6 liefert wieder den Klartext.",
+  "✔ nachgerechnet: t → ((20 + 6 − 1) mod 26) + 1 = 26 → Z; u → ((21 + 6 − 1) mod 26) + 1 = 1 → A; r → X; e → K; Geheimtextalphabet für k = 6: GHIJKLMNOPQRSTUVWXYZABCDEF.",
+  "✔ nachgerechnet: 15 mod 12 = 3; 27 mod 26 = 1; 26 mod 26 = 0; −6 mod 26 = 20.",
+  "✔ nachgerechnet: Pause RPSPT XMZED NSLQE mit k = 11 → geheimbotschaft; E: 5 − 11 = −6 → 20 (t), D: 4 − 11 = −7 → 19 (s); alle Zeilen der Auflösungstabelle per Programm erzeugt.",
+  "✔ nachgerechnet: Falle P2 – A (1) mit k = 6 zurück: 1 − 6 = −5 → + 26 = 21 → u. Falle P3 – RPSPT mit + 11 statt − 11 ergibt „cadae“; Entschlüsseln mit − 11 ist gleichwertig zu + 15.",
+  "✔ nachgerechnet: Brute Force – alle 26 Verschiebungen von GTVAM PTVAX per Programm erzeugt; nur k = 19 liefert ein deutsches Wort („nachtwache“).",
+  "Abitur-Bezug aus der Auswertung der eA-Aufgaben 2021–2026 (analyse/abitur_eA.md §3.1): Caesar als Baustein/Vergleich in 7 von 17 Aufgaben.",
+  "Historisches vorsichtig formuliert: Sueton (Kaiserviten, Divus Iulius 56) berichtet von Caesars Verschiebung um drei Stellen; Auguste Kerckhoffs formulierte seine Grundsätze 1883 in „La cryptographie militaire“. Keine Zitate realer Personen.",
+  "Pause-Folie: im Schnitt die Einblendung „⏸ Video anhalten“ zeigen; die Auflösung folgt erst auf der nächsten Folie.",
+  "Schreibweise wie in allen Kryptos-Materialien: Klartext klein, Geheimtext GROSS in Fünfergruppen, Schlüsselbuchstabe A = Verschiebung 0."
+ ],
+ "youtube": {
+  "titel": "Caesar-Verschlüsselung, A = 1 und Modulo | Informatik-Abi Niedersachsen | Kryptos #1",
+  "beschreibung": "Das Caesar-Verfahren ist der Klassiker der Kryptologie – und der beste Einstieg ins modulare Rechnen fürs Informatik-Abitur in Niedersachsen. Wir verschlüsseln Schritt für Schritt mit dem Alphabet A = 1 … Z = 26 der Abitur-Anlage, rechnen sicher mit mod 26 (auch bei Rest 0 und negativen Zahlen), entschlüsseln, knacken einen Geheimtext per Brute Force und beurteilen die Sicherheit mit Schlüsselraum und Kerckhoffs-Prinzip. Mit Pause-Aufgabe zum Mitmachen und den typischen Fallen P1, P2, P3, P5, P7 und P10.",
+  "fuss": "Teil der Unterrichtsreihe „Kryptos – Die Zeitreise der Geheimschriften“ (Kryptologie, Informatik eA/gA, Niedersachsen, Abitur ab 2027).\nÜben mit sofortiger Rückmeldung: https://kryptos.frankjuchim.de\nThemen und Akten: https://kryptos.frankjuchim.de/themen\nOhne Anmeldung ausprobieren: https://kryptos.frankjuchim.de/gast\nPlaylist: Kryptos – Die Zeitreise der Geheimschriften",
+  "tags": [
+   "Informatik Abitur",
+   "Niedersachsen",
+   "Kryptologie",
+   "Caesar-Verschlüsselung",
+   "Caesar-Chiffre",
+   "Modulo",
+   "modulare Arithmetik",
+   "Brute Force",
+   "Schlüsselraum",
+   "Kerckhoffs-Prinzip",
+   "Informatik LK",
+   "Kryptos"
+  ],
+  "playlist": "Kryptos – Die Zeitreise der Geheimschriften",
+  "thumbnail": "Tinte (#14213D) mit Terrakotta-Band links und feinem Mäanderband; groß in Georgia fett, Papierweiß: „A = 1“ und darunter „mod 26“ in Terrakotta-hell; quer darüber ein Geheimtext-Streifen „ZXKLL VATQZ“ in Mono auf Papier-2; oben rechts Ziffernring in Messing mit „#1“; Kamerabild freigestellt rechts unten (wie im Video). Höchstens vier Wörter Text.",
+  "kapitelmarken": [
+   "00:00 Einstieg",
+   "00:52 Grundbegriffe",
+   "01:26 Das Caesar-Verfahren",
+   "02:03 Alphabet A = 1",
+   "02:45 Verschlüsseln",
+   "03:25 Modulo",
+   "04:04 Die Formel",
+   "04:51 Fallen beim Rechnen",
+   "05:32 Selbst ausprobieren",
+   "07:05 Brute Force",
+   "07:39 Sicherheit beurteilen",
+   "08:20 Typische Fehler",
+   "08:50 Zusammenfassung"
+  ]
+ },
+ "folien": [
+  {
+   "typ": "titel",
+   "kapitel": "Einstieg",
+   "ort": "Rom · um 50 v. Chr.",
+   "regie": "Kamera unten rechts, Titelfolie mit Terrakotta-Akzent. Locker, ohne Vorlauf.",
+   "sprechertext": "Rom, um fünfzig vor Christus. Ein Bote trägt eine Nachricht durch feindliches Gebiet – und wenn er abgefangen wird, darf niemand sie lesen können. Willkommen in der Antike! Heute geht es um das Caesar-Verfahren. Klingt einfach, ist es auch. Aber genau hier entscheidet sich im Abitur, ob du sicher mit dem Alphabet und mit Modulo rechnest. Denn fast jedes fremde Verfahren in der Prüfung verschiebt irgendwo Buchstaben."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Caesar im Abitur",
+   "punkte": [
+    "In **7 von 17** eA-Abituraufgaben (2021–2026) steckt Caesar als Baustein oder Vergleich",
+    "Typisch: ein **fremdes Verfahren** von Hand **anwenden** – Nummerierung steht im Material",
+    "Die Anlage nummeriert: **A = 1 … Z = 26**",
+    "Danach fast immer: Sicherheit **beurteilen**"
+   ],
+   "kasten": {
+    "farbe": "messing",
+    "titel": "Heute",
+    "text": [
+     "Grundbegriffe",
+     "Caesar mit A = 1",
+     "Modulo und die Formel",
+     "Entschlüsseln",
+     "Brute Force, Schlüsselraum",
+     "Kerckhoffs-Prinzip"
+    ]
+   },
+   "sprechertext": "In sieben von siebzehn Abituraufgaben auf erhöhtem Niveau der letzten Jahre steckt Caesar als Baustein oder Vergleich. Typisch: Das Material beschreibt ein Verfahren, das du von Hand anwendest – mit dem Alphabet der Anlage, A gleich eins bis Z gleich sechsundzwanzig. Danach sollst du fast immer die Sicherheit beurteilen. Rechts der Plan für heute.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "schaubild",
+   "titel": "Wer ist wer?",
+   "kapitel": "Grundbegriffe",
+   "schaubild": {
+    "akteure": [
+     {
+      "id": "alice",
+      "name": "Alice",
+      "rolle": "sendet",
+      "symbol": "🛡"
+     },
+     {
+      "id": "bob",
+      "name": "Bob",
+      "rolle": "empfängt",
+      "symbol": "🛡"
+     },
+     {
+      "id": "eve",
+      "name": "Eve",
+      "rolle": "lauscht",
+      "symbol": "🔍"
+     }
+    ],
+    "pfeile": [
+     {
+      "nr": 1,
+      "von": "Alice",
+      "nach": "Alice",
+      "text": "verschlüsselt den **Klartext** mit dem **Schlüssel** → **Geheimtext**"
+     },
+     {
+      "nr": 2,
+      "von": "Alice",
+      "nach": "Bob",
+      "text": "schickt den Geheimtext über einen unsicheren Weg"
+     },
+     {
+      "nr": 3,
+      "von": "Weg",
+      "nach": "Eve",
+      "text": "fängt den Geheimtext ab"
+     },
+     {
+      "nr": 4,
+      "von": "Bob",
+      "nach": "Bob",
+      "text": "**entschlüsselt** mit demselben Schlüssel → Klartext"
+     }
+    ]
+   },
+   "kasten": {
+    "farbe": "akzent",
+    "titel": "Kryptologie",
+    "text": [
+     "= **Kryptografie** 🛡 (Verfahren entwickeln)",
+     "+ **Kryptoanalyse** 🔍 (Verfahren knacken)"
+    ]
+   },
+   "regie": "Pfeile nacheinander einblenden (1 bis 4).",
+   "sprechertext": "Kurz die Begriffe, die im Abitur zählen. Alice will Bob eine Nachricht schicken. Die lesbare Nachricht heißt Klartext. Alice verschlüsselt sie mit einem Schlüssel – heraus kommt der Geheimtext. Den schickt sie los, und unterwegs kann ihn jemand abfangen: Eve. Bob entschlüsselt den Geheimtext mit demselben Schlüssel. Die Kryptologie hat zwei Seiten: Kryptografie heißt Verfahren entwickeln – das ist die Seite von Alice und Bob. Kryptoanalyse heißt Verfahren knacken – das ist Eves Seite. In Kryptos spielst du beide Rollen."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Die Idee: Jeder Buchstabe rückt weiter",
+   "kapitel": "Das Caesar-Verfahren",
+   "punkte": [
+    "Jeder Klartextbuchstabe wird durch den Buchstaben **k Stellen weiter** ersetzt",
+    "Nach Sueton verschob Caesar um **drei** Stellen: a → D",
+    "Ersetzen = **Substitution** (Umstellen wäre **Transposition**)",
+    "Derselbe Klartextbuchstabe wird **immer gleich** ersetzt: **monoalphabetisch**"
+   ],
+   "kasten": {
+    "farbe": "hinweis",
+    "titel": "Schreibweise",
+    "text": [
+     "Klartext klein: `treffpunkt`",
+     "Geheimtext GROSS in Fünfergruppen",
+     "ohne Leer- und Satzzeichen, ä → ae"
+    ]
+   },
+   "sprechertext": "Das Caesar-Verfahren ist schnell erklärt: Jeder Buchstabe des Klartextes wird durch den Buchstaben ersetzt, der k Stellen weiter im Alphabet steht. Der römische Geschichtsschreiber Sueton berichtet, dass Caesar um drei Stellen verschoben hat – aus a wird D. Weil Buchstaben ersetzt werden, ist das eine Substitution. Würden wir die Buchstaben nur umstellen, wäre es eine Transposition. Und weil derselbe Klartextbuchstabe immer durch denselben Geheimtextbuchstaben ersetzt wird, heißt das Verfahren monoalphabetisch. Zur Schreibweise: Klartext schreiben wir klein, Geheimtext groß und in Fünfergruppen, ohne Leer- und Satzzeichen.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "alphabet",
+   "titel": "Das Alphabet der Anlage: A = 1 … Z = 26",
+   "kapitel": "Alphabet A = 1",
+   "alphabet": {
+    "nummerierung": "A = 1",
+    "klar": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "zahlen": true,
+    "geheim": "GHIJKLMNOPQRSTUVWXYZABCDEF",
+    "geheim_titel": "Geheimtext (k = 6)",
+    "markiere": [
+     "T",
+     "U"
+    ]
+   },
+   "unten": [
+    "Schlüssel: Verschiebung **k = 6** – Schlüsselbuchstabe **G** (A = Verschiebung 0)",
+    "Mögliche Verschiebungen: k ∈ {0, 1, …, 25}"
+   ],
+   "regie": "Mit dem Zeiger die Spalte A → G zeigen, dann auf T und U (hervorgehoben) zeigen.",
+   "sprechertext": "Im Abitur bekommst du als Anlage eine Tabelle, in der jeder Buchstabe eine Zahl hat: A gleich eins, B gleich zwei, bis Z gleich sechsundzwanzig. Damit rechnen wir heute. Unser Schlüssel ist die Verschiebung k gleich sechs. Darunter siehst du das Geheimtextalphabet: Es ist einfach um sechs Stellen verrutscht. A wird zu G, B zu H und so weiter. Achtung, eine kleine Stolperfalle: Den Schlüssel schreibt man oft als Buchstaben. Der Schlüsselbuchstabe G bedeutet Verschiebung sechs – obwohl G in der Tabelle die Nummer sieben hat. Denn der Schlüsselbuchstabe A steht für Verschiebung null. Das ist Falle P1, die Zählbasis."
+  },
+  {
+   "typ": "geheimtext",
+   "titel": "Unser Beispiel: Treffpunkt am Brunnen",
+   "kapitel": "Verschlüsseln",
+   "text": "Klartext `treffpunktambrunnen` · Schlüssel k = 6 · Nummerierung A = 1 … Z = 26",
+   "geheimtext": "ZXKLLVATQZGSHXATTKT",
+   "klartext": "treffpunktambrunnen",
+   "gruppen_pro_zeile": 4,
+   "groesse": 30,
+   "markiere": [
+    {
+     "von": 0,
+     "laenge": 1,
+     "zeichen": "Z",
+     "label": "t: 20 + 6 = 26",
+     "farbe": "akzent"
+    },
+    {
+     "von": 6,
+     "laenge": 1,
+     "zeichen": "A",
+     "label": "u: 21 + 6 = 27 → 1",
+     "farbe": "hinweis"
+    }
+   ],
+   "kasten": {
+    "farbe": "akzent",
+    "titel": "Rechnen",
+    "text": [
+     "t = 20 → 20 + 6 = **26** → Z",
+     "r = 18 → 24 → X",
+     "e = 5 → 11 → K",
+     "u = 21 → **27** – zu groß!",
+     "27 − 26 = 1 → A"
+    ]
+   },
+   "regie": "Die Fünfergruppen erst nach dem Satz „in Fünfergruppen“ einblenden; vorher nur die ersten Buchstaben zeigen.",
+   "sprechertext": "Jetzt verschlüsseln wir unseren Klartext: treffpunkt am brunnen – zusammengeschrieben, versteht sich. Erster Buchstabe: t hat die Nummer zwanzig. Plus sechs ergibt sechsundzwanzig, das ist Z. Dann r: achtzehn plus sechs gleich vierundzwanzig, also X. Das e: fünf plus sechs gleich elf, also K. Spannend wird es beim u: einundzwanzig plus sechs ergibt siebenundzwanzig. Einen siebenundzwanzigsten Buchstaben gibt es nicht. Wir fangen also vorne wieder an: siebenundzwanzig minus sechsundzwanzig gleich eins – das ist A. Am Ende schreiben wir den Geheimtext in Fünfergruppen – so verrät er nicht einmal, wo ein Wort aufhört."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Modulo: Rechnen im Kreis",
+   "kapitel": "Modulo",
+   "punkte": [
+    "**a mod n** = Rest bei der Division durch n – der **kleinste nicht negative** Rest",
+    "Uhr: 10 Uhr + 5 Stunden = 3 Uhr, also 15 mod 12 = 3",
+    "27 mod 26 = 1 · 26 mod 26 = **0**",
+    "Negativ: −6 mod 26 = **20**, denn −6 + 26 = 20",
+    "Das Alphabet ist ein Kreis: Nach Z kommt wieder A"
+   ],
+   "bild": {
+    "beschreibung": "Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A"
+   },
+   "sprechertext": "Dieses Weiterzählen im Kreis heißt Modulo. a mod n ist der Rest bei der Division durch n. Du kennst das von der Uhr: Zehn Uhr plus fünf Stunden ist drei Uhr – fünfzehn mod zwölf ist drei. Genauso ist siebenundzwanzig mod sechsundzwanzig gleich eins. Aber aufgepasst: Sechsundzwanzig mod sechsundzwanzig ist null, denn es bleibt kein Rest. Und bei negativen Zahlen nimmst du den kleinsten nicht negativen Rest: Minus sechs mod sechsundzwanzig ist zwanzig, denn minus sechs plus sechsundzwanzig ergibt zwanzig. So ist es auch in den Ergänzenden Hinweisen zum Abitur festgelegt.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Die Formel – sicher mit A = 1",
+   "kapitel": "Die Formel",
+   "punkte": [
+    "Verschlüsseln: **c = ((p + k − 1) mod 26) + 1**",
+    "Entschlüsseln: **p = ((c − k − 1) mod 26) + 1**",
+    "t: ((20 + 6 − 1) mod 26) + 1 = 25 + 1 = **26** → Z",
+    "u: ((21 + 6 − 1) mod 26) + 1 = 0 + 1 = **1** → A"
+   ],
+   "kasten": {
+    "farbe": "messing",
+    "titel": "Warum − 1 und + 1?",
+    "text": [
+     "− 1: A = 1 … Z = 26 wird zu 0 … 25",
+     "mod 26 rechnet im Kreis",
+     "+ 1: zurück zu 1 … 26 – nie eine 0"
+    ]
+   },
+   "sprechertext": "Für Struktogramme und Begründungen brauchst du das Ganze als Formel. Mit A gleich eins lautet sie: c gleich p plus k minus eins, davon mod sechsundzwanzig, und dann plus eins. p ist die Nummer des Klartextbuchstabens, c die des Geheimtextbuchstabens. Das minus eins schiebt die Nummern auf null bis fünfundzwanzig, dort rechnet mod sauber im Kreis, und plus eins schiebt zurück. Beim t ergibt das sechsundzwanzig, also Z. Beim u ist der Rest null, plus eins macht eins, also A. Zum Entschlüsseln ziehst du k ab. Übrigens: Im Java-Programm in Level null Punkt drei rechnest du bewusst mit A gleich null – auch das gehört zu Falle P1.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "falle",
+   "titel": "Falle P2: Modulo falsch",
+   "kapitel": "Fallen beim Rechnen",
+   "falle": "P2",
+   "kurztitel": "Modulo falsch",
+   "falsch": {
+    "titel": "So nicht",
+    "zeilen": [
+     "c = (p + k) mod 26",
+     "t: (20 + 6) mod 26 = **0** → Buchstabe 0?",
+     "Entschlüsseln von A (k = 6): 1 − 6 = **−5** → Buchstabe −5?"
+    ]
+   },
+   "richtig": {
+    "titel": "So geht’s",
+    "zeilen": [
+     "Rest 0 bedeutet **Z** (26) – oder gleich die Formel mit − 1 / + 1",
+     "Negativ: **+ 26** → −5 + 26 = 21 → u",
+     "Jedes Ergebnis liegt zwischen **1 und 26**"
+    ]
+   },
+   "regel": "Nach jeder Rechnung prüfen: Liegt das Ergebnis zwischen 1 und 26?",
+   "sprechertext": "Hier liegt die häufigste Falle beim Rechnen: P2, Modulo falsch. Wer einfach p plus k mod sechsundzwanzig rechnet, bekommt beim t: sechsundzwanzig mod sechsundzwanzig gleich null. Einen Buchstaben mit der Nummer null gibt es aber nicht – gemeint ist Z. Genauso beim Entschlüsseln: Das A aus unserem Beispiel hat die Nummer eins, minus sechs ergibt minus fünf. Auch das ist kein Buchstabe. Du musst sechsundzwanzig addieren und landest bei einundzwanzig – beim u, mit dem wir angefangen haben. Mein Tipp: Prüfe nach jeder Rechnung, ob das Ergebnis zwischen eins und sechsundzwanzig liegt. Dann passiert dir das nicht.",
+   "regie": "Erst die Spalte ✗ „So nicht“ zeigen, kurze Pause, dann ✓ „So geht’s“ und die Regel einblenden."
+  },
+  {
+   "typ": "pause",
+   "titel": "Jetzt du: Entschlüsseln!",
+   "kapitel": "Selbst ausprobieren",
+   "aufgabe": "Entschlüssele den Geheimtext. Schlüssel: Verschiebung **k = 11** (Schlüsselbuchstabe **L**). Nummerierung: A = 1 … Z = 26.",
+   "geheimtext": "RPSPTXMZEDNSLQE",
+   "gruppen_pro_zeile": 3,
+   "kasten": {
+    "farbe": "messing",
+    "titel": "Tipp",
+    "text": [
+     "rückwärts: c − 11",
+     "Ergebnis ≤ 0? Dann + 26",
+     "Alphabetleiste daneben legen"
+    ]
+   },
+   "pause_s": 6,
+   "regie": "Einblendung „⏸ Video anhalten“ für die Dauer der Pause.",
+   "sprechertext": "Jetzt bist du dran. Eve hat diesen Geheimtext abgefangen – und ausnahmsweise kennt sie den Schlüssel: Verschiebung elf, Schlüsselbuchstabe L. Halte das Video an und entschlüssele. Achte besonders auf die Buchstaben am Anfang des Alphabets. Danach geht es weiter mit der Auflösung."
+  },
+  {
+   "typ": "tabelle",
+   "titel": "Auflösung",
+   "text": "`RPSPT XMZED NSLQE`, k = 11 – jeder Buchstabe einmal:",
+   "tabelle": {
+    "kopf": [
+     "Geheimtext",
+     "Nr.",
+     "− 11",
+     "Klartext"
+    ],
+    "zeilen": [
+     [
+      "R",
+      "18",
+      "7",
+      "g"
+     ],
+     [
+      "P",
+      "16",
+      "5",
+      "e"
+     ],
+     [
+      "S",
+      "19",
+      "8",
+      "h"
+     ],
+     [
+      "T",
+      "20",
+      "9",
+      "i"
+     ],
+     [
+      "X",
+      "24",
+      "13",
+      "m"
+     ],
+     [
+      "M",
+      "13",
+      "2",
+      "b"
+     ],
+     [
+      "Z",
+      "26",
+      "15",
+      "o"
+     ],
+     [
+      "E",
+      "5",
+      "−6 → −6 + 26 = 20",
+      "t"
+     ],
+     [
+      "D",
+      "4",
+      "−7 → −7 + 26 = 19",
+      "s"
+     ],
+     [
+      "N",
+      "14",
+      "3",
+      "c"
+     ],
+     [
+      "L",
+      "12",
+      "1",
+      "a"
+     ],
+     [
+      "Q",
+      "17",
+      "6",
+      "f"
+     ]
+    ],
+    "groesse": 15,
+    "hervorheben": [
+     7,
+     8
+    ],
+    "breiten": [
+     1.4,
+     0.8,
+     2.2,
+     1.2
+    ]
+   },
+   "kasten": {
+    "farbe": "ok",
+    "titel": "Klartext: geheimbotschaft",
+    "text": [
+     "E: 5 − 11 = −6 → + 26 = 20 → t",
+     "D: 4 − 11 = −7 → + 26 = 19 → s"
+    ]
+   },
+   "sprechertext": "Die Auflösung. R hat die Nummer achtzehn, minus elf gleich sieben – das ist g. P: sechzehn minus elf gleich fünf, also e. So geht es weiter: h, e, i, m, b, o. Spannend wird es beim E: Fünf minus elf ist minus sechs. Plus sechsundzwanzig ergibt zwanzig, also t. Beim D genauso: vier minus elf ist minus sieben, plus sechsundzwanzig ergibt neunzehn, also s. Der Klartext lautet: geheimbotschaft. Wenn du an den markierten Stellen sechsundzwanzig addiert hast, hast du Falle P2 sicher umschifft.",
+   "regie": "Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen."
+  },
+  {
+   "typ": "falle",
+   "titel": "Falle P3: Umkehrung falsch",
+   "falle": "P3",
+   "kurztitel": "Umkehrung falsch",
+   "falsch": {
+    "titel": "So nicht",
+    "zeilen": [
+     "Entschlüsseln mit **+ 11** statt − 11",
+     "RPSPT → `cadae` – Unsinn"
+    ]
+   },
+   "richtig": {
+    "titel": "So geht’s",
+    "zeilen": [
+     "Entschlüsseln = **zurück** verschieben: **− k**",
+     "gleichwertig: + (26 − k) = **+ 15**",
+     "Probe: Klartext wieder verschlüsseln → derselbe Geheimtext"
+    ]
+   },
+   "regel": "Entschlüsseln heißt umkehren: jeden Schritt rückwärts – bei mehreren Stufen in umgekehrter Reihenfolge.",
+   "sprechertext": "Falle P3: Umkehrung falsch. Wer beim Entschlüsseln aus Gewohnheit plus elf rechnet, macht aus R P S P T den Unsinn c a d a e. Entschlüsseln heißt zurück verschieben, also minus k. Zurück um elf ist übrigens dasselbe wie vorwärts um fünfzehn – einmal ganz herum. Mach am Ende die Probe: Verschlüssele deinen Klartext noch einmal. Kommt wieder der Geheimtext heraus, stimmt alles. Und bei Verfahren mit mehreren Stufen gilt: alle Schritte rückwärts, in umgekehrter Reihenfolge.",
+   "regie": "Erst die Spalte ✗ „So nicht“ zeigen, kurze Pause, dann ✓ „So geht’s“ und die Regel einblenden."
+  },
+  {
+   "typ": "tabelle",
+   "titel": "Brute Force: Eve probiert alle Schlüssel",
+   "kapitel": "Brute Force",
+   "text": "Abgefangen: `GTVAM PTVAX` – Schlüssel unbekannt. Entschlüsselt mit jeder Verschiebung k:",
+   "tabelle": {
+    "kopf": [
+     "k",
+     "Klartext?",
+     "k",
+     "Klartext?"
+    ],
+    "zeilen": [
+     [
+      "0",
+      "gtvamptvax",
+      "13",
+      "tginzcgink"
+     ],
+     [
+      "1",
+      "fsuzlosuzw",
+      "14",
+      "sfhmybfhmj"
+     ],
+     [
+      "2",
+      "ertyknrtyv",
+      "15",
+      "reglxaegli"
+     ],
+     [
+      "3",
+      "dqsxjmqsxu",
+      "16",
+      "qdfkwzdfkh"
+     ],
+     [
+      "4",
+      "cprwilprwt",
+      "17",
+      "pcejvycejg"
+     ],
+     [
+      "5",
+      "boqvhkoqvs",
+      "18",
+      "obdiuxbdif"
+     ],
+     [
+      "6",
+      "anpugjnpur",
+      "19",
+      "**nachtwache** ✓"
+     ],
+     [
+      "7",
+      "zmotfimotq",
+      "20",
+      "mzbgsvzbgd"
+     ],
+     [
+      "8",
+      "ylnsehlnsp",
+      "21",
+      "lyafruyafc"
+     ],
+     [
+      "9",
+      "xkmrdgkmro",
+      "22",
+      "kxzeqtxzeb"
+     ],
+     [
+      "10",
+      "wjlqcfjlqn",
+      "23",
+      "jwydpswyda"
+     ],
+     [
+      "11",
+      "vikpbeikpm",
+      "24",
+      "ivxcorvxcz"
+     ],
+     [
+      "12",
+      "uhjoadhjol",
+      "25",
+      "huwbnquwby"
+     ]
+    ],
+    "groesse": 13,
+    "breiten": [
+     0.5,
+     1.9,
+     0.5,
+     2.3
+    ]
+   },
+   "kasten": {
+    "farbe": "ok",
+    "titel": "Treffer",
+    "text": [
+     "k = 19 → **nachtwache**",
+     "höchstens 25 Versuche"
+    ]
+   },
+   "regie": "Zeile k = 19 mit dem Zeiger zeigen; kurz über den „Buchstabensalat“ der anderen Zeilen fahren.",
+   "sprechertext": "Was macht Eve, wenn sie den Schlüssel nicht kennt? Sie probiert einfach alle aus. Das nennt man einen Brute-Force-Angriff. Hier hat sie G T V A M P T V A X abgefangen. Sie entschlüsselt mit jeder möglichen Verschiebung und schaut, wo ein sinnvoller Klartext entsteht. Fast überall kommt Buchstabensalat heraus – nur bei k gleich neunzehn steht da: nachtwache. Mehr als fünfundzwanzig Versuche braucht sie nie. Von Hand dauert das ein paar Minuten, ein Computer schafft es im Augenblick."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Schlüsselraum und Kerckhoffs-Prinzip",
+   "kapitel": "Sicherheit beurteilen",
+   "punkte": [
+    "**Schlüsselraum** = alle möglichen Schlüssel: k ∈ {0, …, 25} → 26",
+    "k = 0 ändert nichts (**schwacher Schlüssel**) → **25** sinnvolle",
+    "**Kerckhoffs-Prinzip** (1883): Die Sicherheit darf nur vom **Schlüssel** abhängen, nicht von der Geheimhaltung des Verfahrens",
+    "Caesar: Verfahren bekannt + nur 25 Schlüssel → **unsicher**"
+   ],
+   "kasten": {
+    "farbe": "messing",
+    "titel": "So beurteilst du (P10)",
+    "text": [
+     "**Kriterium:** Schlüsselraum, Brute Force",
+     "**Begründung:** nur 25 sinnvolle Schlüssel, der richtige Klartext fällt sofort auf",
+     "**Urteil:** Das Verfahren ist unsicher."
+    ]
+   },
+   "sprechertext": "Damit können wir die Sicherheit beurteilen. Die Menge aller möglichen Schlüssel heißt Schlüsselraum. Bei Caesar sind das die Verschiebungen null bis fünfundzwanzig, also sechsundzwanzig Schlüssel. Die Verschiebung null ändert aber gar nichts – ein schwacher Schlüssel. Sinnvoll sind also fünfundzwanzig. Und das Verfahren einfach geheim halten? Dagegen spricht ein Grundsatz, den Auguste Kerckhoffs achtzehnhundertdreiundachtzig formuliert hat: Die Sicherheit darf nur vom Schlüssel abhängen, nicht davon, dass das Verfahren geheim bleibt. Verfahren sprechen sich nämlich herum. Zum Beurteilen im Abitur brauchst du drei Dinge: ein Kriterium, eine Begründung und ein klares Urteil – rechts für Caesar.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "punkte",
+   "titel": "Typische Fehler – und wie du sie vermeidest",
+   "kapitel": "Typische Fehler",
+   "punkte": [
+    "**P1** Zählbasis: A = 1 (Anlage) vs. A = 0 (Verschiebung, Java) – Schlüsselbuchstabe G = Verschiebung 6",
+    "**P2** Modulo: Rest 0 ist **Z**, negative Ergebnisse **+ 26**",
+    "**P3** Umkehrung: entschlüsseln mit **− k**, nicht + k",
+    "**P5** Einordnung: Caesar ist eine **monoalphabetische Substitution**, keine Transposition",
+    "**P7** Schlüsselraum: 26 Schlüssel, davon **25** sinnvolle",
+    "**P10** „Beurteilen“ ohne Kriterium und Urteil"
+   ],
+   "kasten": {
+    "farbe": "fehler",
+    "titel": "Abi-Check",
+    "text": [
+     "Nummerierung im Material gelesen?",
+     "Ergebnis zwischen 1 und 26?",
+     "Probe gemacht?",
+     "Urteil formuliert?"
+    ]
+   },
+   "sprechertext": "Die Fallen im Überblick. P1: In der Anlage gilt A gleich eins, bei Verschiebungen und in Java zählst du ab null – lies also zuerst, wie das Material nummeriert. P2: Rest null heißt Z, negative Ergebnisse brauchen plus sechsundzwanzig. P3: Entschlüsseln heißt minus k. P5: Caesar ist eine monoalphabetische Substitution, keine Transposition. P7: fünfundzwanzig sinnvolle Schlüssel, nicht sechsundzwanzig. Und P10: Ein Urteil ohne Kriterium bringt keine Punkte. Rechts dein Abi-Check.",
+   "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
+  },
+  {
+   "typ": "merke",
+   "titel": "Das nimmst du mit",
+   "kapitel": "Zusammenfassung",
+   "punkte": [
+    "Caesar ersetzt jeden Buchstaben durch den, der k Stellen weiter steht: **monoalphabetische Substitution**",
+    "Gerechnet wird mit **A = 1 … Z = 26**: c = ((p + k − 1) mod 26) + 1 – jedes Ergebnis liegt zwischen 1 und 26",
+    "**mod** = kleinster nicht negativer Rest; entschlüsseln = zurück verschieben (**− k**)",
+    "Nur **25** sinnvolle Schlüssel → Brute Force gelingt → **unsicher** (Kerckhoffs: Sicherheit nur durch den Schlüssel)"
+   ],
+   "sprechertext": "Das nimmst du mit: Caesar ersetzt jeden Buchstaben durch den, der k Stellen weiter steht – eine monoalphabetische Substitution. Gerechnet wird mit A gleich eins bis Z gleich sechsundzwanzig, und jedes Ergebnis muss zwischen eins und sechsundzwanzig liegen. Modulo ist der kleinste nicht negative Rest, und entschlüsseln heißt zurück verschieben. Mit nur fünfundzwanzig sinnvollen Schlüsseln fällt Caesar jedem Brute-Force-Angriff zum Opfer.",
+   "regie": "Merksätze nacheinander einblenden; ruhig und etwas langsamer sprechen."
+  },
+  {
+   "typ": "ende",
+   "endcard_s": 20,
+   "links": {
+    "Lab": "Level 0.2 „Caesars Botschaft“ (Epoche Antike) – danach Trainingsplatz „Caesar ver/ent“ und „mod-Rechnen“",
+    "Akte": "Akte W0·2 „Caesars Botschaft“",
+    "Kryptolabor": "Chiffrierscheibe mit Brute-Force-Liste",
+    "Funkraum": "Szenario „Botenlauf“ im Unterricht",
+    "Online": "kryptos.frankjuchim.de"
+   },
+   "naechstes": "02 · Häufigkeitsanalyse: Wie Al-Kindi jede Substitution knackt",
+   "regie": "Endcard über die letzten 20 s legen (nächstes Video, Playlist, Abo).",
+   "sprechertext": "Weiter geht es im Lab mit Level null Punkt zwei, Caesars Botschaft. Mit der Chiffrierscheibe im Kryptolabor kannst du jede Verschiebung ausprobieren. Im nächsten Video reisen wir nach Bagdad. Dort zeige ich dir, wie man ein Verfahren mit unvorstellbar vielen Schlüsseln trotzdem knackt. Bis dann im Archiv!"
+  }
+ ],
+ "endcard": "Tinte mit Mäanderband (Welt 0); links Kachel „Nächstes Video: Häufigkeitsanalyse“ (Video 02), rechts Kachel „Playlist Kryptos“; Mitte unten „Weiter im Lab: Level 0.2“ mit QR-Code kryptos.frankjuchim.de; Kanal-Abo-Knopf. Kamera bleibt unten rechts."
+}

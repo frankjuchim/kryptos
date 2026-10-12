@@ -1,0 +1,225 @@
+{
+ "typ": "warmup",
+ "welt": 2,
+ "kennung": "WARM-UP W2",
+ "titel": "Warm-up-Karten Renaissance",
+ "datei": "KR_W2_Warmup",
+ "karten": [
+  {
+   "id": "WU-W2-01",
+   "titel": "Caesar zum Aufwärmen (W0)",
+   "minuten": 1,
+   "kategorie": "verschluesseln",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. **Verschlüssele** *rom* mit Caesar, Schlüssel D (Verschiebung 3)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**URP**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-02",
+   "titel": "mod mit A = 1 (W0)",
+   "minuten": 2,
+   "kategorie": "modulo",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Berechne** ((24 + 5 − 1) mod 26) + 1 und gib den Buchstaben an (A = 1 … Z = 26)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "28 mod 26 = 2; 2 + 1 = 3 → **C**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-03",
+   "titel": "Schlüsselräume (W0/W1)",
+   "minuten": 2,
+   "kategorie": "schluesselraum",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Wie viele Schlüssel hat Caesar? Wie viele eine monoalphabetische Substitution mit beliebig gemischtem Alphabet?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**26** (davon 25 sinnvoll); **26! ≈ 4 · 10²⁶**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-04",
+   "titel": "Mit dem Quadrat",
+   "minuten": 2,
+   "kategorie": "verschluesseln",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** *bote* mit Vigenère, Schlüsselwort LUNA (Vigenère-Quadrat der Anlage)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**MIGE**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-05",
+   "titel": "Mono oder poly?",
+   "minuten": 1,
+   "kategorie": "einordnen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "*ebbe* wird zu `FCDG`. Mono- oder polyalphabetisch? **Begründe** in einem Satz."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Polyalphabetisch:** b wird einmal zu C, einmal zu D (e zu F und G). (Vigenère mit BBCC)"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-06",
+   "titel": "Jede dritte Stelle",
+   "minuten": 2,
+   "kategorie": "kasiski-friedman",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Bilde** die drei Teiltexte von `QWERT ZUIOP AS` (Schlüssellänge 3)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`QRUP` · `WTIA` · `EZOS`"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-07",
+   "titel": "Kasiski blitzschnell",
+   "minuten": 2,
+   "kategorie": "kasiski-friedman",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Abstände 12, 18, 30. Welche Schlüssellängen kommen in Frage, welche ist am wahrscheinlichsten?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Teiler von ggT = 6: **2, 3, 6**; am wahrscheinlichsten **6** (Prüfung über Teiltexte)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-08",
+   "titel": "Koinzidenz im Kopf (eA)",
+   "minuten": 2,
+   "kategorie": "kasiski-friedman",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Berechne** den Koinzidenzindex von ABBA."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(2 + 2)/(4 · 3) = 4/12 = **1/3**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-09",
+   "titel": "Doppelt hält besser?",
+   "minuten": 1,
+   "kategorie": "sicherheit-beurteilen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "Alice verschlüsselt mit Porta (Schlüsselwort SIEGEL) und „zur Sicherheit“ gleich noch einmal mit SIEGEL. Was kommt heraus?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Der Klartext** – Porta ist involutorisch (P8)."
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-10",
+   "titel": "Playfair vorbereiten",
+   "minuten": 2,
+   "kategorie": "fremde-chiffre",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Bereite** *kaffee* für Playfair **vor**."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`KA FX FE EX`"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-11",
+   "titel": "Al-Kindi lässt grüßen (W1)",
+   "minuten": 2,
+   "kategorie": "haeufigkeitsanalyse",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "In einem langen Caesar-Geheimtext ist H der häufigste Buchstabe. Welcher Schlüssel ist wahrscheinlich (A = 1 … Z = 26)?"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "H ↦ e: Verschiebung 3 → Schlüssel **D**"
+    }
+   ]
+  },
+  {
+   "id": "WU-W2-12",
+   "titel": "Einordnen im Schnelldurchlauf",
+   "minuten": 3,
+   "kategorie": "einordnen",
+   "aufgabe": [
+    {
+     "t": "p",
+     "md": "**Ordne ein:** Atbash · Skytale · Vigenère · Playfair (Transposition/Substitution, mono/poly)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Atbash: Substitution, mono · Skytale: Transposition · Vigenère: Substitution, poly · Playfair: Substitution, mono auf Bigrammen"
+    }
+   ]
+  }
+ ]
+}

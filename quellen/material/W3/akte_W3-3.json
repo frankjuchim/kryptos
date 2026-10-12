@@ -1,0 +1,705 @@
+{
+ "typ": "akte",
+ "welt": 3,
+ "kennung": "AKTE W3·3",
+ "titel": "Die Chiffren-Werkstatt",
+ "ds": "11",
+ "niveau": "eA",
+ "level": "3.3",
+ "datei": "KR_W3_Akte3_Chiffren_Werkstatt",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Im Maschinenzeitalter wurden Chiffren gebaut, getestet und verbessert – und von der Gegenseite angegriffen. Heute baut ihr selbst: Euer Team entwirft im **Baukasten** ein symmetrisches Verfahren, verschlüsselt eine Nachricht und stellt sich in der **Knack-Arena** den anderen Teams. Nach Kerckhoffs gilt: Euer Verfahren ist öffentlich. Nur der Schlüssel schützt euch."
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Nummerierung im Baukasten:** A = 0 … Z = 25 (Verschiebung A = 0 wie im Vigenère-Quadrat der Anlage). In Aufgaben mit Papierrechnung gilt wie immer die Angabe der Aufgabe (A = 1 … Z = 26)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Der Baukasten",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alle Stufen arbeiten auf normalisiertem Text (nur A–Z, Umlaute ae/oe/ue/ss). Beispiele jeweils für den Klartext **FUNKER**:"
+    },
+    {
+     "t": "tabelle",
+     "schrift": 8.5,
+     "kopf": [
+      "Nr.",
+      "Stufe",
+      "Schlüssel",
+      "Was passiert?",
+      "Beispiel",
+      "Einordnung"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "Caesar `CAE`",
+       "Zahl k (0–25), z. B. `7`",
+       "jeder Buchstabe k Stellen nach hinten (zyklisch)",
+       "`MBURLY`",
+       "monoalphabetische Substitution"
+      ],
+      [
+       "2",
+       "Schlüsselwort-Substitution `SUB`",
+       "Wort, z. B. `WALZE`",
+       "Geheimtextalphabet = Wort ohne Wiederholungen, dann restliche Buchstaben (WALZEBCDFG…); A ↦ 1. Zeichen …",
+       "`BSKHEP`",
+       "monoalphabetische Substitution"
+      ],
+      [
+       "3",
+       "Vigenère `VIG`",
+       "Wort, z. B. `LUNA`",
+       "Zeichen i um den Wert des Schlüsselbuchstabens an Position i mod Wortlänge verschieben",
+       "`QOAKPL`",
+       "polyalphabetische Substitution"
+      ],
+      [
+       "4",
+       "Spaltentransposition `SPA`",
+       "Wort, z. B. `TAL`",
+       "zeilenweise unter das Wort schreiben, Spalten alphabetisch auslesen (gleiche Buchstaben von links); letzte Zeile darf kürzer sein",
+       "`UENRFK`",
+       "Transposition"
+      ],
+      [
+       "5",
+       "Gartenzaun `ZAU`",
+       "Schienenzahl h (2–6), z. B. `3`",
+       "im Zickzack auf h Schienen schreiben, Schienen von oben nach unten lesen",
+       "`FEUKRN`",
+       "Transposition"
+      ],
+      [
+       "6",
+       "Blockrotation `ROT`",
+       "„n,r“, z. B. `4,1`",
+       "Blöcke zu n Zeichen je r Stellen nach links drehen (kürzerer letzter Block: r mod m)",
+       "`UNKFRE`",
+       "Transposition"
+      ],
+      [
+       "7",
+       "Umkehrung `UMK`",
+       "–",
+       "Text rückwärts lesen (selbstinvers)",
+       "`REKNUF`",
+       "Transposition (schlüssellos)"
+      ],
+      [
+       "8",
+       "XOR mit Schlüsselwort `XOR`",
+       "Wort, z. B. `AB`",
+       "ASCII-Wert ⊕ ASCII-Wert des Schlüsselbuchstabens, Ausgabe hexadezimal; **nur als letzte Stufe**",
+       "`07 17 0F 09 04 10`",
+       "polyalphabetisch auf Bitebene"
+      ]
+     ],
+     "breiten": [
+      0.7,
+      3.0,
+      2.4,
+      5.0,
+      2.3,
+      2.9
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Regeln:** 1 bis 4 Stufen in beliebiger Reihenfolge (auch dieselbe Stufe mehrfach). Es wird **nie aufgefüllt**. Vor dem Einreichen prüft der Baukasten die **Umkehrbarkeit** (Entschlüsseln = Stufen in umgekehrter Reihenfolge, je Stufe die Umkehrung)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "So beschreibt man ein Verfahren (Abitur-Stil)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Muster für das Verfahren **„FUNKGITTER“**:"
+    },
+    {
+     "t": "liste",
+     "items": [
+      "*Schlüssel:* ein Schlüsselwort aus Großbuchstaben (mindestens 2 Zeichen).",
+      "*Vorbereitung:* Der Klartext wird in Großbuchstaben geschrieben, Leer- und Satzzeichen entfallen, Umlaute werden ersetzt (ä → AE, ö → OE, ü → UE, ß → SS).",
+      "*Stufe 1:* Jeder Buchstabe wird wie beim Vigenère-Verfahren mit dem Schlüsselwort verschoben (Schlüsselbuchstabe A = Verschiebung 0).",
+      "*Stufe 2:* Der Zwischentext wird zeilenweise unter das Schlüsselwort geschrieben; die Spalten werden in alphabetischer Reihenfolge der Schlüsselbuchstaben von oben nach unten gelesen (gleiche Buchstaben von links nach rechts). Die letzte Zeile darf unvollständig sein.",
+      "*Beispiel:* „Wetterbericht fuer die Nordsee“, Schlüssel FUNKE → Stufe 1 `BYGDIWVRBMHBGPYJLQSISIENWJY` → Geheimtext `IMYIW BWHJS JDBPS NGRGQ EYVBL IY`."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Struktogramm einer Stufe (EH §5)",
+   "inhalt": [
+    {
+     "t": "struktogramm",
+     "kopf": "vigenere(text: Zeichenkette, wort: Zeichenkette): Zeichenkette",
+     "elemente": [
+      {
+       "anw": "erg ← \"\""
+      },
+      {
+       "fuer": "i von 0 bis Länge(text) − 1",
+       "rumpf": [
+        {
+         "kommentar": "Buchstabenwerte mit A = 0 (ASCII-Wert − 65), Falle P1"
+        },
+        {
+         "anw": "k ← ASCII-Wert(Zeichen an Position (i mod Länge(wort)) von wort) − 65"
+        },
+        {
+         "anw": "w ← ASCII-Wert(Zeichen an Position i von text) − 65"
+        },
+        {
+         "anw": "erg ← erg verbunden mit Zeichen zum ASCII-Wert ((w + k) mod 26) + 65"
+        }
+       ]
+      },
+      {
+       "gib": "erg"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Erlaubt sind nur die Zeichenketten-Operationen der EH-Anlage (Länge, Zeichen an Position, Teilzeichenkette, verbinden, Gleichheit, ASCII-Wert ↔ Zeichen) – **kein** „Zeichen an Position ersetzen“."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Arena-Regeln",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Verfahren und Geheimtext sind **öffentlich**, der Schlüssel nie. Euer Klartext ist ein **selbst formulierter deutscher Text mit mindestens 150 Buchstaben** (nach Normalisierung; keine Namen von Personen, keine Zitate aus dem Netz). Eine Lösung zählt, wenn der eingereichte Klartext nach Normalisierung exakt übereinstimmt. Abzeichen: **„Arena-Knacker“** für jedes Team, das ein fremdes Verfahren knackt; **„Unknackbar“** für jedes Verfahren, das bei Arena-Schluss ungeknackt ist."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P8",
+   "titel": "Mehr Stufen ≠ mehr Sicherheit",
+   "md": "Zwei Substitutionen derselben Art verschmelzen oft zu einer: Caesar nach Caesar ist Caesar, Caesar nach Vigenère ist Vigenère, zweimal Umkehrung hebt sich auf. Stark ist die Kombination aus **Substitution und Transposition** mit großem Schlüsselraum."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 2,
+   "titel": "Entwerfen",
+   "sozialform": "Team · 20 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Kombiniert im Baukasten **2–4 Stufen**. Achtet auf die Werkstatt-Hinweise (Fallen-Chips). Verschlüsselt euren Arena-Text und reicht Verfahren und Geheimtext ein."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "Stufe 1",
+      "Stufe 2",
+      "Stufe 3",
+      "Stufe 4"
+     ],
+     "zeilen": [
+      [
+       "Stufe (Kürzel)",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Schlüssel (geheim!)",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.6,
+      3.2,
+      3.2,
+      3.2,
+      3.2
+     ],
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Individuell. Beispiel einer starken Lösung: „FUNKGITTER“ (VIG + SPA mit langem Schlüsselwort). Werkstatt-Hinweise beachten: k = 0, Wort „AAAA“ (P7); CAE + VIG nebeneinander (P8); nur Transpositionen (Häufigkeiten bleiben, P6)."
+    }
+   ],
+   "fallen": [
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Beschreiben",
+   "sozialform": "Team",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beschreibt** euer Verfahren im Abitur-Stil (Archivwissen 2) mit einem kurzen Beispiel, und **stellt** eine eurer Stufen als Struktogramm **dar** (Archivwissen 3; nur die Operationen der EH-Anlage). Nutzt ein eigenes Blatt."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Individuell; Muster siehe Archivwissen 2 und 3. Häufige Mängel: Vorbereitung (Normalisierung) fehlt; Spaltenreihenfolge bei gleichen Buchstaben nicht festgelegt; Struktogramm benutzt „Zeichen an Position ersetzen“ oder rechnet mit A = 65 statt A = 0 (P1)."
+    }
+   ],
+   "fallen": [
+    "P1",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 3,
+   "titel": "Beurteilen",
+   "sozialform": "Team · 10 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beurteilt** die Sicherheit eures Verfahrens mit dem Raster (WK3) – mit Befund je Kriterium und einem **Urteil**."
+    },
+    {
+     "t": "tabelle",
+     "schrift": 9,
+     "kopf": [
+      "Kriterium",
+      "Leitfrage",
+      "Unser Befund"
+     ],
+     "zeilen": [
+      [
+       "Schlüsselraum",
+       "Wie viele Schlüssel gibt es (je Stufe, gesamt)? Ist Brute Force von Hand / mit dem Rechner möglich?",
+       ""
+      ],
+      [
+       "Häufigkeitsanalyse",
+       "Bleibt die Buchstabenverteilung erhalten (Transposition)? Mono- oder polyalphabetisch? Helfen Teiltexte oder Bigramme?",
+       ""
+      ],
+      [
+       "Schwache / äquivalente Schlüssel",
+       "Gibt es Schlüssel, die nichts bewirken oder gleich wirken (k = 0, AAAA, Wort in alphabetischer Reihenfolge)?",
+       ""
+      ],
+      [
+       "Kombination der Stufen",
+       "Verschmelzen Stufen (Caesar + Vigenère)? Heben sie sich auf (Umkehrung zweimal)?",
+       ""
+      ],
+      [
+       "Known-Plaintext",
+       "Kann Eve aus einem bekannten Klartextstück den Schlüssel gewinnen?",
+       ""
+      ],
+      [
+       "Fehlerfortpflanzung",
+       "Was passiert bei einem falschen und bei einem fehlenden Geheimtextzeichen?",
+       ""
+      ],
+      [
+       "Kerckhoffs / Arena",
+       "Hielt das Verfahren in der Arena, obwohl es öffentlich war? Womit wurde angegriffen?",
+       ""
+      ],
+      [
+       "**Urteil**",
+       "„Unser Verfahren ist gegen … sicher/unsicher, weil …; am meisten gefährdet ist es durch …; verbessern würden wir …“",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.3,
+      7.2,
+      6.3
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Muster-Beurteilung für „FUNKGITTER“:**"
+    },
+    {
+     "t": "liste",
+     "items": [
+      "*Schlüsselraum:* Wörter der Länge 5 aus 26 Buchstaben → 26^5^ ≈ 11,9 Millionen (mit dem Rechner durchsuchbar, von Hand nicht).",
+      "*Häufigkeitsanalyse:* Stufe 1 polyalphabetisch mit Periode = Wortlänge, Stufe 2 zerstört die Reihenfolge – Teiltexte T~1~ … T~5~ (jede 5. Stelle, Positionen ab 0 wie in Welt 2) lassen sich erst nach Rückgängigmachen der Transposition bilden.",
+      "*Schwache Schlüssel:* AAAAA (Stufe 1 wirkungslos) und Wörter in alphabetischer Reihenfolge wie ABCDE (Spalten in natürlicher Reihenfolge).",
+      "*Kombination:* Substitution + Transposition ergänzen sich.",
+      "*Known-Plaintext:* Bekannter Klartext an bekannter Stelle erlaubt, Schlüsselbuchstaben zu testen, sobald die Spaltenreihenfolge geraten ist.",
+      "*Fehlerfortpflanzung:* ein falsches Zeichen → ein falsches Klartextzeichen; ein fehlendes Zeichen → ab der betroffenen Spalte verschoben.",
+      "*Urteil:* gegen Angriffe von Hand in der Arena gut, für Rechnerangriffe zu klein und strukturell schwach (Wortlänge = Periode = Spaltenzahl verrät viel); Verbesserung: zwei verschiedene, längere Schlüssel."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler P10:* Kriterien aufzählen, aber kein Urteil formulieren."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Implementieren",
+   "sozialform": "Hausaufgabe",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Öffne `KR_W3_ChiffrenWerkstatt` in der Online-IDE, implementiere die Bausteine (mindestens Stufe **Basis** und die von euch benutzten Stufen) und euer Verfahren in `MeineChiffre`. Trage den Beispielwert aus dem Baukasten ein. Alle Tests von `L33MeineChiffreTest` müssen grün sein. *Achtung:* Im Programm gilt A = 0 (`(int) c − 65`), auf Papier A = 1 (P1); für Reste `Hilfe.mod` benutzen (P2)."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Musterlösung `KR_W3_ChiffrenWerkstatt_LSG.txt` (Verfahren FUNKGITTER, 19/19 Tests grün). Häufiger Fehler: Entschlüsselung in Vorwärtsreihenfolge der Stufen (P3) – erkennt `L33MeineChiffreTest` an der Umkehrbarkeit."
+    }
+   ],
+   "fallen": [
+    "P1",
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Ein Arena-Verfahren analysieren",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Team „Morse“ veröffentlichte: Stufe 1 **Gartenzaun** (h = 3), Stufe 2 **Caesar** (k geheim). Bob verrät euch k = 7 (Nummerierung A = 0 … Z = 25 bzw. Verschiebung um 7 nach hinten)."
+    },
+    {
+     "t": "geheimtext",
+     "label": "GEHEIMTEXT TEAM „MORSE“",
+     "text": "DLBVUHPZOUUTYLHOMUYLZNTL"
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Entschlüsselt** den Geheimtext (Raster unten: 24 Zeichen, 3 Schienen).",
+      "**Ordnet** beide Stufen **ein**.",
+      "**Beschreibt**, wie ihr ohne k vorgegangen wärt."
+     ]
+    },
+    {
+     "t": "quadrat",
+     "schrift": 9,
+     "kopfspalte": [
+      "1",
+      "2",
+      "3"
+     ],
+     "zellbreite": 0.62,
+     "zeilen": [
+      [
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●",
+       "",
+       "●"
+      ],
+      [
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       "",
+       "",
+       "",
+       "●",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "quadrat",
+     "schrift": 9,
+     "kopfspalte": [
+      "1",
+      "2",
+      "3"
+     ],
+     "zellbreite": 0.62,
+     "zeilen": [
+      [
+       "W",
+       "",
+       "",
+       "",
+       "E",
+       "",
+       "",
+       "",
+       "U",
+       "",
+       "",
+       "",
+       "O",
+       "",
+       "",
+       "",
+       "N",
+       "",
+       "",
+       "",
+       "A",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "I",
+       "",
+       "S",
+       "",
+       "H",
+       "",
+       "N",
+       "",
+       "N",
+       "",
+       "M",
+       "",
+       "R",
+       "",
+       "E",
+       "",
+       "A",
+       "",
+       "H",
+       "",
+       "F",
+       "",
+       "N"
+      ],
+      [
+       "",
+       "",
+       "R",
+       "",
+       "",
+       "",
+       "E",
+       "",
+       "",
+       "",
+       "S",
+       "",
+       "",
+       "",
+       "G",
+       "",
+       "",
+       "",
+       "M",
+       "",
+       "",
+       "",
+       "E",
+       ""
+      ]
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Caesar −7: `WEUONAISHNNMREAHFNRESGME`; Gartenzaun zurück (h = 3, Schienenlängen 6/12/6, Raster oben): **wir sehen uns morgen am hafen**."
+    },
+    {
+     "t": "p",
+     "md": "b) Stufe 1 (Gartenzaun) Transposition, Stufe 2 (Caesar) monoalphabetische Substitution."
+    },
+    {
+     "t": "p",
+     "md": "c) Häufigkeitsanalyse: Der Gartenzaun ändert die Häufigkeiten nicht. Am häufigsten sind L und U (je 4×); L ≙ e ergibt k = 7, U ≙ e ergibt k = 16 – beide Kandidaten mit h = 2 … 6 probieren; nur k = 7, h = 3 liefert sinnvollen Text. Der kurze Text zeigt: Häufigkeitsanalyse liefert Kandidaten, keine Gewissheit (P6). Alternativ alle 26 · 5 = 130 Schlüssel probieren."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P6"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "**Material:** Verfahren von Team „Morse“ (Auftrag 5): Stufe 1 Gartenzaun mit h Schienen (h ∈ {2, …, 6}), Stufe 2 Caesar mit Verschiebung k (k ∈ {0, …, 25})."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Entscheiden** Sie **begründet**, welche Stufe eine Transposition und welche eine mono- bzw. polyalphabetische Substitution ist.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Gartenzaun: Zeichen bleiben gleich, nur Positionen ändern sich → Transposition [1]; Caesar: jeder Buchstabe wird immer gleich ersetzt → monoalphabetische Substitution [1]."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Beurteilen** Sie die Sicherheit des Verfahrens.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Schlüsselraum 26 · 5 = 130 Schlüssel – Brute Force von Hand möglich [1]; Häufigkeitsanalyse liefert wenige Kandidaten für k, weil die Transposition die Verteilung erhält [1]; schwacher Schlüssel k = 0 [1]; Urteil: unsicher [1]. *P10:* Urteil fehlt → höchstens 2 BE."
+      }
+     ],
+     "fallen": [
+      "P7",
+      "P10"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "Ein Teammitglied schlägt vor, die Reihenfolge der Stufen zu vertauschen. **Entscheiden** Sie **begründet**, ob sich dadurch der Geheimtext oder die Sicherheit ändert.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Der Geheimtext ändert sich nicht [1]: Caesar ersetzt jedes Zeichen unabhängig von seiner Position, der Gartenzaun ändert nur Positionen – beide Stufen sind vertauschbar [1]; damit ändert sich auch die Sicherheit nicht [1]."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Entwickeln** Sie eine Veränderung einer Stufe, die die Sicherheit deutlich erhöht.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "z. B. Caesar durch Vigenère mit langem Schlüsselwort ersetzen (polyalphabetisch, größerer Schlüsselraum) oder Gartenzaun durch Spaltentransposition mit Schlüsselwort [Vorschlag 1, Begründung 1]."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "3.3",
+   "md": "Level 3.3 „Die Chiffren-Werkstatt“ im Kryptolabor: **Baukasten** mit Umkehrbarkeitsprüfung und Knack-Arena. Online-IDE-Karte `KR_W3_ChiffrenWerkstatt`; Trainingsplatz „Spaltentransposition“."
+  }
+ ]
+}

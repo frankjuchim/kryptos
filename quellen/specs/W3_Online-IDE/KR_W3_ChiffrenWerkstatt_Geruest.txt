@@ -1,0 +1,475 @@
+// =====================================================================
+//  WELT 3 – DAS MASCHINENZEITALTER – CHIFFREN-WERKSTATT – GERÜST
+//  Informatik LK (eA) · Online-IDE · Kryptos · Level 3.3
+//
+//  Im Maschinenzeitalter wurden Chiffren nicht mehr nur ausgedacht,
+//  sondern gebaut. Jetzt baust DU: Euer Team hat im Baukasten der
+//  Plattform ein eigenes symmetrisches Verfahren entworfen. Hier
+//  implementierst du zuerst die Bausteine und setzt daraus euer
+//  Verfahren in der Klasse MeineChiffre zusammen.
+//
+//  ANLEITUNG:
+//  1. Du arbeitest NUR im Abschnitt "DEIN TEIL". Ueber jeder Methode
+//     stehen ihre Signatur in Abi-Notation und eine Beschreibung.
+//     Ersetze die Zeilen "// TODO ..." und die vorlaeufigen
+//     return-Anweisungen durch deine Loesung.
+//
+//  2. Tests starten: Reiter "Testrunner", gruener Dreieckspfeil neben
+//     einer Testklasse oder einem einzelnen Test. Gruen = bestanden.
+//
+//  3. Testklassen:
+//      L33BausteineTest    Bausteine in drei Stufen:
+//                            basis_...        Caesar, Umkehrung
+//                            erweiterung_...  Vigenere, Gartenzaun
+//                            experte_...      Spaltentransposition, XOR
+//      L33MeineChiffreTest euer eigenes Verfahren: Beispielwert aus dem
+//                          Baukasten, Umkehrbarkeit, erlaubte Zeichen,
+//                          Wirkung des Schluessels
+//     Eine Stufe ist geschafft, wenn ALLE Tests mit diesem Anfang gruen
+//     sind. Fuer MeineChiffre muessen ALLE Tests gruen sein.
+//
+//  4. MeineChiffre: Trage oben in der Klasse ein
+//       - NAME eures Verfahrens,
+//       - das Beispiel aus dem Baukasten (Klartext, Schluessel und den
+//         Geheimtext, den der Baukasten dafuer anzeigt),
+//       - zwei verschiedene gueltige Schluessel fuer die Tests.
+//     Euer Schluessel ist EINE Zeichenkette. Braucht ihr mehrere
+//     Teilschluessel (z. B. Zahl fuer Caesar und Wort fuer Vigenere),
+//     legt ihr selbst ein Format fest, z. B. "7-LUNA", und zerlegt ihn
+//     mit charAt/substring. Schreibt das Format in den Kommentar!
+//
+//  5. Die Testklassen darfst du NICHT veraendern.
+//
+//  SPIELREGELN (wie im Abitur):
+//  - Zeichenketten nur mit length(), charAt(i), substring(a, b), +,
+//    equals(...), contains(...), compareTo(...); Zeichen <-> Zahl mit
+//    (int) c und (char) n. NICHT erlaubt: toUpperCase, split, indexOf,
+//    replace ... Zeichenketten IMMER mit equals vergleichen.
+//  - Im Programm gilt A = 0 ... Z = 25 (ASCII-Wert - 65), auf Papier und
+//    in der Abitur-Anlage A = 1 ... Z = 26 (Falle P1).
+//  - In Java ist -3 % 26 = -3. Benutze Hilfe.mod (Falle P2).
+//  - Alle Bausteine arbeiten auf normalisiertem Text (nur A-Z). Es wird
+//    NIE mit X aufgefuellt: unvollstaendige Spalten/Bloecke bleiben
+//    unvollstaendig (Falle P4).
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+//  GERÜST – hier nichts veraendern
+// ---------------------------------------------------------------------
+
+class Hilfe {
+
+    // normalisiere(text: Zeichenkette): Zeichenkette
+    // Grossbuchstaben bleiben, Kleinbuchstaben werden gross, ae/oe/ue/ss
+    // fuer Umlaute und Eszett, alle anderen Zeichen fallen weg.
+    // Beispiel: "Grüße an Bob!" -> "GRUESSEANBOB"
+    public static String normalisiere(String text) {
+        String s = "";
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            int a = (int) c;
+            if (a >= 65 && a <= 90) {
+                s = s + c;
+            } else if (a >= 97 && a <= 122) {
+                s = s + (char) (a - 32);
+            } else if (a == 228 || a == 196) {
+                s = s + "AE";
+            } else if (a == 246 || a == 214) {
+                s = s + "OE";
+            } else if (a == 252 || a == 220) {
+                s = s + "UE";
+            } else if (a == 223) {
+                s = s + "SS";
+            }
+        }
+        return s;
+    }
+
+    // mod(a: Ganzzahl, m: Ganzzahl): Ganzzahl
+    // kleinster nicht negativer Rest (wie mod in der Abitur-Anlage),
+    // z. B. mod(-3, 26) = 23. Achtung: In Java ergibt -3 % 26 = -3!
+    public static int mod(int a, int m) {
+        int r = a % m;
+        if (r < 0) {
+            r = r + m;
+        }
+        return r;
+    }
+
+    // wert(c: Zeichen): Ganzzahl
+    // Buchstabenwert mit A = 0 ... Z = 25 (ASCII-Wert minus 65).
+    // ACHTUNG Falle P1: Auf Papier gilt A = 1 ... Z = 26!
+    public static int wert(char c) {
+        return (int) c - 65;
+    }
+
+    // zeichen(w: Ganzzahl): Zeichen
+    // Buchstabe zum Wert w (A = 0); w wird vorher modulo 26 genommen.
+    public static char zeichen(int w) {
+        return (char) (mod(w, 26) + 65);
+    }
+
+    // hex2(n: Ganzzahl): Zeichenkette
+    // Zahl von 0 bis 255 als zwei Hexadezimalziffern, z. B. 7 -> "07",
+    // 26 -> "1A", 255 -> "FF".
+    public static String hex2(int n) {
+        String ziffern = "0123456789ABCDEF";
+        return "" + ziffern.charAt(n / 16) + ziffern.charAt(n % 16);
+    }
+
+    // hexWert(c: Zeichen): Ganzzahl
+    // Wert einer Hexadezimalziffer '0'...'9', 'A'...'F' (0 bis 15).
+    public static int hexWert(char c) {
+        int a = (int) c;
+        if (a >= 48 && a <= 57) {
+            return a - 48;
+        }
+        return a - 55;
+    }
+}
+
+
+// ---------------------------------------------------------------------
+//  DEIN TEIL – hier arbeitest du!
+// ---------------------------------------------------------------------
+//  Abi-Notation -> Java:  Ganzzahl int, Zeichen char, Zeichenkette
+//  String, Wahrheitswert boolean, Reihung von Zeichen char[].
+//  Alle Methoden sind public static.
+// ---------------------------------------------------------------------
+
+// ==================== Level 3.3 – Die Bausteine =======================
+
+class Bausteine {
+
+    // ===================== Stufe BASIS =====================
+
+    // caesar(text: Zeichenkette, k: Ganzzahl): Zeichenkette
+    // Verschiebt jeden Buchstaben von text (nur A-Z) um k Stellen nach
+    // hinten (0 <= k <= 25), zyklisch: hinter Z kommt A.
+    // Beispiel: caesar("XYZ", 4) = "BCD". Tipp: Hilfe.wert, Hilfe.zeichen
+    public static String caesar(String text, int k) {
+        // TODO Level 3.3 · Basis
+        return "";
+    }
+
+    // caesarZurueck(geheimtext: Zeichenkette, k: Ganzzahl): Zeichenkette
+    // Macht caesar(..., k) rueckgaengig.
+    public static String caesarZurueck(String geheimtext, int k) {
+        // TODO Level 3.3 · Basis
+        return "";
+    }
+
+    // umkehren(text: Zeichenkette): Zeichenkette
+    // Liefert text rueckwaerts: "NORDWIND" -> "DNIWDRON".
+    public static String umkehren(String text) {
+        // TODO Level 3.3 · Basis
+        return "";
+    }
+
+
+    // ================== Stufe ERWEITERUNG ==================
+
+    // vigenere(text: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    // Zeichen i wird um den Wert des Schluesselbuchstabens
+    // wort.charAt(i % wort.length()) verschoben (A = 0, B = 1, ...),
+    // wie im Vigenere-Quadrat der Abitur-Anlage.
+    // Beispiel: vigenere("ZZZ", "B") = "AAA".
+    public static String vigenere(String text, String wort) {
+        // TODO Level 3.3 · Erweiterung
+        return "";
+    }
+
+    // vigenereZurueck(geheimtext: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    public static String vigenereZurueck(String geheimtext, String wort) {
+        // TODO Level 3.3 · Erweiterung
+        return "";
+    }
+
+    // zeile(i: Ganzzahl, h: Ganzzahl): Ganzzahl   (Hilfsmethode)
+    // In welcher Zeile (0 bis h - 1) des Gartenzauns mit h Zeilen steht
+    // das Zeichen mit Index i? Zickzack: 0, 1, ..., h-1, h-2, ..., 1, 0,
+    // 1, ... (Periode 2 * (h - 1)). Beispiel h = 3: 0 1 2 1 0 1 2 1 ...
+    public static int zeile(int i, int h) {
+        // TODO Level 3.3 · Erweiterung
+        return 0;
+    }
+
+    // gartenzaun(text: Zeichenkette, h: Ganzzahl): Zeichenkette
+    // Schreibt text im Zickzack in h Zeilen (h >= 2) und liest die Zeilen
+    // von oben nach unten aus. Fuer h < 2 bleibt text unveraendert.
+    // Beispiel: gartenzaun("ABCDEFGH", 2) = "ACEGBDFH".
+    public static String gartenzaun(String text, int h) {
+        // TODO Level 3.3 · Erweiterung
+        return "";
+    }
+
+    // gartenzaunZurueck(geheimtext: Zeichenkette, h: Ganzzahl): Zeichenkette
+    // Tipp: Reihung char[] klar = new char[geheimtext.length()]; die
+    // Zeichen des Geheimtextes der Reihe nach an die Positionen i der
+    // Zeile 0, dann der Zeile 1, ... schreiben.
+    public static String gartenzaunZurueck(String geheimtext, int h) {
+        // TODO Level 3.3 · Erweiterung
+        return "";
+    }
+
+
+    // ==================== Stufe EXPERTE ====================
+
+    // rang(wort: Zeichenkette, j: Ganzzahl): Ganzzahl   (Hilfsmethode)
+    // Nummer (ab 0) der Spalte j in der Lesereihenfolge: Anzahl der
+    // Buchstaben von wort, die alphabetisch vor wort.charAt(j) kommen,
+    // plus Anzahl der GLEICHEN Buchstaben links von j.
+    // Beispiel: "ZUG" -> rang 2, 1, 0;  "BEBE" -> rang 0, 2, 1, 3.
+    public static int rang(String wort, int j) {
+        // TODO Level 3.3 · Experte
+        return 0;
+    }
+
+    // spalteMitRang(wort: Zeichenkette, nr: Ganzzahl): Ganzzahl   (Hilfsmethode)
+    // Index j der Spalte mit rang(wort, j) == nr.
+    public static int spalteMitRang(String wort, int nr) {
+        // TODO Level 3.3 · Experte
+        return 0;
+    }
+
+    // spaltentransposition(text: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    // text zeilenweise unter das Schluesselwort schreiben (so viele
+    // Spalten wie wort Buchstaben hat), Spalten in der Reihenfolge ihres
+    // Rangs von oben nach unten auslesen. Die letzte Zeile darf
+    // unvollstaendig sein - es wird NICHT mit X aufgefuellt.
+    // Spalte j enthaelt die Zeichen mit den Indizes j, j + n, j + 2n, ...
+    public static String spaltentransposition(String text, String wort) {
+        // TODO Level 3.3 · Experte
+        return "";
+    }
+
+    // spaltentranspositionZurueck(geheimtext: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    public static String spaltentranspositionZurueck(String geheimtext, String wort) {
+        // TODO Level 3.3 · Experte
+        return "";
+    }
+
+    // xorHex(text: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    // ASCII-Wert jedes Zeichens XOR ASCII-Wert des Schluesselbuchstabens
+    // (Schluesselwort wiederholt); jedes Ergebnis als zwei Hexziffern.
+    // In Java: int b = (int) a ^ (int) k;  Hilfe.hex2(b)
+    // Beispiel: xorHex("FUNK", "AB") = "07170F09".
+    public static String xorHex(String text, String wort) {
+        // TODO Level 3.3 · Experte
+        return "";
+    }
+
+    // xorHexZurueck(hex: Zeichenkette, wort: Zeichenkette): Zeichenkette
+    // Je zwei Hexziffern bilden ein Byte (Hilfe.hexWert); XOR ist
+    // selbstinvers.
+    public static String xorHexZurueck(String hex, String wort) {
+        // TODO Level 3.3 · Experte
+        return "";
+    }
+}
+
+
+// ================== Level 3.3 – Deine eigene Chiffre ==================
+//  Beschreibe hier euer Verfahren (wie im Baukasten):
+//    Name:
+//    Schluesselformat:
+//    Stufe 1:
+//    Stufe 2:
+//    (Stufe 3, Stufe 4)
+//    Entschluesseln: Stufen in UMGEKEHRTER Reihenfolge zurueck (P3!)
+//  Benutze die Bausteine. Brauchst du eine Stufe, die es hier nicht
+//  gibt (Schluesselwort-Substitution, Blockrotation), schreibe sie als
+//  eigene Hilfsmethode in diese Klasse.
+
+class MeineChiffre {
+
+    public static final String NAME = "";
+    public static final String BEISPIEL_KLARTEXT = "";
+    public static final String BEISPIEL_SCHLUESSEL = "";
+    public static final String BEISPIEL_GEHEIMTEXT = "";
+    public static final String TESTSCHLUESSEL_1 = "";
+    public static final String TESTSCHLUESSEL_2 = "";
+
+    // verschluesseln(klartext: Zeichenkette, schluessel: Zeichenkette): Zeichenkette
+    // Erster Schritt immer: Hilfe.normalisiere(klartext)
+    public static String verschluesseln(String klartext, String schluessel) {
+        // TODO Level 3.3 · eigenes Verfahren
+        return "";
+    }
+
+    // entschluesseln(geheimtext: Zeichenkette, schluessel: Zeichenkette): Zeichenkette
+    public static String entschluesseln(String geheimtext, String schluessel) {
+        // TODO Level 3.3 · eigenes Verfahren
+        return "";
+    }
+}
+
+
+// ---------------------------------------------------------------------
+//  TESTS – hier nichts veraendern!
+// ---------------------------------------------------------------------
+
+class L33BausteineTest {
+
+    @Test
+    public void basis_caesar() {
+        assertEquals("IXQNVWLOOH", Bausteine.caesar("FUNKSTILLE", 3), "caesar(\"FUNKSTILLE\", 3) falsch");
+        assertEquals("ABC", Bausteine.caesar("ABC", 0), "Mit k = 0 bleibt der Text gleich (schwacher Schluessel!)");
+    }
+
+    @Test
+    public void basis_caesar_ueberlauf() {
+        assertEquals("BCD", Bausteine.caesar("XYZ", 4), "Ueberlauf hinter Z: X + 4 = B - benutze Hilfe.zeichen (rechnet modulo 26)");
+        assertEquals("YDAQZ", Bausteine.caesar("ZEBRA", 25), "caesar(\"ZEBRA\", 25) falsch - Verschiebung um 25 = um 1 zurueck");
+    }
+
+    @Test
+    public void basis_caesarZurueck() {
+        assertEquals("FUNKSTILLE", Bausteine.caesarZurueck("IXQNVWLOOH", 3), "caesarZurueck(\"IXQNVWLOOH\", 3) falsch - Falle P3: zurueck heisst -k");
+        assertEquals("XYZ", Bausteine.caesarZurueck("BCD", 4), "caesarZurueck(\"BCD\", 4) falsch - negative Werte? Hilfe.mod bzw. Hilfe.zeichen benutzen (Falle P2)");
+    }
+
+    @Test
+    public void basis_umkehren() {
+        assertEquals("DNIWDRON", Bausteine.umkehren("NORDWIND"), "umkehren(\"NORDWIND\") falsch");
+        assertEquals("A", Bausteine.umkehren("A"), "Ein einzelnes Zeichen bleibt gleich");
+        assertEquals("", Bausteine.umkehren(""), "Leerer Text bleibt leer");
+    }
+
+    @Test
+    public void erweiterung_vigenere() {
+        assertEquals("BYGDJLOOWCPRY", Bausteine.vigenere("WETTERBERICHT", "FUNK"), "vigenere(\"WETTERBERICHT\", \"FUNK\") falsch - Schluesselbuchstabe A bedeutet Verschiebung 0");
+        assertEquals("XIEGPHEOE", Bausteine.vigenere("MORGENROT", "LUNA"), "vigenere(\"MORGENROT\", \"LUNA\") falsch - Schluesselwort wiederholen: wort.charAt(i % wort.length())");
+        assertEquals("AAA", Bausteine.vigenere("ZZZ", "B"), "vigenere(\"ZZZ\", \"B\") = \"AAA\" (Ueberlauf)");
+    }
+
+    @Test
+    public void erweiterung_vigenereZurueck() {
+        assertEquals("WETTERBERICHT", Bausteine.vigenereZurueck("BYGDJLOOWCPRY", "FUNK"), "vigenereZurueck falsch - Falle P3: Schluesselwert abziehen");
+        assertEquals("ZZZ", Bausteine.vigenereZurueck("AAA", "B"), "vigenereZurueck(\"AAA\", \"B\") = \"ZZZ\" - negative Werte modulo 26 (Falle P2)");
+    }
+
+    @Test
+    public void erweiterung_gartenzaun() {
+        assertEquals("FSERENCRIERHB", Bausteine.gartenzaun("FERNSCHREIBER", 3), "gartenzaun(\"FERNSCHREIBER\", 3) falsch - Zickzack: Zeilen 0,1,2,1,0,1,2,...");
+        assertEquals("ACEGBDFH", Bausteine.gartenzaun("ABCDEFGH", 2), "gartenzaun(\"ABCDEFGH\", 2) falsch");
+        assertEquals("AGBFHCEIDJ", Bausteine.gartenzaun("ABCDEFGHIJ", 4), "gartenzaun(\"ABCDEFGHIJ\", 4) falsch");
+    }
+
+    @Test
+    public void erweiterung_gartenzaunZurueck() {
+        assertEquals("FERNSCHREIBER", Bausteine.gartenzaunZurueck("FSERENCRIERHB", 3), "gartenzaunZurueck(\"FSERENCRIERHB\", 3) falsch");
+        assertEquals("ABCDEFGHIJ", Bausteine.gartenzaunZurueck("AGBFHCEIDJ", 4), "gartenzaunZurueck(\"AGBFHCEIDJ\", 4) falsch");
+    }
+
+    @Test
+    public void experte_spaltentransposition() {
+        assertEquals("RCEEESRBFNHIR", Bausteine.spaltentransposition("FERNSCHREIBER", "ZUG"), "Spalten in alphabetischer Reihenfolge der Schluesselbuchstaben auslesen (G, U, Z) - letzte Zeile bleibt unvollstaendig, kein X");
+        assertEquals("NRTITHHDSCCNNAIEE", Bausteine.spaltentransposition("NACHRICHTENDIENST", "FUNK"), "spaltentransposition(\"NACHRICHTENDIENST\", \"FUNK\") falsch");
+    }
+
+    @Test
+    public void experte_spaltentransposition_gleicheBuchstaben() {
+        assertEquals("LSICREOTFHEN", Bausteine.spaltentransposition("LOCHSTREIFEN", "BEBE"), "Gleiche Schluesselbuchstaben werden von links nach rechts nummeriert (Falle P4)");
+    }
+
+    @Test
+    public void experte_spaltentranspositionZurueck() {
+        assertEquals("FERNSCHREIBER", Bausteine.spaltentranspositionZurueck("RCEEESRBFNHIR", "ZUG"), "Ungleich lange Spalten beachten: die ersten (Laenge % n) Spalten sind eine Zeile laenger (Falle P4)");
+        assertEquals("NACHRICHTENDIENST", Bausteine.spaltentranspositionZurueck("NRTITHHDSCCNNAIEE", "FUNK"), "spaltentranspositionZurueck mit FUNK falsch");
+        assertEquals("LOCHSTREIFEN", Bausteine.spaltentranspositionZurueck("LSICREOTFHEN", "BEBE"), "spaltentranspositionZurueck mit BEBE falsch");
+    }
+
+    @Test
+    public void experte_xorHex() {
+        assertEquals("07170F09", Bausteine.xorHex("FUNK", "AB"), "xorHex(\"FUNK\", \"AB\") falsch - ASCII-Werte mit ^ verknuepfen, je Byte zwei Hexziffern (Hilfe.hex2)");
+        assertEquals("0504190F", Bausteine.xorHex("NORD", "K"), "xorHex(\"NORD\", \"K\") falsch");
+    }
+
+    @Test
+    public void experte_xorHexZurueck() {
+        assertEquals("FUNK", Bausteine.xorHexZurueck("07170F09", "AB"), "xorHexZurueck falsch - XOR ist selbstinvers: noch einmal mit demselben Schluessel");
+        assertEquals("NORD", Bausteine.xorHexZurueck("0504190F", "K"), "xorHexZurueck(\"0504190F\", \"K\") falsch");
+    }
+}
+
+
+class L33MeineChiffreTest {
+
+    // nurBuchstabenOderHex(s: Zeichenkette): Wahrheitswert
+    public static boolean nurBuchstabenOderHex(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            int a = (int) s.charAt(i);
+            boolean buchstabe = a >= 65 && a <= 90;
+            boolean ziffer = a >= 48 && a <= 57;
+            if (!buchstabe && !ziffer) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Test
+    public void beispielwert_ausDemBaukasten() {
+        assertTrue(MeineChiffre.BEISPIEL_GEHEIMTEXT.length() > 0, "Trage in MeineChiffre das Beispiel aus dem Baukasten ein (BEISPIEL_KLARTEXT, BEISPIEL_SCHLUESSEL, BEISPIEL_GEHEIMTEXT)");
+        assertEquals(MeineChiffre.BEISPIEL_GEHEIMTEXT, MeineChiffre.verschluesseln(MeineChiffre.BEISPIEL_KLARTEXT, MeineChiffre.BEISPIEL_SCHLUESSEL), "Dein Programm liefert nicht den Geheimtext aus dem Baukasten - Reihenfolge der Stufen und Schluesselformat pruefen");
+    }
+
+    @Test
+    public void umkehrbar_kurz() {
+        String k = MeineChiffre.TESTSCHLUESSEL_1;
+        String g = MeineChiffre.verschluesseln("Ebbe und Flut", k);
+        assertEquals("EBBEUNDFLUT", MeineChiffre.entschluesseln(g, k), "entschluesseln(verschluesseln(t)) muss den normalisierten Klartext liefern - Stufen in UMGEKEHRTER Reihenfolge zurueckrechnen (Falle P3)");
+    }
+
+    @Test
+    public void umkehrbar_lang() {
+        String t = "Im Maschinenzeitalter ersetzten Walzen und Lochstreifen die Feder. Wer heute eine Chiffre entwirft, muss davon ausgehen, dass der Gegner das Verfahren kennt. Geheim bleibt allein der Schluessel.";
+        String k = MeineChiffre.TESTSCHLUESSEL_2;
+        String g = MeineChiffre.verschluesseln(t, k);
+        assertEquals(Hilfe.normalisiere(t), MeineChiffre.entschluesseln(g, k), "Langer Text (ueber 150 Buchstaben) wird nicht korrekt zurueckgewonnen - unvollstaendige Bloecke/Spalten pruefen (Falle P4)");
+    }
+
+    @Test
+    public void umkehrbar_randfaelle() {
+        String k = MeineChiffre.TESTSCHLUESSEL_1;
+        assertEquals("A", MeineChiffre.entschluesseln(MeineChiffre.verschluesseln("a", k), k), "Ein einzelner Buchstabe muss funktionieren");
+        assertEquals("QUIZ", MeineChiffre.entschluesseln(MeineChiffre.verschluesseln("Quiz!", k), k), "\"Quiz!\" -> nach Normalisierung \"QUIZ\"");
+    }
+
+    @Test
+    public void geheimtext_nurErlaubteZeichen() {
+        String g = MeineChiffre.verschluesseln("Ebbe und Flut", MeineChiffre.TESTSCHLUESSEL_1);
+        assertTrue(g.length() > 0, "verschluesseln liefert noch einen leeren Text");
+        assertTrue(nurBuchstabenOderHex(g), "Der Geheimtext darf nur A-Z bzw. bei XOR die Hexziffern 0-9, A-F enthalten: " + g);
+    }
+
+    @Test
+    public void schluessel_wirkt() {
+        String t = "Ebbe und Flut";
+        String g1 = MeineChiffre.verschluesseln(t, MeineChiffre.TESTSCHLUESSEL_1);
+        String g2 = MeineChiffre.verschluesseln(t, MeineChiffre.TESTSCHLUESSEL_2);
+        assertFalse(g1.equals(g2), "Zwei verschiedene Schluessel liefern denselben Geheimtext - wirkt dein Schluessel ueberhaupt?");
+        assertFalse(g1.equals(Hilfe.normalisiere(t)), "Der Geheimtext ist gleich dem Klartext - schwacher Schluessel (Falle P7)?");
+    }
+}
+
+
+// ---------------------------------------------------------------------
+//  Programmstart – das Hauptprogramm
+// ---------------------------------------------------------------------
+
+println("=== Chiffren-Werkstatt ===");
+println("Caesar(FUNKSTILLE, 3)   = " + Bausteine.caesar("FUNKSTILLE", 3) + "   (erwartet: IXQNVWLOOH)");
+println("Vigenere(WETTERBERICHT, FUNK) = " + Bausteine.vigenere("WETTERBERICHT", "FUNK") + "   (erwartet: BYGDJLOOWCPRY)");
+println("Gartenzaun(FERNSCHREIBER, 3) = " + Bausteine.gartenzaun("FERNSCHREIBER", 3) + "   (erwartet: FSERENCRIERHB)");
+println("Spalten(FERNSCHREIBER, ZUG) = " + Bausteine.spaltentransposition("FERNSCHREIBER", "ZUG") + "   (erwartet: RCEEESRBFNHIR)");
+println("XOR-Hex(FUNK, AB)       = " + Bausteine.xorHex("FUNK", "AB") + "   (erwartet: 07170F09)");
+println("");
+String klar = "Morgen kommt der Zug um acht";
+String geheim = MeineChiffre.verschluesseln(klar, MeineChiffre.TESTSCHLUESSEL_1);
+println("Verfahren: " + MeineChiffre.NAME);
+println("Klartext:   " + Hilfe.normalisiere(klar));
+println("Geheimtext: " + geheim);
+println("zurueck:    " + MeineChiffre.entschluesseln(geheim, MeineChiffre.TESTSCHLUESSEL_1));

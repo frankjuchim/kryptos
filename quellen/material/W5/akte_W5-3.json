@@ -1,0 +1,1050 @@
+{
+ "typ": "akte",
+ "welt": 5,
+ "kennung": "AKTE W5·3",
+ "titel": "Mallory im Netz",
+ "ds": "16",
+ "niveau": "kern",
+ "level": "5.3",
+ "datei": "KR_W5_Akte3_Mallory_im_Netz",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Im Funkraum hat Mallory gezeigt, was passiert, wenn niemand prüft, wem ein öffentlicher Schlüssel gehört. Erst als Trent die Schlüssel mit seinem Siegel bestätigte, flog sie auf. Heute erledigt das jeder Browser tausendfach am Tag – fast unsichtbar. Und weil im Netz so viele Daten über uns fließen, hat Europa Regeln dafür geschaffen, wer was speichern darf."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Der Man-in-the-Middle-Angriff",
+   "inhalt": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "M",
+       "name": "Mallory",
+       "unter": "Angreiferin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 13.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "B",
+       "nach": "M",
+       "text": "Bob sendet seinen öffentlichen Schlüssel – Mallory behält ihn"
+      },
+      {
+       "nr": 2,
+       "von": "M",
+       "nach": "A",
+       "text": "(1) ______________ als „Bobs Schlüssel“"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "M",
+       "text": "Nachricht, verschlüsselt mit dem (2) ______________"
+      },
+      {
+       "nr": 4,
+       "von": "M",
+       "nach": "M",
+       "text": "entschlüsselt mit dem (3) ______________, liest und ändert"
+      },
+      {
+       "nr": 5,
+       "von": "M",
+       "nach": "B",
+       "text": "verschlüsselt neu mit dem (4) ______________"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "entschlüsselt mit seinem privaten Schlüssel – merkt nichts"
+      }
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "M",
+       "name": "Mallory",
+       "unter": "Angreiferin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 13.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "B",
+       "nach": "M",
+       "text": "Bob sendet seinen öffentlichen Schlüssel – Mallory behält ihn"
+      },
+      {
+       "nr": 2,
+       "von": "M",
+       "nach": "A",
+       "text": "öffentlicher Schlüssel von Mallory als „Bobs Schlüssel“"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "M",
+       "text": "Nachricht, verschlüsselt mit dem öffentlichen Schlüssel von Mallory"
+      },
+      {
+       "nr": 4,
+       "von": "M",
+       "nach": "M",
+       "text": "entschlüsselt mit dem privaten Schlüssel von Mallory, liest und ändert"
+      },
+      {
+       "nr": 5,
+       "von": "M",
+       "nach": "B",
+       "text": "verschlüsselt neu mit dem öffentlichen Schlüssel von Bob"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "entschlüsselt mit seinem privaten Schlüssel – merkt nichts"
+      }
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "p",
+     "md": "Mallory bricht **kein** Verfahren – sie nutzt aus, dass Alice nicht prüft, wem der Schlüssel gehört. Gebrochen sind Vertraulichkeit (Mallory liest) und Integrität/Authentizität (Mallory ändert und gibt sich als Bob bzw. Alice aus). Auch **Diffie-Hellman** (W4) ist ohne Prüfung anfällig: Mallory vereinbart je einen Schlüssel mit Alice und mit Bob."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Zertifikate",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein **Zertifikat** ist ein von einer **Zertifizierungsstelle (CA)** signiertes Dokument (Beispiel, erfunden):"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      4.2,
+      11.4
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Inhaber",
+       "`bank-chronopolis.example`"
+      ],
+      [
+       "Öffentlicher Schlüssel",
+       "RSA 2048 Bit, `30 82 01 0A 02 82 01 01 …` (gekürzt)"
+      ],
+      [
+       "Aussteller",
+       "Chronopolis CA"
+      ],
+      [
+       "Gültig",
+       "01.09.2026 bis 15.03.2027"
+      ],
+      [
+       "Seriennummer",
+       "`4F 2A 91 C3`"
+      ],
+      [
+       "Signatur der CA",
+       "(Hashwert aller Angaben oben, verschlüsselt mit dem privaten Schlüssel der Chronopolis CA)"
+      ]
+     ]
+    },
+    {
+     "t": "liste",
+     "items": [
+      "**Ausstellung:** Die CA prüft, dass der Antragsteller die Domain bzw. Identität wirklich kontrolliert, und signiert die Zuordnung „öffentlicher Schlüssel ↔ Inhaber“.",
+      "**Prüfung im Browser:** (1) Signatur mit dem **öffentlichen Schlüssel der CA** prüfen, (2) Name = aufgerufene Domain?, (3) gültig am heutigen Tag?, (4) nicht widerrufen (gesperrt)?",
+      "**Zertifikatskette:** Serverzertifikat (signiert von Zwischen-CA) → Zwischenzertifikat (signiert von Wurzel-CA) → **Wurzelzertifikat** (selbst signiert, im Browser/Betriebssystem als **Vertrauensanker** vorinstalliert).",
+      "**Web of Trust** (z. B. OpenPGP): Ohne zentrale CA bestätigen sich Nutzerinnen und Nutzer gegenseitig ihre Schlüssel durch Signaturen; man vertraut einem Schlüssel, wenn Personen, denen man vertraut, ihn bestätigt haben."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**So bestätigt Trent (CA) Bobs Schlüssel** – Schlüsselart und Inhaber an (1) und (2) ergänzt ihr in Auftrag 3:",
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "**So bestätigt Trent (CA) Bobs Schlüssel:**",
+     "nur_loesung": true
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      },
+      {
+       "id": "T",
+       "name": "Trent",
+       "unter": "Zertifizierungsstelle (CA)"
+      }
+     ],
+     "breite_cm": 12.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "B",
+       "nach": "T",
+       "text": "Antrag: Name + öffentlicher Schlüssel von Bob"
+      },
+      {
+       "nr": 2,
+       "von": "T",
+       "nach": "T",
+       "text": "prüft Bobs Identität; signiert (Name, Schlüssel, Gültigkeit) mit dem (1) ______________ → Zertifikat"
+      },
+      {
+       "nr": 3,
+       "von": "T",
+       "nach": "B",
+       "text": "Zertifikat"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "A",
+       "text": "Zertifikat (beim Verbindungsaufbau)"
+      },
+      {
+       "nr": 5,
+       "von": "A",
+       "nach": "A",
+       "text": "prüft die Signatur mit dem (2) ______________ (vorinstalliert), dazu Name, Gültigkeit, Widerruf"
+      },
+      {
+       "nr": 6,
+       "von": "A",
+       "nach": "B",
+       "text": "verschlüsselt mit Bobs öffentlichem Schlüssel aus dem Zertifikat"
+      }
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      },
+      {
+       "id": "T",
+       "name": "Trent",
+       "unter": "Zertifizierungsstelle (CA)"
+      }
+     ],
+     "breite_cm": 12.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "B",
+       "nach": "T",
+       "text": "Antrag: Name + öffentlicher Schlüssel von Bob"
+      },
+      {
+       "nr": 2,
+       "von": "T",
+       "nach": "T",
+       "text": "prüft Bobs Identität; signiert (Name, Schlüssel, Gültigkeit) mit dem privaten Schlüssel von Trent → Zertifikat"
+      },
+      {
+       "nr": 3,
+       "von": "T",
+       "nach": "B",
+       "text": "Zertifikat"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "A",
+       "text": "Zertifikat (beim Verbindungsaufbau)"
+      },
+      {
+       "nr": 5,
+       "von": "A",
+       "nach": "A",
+       "text": "prüft die Signatur mit dem öffentlichen Schlüssel von Trent (vorinstalliert), dazu Name, Gültigkeit, Widerruf"
+      },
+      {
+       "nr": 6,
+       "von": "A",
+       "nach": "B",
+       "text": "verschlüsselt mit Bobs öffentlichem Schlüssel aus dem Zertifikat"
+      }
+     ],
+     "nur_loesung": true
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P9",
+   "titel": "Was ein Zertifikat bestätigt",
+   "md": "Ein Zertifikat bestätigt **die Zuordnung Schlüssel ↔ Identität**, nicht die Ehrlichkeit des Inhabers. Auch Betrugsseiten haben gültige Zertifikate – für **ihren eigenen** Namen (vgl. `chronoskop-archiv.example` im Archivfund)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "TLS (HTTPS) im Überblick",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Der Browser baut die Verbindung auf und nennt die Verfahren, die er beherrscht.",
+      "Der Server schickt sein Zertifikat (mit Kette).",
+      "Der Browser prüft Zertifikat und Kette bis zu einem Vertrauensanker sowie Name und Gültigkeit.",
+      "Browser und Server vereinbaren **asymmetrisch** einen gemeinsamen Sitzungsschlüssel (heute mit Diffie-Hellman, wobei der Server seinen Teil mit dem Schlüssel aus dem Zertifikat signiert; ältere Versionen übertrugen einen Schlüssel RSA-verschlüsselt).",
+      "Alle Daten werden **symmetrisch** (z. B. AES) mit dem Sitzungsschlüssel verschlüsselt und gegen Veränderung gesichert."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "→ TLS = **Zertifikatsprüfung + Hybridverfahren**. Das Schloss-Symbol bedeutet: verschlüsselt mit dem Inhaber des Zertifikats – nicht „diese Seite ist harmlos“."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Datenschutz: DSGVO und informationelle Selbstbestimmung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Personenbezogene Daten** sind alle Informationen, die sich auf eine identifizierte oder identifizierbare Person beziehen (Name, Adresse, Standort, Fotos, Kennnummern …). Das **Recht auf informationelle Selbstbestimmung** (Bundesverfassungsgericht 1983, „Volkszählungsurteil“) besagt, dass jede und jeder grundsätzlich selbst über Preisgabe und Verwendung der eigenen Daten bestimmt. Die **Datenschutz-Grundverordnung (DSGVO)** gilt seit dem 25. Mai 2018 und legt in Art. 5 **Grundsätze** fest:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Grundsatz",
+      "Kurzform"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      5.6,
+      10.2
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Rechtmäßigkeit, Verarbeitung nach Treu und Glauben, Transparenz",
+       "nur mit Rechtsgrundlage (z. B. Einwilligung, Vertrag, Gesetz), nachvollziehbar für Betroffene"
+      ],
+      [
+       "Zweckbindung",
+       "nur für festgelegte, eindeutige Zwecke"
+      ],
+      [
+       "Datenminimierung",
+       "nur so viele Daten wie für den Zweck nötig"
+      ],
+      [
+       "Richtigkeit",
+       "Daten müssen sachlich richtig sein, falsche werden berichtigt oder gelöscht"
+      ],
+      [
+       "Speicherbegrenzung",
+       "nur so lange speichern wie nötig"
+      ],
+      [
+       "Integrität und Vertraulichkeit",
+       "angemessene Sicherheit, z. B. Verschlüsselung, Zugriffsschutz, Passwort-Hashing"
+      ],
+      [
+       "Rechenschaftspflicht",
+       "der Verantwortliche muss die Einhaltung nachweisen können"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Betroffene haben u. a. Rechte auf **Auskunft, Berichtigung, Löschung** und **Widerspruch**."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 5,
+   "titel": "Verschlüsselung und Gesellschaft: eine Debatte",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Starke Ende-zu-Ende-Verschlüsselung schützt Privatsphäre, Geschäftsgeheimnisse, Journalistinnen und Journalisten – erschwert aber auch Ermittlungen. Seit Jahrzehnten wird deshalb über staatlichen Zugriff gestritten (in den 1990er-Jahren „Crypto Wars“ um Hintertüren und Schlüsselhinterlegung). Aktuell diskutiert die EU seit 2022 eine Verordnung zur Bekämpfung von Darstellungen sexuellen Kindesmissbrauchs im Netz, die Anbieter zum automatischen Durchsuchen von Nachrichten verpflichten könnte – auch **vor** der Verschlüsselung auf dem Gerät („Client-Side-Scanning“, umgangssprachlich „Chatkontrolle“)."
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "h",
+       "md": "Argumente dafür (Auswahl)"
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Schutz von Opfern schwerer Straftaten",
+        "Ermittlungsmöglichkeiten dürfen nicht durch Technik verschwinden",
+        "Anbieter tragen Verantwortung für ihre Dienste"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "h",
+       "md": "Argumente dagegen (Auswahl)"
+      },
+      {
+       "t": "liste",
+       "items": [
+        "anlassloses Durchsuchen aller Kommunikation (Verhältnismäßigkeit, informationelle Selbstbestimmung)",
+        "Fehlalarme treffen Unschuldige",
+        "eine eingebaute Prüffunktion ist eine Schwachstelle, die missbraucht oder erweitert werden kann",
+        "Vertraulichkeit der Ende-zu-Ende-Verschlüsselung wird untergraben"
+       ]
+      }
+     ],
+     "anteil": 0.5
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "*Es gibt hier keine „richtige“ Meinung: Bewertet wird, wie sachlich und begründet du abwägst. Stand der Gesetzgebung: siehe aktuelle Nachrichtenlage.*"
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Mallorys Schlüsseltausch",
+   "sozialform": "Einzelarbeit · 6 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Beschrifte im Schaubild (Archivwissen 1) an den Stellen (1) bis (4) – Pfeile 2 bis 5 – den verwendeten Schlüssel (**Art + Inhaber**). **Nenne** die Schutzziele, die Mallory bricht."
+    },
+    {
+     "t": "p",
+     "nur_schueler": true,
+     "md": "(1) [[luecke:24]]   (2) [[luecke:24]]"
+    },
+    {
+     "t": "p",
+     "nur_schueler": true,
+     "md": "(3) [[luecke:24]]   (4) [[luecke:24]]"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(1) Pfeil 2: **öffentlicher Schlüssel von Mallory** (ausgegeben als Bobs), (2) Pfeil 3: **öffentlicher Schlüssel von Mallory**, (3) Pfeil 4: **privater Schlüssel von Mallory**, (4) Pfeil 5: **öffentlicher Schlüssel von Bob**."
+    },
+    {
+     "t": "p",
+     "md": "Gebrochen: **Vertraulichkeit, Integrität, Authentizität**."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Drei Zertifikate",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice ruft am 12.10.2026 `bank-chronopolis.example` auf. Mallory kann ihr eines von drei Zertifikaten unterschieben:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Inhaber",
+      "Aussteller",
+      "gültig",
+      "Signatur"
+     ],
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      1.0,
+      4.6,
+      3.0,
+      3.8,
+      3.4
+     ],
+     "zeilen": [
+      [
+       "Z1",
+       "`bank-chronopolis.example`",
+       "Chronopolis CA",
+       "01.09.2026–15.03.2027",
+       "korrekt"
+      ],
+      [
+       "Z2",
+       "`chronopolis-bank.example`",
+       "Chronopolis CA",
+       "01.10.2026–31.03.2027",
+       "korrekt"
+      ],
+      [
+       "Z3",
+       "`bank-chronopolis.example`",
+       "Mallory Root",
+       "01.10.2026–31.03.2027",
+       "korrekt mit Mallorys Schlüssel"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Mallorys Wurzelzertifikat ist nicht im Browser installiert. **Entscheide** für jedes Zertifikat begründet, ob der Browser es akzeptiert. Welches der drei Zertifikate kann Mallory nur benutzen, wenn Alice sich auf die falsche Adresse locken lässt?"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Z1:** akzeptiert (Name passt, gültig, Kette zur vorinstallierten Wurzel) – aber Mallory hat den passenden privaten Schlüssel der Bank nicht, kann also mit Z1 nicht als Bank auftreten."
+    },
+    {
+     "t": "p",
+     "md": "**Z2:** Name passt nicht zu `bank-chronopolis.example` → Warnung; **nur nutzbar, wenn Alice auf `chronopolis-bank.example` gelockt wird** (Phishing, vgl. Archivfund) – dann zeigt der Browser sogar ein Schloss."
+    },
+    {
+     "t": "p",
+     "md": "**Z3:** Kette endet bei „Mallory Root“, das nicht vorinstalliert ist → Warnung (nicht vertrauenswürdige Zertifizierungsstelle)."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Bis zur Wurzel",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Ergänze im Schaubild in Archivwissen 2 an den Stellen (1) und (2) **Schlüsselart und Inhaber**.",
+      "**Beschreibe** die Prüfung der Kette „Trent Root CA → Chronopolis CA → `bank-chronopolis.example`“ Schritt für Schritt (welche Signatur wird mit welchem öffentlichen Schlüssel geprüft?).",
+      "**Begründe**, warum die Kette mit einem vorinstallierten Zertifikat enden muss."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) (1) **privater Schlüssel von Trent**, (2) **öffentlicher Schlüssel von Trent** (im Browser vorinstalliert)."
+    },
+    {
+     "t": "p",
+     "md": "b) Signatur im Serverzertifikat mit dem öffentlichen Schlüssel der **Chronopolis CA** (steht im Zwischenzertifikat) prüfen; Signatur im Zwischenzertifikat mit dem öffentlichen Schlüssel der **Trent Root CA** prüfen; Trent Root CA ist im Browser vorinstalliert → das Vertrauen endet hier."
+    },
+    {
+     "t": "p",
+     "md": "c) Irgendeinem Schlüssel muss man ohne weitere Prüfung vertrauen; würde der Server auch die Wurzel liefern, könnte Mallory eine eigene Wurzel mitschicken."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "TLS-Kärtchen",
+   "sozialform": "Partnerarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bringe die gemischten TLS-Schritte in die richtige Reihenfolge und **begründe**, warum TLS ein Hybridverfahren ist und warum die Zertifikatsprüfung **vor** der Schlüsselvereinbarung stehen muss."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      1.0,
+      13.3,
+      1.5
+     ],
+     "schrift": 10,
+     "kopf": [
+      "",
+      "Kärtchen",
+      "Platz"
+     ],
+     "zeilen": [
+      [
+       "A",
+       "Browser und Server vereinbaren asymmetrisch einen gemeinsamen Sitzungsschlüssel.",
+       ""
+      ],
+      [
+       "B",
+       "Der Server schickt sein Zertifikat (mit Kette).",
+       ""
+      ],
+      [
+       "C",
+       "Alle Daten werden symmetrisch mit dem Sitzungsschlüssel verschlüsselt.",
+       ""
+      ],
+      [
+       "D",
+       "Der Browser baut die Verbindung auf und nennt die Verfahren, die er beherrscht.",
+       ""
+      ],
+      [
+       "E",
+       "Der Browser prüft Zertifikat und Kette bis zu einem Vertrauensanker sowie Name und Gültigkeit.",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Reihenfolge **D – B – E – A – C** (wie Archivwissen 3)."
+    },
+    {
+     "t": "p",
+     "md": "Hybrid: asymmetrisch nur für die Vereinbarung des Sitzungsschlüssels (keine geheime Vorabsprache mit dem Server möglich), symmetrisch für die Daten (Geschwindigkeit). Zertifikat zuerst: sonst vereinbart der Browser womöglich einen Schlüssel mit Mallory (Man-in-the-Middle)."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Der Messenger „Funkspruch“",
+   "sozialform": "Gruppenarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der (erfundene) Messenger „Funkspruch“ wirbt mit Ende-zu-Ende-Verschlüsselung. In seinen Bedingungen steht:"
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Beim Start wird das gesamte Adressbuch hochgeladen.",
+      "Chats werden unbegrenzt auf dem Server gesichert.",
+      "Der Standort wird für personalisierte Werbung genutzt, obwohl er für die Funktion nicht nötig ist.",
+      "Auskunftsanfragen beantwortet der Anbieter nicht.",
+      "Passwörter werden im Klartext gespeichert."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Ordne jedem Punkt einen verletzten DSGVO-Grundsatz bzw. ein Betroffenenrecht zu und **schlage** je eine Verbesserung vor."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Nr.",
+      "verletzter Grundsatz / Recht",
+      "Verbesserungsvorschlag"
+     ],
+     "breiten": [
+      1.2,
+      6.0,
+      8.6
+     ],
+     "zentriert": false,
+     "zeilen": [
+      [
+       "1",
+       "",
+       ""
+      ],
+      [
+       "2",
+       "",
+       ""
+      ],
+      [
+       "3",
+       "",
+       ""
+      ],
+      [
+       "4",
+       "",
+       ""
+      ],
+      [
+       "5",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Nr.",
+      "verletzter Grundsatz / Recht",
+      "Verbesserungsvorschlag"
+     ],
+     "breiten": [
+      1.0,
+      5.6,
+      8.6
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "1",
+       "Datenminimierung, Rechtmäßigkeit (Kontakte Dritter ohne deren Einwilligung)",
+       "nur gehashte bzw. freiwillig ausgewählte Kontakte abgleichen"
+      ],
+      [
+       "2",
+       "Speicherbegrenzung",
+       "Löschfristen, Speicherung nur auf Wunsch"
+      ],
+      [
+       "3",
+       "Zweckbindung, Datenminimierung",
+       "Standort nur mit ausdrücklicher Einwilligung und nur für die Funktion"
+      ],
+      [
+       "4",
+       "Auskunftsrecht, Transparenz, Rechenschaftspflicht",
+       "Auskunft binnen eines Monats"
+      ],
+      [
+       "5",
+       "Integrität und Vertraulichkeit",
+       "gesalzene, langsame Passwort-Hashes"
+      ]
+     ]
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Scannen vor dem Verschlüsseln?",
+   "sozialform": "Einzelarbeit · Hausaufgabe",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Erörtere** auf einem eigenen Blatt (ca. 250 Wörter) die Frage: „Sollen Messenger-Anbieter verpflichtet werden, Nachrichten vor der Verschlüsselung automatisch auf verbotene Inhalte zu prüfen?“"
+    },
+    {
+     "t": "liste",
+     "haken": true,
+     "items": [
+      "**Einleitung:** Sachverhalt und Fachbegriffe (Ende-zu-Ende-Verschlüsselung, Client-Side-Scanning)",
+      "mindestens **zwei Argumente je Seite**, jeweils mit Beispiel",
+      "**Abwägung** der Argumente",
+      "**eigenes, begründetes Urteil**",
+      "Bezug zu mindestens einem **Schutzziel** und einem **DSGVO-Grundsatz** bzw. der **informationellen Selbstbestimmung**"
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Bewertungskriterien:** Sachverhalt korrekt (Prüfung **vor** der Verschlüsselung, das Verfahren selbst bleibt ungebrochen); je Seite ≥ 2 Argumente mit Beispiel; Bezug zu Vertraulichkeit und informationeller Selbstbestimmung/DSGVO; Abwägung (z. B. Verhältnismäßigkeit, Missbrauchsrisiko vs. Opferschutz, Alternativen wie gezielte Ermittlungen); begründetes eigenes Urteil."
+    },
+    {
+     "t": "p",
+     "md": "**Jede Position ist zulässig** – bewertet wird die Qualität der Argumentation (P10)."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Mallory gegen Diffie-Hellman",
+   "sozialform": "Partnerarbeit · 10 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "*(Rechnung: Ergänzung, DH aus W4)* p = 23, g = 5. Alice wählt a = 6, Bob b = 9. Mallory fängt beide öffentlichen Werte ab und schickt beiden ihren Wert M = 5^m^ mod 23 mit m = 4."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Berechne A, B und M.",
+      "Berechne den Schlüssel, den Alice berechnet (M^a^ mod 23), und den, den Bob berechnet (M^b^ mod 23).",
+      "Welche Schlüssel kennt Mallory? Welchen Schlüssel hätten Alice und Bob ohne Mallory?",
+      "**Erläutere**, wie signierte DH-Werte (Server-Zertifikat in TLS) den Angriff verhindern."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Größe",
+      "Rechnung",
+      "Wert"
+     ],
+     "breiten": [
+      3.2,
+      9.6,
+      3.0
+     ],
+     "kopfspalte": true,
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "A",
+       "",
+       ""
+      ],
+      [
+       "B",
+       "",
+       ""
+      ],
+      [
+       "M",
+       "",
+       ""
+      ],
+      [
+       "K~Alice~",
+       "",
+       ""
+      ],
+      [
+       "K~Bob~",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Größe",
+      "Rechnung",
+      "Wert"
+     ],
+     "breiten": [
+      3.0,
+      9.4,
+      2.8
+     ],
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "A",
+       "5^6^ mod 23",
+       "**8**"
+      ],
+      [
+       "B",
+       "5^9^ mod 23",
+       "**11**"
+      ],
+      [
+       "M",
+       "5^4^ mod 23 = 625 mod 23",
+       "**4**"
+      ],
+      [
+       "K~Alice~",
+       "M^a^ = 4^6^ mod 23 = 4096 mod 23",
+       "**2**"
+      ],
+      [
+       "K~Bob~",
+       "M^b^ = 4^9^ mod 23",
+       "**13**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "c) Mallory berechnet A^m^ = 8^4^ mod 23 = 2 und B^m^ = 11^4^ mod 23 = 13 – sie kennt **beide** Schlüssel. Ohne Mallory: K = 5^54^ mod 23 = **9**."
+    },
+    {
+     "t": "p",
+     "md": "d) Signiert der Server seinen DH-Wert mit dem privaten Schlüssel aus seinem Zertifikat, prüft der Browser die Signatur mit dem öffentlichen Schlüssel aus dem (CA-geprüften) Zertifikat; Mallorys Ersatzwert hätte keine gültige Signatur."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Erläutern Sie**, wie ein Angreifer mithilfe eines gefälschten öffentlichen Schlüssels die Vertraulichkeit und die Integrität der Kommunikation zwischen zwei Personen aushebeln kann.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Der Angreifer fängt den öffentlichen Schlüssel des Empfängers ab und gibt seinen eigenen als dessen aus (1); der Absender verschlüsselt mit dem Angreiferschlüssel, der Angreifer entschlüsselt und liest (Vertraulichkeit) (1); er kann die Nachricht verändern (1) und mit dem echten öffentlichen Schlüssel des Empfängers neu verschlüsseln, sodass niemand etwas bemerkt (Integrität) (1)."
+      }
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Beschreiben Sie**, wie ein Zertifikat einer Zertifizierungsstelle diesen Angriff verhindert.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Eine CA bestätigt mit ihrer digitalen Signatur, dass ein öffentlicher Schlüssel zu einer bestimmten Person/Domain gehört (1); der Absender prüft die Signatur mit dem öffentlichen Schlüssel der CA, der z. B. im Browser vorinstalliert ist (1); ein untergeschobener Schlüssel hat kein gültiges Zertifikat auf den Namen des Empfängers, der Angriff fällt auf (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie** begründet, ob die folgende Aussage korrekt ist: „Eine Website mit gültigem Zertifikat ist vertrauenswürdig.“",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch (1): Das Zertifikat bestätigt nur die Zuordnung des öffentlichen Schlüssels zur Domain bzw. zum Inhaber; auch Betrüger erhalten Zertifikate für eigene Domains (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Nennen Sie** drei Grundsätze der DSGVO für die Verarbeitung personenbezogener Daten.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Drei aus: Rechtmäßigkeit/Treu und Glauben/Transparenz, Zweckbindung, Datenminimierung, Richtigkeit, Speicherbegrenzung, Integrität und Vertraulichkeit, Rechenschaftspflicht (je 1)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "5.3",
+   "md": "Level 5.3 „Mallory im Netz“ im Kryptolabor mit dem **Zertifikats-Simulator** (Modi „Zertifikat“ und „MitM“). Danach: **Boss W5 „Das Siegel der Stadt“** – ab 50 % gehört das Artefakt „Siegel“ dir. Trainingsplatz: „Schutzziele“."
+  }
+ ]
+}

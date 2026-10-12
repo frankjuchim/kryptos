@@ -1,0 +1,889 @@
+{
+ "typ": "dokument",
+ "welt": 6,
+ "kennung": "FUNKRAUM W6",
+ "titel": "Abi-Duell",
+ "datei": "KR_W6_Funkraum_Abi-Duell",
+ "ordner": "Werkzeuge/Funkraum",
+ "ds": "18 / Folgestunde",
+ "namenszeile": false,
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "WORUM ES GEHT",
+   "md": "Welt 6 hat kein Funkraum-Szenario – stattdessen das **Abi-Duell** (20–25 min, ohne Plattformpflicht): Tischgruppen (3–4 Personen) sind abwechselnd **Prüfungskommission** (stellt eine Aussage) und **Prüflinge** (entscheiden begründet). Die Lehrkraft ist **Zweitkorrektorin**. Geübt wird der Aufgabentyp „**Entscheiden Sie begründet** …“ aus dem Abitur (2025, 2026) im Drei-Schritt Entscheidung – Begründung – Beleg. Es gibt **keine Lab-Punkte**; gezählt werden BE an der Tafel."
+  },
+  {
+   "t": "verlauf",
+   "titel": "Ablauf für die Lehrkraft (20–25 min)",
+   "zeilen": [
+    [
+     "Vorbereitung",
+     "vorab",
+     "Akte W6·3 Auftrag 4: jedes Team hat zwei Aussagen (eine korrekte, eine falsche) mit Musterentscheidung auf Duell-Karten. Reserve: Karten K1–K12 dieses Dokuments (ausschneiden). Rollenkarten und Antwortkarten kopieren.",
+     "PA/GA",
+     "Akte W6·3, Karten K1–K12"
+    ],
+    [
+     "Start",
+     "3",
+     "Teams bilden (3–4 Personen), Rollenkarten verteilen, Paarungsplan an die Tafel, Strichliste anlegen. Regel nennen: Entscheidung ohne Begründung = 0 BE.",
+     "PL",
+     "Rollenkarten, Paarungsplan"
+    ],
+    [
+     "Duell-Runden",
+     "4 × 4–5",
+     "(1) Team A liest eine Aussage vor (Beamer oder Karte). (2) Team B hat 3 min und schreibt eine Entscheidung im Drei-Schritt auf die Antwortkarte. (3) Team A bewertet nach Kernpunkten: Entscheidung richtig 1 BE, fachliche Begründung 1 BE, Beleg 1 BE. (4) Die Lehrkraft bestätigt oder korrigiert (bei falscher Musterlösung erhält Team B die Punkte). (5) Rollenwechsel nach Paarungsplan, bis jedes Team zweimal geprüft hat.",
+     "GA",
+     "Antwortkarten, Strichliste"
+    ],
+    [
+     "Auswertung",
+     "3–5",
+     "BE-Strichliste an der Tafel; die zwei „gemeinsten“ Aussagen gemeinsam besprechen und als Warm-up-Karten notieren.",
+     "PL",
+     "Tafel"
+    ]
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "PAPIER-ALTERNATIVE UND PLATTFORM-VARIANTE",
+   "md": "Das Duell läuft **auf Papier** (Karten, Antwortkarten, Tafel) oder am Beamer. Freitext ist im Funkraum nicht zugelassen (nur A–Z/0–9); die Plattform liefert deshalb optional nur einen **Zufallsgenerator für die Paarungen**. Ohne Gerät: Paarungsplan unten verwenden."
+  },
+  {
+   "t": "h",
+   "md": "Paarungsplan (jedes Team prüft zweimal und wird zweimal geprüft)"
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.42,
+   "links": [
+    {
+     "t": "p",
+     "md": "**4 Teams (A–D)** · „A → B“ heißt: A ist Kommission, B sind Prüflinge."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Runde",
+      "Duell 1",
+      "Duell 2"
+     ],
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "1",
+       "A → B",
+       "C → D"
+      ],
+      [
+       "2",
+       "B → A",
+       "D → C"
+      ],
+      [
+       "3",
+       "C → A",
+       "D → B"
+      ],
+      [
+       "4",
+       "A → C",
+       "B → D"
+      ]
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "**6 Teams (A–F)**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Runde",
+      "Duell 1",
+      "Duell 2",
+      "Duell 3"
+     ],
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "1",
+       "A → B",
+       "C → D",
+       "E → F"
+      ],
+      [
+       "2",
+       "B → A",
+       "D → C",
+       "F → E"
+      ],
+      [
+       "3",
+       "D → A",
+       "E → B",
+       "F → C"
+      ],
+      [
+       "4",
+       "A → D",
+       "B → E",
+       "C → F"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Rollenkarten zum Ausschneiden"
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLE · PRÜFUNGSKOMMISSION",
+   "farbe": "8A5F1A",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr stellt eine Aussage und bewertet die Antwort wie eine Abiturkommission. Verteilt die Aufgaben: **Vorleser/in** · **Zeitwächter/in** · **Korrektor/in** · **Protokoll** (Strichliste)."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Aussage **zweimal langsam** vorlesen (oder am Beamer zeigen). Keine Hinweise, ob sie korrekt ist!",
+      "**3 Minuten** stoppen, dann die Antwortkarte einsammeln.",
+      "Nach Kernpunkten bewerten: Entscheidung richtig 1 BE · fachliche Begründung 1 BE · Beleg 1 BE. Eine Entscheidung ohne Begründung erhält **0 BE**.",
+      "Bewertung **laut begründen** („Begründung fehlt, weil …“).",
+      "Streitfall? Die Zweitkorrektorin entscheidet. Ist eure Musterlösung falsch, bekommen die Prüflinge die Punkte."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLE · PRÜFLINGE",
+   "farbe": "14213D",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr habt **3 Minuten** und schreibt **eine** gemeinsame Antwort auf die Antwortkarte – im Drei-Schritt:"
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "**Entscheidung** gleich zu Beginn: „Die Aussage ist korrekt/falsch.“",
+      "**Begründung** mit Fachbegriff und Ursache: „…, weil … . Daraus folgt …“",
+      "**Beleg**: Rechnung, Beispiel oder Gegenbeispiel. Für „falsch“ genügt ein einziges Gegenbeispiel."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Tipp:* „Immer“- und „nie“-Aussagen sind verdächtig. Prüft Zahlen nach (n(n − 1)/2, 26ⁿ, mod 26) und denkt an die Fallen P1–P10.",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLE · ZWEITKORREKTORIN (LEHRKRAFT)",
+   "farbe": "4A4A55",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Paarungen ansagen, Zeit im Blick behalten (je Duell 4–5 min).",
+      "Bewertungen stichprobenartig prüfen; bei Streit entscheiden. Falsche Musterlösung → Punkte an die Prüflinge.",
+      "Achten auf: Entscheidung ohne Begründung (0 BE), Begründung ohne Fachbegriff, Beleg fehlt (P10).",
+      "Die zwei „gemeinsten“ Aussagen sammeln → am Ende besprechen und als Warm-up-Karten notieren."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Strichliste (Tafelbild)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Team",
+    "Runde 1",
+    "Runde 2",
+    "Runde 3",
+    "Runde 4",
+    "BE gesamt"
+   ],
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "zeilen": [
+    [
+     "A",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "B",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "C",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "D",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "E",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Antwortkarten (zum Kopieren)"
+  },
+  {
+   "t": "kasten",
+   "kopf": "ANTWORTKARTE DER PRÜFLINGE (je Duell eine Karte, 3 min)",
+   "farbe": "14213D",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Team: [[luecke:16]]   Karte/Aussage Nr.: [[luecke:8]]   Runde: [[luecke:5]]"
+    },
+    {
+     "t": "p",
+     "md": "**1 Entscheidung:**  ☐ korrekt   ☐ falsch"
+    },
+    {
+     "t": "p",
+     "md": "**2 Begründung** (Fachbegriff, „weil …, daher …“):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "**3 Beleg** (Rechnung, Beispiel oder Gegenbeispiel):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "*Bewertung durch die Kommission:* ☐ Entscheidung · ☐ Begründung · ☐ Beleg  =  ____ BE   · Zweitkorrektur: ☐ bestätigt ☐ geändert",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ANTWORTKARTE DER PRÜFLINGE (je Duell eine Karte, 3 min)",
+   "farbe": "14213D",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Team: [[luecke:16]]   Karte/Aussage Nr.: [[luecke:8]]   Runde: [[luecke:5]]"
+    },
+    {
+     "t": "p",
+     "md": "**1 Entscheidung:**  ☐ korrekt   ☐ falsch"
+    },
+    {
+     "t": "p",
+     "md": "**2 Begründung** (Fachbegriff, „weil …, daher …“):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "**3 Beleg** (Rechnung, Beispiel oder Gegenbeispiel):"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "[[luecke:74]]"
+    },
+    {
+     "t": "p",
+     "md": "*Bewertung durch die Kommission:* ☐ Entscheidung · ☐ Begründung · ☐ Beleg  =  ____ BE   · Zweitkorrektur: ☐ bestätigt ☐ geändert",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Abi-Duell-Karten K1–K12 (Reserve und Ergänzung, zum Ausschneiden)"
+  },
+  {
+   "t": "p",
+   "md": "Für Teams ohne eigene Aussagen oder als zusätzliche Runde. K1–K9: alle Kurse; K10–K12: eA (Blockchiffre, Betriebsmodus). Die Karten bleiben bei der Prüfungskommission – die Musterentscheidung ist nur für sie bestimmt.",
+   "klein": true
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K1 · Welt 6 · Welt 2",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Das Pendel mit dem Wort ZEIT verschlüsselt genauso wie Vigenère mit dem Schlüsselwort ZEITIE.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **korrekt**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Die Pendelfolge ist periodisch mit der Periode 2 · 4 − 2 = 6 und wiederholt immer dieselben sechs Buchstaben – genau wie ein Vigenère-Schlüsselwort der Länge 6.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** Pendel ZEIT für 12 Zeichen: `ZEITIE ZEITIE`.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K2 · Welt 6",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Vertauscht man beim Uhrwerk die beiden Stufen, ändert sich der Geheimtext nicht.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Stufe 2 ist positionsabhängig (der Pendelbuchstabe hängt von der Stelle ab); der Ring setzt die Zeichen auf andere Stellen, dort treffen sie auf andere Pendelbuchstaben.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** „abendrot“ (t = 3, ZEIT) → `ZRWUL XDV`; mit vertauschten Stufen → `ZGNFL XMV`.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K3 · Welt 5",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Eine Hashfunktion mit 8-Bit-Hashwerten kann kollisionsfrei sein, wenn sie gut konstruiert ist.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Es gibt nur 2⁸ = 256 Hashwerte, aber mehr als 256 mögliche Nachrichten; nach dem Schubfachprinzip haben mindestens zwei Nachrichten denselben Hashwert.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** Schon 257 verschiedene Nachrichten erzwingen eine Kollision; gute Hashfunktionen machen Kollisionen nur schwer findbar.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K4 · Welt 4",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Ab sechs Teilnehmenden benötigt ein asymmetrisches Verfahren weniger Schlüssel als ein symmetrisches.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **korrekt**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Symmetrisch braucht jedes Paar einen Schlüssel: n(n − 1)/2; asymmetrisch hat jede Person ein Schlüsselpaar: 2n.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** n = 5: 10 = 10; n = 6: 15 > 12.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K5 · Welt 0",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Verschlüsselt man erst mit Caesar k = 7 und dann mit Caesar k = 11, muss ein Angreifer 26 · 26 = 676 Schlüssel ausprobieren.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Zwei Caesar-Verschiebungen addieren sich (mod 26) zu einer einzigen Verschiebung; der Schlüsselraum bleibt bei 26 Schlüsseln (P8).",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** k = 7 und k = 11 ergeben k = 18: abc → `STU` in beiden Fällen.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K6 · Welt 1",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Eine allgemeine monoalphabetische Substitution ist wegen ihrer 26! Schlüssel sicher.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Der Schlüsselraum ist riesig (26! ≈ 4 · 10²⁶), aber jeder Klartextbuchstabe wird immer gleich ersetzt – die Häufigkeitsverteilung bleibt erhalten.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** Häufigkeitsanalyse: Der häufigste Geheimtextbuchstabe steht in einem langen deutschen Text vermutlich für e (17,40 %).",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K7 · Welt 2",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Das Verfahren TREPPE (1. Zeichen um 1, 2. um 2, 3. um 3, 4. wieder um 1 Stelle verschoben usw.) ist polyalphabetisch, bietet aber nach dem Kerckhoffs-Prinzip keine Sicherheit.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **korrekt**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** TREPPE entspricht Vigenère mit dem Schlüsselwort BCD; derselbe Buchstabe wird je nach Stelle verschieden ersetzt. Es gibt keinen geheimen Schlüssel – wer das Verfahren kennt, kann entschlüsseln.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** „leuchte“ → `MGXDJWF`: e wird einmal zu G, einmal zu F.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K8 · Welt 4 · Welt 5",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Beim Hybridverfahren wird die Datei mit dem öffentlichen Schlüssel des Empfängers verschlüsselt.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Die Datei wird symmetrisch mit einem zufälligen Sitzungsschlüssel verschlüsselt (schnell); nur der Sitzungsschlüssel wird mit dem öffentlichen Schlüssel des Empfängers verschlüsselt.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** 2-GB-Datei: asymmetrisch allein wäre viel zu langsam; Bob entschlüsselt zuerst den Sitzungsschlüssel mit seinem privaten Schlüssel.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K9 · Welt 5",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Die Prüfsumme „Summe der Buchstabenwerte mod 26“ erkennt, wenn zwei Buchstaben vertauscht werden.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Eine Summe hängt nicht von der Reihenfolge der Summanden ab – Vertauschungen ändern die Prüfsumme nicht (Kollision).",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** kern: 11 + 5 + 18 + 14 = 48 → 22 = V; nerk ergibt ebenfalls V.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K10 · Welt 3 · eA",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Bei einer Toy-Blockchiffre, deren vier Runden nur aus „Block ⊕ Rundenschlüssel“ und einer zyklischen Verschiebung um 2 Stellen bestehen, ändert ein gekipptes Klartextbit etwa die Hälfte der Geheimtextbits.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** XOR wirkt bitweise, die Rotation verschiebt nur; das gekippte Bit wandert, vermischt sich aber nicht mit anderen Bits – keine Diffusion, auch nicht bei vielen Runden.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** Es ändert sich **genau 1** Geheimtextbit (an einer verschobenen Stelle).",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "zweispaltig",
+   "links": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K11 · Welt 3 · eA",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Im Betriebsmodus ECB ergeben gleiche Klartextblöcke gleiche Geheimtextblöcke.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **korrekt**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** ECB verschlüsselt jeden Block einzeln mit demselben Schlüssel: C~j~ = E~K~(P~j~) – ohne Verkettung mit anderen Blöcken.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** In einem mit ECB verschlüsselten Pixelbild bleiben die Umrisse sichtbar.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "kasten",
+     "kopf": "ABI-DUELL · KARTE K12 · Welt 3 · eA",
+     "farbe": "8A5F1A",
+     "hintergrund": "FFFFFF",
+     "inhalt": [
+      {
+       "t": "p",
+       "md": "**„Im Modus CBC wirkt sich ein gekipptes Bit in einem Geheimtextblock nur auf den zugehörigen Klartextblock aus.“**"
+      },
+      {
+       "t": "p",
+       "md": "*Nur für die Prüfungskommission – Musterentscheidung:*",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**1 Entscheidung:** Die Aussage ist **falsch**.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**2 Begründung:** Beim Entschlüsseln gilt P~j~ = D~K~(C~j~) ⊕ C~j−1~; ein fehlerhafter Block C~2~ geht in P~2~ (über D~K~: völlig unbrauchbar) und in P~3~ (über das XOR: genau das gekippte Bit) ein.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "**3 Beleg:** „SEHR GUT“ (4 Datenblöcke + Füllblock), Bit 5 von C~2~ gekippt → „SEQp(GUT“: P~2~ zerstört, in P~3~ ein Bit falsch.",
+       "klein": true
+      },
+      {
+       "t": "p",
+       "md": "Bewertung: ☐ Entscheidung (1 BE) · ☐ Begründung (1 BE) · ☐ Beleg (1 BE)",
+       "klein": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

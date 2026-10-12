@@ -1,0 +1,739 @@
+{"name": "W0 Akte1 AW2 skytale", "ok": true, "got": "DETFA RELSW TUHAA SERMS", "exp": "DETFA RELSW TUHAA SERMS"}
+{"name": "W0 Akte1 AW3 rail3", "ok": true, "got": "VONMP ESRUG OMSAT RGKTE", "exp": "VONMP ESRUG OMSAT RGKTE"}
+{"name": "W0 Akte1 AW4 fleissner", "ok": true, "got": "TBNMO TTWOE ANRRA E", "exp": "TBNMO TTWOE ANRRA E"}
+{"name": "W0 Akte1 A2", "ok": true, "got": "SHHCR UHBEI OTCGZ KEETN NMSXE CX", "exp": "SHHCR UHBEI OTCGZ KEETN NMSXE CX"}
+{"name": "W0 Akte1 A3", "ok": true, "got": "DERPASSBEIDENTEMPELNISTZU", "exp": "derpassbeidentempelnistzu"}
+{"name": "W0 Akte1 A4", "ok": true, "got": "PDEBI FRETH NEETE SER", "exp": "PDEBI FRETH NEETE SER"}
+{"name": "W0 Akte1 A5", "ok": true, "got": "SPARTASSCHIFFESINDDA", "exp": "spartasschiffesindda"}
+{"name": "W0 Akte1 A6", "ok": true, "got": "ZRKAU FEZEU UMGNH C", "exp": "ZRKAU FEZEU UMGNH C"}
+{"name": "W0 Akte1 A7 a unbrauchbar", "ok": true, "got": "False", "exp": "False"}
+{"name": "W0 Akte1 A7 b 256", "ok": true, "got": "256", "exp": "256"}
+{"name": "W0 Akte1 Abi a", "ok": true, "got": "LETYR HSKEA EINHM DRX", "exp": "LETYR HSKEA EINHM DRX"}
+{"name": "W0 Akte1 Abi c", "ok": true, "got": "[2, 3, 5, 6, 10, 15]", "exp": "[2, 3, 5, 6, 10, 15]"}
+{"name": "W0 Akte2 AW1", "ok": true, "got": "UXHFN CXJLQ VODJH U", "exp": "UXHFN CXJLQ VODJH U"}
+{"name": "W0 Akte2 A1", "ok": true, "got": "KPLSL NPVUG PLOAU HJOUV YKLU", "exp": "KPLSL NPVUG PLOAU HJOUV YKLU"}
+{"name": "W0 Akte2 A2", "ok": true, "got": "WIRBRAUCHENMEHRWASSER", "exp": "wirbrauchenmehrwasser"}
+{"name": "W0 Akte2 A3", "ok": true, "got": "TYHN", "exp": "TYHN"}
+{"name": "W0 Akte2 A3 res", "ok": true, "got": "ZZGZ", "exp": "ZZGZ"}
+{"name": "W0 Akte2 A4", "ok": true, "got": "SENATTAGTHEUTE", "exp": "senattagtheute"}
+{"name": "W0 Akte2 A4 k1", "ok": true, "got": "KWFSL", "exp": "kwfsl"}
+{"name": "W0 Akte2 A5", "ok": true, "got": "RLWWTLPDEZXYTDOTGTDL", "exp": "RLWWTLPDEZXYTDOTGTDL"}
+{"name": "W0 Akte2 A6", "ok": true, "got": "KLOIH", "exp": "KLOIH"}
+{"name": "W0 Akte2 A6 zw", "ok": true, "got": "QRUON", "exp": "QRUON"}
+{"name": "W0 Akte2 Abi a", "ok": true, "got": "ANSD", "exp": "ANSD"}
+{"name": "W0 Akte3 A2 nil k20", "ok": true, "got": "HCF", "exp": "HCF"}
+{"name": "W0 Akte3 Abi a", "ok": true, "got": "SNNZ", "exp": "SNNZ"}
+{"name": "W0 Akte3 Abi b", "ok": true, "got": "BZ", "exp": "BZ"}
+{"name": "W0 Akte3 Abi d P3", "ok": true, "got": "TMOY", "exp": "TMOY"}
+{"name": "W0 Akte4 AW1 olympia", "ok": true, "got": "34 31 54 32 35 24 11", "exp": "34 31 54 32 35 24 11"}
+{"name": "W0 Akte4 AW2 caesar", "ok": true, "got": "XZVHZI", "exp": "XZVHZI"}
+{"name": "W0 Akte4 Material feuer", "ok": true, "got": "45 51 24 51 31", "exp": "45 51 24 51 31"}
+{"name": "W0 Akte4 A2a", "ok": true, "got": "31 15 22 24 34 33", "exp": "31 15 22 24 34 33"}
+{"name": "W0 Akte4 A2b", "ok": true, "got": "NESTOR", "exp": "nestor"}
+{"name": "W0 Akte4 A3", "ok": true, "got": "NZFVI", "exp": "NZFVI"}
+{"name": "W0 Akte4 A4", "ok": true, "got": "44 43 35 45 51", "exp": "44 43 35 45 51"}
+{"name": "W0 Akte4 A5", "ok": true, "got": "SIGNAL", "exp": "signal"}
+{"name": "W0 Akte4 A7c quelle", "ok": true, "got": "31 24 51 35 35 51", "exp": "31 24 51 35 35 51"}
+{"name": "W0 Akte4 A7c rauch", "ok": true, "got": "31 55 24 53 44", "exp": "31 55 24 53 44"}
+{"name": "W0 Akte4 Abi a sq", "ok": true, "got": "['KORIN', 'THABC', 'DEFGL', 'MPQSU', 'VWXYZ']", "exp": "['KORIN', 'THABC', 'DEFGL', 'MPQSU', 'VWXYZ']"}
+{"name": "W0 Akte4 Abi a", "ok": true, "got": "11 51 14 22 51 14", "exp": "11 51 14 22 51 14"}
+{"name": "W0-B-03", "ok": true, "got": "RKMGZ", "exp": "RKMGZ"}
+{"name": "W0-B-04", "ok": true, "got": "FEUERIMLAGER", "exp": "feuerimlager"}
+{"name": "W0-B-06", "ok": true, "got": "VERRATIMSENAT", "exp": "verratimsenat"}
+{"name": "W0-B-07", "ok": true, "got": "ZZG", "exp": "ZZG"}
+{"name": "W0-B-08", "ok": true, "got": "9", "exp": "9"}
+{"name": "W0-B-08 check", "ok": true, "got": "LJBCAJ", "exp": "LJBCAJ"}
+{"name": "W0-B-09", "ok": true, "got": "HILFEKOMMTUEBERSEE", "exp": "hilfekommtuebersee"}
+{"name": "W0-B-11 bsp", "ok": true, "got": "TNPSUHFJ", "exp": "TNPSUHFJ"}
+{"name": "W0-B-11", "ok": true, "got": "MTKYG OOQZZ ZP", "exp": "MTKYG OOQZZ ZP"}
+{"name": "W0-B-12", "ok": true, "got": "SCHIFFEBRENNENXX", "exp": "schiffebrennenxx"}
+{"name": "W0-B-13 essen", "ok": true, "got": "HXVJQ", "exp": "HXVJQ"}
+{"name": "W0-B-13 eee", "ok": true, "got": "HJH", "exp": "HJH"}
+{"name": "W0-B-14", "ok": true, "got": "TRIBUN", "exp": "TRIBUN"}
+{"name": "W0-B-15", "ok": true, "got": "FORUM", "exp": "forum"}
+{"name": "W0 Pboss Bsp", "ok": true, "got": "DURZT FKZQP GZVWN G", "exp": "DURZT FKZQP GZVWN G"}
+{"name": "W0 Pboss a", "ok": true, "got": "IXZHM JJAZY WAWFC", "exp": "IXZHM JJAZY WAWFC"}
+{"name": "W0 Pboss b", "ok": true, "got": "FLIEHTZUMHAFENX", "exp": "fliehtzumhafenx"}
+{"name": "W0 Pboss b zw", "ok": true, "got": "FHALMFIUEEZNHTX", "exp": "FHALMFIUEEZNHTX"}
+{"name": "W0 Pboss f swap", "ok": true, "got": "IXZHM JJAZY WAWFX", "exp": "...WAWFX"}
+{"name": "W1 Beutelspacher Summe 100,00", "ok": true, "got": "100.0", "exp": "100.0"}
+{"name": "Top7 61,7", "ok": true, "got": "61.66", "exp": "61.66"}
+{"name": "Top5 49,0", "ok": true, "got": "49.0", "exp": "49.0"}
+{"name": "Top10 75,85", "ok": true, "got": "75.85", "exp": "75.85"}
+{"name": "Sum p^2 0,0762", "ok": true, "got": "0.0762", "exp": "0.0762"}
+{"name": "SCHERAZADE", "ok": true, "got": "SCHERAZDBFGIJKLMNOPQTUVWXY", "exp": "SCHERAZDBFGIJKLMNOPQTUVWXY"}
+{"name": "inv26", "ok": true, "got": "{1: 1, 3: 9, 5: 21, 7: 15, 11: 19, 17: 23, 25: 25}", "exp": "{1: 1, 3: 9, 5: 21, 7: 15, 11: 19, 17: 23, 25: 25}"}
+{"name": "inv29", "ok": true, "got": "{1: 1, 2: 15, 3: 10, 4: 22, 5: 6, 7: 25, 8: 11, 9: 13, 12: 17, 14: 27, 16: 20, 18: 21, 19: 26, 23: 24, 28: 28}", "exp": "{1: 1, 2: 15, 3: 10, 4: 22, 5: 6, 7: 25, 8: 11, 9: 13, 12: 17, 14: 27, 16: 20, 18: 21, 19: 26, 23: 24, 28: 28}"}
+{"name": "W1-AF", "ok": true, "got": "ZAEHLEDIEZEICHENUNDDUFINDESTDENSCHLUESSEL", "exp": "zaehlediezeichenunddufindestdenschluessel"}
+{"name": "W1-L1-01", "ok": true, "got": "SULTANBCDEFGHIJKMOPQRVWXYZ", "exp": "SULTANBCDEFGHIJKMOPQRVWXYZ"}
+{"name": "W1-L1-02", "ok": true, "got": "CSORI", "exp": "CSORI"}
+{"name": "W1-L1-03 alph", "ok": true, "got": "YASMINBCDEFGHJKLOPQRTUVWXZ", "exp": "YASMINBCDEFGHJKLOPQRTUVWXZ"}
+{"name": "W1-L1-03", "ok": true, "got": "TIGRIS", "exp": "tigris"}
+{"name": "W1-L1-04b Jahre", "ok": true, "got": "1.3", "exp": "1.3"}
+{"name": "W1-L1-05 alph", "ok": true, "got": "KALIFBCDEGHJMNOPQRSTUVWXYZ", "exp": "KALIFBCDEGHJMNOPQRSTUVWXYZ"}
+{"name": "W1-L1-05 fix", "ok": true, "got": "14", "exp": "14"}
+{"name": "W1-L1-05 mond", "ok": true, "got": "MONI", "exp": "MONI"}
+{"name": "W1-L1-07", "ok": true, "got": "DIESTERNESTEHENHELLUEBERDERSTADTUNDDIEWACHEGEHTIHRERUNDE", "exp": "diesternestehenhellueberderstadtunddiewachegehtihrerunde"}
+{"name": "W1-L1-07 counts", "ok": true, "got": "{'T': 6, 'D': 3, 'A': 14, 'P': 3, 'Q': 5, 'O': 5, 'I': 4, 'C': 5, 'G': 2, 'R': 3, 'U': 1, 'S': 2, 'W': 1, 'L': 1, 'B': 1}", "exp": "{'A': 14, 'T': 6, 'C': 5, 'O': 5, 'Q': 5, 'I': 4, 'D': 3, 'P': 3, 'R': 3, 'G': 2, 'S': 2, 'B': 1, 'L': 1, 'U': 1, 'W': 1}"}
+{"name": "W1-L2-01", "ok": true, "got": "VGXXAJ", "exp": "VGXXAJ"}
+{"name": "W1-L2-03", "ok": true, "got": "ANANANANANANANANANANANANAN", "exp": "ANANANANANANANANANANANANAN"}
+{"name": "W1-L2-04", "ok": true, "got": "BOTE", "exp": "bote"}
+{"name": "W1-L2-04 inv", "ok": true, "got": "5", "exp": "5"}
+{"name": "W1-L2-05", "ok": true, "got": "312", "exp": "312"}
+{"name": "W1-L2-07", "ok": true, "got": "[(3, 10)]", "exp": "[(3, 10)]"}
+{"name": "NOMEN alph", "ok": true, "got": "TUSCHEABDFGIJKLMNOPQRVWXYZ", "exp": "TUSCHEABDFGIJKLMNOPQRVWXYZ"}
+{"name": "NOMEN Bsp", "ok": true, "got": "5862H OOHDS BQ90T J74", "exp": "5862H OOHDS BQ90T J74"}
+{"name": "W1-L3-01", "ok": true, "got": "3918U ODKAQ 27165 3", "exp": "3918U ODKAQ 27165 3"}
+{"name": "W1-L3-06", "ok": true, "got": "5862DPQDK3981RHUHOETIIHKWLOCHK", "exp": "5862DPQDK3981RHUHOETIIHKWLOCHK"}
+{"name": "W1-L3-03", "ok": true, "got": "FLIEHTNACH", "exp": "fliehtnach"}
+{"name": "W1-L3-06 b", "ok": true, "got": "14", "exp": "14"}
+{"name": "W1 Akte1 AW1", "ok": true, "got": "IFRHK JEBSL DJKFB T", "exp": "IFRHK JEBSL DJKFB T"}
+{"name": "26!", "ok": true, "got": "403291461126605635584000000", "exp": "403291461126605635584000000"}
+{"name": "W1 Akte1 A1", "ok": true, "got": "QSTPR KETKE RBKRK SHDQ", "exp": "QSTPR KETKE RBKRK SHDQ"}
+{"name": "W1 Akte1 A2", "ok": true, "got": "WESIR", "exp": "wesir"}
+{"name": "W1 Akte1 A3 fix SCHERAZADE", "ok": true, "got": "0", "exp": "0"}
+{"name": "ZEDER alph", "ok": true, "got": "ZEDRABCFGHIJKLMNOPQSTUVWXY", "exp": "ZEDRABCFGHIJKLMNOPQSTUVWXY"}
+{"name": "W1 Akte1 A4 dec", "ok": true, "got": "DERKALIFSCHICKTEINEKARAWANENACHBASRASIETRAEGTSEIDEPFEFFERUNDPAPIERINDERNACHTRASTETSIEANEINEROASEEINDIEBVERSTECKTSICHHINTERDENZELTENUNDWARTETBISDIEWAECHTERSCHLAFENDOCHDERJUNGEKURIERBEMERKTIHNUNDSCHLAEGTALARM", "exp": "derkalifschickteinekarawanenachbasrasietraegtseidepfefferundpapierindernachtrastetsieaneineroaseeindiebverstecktsichhinterdenzeltenundwartetbisdiewaechterschlafendochderjungekurierbemerktihnundschlaegtalarm"}
+{"name": "W1 Akte1 A4 len", "ok": true, "got": "206", "exp": "206"}
+{"name": "W1 Akte1 A4 counts", "ok": true, "got": "{'R': 11, 'A': 36, 'P': 18, 'I': 6, 'Z': 19, 'J': 5, 'G': 17, 'B': 5, 'Q': 12, 'D': 10, 'F': 10, 'S': 15, 'L': 17, 'V': 3, 'E': 4, 'C': 3, 'N': 3, 'T': 5, 'M': 2, 'U': 1, 'Y': 1, 'H': 1, 'K': 2}", "exp": "{'A': 36, 'Z': 19, 'P': 18, 'G': 17, 'L': 17, 'S': 15, 'Q': 12, 'R': 11, 'D': 10, 'F': 10, 'I': 6, 'B': 5, 'J': 5, 'T': 5, 'E': 4, 'C': 3, 'N': 3, 'V': 3, 'K': 2, 'M': 2, 'H': 1, 'U': 1, 'Y': 1}"}
+{"name": "W1 Akte1 A4 bigr", "ok": true, "got": "[11, 8, 7, 6, 6]", "exp": "[11, 8, 7, 6, 6]"}
+{"name": "W1 Akte2 AW1 sultan", "ok": true, "got": "ZNCGDQ", "exp": "ZNCGDQ"}
+{"name": "W1 Akte2 AW2 inv table", "ok": true, "got": "[1, 9, 21, 15, 3, 19, 7, 23, 11, 5, 17, 25]", "exp": "[1, 9, 21, 15, 3, 19, 7, 23, 11, 5, 17, 25]"}
+{"name": "Homophon 35 distinct", "ok": true, "got": "(35, 35)", "exp": "(35, 35)"}
+{"name": "W1 Akte2 AW3 erreichen", "ok": true, "got": "42 72 28 77 15 58 49 19 34", "exp": "42 72 28 77 15 58 49 19 34"}
+{"name": "W1-L2-06 seide (Ausschnitt)", "ok": true, "got": "56 42 15 13 77", "exp": "56 42 15 13 77"}
+{"name": "W1 Akte2 A1", "ok": true, "got": "GOREJ WFF", "exp": "GOREJ WFF"}
+{"name": "W1 Akte2 A3", "ok": true, "got": "TIGRIS", "exp": "tigris"}
+{"name": "W1 Akte2 A4 m13", "ok": true, "got": "ACEGIKMOQSUWY", "exp": "ACEGIKMOQSUWY"}
+{"name": "W1 Akte2 A5", "ok": true, "got": "[(11, 6)]", "exp": "[(11, 6)]"}
+{"name": "W1 Akte2 A6a", "ok": true, "got": "66 42 53 77 49 72 39 19", "exp": "66 42 53 77 49 72 39 19"}
+{"name": "W1 Akte2 A6b", "ok": true, "got": "wesireilt", "exp": "wesireilt"}
+{"name": "W1 Akte2 A7a", "ok": true, "got": "NLELF LYR", "exp": "NLELF LYR"}
+{"name": "W1 Akte2 A7b", "ok": true, "got": "NLELFLYR", "exp": "NLELFLYR"}
+{"name": "W1 Akte2 Abi a", "ok": true, "got": "08 04 18 04 14", "exp": "08 04 18 04 14"}
+{"name": "W1 Akte2 Abi b", "ok": true, "got": "MOND", "exp": "mond"}
+{"name": "W1 Akte2 Abi b inv6", "ok": true, "got": "5", "exp": "5"}
+{"name": "W1 Akte3 A2 liegt", "ok": true, "got": "IDHAQ", "exp": "IDHAQ"}
+{"name": "W1 Akte3 A3", "ok": true, "got": "SCHICKTNACH", "exp": "schicktnach"}
+{"name": "W1 Akte3 Abi", "ok": true, "got": "REITET|MIT|NACH", "exp": "reitet|mit|nach"}
+{"name": "W1-B-01", "ok": true, "got": "WUESTNIDABCFGHJKLMOPQRVXYZ", "exp": "WUESTNIDABCFGHJKLMOPQRVXYZ"}
+{"name": "W1-B-03", "ok": true, "got": "CQMATM", "exp": "CQMATM"}
+{"name": "W1-B-06", "ok": true, "got": "UGLIJC", "exp": "UGLIJC"}
+{"name": "W1-B-08", "ok": true, "got": "[5, 17, 25]", "exp": "[5, 17, 25]"}
+{"name": "W1-B-09", "ok": true, "got": "WESIR", "exp": "wesir"}
+{"name": "W1-B-10", "ok": true, "got": "6", "exp": "6"}
+{"name": "W1-B-11", "ok": true, "got": "DEMEN", "exp": "DEMEN"}
+{"name": "W1-B-12", "ok": true, "got": "DINAR", "exp": "dinar"}
+{"name": "W1-B-15", "ok": true, "got": "[(7, 11)]", "exp": "[(7, 11)]"}
+{"name": "SAFRAN Bsp", "ok": true, "got": "27 05 17 09", "exp": "27 05 17 09"}
+{"name": "SAFRAN a", "ok": true, "got": "10 20 05 06", "exp": "10 20 05 06"}
+{"name": "SAFRAN b", "ok": true, "got": "KORIANDER", "exp": "koriander"}
+{"name": "SAFRAN c pfeffer e", "ok": true, "got": "22", "exp": "22"}
+{"name": "SAFRAN f", "ok": true, "got": "[(3, 7)]", "exp": "[(3, 7)]"}
+{"name": "SAFRAN g", "ok": true, "got": "(6, 19)", "exp": "(6, 19)"}
+{"name": "SAFRAN e", "ok": true, "got": "812", "exp": "812"}
+{"name": "WU-W1-02", "ok": true, "got": "OASEBCDF", "exp": "OASEBCDF"}
+{"name": "WU-W1-10", "ok": true, "got": "MARS", "exp": "mars"}
+{"name": "WU-W1-11", "ok": true, "got": "OEANS X", "exp": "OEANS X"}
+{"name": "W2 AF enc", "ok": true, "got": "OEXLNXGOTPRRPDOAYMPSZOAWPRKVEMPFKVRRFTFYNFUEZTGRFRTIPLOAYKHEORGN", "exp": "OEXLNXGOTPRRPDOAYMPSZOAWPRKVEMPFKVRRFTFYNFUEZTGRFRTIPLOAYKHEORGN"}
+{"name": "W2 AF len", "ok": true, "got": "64", "exp": "64"}
+{"name": "W2 AF e-Bilder", "ok": true, "got": "['E', 'K', 'P', 'R', 'Y']", "exp": "['E', 'K', 'P', 'R', 'Y']"}
+{"name": "W2 AF IC klar", "ok": true, "got": "0.0665", "exp": "0.0665"}
+{"name": "W2 AF IC geheim", "ok": true, "got": "0.0496", "exp": "0.0496"}
+{"name": "W2-L21-01", "ok": true, "got": "BOPB", "exp": "BOPB"}
+{"name": "W2-L21-02", "ok": true, "got": "HCGHF Z", "exp": "HCGHF Z"}
+{"name": "W2-L21-03", "ok": true, "got": "BDA", "exp": "BDA"}
+{"name": "W2-L21-04", "ok": true, "got": "SEIDENHANDEL", "exp": "seidenhandel"}
+{"name": "W2-L21-05", "ok": true, "got": "GIZPZ KO", "exp": "GIZPZ KO"}
+{"name": "W2-L21-06 inv", "ok": true, "got": "NACHTWACHE", "exp": "nachtwache"}
+{"name": "W2-L21-07 ABAB", "ok": true, "got": "HBFFN XADHF", "exp": "HBFFN XADHF"}
+{"name": "W2-L21-07 AB", "ok": true, "got": "HBFFNXADHF", "exp": "HBFFNXADHF"}
+{"name": "W2-L21-07 DDDD", "ok": true, "got": "YHQHG LJ", "exp": "YHQHG LJ"}
+{"name": "W2-L21-07 porta AB", "ok": true, "got": "True", "exp": "True"}
+{"name": "W2-L21-08", "ok": true, "got": "TORTORTORT", "exp": "TORTORTORT"}
+{"name": "W2-L22-01 T2", "ok": true, "got": "CZWUM", "exp": "CZWUM"}
+{"name": "T1", "ok": true, "got": "VISEX", "exp": "VISEX"}
+{"name": "T3", "ok": true, "got": "VTLKY", "exp": "VTLKY"}
+{"name": "W2-L22-03", "ok": true, "got": "(65, [5, 13])", "exp": "(65, [5, 13])"}
+{"name": "W2-L22-04", "ok": true, "got": "[1, 1, 1, 5, 0, 0, 1, 0, 1]", "exp": "[1, 1, 1, 5, 0, 0, 1, 0, 1]"}
+{"name": "W2-L22-05 ggT", "ok": true, "got": "21", "exp": "21"}
+{"name": "W2-L22-05 ggT alle", "ok": true, "got": "1", "exp": "1"}
+{"name": "W2-L22-06 len", "ok": true, "got": "57", "exp": "57"}
+{"name": "W2-L22-06", "ok": true, "got": "DIEKURIEREWARTENANDERBRUECKENEBENDEMFISCHMARKTAUFDENABEND", "exp": "diekurierewartenanderbrueckenebendemfischmarktaufdenabend"}
+{"name": "W2-L22-07 len", "ok": true, "got": "162", "exp": "162"}
+{"name": "W2-L22-07 c", "ok": true, "got": "DERDOGEEMPFAENGT", "exp": "derdogeempfaengt"}
+{"name": "W2-L22-07 pos WJWPJKGLQJHPQ", "ok": true, "got": "(15, 131)", "exp": "(15, 131)"}
+{"name": "W2-L22-07 pos HMSD", "ok": true, "got": "(39, 59)", "exp": "(39, 59)"}
+{"name": "W2-L22-07 pos RTH", "ok": true, "got": "(37, 77)", "exp": "(37, 77)"}
+{"name": "W2-L22-07 pos PQT", "ok": true, "got": "(102, 142)", "exp": "(102, 142)"}
+{"name": "W2-L22-07 pos KGD", "ok": true, "got": "(128, 152)", "exp": "(128, 152)"}
+{"name": "W2-L23-01", "ok": true, "got": "0.267", "exp": "0.267"}
+{"name": "W2-L23-03", "ok": true, "got": "(0.3333333333333333, 0.3333333333333333, 'RWWR')", "exp": "(0.3333333333333333, 0.3333333333333333, 'RWWR')"}
+{"name": "W2-L23-03b", "ok": true, "got": "('AOPD', 0.0)", "exp": "('AOPD', 0.0)"}
+{"name": "W2-L23-04", "ok": true, "got": "0.079", "exp": "0.079"}
+{"name": "W2-L23-05", "ok": true, "got": "3.99", "exp": "3.99"}
+{"name": "W2-L23-07", "ok": true, "got": "0.533", "exp": "0.533"}
+{"name": "W2-K1-05", "ok": true, "got": "0.0484", "exp": "0.0484"}
+{"name": "W2-K1-05 back", "ok": true, "got": "3.0", "exp": "3.0"}
+{"name": "W2-K1-07", "ok": true, "got": "(5.0, 4.96)", "exp": "(5.0, 4.96)"}
+{"name": "RIALTO", "ok": true, "got": "['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ']", "exp": "['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ']"}
+{"name": "W2-L24-02", "ok": true, "got": "BA LX LE TX TX", "exp": "BA LX LE TX TX"}
+{"name": "W2-L24-03", "ok": true, "got": "['BE', 'GP', 'LN']", "exp": "['BE', 'GP', 'LN']"}
+{"name": "W2-L24-04", "ok": true, "got": "XIQYU DIVBM", "exp": "XIQYU DIVBM"}
+{"name": "W2-L24-05", "ok": true, "got": "KARTENSPIELX", "exp": "kartenspielx"}
+{"name": "GONDEL", "ok": true, "got": "['GONDE', 'LABCF', 'HIKMP', 'QRSTU', 'VWXYZ']", "exp": "['GONDE', 'LABCF', 'HIKMP', 'QRSTU', 'VWXYZ']"}
+{"name": "MURANO", "ok": true, "got": "['MURAN', 'OBCDE', 'FGHIK', 'LPQST', 'VWXYZ']", "exp": "['MURAN', 'OBCDE', 'FGHIK', 'LPQST', 'VWXYZ']"}
+{"name": "W2-L24-06", "ok": true, "got": "KCFQ", "exp": "KCFQ"}
+{"name": "W2-L24-07 E", "ok": true, "got": "TBIAN EDNOQ NE", "exp": "TBIAN EDNOQ NE"}
+{"name": "W2-L24-08", "ok": true, "got": "['EE', 'OG', 'GL']", "exp": "['EE', 'OG', 'GL']"}
+{"name": "W2-L21-06 (Porta Standardtafel)", "ok": true, "got": "FQWUL GUPPU", "exp": "FQWUL GUPPU"}
+{"name": "Porta row CD a->Z", "ok": true, "got": "Z", "exp": "Z"}
+{"name": "W1-L3-02", "ok": true, "got": "ERWARTET|IN", "exp": "erwartet|in"}
+{"name": "W2 Akte1 DAME", "ok": true, "got": "PADOX SBPDT L", "exp": "PADOX SBPDT L"}
+{"name": "W2 Akte1 Autokey", "ok": true, "got": "FURKE CIRZQ UIRLN", "exp": "FURKE CIRZQ UIRLN"}
+{"name": "W2 Akte1 A2", "ok": true, "got": "XEOEW FTFVC R", "exp": "XEOEW FTFVC R"}
+{"name": "W2 Akte1 A3", "ok": true, "got": "DERGESANDTEKOMMTMORGEN", "exp": "dergesandtekommtmorgen"}
+{"name": "W2 Akte1 A3b", "ok": true, "got": "[(1, 'Y'), (4, 'X'), (10, 'V'), (20, 'X')]", "exp": "[(1, 'Y'), (4, 'X'), (10, 'V'), (20, 'X')]"}
+{"name": "W2 Akte1 A4a", "ok": true, "got": "PIXEA DDZGW G", "exp": "PIXEA DDZGW G"}
+{"name": "W2 Akte1 A4b", "ok": true, "got": "DGGENPATAST", "exp": "dggenpatast"}
+{"name": "W2 Akte1 A4c", "ok": true, "got": "PIXEADMFRSG", "exp": "PIXEADMFRSG"}
+{"name": "W2 Akte1 A4c dec", "ok": true, "got": "DGGENPALAST", "exp": "dggenpalast"}
+{"name": "W2 Akte1 A5", "ok": true, "got": "MXMVA OMAZZ T", "exp": "MXMVA OMAZZ T"}
+{"name": "W2 Akte1 A6c", "ok": true, "got": "(11881376, 371293)", "exp": "(11881376, 371293)"}
+{"name": "W2 Akte1 Abi a", "ok": true, "got": "BIIAC EVCYM", "exp": "BIIAC EVCYM"}
+{"name": "W2 Akte1 Abi b", "ok": true, "got": "('N', 'Z')", "exp": "('N', 'Z')"}
+{"name": "W2 Akte2 len", "ok": true, "got": "228", "exp": "228"}
+{"name": "W2 Akte2 dec WACHS", "ok": true, "got": "DIEGALEEREAUSVENEDIGERREICHTDENHAFENAMABENDDERGESANDTEBRINGTDIEBRIEFEDERDIPLOMATINDIEBRIEFEENTHALTENDIENAMENDERVERBUENDETENINGENUALESTDIEBRIEFEERSTSPAETINDERNACHTUNDVERBRENNTDIEBRIEFEDANACHDIEGALEERESEGELTAMMORGENWEITERNACHGENUA", "exp": "diegaleereausvenedigerreichtdenhafenamabenddergesandtebringtdiebriefederdiplomatindiebriefeenthaltendienamenderverbuendeteningenualestdiebriefeerstspaetindernachtundverbrenntdiebriefedanachdiegaleeresegeltammorgenweiternachgenua"}
+{"name": "W2 Akte2 ZIG", "ok": true, "got": "[0, 60, 100]", "exp": "[0, 60, 100]"}
+{"name": "AVEEDYAAFG", "ok": true, "got": "[133, 173]", "exp": "[133, 173]"}
+{"name": "EPKW", "ok": true, "got": "[106, 116]", "exp": "[106, 116]"}
+{"name": "KWN", "ok": true, "got": "[43, 108]", "exp": "[43, 108]"}
+{"name": "VAR", "ok": true, "got": "[69, 154]", "exp": "[69, 154]"}
+{"name": "CEP", "ok": true, "got": "[125, 210]", "exp": "[125, 210]"}
+{"name": "SHE", "ok": true, "got": "[4, 129]", "exp": "[4, 129]"}
+{"name": "VEE", "ok": true, "got": "[134, 174, 189]", "exp": "[134, 174, 189]"}
+{"name": "W2 Akte2 A3c Teilertabelle", "ok": true, "got": "[4, 2, 3, 9, 1, 0, 2, 0, 4]", "exp": "[4, 2, 3, 9, 1, 0, 2, 0, 4]"}
+{"name": "W2 Akte2 A2 FPW", "ok": true, "got": "FPW", "exp": "FPW"}
+{"name": "W2 Akte2 A5 Teiltexte", "ok": true, "got": "[('A', 11), ('E', 15), ('G', 10), ('L', 7), ('W', 10)]", "exp": "[('A', 11), ('E', 15), ('G', 10), ('L', 7), ('W', 10)]"}
+{"name": "W2 Akte2 A1b", "ok": true, "got": "RUDERBOOTAMSTEG", "exp": "ruderbootamsteg"}
+{"name": "W2 Akte2 Abi b", "ok": true, "got": "14", "exp": "14"}
+{"name": "W2-L23-06 friedman 228", "ok": true, "got": "4.15", "exp": "4.15"}
+{"name": "W2 Akte3 A1 SERENISSIMA", "ok": true, "got": "(0.091, 0.0)", "exp": "(0.091, 0.0)"}
+{"name": "W2 Akte3 A4a", "ok": true, "got": "4.96", "exp": "4.96"}
+{"name": "W2 Akte3 A4b", "ok": true, "got": "2.0", "exp": "2.0"}
+{"name": "W2 Akte3 A6", "ok": true, "got": "(1.0, 400.0)", "exp": "(1.0, 400.0)"}
+{"name": "W2 Akte3 Abi a", "ok": true, "got": "0.139", "exp": "0.139"}
+{"name": "W2 Akte3 Abi c", "ok": true, "got": "9.9", "exp": "9.9"}
+{"name": "25!", "ok": true, "got": "1.55e+25", "exp": "1.55e+25"}
+{"name": "W2 Akte4 A2", "ok": true, "got": "DA SX SC HI FX FS EG EL TM OR GE NX", "exp": "DA SX SC HI FX FS EG EL TM OR GE NX"}
+{"name": "W2 Akte4 A3", "ok": true, "got": "CLQYQ DGAHV KNBMD TEUFO MBQV", "exp": "CLQYQ DGAHV KNBMD TEUFO MBQV"}
+{"name": "W2 Akte4 A4", "ok": true, "got": "HINTERDEMGLOCKENTURM", "exp": "hinterdemglockenturm"}
+{"name": "W2 Akte4 AW3 FA", "ok": true, "got": "DE", "exp": "DE"}
+{"name": "W2 Akte4 A5a", "ok": true, "got": "FBFDE OADNS", "exp": "FBFDE OADNS"}
+{"name": "W2 Akte4 A5b", "ok": true, "got": "KONTORBUCH", "exp": "kontorbuch"}
+{"name": "W2 Akte4 A6c 18/625 fix", "ok": true, "got": "18", "exp": "18"}
+{"name": "W2 Akte4 Abi a", "ok": true, "got": "ALKB", "exp": "ALKB"}
+{"name": "Playfair AB/BA-Symmetrie", "ok": true, "got": "True", "exp": "True"}
+{"name": "W2 Depesche stream", "ok": true, "got": "ROSESPTFTQUGURVH", "exp": "ROSESPTFTQUGURVH"}
+{"name": "W2-B-02", "ok": true, "got": "BOGRZ", "exp": "BOGRZ"}
+{"name": "W2-B-03", "ok": true, "got": "F", "exp": "F"}
+{"name": "W2-B-04", "ok": true, "got": "LXYTP", "exp": "LXYTP"}
+{"name": "W2-B-05", "ok": true, "got": "7", "exp": "7"}
+{"name": "W2-B-06", "ok": true, "got": "MASKENBALL", "exp": "maskenball"}
+{"name": "W2-B-07", "ok": true, "got": "BRUNNEN", "exp": "brunnen"}
+{"name": "W2-B-08", "ok": true, "got": "STEMPEL", "exp": "stempel"}
+{"name": "W2-B-09", "ok": true, "got": "(0.09523809523809523, 0.09523809523809523)", "exp": "(0.09523809523809523, 0.09523809523809523)"}
+{"name": "W2-B-10", "ok": true, "got": "['MQ', 'IB']", "exp": "['MQ', 'IB']"}
+{"name": "W2-B-11", "ok": true, "got": "XSXEZ GTRDQ HGF", "exp": "XSXEZ GTRDQ HGF"}
+{"name": "W2-B-11 falsch", "ok": true, "got": "XSXEYFSQBOFEC", "exp": "XSXEYFSQBOFEC"}
+{"name": "W2-B-14", "ok": true, "got": "2.98", "exp": "2.98"}
+{"name": "W2-B-15", "ok": true, "got": "UIMGH SUXSI IJWRH JOFUT IUOJP", "exp": "UIMGH SUXSI IJWRH JOFUT IUOJP"}
+{"name": "W2-B-15b", "ok": true, "got": "UIMGHSUXSIIJWRHJOFUTIUOJP", "exp": "UIMGHSUXSIIJWRHJOFUTIUOJP"}
+{"name": "Q1", "ok": true, "got": "['BRIEF', 'TAUCD', 'GHKLM', 'NOPQS', 'VWXYZ']", "exp": "['BRIEF', 'TAUCD', 'GHKLM', 'NOPQS', 'VWXYZ']"}
+{"name": "Q2", "ok": true, "got": "['KOMPA', 'SBCDE', 'FGHIL', 'NQRTU', 'VWXYZ']", "exp": "['KOMPA', 'SBCDE', 'FGHIL', 'NQRTU', 'VWXYZ']"}
+{"name": "ZQ Bsp h", "ok": true, "got": "O", "exp": "O"}
+{"name": "ZQ a", "ok": true, "got": "SGPWV OOTOD", "exp": "SGPWV OOTOD"}
+{"name": "ZQ b", "ok": true, "got": "ANKERPLATZ", "exp": "ankerplatz"}
+{"name": "ZQ d anna", "ok": true, "got": "QKKQ", "exp": "QKKQ"}
+{"name": "ZQ f1", "ok": true, "got": "True", "exp": "True"}
+{"name": "ZQ f2 rat", "ok": true, "got": "('QGK', 'DNC')", "exp": "('QGK', 'DNC')"}
+{"name": "ZQ f2 kein Ersatzschluessel", "ok": true, "got": "True", "exp": "True"}
+{"name": "ZQ g2", "ok": true, "got": "SILCOSEWVVQ", "exp": "silcosewvvq"}
+{"name": "ZQ h fix k=0", "ok": true, "got": "NVWXYZ", "exp": "NVWXYZ"}
+{"name": "WU-W2-01", "ok": true, "got": "URP", "exp": "URP"}
+{"name": "WU-W2-04", "ok": true, "got": "MIGE", "exp": "MIGE"}
+{"name": "WU-W2-05", "ok": true, "got": "FCDG", "exp": "FCDG"}
+{"name": "WU-W2-06", "ok": true, "got": "['QRUP', 'WTIA', 'EZOS']", "exp": "['QRUP', 'WTIA', 'EZOS']"}
+{"name": "WU-W2-10", "ok": true, "got": "KA FX FE EX", "exp": "KA FX FE EX"}
+{"name": "Generator 8 Friedman Rundung", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "SI table", "ok": true, "got": "F892AD74635C0EB1", "exp": "F892AD74635C0EB1"}
+{"name": "S kein Fixpunkt", "ok": true, "got": "True", "exp": "True"}
+{"name": "S nicht selbstinvers (fuer alle x)", "ok": true, "got": "True", "exp": "True"}
+{"name": "S Avalanche 2/3/4 in 32/24/8", "ok": true, "got": "(0, 32, 24, 8)", "exp": "(0, 32, 24, 8)"}
+{"name": "S Avalanche Mittel 2,625", "ok": true, "got": "2.625", "exp": "2.625"}
+{"name": "diff. Gleichmaessigkeit 4", "ok": true, "got": "4", "exp": "4"}
+{"name": "Linearitaet 4", "ok": true, "got": "4", "exp": "4"}
+{"name": "OK Block", "ok": true, "got": "0100 1111 0100 1011", "exp": "0100 1111 0100 1011"}
+{"name": "Schluesselplan", "ok": true, "got": "['0011 0110 1101 1010', '0110 1101 1010 0011', '1101 1010 0011 0110']", "exp": "['0011 0110 1101 1010', '0110 1101 1010 0011', '1101 1010 0011 0110']"}
+{"name": "K16 TV 4F4B/A36D", "ok": true, "got": "['D86E', 'EF3D', '116D', 'F5F8']", "exp": "['D86E', 'EF3D', '116D', 'F5F8']"}
+{"name": "K16 dec 4F4B", "ok": true, "got": "20299", "exp": "20299"}
+{"name": "K16 TV 4F4A/A36D", "ok": true, "got": "['C97E', '0311', 'E635', 'F24D']", "exp": "['C97E', '0311', 'E635', 'F24D']"}
+{"name": "K16 dec 4F4A", "ok": true, "got": "20298", "exp": "20298"}
+{"name": "K16 TV 4A41/5C9E", "ok": true, "got": "['CA8A', 'E804', '68A1', '240D']", "exp": "['CA8A', 'E804', '68A1', '240D']"}
+{"name": "K16 dec 4A41", "ok": true, "got": "19009", "exp": "19009"}
+{"name": "K16 TV 4F4B/0000", "ok": true, "got": "['1BBA', 'EFE8', 'AA0B', '3F10']", "exp": "['1BBA', 'EFE8', 'AA0B', '3F10']"}
+{"name": "K16 dec 4F4B", "ok": true, "got": "20299", "exp": "20299"}
+{"name": "K16 TV 0000/2B7E", "ok": true, "got": "['57E9', 'FF18', '744F', '4081']", "exp": "['57E9', 'FF18', '744F', '4081']"}
+{"name": "K16 dec 0000", "ok": true, "got": "0", "exp": "0"}
+{"name": "K16 TV FFFF/2B7E", "ok": true, "got": "['1D5F', '2F21', 'E7C4', 'DA61']", "exp": "['1D5F', '2F21', 'E7C4', 'DA61']"}
+{"name": "K16 dec FFFF", "ok": true, "got": "65535", "exp": "65535"}
+{"name": "K16/2 Bsp Runde1", "ok": true, "got": "['0100 1111 0100 1011', '1010 0011 0110 1101', '1110 1100 0010 0110', '1101 1011 0011 1000', '1101 1000 0110 1110']", "exp": "['0100 1111 0100 1011', '1010 0011 0110 1101', '1110 1100 0010 0110', '1101 1011 0011 1000', '1101 1000 0110 1110']"}
+{"name": "K16/2 Bsp Runde2", "ok": true, "got": "['1101 1000 0110 1110', '0011 0110 1101 1010', '1110 1110 1011 0100', '1101 1101 1110 0111', '1110 1111 0011 1101']", "exp": "['1101 1000 0110 1110', '0011 0110 1101 1010', '1110 1110 1011 0100', '1101 1101 1110 0111', '1110 1111 0011 1101']"}
+{"name": "Vollstaendigkeit R1 64/256", "ok": true, "got": "64", "exp": "64"}
+{"name": "Vollstaendigkeit R2 256/256", "ok": true, "got": "256", "exp": "256"}
+{"name": "Lawine R1 (2,625 kaufm. gerundet 2,63)", "ok": true, "got": "(2.62, 16.4, 2, 4)", "exp": "(2.63, 16.4, 2, 4)"}
+{"name": "Lawine R2", "ok": true, "got": "(6.89, 43.1, 4, 16)", "exp": "(6.89, 43.1, 4, 16)"}
+{"name": "Lawine R3", "ok": true, "got": "(7.71, 48.2, 2, 16)", "exp": "(7.71, 48.2, 2, 16)"}
+{"name": "Lawine R4", "ok": true, "got": "(7.9, 49.4, 1, 16)", "exp": "(7.9, 49.4, 1, 16)"}
+{"name": "16 schwache", "ok": true, "got": "16", "exp": "16"}
+{"name": "240 k1k2k1k2", "ok": true, "got": "240", "exp": "240"}
+{"name": "W3 AF FUNK", "ok": true, "got": "FUNK", "exp": "FUNK"}
+{"name": "W3-L1-01", "ok": true, "got": "['0100 1111', '0101 0011', '0101 0100']", "exp": "['0100 1111', '0101 0011', '0101 0100']"}
+{"name": "W3-L1-02", "ok": true, "got": "1110 1001", "exp": "1110 1001"}
+{"name": "W3-L1-04", "ok": true, "got": "1110 1001 · 0000 1111 · 1010 0100", "exp": "1110 1001 · 0000 1111 · 1010 0100"}
+{"name": "W3-L1-05", "ok": true, "got": "ZUG", "exp": "ZUG"}
+{"name": "W3-L1-06a", "ok": true, "got": "1100 1011 · 0110 0001 · 1001 1101 · 0011 0111", "exp": "1100 1011 · 0110 0001 · 1001 1101 · 0011 0111"}
+{"name": "W3-L1-06b", "ok": true, "got": "1101 0010 · 0110 1011 · 1001 1100 · 0010 0111", "exp": "1101 0010 · 0110 1011 · 1001 1100 · 0010 0111"}
+{"name": "W3-L1-07a", "ok": true, "got": "0001 1101 · 0001 1010 · 0001 0111 · 0000 0000 · 0000 0000 · 0000 0000", "exp": "0001 1101 · 0001 1010 · 0001 0111 · 0000 0000 · 0000 0000 · 0000 0000"}
+{"name": "W3-L1-07b", "ok": true, "got": "['SUED', 'TXRD', 'YORD']", "exp": "['SUED', 'TXRD', 'YORD']"}
+{"name": "W3-L1-07c", "ok": true, "got": "SUEDEN", "exp": "SUEDEN"}
+{"name": "W3-L2-02", "ok": true, "got": "['1110', '1000', '1011', '1111']", "exp": "['1110', '1000', '1011', '1111']"}
+{"name": "W3-L2-03", "ok": true, "got": "1101 1000 0110 1110", "exp": "1101 1000 0110 1110"}
+{"name": "W3-L2-04", "ok": true, "got": "['0100 1110 0100 1111', '0111 0001 0100 0111', '0110 1111 0111 0110', '0100 1111 1111 0110']", "exp": "['0100 1110 0100 1111', '0111 0001 0100 0111', '0110 1111 0111 0110', '0100 1111 1111 0110']"}
+{"name": "W3-L2-05", "ok": true, "got": "['1100 1001 1110 0101', '1001 1110 0101 1100', '1110 0101 1100 1001']", "exp": "['1100 1001 1110 0101', '1001 1110 0101 1100', '1110 0101 1100 1001']"}
+{"name": "W3-L2-06", "ok": true, "got": "[3, 8, 10, 8]", "exp": "[3, 8, 10, 8]"}
+{"name": "W3-L2-06 Werte", "ok": true, "got": "['1100 1001 0111 1110', '0000 0011 0001 0001', '1110 0110 0011 0101', '1111 0010 0100 1101']", "exp": "['1100 1001 0111 1110', '0000 0011 0001 0001', '1110 0110 0011 0101', '1111 0010 0100 1101']"}
+{"name": "W3-L2-07 P3 Bit5", "ok": true, "got": "(", "exp": "("}
+{"name": "Baukasten SUB WALZE", "ok": true, "got": "WALZEBCDFGHIJKMNOPQRSTUVXY", "exp": "WALZEBCDFGHIJKMNOPQRSTUVXY"}
+{"name": "Baukasten SUB FUNKER", "ok": true, "got": "BSKHEP", "exp": "BSKHEP"}
+{"name": "Baukasten XOR FUNK/AB", "ok": true, "got": "07 17 0F 09", "exp": "07 17 0F 09"}
+{"name": "FUNKGITTER Stufe1", "ok": true, "got": "BYGDIWVRBMHBGPYJLQSISIENWJY", "exp": "BYGDIWVRBMHBGPYJLQSISIENWJY"}
+{"name": "FUNKGITTER", "ok": true, "got": "IMYIW BWHJS JDBPS NGRGQ EYVBL IY", "exp": "IMYIW BWHJS JDBPS NGRGQ EYVBL IY"}
+{"name": "W3-L3-04", "ok": true, "got": "HMRE", "exp": "HMRE"}
+{"name": "W3-L3-05a", "ok": true, "got": "('XIEGPHEOE', 'CNJLUMJTJ')", "exp": "('XIEGPHEOE', 'CNJLUMJTJ')"}
+{"name": "W3-L3-05b", "ok": true, "got": "CNJLUMJTJ", "exp": "CNJLUMJTJ"}
+{"name": "W3-L3-06", "ok": true, "got": "LOCHKARTEN", "exp": "lochkarten"}
+{"name": "W3-L3-07", "ok": true, "got": "DERNACHTZUGFAEHRTHEUTEPUENKTLICHAB", "exp": "dernachtzugfaehrtheutepuenktlichab"}
+{"name": "ADFGVX Quadrat ZEPPELIN18", "ok": true, "got": "['ZEPLIN', '18ABCD', 'FGHJKM', 'OQRSTU', 'VWXY02', '345679']", "exp": "['ZEPLIN', '18ABCD', 'FGHJKM', 'OQRSTU', 'VWXY02', '345679']"}
+{"name": "W3-L4-01", "ok": true, "got": "AFGAGGGV", "exp": "AFGAGGGV"}
+{"name": "W3-L4-02", "ok": true, "got": "ZUG", "exp": "ZUG"}
+{"name": "W3-L4-03 nebel4", "ok": true, "got": "AXADDGADAGXD", "exp": "AXADDGADAGXD"}
+{"name": "W3-L4-03", "ok": true, "got": "XGGADADDDAAX", "exp": "XGGADADDDAAX"}
+{"name": "W3-L4-04", "ok": true, "got": "WOLKE5", "exp": "WOLKE5"}
+{"name": "W3-L4-06", "ok": true, "got": "MORGEN6", "exp": "MORGEN6"}
+{"name": "Mini-Enigma Tabelle", "ok": true, "got": "['EHFGACDB', 'HEDCBGFA', 'CFAEDBHG', 'ECBGAHDF', 'BAEFCDHG', 'EDFBACHG', 'HEFGBCDA', 'GDFBHCAE']", "exp": "['EHFGACDB', 'HEDCBGFA', 'CFAEDBHG', 'ECBGAHDF', 'BAEFCDHG', 'EDFBACHG', 'HEFGBCDA', 'GDFBHCAE']"}
+{"name": "Mini-Enigma Involution o. Fixpunkt", "ok": true, "got": "True", "exp": "True"}
+{"name": "W3-K2-01", "ok": true, "got": "HHAF", "exp": "HHAF"}
+{"name": "W3-K2-02", "ok": true, "got": "BACH", "exp": "BACH"}
+{"name": "W3-K2-04", "ok": true, "got": "[2, 5, 6]", "exp": "[2, 5, 6]"}
+{"name": "W3-K2-04 chefhabach", "ok": true, "got": "AFCCAGHHAF", "exp": "AFCCAGHHAF"}
+{"name": "W3-K2-05", "ok": true, "got": "33868800", "exp": "33868800"}
+{"name": "W3 Akte1 A1", "ok": true, "got": "('W', 'H')", "exp": "('W', 'H')"}
+{"name": "W3 Akte1 A2", "ok": true, "got": "10101100", "exp": "10101100"}
+{"name": "W3 Akte1 A3", "ok": true, "got": "0010 1011 · 1011 1111 · 0111 1001 · 1110 0000", "exp": "0010 1011 · 1011 1111 · 0111 1001 · 1110 0000"}
+{"name": "W3 Akte1 A4 HALT", "ok": true, "got": "0101 0110 · 1001 1011 · 0010 1011 · 1100 0101", "exp": "0101 0110 · 1001 1011 · 0010 1011 · 1100 0101"}
+{"name": "W3 Akte1 A4 LAUF", "ok": true, "got": "0101 0010 · 1001 1011 · 0011 0010 · 1101 0111", "exp": "0101 0010 · 1001 1011 · 0011 0010 · 1101 0111"}
+{"name": "W3 Akte1 A5a", "ok": true, "got": "0001 0111 · 0000 0100 · 0000 1101 · 0001 0011 · 0001 0011 · 0000 1101 · 0001 1100", "exp": "0001 0111 · 0000 0100 · 0000 1101 · 0001 0011 · 0001 0011 · 0000 1101 · 0001 1100"}
+{"name": "W3 Akte1 A5b Pos0", "ok": true, "got": "BL_", "exp": "BL_"}
+{"name": "W3 Akte1 A5b Pos4", "ok": true, "got": "FEN", "exp": "FEN"}
+{"name": "W3 Akte1 A5b Pos1-3", "ok": true, "got": "['QEA', 'X[A', 'F[_']", "exp": "['QEA', 'X[A', 'F[_']"}
+{"name": "W3 Akte1 A5c", "ok": true, "got": "AMHAFEN", "exp": "AMHAFEN"}
+{"name": "W3 Akte1 A6", "ok": true, "got": "0110 0100 · 0110 0011 · 0110 0011 · 0110 0100", "exp": "0110 0100 · 0110 0011 · 0110 0011 · 0110 0100"}
+{"name": "W3 Akte2 A1", "ok": true, "got": "['1100', '0000', '0010', '0011', '0111']", "exp": "['1100', '0000', '0010', '0011', '0111']"}
+{"name": "W3 Akte2 A1b", "ok": true, "got": "0001", "exp": "0001"}
+{"name": "W3 Akte2 A2", "ok": true, "got": "0001 0101 1100 0010", "exp": "0001 0101 1100 0010"}
+{"name": "W3 Akte2 A4 R1", "ok": true, "got": "['0100 1010 0100 0001', '0101 1100 1001 1110', '0001 0110 1101 1111', '1111 1000 0101 0000', '1100 1010 1000 1010']", "exp": "['0100 1010 0100 0001', '0101 1100 1001 1110', '0001 0110 1101 1111', '1111 1000 0101 0000', '1100 1010 1000 1010']"}
+{"name": "W3 Akte2 A4 R2", "ok": true, "got": "['1100 1010 1000 1010', '1100 1001 1110 0101', '0000 0011 0110 1111', '1100 1001 1000 0000', '1110 1000 0000 0100']", "exp": "['1100 1010 1000 1010', '1100 1001 1110 0101', '0000 0011 0110 1111', '1100 1001 1000 0000', '1110 1000 0000 0100']"}
+{"name": "W3 Akte2 A5", "ok": true, "got": "[3, 7, 9, 7]", "exp": "[3, 7, 9, 7]"}
+{"name": "W3 Akte2 A6a", "ok": true, "got": "1100 1010 1000 1010", "exp": "1100 1010 1000 1010"}
+{"name": "W3 Akte2 A6b", "ok": true, "got": "('0111 0010 1011 1011', '1010 0101 0101 0101')", "exp": "('0111 0010 1011 1011', '1010 0101 0101 0101')"}
+{"name": "W3 Akte2 Abi d", "ok": true, "got": "30583", "exp": "30583"}
+{"name": "Padding OST", "ok": true, "got": "0100 1111 · 0101 0011 · 0101 0100 · 0000 0001", "exp": "0100 1111 · 0101 0011 · 0101 0100 · 0000 0001"}
+{"name": "W3 Akte4 AW2 Stufe1", "ok": true, "got": "DFAXFVGXAXFAGVDD", "exp": "DFAXFVGXAXFAGVDD"}
+{"name": "W3 Akte4 AW2", "ok": true, "got": "XXADA GFDFV XVDFA G", "exp": "XXADA GFDFV XVDFA G"}
+{"name": "W3 Akte4 A1", "ok": true, "got": "AAVGXVFXFX", "exp": "AAVGXVFXFX"}
+{"name": "W3 Akte4 A2", "ok": true, "got": "BRIEFTAUBE", "exp": "BRIEFTAUBE"}
+{"name": "ADFGX FERNSCHREIBER Quadrat", "ok": true, "got": "['FERNS', 'CHIBA', 'DGKLM', 'OPQTU', 'VWXYZ']", "exp": "['FERNS', 'CHIBA', 'DGKLM', 'OPQTU', 'VWXYZ']"}
+{"name": "W3 Akte4 A6", "ok": true, "got": "XDGAFGFFAD", "exp": "XDGAFGFFAD"}
+{"name": "W3 Akte3 A5", "ok": true, "got": "WIRSEHENUNSMORGENAMHAFEN", "exp": "wirsehenunsmorgenamhafen"}
+{"name": "W3 Akte3 A5 zw", "ok": true, "got": "WEUONAISHNNMREAHFNRESGME", "exp": "WEUONAISHNNMREAHFNRESGME"}
+{"name": "W3 K2-Akte A1", "ok": true, "got": "EGBC", "exp": "EGBC"}
+{"name": "W3 K2-Akte A1 zurueck", "ok": true, "got": "CHEF", "exp": "CHEF"}
+{"name": "W3 K2-Akte A3", "ok": true, "got": "[3, 4, 6, 7]", "exp": "[3, 4, 6, 7]"}
+{"name": "W3 K2-Akte A3 fadebachgab", "ok": true, "got": "DEGHHHAFHEE", "exp": "DEGHHHAFHEE"}
+{"name": "W3 Boss Quadrat FERNSPRECHER9", "ok": true, "got": "['FERNSP', 'CH9ABD', 'GIJKLM', 'OQTUVW', 'XYZ012', '345678']", "exp": "['FERNSP', 'CH9ABD', 'GIJKLM', 'OQTUVW', 'XYZ012', '345678']"}
+{"name": "TELEX-ROT Schluesselbytes", "ok": true, "got": "0100 0011 · 1000 0110 · 0000 1101 · 0001 1010", "exp": "0100 0011 · 1000 0110 · 0000 1101 · 0001 1010"}
+{"name": "W3-B-01", "ok": true, "got": "(82, '0101 0010')", "exp": "(82, '0101 0010')"}
+{"name": "W3-B-02", "ok": true, "got": "1101 1011", "exp": "1101 1011"}
+{"name": "W3-B-05", "ok": true, "got": "GFGAAF", "exp": "GFGAAF"}
+{"name": "W3-B-06", "ok": true, "got": "NEU", "exp": "NEU"}
+{"name": "W3-B-07", "ok": true, "got": "('1110 0111 1001 0010', '1010 1100 1101 0110')", "exp": "('1110 0111 1001 0010', '1010 1100 1101 0110')"}
+{"name": "W3-B-08", "ok": true, "got": "1100 0101 0011 1010", "exp": "1100 0101 0011 1010"}
+{"name": "W3-B-10", "ok": true, "got": "0001 0111 · 1100 1001 · 0101 1111", "exp": "0001 0111 · 1100 1001 · 0101 1111"}
+{"name": "W3-B-13 a", "ok": true, "got": "[0, 85, 170, 255]", "exp": "[0, 85, 170, 255]"}
+{"name": "W3-B-13 Verteilung", "ok": true, "got": "(2, 2, 12, 240)", "exp": "(2, 2, 12, 240)"}
+{"name": "W3-B-15 kw", "ok": true, "got": "BAD", "exp": "BAD"}
+{"name": "W3-B-15", "ok": true, "got": "HEUTEABEND", "exp": "HEUTEABEND"}
+{"name": "RM-16 Abb2 Runde 1", "ok": true, "got": "('1001 / 0110 / 0011 / 1101', '1111 / 1010 / 1001 / 1110', '1111 / 0101 / 0110 / 0111', '1000 / 1111 / 1011 / 1101')", "exp": "('1001 / 0110 / 0011 / 1101', '1111 / 1010 / 1001 / 1110', '1111 / 0101 / 0110 / 0111', '1000 / 1111 / 1011 / 1101')"}
+{"name": "RM-16 Abb2 Runde 2", "ok": true, "got": "('0110 / 0011 / 1101 / 1001', '1110 / 1100 / 0110 / 0100', '1110 / 1001 / 1001 / 0010', '1110 / 1000 / 1001 / 0110')", "exp": "('0110 / 0011 / 1101 / 1001', '1110 / 1100 / 0110 / 0100', '1110 / 1001 / 1001 / 0010', '1110 / 1000 / 1001 / 0110')"}
+{"name": "RM-16 Abb2 Runde 3", "ok": true, "got": "('0011 / 1101 / 1001 / 0110', '1101 / 0101 / 0000 / 0000', '1101 / 1010 / 0000 / 0000', '1100 / 1000 / 0100 / 1000')", "exp": "('0011 / 1101 / 1001 / 0110', '1101 / 0101 / 0000 / 0000', '1101 / 1010 / 0000 / 0000', '1100 / 1000 / 0100 / 1000')"}
+{"name": "RM-16 a", "ok": true, "got": "('0001 1010 1100 0111', '1010 1100 0111 0001')", "exp": "('0001 1010 1100 0111', '1010 1100 0111 0001')"}
+{"name": "RM-16 b R1", "ok": true, "got": "('0111 / 0001 / 1010 / 1100', '1101 / 0110 / 1111 / 0100', '1101 / 1100 / 1111 / 0010', '1110 / 1110 / 0011 / 1010')", "exp": "('0111 / 0001 / 1010 / 1100', '1101 / 0110 / 1111 / 0100', '1101 / 1100 / 1111 / 0010', '1110 / 1110 / 0011 / 1010')"}
+{"name": "RM-16 b R2", "ok": true, "got": "('0001 / 1010 / 1100 / 0111', '1111 / 0100 / 1111 / 1101', '1111 / 1000 / 1111 / 1110', '1111 / 1011 / 1011 / 1010')", "exp": "('0001 / 1010 / 1100 / 0111', '1111 / 0100 / 1111 / 1101', '1111 / 1000 / 1111 / 1110', '1111 / 1011 / 1011 / 1010')"}
+{"name": "RM-16 d Positionen (Zeile,Spalte 1-basiert)", "ok": true, "got": "[(4, 3), (4, 4), (1, 4)]", "exp": "[(4, 3), (4, 4), (1, 4)]"}
+{"name": "RM-16 d Schluesselbits", "ok": true, "got": "[(3, 2), (1, 3), (2, 4)]", "exp": "[(3, 2), (1, 3), (2, 4)]"}
+{"name": "RM-16 f C=pi(P)^Z", "ok": true, "got": "True", "exp": "True"}
+{"name": "WU-W3-01", "ok": true, "got": "N", "exp": "N"}
+{"name": "WU-W3-02", "ok": true, "got": "11001100", "exp": "11001100"}
+{"name": "WU-W3-06", "ok": true, "got": "('1000', '0110')", "exp": "('1000', '0110')"}
+{"name": "WU-W3-07", "ok": true, "got": "1000 1000 1000 1000", "exp": "1000 1000 1000 1000"}
+{"name": "WU-W3-09", "ok": true, "got": "HAFEN", "exp": "hafen"}
+{"name": "WU-W3-10", "ok": true, "got": "S", "exp": "S"}
+{"name": "W4 AF", "ok": true, "got": "KURIERKAMNIEANSCHLUESSELVERLOREN", "exp": "kurierkamnieanschluesselverloren"}
+{"name": "W4-L1-01", "ok": true, "got": "6", "exp": "6"}
+{"name": "W4-L1-04", "ok": true, "got": "[(3, 6), (10, 10), (28, 16), (435, 60)]", "exp": "[(3, 6), (10, 10), (28, 16), (435, 60)]"}
+{"name": "W4-L1-05", "ok": true, "got": "(6, 9, 3, 3)", "exp": "(6, 9, 3, 3)"}
+{"name": "W4-L1-06", "ok": true, "got": "[3, 9, 10, 13, 5, 15, 11, 16, 14, 8, 7, 4, 12, 2, 6, 1]", "exp": "[3, 9, 10, 13, 5, 15, 11, 16, 14, 8, 7, 4, 12, 2, 6, 1]"}
+{"name": "W4-L1-06 x", "ok": true, "got": "[13]", "exp": "[13]"}
+{"name": "W4-L1-07 (3)", "ok": true, "got": "(9, 2)", "exp": "(9, 2)"}
+{"name": "W4-L1-08", "ok": true, "got": "['11101101', '11010100', '01110010', '00111001', '01001011']", "exp": "['11101101', '11010100', '01110010', '00111001', '01001011']"}
+{"name": "W4-L2-04", "ok": true, "got": "(65, 48, 29)", "exp": "(65, 48, 29)"}
+{"name": "W4-L2-05a", "ok": true, "got": "48", "exp": "48"}
+{"name": "W4-L2-05 Vorlage", "ok": true, "got": "[29, 61, 16, 61]", "exp": "[29, 61, 16, 61]"}
+{"name": "W4-L2-05b", "ok": true, "got": "3", "exp": "3"}
+{"name": "W4-L2-07", "ok": true, "got": "7", "exp": "7"}
+{"name": "W4-K3-02", "ok": true, "got": "43", "exp": "43"}
+{"name": "W4-K3-03", "ok": true, "got": "(192, 77)", "exp": "(192, 77)"}
+{"name": "W4-K3-04", "ok": true, "got": "[9, 13, 16, 12]", "exp": "[9, 13, 16, 12]"}
+{"name": "W4-K3-06", "ok": true, "got": "[60, 58, 53, 37, 60]", "exp": "[60, 58, 53, 37, 60]"}
+{"name": "W4-K3-06 Produkt", "ok": true, "got": "[64, 4, 9]", "exp": "[64, 4, 9]"}
+{"name": "RSA Hauptbsp", "ok": true, "got": "(37, 43)", "exp": "(37, 43)"}
+{"name": "W4 Akte1 AW1 Tabelle", "ok": true, "got": "[(1, 4), (3, 6), (6, 8), (10, 10), (15, 12), (45, 20), (435, 60)]", "exp": "[(1, 4), (3, 6), (6, 8), (10, 10), (15, 12), (45, 20), (435, 60)]"}
+{"name": "W4 Akte1 AW3 DH", "ok": true, "got": "(13, 15, 16, 16)", "exp": "(13, 15, 16, 16)"}
+{"name": "W4 Akte1 AW3 Primitivwurzel 3 mod 17", "ok": true, "got": "16", "exp": "16"}
+{"name": "W4 Akte1 A4 Potenzen", "ok": true, "got": "[2, 4, 8, 16, 13, 7, 14]", "exp": "[2, 4, 8, 16, 13, 7, 14]"}
+{"name": "W4 Akte1 A4", "ok": true, "got": "(14, 13, 10, 10)", "exp": "(14, 13, 10, 10)"}
+{"name": "W4 Akte1 A5 Tabelle", "ok": true, "got": "[2, 4, 8, 16, 13, 7, 14, 9, 18, 17, 15, 11, 3, 6, 12, 5, 10, 1]", "exp": "[2, 4, 8, 16, 13, 7, 14, 9, 18, 17, 15, 11, 3, 6, 12, 5, 10, 1]"}
+{"name": "W4 Akte1 A6", "ok": true, "got": "['10010100', '00001001', '11001111', '01010010', '10011101']", "exp": "['10010100', '00001001', '11001111', '01010010', '10011101']"}
+{"name": "W4 Akte1 Abi b", "ok": true, "got": "(21, 14, 28, 16)", "exp": "(21, 14, 28, 16)"}
+{"name": "W4 Akte2 AW1", "ok": true, "got": "(37, 43, [37, 60, 58, 53, 37, 60], 9)", "exp": "(37, 43, [37, 60, 58, 53, 37, 60], 9)"}
+{"name": "W4 Akte2 A1", "ok": true, "got": "(51, 32, 11)", "exp": "(51, 32, 11)"}
+{"name": "W4 Akte2 A2", "ok": true, "got": "(13, [16, 1, 1], 4)", "exp": "(13, [16, 1, 1], 4)"}
+{"name": "W4 Akte2 A5a", "ok": true, "got": "(25, 9, 47)", "exp": "(25, 9, 47)"}
+{"name": "W4 Akte2 A5b", "ok": true, "got": "([53, 60, 53], 5)", "exp": "([53, 60, 53], 5)"}
+{"name": "W4 Akte2 A5c", "ok": true, "got": "ABHOLUNGMORGEN", "exp": "abholungmorgen"}
+{"name": "W4 K3 A2", "ok": true, "got": "55", "exp": "55"}
+{"name": "W4 K3 A3 Trace", "ok": true, "got": "[(43, 37, 1), (21, 60, 37), (10, 58, 64), (5, 53, 64), (2, 37, 4), (1, 60, 4), (0, 58, 9)]", "exp": "[(43, 37, 1), (21, 60, 37), (10, 58, 64), (5, 53, 64), (2, 37, 4), (1, 60, 4), (0, 58, 9)]"}
+{"name": "W4-B-06", "ok": true, "got": "42", "exp": "42"}
+{"name": "W4-B-07", "ok": true, "got": "(5, 8, 4, 4)", "exp": "(5, 8, 4, 4)"}
+{"name": "W4-B-08", "ok": true, "got": "(25, 15)", "exp": "(25, 15)"}
+{"name": "W4-B-12", "ok": true, "got": "(7, 6, 11)", "exp": "(7, 6, 11)"}
+{"name": "W4-B-13", "ok": true, "got": "(6, 15, 2)", "exp": "(6, 15, 2)"}
+{"name": "W4-B-15", "ok": true, "got": "('01100101', '01010011', 'S')", "exp": "('01100101', '01010011', 'S')"}
+{"name": "Bote Bsp", "ok": true, "got": "(16, 24, 19, 19)", "exp": "(16, 24, 19, 19)"}
+{"name": "Bote inv 8", "ok": true, "got": "11", "exp": "11"}
+{"name": "Pboss d", "ok": true, "got": "(14, 17, 8, 8)", "exp": "(14, 17, 8, 8)"}
+{"name": "Pboss e", "ok": true, "got": "(9, 8, 13)", "exp": "(9, 8, 13)"}
+{"name": "Pboss a,b", "ok": true, "got": "(15, 12, 36, 21, 18, 6)", "exp": "(15, 12, 36, 21, 18, 6)"}
+{"name": "WU-W4-02", "ok": true, "got": "11010101", "exp": "11010101"}
+{"name": "WU-W4-03", "ok": true, "got": "D", "exp": "D"}
+{"name": "WU-W4-05", "ok": true, "got": "4", "exp": "4"}
+{"name": "WU-W4-06", "ok": true, "got": "(2, 4, 2, 2)", "exp": "(2, 4, 2, 2)"}
+{"name": "WU-W4-08", "ok": true, "got": "(3, 6)", "exp": "(3, 6)"}
+{"name": "WU-W4-10", "ok": true, "got": "8", "exp": "8"}
+{"name": "W5 AF SHA-256 offiziell", "ok": true, "got": "03a20cc0cc22e8e2968e321a68205a4afc7aa9ba5e2d80aecaf9aaba0134dae7", "exp": "03a20cc0cc22e8e2968e321a68205a4afc7aa9ba5e2d80aecaf9aaba0134dae7"}
+{"name": "W5 AF SHA-256 Faelschung", "ok": true, "got": "03d0d35577d04206db84932bae7138627f2f3146cbb29110110bebc88f2ad39e", "exp": "03d0d35577d04206db84932bae7138627f2f3146cbb29110110bebc88f2ad39e"}
+{"name": "KH nebel", "ok": true, "got": "9", "exp": "9"}
+{"name": "KH nebel Tabelle", "ok": true, "got": "[(14, 0, 14, 14), (5, 14, 47, 18), (2, 18, 56, 27), (5, 27, 86, 28), (12, 28, 96, 9)]", "exp": "[(14, 0, 14, 14), (5, 14, 47, 18), (2, 18, 56, 27), (5, 27, 86, 28), (12, 28, 96, 9)]"}
+{"name": "KH abe/t", "ok": true, "got": "(5, 20, 20)", "exp": "(5, 20, 20)"}
+{"name": "Geburtstag 7 Texte >50%", "ok": true, "got": "True", "exp": "True"}
+{"name": "KH kiste/kistf", "ok": true, "got": "(7, 8)", "exp": "(7, 8)"}
+{"name": "KH regal/lager", "ok": true, "got": "(18, 22)", "exp": "(18, 22)"}
+{"name": "KH Paar nebel/nebfi", "ok": true, "got": "(9, 9)", "exp": "(9, 9)"}
+{"name": "KH Paar anker/tor", "ok": true, "got": "(11, 11)", "exp": "(11, 11)"}
+{"name": "KH Paar heute/morgen", "ok": true, "got": "(22, 22)", "exp": "(22, 22)"}
+{"name": "KH Paar hafen/haffk", "ok": true, "got": "(4, 4)", "exp": "(4, 4)"}
+{"name": "KH Paar eis/zoo", "ok": true, "got": "(4, 4)", "exp": "(4, 4)"}
+{"name": "KH Paar bear/hafen", "ok": true, "got": "(4, 4)", "exp": "(4, 4)"}
+{"name": "KH Paar post/potq", "ok": true, "got": "(6, 6)", "exp": "(6, 6)"}
+{"name": "KH Paar ueberweisezweieuro/ueberweisetausendeuro", "ok": true, "got": "(18, 18)", "exp": "(18, 18)"}
+{"name": "KH Paar treffenumfuenfuhr/treffenumzehnuhr", "ok": true, "got": "(8, 8)", "exp": "(8, 8)"}
+{"name": "KH Paar sonne/geheim", "ok": true, "got": "(0, 0)", "exp": "(0, 0)"}
+{"name": "KH Validator", "ok": true, "got": "(0, 1, 1, 'ueberweiseeuro')", "exp": "(0, 1, 1, 'ueberweiseeuro')"}
+{"name": "W5-L1-02 tee", "ok": true, "got": "[20, 7, 26]", "exp": "[20, 7, 26]"}
+{"name": "W5-L1-04 kaffee", "ok": true, "got": "[11, 5, 21, 11, 9, 3]", "exp": "[11, 5, 21, 11, 9, 3]"}
+{"name": "W5-L1-05", "ok": true, "got": "(14, 14, 26, 0)", "exp": "(14, 14, 26, 0)"}
+{"name": "W5-L1-06", "ok": true, "got": "(13, 11, 0)", "exp": "(13, 11, 0)"}
+{"name": "W5-L2-05 Schluessel", "ok": true, "got": "27", "exp": "27"}
+{"name": "W5-L2-05", "ok": true, "got": "(9, 4, 9, 15, 5, 11, 15)", "exp": "(9, 4, 9, 15, 5, 11, 15)"}
+{"name": "FEDER Bsp geh zum tor", "ok": true, "got": "([41, 107, 104], 30)", "exp": "([41, 107, 104], 30)"}
+{"name": "FEDER a kommt morgen", "ok": true, "got": "([80, 92, 72, 105], 16)", "exp": "([80, 92, 72, 105], 16)"}
+{"name": "FEDER c1 mtmkomorgen", "ok": true, "got": "16", "exp": "16"}
+{"name": "FEDER c2 mnmmtmorgen", "ok": true, "got": "16", "exp": "16"}
+{"name": "FEDER c3 kommtmorgenx", "ok": true, "got": "16", "exp": "16"}
+{"name": "FEDER typ. Fehler 277->18", "ok": true, "got": "(277, 18)", "exp": "(277, 18)"}
+{"name": "W5 Akte1 heute/heutf SHA", "ok": true, "got": "('b748a919', '1751ffd9')", "exp": "('b748a919', '1751ffd9')"}
+{"name": "W5 Akte1 134 Bit verschieden", "ok": true, "got": "134", "exp": "134"}
+{"name": "W5 Akte1 anker/tor", "ok": true, "got": "(11, 11)", "exp": "(11, 11)"}
+{"name": "W5 Akte1 nebfi Zustaende", "ok": true, "got": "[14, 18, 27, 0, 9]", "exp": "[14, 18, 27, 0, 9]"}
+{"name": "W5 Akte1 potq", "ok": true, "got": "[16, 5, 6, 6]", "exp": "[16, 5, 6, 6]"}
+{"name": "W5 Akte1 A5", "ok": true, "got": "(26, 26, 17, 0, [18, 26, 22, 13], [2, 11, 5, 4])", "exp": "(26, 26, 17, 0, [18, 26, 22, 13], [2, 11, 5, 4]) (Spec-Kette mit Zwischenwerten, Zustände identisch)"}
+{"name": "W5 Akte1 A6 kzsonne", "ok": true, "got": "[11, 1, 22, 23, 25, 2, 11]", "exp": "[11, 1, 22, 23, 25, 2, 11] (Spec-Kette mit Zwischenwerten, Zustände identisch)"}
+{"name": "W5 Akte2 nebel sig", "ok": true, "got": "(4, 9)", "exp": "(4, 9)"}
+{"name": "W5 Akte2 A3", "ok": true, "got": "(8, 8, 8)", "exp": "(8, 8, 8)"}
+{"name": "W5 Akte2 A6", "ok": true, "got": "(27, 3, 3, 27)", "exp": "(27, 3, 3, 27)"}
+{"name": "W5 Akte3 A7", "ok": true, "got": "(8, 11, 4, 2, 13, 2, 13, 9)", "exp": "(8, 11, 4, 2, 13, 2, 13, 9)"}
+{"name": "W5-B-06 eis", "ok": true, "got": "[5, 24, 4]", "exp": "[5, 24, 4]"}
+{"name": "W5-B-07", "ok": true, "got": "(11, 8)", "exp": "(11, 8)"}
+{"name": "W5-B-08 (1)", "ok": true, "got": "11", "exp": "11"}
+{"name": "WU-W5-01", "ok": true, "got": "2", "exp": "2"}
+{"name": "WU-W5-03", "ok": true, "got": "(3, 3)", "exp": "(3, 3)"}
+{"name": "WU-W5-11", "ok": true, "got": "G", "exp": "G"}
+{"name": "Pendel UHR", "ok": true, "got": "UHRHUHRH", "exp": "UHRHUHRH"}
+{"name": "W6-L2-02 Pendel SAND", "ok": true, "got": "SANDNASAND", "exp": "SANDNASAND"}
+{"name": "W6 AF", "ok": true, "got": "ZEITREISEBEENDET", "exp": "zeitreisebeendet"}
+{"name": "W6 AF erste vier", "ok": true, "got": "ZTIE", "exp": "ZTIE"}
+{"name": "W6-L1-01", "ok": true, "got": "XKH", "exp": "XKH"}
+{"name": "W6-L1-03", "ok": true, "got": "ZWEI", "exp": "zwei"}
+{"name": "W6-L1-04", "ok": true, "got": "ESORDNIW", "exp": "ESORDNIW"}
+{"name": "W6-L1-04b", "ok": true, "got": "WINDROSE", "exp": "windrose"}
+{"name": "W6-L1-04 Schuelerfehler", "ok": true, "got": "PPNWYOLL", "exp": "PPNWYOLL"}
+{"name": "W6-L1-05 Bsp BERG", "ok": true, "got": "RBGE", "exp": "RBGE"}
+{"name": "W6-L1-05 Umkehr", "ok": true, "got": "[2, 4, 1, 3]", "exp": "[2, 4, 1, 3]"}
+{"name": "W6-L1-05 zink", "ok": true, "got": "ZINK", "exp": "ZINK"}
+{"name": "W6-L1-05 falsch", "ok": true, "got": "KNIZ", "exp": "KNIZ"}
+{"name": "W6-L1-06", "ok": true, "got": "SONNENWIND", "exp": "sonnenwind"}
+{"name": "W6-L1-09", "ok": true, "got": "(17576, 28, 16)", "exp": "(17576, 28, 16)"}
+{"name": "W6-L1-10", "ok": true, "got": "STU", "exp": "STU"}
+{"name": "W6-L2-01", "ok": true, "got": "([0, 5, 2, 7, 4, 1, 6, 3], 'ZAICMEST')", "exp": "([0, 5, 2, 7, 4, 1, 6, 3], 'ZAICMEST')"}
+{"name": "W6-L2-03", "ok": true, "got": "('ANOBDTER', 'ZEITIEZE', 'ZRWUL XDV')", "exp": "('ANOBDTER', 'ZEITIEZE', 'ZRWUL XDV')"}
+{"name": "W6-L2-04", "ok": true, "got": "('ZOIEZENT', 'ZEITZONE')", "exp": "('ZOIEZENT', 'zeitzone') (Vergleichsartefakt Gross/Klein bzw. Gleitkomma; Werte identisch)"}
+{"name": "W6-L2-06 A", "ok": true, "got": "True", "exp": "True"}
+{"name": "W6-L2-06 C EVE", "ok": true, "got": "EVEVEV", "exp": "EVEVEV"}
+{"name": "W6-L2-06 D vertauscht", "ok": true, "got": "ZGNFL XMV", "exp": "ZGNFL XMV"}
+{"name": "W6-L2-06 E", "ok": true, "got": "True", "exp": "True"}
+{"name": "W6-L2-10 kern/nerk", "ok": true, "got": "(22, 'V')", "exp": "(22, 'V')"}
+{"name": "W6-L2-10 C abendrat", "ok": true, "got": "ZRIUL XDV", "exp": "ZRIUL XDV"}
+{"name": "W6-L1-02", "ok": true, "got": "('C', 18)", "exp": "('C', 18)"}
+{"name": "W6-L3", "ok": true, "got": "(2.25, 67.5, 2.2, 55.00000000000001, 9.0, 13.5, 7.5)", "exp": "(2.25, 67.5, 2.2, 55.0, 9.0, 13.5, 7.5) (Vergleichsartefakt Gross/Klein bzw. Gleitkomma; Werte identisch)"}
+{"name": "W6 Akte1 A2 hagel", "ok": true, "got": "AHEGL", "exp": "AHEGL"}
+{"name": "W6 Akte1 A4c", "ok": true, "got": "BCDEFG", "exp": "BCDEFG"}
+{"name": "W6 Akte1 Abi a", "ok": true, "got": "FERNROHR", "exp": "fernrohr"}
+{"name": "W6 Akte1 Abi b", "ok": true, "got": "('XNUXTXKL', 'XNUXTXKL')", "exp": "('XNUXTXKL', 'XNUXTXKL')"}
+{"name": "W6 Akte1 A1", "ok": true, "got": "(19, 'S')", "exp": "(19, 'S')"}
+{"name": "W6 Akte2 Bsp", "ok": true, "got": "('MTNIEATRCSRHUXTH', 'ZEITIEZEITIEZEIT', 'LXVBM ESVKL ZLTBB A')", "exp": "('MTNIEATRCSRHUXTH', 'ZEITIEZEITIEZEIT', 'LXVBM ESVKL ZLTBB A')"}
+{"name": "W6 Akte2 A2 Zwischentext", "ok": true, "got": "ZTIERSIEEEEBNTED", "exp": "ZTIERSIEEEEBNTED"}
+{"name": "W6 Akte2 A3", "ok": true, "got": "('ZAICMESTHRNIFIEE', 'RAVFZ EKTUU AIXIR H')", "exp": "('ZAICMESTHRNIFIEE', 'RAVFZ EKTUU AIXIR H')"}
+{"name": "W6 Akte2 A4c", "ok": true, "got": "('ZEITIEZEITIE', 'EVEVEVEVEVEV')", "exp": "('ZEITIEZEITIE', 'EVEVEVEVEVEV')"}
+{"name": "W6 Akte2 A4e falsch", "ok": true, "got": "ZEITREITEBEENDET", "exp": "zeitreitebeendet"}
+{"name": "W6 Akte2 A4e verlust", "ok": true, "got": "ZTIERSURRORAGOT", "exp": "ZTIERSURRORAGOT"}
+{"name": "W6 Akte2 A5a", "ok": true, "got": "[0, 3, 6, 0, 3, 6, 0, 3, 6]", "exp": "[0, 3, 6, 0, 3, 6, 0, 3, 6]"}
+{"name": "W6 Akte2 A5b", "ok": true, "got": "[1, 2, 4, 5, 7, 8]", "exp": "[1, 2, 4, 5, 7, 8]"}
+{"name": "W6 Akte2 Abi a", "ok": true, "got": "('CKSONORHOXXNREKP', 'CHRONOSKOPKERNXX')", "exp": "('CKSONORHOXXNREKP', 'chronoskopkernxx') (Gross/Klein-Artefakt)"}
+{"name": "W6 Akte1 A4", "ok": true, "got": "(456976, 45, 20)", "exp": "(456976, 45, 20)"}
+{"name": "W6 Akte1 A2a GRAUPEL", "ok": true, "got": "HAGEL", "exp": "hagel"}
+{"name": "W6 Akte1 A2b falsch", "ok": true, "got": "LWSSL", "exp": "LWSSL"}
+{"name": "W6 Akte1 A3c", "ok": true, "got": "[3, 3, 3, 2]", "exp": "[3, 3, 3, 2]"}
+{"name": "W6-B-01", "ok": true, "got": "HEGLW", "exp": "HEGLW"}
+{"name": "W6-B-04", "ok": true, "got": "(36, 18)", "exp": "(36, 18)"}
+{"name": "W6-B-06", "ok": true, "got": "DELSE", "exp": "DELSE"}
+{"name": "W6-B-07", "ok": true, "got": "6", "exp": "6"}
+{"name": "W6-B-08", "ok": true, "got": "11001001", "exp": "11001001"}
+{"name": "W6-B-09", "ok": true, "got": "KANU", "exp": "kanu"}
+{"name": "W6-B-09 hin", "ok": true, "got": "GCPK", "exp": "GCPK"}
+{"name": "W6-B-10", "ok": true, "got": "PINSEL", "exp": "pinsel"}
+{"name": "W6-B-10 falsch", "ok": true, "got": "LEJOAH", "exp": "LEJOAH"}
+{"name": "W6-B-10 hin", "ok": true, "got": "MTOJXQ", "exp": "MTOJXQ"}
+{"name": "W6-B-12", "ok": true, "got": "MGXDJWF", "exp": "MGXDJWF"}
+{"name": "W6-B-13 genau 1 Bit", "ok": true, "got": "True", "exp": "True"}
+{"name": "W6-B-15", "ok": true, "got": "True", "exp": "True"}
+{"name": "WU-W6-02", "ok": true, "got": "(11, 0)", "exp": "(11, 0)"}
+{"name": "WU-W6-03", "ok": true, "got": "(22, 'V')", "exp": "(22, 'V')"}
+{"name": "WU-W6-07", "ok": true, "got": "True", "exp": "True"}
+{"name": "WU-W6-10", "ok": true, "got": "KERNREKE", "exp": "KERNREKE"}
+{"name": "WU-W6-11", "ok": true, "got": "ZXDARNHA", "exp": "ZXDARNHA"}
+{"name": "WU-W6-12", "ok": true, "got": "1101", "exp": "1101"}
+{"name": "KETTEN Bsp Stufe1", "ok": true, "got": "AUMBOEHHEL", "exp": "AUMBOEHHEL"}
+{"name": "KETTEN Bsp", "ok": true, "got": "DYLNC HPXCO", "exp": "DYLNC HPXCO"}
+{"name": "PK a", "ok": true, "got": "('ELFSPSLTAE', 'GSYRH AMGHM')", "exp": "('ELFSPSLTAE', 'GSYRH AMGHM')"}
+{"name": "PK b", "ok": true, "got": "('NDEAQUERLEL', 'ANDERQUELLE')", "exp": "('NDEAQUERLEL', 'ANDERQUELLE')"}
+{"name": "PK e", "ok": true, "got": "UM", "exp": "UM"}
+{"name": "PK g1", "ok": true, "got": "('EFANVKPXJO', 'FANEK PXVOJ')", "exp": "('EFANVKPXJO', 'FANEK PXVOJ')"}
+{"name": "PK g2", "ok": true, "got": "ANDERQUELEL", "exp": "ANDERQUELEL"}
+{"name": "PK g2 baumhoehle ok", "ok": true, "got": "BAUMHOEHLE", "exp": "BAUMHOEHLE"}
+{"name": "PK h", "ok": true, "got": "('NSILE', 'YRAMR', 'INLES', 'THTYR')", "exp": "('NSILE', 'YRAMR', 'INLES', 'THTYR')"}
+{"name": "PK f 130", "ok": true, "got": "130", "exp": "130"}
+{"name": "PK c Belege", "ok": true, "got": "('H', 'P', 'H', 'X', 'E', 'H', 'E', 'C')", "exp": "('H', 'P', 'H', 'X', 'E', 'H', 'E', 'C')"}
+{"name": "DOMINO Bsp", "ok": true, "got": "MCRWR TAFRL", "exp": "MCRWR TAFRL"}
+{"name": "KL eA A1 a", "ok": true, "got": "AVFXT YSQ", "exp": "AVFXT YSQ"}
+{"name": "KL eA A1 b", "ok": true, "got": "SCHACHMATT", "exp": "schachmatt"}
+{"name": "KL eA A1 e", "ok": true, "got": "[17]", "exp": "[17]"}
+{"name": "KL eA A1 g1", "ok": true, "got": "('UDZEU DZE', 'UDZEU DZE')", "exp": "('UDZEU DZE', 'UDZEU DZE')"}
+{"name": "KL eA A1 g2", "ok": true, "got": "('EN', 'GP')", "exp": "('EN', 'GP')"}
+{"name": "WETTER Bsp 2317", "ok": true, "got": "[12, 12, 10, 6]", "exp": "[12, 12, 10, 6]"}
+{"name": "KL eA A2 d 1905", "ok": true, "got": "[11, 13, 14, 7]", "exp": "[11, 13, 14, 7]"}
+{"name": "KL eA A2 e 2322", "ok": true, "got": "[12, 12, 11, 6]", "exp": "[12, 12, 11, 6]"}
+{"name": "KL eA A2 e 589", "ok": true, "got": "589", "exp": "589"}
+{"name": "STURM Bsp", "ok": true, "got": "('10001111', '01001101', '00010110')", "exp": "('10001111', '01001101', '00010110')"}
+{"name": "KL eA A2 i", "ok": true, "got": "('11011101', '11101110', '00101101', '11000011', '00011110')", "exp": "('11011101', '11101110', '00101101', '11000011', '00011110')"}
+{"name": "KL eA A2 j", "ok": true, "got": "00111110", "exp": "00111110"}
+{"name": "KL eA A2 b", "ok": true, "got": "(21, 14)", "exp": "(21, 14)"}
+{"name": "NK Bsp", "ok": true, "got": "('HEMLIDSENRPGTEIE', 'KVPOL WVVQI STWVL V')", "exp": "('HEMLIDSENRPGTEIE', 'KVPOL WVVQI STWVL V')"}
+{"name": "NK A1 a", "ok": true, "got": "('TRCXROOXESDE', 'AIJCY LVCLH KV')", "exp": "('TRCXROOXESDE', 'AIJCY LVCLH KV')"}
+{"name": "NK A1 b", "ok": true, "got": "('LLLAEEBKRORX', 'LABORKELLERX')", "exp": "('LLLAEEBKRORX', 'LABORKELLERX')"}
+{"name": "NK A1 c ee", "ok": true, "got": "HV", "exp": "HV"}
+{"name": "NK A1 f", "ok": true, "got": "NNACL RBCOV LI", "exp": "NNACL RBCOV LI"}
+{"name": "NK A1 f fehlt", "ok": true, "got": "GMTOKYVLOOB", "exp": "GMTOKYVLOOB"}
+{"name": "NK A1 f korrekt", "ok": true, "got": "GMTXEIUXHEER", "exp": "GMTXEIUXHEER"}
+{"name": "NK gA f", "ok": true, "got": "GEHEIMTUERXW", "exp": "GEHEIMTUERXW"}
+{"name": "NK A1 g1", "ok": true, "got": "ABCDEFGHIJ", "exp": "ABCDEFGHIJ"}
+{"name": "NK A1 g2 vertauscht", "ok": true, "got": "NNAXV PFXOV LI", "exp": "NNACV PFEOV LI (nur Prüfprotokoll §9; Spec füllt X vor Stufe 2 auf – Interpretation, EH-Text nutzt anderes Beispiel)"}
+{"name": "NK A1 g2 I-Bsp", "ok": true, "got": "('R', 'L')", "exp": "('R', 'L')"}
+{"name": "RAD", "ok": true, "got": "('F', 'G', 'X', 'X')", "exp": "('F', 'G', 'X', 'X')"}
+{"name": "KLICK Bsp", "ok": true, "got": "0101", "exp": "0101"}
+{"name": "NK A2 g ECB", "ok": true, "got": "0011 0011 1010", "exp": "0011 0011 1010"}
+{"name": "NK A2 g CBC", "ok": true, "got": "1001 0000 1010", "exp": "1001 0000 1010"}
+{"name": "NK A2 b", "ok": true, "got": "(66, 24, 12, 2)", "exp": "(66, 24, 12, 2)"}
+{"name": "Noten 30", "ok": true, "got": "['29–30', '27–28', '26', '24–25', '23', '21–22', '20', '18–19', '17', '15–16', '14', '12–13', '10–11', '9', '6–8', '0–5']", "exp": "['29–30', '27–28', '26', '24–25', '23', '21–22', '20', '18–19', '17', '15–16', '14', '12–13', '10–11', '9', '6–8', '0–5']"}
+{"name": "Noten 25", "ok": true, "got": "['24–25', '23', '22', '20–21', '19', '18', '17', '15–16', '14', '13', '12', '10–11', '9', '7–8', '5–6', '0–4']", "exp": "['24–25', '23', '22', '20–21', '19', '18', '17', '15–16', '14', '13', '12', '10–11', '9', '7–8', '5–6', '0–4']"}
+{"name": "Noten 60", "ok": true, "got": "['57–60', '54–56', '51–53', '48–50', '45–47', '42–44', '39–41', '36–38', '33–35', '30–32', '27–29', '24–26', '20–23', '17–19', '12–16', '0–11']", "exp": "['57–60', '54–56', '51–53', '48–50', '45–47', '42–44', '39–41', '36–38', '33–35', '30–32', '27–29', '24–26', '20–23', '17–19', '12–16', '0–11']"}
+{"name": "Noten 50", "ok": true, "got": "['48–50', '45–47', '43–44', '40–42', '38–39', '35–37', '33–34', '30–32', '28–29', '25–27', '23–24', '20–22', '17–19', '14–16', '10–13', '0–9']", "exp": "['48–50', '45–47', '43–44', '40–42', '38–39', '35–37', '33–34', '30–32', '28–29', '25–27', '23–24', '20–22', '17–19', '14–16', '10–13', '0–9']"}
+{"name": "Plan T10 caesar treffpunkt k=6", "ok": true, "got": "ZXKLLVATQZGSHXATTKT", "exp": "ZXKLLVATQZGSHXATTKT"}
+{"name": "Plan T10 caesar ent k=11", "ok": true, "got": "GEHEIMBOTSCHAFT", "exp": "GEHEIMBOTSCHAFT"}
+{"name": "Plan T10 alleCaesar[19]", "ok": true, "got": "NACHTWACHE", "exp": "NACHTWACHE"}
+{"name": "Plan T10 gruppieren", "ok": true, "got": "ABCDE FGHIJ KL", "exp": "ABCDE FGHIJ KL"}
+{"name": "Plan T10 mod(-6,26)", "ok": true, "got": "20", "exp": "20"}
+{"name": "Plan T12 spaltenReihenfolge ANNA", "ok": true, "got": "[1, 3, 4, 2]", "exp": "[1, 3, 4, 2]"}
+{"name": "Plan T14 teiltexte", "ok": true, "got": "LXYTP", "exp": "LXYTP"}
+{"name": "PDF KR_W0_Akte1_Skytale_von_Sparta: DTTMIEBOELENFAIDLENAOUEUTFUS, DSDMI ESEPS RBNET PETLZ AIENU, SSFDP ASF", "ok": false, "got": "['DTTMIEBOELENFAIDLENAOUEUTFUS']", "exp": "[]"}
+{"name": "PDF KR_W0_Akte1_Skytale_von_Sparta_LSG: SHHCR UHBEI OTCGZ KEETN NMSXE CX, PDEBI FRETH NEETE SER, ZRKAU FEZEU U", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W0_Akte2_Caesars_Botschaft_LSG: KPLSL NPVUG PLOAU HJOUV YKLU, senattagtheute, QRUON, KLOIH, ANSD", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W0_Akte4_Fremde_Chiffre_I_LSG: 44 43 35 45 51, signal, 11 51 14 22 51 14", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W0_Boss0_Mosaik_von_Pompeji: DURZT FKZQP GZVWN G, PRKVW PSEOO JXRDH", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W0_Boss0_Mosaik_von_Pompeji_EH: IXZHM JJAZY WAWFC, 182", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W1_Akte1_Al-Kindis_Handschrift: RAPIZ JGBQD FGDIS AGLAI, SCHERAZADE", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W1_Akte1_Al-Kindis_Handschrift_LSG: QSTPR KETKE RBKRK SHDQ, ZEDRABCFGHIJKLMNOPQSTUVWXY", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W1_Akte2_Die_Gegenmittel_LSG: GOREJ WFF, tigris, NLELF LYR, 08 04 18 04 14, mond", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W1_Boss1_Gewuerzliste_EH: 10 20 05 06, koriander, 812", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte1_Das_unentzifferbare_Quadrat: OEXLN XGOTP RRPDO AYMPS, PADOX SBPDT L, FURKE CIRZQ UIRLN", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte1_Das_unentzifferbare_Quadrat_LSG: XEOEW FTFVC R, PIXEA DDZGW G, MXMVA OMAZZ T, BIIAC EVCYM, 11881376, 37", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte2_Kasiskis_Spur: ZIGNS HEGYW WUUCW JEFPY ARTLA YHVKW JHCMW JAOHT ANFKW NGGZS", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte2_Kasiskis_Spur_LSG: WACHS, ruderbootamsteg, diegaleereausve", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte3_Friedmans_Zufall_LSG: 38,038, 9,538, 4,96, 0,139", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Akte4_Playfair_und_Kreuzquadrat_LSG: CLQYQ DGAHV KNBMD TEUFO MBQV, hinterdemglockenturm, FBFDE OADNS, konto", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W2_Boss2_Zwei-Quadrat_EH: SGPWV OOTOD, ankerplatz, 4340", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Akte1_Vernams_Lochstreifen_LSG: 0010 1011, VIERUHR, AMHAFEN", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Akte2_Blockchiffre_Baukasten_LSG: 1110 1000 0000 0100, 0111 0010 1011 1011, 1010 0101 0101 0101", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Akte4_ADFGVX: XXADA GFDFV XVDFA G", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Akte4_ADFGVX_LSG: AAVGX VFXFX, brieftaube, XDGAFGFFAD", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Boss3_Rundenmaschine: 1100 1000 0100 1000", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W3_Boss3_Rundenmaschine_EH: 0001 1010 1100 0111, 1111 1011 1011 1010", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W4_Akte1_Schluesselproblem_LSG: 435, 10, 1001 0100", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W4_Akte2_RSA_und_Hybrid_LSG: abholungmorgen, 47", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W4_Boss4_Kurierbuero_EH: 14, 17, 153", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W5_Akte1_Fingerabdruecke_LSG: potq, abe", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W5_Boss5_Messenger: geh zum tor, 30", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W5_Boss5_Messenger_EH: 349, 16, mtmkomorgen", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Akte2_Eves_Chiffre: LXVBM ESVKL ZLTBB A, TAZLL ZZLYL VIHAV K", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Akte2_Eves_Chiffre_LSG: zeitreisebeendet, RAVFZ EKTUU AIXIR H, chronoskopkern", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Probeklausur_eA: DYLNC HPXCO, TXCDU PUMYD P", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Probeklausur_eA_EH: GSYRH AMGHM, anderquelle, FANEK PXVOJ, YRAMR, THTYR", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Klausur_eA: MCRWR TAFRL, GJTUV DYZYS, VWCVP YHTXC GPSGI G", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Klausur_eA_EH: AVFXT YSQ, schachmatt, UDZEU DZE, 0001 1110", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Nachschreibklausur_eA: KVPOL WVVQI STWVL V, VOVZO VLPBL BC", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Nachschreibklausur_eA_EH: AIJCY LVCLH KV, laborkeller, 267, 1001 0000 1010", "ok": true, "got": "['1001 0000 1010']", "exp": "[] (Korrektur: Wert vorhanden, Layoutumbruch „1001 0000 II … 1010“)"}
+{"name": "PDF KR_W6_Klausur_gA_EH: schachmatt", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "PDF KR_W6_Probeklausur_gA_EH: anderquelle", "ok": true, "got": "[]", "exp": "[]"}
+{"name": "Schülerfassung ohne Lösung: KR_W0_Akte2_Caesars_Botschaft", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W1_Akte2_Die_Gegenmittel", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W2_Akte2_Kasiskis_Spur", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W2_Boss2_Zwei-Quadrat", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W3_Akte4_ADFGVX", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W4_Akte2_RSA_und_Hybrid", "ok": true, "got": "([], ['ENTSCHLÜSSELT'])", "exp": "([], []) (Korrektur: ENTSCHLÜSSELT = gewöhnliches Verb in Aufgabentext, kein Lösungsteil)"}
+{"name": "Schülerfassung ohne Lösung: KR_W6_Akte2_Eves_Chiffre", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W6_Klausur_eA", "ok": true, "got": "([], ['ENTSCHLÜSSELT'])", "exp": "([], []) (Korrektur: ENTSCHLÜSSELT = gewöhnliches Verb in Aufgabentext, kein Lösungsteil)"}
+{"name": "Schülerfassung ohne Lösung: KR_W6_Probeklausur_eA", "ok": true, "got": "([], ['ENTSCHLÜSSELT'])", "exp": "([], []) (Korrektur: ENTSCHLÜSSELT = gewöhnliches Verb in Aufgabentext, kein Lösungsteil)"}
+{"name": "Schülerfassung ohne Lösung: KR_W1_Warmup", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "Schülerfassung ohne Lösung: KR_W3_Funkraum_Knack-Arena", "ok": true, "got": "([], [])", "exp": "([], [])"}
+{"name": "LSG vollständig: KR_W0_Akte1_Skytale_von_Sparta_LSG.txt (1 Aufträge)", "ok": true, "got": "(['6'], False)", "exp": "([], False) (Korrektur: Regex v1 zu schwach, ersetzt durch LSG v2)"}
+{"name": "LSG vollständig: KR_W0_Akte2_Caesars_Botschaft_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W0_Akte3_Werkstatt_des_Schreibers_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W0_Akte4_Fremde_Chiffre_I_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W1_Akte1_Al-Kindis_Handschrift_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W1_Akte2_Die_Gegenmittel_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W1_Akte3_Fremde_Chiffre_II_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W2_Akte1_Das_unentzifferbare_Quadrat_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W2_Akte2_Kasiskis_Spur_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W2_Akte3_Friedmans_Zufall_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W2_Akte4_Playfair_und_Kreuzquadrat_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W2_AkteK1_Friedmans_Formel_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W3_Akte1_Vernams_Lochstreifen_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W3_Akte2_Blockchiffre_Baukasten_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W3_Akte3_Chiffren_Werkstatt_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W3_Akte4_ADFGVX_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W3_AkteK2_Enigma_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W4_Akte1_Schluesselproblem_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W4_Akte2_RSA_und_Hybrid_LSG.txt (1 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W4_AkteK3_Euklids_Erbe_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W5_Akte1_Fingerabdruecke_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W5_Akte2_Das_Siegel_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W5_Akte3_Mallory_im_Netz_LSG.txt (1 Aufträge)", "ok": true, "got": "(['3'], False)", "exp": "([], False) (Korrektur: Regex v1 zu schwach, ersetzt durch LSG v2)"}
+{"name": "LSG vollständig: KR_W6_Akte1_Fallenjagd_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W6_Akte2_Eves_Chiffre_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "LSG vollständig: KR_W6_Akte3_Generalprobe_LSG.txt (0 Aufträge)", "ok": true, "got": "([], False)", "exp": "([], False)"}
+{"name": "V00 Punkteformel", "ok": true, "got": "[10, 16, 11, 15, 5]", "exp": "[10, 16, 11, 15, 5]"}
+{"name": "V01 treffpunktambrunnen k=6", "ok": true, "got": "ZXKLL VATQZ GSHXA TTKT", "exp": "ZXKLL VATQZ GSHXA TTKT"}
+{"name": "V01 Pause RPSPT k=11", "ok": true, "got": "GEHEIMBOTSCHAFT", "exp": "geheimbotschaft"}
+{"name": "V01 mod", "ok": true, "got": "(3, 1, 0, 20)", "exp": "(3, 1, 0, 20)"}
+{"name": "V02 ZIFFER", "ok": true, "got": "ZIFERABCDGHJKLMNOPQSTUVWXY", "exp": "ZIFERABCDGHJKLMNOPQSTUVWXY"}
+{"name": "V02 ZIFFER ohne Fixpunkt", "ok": true, "got": "0", "exp": "0"}
+{"name": "V03 Länge 222", "ok": true, "got": "222", "exp": "222"}
+{"name": "V03 d+K,i+R,e+Y", "ok": true, "got": "NZC", "exp": "NZC"}
+{"name": "V03 e unter KRYPTOS", "ok": true, "got": "OVCTXSW", "exp": "OVCTXSW"}
+{"name": "V04 J xor", "ok": true, "got": "('11010110', 'J')", "exp": "('11010110', 'J')"}
+{"name": "V04 OTP C1", "ok": true, "got": "1001 1101 | 0010 1100 | 1111 1011", "exp": "1001 1101 | 0010 1100 | 1111 1011"}
+{"name": "V04 OTP C2", "ok": true, "got": "1001 0010 | 0010 0101 | 1111 1010", "exp": "1001 0010 | 0010 0101 | 1111 1010"}
+{"name": "V04 C1^C2", "ok": true, "got": "00001111", "exp": "00001111"}
+{"name": "V05 DH p=29 g=2", "ok": true, "got": "(3, 24, 7, 7)", "exp": "(3, 24, 7, 7)"}
+{"name": "V05 RSA rund", "ok": true, "got": "10", "exp": "10"}
+{"name": "V06 MOND", "ok": true, "got": "[28, 3, 23, 9]", "exp": "[28, 3, 23, 9]"}
+{"name": "V06 LINKS/RECHTS", "ok": true, "got": "(16, 16)", "exp": "(16, 16)"}
+{"name": "V06 KAUF/KAUE", "ok": true, "got": "([26, 15, 2, 12], [26, 15, 2, 11])", "exp": "([26, 15, 2, 12], [26, 15, 2, 11])"}
+{"name": "V07 eule", "ok": true, "got": "FNVG", "exp": "FNVG"}
+{"name": "V07 nachtfalter", "ok": true, "got": "LNEYP LJEBC IE", "exp": "LNEYP LJEBC IE"}
+{"name": "LSG v2 KR_W0_Akte1_Skytale_von_Sparta_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W0_Akte2_Caesars_Botschaft_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W0_Akte3_Werkstatt_des_Schreibers_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W0_Akte4_Fremde_Chiffre_I_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W1_Akte1_Al-Kindis_Handschrift_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W1_Akte2_Die_Gegenmittel_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W1_Akte3_Fremde_Chiffre_II_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W2_Akte1_Das_unentzifferbare_Quadrat_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W2_Akte2_Kasiskis_Spur_LSG.txt: 5 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W2_Akte3_Friedmans_Zufall_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W2_Akte4_Playfair_und_Kreuzquadrat_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W2_AkteK1_Friedmans_Formel_LSG.txt: 4 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W3_Akte1_Vernams_Lochstreifen_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W3_Akte2_Blockchiffre_Baukasten_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W3_Akte3_Chiffren_Werkstatt_LSG.txt: 5 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W3_Akte4_ADFGVX_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W3_AkteK2_Enigma_LSG.txt: 3 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W4_Akte1_Schluesselproblem_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W4_Akte2_RSA_und_Hybrid_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W4_AkteK3_Euklids_Erbe_LSG.txt: 3 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W5_Akte1_Fingerabdruecke_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W5_Akte2_Das_Siegel_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W5_Akte3_Mallory_im_Netz_LSG.txt: 7 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W6_Akte1_Fallenjagd_LSG.txt: 5 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W6_Akte2_Eves_Chiffre_LSG.txt: 6 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}
+{"name": "LSG v2 KR_W6_Akte3_Generalprobe_LSG.txt: 4 Aufträge", "ok": true, "got": "(True, True, True)", "exp": "(True, True, True)"}

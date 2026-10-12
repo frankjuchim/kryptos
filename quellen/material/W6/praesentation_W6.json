@@ -1,0 +1,1419 @@
+{
+ "typ": "praesentation",
+ "welt": 6,
+ "titel": "Die Zeitmaschine",
+ "datei": "KR_W6_Praesentation_Zeitmaschine",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "Archivfund",
+   "titel": "Die Zeitmaschine",
+   "untertitel": "Welt 6 · Endgegner\n„Die Story endet dort, wo die Prüfung beginnt.“",
+   "notizen": "1 min. Begrüßung. Rückblick in einem Satz pro Welt: Sparta (Skytale, Caesar) – Bagdad (Al-Kindi, Häufigkeitsanalyse) – Venedig (Vigenère, Kasiski, Friedman) – Lochstreifen (XOR, One-Time-Pad, Blockchiffren) – Stanford (Schlüsselproblem, asymmetrisch, hybrid) – Netz (Hash, Signatur, Zertifikat). Heute: der Endgegner. DS 17 = Fallenjagd + Eves Chiffre, DS 18 = Generalprobe (Probeklausur)."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "Archivfund",
+   "titel": "Eves Chiffre",
+   "label": "CHRONOSKOP · ZIFFERNRING · VERRIEGELT",
+   "geheimtext": "TAZLLZZLYLVIHAVK",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das Chronoskop steht still. Eve hat es mit ihrem „Uhrwerk“ verriegelt."
+    },
+    {
+     "t": "p",
+     "md": "**Was braucht ihr, um diese Zeile zu lesen?**"
+    }
+   ],
+   "notizen": "2 min. Story vorlesen: „Das Archiv ist still geworden. Das Chronoskop, das dich durch zweieinhalb Jahrtausende Geheimschriften getragen hat, rührt sich nicht mehr: Auf seinem Ziffernring leuchtet nur noch eine einzige Zeile. Eve hat die Zeitmaschine mit einer eigenen Chiffre verriegelt, ihrem ‚Uhrwerk‘.“ Impuls: „Was wisst ihr, was fehlt?“ Erwartet: Verfahren + Schlüssel. Kerckhoffs erinnern: Das Verfahren darf bekannt sein (Eves Beschreibung liegt im Archiv) – geheim ist nur der Schlüssel. Lösung (nicht verraten): zeitreisebeendet, t = 3, Pendelwort UHR."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Archivfund",
+   "titel": "Eves Zettel",
+   "anteil": 0.46,
+   "links": [
+    {
+     "t": "geheimtext",
+     "text": "RING 3 · PENDEL UHR",
+     "gruppen": 0,
+     "label": "EVES HANDSCHRIFT",
+     "groesse": 24
+    },
+    {
+     "t": "bild",
+     "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_skizze.png",
+     "breite_folie": 3.5,
+     "alt": "Skizze eines Rings mit acht Feldern und Sprüngen von drei Feldern"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "Eve hat kombiniert, was sie auf der Reise gesehen hat:"
+    },
+    {
+     "t": "p",
+     "md": "▸  eine **Transposition** wie in Sparta"
+    },
+    {
+     "t": "p",
+     "md": "▸  eine **polyalphabetische** Stufe wie in Venedig"
+    },
+    {
+     "t": "p",
+     "md": "Das Verfahren steht in **keinem Buch** – genau wie im Abitur."
+    },
+    {
+     "t": "p",
+     "md": "==Welche Fragen stellt ihr an ein unbekanntes Verfahren?=="
+    }
+   ],
+   "notizen": "1 min. Zettel und Skizze zeigen: Ring mit acht Feldern, Sprünge. Impuls: „Welche Fragen stellt ihr an ein unbekanntes Verfahren?“ Erwartet: Wie wird verschlüsselt? Was ist der Schlüssel? Wie kehrt man es um? Welcher Typ? Wie sicher? → Überleitung zur 5-Schritte-Methode (WK2): Lesen und nachrechnen – Anwenden – Umkehren – Einordnen – Beurteilen."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Archivfund",
+   "titel": "Stufe 1: Der Ring",
+   "anteil": 0.42,
+   "links": [
+    {
+     "t": "bild",
+     "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_mitterna.png",
+     "breite_folie": 4.6,
+     "alt": "Ring mit MITTERNA, Lesereihenfolge 0 3 6 1 4 7 2 5"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "▸  Block zu **8 Zeichen** auf die Felder 0–7 (letzter Block mit X auffüllen)"
+    },
+    {
+     "t": "p",
+     "md": "▸  Lesen ab Feld 0, dann **t Felder weiter** – im Kreis"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "1",
+       "0 1 2 3 4 5 6 7"
+      ],
+      [
+       "3",
+       "0 3 6 1 4 7 2 5"
+      ],
+      [
+       "5",
+       "0 5 2 7 4 1 6 3"
+      ],
+      [
+       "7",
+       "0 7 6 5 4 3 2 1"
+      ]
+     ],
+     "kopf": [
+      "t",
+      "Lesereihenfolge"
+     ],
+     "breiten": [
+      0.9,
+      4.6
+     ]
+    },
+    {
+     "t": "geheimtext",
+     "text": "MITTERNA → MTNIEATR",
+     "gruppen": 0,
+     "label": "BEISPIEL · t = 3",
+     "groesse": 22
+    }
+   ],
+   "notizen": "2 min. Am Ring mit dem Finger zeigen: Feld 0, drei weiter → 3, → 6, → 9 = Feld 1 („nach Feld 7 kommt Feld 0“ = Rechnen mod 8) … Ergebnis MTNIEATR. Die Zeichen bleiben dieselben – nur ihre Reihenfolge ändert sich → Transposition. Falle P4: Der letzte Block wird mit X aufgefüllt (mitternachtsuhr → CHTSUHRX)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Archivfund",
+   "titel": "Stufe 2: Das Pendel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Pendelwort vor und zurück – **die Enden nicht doppelt**:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "UHR → U H R H U H R H …",
+     "gruppen": 0,
+     "groesse": 26
+    },
+    {
+     "t": "p",
+     "md": "Dann **Vigenère** mit dem Anlage-Quadrat (Schlüsselbuchstabe A = Verschiebung 0, Z = 25):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Zwischentext",
+       "M",
+       "T",
+       "N",
+       "I",
+       "E",
+       "A",
+       "T",
+       "R"
+      ],
+      [
+       "Pendel ZEIT",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "I",
+       "E",
+       "Z",
+       "E"
+      ],
+      [
+       "Geheimtext",
+       "L",
+       "X",
+       "V",
+       "B",
+       "M",
+       "E",
+       "S",
+       "V"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "2 min. Frage: „Ist das noch Vigenère?“ – Ja: Das Pendel ist eine periodische Schlüsselfolge mit der Periode 2L − 2 (UHR → UHRH, ZEIT → ZEITIE). Am Beispiel zeigen: M + Z = L – Z verschiebt um 25, also eine Stelle zurück (P1: nicht 26!). Falle P4: UHRRHU (Enden doppelt) oder UHRUHR (zyklisch) sind falsch."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Archivfund",
+   "titel": "Gemeinsam: die ersten vier Zeichen",
+   "sozialform": "Plenum",
+   "zeit": "5 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Entschlüsselt `T A Z L` mit dem Pendel **U H R H**."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "T",
+       "A",
+       "Z",
+       "L"
+      ],
+      [
+       "Pendel",
+       "U",
+       "H",
+       "R",
+       "H"
+      ],
+      [
+       "Zwischentext",
+       "?",
+       "?",
+       "?",
+       "?"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "schrift_folie": 22
+    },
+    {
+     "t": "p",
+     "md": "==Welche Stufe kehrt ihr zuerst um – und warum?=="
+    }
+   ],
+   "notizen": "5 min. Erwartet: Stufe 2 zuerst rückwärts (P3), Pendelbuchstabe abziehen: T − U = Z, A − H = T, Z − R = I, L − H = E → ZTIE. Begründung: Beim Verschlüsseln kam das Pendel zuletzt. Der Ring kommt erst in Akte W6·2 Auftrag 2 (dort Zeichen j zurück auf Feld 3j mod 8). Nicht verraten, dass ZTIE noch nicht der Klartext ist – das sorgt für Spannung."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Fallenjagd",
+   "titel": "Fallenjagd",
+   "untertitel": "Zehn Fallen. Hundert verlorene Punkte.",
+   "notizen": "Überleitung zu Video 07 (Ausschnitt „Die zehn Fallen“, 6 min). Danach die beiden Merke-Folien; die Fallen-Folien P1–P10 dienen als Bilderbuch: P1, P3 und P9 im Plenum zeigen, die übrigen in der Sicherung nach der Partnerarbeit aufrufen, wenn eine Gruppe „ihre“ Falle nennt."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Fallenjagd",
+   "titel": "Die zehn Fallen (1)",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": false,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "P1",
+       "Zählbasis",
+       "„Nummerierung laut Material: …“ als erste Zeile"
+      ],
+      [
+       "P2",
+       "Modulo",
+       "Rest 0 → Z, negativ + 26"
+      ],
+      [
+       "P3",
+       "Umkehrung",
+       "letzte Stufe zuerst umkehren"
+      ],
+      [
+       "P4",
+       "Verfahrensregel",
+       "Beispiel des Materials nachrechnen"
+      ],
+      [
+       "P5",
+       "Einordnung",
+       "derselbe Buchstabe → immer gleicher Ersatz?"
+      ]
+     ],
+     "kopf": [
+      "",
+      "Falle",
+      "Gegenmittel"
+     ],
+     "breiten": [
+      0.8,
+      2.6,
+      7.4
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "1 min. Jede Falle mit einem Satz aus Akte W6·1 (Archivwissen 1) erläutern. „Im Abitur gehen Punkte selten verloren, weil jemand nichts weiß – sondern weil eine kleine Regel übersehen wird.“"
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Fallenjagd",
+   "titel": "Die zehn Fallen (2)",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": false,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "P6",
+       "Häufigkeitsanalyse pauschal",
+       "worauf? unter welchen Voraussetzungen?"
+      ],
+      [
+       "P7",
+       "Schlüsselraum",
+       "Stellen multiplizieren, Paare einmal zählen"
+      ],
+      [
+       "P8",
+       "Kombination überschätzt",
+       "Caesar ∘ Caesar = Caesar"
+      ],
+      [
+       "P9",
+       "Schlüsselrollen",
+       "signieren privat, prüfen öffentlich"
+      ],
+      [
+       "P10",
+       "Operator verfehlt",
+       "Leistung nach WK5: Urteil, Beispiel, „weil“"
+      ]
+     ],
+     "kopf": [
+      "",
+      "Falle",
+      "Gegenmittel"
+     ],
+     "breiten": [
+      0.8,
+      3.6,
+      6.4
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "1 min. Frage: „Welche Falle hat euch in einem Boss schon Punkte gekostet?“ (Profil „Deine Fallen“ im Lab). Zwei, drei Stimmen sammeln."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P1",
+   "titel": "Zählbasis",
+   "regel": "Material: **A = 0** … Z = 25, Geheimwert = (3 · Wert + 2) mod 26. Erste Zeile jeder Rechnung: **Nummerierung laut Material**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "*hut* mit A = 1 gerechnet:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Wert",
+       "8",
+       "21",
+       "20"
+      ],
+      [
+       "3 · W + 2",
+       "26",
+       "65",
+       "62"
+      ],
+      [
+       "mod 26",
+       "0",
+       "13",
+       "10"
+      ],
+      [
+       "Zeichen",
+       "A",
+       "N",
+       "K"
+      ]
+     ],
+     "breiten": [
+      1.9,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "*hut* mit A = 0 gerechnet:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Wert",
+       "7",
+       "20",
+       "19"
+      ],
+      [
+       "3 · W + 2",
+       "23",
+       "62",
+       "59"
+      ],
+      [
+       "mod 26",
+       "23",
+       "10",
+       "7"
+      ],
+      [
+       "Zeichen",
+       "X",
+       "K",
+       "H"
+      ]
+     ],
+     "breiten": [
+      1.9,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-01. Ab der ersten Zeile ist alles falsch, obwohl jede Rechnung für sich stimmt. Merksatz: „Erste Zeile: Nummerierung laut Material.“ Positionen in Zeichenketten beginnen dagegen bei 0 (EH §5) – zwei verschiedene Zählungen.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P2",
+   "titel": "Modulo",
+   "regel": "Mit A = 1 gibt es keinen Buchstaben mit dem Wert 0: **Rest 0 → Z**, negative Reste **+ 26**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Caesar, k = 5, Geheimtext `EBJN`"
+    },
+    {
+     "t": "p",
+     "md": "E: 5 − 5 = 0 → **A**"
+    },
+    {
+     "t": "p",
+     "md": "B: 2 − 5 = −3 + 26 = 23 → W"
+    },
+    {
+     "t": "p",
+     "md": "Klartext: *awei*"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Caesar, k = 5, Geheimtext `EBJN`"
+    },
+    {
+     "t": "p",
+     "md": "E: 5 − 5 = 0 ≡ 26 → **Z**"
+    },
+    {
+     "t": "p",
+     "md": "B: 2 − 5 = −3 + 26 = 23 → W"
+    },
+    {
+     "t": "p",
+     "md": "Klartext: **zwei**"
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-03. Der negative Rest wurde richtig behandelt – nur die Null nicht. Kontrolle: Ein Klartext, der keinen Sinn ergibt, ist ein Alarmsignal.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P3",
+   "titel": "Umkehrung",
+   "regel": "RÜCKSPIEGEL: Stufe 1 rückwärts schreiben, Stufe 2 Vigenère mit OHR. Entschlüsseln: **letzte Stufe zuerst**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "**1.**  `SZFFKEWD` umdrehen → `DWEKFFZS`"
+    },
+    {
+     "t": "p",
+     "md": "**2.**  Vigenère zurück mit OHR → *ppnwyoll*"
+    },
+    {
+     "t": "p",
+     "md": "„Das Verfahren ist fehlerhaft.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "**1.**  Vigenère zurück mit OHR → `ESORDNIW`"
+    },
+    {
+     "t": "p",
+     "md": "**2.**  umdrehen → **windrose**"
+    }
+   ],
+   "notizen": "2 min. Aus Lab W6-L1-04. Warum hier entscheidend: Vigenère ist positionsabhängig – nach dem Umdrehen stehen die Zeichen unter anderen Schlüsselbuchstaben. Gegenbeispiel: Caesar + Umdrehen (Verfahren WENDE, Akte W6·1 Abi-Check b) – dort ist die Reihenfolge egal, weil Caesar jeden Buchstaben unabhängig von der Position ersetzt.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P4",
+   "titel": "Verfahrensregel",
+   "regel": "Das **Beispiel des Materials** vollständig nachrechnen – dort steckt jede Regel. Eves Pendel UHR:",
+   "falsch": [
+    {
+     "t": "geheimtext",
+     "text": "U H R R H U U H R …",
+     "gruppen": 0,
+     "label": "ENDEN DOPPELT",
+     "groesse": 20
+    },
+    {
+     "t": "geheimtext",
+     "text": "U H R U H R U H R …",
+     "gruppen": 0,
+     "label": "ZYKLISCH WIE VIGENÈRE",
+     "groesse": 20
+    }
+   ],
+   "richtig": [
+    {
+     "t": "geheimtext",
+     "text": "U H R H U H R H …",
+     "gruppen": 0,
+     "label": "PENDEL",
+     "groesse": 20
+    },
+    {
+     "t": "p",
+     "md": "Periode 2L − 2 = **4**"
+    }
+   ],
+   "notizen": "1 min. Weitere typische Regelfallen: Füllzeichen X im letzten Block, Leserichtung, kurze letzte Zeile bei der Spaltentransposition (Lab W6-L1-06: 10 Zeichen in 3 Spalten → Spaltenlängen 4, 3, 3 statt 4, 4, 2 → sonnenwind statt sonnenwidn).",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P5",
+   "titel": "Einordnung",
+   "regel": "Kriterium: Wird **derselbe Klartextbuchstabe immer gleich** ersetzt? Ändern sich Zeichen oder nur Plätze?",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Beim Klopfcode wird jeder Buchstabe durch **zwei** Zeichen ersetzt – also ist das Verfahren **polyalphabetisch**.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "E wird **immer** durch `15` ersetzt → **monoalphabetisch**."
+    },
+    {
+     "t": "p",
+     "md": "Die Anzahl der Zeichen ist kein Kriterium.",
+     "klein": true
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-07. Klopfcode = 5×5-Quadrat aus einem geheimen Schlüsselwort. Auch „Codierung, weil Zahlen entstehen“ ist falsch: Entscheidend für eine Verschlüsselung ist der geheime Schlüssel (hier das Quadrat). Gegenbeispiel Morse: öffentliche Zuordnung → Codierung.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P6",
+   "titel": "Häufigkeitsanalyse pauschal",
+   "regel": "Sagen, **worauf** (Einzelbuchstaben, Teiltexte, Paare) und **unter welchen Voraussetzungen** (Länge, Sprache).",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Bei der Spaltentransposition findet man den Schlüssel mit der Häufigkeitsanalyse, weil E der häufigste Buchstabe ist.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Transposition: Häufigkeiten bleiben **erhalten** → verrät nur den **Typ**."
+    },
+    {
+     "t": "p",
+     "md": "Vigenère (k = 3): **3 Teiltexte**, je Teiltext häufigster Buchstabe ≙ e – bei langem deutschem Text."
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-08 und Akte W6·1 A4d. Eine Häufigkeitsanalyse ist nur dann eine Antwort, wenn gesagt wird, worauf sie angewendet wird und warum sie dort funktioniert.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P7",
+   "titel": "Schlüsselraum",
+   "regel": "Unabhängige Stellen **multiplizieren**, Paare **einmal** zählen, schwache Schlüssel suchen.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Vigenère, Länge 3: 26 · 3 = **78**"
+    },
+    {
+     "t": "p",
+     "md": "8 Personen symmetrisch: 8 · 7 = **56**"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "26³ = **17 576**"
+    },
+    {
+     "t": "p",
+     "md": "8 · 7 / 2 = **28**"
+    },
+    {
+     "t": "p",
+     "md": "asymmetrisch: 2 · 8 = **16**"
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-09. Bei n(n − 1) wird jedes Paar doppelt gezählt (A–B und B–A). Vergleich: Ab n = 6 braucht asymmetrisch weniger Schlüssel, bei n = 5 gleich viele (10). Schwache Schlüssel: k = 0, „AAAA“, Ringschritt t = 1.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P8",
+   "titel": "Kombination überschätzt",
+   "regel": "Prüfen, ob die Kombination wieder ein Verfahren **derselben Art** ist.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Erst Caesar k = 7, dann k = 11 – ein Angreifer muss 26 · 26 = **676** Schlüssel probieren.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "7 + 11 = 18 → **Caesar k = 18**"
+    },
+    {
+     "t": "p",
+     "md": "`abc` → `STU` in beiden Fällen; weiterhin **26** Schlüssel."
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-10. Ebenso: Vigenère AB ∘ BA = Caesar 1 (Akte W6·1 A4c); Eves Ring zweimal = Identität. Mehrfachverschlüsselung vergrößert den Schlüsselraum nur, wenn die Kombination kein Verfahren derselben Art ist.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P9",
+   "titel": "Schlüsselrollen",
+   "regel": "Signieren **privat** (Absender) – prüfen **öffentlich** (Absender) – verschlüsseln mit dem öffentlichen Schlüssel des **Empfängers**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Alice signiert mit **Bobs öffentlichem** Schlüssel.“"
+    },
+    {
+     "t": "p",
+     "md": "„Ein Zertifikat beweist, dass Alice vertrauenswürdig ist.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Alice signiert mit **ihrem privaten** Schlüssel; Bob prüft mit **Alices öffentlichem** Schlüssel + Hashvergleich."
+    },
+    {
+     "t": "p",
+     "md": "Ein Zertifikat bindet einen Schlüssel an eine **Identität**."
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-11. Merksatz: „Signieren privat – prüfen öffentlich – verschlüsseln mit dem öffentlichen Schlüssel des Empfängers.“ Weitere P9-Fehler: Hashwert „entschlüsseln“, Zertifikat = Ehrlichkeit der Person.",
+   "schrift": 20
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "Fallenjagd",
+   "nr": "P10",
+   "titel": "Operator verfehlt",
+   "regel": "„**Beurteilen** Sie die Sicherheit des Caesar-Verfahrens.“ – Kriterien + Begründung + **Urteil**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Caesar ist unsicher.“"
+    },
+    {
+     "t": "p",
+     "md": "„Caesar hat 25 Schlüssel.“"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Nur 25 sinnvolle Schlüssel → Brute Force in Minuten; Häufigkeitsverteilung bleibt erhalten. **Daher unsicher** – schützt nur vor zufälligen Mitlesern."
+    }
+   ],
+   "notizen": "1 min. Aus Lab W6-L1-12. „Caesar ist unsicher“ urteilt ohne Begründung, „25 Schlüssel“ nennt nur. Operator unterstreichen und die Leistung nach WK5 erbringen; bei „Entscheiden Sie begründet“ gibt es ohne Begründung 0 BE.",
+   "schrift": 20
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Fallenjagd",
+   "titel": "Fallenjagd",
+   "sozialform": "Partnerarbeit",
+   "zeit": "15 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "▸  Lab **Level 6.1** (12 Fälle) **oder** Akte W6·1, Aufträge 1–3"
+    },
+    {
+     "t": "p",
+     "md": "▸  Am Ende: eure **gefährlichste Falle** + Gegenmittel"
+    },
+    {
+     "t": "p",
+     "md": "Strichliste an der Tafel:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7",
+      "P8",
+      "P9",
+      "P10"
+     ],
+     "zeilen": [
+      [
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " "
+      ]
+     ],
+     "zentriert": true,
+     "breiten": [
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 24
+    }
+   ],
+   "notizen": "15 min. Lehrkraft geht herum, sammelt die Fallen-Nennungen an der Tafel (Strichliste). Sicherung: Jede Partnergruppe nennt ihre gefährlichste Falle + Gegenmittel; passende Fallen-Folie (P1–P10) aufrufen. Schnelle Paare: Akte W6·1 Aufträge 4–5."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Eves Chiffre",
+   "titel": "Eves Chiffre in 5 Schritten",
+   "untertitel": "Lesen · Anwenden · Umkehren · Einordnen · Beurteilen",
+   "notizen": "Überleitung: Jetzt das ganze Uhrwerk – wie eine fremde Chiffre im Abitur."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Eves Chiffre",
+   "titel": "Eves Chiffre knacken",
+   "sozialform": "Einzelarbeit → Partnerarbeit",
+   "zeit": "35 min",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "Akte W6·2"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      4.6,
+      7.4
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "1 Nachrechnen",
+       "Auftrag 1: Beispiel (Z = 25!)"
+      ],
+      [
+       "3 Umkehren",
+       "Auftrag 2: der Archivfund"
+      ],
+      [
+       "2 Anwenden",
+       "Auftrag 3: Eve imitieren"
+      ],
+      [
+       "4 + 5 Einordnen, beurteilen",
+       "Auftrag 4 (Raster WK3)"
+      ],
+      [
+       "schnell fertig?",
+       "Auftrag 5 (eA) · Lab 6.2"
+      ]
+     ]
+    }
+   ],
+   "notizen": "35 min. Material: Archivwissen 1 der Akte W6·2 (im Abitur-Stil), WK2, WK3, Ring-Schablone im Anhang. Langsame Lernende: Pendelzeile UHRHUHRH… vorgeben. Kontrollwerte: Auftrag 2 → zeitreisebeendet; Auftrag 3 → RAVFZ EKTUU AIXIR H. Häufigste Fehler: Zeichen j auf Feld j zurücklegen statt auf Feld (t · j) mod 8 (P3); Pendel mit doppelten Enden (P4)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Eves Chiffre",
+   "titel": "Das Uhrwerk in 5 Schritten",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**1.**  Beispiel nachrechnen (**Z = 25!**)"
+    },
+    {
+     "t": "p",
+     "md": "**2.**  Vorlage füllen (Ring-Tabelle, Pendelzeile)"
+    },
+    {
+     "t": "p",
+     "md": "**3.**  **erst Pendel, dann Ring** zurück"
+    },
+    {
+     "t": "p",
+     "md": "**4.**  Ring = **Transposition**, Pendel = **polyalphabetisch**"
+    },
+    {
+     "t": "p",
+     "md": "**5.**  Raster WK3 → **Urteil**"
+    }
+   ],
+   "notizen": "3 min. Sicherung am Ende von DS 17. Archivfund auflösen: ZTIERSIE EEEBNTED → Ring zurück → zeitreisebeendet. Das Chronoskop ist entriegelt."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Eves Chiffre",
+   "titel": "Eves Schwächen",
+   "links": [
+    {
+     "t": "h",
+     "md": "Ring"
+    },
+    {
+     "t": "p",
+     "md": "▸  nur **4** Ringschritte"
+    },
+    {
+     "t": "p",
+     "md": "▸  t = 1 tut nichts"
+    },
+    {
+     "t": "p",
+     "md": "▸  zweimal = Identität (t · t mod 8 = 1)"
+    },
+    {
+     "t": "geheimtext",
+     "text": "t = 1:  0 1 2 3 4 5 6 7",
+     "gruppen": 0,
+     "label": "SCHWACHER RINGSCHRITT",
+     "groesse": 20
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "Pendel"
+    },
+    {
+     "t": "p",
+     "md": "▸  = Vigenère mit Periode **2L − 2**"
+    },
+    {
+     "t": "p",
+     "md": "▸  EVE → EV: Periode **2**"
+    },
+    {
+     "t": "p",
+     "md": "▸  → Teiltexte + Häufigkeitsanalyse"
+    },
+    {
+     "t": "geheimtext",
+     "text": "EVE → E V E V E V …",
+     "gruppen": 0,
+     "label": "SCHWACHES PENDELWORT",
+     "groesse": 20
+    }
+   ],
+   "notizen": "3 min. Erwartete Schülerantworten aus Akte W6·2 Auftrag 4. Urteil gemeinsam formulieren: „Der Ring trägt fast nichts bei (4 Schlüssel), die Sicherheit beruht allein auf einem kurzen periodischen Vigenère → mit Teiltext-Häufigkeitsanalyse bei längeren Texten brechbar; das Uhrwerk ist unsicher.“ Zusatz Fehlerfortpflanzung: ein falsches Zeichen → genau ein falscher Klartextbuchstabe; ein verlorenes Zeichen → Rest unbrauchbar."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Eves Chiffre",
+   "titel": "Bis zur Generalprobe",
+   "sozialform": "Hausaufgabe",
+   "zeit": "bis DS 18",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "▸  Lab **Level 6.3** (Zeitplan, Operatoren, Entscheiden)"
+    },
+    {
+     "t": "p",
+     "md": "▸  Boss **„Generalprobe online“** – 30 min, ohne Werkzeuge, nur WK1"
+    },
+    {
+     "t": "p",
+     "md": "▸  Akte W6·3, Auftrag 1: dein **BE-Plan** für die Probeklausur"
+    }
+   ],
+   "notizen": "Hinweis: Beim Boss zählt der beste Versuch; Belohnung ist das Artefakt „Chronoskop-Kern“. Den BE-Plan (Akte W6·3 A1) in DS 18 mitbringen."
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "Generalprobe",
+   "titel": "Generalprobe",
+   "oberzeile": "WELT 6 · DS 18 · PROBEKLAUSUR",
+   "untertitel": "Probeklausur im Block-2-Format\neA 30 BE · 70 min — gA 25 BE · 55 min",
+   "notizen": "1 min. Organisation: Taschen weg, nur WK1, Handys abgegeben. Das Warm-up entfällt heute – Ersatz ist das Briefing (8 min)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Generalprobe",
+   "titel": "Dein Takt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "eA",
+      "gA"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.6,
+      4.2,
+      4.2
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "Abitur",
+       "270 min / 120 BE",
+       "220 min / 100 BE"
+      ],
+      [
+       "Takt",
+       "**2,25 min je BE**",
+       "**2,2 min je BE**"
+      ],
+      [
+       "Krypto-Aufgabe",
+       "30 BE ≈ 67,5 min",
+       "25 BE ≈ 55 min"
+      ],
+      [
+       "Probeklausur",
+       "30 BE · 70 min",
+       "25 BE · 55 min"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "4 BE ≈ **9 min** · 6 BE ≈ **13,5 min** (eA)"
+    }
+   ],
+   "notizen": "1 min. Rechnung kurz vorführen: 270 : 120 = 2,25; 30 · 2,25 = 67,5. Plan aus Akte W6·3 Auftrag 1 hervorholen lassen."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Generalprobe",
+   "titel": "So gehst du vor",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "Schritt",
+      "Zeit"
+     ],
+     "breiten": [
+      0.7,
+      8.6,
+      2.6
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "**1**",
+       "Aufgabe überfliegen",
+       "3 min"
+      ],
+      [
+       "**2**",
+       "Material markieren, Beispiel nachrechnen",
+       "5 min"
+      ],
+      [
+       "**3**",
+       "Teilaufgaben nach BE takten, Sicheres zuerst",
+       "BE · Takt"
+      ],
+      [
+       "**4**",
+       "Bei Rückstand: Stichpunkte, später ergänzen",
+       "–"
+      ],
+      [
+       "**5**",
+       "Kontrolle mit der Checkliste (Akte W6·1)",
+       "5 min"
+      ]
+     ]
+    }
+   ],
+   "notizen": "2 min. Betonen: Schritt 2 ist keine verlorene Zeit – im Beispiel des Materials stecken alle Regeln (P4). Wer nach der Hälfte der Zeit deutlich hinter dem Plan liegt, sichert zuerst die BE, die er sicher holen kann."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Generalprobe",
+   "titel": "Operatoren-Kompass",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Operator",
+      "erwartet"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.6,
+      8.4
+     ],
+     "schrift_folie": 20,
+     "zeilen": [
+      [
+       "bestimmen",
+       "Lösungsweg + Ergebnis"
+      ],
+      [
+       "erläutern",
+       "verständlich machen, **mit Beispiel**"
+      ],
+      [
+       "begründen",
+       "„weil … daher …“"
+      ],
+      [
+       "beurteilen",
+       "Kriterien + Begründung + **Urteil**"
+      ],
+      [
+       "entscheiden",
+       "Entscheidung + Begründung + Beleg"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Alle 18 Operatoren mit Mustersätzen: **WK5**",
+     "klein": true
+    }
+   ],
+   "notizen": "1 min. Verweis WK5. Der Operator entscheidet über die BE – gleiche Inhalte, andere Operatoren, andere Leistung (P10)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Generalprobe",
+   "titel": "Entscheiden Sie begründet",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**1.**  **Entscheidung** zuerst"
+    },
+    {
+     "t": "p",
+     "md": "**2.**  **Begründung** mit Fachbegriff („weil …“)"
+    },
+    {
+     "t": "p",
+     "md": "**3.**  **Beleg**: Rechnung, Beispiel, Gegenbeispiel"
+    },
+    {
+     "t": "p",
+     "md": "Ohne Begründung: **0 BE** – auch wenn die Entscheidung stimmt."
+    }
+   ],
+   "notizen": "1 min. Beispiel: „Die Aussage ist falsch. Caesar ersetzt jeden Buchstaben unabhängig von der Position; zwei Verschiebungen addieren sich daher zu einer Verschiebung. Beleg: k = 7 und k = 11 ergeben k = 18; abc → STU in beiden Fällen.“"
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "Generalprobe",
+   "titel": "Probeklausur KETTENSCHRIFT",
+   "sozialform": "Einzelarbeit",
+   "zeit": "eA 70 min · gA 55 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "▸  Hilfsmittel: **nur WK1** (Anlage), kein Taschenrechner"
+    },
+    {
+     "t": "p",
+     "md": "▸  Vorlagen im Material ausfüllen und **mit abgeben**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Teil",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "Σ"
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      1.4,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ],
+     "zeilen": [
+      [
+       "eA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "5",
+       "4",
+       "3",
+       "2",
+       "**30**"
+      ],
+      [
+       "gA",
+       "3",
+       "4",
+       "3",
+       "3",
+       "3",
+       "3",
+       "2",
+       "2",
+       "2",
+       "**25**"
+      ]
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "Uhr mit Restzeit sichtbar projizieren. Dateien: KR_W6_Probeklausur_eA / KR_W6_Probeklausur_gA. Während der Bearbeitung keine Hilfen außer bei Druckfehlern."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Generalprobe",
+   "titel": "Lösung a) und b)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**a)** *felsspalte*, b = 3, S = B"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Zwischentext",
+       "E",
+       "L",
+       "F",
+       "S",
+       "P",
+       "S",
+       "L",
+       "T",
+       "A",
+       "E"
+      ],
+      [
+       "Geheimtext",
+       "G",
+       "S",
+       "Y",
+       "R",
+       "H",
+       "A",
+       "M",
+       "G",
+       "H",
+       "M"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85,
+      0.85
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "**b)** `TXCDU PUMYD P`, b = 4, S = F"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "T",
+       "X",
+       "C",
+       "D",
+       "U",
+       "P",
+       "U",
+       "M",
+       "Y",
+       "D",
+       "P"
+      ],
+      [
+       "Zwischentext",
+       "N",
+       "D",
+       "E",
+       "A",
+       "Q",
+       "U",
+       "E",
+       "R",
+       "L",
+       "E",
+       "L"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "`NDEA | QUER | LEL` → `ANDE | RQUE | LLE` → **anderquelle**"
+    }
+   ],
+   "notizen": "3 min. Nur nach Abgabe zeigen. a) Blöcke FEL | SSP | ALT | E → ELF | SPS | LTA | E; Kette mit S = B (Wert 2): E 5 + 2 = 7 G, L 12 + 7 = 19 S, … → GSYRH AMGHM. b) Differenz Geheimtextzeichen − vorheriges Geheimtextzeichen (erstes: − S). Fallen: Vorgänger ist das Geheimtextzeichen, nicht das Zwischentextzeichen (P4); Rotationsrichtung beim Umkehren – das letzte Zeichen wieder nach vorn (P3); letzter Block ist kürzer (P4); negative Reste + 26 (P2)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Generalprobe",
+   "titel": "Korrigieren wie die Abiturkommission",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "▸  Kernpunkte-Bogen: Kernpunkt erfüllt? ✓ / ✗"
+    },
+    {
+     "t": "p",
+     "md": "▸  Jeder Verlust bekommt eine **P-Nummer**"
+    },
+    {
+     "t": "p",
+     "md": "▸  Strichliste P1–P10 im Team → Level 6.1 wiederholen"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7",
+      "P8",
+      "P9",
+      "P10"
+     ],
+     "zeilen": [
+      [
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " ",
+       " "
+      ]
+     ],
+     "zentriert": true,
+     "breiten": [
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 24
+    }
+   ],
+   "notizen": "2 min. Selbstkorrektur als Hausaufgabe mit dem Kernpunkte-Bogen (EH ohne Musterrechnungen); Peer-Check und Abi-Duell in der Folgestunde. gA: zusätzlich Besprechung c)–g) im Plenum (27 min statt 12)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Ausblick",
+   "titel": "Das Chronoskop ist frei",
+   "untertitel": "Klausur: zwei Aufgaben (klassisch + modern) · danach das Abitur · Und K4?",
+   "notizen": "1 min. Easter Egg: die Skulptur „Kryptos“ (Jim Sanborn, 1990) vor dem CIA-Hauptquartier; ihr vierter Teil K4 widerstand jahrzehntelang allen öffentlichen Knackversuchen. Ausblick auf Klausur (Format 2A/2E) und Abitur. Dank für die Reise durch zweieinhalb Jahrtausende Geheimschriften."
+  }
+ ]
+}

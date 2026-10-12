@@ -1,0 +1,935 @@
+{
+ "typ": "akte",
+ "welt": 2,
+ "kennung": "AKTE W2·4",
+ "titel": "Playfair und Kreuzquadrat",
+ "ds": "8",
+ "niveau": "kern",
+ "level": "2.4",
+ "datei": "KR_W2_Akte4_Playfair_und_Kreuzquadrat",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "ARCHIVFUND · FREMDE CHIFFRE III",
+   "md": "London, 1854. Charles Wheatstone erfindet ein Verfahren, das nicht einzelne Buchstaben, sondern **Paare** verschlüsselt – sein Freund Lyon Playfair macht es berühmt. Ein Paar hat 600 Möglichkeiten statt 26: Ist das der Ausweg aus Kasiskis Spur? Danach wartet in Eves Schreibstube ein fremdes Verfahren, das **Kreuzquadrat**. Du gehst vor wie im Abitur: anwenden, einordnen, beurteilen."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Das Playfair-Quadrat",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.58,
+     "links": [
+      {
+       "t": "p",
+       "md": "Schlüsselwort ohne doppelte Buchstaben zeilenweise eintragen, Rest des Alphabets in alphabetischer Reihenfolge auffüllen, **I und J werden zusammengefasst** (25 Felder)."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* Schlüsselwort RIALTO (rechts). Die Zeilen und Spalten sind von 1 bis 5 nummeriert."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "RIALT",
+        "OBCDE",
+        "FGHKM",
+        "NPQSU",
+        "VWXYZ"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "schrift": 12,
+       "hervor": [
+        [
+         0,
+         0
+        ],
+        [
+         0,
+         1
+        ],
+        [
+         0,
+         2
+        ],
+        [
+         0,
+         3
+        ],
+        [
+         0,
+         4
+        ],
+        [
+         1,
+         0
+        ]
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Vorbereiten und verschlüsseln",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Vorbereiten:** (1) J → I. (2) Text von vorn in Paare teilen. (3) Bestünde ein Paar aus zwei gleichen Buchstaben, **X** dazwischen schreiben; die Paarbildung läuft dann weiter. (4) Bleibt am Ende ein Buchstabe übrig, **X** anhängen."
+    },
+    {
+     "t": "p",
+     "md": "**Verschlüsseln je Paar:**"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Fall",
+      "Regel",
+      "Beispiel (RIALTO)"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "gleiche Zeile",
+       "jeder Buchstabe → **rechter** Nachbar (am Rand zyklisch zum Zeilenanfang)",
+       "`OD` → `BE`"
+      ],
+      [
+       "gleiche Spalte",
+       "jeder Buchstabe → **unterer** Nachbar (zyklisch nach oben)",
+       "`BG` → `GP`"
+      ],
+      [
+       "sonst (Rechteck)",
+       "jeder Buchstabe → Ecke des Rechtecks **in seiner eigenen Zeile**",
+       "`RS` → `LN`"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      9.6,
+      3.6
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Entschlüsseln:** Zeile → **links**, Spalte → **oben**, Rechteck → wie beim Verschlüsseln (Falle P3)."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P4",
+   "titel": "Regeln abhaken",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das X wird nur **innerhalb** eines Paars eingefügt; danach verschiebt sich die Paarbildung: *ballett* → `BA LX LE TX TX` – nicht `BA LL ET T`. Beim Rechteck liegt die neue Ecke in der **eigenen Zeile** (nicht in der eigenen Spalte). Und J gibt es im Quadrat nicht: erst J → I, dann suchen."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Material: Das Kreuzquadrat (fremdes Verfahren)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das Kreuzquadrat verwendet zwei 5×5-Schlüsselquadrate (I = J), die wie beim Playfair-Verfahren aus je einem Schlüsselwort gebildet werden: ein **oberes Quadrat O** und ein **unteres Quadrat U**. Hat der Klartext eine ungerade Länge, wird ein X angehängt. Der Klartext wird in Paare (a, b) zerlegt. Der Buchstabe a wird im oberen, der Buchstabe b im unteren Quadrat gesucht. Der **erste** Geheimtextbuchstabe ist der Buchstabe im **unteren** Quadrat, der in der **Zeile von a** und der **Spalte von b** steht. Der **zweite** Geheimtextbuchstabe ist der Buchstabe im **oberen** Quadrat, der in der **Zeile von b** und der **Spalte von a** steht."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Oberes Quadrat O** (Schlüsselwort GONDEL)",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "GONDE",
+        "LABCF",
+        "HIKMP",
+        "QRSTU",
+        "VWXYZ"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "schrift": 12,
+       "hervor": [
+        [
+         0,
+         4
+        ],
+        [
+         1,
+         4
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Unteres Quadrat U** (Schlüsselwort MURANO)",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "MURAN",
+        "OBCDE",
+        "FGHIK",
+        "LPQST",
+        "VWXYZ"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "schrift": 12,
+       "hervor": [
+        [
+         0,
+         3
+        ],
+        [
+         1,
+         3
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel aus dem Material:* Paar FA → f oben in Zeile 2, Spalte 5; a unten in Zeile 1, Spalte 4 → 1. Buchstabe: unten Zeile 2, Spalte 4 = **D**; 2. Buchstabe: oben Zeile 1, Spalte 5 = **E** → FA ↦ `DE`."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Einordnen und Beurteilen von Bigramm-Verfahren (5-Schritte-Methode, Schritte 4 und 5)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Einordnung:** Substitution (Buchstaben werden ersetzt, nicht umgestellt); **monoalphabetisch auf Bigrammen**: Dasselbe Klartextpaar wird immer zum selben Geheimtextpaar. Bezogen auf Einzelbuchstaben hängt die Ersetzung vom Partner ab – deshalb nennt man solche Verfahren **bigraphisch** (Falle P5). Symmetrisch: gleicher Schlüssel für beide Richtungen.",
+      "**Beurteilung:** Einzelbuchstaben-Häufigkeitsanalyse greift nicht direkt, aber **Bigramm-Häufigkeiten** schon (häufige deutsche Bigramme sind z. B. *en*, *er*, *ch*, *ei*, *de*); es gibt nur 600 (Playfair) bzw. 625 mögliche Paare – bei langen Texten genug Statistik. Schlüsselraum: höchstens 25! ≈ 1,55 · 10²⁵ Quadrate (Playfair; einige gleichwertig), Brute Force aussichtslos, aber unnötig. Verräterische Eigenschaften: kein Geheimtextpaar aus zwei gleichen Buchstaben; ist AB → XY, dann BA → YX."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Das RIALTO-Quadrat",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Erstelle** das Playfair-Quadrat zum Schlüsselwort RIALTO (ohne nachzusehen) und **vergleiche** mit Archivwissen 1. Wo steht J?"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "schrift": 12
+      }
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "**Erstelle** das Playfair-Quadrat zum Schlüsselwort RIALTO (ohne nachzusehen) und **vergleiche** mit Archivwissen 1. Wo steht J?",
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Quadrat wie Archivwissen 1; J steht nicht im Quadrat (J = I)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Klartext vorbereiten",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bereite** *dasschiffsegeltmorgen* für Playfair **vor**.",
+     "nur_loesung": true
+    },
+    {
+     "t": "p",
+     "md": "**Bereite** *dasschiffsegeltmorgen* für Playfair **vor**:  [[luecke:62]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`DA SX SC HI FX FS EG EL TM OR GE NX` (ss → SX + S…, ff → FX + F…, Rest-n → NX)."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* X nach dem zweiten s statt dazwischen; oder Paare „FF“ stehen lassen (P4)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Das Schiff segelt",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** den vorbereiteten Text aus Auftrag 2 (Quadrat RIALTO). **Notiere** zu jedem Paar den Fall (Z = Zeile, S = Spalte, R = Rechteck)."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartextpaar",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Fall",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtextpaar",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.2,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartextpaar",
+       "DA",
+       "SX",
+       "SC",
+       "HI",
+       "FX",
+       "FS",
+       "EG",
+       "EL",
+       "TM",
+       "OR",
+       "GE",
+       "NX"
+      ],
+      [
+       "Fall",
+       "R",
+       "R",
+       "R",
+       "R",
+       "R",
+       "R",
+       "R",
+       "R",
+       "S",
+       "S",
+       "R",
+       "R"
+      ],
+      [
+       "Geheimtextpaar",
+       "CL",
+       "QY",
+       "QD",
+       "GA",
+       "HV",
+       "KN",
+       "BM",
+       "DT",
+       "EU",
+       "FO",
+       "MB",
+       "QV"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "nur_loesung": true,
+     "hervor": [
+      [
+       1,
+       9
+      ],
+      [
+       1,
+       10
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "DA→CL, SX→QY, SC→QD, HI→GA, FX→HV, FS→KN, EG→BM, EL→DT (alle Rechteck), TM→EU (Spalte), OR→FO (Spalte), GE→MB, NX→QV (Rechteck) → **CLQYQ DGAHV KNBMD TEUFO MBQV**."
+    },
+    {
+     "t": "p",
+     "md": "Achtung bei OR: O und R stehen in Spalte 1 → O → F (darunter), R → O (darunter)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Rückweg",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entschlüssele** `GAURO TEOFH RDDHO UEZTF` (Quadrat RIALTO). Im Geheimtext steht DD – widerspricht das der Regel, dass kein Geheimtextpaar aus gleichen Buchstaben besteht?"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Geheimtextpaar",
+       "GA",
+       "UR",
+       "OT",
+       "EO",
+       "FH",
+       "RD",
+       "DH",
+       "OU",
+       "EZ",
+       "TF"
+      ],
+      [
+       "Klartextpaar",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Geheimtextpaar",
+       "GA",
+       "UR",
+       "OT",
+       "EO",
+       "FH",
+       "RD",
+       "DH",
+       "OU",
+       "EZ",
+       "TF"
+      ],
+      [
+       "Fall",
+       "R",
+       "R",
+       "R",
+       "Z",
+       "Z",
+       "R",
+       "R",
+       "R",
+       "S",
+       "R"
+      ],
+      [
+       "Klartextpaar",
+       "HI",
+       "NT",
+       "ER",
+       "DE",
+       "MG",
+       "LO",
+       "CK",
+       "EN",
+       "TU",
+       "RM"
+      ]
+     ],
+     "breiten": [
+      3.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.2
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Paare GA UR OT EO FH RD DH OU EZ TF → HI NT ER DE MG LO CK EN TU RM → *hinterdemglockenturm*."
+    },
+    {
+     "t": "p",
+     "md": "DD steht über eine Paargrenze hinweg (R**D** | **D**H) – innerhalb eines Paars kommt es nie vor."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Kreuzquadrat anwenden",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *kommandant* mit dem Kreuzquadrat (Material, Archivwissen 3).",
+      "**Entschlüssele** `FBNSR OBNCM`. **Formuliere** dazu zuerst die Entschlüsselungsregel."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "a) Klartextpaar",
+       "KO",
+       "MM",
+       "AN",
+       "DA",
+       "NT"
+      ],
+      [
+       "Geheimtextpaar",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "b) Geheimtextpaar",
+       "FB",
+       "NS",
+       "RO",
+       "BN",
+       "CM"
+      ],
+      [
+       "Klartextpaar",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.6,
+      1.5,
+      1.5,
+      1.5,
+      1.5,
+      1.5
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "a) Klartextpaar",
+       "KO",
+       "MM",
+       "AN",
+       "DA",
+       "NT"
+      ],
+      [
+       "Geheimtextpaar",
+       "FB",
+       "FD",
+       "EO",
+       "AD",
+       "NS"
+      ],
+      [
+       "b) Geheimtextpaar",
+       "FB",
+       "NS",
+       "RO",
+       "BN",
+       "CM"
+      ],
+      [
+       "Klartextpaar",
+       "KO",
+       "NT",
+       "OR",
+       "BU",
+       "CH"
+      ]
+     ],
+     "breiten": [
+      3.6,
+      1.5,
+      1.5,
+      1.5,
+      1.5,
+      1.5
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) KO→FB, MM→FD, AN→EO, DA→AD, NT→NS → **FBFDE OADNS** (MM wird ohne Sonderregel verschlüsselt)."
+    },
+    {
+     "t": "p",
+     "md": "b) Entschlüsselungsregel: Für das Geheimtextpaar (c~1~, c~2~) c~1~ im **unteren** und c~2~ im **oberen** Quadrat suchen; a = Buchstabe im oberen Quadrat in der Zeile von c~1~ und der Spalte von c~2~; b = Buchstabe im unteren Quadrat in der Zeile von c~2~ und der Spalte von c~1~. FB NS RO BN CM → KO NT OR BU CH → *kontorbuch*."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* oberes und unteres Quadrat verwechseln (P4)."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Kreuzquadrat einordnen und beurteilen",
+   "sozialform": "Gruppenarbeit",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *seidenballen* und **ordne** das Verfahren **ein**.",
+      "Was passiert, wenn O und U gleich sind? **Teste** EE, GO, GL mit O = U = GONDEL.",
+      "**Beurteile** die Sicherheit des Kreuzquadrats."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) SE→TB, ID→IA, EN→NE, BA→DN, LL→OQ, EN→NE → **TBIAN EDNOQ NE**; Substitution, monoalphabetisch auf Bigrammen (EN → NE zweimal), symmetrisch."
+    },
+    {
+     "t": "p",
+     "md": "b) O = U = GONDEL: EE → EE, GO (gleiche Zeile) → OG, GL (gleiche Spalte) → GL – Doppelpaare und Spaltenpaare bleiben stehen, Zeilenpaare werden nur vertauscht: schwacher Schlüssel (P7)."
+    },
+    {
+     "t": "p",
+     "md": "c) Urteil: Schlüsselraum groß (zwei Quadrate), aber Bigramm-Häufigkeitsanalyse möglich; mit den Material-Quadraten bleiben 18 von 625 Paaren unverändert, und gleichwertige Schlüssel existieren (z. B. zwei Zeilen in **beiden** Quadraten gleichzeitig tauschen ergibt dieselbe Verschlüsselung); bei langen Texten unsicher."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P7"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Wenden Sie** das Playfair-Verfahren mit dem Quadrat RIALTO auf den Klartext *jagd* **an**.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "j → I; Paare IA, GD; IA gleiche Zeile → AL; GD Rechteck → KB; Geheimtext **ALKB** [2 BE; Fehler „J nicht ersetzt“ P4]."
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Entscheiden Sie begründet**, ob das Playfair-Verfahren als monoalphabetisches oder als polyalphabetisches Verfahren einzuordnen ist.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Auf Einzelbuchstaben bezogen wird ein Buchstabe je nach Partner verschieden ersetzt (z. B. e in EG → B, in EL → D, Auftrag 3), auf Paare bezogen aber immer gleich (GE → MB an jeder Stelle): Playfair ist eine **monoalphabetische Substitution auf Bigrammen** (bigraphisch); die Einordnung muss die Bezugsgröße nennen [3 BE: Kriterium 1, Beispiel 1, Entscheidung 1]."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Begründen Sie**, dass bei Playfair kein Geheimtextpaar aus zwei gleichen Buchstaben bestehen kann.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Klartextpaare enthalten nach der Vorbereitung nie zwei gleiche Buchstaben; Zeile/Spalte: zwei verschiedene Buchstaben gehen in zwei verschiedene Nachbarn über; Rechteck: die beiden Ecken liegen in verschiedenen Spalten und Zeilen → verschieden [2 BE]."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Beurteilen Sie** die Sicherheit des Kreuzquadrats im Vergleich zum Playfair-Verfahren.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Gemeinsam: bigraphisch, monoalphabetisch auf Bigrammen → Bigramm-Häufigkeitsanalyse bei langen Texten. Kreuzquadrat: zwei Schlüsselquadrate (größerer Schlüsselraum), Doppelbuchstaben ohne X-Regel (keine Lücke im Muster), aber einige Paare bleiben unverändert (mit den Material-Quadraten 18 von 625) und gleiche Quadrate sind ein schwacher Schlüssel; Playfair: verräterische Eigenschaften (kein Doppel im Paar, AB/BA-Symmetrie). Urteil: Das Kreuzquadrat ist nicht grundsätzlich sicherer; beide sind gegen Bigramm-Analyse schwach [4 BE inkl. begründetem Urteil]."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "2.4",
+   "md": "Level 2.4 „Playfair und Kreuzquadrat“ im Kryptolabor (Häufigkeits-Analysator, Reiter „Bigramme“). Trainingsplatz: „Playfair-Paar“. Danach wartet der Boss W2 „Die Venezianische Depesche“."
+  }
+ ]
+}

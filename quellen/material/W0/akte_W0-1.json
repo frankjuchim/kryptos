@@ -1,0 +1,1191 @@
+{
+ "typ": "akte",
+ "welt": 0,
+ "kennung": "AKTE W0·1",
+ "titel": "Die Skytale von Sparta",
+ "ds": "1",
+ "niveau": "kern",
+ "level": "0.1",
+ "datei": "KR_W0_Akte1_Skytale_von_Sparta",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Willkommen im Archiv der verborgenen Schriften! Das Chronoskop hat dich ins Jahr −405 gebracht, nach Sparta. Ein Bote trägt einen Lederstreifen bei sich, der nur aus Buchstabensalat besteht – und doch soll er einen Befehl für die Flotte enthalten. Heute lernst du die Sprache der Kryptologie und die ersten Verfahren, mit denen Menschen ihre Botschaften vor fremden Augen geschützt haben. Am Ende kannst du den Streifen selbst lesen."
+  },
+  {
+   "t": "kasten",
+   "kopf": "FUNDSTÜCK · Die Botschaft am Stab",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Im Archiv liegt ein schmaler Lederstreifen, gefunden im Gepäck eines spartanischen Boten. Darauf steht:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "DTTMIEBOELENFAIDLENAOUEUTFUS",
+     "gruppen": 5
+    },
+    {
+     "t": "p",
+     "md": "Der Bote hatte einen Stab bei sich, um den genau **vier Zeilen** passen. **Finde heraus**, was der Feldherr seiner Flotte mitteilen wollte. (Sobald du Archivwissen 2 kennst, gelingt es dir. Im Lab: Archivfund W0-AF.)"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "nur_loesung": true,
+     "md": "Skytale, u = 4: 28 Zeichen → 7 Spalten; Geheimtext spaltenweise in 4 Zeilen eintragen: `dieflot / telaeuf / tbeineu / mondaus` → **„die flotte laeuft bei neumond aus“**."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Die Sprache der Kryptologie",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice will Bob eine Nachricht schicken. Eve lauscht auf dem Weg. Damit Eve nichts versteht, **verschlüsselt** Alice den **Klartext** mit einem **Verfahren** und einem geheimen **Schlüssel** zum **Geheimtext**. Bob kennt den Schlüssel und **entschlüsselt** (ältere Wörter: chiffrieren, dechiffrieren)."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Begriff",
+      "Bedeutung"
+     ],
+     "zeilen": [
+      [
+       "**Kryptologie**",
+       "Wissenschaft vom Verschlüsseln = Kryptografie + Kryptoanalyse"
+      ],
+      [
+       "**Kryptografie** 🛡",
+       "Entwurf und Anwendung von Verfahren (Alice und Bob)"
+      ],
+      [
+       "**Kryptoanalyse** 🔍",
+       "Brechen von Verfahren ohne Kenntnis des Schlüssels (Eve) – umgangssprachlich „knacken“"
+      ]
+     ],
+     "breiten": [
+      4.0,
+      12.4
+     ],
+     "kopfspalte": true
+    },
+    {
+     "t": "p",
+     "md": "**Codierung ≠ Verschlüsselung.** Eine Codierung ist eine **öffentlich bekannte** Vorschrift, Information darzustellen (Morsecode, ASCII, Blindenschrift, QR-Code). Jeder, der die Vorschrift nachschlägt, kann sie lesen. Eine Verschlüsselung braucht zusätzlich einen **geheimen Schlüssel**."
+    },
+    {
+     "t": "p",
+     "md": "Schreibweise: Klartext klein (`hilfe`), Geheimtext GROSS in Fünfergruppen (`HEMBE IFKMT`), Leer- und Satzzeichen fallen weg, ä → ae, ö → oe, ü → ue, ß → ss.",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Transposition: Die Skytale",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bei einer **Transposition** bleiben die Buchstaben, was sie sind, aber nicht, wo sie sind. Bei einer **Substitution** werden Buchstaben durch andere Zeichen ersetzt."
+    },
+    {
+     "t": "p",
+     "md": "**Skytale.** Ein Streifen wird um einen Stab gewickelt; man schreibt längs des Stabes. **Schlüssel: Umfang u = Anzahl der Zeilen.** Verschlüsseln: Klartext **zeilenweise** in ein Raster mit u Zeilen schreiben (Spaltenzahl s = Textlänge : u, aufgerundet; Rest mit X füllen), dann **spaltenweise** von oben nach unten lesen."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.42,
+     "links": [
+      {
+       "t": "p",
+       "md": "*Beispiel:* `das heer wartet am fluss` (20 Buchstaben), u = 4 → s = 5:"
+      },
+      {
+       "t": "tabelle",
+       "mono": true,
+       "zentriert": true,
+       "zeilen": [
+        [
+         "d",
+         "a",
+         "s",
+         "h",
+         "e"
+        ],
+        [
+         "e",
+         "r",
+         "w",
+         "a",
+         "r"
+        ],
+        [
+         "t",
+         "e",
+         "t",
+         "a",
+         "m"
+        ],
+        [
+         "f",
+         "l",
+         "u",
+         "s",
+         "s"
+        ]
+       ],
+       "breiten": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+       ],
+       "schmal": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "Spaltenweise gelesen:"
+      },
+      {
+       "t": "geheimtext",
+       "text": "DETFARELSWTUHAASERMS"
+      },
+      {
+       "t": "p",
+       "md": "**Entschlüsseln:** Geheimtext **spaltenweise** in das Raster mit u Zeilen eintragen und **zeilenweise** lesen."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P4",
+   "titel": "Füllzeichen nicht vergessen",
+   "md": "Erst die Buchstaben zählen, dann s = Länge : u **aufrunden** und die letzte Zeile mit **X** auffüllen. Sonst sind die letzten Spalten zu kurz und der Geheimtext stimmt nicht. Beim Gartenzaun gibt es dagegen **kein** Füllzeichen."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Gartenzaun",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der Klartext wird im **Zickzack** auf n „Schienen“ geschrieben (oben beginnend: Schiene 1, 2, 3, 2, 1, 2, …), dann liest man Schiene für Schiene von oben nach unten. Schlüssel: Anzahl der Schienen n. Kein Füllzeichen."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel:* `versorgung kommt spaet`, n = 3:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "1",
+       "v",
+       "·",
+       "·",
+       "·",
+       "o",
+       "·",
+       "·",
+       "·",
+       "n",
+       "·",
+       "·",
+       "·",
+       "m",
+       "·",
+       "·",
+       "·",
+       "p",
+       "·",
+       "·",
+       "·"
+      ],
+      [
+       "2",
+       "·",
+       "e",
+       "·",
+       "s",
+       "·",
+       "r",
+       "·",
+       "u",
+       "·",
+       "g",
+       "·",
+       "o",
+       "·",
+       "m",
+       "·",
+       "s",
+       "·",
+       "a",
+       "·",
+       "t"
+      ],
+      [
+       "3",
+       "·",
+       "·",
+       "r",
+       "·",
+       "·",
+       "·",
+       "g",
+       "·",
+       "·",
+       "·",
+       "k",
+       "·",
+       "·",
+       "·",
+       "t",
+       "·",
+       "·",
+       "·",
+       "e",
+       "·"
+      ]
+     ],
+     "breiten": [
+      0.8,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78,
+      0.78
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Schienen: `vonmp` · `esrugomsat` · `rgkte` → **VONMP ESRUG OMSAT RGKTE**"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Die Fleißner-Schablone",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eine Karte mit 4 × 4 Feldern hat 4 Löcher. **Schlüssel:** die Lage der Löcher (Zeile, Spalte). Verschlüsseln: Schablone in Grundstellung auflegen, Löcher **zeilenweise** (von oben links nach unten rechts) beschriften, dann die Schablone **um 90° im Uhrzeigersinn drehen** – viermal. Danach das Raster zeilenweise auslesen. Beim Drehen wandert das Feld (z, s) nach (s, 5 − z)."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "*Beispiel:* Löcher (1,2), (2,1), (2,3), (4,4); Klartext `boten warten am tor` (16 Buchstaben):"
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Stellung 1: (1,2) b, (2,1) o, (2,3) t, (4,4) e",
+        "Stellung 2: (1,3) n, (2,4) w, (3,3) a, (4,1) r",
+        "Stellung 3: (1,1) t, (3,2) e, (3,4) n, (4,3) a",
+        "Stellung 4: (1,4) m, (2,2) t, (3,1) o, (4,2) r"
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: **TBNMO TTWOE ANRRA E**"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "TBNM",
+        "OTTW",
+        "OEAN",
+        "RRAE"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "hervor": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         3
+        ]
+       ],
+       "zellbreite": 0.9
+      },
+      {
+       "t": "p",
+       "md": "markiert: Löcher der Grundstellung",
+       "klein": true,
+       "zentriert": true
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Eine Schablone ist nur brauchbar, wenn die vier Stellungen **jedes Feld genau einmal** freigeben.",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P5",
+   "titel": "„Ich kann es nicht lesen – also ist es geheim“",
+   "md": "Morsecode kannst du vielleicht nicht lesen, aber jeder kann ihn nachschlagen. Frage immer: **Was ist geheim?** Gibt es etwas, das nur Sender und Empfänger kennen? Nur dann ist es eine Verschlüsselung."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Codierung oder Verschlüsselung?",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entscheide** für jedes Beispiel und **begründe** in einem Satz („Geheim ist …“ / „Nichts ist geheim, weil …“). Ordne die Verschlüsselungen außerdem als Transposition oder Substitution ein."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Beispiel",
+      "Codierung / Verschl.?",
+      "Begründung",
+      "Transp. / Subst."
+     ],
+     "zeilen": [
+      [
+       "(a) Morsecode",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(b) `A` wird als 65 gespeichert (ASCII)",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(c) Skytale mit Umfang 4",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(d) QR-Code auf einem Plakat",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(e) Gartenzaun mit 3 Schienen",
+       "",
+       "",
+       ""
+      ],
+      [
+       "(f) jeder Buchstabe wird um 3 verschoben, die 3 kennen nur Alice und Bob",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      5.2,
+      2.8,
+      6.0,
+      2.4
+     ],
+     "schrift": 9.5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(a) Codierung – Morsetabelle ist öffentlich. (b) Codierung – ASCII-Tabelle ist öffentlich (steht sogar in der Abitur-Anlage). (c) Verschlüsselung, geheim ist der Umfang; Transposition. (d) Codierung – jede QR-App liest ihn. (e) Verschlüsselung, geheim ist die Schienenzahl; Transposition. (f) Verschlüsselung, geheim ist die Verschiebung 3; Substitution."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler (P5):* „Morsecode ist geheim, weil ich ihn nicht lesen kann“ – geheim heißt: nur Sender und Empfänger kennen den Schlüssel."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Der Stab mit drei Zeilen",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** mit der Skytale, u = 3: `schickt mehr bogenschuetzen`"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true,
+     "breiten": [
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "25 Buchstaben, u = 3 → s = 9, zwei X. Raster `schicktme / hrbogensc / huetzenxx` → Geheimtext **SHHCR UHBEI OTCGZ KEETN NMSXE CX**."
+    },
+    {
+     "t": "p",
+     "md": "*P4:* X vergessen → Spalten 8 und 9 zu kurz."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Eves Fang",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 Eve hat abgefangen (Skytale, Umfang u = 5). **Entschlüssele.**"
+    },
+    {
+     "t": "geheimtext",
+     "text": "DSDMIESEPSRBNETPETLZAIENU"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true,
+     "breiten": [
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "25 Zeichen : 5 = 5 Spalten. Spaltenweise eintragen (Spalte 1 = D, S, D, M, I): `derpa / ssbei / dente / mpeln / istzu` → **„der pass bei den tempeln ist zu“**."
+    },
+    {
+     "t": "p",
+     "md": "*P3:* zeilenweise eingetragen → Unsinn."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 1,
+   "titel": "Ein Zaun für die Pferde",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** mit dem Gartenzaun, n = 3 Schienen: `pferde stehen bereit`"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true,
+     "breiten": [
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88,
+      0.88
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Schienen `pdebi` · `frethneet` · `eser` → **PDEBI FRETH NEETE SER**."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Vier Schienen",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entschlüssele** den Gartenzaun-Geheimtext mit n = 4 Schienen. *Tipp:* Zeichne zuerst das Zickzack-Muster für 20 Zeichen und zähle die Plätze je Schiene."
+    },
+    {
+     "t": "geheimtext",
+     "text": "SSFDPASFEDAATCISNRHI"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true,
+     "breiten": [
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Zickzack 1-2-3-4-3-2-1-… für 20 Zeichen: Schiene 1 hat 4 Plätze (Pos. 1, 7, 13, 19), Schiene 2 hat 7, Schiene 3 hat 6, Schiene 4 hat 3. Aufteilung: `SSFD` · `PASFEDA` · `ATCISN` · `RHI` → **„spartas schiffe sind da“**."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Die Schablone in der Hand",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Schneide** die Schablone von Archivwissen 4 aus (Vorlage am Ende der Akte) und **verschlüssele** `rueckzug zum hafen` (16 Buchstaben). Kontrolle: Der Geheimtext beginnt mit Z."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Stellung 1: (1,2) r, (2,1) u, (2,3) e, (4,4) c · Stellung 2: (1,3) k, (2,4) z, (3,3) u, (4,1) g · Stellung 3: (1,1) z, (3,2) u, (3,4) m, (4,3) h · Stellung 4: (1,4) a, (2,2) f, (3,1) e, (4,2) n. Raster `ZRKA / UFEZ / EUUM / GNHC` → **ZRKAU FEZEU UMGNH C**."
+    },
+    {
+     "t": "p",
+     "md": "*P3:* gegen den Uhrzeigersinn gedreht → anderer Geheimtext."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Eine Schablone prüfen",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Schreiber schlägt die Schablone mit den Löchern (1,1), (1,4), (2,2), (3,3) vor."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Untersuche**, ob sie brauchbar ist.",
+      "Die 16 Felder zerfallen in vier „Drehgruppen“ zu je 4 Feldern, die beim Drehen ineinander übergehen (z. B. die vier Ecken). **Begründe**, dass es genau 4^4^ = 256 brauchbare Schablonen gibt.",
+      "**Beurteile** die Sicherheit der Fleißner-Schablone gegen einen Brute-Force-Angriff von Hand."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Unbrauchbar: (1,1) wandert nach einer Drehung auf (1,4) – das Feld wird doppelt beschriftet; ebenso (2,2) → (2,3) → (3,3). Die vier Stellungen geben nur 8 der 16 Felder frei."
+    },
+    {
+     "t": "p",
+     "md": "b) Jede Drehgruppe muss in jeder Stellung genau einmal „offen“ sein, also enthält die Schablone aus jeder der 4 Gruppen genau ein Loch; für jedes Loch gibt es 4 Möglichkeiten → 4 · 4 · 4 · 4 = 256 (von allen 1820 Vierer-Lochmengen sind genau 256 gültig)."
+    },
+    {
+     "t": "p",
+     "md": "c) 256 Schablonen (× 4 mögliche Grundstellungen ändert nichts Neues, da Drehungen einer gültigen Schablone wieder gültige Schablonen sind) – von Hand mühsam, mit Rechner sofort; außerdem lässt sich mit sinnvollen Wortanfängen Feld für Feld eingrenzen → unsicher."
+    }
+   ],
+   "fallen": [
+    "P7",
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "Nummerierung entfällt (reine Transposition).",
+     "klein": true
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "Die Skytale wird mit dem Umfang u = 3 verwendet. **Bestimmen Sie** den Geheimtext zum Klartext „lysander kehrt heim“.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "17 Buchstaben, s = 6, ein X: `lysand / erkehr / theimx` → **LETYR HSKEA EINHM DRX** [Raster 1, Füllzeichen 1, Auslesen 1]."
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Entscheiden Sie begründet**, ob es sich bei der Skytale um eine Transposition oder um eine Substitution handelt.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Transposition: Jeder Buchstabe bleibt erhalten, nur seine Position ändert sich; im Geheimtext stehen genau die Buchstaben des Klartextes (plus X) [2]."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "Ein Angreifer weiß, dass ein Geheimtext der Länge 30 mit einer Skytale **ohne** Füllzeichen erzeugt wurde. **Bestimmen Sie** alle infrage kommenden Umfänge u mit 2 ≤ u ≤ 15 und **beurteilen Sie** die Sicherheit des Verfahrens gegen einen Brute-Force-Angriff.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "u muss 30 teilen: u ∈ {2, 3, 5, 6, 10, 15}; nur 6 Schlüssel → Brute Force sogar von Hand in wenigen Minuten; das Verfahren ist unsicher (Urteil!) [Teiler 2, Begründung 1, Urteil 1]."
+      }
+     ],
+     "fallen": [
+      "P7",
+      "P10"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Erläutern Sie**, welche Information ein Angreifer aus den Buchstabenhäufigkeiten eines Skytale-Geheimtextes gewinnen kann und welche nicht.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Die Häufigkeiten bleiben unverändert (Transposition). Der Angreifer erkennt daran, dass ein deutscher Text nur umgestellt wurde (e, n, i, s, r häufig), bekommt aber keinen Hinweis auf den Umfang/die Anordnung [3]."
+      }
+     ],
+     "fallen": [
+      "P6",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "0.1",
+   "md": "Level 0.1 „Die Skytale von Sparta“ (Aufgaben 01–08) und der Archivfund W0-AF „Die Botschaft am Stab“. Trainingsplatz „Skytale“. Werkzeug im Kryptolabor: **Skytale & Gitter** (Skytale, Gartenzaun, Fleißner-Schablone)."
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "kasten",
+   "kopf": "VORLAGE · FLEISSNER-SCHABLONE ZUM AUSSCHNEIDEN (AUFTRAG 6)",
+   "nur_schueler": true,
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Schablone auf Karton kleben, die **vier markierten Felder ausschneiden** (Löcher (1,2), (2,1), (2,3), (4,4)). Die Markierung **OBEN** zeigt die Grundstellung. Drehen immer **↻ im Uhrzeigersinn** um 90°."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**SCHABLONE** · ▲ OBEN",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         " ",
+         "●",
+         " ",
+         " "
+        ],
+        [
+         "●",
+         " ",
+         "●",
+         " "
+        ],
+        [
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         " ",
+         " ",
+         " ",
+         "●"
+        ]
+       ],
+       "hervor": [
+        [
+         0,
+         1
+        ],
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         2
+        ],
+        [
+         3,
+         3
+        ]
+       ],
+       "zellbreite": 1.5,
+       "schrift": 30
+      },
+      {
+       "t": "p",
+       "md": "↻ 90° im Uhrzeigersinn",
+       "zentriert": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**RASTER** zum Eintragen",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        [
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         " ",
+         " ",
+         " ",
+         " "
+        ],
+        [
+         " ",
+         " ",
+         " ",
+         " "
+        ]
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4"
+       ],
+       "zellbreite": 1.3,
+       "schrift": 26
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: [[luecke:24]]",
+       "zentriert": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

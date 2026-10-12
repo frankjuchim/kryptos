@@ -1,0 +1,664 @@
+{
+ "typ": "praesentation",
+ "welt": 9,
+ "titel": "Kryptos: So funktioniert die Zeitreise",
+ "datei": "KR_Video_00_Kryptos_Zeitreise_Folien",
+ "ordner": "Videos/00_Kryptos_Zeitreise",
+ "folien": [
+  {
+   "titel": "Kryptos: So funktioniert die Zeitreise",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie in Tinte und Messing (Kickoff-Thema).\n\nSPRECHERTEXT: Willkommen im Archiv der verborgenen Schriften! In dieser Einheit reist du durch zweieinhalbtausend Jahre Geheimschriften – vom Holzstab in Sparta bis zum Smartphone. In diesem kurzen Video zeige ich dir, wie die Plattform Kryptos funktioniert.",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "Anmelden über InfoLabs, Zeitleiste, Level, Punkte, Fallen, Boss – dein Start in die Plattform",
+   "oberzeile": "VIDEO 00 · −500 … HEUTE"
+  },
+  {
+   "titel": "Worum geht es?",
+   "notizen": "REGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Die Geschichte: Seit Jahrtausenden schreiben sich Alice und Bob geheime Botschaften, und Eve lauscht. Du bist Chronistin oder Chronist im Archiv und wechselst die Seiten: Mal hilfst du beim Verschlüsseln, mal knackst du mit Eve. Am Ende wartet Eves eigene Chiffre – genau wie im Abitur.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Seit Jahrtausenden schreiben sich **Alice und Bob** Geheimbotschaften – und **Eve** lauscht",
+        "Du bist **Chronistin oder Chronist** des Archivs und wechselst die Seiten:",
+        "  - 🛡 **Kryptografie**: Alice und Bob beim Verschlüsseln helfen",
+        "  - 🔍 **Kryptoanalyse**: mit Eve Geheimtexte knacken",
+        "Am Ende wartet **Eves eigene Chiffre** – genau das Abiturformat"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Anmelden über InfoLabs"
+        },
+        {
+         "t": "p",
+         "md": "Zeitleiste und Level"
+        },
+        {
+         "t": "p",
+         "md": "Punkte und Fallen"
+        },
+        {
+         "t": "p",
+         "md": "Boss, Training, Warm-up"
+        },
+        {
+         "t": "p",
+         "md": "Labor und Funkraum"
+        },
+        {
+         "t": "p",
+         "md": "Gastmodus"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Schritt 1: Anmelden im Portal InfoLabs",
+   "notizen": "[Kapitel: Anmelden über InfoLabs]\n\nREGIE: Erst auf „Kurs beitreten“ zeigen, dann auf den Reiter für die spätere Anmeldung.\n\nSPRECHERTEXT: Angemeldet wirst du immer im Portal InfoLabs: labs punkt frankjuchim punkt de – oder du scannst den QR-Code aus dem Unterricht. Beim ersten Mal trittst du mit dem Kurscode deiner Lehrkraft und deinem Namen bei. Dann bekommst du deinen persönlichen Code: drei Buchstaben, Bindestrich, drei Ziffern. Schreib ihn sofort auf und behalte ihn für dich. Danach meldest du dich immer mit Name und Code an.",
+   "video": true,
+   "abschnitt": "Anmelden über InfoLabs",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.6599999999999999,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "SO GEHT’S",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**labs.frankjuchim.de** öffnen oder QR-Code scannen"
+        },
+        {
+         "t": "p",
+         "md": "Beim ersten Mal: **Kurscode** + **Name**"
+        },
+        {
+         "t": "p",
+         "md": "**persönlichen Code** sofort notieren"
+        },
+        {
+         "t": "p",
+         "md": "danach immer: **Name + persönlicher Code**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Schritt 2: Weiter zu Kryptos",
+   "notizen": "REGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Unter Meine Plattformen klickst du auf Weiter zu Kryptos – und bist drin, ohne weiteres Passwort. Mit demselben Konto erreichst du auch die anderen Plattformen deines Kurses. Das Haus-Symbol oben führt zurück zum Portal. Und an fremden Geräten meldest du dich am Ende ab.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.6599999999999999,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "EIN KONTO FÜR ALLES",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "„**Weiter zu Kryptos**“ → automatisch angemeldet"
+        },
+        {
+         "t": "p",
+         "md": "kein eigenes Passwort in Kryptos"
+        },
+        {
+         "t": "p",
+         "md": "oben „⌂ Portal“: zurück"
+        },
+        {
+         "t": "p",
+         "md": "fremdes Gerät: **Abmelden**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Die Zeitleiste",
+   "notizen": "[Kapitel: Zeitleiste und Level]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Kryptos beginnt mit der Zeitleiste: sieben Epochen, von der Antike bis zur Zeitmaschine. Gesperrte Epochen sind noch verschlüsselt und entschlüsseln sich Buchstabe für Buchstabe, sobald sie freigeschaltet werden. Jede Epoche hat einen Archivfund zum Einstieg, mehrere Level, einen Trainingsplatz und einen Boss.",
+   "video": true,
+   "abschnitt": "Zeitleiste und Level",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "SIEBEN EPOCHEN",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "0 Antike · 1 Bagdad"
+        },
+        {
+         "t": "p",
+         "md": "2 Renaissance · 3 Maschinen"
+        },
+        {
+         "t": "p",
+         "md": "4 Stanford 1976 · 5 Das Netz"
+        },
+        {
+         "t": "p",
+         "md": "6 Zeitmaschine"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ein Level von innen",
+   "notizen": "REGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Ein Level gehört zu einer Doppelstunde. Oben steht das Archivwissen zum Nachlesen, darunter folgen sechs bis acht Aufgaben mit einem bis drei Sternen. Oft ist ein Werkzeug direkt eingebaut. Dazu gibt es jeweils eine Akte – das Arbeitsblatt.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "IM LEVEL",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "eine Doppelstunde"
+        },
+        {
+         "t": "p",
+         "md": "**Archivwissen**"
+        },
+        {
+         "t": "p",
+         "md": "6–8 Aufgaben, ★ bis ★★★"
+        },
+        {
+         "t": "p",
+         "md": "dazu die **Akte**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Prüfen, Tipp, Lösung zeigen",
+   "notizen": "[Kapitel: Punkte und Fallen]\n\nREGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: In jeder Aufgabe prüfst du deine Antwort und bekommst sofort Rückmeldung. Ein Tipp kostet ein Fünftel der Punkte, ein Fehlversuch ein Viertel – ein Viertel bleibt aber immer. Zwanzig Punkte werden mit einem Tipp also zu sechzehn. Lösung zeigen bringt null Punkte, dafür die Erklärung.",
+   "video": true,
+   "abschnitt": "Punkte und Fallen",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.7,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Aufgabe",
+        "Punkte"
+       ],
+       "zeilen": [
+        [
+         "★ 10 P., sofort richtig",
+         "10"
+        ],
+        [
+         "★★ 20 P., mit 1 Tipp",
+         "16"
+        ],
+        [
+         "★★ 20 P., 1 Tipp + 1 Fehlversuch",
+         "11"
+        ],
+        [
+         "★★★ 30 P., 2 Fehlversuche",
+         "15"
+        ],
+        [
+         "★★ 20 P., 4 Fehlversuche",
+         "5"
+        ],
+        [
+         "„Lösung zeigen“",
+         "0"
+        ]
+       ],
+       "breiten": [
+        4.2,
+        1.0
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DIE REGELN",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "je Tipp **− 20 %**"
+        },
+        {
+         "t": "p",
+         "md": "je Fehlversuch **− 25 %**"
+        },
+        {
+         "t": "p",
+         "md": "mindestens **25 %** bleiben"
+        },
+        {
+         "t": "p",
+         "md": "„Lösung zeigen“: **0**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Die zehn Fallen P1–P10",
+   "notizen": "REGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: Oft nennt die Rückmeldung eine Falle, zum Beispiel P3, Umkehrung. Die zehn Fallen P1 bis P10 sind die häufigsten Punktverluste im Abitur – im Lab, in den Akten und in den Videos gleich nummeriert. Im Profil siehst du unter Deine Fallen, wo du noch aufpassen musst.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Nr.",
+        "Falle",
+        "Nr.",
+        "Falle"
+       ],
+       "zeilen": [
+        [
+         "P1",
+         "Zählbasis verwechselt",
+         "P6",
+         "Häufigkeitsanalyse pauschal"
+        ],
+        [
+         "P2",
+         "Modulo falsch",
+         "P7",
+         "Schlüsselraum falsch"
+        ],
+        [
+         "P3",
+         "Umkehrung falsch",
+         "P8",
+         "Kombination überschätzt"
+        ],
+        [
+         "P4",
+         "Verfahrensregel übersehen",
+         "P9",
+         "Schlüsselrollen verwechselt"
+        ],
+        [
+         "P5",
+         "Falsch eingeordnet",
+         "P10",
+         "Operator verfehlt"
+        ]
+       ],
+       "breiten": [
+        0.6,
+        2.9,
+        0.7,
+        2.9
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "IM LAB",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Rückmeldung nennt die Falle, z. B. **P3 Umkehrung**"
+        },
+        {
+         "t": "p",
+         "md": "Profil: **Deine Fallen**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Boss, Trainingsplatz, Warm-up",
+   "notizen": "[Kapitel: Boss, Training, Warm-up]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Am Ende jeder Epoche wartet der Boss: eine Abiturprobe mit acht Aufgaben in fünfundzwanzig Minuten, ohne Werkzeuge. Ab fünfzig Prozent ist er besiegt, dein bester Versuch zählt. Auf dem Trainingsplatz gibt es immer neue Zufallsaufgaben, einen Punkt je Aufgabe. Und die Warm-up-Karten lösen wir zum Stundenbeginn auf Papier, ohne Punkte.",
+   "video": true,
+   "abschnitt": "Boss, Training, Warm-up",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "p",
+       "md": "Trainingsplatz: Zufallsaufgaben, 1 Punkt, max. 30/Tag · Warm-up: Karten auf Papier, ohne Punkte"
+      },
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "BOSS",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "8 Aufgaben, 25 min, **ohne** Werkzeuge"
+        },
+        {
+         "t": "p",
+         "md": "besiegt ab **50 %**"
+        },
+        {
+         "t": "p",
+         "md": "bester Versuch zählt, dann 12 h Pause"
+        },
+        {
+         "t": "p",
+         "md": "frei ab 60 % der Level-Punkte"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Kryptolabor und Funkraum",
+   "notizen": "[Kapitel: Labor und Funkraum]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Im Kryptolabor findest du Werkzeuge wie die Chiffrierscheibe oder die Vigenère-Werkbank. Im Funkraum spielen wir im Unterricht live: Teams schicken sich Geheimbotschaften, ein Eve-Team lauscht und versucht zu knacken. Die Nachrichten bleiben im Kurs und werden danach gelöscht.",
+   "video": true,
+   "abschnitt": "Labor und Funkraum",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "FUNKRAUM",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "live im Unterricht, in Teams"
+        },
+        {
+         "t": "p",
+         "md": "nur Großbuchstaben und Ziffern"
+        },
+        {
+         "t": "p",
+         "md": "nur im Kurs, danach gelöscht"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ränge, Artefakte, Abzeichen",
+   "notizen": "[Kapitel: Ränge und Artefakte]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Mit deinen Punkten steigst du auf – vom Lehrling bis zum Meister der Chiffren. Jeder besiegte Boss bringt ein Artefakt, von der Skytale bis zum Kern des Chronoskops. Und auf der Zeitleiste entsiegelt sich mit jeder Epoche ein Kapitel Kryptogeschichte.",
+   "video": true,
+   "abschnitt": "Ränge und Artefakte",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "RÄNGE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Lehrling → Schreiber"
+        },
+        {
+         "t": "p",
+         "md": "→ Chiffreur → Kryptoanalytiker"
+        },
+        {
+         "t": "p",
+         "md": "→ **Meister der Chiffren**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Gastmodus: ohne Anmeldung reinschnuppern",
+   "notizen": "[Kapitel: Gastmodus]\n\nREGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Noch kein Kurscode? Im Gastmodus unter kryptos punkt frankjuchim punkt de Schrägstrich gast probierst du sechs Demo-Aufgaben ohne Anmeldung aus. Gespeichert wird dort nichts.",
+   "video": true,
+   "abschnitt": "Gastmodus",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**kryptos.frankjuchim.de/gast**",
+      "6 Demo-Aufgaben und die Chiffrierscheibe",
+      "Nichts wird gespeichert",
+      "Für Lehrkräfte: ein erfundener Demo-Kurs"
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Probier es aus!",
+   "notizen": "REGIE: Einblendung „⏸ Video anhalten“.\n\nSPRECHERTEXT: Jetzt du: Halte das Video an, melde dich an und notiere deinen Code. Dann weiter zu Kryptos, in die Antike und zur ersten Aufgabe in Level null Punkt eins.\n\nPAUSE: 3 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": null,
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Melde dich im Portal an und **notiere deinen persönlichen Code**. Wechsle mit „Weiter zu Kryptos“ in die Plattform, öffne die Epoche **Antike** und löse die erste Aufgabe in **Level 0.1**."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "GESCHAFFT, WENN …",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "dein Code im Heft steht"
+        },
+        {
+         "t": "p",
+         "md": "du die Zeitleiste siehst"
+        },
+        {
+         "t": "p",
+         "md": "die ersten Punkte da sind"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nREGIE: Merksätze nacheinander einblenden; ruhig und etwas langsamer sprechen.\n\nSPRECHERTEXT: Kurz gesagt: anmelden über InfoLabs, Code notieren, weiter zu Kryptos. Tipps und Fehlversuche kosten etwas, die Fallen zeigen dir deine Stolpersteine, und jede Epoche endet mit einem Boss.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Anmelden immer über **InfoLabs**: einmal Kurscode + Name, danach **Name + persönlicher Code**"
+    },
+    {
+     "t": "p",
+     "md": "„**Weiter zu Kryptos**“ – kein eigenes Passwort; Code notieren und für dich behalten"
+    },
+    {
+     "t": "p",
+     "md": "Tipp − 20 %, Fehlversuch − 25 %, „Lösung zeigen“ 0 – die **Fallen P1–P10** zeigen deine Stolpersteine"
+    },
+    {
+     "t": "p",
+     "md": "Jede Epoche: Level, Trainingsplatz, **Boss** – dazu Kryptolabor, Funkraum und Gastmodus"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Endcard über die letzten 20 s legen.\n\nSPRECHERTEXT: Deine erste Station ist Level null Punkt eins, die Skytale von Sparta. Im nächsten Video geht es um Caesar, das Alphabet und das Rechnen mit Modulo. Gute Reise durch die Zeit – wir sehen uns im Archiv!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 0.1 „Die Skytale von Sparta“ (Epoche Antike)"
+      ],
+      [
+       "Akte",
+       "Akte W0·1 „Die Skytale von Sparta“"
+      ],
+      [
+       "Portal",
+       "labs.frankjuchim.de"
+      ],
+      [
+       "Gastmodus",
+       "kryptos.frankjuchim.de/gast"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 01 · Caesar, das Alphabet A = 1 und Modulo"
+    }
+   ]
+  }
+ ]
+}

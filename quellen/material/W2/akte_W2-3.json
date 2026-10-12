@@ -1,0 +1,678 @@
+{
+ "typ": "akte",
+ "welt": 2,
+ "kennung": "AKTE W2·3",
+ "titel": "Friedmans Zufall",
+ "ds": "8",
+ "niveau": "eA",
+ "level": "2.3",
+ "datei": "KR_W2_Akte3_Friedmans_Zufall",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "1920, ein Labor in Illinois. William F. Friedman stellt eine einfache Frage: Wenn ich aus einem Text zwei Buchstaben zufällig herausgreife – wie wahrscheinlich sind sie gleich? Die Antwort verrät, ob ein Text mono- oder polyalphabetisch verschlüsselt ist, und sogar, wie lang das Schlüsselwort ungefähr ist. Eve bekommt ein zweites Werkzeug neben Kasiski."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Der Koinzidenzindex",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Text habe n Buchstaben; n~i~ zählt, wie oft der i-te Buchstabe vorkommt. Es gibt n(n − 1) geordnete Paare verschiedener Stellen, davon Σ n~i~(n~i~ − 1) mit gleichen Buchstaben (Laplace: günstige durch mögliche):"
+    },
+    {
+     "t": "formel",
+     "md": "**I = Σ n~i~(n~i~ − 1) / (n(n − 1))**"
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* ANANAS (n = 6; A 3, N 2, S 1): I = (3 · 2 + 2 · 1 + 1 · 0) / (6 · 5) = 8/30 ≈ 0,267. Gleichwertig mit ungeordneten Paaren: (3 + 1)/15 = 4/15."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P4",
+   "titel": "Paare gleich zählen",
+   "md": "Zähler und Nenner müssen **gleich** zählen – beide geordnet (n~i~(n~i~ − 1) und n(n − 1)) oder beide ungeordnet (n~i~(n~i~ − 1)/2 und n(n − 1)/2). Wer oben geordnet und unten ungeordnet zählt, **verdoppelt** I: ANANAS käme auf 8 : 15 ≈ 0,533 statt 0,267, ein deutscher Text auf ≈ 0,152 statt 0,076."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Referenzwerte",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Text",
+      "Koinzidenzindex",
+      "Herkunft"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Deutscher Text",
+       "**I~D~ = Σ p~i~² ≈ 0,076**",
+       "berechnet aus der Häufigkeitstabelle von Beutelspacher (0,0762)"
+      ],
+      [
+       "Zufallstext (alle 26 Buchstaben gleich häufig)",
+       "**I~Z~ = 26 · (1/26)² = 1/26 ≈ 0,038**",
+       "rein rechnerisch"
+      ]
+     ],
+     "breiten": [
+      5.0,
+      5.2,
+      6.2
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Was Verschlüsselung mit I macht",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Monoalphabetisch** (Caesar, Substitution): Buchstaben werden nur umbenannt, die Anzahlen bleiben → I bleibt gleich. *otto* (4/12) → Caesar D → `RWWR` (4/12).",
+      "**Polyalphabetisch:** gleiche Klartextbuchstaben werden verschieden → I sinkt Richtung I~Z~. *anna* (4/12) → Vigenère mit ABCD → `AOPD` (0/12). Je länger der (zufällige) Schlüssel, desto näher an 0,038."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Die Friedman-Schätzung",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**k ≈ (I~D~ − I~Z~) · n / ((n − 1) · I − I~Z~ · n + I~D~)**"
+    },
+    {
+     "t": "p",
+     "md": "mit I~D~ = 0,076, I~Z~ = 0,038, n = Länge, I = Koinzidenzindex des Geheimtexts. *Rechenvorlage* (n = 1001, I = 0,0475):"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "Rechnung",
+      "Ergebnis"
+     ],
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Zähler (I~D~ − I~Z~) · n",
+       "0,038 · 1001",
+       "38,038"
+      ],
+      [
+       "(n − 1) · I",
+       "1000 · 0,0475",
+       "47,5"
+      ],
+      [
+       "Nenner",
+       "47,5 − 38,038 + 0,076",
+       "9,538"
+      ],
+      [
+       "k",
+       "38,038 : 9,538",
+       "≈ 3,99 ≈ **4**"
+      ]
+     ],
+     "breiten": [
+      5.0,
+      6.4,
+      4.6
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Die Formel liefert eine **Schätzung**: Sie beruht auf Durchschnittswerten und streut bei kurzen Texten stark."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 5,
+   "titel": "Die Teiltext-Probe",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Für jede vermutete Schlüssellänge k: Text in k Teiltexte zerlegen, den Koinzidenzindex jedes Teiltexts berechnen, Mittelwert bilden. Beim richtigen k (und bei seinen Vielfachen) sind die Teiltexte monoalphabetisch → Mittelwert ≈ I~D~; sonst ≈ I~Z~ bis 0,05. **Das kleinste k mit hohem Wert gewinnt.**"
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Zwei Wörter aus Venedig",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Berechne** den Koinzidenzindex von SERENISSIMA und von LAGUNE (Bruch und Dezimalzahl)."
+    },
+    {
+     "t": "p",
+     "md": "SERENISSIMA: n = [[luecke:6]], Σ n~i~(n~i~ − 1) = [[luecke:16]], I = [[luecke:16]]",
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "LAGUNE: n = [[luecke:6]], Σ n~i~(n~i~ − 1) = [[luecke:16]], I = [[luecke:16]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "SERENISSIMA (n = 11; S 3, E 2, I 2, sonst je 1): (6 + 2 + 2)/110 = 10/110 = **1/11 ≈ 0,091**; LAGUNE: alle verschieden → 0/30 = **0**."
+    },
+    {
+     "t": "p",
+     "md": "Hinweis: Bei so kurzen Wörtern sagt I nichts über die Sprache."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Drei Geheimtexte",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Drei Geheimtexte (je etwa 600 Buchstaben, deutscher Klartext) haben I = 0,077, I = 0,047 und I = 0,038. **Ordne zu** und **begründe**:"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Verfahren",
+      "I",
+      "Begründung"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Caesar",
+       "",
+       ""
+      ],
+      [
+       "Vigenère, Schlüsselwort der Länge 5",
+       "",
+       ""
+      ],
+      [
+       "Schlüssel so lang wie der Text, zufällig",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      5.4,
+      1.8,
+      9.2
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Verfahren",
+      "I",
+      "Begründung"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Caesar",
+       "0,077",
+       "I bleibt deutsch (monoalphabetisch)"
+      ],
+      [
+       "Vigenère, Schlüsselwort der Länge 5",
+       "0,047",
+       "fünf Alphabete ebnen die Häufigkeiten teilweise ein"
+      ],
+      [
+       "Schlüssel so lang wie der Text, zufällig",
+       "0,038",
+       "gleichverteilt wie ein Zufallstext"
+      ]
+     ],
+     "breiten": [
+      5.4,
+      1.8,
+      9.2
+     ],
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "0,077 → Caesar (I bleibt deutsch); 0,047 → Vigenère, Länge 5; 0,038 → zufälliger Schlüssel so lang wie der Text (gleichverteilt). Begründung über Archivwissen 3. (Beispielwerte zur Deutung, keine Rechnung.)"
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_loesung": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Vorher – nachher",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *anna* mit Vigenère (Schlüsselwort ABCD) und *otto* mit Caesar (Schlüssel D, Nummerierung: A = 1 … Z = 26).",
+      "**Berechne** jeweils I vorher und nachher.",
+      "**Formuliere** eine Regel."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Klartext",
+      "I vorher",
+      "Verfahren",
+      "Geheimtext",
+      "I nachher"
+     ],
+     "zentriert": true,
+     "zeilen": [
+      [
+       "*anna*",
+       "",
+       "Vigenère ABCD",
+       "",
+       ""
+      ],
+      [
+       "*otto*",
+       "",
+       "Caesar D",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.8,
+      2.8,
+      3.6,
+      3.4,
+      2.8
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Klartext",
+      "I vorher",
+      "Verfahren",
+      "Geheimtext",
+      "I nachher"
+     ],
+     "zentriert": true,
+     "zeilen": [
+      [
+       "*anna*",
+       "4/12",
+       "Vigenère ABCD",
+       "`AOPD`",
+       "0/12"
+      ],
+      [
+       "*otto*",
+       "4/12",
+       "Caesar D",
+       "`RWWR`",
+       "4/12"
+      ]
+     ],
+     "breiten": [
+      2.8,
+      2.8,
+      3.6,
+      3.4,
+      2.8
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) `AOPD`; `RWWR`. b) *anna* 4/12 → `AOPD` 0/12; *otto* 4/12 → `RWWR` 4/12."
+    },
+    {
+     "t": "p",
+     "md": "c) Monoalphabetisch: I unverändert; polyalphabetisch: I sinkt (Richtung 0,038)."
+    }
+   ],
+   "fallen": [
+    "P5"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Friedman mit Rechenvorlage",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Berechne** k für (a) n = 501, I = 0,0456 und (b) n = 1001, I = 0,0570. Benutze die Tabelle aus Archivwissen 4; ein Überschlag beim Teilen genügt."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "a) n = 501, I = 0,0456",
+      "b) n = 1001, I = 0,0570"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Zähler 0,038 · n",
+       "",
+       ""
+      ],
+      [
+       "(n − 1) · I",
+       "",
+       ""
+      ],
+      [
+       "Nenner (n − 1) · I − 0,038 · n + 0,076",
+       "",
+       ""
+      ],
+      [
+       "k ≈ Zähler : Nenner",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      6.0,
+      5.2,
+      5.2
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "a) n = 501, I = 0,0456",
+      "b) n = 1001, I = 0,0570"
+     ],
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Zähler 0,038 · n",
+       "19,038",
+       "38,038"
+      ],
+      [
+       "(n − 1) · I",
+       "500 · 0,0456 = 22,8",
+       "1000 · 0,057 = 57"
+      ],
+      [
+       "Nenner (n − 1) · I − 0,038 · n + 0,076",
+       "22,8 − 19,038 + 0,076 = 3,838",
+       "57 − 38,038 + 0,076 = 19,038"
+      ],
+      [
+       "k ≈ Zähler : Nenner",
+       "≈ 4,96 ≈ **5**",
+       "≈ 2,00 ≈ **2**"
+      ]
+     ],
+     "breiten": [
+      6.0,
+      5.2,
+      5.2
+     ],
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) k ≈ 4,96 ≈ **5**; b) k ≈ 2,00 ≈ **2**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* n statt n − 1 verwenden (kleiner Unterschied) oder 0,038 · n vergessen (P4: Formel nicht vollständig angewendet)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Drei Methoden, ein Brief",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Für Eves Brief aus Akte W2·2 (n = 228, I = 0,0470) gilt: Friedman-Schätzung ≈ 4,15. Mittlerer Koinzidenzindex der Teiltexte:"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "kopf": [
+      "k",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "zeilen": [
+      [
+       "mittlerer I",
+       "0,047",
+       "0,046",
+       "0,046",
+       "0,048",
+       "0,096",
+       "0,044",
+       "0,047",
+       "0,047",
+       "0,042",
+       "0,099"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4
+     ]
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Welche Schlüssellänge folgt aus der Teiltext-Probe?",
+      "**Vergleiche** mit Kasiski (Akte W2·2) und Friedman.",
+      "**Beurteile** die drei Methoden."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **5** (Sprung auf 0,096; bei 10 ebenfalls hoch, weil Vielfaches)."
+    },
+    {
+     "t": "p",
+     "md": "b) Kasiski: 5 ✔; Friedman: 4,15 → „etwa 4 bis 5“."
+    },
+    {
+     "t": "p",
+     "md": "c) Kasiski braucht echte Wiederholungen, liefert Teiler; Friedman ist schnell, aber bei n = 228 grob (Abweichung fast 1); Teiltext-Probe am zuverlässigsten, aber rechenaufwendig – in der Praxis kombinieren."
+    }
+   ],
+   "fallen": [
+    "P6",
+    "P10"
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_loesung": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Grenzfälle",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Was liefert die Friedman-Formel für I = 0,076 und für I = 0,038 (jeweils n = 400)? **Deute** beide Ergebnisse."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "I = 0,076: Zähler 15,2, Nenner 399 · 0,076 − 15,2 + 0,076 = 15,2 → **k = 1** (monoalphabetisch)."
+    },
+    {
+     "t": "p",
+     "md": "I = 0,038: Nenner 0,038 → k = 15,2 : 0,038 = **400 = n** – der Schlüssel ist so lang wie der Text (wie beim One-Time-Pad, Welt 3)."
+    }
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "eA · ca. 12 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Berechnen Sie** den Koinzidenzindex des Wortes KANALBANK.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "K 2, A 3, N 2, L 1, B 1; n = 9: (2 + 6 + 2)/72 = 10/72 ≈ **0,139** [2 BE]."
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern Sie**, warum eine Caesar-Verschlüsselung den Koinzidenzindex eines Textes nicht verändert.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Caesar ersetzt jeden Buchstaben immer durch denselben anderen; die Anzahlen n~i~ werden nur anderen Buchstaben zugeordnet, die Summe Σ n~i~(n~i~ − 1) und n bleiben gleich [2 BE]."
+      }
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "Ein Vigenère-Geheimtext hat n = 1001 Zeichen und den Koinzidenzindex I = 0,0418. **Bestimmen Sie** mithilfe der Friedman-Formel (I~D~ = 0,076, I~Z~ = 0,038) eine Schätzung der Schlüssellänge.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Zähler 0,038 · 1001 = 38,038; (n − 1) · I = 1000 · 0,0418 = 41,8; Nenner 41,8 − 38,038 + 0,076 = 3,838; k ≈ 38,038 : 3,838 ≈ 9,9 ≈ **10** [3 BE: Einsetzen 1, Zwischenwerte 1, Ergebnis gerundet 1]."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Beurteilen Sie** die Aussage: „Der Friedman-Test liefert die Schlüssellänge exakt.“",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch: Die Formel verwendet Durchschnittswerte (I~D~, I~Z~), der tatsächliche Text weicht ab; bei kurzen Texten große Streuung (Beispiel: Eves Brief 4,15 statt 5); Ergebnis ist keine ganze Zahl → nur Schätzung, Bestätigung durch Kasiski/Teiltexte nötig [3 BE inkl. Urteil]."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "2.3",
+   "md": "Level 2.3 „Friedmans Zufall“ im Kryptolabor: Vigenère-Werkbank, Reiter „Koinzidenzindex“. Trainingsplatz: „Koinzidenzindex kleiner Texte“ und „Friedman-Schätzung“. Für Mathe-Begeisterte: Kür K1 „Friedmans Formel“."
+  }
+ ]
+}

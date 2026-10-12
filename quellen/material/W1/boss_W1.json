@@ -1,0 +1,73 @@
+{
+  "typ": "pruefung",
+  "welt": 1,
+  "kennung": "PAPIER-BOSS W1",
+  "titel": "Die Gewürzliste",
+  "datei": "KR_W1_Boss1_Gewuerzliste",
+  "niveau": "kern",
+  "zeit": "60 Minuten",
+  "hilfsmittel": "Anlage (Alphabet A = 1 … Z = 26); kein Taschenrechner",
+  "info": [["Name", ""], ["Datum", ""]],
+  "rahmen_kopf": "AUSGANGSLAGE",
+  "rahmen": "Ein Gewürzhändler aus Basra schickt seinem Geschäftspartner in Bagdad regelmäßig Bestelllisten. Damit die Konkurrenz nicht erfährt, welche Gewürze knapp werden, verschlüsselt er sie mit einem Verfahren, das er **SAFRAN-29** nennt (siehe Material).",
+  "hinweise": [
+    {"t": "p", "md": "**Anlage – Nummerierung A = 1 … Z = 26:**", "klein": true},
+    {"t": "alphabet", "nummerierung": 1}
+  ],
+  "aufgaben": [
+    {"nr": "1", "titel": "Das Verfahren SAFRAN-29",
+     "material": [
+      {"t": "kasten", "kopf": "MATERIAL · DAS VERFAHREN SAFRAN-29", "farbe": "14213D", "inhalt": [
+        {"t": "p", "md": "Nummerierung: **A = 1, B = 2, …, Z = 26** (Anlage). Schlüssel: ein Zahlenpaar (m, t) mit 1 ≤ m ≤ 28 und 0 ≤ t ≤ 28."},
+        {"t": "p", "md": "**Verschlüsseln:** Jeder Buchstabe mit der Nummer p wird durch die Zahl **c = (m · p + t) mod 29** ersetzt; c wird zweistellig geschrieben (00 … 28)."},
+        {"t": "p", "md": "**Entschlüsseln:** **p = (d · (c − t)) mod 29**, wobei d der inverse Schlüssel zu m ist, d. h. (m · d) mod 29 = 1. Ist c − t negativ, addiert man vorher 29."},
+        {"t": "p", "md": "**Beispiel** (m, t) = (3, 7): z = 26 → 3 · 26 + 7 = 85, 85 mod 29 = 27; i = 9 → 34 mod 29 = 5; m = 13 → 46 mod 29 = 17; t = 20 → 67 mod 29 = 9. „zimt“ → **27 05 17 09**."},
+        {"t": "p", "md": "**Inverse modulo 29 (Auszug):**"},
+        {"t": "tabelle", "zentriert": true, "kopfspalte": true, "schrift": 10,
+         "zeilen": [["m", "2", "3", "4", "5", "7", "8", "9", "12"], ["d", "15", "10", "22", "6", "25", "11", "13", "17"]]}
+      ]}],
+     "teile": [
+      {"bez": "a)", "text": "**Bestimmen Sie** den Geheimtext zum Klartext „anis“ mit dem Schlüssel (3, 7).", "be": 3,
+       "erwartung": [
+        {"punkt": "Nummern a = 1, n = 14, i = 9, s = 19 (Anlage, A = 1)", "afb": "I", "be": 1},
+        {"punkt": "Rechnung 3 · p + 7: 10, 49, 34, 64", "afb": "I", "be": 1},
+        {"punkt": "Rest mod 29, zweistellig: **10 20 05 06**", "afb": "I", "be": 1}],
+       "fehler": "mit A = 0 gerechnet (P1); Rest nicht zweistellig geschrieben (05 statt 5)."},
+      {"bez": "b)", "text": "**Bestimmen Sie** den Klartext zum Geheimtext `28 19 05 18 07 14 22 27 05`, der mit dem Schlüssel (5, 2) erzeugt wurde.", "be": 4,
+       "erwartung": [
+        {"punkt": "inverser Schlüssel d = 6 (5 · 6 = 30 ≡ 1) aus der Tabelle", "afb": "I", "be": 1},
+        {"punkt": "Rechnungen d · (c − 2) mod 29: 28 → 6 · 26 = 156 mod 29 = 11; 19 → 6 · 17 = 102 mod 29 = 15; 05 → 6 · 3 = 18; 18 → 96 mod 29 = 9; 07 → 30 mod 29 = 1; 14 → 72 mod 29 = 14; 22 → 120 mod 29 = 4; 27 → 150 mod 29 = 5; 05 → 18", "afb": "II", "be": 2},
+        {"punkt": "Klartext **koriander** (k, o, r, i, a, n, d, e, r)", "afb": "I", "be": 1}],
+       "fehler": "mit m statt d multipliziert oder erst multipliziert, dann t abgezogen (P3); negativer Wert c − t ohne + 29 (P2); Zählbasis A = 0 (P1)."},
+      {"bez": "c)", "text": "**Entscheiden Sie begründet**, ob SAFRAN-29 ein Transpositions- oder ein Substitutionsverfahren ist und ob es mono- oder polyalphabetisch arbeitet.", "be": 2,
+       "erwartung": [
+        {"punkt": "Substitution: Buchstaben werden durch Zahlen ersetzt, die Reihenfolge bleibt", "afb": "I", "be": 1},
+        {"punkt": "monoalphabetisch: derselbe Buchstabe ergibt bei festem Schlüssel immer dieselbe Zahl (z. B. e in „pfeffer“ mit dem Schlüssel (3, 7) immer 22)", "afb": "I", "be": 1}],
+       "fehler": "„polyalphabetisch, weil Zahlen statt Buchstaben“ (P5); Einordnung ohne Kriterium."},
+      {"bez": "d)", "text": "**Begründen Sie**, dass bei SAFRAN-29 jeder Faktor m ∈ {1, …, 28} eine eindeutige Entschlüsselung erlaubt, und **zeigen Sie** an einem Gegenbeispiel, dass dies bei einer Variante mit dem Modul 26 (Nummerierung A = 1 … Z = 26) für m = 2 nicht gilt.", "be": 4,
+       "erwartung": [
+        {"punkt": "29 ist eine Primzahl → ggT(m, 29) = 1 für alle m ∈ {1, …, 28} → Inverses d existiert, p ↦ c ist umkehrbar (verschiedene p liefern verschiedene c)", "afb": "III", "be": 2},
+        {"punkt": "Gegenbeispiel mod 26, m = 2: A (1) → 2, N (14) → 28 mod 26 = 2 → gleiche Zahl, nicht eindeutig", "afb": "II", "be": 2}],
+       "fehler": "nur „29 ist prim“ ohne Folgerung; Gegenbeispiel ohne konkrete Buchstaben (P10)."},
+      {"bez": "e)", "text": "**Bestimmen Sie** die Anzahl der Schlüssel von SAFRAN-29 und **beurteilen Sie** die Sicherheit gegenüber einem Brute-Force-Angriff.", "be": 3,
+       "erwartung": [
+        {"punkt": "28 · 29 = **812** Schlüssel (schwach: (1, 0) lässt die Nummern unverändert, m = 1 ist reine Verschiebung)", "afb": "II", "be": 1},
+        {"punkt": "Mit Rechner sofort durchprobiert, von Hand mühsam, aber unnötig (siehe f); Urteil: unsicher", "afb": "II", "be": 2}],
+       "fehler": "28 · 28 oder 26! (P7)."},
+      {"bez": "f)", "text": "Die Konkurrenz hat viele lange Bestelllisten abgefangen. Die häufigste Zahl ist 22, die zweithäufigste 20. **Erläutern Sie**, wie man daraus den Schlüssel gewinnen kann, und **bestimmen Sie** ihn unter der Annahme, dass 22 für E und 20 für N steht.", "be": 5,
+       "erwartung": [
+        {"punkt": "Monoalphabetisch → Häufigkeiten bleiben erhalten; häufigste Zahl ≙ e, zweithäufigste ≙ n; Voraussetzung: lange Texte, Sprache bekannt", "afb": "II", "be": 2},
+        {"punkt": "Gleichungen 5m + t ≡ 22, 14m + t ≡ 20 (mod 29) → 9m ≡ −2 ≡ 27 → m = 13 · 27 = 351 mod 29 = 3 (9^−1^ = 13 aus der Tabelle); t = 22 − 15 = 7 → **(3, 7)**", "afb": "III", "be": 2},
+        {"punkt": "Probe: n → 3 · 14 + 7 = 49 mod 29 = 20 ✔", "afb": "III", "be": 1}],
+       "alternativen": "Probieren von m mit der Bedingung 9m ≡ 27 (m = 3 sofort sichtbar, da 9 · 3 = 27) – volle Punktzahl.",
+       "fehler": "Gleichungssystem mit A = 0 aufgestellt (P1); negativer Rest −2 nicht in 27 umgewandelt (P2); nur „Häufigkeitsanalyse“ ohne Vorgehen (P10)."},
+      {"bez": "g)", "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Wendet man SAFRAN-29 zweimal hintereinander mit den Schlüsseln (m~1~, t~1~) und (m~2~, t~2~) an (die zweite Anwendung auf die Zahlen der ersten), wird das Verfahren deutlich sicherer.“", "be": 3,
+       "erwartung": [
+        {"punkt": "Falsch: c~2~ = m~2~ · (m~1~ · p + t~1~) + t~2~ = (m~2~m~1~) · p + (m~2~t~1~ + t~2~) mod 29 – wieder SAFRAN-29 mit dem Schlüssel (m~1~m~2~ mod 29, (m~2~t~1~ + t~2~) mod 29); z. B. (3, 7) dann (2, 5) = (6, 19)", "afb": "II", "be": 2},
+        {"punkt": "Schlüsselraum bleibt 812, Häufigkeitsanalyse wirkt unverändert → kein Sicherheitsgewinn", "afb": "II", "be": 1}],
+       "fehler": "„doppelt so viele Schlüssel“ bzw. „812² Schlüssel“ (P8)."}
+     ]}
+  ],
+  "notenschluessel": [[15, 23], [14, 22], [13, 21], [12, 20], [11, 18], [10, 17], [9, 16], [8, 15], [7, 14], [6, 12], [5, 11], [4, 10], [3, 8], [2, 7], [1, 5], [0, 0]],
+  "schlusszeile": "Viel Erfolg!"
+}

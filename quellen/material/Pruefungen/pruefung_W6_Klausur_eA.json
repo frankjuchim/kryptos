@@ -1,0 +1,1357 @@
+{
+ "typ": "pruefung",
+ "welt": 6,
+ "kennung": "KLAUSUR eA",
+ "titel": "DOMINO · Das Wetternetz",
+ "datei": "KR_W6_Klausur_eA",
+ "niveau": "eA",
+ "zeile1": "KRYPTOS · INFORMATIK · KRYPTOLOGIE",
+ "zeit": "135 Minuten",
+ "hilfsmittel": "ausschließlich die Anlage der Ergänzenden Hinweise zum KC Informatik (Juni 2025) in ausgedruckter Form: Alphabet mit Nummerierung (A = 1 … Z = 26), Vigenère-Quadrat, ASCII-Tabelle (Auszug 32–126) – im Kurs als Werkzeugkarte WK1 ausgegeben, liegt dieser Prüfung als Anlage bei. Kein Taschenrechner, keine Formelsammlung, keine eigenen Notizen.",
+ "info": [
+  [
+   "Prüfung",
+   "Klausur · Informatik · erhöhtes Anforderungsniveau (eA)"
+  ],
+  [
+   "Thema",
+   "Kryptologie – Kryptos · Die Zeitreise der Geheimschriften"
+  ],
+  [
+   "Name",
+   "[[luecke:44]]"
+  ],
+  [
+   "Kurs",
+   "[[luecke:16]]"
+  ],
+  [
+   "Datum",
+   "[[luecke:16]]"
+  ],
+  [
+   "Bewertungsgrundsätze",
+   "Bewertet wird nach Kernpunkten; gleichwertige, fachlich richtige Alternativen werden voll anerkannt. **Folgefehler:** Wer mit einem falschen Zwischenergebnis korrekt weiterrechnet, erhält für die Folgeschritte volle Punkte (außer das Ergebnis wird dadurch trivial). „Beurteilen“ ohne ausdrückliches Urteil sowie „begründen/erläutern“ ohne kausale Verknüpfung bzw. ohne Beispiel: höchstens die Hälfte der BE. „Entscheiden (begründet)“: Entscheidung ohne Begründung bzw. Begründung mit falscher Entscheidung: 0 BE. Fachbegriffe werden erwartet."
+  ]
+ ],
+ "hinweise": [
+  {
+   "t": "hinweis",
+   "kopf": "HINWEISE",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Die Klausur besteht aus zwei Aufgaben im Format des Abiturs (Block 2). Bearbeiten Sie beide Aufgaben. Planen Sie für jede Aufgabe etwa 65 Minuten ein.",
+      "Bearbeiten Sie alle Teilaufgaben auf dem ausgegebenen Papier. Vorlagen im Material füllen Sie direkt aus; geben Sie das Material mit ab.",
+      "Notieren Sie Klartexte in Kleinbuchstaben, Geheimtexte in GROSSBUCHSTABEN.",
+      "Dokumentieren Sie Rechenwege nachvollziehbar; Ergebnisse ohne Rechenweg erhalten nur Teilpunkte.",
+      "Zeitplanung: etwa 2,25 min je BE; planen Sie 5 min zur Kontrolle ein."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Viel Erfolg!**",
+   "zentriert": true,
+   "vor": 4,
+   "nach": 8
+  },
+  {
+   "t": "h",
+   "md": "Bewertung (von der Lehrkraft auszufüllen)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Teilaufgabe",
+    "a)",
+    "b)",
+    "c)",
+    "d)",
+    "e)",
+    "f)",
+    "g)",
+    "h)",
+    "i)",
+    "j)",
+    "Summe"
+   ],
+   "zeilen": [
+    [
+     "Aufg. 1 · max. BE",
+     "3",
+     "4",
+     "4",
+     "4",
+     "3",
+     "3",
+     "4",
+     "3",
+     "2",
+     "–",
+     "**30**"
+    ],
+    [
+     "Aufg. 1 · erreicht",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "–",
+     "\n"
+    ],
+    [
+     "Aufg. 2 · max. BE",
+     "2",
+     "4",
+     "3",
+     "3",
+     "3",
+     "3",
+     "3",
+     "3",
+     "3",
+     "3",
+     "**30**"
+    ],
+    [
+     "Aufg. 2 · erreicht",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n"
+    ]
+   ],
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 9.5,
+   "breiten": [
+    3.4,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.1800000000000002,
+    1.6
+   ]
+  },
+  {
+   "t": "p",
+   "vor": 6,
+   "md": "Gesamt: [[luecke:8]] von 60 BE      Notenpunkte: [[luecke:8]]      Datum, Unterschrift: [[luecke:20]]"
+  },
+  {
+   "t": "seitenumbruch"
+  }
+ ],
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "DOMINO",
+   "material": [
+    {
+     "t": "p",
+     "md": "Ein Brettspielverein verschickt Einladungen zu seinen Turnieren. Damit die Austragungsorte erst kurz vor dem Turnier bekannt werden, verschlüsselt der Vorstand sie mit dem symmetrischen Verfahren DOMINO. DOMINO verschlüsselt Texte, die nur aus den Zeichen A bis Z bestehen, immer paarweise. Die Arbeitsweise ist in Abbildung 1 im Material beschrieben."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen** Sie den Geheimtext zum Klartext „wuerfel“ mit dem Schlüssel s = 9.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Paare `WU ER FE LX` (X angehängt, da 7 Zeichen)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "WU: 23 + 21 + 9 = 53 → 1 A; 1 + 21 = 22 V · ER: 5 + 18 + 9 = 32 → 6 F; 6 + 18 = 24 X · FE: 6 + 5 + 9 = 20 T; 20 + 5 = 25 Y · LX: 12 + 24 + 9 = 45 → 19 S; 19 + 24 = 43 → 17 Q",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Geheimtext **`AVFXT YSQ`**",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "X vergessen (P4); g2 = g1 + x statt g1 + y (P4); 53 mod 26 falsch (P2)."
+    },
+    {
+     "bez": "b)",
+     "text": "**Bestimmen** Sie den Klartext zum Geheimtext `GJTUV DYZYS`, der mit dem Schlüssel s = 11 erzeugt wurde. Verwenden Sie die Vorlage in Abbildung 2.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Umkehrung hergeleitet: aus g2 = g1 + y folgt y = (g2 − g1) mod 26, aus g1 = x + y + s folgt x = (g1 − y − s) mod 26, jeweils Rest 0 → 26; **y muss vor x bestimmt werden**",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "GJ (7, 10): y = 3 C, x = 7 − 3 − 11 = −7 → 19 S · TU (20, 21): y = 1 A, x = 8 H · VD (22, 4): y = −18 → 8 H, x = 22 − 8 − 11 = 3 C · YZ (25, 26): y = 1 A, x = 13 M · YS (25, 19): y = −6 → 20 T, x = 25 − 20 − 11 = −6 → 20 T",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "Klartext **schachmatt**",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "s addiert statt subtrahiert (P3); negative Reste (P2); x vor y berechnet und dabei y „geraten“ (P3)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden** Sie begründet, ob es sich bei DOMINO um eine Transposition oder um eine Substitution handelt.\n**Untersuchen** Sie außerdem, ob DOMINO bezogen auf einzelne Buchstaben bzw. bezogen auf Buchstabenpaare monoalphabetisch arbeitet.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Substitution: Die Zeichen werden durch berechnete andere Zeichen ersetzt, die Reihenfolge der Paare bleibt erhalten",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Paare: Bei festem s wird jedes Klartextpaar stets in dasselbe Geheimtextpaar überführt, und aus jedem Geheimtextpaar lässt sich das Klartextpaar eindeutig zurückrechnen → monoalphabetische Substitution von Buchstabenpaaren (bigraphische Substitution)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Einzelbuchstaben: Ein Geheimtextbuchstabe hängt von beiden Buchstaben des Paares ab; derselbe Klartextbuchstabe wird je nach Partner verschieden verschlüsselt, z. B. Abbildung 1: E in IE → W, E in RE → F; TT → RL",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Bezogen auf einzelne Buchstaben arbeitet DOMINO also **nicht** monoalphabetisch",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Transposition, weil Paare gebildet werden“ (P5); „polyalphabetisch“ ohne Unterscheidung der Ebenen (P5)."
+    },
+    {
+     "bez": "d)",
+     "text": "**Erläutern** Sie, warum eine Häufigkeitsanalyse der einzelnen Geheimtextbuchstaben bei DOMINO kaum weiterhilft und wie stattdessen eine Häufigkeitsanalyse von Buchstabenpaaren eingesetzt werden kann. Gehen Sie dabei auch auf die Voraussetzungen ein.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Einzelbuchstaben: Die Häufigkeit eines Geheimtextbuchstabens hängt von vielen verschiedenen Klartextpaaren ab; die typische Verteilung des Deutschen (E, N, I …) bleibt nicht erhalten, eine Zuordnung Buchstabe ↔ Buchstabe ist nicht möglich",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Paare: Da Paare monoalphabetisch verschlüsselt werden, bleibt die Häufigkeitsverteilung der Klartextpaare erhalten",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Man zählt die Geheimtextpaare (nur an den Paarpositionen 1–2, 3–4, …) und ordnet die häufigsten den häufigsten deutschen Bigrammen zu (z. B. EN, ER, CH, EI, DE)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Voraussetzungen: genügend langer Geheimtext (es gibt 676 mögliche Paare – mehrere hundert Zeichen nötig), bekannte Sprache, korrekte Paargrenzen; ein sicher zugeordnetes Paar liefert bereits s",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Häufigkeitsanalyse funktioniert immer“ ohne Begründung (P6); Bigramme über die Paargrenzen hinweg gezählt (P4)."
+    },
+    {
+     "bez": "e)",
+     "text": "Eve hat den Geheimtext in Abbildung 3 abgefangen. Sie weiß, dass Einladungen des Vereins stets mit dem Wort „das“ beginnen.\n**Bestimmen** Sie den Schlüssel s und überprüfen Sie Ihr Ergebnis mit dem zweiten Geheimtextzeichen.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Erstes Paar „da“ (x = 4, y = 1) ↔ Geheimtextpaar `VW`: 22 = (4 + 1 + s) mod 26",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "s = 17",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Probe: g2 = (22 + 1) mod 26 = 23 = W ✓",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "alternativen": "zweites Paar „s?“ nicht nötig; Ausprobieren aller s mit Probe ist gleichwertig.",
+     "fehler": "Werte mit A = 0 (P1); s = 22 − 4 − 1 = 17 ohne Probe (−1 BE)."
+    },
+    {
+     "bez": "f)",
+     "text": "**Beurteilen** Sie die Sicherheit des Verfahrens DOMINO.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Kriterien (mindestens zwei, je mit Begründung): nur 26 Schlüssel → Brute Force in Minuten; Known-Plaintext: ein bekanntes Klartextpaar verrät s (vgl. e)); Bigramm-Häufigkeitsanalyse bei langen Texten; nach Kerckhoffs ist das Verfahren bekannt, die Sicherheit liegt allein im Schlüssel",
+       "afb": "III",
+       "be": 2
+      },
+      {
+       "punkt": "Urteil: DOMINO ist unsicher und schützt nur gegen zufällige Mitleser",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "Urteil fehlt (P10); „sicher, weil Paare“ (P8).",
+     "material": [
+      {
+       "t": "p",
+       "md": "Der Vorstand möchte das Verfahren verbessern und schlägt DOMINO-PLUS vor (Abbildung 4).",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "g)",
+     "text": "**Entscheiden** Sie für die folgenden Aussagen jeweils begründet, ob sie korrekt oder falsch sind.\n(1) DOMINO-PLUS mit dem Schlüsselwort HHHH bietet keinen Sicherheitsgewinn gegenüber DOMINO.\n(2) Bei DOMINO-PLUS werden gleiche Klartextpaare stets in gleiche Geheimtextpaare verschlüsselt.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "(1) **korrekt**: H hat den Wert 8, also s = 7 für jedes Paar; DOMINO-PLUS mit HHHH ist identisch mit DOMINO mit s = 7 (z. B. „eineeine“ ergibt in beiden Fällen `UDZEU DZE`); Schlüsselraum und Angriffe wie bei DOMINO",
+       "afb": "II",
+       "be": 2
+      },
+      {
+       "punkt": "(2) **falsch**: Der Schlüssel s hängt von der Paarnummer ab; gleiche Paare an Stellen mit verschiedenen Schlüsselbuchstaben werden verschieden verschlüsselt",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) Gegenbeispiel: Schlüsselwort RAT, Klartext „eineeine“: 1. Paar EI mit R (s = 17) → `EN`, 3. Paar EI mit T (s = 19) → `GP`. Gleich sind sie nur, wenn die Schlüsselbuchstaben übereinstimmen (z. B. Abstand ein Vielfaches der Schlüsselwortlänge)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "bei (1) „falsch, weil ein Schlüsselwort verwendet wird“ (P7/P8); bei (2) Begründung nur mit DOMINO statt DOMINO-PLUS (P10)."
+    },
+    {
+     "bez": "h)",
+     "text": "Abbildung 5 zeigt ein unvollständiges Struktogramm der Operation dominoPaar, die ein Klartextpaar mit DOMINO verschlüsselt.\n**Ergänzen** Sie das Struktogramm an den Stellen (1), (2) und (3).",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "(1) ASCII-Wert von x − 64",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "(2) g1 ← 26",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "(3) gib (Zeichen zum ASCII-Wert g1 + 64) verbunden mit (Zeichen zum ASCII-Wert g2 + 64) zurück",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "− 65 (P1); Rückgabe einer Zahl statt einer Zeichenkette; Java-Syntax (`charAt`, `%`) im Struktogramm (Notation EH §5); `return` ohne „gib … zurück“."
+    },
+    {
+     "bez": "i)",
+     "text": "**Erläutern** Sie eine Veränderung von DOMINO, durch die eine Häufigkeitsanalyse von Buchstabenpaaren erschwert wird.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Eine Veränderung beschreiben, z. B. DOMINO-PLUS mit langem, zufälligem Schlüsselwort; Verkettung (s für Paar j ist der Wert von g2 des vorherigen Paares, wie CBC); zusätzliche schlüsselabhängige Transposition vor DOMINO",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Wirkung auf die Paarstatistik begründen: gleiche Paare werden verschieden verschlüsselt bzw. die Paarstatistik zerfällt in viele kurze Teiltexte bzw. die Klartextpaare werden auseinandergerissen",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„doppelt mit zwei Schlüsseln verschlüsseln“ ohne Prüfung – zweimal DOMINO ist wieder eine monoalphabetische Paarsubstitution, die Paarstatistik bleibt (P8).",
+     "material": [
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Material zu Aufgabe 1"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 1: Beschreibung des Verfahrens DOMINO**"
+      },
+      {
+       "t": "p",
+       "md": "Nummerierung: A = 1, B = 2, …, Z = 26. Schlüssel: eine Zahl s ∈ {0, 1, …, 25}."
+      },
+      {
+       "t": "liste",
+       "nummeriert": true,
+       "items": [
+        "Der Klartext wird von links beginnend in Paare zerlegt. Hat der Klartext eine ungerade Anzahl von Zeichen, wird ein X angehängt.",
+        "Für jedes Paar mit den Werten x (erstes Zeichen) und y (zweites Zeichen) werden zwei Geheimtextzeichen berechnet:\n– erstes Geheimtextzeichen: **g1 = (x + y + s) mod 26**\n– zweites Geheimtextzeichen: **g2 = (g1 + y) mod 26**\nDabei steht mod für den Rest bei der Division durch 26; ergibt sich der Rest 0, wird stattdessen 26 (Z) verwendet.",
+        "Die Geheimtextpaare werden in der Reihenfolge der Klartextpaare notiert."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* Klartext „spielbrett“, s = 4.",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10,
+       "breiten": [
+        3.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6
+       ],
+       "zeilen": [
+        [
+         "Klartextpaar",
+         "`SP`",
+         "`IE`",
+         "`LB`",
+         "`RE`",
+         "`TT`"
+        ],
+        [
+         "x, y",
+         "19, 16",
+         "9, 5",
+         "12, 2",
+         "18, 5",
+         "20, 20"
+        ],
+        [
+         "x + y + s",
+         "39",
+         "18",
+         "18",
+         "27",
+         "44"
+        ],
+        [
+         "g1",
+         "13 → M",
+         "18 → R",
+         "18 → R",
+         "1 → A",
+         "18 → R"
+        ],
+        [
+         "g1 + y",
+         "29",
+         "23",
+         "20",
+         "6",
+         "38"
+        ],
+        [
+         "g2",
+         "3 → C",
+         "23 → W",
+         "20 → T",
+         "6 → F",
+         "12 → L"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: `MCRWR TAFRL`"
+      },
+      {
+       "t": "abstand",
+       "pt": 4
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 2: Vorlage zu Teilaufgabe b)** (Geheimtext `GJTUV DYZYS`, s = 11)"
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10,
+       "breiten": [
+        3.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6
+       ],
+       "zeilen": [
+        [
+         "Geheimtextpaar",
+         "`GJ`",
+         "`TU`",
+         "`VD`",
+         "`YZ`",
+         "`YS`"
+        ],
+        [
+         "g1, g2 (Werte)",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "y",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "x",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "Klartextpaar",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ]
+       ]
+      },
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 3: Abgefangener Geheimtext**",
+       "nach": 2
+      },
+      {
+       "t": "geheimtext",
+       "text": "VWCVPYHTXCGPSGIG"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 4: DOMINO-PLUS**"
+      },
+      {
+       "t": "p",
+       "md": "Statt einer Zahl s wird ein Schlüsselwort verwendet, das zyklisch wiederholt wird. Für das j-te Klartextpaar wird der j-te Buchstabe des (wiederholten) Schlüsselworts benutzt; s ist der Wert dieses Buchstabens minus 1 (A → 0, B → 1, …, Z → 25). Sonst wird wie bei DOMINO verschlüsselt."
+      },
+      {
+       "t": "abstand",
+       "pt": 4
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 5: Struktogramm der Operation dominoPaar** (Darstellung nach den Ergänzenden Hinweisen §5)",
+       "nach": 0
+      },
+      {
+       "t": "struktogramm",
+       "breite_cm": 15.5,
+       "kopf": "dominoPaar(x: Zeichen, y: Zeichen, s: Ganzzahl): Zeichenkette",
+       "elemente": [
+        {
+         "kommentar": "Werte nach der Nummerierung A = 1 … Z = 26 bestimmen"
+        },
+        {
+         "anw": "wx ← (1) ________________________________________"
+        },
+        {
+         "anw": "wy ← ASCII-Wert von y − 64"
+        },
+        {
+         "anw": "g1 ← (wx + wy + s) mod 26"
+        },
+        {
+         "wenn": "g1 = 0 ?",
+         "dann": [
+          {
+           "anw": "(2) ______________________"
+          }
+         ],
+         "sonst": []
+        },
+        {
+         "anw": "g2 ← (g1 + wy) mod 26"
+        },
+        {
+         "wenn": "g2 = 0 ?",
+         "dann": [
+          {
+           "anw": "g2 ← 26"
+          }
+         ],
+         "sonst": []
+        },
+        {
+         "anw": "(3) ______________________________________________________________________"
+        }
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Hinweis zur Anlage: Der ASCII-Wert von A ist 65, der von Z ist 90."
+      },
+      {
+       "t": "seitenumbruch"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "2",
+   "titel": "Das Wetternetz",
+   "material": [
+    {
+     "t": "p",
+     "md": "Sechs Schulen betreiben gemeinsam ein Netz aus sechs Wetterstationen. Jede Station sendet alle zehn Minuten ein Messtelegramm über das Internet an einen zentralen Server (im Folgenden: die Zentrale), der die Daten auswertet und veröffentlicht. Die Messwerte werden auch für ein Unwetter-Warnsystem der Gemeinde genutzt."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Nennen** Sie die drei Schutzziele Vertraulichkeit, Integrität und Authentizität und **geben** Sie zu jedem Schutzziel **an**, was im Wetternetz damit gesichert werden soll.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Vertraulichkeit: nur die Zentrale kann die (z. B. archivierten) Messdaten lesen; Integrität: Messwerte werden unterwegs nicht verändert (sonst falsche Unwetterwarnung); Authentizität: das Telegramm stammt wirklich von der angegebenen Station (alle drei korrekt zugeordnet: 2 BE, zwei: 1 BE)",
+       "afb": "I",
+       "be": 2
+      }
+     ],
+     "fehler": "Integrität und Authentizität vertauscht."
+    },
+    {
+     "bez": "b)",
+     "text": "Zunächst soll jede der sieben Beteiligten (sechs Stationen und die Zentrale) mit jeder anderen verschlüsselt kommunizieren können.\n**Berechnen** Sie die Anzahl der benötigten Schlüssel für ein symmetrisches und für ein asymmetrisches Verfahren. **Begründen** Sie allgemein, ab welcher Anzahl von Beteiligten ein asymmetrisches Verfahren weniger Schlüssel benötigt als ein symmetrisches.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "symmetrisch: n(n − 1)/2 = 7 · 6/2 = **21** Schlüssel; asymmetrisch: 2n = **14** Schlüssel (7 Schlüsselpaare)",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "Vergleich: n(n − 1)/2 > 2n ⇔ n − 1 > 4 ⇔ n > 5; bei n = 5 sind beide 10, ab n = 6 benötigt das asymmetrische Verfahren weniger (15 > 12)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Begründung des Wachstums: symmetrisch braucht jedes Paar einen eigenen geheimen Schlüssel (quadratisches Wachstum), asymmetrisch bringt jede Person genau ein Paar mit (lineares Wachstum)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "n(n − 1) statt n(n − 1)/2; „asymmetrisch n Schlüssel“ (Schlüsselpaar als ein Schlüssel) (P7)."
+    },
+    {
+     "bez": "c)",
+     "text": "Einmal täglich sendet jede Station zusätzlich ein großes Archiv aller Rohdaten vertraulich an die Zentrale.\n**Beschreiben** Sie, wie dies mit einem Hybridverfahren geschieht, und **begründen** Sie, warum man das Archiv nicht rein asymmetrisch verschlüsselt.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Station erzeugt einen zufälligen symmetrischen Sitzungsschlüssel, verschlüsselt das Archiv symmetrisch damit und den Sitzungsschlüssel mit dem **öffentlichen Schlüssel der Zentrale**; beides wird gesendet",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Die Zentrale entschlüsselt den Sitzungsschlüssel mit ihrem **privaten** Schlüssel und damit das Archiv",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Begründung: asymmetrische Verfahren sind um Größenordnungen langsamer und für große Datenmengen ungeeignet; das Hybridverfahren verbindet die Geschwindigkeit symmetrischer Verfahren mit dem Schlüsselaustausch ohne geheimen Kanal",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Sitzungsschlüssel mit dem eigenen privaten Schlüssel verschlüsselt (P9).",
+     "material": [
+      {
+       "t": "p",
+       "md": "Zur Sicherung der Integrität wird zu jedem Telegramm ein Prüfwert gebildet (Abbildung 1).",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Bestimmen** Sie den WETTER-Prüfwert des Telegramms 1905.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "h~1~ = (10 + 1) mod 17 = 11; h~2~ = (55 + 9) mod 17 = 64 mod 17 = 13; h~3~ = (65 + 0) mod 17 = 14 (drei Zwischenwerte korrekt)",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "h~4~ = (70 + 5) mod 17 = 75 mod 17 = 7; Prüfwert **7**",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "mit h~0~ = 0 begonnen (P4); d~i~ multipliziert statt addiert (P4); 64 mod 17 oder 75 mod 17 falsch (P2)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Zeigen** Sie, dass die Telegramme 2317 und 2322 denselben WETTER-Prüfwert besitzen, und **begründen** Sie, dass es bei jeder Hashfunktion mit fester Ausgabelänge solche Kollisionen geben muss.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "2322: h~1~ = 12, h~2~ = 12, h~3~ = (60 + 2) mod 17 = 11, h~4~ = (55 + 2) mod 17 = 57 mod 17 = 6 = Prüfwert von 2317",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Allgemein: Es gibt 10 000 mögliche Telegramme, aber nur 17 Prüfwerte – nach dem Schubfachprinzip haben mindestens ⌈10 000 / 17⌉ = 589 Telegramme denselben Prüfwert",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Jede Hashfunktion bildet beliebig viele (bzw. sehr viele) Nachrichten auf eine feste Anzahl von Hashwerten ab; Kollisionen sind daher unvermeidbar, man kann sie nur schwer **findbar** machen",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Kollisionen entstehen nur bei schlechten Hashfunktionen“ (P9); Rechnung ohne allgemeine Begründung (P10).",
+     "material": [
+      {
+       "t": "p",
+       "md": "Die Stationen signieren ihre Telegramme. Abbildung 2 zeigt den Ablauf.",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "f)",
+     "text": "**Ergänzen** Sie in Abbildung 2 die Lücken (A) bis (D).",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "(A) privater Schlüssel der Station S; (B) öffentlicher Schlüssel der Station S (je 1 BE)",
+       "afb": "II",
+       "be": 2
+      },
+      {
+       "punkt": "(C) WETTER-Prüfwert des empfangenen Telegramms; (D) Vergleich h' = h'' (beide zusammen)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "(A) öffentlicher Schlüssel der Zentrale (P9)."
+    },
+    {
+     "bez": "g)",
+     "text": "**Erläutern** Sie, wie ein Angreifer Mallory die Kollision aus Teilaufgabe e) ausnutzen kann, obwohl die Telegramme signiert werden, und **nennen** Sie die Eigenschaft, die eine für Signaturen geeignete Hashfunktion besitzen muss.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Die Signatur ist nur an den Prüfwert gebunden; Mallory ersetzt das Telegramm 2317 durch 2322 und lässt die Signatur unverändert",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Die Zentrale berechnet für 2322 den Prüfwert 6 und erhält aus der Signatur ebenfalls 6 – die Prüfung gelingt, die Fälschung (Niederschlag 2 statt 7 mm, Windstärke 2 statt 1) bleibt unbemerkt",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Eigenschaft: Kollisionsresistenz – es muss praktisch unmöglich sein, zu einer Nachricht eine zweite mit demselben Hashwert zu finden (dafür u. a. großer Wertebereich, z. B. 256 Bit)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„Mallory fälscht die Signatur“ (P9); Eigenschaft „Einweg“ allein (nur mit Bezug auf das Finden einer zweiten Nachricht anerkannt)."
+    },
+    {
+     "bez": "h)",
+     "text": "Mallory gelingt es, sich zwischen eine neue Station und die Zentrale zu schalten, bevor diese ihre öffentlichen Schlüssel ausgetauscht haben.\n**Erläutern** Sie, wie Mallory dadurch gefälschte Telegramme unbemerkt einschleusen kann und wie Zertifikate dies verhindern.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "MitM: Mallory fängt den öffentlichen Schlüssel der Station ab und schickt der Zentrale seinen eigenen; die Zentrale hält Mallorys Schlüssel für den der Station",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Mallory signiert gefälschte Telegramme mit seinem privaten Schlüssel; die Zentrale prüft mit dem falschen öffentlichen Schlüssel und akzeptiert sie (Authentizität und Integrität ausgehebelt)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Zertifikat: Eine vertrauenswürdige Zertifizierungsstelle (CA, „Trent“) bestätigt mit ihrer Signatur die Zuordnung öffentlicher Schlüssel ↔ Station; die Zentrale prüft die CA-Signatur mit dem ihr bekannten öffentlichen Schlüssel der CA; Mallorys Schlüssel besitzt kein gültiges Zertifikat für diese Station",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„das Zertifikat zeigt, dass die Station vertrauenswürdig ist“ (P9); Zertifikat als Verschlüsselung (P9).",
+     "material": [
+      {
+       "t": "p",
+       "md": "Die Stationen sind kleine Mikrocontroller. Für die laufende Verschlüsselung ihrer Telegramme testet die Zentrale die Blockchiffre STURM-8 (Abbildung 3).",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "i)",
+     "text": "**Wenden** Sie STURM-8 auf den Klartextblock `0100 1011` mit dem Schlüssel K = `1001 0110` **an**. Verwenden Sie die Vorlage in Abbildung 3.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Runde 1: `0100 1011` ⊕ `1001 0110` = `1101 1101` → verschoben `1110 1110`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "K~2~ = `0010 1101`",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Runde 2: `1110 1110` ⊕ `0010 1101` = `1100 0011` → verschoben **`0001 1110`**",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "nach rechts verschoben (P3/P4); K~2~ = K verwendet (P4); Verschiebung vor XOR (P4)."
+    },
+    {
+     "bez": "j)",
+     "text": "**Begründen** Sie, dass STURM-8 die Eigenschaft der Diffusion nicht besitzt und dass sich daran auch durch weitere Runden desselben Aufbaus nichts ändert.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "XOR wirkt bitweise (jedes Ergebnisbit hängt nur vom Bit an derselben Stelle ab), die Verschiebung ändert nur Positionen; daher hängt jedes Geheimtextbit von genau einem Klartextbit ab",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Beleg: Kippt man im Block aus i) das erste Bit (`1100 1011`), ändert sich im Geheimtext nur das dritte Bit (`0011 1110` statt `0001 1110`) – Diffusion würde verlangen, dass sich viele (etwa die Hälfte) der Bits ändern",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Weitere Runden aus XOR und Verschiebung bleiben bitweise: Zwei Runden lassen sich sogar zu einer zusammenfassen, C = (P um 6 Stellen verschoben) ⊕ K~eff~; mehr Runden ändern daran nichts. Nötig ist ein Baustein, der mehrere Bits mischt (z. B. S-Box, Addition mit Übertrag)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "Diffusion mit Konfusion verwechselt; „mehr Runden = mehr Sicherheit“ (P8).",
+     "material": [
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Material zu Aufgabe 2"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 1: WETTER-Prüfwert**"
+      },
+      {
+       "t": "p",
+       "md": "Ein Telegramm besteht aus vier Ziffern d~1~ d~2~ d~3~ d~4~ (z. B. 2317: Temperatur 23 °C, Windstärke 1, Niederschlag 7 mm). Man beginnt mit h~0~ = 2 und berechnet nacheinander für i = 1, 2, 3, 4:"
+      },
+      {
+       "t": "formel",
+       "md": "h~i~ = (5 · h~i−1~ + d~i~) mod 17"
+      },
+      {
+       "t": "p",
+       "md": "Der Prüfwert ist h~4~ (eine Zahl von 0 bis 16). Hier steht mod für den Rest bei der Division durch 17."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel 2317:* h~1~ = (5 · 2 + 2) mod 17 = 12; h~2~ = (60 + 3) mod 17 = 63 mod 17 = 12; h~3~ = (60 + 1) mod 17 = 61 mod 17 = 10; h~4~ = (50 + 7) mod 17 = 57 mod 17 = 6. Prüfwert: 6"
+      },
+      {
+       "t": "abstand",
+       "pt": 4
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 2: Signieren und Prüfen eines Telegramms** (Station S → Zentrale Z)",
+       "nach": 0
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Station S",
+        "",
+        "Zentrale Z"
+       ],
+       "schrift": 10.5,
+       "breiten": [
+        1.0,
+        7.2,
+        1.4,
+        7.2
+       ],
+       "zeilen": [
+        [
+         "(1)",
+         "h ← WETTER-Prüfwert(Telegramm)",
+         "",
+         ""
+        ],
+        [
+         "(2)",
+         "sig ← h verschlüsselt mit\n(A) [[luecke:34]]",
+         "",
+         ""
+        ],
+        [
+         "(3)",
+         "**Telegramm und sig** senden",
+         "→",
+         "(empfängt Telegramm und sig)"
+        ],
+        [
+         "(4)",
+         "",
+         "",
+         "h' ← sig entschlüsselt mit\n(B) [[luecke:34]]"
+        ],
+        [
+         "(5)",
+         "",
+         "",
+         "h'' ← (C) [[luecke:28]]"
+        ],
+        [
+         "(6)",
+         "",
+         "",
+         "(D) [[luecke:34]]\n→ Telegramm ist echt und unverändert"
+        ]
+       ]
+      },
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 3: Blockchiffre STURM-8**"
+      },
+      {
+       "t": "p",
+       "md": "Ein Block besteht aus 8 Bit, der Schlüssel K ebenfalls aus 8 Bit. Rundenschlüssel: K~1~ = K; K~2~ = K, zyklisch um eine Stelle nach links verschoben. Jede Runde r (r = 1, 2) besteht aus zwei Schritten:\n(1) Block ⊕ K~r~ (bitweises XOR: 0 ⊕ 0 = 0, 0 ⊕ 1 = 1, 1 ⊕ 0 = 1, 1 ⊕ 1 = 0);\n(2) das Ergebnis zyklisch um drei Stellen nach links verschieben (die drei linken Bits werden rechts angehängt).\nDas Ergebnis von Runde 2 ist der Geheimtextblock."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* Klartextblock `0101 0111` (ASCII „W“), K = `1010 0110`, K~2~ = `0100 1101`.",
+       "nach": 2
+      },
+      {
+       "t": "zweispaltig",
+       "links": [
+        {
+         "t": "p",
+         "md": "**Runde 1**",
+         "nach": 0
+        },
+        {
+         "t": "bits",
+         "zeilen": [
+          {
+           "label": "Block",
+           "bits": "0101 0111"
+          },
+          {
+           "label": "⊕ K~1~",
+           "bits": "1010 0110"
+          },
+          {
+           "label": "=",
+           "bits": "1111 0001",
+           "strich": true
+          },
+          {
+           "label": "3 nach links",
+           "bits": "1000 1111"
+          }
+         ]
+        }
+       ],
+       "rechts": [
+        {
+         "t": "p",
+         "md": "**Runde 2**",
+         "nach": 0
+        },
+        {
+         "t": "bits",
+         "zeilen": [
+          {
+           "label": "Block",
+           "bits": "1000 1111"
+          },
+          {
+           "label": "⊕ K~2~",
+           "bits": "0100 1101"
+          },
+          {
+           "label": "=",
+           "bits": "1100 0010",
+           "strich": true
+          },
+          {
+           "label": "3 nach links",
+           "bits": "0001 0110"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Geheimtextblock: `0001 0110`"
+      },
+      {
+       "t": "p",
+       "md": "*Vorlage zu i):* Block `0100 1011`, K = `1001 0110`",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Runde 1",
+        "Runde 2"
+       ],
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 11,
+       "breiten": [
+        4.8,
+        5.0,
+        5.0
+       ],
+       "zeilen": [
+        [
+         "Block vor der Runde",
+         "`0100 1011`",
+         "\n"
+        ],
+        [
+         "Rundenschlüssel",
+         "`1001 0110`",
+         "\n"
+        ],
+        [
+         "nach XOR",
+         "\n",
+         "\n"
+        ],
+        [
+         "nach Verschiebung",
+         "\n",
+         "\n"
+        ]
+       ]
+      },
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Anlage"
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Auszug aus der Anlage zu den Ergänzenden Hinweisen zum Kerncurriculum Informatik (Juni 2025), Abschnitt „ASCII-Tabelle / Vigenère-Quadrat / Alphabet mit Nummerierung“ – in ausgedruckter Form als Hilfsmittel zugelassen."
+      },
+      {
+       "t": "p",
+       "md": "**Alphabet mit Nummerierung**",
+       "nach": 2
+      },
+      {
+       "t": "alphabet",
+       "nummerierung": 1
+      },
+      {
+       "t": "p",
+       "md": "**Vigenère-Quadrat**",
+       "nach": 0
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Kopfzeile: Klartextbuchstabe · Kopfspalte: Schlüsselbuchstabe · Kreuzung: Geheimtextbuchstabe"
+      },
+      {
+       "t": "quadrat",
+       "art": "vigenere"
+      },
+      {
+       "t": "p",
+       "md": "**ASCII-Tabelle (Auszug 32–126)**",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen"
+       ],
+       "zeilen": [
+        [
+         "32 ␣",
+         "33 !",
+         "34 \"",
+         "35 #",
+         "36 $",
+         "37 %",
+         "38 &",
+         "39 '"
+        ],
+        [
+         "40 (",
+         "41 )",
+         "42 *",
+         "43 +",
+         "44 ,",
+         "45 -",
+         "46 .",
+         "47 /"
+        ],
+        [
+         "**48 0**",
+         "**49 1**",
+         "**50 2**",
+         "**51 3**",
+         "**52 4**",
+         "**53 5**",
+         "**54 6**",
+         "**55 7**"
+        ],
+        [
+         "**56 8**",
+         "**57 9**",
+         "58 :",
+         "59 ;",
+         "60 <",
+         "61 =",
+         "62 >",
+         "63 ?"
+        ],
+        [
+         "64 @",
+         "**65 A**",
+         "**66 B**",
+         "**67 C**",
+         "**68 D**",
+         "**69 E**",
+         "**70 F**",
+         "**71 G**"
+        ],
+        [
+         "**72 H**",
+         "**73 I**",
+         "**74 J**",
+         "**75 K**",
+         "**76 L**",
+         "**77 M**",
+         "**78 N**",
+         "**79 O**"
+        ],
+        [
+         "**80 P**",
+         "**81 Q**",
+         "**82 R**",
+         "**83 S**",
+         "**84 T**",
+         "**85 U**",
+         "**86 V**",
+         "**87 W**"
+        ],
+        [
+         "**88 X**",
+         "**89 Y**",
+         "**90 Z**",
+         "91 [",
+         "92 \\",
+         "93 ]",
+         "94 ^",
+         "95 _"
+        ],
+        [
+         "96 `",
+         "97 a",
+         "98 b",
+         "99 c",
+         "100 d",
+         "101 e",
+         "102 f",
+         "103 g"
+        ],
+        [
+         "104 h",
+         "105 i",
+         "106 j",
+         "107 k",
+         "108 l",
+         "109 m",
+         "110 n",
+         "111 o"
+        ],
+        [
+         "112 p",
+         "113 q",
+         "114 r",
+         "115 s",
+         "116 t",
+         "117 u",
+         "118 v",
+         "119 w"
+        ],
+        [
+         "120 x",
+         "121 y",
+         "122 z",
+         "123 {",
+         "124 |",
+         "125 }",
+         "126 ~",
+         ""
+        ]
+       ],
+       "mono": true,
+       "zentriert": true,
+       "schrift": 9,
+       "breiten": [
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1
+       ]
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "␣ = Leerzeichen"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   57
+  ],
+  [
+   14,
+   54
+  ],
+  [
+   13,
+   51
+  ],
+  [
+   12,
+   48
+  ],
+  [
+   11,
+   45
+  ],
+  [
+   10,
+   42
+  ],
+  [
+   9,
+   39
+  ],
+  [
+   8,
+   36
+  ],
+  [
+   7,
+   33
+  ],
+  [
+   6,
+   30
+  ],
+  [
+   5,
+   27
+  ],
+  [
+   4,
+   24
+  ],
+  [
+   3,
+   20
+  ],
+  [
+   2,
+   17
+  ],
+  [
+   1,
+   12
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "",
+ "namenszeile": false
+}

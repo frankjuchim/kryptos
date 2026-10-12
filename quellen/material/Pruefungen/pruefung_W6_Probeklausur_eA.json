@@ -1,0 +1,889 @@
+{
+ "typ": "pruefung",
+ "welt": 6,
+ "kennung": "PROBEKLAUSUR eA",
+ "titel": "KETTENSCHRIFT",
+ "datei": "KR_W6_Probeklausur_eA",
+ "niveau": "eA",
+ "ds": "18",
+ "zeile1": "KRYPTOS · PAPIER-BOSS W6 · GENERALPROBE",
+ "zeit": "70 Minuten",
+ "hilfsmittel": "ausschließlich die Anlage der Ergänzenden Hinweise zum KC Informatik (Juni 2025) in ausgedruckter Form: Alphabet mit Nummerierung (A = 1 … Z = 26), Vigenère-Quadrat, ASCII-Tabelle (Auszug 32–126) – im Kurs als Werkzeugkarte WK1 ausgegeben, liegt dieser Prüfung als Anlage bei. Kein Taschenrechner, keine Formelsammlung, keine eigenen Notizen.",
+ "info": [
+  [
+   "Prüfung",
+   "Probeklausur unter Abiturbedingungen (Block 2) · Informatik · erhöhtes Anforderungsniveau (eA)"
+  ],
+  [
+   "Thema",
+   "Kryptologie – Kryptos · Die Zeitreise der Geheimschriften"
+  ],
+  [
+   "Name",
+   "[[luecke:44]]"
+  ],
+  [
+   "Kurs",
+   "[[luecke:16]]"
+  ],
+  [
+   "Datum",
+   "[[luecke:16]]"
+  ],
+  [
+   "Bewertungsgrundsätze",
+   "Bewertet wird nach Kernpunkten; gleichwertige, fachlich richtige Alternativen werden voll anerkannt. **Folgefehler:** Wer mit einem falschen Zwischenergebnis korrekt weiterrechnet, erhält für die Folgeschritte volle Punkte (außer das Ergebnis wird dadurch trivial). „Beurteilen“ ohne ausdrückliches Urteil sowie „begründen/erläutern“ ohne kausale Verknüpfung bzw. ohne Beispiel: höchstens die Hälfte der BE. „Entscheiden (begründet)“: Entscheidung ohne Begründung bzw. Begründung mit falscher Entscheidung: 0 BE. Fachbegriffe werden erwartet."
+  ]
+ ],
+ "hinweise": [
+  {
+   "t": "hinweis",
+   "kopf": "HINWEISE",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Bearbeiten Sie alle Teilaufgaben auf dem ausgegebenen Papier. Vorlagen im Material füllen Sie direkt aus; geben Sie das Material mit ab.",
+      "Notieren Sie Klartexte in Kleinbuchstaben, Geheimtexte in GROSSBUCHSTABEN.",
+      "Dokumentieren Sie Rechenwege nachvollziehbar; Ergebnisse ohne Rechenweg erhalten nur Teilpunkte.",
+      "Zeitplanung: etwa 2,25 min je BE; planen Sie 5 min zur Kontrolle ein."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftakt",
+   "kopf": "GENERALPROBE",
+   "md": "*Das ist die Generalprobe für dein Abitur: eine Aufgabe, ein unbekanntes Verfahren, die Uhr läuft. Lies das Material genau, rechne das Beispiel nach – und denk an die zehn Fallen.*"
+  },
+  {
+   "t": "p",
+   "md": "**Viel Erfolg!**",
+   "zentriert": true,
+   "vor": 4,
+   "nach": 8
+  },
+  {
+   "t": "h",
+   "md": "Bewertung (von der Lehrkraft auszufüllen)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Teilaufgabe",
+    "a)",
+    "b)",
+    "c)",
+    "d)",
+    "e)",
+    "f)",
+    "g)",
+    "h)",
+    "i)",
+    "Summe"
+   ],
+   "zeilen": [
+    [
+     "max. BE",
+     "3",
+     "4",
+     "3",
+     "3",
+     "3",
+     "5",
+     "4",
+     "3",
+     "2",
+     "**30**"
+    ],
+    [
+     "erreicht",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n"
+    ]
+   ],
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 9.5,
+   "breiten": [
+    2.6,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.4000000000000001,
+    1.6
+   ]
+  },
+  {
+   "t": "p",
+   "vor": 6,
+   "md": "Gesamt: [[luecke:8]] von 30 BE      Notenpunkte: [[luecke:8]]      Datum, Unterschrift: [[luecke:20]]"
+  },
+  {
+   "t": "seitenumbruch"
+  }
+ ],
+ "aufgaben": [
+  {
+   "titel": "Der Geocaching-Verein",
+   "material": [
+    {
+     "t": "p",
+     "md": "Ein Geocaching-Verein versteckt in der Umgebung Rätsel-Caches. Die Hinweise zu den Verstecken veröffentlicht er auf seiner Website mit dem symmetrischen Verfahren KETTENSCHRIFT verschlüsselt; nur Vereinsmitglieder kennen den aktuellen Schlüssel. Das Verfahren verarbeitet Texte, die nur aus den Zeichen A bis Z bestehen, in zwei Stufen. Im Material ist in Abbildung 1 die Arbeitsweise des Verfahrens an einem Beispiel beschrieben."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "Ein Hinweis lautet im Klartext „felsspalte“.\n**Bestimmen** Sie den zugehörigen Geheimtext für die Blocklänge b = 3 und den Startbuchstaben S = B.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Blöcke `FEL | SSP | ALT | E` → `ELF | SPS | LTA | E`; Zwischentext `ELFSPSLTAE` (der letzte Block aus einem Zeichen bleibt)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Kette mit S = B (Wert 2): E 5 + 2 = 7 G · L 12 + 7 = 19 S · F 6 + 19 = 25 Y · S 19 + 25 = 44 → 18 R · P 16 + 18 = 34 → 8 H · S 19 + 8 = 27 → 1 A · L 12 + 1 = 13 M · T 20 + 13 = 33 → 7 G · A 1 + 7 = 8 H · E 5 + 8 = 13 M",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Geheimtext **`GSYRH AMGHM`**",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Zwischentext statt Geheimtext als Vorgänger addiert (P4); S = B mit Wert 1 (P1); Rest nicht gebildet bzw. 26 statt 0 falsch behandelt (P2); letzter Block „E“ vergessen (P4); nach rechts statt nach links rotiert (P4)."
+    },
+    {
+     "bez": "b)",
+     "text": "Ein veröffentlichter Hinweis lautet `TXCDU PUMYD P`. Er wurde mit der Blocklänge b = 4 und dem Startbuchstaben S = F verschlüsselt.\n**Bestimmen** Sie den zugehörigen Klartext. Verwenden Sie für die Dokumentation die Vorlage in Abbildung 2.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Umkehrung erkannt: zuerst Stufe 2 rückgängig (Wert des Geheimtextzeichens minus Wert des **vorherigen Geheimtextzeichens**, beim ersten Zeichen minus Wert von S = F = 6), dann Stufe 1",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Vorlage: Werte 20 24 3 4 21 16 21 13 25 4 16; abgezogen 6 20 24 3 4 21 16 21 13 25 4; Differenzen 14 4 −21 → 5 1 17 −5 → 21 5 −8 → 18 12 −21 → 5 12; Zwischentext `NDEAQUERLEL`",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "Blöcke `NDEA | QUER | LEL`; Rotation umkehren (letztes Zeichen jedes Blocks nach vorn) → `ANDE | RQUE | LLE`; Klartext **anderquelle** („an der Quelle“)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "vorheriges **Zwischen**textzeichen statt Geheimtextzeichen abgezogen (P3); negative Differenz nicht in 1 … 26 überführt (P2); letzter Block der Länge 3 als Block der Länge 4 behandelt (P4); Rotation in derselben statt in der umgekehrten Richtung (P3); Stufen in falscher Reihenfolge rückgängig gemacht (P3)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden** Sie für jede der beiden Stufen begründet, ob es sich um eine Transposition oder um eine Substitution handelt und – im Fall einer Substitution – ob diese monoalphabetisch oder polyalphabetisch ist.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Stufe 1: Transposition – die Zeichen bleiben erhalten, nur ihre Reihenfolge innerhalb der Blöcke ändert sich",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 2: Substitution – jedes Zeichen wird durch ein (berechnetes) anderes Zeichen ersetzt",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 2 ist polyalphabetisch: Die Verschiebung eines Zeichens hängt vom vorherigen Geheimtextzeichen ab und wechselt daher; derselbe Zwischentextbuchstabe wird verschieden verschlüsselt, z. B. in Abbildung 1 H → P (Position 7) und H → X (Position 8), E → H (Position 6) und E → C (Position 9)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Stufe 2 ist monoalphabetisch, weil jeder Buchstabe nur einmal ersetzt wird“ (P5); Stufe 1 als Substitution bezeichnet, weil „sich die Buchstaben an den Positionen ändern“ (P5)."
+    },
+    {
+     "bez": "d)",
+     "text": "Bei der Übertragung eines Geheimtextes wird genau ein Geheimtextzeichen falsch notiert.\n**Analysieren** Sie, wie sich dieser Fehler auf den entschlüsselten Klartext auswirkt.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Beim Entschlüsseln gilt für jedes Zeichen: Zwischentextzeichen = Geheimtextzeichen minus vorheriges Geheimtextzeichen. Ein falsches Geheimtextzeichen g~i~ geht in genau zwei Differenzen ein: für z~i~ und für z~i+1~",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Alle anderen Zwischentextzeichen werden korrekt bestimmt, da jede Differenz nur zwei benachbarte Geheimtextzeichen verwendet – der Fehler pflanzt sich nicht weiter fort",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 1 vertauscht nur Positionen innerhalb der Blöcke: Im Klartext sind daher genau zwei Buchstaben falsch (ggf. in zwei benachbarten Blöcken); ist das letzte Geheimtextzeichen betroffen, nur einer",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "alternativen": "Nachweis an einem selbst gewählten Beispiel mit korrekter Rechnung und Verallgemeinerung.",
+     "fehler": "„alle folgenden Zeichen werden falsch“ – das gilt beim **Verschlüsseln** für eine Änderung des Klartextes, nicht beim Entschlüsseln (P3); nur Stufe 2 betrachtet (P10)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Zeigen** Sie, dass sich ab dem zweiten Zeichen jedes Zeichen des Zwischentextes aus dem Geheimtext bestimmen lässt, ohne den Startbuchstaben S zu kennen.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Für i ≥ 2 gilt nach Abbildung 1: Wert(g~i~) = (Wert(z~i~) + Wert(g~i−1~)) mod 26. Umgestellt: Wert(z~i~) = (Wert(g~i~) − Wert(g~i−1~)) mod 26 (Rest 0 → 26)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Diese Gleichung enthält nur Geheimtextzeichen; S geht ausschließlich in die Berechnung von z~1~ ein",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Beleg, z. B. Abbildung 1: Y − D = 25 − 4 = 21 = U = z~2~; L − Y = 12 − 25 = −13 → 13 = M = z~3~",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "nur Beispiel ohne allgemeine Begründung (P10); Summe statt Differenz (P3)."
+    },
+    {
+     "bez": "f)",
+     "text": "**Entwickeln** Sie unter Verwendung Ihres Ergebnisses aus Teilaufgabe e) eine Vorgehensweise, mit der ein Angreifer einen Geheimtext ohne Kenntnis des Schlüssels entschlüsseln kann, und **beurteilen** Sie die Sicherheit des Verfahrens KETTENSCHRIFT.",
+     "be": 5,
+     "erwartung": [
+      {
+       "punkt": "Schritt 1: Differenzen benachbarter Geheimtextzeichen bilden → Zwischentext ab dem 2. Zeichen",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Schritt 2: erstes Zeichen: alle 26 Startbuchstaben ausprobieren bzw. aus dem Zusammenhang erraten (ein einziges Zeichen)",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Schritt 3: Stufe 1 rückgängig machen, indem man die Blocklängen 2, …, 6 ausprobiert (in jedem Block das letzte Zeichen nach vorn) und den sinnvollen deutschen Text auswählt",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Beurteilung mit Kriterien: Schlüsselraum nur 5 · 26 = 130 Schlüssel (Brute Force von Hand möglich); der Startbuchstabe schützt nur ein einziges Zeichen; die Transposition ist kurz und schlüsselarm; nach dem Kerckhoffs-Prinzip ist das Verfahren als bekannt anzunehmen",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Urteil: KETTENSCHRIFT bietet keine Sicherheit gegen einen Angreifer, der das Verfahren kennt; geeignet allenfalls als Rätsel",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "Brute Force über alle 130 Schlüssel als Hauptweg (volle Punkte bei vollständiger Begründung); Häufigkeitsanalyse der Differenzfolge (sie ist der transponierte Klartext, Buchstabenhäufigkeiten wie Deutsch).",
+     "fehler": "Häufigkeitsanalyse direkt auf den Geheimtext (P6); Schlüsselraum 26 · 26 oder 26! (P7); Beurteilung ohne Urteil (P10)."
+    },
+    {
+     "bez": "g)",
+     "text": "**Entscheiden** Sie für die folgenden Aussagen jeweils begründet, ob sie korrekt oder falsch sind.\n(1) Führt man die beiden Stufen in umgekehrter Reihenfolge aus (erst Stufe 2, dann Stufe 1), erhält man denselben Geheimtext.\n(2) Wendet man Stufe 1 mit der Blocklänge b genau b-mal hintereinander an, erhält man stets wieder den ursprünglichen Text.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "(1) **falsch**: Stufe 2 verknüpft jedes Zeichen mit dem vorherigen Geheimtextzeichen, das Ergebnis hängt also von der Reihenfolge der Zeichen ab; vertauscht man die Stufen, wird in einer anderen Reihenfolge verkettet. Gegenbeispiel Abbildung 1: Stufe 2 zuerst ergibt `EFANVKPXJO`, nach Blockrotation `FANEK PXVOJ` statt `DYLNC HPXCO` (bereits das erste Zeichen F ≠ D genügt als Gegenbeispiel)",
+       "afb": "II",
+       "be": 2
+      },
+      {
+       "punkt": "(2) **falsch**: Ein voller Block der Länge b ist nach b Rotationen wieder im Ausgangszustand",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) Der kürzere letzte Block der Länge r wird aber ebenfalls b-mal rotiert; das wirkt wie (b mod r) Rotationen. Ist r kein Teiler von b, bleibt er verändert. Gegenbeispiel: anderquelle, b = 4, letzter Block `LLE` → nach 4 Rotationen `LEL`, Ergebnis `ANDERQUELEL`. (Korrekt ist die Aussage nur, wenn die Textlänge ein Vielfaches von b oder r ein Teiler von b ist, z. B. baumhoehle mit r = 2.)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "Entscheidung ohne Begründung (P10); bei (2) den kürzeren letzten Block übersehen (P4); bei (1) „korrekt, da beide Stufen umkehrbar sind“ (P8).",
+     "material": [
+      {
+       "t": "p",
+       "md": "Der Verein hängt im Vereinsheim zu jedem Hinweis zusätzlich ein Prüfzeichen aus: den letzten Buchstaben des Geheimtextes. Stimmt das letzte Zeichen des Geheimtextes auf der Website nicht mit dem ausgehängten Prüfzeichen überein, so wurde der Hinweis auf der Website verändert.",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "h)",
+     "text": "**Zeigen** Sie an einem Beispiel, dass zwei verschiedene Klartexte bei gleichem Schlüssel dasselbe Prüfzeichen erzeugen können.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Das Prüfzeichen ist g~n~ mit Wert(g~n~) = (Wert(S) + Wert(z~1~) + … + Wert(z~n~)) mod 26 – es hängt nur von der **Summe** der Werte ab; Stufe 1 ändert die Summe nicht",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Beispiel mit vollständiger Rechnung, z. B. b = 3, S = K: „insel“ → Zwischentext `NSILE` → `YRAMR`; „linse“ → `INLES` → `THTYR`; beide Prüfzeichen R (Summe 11 + 59 = 70, 70 mod 26 = 18)",
+       "afb": "II",
+       "be": 2
+      }
+     ],
+     "alternativen": "jedes Anagramm; zwei Texte, bei denen ein Buchstabe um 1 erhöht und ein anderer um 1 erniedrigt ist (Summe gleich); ein Beispiel ohne Rechnung, aber mit Summenargument: im zweiten Kernpunkt 1 BE.",
+     "fehler": "Behauptung ohne Beispiel (P10)."
+    },
+    {
+     "bez": "i)",
+     "text": "**Erläutern** Sie, wie der Verein stattdessen mithilfe einer digitalen Signatur sicherstellen kann, dass ein Hinweis unverändert ist und tatsächlich vom Verein stammt.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Der Verein bildet den Hashwert des Hinweises und verschlüsselt ihn mit seinem **privaten** Schlüssel; diese Signatur wird mit dem Hinweis veröffentlicht",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Mitglieder entschlüsseln die Signatur mit dem **öffentlichen** Schlüssel des Vereins und vergleichen das Ergebnis mit dem selbst berechneten Hashwert des Hinweises: Stimmen sie überein, ist der Hinweis unverändert (Integrität) und stammt vom Verein, da nur dieser den privaten Schlüssel besitzt (Authentizität)",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Signieren mit dem öffentlichen Schlüssel (P9); Hashvergleich fehlt (P9).",
+     "material": [
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Material"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 1: Beschreibung des Verfahrens KETTENSCHRIFT**"
+      },
+      {
+       "t": "p",
+       "md": "Nummerierung: A = 1, B = 2, …, Z = 26 (wie in der Anlage).\nSchlüssel: eine Blocklänge b ∈ {2, 3, 4, 5, 6} und ein Startbuchstabe S ∈ {A, B, …, Z}."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 1 (Blockrotation):* Der Klartext wird von links beginnend in Blöcke der Länge b zerlegt; der letzte Block darf kürzer sein. In jedem Block wird das erste Zeichen an das Ende des Blocks gestellt; die übrigen Zeichen rücken um eine Stelle nach vorn. Es ergibt sich der Zwischentext."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 2 (Kette):* Die Zeichen des Zwischentextes werden der Reihe nach verschlüsselt. Für das erste Zeichen addiert man den Wert des Zwischentextzeichens und den Wert des Startbuchstabens S. Für jedes weitere Zeichen addiert man den Wert des Zwischentextzeichens und den Wert des **unmittelbar zuvor erzeugten Geheimtextzeichens**. Von der Summe bildet man den Rest bei der Division durch 26 (mod); der Rest 0 steht dabei für 26 (Z). Der Buchstabe mit diesem Wert ist das Geheimtextzeichen."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* Klartext „baumhoehle“, b = 4, S = C (Wert 3)."
+      },
+      {
+       "t": "p",
+       "md": "Stufe 1: `BAUM | HOEH | LE` → `AUMB | OEHH | EL`. Zwischentext: `AUMBOEHHEL`."
+      },
+      {
+       "t": "p",
+       "md": "Stufe 2:",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 9.5,
+       "breiten": [
+        4.6,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2,
+        1.2
+       ],
+       "zeilen": [
+        [
+         "Zwischentextzeichen",
+         "`A`",
+         "`U`",
+         "`M`",
+         "`B`",
+         "`O`",
+         "`E`",
+         "`H`",
+         "`H`",
+         "`E`",
+         "`L`"
+        ],
+        [
+         "Wert",
+         "1",
+         "21",
+         "13",
+         "2",
+         "15",
+         "5",
+         "8",
+         "8",
+         "5",
+         "12"
+        ],
+        [
+         "addiert wird",
+         "3 (S)",
+         "4",
+         "25",
+         "12",
+         "14",
+         "3",
+         "8",
+         "16",
+         "24",
+         "3"
+        ],
+        [
+         "Summe",
+         "4",
+         "25",
+         "38",
+         "14",
+         "29",
+         "8",
+         "16",
+         "24",
+         "29",
+         "15"
+        ],
+        [
+         "mod 26 (Rest 0 → 26)",
+         "4",
+         "25",
+         "12",
+         "14",
+         "3",
+         "8",
+         "16",
+         "24",
+         "3",
+         "15"
+        ],
+        [
+         "Geheimtextzeichen",
+         "`D`",
+         "`Y`",
+         "`L`",
+         "`N`",
+         "`C`",
+         "`H`",
+         "`P`",
+         "`X`",
+         "`C`",
+         "`O`"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: `DYLNC HPXCO`"
+      },
+      {
+       "t": "abstand",
+       "pt": 6
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 2: Vorlage zu Teilaufgabe b)** (Geheimtext `TXCDU PUMYD P`, b = 4, S = F)"
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10,
+       "breiten": [
+        5.1,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05,
+        1.05
+       ],
+       "zeilen": [
+        [
+         "Geheimtextzeichen",
+         "`T`",
+         "`X`",
+         "`C`",
+         "`D`",
+         "`U`",
+         "`P`",
+         "`U`",
+         "`M`",
+         "`Y`",
+         "`D`",
+         "`P`"
+        ],
+        [
+         "Wert",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "abzuziehender Wert",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "Differenz mod 26 (Rest 0 → 26)",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ],
+        [
+         "Zwischentextzeichen",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "vor": 6,
+       "md": "Zwischentext in Blöcken der Länge 4:   [[luecke:12]]  |  [[luecke:12]]  |  [[luecke:12]]"
+      },
+      {
+       "t": "p",
+       "vor": 6,
+       "md": "Klartext: [[luecke:50]]"
+      },
+      {
+       "t": "abstand",
+       "pt": 6
+      },
+      {
+       "t": "p",
+       "md": "**Anlage:** Werkzeugkarte WK1 (Alphabet A = 1 … Z = 26, Vigenère-Quadrat, ASCII-Tabelle) – wird nicht benötigt, liegt aber wie im Abitur bei."
+      },
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Anlage"
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Auszug aus der Anlage zu den Ergänzenden Hinweisen zum Kerncurriculum Informatik (Juni 2025), Abschnitt „ASCII-Tabelle / Vigenère-Quadrat / Alphabet mit Nummerierung“ – in ausgedruckter Form als Hilfsmittel zugelassen."
+      },
+      {
+       "t": "p",
+       "md": "**Alphabet mit Nummerierung**",
+       "nach": 2
+      },
+      {
+       "t": "alphabet",
+       "nummerierung": 1
+      },
+      {
+       "t": "p",
+       "md": "**Vigenère-Quadrat**",
+       "nach": 0
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Kopfzeile: Klartextbuchstabe · Kopfspalte: Schlüsselbuchstabe · Kreuzung: Geheimtextbuchstabe"
+      },
+      {
+       "t": "quadrat",
+       "art": "vigenere"
+      },
+      {
+       "t": "p",
+       "md": "**ASCII-Tabelle (Auszug 32–126)**",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen"
+       ],
+       "zeilen": [
+        [
+         "32 ␣",
+         "33 !",
+         "34 \"",
+         "35 #",
+         "36 $",
+         "37 %",
+         "38 &",
+         "39 '"
+        ],
+        [
+         "40 (",
+         "41 )",
+         "42 *",
+         "43 +",
+         "44 ,",
+         "45 -",
+         "46 .",
+         "47 /"
+        ],
+        [
+         "**48 0**",
+         "**49 1**",
+         "**50 2**",
+         "**51 3**",
+         "**52 4**",
+         "**53 5**",
+         "**54 6**",
+         "**55 7**"
+        ],
+        [
+         "**56 8**",
+         "**57 9**",
+         "58 :",
+         "59 ;",
+         "60 <",
+         "61 =",
+         "62 >",
+         "63 ?"
+        ],
+        [
+         "64 @",
+         "**65 A**",
+         "**66 B**",
+         "**67 C**",
+         "**68 D**",
+         "**69 E**",
+         "**70 F**",
+         "**71 G**"
+        ],
+        [
+         "**72 H**",
+         "**73 I**",
+         "**74 J**",
+         "**75 K**",
+         "**76 L**",
+         "**77 M**",
+         "**78 N**",
+         "**79 O**"
+        ],
+        [
+         "**80 P**",
+         "**81 Q**",
+         "**82 R**",
+         "**83 S**",
+         "**84 T**",
+         "**85 U**",
+         "**86 V**",
+         "**87 W**"
+        ],
+        [
+         "**88 X**",
+         "**89 Y**",
+         "**90 Z**",
+         "91 [",
+         "92 \\",
+         "93 ]",
+         "94 ^",
+         "95 _"
+        ],
+        [
+         "96 `",
+         "97 a",
+         "98 b",
+         "99 c",
+         "100 d",
+         "101 e",
+         "102 f",
+         "103 g"
+        ],
+        [
+         "104 h",
+         "105 i",
+         "106 j",
+         "107 k",
+         "108 l",
+         "109 m",
+         "110 n",
+         "111 o"
+        ],
+        [
+         "112 p",
+         "113 q",
+         "114 r",
+         "115 s",
+         "116 t",
+         "117 u",
+         "118 v",
+         "119 w"
+        ],
+        [
+         "120 x",
+         "121 y",
+         "122 z",
+         "123 {",
+         "124 |",
+         "125 }",
+         "126 ~",
+         ""
+        ]
+       ],
+       "mono": true,
+       "zentriert": true,
+       "schrift": 9,
+       "breiten": [
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1
+       ]
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "␣ = Leerzeichen"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   29
+  ],
+  [
+   14,
+   27
+  ],
+  [
+   13,
+   26
+  ],
+  [
+   12,
+   24
+  ],
+  [
+   11,
+   23
+  ],
+  [
+   10,
+   21
+  ],
+  [
+   9,
+   20
+  ],
+  [
+   8,
+   18
+  ],
+  [
+   7,
+   17
+  ],
+  [
+   6,
+   15
+  ],
+  [
+   5,
+   14
+  ],
+  [
+   4,
+   12
+  ],
+  [
+   3,
+   10
+  ],
+  [
+   2,
+   9
+  ],
+  [
+   1,
+   6
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "",
+ "namenszeile": false
+}

@@ -1,0 +1,1222 @@
+{
+ "typ": "pruefung",
+ "welt": 6,
+ "kennung": "NACHSCHREIBKLAUSUR gA",
+ "titel": "Mäander-Wechselrad",
+ "datei": "KR_W6_Nachschreibklausur_gA",
+ "niveau": "gA",
+ "zeile1": "KRYPTOS · INFORMATIK · KRYPTOLOGIE",
+ "zeit": "110 Minuten",
+ "hilfsmittel": "ausschließlich die Anlage der Ergänzenden Hinweise zum KC Informatik (Juni 2025) in ausgedruckter Form: Alphabet mit Nummerierung (A = 1 … Z = 26), Vigenère-Quadrat, ASCII-Tabelle (Auszug 32–126) – im Kurs als Werkzeugkarte WK1 ausgegeben, liegt dieser Prüfung als Anlage bei. Kein Taschenrechner, keine Formelsammlung, keine eigenen Notizen.",
+ "info": [
+  [
+   "Prüfung",
+   "Nachschreibklausur · Informatik · grundlegendes Anforderungsniveau (gA)"
+  ],
+  [
+   "Thema",
+   "Kryptologie – Kryptos · Die Zeitreise der Geheimschriften"
+  ],
+  [
+   "Name",
+   "[[luecke:44]]"
+  ],
+  [
+   "Kurs",
+   "[[luecke:16]]"
+  ],
+  [
+   "Datum",
+   "[[luecke:16]]"
+  ],
+  [
+   "Bewertungsgrundsätze",
+   "Bewertet wird nach Kernpunkten; gleichwertige, fachlich richtige Alternativen werden voll anerkannt. **Folgefehler:** Wer mit einem falschen Zwischenergebnis korrekt weiterrechnet, erhält für die Folgeschritte volle Punkte (außer das Ergebnis wird dadurch trivial). „Beurteilen“ ohne ausdrückliches Urteil sowie „begründen/erläutern“ ohne kausale Verknüpfung bzw. ohne Beispiel: höchstens die Hälfte der BE. „Entscheiden (begründet)“: Entscheidung ohne Begründung bzw. Begründung mit falscher Entscheidung: 0 BE. Fachbegriffe werden erwartet."
+  ]
+ ],
+ "hinweise": [
+  {
+   "t": "hinweis",
+   "kopf": "HINWEISE",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Die Nachschreibklausur besteht aus zwei Aufgaben im Format des Abiturs (Block 2). Bearbeiten Sie beide Aufgaben. Planen Sie für jede Aufgabe etwa 55 Minuten ein.",
+      "Bearbeiten Sie alle Teilaufgaben auf dem ausgegebenen Papier. Vorlagen im Material füllen Sie direkt aus; geben Sie das Material mit ab.",
+      "Notieren Sie Klartexte in Kleinbuchstaben, Geheimtexte in GROSSBUCHSTABEN.",
+      "Dokumentieren Sie Rechenwege nachvollziehbar; Ergebnisse ohne Rechenweg erhalten nur Teilpunkte.",
+      "Zeitplanung: etwa 2,2 min je BE; planen Sie 5 min zur Kontrolle ein."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Viel Erfolg!**",
+   "zentriert": true,
+   "vor": 4,
+   "nach": 8
+  },
+  {
+   "t": "h",
+   "md": "Bewertung (von der Lehrkraft auszufüllen)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Teilaufgabe",
+    "a)",
+    "b)",
+    "c)",
+    "d)",
+    "e)",
+    "f)",
+    "g)",
+    "h)",
+    "Summe"
+   ],
+   "zeilen": [
+    [
+     "Aufg. 1 · max. BE",
+     "3",
+     "4",
+     "3",
+     "3",
+     "4",
+     "3",
+     "2",
+     "3",
+     "**25**"
+    ],
+    [
+     "Aufg. 1 · erreicht",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n"
+    ],
+    [
+     "Aufg. 2 · max. BE",
+     "3",
+     "4",
+     "4",
+     "3",
+     "3",
+     "4",
+     "2",
+     "2",
+     "**25**"
+    ],
+    [
+     "Aufg. 2 · erreicht",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n",
+     "\n"
+    ]
+   ],
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 9.5,
+   "breiten": [
+    3.4,
+    1.475,
+    1.475,
+    1.475,
+    1.475,
+    1.475,
+    1.475,
+    1.475,
+    1.475,
+    1.6
+   ]
+  },
+  {
+   "t": "p",
+   "vor": 6,
+   "md": "Gesamt: [[luecke:8]] von 50 BE      Notenpunkte: [[luecke:8]]      Datum, Unterschrift: [[luecke:20]]"
+  },
+  {
+   "t": "seitenumbruch"
+  }
+ ],
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "MÄANDER-WECHSELRAD",
+   "material": [
+    {
+     "t": "p",
+     "md": "Ein Escape-Room-Anbieter versteckt in seinen Räumen Hinweise, die die Spielenden entschlüsseln müssen. Für einen neuen Raum „Das Labor“ verwendet er das symmetrische Verfahren MÄANDER-WECHSELRAD, das Texte aus den Zeichen A bis Z in zwei Stufen verschlüsselt. Die Arbeitsweise ist in Abbildung 1 im Material beschrieben."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen** Sie den Geheimtext zum Klartext „tresorcode“ mit dem Schlüssel s = 3, k = 7.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Raster mit 3 Spalten: `TRE` / `ROS` (←) / `COD` / `XXE` (←, mit XX aufgefüllt)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Zwischentext `TRCX ROOX ESDE` = `TRCXROOXESDE`",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 2 mit k = 7: T → A, R → I, C → J, X → C, R → Y, O → L, O → V, X → C, E → L, S → H, D → K, E → V; Geheimtext **`AIJCY LVCLH KV`**",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "2. Zeile von links nach rechts eingetragen (P4); X am falschen Ende der Rückwärtszeile (P4); Spiegeln mit 26 − Wert (P1); Positionen ab 0 gezählt (P1)."
+    },
+    {
+     "bez": "b)",
+     "text": "Ein Hinweis lautet `VOVZO VLPBL BC`; der Schlüssel ist s = 4, k = 10.\n**Bestimmen** Sie den Klartext. Verwenden Sie die Vorlage in Abbildung 2.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Umkehrung: zuerst Stufe 2 rückgängig (ungerade Positionen −k, gerade Positionen erneut spiegeln), dann Stufe 1; Zeilenzahl 12 : 4 = 3",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Zwischentext: V − 10 = L, O → L, V − 10 = L, Z → A, O − 10 = E, V → E, L − 10 = B, P → K, B − 10 = −8 → 18 R, L → O, B − 10 → R, C → X: `LLLAEEBKRORX`",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "Spalten (je 3 Zeichen) `LLL | AEE | BKR | ORX` → Zeilen `LABO` / `LEKR` (← gelesen: `RKEL`) / `LERX` → `LABORKELLERX`; Klartext **laborkeller** (X ist Füllzeichen)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "gerade Positionen „zurück-gespiegelt“ mit anderer Formel (P3 – Spiegeln ist selbstinvers); 2. Zeile nicht rückwärts gelesen (P4); −8 nicht in 18 umgerechnet (P2); X als Klartext stehen gelassen (P4)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Erläutern** Sie für jede der beiden Stufen, welches Prinzip der Verschlüsselung (Transposition, monoalphabetische oder polyalphabetische Substitution) sie verwendet.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Stufe 1: Transposition – nur die Anordnung der Zeichen ändert sich, die Zeichen selbst bleiben",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 2: Substitution mit zwei Alphabeten, die sich nach der Position abwechseln (Verschiebung um k bzw. Spiegelung)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "→ polyalphabetische Substitution (Periode 2): Derselbe Buchstabe wird an ungerader und gerader Position verschieden ersetzt (z. B. „ee“ mit k = 3 → `HV`), und verschiedene Buchstaben können dasselbe Geheimtextzeichen ergeben (Abbildung 1: E an Position 2 → V und S an Position 7 → V; D an Position 6 → W und T an Position 13 → W) – bei einer monoalphabetischen Substitution unmöglich",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Stufe 2 monoalphabetisch, weil jede Regel für sich monoalphabetisch ist“ (P5)."
+    },
+    {
+     "bez": "d)",
+     "text": "**Begründen** Sie, dass ein Angreifer, der das Verfahren kennt, die Hälfte der Zeichen des Zwischentextes ohne Kenntnis des Schlüssels bestimmen kann.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "An den geraden Positionen wird nur gespiegelt – diese Regel enthält keinen Schlüssel",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Nach dem Kerckhoffs-Prinzip ist das Verfahren dem Angreifer bekannt; er spiegelt alle Zeichen an geraden Positionen erneut und erhält dort den Zwischentext",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Damit ist die Hälfte der Zeichen des Zwischentextes ohne Schlüssel bekannt; nur die ungeraden Positionen sind mit k geschützt",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Begründung ohne Bezug auf die Schlüsselunabhängigkeit der Spiegelung (P10)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Bestimmen** Sie die Anzahl der möglichen Schlüssel (s, k) und **untersuchen** Sie, wie sich der Schlüssel k = 0 auf Stufe 2 auswirkt.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "7 · 26 = **182** Schlüssel",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "k = 0: ungerade Positionen bleiben unverändert, gerade werden gespiegelt",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 2 ist dann ganz ohne Schlüssel umkehrbar, nur noch Stufe 1 schützt",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Folgerung: schwacher Schlüssel, zusammen mit 182 Schlüsseln Brute Force leicht",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "s ∈ {1, …, 8} gezählt (P7); 26 · 26 (P7)."
+    },
+    {
+     "bez": "f)",
+     "text": "Beim Abschreiben eines Geheimtextes wird ein einzelnes Zeichen falsch notiert (alle anderen Zeichen sind korrekt).\n**Analysieren** Sie die Auswirkung auf den entschlüsselten Klartext.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Stufe 2 rückwärts: nur das Zeichen an derselben Position wird falsch (gleiche Regel, da Position unverändert)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 1 rückwärts versetzt das falsche Zeichen nur an eine andere Stelle",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Im Klartext ist genau ein Buchstabe falsch, z. B. „geheimtuer“: `NNACL RBCOV LI` mit S statt R an Position 6 → `GEHEHMTUERXX`: nur das i (5. Klartextbuchstabe) wird zu h",
+       "afb": "II",
+       "be": 1
+      }
+     ]
+    },
+    {
+     "bez": "g)",
+     "text": "**Entscheiden** Sie begründet, ob die folgende Aussage korrekt ist: „Wendet man Stufe 2 zweimal mit k = 13 an, erhält man wieder den Zwischentext.“",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "**korrekt**; ungerade Positionen +13 +13 = +26 ≡ 0",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "zweimal spiegeln = unverändert: 27 − (27 − w) = w",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„falsch, weil die Spiegelung nicht 13 verschiebt“ (P8)."
+    },
+    {
+     "bez": "h)",
+     "text": "**Beschreiben** Sie, wie ein Angreifer einen langen Geheimtext ohne Kenntnis des Schlüssels entschlüsseln kann. Berücksichtigen Sie die Zeichen an geraden und an ungeraden Positionen sowie Stufe 1.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Gerade Positionen spiegeln",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Ungerade Positionen: Caesar-Teiltext → Häufigkeitsanalyse (häufigster Buchstabe ≙ E) oder 26 Verschiebungen probieren",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Stufe 1: Spaltenzahlen 2–8 probieren, sinnvollen Text wählen",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "Häufigkeitsanalyse über den gesamten Geheimtext (P6).",
+     "material": [
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Material zu Aufgabe 1"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 1: Beschreibung des Verfahrens MÄANDER-WECHSELRAD**"
+      },
+      {
+       "t": "p",
+       "md": "Nummerierung: A = 1, B = 2, …, Z = 26. Schlüssel: Spaltenzahl s ∈ {2, 3, …, 8} und Verschiebung k ∈ {0, 1, …, 25}."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 1 (Mäander):* Der Klartext wird zeilenweise in ein Raster mit s Spalten eingetragen: die 1. Zeile von links nach rechts, die 2. Zeile von rechts nach links, die 3. Zeile wieder von links nach rechts usw. Ist die letzte Zeile nicht voll, wird sie in Schreibrichtung mit X aufgefüllt. Anschließend wird das Raster spaltenweise ausgelesen: Spalte für Spalte von links nach rechts, jede Spalte von oben nach unten. Es ergibt sich der Zwischentext."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 2 (Wechselrad):* Die Zeichen des Zwischentextes werden ab 1 gezählt.",
+       "nach": 2
+      },
+      {
+       "t": "liste",
+       "items": [
+        "Zeichen an ungerader Position (1., 3., 5., …): Der Wert wird um k erhöht (mod 26, Rest 0 → 26).",
+        "Zeichen an gerader Position (2., 4., 6., …): Das Zeichen wird gespiegelt: Wert → 27 − Wert (A ↔ Z, B ↔ Y, …)."
+       ]
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel:* Klartext „hinterdemspiegel“, s = 4, k = 3."
+      },
+      {
+       "t": "zweispaltig",
+       "anteil": 0.56,
+       "links": [
+        {
+         "t": "p",
+         "md": "Raster (Pfeil = Schreibrichtung):",
+         "nach": 2
+        },
+        {
+         "t": "tabelle",
+         "kopf": [
+          "Zeile",
+          "Sp. 1",
+          "Sp. 2",
+          "Sp. 3",
+          "Sp. 4",
+          "Richtung"
+         ],
+         "zentriert": true,
+         "schrift": 10,
+         "breiten": [
+          1.6,
+          1.4,
+          1.4,
+          1.4,
+          1.4,
+          2.0
+         ],
+         "zeilen": [
+          [
+           "1",
+           "`H`",
+           "`I`",
+           "`N`",
+           "`T`",
+           "→"
+          ],
+          [
+           "2",
+           "`E`",
+           "`D`",
+           "`R`",
+           "`E`",
+           "←"
+          ],
+          [
+           "3",
+           "`M`",
+           "`S`",
+           "`P`",
+           "`I`",
+           "→"
+          ],
+          [
+           "4",
+           "`L`",
+           "`E`",
+           "`G`",
+           "`E`",
+           "←"
+          ]
+         ]
+        }
+       ],
+       "rechts": [
+        {
+         "t": "p",
+         "md": "Zwischentext (spaltenweise gelesen):\n`HEML IDSE NRPG TEIE` → `HEMLIDSENRPGTEIE`",
+         "vor": 18
+        }
+       ]
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 9,
+       "breiten": [
+        2.4,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+       ],
+       "zeilen": [
+        [
+         "Position",
+         "1",
+         "2",
+         "3",
+         "4",
+         "5",
+         "6",
+         "7",
+         "8",
+         "9",
+         "10",
+         "11",
+         "12",
+         "13",
+         "14",
+         "15",
+         "16"
+        ],
+        [
+         "Zwischentext",
+         "`H`",
+         "`E`",
+         "`M`",
+         "`L`",
+         "`I`",
+         "`D`",
+         "`S`",
+         "`E`",
+         "`N`",
+         "`R`",
+         "`P`",
+         "`G`",
+         "`T`",
+         "`E`",
+         "`I`",
+         "`E`"
+        ],
+        [
+         "Regel",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp.",
+         "+3",
+         "sp."
+        ],
+        [
+         "Geheimtext",
+         "`K`",
+         "`V`",
+         "`P`",
+         "`O`",
+         "`L`",
+         "`W`",
+         "`V`",
+         "`V`",
+         "`Q`",
+         "`I`",
+         "`S`",
+         "`T`",
+         "`W`",
+         "`V`",
+         "`L`",
+         "`V`"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "(sp. = spiegeln)   Geheimtext: `KVPOL WVVQI STWVL V`",
+       "nach": 8
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 2: Vorlage zu Teilaufgabe b)** (Geheimtext `VOVZO VLPBL BC`, s = 4, k = 10)"
+      },
+      {
+       "t": "p",
+       "md": "*Hinweis: Machen Sie zuerst Stufe 2 rückgängig: an ungeraden Positionen k abziehen, an geraden Positionen erneut spiegeln.*"
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10.5,
+       "breiten": [
+        2.8,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15,
+        1.15
+       ],
+       "zeilen": [
+        [
+         "Position",
+         "1",
+         "2",
+         "3",
+         "4",
+         "5",
+         "6",
+         "7",
+         "8",
+         "9",
+         "10",
+         "11",
+         "12"
+        ],
+        [
+         "Geheimtext",
+         "`V`",
+         "`O`",
+         "`V`",
+         "`Z`",
+         "`O`",
+         "`V`",
+         "`L`",
+         "`P`",
+         "`B`",
+         "`L`",
+         "`B`",
+         "`C`"
+        ],
+        [
+         "Zwischentext",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "\n"
+        ]
+       ]
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Zeile",
+        "Sp. 1",
+        "Sp. 2",
+        "Sp. 3",
+        "Sp. 4",
+        "Richtung"
+       ],
+       "zentriert": true,
+       "schrift": 10,
+       "breiten": [
+        1.6,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        2.0
+       ],
+       "zeilen": [
+        [
+         "1",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "→"
+        ],
+        [
+         "2",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "←"
+        ],
+        [
+         "3",
+         "\n",
+         "\n",
+         "\n",
+         "\n",
+         "→"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Klartext: [[luecke:46]]",
+       "vor": 4
+      },
+      {
+       "t": "seitenumbruch"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "nr": "2",
+   "titel": "Das Fahrradparkhaus",
+   "material": [
+    {
+     "t": "p",
+     "md": "Am Bahnhof einer Kleinstadt gibt es ein Fahrradparkhaus mit 200 abschließbaren Fahrradboxen. Registrierte Personen öffnen ihre Box mit einer App: Die App sendet über das Internet einen Öffnungsbefehl an den Server des Parkhauses, der daraufhin die Box entriegelt. Zur Anmeldung in der App wird ein Passwort verwendet."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "Die App soll den Öffnungsbefehl vertraulich an den Server senden.\n**Beschreiben** Sie das Prinzip der asymmetrischen Verschlüsselung an diesem Beispiel.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Der Server besitzt ein Schlüsselpaar: einen öffentlichen Schlüssel (für alle bekannt) und einen privaten Schlüssel (nur dem Server bekannt)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Die App verschlüsselt den Öffnungsbefehl mit dem **öffentlichen Schlüssel des Servers**; entschlüsseln kann ihn nur der Server mit seinem **privaten** Schlüssel",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Aus dem öffentlichen Schlüssel lässt sich der private praktisch nicht berechnen (Einwegfunktion mit Falltür); daher ist kein geheimer Schlüsselaustausch nötig",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Verschlüsselung mit dem privaten Schlüssel der App (P9)."
+    },
+    {
+     "bez": "b)",
+     "text": "Die Betreiberfirma hat zwölf Beschäftigte, die untereinander paarweise vertraulich kommunizieren. Eine Beschäftigte behauptet: „Mit einem symmetrischen Verfahren bräuchten wir 66 Schlüssel, mit einem asymmetrischen nur 24.“\n**Entscheiden** Sie begründet, ob die Aussage korrekt ist, und **bestimmen** Sie, um wie viele Schlüssel sich die Anzahl in beiden Fällen erhöht, wenn eine dreizehnte Person hinzukommt.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "symmetrisch 12 · 11 / 2 = 66, asymmetrisch 2 · 12 = 24",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "→ Aussage **korrekt**",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "13. Person: symmetrisch 13 · 12 / 2 = 78, also **+12** (ein neuer Schlüssel mit jeder bisherigen Person); asymmetrisch 26, also **+2** (ein neues Schlüsselpaar)",
+       "afb": "II",
+       "be": 2
+      }
+     ],
+     "fehler": "12 · 11 = 132 (P7); asymmetrisch 12 (Paar als ein Schlüssel) (P7); Entscheidung ohne Rechnung (P10)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Beschreiben** Sie, wie der Server mithilfe einer Hashfunktion Passwörter speichert und bei der Anmeldung prüft, ohne die Passwörter selbst zu speichern, und **erläutern** Sie, welchen Zweck dabei ein „Salz“ erfüllt.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Bei der Registrierung berechnet der Server den Hashwert des Passworts und speichert nur diesen",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Bei der Anmeldung berechnet er den Hashwert des eingegebenen Passworts und vergleicht ihn mit dem gespeicherten; bei Gleichheit gilt die Anmeldung",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Wegen der Einweg-Eigenschaft kann aus gestohlenen Hashwerten das Passwort nicht zurückgerechnet werden",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Salz: eine zufällige, je Person verschiedene Zeichenfolge, die vor dem Hashen an das Passwort gehängt und neben dem Hashwert gespeichert wird; gleiche Passwörter ergeben verschiedene Hashwerte, vorberechnete Tabellen (Wörterbuch-/Regenbogentabellen) werden nutzlos",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Passwort wird verschlüsselt gespeichert“ (P9 – Hash ≠ Verschlüsselung); Salz als geheimer Schlüssel bezeichnet.",
+     "material": [
+      {
+       "t": "p",
+       "md": "Der Server verwendet in einer ersten Version die Hashfunktion RAD-Hash (Abbildung 1).",
+       "vor": 6
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Bestimmen** Sie den RAD-Hash des Passworts „klingel“.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "1 · 11 + 2 · 12 + 3 · 9 + 4 · 14 + 5 · 7 + 6 · 5 + 7 · 12 = 11 + 24 + 27 + 56 + 35 + 30 + 84 = 267",
+       "afb": "I",
+       "be": 2
+      },
+      {
+       "punkt": "267 mod 26 = 267 − 260 = 7 → **G**",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Gewichte vergessen (P4); A = 0 (P1); Rest falsch (P2)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Begründen** Sie mithilfe der Passwörter „sattel“ und „pedal“ (Abbildung 2), dass RAD-Hash für die Speicherung von Passwörtern ungeeignet ist.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "sattel: 19 + 2 + 60 + 80 + 25 + 72 = 258 → 258 mod 26 = 24 → X; pedal: 16 + 10 + 12 + 4 + 60 = 102 → 102 mod 26 = 24 → X",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Da der Server nur Hashwerte vergleicht, wird auch das Passwort „pedal“ für N-0815 akzeptiert – eine Kollision öffnet fremde Boxen",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "RAD-Hash hat nur 26 mögliche Werte: Jeder Angreifer findet durch Probieren schnell ein passendes Passwort; außerdem lassen sich Kollisionen gezielt konstruieren (z. B. w~1~ um 2 erhöhen und w~2~ um 1 verringern) → ungeeignet",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "nur die Rechnung ohne Schlussfolgerung (P10)."
+    },
+    {
+     "bez": "f)",
+     "text": "**Erläutern** Sie, wie die App mithilfe eines Zertifikats überprüfen kann, dass ein empfangener öffentlicher Schlüssel tatsächlich zum Server des Parkhauses gehört, und warum dadurch ein Man-in-the-Middle-Angriff verhindert wird.",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "Der Server erhält von einer Zertifizierungsstelle (CA) ein Zertifikat: Es enthält seinen Namen/seine Adresse und seinen öffentlichen Schlüssel und ist mit dem privaten Schlüssel der CA signiert",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Die App kennt den öffentlichen Schlüssel der CA (vorinstalliert, ggf. über eine Zertifikatskette bis zu einer Wurzel-CA); sie prüft die Signatur des Zertifikats und, ob Name und Gültigkeit passen",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "MitM: Ein Angreifer könnte der App sonst seinen eigenen öffentlichen Schlüssel unterschieben, alle Befehle entschlüsseln, verändern und weiterleiten",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Für seinen Schlüssel besitzt er kein von der CA signiertes Zertifikat mit dem Namen des Parkhaus-Servers; eine Fälschung würde bei der Prüfung auffallen",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "„Zertifikat beweist, dass der Server vertrauenswürdig ist“ (P9); CA signiert mit dem öffentlichen Schlüssel (P9)."
+    },
+    {
+     "bez": "g)",
+     "text": "Die App signiert jeden Öffnungsbefehl digital.\n**Beschreiben** Sie, wie der Server prüft, dass ein Öffnungsbefehl tatsächlich von der App der registrierten Person stammt und unverändert ist.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Die App hat den Hashwert des Befehls mit dem **privaten** Schlüssel der Person verschlüsselt; der Server entschlüsselt die Signatur mit dem bei der Registrierung hinterlegten **öffentlichen** Schlüssel und vergleicht mit dem selbst berechneten Hashwert",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Übereinstimmung → unverändert und von dieser Person, da nur sie den privaten Schlüssel besitzt",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "fehler": "Schlüsselrollen vertauscht bzw. Hashvergleich fehlt (P9)."
+    },
+    {
+     "bez": "h)",
+     "text": "Der Server speichert zu jeder Öffnung Boxnummer, Nutzerkennung und Uhrzeit.\n**Nennen** Sie zwei Grundsätze der Datenschutz-Grundverordnung (DSGVO), die dabei zu beachten sind.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Zwei von: Zweckbindung, Datenminimierung, Speicherbegrenzung, Rechtmäßigkeit/Transparenz, Richtigkeit, Integrität und Vertraulichkeit, Rechenschaftspflicht (je 1 BE), möglichst mit kurzem Bezug (z. B. Öffnungsprotokolle nach Ablauf einer Frist löschen)",
+       "afb": "I",
+       "be": 2
+      }
+     ],
+     "material": [
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Material zu Aufgabe 2"
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 1: RAD-Hash**"
+      },
+      {
+       "t": "p",
+       "md": "Ein Passwort besteht aus den Zeichen A bis Z mit den Werten w~1~, w~2~, …, w~n~ (A = 1 … Z = 26). Der RAD-Hash ist der Buchstabe mit dem Wert"
+      },
+      {
+       "t": "formel",
+       "md": "(1 · w~1~ + 2 · w~2~ + 3 · w~3~ + … + n · w~n~) mod 26,"
+      },
+      {
+       "t": "p",
+       "md": "wobei der Rest 0 für 26 (Z) steht."
+      },
+      {
+       "t": "p",
+       "md": "*Beispiel „rad“:* 1 · 18 + 2 · 1 + 3 · 4 = 32; 32 mod 26 = 6 → RAD-Hash F"
+      },
+      {
+       "t": "abstand",
+       "pt": 4
+      },
+      {
+       "t": "p",
+       "md": "**Abbildung 2: Ausschnitt aus der Passwort-Datenbank (vereinfacht)**",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Nutzerkennung",
+        "gespeicherter RAD-Hash"
+       ],
+       "zentriert": true,
+       "schrift": 10.5,
+       "breiten": [
+        4.5,
+        5.0
+       ],
+       "zeilen": [
+        [
+         "N-0815",
+         "`X`"
+        ],
+        [
+         "N-4711",
+         "`G`"
+        ],
+        [
+         "N-2024",
+         "`F`"
+        ]
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Die Person mit der Kennung N-0815 hat das Passwort „sattel“ gewählt."
+      },
+      {
+       "t": "seitenumbruch"
+      },
+      {
+       "t": "h",
+       "md": "Anlage"
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Auszug aus der Anlage zu den Ergänzenden Hinweisen zum Kerncurriculum Informatik (Juni 2025), Abschnitt „ASCII-Tabelle / Vigenère-Quadrat / Alphabet mit Nummerierung“ – in ausgedruckter Form als Hilfsmittel zugelassen."
+      },
+      {
+       "t": "p",
+       "md": "**Alphabet mit Nummerierung**",
+       "nach": 2
+      },
+      {
+       "t": "alphabet",
+       "nummerierung": 1
+      },
+      {
+       "t": "p",
+       "md": "**Vigenère-Quadrat**",
+       "nach": 0
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "Kopfzeile: Klartextbuchstabe · Kopfspalte: Schlüsselbuchstabe · Kreuzung: Geheimtextbuchstabe"
+      },
+      {
+       "t": "quadrat",
+       "art": "vigenere"
+      },
+      {
+       "t": "p",
+       "md": "**ASCII-Tabelle (Auszug 32–126)**",
+       "nach": 2
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen",
+        "Wert Zeichen"
+       ],
+       "zeilen": [
+        [
+         "32 ␣",
+         "33 !",
+         "34 \"",
+         "35 #",
+         "36 $",
+         "37 %",
+         "38 &",
+         "39 '"
+        ],
+        [
+         "40 (",
+         "41 )",
+         "42 *",
+         "43 +",
+         "44 ,",
+         "45 -",
+         "46 .",
+         "47 /"
+        ],
+        [
+         "**48 0**",
+         "**49 1**",
+         "**50 2**",
+         "**51 3**",
+         "**52 4**",
+         "**53 5**",
+         "**54 6**",
+         "**55 7**"
+        ],
+        [
+         "**56 8**",
+         "**57 9**",
+         "58 :",
+         "59 ;",
+         "60 <",
+         "61 =",
+         "62 >",
+         "63 ?"
+        ],
+        [
+         "64 @",
+         "**65 A**",
+         "**66 B**",
+         "**67 C**",
+         "**68 D**",
+         "**69 E**",
+         "**70 F**",
+         "**71 G**"
+        ],
+        [
+         "**72 H**",
+         "**73 I**",
+         "**74 J**",
+         "**75 K**",
+         "**76 L**",
+         "**77 M**",
+         "**78 N**",
+         "**79 O**"
+        ],
+        [
+         "**80 P**",
+         "**81 Q**",
+         "**82 R**",
+         "**83 S**",
+         "**84 T**",
+         "**85 U**",
+         "**86 V**",
+         "**87 W**"
+        ],
+        [
+         "**88 X**",
+         "**89 Y**",
+         "**90 Z**",
+         "91 [",
+         "92 \\",
+         "93 ]",
+         "94 ^",
+         "95 _"
+        ],
+        [
+         "96 `",
+         "97 a",
+         "98 b",
+         "99 c",
+         "100 d",
+         "101 e",
+         "102 f",
+         "103 g"
+        ],
+        [
+         "104 h",
+         "105 i",
+         "106 j",
+         "107 k",
+         "108 l",
+         "109 m",
+         "110 n",
+         "111 o"
+        ],
+        [
+         "112 p",
+         "113 q",
+         "114 r",
+         "115 s",
+         "116 t",
+         "117 u",
+         "118 v",
+         "119 w"
+        ],
+        [
+         "120 x",
+         "121 y",
+         "122 z",
+         "123 {",
+         "124 |",
+         "125 }",
+         "126 ~",
+         ""
+        ]
+       ],
+       "mono": true,
+       "zentriert": true,
+       "schrift": 9,
+       "breiten": [
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1,
+        2.1
+       ]
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "␣ = Leerzeichen"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   48
+  ],
+  [
+   14,
+   45
+  ],
+  [
+   13,
+   43
+  ],
+  [
+   12,
+   40
+  ],
+  [
+   11,
+   38
+  ],
+  [
+   10,
+   35
+  ],
+  [
+   9,
+   33
+  ],
+  [
+   8,
+   30
+  ],
+  [
+   7,
+   28
+  ],
+  [
+   6,
+   25
+  ],
+  [
+   5,
+   23
+  ],
+  [
+   4,
+   20
+  ],
+  [
+   3,
+   17
+  ],
+  [
+   2,
+   14
+  ],
+  [
+   1,
+   10
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "",
+ "namenszeile": false
+}

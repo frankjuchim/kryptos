@@ -1,0 +1,1657 @@
+{
+ "typ": "akte",
+ "welt": 2,
+ "kennung": "AKTE W2·1",
+ "titel": "Das unentzifferbare Quadrat",
+ "ds": "6",
+ "niveau": "kern",
+ "level": "2.1",
+ "datei": "KR_W2_Akte1_Das_unentzifferbare_Quadrat",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Venedig, um 1600. Alice ist Gesandte an der Lagune, und der Rat liest mit – Eve sitzt in der Schreibstube und kennt Al-Kindis Häufigkeitsanalyse. Gegen einen einzigen Geheimbuchstaben pro Klartextbuchstaben hilft das nichts mehr. Also benutzt Alice ein Quadrat, das jedem Buchstaben **viele** Gesichter gibt. In dieser Akte lernst du, mit dem Quadrat zu schreiben – so, wie es auch in deiner Abitur-Anlage abgedruckt ist."
+  },
+  {
+   "t": "geheimtext",
+   "label": "ARCHIVFUND · BRIEF EINER DIPLOMATIN · 64 ZEICHEN · RÜCKSEITE: „DER SCHLÜSSEL IST DAS WASSER, AUF DEM DIE STADT STEHT.“",
+   "text": "OEXLNXGOTPRRPDOAYMPSZOAWPRKVEMPFKVRRFTFYNFUEZTGRFRTIPLOAYKHEORGN"
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Mono- und polyalphabetisch",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Substitutionsverfahren ist **monoalphabetisch**, wenn jeder Klartextbuchstabe **immer** durch denselben Geheimtextbuchstaben ersetzt wird (Caesar, Schlüsselwort-Alphabet). Es ist **polyalphabetisch**, wenn derselbe Klartextbuchstabe – je nach Position – durch **verschiedene** Geheimtextbuchstaben ersetzt wird."
+    },
+    {
+     "t": "p",
+     "md": "Prüfkriterium für jede Einordnung (Falle P5): *Wird derselbe Klartextbuchstabe immer gleich ersetzt?* Ein Gegenbeispiel genügt für „polyalphabetisch“. Im Archivfund wurde das e aus *der rat von venedig …* zu `E`, `R`, `P`, `K` und `Y`. Folge: Die Häufigkeiten werden „verschmiert“; die einfache Häufigkeitsanalyse findet kein klares e."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Das Vigenère-Verfahren mit dem Quadrat der Anlage",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Schreibe das Schlüsselwort so oft unter den Klartext, bis jeder Klartextbuchstabe einen Schlüsselbuchstaben hat.",
+      "Suche im Vigenère-Quadrat (Seite 2) die **Zeile des Schlüsselbuchstabens** und die **Spalte des Klartextbuchstabens**. Im Kreuzungsfeld steht der Geheimtextbuchstabe.",
+      "Entschlüsseln: In der Zeile des Schlüsselbuchstabens den Geheimtextbuchstaben **suchen**; die **Spalte** nennt den Klartextbuchstaben."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* (Schlüsselwort DAME):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartext",
+       "m",
+       "a",
+       "r",
+       "k",
+       "u",
+       "s",
+       "p",
+       "l",
+       "a",
+       "t",
+       "z"
+      ],
+      [
+       "Schlüssel",
+       "D",
+       "A",
+       "M",
+       "E",
+       "D",
+       "A",
+       "M",
+       "E",
+       "D",
+       "A",
+       "M"
+      ],
+      [
+       "Geheimtext",
+       "P",
+       "A",
+       "D",
+       "O",
+       "X",
+       "S",
+       "B",
+       "P",
+       "D",
+       "T",
+       "L"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext: `PADOX SBPDT L`. Der Schlüsselbuchstabe A verschiebt um 0 (a bleibt A), D verschiebt um 3."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": "2b",
+   "titel": "Rechnen statt Nachschlagen (Nummerierung: A = 1 … Z = 26)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Klartextbuchstabe p, Schlüsselbuchstabe s, Geheimtextbuchstabe c (jeweils als Nummer):"
+    },
+    {
+     "t": "formel",
+     "md": "Verschlüsseln: **c = ((p + s − 2) mod 26) + 1**          Entschlüsseln: **p = ((c − s) mod 26) + 1**"
+    },
+    {
+     "t": "liste",
+     "items": [
+      "m (13) mit D (4): ((13 + 4 − 2) mod 26) + 1 = 15 + 1 = 16 → **P**",
+      "t (20) mit M (13): ((20 + 13 − 2) mod 26) + 1 = 5 + 1 = 6 → **F**"
+     ]
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P1/P2",
+   "titel": "Rechnen mit A = 1",
+   "md": "Der Schlüsselbuchstabe s verschiebt um **s − 1** (A = 0, B = 1, …, Z = 25). Wer c = p + s rechnet, landet eine Stelle zu weit. Und: mod liefert Werte von 0 bis 25 – erst das „+ 1“ macht daraus wieder eine Buchstabennummer 1 … 26. Beispiel z (26) mit B (2): ((26 + 2 − 2) mod 26) + 1 = 0 + 1 = 1 → **A** (nicht „0“, nicht „Z“)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": "2a",
+   "titel": "Das Vigenère-Quadrat (Abitur-Anlage)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Zeile = Schlüsselbuchstabe**, **Spalte = Klartextbuchstabe**, Eintrag = Geheimtextbuchstabe. Beispiel: Zeile D, Spalte m → P.",
+     "klein": true
+    },
+    {
+     "t": "quadrat",
+     "art": "vigenere"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Autokey – der Schlüssel, der sich selbst schreibt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Beim **Autokey-Verfahren** (Vigenère beschrieb 1586 eine solche Variante) wird das Schlüsselwort nur **einmal** verwendet; danach dient der **Klartext selbst** (von vorn) als Schlüssel. Verschlüsselt wird mit dem Vigenère-Quadrat. *Beispiel:* Klartext *galeerenimhafen*, Schlüsselwort ZUG:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Klartext",
+       "g",
+       "a",
+       "l",
+       "e",
+       "e",
+       "r",
+       "e",
+       "n",
+       "i",
+       "m",
+       "h",
+       "a",
+       "f",
+       "e",
+       "n"
+      ],
+      [
+       "Schlüssel",
+       "Z",
+       "U",
+       "G",
+       "G",
+       "A",
+       "L",
+       "E",
+       "E",
+       "R",
+       "E",
+       "N",
+       "I",
+       "M",
+       "H",
+       "A"
+      ],
+      [
+       "Geheimtext",
+       "F",
+       "U",
+       "R",
+       "K",
+       "E",
+       "C",
+       "I",
+       "R",
+       "Z",
+       "Q",
+       "U",
+       "I",
+       "R",
+       "L",
+       "N"
+      ]
+     ],
+     "breiten": [
+      2.55,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext: `FURKE CIRZQ UIRLN`. Beim Entschlüsseln entsteht der Schlüssel Buchstabe für Buchstabe aus dem gerade gewonnenen Klartext. **Vorteil:** keine periodische Wiederholung des Schlüssels. **Nachteil:** Ein einziger Übertragungsfehler pflanzt sich fort (Auftrag 4)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Die Porta-Tafel (13 Tauschalphabete)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Je **zwei** Schlüsselbuchstaben teilen sich ein Alphabet. In jeder Zeile wird ein Buchstabe der oberen Reihe mit dem darunterstehenden **getauscht** (und umgekehrt). Ver- und Entschlüsseln sind daher **derselbe Vorgang** (involutorisch). Moderne Fassung mit 26 Buchstaben:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zentriert": true,
+     "kopf": [
+      "Schlüssel",
+      "oben",
+      "unten"
+     ],
+     "zeilen": [
+      [
+       "A, B",
+       "A B C D E F G H I J K L M",
+       "N O P Q R S T U V W X Y Z"
+      ],
+      [
+       "C, D",
+       "A B C D E F G H I J K L M",
+       "Z N O P Q R S T U V W X Y"
+      ],
+      [
+       "E, F",
+       "A B C D E F G H I J K L M",
+       "Y Z N O P Q R S T U V W X"
+      ],
+      [
+       "G, H",
+       "A B C D E F G H I J K L M",
+       "X Y Z N O P Q R S T U V W"
+      ],
+      [
+       "I, J",
+       "A B C D E F G H I J K L M",
+       "W X Y Z N O P Q R S T U V"
+      ],
+      [
+       "K, L",
+       "A B C D E F G H I J K L M",
+       "V W X Y Z N O P Q R S T U"
+      ],
+      [
+       "M, N",
+       "A B C D E F G H I J K L M",
+       "U V W X Y Z N O P Q R S T"
+      ],
+      [
+       "O, P",
+       "A B C D E F G H I J K L M",
+       "T U V W X Y Z N O P Q R S"
+      ],
+      [
+       "Q, R",
+       "A B C D E F G H I J K L M",
+       "S T U V W X Y Z N O P Q R"
+      ],
+      [
+       "S, T",
+       "A B C D E F G H I J K L M",
+       "R S T U V W X Y Z N O P Q"
+      ],
+      [
+       "U, V",
+       "A B C D E F G H I J K L M",
+       "Q R S T U V W X Y Z N O P"
+      ],
+      [
+       "W, X",
+       "A B C D E F G H I J K L M",
+       "P Q R S T U V W X Y Z N O"
+      ],
+      [
+       "Y, Z",
+       "A B C D E F G H I J K L M",
+       "O P Q R S T U V W X Y Z N"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      6.6,
+      6.6
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Bildungsregel: Die untere Reihe wird von Zeile zu Zeile um eine Stelle nach rechts zyklisch verschoben. *Beispiel:* Schlüssel L (Zeile K, L): a ↔ V, n ↔ F (n steht unten in der Spalte von F). Klartext *nachtwache*, Schlüsselwort LUNA → `FQWUL GUPPU`."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 5,
+   "titel": "Aus der Geschichte",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Giovan Battista **Bellaso** beschrieb **1553** die Verschlüsselung mit einem wiederholten Schlüsselwort. Giambattista della **Porta** veröffentlichte 1563 seine Tauschtafel. Blaise de **Vigenère** veröffentlichte **1586** seinen „Traicté des chiffres“ mit einer Autokey-Variante. Dass das Schlüsselwort-Verfahren heute nach Vigenère heißt, **gilt als Fehlzuschreibung**. Fast 300 Jahre lang galt es als „le chiffre indéchiffrable“ – bis Friedrich Wilhelm **Kasiski** 1863 einen allgemeinen Angriff veröffentlichte (Akte W2·2)."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Der Brief der Diplomatin",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26. **Löst** das Rätsel des Archivfunds (Schlüsselwort mit 6 Buchstaben) und **entschlüsselt** die ersten 20 Buchstaben mit dem Vigenère-Quadrat. Wer schneller ist: der Rest des Briefs (`ZOAWP RKVEM PFKVR RFTFY NFUEZ TGRFR TIPLO AYKHE ORGN`)."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "O",
+       "E",
+       "X",
+       "L",
+       "N",
+       "X",
+       "G",
+       "O",
+       "T",
+       "P",
+       "R",
+       "R",
+       "P",
+       "D",
+       "O",
+       "A",
+       "Y",
+       "M",
+       "P",
+       "S"
+      ],
+      [
+       "Schlüssel",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Klartext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.4,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "O",
+       "E",
+       "X",
+       "L",
+       "N",
+       "X",
+       "G",
+       "O",
+       "T",
+       "P",
+       "R",
+       "R",
+       "P",
+       "D",
+       "O",
+       "A",
+       "Y",
+       "M",
+       "P",
+       "S"
+      ],
+      [
+       "Schlüssel",
+       "L",
+       "A",
+       "G",
+       "U",
+       "N",
+       "E",
+       "L",
+       "A",
+       "G",
+       "U",
+       "N",
+       "E",
+       "L",
+       "A",
+       "G",
+       "U",
+       "N",
+       "E",
+       "L",
+       "A"
+      ],
+      [
+       "Klartext",
+       "d",
+       "e",
+       "r",
+       "r",
+       "a",
+       "t",
+       "v",
+       "o",
+       "n",
+       "v",
+       "e",
+       "n",
+       "e",
+       "d",
+       "i",
+       "g",
+       "l",
+       "i",
+       "e",
+       "s"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Schlüsselwort **LAGUNE** (das Wasser, auf dem Venedig steht). Erste 20 Buchstaben: *derratvonvenediglies*. Ganzer Brief: *derratvonvenedigliestunserebriefebenutzeabjetztnurnochdasquadrat* („Der Rat von Venedig liest unsere Briefe. Benutze ab jetzt nur noch das Quadrat.“)."
+    },
+    {
+     "t": "p",
+     "md": "Rechenbeispiel: O (15) mit L (12): ((15 − 12) mod 26) + 1 = 4 → d."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* in Zeile L noch einmal verschieben, statt O zu suchen (P3)."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Eine Kanalsperre",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *kanalsperre* mit dem Schlüsselwort NEBEL (Quadrat).",
+      "**Prüfe** den 6. Buchstaben mit der Formel c = ((p + s − 2) mod 26) + 1."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartext",
+       "k",
+       "a",
+       "n",
+       "a",
+       "l",
+       "s",
+       "p",
+       "e",
+       "r",
+       "r",
+       "e"
+      ],
+      [
+       "Schlüssel",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartext",
+       "k",
+       "a",
+       "n",
+       "a",
+       "l",
+       "s",
+       "p",
+       "e",
+       "r",
+       "r",
+       "e"
+      ],
+      [
+       "Schlüssel",
+       "N",
+       "E",
+       "B",
+       "E",
+       "L",
+       "N",
+       "E",
+       "B",
+       "E",
+       "L",
+       "N"
+      ],
+      [
+       "Geheimtext",
+       "X",
+       "E",
+       "O",
+       "E",
+       "W",
+       "F",
+       "T",
+       "F",
+       "V",
+       "C",
+       "R"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_loesung": true,
+     "hervor": [
+      [
+       2,
+       6
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Schlüssel NEBELNEBELN → Geheimtext **XEOEW FTFVC R**."
+    },
+    {
+     "t": "p",
+     "md": "b) 6. Buchstabe: s (19) mit N (14): ((19 + 14 − 2) mod 26) + 1 = 5 + 1 = 6 → **F**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* 19 + 14 = 33, 33 mod 26 = 7 → G (P1)."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Bobs Antwort",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Entschlüssele** `WYISX MRZWN VWHGD FFIIS XH` mit dem Schlüsselwort TURM.",
+      "**Gib an**, durch welche Geheimtextbuchstaben das e ersetzt wurde.",
+      "**Erkläre** damit, warum Eve mit der einfachen Häufigkeitsanalyse scheitert."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "W",
+       "Y",
+       "I",
+       "S",
+       "X",
+       "M",
+       "R",
+       "Z",
+       "W",
+       "N",
+       "V",
+       "W",
+       "H",
+       "G",
+       "D",
+       "F",
+       "F",
+       "I",
+       "I",
+       "S",
+       "X",
+       "H"
+      ],
+      [
+       "Schlüssel",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Klartext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.2,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "W",
+       "Y",
+       "I",
+       "S",
+       "X",
+       "M",
+       "R",
+       "Z",
+       "W",
+       "N",
+       "V",
+       "W",
+       "H",
+       "G",
+       "D",
+       "F",
+       "F",
+       "I",
+       "I",
+       "S",
+       "X",
+       "H"
+      ],
+      [
+       "Schlüssel",
+       "T",
+       "U",
+       "R",
+       "M",
+       "T",
+       "U",
+       "R",
+       "M",
+       "T",
+       "U",
+       "R",
+       "M",
+       "T",
+       "U",
+       "R",
+       "M",
+       "T",
+       "U",
+       "R",
+       "M",
+       "T",
+       "U"
+      ],
+      [
+       "Klartext",
+       "d",
+       "e",
+       "r",
+       "g",
+       "e",
+       "s",
+       "a",
+       "n",
+       "d",
+       "t",
+       "e",
+       "k",
+       "o",
+       "m",
+       "m",
+       "t",
+       "m",
+       "o",
+       "r",
+       "g",
+       "e",
+       "n"
+      ]
+     ],
+     "breiten": [
+      2.2,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66,
+      0.66
+     ],
+     "nur_loesung": true,
+     "hervor": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       0,
+       11
+      ],
+      [
+       0,
+       21
+      ],
+      [
+       2,
+       2
+      ],
+      [
+       2,
+       5
+      ],
+      [
+       2,
+       11
+      ],
+      [
+       2,
+       21
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) *dergesandtekommtmorgen* („Der Gesandte kommt morgen“)."
+    },
+    {
+     "t": "p",
+     "md": "b) e → **Y, X, V, X** (Positionen 1, 4, 10, 20 ab 0)."
+    },
+    {
+     "t": "p",
+     "md": "c) Ein Klartextbuchstabe hat bis zu vier verschiedene Geheimtextbuchstaben (Schlüssellänge 4); umgekehrt steht derselbe Geheimtextbuchstabe für verschiedene Klartextbuchstaben (X für e, W für d und k). Die Häufigkeit des e verteilt sich – kein Geheimtextbuchstabe sticht heraus."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Autokey",
+   "sozialform": "Partnerarbeit · Experten A",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nummerierung: A = 1 … Z = 26."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *dogenpalast* mit dem Autokey-Verfahren und dem Schlüsselwort MURANO. Notiere den Schlüsselstrom.",
+      "Bei der Übertragung wird der 2. Geheimtextbuchstabe verfälscht (statt I kommt A an). **Entschlüssele** den verfälschten Geheimtext. Welche Klartextbuchstaben sind falsch?",
+      "**Vergleiche** mit Vigenère (Schlüsselwort MURANO, gleicher Fehler)."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "a) Klartext",
+       "d",
+       "o",
+       "g",
+       "e",
+       "n",
+       "p",
+       "a",
+       "l",
+       "a",
+       "s",
+       "t"
+      ],
+      [
+       "Schlüsselstrom",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "b) verfälscht",
+       "",
+       "A",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Schlüsselstrom",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Klartext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "a) Klartext",
+       "d",
+       "o",
+       "g",
+       "e",
+       "n",
+       "p",
+       "a",
+       "l",
+       "a",
+       "s",
+       "t"
+      ],
+      [
+       "Schlüsselstrom",
+       "M",
+       "U",
+       "R",
+       "A",
+       "N",
+       "O",
+       "D",
+       "O",
+       "G",
+       "E",
+       "N"
+      ],
+      [
+       "Geheimtext",
+       "P",
+       "I",
+       "X",
+       "E",
+       "A",
+       "D",
+       "D",
+       "Z",
+       "G",
+       "W",
+       "G"
+      ],
+      [
+       "b) verfälscht",
+       "P",
+       "A",
+       "X",
+       "E",
+       "A",
+       "D",
+       "D",
+       "Z",
+       "G",
+       "W",
+       "G"
+      ],
+      [
+       "Schlüsselstrom",
+       "M",
+       "U",
+       "R",
+       "A",
+       "N",
+       "O",
+       "D",
+       "G",
+       "G",
+       "E",
+       "N"
+      ],
+      [
+       "Klartext",
+       "d",
+       "g",
+       "g",
+       "e",
+       "n",
+       "p",
+       "a",
+       "t",
+       "a",
+       "s",
+       "t"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95,
+      0.95
+     ],
+     "nur_loesung": true,
+     "hervor": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       8
+      ],
+      [
+       5,
+       2
+      ],
+      [
+       5,
+       8
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Schlüsselstrom MURANODOGEN, Geheimtext **PIXEA DDZGW G**."
+    },
+    {
+     "t": "p",
+     "md": "b) Verfälscht `PAXEADDZGWG` → Entschlüsselung *dggenpatast*: falsch sind der **2. und 8. Buchstabe** (Positionen 1 und 7). Der falsche Klartextbuchstabe g wird 6 Stellen später als Schlüssel benutzt und erzeugt dort den nächsten Fehler, der sich wieder 6 Stellen weiter fortsetzen würde."
+    },
+    {
+     "t": "p",
+     "md": "c) Vigenère: Geheimtext `PIXEADMFRSG`; derselbe Fehler ergibt *dggenpalast* – **nur ein** Buchstabe falsch. Merke: Autokey hat **Fehlerfortpflanzung**, Vigenère nicht."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* beim Entschlüsseln das Schlüsselwort wiederholen statt den gewonnenen Klartext anzuhängen (P3/P4)."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "Porta",
+   "sozialform": "Partnerarbeit · Experten B",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Verschlüssele** *serenissima* mit der Porta-Tafel und dem Schlüsselwort PORTA.",
+      "**Entschlüssele** deinen Geheimtext. Was fällt dir auf?",
+      "**Begründe**, warum ein Klartextbuchstabe nie auf sich selbst abgebildet wird."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartext",
+       "s",
+       "e",
+       "r",
+       "e",
+       "n",
+       "i",
+       "s",
+       "s",
+       "i",
+       "m",
+       "a"
+      ],
+      [
+       "Schlüssel",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Klartext",
+       "s",
+       "e",
+       "r",
+       "e",
+       "n",
+       "i",
+       "s",
+       "s",
+       "i",
+       "m",
+       "a"
+      ],
+      [
+       "Schlüssel",
+       "P",
+       "O",
+       "R",
+       "T",
+       "A",
+       "P",
+       "O",
+       "R",
+       "T",
+       "A",
+       "P"
+      ],
+      [
+       "Geheimtext",
+       "M",
+       "X",
+       "M",
+       "V",
+       "A",
+       "O",
+       "M",
+       "A",
+       "Z",
+       "Z",
+       "T"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_loesung": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **MXMVA OMAZZ T**."
+    },
+    {
+     "t": "p",
+     "md": "b) Entschlüsseln = noch einmal verschlüsseln → *serenissima* (involutorisch)."
+    },
+    {
+     "t": "p",
+     "md": "c) Jede Zeile tauscht einen Buchstaben aus A–M mit einem aus N–Z; ein Buchstabe landet also immer in der anderen Hälfte, nie auf sich selbst – auch das verrät Eve etwas."
+    }
+   ],
+   "fallen": [
+    "P8"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Schwache Schlüssel und Schlüsselraum",
+   "sozialform": "Gruppenarbeit",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Zeige** an *venedig*: Vigenère mit dem Schlüsselwort DDDD ist eine Caesar-Verschiebung. Was bewirkt AAAA?",
+      "**Zeige** an *hafenwache*: ABAB und AB liefern denselben Geheimtext. Was heißt das für die „echte“ Schlüssellänge?",
+      "**Berechne**, wie viele Schlüsselwörter der Länge 5 es bei Vigenère bzw. bei Porta gibt, und **begründe** den Unterschied.",
+      "**Ordne** Vigenère, Autokey und Porta **ein** (Substitution/Transposition, mono/poly)."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) *venedig* mit DDDD → **YHQHG LJ** = Caesar-Verschiebung 3; AAAA verschiebt um 0 → Geheimtext = Klartext (schwacher Schlüssel, P7)."
+    },
+    {
+     "t": "p",
+     "md": "b) beide **HBFFN XADHF**; die echte Schlüssellänge ist 2 (ABAB ist gleichwertig zu AB)."
+    },
+    {
+     "t": "p",
+     "md": "c) Vigenère 26⁵ = **11 881 376** Schlüsselwörter, Porta nur 13⁵ = **371 293** wirklich verschiedene, weil je zwei Buchstaben dasselbe Alphabet wählen. Zum Vergleich W1: 26! monoalphabetische Alphabete – trotzdem geknackt; Größe allein beweist nichts."
+    },
+    {
+     "t": "p",
+     "md": "d) Alle drei: Substitution, polyalphabetisch (bei Schlüssellänge ≥ 2 mit verschiedenen Alphabeten), symmetrisch."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P7"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den Geheimtext zum Klartext *kanalwache* nach dem Vigenère-Verfahren mit dem Schlüsselwort RIVA. Verwenden Sie das Vigenère-Quadrat der Anlage.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Schlüssel RIVARIVARI → **BIIAC EVCYM** [1 BE Verfahren, 1 BE fehlerfrei]."
+      }
+     ],
+     "fallen": [
+      "P1"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Entscheiden Sie begründet**, ob das Porta-Verfahren ein mono- oder ein polyalphabetisches Verfahren ist.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Polyalphabetisch: Je nach Schlüsselbuchstabe wird derselbe Klartextbuchstabe verschieden ersetzt, z. B. a mit Schlüssel A/B → N, mit C/D → Z [1 BE Entscheidung, 1 BE Begründung mit Beispiel]. Sonderfall: Schlüsselwort aus Buchstaben eines Paares (z. B. ABBA) → monoalphabetisch."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Begründen Sie**, dass eine zweifache Verschlüsselung mit dem Porta-Verfahren und demselben Schlüsselwort keine höhere Sicherheit bietet.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Jede Porta-Zeile vertauscht Buchstabenpaare; zweimal tauschen stellt den Klartext wieder her (Involution) → Doppelverschlüsselung = Klartext, also sogar ein Sicherheitsverlust [3 BE]."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Ein Vigenère-Schlüsselwort der Länge 6 ist immer sicherer als ein Schlüsselwort der Länge 3.“",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch [1 BE]: Ein 6er-Schlüssel kann gleichwertig zu einem kürzeren sein (z. B. ABCABC = ABC) oder schwach (AAAAAA = keine Verschlüsselung, DDDDDD = Caesar) [2 BE]. Sicherheit hängt von der **effektiven** Länge und davon ab, wie viele verschiedene Alphabete verwendet werden."
+      }
+     ],
+     "fallen": [
+      "P7",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "2.1",
+   "md": "Level 2.1 „Das unentzifferbare Quadrat“ im Kryptolabor: Vigenère-Werkbank (Reiter „Quadrat“ und „Ver-/Entschlüsseln“). Trainingsplatz: „Vigenère ver-/entschlüsseln“ und „Rechnen mit A = 1“."
+  }
+ ]
+}

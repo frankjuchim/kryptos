@@ -1,0 +1,258 @@
+{
+ "typ": "akte",
+ "welt": 2,
+ "kennung": "AKTE W2·K1",
+ "titel": "Kür: Friedmans Formel",
+ "ds": "frei",
+ "niveau": "kuer",
+ "level": "K1",
+ "datei": "KR_W2_AkteK1_Friedmans_Formel",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Die Friedman-Formel fällt nicht vom Himmel. Mit Paaren zählen, Wahrscheinlichkeiten addieren und einer Umformung kannst du sie selbst herleiten – ein Stück echter Mathematik der Kryptoanalyse."
+  },
+  {
+   "t": "archivwissen",
+   "titel": "Die Idee",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Geheimtext der Länge n mit Schlüssellänge k zerfällt in k Teiltexte zu je n/k Buchstaben. Von allen n(n − 1)/2 Paaren liegen **n(n − k)/(2k)** im selben Teiltext – dort ist die Wahrscheinlichkeit gleicher Buchstaben I~D~, denn jeder Teiltext ist eine Caesar-Verschiebung. Die übrigen **n²(k − 1)/(2k)** Paare liegen in verschiedenen Teiltexten; dort sind gleiche Buchstaben etwa so wahrscheinlich wie im Zufallstext, I~Z~. Also erwartet man"
+    },
+    {
+     "t": "formel",
+     "md": "I = [n(n − k)/(2k) · I~D~ + n²(k − 1)/(2k) · I~Z~] / [n(n − 1)/2]"
+    },
+    {
+     "t": "p",
+     "md": "Löst man nach k auf, erhält man die Friedman-Formel. Für große n gilt näherungsweise **k ≈ (I~D~ − I~Z~)/(I − I~Z~)**."
+    },
+    {
+     "t": "p",
+     "md": "*Skizze:* Text der Länge n = 12, Schlüssellänge k = 3 – drei Teiltexte zu je vier Buchstaben (Positionen ab 0). Ein Paar wie (0, 6) liegt im **selben** Teiltext T~1~, ein Paar wie (0, 4) in **verschiedenen** Teiltexten (T~1~ und T~2~)."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "Position",
+       "0",
+       "1",
+       "2",
+       "3",
+       "4",
+       "5",
+       "6",
+       "7",
+       "8",
+       "9",
+       "10",
+       "11"
+      ],
+      [
+       "Teiltext",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~",
+       "T~1~",
+       "T~2~",
+       "T~3~"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15,
+      1.15
+     ],
+     "hervor": [
+      [
+       0,
+       1
+      ],
+      [
+       0,
+       4
+      ],
+      [
+       0,
+       7
+      ],
+      [
+       0,
+       10
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       4
+      ],
+      [
+       1,
+       7
+      ],
+      [
+       1,
+       10
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Paare zählen",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Zähle** für n = 12 und k = 3 alle Paare, die Paare im selben Teiltext und die Paare in verschiedenen Teiltexten."
+    },
+    {
+     "t": "p",
+     "md": "alle Paare: [[luecke:10]]     im selben Teiltext: [[luecke:10]]     in verschiedenen Teiltexten: [[luecke:10]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "12 · 11/2 = **66**; 3 · (4 · 3/2) = **18**; 66 − 18 = **48**."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Verallgemeinern",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Zeige**, dass im selben Teiltext n(n − k)/(2k) und in verschiedenen Teiltexten n²(k − 1)/(2k) Paare liegen (n durch k teilbar)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Je Teiltext (n/k)(n/k − 1)/2 Paare, k Teiltexte: k · (n/k)(n/k − 1)/2 = n(n − k)/(2k)."
+    },
+    {
+     "t": "p",
+     "md": "Verschiedene Teiltexte: n(n − 1)/2 − n(n − k)/(2k) = n[k(n − 1) − (n − k)]/(2k) = n(kn − n)/(2k) = n²(k − 1)/(2k)."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_loesung": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Der Erwartungswert",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Begründe**, warum im selben Teiltext gleiche Buchstaben mit Wahrscheinlichkeit I~D~ und in verschiedenen Teiltexten etwa mit I~Z~ auftreten. **Stelle** den Erwartungswert von I **auf** und **berechne** ihn für n = 12, k = 3 (I~D~ = 0,076, I~Z~ = 0,038)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Jeder Teiltext ist eine Caesar-Verschiebung eines deutschen Teiltexts → I bleibt I~D~. Zwei Buchstaben aus verschiedenen Teiltexten wurden unterschiedlich verschoben (bei „zufälligem“ Schlüssel) → Übereinstimmung etwa wie im Zufallstext, I~Z~ (Modellannahme)."
+    },
+    {
+     "t": "p",
+     "md": "Erwartungswert: I = [n(n − k)/(2k) · I~D~ + n²(k − 1)/(2k) · I~Z~] / [n(n − 1)/2] = (n − k)/((n − 1)k) · I~D~ + n(k − 1)/((n − 1)k) · I~Z~."
+    },
+    {
+     "t": "p",
+     "md": "Für n = 12, k = 3: (18 · 0,076 + 48 · 0,038)/66 = (1,368 + 1,824)/66 = 3,192/66 ≈ **0,048** (genauer 0,0484)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 3,
+   "titel": "Nach k auflösen",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Löse** nach k **auf** und **vergleiche** mit der Friedman-Formel. **Leite** die Näherung k ≈ (I~D~ − I~Z~)/(I − I~Z~) für große n **her** und berechne damit k für I = 0,0456 (vergleiche: exakt für n = 501)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 6,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Mit (n − 1)k multiplizieren: I(n − 1)k = nI~D~ − kI~D~ + nkI~Z~ − nI~Z~ → k[(n − 1)I − nI~Z~ + I~D~] = n(I~D~ − I~Z~) → **k = (I~D~ − I~Z~) · n / ((n − 1) · I − I~Z~ · n + I~D~)**. Probe mit I ≈ 0,0484, n = 12 → k = 3."
+    },
+    {
+     "t": "p",
+     "md": "Große n: (n − 1)I − nI~Z~ + I~D~ = n(I − I~Z~) + (I~D~ − I) ≈ n(I − I~Z~) → k ≈ (I~D~ − I~Z~)/(I − I~Z~); Beispiel I = 0,0456 → 0,038/0,0076 = **5** (exakt für n = 501: 4,96)."
+    },
+    {
+     "t": "p",
+     "md": "**Modellgrenze:** Schlüsselbuchstaben dürfen sich nicht wiederholen bzw. Teiltexte nicht zufällig gleich verschoben sein; sonst wird k unterschätzt."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "K1",
+   "md": "Kür K1 „Friedmans Formel“ im Kryptolabor: Aufgaben W2-K1-01 bis 07; Kontrolle mit der Vigenère-Werkbank (Reiter „Koinzidenzindex“)."
+  }
+ ]
+}

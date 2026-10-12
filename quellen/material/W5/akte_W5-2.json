@@ -1,0 +1,823 @@
+{
+ "typ": "akte",
+ "welt": 5,
+ "kennung": "AKTE W5·2",
+ "titel": "Das Siegel",
+ "ds": "15",
+ "niveau": "kern",
+ "level": "5.2",
+ "datei": "KR_W5_Akte2_Das_Siegel",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Mallory hat dazugelernt. Sie verändert die Update-Datei **und** berechnet den neuen Fingerabdruck gleich mit. Wer nur Hashwerte vergleicht, merkt nichts. Früher besiegelten Kanzleien Briefe mit einem Siegelring, den nur sie besaßen. Ihr baut das digitale Gegenstück – mit einem Schlüssel, den **nur Alice** besitzt."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Warum ein Hashwert allein nicht reicht",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein mitgeschickter Hashwert schützt nur gegen **zufällige** Fehler. Ein Angreifer, der die Nachricht ändert, berechnet einfach den passenden neuen Hashwert. Der Hashwert muss so „versiegelt“ werden, dass **nur die Absenderin** das Siegel erzeugen, aber **jeder** es prüfen kann – genau das leistet ein asymmetrisches Schlüsselpaar in umgekehrter Rolle."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Die digitale Signatur",
+   "inhalt": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 13.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht → Hashfunktion → Hashwert"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert verschlüsseln mit dem privaten Schlüssel von Alice → Signatur"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Nachricht + Signatur"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "empfangene Nachricht → Hashfunktion → Hashwert H₁"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Signatur entschlüsseln mit dem öffentlichen Schlüssel von Alice → Hashwert H₂"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "H₁ und H₂ vergleichen: gleich → gültig, sonst ungültig"
+      }
+     ],
+     "titel": "Alice erstellt (1 – 3), Bob prüft (4 – 6)"
+    },
+    {
+     "t": "p",
+     "md": "**Gültig** heißt: Die Nachricht wurde nicht verändert (**Integrität**) und stammt von der Besitzerin des privaten Schlüssels (**Authentizität**); Alice kann das später nicht abstreiten (**Verbindlichkeit**)."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P9",
+   "titel": "Schlüsselrollen bei der Signatur",
+   "md": "Signiert wird mit dem **privaten** Schlüssel der **Absenderin**, geprüft mit ihrem **öffentlichen** Schlüssel – und der **Vergleich** in ⑥ gehört immer dazu. Im Schaubild immer **Schlüsselart und Inhaber** angeben („öffentlicher Schlüssel von Alice“)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Schutzziele",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schutzziel",
+      "Bedeutung",
+      "erreicht durch"
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      3.9,
+      5.6,
+      6.3
+     ],
+     "zeilen": [
+      [
+       "Vertraulichkeit",
+       "nur Befugte können den Inhalt lesen",
+       "Verschlüsselung (für Bob: mit Bobs öffentlichem Schlüssel bzw. hybrid)"
+      ],
+      [
+       "Integrität",
+       "Inhalt wurde nicht unbemerkt verändert",
+       "Hashwert + Signatur"
+      ],
+      [
+       "Authentizität",
+       "Absender ist der, der er zu sein vorgibt",
+       "Signatur (+ Zertifikat für den Schlüssel, Akte W5·3)"
+      ],
+      [
+       "Verbindlichkeit *(Ergänzung)*",
+       "Absender kann das Senden nicht abstreiten",
+       "Signatur mit privatem Schlüssel, den nur er besitzt"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Signieren und verschlüsseln",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Schritt",
+      "wer",
+      "was",
+      "Schlüssel"
+     ],
+     "zentriert": false,
+     "breiten": [
+      1.5,
+      1.6,
+      7.0,
+      5.7
+     ],
+     "zeilen": [
+      [
+       "1",
+       "Alice",
+       "Hashwert der Nachricht berechnen und signieren",
+       "**privater Schlüssel von Alice**"
+      ],
+      [
+       "2",
+       "Alice",
+       "Nachricht + Signatur (hybrid) verschlüsseln",
+       "**öffentlicher Schlüssel von Bob** (für den Sitzungsschlüssel)"
+      ],
+      [
+       "3",
+       "Bob",
+       "entschlüsseln",
+       "**privater Schlüssel von Bob**"
+      ],
+      [
+       "4",
+       "Bob",
+       "Signatur prüfen (Hash berechnen, Signatur entschlüsseln, vergleichen)",
+       "**öffentlicher Schlüssel von Alice**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Bob macht Alices Schritte in **umgekehrter Reihenfolge** rückgängig (P3). Erst signieren, dann verschlüsseln: Die Signatur bezieht sich auf den Klartext und ist für Mallory unsichtbar. Merksatz: **Vertraulichkeit → Schlüssel des Empfängers · Signatur → Schlüssel der Absenderin.**"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 5,
+   "titel": "Signatur mit kleinen Zahlen (Ergänzung, RSA aus W4)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice: öffentlich (55, 3), privat (55, 27). Signatur **s = (Hashwert)^27^ mod 55** (berechnet Alices Gerät), Prüfung: **s^3^ mod 55 = Hashwert?**"
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel „nebel“:* KH = 9, s = 9^27^ mod 55 = **4**; Bob: 4^3^ = 64, 64 mod 55 = **9** = KH(„nebel“) → **gültig**."
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Das Siegel prüfen",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "In der Vorlage ist nur der obere Teil (Erstellen, ① – ③) ausgefüllt. **Erweitere** den unteren Teil um das Prüfen ④ – ⑥ und beschrifte **Schlüsselart und Inhaber**. Decke dazu Archivwissen 2 ab."
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 12.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht → Hashfunktion → Hashwert"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert verschlüsseln mit dem privaten Schlüssel von Alice → Signatur"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Nachricht + Signatur"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "______________ → ______________ → H₁"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "______________ ______________ mit dem ______________ → H₂"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "______________ → gültig / ungültig"
+      }
+     ],
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 11.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht → Hashfunktion → Hashwert"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert verschlüsseln mit dem privaten Schlüssel von Alice → Signatur"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Nachricht + Signatur"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "empfangene Nachricht → Hashfunktion → Hashwert H₁"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Signatur entschlüsseln mit dem öffentlichen Schlüssel von Alice → Hashwert H₂"
+      },
+      {
+       "nr": 6,
+       "von": "B",
+       "nach": "B",
+       "text": "H₁ und H₂ vergleichen: gleich → gültig, sonst ungültig"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "④ empfangene Nachricht → Hashfunktion → H~1~; ⑤ Signatur → entschlüsseln mit dem **öffentlichen Schlüssel von Alice** → H~2~; ⑥ H~1~ und H~2~ vergleichen (gleich → gültig, sonst ungültig)."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler:* Bobs privater Schlüssel in ⑤ (P9); der Vergleich fehlt."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Du bist Mallory 🔍",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bob prüft jede Signatur. **Erläutere** jeweils, was seine Prüfung ergibt und warum:"
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Mallory ändert nur die Nachricht.",
+      "Mallory ändert die Nachricht und ersetzt die Signatur durch den neuen Hashwert.",
+      "Mallory ändert die Nachricht und signiert sie mit **ihrem eigenen** privaten Schlüssel.",
+      "Mallory schickt eine alte, gültig signierte Nachricht von Alice eine Woche später noch einmal."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) H~1~ (Hash der geänderten Nachricht) ≠ H~2~ (aus der Signatur) → **ungültig**."
+    },
+    {
+     "t": "p",
+     "md": "b) Bob entschlüsselt den „Signatur“-Wert mit Alices öffentlichem Schlüssel und erhält Unsinn ≠ H~1~ → **ungültig**; ein bloßer Hashwert ist keine Signatur."
+    },
+    {
+     "t": "p",
+     "md": "c) Mit Alices öffentlichem Schlüssel lässt sich Mallorys Signatur nicht korrekt „entschlüsseln“ → H~2~ ≠ H~1~ → **ungültig** (es sei denn, Bob hält Mallorys öffentlichen Schlüssel für Alices → Akte W5·3)."
+    },
+    {
+     "t": "p",
+     "md": "d) Die Prüfung meldet **gültig** – Signaturen schützen nicht vor Wiederholung (Replay). Abhilfe: Datum bzw. fortlaufende Nummer in die signierte Nachricht aufnehmen."
+    }
+   ],
+   "fallen": [
+    "P9"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Fünf oder zehn Uhr?",
+   "sozialform": "Partnerarbeit · 10 min",
+   "niveau": "ergaenzung",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice (öffentlich (55, 3), privat (55, 27)) sendet „treffen um fuenf uhr“ (normalisiert `treffenumfuenfuhr`, KH = 8) mit der Signatur s = 2."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Prüfe** die Signatur als Bob.",
+      "Mallory ersetzt die Nachricht durch „treffen um zehn uhr“ (KH = 8) und lässt s = 2 stehen. **Prüfe** erneut.",
+      "**Erläutere**, welche Eigenschaft der Hashfunktion Mallory ausnutzt und was daraus für echte Signaturverfahren folgt."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) 2^3^ = 8, 8 mod 55 = 8 = KH → **gültig**."
+    },
+    {
+     "t": "p",
+     "md": "b) KH(`treffenumzehnuhr`) = 8, 2^3^ mod 55 = 8 → wieder **gültig**."
+    },
+    {
+     "t": "p",
+     "md": "c) Mallory nutzt eine **Kollision** des KRYPTOS-Hash (keine Kollisionsresistenz). Echte Signaturen brauchen kollisionsresistente Hashfunktionen (SHA-256); MD5 und SHA-1 sind deshalb für Signaturen nicht mehr zulässig."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Was schützt was?",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Fülle die Tabelle mit ✓/✗ und **begründe** je Zeile in einem Satz."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Verfahren",
+      "Vertraulichkeit",
+      "Integrität",
+      "Authentizität",
+      "Verbindlichkeit"
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      5.6,
+      2.8,
+      2.6,
+      2.8,
+      2.8
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Alice verschlüsselt nur (hybrid, Bobs öffentlicher Schlüssel)",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Alice signiert nur",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Alice signiert und verschlüsselt",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Verfahren",
+      "Vertraulichkeit",
+      "Integrität",
+      "Authentizität",
+      "Verbindlichkeit"
+     ],
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      5.2,
+      2.6,
+      2.4,
+      2.6,
+      2.6
+     ],
+     "schrift": 9.5,
+     "zeilen": [
+      [
+       "Alice verschlüsselt nur (hybrid, Bobs öffentlicher Schlüssel)",
+       "✓",
+       "✗",
+       "✗",
+       "✗"
+      ],
+      [
+       "Alice signiert nur",
+       "✗",
+       "✓",
+       "✓",
+       "✓"
+      ],
+      [
+       "Alice signiert und verschlüsselt",
+       "✓",
+       "✓",
+       "✓",
+       "✓"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Begründungen: Bobs öffentlichen Schlüssel kennt jeder, also könnte jeder so eine Nachricht erzeugen (keine Authentizität); Mallory könnte eine eigene verschlüsselte Nachricht unterschieben. Die Signatur ist ohne Verschlüsselung für alle lesbar (keine Vertraulichkeit)."
+    },
+    {
+     "t": "p",
+     "md": "*Hinweis:* Manche Lehrwerke sehen bei hybrider Verschlüsselung eine eingeschränkte Integrität – die Begründung hat bei der Bewertung Vorrang."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Geheim und gesiegelt",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ergänze zuerst im Schaubild an den Stellen (1) bis (4) **Schlüsselart und Inhaber** – ohne in Archivwissen 4 nachzusehen.",
+     "nur_schueler": true
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 13.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert der Nachricht berechnen und signieren mit dem (1) ______________ → Signatur"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht + Signatur mit Sitzungsschlüssel k symmetrisch verschlüsseln; k verschlüsseln mit dem (2) ______________"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Geheimtext + verschlüsselter Sitzungsschlüssel"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "k entschlüsseln mit dem (3) ______________; dann Nachricht + Signatur entschlüsseln"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Signatur prüfen mit dem (4) ______________: Hashwert selbst berechnen und vergleichen"
+      }
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Beschreibe**, wie Alice eine Nachricht gleichzeitig vertraulich und signiert an Bob sendet und wie Bob sie verarbeitet.",
+      "**Entscheide** begründet, ob die Aussage korrekt ist: „Alice kann ebenso gut mit Bobs öffentlichem Schlüssel signieren, Hauptsache, Bob kann prüfen.“",
+      "**Begründe**, warum man üblicherweise zuerst signiert und dann verschlüsselt."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "breite_cm": 12.5,
+     "_W": 760,
+     "_gr": 19,
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Hashwert der Nachricht berechnen und signieren mit dem privaten Schlüssel von Alice → Signatur"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht + Signatur mit Sitzungsschlüssel k symmetrisch verschlüsseln; k verschlüsseln mit dem öffentlichen Schlüssel von Bob"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Geheimtext + verschlüsselter Sitzungsschlüssel"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "k entschlüsseln mit dem privaten Schlüssel von Bob; dann Nachricht + Signatur entschlüsseln"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Signatur prüfen mit dem öffentlichen Schlüssel von Alice: Hashwert selbst berechnen und vergleichen"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "a) Alice: Hash berechnen, mit eigenem privaten Schlüssel signieren; Nachricht + Signatur hybrid verschlüsseln (Sitzungsschlüssel mit Bobs öffentlichem Schlüssel). Bob: Sitzungsschlüssel mit seinem privaten Schlüssel, dann Nachricht + Signatur entschlüsseln; Hash selbst berechnen, Signatur mit Alices öffentlichem Schlüssel prüfen, vergleichen."
+    },
+    {
+     "t": "p",
+     "md": "b) **Falsch:** Bobs öffentlichen Schlüssel kennt jeder – jeder könnte so „signieren“; außerdem ließe sich die Signatur nur mit Bobs privatem Schlüssel prüfen, also nicht von Dritten."
+    },
+    {
+     "t": "p",
+     "md": "c) Die Signatur bezieht sich auf den Klartext (Bob prüft das, was er liest); verschlüsselt ist sie für Mallory unsichtbar – Mallory erfährt nicht einmal, wer signiert hat."
+    }
+   ],
+   "fallen": [
+    "P9",
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 3,
+   "titel": "Fremdes Verfahren: der Siegel-Code",
+   "sozialform": "Partnerarbeit · 12 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zwei Lagerhallen vereinbaren persönlich ein geheimes Wort g. Zu jeder Nachricht n senden sie den Prüfwert **P = KH(g + n)** (g vorangestellt). Mit g = „oase“ und n = „kiste fehlt im hafen“ (`kistefehltimhafen`) ist P = 27."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Beschreibe**, wie die Empfängerhalle den Prüfwert prüft.",
+      "**Vergleiche** den Siegel-Code mit einer digitalen Signatur hinsichtlich Authentizität und Verbindlichkeit.",
+      "Mallory kennt g nicht, ändert aber die Nachricht in `kistefehltimhaffk` und lässt P = 27 stehen. **Untersuche**, ob die Prüfung anschlägt. *(Hinweis: KH(`kistefehltimhafen`) = KH(`kistefehltimhaffk`) = 3.)*"
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Die Empfängerhalle setzt g vor die empfangene Nachricht, berechnet KH(g + n) und vergleicht mit P."
+    },
+    {
+     "t": "p",
+     "md": "b) Authentizität nur **zwischen den beiden Hallen** (nur sie kennen g); **keine Verbindlichkeit**: Da beide g kennen, könnte auch der Empfänger den Prüfwert erzeugt haben – gegenüber Dritten ist nichts beweisbar. Zusätzlich muss g vorher geheim ausgetauscht werden (symmetrisches Schlüsselproblem, W4)."
+    },
+    {
+     "t": "p",
+     "md": "c) Da beide Nachrichten gleich lang sind und denselben KH haben, endet g + n im selben Zustand: KH(`oasekistefehltimhaffk`) = **27** = P → die Prüfung schlägt **nicht** an. Mallory braucht g gar nicht. (Allgemein: KH(g + n) = (3^L^ · KH(g) + KH(n)) mod 29 bei Nachrichtenlänge L.)"
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Beschreiben Sie** das Erstellen und das Prüfen einer digitalen Signatur.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Erstellen: Hashwert der Nachricht berechnen (1), Hashwert mit dem privaten Schlüssel des Absenders verschlüsseln = Signatur, mit der Nachricht senden (1). Prüfen: Empfänger berechnet den Hashwert der empfangenen Nachricht und entschlüsselt die Signatur mit dem öffentlichen Schlüssel des Absenders (1); Vergleich der Hashwerte, Übereinstimmung → gültig (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern Sie**, welche Schutzziele eine digitale Signatur gewährleistet und welches sie nicht gewährleistet.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Integrität: jede Änderung führt zu einem anderen Hashwert (1); Authentizität: nur der Besitzer des privaten Schlüssels kann die Signatur erzeugen (1); keine Vertraulichkeit: die Nachricht wird im Klartext übertragen (1)."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie** begründet, ob die folgende Aussage korrekt ist: „Wenn Alice ihre Nachricht mit Bobs öffentlichem Schlüssel verschlüsselt, weiß Bob sicher, dass die Nachricht von Alice stammt.“",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch (1): Bobs öffentlicher Schlüssel ist allen bekannt, daher kann jede Person eine so verschlüsselte Nachricht erzeugen; die Absenderin ist nicht nachgewiesen (1)."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Erläutern Sie**, wie gleichzeitig Vertraulichkeit, Integrität und Authentizität einer Nachricht gewährleistet werden können.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Absender signiert mit seinem privaten Schlüssel (Integrität, Authentizität) (1), verschlüsselt Nachricht und Signatur mit dem öffentlichen Schlüssel des Empfängers bzw. hybrid (Vertraulichkeit) (1); Empfänger entschlüsselt mit seinem privaten Schlüssel und prüft die Signatur mit dem öffentlichen Schlüssel des Absenders (1)."
+      }
+     ],
+     "fallen": [
+      "P9"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "5.2",
+   "md": "Level 5.2 „Das Siegel“ im Kryptolabor mit dem **Signatur-Simulator** (Mallory ändert ein Zeichen, ersetzt die Signatur, setzt eine Kollision ein …). Trainingsplatz: „Schutzziele“ (3 Aufgaben); Ergänzung „Signaturprüfung“ (3 Aufgaben)."
+  }
+ ]
+}

@@ -1,0 +1,780 @@
+{
+ "typ": "praesentation",
+ "welt": 0,
+ "titel": "Kryptos – Die Zeitreise der Geheimschriften",
+ "datei": "KR_W0_Praesentation_Kickoff",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "Kickoff",
+   "titel": "Kryptos – Die Zeitreise der Geheimschriften",
+   "oberzeile": "KICKOFF · INFORMATIK · KRYPTOLOGIE",
+   "untertitel": "Informatik · Kryptologie · 18 Doppelstunden",
+   "notizen": "K1 · 1 min. DS 1, Einstieg. Einen versiegelten Umschlag hochhalten – noch nichts erklären. Folie stehen lassen, bis es ruhig ist.\nÜberleitung: „Stellt euch vor, in diesem Umschlag steht etwas, das niemand außer einer einzigen Person lesen darf.“"
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Kickoff",
+   "titel": "Ein Brief, den niemand lesen soll",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Alice will Bob schreiben. Der Bote ist **neugierig**. Was tun?"
+    },
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "BO",
+       "name": "Bote",
+       "unter": "unterwegs"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "BO",
+       "text": "übergibt den Brief"
+      },
+      {
+       "nr": 2,
+       "von": "BO",
+       "nach": "BO",
+       "text": "öffnet ihn heimlich?"
+      },
+      {
+       "nr": 3,
+       "von": "BO",
+       "nach": "B",
+       "text": "liefert ab"
+      }
+     ],
+     "breite_folie": 9.5
+    },
+    {
+     "t": "p",
+     "md": "*Wie bekommt ihr eine Nachricht zu jemandem, ohne dass der Bote sie lesen kann?*",
+     "zentriert": true
+    }
+   ],
+   "notizen": "K2 · 3 min. Umschlag weiter in der Hand. Impuls: „Wie bekommt ihr eine Nachricht zu jemandem, ohne dass der Bote sie lesen kann?“\nIdeen an der Tafel sammeln: verstecken, Geheimsprache, Code, Schloss/Kiste, Bote vertrauen, persönlich übergeben.\nErwartung: Das Wort „Code“ fällt fast immer. Nicht korrigieren, nur notieren – der Unterschied Codierung ≠ Verschlüsselung kommt später in dieser Stunde (Welt-0-Präsentation F6, Falle P5)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Kickoff",
+   "titel": "Das Archiv der verborgenen Schriften",
+   "anteil": 0.56,
+   "links": [
+    {
+     "t": "p",
+     "md": "Im Archiv steht das **Chronoskop**. Es reist in jede Epoche, in der Menschen Geheimnisse ausgetauscht haben."
+    },
+    {
+     "t": "p",
+     "md": "Die **Archivarin** führt euch durch die Einheit."
+    },
+    {
+     "t": "p",
+     "md": "==Ihr seid Chronistinnen und Chronisten.=="
+    },
+    {
+     "t": "p",
+     "md": "In jeder Epoche: ein Archivfund, Level, ein Boss – und ein **Artefakt**.",
+     "klein": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Ring",
+      "Epoche"
+     ],
+     "zeilen": [
+      [
+       "`−405`",
+       "Sparta"
+      ],
+      [
+       "`−52`",
+       "Rom"
+      ],
+      [
+       "`850`",
+       "Bagdad"
+      ],
+      [
+       "`1553`",
+       "Venedig"
+      ],
+      [
+       "`1917`",
+       "Funkstation"
+      ],
+      [
+       "`1976`",
+       "Stanford"
+      ],
+      [
+       "`heute`",
+       "das Netz"
+      ]
+     ],
+     "breiten": [
+      1.6,
+      3.2
+     ],
+     "schrift_folie": 18,
+     "kopfspalte": true
+    }
+   ],
+   "notizen": "K3 · 2 min. Rahmenhandlung erzählen: Im Archiv der verborgenen Schriften steht das Chronoskop. Es reist in jede Epoche, in der Menschen Geheimnisse ausgetauscht haben. Die Lernenden sind Chronistinnen und Chronisten – sie halten fest, wie Menschen Botschaften geschützt und geknackt haben.\nDie Archivarin führt durch die Einheit (Level-Einleitungen, Tipps im Lab, Videos). Sie hat keinen Namen; historische Personen (Caesar, Al-Kindi, Vigenère …) kommen nur als Fachgeschichte vor, nie als Figuren mit erfundenen Zitaten.\nDie Jahreszahlen am Ring sind die Epochen der Einheit – Details auf der Zeitleiste (K6)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Kickoff",
+   "titel": "Alice, Bob – und Eve",
+   "anteil": 0.62,
+   "links": [
+    {
+     "t": "schaubild",
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Absenderin"
+      },
+      {
+       "id": "E",
+       "name": "Eve",
+       "unter": "lauscht"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "verschlüsselt"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "B",
+       "text": "sendet den Geheimtext"
+      },
+      {
+       "nr": 3,
+       "von": "E",
+       "nach": "E",
+       "text": "fängt ab und liest mit"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "entschlüsselt"
+      }
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "● **Alice** und **Bob** schreiben sich geheime Botschaften."
+    },
+    {
+     "t": "p",
+     "md": "● **Eve** lauscht (*eavesdropper*)."
+    },
+    {
+     "t": "p",
+     "md": "● Später: **Mallory** fälscht, **Trent** beglaubigt."
+    }
+   ],
+   "notizen": "K4 · 2 min. Alice, Bob und Eve sind die Standardnamen der Fachliteratur – sie bleiben in allen Epochen gleich, nur ihre Gestalt wechselt: Legionär und Feldherr, Gelehrte in Bagdad, Diplomatin in Venedig, Funker im Weltkrieg, Rechenzentrum in Stanford, zwei Smartphones.\nEve = „eavesdropper“ (Lauscherin): Sie hört nur mit. Ab Welt 5 kommt Mallory (der aktive Angreifer, fälscht und schaltet sich dazwischen) und Trent (vertrauenswürdige Dritte, Zertifizierungsstelle).\nIm Abitur werden genau diese Namen in Ablaufschaubildern verwendet."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Kickoff",
+   "titel": "Zwei Rollen",
+   "links": [
+    {
+     "t": "h",
+     "md": "🛡 Kryptografie"
+    },
+    {
+     "t": "p",
+     "md": "Verfahren **entwerfen** und **anwenden**."
+    },
+    {
+     "t": "geheimtext",
+     "label": "MIT SCHLÜSSEL k = 3",
+     "text": "hilfe → KLOIH",
+     "gruppen": 0
+    },
+    {
+     "t": "p",
+     "md": "Ihr helft **Alice und Bob**.",
+     "klein": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "🔍 Kryptoanalyse"
+    },
+    {
+     "t": "p",
+     "md": "Verfahren **ohne Schlüssel brechen** („knacken“)."
+    },
+    {
+     "t": "geheimtext",
+     "label": "OHNE SCHLÜSSEL",
+     "text": "KLOIH → ?????",
+     "gruppen": 0
+    },
+    {
+     "t": "p",
+     "md": "Ihr lest **Eves** Beute mit.",
+     "klein": true
+    }
+   ],
+   "notizen": "K5 · 2 min. In jeder Epoche wechselt ihr die Seiten. Im Lab steht an jedem Level, welche Rolle ihr gerade habt (🛡 oder 🔍).\nFrage: „Wer von beiden ist wichtiger?“ Erwartung: Man braucht beide – nur wer knacken kann, kann sichere Verfahren bauen.\nZusammen ergeben beide die Kryptologie (Merke-Folie folgt)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "Kickoff",
+   "titel": "Kryptologie",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**Kryptologie = Kryptografie + Kryptoanalyse**"
+    },
+    {
+     "t": "p",
+     "md": "Im Abitur zählen die **Fachbegriffe** – die Geschichte ist nur der Rahmen."
+    }
+   ],
+   "notizen": "K5b · 30 s. Merksatz vorlesen lassen. Hinweis auf die Regel der Einheit: Die Story rahmt, sie ersetzt nie Fachbegriffe."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Kickoff",
+   "titel": "Die Zeitleiste: sieben Epochen",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Welt",
+      "Epoche",
+      "Wann / wo",
+      "Archivfund",
+      "Artefakt"
+     ],
+     "zeilen": [
+      [
+       "0",
+       "**Die Antike**",
+       "−500 bis −50 · Sparta & Rom",
+       "Die Botschaft am Stab",
+       "Skytale"
+      ],
+      [
+       "1",
+       "**Das Haus der Weisheit**",
+       "um 850 · Bagdad",
+       "Al-Kindis Manuskript",
+       "Al-Kindis Manuskript"
+      ],
+      [
+       "2",
+       "**Le chiffre indéchiffrable**",
+       "Renaissance – 19. Jh.",
+       "Brief einer Diplomatin",
+       "Vigenère-Tafel"
+      ],
+      [
+       "3",
+       "**Das Maschinenzeitalter**",
+       "1917–1977",
+       "Lochstreifen von 1917",
+       "Lochstreifen"
+      ],
+      [
+       "4",
+       "**Das Schlüsselproblem**",
+       "1976 · Stanford",
+       "Brief mit verlorenem Schlüssel",
+       "Schlüsselpaar"
+      ],
+      [
+       "5",
+       "**Das Netz**",
+       "heute",
+       "Die gefälschte Website",
+       "Siegel"
+      ],
+      [
+       "6",
+       "**Die Zeitmaschine**",
+       "Endgegner",
+       "Eves Chiffre",
+       "Chronoskop-Kern"
+      ]
+     ],
+     "breiten": [
+      0.8,
+      3.4,
+      3.0,
+      3.3,
+      2.4
+     ],
+     "schrift_folie": 18,
+     "kopfspalte": true
+    }
+   ],
+   "notizen": "K6 · 3 min. Jede Epoche ist eine Welt mit Archivfund (Einstiegsrätsel), Leveln, Boss und einem Artefakt als Sammelobjekt.\nIm Lab erscheint die Zeitleiste als Reihe von Toren; gesperrte Tore sind „noch verschlüsselt“. Mit jeder bestandenen Welt wird ein Kapitel der Kryptogeschichte entsiegelt.\nKurz zeigen: Die Reise geht von Stab und Pergament bis zu Smartphone und Zertifikat."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Kickoff",
+   "titel": "Ablauf: 18 Doppelstunden",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "DS",
+      "Welt",
+      "Darum geht es",
+      "Live im Funkraum"
+     ],
+     "zeilen": [
+      [
+       "1–3",
+       "0 Antike",
+       "Grundbegriffe, Skytale, Caesar, Caesar in Java, Fremde Chiffre I",
+       "🔴 Botenlauf"
+      ],
+      [
+       "4–5",
+       "1 Bagdad",
+       "Substitution, Häufigkeitsanalyse, affine Chiffre",
+       "🔴 Wettknacken"
+      ],
+      [
+       "6–8",
+       "2 Renaissance",
+       "Vigenère, Kasiski, Friedman, Playfair",
+       "–"
+      ],
+      [
+       "9–11",
+       "3 Maschinen",
+       "XOR, One-Time-Pad, Blockchiffre, eigene Chiffre",
+       "🔴 Doppelter Schlüssel · Knack-Arena"
+      ],
+      [
+       "12–13",
+       "4 Stanford 1976",
+       "Schlüsselproblem, asymmetrisch, hybrid",
+       "🔴 Schlüsseltausch"
+      ],
+      [
+       "14–16",
+       "5 Das Netz",
+       "Hash, Signatur, Zertifikat, Mallory",
+       "🔴 Mallory im Netz"
+      ],
+      [
+       "17–18",
+       "6 Zeitmaschine",
+       "Fallenjagd, Eves Chiffre, Generalprobe",
+       "–"
+      ]
+     ],
+     "breiten": [
+      1.1,
+      2.4,
+      5.6,
+      3.6
+     ],
+     "schrift_folie": 17,
+     "kopfspalte": true
+    },
+    {
+     "t": "p",
+     "md": "Danach: **Klausur** – eine klassische und eine moderne Aufgabe.",
+     "klein": true
+    }
+   ],
+   "notizen": "K6b · 2 min. Überblick, nicht im Detail besprechen. Drei Dinge betonen:\n1. Je Doppelstunde ein Level (Lab) und eine Akte (Arbeitsblatt).\n2. Jede Welt endet mit einem Boss: online (25 min) und optional auf Papier mit Erwartungshorizont.\n3. 🔴 = Live-Szenario im Funkraum (Teams spielen gegeneinander).\nDie Klausur folgt dem Abiturformat 2A/2E: klassisches + modernes Verfahren."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Kickoff",
+   "titel": "Am Ende: Eves Chiffre",
+   "anteil": 0.52,
+   "links": [
+    {
+     "t": "p",
+     "md": "Eve hat eine **eigene Chiffre** gebaut und das Chronoskop verschlüsselt."
+    },
+    {
+     "t": "p",
+     "md": "Ihr bekommt nur die **Beschreibung** des Verfahrens."
+    },
+    {
+     "t": "p",
+     "md": "==Genau das ist das Abiturformat.=="
+    }
+   ],
+   "rechts": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Lesen und nachrechnen",
+      "Anwenden",
+      "Umkehren",
+      "Einordnen",
+      "Beurteilen"
+     ]
+    },
+    {
+     "t": "p",
+     "md": "In **jeder Welt** übt ihr eine „fremde Chiffre“.",
+     "klein": true
+    }
+   ],
+   "notizen": "K7 · 2 min. Die Story endet dort, wo die Prüfung beginnt: Im Abitur bekommt man fast immer ein unbekanntes Verfahren vorgelegt (in der Auswertung 15 von 17 eA-Aufgaben) – anwenden, umkehren, einordnen, beurteilen.\nDeshalb gibt es in jeder Welt ein Level „Fremde Chiffre“ mit der 5-Schritte-Methode (Werkzeugkarte WK2). In Welt 0 zum ersten Mal: DS 3, die Fackelchiffre."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "Lab",
+   "titel": "So funktioniert das Lab",
+   "links": [
+    {
+     "t": "p",
+     "md": "● **Level** mit Aufgaben ★ / ★★ / ★★★"
+    },
+    {
+     "t": "p",
+     "md": "● **Tipps** helfen – kosten aber Punkte"
+    },
+    {
+     "t": "p",
+     "md": "● **Kryptolabor:** Werkzeuge zum Ausprobieren"
+    },
+    {
+     "t": "p",
+     "md": "● **Akten** (Arbeitsblätter) auf Papier"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "● **Boss** je Welt: Abi-Probe auf Zeit"
+    },
+    {
+     "t": "p",
+     "md": "● **Warm-up** zu Stundenbeginn"
+    },
+    {
+     "t": "p",
+     "md": "● **Trainingsplatz:** unbegrenzt üben"
+    },
+    {
+     "t": "p",
+     "md": "● **Deine Fallen:** P1–P10 im Profil"
+    }
+   ],
+   "notizen": "K8 · 2 min. Punkte gibt es nur automatisch für gelöste Aufgaben – niemand vergibt Punkte von Hand.\nFallen P1–P10: Das Lab erkennt typische Fehler (z. B. falsche Zählbasis) und zeigt sie im Profil unter „Deine Fallen“.\nWerkzeuge (Skytale & Gitter, Chiffrierscheibe …) sind im Kryptolabor frei, in Bossen gesperrt."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Lab",
+   "titel": "Punkte, Ränge, Artefakte",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.47,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Stufe",
+        "Punkte"
+       ],
+       "zeilen": [
+        [
+         "★",
+         "10"
+        ],
+        [
+         "★★",
+         "20"
+        ],
+        [
+         "★★★",
+         "30"
+        ]
+       ],
+       "zentriert": true,
+       "schrift_folie": 20,
+       "breiten": [
+        2.5,
+        2.5
+       ]
+      },
+      {
+       "t": "p",
+       "md": "Je Fehlversuch −25 %, je Tipp −20 % – mindestens 25 % bleiben.",
+       "klein": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Rang",
+        "ab"
+       ],
+       "zeilen": [
+        [
+         "Lehrling",
+         "0 %"
+        ],
+        [
+         "Schreiber",
+         "10 %"
+        ],
+        [
+         "Chiffreur",
+         "30 %"
+        ],
+        [
+         "Kryptoanalytiker",
+         "55 %"
+        ],
+        [
+         "Meister der Chiffren",
+         "80 %"
+        ]
+       ],
+       "breiten": [
+        3.6,
+        1.4
+       ],
+       "schrift_folie": 20
+      },
+      {
+       "t": "p",
+       "md": "**Artefakt** je bestandenem Boss: Skytale, Manuskript, Tafel …",
+       "klein": true
+      }
+     ]
+    }
+   ],
+   "notizen": "K8b · 2 min. Punkteformel (Lab): Punkte × max(0,25; 1 − 0,25 · Fehlversuche − 0,2 · Tipps), gerundet.\nRänge beziehen sich auf den Anteil der Level-Punkte der freigeschalteten Welten (nur sichtbare Level, Ergänzung und Kür zählen nicht für Ränge, geben aber Punkte und Abzeichen).\nArtefakte = Abzeichen für jeden bestandenen Boss (Skytale, Al-Kindis Manuskript, Vigenère-Tafel, Lochstreifen, Schlüsselpaar, Siegel, Chronoskop-Kern). Dazu Leistungsabzeichen wie „Erstes Knacken“ oder „Alle Fallen entschärft“."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "Lab",
+   "titel": "Der Funkraum",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Live-Szenarien im Kurs: Eure **Tischgruppe** ist ein Team, der Beamer zeigt das Netz."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "DS",
+      "Szenario",
+      "Ihr lernt …"
+     ],
+     "zeilen": [
+      [
+       "2",
+       "Botenlauf",
+       "Caesar hat zu wenige Schlüssel"
+      ],
+      [
+       "4",
+       "Wettknacken",
+       "Häufigkeitsanalyse wirkt"
+      ],
+      [
+       "9",
+       "Der doppelte Schlüssel",
+       "One-Time-Pad nur einmal benutzen"
+      ],
+      [
+       "12",
+       "Schlüsseltausch vor Eves Augen",
+       "Schlüssel tauschen ohne geheimen Kanal"
+      ],
+      [
+       "16",
+       "Mallory im Netz",
+       "Wozu Zertifikate gut sind"
+      ]
+     ],
+     "breiten": [
+      0.9,
+      4.6,
+      6.4
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "K8c · 1 min. Nur Vorschau. Der Funkraum zeigt Nachrichten aller Teams live am Beamer; Nachrichten bestehen nur aus A–Z, Ziffern und Leerzeichen und werden nach dem Szenario gelöscht. Keine Punkte, nur das Abzeichen „Funkraum-Veteran“.\nDazu in DS 11 die Knack-Arena: Teams greifen gegenseitig ihre selbst gebauten Chiffren an."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Lab",
+   "titel": "Die zehn Fallen – eine Vorschau",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Nr.",
+        "Falle"
+       ],
+       "zeilen": [
+        [
+         "**P1**",
+         "Zählbasis verwechselt (A = 1 oder A = 0?)"
+        ],
+        [
+         "**P2**",
+         "Modulo falsch (Rest 0 ist Z)"
+        ],
+        [
+         "**P3**",
+         "Umkehrung falsch"
+        ],
+        [
+         "**P4**",
+         "Verfahrensregel übersehen"
+        ],
+        [
+         "**P5**",
+         "Falsch eingeordnet"
+        ]
+       ],
+       "breiten": [
+        0.9,
+        5.0
+       ],
+       "schrift_folie": 18
+      }
+     ],
+     "rechts": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Nr.",
+        "Falle"
+       ],
+       "zeilen": [
+        [
+         "**P6**",
+         "Häufigkeitsanalyse pauschal"
+        ],
+        [
+         "**P7**",
+         "Schlüsselraum falsch (25 oder 26?)"
+        ],
+        [
+         "**P8**",
+         "Kombination überschätzt"
+        ],
+        [
+         "**P9**",
+         "Schlüsselrollen verwechselt"
+        ],
+        [
+         "**P10**",
+         "Operator verfehlt"
+        ]
+       ],
+       "breiten": [
+        0.9,
+        5.0
+       ],
+       "schrift_folie": 18
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Die zehn häufigsten Punktverluste im Abitur – überall gleich nummeriert.",
+     "klein": true
+    }
+   ],
+   "notizen": "K8d · 1 min. Nur zeigen, nicht erklären. Die Fallen sind überall gleich nummeriert: in Akten (roter Kasten „Achtung Falle“), auf Folien, im Lab (Profil „Deine Fallen“) und in den Erwartungshorizonten.\nIn Welt 0 begegnen euch vor allem P1 (A = 1 auf Papier, A = 0 in Java), P2 (26 mod 26 = 0 → Z), P3, P4 (Füllzeichen X), P5 (Codierung ≠ Verschlüsselung), P7 (25 oder 26 Schlüssel) und P8 (Caesar ∘ Caesar = Caesar)."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "Einsteigen",
+   "titel": "Einsteigen!",
+   "qr": "https://labs.frankjuchim.de",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**1**  Portal **InfoLabs** öffnen: `labs.frankjuchim.de`"
+    },
+    {
+     "t": "p",
+     "md": "**2**  Mit deinem **persönlichen Code** anmelden"
+    },
+    {
+     "t": "p",
+     "md": "**3**  „Kurs beitreten“ → **Kurscode: ______**"
+    },
+    {
+     "t": "p",
+     "md": "**4**  Kurs öffnen → **„Weiter zu Kryptos“**"
+    },
+    {
+     "t": "abstand",
+     "pt": 10
+    },
+    {
+     "t": "p",
+     "md": "Kein eigenes Passwort für Kryptos nötig. Danach: Tischgruppe als **Team** eintragen.",
+     "klein": true
+    }
+   ],
+   "notizen": "K9 · 10 min Lab-Beitritt.\nVorbereitung: Kurs vorab im Portal InfoLabs anlegen; den Kurscode an die Tafel schreiben (oder hier in die Lücke eintragen). Persönliche Codes der Lernenden bereithalten (Portal → Kursverwaltung).\nAblauf: 1. labs.frankjuchim.de (QR-Code), 2. mit persönlichem Code anmelden, 3. „Kurs beitreten“ und Kurscode eingeben, 4. Kurs öffnen und „Weiter zu Kryptos“ – die Anmeldung bei Kryptos läuft per SSO über das Portal, kein eigenes Passwort.\nWer keinen Code hat: Lehrkraft legt ihn im Portal an. Danach Tischgruppen als Teams eintragen (Teamname aus fester Liste, z. B. „Team Skytale“). Erster Blick auf die Zeitleiste. Hausaufgabe: Video 📼 00 „Kryptos – Die Zeitreise“."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "Einsteigen",
+   "titel": "Erste Reise: Sparta, −405",
+   "untertitel": "Das Chronoskop surrt …",
+   "notizen": "Überleitung zur Welt-0-Präsentation (KR_W0_Praesentation_Antike, Folie F2: Archivfund „Die Botschaft am Stab“). Papierstreifen und Stifte austeilen."
+  }
+ ]
+}

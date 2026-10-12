@@ -1,0 +1,1082 @@
+{
+ "typ": "dokument",
+ "welt": 4,
+ "kennung": "FUNKRAUM W4",
+ "titel": "Schlüsseltausch vor Eves Augen",
+ "datei": "KR_W4_Funkraum_Schluesseltausch",
+ "ordner": "Werkzeuge/Funkraum",
+ "ds": "12",
+ "niveau": "ergaenzung",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "FUNKRAUM-SZENARIO · DS 12 · 25 MIN",
+   "md": "Zwei Teams vereinbaren über einen öffentlich mitgelesenen Kanal einen gemeinsamen Schlüssel (Diffie-Hellman); Eve sieht **alles** und scheitert nur an der Größe der Zahlen. **Erkenntnis:** Sicherheit beruht auf einer **Einwegfunktion** und auf **großen Parametern**."
+  },
+  {
+   "t": "h",
+   "md": "Teil A · Für die Spielleitung (nicht kopieren)"
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLEN UND MATERIAL",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**Alice-Teams und Bob-Teams** in Paaren (Tischgruppen, Teamnamen aus der festen Liste, z. B. Team Skytale ↔ Team Scheibe, Team Quadrat ↔ Team Lochstreifen); bei ungerader Zahl ein Dreier: Alice, Bob, Carol tauschen paarweise.",
+      "**Eve-Team(s):** 1 Team bei bis zu 6 Teams, 2 bei mehr. Eve sieht alle Nachrichten aller Paare. Eve-Team mit starken Rechnerinnen und Rechnern besetzen.",
+      "**Spielleitung:** Lehrkraft (Funkraum-Regie).",
+      "**Material:** Geheimzahlkarten (verdeckt gezogen, „GEHEIM – nur für dein Team“): Runde 1 Werte 3 … 10 (jeder Wert zweimal), Runde 2 Werte 20 … 90; Rechenkarten; Rollenkarten (Teil B)."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Ablauf als Schaubild** (auch für Beamer oder Tafel geeignet):"
+  },
+  {
+   "t": "schaubild",
+   "breite_cm": 10.5,
+   "_W": 680,
+   "akteure": [
+    {
+     "id": "A",
+     "name": "Alice-Team",
+     "unter": "zieht geheim a"
+    },
+    {
+     "id": "E",
+     "name": "Eve-Team",
+     "unter": "sieht den ganzen Kanal"
+    },
+    {
+     "id": "B",
+     "name": "Bob-Team",
+     "unter": "zieht geheim b"
+    }
+   ],
+   "schritte": [
+    {
+     "nr": 1,
+     "von": "A",
+     "nach": "B",
+     "text": "Beamer zeigt öffentlich: p = 23, g = 5"
+    },
+    {
+     "nr": 2,
+     "von": "A",
+     "nach": "A",
+     "text": "A = 5ᵃ mod 23 berechnen (Rechenkarte)"
+    },
+    {
+     "nr": 3,
+     "von": "B",
+     "nach": "B",
+     "text": "B = 5ᵇ mod 23 berechnen (Rechenkarte)"
+    },
+    {
+     "nr": 4,
+     "von": "A",
+     "nach": "B",
+     "text": "Nachricht „A 17“ (Beispiel)"
+    },
+    {
+     "nr": 5,
+     "von": "B",
+     "nach": "A",
+     "text": "Nachricht „B …“"
+    },
+    {
+     "nr": 6,
+     "von": "A",
+     "nach": "A",
+     "text": "K = Bᵃ mod 23, verdeckt melden"
+    },
+    {
+     "nr": 7,
+     "von": "B",
+     "nach": "B",
+     "text": "K = Aᵇ mod 23, verdeckt melden"
+    },
+    {
+     "nr": 8,
+     "von": "E",
+     "nach": "E",
+     "text": "kennt p, g, A, B – meldet Tipp für K"
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Runde 1 · p = 23, g = 5 · 12 min"
+  },
+  {
+   "t": "liste",
+   "nummeriert": true,
+   "items": [
+    "(1 min) Beamer zeigt öffentlich „p = 23, g = 5“. Teams ziehen ihre Geheimzahl (Alice a, Bob b).",
+    "(4 min) Jedes Team berechnet seinen öffentlichen Wert (A = 5^a^ mod 23 bzw. B = 5^b^ mod 23) mit der Rechenkarte und sendet ihn im Funkraum an das Partnerteam (Nachricht z. B. „A 17“; Eingabe nur A–Z, 0–9, Leerzeichen). Alle Nachrichten erscheinen am Beamer und bei Eve.",
+    "(4 min) Jedes Team berechnet K mit dem Wert des Partners (K = B^a^ mod 23 bzw. A^b^ mod 23) und **meldet K verdeckt** an die Spielleitung (Funktion „Schlüssel melden“, nur für die Lehrkraft sichtbar).",
+    "Eve arbeitet parallel: Sie kennt p, g, A, B und meldet für jedes Paar einen Tipp für K.",
+    "(3 min) Auflösung am Beamer: für jedes Paar „K gleich? ✓/✗“, „Eve richtig? ✓/✗“, Zeitbedarf. **Erwartung:** Eve legt die Tabelle 5^x^ mod 23 an (22 Einträge) und gewinnt."
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Lösungstabelle Runde 1** – öffentliche Werte 5^a^ mod 23:"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "kopf": [
+    "a bzw. b",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+   ],
+   "zeilen": [
+    [
+     "5^a^ mod 23",
+     "10",
+     "4",
+     "20",
+     "8",
+     "17",
+     "16",
+     "11",
+     "9"
+    ]
+   ],
+   "breiten": [
+    3.2,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Gemeinsamer Schlüssel **K = 5^ab^ mod 23** (Zeile a, Spalte b):"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "kopf": [
+    "a \\ b",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+   ],
+   "zeilen": [
+    [
+     "3",
+     "11",
+     "18",
+     "19",
+     "6",
+     "14",
+     "2",
+     "20",
+     "16"
+    ],
+    [
+     "4",
+     "18",
+     "3",
+     "12",
+     "2",
+     "8",
+     "9",
+     "13",
+     "6"
+    ],
+    [
+     "5",
+     "19",
+     "12",
+     "10",
+     "16",
+     "21",
+     "6",
+     "5",
+     "8"
+    ],
+    [
+     "6",
+     "6",
+     "2",
+     "16",
+     "13",
+     "12",
+     "4",
+     "9",
+     "3"
+    ],
+    [
+     "7",
+     "14",
+     "8",
+     "21",
+     "12",
+     "20",
+     "18",
+     "7",
+     "4"
+    ],
+    [
+     "8",
+     "2",
+     "9",
+     "6",
+     "4",
+     "18",
+     "12",
+     "8",
+     "13"
+    ],
+    [
+     "9",
+     "20",
+     "13",
+     "5",
+     "9",
+     "7",
+     "8",
+     "19",
+     "2"
+    ],
+    [
+     "10",
+     "16",
+     "6",
+     "8",
+     "3",
+     "4",
+     "13",
+     "2",
+     "18"
+    ]
+   ],
+   "breiten": [
+    3.2,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7,
+    1.7
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Eves Werkzeug** (vollständige Tabelle 5^x^ mod 23, x = 1 … 22): 5, 2, 10, 4, 20, 8, 17, 16, 11, 9, 22, 18, 21, 13, 19, 3, 15, 6, 7, 12, 14, 1."
+  },
+  {
+   "t": "h",
+   "md": "Runde 2 · p = 101, g = 2 · 8 min"
+  },
+  {
+   "t": "p",
+   "md": "Alle dürfen die **Modulo-Uhr** nutzen; sie bietet aber nur „Potenz berechnen“, keinen Logarithmus."
+  },
+  {
+   "t": "liste",
+   "nummeriert": true,
+   "items": [
+    "Neue Geheimzahlkarten (20 … 90). Alice/Bob berechnen A bzw. B mit **einer** Werkzeug-Rechnung und senden.",
+    "Alice/Bob berechnen K (eine weitere Rechnung) und melden verdeckt.",
+    "Eve muss x mit 2^x^ mod 101 = A suchen: bis zu 100 Rechnungen pro Paar. Die Spielleitung stoppt nach 5 min. **Erwartung:** Eve schafft höchstens ein Paar.",
+    "Beispielpaar zur Kontrolle: a = 37, b = 58 → A = 55, B = 47, K = 82 (2 ist Primitivwurzel mod 101)."
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Kontrolltabelle Runde 2** – 2^x^ mod 101 (Zeile = Zehner, Spalte = Einer; x = 0 steht für 2^0^ = 2^100^ = 1):"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 9,
+   "kopf": [
+    "x",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+   ],
+   "zeilen": [
+    [
+     "**0 +**",
+     "1",
+     "2",
+     "4",
+     "8",
+     "16",
+     "32",
+     "64",
+     "27",
+     "54",
+     "7"
+    ],
+    [
+     "**10 +**",
+     "14",
+     "28",
+     "56",
+     "11",
+     "22",
+     "44",
+     "88",
+     "75",
+     "49",
+     "98"
+    ],
+    [
+     "**20 +**",
+     "95",
+     "89",
+     "77",
+     "53",
+     "5",
+     "10",
+     "20",
+     "40",
+     "80",
+     "59"
+    ],
+    [
+     "**30 +**",
+     "17",
+     "34",
+     "68",
+     "35",
+     "70",
+     "39",
+     "78",
+     "55",
+     "9",
+     "18"
+    ],
+    [
+     "**40 +**",
+     "36",
+     "72",
+     "43",
+     "86",
+     "71",
+     "41",
+     "82",
+     "63",
+     "25",
+     "50"
+    ],
+    [
+     "**50 +**",
+     "100",
+     "99",
+     "97",
+     "93",
+     "85",
+     "69",
+     "37",
+     "74",
+     "47",
+     "94"
+    ],
+    [
+     "**60 +**",
+     "87",
+     "73",
+     "45",
+     "90",
+     "79",
+     "57",
+     "13",
+     "26",
+     "52",
+     "3"
+    ],
+    [
+     "**70 +**",
+     "6",
+     "12",
+     "24",
+     "48",
+     "96",
+     "91",
+     "81",
+     "61",
+     "21",
+     "42"
+    ],
+    [
+     "**80 +**",
+     "84",
+     "67",
+     "33",
+     "66",
+     "31",
+     "62",
+     "23",
+     "46",
+     "92",
+     "83"
+    ],
+    [
+     "**90 +**",
+     "65",
+     "29",
+     "58",
+     "15",
+     "30",
+     "60",
+     "19",
+     "38",
+     "76",
+     "51"
+    ]
+   ],
+   "breiten": [
+    1.8,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5,
+    1.5
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "KONTROLLTRICK FÜR DIE SPIELLEITUNG",
+   "md": "Weil 2 die Ordnung 100 mod 101 hat, gilt **K = 2^(a · b) mod 100^ mod 101**. Beispiel: 37 · 58 = 2146, 2146 mod 100 = 46, in der Tabelle 2^46^ mod 101 = **82** ✓. So prüfen Sie jede Meldung in Sekunden – Eve kennt a und b nicht und kann diesen Trick nicht nutzen."
+  },
+  {
+   "t": "p",
+   "md": "Öffentliche Werte der Runde-2-Karten (aus der Kontrolltabelle):"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 9,
+   "kopf": [
+    "Karte",
+    "21",
+    "24",
+    "29",
+    "33",
+    "37",
+    "41",
+    "46",
+    "52",
+    "58",
+    "63",
+    "67",
+    "72",
+    "77",
+    "81",
+    "86",
+    "90"
+   ],
+   "zeilen": [
+    [
+     "2^x^ mod 101",
+     "89",
+     "5",
+     "59",
+     "35",
+     "55",
+     "72",
+     "82",
+     "97",
+     "47",
+     "90",
+     "26",
+     "24",
+     "61",
+     "67",
+     "23",
+     "65"
+    ]
+   ],
+   "breiten": [
+    2.4,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Auswertung · 5 min (Folie 16)"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "Aufwand Alice/Bob wächst mit der **Stellenzahl** von p (schnelles Potenzieren), Eves Aufwand mit der **Größe** von p (Durchprobieren).",
+    "Bei p mit 600 Stellen: Alice/Bob Millisekunden, Eve länger als das Alter des Universums – „Einwegfunktion“.",
+    "Merksatz: Diffie-Hellman schützt gegen **Lauschen**, nicht gegen **Fälschen** (Ausblick W5: Mallory)."
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "OPTIONALE ZUSATZROLLE MALLORY (eA, SCHNELLE KURSE)",
+   "farbe": "B3261E",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Eve-Team erhält die Karte „Mallory“: Es darf in Runde 1 **eine** Nachricht eines Paars abfangen und durch einen eigenen Wert ersetzen (Funktion „Nachricht ersetzen“, nur in dieser Rolle). Dann vereinbart Mallory je einen Schlüssel mit Alice und mit Bob; das Paar meldet **verschiedene** K → die Auflösung zeigt den Man-in-the-Middle-Angriff (Überleitung W5)."
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "PAPIER-ALTERNATIVE (OHNE TABLETS)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Öffentlicher Kanal = **Tafel** mit einer Spalte je Paar (Teams schreiben A bzw. B groß an).",
+      "Geheimzahlkarten aus Umschlägen, Rechenkarte auf Papier (Teil B).",
+      "K wird auf einem **gefalteten Zettel** an die Lehrkraft gegeben, Eve gibt ihre Tipps ebenfalls schriftlich ab.",
+      "Runde 2 mit Schulrechner **nur für Potenzen** (Eve darf denselben Rechner nur für Potenzen nutzen, keine Programme). Damit der Rechner nicht an zu großen Zahlen scheitert, rechnen alle mit der Quadrierkette der Rechenkarte Runde 2. Zeitbedarf gleich."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Datenschutz/Sicherheit:** Nur Zahlen und Großbuchstaben (Funkraum-Whitelist), keine Punkte (Abzeichen „Funkraum-Veteran“), Löschung beim Beenden des Szenarios."
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Teil B · Kopiervorlagen: Rollenkarten zum Ausschneiden"
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLENKARTE · ALICE-TEAM",
+   "farbe": "14213D",
+   "hintergrund": "FBF7EE",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Euer Ziel:** mit eurem Bob-Team einen gemeinsamen Schlüssel K vereinbaren – obwohl Eve **jede** Nachricht mitliest."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Zieht verdeckt eine Geheimzahlkarte: das ist **a**. Niemand außer euch darf sie sehen.",
+      "Berechnet **A = g^a^ mod p** mit der Rechenkarte (nach jeder Multiplikation mod p reduzieren!).",
+      "Sendet A an euer Bob-Team, z. B. „A 17“.",
+      "Wartet auf B. Berechnet **K = B^a^ mod p** – mit **B**, nicht mit A!",
+      "Meldet K verdeckt an die Spielleitung. Verratet a nie."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLENKARTE · BOB-TEAM",
+   "farbe": "14213D",
+   "hintergrund": "FBF7EE",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Euer Ziel:** mit eurem Alice-Team einen gemeinsamen Schlüssel K vereinbaren – obwohl Eve **jede** Nachricht mitliest."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Zieht verdeckt eine Geheimzahlkarte: das ist **b**. Niemand außer euch darf sie sehen.",
+      "Berechnet **B = g^b^ mod p** mit der Rechenkarte (nach jeder Multiplikation mod p reduzieren!).",
+      "Sendet B an euer Alice-Team, z. B. „B 8“.",
+      "Wartet auf A. Berechnet **K = A^b^ mod p** – mit **A**, nicht mit B!",
+      "Meldet K verdeckt an die Spielleitung. Verratet b nie."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLENKARTE · EVE-TEAM 🔍",
+   "farbe": "B3261E",
+   "hintergrund": "FDF3F2",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Euer Ziel:** den Schlüssel K **jedes** Paares herausfinden. Ihr seht alles, was über den Kanal geht: p, g, A und B."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Notiert für jedes Paar p, g, A und B.",
+      "Überlegt: Was müsstet ihr kennen, um K selbst auszurechnen? Wie kommt ihr von A zurück zu a?",
+      "Meldet für jedes Paar euren Tipp für K an die Spielleitung – so schnell wie möglich.",
+      "Regel: Ihr dürft nur **zuhören**, keine Nachrichten verändern."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ROLLENKARTE · MALLORY (OPTIONAL, eA)",
+   "farbe": "B3261E",
+   "hintergrund": "FDF3F2",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ihr seid kein stiller Lauscher: In **Runde 1** dürft ihr **eine** Nachricht eines Paars abfangen und durch einen eigenen Wert ersetzen. Wählt dafür eine eigene Geheimzahl m, berechnet M = g^m^ mod p und schickt M statt A (bzw. B) weiter. Berechnet dann einen Schlüssel mit Alice **und** einen mit Bob. Gelingt es, dass beide glauben, sicher zu kommunizieren?"
+    }
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Geheimzahlkarten Runde 1 (Werte 3 … 10, je zweimal) – ausschneiden, verdeckt ziehen"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "schrift": 16,
+   "zeilen": [
+    [
+     "GEHEIM\n**3**\nRunde 1",
+     "GEHEIM\n**4**\nRunde 1",
+     "GEHEIM\n**5**\nRunde 1",
+     "GEHEIM\n**6**\nRunde 1"
+    ],
+    [
+     "GEHEIM\n**7**\nRunde 1",
+     "GEHEIM\n**8**\nRunde 1",
+     "GEHEIM\n**9**\nRunde 1",
+     "GEHEIM\n**10**\nRunde 1"
+    ],
+    [
+     "GEHEIM\n**3**\nRunde 1",
+     "GEHEIM\n**4**\nRunde 1",
+     "GEHEIM\n**5**\nRunde 1",
+     "GEHEIM\n**6**\nRunde 1"
+    ],
+    [
+     "GEHEIM\n**7**\nRunde 1",
+     "GEHEIM\n**8**\nRunde 1",
+     "GEHEIM\n**9**\nRunde 1",
+     "GEHEIM\n**10**\nRunde 1"
+    ]
+   ],
+   "breiten": [
+    4.2,
+    4.2,
+    4.2,
+    4.2
+   ]
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "zentriert": true,
+   "md": "Aufdruck Rückseite (optional): „GEHEIM – nur für dein Team“"
+  },
+  {
+   "t": "h",
+   "md": "Geheimzahlkarten Runde 2 (Werte 20 … 90)"
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "schrift": 16,
+   "zeilen": [
+    [
+     "GEHEIM\n**21**\nRunde 2",
+     "GEHEIM\n**24**\nRunde 2",
+     "GEHEIM\n**29**\nRunde 2",
+     "GEHEIM\n**33**\nRunde 2"
+    ],
+    [
+     "GEHEIM\n**37**\nRunde 2",
+     "GEHEIM\n**41**\nRunde 2",
+     "GEHEIM\n**46**\nRunde 2",
+     "GEHEIM\n**52**\nRunde 2"
+    ],
+    [
+     "GEHEIM\n**58**\nRunde 2",
+     "GEHEIM\n**63**\nRunde 2",
+     "GEHEIM\n**67**\nRunde 2",
+     "GEHEIM\n**72**\nRunde 2"
+    ],
+    [
+     "GEHEIM\n**77**\nRunde 2",
+     "GEHEIM\n**81**\nRunde 2",
+     "GEHEIM\n**86**\nRunde 2",
+     "GEHEIM\n**90**\nRunde 2"
+    ]
+   ],
+   "breiten": [
+    4.2,
+    4.2,
+    4.2,
+    4.2
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Rechenkarte Runde 1 · p = 23, g = 5 (je Team eine Kopie)"
+  },
+  {
+   "t": "p",
+   "md": "**Teil 1 – euer öffentlicher Wert:** Startet mit 1 und multipliziert so oft mit g = 5, wie eure Geheimzahl angibt. Nach **jeder** Multiplikation mod 23 reduzieren."
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "kopf": [
+    "Schritt",
+    "bisheriger Wert",
+    "· g",
+    "=",
+    "mod p"
+   ],
+   "zeilen": [
+    [
+     "1",
+     "1",
+     "· 5",
+     "5",
+     "5"
+    ],
+    [
+     "2",
+     "5",
+     "· 5",
+     "25",
+     "2"
+    ],
+    [
+     "3",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "4",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "5",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "6",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "7",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "8",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "9",
+     "",
+     "· 5",
+     "",
+     ""
+    ],
+    [
+     "10",
+     "",
+     "· 5",
+     "",
+     ""
+    ]
+   ],
+   "breiten": [
+    2.0,
+    3.6,
+    2.2,
+    3.6,
+    3.6
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Unser öffentlicher Wert (A bzw. B): [[luecke:8]]   Wert des Partnerteams: [[luecke:8]]"
+  },
+  {
+   "t": "p",
+   "md": "**Teil 2 – der gemeinsame Schlüssel:** Startet mit 1 und multipliziert so oft mit dem **Wert des Partnerteams**, wie eure Geheimzahl angibt."
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "kopf": [
+    "Schritt",
+    "bisheriger Wert",
+    "· Partnerwert",
+    "=",
+    "mod p"
+   ],
+   "zeilen": [
+    [
+     "1",
+     "1",
+     "",
+     "",
+     ""
+    ],
+    [
+     "2",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "3",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "4",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "5",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "6",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "7",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "8",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "9",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "10",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "breiten": [
+    2.0,
+    3.6,
+    2.2,
+    3.6,
+    3.6
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Unser Schlüssel K = [[luecke:8]]  → verdeckt melden!"
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Rechenkarte Runde 2 · p = 101, g = 2 (Papier-Alternative, je Team eine Kopie)"
+  },
+  {
+   "t": "p",
+   "md": "Zahlen wie 2^37^ sind zu groß für den Taschenrechner. Rechnet deshalb mit der **Quadrierkette**: Basis immer wieder quadrieren und **sofort mod 101** reduzieren. Rest mit dem Rechner: r = x − 101 · (ganzzahliger Teil von x / 101)."
+  },
+  {
+   "t": "tabelle",
+   "zentriert": true,
+   "kopfspalte": true,
+   "schrift": 10,
+   "kopf": [
+    "Potenz",
+    "Basis^1^",
+    "Basis^2^",
+    "Basis^4^",
+    "Basis^8^",
+    "Basis^16^",
+    "Basis^32^",
+    "Basis^64^"
+   ],
+   "zeilen": [
+    [
+     "mod 101 (Teil 1: Basis 2)",
+     "2",
+     "4",
+     "16",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "gebraucht?",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "mod 101 (Teil 2: Basis = Partnerwert)",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "gebraucht?",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "breiten": [
+    4.4,
+    1.77,
+    1.77,
+    1.77,
+    1.77,
+    1.77,
+    1.77,
+    1.78
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Zerlegt eure Geheimzahl in Zweierpotenzen**, z. B. 37 = 32 + 4 + 1, und multipliziert nur die gebrauchten Potenzen (nach jeder Multiplikation mod 101)."
+  },
+  {
+   "t": "p",
+   "md": "Geheimzahl = [[luecke:30]]"
+  },
+  {
+   "t": "p",
+   "md": "Unser öffentlicher Wert: [[luecke:8]]   Wert des Partnerteams: [[luecke:8]]   Unser Schlüssel K = [[luecke:8]]"
+  },
+  {
+   "t": "hinweis",
+   "kopf": "BEISPIEL ZUM NACHPRÜFEN",
+   "md": "Basis 2: 2, 4, 16, 2^8^ = 256 mod 101 = 54, 2^16^ = 54² = 2916 mod 101 = 88, 2^32^ = 88² = 7744 mod 101 = 68. Für 37 = 32 + 4 + 1: 68 · 16 = 1088 mod 101 = 78; 78 · 2 = 156 mod 101 = **55** = 2^37^ mod 101."
+  }
+ ]
+}

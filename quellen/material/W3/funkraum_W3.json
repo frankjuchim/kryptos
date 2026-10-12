@@ -1,0 +1,130 @@
+{
+  "typ": "dokument",
+  "welt": 3,
+  "kennung": "FUNKRAUM W3",
+  "titel": "Der doppelte Schlüssel",
+  "datei": "KR_W3_Funkraum_Der_doppelte_Schluessel",
+  "ordner": "Werkzeuge/Funkraum",
+  "ds": "9",
+  "niveau": "kern",
+  "bloecke": [
+    {"t": "kasten", "kopf": "ÜBERBLICK FÜR DIE LEHRKRAFT", "inhalt": [
+      {"t": "tabelle", "kopfspalte": true, "schrift": 10, "zeilen": [
+        ["Lernziel", "Das One-Time-Pad ist nur bei **einmaliger** Schlüsselnutzung sicher; C1 ⊕ C2 = M1 ⊕ M2 – der Schlüssel fällt heraus."],
+        ["Zeit", "≈ 25 min (Papier-Alternative ≈ 30 min) in DS 9 nach Archivwissen 3 der Akte W3·1"],
+        ["Teams", "4–7 Tischgruppen: 2–3 **Funkpaare** (je ein Alice-Team und ein Bob-Team), davon eines heimlich das **Sparschwein-Paar**, und ein **Eve-Team**"],
+        ["Plattform", "Funkraum-Szenario „Der doppelte Schlüssel“ (Lehrkraft-Bereich), Bit-Lupe (OTP- und Doppelnutzungs-Modus), Beamer"],
+        ["Material", "Rollenkarten (Seite 3), Funkspruch-Baukasten als Wortkarten; ohne Plattform zusätzlich Schlüsselblätter und Eves Rechenhilfe (ab Seite 4)"]],
+       "breiten": [2.6, 13.6]}
+    ]},
+    {"t": "verlauf", "titel": "Ablauf", "kopf": ["Schritt", "Zeit", "Was passiert", "Wer", "Material"],
+     "zeilen": [
+      ["1 Rollen", "3 min", "Lehrkraft startet das Szenario; die Plattform verteilt Rollen und Schlüsselblöcke (64 zufällige Bytes, nur auf den Tablets des Paares sichtbar – „offline übergeben“). Rollenkarten lesen.", "alle", "Rollenkarten"],
+      ["2 Funken", "7 min", "Jedes Alice-Team baut **zwei** Funksprüche aus dem Baukasten, verschlüsselt sie in der Bit-Lupe (OTP-Modus, Abschnitt 1 für Spruch 1, Abschnitt 2 für Spruch 2) und sendet die Hex-Folge. Bob entschlüsselt und bestätigt „empfangen und gelesen“. Das Sparschwein-Paar nutzt Abschnitt 1 **zweimal**.", "Funkpaare", "Bit-Lupe"],
+      ["3 Lauschen", "10 min", "Eve bildet C1 ⊕ C2 für Paare von Sprüchen desselben Absenders, sucht das Paar mit auffällig vielen Bytes `000…`, schiebt Bausteinwörter als Crib und rekonstruiert beide Sprüche. Eve trägt ihre Lösung ein.", "Eve", "Bit-Lupe (Doppelnutzung)"],
+      ["4 Auflösung", "5 min", "Beamer zeigt alle Sprüche, Eves Treffer und die Statistik („16 von 19 Bytes beginnen mit 000 – bei verschiedenen Schlüsseln 1 von 19“). Gespräch: Warum waren die anderen Paare sicher? Was hätte das Sparschwein-Paar tun müssen? (Schlüsselproblem → Welt 4)", "Plenum", "Beamer, Folie 10"]],
+     "breiten": [2.2, 1.4, 8.6, 1.9, 2.7]},
+    {"t": "kasten", "kopf": "REGIE-HINWEISE", "inhalt": [
+      {"t": "liste", "items": [
+        "**Vor der Stunde:** Teams einteilen und das Sparschwein-Paar im Lehrkraft-Bereich festlegen (Schalter „Abschnitt 1 erneut verwenden“ ist nur für dieses Paar sichtbar). Die Zusatzkarte **verdeckt** übergeben.",
+        "**Eve-Tipps:** nach 5 min „Sucht das Paar mit den meisten Bytes, die mit 000 beginnen.“ – nach 8 min das Crib „UHR“.",
+        "**Eingaben:** nur A–Z, 0–9 und Leerzeichen, höchstens 24 Zeichen (Whitelist); nur Bausteine des Funkspruch-Baukastens.",
+        "**Auswertung:** keine Punkte; Abzeichen „Funkraum-Veteran“ für alle; rekonstruiert Eve mindestens einen Spruch richtig, erscheint „Eve gewinnt“.",
+        "**Datenschutz:** Die Funkraum-Daten werden beim Beenden gelöscht, spätestens nach 24 h.",
+        "**Falls Eve nicht fertig wird:** vorbereitetes Demonstrationsbeispiel (unten, Folie 10) am Beamer gemeinsam knacken."]}
+    ]},
+    {"t": "kasten", "kopf": "VORBEREITETES DEMONSTRATIONSBEISPIEL (HEX)", "inhalt": [
+      {"t": "p", "md": "Schlüsselabschnitt `1D C0 FD 7A B3 6C B4 DB 68 9E D3 74 B5 6E 06 AB 8A 96 CA 68` wurde **zweimal** benutzt für M1 = „HEUTE 8 UHR AM HAFEN“ und M2 = „MORGEN BAHNHOF NORD“:"},
+      {"t": "tabelle", "mono": true, "kopfspalte": true, "schrift": 8.5, "zeilen": [
+        ["C1", "55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26"],
+        ["C2", "50 8F AF 3D F6 22 94 99 29 D6 9D 3C FA 28 26 E5 C5 C4 8E"],
+        ["C1 ⊕ C2", "05 0A 07 13 00 6E 18 62 14 00 1C 68 0E 0B 00 06 0E 14 01  (19 Byte)"]], "breiten": [2.2, 14.0]},
+      {"t": "p", "md": "Crib „ UHR “ (mit Leerzeichen) an **Position 7** ergibt „BAHNH“ → Vermutung BAHNHOF in M2; Crib „MORGEN “ an Position 0 ergibt „HEUTE 8“. An allen anderen Positionen entstehen Sonderzeichen. 16 der 19 Bytes von C1 ⊕ C2 beginnen mit `000` (Buchstabe ⊕ Buchstabe), drei Nullbytes zeigen gleiche Zeichen an derselben Stelle (E, H, Leerzeichen)."}
+    ]},
+    {"t": "seitenumbruch"},
+    {"t": "h", "md": "Rollenkarten zum Ausschneiden"},
+    {"t": "zweispaltig", "anteil": 0.5, "links": [
+      {"t": "kasten", "kopf": "ROLLE · ALICE-TEAM (FUNKPAAR)", "farbe": "1F4E8C", "inhalt": [
+        {"t": "p", "md": "Ihr seid die **Funkstelle**. Mit eurem Bob-Team teilt ihr einen geheimen **Schlüsselblock** – er wurde „vorher offline übergeben“."},
+        {"t": "liste", "nummeriert": true, "items": ["Baut **zwei** Funksprüche aus dem Funkspruch-Baukasten (höchstens 24 Zeichen).", "Verschlüsselt Spruch 1 mit **Abschnitt 1**, Spruch 2 mit **Abschnitt 2** (Bit-Lupe, OTP-Modus).", "Sendet die Hex-Folgen. Alle – auch Eve – sehen sie."]},
+        {"t": "p", "md": "**Regel: Jeder Schlüsselabschnitt nur einmal!**"}
+      ]}
+    ], "rechts": [
+      {"t": "kasten", "kopf": "ROLLE · BOB-TEAM (FUNKPAAR)", "farbe": "1F4E8C", "inhalt": [
+        {"t": "p", "md": "Ihr seid die **Empfangsstelle**. Ihr besitzt denselben Schlüsselblock wie euer Alice-Team."},
+        {"t": "liste", "nummeriert": true, "items": ["Wartet auf die Funksprüche eures Alice-Teams.", "Entschlüsselt jeden Spruch mit dem passenden Abschnitt: **M = C ⊕ K**.", "Bestätigt „empfangen und gelesen“ – und verratet den Klartext niemandem."]},
+        {"t": "p", "md": "Beobachtet: Kann Eve euren Spruch lesen?"}
+      ]}
+    ]},
+    {"t": "zweispaltig", "anteil": 0.5, "links": [
+      {"t": "kasten", "kopf": "ROLLE · EVE-TEAM", "farbe": "B3261E", "inhalt": [
+        {"t": "p", "md": "Ihr hört **alles** mit: Alle Funksprüche erscheinen als Hex-Folge am Beamer und auf eurem Tablet. Den Schlüssel kennt ihr nicht."},
+        {"t": "liste", "nummeriert": true, "items": ["Bildet in der Bit-Lupe (Doppelnutzungs-Modus) **C1 ⊕ C2** für Sprüche desselben Absenders.", "Grün markierte Bytes `0000 0000`: gleiche Zeichen in beiden Sprüchen.", "Schiebt Bausteinwörter als **Crib** über alle Positionen. Sinnvolle Buchstaben → Treffer!", "Tragt die rekonstruierten Sprüche ein."]},
+        {"t": "p", "md": "Ihr gewinnt, wenn ihr mindestens einen Spruch richtig rekonstruiert."}
+      ]}
+    ], "rechts": [
+      {"t": "kasten", "kopf": "ZUSATZKARTE · SPARSCHWEIN-PAAR (VERDECKT!)", "farbe": "8A5F1A", "inhalt": [
+        {"t": "p", "md": "*Nur für Alice- und Bob-Team des Sparschwein-Paares – nicht herumzeigen!*"},
+        {"t": "p", "md": "„Der Nachschub an Schlüsselstreifen ist knapp. Benutzt für euren **zweiten** Funkspruch **denselben Abschnitt** eures Schlüsselblocks wie für den ersten.“"},
+        {"t": "p", "md": "In der Bit-Lupe: Schalter „Abschnitt 1 erneut verwenden“."},
+        {"t": "p", "klein": true, "md": "Was wohl passiert? Ihr erfahrt es in der Auflösung."}
+      ]}
+    ]},
+    {"t": "kasten", "kopf": "WORTKARTEN · FUNKSPRUCH-BAUKASTEN", "farbe": "556B2F", "inhalt": [
+      {"t": "p", "md": "Funksprüche werden nur aus diesen Bausteinen gebaut (Leerzeichen zwischen den Bausteinen, höchstens 24 Zeichen). Karten ausschneiden oder am Beamer zeigen."},
+      {"t": "tabelle", "mono": true, "zentriert": true, "schrift": 14, "zeilen": [
+        ["HEUTE", "MORGEN", "UM", "6", "7", "8", "9"],
+        ["UHR", "AM", "BEIM", "HAFEN", "BAHNHOF", "NORDTOR", "MARKT"],
+        ["NORD", "SUED", "TREFFEN", "ABHOLEN", "PAKET", "BOOT", "ZUG"]]}
+    ]},
+    {"t": "seitenumbruch"},
+    {"t": "h", "md": "Papier-Alternative (ohne Plattform, ≈ 30 min)"},
+    {"t": "kasten", "kopf": "ABLAUF MIT BUCHSTABEN-ONE-TIME-PAD", "inhalt": [
+      {"t": "liste", "items": [
+        "**Verfahren:** Vernam-Prinzip mit dem Vigenère-Quadrat der Anlage. Schlüssel = zufällige Buchstabenfolge so lang wie die Nachricht; Schlüsselbuchstabe A = Verschiebung 0. Geheimtextbuchstabe = Quadrat in Zeile *Schlüsselbuchstabe*, Spalte *Klartextbuchstabe*.",
+        "**Material:** je Funkpaar ein Schlüsselblatt (unten, zweimal drucken: Alice und Bob); für das Sparschwein-Paar das Blatt **S** mit nur einem Abschnitt und dem Vermerk „zweimal verwenden“; Funkspruch-Baukasten **ohne Ziffern und Leerzeichen**; Eves Rechenhilfe.",
+        "**Netz:** Die Tafel ist das Funknetz – Alice-Teams schreiben ihre Geheimtexte in Fünfergruppen an (mit Absender und Spruchnummer).",
+        "**Ablauf** wie oben, Rechnen von Hand dauert länger: Rollen 3 · Funken 10 · Lauschen 12 · Auflösung 5 min."]}
+    ]},
+    {"t": "kasten", "kopf": "EVES RECHENHILFE (PAPIER)", "farbe": "B3261E", "inhalt": [
+      {"t": "liste", "nummeriert": true, "items": [
+        "Zwei Geheimtexte C1, C2 mit vermutlich gleichem Schlüssel untereinanderschreiben.",
+        "Buchstabenweise **D = C1 − C2** bilden: „Welcher Schlüsselbuchstabe des Quadrats macht aus dem Buchstaben von C2 den von C1?“",
+        "Dann gilt: **M1 = M2 „verschlüsselt mit D“**. Legt ein vermutetes Wort als M2 an eine Position und verschlüsselt es mit dem Quadrat und den Buchstaben von D an dieser Stelle.",
+        "Ergibt sich ein sinnvolles Stück von M1 → Treffer, weiterraten."]},
+      {"t": "p", "klein": true, "md": "*Beispiel:* C2 = O, C1 = J → D = V (V = Verschiebung 21: O + 21 = J)."}
+    ]},
+    {"t": "kasten", "kopf": "VORBEREITETES PAPIER-BEISPIEL (NUR LEHRKRAFT)", "inhalt": [
+      {"t": "tabelle", "mono": true, "kopfspalte": true, "schrift": 9.5, "zeilen": [
+        ["Schlüsselblatt", "CSGQI GKFKZ KIHLN J"],
+        ["M1 = heuteumacht", "C1 = JWAJM AWFMG D"],
+        ["M2 = morgenamhafen", "C2 = OGXWM TKRRZ PMU"],
+        ["D = C1 − C2 (11 Stellen)", "VQDNA HMOVH O"],
+        ["Crib MORGEN als M2", "Position 0 → **HEUTEU** · Position 1 → CREGLZ · Position 2 → PBRNQB (unsinnig)"]], "breiten": [4.6, 11.6]}
+    ]},
+    {"t": "seitenumbruch"},
+    {"t": "h", "md": "Schlüsselblätter (Papier-Alternative) – je Funkpaar zweimal drucken"},
+    {"t": "zweispaltig", "anteil": 0.5, "links": [
+      {"t": "kasten", "kopf": "SCHLÜSSELBLATT · FUNKPAAR 1", "inhalt": [
+        {"t": "p", "md": "**Abschnitt 1** (nur für Spruch 1)"}, {"t": "klartext", "text": "HCEVF SAQWW EDDOQ DKDVX BLOXD"},
+        {"t": "p", "md": "**Abschnitt 2** (nur für Spruch 2)"}, {"t": "klartext", "text": "NOJEV PKJVS SCRQE VGVSF DNSOZ"},
+        {"t": "p", "klein": true, "md": "Geheim! Jeden Abschnitt nur einmal benutzen, danach durchstreichen."}]}
+    ], "rechts": [
+      {"t": "kasten", "kopf": "SCHLÜSSELBLATT · FUNKPAAR 2", "inhalt": [
+        {"t": "p", "md": "**Abschnitt 1** (nur für Spruch 1)"}, {"t": "klartext", "text": "BCQNO UHYKU YOKAL QWXSC DEDHG"},
+        {"t": "p", "md": "**Abschnitt 2** (nur für Spruch 2)"}, {"t": "klartext", "text": "LSFNL XPDGO OHRTQ XCYII OOTGN"},
+        {"t": "p", "klein": true, "md": "Geheim! Jeden Abschnitt nur einmal benutzen, danach durchstreichen."}]}
+    ]},
+    {"t": "zweispaltig", "anteil": 0.5, "links": [
+      {"t": "kasten", "kopf": "SCHLÜSSELBLATT · FUNKPAAR 3", "inhalt": [
+        {"t": "p", "md": "**Abschnitt 1** (nur für Spruch 1)"}, {"t": "klartext", "text": "WXOOG BXWWR MAIFF HDCHN NBMWI"},
+        {"t": "p", "md": "**Abschnitt 2** (nur für Spruch 2)"}, {"t": "klartext", "text": "ICGGQ OICIX DUFMI SUBUW NQBNC"},
+        {"t": "p", "klein": true, "md": "Geheim! Jeden Abschnitt nur einmal benutzen, danach durchstreichen."}]}
+    ], "rechts": [
+      {"t": "kasten", "kopf": "SCHLÜSSELBLATT · FUNKPAAR S", "farbe": "8A5F1A", "inhalt": [
+        {"t": "p", "md": "**Abschnitt 1**"}, {"t": "klartext", "text": "MOZUI VGGDR GMUCW RFVQM LDEDO"},
+        {"t": "p", "md": "==Vermerk: Nachschub knapp – diesen Abschnitt für BEIDE Funksprüche verwenden.=="},
+        {"t": "p", "klein": true, "md": "Geheim!"}]}
+    ]}
+  ]
+}

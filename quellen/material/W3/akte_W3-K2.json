@@ -1,0 +1,55 @@
+{
+  "typ": "akte",
+  "welt": 3,
+  "kennung": "KÜR-AKTE K2",
+  "titel": "Die Enigma (kurz)",
+  "ds": "Kür",
+  "niveau": "kuer",
+  "level": "K2",
+  "datei": "KR_W3_AkteK2_Enigma",
+  "bloecke": [
+    {"t": "auftakt", "md": "Die Archivarin öffnet einen Holzkasten mit Tastatur, Lampenfeld und Walzen. Wir bauen eine **Mini-Enigma** mit nur 8 Buchstaben (A–H) – klein genug für Papier, groß genug, um ihr Geheimnis zu verstehen."},
+    {"t": "archivwissen", "nr": 1, "titel": "Die Enigma", "inhalt": [
+      {"t": "p", "md": "Die **Enigma** ist eine Rotor-Schlüsselmaschine, die Arthur Scherbius ab 1918 entwickelte; Wehrmacht und Marine setzten weiterentwickelte Modelle im Zweiten Weltkrieg ein. Jeder Tastendruck schickt Strom durch drehbare **Walzen**, an einen **Reflektor** und auf anderem Weg zurück. Nach jedem Buchstaben dreht sich die Walze weiter – dadurch ist die Enigma **polyalphabetisch**. Weil der Strom hin und zurück läuft, gilt: Wird A zu F, dann wird F zu A (**Involution**) – dieselbe Einstellung entschlüsselt. Weil der Reflektor keinen Kontakt mit sich selbst verbindet, wird **kein Buchstabe auf sich selbst abgebildet**. Genau das half polnischen und britischen Kryptoanalytikern: Ein vermutetes Wort kann nicht an Stellen stehen, an denen ein Buchstabe gleich bliebe."}
+    ]},
+    {"t": "archivwissen", "nr": 2, "titel": "Die Mini-Enigma", "inhalt": [
+      {"t": "zweispaltig", "anteil": 0.5, "links": [
+        {"t": "p", "md": "Alphabet A–H (intern 0–7). **Walze W:** A→D, B→A, C→H, D→B, E→F, F→C, G→G, H→E. **Reflektor:** A↔E, B↔G, C↔H, D↔F. **Stellung** s ∈ {A … H}."},
+        {"t": "p", "md": "Der **erste** Buchstabe wird in der Startstellung verschlüsselt, danach dreht die Walze vor jedem weiteren Buchstaben um eine Stellung weiter (H → A). Die Tabelle rechts zeigt für jede Stellung, was aus jedem Buchstaben wird."},
+        {"t": "p", "klein": true, "md": "Formel (alles mod 8): x ↦ W⁻¹(R(W(x + s) − s) + s) − s. Die echte Enigma drehte schon vor dem ersten Buchstaben – für die Eigenschaften unerheblich."}
+      ], "rechts": [
+        {"t": "quadrat", "schrift": 11, "ecke": "St.", "kopfzeile": ["A", "B", "C", "D", "E", "F", "G", "H"], "kopfspalte": ["A", "B", "C", "D", "E", "F", "G", "H"],
+         "zeilen": ["EHFGACDB", "HEDCBGFA", "CFAEDBHG", "ECBGAHDF", "BAEFCDHG", "EDFBACHG", "HEFGBCDA", "GDFBHCAE"]},
+        {"t": "p", "klein": true, "zentriert": true, "md": "Zeile = Stellung, Spalte = Eingabe. Beispiel: „bach“ ab A → **HHAF**."}
+      ]}
+    ]},
+    {"t": "falle", "nr": "P3", "titel": "Umkehrung", "md": "Zum Entschlüsseln braucht die Enigma **keine** Rückwärts-Tabelle: Jede Stellung vertauscht Buchstaben paarweise. Man benutzt **dieselbe** Startstellung und dieselbe Tabelle – anders als bei Caesar oder KRYPTOS-16."},
+    {"t": "auftrag", "nr": 1, "stufe": 1, "titel": "Ver- und entschlüsseln", "sozialform": "Einzelarbeit", "niveau": "kuer", "inhalt": [
+      {"t": "p", "md": "**Verschlüssele** „chef“ ab Startstellung **E** und **entschlüssele** das Ergebnis wieder."},
+      {"t": "tabelle", "mono": true, "zentriert": true, "kopfspalte": true, "kopf": ["Stellung", "E", "F", "G", "H"], "zeilen": [["Klartext", "c", "h", "e", "f"], ["Geheimtext", "", "", "", ""], ["zurück", "", "", "", ""]], "breiten": [3.0, 2.0, 2.0, 2.0, 2.0], "nur_schueler": true},
+      {"t": "tabelle", "mono": true, "zentriert": true, "kopfspalte": true, "kopf": ["Stellung", "E", "F", "G", "H"], "zeilen": [["Klartext", "c", "h", "e", "f"], ["Geheimtext", "**E**", "**G**", "**B**", "**C**"], ["zurück", "c", "h", "e", "f"]], "breiten": [3.0, 2.0, 2.0, 2.0, 2.0], "nur_loesung": true}],
+     "loesung": [{"t": "p", "md": "C (E) → E, H (F) → G, E (G) → B, F (H) → C → **EGBC**; zurück ab E: E → c, G → h, B → e, C → f → **chef**."}], "fallen": ["P3", "P4"]},
+    {"t": "auftrag", "nr": 2, "stufe": 2, "titel": "Warum dieselbe Einstellung entschlüsselt", "sozialform": "Partnerarbeit", "niveau": "kuer", "inhalt": [
+      {"t": "p", "md": "**Begründe** mit dem Stromweg, dass dieselbe Einstellung ver- und entschlüsselt. **Begründe** außerdem, warum kein Buchstabe auf sich selbst abgebildet werden kann (die Walze hat sogar einen Fixpunkt: G → G)."},
+      {"t": "schreiblinien", "anzahl": 4, "nur_schueler": true}],
+     "loesung": [
+      {"t": "p", "md": "Bei fester Stellung ist der Weg x → Walze → Reflektor → Walze rückwärts. Der Rückweg von R(y) aus führt wegen R(R(y)) = y genau zurück zu x; also ist jede Stellungstabelle eine Vertauschung von Paaren (**Involution**)."},
+      {"t": "p", "md": "Hin- und Rückweg durch die Walze sind zueinander invers; x ↦ x wäre nur möglich, wenn der Strom auf demselben Weg zurückliefe, also R(y) = y gälte – der Reflektor verbindet aber jeden Kontakt mit einem **anderen** (kein Fixpunkt). Der Fixpunkt der Walze spielt keine Rolle."}], "fallen": ["P10"]},
+    {"t": "auftrag", "nr": 3, "stufe": 2, "titel": "Wo steht BACH?", "sozialform": "Partnerarbeit", "niveau": "kuer", "inhalt": [
+      {"t": "p", "md": "Eve fängt `DEGHH HAFHE E` ab und vermutet das Wort BACH. **Bestimme** alle möglichen Positionen (ab 0), an denen BACH stehen **kann**, ohne dass ein Buchstabe auf sich selbst fiele."},
+      {"t": "tabelle", "mono": true, "zentriert": true, "kopfspalte": true, "schrift": 10, "kopf": ["Position", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+       "zeilen": [["Geheimtext", "D", "E", "G", "H", "H", "H", "A", "F", "H", "E", "E"]], "breiten": [2.6, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2]},
+      {"t": "p", "md": "Mögliche Positionen: [[luecke:30]]", "nur_schueler": true}],
+     "loesung": [
+      {"t": "tabelle", "mono": true, "zentriert": true, "kopfspalte": true, "schrift": 9.5, "kopf": ["Position p", "0", "1", "2", "3", "4", "5", "6", "7"],
+       "zeilen": [["Geheimtext ab p", "DEGH", "EGHH", "GHHH", "HHHA", "HHAF", "HAFH", "AFHE", "FHEE"], ["Kollision mit BACH", "H = H", "H = H", "H = H", "–", "–", "A, H", "–", "–"]], "breiten": [3.6, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6]},
+      {"t": "p", "md": "Mögliche Positionen **3, 4, 6, 7** – tatsächlich 4 (Klartext *fadebachgab*, Start E)."}]},
+    {"t": "abicheck", "titel": "Zusatz · ca. 10 min", "teile": [
+      {"bez": "a)", "text": "**Begründen** Sie, warum bei der Mini-Enigma kein Buchstabe auf sich selbst abgebildet werden kann.", "be": 2,
+       "loesung": [{"t": "p", "md": "Hin- und Rückweg durch die Walze sind invers [1]; Gleichheit von Ein- und Ausgang erforderte einen Fixpunkt des Reflektors, den es nicht gibt [1]."}], "fallen": ["P10"]},
+      {"bez": "b)", "text": "**Bestimmen** Sie die Anzahl möglicher Einstellungen der Mini-Enigma, wenn Walzenverdrahtung (beliebige Anordnung von A–H), Reflektor (Einteilung von A–H in 4 Paare) und Startstellung geheim sind, und **beurteilen** Sie, ob ein Rechner diese Zahl durchprobieren könnte.", "be": 4,
+       "loesung": [{"t": "p", "md": "Walzen 8! = 40 320 [1], Reflektoren 7 · 5 · 3 · 1 = 105 [1], Stellungen 8 → **33 868 800** [1]; für einen Rechner in Sekunden durchsuchbar – ein großer Schlüsselraum ist notwendig, aber nicht hinreichend; die echte Enigma hatte einen viel größeren Schlüsselraum, fiel aber durch Strukturschwächen wie die fehlenden Fixpunkte [1]."}], "fallen": ["P7"]}
+    ]},
+    {"t": "imlab", "level": "K2", "md": "Kür K2 „Die Enigma“ im Kryptolabor: **Mini-Enigma** im Runden-Labor (Walze, Reflektor, Stellung A–H, Stromweg-Animation). Keine Rangrelevanz – reine Neugier!"}
+  ]
+}

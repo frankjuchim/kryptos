@@ -1,0 +1,513 @@
+{
+ "typ": "dokument",
+ "welt": 9,
+ "kennung": "GESAMTÜBERSICHT",
+ "titel": "Kryptos · Doppelstunden 1–18",
+ "datei": "KR_Gesamtuebersicht_DS1-18",
+ "ordner": "00_Lehrerhinweise",
+ "quer": true,
+ "namenszeile": false,
+ "zeile1": "KRYPTOS · DIE ZEITREISE DER GEHEIMSCHRIFTEN · LEHRKRAFT",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "DIE EINHEIT IN KÜRZE",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Kryptos – Die Zeitreise der Geheimschriften** ist die Unterrichtseinheit Kryptologie für Informatik in der Oberstufe Niedersachsens (KC 2017, Ergänzende Hinweise 2025, Abitur ab 2027) – für den Leistungskurs (eA) und, über die Niveau-Einstellung, für Grundkurse (gA). In **18 Doppelstunden + Klausur** reisen die Lernenden mit dem Chronoskop durch sieben Epochen: von der Skytale in Sparta bis zu Zertifikaten im Netz. In jeder Epoche wechseln sie die Rollen: 🛡 Kryptografie (Alice und Bob sichern) und 🔍 Kryptoanalyse (mit Eve knacken)."
+    },
+    {
+     "t": "p",
+     "md": "**Roter Faden fürs Abitur:** In jeder Welt gibt es ein Level „Fremde Chiffre“ nach der 5-Schritte-Methode (Werkzeugkarte WK2): lesen und nachrechnen → anwenden → umkehren → einordnen → beurteilen. Genau dieses Muster prüfen 15 von 17 eA-Abituraufgaben zur Kryptologie (2021–2026)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "titel": "Vorbereitung vor DS 1",
+   "gross": true,
+   "inhalt": [
+    {
+     "t": "liste",
+     "haken": true,
+     "items": [
+      "Im Portal **InfoLabs** (labs.frankjuchim.de): Konto als Lehrkraft, Freischaltung für **Kryptos** durch den Superadmin.",
+      "Kurs im Portal anlegen und **Kryptos** wählen; Kurscode notieren (Kickoff-Folie).",
+      "In Kryptos (Lehrkraft-Ansicht): **Niveau eA oder gA**, freigeschaltete Welten (zunächst W0), Werkzeug-Freigaben, Boss-Einstellungen.",
+      "Akten drucken (Ordner `Welt<N>/2_Akten`), Lösungen liegen in `5_Loesungen` (nur Lehrkraft).",
+      "Anlage zum Abitur (`Werkzeuge/KR_Anlage_Abitur`) für alle drucken – sie liegt in jeder Stunde auf dem Tisch.",
+      "Online-IDE (online-ide.de) für DS 3 und DS 11 testen; Gerüste in `3_Online-IDE`."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Ablauf: 18 Doppelstunden + Klausur"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "DS",
+    "Welt",
+    "Thema der Stunde",
+    "Level · Niveau",
+    "Material",
+    "Highlight"
+   ],
+   "zeilen": [
+    [
+     "1",
+     "W0 Antike",
+     "**Kickoff** + Die Skytale von Sparta: Kryptologie/-grafie/-analyse, Klartext/Geheimtext/Schlüssel, Codierung ≠ Verschlüsselung, Transposition (Skytale, Gartenzaun, Fleißner)",
+     "0.1 · K",
+     "Präs. Kickoff + W0 · Akte W0·1",
+     "Archivfund, Lab-Beitritt, Video 00"
+    ],
+    [
+     "2",
+     "W0",
+     "**Caesars Botschaft:** Substitution, Caesar mit A = 1, mod, Brute Force, Schlüsselraum, Kerckhoffs",
+     "0.2 · K",
+     "Akte W0·2",
+     "🔴 Botenlauf · Video 01"
+    ],
+    [
+     "3",
+     "W0",
+     "**Die Werkstatt des Schreibers:** Caesar als Struktogramm (EH §5) und in Java; Fremde Chiffre I",
+     "0.3, 0.4 · K",
+     "Akten W0·3, W0·4 · Online-IDE CaesarWerkstatt",
+     "Boss W0 · Papier-Boss Mosaik von Pompeji"
+    ],
+    [
+     "4",
+     "W1 Bagdad",
+     "**Al-Kindis Handschrift:** Schlüsselwort-Alphabet, 26!, Häufigkeitsanalyse",
+     "1.1 · K",
+     "Akte W1·1",
+     "🔴 Wettknacken · Video 02"
+    ],
+    [
+     "5",
+     "W1",
+     "**Die Gegenmittel:** affine/multiplikative Chiffre, Inverses, Homophonie, Bigramme; Fremde Chiffre II (Nomenklator)",
+     "1.2, 1.3 · K",
+     "Akten W1·2, W1·3",
+     "Boss W1 · Papier-Boss Gewürzliste"
+    ],
+    [
+     "6",
+     "W2 Renaissance",
+     "**Das unentzifferbare Quadrat:** Vigenère mit dem Quadrat der Anlage, Autokey, Porta",
+     "2.1 · K",
+     "Akte W2·1",
+     "Archivfund Brief einer Diplomatin"
+    ],
+    [
+     "7",
+     "W2",
+     "**Kasiskis Spur:** Teiltexte, Kasiski-Test",
+     "2.2 · K",
+     "Akte W2·2",
+     "Eve knackt live (Beamer) · Video 03"
+    ],
+    [
+     "8",
+     "W2",
+     "**Friedmans Zufall** (eA): Koinzidenzindex, Friedman; Fremde Chiffre III (Playfair, Kreuzquadrat)",
+     "2.3 · eA, 2.4 · K",
+     "Akten W2·3, W2·4 (Kür K1)",
+     "Boss W2 · Papier-Boss Zwei-Quadrat"
+    ],
+    [
+     "9",
+     "W3 Maschinen",
+     "**Vernams Lochstreifen:** Bits, ASCII, XOR, One-Time-Pad, Schlüsselwiederverwendung",
+     "3.1 · K",
+     "Akte W3·1",
+     "🔴 Der doppelte Schlüssel · Video 04"
+    ],
+    [
+     "10",
+     "W3",
+     "**Der Blockchiffre-Baukasten** (eA): KRYPTOS-16, Runden, Konfusion/Diffusion, Fehlerfortpflanzung, ECB/CBC",
+     "3.2 · eA",
+     "Akte W3·2",
+     "Runden-Labor"
+    ],
+    [
+     "11",
+     "W3",
+     "**Die Chiffren-Werkstatt** (eA): eigenes Verfahren entwerfen + implementieren, Knack-Arena; Fremde Chiffre IV (ADFGVX)",
+     "3.3 · eA, 3.4 · K",
+     "Akten W3·3, W3·4 (Kür K2) · Online-IDE ChiffrenWerkstatt",
+     "🔴 Knack-Arena · Boss W3 · Papier-Boss Rundenmaschine"
+    ],
+    [
+     "12",
+     "W4 Stanford",
+     "**Das Schlüsselproblem:** n(n−1)/2 vs. 2n, asymmetrisches Prinzip, Einwegfunktion, Diffie-Hellman (E)",
+     "4.1 · K/E",
+     "Akte W4·1",
+     "🔴 Schlüsseltausch · Video 05"
+    ],
+    [
+     "13",
+     "W4",
+     "**RSA (E) und das hybride Prinzip (K):** Hybridverfahren, Anwendungsbereiche",
+     "4.2 · K/E",
+     "Akte W4·2 (Kür K3)",
+     "Boss W4 · Papier-Boss Kurierbüro"
+    ],
+    [
+     "14",
+     "W5 Netz",
+     "**Fingerabdrücke:** Hashfunktion, KRYPTOS-Hash, Kollisionen, Passwort-Hashing, Prüfsummen",
+     "5.1 · K",
+     "Akte W5·1",
+     "Hash-Labor · Video 06"
+    ],
+    [
+     "15",
+     "W5",
+     "**Das Siegel:** digitale Signatur, Schutzziele, signieren + verschlüsseln",
+     "5.2 · K",
+     "Akte W5·2",
+     "Signatur-Simulator"
+    ],
+    [
+     "16",
+     "W5",
+     "**Mallory im Netz:** MitM, Zertifikate/CA, TLS, Datenschutz",
+     "5.3 · K",
+     "Akte W5·3",
+     "🔴 Mallory im Netz · Boss W5 · Papier-Boss Messenger"
+    ],
+    [
+     "17",
+     "W6 Zeitmaschine",
+     "**Fallenjagd + Eves Chiffre:** P1–P10, Abi-Mix fremder Verfahren",
+     "6.1, 6.2 · K",
+     "Akten W6·1, W6·2",
+     "Video 07 · Generalprobe online"
+    ],
+    [
+     "18",
+     "W6",
+     "**Generalprobe:** Probeklausur im Block-2-Format + Besprechung",
+     "6.3 · K",
+     "Akte W6·3 · Probeklausur eA/gA",
+     "Abi-Duell (optional)"
+    ],
+    [
+     "–",
+     "–",
+     "**Klausur** (2 Aufgaben: klassisch + modern) · Nachschreibklausur",
+     "–",
+     "Klausur eA/gA, Nachschreibklausur eA/gA + EH",
+     "–"
+    ]
+   ],
+   "breiten": [
+    0.9,
+    2.4,
+    10.0,
+    2.6,
+    5.0,
+    4.6
+   ],
+   "schrift": 8.5
+  },
+  {
+   "t": "p",
+   "md": "*Niveau:* K = Kern (gA + eA) · eA = nur erhöhtes Niveau · E = KC-Ergänzung (freiwillig, nie bossrelevant) · Kür = Vertiefung (K1 Friedmans Formel, K2 Enigma, K3 Euklids Erbe). 🔴 = Live-Szenario im Funkraum (Rollenkarten im Ordner `Werkzeuge/Funkraum`, jeweils auch ohne Plattform spielbar)."
+  },
+  {
+   "t": "archivwissen",
+   "titel": "Kürzungsvarianten",
+   "gross": true,
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "**15–16 DS (gA):** DS 10 und DS 11 (eA) entfallen; Fremde Chiffre IV (ADFGVX) als Hausaufgabe; DS 17 und 18 zusammenlegen (Probeklausur als Hausaufgabe, Besprechung in der Stunde).",
+      "**16–17 DS (eA, Zeitnot):** DS 8 auf Friedman-Kurzfassung (Folie + Akte Auftrag 1–2) kürzen, Playfair als Hausaufgabe; RSA (E) nur als Ausblick in DS 13.",
+      "Bosse online und Papier-Bosse können als Hausaufgabe laufen; die Online-Bosse sind wiederholbar (bester Versuch zählt)."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Abdeckung des Kerncurriculums (Modul Kryptologie)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz („Die Schülerinnen und Schüler …“)",
+    "Phase · Niveau",
+    "Ort in Kryptos"
+   ],
+   "zeilen": [
+    [
+     "beschreiben das Prinzip der Transposition und der Substitution",
+     "EP · gA/eA",
+     "W0 · 0.1, 0.2"
+    ],
+    [
+     "implementieren monoalphabetische Verfahren, u. a. Caesar",
+     "EP · gA/eA",
+     "W0 · 0.3"
+    ],
+    [
+     "erläutern das Prinzip der Häufigkeitsanalyse",
+     "EP · gA/eA",
+     "W1 · 1.1"
+    ],
+    [
+     "beurteilen die Sicherheit einfacher Verschlüsselungsverfahren",
+     "EP · gA/eA",
+     "W0–W1, Fremde Chiffren"
+    ],
+    [
+     "beschreiben das Prinzip der polyalphabetischen Substitution (Vigenère)",
+     "Q · gA/eA",
+     "W2 · 2.1"
+    ],
+    [
+     "beurteilen die Sicherheit eines gegebenen symmetrischen Verfahrens",
+     "Q · gA/eA",
+     "W2 · 2.2–2.4, W3 · 3.4, W6"
+    ],
+    [
+     "beschreiben und unterscheiden symmetrische und asymmetrische Verschlüsselung",
+     "Q · gA/eA",
+     "W4 · 4.1"
+    ],
+    [
+     "beschreiben Anwendungsbereiche symm./asymm. Verfahren",
+     "Q · gA/eA",
+     "W4 · 4.2, W5"
+    ],
+    [
+     "erläutern das Prinzip von digitalen Signaturen und Zertifikaten",
+     "Q · gA/eA",
+     "W5 · 5.2, 5.3"
+    ],
+    [
+     "entwerfen und implementieren ein symmetrisches Verfahren",
+     "nur eA",
+     "W3 · 3.3"
+    ],
+    [
+     "erläutern die prinzipielle Funktionsweise einer modernen Blockchiffre",
+     "nur eA",
+     "W3 · 3.2"
+    ],
+    [
+     "Ergänzungen: AES, RSA, Diffie-Hellman",
+     "Ergänzung",
+     "W4 · 4.1, 4.2, K3"
+    ]
+   ],
+   "breiten": [
+    15.5,
+    3.5,
+    6.5
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "h",
+   "md": "Die zehn Fallen (überall gleich nummeriert)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Nr.",
+    "Kurztitel",
+    "Worum es geht"
+   ],
+   "zeilen": [
+    [
+     "P1",
+     "Zählbasis verwechselt",
+     "A = 1 (Anlage) vs. A = 0 (Verschiebung, Java); Positionen ab 0"
+    ],
+    [
+     "P2",
+     "Modulo falsch",
+     "Rest 0 → Z (26); negative Reste + 26"
+    ],
+    [
+     "P3",
+     "Umkehrung falsch",
+     "−k statt +k; mehrstufig rückwärts in umgekehrter Reihenfolge"
+    ],
+    [
+     "P4",
+     "Verfahrensregel übersehen",
+     "Füllzeichen, Doppelbuchstaben, unvollständige Matrix, Leserichtung"
+    ],
+    [
+     "P5",
+     "Falsch eingeordnet",
+     "Transposition/Substitution, mono/poly, sym/asym, Codierung"
+    ],
+    [
+     "P6",
+     "Häufigkeitsanalyse pauschal",
+     "Einzel vs. Teiltexte vs. Bigramme; Voraussetzungen nennen"
+    ],
+    [
+     "P7",
+     "Schlüsselraum falsch",
+     "25/26/26!, schwache Schlüssel, n(n−1)/2 vs. 2n"
+    ],
+    [
+     "P8",
+     "Kombination überschätzt",
+     "Caesar ∘ Caesar = Caesar; Verdopplung ohne Gewinn"
+    ],
+    [
+     "P9",
+     "Schlüsselrollen verwechselt",
+     "Signieren privat, prüfen öffentlich; Hash ≠ Verschlüsselung"
+    ],
+    [
+     "P10",
+     "Operator verfehlt",
+     "beurteilen ohne Kriterien/Urteil, begründen ohne Kausalität"
+    ]
+   ],
+   "breiten": [
+    1.2,
+    5.5,
+    18.8
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "h",
+   "md": "Prüfungsformate und Werkzeuge"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Material",
+    "Inhalt"
+   ],
+   "zeilen": [
+    [
+     "Papier-Bosse W0–W5",
+     "je ≈ 24 BE, 60 min, Abitur-Stil, Erwartungshorizont mit Kernpunkt · AFB · BE"
+    ],
+    [
+     "Probeklausur eA / gA",
+     "Block-2-Format: eine Aufgabe, 30 BE (≈ 70 min) bzw. 25 BE (≈ 55 min) – KETTENSCHRIFT"
+    ],
+    [
+     "Klausur eA / gA",
+     "zwei Aufgaben wie 2A + 2E (klassisch + modern), 2 × 30 bzw. 2 × 25 BE – DOMINO · Das Wetternetz"
+    ],
+    [
+     "Nachschreibklausur eA / gA",
+     "gleiche Struktur, andere Verfahren – Mäander-Wechselrad"
+    ],
+    [
+     "Werkzeugkarten WK1–WK6",
+     "Abitur-Anlage kompakt · 5-Schritte-Methode · Beurteilungsraster · Ablaufschaubilder · Operatoren · Struktogramm und Zeichenketten"
+    ],
+    [
+     "Anlage Abitur",
+     "Alphabet A = 1 … Z = 26, Vigenère-Quadrat, ASCII-Tabelle – als einziges Hilfsmittel in Bosse und Klausuren"
+    ],
+    [
+     "Warm-up-Karten",
+     "je Welt 12 Karten (10 min Stundenbeginn), spiralförmige Wiederholung"
+    ]
+   ],
+   "breiten": [
+    6.0,
+    19.5
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "h",
+   "md": "Erklärvideos (Kanal „frankjuchim“)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Nr.",
+    "Titel",
+    "Einsatz",
+    "Länge"
+   ],
+   "zeilen": [
+    [
+     "00",
+     "Kryptos: So funktioniert die Zeitreise",
+     "DS 1",
+     "4–5 min"
+    ],
+    [
+     "01",
+     "Caesar, das Alphabet A = 1 und Modulo",
+     "W0 · 0.2",
+     "8–10 min"
+    ],
+    [
+     "02",
+     "Häufigkeitsanalyse: Wie Al-Kindi jede Substitution knackt",
+     "W1 · 1.1",
+     "8–10 min"
+    ],
+    [
+     "03",
+     "Vigenère knacken: Kasiski-Test und Friedman-Test",
+     "W2 · 2.2/2.3",
+     "10–12 min"
+    ],
+    [
+     "04",
+     "XOR, One-Time-Pad und Blockchiffren",
+     "W3",
+     "10–12 min"
+    ],
+    [
+     "05",
+     "Das Schlüsselproblem: asymmetrisch, Diffie-Hellman, RSA, hybrid",
+     "W4",
+     "10–12 min"
+    ],
+    [
+     "06",
+     "Hash, Signatur, Zertifikat: Vertrauen im Netz",
+     "W5",
+     "10–12 min"
+    ],
+    [
+     "07",
+     "Abi-Check: Fremde Chiffren in 5 Schritten + die 10 Fallen",
+     "W6",
+     "10–12 min"
+    ]
+   ],
+   "breiten": [
+    1.2,
+    15.8,
+    4.5,
+    4.0
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "p",
+   "md": "Drehbücher (`Skript.md`), Quellen (`video.json`) und Aufnahme-Folien (`KR_Video_…_Folien.pptx`, Kamera-Zone unten rechts frei, Sprechertext in den Notizen) liegen in `materialien/Videos`."
+  }
+ ]
+}

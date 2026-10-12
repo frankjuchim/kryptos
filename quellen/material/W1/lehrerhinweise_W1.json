@@ -1,0 +1,732 @@
+{
+ "typ": "dokument",
+ "welt": 1,
+ "kennung": "LEHRERHINWEISE W1",
+ "titel": "Das Haus der Weisheit",
+ "datei": "KR_W1_Lehrerhinweise",
+ "ds": "4–5",
+ "namenszeile": false,
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "kopf": "WELT 1 AUF EINEN BLICK",
+   "md": "Bagdad, um 850 · Akzent Lapis · **DS 4–5** · Level 1.1–1.3 · Funkraum **„Wettknacken“** · Boss online **„Der Kalif und der Kurier“** · Papier-Boss **„Die Gewürzliste“** · Artefakt: Al-Kindis Manuskript. Die Lernenden werden zu Eve – und dann zu Alice, die nach Gegenmitteln sucht."
+  },
+  {
+   "t": "kasten",
+   "kopf": "ZIELE",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die Lernenden **erläutern** das Prinzip der Häufigkeitsanalyse (Operator „erläutern“: mit Beispiel und Voraussetzungen), **wenden** sie **an**, unterscheiden Schlüsselraumgröße und tatsächliche Sicherheit, **rechnen modular** inkl. inversem Schlüssel ohne Taschenrechner und **beurteilen** Gegenmittel (affin, homophon, Nomenklator) begründet."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "KC-Kompetenz (KC 2017, Einführungsphase, gA und eA)",
+      "Niveau",
+      "Level"
+     ],
+     "zeilen": [
+      [
+       "„erläutern das Prinzip der Häufigkeitsanalyse.“",
+       "kern",
+       "1.1, 1.2, 1.3"
+      ],
+      [
+       "„beurteilen die Sicherheit einfacher Verschlüsselungsverfahren.“",
+       "kern",
+       "1.1–1.3, Bosse"
+      ],
+      [
+       "„beschreiben das Prinzip der Transposition und der Substitution …“ (Vertiefung: monoalphabetisch, homophon, Codes)",
+       "kern",
+       "1.1–1.3"
+      ],
+      [
+       "„implementieren monoalphabetische Verfahren …“ (Anschluss: `rateSchluessel` der Caesar-Werkstatt)",
+       "kern",
+       "1.1 (Verweis)"
+      ],
+      [
+       "Vorbereitung modulares Rechnen/inverser Schlüssel (Abitur 2025 NT)",
+       "kern",
+       "1.2"
+      ],
+      [
+       "prozessbezogen PK3.3 (begründen), PK1.4 (Modelle nach Kriterien beurteilen), PK4.4 (Gegenmittel entwerfen, eA)",
+       "kern / eA",
+       "alle"
+      ]
+     ],
+     "schrift": 9,
+     "breiten": [
+      11.0,
+      2.0,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Doppelstunden und Level"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "DS",
+    "Thema",
+    "Level",
+    "Niveau",
+    "Highlight"
+   ],
+   "zeilen": [
+    [
+     "4",
+     "**Al-Kindis Handschrift**",
+     "1.1",
+     "kern",
+     "Archivfund, 🔴 Funkraum „Wettknacken“, 📼 02"
+    ],
+    [
+     "5",
+     "**Die Gegenmittel** + **Fremde Chiffre II**",
+     "1.2, 1.3",
+     "kern",
+     "Boss W1 frei"
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    1.0,
+    5.6,
+    1.8,
+    1.6,
+    6.8
+   ]
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Level",
+    "Titel",
+    "Niveau",
+    "Rolle",
+    "Aufgaben"
+   ],
+   "zeilen": [
+    [
+     "1.1",
+     "Al-Kindis Handschrift",
+     "kern",
+     "🔍",
+     "8"
+    ],
+    [
+     "1.2",
+     "Die Gegenmittel",
+     "kern",
+     "🛡",
+     "8"
+    ],
+    [
+     "1.3",
+     "Fremde Chiffre II: Der Nomenklator",
+     "kern",
+     "🛡 / 🔍",
+     "7"
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    1.4,
+    8.0,
+    2.0,
+    2.4,
+    3.0
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 4 – Al-Kindis Handschrift (Level 1.1)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W1-01 bis -03 und WU-W0-10 bis -12 (Spirale: ASCII, Java-Rest, Atbash).",
+     "Einzel",
+     "Lab Warm-up"
+    ],
+    [
+     "Archivfund",
+     "8",
+     "Folie 2: Al-Kindis Manuskript. „Caesar? Probiert die Scheibe!“ – keine Verschiebung passt. Frage: „Wie viele Möglichkeiten gibt es, das Alphabet zu vertauschen?“",
+     "Plenum",
+     "W1 F1–F3"
+    ],
+    [
+     "Erarbeitung 1",
+     "12",
+     "Monoalphabetische Substitution mit beliebigem Geheimtextalphabet, **Schlüsselwort-Alphabet** (Festlegung 1, Beispiel KALIF mit 14 Fixpunkten), **Schlüsselraum 26! ≈ 4 · 10^26^** – Brute Force aussichtslos.",
+     "Plenum",
+     "W1 F4–F8, Akte W1·1 AW 1–2"
+    ],
+    [
+     "Erarbeitung 2",
+     "10",
+     "**Häufigkeitsanalyse:** Idee (Sprache hat Fingerabdruck), Beutelspacher-Tabelle, E N I S R A T, Bigramme ER/EN/CH, Musterwörter (der, die, und). Video 📼 02 als Hausaufgabe.",
+     "Plenum",
+     "W1 F9–F12, Akte W1·1 AW 3–4"
+    ],
+    [
+     "Funkraum",
+     "25",
+     "🔴 **„Wettknacken“**: alle Teams, derselbe Geheimtext (486 Buchstaben), Werkbank + Analysator, Fortschrittsbalken am Beamer.",
+     "Teams",
+     "Funkraum, Werkzeuge"
+    ],
+    [
+     "Sicherung",
+     "15",
+     "Auswertung: Welche Schritte haben geholfen (E, ER, CH/SCH, UND)? Archivfund jetzt lesen (gleicher Schlüssel). Merksatz Häufigkeitsanalyse; Grenzen: kurze Texte (P6), Sprache muss bekannt sein.",
+     "Plenum",
+     "W1 F13–F15"
+    ],
+    [
+     "Lab/Abschluss",
+     "10",
+     "Level 1.1 (01–05). Hausaufgabe: Akte W1·1 Auftrag 4 (Knacken auf Papier) + Abi-Check, 📼 02. Ausblick: „Wie schützt sich Alice?“",
+     "Einzel",
+     "Lab"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 5 – Die Gegenmittel (Level 1.2) + Fremde Chiffre II (Level 1.3)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W1-04 bis -08.",
+     "Einzel",
+     "Lab Warm-up"
+    ],
+    [
+     "Einstieg",
+     "3",
+     "„Alice hat von Al-Kindi gehört. Was kann sie tun?“ Sammeln: Alphabet rechnerisch erzeugen, mehrere Zeichen für e, ganze Wörter verstecken.",
+     "Plenum",
+     "W1 F16"
+    ],
+    [
+     "Erarbeitung 1",
+     "22",
+     "**Affine/multiplikative Chiffre** (A = 0, P1-Hinweis): Verschlüsseln, ggT-Bedingung mit Gegenbeispiel m = 2 (a und n → A) und m = 13, **inverser Schlüssel** ohne Taschenrechner (Probieren mit der Vielfachen-Tabelle), Entschlüsseln; Schlüsselraum 312; Known-Plaintext aus zwei Häufigkeits-Paaren.",
+     "Plenum, Partner",
+     "W1 F17–F22, Akte W1·2 AW 1–2, Aufträge 1–4"
+    ],
+    [
+     "Erarbeitung 2",
+     "12",
+     "**Homophone Chiffre** (Tabelle mit 35 Zahlen, E hat 4 Homophone) als Gegenmittel; was bleibt sichtbar (Bigramme, Muster)? Einordnung (P5).",
+     "Partner",
+     "W1 F23–F25, Akte W1·2 AW 3–4, Auftrag 6"
+    ],
+    [
+     "Fremde Chiffre II",
+     "25",
+     "**Der Nomenklator** mit der 5-Schritte-Methode (Akte W1·3): anwenden, Blender erkennen, einordnen, beurteilen (Codebuch = Schlüssel, Kerckhoffs).",
+     "Partner, Plenum",
+     "W1 F26–F28, Akte W1·3"
+    ],
+    [
+     "Lab/Boss",
+     "13",
+     "Level 1.2/1.3; Boss **„Der Kalif und der Kurier“** frei (ab 60 % der Level-Punkte).",
+     "Einzel",
+     "Lab"
+    ],
+    [
+     "Abschluss",
+     "5",
+     "Rückblick Bagdad: Häufigkeitsanalyse schlägt jede monoalphabetische Substitution, egal wie groß der Schlüsselraum ist. Ausblick Renaissance: „Ein Alphabet ist zu wenig.“ Hausaufgabe: Abi-Checks W1·2/W1·3, Boss W1, Papier-Boss (optional).",
+     "Plenum",
+     "W1 F29"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Papier-Boss „Die Gewürzliste“ (60 min, 24 BE): Hausaufgabe, Puffer oder Vertretungsstunde.",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Typische Schwierigkeiten"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Schwierigkeit",
+    "Falle",
+    "Gegenmittel"
+   ],
+   "zeilen": [
+    [
+     "„Häufigster Buchstabe = e“ auch bei 30 Buchstaben",
+     "P6",
+     "Folie F12, Lab W1-L1-07/08, Akte W1·1 Auftrag 4 (a ist zweithäufigster)."
+    ],
+    [
+     "Schlüsselwort-Alphabet: Wiederholungen nicht gestrichen, Rest ab letztem Buchstaben begonnen",
+     "P4",
+     "Festlegung 1 an der Tafel; Werkbank zeigt das Alphabet."
+    ],
+    [
+     "Affin mit A = 1 gerechnet",
+     "P1",
+     "Jede Aufgabe mit Zeile „Nummerierung: A = 0 … Z = 25“; Falle-Folie F17."
+    ],
+    [
+     "Entschlüsseln mit m statt m^−1^ oder in falscher Reihenfolge",
+     "P3",
+     "Merksatz „erst − t, dann · m^−1^“."
+    ],
+    [
+     "Negative Zwischenwerte",
+     "P2",
+     "+ 26 bzw. + 29 addieren."
+    ],
+    [
+     "ggT-Bedingung ohne konkretes Gegenbeispiel „begründet“",
+     "P10",
+     "Abitur verlangt eine konkrete Kollision (zwei Buchstaben, eine Zahl)."
+    ],
+    [
+     "homophon = polyalphabetisch",
+     "P5",
+     "Akte W1·2 Archivwissen 3: Einordnung begründen."
+    ],
+    [
+     "Doppelt affin für sicherer halten",
+     "P8",
+     "Akte W1·2 Auftrag 7, Papier-Boss g."
+    ],
+    [
+     "Schlüsselraum 26! mit 26 oder 26² verwechseln; schwache Schlüsselwörter (Fixpunkte)",
+     "P7",
+     "Folien F3, F6, F7; Akte W1·1 Auftrag 3."
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    7.0,
+    1.4,
+    8.4
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "EINORDNUNG HOMOPHONER VERFAHREN (offene Frage an die Lehrkraft)",
+   "md": "Kryptos ordnet die homophone Substitution als **eigene Form** ein und verlangt eine Begründung. Erwartungshorizonte akzeptieren „nicht monoalphabetisch, da gleiche Klartextbuchstaben verschieden ersetzt werden“ ebenso wie „monoalphabetische Grundstruktur mit Homophonen“, sofern das Kriterium genannt und angewendet wird."
+  },
+  {
+   "t": "h",
+   "md": "Differenzierung gA/eA"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Gruppe",
+    "Angebot"
+   ],
+   "zeilen": [
+    [
+     "gA",
+     "Akte W1·2 Auftrag 7 und W1·3 Auftrag 7 entfallen; affine Chiffre mindestens bis zum Entschlüsseln mit gegebenem Inversen."
+    ],
+    [
+     "eA",
+     "Known-Plaintext-Gleichungssystem (W1-L2-07, Akte W1·2 A5), Doppel-affin (Akte W1·2 A7), Verbesserungen entwerfen (Akte W1·3 A7)."
+    ],
+    [
+     "Schnelle",
+     "Archivfund ohne Hinweise knacken; eigene homophone Tabelle für die Tischgruppe entwerfen und tauschen."
+    ],
+    [
+     "Langsame",
+     "Werkbank mit Hinweisen; Häufigkeiten in Akte W1·1 Auftrag 4 sind vorgezählt; Funkraum-Rückseite „vorgezählt“."
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    2.6,
+    14.2
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Kürzungsvariante"
+  },
+  {
+   "t": "p",
+   "md": "Nomenklator (Level 1.3) als Hausaufgabe mit Lab-Rückmeldung, Besprechung im Warm-up von DS 6; homophone Substitution nur über Lab W1-L2-06/08. Papier-Boss als freiwillige Übung."
+  },
+  {
+   "t": "h",
+   "md": "Vorbereitung und Technik"
+  },
+  {
+   "t": "liste",
+   "haken": true,
+   "items": [
+    "Werkzeug-Freigaben: **Häufigkeits-Analysator** und **Substitutions-Werkbank** erst ab DS 4 (sonst wird der Archivfund vorab geknackt).",
+    "Funkraum-Szenario **„Wettknacken“** in der Regie anlegen; Beamer mit Fortschrittsanzeige testen.",
+    "Papierfassung bereithalten: `KR_W1_Funkraum_Wettknacken.docx` (Geheimtextkarte auf A3, Rückseite „vorgezählt“, Rollen- und Hinweiskarten).",
+    "Akte W1·1 Auftrag 4 als Hausaufgabe (≈ 25 min) einplanen; Video 📼 02 „Häufigkeitsanalyse“ verlinken.",
+    "Level 1.2: keine Rechenhilfe für mod (ohne Taschenrechner wie im Abitur)."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Bezug zum Abitur"
+  },
+  {
+   "t": "p",
+   "md": "Häufigkeitsanalyse beschreiben/erläutern (9 von 17 eA-Aufgaben; KC-Beispieloperator „Erläutern Sie das Prinzip der Häufigkeitsanalyse“), Voraussetzungen nennen, Bigramme (2021 B, 2022 NT A), homophone Erweiterung (2023 NT A), multiplikative Chiffre mit Inversem und Gegenbeispiel (Format 2025 NT – eigenes Verfahren, nicht kopiert), Known-Plaintext (2023 NT A), Mehrfachverschlüsselung (P8), „Entscheiden Sie begründet“."
+  },
+  {
+   "t": "h",
+   "md": "Werkzeuge und Funkraum"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Werkzeug",
+    "Kurzbeschreibung"
+   ],
+   "zeilen": [
+    [
+     "Häufigkeits-Analysator",
+     "Text bis 3 000 Zeichen; Histogramm absolut/relativ mit **Referenz Deutsch** (Beutelspacher), Sortierung alphabetisch oder nach Häufigkeit (Rang gegen Rang); Top 15 Bigramme, Top 10 Trigramme; Warnung bei n < 100 („Kurzer Text – die Ränge weichen stark ab (P6)“); Teiltexte und Koinzidenzindex erst ab W2. In Bossen gesperrt."
+    ],
+    [
+     "Substitutions-Werkbank",
+     "Geheimtext in Fünfergruppen mit Live-Klartext (unbekannte Zeichen als ·); Zuordnungstabelle mit Anzahl und Rang; Konflikte werden markiert; Hilfen (Referenzrang, Bigramm-Markierung, Musterwortsuche); keine automatische Lösung. Funkraum-Modus: sendet nur die Zuordnungstabelle, Server berechnet den Fortschritt."
+    ],
+    [
+     "Funkraum „Wettknacken“",
+     "25 min, alle Teams = Eve-Teams, Lehrkraft = Regie: Start (1) → Analyse (5) → Knacken (14, Hinweise ab Minute 8: U ≙ e, YC ≙ ch, RUM ≙ der) → Ziellinie ≥ 95 % → Auswertung (5). Ablauf, Rollen- und Hinweiskarten, Geheimtextkarte und Lösung: `KR_W1_Funkraum_Wettknacken` (+ `_LSG`)."
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    3.6,
+    13.2
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Abdeckungsmatrix"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz",
+    "Level-Aufgaben",
+    "Akte-Auftrag",
+    "Boss online",
+    "Papier-Boss"
+   ],
+   "zeilen": [
+    [
+     "**erläutern das Prinzip der Häufigkeitsanalyse**",
+     "W1-AF, W1-L1-06 – 08, W1-L2-07, W1-L3-05",
+     "W1·1 AW3–4, A4–A6, Abi-Check a, c; W1·2 A5; W1·3 A5",
+     "W1-B-02, 10, 15",
+     "f"
+    ],
+    [
+     "**beschreiben das Prinzip der Substitution** (mono, Schlüsselwort, affin, homophon, Code)",
+     "W1-L1-01 – 03, W1-L2-01, 04, 06, W1-L3-01 – 04",
+     "W1·1 A1–A2; W1·2 A1, A3, A6; W1·3 A1–A4",
+     "W1-B-01, 03, 05, 06, 09, 11, 13",
+     "a, b, c"
+    ],
+    [
+     "**beurteilen die Sicherheit einfacher Verfahren** (Schlüsselraum, schwache Schlüssel, Known-Plaintext, Mehrfachanwendung, Kerckhoffs)",
+     "W1-L1-04, 05, 08, W1-L2-03, 05, 08, W1-L3-06, 07",
+     "W1·1 A3, A5, Abi-Check b, d; W1·2 A4, A7, Abi-Check c, d; W1·3 A6, A7, Abi-Check c, d",
+     "W1-B-04, 08, 12, 14",
+     "d, e, g"
+    ],
+    [
+     "modulares Rechnen, inverser Schlüssel (Abitur 2025 NT; Vorbereitung RSA-Ergänzung)",
+     "W1-L2-02, 04, 05, 07",
+     "W1·2 AW2, A2–A5, Abi-Check",
+     "W1-B-07, 09, 15",
+     "b, d, f"
+    ],
+    [
+     "fremde Chiffre (5-Schritte-Methode)",
+     "W1-L3-01 – 07",
+     "W1·3 A1–A7",
+     "W1-B-11 – 14",
+     "gesamt"
+    ]
+   ],
+   "schrift": 8.5,
+   "breiten": [
+    4.6,
+    3.6,
+    4.2,
+    2.6,
+    1.8
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Materialien Welt 1"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Datei",
+    "Inhalt"
+   ],
+   "zeilen": [
+    [
+     "`KR_W1_Praesentation_Bagdad.pptx`",
+     "29 Folien mit Sprechernotizen (DS 4: F1–F15, DS 5: F16–F29)"
+    ],
+    [
+     "`KR_W1_Akte1_Al-Kindis_Handschrift` (+ `_LSG`)",
+     "Akte W1·1, DS 4, Level 1.1"
+    ],
+    [
+     "`KR_W1_Akte2_Die_Gegenmittel` (+ `_LSG`)",
+     "Akte W1·2, DS 5, Level 1.2 (Auftrag 7: eA)"
+    ],
+    [
+     "`KR_W1_Akte3_Fremde_Chiffre_II` (+ `_LSG`)",
+     "Akte W1·3, DS 5, Level 1.3 (Auftrag 7: eA)"
+    ],
+    [
+     "`KR_W1_Boss1_Gewuerzliste` (+ `_EH`)",
+     "Papier-Boss, 60 min, 24 BE"
+    ],
+    [
+     "`KR_W1_Warmup` (+ `_LSG`)",
+     "Warm-up-Karten WU-W1-01 bis -12"
+    ],
+    [
+     "`KR_W1_Funkraum_Wettknacken` (+ `_LSG`)",
+     "Funkraum-Ablauf, Rollenkarten, Geheimtextkarte, Lösung"
+    ]
+   ],
+   "schrift": 9,
+   "breiten": [
+    7.6,
+    9.2
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Anhang A · Boss-Pool online „Der Kalif und der Kurier“"
+  },
+  {
+   "t": "p",
+   "md": "**Rahmentext (geduzt):** Ein Kurier reitet mit Briefen des Kalifen von Bagdad nach Basra. In jeder Karawanserei lauern Eves Späher – und die Schreiber des Kalifen probieren immer neue Tricks. Zeig in 25 Minuten ohne Werkzeuge, dass du jede Substitution der Bagdader Kanzlei durchschaust. Siegst du, gehört **Al-Kindis Manuskript** dir."
+  },
+  {
+   "t": "p",
+   "md": "Pool 15, Ziehung 8 (★ 3 / ★★ 3 / ★★★ 2), gesiezt, alle Aufgaben `kern`. Mix: ★ = 01–05 (5) · ★★ = 06–11 (6) · ★★★ = 12–15 (4) · fremde Chiffre: 11, 12, 13, 14 (4).",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "ID",
+    "Stufe",
+    "Aufgabenstellung (Kurzfassung)",
+    "Lösung"
+   ],
+   "zeilen": [
+    [
+     "W1-B-01",
+     "★",
+     "Ersten zehn Buchstaben des Geheimtextalphabets zum Schlüsselwort WUESTENWIND (Rest ab A).",
+     "`WUESTNIDAB` (vollständig `WUESTNIDABCFGHJKLMOPQRVXYZ`)"
+    ],
+    [
+     "W1-B-02",
+     "★",
+     "Zweithäufigster Buchstabe in deutschen Texten? (A) E (B) N (C) S (D) A",
+     "(B)"
+    ],
+    [
+     "W1-B-03",
+     "★",
+     "Geheimtext zu „kurier“ mit Alphabet `WUESTNIDABCFGHJKLMOPQRVXYZ`.",
+     "`CQMATM`"
+    ],
+    [
+     "W1-B-04",
+     "★",
+     "Anzahl der Geheimtextalphabete: (A) 25 (B) 26 (C) 26² (D) 26! ≈ 4 · 10^26^",
+     "(D)"
+    ],
+    [
+     "W1-B-05",
+     "★",
+     "Mehrere Geheimzeichen je Klartextbuchstabe, jedes Zeichen zu genau einem Buchstaben – Name? (A) Transposition (B) homophone Substitution (C) Caesar (D) Codierung",
+     "(B)"
+    ],
+    [
+     "W1-B-06",
+     "★★",
+     "A = 0 … Z = 25: Geheimtext zu „sklave“ mit c = (5 · p + 8) mod 26.",
+     "`UGLIJC`"
+    ],
+    [
+     "W1-B-07",
+     "★★",
+     "Inverser Schlüssel zu m = 7 modulo 26.",
+     "15 (7 · 15 = 105 = 4 · 26 + 1)"
+    ],
+    [
+     "W1-B-08",
+     "★★",
+     "Brauchbare Faktoren m mod 26: (1) 4 (2) 5 (3) 13 (4) 17 (5) 22 (6) 25",
+     "(2), (4), (6)"
+    ],
+    [
+     "W1-B-09",
+     "★★",
+     "A = 0 … Z = 25, Schlüssel (11, 3), Inverses 19: Klartext zu `LVTNI` mit p = 19 · (c − 3) mod 26.",
+     "`wesir`"
+    ],
+    [
+     "W1-B-10",
+     "★★",
+     "Langer Caesar-Geheimtext (A = 1 … Z = 26), häufigster Buchstabe K: wahrscheinlichster Schlüssel k?",
+     "k = 6 (e = 5 → K = 11)"
+    ],
+    [
+     "W1-B-11",
+     "★★",
+     "Spiegel-Kurier (A = 0 … Z = 25, c = (t − p) mod 26): Geheimtext zu „basar“ mit t = 4.",
+     "`DEMEN`"
+    ],
+    [
+     "W1-B-12",
+     "★★★",
+     "Spiegel-Kurier: a) Klartext zu `GBWJS` mit t = 9; b) Wie entschlüsselt man? (A) dieselbe Vorschrift – involutorisch (B) c = (t + p) mod 26 (C) inverser Schlüssel von t",
+     "a) `dinar`; b) (A) (`DEMEN` mit t = 4 → `basar`)"
+    ],
+    [
+     "W1-B-13",
+     "★★★",
+     "Spiegel-Kurier: (A) affine Chiffre mit m = 25 (B) polyalphabetisch (C) Transposition (D) 26! Schlüssel",
+     "(A) – c = (25 · p + t) mod 26, da −1 ≡ 25"
+    ],
+    [
+     "W1-B-14",
+     "★★★",
+     "NOMEN-850: Eve kennt „und“ ↔ 16, die Zahl 16 kommt sehr oft vor. Korrekte Folgerung? (A) Buchstabenteil sofort lesbar (B) Eve erfährt, wo „und“ steht, und kann Satzstrukturen ableiten; Buchstabenteil weiter per Häufigkeitsanalyse (C) vollständig gebrochen (D) wertlos",
+     "(B)"
+    ],
+    [
+     "W1-B-15",
+     "★★★",
+     "Affin (A = 0 … Z = 25), häufigste Buchstaben N und Y; e → N, n → Y: 4m + t ≡ 13, 13m + t ≡ 24 (mod 26). (m, t)? Hinweis 9^−1^ mod 26 = 3.",
+     "(m, t) = (7, 11) (9m ≡ 11 → m = 33 mod 26 = 7; t = 13 − 28 = −15 ≡ 11)"
+    ]
+   ],
+   "schrift": 8.5,
+   "breiten": [
+    1.7,
+    1.5,
+    8.4,
+    5.2
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Anhang B · Trainingsplatz-Generatoren Welt 1"
+  },
+  {
+   "t": "p",
+   "md": "Wortlisten ohne Wörter aus Lab, Akten, Bossen und Videos.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Name",
+    "Parameterbereich",
+    "Aufgabentext-Muster",
+    "Lösung / Prüfregel"
+   ],
+   "zeilen": [
+    [
+     "`schluesselwort_alphabet`",
+     "Schlüsselwort aus `SCHLUESSELWOERTER_W1` (40 Wörter, 4–12 Buchstaben, z. B. minarett, dattelpalme, karawanserei, tigris)",
+     "„Bilde das Geheimtextalphabet zum Schlüsselwort {WORT} (ohne Wiederholungen, Rest ab A). Gib die ersten {n} Buchstaben an.“ (n = 10 oder 26)",
+     "Präfix des Alphabets, exakt; Diagnose: Wiederholung nicht gestrichen → P4; Rest ab letztem Schlüsselwortbuchstaben → Hinweis „Kryptos-Regel: Rest ab A“."
+    ],
+    [
+     "`substitution_ver_ent`",
+     "Alphabet aus `schluesselwort_alphabet`, Wort aus `WOERTER_BAGDAD` (60 Wörter)",
+     "„Verschlüssele/Entschlüssele mit dem Alphabet {ALPHABET}: {text}“",
+     "Text nach Normalisierung; Diagnose: Richtung vertauscht (oben/unten) → P3."
+    ],
+    [
+     "`affin`",
+     "m ∈ {3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25}, t ∈ {0, …, 25}, Wort 3–6 Buchstaben, Richtung ver/ent (bei ent: m^−1^ angegeben)",
+     "„Nummerierung: A = 0 … Z = 25. Affine Chiffre (m, t) = ({m}, {t}). {Verschlüssele/Entschlüssele}: {text}“",
+     "Text; Diagnose: Ergebnis passt zu A = 1-Rechnung → P1; mit m statt m^−1^ → P3; t nach statt vor der Multiplikation abgezogen → P3."
+    ],
+    [
+     "`invers_mod26`",
+     "m wie oben",
+     "„Bestimme m^−1^ mit (m · m^−1^) mod 26 = 1 für m = {m}.“",
+     "m^−1^, Ganzzahl gleich; Diagnose: 26 − m^−1^ → Vorzeichenfehler (P2)."
+    ],
+    [
+     "`haeufigkeit_caesar`",
+     "erzeugter deutscher Satz (Satzbaukasten, 60–120 Buchstaben, e eindeutig häufigster Buchstabe, vom Generator geprüft), k ∈ {1, …, 25}",
+     "„Nummerierung: A = 1 … Z = 26. Ein Caesar-Geheimtext hat folgende Häufigkeiten: {Top 5}. Bestimme den wahrscheinlichsten Schlüssel.“ (Geheimtext wird mit angezeigt)",
+     "k, Ganzzahl gleich; Diagnose: k ± 1 → P1; 26 − k → P3."
+    ]
+   ],
+   "schrift": 8.5,
+   "breiten": [
+    3.2,
+    4.4,
+    5.0,
+    4.2
+   ]
+  }
+ ]
+}

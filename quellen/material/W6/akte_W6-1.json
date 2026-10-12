@@ -1,0 +1,501 @@
+{
+ "typ": "akte",
+ "welt": 6,
+ "kennung": "AKTE W6·1",
+ "titel": "Fallenjagd",
+ "ds": "17",
+ "niveau": "kern",
+ "level": "6.1",
+ "datei": "KR_W6_Akte1_Fallenjagd",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Bevor du dich Eves Chiffre stellst, legt dir die Archivarin eine dicke Akte auf den Tisch: die gesammelten Fehler aller Chronistinnen und Chronisten, die vor dir am Chronoskop gearbeitet haben. Erstaunlich: Fast nie fehlte das Wissen – fast immer war es eine kleine Regel, eine vertauschte Reihenfolge, ein vergessenes „weil“. Die Archivarin hat diese Fehler in **zehn Fallen** sortiert. Wer sie kennt, tappt nicht hinein. 🔍 Heute analysierst du fremde Lösungen."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Die zehn Fallen",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Falle",
+      "Woran du sie erkennst",
+      "Gegenmittel"
+     ],
+     "kopfspalte": true,
+     "schrift": 9,
+     "breiten": [
+      3.3,
+      6.6,
+      6.3
+     ],
+     "zeilen": [
+      [
+       "P1 Zählbasis verwechselt",
+       "Material sagt A = 0, du rechnest mit A = 1 (oder umgekehrt); Position 3 vs. 3. Buchstabe",
+       "Erste Zeile jeder Rechnung: „Nummerierung laut Material: …“"
+      ],
+      [
+       "P2 Modulo falsch",
+       "Ergebnis 0, negative Zahl oder Zahl > 26 als Buchstabe",
+       "Bei A = 1: Rest 0 → Z; negative Zahl + 26"
+      ],
+      [
+       "P3 Umkehrung falsch",
+       "Entschlüsseln liefert Unsinn; Stufen in Verschlüsselungsreihenfolge rückgängig gemacht",
+       "Letzte Stufe zuerst umkehren; Permutationen invertieren; −k statt +k"
+      ],
+      [
+       "P4 Verfahrensregel übersehen",
+       "Füllzeichen, Leserichtung, kurze letzte Zeile, Doppelbuchstaben, I = J",
+       "Beispiel des Materials vollständig nachrechnen"
+      ],
+      [
+       "P5 Falsch eingeordnet",
+       "„poly, weil zwei Zeichen“, „Transposition, weil Positionen“",
+       "Kriterium: Wird derselbe Klartextbuchstabe immer gleich ersetzt? Ändern sich Zeichen oder nur Plätze?"
+      ],
+      [
+       "P6 Häufigkeitsanalyse pauschal",
+       "„Man macht eine Häufigkeitsanalyse.“ ohne Wie und Voraussetzung",
+       "Sagen, worauf (Einzelbuchstaben, Teiltexte, Paare) und unter welchen Voraussetzungen (Länge, Sprache)"
+      ],
+      [
+       "P7 Schlüsselraum falsch",
+       "26 · 3 statt 26³; n(n − 1) statt n(n − 1)/2; schwache Schlüssel übersehen",
+       "Unabhängige Stellen multiplizieren; Paare nur einmal zählen; nach k = 0, „AAAA“, Werten ≡ 0 suchen"
+      ],
+      [
+       "P8 Kombination überschätzt",
+       "„doppelt verschlüsselt = doppelt sicher“",
+       "Prüfen, ob die Kombination wieder ein Verfahren derselben Art ist (Caesar ∘ Caesar = Caesar)"
+      ],
+      [
+       "P9 Schlüsselrollen verwechselt",
+       "Signieren mit öffentlichem Schlüssel; Hash „entschlüsseln“; Zertifikat = Vertrauenswürdigkeit",
+       "Signieren privat (Absender), prüfen öffentlich (Absender); verschlüsseln öffentlich (Empfänger)"
+      ],
+      [
+       "P10 Operator verfehlt",
+       "„beurteilen“ ohne Urteil, „erläutern“ ohne Beispiel",
+       "Operator unterstreichen, Leistung nach WK5 erbringen"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "merke",
+   "titel": "Die Abgabe-Checkliste (vor jeder Teilaufgabe 10 Sekunden)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "haken": true,
+     "items": [
+      "Nummerierung des Materials notiert?",
+      "Beispiel des Materials selbst nachgerechnet?",
+      "Beim Entschlüsseln: letzte Stufe zuerst?",
+      "Reste in 1 … 26 (bzw. 0 … 25)?",
+      "Füllzeichen/Leserichtung beachtet?",
+      "Operator erfüllt (Urteil, Beispiel, Begründung mit „weil/daher“)?"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Zählen und Rechnen",
+   "sozialform": "Einzelarbeit · 5 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Gib den Wert des Buchstabens R nach der Abitur-Anlage an.",
+      "Gib das Zeichen an Position 2 der Zeichenkette „ARCHIV“ an (Positionen ab 0 wie in den EH).",
+      "Berechne (4 − 11) mod 26 und gib den Buchstaben mit diesem Wert (A = 1) an.",
+      "Ein Verfahren addiert die Werte zweier Buchstaben mod 26, der Rest 0 steht für Z. Bestimme das Ergebnis für M und M."
+     ]
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 1
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) R = **18**. b) **C** (A = 0, R = 1, C = 2). c) (4 − 11) = −7; −7 mod 26 = **19 → S**. d) 13 + 13 = 26, Rest 0 → **Z**."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler:* b) „R“ (Zählung ab 1, P1); c) −7 als Ergebnis stehen lassen (P2); d) „0 → A“ (P2)."
+    }
+   ],
+   "fallen": [
+    "P1",
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Rückwärts denken",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verfahren GRAUPEL** · Nummerierung A = 1 … Z = 26. *Stufe 1:* Benachbarte Zeichen werden paarweise vertauscht (1. mit 2., 3. mit 4., …; bei ungerader Länge bleibt das letzte Zeichen stehen). *Stufe 2:* Vigenère mit dem Schlüsselwort EIS (Anlage-Quadrat)."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Entschlüssele den Geheimtext `EPWKT`.",
+      "Eine Mitschülerin hat zuerst die Paare zurückgetauscht und dann Vigenère rückgängig gemacht. Sie erhält *lwssl*. **Erkläre** ihren Fehler.",
+      "**Begründe**, warum die Reihenfolge der Stufen hier eine Rolle spielt."
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.4,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3
+     ],
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "E",
+       "P",
+       "W",
+       "K",
+       "T"
+      ],
+      [
+       "Schlüssel",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "nach Stufe 2 zurück",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "nach Stufe 1 zurück",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      3.4,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3
+     ],
+     "nur_loesung": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "E",
+       "P",
+       "W",
+       "K",
+       "T"
+      ],
+      [
+       "Schlüssel",
+       "E",
+       "I",
+       "S",
+       "E",
+       "I"
+      ],
+      [
+       "nach Stufe 2 zurück",
+       "A",
+       "H",
+       "E",
+       "G",
+       "L"
+      ],
+      [
+       "nach Stufe 1 zurück",
+       "h",
+       "a",
+       "g",
+       "e",
+       "l"
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Stufe 2 zuerst rückgängig: E − E = A, P − I = H, W − S = E, K − E = G, T − I = L → `AHEGL`; Paare zurücktauschen: AH | EG | L → HA | GE | L → **hagel**."
+    },
+    {
+     "t": "p",
+     "md": "b) Sie hat die Stufen in der Verschlüsselungsreihenfolge rückgängig gemacht (P3): Nach dem Tauschen stehen die Zeichen unter anderen Schlüsselbuchstaben, z. B. P unter E statt unter I."
+    },
+    {
+     "t": "p",
+     "md": "c) Vigenère ist positionsabhängig (der Schlüsselbuchstabe hängt von der Stelle ab); die Vertauschung ändert die Stellen – deshalb ist die Reihenfolge entscheidend. (Bei Caesar + Vertauschung wäre sie egal, vgl. Abi-Check b.)"
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Regeln und Schubladen",
+   "sozialform": "Partnerarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Atbash ersetzt A ↔ Z, B ↔ Y, … **Ordne** Atbash **ein** (Transposition/Substitution, mono-/polyalphabetisch) und **begründe**.",
+      "**Entscheide begründet**: „Der Morsecode ist ein Verschlüsselungsverfahren.“",
+      "Ein Klartext aus 11 Zeichen wird zeilenweise in 4 Spalten geschrieben und spaltenweise ausgelesen. Gib die Längen der vier Spalten an."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 5,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) **Substitution** (Buchstaben werden ersetzt), **monoalphabetisch** (jeder Buchstabe immer gleich: E → V), schlüssellos und involutorisch (zweimal = Klartext)."
+    },
+    {
+     "t": "p",
+     "md": "b) **Falsch**: Morse ist eine Codierung – die Zuordnung ist öffentlich, es gibt keinen geheimen Schlüssel (P5)."
+    },
+    {
+     "t": "p",
+     "md": "c) 11 = 2 · 4 + 3 → 3 Zeilen, die letzte Zeile hat 3 Zeichen → Spaltenlängen **3, 3, 3, 2** (P4)."
+    }
+   ],
+   "fallen": [
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Zählen, kombinieren, analysieren",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** die Anzahl der Vigenère-Schlüsselwörter der Länge 4.",
+      "**Bestimme** für 10 Personen die Schlüsselanzahl symmetrisch und asymmetrisch.",
+      "Ein Text wird mit Vigenère zuerst mit AB, dann mit BA verschlüsselt. **Untersuche**, welchem einfachen Verfahren das entspricht.",
+      "Die Schlüssellänge eines Vigenère-Geheimtextes ist 3. **Beschreibe**, wie man eine Häufigkeitsanalyse durchführt."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 6,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) 26⁴ = **456 976**."
+    },
+    {
+     "t": "p",
+     "md": "b) symmetrisch 10 · 9 / 2 = **45**, asymmetrisch 2 · 10 = **20**."
+    },
+    {
+     "t": "p",
+     "md": "c) Die Schlüssel addieren sich stellenweise: A + B = B, B + A = B → Vigenère mit BB = **Caesar mit Verschiebung 1** (P8)."
+    },
+    {
+     "t": "p",
+     "md": "d) Text in 3 Teiltexte zerlegen (Zeichen 1, 4, 7, … / 2, 5, 8, … / 3, 6, 9, …); in jedem Teiltext ist eine Caesar-Verschiebung wirksam → häufigsten Buchstaben bestimmen, mit E gleichsetzen, Verschiebung ablesen; Voraussetzung: genügend langer deutscher Text (P6)."
+    }
+   ],
+   "fallen": [
+    "P6",
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Vom Stichwort zur Prüfungsantwort",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Aufgabe: „**Beurteilen** Sie die Sicherheit einer Verschlüsselung, bei der zuerst Caesar und dann eine Spaltentransposition mit 3 Spalten angewendet wird.“ Antwort eines Schülers: „Sicher, weil zwei Verfahren.“ **Schreibe** eine Antwort, die den Operator erfüllt.",
+      "**Korrigiere**: „Bob prüft Alices Signatur mit seinem privaten Schlüssel und entschlüsselt dabei den Hashwert.“"
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 7,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) *Musterantwort:* „Caesar hat nur 25 sinnvolle Schlüssel, die Spaltentransposition mit 3 Spalten nur wenige Anordnungen; zusammen lassen sich alle Kombinationen schnell ausprobieren. Außerdem kann man die Caesar-Stufe unabhängig per Häufigkeitsanalyse brechen, weil die Transposition die Häufigkeiten nicht verändert. Das Verfahren ist daher **unsicher**.“ (Kriterien + Begründung + Urteil, P10)"
+    },
+    {
+     "t": "p",
+     "md": "b) „Bob entschlüsselt die Signatur mit **Alices öffentlichem** Schlüssel, bildet selbst den Hashwert der Nachricht und vergleicht beide.“ (P9)"
+    }
+   ],
+   "fallen": [
+    "P9",
+    "P10"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "**Material:** Das Verfahren WENDE arbeitet mit der Nummerierung A = 1 … Z = 26 in zwei Stufen. *Stufe 1:* Jeder Buchstabe wird um k Stellen verschoben (Caesar, k ∈ {0, …, 25}). *Stufe 2:* Der Text wird rückwärts notiert."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen** Sie den Klartext zum Geheimtext `XNUXT XKL` mit k = 6.",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 2,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Stufe 2 rückgängig: `LKXTXUNX` (1); Stufe 1 rückgängig (−6): **fernrohr** (1)."
+      }
+     ],
+     "fallen": [
+      "P3"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Entscheiden** Sie begründet, ob die folgende Aussage korrekt ist: „Vertauscht man die beiden Stufen, ändert sich der Geheimtext.“",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 3,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**Falsch** (1): Caesar ersetzt jeden Buchstaben unabhängig von seiner Position; das Umdrehen ändert nur die Positionen – beide Stufen sind vertauschbar; *fernrohr* ergibt in beiden Reihenfolgen `XNUXTXKL` (1)."
+      }
+     ],
+     "fallen": [
+      "P3"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Beurteilen** Sie die Sicherheit des Verfahrens WENDE.",
+     "be": 3,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 4,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Kriterien (2): Stufe 2 ist schlüsselunabhängig und nach Kerckhoffs bekannt – WENDE ist also nur Caesar; 25 sinnvolle Schlüssel → Brute Force; die Häufigkeitsverteilung bleibt erhalten. Urteil (1): **unsicher**."
+      }
+     ],
+     "fallen": [
+      "P8",
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "6.1",
+   "md": "Level 6.1 „Fallenjagd“ im Kryptolabor: zwölf fremde Lösungen – finde jeweils den Fehler. Trainingsplatz „Fallen-Mix“ (G-W6-3) und Warm-up-Karten WU-W6-01 bis -06."
+  }
+ ]
+}

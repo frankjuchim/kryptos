@@ -1,0 +1,774 @@
+{
+ "typ": "dokument",
+ "welt": 0,
+ "kennung": "LEHRERHINWEISE W0",
+ "titel": "Die Antike",
+ "datei": "KR_W0_Lehrerhinweise",
+ "ds": "1–3",
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "WELT 0 AUF EINEN BLICK",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Die Antike** – Sparta & Rom, ca. 500 v. Chr. – 50 v. Chr. · Akzent Terrakotta · DS 1–3 · Level 0.1–0.4 · Boss online „Der Bote des Feldherrn“ · Papier-Boss „Das Mosaik von Pompeji“ · Artefakt: **Skytale**."
+    },
+    {
+     "t": "p",
+     "md": "**Ziele.** Nach Welt 0 können die Lernenden die Grundbegriffe sicher verwenden, Transposition und Substitution unterscheiden und an Beispielen anwenden, Caesar mit A = 1 von Hand und als Struktogramm/Java umsetzen, die Unsicherheit einfacher Verfahren mit Schlüsselraum, Brute Force und Kerckhoffs begründen und ein fremdes Verfahren mit der 5-Schritte-Methode bearbeiten."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "DS",
+      "Thema",
+      "Level",
+      "Highlight"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "**Kickoff + Die Skytale von Sparta**",
+       "0.1",
+       "Kickoff-Präsentation, Lab-Beitritt über das Portal, Archivfund, 📼 00"
+      ],
+      [
+       "2",
+       "**Caesars Botschaft**",
+       "0.2",
+       "🔴 Funkraum „Botenlauf“, 📼 01"
+      ],
+      [
+       "3",
+       "**Die Werkstatt des Schreibers** + **Fremde Chiffre I**",
+       "0.3, 0.4",
+       "Online-IDE-Gerüst `CaesarWerkstatt`, Boss W0 frei"
+      ]
+     ],
+     "breiten": [
+      1.0,
+      6.8,
+      1.6,
+      7.0
+     ],
+     "schrift": 9.5
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Kompetenzen (KC 2017, Modul Kryptologie, Einführungsphase)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz („Die Schülerinnen und Schüler …“)",
+    "Niveau",
+    "Level"
+   ],
+   "zeilen": [
+    [
+     "„beschreiben das Prinzip der Transposition und der Substitution zur Verschlüsselung von Daten.“",
+     "kern",
+     "0.1, 0.2, 0.4"
+    ],
+    [
+     "„implementieren monoalphabetische Verfahren, u. a. Caesar-Verfahren.“",
+     "kern",
+     "0.3"
+    ],
+    [
+     "„beurteilen die Sicherheit einfacher Verschlüsselungsverfahren.“",
+     "kern",
+     "0.1–0.4, Bosse"
+    ],
+    [
+     "angrenzend Modul Codierung: „beschreiben grundlegende Codierungen von Daten, u. a. Dualzahlen, ASCII …“",
+     "kern",
+     "0.1 (Codierung ≠ Verschlüsselung), 0.3 (ASCII)"
+    ],
+    [
+     "prozessbezogen: PK2.2 (in ausführbare Prozesse umsetzen), PK3.3 (begründen), PK2.1 (Struktogramm, eA-Vertiefung), IK2.3",
+     "kern / eA",
+     "0.3, alle"
+    ]
+   ],
+   "breiten": [
+    11.2,
+    1.8,
+    3.4
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 1 – Kickoff + Die Skytale von Sparta (Level 0.1)",
+   "zeilen": [
+    [
+     "Einstieg",
+     "5",
+     "Kickoff-Folien K1/K2: „Ein Brief, den niemand lesen soll“ – Lehrkraft hält einen versiegelten Umschlag hoch: „Wie bekommt ihr eine Nachricht zu jemandem, ohne dass der Bote sie lesen kann?“ (Sammeln: verstecken, Geheimsprache, Code, Schloss).",
+     "Plenum",
+     "Kickoff-Präsentation"
+    ],
+    [
+     "Kickoff",
+     "15",
+     "Rahmenhandlung (Chronoskop, Archiv, Archivarin), Alice/Bob/Eve, die zwei Rollen 🛡 Kryptografie / 🔍 Kryptoanalyse, Zeitleiste der 7 Epochen, Abitur-Bezug („Am Ende steht Eves Chiffre – genau das Abiturformat“), Punkte/Ränge/Artefakte, Funkraum.",
+     "Plenum",
+     "Kickoff-Präsentation"
+    ],
+    [
+     "Lab-Beitritt",
+     "10",
+     "Alle melden sich im Portal **InfoLabs** an (`labs.frankjuchim.de`, persönlicher Code), geben unter „Kurs beitreten“ den **Kurscode** ein, wählen den Kurs und klicken auf **„Weiter zu Kryptos“** (SSO, kein eigenes Passwort). Erster Blick auf die Zeitleiste; Tischgruppen = Teams (Teamname aus fester Liste). Video 📼 00 als Hausaufgabe.",
+     "Einzel",
+     "Kickoff-Folie „Einsteigen!“, Kurscode an der Tafel, Tablets"
+    ],
+    [
+     "Archivfund",
+     "10",
+     "Folie „Die Botschaft am Stab“: Lederstreifen-Geheimtext. Papierstreifen + Bleistift/Stift als „Stab“: Teams wickeln und probieren. Erste Lösung vorstellen lassen (u = 4). Begriffe Klartext/Geheimtext/Schlüssel am Fund benennen.",
+     "Teams",
+     "W0 F1–F3, Papierstreifen (A4 längs, 1,5 cm breit)"
+    ],
+    [
+     "Erarbeitung",
+     "15",
+     "Grundbegriffe: Kryptologie = Kryptografie + Kryptoanalyse, Klartext/Geheimtext/Schlüssel, ver-/entschlüsseln; **Codierung ≠ Verschlüsselung** (Murmelrunde: Morsecode, ASCII, Skytale – was ist geheim?); Transposition vs. Substitution.",
+     "Plenum, Partner",
+     "W0 F4–F8, Akte W0·1 AW 1"
+    ],
+    [
+     "Übung",
+     "25",
+     "Akte W0·1, Archivwissen 2–4 + Aufträge 2–5 (Skytale, Gartenzaun), schnelle Teams Auftrag 6 (Fleißner, Schablone ausschneiden) und 7 (eA). Lehrkraft geht mit Folie „Falle P4: Füllzeichen“ herum.",
+     "Partner",
+     "Akte W0·1, Schablonenvorlage, Werkzeug Skytale & Gitter"
+    ],
+    [
+     "Lab",
+     "8",
+     "Level 0.1 starten (Aufgaben 01–03), Archivfund W0-AF im Lab eintragen (ohne Punkte, schaltet die Zeitleiste frei).",
+     "Einzel",
+     "Lab"
+    ],
+    [
+     "Abschluss",
+     "2",
+     "Ausblick: „Caesar hat nicht vertauscht, sondern ersetzt. Nächste Stunde: Funkraum!“ Hausaufgabe: Level 0.1 fertig, 📼 00.",
+     "Plenum",
+     "W0 F9 „Ausblick“"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 2 – Caesars Botschaft (Level 0.2)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "Warm-up-Karten WU-W0-01 bis -04 (Begriffe, Codierung, Skytale, Gartenzaun) im Leitner-Trainer oder als Kartenstapel.",
+     "Einzel",
+     "Lab Warm-up, Karten"
+    ],
+    [
+     "Einstieg",
+     "5",
+     "Folie „Ein Brief aus Gallien“: `UXHFN CXJLQ VODJH U` – „Diesmal ist nichts vertauscht. Was ist passiert?“ (Hinweis: Sueton berichtet von der Verschiebung um 3.)",
+     "Plenum",
+     "W0 F10–F11"
+    ],
+    [
+     "Erarbeitung",
+     "15",
+     "Substitution, Caesar, **Alphabetleiste A = 1 … Z = 26**, Chiffrierscheibe; Verschlüsseln an der Leiste, dann Formel `c = ((p + k − 1) mod 26) + 1`; **Falle P2:** W + 3 → 26 mod 26 = 0 → Z.",
+     "Plenum",
+     "W0 F12–F16, Werkzeug Chiffrierscheibe, Akte W0·2 AW 1–2"
+    ],
+    [
+     "Übung",
+     "10",
+     "Akte W0·2 Aufträge 1–3 (verschlüsseln, entschlüsseln, Formel-Tabelle).",
+     "Partner",
+     "Akte W0·2"
+    ],
+    [
+     "Funkraum",
+     "25",
+     "🔴 **„Botenlauf“**: 2–3 Teampaare Alice/Bob, 1–2 Eve-Teams; drei Runden à 6 min; Beamer zeigt das Netz.",
+     "Teams",
+     "Funkraum, Rollenkarten, Schlüsselkarten (KR_W0_Funkraum_Botenlauf)"
+    ],
+    [
+     "Sicherung",
+     "15",
+     "Auswertung Botenlauf: Wie lange brauchte Eve? Warum? → **Schlüsselraum** (26 Schlüssel, 25 sinnvoll, k = 0 schwach), **Brute-Force-Angriff**, **Kerckhoffs-Prinzip** („Die Sicherheit darf nur vom Schlüssel abhängen.“), Caesar ∘ Caesar = Caesar (P8).",
+     "Plenum",
+     "W0 F18–F21, Akte W0·2 AW 3–4"
+    ],
+    [
+     "Lab/Abschluss",
+     "10",
+     "Level 0.2 (01–05); Hausaufgabe: Akte W0·2 Aufträge 4–7 + Abi-Check, 📼 01.",
+     "Einzel",
+     "Lab"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 3 – Die Werkstatt des Schreibers (Level 0.3) + Fremde Chiffre I (Level 0.4)",
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W0-05 bis -09 (Caesar, Z-Falle, Schlüsselraum, Kerckhoffs, Caesar ∘ Caesar).",
+     "Einzel",
+     "Lab Warm-up"
+    ],
+    [
+     "Erarbeitung",
+     "15",
+     "Vom Papier zum Algorithmus: ASCII (EH-Anlage), Zählbasis A = 0 vs. A = 1 (P1), Struktogramm `verschluesseln` nach EH §5 (nur erlaubte Zeichenketten-Operationen!), Trace mit „hof“, k = 4.",
+     "Plenum, Partner",
+     "W0 F22–F25, Akte W0·3"
+    ],
+    [
+     "Implementierung",
+     "20",
+     "Online-IDE: Gerüst `KR_W0_CaesarWerkstatt_Geruest.txt` importieren, Stufe **Basis** (+ Erweiterung, wer schneller ist); Falle `%` in Java (P2).",
+     "Einzel/Partner",
+     "Online-IDE, Gerüst, Folie „Online-IDE: Caesar-Werkstatt“"
+    ],
+    [
+     "Fremde Chiffre I",
+     "25",
+     "**Die 5-Schritte-Methode** (WK2) zum ersten Mal: Polybios-Quadrat und Atbash kurz einführen (5 min), dann Akte W0·4 „Die Fackelchiffre“ in Partnerarbeit Schritt für Schritt; Besprechung Schritt 4–5 (Einordnen, Beurteilen) im Plenum.",
+     "Partner, Plenum",
+     "W0 F26–F29, Akte W0·4, WK2"
+    ],
+    [
+     "Lab/Boss",
+     "15",
+     "Level 0.4; wer 60 % der Level-Punkte hat: **Boss „Der Bote des Feldherrn“** (25 min, ab jetzt frei, auch zu Hause).",
+     "Einzel",
+     "Lab"
+    ],
+    [
+     "Abschluss",
+     "5",
+     "Rückblick Antike: Transposition, Substitution, Schlüsselraum, Kerckhoffs. Ausblick Bagdad: „Caesar fiel durch Ausprobieren. Was, wenn es 400 Quadrillionen Schlüssel gibt?“ Hausaufgabe: Online-IDE Erweiterung (Experte freiwillig/eA), Boss W0, Papier-Boss als Übung (optional).",
+     "Plenum",
+     "W0 F30"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Der **Papier-Boss „Das Mosaik von Pompeji“** (60 min, 24 BE) wird als Hausaufgabe, Vertretungsstunde oder Pufferstunde eingesetzt."
+  },
+  {
+   "t": "h",
+   "md": "Typische Schwierigkeiten"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Schwierigkeit",
+    "Falle",
+    "Gegenmittel"
+   ],
+   "zeilen": [
+    [
+     "Skytale: zeilenweise statt spaltenweise eingetragen beim Entschlüsseln",
+     "P3",
+     "Merksatz „Was spaltenweise gelesen wurde, wird spaltenweise eingetragen“; Werkzeug zeigt Pfeile."
+    ],
+    [
+     "Füllzeichen vergessen, Spalten ungleich lang",
+     "P4",
+     "Erst Länge zählen, s = ⌈n / u⌉ rechnen, X eintragen."
+    ],
+    [
+     "Fleißner-Schablone gegen den Uhrzeigersinn gedreht / Löcher nicht zeilenweise beschriftet",
+     "P3, P4",
+     "Drehpfeil und „OBEN“ auf der Schablone; Festlegung in jeder Aufgabe nennen."
+    ],
+    [
+     "„Morsecode ist eine Verschlüsselung“",
+     "P5",
+     "Frage „Was ist geheim?“ immer stellen."
+    ],
+    [
+     "Rest 0 → „@“ oder „A“ statt Z",
+     "P2",
+     "Formel mit − 1 … + 1; Falle-Folie „Die Null“; Warm-up 06."
+    ],
+    [
+     "A = 1 (Papier) und A = 0 (Java) vermischt",
+     "P1",
+     "`alphabetNummer` vs. `buchstabeZuZahl` in der Werkstatt; Tabelle Akte W0·3."
+    ],
+    [
+     "Java `%` negativ",
+     "P2",
+     "Test `entschluesseln(\"ABC\", 3)`."
+    ],
+    [
+     "„25 oder 26 Schlüssel?“",
+     "P7",
+     "26 im Schlüsselraum, 25 sinnvoll – beides nennen."
+    ],
+    [
+     "Doppel-Caesar für sicherer halten",
+     "P8",
+     "Akte W0·2 Auftrag 6, Botenlauf Runde 3."
+    ],
+    [
+     "„Beurteilen“ ohne Urteil",
+     "P10",
+     "Satzanfang „Insgesamt ist das Verfahren … , weil …“ einfordern."
+    ]
+   ],
+   "breiten": [
+    6.6,
+    1.4,
+    8.4
+   ],
+   "schrift": 9.5
+  },
+  {
+   "t": "h",
+   "md": "Differenzierung gA / eA"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**gA:** Akte W0·1 Auftrag 7, Akte W0·3 Auftrag 4/7 und Online-IDE-Stufe Experte entfallen; der Online-Boss zieht nur `kern`-Aufgaben (alle W0-Boss-Aufgaben sind kern).",
+    "**eA:** Experte-Stufe als Pflicht, Abi-Check der Akte W0·3 (Struktogramm-Analyse).",
+    "**Schnelle:** Fleißner-Gültigkeit (256), Kür „eigene Transposition erfinden“ (Vorgriff auf W3).",
+    "**Langsame:** Werkzeuge Skytale & Gitter/Chiffrierscheibe zur Selbstkontrolle, Lab-Tipps, Akte-Aufträge ★ zuerst."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Kürzungsvariante (15-DS-Kurs)"
+  },
+  {
+   "t": "p",
+   "md": "DS 3 kürzen: Struktogramm nur an der Tafel, Online-IDE als Hausaufgabe (Basis + Erweiterung), Fremde Chiffre I als Hausaufgabe mit Besprechung im Warm-up von DS 4. Papier-Boss W0 entfällt (als freiwillige Übung)."
+  },
+  {
+   "t": "h",
+   "md": "Vorbereitung und Technik"
+  },
+  {
+   "t": "liste",
+   "haken": true,
+   "items": [
+    "Kurs im Portal InfoLabs anlegen; Kurscode auf der Kickoff-Folie „Einsteigen!“ eintragen oder an die Tafel schreiben; persönliche Codes der Lernenden bereithalten.",
+    "Tablets/Laptops; Papierstreifen (A4 längs geschnitten, 1,5 cm) und Stifte/Rundhölzer (Ø ≈ 1 cm) für den Archivfund.",
+    "Fleißner-Schablonen (Vorlage am Ende von Akte W0·1, ggf. auf Karton).",
+    "Botenlauf: Rollen-, Schlüssel- und Befehlskarten (`KR_W0_Funkraum_Botenlauf`), Pappscheiben; Szenario in der Funkraum-Regie anlegen.",
+    "Online-IDE-Gerüst `KR_W0_CaesarWerkstatt_Geruest.txt` (Ordner `Welt0_Antike/3_Online-IDE`) in den Kurs-Workspace legen; Musterlösung `KR_W0_CaesarWerkstatt_LSG.txt` liegt in `5_Loesungen` (nur Lehrkraft).",
+    "Werkzeug-Freigaben: Skytale & Gitter ab DS 1, Chiffrierscheibe ab DS 2 (in Bossen gesperrt; im Funkraum nur für das Eve-Team)."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Werkzeuge und Funkraum"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Werkzeug / Szenario",
+    "Kurzbeschreibung"
+   ],
+   "zeilen": [
+    [
+     "**Skytale & Gitter**",
+     "Reiter Skytale (Umfang u = 2 … 10, Raster mit Schreib-/Leserichtung, Füllzeichen X abgesetzt) · Gartenzaun (n = 2 … 8, Plätze je Schiene) · Fleißner-Schablone (Löcher setzen, Drehgruppen ●▲■◆, Gültigkeitsprüfung, Drehen 90° im Uhrzeigersinn). Ausgabe in Fünfergruppen, Hinweis „Buchstaben unverändert“ (P6)."
+    ],
+    [
+     "**Chiffrierscheibe**",
+     "Doppelscheibe mit Schalter A = 1 / A = 0, Alphabetleiste, Formel-Modus mit Hinweis bei Rest 0 (P2), Text-Modus, Brute-Force-Liste k = 0 … 25 ohne automatische Erkennung (Eve muss selbst lesen). Auch im Gastmodus."
+    ],
+    [
+     "**Funkraum „Botenlauf“** (DS 2)",
+     "Teampaare Alice/Bob tauschen Caesar-Nachrichten, das Eve-Team liest mit und knackt per Brute Force; Runde 3 mit Doppel-Caesar und „geheimem“ Gartenzaun. Ablauf, Rollenkarten, Papier-Alternative: Dokument `KR_W0_Funkraum_Botenlauf`."
+    ]
+   ],
+   "breiten": [
+    4.2,
+    12.2
+   ],
+   "schrift": 9.5
+  },
+  {
+   "t": "p",
+   "md": "**Ergänzung bis zum Kryptolabor:** Die „Krypto-Werkstatt“ von André Bodendiek (enigma.andrebodendiek.de/werkstatt) bietet Caesar-Scheibe, Stab (Skytale), Tabellenbreite, Schablone und Walzen zum direkten Bedienen mit Nachspielen in Einzelschritten – gut für den Einstieg in DS 1/2, als Stationenlernen oder zur Differenzierung. Achtung: Konventionen (Nummerierung, Füllzeichen, Leserichtung) vor dem Einsatz mit Archivwissen und Akten abgleichen (Falle P1/P4)."
+  },
+  {
+   "t": "h",
+   "md": "Bezug zum Abitur"
+  },
+  {
+   "t": "p",
+   "md": "Trainiert werden: Verfahren anwenden (Bestimmen, ver-/entschlüsseln mit Vorlage) · Einordnen Transposition/Substitution, mono/poly (Abitur 13 von 17 eA-Aufgaben) · Schlüsselraum/Brute Force/schwache Schlüssel · Mehrfachverschlüsselung (P8) · Fehlerfortpflanzung (Papier-Boss g) · „Entscheiden Sie begründet“ (Papier-Boss f, Abi-Checks) · Kerckhoffs (2023 NT) · Struktogramm-Analyse im Stil 2021 (Akte W0·3) · Nummerierung A = 1 der Anlage. Nicht abiturrelevant, aber KC-Pflicht: Implementierung in Java (EP-Kompetenz „implementieren“)."
+  },
+  {
+   "t": "hinweis",
+   "kopf": "HISTORISCHE VORSICHT",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Die Skytale ist durch Plutarch (Lysander-Biografie, um 100 n. Chr.) und frühere Erwähnungen überliefert; ob sie tatsächlich der Geheimhaltung diente, ist umstritten – immer „gilt als“, „wird überliefert“. Caesars Verschiebung um 3 ist durch Sueton überliefert. Polybios (um 200–120 v. Chr.) beschreibt ein Fackel-Signalverfahren, aus dem das Quadrat abgeleitet wird. Atbash stammt aus der hebräischen Tradition (gängige Deutung einer Stelle im Buch Jeremia). Keine erfundenen Zitate realer Personen."
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Abdeckungsmatrix Welt 0"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "KC-Kompetenz",
+    "Level-Aufgaben",
+    "Akte-Auftrag",
+    "Boss online",
+    "Papier-Boss"
+   ],
+   "zeilen": [
+    [
+     "beschreiben das Prinzip der **Transposition**",
+     "W0-L1-03 – 08, W0-AF",
+     "W0·1 A2–A7, Abi-Check a, b",
+     "W0-B-04, 05, 09",
+     "a, b, c"
+    ],
+    [
+     "beschreiben das Prinzip der **Substitution**",
+     "W0-L2-01 – 05, W0-L4-01 – 06",
+     "W0·2 A1–A3; W0·4 A2–A6",
+     "W0-B-03, 05, 06, 15",
+     "a, c"
+    ],
+    [
+     "**Codierung ≠ Verschlüsselung** (angrenzend Modul Codierung)",
+     "W0-L1-02, W0-L4-04",
+     "W0·1 A1; W0·4 AW1",
+     "W0-B-02",
+     "–"
+    ],
+    [
+     "**implementieren** monoalphabetische Verfahren (Caesar)",
+     "W0-L3-01 – 07, Online-IDE",
+     "W0·3 A1–A7, Abi-Check",
+     "– (kein Code im Boss, wie Abitur)",
+     "–"
+    ],
+    [
+     "**beurteilen** die Sicherheit einfacher Verfahren",
+     "W0-L1-08, W0-L2-04 – 08, W0-L4-04, 06, 07",
+     "W0·1 A7, Abi-Check c, d; W0·2 A4–A7, Abi-Check; W0·4 A7, Abi-Check",
+     "W0-B-08, 10, 12, 13, 14",
+     "d, e, f, g, h"
+    ],
+    [
+     "fremde Chiffre (5-Schritte-Methode)",
+     "W0-L4-05 – 07",
+     "W0·4 A1–A7",
+     "W0-B-11, 12, 13",
+     "gesamt"
+    ],
+    [
+     "modulares Rechnen (A = 1, Rest 0)",
+     "W0-L2-03, W0-L3-04, 06, 07",
+     "W0·2 A3; W0·3 A3, Abi-Check c",
+     "W0-B-07",
+     "a, b"
+    ]
+   ],
+   "breiten": [
+    4.4,
+    3.4,
+    3.8,
+    2.6,
+    2.2
+   ],
+   "schrift": 8.5
+  },
+  {
+   "t": "h",
+   "md": "Materialien Welt 0"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Datei",
+    "Inhalt"
+   ],
+   "zeilen": [
+    [
+     "`KR_W0_Praesentation_Kickoff.pptx`",
+     "Kickoff der ganzen Einheit (DS 1, ≈ 20 min)"
+    ],
+    [
+     "`KR_W0_Praesentation_Antike.pptx`",
+     "Präsentation Welt 0 (DS 1–3)"
+    ],
+    [
+     "`KR_W0_Akte1_Skytale_von_Sparta` … `KR_W0_Akte4_Fremde_Chiffre_I`",
+     "Akten (+ `_LSG` in `5_Loesungen`)"
+    ],
+    [
+     "`KR_W0_Boss0_Mosaik_von_Pompeji`",
+     "Papier-Boss (+ `_EH`)"
+    ],
+    [
+     "`KR_W0_CaesarWerkstatt_Geruest.txt` / `_LSG.txt`",
+     "Online-IDE-Gerüst / Musterlösung (23 Tests)"
+    ],
+    [
+     "`KR_W0_Warmup` (+ `_LSG`)",
+     "Warm-up-Karten WU-W0-01 … 12 (Werkzeuge/Warm-up-Karten)"
+    ],
+    [
+     "`KR_W0_Funkraum_Botenlauf`",
+     "Funkraum-Szenario mit Rollenkarten (Werkzeuge/Funkraum)"
+    ]
+   ],
+   "breiten": [
+    8.4,
+    8.0
+   ],
+   "schrift": 9
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Anhang A · Boss-Pool online „Der Bote des Feldherrn“"
+  },
+  {
+   "t": "p",
+   "md": "*Rahmentext (geduzt):* Ein Bote ist mit Botschaften des Feldherrn unterwegs – und Eve hat ihre Späher überall. Zeig, dass du jede Botschaft der Antike verschlüsseln, entschlüsseln und durchschauen kannst. Du hast 25 Minuten, keine Werkzeuge, nur Papier und Kopf – wie im Abitur. Besiegst du den Boten, gehört die **Skytale** dir."
+  },
+  {
+   "t": "p",
+   "md": "Pool 15 Aufgaben, Ziehung 8 (★ 3 / ★★ 3 / ★★★ 2), Aufgabenstellung gesiezt, alle `kern`. Mix: ★ = 01, 02, 03, 05, 15 (5) · ★★ = 04, 06, 07, 08, 09, 10 (6) · ★★★ = 11, 12, 13, 14 (4) · fremde Chiffre: 11, 12, 13.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "ID",
+    "Stufe",
+    "Kategorie",
+    "Aufgabenstellung",
+    "Lösung"
+   ],
+   "zeilen": [
+    [
+     "W0-B-01",
+     "★",
+     "begriffe",
+     "Welcher Begriff bezeichnet das Brechen eines Verfahrens ohne Kenntnis des Schlüssels? (A) Kryptografie (B) Kryptoanalyse (C) Codierung (D) Transposition",
+     "(B)"
+    ],
+    [
+     "W0-B-02",
+     "★",
+     "begriffe",
+     "**Entscheiden** Sie: Welches Beispiel ist eine Verschlüsselung und keine bloße Codierung? (A) ASCII-Darstellung eines Textes (B) Morsezeichen (C) Gartenzaun mit vereinbarter Schienenzahl (D) Barcode auf einer Verpackung",
+     "(C) – nur (C) hat einen geheimen Schlüssel (P5)"
+    ],
+    [
+     "W0-B-03",
+     "★",
+     "verschluesseln",
+     "Nummerierung: A = 1 … Z = 26. **Bestimmen** Sie den Geheimtext zu „legat“ mit dem Caesar-Schlüssel k = 6.",
+     "`RKMGZ` (t (20) + 6 = 26 → Z, P2)"
+    ],
+    [
+     "W0-B-04",
+     "★★",
+     "entschluesseln",
+     "Eine Skytale mit dem Umfang u = 3 (3 Zeilen; zeilenweise geschrieben, spaltenweise gelesen) erzeugte `FRAEI GUMEE LR`. **Bestimmen** Sie den Klartext.",
+     "`feuerimlager` (12 : 3 = 4 Spalten, P3)"
+    ],
+    [
+     "W0-B-05",
+     "★",
+     "einordnen",
+     "**Ordnen** Sie zu (Transposition / Substitution): Skytale · Caesar · Gartenzaun · Atbash · Polybios-Quadrat · Fleißner-Schablone",
+     "Transposition: Skytale, Gartenzaun, Fleißner · Substitution: Caesar, Atbash, Polybios"
+    ],
+    [
+     "W0-B-06",
+     "★★",
+     "entschluesseln",
+     "Nummerierung: A = 1 … Z = 26. **Bestimmen** Sie den Klartext zu `PYLLU NCGMY HUN` (Caesar, k = 20).",
+     "`verratimsenat`"
+    ],
+    [
+     "W0-B-07",
+     "★★",
+     "modulo",
+     "Nummerierung: A = 1 … Z = 26, c = ((p + k − 1) mod 26) + 1. **Bestimmen** Sie c und den Buchstaben für (a) S, k = 7 (b) V, k = 4 (c) H, k = 25.",
+     "(a) 26, Z (b) 26, Z (c) 7, G"
+    ],
+    [
+     "W0-B-08",
+     "★★",
+     "schluesselraum",
+     "Es ist bekannt, dass „castra“ zu `LJBCAJ` verschlüsselt wurde (Caesar). **Bestimmen** Sie den Schlüssel k und die Verschiebung, mit der man entschlüsselt.",
+     "k = 9; Entschlüsseln mit 17"
+    ],
+    [
+     "W0-B-09",
+     "★★",
+     "entschluesseln",
+     "Gartenzaun mit n = 3 Schienen (Zickzack oben beginnend). **Bestimmen** Sie den Klartext zu `HEMBE IFKMT EESEL OUR`.",
+     "`hilfekommtuebersee` (Schienen 5 / 9 / 4)"
+    ],
+    [
+     "W0-B-10",
+     "★★",
+     "sicherheit-beurteilen",
+     "**Entscheiden** Sie, welche Aussage korrekt ist: (A) „Caesar ist sicher, solange niemand weiß, dass Caesar benutzt wurde.“ (B) „Nach dem Kerckhoffs-Prinzip ist Caesar unsicher, weil bei bekanntem Verfahren nur 25 sinnvolle Schlüssel zu prüfen sind.“ (C) „Caesar ist sicher, weil es 26! Schlüssel gibt.“ (D) „Kerckhoffs fordert, das Verfahren geheim zu halten.“",
+     "(B) (P7, P10)"
+    ],
+    [
+     "W0-B-11",
+     "★★★",
+     "fremde-chiffre",
+     "Material **Spiegelbote:** Klartext in Blöcke zu 4 Buchstaben (letzter Block mit X aufgefüllt), jeden Block rückwärts schreiben, dann jeden Buchstaben mit Caesar um k verschieben (A = 1 … Z = 26). Beispiel k = 1: „rom siegt“ → `roms` `iegt` → `smor` `tgei` → `TNPSUHFJ`. **Bestimmen** Sie den Geheimtext zu „wir kommen“ mit k = 2.",
+     "`MTKYG OOQZZ ZP` (Blöcke `wirk` `omme` `nxxx` → `kriw` `emmo` `xxxn`; auch X wird verschoben, P4)"
+    ],
+    [
+     "W0-B-12",
+     "★★★",
+     "fremde-chiffre",
+     "Material Spiegelbote. a) **Bestimmen** Sie den Klartext zu `LKFVE HIIQQ HUAAQ H` mit k = 3. b) Welches Vorgehen entschlüsselt korrekt? (A) erst jeden Buchstaben um 3 zurückverschieben, dann jeden Block umdrehen (B) erst um 3 weiterverschieben, dann umdrehen (C) jeden Block umdrehen und danach noch einmal mit k = 3 verschlüsseln",
+     "a) `schiffebrennen` (+ `xx`); b) (A) (P3)"
+    ],
+    [
+     "W0-B-13",
+     "★★★",
+     "fremde-chiffre",
+     "Material **Wechselschritt:** Buchstaben an ungeraden Positionen (1., 3., …) Caesar um 3, an geraden Positionen um 5 (A = 1 … Z = 26). „essen“ → `HXVJQ`. **Entscheiden** Sie: (A) Transposition (B) monoalphabetische Substitution (C) polyalphabetische Substitution (D) Codierung",
+     "(C) – „eee“ → `HJH` (P5)"
+    ],
+    [
+     "W0-B-14",
+     "★★★",
+     "sicherheit-beurteilen",
+     "Ein Tribun verschlüsselt „tribun“ zuerst mit k = 8, dann mit k = 18 (Caesar). a) **Geben** Sie den resultierenden Geheimtext **an**. b) **Entscheiden** Sie: Die doppelte Verschlüsselung (A) erhöht den Schlüsselraum auf 26 · 26 (B) entspricht einer Caesar-Verschiebung um 0 und ist damit wertlos (C) entspricht einer Verschiebung um 10",
+     "a) `TRIBUN`; b) (B) – (8 + 18) mod 26 = 0 (P7, P8)"
+    ],
+    [
+     "W0-B-15",
+     "★",
+     "entschluesseln",
+     "Polybios-Standardquadrat (A B C D E / F G H I K / L M N O P / Q R S T U / V W X Y Z; I = J; erst Zeile, dann Spalte). **Bestimmen** Sie den Klartext zu `21 34 42 45 32`.",
+     "`forum`"
+    ]
+   ],
+   "breiten": [
+    1.7,
+    1.5,
+    2.4,
+    7.3,
+    3.5
+   ],
+   "schrift": 8
+  },
+  {
+   "t": "h",
+   "md": "Anhang B · Trainingsplatz-Generatoren Welt 0"
+  },
+  {
+   "t": "p",
+   "md": "Deterministisch per Seed, serverseitig geprüft; Eingabe tolerant (Groß/Klein, Leerzeichen, Gruppierung egal). 1 Punkt je Aufgabe, max. 30/Tag. Wortliste `WOERTER_ANTIKE` (60 Wörter, 3–12 Buchstaben, z. B. legion, senat, forum, tribun, galeere, hoplit …) – keine Wörter aus Lab, Akten, Bossen und Videos.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Name",
+    "Parameter",
+    "Aufgabentext-Muster",
+    "Lösung / Prüfregel und Diagnose"
+   ],
+   "zeilen": [
+    [
+     "`caesar_ver`",
+     "Wort aus `WOERTER_ANTIKE`, k ∈ {1, …, 25}",
+     "„Nummerierung: A = 1 … Z = 26. Verschlüssele mit Caesar, k = {k}: {wort}“",
+     "`caesar(wort, k)` GROSS; Diagnose: Eingabe = caesar(wort, 26 − k) → P3; Abweichung genau bei p + k = 26 → P2; caesar(wort, k ± 1) → P1"
+    ],
+    [
+     "`caesar_ent`",
+     "wie oben",
+     "„Nummerierung: A = 1 … Z = 26. Entschlüssele mit k = {k}: {GEHEIMTEXT}“",
+     "Wort klein; Diagnose wie oben (P3: um + k statt − k)"
+    ],
+    [
+     "`caesar_paar`",
+     "Wort mit 3–6 Buchstaben, k ∈ {1, …, 25}",
+     "„Das Wort {wort} wurde mit Caesar zu {GEHEIMTEXT}. Bestimme den Schlüssel k (0 … 25).“",
+     "k; Diagnose: 26 − k → P3; k ± 1 → P1"
+    ],
+    [
+     "`mod_a1`",
+     "p ∈ {1, …, 26}, k ∈ {0, …, 25}; ≥ 30 % mit p + k = 26",
+     "„… Berechne c = ((p + k − 1) mod 26) + 1 für p = {p} ({Buchstabe}) und k = {k}. Gib c und den Buchstaben an.“",
+     "c und Buchstabe; Diagnose c = 0 → P2"
+    ],
+    [
+     "`skytale`",
+     "Klartext 8–24 Buchstaben, u ∈ {2, 3, 4, 5}; ver/ent zufällig",
+     "„Skytale, Umfang u = {u} (zeilenweise schreiben, spaltenweise lesen, Füllzeichen X): {text}“",
+     "Verschlüsseln exakt inkl. X; Entschlüsseln: abschließende X dürfen fehlen; Diagnose: zeilenweise gelesen → P3; X fehlt → P4"
+    ]
+   ],
+   "breiten": [
+    2.2,
+    3.4,
+    5.6,
+    5.2
+   ],
+   "schrift": 8
+  }
+ ]
+}

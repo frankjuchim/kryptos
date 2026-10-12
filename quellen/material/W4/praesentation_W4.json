@@ -1,0 +1,1190 @@
+{
+ "typ": "praesentation",
+ "welt": 4,
+ "titel": "Das Schlüsselproblem",
+ "datei": "KR_W4_Praesentation_Stanford",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Das Schlüsselproblem",
+   "oberzeile": "WELT 4 · STANFORD · 1976",
+   "untertitel": "Wie vereinbart man ein Geheimnis, während alle zuhören?",
+   "notizen": "1 min. Zeitsprung ankündigen: von den Lochstreifen (W3) zu den ersten Terminals – Stanford 1976, phosphorgrüne Bildschirme. Ziel der Welt: Schlüsselverteilung als Grenze symmetrischer Verfahren, asymmetrisches Prinzip, Hybridverfahren. RSA und Diffie-Hellman sind Ergänzung (KC) – sie machen das Prinzip greifbar, werden im Abitur aber nicht gerechnet."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Der Brief mit dem verlorenen Schlüssel",
+   "label": "FERNSCHREIBEN · NOTVERFAHREN – NUR VERSCHIEBUNG",
+   "geheimtext": "TDARN ATJVW RNJWB LQUDN BBNUE NAUXA NW",
+   "groesse": 30,
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Was steht da – und was lernen wir daraus?"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Nummerierung A = 1 … Z = 26 · Chiffrierscheibe bereitlegen"
+    }
+   ],
+   "notizen": "10 min. Archivfund-Text vorlesen: „Das Chronoskop setzt euch in einem Rechnerraum der Stanford University ab. Es ist 1976 … Auf einem Schreibtisch liegt ein Fernschreiben einer Bank an ihre Filiale. Darüber klebt ein Zettel: ‚Notverfahren – nur Verschiebung, weil der neue Schlüssel nicht angekommen ist.‘ … Zwei Forscher an dieser Universität behaupten, man könne einen gemeinsamen Schlüssel vereinbaren, während Eve jedes Wort mithört. Knackt zuerst das Fernschreiben – und findet dann heraus, wie das gehen soll.“\nPA mit Chiffrierscheibe. Tipp für Langsame: häufigster Buchstabe N (6×) → e? (N = 14, e = 5 → k = 9). Probe: aus T (20) wird mit −9 k (11).\nErwartet: „kurier kam nie an, schlüssel verloren“ (kurierkamnieanschluesselverloren).\nImpuls: „Warum ‚Notverfahren‘? Was wäre gewesen, wenn der Kurier angekommen wäre – und wenn Eve ihn abgefangen hätte?“\nÜberleitung: Problemfrage an die Tafel – Wie vereinbaren Alice und Bob einen Schlüssel, ohne sich zu treffen?"
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Warm-up",
+   "sozialform": "Einzelarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lab → **Warm-up W4** (3 Karten)"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      2.6,
+      9.4
+     ],
+     "zeilen": [
+      [
+       "WU-W4-02",
+       "XOR (W3): `1011 0110` ⊕ `0110 0011` = ?"
+      ],
+      [
+       "WU-W4-03",
+       "Caesar (W0): w mit k = 7 verschlüsseln (A = 1 … Z = 26)"
+      ],
+      [
+       "WU-W4-09",
+       "Inverses (W1): 3 · ? mod 26 = 1"
+      ]
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "10 min, davon 3 min Besprechung. Lösungen: WU-W4-02 → 1101 0101; WU-W4-03 → w = 23, ((23 + 7 − 1) mod 26) + 1 = 4 → D; WU-W4-09 → 9 (3 · 9 = 27 = 26 + 1).\nFalle P2 betonen: mod = kleinster nicht negativer Rest, Überlauf über Z. Das Inverse brauchen wir heute für Eves Angriffe auf fremde Tauschverfahren."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Jede mit jedem",
+   "untertitel": "Die Bank hat 30 Filialen – wie viele Kuriere braucht sie?",
+   "notizen": "Überleitung: „Die Bank hat 30 Filialen, und jede soll mit jeder vertraulich kommunizieren können. Wie viele Kuriere bräuchte man dafür?“ Erst schätzen lassen, Schätzungen an die Tafel."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Das Kurierproblem",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "•  Symmetrisch: **ein gemeinsamer Schlüssel** je Paar"
+      },
+      {
+       "t": "p",
+       "md": "•  Jeder Schlüssel muss **vorher geheim** übergeben werden"
+      },
+      {
+       "t": "p",
+       "md": "•  Kuriere können abgefangen, bestochen, verloren werden"
+      },
+      {
+       "t": "p",
+       "md": "•  Je mehr Teilnehmende, desto mehr Kuriere"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "schaubild",
+       "_W": 620,
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice"
+        },
+        {
+         "id": "E",
+         "name": "Eve"
+        },
+        {
+         "id": "B",
+         "name": "Bob"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "A",
+         "text": "wählt Schlüssel k"
+        },
+        {
+         "nr": 2,
+         "von": "A",
+         "nach": "B",
+         "text": "Kurier bringt k – vorher!"
+        },
+        {
+         "nr": 3,
+         "von": "E",
+         "nach": "E",
+         "text": "fängt den Kurier ab"
+        },
+        {
+         "nr": 4,
+         "von": "A",
+         "nach": "B",
+         "text": "Geheimtext"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "notizen": "3 min. Impuls: „Wie habt ihr in W0–W3 eigentlich Schlüssel ausgetauscht?“ Erwartet: gar nicht thematisiert / persönlich verabredet.\nOTP aus W3: Schlüssel so lang wie die Nachricht → die Verteilung wird noch schwieriger.\nSchaubild: Schritt 2 ist die Schwachstelle – wer den Kurier abfängt (3), kann alles lesen, was danach kommt (4)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Wie viele Schlüssel?",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.6,
+     "links": [
+      {
+       "t": "p",
+       "md": "1.  Jede Person hat n − 1 Partner"
+      },
+      {
+       "t": "p",
+       "md": "2.  n · (n − 1) Enden"
+      },
+      {
+       "t": "p",
+       "md": "3.  jede Verbindung zweimal gezählt → **n(n − 1)/2**"
+      },
+      {
+       "t": "p",
+       "md": "4.  asymmetrisch: ein Schlüsselpaar je Person → **2n**"
+      },
+      {
+       "t": "tabelle",
+       "zentriert": true,
+       "kopfspalte": true,
+       "kopf": [
+        "n",
+        "symmetrisch",
+        "asymmetrisch"
+       ],
+       "zeilen": [
+        [
+         "4",
+         "6",
+         "8"
+        ],
+        [
+         "30",
+         "435",
+         "60"
+        ]
+       ],
+       "schrift_folie": 20
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W4/bilder/W4_fuenf_personen_faeden.png",
+       "breite_folie": 4.4
+      }
+     ]
+    }
+   ],
+   "notizen": "7 min. Wollfaden-Demo: 5 Freiwillige stellen sich im Kreis auf und verbinden sich jede mit jeder – 10 Fäden. Formel an der Demo herleiten, nicht vorgeben: Jede hält 4 Fadenenden (n − 1), zusammen 5 · 4 = 20 Enden, jeder Faden hat zwei Enden → 10.\nAsymmetrisch: jede Person ein Schlüsselpaar → 2n = 10 – bei n = 5 zufällig gleich viele!\nDanach Akte W4·1 Auftrag 1 (Bank mit 30 Filialen: 435 vs. 60)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "nr": "P7",
+   "titel": "Schlüsselanzahl",
+   "regel": "Symmetrisch jede Verbindung **einmal** zählen, asymmetrisch jedes Schlüsselpaar als **zwei** Schlüssel.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "10 Personen → 10 · 9 = **90** Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "asymmetrisch **10** Schlüssel (ein Paar = 1)"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "10 · 9/2 = **45** Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "asymmetrisch **20** Schlüssel (10 Paare)"
+    }
+   ],
+   "notizen": "2 min. Im Abitur 2026 kam genau diese Rechnung (andere Zahlen) im Format „Erläutern Sie die Richtigkeit der Aussage …“. Beide Zählfehler kosten alle Punkte der Teilaufgabe. Erläutern heißt: Rechnung UND Deutung (P10)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Das asymmetrische Prinzip",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Jede Person hat ein **Schlüsselpaar**."
+    },
+    {
+     "t": "p",
+     "md": "Mit dem **öffentlichen Schlüssel des Empfängers** wird verschlüsselt, nur sein **privater Schlüssel** entschlüsselt."
+    },
+    {
+     "t": "p",
+     "md": "Der private Schlüssel verlässt nie seinen Besitzer."
+    }
+   ],
+   "notizen": "2 min. Laut vorlesen lassen. Die Formulierung „öffentlicher Schlüssel des Empfängers“ konsequent verwenden – in W5 wird sie wichtig, wenn das Schlüsselpaar für Signaturen „umgekehrt“ benutzt wird (Falle P9)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Vorhängeschloss und Fachbegriff",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Vorhängeschloss",
+      "asymmetrisches Verfahren"
+     ],
+     "breiten": [
+      6,
+      6
+     ],
+     "zeilen": [
+      [
+       "offenes Schloss, von Bob verteilt",
+       "**öffentlicher Schlüssel** von Bob"
+      ],
+      [
+       "Schloss zudrücken",
+       "verschlüsseln"
+      ],
+      [
+       "Schlüssel zum Schloss",
+       "**privater Schlüssel** von Bob"
+      ],
+      [
+       "nur Bob hat ihn",
+       "nur Bob kann entschlüsseln"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Grenze des Modells: Ein Schloss kann man **aufbrechen**."
+    }
+   ],
+   "notizen": "3 min. Echtes Vorhängeschloss zeigen: offen herumgeben, jede/r darf es zudrücken – aufschließen kann nur, wer den Schlüssel hat.\nGrenze der Analogie (PK1.4): Ein Schloss kann man aufbrechen; die Mathematik soll genau das verhindern → nächste Folie: Einwegfunktion."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Das Schlüsselproblem",
+   "titel": "Einwegfunktion mit Falltür",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "x",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "zeilen": [
+      [
+       "3^x^ mod 17",
+       "3",
+       "9",
+       "10",
+       "13",
+       "5",
+       "15",
+       "11",
+       "16"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "•  vorwärts: **leicht** (multiplizieren, mod 17)"
+    },
+    {
+     "t": "p",
+     "md": "•  rückwärts „3^x^ mod 17 = 12, x = ?“: nur **suchen**"
+    },
+    {
+     "t": "p",
+     "md": "•  **Falltür:** Zusatzwissen (privater Schlüssel) macht die Umkehrung leicht"
+    }
+   ],
+   "notizen": "4 min. Impuls: „Findet x mit 3^x mod 17 = 12!“ – Erwartet: Tabelle weiterführen (14, 8, 7, 4, 12 …) → x = 13.\nFachwort: diskreter Logarithmus. Unpräzise Formulierung „nicht eindeutig umkehrbar“ vermeiden – gemeint ist „nicht effizient umkehrbar“ (Fehler der früheren Folie P06)."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Diffie-Hellman · 1976",
+   "untertitel": "ERGÄNZUNG · ein gemeinsamer Schlüssel über einen öffentlichen Kanal",
+   "notizen": "Fachgeschichte (vorsichtig formulieren, keine Zitate): 1976 veröffentlichten Whitfield Diffie und Martin Hellman an der Stanford University den Aufsatz „New Directions in Cryptography“ mit der Idee der Public-Key-Kryptografie und einem Verfahren zur Schlüsselvereinbarung über einen öffentlichen Kanal. Ralph Merkle hatte unabhängig ähnliche Ideen (Merkle-Puzzles) – daher auch Diffie-Hellman-Merkle. Beim britischen GCHQ sollen Ellis, Cocks und Williamson vergleichbare Verfahren schon Anfang der 1970er gefunden haben; das wurde erst 1997 öffentlich.\nHinweis an den Kurs: Die Rechnungen sind Ergänzung, das Prinzip ist Kern."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Schlüssel mischen wie Farben",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.42,
+     "links": [
+      {
+       "t": "p",
+       "md": "•  **Gelb** ist öffentlich"
+      },
+      {
+       "t": "p",
+       "md": "•  Alice mischt geheim **Rot** dazu, Bob geheim **Blau**"
+      },
+      {
+       "t": "p",
+       "md": "•  Mischungen austauschen, eigene Geheimfarbe dazu → **gleiches Braun**"
+      },
+      {
+       "t": "p",
+       "md": "•  Eve: Mischen leicht, **Entmischen schwer**"
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "==ERGÄNZUNG== · Prinzip ist Kern"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "schaubild",
+       "_W": 620,
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice"
+        },
+        {
+         "id": "E",
+         "name": "Eve",
+         "unter": "sieht alles"
+        },
+        {
+         "id": "B",
+         "name": "Bob"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "B",
+         "text": "öffentlich: Gelb"
+        },
+        {
+         "nr": 2,
+         "von": "A",
+         "nach": "A",
+         "text": "Gelb + Rot"
+        },
+        {
+         "nr": 3,
+         "von": "B",
+         "nach": "B",
+         "text": "Gelb + Blau"
+        },
+        {
+         "nr": 4,
+         "von": "A",
+         "nach": "B",
+         "text": "Gelb + Rot"
+        },
+        {
+         "nr": 5,
+         "von": "B",
+         "nach": "A",
+         "text": "Gelb + Blau"
+        },
+        {
+         "nr": 6,
+         "von": "A",
+         "nach": "A",
+         "text": "+ Rot → Braun"
+        },
+        {
+         "nr": 7,
+         "von": "B",
+         "nach": "B",
+         "text": "+ Blau → Braun"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "notizen": "3 min. Werkzeug „Farbmischer“ am Beamer live in vier Schritten (Eve-Leiste zeigt alles, was über den Kanal geht).\nFrage: „Was müsste Eve können, um Braun herzustellen?“ Erwartet: Rot oder Blau aus der Mischung herausrechnen – „entmischen“. Eve-Modus zeigen: Mischt Eve die beiden Mischungen, entsteht eine andere Farbe (Gelb doppelt).\nÜberleitung: „Mischen ist leicht, Entmischen schwer – wie g^x mod p.“"
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Diffie-Hellman mit Zahlen",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "kopf": [
+      "",
+      "Alice",
+      "öffentlich (Eve sieht alles)",
+      "Bob"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "",
+       "p = 17, g = 3",
+       ""
+      ],
+      [
+       "2",
+       "geheim a = 4",
+       "",
+       "geheim b = 6"
+      ],
+      [
+       "3",
+       "A = 3^4^ mod 17 = **13**",
+       "A = 13 →   ← B = 15",
+       "B = 3^6^ mod 17 = **15**"
+      ],
+      [
+       "4",
+       "K = 15^4^ mod 17 = **16**",
+       "",
+       "K = 13^6^ mod 17 = **16**"
+      ]
+     ],
+     "breiten": [
+      0.6,
+      4.0,
+      3.6,
+      4.0
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "formel",
+     "md": "Warum gleich?   (g^b^)^a^ = (g^a^)^b^ = g^ab^"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "==ERGÄNZUNG== · nach jeder Multiplikation mod 17 reduzieren"
+    }
+   ],
+   "notizen": "5 min. Gemeinsam rechnen, nach jeder Multiplikation mod 17 reduzieren (P2):\nA = 3^4 = 81 = 4 · 17 + 13 → 13. B = 3^6 = 729 = 42 · 17 + 15 → 15.\nAlice: 15² = 225 = 13 · 17 + 4 → 4; 15^4 = 4² = 16. Bob: 13² = 169 → 16; 13^4 = 16² = 256 → 1; 13^6 = 1 · 16 = 16.\nTrick für Schnelle: 15 ≡ −2 (mod 17), also 15^4 ≡ (−2)^4 = 16.\nTypischer Fehler: K = A^a statt B^a – die eigene statt die fremde Zahl potenzieren (P3)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Warum Eve scheitert",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "x",
+       "1",
+       "2",
+       "3",
+       "**4**",
+       "5",
+       "6",
+       "7",
+       "8"
+      ],
+      [
+       "3^x^ mod 17",
+       "3",
+       "9",
+       "10",
+       "**13**",
+       "5",
+       "15",
+       "11",
+       "16"
+      ],
+      [
+       "x",
+       "9",
+       "10",
+       "11",
+       "12",
+       "13",
+       "14",
+       "15",
+       "16"
+      ],
+      [
+       "3^x^ mod 17",
+       "14",
+       "8",
+       "7",
+       "4",
+       "12",
+       "2",
+       "6",
+       "1"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1,
+      1.1
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "•  Eve kennt p, g, A, B – sie braucht a oder b (**diskreter Logarithmus**)"
+    },
+    {
+     "t": "p",
+     "md": "•  p = 17: Tabelle mit 16 Einträgen → A = 13 bei x = 4"
+    },
+    {
+     "t": "p",
+     "md": "•  Praxis: p mit **über 600 Dezimalstellen**; g ist Primitivwurzel"
+    }
+   ],
+   "notizen": "2 min. Eve sucht A = 13 in der Tabelle → a = 4, dann K = 15^4 mod 17 = 16. Bei p = 17 geht das in Sekunden.\nPrimitivwurzel nur kurz (Ergänzung): g^1 … g^(p−1) treffen alle Reste 1 … p − 1 – hier alle 16 Werte. So hat Eve keine Abkürzung.\nHinweis zum Altmaterial: Auf der früheren Unterrichtsfolie war g = 7, p = 11 – auch 7 ist Primitivwurzel mod 11, das Beispiel ist korrekt."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Schlüsseltausch vor Eves Augen",
+   "qr": "https://kryptos.frankjuchim.de/funkraum",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.4,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "breiten": [
+        2.0,
+        4.0
+       ],
+       "zeilen": [
+        [
+         "Rollen",
+         "Alice-Teams ↔ Bob-Teams, Eve-Team(s)"
+        ],
+        [
+         "Runde 1",
+         "p = 23, g = 5 · Karten 3 … 10"
+        ],
+        [
+         "Runde 2",
+         "p = 101, g = 2 · Karten 20 … 90"
+        ],
+        [
+         "Ziel",
+         "Alice/Bob: gleiches K · Eve: K erraten"
+        ]
+       ],
+       "schrift_folie": 16
+      }
+     ],
+     "rechts": [
+      {
+       "t": "schaubild",
+       "_W": 560,
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice-Team"
+        },
+        {
+         "id": "E",
+         "name": "Eve-Team"
+        },
+        {
+         "id": "B",
+         "name": "Bob-Team"
+        }
+       ],
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "A",
+         "text": "A = gᵃ mod p"
+        },
+        {
+         "nr": 2,
+         "von": "B",
+         "nach": "B",
+         "text": "B = gᵇ mod p"
+        },
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "B",
+         "text": "A"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "A",
+         "text": "B"
+        },
+        {
+         "nr": 5,
+         "von": "A",
+         "nach": "A",
+         "text": "K = Bᵃ mod p"
+        },
+        {
+         "nr": 6,
+         "von": "B",
+         "nach": "B",
+         "text": "K = Aᵇ mod p"
+        },
+        {
+         "nr": 7,
+         "von": "E",
+         "nach": "E",
+         "text": "p, g, A, B → K?"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "notizen": "25 min. Ablauf und Lösungstabellen: KR_W4_Funkraum_Schluesseltausch.\nRunde 1 (12 min): Beamer zeigt p = 23, g = 5; Teams ziehen Geheimzahlkarten, berechnen A bzw. B mit der Rechenkarte (4 min), senden z. B. „A 17“, berechnen K und melden verdeckt (4 min). Eve meldet je Paar einen Tipp. Auflösung (3 min) – erwartet: Eve legt die Tabelle 5^x mod 23 (22 Einträge) an und gewinnt.\nRunde 2 (8 min): p = 101, g = 2, Modulo-Uhr nur „Potenz berechnen“. Eve braucht bis zu 100 Rechnungen pro Paar; Stopp nach 5 min.\nGeheimzahlkarten austeilen, Eve-Team mit starken Rechnern besetzen. Bei technischen Problemen Papier-Variante (Tafel = öffentlicher Kanal, gefaltete Zettel). Kontrolle: Beispielpaar a = 37, b = 58 → A = 55, B = 47, K = 82."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Was haben wir gesehen?",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      2.4,
+      4.8,
+      4.8
+     ],
+     "kopf": [
+      "",
+      "Alice und Bob",
+      "Eve"
+     ],
+     "zeilen": [
+      [
+       "Runde 1",
+       "je eine kurze Rechnung",
+       "gewinnt mit einer 22er-Tabelle"
+      ],
+      [
+       "Runde 2",
+       "je eine Rechnung",
+       "bis zu 100 Versuche je Paar"
+      ],
+      [
+       "Aufwand wächst mit",
+       "der **Stellenzahl** von p",
+       "der **Größe** von p"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Achtung: Eve hört nur zu. Wer **aktiv** Zahlen austauscht, ist **Mallory** (W5)."
+    }
+   ],
+   "notizen": "5 min. Auswertung mit Zeitmessung am Beamer. Bei p mit 600 Stellen: Alice/Bob brauchen Millisekunden (schnelles Potenzieren), Eve länger als das Alter des Universums – genau das meint „Einwegfunktion“.\nMerksatz: Diffie-Hellman schützt gegen Lauschen, nicht gegen Fälschen. Man-in-the-Middle nur andeuten (falls die Mallory-Zusatzrolle gespielt wurde: verschiedene K beim Paar zeigen)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 12 · Diffie-Hellman (Ergänzung)",
+   "titel": "Merke · Level 4.1",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Symmetrisch **n(n − 1)/2**, asymmetrisch **2n** Schlüssel."
+    },
+    {
+     "t": "p",
+     "md": "Asymmetrisch: **öffentlicher** Schlüssel verschlüsselt, **privater** entschlüsselt. Sicherheit durch **Einwegfunktionen**."
+    },
+    {
+     "t": "p",
+     "md": "Diffie-Hellman: K = g^ab^ mod p über einen öffentlichen Kanal."
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "Hausaufgabe: Lab Level 4.1 (mind. 5 Aufgaben), Akte W4·1 Aufträge 4–5"
+    }
+   ],
+   "schrift": 22,
+   "notizen": "2 min. Merkkasten vorlesen, Abi-Check a) der Akte W4·1 gemeinsam mündlich. Video 05 (Schlüsselproblem, asymmetrisch, hybrid) als Nachbereitung."
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "RSA und das hybride Prinzip",
+   "oberzeile": "WELT 4 · MIT · 1977",
+   "untertitel": "Multiplizieren ist leicht – Zerlegen ist schwer",
+   "notizen": "DS 13. 1 min. Ein Jahr später, 1977: Ron Rivest, Adi Shamir und Leonard Adleman am MIT stellen RSA vor – die Falltür ist das Multiplizieren zweier Primzahlen. Vorher Warm-up (nächste Folie)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Warm-up",
+   "sozialform": "Einzelarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lab → **Warm-up W4** (3 Karten)"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      2.6,
+      9.4
+     ],
+     "zeilen": [
+      [
+       "WU-W4-01",
+       "Sechs Personen: Schlüssel symmetrisch? asymmetrisch?"
+      ],
+      [
+       "WU-W4-06",
+       "DH im Kleinformat: p = 7, g = 3, a = 2, b = 4 → A, B, K"
+      ],
+      [
+       "WU-W4-12",
+       "Falle P7: „Zehn Teilnehmende: 90 bzw. 10 Schlüssel“"
+      ]
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "notizen": "10 min (Folie in der Spezifikation als „Folie 3 analog“ vorgesehen). Lösungen: WU-W4-01 → 15 / 12; WU-W4-06 → A = 2, B = 4, K = 2; WU-W4-12 → symmetrisch 45 (Halbierung vergessen), asymmetrisch 20 (10 Schlüsselpaare)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "RSA: Schlüssel erzeugen",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      0.7,
+      4.8,
+      6.5
+     ],
+     "zeilen": [
+      [
+       "1",
+       "zwei Primzahlen",
+       "p = 7, q = 11"
+      ],
+      [
+       "2",
+       "N = p · q",
+       "N = 77"
+      ],
+      [
+       "3",
+       "φ(N) = (p − 1)(q − 1)",
+       "φ(N) = 6 · 10 = 60"
+      ],
+      [
+       "4",
+       "e teilerfremd zu φ(N)",
+       "e = 7"
+      ],
+      [
+       "5",
+       "e · d mod φ(N) = 1",
+       "d = 43: 7 · 43 = 301 = 5 · 60 + 1"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "öffentlich **(77, 7)** · privat **(77, 43)**"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "==ERGÄNZUNG== · wird im Abitur nicht gerechnet"
+    }
+   ],
+   "notizen": "6 min. Hinweis „Ergänzung“: RSA wird im Abitur nicht gerechnet, macht aber das Prinzip „Falltür“ greifbar – wer p und q kennt, kann φ(N) und damit d berechnen; wer nur N kennt, müsste N zerlegen.\nWie man d findet: Kür K3 (erweiterter Euklid). Probe immer mit e · d mod φ(N) = 1."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "RSA: ver- und entschlüsseln",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Klarzahl m = 9: c = 9^7^ mod 77: 9² → 4, 9^4^ → 16, 16 · 4 · 9 = 576 → **c = 37**"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "37^k^",
+      "37^1^",
+      "37^2^",
+      "37^4^",
+      "37^8^",
+      "37^16^",
+      "37^32^"
+     ],
+     "zeilen": [
+      [
+       "mod 77",
+       "37",
+       "60",
+       "58",
+       "53",
+       "37",
+       "60"
+      ],
+      [
+       "43 = 32 + 8 + 2 + 1",
+       "✓",
+       "✓",
+       "–",
+       "✓",
+       "–",
+       "✓"
+      ]
+     ],
+     "breiten": [
+      3.6,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "37 · 60 → 64 · 53 → 4 · 60 → **9** = m"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "==ERGÄNZUNG== · Rechenvorlage „fortgesetztes Quadrieren“"
+    }
+   ],
+   "notizen": "8 min. Rechenvorlage aus Akte W4·2 zeigen: 37² = 1369 = 17 · 77 + 60; 60² = 3600 → 58; 58² = 3364 → 53; 53² = 2809 → 37; 37² → 60.\nProduktkette: 37 · 60 = 2220 → 64; 64 · 53 = 3392 → 4; 4 · 60 = 240 → 9.\nSchnelle rechnen im RSA-Rechenwerk nach. Danach Akte W4·2 Aufträge 1–2 in PA (p = 3, q = 17: (51, 3)/(51, 11), m = 4 → c = 13 → 4)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "nr": "P3/P9",
+   "titel": "e oder d?",
+   "regel": "Vertraulich: mit dem **öffentlichen Schlüssel des Empfängers** hin, mit seinem **privaten** zurück.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Bob verschlüsselt die Antwort an Alice mit **seinem privaten** Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "m = c^e^ mod N"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Bob verschlüsselt mit **Alices öffentlichem** Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "m = c^d^ mod N"
+    }
+   ],
+   "notizen": "2 min. Merksatz: „Vertraulich: Empfänger-öffentlich hin, Empfänger-privat zurück.“ Mit dem eigenen privaten Schlüssel „verschlüsselt“ man nicht vertraulich – das wird in W5 zur Signatur."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Das Geschwindigkeitsproblem",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      3.2,
+      4.4,
+      4.4
+     ],
+     "kopf": [
+      "",
+      "symmetrisch (z. B. AES)",
+      "asymmetrisch (z. B. RSA)"
+     ],
+     "zeilen": [
+      [
+       "Tempo",
+       "**schnell**",
+       "um Größenordnungen **langsamer**"
+      ],
+      [
+       "Schlüsselverteilung",
+       "geheimer Austausch **nötig**",
+       "**kein** geheimer Austausch"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Wie bekommt man das **Beste aus beiden Welten**?"
+    }
+   ],
+   "notizen": "2 min. Impuls: „RSA ist um Größenordnungen langsamer als AES – und trotzdem nutzt jede Website beides. Wie?“ Offen lassen, Vorschläge sammeln. Erwartet: „nur den Schlüssel asymmetrisch verschlüsseln“ (Archivarin: „Man muss nicht alles asymmetrisch verschlüsseln. Nur den Schlüssel.“)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Das Hybridverfahren",
+   "inhalt": [
+    {
+     "t": "schaubild",
+     "_W": 760,
+     "akteure": [
+      {
+       "id": "A",
+       "name": "Alice",
+       "unter": "Senderin"
+      },
+      {
+       "id": "E",
+       "name": "Eve",
+       "unter": "liest den Kanal mit"
+      },
+      {
+       "id": "B",
+       "name": "Bob",
+       "unter": "Empfänger"
+      }
+     ],
+     "schritte": [
+      {
+       "nr": 1,
+       "von": "A",
+       "nach": "A",
+       "text": "Nachricht symmetrisch mit Sitzungsschlüssel K"
+      },
+      {
+       "nr": 2,
+       "von": "A",
+       "nach": "A",
+       "text": "K mit Bobs öffentlichem Schlüssel"
+      },
+      {
+       "nr": 3,
+       "von": "A",
+       "nach": "B",
+       "text": "Geheimtext + K verschlüsselt"
+      },
+      {
+       "nr": 4,
+       "von": "B",
+       "nach": "B",
+       "text": "K mit Bobs privatem Schlüssel"
+      },
+      {
+       "nr": 5,
+       "von": "B",
+       "nach": "B",
+       "text": "Nachricht symmetrisch mit K"
+      }
+     ]
+    }
+   ],
+   "notizen": "8 min. Schaubild mit nummerierten Pfeilen gemeinsam an der Tafel entwickeln (Format wie im Abitur 2024 NT b: Schlüsselart + Inhaber an jedem Pfeil).\n① Alice erzeugt zufällig K und verschlüsselt die Nachricht symmetrisch. ② K asymmetrisch mit Bobs öffentlichem Schlüssel. ③ beides über den unsicheren Kanal. ④ Bob gewinnt K mit seinem privaten Schlüssel. ⑤ Bob entschlüsselt die Nachricht symmetrisch.\nBegründung: Geschwindigkeit (lange Nachricht symmetrisch) + Schlüsselverteilung (K reist geschützt, kein Treffen). Neuer K je Verbindung.\nFalle P5: Die Nachricht wird NICHT asymmetrisch verschlüsselt."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Hybrid selbst durchspielen",
+   "sozialform": "Partnerarbeit",
+   "zeit": "12 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Akte W4·2 **Auftrag 3** (Schaubild ergänzen) und **Auftrag 5** (Toy-Hybrid):"
+    },
+    {
+     "t": "geheimtext",
+     "label": "ALICE → BOB · CAESAR MIT K",
+     "text": "FGMTQ ZSLRT WLJS"
+    },
+    {
+     "t": "p",
+     "md": "Bobs Schlüssel (77, 7)/(77, 43) · c~K~ = 5^7^ mod 77"
+    },
+    {
+     "t": "p",
+     "klein": true,
+     "md": "==ERGÄNZUNG== · Auftrag 5 (RSA-Rechnung) · Auftrag 3 ist Kern"
+    }
+   ],
+   "notizen": "Lösung: c_K = 5^7 mod 77 = 47 (9 · 25 = 225 → 71; 71 · 5 = 355 → 47). Bob: 47^43 mod 77 = 5 = K (47 · 53 → 27; 27 · 60 → 3; 3 · 53 → 5). Caesar −5: abholungmorgen.\nSchwachstellen in d) sammeln: Caesar nur 26 Schlüssel (real AES); N = 77 = 7 · 11 sofort faktorisiert (real 600+ Stellen); auch: K = 5 zu klein/kein Zufall.\nAuftrag 3 ist Kern, Auftrag 5 Ergänzung."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Anwendungsbereiche",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      2.8,
+      5.6,
+      4.6
+     ],
+     "kopf": [
+      "Prinzip",
+      "Anwendungsbereiche",
+      "Grund"
+     ],
+     "zeilen": [
+      [
+       "symmetrisch",
+       "Festplatte, WLAN, Backup, laufende Sitzung",
+       "schnell, Schlüssel schon geteilt"
+      ],
+      [
+       "asymmetrisch",
+       "Sitzungsschlüssel übertragen, Signatur, Zertifikat",
+       "kleine Daten, kein gemeinsames Geheimnis"
+      ],
+      [
+       "hybrid",
+       "HTTPS, E-Mail-Verschlüsselung, Messenger",
+       "fremde Partner + große Daten"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Jede Zuordnung **begründen**: Datenmenge · Schlüsselverteilung"
+    }
+   ],
+   "notizen": "10 min mit Zuordnungsspiel (Akte W4·2 Auftrag 6, 8 Szenario-Karten in GA). Jede Zuordnung mit dem Kriterium Datenmenge/Schlüsselverteilung begründen lassen (P10). Typischer Fehler: „asymmetrisch, weil sicherer“ (P5).\nLösung Auftrag 6: 1 sym, 2 hybrid, 3 asym (Signatur, W5), 4 sym, 5 hybrid, 6 asym, 7 sym, 8 asym (Schlüsseltransport bzw. Diffie-Hellman)."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Boss: Der Schlüsseltausch",
+   "sozialform": "Einzelarbeit",
+   "zeit": "25 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lab → **Welt 4** → **Boss**"
+    },
+    {
+     "t": "p",
+     "md": "•  ohne Werkzeuge, ohne Taschenrechner – wie im Abitur"
+    },
+    {
+     "t": "p",
+     "md": "•  ab **50 %** besiegt → Artefakt **„Schlüsselpaar“**"
+    },
+    {
+     "t": "p",
+     "md": "•  fertig? → Kür **K3 „Euklids Erbe“**"
+    }
+   ],
+   "notizen": "Boss W4 vorher freischalten (Standard ab 60 % der Level-Punkte, für DS 13 ggf. manuell). Pool 15 Aufgaben, nur kern/eA; gA zieht keine eA-Aufgaben (B-12, B-15).\nPapier-Boss „Das Kurierbüro“ (24 BE, 60 min) als Hausaufgabe/Übungsklausur ankündigen."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 13 · RSA und Hybrid",
+   "titel": "Wem gehört der Schlüssel?",
+   "untertitel": "Ausblick W5 · „Bob bekommt Alices öffentlichen Schlüssel – aber ist er wirklich von Alice?“",
+   "notizen": "2 min. Überleitung zu W5: Mallory sitzt zwischen Alice und Bob und tauscht öffentliche Schlüssel aus (Man-in-the-Middle, auch bei Diffie-Hellman). Lösung dort: Signaturen und Zertifikate."
+  }
+ ]
+}

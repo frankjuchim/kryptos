@@ -1,0 +1,694 @@
+{
+ "typ": "praesentation",
+ "welt": 1,
+ "titel": "Häufigkeitsanalyse: Wie Al-Kindi jede Substitution knackt",
+ "datei": "KR_Video_02_Haeufigkeitsanalyse_Folien",
+ "ordner": "Videos/02_Haeufigkeitsanalyse",
+ "folien": [
+  {
+   "titel": "Häufigkeitsanalyse: Wie Al-Kindi jede Substitution knackt",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie mit Lapis-Akzent.\n\nSPRECHERTEXT: Bagdad, um achthundertfünfzig. In den Bibliotheken der Stadt werden Schriften aus aller Welt gesammelt und übersetzt. Und ein Gelehrter beschreibt dort eine Methode, mit der man Geheimschriften lesen kann, ohne den Schlüssel zu kennen. Willkommen im Haus der Weisheit! Heute lernst du die Häufigkeitsanalyse – das Werkzeug, mit dem du im Abitur fast jede klassische Chiffre beurteilst.",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "26! Schlüssel – und trotzdem in einer Viertelstunde geknackt",
+   "oberzeile": "VIDEO 02 · BAGDAD · UM 850"
+  },
+  {
+   "titel": "Häufigkeitsanalyse im Abitur",
+   "notizen": "REGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Ein Blick in die Abituraufgaben zeigt: In neun von siebzehn Aufgaben auf erhöhtem Niveau wird die Häufigkeitsanalyse ausdrücklich gefragt, in drei weiteren steckt sie indirekt drin. Typisch sind Aufträge wie: Erläutern Sie das Prinzip der Häufigkeitsanalyse. Oder: Entscheiden Sie begründet, ob sie hier weiterhilft. Dafür musst du nicht nur wissen, wie sie funktioniert, sondern auch, wann sie versagt.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "In **9 von 17** eA-Abituraufgaben (2021–2026) ausdrücklich gefragt, in 3 weiteren indirekt",
+        "„**Erläutern** Sie das Prinzip der Häufigkeitsanalyse.“",
+        "„**Entscheiden** Sie begründet, ob eine Häufigkeitsanalyse hier hilft.“",
+        "Dafür musst du wissen, **wann** sie funktioniert – und wann nicht"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Substitution mit Schlüsselwort"
+        },
+        {
+         "t": "p",
+         "md": "Schlüsselraum 26!"
+        },
+        {
+         "t": "p",
+         "md": "Zählen, Paare, Dreiergruppen"
+        },
+        {
+         "t": "p",
+         "md": "Ein Brief wird geknackt"
+        },
+        {
+         "t": "p",
+         "md": "Grenzen der Methode"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Substitution mit Schlüsselwort",
+   "notizen": "[Kapitel: Substitution mit Schlüsselwort]\n\nREGIE: Erst die Schlüsselwort-Buchstaben Z I F E R (hervorgehoben) zeigen, dann den alphabetischen Rest.\n\nSPRECHERTEXT: Zuerst das Verfahren, um das es geht. Statt alle Buchstaben um gleich viele Stellen zu verschieben, darf jetzt jeder Klartextbuchstabe durch irgendeinen Geheimtextbuchstaben ersetzt werden. Damit man sich die Zuordnung merken kann, nimmt man ein Schlüsselwort – hier ZIFFER. Doppelte Buchstaben schreibt man nur einmal, danach folgt der Rest des Alphabets der Reihe nach. Ein passendes Wort übrigens: Ziffer und Chiffre stammen vom arabischen Wort sifr – leer, Null. Wie viele Schlüssel gibt es? Für das a gibt es sechsundzwanzig Möglichkeiten, für das b noch fünfundzwanzig und so weiter: sechsundzwanzig Fakultät, rund vier mal zehn hoch sechsundzwanzig. Selbst mit einer Milliarde Versuchen pro Sekunde bräuchte man etwa dreizehn Milliarden Jahre. Brute Force ist also hoffnungslos.",
+   "video": true,
+   "abschnitt": "Substitution mit Schlüsselwort",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "alphabet",
+     "nummerierung": 1,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "ZIFERABCDGHJKLMNOPQSTUVWXY"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Schlüsselwort **ZIFFER**: doppelte Buchstaben nur einmal, dann der **Rest** des Alphabets der Reihe nach"
+    },
+    {
+     "t": "p",
+     "md": "Jede Zuordnung ist ein Schlüssel: **26! ≈ 4 · 10²⁶** Möglichkeiten"
+    },
+    {
+     "t": "p",
+     "md": "1 Milliarde Versuche pro Sekunde → **≈ 13 Milliarden Jahre**"
+    }
+   ]
+  },
+  {
+   "titel": "Al-Kindi: Zählen statt Probieren",
+   "notizen": "[Kapitel: Al-Kindis Idee]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Hier kommt Al-Kindi ins Spiel, ein Gelehrter, der im neunten Jahrhundert in Bagdad gearbeitet hat. Seine Abhandlung über das Entschlüsseln geheimer Botschaften gilt als die älteste bekannte Beschreibung der Häufigkeitsanalyse – sie wurde übrigens erst im zwanzigsten Jahrhundert in einem Archiv in Istanbul wiederentdeckt. Die Idee ist verblüffend einfach: In jeder Sprache kommen die Buchstaben unterschiedlich oft vor. Im Deutschen ist etwa jeder sechste Buchstabe ein e, jeder zehnte ein n. Bei einer monoalphabetischen Substitution wird jedes e immer gleich ersetzt. Die Häufigkeit bleibt also erhalten – sie steht nur bei einem anderen Buchstaben. Man muss also nicht probieren, sondern zählen.",
+   "video": true,
+   "abschnitt": "Al-Kindis Idee",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "platzhalter",
+       "beschreibung": "Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DIE IDEE",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "In jeder Sprache kommen Buchstaben **unterschiedlich oft** vor"
+        },
+        {
+         "t": "p",
+         "md": "Deutsch: **e** ≈ 17 %, **n** ≈ 10 %"
+        },
+        {
+         "t": "p",
+         "md": "Monoalphabetisch: Die Häufigkeiten wandern nur zu **anderen Buchstaben**"
+        },
+        {
+         "t": "p",
+         "md": "Also: zählen und vergleichen"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Ein abgefangener Brief",
+   "notizen": "[Kapitel: Ein Brief wird geknackt]\n\nREGIE: Ruhig stehen lassen; mit dem Zeiger über die Zeilen fahren, ohne einzelne Gruppen zu deuten.\n\nSPRECHERTEXT: Eve hat einen Brief abgefangen. Sie weiß, dass er auf Deutsch geschrieben und monoalphabetisch verschlüsselt ist. Den Schlüssel kennt sie nicht. Zweihundertfünfundneunzig Buchstaben, in Fünfergruppen – auf den ersten Blick völlig undurchdringlich. Schauen wir, wie weit wir mit Al-Kindis Methode kommen.",
+   "video": true,
+   "abschnitt": "Ein Brief wird geknackt",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eve weiß: deutscher Text, monoalphabetische Substitution. Der Schlüssel ist unbekannt."
+    },
+    {
+     "t": "geheimtext",
+     "text": "EDRLRTRZIQFCPDASERPQSRPLRLSZARJLDQSARPSDBDFCCZIRQDRDLRDLRPHDQSRTLSRPERLITRFCRPLDKYVRDSRLQZZJURPQSRFHSLDRKZLEZTQQRPEDPEZPAEZUMLRPAZCPRLERLLEDRCZRLEJRPZTQERKCZARLVMJJRLEDRSZARJLATRPRDLRLCMCRLNPRDQURPHZTARLHMKKKMPBRLLZFCQMLLRLTLSRPBZLBTLEIPDLBRRDLRJZKNRKDSURPIPRLLREDRQRLIPDRAQMIZJEETDCLBRJRQRLCZQS",
+     "groesse": 18
+    }
+   ]
+  },
+  {
+   "titel": "Schritt 1: Zählen",
+   "notizen": "REGIE: Auf die beiden hohen Balken R und L zeigen, dann auf das „Mittelfeld“ D, P, Z.\n\nSPRECHERTEXT: Schritt eins: zählen. Das Histogramm zeigt, wie oft jeder Geheimtextbuchstabe vorkommt, nach Häufigkeit sortiert. Ganz vorne steht R mit siebenundfünfzig von zweihundertfünfundneunzig Buchstaben – gut neunzehn Prozent. Im Deutschen ist das e mit etwa siebzehn Prozent der Spitzenreiter. Also vermuten wir: R steht für e. Auf Platz zwei kommt L mit gut dreizehn Prozent – ein Kandidat für n. Danach wird es eng: D, P und Z liegen dicht beieinander. Hier hilft Zählen allein nicht weiter. Wir brauchen mehr Information.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "haeufigkeit",
+       "werte": {
+        "R": 57,
+        "L": 39,
+        "D": 23,
+        "P": 23,
+        "Z": 20,
+        "E": 16,
+        "Q": 16,
+        "S": 14,
+        "C": 12,
+        "T": 10,
+        "A": 10,
+        "J": 9,
+        "K": 8,
+        "I": 7,
+        "M": 7,
+        "B": 6,
+        "F": 5,
+        "H": 4,
+        "U": 4,
+        "V": 2,
+        "N": 2,
+        "Y": 1
+       },
+       "text": null,
+       "titel": "Geheimtext des Briefs",
+       "sortiert": true,
+       "referenz": true,
+       "hoehe": 3.2
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "VERGLEICH",
+       "farbe": "akzent",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**R**: 57 von 295 = 19,3 % → **e** (≈ 17 %)"
+        },
+        {
+         "t": "p",
+         "md": "**L**: 39 = 13,2 % → **n** (≈ 10 %)"
+        },
+        {
+         "t": "p",
+         "md": "danach D, P, Z: eng beieinander – hier hilft Zählen allein nicht mehr"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Schritt 2: Paare und Dreiergruppen",
+   "notizen": "REGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: Schritt zwei: Wir schauen auf Paare und Dreiergruppen. Das häufigste Paar im Geheimtext ist R L, siebzehnmal. Mit unserer Vermutung wäre das e n – und en ist zusammen mit er das häufigste Paar im Deutschen. Das bestätigt R gleich e und L gleich n. Auf Platz zwei kommt R P, vierzehnmal. e und dann? Natürlich er – also P gleich r. D R und R D kommen beide oft vor: ie und ei, also D gleich i. Und die Dreiergruppe E D R taucht viermal auf: ein Wort, das mit i e endet – die. Also E gleich d.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Häufigste Paare (Bigramme) im Geheimtext – Annahme R = e, L = n:"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Geheimtext",
+        "Anzahl",
+        "Klartext",
+        "Folgerung"
+       ],
+       "zeilen": [
+        [
+         "RL",
+         "17",
+         "en",
+         "R = e, L = n passt: **en** ist eines der häufigsten Paare"
+        ],
+        [
+         "RP",
+         "14",
+         "er",
+         "→ **P = r**"
+        ],
+        [
+         "DR · RD",
+         "7 · 6",
+         "ie · ei",
+         "→ **D = i**"
+        ],
+        [
+         "EDR",
+         "4 (Dreiergruppe)",
+         "die",
+         "→ **E = d**"
+        ]
+       ],
+       "breiten": [
+        1.4,
+        1.5,
+        1.0,
+        3.4
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DEUTSCH",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "häufige Paare: **en, er, ch, ei, ie, nd, te**"
+        },
+        {
+         "t": "p",
+         "md": "häufige Wörter: **die, der, und, ein**"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: Der erste Satz",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nREGIE: Einblendung „⏸ Video anhalten“; Klartextzeile in --text-2, unbekannte Buchstaben GROSS in Mono.\n\nSPRECHERTEXT: Jetzt bist du dran. Hier ist der Anfang des Briefs. Die kleinen Buchstaben kennen wir schon, die großen noch nicht. Halte das Video an und ergänze den ersten Satz wie ein Kreuzworträtsel. Ein Tipp: Es geht um Sterne. Danach kommt die Auflösung.\n\nPAUSE: 8 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": "Selbst ausprobieren",
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Bekannt: **R = e, L = n, P = r, D = i, E = d** (klein = schon entschlüsselt, GROSS = noch unbekannt). Ergänze den ersten Satz. Welche Klartextbuchstaben stehen hinter **T, Z, I, Q, F, C, A, S, J, B**?"
+      },
+      {
+       "t": "geheimtext",
+       "text": "EDRLRTRZIQFCPDASERPQSRPLRLSZARJLDQSARPSDB"
+      },
+      {
+       "t": "klartext",
+       "text": "dieneTeZIQFCriASderQSernenSZAeJniQSAerSiB"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Es geht um Sterne"
+        },
+        {
+         "t": "p",
+         "md": "„sch“ und „st“ sind häufig"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung: Satz 1",
+   "notizen": "REGIE: Tabelle zeilenweise aufdecken und beim Sprechen mit dem Zeiger mitgehen.\n\nSPRECHERTEXT: Die Auflösung: Der Brief beginnt mit „die neue Abschrift der Sternentafeln ist fertig“. Damit kennen wir zehn weitere Buchstaben: T ist u, Z ist a, I ist b, Q ist s, F ist c, C ist h, A ist f, S ist t, J ist l und B ist g. Wenn du „neue“ und „Sternentafeln“ gefunden hast, war der Rest nur noch Fleißarbeit. Und so geht es weiter: Jeder neue Buchstabe macht die übrigen leichter.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "**die neue abschrift der sternentafeln ist fertig**"
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Geheimtext",
+        "T",
+        "Z",
+        "I",
+        "Q",
+        "F",
+        "C",
+        "A",
+        "S",
+        "J",
+        "B"
+       ],
+       "zeilen": [
+        [
+         "Klartext",
+         "u",
+         "a",
+         "b",
+         "s",
+         "c",
+         "h",
+         "f",
+         "t",
+         "l",
+         "g"
+        ]
+       ],
+       "breiten": null,
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "SCHON 15 VON 22 BUCHSTABEN",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Jeder neue Buchstabe macht den Rest leichter"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Geknackt – und der Schlüssel gleich mit",
+   "notizen": "REGIE: Lücken (·) zeigen, dann „ZIFER“ am Anfang einkreisen.\n\nSPRECHERTEXT: Mit dieser Methode lässt sich der ganze Brief lesen: Jemand hat die Abschrift in einer Kiste unter den Büchern versteckt, und Händler aus dem Hafen wollen sie verkaufen. Spannend ist, was dabei mit dem Schlüssel passiert. Schreiben wir die gefundenen Zuordnungen in die Alphabetleiste, entstehen vier Lücken – j, q, x und y kommen im Brief gar nicht vor. Aber vorne steht Z I F E R, danach geht es alphabetisch weiter. Damit ist das Schlüsselwort klar, und die Lücken füllen sich von selbst. Eve kann jetzt auch jeden weiteren Brief mit diesem Schlüssel sofort lesen.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "alphabet",
+     "nummerierung": 1,
+     "zeilen": [
+      {
+       "label": "rekonstruiert",
+       "werte": "ZIFERABCD·HJKLMN·PQSTUV··Y"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Klartext: „Die neue Abschrift der Sternentafeln ist fertig. Ich habe sie in einer Kiste unter den Büchern … Verbrenne diesen Brief, sobald du ihn gelesen hast.“"
+    },
+    {
+     "t": "p",
+     "md": "j, q, x, y kommen im Brief nicht vor → Lücken · Z I F E R … → Schlüsselwort **ZIFFER**, Rest **G, O, W, X**"
+    }
+   ]
+  },
+  {
+   "titel": "Warum das funktioniert – und so erläuterst du es",
+   "notizen": "[Kapitel: Prinzip erläutern]\n\nREGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Warum funktioniert das? Weil bei einer monoalphabetischen Substitution jeder Klartextbuchstabe immer gleich ersetzt wird. Die Häufigkeitsverteilung der Sprache bleibt deshalb erhalten – die Buchstaben tragen nur andere Namen. Dafür braucht es zwei Voraussetzungen: genug Text und eine bekannte Sprache. Und die wichtigste Lehre für das Abitur: Ein großer Schlüsselraum ist notwendig, aber nicht hinreichend. Sechsundzwanzig Fakultät Schlüssel haben nicht geholfen. Wenn du das Prinzip erläutern sollst, kannst du dich an den Mustersätzen rechts orientieren: Was man tut, warum es funktioniert, und wie man die Zuordnung bestätigt.",
+   "video": true,
+   "abschnitt": "Prinzip erläutern",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Monoalphabetisch: Jeder Klartextbuchstabe wird **immer gleich** ersetzt",
+        "Die **Häufigkeitsverteilung** der Sprache bleibt erhalten – nur die Buchstaben tragen andere Namen",
+        "Voraussetzungen: **genug Text**, **Sprache bekannt**",
+        "Großer Schlüsselraum ist **notwendig, aber nicht hinreichend**"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "MUSTERSATZ (ERLÄUTERN)",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Man zählt die Geheimtextbuchstaben und ordnet sie den häufigsten Buchstaben der Sprache zu (z. B. häufigster → e)."
+        },
+        {
+         "t": "p",
+         "md": "Das gelingt, weil bei einer monoalphabetischen Substitution jeder Buchstabe immer gleich ersetzt wird."
+        },
+        {
+         "t": "p",
+         "md": "Paare, häufige Wörter und der Kontext bestätigen die Zuordnung."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Häufigkeitsanalyse pauschal",
+   "notizen": "[Kapitel: Grenzen und Fallen]\n\nREGIE: Erst die Spalte ✗ „So nicht“ zeigen, kurze Pause, dann ✓ „So geht’s“ und die Regel einblenden.\n\nSPRECHERTEXT: Und jetzt die Grenzen – Falle P6: Häufigkeitsanalyse pauschal. Erstens: Bei kurzen Texten ist sie unzuverlässig. Erinnerst du dich an unseren Caesar-Geheimtext aus dem letzten Video? Neunzehn Buchstaben, am häufigsten ist T. Wer T gleich e annimmt, landet bei der Verschiebung fünfzehn und bei Unsinn. In Wahrheit steht T für n. Zweitens: Bei einer Transposition werden Buchstaben nur umgestellt. Die Verteilung bleibt gleich – du erkennst daran den Verfahrenstyp, aber nicht den Schlüssel. Drittens: Bei polyalphabetischen Verfahren wird jedes e mal so, mal anders ersetzt. Die Verteilung verwischt. Dann musst du erst Teiltexte bilden – das zeige ich dir im nächsten Video. Und wird in Paaren ersetzt, zählst du Paare.",
+   "video": true,
+   "abschnitt": "Grenzen und Fallen",
+   "layout": "falle",
+   "nr": "P6",
+   "regel": "Immer sagen, welche Häufigkeiten (Einzelbuchstaben, Teiltexte, Paare) und unter welchen Voraussetzungen.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "„Mit der Häufigkeitsanalyse kann man jedes Verfahren knacken.“"
+    },
+    {
+     "t": "p",
+     "md": "Kurzer Text `ZXKLL VATQZ GSHXA TTKT`: T am häufigsten → T = e → k = 15 → `kivwwglebk…`"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Kurze Texte: unzuverlässig – hier steht T für **n** (k = 6)"
+    },
+    {
+     "t": "p",
+     "md": "Transposition: Verteilung bleibt **gleich** → Verfahrenstyp erkennbar, Schlüssel nicht"
+    },
+    {
+     "t": "p",
+     "md": "Polyalphabetisch: Verteilung **verwischt** → erst Teiltexte bilden (Video 03)"
+    },
+    {
+     "t": "p",
+     "md": "Bigramm-Ersetzung: **Paare** zählen statt Einzelbuchstaben"
+    }
+   ]
+  },
+  {
+   "titel": "Gegenmittel: Wie verwischt man die Spuren?",
+   "notizen": "[Kapitel: Gegenmittel]\n\nREGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Wie haben sich die Kryptografen gewehrt? Mit Ideen, die die Häufigkeiten verwischen. Bei einer homophonen Chiffre bekommen häufige Buchstaben wie das e mehrere verschiedene Geheimzeichen – dann ist keines mehr auffällig häufig. Bei einer Bigramm-Substitution wie Playfair werden Buchstabenpaare ersetzt statt einzelner Buchstaben. Und bei polyalphabetischen Verfahren wie Vigenère wechselt die Ersetzung von Position zu Position. Genau solche Ideen brauchst du, wenn du im Abitur auf erhöhtem Niveau eine Verbesserung eines Verfahrens vorschlagen und begründen sollst.",
+   "video": true,
+   "abschnitt": "Gegenmittel",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**Homophone** Chiffre: häufige Buchstaben bekommen **mehrere** Geheimzeichen → Verteilung wird flacher",
+        "**Bigramm-Substitution** (z. B. Playfair): **Paare** statt Einzelbuchstaben ersetzen",
+        "**Polyalphabetisch** (Vigenère): Die Ersetzung **wechselt** mit der Position",
+        "eA-Abitur: eine **Verbesserung** entwickeln und erläutern – genau mit diesen Ideen"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "MEHR DAZU",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Level 1.2 „Die Gegenmittel“"
+        },
+        {
+         "t": "p",
+         "md": "Level 2.4 Playfair"
+        },
+        {
+         "t": "p",
+         "md": "Video 03: Vigenère"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Typische Fehler – und wie du sie vermeidest",
+   "notizen": "[Kapitel: Typische Fehler]\n\nREGIE: Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.\n\nSPRECHERTEXT: Die typischen Fehler auf einen Blick. P5, die Einordnung: Monoalphabetisch ist ein Verfahren, wenn derselbe Klartextbuchstabe immer gleich ersetzt wird – egal, wie kompliziert die Ersetzung aussieht. P6: Nenne immer, was gezählt wird und unter welchen Voraussetzungen. P7: Die Substitution hat sechsundzwanzig Fakultät Schlüssel, Caesar nur fünfundzwanzig sinnvolle. Und P10: Wer nur sagt „großer Schlüsselraum, also sicher“, verschenkt Punkte, weil das entscheidende Argument fehlt.",
+   "video": true,
+   "abschnitt": "Typische Fehler",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**P5** Einordnung: Kriterium für monoalphabetisch – wird derselbe Klartextbuchstabe **immer gleich** ersetzt?",
+        "**P6** „Häufigkeitsanalyse geht immer“ – Voraussetzungen und Art der Zählung nennen",
+        "**P7** Schlüsselraum: Substitution **26!**, Caesar nur **25** sinnvolle – nicht verwechseln",
+        "**P10** „Großer Schlüsselraum, also sicher“ – Urteil ohne Häufigkeitsargument"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ABI-CHECK",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "mono oder poly?"
+        },
+        {
+         "t": "p",
+         "md": "Text lang genug?"
+        },
+        {
+         "t": "p",
+         "md": "Einzel, Teiltexte oder Paare?"
+        },
+        {
+         "t": "p",
+         "md": "Urteil mit Begründung?"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nREGIE: Merksätze nacheinander einblenden; ruhig und etwas langsamer sprechen.\n\nSPRECHERTEXT: Das nimmst du mit: Eine monoalphabetische Substitution hat sechsundzwanzig Fakultät Schlüssel – Brute Force ist unmöglich. Aber die Häufigkeitsverteilung der Sprache bleibt erhalten. Du zählst, vergleichst mit dem Deutschen und bestätigst mit Paaren, häufigen Wörtern und dem Kontext. Und du kennst die Grenzen: kurze Texte, Transposition und polyalphabetische Verfahren.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Monoalphabetische Substitution: **26!** Schlüssel – Brute Force unmöglich"
+    },
+    {
+     "t": "p",
+     "md": "Aber die **Häufigkeitsverteilung** bleibt erhalten: zählen, mit der Sprache vergleichen (e, n, …)"
+    },
+    {
+     "t": "p",
+     "md": "Paare, häufige Wörter und Kontext bestätigen und ergänzen die Zuordnung"
+    },
+    {
+     "t": "p",
+     "md": "Grenzen: kurze Texte, Transposition, polyalphabetische Verfahren (**P6**)"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Endcard über die letzten 20 s legen.\n\nSPRECHERTEXT: Weiter geht es im Lab mit Level eins Punkt eins, Al-Kindis Handschrift. Mit der Substitutions-Werkbank im Kryptolabor knackst du selbst eine Substitution. Im nächsten Video wird es schwieriger: Wir knacken ein Verfahren, das rund dreihundert Jahre lang als unknackbar galt. Bis dann im Archiv!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 1.1 „Al-Kindis Handschrift“ (Epoche Bagdad) – danach Level 1.2 „Die Gegenmittel“"
+      ],
+      [
+       "Akte",
+       "Akte W1·1 „Al-Kindis Handschrift“"
+      ],
+      [
+       "Kryptolabor",
+       "Häufigkeits-Analysator und Substitutions-Werkbank"
+      ],
+      [
+       "Funkraum",
+       "Szenario „Wettknacken“ im Unterricht"
+      ],
+      [
+       "Online",
+       "kryptos.frankjuchim.de"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 03 · Vigenère knacken: Kasiski-Test und Friedman-Test"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+{"typ":"pruefung","welt":2,"kennung":"PAPIER-BOSS W2","titel":"Das Zwei-Quadrat","datei":"KR_W2_Boss2_Zwei-Quadrat","niveau":"kern",
+ "zeit":"60 Minuten","hilfsmittel":"Anlage (Vigenère-Quadrat, Alphabet A = 1 … Z = 26); kein Taschenrechner",
+ "rahmen":"Venedig 1610. Alice hat ein neues Verfahren erfunden …",
+ "aufgaben":[{"nr":"1","titel":"Das Verfahren","material":[{"t":"p","md":"**Material:** Das Zwei-Quadrat arbeitet …"},{"t":"quadrat","zeilen":["GONDE","LABCF","HIKMP","QRSTU","VWXYZ"]}],
+  "teile":[{"bez":"a)","text":"**Bestimmen Sie** den Geheimtext zu *rialto*.","be":4,"erwartung":[{"punkt":"Schlüsselstrom korrekt","afb":"I","be":2},{"punkt":"Geheimtext `XYZAB`","afb":"I","be":2}],"fehler":"Nummerierung A = 0 (P1)"},
+           {"bez":"b)","text":"**Beurteilen Sie** die Sicherheit des Verfahrens.","be":4,"erwartung":[{"punkt":"Schlüsselraum","afb":"II","be":1},{"punkt":"Häufigkeitsanalyse auf Teiltexten","afb":"II","be":2},{"punkt":"begründetes Urteil","afb":"III","be":1}],"alternativen":"Auch Known-Plaintext-Argument."}]}],
+ "notenschluessel":[[15,23],[14,22],[13,21],[12,20],[11,19],[10,17],[9,16],[8,15],[7,14],[6,12],[5,11],[4,10],[3,8],[2,7],[1,5],[0,0]]}

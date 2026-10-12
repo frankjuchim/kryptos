@@ -1,0 +1,1130 @@
+{
+ "typ": "praesentation",
+ "welt": 1,
+ "titel": "Das Haus der Weisheit",
+ "datei": "KR_W1_Praesentation_Bagdad",
+ "folien": [
+  {
+   "layout": "titel",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Das Haus der Weisheit",
+   "oberzeile": "850 · BAGDAD",
+   "untertitel": "Welt 1 · Häufigkeitsanalyse und ihre Gegenmittel",
+   "notizen": "30 s. Zeitsprung: Das Chronoskop springt ins Bagdad der Abbasiden, um 850. Ornament: achtzackiger Stern. Im Haus der Weisheit (Bait al-Hikma) übersetzen Gelehrte die Schriften der Griechen und Perser. Rolle heute: Ihr werdet zu Eve – und in DS 5 zu Alice, die nach Gegenmitteln sucht."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Al-Kindis Manuskript",
+   "label": "HAUS DER WEISHEIT · 850 · UNBEKANNTES VERFAHREN",
+   "geheimtext": "ZPUCGURDUZUDYCUIQIRRQSDIRUNORUINYCGQUNNUG",
+   "groesse": 28,
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Randnotiz, aus dem Arabischen übersetzt: *„Wer die Zeichen zählt, braucht keinen Schlüssel.“*"
+    },
+    {
+     "t": "p",
+     "md": "**Probiert die Chiffrierscheibe:** Welche Verschiebung passt?"
+    }
+   ],
+   "notizen": "5 min. Archivfund vorlesen: „Das Chronoskop zeigt ‚850‘. Vor dir liegt ein Blatt aus dem Haus der Weisheit, beschrieben mit einer fremden Buchstabenfolge. Diesmal ist nicht verschoben wie bei Caesar: Jeder Buchstabe wurde durch einen beliebigen anderen ersetzt. 26! Möglichkeiten – mehr, als ein Mensch je ausprobieren könnte. Am Rand steht in arabischer Schrift eine Notiz, die das Archiv übersetzt hat: ‚Wer die Zeichen zählt, braucht keinen Schlüssel.‘ Am Ende dieser Stunde wirst du die Botschaft lesen können.“\nImpuls: Chiffrierscheibe aus Welt 0 probieren lassen – keine Verschiebung passt (z. B. U ist 9 × da; als e gedeutet ergäbe sich Verschiebung 16, dann wird aus ZPUCG kein Wort).\nNur Lehrkraft: Lösung „zaehle die zeichen und du findest den schluessel“, Schlüsselwort PAPYRUS – derselbe Schlüssel wie im Wettknacken. Nicht verraten; Auflösung auf Folie 15."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Kein Caesar",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Jeder Buchstabe kann durch **jeden anderen** ersetzt sein."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "kopf": [
+      "Klartext",
+      "a",
+      "b",
+      "c",
+      "d",
+      "…",
+      "y",
+      "z"
+     ],
+     "zeilen": [
+      [
+       "Möglichkeiten",
+       "26",
+       "25",
+       "24",
+       "23",
+       "…",
+       "2",
+       "1"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.2,
+      1.2,
+      1.2,
+      1.2,
+      1.0,
+      1.2,
+      1.2
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "formel",
+     "md": "26 · 25 · 24 · … · 2 · 1 = **?**"
+    },
+    {
+     "t": "p",
+     "md": "**Wie viele Geheimtextalphabete gibt es?**"
+    }
+   ],
+   "notizen": "3 min. Frage stellen, Schätzungen sammeln. Erwartung: „26 · 25 · 24 …“ – Schreibweise 26! (Fakultät) an der Tafel einführen. Abgrenzung zu Caesar: dort nur 26 Verschiebungen (25 sinnvolle). Falle P7 vorbereiten: 26! ist NICHT 26 und nicht 26²."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Monoalphabetische Substitution",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Klartextalphabet oben, **beliebig vertauschtes** Geheimtextalphabet unten:"
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "YASMINBCDEFGHJKLOPQRTUVWXZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "•  **Verschlüsseln:** oben suchen, unten ablesen – `tigris` → `RDBPDQ`"
+    },
+    {
+     "t": "p",
+     "md": "•  **Entschlüsseln:** unten suchen, oben ablesen"
+    },
+    {
+     "t": "p",
+     "md": "•  **e** wird **immer** durch denselben Buchstaben ersetzt (hier I) → **monoalphabetisch**"
+    }
+   ],
+   "notizen": "2 min. Beispielalphabet aus Lab W1-L1-03 (Schlüsselwort YASMIN). Kriterium monoalphabetisch wiederholen: Wird derselbe Klartextbuchstabe immer gleich ersetzt? (P5). Richtung beim Entschlüsseln: unten suchen, oben ablesen (P3). Caesar ist ein Spezialfall (verschobenes Alphabet)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Das Schlüsselwort-Alphabet",
+   "inhalt": [
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "KALIFBCDEGHJMNOPQRSTUVWXYZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**1**   Schlüsselwort **ohne Wiederholungen**: K A L I F"
+    },
+    {
+     "t": "p",
+     "md": "**2**   danach der **Rest des Alphabets ab A**: B C D E G H J …"
+    },
+    {
+     "t": "p",
+     "md": "**3**   unter das Klartextalphabet a … z schreiben"
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* `SCHERAZADE` → S C H E R A Z D + B F G I J K …",
+     "klein": true
+    }
+   ],
+   "notizen": "3 min. Kryptos-Regel (Festlegung 1): Buchstaben des Schlüsselworts in der Reihenfolge des ersten Auftretens, Wiederholungen streichen (P4), dann der Rest ab A – NICHT ab dem letzten Schlüsselwortbuchstaben. Gleiche Regel wie bei Polybios/Playfair und in Abituraufgaben mit Schlüsselquadraten. Gemeinsam SCHERAZADE bilden: SCHERAZDBFGIJKLMNOPQTUVWXY. Impuls: Was fällt bei KALIF hinten auf? → nächste Folie."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "nr": "P7",
+   "titel": "Der faule Kalif",
+   "regel": "Schlüsselwort-Alphabet **prüfen**: Wie viele Buchstaben bleiben auf ihrem Platz (**Fixpunkte**)?",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "**KALIF**"
+    },
+    {
+     "t": "p",
+     "md": "`KALIFBCDEGHJMNOPQRSTUVWXYZ`"
+    },
+    {
+     "t": "p",
+     "md": "**14 Fixpunkte:** m … z bleiben gleich – darunter n, r, s, t"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "**SCHERAZADE**"
+    },
+    {
+     "t": "p",
+     "md": "`SCHERAZDBFGIJKLMNOPQTUVWXY`"
+    },
+    {
+     "t": "p",
+     "md": "**0 Fixpunkte** – langes Wort, späte Buchstaben"
+    }
+   ],
+   "notizen": "2 min. Schwache Schlüssel erkennen: Bei „Rest ab A“ entstehen Fixpunkte, wenn das Schlüsselwort nur frühe Buchstaben enthält. Mit KALIF ist z. B. „mond“ → MONI fast lesbar. Regel für gute Schlüsselwörter: lang, Buchstaben aus dem hinteren Alphabet (oder Schlüsselsatz), danach Alphabet auf Fixpunkte prüfen. Akte W1·1 Auftrag 3."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "26!",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "26! = 403 291 461 126 605 635 584 000 000 ≈ **4 · 10^26^** Schlüssel"
+    },
+    {
+     "t": "p",
+     "md": "Bei 10^9^ Versuchen pro Sekunde: ≈ **13 Milliarden Jahre**."
+    },
+    {
+     "t": "p",
+     "md": "Ein großer Schlüsselraum ist **notwendig** – aber **nicht hinreichend**."
+    }
+   ],
+   "notizen": "2 min. Rechnung: 4 · 10^26 : 10^9 : 3,2 · 10^7 s/Jahr ≈ 1,3 · 10^10 Jahre (Lab W1-L1-04). Spannung aufbauen: „Trotzdem werdet ihr in 25 Minuten einen solchen Text lesen.“ Notwendig, aber nicht hinreichend – Abitur-Formulierung für die Beurteilung (P7)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Al-Kindi",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bagdad, 9. Jahrhundert. Al-Kindi (ca. 801–873) wird eine Schrift zugeschrieben, die als **älteste bekannte Beschreibung der Häufigkeitsanalyse** gilt."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      3.2,
+      8.5
+     ],
+     "zeilen": [
+      [
+       "Ort",
+       "Haus der Weisheit (Bait al-Hikma), Bagdad"
+      ],
+      [
+       "Umfeld",
+       "Übersetzung griechischer und persischer Schriften"
+      ],
+      [
+       "Idee",
+       "Zeichen **zählen** statt Schlüssel **probieren**"
+      ]
+     ],
+     "schrift_folie": 18
+    }
+   ],
+   "notizen": "2 min. Historisch vorsichtig formulieren: Lebensdaten „ca.“, die Schrift „wird zugeschrieben“, sie „gilt als“ älteste bekannte Beschreibung. Keine Aussagen Al-Kindis als wörtliches Zitat ausgeben. Die Randnotiz auf dem Archivfund ist Teil der Kryptos-Story, kein Zitat."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Der Fingerabdruck der Sprache",
+   "anteil": 0.68,
+   "links": [
+    {
+     "t": "bild",
+     "pfad": "quellen/material/W1/bilder/haeufigkeit_deutsch_rang.png",
+     "alt": "Häufigkeiten deutscher Buchstaben nach Rang"
+    }
+   ],
+   "rechts": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopf": [
+      "Rang",
+      "",
+      "%"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "**E**",
+       "17,4"
+      ],
+      [
+       "2",
+       "**N**",
+       "9,8"
+      ],
+      [
+       "3",
+       "**I**",
+       "7,6"
+      ],
+      [
+       "4",
+       "**S**",
+       "7,3"
+      ],
+      [
+       "5",
+       "**R**",
+       "7,0"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Merkwort **ENISRAT**",
+     "klein": true
+    }
+   ],
+   "notizen": "3 min. Quelle nennen: A. Beutelspacher, Kryptologie, 7. Aufl., Vieweg 2005, S. 10 (Umlaute als ae/oe/ue gezählt). Die fünf häufigsten Buchstaben machen fast die Hälfte (49 %) aus, die sieben häufigsten (E N I S R A T) ≈ 62 %. Werkzeug Häufigkeits-Analysator am Beamer zeigen: beliebigen deutschen Text einfügen → gleiche Form. Kernidee: Eine monoalphabetische Substitution vertauscht nur die Beschriftung der Balken, nicht ihre Höhe."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Häufigkeitsanalyse",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Zähle** die Geheimtextbuchstaben. Der häufigste steht vermutlich für **e**, dann **n, i, s, r**."
+    },
+    {
+     "t": "p",
+     "md": "**Prüfe** mit Bigrammen und kurzen Wörtern."
+    },
+    {
+     "t": "p",
+     "md": "Voraussetzungen: **genug Text**, **bekannte Sprache**."
+    }
+   ],
+   "notizen": "2 min. Merksatz ins Heft. Operator „erläutern“ im Abitur verlangt Prinzip + Beispiel + Voraussetzungen (P10) – nicht nur das Schlagwort."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Bigramme und Musterwörter",
+   "anteil": 0.48,
+   "links": [
+    {
+     "t": "p",
+     "md": "Häufige Paare im Deutschen:"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "ER",
+       "EN",
+       "CH",
+       "DE",
+       "EI"
+      ],
+      [
+       "ND",
+       "TE",
+       "IN",
+       "IE",
+       "GE"
+      ]
+     ],
+     "schrift_folie": 20
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "•  **c** fast nur vor **h** oder **k** – **sch** als Anker"
+    },
+    {
+     "t": "p",
+     "md": "•  **q** fast nur vor **u**"
+    },
+    {
+     "t": "p",
+     "md": "•  kurze Wörter: **der, die, und**, ein, das, ist"
+    },
+    {
+     "t": "p",
+     "md": "•  wiederholte Dreiergruppen: oft der, die, und, sch"
+    }
+   ],
+   "notizen": "2 min. SCH als Anker: Ein Geheimzeichen, das fast immer vor demselben Zeichen steht, ist vermutlich c (und das folgende h). Nachgemessen am Wettknack-Text (486 Buchstaben): EN 21, ER 20, ND 20, CH 17, DE 14, IN 13 – Reihenfolge schwankt je nach Text, deshalb ohne Prozentangaben."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "nr": "P6",
+   "titel": "Kurze Texte lügen",
+   "regel": "„Häufigster Buchstabe = e“ gilt nur bei **langen** Texten.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "`hannibal ante portas` (18 Buchstaben)"
+    },
+    {
+     "t": "p",
+     "md": "häufigster Buchstabe: **a** (4 ×) – **e** nur 1 ×"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "haeufigkeit",
+     "werte": {
+      "A": 4,
+      "N": 3,
+      "T": 2,
+      "H": 1,
+      "I": 1,
+      "B": 1,
+      "L": 1,
+      "E": 1,
+      "P": 1,
+      "O": 1,
+      "R": 1,
+      "S": 1
+     },
+     "referenz": true,
+     "hoehe": 2.4
+    },
+    {
+     "t": "p",
+     "md": "Kurzer Text: Ränge **streuen** → Bigramme, Musterwörter",
+     "klein": true
+    }
+   ],
+   "notizen": "1 min. Brücke zur Caesar-Werkstatt (`rateSchluessel` aus Welt 0): Die Methode „häufigster = e“ scheitert bei kurzen Texten. Je kürzer der Text, desto stärker weichen die Häufigkeiten ab; seltene Buchstaben fehlen ganz. Abitur-Klassiker: „Entscheiden Sie begründet … 30 Buchstaben …“ (Akte W1·1, Abi-Check c)."
+  },
+  {
+   "layout": "funkraum",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Funkraum: Wettknacken",
+   "qr": "https://kryptos.frankjuchim.de/funkraum",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Ein Text – alle Teams – wer liest zuerst?**"
+    },
+    {
+     "t": "p",
+     "md": "**1**   **Analysator:** zählen, Rangfolge notieren"
+    },
+    {
+     "t": "p",
+     "md": "**2**   **Werkbank:** zuordnen – Bigramme, Dreiergruppen, Musterwörter"
+    },
+    {
+     "t": "p",
+     "md": "**3**   **Beamer:** Fortschrittsbalken je Team – Ziel ≥ 95 %"
+    },
+    {
+     "t": "p",
+     "md": "486 Buchstaben · monoalphabetische Substitution · 25 min",
+     "klein": true
+    }
+   ],
+   "notizen": "25 min, Ablauf (Spec §9.3): 0 Start (1 min): Szenario „Wettknacken“ in der Funkraum-Regie starten, Analysator und Werkbank werden freigeschaltet. 1 Analyse (5 min): zählen, Rangfolge, U ≙ e. 2 Knacken (14 min): Bigramme/Trigramme, Musterwörter, Lesen; Beamer zeigt je Team nur den Fortschrittsbalken. 3 Hinweise (optional, nach 8 min): (1) „U ≙ e“, (2) „YC ≙ ch“, (3) „RUM ≙ der“. 4 Ziellinie: ≥ 95 % korrekte Positionen, Platzierung nach Zeit, keine Punkte (Abzeichen „Funkraum-Veteran“). 5 Auswertung (5 min): Folie 14.\nPapier-Alternative: Rollenkarten-Dokument KR_W1_Funkraum_Wettknacken (A3-Geheimtextkarte je Team, Häufigkeiten auf der Rückseite)."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Was hat geholfen?",
+   "anteil": 0.6,
+   "links": [
+    {
+     "t": "haeufigkeit",
+     "text": "DHCPQNRUMVUDNCUDODIAPBRPRPMAUDOUIRDUBUGUCMOUIOPBQIRIPYCONDUQUAUMNUOZUIRDUNYCMDSOUIRUMBMDUYCUIQIRKUMNUMDIRDUPMPADNYCUNKMPYCUQIRNPHHUGIRPNVDNNUIRUMBPIZUIVUGOUDIUNPAUIRNSDIRUOUDIEQIBUMNYCMUDAUMUDIUIAMDUSRUIIDUHPIRGUNUIFPIIEURUMAQYCNOPAUDNORQMYCUDIUIPIRUMUIUMNUOZORUMNYCMUDAUMUMDIIUMONDYCPIRDUGUCMURUNKCDGJNJKCUIPGFDIRDHPIZPUCGOVDUJSOEURUNZUDYCUITJMFJHHODIEURUMNKMPYCUBDAOUNAQYCNOPAUIRDUNUCMCPUQSDBNDIRQIRPIRUMURDUNUGOUIUMNYCUDIUIVUMBUIQBOUWOCPOSDIRUONJNYCMDOOSQUMNYCMDOORUIBPIZUINYCGQUNNUG",
+     "referenz": true,
+     "titel": "Wettknack-Text (486 Buchstaben)",
+     "hoehe": 4.2
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "**1**   `U` (94) ≙ **e**"
+    },
+    {
+     "t": "p",
+     "md": "**2**   `UM` ≙ er · `UI` ≙ en"
+    },
+    {
+     "t": "p",
+     "md": "**3**   `YC` ≙ ch · `NYC` ≙ sch"
+    },
+    {
+     "t": "p",
+     "md": "**4**   `RUM` ≙ der · `IR` ≙ nd"
+    },
+    {
+     "t": "p",
+     "md": "**5**   lesen und ergänzen"
+    }
+   ],
+   "notizen": "6 min. Teams berichten: Welcher Schritt hat den Sprung gebracht? Erwartung: e zuerst, dann ch/sch und der, dann Lesen. In der Plattform-Auswertung die Fortschrittskurven aller Teams zeigen (Sprünge nach den ersten Zuordnungen). Diagramm: U ragt wie E heraus, die nächsten Ränge I, D, N, M passen zu n, i, s, r. Zusatz für Schnelle: Die Schlüsselwort-Struktur verrät sich selbst – ab g folgen B C D … (Rest des Alphabets ab A). Grenzen besprechen: kurze Texte (P6), Sprache muss bekannt sein."
+  },
+  {
+   "layout": "archivfund",
+   "abschnitt": "DS 4 · Al-Kindis Handschrift",
+   "titel": "Al-Kindis Manuskript – gelöst",
+   "label": "GLEICHER SCHLÜSSEL WIE IM WETTKNACKEN",
+   "geheimtext": "ZPUCGURDUZUDYCUIQIRRQSDIRUNORUINYCGQUNNUG",
+   "groesse": 24,
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**zaehle die zeichen und du findest den schluessel**"
+    },
+    {
+     "t": "p",
+     "md": "Häufigstes Zeichen `U` (9 ×) ≙ e · Schlüsselwort **PAPYRUS**"
+    }
+   ],
+   "notizen": "3 min. Mit der Zuordnung aus dem Wettknacken liest der Kurs den Archivfund mühelos (Schlüsselwort PAPYRUS, Alphabet PAYRUSBCDEFGHIJKLMNOQTVWXZ). Merksatz Häufigkeitsanalyse festhalten. Hausaufgabe: Akte W1·1 Auftrag 4 (Knacken auf Papier) + Abi-Check, Video 📼 02. Ausblick: „Wie schützt sich Alice?“"
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Die Gegenmittel",
+   "oberzeile": "DS 5 · BAGDAD · UM 850",
+   "untertitel": "Wie schützt sich Alice vor Al-Kindi?",
+   "notizen": "DS 5 nach dem Warm-up (WU-W1-04 bis -08). 3 min Ideen sammeln: „Alice hat von Al-Kindi gehört. Was kann sie tun?“ Erwartete Ideen: Alphabet rechnerisch erzeugen, mehrere Zeichen für e, ganze Wörter verstecken – genau die drei Gegenmittel dieser Doppelstunde (affin, homophon, Nomenklator)."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "nr": "P1",
+   "titel": "Diese Chiffre zählt ab 0",
+   "regel": "Nummerierung **immer zuerst** prüfen – die affine Chiffre zählt **A = 0 … Z = 25**.",
+   "falsch": [
+    {
+     "t": "p",
+     "md": "Abitur-Anlage (A = 1):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "…",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "1",
+       "2",
+       "3",
+       "4",
+       "5",
+       "…",
+       "26"
+      ]
+     ],
+     "schrift_folie": 16
+    },
+    {
+     "t": "p",
+     "md": "für die affine Chiffre: e = 5 ✗"
+    }
+   ],
+   "richtig": [
+    {
+     "t": "p",
+     "md": "Affine Chiffre (A = 0):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "…",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "0",
+       "1",
+       "2",
+       "3",
+       "4",
+       "…",
+       "25"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "e = 4 · Rest 0 = **A**"
+    }
+   ],
+   "notizen": "1 min. Begründung der Wahl A = 0: Die Reste 0 … 25 von mod 26 entsprechen genau den 26 Buchstaben – keine „Rest 0 → Z“-Ausnahme. Die Abweichung von der Anlage ist bewusstes P1-Training: Jede Aufgabe nennt ihre Nummerierung. Im Abi-Check der Akte (ZAHLENCHIFFRE-29) wird wieder mit A = 1 gerechnet."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Die affine Chiffre",
+   "inhalt": [
+    {
+     "t": "formel",
+     "md": "**c = (m · p + t) mod 26**     Schlüssel (m, t)"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "breiten": [
+      2.8,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3,
+      1.3
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "s",
+       "u",
+       "l",
+       "t",
+       "a",
+       "n"
+      ],
+      [
+       "p",
+       "18",
+       "20",
+       "11",
+       "19",
+       "0",
+       "13"
+      ],
+      [
+       "7 · p + 3",
+       "129",
+       "143",
+       "80",
+       "136",
+       "3",
+       "94"
+      ],
+      [
+       "mod 26",
+       "25",
+       "13",
+       "2",
+       "6",
+       "3",
+       "16"
+      ],
+      [
+       "Geheimtext",
+       "**Z**",
+       "**N**",
+       "**C**",
+       "**G**",
+       "**D**",
+       "**Q**"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "t = 0: **multiplikative** Chiffre · m = 1: **Caesar**",
+     "klein": true
+    }
+   ],
+   "notizen": "5 min. Beispiel (m, t) = (7, 3): Gemeinsam s und u rechnen (s = 18 → 129 mod 26 = 25 → Z; u = 20 → 143 mod 26 = 13 → N), den Rest in Partnerarbeit. Ohne Taschenrechner: 129 = 4 · 26 + 25. Ergebnis ZNCGD Q."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Nicht jedes m funktioniert",
+   "anteil": 0.5,
+   "links": [
+    {
+     "t": "h",
+     "md": "m = 2"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Klartext",
+       "a",
+       "n"
+      ],
+      [
+       "p",
+       "0",
+       "13"
+      ],
+      [
+       "2 · p mod 26",
+       "0",
+       "26 mod 26 = 0"
+      ],
+      [
+       "Geheimtext",
+       "**A**",
+       "**A**"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      1.2,
+      2.6
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "p",
+     "md": "Bob weiß nicht: a oder n?",
+     "klein": true
+    }
+   ],
+   "rechts": [
+    {
+     "t": "h",
+     "md": "m = 13"
+    },
+    {
+     "t": "geheimtext",
+     "text": "ANANANANANANANANANANANANAN",
+     "gruppen": 0,
+     "groesse": 18
+    },
+    {
+     "t": "p",
+     "md": "Bedingung: **ggT(m, 26) = 1** → 12 Faktoren, **312** Schlüssel"
+    }
+   ],
+   "notizen": "4 min. Konkretes Gegenbeispiel (zwei Buchstaben, ein Geheimtextbuchstabe) ist Abitur-Format – ein bloßes „ggT ≠ 1“ reicht nicht (P10). m = 13: gerade p → A, ungerade p → N. Erlaubte m: 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25; Schlüsselraum 12 · 26 = 312."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Der inverse Schlüssel",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "breiten": [
+      3.6,
+      1.6,
+      1.6,
+      1.6,
+      3.2
+     ],
+     "zeilen": [
+      [
+       "26 · k + 1",
+       "27",
+       "53",
+       "79",
+       "105"
+      ],
+      [
+       "durch 7 teilbar?",
+       "nein",
+       "nein",
+       "nein",
+       "**105 = 7 · 15**"
+      ]
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "formel",
+     "md": "7^−1^ = **15**     Entschlüsseln: **p = m^−1^ · (c − t) mod 26**"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "m",
+       "1",
+       "3",
+       "5",
+       "7",
+       "9",
+       "11",
+       "15",
+       "17",
+       "19",
+       "21",
+       "23",
+       "25"
+      ],
+      [
+       "m^−1^",
+       "1",
+       "9",
+       "21",
+       "15",
+       "3",
+       "19",
+       "7",
+       "23",
+       "11",
+       "5",
+       "17",
+       "25"
+      ]
+     ],
+     "schrift_folie": 16
+    }
+   ],
+   "notizen": "5 min. Ohne Taschenrechner: Vielfache von 26 plus 1 durchgehen (27, 53, 79, 105, 131, 157, 183, 209, 235) und prüfen, welche durch m teilbar ist. Reihenfolge beim Entschlüsseln: erst − t, dann · m⁻¹ (P3); negative Zwischenwerte + 26 (P2). Beispiel Lab W1-L2-04: CPQN mit (21, 7), m⁻¹ = 5 → bote."
+  },
+  {
+   "layout": "auftrag",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Rechnen wie im Haus der Weisheit",
+   "sozialform": "Partnerarbeit",
+   "zeit": "10 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Akte W1·2, Aufträge 1–4** · Nummerierung A = 0 … Z = 25"
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": 0
+    },
+    {
+     "t": "p",
+     "md": "**1**   `minarett` mit (11, 4) verschlüsseln"
+    },
+    {
+     "t": "p",
+     "md": "**2**   Inverse zu 5, 9, 11, 17 bestimmen"
+    },
+    {
+     "t": "p",
+     "md": "**3**   `RWEZW I` mit (9, 2) entschlüsseln"
+    },
+    {
+     "t": "p",
+     "md": "**4**   Gegenbeispiel m = 2; alle Buchstaben, die mit m = 13 zu A werden"
+    }
+   ],
+   "notizen": "10 min Partnerarbeit, ohne Taschenrechner. Schnelle: Auftrag 5 (Known-Plaintext: e → Y, n → T ergibt (11, 6)). Lösungen: 1 GOREJ WFF · 2 21, 3, 19, 23 · 3 tigris · 4 z. B. b und o → C; m = 13: a, c, e, g, i, k, m, o, q, s, u, w, y → A. Typische Fehler: A = 1 gerechnet (P1), m statt m⁻¹ (P3), negative Reste (P2)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Affin bleibt monoalphabetisch",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**312 Schlüssel** – aber e wird **immer gleich** ersetzt."
+    },
+    {
+     "t": "p",
+     "md": "Zwei vermutete Paare (e, n) aus der Häufigkeitsanalyse liefern **(m, t)**."
+    },
+    {
+     "t": "p",
+     "md": "Doppelt affin ist wieder affin – **kein** Sicherheitsgewinn."
+    }
+   ],
+   "notizen": "2 min. Known-Plaintext aus zwei Häufigkeits-Paaren: e → W, n → X ergibt 4m + t ≡ 22, 13m + t ≡ 23 → 9m ≡ 1 → m = 3, t = 10 (Lab W1-L2-07). Doppelt affin = affin (P8): (3, 5) dann (7, 2) entspricht (21, 11) – eA-Auftrag 7 der Akte W1·2, Papier-Boss g."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Homophone Substitution",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Tabelle **Kalifenschrift** (Ausschnitt): häufige Buchstaben bekommen **mehrere** Zahlen."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "breiten": [
+      2.6,
+      3.6,
+      1.6,
+      1.6,
+      1.6,
+      2.0,
+      2.0,
+      1.6
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "e",
+       "c",
+       "h",
+       "i",
+       "n",
+       "r",
+       "s"
+      ],
+      [
+       "Homophone",
+       "42, 77, 19, 85",
+       "58",
+       "49",
+       "15, 92",
+       "34, 60",
+       "72, 28",
+       "56, 83"
+      ]
+     ],
+     "schrift_folie": 18
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "zentriert": true,
+     "kopf": [
+      "e",
+      "r",
+      "r",
+      "e",
+      "i",
+      "c",
+      "h",
+      "e",
+      "n"
+     ],
+     "zeilen": [
+      [
+       "**42**",
+       "72",
+       "28",
+       "**77**",
+       "15",
+       "58",
+       "49",
+       "**19**",
+       "34"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "p",
+     "md": "Regel: Homophone **der Reihe nach** benutzen – die drei e werden 42, 77, 19.",
+     "klein": true
+    }
+   ],
+   "notizen": "4 min. Kryptos-Regel „der Reihe nach“: 1. Vorkommen → erste Zahl, 2. Vorkommen → zweite Zahl, …, danach wieder von vorn. Gesamttabelle: 35 verschiedene Zahlen (Akte W1·2, Archivwissen 3). Jede Zahl gehört zu genau einem Buchstaben → Entschlüsselung eindeutig. Kurzübung: seide → 56 42 15 13 77."
+  },
+  {
+   "layout": "zweispaltig",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "titel": "Was bleibt sichtbar?",
+   "anteil": 0.55,
+   "links": [
+    {
+     "t": "p",
+     "md": "Wettknack-Klartext (486 Buchstaben) zweimal verschlüsselt:",
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      2.4,
+      2.6,
+      3.0
+     ],
+     "kopf": [
+      "",
+      "mono",
+      "homophon"
+     ],
+     "zeilen": [
+      [
+       "häufigstes Zeichen",
+       "U: **94**",
+       "13: **32**"
+      ],
+      [
+       "e erscheint als",
+       "U (94)",
+       "42 · 77 · 19 · 85 (je 23–24)"
+      ],
+      [
+       "„ch“ erscheint als",
+       "YC: **17**",
+       "58 49: **17**"
+      ]
+     ],
+     "schrift_folie": 16
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "•  Einzelhäufigkeiten werden **flacher**"
+    },
+    {
+     "t": "p",
+     "md": "•  aber „ch“ ist **immer 58 49**"
+    },
+    {
+     "t": "p",
+     "md": "•  gleiche Umgebungen verraten die Homophone von e"
+    }
+   ],
+   "notizen": "3 min. Impuls: „Ist Al-Kindi jetzt besiegt?“ Erwartung: Bigramme! Die Tabelle ist am Wettknack-Klartext nachgerechnet (Kalifenschrift, Regel „der Reihe nach“): Das häufigste Zeichen ist nun 13 (= d, 32 ×), e verteilt sich auf vier Zahlen mit 24, 24, 23, 23 Vorkommen – aber das Paar 58 49 (ch) erscheint genauso oft wie YC im monoalphabetischen Geheimtext. Bei langen Texten findet man die Homophone eines Buchstabens über ihre Umgebungen."
+  },
+  {
+   "layout": "falle",
+   "abschnitt": "DS 5 · Die Gegenmittel",
+   "nr": "P5",
+   "titel": "homophon ≠ polyalphabetisch",
+   "regel": "Einordnung **immer mit Kriterium** begründen.",
+   "falsch": "„Homophon ist polyalphabetisch wie Vigenère, weil e verschieden ersetzt wird.“",
+   "richtig": [
+    {
+     "t": "p",
+     "md": "**homophon:** *ein* Zuordnungsalphabet mit Auswahl (e → 42, 77, 19, 85)"
+    },
+    {
+     "t": "p",
+     "md": "**polyalphabetisch:** **wechselnde** Alphabete nach Schlüssel (Vigenère, Welt 2)"
+    }
+   ],
+   "notizen": "2 min. Erwartungshorizonte akzeptieren „nicht monoalphabetisch, da gleiche Klartextbuchstaben verschieden ersetzt werden“ ebenso wie „monoalphabetische Grundstruktur mit Homophonen“ – sofern das Kriterium genannt und angewendet wird (Lehrerhinweise W1). Entscheidend: keine schlüsselgesteuerte Folge von Alphabeten → nicht polyalphabetisch."
+  },
+  {
+   "layout": "titel",
+   "abschnitt": "DS 5 · Der Nomenklator",
+   "titel": "Fremde Chiffre II: Der Nomenklator",
+   "oberzeile": "DS 5 · FREMDE CHIFFRE II",
+   "untertitel": "Wörter verschwinden in Zahlen.",
+   "notizen": "30 s. Historischer Hinweis: Nomenklatoren sind eine spätere Technik (Kanzleien Europas, ab dem 14./15. Jahrhundert). In der Story liegt das Codebuch „im Archiv neben Al-Kindis Schrift, weil es gegen dessen Methode gebaut wurde“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 5 · Der Nomenklator",
+   "titel": "NOMEN-850",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "kopfspalte": true,
+     "zeilen": [
+      [
+       "Codebuch",
+       "der",
+       "die",
+       "und",
+       "karawane",
+       "basra",
+       "…"
+      ],
+      [
+       "Code",
+       "39",
+       "58",
+       "16",
+       "62",
+       "90",
+       "…"
+      ]
+     ],
+     "schrift_folie": 20
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "TUSCHEABDFGIJKLMNOPQRVWXYZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Blender: `00` und `99` · Wortgrenzen entfallen · Zahlen immer zweistellig",
+     "klein": true
+    },
+    {
+     "t": "geheimtext",
+     "label": "die karawane erreicht basra am morgen",
+     "text": "5862HOOHDSBQ90TJ74"
+    }
+   ],
+   "notizen": "4 min. Regeln: Wörter aus dem Codebuch → zweistellige Zahl, alle anderen Buchstabe für Buchstabe mit dem Alphabet zu TUSCHE; Blender nach jedem Wort erlaubt; Fünfergruppen, Ziffern und Buchstaben gemischt. Beispiel gemeinsam zerlegen: 58 · 62 · HOOHDSBQ (erreicht) · 90 · TJ (am) · 74. Danach Akte W1·3 (5-Schritte-Methode, 20 min)."
+  },
+  {
+   "layout": "merke",
+   "abschnitt": "DS 5 · Der Nomenklator",
+   "titel": "Codebuch = Schlüssel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nach **Kerckhoffs** dürfen die Regeln bekannt sein – das **Codebuch** muss geheim bleiben und **sicher ausgetauscht** werden."
+    },
+    {
+     "t": "p",
+     "md": "Der Buchstabenteil bleibt **monoalphabetisch**; jeder erbeutete Klartext verrät Codes."
+    }
+   ],
+   "notizen": "2 min. Besprechung Schritt 5 der Akte: Häufigkeitsanalyse erschwert, nicht verhindert (Codes sind zählbar, Buchstabenteil monoalphabetisch); Known-Plaintext deckt Codes und Buchstaben auf; Blender 00/99 sind konstant und erkennbar; großes Codebuch → Schlüsselaustausch aufwendig, Verlust kompromittiert alles. Urteil: besser als einfache Substitution, aber unsicher."
+  },
+  {
+   "layout": "abschnitt",
+   "abschnitt": "DS 5 · Der Nomenklator",
+   "titel": "Bagdad ist entsiegelt",
+   "untertitel": "Häufigkeitsanalyse schlägt jede monoalphabetische Substitution. Nächste Epoche: Renaissance – ein Alphabet ist zu wenig.",
+   "notizen": "2 min. Rückblick: Egal wie groß der Schlüsselraum (26!, 312, Codebuch) – solange ein Klartextbuchstabe immer gleich ersetzt wird, verrät ihn die Statistik. Boss „Der Kalif und der Kurier“ ist frei (ab 60 % der Level-Punkte); Artefakt: Al-Kindis Manuskript. Hausaufgabe: Abi-Checks W1·2/W1·3, Boss W1, Papier-Boss „Die Gewürzliste“ (optional). Ausblick Renaissance: „Ein Alphabet ist zu wenig.“"
+  }
+ ]
+}

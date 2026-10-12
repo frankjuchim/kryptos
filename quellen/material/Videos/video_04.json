@@ -1,0 +1,965 @@
+{
+ "typ": "praesentation",
+ "welt": 3,
+ "titel": "XOR, One-Time-Pad und Blockchiffren",
+ "datei": "KR_Video_04_XOR_OTP_Blockchiffren_Folien",
+ "ordner": "Videos/04_XOR_OTP_Blockchiffren",
+ "folien": [
+  {
+   "titel": "XOR, One-Time-Pad und Blockchiffren",
+   "notizen": "[Kapitel: Einstieg]\n\nREGIE: Kamera unten rechts, Titelfolie mit Lochstreifen-Ornament. Kurzer Ton eines Fernschreibers als Einstieg (optional).\n\nSPRECHERTEXT: Willkommen im Maschinenzeitalter! Statt Buchstaben auf Pergament rattern jetzt Fernschreiber, und Nachrichten werden zu Löchern im Papierstreifen – also zu Bits. Heute lernst du das einzige Verfahren kennen, das beweisbar nicht zu knacken ist. Du siehst, wie man es trotzdem knackt, wenn jemand schlampt. Und du baust mit mir eine kleine Blockchiffre, so wie sie im Abitur von Hand gerechnet wird.",
+   "video": false,
+   "abschnitt": "Einstieg",
+   "layout": "titel",
+   "untertitel": "Bits, das perfekte Verfahren, der doppelte Schlüssel und eine Mini-Blockchiffre von Hand",
+   "oberzeile": "VIDEO 04 · MASCHINENZEITALTER · 1917–1977"
+  },
+  {
+   "titel": "Das fragt das Abitur",
+   "notizen": "SPRECHERTEXT: Im Abitur kommen Bits und XOR immer wieder vor. Du sollst ein Verfahren auf einen Block anwenden, also von Hand rechnen. Du sollst begründen, ob ein Verfahren Diffusion erfüllt. Und du sollst erläutern, wie man beliebig lange Texte verschlüsselt. XOR und das One-Time-Pad gehören zum Kern. Die Blockchiffre ist Stoff für das erhöhte Niveau – im Grundkurs schaust du dir den zweiten Teil als Ausblick an.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "„**Wenden Sie** das Verfahren auf den Block … **an**.“ – XOR und Runden von Hand",
+        "„**Begründen Sie**, dass das Verfahren die Eigenschaft **Diffusion** (nicht) erfüllt.“",
+        "„**Erläutern Sie**, wie beliebig lange Klartexte verschlüsselt werden können.“",
+        "Kern: Bits, XOR, One-Time-Pad · **eA**: Blockchiffre"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "HEUTE",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "ASCII und XOR"
+        },
+        {
+         "t": "p",
+         "md": "One-Time-Pad"
+        },
+        {
+         "t": "p",
+         "md": "Der doppelte Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "eA: Mini-Blockchiffre WIRBEL-8"
+        },
+        {
+         "t": "p",
+         "md": "eA: ECB oder CBC"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Vom Buchstaben zum Bit: ASCII",
+   "notizen": "[Kapitel: ASCII und XOR]\n\nSPRECHERTEXT: Ein Computer kennt keine Buchstaben, nur Zahlen. Welche Zahl zu welchem Zeichen gehört, legt der ASCII-Code fest. Die Tabelle findest du in der Anlage zum Abitur. Großes A ist 65, J ist 74. Als Dualzahl mit acht Bit schreiben wir die Bits in Vierergruppen, das höchstwertige Bit links: J ist null eins null null, eins null eins null. Achtung, Falle P1: ASCII zählt A als 65, das Alphabet der Anlage zählt A als 1. Prüf also immer zuerst, welche Nummerierung das Material verwendet.",
+   "video": true,
+   "abschnitt": "ASCII und XOR",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Zeichen",
+        "ASCII (dezimal)",
+        "Bits"
+       ],
+       "zeilen": [
+        [
+         "A",
+         "65",
+         "0100 0001"
+        ],
+        [
+         "J",
+         "74",
+         "0100 1010"
+        ],
+        [
+         "N",
+         "78",
+         "0100 1110"
+        ],
+        [
+         "Z",
+         "90",
+         "0101 1010"
+        ]
+       ],
+       "breiten": [
+        1.4,
+        2.4,
+        2.6
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "FALLE P1",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "ASCII: A = **65**"
+        },
+        {
+         "t": "p",
+         "md": "Alphabet der Abitur-Anlage: A = **1**"
+        },
+        {
+         "t": "p",
+         "md": "Immer zuerst prüfen, welche Nummerierung das Material nutzt."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "XOR – das exklusive Oder ⊕",
+   "notizen": "REGIE: Beispiel rechts Zeile für Zeile einblenden; bei der zweiten ⊕-Zeile auf „derselbe Schlüssel“ zeigen.\n\nSPRECHERTEXT: XOR heißt exklusives Oder und wird mit einem Plus im Kreis geschrieben. Die Regel ist einfach: Sind beide Bits gleich, kommt null heraus. Sind sie verschieden, kommt eins heraus. Man kann auch sagen: Eine Eins im Schlüssel kippt das Bit, eine Null lässt es stehen. Rechts verschlüsseln wir das J mit einem Schlüsselbyte und erhalten eins eins null eins, null eins eins null. Jetzt der Trick: Wir verknüpfen das Ergebnis noch einmal mit demselben Schlüssel – und das J ist wieder da. Denn jedes Bit wird zweimal gekippt. XOR ist also seine eigene Umkehrung. Derselbe Schlüssel verschlüsselt und entschlüsselt – ein symmetrisches Verfahren.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.45,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "a",
+        "b",
+        "a ⊕ b"
+       ],
+       "zeilen": [
+        [
+         "0",
+         "0",
+         "0"
+        ],
+        [
+         "0",
+         "1",
+         "1"
+        ],
+        [
+         "1",
+         "0",
+         "1"
+        ],
+        [
+         "1",
+         "1",
+         "0"
+        ]
+       ],
+       "breiten": [
+        1.0,
+        1.0,
+        1.4
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "BEISPIEL",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "`  0100 1010` J"
+        },
+        {
+         "t": "p",
+         "md": "`⊕ 1001 1100` Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "`= 1101 0110` Geheimtext"
+        },
+        {
+         "t": "p",
+         "md": "`⊕ 1001 1100` Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "`= 0100 1010` wieder J"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das One-Time-Pad",
+   "notizen": "[Kapitel: One-Time-Pad]\n\nSPRECHERTEXT: Gilbert Vernam hat um 1917 Fernschreibzeichen auf genau diese Weise mit einem Schlüsselstreifen verknüpft. Die Forderung, dass der Schlüssel zufällig sein und nur einmal benutzt werden darf, wird Joseph Mauborgne zugeschrieben. So entsteht das One-Time-Pad. Der Schlüssel ist zufällig, mindestens so lang wie die Nachricht, geheim, und er wird nur ein einziges Mal benutzt. Dann ist das Verfahren perfekt sicher, das hat Claude Shannon später bewiesen. Warum? Zu jedem denkbaren Klartext gleicher Länge gibt es einen Schlüssel, der genau diesen Geheimtext erzeugt. Probiert Eve alle Schlüssel durch, bekommt sie alle Klartexte – und weiß nicht, welcher stimmt. Der Haken: Für jede Nachricht braucht man neues Schlüsselmaterial, und das muss erst einmal sicher zu Bob.",
+   "video": true,
+   "abschnitt": "One-Time-Pad",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Klartext ⊕ Schlüssel = Geheimtext (Fernschreiber, Lochstreifen)",
+        "Der Schlüssel ist",
+        "  - **zufällig**,",
+        "  - **mindestens so lang** wie die Nachricht,",
+        "  - **geheim** und wird **nur einmal** benutzt.",
+        "Dann: **perfekt sicher** – auch mit unbegrenzter Rechenkraft",
+        "Haken: Schlüsselverteilung – für jede Nachricht neues Material"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "WARUM PERFEKT?",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Zu **jedem** denkbaren Klartext gleicher Länge gibt es einen passenden Schlüssel."
+        },
+        {
+         "t": "p",
+         "md": "Brute Force liefert **alle** Klartexte – und damit keinen."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Der doppelte Schlüssel",
+   "notizen": "[Kapitel: Der doppelte Schlüssel]\n\nREGIE: Erst nur K, M1, C1 zeigen, dann M2, C2; zuletzt die markierte Zeile. Eve sieht in der Story nur C1 und C2.\n\nSPRECHERTEXT: Jetzt schlampt jemand. Alice schickt zwei Nachrichten, NEU und ALT, und benutzt dafür zweimal denselben Schlüssel. Eve fängt beide Geheimtexte ab. Den Schlüssel kennt sie nicht. Aber sie verknüpft die beiden Geheimtexte miteinander. Schau rechts: Der Schlüssel steckt in beiden drin und hebt sich weg. Übrig bleibt M1 XOR M2 – eine Mischung aus zwei Klartexten, ganz ohne Schlüssel. Und das ist kein Zufall der Zahlen, das klappt immer. Schon die Mischung verrät etwas: Vorne stehen lauter Nullen, weil alle Großbuchstaben mit null eins null beginnen. Eve weiß also: Hier wurden Buchstaben verschlüsselt. Jetzt muss sie nur noch raten.",
+   "video": true,
+   "abschnitt": "Der doppelte Schlüssel",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Bits",
+        "Text"
+       ],
+       "zeilen": [
+        [
+         "Schlüssel K",
+         "1101 0011 | 0110 1001 | 1010 1110",
+         ""
+        ],
+        [
+         "M1",
+         "0100 1110 | 0100 0101 | 0101 0101",
+         "NEU"
+        ],
+        [
+         "C1 = M1 ⊕ K",
+         "1001 1101 | 0010 1100 | 1111 1011",
+         ""
+        ],
+        [
+         "M2",
+         "0100 0001 | 0100 1100 | 0101 0100",
+         "ALT"
+        ],
+        [
+         "C2 = M2 ⊕ K",
+         "1001 0010 | 0010 0101 | 1111 1010",
+         ""
+        ],
+        [
+         "C1 ⊕ C2",
+         "0000 1111 | 0000 1001 | 0000 0001",
+         "= M1 ⊕ M2"
+        ]
+       ],
+       "breiten": [
+        1.9,
+        4.6,
+        1.2
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DER SCHLÜSSEL FÄLLT HERAUS",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "C1 ⊕ C2"
+        },
+        {
+         "t": "p",
+         "md": "= (M1 ⊕ K) ⊕ (M2 ⊕ K)"
+        },
+        {
+         "t": "p",
+         "md": "= M1 ⊕ M2"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Jetzt du: Eve rät ein Wort",
+   "notizen": "[Kapitel: Selbst ausprobieren]\n\nSPRECHERTEXT: Jetzt bist du Eve. Du kennst C1 XOR C2 und vermutest, dass die erste Nachricht NEU heißt. Halte das Video an und bestimme die zweite Nachricht. Tipp: Verknüpfe die Zeile oben mit deinem geratenen Wort und schlag die Ergebnisse in der ASCII-Tabelle nach.\n\nPAUSE: 5 s Einblendung „⏸ Video anhalten“",
+   "video": true,
+   "abschnitt": "Selbst ausprobieren",
+   "layout": "auftrag",
+   "sozialform": "⏸ Video anhalten",
+   "zeit": "selbst probieren",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Eve kennt C1 ⊕ C2 und vermutet, dass die erste Nachricht **NEU** lautet. **Bestimme** die zweite Nachricht M2."
+      },
+      {
+       "t": "code",
+       "text": "C1 ⊕ C2   0000 1111 | 0000 1001 | 0000 0001\nM1 (NEU)  0100 1110 | 0100 0101 | 0101 0101\nM2 = ?"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "TIPP",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "M2 = (M1 ⊕ M2) ⊕ M1"
+        },
+        {
+         "t": "p",
+         "md": "Dann mit der ASCII-Tabelle zurück in Buchstaben"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Auflösung: M2 = ALT",
+   "notizen": "SPRECHERTEXT: Die Auflösung: Null null null null, eins eins eins eins XOR null eins null null, eins eins eins null ergibt null eins null null, null null null eins – das ist 65, also A. Genauso entstehen L und T. Die zweite Nachricht lautet ALT. Hätte Eve falsch geraten, zum Beispiel OST, käme Unsinn heraus – ein At-Zeichen, Z, U. Das zeigt ihr sofort: falsch geraten, nächstes Wort probieren. Genau so wurden in der Geschichte tatsächlich Nachrichten gelesen: Im sogenannten Venona-Projekt konnten Kryptoanalytiker Teile sowjetischer Nachrichten entschlüsseln, weil Schlüsselmaterial mehrfach verwendet worden war. One-Time heißt also wirklich: nur ein einziges Mal.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "Bits",
+        "Text"
+       ],
+       "zeilen": [
+        [
+         "C1 ⊕ C2",
+         "0000 1111 | 0000 1001 | 0000 0001",
+         ""
+        ],
+        [
+         "⊕ geraten",
+         "0100 1110 | 0100 0101 | 0101 0101",
+         "NEU"
+        ],
+        [
+         "= M2",
+         "0100 0001 | 0100 1100 | 0101 0100",
+         "ALT ✓"
+        ],
+        [
+         "⊕ geraten",
+         "0100 1111 | 0101 0011 | 0101 0100",
+         "OST"
+        ],
+        [
+         "= ?",
+         "0100 0000 | 0101 1010 | 0101 0101",
+         "@ZU ✗"
+        ]
+       ],
+       "breiten": [
+        1.6,
+        4.6,
+        1.2
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "MERKE",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Ein richtig geratenes Wort liefert das andere."
+        },
+        {
+         "t": "p",
+         "md": "Ein falsches liefert Unsinn – Eve merkt es sofort."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "eA · Blockchiffre: das Prinzip",
+   "notizen": "[Kapitel: Blockchiffre]\n\nSPRECHERTEXT: Das One-Time-Pad ist perfekt, aber unpraktisch. Moderne Verfahren wie AES sind Blockchiffren. Sie zerlegen den Klartext in Blöcke fester Länge und verschlüsseln jeden Block in mehreren Runden. Aus einem kurzen Schlüssel werden Rundenschlüssel gebildet. In jeder Runde passiert dreierlei: Der Rundenschlüssel wird per XOR eingemischt. Eine S-Box ersetzt kleine Bitgruppen – das ist eine Substitution. Und eine Permutation ordnet die Bits um – das ist eine Transposition. Claude Shannon hat dafür zwei Begriffe geprägt. Konfusion: Der Zusammenhang zwischen Schlüssel und Geheimtext soll möglichst verwickelt sein. Diffusion: Jedes Klartextbit soll viele Geheimtextbits beeinflussen.",
+   "video": true,
+   "abschnitt": "Blockchiffre",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "Klartext in **Blöcke fester Länge** zerlegen (z. B. AES: 128 Bit)",
+        "Ein kurzer Schlüssel → mehrere **Rundenschlüssel**",
+        "Jede **Runde**:",
+        "  - Rundenschlüssel einmischen (⊕)",
+        "  - **Substitution** mit einer S-Box",
+        "  - **Permutation**: Bits umordnen (Transposition)",
+        "Viele einfache Runden → ein starkes Verfahren"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ZIELE NACH SHANNON",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "**Konfusion**: Zusammenhang Schlüssel ↔ Geheimtext verwischen (S-Box)"
+        },
+        {
+         "t": "p",
+         "md": "**Diffusion**: jedes Klartextbit beeinflusst viele Geheimtextbits (Permutation)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "eA · WIRBEL-8: unsere Mini-Blockchiffre",
+   "notizen": "REGIE: Hinweis einblenden: „WIRBEL-8 ist nur für dieses Video erfunden und nicht sicher.“ S-Box-Tabelle oben, Kamera-Zone frei lassen.\n\nSPRECHERTEXT: Damit du das von Hand rechnen kannst, habe ich eine Mini-Blockchiffre nur für dieses Video gebaut: WIRBEL-8. Sie ist natürlich nicht sicher, aber alle Bausteine sind echt. Ein Block hat acht Bit, es gibt zwei Runden mit den Rundenschlüsseln K1 und K2. In jeder Runde rechnest du erst XOR mit dem Rundenschlüssel. Dann schickst du beide Vierergruppen durch die S-Box: Du liest die Vierergruppe als Zahl, schlägst sie oben nach und schreibst das Ergebnis wieder als Bits. Zum Schluss die Permutation: Die neuen acht Bits sind Bit fünf, Bit eins, Bit sechs, Bit zwei und so weiter – die beiden Hälften werden also ineinander verzahnt.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Block 8 Bit · 2 Runden · K1 = `0010 1011` · K2 = `1100 0110` · Runde: ⊕ Ki → S-Box (beide Vierergruppen) → Permutation"
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "ein",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15"
+     ],
+     "zeilen": [
+      [
+       "aus",
+       "14",
+       "4",
+       "11",
+       "1",
+       "7",
+       "9",
+       "12",
+       "10",
+       "13",
+       "2",
+       "0",
+       "15",
+       "8",
+       "5",
+       "3",
+       "6"
+      ]
+     ],
+     "breiten": [
+      0.55,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44,
+      0.44
+     ],
+     "mono": false,
+     "zentriert": false
+    },
+    {
+     "t": "p",
+     "md": "**S-Box**: Vierergruppe als Zahl lesen (0111 = 7), nachschlagen (7 → 10), zurück in Bits (1010)"
+    },
+    {
+     "t": "p",
+     "md": "**Permutation**: b1 b2 … b8 → **b5 b1 b6 b2 b7 b3 b8 b4**"
+    }
+   ]
+  },
+  {
+   "titel": "eA · Runde 1 von Hand: der Block W",
+   "notizen": "REGIE: Zeile für Zeile aufdecken; bei der Permutation die Bits b5 und b1 farbig markieren.\n\nSPRECHERTEXT: Rechnen wir den Buchstaben W, ASCII 87. Erst XOR mit K1: Das ergibt null eins eins eins, eins eins null null. Die linke Vierergruppe ist die Zahl sieben, die rechte zwölf. In der S-Box wird aus sieben die Zehn und aus zwölf die Acht – also eins null eins null, eins null null null. Jetzt die Permutation, rechts im Kasten: Bit fünf ist eine Eins, Bit eins ist eine Eins, Bit sechs eine Null, Bit zwei eine Null, und so weiter. Ergebnis von Runde eins: eins eins null null, null eins null null. Runde zwei läuft genauso mit K2 und liefert den Geheimtext eins eins null eins, eins eins eins null.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "Schritt",
+        "Bits",
+        "Notiz"
+       ],
+       "zeilen": [
+        [
+         "Klartext W",
+         "0101 0111",
+         "ASCII 87"
+        ],
+        [
+         "⊕ K1",
+         "0010 1011",
+         ""
+        ],
+        [
+         "=",
+         "0111 1100",
+         "7 | 12"
+        ],
+        [
+         "S-Box",
+         "1010 1000",
+         "10 | 8"
+        ],
+        [
+         "Permutation",
+         "1100 0100",
+         "Ende Runde 1"
+        ],
+        [
+         "Runde 2 (⊕ K2, S-Box, P)",
+         "1101 1110",
+         "Geheimtext"
+        ]
+       ],
+       "breiten": [
+        3.0,
+        1.9,
+        1.9
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "PERMUTATION",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "S-Box-Ausgabe 1 0 1 0 | 1 0 0 0"
+        },
+        {
+         "t": "p",
+         "md": "b5 b1 b6 b2 | b7 b3 b8 b4"
+        },
+        {
+         "t": "p",
+         "md": "= 1 1 0 0 | 0 1 0 0"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "eA · Lawineneffekt: ein Bit kippt",
+   "notizen": "[Kapitel: Lawineneffekt]\n\nSPRECHERTEXT: Jetzt das Spannende. Das V hat ASCII 86 und unterscheidet sich vom W in genau einem Bit, dem letzten. Nach der ersten Runde unterscheiden sich die Ergebnisse schon in drei Bits, nach der zweiten Runde in fünf. Ein winziger Unterschied am Anfang reißt immer mehr Bits mit – wie eine Lawine. Das ist der Lawineneffekt, und er zeigt Diffusion. Über alle Blöcke gemittelt ändern sich bei WIRBEL-8 nach zwei Runden etwa viereinhalb von acht Bits – ideal wäre ungefähr die Hälfte. Echte Verfahren brauchen dafür viel mehr Runden, AES je nach Schlüssellänge zehn bis vierzehn.",
+   "video": true,
+   "abschnitt": "Lawineneffekt",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "tabelle",
+       "kopf": [
+        "",
+        "W",
+        "V",
+        "verschiedene Bits"
+       ],
+       "zeilen": [
+        [
+         "Klartext",
+         "0101 0111",
+         "0101 0110",
+         "1"
+        ],
+        [
+         "nach Runde 1",
+         "1100 0100",
+         "0110 0110",
+         "3"
+        ],
+        [
+         "nach Runde 2",
+         "1101 1110",
+         "1010 1000",
+         "5"
+        ]
+       ],
+       "breiten": [
+        2.0,
+        1.7,
+        1.7,
+        1.9
+       ],
+       "mono": false,
+       "zentriert": false
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "DIFFUSION",
+       "farbe": "ok",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Ein Bit Unterschied verteilt sich über den ganzen Block."
+        },
+        {
+         "t": "p",
+         "md": "WIRBEL-8 im Mittel: 2,6 Bit nach 1 Runde, 4,5 Bit nach 2 Runden (ideal: etwa die Hälfte)"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "eA · So begründest du Diffusion",
+   "notizen": "SPRECHERTEXT: Im Abitur heißt es oft: Begründen Sie, ob das Verfahren Diffusion erfüllt. Eine Begründung braucht eine Weil-deshalb-Kette. Bei WIRBEL-8 klingt das so: Ein gekipptes Klartextbit ändert nach der S-Box mehrere Bits seiner Vierergruppe. Weil die Permutation diese Bits auf beide Hälften verteilt, landen sie in Runde zwei in beiden S-Boxen. Deshalb hängt am Ende fast jedes Geheimtextbit von jedem Klartextbit ab. Und die Gegenprobe: Lässt man die Permutation weg, bleibt eine Änderung in der linken Hälfte für immer links. Dann ist Diffusion nicht erfüllt – egal, wie viele Runden man rechnet.",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "„**Begründen Sie**, ob das Verfahren Diffusion erfüllt.“",
+        "✓ Mit Permutation: „Ein gekipptes Klartextbit ändert nach der S-Box mehrere Bits seiner Vierergruppe. **Weil** die Permutation diese Bits auf **beide** Hälften verteilt, gelangen sie in Runde 2 in **beide** S-Boxen. **Deshalb** hängt am Ende fast jedes Geheimtextbit von jedem Klartextbit ab.“",
+        "✗ Ohne Permutation: Eine Änderung links bleibt **immer links** – Diffusion nicht erfüllt."
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "MUSTER",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Beobachtung"
+        },
+        {
+         "t": "p",
+         "md": "**weil** Baustein …"
+        },
+        {
+         "t": "p",
+         "md": "**deshalb** Eigenschaft"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "eA · Lange Texte: ECB oder CBC?",
+   "notizen": "[Kapitel: ECB und CBC]\n\nREGIE: Bei ECB die beiden gleichen Blöcke rot umranden. Optional Ausschnitt aus dem Runden-Labor: Pixelbild mit ECB (Umriss bleibt sichtbar) und CBC (Rauschen).\n\nSPRECHERTEXT: Ein Block hat acht Bit, ein Text ist länger. Die einfachste Idee: Jeder Block wird einzeln verschlüsselt. Das heißt ECB. Schau auf die Nachricht O, H, O: Das erste und das dritte O werden zu genau demselben Geheimtext. Eve sieht also Muster, ohne den Schlüssel zu kennen. Bei einem Bild bleiben sogar die Umrisse sichtbar. Besser ist CBC: Bevor ein Block verschlüsselt wird, wird er mit dem vorherigen Geheimtextblock per XOR verknüpft, der erste Block mit einem Startwert. Jetzt sind alle drei Geheimtextblöcke verschieden. Der Preis: Ein Übertragungsfehler zerstört bei CBC nicht nur einen Block, sondern kippt auch ein Bit im nächsten.",
+   "video": true,
+   "abschnitt": "ECB und CBC",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "",
+      "O",
+      "H",
+      "O"
+     ],
+     "zeilen": [
+      [
+       "Klartext",
+       "0100 1111",
+       "0100 1000",
+       "0100 1111"
+      ],
+      [
+       "ECB",
+       "1101 0101",
+       "0010 1110",
+       "1101 0101"
+      ],
+      [
+       "CBC (IV 1010 0101)",
+       "1010 0000",
+       "0111 1011",
+       "0001 1110"
+      ]
+     ],
+     "breiten": [
+      2.4,
+      1.6,
+      1.6,
+      1.6
+     ],
+     "mono": false,
+     "zentriert": false
+    },
+    {
+     "t": "p",
+     "md": "**ECB**: jeder Block einzeln → gleiche Blöcke, gleicher Geheimtext"
+    },
+    {
+     "t": "p",
+     "md": "**CBC**: Block vorher ⊕ vorheriger Geheimtextblock (erster: ⊕ Startwert IV)"
+    },
+    {
+     "t": "p",
+     "md": "Bitfehler im Geheimtext: ECB → 1 Block kaputt · CBC → dieser Block + 1 Bit im nächsten"
+    }
+   ]
+  },
+  {
+   "titel": "Typische Fehler – und wie du sie vermeidest",
+   "notizen": "[Kapitel: Typische Fehler]\n\nSPRECHERTEXT: Hier die typischen Fehler mit ihren Fallen-Nummern. P1: ASCII-Wert und Alphabet-Nummer verwechselt. P3: Beim Entschlüsseln einer Blockchiffre musst du alles rückwärts machen – Permutation zurück, S-Box rückwärts lesen, dann XOR, und mit K2 beginnen. P5: XOR und S-Box sind Substitutionen, die Permutation ist eine Transposition. P7: Ein Schlüssel aus lauter Nullen ändert gar nichts – ein schwacher Schlüssel. Und P8: Zweimal XOR mit demselben Schlüssel ist nicht doppelt sicher. Es ist wieder der Klartext.",
+   "video": true,
+   "abschnitt": "Typische Fehler",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "liste",
+       "items": [
+        "**P1** ASCII (A = 65) mit Alphabet-Nummer (A = 1) verwechselt",
+        "**P3** Entschlüsseln: Runden **rückwärts** – Permutation zurück, S-Box rückwärts, dann ⊕ – erst K2, dann K1",
+        "**P5** ⊕ und S-Box sind **Substitution**, die Permutation ist **Transposition**",
+        "**P7** Schlüssel `0000 0000` ist schwach: ⊕ ändert nichts",
+        "**P8** Zweimal ⊕ mit demselben Schlüssel ist nicht „doppelt sicher“ – es ist wieder der Klartext"
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "ABI-CHECK",
+       "farbe": "fehler",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "Bits in Vierergruppen?"
+        },
+        {
+         "t": "p",
+         "md": "Reihenfolge der Schritte?"
+        },
+        {
+         "t": "p",
+         "md": "Jede Stufe eingeordnet?"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "titel": "Das nimmst du mit",
+   "notizen": "[Kapitel: Zusammenfassung]\n\nSPRECHERTEXT: Das nimmst du mit. Erstens: XOR ergibt null bei gleichen und eins bei verschiedenen Bits, und derselbe Schlüssel ver- und entschlüsselt. Zweitens: Das One-Time-Pad ist perfekt sicher – aber nur mit zufälligem, langem, geheimem Schlüssel, der genau einmal benutzt wird. Drittens: Eine Blockchiffre besteht aus Runden mit Rundenschlüssel, S-Box und Permutation, das sorgt für Konfusion und Diffusion. Viertens: ECB verrät gleiche Blöcke, CBC verkettet sie.",
+   "video": true,
+   "abschnitt": "Zusammenfassung",
+   "layout": "merke",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "XOR: gleich → 0, verschieden → 1; derselbe Schlüssel ver- und entschlüsselt"
+    },
+    {
+     "t": "p",
+     "md": "One-Time-Pad: zufällig, so lang wie die Nachricht, geheim, **nur einmal** – sonst C1 ⊕ C2 = M1 ⊕ M2"
+    },
+    {
+     "t": "p",
+     "md": "Blockchiffre: Runden aus ⊕ Rundenschlüssel, S-Box (Konfusion) und Permutation (Diffusion)"
+    },
+    {
+     "t": "p",
+     "md": "ECB zeigt gleiche Blöcke, CBC verkettet die Blöcke"
+    }
+   ]
+  },
+  {
+   "titel": "Weiter im Lab",
+   "notizen": "REGIE: Danach 20 s Endcard (siehe Kopf).\n\nSPRECHERTEXT: Weiter geht es im Lab! In Level drei Punkt eins rechnest du mit Bits und XOR und knackst einen doppelt benutzten Schlüssel. Im eA-Level drei Punkt zwei baust du Blockchiffren-Runden selbst. Mit der Bit-Lupe und dem Runden-Labor kannst du alles ausprobieren. Und eine Frage bleibt offen: Wie bekommt Bob überhaupt den geheimen Schlüssel? Darum geht es im nächsten Video. Bis dann!",
+   "video": true,
+   "abschnitt": null,
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "zeilen": [
+      [
+       "Lab",
+       "Level 3.1 „Vernams Lochstreifen“ und Level 3.2 „Der Blockchiffre-Baukasten“ (eA)"
+      ],
+      [
+       "Akte",
+       "Akten W3·1 und W3·2"
+      ],
+      [
+       "Kryptolabor",
+       "Bit-Lupe (XOR, OTP-Doppelnutzung) und Runden-Labor (Lawineneffekt, ECB/CBC)"
+      ],
+      [
+       "Funkraum",
+       "Szenario „Der doppelte Schlüssel“ im Unterricht"
+      ],
+      [
+       "Online",
+       "kryptos.frankjuchim.de"
+      ]
+     ],
+     "kopfspalte": true,
+     "breiten": [
+      2.0,
+      6.0
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Nächstes Video:** 05 · Das Schlüsselproblem: asymmetrisch, Diffie-Hellman, RSA, hybrid"
+    }
+   ]
+  }
+ ]
+}

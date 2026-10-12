@@ -1,0 +1,308 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK2",
+ "titel": "Die 5-Schritte-Methode",
+ "datei": "KR_WK2_5-Schritte-Methode",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "p",
+   "md": "**Wozu?** Fast jede Krypto-Aufgabe im Abitur beschreibt im Material ein Verfahren, das du noch nie gesehen hast. Mit fünf festen Schritten bekommst du jedes davon in den Griff – und sammelst unterwegs die meisten BE."
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Schritt",
+    "Was du tust",
+    "Typische Operatoren",
+    "Fallen"
+   ],
+   "schrift": 9,
+   "kopfspalte": true,
+   "breiten": [
+    3.0,
+    8.9,
+    3.0,
+    1.9
+   ],
+   "zeilen": [
+    [
+     "1 Lesen und nachrechnen",
+     "Material zweimal lesen; Nummerierung, Schlüssel, Sonderregeln (Füllzeichen, Leserichtung, kurze Blöcke) markieren; **das Beispiel des Materials selbst nachrechnen**",
+     "– (Vorarbeit)",
+     "P1, P4"
+    ],
+    [
+     "2 Anwenden",
+     "Verschlüsseln mit der Vorlage; jede Regel abhaken",
+     "bestimmen, anwenden",
+     "P2, P4"
+    ],
+    [
+     "3 Umkehren",
+     "Entschlüsseln: **letzte Stufe zuerst** rückgängig machen, jede Stufe umkehren (−k statt +k, inverse Permutation, Rotation zurück)",
+     "bestimmen",
+     "P3"
+    ],
+    [
+     "4 Einordnen",
+     "Je Stufe: Transposition (nur Plätze ändern sich) oder Substitution (Zeichen werden ersetzt)? Mono- oder polyalphabetisch (wird derselbe Buchstabe **immer** gleich ersetzt)? Symmetrisch?",
+     "entscheiden, erläutern",
+     "P5"
+    ],
+    [
+     "5 Beurteilen",
+     "Mit dem Beurteilungsraster WK3: Kriterien prüfen, begründen, **Urteil formulieren**",
+     "beurteilen, begründen, entscheiden",
+     "P6–P8, P10"
+    ]
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "MINI-BEISPIEL · DAS VERFAHREN PAARLAUF",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "*Material:* Nummerierung A = 1 … Z = 26. Schlüssel: ein Schlüsselwort aus drei Buchstaben.\n**Stufe 1:** Benachbarte Zeichen werden paarweise vertauscht (1. mit 2., 3. mit 4., …); bei ungerader Länge bleibt das letzte Zeichen stehen. **Stufe 2:** Vigenère mit dem Schlüsselwort (Quadrat der Anlage).\nBeispiel des Materials: „moewe“, Schlüsselwort KAI → Stufe 1: `OMWEE` → Stufe 2: `YMEOE`"
+    },
+    {
+     "t": "p",
+     "md": "*Aufgabe:* Ein Geheimtext lautet `DSZEF UELB`, Schlüsselwort KAI. Bestimme den Klartext, ordne ein, beurteile.",
+     "nach": 0
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Schritt 1 – Lesen und nachrechnen"
+  },
+  {
+   "t": "zweispaltig",
+   "anteil": 0.45,
+   "links": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      2.6,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+     ],
+     "zeilen": [
+      [
+       "Stufe 1",
+       "O",
+       "M",
+       "W",
+       "E",
+       "E"
+      ],
+      [
+       "Schlüssel",
+       "K",
+       "A",
+       "I",
+       "K",
+       "A"
+      ],
+      [
+       "Stufe 2",
+       "Y",
+       "M",
+       "E",
+       "O",
+       "E"
+      ]
+     ]
+    }
+   ],
+   "rechts": [
+    {
+     "t": "p",
+     "md": "Beispiel prüfen: O + K = Y, M + A = M, W + I = E, E + K = O, E + A = E → `YMEOE` ✓. Dabei fällt auf: Der Schlüsselbuchstabe A verschiebt **nicht** (M bleibt M) – A bedeutet Verschiebung 0 (P1). Das letzte E bleibt in Stufe 1 stehen (ungerade Länge, P4).",
+     "klein": true
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Schritt 2 – Anwenden"
+  },
+  {
+   "t": "p",
+   "md": "(Hier nicht verlangt; zur Übung: „sturmflut“ → Stufe 1 `TSRUFMULT` → Stufe 2 `DSZEFUELB`.)"
+  },
+  {
+   "t": "h",
+   "md": "Schritt 3 – Umkehren: letzte Stufe zuerst"
+  },
+  {
+   "t": "tabelle",
+   "mono": true,
+   "kopfspalte": true,
+   "zentriert": true,
+   "schrift": 10,
+   "breiten": [
+    4.6,
+    1.1,
+    1.1,
+    1.1,
+    1.1,
+    1.1,
+    1.1,
+    1.1,
+    1.1,
+    1.1
+   ],
+   "zeilen": [
+    [
+     "Geheimtext",
+     "D",
+     "S",
+     "Z",
+     "E",
+     "F",
+     "U",
+     "E",
+     "L",
+     "B"
+    ],
+    [
+     "− Schlüssel",
+     "K",
+     "A",
+     "I",
+     "K",
+     "A",
+     "I",
+     "K",
+     "A",
+     "I"
+    ],
+    [
+     "Stufe 2 zurück",
+     "T",
+     "S",
+     "R",
+     "U",
+     "F",
+     "M",
+     "U",
+     "L",
+     "T"
+    ],
+    [
+     "Paare tauschen",
+     "ST",
+     "",
+     "UR",
+     "",
+     "MF",
+     "",
+     "LU",
+     "",
+     "T"
+    ],
+    [
+     "Klartext",
+     "s",
+     "t",
+     "u",
+     "r",
+     "m",
+     "f",
+     "l",
+     "u",
+     "t"
+    ]
+   ],
+   "hervor": [
+    [
+     4,
+     1
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     4,
+     6
+    ],
+    [
+     4,
+     7
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     4,
+     9
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Zuerst Stufe 2 zurück (Schlüsselbuchstaben K, A, I, … abziehen): D − K = T, S − A = S, Z − I = R, E − K = U, F − A = F, U − I = M, E − K = U, L − A = L, B − I = T → `TSRUFMULT`. Dann Stufe 1 zurück (Paare erneut tauschen): TS|RU|FM|UL|T → ST|UR|MF|LU|T → **sturmflut**."
+  },
+  {
+   "t": "falle",
+   "nr": "P3",
+   "titel": "Falsche Reihenfolge",
+   "md": "Wer zuerst die Paare tauscht und dann Vigenère zurückrechnet, erhält `IDWPUXBET` – denn nach dem Tausch stehen die Zeichen unter anderen Schlüsselbuchstaben."
+  },
+  {
+   "t": "h",
+   "md": "Schritt 4 – Einordnen"
+  },
+  {
+   "t": "p",
+   "md": "Stufe 1: **Transposition** (dieselben Zeichen, andere Plätze; schlüsselunabhängig). Stufe 2: **polyalphabetische Substitution**, denn derselbe Buchstabe wird verschieden ersetzt (im Beispiel E → O an Position 4 und E → E an Position 5). Insgesamt **symmetrisch** (ein Schlüssel zum Ver- und Entschlüsseln)."
+  },
+  {
+   "t": "h",
+   "md": "Schritt 5 – Beurteilen (Raster WK3)"
+  },
+  {
+   "t": "p",
+   "md": "Schlüsselraum 26³ = 17 576 (von Hand groß, für Rechner winzig); Stufe 1 ist schlüsselunabhängig und nach Kerckhoffs wirkungslos; Stufe 2 ist ein Vigenère mit Periode 3 → in drei Teiltexte zerlegen, je Teiltext Häufigkeitsanalyse (lange Texte); schwache Schlüssel: AAA (gar keine Substitution), drei gleiche Buchstaben (Caesar). **Urteil:** PAARLAUF ist so sicher wie ein Vigenère mit drei Buchstaben, also unsicher gegen einen Angreifer mit genügend Geheimtext."
+  },
+  {
+   "t": "merke",
+   "titel": "Merksätze",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "Erst nachrechnen, dann anwenden – das Material-Beispiel ist deine Probe.",
+      "Entschlüsseln heißt: rückwärts durch die Stufen.",
+      "Eine Stufe ohne Schlüssel bringt keine Sicherheit (Kerckhoffs).",
+      "Ohne ausdrückliches Urteil keine volle Punktzahl bei „beurteilen“."
+     ]
+    }
+   ]
+  }
+ ]
+}

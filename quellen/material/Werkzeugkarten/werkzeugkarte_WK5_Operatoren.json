@@ -1,0 +1,185 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK5",
+ "titel": "Operatoren in der Kryptologie",
+ "datei": "KR_WK5_Operatoren",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "p",
+   "md": "Die 18 Operatoren der KC-Liste (Anhang A1, Definition wörtlich) mit Krypto-Beispiel, Mustersatz-Anfang und typischem Fehler. Eine amtliche Zuordnung zu Anforderungsbereichen gibt es nicht; die AFB-Angabe in Klammern ist eine Orientierung.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Operator (AFB)",
+    "Definition (KC)",
+    "Krypto-Beispiel",
+    "Mustersatz-Anfang",
+    "Typischer Fehler"
+   ],
+   "schrift": 8,
+   "kopfspalte": true,
+   "breiten": [
+    2.7,
+    3.6,
+    3.8,
+    3.6,
+    3.1
+   ],
+   "zeilen": [
+    [
+     "**abschätzen** (II)",
+     "durch begründete Überlegungen Größenordnungen angeben",
+     "„Schätzen Sie ab, wie lange ein Brute-Force-Angriff bei 26^4^ Schlüsseln und 1000 Versuchen pro Sekunde dauert.“",
+     "„Es gibt rund 4,6 · 10^5^ Schlüssel; bei 10^3^ Versuchen je Sekunde dauert das höchstens etwa …“",
+     "Genaue Rechnung ohne Begründung der Größenordnung"
+    ],
+    [
+     "**analysieren / untersuchen** (II–III)",
+     "unter einer gegebenen Fragestellung wichtige Bestandteile oder Eigenschaften nach fachlich üblichen Kriterien herausarbeiten",
+     "„Analysieren Sie die Auswirkung eines verlorenen Geheimtextzeichens.“",
+     "„Betrachtet man zunächst Stufe 2, so … ; für Stufe 1 folgt daraus …“",
+     "Nur ein Ergebnis ohne Herleitung je Stufe"
+    ],
+    [
+     "**anwenden** (I–II)",
+     "ein gegebenes Verfahren unter Berücksichtigung konkreter Werte durchführen",
+     "„Wenden Sie das Verfahren mit dem Schlüssel k = 7 auf … an.“",
+     "„Nummerierung A = 1 … ; Schritt 1: … ; Ergebnis: …“",
+     "Regel des Materials übersehen (P4), Zählbasis (P1)"
+    ],
+    [
+     "**begründen / zeigen** (II–III)",
+     "einen Sachverhalt auf Gesetzmäßigkeiten bzw. kausale Zusammenhänge zurückführen",
+     "„Begründen Sie, dass eine Häufigkeitsanalyse über den gesamten Geheimtext nicht zielführend ist.“",
+     "„…, weil … . Daraus folgt, dass …“",
+     "Behauptung ohne „weil“ (P10)"
+    ],
+    [
+     "**berechnen** (I–II)",
+     "Ergebnisse durch Rechenoperationen gewinnen",
+     "„Berechnen Sie die Anzahl der Schlüssel für 9 Personen.“",
+     "„n(n − 1)/2 = 9 · 8 / 2 = 36“",
+     "Formel ohne Einsetzen; n(n − 1) (P7)"
+    ],
+    [
+     "**beschreiben** (I–II)",
+     "Sachverhalte oder Verfahren in Textform unter Verwendung der Fachsprache in eigenen Worten wiedergeben",
+     "„Beschreiben Sie das Prinzip asymmetrischer Verschlüsselung.“",
+     "„Jede Person besitzt ein Schlüsselpaar aus … Zunächst … anschließend …“",
+     "Alltagssprache statt Fachbegriffe; Bewertung statt Beschreibung"
+    ],
+    [
+     "**bestimmen** (II)",
+     "einen Lösungsweg darstellen und das Ergebnis formulieren",
+     "„Bestimmen Sie den Klartext zum Geheimtext …“",
+     "„Stufe 2 rückwärts: … ; Stufe 1 rückwärts: … ; Klartext: …“",
+     "Nur Ergebnis ohne Weg; falsche Stufenreihenfolge (P3)"
+    ],
+    [
+     "**beurteilen** (III)",
+     "zu einem Sachverhalt ein selbstständiges Urteil unter Verwendung von Fachwissen und Fachmethoden formulieren und begründen",
+     "„Beurteilen Sie die Sicherheit des Verfahrens.“",
+     "„Nach dem Kriterium … ist …; zudem … . Insgesamt ist das Verfahren …“",
+     "Kein ausdrückliches Urteil (P10)"
+    ],
+    [
+     "**darstellen** (I–II)",
+     "Sachverhalte, Zusammenhänge und Algorithmen strukturiert in ggf. fachspezifischer Form wiedergeben",
+     "„Stellen Sie den Ablauf eines Man-in-the-Middle-Angriffs dar.“",
+     "Schaubild mit nummerierten Pfeilen (WK4) oder nummerierte Schrittfolge",
+     "Ungeordneter Fließtext; Schlüssel ohne Inhaber"
+    ],
+    [
+     "**erörtern** (III)",
+     "Argumente zu einer Aussage oder These einander gegenüberstellen und abwägen",
+     "„Erörtern Sie, ob Messenger-Anbieter eine Hintertür für Behörden einbauen sollten.“",
+     "„Für … spricht … ; dagegen spricht … ; wägt man ab, …“",
+     "Nur eine Seite; keine Abwägung am Ende"
+    ],
+    [
+     "**entwerfen / entwickeln** (II–III)",
+     "nach vorgegebenen Bedingungen ein Modell / einen Algorithmus selbstständig planen / erarbeiten",
+     "„Entwickeln Sie eine Vorgehensweise, um den Geheimtext ohne Schlüssel zu entschlüsseln.“",
+     "„Schritt 1: … ; Schritt 2: … ; Voraussetzung: …“",
+     "Nur Schlagwort („Häufigkeitsanalyse“) statt Plan (P6)"
+    ],
+    [
+     "**ergänzen / erweitern / verändern** (II)",
+     "eine vorgegebene Problemlösung unter Berücksichtigung vorgegebener Kriterien anpassen",
+     "„Ergänzen Sie das Schaubild um die fehlenden Schlüssel.“",
+     "„(A) privater Schlüssel von Alice; (B) …“",
+     "„Schlüssel“ ohne Art und Inhaber (P9)"
+    ],
+    [
+     "**erläutern** (II)",
+     "einen Sachverhalt durch zusätzliche Informationen veranschaulichen und verständlich machen",
+     "„Erläutern Sie das Prinzip der Häufigkeitsanalyse.“",
+     "„…, das heißt … . Zum Beispiel …“",
+     "Ohne Beispiel bzw. Veranschaulichung (P10)"
+    ],
+    [
+     "**erstellen** (II)",
+     "bekannte Verfahren zur Lösung eines neuen Problems aus einem bekannten Problemkreis anwenden",
+     "„Erstellen Sie die Schlüsseltabelle für das Schlüsselwort …“",
+     "Tabelle bzw. Vorlage vollständig ausfüllen",
+     "Regeln (doppelte Buchstaben, I = J) übersehen (P4)"
+    ],
+    [
+     "**implementieren** (II–III)",
+     "Erarbeiten und Codieren eines Algorithmus oder einer Datenstruktur",
+     "„Implementieren Sie die Operation verschiebe in einer im Unterricht verwendeten Programmiersprache.“",
+     "Methodenkopf exakt nach Signatur, dann Rumpf",
+     "Nicht erlaubte Zeichenketten-Operationen; Java-`%` mit negativen Zahlen (P2)"
+    ],
+    [
+     "**nennen / angeben** (I)",
+     "ohne Erläuterungen und Begründungen aufzählen",
+     "„Nennen Sie zwei Grundsätze der DSGVO.“",
+     "„Zweckbindung; Datenminimierung.“",
+     "Zeit verschwendet mit Erklärungen; mehr als verlangt (nur die ersten werden gewertet)"
+    ],
+    [
+     "**vergleichen** (II)",
+     "nach vorgegebenen oder selbst gewählten Gesichtspunkten Gemeinsamkeiten, Ähnlichkeiten und Unterschiede ermitteln und darstellen",
+     "„Vergleichen Sie das Verfahren mit dem Vigenère-Verfahren.“",
+     "„Hinsichtlich … gilt bei beiden …; dagegen …“",
+     "Zwei getrennte Beschreibungen ohne Gegenüberstellung"
+    ],
+    [
+     "**zeichnen / grafisch darstellen** (I–II)",
+     "die wesentlichen Eigenschaften eines Verfahrens / eines Modells übersichtlich in einer Zeichnung darstellen",
+     "„Zeichnen Sie das Ablaufschaubild der Signaturprüfung.“",
+     "Akteure, nummerierte Pfeile, Beschriftungen (WK4)",
+     "Pfeile ohne Nummern/Beschriftung"
+    ]
+   ]
+  },
+  {
+   "t": "kasten",
+   "kopf": "ZUSATZOPERATOR (IN ABITURAUFGABEN ÜBLICH): ENTSCHEIDEN (BEGRÜNDET)",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "„Entscheiden Sie begründet, ob die Aussage korrekt ist.“ Erwartet: (1) Entscheidung, (2) fachliche Begründung, (3) Beleg (Rechnung, Beispiel, Gegenbeispiel). Mustersatz: „Die Aussage ist falsch, denn … . Gegenbeispiel: …“ **Typischer Fehler:** Entscheidung ohne Begründung = 0 BE.",
+     "nach": 0
+    }
+   ]
+  },
+  {
+   "t": "merke",
+   "titel": "Zeitregel",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "eA **2,25 min je BE**, gA **2,2 min je BE** (Abitur: 270 min / 120 BE bzw. 220 min / 100 BE).",
+     "nach": 0
+    }
+   ]
+  }
+ ]
+}

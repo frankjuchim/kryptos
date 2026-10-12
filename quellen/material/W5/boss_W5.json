@@ -1,0 +1,431 @@
+{
+ "typ": "pruefung",
+ "welt": 5,
+ "kennung": "PAPIER-BOSS W5",
+ "titel": "Der Messenger",
+ "datei": "KR_W5_Boss5_Messenger",
+ "niveau": "kern",
+ "zeit": "60 Minuten",
+ "hilfsmittel": "Abitur-Anlage (Alphabet, Nummerierung A = 1 … Z = 26); kein Taschenrechner",
+ "rahmen_kopf": "AUSGANGSLAGE",
+ "rahmen": "Mallory hat einen neuen Plan: Statt Briefe abzufangen, nistet sie sich in einem Messenger ein. Der (erfundene) Messenger „Brieftaube“ verspricht sichere Kommunikation. Jede Nachricht wird mit der Hashfunktion **FEDER** (Material 1) und einer **digitalen Signatur** geschützt (Material 2). Öffentliche Schlüssel aller Nutzerinnen und Nutzer liegen auf einem **Schlüsselserver** des Anbieters.",
+ "hinweise": [
+  {
+   "t": "hinweis",
+   "kopf": "HINWEISE",
+   "md": "Notieren Sie alle Rechenwege. Bearbeiten Sie die Aufgaben auf eigenem Papier; in Material 2 genügt es, die Angaben zu (1) bis (4) zu notieren."
+  }
+ ],
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "Der Messenger „Brieftaube“",
+   "material": [
+    {
+     "t": "h",
+     "md": "Material 1 – Hashfunktion FEDER"
+    },
+    {
+     "t": "p",
+     "md": "Nummerierung **A = 1 … Z = 26**. Die Nachricht wird normalisiert (nur Kleinbuchstaben a–z, Leerzeichen entfallen)."
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Zerlege die Nachricht in Blöcke aus je drei Buchstaben. Ist der letzte Block kürzer, wird er mit **x** aufgefüllt.",
+      "Für jeden Block (b~1~ b~2~ b~3~) berechne den Blockwert **b~1~ + 2 · b~2~ + 3 · b~3~**.",
+      "Der Hashwert ist die **Summe aller Blockwerte mod 37** (Ergebnis 0 … 36)."
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* „geh zum tor“:"
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "zentriert": true,
+     "breiten": [
+      3.0,
+      4.0,
+      4.0,
+      4.0
+     ],
+     "schrift": 10,
+     "zeilen": [
+      [
+       "Block",
+       "`geh`",
+       "`zum`",
+       "`tor`"
+      ],
+      [
+       "Blockwert",
+       "7 + 10 + 24 = 41",
+       "26 + 42 + 39 = 107",
+       "20 + 30 + 54 = 104"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Summe 252; 252 mod 37 = 30 (denn 6 · 37 = 222). Hashwert **30**."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** den FEDER-Hash der Nachricht „kommt morgen“.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Normalisiert „kommtmorgen“ (11 Zeichen) → Blöcke `kom` · `mtm` · `org` · `enx` (Auffüllen mit x!)",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Blockwerte 11 + 30 + 39 = 80 · 13 + 40 + 39 = 92 · 15 + 36 + 21 = 72 · 5 + 28 + 72 = 105",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Summe 349; 349 mod 37 = 349 − 333 = **16**",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Letzten Block nicht aufgefüllt (P4) → Blockwert „en“ = 33 statt 105, Summe 277 → 18 (falsch); A = 0 statt A = 1 (P1); mod falsch (P2)."
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen Sie**, dass es für den FEDER-Hash verschiedene Nachrichten mit gleichem Hashwert geben muss.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Der Hashwert hat nur 37 mögliche Werte, es gibt aber unendlich (beliebig) viele Nachrichten",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Nach dem Schubfachprinzip müssen mehrere Nachrichten denselben Hashwert haben",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Nur ein Kollisionsbeispiel statt Begründung (P10)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Zeigen Sie** an zwei verschiedenartigen Manipulationen, dass ein Angreifer die Nachricht aus a) so verändern kann, dass der FEDER-Hash gleich bleibt. Die veränderten Nachrichten müssen keinen Sinn ergeben.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Manipulation 1 mit Nachweis gleicher Blocksumme, z. B. **Blöcke vertauschen**: „mtmkomorgen“ → `mtm` · `kom` · `org` · `enx`, Summe 349 → 16",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Manipulation 2 mit Nachweis, z. B. **innerhalb eines Blocks ausgleichen** (erster Buchstabe +2, zweiter −1): `kom` → `mnm` (13 + 28 + 39 = 80) → „mnmmtmorgen“ → 16; oder **Auffüllzeichen x anhängen**: „kommtmorgenx“ ergibt dieselben Blöcke → 16",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Prinzip benannt (Summe der Blockwerte bleibt gleich bzw. Reihenfolge der Blöcke wirkt nicht)",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "Jede Manipulation mit nachgerechneter Gleichheit der Blocksumme zählt (z. B. zweiter Buchstabe +3, dritter −2 in einem Block; Ausgleich zwischen zwei Blöcken: erster Buchstabe in Block 1 +1, erster in Block 2 −1). „Verschiedenartig“ heißt: unterschiedliches Prinzip (Vertauschen / Ausgleichen / Auffüllen), nicht zweimal dasselbe Prinzip.",
+     "fehler": "Nur eine Manipulationsart oder ohne Nachrechnung (P10)."
+    },
+    {
+     "bez": "d)",
+     "text": "**Untersuchen Sie**, ob der FEDER-Hash den Lawineneffekt erfüllt.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Ändert man z. B. den ersten Buchstaben eines Blocks um 1, ändert sich der Hashwert nur um 1 (Beispiel mit Rechnung)",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Lawineneffekt nicht erfüllt",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Urteil ohne Beispielrechnung (P10)."
+    },
+    {
+     "bez": "e)",
+     "text": "**Ergänzen Sie** in Material 2 an den Stellen (1) bis (4) die passenden Angaben (Verfahren bzw. Schlüsselart und Inhaber).",
+     "be": 4,
+     "material": [
+      {
+       "t": "h",
+       "md": "Material 2 – Digitale Signatur bei Brieftaube (Alice sendet an Bob)"
+      },
+      {
+       "t": "schaubild",
+       "akteure": [
+        {
+         "id": "A",
+         "name": "Alice",
+         "unter": "Absenderin"
+        },
+        {
+         "id": "B",
+         "name": "Bob",
+         "unter": "Empfänger"
+        }
+       ],
+       "breite_cm": 13.0,
+       "_W": 760,
+       "_gr": 19,
+       "schritte": [
+        {
+         "nr": 1,
+         "von": "A",
+         "nach": "A",
+         "text": "Nachricht → (1) ______________ → Hashwert"
+        },
+        {
+         "nr": 2,
+         "von": "A",
+         "nach": "A",
+         "text": "Hashwert verschlüsseln mit (2) ______________ → Signatur"
+        },
+        {
+         "nr": 3,
+         "von": "A",
+         "nach": "B",
+         "text": "Nachricht + Signatur"
+        },
+        {
+         "nr": 4,
+         "von": "B",
+         "nach": "B",
+         "text": "Nachricht → FEDER → Hashwert H₁"
+        },
+        {
+         "nr": 5,
+         "von": "B",
+         "nach": "B",
+         "text": "Signatur entschlüsseln mit (3) ______________ → Hashwert H₂"
+        },
+        {
+         "nr": 6,
+         "von": "B",
+         "nach": "B",
+         "text": "(4) ______________ → gültig / ungültig"
+        }
+       ]
+      }
+     ],
+     "erwartung": [
+      {
+       "punkt": "(1) Hashfunktion FEDER",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) privater Schlüssel von Alice",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(3) öffentlicher Schlüssel von Alice",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(4) H~1~ und H~2~ vergleichen",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "(2) Bobs Schlüssel (P9); (4) der Vergleich fehlt; Schlüsselart ohne Inhaber."
+    },
+    {
+     "bez": "f)",
+     "text": "**Erläutern Sie**, wie ein Angreifer, der den Schlüsselserver kontrolliert, die Vertraulichkeit der Nachrichten zwischen Alice und Bob aushebeln kann.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Angreifer hinterlegt bzw. liefert seinen eigenen öffentlichen Schlüssel als Bobs Schlüssel",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Alice verschlüsselt mit diesem Schlüssel, der Angreifer entschlüsselt mit seinem privaten Schlüssel und liest",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Er verschlüsselt mit Bobs echtem öffentlichen Schlüssel neu und leitet weiter, sodass niemand den Angriff bemerkt (Man-in-the-Middle)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Angreifer knackt die Verschlüsselung“ (fachlich falsch – er tauscht Schlüssel)."
+    },
+    {
+     "bez": "g)",
+     "text": "**Beschreiben Sie**, wie Zertifikate einer Zertifizierungsstelle diesen Angriff verhindern.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Eine CA bestätigt mit ihrer Signatur die Zuordnung von Bobs öffentlichem Schlüssel zu Bob",
+       "afb": "I",
+       "be": 1
+      },
+      {
+       "punkt": "Alice prüft die Signatur mit dem öffentlichen Schlüssel der CA (Vertrauensanker) und erkennt so einen untergeschobenen Schlüssel",
+       "afb": "I",
+       "be": 1
+      }
+     ],
+     "fehler": "Zertifikat „verschlüsselt“ die Nachricht (P5)."
+    },
+    {
+     "bez": "h)",
+     "text": "**Entscheiden Sie** begründet, ob die folgende Werbeaussage korrekt ist: „Weil Brieftaube jede Nachricht digital signiert, kann niemand außer dem Empfänger sie lesen.“",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Falsch",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Eine Signatur sichert Integrität und Authentizität, die Nachricht bleibt aber lesbar; Vertraulichkeit erfordert zusätzlich Verschlüsselung mit Bobs öffentlichem Schlüssel bzw. hybrid",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "Signatur = Verschlüsselung (P5/P9)."
+    },
+    {
+     "bez": "i)",
+     "text": "**Beurteilen Sie** die Regelungen (A) und (B) aus Material 3 im Hinblick auf Grundsätze der Datenschutz-Grundverordnung (DSGVO).",
+     "be": 3,
+     "material": [
+      {
+       "t": "h",
+       "md": "Material 3 – Auszug aus den Nutzungsbedingungen von Brieftaube"
+      },
+      {
+       "t": "tabelle",
+       "breiten": [
+        1.2,
+        15.4
+       ],
+       "kopfspalte": true,
+       "zeilen": [
+        [
+         "(A)",
+         "„Zur Verbesserung unseres Dienstes speichern wir alle Nachrichten zusätzlich unverschlüsselt für zehn Jahre.“"
+        ],
+        [
+         "(B)",
+         "„Beim ersten Start übertragen wir das vollständige Adressbuch Ihres Geräts an unsere Server und nutzen die Telefonnummern auch für Werbeangebote unserer Partner.“"
+        ],
+        [
+         "(C)",
+         "„Passwörter speichern wir ausschließlich als gesalzene Hashwerte.“"
+        ]
+       ]
+      }
+     ],
+     "erwartung": [
+      {
+       "punkt": "(A) verstößt gegen Speicherbegrenzung (zehn Jahre ohne Notwendigkeit) und Integrität/Vertraulichkeit (unverschlüsselt)",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "(B) verstößt gegen Zweckbindung (Werbung) und Datenminimierung/Rechtmäßigkeit (Daten Dritter ohne Einwilligung)",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Urteil: beide Regelungen sind mit der DSGVO nicht vereinbar bzw. nur mit ausdrücklicher Einwilligung und Begrenzung zulässig; im Gegensatz dazu entspricht (C) dem Grundsatz Integrität und Vertraulichkeit",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "Auch Transparenz und Rechtmäßigkeit (fehlende Einwilligung der Kontakte) anrechnen.",
+     "fehler": "Grundsätze nur aufgezählt, kein Urteil (P10)."
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   23
+  ],
+  [
+   14,
+   22
+  ],
+  [
+   13,
+   21
+  ],
+  [
+   12,
+   20
+  ],
+  [
+   11,
+   18
+  ],
+  [
+   10,
+   17
+  ],
+  [
+   9,
+   16
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   6,
+   12
+  ],
+  [
+   5,
+   11
+  ],
+  [
+   4,
+   10
+  ],
+  [
+   3,
+   8
+  ],
+  [
+   2,
+   7
+  ],
+  [
+   1,
+   5
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "Viel Erfolg – und lassen Sie sich von Mallory nichts unterschieben!"
+}

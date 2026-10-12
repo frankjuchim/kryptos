@@ -1,0 +1,565 @@
+{
+ "typ": "pruefung",
+ "welt": 2,
+ "kennung": "PAPIER-BOSS W2",
+ "titel": "Das Zwei-Quadrat",
+ "datei": "KR_W2_Boss2_Zwei-Quadrat",
+ "niveau": "kern",
+ "zeit": "60 Minuten",
+ "hilfsmittel": "Anlage (Vigenère-Quadrat, Alphabet A = 1 … Z = 26); kein Taschenrechner",
+ "rahmen": "Im Archiv taucht ein Notizbuch eines venezianischen Kuriers auf. Darin beschreibt er ein Verfahren, das er „Zwei-Quadrat“ nennt. Prüfe, ob du es beherrschst – und ob es hält, was der Kurier sich davon versprach.",
+ "rahmen_kopf": "AUSGANGSLAGE",
+ "aufgaben": [
+  {
+   "nr": "1",
+   "titel": "Das Verfahren Zwei-Quadrat",
+   "material": [
+    {
+     "t": "h",
+     "md": "Material – Das Verfahren Zwei-Quadrat"
+    },
+    {
+     "t": "p",
+     "md": "Das Verfahren verwendet zwei Schlüsselquadrate Q1 und Q2 der Größe 5 × 5, in denen die Buchstaben I und J nicht unterschieden werden. Jedes Quadrat wird aus einem Schlüsselwort gebildet: Die Buchstaben des Schlüsselworts werden ohne Wiederholung zeilenweise eingetragen, danach folgen die übrigen Buchstaben in alphabetischer Reihenfolge. Die Zeilen werden von oben nach unten mit 1 bis 5, die Spalten von links nach rechts mit 1 bis 5 nummeriert. Zum Schlüssel gehört außerdem ein **Zahlenschlüssel** aus den Ziffern 0 bis 4."
+    },
+    {
+     "t": "p",
+     "md": "**Verschlüsselung:** Für den Klartextbuchstaben an der i-ten Stelle wird die i-te Ziffer k des Zahlenschlüssels verwendet; ist der Zahlenschlüssel aufgebraucht, beginnt man wieder mit seiner ersten Ziffer. Der Klartextbuchstabe wird in Q1 gesucht; er stehe dort in Zeile z und Spalte s. Man berechnet die neue Zeile"
+    },
+    {
+     "t": "formel",
+     "md": "z' = ((z + k − 1) mod 5) + 1."
+    },
+    {
+     "t": "p",
+     "md": "Der Geheimtextbuchstabe ist der Buchstabe, der in **Q2** in Zeile z' und Spalte s steht. (mod bezeichnet den kleinsten nicht negativen Rest.)"
+    },
+    {
+     "t": "p",
+     "md": "**Abbildung 1** – Schlüsselquadrate (Q1 aus BRIEFTAUBE, Q2 aus KOMPASS)"
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "p",
+       "md": "**Q1**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "BRIEF",
+        "TAUCD",
+        "GHKLM",
+        "NOPQS",
+        "VWXYZ"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "schrift": 12
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Q2**",
+       "zentriert": true
+      },
+      {
+       "t": "quadrat",
+       "zeilen": [
+        "KOMPA",
+        "SBCDE",
+        "FGHIL",
+        "NQRTU",
+        "VWXYZ"
+       ],
+       "kopfzeile": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "kopfspalte": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+       ],
+       "schrift": 12
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Beispiel:** Zahlenschlüssel 3142. Der Klartextbuchstabe h an der 1. Stelle steht in Q1 in Zeile 3 und Spalte 2; mit k = 3 ergibt sich z' = ((3 + 3 − 1) mod 5) + 1 = 1. In Q2 steht in Zeile 1, Spalte 2 der Buchstabe O."
+    },
+    {
+     "t": "seitenumbruch"
+    },
+    {
+     "t": "p",
+     "md": "**Aufgaben** (Schlüssel: Q1 und Q2 aus Abbildung 1, Zahlenschlüssel 3142, sofern nicht anders angegeben)"
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Wenden Sie** das Verfahren auf den Klartext *nachtwache* **an**. Verwenden Sie die Vorlage (Abbildung 2).",
+     "be": 3,
+     "material": [
+      {
+       "t": "p",
+       "md": "**Abbildung 2** – Vorlage (für a) und b))",
+       "klein": true
+      },
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10,
+       "kopf": [
+        "Stelle",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "zeilen": [
+        [
+         "Klartext",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "z, s",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "k",
+         "3",
+         "1",
+         "4",
+         "2",
+         "3",
+         "1",
+         "4",
+         "2",
+         "3",
+         "1"
+        ],
+        [
+         "z'",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "Geheimtext",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.8,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4
+       ]
+      }
+     ],
+     "erwartung": [
+      {
+       "punkt": "Vorlage korrekt: n (4,1; k 3; z' 2) → S · a (2,2; 1; 3) → G · c (2,4; 4; 1) → P · h (3,2; 2; 5) → W · t (2,1; 3; 5) → V · w (5,2; 1; 1) → O · a (2,2; 4; 1) → O · c (2,4; 2; 4) → T · h (3,2; 3; 1) → O · e (1,4; 1; 2) → D. Geheimtext **SGPWV OOTOD**. 3 BE bei fehlerfreiem Ergebnis; 2 BE bei 1–2 Fehlern; 1 BE bei richtigem Verfahren mit mehreren Rechenfehlern.",
+       "afb": "I",
+       "be": 3
+      }
+     ],
+     "fehler": "z' = 0 statt 5 bzw. statt 1 (P2: h an Stelle 9: (3 + 3 − 1) mod 5 = 0 → z' = 1); in Q1 statt Q2 ablesen (P4)."
+    },
+    {
+     "bez": "b)",
+     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `WVCIQ XDQVA`.",
+     "be": 3,
+     "material": [
+      {
+       "t": "tabelle",
+       "kopfspalte": true,
+       "zentriert": true,
+       "schrift": 10,
+       "kopf": [
+        "Stelle",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+       ],
+       "zeilen": [
+        [
+         "Geheimtext",
+         "W",
+         "V",
+         "C",
+         "I",
+         "Q",
+         "X",
+         "D",
+         "Q",
+         "V",
+         "A"
+        ],
+        [
+         "z', s",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "k",
+         "3",
+         "1",
+         "4",
+         "2",
+         "3",
+         "1",
+         "4",
+         "2",
+         "3",
+         "1"
+        ],
+        [
+         "z",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ],
+        [
+         "Klartext",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         "",
+         ""
+        ]
+       ],
+       "breiten": [
+        2.8,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4,
+        1.4
+       ]
+      }
+     ],
+     "erwartung": [
+      {
+       "punkt": "Umkehrung: Geheimtextbuchstabe in **Q2** suchen (Zeile z', Spalte s), z = ((z' − k − 1) mod 5) + 1, Klartextbuchstabe in **Q1** in Zeile z, Spalte s. W (5,2; 3) → 2 → a · V (5,1; 1) → 4 → n · C (2,3; 4) → 3 → k · I (3,4; 2) → 1 → e · Q (4,2; 3) → 1 → r · X (5,3; 1) → 4 → p · D (2,4; 4) → 3 → l · Q (4,2; 2) → 2 → a · V (5,1; 3) → 2 → t · A (1,5; 1) → 5 → z. Klartext *ankerplatz*.",
+       "afb": "I",
+       "be": 3
+      }
+     ],
+     "alternativen": "auch über „Zeile zurückzählen“ ohne Formel.",
+     "fehler": "Zeile + k statt − k, Buchstabe in Q1 gesucht (P3)."
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie begründet**, ob es sich um ein Transpositions- oder ein Substitutionsverfahren handelt und ob das Verfahren mono- oder polyalphabetisch ist. Beziehen Sie sich dabei auf Ihr Ergebnis aus a).",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Substitution: Buchstaben werden ersetzt, ihre Reihenfolge bleibt.",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Polyalphabetisch: derselbe Klartextbuchstabe wird verschieden ersetzt, z. B. a → G (Stelle 2) und a → O (Stelle 7), h → W und h → O.",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Umgekehrt steht O für w, a und h. (Symmetrisch, da gleicher Schlüssel zum Ver- und Entschlüsseln – nicht gefordert.)",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "fehler": "„Zwei Quadrate → bigraphisch“ oder „monoalphabetisch, weil jedes Quadrat fest ist“ (P5)."
+    },
+    {
+     "bez": "d)",
+     "text": "**Begründen Sie**, dass das Verfahren mit dem Zahlenschlüssel 2222 monoalphabetisch ist und dass es – unabhängig von der Länge des Zahlenschlüssels – höchstens fünf verschiedene Ersetzungsalphabete gibt.",
+     "be": 2,
+     "erwartung": [
+      {
+       "punkt": "Bei 2222 wird jeder Buchstabe mit derselben Zeilenverschiebung umgerechnet → jeder Klartextbuchstabe immer gleich ersetzt (z. B. *anna* → QKKQ).",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Die Ersetzung hängt nur von k ab, und k kann nur 0, 1, 2, 3, 4 sein (5 Werte; eine 5 wirkte wie 0) → höchstens 5 Alphabete, auch bei langem Zahlenschlüssel.",
+       "afb": "II",
+       "be": 1
+      }
+     ]
+    },
+    {
+     "bez": "e)",
+     "text": "Ein Angreifer weiß, dass der Zahlenschlüssel aus vier Ziffern besteht, und besitzt einen langen deutschen Geheimtext. **Erläutern Sie**, wie er mithilfe der Häufigkeitsanalyse vorgehen kann. Gehen Sie auch darauf ein, welche Information die Spalten der Quadrate preisgeben.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Geheimtext in 4 Teiltexte zerlegen (Stellen 1, 5, 9, …; 2, 6, 10, …; …); jeder Teiltext ist monoalphabetisch verschlüsselt.",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "In jedem Teiltext Häufigkeitsanalyse (häufigster Buchstabe ↦ e, dann n, i, s, r …).",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "Spalteninformation: Ein Geheimtextbuchstabe steht in Q2 in derselben Spalte wie der Klartextbuchstabe in Q1 – je Klartextbuchstabe kommen nur 5 Geheimtextbuchstaben (eine Q2-Spalte) in Frage, und die vier Alphabete hängen zusammen (gleiche Spalte, nur Zeilen verschoben); Erkenntnisse aus einem Teiltext helfen in den anderen; Teiltexte mit gleicher Ziffer können zusammengelegt werden.",
+       "afb": "II",
+       "be": 1
+      }
+     ],
+     "alternativen": "Angriff über bekannte Klartextstücke (Known-Plaintext) als zusätzlicher Punkt anerkennen.",
+     "fehler": "Häufigkeitsanalyse auf den Gesamttext statt auf die Teiltexte (P6)."
+    },
+    {
+     "bez": "f)",
+     "text": "**Entscheiden Sie** jeweils **begründet**, ob die Aussage korrekt ist.\n(1) „Sind Q1 und Q2 gleich, so liefert eine zweifache Verschlüsselung erst mit dem Zahlenschlüssel 3142 und dann mit 1203 denselben Geheimtext wie eine einfache Verschlüsselung mit dem Zahlenschlüssel 4340.“\n(2) „Mit den Quadraten aus Abbildung 1 lässt sich eine zweifache Verschlüsselung mit dem Zahlenschlüssel 3142 stets durch eine einfache Verschlüsselung mit einem geeigneten Zahlenschlüssel ersetzen.“",
+     "be": 4,
+     "erwartung": [
+      {
+       "punkt": "(1) **Korrekt.**",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(1) Begründung: Bei Q1 = Q2 bewirkt eine Verschlüsselung nur eine zyklische Verschiebung um k Zeilen innerhalb derselben Spalte; zwei Verschiebungen addieren sich stellenweise mod 5: (3 + 1, 1 + 2, 4 + 0, 2 + 3) mod 5 = (4, 3, 4, 0) → 4340.",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) **Falsch.**",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "(2) Begründung: Bei einer einfachen Verschlüsselung liegt der Geheimtextbuchstabe in Q2 in der Spalte des Klartextbuchstabens in Q1. Gegenbeispiel: r (Q1 Spalte 2) wird einfach verschlüsselt immer zu O, B, G, Q oder W; zweifach: r → Q (k = 3), Q steht in Q1 in Spalte 4 → zweiter Schritt liefert D (*rat* → QGK → DNC). D liegt nicht in Q2-Spalte 2 → kein Zahlenschlüssel leistet das (alle 625 vierstelligen Zahlenschlüssel per Skript geprüft).",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "(2) jedes korrekte Gegenbeispiel mit Spaltenargument.",
+     "fehler": "Aussage (2) ohne Gegenbeispiel „falsch“ genannt (P10); „zweimal verschlüsseln ist sicherer“ (P8)."
+    },
+    {
+     "bez": "g)",
+     "text": "**Untersuchen Sie**, welche Auswirkungen es auf die Entschlüsselung hat, wenn bei der Übertragung (1) ein Geheimtextbuchstabe verfälscht wird bzw. (2) ein Geheimtextbuchstabe verloren geht.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "(1) Verfälschter Buchstabe: Jede Stelle wird unabhängig entschlüsselt → nur dieser eine Klartextbuchstabe ist falsch (*silberflotte* → *silserflotte*).",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "(2) Verlorener Buchstabe: Ab der Fehlstelle passen die Ziffern des Zahlenschlüssels nicht mehr zu den Stellen …",
+       "afb": "II",
+       "be": 1
+      },
+      {
+       "punkt": "… → alle folgenden Buchstaben werden mit falscher Ziffer entschlüsselt und sind in der Regel falsch (nur zufällig gleiche Ziffern liefern richtige Buchstaben); Beispiel: 4. Buchstabe fehlt → *silcosewvvq*.",
+       "afb": "II",
+       "be": 1
+      }
+     ]
+    },
+    {
+     "bez": "h)",
+     "text": "**Beurteilen Sie** die Sicherheit des Verfahrens Zwei-Quadrat. Berücksichtigen Sie dabei auch die Größe des Schlüsselraums.",
+     "be": 3,
+     "erwartung": [
+      {
+       "punkt": "Schlüsselraum: je Quadrat bis zu 25! ≈ 1,55 · 10²⁵ Anordnungen, Zahlenschlüssel 5⁴ = 625 → Brute Force unmöglich.",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Aber: nur höchstens 5 Alphabete, periodischer Zahlenschlüssel → Kasiski/Teiltexte + Häufigkeitsanalyse (e); Spalteninformation; schwache Schlüssel (gleiche Ziffern → monoalphabetisch; mit Ziffer 0 bleiben bei Abbildung 1 die Buchstaben N, V, W, X, Y, Z unverändert).",
+       "afb": "III",
+       "be": 1
+      },
+      {
+       "punkt": "Urteil: Trotz großem Schlüsselraum bei langen Texten unsicher, nicht sicherer als Vigenère mit kurzem Schlüsselwort (P10: Urteil muss formuliert sein).",
+       "afb": "III",
+       "be": 1
+      }
+     ],
+     "alternativen": "Vergleich mit Porta (13 Alphabete) oder Vigenère zulässig.",
+     "fehler": "nur „Schlüsselraum riesig → sicher“ (P7); Urteil fehlt (P10)."
+    }
+   ]
+  }
+ ],
+ "notenschluessel": [
+  [
+   15,
+   23
+  ],
+  [
+   14,
+   22
+  ],
+  [
+   13,
+   21
+  ],
+  [
+   12,
+   20
+  ],
+  [
+   11,
+   18
+  ],
+  [
+   10,
+   17
+  ],
+  [
+   9,
+   16
+  ],
+  [
+   8,
+   15
+  ],
+  [
+   7,
+   14
+  ],
+  [
+   6,
+   12
+  ],
+  [
+   5,
+   11
+  ],
+  [
+   4,
+   10
+  ],
+  [
+   3,
+   8
+  ],
+  [
+   2,
+   7
+  ],
+  [
+   1,
+   5
+  ],
+  [
+   0,
+   0
+  ]
+ ],
+ "schlusszeile": "Viel Erfolg – möge dein Siegel halten!"
+}

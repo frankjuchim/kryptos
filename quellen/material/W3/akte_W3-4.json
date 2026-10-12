@@ -1,0 +1,647 @@
+{
+ "typ": "akte",
+ "welt": 3,
+ "kennung": "AKTE W3·4",
+ "titel": "Fremde Chiffre IV: ADFGVX",
+ "ds": "11",
+ "niveau": "kern",
+ "level": "3.4",
+ "datei": "KR_W3_Akte4_ADFGVX",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Frühjahr 1918. In den Funksprüchen des deutschen Heeres tauchen plötzlich nur noch sechs Buchstaben auf: **A, D, F, G, V und X**. Für die Gegenseite war das ein Rätsel – für euch ist es ein Fall für die **5-Schritte-Methode**: lesen und nachrechnen, anwenden, umkehren, einordnen, beurteilen."
+  },
+  {
+   "t": "p",
+   "klein": true,
+   "md": "**Hilfsmittel:** Quadrat und Beschreibung unten. Es wird **nie** mit X aufgefüllt."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Das Verfahren (Material im Abitur-Stil)",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.6,
+     "links": [
+      {
+       "t": "p",
+       "md": "*Schlüssel:* ein 6×6-Quadrat mit A–Z und 0–9 und ein Schlüsselwort."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 1:* Jedes Zeichen wird durch den Buchstaben seiner **Zeile** und dann den seiner **Spalte** ersetzt (Beschriftung A, D, F, G, V, X – im Morsecode gut unterscheidbar)."
+      },
+      {
+       "t": "p",
+       "md": "*Stufe 2:* Der Zwischentext wird zeilenweise unter das Schlüsselwort geschrieben; die Spalten werden in alphabetischer Reihenfolge der Schlüsselbuchstaben von oben nach unten gelesen. Die letzte Zeile darf unvollständig sein."
+      },
+      {
+       "t": "p",
+       "klein": true,
+       "md": "ADFGVX wurde 1918 im deutschen Heer eingeführt; die Entwicklung wird dem Funkoffizier Fritz Nebel zugeschrieben."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "zentriert": true,
+       "md": "**Quadrat** (Schlüsselwort ZEPPELIN18)"
+      },
+      {
+       "t": "quadrat",
+       "schrift": 12,
+       "ecke": "",
+       "kopfzeile": [
+        "A",
+        "D",
+        "F",
+        "G",
+        "V",
+        "X"
+       ],
+       "kopfspalte": [
+        "A",
+        "D",
+        "F",
+        "G",
+        "V",
+        "X"
+       ],
+       "zeilen": [
+        "ZEPLIN",
+        "18ABCD",
+        "FGHJKM",
+        "OQRSTU",
+        "VWXY02",
+        "345679"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Beispiel „ankunft8“, Schlüsselwort WOLF",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Stufe 1:** A = DF, N = AX, K = FV, U = GX, N = AX, F = FA, T = GV, 8 = DD → `DFAXFVGXAXFAGVDD`."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.36,
+     "links": [
+      {
+       "t": "quadrat",
+       "schrift": 12,
+       "kopfzeile": [
+        "W·4",
+        "O·3",
+        "L·2",
+        "F·1"
+       ],
+       "zeilen": [
+        "DFAX",
+        "FVGX",
+        "AXFA",
+        "GVDD"
+       ],
+       "hervor": [
+        [
+         0,
+         3
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         3,
+         3
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Stufe 2:** Schlüsselbuchstaben alphabetisch nummerieren: F = 1, L = 2, O = 3, W = 4. Spalten in dieser Reihenfolge von oben nach unten lesen:"
+      },
+      {
+       "t": "p",
+       "md": "F: `XXAD` · L: `AGFD` · O: `FVXV` · W: `DFAG`"
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: **`XXADA GFDFV XVDFA G`**"
+      },
+      {
+       "t": "p",
+       "md": "**Entschlüsseln** in umgekehrter Reihenfolge: erst die Spalten zurück, dann das Quadrat (P3)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Verschlüsseln",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Wende** ADFGVX mit dem Schlüsselwort **TOR** auf „funk2“ **an**."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.35,
+     "links": [
+      {
+       "t": "quadrat",
+       "schrift": 12,
+       "kopfzeile": [
+        "T",
+        "O",
+        "R"
+       ],
+       "zeilen": [
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ]
+       ],
+       "nur_schueler": true
+      },
+      {
+       "t": "quadrat",
+       "schrift": 12,
+       "kopfzeile": [
+        "T·3",
+        "O·1",
+        "R·2"
+       ],
+       "zeilen": [
+        [
+         "F",
+         "A",
+         "G"
+        ],
+        [
+         "X",
+         "A",
+         "X"
+        ],
+        [
+         "F",
+         "V",
+         "V"
+        ],
+        [
+         "X",
+         "",
+         ""
+        ]
+       ],
+       "nur_loesung": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "Stufe 1: [[luecke:30]]",
+       "nur_schueler": true
+      },
+      {
+       "t": "p",
+       "md": "Geheimtext: [[luecke:30]]",
+       "nur_schueler": true
+      }
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Stufe 1: F = FA, U = GX, N = AX, K = FV, 2 = VX → `FAGXAXFVVX`. Stufe 2 (T = 3, O = 1, R = 2): Zeilen F A G / X A X / F V V / X; Spalte T hat 4 Zeichen. Lesereihenfolge O, R, T: AAV · GXV · FXFX → **`AAVGX VFXFX`**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* X als Füllzeichen anhängen (P4)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P4",
+   "titel": "Ungleiche Spalten",
+   "md": "Ist die Länge L = n · z + r (n Spalten, Rest r), dann sind die **ersten r Spalten von links** (in der Reihenfolge des Schlüsselworts) eine Zeile länger – **nicht** die zuerst gelesenen. Beispiel: 20 Zeichen, Schlüsselwort TOR → 20 = 3 · 6 + 2 → Spalten T und O haben je 7 Zeichen, R hat 6."
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Der ganze Weg zurück",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bestimme** den Klartext (Schlüsselwort **TOR**). Achtung: 20 Zeichen, 3 Spalten – welche Spalten sind länger?"
+    },
+    {
+     "t": "geheimtext",
+     "text": "GADGFDDGVFVGGDFAADXA",
+     "label": "ABGEFANGENER FUNKSPRUCH"
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.35,
+     "links": [
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "kopfzeile": [
+        "T",
+        "O",
+        "R"
+       ],
+       "zeilen": [
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ],
+        [
+         "",
+         "",
+         ""
+        ]
+       ],
+       "nur_schueler": true
+      },
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "kopfzeile": [
+        "T·3",
+        "O·1",
+        "R·2"
+       ],
+       "zeilen": [
+        [
+         "D",
+         "G",
+         "G"
+        ],
+        [
+         "F",
+         "A",
+         "V"
+        ],
+        [
+         "A",
+         "D",
+         "F"
+        ],
+        [
+         "A",
+         "G",
+         "V"
+        ],
+        [
+         "D",
+         "F",
+         "G"
+        ],
+        [
+         "X",
+         "D",
+         "G"
+        ],
+        [
+         "A",
+         "D",
+         ""
+        ]
+       ],
+       "nur_loesung": true
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "Spaltenlängen: T [[luecke:4]] O [[luecke:4]] R [[luecke:4]]",
+       "nur_schueler": true
+      },
+      {
+       "t": "p",
+       "md": "Zwischentext: [[luecke:28]]",
+       "nur_schueler": true
+      },
+      {
+       "t": "p",
+       "md": "Klartext: [[luecke:28]]",
+       "nur_schueler": true
+      }
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "20 = 3 · 6 + 2 → Spalten T und O haben 7, R hat 6 Zeichen. Lesereihenfolge O, R, T: O = `GADGFDD` (7), R = `GVFVGG` (6), T = `DFAADXA` (7)."
+    },
+    {
+     "t": "p",
+     "md": "Zeilenweise: `DGGFAVADFAGVDFGXDGAD` → DG GF AV AD FA GV DF GX DG AD → **brieftaube**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* Spalte O als kurze Spalte annehmen, weil sie zuerst gelesen wird (P4)."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Einordnen",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entscheide begründet** für jede Stufe: Transposition oder Substitution? Mono- oder polyalphabetisch? **Erläutere**, warum eine Häufigkeitsanalyse der einzelnen Geheimtextbuchstaben nichts nützt."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Stufe 1: Substitution, **monoalphabetisch** (jedes Zeichen immer dasselbe Paar), zerlegt jedes Zeichen in zwei Teile (**Fraktionierung**). Stufe 2: **Transposition**."
+    },
+    {
+     "t": "p",
+     "md": "Im Geheimtext kommen nur 6 Buchstaben vor, und die beiden Hälften eines Zeichens stehen nicht mehr nebeneinander – Einzelbuchstaben-Häufigkeiten sagen über den Klartext kaum etwas; erst nach Rückgängigmachen der Transposition kann man Paare zählen (P6)."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P6"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Fehlerfortpflanzung",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Untersuche** die Fehlerfortpflanzung: a) ein Geheimtextbuchstabe wird falsch übertragen, b) ein Geheimtextbuchstabe geht verloren."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Nur eine Hälfte eines Paares ist falsch → genau **ein** Klartextzeichen falsch."
+    },
+    {
+     "t": "p",
+     "md": "b) Spaltenlängen und Spaltengrenzen verschieben sich: Alle Zeichen ab der betroffenen Stelle in den folgenden Spalten landen in falschen Zeilen/Spalten → **viele** Klartextzeichen falsch, zudem werden Paare vertauscht."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Stufen vertauschen?",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beurteile** den Vorschlag, die Stufen zu vertauschen (erst Spaltentransposition des Klartextes, dann das Quadrat)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**Schlechter:** Transponiert man zuerst den Klartext und ersetzt dann jedes Zeichen durch sein Paar, bleiben die Paare zusammen. Der Geheimtext ist dann eine monoalphabetische Substitution eines transponierten Textes: Paar-Häufigkeiten liefern die Buchstaben direkt, nur die Reihenfolge ist vertauscht (Anagramm). Die Stärke von ADFGVX liegt genau darin, dass die Transposition die Paare trennt."
+    }
+   ],
+   "fallen": [
+    "P10"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Die Vorgängerin ADFGX",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.62,
+     "links": [
+      {
+       "t": "p",
+       "md": "Im März 1918 begann das Heer mit **ADFGX**: ein 5×5-Quadrat ohne Ziffern, I und J teilen sich ein Feld; im Juni 1918 kamen V und die Ziffern hinzu."
+      },
+      {
+       "t": "p",
+       "md": "Beispiel-Quadrat aus dem Schlüsselwort FERNSCHREIBER (rechts)."
+      }
+     ],
+     "rechts": [
+      {
+       "t": "quadrat",
+       "schrift": 11,
+       "kopfzeile": [
+        "A",
+        "D",
+        "F",
+        "G",
+        "X"
+       ],
+       "kopfspalte": [
+        "A",
+        "D",
+        "F",
+        "G",
+        "X"
+       ],
+       "zeilen": [
+        "FERNS",
+        "CHIBA",
+        "DGKLM",
+        "OPQTU",
+        "VWXYZ"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 1,
+   "titel": "ADFGX (Zusatz)",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Wende Stufe 1 von ADFGX (Quadrat aus Archivwissen 3) auf „wolke“ an: [[luecke:24]]"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "W = XD (Zeile X, Spalte D), O = GA, L = FG, K = FF, E = AD → **`XDGAFGFFAD`**."
+    }
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "**Material:** Verfahren ADFGVX wie in Archivwissen 1 (Quadrat ZEPPELIN18)."
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen** Sie den Geheimtext zum Klartext „nord3“ mit dem Schlüsselwort TOR.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Stufe 1: N = AX, O = GA, R = GF, D = DX, 3 = XA → `AXGAGFDXXA` [1]. Stufe 2 (T = 3, O = 1, R = 2): Zeilen A X G / A G F / D X X / A; Lesereihenfolge O, R, T: XGX · GFX · AADA → **`XGXGF XAADA`** [2]."
+      }
+     ],
+     "fallen": [
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern** Sie, welche Prinzipien der Substitution und Transposition in ADFGVX verwendet werden.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Stufe 1 monoalphabetische Substitution (Paare, Fraktionierung) [1], Stufe 2 Transposition [1]; die Kombination trennt die Paare [1]."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Analysieren** Sie die Auswirkung eines bei der Übertragung verlorenen Geheimtextbuchstabens.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "wie Auftrag 4 b): Spaltenlängen/-grenzen verschieben sich [1], Zeichen der folgenden Spalten landen an falschen Positionen [1], Paare werden falsch gebildet → viele falsche Klartextzeichen [1]."
+      }
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "„Vertauscht man die beiden Stufen, bleibt die Sicherheit unverändert.“ **Entscheiden** Sie **begründet**, ob die Aussage korrekt ist.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**Falsch** [1] – Begründung wie Auftrag 5: Die Paare bleiben zusammen, Paar-Häufigkeiten verraten die Buchstaben [2]."
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "3.4",
+   "md": "Level 3.4 „Fremde Chiffre IV: ADFGVX“ im Kryptolabor (Quadrat- und Matrix-Aufgaben). Trainingsplatz: „ADFGVX Stufe 1“ und „Spaltentransposition“."
+  }
+ ]
+}

@@ -1,0 +1,1118 @@
+{
+ "typ": "akte",
+ "welt": 6,
+ "kennung": "AKTE W6·2",
+ "titel": "Eves Chiffre",
+ "ds": "17",
+ "niveau": "kern",
+ "level": "6.2",
+ "datei": "KR_W6_Akte2_Eves_Chiffre",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Das Chronoskop schweigt, auf dem Ziffernring steht `TAZLL ZZLYL VIHAV K`. Eve hat ihr eigenes Verfahren gebaut – und weil sie das Kerckhoffs-Prinzip kennt, hat sie die Beschreibung sogar im Archiv hinterlegt. Sie ist sicher: Wer den Schlüssel nicht kennt, kommt nie hinein. Dein Auftrag ist der eines Prüflings im Abitur: ein unbekanntes Verfahren **verstehen, anwenden, umkehren, einordnen und beurteilen** – in fünf Schritten. 🔍 Neben dem Gerät liegt Eves Zettel: „Ring 3 · Pendel UHR“."
+  },
+  {
+   "t": "geheimtext",
+   "label": "EVES ZEILE AUF DEM ZIFFERNRING DES CHRONOSKOPS",
+   "text": "TAZLLZZLYLVIHAVK",
+   "groesse": 14
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Material „Eves Uhrwerk“ (im Abitur-Stil)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Das symmetrische Verfahren UHRWERK verschlüsselt Texte, die nur aus den Zeichen A bis Z bestehen, in zwei Stufen. **Schlüssel:** ein Ringschritt t ∈ {1, 3, 5, 7} und ein Pendelwort W aus mindestens zwei Buchstaben. Nummerierung: A = 1 … Z = 26 (wie in der Anlage)."
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.64,
+     "links": [
+      {
+       "t": "p",
+       "md": "*Stufe 1 (Ring):* Der Klartext wird in Blöcke zu 8 Zeichen zerlegt; der letzte Block wird mit X aufgefüllt. Die Zeichen eines Blocks werden der Reihe nach auf die Felder 0 bis 7 eines Rings gelegt. Ausgelesen wird ab Feld 0, danach jeweils t Felder weiter im Kreis (nach Feld 7 folgt Feld 0). Es ergibt sich der Zwischentext."
+      },
+      {
+       "t": "tabelle",
+       "kopf": [
+        "t",
+        "Lesereihenfolge der Felder"
+       ],
+       "kopfspalte": true,
+       "schrift": 10,
+       "breiten": [
+        1.2,
+        8.6
+       ],
+       "zeilen": [
+        [
+         "1",
+         "`0 1 2 3 4 5 6 7`"
+        ],
+        [
+         "3",
+         "`0 3 6 1 4 7 2 5`"
+        ],
+        [
+         "5",
+         "`0 5 2 7 4 1 6 3`"
+        ],
+        [
+         "7",
+         "`0 7 6 5 4 3 2 1`"
+        ]
+       ]
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_mitterna.png",
+       "breite_cm": 5.3,
+       "unterschrift": "Ring mit Block 1 des Beispiels, t = 3"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "*Stufe 2 (Pendel):* Das Pendelwort wird vorwärts und anschließend rückwärts geschrieben, ohne die Endbuchstaben zu wiederholen, und so fortgesetzt, bis die Folge so lang ist wie der Zwischentext (ZEIT → Z E I T I E Z E I T I E …). Jedes Zwischentextzeichen wird mit dem darunterstehenden Buchstaben der Pendelfolge nach dem Vigenère-Verfahren verschlüsselt (Anlage: Zeile = Schlüsselbuchstabe, Spalte = Klartextbuchstabe; Schlüsselbuchstabe A = Verschiebung 0)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Fortsetzung: Beispiel im Material",
+   "inhalt": [
+    {
+     "t": "h",
+     "md": "Beispiel: Klartext „mitternachtsuhr“, t = 3, Pendelwort ZEIT"
+    },
+    {
+     "t": "p",
+     "md": "Blöcke: `MITTERNA | CHTSUHRX` (ein X aufgefüllt). Ring, Block 1: Feld 0 M, 1 I, 2 T, 3 T, 4 E, 5 R, 6 N, 7 A → gelesen 0, 3, 6, 1, 4, 7, 2, 5: `M T N I E A T R`. Block 2: `C H T S U H R X` → `C S R H U X T H`. Zwischentext: `MTNIEATR CSRHUXTH`."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      2.8,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+     ],
+     "zeilen": [
+      [
+       "Zwischentext",
+       "M",
+       "T",
+       "N",
+       "I",
+       "E",
+       "A",
+       "T",
+       "R",
+       "C",
+       "S",
+       "R",
+       "H",
+       "U",
+       "X",
+       "T",
+       "H"
+      ],
+      [
+       "Pendelfolge",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "I",
+       "E",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "I",
+       "E",
+       "Z",
+       "E",
+       "I",
+       "T"
+      ],
+      [
+       "Geheimtext",
+       "L",
+       "X",
+       "V",
+       "B",
+       "M",
+       "E",
+       "S",
+       "V",
+       "K",
+       "L",
+       "Z",
+       "L",
+       "T",
+       "B",
+       "B",
+       "A"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Geheimtext: `LXVBM ESVKL ZLTBB A`"
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Die 5 Schritte am Uhrwerk (Kurzfassung von WK2)",
+   "inhalt": [
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "*Lesen und nachrechnen:* Beispiel selbst rechnen – hier fällt auf: Schlüsselbuchstabe Z verschiebt um 25 (P1), der letzte Block wird mit X gefüllt (P4).",
+      "*Anwenden:* Vorlage nutzen (Ring-Tabelle, Pendelzeile).",
+      "*Umkehren:* zuerst Stufe 2 (Pendelbuchstabe abziehen), dann Stufe 1 (Zeichen j zurück auf Feld (t · j) mod 8) (P3).",
+      "*Einordnen:* Stufe 1 Transposition, Stufe 2 polyalphabetische Substitution, insgesamt symmetrisch (P5).",
+      "*Beurteilen:* mit dem Raster WK3 – Schlüsselraum, Häufigkeitsanalyse (Teiltexte!), schwache Schlüssel, Mehrfachanwendung, Fehlerfortpflanzung, Kerckhoffs → Urteil (P10)."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P3",
+   "titel": "Den Ring richtig zurückdrehen",
+   "md": "Beim Entschlüsseln **zuerst das Pendel** (Stufe 2), **dann den Ring** (Stufe 1). Und beim Ring nicht einfach der Reihe nach zurückschreiben: Das j-te Zeichen eines Zwischentextblocks (j = 0 … 7) gehört auf **Feld (t · j) mod 8** – bei t = 3 also auf die Felder 0, 3, 6, 1, 4, 7, 2, 5. Wer Zeichen j auf Feld j legt, erhält Unsinn."
+  },
+  {
+   "t": "falle",
+   "nr": "P4",
+   "titel": "Das Pendel schwingt ohne Doppelschritt",
+   "md": "UHR wird zu `U H R H U H R H …` – **nicht** zu `U H R R H U …` (Enden doppelt) und **nicht** zu `U H R U H R …` (wie ein gewöhnliches Vigenère-Schlüsselwort). Die Pendelfolge hat die Periode 2L − 2 (L = Länge des Pendelworts)."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Moderne Bausteine im Schnelldurchlauf",
+   "inhalt": [
+    {
+     "t": "liste",
+     "items": [
+      "*Schlüsselanzahl:* n Personen, paarweise – symmetrisch n(n − 1)/2, asymmetrisch 2n (n Schlüsselpaare); gleich bei n = 5, ab n = 6 asymmetrisch weniger.",
+      "*Hybrid:* Daten symmetrisch mit zufälligem Sitzungsschlüssel, Sitzungsschlüssel asymmetrisch mit dem öffentlichen Schlüssel des Empfängers.",
+      "*Signatur:* Hashwert mit dem privaten Schlüssel des Absenders verschlüsseln; prüfen mit dessen öffentlichem Schlüssel und Hashvergleich.",
+      "*Hash:* feste Länge, Einweg, kleine Änderung → ganz anderer Wert (Lawineneffekt); Kollisionen gibt es immer, sie dürfen nur nicht findbar sein.",
+      "*Diffusion:* Eine kleine Änderung im Klartext soll viele Zeichen/Bits des Geheimtextes ändern."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Schritt 1: Nachrechnen",
+   "sozialform": "Einzelarbeit · 5 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Rechne** im Beispiel (Archivwissen 1) die ersten acht Geheimtextzeichen **nach**. Markiere die Stellen, an denen der Pendelbuchstabe Z verwendet wird, und gib an, um wie viele Stellen Z verschiebt."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Z · E · I · T · I · E · Z · E über `M T N I E A T R`: M + Z = L, T + E = X, N + I = V, I + T = B, E + I = M, A + E = E, T + Z = S, R + E = V → `LXVBMESV`."
+    },
+    {
+     "t": "p",
+     "md": "Z steht an den Positionen 1 und 7 (und 13); Z verschiebt um **25** Stellen, d. h. **eine Stelle zurück** (M → L)."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Schritt 3: Der Archivfund",
+   "sozialform": "Einzel- oder Partnerarbeit · 12 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entschlüssele** Eves Zeile `TAZLL ZZLYL VIHAV K` mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+     ],
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "T",
+       "A",
+       "Z",
+       "L",
+       "L",
+       "Z",
+       "Z",
+       "L",
+       "Y",
+       "L",
+       "V",
+       "I",
+       "H",
+       "A",
+       "V",
+       "K"
+      ],
+      [
+       "Pendelfolge",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Zwischentext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+     ],
+     "nur_loesung": true,
+     "zeilen": [
+      [
+       "Geheimtext",
+       "T",
+       "A",
+       "Z",
+       "L",
+       "L",
+       "Z",
+       "Z",
+       "L",
+       "Y",
+       "L",
+       "V",
+       "I",
+       "H",
+       "A",
+       "V",
+       "K"
+      ],
+      [
+       "Pendelfolge",
+       "U",
+       "H",
+       "R",
+       "H",
+       "U",
+       "H",
+       "R",
+       "H",
+       "U",
+       "H",
+       "R",
+       "H",
+       "U",
+       "H",
+       "R",
+       "H"
+      ],
+      [
+       "Zwischentext",
+       "Z",
+       "T",
+       "I",
+       "E",
+       "R",
+       "S",
+       "I",
+       "E",
+       "E",
+       "E",
+       "E",
+       "B",
+       "N",
+       "T",
+       "E",
+       "D"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Ring-Rücklage (Zeichen j des Blocks gehört auf Feld (3 · j) mod 8):"
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "Feld",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+     ],
+     "zeilen": [
+      [
+       "Block 1",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Block 2",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "nur_loesung": true,
+     "kopf": [
+      "Feld",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+     ],
+     "zeilen": [
+      [
+       "Block 1",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "R",
+       "E",
+       "I",
+       "S"
+      ],
+      [
+       "Block 2",
+       "E",
+       "B",
+       "E",
+       "E",
+       "N",
+       "D",
+       "E",
+       "T"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Klartext: [[luecke:40]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Pendel `UHRHUHRHUHRHUHRH`. Zwischentext: T − U = Z, A − H = T, Z − R = I, L − H = E, L − U = R, Z − H = S, Z − R = I, L − H = E, Y − U = E, L − H = E, V − R = E, I − H = B, H − U = N, A − H = T, V − R = E, K − H = D → `ZTIERSIE EEEBNTED`."
+    },
+    {
+     "t": "p",
+     "md": "Ring zurück (t = 3, Zeichen j → Feld 3j mod 8): Block 1 Felder 0–7 = `Z E I T R E I S`; Block 2 = `E B E E N D E T` → Klartext **zeitreisebeendet**."
+    },
+    {
+     "t": "p",
+     "md": "*Typische Fehler:* Pendel `UHRUHR…` (P4); Ring vor Stufe 2 zurückgedreht (P3); Zeichen j auf Feld j gelegt (P3)."
+    }
+   ],
+   "fallen": [
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Schritt 2: Eve imitieren",
+   "sozialform": "Einzelarbeit · 8 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Verschlüssele** „zeitmaschinefrei“ mit t = 5 und dem Pendelwort SAND."
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+     ],
+     "nur_schueler": true,
+     "zeilen": [
+      [
+       "Klartext",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "M",
+       "A",
+       "S",
+       "C",
+       "H",
+       "I",
+       "N",
+       "E",
+       "F",
+       "R",
+       "E",
+       "I"
+      ],
+      [
+       "Zwischentext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Pendelfolge",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "Geheimtext",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      2.8,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+     ],
+     "nur_loesung": true,
+     "zeilen": [
+      [
+       "Klartext",
+       "Z",
+       "E",
+       "I",
+       "T",
+       "M",
+       "A",
+       "S",
+       "C",
+       "H",
+       "I",
+       "N",
+       "E",
+       "F",
+       "R",
+       "E",
+       "I"
+      ],
+      [
+       "Zwischentext",
+       "Z",
+       "A",
+       "I",
+       "C",
+       "M",
+       "E",
+       "S",
+       "T",
+       "H",
+       "R",
+       "N",
+       "I",
+       "F",
+       "I",
+       "E",
+       "E"
+      ],
+      [
+       "Pendelfolge",
+       "S",
+       "A",
+       "N",
+       "D",
+       "N",
+       "A",
+       "S",
+       "A",
+       "N",
+       "D",
+       "N",
+       "A",
+       "S",
+       "A",
+       "N",
+       "D"
+      ],
+      [
+       "Geheimtext",
+       "R",
+       "A",
+       "V",
+       "F",
+       "Z",
+       "E",
+       "K",
+       "T",
+       "U",
+       "U",
+       "A",
+       "I",
+       "X",
+       "I",
+       "R",
+       "H"
+      ]
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Blöcke `ZEITMASC | HINEFREI`; Ring t = 5 (Felder 0 5 2 7 4 1 6 3): `ZAICMEST | HRNIFIEE`; Pendel `SANDNASANDNASAND`; Geheimtext **`RAVFZ EKTUU AIXIR H`**."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 2,
+   "titel": "Schritte 4 + 5: Einordnen, beurteilen",
+   "sozialform": "Partnerarbeit · 12 min",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Nutze das Beurteilungsraster WK3."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Ordne** beide Stufen **ein** und **begründe**.",
+      "**Bestimme** die Anzahl der Ringschritte und gib einen schwachen Ringschritt an.",
+      "Schreibe das Pendel zu ZEIT und zu EVE für 12 Zeichen aus. Gib jeweils die Periode an und **vergleiche** mit Vigenère.",
+      "**Beschreibe** einen Angriff, wenn das Pendelwort 4 Buchstaben hat (Häufigkeitsanalyse auf Teiltexten).",
+      "**Analysiere**: Was passiert beim Entschlüsseln, wenn ein Geheimtextzeichen falsch notiert wird – und wenn eines verloren geht?",
+      "Formuliere ein **Urteil** über die Sicherheit des Uhrwerks."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 12,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Stufe 1 **Transposition** (gleiche Zeichen, andere Plätze); Stufe 2 **polyalphabetisch** (z. B. im Beispiel T → X mit E, T → S mit Z); insgesamt **symmetrisch** (gleicher Schlüssel)."
+    },
+    {
+     "t": "p",
+     "md": "b) **4** Ringschritte; t = 1 liest 0 1 2 … 7 → keine Umordnung (schwach)."
+    },
+    {
+     "t": "p",
+     "md": "c) ZEIT → `ZEITIEZEITIE`, Periode 6 = Vigenère mit ZEITIE; EVE → `EVEVEVEVEVEV`, Periode 2 = Vigenère mit EV (schwächer, als die Wortlänge vermuten lässt)."
+    },
+    {
+     "t": "p",
+     "md": "d) Periode 2 · 4 − 2 = 6: Geheimtext in 6 Teiltexte zerlegen (jede 6. Stelle); da die Transposition nur innerhalb der Blöcke umordnet, bleibt jeder Teiltext eine Caesar-Verschlüsselung eines Stücks deutschen Textes → je Teiltext häufigsten Buchstaben ≙ E → Pendelbuchstaben; dann die 4 Ringschritte probieren. Voraussetzung: langer Text; Periode notfalls mit Kasiski/Friedman bestimmen."
+    },
+    {
+     "t": "p",
+     "md": "e) *Falsches Zeichen:* genau ein Klartextbuchstabe falsch (zeichenweises Verfahren, der Ring versetzt ihn nur) – Beispiel: 6. Zeichen des Archivfunds + 1 → *zeitreiTebeendet*. *Verlorenes Zeichen:* ab der Fehlstelle verrutschen die Pendelfolge und die Blockeinteilung → Rest unbrauchbar (Stufe 2 rückwärts ergibt `ZTIERSURRORAGOT` …); die Länge ist dann kein Vielfaches von 8 – der Fehler fällt auf."
+    },
+    {
+     "t": "p",
+     "md": "f) Urteil: Der Ring trägt fast nichts bei (4 Schlüssel), die Sicherheit beruht allein auf einem kurzen periodischen Vigenère → mit Teiltext-Häufigkeitsanalyse bei längeren Texten brechbar; **unsicher**."
+    }
+   ],
+   "fallen": [
+    "P5",
+    "P6",
+    "P7",
+    "P10"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 3,
+   "titel": "Eve experimentiert",
+   "sozialform": "Einzelarbeit · 8 min",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Eve möchte Blöcke der Länge 9 statt 8 verwenden."
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "**Bestimme** die Lesereihenfolge für t = 3 bei Blocklänge 9 und **begründe**, dass Eve so nicht mehr entschlüsseln kann.",
+      "Gib alle Ringschritte t ∈ {1, …, 8} an, die bei Blocklänge 9 funktionieren, und formuliere die Bedingung."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) Lesereihenfolge `0 3 6 0 3 6 0 3 6` – die Felder 1, 2, 4, 5, 7, 8 werden nie gelesen, die Felder 0, 3, 6 dreimal; Information geht verloren, keine Umkehrung möglich (P4)."
+    },
+    {
+     "t": "p",
+     "md": "b) t ∈ {1, 2, 4, 5, 7, 8}; Bedingung: t und die Blocklänge dürfen keinen gemeinsamen Teiler > 1 haben (**teilerfremd**)."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Abi-Mix modern",
+   "sozialform": "Partnerarbeit · 10 min",
+   "inhalt": [
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "Im Archiv arbeiten 9 Chronisten. **Bestimme** die Schlüsselanzahl symmetrisch und asymmetrisch.",
+      "Eve will Bob eine 2 GB große Datei schicken. **Beschreibe**, wie sie dies mit einem Hybridverfahren tut, und warum.",
+      "Ergänze: Alice signiert, indem sie den Hashwert mit [[luecke:22]] verschlüsselt; Bob prüft mit [[luecke:22]] und [[luecke:18]].",
+      "„abendrot“ und „abendrat“ (t = 3, ZEIT) ergeben `ZRWUL XDV` und `ZRIUL XDV`. **Erläutere** daran den Begriff Diffusion."
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 7,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "a) symmetrisch 9 · 8 / 2 = **36**, asymmetrisch 2 · 9 = **18**."
+    },
+    {
+     "t": "p",
+     "md": "b) Zufälliger Sitzungsschlüssel → Datei symmetrisch verschlüsseln (schnell); Sitzungsschlüssel mit **Bobs öffentlichem** Schlüssel verschlüsseln; Bob entschlüsselt ihn mit seinem privaten Schlüssel und damit die Datei; asymmetrisch allein wäre für 2 GB zu langsam."
+    },
+    {
+     "t": "p",
+     "md": "c) **Alices privatem** Schlüssel; **Alices öffentlichem** Schlüssel und **Hashvergleich**."
+    },
+    {
+     "t": "p",
+     "md": "d) Eine Änderung im Klartext ändert nur ein Geheimtextzeichen (W → I an Position 3) – **keine Diffusion**; ein sicheres Verfahren würde viele Zeichen verändern."
+    }
+   ],
+   "fallen": [
+    "P7",
+    "P9"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 25 min · Material: Archivwissen 1",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "Ein Geheimtext lautet `GFWJR JVCSS BIVZO K` (t = 7, Pendelwort EVE). **Bestimmen** Sie den Klartext.",
+     "be": 4,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 4,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Pendel `EVEV…`; Stufe 2 zurück: `CKSONORH OXXNREKP` (2); Ring t = 7 zurück (Zeichen j → Feld 7j mod 8): `CHRONOSK | OPKERNXX` → **chronoskopkern** (Füllzeichen XX) (2)."
+      }
+     ],
+     "fallen": [
+      "P3",
+      "P4"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Erläutern** Sie, an welcher Stelle das Verfahren das Prinzip der Transposition und an welcher es das Prinzip der polyalphabetischen Substitution nutzt.",
+     "be": 2,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 3,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Transposition in Stufe 1 (Umordnung im Ring) (1), polyalphabetische Substitution in Stufe 2 (Pendelfolge mit wechselnden Verschiebungen) (1)."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden** Sie begründet, ob die folgende Aussage korrekt ist: „Das Pendelwort EVE ist für Stufe 2 genauso wirksam wie ein Pendelwort aus drei verschiedenen Buchstaben.“",
+     "be": 3,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 4,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "**Falsch** (1): Das Pendel EVE ergibt `E V E V …`, also nur zwei verschiedene, sich abwechselnde Verschiebungen – wie Vigenère mit EV (Periode 2) (1); ein Wort aus drei verschiedenen Buchstaben, z. B. UHR, ergibt `U H R H …` mit Periode 4 und mehr Teiltexten (1)."
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Begründen** Sie, dass zweimaliges Anwenden von Stufe 1 mit demselben Ringschritt den Text unverändert lässt.",
+     "be": 3,
+     "material": [
+      {
+       "t": "schreiblinien",
+       "anzahl": 4,
+       "nur_schueler": true
+      }
+     ],
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Stufe 1 liest Feld (t · j) mod 8; zweimal angewendet liest man Feld (t · t · j) mod 8 (1); für t = 1, 3, 5, 7 gilt t · t mod 8 = 1 (1, 9, 25, 49) (1); also wird jedes Zeichen auf seinen ursprünglichen Platz gelesen (1)."
+      }
+     ],
+     "fallen": [
+      "P8"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "6.2",
+   "md": "Level 6.2 „Eves Chiffre“ im Kryptolabor: *Skytale & Gitter* im Modus „Ring“ und *Vigenère-Werkbank* mit Pendel-Schlüsselfolge. Trainingsplatz „Eves Uhrwerk“ (G-W6-1); danach Boss „Generalprobe online“."
+  },
+  {
+   "t": "kasten",
+   "kopf": "ANHANG · RING-SCHABLONEN ZUM AUSSCHNEIDEN",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Lege die Zeichen eines Blocks der Reihe nach auf die Felder 0–7. Verschlüsseln: ab Feld 0 in Sprüngen von t Feldern auslesen. Entschlüsseln (P3): Das j-te Zeichen des Zwischentextblocks gehört auf Feld (t · j) mod 8 – dann die Felder 0 bis 7 der Reihe nach lesen.",
+     "klein": true
+    },
+    {
+     "t": "zweispaltig",
+     "links": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_schablone.png",
+       "breite_cm": 7.2
+      }
+     ],
+     "rechts": [
+      {
+       "t": "bild",
+       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_schablone.png",
+       "breite_cm": 7.2
+      }
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "t",
+      "Lesereihenfolge (Verschlüsseln)",
+      "Zeichen j = 0 … 7 kommt beim Entschlüsseln auf Feld"
+     ],
+     "kopfspalte": true,
+     "schrift": 10,
+     "breiten": [
+      1.2,
+      6.8,
+      8.0
+     ],
+     "zeilen": [
+      [
+       "3",
+       "`0 3 6 1 4 7 2 5`",
+       "`0 3 6 1 4 7 2 5`"
+      ],
+      [
+       "5",
+       "`0 5 2 7 4 1 6 3`",
+       "`0 5 2 7 4 1 6 3`"
+      ],
+      [
+       "7",
+       "`0 7 6 5 4 3 2 1`",
+       "`0 7 6 5 4 3 2 1`"
+      ]
+     ]
+    }
+   ],
+   "farbe": "8A5F1A"
+  }
+ ]
+}

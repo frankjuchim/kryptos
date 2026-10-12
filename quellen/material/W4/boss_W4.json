@@ -1,0 +1,106 @@
+{
+  "typ": "pruefung",
+  "welt": 4,
+  "kennung": "PAPIER-BOSS W4",
+  "titel": "Das Kurierbüro",
+  "datei": "KR_W4_Boss4_Kurierbuero",
+  "niveau": "kern",
+  "zeit": "60 Minuten",
+  "hilfsmittel": "Abitur-Anlage; kein Taschenrechner",
+  "info": [["Name", ""]],
+  "rahmen_kopf": "AUSGANGSLAGE",
+  "rahmen": "Das Kurierbüro „Eilbote“ hat **sechs Filialen**. Bisher besitzt jedes Paar von Filialen einen eigenen geheimen Schlüssel für ein symmetrisches Verfahren; neue Schlüssel bringt monatlich ein Kurier. Das Büro plant, auf **neun Filialen** zu wachsen, und lässt seine Kommunikation überprüfen.",
+  "hinweise": [
+    {"t": "hinweis", "md": "Alle Rechnungen sind ohne Taschenrechner lösbar. `mod` liefert den kleinsten nicht negativen Rest. Geben Sie Rechenwege vollständig an."}
+  ],
+  "aufgaben": [
+    {"nr": "1", "titel": "Schlüssel für das Kurierbüro",
+     "teile": [
+      {"bez": "a)", "text": "„Bei sechs Filialen benötigt das Büro symmetrisch 15 Schlüssel, asymmetrisch dagegen nur 12.“ **Erläutern Sie** die Richtigkeit dieser Aussage.", "be": 3,
+       "erwartung": [
+        {"punkt": "symmetrisch: je Paar ein Schlüssel, 6 · 5/2 = 15", "afb": "II", "be": 1},
+        {"punkt": "asymmetrisch: je Filiale ein Schlüsselpaar, 2 · 6 = 12", "afb": "II", "be": 1},
+        {"punkt": "Deutung: Aussage korrekt, ein Schlüsselpaar zählt als zwei Schlüssel", "afb": "II", "be": 1}],
+       "fehler": "30 statt 15 (Halbierung vergessen, P7); „6 Schlüssel, weil jede Filiale einen hat“ (Paar als ein Schlüssel, P7)."},
+      {"bez": "b)", "text": "**Bestimmen Sie** für neun Filialen die Anzahl benötigter Schlüssel bei symmetrischer und bei asymmetrischer Verschlüsselung sowie jeweils die Anzahl der Schlüssel, die gegenüber sechs Filialen neu erzeugt werden müssen.", "be": 2,
+       "erwartung": [
+        {"punkt": "symmetrisch 9 · 8/2 = **36**, davon **21** neu", "afb": "I", "be": 1},
+        {"punkt": "asymmetrisch 2 · 9 = **18**, davon **6** neu", "afb": "I", "be": 1}],
+       "alternativen": "Zuwachs auch als Differenz begründet (symmetrisch kommen 3 · 6 + 3 = 21 Verbindungen hinzu).",
+       "fehler": "n(n − 1) statt n(n − 1)/2 (P7)."},
+      {"bez": "c)", "text": "**Beschreiben Sie** das Prinzip der asymmetrischen Verschlüsselung am Beispiel einer vertraulichen Nachricht von Filiale X an Filiale Y.", "be": 3,
+       "erwartung": [
+        {"punkt": "Y besitzt ein Schlüsselpaar aus öffentlichem und privatem Schlüssel", "afb": "I", "be": 1},
+        {"punkt": "X verschlüsselt mit dem öffentlichen Schlüssel von Y", "afb": "I", "be": 1},
+        {"punkt": "nur Y kann mit seinem privaten Schlüssel entschlüsseln; der private Schlüssel wird nie übertragen", "afb": "I", "be": 1}],
+       "fehler": "X verschlüsselt mit dem eigenen (privaten) Schlüssel (P9)."}
+     ]},
+    {"nr": "2", "titel": "Der Bote-Tausch",
+     "material": [
+      {"t": "p", "md": "Die IT-Abteilung schlägt vor, Schlüssel künftig mit dem in Material 1 beschriebenen Verfahren „Bote-Tausch“ zu vereinbaren."},
+      {"t": "kasten", "kopf": "MATERIAL 1 · BOTE-TAUSCH", "inhalt": [
+        {"t": "p", "md": "Öffentlich bekannt sind die Primzahl **p = 29** und die Zahl **g = 8**."},
+        {"t": "liste", "nummeriert": true, "items": [
+          "Filiale X wählt eine geheime Zahl a mit 1 < a < 29 und sendet **A = (g · a) mod p**.",
+          "Filiale Y wählt eine geheime Zahl b mit 1 < b < 29 und sendet **B = (g · b) mod p**.",
+          "Filiale X berechnet **K = (B · a) mod p**, Filiale Y berechnet **K = (A · b) mod p**."]},
+        {"t": "p", "md": "*Beispiel:* a = 2, b = 3 → A = 16, B = 24, K = (24 · 2) mod 29 = 19 = (16 · 3) mod 29."},
+        {"t": "p", "md": "*Hinweis:* Es gilt (8 · 11) mod 29 = 1. `mod` liefert den kleinsten nicht negativen Rest, z. B. 53 mod 29 = 24."}]}],
+     "teile": [
+      {"bez": "d)", "text": "**Wenden Sie** den Bote-Tausch mit a = 9 und b = 13 **an**. **Bestimmen Sie** A, B und den Schlüssel K beider Filialen.", "be": 3,
+       "erwartung": [
+        {"punkt": "A = 8 · 9 mod 29 = 72 mod 29 = **14**", "afb": "II", "be": 1},
+        {"punkt": "B = 8 · 13 mod 29 = 104 mod 29 = **17**", "afb": "II", "be": 1},
+        {"punkt": "K = 17 · 9 mod 29 = 153 mod 29 = **8** = 14 · 13 mod 29 = 182 mod 29", "afb": "II", "be": 1}],
+       "fehler": "K = A · a statt B · a (P3); Rest falsch bestimmt (P2)."},
+      {"bez": "e)", "text": "**Zeigen Sie**, dass ein Angreifer, der nur p, g, A und B mitliest, den Schlüssel K aus d) berechnen kann.", "be": 3,
+       "erwartung": [
+        {"punkt": "Multiplikation mit dem Inversen 11 von g macht den Schritt rückgängig", "afb": "III", "be": 1},
+        {"punkt": "a = (A · 11) mod 29 = 154 mod 29 = **9**", "afb": "III", "be": 1},
+        {"punkt": "K = (B · a) mod 29 = (17 · 9) mod 29 = **8**", "afb": "III", "be": 1}],
+       "alternativen": "b = 17 · 11 mod 29 = 187 mod 29 = 13 und K = A · b mod 29. Systematisches Probieren aller a ∈ {2, …, 28} mit Begründung, dass das bei Multiplikation höchstens 27 Versuche sind, erhält 2 BE; volle Punktzahl nur mit dem Inversen bzw. vollständiger Rechnung.",
+       "fehler": "nur „der Angreifer probiert“ ohne Rechnung (P10)."},
+      {"bez": "f)", "text": "**Erläutern Sie**, warum das Diffie-Hellman-Verfahren, bei dem A = g^a^ mod p gesendet wird, im Unterschied zum Bote-Tausch bei sehr großen Zahlen als sicher gilt.", "be": 2,
+       "erwartung": [
+        {"punkt": "Die Umkehrung von g^a^ mod p (diskreter Logarithmus) ist bei großen p nicht effizient berechenbar – Einwegfunktion", "afb": "III", "be": 1},
+        {"punkt": "Alice/Bob brauchen nur schnelles Potenzieren, Eve müsste praktisch alle Exponenten durchprobieren; beim Bote-Tausch genügt eine Multiplikation mit dem Inversen", "afb": "III", "be": 1}],
+       "fehler": "„weil Potenzen größer sind“ ohne Bezug auf die Umkehrbarkeit (P10)."}
+     ]},
+    {"nr": "3", "titel": "Die Tagesberichte",
+     "material": [
+      {"t": "p", "md": "Für die Übertragung der Tagesberichte (mehrere Megabyte) soll ein Hybridverfahren eingesetzt werden."},
+      {"t": "kasten", "kopf": "MATERIAL 2 · HYBRIDVERFAHREN (FILIALE X SENDET AN FILIALE Y)", "inhalt": [
+        {"t": "schaubild", "breite_cm": 13.0, "_W": 640,
+         "akteure": [{"id": "X", "name": "Filiale X", "unter": "Senderin"}, {"id": "Y", "name": "Filiale Y", "unter": "Empfängerin"}],
+         "schritte": [
+          {"nr": 1, "von": "X", "nach": "X", "text": "Tagesbericht verschlüsseln mit (1) → Geheimtext"},
+          {"nr": 2, "von": "X", "nach": "X", "text": "Sitzungsschlüssel K verschlüsseln mit (2) → K verschlüsselt"},
+          {"nr": 3, "von": "X", "nach": "Y", "text": "Geheimtext und K verschlüsselt"},
+          {"nr": 4, "von": "Y", "nach": "Y", "text": "K verschlüsselt entschlüsseln mit (3) → K"},
+          {"nr": 5, "von": "Y", "nach": "Y", "text": "Geheimtext entschlüsseln mit (4) → Tagesbericht"}]}]}],
+     "teile": [
+      {"bez": "g)", "text": "**Ergänzen Sie** in Material 2 an den Stellen (1) bis (4) die Art des Schlüssels und seinen Inhaber bzw. das verwendete Verfahren.", "be": 4,
+       "material": [
+        {"t": "p", "md": "(1) [[luecke:34]]   (2) [[luecke:34]]"},
+        {"t": "p", "md": "(3) [[luecke:34]]   (4) [[luecke:34]]"}],
+       "erwartung": [
+        {"punkt": "(1) Sitzungsschlüssel K / symmetrisches Verfahren", "afb": "II", "be": 1},
+        {"punkt": "(2) öffentlicher Schlüssel von Filiale Y", "afb": "II", "be": 1},
+        {"punkt": "(3) privater Schlüssel von Filiale Y", "afb": "II", "be": 1},
+        {"punkt": "(4) Sitzungsschlüssel K / symmetrisches Verfahren", "afb": "II", "be": 1}],
+       "fehler": "Schlüssel von X statt Y (P9)."},
+      {"bez": "h)", "text": "**Begründen Sie**, warum das Büro ein Hybridverfahren statt eines rein asymmetrischen Verfahrens einsetzen sollte.", "be": 2,
+       "erwartung": [
+        {"punkt": "Asymmetrische Verfahren sind deutlich langsamer, Tagesberichte sind groß", "afb": "II", "be": 1},
+        {"punkt": "hybrid: Daten schnell symmetrisch, nur der kurze Sitzungsschlüssel asymmetrisch, trotzdem kein geheimer Schlüsseltransport nötig", "afb": "II", "be": 1}],
+       "fehler": "„asymmetrisch ist unsicherer“ (fachlich falsch)."},
+      {"bez": "i)", "text": "**Nennen Sie** für das Kurierbüro je einen sinnvollen Anwendungsbereich einer rein symmetrischen und einer asymmetrischen Verschlüsselung.", "be": 2,
+       "erwartung": [
+        {"punkt": "z. B. symmetrisch: Verschlüsselung der Festplatten/Backups einer Filiale", "afb": "I", "be": 1},
+        {"punkt": "z. B. asymmetrisch: Übertragung/Vereinbarung von Sitzungsschlüsseln oder digitale Signatur der Berichte", "afb": "I", "be": 1}],
+       "alternativen": "Messenger, Website (hybrid) nur dann anrechnen, wenn der asymmetrische Anteil benannt wird."}
+     ]}
+  ],
+  "notenschluessel": [[15, 23], [14, 22], [13, 21], [12, 20], [11, 18], [10, 17], [9, 16], [8, 15], [7, 14], [6, 12], [5, 11], [4, 10], [3, 8], [2, 7], [1, 5], [0, 0]],
+  "schlusszeile": "Viel Erfolg – und lassen Sie Eve nichts mitlesen!"
+}

@@ -1,0 +1,695 @@
+{
+ "typ": "akte",
+ "welt": 0,
+ "kennung": "AKTE W0·3",
+ "titel": "Die Werkstatt des Schreibers",
+ "ds": "3",
+ "niveau": "kern",
+ "level": "0.3",
+ "datei": "KR_W0_Akte3_Werkstatt_des_Schreibers",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "In der Schreibstube des Archivs stapeln sich Wachstafeln. Jede Botschaft musste ein Schreiber von Hand verschieben, Buchstabe für Buchstabe. Du baust ihm eine Maschine: erst als Struktogramm – so, wie es im Abitur verlangt wird –, dann als Java-Programm in der Online-IDE. Eine Falle lauert dabei auf jeden Programmierer: Die Maschine zählt anders als die Anlage."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Zeichen sind Zahlen (ASCII, Anlage)",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "zentriert": true,
+     "zeilen": [
+      [
+       "Zeichen",
+       "A",
+       "B",
+       "…",
+       "K",
+       "…",
+       "Z",
+       "a",
+       "…",
+       "z"
+      ],
+      [
+       "ASCII-Wert",
+       "65",
+       "66",
+       "…",
+       "75",
+       "…",
+       "90",
+       "97",
+       "…",
+       "122"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4,
+      1.4
+     ]
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Zählbasis",
+      "Wo?",
+      "Umrechnung",
+      "Beispiel K"
+     ],
+     "zeilen": [
+      [
+       "**A = 1 … Z = 26**",
+       "Papier, Abitur-Anlage",
+       "Nummer = ASCII-Wert − 64",
+       "11"
+      ],
+      [
+       "**A = 0 … Z = 25**",
+       "Programm (Rechnen mod 26)",
+       "Wert = ASCII-Wert − 65",
+       "10"
+      ]
+     ],
+     "breiten": [
+      3.6,
+      4.8,
+      5.2,
+      2.8
+     ]
+    },
+    {
+     "t": "p",
+     "md": "Mit A = 0 ist die Caesar-Formel einfach: neu = (wert + k) mod 26. Mit A = 1 braucht man c = ((p + k − 1) mod 26) + 1."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P1",
+   "titel": "Zählbasis verwechselt",
+   "md": "Prüfe in jeder Aufgabe **zuerst**, welche Nummerierung gilt: A = 1 (Anlage, Papier) oder A = 0 (Programm, ASCII − 65). Programm und Anlage unterscheiden sich immer um 1."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Caesar als Struktogramm (EH §5)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Erlaubt sind nur die Zeichenketten-Operationen der Anlage: **Länge**, **Zeichen an Position i** (ab 0), **Teilzeichenkette**, **Verbinden**, Gleichheit, Teilzeichenkette prüfen, lexikographischer Vergleich, **ASCII-Wert ↔ Zeichen**. Ein Zeichen „an einer Stelle ersetzen“ gibt es **nicht** – der Geheimtext entsteht durch Verbinden. `mod` ist der kleinste nicht negative Rest."
+    },
+    {
+     "t": "struktogramm",
+     "kopf": "verschluesseln(klartext: Zeichenkette, k: Ganzzahl): Zeichenkette",
+     "elemente": [
+      {
+       "kommentar": "klartext besteht nur aus Kleinbuchstaben a … z"
+      },
+      {
+       "anw": "geheimtext ← \"\""
+      },
+      {
+       "fuer": "i von 0 bis Länge von klartext − 1",
+       "rumpf": [
+        {
+         "anw": "z ← Zeichen an Position i von klartext"
+        },
+        {
+         "anw": "wert ← ASCII-Wert von z − 97      // a = 0 … z = 25"
+        },
+        {
+         "anw": "wert ← (wert + k) mod 26"
+        },
+        {
+         "anw": "geheimtext ← geheimtext verbunden mit Zeichen zum ASCII-Wert (wert + 65)"
+        }
+       ]
+      },
+      {
+       "gib": "geheimtext"
+      }
+     ],
+     "_breite": 620,
+     "breite_cm": 13.5
+    }
+   ]
+  },
+  {
+   "t": "hinweis",
+   "kopf": "ENTSCHLÜSSELN",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Beim **Entschlüsseln** (Geheimtext groß, Klartext klein) lauten die drei mittleren Zeilen: `wert ← ASCII-Wert von z − 65`, `wert ← (wert − k) mod 26`, `klartext ← klartext verbunden mit Zeichen zum ASCII-Wert (wert + 97)`. Im Struktogramm ist `(wert − k) mod 26` korrekt, weil mod nach EH nie negativ ist."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Vom Struktogramm nach Java (Online-IDE)",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Struktogramm (EH §5)",
+      "Java (Online-IDE)"
+     ],
+     "zeilen": [
+      [
+       "`geheimtext ← \"\"`",
+       "`String geheimtext = \"\";`"
+      ],
+      [
+       "`für i von 0 bis Länge von klartext − 1`",
+       "`for (int i = 0; i < klartext.length(); i++)`"
+      ],
+      [
+       "`z ← Zeichen an Position i von klartext`",
+       "`char z = klartext.charAt(i);`"
+      ],
+      [
+       "`ASCII-Wert von z`",
+       "`(int) z`"
+      ],
+      [
+       "`Zeichen zum ASCII-Wert (w)`",
+       "`(char) w`"
+      ],
+      [
+       "`a mod 26`",
+       "`a % 26` – **nur für a ≥ 0 gleich!** → `(a + 26) % 26`"
+      ],
+      [
+       "`geheimtext ← geheimtext verbunden mit c`",
+       "`geheimtext = geheimtext + c;`"
+      ],
+      [
+       "`gib geheimtext zurück`",
+       "`return geheimtext;`"
+      ]
+     ],
+     "breiten": [
+      8.0,
+      8.4
+     ],
+     "schrift": 9.5
+    },
+    {
+     "t": "p",
+     "md": "Die Online-IDE (online-ide.de) kennt `println(...)` ohne `System.out`. Nicht erlaubt (wie im Abitur): `toUpperCase`, `toLowerCase`, `indexOf`, `replace`, `split`."
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P2",
+   "titel": "Java-% ist nicht mod",
+   "md": "`-3 % 26` ergibt in Java **−3**, nach der Anlage ist −3 mod 26 = **23**. Beim Entschlüsseln in Java deshalb erst 26 addieren: `(wert - k + 26) % 26`."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Drei Zeichen, drei Zahlen",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bestimme** mit der ASCII-Tabelle für `G`, `R` und `v` jeweils den ASCII-Wert, den Wert im Programm (A = 0 bzw. a = 0) und die Nummer der Anlage (A = 1)."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Zeichen",
+      "ASCII-Wert",
+      "Programm (A = 0)",
+      "Anlage (A = 1)"
+     ],
+     "zeilen": [
+      [
+       "`G`",
+       "",
+       "",
+       ""
+      ],
+      [
+       "`R`",
+       "",
+       "",
+       ""
+      ],
+      [
+       "`v`",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      3.6,
+      4.2,
+      4.2
+     ],
+     "zentriert": true,
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "Zeichen",
+      "ASCII-Wert",
+      "Programm (A = 0)",
+      "Anlage (A = 1)"
+     ],
+     "zeilen": [
+      [
+       "`G`",
+       "71",
+       "6",
+       "7"
+      ],
+      [
+       "`R`",
+       "82",
+       "17",
+       "18"
+      ],
+      [
+       "`v`",
+       "118",
+       "21 (v − 97)",
+       "22"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      3.6,
+      4.2,
+      4.2
+     ],
+     "zentriert": true,
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Tabelle. Kleinbuchstaben liegen 32 höher als Großbuchstaben."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "Ein Durchlauf von Hand",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Führe** `verschluesseln(\"nil\", 20)` nach dem Struktogramm von Hand aus. Lege eine Tracetabelle mit den Spalten i, z, wert (nach der mod-Zeile), geheimtext an (nur Variablen, keine Bedingungsspalte)."
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "i",
+      "z",
+      "wert",
+      "geheimtext"
+     ],
+     "zeilen": [
+      [
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.0,
+      6.0,
+      6.4
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "kopf": [
+      "i",
+      "z",
+      "wert",
+      "geheimtext"
+     ],
+     "zeilen": [
+      [
+       "0",
+       "n",
+       "(13 + 20) mod 26 = 7",
+       "H"
+      ],
+      [
+       "1",
+       "i",
+       "(8 + 20) mod 26 = 2",
+       "HC"
+      ],
+      [
+       "2",
+       "l",
+       "(11 + 20) mod 26 = 5",
+       "HCF"
+      ]
+     ],
+     "breiten": [
+      2.0,
+      2.0,
+      6.0,
+      6.4
+     ],
+     "zentriert": true,
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Rückgabe **HCF**."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Mit der Zählung der Anlage",
+   "sozialform": "Partnerarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Ergänze** ein Struktogramm `verschluesselnAnlage(klartext: Zeichenkette, k: Ganzzahl): Zeichenkette`, das mit der Nummerierung der Anlage (a = 1 … z = 26) und der Formel c = ((p + k − 1) mod 26) + 1 arbeitet. Gib nur die drei Zeilen im Schleifenrumpf an, die sich gegenüber Archivwissen 2 ändern."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "`p ← ASCII-Wert von z − 96` · `p ← ((p + k − 1) mod 26) + 1` · `geheimtext ← geheimtext verbunden mit Zeichen zum ASCII-Wert (p + 64)`."
+    },
+    {
+     "t": "p",
+     "md": "*P1:* − 97 / + 65 beibehalten → um 1 verschoben."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 3,
+   "titel": "Den Schlüssel finden",
+   "sozialform": "Partnerarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entwirf** ein Struktogramm `findeSchluessel(klartext: Zeichenkette, geheimtext: Zeichenkette): Ganzzahl` (klartext klein, geheimtext groß, gleich lang, mindestens 1 Zeichen). Es liefert den Caesar-Schlüssel oder −1, wenn kein Caesar-Schlüssel passt."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 6,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Musterlösung (andere korrekte Varianten zulassen):"
+    },
+    {
+     "t": "struktogramm",
+     "kopf": "findeSchluessel(klartext: Zeichenkette, geheimtext: Zeichenkette): Ganzzahl",
+     "elemente": [
+      {
+       "anw": "k ← (ASCII-Wert von (Zeichen an Position 0 von geheimtext) − 65 − (ASCII-Wert von (Zeichen an Position 0 von klartext) − 97)) mod 26"
+      },
+      {
+       "fuer": "i von 1 bis Länge von klartext − 1",
+       "rumpf": [
+        {
+         "anw": "p ← ASCII-Wert von (Zeichen an Position i von klartext) − 97"
+        },
+        {
+         "anw": "c ← ASCII-Wert von (Zeichen an Position i von geheimtext) − 65"
+        },
+        {
+         "wenn": "(p + k) mod 26 ≠ c",
+         "dann": [
+          {
+           "gib": "−1"
+          }
+         ],
+         "sonst": []
+        }
+       ]
+      },
+      {
+       "gib": "k"
+      }
+     ],
+     "_breite": 760
+    },
+    {
+     "t": "p",
+     "md": "Probe: `findeSchluessel(\"rom\", \"FCA\")` = 14 (vgl. Online-IDE-Test)."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 1,
+   "titel": "Online-IDE · Stufe Basis",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Importiere `KR_W0_CaesarWerkstatt_Geruest.txt` in die Online-IDE und **implementiere** `buchstabeZuZahl`, `zahlZuBuchstabe`, `alphabetNummer`, `verschiebe`, bis `CaesarBasisTest` grün ist."
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Musterlösung `KR_W0_CaesarWerkstatt_LSG.txt` (alle 8 Basis-Tests grün). Kernzeilen: `return (int) b - 65;` · `return (char) (z + 65);` · `return (int) b - 64;` · `zahlZuBuchstabe((buchstabeZuZahl(b) + k) % 26)`."
+    }
+   ],
+   "fallen": [
+    "P1"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Online-IDE · Stufe Erweiterung",
+   "sozialform": "Einzelarbeit",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Implementiere `grossbuchstabe`, `verschluesseln`, `entschluesseln`, bis `CaesarErweiterungTest` grün ist. Beachte den Test `entschluesseln(\"ABC\", 3)` → `\"xyz\"`!"
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Musterlösung (7 Tests grün). Entscheidend: `int wert = (buchstabeZuZahl(c) - k + 26) % 26;` – ohne `+ 26` liefert Java für A, k = 3 den Rest −3 (P2)."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 7,
+   "stufe": 3,
+   "titel": "Online-IDE · Stufe Experte",
+   "sozialform": "Einzelarbeit",
+   "niveau": "eA",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Implementiere `fuenfergruppen`, `bruteForce`, `findeSchluessel`, `rateSchluessel`. **Erkläre** mit dem Test `experte_rateSchluessel_grenze`, warum der häufigste Buchstabe nicht immer e ist."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Siehe Musterlösung (8 Tests grün; insgesamt 23/23). „Hannibal ante portas“ (Geheimtext `CVIIDWVGVIOZKJMOVN`, k = 21) enthält 4 × a und nur 1 × e – `rateSchluessel` liefert deshalb 17. Bei kurzen Texten weicht die Häufigkeit von der Statistik ab (P6) – Brücke zur Häufigkeitsanalyse in Welt 1."
+    }
+   ],
+   "fallen": [
+    "P6"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 15 min",
+   "material": [
+    {
+     "t": "p",
+     "md": "**Material:** Struktogramm einer Operation (Positionen ab 0, `text` besteht nur aus Großbuchstaben A–Z):"
+    },
+    {
+     "t": "struktogramm",
+     "kopf": "geheim(text: Zeichenkette): Zeichenkette",
+     "elemente": [
+      {
+       "anw": "ergebnis ← \"\""
+      },
+      {
+       "fuer": "i von 0 bis Länge von text − 1",
+       "rumpf": [
+        {
+         "anw": "wert ← ASCII-Wert von (Zeichen an Position i von text) − 65"
+        },
+        {
+         "wenn": "i mod 2 = 0",
+         "dann": [
+          {
+           "anw": "wert ← (wert + 1) mod 26"
+          }
+         ],
+         "sonst": [
+          {
+           "anw": "wert ← (wert − 1) mod 26"
+          }
+         ]
+        },
+        {
+         "anw": "ergebnis ← ergebnis verbunden mit Zeichen zum ASCII-Wert (wert + 65)"
+        }
+       ]
+      },
+      {
+       "gib": "ergebnis"
+      }
+     ],
+     "_breite": 620,
+     "breite_cm": 13.5
+    }
+   ],
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Bestimmen Sie** die Rückgabe von `geheim(\"ROMA\")`.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "R (17) + 1 = 18 → S; O (14) − 1 = 13 → N; M (12) + 1 = 13 → N; A (0) − 1 = −1 mod 26 = 25 → Z: **SNNZ** [2]."
+      }
+     ],
+     "fallen": [
+      "P2"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Entscheiden Sie begründet**, ob `geheim` ein monoalphabetisches oder ein polyalphabetisches Verfahren beschreibt.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Polyalphabetisch: Derselbe Klartextbuchstabe wird je nach Position verschieden ersetzt, z. B. `geheim(\"AA\")` = BZ [2]."
+      }
+     ],
+     "fallen": [
+      "P5"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "Ein Schüler übersetzt die Zeile `wert ← (wert − 1) mod 26` wörtlich mit dem Java-Operator `%`. **Erläutern Sie**, für welche Eingabe dabei ein Fehler entsteht, und **geben Sie** eine korrekte Java-Anweisung **an**.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Für `A` an ungerader Position: `(0 - 1) % 26` ergibt in Java −1, `(char) (−1 + 65)` = `@` statt Z; korrekt: `wert = (wert - 1 + 26) % 26;` [3]."
+      }
+     ],
+     "fallen": [
+      "P2"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "**Geben Sie an**, wie das Struktogramm verändert werden muss, damit es die Verschlüsselung von `geheim` wieder rückgängig macht.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "In der Verzweigung + 1 und − 1 vertauschen (wahr: (wert − 1) mod 26, falsch: (wert + 1) mod 26) [2]."
+      },
+      {
+       "t": "p",
+       "md": "*P3:* „noch einmal anwenden“ ist falsch – zweimal `geheim` verschiebt gerade Positionen um + 2 (`geheim(geheim(\"ROMA\"))` = TMOY)."
+      }
+     ],
+     "fallen": [
+      "P3"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "0.3",
+   "md": "Level 0.3 „Die Werkstatt des Schreibers“; Online-IDE-Karte „Caesar-Werkstatt“ (Gerüst `KR_W0_CaesarWerkstatt_Geruest.txt`, Stufen Basis · Erweiterung · Experte). Die grünen Tests in der IDE sind deine Rückmeldung."
+  }
+ ]
+}

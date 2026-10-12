@@ -1,0 +1,788 @@
+{
+ "typ": "dokument",
+ "welt": 5,
+ "kennung": "LEHRERHINWEISE W5",
+ "titel": "Das Netz",
+ "ds": "14–16",
+ "datei": "KR_W5_Lehrerhinweise",
+ "bloecke": [
+  {
+   "t": "kasten",
+   "kopf": "WELT 5 AUF EINEN BLICK",
+   "hintergrund": "F2EADB",
+   "inhalt": [
+    {
+     "t": "tabelle",
+     "schrift": 9.5,
+     "kopfspalte": true,
+     "breiten": [
+      3.2,
+      12.8
+     ],
+     "zeilen": [
+      [
+       "Epoche",
+       "Das Netz – heute · Akzent Cyan · Artefakt **„Siegel“** · neue Figur **Mallory** (aktive Angreiferin: fälscht, ändert, schiebt unter) und **Trent** (Zertifizierungsstelle)"
+      ],
+      [
+       "Doppelstunden",
+       "DS 14 Fingerabdrücke (Level 5.1) · DS 15 Das Siegel (Level 5.2) · DS 16 Mallory im Netz (Level 5.3, Funkraum, Boss W5)"
+      ],
+      [
+       "Materialien",
+       "Präsentation (31 Folien) · Akten W5·1–W5·3 mit `_LSG` · Papier-Boss „Der Messenger“ (24 BE) mit `_EH` · Warm-up W5 (12 Karten) · Funkraum „Mallory im Netz“ (Rollenkarten) · Boss online „Das Siegel der Stadt“"
+      ],
+      [
+       "Werkzeuge",
+       "Hash-Labor · Signatur- & Zertifikats-Simulator (Kryptolabor) · Video 📼06 „Hash, Signatur, Zertifikat“"
+      ],
+      [
+       "Fallen",
+       "**P9** (Schlüsselrollen, Hash ≠ Verschlüsselung, Vergleich vergessen, Zertifikat ≠ Vertrauenswürdigkeit) · P5 · P2 · P4 · P10"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "t": "h",
+   "md": "1 · Ziele"
+  },
+  {
+   "t": "p",
+   "md": "Hashfunktionen (Eigenschaften, Toy-Hash rechnen und beurteilen, Kollisionen, Prüfsummen, Passwort-Hashing), digitale Signatur (erstellen/prüfen als Schaubild, Schutzziele, mit Verschlüsselung kombinieren), Zertifikate gegen Man-in-the-Middle, TLS als Anwendung, DSGVO-Grundsätze und eine sachliche Erörterung gesellschaftlicher Fragen. Das ist seit 2022 der am stärksten wachsende Teil des Abiturs (Hash/Signatur/Zertifikat in 2022 E/NE, 2023 gA E, 2024 NT, 2025 NT)."
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "KC-Kompetenz „Die Schülerinnen und Schüler …“",
+    "Phase",
+    "Niveau",
+    "Ort"
+   ],
+   "breiten": [
+    10.4,
+    2.0,
+    1.6,
+    2.0
+   ],
+   "zeilen": [
+    [
+     "„erläutern das Prinzip von digitalen Signaturen und Zertifikaten.“ (Modul Kryptologie)",
+     "Q (gA/eA)",
+     "kern",
+     "5.2, 5.3"
+    ],
+    [
+     "„beschreiben Anwendungsbereiche für symmetrische bzw. asymmetrische Verschlüsselungsverfahren.“",
+     "Q (gA/eA)",
+     "kern",
+     "5.3 (TLS)"
+    ],
+    [
+     "„beschreiben Aspekte zur Sicherheit der Kommunikation im Internet.“ (Modul Codierung und Übertragung von Daten)",
+     "EP",
+     "kern",
+     "5.1–5.3"
+    ],
+    [
+     "„erläutern die rechtlichen Rahmenbedingungen für den Umgang mit ihren persönlichen Daten, wie z. B. informationelle Selbstbestimmung und Datenschutzrichtlinien.“ (Modul Datenschutz)",
+     "EP",
+     "kern",
+     "5.3"
+    ],
+    [
+     "„beurteilen die Sicherheit eines gegebenen symmetrischen Verschlüsselungsverfahrens.“ – übertragen auf Hash-/Prüfverfahren (Abiturpraxis 2022–2025)",
+     "Q",
+     "kern",
+     "5.1, Bosse"
+    ],
+    [
+     "Hashfunktionen, Prüfsummen, Passwort-Hashing (nicht wörtlich im KC, abiturrelevant seit 2022: Signatur „über einen Hashwert“)",
+     "–",
+     "kern",
+     "5.1"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Prozessbezogen: **PK3.3** (begründen), **IK4.2** (Datenschutz diskutieren), **IK4.3** (Grenzen: Toy-Hash vs. SHA-256, Zertifikat ≠ Vertrauenswürdigkeit), PK1.4 (Prüfverfahren nach Kriterien beurteilen).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "2 · Verlauf der Doppelstunden"
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 14 – Fingerabdrücke (Level 5.1)",
+   "breiten": [
+    2.6,
+    1.2,
+    7.6,
+    2.4,
+    3.0
+   ],
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W5-01 (KH „ja“), WU-W5-10 (Hybrid, W4), WU-W5-12 (Schlüsselanzahl, W4)",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Archivfund",
+     "10",
+     "Gefälschte Update-Seite: Fingerabdrücke vergleichen, Domain, Zertifikat. Impuls: „Was ist ein Fingerabdruck einer Datei? Was müsste er können?“ → Anforderungsliste an der Tafel sammeln",
+     "Plenum, PA",
+     "Folie 2, Lab-Archivfund"
+    ],
+    [
+     "Erarbeitung 1: Eigenschaften",
+     "15",
+     "Hash-Labor: SHA-256 von „heute“ und „heutf“ (134 von 256 Bits verschieden) → Lawineneffekt; feste Länge, Einweg, Kollisionsresistenz, effizient; Hash ≠ Verschlüsselung (kein Schlüssel, nicht umkehrbar)",
+     "Plenum",
+     "Hash-Labor, Folien 4–6"
+    ],
+    [
+     "Erarbeitung 2: KRYPTOS-Hash von Hand",
+     "15",
+     "Vorgerechnet „nebel“ (Archivwissen 2), dann Akte Auftrag 1 (anker/tor → Kollision!) und 2 (kiste/kistf)",
+     "EA, PA",
+     "Akte W5·1, Folie 7"
+    ],
+    [
+     "Erarbeitung 3: Kollisionen",
+     "15",
+     "Schubfach-Erlebnis im Hash-Labor (Kurs füllt die 29 Fächer mit Wörtern, erste Kollision nach wenigen Wörtern); Regel „vorletzter +1, letzter −3“ (Akte Auftrag 3–4)",
+     "Plenum, PA",
+     "Hash-Labor (Kollisionssuche), Folien 8–9"
+    ],
+    [
+     "Erarbeitung 4: Prüfsummen und Passwörter",
+     "15",
+     "Summen- vs. gewichtete Prüfsumme (rabe/bear), Passwort-Hashing mit Salz (Akte Auftrag 5–6); aktuelle Verfahren nur nennen",
+     "PA",
+     "Akte W5·1, Folien 10–11"
+    ],
+    [
+     "Sicherung",
+     "10",
+     "Merkkasten 5.1, Abi-Check a) gemeinsam; Hausaufgabe Lab 5.1, Abi-Check b)–d)",
+     "Plenum",
+     "Folie 12"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 15 – Das Siegel (Level 5.2)",
+   "breiten": [
+    2.6,
+    1.2,
+    7.6,
+    2.4,
+    3.0
+   ],
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W5-02, WU-W5-04, WU-W5-11",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Einstieg",
+     "10",
+     "„Mallory ändert die Datei – und berechnet einfach den neuen Hashwert mit. Was nun?“ → Der Hash muss so geschützt werden, dass nur Alice ihn erzeugen kann",
+     "Plenum",
+     "Folie 14"
+    ],
+    [
+     "Erarbeitung 1: Signatur",
+     "20",
+     "Schaubild mit nummerierten Pfeilen entwickeln (erstellen ①–③, prüfen ④–⑥); Signatur-Simulator: Alice signiert, Bob prüft, Mallory ändert ein Zeichen → Prüfung schlägt fehl; Akte W5·2 Auftrag 1–2",
+     "Plenum, PA",
+     "Signatur-Simulator, Folien 15–16"
+    ],
+    [
+     "Schutzziele",
+     "10",
+     "Vertraulichkeit, Integrität, Authentizität (+ Verbindlichkeit) an Szenarien zuordnen (Akte Auftrag 4)",
+     "PA",
+     "Folie 17"
+    ],
+    [
+     "Signieren und verschlüsseln",
+     "15",
+     "Reihenfolge und Schlüssel (Alice: privat Alice, öffentlich Bob; Bob: privat Bob, öffentlich Alice); Akte Auftrag 5",
+     "EA",
+     "Folie 18, Akte"
+    ],
+    [
+     "Kollisionsangriff",
+     "15",
+     "„ueberweise zwei euro“ vs. „ueberweise tausend euro“ (KH 18): Signatur bleibt gültig → Signatur nur so stark wie der Hash; Akte Auftrag 3 (Ergänzung mit Zahlen)",
+     "PA",
+     "Simulator (Modus „schwacher Hash“), Folie 19"
+    ],
+    [
+     "Sicherung",
+     "10",
+     "Merkkasten 5.2, Falle P9; Hausaufgabe Lab 5.2, Abi-Check",
+     "Plenum",
+     "Folien 20–21"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "verlauf",
+   "titel": "DS 16 – Mallory im Netz (Level 5.3, Boss W5)",
+   "breiten": [
+    2.6,
+    1.2,
+    7.6,
+    2.4,
+    3.0
+   ],
+   "zeilen": [
+    [
+     "Warm-up",
+     "10",
+     "WU-W5-05, WU-W5-07, WU-W5-08",
+     "EA",
+     "Lab Warm-up"
+    ],
+    [
+     "Funkraum",
+     "25",
+     "🔴 „Mallory im Netz“: Phase 1 ohne Zertifikate (Mallory gewinnt), Phase 2 mit Trent und Zertifikaten (Mallory fällt auf), Auswertung",
+     "Teams",
+     "Funkraum bzw. Papier-Variante, Folien 23–24"
+    ],
+    [
+     "Zertifikate und TLS",
+     "20",
+     "Zertifikat lesen (Inhalt, Aussteller, Signatur der CA), Zertifikatskette bis zur Wurzel, Vertrauensanker im Browser, Web of Trust kurz; TLS im Überblick (Zertifikat prüfen → Sitzungsschlüssel vereinbaren → symmetrisch); Akte W5·3 Auftrag 2–4",
+     "Plenum, PA",
+     "Zertifikats-Simulator, Folien 25–28"
+    ],
+    [
+     "Datenschutz",
+     "10",
+     "DSGVO-Grundsätze an Fallkarten (Akte Auftrag 5), informationelle Selbstbestimmung; Erörterung „Scannen vor der Verschlüsselung?“ als schriftliche Hausaufgabe (Auftrag 6)",
+     "PA",
+     "Folien 29–30"
+    ],
+    [
+     "Boss online",
+     "25",
+     "„Das Siegel der Stadt“ (Anhang A)",
+     "EA",
+     "Lab Boss W5, Folie 31"
+    ],
+    [
+     "**Summe**",
+     "**90**",
+     "",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "*Folienzählung: Die Präsentation hat gegenüber der Spezifikation eine zusätzliche Folie 25 „Trent siegelt Bobs Schlüssel“ (Zertifikats-Schaubild); die Folien ab „Das Zertifikat“ sind daher um eins verschoben (Spezifikation 25–30 = Präsentation 26–31).*",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "3 · Typische Schwierigkeiten"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "**P9** in allen Varianten: Signatur mit Bobs Schlüssel, Prüfen „mit dem privaten Schlüssel“, Vergleich vergessen, Hash = Verschlüsselung, Zertifikat = „Seite ist sicher“. Gegenmittel: Schaubilder immer mit **Schlüsselart + Inhaber** beschriften lassen; Merksatz „Vertraulichkeit: Empfänger-Schlüssel · Signatur: Absender-Schlüssel“.",
+    "**P2/P1** beim KRYPTOS-Hash: nicht nach jeder Runde reduziert, mehrfaches Abziehen von 29 vergessen (62 → 33 statt 4), A = 0.",
+    "**P4** Normalisierung (Leerzeichen, Ziffern entfallen) und Auffüllen mit x bei FEDER (Papier-Boss a).",
+    "**P10** Schutzziele nur aufgezählt; „beurteilen“ beim Datenschutz ohne Urteil; Erörterung einseitig.",
+    "**P5** Verwechslung **Prüfsumme** (zufällige Fehler, kein Angreifer) vs. **kryptografischer Hash** (gegen Angreifer); Signatur als „Verschlüsselung“ eingeordnet."
+   ]
+  },
+  {
+   "t": "h",
+   "md": "4 · Differenzierung"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopfspalte": true,
+   "breiten": [
+    2.6,
+    13.4
+   ],
+   "zeilen": [
+    [
+     "gA",
+     "Level 5.1 Aufgaben 01–06, 08; 5.2 01–04, 06, 07; 5.3 01–07; Akte W5·2 Auftrag 6 und W5·3 Auftrag 7 entfallen (eA). Boss-Pool ohne W5-B-15."
+    ],
+    [
+     "eA",
+     "Herleitung der Kollisionsregel (Akte W5·1 Auftrag 4a), Siegel-Code (MAC-Idee, keine Verbindlichkeit), Mallory gegen Diffie-Hellman, Simulator-Modus „Vertrauensanker manipulieren“."
+    ],
+    [
+     "Schnelle",
+     "Hash-Labor „Kollisionsbaukasten“ (eigene Kollisionen für Mitschüler bauen), Geburtstagseffekt berechnen (Wahrscheinlichkeit > 50 % ab 7 Wörtern beim KRYPTOS-Hash), Zertifikat einer echten Website im Browser analysieren."
+    ],
+    [
+     "Langsame",
+     "Rechenvorlagen der Akten (Buchstabe · Wert · 3 · h + w · h), Schaubild-Vorlagen mit Wortkarten (Schlüsselart + Inhaber), Video 06 vor DS 15."
+    ],
+    [
+     "Ergänzung",
+     "Aufgaben mit RSA-Zahlen (s^3^ mod 55) nur, wenn W4.2 RSA gerechnet wurde (Akte W5·2 Archivwissen 5, Auftrag 3)."
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "5 · Kürzungsvariante (2 DS statt 3)"
+  },
+  {
+   "t": "p",
+   "md": "DS 14 und 15 zusammenlegen: Hash-Eigenschaften + KRYPTOS-Hash (30 min), Prüfsummen/Passwort als Hausaufgabe, Signatur (30 min), Schutzziele + Signieren/Verschlüsseln (20 min); DS 16 unverändert, Boss online als Hausaufgabe. Papier-Boss als Übungsklausur in W6."
+  },
+  {
+   "t": "h",
+   "md": "6 · Vorbereitung und Technik"
+  },
+  {
+   "t": "liste",
+   "items": [
+    "Hash-Labor und Signatur-/Zertifikats-Simulator freigeben.",
+    "Funkraum-Szenario „Mallory im Netz“ in der Regie anlegen (Paare + Mallory-Team); für die Papier-Variante Umschläge, nummerierte Klebezettel, Schlüsselkarten, Stempel; Auftragskarten drucken (`KR_W5_Funkraum_Mallory_im_Netz`).",
+    "**Aktuellen Stand der EU-Debatte („Chatkontrolle“) vor DS 16 prüfen** und Folie 30 sowie Archivwissen 5 der Akte W5·3 ggf. anpassen.",
+    "Eine echte HTTPS-Seite im Browser für die Zertifikatsansicht bereithalten.",
+    "Boss W5 freischalten."
+   ],
+   "haken": true
+  },
+  {
+   "t": "h",
+   "md": "7 · Gesellschaftliche Debatte sachlich führen"
+  },
+  {
+   "t": "p",
+   "md": "Die Erörterung „Scannen vor der Verschlüsselung?“ ist politisch umstritten. Das Material stellt beide Seiten mit gleichem Gewicht dar (Archivwissen 5, Folie 30, Level-Aufgabe W5-L3-08). Für die Moderation gilt: Kontroverses kontrovers darstellen, keine eigene Position vorgeben, die Schülerinnen und Schüler zu einem **eigenen, begründeten Urteil** befähigen. Bewertet wird die Qualität der Argumentation (Sachverhalt korrekt, je Seite ≥ 2 Argumente, Abwägung, Bezug zu Schutzziel und DSGVO), **nicht** die Position. Fachlicher Kern für alle Positionen: Die Prüfung setzt **vor** der Ende-zu-Ende-Verschlüsselung an – das Verfahren wird nicht gebrochen, die Vertraulichkeit aber umgangen."
+  },
+  {
+   "t": "h",
+   "md": "8 · Bezug zum Abitur"
+  },
+  {
+   "t": "p",
+   "md": "Hash-Kollisionen begründen und Ungeeignetheit zur Verschlüsselung (2024 NT c), Toy-Hash berechnen (2024 NT e, gA 2022 E a, gA 2023 E c, gA 2024 NT a) und beurteilen (Lawineneffekt, Einweg: gA 2023 E c; Kollisionsfreiheit: gA 2024 NT b), zwei verschiedene Kollisionsangriffe darstellen (2024 NT f), Signaturprüfung im Schema ergänzen (2024 NT d, gA 2022 NT E c, gA 2025 NT e), Schlüsselart + Inhaber begründet ergänzen (2024 NT b), Vertraulichkeit + Integrität + Authentizität gleichzeitig (2024 NT g), Passwort-Hashing (2024 NT h), DSGVO-Grundsätze nennen (2024 NT i) bzw. Datenschutzprobleme erläutern (gA 2022 NT E d), Zertifikate gegen gefälschte öffentliche Schlüssel (2022 E c, gA 2022 E b, gA 2023 E b, gA 2025 NT f), Prüfsummen Summe vs. Stellenwert (2025 NT f). Alle Aufgaben hier sind eigene Formulierungen mit eigenen Verfahren (KRYPTOS-Hash, FEDER, Produkt-Hash) und eigenen Zahlen."
+  },
+  {
+   "t": "h",
+   "md": "9 · Fachlicher Hintergrund: der KRYPTOS-Hash"
+  },
+  {
+   "t": "p",
+   "md": "Eigene Konstruktion (kein Abitur-Verfahren), verbindlich für Plattform, Materialien und Welt 6: Text normalisieren (a–z; ä → ae, ö → oe, ü → ue, ß → ss; Ziffern, Leerzeichen, Satzzeichen entfallen), A = 1 … Z = 26, Start h = 0, je Buchstabe **h ← (3 · h + w) mod 29**, Ausgabe h ∈ {0, …, 28}."
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "Anforderung",
+    "erfüllt?",
+    "Begründung am KRYPTOS-Hash"
+   ],
+   "breiten": [
+    3.4,
+    1.4,
+    11.2
+   ],
+   "zeilen": [
+    [
+     "feste Länge",
+     "✓",
+     "Ausgabe immer eine Zahl 0 … 28 (≈ 5 Bit)"
+    ],
+    [
+     "effizient berechenbar",
+     "✓",
+     "eine Multiplikation, eine Addition, ein Rest je Buchstabe"
+    ],
+    [
+     "Einwegeigenschaft",
+     "✗",
+     "letzten Buchstaben w = (z − 3h) mod 29 wählen; z. B. Ziel 20, Anfang „ab“ (h = 5) → „abe“; schon KH(„t“) = 20"
+    ],
+    [
+     "Kollisionsresistenz",
+     "✗",
+     "Schubfach (29 Werte; > 50 % Kollision ab 7 Zufallswörtern); gezielt: Buchstabe j Stellen vor dem Ende um d ändern → Hash ändert sich um 3^j^ · d, Regel „vorletzter +1, letzter −3“; Erweiterung: gleiche Hashes bleiben beim Anhängen gleich"
+    ],
+    [
+     "Lawineneffekt",
+     "✗",
+     "letzter Buchstabe +1 → Hash +1 („kiste“ 7 → „kistf“ 8)"
+    ],
+    [
+     "Reihenfolge wirkt",
+     "✓",
+     "Gewichte 3^j^: Anagramme meist verschieden („regal“ 18, „lager“ 22) – anders als die Summen-Prüfsumme"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Reservierte Beispielpaare** (in Welt 5 verwendet, Welt 6 wählt andere): nebel/nebfi 9 · anker/tor 11 · heute/morgen 22 · hafen/haffk/eis/zoo/bear 4 · post/potq 6 · ueberweisezweieuro/ueberweisetausendeuro 18 · treffenumfuenfuhr/treffenumzehnuhr 8 · sonne/geheim 0. Testfälle: „“ → 0, „a“ → 1, „Überweise 2 Euro“ → „ueberweiseeuro“ → 1 (Ziffern entfallen – Zahlen in Aufgaben immer als Wort).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "10 · Werkzeuge"
+  },
+  {
+   "t": "h",
+   "md": "Hash-Labor (Kryptolabor)"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 9,
+   "kopf": [
+    "Ansicht",
+    "zeigt",
+    "Grenzen"
+   ],
+   "breiten": [
+    3.6,
+    9.0,
+    3.4
+   ],
+   "zeilen": [
+    [
+     "KRYPTOS-Hash Schritt für Schritt",
+     "Normalisierung, Rundentabelle (Buchstabe, w, h vorher, 3 · h + w, mod 29), „nächste Runde“",
+     "gesperrt in Aufgaben, die nach KH fragen"
+    ],
+    [
+     "Lawinen-Vergleich",
+     "zwei Eingaben: KRYPTOS-Hash (Zahl + 5 Bit) und SHA-256 (64 Hexziffern, 256-Bit-Raster, „x von 256 Bits verschieden“)",
+     "Text bis 200 Zeichen"
+    ],
+    [
+     "Kollisionssuche (Schubfach)",
+     "29 Fächer, Kurs ruft Wörter zu, erste Kollision hervorgehoben, „Spätestens beim 30. Wort ist eine Kollision sicher“",
+     "nur KRYPTOS-Hash"
+    ],
+    [
+     "Kollisionsbaukasten",
+     "Beitrag 3^j^ · Δ mod 29 eines Buchstabens, „ausgleichen mit dem letzten Buchstaben“",
+     "Wort bis 12 Zeichen"
+    ],
+    [
+     "Passwort & Salz",
+     "drei Konten, KH(Salz + Passwort) bzw. SHA-256 (gekürzt), Login-Simulation, Schalter „ohne Salz“",
+     "speichert nichts; nur Übung"
+    ],
+    [
+     "Prüfsummen",
+     "S(t) und G(t) zweier Texte",
+     "Texte bis 30 Zeichen"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "MD5 und SHA-1 erscheinen nur als Text mit dem Etikett „gebrochen – nicht verwenden“.",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Signatur- & Zertifikats-Simulator (Kryptolabor)"
+  },
+  {
+   "t": "p",
+   "md": "Bühne mit Alice, Bob, Mallory, Trent (CA), Schlüsselserver und Vertrauensspeicher; RSA mit kleinen Zahlen nur zur Anzeige (Alice (55, 3)/(55, 27), Bob (91, 5)/(91, 29), Mallory (51, 3)/(51, 11), Trent (65, 5)/(65, 29)). Modus **Signatur**: Manipulationen Nachricht ändern / Signatur ändern / Hashwert statt Signatur / mit Mallorys Schlüssel signieren → **ungültig**; Schlüssel auf dem Schlüsselserver ersetzen, Kollision (Modus „schwacher Hash“), Replay → **gültig!** Modus **Zertifikat**: Schlüssel im Zertifikat tauschen (Signatur der CA passt nicht), fremder Name, selbst signiert (kein Vertrauensanker), abgelaufen, gesperrt; Lehrkraft-Schalter „Mallory Root in Alices Vertrauensspeicher“ → Prüfung grün („Wer den Vertrauensanker kontrolliert, kontrolliert alles.“). Modus **MitM** mit Pfeilen ①–⑥, Variante Diffie-Hellman (p = 23, g = 5)."
+  },
+  {
+   "t": "h",
+   "md": "Funkraum „Mallory im Netz“ (DS 16, 25 min)"
+  },
+  {
+   "t": "p",
+   "md": "Phase 1 ohne Zertifikate (9 min): Mallory sitzt zwischen allen Paaren, tauscht Schlüsselnummern und ändert Aufträge unbemerkt. Phase 2 (9 min): Trent (Lehrkraft) stellt Zertifikate aus, Alice nutzt nur grün geprüfte Schlüssel – Mallory fällt auf. Auswertung (7 min, Folie 24). Vollständiger Ablauf, Papier-Alternative, Rollen-, Auftrags-, Zahlen- und Zertifikatskarten: **`Werkzeuge/Funkraum/KR_W5_Funkraum_Mallory_im_Netz`**."
+  },
+  {
+   "t": "h",
+   "md": "11 · Abdeckungsmatrix"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8.5,
+   "kopf": [
+    "KC-Kompetenz",
+    "Level-Aufgaben",
+    "Akte-Auftrag",
+    "Boss online",
+    "Papier-Boss"
+   ],
+   "breiten": [
+    4.6,
+    3.0,
+    3.6,
+    3.0,
+    1.8
+   ],
+   "zeilen": [
+    [
+     "erläutern das Prinzip von digitalen Signaturen",
+     "W5-L2-01 … -07",
+     "W5·2 A1–A6, Abi-Check a–d",
+     "W5-B-02, -04, -09, -12, -13, -15",
+     "e), h)"
+    ],
+    [
+     "erläutern das Prinzip von Zertifikaten",
+     "W5-L3-01, -02, -04, -05, -07",
+     "W5·3 A1–A3, A7, Abi-Check a–c",
+     "W5-B-03, -11, -14",
+     "f), g)"
+    ],
+    [
+     "beschreiben Anwendungsbereiche sym./asym. Verfahren (TLS, Signatur)",
+     "W5-L3-03",
+     "W5·3 A4",
+     "W5-B-10",
+     "g)"
+    ],
+    [
+     "beschreiben Aspekte zur Sicherheit der Kommunikation im Internet (Hash, Prüfsumme, Passwort, TLS, MitM)",
+     "W5-L1-01 … -08, W5-L3-03, -04",
+     "W5·1 A1–A7, W5·3 A1, A4",
+     "W5-B-01, -06, -07, -08, -10",
+     "a)–d), f)"
+    ],
+    [
+     "beurteilen die Sicherheit gegebener Verfahren (Toy-Hash, fremde Prüfverfahren)",
+     "W5-L1-07, -08, W5-L2-07",
+     "W5·1 A2–A4, W5·2 A3, A6",
+     "W5-B-07, -08, -12, -15",
+     "c), d)"
+    ],
+    [
+     "erläutern rechtliche Rahmenbedingungen (informationelle Selbstbestimmung, DSGVO) / IK4.2",
+     "W5-L3-06, -08",
+     "W5·3 A5, A6, Abi-Check d",
+     "W5-B-05",
+     "i)"
+    ]
+   ]
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Anhang A · Boss online „Das Siegel der Stadt“ – Aufgabenpool mit Lösungen"
+  },
+  {
+   "t": "p",
+   "md": "**Rahmentext (geduzt):** In Chronopolis hängt alles am Siegel der Stadt: Urkunden, Überweisungen, die Website des Rathauses. Mallory hat angekündigt, das Siegel zu fälschen. Zeig in 25 Minuten ohne Werkzeuge, dass du jeden ihrer Tricks durchschaust – ab 50 % gehört das Artefakt „Siegel“ dir."
+  },
+  {
+   "t": "p",
+   "md": "Pool 15 Aufgaben (5 × ★, 6 × ★★, 4 × ★★★), nur `kern`/`eA`; fremde Verfahren: W5-B-07, -08, -12, -15. Für gA ohne W5-B-15.",
+   "klein": true
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8,
+   "kopf": [
+    "ID · Stufe · Niveau",
+    "Aufgabenstellung (gesiezt)",
+    "Lösung",
+    "Erklärung"
+   ],
+   "breiten": [
+    2.3,
+    7.6,
+    2.9,
+    3.4
+   ],
+   "zeilen": [
+    [
+     "**W5-B-01**\n★ · kern\n*hash · choice*",
+     "Welche Aussage beschreibt den Lawineneffekt einer Hashfunktion? (A) Der Hashwert wächst mit der Nachrichtenlänge. (B) Eine kleine Änderung der Nachricht ändert den Hashwert stark. (C) Zu jedem Hashwert gibt es genau eine Nachricht. (D) Der Hashwert kann mit einem Schlüssel zurückgerechnet werden.",
+     "**(B)**",
+     "(A) widerspricht fester Länge, (C) dem Schubfachprinzip, (D) beschreibt Verschlüsselung (P9)."
+    ],
+    [
+     "**W5-B-02**\n★ · kern\n*signatur · choice*",
+     "Mit welchem Schlüssel prüft Bob eine digitale Signatur von Alice? (A) Bobs privatem (B) Bobs öffentlichem (C) Alices privatem (D) Alices öffentlichem",
+     "**(D)**",
+     "Geprüft wird mit dem öffentlichen Schlüssel der Absenderin (P9)."
+    ],
+    [
+     "**W5-B-03**\n★ · kern\n*zertifikat · choice*",
+     "Wer signiert das Zertifikat einer Website? (A) die Website selbst (B) der Browser (C) eine Zertifizierungsstelle (D) der Internetanbieter",
+     "**(C)**",
+     "Die CA bestätigt mit ihrer Signatur die Zuordnung Schlüssel ↔ Domain."
+    ],
+    [
+     "**W5-B-04**\n★ · kern\n*signatur · match*",
+     "Ordnen Sie zu: (1) Vertraulichkeit (2) Integrität (3) Authentizität – (A) Die Nachricht stammt nachweislich vom angegebenen Absender. (B) Nur Befugte können den Inhalt lesen. (C) Die Nachricht wurde nicht verändert.",
+     "**1–B · 2–C · 3–A**",
+     "Schutzziele mit Fachbegriffen benennen (P10)."
+    ],
+    [
+     "**W5-B-05**\n★ · kern\n*gesellschaft · choice*",
+     "Ein Schulportal speichert Krankmeldungen auch noch zehn Jahre nach dem Abitur. Welcher DSGVO-Grundsatz ist verletzt? (A) Zweckbindung (B) Speicherbegrenzung (C) Richtigkeit (D) Transparenz",
+     "**(B)**",
+     "Daten dürfen nur so lange gespeichert werden, wie es der Zweck erfordert."
+    ],
+    [
+     "**W5-B-06**\n★★ · kern\n*hash · gaps*",
+     "KRYPTOS-Hash (A = 1 … Z = 26, Start 0, h ← (3 · h + w) mod 29). Bestimmen Sie KH(„eis“). Zustände nach jeder Runde: [1], [2], [3].",
+     "**5 · 24 · 4**",
+     "3 · 5 + 9 = 24; 3 · 24 + 19 = 91 = 3 · 29 + 4."
+    ],
+    [
+     "**W5-B-07**\n★★ · kern\n*fremde-chiffre · gaps*",
+     "**Material „Produkt-Hash“:** PH(t) = (Produkt aller Buchstabenwerte) mod 13, A = 1 … Z = 26; nach jeder Multiplikation mod 13. Bestimmen Sie PH(„rabe“) [1] und PH(„kai“) [2].",
+     "**[1] 11 · [2] 8**",
+     "rabe: 18 mod 13 = 5, · 1 = 5, · 2 = 10, · 5 = 50 mod 13 = 11. kai: 11 · 1 = 11, · 9 = 99 mod 13 = 8."
+    ],
+    [
+     "**W5-B-08**\n★★ · kern\n*fremde-chiffre · choice (mehrfach)*",
+     "Produkt-Hash wie in W5-B-07. Korrekt? (1) „rabe“ und „bear“ haben denselben Hashwert. (2) Jede Nachricht, die ein m oder ein z enthält, hat den Hashwert 0. (3) Der Produkt-Hash erfüllt den Lawineneffekt. (4) Der Produkt-Hash hat keine Kollisionen.",
+     "**(1), (2)**",
+     "(1) Multiplikation ist vertauschbar → Anagramme kollidieren. (2) m = 13 und z = 26 sind Vielfache von 13. (3)/(4) falsch: nur 13 Werte."
+    ],
+    [
+     "**W5-B-09**\n★★ · kern\n*signatur · schaubild*",
+     "Signaturprüfung bei Bob: ④ empfangene Nachricht → [L1] → H₁ · ⑤ Signatur → entschlüsseln mit [L2] → H₂ · ⑥ [L3]. Ergänzen Sie L1 bis L3.",
+     "**L1** Hashfunktion · **L2** öffentlicher Schlüssel von Alice · **L3** H₁ und H₂ vergleichen",
+     "Ohne Vergleich keine Prüfung (P9)."
+    ],
+    [
+     "**W5-B-10**\n★★ · kern\n*protokoll · order*",
+     "Ordnen Sie den TLS-Verbindungsaufbau: (a) Server sendet Zertifikat (b) Browser prüft Zertifikatskette (c) Sitzungsschlüssel wird asymmetrisch vereinbart (d) Daten werden symmetrisch verschlüsselt (e) Browser nennt unterstützte Verfahren",
+     "**e – a – b – c – d**",
+     "Zertifikatsprüfung vor Schlüsselvereinbarung, sonst MitM."
+    ],
+    [
+     "**W5-B-11**\n★★ · kern\n*zertifikat · choice*",
+     "Kette Wurzel-CA → Zwischen-CA → Serverzertifikat. Mit welchem Schlüssel prüft der Browser die Signatur im Serverzertifikat? (A) öffentlicher Schlüssel des Servers (B) öffentlicher Schlüssel der Zwischen-CA (C) privater Schlüssel der Wurzel-CA (D) öffentlicher Schlüssel des Browsers",
+     "**(B)**",
+     "Jede Signatur wird mit dem öffentlichen Schlüssel ihres Ausstellers geprüft."
+    ],
+    [
+     "**W5-B-12**\n★★★ · kern\n*fremde-chiffre · choice (mehrfach)*",
+     "**Material „Tausch-Siegel“:** Alice und Bob vereinbaren persönlich eine geheime Verschiebung k. Alice sendet den KRYPTOS-Hash h sowie s = (h + k) mod 29. Bob prüft, ob (s − k) mod 29 dem selbst berechneten Hash entspricht. Korrekt? (1) symmetrisches Verfahren (2) Bob kann einem Gericht beweisen, dass Alice gesiegelt hat (3) Wer ein Paar (h, s) mitliest, kann k berechnen (4) leistet Verbindlichkeit wie eine digitale Signatur",
+     "**(1), (3)**",
+     "(2)/(4) falsch: Auch Bob kennt k → keine Verbindlichkeit. (3) k = (s − h) mod 29."
+    ],
+    [
+     "**W5-B-13**\n★★★ · kern\n*signatur · gaps*",
+     "Alice signiert „ueberweise zwei euro“ mit dem KRYPTOS-Hash. Mallory ersetzt die Nachricht durch „ueberweise tausend euro“ (KH 18) und lässt die Signatur unverändert. Bobs Prüfung ergibt [1] (gültig/ungültig). Ausgenutzt wird die fehlende [2] (Einwegeigenschaft/Kollisionsresistenz/Vertraulichkeit). Mallory benötigt Alices privaten Schlüssel: [3] (ja/nein).",
+     "**[1] gültig · [2] Kollisionsresistenz · [3] nein**",
+     "Die alte Signatur passt zum unveränderten Hashwert; Signaturen sind nur so sicher wie die Hashfunktion."
+    ],
+    [
+     "**W5-B-14**\n★★★ · kern\n*zertifikat · match*",
+     "Alice ruft `rathaus-chronopolis.example` auf. Ordnen Sie zu: (1) Zertifikat für `rathaus-chron0polis.example` (Null statt o) (2) echtes Zertifikat gesperrt, privater Schlüssel gestohlen (3) Mallory signiert ein Zertifikat für die Domain selbst (4) echtes Zertifikat seit gestern abgelaufen – (A) Name passt nicht (B) Widerruf (Sperrliste) (C) kein Vertrauensanker (D) Gültigkeitszeitraum",
+     "**1–A · 2–B · 3–C · 4–D**",
+     "Alle vier Prüfungen gehören zur Zertifikatsprüfung; gestohlene Schlüssel stoppt nur der Widerruf."
+    ],
+    [
+     "**W5-B-15**\n★★★ · eA\n*fremde-chiffre · choice*",
+     "**Material „Kurz-Signatur“:** Alice verschlüsselt den Hashwert mit ihrem **öffentlichen** Schlüssel und sendet ihn mit. Beurteilen Sie: (A) gleichwertig zur Signatur (B) unbrauchbar: jede Person kann solche Werte erzeugen, prüfen könnte nur Alice (C) sicherer als eine Signatur, weil der Hash vertraulich ist",
+     "**(B)**",
+     "Signieren erfordert den privaten Schlüssel der Absenderin, sonst fehlen Authentizität und Verbindlichkeit (P9)."
+    ]
+   ]
+  },
+  {
+   "t": "h",
+   "md": "Anhang B · Trainingsplatz-Generatoren"
+  },
+  {
+   "t": "tabelle",
+   "schrift": 8,
+   "kopf": [
+    "Name",
+    "Niveau",
+    "Parameter",
+    "Aufgabentext-Muster",
+    "Lösung / Prüfregel"
+   ],
+   "breiten": [
+    2.6,
+    1.6,
+    4.2,
+    4.2,
+    3.6
+   ],
+   "zeilen": [
+    [
+     "**KRYPTOS-Hash** (`w5_kryptoshash`)",
+     "kern",
+     "Wortliste (≈ 300 deutsche Wörter, 3–7 Buchstaben, normalisiert, ohne Video-Wörter und ohne die reservierten Paare); Variante „mit Zwischenständen“",
+     "„Bestimme KH(„{wort}“). Gib die Zustände nach jeder Runde an.“",
+     "Zustandsfolge und KH; Endwert exakt, Zwischenstände einzeln; Wert ≥ 29 → Hinweis P2; mit A = 0 gerechnet → Hinweis P1"
+    ],
+    [
+     "**Kollisionsbau** (`w5_kollision`)",
+     "kern",
+     "Wort mit vorletztem Buchstaben ≤ y und letztem ≥ d; Variante B „Urbild“: Präfix aus 2 Buchstaben, Ziel z mit w = (z − 3h) mod 29 ∈ 1 … 26",
+     "A: „KH(„{wort}“) = {h}. Gib eine andere Nachricht mit demselben KRYPTOS-Hash an.“ B: „Gib eine Nachricht an, die mit „{präfix}“ beginnt und den KRYPTOS-Hash {z} hat.“",
+     "A: KH(Eingabe) = h und Eingabe ≠ Wort; B: KH(Eingabe) = z und Präfix passt"
+    ],
+    [
+     "**Prüfsummen** (`w5_pruefsumme`)",
+     "kern",
+     "Wortpaar (Permutation oder Nachbartausch), S und G mod 29",
+     "„Berechne S und G für „{a}“ und „{b}“. Welche Prüfsumme erkennt den Unterschied?“",
+     "S(a), S(b), G(a), G(b), Auswahl; Werte exakt"
+    ],
+    [
+     "**Signaturprüfung** (`w5_signatur`)",
+     "ergänzung",
+     "Schlüssel aus {(55, 3), (33, 3), (51, 3)}; h ∈ {2, …, 28}, h < N, kein Fixpunkt; s = h^d^ mod N; zu 50 % manipuliert (h′)",
+     "„Öffentlicher Schlüssel von Alice ({N}, 3). Hashwert der empfangenen Nachricht: {h oder h′}. Signatur s = {s}. Prüfe die Signatur.“",
+     "s^3^ mod N und Urteil; Prüfung mit d statt e → Hinweis P9/P3"
+    ],
+    [
+     "**Schutzziele** (`w5_schutzziele`)",
+     "kern",
+     "24 Szenario-Bausteine × 4 Schutzziele",
+     "„Welche Schutzziele werden im folgenden Szenario erreicht? {szenario}“",
+     "Mengenvergleich; fehlende Vertraulichkeit bei Signatur → Hinweis P9"
+    ]
+   ]
+  }
+ ]
+}

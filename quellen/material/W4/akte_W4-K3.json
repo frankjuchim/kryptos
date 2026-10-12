@@ -1,0 +1,608 @@
+{
+ "typ": "akte",
+ "welt": 4,
+ "kennung": "AKTE W4·K3",
+ "titel": "Euklids Erbe",
+ "niveau": "kuer",
+ "level": "K3",
+ "datei": "KR_W4_AkteK3_Euklids_Erbe",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "In der Akte W4·2 fiel d = 43 „vom Himmel“. Die Archivarin zeigt dir ein **2300 Jahre altes Rechenverfahren**, das RSA erst möglich macht – und einen Trick, mit dem man 37^43^ ohne Taschenrechner bezwingt."
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Erweiterter Euklid in Tabellenform",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Der **euklidische Algorithmus** bestimmt ggT(a, b): Ersetze (a, b) so lange durch (b, a mod b), bis der Rest 0 ist. Der **erweiterte** Algorithmus findet zusätzlich Zahlen x, y mit **a · x + b · y = ggT(a, b)**. Ist ggT(φ, e) = 1, dann ist **y mod φ** das gesuchte **d** (denn e · y mod φ = 1)."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel φ = 60, e = 7:*"
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "kopf": [
+      "a",
+      "b",
+      "q = a / b",
+      "r = a mod b",
+      "x",
+      "y"
+     ],
+     "zeilen": [
+      [
+       "60",
+       "7",
+       "8",
+       "4",
+       "2",
+       "**−17**"
+      ],
+      [
+       "7",
+       "4",
+       "1",
+       "3",
+       "−1",
+       "2"
+      ],
+      [
+       "4",
+       "3",
+       "1",
+       "1",
+       "1",
+       "−1"
+      ],
+      [
+       "3",
+       "1",
+       "3",
+       "0",
+       "0",
+       "1"
+      ],
+      [
+       "1",
+       "0",
+       "–",
+       "–",
+       "1",
+       "0"
+      ]
+     ],
+     "breiten": [
+      2.2,
+      2.2,
+      3.2,
+      3.4,
+      2.6,
+      2.6
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Von oben nach unten:** (a, b) → (b, r). **Von unten nach oben:** letzte Zeile x = 1, y = 0; darüber jeweils x = y (der Zeile darunter), y = x − q · y (der Zeile darunter). Ergebnis: 60 · 2 + 7 · (−17) = 1 → **d = −17 mod 60 = 43**. ⚠ **Falle P2:** Ein negatives y in den kleinsten nicht negativen Rest umwandeln (φ addieren) und immer die Probe e · d mod φ = 1 machen: 7 · 43 = 301 = 5 · 60 + 1."
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 2,
+   "titel": "d für p = 13, q = 17",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bestimme mit der Tabelle d für **φ = 192, e = 5** (p = 13, q = 17)."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_schueler": true,
+     "kopf": [
+      "a",
+      "b",
+      "q",
+      "r",
+      "x",
+      "y"
+     ],
+     "zeilen": [
+      [
+       "192",
+       "5",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.6,
+      2.6,
+      2.6,
+      3.2,
+      3.2
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_loesung": true,
+     "kopf": [
+      "a",
+      "b",
+      "q",
+      "r",
+      "x",
+      "y"
+     ],
+     "zeilen": [
+      [
+       "192",
+       "5",
+       "38",
+       "2",
+       "−2",
+       "**77**"
+      ],
+      [
+       "5",
+       "2",
+       "2",
+       "1",
+       "1",
+       "−2"
+      ],
+      [
+       "2",
+       "1",
+       "2",
+       "0",
+       "0",
+       "1"
+      ],
+      [
+       "1",
+       "0",
+       "–",
+       "–",
+       "1",
+       "0"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.6,
+      2.6,
+      2.6,
+      3.2,
+      3.2
+     ]
+    },
+    {
+     "t": "p",
+     "md": "d = [[luecke:8]]   Probe: [[luecke:40]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "192 = 38 · 5 + 2; 5 = 2 · 2 + 1; 2 = 2 · 1 + 0. Rückwärts: (x, y) = (0, 1) → (1, −2) → (−2, 77). 192 · (−2) + 5 · 77 = 1 → **d = 77**; Probe 5 · 77 = 385 = 2 · 192 + 1."
+    },
+    {
+     "t": "p",
+     "md": "Hier ist y schon positiv – kein Umrechnen nötig."
+    }
+   ],
+   "fallen": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 2,
+   "titel": "d für p = 7, q = 17",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Bestimme mit der Tabelle d für **φ = 96, e = 7** (p = 7, q = 17) und mache die Probe."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_schueler": true,
+     "kopf": [
+      "a",
+      "b",
+      "q",
+      "r",
+      "x",
+      "y"
+     ],
+     "zeilen": [
+      [
+       "96",
+       "7",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.6,
+      2.6,
+      2.6,
+      3.2,
+      3.2
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_loesung": true,
+     "kopf": [
+      "a",
+      "b",
+      "q",
+      "r",
+      "x",
+      "y"
+     ],
+     "zeilen": [
+      [
+       "96",
+       "7",
+       "13",
+       "5",
+       "3",
+       "**−41**"
+      ],
+      [
+       "7",
+       "5",
+       "1",
+       "2",
+       "−2",
+       "3"
+      ],
+      [
+       "5",
+       "2",
+       "2",
+       "1",
+       "1",
+       "−2"
+      ],
+      [
+       "2",
+       "1",
+       "2",
+       "0",
+       "0",
+       "1"
+      ],
+      [
+       "1",
+       "0",
+       "–",
+       "–",
+       "1",
+       "0"
+      ]
+     ],
+     "breiten": [
+      2.6,
+      2.6,
+      2.6,
+      2.6,
+      3.2,
+      3.2
+     ]
+    },
+    {
+     "t": "p",
+     "md": "d = [[luecke:8]]   Probe: [[luecke:40]]",
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "96 = 13 · 7 + 5; 7 = 1 · 5 + 2; 5 = 2 · 2 + 1; 2 = 2 · 1 + 0. Rückwärts: (0, 1) → (1, −2) → (−2, 3) → (3, −41). 96 · 3 + 7 · (−41) = 1 → d = −41 mod 96 = **55**; Probe 7 · 55 = 385 = 4 · 96 + 1."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler:* d = −41 stehen lassen (P2)."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Fortgesetztes Quadrieren (Square-and-Multiply)",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Zerlege den Exponenten in Zweierpotenzen, quadriere wiederholt mod N und multipliziere nur die benötigten Potenzen. So braucht c^d^ statt d − 1 nur etwa 2 · log~2~(d) Multiplikationen."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel 3^13^ mod 17, 13 = 8 + 4 + 1:* 3^1^ = 3, 3² = 9, 3^4^ = 81 mod 17 = 13, 3^8^ = 169 mod 17 = 16; 3 · 13 = 39 mod 17 = 5; 5 · 16 = 80 mod 17 = **12**."
+    },
+    {
+     "t": "struktogramm",
+     "breite_cm": 12.5,
+     "_breite": 620,
+     "kopf": "potenzMod(basis: Ganzzahl, exp: Ganzzahl, n: Ganzzahl): Ganzzahl",
+     "elemente": [
+      {
+       "anw": "ergebnis ← 1"
+      },
+      {
+       "anw": "b ← basis mod n"
+      },
+      {
+       "solange": "exp > 0",
+       "rumpf": [
+        {
+         "wenn": "exp mod 2 = 1",
+         "dann": [
+          {
+           "anw": "ergebnis ← (ergebnis · b) mod n"
+          }
+         ],
+         "sonst": []
+        },
+        {
+         "anw": "b ← (b · b) mod n"
+        },
+        {
+         "anw": "exp ← exp / 2   // ganzzahlige Division"
+        }
+       ]
+      },
+      {
+       "gib": "ergebnis"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 3,
+   "titel": "Das Struktogramm von Hand",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kuer",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Führe das Struktogramm `potenzMod(37, 43, 77)` in einer **Tracetabelle** aus (Startzeile, dann je Schleifendurchlauf nach `exp ← exp / 2`) und vergleiche mit Akte W4·2."
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_schueler": true,
+     "kopf": [
+      "exp",
+      "b",
+      "ergebnis"
+     ],
+     "zeilen": [
+      [
+       "43",
+       "37",
+       "1"
+      ],
+      [
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       ""
+      ],
+      [
+       "",
+       "",
+       ""
+      ]
+     ],
+     "breiten": [
+      3.0,
+      3.0,
+      3.0
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 10,
+     "nur_loesung": true,
+     "kopf": [
+      "exp",
+      "b",
+      "ergebnis"
+     ],
+     "zeilen": [
+      [
+       "43",
+       "37",
+       "1"
+      ],
+      [
+       "21",
+       "60",
+       "37"
+      ],
+      [
+       "10",
+       "58",
+       "64"
+      ],
+      [
+       "5",
+       "53",
+       "64"
+      ],
+      [
+       "2",
+       "37",
+       "4"
+      ],
+      [
+       "1",
+       "60",
+       "4"
+      ],
+      [
+       "0",
+       "58",
+       "**9**"
+      ]
+     ],
+     "breiten": [
+      3.0,
+      3.0,
+      3.0
+     ]
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Ergebnis **9** – gleich wie in Akte W4·2 (37 → 9 mit dem privaten Schlüssel (77, 43)). Die Werte von b sind genau die Quadrierkette 37, 60, 58, 53, 37, 60; ergebnis wird nur bei ungeradem exp (43, 21, 5, 1 → Zweierpotenzen 1, 2, 8, 32) multipliziert."
+    }
+   ],
+   "fallen": [
+    "P2"
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "Kür",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Begründen Sie**, warum ein RSA-Schlüssel mit e = 6 bei φ(N) = 60 nicht erzeugt werden kann.",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "ggT(6, 60) = 6 ≠ 1 (1); 6 · d mod 60 ist immer ein Vielfaches von 6 und kann nie 1 sein, also existiert kein d (1)."
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "K3",
+   "md": "Kür K3 „Euklids Erbe“ im Kryptolabor (RSA-Rechenwerk, Ansichten **Euklid-Tabelle** und **Quadrierkette**). Trainingsplatz: „Inverses modulo m“."
+  }
+ ]
+}

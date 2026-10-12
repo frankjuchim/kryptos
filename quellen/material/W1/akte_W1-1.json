@@ -1,0 +1,786 @@
+{
+ "typ": "akte",
+ "welt": 1,
+ "kennung": "AKTE W1·1",
+ "titel": "Al-Kindis Handschrift",
+ "ds": "4",
+ "niveau": "kern",
+ "level": "1.1",
+ "datei": "KR_W1_Akte1_Al-Kindis_Handschrift",
+ "bloecke": [
+  {
+   "t": "auftakt",
+   "md": "Bagdad, um 850. Im Haus der Weisheit stapeln sich Schriften aus aller Welt – und Briefe, die niemand lesen soll. Ihre Schreiber haben nicht verschoben wie Caesar, sondern das ganze Alphabet durcheinandergewürfelt. Kein Mensch kann 26! Alphabete ausprobieren. Doch einem Gelehrten dieser Stadt, **Al-Kindi**, wird eine Methode zugeschrieben, die ohne Ausprobieren auskommt. Heute wirst du zu Eve – mit Al-Kindis Werkzeug."
+  },
+  {
+   "t": "kasten",
+   "kopf": "FUNDSTÜCK · Al-Kindis Manuskript",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Ein Blatt aus dem Haus der Weisheit. Jeder Buchstabe wurde durch einen beliebigen anderen ersetzt – 26! Möglichkeiten:"
+    },
+    {
+     "t": "geheimtext",
+     "text": "ZPUCGURDUZUDYCUIQIRRQSDIRUNORUINYCGQUNNUG",
+     "gruppen": 5
+    },
+    {
+     "t": "p",
+     "md": "Randnotiz, aus dem Arabischen übersetzt: „Wer die Zeichen zählt, braucht keinen Schlüssel.“ Das Blatt ist mit **demselben Schlüssel** verschlüsselt wie der Text aus dem Wettknacken – Auftrag 6 b) löst das Rätsel."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 1,
+   "titel": "Monoalphabetische Substitution mit Schlüsselwort",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Jeder Klartextbuchstabe wird **immer durch denselben** Geheimtextbuchstaben ersetzt; das Geheimtextalphabet ist eine beliebige Vertauschung. Damit man es sich merken kann, nimmt man ein **Schlüsselwort**: dessen Buchstaben in der Reihenfolge des ersten Auftretens (Wiederholungen streichen), danach **der Rest des Alphabets ab A** (Kryptos-Regel)."
+    },
+    {
+     "t": "p",
+     "md": "*Beispiel* Schlüsselwort `KALIF`:"
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "KALIFBCDEGHJMNOPQRSTUVWXYZ"
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "`der kalif schlaeft` → `IFRHK JEBSL DJKFB T`. Auffällig: m … z bleiben gleich – **14 Fixpunkte**. KALIF ist ein **schwaches** Schlüsselwort (Falle P7)."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 2,
+   "titel": "Der Schlüsselraum",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Für a gibt es 26 mögliche Geheimtextbuchstaben, für b noch 25, für c noch 24 … Insgesamt:"
+    },
+    {
+     "t": "formel",
+     "md": "**26! = 403 291 461 126 605 635 584 000 000 ≈ 4 · 10^26^** Geheimtextalphabete"
+    },
+    {
+     "t": "p",
+     "md": "Selbst bei einer Milliarde Versuchen pro Sekunde dauerte ein Brute-Force-Angriff rund **13 Milliarden Jahre**. Ein großer Schlüsselraum ist **notwendig** für Sicherheit – aber **nicht hinreichend**, wie die Häufigkeitsanalyse zeigt."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 3,
+   "titel": "Die Häufigkeitsanalyse",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Jede Sprache hat einen **Fingerabdruck**: Manche Buchstaben sind viel häufiger als andere. Eine monoalphabetische Substitution vertauscht nur die **Namen** der Buchstaben, nicht ihre **Häufigkeiten**."
+    },
+    {
+     "t": "p",
+     "md": "Häufigkeiten in deutschen Texten in % (nach A. Beutelspacher, *Kryptologie*, 7. Aufl. 2005):",
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 9,
+     "kopf": [
+      "E",
+      "N",
+      "I",
+      "S",
+      "R",
+      "A",
+      "T",
+      "D",
+      "H",
+      "U",
+      "L",
+      "C",
+      "G"
+     ],
+     "zeilen": [
+      [
+       "17,40",
+       "9,78",
+       "7,55",
+       "7,27",
+       "7,00",
+       "6,51",
+       "6,15",
+       "5,08",
+       "4,76",
+       "4,35",
+       "3,44",
+       "3,06",
+       "3,01"
+      ]
+     ]
+    },
+    {
+     "t": "tabelle",
+     "zentriert": true,
+     "schrift": 9,
+     "kopf": [
+      "M",
+      "O",
+      "B",
+      "W",
+      "F",
+      "K",
+      "Z",
+      "P",
+      "V",
+      "J",
+      "Y",
+      "X",
+      "Q"
+     ],
+     "zeilen": [
+      [
+       "2,53",
+       "2,51",
+       "1,89",
+       "1,89",
+       "1,66",
+       "1,21",
+       "1,13",
+       "0,79",
+       "0,67",
+       "0,27",
+       "0,04",
+       "0,03",
+       "0,02"
+      ]
+     ]
+    },
+    {
+     "t": "zweispaltig",
+     "anteil": 0.5,
+     "links": [
+      {
+       "t": "haeufigkeit",
+       "sortiert": true,
+       "titel": "Deutsch nach Rang (Beutelspacher)"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "p",
+       "md": "**Vorgehen:**"
+      },
+      {
+       "t": "liste",
+       "nummeriert": true,
+       "items": [
+        "Geheimtextbuchstaben **zählen** und nach Häufigkeit ordnen.",
+        "Häufigster Geheimtextbuchstabe ≙ **e**.",
+        "Weitere Kandidaten mit n, i, s, r, a, t vergleichen – aber **nicht blind** zuordnen.",
+        "**Bigramme** und **Muster** nutzen (Archivwissen 4).",
+        "Teilweise entschlüsselten Text **lesen**, Wörter ergänzen, Zuordnung verbessern."
+       ]
+      }
+     ]
+    },
+    {
+     "t": "p",
+     "md": "**Voraussetzungen:** ausreichend langer Text (je kürzer, desto stärker die Abweichungen) und bekannte Sprache."
+    }
+   ]
+  },
+  {
+   "t": "archivwissen",
+   "nr": 4,
+   "titel": "Bigramme und Musterwörter",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Häufige Buchstabenpaare (**Bigramme**) im Deutschen: **ER, EN, CH, DE, EI, ND, TE, IN, IE, GE**."
+    },
+    {
+     "t": "liste",
+     "items": [
+      "**C** steht fast nur vor **H** oder **K**; „sch“ ist häufig; **Q** fast nur vor **U**.",
+      "Häufige kurze Wörter: der, die, und, ein, das, ist.",
+      "Wiederholte Dreiergruppen im Geheimtext sind oft „der“, „die“, „und“ oder „sch“."
+     ]
+    }
+   ]
+  },
+  {
+   "t": "falle",
+   "nr": "P6",
+   "titel": "Kurze Texte lügen",
+   "md": "„Der häufigste Buchstabe ist e“ gilt nur bei **langen** Texten. In *hannibal ante portas* (18 Buchstaben) ist **a** viermal da, **e** nur einmal. Je kürzer der Text, desto mehr streuen die Ränge hinter e – dann helfen nur Bigramme und Musterwörter weiter."
+  },
+  {
+   "t": "auftrag",
+   "nr": 1,
+   "stufe": 1,
+   "titel": "Das Alphabet der Erzählerin",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Bilde** das Geheimtextalphabet zum Schlüsselwort `SCHERAZADE` und **verschlüssele** `tausend und eine nacht`."
+    },
+    {
+     "t": "alphabet",
+     "nummerierung": null,
+     "zeilen": [
+      {
+       "label": "Geheimtext",
+       "werte": "SCHERAZDBFGIJKLMNOPQTUVWXY",
+       "leer": true
+      }
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Alphabet: `SCHERAZDBFGIJKLMNOPQTUVWXY` (S C H E R A Z D, dann B F G … ab A ohne schon benutzte Buchstaben)."
+    },
+    {
+     "t": "p",
+     "md": "`tausend und eine nacht` → **QSTPR KETKE RBKRK SHDQ**."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler (P4):* doppeltes A bzw. E aus SCHERAZADE nicht gestrichen."
+    }
+   ],
+   "fallen": [
+    "P4"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 2,
+   "stufe": 1,
+   "titel": "Ein Titel am Hof",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Entschlüssele** mit demselben Alphabet: `VRPBO`"
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 1,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "**wesir** (V → w, R → e, P → s, B → i, O → r)."
+    },
+    {
+     "t": "p",
+     "md": "*Typischer Fehler (P3):* Richtung vertauscht – beim Entschlüsseln unten suchen, oben ablesen."
+    }
+   ],
+   "fallen": [
+    "P3"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 3,
+   "stufe": 2,
+   "titel": "Der faule Kalif",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Vergleiche** die Schlüsselwörter KALIF und SCHERAZADE: Zähle die **Fixpunkte** (Buchstaben, die auf sich selbst abgebildet werden) und **beurteile**, welches Schlüsselwort besser ist. **Nenne** eine Regel für gute Schlüsselwörter."
+    },
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      3.2,
+      9.6,
+      3.0
+     ],
+     "nur_schueler": true,
+     "kopf": [
+      "Schlüsselwort",
+      "Fixpunkte (welche?)",
+      "Anzahl"
+     ],
+     "zeilen": [
+      [
+       "KALIF",
+       "",
+       ""
+      ],
+      [
+       "SCHERAZADE",
+       "",
+       ""
+      ]
+     ]
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "tabelle",
+     "kopfspalte": true,
+     "breiten": [
+      3.2,
+      9.6,
+      3.0
+     ],
+     "kopf": [
+      "Schlüsselwort",
+      "Fixpunkte (welche?)",
+      "Anzahl"
+     ],
+     "zeilen": [
+      [
+       "KALIF",
+       "m, n, o, p, q, r, s, t, u, v, w, x, y, z",
+       "**14**"
+      ],
+      [
+       "SCHERAZADE",
+       "–",
+       "**0**"
+      ]
+     ]
+    },
+    {
+     "t": "p",
+     "md": "KALIF: darunter die häufigen Buchstaben n, r, s, t → große Textteile bleiben direkt lesbar. **Besser: SCHERAZADE.**"
+    },
+    {
+     "t": "p",
+     "md": "Regel: Schlüsselwort lang, mit Buchstaben aus dem **hinteren** Alphabet (oder ein Schlüsselsatz); danach das Alphabet auf Fixpunkte **prüfen** (P7)."
+    }
+   ],
+   "fallen": [
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 4,
+   "stufe": 3,
+   "titel": "Der abgefangene Bericht",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "🔍 **Knacke** den abgefangenen Bericht (monoalphabetische Substitution, 206 Buchstaben). Gehe nach den Schritten vor und **notiere** die Zuordnung in der Tabelle:"
+    },
+    {
+     "t": "liste",
+     "buchstaben": true,
+     "items": [
+      "häufigster Buchstabe ≙ e;",
+      "das häufigste Bigramm, das mit dem e-Zeichen beginnt, ≙ „er“;",
+      "das zweithäufigste Bigramm ≙ „ch“, die Dreiergruppe davor mit „s“ ≙ „sch“;",
+      "die dreimal vorkommende Dreiergruppe `TLR` ≙ „und“;",
+      "Rest durch Lesen ergänzen."
+     ]
+    },
+    {
+     "t": "geheimtext",
+     "label": "ABGEFANGENER BERICHT · 206 Buchstaben",
+     "schreiblinien": true,
+     "text": "RAPIZJGBQDFGDISAGLAIZPZVZLALZDFEZQPZQGASPZACSQAGRANBABBAPTLRNZNGAPGLRAPLZDFSPZQSASQGAZLAGLAPMZQAAGLRGAEUAPQSADISQGDFFGLSAPRALYAJSALTLRVZPSASEGQRGAVZADFSAPQDFJZBALRMDFRAPHTLCAITPGAPEAKAPISGFLTLRQDFJZACSZJZPK"
+    },
+    {
+     "t": "haeufigkeit",
+     "text": "RAPIZJGBQDFGDISAGLAIZPZVZLALZDFEZQPZQGASPZACSQAGRANBABBAPTLRNZNGAPGLRAPLZDFSPZQSASQGAZLAGLAPMZQAAGLRGAEUAPQSADISQGDFFGLSAPRALYAJSALTLRVZPSASEGQRGAVZADFSAPQDFJZBALRMDFRAPHTLCAITPGAPEAKAPISGFLTLRQDFJZACSZJZPK",
+     "referenz": true,
+     "titel": "Häufigkeiten im Bericht (absolut) neben Deutsch (%)"
+    },
+    {
+     "t": "p",
+     "md": "**Häufigkeiten:** A 36 · Z 19 · P 18 · G 17 · L 17 · S 15 · Q 12 · R 11 · D 10 · F 10 · I 6 · B 5 · J 5 · T 5 · E 4 · C 3 · N 3 · V 3 · K 2 · M 2 · H 1 · U 1 · Y 1. **Häufigste Bigramme:** AP 11 · DF 8 · SA 7 · GA 6 · LR 6.",
+     "klein": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      1.4,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59
+     ],
+     "kopf": [
+      "geheim",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "klar",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
+      ]
+     ],
+     "nur_schueler": true
+    },
+    {
+     "t": "tabelle",
+     "mono": true,
+     "kopfspalte": true,
+     "schrift": 9.5,
+     "breiten": [
+      1.4,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59,
+      0.59
+     ],
+     "kopf": [
+      "geheim",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+     ],
+     "zeilen": [
+      [
+       "klar",
+       "e",
+       "f",
+       "g",
+       "c",
+       "b",
+       "h",
+       "i",
+       "j",
+       "k",
+       "l",
+       "m",
+       "n",
+       "o",
+       "p",
+       "–",
+       "r",
+       "s",
+       "d",
+       "t",
+       "u",
+       "v",
+       "w",
+       "–",
+       "–",
+       "z",
+       "a"
+      ]
+     ],
+     "nur_loesung": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "(a) **A** (36) ≙ e. (b) **AP** (11) ≙ er → P ≙ r. (c) **DF** (8) ≙ ch; `QDF` (3 ×) ≙ sch → Q ≙ s. (d) `TLR` ≙ und → T ≙ u, L ≙ n, R ≙ d; Probe: `RAP` ≙ der (3 ×) ✔. (e) Rest durch Lesen. O, W, X kommen nicht vor."
+    },
+    {
+     "t": "p",
+     "md": "Klartext: **der kalif schickt eine karawane nach basra sie traegt seide pfeffer und papier in der nacht rastet sie an einer oase ein dieb versteckt sich hinter den zelten und wartet bis die waechter schlafen doch der junge kurier bemerkt ihn und schlaegt alarm**"
+    },
+    {
+     "t": "p",
+     "md": "Schlüsselwort **ZEDER**: `ZEDRABCFGHIJKLMNOPQSTUVWXY`."
+    },
+    {
+     "t": "p",
+     "md": "*Beobachtung (P6):* Z (= a) ist mit 19 der zweithäufigste Buchstabe, nicht n – in kurzen Texten (Kalif, Karawane, Basra) verschieben sich die Ränge."
+    }
+   ],
+   "fallen": [
+    "P6"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 5,
+   "stufe": 2,
+   "titel": "26! und trotzdem unsicher",
+   "sozialform": "Partnerarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Begründe**, warum die monoalphabetische Substitution trotz 26! Schlüsseln unsicher ist, und **vergleiche** mit Caesar (Schlüsselraum, Angriff)."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 3,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "26! macht Brute Force unmöglich, aber die Häufigkeitsanalyse braucht **kein Ausprobieren** aller Schlüssel: Sie bestimmt das Alphabet Buchstabe für Buchstabe aus der Statistik."
+    },
+    {
+     "t": "p",
+     "md": "Caesar: 25 sinnvolle Schlüssel → Brute Force; zusätzlich reicht ein Buchstabe (häufigster ≙ e). Beide sind monoalphabetisch und damit häufigkeitsanfällig; die Substitution ist nur **gegen Brute Force** stärker."
+    }
+   ],
+   "fallen": [
+    "P7"
+   ]
+  },
+  {
+   "t": "auftrag",
+   "nr": 6,
+   "stufe": 2,
+   "titel": "Nach dem Wettknacken",
+   "sozialform": "Einzelarbeit",
+   "niveau": "kern",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "**Beschreibe** in 4–6 Sätzen, wie euer Team im Funkraum vorgegangen ist und welcher Schritt am meisten geholfen hat."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 4,
+     "nur_schueler": true
+    },
+    {
+     "t": "p",
+     "md": "b) **Entschlüssele** danach das Fundstück am Anfang dieser Akte mit eurem Geheimalphabet aus dem Wettknacken."
+    },
+    {
+     "t": "schreiblinien",
+     "anzahl": 2,
+     "nur_schueler": true
+    }
+   ],
+   "loesung": [
+    {
+     "t": "p",
+     "md": "Individuell; erwartet: zuerst e (U), dann er/ch/sch/und bzw. der, dann Lesen und Ergänzen; Hinweis auf Musterwörter. Im Wettknacken: U ≙ e, YC ≙ ch, RUM ≙ der; die Schlüsselwort-Struktur (Folge B C D … ab g) verrät den Rest."
+    },
+    {
+     "t": "p",
+     "md": "b) Schlüsselwort PAPYRUS: **„zaehle die zeichen und du findest den schluessel“** (häufigstes Zeichen U, 9-mal ≙ e)."
+    }
+   ]
+  },
+  {
+   "t": "abicheck",
+   "titel": "ca. 20 min",
+   "teile": [
+    {
+     "bez": "a)",
+     "text": "**Erläutern Sie** das Prinzip der Häufigkeitsanalyse am Beispiel einer monoalphabetischen Substitution.",
+     "be": 4,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "In natürlicher Sprache sind Buchstaben ungleich häufig (Deutsch: e ≈ 17 %, dann n, i, s, r). Monoalphabetisch: Jeder Klartextbuchstabe hat genau ein Geheimzeichen, also bleibt seine Häufigkeit erhalten. Man zählt die Geheimtextbuchstaben, ordnet den häufigsten e zu, dann weitere; Bigramme (er, ch) und kurze Wörter (der, und) bestätigen; Beispiel aus Auftrag 4. Voraussetzung: langer Text, bekannte Sprache. [Prinzip 2, Beispiel 1, Voraussetzung 1]"
+      }
+     ],
+     "fallen": [
+      "P10"
+     ]
+    },
+    {
+     "bez": "b)",
+     "text": "**Begründen Sie**, dass ein Schlüsselraum von 26! Schlüsseln allein keine Sicherheit garantiert.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Brute Force ist zwar aussichtslos, der Angreifer muss aber nicht alle Schlüssel probieren; die Häufigkeitsanalyse rekonstruiert den Schlüssel direkt aus statistischen Eigenschaften, die die Substitution nicht verbirgt. [3]"
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    },
+    {
+     "bez": "c)",
+     "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Bei einem Geheimtext aus 30 Buchstaben liefert die Häufigkeitsanalyse zuverlässig das gesamte Geheimtextalphabet.“",
+     "be": 2,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "Falsch: Bei 30 Buchstaben weichen die Häufigkeiten stark von der Statistik ab; seltene Buchstaben kommen gar nicht vor, das Alphabet lässt sich nicht vollständig bestimmen (bestenfalls einzelne Zuordnungen, Rest über Wortraten). [2]"
+      }
+     ],
+     "fallen": [
+      "P6"
+     ]
+    },
+    {
+     "bez": "d)",
+     "text": "Ein Schreiber benutzt das Schlüsselwort KALIF. **Beurteilen Sie** diese Wahl.",
+     "be": 3,
+     "loesung": [
+      {
+       "t": "p",
+       "md": "14 Fixpunkte (m bis z bleiben gleich), darunter häufige Buchstaben n, r, s, t → Text teilweise direkt lesbar; schwacher Schlüssel. Urteil: ungeeignet, besser ein Schlüsselwort mit späten Buchstaben. [3]"
+      }
+     ],
+     "fallen": [
+      "P7"
+     ]
+    }
+   ]
+  },
+  {
+   "t": "imlab",
+   "level": "1.1",
+   "md": "Level 1.1 „Al-Kindis Handschrift“ und Archivfund W1-AF im Kryptolabor. Trainingsplatz: „Schlüsselwort-Alphabet“ und „Häufigkeit → Caesar-Schlüssel“. Werkzeuge: Häufigkeits-Analysator, Substitutions-Werkbank. Video 📼 02 „Häufigkeitsanalyse“."
+  }
+ ]
+}

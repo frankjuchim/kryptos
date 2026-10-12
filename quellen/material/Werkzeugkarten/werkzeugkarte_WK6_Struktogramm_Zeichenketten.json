@@ -1,0 +1,208 @@
+{
+ "typ": "werkzeugkarte",
+ "welt": 9,
+ "kennung": "WERKZEUGKARTE WK6",
+ "titel": "Struktogramm · Zeichenketten",
+ "datei": "KR_WK6_Struktogramm_Zeichenketten",
+ "zeile1": "KRYPTOS · GILT FÜR ALLE WELTEN",
+ "bloecke": [
+  {
+   "t": "h",
+   "md": "Bausteine (sprachunabhängig notieren)"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Baustein",
+    "Notation",
+    "Beispiel"
+   ],
+   "schrift": 9,
+   "kopfspalte": true,
+   "breiten": [
+    3.4,
+    7.2,
+    6.2
+   ],
+   "zeilen": [
+    [
+     "Kopf (Signatur)",
+     "`name(p: Typ, …): Rückgabetyp` – Typen deutsch: Ganzzahl, Kommazahl, Wahrheitswert, Zeichen, Zeichenkette, nichts",
+     "`verschiebe(b: Zeichen, k: Ganzzahl): Zeichen`"
+    ],
+    [
+     "Anweisung / Zuweisung",
+     "Rechteck; Zuweisung mit `←`",
+     "`wert ← wert + k`"
+    ],
+    [
+     "Kommentar",
+     "zwei Schrägstriche",
+     "`// Verschiebung mit A = 0`"
+    ],
+    [
+     "Verzweigung",
+     "Dreieck mit Bedingung, links „wahr“, rechts „falsch“; leerer Zweig mit ∅",
+     "`g1 = 0 ?` → wahr: `g1 ← 26` / falsch: ∅"
+    ],
+    [
+     "Zählschleife",
+     "`für i von 0 bis Länge von text − 1` (Rumpf eingerückt)",
+     "Zeichen für Zeichen durchlaufen"
+    ],
+    [
+     "Schleife über alle Elemente",
+     "`für jedes x in r`",
+     "über eine Reihung"
+    ],
+    [
+     "Solange-Schleife",
+     "`solange Bedingung` (Prüfung vor jedem Durchlauf)",
+     "`solange k < 0`"
+    ],
+    [
+     "Rückgabe",
+     "`gib … zurück` – beendet die Operation",
+     "`gib ergebnis zurück`"
+    ],
+    [
+     "Aufruf / Objekt",
+     "Operationsname mit Argumenten; Objekte mit `erzeuge …`",
+     "`verschiebe(z, k)`"
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "md": "Positionen in Zeichenketten und Reihungen beginnen bei **0**; Bedingungen mit `und`, `oder`, `nicht` (nicht `&&`)."
+  },
+  {
+   "t": "h",
+   "md": "Beispiel 1: Caesar-Verschiebung eines Zeichens"
+  },
+  {
+   "t": "struktogramm",
+   "breite_cm": 14.5,
+   "kopf": "verschiebe(b: Zeichen, k: Ganzzahl): Zeichen",
+   "elemente": [
+    {
+     "kommentar": "b ist ein Großbuchstabe; intern A = 0 … Z = 25"
+    },
+    {
+     "anw": "wert ← ASCII-Wert von b − 65"
+    },
+    {
+     "anw": "wert ← (wert + k) mod 26"
+    },
+    {
+     "gib": "Zeichen zum ASCII-Wert (wert + 65)"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Probe:** verschiebe('X', 5): wert ← 88 − 65 = 23; wert ← 28 mod 26 = 2; Zeichen zum ASCII-Wert 67 = 'C' ✓.\nverschiebe('C', −5): wert ← 2; (2 − 5) mod 26 = 23 (kleinster nicht negativer Rest); Zeichen 88 = 'X' ✓.",
+   "klein": true
+  },
+  {
+   "t": "p",
+   "md": "Beachte: Hier wird bewusst **A = 0** verwendet (ASCII − 65); mit der Nummerierung der Anlage (A = 1, ASCII − 64) müsste der Rest 0 in 26 umgewandelt werden (P1, P2).",
+   "klein": true
+  },
+  {
+   "t": "h",
+   "md": "Beispiel 2: Caesar für eine ganze Zeichenkette"
+  },
+  {
+   "t": "struktogramm",
+   "breite_cm": 14.5,
+   "kopf": "caesar(text: Zeichenkette, k: Ganzzahl): Zeichenkette",
+   "elemente": [
+    {
+     "anw": "ergebnis ← \"\""
+    },
+    {
+     "fuer": "i von 0 bis Länge von text − 1",
+     "rumpf": [
+      {
+       "anw": "z ← Zeichen an Position i von text"
+      },
+      {
+       "anw": "ergebnis ← ergebnis verbunden mit verschiebe(z, k)"
+      }
+     ]
+    },
+    {
+     "gib": "ergebnis"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "md": "**Probe:** caesar(„XYZ“, 3) = „ABC“ ✓. Die Schleife läuft von 0 bis Länge − 1 – genau einmal über jedes Zeichen.",
+   "klein": true
+  },
+  {
+   "t": "seitenumbruch"
+  },
+  {
+   "t": "h",
+   "md": "Übertragung in Java (Online-IDE)"
+  },
+  {
+   "t": "code",
+   "text": "public static char verschiebe(char b, int k) {\n    int wert = (int) b - 65;              // A = 0 … Z = 25\n    wert = ((wert + k) % 26 + 26) % 26;   // Java-% kann negativ sein: +26 sichert 0 … 25\n    return (char) (wert + 65);\n}",
+   "schrift": 8
+  },
+  {
+   "t": "falle",
+   "nr": "P2",
+   "titel": "Java-% ist nicht mod",
+   "md": "In Java liefert `%` bei negativen Zahlen einen negativen Rest (−3 % 26 = −3); `mod` in der EH ist immer nicht negativ. `println(...)` ohne `System.out`; Zeichenketten mit `equals` vergleichen."
+  },
+  {
+   "t": "h",
+   "md": "Erlaubt und verboten"
+  },
+  {
+   "t": "tabelle",
+   "kopf": [
+    "Erlaubt (Anlage)",
+    "Nicht erlaubt bzw. nicht verwenden"
+   ],
+   "schrift": 9,
+   "breiten": [
+    8.4,
+    8.4
+   ],
+   "zeilen": [
+    [
+     "Länge, Zeichen an Position, Teilzeichenkette (von a bis vor b), Verbinden, Gleichheit, enthält Teilzeichenkette, lexikographischer Vergleich, ASCII-Wert ↔ Zeichen; `/` (ganzzahlig), `mod`",
+     "Zeichen an einer Position ersetzen (entfallen!), `toUpperCase`, `toLowerCase`, `indexOf`, `split`, `replace`, `trim`; Java-Syntax im Struktogramm (`=`, `==`, `;`, `i++`, `return`, `charAt`)"
+    ],
+    [
+     "In Java: `length()`, `charAt(i)`, `substring(a, b)`, `+`, `equals`, `contains`, `compareTo`, `(int) c`, `(char) n`",
+     "`==` für Zeichenketten (in der Online-IDE scheinbar korrekt, in echtem Java falsch)"
+    ]
+   ]
+  },
+  {
+   "t": "merke",
+   "titel": "Checkliste Struktogramm",
+   "inhalt": [
+    {
+     "t": "liste",
+     "haken": true,
+     "items": [
+      "Kopf mit Signatur und deutschen Typen?",
+      "Jede Zuweisung mit `←`?",
+      "Schleifengrenzen 0 bis Länge − 1?",
+      "Rest 0 bzw. negative Reste behandelt?",
+      "„gib … zurück“ auf jedem Weg?",
+      "Keine Java-Syntax?"
+     ]
+    }
+   ]
+  }
+ ]
+}
