@@ -273,7 +273,7 @@ const FAELLE = {
     zufall: () => [zufall() < 0.5 ? textOderDeutsch() : buchstaben(0, 30), buchstaben(0, 8), buchstaben(0, 8), richtung(), ...(zufall() < 0.3 ? [{ fuellzeichen: fuell() ?? 'X' }] : [])],
   },
   zweiQuadratZahl: {
-    fest: [['', 'BRIEFTAUBE', 'KOMPASS', '3142'], ['anna', 'BRIEFTAUBE', 'KOMPASS', [2, 2, 2, 2]], ['abc', 'B', 'K', '35'], ['abc', 'B', 'K', ''], ['abc', 'B', 'K', '3a'], ['abc', 'B', 'K', [1, 7]], ['jagd', 'B', 'K', '0']],
+    fest: [['', 'BRIEFTAUBE', 'KOMPASS', '3142'], ['anna', 'BRIEFTAUBE', 'KOMPASS', [2, 2, 2, 2]], ['abc', 'B', 'K', '35'], ['abc', 'B', 'K', ''], ['abc', 'B', 'K', '3a'], ['abc', 'B', 'K', [1, 7]], ['jagd', 'B', 'K', '0'], ['abcd', 'B', 'K', 3142], ['abcd', 'B', 'K', 0], ['abcd', 'B', 'K', '0314']],
     zufall: () => [textOderDeutsch(), buchstaben(0, 10), buchstaben(0, 10), zahlenschluessel(), richtung()],
   },
   polybios: {
@@ -409,7 +409,7 @@ const FAELLE = {
   koinzidenzindex: { fest: [['A'], [''], ['BALLADE'], ['LAGUNE']], zufall: () => [textOderDeutsch()] },
   friedman: { fest: [['A'], [''], ['AB'], ['ABCDEFGHIJKLMNOPQRSTUVWXYZ'], ['AA']], zufall: () => [textOderDeutsch(), ...(zufall() < 0.3 ? [{ iD: wahl([0.076, 0.0765]), iZ: wahl([0.038, 0.0385]) }] : [])] },
   friedmanWert: {
-    fest: [[601, 0.0507], [1001, 0.0475], [1, 0.05], [100, -1], [100, 410 / 9900, { iD: 0.0765, iZ: 0.0385 }], [2, 0]],
+    fest: [[601, 0.0507], [1001, 0.0475], [1, 0.05], [100, -1], [100, 410 / 9900, { iD: 0.0765, iZ: 0.0385 }], [2, 0], [3, 0.0375], [2, 0, { iD: 0.0765, iZ: 0.0385 }]],
     zufall: () => [selten() ? wahl([0, 1, 2.5]) : ganz(2, 2000), selten() ? wahl([-0.1, 1.5, '0,05']) : zufall() * 0.1, ...(zufall() < 0.3 ? [{ iD: 0.0765, iZ: 0.0385 }] : [])],
   },
   kasiski: {

@@ -402,8 +402,9 @@ class Quadrate(unittest.TestCase):
         self.assertEqual(zq(g[:3] + g[4:], '3142', 'ent'), 'SILCOSEWVVQ')
         self.assertEqual([zq('', '3142'), zq('anna', [2, 2, 2, 2])], ['', 'QKKQ'])
         self.assertEqual(zq('jagd', '0'), zq('iagd', '0'))
-        for s in ('35', '', '3a', [1, 7]):
+        for s in ('35', '', '3a', [1, 7], 3142, 0):  # Zahl → Fehler (führende 0 ginge verloren)
             self.assertRaises(F, zq, 'abc', s)
+        self.assertEqual(zq('abcd', '0314'), zq('abcd', [0, 3, 1, 4]))
 
     def test_polybios(self):
         self.assertEqual([K.polybios('rom'), K.polybios('troia')], ['423432', '4442342411'])
@@ -920,6 +921,8 @@ class Kryptoanalyse(unittest.TestCase):
         self.assertIsNone(K.friedman('A'))
         self.assertRaises(F, fw, 1, 0.05)
         self.assertRaises(F, fw, 100, -1)
+        self.assertIsNone(fw(2, 0))  # Nenner 0 → None
+        self.assertIsNone(K.friedman('AB'))
 
     def test_teiltexte(self):
         self.assertEqual(K.teiltexte('YLYTXEBYWUTPRP', 3)[1], 'LXYTP')

@@ -435,7 +435,7 @@
     let liste;
     if (Array.isArray(zahlenschluessel)) liste = zahlenschluessel;
     else if (typeof zahlenschluessel === 'string') liste = [...zahlenschluessel.replace(/\s+/g, '')].map((c) => (/^[0-9]$/.test(c) ? Number(c) : NaN));
-    else if (Number.isInteger(zahlenschluessel)) liste = [...String(zahlenschluessel)].map(Number);
+    // Kein Zahlenschlüssel als Zahl: eine führende 0 ginge verloren (0314 → 314).
     else throw new KryptoFehler('Der Zahlenschlüssel muss aus den Ziffern 0 bis 4 bestehen.');
     if (liste.length === 0 || !liste.every((k) => Number.isInteger(k) && k >= 0 && k <= 4)) {
       throw new KryptoFehler('Der Zahlenschlüssel muss aus den Ziffern 0 bis 4 bestehen.');
@@ -1130,12 +1130,14 @@
     return Object.values(h).reduce((s, x) => s + x * (x - 1), 0) / (n * (n - 1));
   }
 
-  /** Friedman: k ≈ (iD − iZ)·n / ((n − 1)·I − iZ·n + iD) (Design §6.4: iZ = 0,038, nie 1/26) */
+  /** Friedman: k ≈ (iD − iZ)·n / ((n − 1)·I − iZ·n + iD) (Design §6.4: iZ = 0,038, nie 1/26); Nenner 0 → null */
   function friedmanWert(n, I, { iD = 0.076, iZ = 0.038 } = {}) {
     pruefeGanzzahl(n, 'Textlänge n');
     if (n < 2) throw new KryptoFehler('Die Textlänge muss mindestens 2 sein.');
     if (typeof I !== 'number' || !Number.isFinite(I) || I < 0 || I > 1) throw new KryptoFehler('Der Koinzidenzindex liegt zwischen 0 und 1.');
-    return ((iD - iZ) * n) / ((n - 1) * I - iZ * n + iD);
+    const nenner = (n - 1) * I - iZ * n + iD;
+    if (nenner === 0) return null; // keine Schätzung möglich (wie koinzidenzindex bei n < 2)
+    return ((iD - iZ) * n) / nenner;
   }
 
   function friedman(text, optionen = {}) {

@@ -414,6 +414,7 @@ def kreuzquadrat(text, oben, unten, richtung='ver', *, fuellzeichen='X'):
 
 
 def _zahlenschluessel(z):
+    # Nur Ziffernfolge als Text oder Liste – als Zahl ginge eine führende 0 verloren (0314 → 314).
     if isinstance(z, str):
         z = _ohne_leerraum(z)
         if not z or any(c not in '01234' for c in z):
@@ -1077,7 +1078,7 @@ def friedman_wert(n, i_wert, *, i_d=0.076, i_z=0.038):
     zaehler = (i_d - i_z) * n
     nenner = (n - 1) * i_wert - i_z * n + i_d
     if nenner == 0:
-        return math.copysign(math.inf, zaehler) if zaehler else math.nan
+        return None  # keine Schätzung möglich (wie koinzidenzindex bei n < 2)
     return zaehler / nenner
 
 

@@ -665,6 +665,10 @@ test('grenzfaelle_zweiQuadratZahl', () => {
   assert.throws(() => zq('abc', ''), K.KryptoFehler);
   assert.throws(() => zq('abc', '3a'), K.KryptoFehler);
   assert.throws(() => zq('abc', [1, 7]), K.KryptoFehler);
+  // Zahlenschlüssel als Zahl → KryptoFehler (führende 0 ginge verloren: 0314 → 314)
+  assert.throws(() => zq('abc', 3142), K.KryptoFehler);
+  assert.throws(() => zq('abc', 0), K.KryptoFehler);
+  assert.equal(zq('abcd', '0314'), zq('abcd', [0, 3, 1, 4]));
 });
 
 test('polybios: SPEC W0 §12 (Standard, KORINTH, Fackelchiffre ATHEN)', () => {
@@ -1527,6 +1531,9 @@ test('friedman: SPEC W2 §12 (Level 2.3, Akten W2·3, Kür K1, P04, Generator)',
   assert.equal(K.friedman('A'), null);
   assert.throws(() => K.friedmanWert(1, 0.05), K.KryptoFehler);
   assert.throws(() => K.friedmanWert(100, -1), K.KryptoFehler);
+  // Nenner 0 → null (keine Schätzung, wie koinzidenzindex bei n < 2)
+  assert.equal(K.friedmanWert(2, 0), null);
+  assert.equal(K.friedman('AB'), null);
 });
 
 test('teiltexte ab Position 0', () => assert.equal(K.teiltexte('YLYTXEBYWUTPRP', 3)[1], 'LXYTP'));
