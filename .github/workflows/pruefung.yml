@@ -43,9 +43,9 @@ jobs:
         run: python3 -I werkzeuge/krypto/test_krypto.py
       - name: Zwilling-Vergleich JS ↔ Python (2000 Fälle je Funktion)
         run: npm run krypto:vergleich -- --anzahl 2000
-      # folgen (Plan Task 18 ff.):
-      #   python3 werkzeuge/krypto/seed_pruefen.py
-      #   python3 werkzeuge/krypto/pruefwerte.py
+      - name: Prüfwerte der Materialien (Akten, Bosse, Klausuren, Videos) gegen den Zwilling
+        run: python3 -I werkzeuge/krypto/pruefwerte.py
+      # folgt (M3/M5): python3 -I werkzeuge/krypto/seed_pruefen.py
 
   inhalte:
     name: Inhalte (Material-Werkzeuge)

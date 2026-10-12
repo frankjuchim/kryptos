@@ -156,7 +156,7 @@ public/
                            bitlupe.js runden.js modulo.js rsa.js hash.js signatur.js
                     funkraum.js beamer.js werkstatt.js arena.js lehrer.js lehrer_funkraum.js lehrer_arena.js
                     gast.js start.js board.js themen.js urkunden.js
-werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py
+werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAG_v1.2.md DESIGNSYSTEM.md
 ```
@@ -1493,7 +1493,7 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 | `werkzeuge/materialien_pruefen.py` | übernommen, Regeln ersetzt | Altbegriffe (Chiffrat, Friedmann, Merkel, Kerkhoff, Kata, XP), Nummerierungshinweis je Akte, Geheimtexte in Fünfergruppen (Consolas-Läufe), Operatoren aus KC-Liste fett, BE-Summen von Bossen/Klausuren (eA 30/gA 25 je Aufgabe), Struktogramm-Regeln EH §5 bleiben; `--rendern` |
 | `werkzeuge/workspaces_erzeugen.py`, `ide-pruefung/ide_pruefen.py` | übernommen | Gerüste `CaesarWerkstatt`, `MeineChiffre`, Kür-Vigenère-Knacker; NI-Bibliothek/Grafik-Nachbau entfernt (nicht benötigt), Testrunner bleibt |
 | `werkzeuge/krypto/seed_pruefen.py` | neu | Python-Neuberechnung aller Seed-Lösungen (Delta §11) |
-| `werkzeuge/krypto/pruefwerte.py` | neu | prüft `quellen/pruefwerte/W<n>.json` (Rechnungen aus Akten, Bossen, Klausuren, Videos: `{ ort, verfahren, eingabe, richtung, erwartet }`) gegen den Zwilling |
+| `werkzeuge/krypto/pruefwerte.py` | neu | prüft `quellen/pruefwerte/W0.json … W6.json`, `pruefungen.json`, `videos.json` (Rechnungen aus Akten, Bossen, Klausuren, Videos, Warm-up und Specs: `{ id, ort, art, verfahren, eingabe, optionen?, richtung?, feld?, als?, ausschnitt?, runden?, erwartet, herkunft }`, `verfahren` = JS-Name wie in `bruecke.py`) direkt mit dem Python-Zwilling; Abweichung mit `ort` → Exit 1; Überschneidung Video ↔ Prüfung/Boss (gleiche Eingabe) → Exit 1; gemeldete Fälle (`bekannt_abweichend` / `ueberschneidung_bekannt` + `begruendung`) gesondert ausgewiesen; `--ordner` für Test-Fixtures. Nicht abbildbare Rechnungen (fremde Verfahren) stehen je Datei unter `nicht_abbildbar`. Einmaliger Import aus `quellen/analyse/verifikation/` (log.jsonl, w*.py): `pruefwerte_import.py` |
 | `werkzeuge/schriften_pruefen.py` | neu | Glyphenabdeckung (§11.4) |
 | `scripts/abdeckung.js` | neu | KC-Kompetenz ↔ Level ↔ Akte ↔ Boss aus `quellen/specs/LAB_LEVELS.md` + Seed; Fehler bei Lücke (Design §1 Kriterium 1) |
 
@@ -1559,7 +1559,7 @@ nach `docs/screenshots/`, Viewports 1280×800, 768×1024, 360×740, Beamer 1920�
 | Job | Schritte |
 |---|---|
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` |
-| `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 werkzeuge/krypto/seed_pruefen.py`, `python3 werkzeuge/krypto/pruefwerte.py` |
+| `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 werkzeuge/krypto/seed_pruefen.py`, `python3 -I werkzeuge/krypto/pruefwerte.py` |
 | `inhalte` | Python 3.12 + Java 21 + `pip install python-docx python-pptx pypdf fonttools`: `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `materialien_pruefen.py`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, `video_folien.py --pruefen`, `schriften_pruefen.py` |
 | `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install chromium` in CI), Artefakt: Screenshots |
 
