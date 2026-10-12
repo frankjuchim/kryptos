@@ -89,7 +89,9 @@ Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
 
 ## Neu in `src/verbund/` (Kern-Kandidat lab-kern)
 
-- `konfig.js` (Task 3): `ladeKonfig(env, { test })` nach TECHNIK §6.1.
+- `konfig.js` (Task 3): `ladeKonfig(env, { test })` nach TECHNIK §6.1. Review M1: `VERTRAG_VERSION` vorerst nur `1.1`;
+  `1.2` bricht ab („Vertrag 1.2 (labs) noch nicht umgesetzt: Niveau-Übersicht und urls.niveaus fehlen“), weil labs ein
+  anderes v1.2 angenommen hat als der Kryptos-Vorschlag (Entscheidung der Lehrkraft offen).
 - `sso.js` (Task 5): `createSsoRouter` – `GET /sso/start` (state 16 Byte base64url in `kr_sso_state`, `Path=/sso`,
   `Max-Age=600`; `ziel` nach `sicheresZiel`, zusätzlich ohne Steuerzeichen; Rate-Limit 300/10 min je IP → 429;
   ohne Portal-Konfiguration 503), `GET /sso/portal` (Weiterleitung auf `PORTAL_URL` für die statischen Fehlerseiten).

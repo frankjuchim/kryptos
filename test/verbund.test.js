@@ -47,14 +47,15 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   for (const v of ['loesung', 'Mika', 'LK 13', 'kurscode']) assert.ok(!text.toLowerCase().includes(v.toLowerCase()), v);
 });
 
-test('Manifest: VERTRAG_VERSION 1.2 → vertrag 1.2 und niveaus; basis aus PLATTFORM_URL', async () => {
-  const app = H.makeApp({ seedDir: SEED, vertragVersion: '1.2', plattformUrl: 'https://kryptos.example', portalUrl: 'https://portal.example' });
+test('Manifest: basis aus PLATTFORM_URL; VERTRAG_VERSION 1.2 vorerst abgelehnt (labs v1.2 noch nicht umgesetzt)', async () => {
+  const app = H.makeApp({ seedDir: SEED, plattformUrl: 'https://kryptos.example', portalUrl: 'https://portal.example' });
   const m = (await request(app).get('/api/plattform')).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.equal(m.vertrag, '1.2');
-  assert.deepEqual(m.niveaus, ['eA', 'gA']);
+  assert.equal(m.vertrag, '1.1');
+  assert.equal(m.niveaus, undefined);
   assert.equal(m.basis, 'https://kryptos.example');
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
+  assert.throws(() => H.makeApp({ vertragVersion: '1.2' }), /Vertrag 1\.2 \(labs\) noch nicht umgesetzt/);
 });
 
 test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgemäß', async () => {

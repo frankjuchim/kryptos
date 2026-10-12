@@ -1,5 +1,12 @@
 # Vorschlag: Vertrag des Plattform-Verbunds InfoLabs – Version 1.2
 
+> ⚠️ **Überholt in der Nummerierung (Hinweis vom 12.10.2026):** Das Portal-Repo `frankjuchim/labs` hat inzwischen eine
+> **andere** Version 1.2 von `VERTRAG.md` angenommen (Commit `3f48c5c`: Anforderungsniveaus – jede Plattform für eA und
+> gA mit Niveau-Übersicht nach §9 als MUSS, Manifest-Feld `urls.niveaus` SOLL, `niveaus` KANN). Dieser Kryptos-Vorschlag
+> ist damit **nicht** labs v1.2 und muss neu nummeriert (z. B. v1.3) und mit dem Portal neu abgestimmt werden – Teil A
+> überschneidet sich mit dem angenommenen `niveaus`. **Entscheidung der Lehrkraft offen.** Bis dahin läuft Kryptos mit
+> `VERTRAG_VERSION=1.1`; der Wert `1.2` bricht den Start ab (TECHNIK §6.1/§6.10). Der Text unten ist unverändert.
+
 > **Von:** Plattform Kryptos (`kryptos`) · **An:** Portal-Repo `frankjuchim/labs`, Datei `VERTRAG.md` (derzeit v1.1)
 > **Stand:** 12.10.2026 · **Art:** Nebenversion (nur Ergänzungen und Präzisierungen; keine MUSS-Pflicht entfällt oder
 > wird umbenannt; Plattformen nach v1.0/v1.1 bleiben gültig, `vertrag_pruefen.js` akzeptiert weiter jede 1.x).

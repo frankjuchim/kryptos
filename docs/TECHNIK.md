@@ -456,7 +456,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen) |
 | `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende |
 | `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
-| `VERTRAG_VERSION` | `1.1` | nein (Std. `1.1`) | `1.1` oder `1.2`; steuert alle Felder/Regeln, die erst mit dem Vorschlag v1.2 gelten (§6.8 `niveau`, §6.9 `niveaus`, §8.3 Bezugsmenge des Anteils). Erst auf `1.2` stellen, wenn das Portal v1.2 angenommen hat |
+| `VERTRAG_VERSION` | `1.1` | nein (Std. `1.1`) | **vorerst nur `1.1`**; `1.2` → Startabbruch „Vertrag 1.2 (labs) noch nicht umgesetzt: Niveau-Übersicht und urls.niveaus fehlen“ (auch im Testmodus). Grund: labs hat inzwischen ein **anderes** v1.2 angenommen (Niveau-Übersicht §9 MUSS, `urls.niveaus` SOLL, `niveaus` KANN), nicht den Kryptos-Vorschlag (§6.10). Der Code für die Felder/Regeln des Kryptos-Vorschlags (§6.8 `niveau`, §6.9 `niveaus`, §8.3 Bezugsmenge) bleibt vorbereitet, ist aber nicht einschaltbar |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
 | `DATA_DIR` | `/app/data` | nein | DB `kryptos.db` |
@@ -645,6 +645,14 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
 `"vertrag": "1.2"` und `"niveaus": ["eA", "gA"]`. Das Manifest enthält nie Kurs-, Schüler- oder Lösungsdaten (Test).
 
 ### 6.10 Vertragsstand
+
+> **Achtung (Stand 12.10.2026):** labs (`VERTRAG.md`, Commit `3f48c5c`) hat inzwischen eine **eigene** Version 1.2
+> angenommen: Anforderungsniveaus – jede Plattform ist für eA **und** gA und zeigt eine Niveau-Übersicht (§9, MUSS),
+> Manifest-Felder `urls.niveaus` (SOLL) und `niveaus` (KANN). Das ist **nicht** der Kryptos-Vorschlag
+> `docs/VERTRAG_VORSCHLAG_v1.2.md`; dieser muss neu nummeriert (z. B. als v1.3) und mit dem Portal abgestimmt werden.
+> Die Entscheidung der Lehrkraft ist offen. Bis dahin läuft Kryptos mit `VERTRAG_VERSION=1.1`; `1.2` bricht den Start
+> ab (§6.1). Alle Stellen in diesem Dokument, die „ab v1.2“ / „`VERTRAG_VERSION=1.2`“ sagen, meinen den
+> **Kryptos-Vorschlag**, nicht labs v1.2.
 
 Kryptos erfüllt v1.1 ohne MUSS-Abweichung, **solange `VERTRAG_VERSION=1.1`** gilt: Dann werden `anteil` und Rang
 vertragsgemäß über alle sichtbaren Level-Punkte der freigeschalteten Welten berechnet (§8.3), und weder `niveau` noch

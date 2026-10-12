@@ -10,7 +10,9 @@ const { schluesselListe } = require('../jwt');
 
 const STANDARD_ID = 'kryptos';
 const ID_MUSTER = /^[a-z][a-z0-9-]{1,30}$/;
-const VERTRAG_VERSIONEN = ['1.1', '1.2'];
+// Vorerst nur 1.1: labs hat inzwischen ein ANDERES v1.2 angenommen (Niveau-Übersicht §9 MUSS, urls.niveaus SOLL,
+// niveaus KANN) als docs/VERTRAG_VORSCHLAG_v1.2.md vorschlägt. Bis die Lehrkraft entscheidet, bricht 1.2 ab.
+const VERTRAG_VERSIONEN = ['1.1'];
 
 function fehler(text) {
   return new Error(`Konfiguration: ${text}`);
@@ -61,7 +63,7 @@ function trustProxyWert(v) {
  * @param {object} env  Umgebung (process.env oder Testwerte)
  * @param {{ test?: boolean }} [o]  test: fehlende Pflichtwerte erlaubt (Konfiguration kommt aus createApp(opts))
  * @returns {{ plattformId: string, plattformUrl: string|null, portalUrl: string|null, portalPublicKey: string|null,
- *   schluessel: import('node:crypto').KeyObject[], sessionSecret: string, vertragVersion: '1.1'|'1.2',
+ *   schluessel: import('node:crypto').KeyObject[], sessionSecret: string, vertragVersion: '1.1',
  *   authModus: 'portal', dataDir: string, port: number, trustProxy: number|boolean|string }}
  */
 function ladeKonfig(env = process.env, { test = false } = {}) {
@@ -93,7 +95,8 @@ function ladeKonfig(env = process.env, { test = false } = {}) {
   if (!sessionSecret) sessionSecret = crypto.randomBytes(32).toString('hex');
 
   const vertragVersion = leer(e.VERTRAG_VERSION) ? '1.1' : String(e.VERTRAG_VERSION).trim();
-  if (!VERTRAG_VERSIONEN.includes(vertragVersion)) throw fehler('VERTRAG_VERSION muss 1.1 oder 1.2 sein.');
+  if (vertragVersion === '1.2') throw fehler('Vertrag 1.2 (labs) noch nicht umgesetzt: Niveau-Übersicht und urls.niveaus fehlen. Bitte VERTRAG_VERSION=1.1 setzen.');
+  if (!VERTRAG_VERSIONEN.includes(vertragVersion)) throw fehler('VERTRAG_VERSION muss 1.1 sein.');
 
   let port = 80;
   if (!leer(e.PORT)) {
