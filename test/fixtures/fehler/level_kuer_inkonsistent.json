@@ -1,0 +1,10 @@
+{
+  "beschreibung": "kuer: true mit niveau kern",
+  "erwartet": "kuer",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L4.niveau",
+      "wert": "kern"
+    }
+  ]
+}

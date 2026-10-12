@@ -15,6 +15,10 @@
       "titel": "Blöcke und Lücken",
       "ds": [1],
       "niveau": "kern",
+      "rolle": "kryptografie",
+      "werkzeug": ["scheibe"],
+      "akte": "Akte W9·1 – Blöcke und Lücken",
+      "video": { "nr": 1, "titel": "Testvideo" },
       "ab": "AB 1 – Beispiel, Teil A",
       "ide": "AQ_W9_Beispiel_Geruest.txt – Level 9.1",
       "intro": [
@@ -25,6 +29,7 @@
     {
       "id": "W9-L2",
       "niveau": "kern",
+      "rolle": "kryptoanalyse",
       "nr": "9.2",
       "titel": "Alle Interaktionen",
       "ds": [2, 3],

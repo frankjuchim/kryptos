@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Kür-Level mit Kern-Aufgabe",
+  "erwartet": "kuer",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L4-01.niveau",
+      "wert": "kern"
+    }
+  ]
+}

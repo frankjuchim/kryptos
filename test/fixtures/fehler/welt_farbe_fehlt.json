@@ -1,0 +1,10 @@
+{
+  "beschreibung": "farbe ist für jede Welt Pflicht",
+  "erwartet": "farbe",
+  "aenderungen": [
+    {
+      "pfad": "farbe",
+      "loeschen": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "beschreibung": "unbekanntes Werkzeug",
+  "erwartet": "werkzeug",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L1.werkzeug",
+      "wert": [
+        "enigma"
+      ]
+    }
+  ]
+}

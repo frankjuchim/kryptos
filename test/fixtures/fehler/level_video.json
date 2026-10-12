@@ -1,0 +1,13 @@
+{
+  "beschreibung": "video.nr außerhalb 0–7",
+  "erwartet": "video",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L1.video",
+      "wert": {
+        "nr": 9,
+        "titel": "x"
+      }
+    }
+  ]
+}

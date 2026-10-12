@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Level ohne niveau",
+  "erwartet": "niveau fehlt",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L2.niveau",
+      "loeschen": true
+    }
+  ]
+}

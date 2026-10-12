@@ -1,0 +1,10 @@
+{
+  "beschreibung": "bits-rechnen-Lösung weicht ab",
+  "erwartet": "Neuberechnung",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L6-01.loesung.bits",
+      "wert": "00100011"
+    }
+  ]
+}

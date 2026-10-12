@@ -1,0 +1,11 @@
+{
+  "beschreibung": "Welt 0–6 ohne akzentHell",
+  "erwartet": "akzentHell",
+  "alsWelt": 0,
+  "aenderungen": [
+    {
+      "pfad": "akzentHell",
+      "loeschen": true
+    }
+  ]
+}

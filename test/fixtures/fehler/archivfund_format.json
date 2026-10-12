@@ -1,0 +1,10 @@
+{
+  "beschreibung": "archivfund verweist auf eine Level-Aufgabe",
+  "erwartet": "archivfund",
+  "aenderungen": [
+    {
+      "pfad": "archivfund.aufgabe",
+      "wert": "W9-L1-01"
+    }
+  ]
+}

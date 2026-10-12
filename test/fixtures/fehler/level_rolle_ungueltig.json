@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Level mit unbekannter rolle",
+  "erwartet": "rolle",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L2.rolle",
+      "wert": "angreifer"
+    }
+  ]
+}

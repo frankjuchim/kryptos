@@ -1,0 +1,77 @@
+{
+  "beschreibung": "Kern-Level nur mit eA-Aufgaben ist im gA-Kurs leer",
+  "erwartet": "gA",
+  "aenderungen": [
+    {
+      "pfad": "levels",
+      "anhaengen": {
+        "id": "W9-L7",
+        "titel": "Nur eA",
+        "niveau": "kern",
+        "rolle": "kryptografie",
+        "aufgaben": [
+          "W9-L7-01"
+        ]
+      }
+    },
+    {
+      "pfad": "aufgaben",
+      "anhaengen": {
+        "id": "W9-L7-01",
+        "titel": "Konstruktor erkennen",
+        "stufe": 1,
+        "kategorie": "begriffe",
+        "fallen": [],
+        "inhalt": [
+          {
+            "t": "klassenkarte",
+            "name": "Held",
+            "attribute": [
+              "- name: Zeichenkette",
+              "- leben: Ganzzahl"
+            ],
+            "methoden": [
+              "+ c Held(name: Zeichenkette)",
+              "+ getName(): Zeichenkette",
+              "+ nimmSchaden(schaden: Ganzzahl): nichts"
+            ]
+          },
+          {
+            "t": "text",
+            "md": "Welche Zeile beschreibt den **Konstruktor**?"
+          }
+        ],
+        "interaktion": {
+          "kind": "choice",
+          "mehrfach": false,
+          "optionen": [
+            {
+              "id": "a",
+              "md": "`+ c Held(name: Zeichenkette)`"
+            },
+            {
+              "id": "b",
+              "md": "`+ getName(): Zeichenkette`"
+            },
+            {
+              "id": "c",
+              "md": "`- leben: Ganzzahl`"
+            }
+          ]
+        },
+        "loesung": {
+          "richtig": [
+            "a"
+          ]
+        },
+        "erklaerung": [
+          {
+            "t": "text",
+            "md": "Konstruktoren tragen im Klassendiagramm ein vorangestelltes **c** und heißen wie die Klasse."
+          }
+        ],
+        "niveau": "eA"
+      }
+    }
+  ]
+}

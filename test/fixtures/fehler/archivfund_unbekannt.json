@@ -1,0 +1,10 @@
+{
+  "beschreibung": "archivfund verweist auf eine fehlende Aufgabe",
+  "erwartet": "archivfund",
+  "aenderungen": [
+    {
+      "pfad": "archivfund.aufgabe",
+      "wert": "W9-A-02"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "beschreibung": "zuordnung-Klartext weicht ab",
+  "erwartet": "Neuberechnung",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L3-02.loesung.klartext",
+      "wert": "GEHEIMTREFFENIMKELLEX"
+    }
+  ]
+}

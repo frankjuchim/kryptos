@@ -1,0 +1,10 @@
+{
+  "beschreibung": "chiffre-Lösung weicht von der Neuberechnung ab",
+  "erwartet": "Neuberechnung",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-01.loesung.text",
+      "wert": "ZUVERLAESSIX"
+    }
+  ]
+}

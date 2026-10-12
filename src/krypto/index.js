@@ -36,7 +36,7 @@ function registriere() {
   bits.registriere(F);
   // Delta §9.6: erwartete Fehlantworten in gaps (loesung._fehlmuster) und ihre Prüfung im Validator
   F.registriereDiagnose('gaps', D.gapsFehlmuster);
-  V.registriereValidierung(validierung);
+  V.registriereValidierung(validierung.HOOKS);
 }
 
 /** Dienst-Optionen für den Kern (TECHNIK §4.2) – Gerüst, Task 33 füllt sie. */

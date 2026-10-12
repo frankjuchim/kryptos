@@ -1,0 +1,10 @@
+{
+  "beschreibung": "akzentHell zu dunkel für Tinte",
+  "erwartet": "Kontrast",
+  "aenderungen": [
+    {
+      "pfad": "akzentHell",
+      "wert": "#5B6B7C"
+    }
+  ]
+}

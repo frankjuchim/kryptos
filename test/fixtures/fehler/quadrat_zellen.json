@@ -1,0 +1,46 @@
+{
+  "beschreibung": "Playfair-Quadrat passt nicht zum Schlüssel",
+  "erwartet": "passen nicht zum Schlüssel",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-05.inhalt.1.zellen",
+      "wert": [
+        [
+          "R",
+          "A",
+          "C",
+          "H",
+          "I"
+        ],
+        [
+          "V",
+          "B",
+          "D",
+          "E",
+          "F"
+        ],
+        [
+          "G",
+          "K",
+          "L",
+          "M",
+          "N"
+        ],
+        [
+          "O",
+          "P",
+          "Q",
+          "S",
+          "T"
+        ],
+        [
+          "U",
+          "W",
+          "X",
+          "Y",
+          "Z"
+        ]
+      ]
+    }
+  ]
+}

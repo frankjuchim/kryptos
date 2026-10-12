@@ -1,0 +1,15 @@
+{
+  "beschreibung": "jahr mit von > bis",
+  "erwartet": "jahr",
+  "alsWelt": 0,
+  "aenderungen": [
+    {
+      "pfad": "jahr",
+      "wert": {
+        "von": 2000,
+        "bis": 1900,
+        "anzeige": "x"
+      }
+    }
+  ]
+}

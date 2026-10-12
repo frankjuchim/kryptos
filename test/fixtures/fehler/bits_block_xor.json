@@ -1,0 +1,10 @@
+{
+  "beschreibung": "bits-Block mit pruefe xor rechnet falsch",
+  "erwartet": "Neuberechnung",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L6-01.erklaerung.0.zeilen.3.bits",
+      "wert": "0010 0011"
+    }
+  ]
+}

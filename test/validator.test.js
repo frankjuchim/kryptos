@@ -158,7 +158,7 @@ const V = require('../src/content/validator');
 const F = require('../src/content/format');
 V.registriereValidierung({
   welt: (d, f) => { if (d.titel === 'Hooktest' && !d.testfeld) f('datei', 'testfeld', 'testfeld fehlt.'); },
-  level: (l, o, f, w, { data }) => { if (data.titel === 'Hooktest' && !l.rolle) f('level', o, 'rolle fehlt.'); },
+  level: (l, o, f, w, { data }) => { if (data.titel === 'Hooktest' && !l.hookfeld) f('level', o, 'hookfeld fehlt.'); },
   aufgabe: (a, fa, wa, { data }) => { if (data.titel === 'Hooktest' && a.stufe === 3) wa('stufe', 'Stufe 3 im Hooktest.'); },
   boss: (b, f, w, { data }) => { if (data.titel === 'Hooktest') w('boss', 'boss', 'Boss-Hook lief.'); },
   dateien: (eintraege, ergebnisse) => { for (const r of ergebnisse) if (r.datei === 'hook.json') r.warnungen.push({ datei: r.datei, ebene: 'datei', ort: '', meldung: 'Dateien-Hook lief.', aufgabe: null }); }
@@ -169,7 +169,7 @@ test('Validator-Hooks: welt, level, aufgabe, boss, dateien', () => {
   const r = validiereWelt(hookWelt(), { datei: 'hook.json' });
   const t = (x) => x.map((e) => e.meldung).join(' | ');
   assert.match(t(r.fehler), /testfeld fehlt/);
-  assert.match(t(r.fehler), /rolle fehlt/);
+  assert.match(t(r.fehler), /hookfeld fehlt/);
   assert.match(t(r.warnungen), /Stufe 3 im Hooktest/);
   assert.match(t(r.warnungen), /Boss-Hook lief/);
   const fs2 = require('node:fs'); const os2 = require('node:os');
@@ -265,4 +265,67 @@ test('bits-rechnen-Validator: Neuberechnung je Operation', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L3-04').loesung.positionen = [3, 5, 7]; }, /Neuberechnung ergibt \[3, 5, 7, 13\]|3,5,7,13/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0100 1011', '0110 101']; }, /gleich lang/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L3-03').interaktion.runden = 5; }, /runden/);
+});
+
+/* ---------- Task 30: Welt- und Level-Felder (Delta §2, §3), Negativ-Fixtures (Delta §13, E15) ---------- */
+
+const FEHLER_DIR = path.join(__dirname, 'fixtures', 'fehler');
+
+/** Änderungen einer Negativ-Fixture anwenden: pfad mit Punkten, Segment liste#ID wählt nach id, Zahl = Index. */
+function wendeAn(w, aenderungen) {
+  for (const a of aenderungen) {
+    const teile = a.pfad.split('.');
+    let ziel = w;
+    const schritt = (o, seg) => {
+      const [name, id] = seg.split('#');
+      const x = name === '' ? o : o[name];
+      return id ? x.find((e) => e.id === id) : /^\d+$/.test(seg) ? o[Number(seg)] : x;
+    };
+    for (const seg of teile.slice(0, -1)) ziel = schritt(ziel, seg);
+    const letzt = teile[teile.length - 1];
+    if (a.loeschen) delete ziel[letzt];
+    else if ('anhaengen' in a) schritt(ziel, letzt).push(a.anhaengen);
+    else ziel[/^\d+$/.test(letzt) ? Number(letzt) : letzt] = a.wert;
+  }
+  return w;
+}
+
+/** Fixture laden, optional als Inhaltswelt alsWelt (ids und Akten-Nummern umgeschrieben). */
+function ladeWelt(alsWelt) {
+  let t = fs.readFileSync(H.FIXTURE, 'utf8');
+  if (alsWelt === undefined) return JSON.parse(t);
+  t = t.replace(/W9-/g, `W${alsWelt}-`).replace(/W9·/g, `W${alsWelt}·`);
+  const w = JSON.parse(t);
+  w.welt = alsWelt;
+  return w;
+}
+
+test('Fixture auch als Welt 0 fehlerfrei (alle Pflichtfelder einer Inhaltswelt)', () => assert.deepEqual(fehlerVon(ladeWelt(0)), []));
+
+test('Negativ-Fixtures: je Datei der erwartete Fehler (Delta §11, §13)', () => {
+  const dateien = fs.readdirSync(FEHLER_DIR).filter((d) => d.endsWith('.json')).sort();
+  assert.ok(dateien.length >= 22, `nur ${dateien.length} Negativ-Fixtures`);
+  for (const d of dateien) {
+    const spec = JSON.parse(fs.readFileSync(path.join(FEHLER_DIR, d), 'utf8'));
+    const f = fehlerVon(wendeAn(ladeWelt(spec.alsWelt), spec.aenderungen));
+    assert.ok(f.some((x) => new RegExp(spec.erwartet).test(x)), `${d}: erwartet /${spec.erwartet}/ in\n${f.join('\n')}`);
+  }
+});
+
+test('Welt/Level-Hinweise: akte, ab, kapitel, video', () => {
+  const hin = (w, opt = {}) => validiereWelt(w, { datei: 't', ...opt }).warnungen.map((x) => x.meldung).join(' | ');
+  let w = basis();
+  delete w.levels.find((l) => l.id === 'W9-L2').akte;
+  assert.match(hin(w), /akte fehlt/);
+  w = basis();
+  delete w.levels[0].akte;
+  assert.match(hin(w), /bitte `?akte`? verwenden/);
+  w = ladeWelt(0);
+  delete w.kapitel;
+  assert.match(hin(w), /kapitel fehlt/);
+  assert.match(hin(basis(), { videos: [{ nr: 2, titel: 'x', url: 'https://www.youtube.com/watch?v=x' }] }), /video.*1/);
+  assert.doesNotMatch(hin(basis(), { videos: [{ nr: 1, titel: 'x', url: 'https://www.youtube.com/watch?v=x' }] }), /video/);
+  const k = require('../src/krypto/validierung');
+  assert.equal(Math.round(k.kontrast('#8A5F1A', '#FBF7EE') * 100) / 100, 5.26);
+  assert.equal(Math.round(k.kontrast('#B07D2B', '#FBF7EE') * 100) / 100, 3.38);
 });

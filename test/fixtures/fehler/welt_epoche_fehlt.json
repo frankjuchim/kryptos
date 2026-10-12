@@ -1,0 +1,11 @@
+{
+  "beschreibung": "Welt 0–6 ohne epoche",
+  "erwartet": "epoche",
+  "alsWelt": 0,
+  "aenderungen": [
+    {
+      "pfad": "epoche",
+      "loeschen": true
+    }
+  ]
+}

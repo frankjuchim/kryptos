@@ -1,0 +1,27 @@
+{
+  "beschreibung": "Fleißner-Schablone deckt nicht jedes Feld genau einmal",
+  "erwartet": "mehrfach frei",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L4-01.inhalt.3.schablone",
+      "wert": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          4
+        ]
+      ]
+    }
+  ]
+}

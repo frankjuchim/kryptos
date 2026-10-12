@@ -1,0 +1,14 @@
+{
+  "beschreibung": "Ergänzungs-Level mit Kern-Aufgabe",
+  "erwartet": "ergaenzung",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L1.niveau",
+      "wert": "ergaenzung"
+    },
+    {
+      "pfad": "aufgaben#W9-L1-01.niveau",
+      "wert": "kern"
+    }
+  ]
+}

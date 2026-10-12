@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Plattform-Messing hat auf Papier zu wenig Kontrast",
+  "erwartet": "Kontrast der Weltfarbe zu Papier 3,38",
+  "aenderungen": [
+    {
+      "pfad": "farbe",
+      "wert": "#B07D2B"
+    }
+  ]
+}
