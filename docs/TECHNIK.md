@@ -559,8 +559,12 @@ Ablauf in `/sso/ende` (Schritt 6), alles in einer Transaktion:
 
 ### 6.7 Verbund-API (Portal → Plattform)
 
-Router `/api/verbund` wird **vor** dem allgemeinen API-Router eingehängt (keine Origin-Prüfung, VERTRAG §6), mit
-`express.json({ limit: '100kb' })`, Rate-Limit 600 Anfragen/10 min gesamt, `Cache-Control: no-store`.
+Router `/api/verbund` wird **vor** dem allgemeinen API-Router eingehängt (keine Origin-Prüfung, VERTRAG §6),
+`Cache-Control: no-store`. Reihenfolge je Route: **Tokenprüfung → Rate-Limit → `express.json({ limit: '100kb' })` →
+Handler** – der Body wird erst nach gültigem Token gelesen (kaputtes oder zu großes JSON ohne Token → 401, nicht 400/413).
+Rate-Limits: **gültige** Portal-Aufträge 600/10 min gesamt (gezählt nach der Tokenprüfung, darüber 429 mit
+`Retry-After`); **abgelehnte** Anfragen 120/10 min **je IP** (danach 429 statt 401). Eine Flut ohne gültiges Token
+verbraucht so nie das Kontingent echter Löschaufträge (Test: Flut ohne Token, danach gültiger Auftrag → 200).
 
 Middleware `verbund(zweck)`: `Authorization: Bearer <JWT>` → `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL,
 aud: PLATTFORM_ID, maxDauerSek: 60 })`, dann `sub === 'portal'`, `zweck` gleich, `jti` einmalig (`sso_jti` mit Präfix

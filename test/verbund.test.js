@@ -320,13 +320,53 @@ test('kurs-aendern aktiv:false: laufendes Funkraum-Szenario beendet (Inhalte gel
   assert.equal(H.zaehle(app, 'fortschritt', 'schueler_id = ?', t), 1);
 });
 
-test('Verbund-API: Rate-Limit 600 Anfragen je 10 Minuten (gesamt) → 429', async () => {
+test('Verbund-API: Rate-Limit 600 gültige Aufträge je 10 Minuten (gesamt) → 429', async () => {
   const app = H.makeApp();
   for (let i = 0; i < 600; i++) {
-    const r = await request(app).post('/api/verbund/loeschen').send({});
-    assert.equal(r.status, 401);
+    const r = await loeschen(app, { sub: 's:1' });
+    assert.equal(r.status, 200);
   }
   const r = await loeschen(app, { sub: 's:1' });
   assert.equal(r.status, 429);
   assert.ok(Number(r.headers['retry-after']) > 0);
+});
+
+test('Verbund-API: Flut ohne Token wird je IP gedrosselt (429), blockiert aber keine gültigen Löschaufträge', async () => {
+  const app = H.makeApp();
+  const status = [];
+  for (let i = 0; i < 600; i++) status.push((await request(app).post('/api/verbund/loeschen').send({ sub: 's:1' })).status);
+  assert.deepEqual([...new Set(status.slice(0, 120))], [401], 'die ersten 120 abgelehnten: 401');
+  assert.deepEqual([...new Set(status.slice(120))], [429], 'danach gedrosselt');
+  const ok = await loeschen(app, { sub: 's:1' });
+  assert.deepEqual([ok.status, ok.body], [200, { geloescht: 0 }], 'gültiger Auftrag kommt trotzdem durch');
+});
+
+test('Verbund-API: JSON wird erst nach der Tokenprüfung gelesen (kaputtes JSON ohne Token → 401, mit Token → 400)', async () => {
+  const app = H.makeApp();
+  const ohne = await request(app).post('/api/verbund/loeschen').set('Content-Type', 'application/json').send('{x');
+  assert.deepEqual([ohne.status, ohne.body], [401, { error: 'Token ungültig.' }]);
+  const gross = await request(app).post('/api/verbund/kurse/k%3A1').set('Content-Type', 'application/json').send(JSON.stringify({ name: 'x'.repeat(200 * 1024) }));
+  assert.equal(gross.status, 401, 'zu großer Body ohne Token → 401');
+  const mit = await vb(app, 'post', '/api/verbund/loeschen', 'loeschen').set('Content-Type', 'application/json').send('{x');
+  assert.deepEqual([mit.status, mit.body], [400, { error: 'Ungültiges JSON.' }]);
+});
+
+test('Verbund-API: jti bleibt nach echtem Neustart verbraucht (zwei App-Instanzen, gleiche DB-Datei)', async () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kryptos-verbund-'));
+  const dbFile = path.join(dir, 'kryptos.db');
+  try {
+    const app1 = H.makeApp({ dbFile });
+    const token = H.verbundToken('loeschen', {}, { app: app1 });
+    assert.equal((await request(app1).post('/api/verbund/loeschen').set('Authorization', bearer(token)).send({ sub: 's:1' })).status, 200);
+    app1.locals.db.close();
+    const app2 = H.makeApp({ dbFile });
+    const r = await request(app2).post('/api/verbund/loeschen').set('Authorization', bearer(token)).send({ sub: 's:1' });
+    assert.deepEqual([r.status, r.body], [401, { error: 'Token ungültig.' }]);
+    assert.equal((await loeschen(app2, { sub: 's:1' })).status, 200, 'neues Token geht');
+    app2.locals.db.close();
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

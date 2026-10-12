@@ -3,8 +3,10 @@
 //   POST /api/verbund/loeschen                  zweck „loeschen“         { sub } oder { kurs } → { geloescht: n }
 //   GET  /api/verbund/kurse/:kursId/uebersicht  zweck „kurs-uebersicht“  Kennzahlen (TECHNIK §6.8), 404 unbekannt
 //   POST /api/verbund/kurse/:kursId             zweck „kurs-aendern“     { name?, aktiv? } → { ok: true }
-// Wird in app.js VOR dem allgemeinen API-Router eingehängt: keine Origin-Prüfung (serverseitige Aufrufe), eigenes
-// JSON-Limit 100 kB, Rate-Limit 600 Anfragen je 10 Minuten (gesamt), Cache-Control: no-store.
+// Wird in app.js VOR dem allgemeinen API-Router eingehängt: keine Origin-Prüfung (serverseitige Aufrufe), Cache-Control:
+// no-store. Reihenfolge je Route: Tokenprüfung → Rate-Limit → JSON (100 kB) → Handler. Rate-Limits: gültige
+// Portal-Aufträge 600 je 10 Minuten (gesamt), abgelehnte Anfragen 120 je 10 Minuten je IP (danach 429) – eine Flut ohne
+// gültiges Token verbraucht so nie das Kontingent der echten Löschaufträge; der Body wird erst nach der Prüfung gelesen.
 // Jede Token-Verletzung → 401 { error: 'Token ungültig.' } ohne Details; Tokens werden nie geloggt.
 
 const express = require('express');
@@ -27,39 +29,51 @@ const istObjekt = (b) => !!b && typeof b === 'object' && !Array.isArray(b);
  */
 function createVerbundRouter({ db, svc, konfig, now }) {
   const r = express.Router();
-  const limit = new S.Limiter({ max: 600, windowMs: 10 * 60 * 1000 });
+  const limit = new S.Limiter({ max: 600, windowMs: 10 * 60 * 1000 }); // gültige Aufträge (gesamt)
+  const abgelehntLimit = new S.Limiter({ max: 120, windowMs: 10 * 60 * 1000 }); // abgelehnte Anfragen je IP
+  const json = express.json({ limit: '100kb' });
   const jetztSek = () => Math.floor(now() / 1000);
   const jtiMerken = db.prepare('INSERT INTO sso_jti (jti, exp) VALUES (?, ?) ON CONFLICT(jti) DO NOTHING');
   const jtiAufraeumen = db.prepare('DELETE FROM sso_jti WHERE exp < ?');
 
   r.use((req, res, next) => {
     res.set('Cache-Control', 'no-store');
-    if (!limit.take('gesamt', now())) {
-      res.set('Retry-After', String(limit.retryAfterSec('gesamt', now())));
-      return res.status(429).json({ error: 'Zu viele Anfragen.' });
-    }
     next();
   });
-  r.use(express.json({ limit: '100kb' }));
 
-  const ungueltig = (res) => res.status(401).json({ error: 'Token ungültig.' });
+  const zuViele = (res, l, key) => {
+    res.set('Retry-After', String(l.retryAfterSec(key, now())));
+    return res.status(429).json({ error: 'Zu viele Anfragen.' });
+  };
+  /** Abgelehnte Anfrage: je IP zählen; über dem Limit 429 statt 401. */
+  const abgelehnt = (req, res) => {
+    const key = 'ip:' + req.ip;
+    if (abgelehntLimit.isBlocked(key, now())) return zuViele(res, abgelehntLimit, key);
+    abgelehntLimit.hit(key, now());
+    return res.status(401).json({ error: 'Token ungültig.' });
+  };
   const fehler400 = (res, text) => res.status(400).json({ error: text });
 
-  /** Middleware: Bearer-Token des Portals mit passendem zweck, sub „portal“, jti einmalig (sso_jti, Präfix „v:“). */
+  /**
+   * Middleware-Kette: Bearer-Token des Portals mit passendem zweck, sub „portal“, jti einmalig (sso_jti, Präfix „v:“);
+   * danach Rate-Limit der gültigen Aufträge und erst dann der JSON-Parser.
+   */
   function verbund(zweck) {
     if (!ZWECKE.includes(zweck)) throw new Error(`unbekannter zweck ${zweck}`);
-    return (req, res, next) => {
-      if (!konfig.portalUrl || !konfig.schluessel || !konfig.schluessel.length) return ungueltig(res);
+    const pruefen = (req, res, next) => {
+      if (!konfig.portalUrl || !konfig.schluessel || !konfig.schluessel.length) return abgelehnt(req, res);
       const m = /^Bearer ([A-Za-z0-9_.-]{1,8192})$/.exec(req.get('authorization') || '');
-      if (!m) return ungueltig(res);
+      if (!m) return abgelehnt(req, res);
       const p = pruefe(m[1], konfig.schluessel, { iss: konfig.portalUrl, aud: konfig.plattformId, maxDauerSek: MAX_DAUER_SEK, jetztSek: jetztSek() });
-      if (!p.ok) return ungueltig(res);
+      if (!p.ok) return abgelehnt(req, res);
       const t = p.nutzlast;
-      if (t.sub !== 'portal' || t.zweck !== zweck) return ungueltig(res);
+      if (t.sub !== 'portal' || t.zweck !== zweck) return abgelehnt(req, res);
       jtiAufraeumen.run(jetztSek() - 60);
-      if (jtiMerken.run('v:' + t.jti, t.exp).changes !== 1) return ungueltig(res);
+      if (jtiMerken.run('v:' + t.jti, t.exp).changes !== 1) return abgelehnt(req, res);
+      if (!limit.take('gesamt', now())) return zuViele(res, limit, 'gesamt');
       next();
     };
+    return [pruefen, json];
   }
 
   /** :kursId (Express dekodiert k%3A17) → „k:17“ oder null. */

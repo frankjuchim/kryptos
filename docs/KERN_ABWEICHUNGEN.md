@@ -105,7 +105,9 @@ Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
 - `verbund.js` (Task 8): `createVerbundRouter` – Verbund-API nach TECHNIK §6.7 (`/loeschen`, `/kurse/:kursId/uebersicht`,
   `/kurse/:kursId`), Middleware `verbund(zweck)` (Bearer, `jwt.pruefe` mit `maxDauerSek: 60`, `sub = portal`, `zweck`,
   `jti` persistent in `sso_jti` mit Präfix `v:`; jede Verletzung `401 { error: 'Token ungültig.' }`), eigenes
-  `express.json({ limit: '100kb' })`, Rate-Limit 600/10 min gesamt, `Cache-Control: no-store`; `kurs-aendern` übernimmt
+  `express.json({ limit: '100kb' })`, `Cache-Control: no-store`; Review M1: JSON-Parser erst **nach** der Tokenprüfung,
+  Rate-Limit 600/10 min nur für gültige Aufträge (nach der Prüfung gezählt), abgelehnte Anfragen eigener Limiter
+  120/10 min je IP (danach 429); `kurs-aendern` übernimmt
   den Namen (1–80 Zeichen) und sperrt/entsperrt (`kurse.aktiv`), unbekannter Kurs → `{ ok: true }` ohne Anlage.
 - `loeschen.js` (Task 8): `nachSub(db, sub)`, `nachKurs(db, kursId)` (je eine Transaktion, Fremdschlüssel-Kaskaden,
   leere Teams nach `nachSub` samt Funkraum-Rollen und Arena-Chiffren gelöscht – TECHNIK §7.3) und
