@@ -21,7 +21,6 @@ const RICHTIG = {
   'W9-B-02': { g1: '2' },
   'W9-B-03': ['b'],
   'W9-B-04': ['1', '3'],
-  'W9-B-05': ['L', '', 'R'],
   'W9-B-06': { g1: '3' }
 };
 const FALSCH = {
@@ -45,8 +44,39 @@ const FALSCH = {
   'W9-B-02': { g1: '3' },
   'W9-B-03': ['a'],
   'W9-B-04': ['3', '1'],
-  'W9-B-05': ['', 'L', 'R'],
   'W9-B-06': { g1: '2' }
 };
+Object.assign(RICHTIG, {
+  'W9-A-01': 'treffpunkt',
+  'W9-L5-01': 'zuverlaessig', 'W9-L5-02': ['B', 'O', 'G', 'R', 'Z', 'N', 'W', 'S', 'K'], 'W9-L5-03': [9, 11, 19, 5, 14],
+  'W9-L5-04': ['26 1 2 3 4', '24, 25, 26, 20, 21'], 'W9-L5-05': 'NHQZS FJKRH JS', 'W9-L5-06': 'rfnep ktfut',
+  'W9-L5-07': 'Mondfinsternis', 'W9-L5-08': 'UVMGE OVFCC F', 'W9-B-05': 'treffpunkt'
+});
+Object.assign(FALSCH, {
+  'W9-A-01': 'HFSTTDIBYH', 'W9-L5-01': 'ZUVERLAESSIX', 'W9-L5-02': 'BOGRZNWSL', 'W9-L5-03': [9, 11, 19, 5, 15],
+  'W9-L5-04': ['26 1 2 3 4', '24 25 0 20 21'], 'W9-L5-05': 'NHOOBHGIHIQZ', 'W9-L5-06': 'RFNEPKTFTU',
+  'W9-L5-07': 'MSNZFWZIDEVNES', 'W9-L5-08': 'FCCFVOEGMVU', 'W9-B-05': 'BHONVZCDUB'
+});
+/** Fallen-Diagnose (Delta §9): je Zeile eine Fehlantwort und die erwarteten [p, code] */
+const DIAGNOSE = [
+  { aufgabe: 'W9-L5-01', antwort: 'FABKXRGKYYOM', erwartet: [['P3', 'richtung']] },
+  { aufgabe: 'W9-L5-01', antwort: 'YTUDQKZDRRHF', erwartet: [['P1', 'zaehlbasis']] },
+  { aufgabe: 'W9-L5-01', antwort: '0UVERLAESSIG', erwartet: [['P2', 'null_statt_z']] },
+  { aufgabe: 'W9-L5-01', antwort: 'ZUB', teilweise: true, erwartet: [['P3', 'richtung']] },
+  { aufgabe: 'W9-L5-07', antwort: 'MSNZFWZIDEVNES', erwartet: [['P3', 'reihenfolge']] },
+  { aufgabe: 'W9-L5-06', antwort: 'UTFNRFKEPT', erwartet: [['P3', 'permutation']] },
+  { aufgabe: 'W9-L5-06', antwort: 'RFNXEPKXTFUT', erwartet: [['P4', 'fuellung']] },
+  { aufgabe: 'W9-L5-03', antwort: '5 7 15 1 10', erwartet: [['P1', 'zaehlbasis']] },
+  { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXI', erwartet: [['P1', 'position']] },
+  { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXQ', erwartet: [['P1', 'position']] },
+  { aufgabe: 'W9-L5-02', antwort: 'YTE', erwartet: [] },
+  { aufgabe: 'W9-L5-02', antwort: '0O0RZ0WS0', erwartet: [['P2', 'ueberlauf']] },
+  { aufgabe: 'W9-L5-04', teil: 0, antwort: [0, 1, 2, 3, 4], erwartet: [['P2', 'null_statt_z']] },
+  { aufgabe: 'W9-L5-04', teil: 0, antwort: [26, 27, 28, 29, 30], erwartet: [['P2', 'ueberlauf']] },
+  { aufgabe: 'W9-L5-04', teil: 1, antwort: [-2, -1, 0, 20, 21], erwartet: [['P2', 'negativ']] },
+  { aufgabe: 'W9-L5-05', antwort: 'NHOOBHGIHIQZ', erwartet: [['P4', 'paare']] },
+  { aufgabe: 'W9-L5-08', antwort: 'FCCFVOEGMVU', erwartet: [['P4', 'regel']] },
+  { aufgabe: 'W9-L5-08', antwort: 'STKECMTDAAD', erwartet: [['P3', 'richtung']] }
+];
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
-module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN };
+module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };

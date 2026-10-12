@@ -218,3 +218,17 @@ test('CLI: registriere() vor dem Validieren – norm „krypto“ ist bekannt', 
   assert.equal(r.status, 0, r.stdout);
   assert.match(r.stdout, /Alles in Ordnung/);
 });
+
+test('chiffre-Validator: Neuberechnung, Parameter, Alternativen, frei', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-01').loesung.text = 'ZUVERLAESSIX'; }, /Neuberechnung ergibt ZUVERLAESSIG statt ZUVERLAESSIX/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-03').loesung.text = '9 11 19 5 15'; }, /Neuberechnung ergibt 9 11 19 5 14/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-03').interaktion.verfahren.a = 13; }, /„a“ muss teilerfremd zu 26 sein/);
+  erwarteFehler((w) => { const a = aufgabe(w, 'W9-L5-05'); a.interaktion.richtung = 'ent'; a.interaktion.eingabe = 'ABC'; }, /Verfahren nicht anwendbar: Ein Playfair-Geheimtext hat eine gerade Anzahl/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFIKRHIS']; }, /alternative/i);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L5-08').pruefnachweis; }, /pruefnachweis fehlt/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-01').loesung.fehlmuster = [{ text: 'X', p: 'P3', code: 'richtung' }]; }, /fehlmuster nur bei fremden Chiffren/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-02').interaktion.ausgabe = 'hex'; }, /hex/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-06').interaktion.hilfszeilen = ['schluessel']; }, /hilfszeilen/);
+  const w = basis(); aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFIKRHIT'];
+  assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /bekannte Variante/);
+});

@@ -7,6 +7,7 @@
 const F = require('../content/format');
 const K = require('../../public/static/js/shared/krypto');
 const bloecke = require('./bloecke');
+const chiffre = require('./interaktionen/chiffre');
 
 let registriert = false;
 
@@ -19,6 +20,8 @@ function registriere() {
   F.registriereNorm('bits', (s) => K.normBits(s));
   // Delta §7: neue Blöcke mit Neuberechnung
   bloecke.registriere(F);
+  // Delta §8.1: Interaktion chiffre (mit Fallen-Diagnose §9.2)
+  chiffre.registriere(F);
 }
 
 /** Dienst-Optionen für den Kern (TECHNIK §4.2) – Gerüst, Task 33 füllt sie. */

@@ -4,7 +4,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const C = require('../src/content/checker');
 const W = require('./fixtures/welt_beispiel.json');
-const { RICHTIG, FALSCH } = require('./fixtures/antworten');
+const { RICHTIG, FALSCH, DIAGNOSE } = require('./fixtures/antworten');
 const F = require('../src/content/format');
 require('../src/krypto').registriere();
 
@@ -180,4 +180,49 @@ test('Werkzeug-Liste TECHNIK §10.2', () => {
   assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis'], gast: true });
   assert.deepEqual(W.WERKZEUGE.filter((x) => x.gast).map((x) => x.id), ['scheibe']);
   assert.equal(W.werkzeug('enigma'), null);
+});
+
+const D = require('../src/krypto/diagnose');
+function diagnoseVon(e) {
+  const a = A[e.aufgabe];
+  if (e.teilweise) return C.pruefeAufgabe(a, e.antwort, { teilweise: true, teil: e.teil, diagnose: true }).diagnose || [];
+  const mehr = Array.isArray(a.interaktion);
+  const antwort = mehr ? a.interaktion.map((_, i) => (i === e.teil ? e.antwort : C.musterantwortAufgabe(a)[i])) : e.antwort;
+  const r = C.pruefeAufgabe(a, antwort, { diagnose: true });
+  assert.equal(r.ok, false, e.aufgabe + ' muss falsch sein');
+  return (mehr ? r.teile[e.teil].diagnose : r.diagnose) || [];
+}
+test('Fallen-Diagnose: jede Zeile Delta §9 (Antworten aus fixtures/antworten.js)', () => {
+  for (const e of DIAGNOSE) {
+    const d = diagnoseVon(e);
+    assert.deepEqual(d.map((x) => [x.p, x.code]), e.erwartet, `${e.aufgabe} ${JSON.stringify(e.antwort)}`);
+    for (const x of d) assert.equal(x.text, D.text(A[e.aufgabe] && (Array.isArray(A[e.aufgabe].interaktion) ? A[e.aufgabe].interaktion[e.teil || 0] : A[e.aufgabe].interaktion).kind, x.p, x.code));
+  }
+});
+test('Diagnosetexte verraten keine Lösung', () => {
+  for (const e of DIAGNOSE) for (const x of diagnoseVon(e)) {
+    const lo = JSON.stringify(A[e.aufgabe].loesung).toUpperCase();
+    for (const wort of x.text.toUpperCase().match(/[A-ZÄÖÜ]{5,}/g) || []) assert.ok(!lo.includes(wort) || ['RICHTUNG', 'STELLE'].includes(wort), `${x.text} verrät ${wort}`);
+  }
+});
+test('chiffre: Feedback je Zeichen, Normalisierung, Listenform, leere Kästchen, Alternativen', () => {
+  const a = A['W9-L5-01'];
+  assert.equal(C.pruefeAufgabe(a, 'Zuver lässig!').ok, true, 'ä → AE, Leerzeichen/Satzzeichen egal');
+  let r = C.pruefeAufgabe(a, 'ZUVERLAESSI');
+  assert.deepEqual(r.zeichen, [...Array(11).fill(true), false]);
+  r = C.pruefeAufgabe(a, ['Z', 'U', '', 'E']);
+  assert.deepEqual(r.zeichen.slice(0, 4), [true, true, false, true]);
+  assert.equal(C.pruefeAufgabe(a, ['', ' ']).leer, true);
+  assert.throws(() => C.pruefeAufgabe(a, ['ZU']), (e) => e.status === 400);
+  assert.equal(C.pruefeAufgabe(A['W9-L5-05'], 'NHQZSFJKRHJS').ok, true, 'Alternative I/J');
+  assert.throws(() => C.pruefeAufgabe(A['W9-L5-03'], '9 elf 19'), (e) => e.status === 400);
+  assert.equal(C.pruefeAufgabe(A['W9-L5-03'], '9, 11, 19, 5, 14').ok, true);
+});
+test('chiffre: Schrittprüfung (Präfix) und Abschaltung', () => {
+  const a = A['W9-L5-01'];
+  assert.deepEqual(C.pruefeAufgabe(a, 'ZUV', { teilweise: true }), { ok: true, teilweise: true, teil: 0, vollstaendig: false, ersteFalschePosition: null, leer: false, antworten: ['ZUV'] });
+  const f = C.pruefeAufgabe(a, 'ZUB', { teilweise: true, diagnose: true });
+  assert.deepEqual([f.ok, f.ersteFalschePosition], [false, 2]);
+  assert.equal(C.pruefeAufgabe(a, 'ZUVERLAESSIG', { teilweise: true }).vollstaendig, true);
+  assert.throws(() => C.pruefeAufgabe({ ...a, interaktion: { ...a.interaktion, schritt: false } }, 'Z', { teilweise: true }), (e) => e.status === 400);
 });

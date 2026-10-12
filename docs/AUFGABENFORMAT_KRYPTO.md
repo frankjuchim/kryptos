@@ -253,7 +253,7 @@ Ein Verfahren wird überall gleich beschrieben – als JSON-Objekt mit `typ` und
 | `baukasten` | **`verfahren`** (Stufenliste), **`schluessel`** (Werte) | Hintereinanderausführung (TECHNIK §9.2) |
 | `frei` | `name` (optional, Verweis auf `werkzeuge/krypto/fremde_verfahren.py`) | **fremde Chiffre** aus dem Aufgabentext; keine Neuberechnung, keine Diagnose außer §9.6 |
 
-Gemeinsame Option `basis` (`1` Std. | `0`): wirkt nur auf `affin` und auf Zahlenausgaben (`ausgabe: "zahlen"`).
+Gemeinsame Option `basis` (`1` Std. | `0`): wirkt nur auf Zahlenausgaben (`ausgabe: "zahlen"`) und die Hilfszeile `zahlen`; `affin` rechnet mit dem eigenen Parameter `verfahren.basis` (Std. **0**, TECHNIK §5.2).
 Eingaben werden vor der Anwendung mit `krypto` normalisiert (Ziffern nur bei `polybios`/`adfgvx`/`xor` sinnvoll).
 
 ---
@@ -464,7 +464,7 @@ und `frage`/`inhalt` je Teil funktionieren unverändert.
 | `richtung` | `ver` \| `ent` | **ja** | |
 | `verfahren` | Verfahrens-Objekt (§6) | **ja** | bestimmt Neuberechnung und Diagnose; `{"typ":"frei"}` für fremde Chiffren |
 | `eingabe` | Text (1–400 Buchstaben nach Normalisierung) | **ja** | Klartext (`ver`) bzw. Geheimtext (`ent`) |
-| `basis` | 1 (Std.) \| 0 | nein | Zählbasis (wirkt auf `affin`, `ausgabe: zahlen`, Hilfszeile `zahlen`) |
+| `basis` | 1 (Std.) \| 0 | nein | Zählbasis der Zahlenausgabe (`ausgabe: zahlen`) und der Hilfszeile `zahlen`; `affin` rechnet mit `verfahren.basis` (Std. 0) |
 | `ausgabe` | `buchstaben` (Std.) \| `zahlen` \| `hex` \| `paare` | nein | `zahlen`: Antwort sind Zahlenwerte gemäß `basis`; `hex`: bei `xor`; `paare`: bei `polybios`/`adfgvx` |
 | `darstellung` | `zeichenweise` \| `zeile` | nein | Std.: `zeichenweise` bis 60 Zeichen, sonst `zeile` (ein Eingabefeld) |
 | `hilfszeilen` | Liste aus `zahlen`, `schluessel`, `positionen` | nein | Zusatzzeilen über den Eingabefeldern: Zahlenwerte der Eingabe, wiederholter Schlüssel (nur `vigenere`/`autokey`/`porta`), Positionsleiste 0, 5, 10 … (EH: Positionen ab 0) |
@@ -688,6 +688,9 @@ Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagno
 - Sie vergleicht die Antwort mit **Kandidaten typischer Fehlrechnungen**, die aus Verfahren und Parametern mit der
   Bibliothek berechnet werden. Ein Kandidat passt, wenn die Antwort ihm **vollständig** gleicht oder – bei mindestens
   4 eingegebenen Zeichen – **≥ 80 % der falschen Positionen** genau durch diesen Kandidaten erklärt werden.
+  Zweistufig: Gleicht die Antwort einem Kandidaten vollständig, gelten nur die vollständigen Treffer; die
+  Teilübereinstimmung zählt nur, wenn es keinen vollständigen Treffer gibt (sonst „erklärt“ bei einer einzigen falschen
+  Stelle jeder Kandidat mit passendem Zeichen die Antwort). Leere Kästchen erklären nie etwas.
 - Rückgabe je Teil: `diagnose: [{ "p": "P3", "code": "richtung", "text": "…" }]` (höchstens zwei Einträge,
   Priorität P3 > P1 > P2 > P4 > P9). Die Texte stehen fest in `src/krypto/diagnose.js` und **verraten keine
   Lösungszeichen** (nur das Fehlmuster).
@@ -708,6 +711,11 @@ Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagno
 | „0 statt Z“ | `ausgabe: zahlen`: Antwort 0 an Stellen mit Lösung 26 (bei `basis: 1`) | **P2** · `null_statt_z` | „Rest 0 bedeutet bei A = 1 den Buchstaben Z (26).“ |
 | Überlauf vergessen | `ausgabe: zahlen`: Werte > 26 bzw. < 1 (`basis 1`) an Stellen, an denen die Lösung umbricht; Buchstaben: nur die Umbruchstellen falsch | **P2** · `ueberlauf` | „Über Z hinaus geht es wieder bei A weiter – rechne mod 26.“ |
 | Negativer Rest | Werte = Lösung − 26 an Umbruchstellen beim Entschlüsseln | **P2** · `negativ` | „mod liefert den kleinsten nicht negativen Rest.“ |
+
+Positionsregel „Umbruchstellen“ (Buchstabenausgabe, nur `caesar`/`vigenere`, Antwort so lang wie die Lösung): Sind
+genau die Stellen falsch, an denen die Rechnung auf Z (Rest 0) führt, meldet der Prüfer **P2** `null_statt_z`; sind
+nur Stellen falsch, an denen die Rechnung über Z hinaus (`ver`) bzw. unter A (`ent`) läuft (Rest-0-Stellen
+eingeschlossen), **P2** `ueberlauf` bzw. `negativ` (Bibliothek: `varianten` liefert P2 nur für Zahlenausgaben).
 | Playfair: Doppelbuchstaben nicht getrennt / J nicht ersetzt / kein Füllzeichen am Ende | Varianten der Paarbildung | **P4** · `paare` | „Prüfe die Paarbildung: Doppelbuchstaben trennen, J = I, Füllzeichen.“ |
 | Transposition: Füllzeichen fehlt/zu viel, unvollständige Matrix falsch gelesen | Varianten `fuellzeichen` an/aus | **P4** · `fuellung` | „Prüfe Füllzeichen und die unvollständige letzte Zeile.“ |
 
