@@ -2069,3 +2069,29 @@ test('verfahren.varianten: Fehlrechnungen (Delta §9.2)', () => {
   assert.deepEqual(va({ typ: 'frei' }, 'abc', 'ver'), []);
   assert.deepEqual(finde(va({ typ: 'atbash' }, 'abc', 'ver'), 'P3', 'richtung'), []);
 });
+
+// ───────────────────────────── Korrekturen aus dem Zwilling-Vergleich (Task 17) ─────────────────────────────
+
+test('zwilling: Playfair prüft die Füllzeichen-Optionen auch beim Entschlüsseln und in verfahren.pruefe', () => {
+  assert.throws(() => K.playfair('EOXF', 'RIALTO', 'ent', { fuellzeichen: 'Q', fuellzeichenX: 'Q' }), K.KryptoFehler);
+  assert.throws(() => K.playfair('EOXF', 'RIALTO', 'ent', { fuellzeichen: 'J' }), K.KryptoFehler);
+  assert.equal(K.verfahren.pruefe({ typ: 'playfair', schluessel: 'IMA', fuellzeichen: 'Q' }).ok, false); // Std. fuellzeichenX = Q
+  assert.equal(K.verfahren.pruefe({ typ: 'playfair', schluessel: 'IMA', fuellzeichen: 'Q', fuellzeichenX: 'Z' }).ok, true);
+});
+
+test('zwilling: textZuBits mit negativer Gruppengröße → KryptoFehler', () => {
+  assert.throws(() => K.textZuBits('OK', { gruppe: -1 }), K.KryptoFehler);
+});
+
+test('zwilling: kollisionSuchen zählt den Text selbst nicht als Versuch', () => {
+  // Kandidaten a … z, aa, … ; „i“ selbst wird übersprungen; erste Kollision mit KH = 9 ist „af“ nach 31 Versuchen
+  assert.deepEqual(K.kryptosHash.kollisionSuchen('i'), { text: 'af', wert: 9, versuche: 31 });
+  assert.deepEqual(K.kryptosHash.kollisionSuchen('nebel'), { text: 'i', wert: 9, versuche: 9 });
+});
+
+test('zwilling: verschiebungSchaetzen entscheidet einen exakten Gleichstand für das kleinere v (nicht nach Rundung)', () => {
+  // χ(4) = χ(14) exakt; die Gleitkommasumme ergab χ(14) minimal größer
+  const v = K.verschiebungSchaetzen('irbnIos');
+  assert.equal(v.k, 4);
+  assert.deepEqual(v.kandidaten.map((c) => c.k), [4, 14, 0]);
+});

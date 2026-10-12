@@ -371,6 +371,7 @@
     if (richtung === 'ver') {
       paare = playfairPaare(text, opt);
     } else {
+      playfairPaare('', opt); // Füllzeichen-Optionen auch beim Entschlüsseln prüfen (wie Kreuzquadrat)
       const t = quadratText(text, 5, ij);
       if (t.length % 2) throw new KryptoFehler('Ein Playfair-Geheimtext hat eine gerade Anzahl von Buchstaben.');
       paare = [];
@@ -786,6 +787,7 @@
   /** Text → Bits (8 je Zeichen), gruppiert zu `gruppe` Bits (0 = ohne Leerzeichen) */
   function textZuBits(text, { gruppe = 4 } = {}) {
     pruefeGanzzahl(gruppe, 'Gruppengröße');
+    if (gruppe < 0) throw new KryptoFehler('Die Gruppengröße darf nicht negativ sein (0 = ohne Gruppen).');
     const bits = textZuBytes(text).map((b) => byteZuBits(b)).join('');
     return gruppe > 0 ? gruppieren(bits, gruppe) : bits;
   }
@@ -1049,8 +1051,11 @@
     const stellen = [0];
     while (versuche < max) {
       const kandidat = stellen.map((i) => zeichen[i]).join('');
-      versuche++;
-      if (kandidat.toUpperCase() !== eigen && kryptosHash(kandidat).wert === ziel) return { text: kandidat, wert: ziel, versuche };
+      // der Text selbst ist kein Kandidat: weder Kollision noch Versuch (TECHNIK §5.2)
+      if (kandidat.toUpperCase() !== eigen) {
+        versuche++;
+        if (kryptosHash(kandidat).wert === ziel) return { text: kandidat, wert: ziel, versuche };
+      }
       // nächster Kandidat (Zähler zur Basis |alphabet|, bei Überlauf eine Stelle länger)
       let p = stellen.length - 1;
       while (p >= 0 && stellen[p] === zeichen.length - 1) stellen[p--] = 0;
@@ -1226,7 +1231,16 @@
       for (let x = 0; x < 26; x++) chi += (DEUTSCH[ALPHABET[x]] / 100) * f[ALPHABET[(x + v) % 26]];
       werte.push(chi);
     }
-    const reihenfolge = werte.map((w, v) => v).sort((a, b) => werte[b] - werte[a] || a - b);
+    // Rangfolge exakt in ganzen Zahlen (Prozent · 100 · Anzahl), damit ein mathematischer Gleichstand nicht durch
+    // Rundung der Gleitkommasumme entschieden wird (SPEC W2 §9: Gleichstand → kleineres v)
+    const h = haeufigkeiten(teiltext);
+    const exakt = [];
+    for (let v = 0; v < 26; v++) {
+      let summe = 0;
+      for (let x = 0; x < 26; x++) summe += Math.round(DEUTSCH[ALPHABET[x]] * 100) * h[ALPHABET[(x + v) % 26]];
+      exakt.push(summe);
+    }
+    const reihenfolge = werte.map((w, v) => v).sort((a, b) => exakt[b] - exakt[a] || a - b);
     const kandidaten = reihenfolge.slice(0, 3).map((v) => ({ k: v, buchstabe: ALPHABET[v], wert: werte[v] }));
     return { k: reihenfolge[0], buchstabe: ALPHABET[reihenfolge[0]], werte, kandidaten };
   }
@@ -1691,6 +1705,15 @@
       if (da.length !== 1) fehler.push(`Genau einer der Parameter ${def.einsVon.map((n) => `„${n}“`).join(' oder ')} ist anzugeben.`);
     }
     if (v.typ === 'affin' && Number.isInteger(v.a) && !affinSchluesselGueltig(v.a)) fehler.push('„a“ muss teilerfremd zu 26 sein.');
+    if (v.typ === 'playfair' && fehler.length === 0) {
+      // Füllzeichen-Kombination wie in playfairPaare (z. B. fuellzeichen „Q“ mit Standard-fuellzeichenX „Q“)
+      try {
+        playfairPaare('', opt(v, ['fuellzeichen', 'fuellzeichenX', 'ij']));
+      } catch (e) {
+        if (!(e instanceof KryptoFehler)) throw e;
+        fehler.push(e.message);
+      }
+    }
     if (v.typ === 'baukasten' && fehler.length === 0) fehler.push(...baukastenAufloesen(v.verfahren, v.schluessel).fehler);
     return { ok: fehler.length === 0, fehler };
   }
