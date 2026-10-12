@@ -322,19 +322,28 @@ test('P2-Positionsregel: Tippfehler an einer Umbruchstelle ist kein Überlauf-Fe
   const lo = { text: 'GERSSCHAXGNZUNSRA' }; // Umbruch: null [11], über [0, 1, 5, 6, 7, 9, 16]
   const codes = (antwort, i = ia, l = lo) => D.chiffre(i, l, antwort).map((d) => `${d.p}:${d.code}`);
   assert.deepEqual(codes('QERSSCHAXGNZUNSRA'), [], 'Tippfehler Q an Position 0');
-  const ohneP2 = (x) => !codes(x).some((c) => c.startsWith('P2:'));
-  assert.ok(ohneP2('FERSSCHAXGNZUNSRA'), 'eine Umbruchstelle um 1 daneben (von 8) – zu wenig Evidenz für P2');
+  assert.deepEqual(codes('FERSSCHAXGNZUNSRA'), [], 'eine Umbruchstelle um 1 daneben (von 8): weder P2 noch P1 (eine falsche Stelle)');
   assert.deepEqual(codes('HDRSSDGBXFNZUNSRA'), ['P2:ueberlauf'], 'sechs Umbruchstellen je um 1 daneben');
   assert.deepEqual(codes('HDRSSDGBXFNZUNSRQ'), [], 'eine falsche Stelle passt nicht zum Umbruchfehler');
-  assert.ok(codes('GERSSCHAXGNAUNSRA').includes('P2:null_statt_z'), 'Rest 0 als A');
+  assert.deepEqual(codes('GERSSCHAXGNAUNSRA'), ['P2:null_statt_z'], 'Rest 0 als A');
   assert.deepEqual(codes('GERSSCHAXGN0UNSRA'), ['P2:null_statt_z'], 'Rest 0 als 0');
   assert.deepEqual(codes('GERSSCHAXGNQUNSRA'), [], 'Tippfehler an der Rest-0-Stelle');
   // genau eine Umbruchstelle im Text: ein passender Fehlbuchstabe genügt
   const ia1 = { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 2 }, eingabe: 'abcy' }; // CDEA, über [3]
-  assert.ok(codes('CDEB', ia1, { text: 'CDEA' }).includes('P2:ueberlauf'));
-  assert.ok(!codes('CDEQ', ia1, { text: 'CDEA' }).includes('P2:ueberlauf'));
+  assert.deepEqual(codes('CDEB', ia1, { text: 'CDEA' }), ['P2:ueberlauf']);
+  assert.deepEqual(codes('CDEQ', ia1, { text: 'CDEA' }), []);
   // ent: negativer Rest
   const ia2 = { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 5 }, eingabe: 'BCDXY' }; // wxyst, unter A: [0, 1, 2]
   assert.deepEqual(codes('XWZST', ia2, { text: 'wxyst' }), ['P2:negativ']);
   assert.deepEqual(codes('WXQST', ia2, { text: 'wxyst' }), []);
+});
+
+test('Teilübereinstimmung erst ab 2 falschen Stellen: ein einzelner ±1-Tippfehler ist keine P1-Diagnose (Delta §9.1)', () => {
+  const D = require('../src/krypto/diagnose');
+  const ia = { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'abcdefgh' }; // DEFGHIJK
+  const codes = (x) => D.chiffre(ia, { text: 'DEFGHIJK' }, x).map((d) => `${d.p}:${d.code}`);
+  assert.deepEqual(codes('DEFGHIJL'), [], 'eine Stelle +1');
+  assert.deepEqual(codes('DEFGHJKL'), ['P1:zaehlbasis'], 'drei Stellen +1 (alle falschen erklärt)');
+  assert.deepEqual(codes('EFGHIJKL'), ['P1:zaehlbasis'], 'vollständiger Treffer');
+  assert.equal(D.passt([...'DEFGHIJL'], [...'DEFGHIJK'], [...'EFGHIJKL']), false);
 });

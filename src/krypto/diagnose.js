@@ -54,14 +54,15 @@ function falschePositionen(antwort, loesung) {
 const gleich = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 /**
- * Passt ein Kandidat zur Antwort? Vollständig gleich – oder (mindestens 4 nicht leere Eingaben, mindestens eine falsche
- * Position und ≥ 80 % der falschen Positionen durch den Kandidaten erklärt). Leere Eingaben erklären nie etwas.
+ * Passt ein Kandidat zur Antwort? Vollständig gleich – oder (mindestens 4 nicht leere Eingaben, mindestens zwei falsche
+ * Positionen und ≥ 80 % der falschen Positionen durch den Kandidaten erklärt). Leere Eingaben erklären nie etwas.
  */
 function passt(antwort, loesung, kandidat) {
   if (gleich(antwort, kandidat)) return true;
   if (antwort.filter((x) => !istLeerEintrag(x)).length < 4) return false;
   const falsch = falschePositionen(antwort, loesung);
-  if (!falsch.length) return false;
+  // eine einzige falsche Stelle ist eher ein Tippfehler als ein Fehlmuster (Review M3: erst ab 2 falschen Stellen)
+  if (falsch.length < 2) return false;
   const erklaert = falsch.filter((i) => i < antwort.length && !istLeerEintrag(antwort[i]) && antwort[i] === kandidat[i]).length;
   return erklaert / falsch.length >= 0.8 - 1e-9;
 }

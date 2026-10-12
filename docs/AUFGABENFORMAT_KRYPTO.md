@@ -714,7 +714,8 @@ Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagno
   wenn `diagnose` der Interaktion nicht `false` ist.
 - Sie vergleicht die Antwort mit **Kandidaten typischer Fehlrechnungen**, die aus Verfahren und Parametern mit der
   Bibliothek berechnet werden. Ein Kandidat passt, wenn die Antwort ihm **vollständig** gleicht oder – bei mindestens
-  4 eingegebenen Zeichen – **≥ 80 % der falschen Positionen** genau durch diesen Kandidaten erklärt werden.
+  4 eingegebenen Zeichen und **mindestens 2 falschen Positionen** – **≥ 80 % der falschen Positionen** genau durch
+  diesen Kandidaten erklärt werden (eine einzige falsche Stelle gilt als Tippfehler, Review M3).
   Zweistufig: Gleicht die Antwort einem Kandidaten vollständig, gelten nur die vollständigen Treffer; die
   Teilübereinstimmung zählt nur, wenn es keinen vollständigen Treffer gibt (sonst „erklärt“ bei einer einzigen falschen
   Stelle jeder Kandidat mit passendem Zeichen die Antwort). Leere Kästchen erklären nie etwas.
