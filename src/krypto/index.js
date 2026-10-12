@@ -6,6 +6,7 @@
 
 const F = require('../content/format');
 const K = require('../../public/static/js/shared/krypto');
+const bloecke = require('./bloecke');
 
 let registriert = false;
 
@@ -16,6 +17,8 @@ function registriere() {
   F.registriereNorm('krypto', (s) => K.normalisieren(s));
   // Delta §5.2: nur Trennzeichen (Leerraum, _ | .) entfernen
   F.registriereNorm('bits', (s) => K.normBits(s));
+  // Delta §7: neue Blöcke mit Neuberechnung
+  bloecke.registriere(F);
 }
 
 /** Dienst-Optionen für den Kern (TECHNIK §4.2) – Gerüst, Task 33 füllt sie. */

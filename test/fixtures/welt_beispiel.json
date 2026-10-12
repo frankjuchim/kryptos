@@ -31,7 +31,8 @@
       "ide": "",
       "intro": [{ "t": "text", "md": "Puzzle, Bug-Hunt, Bäume, Reihungen, Raster und ADT-Simulation." }],
       "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09"]
-    }
+    },
+    { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] }
   ],
   "boss": {
     "id": "W9-BOSS",
@@ -324,6 +325,18 @@
       "interaktion": { "kind": "adtsim", "art": "dynarray", "start": ["A", "B", "C"] },
       "loesung": { "inhalt": ["A", "X", "B", "Y"] },
       "erklaerung": [{ "t": "text", "md": "Nach insertAt: A X B C; delete(3) entfernt C; append hängt Y an → A, X, B, Y." }]
+    },
+    {
+      "id": "W9-L4-01", "titel": "Quadrate und Schablonen", "stufe": 2, "kategorie": "transposition", "fallen": ["P4"],
+      "inhalt": [
+        { "t": "text", "md": "Ergänze das fehlende Feld des Polybios-Quadrats." },
+        { "t": "quadrat", "art": "frei", "zellen": [["A","B","C","D","E"],["F","G","H","I","K"],["L","M","N","O","P"],["Q","R","[[q1]]","T","U"],["V","W","X","Y","Z"]] },
+        { "t": "quadrat", "art": "polybios", "groesse": 6, "kopf": "ADFGVX", "schluessel": "KRYPTOS9" },
+        { "t": "matrix", "groesse": 4, "schablone": [[1, 1], [1, 2], [2, 1], [2, 2]], "drehung": "rechts", "zeige": "stellungen" }
+      ],
+      "interaktion": { "kind": "gaps", "felder": { "q1": { "typ": "text", "norm": "krypto" } } },
+      "loesung": { "q1": ["S"] },
+      "erklaerung": [{ "t": "text", "md": "Das Quadrat ohne Schlüsselwort enthält die Buchstaben der Reihe nach (I = J)." }]
     },
     {
       "id": "W9-B-01",

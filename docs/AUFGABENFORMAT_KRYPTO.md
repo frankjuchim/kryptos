@@ -410,7 +410,7 @@ Textalternative ist (immer im DOM, für Screenreader). Lücken erscheinen als Ei
   "zeilen": [["d","i","e","b","o","t","s","c","h","a"], ["f","t","i","s","t","[[m1]]","", "", "", ""]],
   "leserichtung": "spaltenweise", "titel": "Spaltentransposition mit Schlüsselwort" }
 
-{ "t": "matrix", "groesse": 4, "schablone": [[0,0],[0,3],[1,1],[3,2]], "drehung": "rechts", "zeige": "schablone" }
+{ "t": "matrix", "groesse": 4, "schablone": [[1,1],[1,2],[2,1],[2,2]], "drehung": "rechts", "zeige": "schablone" }
 ```
 
 | Feld | Typ | Pflicht | Bedeutung |
@@ -419,7 +419,7 @@ Textalternative ist (immer im DOM, für Screenreader). Lücken erscheinen als Ei
 | `kopf` | Liste von Zeichen | nein | Schlüsselwort über den Spalten |
 | `reihenfolge` | `true` \| Liste von Zahlen | nein | `true`: Reihenfolge aus `kopf` berechnen (alphabetisch, gleiche Buchstaben von links nach rechts) und als Zahlenzeile 1, 2, … unter dem Kopf zeigen; Liste: vorgegeben |
 | `leserichtung` | `zeilenweise` \| `spaltenweise` | nein | Pfeilsymbol am Rand („↓ spaltenweise lesen“) |
-| `groesse`, `schablone`, `drehung`, `zeige` | | nur Fleißner | `schablone`: Löcher in Grundstellung; `zeige`: `schablone` (nur Löcher) \| `stellungen` (alle 4 Stellungen nummeriert) |
+| `groesse`, `schablone`, `drehung`, `zeige` | | nur Fleißner | `groesse` 4, 6 oder 8; `schablone`: Löcher `[z, s]` in Grundstellung, **ab 1** wie `Krypto.fleissner`/`schablonePruefen` (`markiert` bleibt 0-basiert); `zeige`: `schablone` (nur Löcher) \| `stellungen` (alle 4 Stellungen nummeriert) |
 | `markiert` | Liste `[z, s]` | nein | Zellen hervorheben |
 | `titel` | Text | nein | |
 

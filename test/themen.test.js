@@ -18,11 +18,13 @@ test('Themenübersicht: öffentlich, alle Welten und Level, keine Lösungen/Erkl
   const d = r.body;
   assert.equal(d.welten.length, 1);
   const levels = d.welten.flatMap((w) => w.levels);
-  assert.equal(levels.length, 2);
+  const W = require('./fixtures/welt_beispiel.json');
+  assert.equal(levels.length, W.levels.length);
   const text = JSON.stringify(d);
   for (const verboten of ['"loesung"', '"erklaerung"', '"tipps"', '"inhalt"', '"interaktion"']) assert.ok(!text.includes(verboten), verboten);
-  // Jedes Level ist einem Arbeitsblatt zugeordnet, und jedes Arbeitsblatt hat eine ausgelieferte PDF
-  for (const l of levels) assert.ok(l.abBlatt && l.abBlatt.url, `Level ${l.id} ohne Arbeitsblatt (${l.ab})`);
+  // Jedes Level mit Arbeitsblatt-Angabe (ab) ist zugeordnet, und jedes Arbeitsblatt hat eine ausgelieferte PDF
+  for (const l of levels.filter((x) => x.ab)) assert.ok(l.abBlatt && l.abBlatt.url, `Level ${l.id} ohne Arbeitsblatt (${l.ab})`);
+  assert.ok(levels.some((x) => x.abBlatt && x.abBlatt.url));
   const abs = d.welten.flatMap((w) => w.arbeitsblaetter);
   assert.equal(abs.length, 2);
   for (const a of abs) assert.match(a.url, /^\/arbeitsblaetter\/Welt_\d_[A-Za-z]+\/KR_W\d-AB\d_[A-Za-z0-9_-]+\.pdf$/);

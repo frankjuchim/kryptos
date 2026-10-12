@@ -38,7 +38,7 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   assert.deepEqual(m.urls, { start: '/', gast: '/gast', themen: '/themen', lehrkraft: '/lehrer', datenschutz: '/datenschutz', healthz: '/healthz', ssoStart: '/sso/start', ssoEnde: '/sso/ende', niveaus: '/themen#niveaus' });
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.test', sso: true });
   assert.deepEqual(m.umfang, { welten: 1, level: W.levels.length, aufgaben: LEVEL_IDS.length + W.boss.pool.length, bosse: 1 }, 'aus dem Katalog berechnet');
-  assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: 2 }]);
+  assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: W.levels.length }]);
   assert.deepEqual(m.faehigkeiten, FAEHIGKEITEN);
   for (const f of ['labor', 'funkraum', 'arena', 'niveau']) assert.ok(m.faehigkeiten.includes(f), f);
   const h = (await request(app).get('/healthz')).body;
