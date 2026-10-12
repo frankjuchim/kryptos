@@ -70,7 +70,7 @@ const DIAGNOSE = [
   { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXI', erwartet: [['P1', 'position']] },
   { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXQ', erwartet: [['P1', 'position']] },
   { aufgabe: 'W9-L5-02', antwort: 'YTE', erwartet: [] },
-  { aufgabe: 'W9-L5-02', antwort: '0O0RZ0WS0', erwartet: [['P2', 'ueberlauf']] },
+  { aufgabe: 'W9-L5-02', antwort: 'COFRZOWSJ', erwartet: [['P2', 'ueberlauf']] }, // Umbruchstellen je um 1 daneben
   { aufgabe: 'W9-L5-04', teil: 0, antwort: [0, 1, 2, 3, 4], erwartet: [['P2', 'null_statt_z']] },
   { aufgabe: 'W9-L5-04', teil: 0, antwort: [26, 27, 28, 29, 30], erwartet: [['P2', 'ueberlauf']] },
   { aufgabe: 'W9-L5-04', teil: 1, antwort: [-2, -1, 0, 20, 21], erwartet: [['P2', 'negativ']] },

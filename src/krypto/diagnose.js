@@ -113,6 +113,33 @@ function umbruchStellen(v, eingabe, richtung) {
   return out;
 }
 
+/** Buchstabe c (A = 1) um d Stellen verschoben, zyklisch. */
+const verschoben = (c, d) => K.buchstabe(K.mod(K.wert(c, 1) - 1 + d, 26) + 1, 1);
+
+/**
+ * Positionsregel „Umbruchstellen“ (Delta §9.2, Review M3 W2) für Buchstabenantworten bei caesar/vigenere. Der Prüfer
+ * meldet P2 nur, wenn die falschen Zeichen zum Fehlrechenwert passen – ein Tippfehler an einer Umbruchstelle ist kein
+ * Modulo-Fehler. Fehlbuchstaben: Rest-0-Stelle (Lösung Z) → „0“ oder „A“ (0 statt 26); Stelle über Z (ver) bzw. unter A
+ * (ent) → ein Buchstabe neben der Lösung (Rest um 1 falsch, Z ↔ A beim Übergang verzählt).
+ *  - null_statt_z: genau die Rest-0-Stellen sind falsch – alle – und tragen dort 0 bzw. A;
+ *  - ueberlauf/negativ: alle falschen Stellen sind Umbruchstellen mit passendem Fehlbuchstaben, und es sind mindestens
+ *    zwei falsche Stellen – oder der Text hat nur eine einzige Umbruchstelle.
+ * Rückgabe: Code oder null.
+ */
+function umbruchDiagnose(v, ia, a, l) {
+  const falsch = falschePositionen(a, l);
+  if (!falsch.length || falsch.some((i) => istLeerEintrag(a[i]))) return null;
+  const u = umbruchStellen(v, ia.eingabe, ia.richtung);
+  const nullSet = new Set(u.null);
+  const alle = new Set([...u.null, ...u.ueber]);
+  const nullFehler = (i) => a[i] === '0' || a[i] === 'A';
+  const nachbar = (i) => a[i] === verschoben(l[i], 1) || a[i] === verschoben(l[i], -1);
+  if (u.null.length && falsch.length === u.null.length && falsch.every((i) => nullSet.has(i) && nullFehler(i))) return 'null_statt_z';
+  const plausibel = falsch.every((i) => alle.has(i) && (nachbar(i) || (nullSet.has(i) && nullFehler(i))));
+  if (plausibel && (falsch.length >= 2 || alle.size === 1)) return ia.richtung === 'ent' ? 'negativ' : 'ueberlauf';
+  return null;
+}
+
 /** Text- bzw. Zahlenantwort als Liste von Einträgen (Zeichen bzw. Zahlen). */
 const alsListe = (x) => (Array.isArray(x) ? x : [...String(x)]);
 
@@ -157,14 +184,8 @@ function chiffre(ia, lo, antwort, { teilweise = false, ersteFalschePosition = nu
   const treffer = kandidaten.filter((k) => passt(a, l, k.liste));
   const v = ia.verfahren || {};
   if (ia.ausgabe !== 'zahlen' && (v.typ === 'caesar' || v.typ === 'vigenere') && a.length === l.length) {
-    const falsch = falschePositionen(a, l);
-    if (falsch.length && falsch.every((i) => !istLeerEintrag(a[i]))) {
-      const u = umbruchStellen(v, ia.eingabe, ia.richtung);
-      const nullSet = new Set(u.null);
-      const alle = new Set([...u.null, ...u.ueber]);
-      if (falsch.every((i) => nullSet.has(i))) treffer.push({ p: 'P2', code: 'null_statt_z' });
-      else if (falsch.every((i) => alle.has(i))) treffer.push({ p: 'P2', code: ia.richtung === 'ent' ? 'negativ' : 'ueberlauf' });
-    }
+    const p2 = umbruchDiagnose(v, ia, a, l);
+    if (p2) treffer.push({ p: 'P2', code: p2 });
   }
   return auswaehlen('chiffre', treffer);
 }
@@ -357,4 +378,4 @@ function gapsFehlmuster(ia, lo, a, ergebnis) {
   return auswaehlen('gaps', treffer);
 }
 
-module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung, schaubild, bits };
+module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, umbruchDiagnose, chiffre, falschePositionen, gapsFehlmuster, zuordnung, schaubild, bits };

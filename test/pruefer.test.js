@@ -313,3 +313,28 @@ test('Objekt-Antworten: geerbte Schlüssel (constructor, toString, __proto__) si
   assert.throws(() => C.pruefeAufgabe(A['W9-L6-03'], JSON.parse('{"toString":"0100 1011"}')), (e) => e.status === 400);
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], JSON.parse('{"constructor":"E"}')), (e) => e.status === 400);
 });
+
+/* ---------- Review M3 W2: Positionsregel P2 (Umbruchstellen) nur bei plausiblen Fehlbuchstaben ---------- */
+
+test('P2-Positionsregel: Tippfehler an einer Umbruchstelle ist kein Überlauf-Fehler, echte Umbruchfehler schon', () => {
+  const D = require('../src/krypto/diagnose');
+  const ia = { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 13 }, eingabe: 'treffpunktamhafen' };
+  const lo = { text: 'GERSSCHAXGNZUNSRA' }; // Umbruch: null [11], über [0, 1, 5, 6, 7, 9, 16]
+  const codes = (antwort, i = ia, l = lo) => D.chiffre(i, l, antwort).map((d) => `${d.p}:${d.code}`);
+  assert.deepEqual(codes('QERSSCHAXGNZUNSRA'), [], 'Tippfehler Q an Position 0');
+  const ohneP2 = (x) => !codes(x).some((c) => c.startsWith('P2:'));
+  assert.ok(ohneP2('FERSSCHAXGNZUNSRA'), 'eine Umbruchstelle um 1 daneben (von 8) – zu wenig Evidenz für P2');
+  assert.deepEqual(codes('HDRSSDGBXFNZUNSRA'), ['P2:ueberlauf'], 'sechs Umbruchstellen je um 1 daneben');
+  assert.deepEqual(codes('HDRSSDGBXFNZUNSRQ'), [], 'eine falsche Stelle passt nicht zum Umbruchfehler');
+  assert.ok(codes('GERSSCHAXGNAUNSRA').includes('P2:null_statt_z'), 'Rest 0 als A');
+  assert.deepEqual(codes('GERSSCHAXGN0UNSRA'), ['P2:null_statt_z'], 'Rest 0 als 0');
+  assert.deepEqual(codes('GERSSCHAXGNQUNSRA'), [], 'Tippfehler an der Rest-0-Stelle');
+  // genau eine Umbruchstelle im Text: ein passender Fehlbuchstabe genügt
+  const ia1 = { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 2 }, eingabe: 'abcy' }; // CDEA, über [3]
+  assert.ok(codes('CDEB', ia1, { text: 'CDEA' }).includes('P2:ueberlauf'));
+  assert.ok(!codes('CDEQ', ia1, { text: 'CDEA' }).includes('P2:ueberlauf'));
+  // ent: negativer Rest
+  const ia2 = { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 5 }, eingabe: 'BCDXY' }; // wxyst, unter A: [0, 1, 2]
+  assert.deepEqual(codes('XWZST', ia2, { text: 'wxyst' }), ['P2:negativ']);
+  assert.deepEqual(codes('WXQST', ia2, { text: 'wxyst' }), []);
+});

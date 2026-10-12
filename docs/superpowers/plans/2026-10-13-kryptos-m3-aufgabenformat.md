@@ -191,7 +191,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
 | §9.2 Position | W9-L5-02 | `YTEOELTXI` | P1 `position` |
 | §9.2 0 statt Z | W9-L5-04 Teil a | `[0, 1, 2, 3, 4]` | P2 `null_statt_z` |
 | §9.2 Überlauf (Zahlen) | W9-L5-04 Teil a | `[26, 27, 28, 29, 30]` | P2 `ueberlauf` |
-| §9.2 Überlauf (Buchstaben) | W9-L5-02 | `0O0RZ0WS0` | P2 `ueberlauf` |
+| §9.2 Überlauf (Buchstaben) | W9-L5-02 | `COFRZOWSJ` (Review M3 W2; vorher `0O0RZ0WS0`) | P2 `ueberlauf` |
 | §9.2 Negativer Rest | W9-L5-04 Teil b | `[-2, -1, 0, 20, 21]` | P2 `negativ` |
 | §9.2 Paare | W9-L5-05 | `NHOOBHGIHIQZ` | P4 `paare` |
 | §9.2 Füllung | W9-L5-06 | `RFNXEPKXTFUT` | P4 `fuellung` |
@@ -862,7 +862,7 @@ const DIAGNOSE = [
   { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXI', erwartet: [['P1', 'position']] },
   { aufgabe: 'W9-L5-02', antwort: 'YTEOELTXQ', erwartet: [['P1', 'position']] },
   { aufgabe: 'W9-L5-02', antwort: 'YTE', erwartet: [] },
-  { aufgabe: 'W9-L5-02', antwort: '0O0RZ0WS0', erwartet: [['P2', 'ueberlauf']] },
+  { aufgabe: 'W9-L5-02', antwort: 'COFRZOWSJ', erwartet: [['P2', 'ueberlauf']] }, // Review M3 W2 (vorher 0O0RZ0WS0)
   { aufgabe: 'W9-L5-04', teil: 0, antwort: [0, 1, 2, 3, 4], erwartet: [['P2', 'null_statt_z']] },
   { aufgabe: 'W9-L5-04', teil: 0, antwort: [26, 27, 28, 29, 30], erwartet: [['P2', 'ueberlauf']] },
   { aufgabe: 'W9-L5-04', teil: 1, antwort: [-2, -1, 0, 20, 21], erwartet: [['P2', 'negativ']] },

@@ -723,10 +723,15 @@ Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagno
 | Überlauf vergessen | `ausgabe: zahlen`: Werte > 26 bzw. < 1 (`basis 1`) an Stellen, an denen die Lösung umbricht; Buchstaben: nur die Umbruchstellen falsch | **P2** · `ueberlauf` | „Über Z hinaus geht es wieder bei A weiter – rechne mod 26.“ |
 | Negativer Rest | Werte = Lösung − 26 an Umbruchstellen beim Entschlüsseln | **P2** · `negativ` | „mod liefert den kleinsten nicht negativen Rest.“ |
 
-Positionsregel „Umbruchstellen“ (Buchstabenausgabe, nur `caesar`/`vigenere`, Antwort so lang wie die Lösung): Sind
-genau die Stellen falsch, an denen die Rechnung auf Z (Rest 0) führt, meldet der Prüfer **P2** `null_statt_z`; sind
-nur Stellen falsch, an denen die Rechnung über Z hinaus (`ver`) bzw. unter A (`ent`) läuft (Rest-0-Stellen
-eingeschlossen), **P2** `ueberlauf` bzw. `negativ` (Bibliothek: `varianten` liefert P2 nur für Zahlenausgaben).
+Positionsregel „Umbruchstellen“ (Buchstabenausgabe, nur `caesar`/`vigenere`, Antwort so lang wie die Lösung; Review
+M3 W2). Die Bibliothek (`varianten`) liefert P2 nur für Zahlenausgaben; für Buchstaben gelten diese **Fehlbuchstaben**:
+an einer Rest-0-Stelle (Lösung Z) `0` oder `A` (0 statt 26), an einer Stelle über Z (`ver`) bzw. unter A (`ent`) ein
+Buchstabe **neben** der Lösung (Rest um 1 falsch, Übergang Z ↔ A verzählt).
+- **P2** `null_statt_z`: **alle** Rest-0-Stellen sind falsch, sonst keine, und dort steht `0` bzw. `A`.
+- **P2** `ueberlauf` (`ver`) bzw. `negativ` (`ent`): (a) mindestens **zwei** falsche Stellen – oder der Text hat nur
+  **eine** Umbruchstelle –, (b) **alle** falschen Stellen sind Umbruchstellen (Rest-0-Stellen eingeschlossen) und
+  (c) an **jeder** falschen Stelle steht ein Fehlbuchstabe.
+Ein einzelner Tippfehler an einer Umbruchstelle (z. B. `Q` statt `G` bei Caesar k = 13) ist damit kein P2-Fehler.
 | Playfair: Doppelbuchstaben nicht getrennt / J nicht ersetzt / kein Füllzeichen am Ende | Varianten der Paarbildung | **P4** · `paare` | „Prüfe die Paarbildung: Doppelbuchstaben trennen, J = I, Füllzeichen.“ |
 | Transposition: Füllzeichen fehlt/zu viel, unvollständige Matrix falsch gelesen | Varianten `fuellzeichen` an/aus | **P4** · `fuellung` | „Prüfe Füllzeichen und die unvollständige letzte Zeile.“ |
 
