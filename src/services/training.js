@@ -34,7 +34,12 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
     if (!gens.length) throw new NotFoundError('Für diese Welt gibt es keinen Trainingsplatz.');
     const w = inhalte.weltInfo(nr);
     const gesamt = db.prepare("SELECT COUNT(*) AS n FROM training WHERE schueler_id = ? AND status = 'geloest'").get(s.id).n;
-    const offen = db.prepare("SELECT id FROM training WHERE schueler_id = ? AND welt = ? AND status = 'offen' ORDER BY id DESC LIMIT 1").get(s.id, nr);
+    // offene Aufgabe nur, wenn ihr Generator im Kurs (noch) sichtbar ist (Niveauwechsel, Review M3 K3)
+    const keys = new Set(gens.map((g) => g.key));
+    const offen = db
+      .prepare("SELECT id, generator FROM training WHERE schueler_id = ? AND welt = ? AND status = 'offen' ORDER BY id DESC")
+      .all(s.id, nr)
+      .find((r) => keys.has(r.generator));
     return {
       welt: { nr, titel: w.titel, farbe: w.farbe },
       generatoren: gens,
@@ -48,6 +53,14 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
   function row(sid, id) {
     const r = db.prepare('SELECT * FROM training WHERE id = ? AND schueler_id = ?').get(id, sid);
     if (!r) throw new NotFoundError('Trainingsaufgabe nicht gefunden.');
+    return r;
+  }
+
+  /** Eigene Trainingsaufgabe, deren Generator im Kurs sichtbar ist – sonst 404 (Niveauwechsel, Review M3 K3). */
+  function sichtbareRow(s, id) {
+    const r = row(s.id, id);
+    const gens = sichtbareGeneratoren(r.welt, lernen.pruefeWeltFrei(s, r.welt));
+    if (!gens.some((g) => g.key === r.generator)) throw new NotFoundError('Trainingsaufgabe nicht gefunden.');
     return r;
   }
 
@@ -87,11 +100,11 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
   }
 
   function holen(s, idRoh) {
-    return ansicht(row(s.id, V.id(idRoh, 'Trainingsaufgabe')));
+    return ansicht(sichtbareRow(s, V.id(idRoh, 'Trainingsaufgabe')));
   }
 
   function pruefen(s, idRoh, body) {
-    const r = row(s.id, V.id(idRoh, 'Trainingsaufgabe'));
+    const r = sichtbareRow(s, V.id(idRoh, 'Trainingsaufgabe'));
     const a = JSON.parse(r.daten);
     const b = body || {};
     const teilweise = b.teilweise === true;
@@ -125,7 +138,7 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
   }
 
   function aufdecken(s, idRoh) {
-    const r = row(s.id, V.id(idRoh, 'Trainingsaufgabe'));
+    const r = sichtbareRow(s, V.id(idRoh, 'Trainingsaufgabe'));
     if (r.status === 'offen') db.prepare("UPDATE training SET status = 'angesehen' WHERE id = ?").run(r.id);
     return ansicht(row(s.id, r.id));
   }

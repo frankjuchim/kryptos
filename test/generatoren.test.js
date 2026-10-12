@@ -323,6 +323,24 @@ test('Trainingsplatz Welt 2: koinzidenz (eA) fehlt im gA-Kurs', async () => {
   assert.equal((await s.post('/api/training/3/neu').send({ generator: 'kryptos16_runde' })).status, 400);
 });
 
+test('Trainingsplatz: offene Aufgabe eines nach Niveauwechsel unsichtbaren Generators → 404, nicht in info.offen (Review M3 K3)', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  const t = (await s.post('/api/training/2/neu').send({ generator: 'koinzidenz' }).expect(201)).body;
+  assert.equal((await s.get('/api/training/2')).body.offen, t.id);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  await s.get(`/api/training/aufgabe/${t.id}`).expect(404);
+  await s.post(`/api/training/aufgabe/${t.id}/pruefen`).send({ antwort: { z: '1', n: '2' } }).expect(404);
+  await s.post(`/api/training/aufgabe/${t.id}/aufdecken`).send({}).expect(404);
+  assert.equal((await s.get('/api/training/2')).body.offen, null);
+  // sichtbarer Generator in derselben Welt bleibt erreichbar
+  const v = (await s.post('/api/training/2/neu').send({ generator: 'vigenere' }).expect(201)).body;
+  await s.get(`/api/training/aufgabe/${v.id}`).expect(200);
+  assert.equal((await s.get('/api/training/2')).body.offen, v.id);
+  // zurück im eA-Kurs ist die alte koinzidenz-Aufgabe (wurde durch „neu“ verworfen) nicht mehr da
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'eA' } }).expect(200);
+  await s.get(`/api/training/aufgabe/${t.id}`).expect(404);
+});
+
 /* ---------- Welt 4 und 5 (Task 39) ---------- */
 
 const potenz = (b, e, m) => { let r = 1; for (let i = 0; i < e; i++) r = (r * b) % m; return r; };

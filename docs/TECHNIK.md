@@ -222,7 +222,7 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`; Kryptos: erkannte Fallen, sonst `aufgabe.fallen`) |
 | `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level\|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
 | `stand.js` | `optionen.bossBezug(aufgabe, einst)` | Bezugsmenge der Boss-Freischaltung (60 %) und des Abzeichens „Welt gemeistert“ (§8.1/§8.2; Std.: alles) |
-| `training.js` | `optionen.generatorSichtbar(gen, einst)` | Trainingsplatz nach Niveau (§8.2; Std.: alles) |
+| `training.js` | `optionen.generatorSichtbar(gen, einst)` | Trainingsplatz nach Niveau (§8.2; Std.: alles); auch bestehende Trainingsaufgaben: unsichtbarer Generator → 404, nicht in `info.offen` (Review M3 K3) |
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |
 | `services/index.js` | `STANDARD_OPTIONEN` (alle Hooks oben mit Standardwert); `createServices` setzt `ctx.optionen = { ...STANDARD_OPTIONEN, ...ctx.optionen }`; `app.js` füllt `ctx.optionen` aus `src/krypto/index.js → dienstOptionen()` (Tests: `opts.optionen` überschreibt) | Kern ohne `src/krypto/` = Standard |
 | `inhalte.js` | – (fest) | `oeffentlich`/`loesungsteil` entfernen interne Prüfdaten (`fehlmuster`, `_fehlmuster`, Delta §9.6) für alle Clients (Lab, Boss, Training, Gast, Vorschau) |
