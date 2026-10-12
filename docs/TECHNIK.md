@@ -1566,6 +1566,11 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 | `wartung.test.js` | neu | §7.4 mit steuerbarer Uhr |
 | `seiten.test.js` | neu | keine Inline-Skripte/-Styles/`on*`-Attribute in `public/**/*.html`; kein `innerHTML`/`outerHTML`/`insertAdjacentHTML`/`document.write`/`setAttribute('style'` in `public/static/js/**`; `?v=` = Version; jede Schrift mit Lizenz; kein „Algo Quest“ in sichtbaren Texten; alle Seiten mit `lang="de"` |
 | `kern_kopien.test.js` | neu | `src/jwt.js`, `scripts/vertrag_pruefen.js` byte-gleich zur notierten labs-Fassung (SHA-256 in `fixtures/labs_hashes.json`) |
+| `registry.test.js` | neu (M3) | Server-Registries des Kerns (K01/K02): `registriereBlock`/`registriereInteraktion`/`registriereNorm`/`registriereDiagnose`, Dopplungen und Kern-Namen werfen, Lücken-Besitz, Prüfer-Delegation, Diagnose nur mit `{ diagnose: true }` und nur bei falscher, nicht leerer Antwort |
+| `bloecke.test.js` | neu (M3) | die sieben neuen Blöcke (Delta §7) mit Neuberechnung (`quadrat` Schlüssel ↔ Zellen, `bits` `pruefe: xor`, `matrix` Fleißner-Schablone ab 1) |
+| `client_hooks.test.js` | neu (M3) | Client-Hooks K04/K05 in einer `vm` mit Attrappen-DOM: `AQR.registriere` (Klassen, `ctx.modus`), `raster` mit Spaltenköpfen, `AQI.registriere`/`schrittArten`/`teilFuer`/`gapBesitzer`, Kern-Namen werfen |
+| `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung, manipulierte Lösungen (`kryptos16`, `frei` mit `pruefnachweis`) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
+| `fixture_abdeckung.test.js` | neu (M3) | Delta §13 aus der Fixture gezählt: jeder Block/jede Interaktion/jeder Modus, Welt-/Level-Felder, Niveaus, Boss-Pool/Mix, jede Diagnose-Zeile §9 mit Fehlantwort in `fixtures/antworten.js` |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf Ports, Screenshots
 nach `docs/screenshots/`, Viewports 1280×800, 768×1024, 360×740, Beamer 1920×1080):

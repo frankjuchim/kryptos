@@ -3,6 +3,9 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or
 > superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 > Nummerierung setzt den Gesamtplan `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` fort (Tasks 19–42).
+>
+> **Status: erledigt** – Tasks 19–42 umgesetzt (Branch `feature/m0-kern`), `npm run pruefen` grün; offene Lehrkraft-Fragen
+> siehe „Offene Entscheidungen für die Lehrkraft“ (vorläufige Annahmen gelten).
 
 **Goal:** Der übernommene Algo-Quest-Kern bekommt die Erweiterungs-Hooks aus TECHNIK §4 (K01–K09), und Kryptos füllt sie
 vollständig nach `docs/AUFGABENFORMAT_KRYPTO.md`: neue Blöcke (§7), neue Interaktionen (§8), Normalisierungen (§5),
@@ -232,7 +235,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   - `normText(s, norm)`: registrierte Norm → `fn(String(s))`; sonst Kern-Verhalten unverändert
   - `blockTexte(b)`: `default`-Zweig fragt `blockVertrag(b.t)?.texte(b)` (nur Strings übernehmen)
 
-- [ ] **Step 1: Failing test** `test/registry.test.js`:
+- [x] **Step 1: Failing test** `test/registry.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -277,13 +280,13 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
     assert.throws(() => F.registriereDiagnose('lines', fn), /bereits registriert/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/registry.test.js` → FAIL (`F.registriereBlock is not a function`).
-- [ ] **Step 3: Implement** in `format.js`: drei `Map`s (`BLOCK_REG`, `IA_REG`, `NORM_REG`, `DIAG_REG`); Meldung bei Dopplung
+- [x] **Step 2: Run** `node --test test/registry.test.js` → FAIL (`F.registriereBlock is not a function`).
+- [x] **Step 3: Implement** in `format.js`: drei `Map`s (`BLOCK_REG`, `IA_REG`, `NORM_REG`, `DIAG_REG`); Meldung bei Dopplung
   `Blocktyp „${typ}“ ist bereits registriert.` bzw. `Interaktion „…“`, `Normalisierung „…“`, `Zusatzdiagnose „…“`; Kern-Namen
   (aktueller Inhalt der Arrays) gelten als registriert. Keine Kern-Logik ändern außer `schrittErlaubt`, `normText`,
   `blockTexte` (Default-Zweig). Kopfkommentar „Registry: TECHNIK §4.2 (K01)“.
-- [ ] **Step 4: Run** `node --test test/registry.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Kern-Registry für Blöcke, Interaktionen, Normen (K01)"` (mit `docs/KERN_ABWEICHUNGEN.md`: K01 Status „umgesetzt (Task 19)“, Änderung um `registriereDiagnose`, `NORMEN`, `lueckenFelder` ergänzen).
+- [x] **Step 4: Run** `node --test test/registry.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Kern-Registry für Blöcke, Interaktionen, Normen (K01)"` (mit `docs/KERN_ABWEICHUNGEN.md`: K01 Status „umgesetzt (Task 19)“, Änderung um `registriereDiagnose`, `NORMEN`, `lueckenFelder` ergänzen).
 
 ### Task 20: Prüfer delegiert an die Registry, Teil-Feedback und Diagnose-Option (K02)
 
@@ -302,7 +305,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   - `C.folgenPruefung(antwort, loesungen, vergleiche, teilweise)` exportiert (für `chiffre`)
   - Unbekannte Art → weiterhin `AntwortFehler('Unbekannte Interaktion.')`
 
-- [ ] **Step 1: Failing test** (an `test/registry.test.js` anhängen):
+- [x] **Step 1: Failing test** (an `test/registry.test.js` anhängen):
   ```js
   const C = require('../src/content/checker');
   const TESTZAHL = {
@@ -337,12 +340,12 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   });
   ```
   (Die echte `gaps`-Diagnose nach Delta §9.6 testet Task 26 in `pruefer.test.js`.)
-- [ ] **Step 2: Run** `node --test test/registry.test.js` → FAIL (`kontext fehlt` bzw. kein `zeichen` oben).
-- [ ] **Step 3: Implement** – je `switch` im Kern einen `default`-Zweig, der `F.interaktionVertrag(F.artVon(ia))` fragt; `teilweise`
+- [x] **Step 2: Run** `node --test test/registry.test.js` → FAIL (`kontext fehlt` bzw. kein `zeichen` oben).
+- [x] **Step 3: Implement** – je `switch` im Kern einen `default`-Zweig, der `F.interaktionVertrag(F.artVon(ia))` fragt; `teilweise`
   verlangt weiterhin `F.schrittErlaubt(ia)` (sonst 400). Bug-Hunt-Sonderfall unverändert. `boss.js` ruft `C.bereinige(ia, antwort)`
   ohne kontext → das ändert Task 33 (bis dahin keine registrierte Art im Boss-Pool).
-- [ ] **Step 4: Run** → PASS; `npm test` grün (Kern-Prüfer unverändert, `test/pruefer.test.js` grün).
-- [ ] **Step 5: Commit** `git commit -m "Prüfer: Registry-Delegation, Teil-Feedback, Diagnose-Option (K02)"` (K02 umgesetzt; TECHNIK §4.3 Signatur `bereinige(ia, antwort, kontext)` und `pruefe(…, teilweise, { diagnose, aufgabe })`).
+- [x] **Step 4: Run** → PASS; `npm test` grün (Kern-Prüfer unverändert, `test/pruefer.test.js` grün).
+- [x] **Step 5: Commit** `git commit -m "Prüfer: Registry-Delegation, Teil-Feedback, Diagnose-Option (K02)"` (K02 umgesetzt; TECHNIK §4.3 Signatur `bereinige(ia, antwort, kontext)` und `pruefe(…, teilweise, { diagnose, aufgabe })`).
 
 ### Task 21: Validator-Hooks, Archivfund-ids, Registry-Blöcke und Lücken-Besitz (K03)
 
@@ -368,7 +371,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   - Lücken-Besitz: `felderBesitzer` aus `F.lueckenFelder(t.interaktion)` aller Teile (nicht nur `gaps`); Meldung „Lücke [[x]] hat kein Feld in einer Interaktion.“
   - `gaps`: `feld.norm` muss in `F.NORMEN` stehen; Lösungsschlüssel mit führendem `_` (z. B. `_fehlmuster`) lösen **keinen** Hinweis „unbekanntes Feld“ aus (Prüfung durch den Krypto-Hook, Task 26)
 
-- [ ] **Step 1: Failing tests** (an `validator.test.js` anhängen; Hooks wirken nur auf Welten mit `titel: 'Hooktest'`, damit
+- [x] **Step 1: Failing tests** (an `validator.test.js` anhängen; Hooks wirken nur auf Welten mit `titel: 'Hooktest'`, damit
   andere Tests im selben Prozess unberührt bleiben):
   ```js
   const V = require('../src/content/validator');
@@ -424,12 +427,12 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
     erwarteFehler((x) => { aufgabe(x, 'W9-L1-01').interaktion.felder.g1.norm = 'gibtsnicht'; }, /norm „gibtsnicht“ unbekannt/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/validator.test.js` → FAIL (`V.registriereValidierung is not a function`).
-- [ ] **Step 3: Implement** in `validator.js` (`HOOKS = []`, Aufrufstellen wie oben; Meldung für Normen
+- [x] **Step 2: Run** `node --test test/validator.test.js` → FAIL (`V.registriereValidierung is not a function`).
+- [x] **Step 3: Implement** in `validator.js` (`HOOKS = []`, Aufrufstellen wie oben; Meldung für Normen
   `norm „x“ unbekannt (${F.NORMEN.join(' | ')}).`). `fa`-Fehlerzähler (`fehlerZaehler`) auch für Hook-Fehler aus `vertrag.validiere`
   hochzählen, damit die Musterantwort-Prüfung bei Strukturfehlern übersprungen wird.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Validator: Hooks, Archivfund-ids, Registry-Blöcke und Lücken-Besitz (K03)"` (K03 umgesetzt; TECHNIK §2.1 Zeile `validator.js` auf `registriereValidierung` (E1) korrigieren).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Validator: Hooks, Archivfund-ids, Registry-Blöcke und Lücken-Besitz (K03)"` (K03 umgesetzt; TECHNIK §2.1 Zeile `validator.js` auf `registriereValidierung` (E1) korrigieren).
 
 ### Task 22: Krypto-Registrierung, Normalisierungen `krypto`/`bits`, Werkzeug-Liste
 
@@ -448,7 +451,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
     für `skytale, scheibe, haeufigkeit, substitution, vigenere, bitlupe, runden, modulo, rsa, hash, signatur`), `WERKZEUG_IDS`,
     `werkzeug(id) → Eintrag | null`
 
-- [ ] **Step 1: Failing tests** – `pruefer.test.js` **und** `validator.test.js` bekommen ab jetzt als erste Zeile nach den `require`s
+- [x] **Step 1: Failing tests** – `pruefer.test.js` **und** `validator.test.js` bekommen ab jetzt als erste Zeile nach den `require`s
   `require('../src/krypto').registriere();` (beide prüfen ohne `createApp`). `pruefer.test.js`:
   ```js
   test('norm: krypto (Delta §5.1) und bits (Delta §5.2) in gaps', () => {
@@ -474,14 +477,14 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   ```
   `validator.test.js`, CLI: eine Welt-Datei mit `norm: 'krypto'` in einem gaps-Feld → `node scripts/validate.js <datei>` Exit-Code 0
   (vorher: Fehler „norm … unbekannt“).
-- [ ] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL (Modul `src/krypto` fehlt).
-- [ ] **Step 3: Implement** `src/krypto/index.js` (Kopfkommentar „Registrierung aller Krypto-Erweiterungen, TECHNIK §4.1“),
+- [x] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL (Modul `src/krypto` fehlt).
+- [x] **Step 3: Implement** `src/krypto/index.js` (Kopfkommentar „Registrierung aller Krypto-Erweiterungen, TECHNIK §4.1“),
   `werkzeuge.js` (Titel aus TECHNIK §10.2 wörtlich: „Skytale & Gitter“, „Chiffrierscheibe“, „Häufigkeits-Analysator“,
   „Substitutions-Werkbank“, „Vigenère-Werkbank“, „Bit-Lupe“, „Runden-Labor“, „Modulo-Uhr & Farbmischer“, „RSA-Rechenwerk“,
   „Hash-Labor“, „Signatur- & Zertifikats-Simulator“); `scripts/validate.js`: `require('../src/krypto').registriere();` vor
   `validiereDateien`.
-- [ ] **Step 4: Run** → PASS; `npm test` grün; `npm run validate` → „Keine Welt-Dateien …“ Exit 0.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Registrierung, Normen krypto/bits, Werkzeug-Liste"` (K13 ergänzt, K31 neu: „`scripts/validate.js`: `registriere()` vor dem Validieren; Grund: Krypto-Formate im CLI; Art Hook; rückführbar ja (Hook-Datei konfigurierbar)“; TECHNIK §2.1 `scripts/validate.js` Art U → A).
+- [x] **Step 4: Run** → PASS; `npm test` grün; `npm run validate` → „Keine Welt-Dateien …“ Exit 0.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Registrierung, Normen krypto/bits, Werkzeug-Liste"` (K13 ergänzt, K31 neu: „`scripts/validate.js`: `registriere()` vor dem Validieren; Grund: Krypto-Formate im CLI; Art Hook; rückführbar ja (Hook-Datei konfigurierbar)“; TECHNIK §2.1 `scripts/validate.js` Art U → A).
 
 ### Task 23: Niveau-Begriffe, Kurseinstellungen `niveau`/`kuer`, fixture-unabhängige Kern-Tests
 
@@ -505,7 +508,7 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   B-03 (Delta §13). `W9-L1`, `W9-L2`: `"niveau": "kern"`. Welt-Felder (`epoche`, `jahr`, `akzentHell`, `kapitel`) aus der
   Zielbild-Tabelle. Gast-Demo `W8-L1`: `"niveau": "kern", "rolle": "kryptoanalyse"`.
 
-- [ ] **Step 1: Failing tests** – `test/niveau.test.js` vollständig ersetzen:
+- [x] **Step 1: Failing tests** – `test/niveau.test.js` vollständig ersetzen:
   ```js
   'use strict';
   // Niveau gA/eA (TECHNIK §8, Delta §3/§10): Begriffe und Einstellungen. Sichtbarkeit/Rang folgen in Tasks 34/35.
@@ -569,10 +572,10 @@ Diagnose-Abdeckung (je Zeile Delta §9.2–§9.6 eine Fehlantwort in `test/fixtu
   - `verwaltung.test.js`: Matrix-Level `= W.levels.map((l) => l.id)`; Vorschau `w.levels[1].aufgaben.length === W.levels[1].aufgaben.length`.
   - `verbund.test.js`: Manifest `umfang = { welten: 1, level: W.levels.length, aufgaben: Σ Level-Aufgaben + pool.length, bosse: 1 }`;
     Kursübersicht: `260` durch `MAX` (wie oben) ersetzen.
-- [ ] **Step 2: Run** `npm test` → FAIL (u. a. `NIVEAU_IDS`, `niveau` in Einstellungen, Boss-Mix).
-- [ ] **Step 3: Implement** wie unter Interfaces; `lernen.js`/`boss.js` lesen `einst.niveau === 'gA'`; `sitzung.js` `e.niveau`.
-- [ ] **Step 4: Run** `npm test` → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Niveau kern/eA/ergaenzung/kuer, Einstellungen niveau/kuer, Fixture-Boss 3/1-1-1"` (K06, K08, K09, K12, K17 fortschreiben: „`kursart` → `niveau`, `kuer`; Standard `kern`“; E4).
+- [x] **Step 2: Run** `npm test` → FAIL (u. a. `NIVEAU_IDS`, `niveau` in Einstellungen, Boss-Mix).
+- [x] **Step 3: Implement** wie unter Interfaces; `lernen.js`/`boss.js` lesen `einst.niveau === 'gA'`; `sitzung.js` `e.niveau`.
+- [x] **Step 4: Run** `npm test` → PASS.
+- [x] **Step 5: Commit** `git commit -m "Niveau kern/eA/ergaenzung/kuer, Einstellungen niveau/kuer, Fixture-Boss 3/1-1-1"` (K06, K08, K09, K12, K17 fortschreiben: „`kursart` → `niveau`, `kuer`; Standard `kern`“; E4).
 
 ### Task 24: Neue Blöcke (Delta §7) mit Neuberechnung
 
@@ -613,7 +616,7 @@ Fixture (diese Task) – Level und Aufgabe aus dem Zielbild (`nr: "K1"`, `niveau
 ```
 `antworten.js`: `RICHTIG['W9-L4-01'] = { q1: 's' }`, `FALSCH['W9-L4-01'] = { q1: 'T' }`.
 
-- [ ] **Step 1: Failing test** `test/bloecke.test.js`:
+- [x] **Step 1: Failing test** `test/bloecke.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -689,12 +692,12 @@ Fixture (diese Task) – Level und Aufgabe aus dem Zielbild (`nr: "K1"`, `niveau
     assert.match(meld([{ t: 'haeufigkeit', quelle: 'werte', werte: { E: -1 } }]).f, /werte/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/bloecke.test.js` → FAIL (`unbekannter Blocktyp t: „alphabet“`).
-- [ ] **Step 3: Implement** `src/krypto/bloecke.js` nach der Tabelle; Registrierung in `index.js`. Fixture `W9-L4`/`W9-L4-01`
+- [x] **Step 2: Run** `node --test test/bloecke.test.js` → FAIL (`unbekannter Blocktyp t: „alphabet“`).
+- [x] **Step 3: Implement** `src/krypto/bloecke.js` nach der Tabelle; Registrierung in `index.js`. Fixture `W9-L4`/`W9-L4-01`
   ergänzen; Delta §7.1 Beispiel (`"werte": [ "D" … "Z", "[[g1]]", "[[g2]]", "[[g3]]" ]` mit 23 Buchstaben) und §7.6 Beispiel
   (`"schablone": [[1,1],[1,2],[2,1],[2,2]]`, Satz „Löcher `[z, s]` ab 1 wie `Krypto.fleissner`“) korrigieren.
-- [ ] **Step 4: Run** `node --test test/bloecke.test.js` → PASS; `npm test` grün (Fixture fehlerfrei, `W9-L4-01` im Prüfer-Rundlauf).
-- [ ] **Step 5: Commit** `git commit -m "Neue Blöcke: alphabet, haeufigkeit, quadrat, bits, schaubild, matrix, werkzeug"`.
+- [x] **Step 4: Run** `node --test test/bloecke.test.js` → PASS; `npm test` grün (Fixture fehlerfrei, `W9-L4-01` im Prüfer-Rundlauf).
+- [x] **Step 5: Commit** `git commit -m "Neue Blöcke: alphabet, haeufigkeit, quadrat, bits, schaubild, matrix, werkzeug"`.
 
 ### Task 25: Fallen-Diagnose (Rahmen) und Interaktion `chiffre`
 
@@ -870,7 +873,7 @@ const DIAGNOSE = [
 ```
 (`FALSCH['W9-L5-04']`: Teil a richtig, Teil b „0 statt Z“ → ganze Aufgabe falsch, Teil b mit Diagnose.)
 
-- [ ] **Step 1: Failing tests** in `pruefer.test.js` (oben `const { RICHTIG, FALSCH, DIAGNOSE } = require('./fixtures/antworten');`):
+- [x] **Step 1: Failing tests** in `pruefer.test.js` (oben `const { RICHTIG, FALSCH, DIAGNOSE } = require('./fixtures/antworten');`):
   ```js
   const D = require('../src/krypto/diagnose');
   function diagnoseVon(e) {
@@ -933,12 +936,12 @@ const DIAGNOSE = [
     assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /bekannte Variante/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL (`unbekannte kind „chiffre“`).
-- [ ] **Step 3: Implement** `diagnose.js` und `chiffre.js` nach den Interfaces; `registriere()` ergänzt. Fixture wie oben; Delta §6/§8.1
+- [x] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL (`unbekannte kind „chiffre“`).
+- [x] **Step 3: Implement** `diagnose.js` und `chiffre.js` nach den Interfaces; `registriere()` ergänzt. Fixture wie oben; Delta §6/§8.1
   (E9: „`basis` der Interaktion wirkt nur auf Zahlenausgabe und Hilfszeile; `affin` rechnet mit `verfahren.basis`, Std. 0“) und §9.2
   (E12: Satz zur Positionsregel „Umbruchstellen“) anpassen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (Boss-Tests: `W9-B-05` ist jetzt `chiffre`, RICHTIG/FALSCH aus `antworten.js`).
-- [ ] **Step 5: Commit** `git commit -m "Fallen-Diagnose und Interaktion chiffre"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün (Boss-Tests: `W9-B-05` ist jetzt `chiffre`, RICHTIG/FALSCH aus `antworten.js`).
+- [x] **Step 5: Commit** `git commit -m "Fallen-Diagnose und Interaktion chiffre"`.
 
 ### Task 26: Erwartete Fehlantworten in `gaps` (Delta §9.6)
 
@@ -969,7 +972,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-08` eintragen):
 `antworten.js`: `RICHTIG['W9-L5-09'] = { g1: 'a', g2: 'B', g3: ' c ', wert: '26' }`, `FALSCH['W9-L5-09'] = { g1: 'A', g2: 'B', g3: 'C', wert: '0' }`,
 `DIAGNOSE.push({ aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '0' }, erwartet: [['P2', 'null_statt_z']] }, { aufgabe: 'W9-L5-09', antwort: { g1: 'A', g2: 'B', g3: 'C', wert: '25' }, erwartet: [] })`.
 
-- [ ] **Step 1: Failing tests** – der Diagnose-Rundlauf aus Task 25 deckt die neuen `DIAGNOSE`-Zeilen ab; zusätzlich `validator.test.js`:
+- [x] **Step 1: Failing tests** – der Diagnose-Rundlauf aus Task 25 deckt die neuen `DIAGNOSE`-Zeilen ab; zusätzlich `validator.test.js`:
   ```js
   test('_fehlmuster: Format und kein Treffer auf eine akzeptierte Lösung', () => {
     erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].wert = '26'; }, /_fehlmuster gleicht einer akzeptierten Lösung/);
@@ -977,10 +980,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-08` eintragen):
     erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P11'; }, /P1–P10/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "gaps: erwartete Fehlantworten mit Fallen-Diagnose"`.
+- [x] **Step 2: Run** `node --test test/pruefer.test.js test/validator.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "gaps: erwartete Fehlantworten mit Fallen-Diagnose"`.
 
 ### Task 27: Interaktion `zuordnung` (Delta §8.2, §9.3)
 
@@ -1049,7 +1052,7 @@ DIAGNOSE.push(
 );
 ```
 
-- [ ] **Step 1: Failing tests** – Diagnose-Rundlauf (Task 25) + `pruefer.test.js`:
+- [x] **Step 1: Failing tests** – Diagnose-Rundlauf (Task 25) + `pruefer.test.js`:
   ```js
   test('zuordnung: Vorgaben erzwungen, anteil, buchstaben, Modus zuordnung, 400 bei fremden Buchstaben', () => {
     const a = A['W9-L3-01'];
@@ -1079,10 +1082,10 @@ DIAGNOSE.push(
     assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /P6/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL (`unbekannte kind „zuordnung“`).
-- [ ] **Step 3: Implement**; Delta §9.3 um die präzise Regel (E11) ergänzen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion zuordnung mit Diagnose"`.
+- [x] **Step 2: Run** → FAIL (`unbekannte kind „zuordnung“`).
+- [x] **Step 3: Implement**; Delta §9.3 um die präzise Regel (E11) ergänzen.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktion zuordnung mit Diagnose"`.
 
 ### Task 28: Interaktion `schaubild-ergaenzen` (Delta §8.3, §9.5)
 
@@ -1150,7 +1153,7 @@ Test „Diagnosetexte verraten keine Lösung“ vergleicht deshalb nur die **Wer
 
 **Achtung (Fallensucher):** `W9-L6-05`/`-06` tragen `P9`; der in Task 23 angepasste Test beantwortet alle `P9`-Aufgaben falsch – nichts weiter zu tun.
 
-- [ ] **Step 1: Failing tests** – Diagnose-Rundlauf + `pruefer.test.js`:
+- [x] **Step 1: Failing tests** – Diagnose-Rundlauf + `pruefer.test.js`:
   ```js
   test('schaubild-ergaenzen: Feedback je Feld, Akteure aus dem Block, 400 bei Unsinn', () => {
     const a = A['W9-L6-05'];
@@ -1172,10 +1175,10 @@ Test „Diagnosetexte verraten keine Lösung“ vergleicht deshalb nur die **Wer
     erwarteFehler((w) => { aufgabe(w, 'W9-L6-06').loesung.z1 = ['Schlüssel']; }, /optionen/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion schaubild-ergaenzen mit Diagnose"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktion schaubild-ergaenzen mit Diagnose"`.
 
 ### Task 29: Interaktion `bits-rechnen` (Delta §8.4, §9.4)
 
@@ -1278,7 +1281,7 @@ DIAGNOSE.push(
 );
 ```
 
-- [ ] **Step 1: Failing tests** – Diagnose-Rundlauf + `pruefer.test.js`:
+- [x] **Step 1: Failing tests** – Diagnose-Rundlauf + `pruefer.test.js`:
   ```js
   test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Positions-Feedback, ascii exakt', () => {
     const r = C.pruefeAufgabe(A['W9-L6-01'], '0010_0011');
@@ -1305,11 +1308,11 @@ DIAGNOSE.push(
     erwarteFehler((w) => { aufgabe(w, 'W9-L3-03').interaktion.runden = 5; }, /runden/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; Delta §9.4 (Code `transposition` statt `tausch`, Kandidaten nach W3 §0a), §8.4/§13 (Sätze „bis dahin
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; Delta §9.4 (Code `transposition` statt `tausch`, Kandidaten nach W3 §0a), §8.4/§13 (Sätze „bis dahin
   Fehler …“/„erst nach W3 §0a“ streichen) korrigieren.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion bits-rechnen mit Diagnose (KRYPTOS-16 nach W3 §0a)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktion bits-rechnen mit Diagnose (KRYPTOS-16 nach W3 §0a)"`.
 
 ### Task 30: Validator – Welt- und Level-Felder (Delta §2, §3) und Negativ-Fixtures
 
@@ -1379,7 +1382,7 @@ Bereits vorhandene Fehlerfälle aus Tasks 24–29 als Dateien nachziehen: `neube
 erwartet `passen nicht zum Schlüssel`), `matrix_schablone.json` (`aufgaben#W9-L4-01.inhalt.3.schablone` = `[[1,1],[2,3],[3,2],[4,4]]`,
 erwartet `mehrfach frei`), `bits_block_xor.json` (`aufgaben#W9-L6-01.erklaerung.0.zeilen.3.bits` = `0010 0011`, erwartet `Neuberechnung`).
 
-- [ ] **Step 1: Failing tests** (`validator.test.js`):
+- [x] **Step 1: Failing tests** (`validator.test.js`):
   ```js
   const FEHLER_DIR = path.join(__dirname, 'fixtures', 'fehler');
   function wendeAn(w, aenderungen) {
@@ -1427,10 +1430,10 @@ erwartet `mehrfach frei`), `bits_block_xor.json` (`aufgaben#W9-L6-01.erklaerung.
   });
   ```
   (Bis Task 31 die Aufgabe-/Boss-Regeln liefert, genügen die 16 + 6 Dateien dieser Task für `>= 22`.)
-- [ ] **Step 2: Run** `node --test test/validator.test.js` → FAIL.
-- [ ] **Step 3: Implement**; Fixture ergänzen; Delta §13 Satz zu Negativ-Fixtures (E15) anpassen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (Gast-Demo und Welt-0-Kopie in `gast.test.js` erfüllen die Pflichtfelder).
-- [ ] **Step 5: Commit** `git commit -m "Validator: Welt- und Level-Felder, Kontraste, Negativ-Fixtures"`.
+- [x] **Step 2: Run** `node --test test/validator.test.js` → FAIL.
+- [x] **Step 3: Implement**; Fixture ergänzen; Delta §13 Satz zu Negativ-Fixtures (E15) anpassen.
+- [x] **Step 4: Run** → PASS; `npm test` grün (Gast-Demo und Welt-0-Kopie in `gast.test.js` erfüllen die Pflichtfelder).
+- [x] **Step 5: Commit** `git commit -m "Validator: Welt- und Level-Felder, Kontraste, Negativ-Fixtures"`.
 
 ### Task 31: Validator – Aufgaben, Boss-Regeln, dateiübergreifende Hinweise (Delta §4, §5.3, §10, §11)
 
@@ -1474,7 +1477,7 @@ Negativ-Fixtures dieser Task:
 | `boss_fremde_chiffre_kern.json` | `aufgaben#W9-B-03.niveau` = `eA` | `kern` |
 | `boss_gA_pool.json` | `aufgaben#W9-B-05.niveau` = `eA` | `gA-Pool` |
 
-- [ ] **Step 1: Failing tests** – der Negativ-Fixture-Rundlauf (Task 30) erfasst die neuen Dateien (Mindestzahl auf `>= 32` erhöhen);
+- [x] **Step 1: Failing tests** – der Negativ-Fixture-Rundlauf (Task 30) erfasst die neuen Dateien (Mindestzahl auf `>= 32` erhöhen);
   zusätzlich:
   ```js
   test('Aufgaben-Hinweise: Nummerierung, Altbegriffe, Fünfergruppen, Kern-Bestandteile, doppelte krypto-Lösung', () => {
@@ -1507,10 +1510,10 @@ Negativ-Fixtures dieser Task:
   });
   ```
   (Die Welt-1-Kopie verletzt durch die Umkategorisierung auch die Boss-Regel „≥ 3 fremde Chiffren“ – hier zählen nur die Hinweise.)
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; Delta §2 um den Satz zu den Archivfund-ids (E10) ergänzen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün; Fixture (Welt 9 und Welt-0-Kopie) ohne Fehler.
-- [ ] **Step 5: Commit** `git commit -m "Validator: Aufgaben-, Boss- und Dateiregeln der Kryptos-Inhalte"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; Delta §2 um den Satz zu den Archivfund-ids (E10) ergänzen.
+- [x] **Step 4: Run** → PASS; `npm test` grün; Fixture (Welt 9 und Welt-0-Kopie) ohne Fehler.
+- [x] **Step 5: Commit** `git commit -m "Validator: Aufgaben-, Boss- und Dateiregeln der Kryptos-Inhalte"`.
 
 ### Task 32: Inhalte – neue Felder, Archivfund, Niveau-Spalte (K09) und Archivfund-API
 
@@ -1537,7 +1540,7 @@ Negativ-Fixtures dieser Task:
     besiegtem Boss, sonst `null`)
   - `stand.staende`/`pruefeAbzeichen`: Archivfund-Aufgaben zählen weder bei `geloest` noch bei Punkten, Abzeichen oder Weltbummler
 
-- [ ] **Step 1: Failing tests** – `lernen.test.js`:
+- [x] **Step 1: Failing tests** – `lernen.test.js`:
   ```js
   test('Archivfund: 0 Punkte, zählt für nichts, wird aber gespeichert (Delta §2)', async () => {
     const { s } = await H.szenario();
@@ -1574,10 +1577,10 @@ Negativ-Fixtures dieser Task:
     assert.deepEqual([l.rolle, l.werkzeug, l.akte], ['kryptografie', ['scheibe'], 'Akte W9·1 – Blöcke und Lücken']);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/lernen.test.js test/upgrade_seed.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (Manifest zählt Archivfund-Aufgaben weiterhin nicht).
-- [ ] **Step 5: Commit** `git commit -m "Inhalte: Kryptos-Felder, Archivfund mit eigener API, Niveau-Spalte (K09)"` (K06, K07, K09, K16 fortschreiben).
+- [x] **Step 2: Run** `node --test test/lernen.test.js test/upgrade_seed.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün (Manifest zählt Archivfund-Aufgaben weiterhin nicht).
+- [x] **Step 5: Commit** `git commit -m "Inhalte: Kryptos-Felder, Archivfund mit eigener API, Niveau-Spalte (K09)"` (K06, K07, K09, K16 fortschreiben).
 
 ### Task 33: Diagnose in den Diensten, Fallen-Zählung, Dienst-Optionen (K06, K08, K25, K32, K33)
 
@@ -1604,7 +1607,7 @@ Negativ-Fixtures dieser Task:
     Ergänzung des Orchestrators, Delta §9.6 um einen Satz ergänzt
   - Diagnosetext `bits-rechnen:richtung` neutral (siehe Task 29)
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   // lernen.test.js
   test('Diagnose: erkannte Falle wird gezählt (statt der Liste fallen), Feedback je Zeichen, Schrittprüfung', async () => {
@@ -1642,10 +1645,10 @@ Negativ-Fixtures dieser Task:
   Zusätzlich: `lernen.test.js` „fehlmuster verlassen den Server nie“ (W9-L5-08 gelöst, W9-L5-09 aufgedeckt, Lehrkraft-Vorschau);
   `boss.test.js` mit einer Fixture-Kopie (W9-B-01 = fremde Chiffre mit `fehlmuster`, W9-B-03 = Signatur-Schaubild): unbekannter
   Akteur im Boss → 400 (`bereinige` mit Kontext), Auswertung ohne `fehlmuster`; `gast.test.js` dito für den Gastmodus.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; TECHNIK §4.2 um `optionen.bossBezug`, `optionen.generatorSichtbar`, `optionen.diagnose` ergänzen (E3).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Diagnose im Lab, Training, Gastmodus und Boss-Auswertung; Dienst-Optionen"` (K06, K08, K13, K25 fortschreiben; neu
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; TECHNIK §4.2 um `optionen.bossBezug`, `optionen.generatorSichtbar`, `optionen.diagnose` ergänzen (E3).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Diagnose im Lab, Training, Gastmodus und Boss-Auswertung; Dienst-Optionen"` (K06, K08, K13, K25 fortschreiben; neu
   K32 `src/services/training.js` „Diagnose/Feedback in der Prüfantwort; später Generator-Sichtbarkeit (Task 36)“, Art Hook; K33
   `src/services/gast.js` „Diagnose/Feedback in der Prüfantwort“, Art Hook).
 
@@ -1693,7 +1696,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 ```
 `antworten.js`: `RICHTIG['W9-L5-10'] = { c: '31' }`, `FALSCH['W9-L5-10'] = { c: '64' }`, `RICHTIG['W9-L5-11'] = ['a']`, `FALSCH['W9-L5-11'] = ['b']`.
 
-- [ ] **Step 1: Failing tests** (`niveau.test.js` ergänzen):
+- [x] **Step 1: Failing tests** (`niveau.test.js` ergänzen):
   ```js
   const N = require('../src/krypto/niveau');
   test('niveau.js: Sichtbarkeit, Rangrelevanz (= sichtbar, labs v1.2), Boss-Pool, Generatoren', () => {
@@ -1733,10 +1736,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.equal(v.levels.find((l) => l.id === 'W9-L5').aufgaben.find((a) => a.id === 'W9-L5-11').gAAusgeblendet, true);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/niveau.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Niveau: Sichtbarkeit im Lab, Lehrkraft-Vorschau mit gA-Hinweis"`.
+- [x] **Step 2: Run** `node --test test/niveau.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Niveau: Sichtbarkeit im Lab, Lehrkraft-Vorschau mit gA-Hinweis"`.
 
 ### Task 35: Niveau – Rang, Anteil, Boss-Freischaltung und -Ziehung, Kursübersicht, Abzeichen, Matrix (TECHNIK §8.2/§8.3)
 
@@ -1765,7 +1768,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   - `auswertung.kursUebersicht`: `bezugsMax(w)` und `ist` über `stand.bezug(einst)` (TECHNIK §6.8, sichtbare Level-Punkte nach labs v1.2;
     **kein** Feld `niveau`); `auswertung.matrix(k)`: nur sichtbare Level, Antwort `auswertung()` enthält `niveau: einst.niveau`; Board-Welt-Anteile über `bezug`
 
-- [ ] **Step 1: Failing tests** (`niveau.test.js`; Hilfsfunktion aus der Fixture: `punkte(a) = a.punkte ?? {1:10,2:20,3:30}[a.stufe]`,
+- [x] **Step 1: Failing tests** (`niveau.test.js`; Hilfsfunktion aus der Fixture: `punkte(a) = a.punkte ?? {1:10,2:20,3:30}[a.stufe]`,
   `effektiv(a, l) = a.niveau ?? l.niveau ?? 'kern'`):
   ```js
   const W = require('./fixtures/welt_beispiel.json');
@@ -1822,10 +1825,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   ```
   (`H.kurs(app, name, { einstellungen })` existiert; falls die Signatur abweicht, die Einstellungen danach per `UPDATE kurse SET einstellungen` setzen.
   Bei mehr als 90 Prüfungen pro Minute `H.uhr()` nutzen und zwischen den Prüfungen `uhr.vor(1000)`.)
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; `bezugsMax` in `auswertung.js` durch `stand.bezug` ersetzen; Boss-gA-Sonderlogik aus Task 23 entfernen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (auch `verbund.test.js` Kursübersicht: eA-Kurs, alle sichtbar).
-- [ ] **Step 5: Commit** `git commit -m "Niveau: Rang, Boss-Freischaltung und -Ziehung, Kursübersicht, Abzeichen-Hooks"` (K07, K08, K14 fortschreiben).
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; `bezugsMax` in `auswertung.js` durch `stand.bezug` ersetzen; Boss-gA-Sonderlogik aus Task 23 entfernen.
+- [x] **Step 4: Run** → PASS; `npm test` grün (auch `verbund.test.js` Kursübersicht: eA-Kurs, alle sichtbar).
+- [x] **Step 5: Commit** `git commit -m "Niveau: Rang, Boss-Freischaltung und -Ziehung, Kursübersicht, Abzeichen-Hooks"` (K07, K08, K14 fortschreiben).
 
 ### Task 36: Generator-Rahmen und Trainingsplatz mit Niveau (K18, K32)
 
@@ -1862,7 +1865,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   }
   ```
 
-- [ ] **Step 1: Failing test** `test/generatoren.test.js` (vollständig ersetzen; Kopf: `require('../src/krypto').registriere();`):
+- [x] **Step 1: Failing test** `test/generatoren.test.js` (vollständig ersetzen; Kopf: `require('../src/krypto').registriere();`):
   ```js
   G.registriereGenerator('test_eins', { titel: 'Test: Eins', welten: [9], make: () => ({ titel: 'Eins', kategorie: 'modulo', inhalt: [{ t: 'text', md: '1 = [[g]]' }], interaktion: { kind: 'gaps', felder: { g: { typ: 'zahl' } } }, loesung: { g: ['1'] }, erklaerung: [{ t: 'text', md: 'Eins.' }] }) });
   G.registriereGenerator('test_ea', { titel: 'Test: eA', welten: [9], niveau: 'eA', make: () => ({ titel: 'Zwei', kategorie: 'modulo', inhalt: [{ t: 'text', md: '2 = [[g]]' }], interaktion: { kind: 'gaps', felder: { g: { typ: 'zahl' } } }, loesung: { g: ['2'] }, erklaerung: [{ t: 'text', md: 'Zwei.' }] }) });
@@ -1904,10 +1907,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   });
   ```
   `abzeichen_scoreboard.test.js` legt Trainingszeilen mit `generator 'stapel'` direkt in der DB an – unverändert lassen (nur Daten).
-- [ ] **Step 2: Run** `node --test test/generatoren.test.js` → FAIL (`G.registriereGenerator is not a function`).
-- [ ] **Step 3: Implement**; TECHNIK §2.4 Generatorliste kommentieren: „12 Pflicht-Generatoren (Design §7.6) + `dhrsa.js` (Ergänzung)“ (E13).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Generator-Rahmen: Registry, Niveau-Filter im Trainingsplatz (K18, K32)"`.
+- [x] **Step 2: Run** `node --test test/generatoren.test.js` → FAIL (`G.registriereGenerator is not a function`).
+- [x] **Step 3: Implement**; TECHNIK §2.4 Generatorliste kommentieren: „12 Pflicht-Generatoren (Design §7.6) + `dhrsa.js` (Ergänzung)“ (E13).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Generator-Rahmen: Registry, Niveau-Filter im Trainingsplatz (K18, K32)"`.
 
 ### Task 37: Generatoren Welt 0 und 1 (caesar, schluesselpaar, modulo, affin, schluesselwort)
 
@@ -1933,7 +1936,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 | `invers_mod26` | affin.js | [1] · kern | `gaps` Feld `inv` (`zahl`) | m wie oben; Text „Bestimme m⁻¹ mit (m · m⁻¹) mod 26 = 1 für m = {m}: m⁻¹ = [[inv]]“; Stufe 2, `modulo`, P2 | `inverses(m, 26)`; `_fehlmuster.inv`: `26 − inv` (P2 `vorzeichen`) |
 | `schluesselwort_alphabet` | schluesselwort.js | [1] · kern | `gaps` Feld `a` (`text`, `norm: 'krypto'`) | Wort aus `SCHLUESSELWOERTER_W1`, n ∈ {10, 26}; Text „Bilde das Geheimtextalphabet zum Schlüsselwort {WORT} (ohne Wiederholungen, Rest ab A). Gib die ersten {n} Buchstaben an: [[a]]“; Stufe 1, `substitution-mono`, P4 | `schluesselwortAlphabet(wort).slice(0, n)`; `_fehlmuster.a`: (WORT ohne Streichen + restliche Buchstaben).slice(0, n) (P4 `wiederholung`), falls verschieden |
 
-- [ ] **Step 1: Failing tests** (`generatoren.test.js`; **unabhängige Nachrechnung** jeweils aus den Aufgabendaten, ohne die Bibliotheksfunktion,
+- [x] **Step 1: Failing tests** (`generatoren.test.js`; **unabhängige Nachrechnung** jeweils aus den Aufgabendaten, ohne die Bibliotheksfunktion,
   die der Generator benutzt):
   ```js
   const az = (s) => [...s.toUpperCase().replace(/[^A-Z]/g, '')].map((c) => c.charCodeAt(0) - 65);   // A = 0
@@ -1998,10 +2001,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
   ```
   (Welt 0 ist in der Test-App nicht geseedet; `/api/training/0` funktioniert, weil der Trainingsplatz nur `istFrei` und die Generatoren
   braucht. Falls `pruefeWeltFrei` eine geseedete Welt verlangt: Test auf Welt 0 mit `H.makeApp({ weltDateien: [Welt-0-Kopie der Fixture] })`.)
-- [ ] **Step 2: Run** → FAIL (Generatoren unbekannt).
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Generatoren Welt 0 und 1: Caesar, Schlüsselpaar, Modulo, affin, Schlüsselwort"`.
+- [x] **Step 2: Run** → FAIL (Generatoren unbekannt).
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Generatoren Welt 0 und 1: Caesar, Schlüsselpaar, Modulo, affin, Schlüsselwort"`.
 
 ### Task 38: Generatoren Welt 2 und 3 (vigenere, kasiski, koinzidenz, xor, kryptos16)
 
@@ -2022,7 +2025,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 | `xor_bytes` | [3] · kern | `bits-rechnen` `xor`, `labels: ['A', 'B', 'A ⊕ B']` | Stufe 1: zwei Bytes (8 Bit), Stufe 2 (50 %): je zwei Bytes (16 Bit); Operanden in Vierergruppen; Text „Berechne A ⊕ B.“; `bits-xor`, P4 | `xorBits`; Diagnose automatisch |
 | `kryptos16_runde` | [3] · **eA** | `bits-rechnen` `kryptos16` | Klartext zwei Buchstaben A–Z (`textZuBits`), Schlüssel 0…FFFF ohne schwache Schlüssel (vier gleiche Vierergruppen), R ∈ {1, 2}; Text „Wende KRYPTOS-16 mit R = {R} auf „{XY}“ (ASCII, A = 65) mit K = `{K}` an (je Runde XOR mit dem Rundenschlüssel → S-Box → Transposition; der Rundenschlüssel wird je Runde um 4 Bit nach links rotiert).“ (Schülertext ohne Spec-Verweis – Korrektur bei Task 38); Stufe 2/3, `blockchiffre`, P3/P4 | Bibliothek; Diagnose automatisch |
 
-- [ ] **Step 1: Failing tests** (unabhängig: Vigenère über Zeichencodes; Kasiski über eigene Teilertabelle; Koinzidenz über eigene
+- [x] **Step 1: Failing tests** (unabhängig: Vigenère über Zeichencodes; Kasiski über eigene Teilertabelle; Koinzidenz über eigene
   Zählung; XOR über `^`; KRYPTOS-16 über eine **im Test** nach SPEC W3 §0a geschriebene Runde):
   ```js
   test('vigenere: c = p + s (A = 0) je Stelle', () => {
@@ -2075,8 +2078,8 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.equal(G.GENERATOREN.kryptos16_runde.niveau, 'eA');
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Generatoren Welt 2 und 3: Vigenère, Kasiski, Koinzidenz, XOR, KRYPTOS-16"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Generatoren Welt 2 und 3: Vigenère, Kasiski, Koinzidenz, XOR, KRYPTOS-16"`.
 
 ### Task 39: Generatoren Welt 4 und 5 (schluesselanzahl, toyhash, dhrsa)
 
@@ -2096,7 +2099,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 | `w4_dh` | dhrsa.js | [4] · **ergaenzung** | `gaps` Felder `A`, `B`, `K` (`zahl`) | p ∈ {11, 13, 17, 19, 23}, g Primitivwurzel mod p (Ordnung p − 1), a, b ∈ 2…8, a ≠ b, K ≠ 1; Text „Öffentlich: p = {p}, g = {g}. Alice wählt a = {a}, Bob wählt b = {b}. Bestimme A = [[A]], B = [[B]] und K = [[K]].“; Stufe 2, `schluesselaustausch`, P3 | `dh.oeffentlich`, `dh.gemeinsam`; `_fehlmuster.K`: Aᵃ mod p, g^(a+b) mod p (P3 `richtung`), ohne Duplikate/ohne K |
 | `w4_rsa_ver` | dhrsa.js | [4] · **ergaenzung** | `gaps` Feld `c` (`zahl`) | (N, e) aus {(33, 3), (51, 3), (55, 3), (65, 5), (77, 7), (91, 5)}, m ∈ 2…N − 2 mit mᵉ mod N ≠ m; Text „Öffentlicher Schlüssel (N, e) = ({N}, {e}). Verschlüssele die Klarzahl m = {m}: c = [[c]]“; Stufe 2, `asymmetrisch`, P3 | `rsa.verschluesseln`; `_fehlmuster.c`: mᵈ mod N mit d = e⁻¹ mod φ(N) (P3 `richtung`), falls ≠ c |
 
-- [ ] **Step 1: Failing tests** (unabhängig über eine Test-Funktion `potenz(b, e, m)` mit Schleife und eigene Hash-Schleife):
+- [x] **Step 1: Failing tests** (unabhängig über eine Test-Funktion `potenz(b, e, m)` mit Schleife und eigene Hash-Schleife):
   ```js
   const potenz = (b, e, m) => { let r = 1; for (let i = 0; i < e; i++) r = (r * b) % m; return r; };
   test('w4_schluesselanzahl: Formeln n(n−1)/2 und 2n bzw. Zuwachs n und 2', () => {
@@ -2137,8 +2140,8 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'schluesselwort_alphabet', 'vigenere', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Generatoren Welt 4 und 5: Schlüsselanzahl, KRYPTOS-Hash, DH/RSA (Ergänzung)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Generatoren Welt 4 und 5: Schlüsselanzahl, KRYPTOS-Hash, DH/RSA (Ergänzung)"`.
 
 ### Task 40: Client-Registry `AQR`/`AQI` (K04, K05)
 
@@ -2156,7 +2159,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     `AQI.gapBesitzer(teile, id)` → erster Teil mit `typeof t.besitzt === 'function' && t.besitzt(id)`; `ctx.gap(id)` nutzt `gapBesitzer`
     und ruft `t.feld(id)`; `schrittAktiv` nutzt `schrittArten.has(teil.kind)`; Rückgabe-Objekt `{ aufgabe, art, registriere, schrittArten, teilFuer, gapBesitzer }`
 
-- [ ] **Step 1: Failing test** `test/client_hooks.test.js` (lädt die Browser-Skripte in einer `vm`-Umgebung mit Attrappen-DOM):
+- [x] **Step 1: Failing test** `test/client_hooks.test.js` (lädt die Browser-Skripte in einer `vm`-Umgebung mit Attrappen-DOM):
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2204,10 +2207,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.throws(() => AQI.registriere('gaps', () => null), /bereits registriert/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_hooks.test.js` → FAIL (`AQR.registriere is not a function`).
-- [ ] **Step 3: Implement** (kein `innerHTML`, keine neuen Abhängigkeiten; `seiten.test.js` muss grün bleiben).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Client-Registry für Blöcke und Interaktionen (K04, K05)"` (K04/K05 umgesetzt; Renderer folgen in M4).
+- [x] **Step 2: Run** `node --test test/client_hooks.test.js` → FAIL (`AQR.registriere is not a function`).
+- [x] **Step 3: Implement** (kein `innerHTML`, keine neuen Abhängigkeiten; `seiten.test.js` muss grün bleiben).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Client-Registry für Blöcke und Interaktionen (K04, K05)"` (K04/K05 umgesetzt; Renderer folgen in M4).
 
 ### Task 41: Unabhängige Python-Nachrechnung der Seeds (`seed_pruefen.py`, Delta §11)
 
@@ -2228,7 +2231,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     (`xor`, `ascii`, `kryptos16`, `lawine` ab 0); Blöcke `quadrat` (Schlüssel ↔ Zellen), `bits` (`pruefe: xor`), `matrix`
     (`schablone_pruefen`, `reihenfolge: true` ↔ `spalten_reihenfolge(kopf)` nur Plausibilität). Ausgabe „N Lösungen geprüft,
     0 Abweichungen“; jede Abweichung `datei › aufgabe-id › ort: erwartet … gefunden …`; Exit-Code 1 bei Abweichung
-- [ ] **Step 1: Failing test** `test/seed_pruefen.test.js`:
+- [x] **Step 1: Failing test** `test/seed_pruefen.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2252,10 +2255,10 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.match(r.stdout, /W9-L5-08/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/seed_pruefen.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Python ≥ 3.10, nur Standardbibliothek, deutsche Meldungen).
-- [ ] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py test/fixtures/welt_beispiel.json` → „… 0 Abweichungen“; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "seed_pruefen.py: unabhängige Nachrechnung der Lösungen in Python"`.
+- [x] **Step 2: Run** `node --test test/seed_pruefen.test.js` → FAIL.
+- [x] **Step 3: Implement** (Python ≥ 3.10, nur Standardbibliothek, deutsche Meldungen).
+- [x] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py test/fixtures/welt_beispiel.json` → „… 0 Abweichungen“; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "seed_pruefen.py: unabhängige Nachrechnung der Lösungen in Python"`.
 
 ### Task 42: Abschluss M3 – Abdeckungstest der Fixture, Dokumente, Prüfung
 
@@ -2264,7 +2267,7 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
 - Modify: `docs/KERN_ABWEICHUNGEN.md` (Status K01–K09, K13, K14, K16–K18, K25, K31–K33 = „umgesetzt (Task …)“), `docs/TECHNIK.md` §15
   (neue Testdateien `registry`, `bloecke`, `client_hooks`, `seed_pruefen`, `fixture_abdeckung`), `docs/AUFGABENFORMAT_KRYPTO.md` §13 (Fixture-Stand)
 
-- [ ] **Step 1: Failing test** `test/fixture_abdeckung.test.js` (zählt aus der Fixture und `antworten.js`, nichts von Hand):
+- [x] **Step 1: Failing test** `test/fixture_abdeckung.test.js` (zählt aus der Fixture und `antworten.js`, nichts von Hand):
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2330,12 +2333,12 @@ Fixture (in `W9-L5.aufgaben` nach `W9-L5-09`):
     assert.ok(DIAGNOSE.some((e) => e.teilweise), '§9.1 Einzelzeichen');
   });
   ```
-- [ ] **Step 2: Run** `node --test test/fixture_abdeckung.test.js` → PASS erwartet (alle Teile stehen seit Tasks 23–35); schlägt eine
+- [x] **Step 2: Run** `node --test test/fixture_abdeckung.test.js` → PASS erwartet (alle Teile stehen seit Tasks 23–35); schlägt eine
   Zeile fehl, die fehlende Fixture-Stelle in der zuständigen Task nachtragen, nicht den Test aufweichen.
-- [ ] **Step 3: Dokumente** – `KERN_ABWEICHUNGEN.md` Status/Tasks prüfen; TECHNIK §15 ergänzen; Delta §13 „Stand: alle Zeilen durch
+- [x] **Step 3: Dokumente** – `KERN_ABWEICHUNGEN.md` Status/Tasks prüfen; TECHNIK §15 ergänzen; Delta §13 „Stand: alle Zeilen durch
   `test/fixture_abdeckung.test.js` gesichert“.
-- [ ] **Step 4: Run** `npm run pruefen` (inkl. `npm run validate` und `krypto:pruefwerte`) und `python3 -I werkzeuge/krypto/seed_pruefen.py test/fixtures/welt_beispiel.json` → grün.
-- [ ] **Step 5: Commit** `git commit -m "Abschluss M3: Fixture-Abdeckung, Kern-Abweichungen, Dokumente"`; Merge-Vorschlag an die Lehrkraft (Gesamtplan Teil A).
+- [x] **Step 4: Run** `npm run pruefen` (inkl. `npm run validate` und `krypto:pruefwerte`) und `python3 -I werkzeuge/krypto/seed_pruefen.py test/fixtures/welt_beispiel.json` → grün.
+- [x] **Step 5: Commit** `git commit -m "Abschluss M3: Fixture-Abdeckung, Kern-Abweichungen, Dokumente"`; Merge-Vorschlag an die Lehrkraft (Gesamtplan Teil A).
 
 ---
 

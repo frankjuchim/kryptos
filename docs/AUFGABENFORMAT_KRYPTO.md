@@ -837,6 +837,10 @@ jeder Block mit Test). Sie muss enthalten:
 | Boss | `W9-BOSS`, Pool 6 Aufgaben (3 `kern`, 3 `eA`, davon 3 `fremde-chiffre`), `anzahl` 3, `mix` 1/1/1, `dauerMin` 25 – damit sind gA- und eA-Ziehung testbar |
 | Negativ-Fixtures | `test/fixtures/fehler/*.json`: je Validator-Fehler aus §11 eine kleine **Änderungsdatei** `{ "beschreibung", "erwartet" (RegExp-Quelle), "alsWelt"?, "aenderungen": [{ "pfad", "wert" \| "loeschen" \| "anhaengen" }] }`, die die Fixture verändert (falsche Neuberechnung, Kontrast, Boss mit Werkzeug, kuer-Inkonsistenz …); `pfad` mit Punkten, `liste#ID` wählt nach `id`, Zahl = Index; `alsWelt` schreibt `W9-`/`W9·` auf die Welt um (Pflichtfelder der Inhaltswelten 0–6). `test/validator.test.js` prüft je Datei den erwarteten Fehler |
 
+**Stand (Abschluss M3):** alle Zeilen der Tabelle sind durch `test/fixture_abdeckung.test.js` gesichert (zählt aus der
+Fixture und `test/fixtures/antworten.js`, nichts von Hand); die Lösungen rechnet zusätzlich `werkzeuge/krypto/seed_pruefen.py`
+unabhängig in Python nach (`test/seed_pruefen.test.js`, CI-Job `krypto`).
+
 Die Fixture wird nie nach `seed/welten` kopiert. `WELT_DATEIEN=test/fixtures/welt_beispiel.json npm run dev` zeigt sie
 lokal (Kern-Mechanik).
 

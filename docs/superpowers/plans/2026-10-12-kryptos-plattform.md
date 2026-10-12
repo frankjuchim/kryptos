@@ -56,18 +56,18 @@ Jede Phase endet mit grüner Prüfung (`npm run pruefen`) und einem Merge-Vorsch
 Beginn der Phase mit `superpowers:writing-plans` ein eigener Detailplan** unter `docs/superpowers/plans/` erstellt (aus
 TECHNIK.md und den Welt-Specs); Teil B dieses Dokuments enthält die Detailaufgaben für M0–M2.
 
-| M | Phase | Ergebnis (Abnahme) | hängt ab von |
-|---|---|---|---|
-| **M0** | Repo-Grundlage | Kern kopiert, umbenannt, Fach-Listen Kryptos, Tests grün mit Fixture-Welt, CI läuft, `KERN_ABWEICHUNGEN.md` | – |
-| **M1** | Verbund und SSO | `AUTH_MODUS=portal`, `/sso/*`, Verbund-API, Manifest, Dev-Portal; alle Testfälle TECHNIK §6.12 grün; `vertrag_pruefen.js` gegen lokale Instanz leer | M0 |
-| **M2** | Krypto-Bibliothek | `shared/krypto.js` vollständig (TECHNIK §5.2), Python-Zwilling, Vergleich ≥ 2000 Fälle/Funktion grün, alle Testvektoren der Specs, Prüfwerte der Materialien grün (Task 18) | M0 |
-| **M3** | Aufgabenformat | Hooks (TECHNIK §4), neue Blöcke/Interaktionen/Normalisierungen, Fallen-Diagnose, Validator-Neuberechnung, Niveau, 12 Generatoren, Fixture Welt 9 deckt alles ab | M2 |
-| **M4** | Oberfläche | Designsystem (Tokens, Schriften, Epochen), alle Seiten TECHNIK §11.1 (Themenseite mit Niveau-Übersicht `#niveaus` im Designsystem, Inhalt aus `GET /api/niveaus`), Renderer der neuen Blöcke/Interaktionen, Lehrkraft-Ansicht inkl. Niveau/Werkzeuge; Vorlage: `prototyp/kryptos_prototyp.html` | M1, M3 |
-| **M5** | Inhalte W0–W2 + Akten-Anbindung | `seed/welten/welt0–2.json` (mit `niveau` je Level/Aufgabe – die Niveau-Übersicht liest dann den Katalog statt `WELT_PLAN`; Abweichungen vom Plan klären), Bosse, Warm-up W0–W2, Gast-Demo, `seed/akten.json`, PDFs aus `materialien/` | M3, M4 |
-| **M6** | Kryptolabor | 11 Werkzeuge (Design §7.3), Freigaben je Kurs, Sperre im Boss, Einbettung in Aufgaben | M2, M4 |
-| **M7** | Funkraum + Werkstatt/Arena | 5 Szenarien, Beamer, Moderation, Löschung; Baukasten, Einreichung, Angriffe, Abzeichen | M1, M4 |
-| **M8** | Inhalte W3–W6 | Seeds W3–W6, Bosse, Warm-up, Trainingsplatz vollständig, Abdeckungsskript `scripts/abdeckung.js` grün | M5 |
-| **M9** | Abschluss und Deploy | e2e (TECHNIK §15), Datenschutzseite, Screenshots, Video-Bilder, CapRover-App, Portal-Eintrag, Ende-zu-Ende nach INTEGRATION §6, Version 1.0.0 | alle |
+| M | Phase | Ergebnis (Abnahme) | hängt ab von | Status |
+|---|---|---|---|---|
+| **M0** | Repo-Grundlage | Kern kopiert, umbenannt, Fach-Listen Kryptos, Tests grün mit Fixture-Welt, CI läuft, `KERN_ABWEICHUNGEN.md` | – | **erledigt** (Tasks 1–2, bis `446fec9`) |
+| **M1** | Verbund und SSO | `AUTH_MODUS=portal`, `/sso/*`, Verbund-API, Manifest, Dev-Portal; alle Testfälle TECHNIK §6.12 grün; `vertrag_pruefen.js` gegen lokale Instanz leer | M0 | **erledigt** (Tasks 3–9, Review M1 `2598fa1`) |
+| **M2** | Krypto-Bibliothek | `shared/krypto.js` vollständig (TECHNIK §5.2), Python-Zwilling, Vergleich ≥ 2000 Fälle/Funktion grün, alle Testvektoren der Specs, Prüfwerte der Materialien grün (Task 18) | M0 | **erledigt** (Tasks 10–18, bis `a4fcd17`) |
+| **M3** | Aufgabenformat | Hooks (TECHNIK §4), neue Blöcke/Interaktionen/Normalisierungen, Fallen-Diagnose, Validator-Neuberechnung, Niveau, 12 Generatoren, Fixture Welt 9 deckt alles ab | M2 | **erledigt** (Tasks 19–42, Detailplan `2026-10-13-kryptos-m3-aufgabenformat.md`) |
+| **M4** | Oberfläche | Designsystem (Tokens, Schriften, Epochen), alle Seiten TECHNIK §11.1 (Themenseite mit Niveau-Übersicht `#niveaus` im Designsystem, Inhalt aus `GET /api/niveaus`), Renderer der neuen Blöcke/Interaktionen, Lehrkraft-Ansicht inkl. Niveau/Werkzeuge; Vorlage: `prototyp/kryptos_prototyp.html` | M1, M3 | offen |
+| **M5** | Inhalte W0–W2 + Akten-Anbindung | `seed/welten/welt0–2.json` (mit `niveau` je Level/Aufgabe – die Niveau-Übersicht liest dann den Katalog statt `WELT_PLAN`; Abweichungen vom Plan klären), Bosse, Warm-up W0–W2, Gast-Demo, `seed/akten.json`, PDFs aus `materialien/` | M3, M4 | offen |
+| **M6** | Kryptolabor | 11 Werkzeuge (Design §7.3), Freigaben je Kurs, Sperre im Boss, Einbettung in Aufgaben | M2, M4 | offen |
+| **M7** | Funkraum + Werkstatt/Arena | 5 Szenarien, Beamer, Moderation, Löschung; Baukasten, Einreichung, Angriffe, Abzeichen | M1, M4 | offen |
+| **M8** | Inhalte W3–W6 | Seeds W3–W6, Bosse, Warm-up, Trainingsplatz vollständig, Abdeckungsskript `scripts/abdeckung.js` grün | M5 | offen |
+| **M9** | Abschluss und Deploy | e2e (TECHNIK §15), Datenschutzseite, Screenshots, Video-Bilder, CapRover-App, Portal-Eintrag, Ende-zu-Ende nach INTEGRATION §6, Version 1.0.0 | alle | offen |
 
 **Unterrichtsreife (MVP):** M0–M5 → Welten 0–2 spielbar. Funkraum-Szenarien der ersten Wochen laufen bis M7 mit den
 Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 nach Unterrichtsfortschritt.
@@ -87,8 +87,8 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: `require('./krypto/fach')` → `{ PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, RAENGE, TEAM_NAMEN }`; `PLATTFORM = { id: 'kryptos', name: 'Kryptos', titel: 'Kryptos – Die Zeitreise der Geheimschriften', farbe: '#B07D2B', themenfeld: 'Kryptologie', kurs: 'Informatik eA und gA, Niedersachsen, Abitur ab 2027' }`
 
-- [ ] **Step 1: Kern kopieren** – Commit-Hash von AlgoQuest notieren (für `KERN_ABWEICHUNGEN.md`); Algo-Quest-Inhalte nicht mitkopieren.
-- [ ] **Step 2: Failing test** `test/fach.test.js`:
+- [x] **Step 1: Kern kopieren** – Commit-Hash von AlgoQuest notieren (für `KERN_ABWEICHUNGEN.md`); Algo-Quest-Inhalte nicht mitkopieren.
+- [x] **Step 2: Failing test** `test/fach.test.js`:
   ```js
   test('fach: Welten, Fallen, Ränge', () => {
     assert.equal(F.PLATTFORM.id, 'kryptos');
@@ -100,10 +100,10 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
     assert.equal(F.LAB_KATEGORIEN.length, 25);
   });
   ```
-- [ ] **Step 3: Run** `node --test test/fach.test.js` → FAIL (Modul fehlt).
-- [ ] **Step 4: Implement** `src/krypto/fach.js` mit Werten aus Design-Spec §3.3 (Fallen-Kurztitel und Erläuterungen wörtlich), §3.4 (25 Kategorien), §2.4 (Ränge), §5 (Welten, Farben laut TECHNIK §6.9). `src/domain.js` re-exportiert diese Listen unter den Kern-Namen.
-- [ ] **Step 5: Run** `npm test` → alle Kern-Tests mit Fixture Welt 9 grün (Tests, die Algo-Quest-Inhalte erwarten, auf Fixture umstellen oder in Task 2 ersetzen).
-- [ ] **Step 6: Commit** `git commit -m "Kern aus Algo Quest übernommen, Fachlisten Kryptos"`
+- [x] **Step 3: Run** `node --test test/fach.test.js` → FAIL (Modul fehlt).
+- [x] **Step 4: Implement** `src/krypto/fach.js` mit Werten aus Design-Spec §3.3 (Fallen-Kurztitel und Erläuterungen wörtlich), §3.4 (25 Kategorien), §2.4 (Ränge), §5 (Welten, Farben laut TECHNIK §6.9). `src/domain.js` re-exportiert diese Listen unter den Kern-Namen.
+- [x] **Step 5: Run** `npm test` → alle Kern-Tests mit Fixture Welt 9 grün (Tests, die Algo-Quest-Inhalte erwarten, auf Fixture umstellen oder in Task 2 ersetzen).
+- [x] **Step 6: Commit** `git commit -m "Kern aus Algo Quest übernommen, Fachlisten Kryptos"`
 
 ### Task 2: Abweichungsprotokoll, Seiten- und Kopienprüfung, CI (M0)
 
@@ -114,11 +114,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: `test/fixtures/labs_hashes.json` = `{ "src/jwt.js": "<sha256>", "scripts/vertrag_pruefen.js": "<sha256>" }` (Werte aus `frankjuchim/labs` main)
 
-- [ ] **Step 1: Failing tests**: `seiten.test.js` – (a) keine `<script>`-Inhalte/`style=`/`on*=` in `public/**/*.html`, (b) kein `innerHTML|outerHTML|insertAdjacentHTML|document.write` in `public/static/js/**`, (c) kein „Algo Quest“ in `public/**`, (d) jede HTML-Seite `lang="de"`. `kern_kopien.test.js` – SHA-256 von `src/jwt.js` und `scripts/vertrag_pruefen.js` gleich Fixture.
-- [ ] **Step 2: Run** → FAIL (jwt.js fehlt; Algo-Quest-Texte in alter Oberfläche).
-- [ ] **Step 3:** `src/jwt.js` und `scripts/vertrag_pruefen.js` byte-gleich aus labs kopieren; alte Oberflächen-HTML durch Platzhalterseiten (Kryptos-Titel, `lang="de"`) ersetzen, bis M4 sie ersetzt.
-- [ ] **Step 4: Run** `npm test` → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Abweichungsprotokoll, Seiten- und Kopienprüfung, CI"`
+- [x] **Step 1: Failing tests**: `seiten.test.js` – (a) keine `<script>`-Inhalte/`style=`/`on*=` in `public/**/*.html`, (b) kein `innerHTML|outerHTML|insertAdjacentHTML|document.write` in `public/static/js/**`, (c) kein „Algo Quest“ in `public/**`, (d) jede HTML-Seite `lang="de"`. `kern_kopien.test.js` – SHA-256 von `src/jwt.js` und `scripts/vertrag_pruefen.js` gleich Fixture.
+- [x] **Step 2: Run** → FAIL (jwt.js fehlt; Algo-Quest-Texte in alter Oberfläche).
+- [x] **Step 3:** `src/jwt.js` und `scripts/vertrag_pruefen.js` byte-gleich aus labs kopieren; alte Oberflächen-HTML durch Platzhalterseiten (Kryptos-Titel, `lang="de"`) ersetzen, bis M4 sie ersetzt.
+- [x] **Step 4: Run** `npm test` → PASS.
+- [x] **Step 5: Commit** `git commit -m "Abweichungsprotokoll, Seiten- und Kopienprüfung, CI"`
 
 ### Task 3: Verbund-Konfiguration (M1)
 
@@ -129,7 +129,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: `ladeKonfig(env, { test }) → { plattformId, plattformUrl, portalUrl, portalPublicKey, schluessel: KeyObject[], sessionSecret, dataDir, port, trustProxy }`; wirft `Error` mit deutscher Meldung
 
-- [ ] **Step 1: Failing tests** (Werte aus TECHNIK §6.1):
+- [x] **Step 1: Failing tests** (Werte aus TECHNIK §6.1):
   ```js
   test('AUTH_MODUS ≠ portal bricht ab', () => assert.throws(() => ladeKonfig({ ...gueltig, AUTH_MODUS: 'lokal' }), /nur AUTH_MODUS=portal/));
   test('SESSION_SECRET < 32 Zeichen bricht ab', () => assert.throws(() => ladeKonfig({ ...gueltig, SESSION_SECRET: 'x'.repeat(31) })));
@@ -137,10 +137,10 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('PLATTFORM_URL ohne Schrägstrich am Ende', () => assert.throws(() => ladeKonfig({ ...gueltig, PLATTFORM_URL: 'https://kryptos.test/' })));
   test('PLATTFORM_ID Format', () => assert.throws(() => ladeKonfig({ ...gueltig, PLATTFORM_ID: 'Kryptos!' })));
   ```
-- [ ] **Step 2: Run** `node --test test/konfig.test.js` → FAIL.
-- [ ] **Step 3: Implement** `ladeKonfig` (Schlüsselliste über `jwt.schluesselListe`, falls vorhanden, sonst PEM-Blöcke trennen und `crypto.createPublicKey`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Verbund-Konfiguration"`
+- [x] **Step 2: Run** `node --test test/konfig.test.js` → FAIL.
+- [x] **Step 3: Implement** `ladeKonfig` (Schlüsselliste über `jwt.schluesselListe`, falls vorhanden, sonst PEM-Blöcke trennen und `crypto.createPublicKey`).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Verbund-Konfiguration"`
 
 ### Task 4: Datenmodell Kryptos (M1)
 
@@ -151,11 +151,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: Tabellen `konten(sub PK, rolle, name, session_gen, last_login_at)`, `sso_jti(jti PK, exp)`, `kurse(id, kurs_id UNIQUE 'k:n', name, aktiv, einstellungen JSON, board_schluessel)`, `kurs_lehrkraefte(kurs_id, sub, aktiv)`, `schueler` als Teilnahme `(id, kurs_id, sub, name, name_key, aktiv, …Kernspalten)` sowie alle Kern-Lernstandstabellen und die Funkraum-/Arena-/Team-Tabellen exakt nach TECHNIK §7.1
 
-- [ ] **Step 1: Failing tests**: frische DB hat `meta.app = 'kryptos'` und `schema_version = <Anzahl Migrationen>`; Start mit DB `meta.app = 'algoquest'` → Abbruch mit Meldung; alle Tabellen aus TECHNIK §7.1 existieren (Tabellenliste im Test wörtlich).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** Migrationsliste (nur anhängen).
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Datenmodell Kryptos (Migration 1)"`
+- [x] **Step 1: Failing tests**: frische DB hat `meta.app = 'kryptos'` und `schema_version = <Anzahl Migrationen>`; Start mit DB `meta.app = 'algoquest'` → Abbruch mit Meldung; alle Tabellen aus TECHNIK §7.1 existieren (Tabellenliste im Test wörtlich).
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** Migrationsliste (nur anhängen).
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "Datenmodell Kryptos (Migration 1)"`
 
 ### Task 5: `GET /sso/start` (M1)
 
@@ -167,7 +167,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 - Consumes: `ladeKonfig` (Task 3)
 - Produces: Cookie `kr_sso_state` = `S.sign({ st, exp })`, `Path=/sso`, `Max-Age=600`, `HttpOnly; SameSite=Lax` (+`Secure` bei `req.secure`)
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('sso/start: Weiterleitung zeichengenau', async () => {
     const r = await agent.get('/sso/start?ziel=/spiel%23w2');
@@ -182,10 +182,10 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   });
   test('sso/start: ziel //boese.example → /', …); // auch '/\\boese', 'https://x'
   ```
-- [ ] **Step 2: Run** `node --test test/sso.test.js` → FAIL.
-- [ ] **Step 3: Implement** nach TECHNIK §6.2 (Rate-Limit 300/10 min je IP).
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "SSO-Start"`
+- [x] **Step 2: Run** `node --test test/sso.test.js` → FAIL.
+- [x] **Step 3: Implement** nach TECHNIK §6.2 (Rate-Limit 300/10 min je IP).
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "SSO-Start"`
 
 ### Task 6: `GET /sso/ende` – Token prüfen, Konto, Kursabgleich (M1)
 
@@ -197,7 +197,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 - Consumes: `jwt.pruefe(token, schluessel, { iss, aud, maxDauerSek: 120 })`, `S.sign/verify/safeEqual`
 - Produces: `konten.upsert({ sub, rolle, name })`, `kurse.upsertAusToken(sub, rolle, kurse[])`, `konten.teilnahmen(sub)`; Kopf `X-Kryptos-Grund` mit Grundkennung
 
-- [ ] **Step 1: Failing tests** T1–T10 und Zusätze aus TECHNIK §6.12 wörtlich, u. a.:
+- [x] **Step 1: Failing tests** T1–T10 und Zusätze aus TECHNIK §6.12 wörtlich, u. a.:
   ```js
   test('T1 gültig', …) // 302 auf ziel, kr_s gesetzt, konten.sub='s:1042', Teilnahme in k:17
   test('T2 falsche Signatur → 401 signatur', …)
@@ -213,10 +213,10 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('Schlüsselwechsel: Token mit Schlüssel 2 von 2 angenommen', …)
   test('Kursabgleich: zweites Token ohne k:17 → Teilnahme inaktiv, Lernstand bleibt', …)
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** Tabelle TECHNIK §6.3 Schritte 1–9 (Upsert in einer Transaktion, §6.6). Antwort immer `Referrer-Policy: no-referrer`, `Cache-Control: no-store`; Fehler-Handler loggt für `/sso/*` nie die URL.
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "SSO-Ende: Token, Konto, Kursabgleich"`
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** Tabelle TECHNIK §6.3 Schritte 1–9 (Upsert in einer Transaktion, §6.6). Antwort immer `Referrer-Policy: no-referrer`, `Cache-Control: no-store`; Fehler-Handler loggt für `/sso/*` nie die URL.
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "SSO-Ende: Token, Konto, Kursabgleich"`
 
 ### Task 7: Sitzung, Seiten-Wächter, Kurswahl, Abmelden (M1)
 
@@ -227,11 +227,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: `helpers.schueler(req)` → Teilnahme-Zeile oder `null`; `helpers.lehrkraft(req)` → `{ konto, kurse }` oder `null`; `POST /api/sitzung/kurs { kurs }`; `POST /api/abmelden { ueberall }` → `{ weiter }`
 
-- [ ] **Step 1: Failing tests**: `/spiel` ohne Sitzung → 302 `/sso/start?ziel=%2Fspiel`; `/lehrer` mit Schüler-Sitzung → 302 `/sso/start…`; API ohne Sitzung → `401 { anmelden: true, sso: '/sso/start' }`; Rollenwechsel auf einem Gerät löscht das andere Cookie; Abmelden überall → `weiter = 'https://portal.test/sso/abmelden?ruecksprung=https%3A%2F%2Fkryptos.test%2F'`; Kurswahl nur eigene aktive Teilnahme (fremde → 404).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** nach TECHNIK §6.4.
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Sitzungen und Seiten-Wächter"`
+- [x] **Step 1: Failing tests**: `/spiel` ohne Sitzung → 302 `/sso/start?ziel=%2Fspiel`; `/lehrer` mit Schüler-Sitzung → 302 `/sso/start…`; API ohne Sitzung → `401 { anmelden: true, sso: '/sso/start' }`; Rollenwechsel auf einem Gerät löscht das andere Cookie; Abmelden überall → `weiter = 'https://portal.test/sso/abmelden?ruecksprung=https%3A%2F%2Fkryptos.test%2F'`; Kurswahl nur eigene aktive Teilnahme (fremde → 404).
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** nach TECHNIK §6.4.
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "Sitzungen und Seiten-Wächter"`
 
 ### Task 8: Verbund-API und Löschung (M1)
 
@@ -243,11 +243,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 - Consumes: `verbundToken(zweck, extra)` aus `test/helpers.js`
 - Produces: `loeschen.nachSub(db, sub) → n`, `loeschen.nachKurs(db, kursId) → n` (umfasst Teams, Funkraum, Arena – Tabellen aus Task 4); `auswertung.kursUebersicht(kursId)` im Format TECHNIK §6.8
 
-- [ ] **Step 1: Failing tests** T11, T12 und Zusätze TECHNIK §6.12: ohne Token/falsches `aud`/falscher `zweck`/`exp−iat=61`/wiederverwendet/`sub ≠ portal` → 401 `{ error: 'Token ungültig.' }`; `loeschen {sub}` zweimal → 200 `{geloescht: n>0}` dann `{geloescht: 0}`; `loeschen {kurs}` leert alle Kurs-Tabellen (Zählung je Tabelle = 0); Übersicht unbekannter Kurs → 404; Übersicht ohne Freitexte/Teamnamen; `kurs-aendern {aktiv:false}` → Schüler-API 403 „Kryptos ist für deinen Kurs abgeschaltet“, `{aktiv:true}` entsperrt; Body mit `sub` und `kurs` → 400.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** nach TECHNIK §6.7–§6.8 und §7.3 (Router vor dem API-Router, ohne Origin-Prüfung, Rate-Limit 600/10 min).
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Verbund-API und Löschung"`
+- [x] **Step 1: Failing tests** T11, T12 und Zusätze TECHNIK §6.12: ohne Token/falsches `aud`/falscher `zweck`/`exp−iat=61`/wiederverwendet/`sub ≠ portal` → 401 `{ error: 'Token ungültig.' }`; `loeschen {sub}` zweimal → 200 `{geloescht: n>0}` dann `{geloescht: 0}`; `loeschen {kurs}` leert alle Kurs-Tabellen (Zählung je Tabelle = 0); Übersicht unbekannter Kurs → 404; Übersicht ohne Freitexte/Teamnamen; `kurs-aendern {aktiv:false}` → Schüler-API 403 „Kryptos ist für deinen Kurs abgeschaltet“, `{aktiv:true}` entsperrt; Body mit `sub` und `kurs` → 400.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** nach TECHNIK §6.7–§6.8 und §7.3 (Router vor dem API-Router, ohne Origin-Prüfung, Rate-Limit 600/10 min).
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "Verbund-API und Löschung"`
 
 ### Task 9: Lokale Anmeldung entfernen, Manifest, Dev-Portal (M1)
 
@@ -259,11 +259,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces: Manifest exakt TECHNIK §6.9 (`umfang`/`welten` aus dem Katalog berechnet), `npm run dev` startet Kryptos (3000) + Dev-Portal (3100)
 
-- [ ] **Step 1: Failing tests**: alle Routen aus TECHNIK §6.5 → 404; `pruefeManifest(m)` aus `scripts/vertrag_pruefen.js` liefert `[]`; `m.auth = { modus: 'portal', portal: 'https://portal.test', sso: true }`; `m.faehigkeiten` enthält `labor, funkraum, arena, niveau`; (nachgetragen mit labs v1.2) `m.vertrag === '1.2'`, `m.niveaus = ['eA', 'gA']`, `m.urls.niveaus = '/themen#niveaus'`; Manifest-JSON enthält kein `k:` und kein `loesung`; `m.version === (await get('/healthz')).body.version`.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; Dev-Portal nach TECHNIK §16.4 (Pseudonyme „Mika R.“, „Ida K.“; Kurse `k:1` „LK 13 (eA)“, `k:2` „GK 12 (gA)“).
-- [ ] **Step 4: Run** `npm test` → PASS; manuell `npm run dev` → Anmeldung als Schüler landet auf `/spiel`; `node scripts/vertrag_pruefen.js http://localhost:3000` → keine Befunde.
-- [ ] **Step 5: Commit** `git commit -m "Nur Portal-Anmeldung, Manifest, Dev-Portal"`
+- [x] **Step 1: Failing tests**: alle Routen aus TECHNIK §6.5 → 404; `pruefeManifest(m)` aus `scripts/vertrag_pruefen.js` liefert `[]`; `m.auth = { modus: 'portal', portal: 'https://portal.test', sso: true }`; `m.faehigkeiten` enthält `labor, funkraum, arena, niveau`; (nachgetragen mit labs v1.2) `m.vertrag === '1.2'`, `m.niveaus = ['eA', 'gA']`, `m.urls.niveaus = '/themen#niveaus'`; Manifest-JSON enthält kein `k:` und kein `loesung`; `m.version === (await get('/healthz')).body.version`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; Dev-Portal nach TECHNIK §16.4 (Pseudonyme „Mika R.“, „Ida K.“; Kurse `k:1` „LK 13 (eA)“, `k:2` „GK 12 (gA)“).
+- [x] **Step 4: Run** `npm test` → PASS; manuell `npm run dev` → Anmeldung als Schüler landet auf `/spiel`; `node scripts/vertrag_pruefen.js http://localhost:3000` → keine Befunde.
+- [x] **Step 5: Commit** `git commit -m "Nur Portal-Anmeldung, Manifest, Dev-Portal"`
 
 ### Task 10: Krypto-Bibliothek – Grundlagen und monoalphabetische Verfahren (M2)
 
@@ -273,7 +273,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 **Interfaces:**
 - Produces (Signaturen TECHNIK §5.2): `ALPHABET`, `KryptoFehler`, `mod`, `wert`, `buchstabe`, `verschiebung`, `normalisieren`, `nurBuchstaben`, `normBits`, `gruppieren`, `klein`, `zahlen`, `ausZahlen`, `caesar`, `alleCaesar`, `atbash`, `affin`, `affinSchluesselGueltig`, `schluesselwortAlphabet`, `substitution`, `umkehrAlphabet`
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('rest_null_ist_z', () => { assert.equal(K.buchstabe(26, 1), 'Z'); assert.equal(K.buchstabe(0, 1), 'Z'); assert.equal(K.buchstabe(27, 1), 'A'); });
   test('mod', () => { assert.equal(K.mod(-6, 26), 20); assert.equal(K.mod(26, 26), 0); });
@@ -289,10 +289,10 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('ver∘ent = id (500 Zufallsfälle je Verfahren)', …);
   ```
   (Video-01-Werte aus `materialien/Videos/01_Caesar_und_Modulo/video.json` „hinweise“; Schlüsselwort-Alphabet aus SPEC W1 §0. Weitere Vektoren aus SPEC W0 §12 und SPEC W1 §12 übernehmen – jede Zeile dort ein Test.)
-- [ ] **Step 2: Run** `node --test test/krypto.test.js` → FAIL.
-- [ ] **Step 3: Implement** (rein, deterministisch, ES2020, keine Abhängigkeiten; Rückgaben GROSS ohne Leerzeichen).
-- [ ] **Step 4: Run** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Grundlagen, monoalphabetisch"`
+- [x] **Step 2: Run** `node --test test/krypto.test.js` → FAIL.
+- [x] **Step 3: Implement** (rein, deterministisch, ES2020, keine Abhängigkeiten; Rückgaben GROSS ohne Leerzeichen).
+- [x] **Step 4: Run** → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Grundlagen, monoalphabetisch"`
 
 ### Task 11: Polyalphabetisch und Bigramm-Verfahren (M2)
 
@@ -300,7 +300,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `vigenere`, `autokey`, `porta`, `quadrat`, `playfairPaare`, `playfair`, `kreuzquadrat`, `zweiQuadratZahl`, `polybios`, `adfgvx` (Semantik TECHNIK §5.2; **kein** `zweiQuadrat` – Namenskollision, Verifikation H2)
 
-- [ ] **Step 1: Failing tests** (Werte aus SPEC W2 §5 und §12):
+- [x] **Step 1: Failing tests** (Werte aus SPEC W2 §5 und §12):
   ```js
   test('vigenere', () => { assert.equal(K.vigenere('kanal', 'ROT'), 'BOGRZ'); assert.equal(K.vigenere('HEDKZRMAGP', 'VELA', 'ent'), 'MASKENBALL'); });
   test('autokey', () => assert.equal(K.autokey('ALVEHRA', 'ZU', 'ent'), 'BRUNNEN'));
@@ -313,8 +313,8 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('grenzfaelle_vigenere', () => { assert.equal(K.vigenere('abc', 'A'), 'ABC'); assert.throws(() => K.vigenere('abc', ''), K.KryptoFehler); });
   ```
   ADFGVX- und Polybios-Vektoren aus SPEC W3 §12 bzw. W0 §12 übernehmen; alle weiteren Kreuzquadrat- und Zwei-Quadrat-Werte aus SPEC W2 Level 2.4, Akte W2·4 und §6 (Papier-Boss) als Tests – **Spec-Vektor-first:** erst die Spec-Werte als roten Test, dann implementieren.
-- [ ] **Step 2: Run** → FAIL. **Step 3:** implementieren. **Step 4:** → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: polyalphabetisch, Bigramme"`
+- [x] **Step 2: Run** → FAIL. **Step 3:** implementieren. **Step 4:** → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: polyalphabetisch, Bigramme"`
 
 ### Task 12: Transpositionen (M2)
 
@@ -322,9 +322,9 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `gartenzaun`, `skytale`, `fleissner`, `schablonePruefen`, `spaltenReihenfolge`, `spaltentransposition`, `umkehrung`, `blockrotation`
 
-- [ ] **Step 1: Failing tests** – Konventionen aus SPEC W0 §0/§12: Skytale „Umfang = Anzahl Zeilen, zeilenweise schreiben, spaltenweise lesen, Füllzeichen X“; Gartenzaun „oben beginnen“; Fleißner „Drehung im Uhrzeigersinn, (z, s) → (s, 5 − z), Löcher zeilenweise beschriften“; Spaltentransposition „unvollständige letzte Zeile erlaubt, nie auffüllen“ (SPEC W3 Baukasten). Jede Rechnung aus den Prüfprotokollen §12 von W0 und W3 als Test; dazu `grenzfaelle_transposition`: Umfang > Textlänge, Text leer, Schlüssel mit doppelten Buchstaben (`spaltenReihenfolge('ANNA')` = `[1,3,4,2]`). Pflicht-Vektor Skytale mit Standard-Füllzeichen X: `K.skytale('wir halten den pass', 3)` = `'WTPIEARNSHDSAEXLNX'` (W0-L1-03).
-- [ ] **Step 2–4:** FAIL → implementieren → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Transpositionen"`
+- [x] **Step 1: Failing tests** – Konventionen aus SPEC W0 §0/§12: Skytale „Umfang = Anzahl Zeilen, zeilenweise schreiben, spaltenweise lesen, Füllzeichen X“; Gartenzaun „oben beginnen“; Fleißner „Drehung im Uhrzeigersinn, (z, s) → (s, 5 − z), Löcher zeilenweise beschriften“; Spaltentransposition „unvollständige letzte Zeile erlaubt, nie auffüllen“ (SPEC W3 Baukasten). Jede Rechnung aus den Prüfprotokollen §12 von W0 und W3 als Test; dazu `grenzfaelle_transposition`: Umfang > Textlänge, Text leer, Schlüssel mit doppelten Buchstaben (`spaltenReihenfolge('ANNA')` = `[1,3,4,2]`). Pflicht-Vektor Skytale mit Standard-Füllzeichen X: `K.skytale('wir halten den pass', 3)` = `'WTPIEARNSHDSAEXLNX'` (W0-L1-03).
+- [x] **Step 2–4:** FAIL → implementieren → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Transpositionen"`
 
 ### Task 13: Bits, XOR, KRYPTOS-16, KRYPTOS-Hash (M2)
 
@@ -332,7 +332,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `ascii`, `zeichenAusAscii`, `textZuBytes`, `bytesZuText`, `byteZuBits`, `bitsZuByte`, `textZuBits`, `bitsZuText`, `xorBits`, `xor`, `hex`, `vonHex`, `rotiereBits`, `kryptos16.{rundenschluessel, runde, verschluesseln, entschluesseln, lawine, modus}`, `kryptosHash(text, {protokoll})`, `kryptosHash.kollisionSuchen`
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('ascii Bereich 32–126', () => { assert.equal(K.ascii('A'), 65); assert.throws(() => K.ascii('ä'), K.KryptoFehler); });
   test('xor selbstinvers', () => assert.equal(K.xorBits(K.xorBits('01000001','10011100'),'10011100'), '01000001'));
@@ -345,8 +345,8 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('kryptosHash', () => { assert.equal(K.kryptosHash('nebel').wert, 9); assert.equal(K.kryptosHash('heute').wert, K.kryptosHash('morgen').wert); assert.equal(K.kryptosHash('heute').wert, 22); });
   ```
   (Definitionen TECHNIK §5.2 „Definitionen“, Quelle SPEC W3 §0a / SPEC W5 §0a; CBC- und Lawinenwerte aus SPEC W3 §0a.6 als weitere Tests.)
-- [ ] **Step 2–4:** FAIL → implementieren → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Bits, KRYPTOS-16, KRYPTOS-Hash"`
+- [x] **Step 2–4:** FAIL → implementieren → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Bits, KRYPTOS-16, KRYPTOS-Hash"`
 
 ### Task 14: Kryptoanalyse (M2)
 
@@ -354,7 +354,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `DEUTSCH`, `haeufigkeiten`, `anteile`, `rangfolge`, `teiltexte`, `bigramme`, `koinzidenzindex`, `friedman`, `friedmanWert`, `kasiski`, `verschiebungSchaetzen`, `chiQuadrat`
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('DEUTSCH Beutelspacher', () => { assert.equal(K.DEUTSCH.E, 17.40); assert.ok(Math.abs(Object.values(K.DEUTSCH).reduce((a,b)=>a+b,0) - 100) < 0.5); });
   test('koinzidenzindex BALLADE = 2/21', () => assert.ok(Math.abs(K.koinzidenzindex('BALLADE') - 2/21) < 1e-12));
@@ -364,8 +364,8 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('kasiski Eves Brief', () => { const r = K.kasiski(EVES_BRIEF); assert.deepEqual(r.wiederholungen.find(w => w.folge === 'ZIG').positionen, [0, 60, 100]); assert.equal(r.vorschlag[0], 5); });
   ```
   (`EVES_BRIEF` = Geheimtext aus SPEC W2 Akte W2·2, 228 Zeichen, Schlüssel WACHS.)
-- [ ] **Step 2–4:** FAIL → implementieren → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Kryptoanalyse"`
+- [x] **Step 2–4:** FAIL → implementieren → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Kryptoanalyse"`
 
 ### Task 15: Zahlentheorie, asymmetrische Verfahren, Schlüsselanzahl (M2)
 
@@ -373,7 +373,7 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `ggT`, `erweiterterEuklid`, `inverses`, `modpow`, `istPrim`, `rsa.{schluessel, verschluesseln, entschluesseln}`, `dh.{oeffentlich, gemeinsam, dlogKlein}`, `schluesselanzahl`
 
-- [ ] **Step 1: Failing tests** (Werte SPEC W4 §12, unabhängig nachgerechnet):
+- [x] **Step 1: Failing tests** (Werte SPEC W4 §12, unabhängig nachgerechnet):
   ```js
   test('rsa (77,7)/(77,43)', () => { assert.equal(K.rsa.verschluesseln(9, 7, 77), 37); assert.equal(K.rsa.entschluesseln(37, 43, 77), 9); assert.equal(K.rsa.schluessel(7, 11, 7).d, 43); });
   test('dh p=17 g=3 a=4 b=6', () => { assert.equal(K.dh.oeffentlich(3, 4, 17), 13); assert.equal(K.dh.oeffentlich(3, 6, 17), 15); assert.equal(K.dh.gemeinsam(15, 4, 17), 16); assert.equal(K.dh.dlogKlein(3, 13, 17), 4); });
@@ -381,8 +381,8 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
   test('inverses', () => { assert.equal(K.inverses(7, 60), 43); assert.equal(K.inverses(2, 26), null); });
   test('modpow', () => { assert.equal(K.modpow(9, 7, 77), 37); const p = K.modpow(9, 7, 77, { protokoll: true }); assert.equal(p.wert, 37); assert.ok(p.schritte.length >= 3); });
   ```
-- [ ] **Step 2–4:** FAIL → implementieren → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Zahlentheorie und asymmetrisch"`
+- [x] **Step 2–4:** FAIL → implementieren → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Zahlentheorie und asymmetrisch"`
 
 ### Task 16: Verfahrens-Objekt und Baukasten (M2)
 
@@ -390,9 +390,9 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 
 **Interfaces:** Produces `verfahren.{TYPEN, pruefe, anwenden, varianten}`, `baukasten.{STUFEN, pruefe, verschluesseln, entschluesseln}` – Stufen-Katalog aus SPEC W3 (Baukasten, 8 Stufen; XOR nur als letzte Stufe mit Hex-Ausgabe; nie auffüllen) und TECHNIK §9.2
 
-- [ ] **Step 1: Failing tests**: Musterverfahren FUNKGITTER (Vigenère, dann Spaltentransposition) aus SPEC W3 §2 (Tabelle B) – Beispielwerte der Musterlösung als Test; `baukasten.pruefe` meldet XOR nicht als letzte Stufe als Fehler; Hinweis `P8` bei zwei Caesar-Stufen hintereinander; `verfahren.varianten` liefert für Caesar die P3-Variante (−k statt +k) und die P1-Variante (Abweichung 1) (Delta §9.2).
-- [ ] **Step 2–4:** FAIL → implementieren → PASS.
-- [ ] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Verfahren und Baukasten"`
+- [x] **Step 1: Failing tests**: Musterverfahren FUNKGITTER (Vigenère, dann Spaltentransposition) aus SPEC W3 §2 (Tabelle B) – Beispielwerte der Musterlösung als Test; `baukasten.pruefe` meldet XOR nicht als letzte Stufe als Fehler; Hinweis `P8` bei zwei Caesar-Stufen hintereinander; `verfahren.varianten` liefert für Caesar die P3-Variante (−k statt +k) und die P1-Variante (Abweichung 1) (Delta §9.2).
+- [x] **Step 2–4:** FAIL → implementieren → PASS.
+- [x] **Step 5: Commit** `git commit -m "Krypto-Bibliothek: Verfahren und Baukasten"`
 
 ### Task 17: Python-Zwilling und Vergleich (M2)
 
@@ -404,11 +404,11 @@ Papier-Rollenkarten (`materialien/Werkzeuge/Funkraum/`). Reihenfolge M6/M7/M8 na
 - Consumes: Funktionsliste Tasks 10–16
 - Produces: `python3 -I werkzeuge/krypto/bruecke.py` (JSON-Zeilen `{f, args}` → `{ok, r}` / `{ok:false, fehler}`), `npm run krypto:vergleich -- --anzahl N --seed S`
 
-- [ ] **Step 1: Failing test** `krypto_zwilling.test.js`: ruft `vergleich.js --anzahl 300` und erwartet Exit-Code 0 (übersprungen mit Hinweis, wenn `python3` fehlt).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** den Zwilling **unabhängig** (eigene Algorithmen laut TECHNIK §5.3, nicht aus dem JS übersetzt); `test_krypto.py` mit denselben festen Vektoren wie Tasks 10–16; Vergleich mit Grenzfällen aus TECHNIK §5.3 (leerer Text, k = 0/25/26/−1, „AAAA“, ungerade Playfair-Länge, „XX“, unvollständige Matrizen, Umfang > Textlänge).
-- [ ] **Step 4: Run** `npm run krypto:vergleich -- --anzahl 2000` → „0 Abweichungen“; `python3 -I werkzeuge/krypto/test_krypto.py` → OK.
-- [ ] **Step 5: Commit** `git commit -m "Python-Zwilling und Vergleichstest"`
+- [x] **Step 1: Failing test** `krypto_zwilling.test.js`: ruft `vergleich.js --anzahl 300` und erwartet Exit-Code 0 (übersprungen mit Hinweis, wenn `python3` fehlt).
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** den Zwilling **unabhängig** (eigene Algorithmen laut TECHNIK §5.3, nicht aus dem JS übersetzt); `test_krypto.py` mit denselben festen Vektoren wie Tasks 10–16; Vergleich mit Grenzfällen aus TECHNIK §5.3 (leerer Text, k = 0/25/26/−1, „AAAA“, ungerade Playfair-Länge, „XX“, unvollständige Matrizen, Umfang > Textlänge).
+- [x] **Step 4: Run** `npm run krypto:vergleich -- --anzahl 2000` → „0 Abweichungen“; `python3 -I werkzeuge/krypto/test_krypto.py` → OK.
+- [x] **Step 5: Commit** `git commit -m "Python-Zwilling und Vergleichstest"`
 
 ### Task 18: Prüfwerte und CI-Abgleich der Materialien (M2)
 
@@ -426,16 +426,16 @@ Python-Zwilling) nachgerechnet (Design §13.1). Grundlage sind die unabhängigen
 - Produces: Einträge `{ "id", "ort", "verfahren", "eingabe", "richtung", "erwartet" }` (TECHNIK §15); `pruefwerte.py` meldet
   Abweichungen mit `ort` und beendet sich mit Exit-Code 1.
 
-- [ ] **Step 1:** Aus `quellen/analyse/verifikation/log.jsonl` alle Einträge mit Verfahren, Eingabe und Ergebnis in das
+- [x] **Step 1:** Aus `quellen/analyse/verifikation/log.jsonl` alle Einträge mit Verfahren, Eingabe und Ergebnis in das
   Format übertragen (Skript `werkzeuge/krypto/pruefwerte_import.py`, einmalig); fehlende Pflichtwerte ergänzen: je
   Akte die Werte der Aufträge ★★/★★★, je Klausur-EH alle Rechenergebnisse, je Video die Werte aus `video.json`.
-- [ ] **Step 2: Failing test** `pruefwerte.test.js`: ein absichtlich falscher Eintrag in einer Fixture → Exit-Code 1 mit
+- [x] **Step 2: Failing test** `pruefwerte.test.js`: ein absichtlich falscher Eintrag in einer Fixture → Exit-Code 1 mit
   `ort` in der Meldung; leere Fixture → Exit-Code 0.
-- [ ] **Step 3: Implement** `pruefwerte.py` (ruft die Python-Bibliothek direkt, kein JS); zusätzlich Überschneidungsprüfung
+- [x] **Step 3: Implement** `pruefwerte.py` (ruft die Python-Bibliothek direkt, kein JS); zusätzlich Überschneidungsprüfung
   Videos ↔ Prüfungen/Bosse: identische Eingaben in `videos.json` und `pruefungen.json`/Boss-Pools sind ein Fehler
   (Design §11 „Beispiele eigens für Videos“).
-- [ ] **Step 4: Run** `python3 -I werkzeuge/krypto/pruefwerte.py` → „0 Abweichungen, 0 Überschneidungen“.
-- [ ] **Step 5: Commit** `git commit -m "Prüfwerte der Materialien und CI-Abgleich"`
+- [x] **Step 4: Run** `python3 -I werkzeuge/krypto/pruefwerte.py` → „0 Abweichungen, 0 Überschneidungen“.
+- [x] **Step 5: Commit** `git commit -m "Prüfwerte der Materialien und CI-Abgleich"`
 
 ---
 
