@@ -723,6 +723,338 @@
     return istListe ? aus : aus.join('');
   }
 
+  // ───────────────────────────── Bits, ASCII, XOR ─────────────────────────────
+
+  /** ASCII-Wert eines Zeichens (EH-Anlage: nur 32–126) */
+  function ascii(zeichen) {
+    pruefeText(zeichen, 'Zeichen');
+    if (zeichen.length !== 1) throw new KryptoFehler('Es wird genau ein Zeichen erwartet.');
+    const n = zeichen.charCodeAt(0);
+    if (n < 32 || n > 126) throw new KryptoFehler('Nur Zeichen mit ASCII-Wert 32 bis 126 sind erlaubt (keine Umlaute).');
+    return n;
+  }
+
+  function zeichenAusAscii(n) {
+    pruefeGanzzahl(n, 'ASCII-Wert');
+    if (n < 32 || n > 126) throw new KryptoFehler('Der ASCII-Wert muss zwischen 32 und 126 liegen.');
+    return String.fromCharCode(n);
+  }
+
+  /** Text → ASCII-Bytes (nicht normalisiert, Leerzeichen erlaubt, nur 32–126) */
+  function textZuBytes(text) {
+    return [...pruefeText(text)].map(ascii);
+  }
+
+  function bytesZuText(bytes) {
+    if (!Array.isArray(bytes)) throw new KryptoFehler('Es wird eine Liste von Bytes erwartet.');
+    return bytes.map(zeichenAusAscii).join('');
+  }
+
+  function pruefeBytes(bytes) {
+    if (!Array.isArray(bytes) || !bytes.every((b) => Number.isInteger(b) && b >= 0 && b <= 255)) {
+      throw new KryptoFehler('Bytes müssen ganze Zahlen von 0 bis 255 sein.');
+    }
+    return bytes;
+  }
+
+  /** Zahl → Bitfolge der Breite `breite`, höchstwertiges Bit links */
+  function byteZuBits(n, breite = 8) {
+    pruefeGanzzahl(n, 'Zahl');
+    pruefeGanzzahl(breite, 'Bitbreite');
+    if (breite < 1 || breite > 32) throw new KryptoFehler('Die Bitbreite muss zwischen 1 und 32 liegen.');
+    if (n < 0 || n >= 2 ** breite) throw new KryptoFehler(`Die Zahl passt nicht in ${breite} Bit.`);
+    return n.toString(2).padStart(breite, '0');
+  }
+
+  function reineBits(bits) {
+    const b = normBits(bits);
+    if (/[^01]/.test(b)) throw new KryptoFehler('Eine Bitfolge besteht nur aus 0 und 1.');
+    return b;
+  }
+
+  function bitsZuByte(bits) {
+    const b = reineBits(bits);
+    if (b.length === 0 || b.length > 32) throw new KryptoFehler('Es werden 1 bis 32 Bits erwartet.');
+    return parseInt(b, 2);
+  }
+
+  /** Text → Bits (8 je Zeichen), gruppiert zu `gruppe` Bits (0 = ohne Leerzeichen) */
+  function textZuBits(text, { gruppe = 4 } = {}) {
+    pruefeGanzzahl(gruppe, 'Gruppengröße');
+    const bits = textZuBytes(text).map((b) => byteZuBits(b)).join('');
+    return gruppe > 0 ? gruppieren(bits, gruppe) : bits;
+  }
+
+  function bitsZuText(bits) {
+    const b = reineBits(bits);
+    if (b.length % 8) throw new KryptoFehler('Die Anzahl der Bits muss ein Vielfaches von 8 sein.');
+    let aus = '';
+    for (let i = 0; i < b.length; i += 8) aus += zeichenAusAscii(parseInt(b.slice(i, i + 8), 2));
+    return aus;
+  }
+
+  function bitweise(folgen, op) {
+    if (folgen.length < 2) throw new KryptoFehler('Es werden mindestens zwei Bitfolgen erwartet.');
+    const b = folgen.map(reineBits);
+    if (!b.every((x) => x.length === b[0].length)) throw new KryptoFehler('Die Bitfolgen müssen gleich lang sein.');
+    let aus = '';
+    for (let i = 0; i < b[0].length; i++) aus += b.map((x) => Number(x[i])).reduce(op);
+    return aus;
+  }
+
+  /** bitweises XOR gleich langer Bitfolgen (Ergebnis ohne Leerzeichen) */
+  function xorBits(...folgen) {
+    return bitweise(folgen, (a, b) => a ^ b);
+  }
+
+  function undBits(a, b) {
+    return bitweise([a, b], (x, y) => x & y);
+  }
+
+  function oderBits(a, b) {
+    return bitweise([a, b], (x, y) => x | y);
+  }
+
+  /** Bytes (Liste) oder KRYPTOS-16-Block (Zahl 0–65535, 4 Hexziffern) → Hex in Großbuchstaben */
+  function hex(bytes) {
+    if (Number.isInteger(bytes)) {
+      if (bytes < 0 || bytes > 0xffff) throw new KryptoFehler('Ein Block hat 16 Bit (0 bis FFFF).');
+      return bytes.toString(16).toUpperCase().padStart(4, '0');
+    }
+    return pruefeBytes(bytes).map((b) => b.toString(16).toUpperCase().padStart(2, '0')).join('');
+  }
+
+  function vonHex(text) {
+    const h = pruefeText(text).replace(/\s+/g, '').toUpperCase();
+    if (/[^0-9A-F]/.test(h) || h.length % 2) throw new KryptoFehler('Hex besteht aus Paaren der Zeichen 0–9 und A–F.');
+    const aus = [];
+    for (let i = 0; i < h.length; i += 2) aus.push(parseInt(h.slice(i, i + 2), 16));
+    return aus;
+  }
+
+  /** zyklische Rotation einer Bitfolge nach links (negativ: rechts) */
+  function rotiereBits(bits, um) {
+    pruefeGanzzahl(um, 'Drehung');
+    const b = reineBits(bits);
+    if (b.length === 0) return '';
+    const r = mod(um, b.length);
+    return b.slice(r) + b.slice(0, r);
+  }
+
+  /**
+   * XOR mit wiederholtem Schlüssel: ver – Text (ASCII 32–126, nicht normalisiert) oder Bytes ⊕ Schlüsselbytes →
+   * Hex ohne Leerzeichen; ent – Hex ⊕ Schlüsselbytes → Text (ASCII 32–126). Schlüssel: Text oder Bytes.
+   */
+  function xor(textOderBytes, schluessel, richtung = 'ver') {
+    pruefeRichtung(richtung);
+    const k = Array.isArray(schluessel) ? pruefeBytes(schluessel) : textZuBytes(pruefeText(schluessel, 'Schlüssel'));
+    if (k.length === 0) throw new KryptoFehler('Der Schlüssel darf nicht leer sein.');
+    let daten;
+    if (richtung === 'ver') daten = Array.isArray(textOderBytes) ? pruefeBytes(textOderBytes) : textZuBytes(textOderBytes);
+    else daten = Array.isArray(textOderBytes) ? pruefeBytes(textOderBytes) : vonHex(textOderBytes);
+    const ergebnis = daten.map((b, i) => b ^ k[i % k.length]);
+    if (richtung === 'ver') return hex(ergebnis);
+    if (!ergebnis.every((b) => b >= 32 && b <= 126)) {
+      throw new KryptoFehler('Das Ergebnis enthält Bytes außerhalb von ASCII 32–126 (falscher Schlüssel?).');
+    }
+    return bytesZuText(ergebnis);
+  }
+
+  // ───────────────────────────── KRYPTOS-16 (SPEC W3 §0a) ─────────────────────────────
+
+  const SBOX = [0xc, 0xf, 0x3, 0x9, 0x7, 0xa, 0x8, 0x6, 0x1, 0x2, 0x4, 0xe, 0xb, 0x5, 0xd, 0x0];
+  const SBOX_INV = new Array(16);
+  SBOX.forEach((v, i) => (SBOX_INV[v] = i));
+
+  function pruefeBlock(x, name = 'Block') {
+    if (!Number.isInteger(x) || x < 0 || x > 0xffff) throw new KryptoFehler(`${name} muss eine 16-Bit-Zahl (0 bis FFFF) sein.`);
+    return x;
+  }
+
+  function pruefeRunden(r) {
+    if (!Number.isInteger(r) || r < 1) throw new KryptoFehler('Die Rundenzahl muss eine ganze Zahl ab 1 sein.');
+    return r;
+  }
+
+  /** K₁ = K, K_{i+1} = K_i um 4 Bit zyklisch nach links */
+  function k16Rundenschluessel(schluessel16, runde) {
+    pruefeBlock(schluessel16, 'Der Schlüssel');
+    pruefeRunden(runde);
+    const r = ((runde - 1) % 4) * 4;
+    return ((schluessel16 << r) | (schluessel16 >>> (16 - r))) & 0xffff;
+  }
+
+  /** S-Box (ent: S⁻¹) auf jede Zeile = Vierergruppe */
+  function k16Sbox(block16, richtung = 'ver') {
+    pruefeBlock(block16);
+    pruefeRichtung(richtung);
+    const t = richtung === 'ver' ? SBOX : SBOX_INV;
+    let aus = 0;
+    for (let z = 0; z < 4; z++) aus |= t[(block16 >>> (12 - 4 * z)) & 0xf] << (12 - 4 * z);
+    return aus;
+  }
+
+  /** Transposition der 4×4-Bitmatrix: Bit (z, s) → (s, z); selbstinvers */
+  function k16Transponiere(block16) {
+    pruefeBlock(block16);
+    let aus = 0;
+    for (let z = 0; z < 4; z++) {
+      for (let s = 0; s < 4; s++) {
+        const bit = (block16 >>> (15 - (4 * z + s))) & 1;
+        aus |= bit << (15 - (4 * s + z));
+      }
+    }
+    return aus;
+  }
+
+  /** eine Runde: ver XOR → S-Box → Transposition; ent Transposition → S⁻¹ → XOR */
+  function k16Runde(block16, rundenschluessel, richtung = 'ver') {
+    pruefeBlock(block16);
+    pruefeBlock(rundenschluessel, 'Der Rundenschlüssel');
+    pruefeRichtung(richtung);
+    if (richtung === 'ver') return k16Transponiere(k16Sbox(block16 ^ rundenschluessel));
+    return k16Sbox(k16Transponiere(block16), 'ent') ^ rundenschluessel;
+  }
+
+  function k16Verschluesseln(block16, schluessel16, { runden = 4, protokoll = false } = {}) {
+    pruefeBlock(block16);
+    pruefeBlock(schluessel16, 'Der Schlüssel');
+    pruefeRunden(runden);
+    let x = block16;
+    const liste = [];
+    for (let r = 1; r <= runden; r++) {
+      const k = k16Rundenschluessel(schluessel16, r);
+      const nachXor = x ^ k;
+      const nachSBox = k16Sbox(nachXor);
+      const nachTransposition = k16Transponiere(nachSBox);
+      if (protokoll) liste.push({ runde: r, eingang: x, schluessel: k, nachXor, nachSBox, nachTransposition });
+      x = nachTransposition;
+    }
+    return protokoll ? { ergebnis: x, runden: liste } : x;
+  }
+
+  function k16Entschluesseln(block16, schluessel16, { runden = 4 } = {}) {
+    pruefeBlock(block16);
+    pruefeBlock(schluessel16, 'Der Schlüssel');
+    pruefeRunden(runden);
+    let x = block16;
+    for (let r = runden; r >= 1; r--) x = k16Runde(x, k16Rundenschluessel(schluessel16, r), 'ent');
+    return x;
+  }
+
+  /** Lawine: je Runde die Bitpositionen (1 = höchstwertig … 16), die sich unterscheiden, wenn Bit `bit` kippt */
+  function k16Lawine(block16, schluessel16, bit, { runden = 4 } = {}) {
+    pruefeGanzzahl(bit, 'Bitposition');
+    if (bit < 1 || bit > 16) throw new KryptoFehler('Die Bitposition liegt zwischen 1 und 16.');
+    const a = k16Verschluesseln(block16, schluessel16, { runden, protokoll: true }).runden;
+    const b = k16Verschluesseln(block16 ^ (1 << (16 - bit)), schluessel16, { runden, protokoll: true }).runden;
+    return a.map((ra, i) => {
+      const d = ra.nachTransposition ^ b[i].nachTransposition;
+      const positionen = [];
+      for (let p = 1; p <= 16; p++) if ((d >>> (16 - p)) & 1) positionen.push(p);
+      return { runde: ra.runde, positionen, anzahl: positionen.length };
+    });
+  }
+
+  /** Betriebsmodi ECB/CBC auf einer Liste von 16-Bit-Blöcken (CBC: Cⱼ = E(Pⱼ ⊕ Cⱼ₋₁), C₀ = IV) */
+  function k16Modus(bloecke, schluessel, art, iv = null, { richtung = 'ver', runden = 4 } = {}) {
+    if (!Array.isArray(bloecke)) throw new KryptoFehler('Es wird eine Liste von Blöcken erwartet.');
+    bloecke.forEach((b) => pruefeBlock(b));
+    pruefeRichtung(richtung);
+    if (art !== 'ECB' && art !== 'CBC') throw new KryptoFehler('Der Betriebsmodus muss „ECB“ oder „CBC“ sein.');
+    if (art === 'CBC') pruefeBlock(iv, 'Der Initialisierungsvektor');
+    const E = (x) => k16Verschluesseln(x, schluessel, { runden });
+    const D = (x) => k16Entschluesseln(x, schluessel, { runden });
+    if (art === 'ECB') return bloecke.map(richtung === 'ver' ? E : D);
+    const aus = [];
+    let vorher = iv;
+    for (const b of bloecke) {
+      if (richtung === 'ver') {
+        vorher = E(b ^ vorher);
+        aus.push(vorher);
+      } else {
+        aus.push(D(b) ^ vorher);
+        vorher = b;
+      }
+    }
+    return aus;
+  }
+
+  /** Text → 16-Bit-Blöcke mit Auffüllen (immer): ungerade → Byte 01, gerade → Block 0202 (§0a.7) */
+  function k16TextZuBloecken(text) {
+    const bytes = textZuBytes(text);
+    if (bytes.length % 2) bytes.push(1);
+    else bytes.push(2, 2);
+    const aus = [];
+    for (let i = 0; i < bytes.length; i += 2) aus.push((bytes[i] << 8) | bytes[i + 1]);
+    return aus;
+  }
+
+  /** Blöcke → Text, Füllbytes werden geprüft und entfernt */
+  function k16BloeckeZuText(bloecke) {
+    if (!Array.isArray(bloecke) || bloecke.length === 0) throw new KryptoFehler('Es wird eine nicht leere Liste von Blöcken erwartet.');
+    const bytes = [];
+    for (const b of bloecke) bytes.push(pruefeBlock(b) >>> 8, b & 0xff);
+    const n = bytes[bytes.length - 1];
+    if ((n !== 1 && n !== 2) || (n === 2 && bytes[bytes.length - 2] !== 2)) {
+      throw new KryptoFehler('Die Füllbytes am Ende sind ungültig (01 bzw. 02 02 erwartet).');
+    }
+    return bytesZuText(bytes.slice(0, bytes.length - n));
+  }
+
+  const kryptos16 = {
+    SBOX: SBOX.slice(),
+    SBOX_INV: SBOX_INV.slice(),
+    rundenschluessel: k16Rundenschluessel,
+    sbox: k16Sbox,
+    transponiere: k16Transponiere,
+    runde: k16Runde,
+    verschluesseln: k16Verschluesseln,
+    entschluesseln: k16Entschluesseln,
+    lawine: k16Lawine,
+    modus: k16Modus,
+    textZuBloecken: k16TextZuBloecken,
+    bloeckeZuText: k16BloeckeZuText,
+  };
+
+  // ───────────────────────────── KRYPTOS-Hash (SPEC W5 §0a) ─────────────────────────────
+
+  /** KH: normalisieren (nur Buchstaben), A = 1 … Z = 26, h = 0, je Buchstabe h ← (3h + w) mod 29 */
+  function kryptosHash(text, { protokoll = false } = {}) {
+    let h = 0;
+    const schritte = [];
+    for (const c of nurBuchstaben(text)) {
+      const w = ALPHABET.indexOf(c) + 1;
+      const summe = 3 * h + w;
+      const nachher = summe % 29;
+      if (protokoll) schritte.push({ buchstabe: c.toLowerCase(), w, vorher: h, summe, nachher });
+      h = nachher;
+    }
+    return protokoll ? { wert: h, schritte } : { wert: h };
+  }
+
+  /** erste Kollision in kürzester-zuerst-Reihenfolge über `alphabet` (Standard a–z), höchstens `max` Versuche */
+  kryptosHash.kollisionSuchen = function (text, { max = 10000, alphabet = 'abcdefghijklmnopqrstuvwxyz' } = {}) {
+    pruefeGanzzahl(max, 'Höchstzahl der Versuche');
+    const zeichen = [...new Set(nurBuchstaben(pruefeText(alphabet, 'Alphabet')).toLowerCase())];
+    if (zeichen.length === 0) throw new KryptoFehler('Das Alphabet muss mindestens einen Buchstaben enthalten.');
+    const ziel = kryptosHash(text).wert;
+    const eigen = nurBuchstaben(text);
+    let versuche = 0;
+    const stellen = [0];
+    while (versuche < max) {
+      const kandidat = stellen.map((i) => zeichen[i]).join('');
+      versuche++;
+      if (kandidat.toUpperCase() !== eigen && kryptosHash(kandidat).wert === ziel) return { text: kandidat, wert: ziel, versuche };
+      // nächster Kandidat (Zähler zur Basis |alphabet|, bei Überlauf eine Stelle länger)
+      let p = stellen.length - 1;
+      while (p >= 0 && stellen[p] === zeichen.length - 1) stellen[p--] = 0;
+      if (p < 0) stellen.unshift(0);
+      else stellen[p]++;
+    }
+    return null;
+  };
+
   return {
     // Grundlagen
     ALPHABET,
@@ -767,5 +1099,24 @@
     spaltentransposition,
     umkehrung,
     blockrotation,
+    // Bits, ASCII, XOR
+    ascii,
+    zeichenAusAscii,
+    textZuBytes,
+    bytesZuText,
+    byteZuBits,
+    bitsZuByte,
+    textZuBits,
+    bitsZuText,
+    xorBits,
+    undBits,
+    oderBits,
+    xor,
+    hex,
+    vonHex,
+    rotiereBits,
+    // Moderne Toy-Verfahren
+    kryptos16,
+    kryptosHash,
   };
 });

@@ -340,11 +340,11 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `ascii(zeichen)` / `zeichenAusAscii(n)` | Codes 32–126 (EH-Anlage), sonst `KryptoFehler` |
 | `textZuBytes(text)` / `bytesZuText(bytes)` | ASCII; Text **nicht** normalisiert (Leerzeichen erlaubt), nur 32–126 |
 | `byteZuBits(n, breite = 8)` / `bitsZuByte(bits)` | MSB links |
-| `textZuBits(text, { gruppe = 4 })` / `bitsZuText(bits)` | 8 Bit je Zeichen |
+| `textZuBits(text, { gruppe = 4 })` / `bitsZuText(bits)` | 8 Bit je Zeichen; `gruppe` Bits je Gruppe mit Leerzeichen (`0` = ohne) |
 | `xorBits(a, b, …)` | bitweise XOR gleich langer Bitfolgen (nach `normBits`) |
 | `undBits(a, b)`, `oderBits(a, b)` | nur für die Diagnose |
-| `xor(textOderBytes, schluessel, richtung)` | Bytes ⊕ Schlüsselbytes (Schlüssel wiederholt); `ver` liefert Hex in Großbuchstaben ohne Leerzeichen, `ent` erwartet Hex und liefert Text |
-| `hex(bytes)` / `vonHex(text)` | Zweiergruppen-tauglich, Großbuchstaben |
+| `xor(textOderBytes, schluessel, richtung)` | Bytes ⊕ Schlüsselbytes (Schlüssel als Text oder Bytes, wiederholt); `ver` liefert Hex in Großbuchstaben ohne Leerzeichen, `ent` erwartet Hex (oder Bytes) und liefert Text – Ergebnisbytes außerhalb 32–126 → `KryptoFehler`. Test: `xor('FUNK', 'AB')` = `07170F09` |
+| `hex(bytes)` / `vonHex(text)` | Zweiergruppen-tauglich, Großbuchstaben; `hex(zahl)` mit einer Zahl 0–65535 = KRYPTOS-16-Block → 4 Hexziffern (`hex(0x4F4B)` = `4F4B`) |
 | `rotiereBits(bits, um)` | zyklisch links (negativ: rechts) |
 
 **Moderne Toy-Verfahren (Platzhalter mit fester API)**
@@ -353,12 +353,14 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 |---|---|
 | `kryptos16.rundenschluessel(schluessel16, runde)` | Definition: `quellen/specs/SPEC_Kryptos_W3_Maschinen.md §0a` |
 | `kryptos16.runde(block16, rundenschluessel, richtung)` | eine Runde in der Reihenfolge **XOR mit Rundenschlüssel → S-Box je Zeile → Transposition** (W3 §0a); kein abschließendes XOR nach der letzten Runde |
-| `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | `protokoll: true` liefert Zwischenstände je Runde (Runden-Labor) |
+| `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | Blöcke und Schlüssel als Zahlen 0–FFFF; `protokoll: true` liefert `{ ergebnis, runden: [{ runde, eingang, schluessel, nachXor, nachSBox, nachTransposition }] }` (Runden-Labor) |
 | `kryptos16.entschluesseln(…)` | Umkehrung |
-| `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird |
-| `kryptos16.modus(bloecke, schluessel, 'ECB'|'CBC', iv)` | Betriebsmodi für das Pixelbild-Experiment |
-| `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` |
-| `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment) |
+| `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird: `[{ runde, positionen, anzahl }]`; Bitnummern 1 (b1, höchstwertig) … 16 |
+| `kryptos16.modus(bloecke, schluessel, 'ECB'|'CBC', iv, { richtung = 'ver', runden = 4 })` | Betriebsmodi für das Pixelbild-Experiment und die Fehlerfortpflanzung (W3-L2-07); `iv` nur bei CBC (Pflicht) |
+| `kryptos16.SBOX`, `kryptos16.SBOX_INV`, `kryptos16.sbox(block16, richtung)`, `kryptos16.transponiere(block16)` | Tabellen und Einzelschritte (Runden-Labor, Aufgaben W3-L2-02/03) |
+| `kryptos16.textZuBloecken(text)` / `kryptos16.bloeckeZuText(bloecke)` | ASCII → 16-Bit-Blöcke mit Auffüllen nach §0a.7 (immer: ungerade → Byte `01`, gerade → Block `0202`) bzw. zurück mit Prüfung und Entfernen der Füllbytes |
+| `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` mit `schritte: [{ buchstabe, w, vorher, summe, nachher }]` (Rundentabelle) |
+| `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment): Kandidaten kürzeste zuerst über `alphabet` (Std. a–z), der Text selbst zählt nicht; `{ text, wert, versuche }` oder `null` |
 
 **Definitionen (inzwischen festgelegt, verbindlich):**
 

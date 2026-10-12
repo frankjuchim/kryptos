@@ -990,3 +990,390 @@ test('ver∘ent = id (500 Zufallsfälle je Verfahren) – Transpositionen', () =
     assert.equal(K.fleissner(fl, 4, s1, 'ent', { drehung: d }), n + 'X'.repeat(fl.length - n.length));
   }
 });
+
+// ───────────────────────────── Task 13: Bits, ASCII, XOR ─────────────────────────────
+
+const B8 = (s) => s.split('·').map((x) => K.bitsZuByte(x)); // „0100 1111 · 0101 0011“ → Bytes
+const bits8 = (bytes) => bytes.map((b) => K.byteZuBits(b)).join('');
+
+test('ascii Bereich 32–126', () => {
+  assert.equal(K.ascii('A'), 65);
+  assert.throws(() => K.ascii('ä'), K.KryptoFehler);
+  assert.equal(K.ascii(' '), 32);
+  assert.equal(K.ascii('~'), 126);
+  assert.throws(() => K.ascii('AB'), K.KryptoFehler);
+  assert.throws(() => K.ascii('\n'), K.KryptoFehler);
+  assert.equal(K.zeichenAusAscii(82), 'R');
+  assert.throws(() => K.zeichenAusAscii(127), K.KryptoFehler);
+  assert.throws(() => K.zeichenAusAscii(31), K.KryptoFehler);
+  // SPEC W0 §12: ASCII K / G / R / v
+  assert.deepEqual(['K', 'G', 'R', 'v'].map(K.ascii), [75, 71, 82, 118]);
+});
+
+test('Bytes, Bits, Hex', () => {
+  assert.deepEqual(K.textZuBytes('OK ok'), [79, 75, 32, 111, 107]);
+  assert.equal(K.bytesZuText([79, 75]), 'OK');
+  assert.throws(() => K.textZuBytes('Grüße'), K.KryptoFehler);
+  assert.throws(() => K.bytesZuText([200]), K.KryptoFehler);
+  assert.equal(K.byteZuBits(65), '01000001');
+  assert.equal(K.byteZuBits(5, 4), '0101');
+  assert.throws(() => K.byteZuBits(256), K.KryptoFehler);
+  assert.equal(K.bitsZuByte('0100 0001'), 65);
+  assert.throws(() => K.bitsZuByte('0102'), K.KryptoFehler);
+  assert.throws(() => K.bitsZuByte(''), K.KryptoFehler);
+  assert.equal(K.textZuBits('OK'), '0100 1111 0100 1011'); // §0a.1 Beispiel „OK“
+  assert.equal(K.textZuBits('OK', { gruppe: 8 }), '01001111 01001011');
+  assert.equal(K.textZuBits('OK', { gruppe: 0 }), '0100111101001011');
+  assert.equal(K.textZuBits(''), '');
+  assert.equal(K.bitsZuText('0100 1111 0100 1011'), 'OK');
+  assert.throws(() => K.bitsZuText('0100 111'), K.KryptoFehler);
+  assert.equal(K.hex([0x07, 0x17, 0x0f, 0x09]), '07170F09');
+  assert.equal(K.hex(0x4f4b), '4F4B'); // ein KRYPTOS-16-Block (Zahl) → 4 Hexziffern
+  assert.equal(K.hex(0x0202), '0202');
+  assert.deepEqual(K.vonHex('07 17 0f 09'), [7, 23, 15, 9]);
+  assert.throws(() => K.vonHex('0G'), K.KryptoFehler);
+  assert.throws(() => K.vonHex('071'), K.KryptoFehler);
+  assert.equal(K.hex(K.vonHex('ABCD')), 'ABCD');
+});
+
+test('xor selbstinvers', () => assert.equal(K.xorBits(K.xorBits('01000001', '10011100'), '10011100'), '01000001'));
+
+test('xorBits, undBits, oderBits, rotiereBits', () => {
+  assert.equal(K.xorBits('0100 1111', '1010 0110'), '11101001'); // W3-L1-02
+  assert.equal(K.xorBits('1011 0110', '0110 1101'), '11011011'); // W3-B-02
+  assert.equal(K.xorBits('11001010', '01100110'), '10101100'); // Akte W3·1 A2
+  assert.equal(K.xorBits('10010110', '01011010'), '11001100'); // WU-W3-02
+  assert.equal(K.xorBits('1100', '1010', '0110'), '0000'); // mehrere Operanden
+  assert.equal(K.undBits('1100', '1010'), '1000');
+  assert.equal(K.oderBits('1100', '1010'), '1110');
+  assert.throws(() => K.xorBits('0101', '011'), K.KryptoFehler);
+  assert.throws(() => K.xorBits('0102', '0110'), K.KryptoFehler);
+  assert.equal(K.rotiereBits('0100 0011', 1), '10000110');
+  assert.equal(K.rotiereBits('10000110', -1), '01000011');
+  assert.equal(K.rotiereBits('1011', 4), '1011');
+  assert.equal(K.rotiereBits('', 3), '');
+});
+
+test('Video 04: J ⊕ 10011100, One-Time-Pad NEU/ALT', () => {
+  const j = K.byteZuBits(K.ascii('J'));
+  assert.equal(K.xorBits(j, '10011100'), '11010110');
+  assert.equal(K.bitsZuText(K.xorBits('11010110', '10011100')), 'J');
+  const schl = ['11010011', '01101001', '10101110'];
+  const c1 = [...'NEU'].map((c, i) => K.xorBits(K.byteZuBits(K.ascii(c)), schl[i]));
+  const c2 = [...'ALT'].map((c, i) => K.xorBits(K.byteZuBits(K.ascii(c)), schl[i]));
+  assert.deepEqual(c1, ['10011101', '00101100', '11111011']);
+  assert.deepEqual(c2, ['10010010', '00100101', '11111010']);
+  assert.equal(K.xorBits(c1[0], c2[0]), '00001111');
+});
+
+test('Bits und XOR: SPEC W3 §12 (Level 3.1, Akte W3·1, Boss, Warm-up)', () => {
+  // Archivfund: FUNK ⊕ Schlüsselstreifen
+  const st = [['1111 0100', '1011 0010'], ['0110 1100', '0011 1001'], ['1000 1011', '1100 0101'], ['0010 0101', '0110 1110']];
+  assert.equal(K.bitsZuText(st.map(([a, b]) => K.xorBits(a, b)).join('')), 'FUNK');
+  // W3-L1-01, L1-04, L1-05, L1-06
+  assert.equal(K.textZuBits('OST'), '0100 1111 0101 0011 0101 0100');
+  assert.equal(K.xor('OST', [0b10100110, 0b01011100, 0b11110000]), 'E90FA4');
+  assert.equal(bits8(K.vonHex('E90FA4')), ohne('1110 1001 0000 1111 1010 0100'));
+  assert.equal(K.xor(K.hex([0b01101111, 0b10011111, 0b00011000]), [0b00110101, 0b11001010, 0b01011111], 'ent'), 'ZUG');
+  const c6 = [0b10011100, 0b00100100, 0b11001110, 0b01100011];
+  assert.equal(bits8(K.vonHex(K.xor(c6, 'WEST'))), ohne('1100 1011 0110 0001 1001 1101 0011 0111'));
+  assert.equal(bits8(K.vonHex(K.xor(c6, 'NORD'))), ohne('1101 0010 0110 1011 1001 1100 0010 0111'));
+  // W3-L1-07: zweimal derselbe Schlüssel → C1 ⊕ C2 = M1 ⊕ M2; Crib „NORD“
+  const C1 = [0b00111111, 0b11100011, 0b01001001, 0b10100000, 0b11010011, 0b01100011];
+  const C2 = [0b00100010, 0b11111001, 0b01011110, 0b10100000, 0b11010011, 0b01100011];
+  const D = K.vonHex(K.xor(C1, C2));
+  assert.equal(bits8(D), ohne('0001 1101 0001 1010 0001 0111 0000 0000 0000 0000 0000 0000'));
+  assert.deepEqual([0, 1, 2].map((p) => K.xor(K.hex(D.slice(p, p + 4)), 'NORD', 'ent')), ['SUED', 'TXRD', 'YORD']);
+  assert.equal(K.xor(K.hex(D), 'NORDEN', 'ent'), 'SUEDEN');
+  // Akte W3·1: A1, A3, A4, A5, A6
+  assert.equal(K.bitsZuText('01010111 01001000'), 'WH');
+  assert.equal(bits8(K.vonHex(K.xor('BOJE', B8('0110 1001 · 1111 0000 · 0011 0011 · 1010 0101')))), ohne('0010 1011 1011 1111 0111 1001 1110 0000'));
+  const C4 = B8('0001 1110 · 1101 1010 · 0110 0111 · 1001 0001');
+  assert.equal(bits8(K.vonHex(K.xor(C4, 'HALT'))), ohne('0101 0110 1001 1011 0010 1011 1100 0101'));
+  assert.equal(bits8(K.vonHex(K.xor(C4, 'LAUF'))), ohne('0101 0010 1001 1011 0011 0010 1101 0111'));
+  const A1 = B8('1001 0011 · 0111 0011 · 1110 1001 · 0000 0001 · 1011 0100 · 0101 0110 · 1100 0100');
+  const A2 = B8('1000 0100 · 0111 0111 · 1110 0100 · 0001 0010 · 1010 0111 · 0101 1011 · 1101 1000');
+  const DA = K.vonHex(K.xor(A1, A2));
+  assert.equal(bits8(DA), ohne('0001 0111 0000 0100 0000 1101 0001 0011 0001 0011 0000 1101 0001 1100'));
+  assert.deepEqual([0, 1, 2, 3, 4].map((p) => K.xor(K.hex(DA.slice(p, p + 3)), 'UHR', 'ent')), ['BL_', 'QEA', 'X[A', 'F[_', 'FEN']);
+  assert.equal(K.xor(K.hex(DA), 'VIERUHR', 'ent'), 'AMHAFEN');
+  assert.equal(bits8(K.vonHex(K.xor('EBBE', [0b00100001]))), ohne('0110 0100 0110 0011 0110 0011 0110 0100'));
+  // Baukasten XOR: „FUNK“ mit AB → 07 17 0F 09
+  assert.equal(K.xor('FUNK', 'AB'), '07170F09');
+  assert.equal(K.xor('07 17 0F 09', 'AB', 'ent'), 'FUNK');
+  // Boss: B-01, B-06, B-10 (TELEX-ROT), B-13 (Perioden), B-15
+  assert.equal(K.byteZuBits(K.ascii('R')), '01010010');
+  assert.equal(K.xor(K.hex([0b00000001, 0b00010110, 0b00000001]), 'OST', 'ent'), 'NEU');
+  const ks = ['01000011'];
+  for (let i = 0; i < 3; i++) ks.push(K.rotiereBits(ks[i], 1));
+  assert.deepEqual(ks, ['01000011', '10000110', '00001101', '00011010']);
+  assert.equal(bits8(K.vonHex(K.xor('TOR', ks.map(K.bitsZuByte)))), ohne('0001 0111 1100 1001 0101 1111'));
+  const periode = (k) => {
+    const b = K.byteZuBits(k);
+    for (let p = 1; p <= 8; p++) if (K.rotiereBits(b, p) === b) return p;
+    return null;
+  };
+  const per = {};
+  for (let k = 0; k < 256; k++) per[periode(k)] = (per[periode(k)] || 0) + 1;
+  assert.deepEqual(per, { 1: 2, 2: 2, 4: 12, 8: 240 });
+  const C15 = [0b00001010, 0b00000100, 0b00010001, 0b00010110, 0b00000100, 0b00000101, 0b00000000, 0b00000100, 0b00001010, 0b00000110];
+  assert.equal(K.xor(K.hex(C15.slice(0, 3)), 'HEU', 'ent'), 'BAD');
+  assert.equal(K.xor(K.hex(C15), 'BAD', 'ent'), 'HEUTEABEND');
+  // Warm-up W3-01; P3-Falle Bit 5 (W3-L2-07 Merkkasten): „ “ ⊕ 0000 1000 = „(“
+  assert.equal(K.bitsZuText('01001110'), 'N');
+  assert.equal(K.xor(K.hex([K.ascii(' ')]), [0b00001000], 'ent'), '(');
+});
+
+test('xor: Grenzfälle', () => {
+  assert.equal(K.xor('', 'AB'), '');
+  assert.equal(K.xor('', 'AB', 'ent'), '');
+  assert.throws(() => K.xor('ABC', ''), K.KryptoFehler);
+  assert.throws(() => K.xor('ABC', []), K.KryptoFehler);
+  assert.throws(() => K.xor('Grüße', 'A'), K.KryptoFehler);
+  assert.equal(K.xor('00', 'A', 'ent'), 'A');
+  assert.throws(() => K.xor('41', 'A', 'ent'), K.KryptoFehler); // Ergebnis 0x00 liegt nicht in ASCII 32–126
+  assert.throws(() => K.xor('4', 'A', 'ent'), K.KryptoFehler);
+});
+
+// ───────────────────────────── KRYPTOS-16 ─────────────────────────────
+
+const K16 = K.kryptos16;
+const BIN = (s) => parseInt(ohne(s), 2);
+const BLK = (x) => K.byteZuBits(x, 16).replace(/(.{4})(?!$)/g, '$1 ');
+
+test('kryptos16 S-Box und Inverse (SPEC W3 §0a.4)', () => {
+  assert.equal(K16.SBOX.map((v) => v.toString(16).toUpperCase()).join(''), 'CF397A86124EB5D0');
+  assert.equal(K16.SBOX_INV.map((v) => v.toString(16).toUpperCase()).join(''), 'F892AD74635C0EB1');
+  for (let x = 0; x < 16; x++) {
+    assert.notEqual(K16.SBOX[x], x);
+    assert.notEqual(K16.SBOX[K16.SBOX[x]], x);
+    assert.equal(K16.SBOX_INV[K16.SBOX[x]], x);
+  }
+  // W3-L2-02, Akte W3·2 A1, WU-W3-06
+  assert.deepEqual([0b1011, 0b0110].map((x) => K16.SBOX[x]), [0b1110, 0b1000]);
+  assert.deepEqual([0b1110, 0b0000].map((x) => K16.SBOX_INV[x]), [0b1011, 0b1111]);
+  assert.deepEqual([0, 15, 9].map((x) => K16.SBOX[x]), [0b1100, 0b0000, 0b0010]);
+  assert.deepEqual([9, 6].map((x) => K16.SBOX_INV[x]), [0b0011, 0b0111]);
+  assert.equal(K16.SBOX[K16.SBOX[6]], 0b0001);
+  assert.equal(K16.SBOX_INV[8], 0b0110);
+});
+
+test('kryptos16 Einzelschritte: S-Box je Zeile, Transposition', () => {
+  assert.equal(BLK(K16.sbox(BIN('1110 1100 0010 0110'))), '1101 1011 0011 1000');
+  assert.equal(BLK(K16.sbox(BIN('1101 1011 0011 1000'), 'ent')), '1110 1100 0010 0110');
+  assert.equal(BLK(K16.transponiere(BIN('1101 1011 0011 1000'))), '1101 1000 0110 1110'); // W3-L2-03
+  assert.equal(BLK(K16.transponiere(BIN('0010 0110 0001 1100'))), '0001 0101 1100 0010'); // Akte W3·2 A2
+  assert.equal(BLK(K16.transponiere(0xf000)), '1000 1000 1000 1000'); // WU-W3-07
+  // Boss B-07: S-Box, dann Transposition
+  const s = K16.sbox(BIN('1011 0100 0011 1001'));
+  assert.equal(BLK(s), '1110 0111 1001 0010');
+  assert.equal(BLK(K16.transponiere(s)), '1010 1100 1101 0110');
+});
+
+test('kryptos16 Schlüsselplan (§0a.2, W3-L2-05, Boss B-08, Akte W3·2 Abi d)', () => {
+  assert.deepEqual([1, 2, 3, 4].map((r) => K.hex(K16.rundenschluessel(0xa36d, r))), ['A36D', '36DA', '6DA3', 'DA36']);
+  const k = BIN('0101 1100 1001 1110');
+  assert.deepEqual([2, 3, 4].map((r) => BLK(K16.rundenschluessel(k, r))), ['1100 1001 1110 0101', '1001 1110 0101 1100', '1110 0101 1100 1001']);
+  assert.equal(BLK(K16.rundenschluessel(BIN('0011 1010 1100 0101'), 3)), '1100 0101 0011 1010');
+  assert.equal(K16.rundenschluessel(0x7777, 2), 0x7777);
+  assert.equal(K16.rundenschluessel(0xa36d, 5), 0xa36d);
+  // schwache Schlüssel: 16 mit vier gleichen Rundenschlüsseln, 240 der Form k1 k2 k1 k2 (k1 ≠ k2)
+  let schwach = 0;
+  let periode2 = 0;
+  for (let x = 0; x < 65536; x++) {
+    const r = [1, 2, 3, 4].map((i) => K16.rundenschluessel(x, i));
+    if (r.every((v) => v === x)) schwach++;
+    else if (r[2] === r[0] && r[3] === r[1]) periode2++;
+  }
+  assert.equal(schwach, 16);
+  assert.equal(periode2, 240);
+  assert.throws(() => K16.rundenschluessel(0x10000, 1), K.KryptoFehler);
+  assert.throws(() => K16.rundenschluessel(1, 0), K.KryptoFehler);
+});
+
+test('kryptos16 Testvektor', () => {
+  const erg = [1, 2, 3, 4].map((r) => K.hex(K16.verschluesseln(0x4f4b, 0xa36d, { runden: r })));
+  assert.deepEqual(erg, ['D86E', 'EF3D', '116D', 'F5F8']);
+});
+
+test('kryptos16 Testvektoren §0a.6 (alle 24 Werte)', () => {
+  const tv = [
+    [0x4f4b, 0xa36d, ['D86E', 'EF3D', '116D', 'F5F8']],
+    [0x4f4a, 0xa36d, ['C97E', '0311', 'E635', 'F24D']],
+    [0x4a41, 0x5c9e, ['CA8A', 'E804', '68A1', '240D']],
+    [0x4f4b, 0x0000, ['1BBA', 'EFE8', 'AA0B', '3F10']],
+    [0x0000, 0x2b7e, ['57E9', 'FF18', '744F', '4081']],
+    [0xffff, 0x2b7e, ['1D5F', '2F21', 'E7C4', 'DA61']],
+  ];
+  for (const [p, k, soll] of tv) {
+    assert.deepEqual([1, 2, 3, 4].map((r) => K.hex(K16.verschluesseln(p, k, { runden: r }))), soll, K.hex(p));
+    assert.equal(K16.entschluesseln(K16.verschluesseln(p, k), k), p);
+  }
+  assert.equal(K16.verschluesseln(0x4f4b, 0xa36d), 0xf5f8); // Standard R = 4
+});
+
+test('kryptos16 Protokoll: KRYPTOS-16/2 „OK“ (§0a.6), „NO“ (W3-L2-04), „JA“ (Akte W3·2 A4)', () => {
+  const p = K16.verschluesseln(0x4f4b, 0xa36d, { runden: 2, protokoll: true });
+  assert.equal(p.ergebnis, 0xef3d);
+  const zeile = (r) => [r.eingang, r.schluessel, r.nachXor, r.nachSBox, r.nachTransposition].map(BLK);
+  assert.deepEqual(zeile(p.runden[0]), ['0100 1111 0100 1011', '1010 0011 0110 1101', '1110 1100 0010 0110', '1101 1011 0011 1000', '1101 1000 0110 1110']);
+  assert.deepEqual(zeile(p.runden[1]), ['1101 1000 0110 1110', '0011 0110 1101 1010', '1110 1110 1011 0100', '1101 1101 1110 0111', '1110 1111 0011 1101']);
+  assert.equal(p.runden[1].runde, 2);
+  const no = K16.verschluesseln(K16.textZuBloecken('NO')[0], BIN('0011 1111 0000 1000'), { runden: 1, protokoll: true });
+  assert.deepEqual(zeile(no.runden[0]).filter((x, i) => i !== 1), ['0100 1110 0100 1111', '0111 0001 0100 0111', '0110 1111 0111 0110', '0100 1111 1111 0110']);
+  const ja = K16.verschluesseln(0x4a41, 0x5c9e, { runden: 2, protokoll: true });
+  assert.deepEqual(zeile(ja.runden[0]), ['0100 1010 0100 0001', '0101 1100 1001 1110', '0001 0110 1101 1111', '1111 1000 0101 0000', '1100 1010 1000 1010']);
+  assert.deepEqual(zeile(ja.runden[1]), ['1100 1010 1000 1010', '1100 1001 1110 0101', '0000 0011 0110 1111', '1100 1001 1000 0000', '1110 1000 0000 0100']);
+  // runde() einzeln und rückwärts
+  assert.equal(K16.runde(0x4f4b, 0xa36d), 0xd86e);
+  assert.equal(K16.runde(0xd86e, 0xa36d, 'ent'), 0x4f4b);
+  // W3-L2-06: Werte „OJ“ nach R = 1 … 4
+  assert.deepEqual([1, 2, 3, 4].map((r) => BLK(K16.verschluesseln(0x4f4a, 0xa36d, { runden: r }))), ['1100 1001 0111 1110', '0000 0011 0001 0001', '1110 0110 0011 0101', '1111 0010 0100 1101']);
+});
+
+test('kryptos16 ent∘ver = id (alle 65536 Blöcke, K=A36D)', () => {
+  const gesehen = new Uint8Array(65536);
+  for (let p = 0; p < 65536; p++) {
+    const c = K16.verschluesseln(p, 0xa36d);
+    assert.equal(gesehen[c], 0); // bijektiv
+    gesehen[c] = 1;
+    if (K16.entschluesseln(c, 0xa36d) !== p) assert.fail(`ent∘ver ≠ id für ${K.hex(p)}`);
+  }
+  for (let i = 0; i < 2000; i++) {
+    const p = ganz(0, 65535);
+    const k = ganz(0, 65535);
+    const r = ganz(1, 8);
+    assert.equal(K16.entschluesseln(K16.verschluesseln(p, k, { runden: r }), k, { runden: r }), p);
+  }
+});
+
+test('kryptos16 Lawine (W3-L2-06, Akte W3·2 A5, §0a.8 exakt)', () => {
+  assert.deepEqual(K16.lawine(0x4f4b, 0xa36d, 16).map((r) => r.anzahl), [3, 8, 10, 8]);
+  assert.deepEqual(K16.lawine(0x4a41, 0x5c9e, 16).map((r) => r.anzahl), [3, 7, 9, 7]);
+  const l = K16.lawine(0x4f4b, 0xa36d, 16, { runden: 1 });
+  assert.equal(l.length, 1);
+  assert.equal(l[0].runde, 1);
+  assert.equal(l[0].positionen.length, 3);
+  assert.ok(l[0].positionen.every((b) => b >= 1 && b <= 16));
+  assert.throws(() => K16.lawine(0, 0, 17), K.KryptoFehler);
+  // exakt über alle 65 536 Klartexte und 16 Bitpositionen, K = 2B7E
+  const soll = [[2.63, 16.4, 2, 4], [6.89, 43.1, 4, 16], [7.71, 48.2, 2, 16], [7.9, 49.4, 1, 16]];
+  const pc = (x) => { let n = 0; while (x) { n += x & 1; x >>>= 1; } return n; };
+  for (let r = 1; r <= 4; r++) {
+    const C = new Uint16Array(65536);
+    for (let p = 0; p < 65536; p++) C[p] = K16.verschluesseln(p, 0x2b7e, { runden: r });
+    let summe = 0; let min = 99; let max = 0;
+    for (let p = 0; p < 65536; p++) for (let i = 0; i < 16; i++) {
+      const d = pc(C[p] ^ C[p ^ (1 << i)]);
+      summe += d; if (d < min) min = d; if (d > max) max = d;
+    }
+    const mittel = summe / 65536 / 16;
+    assert.deepEqual([Math.round(mittel * 100) / 100, Math.round((mittel / 16) * 1000) / 10, min, max], soll[r - 1], `R = ${r}`);
+  }
+});
+
+test('kryptos16 Vollständigkeit: nach 1 Runde 64/256, nach 2 Runden 256/256 Abhängigkeiten (§0a.8)', () => {
+  for (const [r, soll] of [[1, 64], [2, 256]]) {
+    let abh = 0;
+    for (let i = 0; i < 16; i++) {
+      let maske = 0;
+      for (let p = 0; p < 65536; p += 97) maske |= K16.verschluesseln(p, 0x2b7e, { runden: r }) ^ K16.verschluesseln(p ^ (1 << (15 - i)), 0x2b7e, { runden: r });
+      for (let j = 0; j < 16; j++) if ((maske >> j) & 1) abh++;
+    }
+    assert.equal(abh, soll);
+  }
+});
+
+test('kryptos16 Padding', () => {
+  // §0a.7: ungerade Zeichenzahl → Byte 01, gerade → Block 0202
+  assert.deepEqual(K16.textZuBloecken('OST').map(BLK), ['0100 1111 0101 0011', '0101 0100 0000 0001']);
+  assert.deepEqual(K16.textZuBloecken('JA').map(BLK), ['0100 1010 0100 0001', '0000 0010 0000 0010']);
+  assert.deepEqual(K16.textZuBloecken('').map(K.hex), ['0202']);
+  assert.deepEqual(K16.textZuBloecken('NEIN').map(K.hex), ['4E45', '494E', '0202']);
+  assert.equal(K16.bloeckeZuText(K16.textZuBloecken('OST')), 'OST');
+  assert.equal(K16.bloeckeZuText(K16.textZuBloecken('JA')), 'JA');
+  assert.equal(K16.bloeckeZuText(K16.textZuBloecken('')), '');
+  assert.throws(() => K16.bloeckeZuText([0x4a41]), K.KryptoFehler); // Füllbytes fehlen
+  assert.throws(() => K16.bloeckeZuText([0x4a41, 0x0203]), K.KryptoFehler);
+  assert.throws(() => K16.textZuBloecken('Grüße'), K.KryptoFehler);
+});
+
+test('kryptos16 Modi ECB/CBC (Akte W3·2 A6, W3-L2-07)', () => {
+  // „JAJA“ mit 1 Runde, K = 5C9E, IV = 0011 0000 1100 0011 (ohne Füllblock)
+  const ecb = K16.modus([0x4a41, 0x4a41], 0x5c9e, 'ECB', null, { runden: 1 });
+  assert.deepEqual(ecb.map(BLK), ['1100 1010 1000 1010', '1100 1010 1000 1010']);
+  const iv = BIN('0011 0000 1100 0011');
+  const cbc = K16.modus([0x4a41, 0x4a41], 0x5c9e, 'CBC', iv, { runden: 1 });
+  assert.deepEqual(cbc.map(BLK), ['0111 0010 1011 1011', '1010 0101 0101 0101']);
+  assert.deepEqual(K16.modus(cbc, 0x5c9e, 'CBC', iv, { runden: 1, richtung: 'ent' }), [0x4a41, 0x4a41]);
+  assert.deepEqual(K16.modus(ecb, 0x5c9e, 'ECB', null, { runden: 1, richtung: 'ent' }), [0x4a41, 0x4a41]);
+  // W3-L2-07: „SEHR GUT“, R = 4, K = A36D, IV = 1917, Bit 5 von C₂ gekippt
+  const P = K16.textZuBloecken('SEHR GUT');
+  assert.equal(P.length, 5);
+  const C = K16.modus(P, 0xa36d, 'CBC', 0x1917);
+  const Cf = C.slice();
+  Cf[1] ^= 1 << (16 - 5);
+  const Pf = K16.modus(Cf, 0xa36d, 'CBC', 0x1917, { richtung: 'ent' });
+  assert.equal(K.bytesZuText(Pf.slice(0, 4).flatMap((b) => [b >> 8, b & 255])), 'SEQp(GUT');
+  const pc = (x) => x.toString(2).split('1').length - 1;
+  assert.equal(pc(Pf[1] ^ P[1]), 5);
+  assert.equal(pc(Pf[2] ^ P[2]), 1);
+  const E = K16.modus(P, 0xa36d, 'ECB');
+  const Ef = E.slice();
+  Ef[1] ^= 1 << (16 - 5);
+  const Pe = K16.modus(Ef, 0xa36d, 'ECB', null, { richtung: 'ent' });
+  assert.equal(pc(Pe[1] ^ P[1]), 12);
+  assert.deepEqual([0, 2, 3, 4].map((i) => Pe[i] === P[i]), [true, true, true, true]);
+  assert.throws(() => K16.modus([1], 1, 'CBC'), K.KryptoFehler); // IV fehlt
+  assert.throws(() => K16.modus([1], 1, 'OFB', 0), K.KryptoFehler);
+  assert.throws(() => K16.verschluesseln(0x10000, 1), K.KryptoFehler);
+  assert.throws(() => K16.verschluesseln(1, 1, { runden: 0 }), K.KryptoFehler);
+});
+
+// ───────────────────────────── KRYPTOS-Hash ─────────────────────────────
+
+test('kryptosHash', () => {
+  assert.equal(K.kryptosHash('nebel').wert, 9);
+  assert.equal(K.kryptosHash('heute').wert, K.kryptosHash('morgen').wert);
+  assert.equal(K.kryptosHash('heute').wert, 22);
+});
+
+test('kryptosHash: SPEC W5 §0a, §12', () => {
+  const KH = (t) => K.kryptosHash(t).wert;
+  // Validator-Testfälle §0a
+  assert.equal(KH(''), 0);
+  assert.equal(KH('a'), 1);
+  assert.equal(KH('ueberweisetausendeuro'), 18);
+  assert.equal(KH('Überweise 2 Euro'), 1); // Ziffern entfallen → „ueberweiseeuro“
+  assert.equal(KH('Überweise 2 Euro'), KH('ueberweiseeuro'));
+  // Rundentabelle „nebel“
+  const p = K.kryptosHash('nebel', { protokoll: true });
+  assert.deepEqual(p.schritte.map((s) => [s.buchstabe, s.w, s.vorher, s.summe, s.nachher]), [
+    ['n', 14, 0, 14, 14], ['e', 5, 14, 47, 18], ['b', 2, 18, 56, 27], ['e', 5, 27, 86, 28], ['l', 12, 28, 96, 9],
+  ]);
+  assert.equal(K.kryptosHash('nebel').schritte, undefined);
+  // Einzelwerte §12
+  const einzel = { tee: 26, kaffee: 3, kiste: 7, kistf: 8, hafen: 4, eis: 4, anker: 11, tor: 11, post: 6, potq: 6, abe: 20, ja: 2, rabe: 13, bear: 4, nebfi: 9, haffk: 4, zoo: 4, ab: 5, t: 20, regal: 18, lager: 22, oase: 12 };
+  for (const [w, h] of Object.entries(einzel)) assert.equal(KH(w), h, w);
+  // Kollisionspaare
+  for (const [a, b, h] of [['heute', 'morgen', 22], ['ueberweisezweieuro', 'ueberweisetausendeuro', 18], ['treffenumfuenfuhr', 'treffenumzehnuhr', 8], ['treffpunktbruecke', 'treffpunktschule', 18], ['sonne', 'geheim', 0]]) {
+    assert.deepEqual([KH(a), KH(b)], [h, h], `${a}/${b}`);
+  }
+  // Salz, Siegel-Code
+  assert.deepEqual([KH('qxsonne'), KH('kzsonne'), KH('mbsonne')], [13, 11, 16]);
+  assert.equal(KH('oasekistefehltimhafen'), 27);
+  assert.equal(KH('oasekistefehltimhaffk'), 27);
+});
+
+test('kryptosHash.kollisionSuchen (Schubfach-Experiment)', () => {
+  const k = K.kryptosHash.kollisionSuchen('nebel');
+  assert.equal(k.wert, 9);
+  assert.equal(K.kryptosHash(k.text).wert, 9);
+  assert.notEqual(K.nurBuchstaben(k.text), 'NEBEL');
+  assert.equal(k.text, 'i'); // kürzester Kandidat zuerst (a, b, …, z, aa, …)
+  const k2 = K.kryptosHash.kollisionSuchen('heute', { alphabet: 'xyz' });
+  assert.equal(K.kryptosHash(k2.text).wert, 22);
+  assert.ok(/^[xyz]+$/.test(k2.text));
+  assert.equal(K.kryptosHash.kollisionSuchen('heute', { alphabet: 'a', max: 5 }), null);
+  assert.throws(() => K.kryptosHash.kollisionSuchen('x', { alphabet: '' }), K.KryptoFehler);
+});
