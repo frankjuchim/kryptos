@@ -1,5 +1,6 @@
 'use strict';
-// API für den Superadmin (Konto a:<n> aus dem Portal): Backup/Restore (JSON), Warm-up-Import, Inhalte neu laden.
+// API für den Superadmin (Konto a:<n> aus dem Portal): Backup/Restore (JSON), Warm-up-Import, Inhalte neu laden,
+// Wartungsbericht.
 // Lehrkraft-Verwaltung und Einmal-Passwort gibt es in Kryptos nicht (Portal, TECHNIK §6.5).
 
 const express = require('express');
@@ -46,6 +47,8 @@ function adminRoutes(api, h) {
       katas: svc.kata.meta()
     });
   });
+  // Bericht des Wartungsjobs (TECHNIK §7.4): Zeitpunkt, Anzahlen, Fehler des letzten Laufs
+  r.get('/wartung', (req, res) => res.json({ bericht: h.wartung ? h.wartung.bericht() : null }));
   r.post('/inhalte/neu-laden', (req, res) => {
     const e = h.reload();
     res.json({ ok: true, bericht: e.welten, kata: e.kata });

@@ -18,6 +18,7 @@ const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
 const { createVerbundRouter } = require('./verbund/verbund');
+const { createWartung } = require('./wartung');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const ROOT_DIR = path.join(__dirname, '..');
@@ -68,6 +69,8 @@ function createApp(opts) {
   const secret = opts.sessionSecret || konfig.sessionSecret;
   const sitzung = createSitzung({ db, secret });
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });
+  // Wartungsjob (TECHNIK §7.4): server.js startet ihn (wartung.starte()); Tests rufen wartung.lauf() direkt
+  const wartung = createWartung({ db, svc, now: ctx.now, log });
 
   const app = express();
   app.disable('x-powered-by');
@@ -144,6 +147,7 @@ function createApp(opts) {
     gesperrt: sitzung.gesperrt,
     material,
     gast,
+    wartung,
     reload: () => ladeInhalte(svc, opts, log)
   };
 
@@ -253,6 +257,7 @@ function createApp(opts) {
   app.locals.db = db;
   app.locals.konfig = konfig;
   app.locals.services = svc;
+  app.locals.wartung = wartung;
   app.locals.ctx = ctx;
   return app;
 }

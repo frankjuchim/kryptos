@@ -36,10 +36,15 @@ try {
   process.exit(1);
 }
 
-const server = app.listen(konfig.port, () => log(`Kryptos ${VERSION} läuft auf Port ${konfig.port} (Daten: ${konfig.dataDir}, Portal: ${konfig.portalUrl})`));
+const server = app.listen(konfig.port, () => {
+  log(`Kryptos ${VERSION} läuft auf Port ${konfig.port} (Daten: ${konfig.dataDir}, Portal: ${konfig.portalUrl})`);
+  // Wartungsjob (TECHNIK §7.4): sofort und danach stündlich
+  app.locals.wartung.starte();
+});
 
 function shutdown(sig) {
   log(`${sig} empfangen, fahre herunter …`);
+  app.locals.wartung.stop();
   server.close(() => {
     try {
       app.locals.db.close();
