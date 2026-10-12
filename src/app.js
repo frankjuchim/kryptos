@@ -15,6 +15,7 @@ const { createLehrkraftMaterial, URL_LEHRKRAFT } = require('./services/lehrkraft
 const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
 const { verbundKonfig } = require('./verbundKonfig');
+const { ladeKonfig } = require('./verbund/konfig');
 const { ssoRoutes } = require('./routes/sso');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -62,7 +63,21 @@ function createApp(opts) {
   });
   const material = createLehrkraftMaterial({ materialienDir: materialienOrdner(opts), abDir, demo, log });
   const gast = createGast(ctx, { datei: gastDatei(opts), inhalte: svc.inhalte, material, log });
-  const konfig = verbundKonfig(opts.umgebung || process.env, log);
+  // Verbund-Konfiguration (TECHNIK §6.1): vom Server (ladeKonfig) oder – in Tests – aus opts (Testmodus, ohne Abbruch).
+  const vkonfig =
+    opts.konfig ||
+    ladeKonfig(
+      { PORTAL_URL: opts.portalUrl, PORTAL_PUBLIC_KEY: opts.portalPublicKey, PLATTFORM_URL: opts.plattformUrl, PLATTFORM_ID: opts.plattformId, SESSION_SECRET: opts.sessionSecret, VERTRAG_VERSION: opts.vertragVersion },
+      { test: true }
+    );
+  // Übergang bis Task 5–9: die mitkopierte Algo-Quest-Anbindung (verbundKonfig, routes/sso.js) liest weiter ihr Format.
+  const konfig = verbundKonfig(
+    opts.umgebung ||
+      (opts.konfig
+        ? { AUTH_MODUS: 'portal', PLATTFORM_ID: vkonfig.plattformId, PLATTFORM_URL: vkonfig.plattformUrl || '', PORTAL_URL: vkonfig.portalUrl || '', PORTAL_PUBLIC_KEY: vkonfig.portalPublicKey || '' }
+        : process.env),
+    log
+  );
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });
 
   const app = express();
@@ -258,6 +273,7 @@ function createApp(opts) {
   });
 
   app.locals.db = db;
+  app.locals.konfig = vkonfig;
   app.locals.services = svc;
   app.locals.ctx = ctx;
   return app;

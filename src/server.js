@@ -1,42 +1,35 @@
 'use strict';
 const path = require('node:path');
-const crypto = require('node:crypto');
 const { createApp, VERSION } = require('./app');
+const { ladeKonfig } = require('./verbund/konfig');
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 
-const PORT = Number(process.env.PORT) || 80;
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
+// Verbund-Konfiguration (TECHNIK §6.1): fehlt etwas oder ist es ungültig, startet Kryptos nicht (außer NODE_ENV=test).
+let konfig;
+try {
+  konfig = ladeKonfig(process.env, { test: process.env.NODE_ENV === 'test' });
+} catch (e) {
+  console.error(`Kryptos startet nicht. ${e.message}`);
+  console.error('Pflicht: PLATTFORM_URL, PORTAL_URL, PORTAL_PUBLIC_KEY, SESSION_SECRET (≥ 32 Zeichen); AUTH_MODUS nur „portal“.');
+  process.exit(1);
+}
+
 const SEED_DIR = process.env.SEED_DIR || path.join(__dirname, '..', 'seed');
 // Nur für Entwicklung/Tests: zusätzliche Welt-Dateien (durch Komma getrennt), z. B. test/fixtures/welt_beispiel.json
 const WELT_DATEIEN = (process.env.WELT_DATEIEN || '').split(',').map((s) => s.trim()).filter(Boolean);
 
-let sessionSecret = process.env.SESSION_SECRET;
-if (!sessionSecret || sessionSecret.length < 16) {
-  sessionSecret = crypto.randomBytes(32).toString('hex');
-  log('WARNUNG: SESSION_SECRET fehlt oder ist kürzer als 16 Zeichen – es wird ein zufälliges Geheimnis verwendet.',
-    'Nach jedem Neustart müssen sich alle neu anmelden. Bitte SESSION_SECRET setzen!');
-}
-const adminEmail = (process.env.ADMIN_EMAIL || 'admin').trim();
-const adminPassword = process.env.ADMIN_PASSWORD || '';
-if (!adminPassword) log('WARNUNG: ADMIN_PASSWORD ist nicht gesetzt – der Superadmin-Login ist deaktiviert.');
-else if (adminPassword.length < 10) log('HINWEIS: ADMIN_PASSWORD ist kurz. Empfohlen sind mindestens 10 Zeichen.');
-
-const trustProxyEnv = process.env.TRUST_PROXY;
-const trustProxy = trustProxyEnv === undefined ? 1 : /^\d+$/.test(trustProxyEnv) ? Number(trustProxyEnv) : trustProxyEnv === 'true';
-
 const app = createApp({
-  dbFile: path.join(DATA_DIR, 'algoquest.db'),
-  sessionSecret,
-  adminEmail,
-  adminPassword,
+  dbFile: path.join(konfig.dataDir, 'kryptos.db'),
+  sessionSecret: konfig.sessionSecret,
+  konfig,
   seedDir: SEED_DIR,
   weltDateien: WELT_DATEIEN.map((f) => path.resolve(f)),
-  trustProxy,
+  trustProxy: konfig.trustProxy,
   log
 });
 
-const server = app.listen(PORT, () => log(`Algo Quest Lab ${VERSION} läuft auf Port ${PORT} (Daten: ${DATA_DIR})`));
+const server = app.listen(konfig.port, () => log(`Kryptos ${VERSION} läuft auf Port ${konfig.port} (Daten: ${konfig.dataDir}, Portal: ${konfig.portalUrl})`));
 
 function shutdown(sig) {
   log(`${sig} empfangen, fahre herunter …`);

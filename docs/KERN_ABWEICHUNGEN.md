@@ -28,7 +28,7 @@ Spalte **Art**: `Hook` (generische Erweiterungsstelle) · `Verbund` (SSO/Portal)
 | K10 | src/db.js | Migrationsliste, `APP_KENNUNG = 'kryptos'`, v1-Erkennung entfernt | eigenes Schema, Fehlerkennung alter DBs | Verbund | ja (Migrationsliste) | geplant |
 | K11 | src/security.js | lokale Anmeldung (Passwort-/Code-Funktionen) entfernt, Cookies `kr_*`, `zufallsText` | Login nur über das Portal | Verbund | ja | geplant |
 | K12 | src/services/kurse.js, src/services/konten.js | ersetzt: Kurse/Konten kommen vom Portal (`upsert`, `teilnahmen`) | VERTRAG §5/§6 | Verbund | ja (Kern-Kandidat) | geplant |
-| K13 | src/app.js | Seitenliste/Seiten-Wächter, SSO- und Verbund-Router, Manifest | Verbund, neue Seiten | Verbund | ja | teilweise (siehe K20) |
+| K13 | src/app.js | Seitenliste/Seiten-Wächter, SSO- und Verbund-Router, Manifest; `createApp(opts)` nimmt die Verbund-Konfiguration als `opts.konfig` (Server) bzw. baut sie im Testmodus aus `opts.portalUrl`/`portalPublicKey`/`plattformUrl` (`app.locals.konfig`) | Verbund, neue Seiten | Verbund | ja | teilweise (K20; Konfiguration Task 3) |
 | K14 | src/services/auswertung.js | `board(schluessel)` statt Kurscode, Kursübersicht für das Portal | Verbund | Verbund | ja | geplant |
 | K15 | src/services/themen.js, src/services/lehrkraftMaterial.js | Akten statt Arbeitsblätter (`seed/akten.json`, `/akten/`, `Akten_PDF/`) | Kryptos-Material | Fach | teilweise | teilweise (Akten-Ordner, siehe K20) |
 | K16 | src/routes/* | lokale Anmeldung, Beitritt, Kurs-/Schülerverwaltung entfernt | Login nur über das Portal | Entfernt | ja | geplant |
@@ -38,6 +38,7 @@ Spalte **Art**: `Hook` (generische Erweiterungsstelle) · `Verbund` (SSO/Portal)
 | K20 | src/app.js | Hinweisseite „Nur nach Anmeldung“: Titel „– Kryptos“, Stylesheet `basis.css` statt `style.css`; PDF-Ordner-Kandidaten zuerst `akten/` (Image) und `materialien/Akten_PDF` (Repo), Kern-Pfade als Rückfall | alte Oberfläche entfernt; Image-Pfad `/app/akten` (TECHNIK §16.2) | Fach | ja (Pfadliste konfigurierbar machen) | umgesetzt (Task 2) |
 | K21 | Dockerfile, .dockerignore | `ENV AUTH_MODUS=portal PLATTFORM_ID=kryptos`; nur `scripts/validate.js` + `vertrag_pruefen.js`, `docs/AUFGABENFORMAT.md` + `AUFGABENFORMAT_KRYPTO.md`; `materialien/Akten_PDF → ./akten` statt Arbeitsblätter; `.dockerignore` mit Ausnahmen für genau diese Dateien/Ordner, zusätzlich `prototyp`, `.github`, `.env*` | TECHNIK §16.2 | Betrieb | nein (plattformspezifisch) | umgesetzt (Task 2) |
 | K22 | .github/workflows/pruefung.yml | Jobs `app`, `krypto`, `inhalte` (TECHNIK §16.1); Push auf allen Branches, PR nach `main`; `krypto`/`inhalte` vorerst nur mit vorhandenen Schritten | Kryptos-Prüfkette | Betrieb | nein | teilweise (Task 2; Schritte folgen mit M2/Material-Pipeline) |
+| K23 | src/server.js | liest die Verbund-Konfiguration über `src/verbund/konfig.js` (`ladeKonfig`), bricht ohne `PLATTFORM_URL`/`PORTAL_URL`/`PORTAL_PUBLIC_KEY`/`SESSION_SECRET` (≥ 32) oder mit `AUTH_MODUS ≠ portal` mit deutscher Meldung ab (außer `NODE_ENV=test`); DB-Datei `kryptos.db`; keine `ADMIN_*`-Variablen mehr | Login nur über das Portal, strenger Start (TECHNIK §2.1, §6.1) | Verbund | ja (mit konfigurierbarer App-Kennung) | umgesetzt (Task 3); Wartungsjob folgt (TECHNIK §7.4) |
 
 ### Hinweise zu K21 (Image)
 
@@ -63,7 +64,7 @@ Kern-Kandidat „lab-kern“) ersetzt bzw. entfernt und hier dann als `Entfernt`
 
 | Datei | Inhalt in AlgoQuest 2.8.2 | Verbleib |
 |---|---|---|
-| `src/verbundKonfig.js` | Umgebungsvariablen `AUTH_MODUS`, `PORTAL_*` | → `src/verbund/konfig.js` (Task 3) |
+| `src/verbundKonfig.js` | Umgebungsvariablen `AUTH_MODUS`, `PORTAL_*` | ersetzt durch `src/verbund/konfig.js` (Task 3); bleibt nur als Übergang, solange `src/routes/sso.js` sie liest – `createApp` füttert sie aus der neuen Konfiguration |
 | `src/routes/sso.js` | `/sso/start`, `/sso/ende`, `/sso/abmelden`, Verbund-API `/api/verbund/…` | → `src/verbund/sso.js`, `src/verbund/verbund.js` (Tasks 5–7); in Task 2 nur Titel/Stylesheet der Hinweisseite angepasst („– Kryptos“, `basis.css`) |
 | `src/services/verbund.js` | Upsert nach `sub`, Kurse/Mitgliedschaften, Löschen, Übersicht | → `src/verbund/verbund.js`, `src/verbund/loeschen.js` |
 | `src/services/konten.js` | lokale Konten **und** Portal-Konten (`sub`) | → K12 |
