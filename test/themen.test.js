@@ -117,12 +117,12 @@ test('Lösungen: nie über /arbeitsblaetter oder statisch erreichbar; im Image n
   }
   const ignore = fs.readFileSync(path.join(__dirname, '..', '.dockerignore'), 'utf8').split('\n').map((z) => z.trim());
   assert.ok(ignore.includes('materialien/*'), '.dockerignore muss materialien/* ausschließen');
-  assert.deepEqual(ignore.filter((z) => z.startsWith('!')), ['!materialien/Arbeitsblaetter_PDF', '!materialien/Loesungen_Portal', '!materialien/Lehrkraft_PDF'], 'nur Schülerordner + Lehrkraft-Downloads ins Image');
+  assert.deepEqual(ignore.filter((z) => z.startsWith('!')), ['!docs/AUFGABENFORMAT.md', '!docs/AUFGABENFORMAT_KRYPTO.md', '!materialien/Akten_PDF', '!materialien/Loesungen_Portal', '!materialien/Lehrkraft_PDF', '!scripts/validate.js', '!scripts/vertrag_pruefen.js'], 'nur Formatdateien, Skripte, Akten + Lehrkraft-Downloads ins Image');
   const docker = fs.readFileSync(path.join(__dirname, '..', 'Dockerfile'), 'utf8');
   const kopien = docker.split('\n').filter((z) => /^COPY\s+materialien/.test(z)).map((z) => z.split(/\s+/).slice(1).join(' '));
   assert.deepEqual(kopien, [
-    'materialien/Arbeitsblaetter_PDF ./arbeitsblaetter',
+    'materialien/Akten_PDF ./akten',
     'materialien/Loesungen_Portal ./materialien/Loesungen_Portal',
     'materialien/Lehrkraft_PDF ./materialien/Lehrkraft_PDF'
-  ], 'Lösungen nie in den öffentlichen Ordner ./arbeitsblaetter');
+  ], 'Lösungen nie in den öffentlichen Ordner ./akten');
 });

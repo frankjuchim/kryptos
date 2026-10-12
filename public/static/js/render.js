@@ -1,5 +1,5 @@
-/* Algo Quest Lab – Darstellung der Inhaltsblöcke (SPEC §4): Mini-Markdown, Code, Struktogramm (EH §5),
- * Tabelle, Baum (SVG), Reihung, Raster, Klassenkarte (EH §6), ADT, Hinweis. Alles als DOM – nie innerHTML. */
+/* Lab-Kern – Darstellung der Inhaltsblöcke (SPEC §4): Mini-Markdown, Code, Struktogramm (EH §5),
+ * Tabelle, Baum (SVG), Reihung, Raster, Klassenkarte (EH §6), ADT, Hinweis. Alles als DOM – nie als HTML-Zeichenkette. */
 'use strict';
 
 const AQR = (() => {

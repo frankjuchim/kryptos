@@ -1,4 +1,4 @@
-/* Algo Quest Lab – Klammerformat für Binärbäume (gemeinsam für Server und Browser, kein Build)
+/* Lab-Kern – Klammerformat für Binärbäume (gemeinsam für Server und Browser, kein Build)
  *
  * Format:  wert(links,rechts)   leerer Baum: -   Blatt: x  (≙ x(-,-))
  * Werte enthalten keine Zeichen ( ) , – Leerzeichen um Werte werden ignoriert.

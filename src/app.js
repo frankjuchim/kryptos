@@ -270,7 +270,7 @@ function nurMitAnmeldung(res) {
     .type('html')
     .send(
       '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<title>Nur nach Anmeldung – Algo Quest Lab</title><link rel="stylesheet" href="/static/css/style.css"></head>' +
+        '<title>Nur nach Anmeldung – Kryptos</title><link rel="stylesheet" href="/static/css/basis.css"></head>' +
         '<body><main class="narrow" id="haupt"><section class="card"><h1>🔒 Nur nach Anmeldung</h1>' +
         '<p>Die Arbeitsblätter, Papier-Bosse und Warm-up-Karten stehen nach der Anmeldung im Lab zur Verfügung (Schüler und Lehrkräfte). Ohne Anmeldung zeigt der Gastmodus einige Beispiele.</p>' +
         '<p class="btn-row"><a class="btn" href="/">Anmelden</a> <a class="btn secondary" href="/lehrer">Bereich für Lehrkräfte</a> <a class="btn secondary" href="/gast">👀 Gastmodus</a></p>' +
@@ -297,7 +297,14 @@ function ladeDemo(opts, log) {
 
 function arbeitsblaetterOrdner(opts) {
   if (opts.arbeitsblaetterDir !== undefined) return opts.arbeitsblaetterDir;
-  const kandidaten = [process.env.ARBEITSBLAETTER_DIR, path.join(ROOT_DIR, 'arbeitsblaetter'), path.join(ROOT_DIR, 'materialien', 'Arbeitsblaetter_PDF')];
+  // Kryptos: Akten unter /app/akten (Image) bzw. materialien/Akten_PDF (Repo), TECHNIK §16.2; Kern-Pfade bleiben als Rückfall.
+  const kandidaten = [
+    process.env.ARBEITSBLAETTER_DIR,
+    path.join(ROOT_DIR, 'akten'),
+    path.join(ROOT_DIR, 'materialien', 'Akten_PDF'),
+    path.join(ROOT_DIR, 'arbeitsblaetter'),
+    path.join(ROOT_DIR, 'materialien', 'Arbeitsblaetter_PDF')
+  ];
   return kandidaten.find((d) => d && fs.existsSync(d)) || null;
 }
 

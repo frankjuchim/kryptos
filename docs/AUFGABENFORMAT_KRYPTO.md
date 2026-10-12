@@ -116,7 +116,7 @@ Ein Level, dessen Aufgaben im gA-Kurs **alle** unsichtbar wären (Level `kern`, 
 | Feld | Regel |
 |---|---|
 | `niveau` | optional bei Level-Aufgaben (erbt vom Level), **Pflicht bei Boss-Aufgaben** (dort nur `kern` oder `eA`; `ergaenzung`/`kuer` → Fehler, Design §3.2 „nie bossrelevant“). Archivfund-Aufgaben: `kern` |
-| `kategorie` | genau ein Wert aus §4.2 (Slug-Schreibweise, Kleinbuchstaben). Anzeigenamen stehen in `src/krypto/fach.js` (`KATEGORIE_NAMEN`) |
+| `kategorie` | genau ein Wert aus §4.2 (Slug-Schreibweise, Kleinbuchstaben). Anzeigenamen stehen in `src/krypto/fach.js` (`LAB_KATEGORIE_NAMEN`) |
 | `fallen` | Teilmenge von `P1`…`P10` nach §4.3. Bedeutung wie im Kern (Zähler bei Fehlversuchen) – **ergänzt** durch die automatische Diagnose (§9): Erkennt der Prüfer ein Fehlmuster, wird die **erkannte** Falle gezählt, sonst die Liste `fallen` |
 | `pruefnachweis` | optional; Verweis auf den unabhängigen Python-Nachweis (`quellen/pruefwerte/W<n>.json#<id>` oder `werkzeuge/krypto/fremde_verfahren.py:<name>`). **Pflicht (Fehler)**, wenn die Aufgabe ein Verfahren `{"typ": "frei"}` oder `bits-rechnen` mit `operation: "frei"` enthält, sonst überflüssig (die Neuberechnung ersetzt den Nachweis) |
 | `punkte` | wie Kern (1–200, Standard 10/20/30); **Archivfund-Aufgaben: `punkte` weglassen** (immer 0) |

@@ -7,7 +7,7 @@
 > Vertragsänderungen, die Kryptos braucht: `docs/VERTRAG_VORSCHLAG_v1.2.md` – **erst nach Annahme im Portal-Repo umsetzen**;
 > bis dahin hält Kryptos v1.1 ein (siehe §6.10).
 >
-> Basis der Übernahme: Algo Quest Lab **2.5.0** (Commit `0159b7d`), Portal InfoLabs (Commit `c7115af`).
+> Basis der Übernahme: Algo Quest Lab **2.8.2** (Commit `60fe4a1`, aktueller `main` bei Task 1; ursprünglich geplant 2.5.0/`0159b7d`), Portal InfoLabs (Commit `3f48c5c`; ursprünglich `c7115af`).
 
 Inhalt: §1 Überblick · §2 Übernahme aus Algo Quest · §3 Naht-Regel, `KERN_ABWEICHUNGEN.md` · §4 Erweiterungs-Hooks ·
 §5 Krypto-Bibliothek und Python-Zwilling · §6 SSO und Verbund · §7 Datenmodell · §8 Niveau gA/eA ·
@@ -180,7 +180,7 @@ docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERT
 **Format von `docs/KERN_ABWEICHUNGEN.md`:**
 
 ```markdown
-# Abweichungen vom Algo-Quest-Kern (Basis: AlgoQuest 2.5.0, 0159b7d)
+# Abweichungen vom Algo-Quest-Kern (Basis: AlgoQuest 2.8.2, 60fe4a1)
 | Nr. | Datei | Änderung | Grund | Art | Rückführbar in lab-kern? |
 |---|---|---|---|---|---|
 | K01 | src/content/format.js | Registry für Blöcke/Interaktionen/Normalisierungen | Krypto-Blöcke ohne Kern-Fork | Hook | ja (empfohlen) |

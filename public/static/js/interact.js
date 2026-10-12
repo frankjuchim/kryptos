@@ -1,4 +1,4 @@
-/* Algo Quest Lab – Interaktionen (SPEC §5): gaps, choice, order, lines, match, tree (klick/bauen), array (tausch/klick),
+/* Lab-Kern – Interaktionen (SPEC §5): gaps, choice, order, lines, match, tree (klick/bauen), array (tausch/klick),
  * grid, adtsim; mehrteilige Aufgaben; Schrittprüfung; Feedback; Lösungsanzeige. Prüfung erfolgt NUR auf dem Server. */
 'use strict';
 

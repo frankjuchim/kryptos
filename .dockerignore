@@ -1,16 +1,25 @@
-# Ins Image kommen nur src/, public/, seed/, scripts/, docs/AUFGABENFORMAT.md, materialien/Arbeitsblaetter_PDF (öffentlich)
-# sowie materialien/Loesungen_Portal und materialien/Lehrkraft_PDF (nur für angemeldete Lehrkräfte, siehe Dockerfile).
+# Ins Image kommen nur src/, public/, seed/, scripts/validate.js + vertrag_pruefen.js, die zwei Formatdateien aus docs/,
+# materialien/Akten_PDF (Schülerfassung) sowie materialien/Loesungen_Portal und materialien/Lehrkraft_PDF
+# (nur für angemeldete Lehrkräfte, siehe Dockerfile). TECHNIK §16.2.
 .git
+.github
 node_modules
 data
 test
+werkzeuge
+quellen
+prototyp
+docs/*
+!docs/AUFGABENFORMAT.md
+!docs/AUFGABENFORMAT_KRYPTO.md
 materialien/*
-!materialien/Arbeitsblaetter_PDF
+!materialien/Akten_PDF
 !materialien/Loesungen_Portal
 !materialien/Lehrkraft_PDF
-quellen
-docs/*.png
+scripts/*
+!scripts/validate.js
+!scripts/vertrag_pruefen.js
 *.log
 .DS_Store
 __pycache__
-werkzeuge
+.env*

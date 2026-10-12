@@ -56,10 +56,7 @@ const LAB_KATEGORIE_NAMEN = {
 };
 const LAB_KATEGORIEN = Object.keys(LAB_KATEGORIE_NAMEN);
 
-/**
- * Fallen P1–P10 der Kryptologie (Design §3.3: Kurztitel und Erläuterung wörtlich).
- * Abweichung P2: „kleinster nicht negativer Rest“ statt „kleinster positiver Rest“ (Design §6.1, AUFGABENFORMAT_KRYPTO §4.3).
- */
+/** Fallen P1–P10 der Kryptologie (Design §3.3: Kurztitel und Erläuterung wörtlich). */
 const FALLEN = {
   P1: {
     titel: 'Zählbasis verwechselt',

@@ -1,11 +1,13 @@
-# Prüfung bei jedem Push und Pull Request (Kryptos; Jobs krypto/inhalte folgen in Task 2, TECHNIK §16.1).
-# Hinweis: Die Live-App baut CapRover direkt bei jedem Push auf main – diese Prüfung blockiert das nicht.
-# Deshalb auf Feature-Branches arbeiten und erst nach grüner Prüfung nach main übernehmen.
+# Prüfung bei jedem Push (alle Branches) und jedem Pull Request nach main – TECHNIK §16.1.
+# Hinweis: Die Live-App baut CapRover (ab M9) direkt bei jedem Push auf main – diese Prüfung blockiert das nicht.
+# Deshalb auf Feature-Branches arbeiten und erst nach grüner Prüfung und ausdrücklicher Freigabe nach main übernehmen.
 name: Prüfung
 
 on:
   push:
+    branches: ['**']
   pull_request:
+    branches: [main]
 
 jobs:
   app:
@@ -20,4 +22,44 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run validate
+      # folgt: node scripts/abdeckung.js (Abdeckungsprüfung, TECHNIK §16.1) – das Skript existiert noch nicht.
 
+  krypto:
+    name: Krypto (Bibliothek und Python-Zwilling)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Fachlisten (src/krypto/fach.js)
+        run: node --test test/fach.test.js
+      # folgen mit M2 (Plan Tasks 10–18):
+      #   python3 -I werkzeuge/krypto/test_krypto.py
+      #   npm run krypto:vergleich -- --anzahl 2000
+      #   python3 werkzeuge/krypto/seed_pruefen.py
+      #   python3 werkzeuge/krypto/pruefwerte.py
+
+  inhalte:
+    name: Inhalte (Material-Werkzeuge)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Material-Werkzeuge übersetzbar
+        run: |
+          python3 -m py_compile werkzeuge/material/*.py
+          node --check werkzeuge/material/kr_pptx.js
+      # folgen (TECHNIK §16.1, mit Java 21 und pip install python-docx python-pptx pypdf fonttools):
+      #   ide_pruefen.py, workspaces_erzeugen.py --pruefen, materialien_pruefen.py, akten_pdf.py --pruefen,
+      #   loesungen_pdf.py --pruefen, lehrkraft_pdf.py --pruefen, video_folien.py --pruefen, schriften_pruefen.py

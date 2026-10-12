@@ -1,4 +1,4 @@
-# Algo Quest Lab 2.0 – Node.js 20 LTS
+# Kryptos – Node.js 20 LTS (Aufbau wie der Algo-Quest-Kern, TECHNIK §16.2)
 # Stufe 1: Abhängigkeiten installieren (Build-Werkzeuge als Fallback für better-sqlite3)
 FROM node:20-bookworm-slim AS deps
 WORKDIR /app
@@ -14,18 +14,21 @@ FROM node:20-bookworm-slim
 ENV NODE_ENV=production \
     PORT=80 \
     DATA_DIR=/app/data \
-    TZ=Europe/Berlin
+    TZ=Europe/Berlin \
+    AUTH_MODUS=portal \
+    PLATTFORM_ID=kryptos
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY src ./src
 COPY public ./public
 COPY seed ./seed
-COPY scripts ./scripts
-COPY docs/AUFGABENFORMAT.md ./docs/AUFGABENFORMAT.md
-# Arbeitsblätter (Schülerfassung, PDF) für die Themenseite /themen
-COPY materialien/Arbeitsblaetter_PDF ./arbeitsblaetter
-# Nur für angemeldete Lehrkräfte (Lehrkraft-Bereich → Materialien): Lösungen, Präsentationen, Lehrerhinweise, Klausuren.
+COPY scripts/validate.js scripts/vertrag_pruefen.js ./scripts/
+COPY docs/AUFGABENFORMAT.md docs/AUFGABENFORMAT_KRYPTO.md ./docs/
+# Akten (Schülerfassung, PDF) für die Themenseite. Die drei materialien-Ordner existieren im Repo vorerst nur mit
+# .gitkeep (Material-Pipeline TECHNIK §14 folgt), damit der Build nicht an fehlenden Ordnern scheitert.
+COPY materialien/Akten_PDF ./akten
+# Nur für angemeldete Lehrkräfte: Lösungen, Präsentationen, Lehrerhinweise, Klausuren.
 # Der Server liefert daraus nur Dateien aus materialien/Lehrkraft_PDF/verzeichnis.json und nur an Lehrkräfte.
 COPY materialien/Loesungen_Portal ./materialien/Loesungen_Portal
 COPY materialien/Lehrkraft_PDF ./materialien/Lehrkraft_PDF

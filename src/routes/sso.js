@@ -30,7 +30,7 @@ function seite(res, status, titel, text, links) {
     .type('html')
     .send(
       `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">` +
-        `<title>${esc(titel)} – Algo Quest Lab</title><link rel="stylesheet" href="/static/css/style.css"></head>` +
+        `<title>${esc(titel)} – Kryptos</title><link rel="stylesheet" href="/static/css/basis.css"></head>` +
         `<body><main class="narrow" id="haupt"><section class="card"><h1>${esc(titel)}</h1><p>${esc(text)}</p>` +
         `<p class="btn-row">${links.map(([href, label], i) => `<a class="btn${i ? ' secondary' : ''}" href="${esc(href)}">${esc(label)}</a>`).join(' ')}</p>` +
         `</section></main></body></html>`

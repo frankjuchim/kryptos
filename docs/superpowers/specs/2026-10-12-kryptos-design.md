@@ -201,7 +201,7 @@ Gleiches Schema wie im Verbund (Nummer · Kurztitel · Erläuterung), Quelle: Ab
 | Nr. | Kurztitel | Erläuterung (Kurzform) |
 |---|---|---|
 | **P1** | Zählbasis verwechselt | A = 1 (Abitur-Anlage) vs. A = 0 (Verschiebung, Implementierung, ASCII − 65); Positionen ab 0 (EH) vs. Buchstabenwerte ab 1; in jeder Aufgabe zuerst die Nummerierung des Materials prüfen |
-| **P2** | Modulo falsch | Überlauf über Z vergessen, negative Reste, mit A = 1 ergibt 26 mod 26 = 0 → muss Z (26) werden; `mod` = kleinster positiver Rest |
+| **P2** | Modulo falsch | Überlauf über Z vergessen, negative Reste, mit A = 1 ergibt 26 mod 26 = 0 → muss Z (26) werden; `mod` = kleinster nicht negativer Rest |
 | **P3** | Umkehrung falsch | Entschlüsseln in falscher Richtung (−k statt +k), mehrstufige Verfahren nicht in **umgekehrter Reihenfolge** zurückgerechnet, inverse Permutation/Drehrichtung verwechselt |
 | **P4** | Verfahrensregel übersehen | Füllzeichen, Doppelbuchstaben (Playfair), I = J, unvollständige Matrix (ungleich lange Spalten), Leserichtung, Blockbildung, Padding |
 | **P5** | Falsch eingeordnet | Transposition vs. Substitution, mono- vs. polyalphabetisch (es zählt: wird derselbe Klartextbuchstabe immer gleich ersetzt?), symmetrisch vs. asymmetrisch, Codierung vs. Verschlüsselung |
@@ -323,7 +323,7 @@ Umfang (Stand der Welt-Specs): **202 Level-Aufgaben** (7–8 je Level, Fallenjag
 - **Verschiebungen** sind Schlüssel k ∈ {0, …, 25}; der Schlüsselbuchstabe A bedeutet Verschiebung 0
   (Vigenère-Quadrat der Anlage). Formel mit A = 1: `c = ((p + k − 1) mod 26) + 1`. Didaktisch wird zuerst mit der
   **Alphabetleiste/Scheibe** gearbeitet, die Formel folgt; die „0 wird zu Z“-Falle (P2) wird ausdrücklich geübt.
-- **`mod`** = kleinster positiver (nicht negativer) Rest wie in der EH-Anlage; `/` = ganzzahlige Division.
+- **`mod`** = kleinster nicht negativer Rest wie in der EH-Anlage; `/` = ganzzahlige Division.
 - **Implementierung (Java):** intern 0-basiert über ASCII: `wert = (int) zeichen − 65` → das wird im Code-Kommentar
   und auf der Werkzeugkarte als bewusster Wechsel A = 0 kenntlich gemacht.
 - **Positionen in Zeichenketten** beginnen bei 0 (EH §5) – im Unterschied zu Buchstabenwerten (P1).

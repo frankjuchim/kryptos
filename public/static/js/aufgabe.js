@@ -1,4 +1,4 @@
-/* Algo Quest Lab – Aufgaben-Ansicht (Prüfen, Tipp, Lösung zeigen, Erklärung) für Schüler-Oberfläche und Gastmodus. */
+/* Lab-Kern – Aufgaben-Ansicht (Prüfen, Tipp, Lösung zeigen, Erklärung) für Schüler-Oberfläche und Gastmodus. */
 'use strict';
 const AQA = (() => {
   const { h, mount, toast, sterne, bestaetigen } = AQ;

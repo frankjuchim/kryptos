@@ -1,4 +1,4 @@
-/* Algo Quest Lab – gemeinsame Hilfsfunktionen (kein Build, Vanilla JS, keine Inline-Skripte) */
+/* Lab-Kern – gemeinsame Hilfsfunktionen (kein Build, Vanilla JS, keine Inline-Skripte) */
 'use strict';
 
 const AQ = (() => {

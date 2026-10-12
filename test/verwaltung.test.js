@@ -198,7 +198,7 @@ test('Urkunden: je Schüler Name, Rang, Punkte, Platz, Abzeichen; nur eigene Kur
   assert.equal((await admin.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 200);
   const seite = await lk.get('/lehrer/urkunden?kurs=' + kurs.id);
   assert.equal(seite.status, 200);
-  assert.match(seite.text, /urkunden\.css/);
+  assert.match(seite.text, /<title>Urkunden · Kryptos/); // Platzhalter bis M4 (Urkunden-Oberfläche)
 });
 
 test('Aufgaben-Vorschau für Lehrkräfte: Welten mit Level-Infos und Boss-Pool, Aufgaben mit Lösung und Erklärung', async () => {
