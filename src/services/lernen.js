@@ -79,7 +79,7 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
         punkte: e.level[w.nr] || 0,
         maxPunkte: b.get(w.nr).max,
         anteil: b.get(w.nr).max ? Math.min(1, stand.istVon(e, b.get(w.nr).ids) / b.get(w.nr).max) : 0,
-        training: generatorenFuerWelt(w.nr).length > 0
+        training: generatorenFuerWelt(w.nr, { sichtbar: (g) => ctx.optionen.generatorSichtbar(g, einst) }).length > 0
       });
     }
     return { welten: out, scoreboard: !!einst.scoreboard, niveau: einst.niveau === 'gA' ? 'gA' : 'eA' };

@@ -59,13 +59,13 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/content/format.js` | A | Hook-Registry (§4.2): `BLOCK_TYPEN`, `INTERAKTIONEN`, `SCHRITT_ARTEN` erweiterbar; `normText` kennt `krypto`/`bits` (delegiert an `shared/krypto.js`); `blockTexte` und neue Funktion `lueckenFelder(ia)` fragen registrierte Typen |
 | `src/content/checker.js` | A | `bereinige`/`istLeer`/`pruefeTeil`/`musterantwort` delegieren unbekannte Arten an die Registry; `pruefeAufgabe` reicht `diagnose`, `zeichen`, `bits`, `anteil` je Teil durch; Kern-Interaktionen unverändert |
 | `src/content/validator.js` | A | `AUFGABE_ID` += `A` (Archivfund); `LEVEL_ID` unverändert; Welt-/Level-/Aufgabenfelder §2–§4 des Delta über `registriereValidierung({ welt, level, aufgabe, boss, dateien })` (§4.2); Blöcke/Interaktionen über Registry; Lücken-Besitz über `F.lueckenFelder` |
-| `src/content/generators.js` | E | Rahmen (`mulberry32`, `zufall`, `erzeuge`, `generatorenFuerWelt`, Rückgabeformat) **unverändert übernommen**, alle Algo-Quest-Generatoren entfernt; Krypto-Generatoren in `src/krypto/generatoren/*.js` registriert (Design §7.6, 12 Stück) |
+| `src/content/generators.js` | E | Rahmen (`mulberry32`, `zufall`, `erzeuge`, Rückgabeformat) übernommen, dazu Registry `registriereGenerator(key, { titel, welten, niveau, make(z) })` und `generatorenFuerWelt(welt, { sichtbar })` (K18); alle Algo-Quest-Generatoren entfernt; Krypto-Generatoren in `src/krypto/generatoren/*.js` registriert (Design §7.6: 12 Pflicht-Generatoren + DH/RSA als Ergänzung) |
 | `src/services/index.js` | A | `konten` (neu, §6.6) statt lokaler Konten; zusätzliche Dienste `funkraum`, `arena`, `labor`, `teams`, `verbund`; Backup-Kennung `kryptos`, Tabellenliste aus `db.js` |
 | `src/services/inhalte.js` | A | übernimmt `niveau`, `rolle`, `kuer`, `werkzeug`, `akte`, `video`, Welt-Felder; Archivfund-Aufgaben aktiv halten; Spalte `aufgaben.niveau` (effektiv) füllen; `SEED_VERSION = 'kryptos-1'` |
 | `src/services/lernen.js` | A | Sichtbarkeit nach Niveau (§8); `fehlerVerbuchen` zählt diagnostizierte Fallen (Delta §9.1); Antwort von `pruefen` mit `diagnose`/`zeichen`/`bits`/`anteil`; `schueler`-Zeile = Teilnahme (§6.6); Archivfund-Route |
 | `src/services/stand.js` | A | rangrelevante Punkte (§8.3); Abzeichen-Definitionen erweiterbar (Hook `zusatzAbzeichen` aus `src/krypto/abzeichen.js`), Icons als SVG-Kennungen; Fallensucher-Text „Alle Fallen entschärft“ |
 | `src/services/boss.js` | A | Ziehung niveau-gefiltert (§8.2); Diagnose in der Auswertung (`ergebnis[].diagnose`); sonst unverändert (Timer, Kulanz, 12 h, bester Versuch) |
-| `src/services/training.js` | U | (Generatoren kommen über die Registry) |
+| `src/services/training.js` | A | Generatoren über die Registry, Sichtbarkeit nach Kursniveau `optionen.generatorSichtbar` (K32, §8.2) |
 | `src/services/kata.js` | U | Warm-up/Leitner |
 | `src/services/auswertung.js` | A | Matrix/Statistik niveau-gefiltert, Niveau-Spalte; `board(schluessel)` statt `board(kurscode)`; Kursübersicht für das Portal (§6.8); CSV-Dateiname `kryptos_…` |
 | `src/services/kurse.js` | E | Kurse kommen vom Portal: `upsertAusToken`, `kursFuer(konto, id)` (Lehrkraft nur aktive `kurs_lehrkraefte`, Superadmin alle), `kursAendern` (nur `einstellungen`, **kein** Umbenennen), `einstellungen()` (Kern-Logik + Niveau/Werkzeuge/Kür); Beitritt, Codes, Umbenennen, Löschen **entfernt** |
@@ -135,6 +135,8 @@ src/
     werkzeuge.js               Labor-Registry (serverseitige Liste, §10.2)
     generatoren/               caesar.js, schluesselpaar.js, modulo.js, affin.js, schluesselwort.js, vigenere.js,
                                kasiski.js, koinzidenz.js, xor.js, kryptos16.js, toyhash.js, schluesselanzahl.js, dhrsa.js
+                               (12 Pflicht-Generatoren nach Design §7.6 + dhrsa.js als Ergänzung = 13 Dateien,
+                               16 Generator-Schlüssel nach Welt-Spec §8; index.js registriert, woerter.js Wortlisten)
     teams.js                   Tischgruppen je Kurs
     funkraum/                  szenarien.js (Konfiguration §12.6), dienst.js, routen.js
     arena/                     dienst.js, routen.js

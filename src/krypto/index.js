@@ -15,6 +15,8 @@ const bits = require('./interaktionen/bits');
 const D = require('./diagnose');
 const validierung = require('./validierung');
 const N = require('./niveau');
+const G = require('../content/generators');
+const generatoren = require('./generatoren');
 
 let registriert = false;
 
@@ -38,6 +40,8 @@ function registriere() {
   // Delta §9.6: erwartete Fehlantworten in gaps (loesung._fehlmuster) und ihre Prüfung im Validator
   F.registriereDiagnose('gaps', D.gapsFehlmuster);
   V.registriereValidierung(validierung.HOOKS);
+  // Trainingsplatz-Generatoren (Design §7.6, TECHNIK §2.4)
+  generatoren.registriere(G);
 }
 
 /**

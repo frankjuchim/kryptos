@@ -19,14 +19,18 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
   const iso = () => new Date(ctx.now()).toISOString();
   const seedQuelle = ctx.trainingSeed || (() => crypto.randomInt(1, 2 ** 31));
 
+  /** Generatoren der Welt, gefiltert nach Kursniveau (optionen.generatorSichtbar, TECHNIK §8.2). */
+  function sichtbareGeneratoren(nr, einst) {
+    return G.generatorenFuerWelt(nr, { sichtbar: (g) => ctx.optionen.generatorSichtbar(g, einst) });
+  }
+
   function punkteHeute(sid) {
     return db.prepare('SELECT COALESCE(SUM(punkte), 0) AS p FROM training WHERE schueler_id = ? AND tag = ?').get(sid, tagBerlin(ctx.now())).p;
   }
 
   function info(s, weltRoh) {
     const nr = V.int(weltRoh, 'Welt', { min: 0, max: 9 });
-    lernen.pruefeWeltFrei(s, nr);
-    const gens = G.generatorenFuerWelt(nr);
+    const gens = sichtbareGeneratoren(nr, lernen.pruefeWeltFrei(s, nr));
     if (!gens.length) throw new NotFoundError('Für diese Welt gibt es keinen Trainingsplatz.');
     const w = inhalte.weltInfo(nr);
     const gesamt = db.prepare("SELECT COUNT(*) AS n FROM training WHERE schueler_id = ? AND status = 'geloest'").get(s.id).n;
@@ -64,8 +68,7 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
 
   function neu(s, weltRoh, body) {
     const nr = V.int(weltRoh, 'Welt', { min: 0, max: 9 });
-    lernen.pruefeWeltFrei(s, nr);
-    const gens = G.generatorenFuerWelt(nr);
+    const gens = sichtbareGeneratoren(nr, lernen.pruefeWeltFrei(s, nr));
     if (!gens.length) throw new NotFoundError('Für diese Welt gibt es keinen Trainingsplatz.');
     const wunsch = body && typeof body.generator === 'string' && body.generator ? body.generator : null;
     let key;
