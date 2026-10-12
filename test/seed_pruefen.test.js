@@ -1,0 +1,21 @@
+'use strict';
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const fs = require('node:fs'); const os = require('node:os'); const path = require('node:path');
+const H = require('./helpers');
+const SKRIPT = path.join(__dirname, '..', 'werkzeuge', 'krypto', 'seed_pruefen.py');
+const py = spawnSync('python3', ['--version']);
+test('seed_pruefen.py: Fixture ohne Abweichung, manipulierte Lösung mit Exit-Code 1', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
+  let r = spawnSync('python3', ['-I', SKRIPT, H.FIXTURE], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /0 Abweichungen/);
+  const w = JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8'));
+  w.aufgaben.find((a) => a.id === 'W9-L3-03').loesung.bits = '1101100001101111';
+  w.aufgaben.find((a) => a.id === 'W9-L5-08').loesung.text = 'UVMGEOVFCCX';
+  const d = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kr-seed-')), 'w.json'); fs.writeFileSync(d, JSON.stringify(w));
+  r = spawnSync('python3', ['-I', SKRIPT, d], { encoding: 'utf8' });
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /W9-L3-03/);
+  assert.match(r.stdout, /W9-L5-08/);
+});

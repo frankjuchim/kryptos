@@ -1591,7 +1591,7 @@ nach `docs/screenshots/`, Viewports 1280×800, 768×1024, 360×740, Beamer 1920�
 | Job | Schritte |
 |---|---|
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` |
-| `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 werkzeuge/krypto/seed_pruefen.py`, `python3 -I werkzeuge/krypto/pruefwerte.py` |
+| `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture und Seeds), `python3 -I werkzeuge/krypto/pruefwerte.py` |
 | `inhalte` | Python 3.12 + Java 21 + `pip install python-docx python-pptx pypdf fonttools`: `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `materialien_pruefen.py`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, `video_folien.py --pruefen`, `schriften_pruefen.py` |
 | `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install chromium` in CI), Artefakt: Screenshots |
 

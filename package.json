@@ -11,8 +11,9 @@
     "validate": "node scripts/validate.js",
     "krypto:vergleich": "node werkzeuge/krypto/vergleich.js",
     "krypto:pruefwerte": "python3 -I werkzeuge/krypto/pruefwerte.py",
+    "krypto:seeds": "python3 -I werkzeuge/krypto/seed_pruefen.py",
     "e2e": "node test/e2e/e2e.js",
-    "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte"
+    "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds"
   },
   "engines": {
     "node": ">=20"
