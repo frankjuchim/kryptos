@@ -152,6 +152,35 @@ test('T1 Lehrkraft und Superadmin: kurs_lehrkraefte, Weiterleitung auf /lehrer, 
   assert.equal((await a.get('/api/admin/inhalte')).status, 200);
 });
 
+test('Superadmin: keine kurs_lehrkraefte-Zeilen, erscheint nicht als Lehrkraft eines Kurses, sieht trotzdem alle Kurse', async () => {
+  const app = H.makeApp();
+  const { c: a } = await ende(app, { felder: { sub: 'a:1', rolle: 'superadmin', name: 'Admin', kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'lehrkraft' }] } });
+  assert.equal(zaehle(app, "SELECT COUNT(*) AS n FROM kurs_lehrkraefte WHERE sub = 'a:1'"), 0, 'keine Zuordnung für den Superadmin');
+  assert.equal(zaehle(app, "SELECT COUNT(*) AS n FROM kurse WHERE kurs_id = 'k:17'"), 1, 'Kurs trotzdem angelegt');
+  const { c: lk } = await ende(app, { felder: { sub: 'l:2', rolle: 'lehrkraft', name: 'Frau K.', kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'lehrkraft' }] } });
+  assert.deepEqual((await lk.get('/api/lehrer/kurse')).body.map((x) => x.lehrkraft), ['Frau K.']);
+  const alle = (await a.get('/api/lehrer/kurse')).body;
+  assert.deepEqual(alle.map((x) => [x.kurs, x.lehrkraft]), [['k:17', 'Frau K.']]);
+  // alte Zeile eines Superadmins (z. B. aus einem Backup) zählt nicht als Lehrkraft und wird beim nächsten SSO entfernt
+  app.locals.db.prepare("INSERT INTO kurs_lehrkraefte (kurs_id, sub, aktiv) SELECT id, 'a:1', 1 FROM kurse WHERE kurs_id = 'k:17'").run();
+  assert.deepEqual((await lk.get('/api/lehrer/kurse')).body.map((x) => x.lehrkraft), ['Frau K.']);
+  await ende(app, { felder: { sub: 'a:1', rolle: 'superadmin', name: 'Admin', kurse: [] } });
+  assert.equal(zaehle(app, "SELECT COUNT(*) AS n FROM kurs_lehrkraefte WHERE sub = 'a:1'"), 0);
+});
+
+test('Board: gesperrter Kurs (aktiv = 0) → 404, entsperrt wieder sichtbar', async () => {
+  const request = require('supertest');
+  const { STANDARD_EINSTELLUNGEN } = require('../src/domain');
+  const app = H.makeApp();
+  const k = H.kurs(app, 'Gesperrt', { einstellungen: { ...STANDARD_EINSTELLUNGEN, beamer: true }, aktiv: false });
+  H.teilnahme(app, k, H.konto(app, 'schueler', 'Mika R.'), 'Mika R.');
+  const r = await request(app).get('/api/board/' + k.boardSchluessel);
+  assert.equal(r.status, 404);
+  assert.equal(JSON.stringify(r.body).includes('Mika'), false);
+  app.locals.db.prepare('UPDATE kurse SET aktiv = 1 WHERE id = ?').run(k.id);
+  assert.equal((await request(app).get('/api/board/' + k.boardSchluessel)).status, 200);
+});
+
 test('T2 falsche Signatur → 401 signatur', async () => {
   const { r } = await ende(H.makeApp(), { key: FREMD.privateKey });
   erwarteFehler(r, 401, 'signatur');

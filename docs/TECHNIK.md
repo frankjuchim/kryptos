@@ -560,7 +560,9 @@ Ablauf in `/sso/ende` (Schritt 6), alles in einer Transaktion:
 3. **Schüler:** je Kurs `schueler` (Teilnahme) nach `(kurs_id, sub)` upserten: `name`, `name_key` (Kern-Funktion
    `V.schuelerName`, bei Ungültigkeit gekürzt/bereinigt), `aktiv = 1`; alle anderen Teilnahmen dieses `sub` → `aktiv = 0`
    (Lernstand bleibt bis zur Löschung, VERTRAG §5).
-4. **Lehrkraft/Superadmin:** `kurs_lehrkraefte` je Token-Kurs `aktiv = 1`, alle anderen dieses `sub` → `aktiv = 0`.
+4. **Lehrkraft:** `kurs_lehrkraefte` je Token-Kurs `aktiv = 1`, alle anderen dieses `sub` → `aktiv = 0`.
+   **Superadmin:** keine `kurs_lehrkraefte`-Zeilen (vorhandene werden entfernt) – er sieht ohnehin alle Kurse und soll in
+   Lehrkraft-Listen (Spalte „Lehrkraft“ der Kursliste, nur Konten mit `rolle = 'lehrkraft'`) nicht erscheinen.
 5. Gleichnamige Schüler in einem Kurs sind erlaubt (Portal sichert Eindeutigkeit); Anzeige im Kurs nutzt `name`.
 
 ### 6.7 Verbund-API (Portal → Plattform)
@@ -585,7 +587,7 @@ aud: PLATTFORM_ID, maxDauerSek: 60 })`, dann `sub === 'portal'`, `zweck` gleich,
 `geloescht` = Anzahl gelöschter **Konten + Teilnahmen** (bei `sub`) bzw. **Kurse + Teilnahmen** (bei `kurs`). Umfang
 der Löschung: §7.3 (umfasst Funkraum und Arena). `aktiv: false` sperrt den Kurs: Schüler-API → 403 „Kryptos ist für
 deinen Kurs abgeschaltet“, Lehrkraft sieht den Kurs nur lesend mit Hinweis; Funkraum-Szenario und Arena des Kurses
-werden beendet (Inhalte gelöscht, §12.7).
+werden beendet (Inhalte gelöscht, §12.7); das Beamer-Board des Kurses (`/api/board/:schluessel`) antwortet 404.
 
 ### 6.8 Kursübersicht (SOLL, Format VERTRAG §6)
 
@@ -655,7 +657,7 @@ Registrierung, das Feld `niveaus`, `niveau` in der Kursübersicht und die Regel 
 
 ### 6.11 Superadmin und Gastmodus
 
-- Superadmin (`a:`) kommt per SSO, hat Lehrkraft-Rechte für **alle** Kurse der Plattform plus `/api/admin/*`
+- Superadmin (`a:`) kommt per SSO, hat Lehrkraft-Rechte für **alle** Kurse der Plattform (ohne `kurs_lehrkraefte`-Zeilen, §6.6) plus `/api/admin/*`
   (Inhalte neu laden, Seed-Bericht, Backup/Restore, Warm-up-Import, Wartungsbericht). Kein lokales Passwort.
 - Gastmodus wie Algo Quest (Delta §12): keine Anmeldung, keine Speicherung, eigene Demo-Aufgaben, Demo-Kurs nur lesend,
   Kryptolabor im Gastmodus nur mit der Chiffrierscheibe.

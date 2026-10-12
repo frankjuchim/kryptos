@@ -71,7 +71,7 @@ function createKurse(ctx) {
       .prepare(
         `SELECT k.*,
            COALESCE((SELECT GROUP_CONCAT(x.name, ', ') FROM kurs_lehrkraefte kl JOIN konten x ON x.sub = kl.sub
-                     WHERE kl.kurs_id = k.id AND kl.aktiv = 1), '–') AS lk_name,
+                     WHERE kl.kurs_id = k.id AND kl.aktiv = 1 AND x.rolle = 'lehrkraft'), '–') AS lk_name,
            (SELECT COUNT(*) FROM schueler s WHERE s.kurs_id = k.id) AS anzahl,
            (SELECT MAX(last_active_at) FROM schueler s WHERE s.kurs_id = k.id) AS zuletzt
          FROM kurse k
@@ -135,7 +135,8 @@ function createKurse(ctx) {
    * Kursabgleich aus dem SSO-Token (TECHNIK §6.6 Schritte 2–4) – Aufruf innerhalb der Transaktion von /sso/ende,
    * nach konten.upsert. Neue Kurse: Standard-Einstellungen, aktiv, neuer Board-Schlüssel; vorhandene: nur der Name
    * (aktiv steuert allein die Verbund-API). Schüler: Teilnahmen der Token-Kurse aktiv, alle anderen inaktiv (Lernstand
-   * bleibt). Lehrkraft/Superadmin: kurs_lehrkraefte entsprechend. Liefert die lokalen Kurs-ids der Token-Kurse.
+   * bleibt). Lehrkraft: kurs_lehrkraefte entsprechend; Superadmin: keine kurs_lehrkraefte-Zeilen (sieht alle Kurse).
+   * Liefert die lokalen Kurs-ids der Token-Kurse.
    */
   function upsertAusToken(sub, rolle, liste) {
     const jetzt = iso();
@@ -165,6 +166,9 @@ function createKurse(ctx) {
       );
       for (const id of new Set(ids)) teilnahme.run(id, sub, name, key, jetzt);
       db.prepare('UPDATE schueler SET aktiv = 0 WHERE sub = ? AND kurs_id NOT IN (SELECT value FROM json_each(?))').run(sub, idListe);
+    } else if (rolle === 'superadmin') {
+      // Superadmin sieht ohnehin alle Kurse (sitzung.lehrkraft) – keine Zuordnung, sonst stünde er als Lehrkraft im Kurs
+      db.prepare('DELETE FROM kurs_lehrkraefte WHERE sub = ?').run(sub);
     } else {
       const zuordnung = db.prepare('INSERT INTO kurs_lehrkraefte (kurs_id, sub, aktiv) VALUES (?, ?, 1) ON CONFLICT(kurs_id, sub) DO UPDATE SET aktiv = 1');
       for (const id of new Set(ids)) zuordnung.run(id, sub);

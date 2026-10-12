@@ -191,7 +191,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
   /** Beamer-Board zum Board-Schlüssel des Kurses (ersetzt den Kurscode, TECHNIK §2.1). */
   function board(schluessel) {
     const k = kurse.kursPerBoardSchluessel(schluessel);
-    if (!k || !k.einstellungen.beamer) return null;
+    if (!k || !k.aktiv || !k.einstellungen.beamer) return null; // vom Portal gesperrter Kurs: kein Board
     const liste = lernen.scoreboard(k.id).slice(0, 15).map(({ id, ich, ...r }) => r);
     // nur aktive Teilnahmen (Kryptos: inaktive erscheinen auf dem Board nicht)
     const map = new Map([...stand.staende(k.id)].filter(([, e]) => e.row.aktiv === 1));
