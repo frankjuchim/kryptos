@@ -2,6 +2,7 @@
 // Inhalte: Seed-Upsert der Welt-Dateien, Katalog im Speicher, Ansichten ohne Lösung.
 // K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video),
 // Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
+// M3 Task 33: oeffentlich/loesungsteil filtern interne Prüfdaten (fehlmuster, _fehlmuster) für alle Clients.
 
 const crypto = require('node:crypto');
 const { validiereWelt, aufgabePunkte } = require('../content/validator');
@@ -36,6 +37,21 @@ function weltFelder(d) {
     akzentHell: typeof d.akzentHell === 'string' ? d.akzentHell : null,
     kapitel: kapitel ? { titel: String(kapitel.titel || ''), md: String(kapitel.md || '') } : null
   };
+}
+
+/**
+ * Interne Prüfdaten, die den Server nie verlassen (Delta §9.6): erwartete Fehlantworten `fehlmuster` (chiffre/bits
+ * frei) und `_fehlmuster` (gaps) – weder vor noch nach dem Lösen, auch nicht in Vorschau, Gast oder Boss-Auswertung.
+ */
+const INTERNE_SCHLUESSEL = new Set(['fehlmuster', '_fehlmuster']);
+
+/** Tiefe Kopie ohne interne Prüfdaten (Objekte und Listen; andere Werte unverändert). */
+function ohneInterna(x) {
+  if (Array.isArray(x)) return x.map(ohneInterna);
+  if (!x || typeof x !== 'object') return x;
+  const out = {};
+  for (const [k, v] of Object.entries(x)) if (!INTERNE_SCHLUESSEL.has(k)) out[k] = ohneInterna(v);
+  return out;
 }
 
 function createInhalte(ctx) {
@@ -270,15 +286,15 @@ function createInhalte(ctx) {
       niveau: a._niveau || a.niveau || 'kern',
       fallen: a.fallen || [],
       inhalt: a.inhalt,
-      interaktion: a.interaktion,
+      interaktion: ohneInterna(a.interaktion),
       tippsAnzahl: Array.isArray(a.tipps) ? a.tipps.length : 0
     };
     return out;
   }
 
-  /** Lösungsteil (nach Lösen oder Aufdecken). */
+  /** Lösungsteil (nach Lösen oder Aufdecken) – ohne interne Prüfdaten (fehlmuster, _fehlmuster). */
   function loesungsteil(a) {
-    return { loesung: a.loesung, muster: C.musterantwortAufgabe(a), erklaerung: Array.isArray(a.erklaerung) ? a.erklaerung : [] };
+    return { loesung: ohneInterna(a.loesung), muster: C.musterantwortAufgabe(a), erklaerung: Array.isArray(a.erklaerung) ? a.erklaerung : [] };
   }
 
   function weltInfo(nr) {
@@ -357,4 +373,4 @@ function createInhalte(ctx) {
   };
 }
 
-module.exports = { createInhalte };
+module.exports = { createInhalte, ohneInterna };

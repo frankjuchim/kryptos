@@ -214,10 +214,14 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `format.js` | `registriereInteraktion(art, vertrag)` | Interaktion (Vertrag §4.3); `art` ist `kind` (ohne Modus) |
 | `format.js` | `registriereNorm(name, fn)` | `krypto`, `bits` |
 | `validator.js` | `registriereValidierung({ welt?, level?, aufgabe?, boss?, dateien? })` (mehrfach erlaubt) | Zusatzprüfungen (Delta §11): `welt(data, f, w, { stats, opt })`, `level(l, ort, f, w, { data, aufgaben, opt })`, `aufgabe(a, fa, wa, { data, welt, opt })`, `boss(b, f, w, { data, aufgaben, opt })`, `dateien(eintraege, ergebnisse)` |
-| `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`) |
+| `lernen.js`, `training.js`, `gast.js`, `boss.js` | `optionen.diagnose` (Wahrheitswert) | Fallen-Diagnose in der Prüfung (`C.pruefeAufgabe(…, { diagnose })`, Delta §9); Std.: `false`. Boss: nur in der Auswertung, nie im laufenden Kampf, keine Zählung |
+| `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`; Kryptos: erkannte Fallen, sonst `aufgabe.fallen`) |
 | `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level\|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
+| `stand.js` | `optionen.bossBezug(aufgabe, einst)` | Bezugsmenge der Boss-Freischaltung (60 %) und des Abzeichens „Welt gemeistert“ (§8.1/§8.2; Std.: alles) |
+| `training.js` | `optionen.generatorSichtbar(gen, einst)` | Trainingsplatz nach Niveau (§8.2; Std.: alles) |
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |
-| `services/index.js` | `optionen` wird aus `src/krypto/index.js → dienstOptionen()` gefüllt | |
+| `services/index.js` | `STANDARD_OPTIONEN` (alle Hooks oben mit Standardwert); `createServices` setzt `ctx.optionen = { ...STANDARD_OPTIONEN, ...ctx.optionen }`; `app.js` füllt `ctx.optionen` aus `src/krypto/index.js → dienstOptionen()` (Tests: `opts.optionen` überschreibt) | Kern ohne `src/krypto/` = Standard |
+| `inhalte.js` | – (fest) | `oeffentlich`/`loesungsteil` entfernen interne Prüfdaten (`fehlmuster`, `_fehlmuster`, Delta §9.6) für alle Clients (Lab, Boss, Training, Gast, Vorschau) |
 
 ### 4.3 Vertrag einer registrierten Interaktion (Server)
 

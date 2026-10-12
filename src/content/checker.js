@@ -423,6 +423,7 @@ module.exports = {
   feldRichtig,
   pruefeTeil,
   pruefeAufgabe,
+  FELDER_OBEN,
   folgenPruefung,
   musterantwort,
   musterantwortAufgabe,

@@ -206,3 +206,39 @@ test('Archivfund: Tipp/Aufdecken über die eigene Route, gesperrte Welt 403, Kap
   await s.get('/api/archivfund/9').expect(403);
   await s.post('/api/archivfund/9/pruefen').send({ antwort: 'treffpunkt' }).expect(403);
 });
+
+test('Diagnose: erkannte Falle wird gezählt (statt der Liste fallen), Feedback je Zeichen, Schrittprüfung', async () => {
+  const { s } = await H.szenario();
+  const f = async () => Object.fromEntries((await s.get('/api/profil')).body.fallen.map((x) => [x.p, x.fehlversuche]));
+  let r = (await s.post('/api/aufgaben/W9-L5-01/pruefen').send({ antwort: 'FABKXRGKYYOM' }).expect(200)).body;
+  assert.deepEqual(r.diagnose.map((d) => [d.p, d.code]), [['P3', 'richtung']]);
+  assert.equal(r.zeichen.length, 12);
+  assert.deepEqual([(await f()).P3, (await f()).P1], [1, 0], 'nur die erkannte Falle');
+  r = (await s.post('/api/aufgaben/W9-L5-01/pruefen').send({ antwort: 'AAAAAAAAAAAA' }).expect(200)).body;
+  assert.equal(r.diagnose, undefined);
+  assert.deepEqual([(await f()).P3, (await f()).P1], [2, 1], 'ohne Diagnose: Liste fallen (P1, P3)');
+  r = (await s.post('/api/aufgaben/W9-L5-01/pruefen').send({ antwort: 'ZUB', teilweise: true }).expect(200)).body;
+  assert.deepEqual([r.ok, r.ersteFalschePosition, r.diagnose[0].p], [false, 2, 'P3']);
+  assert.equal((await f()).P3, 3);
+  assert.equal(r.zustand.fehlversuche, 3);
+});
+
+test('fehlmuster/_fehlmuster (interne Prüfdaten) verlassen den Server nie – auch nicht nach dem Lösen oder in der Vorschau', async () => {
+  const { s, lk } = await H.szenario();
+  const sauber = (x, wo) => assert.ok(!/fehlmuster/.test(JSON.stringify(x)), `${wo}: fehlmuster in der Antwort`);
+  // W9-L5-08: chiffre frei mit loesung.fehlmuster; W9-L5-09: gaps mit loesung._fehlmuster
+  sauber((await s.post('/api/aufgaben/W9-L5-08/pruefen').send({ antwort: FALSCH['W9-L5-08'] }).expect(200)).body, 'falsch');
+  const ok = (await s.post('/api/aufgaben/W9-L5-08/pruefen').send({ antwort: RICHTIG['W9-L5-08'] }).expect(200)).body;
+  assert.equal(ok.geloest, true);
+  assert.equal(ok.loesung.text, 'UVMGEOVFCCF', 'Lösung selbst bleibt erhalten');
+  sauber(ok, 'gelöst');
+  sauber((await s.get('/api/aufgaben/W9-L5-08').expect(200)).body, 'Aufgabe nach dem Lösen');
+  const auf = (await s.post('/api/aufgaben/W9-L5-09/aufdecken').send({}).expect(200)).body;
+  assert.deepEqual(auf.loesung.wert, ['26']);
+  sauber(auf, 'aufgedeckt');
+  sauber((await s.get('/api/aufgaben/W9-L5-09').expect(200)).body, 'Aufgabe nach dem Aufdecken');
+  for (const id of ['W9-L5-08', 'W9-L5-09']) sauber((await lk.get(`/api/lehrer/vorschau/${id}`).expect(200)).body, `Vorschau ${id}`);
+  sauber((await lk.get('/api/lehrer/vorschau').expect(200)).body, 'Vorschau-Liste');
+  // der Katalog im Server behält die Prüfdaten (Diagnose braucht sie)
+  assert.ok(s.app.locals.services.inhalte.katalog.aufgaben.get('W9-L5-09').loesung._fehlmuster);
+});

@@ -1218,7 +1218,7 @@ Test „Diagnosetexte verraten keine Lösung“ vergleicht deshalb nur die **Wer
   - Texte: `bits-rechnen:verknuepfung` „Prüfe die Verknüpfung: Bei XOR ergibt 1 ⊕ 1 = 0 und 0 ⊕ 0 = 0.“ · `…:bitreihenfolge` „Das
     höchstwertige Bit steht links – prüfe die Bitreihenfolge.“ · `…:ascii` „Der ASCII-Wert liegt um eins daneben – zähle die
     Zweierpotenzen noch einmal nach.“ · `…:transposition` „Nach der S-Box fehlt die Transposition (Zeile ↔ Spalte).“ ·
-    `bits-rechnen:richtung` „Du hast in Entschlüsselungsrichtung gerechnet (S⁻¹ statt S, Rundenschlüssel falsch rotiert oder Runde rückwärts).“
+    `bits-rechnen:richtung` „Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).“ (neutral, weil die Aufgabe auch `ent` sein kann; korrigiert in Task 33)
 
 Fixture (`W9-L6.aufgaben` = `["W9-L6-01", …, "W9-L6-06"]`, `W9-L3.aufgaben` += `W9-L3-03`, `W9-L3-04`):
 ```json
@@ -1599,6 +1599,10 @@ Negativ-Fixtures dieser Task:
   - `boss.antworten`: `C.bereinige(ia, antwort, { aufgabe: a })`; `boss.auswerten`: Prüfung mit `{ diagnose: optionen.diagnose }`,
     `ergebnis[i].diagnose` (nur falsche Antworten, nicht leer); beendete Ansicht: je Aufgabe `diagnose` (Liste, ggf. leer); **keine**
     Zählung in `fallen_zaehler`; laufender Kampf ohne `diagnose`
+  - `inhalte.oeffentlich`/`inhalte.loesungsteil`: interne Prüfdaten `fehlmuster` (chiffre/bits `frei`) und `_fehlmuster` (gaps)
+    werden zentral entfernt (`ohneInterna`) – sie verlassen den Server nie (Lab, Boss-Auswertung, Training, Gast, Lehrkraft-Vorschau);
+    Ergänzung des Orchestrators, Delta §9.6 um einen Satz ergänzt
+  - Diagnosetext `bits-rechnen:richtung` neutral (siehe Task 29)
 
 - [ ] **Step 1: Failing tests**:
   ```js
@@ -1635,6 +1639,9 @@ Negativ-Fixtures dieser Task:
   ```
   `gast.test.js`: temporäre Demo-Datei (Welt 8, Level `W8-L1` `kern`/`kryptoanalyse`, eine Aufgabe = Kopie von `W9-L5-01` mit id
   `W8-L1-01`) → `POST /api/gast/aufgaben/W8-L1-01/pruefen` mit `FABKXRGKYYOM` liefert `diagnose[0].p === 'P3'` und `zeichen`.
+  Zusätzlich: `lernen.test.js` „fehlmuster verlassen den Server nie“ (W9-L5-08 gelöst, W9-L5-09 aufgedeckt, Lehrkraft-Vorschau);
+  `boss.test.js` mit einer Fixture-Kopie (W9-B-01 = fremde Chiffre mit `fehlmuster`, W9-B-03 = Signatur-Schaubild): unbekannter
+  Akteur im Boss → 400 (`bereinige` mit Kontext), Auswertung ohne `fehlmuster`; `gast.test.js` dito für den Gastmodus.
 - [ ] **Step 2: Run** → FAIL.
 - [ ] **Step 3: Implement**; TECHNIK §4.2 um `optionen.bossBezug`, `optionen.generatorSichtbar`, `optionen.diagnose` ergänzen (E3).
 - [ ] **Step 4: Run** → PASS; `npm test` grün.

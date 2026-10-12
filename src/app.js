@@ -39,6 +39,7 @@ const VERSION = require('../package.json').version;
  * @param {Function} [opts.now]           Uhr (ms) – für Tests
  * @param {Function} [opts.random]        Zufall [0,1) für Boss-Ziehung – für Tests
  * @param {Function} [opts.trainingSeed]  Seed-Quelle für Generatoren – für Tests
+ * @param {object} [opts.optionen]        Dienst-Optionen (TECHNIK §4.2), überschreiben dienstOptionen() – für Tests
  * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Arbeitsblatt-PDFs (Standard: ARBEITSBLAETTER_DIR,
  *                                         sonst ./arbeitsblaetter im Image bzw. materialien/Arbeitsblaetter_PDF im Repo)
  * @param {string|null} [opts.materialienDir] Ordner mit Lehrkraft_PDF/ und Loesungen_Portal/ (nur Lehrkräfte;
@@ -49,7 +50,16 @@ function createApp(opts) {
   require('./krypto').registriere();
   const log = opts.log || (() => {});
   const db = openDatabase(opts.dbFile, { log });
-  const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed };
+  // Verbund-Konfiguration (TECHNIK §6.1): vom Server (ladeKonfig) oder – in Tests – aus opts (Testmodus, ohne Abbruch).
+  const konfig =
+    opts.konfig ||
+    ladeKonfig(
+      { PORTAL_URL: opts.portalUrl, PORTAL_PUBLIC_KEY: opts.portalPublicKey, PLATTFORM_URL: opts.plattformUrl, PLATTFORM_ID: opts.plattformId, SESSION_SECRET: opts.sessionSecret, VERTRAG_VERSION: opts.vertragVersion },
+      { test: true }
+    );
+  // Dienst-Optionen (TECHNIK §4.2): Krypto-Hooks, in Tests durch opts.optionen überschreibbar
+  const optionen = { ...require('./krypto').dienstOptionen(), ...(opts.optionen || {}) };
+  const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed, optionen };
   const svc = createServices(ctx);
   ladeInhalte(svc, opts, log);
   const abDir = arbeitsblaetterOrdner(opts);
@@ -62,13 +72,6 @@ function createApp(opts) {
   });
   const material = createLehrkraftMaterial({ materialienDir: materialienOrdner(opts), abDir, demo, log });
   const gast = createGast(ctx, { datei: gastDatei(opts), inhalte: svc.inhalte, material, log });
-  // Verbund-Konfiguration (TECHNIK §6.1): vom Server (ladeKonfig) oder – in Tests – aus opts (Testmodus, ohne Abbruch).
-  const konfig =
-    opts.konfig ||
-    ladeKonfig(
-      { PORTAL_URL: opts.portalUrl, PORTAL_PUBLIC_KEY: opts.portalPublicKey, PLATTFORM_URL: opts.plattformUrl, PLATTFORM_ID: opts.plattformId, SESSION_SECRET: opts.sessionSecret, VERTRAG_VERSION: opts.vertragVersion },
-      { test: true }
-    );
   const secret = opts.sessionSecret || konfig.sessionSecret;
   const sitzung = createSitzung({ db, secret });
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });

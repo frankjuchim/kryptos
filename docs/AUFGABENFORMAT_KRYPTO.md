@@ -761,6 +761,8 @@ Für `frei` gibt es keine berechneten Kandidaten. Optional kann die Lösung **er
 `"loesung": { "text": "…", "fehlmuster": [ { "text": "…", "p": "P3", "code": "richtung" } ] }` (höchstens 5;
 Validator: unterscheidet sich von `text`). Dasselbe Feld `fehlmuster` ist bei `gaps`-Feldern erlaubt:
 `"loesung": { "g1": ["17"], "_fehlmuster": { "g1": [ { "wert": "0", "p": "P2", "code": "null_statt_z" } ] } }`.
+`fehlmuster` und `_fehlmuster` sind interne Prüfdaten: Der Server entfernt sie aus jeder Ausgabe an Clients (auch aus
+der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und der Boss-Auswertung).
 
 ---
 

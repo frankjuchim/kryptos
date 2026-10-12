@@ -202,11 +202,13 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
   /** Archivfund: zählt für nichts (Delta §2) – auch nicht für die Serie (Abzeichen „Zehnerserie“). */
   const serieZaehlt = (a) => !a._archivfund;
 
-  function fehlerVerbuchen(s, a, r, antworten, voll) {
+  /** Fehlversuch zählen; Fallen nach optionen.fallenAusErgebnis (erkannte Falle der Diagnose, sonst aufgabe.fallen). */
+  function fehlerVerbuchen(s, a, erg, voll) {
+    const antworten = erg.antworten;
     db.prepare('UPDATE fortschritt SET fehlversuche = fehlversuche + 1, updated_at = ? WHERE schueler_id = ? AND aufgabe_id = ?').run(iso(), s.id, a.id);
     if (serieZaehlt(a)) db.prepare('UPDATE schueler SET serie = 0 WHERE id = ?').run(s.id);
     const up = db.prepare('INSERT INTO fallen_zaehler (schueler_id, falle, anzahl) VALUES (?, ?, 1) ON CONFLICT(schueler_id, falle) DO UPDATE SET anzahl = anzahl + 1');
-    for (const p of a.fallen) up.run(s.id, p);
+    for (const p of ctx.optionen.fallenAusErgebnis(a, erg) || []) up.run(s.id, p);
     if (voll) {
       const kurz = C.antwortKurz(antworten);
       if (kurz) {
@@ -225,14 +227,14 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const a = levelAufgabe(s, id);
     const b = body || {};
     const teilweise = b.teilweise === true;
-    const erg = C.pruefeAufgabe(a, b.antwort, { teilweise, teil: b.teil });
+    const erg = C.pruefeAufgabe(a, b.antwort, { teilweise, teil: b.teil, diagnose: ctx.optionen.diagnose });
     if (!teilweise && erg.leer) throw new ValidationError('Bitte gib zuerst eine Antwort ein.');
     const neu = { geloest: false, punkte: 0, abzeichen: [] };
     const tx = db.transaction(() => {
       const r = sichereZeile(s.id, a.id);
       const fertig = erg.ok && (!teilweise || erg.vollstaendig);
       if (r.status === 'offen') {
-        if (!erg.ok) fehlerVerbuchen(s, a, r, erg.antworten, !teilweise);
+        if (!erg.ok) fehlerVerbuchen(s, a, erg, !teilweise);
         else if (fertig) {
           const p = punkteFuer(a.punkte, r.fehlversuche, Math.min(r.tipps, a.tipps.length));
           db.prepare("UPDATE fortschritt SET status = 'geloest', punkte = ?, geloest_at = ?, updated_at = ? WHERE schueler_id = ? AND aufgabe_id = ?").run(p, iso(), iso(), s.id, a.id);
@@ -257,9 +259,10 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     else {
       out.teile = erg.teile;
       if ('ersteFalschePosition' in erg) out.ersteFalschePosition = erg.ersteFalschePosition;
-      if (erg.felder) out.felder = erg.felder;
-      if (erg.elemente) out.elemente = erg.elemente;
+      // Teil-Feedback (felder, elemente, zeichen, bits, anteil, buchstaben) und Fallen-Diagnose (K02)
+      for (const k of C.FELDER_OBEN) if (erg[k] !== undefined) out[k] = erg[k];
     }
+    if (teilweise && erg.diagnose) out.diagnose = erg.diagnose;
     if (z.status !== 'offen' && (neu.geloest || erg.ok)) Object.assign(out, inhalte.loesungsteil(a));
     return out;
   }

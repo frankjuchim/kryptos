@@ -92,7 +92,7 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
     const a = JSON.parse(r.daten);
     const b = body || {};
     const teilweise = b.teilweise === true;
-    const erg = C.pruefeAufgabe(a, b.antwort, { teilweise, teil: b.teil });
+    const erg = C.pruefeAufgabe(a, b.antwort, { teilweise, teil: b.teil, diagnose: ctx.optionen.diagnose });
     if (!teilweise && erg.leer) throw new ValidationError('Bitte gib zuerst eine Antwort ein.');
     let punkte = 0;
     let geloest = false;
@@ -113,9 +113,10 @@ function createTraining(ctx, { inhalte, stand, lernen }) {
     else {
       out.teile = erg.teile;
       if ('ersteFalschePosition' in erg) out.ersteFalschePosition = erg.ersteFalschePosition;
-      if (erg.felder) out.felder = erg.felder;
-      if (erg.elemente) out.elemente = erg.elemente;
+      // Teil-Feedback (felder, elemente, zeichen, bits, anteil, buchstaben) und Fallen-Diagnose (K02)
+      for (const k of C.FELDER_OBEN) if (erg[k] !== undefined) out[k] = erg[k];
     }
+    if (teilweise && erg.diagnose) out.diagnose = erg.diagnose;
     if (nachher.status !== 'offen' && erg.ok) Object.assign(out, inhalte.loesungsteil(a));
     return out;
   }

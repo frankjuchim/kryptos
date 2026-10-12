@@ -1,6 +1,7 @@
 'use strict';
 // Boss-Kampf (SPEC §7): Ziehung nach Mix, serverseitiger Timer (+30 s Kulanz), kein Feedback während des Kampfes,
 // Auswertung am Ende, bester Versuch zählt, neuer Versuch frühestens 12 h nach dem Ende des letzten.
+// K08: Fallen-Diagnose nur in der Auswertung (ergebnis[i].diagnose), bereinige mit Kontext { aufgabe }.
 
 const crypto = require('node:crypto');
 const V = require('../validate');
@@ -74,6 +75,18 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     }
   }
 
+  /** Diagnose-Einträge eines Prüfergebnisses (einteilig oben, mehrteilig je Teil), ohne doppelte p/code. */
+  function diagnoseVon(erg) {
+    const liste = [...(erg.diagnose || []), ...(erg.teile || []).flatMap((t) => (t && t.diagnose) || [])];
+    const gesehen = new Set();
+    return liste.filter((d) => {
+      const k = `${d.p}:${d.code}`;
+      if (gesehen.has(k)) return false;
+      gesehen.add(k);
+      return true;
+    });
+  }
+
   function auswerten(s, r, endeT = ctx.now()) {
     const ids = JSON.parse(r.aufgaben);
     const antworten = JSON.parse(r.antworten || '{}');
@@ -82,15 +95,21 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
       const a = kat().aufgaben.get(id);
       if (!a) return { id, ok: false, punkte: 0, fehlt: true };
       let ok = false;
+      let diagnose = [];
       if (antworten[id] !== undefined) {
         try {
-          ok = C.pruefeAufgabe(a, antworten[id]).ok;
+          const erg = C.pruefeAufgabe(a, antworten[id], { diagnose: ctx.optionen.diagnose });
+          ok = erg.ok;
+          // Fallen-Diagnose nur für die Auswertung (nie im laufenden Kampf, keine Zählung in fallen_zaehler)
+          if (!ok && !erg.leer) diagnose = diagnoseVon(erg);
         } catch {
           ok = false;
         }
       }
       if (ok) punkte += a.punkte;
-      return { id, ok, punkte: ok ? a.punkte : 0 };
+      const out = { id, ok, punkte: ok ? a.punkte : 0 };
+      if (diagnose.length) out.diagnose = diagnose;
+      return out;
     });
     db.prepare('UPDATE boss_versuche SET ende_at = ?, punkte = ?, ergebnis = ? WHERE id = ? AND ende_at IS NULL').run(iso(endeT), punkte, JSON.stringify(ergebnis), r.id);
     stand.pruefeAbzeichen(s);
@@ -183,7 +202,7 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
         if (!a) return { id: aid, titel: '(entfernt)', ok: x.ok, erreicht: x.punkte };
         const o = inhalte.oeffentlich(a);
         delete o.tippsAnzahl;
-        return { ...o, ok: x.ok, erreicht: x.punkte, antwort: antworten[aid] === undefined ? null : antworten[aid], ...inhalte.loesungsteil(a) };
+        return { ...o, ok: x.ok, erreicht: x.punkte, antwort: antworten[aid] === undefined ? null : antworten[aid], diagnose: Array.isArray(x.diagnose) ? x.diagnose : [], ...inhalte.loesungsteil(a) };
       })
     };
   }
@@ -208,8 +227,8 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     let gespeichert;
     if (Array.isArray(a.interaktion)) {
       if (!Array.isArray(b.antwort)) throw new ValidationError('Mehrteilige Aufgabe: Antwort muss eine Liste sein.');
-      gespeichert = teile.map((ia, i) => C.bereinige(ia, b.antwort[i]));
-    } else gespeichert = C.bereinige(a.interaktion, b.antwort);
+      gespeichert = teile.map((ia, i) => C.bereinige(ia, b.antwort[i], { aufgabe: a }));
+    } else gespeichert = C.bereinige(a.interaktion, b.antwort, { aufgabe: a });
     const alle = JSON.parse(r.antworten || '{}');
     alle[aid] = gespeichert;
     db.prepare('UPDATE boss_versuche SET antworten = ? WHERE id = ?').run(JSON.stringify(alle), r.id);

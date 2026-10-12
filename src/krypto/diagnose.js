@@ -19,7 +19,7 @@ const TEXTE = Object.freeze({
   'bits-rechnen:bitreihenfolge': 'Das höchstwertige Bit steht links – prüfe die Bitreihenfolge.',
   'bits-rechnen:ascii': 'Der ASCII-Wert liegt um eins daneben – zähle die Zweierpotenzen noch einmal nach.',
   'bits-rechnen:transposition': 'Nach der S-Box fehlt die Transposition (Zeile ↔ Spalte).',
-  'bits-rechnen:richtung': 'Du hast in Entschlüsselungsrichtung gerechnet (S⁻¹ statt S, Rundenschlüssel falsch rotiert oder Runde rückwärts).',
+  'bits-rechnen:richtung': 'Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).',
   'zuordnung:richtung': 'Du hast die Tabelle in der falschen Richtung gelesen – gesucht ist zu jedem Geheimtextbuchstaben der Klartextbuchstabe.',
   '*:reihenfolge': 'Die Stufen müssen in umgekehrter Reihenfolge zurückgerechnet werden.',
   '*:permutation': 'Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).',

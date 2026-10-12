@@ -39,9 +39,23 @@ function registriere() {
   V.registriereValidierung(validierung.HOOKS);
 }
 
-/** Dienst-Optionen für den Kern (TECHNIK §4.2) – Gerüst, Task 33 füllt sie. */
-function dienstOptionen() {
-  return {};
+/**
+ * Fallen-Zählung (TECHNIK §4.2): erkannte Fallen der Diagnose (einteilig oben, mehrteilig je Teil), eindeutig in der
+ * Reihenfolge des Auftretens; ohne Diagnose die Liste aufgabe.fallen.
+ */
+function fallenAusErgebnis(a, erg) {
+  const p = new Set();
+  const nimm = (d) => (Array.isArray(d) ? d : []).forEach((x) => x && typeof x.p === 'string' && p.add(x.p));
+  if (erg) {
+    nimm(erg.diagnose);
+    for (const t of Array.isArray(erg.teile) ? erg.teile : []) nimm(t && t.diagnose);
+  }
+  return p.size ? [...p] : a.fallen || [];
 }
 
-module.exports = { registriere, dienstOptionen };
+/** Dienst-Optionen für den Kern (TECHNIK §4.2). */
+function dienstOptionen() {
+  return { diagnose: true, fallenAusErgebnis };
+}
+
+module.exports = { registriere, dienstOptionen, fallenAusErgebnis };

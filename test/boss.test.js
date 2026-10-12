@@ -147,3 +147,58 @@ test('Ziehung: deterministisch prüfbar über den Dienst (Mix nicht erfüllbar �
   assert.equal(ids.length, 5, 'nur 2 Stufe-3-Aufgaben vorhanden – Rest wird aufgefüllt');
   assert.equal(new Set(ids).size, 5);
 });
+
+test('Boss: keine Diagnose im Kampf, Diagnose in der Auswertung, keine Fallen-Zählung', async () => {
+  const { s, lk, kurs } = await bossSzenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen', niveau: 'gA' } });
+  const k = (await s.post('/api/boss/9/start').send({})).body;
+  assert.ok(k.aufgaben.some((a) => a.id === 'W9-B-05'));
+  await s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: 'W9-B-05', antwort: FALSCH['W9-B-05'] }).expect(200);
+  assert.ok(!JSON.stringify((await s.get(`/api/boss/kampf/${k.id}`)).body).includes('diagnose'));
+  const e = (await s.post(`/api/boss/kampf/${k.id}/beenden`).send({})).body;
+  assert.deepEqual(e.aufgaben.find((a) => a.id === 'W9-B-05').diagnose.map((d) => [d.p, d.code]), [['P3', 'richtung']]);
+  assert.deepEqual(e.aufgaben.find((a) => a.id === 'W9-B-01').diagnose, []);
+  const fallen = (await s.get('/api/profil')).body.fallen;
+  assert.ok(fallen.every((x) => x.fehlversuche === 0), 'Boss zählt nicht in fallen_zaehler');
+});
+
+/** Fixture-Kopie: W9-B-01 = fremde Chiffre mit fehlmuster (wie W9-L5-08), W9-B-03 = Signatur-Schaubild (wie W9-L6-05). */
+function bossWeltMitSchaubild() {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const d = JSON.parse(JSON.stringify(W));
+  const von = (id) => d.aufgaben.find((a) => a.id === id);
+  const ersetze = (ziel, quelle) => {
+    const i = d.aufgaben.findIndex((a) => a.id === ziel);
+    const alt = d.aufgaben[i];
+    d.aufgaben[i] = { ...JSON.parse(JSON.stringify(von(quelle))), id: ziel, stufe: alt.stufe, niveau: alt.niveau, kategorie: alt.kategorie };
+  };
+  ersetze('W9-B-01', 'W9-L5-08');
+  ersetze('W9-B-03', 'W9-L6-05');
+  const ordner = fs.mkdtempSync(path.join(os.tmpdir(), 'kryptos-boss-'));
+  const datei = path.join(ordner, 'welt9.json');
+  fs.writeFileSync(datei, JSON.stringify(d));
+  return datei;
+}
+
+test('Boss: Antwort wird mit Kontext (Aufgabe) bereinigt – unbekannter Akteur im Schaubild → 400; fehlmuster nie in der Auswertung', async () => {
+  const uhr = H.uhr();
+  const { app, s, lk, kurs } = await H.szenario({ now: uhr, weltDateien: [bossWeltMitSchaubild()] });
+  assert.ok(app.locals.services.inhalte.katalog.aufgaben.get('W9-B-03').interaktion.kind === 'schaubild-ergaenzen', 'Seed der Kopie');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen', niveau: 'gA' } });
+  const k = (await s.post('/api/boss/9/start').send({}).expect(201)).body;
+  assert.deepEqual(k.aufgaben.map((a) => a.id).sort(), ['W9-B-01', 'W9-B-03', 'W9-B-05']);
+  assert.ok(!/fehlmuster/.test(JSON.stringify(k)), 'laufender Kampf ohne fehlmuster');
+  const put = (antwort) => s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: 'W9-B-03', antwort });
+  await put({ s1: { art: 'privat', inhaber: 'X' }, s2: { art: 'oeffentlich', inhaber: 'A' } }).expect(400);
+  await put({ s1: { art: 'privat', inhaber: 'A' }, s2: { art: 'oeffentlich', inhaber: 'A' } }).expect(200);
+  await s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: 'W9-B-01', antwort: 'FCCFVOEGMVU' }).expect(200);
+  const e = (await s.post(`/api/boss/kampf/${k.id}/beenden`).send({})).body;
+  assert.equal(e.aufgaben.find((a) => a.id === 'W9-B-03').ok, true);
+  assert.deepEqual(e.aufgaben.find((a) => a.id === 'W9-B-01').diagnose.map((d) => [d.p, d.code]), [['P4', 'regel']]);
+  assert.ok(!/fehlmuster/.test(JSON.stringify(e)), 'Auswertung ohne fehlmuster');
+  assert.ok(!/fehlmuster/.test(JSON.stringify((await s.get(`/api/boss/kampf/${k.id}`)).body)));
+  // auch der gespeicherte Versuch (ergebnis mit Diagnose) enthält keine Prüfdaten
+  assert.ok(!/fehlmuster/.test(JSON.stringify(app.locals.db.prepare('SELECT * FROM boss_versuche').all())));
+});

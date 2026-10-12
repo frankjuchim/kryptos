@@ -98,3 +98,34 @@ test('Ohne Demo-Datei: Schüler-Gastmodus meldet „nicht vorhanden“, App läu
   assert.deepEqual((await c.get('/api/gast/schueler').expect(200)).body, { vorhanden: false });
   await c.get('/api/gast/aufgaben/W8-L1-01').expect(404);
 });
+
+test('Gast-Schüler: Fallen-Diagnose und Feedback je Zeichen; fehlmuster verlassen den Server nie', async () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const W = require('./fixtures/welt_beispiel.json');
+  const kopie = (quelle, id) => ({ ...JSON.parse(JSON.stringify(W.aufgaben.find((a) => a.id === quelle))), id });
+  const demo = {
+    version: 2,
+    welt: 8,
+    titel: 'Probe-Level',
+    farbe: '#1F4E79',
+    levels: [{ id: 'W8-L1', nr: 'Probe', titel: 'Diagnose', niveau: 'kern', rolle: 'kryptoanalyse', aufgaben: ['W8-L1-01', 'W8-L1-02'] }],
+    aufgaben: [kopie('W9-L5-01', 'W8-L1-01'), kopie('W9-L5-08', 'W8-L1-02')]
+  };
+  const datei = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kryptos-gast-')), 'demo.json');
+  fs.writeFileSync(datei, JSON.stringify(demo));
+  const app = H.makeApp({ ...opts, gastDatei: datei });
+  const c = H.client(app);
+  assert.equal((await c.get('/api/gast/schueler').expect(200)).body.aufgaben.length, 2);
+  const r = (await c.post('/api/gast/aufgaben/W8-L1-01/pruefen').send({ antwort: 'FABKXRGKYYOM' }).expect(200)).body;
+  assert.equal(r.diagnose[0].p, 'P3');
+  assert.equal(r.zeichen.length, 12);
+  const sauber = (x, wo) => assert.ok(!/fehlmuster/.test(JSON.stringify(x)), wo);
+  const f = (await c.post('/api/gast/aufgaben/W8-L1-02/pruefen').send({ antwort: 'FCCFVOEGMVU' }).expect(200)).body;
+  assert.equal(f.diagnose[0].code, 'regel');
+  sauber(f, 'falsch');
+  sauber((await c.post('/api/gast/aufgaben/W8-L1-02/pruefen').send({ antwort: 'UVMGEOVFCCF' }).expect(200)).body, 'gelöst');
+  sauber((await c.post('/api/gast/aufgaben/W8-L1-02/aufdecken').send({}).expect(200)).body, 'aufgedeckt');
+  sauber((await c.get('/api/gast/aufgaben/W8-L1-02').expect(200)).body, 'Aufgabe');
+  sauber((await c.get('/api/gast/vorschau/W8-L1-02').expect(200)).body, 'Vorschau');
+});

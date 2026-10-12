@@ -264,3 +264,6 @@ test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Po
   assert.equal(C.pruefeAufgabe(A['W9-L3-04'], [3]).bits, undefined, 'lawine: kein Feedback je Position');
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-04'], [16]), (e) => e.status === 400);
 });
+test('Diagnosetext bits-rechnen:richtung neutral (ver- statt entschlüsselt oder umgekehrt)', () => {
+  assert.equal(D.text('bits-rechnen', 'P3', 'richtung'), 'Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).');
+});

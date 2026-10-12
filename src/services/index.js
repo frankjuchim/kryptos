@@ -1,5 +1,6 @@
 'use strict';
-// Zusammenbau aller Dienste. ctx = { db, now(), log, random?, trainingSeed? }
+// Zusammenbau aller Dienste. ctx = { db, now(), log, random?, trainingSeed?, optionen? }
+// K25: ctx.optionen = Erweiterungs-Hooks der Dienste (TECHNIK §4.2); ohne src/krypto gelten die Standardwerte.
 
 const V = require('../validate');
 const { TABLES, SCHEMA_VERSION, APP_KENNUNG, setMeta } = require('../db');
@@ -14,7 +15,24 @@ const { createAuswertung } = require('./auswertung');
 const { createKata } = require('./kata');
 const L = require('../verbund/loeschen');
 
+/**
+ * Standard der Dienst-Optionen (TECHNIK §4.2) – der Kern ohne Erweiterung: keine Diagnose, Fallen-Zählung über
+ * aufgabe.fallen, alles sichtbar und rangrelevant, Boss-Pool ungefiltert, keine Zusatz-Abzeichen.
+ */
+const STANDARD_OPTIONEN = Object.freeze({
+  diagnose: false,
+  fallenAusErgebnis: (a) => a.fallen,
+  sichtbar: () => true,
+  rangrelevant: () => true,
+  bossPool: (pool) => pool,
+  bossBezug: () => true,
+  generatorSichtbar: () => true,
+  zusatzAbzeichen: () => [],
+  zusatzBedingungen: () => new Set()
+});
+
 function createServices(ctx) {
+  ctx.optionen = { ...STANDARD_OPTIONEN, ...(ctx.optionen || {}) };
   const inhalte = createInhalte(ctx);
   const konten = createKonten(ctx);
   const kurse = createKurse(ctx);
@@ -96,4 +114,4 @@ function createDaten(ctx, { inhalte }) {
   return { exportieren, wiederherstellen };
 }
 
-module.exports = { createServices };
+module.exports = { createServices, STANDARD_OPTIONEN };
