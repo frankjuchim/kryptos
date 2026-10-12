@@ -121,7 +121,7 @@ Ein Level, dessen Aufgaben im gA-Kurs **alle** unsichtbar wären (Level `kern`, 
 | `niveau` | optional bei Level-Aufgaben (erbt vom Level), **Pflicht bei Boss-Aufgaben** (dort nur `kern` oder `eA`; `ergaenzung`/`kuer` → Fehler, Design §3.2 „nie bossrelevant“). Archivfund-Aufgaben: `kern` |
 | `kategorie` | genau ein Wert aus §4.2 (Slug-Schreibweise, Kleinbuchstaben). Anzeigenamen stehen in `src/krypto/fach.js` (`LAB_KATEGORIE_NAMEN`) |
 | `fallen` | Teilmenge von `P1`…`P10` nach §4.3. Bedeutung wie im Kern (Zähler bei Fehlversuchen) – **ergänzt** durch die automatische Diagnose (§9): Erkennt der Prüfer ein Fehlmuster, wird die **erkannte** Falle gezählt, sonst die Liste `fallen` |
-| `pruefnachweis` | optional; Verweis auf den unabhängigen Python-Nachweis (`quellen/pruefwerte/W<n>.json#<id>` oder `werkzeuge/krypto/fremde_verfahren.py:<name>`). **Pflicht (Fehler)**, wenn die Aufgabe ein Verfahren `{"typ": "frei"}` oder `bits-rechnen` mit `operation: "frei"` enthält, sonst überflüssig (die Neuberechnung ersetzt den Nachweis) |
+| `pruefnachweis` | optional; Verweis auf den unabhängigen Python-Nachweis (`quellen/pruefwerte/W<n>.json#<id>` oder `werkzeuge/krypto/fremde_verfahren.py:<name>`). **Pflicht (Fehler)**, wenn die Aufgabe ein Verfahren `{"typ": "frei"}` oder `bits-rechnen` mit `operation: "frei"` enthält. **`gaps`** (Review M3 W3): Rechenergebnisse, die der Validator nicht selbst nachrechnet (Lücken in `bits` mit `pruefe: xor`, in einer Caesar-/Schlüsselwort-Alphabetzeile oder in `quadrat`-Zellen rechnet er nach), belegt ein Prüfwert `quellen/pruefwerte/W<n>.json#<id>`; `seed_pruefen.py` vergleicht dessen `erwartet` (Objekt `{ feld: wert }` oder Einzelwert bei genau einem Feld) mit der Hauptlösung. Fehlt er in den Kategorien `modulo`, `verschluesseln`, `entschluesseln`, `bits-xor`, `blockchiffre`, `schluesselaustausch`, `asymmetrisch`, `hash`, `signatur`, `schluesselraum` → Hinweis „Rechenergebnis nicht nachgerechnet – pruefnachweis angeben“. Sonst (ohne `frei` und ohne `gaps`) überflüssig – die Neuberechnung ersetzt den Nachweis |
 | `punkte` | wie Kern (1–200, Standard 10/20/30); **Archivfund-Aufgaben: `punkte` weglassen** (immer 0) |
 | `id` | Kern-Formate `W<n>-L<k>-<nn>`, `W<n>-B-<nn>` plus **neu `W<n>-A-<nn>`** (Archivfund) |
 | `schluesselVerdeckt` | optional, `true`/`false` (auch je `chiffre`-Interaktion, dort mit Vorrang): Schlüssel der `chiffre`-Teile vor dem Lösen verdeckt (§8.1). Ohne Angabe automatisch `true` für Aufgaben eines Levels mit `rolle: "kryptoanalyse"`, sonst `false` |
@@ -296,6 +296,11 @@ Nummerierung A = 1 … Z = 26“), Lücken-Eingaben mit `aria-label="Geheimtext 
 
 **Lücken:** erlaubt in `werte` (Listenform). **Validator:** 26 Einträge je Zeile; Text-Form nur Buchstaben/`·`;
 `markiert` im Bereich; bei zwei Buchstabenzeilen ohne Lücken: Hinweis, falls die Zuordnung keine Bijektion ist.
+**Neuberechnung der Lücken** (Review M3 W3): Gibt es eine Normalzeile `a…z` und eine Zeile mit Lücken, deren bekannte
+Buchstaben eindeutig zu einem Caesar-Alphabet (k = 0…25) oder einem Schlüsselwort-Alphabet (Schlüsselwort = Anfang
+der Zeile, Rest `alphabetisch` oder `ab_letztem`) passen, muss jede akzeptierte Lösung der Lücke der berechnete
+Buchstabe sein (Fehler). **Hinweis**, wenn die Zeile nicht zum `verfahren` (`caesar`, `atbash`, `substitution`) einer
+`chiffre`-Interaktion derselben Aufgabe passt (vorwärts oder als Umkehrtabelle) – verschiedene Schlüssel (Review M3 K8).
 
 ### 7.2 `haeufigkeit` – Histogramm
 
@@ -355,7 +360,11 @@ Spalte = Klartextbuchstabe“.
 
 **Lücken:** nur in `zellen` (`frei`/`polybios`). **Validator (Neuberechnung):** `playfair`/`polybios` mit `schluessel`
 werden berechnet (keine Zellen nötig); sind `zellen` **und** `schluessel` angegeben, müssen sie übereinstimmen (Fehler);
-`frei`: rechteckig, `groesse²` Zellen, keine doppelten Zeichen (außer Lücken).
+`frei`: rechteckig, `groesse²` Zellen, keine doppelten Zeichen (außer Lücken). **Lücken** (Review M3 W3): mit
+`schluessel` bzw. bei `frei`, wenn die bekannten Zellen eindeutig zu einem Schlüsselwort-Quadrat passen (Schlüsselwort =
+Anfang der Zellen, auch leer), wird jede akzeptierte Lösung der Lücke nachgerechnet (Fehler). **Hinweis**, wenn
+`schluessel` (`playfair`/`polybios`) bzw. `ausschnitt` (`vigenere`) nicht zum `verfahren` einer `chiffre`-Interaktion
+derselben Aufgabe passt (Review M3 K8).
 
 ### 7.4 `bits` – Bitfolgen mit ⊕-Zeile
 
@@ -374,7 +383,7 @@ werden berechnet (keine Zellen nötig); sind `zellen` **und** `schluessel` angeg
 | `zeilen` | Liste | **ja** | Datenzeile `{ label, bits }` (`bits`: 0/1, Leerzeichen, oder **eine** Lücke `[[id]]` als ganze Zeile) oder Trennzeile `{ "trenner": "⊕" \| "=" \| "→" }` |
 | `gruppe` | 4 (Std.) \| 8 \| 0 | nein | Gruppierung der Anzeige (0 = keine) |
 | `markiert` | Liste von Bitpositionen (0 = links, höchstwertig) | nein | Spalten hervorheben (Bit-Verfolgung) |
-| `pruefe` | `xor` | nein | Validator prüft: letzte Datenzeile = XOR aller vorherigen Datenzeilen (wenn sie keine Lücke ist) |
+| `pruefe` | `xor` | nein | Validator prüft: letzte Datenzeile = XOR aller vorherigen Datenzeilen; ist **genau eine** Datenzeile eine Lücke `[[id]]`, muss jede akzeptierte Lösung des gaps-Felds das XOR der übrigen Zeilen sein (Fehler, Review M3 W3; auch `seed_pruefen.py`) |
 
 **Darstellung:** Monospace-Raster, Bits einer Spalte exakt untereinander, Gruppenabstand 1 ch, Trennzeile mit
 Symbol links und Linie. Markierte Spalten: Akzentrahmen + `aria-current`. Screenreader: je Zeile
@@ -478,8 +487,8 @@ und `frage`/`inhalt` je Teil funktionieren unverändert.
 | `schluesselVerdeckt` | bool | nein (Std. wie Aufgabenfeld, sonst `true` im Kryptoanalyse-Level) | **Knack-Aufgaben:** Der Client erhält vor dem Lösen nur `verfahren.typ` (und `verfahren.name`), keine Parameter (`k`, `schluessel` …) – in Lab, Boss-Kampf, Training und Gastmodus; die Lehrkraft-Vorschau zeigt alles. Nach dem Lösen/Aufdecken nennen Lösung und Erklärung den Schlüssel. Verdeckt + Hilfszeile `schluessel` → Fehler |
 
 **Lösung:** `{ "text": "ELRFQJHNVNNMSUSEY", "alternativen": ["…"] }` – `text` normalisiert (Buchstaben bzw. Hex ohne
-Leerzeichen bzw. Zahlen durch Leerzeichen getrennt bei `ausgabe: zahlen`); `alternativen` optional (z. B. mit/ohne
-Füllzeichen `X`).
+Leerzeichen bzw. Zahlen durch Leerzeichen getrennt bei `ausgabe: zahlen`); `alternativen` optional, nur erlaubte
+Varianten (z. B. mit/ohne Füllzeichen `X`, I/J – siehe Validator).
 
 **Vollständiges Beispiel** (Vigenère, Schritt-für-Schritt mit Quadrat):
 
@@ -524,8 +533,10 @@ Schrittprüfung: `{ "antwort": "ELRF", "teilweise": true, "teil": k }` (Präfix 
 `fleissner.schablone` vollständig); `eingabe` nach Normalisierung 1–400 Zeichen; bei `ent` muss `eingabe` ein
 gültiger Geheimtext sein (Playfair gerade Länge, Polybios-Paare aus dem Kopf …). **Neuberechnung:**
 `Krypto.verfahren.anwenden(verfahren, eingabe, richtung, {basis})` muss **gleich `loesung.text`** sein (Fehler mit
-erwarteter Ausgabe); jede `alternative` muss sich von `text` unterscheiden und (Hinweis) durch eine bekannte Variante
-erklärbar sein (Füllzeichen weggelassen/angehängt, I/J). Bei `typ: frei`: keine Neuberechnung, `pruefnachweis` Pflicht.
+erwarteter Ausgabe); jede `alternative` muss sich von `text` unterscheiden und durch eine bekannte Variante erklärbar
+sein – sonst **Fehler** (Review M3 K5, vorher Hinweis): Textvariante der Lösung (I/J vertauscht, Füllzeichen `X` am
+Ende angehängt/weggelassen) oder Neuberechnung mit einer erlaubten Verfahrensvariante (`playfair`/`polybios` mit dem
+anderen I/J-Quadrat, `skytale`/`spaltentransposition` mit bzw. ohne Füllzeichen `X`). Bei `typ: frei`: keine Neuberechnung, `pruefnachweis` Pflicht.
 **Verdeckter Schlüssel:** `schluesselVerdeckt` muss bool sein; ist der Schlüssel verdeckt (explizit oder automatisch
 im Kryptoanalyse-Level), ist `hilfszeilen: ["schluessel"]` ein Fehler. Hinweis, wenn eine Aufgabe der Kategorien
 `entschluesseln`, `haeufigkeitsanalyse`, `kasiski-friedman` oder `fremde-chiffre` „Schlüssel“ zusammen mit „bestimme“,
@@ -802,13 +813,14 @@ der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und
 |---|---|---|
 | Welt | `epoche`, `jahr`, `farbe`, `akzentHell` fehlen (0–6); Kontrast < 4,5 : 1; `archivfund.aufgabe` fehlt, hat falsches Format, steht in Level/Boss | `kapitel` fehlt; Zeitleiste nicht aufsteigend |
 | Level | `niveau`/`rolle` fehlen oder ungültig; `kuer` ↔ `niveau` inkonsistent; unbekanntes `werkzeug`; Niveau-Regeln §3; im gA-Kurs leeres Level | `akte` fehlt / `ab` statt `akte`; `video.nr` ohne Eintrag in `seed/videos.json` |
-| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung**; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet |
+| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung** (auch Lücken in `bits` mit `pruefe: xor`, Alphabetzeilen und `quadrat`-Zellen, §7); `alternative` durch keine erlaubte Variante erklärbar (§8.1); verdeckter Schlüssel mit Hilfszeile `schluessel`; `schluesselVerdeckt` kein bool; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet; Knack-Formulierung ohne verdeckten Schlüssel (§8.1); gaps-Rechenergebnis ohne `pruefnachweis` (§4.1); `quadrat`/`alphabet` und `verfahren` mit verschiedenen Schlüsseln (§7.1, §7.3) |
 | Boss | gA-Pool < `anzahl`; < 3 `fremde-chiffre`; verbotene Bestandteile §10 | Pool-Größe, Dauer, Mix ≠ Standard; gA-Mix nicht erfüllbar |
 | Dateiübergreifend | doppelte ids (Kern) | Abdeckung: je Welt mindestens ein Level mit Kategorie `fremde-chiffre` oder Boss-Anteil (Design §1, Kriterium 2) |
 
 Ausgabe und Optionen wie im Kern (`--json`, `--ohne-hinweise`, Exit-Code 1 bei Fehlern). Zusätzlich vergleicht
 `werkzeuge/krypto/seed_pruefen.py` **unabhängig in Python** jede Lösung von `chiffre`, `zuordnung`, `bits-rechnen`,
-`quadrat`, `bits` und `matrix` sowie alle `frei`-Aufgaben mit `pruefnachweis` (Design §13.1, doppelte Prüfung).
+`quadrat`, `bits` (auch mit einer Lücke) und `matrix` sowie alle `frei`- und `gaps`-Aufgaben mit `pruefnachweis` (Design
+§13.1, doppelte Prüfung); `--pruefwerte <ordner>` wählt die Prüfwert-Dateien (Fixture: `test/fixtures/pruefwerte`).
 
 ---
 
@@ -853,6 +865,10 @@ jeder Block mit Test). Sie muss enthalten:
 **Stand (Abschluss M3):** alle Zeilen der Tabelle sind durch `test/fixture_abdeckung.test.js` gesichert (zählt aus der
 Fixture und `test/fixtures/antworten.js`, nichts von Hand); die Lösungen rechnet zusätzlich `werkzeuge/krypto/seed_pruefen.py`
 unabhängig in Python nach (`test/seed_pruefen.test.js`, CI-Job `krypto`).
+
+Prüfwerte der Fixture (`pruefnachweis` von `W9-L5-10`, gaps) stehen in `test/fixtures/pruefwerte/W9.json`, nie in
+`quellen/pruefwerte`; `seed_pruefen.py --pruefwerte test/fixtures/pruefwerte` und `pruefwerte.py --ordner
+test/fixtures/pruefwerte` (CI) lesen sie.
 
 Die Fixture wird nie nach `seed/welten` kopiert. `WELT_DATEIEN=test/fixtures/welt_beispiel.json npm run dev` zeigt sie
 lokal (Kern-Mechanik).

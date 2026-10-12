@@ -12,11 +12,15 @@ JS-Bibliothek, die der Validator (`npm run validate`) benutzt. Geprüft werden:
 - `zuordnung`: Geheimtext mit `loesung.zuordnung` entschlüsselt = `loesung.klartext`; `vorgabe` passt zur Zuordnung.
 - `bits-rechnen`: `xor`, `ascii` (`zu-bits`/`zu-text`), `kryptos16` (ver/ent), `lawine` (Positionen ab 0 nach der
   letzten Runde, gekipptes Bit `kippe` ab 0).
-- Blöcke `quadrat` (Schlüssel ↔ Zellen), `bits` mit `pruefe: xor`, `matrix` (Fleißner-Schablone; Spaltenkopf mit
-  `reihenfolge` – Plausibilität und, wenn die Aufgabe eine Spaltentransposition mit demselben Schlüssel enthält,
-  spaltenweise gelesen = deren Lösung).
+- Blöcke `quadrat` (Schlüssel ↔ Zellen), `bits` mit `pruefe: xor` (auch eine Lücke [[id]] in einer Datenzeile: XOR
+  der übrigen Zeilen = Lösung des gaps-Felds), `matrix` (Fleißner-Schablone; Spaltenkopf mit `reihenfolge` –
+  Plausibilität und, wenn die Aufgabe eine Spaltentransposition mit demselben Schlüssel enthält, spaltenweise gelesen
+  = deren Lösung).
+- `gaps` mit `pruefnachweis` `quellen/pruefwerte/W<n>.json#<id>` (Review M3 W3): `erwartet` des Eintrags = Lösung –
+  als Objekt { feld: wert } je Feld, als Einzelwert für das einzige Feld (Hauptlösung, Zahlen numerisch verglichen).
 
-Aufruf: python3 -I werkzeuge/krypto/seed_pruefen.py [dateien …]
+Aufruf: python3 -I werkzeuge/krypto/seed_pruefen.py [--pruefwerte <ordner>] [dateien …]
+        (--pruefwerte: Ordner der Prüfwert-Dateien statt quellen/pruefwerte, z. B. test/fixtures/pruefwerte)
         (Standard: seed/welten/*.json und seed/gast/demo.json, soweit vorhanden)
 Ausgabe: je Abweichung `datei › aufgabe-id › ort: erwartet … gefunden …`, am Ende „N Lösungen geprüft, M Abweichungen“.
 Exit-Code 0 = alles stimmt, 1 = mindestens eine Abweichung (oder eine Datei ist kein gültiges JSON).
@@ -34,8 +38,10 @@ from fremde_verfahren import VERFAHREN as FREMDE  # noqa: E402
 
 WURZEL = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 NACHWEIS_FREMD = re.compile(r'^werkzeuge/krypto/fremde_verfahren\.py:([a-z][a-z0-9_]*)$')
-NACHWEIS_PRUEFWERT = re.compile(r'^quellen/pruefwerte/(W[0-6]\.json)#([A-Za-z0-9_.\-]+)$')
+NACHWEIS_PRUEFWERT = re.compile(r'^quellen/pruefwerte/(W\d\.json)#([A-Za-z0-9_.\-]+)$')
+STANDARD_PRUEFWERTE = os.path.join(WURZEL, 'quellen', 'pruefwerte')
 QUADRAT_5 = {'playfair', 'polybios'}
+LUECKE = re.compile(r'^\[\[([A-Za-z0-9_-]{1,40})\]\]$')
 
 
 def standard_dateien():
@@ -72,10 +78,11 @@ def zahlenliste(text):
 
 
 class Pruefung:
-    def __init__(self):
+    def __init__(self, pruefwerte_ordner=STANDARD_PRUEFWERTE):
         self.geprueft = 0
         self.abweichungen = []
         self._pruefwerte = {}
+        self.pruefwerte_ordner = pruefwerte_ordner
 
     def melde(self, datei, aid, ort, erwartet, gefunden):
         self.abweichungen.append(f'{datei} › {aid} › {ort}: erwartet {erwartet} gefunden {gefunden}')
@@ -99,7 +106,7 @@ class Pruefung:
 
     def pruefwert(self, datei_name, eid):
         if datei_name not in self._pruefwerte:
-            pfad = os.path.join(WURZEL, 'quellen', 'pruefwerte', datei_name)
+            pfad = os.path.join(self.pruefwerte_ordner, datei_name)
             try:
                 with open(pfad, encoding='utf-8') as f:
                     self._pruefwerte[datei_name] = {w.get('id'): w for w in json.load(f).get('werte', [])}
@@ -142,6 +149,35 @@ class Pruefung:
         self.melde(datei, a.get('id'), 'pruefnachweis', 'Verweis auf fremde_verfahren.py:<name> oder quellen/pruefwerte/W<n>.json#<id>', nw)
 
     # ───────────── Interaktionen ─────────────
+
+    def gaps(self, datei, a, ia, lo, ort):
+        """gaps mit pruefnachweis auf einen Prüfwert: erwartet (Objekt je Feld oder Einzelwert) = Hauptlösung."""
+        nw = a.get('pruefnachweis')
+        m = NACHWEIS_PRUEFWERT.match(nw) if isinstance(nw, str) else None
+        if not m or not isinstance(lo, dict) or not isinstance(ia.get('felder'), dict):
+            return
+        aid = a.get('id')
+        felder = [f for f in ia['felder'] if f in lo]
+        eintrag = self.pruefwert(m.group(1), m.group(2))
+        if eintrag is None:
+            self.geprueft += 1
+            self.melde(datei, aid, 'pruefnachweis', f'Eintrag {nw}', 'keinen')
+            return
+        erw = eintrag.get('erwartet')
+        if isinstance(erw, dict):
+            paare = [(f, erw[f]) for f in felder if f in erw]
+        elif len(felder) == 1:
+            paare = [(felder[0], erw)]
+        else:
+            paare = []
+        if not paare:
+            self.geprueft += 1
+            self.melde(datei, aid, 'pruefnachweis', 'erwartet je gaps-Feld ({ feld: wert }) oder genau ein Feld', ', '.join(felder) or 'keine Felder')
+            return
+        for f, wert in paare:
+            werte = lo[f] if isinstance(lo[f], list) else [lo[f]]
+            gefunden = werte[0] if werte else None
+            self.vergleiche(datei, aid, f'{ort}.{f}', wert, gefunden, gleich=gleicher_wert)
 
     def chiffre(self, datei, a, ia, lo, ort):
         if not isinstance(lo, dict) or 'text' not in lo:
@@ -250,11 +286,26 @@ class Pruefung:
                 soll = q[z][s] if z < len(q) and s < len(q[z]) else '–'
                 self.vergleiche(datei, aid, f'{ort}.zellen[{z}][{s}]', soll, c.upper())
 
-    def bits_block(self, datei, aid, b, ort):
+    def bits_block(self, datei, aid, b, ort, aufgabe=None):
         if b.get('pruefe') != 'xor':
             return
         daten = [z.get('bits') for z in b.get('zeilen', []) if isinstance(z, dict) and 'bits' in z]
-        if len(daten) < 3 or any(not isinstance(x, str) or '[[' in x for x in daten):
+        if len(daten) < 3 or any(not isinstance(x, str) for x in daten):
+            return
+        luecken = [i for i, x in enumerate(daten) if LUECKE.match(x.strip())]
+        if len(luecken) == 1:
+            # genau eine Lücke: XOR der übrigen Zeilen = Lösung des gaps-Felds (Hauptlösung)
+            fid = LUECKE.match(daten[luecken[0]].strip()).group(1)
+            werte = gaps_loesung(aufgabe, fid)
+            andere = [x for i, x in enumerate(daten) if i != luecken[0]]
+            if werte is None or any('[[' in x for x in andere):
+                return
+            ok, erg = self.rechne(datei, aid, ort, lambda: K.xor_bits(*andere))
+            if ok:
+                for i, w in enumerate(werte):
+                    self.vergleiche(datei, aid, f'{ort} (Lücke {fid}, Lösung {i + 1})', erg, bits(w))
+            return
+        if luecken:
             return
         ok, erg = self.rechne(datei, aid, ort, lambda: K.xor_bits(*daten[:-1]))
         if ok:
@@ -304,7 +355,7 @@ class Pruefung:
             if b.get('t') == 'quadrat':
                 self.quadrat(datei, aid, b, o)
             elif b.get('t') == 'bits':
-                self.bits_block(datei, aid, b, o)
+                self.bits_block(datei, aid, b, o, aufgabe)
             elif b.get('t') == 'matrix':
                 self.matrix(datei, aid, b, o, aufgabe)
 
@@ -345,11 +396,47 @@ class Pruefung:
                     self.zuordnung(name, a, ia, lo, ort)
                 elif art == 'bits-rechnen':
                     self.bits_rechnen(name, a, ia, lo, ort)
+                elif art == 'gaps':
+                    self.gaps(name, a, ia, lo, ort)
+
+
+def gaps_loesung(aufgabe, fid):
+    """Akzeptierte Werte des gaps-Felds fid (aus allen Teilen der Aufgabe) oder None."""
+    if not isinstance(aufgabe, dict):
+        return None
+    los = aufgabe.get('loesung')
+    for lo in (los if isinstance(los, list) else [los]):
+        if isinstance(lo, dict) and fid in lo:
+            w = lo[fid]
+            return [str(x) for x in (w if isinstance(w, list) else [w])]
+    return None
+
+
+def gleicher_wert(erwartet, gefunden):
+    """Zahlen numerisch (Komma = Punkt), sonst Textvergleich ohne Leerraum/Groß-Klein."""
+    def zahl(x):
+        try:
+            return float(str(x).strip().replace(',', '.'))
+        except ValueError:
+            return None
+    a, b = zahl(erwartet), zahl(gefunden)
+    if a is not None and b is not None:
+        return abs(a - b) < 1e-9
+    return kompakt(erwartet) == kompakt(gefunden)
 
 
 def main(argv):
+    argv = list(argv)
+    ordner = STANDARD_PRUEFWERTE
+    if '--pruefwerte' in argv:
+        i = argv.index('--pruefwerte')
+        if i + 1 >= len(argv):
+            print('--pruefwerte braucht einen Ordner', file=sys.stderr)
+            return 2
+        ordner = argv[i + 1]
+        del argv[i:i + 2]
     dateien = argv or standard_dateien()
-    p = Pruefung()
+    p = Pruefung(ordner)
     for d in dateien:
         p.datei(d)
     for z in p.abweichungen:

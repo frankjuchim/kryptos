@@ -229,8 +229,9 @@ test('chiffre-Validator: Neuberechnung, Parameter, Alternativen, frei', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-01').loesung.fehlmuster = [{ text: 'X', p: 'P3', code: 'richtung' }]; }, /fehlmuster nur bei fremden Chiffren/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-02').interaktion.ausgabe = 'hex'; }, /hex/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-06').interaktion.hilfszeilen = ['schluessel']; }, /hilfszeilen/);
-  const w = basis(); aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFIKRHIT'];
-  assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /bekannte Variante/);
+  // Review M3 K5: nicht erklärbare Alternative ist ein Fehler (vorher Hinweis)
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFIKRHIT']; }, /alternative „NHQZSFIKRHIT“ ist durch keine bekannte Variante erklärbar/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFJKRHJT']; }, /keine bekannte Variante/);
 });
 
 test('_fehlmuster: Format und kein Treffer auf eine akzeptierte Lösung', () => {
@@ -411,4 +412,66 @@ test('Dateien: Zeitleiste und Abdeckung fremde Chiffre (Hinweise)', () => {
   const alle = r.flatMap((x) => x.warnungen.map((y) => y.meldung)).join(' | ');
   assert.match(alle, /Zeitleiste nicht aufsteigend/);
   assert.match(alle, /Abdeckung fremde Chiffre/);
+});
+
+/* ---------- Review M3 W3, K5, K8: Rechenergebnisse in gaps, Alternativen, Schlüssel in Blöcken ---------- */
+
+const hinweiseVon = (w) => validiereWelt(w, { datei: 'test.json' }).warnungen.map((f) => `${f.ort}: ${f.meldung}`);
+function erwarteHinweis(aendern, muster, { nicht = false } = {}) {
+  const w = basis();
+  aendern(w);
+  const h = hinweiseVon(w);
+  assert.equal(h.some((x) => muster.test(x)), !nicht, `${nicht ? 'nicht ' : ''}erwartet ${muster} in:\n${h.join('\n')}`);
+}
+
+test('W3a: bits-Block mit pruefe xor – Lücke in der Ergebnis- oder Operandenzeile wird gegen die Lösung nachgerechnet', () => {
+  assert.deepEqual(fehlerVon(basis()), []);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-02').loesung.c1 = ['0110 1000']; }, /W9-L6-02.*Lücke c1: Neuberechnung \(XOR\) ergibt 01101001/);
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L6-02');
+    const z = a.inhalt[0].zeilen;
+    z[1].bits = '[[k1]]';
+    z[3].bits = '0110 1001';
+    a.interaktion.felder = { k1: { typ: 'text', norm: 'bits' } };
+    a.loesung = { k1: ['1010 1011'] };
+  }, /Lücke k1: Neuberechnung \(XOR\) ergibt 10101010/);
+});
+
+test('W3b: alphabet-Block (Caesar- bzw. Schlüsselwort-Alphabet) – Lücken gegen das berechnete Alphabet', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung.g1 = ['Q']; }, /W9-L5-09.*Lücke g1: Neuberechnung \(Alphabet\) ergibt A/);
+  // Schlüsselwort-Alphabet KRYPTO (Rest ab A) mit Lücken im Rest
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L5-09');
+    const zeile = [...'KRYPTOABCDEFGHIJLMNQSUVWXZ'];
+    zeile[8] = '[[g1]]'; zeile[9] = '[[g2]]'; zeile[25] = '[[g3]]';
+    a.inhalt[1].zeilen[1].werte = zeile;
+    a.loesung.g1 = ['C']; a.loesung.g2 = ['D']; a.loesung.g3 = ['Y'];
+  }, /Lücke g3: Neuberechnung \(Alphabet\) ergibt Z/);
+  // dieselbe Zeile richtig → fehlerfrei
+  const w = basis();
+  const a = aufgabe(w, 'W9-L5-09');
+  const zeile = [...'KRYPTOABCDEFGHIJLMNQSUVWXZ'];
+  zeile[8] = '[[g1]]'; zeile[9] = '[[g2]]'; zeile[25] = '[[g3]]';
+  a.inhalt[1].zeilen[1].werte = zeile;
+  a.loesung.g1 = ['C']; a.loesung.g2 = ['D']; a.loesung.g3 = ['Z'];
+  assert.deepEqual(fehlerVon(w), []);
+});
+
+test('W3b: quadrat-Block mit Lücke (ohne Schlüssel = Standardquadrat) wird nachgerechnet', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L4-01').loesung.q1 = ['Z']; }, /W9-L4-01.*Lücke q1: Neuberechnung \(Quadrat\) ergibt S/);
+});
+
+test('W3c: gaps-Rechenaufgabe ohne prüfbare Struktur → Hinweis „pruefnachweis angeben“; pruefnachweis auch für gaps', () => {
+  erwarteHinweis((w) => { delete aufgabe(w, 'W9-L5-10').pruefnachweis; }, /W9-L5-10.*Rechenergebnis nicht nachgerechnet – pruefnachweis angeben/);
+  erwarteHinweis(() => {}, /W9-L5-10.*Rechenergebnis nicht nachgerechnet/, { nicht: true });
+  erwarteHinweis(() => {}, /W9-L5-10.*pruefnachweis ist überflüssig/, { nicht: true });
+  erwarteHinweis(() => {}, /W9-L6-02.*Rechenergebnis nicht nachgerechnet/, { nicht: true }); // per Block nachgerechnet
+  erwarteHinweis(() => {}, /W9-L5-09.*Rechenergebnis nicht nachgerechnet/, { nicht: true }); // Kategorie substitution-mono
+});
+
+test('K8: quadrat- bzw. alphabet-Block und verfahren derselben Aufgabe mit verschiedenen Schlüsseln → Hinweis', () => {
+  erwarteHinweis(() => {}, /verschiedene Schlüssel/, { nicht: true });
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-05').inhalt[1].schluessel = 'ARCHIX'; }, /W9-L5-05.*quadrat.*verschiedene Schlüssel/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-02').inhalt[1].ausschnitt = ['R', 'O', 'S']; }, /W9-L5-02.*quadrat.*verschiedene Schlüssel/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').interaktion.verfahren.k = 4; }, /W9-L5-01.*alphabet.*verschiedene Schlüssel/);
 });

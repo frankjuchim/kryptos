@@ -1,0 +1,12 @@
+{
+  "beschreibung": "Lücke in einer Caesar-Alphabetzeile: Lösung ≠ berechnetes Alphabet (Review M3 W3)",
+  "erwartet": "Lücke g1: Neuberechnung \\(Alphabet\\)",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-09.loesung.g1",
+      "wert": [
+        "Q"
+      ]
+    }
+  ]
+}

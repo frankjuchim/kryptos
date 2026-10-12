@@ -129,7 +129,9 @@ src/
     bloecke.js                 Validierung + Lücken-Texte der neuen Blöcke (Delta §7)
     interaktionen/             chiffre.js, zuordnung.js, schaubild.js, bits.js (Delta §8)
     diagnose.js                Fallen-Diagnose (Delta §9), feste Texte
-    neuberechnung.js           Validator-Neuberechnung über shared/krypto.js
+    neuberechnung.js           Validator-Neuberechnung über shared/krypto.js: Lücken in bits/alphabet/quadrat, Schlüssel
+                               in Blöcken ↔ verfahren, Hinweis pruefnachweis für gaps (Review M3 W3, K8)
+    validierung.js             Validator-Hooks welt/level/aufgabe/boss/dateien (Delta §11)
     niveau.js                  Sichtbarkeit, Rangrelevanz, Boss-Filter (§8)
     abzeichen.js               Artefakte, Leistungsabzeichen (§9.6, §12.8)
     werkzeuge.js               Labor-Registry (serverseitige Liste, §10.2)
@@ -1572,7 +1574,7 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 | `registry.test.js` | neu (M3) | Server-Registries des Kerns (K01/K02): `registriereBlock`/`registriereInteraktion`/`registriereNorm`/`registriereDiagnose`, Dopplungen und Kern-Namen werfen, Lücken-Besitz, Prüfer-Delegation, Diagnose nur mit `{ diagnose: true }` und nur bei falscher, nicht leerer Antwort |
 | `bloecke.test.js` | neu (M3) | die sieben neuen Blöcke (Delta §7) mit Neuberechnung (`quadrat` Schlüssel ↔ Zellen, `bits` `pruefe: xor`, `matrix` Fleißner-Schablone ab 1) |
 | `client_hooks.test.js` | neu (M3) | Client-Hooks K04/K05 in einer `vm` mit Attrappen-DOM: `AQR.registriere` (Klassen, `ctx.modus`), `raster` mit Spaltenköpfen, `AQI.registriere`/`schrittArten`/`teilFuer`/`gapBesitzer`, Kern-Namen werfen |
-| `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung, manipulierte Lösungen (`kryptos16`, `frei` mit `pruefnachweis`) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
+| `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung (`--pruefwerte test/fixtures/pruefwerte`), manipulierte Lösungen (`kryptos16`, `frei` mit `pruefnachweis`, gaps mit Prüfwert, Lücke im bits-Block) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
 | `fixture_abdeckung.test.js` | neu (M3) | Delta §13 aus der Fixture gezählt: jeder Block/jede Interaktion/jeder Modus, Welt-/Level-Felder, Niveaus, Boss-Pool/Mix, jede Diagnose-Zeile §9 mit Fehlantwort in `fixtures/antworten.js` |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf Ports, Screenshots

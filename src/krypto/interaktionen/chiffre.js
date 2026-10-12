@@ -128,11 +128,37 @@ const muster = (ia, lo) => (istObjekt(lo) ? lo.text : '');
 /** Anzeige einer kanonischen Form (Zahlen mit Leerzeichen). */
 const anzeige = (x) => (Array.isArray(x) ? x.join(' ') : String(x));
 
-/** Ist eine Alternative durch eine bekannte Variante erklärbar (I/J vertauscht, Füllzeichen X am Ende)? */
+/** Ist eine Alternative durch eine bekannte Textvariante erklärbar (I/J vertauscht, Füllzeichen X am Ende)? */
 function bekannteVariante(text, alt) {
   if (Array.isArray(text) || Array.isArray(alt)) return false;
   const ij = (s) => s.replace(/J/g, 'I');
   return ij(text) === ij(alt) || alt === text + 'X' || text === alt + 'X';
+}
+
+/**
+ * Erlaubte Verfahrensvarianten für Alternativen (Delta §8.1, Review M3 K5): anderes I/J-Quadrat (playfair,
+ * polybios) und Transposition mit bzw. ohne Füllzeichen X (skytale, spaltentransposition).
+ */
+function verfahrensVarianten(v) {
+  const out = [];
+  if (v.typ === 'playfair' || v.typ === 'polybios') out.push({ ...v, ij: v.ij === 'J' ? 'I' : 'J' });
+  if (v.typ === 'skytale' || v.typ === 'spaltentransposition') {
+    for (const f of [null, 'X']) if ((v.fuellzeichen ?? null) !== f) out.push({ ...v, fuellzeichen: f });
+  }
+  return out;
+}
+
+/** Ist eine Alternative per Neuberechnung mit einer erlaubten Verfahrensvariante erklärbar? */
+function variantenErgebnis(ia, alt) {
+  for (const v of verfahrensVarianten(ia.verfahren)) {
+    try {
+      const r = K.verfahren.anwenden(v, ia.eingabe, ia.richtung, { basis: ia.basis ?? 1, ausgabe: zahlenAusgabe(ia) ? 'zahlen' : 'buchstaben' });
+      if (anzeige(Array.isArray(r) ? r : kanonisch(ia, r)) === anzeige(alt)) return true;
+    } catch (e) {
+      if (!(e instanceof AntwortFehler || (e && e.name === 'KryptoFehler'))) throw e;
+    }
+  }
+  return false;
 }
 
 /**
@@ -211,7 +237,9 @@ function validiere(ia, lo, aufgabe, ort, fa, wa) {
         const alt = kanon(roh);
         if (alt === null) continue;
         if (anzeige(alt) === anzeige(text)) fa(lort, `alternative „${roh}“ gleicht text.`);
-        else if (!bekannteVariante(text, alt)) wa(lort, `alternative „${roh}“ ist durch keine bekannte Variante erklärbar (I/J vertauscht, Füllzeichen X am Ende angehängt/weggelassen).`);
+        else if (!bekannteVariante(text, alt) && !(verfahrenOk && eingabeOk && RICHTUNGEN.includes(ia.richtung) && variantenErgebnis(ia, alt))) {
+          fa(lort, `alternative „${roh}“ ist durch keine bekannte Variante erklärbar (I/J vertauscht, Füllzeichen X am Ende angehängt/weggelassen, Neuberechnung mit anderem I/J-Quadrat bzw. mit/ohne Füllzeichen).`);
+        }
       }
   }
   if (typ === 'frei') {

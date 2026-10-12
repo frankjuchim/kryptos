@@ -1,0 +1,12 @@
+{
+  "beschreibung": "Lücke in quadrat-Zellen: Lösung ≠ Quadrat (Review M3 W3)",
+  "erwartet": "Lücke q1: Neuberechnung \\(Quadrat\\)",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L4-01.loesung.q1",
+      "wert": [
+        "Z"
+      ]
+    }
+  ]
+}

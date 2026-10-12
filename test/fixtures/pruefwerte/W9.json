@@ -1,0 +1,6 @@
+{
+ "beschreibung": "Prüfwerte der Beispielwelt (Fixture Welt 9) – nur für Tests (seed_pruefen.py --pruefwerte test/fixtures/pruefwerte)",
+ "werte": [
+  {"id": "W9-L5-10", "ort": "test/fixtures/welt_beispiel.json W9-L5-10 (RSA mit kleinen Zahlen)", "art": "lab", "verfahren": "modpow", "eingabe": [4, 3, 33], "erwartet": 31, "herkunft": "Fixture: c = 4³ mod 33"}
+ ]
+}

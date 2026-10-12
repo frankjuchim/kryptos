@@ -47,7 +47,8 @@ jobs:
         run: python3 -I werkzeuge/krypto/pruefwerte.py
       - name: Seeds unabhängig nachrechnen (Python-Zwilling, Delta §11)
         run: |
-          python3 -I werkzeuge/krypto/seed_pruefen.py test/fixtures/welt_beispiel.json
+          python3 -I werkzeuge/krypto/seed_pruefen.py --pruefwerte test/fixtures/pruefwerte test/fixtures/welt_beispiel.json
+          python3 -I werkzeuge/krypto/pruefwerte.py --ordner test/fixtures/pruefwerte
           python3 -I werkzeuge/krypto/seed_pruefen.py
 
   inhalte:

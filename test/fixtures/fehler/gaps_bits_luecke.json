@@ -1,0 +1,12 @@
+{
+  "beschreibung": "Lücke in einem bits-Block mit pruefe xor: Lösung ≠ XOR (Review M3 W3)",
+  "erwartet": "Lücke c1: Neuberechnung \\(XOR\\)",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L6-02.loesung.c1",
+      "wert": [
+        "0110 1000"
+      ]
+    }
+  ]
+}

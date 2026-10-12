@@ -1,0 +1,10 @@
+{
+  "beschreibung": "verdeckter Schlüssel mit Hilfszeile schluessel (Review M3 W1)",
+  "erwartet": "verrät den verdeckten Schlüssel",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L5-02.schluesselVerdeckt",
+      "wert": true
+    }
+  ]
+}

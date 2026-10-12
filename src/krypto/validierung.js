@@ -10,6 +10,7 @@ const F = require('../content/format');
 const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
 const { WERKZEUG_IDS } = require('./werkzeuge');
 const CHIFFRE = require('./interaktionen/chiffre');
+const N = require('./neuberechnung');
 
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const CODE = /^[a-z_]{1,30}$/;
@@ -134,8 +135,14 @@ function aufgabe(a, fa, wa, { data } = {}) {
   if (a.pruefnachweis !== undefined) {
     if (typeof a.pruefnachweis !== 'string' || !PRUEFNACHWEIS.some((r) => r.test(a.pruefnachweis))) {
       fa('pruefnachweis', 'pruefnachweis muss auf quellen/pruefwerte/W<n>.json#<id> oder werkzeuge/krypto/fremde_verfahren.py:<name> verweisen.');
-    } else if (!hatFrei(a)) wa('pruefnachweis', 'pruefnachweis ist überflüssig – die Neuberechnung ersetzt den Nachweis.');
+    } else if (!hatFrei(a) && !F.teile(a).some(({ interaktion: ia }) => istObjekt(ia) && ia.kind === 'gaps')) {
+      wa('pruefnachweis', 'pruefnachweis ist überflüssig – die Neuberechnung ersetzt den Nachweis.');
+    }
   }
+  // Rechenergebnisse in gaps (Lücken in bits/alphabet nachrechnen, sonst pruefnachweis) und Schlüssel in Blöcken (W3, K8)
+  const bloecke = alleBloecke(a, { erklaerung: false });
+  N.pruefeGapsRechnung(a, bloecke, fa, wa);
+  N.pruefeSchluesselBloecke(a, bloecke, wa);
   // _fehlmuster in gaps-Teilen (Delta §9.6)
   F.teile(a).forEach((t, i, alle) => {
     const ia = t.interaktion;
