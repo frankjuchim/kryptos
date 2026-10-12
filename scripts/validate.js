@@ -8,6 +8,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { validiereDateien, formatiere } = require('../src/content/validator');
 
+// Krypto-Formate (Normen, Blöcke, Interaktionen, Zusatzprüfungen) vor dem Validieren registrieren (K31)
+require('../src/krypto').registriere();
+
 const args = process.argv.slice(2);
 const json = args.includes('--json');
 const ohneHinweise = args.includes('--ohne-hinweise');

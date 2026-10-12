@@ -8,6 +8,7 @@ const path = require('node:path');
 const { execFileSync, spawnSync } = require('node:child_process');
 const { validiereWelt, validiereDateien } = require('../src/content/validator');
 const H = require('./helpers');
+require('../src/krypto').registriere();
 
 const basis = () => JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8'));
 const aufgabe = (w, id) => w.aufgaben.find((a) => a.id === id);
@@ -192,4 +193,16 @@ test('Registrierte Blöcke/Interaktionen: Validierung, Lücken-Besitz über luec
   const n = basis(); aufgabe(n, 'W9-L1-01').interaktion.felder.g1.norm = 'vtestnorm';
   assert.deepEqual(fehlerVon(n), []);
   erwarteFehler((x) => { aufgabe(x, 'W9-L1-01').interaktion.felder.g1.norm = 'gibtsnicht'; }, /norm „gibtsnicht“ unbekannt/);
+});
+
+test('CLI: registriere() vor dem Validieren – norm „krypto“ ist bekannt', () => {
+  const skript = path.join(__dirname, '..', 'scripts', 'validate.js');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-cli-norm-'));
+  const datei = path.join(dir, 'welt9.json');
+  const w = basis();
+  aufgabe(w, 'W9-L1-01').interaktion.felder.g4.norm = 'krypto';
+  fs.writeFileSync(datei, JSON.stringify(w));
+  const r = spawnSync(process.execPath, [skript, datei], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(r.stdout, /Alles in Ordnung/);
 });

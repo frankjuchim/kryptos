@@ -78,7 +78,8 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/routes/lehrer.js` | A | Registrierung/Anmeldung/Passwort, Kurs anlegen/löschen, Schüler umbenennen/neuer Code/löschen, QR **entfernt**; Einstellungen erweitert; Teams, Funkraum-Regie, Arena-Regie neu (in `src/krypto/…/routes.js`, hier nur eingehängt) |
 | `src/routes/admin.js` | A | Lehrkraft-Verwaltung und Einmal-Passwort **entfernt**; bleiben: Backup/Restore, Warm-up-Import/-Liste, Inhalte/Seed-Bericht/Neu laden; neu: Wartungsbericht |
 | `src/routes/gast.js` | U | |
-| `src/validate.js`, `scripts/validate.js` | U | |
+| `src/validate.js` | U | |
+| `scripts/validate.js` | A | `require('../src/krypto').registriere()` vor dem Validieren (K31; Krypto-Formate im CLI) |
 | `src/jwt.js` | **U aus labs** | `frankjuchim/labs/src/jwt.js` byte-gleich (Test vergleicht SHA-256 mit der in `test/fixtures/labs_hashes.json` notierten Fassung) |
 | `scripts/vertrag_pruefen.js` | **U aus labs** | byte-gleich wie `jwt.js` |
 

@@ -45,6 +45,8 @@ const VERSION = require('../package.json').version;
  *                                         Standard: MATERIALIEN_DIR, sonst ./materialien)
  */
 function createApp(opts) {
+  // Krypto-Erweiterungen in die Kern-Registries eintragen – vor Seed und Diensten (TECHNIK §4.1, idempotent)
+  require('./krypto').registriere();
   const log = opts.log || (() => {});
   const db = openDatabase(opts.dbFile, { log });
   const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed };

@@ -5,6 +5,8 @@ const assert = require('node:assert/strict');
 const C = require('../src/content/checker');
 const W = require('./fixtures/welt_beispiel.json');
 const { RICHTIG, FALSCH } = require('./fixtures/antworten');
+const F = require('../src/content/format');
+require('../src/krypto').registriere();
 
 const A = Object.fromEntries(W.aufgaben.map((a) => [a.id, a]));
 
@@ -157,4 +159,25 @@ test('Ungültige Antwortformen werden abgewiesen', () => {
   assert.throws(() => C.pruefeAufgabe(A['W9-L1-01'], { g1: { x: 1 } }), C.AntwortFehler);
   assert.throws(() => C.pruefeAufgabe(A['W9-L2-06'], new Array(400).fill(1)), C.AntwortFehler);
   assert.throws(() => C.pruefeAufgabe(A['W9-L1-01'], { g1: 'x'.repeat(600) }), C.AntwortFehler);
+});
+
+test('norm: krypto (Delta §5.1) und bits (Delta §5.2) in gaps', () => {
+  const krypto = { typ: 'text', norm: 'krypto' };
+  for (const [ein, soll] of [['Treffpunkt am Hafen!', 'TREFFPUNKTAMHAFEN'], ['bohvs vjnnp', 'BOHVSVJNNP'], ['Grüße aus Köln', 'GRUESSEAUSKOELN'], ['Café – 12 Uhr', 'CAFE12UHR'], ['A-D-F-G-V-X', 'ADFGVX']]) {
+    assert.equal(F.normText(ein, 'krypto'), soll, ein);
+    assert.equal(C.feldRichtig(krypto, ein, [soll.toLowerCase()]), true, ein);
+  }
+  assert.equal(C.feldRichtig(krypto, 'ABC1', ['ABC']), false, 'Ziffern bleiben – Antwort falsch');
+  assert.equal(F.normText('0100 0001', 'bits'), '01000001');
+  assert.equal(F.normText('0100_0001|0.1', 'bits'), '01000001' + '01');
+  assert.equal(C.feldRichtig({ typ: 'text', norm: 'bits' }, '0100 0201', ['01000201']), true, 'nur Trennzeichen fallen weg');
+  assert.equal(C.feldRichtig({ typ: 'text', norm: 'bits' }, '0100 0001', ['0100 0011']), false);
+});
+test('registriere() ist idempotent', () => { const R = require('../src/krypto'); R.registriere(); R.registriere(); });
+test('Werkzeug-Liste TECHNIK §10.2', () => {
+  const W = require('../src/krypto/werkzeuge');
+  assert.deepEqual(W.WERKZEUG_IDS, ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur']);
+  assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis'], gast: true });
+  assert.deepEqual(W.WERKZEUGE.filter((x) => x.gast).map((x) => x.id), ['scheibe']);
+  assert.equal(W.werkzeug('enigma'), null);
 });
