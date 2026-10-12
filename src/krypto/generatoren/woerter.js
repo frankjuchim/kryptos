@@ -17,4 +17,10 @@ const KLARTEXTE_W2 = Object.freeze(['gondel', 'kanal', 'palazzo', 'seidenhandel'
 const SCHLUESSEL_W2 = Object.freeze(['ROT', 'ROSA', 'TURM', 'NEBEL', 'VELA', 'RIVA', 'MOLO', 'SALE']);
 const KOINZIDENZ_W2 = Object.freeze(['ANANAS', 'KANALBANK', 'BALLADE', 'SERENISSIMA', 'GONDOLIERE']);
 
-module.exports = { WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2 };
+/**
+ * Welt 5 (vorläufig; SPEC W5 §8 verlangt ≈ 300 Wörter) – ohne Video-Wörter und nie die Paare aus SPEC W5 §0a
+ * (nebel, heute, morgen, ueberweise, zwei, tausend, euro).
+ */
+const WOERTER_W5 = Object.freeze(['mauer', 'kabel', 'router', 'wolke', 'daten', 'paket', 'server', 'signal']);
+
+module.exports = { WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2, WOERTER_W5 };

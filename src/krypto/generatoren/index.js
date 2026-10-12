@@ -13,7 +13,10 @@ const MODULE = [
   require('./kasiski'),
   require('./koinzidenz'),
   require('./xor'),
-  require('./kryptos16')
+  require('./kryptos16'),
+  require('./schluesselanzahl'),
+  require('./toyhash'),
+  require('./dhrsa')
 ];
 
 /** Alle Generatoren der Module in der Registry des Kerns eintragen (G = src/content/generators). */

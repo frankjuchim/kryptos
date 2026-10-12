@@ -54,13 +54,21 @@ function videoKollision(a) {
   for (const b of a.inhalt || []) if (typeof b.md === 'string') for (const m of b.md.matchAll(/`([^`]+)`|\*\*([^*]+)\*\*|„([^“]+)“/g)) texte.push(m[1] || m[2] || m[3]);
   for (const t of texte) if (typeof t === 'string' && !istBits(t) && VIDEO_TEXTE.has(nurAZ(t))) return `Text ${t}`;
   if (ia.kind === 'bits-rechnen' && ia.operation === 'xor' && VIDEO_XOR.has(ia.operanden.map(nurBits).sort().join('|'))) return 'XOR-Paar';
-  for (const z of a._videoZahlen || []) if (VIDEO_ZAHLEN.has(z)) return z;
+  // Zahl-Eingaben aus dem Aufgabentext (Schlüsselanzahl, DH, RSA)
+  const md = (a.inhalt || []).map((b) => b.md || '').join(' ');
+  const zahlen = [];
+  let m;
+  if ((m = /(\d+) Personen/.exec(md))) zahlen.push(`schluesselanzahl:${m[1]}`);
+  if ((m = /p = (\d+), g = (\d+)\. Alice wählt a = (\d+), Bob wählt b = (\d+)/.exec(md))) zahlen.push(`dh.oeffentlich:${m[2]},${m[3]},${m[1]}`, `dh.oeffentlich:${m[2]},${m[4]},${m[1]}`);
+  if ((m = /\(N, e\) = \((\d+), (\d+)\)\. Verschlüssele die Klarzahl m = (\d+)/.exec(md))) zahlen.push(`rsa.verschluesseln:${m[3]},${m[2]},${m[1]}`);
+  for (const z of zahlen) if (VIDEO_ZAHLEN.has(z)) return z;
   return null;
 }
 
 test('Video-Abgleich erkennt Video-Eingaben', () => {
   assert.ok(VIDEO_TEXTE.has('TREFFPUNKTAMBRUNNEN') && VIDEO_TEXTE.has('ZIFFER'));
-  assert.ok(VIDEO_ZAHLEN.has('schluesselanzahl:4'));
+  assert.ok(VIDEO_ZAHLEN.has('schluesselanzahl:4') && VIDEO_ZAHLEN.has('dh.oeffentlich:2,5,29') && VIDEO_ZAHLEN.has('rsa.verschluesseln:10,5,133'));
+  assert.equal(videoKollision({ inhalt: [{ t: 'text', md: '11 Personen kommunizieren' }], interaktion: { kind: 'gaps' }, loesung: {} }), 'schluesselanzahl:11');
   assert.equal(videoKollision({ inhalt: [], interaktion: { kind: 'chiffre', eingabe: 'nachtwache' }, loesung: { text: 'X' } }), 'Text nachtwache');
   assert.equal(videoKollision({ inhalt: [], interaktion: { kind: 'bits-rechnen', operation: 'xor', operanden: ['1001 1100', '0100 1010'] }, loesung: {} }), 'XOR-Paar');
 });
@@ -282,4 +290,65 @@ test('Trainingsplatz Welt 2: koinzidenz (eA) fehlt im gA-Kurs', async () => {
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
   assert.deepEqual((await s.get('/api/training/2')).body.generatoren.map((g) => g.key), ['vigenere', 'kasiski']);
   assert.equal((await s.post('/api/training/3/neu').send({ generator: 'kryptos16_runde' })).status, 400);
+});
+
+/* ---------- Welt 4 und 5 (Task 39) ---------- */
+
+const potenz = (b, e, m) => { let r = 1; for (let i = 0; i < e; i++) r = (r * b) % m; return r; };
+
+test('w4_schluesselanzahl: Formeln n(n−1)/2 und 2n bzw. Zuwachs n und 2', () => {
+  const varianten = new Set();
+  for (const a of grundpruefung('w4_schluesselanzahl')) {
+    const n = Number(/(\d+) Personen/.exec(a.inhalt[0].md)[1]);
+    assert.ok(n >= 3 && n <= 40 && ![4, 5, 11, 17].includes(n), `n = ${n} (Video-Werte ausgeschlossen)`);
+    const v2 = /kommt eine weitere hinzu/.test(a.inhalt[0].md);
+    varianten.add(v2);
+    assert.deepEqual([a.loesung.sym[0], a.loesung.asym[0]], v2 ? [String(n), '2'] : [String((n * (n - 1)) / 2), String(2 * n)]);
+    if (!v2) assert.deepEqual([a.loesung._fehlmuster.sym[0].wert, a.loesung._fehlmuster.asym[0].wert], [String(n * (n - 1)), String(n)]);
+    else assert.equal(a.loesung._fehlmuster, undefined);
+  }
+  assert.equal(varianten.size, 2);
+});
+
+test('w5_kryptoshash: eigene Hash-Schleife, keine reservierten Wörter, Fehlmuster A = 0', () => {
+  let mitZustaenden = 0;
+  for (const a of grundpruefung('w5_kryptoshash')) {
+    const wort = /KH\(„([a-z]+)“\)/.exec(a.inhalt[0].md)[1];
+    assert.ok(!['nebel', 'heute', 'morgen', 'ueberweise', 'zwei', 'tausend', 'euro'].includes(wort));
+    let h = 0; const z = [];
+    for (const c of wort) { h = (3 * h + (c.charCodeAt(0) - 96)) % 29; z.push(h); }
+    assert.equal(a.loesung.h[0], String(h));
+    z.forEach((x, i) => { if (a.loesung[`z${i + 1}`]) assert.equal(a.loesung[`z${i + 1}`][0], String(x)); });
+    if (a.loesung.z1) { mitZustaenden++; assert.equal(a.stufe, 2); assert.ok(a.loesung[`z${wort.length}`]); }
+  }
+  assert.ok(mitZustaenden > 0 && mitZustaenden < 300);
+  const m = grundpruefung('w5_kryptoshash').find((a) => /„mauer“/.test(a.inhalt[0].md));
+  assert.ok(m, 'mauer kommt vor');
+  assert.deepEqual(m.loesung._fehlmuster.h.map((f) => f.wert).sort(), ['1302', '21']);
+  assert.equal(m.loesung.h[0], '26');
+});
+
+test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau ergaenzung', () => {
+  for (const a of grundpruefung('w4_dh')) {
+    const [, p, g, x, y] = /p = (\d+), g = (\d+)\. Alice wählt a = (\d+), Bob wählt b = (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok([11, 13, 17, 19, 23].includes(p) && x !== y && x >= 2 && x <= 8 && y >= 2 && y <= 8);
+    assert.equal(new Set([...Array(p - 1).keys()].map((i) => potenz(g, i + 1, p))).size, p - 1, 'Primitivwurzel');
+    const A = potenz(g, x, p), B = potenz(g, y, p);
+    assert.deepEqual([a.loesung.A[0], a.loesung.B[0], a.loesung.K[0]], [A, B, potenz(B, x, p)].map(String));
+    assert.equal(potenz(A, y, p), potenz(B, x, p));
+    assert.notEqual(potenz(B, x, p), 1);
+  }
+  for (const a of grundpruefung('w4_rsa_ver')) {
+    const [, N, e, m] = /\(N, e\) = \((\d+), (\d+)\)\. Verschlüssele die Klarzahl m = (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok(m >= 2 && m <= N - 2);
+    assert.equal(a.loesung.c[0], String(potenz(m, e, N)));
+    assert.notEqual(potenz(m, e, N), m);
+  }
+  assert.deepEqual(['w4_dh', 'w4_rsa_ver'].map((k) => G.GENERATOREN[k].niveau), ['ergaenzung', 'ergaenzung']);
+});
+
+test('Alle 16 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA)', () => {
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'schluesselwort_alphabet', 'vigenere', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
+  // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
+  for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
