@@ -42,7 +42,7 @@ function bereinige(ia, antwort) {
   let a = antwort;
   if (a === undefined || a === null) a = {};
   if (!istObjekt(a)) throw new AntwortFehler('Antwort muss eine Zuordnung sein.');
-  if ('zuordnung' in a) {
+  if (Object.hasOwn(a, 'zuordnung')) {
     a = a.zuordnung;
     if (a === undefined || a === null) a = {};
     if (!istObjekt(a)) throw new AntwortFehler('Antwort muss eine Zuordnung sein.');
@@ -67,7 +67,7 @@ function bereinige(ia, antwort) {
 
 function istLeer(ia, a) {
   const vorgabe = grossZuordnung(ia.vorgabe);
-  return Object.keys((a && a.zuordnung) || {}).every((k) => k in vorgabe);
+  return Object.keys((a && a.zuordnung) || {}).every((k) => Object.hasOwn(vorgabe, k));
 }
 
 /** Klartext aus Geheimtext und Zuordnung; nicht vergebene Buchstaben → '?'. */
@@ -139,7 +139,7 @@ function validiere(ia, lo, aufgabe, ort, fa, wa) {
   const doppelt = new Set();
   for (const v of Object.values(loZu)) (gesehen.has(v) ? doppelt : gesehen).add(v);
   if (doppelt.size) fa(lort, `loesung.zuordnung ist nicht injektiv (${[...doppelt].sort().join(', ')} doppelt).`);
-  const fehlt = vorkommend.filter((c) => !(c in loZu));
+  const fehlt = vorkommend.filter((c) => !Object.hasOwn(loZu, c));
   if (fehlt.length) fa(lort, `loesung.zuordnung deckt nicht alle Geheimtextbuchstaben ab (fehlt: ${fehlt.join(', ')}).`);
   if (istObjekt(ia.vorgabe)) {
     for (const [k, v] of Object.entries(grossZuordnung(ia.vorgabe))) {

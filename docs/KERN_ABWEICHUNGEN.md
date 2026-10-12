@@ -49,6 +49,7 @@ Spalte **Art**: `Hook` (generische Erweiterungsstelle) · `Verbund` (SSO/Portal)
 | K31 | scripts/validate.js | `require('../src/krypto').registriere()` vor `validiereDateien` | Krypto-Formate (Normen, Blöcke, Interaktionen, Zusatzprüfungen) auch im Validator-CLI | Hook | ja (Hook-Datei konfigurierbar) | umgesetzt (Task 22) |
 | K32 | src/services/training.js | Diagnose/Feedback in der Prüfantwort (`{ diagnose: optionen.diagnose }`, Felder über `C.FELDER_OBEN`, Schrittprüfung mit `diagnose`); M3 Task 36: Generatoren über `G.generatorenFuerWelt(nr, { sichtbar: (g) => optionen.generatorSichtbar(g, einst) })` in `info` und `neu` (unsichtbarer Wunsch-Generator → 400, Zufallswahl nur aus sichtbaren) | Fallen-Diagnose und Niveau im Trainingsplatz | Hook | ja | umgesetzt (Task 33, Task 36) |
 | K33 | src/services/gast.js | Diagnose/Feedback in der Prüfantwort (`{ diagnose: optionen.diagnose }`, Felder über `C.FELDER_OBEN`, Schrittprüfung mit `diagnose`) | Fallen-Diagnose im Gastmodus | Hook | ja | umgesetzt (Task 33) |
+| K34 | src/content/checker.js | `auspacken`: Antwort-Hülle nur über eine **eigene** Eigenschaft (`Object.hasOwn(antwort, schluessel)` statt `schluessel in antwort`) | Review M3 K2: geerbte Schlüssel (`constructor`, `toString`) sind keine Antwortfelder | Fehlerbehebung | ja | umgesetzt (Review M3) |
 
 ## Review M1 (Befunde W1–W6, K1–K7) – Übersicht
 

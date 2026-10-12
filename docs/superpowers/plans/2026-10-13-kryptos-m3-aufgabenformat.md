@@ -742,7 +742,7 @@ Fixture (diese Task) – Level und Aufgabe aus dem Zielbild (`nr: "K1"`, `niveau
        sonst jeder Kandidat mit passendem Zeichen die Antwort – vollständige Treffer gehen deshalb vor; gilt für alle Interaktionen.)
     5. `auswaehlen('chiffre', treffer)`.
 - Produces – `src/krypto/interaktionen/chiffre.js` (`vertrag`, `registriere(F)`), Regeln Delta §8.1 mit diesen Festlegungen:
-  - **kanonische Antwort:** Buchstaben/`hex`/`paare` → Zeichenkette, leere Kästchen als `' '`; `zahlen` → Liste aus Ganzzahl oder `null`.
+  - **kanonische Antwort:** Buchstaben/`hex`/`paare` → Zeichenkette, leere Kästchen als `'_'` (Review M3 K1: idempotent, vorher `' '`); `zahlen` → Liste aus Ganzzahl oder `null`.
     Text: `krypto`-Normalisierung (`hex`: Großschreibung, Leerraum weg, nur `0-9A-F`, sonst 400 „Hex-Antwort: nur 0–9 und A–F.“);
     Liste: je Eintrag normalisiert, genau 0 oder 1 Zeichen (sonst 400 „Je Kästchen ein Zeichen.“). `zahlen`: Text an Leerraum/Komma
     trennen oder Liste; Einträge ganze Zahlen (`''`/`null` → `null`), sonst 400. Rohtext > 2000 Zeichen oder > 800 Einträge → 400.

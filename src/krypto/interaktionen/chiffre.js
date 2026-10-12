@@ -1,7 +1,8 @@
 'use strict';
 // Interaktion chiffre (AUFGABENFORMAT_KRYPTO §8.1): zeichenweise ver-/entschlüsseln mit Feedback je Zeichen,
 // Schrittprüfung (Präfix), Fallen-Diagnose (§9.2) und Validator mit Neuberechnung über die Bibliothek.
-// Kanonische Antwort: Buchstaben/hex/paare → Zeichenkette (leeres Kästchen = ' '), zahlen → Liste aus Ganzzahl/null.
+// Kanonische Antwort: Buchstaben/hex/paare → Zeichenkette (leeres Kästchen = '_'), zahlen → Liste aus Ganzzahl/null.
+// Die kanonische Form ist ein Fixpunkt von bereinige (Review M3 K1: der Boss bereinigt gespeicherte Antworten erneut).
 
 const K = require('../../../public/static/js/shared/krypto');
 const C = require('../../content/checker');
@@ -18,10 +19,17 @@ const MIT_SCHLUESSELZEILE = ['vigenere', 'autokey', 'porta'];
 const PAARE = ['polybios', 'adfgvx'];
 
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+/** Platzhalter für ein leeres Kästchen in der kanonischen Form (übersteht die krypto-Normalisierung). */
+const LUECKE = '_';
 const zahlenAusgabe = (ia) => ia.ausgabe === 'zahlen';
 
-/** Ein Text (ganze Antwort) normalisieren: hex → nur 0–9A–F, sonst krypto-Normalisierung. */
+/** Ein Text (ganze Antwort) normalisieren; der Lücken-Platzhalter _ bleibt stehen (Idempotenz). */
 function normText(ia, s) {
+  return s.split(LUECKE).map((t) => normTeil(ia, t)).join(LUECKE);
+}
+
+/** Textstück ohne Lücken: hex → nur 0–9A–F, sonst krypto-Normalisierung. */
+function normTeil(ia, s) {
   if (ia.ausgabe === 'hex') {
     const h = s.toUpperCase().replace(/\s+/g, '');
     if (!/^[0-9A-F]*$/.test(h)) throw new AntwortFehler('Hex-Antwort: nur 0–9 und A–F.');
@@ -45,8 +53,8 @@ function ganzzahlOderNull(x) {
 function kanonisch(ia, antwort) {
   let a = antwort;
   if (istObjekt(a)) {
-    if ('text' in a) a = a.text;
-    else if ('zeichen' in a) a = a.zeichen;
+    if (Object.hasOwn(a, 'text')) a = a.text;
+    else if (Object.hasOwn(a, 'zeichen')) a = a.zeichen;
     else throw new AntwortFehler('Antwort muss Text oder eine Liste sein.');
   }
   if (a === undefined || a === null) return zahlenAusgabe(ia) ? [] : '';
@@ -65,12 +73,12 @@ function kanonisch(ia, antwort) {
   if (zahlenAusgabe(ia)) return a.map(ganzzahlOderNull);
   return a
     .map((x) => {
-      if (x === null || x === undefined) return ' ';
+      if (x === null || x === undefined) return LUECKE;
       if (typeof x === 'number') x = String(x);
       if (typeof x !== 'string' || x.length > 20) throw new AntwortFehler('Je Kästchen ein Zeichen.');
       const n = normText(ia, x);
       if (n.length > 1) throw new AntwortFehler('Je Kästchen ein Zeichen.');
-      return n.length ? n : ' ';
+      return n.length ? n : LUECKE;
     })
     .join('');
 }
@@ -79,7 +87,7 @@ const bereinige = (ia, antwort) => kanonisch(ia, antwort);
 
 function istLeer(ia, a) {
   if (Array.isArray(a)) return a.every((x) => x === null);
-  return String(a).trim() === '';
+  return String(a).split(LUECKE).join('').trim() === '';
 }
 
 /** Lösungen in kanonischer Form: text und alternativen. */
@@ -111,7 +119,7 @@ function pruefe(ia, lo, a, teilweise, opt = {}) {
   const hl = alsListe(haupt);
   const n = Math.max(al.length, hl.length);
   const zeichen = [];
-  for (let i = 0; i < n; i++) zeichen.push(i < al.length && i < hl.length && al[i] === hl[i] && al[i] !== ' ' && al[i] !== null);
+  for (let i = 0; i < n; i++) zeichen.push(i < al.length && i < hl.length && al[i] === hl[i] && al[i] !== LUECKE && al[i] !== null);
   return mitDiagnose({ ok, zeichen }, {});
 }
 

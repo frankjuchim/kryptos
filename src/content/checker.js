@@ -20,7 +20,7 @@ const MAX_TEXT = 500;
 /* ---------- Antworten vereinheitlichen (großzügig: Objekt-Hüllen wie in der Lösung erlaubt) ---------- */
 
 function auspacken(antwort, schluessel) {
-  if (antwort && typeof antwort === 'object' && !Array.isArray(antwort) && schluessel in antwort) return antwort[schluessel];
+  if (antwort && typeof antwort === 'object' && !Array.isArray(antwort) && Object.hasOwn(antwort, schluessel)) return antwort[schluessel];
   return antwort;
 }
 

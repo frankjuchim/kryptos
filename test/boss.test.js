@@ -204,3 +204,15 @@ test('Boss: Antwort wird mit Kontext (Aufgabe) bereinigt – unbekannter Akteur 
   // auch der gespeicherte Versuch (ergebnis mit Diagnose) enthält keine Prüfdaten
   assert.ok(!/fehlmuster/.test(JSON.stringify(app.locals.db.prepare('SELECT * FROM boss_versuche').all())));
 });
+
+test('Boss: gespeicherte chiffre-Antwort mit leerem Kästchen bleibt falsch (kanonische Form idempotent, Review M3 K1)', async () => {
+  const { s, lk, kurs } = await bossSzenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen', niveau: 'gA' } });
+  const k = (await s.post('/api/boss/9/start').send({})).body;
+  assert.ok(k.aufgaben.some((a) => a.id === 'W9-B-05'));
+  // TREFF·PUNKT mit leerem 6. Kästchen: P steht an Position 6 statt 5
+  const liste = ['T', 'R', 'E', 'F', 'F', '', 'P', 'U', 'N', 'K', 'T'];
+  await s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: 'W9-B-05', antwort: liste }).expect(200);
+  const e = (await s.post(`/api/boss/kampf/${k.id}/beenden`).send({})).body;
+  assert.equal(e.aufgaben.find((a) => a.id === 'W9-B-05').ok, false);
+});

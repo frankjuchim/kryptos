@@ -20,7 +20,7 @@ function pruefeFehlmuster(ia, lo, lort, fa) {
   if (!istObjekt(fm)) return fa(o, '_fehlmuster muss ein Objekt { feld: [ … ] } sein.');
   const felder = istObjekt(ia.felder) ? ia.felder : {};
   for (const [id, liste] of Object.entries(fm)) {
-    if (!(id in felder)) {
+    if (!Object.hasOwn(felder, id)) {
       fa(o, `_fehlmuster: Feld „${id}“ gibt es nicht in felder.`);
       continue;
     }
@@ -272,7 +272,7 @@ function level(l, o, f, w, { aufgaben, opt }) {
       const a = aufgaben.get(id);
       if (!istObjekt(a)) continue;
       for (const b of alleBloecke(a)) {
-        if (b.t === 'werkzeug' && istObjekt(b.voreinstellung) && ('schluessel' in b.voreinstellung || 'k' in b.voreinstellung)) {
+        if (b.t === 'werkzeug' && istObjekt(b.voreinstellung) && (Object.hasOwn(b.voreinstellung, 'schluessel') || Object.hasOwn(b.voreinstellung, 'k'))) {
           wl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
         }
       }

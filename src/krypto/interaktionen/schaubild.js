@@ -34,7 +34,7 @@ function bereinige(ia, antwort, kontext = {}) {
   if (a === undefined || a === null) a = {};
   if (!istObjekt(a)) throw new AntwortFehler('Antwort muss ein Objekt { feld: … } sein.');
   const felder = istObjekt(ia.felder) ? ia.felder : {};
-  for (const k of Object.keys(a)) if (!(k in felder)) throw new AntwortFehler('Unbekanntes Feld.');
+  for (const k of Object.keys(a)) if (!Object.hasOwn(felder, k)) throw new AntwortFehler('Unbekanntes Feld.');
   const out = {};
   for (const [id, feld] of Object.entries(felder)) {
     const v = a[id];

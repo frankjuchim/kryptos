@@ -267,3 +267,49 @@ test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Po
 test('Diagnosetext bits-rechnen:richtung neutral (ver- statt entschlüsselt oder umgekehrt)', () => {
   assert.equal(D.text('bits-rechnen', 'P3', 'richtung'), 'Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).');
 });
+
+/* ---------- Review M3 (K1, K2): kanonische Antwortform idempotent, Objekt-Schlüssel nur als eigene Eigenschaft ---------- */
+
+test('bereinige ist idempotent: bereinige(bereinige(x)) = bereinige(x) für alle Fixture-Antworten und Lücken-Listen', () => {
+  const extra = [['A', 'B', '', 'C'], ['', 'A'], ['A', ''], [null, 'B'], ['0', '1', '', '1'], [1, null, 3], 'ab c', '1  2', { text: 'AB' }, ['', '']];
+  let n = 0;
+  for (const a of W.aufgaben) {
+    const ts = F.teile(a);
+    const kand = [RICHTIG[a.id], FALSCH[a.id], C.musterantwortAufgabe(a), ...DIAGNOSE.filter((d) => d.aufgabe === a.id).map((d) => d.antwort)];
+    ts.forEach((t, i) => {
+      const teil = (x) => (ts.length > 1 && Array.isArray(x) && x.length === ts.length ? x[i] : x);
+      for (const x of [...kand.map(teil), ...extra]) {
+        let b1;
+        try {
+          b1 = C.bereinige(t.interaktion, x, { aufgabe: a });
+        } catch {
+          continue; // unbrauchbare Form → 400, nicht Gegenstand dieser Eigenschaft
+        }
+        n++;
+        assert.deepEqual(C.bereinige(t.interaktion, b1, { aufgabe: a }), b1, `${a.id} (${F.artVon(t.interaktion)}): ${JSON.stringify(x)}`);
+      }
+    });
+  }
+  assert.ok(n > 300, `genug Fälle (${n})`);
+});
+
+test('chiffre: leeres Kästchen bleibt Lücke (auch nach erneutem Bereinigen), Liste nur aus Lücken ist leer', () => {
+  const a = A['W9-L5-01'];
+  const b = C.bereinige(a.interaktion, ['Z', 'U', '', 'E']);
+  assert.deepEqual(C.pruefeAufgabe(a, b).zeichen.slice(0, 4), [true, true, false, true], 'E bleibt an Position 3');
+  const mitLuecke = C.bereinige(a.interaktion, ['Z', 'U', 'V', 'E', 'R', 'L', 'A', 'E', 'S', 'S', 'I', '', 'G']);
+  assert.equal(C.pruefeAufgabe(a, mitLuecke).ok, false, 'gespeicherte Antwort mit Lücke wird nicht nachträglich richtig');
+  assert.equal(C.pruefeAufgabe(a, C.bereinige(a.interaktion, ['', ''])).leer, true);
+  assert.equal(C.pruefeAufgabe(A['W9-L6-01'], '0010 0001').ok, true, 'bits unverändert');
+});
+
+test('Objekt-Antworten: geerbte Schlüssel (constructor, toString, __proto__) sind unbekannte Felder → 400', () => {
+  const sb = A['W9-L6-05'];
+  for (const roh of ['{"constructor":{"art":"privat","inhaber":"A"}}', '{"toString":"x"}', '{"hasOwnProperty":"x"}']) {
+    assert.throws(() => C.pruefeAufgabe(sb, JSON.parse(roh)), (e) => e.status === 400, roh);
+  }
+  // chiffre/zuordnung/bits: Hülle nur über eigene Eigenschaften
+  assert.throws(() => C.pruefeAufgabe(A['W9-L5-01'], JSON.parse('{"constructor":"x"}')), (e) => e.status === 400);
+  assert.throws(() => C.pruefeAufgabe(A['W9-L6-03'], JSON.parse('{"toString":"0100 1011"}')), (e) => e.status === 400);
+  assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], JSON.parse('{"constructor":"E"}')), (e) => e.status === 400);
+});

@@ -40,7 +40,8 @@ function text(art, p, code) {
   return f ? `Achtung, Falle ${p}: ${f.titel}.` : `Achtung, Falle ${p}.`;
 }
 
-const istLeerEintrag = (x) => x === undefined || x === null || x === ' ' || x === '';
+/** Leere Eingabe: auch der Lücken-Platzhalter _ der chiffre-Antwort (leeres Kästchen). */
+const istLeerEintrag = (x) => x === undefined || x === null || x === ' ' || x === '' || x === '_';
 
 /** Falsche Positionen: jede Position bis zur größeren Länge, an der die Antwort nicht der Lösung gleicht. */
 function falschePositionen(antwort, loesung) {
@@ -191,9 +192,9 @@ function zuordnung(ia, lo, a) {
   if (!ia || ia.diagnose === false) return [];
   const loZu = grossePaare(lo && lo.zuordnung);
   const vorgabe = grossePaare(ia.vorgabe);
-  const V = Object.entries((a && a.zuordnung) || {}).filter(([g]) => !(g in vorgabe) && g in loZu);
+  const V = Object.entries((a && a.zuordnung) || {}).filter(([g]) => !Object.hasOwn(vorgabe, g) && Object.hasOwn(loZu, g));
   const treffer = [];
-  const D = V.filter(([g, x]) => x !== loZu[g] && x in loZu);
+  const D = V.filter(([g, x]) => x !== loZu[g] && Object.hasOwn(loZu, x));
   if (D.length >= 3 && D.filter(([g, x]) => loZu[x] === g).length / D.length >= 0.8 - 1e-9) treffer.push({ p: 'P3', code: 'richtung' });
   if (V.length >= 3) {
     for (const d of [1, -1]) {

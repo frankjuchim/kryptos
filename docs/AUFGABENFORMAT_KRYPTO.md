@@ -506,7 +506,9 @@ Schrittprüfung: `{ "antwort": "ELRF", "teilweise": true, "teil": k }` (Präfix 
 
 **Prüfregeln (checker):**
 1. `bereinige`: Text → `krypto`-Normalisierung (bei `hex`: nur 0–9A–F; bei `zahlen`: ganze Zahlen, Liste ≤ 400);
-   Zeichenliste → je Eintrag normalisiert, leere bleiben als Lücke (`" "` intern).
+   Zeichenliste → je Eintrag normalisiert, leere bleiben als Lücke (Platzhalter `_` in der kanonischen Form; `_` in
+   einer Textantwort steht ebenso für ein leeres Kästchen). Die kanonische Form ist ein Fixpunkt:
+   `bereinige(bereinige(x)) = bereinige(x)` (der Boss bereinigt gespeicherte Antworten bei der Auswertung erneut).
 2. `istLeer`: keine einzige Eingabe.
 3. Ganze Prüfung: richtig, wenn die Antwort exakt `text` oder einer `alternative` entspricht. Feedback
    `zeichen: [true, false, …]` je Position gegen `text` (bei Längenabweichung zählt die kürzere Länge, Rest falsch).

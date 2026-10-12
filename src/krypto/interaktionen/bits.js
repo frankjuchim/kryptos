@@ -45,7 +45,7 @@ function erwartet(ia) {
 
 function auspacken(antwort, schluessel) {
   if (istObjekt(antwort)) {
-    for (const k of schluessel) if (k in antwort) return antwort[k];
+    for (const k of schluessel) if (Object.hasOwn(antwort, k)) return antwort[k];
     throw new AntwortFehler('Antwort hat eine unbekannte Form.');
   }
   return antwort;
@@ -82,7 +82,7 @@ function kanonisch(ia, antwort) {
   if (istTextAntwort(ia)) return textAntwort(auspacken(antwort, ['text']));
   if (ia.operation === 'frei') {
     const a = auspacken(antwort, ['bits', 'text']);
-    if (istObjekt(antwort) && 'text' in antwort) return textAntwort(a);
+    if (istObjekt(antwort) && Object.hasOwn(antwort, 'text')) return textAntwort(a);
     if (typeof a === 'string' && /^[01\s_|.]*$/.test(a)) return bitsAntwort(a);
     return textAntwort(a);
   }
