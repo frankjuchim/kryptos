@@ -53,3 +53,15 @@ test('domain: Kern-Namen kommen aus den Fachlisten', () => {
   assert.equal(D.PLATTFORM.id, 'kryptos');
   assert.deepEqual(D.TEAM_NAMEN, F.TEAM_NAMEN);
 });
+
+test('fach: Fallen-Plausibilität je Kategorie (Review M3 K4)', () => {
+  const { FALLEN_PLAUSIBEL, LAB_KATEGORIEN, FALLEN } = require('../src/krypto/fach');
+  assert.deepEqual(Object.keys(FALLEN_PLAUSIBEL).sort(), [...LAB_KATEGORIEN].sort(), 'jede Kategorie hat eine Liste');
+  for (const [k, liste] of Object.entries(FALLEN_PLAUSIBEL)) {
+    assert.ok(liste.length && liste.every((p) => p in FALLEN), k);
+  }
+  // P10 (Operator) nur bei Begründungs-/Beurteilungskategorien
+  for (const k of ['modulo', 'verschluesseln', 'entschluesseln', 'bits-xor', 'struktogramm', 'implementierung']) assert.ok(!FALLEN_PLAUSIBEL[k].includes('P10'), k);
+  for (const k of ['sicherheit-beurteilen', 'einordnen', 'begriffe', 'gesellschaft']) assert.ok(FALLEN_PLAUSIBEL[k].includes('P10'), k);
+  assert.ok(FALLEN_PLAUSIBEL['kasiski-friedman'].includes('P4') && FALLEN_PLAUSIBEL['kasiski-friedman'].includes('P6'));
+});

@@ -100,6 +100,39 @@ const FALLEN = {
   }
 };
 
+/**
+ * Plausible Fallen je Kategorie (Design §3.3/§3.4, Welt-Specs; Review M3 K4) – großzügig: Liste aller Fallen, die in
+ * Aufgaben dieser Kategorie typischerweise auftreten. P10 (Operator) nur bei Begründungs-/Beurteilungskategorien.
+ * Grundlage des Validator-Hinweises „Falle passt nicht zur Kategorie“ (Feld fallen, fehlmuster/_fehlmuster).
+ */
+const FALLEN_PLAUSIBEL = Object.freeze({
+  begriffe: ['P1', 'P4', 'P5', 'P7', 'P8', 'P9', 'P10'],
+  transposition: ['P1', 'P3', 'P4', 'P5', 'P6', 'P8', 'P10'],
+  'substitution-mono': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P10'],
+  'substitution-poly': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P10'],
+  modulo: ['P1', 'P2', 'P3', 'P4'],
+  verschluesseln: ['P1', 'P2', 'P3', 'P4', 'P8'],
+  entschluesseln: ['P1', 'P2', 'P3', 'P4', 'P8'],
+  einordnen: ['P5', 'P6', 'P7', 'P8', 'P9', 'P10'],
+  haeufigkeitsanalyse: ['P1', 'P3', 'P4', 'P5', 'P6', 'P7', 'P10'],
+  'kasiski-friedman': ['P1', 'P2', 'P4', 'P5', 'P6', 'P7', 'P10'],
+  schluesselraum: ['P3', 'P5', 'P6', 'P7', 'P8', 'P10'],
+  'sicherheit-beurteilen': ['P1', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'],
+  'bits-xor': ['P1', 'P2', 'P3', 'P4', 'P8'],
+  blockchiffre: ['P1', 'P2', 'P3', 'P4', 'P5', 'P8', 'P10'],
+  schluesselaustausch: ['P2', 'P3', 'P7', 'P9', 'P10'],
+  asymmetrisch: ['P1', 'P2', 'P3', 'P5', 'P7', 'P9', 'P10'],
+  hybrid: ['P3', 'P5', 'P7', 'P9', 'P10'],
+  hash: ['P1', 'P2', 'P4', 'P5', 'P6', 'P8', 'P9', 'P10'],
+  signatur: ['P2', 'P3', 'P9', 'P10'],
+  zertifikat: ['P9', 'P10'],
+  protokoll: ['P3', 'P5', 'P7', 'P8', 'P9', 'P10'],
+  struktogramm: ['P1', 'P2', 'P3', 'P4'],
+  implementierung: ['P1', 'P2', 'P3', 'P4'],
+  'fremde-chiffre': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P10'],
+  gesellschaft: ['P5', 'P9', 'P10']
+});
+
 /** Ränge (Design §2.4): Anteil der Level-Punkte der freigeschalteten Welten, Schwellen wie im Kern. */
 const RAENGE = [
   { name: 'Lehrling', ab: 0 },
@@ -185,4 +218,4 @@ const WELT_PLAN = [
   ], boss: { titel: 'Generalprobe online', pool: { kern: 14, eA: 1 } } }
 ];
 
-module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, RAENGE, TEAM_NAMEN, NIVEAU_KATEGORIEN, WELT_PLAN };
+module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, FALLEN_PLAUSIBEL, RAENGE, TEAM_NAMEN, NIVEAU_KATEGORIEN, WELT_PLAN };

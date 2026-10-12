@@ -6,15 +6,28 @@ const K = require('../../../public/static/js/shared/krypto');
 
 const txt = (md) => ({ t: 'text', md });
 
+/**
+ * Video-Beispiele (Design §11: kommen in keinem anderen Material vor; quellen/pruefwerte/videos.json, Video 01):
+ * 26 mod 26 und 27 mod 26 (also p + k − 1 = 26 bzw. 27) und die Caesar-Schritte t, u, r, e mit k = 6 – statisch
+ * ausgeschlossen (Review M3 K7), damit der Generator zur Laufzeit keine Material-Dateien braucht.
+ */
+const VIDEO_MOD = new Set([26, 27]);
+const VIDEO_PAARE = new Set(['20:6', '21:6', '18:6', '5:6']);
+const videoEingabe = (p, k) => VIDEO_MOD.has(p + k - 1) || VIDEO_PAARE.has(`${p}:${k}`);
+
 function modA1(z) {
   let p;
   let k;
   if (z.bool(0.35)) {
-    k = z.int(1, 25);
-    p = 26 - k;
+    do {
+      k = z.int(1, 25);
+      p = 26 - k;
+    } while (videoEingabe(p, k));
   } else {
-    p = z.int(1, 26);
-    k = z.int(0, 25);
+    do {
+      p = z.int(1, 26);
+      k = z.int(0, 25);
+    } while (videoEingabe(p, k));
   }
   const c = K.mod(p + k - 1, 26) + 1;
   const b = K.buchstabe(c, 1);

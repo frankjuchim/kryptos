@@ -43,7 +43,9 @@ const VIDEO_TEXTE = new Set(
 );
 /** XOR-Operandenpaare der Videos (ungeordnet). */
 const VIDEO_XOR = new Set(VIDEOS.filter((v) => v.verfahren === 'xorBits').map((v) => v.eingabe.map(nurBits).sort().join('|')));
-/** Zahl-Eingaben je Verfahren (z. B. schluesselanzahl n, dh/rsa-Tupel). */
+/** Caesar-Einzelbuchstaben der Videos (Buchstabe:k:Richtung), z. B. t + 6 → Z (Review M3 K7). */
+const VIDEO_CAESAR_EINZEL = new Set(VIDEOS.filter((v) => v.verfahren === 'caesar' && nurAZ(v.eingabe[0]).length === 1).map((v) => `${nurAZ(v.eingabe[0])}:${v.eingabe[1]}:${v.richtung}`));
+/** Zahl-Eingaben je Verfahren (z. B. schluesselanzahl n, dh/rsa-Tupel, mod a, m). */
 const VIDEO_ZAHLEN = new Set(VIDEOS.filter((v) => Array.isArray(v.eingabe) && v.eingabe.every(Number.isInteger)).map((v) => `${v.verfahren}:${v.eingabe.join(',')}`));
 
 /** Kollision einer Generator-Aufgabe mit einem Video-Beispiel (Eingabetext, XOR-Paar, Zahl-Eingabe) oder null. */
@@ -61,6 +63,11 @@ function videoKollision(a) {
   if ((m = /(\d+) Personen/.exec(md))) zahlen.push(`schluesselanzahl:${m[1]}`);
   if ((m = /p = (\d+), g = (\d+)\. Alice wählt a = (\d+), Bob wählt b = (\d+)/.exec(md))) zahlen.push(`dh.oeffentlich:${m[2]},${m[3]},${m[1]}`, `dh.oeffentlich:${m[2]},${m[4]},${m[1]}`);
   if ((m = /\(N, e\) = \((\d+), (\d+)\)\. Verschlüssele die Klarzahl m = (\d+)/.exec(md))) zahlen.push(`rsa.verschluesseln:${m[3]},${m[2]},${m[1]}`);
+  // Modulo mit A = 1 (mod_a1): (p + k − 1) mod 26 und der Caesar-Schritt Buchstabe p + k (Review M3 K7)
+  if ((m = /für p = (\d+) \(([A-Z])\) und k = (\d+)/.exec(md))) {
+    zahlen.push(`mod:${Number(m[1]) + Number(m[3]) - 1},26`);
+    if (VIDEO_CAESAR_EINZEL.has(`${m[2]}:${m[3]}:ver`)) return `caesar:${m[2]}:${m[3]}`;
+  }
   for (const z of zahlen) if (VIDEO_ZAHLEN.has(z)) return z;
   return null;
 }
@@ -71,6 +78,20 @@ test('Video-Abgleich erkennt Video-Eingaben', () => {
   assert.equal(videoKollision({ inhalt: [{ t: 'text', md: '11 Personen kommunizieren' }], interaktion: { kind: 'gaps' }, loesung: {} }), 'schluesselanzahl:11');
   assert.equal(videoKollision({ inhalt: [], interaktion: { kind: 'chiffre', eingabe: 'nachtwache' }, loesung: { text: 'X' } }), 'Text nachtwache');
   assert.equal(videoKollision({ inhalt: [], interaktion: { kind: 'bits-rechnen', operation: 'xor', operanden: ['1001 1100', '0100 1010'] }, loesung: {} }), 'XOR-Paar');
+  // Review M3 K7: mod-Einträge (26 mod 26, 27 mod 26) und Caesar-Einzelbuchstaben (t + 6) der Videos
+  assert.ok(VIDEO_ZAHLEN.has('mod:26,26') && VIDEO_ZAHLEN.has('mod:27,26') && VIDEO_CAESAR_EINZEL.has('T:6:ver'));
+  const modA1 = (p, k) => ({ inhalt: [{ t: 'text', md: `Berechne c = ((p + k − 1) mod 26) + 1 für p = ${p} (${String.fromCharCode(64 + p)}) und k = ${k}: c = [[c]]` }], interaktion: { kind: 'gaps' }, loesung: {} });
+  assert.equal(videoKollision(modA1(20, 6)), 'caesar:T:6');
+  assert.equal(videoKollision(modA1(14, 13)), 'mod:26,26');
+  assert.equal(videoKollision(modA1(14, 14)), 'mod:27,26');
+  assert.equal(videoKollision(modA1(3, 4)), null);
+});
+
+test('mod_a1: Video-Eingaben (26 mod 26, 27 mod 26, t/u/r/e mit k = 6) kommen in 5000 Seeds nie vor (Review M3 K7)', () => {
+  for (let seed = 1; seed <= 5000; seed++) {
+    const a = G.erzeuge('mod_a1', seed);
+    assert.equal(videoKollision(a), null, `Seed ${seed}: ${a.inhalt[0].md}`);
+  }
 });
 
 /* ---------- Rahmen (Task 36) ---------- */
@@ -237,6 +258,16 @@ test('kasiski: Teilertabelle liefert k an erster Stelle; ohne Störabstand ist g
     if (2 * k <= 20) assert.ok(fm.includes(2 * k));
   }
   assert.ok(stoer >= 45 && stoer <= 135, `Stufe 3: ${stoer} von 300`);
+});
+
+test('Generatoren: Fallen und Fehlmuster-Fallen passen zur Kategorie (kein Plausibilitäts-Hinweis, Review M3 K4)', () => {
+  for (const key of Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_'))) {
+    const aufgaben = SEEDS.slice(0, 40).map((seed, i) => ({ ...G.erzeuge(key, seed), id: `W7-L1-${String(i + 1).padStart(2, '0')}` }));
+    const v = validiereWelt({ version: 2, welt: 7, titel: 'Gen', farbe: '#123456', levels: [{ id: 'W7-L1', titel: 'x', niveau: 'kern', rolle: 'kryptografie', aufgaben: aufgaben.map((a) => a.id) }], aufgaben }, { datei: key });
+    assert.deepEqual(v.warnungen.filter((w) => /passt nicht zur Kategorie/.test(w.meldung)).map((w) => w.meldung), [], key);
+  }
+  assert.ok(G.erzeuge('koinzidenz', 1).fallen.includes('P4'), 'koinzidenz: Paare doppelt gezählt = Verfahrensregel P4');
+  assert.equal(G.erzeuge('koinzidenz', 1).loesung._fehlmuster.z[0].p, 'P4');
 });
 
 test('koinzidenz: gekürzter Bruch (BALLADE 2/21)', () => {

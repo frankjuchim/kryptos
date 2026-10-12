@@ -475,3 +475,10 @@ test('K8: quadrat- bzw. alphabet-Block und verfahren derselben Aufgabe mit versc
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-02').inhalt[1].ausschnitt = ['R', 'O', 'S']; }, /W9-L5-02.*quadrat.*verschiedene Schlüssel/);
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').interaktion.verfahren.k = 4; }, /W9-L5-01.*alphabet.*verschiedene Schlüssel/);
 });
+
+test('K4: Falle bzw. Fehlmuster-Falle passt nicht zur Kategorie → Hinweis', () => {
+  erwarteHinweis(() => {}, /W9-L5-0[1-9].*passt nicht zur Kategorie/, { nicht: true });
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').fallen = ['P10']; }, /W9-L5-01.*Falle P10 passt nicht zur Kategorie entschluesseln/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*fehlmuster.*Falle P9 passt nicht zur Kategorie fremde-chiffre/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P9'; }, /W9-L5-09.*_fehlmuster.*Falle P9 passt nicht zur Kategorie substitution-mono/);
+});

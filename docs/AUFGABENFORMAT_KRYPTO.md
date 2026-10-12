@@ -185,6 +185,11 @@ Inhaltsregeln (aus Design §6, vom Validator als Hinweis geprüft, wo maschinell
 
 Automatisch diagnostizierbar (§9): **P1, P2, P3, P4, P9**. P5–P8 und P10 werden nur über das Feld `fallen` gezählt.
 
+**Plausibilität (Review M3 K4):** Je Kategorie (§4.2) gibt es eine Liste plausibler Fallen (`FALLEN_PLAUSIBEL` in
+`src/krypto/fach.js`, großzügig aus Design §3.3/§3.4 und den Welt-Specs abgeleitet; P10 nur bei Begründungs- und
+Beurteilungskategorien). Eine Falle in `fallen` oder als `p` einer erwarteten Fehlantwort (`fehlmuster`,
+`_fehlmuster`), die nicht in der Liste der Kategorie steht, meldet der Validator als **Hinweis**.
+
 ---
 
 ## 5. Normalisierung `norm: "krypto"` (und `norm: "bits"`)
@@ -813,7 +818,7 @@ der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und
 |---|---|---|
 | Welt | `epoche`, `jahr`, `farbe`, `akzentHell` fehlen (0–6); Kontrast < 4,5 : 1; `archivfund.aufgabe` fehlt, hat falsches Format, steht in Level/Boss | `kapitel` fehlt; Zeitleiste nicht aufsteigend |
 | Level | `niveau`/`rolle` fehlen oder ungültig; `kuer` ↔ `niveau` inkonsistent; unbekanntes `werkzeug`; Niveau-Regeln §3; im gA-Kurs leeres Level | `akte` fehlt / `ab` statt `akte`; `video.nr` ohne Eintrag in `seed/videos.json` |
-| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung** (auch Lücken in `bits` mit `pruefe: xor`, Alphabetzeilen und `quadrat`-Zellen, §7); `alternative` durch keine erlaubte Variante erklärbar (§8.1); verdeckter Schlüssel mit Hilfszeile `schluessel`; `schluesselVerdeckt` kein bool; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet; Knack-Formulierung ohne verdeckten Schlüssel (§8.1); gaps-Rechenergebnis ohne `pruefnachweis` (§4.1); `quadrat`/`alphabet` und `verfahren` mit verschiedenen Schlüsseln (§7.1, §7.3) |
+| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung** (auch Lücken in `bits` mit `pruefe: xor`, Alphabetzeilen und `quadrat`-Zellen, §7); `alternative` durch keine erlaubte Variante erklärbar (§8.1); verdeckter Schlüssel mit Hilfszeile `schluessel`; `schluesselVerdeckt` kein bool; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet; Knack-Formulierung ohne verdeckten Schlüssel (§8.1); gaps-Rechenergebnis ohne `pruefnachweis` (§4.1); `quadrat`/`alphabet` und `verfahren` mit verschiedenen Schlüsseln (§7.1, §7.3); Falle passt nicht zur Kategorie (§4.3) |
 | Boss | gA-Pool < `anzahl`; < 3 `fremde-chiffre`; verbotene Bestandteile §10 | Pool-Größe, Dauer, Mix ≠ Standard; gA-Mix nicht erfüllbar |
 | Dateiübergreifend | doppelte ids (Kern) | Abdeckung: je Welt mindestens ein Level mit Kategorie `fremde-chiffre` oder Boss-Anteil (Design §1, Kriterium 2) |
 

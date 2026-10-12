@@ -11,6 +11,7 @@ const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
 const { WERKZEUG_IDS } = require('./werkzeuge');
 const CHIFFRE = require('./interaktionen/chiffre');
 const N = require('./neuberechnung');
+const { FALLEN_PLAUSIBEL } = require('./fach');
 
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const CODE = /^[a-z_]{1,30}$/;
@@ -122,10 +123,39 @@ function pruefeVerdeckt(a, fa, wa, data) {
   }
 }
 
-/** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, verdeckter Schlüssel, Inhalts-Hinweise. */
+/**
+ * Fallen-Plausibilität (Review M3 K4): fallen der Aufgabe sowie p der erwarteten Fehlantworten (chiffre/bits
+ * fehlmuster, gaps _fehlmuster) müssen zur Kategorie passen (FALLEN_PLAUSIBEL) – sonst Hinweis.
+ */
+function pruefeFallenPlausibel(a, wa) {
+  const liste = FALLEN_PLAUSIBEL[a.kategorie];
+  if (!liste) return;
+  const melde = (ort, p, was) => wa(ort, `${was}Falle ${p} passt nicht zur Kategorie ${a.kategorie} (plausibel: ${liste.join(', ')}).`);
+  if (Array.isArray(a.fallen)) for (const p of a.fallen) if (FALLEN_IDS.includes(p) && !liste.includes(p)) melde('fallen', p, '');
+  const teile = F.teile(a);
+  teile.forEach(({ loesung: lo }, i) => {
+    if (!istObjekt(lo)) return;
+    const lort = teile.length > 1 ? `loesung[${i}]` : 'loesung';
+    if (Array.isArray(lo.fehlmuster)) {
+      lo.fehlmuster.forEach((f, j) => {
+        if (istObjekt(f) && FALLEN_IDS.includes(f.p) && !liste.includes(f.p)) melde(`${lort}.fehlmuster[${j}]`, f.p, 'fehlmuster: ');
+      });
+    }
+    if (istObjekt(lo._fehlmuster)) {
+      for (const [id, l] of Object.entries(lo._fehlmuster)) {
+        (Array.isArray(l) ? l : []).forEach((f, j) => {
+          if (istObjekt(f) && FALLEN_IDS.includes(f.p) && !liste.includes(f.p)) melde(`${lort}._fehlmuster.${id}[${j}]`, f.p, '_fehlmuster: ');
+        });
+      }
+    }
+  });
+}
+
+/** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, verdeckter Schlüssel, Fallen-Plausibilität, Inhalts-Hinweise. */
 function aufgabe(a, fa, wa, { data } = {}) {
   const id = typeof a.id === 'string' ? a.id : '';
   pruefeVerdeckt(a, fa, wa, data);
+  pruefeFallenPlausibel(a, wa);
   // Archivfund (Delta §2, §4.1): 0 Punkte, niveau kern
   if (ARCHIVFUND.test(id)) {
     if (a.punkte !== undefined) fa('punkte', 'Archivfund-Aufgaben haben keine punkte (immer 0).');

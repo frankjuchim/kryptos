@@ -15,13 +15,15 @@ function koinzidenz(z) {
   const g = K.ggT(zaehler, nenner);
   const [zz, nn] = [zaehler / g, nenner / g];
   const lo = { z: [String(zz)], n: [String(nn)] };
-  lo._fehlmuster = { z: [{ wert: String(2 * zz), p: 'P2', code: 'paare_doppelt' }] };
+  // Zähler und Nenner unterschiedlich gezählt (geordnete vs. ungeordnete Paare) → doppelter Wert: Verfahrensregel
+  // der Formel übersehen (P4, SPEC W2 W2-L23-07; Review M3 K4 – vorher P2)
+  lo._fehlmuster = { z: [{ wert: String(2 * zz), p: 'P4', code: 'paare_doppelt' }] };
   const summe = h.filter(([, x]) => x > 1).map(([c, x]) => `${c}: ${x} · ${x - 1}`).join(', ');
   return {
     titel: 'Koinzidenzindex eines Wortes',
     stufe: 2,
     kategorie: 'kasiski-friedman',
-    fallen: ['P2'],
+    fallen: ['P4'],
     inhalt: [txt(`Berechne den Koinzidenzindex von **${wort}** als gekürzten Bruch: I = [[z]] / [[n]]`)],
     interaktion: { kind: 'gaps', felder: { z: { typ: 'zahl', breite: 4 }, n: { typ: 'zahl', breite: 4 } } },
     loesung: lo,
