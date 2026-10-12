@@ -1554,7 +1554,7 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 | `verwaltung.test.js` | A | Einstellungen inkl. `niveau`/`werkzeuge`/`kuer` (Validierung), kein Umbenennen, Auswertung, CSV, Board-Schlüssel, Backup/Restore (ohne flüchtige Tabellen), Warm-up |
 | `lernen.test.js` | A | Kern-Regeln (Lösung geheim, Punkte, Tipps, Aufdecken, Schrittprüfung inkl. `chiffre`), Diagnose-Zählung in `fallen_zaehler`, Archivfund (0 Punkte) |
 | `boss.test.js` | A | Kern-Regeln + niveau-gefilterte Ziehung (gA nur `kern`), Freischaltung über die Kern/eA-Menge, keine Diagnose im Kampf, Diagnose in der Auswertung, Labor gesperrt während des Kampfes |
-| `niveau.test.js` | neu | Sichtbarkeit gA/eA/Kür, Rang/Anteil ohne Ergänzung/Kür, Niveauwechsel, Lehrkraft-Vorschau zeigt alles |
+| `niveau.test.js` | neu | Sichtbarkeit gA/eA/Kür, Rang/Anteil über alle sichtbaren Level-Aufgaben (inkl. Ergänzung/Kür, v1.2), Boss-Freischaltung/„Welt gemeistert“ über Kern (+ eA), Niveauwechsel, Lehrkraft-Vorschau zeigt alles |
 | `abzeichen_scoreboard.test.js` | A | Kern + Artefakte, Funkraum-Veteran, Arena-Knacker, Unknackbar, Icons als SVG-Kennungen |
 | `pruefer.test.js` | A | Kern-Interaktionen + je neue Interaktion: richtig/falsch/leer/400, Feedback-Felder, **jede Diagnose-Zeile** aus Delta §9 (Antworten aus `fixtures/antworten.js`), `norm: krypto`/`bits` |
 | `validator.test.js` | A | Fixture fehlerfrei; `fixtures/fehler/*.json` je erwarteter Meldung; Neuberechnung erkennt manipulierte Lösung; Kontraste; Boss-Regeln; CLI |
