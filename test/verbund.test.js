@@ -7,7 +7,12 @@ const request = require('supertest');
 const H = require('./helpers');
 const { pruefeManifest } = require('../scripts/vertrag_pruefen');
 
-// Bis zu den eigenen Welten (M5) zählt das Manifest die Kern-Fixture Welt 9 (15 Level-Aufgaben, 6 Boss-Aufgaben).
+// Bis zu den eigenen Welten (M5) zählt das Manifest die Kern-Fixture Welt 9 (Zahlen aus der Fixture berechnet).
+const W = require('./fixtures/welt_beispiel.json');
+const AUF = new Map(W.aufgaben.map((a) => [a.id, a]));
+const LEVEL_IDS = W.levels.flatMap((l) => l.aufgaben);
+/** Level-Punkte der Welt 9 (Bezugsmenge, labs v1.2: alle sichtbaren Level-Aufgaben) */
+const MAX = LEVEL_IDS.reduce((sum, id) => sum + (AUF.get(id).punkte ?? { 1: 10, 2: 20, 3: 30 }[AUF.get(id).stufe]), 0);
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
 const FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil', 'labor', 'funkraum', 'arena', 'niveau'];
 
@@ -32,7 +37,7 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   assert.equal(m.icon, '/static/favicon.svg');
   assert.deepEqual(m.urls, { start: '/', gast: '/gast', themen: '/themen', lehrkraft: '/lehrer', datenschutz: '/datenschutz', healthz: '/healthz', ssoStart: '/sso/start', ssoEnde: '/sso/ende', niveaus: '/themen#niveaus' });
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.test', sso: true });
-  assert.deepEqual(m.umfang, { welten: 1, level: 2, aufgaben: 21, bosse: 1 }, 'aus dem Katalog berechnet');
+  assert.deepEqual(m.umfang, { welten: 1, level: W.levels.length, aufgaben: LEVEL_IDS.length + W.boss.pool.length, bosse: 1 }, 'aus dem Katalog berechnet');
   assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: 2 }]);
   assert.deepEqual(m.faehigkeiten, FAEHIGKEITEN);
   for (const f of ['labor', 'funkraum', 'arena', 'niveau']) assert.ok(m.faehigkeiten.includes(f), f);
@@ -246,7 +251,7 @@ test('Kursübersicht: Format VERTRAG §6, nur freigeschaltete Welten, inaktive T
   const tMika = H.teilnahme(app, k, mika, 'Mika R.');
   const tIda = H.teilnahme(app, k, ida, 'Ida K.', { aktiv: false });
   H.befuelle(app, k, [tMika, tIda]);
-  // Mika: zusätzlich 26 Punkte → 36 von 260 Level-Punkten der Welt 9
+  // Mika: zusätzlich 26 Punkte → 36 von MAX Level-Punkten der Welt 9
   app.locals.db.prepare("INSERT INTO fortschritt (schueler_id, aufgabe_id, status, punkte, updated_at) VALUES (?, 'W9-L2-01', 'geloest', 26, ?)").run(tMika, new Date().toISOString());
   const r = await vb(app, 'get', `/api/verbund/kurse/${kid(k)}/uebersicht`, 'kurs-uebersicht');
   assert.equal(r.status, 200);
@@ -259,9 +264,9 @@ test('Kursübersicht: Format VERTRAG §6, nur freigeschaltete Welten, inaktive T
   assert.deepEqual(Object.keys(m).sort(), ['anteil', 'geloest', 'punkte', 'sub', 'zuletzt']);
   assert.equal(m.geloest, 2);
   assert.equal(m.punkte, 36 + 5, 'Level + Boss (wie Scoreboard)');
-  assert.equal(m.anteil, Math.round((36 / 260) * 100) / 100);
+  assert.equal(m.anteil, Math.round((36 / MAX) * 100) / 100);
   assert.ok(u.schueler.some((x) => x.sub === ida), 'inaktive Teilnahme dabei');
-  assert.deepEqual(u.welten, [{ nr: 9, titel: 'Die Testwelt', anteil: Math.round(((36 / 260 + 10 / 260) / 2) * 100) / 100 }]);
+  assert.deepEqual(u.welten, [{ nr: 9, titel: 'Die Testwelt', anteil: Math.round(((36 / MAX + 10 / MAX) / 2) * 100) / 100 }]);
   const text = JSON.stringify(u);
   for (const v of ['Team Skytale', 'GEHEIMTEXT', 'Mika', 'Ida', 'FALSCH', 'Erste Schritte', 'Verfahren', 'loesung']) assert.ok(!text.includes(v), v);
   // Welt nicht freigeschaltet → nicht in der Übersicht, anteil 0

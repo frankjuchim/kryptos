@@ -141,7 +141,7 @@ function createSitzung({ db, secret }) {
           ...basis,
           rolle: 'schueler',
           name: s.name,
-          kurs: { id: k.kurs_id, name: k.name, niveau: e.kursart === 'gA' ? 'gA' : 'eA' },
+          kurs: { id: k.kurs_id, name: k.name, niveau: e.niveau === 'gA' ? 'gA' : 'eA' },
           kurse: svc.konten.teilnahmen(s.sub).map((t) => ({ id: t.kurs, name: t.name, aktiv: t.aktiv }))
         });
       }

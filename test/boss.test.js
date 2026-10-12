@@ -21,10 +21,11 @@ test('Freischaltung: automatisch erst ab 60 % der Level-Punkte; „offen“/„g
   assert.equal(st.frei, false);
   assert.match(st.grund, /60 %/);
   assert.equal((await s.post('/api/boss/9/start').send({})).status, 403);
-  // 60 % von 260 = 156 Punkte: alle Level-Aufgaben außer den 10er-Aufgaben lösen reicht (250 − …)
+  // nötige Punkte aus dem Grund lesen (fixture-unabhängig) und Level-Aufgaben der Reihe nach lösen
+  const noetig = Number(st.grund.match(/\((\d+) von (\d+) nötigen Punkten\)/)[2]);
   let summe = 0;
   for (const id of LEVEL_AUFGABEN) {
-    if (summe >= 156) break;
+    if (summe >= noetig) break;
     await s.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
     summe += PUNKTE[id];
   }
@@ -41,9 +42,9 @@ test('Ziehung nach Mix, kein Feedback während des Kampfes, Auswertung mit Erkl�
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen' } });
   const k = (await s.post('/api/boss/9/start').send({})).body;
   assert.equal(k.laeuft, true);
-  assert.equal(k.aufgaben.length, 5);
+  assert.equal(k.aufgaben.length, 3);
   const stufen = k.aufgaben.map((a) => STUFE[a.id]);
-  assert.deepEqual([stufen.filter((x) => x === 1).length, stufen.filter((x) => x === 2).length, stufen.filter((x) => x === 3).length], [2, 2, 1], 'Mix 2/2/1');
+  assert.deepEqual([stufen.filter((x) => x === 1).length, stufen.filter((x) => x === 2).length, stufen.filter((x) => x === 3).length], [1, 1, 1], 'Mix 1/1/1');
   assert.deepEqual([...stufen].sort(), stufen, 'leichte zuerst');
   assert.ok(k.aufgaben.every((a) => a.id.includes('-B-')), 'nur Pool-Aufgaben');
   assert.ok(!JSON.stringify(k).includes('loesung') && !JSON.stringify(k).includes('erklaerung'), 'keine Lösungen im laufenden Kampf');
@@ -106,9 +107,9 @@ test('Timer: serverseitig mit 30 s Kulanz; danach automatisch ausgewertet', asyn
   const { s, lk, kurs, uhr } = await bossSzenario();
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen' } });
   const k = (await s.post('/api/boss/9/start').send({})).body;
-  assert.equal(Date.parse(k.deadline) - Date.parse(k.start), 10 * 60000);
+  assert.equal(Date.parse(k.deadline) - Date.parse(k.start), 25 * 60000);
   const [a1, a2] = k.aufgaben;
-  uhr.vor(10 * 60000 + 20000); // 20 s nach Ablauf: Kulanz
+  uhr.vor(25 * 60000 + 20000); // 20 s nach Ablauf: Kulanz
   assert.equal((await s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: a1.id, antwort: RICHTIG[a1.id] })).status, 200);
   uhr.vor(15000); // 35 s nach Ablauf
   const r = await s.put(`/api/boss/kampf/${k.id}/antwort`).send({ aufgabeId: a2.id, antwort: RICHTIG[a2.id] });

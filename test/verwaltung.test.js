@@ -4,13 +4,14 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const H = require('./helpers');
 const { RICHTIG, FALSCH } = require('./fixtures/antworten');
+const W = require('./fixtures/welt_beispiel.json');
 
 test('Kurs vom Portal: Kurs-ID, Board-Schlüssel, Standard-Einstellungen (ohne „anmeldung“), Validierung', async () => {
   const { lk, kurs } = await H.szenario();
   const k = (await lk.get(`/api/lehrer/kurse/${kurs.id}`).expect(200)).body;
   assert.match(k.kurs, /^k:\d+$/);
   assert.match(k.boardSchluessel, /^[A-Za-z0-9_-]{12}$/);
-  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, kursart: 'eA' });
+  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, niveau: 'eA', kuer: 'frei' });
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { boss: 'irgendwie' } })).status, 400);
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: 'alle' } })).status, 400);
   const r = await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: [4, 4, 2], scoreboard: false, anmeldung: false } });
@@ -44,7 +45,7 @@ test('Auswertung: Matrix, Boss, Aufgabenstatistik (inkl. häufiger falscher Antw
   await t.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: FALSCH['W9-L1-03'] });
   await t.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: RICHTIG['W9-L1-03'] });
   const d = (await lk.get(`/api/lehrer/kurse/${kurs.id}/auswertung`)).body;
-  assert.deepEqual(d.matrix.levels.map((l) => l.id), ['W9-L1', 'W9-L2']);
+  assert.deepEqual(d.matrix.levels.map((l) => l.id), W.levels.map((l) => l.id));
   const tim = d.matrix.zeilen.find((z) => z.name === 'Tim T.');
   assert.equal(tim.werte[0].punkte, 15);
   assert.ok(Math.abs(tim.werte[0].anteil - 15 / 90) < 1e-9);
@@ -167,7 +168,7 @@ test('Aufgaben-Vorschau für Lehrkräfte: Welten mit Level-Infos und Boss-Pool, 
   const w = (await lk.get('/api/lehrer/vorschau')).body.welten.find((x) => x.nr === 9);
   assert.equal(w.levels[0].ab, 'AB 1 – Beispiel, Teil A');
   assert.equal(w.levels[0].ide, 'AQ_W9_Beispiel_Geruest.txt – Level 9.1');
-  assert.equal(w.levels[1].aufgaben.length, 9);
+  assert.equal(w.levels[1].aufgaben.length, W.levels[1].aufgaben.length);
   assert.deepEqual(w.levels[1].aufgaben[1].arten, ['lines', 'gaps']);
   assert.equal(w.boss.pool.length, 6);
   const a = (await lk.get('/api/lehrer/vorschau/W9-L2-02')).body;

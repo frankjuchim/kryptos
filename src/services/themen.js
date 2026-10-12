@@ -61,7 +61,7 @@ function createThemen(ctx, { inhalte }, ab = { verzeichnis: null, pdfVorhanden: 
           welt: w.nr,
           nr: l.nr || '',
           titel: l.titel,
-          niveau: l.niveau || 'alle',
+          niveau: l.niveau || 'kern',
           gemischt: !!l.gemischt,
           ds: Array.isArray(l.ds) ? l.ds : [],
           ab: l.ab || '',
@@ -81,7 +81,7 @@ function createThemen(ctx, { inhalte }, ab = { verzeichnis: null, pdfVorhanden: 
         levels,
         arbeitsblaetter: abs,
         weitere: weitereDerWelt(w.nr),
-        boss: w.boss ? { titel: w.boss.titel, niveau: w.boss.niveau || 'alle', gemischt: !!w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl } : null,
+        boss: w.boss ? { titel: w.boss.titel, gemischt: !!w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl } : null,
         training: G.generatorenFuerWelt(w.nr).map((g) => g.titel),
         warmup: warmup.get(w.nr) || 0
       };

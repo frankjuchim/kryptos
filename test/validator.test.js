@@ -27,11 +27,23 @@ function erwarteFehler(aendern, muster) {
 test('Fixture ist fehlerfrei; Statistik je Level', () => {
   const r = validiereWelt(basis(), { datei: 'welt_beispiel.json' });
   assert.deepEqual(r.fehler, []);
-  assert.equal(r.stats.levels, 2);
-  assert.equal(r.stats.aufgaben, 21);
-  assert.equal(r.stats.bossPool, 6);
-  assert.equal(Object.keys(r.stats.interaktionen).length, 11, 'alle Interaktionsarten');
-  assert.equal(Object.keys(r.stats.bloecke).length, 10, 'alle Blocktypen');
+  // Zahlen aus der Fixture berechnen (spätere Tasks ergänzen Aufgaben ohne Testbruch)
+  const W = basis();
+  const F = require('../src/content/format');
+  assert.equal(r.stats.levels, W.levels.length);
+  assert.equal(r.stats.aufgaben, W.aufgaben.length);
+  assert.equal(r.stats.bossPool, W.boss.pool.length);
+  const arten = new Set(W.aufgaben.flatMap((a) => F.teile(a).map((t) => F.artVon(t.interaktion))));
+  assert.deepEqual(Object.keys(r.stats.interaktionen).sort(), [...arten].sort(), 'alle Interaktionsarten');
+  const typen = new Set();
+  const sammle = (bl) => (Array.isArray(bl) ? bl : []).forEach((b) => b && typen.add(b.t));
+  for (const l of W.levels) sammle(l.intro);
+  for (const a of W.aufgaben) {
+    sammle(a.inhalt);
+    sammle(a.erklaerung);
+    for (const t of F.teile(a)) sammle(t.interaktion && t.interaktion.inhalt);
+  }
+  assert.deepEqual(Object.keys(r.stats.bloecke).sort(), [...typen].sort(), 'alle Blocktypen');
 });
 
 test('Schema/Datei: version, welt, levels', () => {
@@ -97,8 +109,8 @@ test('Punkte/Stufen, Kategorien, Fallen, Blöcke', () => {
 });
 
 test('Boss: Mix erfüllbar, Summe = anzahl, Pool-Verweise', () => {
-  erwarteFehler((w) => (w.boss.mix = { 1: 2, 2: 2, 3: 3 }), /Boss-Mix nicht erfüllbar: 3 Aufgaben der Stufe 3/);
-  erwarteFehler((w) => (w.boss.anzahl = 6), /Summe von mix \(5\) muss anzahl \(6\)/);
+  erwarteFehler((w) => (w.boss.mix = { 1: 1, 2: 1, 3: 3 }) && (w.boss.anzahl = 5), /Boss-Mix nicht erfüllbar: 3 Aufgaben der Stufe 3/);
+  erwarteFehler((w) => (w.boss.anzahl = 6), /Summe von mix \(3\) muss anzahl \(6\)/);
   erwarteFehler((w) => w.boss.pool.push('W9-B-77'), /pool verweist auf unbekannte Aufgabe/);
   erwarteFehler((w) => w.boss.pool.push('W9-L1-01'), /Boss-Aufgaben müssen eigene Aufgaben sein/);
 });

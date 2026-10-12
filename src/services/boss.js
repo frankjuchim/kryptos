@@ -24,14 +24,13 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     return a;
   }
 
-  /** Aufgaben gemäß mix aus dem Pool ziehen (fehlende Stufen werden aus dem Rest aufgefüllt). */
-  /** Aufgaben ziehen; im Grundkurs (gA) nur Aufgaben für alle, sofern genug vorhanden. */
-  function ziehe(boss, { grundkurs = false } = {}) {
+  /**
+   * Aufgaben gemäß mix aus dem Pool ziehen (fehlende Stufen werden aus dem Rest aufgefüllt).
+   * Kursniveau gA: Pool nur aus kern-Aufgaben, Anzahl höchstens dessen Größe (Delta §10).
+   */
+  function ziehe(boss, { niveau = 'eA' } = {}) {
     let pool = boss.pool.map((id) => kat().aufgaben.get(id)).filter(Boolean);
-    if (grundkurs) {
-      const gA = pool.filter((a) => (a._niveau || 'alle') === 'alle');
-      if (gA.length >= Math.min(boss.anzahl, pool.length)) pool = gA;
-    }
+    if (niveau === 'gA') pool = pool.filter((a) => (a._niveau || 'kern') === 'kern');
     const anzahl = Math.min(boss.anzahl, pool.length);
     const gewaehlt = [];
     const rest = new Set(pool.map((a) => a.id));
@@ -131,7 +130,7 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     if (!st.frei) throw new ForbiddenError(st.grund || 'Der Boss ist noch gesperrt.');
     if (st.gesperrtBis) throw new ConflictError(`Ein neuer Versuch ist erst ab ${new Date(st.gesperrtBis).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} möglich (12 Stunden Pause).`);
     const w = kat().welten.get(st.welt.nr);
-    const ids = ziehe(w.boss, { grundkurs: lernen.einstellungenVon(s).kursart === 'gA' });
+    const ids = ziehe(w.boss, { niveau: lernen.einstellungenVon(s).niveau });
     if (!ids.length) throw new NotFoundError('Der Boss-Pool ist leer.');
     const max = ids.reduce((sum, id) => sum + kat().aufgaben.get(id).punkte, 0);
     const t = ctx.now();

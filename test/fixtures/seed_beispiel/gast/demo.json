@@ -9,6 +9,8 @@
    "id": "W8-L1",
    "nr": "Probe",
    "titel": "Reinschnuppern: sechs Aufgabenarten",
+   "niveau": "kern",
+   "rolle": "kryptoanalyse",
    "intro": [
     {"t": "hinweis", "md": "**So funktioniert’s:** Antwort eingeben, **Prüfen** drücken. Ein **Tipp** hilft weiter (kostet im echten Lab Punkte), **Lösung zeigen** deckt alles auf. Nach dem Lösen gibt es eine Erklärung. Im Gastmodus wird nichts gespeichert."}
    ],

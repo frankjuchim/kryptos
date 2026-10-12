@@ -19,9 +19,11 @@ test('Erste Schritte, Weltenbummler, Zehnerserie, Welt gemeistert, Fallensucher'
   await s.post(`/api/aufgaben/${LEVEL_AUFGABEN[9]}/pruefen`).send({ antwort: FALSCH[LEVEL_AUFGABEN[9]] });
   for (const id of LEVEL_AUFGABEN.slice(9)) await s.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
   const p = (await s.get('/api/profil')).body;
-  assert.equal(p.serie.serie_max, 9);
+  // Serie: 9 vor dem Fehlversuch, danach alle übrigen außer der fehlversuchten Aufgabe
+  const serie = Math.max(9, LEVEL_AUFGABEN.length - 10);
+  assert.equal(p.serie.serie_max, serie);
   const keys = await erhalten(s);
-  assert.ok(!keys.includes('zehnerserie'));
+  assert.equal(keys.includes('zehnerserie'), serie >= 10);
   assert.ok(keys.includes('welt9_gemeistert'), 'alle Level-Aufgaben gelöst');
   // Der Fehlversuch betraf eine Aufgabe ohne Falle → Fallensucher trotzdem erreicht
   assert.ok(keys.includes('fallensucher'));
@@ -38,7 +40,11 @@ test('Fallensucher: je Falle drei (bzw. alle vorhandenen) Aufgaben ohne Fehlvers
   for (const id of LEVEL_AUFGABEN) await s.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
   assert.ok((await erhalten(s)).includes('fallensucher'));
   const { s: s2 } = await H.szenario();
-  await s2.post('/api/aufgaben/W9-L1-03/pruefen').send({ antwort: FALSCH['W9-L1-03'] }); // einzige P9-Aufgabe
+  // alle Level-Aufgaben mit P9 (aus der Fixture) zuerst falsch beantworten
+  const W = require('./fixtures/welt_beispiel.json');
+  const p9 = W.aufgaben.filter((a) => LEVEL_AUFGABEN.includes(a.id) && (a.fallen || []).includes('P9')).map((a) => a.id);
+  assert.ok(p9.length > 0);
+  for (const id of p9) await s2.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: FALSCH[id] });
   for (const id of LEVEL_AUFGABEN) await s2.post(`/api/aufgaben/${id}/pruefen`).send({ antwort: RICHTIG[id] });
   assert.ok(!(await erhalten(s2)).includes('fallensucher'));
 });

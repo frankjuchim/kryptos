@@ -78,7 +78,7 @@ function createInhalte(ctx) {
           ds: Array.isArray(l.ds) ? l.ds.filter(Number.isInteger) : [],
           ab: typeof l.ab === 'string' ? l.ab : '',
           ide: typeof l.ide === 'string' ? l.ide : '',
-          niveau: NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'alle',
+          niveau: NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'kern',
           intro: Array.isArray(l.intro) ? l.intro : [],
           aufgaben: (Array.isArray(l.aufgaben) ? l.aufgaben : []).filter((id) => guteIds.has(id) && !/-B-/.test(id))
         }));
@@ -91,7 +91,6 @@ function createInhalte(ctx) {
           boss = {
             id: String(data.boss.id || `W${data.welt}-BOSS`),
             titel: String(data.boss.titel || 'Boss'),
-            niveau: NIVEAU_IDS.includes(data.boss.niveau) ? data.boss.niveau : 'alle',
             dauerMin: Number.isInteger(data.boss.dauerMin) ? data.boss.dauerMin : 25,
             anzahl: Number.isInteger(data.boss.anzahl) ? Math.min(data.boss.anzahl, pool.length) : Math.min(8, pool.length),
             mix: data.boss.mix && typeof data.boss.mix === 'object' ? data.boss.mix : null,
@@ -178,8 +177,9 @@ function createInhalte(ctx) {
       for (const l of d.levels || []) {
         const lv = { ...l, welt: row.nr, aufgaben: (l.aufgaben || []).filter((id) => k.aufgaben.has(id) && !k.aufgaben.get(id)._boss) };
         lv.maxPunkte = lv.aufgaben.reduce((s, id) => s + k.aufgaben.get(id).punkte, 0);
-        // Niveau: Level-Angabe, einzelne Aufgaben können abweichen (gemischtes Level)
-        lv.niveau = NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'alle';
+        // Niveau: Level-Angabe (Standard kern), einzelne Aufgaben können abweichen (gemischtes Level);
+        // effektives Niveau a._niveau = a.niveau ?? level.niveau ?? 'kern' (TECHNIK §8)
+        lv.niveau = NIVEAU_IDS.includes(l.niveau) ? l.niveau : 'kern';
         for (const id of lv.aufgaben) {
           const a = k.aufgaben.get(id);
           a._niveau = NIVEAU_IDS.includes(a.niveau) ? a.niveau : lv.niveau;
@@ -191,12 +191,14 @@ function createInhalte(ctx) {
       if (d.boss) {
         const pool = (d.boss.pool || []).filter((id) => k.aufgaben.has(id) && k.aufgaben.get(id)._boss);
         if (pool.length) {
-          const bn = NIVEAU_IDS.includes(d.boss.niveau) ? d.boss.niveau : 'alle';
+          // Boss: kein Boss-Niveau mehr, jede Pool-Aufgabe a.niveau ?? 'kern' (Delta §10)
           for (const id of pool) {
             const a = k.aufgaben.get(id);
-            a._niveau = NIVEAU_IDS.includes(a.niveau) ? a.niveau : bn;
+            a._niveau = NIVEAU_IDS.includes(a.niveau) ? a.niveau : 'kern';
           }
-          welt.boss = { ...d.boss, niveau: bn, pool, anzahl: Math.min(d.boss.anzahl || 8, pool.length), gemischt: pool.some((id) => k.aufgaben.get(id)._niveau !== bn) };
+          const boss = { ...d.boss, pool, anzahl: Math.min(d.boss.anzahl || 8, pool.length), gemischt: pool.some((id) => k.aufgaben.get(id)._niveau !== 'kern') };
+          delete boss.niveau;
+          welt.boss = boss;
         }
       }
       welt.maxPunkte = welt.levels.reduce((s, l) => s + l.maxPunkte, 0);
@@ -217,7 +219,7 @@ function createInhalte(ctx) {
       stufe: a.stufe,
       punkte: a.punkte,
       kategorie: a.kategorie,
-      niveau: a._niveau || a.niveau || 'alle',
+      niveau: a._niveau || a.niveau || 'kern',
       fallen: a.fallen || [],
       inhalt: a.inhalt,
       interaktion: a.interaktion,
@@ -241,7 +243,7 @@ function createInhalte(ctx) {
   /* ---------- Vorschau für Lehrkräfte (mit Lösungen) ---------- */
 
   function kurzInfo(a) {
-    return { id: a.id, titel: a.titel, stufe: a.stufe, punkte: a.punkte, kategorie: a.kategorie, niveau: a._niveau || 'alle', fallen: a.fallen, arten: F.teile(a).map((t) => F.artVon(t.interaktion)) };
+    return { id: a.id, titel: a.titel, stufe: a.stufe, punkte: a.punkte, kategorie: a.kategorie, niveau: a._niveau || 'kern', fallen: a.fallen, arten: F.teile(a).map((t) => F.artVon(t.interaktion)) };
   }
 
   function vorschauWelten() {
@@ -252,7 +254,7 @@ function createInhalte(ctx) {
       maxPunkte: w.maxPunkte,
       aufgabenAnzahl: w.aufgabenAnzahl,
       levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, aufgaben: l.aufgaben.map((id) => kurzInfo(katalog.aufgaben.get(id))) })),
-      boss: w.boss ? { id: w.boss.id, titel: w.boss.titel, niveau: w.boss.niveau, gemischt: w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, mix: w.boss.mix || null, pool: w.boss.pool.map((id) => kurzInfo(katalog.aufgaben.get(id))) } : null
+      boss: w.boss ? { id: w.boss.id, titel: w.boss.titel, gemischt: w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, mix: w.boss.mix || null, pool: w.boss.pool.map((id) => kurzInfo(katalog.aufgaben.get(id))) } : null
     }));
   }
 

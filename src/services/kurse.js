@@ -10,8 +10,11 @@ const { STANDARD_EINSTELLUNGEN } = require('../domain');
 
 const { ValidationError, NotFoundError } = V;
 
-/** Einstellungen, die es in Kryptos nicht mehr gibt (werden ignoriert und nicht angezeigt, TECHNIK §6.5). */
-const ENTFALLEN = ['anmeldung'];
+/**
+ * Einstellungen, die es in Kryptos nicht mehr gibt (werden ignoriert und nicht angezeigt, TECHNIK §6.5);
+ * `kursart` (Kern) heißt in Kryptos `niveau` (TECHNIK §7.2, Plan M3 E4).
+ */
+const ENTFALLEN = ['anmeldung', 'kursart'];
 
 function createKurse(ctx) {
   const { db } = ctx;
@@ -25,7 +28,11 @@ function createKurse(ctx) {
       e = {};
     }
     const out = { ...STANDARD_EINSTELLUNGEN, ...e };
+    // gespeicherte Kern-Einstellung kursart übernehmen, solange niveau fehlt
+    if (e.niveau === undefined && ['eA', 'gA'].includes(e.kursart)) out.niveau = e.kursart;
     for (const k of ENTFALLEN) delete out[k];
+    if (!['eA', 'gA'].includes(out.niveau)) out.niveau = STANDARD_EINSTELLUNGEN.niveau;
+    if (!['frei', 'gesperrt'].includes(out.kuer)) out.kuer = STANDARD_EINSTELLUNGEN.kuer;
     if (!Array.isArray(out.welten)) out.welten = [...STANDARD_EINSTELLUNGEN.welten];
     return out;
   }
@@ -94,9 +101,13 @@ function createKurse(ctx) {
       out.boss = e.boss;
     }
     for (const k of ['scoreboard', 'beamer']) if (e[k] !== undefined) out[k] = V.bool(e[k], k);
-    if (e.kursart !== undefined) {
-      if (!['eA', 'gA'].includes(e.kursart)) throw new ValidationError('kursart muss eA (Leistungskurs) oder gA (Grundkurs) sein.');
-      out.kursart = e.kursart;
+    if (e.niveau !== undefined) {
+      if (!['eA', 'gA'].includes(e.niveau)) throw new ValidationError('niveau muss eA oder gA sein.');
+      out.niveau = e.niveau;
+    }
+    if (e.kuer !== undefined) {
+      if (!['frei', 'gesperrt'].includes(e.kuer)) throw new ValidationError('kuer muss frei oder gesperrt sein.');
+      out.kuer = e.kuer;
     }
     for (const k of ENTFALLEN) delete out[k];
     return out;

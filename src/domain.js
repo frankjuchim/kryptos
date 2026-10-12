@@ -56,17 +56,19 @@ const STANDARD_EINSTELLUNGEN = {
   scoreboard: true,
   beamer: false,
   anmeldung: true,
-  kursart: 'eA' // 'eA' Leistungskurs · 'gA' Grundkurs (Hinweise zum Niveau, Boss-Ziehung)
+  niveau: 'eA', // Kursniveau (TECHNIK §7.2, §8): 'eA' Leistungskurs · 'gA' Grundkurs
+  kuer: 'frei' // Kür-Level: 'frei' · 'gesperrt'
 };
 
 /**
- * Niveau nach KC 2017 (Lernfeld Algorithmen und Datenstrukturen): „alle“ = Grund- und Leistungskurs,
- * „eA“ = Spalte „Erweiterung eA“ (nur Leistungskurs), „plus“ = über das Kerncurriculum hinaus.
+ * Niveaus der Inhalte (TECHNIK §8, Delta §3): „kern“ = verbindlich für gA und eA, „eA“ = nur erhöhtes Niveau,
+ * „ergaenzung“ = KC-Ergänzung (freiwillig für beide Niveaus), „kuer“ = Vertiefung über das Abitur hinaus.
  */
 const NIVEAUS = {
-  alle: { kurz: 'GK + LK', lang: 'Grund- und Leistungskurs (gA und eA)' },
-  eA: { kurz: 'nur LK', lang: 'nur Leistungskurs (eA)' },
-  plus: { kurz: 'Zusatz', lang: 'über das Kerncurriculum hinaus' }
+  kern: { kurz: 'Kern', lang: 'verbindlich für gA und eA' },
+  eA: { kurz: 'eA', lang: 'nur erhöhtes Niveau (eA)' },
+  ergaenzung: { kurz: 'E', lang: 'KC-Ergänzung, freiwillig für beide Niveaus' },
+  kuer: { kurz: 'Kür', lang: 'Vertiefung über das Abitur hinaus' }
 };
 const NIVEAU_IDS = Object.keys(NIVEAUS);
 

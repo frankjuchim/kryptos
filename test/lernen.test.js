@@ -144,12 +144,16 @@ test('IDE-Häkchen: nur Überblick, 0 Punkte', async () => {
 
 test('Rang: Anteil der Level-Punkte aller freigeschalteten Welten', async () => {
   const { s } = await H.szenario();
-  // 260 Level-Punkte gesamt; 30 Punkte = 11,5 % → Schreiber
+  // MAX = Level-Punkte aller Level-Aufgaben der Fixture; 30 Punkte (W9-L2-02, Stufe 3) → Rang aus dem Anteil
+  const W = require('./fixtures/welt_beispiel.json');
+  const { rangFuer } = require('../src/domain');
+  const auf = new Map(W.aufgaben.map((a) => [a.id, a]));
+  const MAX = W.levels.flatMap((l) => l.aufgaben).reduce((sum, id) => sum + (auf.get(id).punkte ?? { 1: 10, 2: 20, 3: 30 }[auf.get(id).stufe]), 0);
   await s.post('/api/aufgaben/W9-L2-02/pruefen').send({ antwort: RICHTIG['W9-L2-02'] });
   const p = (await s.get('/api/profil')).body;
-  assert.equal(p.rang.name, 'Schreiber');
-  assert.equal(p.rang.maxPunkte, 260);
-  assert.equal(p.rang.naechster.name, 'Chiffreur');
+  assert.equal(p.rang.maxPunkte, MAX);
+  assert.equal(p.rang.name, rangFuer(30 / MAX).name);
+  assert.deepEqual(p.rang.naechster && p.rang.naechster.name, rangFuer(30 / MAX).naechster && rangFuer(30 / MAX).naechster.name);
 });
 
 test('Bug-Hunt gestuft: Teil a) (Zeilenwahl) einzeln prüfbar – falsch = Fehlversuch, richtig löst noch nicht; andere Teile nicht', async () => {
