@@ -199,9 +199,11 @@ test('Fallen-Diagnose: jede Zeile Delta §9 (Antworten aus fixtures/antworten.js
     for (const x of d) assert.equal(x.text, D.text(A[e.aufgabe] && (Array.isArray(A[e.aufgabe].interaktion) ? A[e.aufgabe].interaktion[e.teil || 0] : A[e.aufgabe].interaktion).kind, x.p, x.code));
   }
 });
+// Nur Lösungs-Werte zählen (Schlüsselnamen wie „inhaber“ oder „zuordnung“ verraten nichts)
+const loesungsWerte = (x) => (Array.isArray(x) ? x.flatMap(loesungsWerte) : x && typeof x === 'object' ? Object.values(x).flatMap(loesungsWerte) : [String(x)]);
 test('Diagnosetexte verraten keine Lösung', () => {
   for (const e of DIAGNOSE) for (const x of diagnoseVon(e)) {
-    const lo = JSON.stringify(A[e.aufgabe].loesung).toUpperCase();
+    const lo = loesungsWerte(A[e.aufgabe].loesung).join(' ').toUpperCase();
     for (const wort of x.text.toUpperCase().match(/[A-ZÄÖÜ]{5,}/g) || []) assert.ok(!lo.includes(wort) || ['RICHTUNG', 'STELLE'].includes(wort), `${x.text} verrät ${wort}`);
   }
 });
@@ -240,4 +242,13 @@ test('zuordnung: Vorgaben erzwungen, anteil, buchstaben, Modus zuordnung, 400 be
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], { C: 'E' }), (e) => e.status === 400);
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-02'], { M: 'EE' }), (e) => e.status === 400);
   assert.equal(C.pruefeAufgabe(a, { zuordnung: { ...RICHTIG['W9-L3-01'].zuordnung } }).ok, true);
+});
+test('schaubild-ergaenzen: Feedback je Feld, Akteure aus dem Block, 400 bei Unsinn', () => {
+  const a = A['W9-L6-05'];
+  assert.deepEqual(C.pruefeAufgabe(a, { s1: { art: 'privat', inhaber: 'A' } }).felder, { s1: true, s2: false });
+  assert.equal(C.pruefeAufgabe(a, {}).leer, true);
+  assert.throws(() => C.pruefeAufgabe(a, { s1: { art: 'privat', inhaber: 'M' } }), (e) => e.status === 400, 'M ist kein Akteur dieses Blocks');
+  assert.throws(() => C.pruefeAufgabe(a, { s1: { art: 'geheim', inhaber: 'A' } }), (e) => e.status === 400);
+  assert.throws(() => C.pruefeAufgabe(a, { s9: { art: 'privat', inhaber: 'A' } }), (e) => e.status === 400);
+  assert.deepEqual(C.pruefeAufgabe(A['W9-L6-06'], { z1: 'Zertifikat', z2: ' MALLORY ' }).ok, true);
 });

@@ -12,6 +12,9 @@ const PRIORITAET = Object.freeze(['P3', 'P1', 'P2', 'P4', 'P9']);
 /** Feste Texte, Schlüssel `art:code`, Rückfall `*:code` (Tasks 27–29 ergänzen weitere Interaktionen). */
 const TEXTE = Object.freeze({
   'chiffre:richtung': 'Du hast in die falsche Richtung verschoben – beim Entschlüsseln wird zurückgerechnet.',
+  'schaubild-ergaenzen:schluesselart': 'Öffentlicher und privater Schlüssel sind vertauscht.',
+  'schaubild-ergaenzen:inhaber': 'Der Schlüssel gehört der falschen Person.',
+  'schaubild-ergaenzen:schluesselrolle': 'Schlüsselart und Inhaber passen nicht – wer signiert, wer prüft, wer verschlüsselt?',
   'zuordnung:richtung': 'Du hast die Tabelle in der falschen Richtung gelesen – gesucht ist zu jedem Geheimtextbuchstaben der Klartextbuchstabe.',
   '*:reihenfolge': 'Die Stufen müssen in umgekehrter Reihenfolge zurückgerechnet werden.',
   '*:permutation': 'Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).',
@@ -200,6 +203,26 @@ function zuordnung(ia, lo, a) {
 }
 
 /**
+ * Diagnose der Interaktion schaubild-ergaenzen (Delta §9.5), je falsch belegtem schluessel-Feld: eine akzeptierte
+ * Antwort mit gleichem inhaber → P9 schluesselart; sonst eine mit gleicher art → P9 inhaber; sonst P9 schluesselrolle.
+ */
+function schaubild(ia, lo, a) {
+  if (!ia || ia.diagnose === false) return [];
+  const treffer = [];
+  for (const [id, feld] of Object.entries(ia.felder || {})) {
+    if (!feld || feld.typ !== 'schluessel') continue;
+    const w = a ? a[id] : null;
+    if (!w || typeof w !== 'object') continue;
+    const acc = (Array.isArray(lo && lo[id]) ? lo[id] : []).filter((x) => x && typeof x === 'object');
+    if (!acc.length || acc.some((x) => x.art === w.art && x.inhaber === w.inhaber)) continue;
+    if (acc.some((x) => x.inhaber === w.inhaber)) treffer.push({ p: 'P9', code: 'schluesselart' });
+    else if (acc.some((x) => x.art === w.art)) treffer.push({ p: 'P9', code: 'inhaber' });
+    else treffer.push({ p: 'P9', code: 'schluesselrolle' });
+  }
+  return auswaehlen('schaubild-ergaenzen', treffer);
+}
+
+/**
  * Zusatzdiagnose für gaps (Delta §9.6): erwartete Fehlantworten je Feld aus loesung._fehlmuster. Ein Feld, das falsch
  * beantwortet ist und einem Fehlmuster gleicht (gleiche Normalisierung wie die Prüfung), liefert dessen Falle.
  */
@@ -218,4 +241,4 @@ function gapsFehlmuster(ia, lo, a, ergebnis) {
   return auswaehlen('gaps', treffer);
 }
 
-module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung };
+module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung, schaubild };

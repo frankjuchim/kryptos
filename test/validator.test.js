@@ -248,3 +248,11 @@ test('zuordnung-Validator: Neuberechnung, Injektivität, Abdeckung, Vorgabe, P6-
   const w = basis(); aufgabe(w, 'W9-L3-02').kategorie = 'haeufigkeitsanalyse';
   assert.match(validiereWelt(w, { datei: 't' }).warnungen.map((x) => x.meldung).join(' | '), /P6/);
 });
+
+test('schaubild-ergaenzen-Validator: Block, Lücken ↔ Felder, Inhaber/Arten angeboten', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-05').interaktion.block = 0; }, /schaubild-Block/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-05').loesung.s1 = [{ art: 'privat', inhaber: 'X' }]; }, /inhaber/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-05').interaktion.felder.s1.arten = ['oeffentlich']; }, /art/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L6-05').interaktion.felder.s2; delete aufgabe(w, 'W9-L6-05').loesung.s2; }, /\[\[s2\]\]/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-06').loesung.z1 = ['Schlüssel']; }, /optionen/);
+});

@@ -35,7 +35,8 @@
     },
     { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "aufgaben": ["W9-L3-01", "W9-L3-02"] },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
-    { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09"] }
+    { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09"] },
+    { "id": "W9-L6", "nr": "9.6", "titel": "Bits und Schaubilder", "ds": [6], "niveau": "kern", "rolle": "kryptografie", "aufgaben": ["W9-L6-05", "W9-L6-06"] }
   ],
   "boss": {
     "id": "W9-BOSS",
@@ -417,6 +418,20 @@
       "interaktion": { "kind": "gaps", "felder": { "g1": { "typ": "text", "norm": "krypto" }, "g2": { "typ": "text", "norm": "krypto" }, "g3": { "typ": "text", "norm": "krypto" }, "wert": { "typ": "zahl" } } },
       "loesung": { "g1": ["A"], "g2": ["B"], "g3": ["C"], "wert": ["26"], "_fehlmuster": { "wert": [ { "wert": "0", "p": "P2", "code": "null_statt_z" } ] } },
       "erklaerung": [ { "t": "text", "md": "Nach Z geht es bei A weiter: x → A, y → B, z → C. Z hat bei A = 1 den Wert 26." } ] },
+    { "id": "W9-L6-05", "titel": "Das Siegel der Testwelt", "stufe": 2, "kategorie": "signatur", "fallen": ["P9"],
+      "inhalt": [ { "t": "text", "md": "Ergänze das Schaubild der digitalen Signatur." },
+        { "t": "schaubild", "akteure": [ { "id": "A", "name": "Alice" }, { "id": "B", "name": "Bob" } ],
+          "schritte": [ { "nr": 1, "von": "A", "an": "A", "text": "bildet h(m)" }, { "nr": 2, "von": "A", "an": "A", "text": "verschlüsselt h(m) mit [[s1]]" }, { "nr": 3, "von": "A", "an": "B", "text": "sendet m und Signatur s" }, { "nr": 4, "von": "B", "an": "B", "text": "entschlüsselt s mit [[s2]], vergleicht mit h(m)" } ] } ],
+      "interaktion": { "kind": "schaubild-ergaenzen", "block": 1, "felder": { "s1": { "typ": "schluessel" }, "s2": { "typ": "schluessel" } } },
+      "loesung": { "s1": [ { "art": "privat", "inhaber": "A" } ], "s2": [ { "art": "oeffentlich", "inhaber": "A" } ] },
+      "erklaerung": [ { "t": "text", "md": "Signieren mit dem privaten, prüfen mit dem öffentlichen Schlüssel der Absenderin (P9)." } ] },
+    { "id": "W9-L6-06", "titel": "Mallory in der Mitte", "stufe": 2, "kategorie": "zertifikat", "fallen": ["P9"],
+      "inhalt": [ { "t": "text", "md": "Ergänze das Schaubild." },
+        { "t": "schaubild", "titel": "Man-in-the-Middle", "akteure": [ { "id": "A", "name": "Alice" }, { "id": "B", "name": "Bob" }, { "id": "M", "name": "Mallory", "art": "angreifer" }, { "id": "CA", "name": "Zertifizierungsstelle", "art": "ca" } ],
+          "schritte": [ { "nr": 1, "von": "CA", "an": "B", "text": "stellt Bob ein [[z1]] aus" }, { "nr": 2, "von": "B", "an": "M", "text": "sendet seinen öffentlichen Schlüssel – [[z2]] fängt ihn ab" }, { "nr": 3, "von": "M", "an": "A", "text": "sendet einen eigenen Schlüssel" }, { "nr": 4, "von": "A", "an": "A", "text": "prüft das Zertifikat und bemerkt den Betrug" } ] } ],
+      "interaktion": { "kind": "schaubild-ergaenzen", "block": 1, "felder": { "z1": { "typ": "auswahl", "optionen": ["Zertifikat", "Hashwert", "Signatur"] }, "z2": { "typ": "text", "norm": "krypto" } } },
+      "loesung": { "z1": ["Zertifikat"], "z2": ["Mallory"] },
+      "erklaerung": [ { "t": "text", "md": "Das Zertifikat bestätigt die Zuordnung Schlüssel ↔ Identität." } ] },
     {
       "id": "W9-B-01",
       "titel": "Ganzzahlige Division",

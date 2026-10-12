@@ -891,7 +891,7 @@ const DIAGNOSE = [
   });
   test('Diagnosetexte verraten keine Lösung', () => {
     for (const e of DIAGNOSE) for (const x of diagnoseVon(e)) {
-      const lo = JSON.stringify(A[e.aufgabe].loesung).toUpperCase();
+      const lo = loesungsWerte(A[e.aufgabe].loesung).join(' ').toUpperCase(); // nur Werte, keine Schlüsselnamen (Task 28: „Inhaber“)
       for (const wort of x.text.toUpperCase().match(/[A-ZÄÖÜ]{5,}/g) || []) assert.ok(!lo.includes(wort) || ['RICHTUNG', 'STELLE'].includes(wort), `${x.text} verrät ${wort}`);
     }
   });
@@ -1145,6 +1145,9 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L6-05', antwort: { s1: { art: 'oeffentlich', inhaber: 'A' }, s2: { art: 'oeffentlich', inhaber: 'B' } }, erwartet: [['P9', 'schluesselart'], ['P9', 'inhaber']] }
 );
 ```
+**Korrektur (Task 28):** Der Text `schluesselrolle` enthält „Inhaber“, das als Schlüsselname im Lösungs-JSON steht; der
+Test „Diagnosetexte verraten keine Lösung“ vergleicht deshalb nur die **Werte** der Lösung (`loesungsWerte`), nicht `JSON.stringify`.
+
 **Achtung (Fallensucher):** `W9-L6-05`/`-06` tragen `P9`; der in Task 23 angepasste Test beantwortet alle `P9`-Aufgaben falsch – nichts weiter zu tun.
 
 - [ ] **Step 1: Failing tests** – Diagnose-Rundlauf + `pruefer.test.js`:

@@ -96,5 +96,15 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L3-01', antwort: { zuordnung: { A: 'I', B: 'J', F: 'M', G: 'B', H: 'D', I: 'E', J: 'N', K: 'O', L: 'P', N: 'G', Q: 'S', R: 'T', S: 'H', T: 'U', U: 'V', Z: 'A' } }, erwartet: [['P1', 'zaehlbasis']] },
   { aufgabe: 'W9-L3-01', antwort: { zuordnung: { A: 'X', B: 'Q' } }, erwartet: [] }
 );
+// Task 28: Interaktion schaubild-ergaenzen (Delta §8.3, §9.5)
+const SIG = { s1: { art: 'privat', inhaber: 'A' }, s2: { art: 'oeffentlich', inhaber: 'A' } };
+Object.assign(RICHTIG, { 'W9-L6-05': SIG, 'W9-L6-06': { z1: 'Zertifikat', z2: 'mallory' } });
+Object.assign(FALSCH, { 'W9-L6-05': { ...SIG, s1: { art: 'oeffentlich', inhaber: 'A' } }, 'W9-L6-06': { z1: 'Signatur', z2: 'Mallory' } });
+DIAGNOSE.push(
+  { aufgabe: 'W9-L6-05', antwort: { ...SIG, s1: { art: 'oeffentlich', inhaber: 'A' } }, erwartet: [['P9', 'schluesselart']] },
+  { aufgabe: 'W9-L6-05', antwort: { ...SIG, s1: { art: 'privat', inhaber: 'B' } }, erwartet: [['P9', 'inhaber']] },
+  { aufgabe: 'W9-L6-05', antwort: { ...SIG, s1: { art: 'oeffentlich', inhaber: 'B' } }, erwartet: [['P9', 'schluesselrolle']] },
+  { aufgabe: 'W9-L6-05', antwort: { s1: { art: 'oeffentlich', inhaber: 'A' }, s2: { art: 'oeffentlich', inhaber: 'B' } }, erwartet: [['P9', 'schluesselart'], ['P9', 'inhaber']] }
+);
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
 module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };
