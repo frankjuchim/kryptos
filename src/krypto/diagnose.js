@@ -15,6 +15,11 @@ const TEXTE = Object.freeze({
   'schaubild-ergaenzen:schluesselart': 'Öffentlicher und privater Schlüssel sind vertauscht.',
   'schaubild-ergaenzen:inhaber': 'Der Schlüssel gehört der falschen Person.',
   'schaubild-ergaenzen:schluesselrolle': 'Schlüsselart und Inhaber passen nicht – wer signiert, wer prüft, wer verschlüsselt?',
+  'bits-rechnen:verknuepfung': 'Prüfe die Verknüpfung: Bei XOR ergibt 1 ⊕ 1 = 0 und 0 ⊕ 0 = 0.',
+  'bits-rechnen:bitreihenfolge': 'Das höchstwertige Bit steht links – prüfe die Bitreihenfolge.',
+  'bits-rechnen:ascii': 'Der ASCII-Wert liegt um eins daneben – zähle die Zweierpotenzen noch einmal nach.',
+  'bits-rechnen:transposition': 'Nach der S-Box fehlt die Transposition (Zeile ↔ Spalte).',
+  'bits-rechnen:richtung': 'Du hast in Entschlüsselungsrichtung gerechnet (S⁻¹ statt S, Rundenschlüssel falsch rotiert oder Runde rückwärts).',
   'zuordnung:richtung': 'Du hast die Tabelle in der falschen Richtung gelesen – gesucht ist zu jedem Geheimtextbuchstaben der Klartextbuchstabe.',
   '*:reihenfolge': 'Die Stufen müssen in umgekehrter Reihenfolge zurückgerechnet werden.',
   '*:permutation': 'Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).',
@@ -222,6 +227,116 @@ function schaubild(ia, lo, a) {
   return auswaehlen('schaubild-ergaenzen', treffer);
 }
 
+/** Bitfolge je Byte (8er-Gruppen, Rest als letzte Gruppe) umgedreht. */
+function jeByteUmgedreht(b) {
+  let out = '';
+  for (let i = 0; i < b.length; i += 8) out += [...b.slice(i, i + 8)].reverse().join('');
+  return out;
+}
+
+/** Rundenschlüssel rechts statt links rotiert: K_i = K um 4(i − 1) Bit nach rechts. */
+function rundenschluesselRechts(k, runde) {
+  const r = ((runde - 1) % 4) * 4;
+  return ((k >>> r) | (k << (16 - r))) & 0xffff;
+}
+
+/** KRYPTOS-16-Kandidaten (E5, SPEC W3 §0a) als Bitfolgen. */
+function kryptos16Kandidaten(ia) {
+  const k16 = K.kryptos16;
+  const x0 = parseInt(K.normBits(ia.block), 2);
+  const key = parseInt(K.normBits(ia.schluessel), 2);
+  const R = ia.runden;
+  const ent = ia.richtung === 'ent';
+  const b16 = (n) => K.byteZuBits(n, 16);
+  const rk = (r) => k16.rundenschluessel(key, r);
+  const runden = (schritt, ks = rk) => {
+    let x = x0;
+    if (ent) for (let r = R; r >= 1; r--) x = schritt(x, ks(r));
+    else for (let r = 1; r <= R; r++) x = schritt(x, ks(r));
+    return x;
+  };
+  const out = [];
+  // ohne Transposition
+  out.push({ p: 'P4', code: 'transposition', liste: [...b16(runden((x, k) => (ent ? k16.sbox(x, 'ent') ^ k : k16.sbox(x ^ k))))] });
+  // Gegenrichtung (ganze Runde rückwärts)
+  out.push({ p: 'P3', code: 'richtung', liste: [...b16((ent ? k16.verschluesseln : k16.entschluesseln)(x0, key, { runden: R }))] });
+  // S⁻¹ statt S (bzw. S statt S⁻¹)
+  out.push({ p: 'P3', code: 'richtung', liste: [...b16(runden((x, k) => (ent ? k16.sbox(k16.transponiere(x), 'ver') ^ k : k16.transponiere(k16.sbox(x ^ k, 'ent')))))] });
+  // Rundenschlüssel in Gegenrichtung rotiert (erst ab 2 Runden unterscheidbar)
+  if (R >= 2) out.push({ p: 'P3', code: 'richtung', liste: [...b16(runden((x, k) => k16.runde(x, k, ent ? 'ent' : 'ver'), (r) => rundenschluesselRechts(key, r)))] });
+  return out;
+}
+
+/** Kandidaten der Interaktion bits-rechnen: [{ p, code, liste }]. */
+function bitsKandidaten(ia, lo, kanon, soll) {
+  const out = [];
+  const textZuBitsVersetzt = (t, d) => {
+    const codes = [...t].map((c) => c.charCodeAt(0) + d);
+    if (!codes.every((n) => n >= 32 && n <= 126)) return null;
+    return codes.map((n) => K.byteZuBits(n, 8)).join('');
+  };
+  switch (ia.operation) {
+    case 'xor': {
+      const ops = ia.operanden.map((o) => K.normBits(o));
+      out.push({ p: 'P4', code: 'verknuepfung', liste: [...ops.slice(1).reduce((a, b) => K.undBits(a, b), ops[0])] });
+      out.push({ p: 'P4', code: 'verknuepfung', liste: [...ops.slice(1).reduce((a, b) => K.oderBits(a, b), ops[0])] });
+      if (typeof soll === 'string') out.push({ p: 'P4', code: 'bitreihenfolge', liste: [...jeByteUmgedreht(soll)] });
+      break;
+    }
+    case 'ascii':
+      if (ia.richtung === 'zu-text') {
+        for (const d of [1, -1]) {
+          const codes = [...String(soll || '')].map((c) => c.charCodeAt(0) + d);
+          if (codes.length && codes.every((n) => n >= 32 && n <= 126)) out.push({ p: 'P1', code: 'ascii', liste: codes.map((n) => String.fromCharCode(n)) });
+        }
+      } else {
+        for (const d of [1, -1]) {
+          const b = textZuBitsVersetzt(ia.text, d);
+          if (b) out.push({ p: 'P1', code: 'ascii', liste: [...b] });
+        }
+        if (typeof soll === 'string') out.push({ p: 'P4', code: 'bitreihenfolge', liste: [...jeByteUmgedreht(soll)] });
+      }
+      break;
+    case 'kryptos16':
+      out.push(...kryptos16Kandidaten(ia));
+      break;
+    case 'frei':
+      for (const f of Array.isArray(lo && lo.fehlmuster) ? lo.fehlmuster : []) {
+        if (!f || typeof f.text !== 'string') continue;
+        let k;
+        try {
+          k = kanon(typeof lo.bits === 'string' ? { bits: f.text } : { text: f.text });
+        } catch {
+          continue;
+        }
+        out.push({ p: f.p, code: f.code, liste: [...k] });
+      }
+      break;
+    default:
+  }
+  return out;
+}
+
+/**
+ * Diagnose der Interaktion bits-rechnen (Delta §9.4), zweistufig wie chiffre: vollständige Treffer gehen vor, sonst
+ * Teilübereinstimmung (passt). lawine: keine Diagnose. opt.loesung = kanonische Lösung, opt.kanon = Antwort-Normalisierung.
+ */
+function bits(ia, lo, a, { loesung, kanon = (x) => x } = {}) {
+  if (!ia || ia.diagnose === false || ia.operation === 'lawine' || Array.isArray(a)) return [];
+  let kandidaten;
+  try {
+    kandidaten = bitsKandidaten(ia, lo, kanon, loesung);
+  } catch (e) {
+    if (e && e.name === 'KryptoFehler') return [];
+    throw e;
+  }
+  const al = [...String(a)];
+  const voll = kandidaten.filter((k) => gleich(al, k.liste));
+  if (voll.length) return auswaehlen('bits-rechnen', voll);
+  const l = [...String(loesung === null || loesung === undefined ? '' : loesung)];
+  return auswaehlen('bits-rechnen', kandidaten.filter((k) => passt(al, l, k.liste)));
+}
+
 /**
  * Zusatzdiagnose für gaps (Delta §9.6): erwartete Fehlantworten je Feld aus loesung._fehlmuster. Ein Feld, das falsch
  * beantwortet ist und einem Fehlmuster gleicht (gleiche Normalisierung wie die Prüfung), liefert dessen Falle.
@@ -241,4 +356,4 @@ function gapsFehlmuster(ia, lo, a, ergebnis) {
   return auswaehlen('gaps', treffer);
 }
 
-module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung, schaubild };
+module.exports = { PRIORITAET, TEXTE, text, passt, auswaehlen, umbruchStellen, chiffre, falschePositionen, gapsFehlmuster, zuordnung, schaubild, bits };

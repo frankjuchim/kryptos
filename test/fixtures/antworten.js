@@ -106,5 +106,22 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L6-05', antwort: { ...SIG, s1: { art: 'oeffentlich', inhaber: 'B' } }, erwartet: [['P9', 'schluesselrolle']] },
   { aufgabe: 'W9-L6-05', antwort: { s1: { art: 'oeffentlich', inhaber: 'A' }, s2: { art: 'oeffentlich', inhaber: 'B' } }, erwartet: [['P9', 'schluesselart'], ['P9', 'inhaber']] }
 );
+// Task 29: Interaktion bits-rechnen (Delta §8.4, §9.4)
+Object.assign(RICHTIG, { 'W9-L6-01': '0010 0001', 'W9-L6-02': { c1: '01101001' }, 'W9-L6-03': { bits: '0100 1011' }, 'W9-L6-04': 'A',
+  'W9-L3-03': '1101 1000 0110 1110', 'W9-L3-04': [13, 3, 7, 5] });
+Object.assign(FALSCH, { 'W9-L6-01': '0010 0011', 'W9-L6-02': { c1: '0110 1000' }, 'W9-L6-03': '01001100', 'W9-L6-04': 'a',
+  'W9-L3-03': '1101 1000 0110 1111', 'W9-L3-04': [3, 5, 7] });
+DIAGNOSE.push(
+  { aufgabe: 'W9-L6-01', antwort: '0100 1010', erwartet: [['P4', 'verknuepfung']] },
+  { aufgabe: 'W9-L6-01', antwort: '0110 1011', erwartet: [['P4', 'verknuepfung']] },
+  { aufgabe: 'W9-L6-01', antwort: '1000 0100', erwartet: [['P4', 'bitreihenfolge']] },
+  { aufgabe: 'W9-L6-03', antwort: '0100 1010', erwartet: [['P1', 'ascii']] },
+  { aufgabe: 'W9-L6-04', antwort: 'B', erwartet: [['P1', 'ascii']] },
+  { aufgabe: 'W9-L6-04', antwort: '@', erwartet: [['P1', 'ascii']] },
+  { aufgabe: 'W9-L3-03', antwort: '1101 1011 0011 1000', erwartet: [['P4', 'transposition']] },
+  { aufgabe: 'W9-L3-03', antwort: '0111 1000 1011 0000', erwartet: [['P3', 'richtung']] },
+  { aufgabe: 'W9-L3-03', antwort: '1010 0001 1001 1011', erwartet: [['P3', 'richtung']] },
+  { aufgabe: 'W9-L3-04', antwort: [3, 5, 7], erwartet: [] }
+);
 const LEVEL_AUFGABEN = Object.keys(RICHTIG).filter((id) => id.includes('-L'));
 module.exports = { RICHTIG, FALSCH, LEVEL_AUFGABEN, DIAGNOSE };

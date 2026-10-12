@@ -11,6 +11,7 @@ const bloecke = require('./bloecke');
 const chiffre = require('./interaktionen/chiffre');
 const zuordnung = require('./interaktionen/zuordnung');
 const schaubild = require('./interaktionen/schaubild');
+const bits = require('./interaktionen/bits');
 const D = require('./diagnose');
 const validierung = require('./validierung');
 
@@ -31,6 +32,8 @@ function registriere() {
   zuordnung.registriere(F);
   // Delta §8.3: Interaktion schaubild-ergaenzen (Diagnose §9.5)
   schaubild.registriere(F);
+  // Delta §8.4: Interaktion bits-rechnen (Diagnose §9.4, KRYPTOS-16 nach SPEC W3 §0a)
+  bits.registriere(F);
   // Delta §9.6: erwartete Fehlantworten in gaps (loesung._fehlmuster) und ihre Prüfung im Validator
   F.registriereDiagnose('gaps', D.gapsFehlmuster);
   V.registriereValidierung(validierung);

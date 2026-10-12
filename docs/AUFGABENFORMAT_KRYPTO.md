@@ -674,7 +674,7 @@ Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagno
 
 **Musterantwort:** `loesung.bits` / `loesung.text` / `loesung.positionen`. **Validator (Neuberechnung):** `xor` über
 `Krypto.xorBits`, `ascii` über `Krypto.textZuBits`/`bitsZuText`, `kryptos16` und `lawine` über `Krypto.kryptos16`
-(sobald W3 §0a umgesetzt ist; bis dahin Fehler „KRYPTOS-16 noch nicht definiert“). `frei`: keine Neuberechnung,
+(SPEC W3 §0a; `lawine`: Bibliothek zählt Bitpositionen ab 1, das Format ab 0). `frei`: keine Neuberechnung,
 `pruefnachweis` Pflicht. **Schrittprüfung:** nein. **Boss:** erlaubt, kein Feedback.
 
 ---
@@ -738,8 +738,11 @@ d ∈ {+1, −1} gilt bei ≥ 80 % von V: x = Buchstabe(Wert(`loesung.zuordnung[
 | UND/ODER statt XOR | bitweises AND bzw. OR der Operanden | **P4** · `verknuepfung` |
 | Bitreihenfolge umgedreht | Lösung rückwärts (je Byte) | **P4** · `bitreihenfolge` |
 | ASCII-Wert um 1 daneben (A = 64/66) | Bits von Code ± 1 | **P1** · `ascii` |
-| `kryptos16`: Hälften nicht getauscht | Runde ohne Tausch | **P4** · `tausch` |
-| `kryptos16`: falsche Richtung/Rotation | Entschlüsselungsrunde bzw. Rotation in Gegenrichtung | **P3** · `richtung` |
+| `kryptos16`: Transposition ausgelassen | Runden ohne Transposition (`sbox(x ⊕ Kᵢ)`; KRYPTOS-16 hat nach SPEC W3 §0a keine Hälften) | **P4** · `transposition` |
+| `kryptos16`: falsche Richtung/Rotation | Gegenrichtung (Ent- statt Verschlüsselung bzw. umgekehrt), S⁻¹ statt S, Rundenschlüssel rechts statt links rotiert (ab 2 Runden) | **P3** · `richtung` |
+
+Zweistufig wie §9.1 (vollständige Treffer vor Teilübereinstimmung); `lawine` und `frei` ohne `fehlmuster` haben keine
+Diagnose. `ascii`/`zu-text` vergleicht exakt (Groß/Klein ist Teil des ASCII-Werts).
 
 ### 9.5 `schaubild-ergaenzen`
 
@@ -823,7 +826,7 @@ jeder Block mit Test). Sie muss enthalten:
 | Welt | alle Welt-Felder (§2) inkl. `archivfund` (`W9-A-01`, `chiffre`) und `kapitel` |
 | Level | `W9-L1` `kern`/`kryptografie` mit `werkzeug` und `akte`; `W9-L2` `kern`/`kryptoanalyse`; `W9-L3` **`eA`**; `W9-L4` **`kuer`** mit `kuer: true`; ein Level mit einer `ergaenzung`-Aufgabe und einer `eA`-Aufgabe in einem `kern`-Level |
 | Blöcke | jeder Kern-Block, der in Kryptos genutzt wird (`text`, `hinweis`, `code`, `struktogramm`, `tabelle`, `reihung`, `raster`), dazu **jeder neue Block** mit allen Varianten: `alphabet` (basis 1 und 0, mit Lücken), `haeufigkeit` (`text`/`werte`, mit Referenz), `quadrat` (`vigenere`+`ausschnitt`, `playfair`, `polybios` 6×6 ADFGVX, `frei` mit Lücke), `bits` (mit `pruefe: xor` und mit Lücke), `schaubild` (4 Akteure inkl. Angreifer und CA), `matrix` (Spaltentransposition mit `reihenfolge: true` und unvollständiger Zeile; Fleißner mit `zeige: stellungen`), `werkzeug` |
-| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `bits-rechnen` (`xor`, `ascii` beide Richtungen; `kryptos16`/`lawine` erst nach W3 §0a) |
+| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `bits-rechnen` (`xor`, `ascii` beide Richtungen, `kryptos16`, `lawine`) |
 | Diagnose | je Zeile der Tabellen §9.2–§9.5 eine Aufgabe, an der `test/pruefer.test.js` die Fehlantwort einspeist und die P-Nummer erwartet (Antworten in `test/fixtures/antworten.js`: richtige, falsche, Fehlmuster je Aufgabe) |
 | Boss | `W9-BOSS`, Pool 6 Aufgaben (3 `kern`, 3 `eA`, davon 3 `fremde-chiffre`), `anzahl` 3, `mix` 1/1/1, `dauerMin` 25 – damit sind gA- und eA-Ziehung testbar |
 | Negativ-Fixtures | `test/fixtures/fehler/*.json`: je Validator-Fehler aus §11 eine kleine Datei (falsche Neuberechnung, Kontrast, Boss mit Werkzeug, kuer-Inkonsistenz …) |

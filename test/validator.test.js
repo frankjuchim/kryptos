@@ -256,3 +256,13 @@ test('schaubild-ergaenzen-Validator: Block, Lücken ↔ Felder, Inhaber/Arten an
   erwarteFehler((w) => { delete aufgabe(w, 'W9-L6-05').interaktion.felder.s2; delete aufgabe(w, 'W9-L6-05').loesung.s2; }, /\[\[s2\]\]/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-06').loesung.z1 = ['Schlüssel']; }, /optionen/);
 });
+
+test('bits-rechnen-Validator: Neuberechnung je Operation', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').loesung.bits = '00100011'; }, /Neuberechnung ergibt 00100001/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-03').loesung.bits = '01001010'; }, /Neuberechnung ergibt 01001011/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-04').loesung.text = 'B'; }, /Neuberechnung ergibt A/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-03').loesung.bits = '1101100001101111'; }, /Neuberechnung ergibt 1101100001101110/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-04').loesung.positionen = [3, 5, 7]; }, /Neuberechnung ergibt \[3, 5, 7, 13\]|3,5,7,13/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0100 1011', '0110 101']; }, /gleich lang/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-03').interaktion.runden = 5; }, /runden/);
+});

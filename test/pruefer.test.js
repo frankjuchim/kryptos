@@ -252,3 +252,15 @@ test('schaubild-ergaenzen: Feedback je Feld, Akteure aus dem Block, 400 bei Unsi
   assert.throws(() => C.pruefeAufgabe(a, { s9: { art: 'privat', inhaber: 'A' } }), (e) => e.status === 400);
   assert.deepEqual(C.pruefeAufgabe(A['W9-L6-06'], { z1: 'Zertifikat', z2: ' MALLORY ' }).ok, true);
 });
+test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Positions-Feedback, ascii exakt', () => {
+  const r = C.pruefeAufgabe(A['W9-L6-01'], '0010_0011');
+  assert.deepEqual(r.bits, [true, true, true, true, true, true, false, true]);
+  assert.throws(() => C.pruefeAufgabe(A['W9-L6-01'], '0010 0021'), (e) => e.status === 400);
+  assert.equal(C.pruefeAufgabe(A['W9-L6-03'], { bits: '01001011' }).ok, true);
+  assert.equal(C.pruefeAufgabe(A['W9-L6-04'], ' A ').ok, true);
+  assert.equal(C.pruefeAufgabe(A['W9-L6-04'], 'a').ok, false, 'ASCII unterscheidet Groß/Klein');
+  const l = C.pruefeAufgabe(A['W9-L3-04'], [7, 13, 3, 5, 5]);
+  assert.equal(l.ok, true);
+  assert.equal(C.pruefeAufgabe(A['W9-L3-04'], [3]).bits, undefined, 'lawine: kein Feedback je Position');
+  assert.throws(() => C.pruefeAufgabe(A['W9-L3-04'], [16]), (e) => e.status === 400);
+});
