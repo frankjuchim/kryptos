@@ -214,7 +214,7 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `format.js` | `registriereNorm(name, fn)` | `krypto`, `bits` |
 | `validator.js` | `registriereValidierung({ welt?, level?, aufgabe?, boss?, dateien? })` | Zusatzprüfungen (Delta §11); Signatur wie intern `(daten, f, w, stats)` |
 | `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`) |
-| `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
+| `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level\|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |
 | `services/index.js` | `optionen` wird aus `src/krypto/index.js → dienstOptionen()` gefüllt | |
 
@@ -286,7 +286,7 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `normalisieren(text, { ziffern = true } = {})` | Delta §5.1 (NFC, Umlaute → AE/OE/UE/SS, groß, Diakritika weg, nur A–Z[0–9]) |
 | `nurBuchstaben(text)` | `normalisieren(text, { ziffern: false })` |
 | `normBits(text)` | Delta §5.2 |
-| `gruppieren(text, n = 5, trenner = ' ')` | Fünfergruppen |
+| `gruppieren(text, n = 5, trenner = ' ')` | Fünfergruppen (Leerraum der Eingabe wird vorher entfernt, sonst keine Normalisierung; `n < 1` → `KryptoFehler`) |
 | `klein(text)` | Kleinschreibung für Klartext-Anzeige |
 | `zahlen(text, basis = 1)` | Liste der Buchstabenwerte |
 | `ausZahlen(liste, basis = 1)` | Umkehrung (mit `mod`) |
@@ -296,9 +296,9 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | Funktion | Semantik |
 |---|---|
 | `caesar(text, k, richtung = 'ver')` | jeder Buchstabe um `k` (`ent`: −k) verschoben, mod 26 |
-| `alleCaesar(text)` | Liste `[{k, text}]` für k = 0…25 (Brute-Force-Liste der Chiffrierscheibe) |
+| `alleCaesar(text)` | Liste `[{k, text}]` für k = 0…25 (Brute-Force-Liste der Chiffrierscheibe); `text` = **Entschlüsselung** mit k (`alleCaesar('GTVAMPTVAX')[19].text` = `NACHTWACHE`) |
 | `atbash(text)` | A↔Z (involutorisch) |
-| `affin(text, a, b = 0, richtung = 'ver', basis = 0)` | **Standard A = 0** (Design §6, W1; Caesar/Vigenère bleiben bei A = 1). Test: `affin('dattel', 5, 6)` = `VGXXAJ`. `ver`: `c = buchstabe(a·wert(p,basis) + b, basis)`; `ent`: `p = buchstabe(a⁻¹·(wert(c,basis) − b), basis)`; `a` teilerfremd zu 26, sonst `KryptoFehler` |
+| `affin(text, a, b = 0, richtung = 'ver', basis = 0)` | **Standard A = 0** (Design §6, W1; Caesar/Vigenère bleiben bei A = 1). Test: `affin('dattel', 5, 6)` = `VGXXAJ`. `ver`: `c = buchstabe(a·wert(p,basis) + b, basis)`; `ent`: `p = buchstabe(a⁻¹·(wert(c,basis) − b), basis)`; `a` teilerfremd zu 26, sonst `KryptoFehler`; `basis` nur 0 oder 1 |
 | `affinSchluesselGueltig(a)` | ggT(a, 26) = 1 |
 | `schluesselwortAlphabet(wort, { rest = 'alphabetisch' })` | Schlüsselwort ohne Doppelte, dann restliche Buchstaben alphabetisch (`ab_letztem`: ab dem Buchstaben nach dem letzten Schlüsselwortbuchstaben zyklisch) → 26 Zeichen |
 | `substitution(text, geheimalphabet, richtung = 'ver')` | `geheimalphabet[i]` ist Bild von `ALPHABET[i]`; `ent` invers |
@@ -310,28 +310,28 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 |---|---|
 | `vigenere(text, schluessel, richtung = 'ver')` | Position i: Verschiebung `verschiebung(schluessel[i mod L])` (nur über Buchstaben gezählt) |
 | `autokey(text, schluessel, richtung = 'ver')` | Schlüsselstrom = Schlüssel + Klartext (beim Entschlüsseln fortlaufend rekonstruiert) |
-| `porta(text, schluessel)` | Porta-Tafel: Schlüsselbuchstabe mit Index s (A = 0) → j = ⌊s/2⌋; Klartextindex x: x < 13 → c = 13 + ((x − j) mod 13), sonst c = (x − 13 + j) mod 13; involutorisch. Tests: `porta('BKPWEZP','SIEGEL')` = `STEMPEL`, `porta('nachtwache','LUNA')` = `FQWULGUPPU`, `porta('serenissima','PORTA')` = `MXMVAOMAZZT` |
-| `quadrat(schluessel = '', { groesse = 5, ij = 'I' })` | 5×5 (ohne J, J → I) bzw. 6×6 (A–Z0–9) aus Schlüsselwort ohne Doppelte + Rest → Liste von Zeilen |
-| `playfairPaare(text, { fuellzeichen = 'X', fuellzeichenX = 'Q', ij = 'I' })` | Paare bilden: J → I, gleiches Paar „AA“ → „AX“ + Rest neu paaren (bei „XX“: „XQ“), ungerade Länge → Füllzeichen anhängen |
-| `playfair(text, schluessel, richtung = 'ver', optionen)` | gleiche Zeile: rechts (`ent` links), gleiche Spalte: darunter (`ent` darüber), sonst Rechteck: Buchstabe in eigener Zeile, Spalte des Partners; `ent` entfernt **keine** Füllzeichen |
-| `kreuzquadrat(text, oben, unten, richtung = 'ver', { fuellzeichen = 'X' })` | Level 2.4 / Akte W2·4 (SPEC W2 Archivwissen 3). Quadrate O (oben) und U (unten) aus Schlüsselwörtern (I = J); ungerade Länge → Füllzeichen anhängen. Paar (a, b): a in O bei (zₐ, sₐ), b in U bei (z_b, s_b) → c₁ = U[zₐ][s_b], c₂ = O[z_b][sₐ]. `ent`: c₁ in U bei (r₁, t₁), c₂ in O bei (r₂, t₂) → a = O[r₁][t₂], b = U[r₂][t₁]. Tests (O = GONDEL, U = MURANO): `mehl` → `KCFQ`, `seidenballen` → `TBIANEDNOQNE`, `fa` → `DE`, `ent('FBNSROBNCM')` = `KONTORBUCH` |
-| `zweiQuadratZahl(text, q1, q2, zahlenschluessel, richtung = 'ver')` | Papier-Boss W2 „Das Zwei-Quadrat“ (SPEC W2 §6): Klartextbuchstabe in Q1 bei (z, s), Ziffer k (zyklisch aus dem Zahlenschlüssel, nur Ziffern 0–4) → Geheimtextbuchstabe Q2[(z + k) mod 5][s] (0-basiert); `ent` sucht in Q2 und rechnet (z − k) mod 5 in Q1. Tests (Q1 = BRIEFTAUBE, Q2 = KOMPASS): `h`/3142 → `O`, `anna`/2222 → `QKKQ`, `rat`/3142 → `QGK` |
+| `porta(text, schluessel, richtung = 'ver')` | Porta-Tafel (`richtung` wird nur geprüft – involutorisch): Schlüsselbuchstabe mit Index s (A = 0) → j = ⌊s/2⌋; Klartextindex x: x < 13 → c = 13 + ((x − j) mod 13), sonst c = (x − 13 + j) mod 13; involutorisch. Tests: `porta('BKPWEZP','SIEGEL')` = `STEMPEL`, `porta('nachtwache','LUNA')` = `FQWULGUPPU`, `porta('serenissima','PORTA')` = `MXMVAOMAZZT` |
+| `quadrat(schluessel = '', { groesse = 5, ij = 'I' })` | 5×5 (ohne J, J → I; `ij: 'J'`: ohne I, I → J) bzw. 6×6 (A–Z0–9) aus Schlüsselwort ohne Doppelte + Rest → Liste von Zeilen (Strings); ein fertiges Quadrat (25/36 Zeichen oder Zeilenliste) ergibt sich selbst |
+| `playfairPaare(text, { fuellzeichen = 'X', fuellzeichenX = 'Q', ij = 'I' })` | Paare bilden: J → I, gleiches Paar „AA“ → „AX“ + Rest neu paaren (bei „XX“: „XQ“), ungerade Länge → Füllzeichen anhängen (ist der letzte Buchstabe selbst das Füllzeichen: `fuellzeichenX`); Füllzeichen verschieden und je ein Buchstabe des Quadrats, sonst `KryptoFehler` |
+| `playfair(text, schluessel, richtung = 'ver', optionen)` | gleiche Zeile: rechts (`ent` links), gleiche Spalte: darunter (`ent` darüber), sonst Rechteck: Buchstabe in eigener Zeile, Spalte des Partners; `ent` entfernt **keine** Füllzeichen; `ent` mit ungerader Länge oder einem Paar aus zwei gleichen Buchstaben → `KryptoFehler` |
+| `kreuzquadrat(text, oben, unten, richtung = 'ver', { fuellzeichen = 'X' })` | Level 2.4 / Akte W2·4 (SPEC W2 Archivwissen 3). Quadrate O (oben) und U (unten) aus Schlüsselwörtern (I = J); ungerade Länge → Füllzeichen anhängen. Paar (a, b): a in O bei (zₐ, sₐ), b in U bei (z_b, s_b) → c₁ = U[zₐ][s_b], c₂ = O[z_b][sₐ]. `ent`: c₁ in U bei (r₁, t₁), c₂ in O bei (r₂, t₂) → a = O[r₁][t₂], b = U[r₂][t₁]. Tests (O = GONDEL, U = MURANO): `mehl` → `KCFQ`, `seidenballen` → `TBIANEDNOQNE`, `fa` → `DE`, `ent('FBNSROBNCM')` = `KONTORBUCH`; keine Regel für Doppelbuchstaben; `ent` mit ungerader Länge → `KryptoFehler` |
+| `zweiQuadratZahl(text, q1, q2, zahlenschluessel, richtung = 'ver')` | Papier-Boss W2 „Das Zwei-Quadrat“ (SPEC W2 §6): Klartextbuchstabe in Q1 bei (z, s), Ziffer k (zyklisch aus dem Zahlenschlüssel, nur Ziffern 0–4) → Geheimtextbuchstabe Q2[(z + k) mod 5][s] (0-basiert); `ent` sucht in Q2 und rechnet (z − k) mod 5 in Q1. Zahlenschlüssel als Ziffernfolge (`'3142'`) oder Liste (`[3,1,4,2]`), leer oder Ziffer > 4 → `KryptoFehler`. Tests (Q1 = BRIEFTAUBE, Q2 = KOMPASS): `h`/3142 → `O`, `anna`/2222 → `QKKQ`, `rat`/3142 → `QGK` |
 | *(kein `zweiQuadrat`)* | Das klassische Zwei-Quadrat (Spalten tauschen) nutzt kein Level; bewusst **nicht** implementieren, um die Namenskollision mit Kreuzquadrat und Papier-Boss zu vermeiden (Verifikation H2) |
-| `polybios(text, { schluessel = '', kopf = '12345', ij = 'I' }, richtung = 'ver')` | `ver`: Paare „Zeilenkopf Spaltenkopf“ (ohne Leerzeichen); `ent`: aus Paaren zurück |
-| `adfgvx(text, quadrat36, schluessel, richtung = 'ver')` | Polybios 6×6 mit Kopf `ADFGVX` → `spaltentransposition(…, schluessel)`; `ent` umgekehrt (erst Transposition invertieren, dann Paare lesen) |
+| `polybios(text, { schluessel = '', kopf = '12345', ij = 'I' }, richtung = 'ver')` | `ver`: Paare „Zeilenkopf Spaltenkopf“ (ohne Leerzeichen); `ent`: aus Paaren zurück. Die Kopflänge (5 oder 6 verschiedene Zeichen, z. B. `ADFGX`, `ADFGVX`) bestimmt die Quadratgröße; bei 5×5 fallen Ziffern im Klartext weg, bei 6×6 bleiben sie. `ent`: ungerade Länge oder Zeichen außerhalb des Kopfs → `KryptoFehler` |
+| `adfgvx(text, quadrat36, schluessel, richtung = 'ver')` | Polybios 6×6 mit Kopf `ADFGVX` → `spaltentransposition(…, schluessel)` (ohne Auffüllen); `ent` umgekehrt (erst Transposition invertieren, dann Paare lesen). `quadrat36`: 36-Zeichen-Quadrat, Zeilenliste oder Schlüsselwort (ergänzt wie `quadrat(…, { groesse: 6 })`, z. B. `ZEPPELIN18`); `schluessel`: Wort oder Zahlenfolge wie bei `spaltenReihenfolge` |
 
 **Transposition**
 
 | Funktion | Semantik |
 |---|---|
-| `gartenzaun(text, zeilen, richtung = 'ver')` | Zickzack ab Zeile 0, Zeilen nacheinander lesen; `ent` rekonstruiert das Zickzack-Muster |
-| `skytale(text, umfang, richtung = 'ver', { fuellzeichen = 'X' })` | Raster mit `umfang` Zeilen und m = ⌈n/umfang⌉ Spalten **zeilenweise** füllen, **spaltenweise** lesen; leere Zellen am Ende werden mit dem Füllzeichen gefüllt (Konvention W0); `fuellzeichen: null` überspringt sie. Test: `skytale('wir halten den pass', 3)` = `WTPIEARNSHDSAEXLNX` |
-| `fleissner(text, groesse, schablone, richtung = 'ver', { drehung = 'rechts', fuellzeichen = 'X' })` | je Block `groesse²` Zeichen; Stellung 0…3 (Drehung 90° je Stellung); Löcher zeilenweise von links oben; Geheimtext = Raster zeilenweise; letzter Block mit Füllzeichen; `schablonePruefen()` prüft Vollständigkeit |
-| `schablonePruefen(groesse, schablone)` | `{ ok, fehler }` – jede Zelle genau einmal über 4 Drehungen |
+| `gartenzaun(text, zeilen, richtung = 'ver')` | Zickzack ab Zeile 0, Zeilen nacheinander lesen; `ent` rekonstruiert das Zickzack-Muster; `zeilen ≥ 2` (mehr Zeilen als Buchstaben: Text unverändert) |
+| `skytale(text, umfang, richtung = 'ver', { fuellzeichen = 'X' })` | Raster mit `umfang` Zeilen und m = ⌈n/umfang⌉ Spalten **zeilenweise** füllen, **spaltenweise** lesen; leere Zellen am Ende werden mit dem Füllzeichen gefüllt (Konvention W0); `fuellzeichen: null` überspringt sie. Test: `skytale('wir halten den pass', 3)` = `WTPIEARNSHDSAEXLNX`. `ent` mit Füllzeichen: Länge muss Vielfaches von `umfang` sein (sonst `KryptoFehler`), Füllzeichen bleiben stehen; `ent` mit `null` rekonstruiert das Raster aus der Länge |
+| `fleissner(text, groesse, schablone, richtung = 'ver', { drehung = 'rechts', fuellzeichen = 'X' })` | je Block `groesse²` Zeichen; Löcher als `[z, s]` **ab 1** in Grundstellung; Stellung 0…3 (Drehung 90° je Stellung: `rechts` (z, s) → (s, n + 1 − z), `links` (z, s) → (n + 1 − s, z)); Löcher zeilenweise von links oben; Geheimtext = Raster zeilenweise; letzter Block mit Füllzeichen; ungültige Schablone (`schablonePruefen`) → `KryptoFehler`; `ent`: Länge Vielfaches von `groesse²`, Füllzeichen bleiben stehen |
+| `schablonePruefen(groesse, schablone)` | `{ ok, fehler, abgedeckt }` – jede Zelle genau einmal über 4 Drehungen (`groesse` gerade, genau `groesse²/4` Löcher); `abgedeckt` = Zahl der freigegebenen Felder (W0 Akte W0·1 A7: 8 von 16) |
 | `spaltenReihenfolge(schluessel)` | Wort → Rangfolge 1…n (alphabetisch, gleiche Buchstaben links zuerst); Zahlenliste wird übernommen |
-| `spaltentransposition(text, schluessel, richtung = 'ver', { fuellzeichen = null })` | zeilenweise in n = Schlüssellänge Spalten schreiben, Spalten in Reihenfolge lesen; unvollständige letzte Zeile erlaubt (kürzere Spalten), `ent` berücksichtigt Spaltenlängen |
+| `spaltentransposition(text, schluessel, richtung = 'ver', { fuellzeichen = null })` | zeilenweise in n = Schlüssellänge Spalten schreiben, Spalten in Reihenfolge lesen; unvollständige letzte Zeile erlaubt (die ersten L mod n Spalten sind länger), `ent` berücksichtigt Spaltenlängen; mit `fuellzeichen` wird das Rechteck aufgefüllt, `ent` entfernt nichts |
 | `umkehrung(text)` | rückwärts |
-| `blockrotation(folge, block, um, richtung = 'ver')` | Folge (Text oder Bytes) in Blöcke; jeder Block um `um` nach links (letzter Block um `um mod Länge`); `ent` nach rechts |
+| `blockrotation(folge, block, um, richtung = 'ver')` | Folge (Text oder Liste von Bytes 0–255) in Blöcke (`block ≥ 2`); jeder Block um `um mod Blocklänge` nach links (letzter Block um `um mod Länge`, negatives `um` = rechts); `ent` nach rechts. Test: `blockrotation('anderquelle', 4, 4)` = `ANDERQUELEL` |
 
 **Bits, ASCII, XOR**
 
@@ -340,11 +340,11 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `ascii(zeichen)` / `zeichenAusAscii(n)` | Codes 32–126 (EH-Anlage), sonst `KryptoFehler` |
 | `textZuBytes(text)` / `bytesZuText(bytes)` | ASCII; Text **nicht** normalisiert (Leerzeichen erlaubt), nur 32–126 |
 | `byteZuBits(n, breite = 8)` / `bitsZuByte(bits)` | MSB links |
-| `textZuBits(text, { gruppe = 4 })` / `bitsZuText(bits)` | 8 Bit je Zeichen |
+| `textZuBits(text, { gruppe = 4 })` / `bitsZuText(bits)` | 8 Bit je Zeichen; `gruppe` Bits je Gruppe mit Leerzeichen (`0` = ohne) |
 | `xorBits(a, b, …)` | bitweise XOR gleich langer Bitfolgen (nach `normBits`) |
 | `undBits(a, b)`, `oderBits(a, b)` | nur für die Diagnose |
-| `xor(textOderBytes, schluessel, richtung)` | Bytes ⊕ Schlüsselbytes (Schlüssel wiederholt); `ver` liefert Hex in Großbuchstaben ohne Leerzeichen, `ent` erwartet Hex und liefert Text |
-| `hex(bytes)` / `vonHex(text)` | Zweiergruppen-tauglich, Großbuchstaben |
+| `xor(textOderBytes, schluessel, richtung)` | Bytes ⊕ Schlüsselbytes (Schlüssel als Text oder Bytes, wiederholt); `ver` liefert Hex in Großbuchstaben ohne Leerzeichen, `ent` erwartet Hex (oder Bytes) und liefert Text – Ergebnisbytes außerhalb 32–126 → `KryptoFehler`. Test: `xor('FUNK', 'AB')` = `07170F09` |
+| `hex(bytes)` / `vonHex(text)` | Zweiergruppen-tauglich, Großbuchstaben; `hex(zahl)` mit einer Zahl 0–65535 = KRYPTOS-16-Block → 4 Hexziffern (`hex(0x4F4B)` = `4F4B`) |
 | `rotiereBits(bits, um)` | zyklisch links (negativ: rechts) |
 
 **Moderne Toy-Verfahren (Platzhalter mit fester API)**
@@ -353,12 +353,14 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 |---|---|
 | `kryptos16.rundenschluessel(schluessel16, runde)` | Definition: `quellen/specs/SPEC_Kryptos_W3_Maschinen.md §0a` |
 | `kryptos16.runde(block16, rundenschluessel, richtung)` | eine Runde in der Reihenfolge **XOR mit Rundenschlüssel → S-Box je Zeile → Transposition** (W3 §0a); kein abschließendes XOR nach der letzten Runde |
-| `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | `protokoll: true` liefert Zwischenstände je Runde (Runden-Labor) |
+| `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | Blöcke und Schlüssel als Zahlen 0–FFFF; `protokoll: true` liefert `{ ergebnis, runden: [{ runde, eingang, schluessel, nachXor, nachSBox, nachTransposition }] }` (Runden-Labor) |
 | `kryptos16.entschluesseln(…)` | Umkehrung |
-| `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird |
-| `kryptos16.modus(bloecke, schluessel, 'ECB'|'CBC', iv)` | Betriebsmodi für das Pixelbild-Experiment |
-| `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` |
-| `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment) |
+| `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird: `[{ runde, positionen, anzahl }]`; Bitnummern 1 (b1, höchstwertig) … 16 |
+| `kryptos16.modus(bloecke, schluessel, 'ECB'\|'CBC', iv, { richtung = 'ver', runden = 4 })` | Betriebsmodi für das Pixelbild-Experiment und die Fehlerfortpflanzung (W3-L2-07); `iv` nur bei CBC (Pflicht) |
+| `kryptos16.SBOX`, `kryptos16.SBOX_INV`, `kryptos16.sbox(block16, richtung)`, `kryptos16.transponiere(block16)` | Tabellen und Einzelschritte (Runden-Labor, Aufgaben W3-L2-02/03) |
+| `kryptos16.textZuBloecken(text)` / `kryptos16.bloeckeZuText(bloecke)` | ASCII → 16-Bit-Blöcke mit Auffüllen nach §0a.7 (immer: ungerade → Byte `01`, gerade → Block `0202`) bzw. zurück mit Prüfung und Entfernen der Füllbytes |
+| `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` mit `schritte: [{ buchstabe, w, vorher, summe, nachher }]` (Rundentabelle) |
+| `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment): Kandidaten kürzeste zuerst über `alphabet` (Std. a–z), der Text selbst zählt nicht; `{ text, wert, versuche }` oder `null` |
 
 **Definitionen (inzwischen festgelegt, verbindlich):**
 
@@ -382,44 +384,44 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `DEUTSCH` | Objekt Buchstabe → Prozent (eine feste Tabelle, Quelle im Kommentar; Summe 100 ± 0,5) |
 | `haeufigkeiten(text)` | `{A: n, …, Z: n}` (immer 26 Schlüssel) |
 | `anteile(text)` | relative Häufigkeiten (Summe 1) |
-| `rangfolge(text)` | Buchstaben absteigend nach Häufigkeit, bei Gleichstand alphabetisch |
+| `rangfolge(text)` | vorkommende Buchstaben absteigend nach Häufigkeit, bei Gleichstand alphabetisch |
 | `teiltexte(text, k)` | k Teiltexte (jede k-te Stelle ab Position 0 … k−1) |
-| `bigramme(text, { top = 10 })` | häufigste Bigramme (überlappend) |
+| `bigramme(text, { top = 10 })` | häufigste Bigramme (überlappend) als `[{ bigramm, anzahl }]`, Gleichstand alphabetisch |
 | `koinzidenzindex(text)` | `Σ nᵢ(nᵢ−1) / (n(n−1))`; n < 2 → `null` |
-| `friedman(text, { iD = 0.076, iZ = 0.038 })` | `(iD − iZ)·n / ((n − 1)·I − iZ·n + iD)` (Design §6.4; **iZ = 0,038 wie in allen Materialien, nicht 1/26**), Rückgabe Zahl (nicht gerundet). Tests über `friedmanWert(n, I)`: (1001; 0,0475) → 3,99 · (501; 0,0456) → 4,96 · (601; 0,0507) → 2,98 |
+| `friedman(text, { iD = 0.076, iZ = 0.038 })` | `(iD − iZ)·n / ((n − 1)·I − iZ·n + iD)` (Design §6.4; **iZ = 0,038 wie in allen Materialien, nicht 1/26**), Rückgabe Zahl (nicht gerundet; Text mit n < 2 → `null`). Tests über `friedmanWert(n, I)`: (1001; 0,0475) → 3,99 · (501; 0,0456) → 4,96 · (601; 0,0507) → 2,98 |
 | `friedmanWert(n, I, { iD = 0.076, iZ = 0.038 })` | dieselbe Formel mit gegebenem n und I (für Aufgaben, die nur Kennzahlen nennen) |
-| `kasiski(text, { min = 3, max = 6 })` | `{ wiederholungen: [{ folge, positionen (ab 0), abstaende }], teiler: {2: n, …, 20: n}, vorschlag: [k…] }`; Teiler 2–20 |
-| `verschiebungSchaetzen(teiltext)` | k mit minimaler χ²-Abweichung zu `DEUTSCH` (+ Liste aller 26 Werte) |
-| `chiQuadrat(text)` | Abweichung von `DEUTSCH` |
+| `kasiski(text, { min = 3, anzahl = 30 })` | nach SPEC W2 §9 (Reiter 3): Mindestlänge `min` 3–6, **ohne Obergrenze** (bis n/2), nur **maximale** Wiederholungen (mit denselben Positionen in einer längeren enthalten → entfällt), sortiert nach Länge, Anzahl, erster Position, höchstens `anzahl`. `{ wiederholungen: [{ folge, positionen (ab 0), abstaende (aufeinanderfolgende Vorkommen) }], abstaende, teiler: {2: n, …, 20: n}, vorschlag: [k…] }`; `abstaende` = Grundlage der Teilertabelle (ein Paar, das in einer längeren Folge mit gleichem Abstand steckt, zählt nicht doppelt – Eves Brief: 9 Abstände); `vorschlag` = Teiler mit Anzahl > 0, absteigend nach Anzahl, bei Gleichstand größerer zuerst. *(Korrigiert nach SPEC W2 §9; vorher `max = 6`.)* |
+| `verschiebungSchaetzen(teiltext)` | nach SPEC W2 §9 (Reiter 6) **Korrelation** mit `DEUTSCH`: χ(v) = Σₓ p_D(x) · f_T((x + v) mod 26), Vorschlag = v mit größtem χ (Gleichstand kleineres v); `{ k, buchstabe, werte (26), kandidaten (3 beste) }` – Tests: Eves Brief k = 5 → WACHS, Lab-Text k = 4 → GOLD. *(Korrigiert nach SPEC W2 §9; vorher minimale χ²-Abweichung.)* |
+| `chiQuadrat(text)` | Abweichung von `DEUTSCH`: Σ (nᵢ − Eᵢ)²/Eᵢ mit Eᵢ = n · pᵢ; leerer Text → `null` |
 
 **Zahlentheorie, asymmetrisch, Schlüsselzahl**
 
 | Funktion | Semantik |
 |---|---|
-| `ggT(a, b)` | euklidisch, ≥ 0 |
-| `erweiterterEuklid(a, b)` | `{ ggt, x, y, schritte: [{ a, b, q, r, x, y }] }` mit `a·x + b·y = ggt` (Tabelle wie im Unterricht) |
-| `inverses(a, m)` | `a⁻¹ mod m` oder `null` |
-| `modpow(basis, exponent, modul, { protokoll = false })` | schnelles Potenzieren (BigInt intern); `protokoll` liefert die Quadrieren-und-Multiplizieren-Tabelle |
+| `ggT(a, b)` | euklidisch, ≥ 0 (ganze Zahlen, auch negativ) |
+| `erweiterterEuklid(a, b)` | `{ ggt, x, y, schritte: [{ a, b, q, r, x, y }] }` mit `a·x + b·y = ggt` (Tabelle wie im Unterricht, W4 Akte W4·K3: letzte Zeile `(ggt, 0, null, null, 1, 0)`, x/y von unten nach oben); a, b ≥ 0 |
+| `inverses(a, m)` | `a⁻¹ mod m` (kleinster nicht negativer Rest) oder `null`; m ≥ 2 |
+| `modpow(basis, exponent, modul, { protokoll = false })` | schnelles Potenzieren (BigInt intern); `protokoll` liefert die Quadrieren-und-Multiplizieren-Tabelle `{ wert, schritte: [{ exponent, basis, ergebnis }] }` wie der Trace `potenzMod` (W4 Akte W4·K3: 37⁴³ mod 77 → 7 Zeilen) |
 | `istPrim(n)` | Probedivision (n < 10⁷) |
 | `rsa.schluessel(p, q, e = null)` | `{ N, phi, e, d }`; `e` Std. = kleinstes e ≥ 3 mit ggT(e, φ) = 1; prüft p ≠ q prim |
 | `rsa.verschluesseln(m, e, N)` / `rsa.entschluesseln(c, d, N)` | `m < N` Pflicht |
 | `dh.oeffentlich(g, geheim, p)` | `g^geheim mod p` |
 | `dh.gemeinsam(fremdOeffentlich, geheim, p)` | `B^a mod p` |
-| `dh.dlogKlein(g, A, p)` | kleinstes x ≥ 1 mit `g^x ≡ A` (p < 10 000, Brute Force – für Eve-Prüfung im Funkraum) |
-| `schluesselanzahl(n)` | `{ symmetrisch: n(n−1)/2, asymmetrisch: 2n }` |
+| `dh.dlogKlein(g, A, p)` | kleinstes x ≥ 1 mit `g^x ≡ A` (p < 10 000, Brute Force – für Eve-Prüfung im Funkraum); keins → `null` |
+| `schluesselanzahl(n)` | `{ symmetrisch: n(n−1)/2, asymmetrisch: 2n }`; n ≥ 2 |
 
 **Verfahrens-Objekt und Baukasten**
 
 | Funktion | Semantik |
 |---|---|
-| `verfahren.TYPEN` | Katalog aller `typ` aus Delta §6 mit Parameter-Schema und `involutorisch`-Kennzeichen |
-| `verfahren.pruefe(v)` | `{ ok, fehler: [] }` – Parameterprüfung |
-| `verfahren.anwenden(v, text, richtung, { basis = 1, ausgabe = 'buchstaben' })` | Dispatcher auf die Einzelfunktionen; `frei` → `KryptoFehler` |
-| `verfahren.varianten(v, text, richtung, optionen)` | Kandidaten typischer Fehlrechnungen `[{ p, code, text }]` (für die Diagnose, Delta §9.2) |
-| `baukasten.STUFEN` | Stufen-Katalog (§9.2) mit `eingabe`/`ausgabe` (`buchstaben`/`bytes`), Parameter-Schema |
-| `baukasten.pruefe(verfahren, schluessel)` | `{ ok, fehler: [], hinweise: [{ p: 'P7'|'P8', text }] }` (§9.3) |
-| `baukasten.verschluesseln(verfahren, schluessel, klartext, { protokoll })` | `{ geheimtext, zwischen: [...] }` |
-| `baukasten.entschluesseln(verfahren, schluessel, geheimtext)` | Stufen rückwärts, jede invertiert |
+| `verfahren.TYPEN` | Katalog aller `typ` aus Delta §6 (Wertebereiche **nach Delta §6**, z. B. `gartenzaun.zeilen` 2–10) als `{ typ: { parameter: { name: { art, pflicht, min?, max?, werte? } }, einsVon?, involutorisch, art } }` (eingefroren) |
+| `verfahren.pruefe(v)` | `{ ok, fehler: [] }` – Parameterprüfung: Pflichtparameter, unbekannte Parameter, Bereiche; `substitution` genau eins von `alphabet`/`schluesselwort`, `xor` genau eins von `schluessel`/`schluesselBits`; `affin.a` teilerfremd; `adfgvx.quadrat` genau 36 Zeichen; `fleissner.schablone` gültig; `baukasten` über `baukasten`-Prüfung |
+| `verfahren.anwenden(v, text, richtung, { basis = 1, ausgabe = 'buchstaben' })` | Dispatcher auf die Einzelfunktionen (ungültiges Verfahren oder `frei` → `KryptoFehler`). `affin` rechnet mit `v.basis` (Std. **0**); die Option `basis` wirkt nur auf `ausgabe: 'zahlen'` (Buchstabenwerte, nur für Buchstabenergebnisse). `xor`: `ver` normalisiert die Eingabe (`krypto`), `ent` erwartet Hex |
+| `verfahren.varianten(v, text, richtung, optionen)` | Kandidaten typischer Fehlrechnungen `[{ p, code, text }]` (für die Diagnose, Delta §9.2), Reihenfolge P3, P1, P2, P4, ohne Duplikate und ohne die richtige Lösung: P3 `richtung`/`permutation` (Gegenrichtung; Fleißner auch andere Drehrichtung), P3 `reihenfolge` (`baukasten`/`adfgvx` beim Entschlüsseln), P1 `zaehlbasis` (Caesar k ± 1, Schlüsselbuchstaben + 1, affin andere Basis), P1 `position` (Vigenère-Schlüssel um eine Stelle versetzt), P2 `null_statt_z`/`ueberlauf`/`negativ` (nur `ausgabe: 'zahlen'`, Basis 1, Caesar/Vigenère), P4 `paare` (Playfair ohne Trennen der Doppelbuchstaben), P4 `fuellung` (Skytale/Spaltentransposition mit umgeschaltetem Füllzeichen) |
+| `baukasten.STUFEN`, `baukasten.MAX_STUFEN` | Stufen-Katalog nach **SPEC W3 Tabelle B** (§9.2): `[{ typ, kuerzel, name, parameter, einordnung, ausgabe, nurZuletzt }]` (eingefroren); höchstens 4 Stufen |
+| `baukasten.pruefe(verfahren, schluessel, { klartext })` | `{ ok, fehler: [], hinweise: [{ p: 'P6'\|'P7'\|'P8'\|null, text }] }` (§9.3) |
+| `baukasten.verschluesseln(verfahren, schluessel, klartext, { protokoll })` | `{ geheimtext, zwischen: [Ergebnis je Stufe] }`, mit `protokoll: true` zusätzlich `stufen: [{ typ, kuerzel, param, ergebnis }]`; ungültiges Verfahren → `KryptoFehler`. Test FUNKGITTER: `IMYIWBWHJSJDBPSNGRGQEYVBLIY` |
+| `baukasten.entschluesseln(verfahren, schluessel, geheimtext)` | Stufen rückwärts, jede invertiert (bei XOR als letzter Stufe ist der Geheimtext Hex) |
 
 ### 5.3 Python-Zwilling `werkzeuge/krypto/krypto.py`
 
@@ -490,7 +492,7 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 2 | `fehler=abgebrochen` | `302` auf `/?abgebrochen=1` (Startseite zeigt Hinweis + Gastmodus) |
 | 2 | anderer `fehler` | `401` wie Schritt 1, Grund `portal` |
 | 3 | `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL, aud: PLATTFORM_ID, maxDauerSek: 120, jetztSek })` | `401`, Grund = `p.grund` (`format`, `alg`, `signatur`, `version`, `iss`, `aud`, `zeit`, `dauer`, `abgelaufen`, `jti`) |
-| 4 | `jti` merken: `INSERT INTO sso_jti (jti, exp) VALUES ('s:'||jti, exp)`; Konflikt → schon verwendet | `401`, Grund `wiederverwendet` |
+| 4 | `jti` merken: `INSERT INTO sso_jti (jti, exp) VALUES ('s:'\|\|jti, exp)`; Konflikt → schon verwendet | `401`, Grund `wiederverwendet` |
 | 5 | Inhalt: `sub` `^[asl]:\d+$`; `rolle` ∈ {schueler, lehrkraft, superadmin} **und passend zum Präfix** (s/l/a); `name` Text 1–60; `kurse` Liste ≤ 200 mit `id` `^k:\d+$`, `name` 1–80, `rolle` ∈ {mitglied, lehrkraft} (Schüler nur `mitglied`, sonst nur `lehrkraft`) | `401`, Grund `inhalt` |
 | 6 | Upsert + Kursabgleich (§6.6) in **einer** Transaktion | – |
 | 7 | Schüler ohne aktive Teilnahme in einem aktiven Kurs | `403`, Seite `fehler/kurs-gesperrt.html` (keine Sitzung) |
@@ -979,40 +981,55 @@ gespeichert wird erst die Einreichung in eine Arena.
   "schluessel": { "wort": "LICHT", "zeilen": 3 } }
 ```
 
-- `stufen`: 1–6 Einträge. Ein Parameterwert ist entweder eine **Konstante** (Teil des öffentlichen Verfahrens) oder ein
+- `stufen`: 1–4 Einträge (SPEC W3 Tabelle B, „Kombination: 1 bis 4 Stufen“; vorher 1–6). Ein Parameterwert ist entweder eine **Konstante** (Teil des öffentlichen Verfahrens) oder ein
   **Platzhalter** `"$name"` (`^[a-z][a-z0-9]{0,11}$`), dessen Wert im geheimen `schluessel` steht. Jeder Platzhalter muss
   im Schlüssel vorkommen, jeder Schlüsselwert muss verwendet werden; derselbe Platzhalter darf in mehreren Stufen stehen.
 - `name` ≤ 40 Zeichen, nur Buchstaben/Ziffern/Leerzeichen/Bindestrich (wird Teamnamen nicht ersetzen).
 
-**Stufen-Katalog** (`Krypto.baukasten.STUFEN`; Feinheiten und ggf. weitere Stufen aus `SPEC_Kryptos_W3_Maschinen.md`, die
-bei Erstellung dieses Dokuments noch nicht vorlag – Abweichungen dort gehen vor):
+**Stufen-Katalog** (`Krypto.baukasten.STUFEN`) – verbindlich ist **SPEC W3 Tabelle B** (Level 3.3); die frühere Fassung
+dieser Tabelle ist danach korrigiert:
 
-| `typ` | Parameter (Typ, Bereich) | Eingabe → Ausgabe | umkehrbar, wenn |
+| `typ` (Kürzel) | Parameter (Typ, Bereich nach W3) | Eingabe → Ausgabe | Einordnung |
 |---|---|---|---|
-| `caesar` | `k` Ganzzahl 0–25 | Buchstaben → Buchstaben | immer |
-| `substitution` | `schluesselwort` 1–26 Buchstaben | Buchstaben → Buchstaben | immer (Doppelte werden entfernt) |
-| `vigenere` | `schluessel` 1–26 Buchstaben | Buchstaben → Buchstaben | immer |
-| `spaltentransposition` | `schluessel` 2–12 Buchstaben | Buchstaben/Bytes → gleich | immer (unvollständige Matrix, kein Füllzeichen) |
-| `gartenzaun` | `zeilen` 2–10 | Buchstaben/Bytes → gleich | immer |
-| `xor` | `schluessel` 1–16 Zeichen (ASCII 32–126) | Buchstaben/Bytes → **Bytes** | immer |
-| `umkehrung` | – | beliebig → gleich | immer |
-| `blockrotation` | `block` 2–16, `um` 1…block−1 | beliebig → gleich | immer |
+| `caesar` (CAE) | `k` Ganzzahl 0–25 | Buchstaben → Buchstaben | monoalphabetisch |
+| `substitution` (SUB) | `schluesselwort` 1–26 Buchstaben A–Z | Buchstaben → Buchstaben | monoalphabetisch |
+| `vigenere` (VIG) | `schluessel` 1–20 Buchstaben A–Z | Buchstaben → Buchstaben | polyalphabetisch |
+| `spaltentransposition` (SPA) | `schluessel` 2–10 Buchstaben A–Z | Buchstaben → Buchstaben | Transposition (unvollständige Matrix, nie auffüllen) |
+| `gartenzaun` (ZAU) | `zeilen` 2–6 | Buchstaben → Buchstaben | Transposition |
+| `blockrotation` (ROT) | `block` 2–9, `um` 1…block−1 | Buchstaben → Buchstaben | Transposition |
+| `umkehrung` (UMK) | – | Buchstaben → Buchstaben | Transposition (selbstinvers) |
+| `xor` (XOR) | `schluessel` 1–20 Buchstaben A–Z | Buchstaben → **Hex** | polyalphabetisch auf Bitebene |
 
-Typregel: Nach der ersten `xor`-Stufe sind nur noch Stufen mit Eingabe „Bytes“ erlaubt (`spaltentransposition`,
-`gartenzaun`, `xor`, `umkehrung`, `blockrotation`). Geheimtext-Darstellung: Buchstaben → GROSS in Fünfergruppen;
-Bytes → Hex in Zweiergruppen (beides erfüllt `^[A-Z0-9 ]+$`).
+Typregel (W3): `xor` höchstens einmal und **nur als letzte Stufe**; es wird nie mit X aufgefüllt, alle Stufen außer XOR
+erhalten die Länge. Geheimtext-Darstellung: Buchstaben → GROSS in Fünfergruppen; nach XOR Hex in Zweiergruppen (beides
+erfüllt `^[A-Z0-9 ]+$`). Die frühere Typregel („nach `xor` nur Stufen mit Eingabe Bytes“) entfällt.
+
+**Unterschiede Baukasten (SPEC W3) ↔ Verfahrens-Objekt (AUFGABENFORMAT_KRYPTO §6)** – bewusst getrennt, kein Abgleich
+der Spec-Dokumente: `baukasten.STUFEN` folgt W3, `verfahren.TYPEN` folgt Delta §6.
+
+| Parameter | Baukasten (W3) | Verfahrens-Objekt (Delta §6) |
+|---|---|---|
+| `gartenzaun.zeilen` | 2–6 | 2–10 |
+| `blockrotation.block` | 2–9 | 2–16 |
+| `vigenere.schluessel` | 1–20 Buchstaben A–Z | Buchstaben (ohne Längengrenze) |
+| `spaltentransposition.schluessel` | Wort 2–10 Buchstaben A–Z | Wort oder Zahlenfolge (ohne Längengrenze), optional `fuellzeichen` |
+| `xor.schluessel` | Wort 1–20 Buchstaben A–Z, nur letzte Stufe | Text (ASCII 32–126) **oder** `schluesselBits` |
+| Stufenzahl | 1–4 | – (ein Verfahren; `typ: "baukasten"` verweist auf das W3-Format) |
 
 ### 9.3 Umkehrbarkeits- und Qualitätsprüfung (`baukasten.pruefe` + Server)
 
 1. **Statisch:** Schema, Bereiche, Typregel, Platzhalter vollständig → `fehler`.
-2. **Dynamisch:** `entschluesseln(verschluesseln(t)) = t` für den eingereichten Klartext und drei feste Prüftexte
-   (unterschiedliche Längen inkl. Länge, die kein Vielfaches der Block-/Spaltenlängen ist) → sonst Fehler.
-3. **Hinweise** (keine Fehler, für den Rückblick; erst ab Phase `beurteilung` sichtbar):
-   P7 – schwache Schlüssel (`k = 0`, Schlüsselwort aus lauter gleichen Buchstaben, `xor`-Schlüssel aus Nullbytes, Zeilen ≥
-   Textlänge); P8 – wirkungslose Kombinationen (zwei Caesar-Stufen, Caesar + Vigenère, zwei Umkehrungen, Blockrotation mit
-   `um` = 0 mod block, zwei gleiche Transpositionen hintereinander); P6 – nur Transpositionsstufen
-   („Häufigkeitsverteilung bleibt erhalten“).
-4. Klartext: 40–300 Buchstaben nach `nurBuchstaben` (Deutsch, keine Ziffern); Geheimtext ≤ 900 Zeichen in Darstellung.
+2. **Dynamisch** (SPEC W3 Level 3.3): `entschluesseln(verschluesseln(t)) = nurBuchstaben(t)` für den eigenen Text
+   (Option `klartext`), „Ebbe und Flut“ und einen Text der Länge 1 → sonst Fehler.
+3. **Hinweise** nach den Werkstatt-Hinweisen von SPEC W3 (keine Fehler; in der Arena erst ab Phase `beurteilung`
+   sichtbar): P7 – schwache Schlüssel (Caesar `k = 0`; Vigenère-Schlüssel nur aus A bzw. aus lauter gleichen Buchstaben;
+   XOR-Wort aus nur einem Buchstaben; Spaltenschlüssel in alphabetischer Reihenfolge bei Länge ≥ Textlänge – nur mit
+   `klartext`); P8 – Kombination verschmilzt (zwei benachbarte Stufen aus {Caesar, Vigenère}, zweimal Substitution
+   nebeneinander, zweimal Umkehrung nebeneinander); P6 – nur Transpositionsstufen („Häufigkeitsverteilung bleibt
+   erhalten“); ohne Falle (`p: null`) – nur Substitutionsstufen („Wortgrenzen und Reihenfolge bleiben“). *(Korrigiert
+   nach SPEC W3; die frühere Liste nannte u. a. Nullbytes, Zeilen ≥ Textlänge und zwei gleiche Transpositionen.)*
+4. Klartext (Server, Arena): 150–300 Buchstaben nach `nurBuchstaben` (Deutsch, keine Ziffern; Mindestlänge nach SPEC W3
+   §9.4 „≥ 150 Buchstaben“, vorher 40); Geheimtext ≤ 900 Zeichen in Darstellung. Die Bibliothek prüft die Länge nicht.
 
 ### 9.4 Einreichung (Phase `werkstatt`)
 
