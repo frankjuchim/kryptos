@@ -16,6 +16,7 @@ const STATE_MS = 10 * 60 * 1000; // 10 Minuten (VERTRAG §5)
 const MAX_DAUER_SEK = 120;
 const FEHLER_DIR = path.join(__dirname, '..', '..', 'public', 'fehler');
 const ROLLE_ZU_PRAEFIX = { schueler: 's', lehrkraft: 'l', superadmin: 'a' };
+const MAX_KURSE = 1000;
 
 /** ziel nur als relativer Pfad mit genau einem führenden „/“ (kein //host, kein /\host, keine Steuerzeichen), ≤ 300 Zeichen. */
 function sicheresZiel(z) {
@@ -44,8 +45,10 @@ function zielFuerRolle(ziel, rolle) {
 function pruefeInhalt(t) {
   if (typeof t.sub !== 'string' || !/^[asl]:\d{1,15}$/.test(t.sub)) return false;
   if (ROLLE_ZU_PRAEFIX[t.rolle] !== t.sub[0]) return false;
-  if (typeof t.name !== 'string' || t.name.trim().length < 1 || t.name.length > 60) return false;
-  if (!Array.isArray(t.kurse) || t.kurse.length > 200) return false;
+  // Name ≤ 80 (Portal: Lehrkraft-Namen 2–80, Schüler 2–30); Kurse ≤ 1000 (Superadmin: alle Kurse der Plattform –
+  // praktisch begrenzt jwt.pruefe die Token-Länge auf 8192 Zeichen, das sind je nach Kursnamen etwa 80–120 Kurse)
+  if (typeof t.name !== 'string' || t.name.trim().length < 1 || t.name.length > 80) return false;
+  if (!Array.isArray(t.kurse) || t.kurse.length > MAX_KURSE) return false;
   const kursRolle = t.rolle === 'schueler' ? 'mitglied' : 'lehrkraft';
   for (const k of t.kurse) {
     if (!k || typeof k !== 'object' || Array.isArray(k)) return false;
@@ -123,6 +126,12 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
     const q = req.query;
     const state = typeof q.state === 'string' ? q.state : '';
     if (!gemerkt || typeof gemerkt.st !== 'string' || !state || !S.safeEqual(gemerkt.st, state)) {
+      // Ein gültig signiertes Token ist trotzdem verbraucht (INTEGRATION §5: Token genau einmal verwendbar) –
+      // sonst ließe es sich nach dem Fehlschlag mit passendem state erneut einlösen.
+      if (typeof q.token === 'string') {
+        const p = pruefe(q.token, konfig.schluessel, { iss: konfig.portalUrl, aud: konfig.plattformId, maxDauerSek: MAX_DAUER_SEK, jetztSek: jetztSek() });
+        if (p.ok) merkeJti(p.nutzlast.jti, p.nutzlast.exp);
+      }
       return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'state');
     }
 

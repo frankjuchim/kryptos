@@ -487,18 +487,21 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 
 | Schritt | Prüfung | Fehlerantwort |
 |---|---|---|
-| 1 | State-Cookie lesen (`S.verify`) und **sofort löschen**; fehlt er oder `S.safeEqual(cookie.st, query.state)` falsch | `401`, Seite `fehler/anmeldung-fehlgeschlagen.html`, Kopf `X-Kryptos-Grund: state` |
+| 1 | State-Cookie lesen (`S.verify`) und **sofort löschen**; fehlt er oder `S.safeEqual(cookie.st, query.state)` falsch. Ist das mitgeschickte Token gültig signiert (`jwt.pruefe` ok), wird seine `jti` trotzdem verbraucht (Schritt 4) – ein Token ist genau einmal verwendbar | `401`, Seite `fehler/anmeldung-fehlgeschlagen.html`, Kopf `X-Kryptos-Grund: state` |
 | 2 | `fehler=keine_berechtigung` | `403`, Seite `fehler/keine-berechtigung.html` („Kein Zugang – deine Lehrkraft hat Kryptos für deinen Kurs nicht freigeschaltet“, Links: Portal, Gastmodus) |
 | 2 | `fehler=abgebrochen` | `302` auf `/?abgebrochen=1` (Startseite zeigt Hinweis + Gastmodus) |
 | 2 | anderer `fehler` | `401` wie Schritt 1, Grund `portal` |
 | 3 | `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL, aud: PLATTFORM_ID, maxDauerSek: 120, jetztSek })` | `401`, Grund = `p.grund` (`format`, `alg`, `signatur`, `version`, `iss`, `aud`, `zeit`, `dauer`, `abgelaufen`, `jti`) |
 | 4 | `jti` merken: `INSERT INTO sso_jti (jti, exp) VALUES ('s:'\|\|jti, exp)`; Konflikt → schon verwendet | `401`, Grund `wiederverwendet` |
-| 5 | Inhalt: `sub` `^[asl]:\d+$`; `rolle` ∈ {schueler, lehrkraft, superadmin} **und passend zum Präfix** (s/l/a); `name` Text 1–60; `kurse` Liste ≤ 200 mit `id` `^k:\d+$`, `name` 1–80, `rolle` ∈ {mitglied, lehrkraft} (Schüler nur `mitglied`, sonst nur `lehrkraft`) | `401`, Grund `inhalt` |
+| 5 | Inhalt: `sub` `^[asl]:\d+$`; `rolle` ∈ {schueler, lehrkraft, superadmin} **und passend zum Präfix** (s/l/a); `name` Text 1–80 (Portal: Lehrkraft-Namen 2–80); `kurse` Liste ≤ 1000 (Superadmin bekommt alle Kurse; praktisch begrenzt `jwt.pruefe` das Token auf 8192 Zeichen ≈ 80–120 Kurse) mit `id` `^k:\d+$`, `name` 1–80, `rolle` ∈ {mitglied, lehrkraft} (Schüler nur `mitglied`, sonst nur `lehrkraft`) | `401`, Grund `inhalt` |
 | 6 | Upsert + Kursabgleich (§6.6) in **einer** Transaktion | – |
 | 7 | Schüler ohne aktive Teilnahme in einem aktiven Kurs | `403`, Seite `fehler/kurs-gesperrt.html` (keine Sitzung) |
 | 8 | Sitzung setzen (§6.4), das jeweils **andere** Sitzungs-Cookie löschen (geteilte Tablets) | – |
 | 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`). Ein `ziel`, das nicht zur Rolle passt, wird verworfen (→ Startseite der Rolle): Schüler nicht `/lehrer…`, `/beamer…`; Lehrkraft/Superadmin nicht `/spiel…`, `/funkraum…`, `/werkstatt…` (`/labor` ist für beide, §11.1) – sonst Weiterleitungsschleife über das SSO | – |
 
+Fehlerantworten bleiben **unter der `/sso/ende`-URL mit Status 401/403** (INTEGRATION.md §5 verlangt für T2–T8 ausdrücklich
+`401`, VERTRAG §5 „Fehlerseite statt Weiterleitung“); das Token ist dort schon verbraucht oder ungültig, die Seite wird
+wegen `Cache-Control: no-store` nicht gespeichert und gibt wegen `Referrer-Policy: no-referrer` keine URL weiter.
 Der Kopf `X-Kryptos-Grund` enthält nur die Grundkennung (für Tests und Fehlersuche), nie Token-Inhalte. Die drei
 Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform); ihr Link „⌂ Zum Portal“ zeigt auf `GET /sso/portal`
 (302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt. Weitere Grundkennungen: `keine_berechtigung`
@@ -679,7 +682,10 @@ Registrierung, das Feld `niveaus`, `niveau` in der Kursübersicht und die Regel 
 | Zusatz | `/sso/start`: state-Format, Cookie-Attribute, Weiterleitungs-URL zeichengenau | – |
 | Zusatz | Abmelden/Überall abmelden | Cookies gelöscht, `weiter`-URL |
 | Zusatz | `loeschen {kurs}` entfernt Kurs, Teilnahmen, Teams, Funkraum, Arena; `{sub}` entfernt Konto, Teilnahmen, Lernstand, Teammitgliedschaft, eigene Funkraum-Nachrichten und Arena-Versuche (§7.3) | Zählungen in allen Tabellen |
-| Zusatz | Kursübersicht: Format, `anteil` niveau-gefiltert, keine Freitexte/Teamnamen; 404 unbekannt | – |
+| Zusatz | Kursübersicht: Format, keine Freitexte/Teamnamen; 404 unbekannt; `anteil` niveau-gefiltert **ab M3 (`src/krypto/niveau.js`, nur unter v1.2)** – bis dahin über alle Level-Aufgaben der freigeschalteten Welten | – |
+| Zusatz | state falsch mit gültigem Token → 401 `state`, `jti` verbraucht; 500 in `/sso/*` loggt nur die Meldung (nie Token/URL/Stack) | – |
+| Zusatz | Verbund-API: Flut ohne Token, danach gültiger Auftrag → 200; kaputtes JSON ohne Token → 401; `jti` nach echtem Neustart (zweite App-Instanz, gleiche DB-Datei) verbraucht | – |
+| Zusatz | Schüler ruft `/lehrer` auf → kein SSO-Kreis (Wächter `302 /spiel`, `/sso/ende` verwirft ziel der anderen Rolle) | – |
 | Zusatz | `kurs-aendern`: Name übernommen, `aktiv:false` sperrt Schüler-API (403), `true` entsperrt | – |
 | Zusatz | Manifest: `pruefeManifest(m)` leer, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
 

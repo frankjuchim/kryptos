@@ -294,7 +294,7 @@ test('Rolle passt nicht zum sub-Präfix, Kurs-id oder Kursrolle falsch, Name lee
     { kurse: [{ id: 'k:17', name: 'x'.repeat(81), rolle: 'mitglied' }] },
     { kurse: 'k:17' },
     { name: '' },
-    { name: 'x'.repeat(61) },
+    { name: 'x'.repeat(81) },
     { name: 42 },
     { sub: 'l:2', rolle: 'lehrkraft', kurse: [{ id: 'k:17', name: 'LK', rolle: 'mitglied' }] }
   ]) {
@@ -302,12 +302,35 @@ test('Rolle passt nicht zum sub-Präfix, Kurs-id oder Kursrolle falsch, Name lee
   }
   assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM konten'), 0);
   assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM kurse'), 0);
-  // > 200 Kurse passen nicht in ein Token (jwt.pruefe: ≤ 8192 Zeichen) – Regel direkt prüfen
+  // Grenze 1000 Kurse (Superadmin bekommt alle Kurse der Plattform); praktisch begrenzt jwt.pruefe (≤ 8192 Zeichen)
+  // schon bei etwa 100 Kursen – Regel deshalb direkt prüfen
   const { pruefeInhalt } = require('../src/verbund/sso');
   const basis = { sub: 's:1', rolle: 'schueler', name: 'Mika R.' };
   const kurse = (n) => Array.from({ length: n }, (_, i) => ({ id: `k:${i}`, name: 'K', rolle: 'mitglied' }));
-  assert.equal(pruefeInhalt({ ...basis, kurse: kurse(200) }), true);
-  assert.equal(pruefeInhalt({ ...basis, kurse: kurse(201) }), false);
+  assert.equal(pruefeInhalt({ ...basis, kurse: kurse(1000) }), true);
+  assert.equal(pruefeInhalt({ ...basis, kurse: kurse(1001) }), false);
+});
+
+test('Lehrkraft-Name bis 80 Zeichen (Portal: Lehrkraft-Namen 2–80) wird angenommen', async () => {
+  const app = H.makeApp();
+  const name = 'Frau ' + 'A'.repeat(75);
+  assert.equal(name.length, 80);
+  const { r } = await ende(app, { felder: { sub: 'l:7', rolle: 'lehrkraft', name, kurse: [{ id: 'k:17', name: 'LK', rolle: 'lehrkraft' }] } });
+  assert.equal(r.status, 302, r.headers['x-kryptos-grund']);
+  assert.equal(app.locals.db.prepare("SELECT name FROM konten WHERE sub = 'l:7'").get().name, name);
+});
+
+test('state falsch, Token gültig: jti wird trotzdem verbraucht (Token danach nicht mehr verwendbar)', async () => {
+  const app = H.makeApp();
+  const token = H.ssoToken({}, { app });
+  const { r } = await ende(app, { token, state: 'B'.repeat(22) });
+  erwarteFehler(r, 401, 'state');
+  const { r: r2 } = await ende(app, { token });
+  erwarteFehler(r2, 401, 'wiederverwendet');
+  // ungültige Signatur im state-Fehlerfall: nichts gemerkt
+  const vorher = zaehle(app, 'SELECT COUNT(*) AS n FROM sso_jti');
+  erwarteFehler((await ende(app, { key: FREMD.privateKey, state: 'C'.repeat(22) })).r, 401, 'state');
+  assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM sso_jti'), vorher);
 });
 
 test('Schlüsselwechsel: Token mit Schlüssel 2 von 2 angenommen (auch einzeilig mit „\\n“)', async () => {
@@ -402,6 +425,26 @@ test('/sso/*: Token und URL landen nie im Log', async () => {
   for (const m of logs) {
     assert.ok(!m.includes(sig), 'Token im Log');
     assert.ok(!m.includes('/sso/ende'), 'URL im Log');
+  }
+});
+
+test('/sso/*: 500er-Pfad loggt nur die Meldung – nie Token, URL oder Stack', async () => {
+  const logs = [];
+  const app = H.makeApp({ log: (m) => logs.push(String(m)) });
+  app.locals.services.konten.upsert = () => {
+    throw new Error('kaputt');
+  };
+  const { r, token } = await ende(app);
+  assert.equal(r.status, 500);
+  assert.equal(r.headers['referrer-policy'], 'no-referrer');
+  assert.deepEqual(sitzungsCookies(r), []);
+  const sso = logs.filter((m) => /kaputt/.test(m));
+  assert.deepEqual(sso, ['SSO-Fehler: kaputt']);
+  const sig = token.split('.')[2];
+  for (const m of logs) {
+    assert.ok(!m.includes(sig) && !m.includes(token.split('.')[1]), 'Token im Log');
+    assert.ok(!m.includes('/sso/ende') && !m.includes('token='), 'URL im Log');
+    assert.ok(!/\n\s+at /.test(m), 'kein Stack');
   }
 });
 

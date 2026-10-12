@@ -105,7 +105,9 @@ Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
   gültige Schüler-Sitzung auf `/spiel` (keine SSO-Schleife); Kurswahl und Rückfall auf die erste aktive Teilnahme
   übernehmen das `exp` des bisherigen `kr_s` (Max-Age = Restlaufzeit, keine Verlängerung).
 - `sso.js` (Review M1): `zielFuerRolle(ziel, rolle)` – `/sso/ende` verwirft ein `ziel` der anderen Rolle (Schüler:
-  `/lehrer…`, `/beamer…` → `/spiel`; Lehrkraft/Superadmin: `/spiel…`, `/funkraum…`, `/werkstatt…` → `/lehrer`).
+  `/lehrer…`, `/beamer…` → `/spiel`; Lehrkraft/Superadmin: `/spiel…`, `/funkraum…`, `/werkstatt…` → `/lehrer`);
+  `name` bis 80 Zeichen (Portal-Grenze für Lehrkraft-Namen), `kurse` bis 1000 (Superadmin); state-Fehler mit gültig
+  signiertem Token verbraucht dessen `jti`.
 - `verbund.js` (Task 8): `createVerbundRouter` – Verbund-API nach TECHNIK §6.7 (`/loeschen`, `/kurse/:kursId/uebersicht`,
   `/kurse/:kursId`), Middleware `verbund(zweck)` (Bearer, `jwt.pruefe` mit `maxDauerSek: 60`, `sub = portal`, `zweck`,
   `jti` persistent in `sso_jti` mit Präfix `v:`; jede Verletzung `401 { error: 'Token ungültig.' }`), eigenes
