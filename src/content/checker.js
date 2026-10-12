@@ -1,6 +1,8 @@
 'use strict';
 // Prüfer für alle Interaktionsarten (SPEC §5). Prüfung NUR serverseitig.
 // Jede Funktion ist rein (keine DB), damit sie einzeln testbar ist.
+// K02: Arten, die der Kern nicht kennt, gehen an den registrierten Vertrag (format.js, TECHNIK §4.3);
+// Teil-Feedback (zeichen, bits, anteil, …) und Fallen-Diagnose nur auf Wunsch ({ diagnose: true }).
 
 const Baum = require('../../public/static/js/shared/baum');
 const F = require('./format');
@@ -43,8 +45,18 @@ function ganzzahl(v) {
   return n;
 }
 
-/** Antwort eines Teils in die kanonische Form bringen (wirft AntwortFehler bei unbrauchbarer Form). */
-function bereinige(ia, antwort) {
+/** Registrierter Vertrag der Interaktion oder Fehler „Unbekannte Interaktion.“ (400). */
+function vertragVon(ia) {
+  const v = F.interaktionVertrag(F.artVon(ia));
+  if (!v) throw new AntwortFehler('Unbekannte Interaktion.');
+  return v;
+}
+
+/**
+ * Antwort eines Teils in die kanonische Form bringen (wirft AntwortFehler bei unbrauchbarer Form).
+ * kontext.aufgabe = vollständige Aufgabe (für registrierte Arten, z. B. Akteure eines Schaubilds).
+ */
+function bereinige(ia, antwort, kontext = {}) {
   switch (F.artVon(ia)) {
     case 'gaps': {
       const a = antwort && typeof antwort === 'object' && !Array.isArray(antwort) ? antwort : {};
@@ -89,7 +101,7 @@ function bereinige(ia, antwort) {
     case 'adtsim':
       return liste(auspacken(antwort, 'inhalt'), 'Inhalt').map((x) => text(x));
     default:
-      throw new AntwortFehler('Unbekannte Interaktion.');
+      return vertragVon(ia).bereinige(ia, antwort, kontext || {});
   }
 }
 
@@ -107,8 +119,10 @@ function istLeer(ia, a) {
     case 'array:klick':
     case 'grid':
       return a.length === 0;
-    default:
-      return false;
+    default: {
+      const v = F.interaktionVertrag(F.artVon(ia));
+      return v ? v.istLeer(ia, a) === true : false;
+    }
   }
 }
 
@@ -251,9 +265,26 @@ function pruefeAdtsim(ia, lo, a) {
  * @param {*} antwort bereinigte Antwort
  * @param {boolean} teilweise Schrittprüfung
  */
-function pruefeTeil(ia, lo, antwort, teilweise = false) {
+function pruefeTeil(ia, lo, antwort, teilweise = false, opt = {}) {
   const art = F.artVon(ia);
   if (teilweise && !F.schrittErlaubt(ia)) throw new AntwortFehler('Schrittprüfung ist für diese Interaktion nicht vorgesehen.');
+  const diagnose = !!(opt && opt.diagnose);
+  const v = F.interaktionVertrag(art);
+  if (v) {
+    const r = v.pruefe(ia, lo, antwort, teilweise, { diagnose, aufgabe: opt && opt.aufgabe });
+    if (!diagnose || r.ok || !Array.isArray(r.diagnose) || r.diagnose.length === 0) delete r.diagnose;
+    return r;
+  }
+  const r = pruefeKernTeil(art, ia, lo, antwort, teilweise);
+  const fn = diagnose && !r.ok ? F.diagnoseFuer(art) : null;
+  if (fn) {
+    const d = fn(ia, lo, antwort, r);
+    if (Array.isArray(d) && d.length > 0) r.diagnose = d;
+  }
+  return r;
+}
+
+function pruefeKernTeil(art, ia, lo, antwort, teilweise) {
   switch (art) {
     case 'gaps':
       return pruefeGaps(ia, lo, antwort);
@@ -282,11 +313,14 @@ function pruefeTeil(ia, lo, antwort, teilweise = false) {
   }
 }
 
+/** Teil-Feedback, das bei einteiligen Aufgaben auch oben im Ergebnis steht. */
+const FELDER_OBEN = ['felder', 'elemente', 'zeichen', 'bits', 'anteil', 'buchstaben', 'diagnose'];
+
 /**
  * Ganze Aufgabe prüfen.
  * @param {object} aufgabe vollständige Aufgabe (mit loesung)
  * @param {*} antwort Einzelantwort oder (mehrteilig) Liste von Antworten
- * @param {{teilweise?: boolean, teil?: number}} [opt]
+ * @param {{teilweise?: boolean, teil?: number, diagnose?: boolean}} [opt]
  * @returns {{ok:boolean, leer:boolean, teile:object[], vollstaendig?:boolean, ersteFalschePosition?:number|null, antworten:any[]}}
  */
 function pruefeAufgabe(aufgabe, antwort, opt = {}) {
@@ -296,12 +330,16 @@ function pruefeAufgabe(aufgabe, antwort, opt = {}) {
     const t = mehrteilig ? Number(opt.teil ?? 0) : 0;
     if (!Number.isInteger(t) || t < 0 || t >= ts.length) throw new AntwortFehler('Ungültiger Teil.');
     // Bei der Schrittprüfung ist „antwort“ immer die Antwort des einen Teils „teil“.
-    const a = bereinige(ts[t].interaktion, antwort);
+    const a = bereinige(ts[t].interaktion, antwort, { aufgabe });
     // Bug-Hunt gestuft: Teil a) (Zeilenwahl) einer mehrteiligen Aufgabe darf einzeln geprüft werden, bevor die
     // späteren Teile (die die Zeile verraten) angezeigt werden – Ergebnis nur richtig/falsch, nie „vollständig“.
     const bugHuntTeilA = mehrteilig && t === 0 && ts.length > 1 && F.artVon(ts[0].interaktion) === 'lines';
-    const r = bugHuntTeilA ? { ok: pruefeLines(ts[0].interaktion, ts[0].loesung, a).ok } : pruefeTeil(ts[t].interaktion, ts[t].loesung, a, true);
-    return { ok: r.ok, teilweise: true, teil: t, vollstaendig: !!r.vollstaendig, ersteFalschePosition: r.ersteFalschePosition ?? null, leer: false, antworten: [a] };
+    const r = bugHuntTeilA
+      ? { ok: pruefeLines(ts[0].interaktion, ts[0].loesung, a).ok }
+      : pruefeTeil(ts[t].interaktion, ts[t].loesung, a, true, { diagnose: opt.diagnose, aufgabe });
+    const out = { ok: r.ok, teilweise: true, teil: t, vollstaendig: !!r.vollstaendig, ersteFalschePosition: r.ersteFalschePosition ?? null, leer: false, antworten: [a] };
+    if (r.diagnose) out.diagnose = r.diagnose;
+    return out;
   }
   let roh;
   if (mehrteilig) {
@@ -311,16 +349,15 @@ function pruefeAufgabe(aufgabe, antwort, opt = {}) {
   } else {
     roh = [antwort];
   }
-  const antworten = ts.map((t, i) => bereinige(t.interaktion, roh[i]));
+  const antworten = ts.map((t, i) => bereinige(t.interaktion, roh[i], { aufgabe }));
   const leer = ts.every((t, i) => istLeer(t.interaktion, antworten[i]));
-  const ergebnisse = ts.map((t, i) => pruefeTeil(t.interaktion, t.loesung, antworten[i], false));
+  const ergebnisse = ts.map((t, i) => pruefeTeil(t.interaktion, t.loesung, antworten[i], false, { diagnose: opt.diagnose, aufgabe }));
   const ok = ergebnisse.every((r) => r.ok);
   const out = { ok, leer, teile: ergebnisse, antworten };
   if (!mehrteilig) {
     const r = ergebnisse[0];
     if ('ersteFalschePosition' in r) out.ersteFalschePosition = r.ersteFalschePosition;
-    if (r.felder) out.felder = r.felder;
-    if (r.elemente) out.elemente = r.elemente;
+    for (const k of FELDER_OBEN) if (r[k] !== undefined) out[k] = r[k];
   }
   return out;
 }
@@ -356,8 +393,10 @@ function musterantwort(ia, lo) {
       return (lo && lo.zellen) || [];
     case 'adtsim':
       return (lo && lo.inhalt) || [];
-    default:
-      return null;
+    default: {
+      const v = F.interaktionVertrag(F.artVon(ia));
+      return v ? v.muster(ia, lo) : null;
+    }
   }
 }
 
@@ -384,6 +423,7 @@ module.exports = {
   feldRichtig,
   pruefeTeil,
   pruefeAufgabe,
+  folgenPruefung,
   musterantwort,
   musterantwortAufgabe,
   antwortKurz

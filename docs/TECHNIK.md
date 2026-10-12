@@ -223,9 +223,9 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 
 ```js
 registriereInteraktion('chiffre', {
-  bereinige(ia, antwort) {},              // → kanonische Antwort; wirft AntwortFehler (400) bei Unsinn
+  bereinige(ia, antwort, kontext) {},     // → kanonische Antwort; wirft AntwortFehler (400) bei Unsinn; kontext.aufgabe = ganze Aufgabe
   istLeer(ia, a) {},                      // → bool (leere Antwort = kein Fehlversuch)
-  pruefe(ia, lo, a, teilweise) {},        // → { ok, zeichen?, bits?, anteil?, felder?, ersteFalschePosition?, vollstaendig?, diagnose? }
+  pruefe(ia, lo, a, teilweise, { diagnose, aufgabe }) {}, // → { ok, zeichen?, bits?, anteil?, felder?, ersteFalschePosition?, vollstaendig?, diagnose? }
   muster(ia, lo) {},                      // → Musterantwort (Validator-Konsistenzprobe, Lehrkraft-Vorschau)
   validiere(ia, lo, aufgabe, ort, fa, wa) {}, // Struktur + Neuberechnung
   schritt: true,                          // Schrittprüfung erlaubt?
@@ -235,6 +235,11 @@ registriereInteraktion('chiffre', {
 ```
 
 `diagnose` wird nur berechnet, wenn der Aufrufer `{ diagnose: true }` übergibt (Level, Training, Gast – nie Boss-Kampf).
+Der Prüfer (`checker.js`, K02) ruft `bereinige(ia, antwort, { aufgabe })` und `pruefe(…, teilweise, { diagnose, aufgabe })`;
+ohne `diagnose: true` (oder bei richtiger Antwort, oder leerer Liste) entfernt er `diagnose` aus dem Ergebnis. Bei
+einteiligen Aufgaben stehen `felder`, `elemente`, `zeichen`, `bits`, `anteil`, `buchstaben`, `diagnose` auch oben im
+Ergebnis. Für **Kern**-Arten liefert `format.registriereDiagnose(art, fn(ia, lo, antwort, ergebnis) → Diagnose[])` eine
+Zusatzdiagnose (z. B. `gaps`, Delta §9.6).
 Blöcke (Server): `registriereBlock('quadrat', { texte, validiere(b, fe, w) })`.
 
 ### 4.4 Client-Hooks

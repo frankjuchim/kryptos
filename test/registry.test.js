@@ -40,3 +40,35 @@ test('registriereNorm und registriereDiagnose', () => {
   assert.equal(F.diagnoseFuer('order'), null);
   assert.throws(() => F.registriereDiagnose('lines', fn), /bereits registriert/);
 });
+
+const C = require('../src/content/checker');
+const TESTZAHL = {
+  bereinige(ia, a, kontext) { if (!kontext || !kontext.aufgabe) throw new Error('kontext fehlt'); const n = Number(a); if (!Number.isInteger(n)) throw new C.AntwortFehler('Zahl erwartet.'); return n; },
+  istLeer: (ia, a) => a === 0,
+  pruefe(ia, lo, a, teilweise, opt) { const r = { ok: a === lo.wert, zeichen: [a === lo.wert] }; if (!r.ok && opt.diagnose) r.diagnose = [{ p: 'P2', code: 'test', text: 'Test' }]; return r; },
+  muster: (ia, lo) => lo.wert,
+  validiere() {}
+};
+F.registriereInteraktion('testzahl', TESTZAHL);
+const A = { id: 'T', interaktion: { kind: 'testzahl' }, loesung: { wert: 7 } };
+
+test('Prüfer: registrierte Interaktion, Feedback oben, Diagnose nur auf Wunsch und nur bei falsch', () => {
+  assert.deepEqual(C.pruefeAufgabe(A, '7'), { ok: true, leer: false, teile: [{ ok: true, zeichen: [true] }], antworten: [7], zeichen: [true] });
+  const f = C.pruefeAufgabe(A, 3);
+  assert.equal(f.ok, false);
+  assert.equal(f.diagnose, undefined, 'ohne { diagnose: true } keine Diagnose');
+  assert.deepEqual(C.pruefeAufgabe(A, 3, { diagnose: true }).diagnose, [{ p: 'P2', code: 'test', text: 'Test' }]);
+  assert.equal(C.pruefeAufgabe(A, 0).leer, true);
+  assert.throws(() => C.pruefeAufgabe(A, 'x'), (e) => e.status === 400);
+  assert.deepEqual(C.musterantwortAufgabe(A), 7);
+  assert.throws(() => C.pruefeAufgabe({ interaktion: { kind: 'gibtsnicht' }, loesung: {} }, 1), /Unbekannte Interaktion/);
+});
+
+test('Prüfer: Zusatzdiagnose für Kern-Arten nur mit { diagnose: true }, nur bei falsch, nur wenn nicht leer', () => {
+  F.registriereDiagnose('choice', (ia, lo, a) => (a.includes('b') ? [{ p: 'P5', code: 'test', text: 'T' }] : []));
+  const W = { interaktion: { kind: 'choice', optionen: [{ id: 'a', md: 'a' }, { id: 'b', md: 'b' }, { id: 'c', md: 'c' }] }, loesung: { richtig: ['a'] } };
+  assert.deepEqual(C.pruefeAufgabe(W, ['b'], { diagnose: true }).diagnose, [{ p: 'P5', code: 'test', text: 'T' }]);
+  assert.equal(C.pruefeAufgabe(W, ['b']).diagnose, undefined);
+  assert.equal(C.pruefeAufgabe(W, ['c'], { diagnose: true }).diagnose, undefined, 'leere Diagnose wird weggelassen');
+  assert.equal(C.pruefeAufgabe(W, ['a'], { diagnose: true }).diagnose, undefined, 'richtig → keine Diagnose');
+});
