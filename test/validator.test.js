@@ -482,3 +482,10 @@ test('K4: Falle bzw. Fehlmuster-Falle passt nicht zur Kategorie → Hinweis', ()
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*fehlmuster.*Falle P9 passt nicht zur Kategorie fremde-chiffre/);
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P9'; }, /W9-L5-09.*_fehlmuster.*Falle P9 passt nicht zur Kategorie substitution-mono/);
 });
+
+test('Level ↔ Aufgabe: kuer-Aufgabe in einem kern-Level ist erlaubt (Delta §3, Tabelle „Regeln Level ↔ Aufgabe“)', () => {
+  const w = basis();
+  aufgabe(w, 'W9-L1-01').niveau = 'kuer';
+  assert.deepEqual(fehlerVon(w), []);
+  erwarteFehler((x) => { aufgabe(x, 'W9-L4-01').niveau = 'kern'; }, /Level-Niveau kuer erlaubt nur kuer-Aufgaben/);
+});
