@@ -214,7 +214,7 @@ Kerndateien; doppelte Registrierung wirft einen Fehler (Startabbruch).
 | `format.js` | `registriereNorm(name, fn)` | `krypto`, `bits` |
 | `validator.js` | `registriereValidierung({ welt?, level?, aufgabe?, boss?, dateien? })` | Zusatzprüfungen (Delta §11); Signatur wie intern `(daten, f, w, stats)` |
 | `lernen.js` | `optionen.fallenAusErgebnis(aufgabe, erg) → string[]` | Diagnose-Zählung (Std.: `aufgabe.fallen`) |
-| `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
+| `lernen.js`, `stand.js`, `boss.js`, `auswertung.js` | `optionen.sichtbar(level\|aufgabe, einst)`, `optionen.rangrelevant(aufgabe, einst)`, `optionen.bossPool(pool, einst)` | Niveau (§8), Std.: alles sichtbar/rangrelevant |
 | `stand.js` | `optionen.zusatzAbzeichen(katalog) → Definition[]`, `optionen.zusatzBedingungen(sid, db) → Set` | Artefakte, Funkraum/Arena-Abzeichen |
 | `services/index.js` | `optionen` wird aus `src/krypto/index.js → dienstOptionen()` gefüllt | |
 
@@ -356,7 +356,7 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | Blöcke und Schlüssel als Zahlen 0–FFFF; `protokoll: true` liefert `{ ergebnis, runden: [{ runde, eingang, schluessel, nachXor, nachSBox, nachTransposition }] }` (Runden-Labor) |
 | `kryptos16.entschluesseln(…)` | Umkehrung |
 | `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird: `[{ runde, positionen, anzahl }]`; Bitnummern 1 (b1, höchstwertig) … 16 |
-| `kryptos16.modus(bloecke, schluessel, 'ECB'|'CBC', iv, { richtung = 'ver', runden = 4 })` | Betriebsmodi für das Pixelbild-Experiment und die Fehlerfortpflanzung (W3-L2-07); `iv` nur bei CBC (Pflicht) |
+| `kryptos16.modus(bloecke, schluessel, 'ECB'\|'CBC', iv, { richtung = 'ver', runden = 4 })` | Betriebsmodi für das Pixelbild-Experiment und die Fehlerfortpflanzung (W3-L2-07); `iv` nur bei CBC (Pflicht) |
 | `kryptos16.SBOX`, `kryptos16.SBOX_INV`, `kryptos16.sbox(block16, richtung)`, `kryptos16.transponiere(block16)` | Tabellen und Einzelschritte (Runden-Labor, Aufgaben W3-L2-02/03) |
 | `kryptos16.textZuBloecken(text)` / `kryptos16.bloeckeZuText(bloecke)` | ASCII → 16-Bit-Blöcke mit Auffüllen nach §0a.7 (immer: ungerade → Byte `01`, gerade → Block `0202`) bzw. zurück mit Prüfung und Entfernen der Füllbytes |
 | `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` mit `schritte: [{ buchstabe, w, vorher, summe, nachher }]` (Rundentabelle) |
@@ -398,17 +398,17 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 
 | Funktion | Semantik |
 |---|---|
-| `ggT(a, b)` | euklidisch, ≥ 0 |
-| `erweiterterEuklid(a, b)` | `{ ggt, x, y, schritte: [{ a, b, q, r, x, y }] }` mit `a·x + b·y = ggt` (Tabelle wie im Unterricht) |
-| `inverses(a, m)` | `a⁻¹ mod m` oder `null` |
-| `modpow(basis, exponent, modul, { protokoll = false })` | schnelles Potenzieren (BigInt intern); `protokoll` liefert die Quadrieren-und-Multiplizieren-Tabelle |
+| `ggT(a, b)` | euklidisch, ≥ 0 (ganze Zahlen, auch negativ) |
+| `erweiterterEuklid(a, b)` | `{ ggt, x, y, schritte: [{ a, b, q, r, x, y }] }` mit `a·x + b·y = ggt` (Tabelle wie im Unterricht, W4 Akte W4·K3: letzte Zeile `(ggt, 0, null, null, 1, 0)`, x/y von unten nach oben); a, b ≥ 0 |
+| `inverses(a, m)` | `a⁻¹ mod m` (kleinster nicht negativer Rest) oder `null`; m ≥ 2 |
+| `modpow(basis, exponent, modul, { protokoll = false })` | schnelles Potenzieren (BigInt intern); `protokoll` liefert die Quadrieren-und-Multiplizieren-Tabelle `{ wert, schritte: [{ exponent, basis, ergebnis }] }` wie der Trace `potenzMod` (W4 Akte W4·K3: 37⁴³ mod 77 → 7 Zeilen) |
 | `istPrim(n)` | Probedivision (n < 10⁷) |
 | `rsa.schluessel(p, q, e = null)` | `{ N, phi, e, d }`; `e` Std. = kleinstes e ≥ 3 mit ggT(e, φ) = 1; prüft p ≠ q prim |
 | `rsa.verschluesseln(m, e, N)` / `rsa.entschluesseln(c, d, N)` | `m < N` Pflicht |
 | `dh.oeffentlich(g, geheim, p)` | `g^geheim mod p` |
 | `dh.gemeinsam(fremdOeffentlich, geheim, p)` | `B^a mod p` |
-| `dh.dlogKlein(g, A, p)` | kleinstes x ≥ 1 mit `g^x ≡ A` (p < 10 000, Brute Force – für Eve-Prüfung im Funkraum) |
-| `schluesselanzahl(n)` | `{ symmetrisch: n(n−1)/2, asymmetrisch: 2n }` |
+| `dh.dlogKlein(g, A, p)` | kleinstes x ≥ 1 mit `g^x ≡ A` (p < 10 000, Brute Force – für Eve-Prüfung im Funkraum); keins → `null` |
+| `schluesselanzahl(n)` | `{ symmetrisch: n(n−1)/2, asymmetrisch: 2n }`; n ≥ 2 |
 
 **Verfahrens-Objekt und Baukasten**
 
@@ -419,7 +419,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `verfahren.anwenden(v, text, richtung, { basis = 1, ausgabe = 'buchstaben' })` | Dispatcher auf die Einzelfunktionen; `frei` → `KryptoFehler` |
 | `verfahren.varianten(v, text, richtung, optionen)` | Kandidaten typischer Fehlrechnungen `[{ p, code, text }]` (für die Diagnose, Delta §9.2) |
 | `baukasten.STUFEN` | Stufen-Katalog (§9.2) mit `eingabe`/`ausgabe` (`buchstaben`/`bytes`), Parameter-Schema |
-| `baukasten.pruefe(verfahren, schluessel)` | `{ ok, fehler: [], hinweise: [{ p: 'P7'|'P8', text }] }` (§9.3) |
+| `baukasten.pruefe(verfahren, schluessel)` | `{ ok, fehler: [], hinweise: [{ p: 'P7'\|'P8', text }] }` (§9.3) |
 | `baukasten.verschluesseln(verfahren, schluessel, klartext, { protokoll })` | `{ geheimtext, zwischen: [...] }` |
 | `baukasten.entschluesseln(verfahren, schluessel, geheimtext)` | Stufen rückwärts, jede invertiert |
 
@@ -492,7 +492,7 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 2 | `fehler=abgebrochen` | `302` auf `/?abgebrochen=1` (Startseite zeigt Hinweis + Gastmodus) |
 | 2 | anderer `fehler` | `401` wie Schritt 1, Grund `portal` |
 | 3 | `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL, aud: PLATTFORM_ID, maxDauerSek: 120, jetztSek })` | `401`, Grund = `p.grund` (`format`, `alg`, `signatur`, `version`, `iss`, `aud`, `zeit`, `dauer`, `abgelaufen`, `jti`) |
-| 4 | `jti` merken: `INSERT INTO sso_jti (jti, exp) VALUES ('s:'||jti, exp)`; Konflikt → schon verwendet | `401`, Grund `wiederverwendet` |
+| 4 | `jti` merken: `INSERT INTO sso_jti (jti, exp) VALUES ('s:'\|\|jti, exp)`; Konflikt → schon verwendet | `401`, Grund `wiederverwendet` |
 | 5 | Inhalt: `sub` `^[asl]:\d+$`; `rolle` ∈ {schueler, lehrkraft, superadmin} **und passend zum Präfix** (s/l/a); `name` Text 1–60; `kurse` Liste ≤ 200 mit `id` `^k:\d+$`, `name` 1–80, `rolle` ∈ {mitglied, lehrkraft} (Schüler nur `mitglied`, sonst nur `lehrkraft`) | `401`, Grund `inhalt` |
 | 6 | Upsert + Kursabgleich (§6.6) in **einer** Transaktion | – |
 | 7 | Schüler ohne aktive Teilnahme in einem aktiven Kurs | `403`, Seite `fehler/kurs-gesperrt.html` (keine Sitzung) |

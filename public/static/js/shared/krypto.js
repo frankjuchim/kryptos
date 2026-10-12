@@ -1239,6 +1239,148 @@
     return s;
   }
 
+  // ───────────────────────────── Zahlentheorie, asymmetrisch, Schlüsselzahl ─────────────────────────────
+
+  /** erweiterter Euklid in Tabellenform (W4 Akte W4·K3): Zeilen (a, b, q, r), letzte Zeile (ggT, 0); x, y von unten */
+  function erweiterterEuklid(a, b) {
+    pruefeGanzzahl(a, 'a');
+    pruefeGanzzahl(b, 'b');
+    if (a < 0 || b < 0) throw new KryptoFehler('Der erweiterte Euklid erwartet Zahlen ≥ 0.');
+    const schritte = [];
+    let x = a;
+    let y = b;
+    while (y !== 0) {
+      schritte.push({ a: x, b: y, q: Math.floor(x / y), r: x % y });
+      [x, y] = [y, x % y];
+    }
+    schritte.push({ a: x, b: 0, q: null, r: null, x: 1, y: 0 });
+    for (let i = schritte.length - 2; i >= 0; i--) {
+      const u = schritte[i + 1];
+      schritte[i].x = u.y;
+      schritte[i].y = u.x - schritte[i].q * u.y;
+    }
+    return { ggt: x, x: schritte[0].x, y: schritte[0].y, schritte };
+  }
+
+  /** a⁻¹ mod m (kleinster nicht negativer Rest) oder null, wenn ggT(a, m) ≠ 1 */
+  function inverses(a, m) {
+    pruefeGanzzahl(a, 'a');
+    pruefeGanzzahl(m, 'Modul');
+    if (m < 2) throw new KryptoFehler('Der Modul muss mindestens 2 sein.');
+    const e = erweiterterEuklid(mod(a, m), m);
+    return e.ggt === 1 ? mod(e.x, m) : null;
+  }
+
+  /** schnelles Potenzieren (BigInt intern); protokoll: Tabelle (exponent, basis, ergebnis) wie potenzMod (W4 K3) */
+  function modpow(basis, exponent, modul, { protokoll = false } = {}) {
+    pruefeGanzzahl(basis, 'Basis');
+    pruefeGanzzahl(exponent, 'Exponent');
+    pruefeGanzzahl(modul, 'Modul');
+    if (exponent < 0) throw new KryptoFehler('Der Exponent darf nicht negativ sein.');
+    if (modul < 1) throw new KryptoFehler('Der Modul muss mindestens 1 sein.');
+    const m = BigInt(modul);
+    let b = ((BigInt(basis) % m) + m) % m;
+    let e = BigInt(exponent);
+    let r = 1n % m;
+    const schritte = [{ exponent: Number(e), basis: Number(b), ergebnis: Number(r) }];
+    while (e > 0n) {
+      if (e & 1n) r = (r * b) % m;
+      b = (b * b) % m;
+      e >>= 1n;
+      if (protokoll) schritte.push({ exponent: Number(e), basis: Number(b), ergebnis: Number(r) });
+    }
+    return protokoll ? { wert: Number(r), schritte } : Number(r);
+  }
+
+  /** Primzahltest durch Probedivision (n < 10⁷) */
+  function istPrim(n) {
+    pruefeGanzzahl(n, 'Zahl');
+    if (n >= 1e7) throw new KryptoFehler('Der Primzahltest ist nur für Zahlen unter 10 000 000 vorgesehen.');
+    if (n < 2) return false;
+    if (n % 2 === 0) return n === 2;
+    for (let t = 3; t * t <= n; t += 2) if (n % t === 0) return false;
+    return true;
+  }
+
+  function pruefeNichtNegativ(n, name) {
+    pruefeGanzzahl(n, name);
+    if (n < 0) throw new KryptoFehler(`${name} darf nicht negativ sein.`);
+    return n;
+  }
+
+  const rsa = {
+    /** { N, phi, e, d }; e Std. = kleinstes e ≥ 3 mit ggT(e, φ) = 1; p ≠ q prim */
+    schluessel(p, q, e = null) {
+      if (!istPrim(p) || !istPrim(q)) throw new KryptoFehler('p und q müssen Primzahlen sein.');
+      if (p === q) throw new KryptoFehler('p und q müssen verschieden sein.');
+      const N = p * q;
+      const phi = (p - 1) * (q - 1);
+      if (e === null || e === undefined) {
+        e = 3;
+        while (e < phi && ggT(e, phi) !== 1) e++;
+      }
+      pruefeGanzzahl(e, 'e');
+      if (e < 2 || e >= phi || ggT(e, phi) !== 1) throw new KryptoFehler('e muss zwischen 2 und φ(N) − 1 liegen und teilerfremd zu φ(N) sein.');
+      return { N, phi, e, d: inverses(e, phi) };
+    },
+    verschluesseln(m, e, N) {
+      pruefeNichtNegativ(m, 'Die Klarzahl');
+      pruefeGanzzahl(N, 'N');
+      if (m >= N) throw new KryptoFehler('Die Klarzahl muss kleiner als N sein.');
+      return modpow(m, pruefeNichtNegativ(e, 'e'), N);
+    },
+    entschluesseln(c, d, N) {
+      pruefeNichtNegativ(c, 'Die Geheimzahl');
+      pruefeGanzzahl(N, 'N');
+      if (c >= N) throw new KryptoFehler('Die Geheimzahl muss kleiner als N sein.');
+      return modpow(c, pruefeNichtNegativ(d, 'd'), N);
+    },
+  };
+
+  function pruefeDhModul(p) {
+    pruefeGanzzahl(p, 'p');
+    if (p < 2) throw new KryptoFehler('Der Modul p muss mindestens 2 sein.');
+    return p;
+  }
+
+  const dh = {
+    /** g^geheim mod p */
+    oeffentlich(g, geheim, p) {
+      return modpow(g, pruefeNichtNegativ(geheim, 'Die geheime Zahl'), pruefeDhModul(p));
+    },
+    /** B^a mod p */
+    gemeinsam(fremdOeffentlich, geheim, p) {
+      return modpow(fremdOeffentlich, pruefeNichtNegativ(geheim, 'Die geheime Zahl'), pruefeDhModul(p));
+    },
+    /** kleinstes x ≥ 1 mit g^x ≡ A (mod p), p < 10 000 (Brute Force); null, wenn es keins gibt */
+    dlogKlein(g, A, p) {
+      pruefeDhModul(p);
+      if (p >= 10000) throw new KryptoFehler('Der diskrete Logarithmus wird nur für p < 10 000 durchprobiert.');
+      pruefeGanzzahl(g, 'g');
+      pruefeGanzzahl(A, 'A');
+      const ziel = mod(A, p);
+      let w = 1;
+      for (let x = 1; x <= p; x++) {
+        w = (w * mod(g, p)) % p;
+        if (w === ziel) return x;
+      }
+      return null;
+    },
+  };
+
+  /** n Teilnehmende: symmetrisch n(n − 1)/2 Schlüssel, asymmetrisch 2n (n Schlüsselpaare) */
+  function schluesselanzahl(n) {
+    pruefeGanzzahl(n, 'Teilnehmerzahl');
+    if (n < 2) throw new KryptoFehler('Es braucht mindestens 2 Teilnehmende.');
+    return { symmetrisch: (n * (n - 1)) / 2, asymmetrisch: 2 * n };
+  }
+
+  function ggTOeffentlich(a, b) {
+    pruefeGanzzahl(a, 'a');
+    pruefeGanzzahl(b, 'b');
+    return ggT(a, b);
+  }
+
   return {
     // Grundlagen
     ALPHABET,
@@ -1315,5 +1457,14 @@
     kasiski,
     verschiebungSchaetzen,
     chiQuadrat,
+    // Zahlentheorie, asymmetrisch, Schlüsselzahl
+    ggT: ggTOeffentlich,
+    erweiterterEuklid,
+    inverses,
+    modpow,
+    istPrim,
+    rsa,
+    dh,
+    schluesselanzahl,
   };
 });

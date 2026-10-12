@@ -1620,3 +1620,184 @@ test('chiQuadrat', () => {
   const erwartet = K.ALPHABET.split('').reduce((s, c) => s + (h[c] - (3 * K.DEUTSCH[c]) / 100) ** 2 / ((3 * K.DEUTSCH[c]) / 100), 0);
   assert.ok(Math.abs(K.chiQuadrat('EEN') - erwartet) < 1e-9);
 });
+
+// ───────────────────────────── Task 15: Zahlentheorie, RSA, DH ─────────────────────────────
+
+test('rsa (77,7)/(77,43)', () => {
+  assert.equal(K.rsa.verschluesseln(9, 7, 77), 37);
+  assert.equal(K.rsa.entschluesseln(37, 43, 77), 9);
+  assert.equal(K.rsa.schluessel(7, 11, 7).d, 43);
+});
+
+test('dh p=17 g=3 a=4 b=6', () => {
+  assert.equal(K.dh.oeffentlich(3, 4, 17), 13);
+  assert.equal(K.dh.oeffentlich(3, 6, 17), 15);
+  assert.equal(K.dh.gemeinsam(15, 4, 17), 16);
+  assert.equal(K.dh.dlogKlein(3, 13, 17), 4);
+});
+
+test('schluesselanzahl', () => {
+  assert.deepEqual(K.schluesselanzahl(5), { symmetrisch: 10, asymmetrisch: 10 });
+  assert.deepEqual(K.schluesselanzahl(6), { symmetrisch: 15, asymmetrisch: 12 });
+});
+
+test('inverses', () => {
+  assert.equal(K.inverses(7, 60), 43);
+  assert.equal(K.inverses(2, 26), null);
+});
+
+test('modpow', () => {
+  assert.equal(K.modpow(9, 7, 77), 37);
+  const p = K.modpow(9, 7, 77, { protokoll: true });
+  assert.equal(p.wert, 37);
+  assert.ok(p.schritte.length >= 3);
+});
+
+test('schluesselanzahl: SPEC W4 §12 (Tabellen n = 2 … 30, Boss, Papier-Boss)', () => {
+  const soll = { 2: [1, 4], 3: [3, 6], 4: [6, 8], 5: [10, 10], 6: [15, 12], 7: [21, 14], 8: [28, 16], 9: [36, 18], 10: [45, 20], 12: [66, 24], 30: [435, 60] };
+  for (const [n, [s, a]] of Object.entries(soll)) assert.deepEqual(K.schluesselanzahl(Number(n)), { symmetrisch: s, asymmetrisch: a }, `n = ${n}`);
+  assert.equal(K.schluesselanzahl(12).symmetrisch - K.schluesselanzahl(12).asymmetrisch, 42); // W4-B-06
+  // W4-B-13: kleinstes n mit n(n − 1)/2 > 2n
+  let n = 2;
+  while (K.schluesselanzahl(n).symmetrisch <= K.schluesselanzahl(n).asymmetrisch) n++;
+  assert.equal(n, 6);
+  assert.throws(() => K.schluesselanzahl(1), K.KryptoFehler);
+  assert.throws(() => K.schluesselanzahl(2.5), K.KryptoFehler);
+});
+
+test('ggT, inverses: SPEC W1 §12 (mod 26/29), W4 §12', () => {
+  assert.equal(K.ggT(60, 7), 1);
+  assert.equal(K.ggT(42, 63), 21);
+  assert.equal(K.ggT(-12, 18), 6);
+  assert.equal(K.ggT(0, 0), 0);
+  // W1: Inverse mod 26 und mod 29
+  assert.deepEqual([1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25].map((a) => K.inverses(a, 26)), [1, 9, 21, 15, 3, 19, 7, 23, 11, 5, 17, 25]);
+  const inv29 = { 1: 1, 2: 15, 3: 10, 4: 22, 5: 6, 6: 5, 7: 25, 8: 11, 9: 13, 12: 17, 14: 27, 16: 20, 18: 21, 19: 26, 23: 24, 28: 28 };
+  for (const [a, x] of Object.entries(inv29)) assert.equal(K.inverses(Number(a), 29), x, `${a}⁻¹ mod 29`);
+  assert.equal(K.inverses(13, 26), null);
+  // W4: 5⁻¹ mod 48 = 29, 7⁻¹ mod 48 = 7, 5⁻¹ mod 192 = 77, 7⁻¹ mod 96 = 55, 3⁻¹ mod 32 = 11, 5⁻¹ mod 17 = 7, 3⁻¹ mod 26 = 9
+  assert.deepEqual([[5, 48], [7, 48], [5, 192], [7, 96], [3, 32], [5, 17], [8, 29], [3, 26], [27, 352]].map(([a, m]) => K.inverses(a, m)), [29, 7, 77, 55, 11, 7, 11, 9, 339]);
+  assert.equal(K.inverses(-17, 60), K.inverses(43, 60)); // negative Zahl: kleinster nicht negativer Rest
+  assert.throws(() => K.inverses(3, 0), K.KryptoFehler);
+});
+
+test('erweiterterEuklid: Euklid-Tabelle (SPEC W4 Akte W4·K3, W4-K3-02/03)', () => {
+  const r = K.erweiterterEuklid(60, 7);
+  assert.equal(r.ggt, 1);
+  assert.deepEqual([r.x, r.y], [2, -17]);
+  assert.deepEqual(r.schritte.map((s) => [s.a, s.b, s.q, s.r, s.x, s.y]), [
+    [60, 7, 8, 4, 2, -17], [7, 4, 1, 3, -1, 2], [4, 3, 1, 1, 1, -1], [3, 1, 3, 0, 0, 1], [1, 0, null, null, 1, 0],
+  ]);
+  assert.equal(K.mod(r.y, 60), 43);
+  const r2b = K.erweiterterEuklid(192, 5);
+  assert.deepEqual([r2b.x, r2b.y], [-2, 77]);
+  assert.deepEqual(r2b.schritte.slice(0, 3).map((s) => [s.a, s.b, s.q, s.r]), [[192, 5, 38, 2], [5, 2, 2, 1], [2, 1, 2, 0]]);
+  for (const [phi, e, d] of [[60, 7, 43], [192, 5, 77], [96, 7, 55], [48, 5, 29]]) assert.equal(K.mod(K.erweiterterEuklid(phi, e).y, phi), d);
+  const g = K.erweiterterEuklid(42, 63);
+  assert.equal(g.ggt, 21);
+  assert.equal(42 * g.x + 63 * g.y, 21);
+  assert.throws(() => K.erweiterterEuklid(-3, 5), K.KryptoFehler);
+});
+
+test('modpow: Quadrierketten und Trace potenzMod (SPEC W4 Akte W4·K3, W4-K3-04/06)', () => {
+  const p = K.modpow(37, 43, 77, { protokoll: true });
+  assert.equal(p.wert, 9);
+  assert.deepEqual(p.schritte.map((s) => [s.exponent, s.basis, s.ergebnis]), [[43, 37, 1], [21, 60, 37], [10, 58, 64], [5, 53, 64], [2, 37, 4], [1, 60, 4], [0, 58, 9]]);
+  assert.deepEqual([2, 4, 8, 16, 32].map((e) => K.modpow(37, e, 77)), [60, 58, 53, 37, 60]);
+  assert.deepEqual([2, 4, 8, 13].map((e) => K.modpow(3, e, 17)), [9, 13, 16, 12]);
+  assert.deepEqual(Array.from({ length: 16 }, (_, i) => K.modpow(3, i + 1, 17)), [3, 9, 10, 13, 5, 15, 11, 16, 14, 8, 7, 4, 12, 2, 6, 1]);
+  assert.deepEqual(Array.from({ length: 18 }, (_, i) => K.modpow(2, i + 1, 19)), [2, 4, 8, 16, 13, 7, 14, 9, 18, 17, 15, 11, 3, 6, 12, 5, 10, 1]);
+  assert.equal(K.modpow(3, 4, 7), 4); // WU-W4-05
+  assert.equal(K.modpow(2, 3, 15), 8); // WU-W4-10
+  assert.equal(K.modpow(5, 0, 7), 1);
+  assert.equal(K.modpow(5, 3, 1), 0);
+  assert.equal(K.modpow(-2, 3, 7), 6);
+  // große Zahlen ohne Überlauf (BigInt intern)
+  assert.equal(K.modpow(123456789, 987654321, 1000000007), Number(((b, e, m) => { let r = 1n; b %= m; while (e > 0n) { if (e & 1n) r = (r * b) % m; b = (b * b) % m; e >>= 1n; } return r; })(123456789n, 987654321n, 1000000007n)));
+  assert.throws(() => K.modpow(2, -1, 7), K.KryptoFehler);
+  assert.throws(() => K.modpow(2, 3, 0), K.KryptoFehler);
+});
+
+test('istPrim', () => {
+  assert.deepEqual(Array.from({ length: 30 }, (_, i) => i).filter(K.istPrim), [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+  assert.equal(K.istPrim(101), true);
+  assert.equal(K.istPrim(391), false); // 17 · 23
+  assert.equal(K.istPrim(9999991), true);
+  assert.throws(() => K.istPrim(10000000), K.KryptoFehler);
+  assert.throws(() => K.istPrim(2.5), K.KryptoFehler);
+});
+
+test('rsa: SPEC W4 §12, Video 05, W5 Signaturen', () => {
+  assert.deepEqual(K.rsa.schluessel(7, 11, 7), { N: 77, phi: 60, e: 7, d: 43 });
+  assert.deepEqual(K.rsa.schluessel(5, 13, 5), { N: 65, phi: 48, e: 5, d: 29 });
+  assert.equal(K.rsa.schluessel(5, 13, 7).d, 7); // e = d: schwacher Schlüssel
+  assert.deepEqual(K.rsa.schluessel(3, 17, 3), { N: 51, phi: 32, e: 3, d: 11 });
+  assert.deepEqual(K.rsa.schluessel(17, 23, 27), { N: 391, phi: 352, e: 27, d: 339 });
+  assert.equal(K.rsa.schluessel(13, 17, 5).d, 77);
+  assert.equal(K.rsa.schluessel(7, 19, 5).d, 65); // Video 05
+  assert.equal(K.rsa.schluessel(7, 11).e, 7); // Standard: kleinstes e ≥ 3 mit ggT(e, φ) = 1
+  assert.equal(K.rsa.schluessel(5, 11).e, 3);
+  // Ver-/Entschlüsseln
+  assert.equal(K.rsa.verschluesseln(3, 5, 65), 48);
+  assert.equal(K.rsa.entschluesseln(48, 29, 65), 3);
+  assert.deepEqual([2, 4, 8, 16].map((e) => K.modpow(48, e, 65)), [29, 61, 16, 61]);
+  assert.equal(K.rsa.verschluesseln(4, 3, 51), 13);
+  assert.equal(K.rsa.entschluesseln(13, 11, 51), 4);
+  assert.deepEqual([2, 4, 8].map((e) => K.modpow(13, e, 51)), [16, 1, 1]);
+  assert.equal(K.rsa.verschluesseln(65, 27, 391), 333);
+  assert.equal(K.rsa.entschluesseln(333, 339, 391), 65);
+  assert.equal(K.rsa.verschluesseln(10, 5, 133), 117);
+  assert.equal(K.rsa.entschluesseln(117, 65, 133), 10);
+  for (let m = 0; m < 133; m++) assert.equal(K.rsa.entschluesseln(K.rsa.verschluesseln(m, 5, 133), 65, 133), m);
+  // Toy-Hybrid: Sitzungsschlüssel 5 → 47 → 5, dann Caesar 5
+  assert.equal(K.rsa.verschluesseln(5, 7, 77), 47);
+  assert.equal(K.rsa.entschluesseln(47, 43, 77), 5);
+  assert.equal(K.caesar('FGMTQ ZSLRT WLJS', K.rsa.entschluesseln(47, 43, 77), 'ent'), 'ABHOLUNGMORGEN');
+  // W5: Signaturen mit (55, 3)/(55, 27) über den KRYPTOS-Hash
+  const s = K.rsa.schluessel(5, 11, 3);
+  assert.equal(s.d, 27);
+  for (const [t, h, sig] of [['nebel', 9, 4], ['kisteliegtimhafen', 15, 5], ['treffenumfuenfuhr', 8, 2], ['ueberweisezweieuro', 18, 17]]) {
+    assert.equal(K.kryptosHash(t).wert, h, t);
+    assert.equal(K.rsa.entschluesseln(h, 27, 55), sig, `Signatur ${t}`);
+    assert.equal(K.rsa.verschluesseln(sig, 3, 55), h, `Prüfung ${t}`);
+  }
+  assert.equal(K.kryptosHash('kisteliegtimhaus').wert, 11);
+  assert.notEqual(K.rsa.verschluesseln(5, 3, 55), 11);
+  // Fehler
+  assert.throws(() => K.rsa.schluessel(7, 7), K.KryptoFehler); // p = q
+  assert.throws(() => K.rsa.schluessel(7, 9), K.KryptoFehler); // 9 nicht prim
+  assert.throws(() => K.rsa.schluessel(7, 11, 6), K.KryptoFehler); // ggT(6, 60) ≠ 1
+  assert.throws(() => K.rsa.verschluesseln(77, 7, 77), K.KryptoFehler); // m < N Pflicht
+  assert.throws(() => K.rsa.entschluesseln(-1, 43, 77), K.KryptoFehler);
+});
+
+test('dh: SPEC W4 §12, W5 §12 (MitM), Video 05', () => {
+  const dhWerte = (p, g, a, b) => {
+    const A = K.dh.oeffentlich(g, a, p);
+    const B = K.dh.oeffentlich(g, b, p);
+    return [A, B, K.dh.gemeinsam(B, a, p), K.dh.gemeinsam(A, b, p)];
+  };
+  assert.deepEqual(dhWerte(17, 3, 4, 6), [13, 15, 16, 16]);
+  assert.deepEqual(dhWerte(19, 2, 7, 5), [14, 13, 10, 10]);
+  assert.deepEqual(dhWerte(13, 2, 5, 8), [6, 9, 3, 3]);
+  assert.deepEqual(dhWerte(29, 2, 5, 8), [3, 24, 7, 7]); // Video 05
+  assert.deepEqual(dhWerte(11, 2, 4, 3), [5, 8, 4, 4]); // Boss Potenz-Tausch
+  assert.deepEqual(dhWerte(7, 3, 2, 4).slice(0, 3), [2, 4, 2]); // Warm-up
+  // Funkraum Runde 2 (p = 101, g = 2, a = 37, b = 58)
+  assert.deepEqual(dhWerte(101, 2, 37, 58).slice(0, 3), [55, 47, 82]);
+  // Altmaterial P06: p = 11, g = 7
+  assert.equal(new Set(Array.from({ length: 10 }, (_, i) => K.modpow(7, i + 1, 11))).size, 10);
+  // Man-in-the-Middle p = 23, g = 5, a = 6, b = 9, m = 4 (W5)
+  const M = K.dh.oeffentlich(5, 4, 23);
+  assert.deepEqual([K.dh.oeffentlich(5, 6, 23), K.dh.oeffentlich(5, 9, 23), M], [8, 11, 4]);
+  assert.deepEqual([K.dh.gemeinsam(M, 6, 23), K.dh.gemeinsam(M, 9, 23), K.dh.gemeinsam(11, 6, 23)], [2, 13, 9]);
+  // Video 05 Mallory m = 3: M = 8, Schlüssel mit Alice 27, mit Bob 20
+  assert.deepEqual([K.dh.oeffentlich(2, 3, 29), K.dh.gemeinsam(3, 3, 29), K.dh.gemeinsam(24, 3, 29)], [8, 27, 20]);
+  // Eve: diskreter Logarithmus durch Probieren
+  assert.equal(K.dh.dlogKlein(3, 12, 17), 13);
+  assert.equal(K.dh.dlogKlein(2, 3, 29), 5);
+  assert.equal(K.dh.dlogKlein(2, 14, 19), 7);
+  assert.equal(K.dh.dlogKlein(2, 3, 7), null); // 2 erzeugt mod 7 nur 2, 4, 1
+  assert.throws(() => K.dh.dlogKlein(2, 3, 10007), K.KryptoFehler); // p < 10 000
+  assert.throws(() => K.dh.oeffentlich(2, 3, 1), K.KryptoFehler);
+});
