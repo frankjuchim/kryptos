@@ -91,6 +91,66 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
     res.redirect(302, `${konfig.portalUrl}/sso/autorisieren?${q}`);
   });
 
+  r.get('/ende', (req, res) => {
+    res.set('Referrer-Policy', 'no-referrer');
+    res.set('Cache-Control', 'no-store');
+    const fehlerSeite = (status, datei, grund) => {
+      res.set('X-Kryptos-Grund', grund);
+      return res.status(status).sendFile(path.join(FEHLER_DIR, datei), { cacheControl: false, lastModified: false, etag: false });
+    };
+
+    // 1. state-Cookie lesen und sofort löschen
+    const roh = S.parseCookies(req.headers.cookie)[S.COOKIE_SSO_STATE];
+    const gemerkt = roh ? S.verify(roh, secret) : null;
+    res.clearCookie(S.COOKIE_SSO_STATE, { httpOnly: true, sameSite: 'lax', secure: req.secure, path: '/sso' });
+    if (!bereit()) return nichtEingerichtet(res);
+    const q = req.query;
+    const state = typeof q.state === 'string' ? q.state : '';
+    if (!gemerkt || typeof gemerkt.st !== 'string' || !state || !S.safeEqual(gemerkt.st, state)) {
+      return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'state');
+    }
+
+    // 2. Ablehnung durch das Portal
+    if (q.fehler !== undefined) {
+      if (q.fehler === 'keine_berechtigung') return fehlerSeite(403, 'keine-berechtigung.html', 'keine_berechtigung');
+      if (q.fehler === 'abgebrochen') return res.redirect(302, '/?abgebrochen=1');
+      return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'portal');
+    }
+
+    // 3. Token prüfen (Signatur, iss, aud, Zeiten, v)
+    const p = pruefe(q.token, konfig.schluessel, { iss: konfig.portalUrl, aud: konfig.plattformId, maxDauerSek: MAX_DAUER_SEK, jetztSek: jetztSek() });
+    if (!p.ok) return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', p.grund);
+    const t = p.nutzlast;
+
+    // 4. jti genau einmal (persistent in sso_jti)
+    if (!merkeJti(t.jti, t.exp)) return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'wiederverwendet');
+
+    // 5. Inhalt
+    if (!pruefeInhalt(t)) return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'inhalt');
+
+    // 6. Konto und Kursabgleich in einer Transaktion (TECHNIK §6.6)
+    const konto = db.transaction(() => {
+      const k = svc.konten.upsert({ sub: t.sub, rolle: t.rolle, name: t.name });
+      svc.kurse.upsertAusToken(t.sub, t.rolle, t.kurse);
+      return k;
+    })();
+
+    const ziel = sicheresZiel(q.ziel);
+    if (t.rolle === 'schueler') {
+      // 7. Schüler ohne aktive Teilnahme in einem aktiven Kurs: keine Sitzung
+      const teilnahme = sitzung.ersteTeilnahme(konto.sub);
+      if (!teilnahme) return fehlerSeite(403, 'kurs-gesperrt.html', 'kurs-gesperrt');
+      // 8. Sitzung; das jeweils andere Sitzungs-Cookie löschen (geteilte Tablets)
+      sitzung.setzeSchueler(req, res, konto, teilnahme.id);
+      sitzung.loescheLehrkraft(req, res);
+      // 9. Weiterleitung
+      return res.redirect(302, ziel === '/' ? '/spiel' : ziel);
+    }
+    sitzung.setzeLehrkraft(req, res, konto);
+    sitzung.loescheSchueler(req, res);
+    res.redirect(302, ziel === '/' ? '/lehrer' : ziel);
+  });
+
   r.get('/portal', (req, res) => {
     if (!konfig.portalUrl) return res.redirect(302, '/');
     res.redirect(302, konfig.portalUrl + '/');

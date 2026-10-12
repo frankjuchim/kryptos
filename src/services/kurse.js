@@ -1,10 +1,11 @@
 'use strict';
 // Kurse kommen vom Portal (TECHNIK §2.1 „kurse.js E“, §6.6): Kurs-ID k:<n>, Name aus dem Token, lokale id für die
 // Lehrkraft-API. Lehrkräfte sehen nur Kurse mit aktiver Zeile in kurs_lehrkraefte, der Superadmin alle.
-// Beitritt, Kurscodes, Anlegen, Umbenennen und Löschen gibt es hier nicht mehr (Portal). Der Upsert aus dem
-// SSO-Token (upsertAusToken) folgt mit /sso/ende (Plan Task 6).
+// Beitritt, Kurscodes, Anlegen, Umbenennen und Löschen gibt es hier nicht mehr (Portal). upsertAusToken gleicht beim
+// SSO Kurse, Teilnahmen bzw. kurs_lehrkraefte mit der Kursliste des Tokens ab (TECHNIK §6.6).
 
 const V = require('../validate');
+const S = require('../security');
 const { STANDARD_EINSTELLUNGEN } = require('../domain');
 
 const { ValidationError, NotFoundError } = V;
@@ -111,6 +112,65 @@ function createKurse(ctx) {
     return kursAnsicht(kursRow(k.id));
   }
 
+  /** Teilnahme-Name nach der Kernregel (2–30 Zeichen, Buchstaben/Ziffern/„ .-'“); Ungültiges wird bereinigt. */
+  function teilnahmeName(name, sub) {
+    try {
+      return V.schuelerName(name);
+    } catch {
+      let n = String(name)
+        .normalize('NFC')
+        .replace(/[^\p{L}\p{N} .\-']/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 30)
+        .trim();
+      if (n.length < 2) n = `Schüler ${sub.slice(2)}`.slice(0, 30);
+      return V.schuelerName(n);
+    }
+  }
+
+  /**
+   * Kursabgleich aus dem SSO-Token (TECHNIK §6.6 Schritte 2–4) – Aufruf innerhalb der Transaktion von /sso/ende,
+   * nach konten.upsert. Neue Kurse: Standard-Einstellungen, aktiv, neuer Board-Schlüssel; vorhandene: nur der Name
+   * (aktiv steuert allein die Verbund-API). Schüler: Teilnahmen der Token-Kurse aktiv, alle anderen inaktiv (Lernstand
+   * bleibt). Lehrkraft/Superadmin: kurs_lehrkraefte entsprechend. Liefert die lokalen Kurs-ids der Token-Kurse.
+   */
+  function upsertAusToken(sub, rolle, liste) {
+    const jetzt = iso();
+    const standard = { ...STANDARD_EINSTELLUNGEN };
+    for (const k of ENTFALLEN) delete standard[k];
+    const suche = db.prepare('SELECT id, name FROM kurse WHERE kurs_id = ?');
+    const neu = db.prepare('INSERT INTO kurse (kurs_id, name, einstellungen, aktiv, board_schluessel, created_at, updated_at) VALUES (?, ?, ?, 1, ?, ?, ?)');
+    const umbenennen = db.prepare('UPDATE kurse SET name = ?, updated_at = ? WHERE id = ?');
+    const ids = [];
+    for (const k of liste) {
+      const name = k.name.trim();
+      const r = suche.get(k.id);
+      if (r) {
+        if (r.name !== name) umbenennen.run(name, jetzt, r.id);
+        ids.push(r.id);
+      } else {
+        ids.push(Number(neu.run(k.id, name, JSON.stringify(standard), S.zufallsText(9), jetzt, jetzt).lastInsertRowid));
+      }
+    }
+    const idListe = JSON.stringify([...new Set(ids)]);
+    if (rolle === 'schueler') {
+      const konto = db.prepare('SELECT name FROM konten WHERE sub = ?').get(sub);
+      const { name, key } = teilnahmeName(konto ? konto.name : '', sub);
+      const teilnahme = db.prepare(
+        `INSERT INTO schueler (kurs_id, sub, name, name_key, aktiv, created_at) VALUES (?, ?, ?, ?, 1, ?)
+         ON CONFLICT(kurs_id, sub) DO UPDATE SET name = excluded.name, name_key = excluded.name_key, aktiv = 1`
+      );
+      for (const id of new Set(ids)) teilnahme.run(id, sub, name, key, jetzt);
+      db.prepare('UPDATE schueler SET aktiv = 0 WHERE sub = ? AND kurs_id NOT IN (SELECT value FROM json_each(?))').run(sub, idListe);
+    } else {
+      const zuordnung = db.prepare('INSERT INTO kurs_lehrkraefte (kurs_id, sub, aktiv) VALUES (?, ?, 1) ON CONFLICT(kurs_id, sub) DO UPDATE SET aktiv = 1');
+      for (const id of new Set(ids)) zuordnung.run(id, sub);
+      db.prepare('UPDATE kurs_lehrkraefte SET aktiv = 0 WHERE sub = ? AND kurs_id NOT IN (SELECT value FROM json_each(?))').run(sub, idListe);
+    }
+    return ids;
+  }
+
   let letzteAktivitaet = new Map();
   /** „zuletzt aktiv“ höchstens einmal pro Minute schreiben. */
   function aktiv(schuelerId) {
@@ -121,7 +181,7 @@ function createKurse(ctx) {
     db.prepare('UPDATE schueler SET last_active_at = ? WHERE id = ?').run(iso(), schuelerId);
   }
 
-  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, aktiv };
+  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, aktiv, upsertAusToken };
 }
 
 module.exports = { createKurse };

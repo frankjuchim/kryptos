@@ -498,7 +498,10 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`) | – |
 
 Der Kopf `X-Kryptos-Grund` enthält nur die Grundkennung (für Tests und Fehlersuche), nie Token-Inhalte. Die drei
-Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform).
+Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform); ihr Link „⌂ Zum Portal“ zeigt auf `GET /sso/portal`
+(302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt. Weitere Grundkennungen: `keine_berechtigung`
+(Schritt 2), `kurs-gesperrt` (Schritt 7). Ohne vollständige Portal-Konfiguration antworten `/sso/start` und `/sso/ende`
+mit 503 (nur im Testmodus möglich).
 
 ### 6.4 Sitzung, Seiten-Wächter, Abmelden
 

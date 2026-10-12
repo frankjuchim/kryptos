@@ -1,6 +1,6 @@
 'use strict';
 // Konten nach `sub` (TECHNIK §6.6): Konten kommen ausschließlich vom Portal (SSO-Token). Keine Registrierung,
-// keine Passwörter, keine Freigabe – das verwaltet das Portal. Upsert beim SSO folgt mit /sso/ende (Plan Task 6).
+// keine Passwörter, keine Freigabe – das verwaltet das Portal. upsert() ruft /sso/ende in seiner Transaktion auf.
 
 function createKonten(ctx) {
   const { db } = ctx;
@@ -26,7 +26,17 @@ function createKonten(ctx) {
       .map((r) => ({ id: r.id, kursLokal: r.kursLokal, kurs: r.kurs, name: r.kursName, aktiv: r.teilnahmeAktiv === 1 && r.kursAktiv === 1 }));
   }
 
-  return { row, ansicht, teilnahmen };
+  /** Konto aus dem SSO-Token anlegen bzw. aktualisieren (TECHNIK §6.6 Schritt 1). Liefert die Zeile. */
+  function upsert({ sub, rolle, name }) {
+    const jetzt = new Date(ctx.now()).toISOString();
+    db.prepare(
+      `INSERT INTO konten (sub, rolle, name, created_at, last_login_at) VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(sub) DO UPDATE SET name = excluded.name, rolle = excluded.rolle, last_login_at = excluded.last_login_at`
+    ).run(sub, rolle, String(name).trim(), jetzt, jetzt);
+    return row(sub);
+  }
+
+  return { row, ansicht, teilnahmen, upsert };
 }
 
 module.exports = { createKonten };

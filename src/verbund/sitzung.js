@@ -71,8 +71,14 @@ function createSitzung({ db, secret }) {
     S.setCookie(req, res, S.COOKIE_LEHRKRAFT, { sub: k.sub, g: k.session_gen }, secret, LEHRKRAFT_MS);
   }
 
+  /** Erste aktive Teilnahme in einem aktiven Kurs (alphabetisch nach Kursname) oder null – für /sso/ende. */
+  function ersteTeilnahme(sub) {
+    return ersteStmt.get(sub) || null;
+  }
+
   return {
     lesen,
+    ersteTeilnahme,
     schueler,
     lehrkraft,
     setzeSchueler,
