@@ -324,14 +324,14 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 
 | Funktion | Semantik |
 |---|---|
-| `gartenzaun(text, zeilen, richtung = 'ver')` | Zickzack ab Zeile 0, Zeilen nacheinander lesen; `ent` rekonstruiert das Zickzack-Muster |
-| `skytale(text, umfang, richtung = 'ver', { fuellzeichen = 'X' })` | Raster mit `umfang` Zeilen und m = ⌈n/umfang⌉ Spalten **zeilenweise** füllen, **spaltenweise** lesen; leere Zellen am Ende werden mit dem Füllzeichen gefüllt (Konvention W0); `fuellzeichen: null` überspringt sie. Test: `skytale('wir halten den pass', 3)` = `WTPIEARNSHDSAEXLNX` |
-| `fleissner(text, groesse, schablone, richtung = 'ver', { drehung = 'rechts', fuellzeichen = 'X' })` | je Block `groesse²` Zeichen; Stellung 0…3 (Drehung 90° je Stellung); Löcher zeilenweise von links oben; Geheimtext = Raster zeilenweise; letzter Block mit Füllzeichen; `schablonePruefen()` prüft Vollständigkeit |
-| `schablonePruefen(groesse, schablone)` | `{ ok, fehler }` – jede Zelle genau einmal über 4 Drehungen |
+| `gartenzaun(text, zeilen, richtung = 'ver')` | Zickzack ab Zeile 0, Zeilen nacheinander lesen; `ent` rekonstruiert das Zickzack-Muster; `zeilen ≥ 2` (mehr Zeilen als Buchstaben: Text unverändert) |
+| `skytale(text, umfang, richtung = 'ver', { fuellzeichen = 'X' })` | Raster mit `umfang` Zeilen und m = ⌈n/umfang⌉ Spalten **zeilenweise** füllen, **spaltenweise** lesen; leere Zellen am Ende werden mit dem Füllzeichen gefüllt (Konvention W0); `fuellzeichen: null` überspringt sie. Test: `skytale('wir halten den pass', 3)` = `WTPIEARNSHDSAEXLNX`. `ent` mit Füllzeichen: Länge muss Vielfaches von `umfang` sein (sonst `KryptoFehler`), Füllzeichen bleiben stehen; `ent` mit `null` rekonstruiert das Raster aus der Länge |
+| `fleissner(text, groesse, schablone, richtung = 'ver', { drehung = 'rechts', fuellzeichen = 'X' })` | je Block `groesse²` Zeichen; Löcher als `[z, s]` **ab 1** in Grundstellung; Stellung 0…3 (Drehung 90° je Stellung: `rechts` (z, s) → (s, n + 1 − z), `links` (z, s) → (n + 1 − s, z)); Löcher zeilenweise von links oben; Geheimtext = Raster zeilenweise; letzter Block mit Füllzeichen; ungültige Schablone (`schablonePruefen`) → `KryptoFehler`; `ent`: Länge Vielfaches von `groesse²`, Füllzeichen bleiben stehen |
+| `schablonePruefen(groesse, schablone)` | `{ ok, fehler, abgedeckt }` – jede Zelle genau einmal über 4 Drehungen (`groesse` gerade, genau `groesse²/4` Löcher); `abgedeckt` = Zahl der freigegebenen Felder (W0 Akte W0·1 A7: 8 von 16) |
 | `spaltenReihenfolge(schluessel)` | Wort → Rangfolge 1…n (alphabetisch, gleiche Buchstaben links zuerst); Zahlenliste wird übernommen |
-| `spaltentransposition(text, schluessel, richtung = 'ver', { fuellzeichen = null })` | zeilenweise in n = Schlüssellänge Spalten schreiben, Spalten in Reihenfolge lesen; unvollständige letzte Zeile erlaubt (kürzere Spalten), `ent` berücksichtigt Spaltenlängen |
+| `spaltentransposition(text, schluessel, richtung = 'ver', { fuellzeichen = null })` | zeilenweise in n = Schlüssellänge Spalten schreiben, Spalten in Reihenfolge lesen; unvollständige letzte Zeile erlaubt (die ersten L mod n Spalten sind länger), `ent` berücksichtigt Spaltenlängen; mit `fuellzeichen` wird das Rechteck aufgefüllt, `ent` entfernt nichts |
 | `umkehrung(text)` | rückwärts |
-| `blockrotation(folge, block, um, richtung = 'ver')` | Folge (Text oder Bytes) in Blöcke; jeder Block um `um` nach links (letzter Block um `um mod Länge`); `ent` nach rechts |
+| `blockrotation(folge, block, um, richtung = 'ver')` | Folge (Text oder Liste von Bytes 0–255) in Blöcke (`block ≥ 2`); jeder Block um `um mod Blocklänge` nach links (letzter Block um `um mod Länge`, negatives `um` = rechts); `ent` nach rechts. Test: `blockrotation('anderquelle', 4, 4)` = `ANDERQUELEL` |
 
 **Bits, ASCII, XOR**
 

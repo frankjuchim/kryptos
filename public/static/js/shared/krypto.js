@@ -328,12 +328,13 @@
     return pos;
   }
 
+  /** ij: 'I' bzw. 'J' (Quadrat ohne J bzw. ohne I) oder null (jeder Buchstabe A–Z erlaubt) */
   function pruefeFuellzeichen(f, name, ij = 'I') {
     if (typeof f !== 'string' || !/^[A-Z]$/.test(f.toUpperCase())) {
       throw new KryptoFehler(`${name} muss genau ein Buchstabe A–Z sein.`);
     }
     const g = f.toUpperCase();
-    if (g === (ij === 'I' ? 'J' : 'I')) throw new KryptoFehler(`${name} kommt im Quadrat nicht vor.`);
+    if (ij !== null && g === (ij === 'I' ? 'J' : 'I')) throw new KryptoFehler(`${name} kommt im Quadrat nicht vor.`);
     return g;
   }
 
@@ -494,8 +495,154 @@
     return aus;
   }
 
-  // Spaltentransposition (intern für ADFGVX; Konvention W3: gleiche Buchstaben von links nach rechts, ohne Auffüllen)
-  function rangfolge(schluessel) {
+  /**
+   * ADFGVX: Polybios 6×6 mit Kopf ADFGVX, dann Spaltentransposition (unvollständige letzte Zeile, ohne Auffüllen);
+   * ent: erst Transposition invertieren, dann Paare lesen. quadrat36: 36-Zeichen-Quadrat, Zeilenliste oder
+   * Schlüsselwort (wird wie bei quadrat(…, { groesse: 6 }) ergänzt).
+   */
+  function adfgvx(text, quadrat36, schluessel, richtung = 'ver') {
+    pruefeRichtung(richtung);
+    const q = quadrat(quadrat36, { groesse: 6 }).join('');
+    spaltenReihenfolge(schluessel); // Schlüssel vorab prüfen
+    const opt = { schluessel: q, kopf: 'ADFGVX' };
+    if (richtung === 'ver') return spaltentransposition(polybios(text, opt), schluessel);
+    const c = normalisieren(pruefeText(text));
+    if (/[^ADFGVX]/.test(c)) throw new KryptoFehler('Im Geheimtext dürfen nur die Zeichen A, D, F, G, V, X vorkommen.');
+    if (c.length % 2) throw new KryptoFehler('Ein ADFGVX-Geheimtext hat eine gerade Anzahl von Zeichen.');
+    return polybios(spaltentransposition(c, schluessel, 'ent'), opt, 'ent');
+  }
+
+  // ───────────────────────────── Transposition ─────────────────────────────
+
+  function pruefeFuellzeichenOderNull(f) {
+    if (f === null) return null;
+    return pruefeFuellzeichen(f, 'Das Füllzeichen', null);
+  }
+
+  /** Gartenzaun: Zickzack ab Schiene 1 (oben), Schienen nacheinander lesen, kein Füllzeichen */
+  function gartenzaun(text, zeilen, richtung = 'ver') {
+    pruefeGanzzahl(zeilen, 'Die Anzahl der Schienen');
+    if (zeilen < 2) throw new KryptoFehler('Ein Gartenzaun hat mindestens 2 Schienen.');
+    pruefeRichtung(richtung);
+    const t = nurBuchstaben(text);
+    // Schiene je Position im Zickzack
+    const muster = [];
+    let z = 0;
+    let d = 1;
+    for (let i = 0; i < t.length; i++) {
+      muster.push(z);
+      if (z === 0) d = 1;
+      else if (z === zeilen - 1) d = -1;
+      z += d;
+    }
+    // Lesereihenfolge: Positionen nach Schiene, innerhalb der Schiene von links nach rechts
+    const reihenfolge = muster.map((r, i) => i).sort((a, b) => muster[a] - muster[b] || a - b);
+    const aus = new Array(t.length);
+    reihenfolge.forEach((pos, k) => {
+      if (richtung === 'ver') aus[k] = t[pos];
+      else aus[pos] = t[k];
+    });
+    return aus.join('');
+  }
+
+  /**
+   * Skytale (W0): Raster mit umfang Zeilen und m = ⌈n/umfang⌉ Spalten zeilenweise füllen, spaltenweise lesen;
+   * leere Zellen am Ende mit dem Füllzeichen (Standard X); fuellzeichen: null überspringt sie.
+   * ent: Mit Füllzeichen muss die Länge ein Vielfaches von umfang sein; Füllzeichen bleiben stehen.
+   */
+  function skytale(text, umfang, richtung = 'ver', { fuellzeichen = 'X' } = {}) {
+    pruefeGanzzahl(umfang, 'Der Umfang');
+    if (umfang < 2) throw new KryptoFehler('Der Umfang der Skytale muss mindestens 2 sein.');
+    pruefeRichtung(richtung);
+    const f = pruefeFuellzeichenOderNull(fuellzeichen);
+    let t = nurBuchstaben(text);
+    if (richtung === 'ent' && f !== null && t.length % umfang) {
+      throw new KryptoFehler('Die Länge des Geheimtextes muss ein Vielfaches des Umfangs sein.');
+    }
+    const m = Math.ceil(t.length / umfang);
+    if (richtung === 'ver' && f !== null) t += f.repeat(umfang * m - t.length);
+    const n = t.length; // belegte Zellen: die ersten n in Zeilenreihenfolge
+    const zellen = [];
+    for (let s = 0; s < m; s++) for (let z = 0; z < umfang; z++) if (z * m + s < n) zellen.push(z * m + s);
+    const aus = new Array(n);
+    zellen.forEach((pos, k) => {
+      if (richtung === 'ver') aus[k] = t[pos];
+      else aus[pos] = t[k];
+    });
+    return aus.join('');
+  }
+
+  function drehe(feld, groesse, drehung) {
+    const [z, s] = feld;
+    return drehung === 'rechts' ? [s, groesse + 1 - z] : [groesse + 1 - s, z];
+  }
+
+  /** Prüft eine Drehschablone: { ok, fehler, abgedeckt } – jedes Feld genau einmal frei über 4 Drehungen */
+  function schablonePruefen(groesse, schablone) {
+    const fehler = [];
+    if (!Number.isInteger(groesse) || groesse < 2 || groesse % 2) {
+      return { ok: false, fehler: ['Die Größe der Schablone muss eine gerade Zahl ab 2 sein.'], abgedeckt: 0 };
+    }
+    if (!Array.isArray(schablone)) return { ok: false, fehler: ['Die Schablone muss eine Liste von Löchern sein.'], abgedeckt: 0 };
+    const soll = (groesse * groesse) / 4;
+    if (schablone.length !== soll) fehler.push(`Die Schablone braucht genau ${soll} Löcher.`);
+    const loecher = [];
+    for (const l of schablone) {
+      const ok = Array.isArray(l) && l.length === 2 && l.every((v) => Number.isInteger(v) && v >= 1 && v <= groesse);
+      if (!ok) fehler.push(`Das Loch ${JSON.stringify(l)} liegt nicht im Raster ${groesse} × ${groesse}.`);
+      else loecher.push(l);
+    }
+    const zaehler = new Map();
+    let stellung = loecher;
+    for (let r = 0; r < 4; r++) {
+      for (const [z, s] of stellung) zaehler.set(`${z},${s}`, (zaehler.get(`${z},${s}`) || 0) + 1);
+      stellung = stellung.map((l) => drehe(l, groesse, 'rechts'));
+    }
+    for (const [feld, n] of zaehler) if (n > 1) fehler.push(`Feld (${feld}) wird mehrfach frei.`);
+    return { ok: fehler.length === 0, fehler, abgedeckt: zaehler.size };
+  }
+
+  /**
+   * Fleißner-Drehschablone (W0): Löcher (Zeile, Spalte ab 1) in Grundstellung; je Stellung Löcher zeilenweise von
+   * links oben füllen, dann 90° drehen (rechts: (z, s) → (s, n + 1 − z)); Raster zeilenweise lesen. Blöcke zu
+   * groesse² Zeichen, letzter Block mit Füllzeichen. ent: Länge Vielfaches von groesse², Füllzeichen bleiben stehen.
+   */
+  function fleissner(text, groesse, schablone, richtung = 'ver', { drehung = 'rechts', fuellzeichen = 'X' } = {}) {
+    pruefeRichtung(richtung);
+    if (drehung !== 'rechts' && drehung !== 'links') throw new KryptoFehler('Die Drehung muss „rechts“ oder „links“ sein.');
+    const f = pruefeFuellzeichen(fuellzeichen, 'Das Füllzeichen', null);
+    const pruefung = schablonePruefen(groesse, schablone);
+    if (!pruefung.ok) throw new KryptoFehler(`Ungültige Schablone: ${pruefung.fehler[0]}`);
+    const flaeche = groesse * groesse;
+    // Füllreihenfolge der Felder (0-basierte Rasterindizes)
+    const reihenfolge = [];
+    let stellung = schablone.map((l) => l.slice());
+    for (let r = 0; r < 4; r++) {
+      const sortiert = stellung.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      for (const [z, s] of sortiert) reihenfolge.push((z - 1) * groesse + (s - 1));
+      stellung = stellung.map((l) => drehe(l, groesse, drehung));
+    }
+    let t = nurBuchstaben(text);
+    if (richtung === 'ent' && t.length % flaeche) {
+      throw new KryptoFehler(`Die Länge des Geheimtextes muss ein Vielfaches von ${flaeche} sein.`);
+    }
+    if (richtung === 'ver' && t.length % flaeche) t += f.repeat(flaeche - (t.length % flaeche));
+    let aus = '';
+    for (let b = 0; b < t.length; b += flaeche) {
+      const block = t.slice(b, b + flaeche);
+      const raster = new Array(flaeche);
+      if (richtung === 'ver') {
+        reihenfolge.forEach((pos, k) => (raster[pos] = block[k]));
+        aus += raster.join('');
+      } else {
+        aus += reihenfolge.map((pos) => block[pos]).join('');
+      }
+    }
+    return aus;
+  }
+
+  /** Wort → Rangfolge 1…n (alphabetisch, gleiche Buchstaben von links nach rechts); Zahlenliste wird übernommen */
+  function spaltenReihenfolge(schluessel) {
     if (Array.isArray(schluessel)) {
       const n = schluessel.length;
       const ok = n > 0 && schluessel.every((r) => Number.isInteger(r) && r >= 1 && r <= n) && new Set(schluessel).size === n;
@@ -509,25 +656,33 @@
     return rang;
   }
 
-  function spaltenLesen(t, rang) {
+  /**
+   * Spaltentransposition (W3 Baukasten): zeilenweise in n = Schlüssellänge Spalten schreiben, Spalten in der
+   * Rangfolge von oben nach unten lesen; unvollständige letzte Zeile erlaubt (die ersten L mod n Spalten sind
+   * länger), Standard ohne Auffüllen; mit fuellzeichen wird das Rechteck aufgefüllt. ent entfernt nichts.
+   */
+  function spaltentransposition(text, schluessel, richtung = 'ver', { fuellzeichen = null } = {}) {
+    pruefeRichtung(richtung);
+    const rang = spaltenReihenfolge(schluessel);
+    const f = pruefeFuellzeichenOderNull(fuellzeichen);
     const n = rang.length;
-    let aus = '';
-    for (let r = 1; r <= n; r++) {
-      const sp = rang.indexOf(r);
-      for (let i = sp; i < t.length; i += n) aus += t[i];
+    let t = nurBuchstaben(text);
+    if (richtung === 'ver') {
+      if (f !== null && t.length % n) t += f.repeat(n - (t.length % n));
+      let aus = '';
+      for (let r = 1; r <= n; r++) {
+        const sp = rang.indexOf(r);
+        for (let i = sp; i < t.length; i += n) aus += t[i];
+      }
+      return aus;
     }
-    return aus;
-  }
-
-  function spaltenZurueck(c, rang) {
-    const n = rang.length;
-    const L = c.length;
+    const L = t.length;
     const spalten = new Array(n);
     let p = 0;
     for (let r = 1; r <= n; r++) {
       const sp = rang.indexOf(r);
       const laenge = Math.floor(L / n) + (sp < L % n ? 1 : 0);
-      spalten[sp] = c.slice(p, p + laenge);
+      spalten[sp] = t.slice(p, p + laenge);
       p += laenge;
     }
     let aus = '';
@@ -535,21 +690,37 @@
     return aus;
   }
 
+  /** Text rückwärts (normalisiert) */
+  function umkehrung(text) {
+    return [...nurBuchstaben(text)].reverse().join('');
+  }
+
   /**
-   * ADFGVX: Polybios 6×6 mit Kopf ADFGVX, dann Spaltentransposition (unvollständige letzte Zeile, ohne Auffüllen);
-   * ent: erst Transposition invertieren, dann Paare lesen. quadrat36: 36-Zeichen-Quadrat, Zeilenliste oder
-   * Schlüsselwort (wird wie bei quadrat(…, { groesse: 6 }) ergänzt).
+   * Blockrotation: Folge (Text oder Liste von Bytes 0–255) in Blöcke zu `block`; jeder Block um `um` nach links
+   * (ein kürzerer letzter Block der Länge m um `um mod m`); ent nach rechts. Text wird normalisiert.
    */
-  function adfgvx(text, quadrat36, schluessel, richtung = 'ver') {
+  function blockrotation(folge, block, um, richtung = 'ver') {
+    pruefeGanzzahl(block, 'Die Blocklänge');
+    if (block < 2) throw new KryptoFehler('Die Blocklänge muss mindestens 2 sein.');
+    pruefeGanzzahl(um, 'Die Drehung');
     pruefeRichtung(richtung);
-    const q = quadrat(quadrat36, { groesse: 6 }).join('');
-    const rang = rangfolge(schluessel);
-    const opt = { schluessel: q, kopf: 'ADFGVX' };
-    if (richtung === 'ver') return spaltenLesen(polybios(text, opt), rang);
-    const c = normalisieren(pruefeText(text));
-    if (/[^ADFGVX]/.test(c)) throw new KryptoFehler('Im Geheimtext dürfen nur die Zeichen A, D, F, G, V, X vorkommen.');
-    if (c.length % 2) throw new KryptoFehler('Ein ADFGVX-Geheimtext hat eine gerade Anzahl von Zeichen.');
-    return polybios(spaltenZurueck(c, rang), opt, 'ent');
+    let elemente;
+    const istListe = Array.isArray(folge);
+    if (istListe) {
+      if (!folge.every((b) => Number.isInteger(b) && b >= 0 && b <= 255)) {
+        throw new KryptoFehler('Bytes müssen ganze Zahlen von 0 bis 255 sein.');
+      }
+      elemente = folge.slice();
+    } else {
+      elemente = [...nurBuchstaben(folge)];
+    }
+    const aus = [];
+    for (let i = 0; i < elemente.length; i += block) {
+      const teil = elemente.slice(i, i + block);
+      const r = mod(richtung === 'ver' ? um : -um, teil.length);
+      aus.push(...teil.slice(r), ...teil.slice(0, r));
+    }
+    return istListe ? aus : aus.join('');
   }
 
   return {
@@ -587,5 +758,14 @@
     zweiQuadratZahl,
     polybios,
     adfgvx,
+    // Transposition
+    gartenzaun,
+    skytale,
+    fleissner,
+    schablonePruefen,
+    spaltenReihenfolge,
+    spaltentransposition,
+    umkehrung,
+    blockrotation,
   };
 });

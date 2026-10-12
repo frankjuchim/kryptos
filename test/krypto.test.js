@@ -770,3 +770,223 @@ test('ver∘ent = id (500 Zufallsfälle je Verfahren) – polyalphabetisch und B
     assert.equal(K.adfgvx(K.adfgvx(t6, w2 + '9', sp), w2 + '9', sp, 'ent'), n6, `adfgvx ${JSON.stringify(t6)} ${sp}`);
   }
 });
+
+// ───────────────────────────── Task 12: Transpositionen ─────────────────────────────
+
+test('skytale: Pflicht-Vektor W0-L1-03 mit Standard-Füllzeichen X', () => {
+  assert.equal(K.skytale('wir halten den pass', 3), 'WTPIEARNSHDSAEXLNX');
+});
+
+test('skytale: SPEC W0 §12 Prüfprotokoll', () => {
+  // Archivfund u = 4
+  assert.equal(K.skytale('DTTMI EBOEL ENFAI DLENA OUEUT FUS', 4, 'ent'), GROSS('dieflottelaeuftbeineumondaus'));
+  assert.equal(K.skytale('dieflottelaeuftbeineumondaus', 4), GROSS('DTTMI EBOEL ENFAI DLENA OUEUT FUS'));
+  // Akte W0·1: AW (u = 4) / A2 (u = 3) / A3 (u = 5) / Abi-Check (u = 3)
+  assert.equal(K.skytale('das heer wartet am fluss', 4), GROSS('DETFA RELSW TUHAA SERMS'));
+  assert.equal(K.skytale('schickt mehr bogenschuetzen', 3), GROSS('SHHCR UHBEI OTCGZ KEETN NMSXE CX'));
+  assert.equal(K.skytale('DSDMI ESEPS RBNET PETLZ AIENU', 5, 'ent'), GROSS('derpassbeidentempelnistzu'));
+  assert.equal(K.skytale('lysander kehrt heim', 3), GROSS('LETYR HSKEA EINHM DRX'));
+  // Lab 04 (Füllzeichen bleiben beim Entschlüsseln stehen), Boss 04, Warm-up 03 (u = 2), W1-Warm-up (oasen, u = 2)
+  assert.equal(K.skytale('NUMRA BOUCK REHOG HSMEX CMNXH TFX', 4, 'ent'), GROSS('nachschubkommtmorgenfruehxxx'));
+  assert.equal(K.skytale('FRAEI GUMEE LR', 3, 'ent'), GROSS('feuerimlager'));
+  assert.equal(K.skytale('eilbote', 2), GROSS('EOITL EBX'));
+  assert.equal(K.skytale('oasen', 2), GROSS('OEANS X'));
+  // „Gleichwertig: Skytale mit Umfang s anwenden“ (W0 §0)
+  assert.equal(K.skytale('DTTMIEBOELENFAIDLENAOUEUTFUS', 7), K.skytale('DTTMIEBOELENFAIDLENAOUEUTFUS', 4, 'ent'));
+});
+
+test('grenzfaelle_skytale', () => {
+  assert.equal(K.skytale('', 3), '');
+  assert.equal(K.skytale('', 3, 'ent'), '');
+  assert.equal(K.skytale('abc', 5), 'ABCXX'); // Umfang > Textlänge: eine Spalte
+  assert.equal(K.skytale('ABCXX', 5, 'ent'), 'ABCXX');
+  assert.equal(K.skytale('abcdefg', 3, 'ver', { fuellzeichen: 'Q' }), 'ADGBEQCFQ');
+  // ohne Füllzeichen: leere Zellen werden übersprungen, ent rekonstruiert das Raster
+  assert.equal(K.skytale('wir halten den pass', 3, 'ver', { fuellzeichen: null }), 'WTPIEARNSHDSAELN');
+  assert.equal(K.skytale('WTPIEARNSHDSAELN', 3, 'ent', { fuellzeichen: null }), GROSS('wirhaltendenpass'));
+  assert.equal(K.skytale('abcde', 4, 'ver', { fuellzeichen: null }), 'ACEBD'); // ganze leere Zeile
+  assert.equal(K.skytale('ACEBD', 4, 'ent', { fuellzeichen: null }), 'ABCDE');
+  assert.throws(() => K.skytale('ABCDE', 3, 'ent'), K.KryptoFehler); // mit Füllzeichen: Länge Vielfaches von u
+  assert.throws(() => K.skytale('abc', 1), K.KryptoFehler);
+  assert.throws(() => K.skytale('abc', 2.5), K.KryptoFehler);
+  assert.throws(() => K.skytale('abc', 3, 'ver', { fuellzeichen: '1' }), K.KryptoFehler);
+});
+
+test('gartenzaun: SPEC W0 §12, W3 Akte W3·3', () => {
+  assert.equal(K.gartenzaun('versorgung kommt spaet', 3), GROSS('VONMP ESRUG OMSAT RGKTE'));
+  assert.equal(K.gartenzaun('pferde stehen bereit', 3), GROSS('PDEBI FRETH NEETE SER'));
+  assert.equal(K.gartenzaun('SSFDP ASFED AATCI SNRHI', 4, 'ent'), GROSS('spartasschiffesindda'));
+  assert.equal(K.gartenzaun('die mauer haelt stand', 3), GROSS('DAHTN IMURA LSADE EET'));
+  assert.equal(K.gartenzaun('BTNID NEWGO ESNUT RES', 2, 'ent'), GROSS('botensindunterwegs'));
+  assert.equal(K.gartenzaun('HEMBE IFKMT EESEL OUR', 3, 'ent'), GROSS('hilfekommtuebersee'));
+  assert.equal(K.gartenzaun('seeschlacht', 2), GROSS('SECLC TESHA H'));
+  // W3 Akte W3·3 A5: Caesar (k = 7) nach Gartenzaun (h = 3)
+  const zw = K.caesar('DLBVU HPZOU UTYLH OMUYL ZNTL', 7, 'ent');
+  assert.equal(zw, 'WEUONAISHNNMREAHFNRESGME');
+  assert.equal(K.gartenzaun(zw, 3, 'ent'), GROSS('wirsehenunsmorgenamhafen'));
+});
+
+test('grenzfaelle_gartenzaun', () => {
+  assert.equal(K.gartenzaun('', 3), '');
+  assert.equal(K.gartenzaun('abc', 5), 'ABC'); // mehr Schienen als Buchstaben
+  assert.equal(K.gartenzaun('ABC', 5, 'ent'), 'ABC');
+  assert.equal(K.gartenzaun('abcdef', 6), 'ABCDEF');
+  assert.throws(() => K.gartenzaun('abc', 1), K.KryptoFehler);
+  assert.throws(() => K.gartenzaun('abc', 3, 'quer'), K.KryptoFehler);
+});
+
+test('fleissner: SPEC W0 §12 (Drehung im Uhrzeigersinn, Löcher zeilenweise)', () => {
+  const s1 = [[1, 3], [2, 2], [3, 1], [4, 4]];
+  const s2 = [[1, 2], [2, 1], [2, 3], [4, 4]];
+  assert.equal(K.fleissner('athen sendet hilfe', 4, s1), GROSS('DNAIL TSEHF TENHE E'));
+  assert.equal(K.fleissner('DNAILTSEHFTENHEE', 4, s1, 'ent'), GROSS('athensendethilfe'));
+  assert.equal(K.fleissner('boten warten am tor', 4, s2), GROSS('TBNMO TTWOE ANRRA E'));
+  assert.equal(K.fleissner('rueckzug zum hafen', 4, s2), GROSS('ZRKAU FEZEU UMGNH C'));
+  assert.equal(K.fleissner('ZRKAUFEZEUUMGNHC', 4, s2, 'ent'), GROSS('rueckzugzumhafen'));
+});
+
+test('fleissner: Blöcke, Füllzeichen, Drehrichtung, Grenzfälle', () => {
+  const s1 = [[1, 3], [2, 2], [3, 1], [4, 4]];
+  assert.equal(K.fleissner('', 4, s1), '');
+  assert.equal(K.fleissner('a', 4, s1).length, 16);
+  assert.equal(K.fleissner(K.fleissner('a', 4, s1), 4, s1, 'ent'), 'A' + 'X'.repeat(15));
+  const lang = 'athensendethilfeboten';
+  const g = K.fleissner(lang, 4, s1);
+  assert.equal(g.length, 32);
+  assert.equal(g.slice(0, 16), 'DNAILTSEHFTENHEE');
+  assert.equal(K.fleissner(g, 4, s1, 'ent'), GROSS(lang) + 'X'.repeat(11));
+  // gegen den Uhrzeigersinn: Stellung 2 entsteht aus (z, s) → (5 − s, z)
+  const links = K.fleissner('athensendethilfe', 4, s1, 'ver', { drehung: 'links' });
+  assert.notEqual(links, 'DNAILTSEHFTENHEE');
+  assert.equal(K.fleissner(links, 4, s1, 'ent', { drehung: 'links' }), GROSS('athensendethilfe'));
+  assert.throws(() => K.fleissner('abc', 4, [[1, 1], [1, 4], [2, 2], [3, 3]]), K.KryptoFehler); // ungültige Schablone
+  assert.throws(() => K.fleissner('abc', 4, s1, 'ver', { drehung: 'oben' }), K.KryptoFehler);
+  assert.throws(() => K.fleissner('ABC', 4, s1, 'ent'), K.KryptoFehler); // Länge kein Vielfaches von 16
+  assert.throws(() => K.fleissner('abc', 5, s1), K.KryptoFehler);
+  // 6 × 6: Schablone aus je einem Feld jeder Drehgruppe
+  const s6 = [[1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [2, 2], [2, 3], [2, 4], [3, 3]];
+  assert.equal(K.schablonePruefen(6, s6).ok, true);
+  const t6 = 'diezweiteschablonehatsechsmalsechsfelder';
+  assert.equal(K.fleissner(K.fleissner(t6, 6, s6), 6, s6, 'ent'), GROSS(t6) + 'X'.repeat(72 - 40));
+});
+
+test('schablonePruefen: SPEC W0 Akte W0·1 A7 (256 von 1820 Lochmengen; ungültig: 8 von 16 Feldern)', () => {
+  const r = K.schablonePruefen(4, [[1, 1], [1, 4], [2, 2], [3, 3]]);
+  assert.equal(r.ok, false);
+  assert.equal(r.abgedeckt, 8);
+  assert.ok(r.fehler.length > 0);
+  assert.deepEqual(K.schablonePruefen(4, [[1, 3], [2, 2], [3, 1], [4, 4]]), { ok: true, fehler: [], abgedeckt: 16 });
+  let gueltig = 0;
+  let alle = 0;
+  const felder = [];
+  for (let z = 1; z <= 4; z++) for (let s = 1; s <= 4; s++) felder.push([z, s]);
+  for (let a = 0; a < 16; a++) for (let b = a + 1; b < 16; b++) for (let c = b + 1; c < 16; c++) for (let d = c + 1; d < 16; d++) {
+    alle++;
+    if (K.schablonePruefen(4, [felder[a], felder[b], felder[c], felder[d]]).ok) gueltig++;
+  }
+  assert.equal(alle, 1820);
+  assert.equal(gueltig, 256);
+  assert.equal(K.schablonePruefen(4, [[1, 1], [1, 2], [1, 3]]).ok, false); // zu wenige Löcher
+  assert.equal(K.schablonePruefen(4, [[0, 1], [1, 2], [1, 3], [2, 2]]).ok, false); // außerhalb
+  assert.equal(K.schablonePruefen(5, []).ok, false); // ungerade Größe
+});
+
+test('spaltenReihenfolge', () => {
+  assert.deepEqual(K.spaltenReihenfolge('ANNA'), [1, 3, 4, 2]);
+  assert.deepEqual(K.spaltenReihenfolge('KARL'), [2, 1, 4, 3]);
+  assert.deepEqual(K.spaltenReihenfolge('TAL'), [3, 1, 2]);
+  assert.deepEqual(K.spaltenReihenfolge('funke'), [2, 5, 4, 3, 1]);
+  assert.deepEqual(K.spaltenReihenfolge('AAAA'), [1, 2, 3, 4]);
+  assert.deepEqual(K.spaltenReihenfolge([3, 1, 2]), [3, 1, 2]); // Zahlenliste wird übernommen
+  assert.throws(() => K.spaltenReihenfolge(''), K.KryptoFehler);
+  assert.throws(() => K.spaltenReihenfolge([1, 1, 2]), K.KryptoFehler);
+  assert.throws(() => K.spaltenReihenfolge([0, 1]), K.KryptoFehler);
+});
+
+test('spaltentransposition: SPEC W3 (Baukasten FUNKGITTER, W3-L3-06)', () => {
+  const s1 = K.vigenere('Wetterbericht fuer die Nordsee', 'FUNKE');
+  assert.equal(K.spaltentransposition(s1, 'FUNKE'), GROSS('IMYIW BWHJS JDBPS NGRGQ EYVBL IY'));
+  assert.equal(K.vigenere(K.spaltentransposition('IMYIW BWHJS JDBPS NGRGQ EYVBL IY', 'FUNKE', 'ent'), 'FUNKE', 'ent'), GROSS('wetterberichtfuerdienordsee'));
+  // unvollständige Matrix: die ersten L mod n Spalten (von links) sind länger, nicht die zuerst gelesenen
+  assert.equal(K.spaltentransposition('OKTCA ELHRN', 'TAL', 'ent'), 'LOCHKARTEN');
+  assert.equal(K.spaltentransposition('lochkarten', 'TAL'), 'OKTCAELHRN');
+  // ADFGVX-Stufe 2 (Level 3.4): NEBEL4/KARL
+  assert.equal(K.spaltentransposition('AXADDGADAGXD', 'KARL'), 'XGGADADDDAAX');
+});
+
+test('grenzfaelle_transposition', () => {
+  assert.equal(K.spaltentransposition('', 'TAL'), '');
+  assert.equal(K.spaltentransposition('', 'TAL', 'ent'), '');
+  assert.equal(K.spaltentransposition('ab', 'KARLSRUHE'), 'BA'); // Schlüssel länger als Text
+  assert.equal(K.spaltentransposition('BA', 'KARLSRUHE', 'ent'), 'AB');
+  assert.equal(K.spaltentransposition('lochkarten', [3, 1, 2]), 'OKTCAELHRN');
+  // mit Füllzeichen: Rechteck wird aufgefüllt, ent entfernt nichts
+  assert.equal(K.spaltentransposition('lochkarten', 'TAL', 'ver', { fuellzeichen: 'X' }), 'OKTXCAEXLHRN');
+  assert.equal(K.spaltentransposition('OKTXCAEXLHRN', 'TAL', 'ent'), 'LOCHKARTENXX');
+  assert.throws(() => K.spaltentransposition('abc', ''), K.KryptoFehler);
+  assert.throws(() => K.spaltentransposition('abc', 'TAL', 'ver', { fuellzeichen: '1' }), K.KryptoFehler);
+});
+
+test('umkehrung (W3-L3-04, W3-L3-07)', () => {
+  assert.equal(K.umkehrung('boje'), 'EJOB');
+  assert.equal(K.caesar(K.umkehrung('boje'), 3), 'HMRE');
+  const c7 = 'MLSNT WEVYP FAPEF PSECS PLQRF KESNL YCPO';
+  assert.equal(K.caesar(c7, 11, 'ent'), GROSS('BAHCI LTKNE UPETU EHTRH EAFGU ZTHCA NRED'));
+  assert.equal(K.umkehrung(K.caesar(c7, 11, 'ent')), GROSS('dernachtzugfaehrtheutepuenktlichab'));
+  assert.equal(K.umkehrung(''), '');
+  assert.equal(K.umkehrung('Grüße'), 'ESSEURG');
+});
+
+test('blockrotation (SPEC Prüfungen: KETTENSCHRIFT Stufe 1)', () => {
+  assert.equal(K.blockrotation('baumhoehle', 4, 1), 'AUMBOEHHEL');
+  assert.equal(K.blockrotation('AUMBOEHHEL', 4, 1, 'ent'), 'BAUMHOEHLE');
+  assert.equal(K.blockrotation('EFANVKPXJO', 4, 1), 'FANEKPXVOJ');
+  // b-fache Rotation ist wegen des kürzeren letzten Blocks keine Identität: anderquelle, b = 4 → ANDERQUELEL
+  assert.equal(K.blockrotation('anderquelle', 4, 4), 'ANDERQUELEL');
+  let t = 'ANDERQUELLE';
+  for (let i = 0; i < 4; i++) t = K.blockrotation(t, 4, 1);
+  assert.equal(t, 'ANDERQUELEL');
+  assert.equal(K.blockrotation('baumhoehle', 2, 4), 'BAUMHOEHLE');
+});
+
+test('grenzfaelle_blockrotation', () => {
+  assert.equal(K.blockrotation('', 4, 1), '');
+  assert.equal(K.blockrotation('abc', 5, 2), 'CAB'); // Block länger als Text: letzter Block um 2 mod 3
+  assert.equal(K.blockrotation('abcdefg', 3, 2, 'ent'), 'BCAEFDG');
+  assert.deepEqual(K.blockrotation([1, 2, 3, 4, 5], 2, 1), [2, 1, 4, 3, 5]); // Bytes
+  assert.deepEqual(K.blockrotation([2, 1, 4, 3, 5], 2, 1, 'ent'), [1, 2, 3, 4, 5]);
+  assert.throws(() => K.blockrotation('abc', 1, 1), K.KryptoFehler);
+  assert.throws(() => K.blockrotation('abc', 3, 1.5), K.KryptoFehler);
+  assert.throws(() => K.blockrotation([1, 300], 2, 1), K.KryptoFehler);
+});
+
+test('ver∘ent = id (500 Zufallsfälle je Verfahren) – Transpositionen', () => {
+  const s1 = [[1, 3], [2, 2], [3, 1], [4, 4]];
+  for (let i = 0; i < RUNDEN; i++) {
+    const t = zufallsText();
+    const n = K.nurBuchstaben(t);
+    const u = ganz(2, 25);
+    const sky = K.skytale(t, u);
+    assert.equal(K.skytale(sky, u, 'ent'), n + 'X'.repeat(sky.length - n.length), `skytale u=${u}`);
+    assert.equal(K.skytale(K.skytale(t, u, 'ver', { fuellzeichen: null }), u, 'ent', { fuellzeichen: null }), n);
+    const h = ganz(2, 12);
+    assert.equal(K.gartenzaun(K.gartenzaun(t, h), h, 'ent'), n, `gartenzaun h=${h}`);
+    assert.equal(K.gartenzaun(K.gartenzaun(n, h, 'ent'), h), n);
+    const fl = K.fleissner(t, 4, s1, 'ver', { drehung: zufall() < 0.5 ? 'rechts' : 'links' });
+    assert.equal(fl.length % 16, 0);
+    const sp = zufall() < 0.3 ? [3, 1, 4, 2, 5].slice(0, ganz(1, 5)).map((x, j, a) => j + 1).reverse() : zufallsWort(1, 9);
+    assert.equal(K.spaltentransposition(K.spaltentransposition(t, sp), sp, 'ent'), n, `spalten ${sp}`);
+    assert.equal(K.spaltentransposition(K.spaltentransposition(n, sp, 'ent'), sp), n);
+    assert.equal(K.umkehrung(K.umkehrung(t)), n);
+    const b = ganz(2, 16);
+    const um = ganz(-5, 20);
+    assert.equal(K.blockrotation(K.blockrotation(t, b, um), b, um, 'ent'), n, `blockrotation ${b}/${um}`);
+  }
+  for (let i = 0; i < 100; i++) {
+    const t = zufallsText();
+    const d = zufall() < 0.5 ? 'rechts' : 'links';
+    const fl = K.fleissner(t, 4, s1, 'ver', { drehung: d });
+    const n = K.nurBuchstaben(t);
+    assert.equal(K.fleissner(fl, 4, s1, 'ent', { drehung: d }), n + 'X'.repeat(fl.length - n.length));
+  }
+});
