@@ -65,7 +65,9 @@ und dunkel). `--ok` und `--fehler` stehen als Text nie auf `--papier-2` (`--ok` 
 
 **Akzent als Text nur auf `--papier`/`--karte`** (E25): Auf `--papier-2` liegen W0 (4,15 : 1), W4 (4,39 : 1) und W5
 (4,14 : 1) unter AA – dort steht Text immer in `--text`/`--text-2`, der Akzent nur als Rand oder Fläche (Test
-`designsystem.test.js`). Für die Akten (Kopf in Akzent auf Papier-2) ist das ein offener Punkt außerhalb von M4.
+`designsystem.test.js`). Dieselbe Regel gilt für die Material-Pipeline (M5, offene Entscheidung 10): `kr_stil.textfarbe`
+setzt Text auf Papier-2 und auf andere Flächen nur in zulässigen Farben (sonst Tinte bzw. auf dunklem Grund die helle
+Akzentvariante), `werkzeuge/material/kr_kontrast.py` prüft gebaute `.docx`/`.pptx`, `test_kontrast.py` (CI-Job `inhalte`).
 
 Texturen sind **SVG-Muster mit max. 6 % Deckkraft** und liegen nur im Rahmen (Kopf, Epochenband, Titelfolien), nie
 hinter Lesetext.
@@ -185,10 +187,12 @@ Geheimtexte mit `aria-label` „Geheimtext, buchstabiert“ und Option „buchst
 - A4 hoch, Ränder 2,0 cm (links 2,2 cm Lochrand), Kopfzeile 1,2 cm, Fußzeile 1,0 cm.
 - **Kopfband** (Tabelle, volle Breite, 2 Zeilen): Zeile 1 Hintergrund Epochenakzent, weiße Schrift Georgia 10 pt
   Großbuchstaben gesperrt: „KRYPTOS · DIE ZEITREISE DER GEHEIMSCHRIFTEN · WELT 2 · RENAISSANCE“, rechts „DS 7“;
-  Zeile 2 Papier-2: links Aktenzeichen „AKTE W2·2“ (Consolas fett), Mitte Titel (Georgia 16 pt fett, Akzent), rechts
+  Zeile 2 Papier-2: links Aktenzeichen „AKTE W2·2“ (Consolas fett), Mitte Titel (Georgia 16 pt fett, Tinte – Akzent nie als
+  Text auf Papier-2, §2.2), rechts
   Niveau-Chip („KERN“, „eA“ …) und „Name: ________“.
 - **Kästen:** einspaltige Tabellen mit oberer Doppellinie in Akzentfarbe, Kopf in Kapitälchen-Optik (Georgia 11 pt
-  fett, Akzent): „ARCHIVWISSEN 1 · …“, „AUFTRAG 3 ★★“, „ABI-CHECK“, „IM LAB ÜBEN“, „ACHTUNG FALLE P3“.
+  fett, Akzent – auf Papier-2-Kästen wie „ARCHIVWISSEN“ und „IM LAB ÜBEN“ in Tinte, §2.2): „ARCHIVWISSEN 1 · …“,
+  „AUFTRAG 3 ★★“ (Sterne Messing dunkel), „ABI-CHECK“, „IM LAB ÜBEN“, „ACHTUNG FALLE P3“.
   Hintergrund Archivwissen `#F2EADB`, Abi-Check weiß mit Rahmen, Falle mit rotem Rand.
 - **Geheimtexte:** Consolas 11 pt, Zeichenabstand +1 pt, Fünfergruppen, max. 50 Zeichen je Zeile, in hellgrauem
   Kasten. Unter Geheimtexten bei Bedarf **Schreiblinien** (Consolas, Unterstriche gleicher Breite) zum Eintragen.

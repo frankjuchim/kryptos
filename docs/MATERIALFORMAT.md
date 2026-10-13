@@ -11,7 +11,8 @@ python3 werkzeuge/material/bauen.py [quelle.json …] [--aus materialien] [--pdf
 - `kr_docx.py` → `.docx` (Schülerfassung **und** Lösungsfassung aus derselben Quelle)
 - `kr_pptx.js` → `.pptx` (strukturiertes Deck: Theme je Epoche, Layouts mit Platzhaltern, Sprechernotizen)
 - `kr_bilder.py` → Siegel, Chiffrierscheibe, QR-Codes, Häufigkeitsdiagramme, Ablaufschaubilder, Struktogramme (PNG)
-- `kr_stil.py` → Farben/Schriften/Epochen (eine Quelle für alles)
+- `kr_stil.py` → Farben/Schriften/Epochen (eine Quelle für alles); `textfarbe(farbe, hintergrund)` wählt lesbare
+  Textfarben (DESIGNSYSTEM §2.2), `kr_kontrast.py <dateien>` prüft gebaute docx/pptx, `test_kontrast.py` (CI)
 
 **Maßgeblich** sind nach dem ersten Erzeugen die `.docx`/`.pptx` in `materialien/` (wie in Algo Quest: direkt
 bearbeiten, danach PDF neu erzeugen). Die JSON-Quellen bleiben als Referenz und für Neu-Erzeugung im selben Design

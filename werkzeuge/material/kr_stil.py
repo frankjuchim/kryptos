@@ -58,6 +58,43 @@ LIZENZ = "© Frank Juchim · Kryptos · für den Unterricht"
 BASIS_URL = "https://kryptos.frankjuchim.de"
 
 
+# Alle Epochen-Akzente (hell und dunkel): als Text nie auf Papier-2 (DESIGNSYSTEM §2.2, E25)
+AKZENTE = frozenset(f for e in EPOCHEN.values() for f in (e["akzent"], e["hell"]))
+
+
+def _leuchtdichte(h):
+    c = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    c = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in c]
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+
+
+def kontrast(a, b):
+    """Kontrastverhältnis nach WCAG 2.1 (1 … 21) zweier Hex-Farben ohne #."""
+    x, y = sorted((_leuchtdichte(a.lstrip("#")), _leuchtdichte(b.lstrip("#"))), reverse=True)
+    return (x + 0.05) / (y + 0.05)
+
+
+def textfarbe(farbe, hintergrund, groesse=11, fett=False):
+    """Farbe für Text auf `hintergrund`: `farbe`, wenn zulässig, sonst ein lesbarer Ersatz.
+
+    Zulässig: kein Epochen-Akzent auf Papier-2 (E25) und Kontrast ≥ 4,5 : 1 (großer Text ab 18 pt bzw. 14 pt fett:
+    ≥ 3 : 1, WCAG AA). Ersatz: für einen Epochen-Akzent auf dunklem Grund dessen helle Variante, sonst Tinte (auf
+    hellem) bzw. Papier (auf dunklem Grund). Geprüft von kr_kontrast.py und test_kontrast.py.
+    """
+    farbe, hg = farbe.upper(), hintergrund.upper()
+    soll = 3.0 if (groesse >= 18 or (fett and groesse >= 14)) else 4.5
+
+    def ok(f):
+        return not (hg == PAPIER2 and f in AKZENTE) and kontrast(f, hg) >= soll
+
+    if ok(farbe):
+        return farbe
+    for e in EPOCHEN.values():
+        if farbe == e["akzent"] and ok(e["hell"]):
+            return e["hell"]
+    return TINTE if kontrast(TINTE, hg) >= kontrast(PAPIER, hg) else PAPIER
+
+
 def epoche(welt):
     return EPOCHEN.get(int(welt), EPOCHEN[9])
 
@@ -67,7 +104,7 @@ def als_json():
         TINTE=TINTE, NACHT=NACHT, TINTE2=TINTE2, MESSING=MESSING, MESSING_HELL=MESSING_HELL,
         MESSING_DUNKEL=MESSING_DUNKEL, PAPIER=PAPIER, PAPIER2=PAPIER2, LINIE=LINIE, TEXT=TEXT, TEXT2=TEXT2,
         OK=OK, FEHLER=FEHLER, HINWEIS=HINWEIS, SCHRIFT_KOPF=SCHRIFT_KOPF, SCHRIFT_TEXT=SCHRIFT_TEXT,
-        SCHRIFT_MONO=SCHRIFT_MONO, EPOCHEN={str(k): v for k, v in EPOCHEN.items()}, NIVEAU=NIVEAU,
+        SCHRIFT_MONO=SCHRIFT_MONO, AKZENTE=sorted(AKZENTE), EPOCHEN={str(k): v for k, v in EPOCHEN.items()}, NIVEAU=NIVEAU,
         LIZENZ=LIZENZ, BASIS_URL=BASIS_URL), ensure_ascii=False, indent=1)
 
 

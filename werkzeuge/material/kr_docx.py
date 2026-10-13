@@ -223,7 +223,14 @@ class Kontext:
         self.loesung = loesung
         self.welt = quelle.get("welt", 9)
         self.e = S.epoche(self.welt)
-        self.akzent = self.e["akzent"]
+        self.akzent = self.e["akzent"]       # Flächen, Ränder, Linien
+        self.akzent_text = self.akzent        # Text in Akzentfarbe – hängt vom Hintergrund ab (auf())
+
+    def auf(self, hintergrund):
+        """Kontext für Inhalte auf einer Kastenfläche: Akzent-Text nur, wo er lesbar ist (S.textfarbe, E25)."""
+        k = copy.copy(self)
+        k.akzent_text = S.textfarbe(self.akzent_text, hintergrund)
+        return k
 
     def breite(self, verfuegbar):
         return verfuegbar
@@ -349,7 +356,8 @@ def kopfband(doc, ctx, kennung, titel, ds=None, niveau=None, namenszeile=True, l
     schrift(p.add_run(kennung), S.SCHRIFT_MONO, 9.5, True, farbe=S.TEXT2, sperrung=0.5)
     p2 = tab.cell(1, 1).add_paragraph()
     absatz_abstand(p2, 0, 0)
-    schrift(p2.add_run(titel), S.SCHRIFT_KOPF, 17, True, farbe=ctx.akzent if not loesung else S.TINTE)
+    schrift(p2.add_run(titel), S.SCHRIFT_KOPF, 17, True,
+           farbe=S.TINTE if loesung else S.textfarbe(ctx.akzent, S.PAPIER2, 17, True))
     c = tab.cell(1, 2)
     p = c.paragraphs[0]
     p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
@@ -399,7 +407,8 @@ def kasten(container, kopf, farbe_kopf, hintergrund="FFFFFF", rahmen_oben=None, 
     p = z.paragraphs[0]
     absatz_abstand(p, 0, 4, mit_naechstem=True)
     if kopf:
-        schrift(p.add_run(kopf), S.SCHRIFT_KOPF, 10.5, True, farbe=farbe_kopf, sperrung=0.8)
+        schrift(p.add_run(kopf), S.SCHRIFT_KOPF, 10.5, True, farbe=S.textfarbe(farbe_kopf, hintergrund, 10.5, True),
+                sperrung=0.8)
     if kopf_rechts:
         for t, f in kopf_rechts:
             p.add_run("  ")
@@ -449,13 +458,13 @@ def block(c, b, ctx, breite, farbe=S.TEXT):
     if t == "p":
         p = _p(c)
         gr = 9.5 if b.get("klein") else 11
-        md(p, b["md"], gr, farbe=farbe, akzent=ctx.akzent)
+        md(p, b["md"], gr, farbe=farbe, akzent=ctx.akzent_text)
         if b.get("zentriert"):
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         absatz_abstand(p, b.get("vor", 0), b.get("nach", 4))
     elif t == "h":
         p = _p(c)
-        md(p, b["md"], 12, farbe=ctx.akzent, fett=True, name=S.SCHRIFT_KOPF)
+        md(p, b["md"], 12, farbe=ctx.akzent_text, fett=True, name=S.SCHRIFT_KOPF)
         absatz_abstand(p, 6, 3, mit_naechstem=True)
     elif t == "liste":
         for i, it in enumerate(b["items"]):
@@ -467,9 +476,9 @@ def block(c, b, ctx, breite, farbe=S.TEXT):
             if b.get("buchstaben"):
                 marke = f"{chr(97+i)})"
             schrift(p.add_run(marke + "\t"), S.SCHRIFT_TEXT, 11, b.get("nummeriert") or b.get("buchstaben"),
-                    farbe=ctx.akzent)
+                    farbe=ctx.akzent_text)
             pf.tab_stops.add_tab_stop(Cm(0.7))
-            md(p, it, 11, farbe=farbe, akzent=ctx.akzent)
+            md(p, it, 11, farbe=farbe, akzent=ctx.akzent_text)
             absatz_abstand(p, 0, 2)
     elif t == "tabelle":
         tabelle(c, b, ctx, breite, farbe)
@@ -496,7 +505,7 @@ def block(c, b, ctx, breite, farbe=S.TEXT):
     elif t == "formel":
         p = _p(c)
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        md(p, b["md"], 12, farbe=farbe, akzent=ctx.akzent)
+        md(p, b["md"], 12, farbe=farbe, akzent=ctx.akzent_text)
         absatz_abstand(p, 3, 5)
     elif t in ("struktogramm", "schaubild", "haeufigkeit", "bild"):
         bild(c, b, ctx, breite)
@@ -505,7 +514,7 @@ def block(c, b, ctx, breite, farbe=S.TEXT):
         p.add_run().add_break(WD_BREAK.PAGE)
     elif t == "hinweis":
         z = kasten(c, b.get("kopf", "HINWEIS"), S.HINWEIS, "EEF3FA", ("single", 6, S.HINWEIS), S.HINWEIS, breite - 0.4)
-        bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b.get("inhalt", []), ctx, breite - 0.8)
+        bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b.get("inhalt", []), ctx.auf("EEF3FA"), breite - 0.8)
     elif t == "abstand":
         p = _p(c)
         absatz_abstand(p, 0, b.get("pt", 6))
@@ -554,7 +563,8 @@ def tabelle(c, b, ctx, breite, farbe=S.TEXT):
             absatz_abstand(p, 0, 0)
             if b.get("zentriert", mono):
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            md(p, k, gr, farbe=S.TEXT, fett=True, name=S.SCHRIFT_MONO if b.get("kopf_mono") else S.SCHRIFT_TEXT)
+            md(p, k, gr, farbe=S.TEXT, fett=True, name=S.SCHRIFT_MONO if b.get("kopf_mono") else S.SCHRIFT_TEXT,
+               akzent=S.textfarbe(ctx.akzent_text, S.PAPIER2))
         r0 = 1
     for ri, zeile in enumerate(zeilen):
         zeile_nicht_trennen(tab.rows[r0 + ri])
@@ -562,17 +572,20 @@ def tabelle(c, b, ctx, breite, farbe=S.TEXT):
             wert = zeile[i] if i < len(zeile) else ""
             z = tab.cell(r0 + ri, i)
             zelle_raender(z, 30, 30, 70, 70)
+            fuellung = "FFFFFF"
             if i == 0 and b.get("kopfspalte"):
-                zelle_fuellen(z, S.PAPIER2)
+                fuellung = S.PAPIER2
             hl = b.get("hervor", [])
             if [ri, i] in hl:
-                zelle_fuellen(z, "F3E1C3")
+                fuellung = "F3E1C3"
+            if fuellung != "FFFFFF":
+                zelle_fuellen(z, fuellung)
             p = z.paragraphs[0]
             absatz_abstand(p, 0, 0)
             if b.get("zentriert", mono):
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            md(p, wert, gr, farbe=farbe, fett=(i == 0 and b.get("kopfspalte")),
-               name=S.SCHRIFT_MONO if mono else S.SCHRIFT_TEXT, akzent=ctx.akzent)
+            md(p, wert, gr, farbe=S.textfarbe(farbe, fuellung), fett=(i == 0 and b.get("kopfspalte")),
+               name=S.SCHRIFT_MONO if mono else S.SCHRIFT_TEXT, akzent=S.textfarbe(ctx.akzent_text, fuellung))
     _spalt(c)
 
 
@@ -792,32 +805,32 @@ def bild(c, b, ctx, breite):
 
 def k_auftakt(c, b, ctx, breite):
     z = kasten(c, b.get("kopf", "ARCHIVFUND"), S.MESSING_DUNKEL, "FFFFFF", ("double", 6, S.MESSING), S.LINIE, breite)
-    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b["inhalt"], ctx, breite - 0.6, S.TEXT)
+    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b["inhalt"], ctx.auf("FFFFFF"), breite - 0.6, S.TEXT)
 
 
 def k_archivwissen(c, b, ctx, breite):
     kopf = "ARCHIVWISSEN" + (f" {b['nr']}" if b.get("nr") else "") + (f" · {b['titel']}" if b.get("titel") else "")
     z = kasten(c, kopf.upper() if b.get("gross", True) else kopf, ctx.akzent, S.PAPIER2,
                ("double", 6, ctx.akzent), S.LINIE, breite)
-    bloecke(z, b["inhalt"], ctx, breite - 0.6)
+    bloecke(z, b["inhalt"], ctx.auf(S.PAPIER2), breite - 0.6)
 
 
 def k_merke(c, b, ctx, breite):
     z = kasten(c, "MERKE" + (f" · {b['titel']}" if b.get("titel") else ""), S.MESSING_DUNKEL, "FBF3E2",
                ("double", 6, S.MESSING), S.MESSING, breite)
-    bloecke(z, b["inhalt"], ctx, breite - 0.6)
+    bloecke(z, b["inhalt"], ctx.auf("FBF3E2"), breite - 0.6)
 
 
 def k_falle(c, b, ctx, breite):
     z = kasten(c, f"ACHTUNG FALLE {b['nr']}" + (f" · {b['titel']}" if b.get("titel") else ""), S.FEHLER, "FDF3F2",
                ("single", 12, S.FEHLER), S.FEHLER, breite)
-    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b["inhalt"], ctx, breite - 0.6)
+    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b["inhalt"], ctx.auf("FDF3F2"), breite - 0.6)
 
 
 def loesungskasten(c, inhalt, ctx, breite, kopf="LÖSUNG", fallen=None):
     z = kasten(c, kopf, S.LOESUNG, "F1F5FB", ("single", 12, S.LOESUNG), S.LOESUNG, breite,
                kopf_rechts=[(f, S.FEHLER) for f in (fallen or [])])
-    bloecke(z, inhalt, ctx, breite - 0.6, S.LOESUNG)
+    bloecke(z, inhalt, ctx.auf("F1F5FB"), breite - 0.6, S.LOESUNG)
     return z
 
 
@@ -838,9 +851,9 @@ def k_auftrag(c, b, ctx, breite):
     z1.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
     p = z1.paragraphs[0]
     absatz_abstand(p, 0, 0, mit_naechstem=True)
-    schrift(p.add_run("AUFTRAG"), S.SCHRIFT_KOPF, 8.5, True, farbe=ctx.akzent, sperrung=0.8)
+    schrift(p.add_run("AUFTRAG"), S.SCHRIFT_KOPF, 8.5, True, farbe=ctx.akzent_text, sperrung=0.8)
     if b.get("stufe"):
-        schrift(p.add_run("  " + S.STERNE[b["stufe"]]), S.SCHRIFT_TEXT, 10, farbe=S.MESSING)
+        schrift(p.add_run("  " + S.STERNE[b["stufe"]]), S.SCHRIFT_TEXT, 10, farbe=S.MESSING_DUNKEL)
     if b.get("titel"):
         schrift(p.add_run("   " + b["titel"]), S.SCHRIFT_KOPF, 12, True, farbe=S.TEXT)
     rechts = []
@@ -878,7 +891,7 @@ def k_abicheck(c, b, ctx, breite):
         pf.tab_stops.add_tab_stop(Cm(0.7))
         pf.tab_stops.add_tab_stop(Cm(bw - 0.1), WD_TAB_ALIGNMENT.RIGHT)
         schrift(p.add_run(t["bez"] + "\t"), S.SCHRIFT_TEXT, 11, True, farbe=S.TINTE)
-        md(p, t["text"], 11, akzent=ctx.akzent)
+        md(p, t["text"], 11, akzent=ctx.akzent_text)
         if t.get("be"):
             schrift(p.add_run(f"\t[{t['be']} BE]"), S.SCHRIFT_TEXT, 10, True, farbe=S.TEXT2)
         absatz_abstand(p, 2, 3)
@@ -900,10 +913,11 @@ def k_imlab(c, b, ctx, breite):
     zelle_raender(zq, 80, 80, 60, 120)
     p = z.paragraphs[0]
     absatz_abstand(p, 0, 3)
-    schrift(p.add_run("IM LAB ÜBEN"), S.SCHRIFT_KOPF, 10.5, True, farbe=ctx.akzent, sperrung=0.8)
+    schrift(p.add_run("IM LAB ÜBEN"), S.SCHRIFT_KOPF, 10.5, True, farbe=S.textfarbe(ctx.akzent_text, S.PAPIER2),
+            sperrung=0.8)
     if b.get("level"):
         schrift(p.add_run(f"   Level {b['level']}"), S.SCHRIFT_KOPF, 10.5, True, farbe=S.TEXT)
-    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b.get("inhalt", []), ctx, breite - 3.4)
+    bloecke(z, [{"t": "p", "md": b["md"]}] if "md" in b else b.get("inhalt", []), ctx.auf(S.PAPIER2), breite - 3.4)
     url = b.get("url") or (S.BASIS_URL + (f"/level/{b['level']}" if b.get("level") else ""))
     pq = zq.paragraphs[0]
     pq.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -915,8 +929,9 @@ def k_imlab(c, b, ctx, breite):
 def k_kasten(c, b, ctx, breite):
     """Freier Kasten mit Kopf (z. B. 'DEINE NOTIZEN', 'FUNKRAUM')."""
     farbe = b.get("farbe", ctx.akzent)
-    z = kasten(c, b.get("kopf", ""), farbe, b.get("hintergrund", "FFFFFF"), ("double", 6, farbe), S.LINIE, breite)
-    bloecke(z, b.get("inhalt", []), ctx, breite - 0.6)
+    hg = b.get("hintergrund", "FFFFFF")
+    z = kasten(c, b.get("kopf", ""), farbe, hg, ("double", 6, farbe), S.LINIE, breite)
+    bloecke(z, b.get("inhalt", []), ctx.auf(hg), breite - 0.6)
 
 
 def k_verlauf(c, b, ctx, breite):
@@ -981,7 +996,7 @@ def baue_warmup(q, loesung):
             schrift(p.add_run(f"   ⏱ {k.get('minuten', 3)} min"), S.SCHRIFT_TEXT, 8.5, farbe=S.TEXT2)
             p2 = z.add_paragraph()
             absatz_abstand(p2, 0, 3)
-            schrift(p2.add_run(k["titel"]), S.SCHRIFT_KOPF, 12, True, farbe=ctx.akzent)
+            schrift(p2.add_run(k["titel"]), S.SCHRIFT_KOPF, 12, True, farbe=ctx.akzent_text)
             bloecke(z, k["aufgabe"], ctx, TEXTBREITE / 2 - 0.7)
             if loesung:
                 loesungskasten(z, k["loesung"], ctx, TEXTBREITE / 2 - 0.7, kopf="RÜCKSEITE · LÖSUNG")
@@ -1017,7 +1032,7 @@ def baue_pruefung(q, eh):
         p = doc.add_paragraph()
         absatz_abstand(p, 8, 4, mit_naechstem=True)
         schrift(p.add_run(f"Aufgabe {a['nr']}" if a.get("nr") else "Aufgabe"), S.SCHRIFT_KOPF, 14, True,
-                farbe=ctx.akzent)
+                farbe=ctx.akzent_text)
         if a.get("titel"):
             schrift(p.add_run(f" · {a['titel']}"), S.SCHRIFT_KOPF, 14, True, farbe=S.TEXT)
         if not eh:
@@ -1032,7 +1047,7 @@ def baue_pruefung(q, eh):
                 pf.tab_stops.add_tab_stop(Cm(0.8))
                 pf.tab_stops.add_tab_stop(Cm(TEXTBREITE), WD_TAB_ALIGNMENT.RIGHT)
                 schrift(p.add_run(t["bez"] + "\t"), S.SCHRIFT_TEXT, 11, True, farbe=S.TINTE)
-                md(p, t["text"], 11, akzent=ctx.akzent)
+                md(p, t["text"], 11, akzent=ctx.akzent_text)
                 schrift(p.add_run(f"\t[{t['be']} BE]"), S.SCHRIFT_TEXT, 10, True, farbe=S.TEXT2)
                 absatz_abstand(p, 4, 3)
                 bloecke(doc, t.get("material", []), ctx, TEXTBREITE)

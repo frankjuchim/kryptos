@@ -73,6 +73,12 @@ jobs:
         run: |
           pip install fonttools brotli
           python3 -I werkzeuge/schriften_pruefen.py
+      - name: Kontraste der Material-Stile (WCAG AA, DESIGNSYSTEM §2.2) in gebauten docx/pptx
+        run: |
+          sudo apt-get update && sudo apt-get install -y libcairo2
+          pip install -r werkzeuge/material/requirements.txt
+          (cd werkzeuge/material && npm install --no-audit --no-fund)
+          python3 -I werkzeuge/material/test_kontrast.py
       # folgen (TECHNIK §16.1, mit Java 21 und pip install python-docx python-pptx pypdf):
       #   ide_pruefen.py, workspaces_erzeugen.py --pruefen, materialien_pruefen.py, akten_pdf.py --pruefen,
       #   loesungen_pdf.py --pruefen, lehrkraft_pdf.py --pruefen, video_folien.py --pruefen

@@ -1616,6 +1616,12 @@ Generatoren/Werkzeuge, §13.1, §14, §15, §16), `docs/AUFGABENFORMAT_KRYPTO.md
 10. **Akten-Kontrast (aus M4, offene Entscheidung 8):** Akzent als Kopfschrift auf Papier-2 liegt bei W0 unter 4,5 : 1. Vor dem Bauen der
     W0–W2-Akten (Task 93) entscheiden, ob `werkzeuge/material/kr_stil.py` angepasst wird – sonst müssten die gebauten Akten später neu
     gebaut werden (und wären dann wieder „maßgeblich“).
+    **Vorläufig festgelegt (Orchestrator) und vor Task 93 umgesetzt:** Die Kontrastregel aus M4 gilt auch für die Material-Pipeline –
+    Akzentfarbe nie als Text auf Papier-2, sonst ≥ 4,5 : 1 (großer Text ≥ 3 : 1). `kr_stil.textfarbe` wählt die Textfarbe je
+    Hintergrund (Akten: Titel im Kopfband und Köpfe der Papier-2-Kästen in Tinte, Sterne in Messing dunkel; Folien: Kastenköpfe und
+    Akzent-Text in Kästen ebenso); `kr_kontrast.py` prüft gebaute docx/pptx, `test_kontrast.py` läuft im CI-Job `inhalte`. Die
+    vorhandenen, maßgeblichen W4–W6-Dateien und `Werkzeuge/**` sind **nicht** neu gebaut (Kopf-Akzent auf Papier-2 bleibt dort bis zur
+    nächsten Überarbeitung; `kr_kontrast.py materialien/…` zeigt die Stellen).
 11. **Demo-PDFs (Task 99):** Vorschlag Akte W0·1 und Werkzeugkarte WK2 für Schülerinnen und Schüler, die Kickoff-Präsentation für
     Lehrkräfte. Andere Auswahl gewünscht?
 12. **Homophone Einordnung (W1 §10, offene Frage der Spec):** Die Lab-Lösung W1-L2-08 (1, 2, 5) bleibt wie in der Spec; Erklärung nennt

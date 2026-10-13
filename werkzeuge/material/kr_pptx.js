@@ -54,10 +54,35 @@ function textHoehe(md, breite, pt, faktor = 0.5, zeilenAbstand = 1.22) {
 }
 
 // ------------------------------------------------------------------------------------------------
+// Kontrast (WCAG 2.1 AA, DESIGNSYSTEM §2.2, E25) – gleiche Regel wie kr_stil.textfarbe
+// ------------------------------------------------------------------------------------------------
+function leuchtdichte(h) {
+  const c = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function kontrast(a, b) {
+  const [x, y] = [leuchtdichte(a), leuchtdichte(b)].sort((p, q) => q - p);
+  return (x + 0.05) / (y + 0.05);
+}
+// Farbe für Text auf hg: farbe, wenn zulässig (kein Epochen-Akzent auf Papier-2, ≥ 4,5 : 1 bzw. großer Text ≥ 3 : 1),
+// sonst helle Akzent-Variante (dunkler Grund) bzw. Tinte/Papier.
+function textfarbe(S, farbe, hg, pt = 11, fett = false) {
+  farbe = String(farbe).toUpperCase(); hg = String(hg).toUpperCase();
+  const soll = pt >= 18 || (fett && pt >= 14) ? 3 : 4.5;
+  const ok = (f) => !(hg === S.PAPIER2 && S.AKZENTE.includes(f)) && kontrast(f, hg) >= soll;
+  if (ok(farbe)) return farbe;
+  for (const e of Object.values(S.EPOCHEN)) if (farbe === e.akzent && ok(e.hell)) return e.hell;
+  return kontrast(S.TINTE, hg) >= kontrast(S.PAPIER, hg) ? S.TINTE : S.PAPIER;
+}
+
+// ------------------------------------------------------------------------------------------------
 // Blöcke
 // ------------------------------------------------------------------------------------------------
 class Setzer {
-  constructor(pres, S, ctx) { this.pres = pres; this.S = S; this.ctx = ctx; }
+  constructor(pres, S, ctx) { this.pres = pres; this.S = S; this.ctx = { akzentText: ctx.akzent, ...ctx }; }
+
+  // Setzer für Inhalte auf der Fläche hg: Akzent-Text nur, wo er lesbar ist
+  mit(hg) { return new Setzer(this.pres, this.S, { ...this.ctx, akzentText: textfarbe(this.S, this.ctx.akzentText, hg) }); }
 
   bloecke(slide, liste, x, y, w, pt, dry, farbe) {
     let yy = y;
@@ -76,13 +101,13 @@ class Setzer {
     if (t === "p" || t === "h" || t === "formel") {
       const groesse = t === "h" ? pt + 2 : t === "formel" ? pt + 4 : (b.klein ? pt - 4 : pt);
       const h = textHoehe(b.md, w, groesse) + 0.05;
-      if (!dry) slide.addText(runs(b.md, { akzent: ctx.akzent, opt: { bold: t === "h", fontFace: t === "h" ? S.SCHRIFT_KOPF : undefined, color: t === "h" ? ctx.akzent : farbe } }, S),
+      if (!dry) slide.addText(runs(b.md, { akzent: ctx.akzentText, opt: { bold: t === "h", fontFace: t === "h" ? S.SCHRIFT_KOPF : undefined, color: t === "h" ? ctx.akzentText : farbe } }, S),
         { x, y, w, h, fontSize: groesse, color: farbe, margin: 0, valign: "top", isTextBox: true, align: (t === "formel" || b.zentriert) ? "center" : "left", fit: "none" });
       return h;
     }
     if (t === "liste") {
       const items = b.items.map((it, i) => {
-        const r = runs(it, { akzent: ctx.akzent, opt: {} }, S);
+        const r = runs(it, { akzent: ctx.akzentText, opt: {} }, S);
         const marke = () => (b.nummeriert ? { type: "number", indent: 24 } : b.buchstaben ? { type: "number", style: "alphaLcParenR", indent: 24 } : { code: "25CF", indent: 22 });
         r[0].options = { ...r[0].options, bullet: marke(), paraSpaceAfter: 6 };
         if (i < b.items.length - 1) r[r.length - 1].options = { ...r[r.length - 1].options, breakLine: true };
@@ -121,10 +146,13 @@ class Setzer {
       colW = colW.map((c) => (c * Math.min(w, summe > w ? w : summe)) / summe);
       const tw = colW.reduce((a, c) => a + c, 0);
       const hl = new Set((b.hervor || []).map((p) => p.join(",")));
-      const zelle = (wert, kopfzelle, erste, key) => ({
-        text: runs(wert, { akzent: ctx.akzent, opt: { bold: kopfzelle || (erste && b.kopfspalte), fontFace: b.mono ? S.SCHRIFT_MONO : undefined } }, S),
-        options: { fill: { color: kopfzelle || (erste && b.kopfspalte) ? S.PAPIER2 : (hl.has(key) ? "F3E1C3" : "FFFFFF") }, align: (b.zentriert || b.mono) ? "center" : "left", valign: "middle" },
-      });
+      const zelle = (wert, kopfzelle, erste, key) => {
+        const fuell = kopfzelle || (erste && b.kopfspalte) ? S.PAPIER2 : (hl.has(key) ? "F3E1C3" : "FFFFFF");
+        return {
+          text: runs(wert, { akzent: textfarbe(S, ctx.akzentText, fuell), opt: { bold: kopfzelle || (erste && b.kopfspalte), fontFace: b.mono ? S.SCHRIFT_MONO : undefined } }, S),
+          options: { fill: { color: fuell }, align: (b.zentriert || b.mono) ? "center" : "left", valign: "middle" },
+        };
+      };
       const rows = [];
       if (kopf) rows.push(kopf.map((k, i) => zelle(k, true, i === 0, "")));
       zeilen.forEach((z, ri) => rows.push(Array.from({ length: ns }, (_, i) => zelle(z[i] ?? "", false, i === 0, ri + "," + i))));
@@ -224,12 +252,13 @@ class Setzer {
       const inner = b.md ? [{ t: "p", md: b.md }] : b.inhalt;
       const FARBEN = { akzent: [ctx.akzent, S.PAPIER2], messing: [S.MESSING_DUNKEL, "FBF3E2"], hinweis: [S.HINWEIS, "EEF3FA"], ok: [S.OK, "EEF6EE"], fehler: [S.FEHLER, "FDF3F2"] };
       const [linie, fuell] = FARBEN[b.farbe || "hinweis"] || FARBEN.hinweis;
-      const hi = this.bloecke(slide, inner, x + 0.25, y + 0.5, w - 0.5, pt - 2, true);
+      const innen = this.mit(fuell);
+      const hi = innen.bloecke(slide, inner, x + 0.25, y + 0.5, w - 0.5, pt - 2, true);
       const h = hi + 0.65;
       if (!dry) {
         slide.addShape(this.pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.08, fill: { color: fuell }, line: { color: linie, width: 1 } });
-        slide.addText(b.kopf || "HINWEIS", { x: x + 0.25, y: y + 0.12, w: w - 0.5, h: 0.3, fontSize: 13, bold: true, color: linie, charSpacing: 2, margin: 0, isTextBox: true });
-        this.bloecke(slide, inner, x + 0.25, y + 0.5, w - 0.5, pt - 2, false);
+        slide.addText(b.kopf || "HINWEIS", { x: x + 0.25, y: y + 0.12, w: w - 0.5, h: 0.3, fontSize: 13, bold: true, color: textfarbe(S, linie, fuell, 13, true), charSpacing: 2, margin: 0, isTextBox: true });
+        innen.bloecke(slide, inner, x + 0.25, y + 0.5, w - 0.5, pt - 2, false);
       }
       return h;
     }
@@ -304,12 +333,14 @@ async function baue(q, aus) {
   const probleme = [];
   let abschnitt = null;
 
-  function inhaltSetzen(slide, f, bloecke, x, y, w, unten, nr, farbe) {
+  // hg: Hintergrund der Inhalte (Folie oder Kasten) – bestimmt die Akzent-Textfarbe
+  function inhaltSetzen(slide, f, bloecke, x, y, w, unten, nr, farbe, hg = S.PAPIER) {
+    const s = setzer.mit(hg);
     let pt = f.schrift || 22;
-    let h = setzer.bloecke(slide, bloecke, x, y, w, pt, true, farbe);
-    while (h > unten - y && pt > 16) { pt -= 2; h = setzer.bloecke(slide, bloecke, x, y, w, pt, true, farbe); }
+    let h = s.bloecke(slide, bloecke, x, y, w, pt, true, farbe);
+    while (h > unten - y && pt > 16) { pt -= 2; h = s.bloecke(slide, bloecke, x, y, w, pt, true, farbe); }
     if (h > unten - y + 0.05) probleme.push(`Folie ${nr} „${f.titel || f.layout}“: Inhalt zu hoch (${h.toFixed(2)} > ${(unten - y).toFixed(2)} Zoll) – kürzen oder teilen`);
-    setzer.bloecke(slide, bloecke, x, y, w, pt, false, farbe);
+    s.bloecke(slide, bloecke, x, y, w, pt, false, farbe);
   }
 
   (q.folien || []).forEach((f, i) => {
@@ -348,7 +379,7 @@ async function baue(q, aus) {
         y += dh + 0.45;
       }
       if (f.qr) { slide.addImage({ path: f._qr, x: W - RAND - 1.9, y: 4.6, w: 1.9, h: 1.9 }); }
-      if (f.inhalt) inhaltSetzen(slide, f, f.inhalt, RAND + 0.2, y, f.qr ? W - 2 * RAND - 2.6 : W - 2 * RAND - 0.4, INHALT_UNTEN, nr, S.PAPIER);
+      if (f.inhalt) inhaltSetzen(slide, f, f.inhalt, RAND + 0.2, y, f.qr ? W - 2 * RAND - 2.6 : W - 2 * RAND - 0.4, INHALT_UNTEN, nr, S.PAPIER, S.NACHT);
     } else if (lay === "merke") {
       slide = pres.addSlide({ masterName: "KR Inhalt", ...sec });
       slide.addText(f.titel || "Merke", { placeholder: "titel" });
@@ -357,7 +388,7 @@ async function baue(q, aus) {
       const h = Math.min(INHALT_UNTEN - y, hi + 1.15);
       slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.1, fill: { color: "FBF3E2" }, line: { color: S.MESSING, width: 1.5 }, objectName: "Merke-Kasten" });
       slide.addText("MERKE", { x: x + 0.45, y: y + 0.25, w: 4, h: 0.45, fontFace: S.SCHRIFT_KOPF, fontSize: 20, bold: true, color: S.MESSING_DUNKEL, charSpacing: 4, margin: 0, isTextBox: true });
-      inhaltSetzen(slide, f, f.inhalt, x + 0.45, y + 0.8, w - 0.9, y + h - 0.2, nr);
+      inhaltSetzen(slide, f, f.inhalt, x + 0.45, y + 0.8, w - 0.9, y + h - 0.2, nr, undefined, "FBF3E2");
     } else if (lay === "falle") {
       slide = pres.addSlide({ masterName: "KR Inhalt", ...sec });
       slide.addText(`Falle ${f.nr} · ${f.titel}`, { placeholder: "titel" });
@@ -370,8 +401,8 @@ async function baue(q, aus) {
         const bl = typeof inhalt === "string" ? [{ t: "p", md: inhalt }] : inhalt || [];
         const hb = Math.min(INHALT_UNTEN - y, Math.max(1.6, setzer.bloecke(slide, bl, x + 0.3, y + 0.75, sw - 0.6, f.schrift || 22, true) + 1.0));
         slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: sw, h: hb, rectRadius: 0.08, fill: { color: fuell }, line: { color: farbe, width: 1.25 } });
-        slide.addText(kopf, { x: x + 0.3, y: y + 0.2, w: sw - 0.6, h: 0.4, fontSize: 18, bold: true, color: farbe, charSpacing: 2, margin: 0, isTextBox: true });
-        inhaltSetzen(slide, f, bl, x + 0.3, y + 0.75, sw - 0.6, y + hb - 0.15, nr);
+        slide.addText(kopf, { x: x + 0.3, y: y + 0.2, w: sw - 0.6, h: 0.4, fontSize: 18, bold: true, color: textfarbe(S, farbe, fuell, 18, true), charSpacing: 2, margin: 0, isTextBox: true });
+        inhaltSetzen(slide, f, bl, x + 0.3, y + 0.75, sw - 0.6, y + hb - 0.15, nr, undefined, fuell);
       });
     } else if (lay === "auftrag") {
       slide = pres.addSlide({ masterName: "KR Inhalt", ...sec });
