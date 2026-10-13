@@ -10,6 +10,13 @@ const DEMO = require('./seed/gast/demo.json');
 
 async function szenario8(ctx) {
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 8');
+  // Review M4: der Gastmodus schreibt nichts – keine Cookies, kein localStorage, keine Schreib-Endpunkte außer Prüfen/Tipp der Demo
+  const schreibend = [];
+  page.on('request', (r) => {
+    if (r.method() === 'GET' || r.method() === 'HEAD') return;
+    const pfad = new URL(r.url()).pathname;
+    if (!/^\/api\/gast\/aufgaben\/W8-[\w-]+\/(pruefen|tipp)$/.test(pfad)) schreibend.push(`${r.method()} ${pfad}`);
+  });
   await gehe(page, ctx.basis + '/gast');
   await page.locator('a.gast-karte').first().waitFor();
   // Review M4 K9: Überschrift mit Abstand zur Kopfzeile (wie die übrigen Seiten)
@@ -49,6 +56,9 @@ async function szenario8(ctx) {
   // Labor-Platz: Chiffrierscheibe (Werkzeug selbst kommt mit M6)
   await gehe(page, ctx.basis + '/gast#/labor/scheibe');
   await page.getByText('Dieses Werkzeug ist noch in Arbeit.').waitFor();
+  assert.deepEqual(schreibend, [], 'Gastmodus: keine schreibenden Anfragen');
+  assert.deepEqual((await kontext.cookies()).map((c) => c.name), [], 'Gastmodus: keine Cookies');
+  assert.deepEqual(await page.evaluate(() => Object.keys(localStorage)), [], 'Gastmodus: kein localStorage');
   await kontext.close();
 }
 

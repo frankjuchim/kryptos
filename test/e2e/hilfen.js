@@ -114,14 +114,19 @@ async function anmelden(page, ctx, wer, ziel = '/') {
 
 const ERWARTET = /status of (400|401|403|404|409|429)\b/;
 
-/** Seitenfehler und Konsolenfehler sammeln (erwartete Ressourcen-Status ausgenommen). */
+/**
+ * Seitenfehler und Konsolenfehler sammeln. Ausgenommen sind nur erwartete Status (400–429) von API-Antworten
+ * (/api/…) – fehlende Schriften, Sprites, Stylesheets oder Skripte (404) fallen auf (Review M4).
+ */
 function beobachte(page, name, fehler) {
   page.on('pageerror', (e) => fehler.push(`${name}: Seitenfehler ${e.message}`));
   page.on('console', (m) => {
     if (m.type() !== 'error') return;
     const t = m.text();
-    if (ERWARTET.test(t)) return;
-    fehler.push(`${name}: Konsole ${t} (${page.url()})`);
+    const quelle = (m.location() && m.location().url) || '';
+    if (ERWARTET.test(t) && /^https?:\/\/[^/]+\/api\//.test(quelle)) return;
+    if (/status of 404\b/.test(t) && quelle === page.url() && /\/404-[\w-]*$/.test(quelle)) return; // absichtlich aufgerufene 404-Seite
+    fehler.push(`${name}: Konsole ${t} (${quelle || page.url()})`);
   });
 }
 

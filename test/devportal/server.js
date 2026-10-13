@@ -105,6 +105,7 @@ function createDevPortal({ portalUrl, plattformUrl, plattformId = 'kryptos', fet
   });
   app.use(express.urlencoded({ extended: false, limit: '10kb' }));
   app.get('/stil.css', (req, res) => res.type('css').send(STIL));
+  app.get('/favicon.ico', (req, res) => res.status(204).end()); // kein 404 in der Browser-Konsole (e2e)
 
   const fehler = (res, text) => res.status(400).type('html').send(seite('Ungültige Anfrage', `<div class="karte"><p>${h(text)}</p><p>Es wird nicht weitergeleitet.</p></div>`));
 

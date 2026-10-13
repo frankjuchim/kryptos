@@ -167,7 +167,7 @@ public/
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
-test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js, seed/ (Gast-Demo für den e2e, §15)
+test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js fehler.js, seed/ (Gast-Demo für den e2e, §15)
 test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
 ```
@@ -1615,9 +1615,10 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
 Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 MB, `E2E_FOTOS=0` schaltet aus –, Viewports
 1280×800, 768×1024, 360×740, Beamer 1920×1080). Aufteilung (M4): `hilfen.js` (Start von Dev-Portal + App mit
-`SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung, `keinQuerScrollen`, `ziele44`, Fotos), `schueler.js` (Nr. 1, 2,
-3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9);
-Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 9. Nr. 4–6 folgen mit M6/M7.
+`SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung – ausgenommen nur erwartete Status 400–429 von `/api/…` –,
+`keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
+3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
+`fehler.js` (Nr. 10); Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 10 → 9. Nr. 4–6 folgen mit M6/M7.
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
 2. Level mit allen neuen Interaktionen (Fixture): `chiffre` mit Schrittprüfung und Fallen-Chip P3, `zuordnung` mit
@@ -1628,8 +1629,12 @@ Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 9. Nr. 4–6 folgen mit M6/M7.
    Beenden → Inhalte weg.
 6. Arena: zwei Teams reichen ein, Angriff, Knacken, Beurteilung, Abzeichen.
 7. Lehrkraft: Niveau gA → Level 2.3 verschwindet bei Schülern; Werkzeug sperren; Teams anlegen; Auswertung; Vorschau.
-8. Gastmodus: sechs Demo-Aufgaben, Chiffrierscheibe, Demo-Kurs.
-9. Alle Seiten auf 360 px ohne horizontales Scrollen; Dunkelmodus-Screenshots; Tastatur-Durchlauf einer Aufgabe.
+8. Gastmodus: sechs Demo-Aufgaben, Chiffrierscheibe, Demo-Kurs; keine Cookies, kein `localStorage`, keine schreibenden
+   Anfragen außer Prüfen/Tipp der Demo.
+9. Alle Seiten auf 360 px ohne horizontales Scrollen; Dunkelmodus-Screenshots; Tastatur-Durchlauf einer Aufgabe (Fokus
+   nie auf `body`, nach dem Prüfen auf der Rückmeldung); Kontrastmessung aller Seiten hell und dunkel über berechnete
+   Farben (≥ 4,5 : 1, großer Text ≥ 3 : 1, Review M4).
+10. Fehlerzustände: Server-500 (JSON und HTML) und Netzwerkfehler per `route` → verständlicher Hinweis (Review M4).
 
 ---
 
