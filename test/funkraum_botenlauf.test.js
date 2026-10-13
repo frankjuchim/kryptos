@@ -73,3 +73,23 @@ test('Botenlauf: Runde bleibt die Sende-Runde, auch wenn Eve erst später knackt
   const sm = await F.starte(g, 'mallory');
   await g.lk.post(`/api/lehrer/funk/${sm.id}/sonderkarte`).send({ teamId: g.teams[0].id, karte: 'zaun' }).expect(400);
 });
+
+test('Botenlauf: Ereignis „sonderkarte“ (mit Team-id) erreicht keine Schüler-Teams und den Beamer erst in der Auflösung', async () => {
+  const f = await F.kursMitTeams(3);
+  const sz = await F.starte(f, 'botenlauf');
+  const [alice] = f.teams;
+  await F.aktion(f, sz.id, 'phase').expect(200); // runde-2
+  await F.aktion(f, sz.id, 'phase').expect(200); // runde-3
+  await f.lk.post(`/api/lehrer/funk/${sz.id}/sonderkarte`).send({ teamId: alice.id, karte: 'zaun' }).expect(200);
+  const codes = (b) => b.ereignisse.map((e) => e.code);
+  for (const t of f.teams) {
+    const b = (await F.stand(t.c, sz.id)).body;
+    assert.ok(!codes(b).includes('sonderkarte'), `Team ${t.id} sieht keine Sonderkarte`);
+    assert.doesNotMatch(JSON.stringify(b), /sonderkarte/);
+  }
+  assert.ok(!codes((await F.regie(f, sz.id, 0, 'beamer')).body).includes('sonderkarte'), 'Beamer vor der Auflösung ohne Sonderkarte');
+  assert.ok(codes((await F.regie(f, sz.id)).body).includes('sonderkarte'), 'Regie sieht die Sonderkarte');
+  await F.aktion(f, sz.id, 'phase').expect(200); // aufloesung
+  assert.ok(codes((await F.regie(f, sz.id, 0, 'beamer')).body).includes('sonderkarte'), 'Beamer in der Auflösung');
+  for (const t of f.teams) assert.ok(!codes((await F.stand(t.c, sz.id)).body).includes('sonderkarte'));
+});

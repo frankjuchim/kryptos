@@ -1542,7 +1542,8 @@ Szenario-Regeln im Detail:
   alle Geheimtexte und reicht Klartexte ein → „geknackt“ (**Hash-Vergleich**, kein Bestätigungsknopf des Absenders).
   Runde einer Nachricht = Phase, deren `phase`-Ereignis die größte Version ≤ Nachrichten-Version hat (keine neue Spalte).
   Runde 3: Regie vermerkt Sonderkarten (`POST /api/lehrer/funk/:id/sonderkarte { teamId, karte: 'doppelt'|'zaun' }`, nur
-  Alice-Teams) für die Spalte „Besonderheit“. Auflösung: Anzahl Nachrichten, angekommen, geknackt, Zeit „gesendet →
+  Alice-Teams) für die Spalte „Besonderheit“; das Ereignis `sonderkarte { team }` geht nie an Schüler-Teams und an den
+  Beamer erst ab der Auflösung (es verriete Eve das Verfahren). Auflösung: Anzahl Nachrichten, angekommen, geknackt, Zeit „gesendet →
   geknackt“; Merksatz Schlüsselraum 26/Kerckhoffs.
 - **Wettknacken (W1 §9.2/§9.3, Plan M7 E97):** Text aus `seed/funkraum/wettknacken.json` (`{ id, geheimtext, loesung: {
   zuordnung }, laenge }`, ≥ 400 Buchstaben, nicht aus Lab/Akten). Teams arbeiten mit der eingebetteten

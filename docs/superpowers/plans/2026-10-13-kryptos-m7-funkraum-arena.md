@@ -2988,6 +2988,11 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Hinweis: Nach dem Schließen meldet Chromium den letzten Stand-Abruf (404) als Konsolenzeile „Failed to load resource“ –
   der Poller stoppt danach (kein Skriptfehler).
 
+- **Nachtrag nach Task 155 (Festlegung Orchestrator):** Das Ereignis `sonderkarte { team }` lieferte der Server auch an
+  Schüler-Teams aus (nur die Oberfläche blendete es aus) – damit hätte Eve das Verfahren eines Alice-Teams im JSON gesehen.
+  Jetzt filtert `typen/botenlauf.js` `ereignisSicht`: Schüler-Teams nie, Beamer erst ab `aufloesung`, Regie immer
+  (Test `funkraum_botenlauf.test.js`, TECHNIK §12.6).
+
 ## Reihenfolge und Abhängigkeiten
 
 130 → 131 → 132 → 133 → 134 → 135 → 136 → 137 → 138 → 139 → 140 → 141 → 142 → 143 → 144 → 145 → 146 → 147 → 148 → 149 →

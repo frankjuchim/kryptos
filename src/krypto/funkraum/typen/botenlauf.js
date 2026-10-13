@@ -80,6 +80,12 @@ module.exports = {
       return { ok: true };
     }
   },
+  /** Sonderkarten (mit Team-id) verraten Eve das Verfahren: nie an Schüler-Teams, an den Beamer erst ab der Auflösung */
+  ereignisSicht(ctx, sz, e, betrachter) {
+    if (e.code !== 'sonderkarte' || betrachter.art === 'regie') return true;
+    if (betrachter.art === 'beamer') return sz.phase === 'aufloesung' || sz.status === 'auswertung';
+    return false;
+  },
   /** Chiffrierscheibe für alle Rollen, eingebettet; Eve braucht „alle“ (Brute-Force-Liste, E98) */
   werkzeuge() {
     return [{ id: 'scheibe', voreinstellung: { reiter: ['alle', 'scheibe', 'text'] } }];
