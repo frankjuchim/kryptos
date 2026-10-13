@@ -133,7 +133,8 @@ function createBoss(ctx, { inhalte, stand, lernen }) {
     const laufend = versuche.find((v) => !v.ende_at) || null;
     return {
       welt: { nr: w.nr, titel: w.titel, farbe: w.farbe },
-      boss: { titel: w.boss.titel, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, maxPunkte: null },
+      // Kryptos (K08, Plan M5 E52): rahmen = Rahmentext der Boss-Startseite
+      boss: { titel: w.boss.titel, rahmen: w.boss.rahmen || null, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, maxPunkte: null },
       frei: z.frei,
       grund: z.grund || null,
       laufend: laufend ? { id: laufend.id, deadline: laufend.deadline_at } : null,

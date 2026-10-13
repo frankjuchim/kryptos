@@ -216,3 +216,13 @@ test('Boss: gespeicherte chiffre-Antwort mit leerem Kästchen bleibt falsch (kan
   const e = (await s.post(`/api/boss/kampf/${k.id}/beenden`).send({})).body;
   assert.equal(e.aufgaben.find((a) => a.id === 'W9-B-05').ok, false);
 });
+
+test('Boss-Rahmentext (boss.rahmen, Plan M5 E52): im Status vor dem Start, ohne Aufgaben', async () => {
+  const { s } = await bossSzenario();
+  const st = (await s.get('/api/boss/9').expect(200)).body;
+  assert.equal(st.boss.rahmen, W.boss.rahmen);
+  assert.equal(typeof st.boss.rahmen, 'string');
+  assert.equal(st.aufgaben, undefined);
+  assert.equal(st.boss.aufgaben, undefined);
+  assert.equal(st.boss.pool, undefined);
+});

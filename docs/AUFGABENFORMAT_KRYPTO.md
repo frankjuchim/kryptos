@@ -812,6 +812,9 @@ der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und
 - Validator: Pool 14–16 Aufgaben (Hinweis außerhalb), `anzahl` 8, `mix` 3/3/2, `dauerMin` 25 (Welt 6: 30) –
   Abweichungen sind Hinweise; **Fehler**, wenn der gA-Pool (nur `kern`) weniger als `anzahl` Aufgaben hat; **Hinweis**,
   wenn der Mix im gA-Pool nicht je Stufe erfüllbar ist.
+- **`rahmen`** (optional, Plan M5 E52): Rahmentext des Bosses aus den Specs §5 („Rahmentext (geduzt)“), Mini-Markdown,
+  höchstens 800 Zeichen (Fehler darüber oder bei Nicht-Text), **keine Lösungen und keine Aufgaben**. Erscheint auf der
+  Boss-Startseite über den Regeln (`GET /api/boss/:welt` → `boss.rahmen`). Fehlt er in einer Inhaltswelt 0–6 → Hinweis.
 - **Mindestens 3** Pool-Aufgaben mit `kategorie: "fremde-chiffre"` (Fehler, Design §7.6), davon mindestens 2 `kern`.
 - Verboten in Boss-Aufgaben (Fehler): Block `werkzeug`, `zuordnung` mit `haeufigkeit: true`, Aufgaben-`niveau`
   `ergaenzung`/`kuer`, Interaktionen, deren Vertrag `boss.erlaubt: false` meldet. Ein Feld `niveau` am Boss selbst ist

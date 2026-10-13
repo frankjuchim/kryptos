@@ -378,6 +378,7 @@ const KRSpiel = (() => {
           { class: 'karte boss-karte' + (best && best.besiegt ? ' besiegt' : st.frei ? ' bereit' : ' gesperrt') },
           h('span', { class: 'etikett' }, 'Boss der Epoche'),
           h('h1', null, st.boss.titel),
+          st.boss.rahmen ? h('div', { class: 'boss-rahmen' }, AQR.md(st.boss.rahmen, null, 'div')) : null,
           h(
             'ul',
             { class: 'boss-regeln' },

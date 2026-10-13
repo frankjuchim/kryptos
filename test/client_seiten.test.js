@@ -164,7 +164,7 @@ test('Boss-Auswertung zeigt Diagnose-Chips und Lösung', async () => {
 test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
   const f = {
     ...spielFetch([welt(9)]),
-    'GET /api/boss/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, boss: { titel: 'Testboss', dauerMin: 30, anzahl: 4 }, frei: false, grund: 'Erst 60 % der Level-Punkte.', laufend: null, gesperrtBis: null, bester: null, versuche: [] } },
+    'GET /api/boss/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, boss: { titel: 'Testboss', dauerMin: 30, anzahl: 4, rahmen: 'Ein **Drache** bewacht <b>das</b> Testarchiv.' }, frei: false, grund: 'Erst 60 % der Level-Punkte.', laufend: null, gesperrtBis: null, bester: null, versuche: [] } },
     'GET /api/training/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, generatoren: [{ key: 'caesar', titel: 'Caesar' }], heute: 3, maxProTag: 30, geloestGesamt: 5, offen: null } },
     'POST /api/training/9/neu': { status: 201, body: { id: 7, status: 'offen', fehlversuche: 0, aufgabe: { id: 'T-7', titel: 'Übung', stufe: 1, punkte: 1, inhalt: [{ t: 'text', md: 'Rechne.' }], interaktion: { kind: 'gaps', felder: { a: { loesung: [] } } } } } },
     'GET /api/kata/meta': { status: 200, body: { welten: [{ welt: 9, anzahl: 2 }], kategorien: [{ kategorie: 'modulo', anzahl: 2 }], weltNamen: [{ nr: 9, name: 'Testwelt' }] } },
@@ -177,6 +177,14 @@ test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
   assert.match(k.text(haupt), /keine Werkzeuge/);
   assert.match(k.text(haupt), /Erst 60 % der Level-Punkte/);
   assert.ok(k.eins(haupt, 'button.boss-start').disabled);
+  // Rahmentext über den Regeln, Mini-Markdown als Textknoten (kein HTML)
+  const rahmen = k.eins(haupt, '.boss-rahmen');
+  assert.ok(rahmen, 'Rahmentext fehlt');
+  assert.match(k.text(rahmen), /Ein Drache bewacht <b>das<\/b> Testarchiv\./);
+  assert.equal(k.alle(rahmen, 'b').length, 0, 'kein HTML aus dem Rahmentext');
+  assert.ok(k.eins(rahmen, 'strong'), 'Fettdruck aus Mini-Markdown');
+  const kinder = rahmen.parentNode.children;
+  assert.ok(kinder.indexOf(rahmen) < kinder.indexOf(k.eins(haupt, '.boss-regeln')), 'Rahmentext steht über den Regeln');
   k = D.lade(SPIEL, { url: 'http://x.test/spiel#/training/9', fetch: f });
   await k.ruhe();
   haupt = k.document.getElementById('haupt');

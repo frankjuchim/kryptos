@@ -521,3 +521,16 @@ test('Video-Eintrag mit url null zählt als vorhanden', () => {
   assert.ok(!r.some((x) => /video\.nr/.test(x.meldung)), r.map((x) => x.meldung).join(' | '));
   assert.ok(warnungenVon(basis(), { videos: [{ nr: 2, titel: 'Testvideo', url: null }] }).some((x) => /video\.nr 1 fehlt in seed\/videos\.json/.test(x.meldung)));
 });
+
+test('Boss-Rahmentext: optional, höchstens 800 Zeichen, Hinweis fehlt nur in Inhaltswelten (Plan M5 E52)', () => {
+  assert.equal(typeof basis().boss.rahmen, 'string');
+  erwarteFehler((w) => { w.boss.rahmen = 'x'.repeat(801); }, /rahmen: höchstens 800 Zeichen/);
+  erwarteFehler((w) => { w.boss.rahmen = 42; }, /rahmen/);
+  const w = basis(); w.boss.rahmen = 'x'.repeat(800);
+  assert.deepEqual(fehlerVon(w), []);
+  const hin = (x) => validiereWelt(x, { datei: 't' }).warnungen.map((y) => y.meldung).join(' | ');
+  const ohne = basis(); delete ohne.boss.rahmen;
+  assert.doesNotMatch(hin(ohne), /rahmen fehlt/, 'Fixture-Welt 9: kein Hinweis');
+  const w0 = ladeWelt(0); delete w0.boss.rahmen;
+  assert.match(hin(w0), /rahmen fehlt/);
+});

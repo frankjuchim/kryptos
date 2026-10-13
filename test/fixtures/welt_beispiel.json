@@ -46,6 +46,7 @@
   "boss": {
     "id": "W9-BOSS",
     "titel": "Der Testdrache",
+    "rahmen": "Ein Drache bewacht das Testarchiv. Du hast 25 Minuten.",
     "dauerMin": 25,
     "anzahl": 3,
     "mix": { "1": 1, "2": 1, "3": 1 },

@@ -132,6 +132,7 @@ async function szenario3(ctx) {
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 3');
   await anmelden(page, ctx, 'Ida K.', '/spiel');
   await gehe(page, `${ctx.basis}/spiel#/boss/9`);
+  assert.match(await page.locator('.boss-karte .boss-rahmen').innerText(), /Ein Drache bewacht das Testarchiv/, 'Rahmentext über den Regeln');
   await page.getByRole('button', { name: 'Kampf beginnen' }).click();
   await page.locator('dialog[open]').getByRole('button', { name: 'Kampf beginnen' }).click();
   await page.waitForURL(/#\/kampf\//);

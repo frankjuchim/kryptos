@@ -140,6 +140,8 @@ function createInhalte(ctx) {
           boss = {
             id: String(data.boss.id || `W${data.welt}-BOSS`),
             titel: String(data.boss.titel || 'Boss'),
+            // Kryptos (K09, Plan M5 E52): Rahmentext des Bosses (geduzt, Mini-Markdown, keine Lösungen)
+            rahmen: typeof data.boss.rahmen === 'string' && data.boss.rahmen.trim() ? data.boss.rahmen : null,
             dauerMin: Number.isInteger(data.boss.dauerMin) ? data.boss.dauerMin : 25,
             anzahl: Number.isInteger(data.boss.anzahl) ? Math.min(data.boss.anzahl, pool.length) : Math.min(8, pool.length),
             mix: data.boss.mix && typeof data.boss.mix === 'object' ? data.boss.mix : null,

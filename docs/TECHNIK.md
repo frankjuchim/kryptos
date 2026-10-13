@@ -1456,6 +1456,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/archivfund/:welt` · `POST …/pruefen` · `…/tipp` · `…/aufdecken` | Schüler | wie Aufgaben | wie Aufgaben, `punkte` immer 0 | 90/min (Kern-Limit) |
 | `POST /api/aufgaben/:id/pruefen` | Schüler | Kern + Delta §14 | Kern + `diagnose`, `zeichen`, `bits`, `anteil` | 90/min |
 | `GET /api/labor` | Schüler | – | `{ boss, werkzeuge: [{ id, titel, welt, frei, grund }] }` (`grund`: `null`/`lehrkraft`/`welt`/`boss`, §10.3) | – |
+| `GET /api/boss/:welt` | Schüler | – | Kern-Status + `boss.rahmen` (Rahmentext der Specs §5, Mini-Markdown oder `null`; Plan M5 E52) – nie Aufgaben vor dem Start | – |
 
 ### 13.2 Funkraum (Schüler)
 

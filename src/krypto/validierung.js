@@ -390,6 +390,11 @@ function boss(b, f, w, { data, aufgaben }) {
   const fb = (m, aid) => f('boss', aid ? `boss › ${aid}` : 'boss', m, aid);
   const wb = (m) => w('boss', 'boss', m);
   if (b.niveau !== undefined) wb('boss.niveau ist entfallen – Niveau je Aufgabe (Pool-Aufgaben tragen niveau kern oder eA).');
+  // Rahmentext (Plan M5 E52): optional, Mini-Markdown, höchstens 800 Zeichen; in den Inhaltswelten erwartet
+  if (b.rahmen !== undefined) {
+    if (typeof b.rahmen !== 'string' || !b.rahmen.trim()) fb('rahmen muss ein Text sein (Mini-Markdown).');
+    else if (b.rahmen.length > 800) fb(`rahmen: höchstens 800 Zeichen (gefunden: ${b.rahmen.length}).`);
+  } else if (istInhaltswelt(data.welt)) wb('rahmen fehlt (Rahmentext der Specs §5, geduzt).');
   const pool = (Array.isArray(b.pool) ? b.pool : []).filter((id) => aufgaben instanceof Map && istObjekt(aufgaben.get(id))).map((id) => aufgaben.get(id));
   for (const a of pool) {
     const aid = a.id;
