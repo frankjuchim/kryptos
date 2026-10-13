@@ -834,7 +834,7 @@ Beamer bei 1920 × 1080.
   Regie alles (mit Inhalt); Beamer alles außer verdeckten Arten (`typ.sicht` entscheidet); `klartext_hash`,
   `von_schueler_id` nie.
 
-- [ ] **Step 1: Failing test** – `test/funkraum_polling.test.js` (Nachrichten per Roh-SQL mit Dienst-Version, weil Senden erst
+- [x] **Step 1: Failing test** – `test/funkraum_polling.test.js` (Nachrichten per Roh-SQL mit Dienst-Version, weil Senden erst
   Task 136 kommt – Hilfsfunktion `einfuegen(f, sz, von, an, inhalt)` setzt `version = version + 1` wie der Dienst):
   ```js
   'use strict';
@@ -904,8 +904,9 @@ Beamer bei 1920 × 1080.
     const frei = (await F.stand(f.teams[3].c, sz.id).expect(200)).body;
     assert.deepEqual([frei.ich.rolle, frei.nachrichten], [null, []]);
     assert.deepEqual((await f.teams[0].c.get('/api/funk').expect(200)).body.szenario.status, 'laeuft');
-    const g = await F.kursMitTeams(3);
-    const szG = await F.starte(g, 'botenlauf');
+    // fremdes Szenario: zweiter Kurs in DERSELBEN App (Plan-Korrektur Task 135, siehe Umsetzungsnotizen)
+    const k2 = await H.kursAnlegen(f.lk, 'LK 12 (eA)'); /* … drei Teams per PUT …/teams … */
+    const szG = await F.starte({ ...f, kurs: k2 }, 'botenlauf');
     await F.stand(f.teams[0].c, szG.id).expect(404);
   });
 
@@ -932,11 +933,11 @@ Beamer bei 1920 × 1080.
     await f.lk.get(`/api/lehrer/funk/${sz.id}/stand?ansicht=alles`).expect(400);
   });
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Limiter aus `src/security.js` mit `h.now()`; `If-None-Match` exakt vergleichen;
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Limiter aus `src/security.js` mit `h.now()`; `If-None-Match` exakt vergleichen;
   `Cache-Control: no-store`; Stand-Abfragen schreiben nichts).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Polling-Protokoll (200/304/seit, ETag), Sichtbarkeit je Rolle, Rate-Limits"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Polling-Protokoll (200/304/seit, ETag), Sichtbarkeit je Rolle, Rate-Limits"`.
 
 ### Task 136: Nachrichten senden, Prüfen über Hash, Moderation (TECHNIK §12.3, §12.5, E108, E109)
 
@@ -2768,6 +2769,15 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Typ-Gerüste enthalten `typ`, `start` → `{}`, leere `aktionen`, `auswertung` generisch. App-Option `funkraumDatei`
   (Wettknacken-Seed, ab Task 138). Zusätzliche Tests: Sperren über den Verbund beendet über den Dienst (Teilnahmen,
   Auswertung je Team), Optionen/Salz.
+
+- **Task 135:** Plan-Test korrigiert: Das „fremde Szenario“ entstand in einer zweiten App (eigene In-Memory-Datenbank, gleiche
+  id 1) und lieferte deshalb 200 – jetzt zweiter Kurs in derselben App (beide Richtungen 404). ETag der Lehrkraft-Beamer-Sicht
+  `"<id>-<version>-beamer"` (Regie `"<id>-<version>"` wie Schüler), damit ein Wechsel der Ansicht nie ein falsches 304
+  liefert. Rate-Limits zählen jede Abfrage (auch 304). Typ-Hooks zusätzlich optional: `ereignisSicht(ctx, sz, e,
+  betrachter)` (Ereignisse je Betrachter filtern) – ohne Hook sehen alle alle Ereignisse (nur Codes/ids). `typ.sicht` wird für
+  Teams nur gerufen, wenn keine Grundregel greift, für den Beamer immer (E99). Nachrichten mit `an_team_id = NULL` gelten als
+  öffentlich. Regie-Stand enthält zusätzlich `rollen`, `optionen`, `stumm`. `auswertung`: nach dem Beenden aus `konfig`, für
+  Regie/Beamer in Phase `aufloesung` live über `typ.auswertung`. Zusatztest: Stand schreibt nichts, Antwortform, getrennte ETags.
 
 ## Reihenfolge und Abhängigkeiten
 

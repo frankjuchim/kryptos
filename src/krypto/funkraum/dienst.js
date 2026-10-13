@@ -1,4 +1,5 @@
-/* Kryptos – Funkraum-Dienst: Zustandsautomat, Regie (TECHNIK §12.1, §12.2, §12.5, Plan M7 Task 134, E107, E111, E113).
+/* Kryptos – Funkraum-Dienst: Zustandsautomat, Regie, Stand/Polling (TECHNIK §12.1–§12.5, Plan M7 Tasks 134–136,
+   E99, E107, E109–E111, E113).
    Der Dienst kennt nur Zustandsautomat, Sichtbarkeit, Versionen, Grenzen und Löschung; jeder Szenario-Typ liefert seine
    Regeln als Modul `typen/<typ>.js` (Vertrag im Plan M7 „Gemeinsame Bausteine“). Jede Änderung erhöht
    `funk_szenarien.version` in derselben Transaktion. Zufall nur über `zufallBytes`, Zeit nur über `now`. */
@@ -8,6 +9,7 @@ const Krypto = require('../../../public/static/js/shared/krypto');
 const T = require('./text');
 const L = require('./loeschen');
 const Sz = require('./szenarien');
+const { BOSS_KULANZ_MS } = require('../../domain');
 
 const TYP_MODULE = Object.freeze({
   botenlauf: require('./typen/botenlauf'),
@@ -246,7 +248,174 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     return { szenario: sz && Date.parse(sz.endet_spaetestens) > now() ? regieAnsicht(sz.id) : null };
   }
 
-  return { anlegen, rollenSetzen, status, aktuellFuerKurs, beendeIntern, regieAnsicht, TYP_MODULE, _intern: { lade, typCtx, sql, naechsteVersion, ereignis, konfigVon } };
+  /* ---------- Stand und Polling (TECHNIK §12.4, Plan M7 Task 135, E99, E109, E110) ---------- */
+
+  const sqlStand = {
+    nachrichten: db.prepare('SELECT * FROM funk_nachrichten WHERE szenario_id = ? AND version > ? ORDER BY id'),
+    ereignisse: db.prepare('SELECT id, code, daten, version, zeit FROM funk_ereignisse WHERE szenario_id = ? AND version > ? ORDER BY id'),
+    laufenderBoss: db.prepare('SELECT 1 FROM boss_versuche WHERE schueler_id = ? AND ende_at IS NULL AND deadline_at > ? LIMIT 1')
+  };
+
+  const etagVon = (sz, ansicht) => `"${sz.id}-${sz.version}${ansicht === 'beamer' ? '-beamer' : ''}"`;
+
+  /** seit nach E110: fehlt, nicht ganzzahlig, ≤ 0 oder > Version → 0 (Vollstand) */
+  function seitVon(seit, version) {
+    const n = typeof seit === 'string' && /^\d{1,15}$/.test(seit) ? Number(seit) : Number.isInteger(seit) ? seit : 0;
+    return n > 0 && n <= version ? n : 0;
+  }
+
+  /** 304 nach E110: If-None-Match = aktueller ETag oder seit = Version */
+  function unveraendert(sz, { seit, etag }, ansicht) {
+    if (typeof etag === 'string' && etag === etagVon(sz, ansicht)) return true;
+    return seitVon(seit, sz.version) === sz.version;
+  }
+
+  /** Nachricht für einen Betrachter → Stand-Objekt oder null (nicht sichtbar). Nie klartext_hash, von_schueler_id. */
+  function nachrichtFuer(sz, typ, ctx, n, betrachter) {
+    const k = Sz.SZENARIEN[sz.typ];
+    const sicht = k.sicht || {};
+    let s = null;
+    if (betrachter.art === 'regie') s = { sichtbar: true, lesbar: true };
+    else if (betrachter.art === 'team') {
+      const eigen = n.von_team_id === betrachter.teamId || n.an_team_id === betrachter.teamId;
+      const alle = betrachter.rolle && sicht[betrachter.rolle] === 'alle';
+      const oeffentlich = n.an_team_id === null || (sicht.alle === 'oeffentlich' && n.art === 'oeffentlich');
+      if (eigen || alle || oeffentlich) s = { sichtbar: true, lesbar: true };
+      else if (typeof typ.sicht === 'function') s = typ.sicht(ctx, sz, n, betrachter);
+    } else {
+      // Beamer: öffentliche Sicht – alles außer verdeckten Arten, die der Typ festlegt (E99)
+      s = typeof typ.sicht === 'function' ? typ.sicht(ctx, sz, n, betrachter) : { sichtbar: true, lesbar: true };
+    }
+    if (!s || !s.sichtbar) return null;
+    const ausgeblendet = n.sichtbar === 0;
+    const inhalt = ausgeblendet ? '' : s.lesbar ? (typeof s.inhalt === 'string' ? s.inhalt : n.inhalt) : typeof s.inhalt === 'string' ? s.inhalt : '';
+    return {
+      id: n.id,
+      von: n.von_team_id,
+      an: n.an_team_id,
+      angezeigtVon: n.angezeigt_von,
+      art: n.art,
+      inhalt,
+      lesbar: !!s.lesbar && !ausgeblendet,
+      ausgeblendet,
+      angekommen: !!n.angekommen,
+      geknackt: n.geknackt_von !== null,
+      zeit: n.zeit,
+      version: n.version
+    };
+  }
+
+  /** gemeinsamer Teil der Stand-Antwort */
+  function standDaten(sz, seit, betrachter, ansicht) {
+    const k = Sz.SZENARIEN[sz.typ];
+    const typ = TYP_MODULE[sz.typ];
+    const ctx = typCtx(sz);
+    const rollen = sql.rollen.all(sz.id);
+    const rolleVon = new Map(rollen.map((r) => [r.team_id, r]));
+    const ohneRolle = betrachter.art === 'team' && !betrachter.rolle;
+    const nachrichten = ohneRolle
+      ? []
+      : sqlStand.nachrichten.all(sz.id, seit).map((n) => nachrichtFuer(sz, typ, ctx, n, betrachter)).filter(Boolean);
+    const ereignisse = sqlStand.ereignisse
+      .all(sz.id, seit)
+      .filter((e) => typeof typ.ereignisSicht !== 'function' || typ.ereignisSicht(ctx, sz, e, betrachter))
+      .map((e) => ({ id: e.id, code: e.code, daten: JSON.parse(e.daten || '{}'), zeit: e.zeit, version: e.version }));
+    const konfig = konfigVon(sz);
+    let auswertung = null;
+    if (sz.status === 'auswertung') auswertung = konfig.auswertung || null;
+    else if (betrachter.art !== 'team' && sz.phase === 'aufloesung' && typeof typ.auswertung === 'function') auswertung = typ.auswertung(ctx, sz);
+    return {
+      id: sz.id,
+      typ: sz.typ,
+      titel: k.titel,
+      version: sz.version,
+      status: sz.status,
+      phase: sz.phase,
+      phasen: [...k.phasen],
+      teams: sql.kursTeams.all(sz.kurs_id).map((t) => ({ id: t.id, nr: t.nr, name: t.name, rolle: rolleVon.has(t.id) ? rolleVon.get(t.id).rolle : null })),
+      nachrichten,
+      ereignisse,
+      anzeigen: (typeof typ.anzeigen === 'function' && !ohneRolle && typ.anzeigen(ctx, sz, betrachter.art === 'team' ? 'schueler' : ansicht, betrachter)) || {},
+      auswertung
+    };
+  }
+
+  /** GET /api/funk → Szenario des Kurses und eigenes Team (Kopfzeilen-Punkt) */
+  function aktuell(s) {
+    const sz = sql.szKurs.get(s.kurs_id);
+    const team = teams.teamVon(s.id);
+    return {
+      szenario: sz && Date.parse(sz.endet_spaetestens) > now() ? { id: sz.id, typ: sz.typ, titel: Sz.SZENARIEN[sz.typ].titel, status: sz.status, phase: sz.phase } : null,
+      team: team ? { id: team.id, nr: team.nr, name: team.name } : null
+    };
+  }
+
+  /** Team + Rolle einer Teilnahme in einem Szenario ihres Kurses (fremdes → 404, ohne Team → 403) */
+  function teilnehmer(s, id) {
+    const sz = lade(id);
+    if (sz.kurs_id !== s.kurs_id) throw new V.NotFoundError('Szenario nicht gefunden.');
+    const team = teams.teamVon(s.id);
+    if (!team) throw new V.ForbiddenError('Du bist keinem Team zugeteilt.');
+    const r = db.prepare('SELECT rolle, partner_id, zustand FROM funk_rollen WHERE szenario_id = ? AND team_id = ?').get(sz.id, team.id);
+    const betrachter = { art: 'team', teamId: team.id, rolle: r ? r.rolle : null, partner: r ? r.partner_id : null, schuelerId: s.id };
+    return { sz, team, rolleZeile: r || null, betrachter };
+  }
+
+  /** GET /api/funk/:id/stand → { etag, daten | null } (null = 304). Schreibt nichts. */
+  function stand(s, id, { seit, etag } = {}) {
+    const { sz, team, rolleZeile, betrachter } = teilnehmer(s, id);
+    const tag = etagVon(sz, 'schueler');
+    if (unveraendert(sz, { seit, etag }, 'schueler')) return { etag: tag, daten: null };
+    const typ = TYP_MODULE[sz.typ];
+    const ctx = typCtx(sz);
+    const daten = standDaten(sz, seitVon(seit, sz.version), betrachter, 'schueler');
+    const stumm = (konfigVon(sz).stumm || {})[team.id];
+    daten.ich = {
+      team: { id: team.id, nr: team.nr, name: team.name },
+      rolle: betrachter.rolle,
+      partner: betrachter.partner,
+      stummBis: stumm && Date.parse(stumm) > now() ? stumm : null,
+      ...(rolleZeile && typeof typ.ich === 'function' ? typ.ich(ctx, sz, rolleZeile, sql.rollen.all(sz.id)) || {} : {})
+    };
+    // E98: Szenario-Werkzeuge nur eingebettet; ein laufender Boss-Kampf sperrt auch sie
+    const boss = !!sqlStand.laufenderBoss.get(s.id, iso(now() - BOSS_KULANZ_MS));
+    daten.boss = boss;
+    daten.werkzeuge = boss || !rolleZeile || typeof typ.werkzeuge !== 'function' ? [] : typ.werkzeuge(sz, betrachter.rolle) || [];
+    return { etag: tag, daten };
+  }
+
+  /** GET /api/lehrer/funk/:id/stand?ansicht=regie|beamer → { etag, daten | null } */
+  function standLehrkraft(lk, id, { seit, etag, ansicht = 'regie' } = {}) {
+    if (!['regie', 'beamer'].includes(ansicht)) throw new V.ValidationError('ansicht muss regie oder beamer sein.');
+    const { sz } = ladeLk(lk, id);
+    const tag = etagVon(sz, ansicht);
+    if (unveraendert(sz, { seit, etag }, ansicht)) return { etag: tag, daten: null };
+    const daten = standDaten(sz, seitVon(seit, sz.version), { art: ansicht }, ansicht);
+    daten.ich = null;
+    daten.werkzeuge = [];
+    daten.boss = false;
+    if (ansicht === 'regie') {
+      const konfig = konfigVon(sz);
+      daten.rollen = sql.rollen.all(sz.id).map((r) => ({ teamId: r.team_id, team: r.name, rolle: r.rolle, partnerId: r.partner_id }));
+      daten.optionen = konfig.optionen || {};
+      daten.stumm = konfig.stumm || {};
+    }
+    return { etag: tag, daten };
+  }
+
+  return {
+    anlegen,
+    rollenSetzen,
+    status,
+    aktuellFuerKurs,
+    beendeIntern,
+    regieAnsicht,
+    aktuell,
+    stand,
+    standLehrkraft,
+    TYP_MODULE,
+    _intern: { lade, typCtx, sql, naechsteVersion, ereignis, konfigVon, teilnehmer, nachrichtFuer }
+  };
 }
 
 module.exports = { createFunkraum, TYP_MODULE };
