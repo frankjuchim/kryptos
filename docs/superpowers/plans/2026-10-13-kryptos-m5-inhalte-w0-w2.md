@@ -1096,11 +1096,18 @@ I(OTTO) = I(RWWR) = I(ABBA) = 1/3.
 
 **Erwartete Hinweise:** keine.
 
-- [ ] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L4'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Level 2.4 „Fremde Chiffre III: Playfair und Kreuzquadrat“"`.
+- [x] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L4'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Level 2.4 „Fremde Chiffre III: Playfair und Kreuzquadrat“"`.
+
+- **Umgesetzt (Task 86):** Material im Level-`intro` (Block `quadrat` playfair RIALTO, Regel-Text Kreuzquadrat, zwei
+  Blöcke `quadrat` `frei` GONDEL/MURANO, E42); Aufgaben 03–05 tragen das RIALTO-Quadrat, 06 und 08 Regel und Quadrate
+  selbst. W2-L4-01: Block `quadrat` `frei` mit Lücken in Zeile 3–4 (Neuberechnung) + Prüfwert-Gruppen `quadrat("RIALTO")`
+  Feld 2/3. W2-L4-03 `match` mit fünf Kategorien (zwei Ablenker aus der Spec). `seed_pruefen.py` erkennt bei Playfair-/
+  Polybios-Lösungen jetzt auch die Alternative ohne bzw. mit Füllzeichen X am Ende (wie der Validator, E45; Test in
+  `seed_pruefen.test.js`) – vorher meldete W2-L4-05 `kartenspiel` als Abweichung. Hinweis „Abdeckung fremde Chiffre“ entfällt.
 
 ### Task 87: Welt 2 – Kür K1 „Friedmans Formel“
 

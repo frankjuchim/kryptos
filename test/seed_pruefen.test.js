@@ -112,6 +112,21 @@ test('seed_pruefen.py: chiffre mit ausgabe „paare“ (Polybios) wird wie Buchs
   assert.match(r.stdout, /0 Abweichungen/);
 });
 
+test('seed_pruefen.py: Playfair-Alternative ohne Füllzeichen X am Ende (Plan M5 E45, W2-L4-05)', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
+  const w = JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8'));
+  const a = w.aufgaben.find((x) => x.id === 'W9-L5-05');
+  a.interaktion = { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'playfair', schluessel: 'RIALTO' }, eingabe: 'HLIRO UUQTB AY' };
+  a.loesung = { text: 'kartenspielx', alternativen: ['kartenspiel', 'kartenspjelx'] };
+  const d = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kr-seed-')), 'w.json'); fs.writeFileSync(d, JSON.stringify(w));
+  let r = spawnSync('python3', ['-I', SKRIPT, '--pruefwerte', PRUEFWERTE, d], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  a.loesung.alternativen = ['kartenspie'];
+  fs.writeFileSync(d, JSON.stringify(w));
+  r = spawnSync('python3', ['-I', SKRIPT, '--pruefwerte', PRUEFWERTE, d], { encoding: 'utf8' });
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /W9-L5-05 › loesung\.alternativen\[0\]/);
+});
+
 test('fremde_verfahren.py: Spec-Vektoren der fremden Verfahren W0–W2 (test_fremde_verfahren.py)', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
   const r = spawnSync('python3', ['-I', path.join(__dirname, '..', 'werkzeuge', 'krypto', 'test_fremde_verfahren.py')], { encoding: 'utf8' });
   assert.equal(r.status, 0, r.stdout + r.stderr);

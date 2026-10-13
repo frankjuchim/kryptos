@@ -258,8 +258,11 @@ class Pruefung:
         self.vergleiche(datei, aid, ort + '.text', kompakt(erg), kompakt(lo['text']))
         for i, alt in enumerate(lo.get('alternativen') or []):
             if v.get('typ') in QUADRAT_5:
-                # Alternative = dieselbe Lösung mit J statt I (5 × 5-Quadrat ohne J bzw. ohne I)
-                self.vergleiche(datei, aid, f'{ort}.alternativen[{i}]', kompakt(erg), kompakt(alt).replace('J', 'I'))
+                # Alternative = dieselbe Lösung mit J statt I (5 × 5-Quadrat ohne J bzw. ohne I) oder – wie im Validator
+                # (Delta §8.1, Plan M5 E45) – ohne bzw. mit Füllzeichen X am Ende
+                soll, ist = kompakt(erg), kompakt(alt).replace('J', 'I')
+                varianten = {soll, soll.rstrip('X'), soll + 'X'}
+                self.vergleiche(datei, aid, f'{ort}.alternativen[{i}]', soll, soll if ist in varianten else ist)
 
     def zuordnung(self, datei, a, ia, lo, ort):
         if not isinstance(lo, dict):
