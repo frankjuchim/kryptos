@@ -429,4 +429,81 @@ figure.alphabet figcaption, figure.haeufigkeit figcaption, figure.schaubild figc
 
 @media (max-width: 600px) {
   .alphabet-teil tbody th[scope="row"] { font-size: .72rem; max-width: 5em; }
+  .quadrat-playfair td, .quadrat-polybios td, .quadrat-frei td { min-width: 2.1em; height: 2.3em; font-size: .95rem; }
+  .matrix th, .matrix td { min-width: 2em; height: 2.2em; padding: 2px; }
+}
+
+/* =====================================================================================================================
+   Teil 3 (M4 Task 52): quadrat, matrix (Transposition, Fleißner), schaubild (Delta §7.3, §7.5, §7.6, E27)
+   ===================================================================================================================== */
+
+/* ---------- quadrat ---------- */
+.quadrat-rahmen { display: grid; gap: var(--a-2); min-width: 0; }
+.quadrat-rahmen > .scroll-x { max-height: 70vh; overflow: auto; }
+.quadrat { width: auto; border-collapse: separate; border-spacing: 0; font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
+.quadrat caption { text-align: left; font-weight: 700; font-family: var(--f-ueberschrift); padding-bottom: var(--a-2); }
+.quadrat th, .quadrat td { min-width: 2em; padding: 4px 3px; text-align: center; border-right: 1px solid var(--linie); border-bottom: 1px solid var(--linie); }
+.quadrat thead th, .quadrat tbody th { background: var(--papier-2); color: var(--text); font-weight: 700; }
+.quadrat td.ecke { background: var(--karte); }
+.quadrat-playfair td, .quadrat-polybios td, .quadrat-frei td { min-width: 2.6em; height: 2.6em; font-size: 1.05rem; }
+.quadrat-vigenere thead th { position: sticky; top: 0; z-index: 1; }
+.quadrat-vigenere tbody th, .quadrat-vigenere td.ecke { position: sticky; left: 0; z-index: 1; }
+.quadrat-vigenere td.ecke { z-index: 2; top: 0; }
+.quadrat tr.hervor th, .quadrat th.hervor { box-shadow: inset 0 -3px 0 var(--akzent); }
+.quadrat tr.hervor td, .quadrat td.hervor { box-shadow: inset 0 0 0 1.5px var(--akzent); }
+.quadrat td.schnitt { font-weight: 700; border-radius: 50%; box-shadow: inset 0 0 0 3px var(--akzent); background: var(--karte); }
+.quadrat-hinweis { margin: 0; font-size: .88rem; color: var(--text-2); }
+
+/* ---------- matrix ---------- */
+.matrix-rahmen { display: grid; gap: var(--a-2); min-width: 0; }
+.matrix-titel { margin: 0; font-weight: 700; font-family: var(--f-ueberschrift); }
+.matrix, .schablone { width: auto; border-collapse: collapse; font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
+.matrix th, .matrix td { min-width: 2.4em; height: 2.4em; padding: 2px 4px; text-align: center; border: 1.5px solid var(--text-2); }
+.matrix thead th { background: var(--papier-2); color: var(--text); }
+.matrix tr.reihenfolge td { font-family: var(--f-text); font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--text-2); background: var(--karte); height: auto; }
+.matrix td.leer { background: repeating-linear-gradient(45deg, var(--papier-2) 0 4px, var(--karte) 4px 8px); }
+.matrix td.markiert { font-weight: 700; box-shadow: inset 0 0 0 3px var(--akzent); }
+.matrix .luecke { min-width: 2em; width: 2.2em; margin: 0; padding: 2px; text-align: center; }
+.matrix-leserichtung { margin: 0; font-weight: 700; color: var(--text-2); }
+.schablone td { width: 2em; height: 2em; text-align: center; border: 1.5px solid var(--text-2); }
+.schablone td.zu { background: var(--tinte); }
+.schablone td.loch { background: var(--karte); font-weight: 700; }
+.stellungen { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-3); }
+figure.stellung { margin: 0; display: grid; gap: 4px; justify-items: center; }
+figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
+.drehpfeil { font-size: 1.4rem; color: var(--text-2); }
+
+/* ---------- schaubild (Liste unter 600 px sichtbar; mit Lücken immer sichtbar, E27) ---------- */
+.schaubild-flaeche { display: none; }
+.schaubild-svg { width: 100%; height: auto; max-width: var(--sb-breite, 900px); background: var(--karte); border: 1px solid var(--linie); border-radius: var(--r-knopf); }
+.schaubild-svg .akteur-kopf { fill: var(--papier-2); stroke: var(--text); stroke-width: 1.5; }
+.schaubild-svg .akteur-angreifer .akteur-kopf { stroke: var(--fehler); stroke-width: 2.5; stroke-dasharray: 6 3; }
+.schaubild-svg .akteur-ca .akteur-kopf { stroke: var(--messing); stroke-width: 2.5; }
+.schaubild-svg .akteur-symbol { color: var(--text); }
+.schaubild-svg .kreuz { stroke: var(--fehler); stroke-width: 2.5; }
+.schaubild-svg .akteur-name { font-family: var(--f-text); font-size: 14px; font-weight: 700; fill: var(--text); text-anchor: middle; }
+.schaubild-svg .akteur-name.lang { font-size: 11px; }
+.schaubild-svg .lebenslinie { stroke: var(--text-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.schaubild-svg .pfeil { stroke: var(--text); stroke-width: 2; }
+.schaubild-svg .pfeil-spitze { fill: var(--text); }
+.schaubild-svg .handlung { fill: var(--karte); stroke: var(--text); stroke-width: 1.5; }
+.schaubild-svg .nummer { fill: var(--tinte); stroke: var(--karte); stroke-width: 2; }
+.schaubild-svg .nummer-text { font-family: var(--f-text); font-size: 12px; font-weight: 700; fill: var(--auf-tinte); text-anchor: middle; }
+.schaubild-svg .schritt-text { font-family: var(--f-text); font-size: 12.5px; fill: var(--text); text-anchor: middle; paint-order: stroke; stroke: var(--karte); stroke-width: 4px; stroke-linejoin: round; }
+.schaubild-liste { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--a-2); }
+.schaubild-liste li { padding: var(--a-2) var(--a-3); border-left: 3px solid var(--linie); background: var(--karte); }
+.schaubild-liste .schritt-kopf { font-weight: 700; }
+@media (min-width: 600px) {
+  .schaubild-flaeche { display: block; overflow-x: auto; }
+  .schaubild-liste:not(.sichtbar) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }

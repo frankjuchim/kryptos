@@ -417,7 +417,7 @@ Symbol links und Linie. Markierte Spalten: Akzentrahmen + `aria-current`. Screen
 **Darstellung:** Sequenzdiagramm als SVG: Akteure als Köpfe mit Lebenslinien (Angreifer mit `--fehler`-Umriss und
 Symbol, CA mit Siegel-Symbol), Pfeile waagerecht mit Nummernkreis, Handlungen vor Ort als Kasten auf der Lebenslinie.
 Unter 600 px Breite wird automatisch die **Listenansicht** gezeigt („① Alice → Bob: sendet m und s“), die zugleich die
-Textalternative ist (immer im DOM, für Screenreader). Lücken erscheinen als Eingabe-Chips im Pfeiltext.
+Textalternative ist (immer im DOM, für Screenreader). Lücken erscheinen im SVG als „?“; hat das Schaubild Lücken, ist die Listenansicht auf allen Breiten sichtbar und trägt die Eingabe-Chips (M4 E27 – Eingaben im SVG nur über `foreignObject`, mit Tastatur/Screenreader unzuverlässig).
 
 **Lücken:** erlaubt in `schritte[].text`. **Validator:** ids eindeutig, `von`/`an` existieren, `nr` lückenlos ab 1.
 

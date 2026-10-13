@@ -70,3 +70,47 @@ test('bits: Gruppen à 4, ⊕-Trennzeile, Lückenzeile, markierte Spalten, Scree
   assert.equal(k.alle(zeilen[0], 'span.bit.markiert[aria-current="true"]').length, 2);
   assert.equal(k.text(k.eins(zeilen[0], 'span.sr')), 'M: 0 1 0 0, 1 0 1 1');
 });
+test('quadrat vigenere: Ausschnitt, Schnittpunkt U/R = L, Hinweistext; playfair I/J; polybios 6×6 ADFGVX', () => {
+  let { k, el } = bau({ t: 'quadrat', art: 'vigenere', ausschnitt: ['L', 'U', 'N', 'A'], hervorheben: { zeile: 'U', spalte: 'R' } });
+  assert.deepEqual(k.alle(el, 'tbody th[scope="row"]').map(k.text), ['L', 'U', 'N', 'A']);
+  assert.equal(k.text(k.eins(el, 'td.schnitt')), 'L');
+  assert.equal(k.alle(el, 'tr.hervor').length, 1);
+  assert.match(k.text(k.eins(el, 'p.quadrat-hinweis')), /Zeile = Schlüsselbuchstabe, Spalte = Klartextbuchstabe/);
+  ({ k, el } = bau({ t: 'quadrat', art: 'playfair', schluessel: 'ARCHIV', ij: 'I' }));
+  const zellen = k.alle(el, 'tbody td').map(k.text);
+  assert.deepEqual(zellen.slice(0, 5), ['A', 'R', 'C', 'H', 'I/J']);
+  assert.equal(zellen.length, 25);
+  ({ k, el } = bau({ t: 'quadrat', art: 'polybios', groesse: 6, kopf: 'ADFGVX', zellen: [['N', 'A', '1', 'C', '3', 'H'], ['8', 'T', 'B', '2', 'O', 'M'], ['E', '5', 'W', 'R', 'P', 'D'], ['4', 'F', '6', 'G', '7', 'I'], ['9', 'J', '0', 'K', 'L', 'Q'], ['S', 'U', 'V', 'X', 'Y', 'Z']] }));
+  assert.deepEqual(k.alle(el, 'thead th[scope="col"]').map(k.text), [...'ADFGVX']);
+  assert.equal(k.alle(el, 'tbody td').length, 36);
+});
+test('quadrat frei mit Lücke: Eingabe über ctx.gap mit Zeile/Spalte im aria-label', () => {
+  const { gaps } = bau({ t: 'quadrat', art: 'frei', zellen: [['A', 'B'], ['[[q1]]', 'D']] });
+  assert.equal(gaps.q1.getAttribute('aria-label'), 'Zelle Zeile 2, Spalte 1');
+});
+test('matrix: Kopf + Reihenfolge aus Krypto.spaltenReihenfolge, leere Zellen, Leserichtung', () => {
+  const kopf = [...'SCHLUESSEL'];
+  const { k, el, gaps } = bau({ t: 'matrix', kopf, reihenfolge: true, zeilen: [[...'diebotscha'], ['f', 't', 'i', 's', 't', '[[m1]]', '', '', '', '']], leserichtung: 'spaltenweise', titel: 'Spaltentransposition' });
+  assert.deepEqual(k.alle(el, 'tr.reihenfolge td').map(k.text).map(Number), K.spaltenReihenfolge('SCHLUESSEL'));
+  assert.equal(k.alle(el, 'td.leer').length, 4);
+  assert.ok(gaps.m1);
+  assert.equal(k.text(k.eins(el, 'p.matrix-leserichtung')), '↓ spaltenweise lesen');
+});
+test('matrix Fleißner: vier Stellungen, Löcher ab 1, Drehung rechts, jede Zelle genau einmal', () => {
+  const { k, el } = bau({ t: 'matrix', groesse: 4, schablone: [[1, 1], [1, 2], [2, 1], [2, 2]], drehung: 'rechts', zeige: 'stellungen' });
+  const st = k.alle(el, 'figure.stellung');
+  assert.deepEqual(st.map((f) => k.text(f.querySelector('figcaption'))), ['Stellung 1', 'Stellung 2', 'Stellung 3', 'Stellung 4']);
+  const zellen = new Set();
+  st.forEach((f) => k.alle(f, 'td.loch').forEach((td) => zellen.add(td.getAttribute('data-zelle'))));
+  assert.equal(zellen.size, 16);
+});
+test('schaubild: Liste mit Nummern und Pfeilen, Angreifer/CA markiert, Lücken als Chips in der Liste (E27)', () => {
+  const { k, el, gaps } = bau({ t: 'schaubild', titel: 'Digitale Signatur', akteure: [{ id: 'A', name: 'Alice' }, { id: 'B', name: 'Bob' }, { id: 'M', name: 'Mallory', art: 'angreifer' }, { id: 'CA', name: 'Zertifizierungsstelle', art: 'ca' }], schritte: [{ nr: 1, von: 'A', an: 'A', text: 'bildet den Hashwert h(m)' }, { nr: 2, von: 'A', an: 'A', text: 'verschlüsselt h(m) mit [[s1]]' }, { nr: 3, von: 'A', an: 'B', text: 'sendet m und s' }] });
+  const li = k.alle(el, 'ol.schaubild-liste li');
+  assert.equal(k.text(li[2]), '③ Alice → Bob: sendet m und s');
+  assert.match(k.text(li[0]), /^① Alice: bildet/);
+  assert.ok(li[1].contains(gaps.s1), 'Lücke als Chip in der Liste');
+  assert.ok(k.eins(el, 'ol.schaubild-liste').classList.contains('sichtbar'));
+  assert.ok(k.eins(el, 'svg .akteur-angreifer') && k.eins(el, 'svg .akteur-ca'));
+  assert.equal(k.eins(el, 'svg.schaubild-svg').getAttribute('aria-hidden'), 'true');
+});
