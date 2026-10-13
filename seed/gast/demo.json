@@ -1,0 +1,401 @@
+{
+  "version": 2,
+  "welt": 8,
+  "titel": "Probe-Akte",
+  "farbe": "#8A5F1A",
+  "_hinweis": "Gast-Demo (Delta §12) – eigene Daten, nie aus Welten, Akten, Bossen oder Videos. Sechs erfundene Krypto-Demo-Aufgaben; Kopie der e2e-Vorlage test/e2e/seed/gast/demo.json (M4 Task 65, E30), die als Test-Seed bleibt. Prüfung: test/inhalte_gast.test.js, test/gast.test.js.",
+  "levels": [
+    {
+      "id": "W8-L1",
+      "nr": "Probe",
+      "titel": "Reinschnuppern: sechs Aufgabenarten",
+      "niveau": "kern",
+      "rolle": "kryptoanalyse",
+      "intro": [
+        {
+          "t": "hinweis",
+          "md": "**So geht’s:** Antwort eingeben und **Prüfen** drücken. Ein **Tipp** hilft weiter, **Lösung zeigen** deckt alles auf; nach dem Lösen folgt eine Erklärung. Nichts wird gespeichert."
+        }
+      ],
+      "aufgaben": [
+        "W8-L1-01",
+        "W8-L1-02",
+        "W8-L1-03",
+        "W8-L1-04",
+        "W8-L1-05",
+        "W8-L1-06"
+      ]
+    }
+  ],
+  "aufgaben": [
+    {
+      "id": "W8-L1-01",
+      "titel": "Chiffrierscheibe drehen",
+      "stufe": 1,
+      "kategorie": "entschluesseln",
+      "fallen": [
+        "P3"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Nummerierung: A = 1 … Z = 26. Eine Nachricht wurde mit Caesar, Verschiebung **k = 7**, verschlüsselt. Entschlüssele sie – die Chiffrierscheibe hilft dir."
+        },
+        {
+          "t": "werkzeug",
+          "id": "scheibe"
+        }
+      ],
+      "interaktion": {
+        "kind": "chiffre",
+        "richtung": "ent",
+        "verfahren": {
+          "typ": "caesar",
+          "k": 7
+        },
+        "eingabe": "UVYKS PJOA",
+        "schluesselVerdeckt": false
+      },
+      "loesung": {
+        "text": "nordlicht"
+      },
+      "tipps": [
+        "Beim Entschlüsseln zählst du um 7 Buchstaben **zurück**: U → n."
+      ],
+      "erklaerung": [
+        {
+          "t": "text",
+          "md": "U − 7 → n, V − 7 → o … Klartext: **nordlicht**. Wer vorwärts statt rückwärts dreht, verschlüsselt ein zweites Mal (P3 Umkehrung falsch)."
+        }
+      ]
+    },
+    {
+      "id": "W8-L1-02",
+      "titel": "Häufigkeits-Puzzle",
+      "stufe": 2,
+      "kategorie": "haeufigkeitsanalyse",
+      "fallen": [
+        "P6"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Dieser Geheimtext ist monoalphabetisch verschlüsselt. Zwei Buchstaben sind schon vorgegeben. Vergleiche die Häufigkeiten mit dem Deutschen und ordne weitere Buchstaben zu."
+        },
+        {
+          "t": "haeufigkeit",
+          "quelle": "text",
+          "text": "TONBH TBIQO NZHPO OPKZY BONOI LOAQA JONQV ZPOBP DIZGD OIRIV PBOAQ VBOOI QOIZH PQBFF OIREO NPQOA OI",
+          "referenz": "deutsch",
+          "sortierung": "absteigend",
+          "einheit": "prozent"
+        }
+      ],
+      "interaktion": {
+        "kind": "zuordnung",
+        "geheimtext": "TONBH TBIQO NZHPO OPKZY BONOI LOAQA JONQV ZPOBP DIZGD OIRIV PBOAQ VBOOI QOIZH PQBFF OIREO NPQOA OI",
+        "vorgabe": {
+          "O": "e",
+          "I": "n"
+        },
+        "feedback": "anteil"
+      },
+      "loesung": {
+        "zuordnung": {
+          "A": "H",
+          "B": "I",
+          "D": "K",
+          "E": "F",
+          "F": "L",
+          "G": "C",
+          "H": "M",
+          "I": "N",
+          "J": "O",
+          "K": "P",
+          "L": "G",
+          "N": "R",
+          "O": "E",
+          "P": "S",
+          "Q": "T",
+          "R": "U",
+          "T": "W",
+          "V": "D",
+          "Y": "Z",
+          "Z": "A"
+        },
+        "klartext": "WERIMWINTERAMSEESPAZIERENGEHTHOERTDASEISKNACKENUNDSIEHTDIEENTENAMSTILLENUFERSTEHEN"
+      },
+      "tipps": [
+        "Kurze Wörter helfen: Ein Wort aus drei Buchstaben, das oft vorkommt, könnte „die“ oder „und“ sein."
+      ],
+      "erklaerung": [
+        {
+          "t": "text",
+          "md": "Geheimalphabet mit dem Schlüsselwort **ZUGVOGEL**. Klartext: „wer im winter am see spazieren geht hoert das eis knacken und sieht die enten am stillen ufer stehen“. Bei kurzen Texten passen die Häufigkeiten nur ungefähr – Wortmuster sind dann die bessere Spur (P6)."
+        }
+      ]
+    },
+    {
+      "id": "W8-L1-03",
+      "titel": "Vigenère mit dem Quadrat",
+      "stufe": 2,
+      "kategorie": "verschluesseln",
+      "fallen": [
+        "P1",
+        "P2"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Nummerierung: A = 1 … Z = 26. Verschlüssele **sonnenuhr** mit dem Schlüsselwort **TAG** (Schlüsselbuchstabe A = Verschiebung 0)."
+        },
+        {
+          "t": "quadrat",
+          "art": "vigenere",
+          "ausschnitt": [
+            "T",
+            "A",
+            "G"
+          ],
+          "hervorheben": {
+            "zeile": "T",
+            "spalte": "S"
+          }
+        }
+      ],
+      "interaktion": {
+        "kind": "chiffre",
+        "richtung": "ver",
+        "verfahren": {
+          "typ": "vigenere",
+          "schluessel": "TAG"
+        },
+        "eingabe": "sonnenuhr",
+        "hilfszeilen": [
+          "schluessel"
+        ],
+        "schluesselVerdeckt": false
+      },
+      "loesung": {
+        "text": "LOTGETNHX"
+      },
+      "tipps": [
+        "Schreibe das Schlüsselwort immer wieder unter den Klartext: TAGTAGTAG."
+      ],
+      "erklaerung": [
+        {
+          "t": "text",
+          "md": "s + T → L, o + A → O, n + G → T … Geheimtext: `LOTGE TNHX`."
+        }
+      ]
+    },
+    {
+      "id": "W8-L1-04",
+      "titel": "XOR-Bits",
+      "stufe": 1,
+      "kategorie": "bits-xor",
+      "fallen": [
+        "P4"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Berechne C = M ⊕ K Bit für Bit (gleiche Bits → 0, verschiedene Bits → 1)."
+        }
+      ],
+      "interaktion": {
+        "kind": "bits-rechnen",
+        "operation": "xor",
+        "operanden": [
+          "1010 0110",
+          "0011 1100"
+        ],
+        "labels": [
+          "M",
+          "K",
+          "C"
+        ]
+      },
+      "loesung": {
+        "bits": "10011010"
+      },
+      "tipps": [
+        "Nur dort, wo genau eines der beiden Bits 1 ist, steht im Ergebnis eine 1."
+      ],
+      "erklaerung": [
+        {
+          "t": "bits",
+          "pruefe": "xor",
+          "zeilen": [
+            {
+              "label": "M",
+              "bits": "1010 0110"
+            },
+            {
+              "label": "K",
+              "bits": "0011 1100"
+            },
+            {
+              "trenner": "⊕"
+            },
+            {
+              "label": "C",
+              "bits": "1001 1010"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "W8-L1-05",
+      "titel": "Signatur prüfen",
+      "stufe": 2,
+      "kategorie": "signatur",
+      "fallen": [
+        "P9"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Das Schaubild zeigt, wie Ada eine Nachricht signiert."
+        },
+        {
+          "t": "schaubild",
+          "titel": "Signieren",
+          "akteure": [
+            {
+              "id": "A",
+              "name": "Ada"
+            },
+            {
+              "id": "B",
+              "name": "Bo"
+            }
+          ],
+          "schritte": [
+            {
+              "nr": 1,
+              "von": "A",
+              "an": "A",
+              "text": "bildet den Hashwert h(m)"
+            },
+            {
+              "nr": 2,
+              "von": "A",
+              "an": "A",
+              "text": "verschlüsselt h(m) mit ihrem privaten Schlüssel → Signatur s"
+            },
+            {
+              "nr": 3,
+              "von": "A",
+              "an": "B",
+              "text": "sendet m und s"
+            }
+          ]
+        },
+        {
+          "t": "text",
+          "md": "Bringe Bos Prüfschritte in eine richtige Reihenfolge. **Ein Schritt gehört nicht dazu.**"
+        }
+      ],
+      "interaktion": {
+        "kind": "order",
+        "teile": [
+          {
+            "id": "a",
+            "md": "Bo empfängt m und s."
+          },
+          {
+            "id": "b",
+            "md": "Bo bildet selbst den Hashwert h(m)."
+          },
+          {
+            "id": "c",
+            "md": "Bo entschlüsselt s mit Adas öffentlichem Schlüssel."
+          },
+          {
+            "id": "d",
+            "md": "Bo vergleicht die beiden Hashwerte."
+          },
+          {
+            "id": "x",
+            "md": "Bo entschlüsselt s mit seinem privaten Schlüssel."
+          }
+        ]
+      },
+      "loesung": {
+        "reihenfolgen": [
+          [
+            "a",
+            "b",
+            "c",
+            "d"
+          ],
+          [
+            "a",
+            "c",
+            "b",
+            "d"
+          ]
+        ]
+      },
+      "erklaerung": [
+        {
+          "t": "text",
+          "md": "Geprüft wird mit dem **öffentlichen** Schlüssel der Absenderin – Bos privater Schlüssel hat mit Adas Signatur nichts zu tun (P9 Schlüsselrollen vertauscht). Ob Bo zuerst h(m) bildet oder zuerst s entschlüsselt, ist egal."
+        }
+      ]
+    },
+    {
+      "id": "W8-L1-06",
+      "titel": "Fremde Chiffre einordnen",
+      "stufe": 2,
+      "kategorie": "fremde-chiffre",
+      "fallen": [
+        "P5"
+      ],
+      "inhalt": [
+        {
+          "t": "text",
+          "md": "Der erfundene **Paartausch** teilt den Klartext in Zweiergruppen und vertauscht in jeder Gruppe die beiden Buchstaben: aus `wolke` wird `OWKLE`."
+        },
+        {
+          "t": "text",
+          "md": "Wie ordnest du den Paartausch ein?"
+        }
+      ],
+      "interaktion": {
+        "kind": "choice",
+        "mehrfach": false,
+        "optionen": [
+          {
+            "id": "a",
+            "md": "Transposition – die Buchstaben bleiben, nur ihre Plätze ändern sich."
+          },
+          {
+            "id": "b",
+            "md": "Monoalphabetische Substitution – jeder Buchstabe wird immer gleich ersetzt."
+          },
+          {
+            "id": "c",
+            "md": "Polyalphabetische Substitution – derselbe Buchstabe wird verschieden ersetzt."
+          }
+        ]
+      },
+      "loesung": {
+        "richtig": [
+          "a"
+        ]
+      },
+      "tipps": [
+        "Zähle die Buchstaben im Geheimtext: Kommen dieselben vor wie im Klartext?"
+      ],
+      "erklaerung": [
+        {
+          "t": "text",
+          "md": "Im Geheimtext stehen genau die Buchstaben des Klartextes, nur an anderen Stellen: eine **Transposition**. Wer das „O“ an Stelle 1 für einen Ersatz von „w“ hält, ordnet falsch ein (P5 Falsch eingeordnet)."
+        }
+      ]
+    }
+  ]
+}

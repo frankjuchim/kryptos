@@ -1,0 +1,10 @@
+{
+ "_hinweis": "Demo-PDFs ohne Anmeldung (Gastmodus, Themenseite; vorläufig, Plan M5 offene Entscheidung 11): nur Schülerfassungen bzw. Folien, nie Lösungen, Erwartungshorizonte, Klausuren oder Funkraum-Regie (src/app.js ladeDemo filtert zusätzlich _LSG/_EH/Klausur). 'schueler' relativ zu materialien/Akten_PDF (/akten/…), 'lehrkraft' relativ zu materialien/ (/lehrkraft/dateien/…).",
+ "schueler": [
+  "Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta.pdf",
+  "00_Werkzeugkarten/KR_WK2_5-Schritte-Methode.pdf"
+ ],
+ "lehrkraft": [
+  "Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Kickoff.pdf"
+ ]
+}

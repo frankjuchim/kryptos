@@ -1553,14 +1553,21 @@ keine Video-Hinweise.
   `00_Werkzeugkarten/KR_WK2_5-Schritte-Methode.pdf`; `lehrkraft`: `Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Kickoff.pdf` –
   **nur Schülerfassungen bzw. Folien, nie `_LSG`/`_EH`/Klausur** (Filter Task 71 greift zusätzlich).
 
-- [ ] **Step 1: Failing tests** (`gast.test.js` mit `seedDir` = `seed`): `GET /api/gast/schueler` liefert genau `W8-L1-01 … 06`; keine Lösung vor dem
+- [x] **Step 1: Failing tests** (`gast.test.js` mit `seedDir` = `seed`): `GET /api/gast/schueler` liefert genau `W8-L1-01 … 06`; keine Lösung vor dem
   Lösen; Werkzeugliste `["scheibe"]`; Demo-PDF ohne Sitzung 200, jede andere Akte 401; Demo-Kurs der Lehrkraft zeigt die Welten 0–2 aus dem
   echten Katalog (Level-Titel 0.1 … K1), Materialien Welt 0 mit genau den Demo-Links → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Run** → PASS; `node scripts/validate.js seed/gast/demo.json` → 0 Fehler, 0 Hinweise; `python3 -I werkzeuge/krypto/seed_pruefen.py`
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Run** → PASS; `node scripts/validate.js seed/gast/demo.json` → 0 Fehler, 0 Hinweise; `python3 -I werkzeuge/krypto/seed_pruefen.py`
   (Standard: Welten + Gast) → 0 Abweichungen; `npm test`.
-- [ ] **Step 4: Kontrollfragen K1, K4.**
-- [ ] **Step 5: Commit** `git commit -m "Gast-Demo und Demo-PDFs (nur Schülerfassungen)"`.
+- [x] **Step 4: Kontrollfragen K1, K4.**
+- [x] **Step 5: Commit** `git commit -m "Gast-Demo und Demo-PDFs (nur Schülerfassungen)"`.
+
+**Umsetzungsnotiz (Task 99):** `seed/gast/demo.json` = e2e-Vorlage mit neuem `_hinweis` (Test: inhaltsgleich bis auf `_hinweis`);
+neuer Prüfling `test/inhalte_gast.test.js`: Eingaben, Geheimtexte, Lösungen und Schlüssel der Demo (Buchstaben, ≥ 6) kommen in keinem Text
+der Seeds, Warm-up-Karten, Materialquellen und Videos vor (statt in `inhalte_woerter.test.js`, das die Generator-Listen prüft und die Demo
+schon im Korpus hat). `seed/demo_materialien.json` wie vorgeschlagen (Akte W0·1, WK2, Kickoff-Präsentation). Validator: 0 Fehler, 0 Hinweise;
+`seed_pruefen.py` (Welten + Gast): 192 Lösungen, 0 Abweichungen. K1 (Videos): `inhalte_videos.test.js` grün (prüft `seed/gast`); K4: keine
+Lösung in `inhalt`/`tipps`, Gast-API liefert vor dem Lösen weder Lösung noch Erklärung (Test).
 
 ### Task 100: Niveau-Übersicht, Manifest und Themenseite mit den echten Seeds
 

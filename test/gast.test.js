@@ -175,3 +175,56 @@ test('e2e-Demo über die Gast-API: Caesar gelöst, Richtung vertauscht → P3, n
   const ok = (await c.post('/api/gast/aufgaben/W8-L1-01/pruefen').send({ antwort: W.aufgaben[0].loesung.text }).expect(200)).body;
   assert.equal(ok.ok, true);
 });
+
+/* ---------- Echte Gast-Demo (Plan M5 Task 99): seed/gast/demo.json, seed/demo_materialien.json, Welten 0–2 ---------- */
+
+const ECHT = { seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] };
+
+test('echte Gast-Demo: genau W8-L1-01 … 06, keine Lösung vor dem Lösen, Werkzeugliste nur Scheibe', async () => {
+  const app = H.makeApp(ECHT);
+  const c = H.client(app);
+  const s = (await c.get('/api/gast/schueler').expect(200)).body;
+  assert.equal(s.vorhanden, true);
+  assert.equal(s.titel, 'Probe-Akte');
+  assert.deepEqual(s.aufgaben.map((a) => a.id), ['W8-L1-01', 'W8-L1-02', 'W8-L1-03', 'W8-L1-04', 'W8-L1-05', 'W8-L1-06']);
+  for (const a of s.aufgaben) {
+    const text = JSON.stringify((await c.get(`/api/gast/aufgaben/${a.id}`).expect(200)).body);
+    for (const verboten of ['"loesung"', '"erklaerung"', '"tipps":["', 'nordlicht']) assert.ok(!text.includes(verboten), `${a.id}: ${verboten}`);
+  }
+  // echte Lab-Aufgaben nie über die Gast-API
+  for (const id of ['W0-L1-01', 'W0-A-01', 'W0-B-01', 'W2-L5-01']) await c.get(`/api/gast/aufgaben/${id}`).expect(404);
+  assert.deepEqual((await c.get('/api/gast/lehrkraft').expect(200)).body.werkzeuge, ['scheibe']);
+});
+
+test('Demo-PDFs (seed/demo_materialien.json): nur Schülerfassungen bzw. Folien, ohne Sitzung 200; jede andere Akte 401', async () => {
+  const fs = require('node:fs');
+  const request = require('supertest');
+  const demo = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'demo_materialien.json'), 'utf8'));
+  assert.deepEqual(demo.schueler, ['Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta.pdf', '00_Werkzeugkarten/KR_WK2_5-Schritte-Methode.pdf']);
+  assert.deepEqual(demo.lehrkraft, ['Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Kickoff.pdf']);
+  for (const rel of [...demo.schueler, ...demo.lehrkraft]) assert.ok(!/_LSG|_EH|Klausur|loesung|erwartungshorizont|funkraum/i.test(rel), rel);
+  const app = H.makeApp(ECHT);
+  for (const rel of demo.schueler) {
+    const r = await request(app).get('/akten/' + rel).expect(200);
+    assert.equal(r.headers['content-type'], 'application/pdf');
+  }
+  await request(app).get('/lehrkraft/dateien/' + demo.lehrkraft[0]).expect(200).expect('Content-Type', 'application/pdf');
+  const akten = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'akten.json'), 'utf8'));
+  const andere = [...akten.werkzeugkarten.map((w) => w.datei), ...akten.welten.flatMap((w) => [...w.akten, ...w.weitere].map((a) => `${w.ordner}/${a.datei}`))].filter((d) => !demo.schueler.includes(d));
+  assert.ok(andere.length >= 20);
+  for (const d of andere) await request(app).get('/akten/' + d).expect(401);
+  await request(app).get('/lehrkraft/dateien/Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Antike.pdf').expect(404);
+  await request(app).get('/lehrkraft/dateien/Loesungen_Portal/Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta_LSG.pdf').expect(404);
+});
+
+test('Demo-Kurs der Lehrkraft: Welten 0–2 aus dem echten Katalog (0.1 … K1), Materialien Welt 0 nur mit den Demo-Links', async () => {
+  const app = H.makeApp(ECHT);
+  const d = (await H.client(app).get('/api/gast/lehrkraft').expect(200)).body;
+  assert.deepEqual(d.welten.map((w) => w.nr), [0, 1, 2]);
+  assert.deepEqual(d.levels.map((l) => l.nr), ['0.1', '0.2', '0.3', '0.4', '1.1', '1.2', '1.3', '2.1', '2.2', '2.3', '2.4', 'K1']);
+  assert.equal(d.levels[0].titel, 'Die Skytale von Sparta');
+  const links = d.materialien.welt0.flatMap((e) => e.dateien).filter((x) => x.url).map((x) => decodeURIComponent(x.url));
+  assert.deepEqual(links.sort(), ['/akten/Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta.pdf', '/lehrkraft/dateien/Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Kickoff.pdf']);
+  assert.ok(d.materialien.welt0.length >= 7, 'übrige Materialien als Titel');
+  assert.ok(!/"loesung"|_LSG|_EH/.test(JSON.stringify(d.materialien.welt0.flatMap((e) => e.dateien).filter((x) => x.url))));
+});
