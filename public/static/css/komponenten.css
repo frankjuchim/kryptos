@@ -574,6 +574,8 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
 }
 @media (max-width: 420px) {
   .logo span { display: none; }
+  /* vier Bereiche (Admin) passen nicht in eine Zeile: umbrechen statt abschneiden */
+  .kopf-seiten { flex-wrap: wrap; overflow-x: visible; }
 }
 @media (max-width: 640px) {
   .rang-text, .kopf-link .lang { display: none; }

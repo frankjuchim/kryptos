@@ -1,0 +1,72 @@
+/* Kryptos – Urkunden und Druckansicht (M4 Task 64, DESIGNSYSTEM §10, TECHNIK §11.3, E34).
+   Die Urkunde ist ein Dokument: Papier, Tinte-Rahmen mit Messing-Doppellinie – in beiden Modi gleich, deshalb feste
+   Hex-Werte (= Tokens --papier #FBF7EE, --tinte #14213D, --messing #B07D2B, --messing-dunkel #8A5F1A, --text-2 #4A4A55).
+   Hex-Farben und !important sind nur in dieser Datei erlaubt (test/stilregeln.test.js). */
+
+/* ---------- Bildschirm: Steuerung und Vorschau ---------- */
+.urkunden-seite { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-5); padding-block: var(--a-6) var(--a-7); }
+.urkunden-steuerung { display: grid; gap: var(--a-3); }
+.urkunden-steuerung h1 { margin: 0; }
+.urkunden-optionen { display: grid; gap: var(--a-3) var(--a-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); align-items: end; }
+.urkunden-optionen > label:not(.wahl) { display: grid; gap: var(--a-1); font-weight: 700; }
+.urkunden-optionen > label.breit { grid-column: 1 / -1; }
+.urkunden-optionen .wahl { display: flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); }
+.urkunden-optionen .knopf-reihe { margin: 0; }
+.urkunden-liste { display: grid; gap: var(--a-6); justify-items: center; }
+
+.urkunde {
+  width: 100%;
+  max-width: 1000px;
+  aspect-ratio: 297 / 210;
+  container-type: inline-size;
+  background: #FBF7EE;
+  color: #14213D;
+  box-shadow: 0 6px 24px rgba(11, 20, 38, .25);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+.urkunde-rahmen {
+  height: 100%;
+  margin: 0;
+  padding: 3.6cqi 5.5cqi 3cqi;
+  border: 2.2cqi solid #14213D;
+  /* Messing-Doppellinie innerhalb des Tinte-Rahmens (cqi = Breite der Urkunde) */
+  box-shadow: inset 0 0 0 .8cqi #FBF7EE, inset 0 0 0 1.05cqi #B07D2B, inset 0 0 0 1.45cqi #FBF7EE, inset 0 0 0 1.6cqi #B07D2B;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: var(--f-text);
+}
+.urkunde p, .urkunde h2 { margin: 0; }
+.urkunde-rahmen > * { flex-shrink: 0; }
+.urkunde-kopf { font-family: var(--f-mono); font-size: 1.5cqi; letter-spacing: .3em; text-transform: uppercase; color: #8A5F1A; margin-top: 1cqi; }
+.urkunde-titel { font-family: var(--f-ueberschrift); font-size: 6.5cqi; letter-spacing: .12em; line-height: 1.1; color: #14213D; margin-top: 1cqi; }
+.urkunde-name { font-family: var(--f-ueberschrift); font-size: 4.6cqi; font-weight: 700; margin-top: 2cqi; border-bottom: .2cqi solid #B07D2B; padding-inline: 4cqi; }
+.urkunde-text { font-size: 1.8cqi; max-width: 70cqi; margin-top: 1.5cqi; color: #14213D; }
+.urkunde-rang { font-size: 2.4cqi; margin-top: 1.2cqi; }
+.urkunde-rang b { font-family: var(--f-ueberschrift); color: #8A5F1A; }
+.urkunde-zahlen { font-size: 1.6cqi; color: #4A4A55; margin-top: .6cqi; }
+.urkunde-siegel { list-style: none; margin: auto 0 0; padding: 2cqi 0 0; display: flex; justify-content: center; gap: 1.8cqi; }
+.urkunde .siegel { display: grid; justify-items: center; align-content: start; gap: .6cqi; width: 9cqi; height: auto; min-width: 0; min-height: 0; padding: 0; border: 0; background: none; border-radius: 0; color: #B07D2B; }
+.urkunde .siegel-bild { width: 6.4cqi; height: 6.4cqi; padding: .9cqi; border-radius: 50%; border: .3cqi solid #B07D2B; background: #FFFDF8; }
+.urkunde .siegel.umriss { color: #C9C3B5; }
+.urkunde .siegel.umriss .siegel-bild { border-style: dashed; border-color: #C9C3B5; background: transparent; }
+.urkunde .siegel-text { font-size: 1.05cqi; line-height: 1.2; color: #4A4A55; }
+.urkunde .siegel.erreicht .siegel-text { color: #14213D; font-weight: 700; }
+.urkunde-fuss { width: 100%; margin-top: 2.4cqi; display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 1cqi 4cqi; font-size: 1.5cqi; }
+.urkunde-datum { text-align: left; }
+.urkunde-unterschrift { display: grid; justify-items: center; gap: .4cqi; }
+.urkunde-unterschrift .linie { display: block; width: 26cqi; border-top: .15cqi solid #14213D; }
+.urkunde-marke { grid-column: 1 / -1; font-family: var(--f-ueberschrift); font-size: 1.4cqi; color: #8A5F1A; letter-spacing: .05em; }
+
+/* ---------- Druck ---------- */
+@page { size: A4 landscape; margin: 0; }
+@media print {
+  html, body { background: #FFFFFF !important; }
+  .kopf, .fuss, .sprung, .urkunden-steuerung, #toast, .toast { display: none !important; }
+  main#haupt, .urkunden-seite, .urkunden-liste { display: block !important; padding: 0 !important; margin: 0 !important; max-width: none !important; width: auto !important; }
+  .urkunde { width: 297mm !important; height: 210mm !important; max-width: none !important; aspect-ratio: auto; box-shadow: none !important; margin: 0 !important; break-after: page; page-break-after: always; }
+  .urkunde:last-child { break-after: auto; page-break-after: auto; }
+  .urkunde[hidden] { display: none !important; }
+}

@@ -392,3 +392,46 @@ test('Scoreboard-Tab: Rangliste des Kurses, Aktualisierung alle 20 s', async () 
   assert.match(k.text(k.document.getElementById('haupt')), /Mika R\./);
   assert.ok(k.timer.some((t) => t.ms === 20000 && t.wiederholt));
 });
+test('Urkunden: je Schüler eine Urkunde mit Rang und sieben Siegeln (erreicht/Umriss)', async () => {
+  const u = { kurs: { id: 3, name: 'LK 13 (eA)' }, raenge: ['Lehrling', 'Schreiber', 'Chiffreur', 'Kryptoanalytiker', 'Meister der Chiffren'], anzahl: 2, schueler: [{ id: 1, name: 'Mika R.', punkte: 120, geloest: 11, rang: 'Chiffreur', platz: 1, abzeichen: [{ key: 'boss0_besiegt', icon: '⚔️', name: 'Bote besiegt' }] }, { id: 2, name: 'Ida K.', punkte: 20, geloest: 2, rang: 'Lehrling', platz: 2, abzeichen: [] }] };
+  const k = D.lade([...BASIS, 'krypto/urkunden.js'], { url: 'http://x.test/lehrer/urkunden?kurs=3', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_L }, 'GET /api/lehrer/kurse/3/urkunden': { status: 200, body: u } } });
+  await k.ruhe();
+  const ur = k.eins(k.document, 'article.urkunde');
+  assert.match(k.text(ur), /Mika R\./);
+  assert.match(k.text(ur), /Chiffreur/);
+  assert.match(k.text(ur), /Kryptos – Die Zeitreise der Geheimschriften/);
+  assert.equal(k.alle(ur, '.siegel').length, 7);
+  assert.equal(k.alle(ur, '.siegel.erreicht').length, 1);
+  assert.equal(k.alle(k.document, 'article.urkunde').length, 2);
+  // einzeln: nur die gewählte Urkunde
+  const wahl = k.eins(k.document, 'select[name="auswahl"]');
+  wahl.value = '2'; wahl.dispatchEvent(new k.window.Event('change'));
+  await k.ruhe();
+  assert.deepEqual(k.alle(k.document, 'article.urkunde').filter((x) => !x.hidden).map((x) => k.text(k.eins(x, '.urkunde-name'))), ['Ida K.']);
+  k.klick(k.eins(k.document, 'button.drucken'));
+  assert.equal(k.gedruckt, 1);
+});
+test('Verwaltung nur für den Superadmin', async () => {
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/admin/inhalte', fetch: lehrerFetch(), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Nur für den Admin/);
+  assert.ok(!k.anfragen.some((x) => x.pfad.startsWith('/api/admin')));
+});
+test('Verwaltung (Admin): Inhalte mit Zahlen und Neu-Laden nach Bestätigung, Wartungsbericht', async () => {
+  const admin = { ...SITZUNG_L, rolle: 'superadmin', name: 'Admin' };
+  const inh = { bericht: [{ datei: 'welt9.json', status: 'geladen', fehler: [], warnungen: 1, aufgaben: 45, ausgelassen: 0 }], welten: [{ nr: 9, titel: 'Testwelt', levels: 6, aufgaben: 45, bossPool: 6, maxPunkte: 700 }], katas: { welten: [{ welt: 9, anzahl: 3 }], kategorien: [], weltNamen: [] } };
+  const f = lehrerFetch({ 'GET /api/sitzung': { status: 200, body: admin }, 'GET /api/admin/inhalte': { status: 200, body: inh }, 'POST /api/admin/inhalte/neu-laden': { status: 200, body: { ok: true, bericht: inh.bericht } }, 'GET /api/admin/wartung': { status: 200, body: { bericht: { zeit: '2026-10-13T02:00:00.000Z', anzahlen: { auftraege: 2 }, optimiert: true, fehler: [] } } } });
+  let k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/admin/inhalte', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /welt9\.json/);
+  assert.match(k.text(haupt), /45/);
+  k.klick(k.eins(haupt, 'button.neu-laden'));
+  await k.ruhe();
+  k.klick(k.alle(k.eins(k.document, 'dialog[open]'), 'button')[0]);
+  await k.ruhe();
+  assert.ok(k.anfragen.some((x) => x.methode === 'POST' && x.pfad === '/api/admin/inhalte/neu-laden'));
+  k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/admin/wartung', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /auftraege|Aufträge/);
+});

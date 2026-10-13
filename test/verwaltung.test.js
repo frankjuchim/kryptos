@@ -153,6 +153,7 @@ test('Urkunden: je Schüler Name, Rang, Punkte, Platz, Abzeichen; nur eigene Kur
   assert.equal(d.anzahl, 2);
   assert.deepEqual(d.schueler.map((x) => [x.name, x.platz, x.punkte, x.rang]), [['Lena S.', 1, 20, 'Lehrling'], ['Tim T.', 2, 10, 'Lehrling']]);
   assert.deepEqual(d.schueler[0].abzeichen.map((b) => b.name).sort(), ['Erste Schritte', 'Weltenbummler']);
+  assert.ok(d.schueler.every((x) => x.abzeichen.every((b) => typeof b.key === 'string')), 'Abzeichen mit key (K14, Siegel der Urkunde)');
   assert.ok(!JSON.stringify(d).includes(s.sub), 'keine Konto-Kennungen auf Urkunden');
   assert.equal((await s.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 401);
   const andere = await H.lehrkraftClient(app, { name: 'Herr Andere' });
@@ -160,7 +161,9 @@ test('Urkunden: je Schüler Name, Rang, Punkte, Platz, Abzeichen; nur eigene Kur
   assert.equal((await admin.get(`/api/lehrer/kurse/${kurs.id}/urkunden`)).status, 200);
   const seite = await lk.get('/lehrer/urkunden?kurs=' + kurs.id);
   assert.equal(seite.status, 200);
-  assert.match(seite.text, /<title>Urkunden · Kryptos/); // Platzhalter bis M4 (Urkunden-Oberfläche)
+  assert.match(seite.text, /<title>Urkunden · Kryptos/);
+  assert.match(seite.text, /\/static\/css\/druck\.css\?v=/);
+  assert.match(seite.text, /krypto\/urkunden\.js\?v=/);
 });
 
 test('Aufgaben-Vorschau für Lehrkräfte: Welten mit Level-Infos und Boss-Pool, Aufgaben mit Lösung und Erklärung', async () => {

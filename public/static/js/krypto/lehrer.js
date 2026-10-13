@@ -820,12 +820,232 @@ const KRLehrer = (() => {
     );
   }
 
+  /* ---------- Urkunden-Tab (Task 64): Link auf die Druckseite ---------- */
+
+  tab('urkunden', 'Urkunden', async (kurs, box) => {
+    mount(
+      box,
+      h('p', { class: 'lesen' }, 'Urkunden zum Abschluss der Einheit: je Schülerin und Schüler eine Seite A4 quer mit Rang, Artefakt-Siegeln der gemeisterten Epochen und Datum.'),
+      h('p', null, h('a', { class: 'knopf knopf-primaer', href: `/lehrer/urkunden?kurs=${enc(kurs.id)}` }, KR.symbol('icons', 'i-drucken'), 'Urkunden öffnen'))
+    );
+  });
+
+  /* ---------- Verwaltung für den Admin (Task 64) ---------- */
+
+  const ADMIN_TABS = [
+    ['inhalte', 'Inhalte'],
+    ['backup', 'Sicherung'],
+    ['warmup', 'Warm-up-Karten'],
+    ['wartung', 'Wartung']
+  ];
+
+  async function adminInhalte(box) {
+    const d = await api('GET', '/api/admin/inhalte');
+    const neuLaden = h('button', { type: 'button', class: 'knopf knopf-zweit neu-laden' }, 'Inhalte neu laden');
+    neuLaden.addEventListener('click', async () => {
+      const ok = await AQ.bestaetigen('Inhalte neu laden?', 'Die Seed-Dateien werden neu eingelesen. Lernstände bleiben erhalten; geänderte Aufgaben gelten sofort.', { ok: 'Neu laden' });
+      if (!ok) return;
+      neuLaden.disabled = true;
+      try {
+        await api('POST', '/api/admin/inhalte/neu-laden', {});
+        toast('Inhalte neu geladen.');
+        await adminInhalte(box);
+      } catch (e) {
+        toast(e.message, true);
+        neuLaden.disabled = false;
+      }
+    });
+    const katas = new Map(((d.katas && d.katas.welten) || []).map((x) => [x.welt, x.anzahl]));
+    mount(
+      box,
+      h('h2', null, 'Welten'),
+      h(
+        'div',
+        { class: 'scroll-x' },
+        h(
+          'table',
+          { class: 'admin-tabelle' },
+          h('thead', null, h('tr', null, ['Welt', 'Level', 'Aufgaben', 'Boss-Pool', 'Level-Punkte', 'Warm-up-Karten'].map((t, i) => h('th', { scope: 'col', class: i ? 'zahl' : null }, t)))),
+          h(
+            'tbody',
+            null,
+            (d.welten || []).map((w) => h('tr', null, h('th', { scope: 'row' }, `Welt ${w.nr} · ${w.titel}`), [w.levels, w.aufgaben, w.bossPool, w.maxPunkte, katas.get(w.nr) || 0].map((n) => h('td', { class: 'zahl' }, String(n)))))
+          )
+        )
+      ),
+      h('h2', null, 'Seed-Bericht'),
+      h(
+        'ul',
+        { class: 'seed-bericht' },
+        (d.bericht || []).map((b) =>
+          h(
+            'li',
+            { class: b.fehler && b.fehler.length ? 'mit-fehler' : null },
+            h('b', { class: 'mono' }, b.datei),
+            ` – ${b.status}, ${b.aufgaben} Aufgaben`,
+            b.ausgelassen ? `, ${b.ausgelassen} ausgelassen` : '',
+            b.warnungen ? `, ${b.warnungen} Warnungen` : '',
+            b.fehler && b.fehler.length ? h('ul', null, b.fehler.slice(0, 20).map((f) => h('li', { class: 'text-2' }, '✗ ', String(f)))) : null
+          )
+        )
+      ),
+      h('p', { class: 'knopf-reihe' }, neuLaden)
+    );
+  }
+
+  async function adminBackup(box) {
+    const datei = h('input', { type: 'file', accept: 'application/json,.json', id: 'restore-datei' });
+    const knopf = h('button', { type: 'button', class: 'knopf knopf-gefahr' }, 'Wiederherstellen …');
+    knopf.addEventListener('click', async () => {
+      const f = datei.files && datei.files[0];
+      if (!f) return toast('Bitte zuerst eine Sicherungsdatei wählen.', true);
+      let daten;
+      try {
+        daten = JSON.parse(await AQ.readFile(f));
+      } catch {
+        return toast('Die Datei ist keine gültige Sicherung (JSON).', true);
+      }
+      const ok = await AQ.bestaetigen('Sicherung wiederherstellen?', 'Alle aktuellen Daten von Kryptos werden durch die Sicherung ersetzt. Das lässt sich nicht rückgängig machen.', { ok: 'Wiederherstellen', gefahr: true, eingabe: { label: 'Zur Bestätigung WIEDERHERSTELLEN eingeben', muss: 'WIEDERHERSTELLEN' } });
+      if (!ok) return;
+      try {
+        const r = await api('POST', '/api/admin/restore', daten);
+        toast(`Wiederhergestellt: ${Object.entries(r.counts || {}).map(([k, n]) => `${n} ${k}`).join(', ')}`);
+      } catch (e) {
+        toast(e.message, true);
+      }
+    });
+    mount(
+      box,
+      h('h2', null, 'Sicherung herunterladen'),
+      h('p', { class: 'lesen' }, 'Die Sicherung enthält alle Kurse, Teilnahmen und Lernstände (JSON). Bewahren Sie sie geschützt auf – sie enthält pseudonyme Schülerdaten.'),
+      h('p', null, h('a', { class: 'knopf knopf-zweit', href: '/api/admin/backup', download: '' }, KR.symbol('icons', 'i-download'), 'Sicherung herunterladen')),
+      h('h2', null, 'Sicherung wiederherstellen'),
+      h('p', { class: 'knopf-reihe' }, h('label', { for: 'restore-datei' }, 'Sicherungsdatei'), datei, knopf)
+    );
+  }
+
+  async function adminWarmup(box) {
+    const liste = await api('GET', '/api/admin/katas');
+    const datei = h('input', { type: 'file', accept: 'application/json,.json', id: 'warmup-datei' });
+    const importKnopf = h('button', { type: 'button', class: 'knopf knopf-zweit' }, 'Importieren');
+    importKnopf.addEventListener('click', async () => {
+      const f = datei.files && datei.files[0];
+      if (!f) return toast('Bitte zuerst eine JSON-Datei wählen.', true);
+      try {
+        const r = await api('POST', '/api/admin/katas/import', JSON.parse(await AQ.readFile(f)));
+        toast(`Import: ${r.neu || 0} neu, ${r.aktualisiert || 0} aktualisiert.`);
+        await adminWarmup(box);
+      } catch (e) {
+        toast(e instanceof SyntaxError ? 'Die Datei ist kein gültiges JSON.' : e.message, true);
+      }
+    });
+    mount(
+      box,
+      h('h2', null, 'Warm-up-Karten importieren'),
+      h('p', { class: 'lesen klein text-2' }, 'Format: {"version": 1, "karten": [...]}. Karten mit gleicher id werden aktualisiert.'),
+      h('p', { class: 'knopf-reihe' }, h('label', { for: 'warmup-datei' }, 'Datei'), datei, importKnopf),
+      h('h2', null, `Karten (${liste.length})`),
+      liste.length
+        ? h(
+            'div',
+            { class: 'scroll-x' },
+            h(
+              'table',
+              { class: 'admin-tabelle' },
+              h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'id'), h('th', { scope: 'col' }, 'Welt'), h('th', { scope: 'col' }, 'Titel'), h('th', { scope: 'col' }, h('span', { class: 'sr' }, 'Aktion')))),
+              h(
+                'tbody',
+                null,
+                liste.map((k) => {
+                  const loeschen = h('button', { type: 'button', class: 'knopf knopf-leise', 'aria-label': `Karte ${k.id} löschen` }, 'Löschen');
+                  loeschen.addEventListener('click', async () => {
+                    if (!(await AQ.bestaetigen('Karte löschen?', `${k.id}: ${k.titel}`, { ok: 'Löschen', gefahr: true }))) return;
+                    try {
+                      await api('DELETE', `/api/admin/katas/${enc(k.id)}`);
+                      await adminWarmup(box);
+                    } catch (e) {
+                      toast(e.message, true);
+                    }
+                  });
+                  return h('tr', null, h('td', { class: 'mono' }, k.id), h('td', null, String(k.welt)), h('td', null, k.titel), h('td', null, loeschen));
+                })
+              )
+            )
+          )
+        : h('p', { class: 'text-2' }, 'Noch keine Karten.')
+    );
+  }
+
+  async function adminWartung(box) {
+    const d = await api('GET', '/api/admin/wartung');
+    const b = d && d.bericht;
+    mount(
+      box,
+      h('h2', null, 'Letzter Wartungslauf'),
+      b
+        ? h(
+            'dl',
+            { class: 'themen-extras' },
+            h('dt', null, 'Zeit'),
+            h('dd', null, zeit(b.zeit)),
+            h('dt', null, 'Anzahlen'),
+            h('dd', null, Object.entries(b.anzahlen || {}).map(([k, n]) => `${k}: ${n}`).join(' · ') || '–'),
+            h('dt', null, 'Datenbank optimiert'),
+            h('dd', null, b.optimiert ? 'ja' : 'nein'),
+            h('dt', null, 'Fehler'),
+            h('dd', null, (b.fehler || []).length ? b.fehler.join(' · ') : 'keine')
+          )
+        : h('p', { class: 'text-2' }, 'Seit dem Start lief noch keine Wartung.')
+    );
+  }
+
+  async function adminRoute(teile, r) {
+    if (!istAdmin()) {
+      return seite('Verwaltung', h('div', { class: 'wrap lehrer-seite' }, h('h1', null, 'Verwaltung'), h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, 'Nur für den Admin.')), h('p', null, h('a', { class: 'knopf knopf-zweit', href: '#/' }, 'Zur Kursliste'))));
+    }
+    const key = ADMIN_TABS.some(([k]) => k === teile[0]) ? teile[0] : 'inhalte';
+    const box = h('div', { class: 'tab-inhalt admin-inhalt', id: 'admin-inhalt', role: 'tabpanel', 'aria-labelledby': `admin-tab-${key}` }, h('p', { class: 'laden', role: 'status' }, 'Wird geladen …'));
+    const knoepfe = ADMIN_TABS.map(([k, label], i) => {
+      const b = h('button', { type: 'button', role: 'tab', id: `admin-tab-${k}`, 'aria-selected': k === key ? 'true' : 'false', tabindex: k === key ? '0' : '-1' }, label);
+      b.addEventListener('click', () => (location.hash = `#/admin/${k}`));
+      b.addEventListener('keydown', (e) => {
+        const n = ADMIN_TABS.length;
+        const j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : null;
+        if (j === null) return;
+        e.preventDefault();
+        tabFokus = true;
+        location.hash = `#/admin/${ADMIN_TABS[j][0]}`;
+      });
+      return b;
+    });
+    const vonTab = tabFokus;
+    tabFokus = false;
+    seite(
+      'Verwaltung',
+      h(
+        'div',
+        { class: 'wrap lehrer-seite' },
+        h('h1', null, 'Verwaltung'),
+        h('p', { class: 'text-2 lesen' }, 'Konten, Kurse und Freischaltungen verwalten Sie im Portal InfoLabs. Hier: Inhalte, Sicherung, Warm-up-Karten und Wartung von Kryptos.'),
+        h('div', { class: 'tabs', role: 'tablist', 'aria-label': 'Verwaltung' }, knoepfe),
+        box
+      )
+    );
+    if (vonTab) haupt.querySelector(`#admin-tab-${key}`).focus();
+    try {
+      await { inhalte: adminInhalte, backup: adminBackup, warmup: adminWarmup, wartung: adminWartung }[key](box);
+    } catch (e) {
+      if (r.gueltig() && !(e && e.status === 401)) KR.fehler(box, e);
+    }
+  }
+
   /* ---------- Router ---------- */
 
   ROUTEN.set('', kursliste);
   ROUTEN.set('kurs', kursRoute);
   ROUTEN.set('vorschau', vorschauRoute);
   ROUTEN.set('materialien', materialienRoute);
+  ROUTEN.set('admin', adminRoute);
 
   /** Route registrieren (Vorschau, Materialien, Verwaltung in Tasks 63/64; M7 ergänzt weitere). */
   function route(name, fn) {

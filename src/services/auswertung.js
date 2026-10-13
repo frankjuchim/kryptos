@@ -236,7 +236,7 @@ function createAuswertung(ctx, { inhalte, kurse, stand, lernen }) {
       const d = defs.get(r.schluessel);
       if (!d) continue;
       if (!abz.has(r.sid)) abz.set(r.sid, []);
-      abz.get(r.sid).push({ icon: d.icon, name: d.name });
+      abz.get(r.sid).push({ key: d.key, icon: d.icon, name: d.name });
     }
     const schueler = [...map.values()].map((e) => ({
       id: e.id,

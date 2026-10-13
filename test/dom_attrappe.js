@@ -5,7 +5,7 @@
  *   const D = require('./dom_attrappe');
  *   const k = D.lade(['common.js', 'krypto/oberflaeche.js'], { url, fetch, vorher(k) {} });
  *   k.wert('AQ') · k.document · k.window · k.eins(el, sel) · k.alle(el, sel) · k.text(el)
- *   k.klick(el) · k.tippe(el, 'abc') · k.taste(el, 'Enter') · k.anfragen · k.navigiert · k.neugeladen
+ *   k.klick(el) · k.tippe(el, 'abc') · k.taste(el, 'Enter') · k.anfragen · k.navigiert · k.neugeladen · k.gedruckt
  *   k.medien · k.zwischenablage (Liste der geschriebenen Texte) · k.timer · k.roh(x) · await k.ruhe()
  *   D.fuehreAus(k, ['weiteres.js'])
  *
@@ -807,6 +807,7 @@ function lade(dateien = [], opt = {}) {
     anfragen: [],
     navigiert: [],
     neugeladen: 0,
+    gedruckt: 0, // Aufrufe von window.print() (Urkunden, M4 Task 64)
     medien: {},
     zwischenablage: [],
     timer: [],
@@ -1013,7 +1014,9 @@ function lade(dateien = [], opt = {}) {
     scrollY: 0,
     devicePixelRatio: 1,
     scrollTo() {},
-    print() {},
+    print() {
+      k.gedruckt++;
+    },
     alert() {},
     addEventListener: (...a) => fensterZiel.addEventListener(...a),
     removeEventListener: (...a) => fensterZiel.removeEventListener(...a),

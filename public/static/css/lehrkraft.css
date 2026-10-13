@@ -85,3 +85,12 @@ td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
 .material-eintrag:last-child { border-bottom: 0; }
 .material-welt { border-top: 6px solid var(--akzent); scroll-margin-top: var(--a-4); }
 .material-welt h2, .materialien .karte > h2 { margin: 0 0 var(--a-3); }
+
+/* ---------- Verwaltung (Task 64) ---------- */
+.admin-tabelle { width: 100%; }
+.admin-tabelle .zahl { text-align: right; font-variant-numeric: tabular-nums; }
+.seed-bericht { margin: 0; padding-left: 1.2em; display: grid; gap: var(--a-2); }
+.seed-bericht li.mit-fehler > b { color: var(--fehler); }
+.seed-bericht li.mit-fehler > b::before { content: "✗ "; }
+.admin-inhalt h2 { margin: var(--a-2) 0 0; font-size: var(--h3); }
+.admin-inhalt input[type="file"] { max-width: 100%; }
