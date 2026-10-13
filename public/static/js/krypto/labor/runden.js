@@ -518,7 +518,7 @@
       const status = h('p', { class: 'malraster-status', 'aria-live': 'polite' });
       const malSvg = s('svg', { class: 'malraster-bild', viewBox: `0 0 ${PIXEL} ${PIXEL}`, 'aria-hidden': 'true', 'shape-rendering': 'crispEdges' });
       const raster = h('div', { class: 'malraster', role: 'group', 'aria-roledescription': 'Mal-Raster', tabindex: '0', 'aria-label': 'Eigenes Bild malen: Pfeiltasten bewegen den Cursor, Leertaste kippt das Pixel' }, malSvg);
-      const zuruecksetzen = h('button', { type: 'button', class: 'knopf knopf-leise modi-zuruecksetzen' }, 'Bild der Spec');
+      const zuruecksetzen = h('button', { type: 'button', class: 'knopf knopf-leise modi-zuruecksetzen' }, 'Ausgangsbild');
       const leeren = h('button', { type: 'button', class: 'knopf knopf-leise modi-leeren' }, 'Leeren');
       r.flaeche.append(
         h('div', { class: 'labor-steuer' }, hexFeld('modi-schluessel', 'Schlüssel K (4 Hex)', modiK, (x) => (modiK = x), zeige), hexFeld('modi-iv', 'IV für CBC (4 Hex)', modiIv, (x) => (modiIv = x), zeige)),
@@ -722,7 +722,7 @@
       const tabOrt = h('div', { class: 'enigma-tabelle' });
       const wahl = radiogruppe(
         [
-          { id: 'spec', titel: 'Verdrahtung der Spec' },
+          { id: 'spec', titel: 'Standard-Verdrahtung' },
           { id: 'eigen', titel: 'eigene Verdrahtung' }
         ],
         verdrahtung,

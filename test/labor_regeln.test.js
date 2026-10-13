@@ -169,3 +169,15 @@ test('Eigene Formulierungen: keine Sätze aus der Krypto-Werkstatt (Review M6, d
     for (const m of NAH) assert.doesNotMatch(src, m, `${f}: ${m}`);
   }
 });
+
+test('Schülergerechte Texte: kein „Spec“ in sichtbaren Werkzeug-Texten (Review M6)', () => {
+  const { oeffne } = require('./hilfen_labor');
+  for (const w of require('../src/krypto/werkzeuge.js').WERKZEUGE) {
+    for (const r of w.reiter.length ? w.reiter : [null]) {
+      const x = oeffne(w.id, { voreinstellung: r ? { reiter: [r] } : {}, umgebung: { zufall: () => 0.5 } });
+      const text = x.k.text(x.flaeche) + ' ' + x.k.alle(x.flaeche, '[aria-label], [title]').map((e) => `${e.getAttribute('aria-label') || ''} ${e.getAttribute('title') || ''}`).join(' ');
+      assert.doesNotMatch(text, /\bSpec\b/, `${w.id}/${r}`);
+      x.ctrl.schliesse();
+    }
+  }
+});
