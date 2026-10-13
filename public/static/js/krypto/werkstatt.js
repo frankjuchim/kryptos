@@ -672,15 +672,19 @@ const KRWerkstatt = (() => {
     if (d && d.verfahren) stufen = ausVerfahren(d.verfahren, d.schluessel);
     else if (info.eigene && info.eigene.verfahren) stufen = ausVerfahren(info.eigene.verfahren, {});
     route();
-    if (d) {
-      felder.name.value = (d.verfahren && typeof d.verfahren.name === 'string' && d.verfahren.name) || '';
-      felder.klartext.value = typeof d.klartext === 'string' ? d.klartext : '';
-      felder.beschreibung.value = typeof d.beschreibung === 'string' ? d.beschreibung : '';
+    const werte = d
+      ? { name: (d.verfahren && typeof d.verfahren.name === 'string' && d.verfahren.name) || '', klartext: typeof d.klartext === 'string' ? d.klartext : '', beschreibung: typeof d.beschreibung === 'string' ? d.beschreibung : '' }
+      : info.eigene
+        ? { name: (info.eigene.verfahren && info.eigene.verfahren.name) || '', klartext: '', beschreibung: info.eigene.beschreibung || '' }
+        : null;
+    if (werte && felder) {
+      felder.name.value = werte.name;
+      felder.klartext.value = werte.klartext;
+      felder.beschreibung.value = werte.beschreibung;
       pruefe();
-    } else if (info.eigene && felder) {
-      felder.name.value = (info.eigene.verfahren && info.eigene.verfahren.name) || '';
-      felder.beschreibung.value = info.eigene.beschreibung || '';
-      pruefe();
+    } else if (werte) {
+      // direkt in der Arena geöffnet (#/arena): Werte für die Rückkehr in den Baukasten merken (Befund e2e 6)
+      merkeZustand = { verfahren: { name: werte.name }, klartext: werte.klartext, beschreibung: werte.beschreibung };
     }
     window.addEventListener('hashchange', route);
     // Phasenwechsel der Lehrkraft mitbekommen (Arena-Ansicht pollt selbst)

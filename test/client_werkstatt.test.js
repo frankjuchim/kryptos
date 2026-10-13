@@ -355,3 +355,27 @@ test('Arena: Abzeichen-Toast nur für neu erhaltene Abzeichen (/api/profil liste
   assert.match(k.text(toast()), /Abzeichen: Arena-Knacker/);
   assert.doesNotMatch(k.text(toast()), /Unknackbar|Erste Schritte/);
 });
+
+test('Arena direkt geöffnet (#/arena) mit Entwurf im Browser: kein Fehler, zurück im Baukasten steht der Entwurf', async () => {
+  const entwurf = JSON.stringify({ verfahren: { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$s1' } }, { typ: 'spaltentransposition', param: { schluessel: '$s1' } }] }, schluessel: { s1: 'LATERNE' }, klartext: TEXT1, beschreibung: 'Zwei Stufen.' });
+  const k = D.lade(ARENA_SEITE, {
+    url: 'http://x.test/werkstatt#/arena',
+    zeitraffer: 10,
+    vorher: (x) => x.window.localStorage.setItem('kr-werkstatt:2', entwurf),
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/arena': ARENA('angriff', { team: { id: 2, nr: 2, name: 'Team Scheibe' }, teilnahme: 2 }),
+      'GET /api/arena/4/chiffren': { status: 200, body: [CHIFFRE(1, SKYTALE)] },
+      'GET /api/profil': { status: 200, body: { abzeichen: [] } }
+    }
+  });
+  await k.ruhe();
+  assert.ok(k.eins(k.document, 'ol.arena-chiffren li.arena-chiffre'), 'Arena-Ansicht steht');
+  k.window.location.hash = '#/';
+  await new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
+  await k.ruhe();
+  assert.equal(k.eins(k.document, 'input.werkstatt-name').value, 'FUNKGITTER');
+  assert.equal(k.eins(k.document, 'textarea.werkstatt-klartext').value, TEXT1);
+  assert.equal(k.eins(k.document, 'textarea.werkstatt-beschreibung').value, 'Zwei Stufen.');
+  assert.equal(k.eins(k.document, 'li.stufe[data-nr="1"] input.stufe-param').value, 'LATERNE');
+});
