@@ -72,9 +72,9 @@ const KRLaborBau = (() => {
    * Textfeld mit Beschriftung, maxlength und Längenanzeige. art: klartext | geheimtext | bits | frei (Anzeige-Hinweis).
    * → { element, feld, wert(), setze(t), sperre(an) }
    */
-  function textfeld({ beschriftung = 'Text', max = 200, wert = '', art = 'klartext', beiEingabe, zeilen = 3 } = {}) {
+  function textfeld({ beschriftung = 'Text', max = 200, wert = '', art = 'klartext', beiEingabe, zeilen = 3, platzhalter = null } = {}) {
     const id = neueId('labor-text');
-    const feld = h('textarea', { id, class: `labor-eingabe art-${art}`, maxlength: String(max), rows: String(zeilen), spellcheck: 'false', autocomplete: 'off', autocapitalize: art === 'geheimtext' ? 'characters' : 'off' });
+    const feld = h('textarea', { id, class: `labor-eingabe art-${art}`, maxlength: String(max), rows: String(zeilen), spellcheck: 'false', autocomplete: 'off', autocapitalize: art === 'geheimtext' ? 'characters' : 'off', placeholder: platzhalter });
     feld.value = String(wert ?? '').slice(0, max);
     const anzeige = h('p', { class: 'labor-laenge', 'aria-live': 'off' }, laenge(art, feld.value));
     feld.addEventListener('input', () => {

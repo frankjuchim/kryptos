@@ -101,7 +101,9 @@ test('Beispieltexte der Werkzeuge kommen nicht aus Videos, Seeds oder Gast-Demo'
     const beispiele = [...fs.readFileSync(path.join(DIR, f), 'utf8').matchAll(/BEISPIEL\w*\s*=\s*(\{[\s\S]*?\});/g)].map((m) => m[1]);
     assert.ok(beispiele.length <= 1, `${f}: Beispieltexte in genau einer Konstante BEISPIEL`);
     for (const b of beispiele) {
-      for (const w of woerterVon(b)) {
+      // nur die Werte (String-Literale), nicht die Schlüsselnamen der Konstante
+      const werte = [...b.matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)].map((m) => m[1] ?? m[2] ?? m[3]).join(' ');
+      for (const w of woerterVon(werte)) {
         assert.ok(!video.has(w), `${f}: Beispielwort „${w}“ stammt aus einem Video`);
         assert.ok(!seed.has(w), `${f}: Beispielwort „${w}“ steht in einem Seed (Lab/Boss/Gast)`);
       }

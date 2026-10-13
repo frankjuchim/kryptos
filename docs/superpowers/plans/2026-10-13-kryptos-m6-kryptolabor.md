@@ -1091,7 +1091,7 @@ seinen Rechenweg. „Alle Verschiebungen“ spielt die Versuche nacheinander ab 
   mit Enter/Leertaste; Ziehen: `pointerdown/move/up` am Innenring, Winkel → nächste Rastung (nur Darstellung).
 - `zustand()` → `{ reiter, k, basis, richtung, text, ausgabe, aktiv }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_scheibe.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_scheibe.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1154,11 +1154,11 @@ seinen Rechenweg. „Alle Verschiebungen“ spielt die Versuche nacheinander ab 
     assert.equal(w.k.window.localStorage.length, 0);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/labor_scheibe.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `node --test test/labor_regeln.test.js` grün; `npm test` grün; Sichtprüfung `blick.js scheibe`
+- [x] **Step 2: Run** `node --test test/labor_scheibe.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `node --test test/labor_regeln.test.js` grün; `npm test` grün; Sichtprüfung `blick.js scheibe`
   (Scheibe bei 360 px vollständig sichtbar, Ringbeschriftung lesbar, Touch-Ziele ≥ 44 px, Drehen per Ziehen im Browser).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Chiffrierscheibe mit Formel-Modus, Text-Modus und Brute-Force-Demo"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Chiffrierscheibe mit Formel-Modus, Text-Modus und Brute-Force-Demo"`.
 
 ### Task 112: Werkzeug „Skytale & Gitter“ – Skytale, Gartenzaun, Fleißner (W0 §9.1)
 

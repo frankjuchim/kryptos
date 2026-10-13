@@ -53,9 +53,9 @@ async function szenario8(ctx) {
   const offen = await page.locator('form.einstellungen').locator('input, select, button[type="submit"]').evaluateAll((l) => l.filter((x) => !x.disabled).length);
   assert.equal(offen, 0, 'Einstellungen nur lesend');
 
-  // Labor-Platz: Chiffrierscheibe (Werkzeug selbst kommt mit M6)
+  // Labor-Platz: Chiffrierscheibe (M6 Task 111, wird nachgeladen; ausführlich in Task 126)
   await gehe(page, ctx.basis + '/gast#/labor/scheibe');
-  await page.getByText('Dieses Werkzeug ist noch in Arbeit.').waitFor();
+  await page.locator('.scheibe-drehknopf').waitFor();
   assert.deepEqual(schreibend, [], 'Gastmodus: keine schreibenden Anfragen');
   assert.deepEqual((await kontext.cookies()).map((c) => c.name), [], 'Gastmodus: keine Cookies');
   assert.deepEqual(await page.evaluate(() => Object.keys(localStorage)), [], 'Gastmodus: kein localStorage');
