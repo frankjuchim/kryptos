@@ -8,15 +8,15 @@ const fs = require('node:fs');
 const request = require('supertest');
 const H = require('./helpers');
 
-// Kryptos: bis zu den eigenen Akten (M5) prüft die Kern-Fixture (Testwelt 9, Fixture-PDFs).
+// Kern-Fixture (Testwelt 9, Fixture-PDFs unter Akten_PDF); echtes Material siehe unten (M5 Tasks 96/97).
 const MAT = path.join(__dirname, 'fixtures', 'materialien');
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
-const PDF_DIR = path.join(MAT, 'Arbeitsblaetter_PDF');
+const PDF_DIR = path.join(MAT, 'Akten_PDF');
 const opts = { seedDir: SEED, materialienDir: MAT, arbeitsblaetterDir: PDF_DIR };
 
 const alleDateien = (m) => [...m.allgemein, ...m.welten.flatMap((w) => w.eintraege)].flatMap((e) => e.dateien);
 
-test('Materialien-Übersicht: vollständig je Welt, Lösungen nur unter /lehrkraft/dateien, Schülerfassung öffentlich', async () => {
+test('Materialien-Übersicht: vollständig je Welt, Lösungen nur unter /lehrkraft/dateien, Schülerfassung unter /akten/', async () => {
   const { lk } = await H.szenario(opts);
   const m = (await lk.get('/api/lehrer/materialien').expect(200)).body;
   assert.equal(m.welten.length, 1);
@@ -25,7 +25,7 @@ test('Materialien-Übersicht: vollständig je Welt, Lösungen nur unter /lehrkra
   for (const d of dateien) {
     assert.ok(d.url, `Datei fehlt: ${d.label}`);
     if (d.lehrkraft) assert.match(d.url, /^\/lehrkraft\/dateien\/(Lehrkraft_PDF|Loesungen_Portal)\//);
-    else assert.match(d.url, /^\/arbeitsblaetter\//);
+    else assert.match(d.url, /^\/akten\//);
     if (/^(Lösung|Lösungen|Erwartungshorizont|Klausur|Folien|Lehrerhinweise)$/.test(d.label)) assert.ok(d.lehrkraft, `${d.label} muss geschützt sein`);
   }
   // je Welt: Präsentation, Lehrerhinweise, Arbeitsblätter mit Lösung, Warm-up-Lösungen
@@ -85,11 +85,11 @@ test('Ohne Materialordner: leere Übersicht, Downloads 404', async () => {
   await lk.get('/lehrkraft/dateien/Loesungen_Portal/Welt_9_Testwelt/x.pdf').expect(404);
 });
 
-test('verzeichnis.json: nur Lehrkraft_PDF, Loesungen_Portal und Arbeitsblaetter_PDF; alle Dateien vorhanden', () => {
+test('verzeichnis.json: nur Lehrkraft_PDF, Loesungen_Portal und Akten_PDF; alle Dateien vorhanden', () => {
   const v = JSON.parse(fs.readFileSync(path.join(MAT, 'Lehrkraft_PDF', 'verzeichnis.json'), 'utf8'));
   const pfade = [...v.allgemein, ...v.welten.flatMap((w) => w.eintraege)].flatMap((e) => e.dateien.map((d) => d.pfad));
   for (const p of pfade) {
-    assert.match(p, /^(Lehrkraft_PDF|Loesungen_Portal|Arbeitsblaetter_PDF)\/[A-Za-z0-9_./-]+\.pdf$/, p);
+    assert.match(p, /^(Lehrkraft_PDF|Loesungen_Portal|Akten_PDF)\/[A-Za-z0-9_./-]+\.pdf$/, p);
     assert.ok(fs.existsSync(path.join(MAT, p)), `fehlt: ${p} (npm run lehrkraft)`);
   }
 });
@@ -168,7 +168,7 @@ test('echtes Material: Lösungs-/Lehrkraft-PDFs nur mit Lehrkraft-Sitzung, ohne 
   }
 });
 
-test('echtes Material: Schülerfassungen (Akten_PDF/…) zeigen auf /akten/…', { todo: 'Task 97 (Route /akten/, Präfix Akten_PDF/ im Dienst lehrkraftMaterial.js, K15)' }, async () => {
+test('echtes Material: Schülerfassungen (Akten_PDF/…) zeigen auf /akten/…', async () => {
   const { lk } = await H.szenario({ seedDir: SEED, materialienDir: ECHT, arbeitsblaetterDir: path.join(ECHT, 'Akten_PDF') });
   const m = (await lk.get('/api/lehrer/materialien').expect(200)).body;
   const schueler = alleDateien(m).filter((d) => !d.lehrkraft);

@@ -41,8 +41,9 @@ const VERSION = require('../package.json').version;
  * @param {Function} [opts.random]        Zufall [0,1) für Boss-Ziehung – für Tests
  * @param {Function} [opts.trainingSeed]  Seed-Quelle für Generatoren – für Tests
  * @param {object} [opts.optionen]        Dienst-Optionen (TECHNIK §4.2), überschreiben dienstOptionen() – für Tests
- * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Arbeitsblatt-PDFs (Standard: ARBEITSBLAETTER_DIR,
- *                                         sonst ./arbeitsblaetter im Image bzw. materialien/Arbeitsblaetter_PDF im Repo)
+ * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Akten-PDFs, ausgeliefert unter /akten/ (Kern-Name der Option
+ *                                         bleibt, TECHNIK §16.2; Standard: ARBEITSBLAETTER_DIR, sonst ./akten im Image bzw.
+ *                                         materialien/Akten_PDF im Repo)
  * @param {string|null} [opts.materialienDir] Ordner mit Lehrkraft_PDF/ und Loesungen_Portal/ (nur Lehrkräfte;
  *                                         Standard: MATERIALIEN_DIR, sonst ./materialien)
  */
@@ -166,7 +167,7 @@ function createApp(opts) {
   };
   // Seiten-Wächter (TECHNIK §6.4): ohne passende Sitzung still 302 /sso/start?ziel=<Pfad>. Schüler: /spiel, /funkraum,
   // /werkstatt; Lehrkraft: /lehrer, /lehrer/urkunden, /beamer/funkraum/:id, /beamer/arena/:id; beide Rollen: /labor.
-  // Öffentlich: /, /gast, /themen, /datenschutz, /board/:schluessel, /healthz, /api/plattform, /akten/*, /static/*,
+  // Öffentlich: /, /gast, /themen, /datenschutz, /board/:schluessel, /healthz, /api/plattform, /akten/* (eigene Prüfung: Demo-PDFs offen, sonst Anmeldung), /static/*,
   // /robots.txt.
   const waechterSchueler = sitzung.waechter('schueler');
   const waechterLehrkraft = sitzung.waechter('lehrkraft');
@@ -186,9 +187,9 @@ function createApp(opts) {
   app.get('/themen', page('themen.html'));
   app.get('/gast', page('gast.html'));
   app.use('/static', express.static(path.join(PUBLIC_DIR, 'static'), { maxAge: '1h', index: false }));
-  // Arbeitsblätter (Schülerfassung, PDF) – nur .pdf, ohne Verzeichnislisten
+  // Akten (Schülerfassung, PDF; Kryptos K15: /akten statt /arbeitsblaetter) – nur .pdf, ohne Verzeichnislisten
   if (abDir) {
-    app.use('/arbeitsblaetter', (req, res, next) => {
+    app.use('/akten', (req, res, next) => {
       if (!req.path.toLowerCase().endsWith('.pdf')) return res.status(404).end();
       let rel;
       try {
@@ -208,7 +209,7 @@ function createApp(opts) {
       res.set('Cache-Control', 'private, max-age=3600');
       next();
     });
-    app.use('/arbeitsblaetter', express.static(abDir, { index: false, dotfiles: 'deny', cacheControl: false }));
+    app.use('/akten', express.static(abDir, { index: false, dotfiles: 'deny', cacheControl: false }));
   }
 
   /* ---------- API ---------- */
@@ -342,15 +343,15 @@ function materialienOrdner(opts) {
   return kandidaten.find((d) => d && fs.existsSync(d)) || null;
 }
 
-/** seedDir/arbeitsblaetter.json (Verzeichnis der Arbeitsblätter); fehlt sie, zeigt /themen nur die Level. */
+/** seedDir/akten.json (Verzeichnis der Akten, TECHNIK §14.2; Kryptos K15 statt arbeitsblaetter.json); fehlt sie, zeigt /themen nur die Level. */
 function ladeVerzeichnis(opts, log) {
   const seedDir = opts.seedDir === undefined ? path.join(ROOT_DIR, 'seed') : opts.seedDir;
-  const datei = seedDir && path.join(seedDir, 'arbeitsblaetter.json');
+  const datei = seedDir && path.join(seedDir, 'akten.json');
   if (!datei || !fs.existsSync(datei)) return null;
   try {
     return JSON.parse(fs.readFileSync(datei, 'utf8'));
   } catch (e) {
-    log(`arbeitsblaetter.json nicht lesbar: ${e.message}`);
+    log(`akten.json nicht lesbar: ${e.message}`);
     return null;
   }
 }

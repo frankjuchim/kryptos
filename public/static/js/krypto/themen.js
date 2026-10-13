@@ -1,5 +1,5 @@
 /* Kryptos – Themen und Niveaus /themen (M4 Task 61, VERTRAG labs v1.2 §9): öffentliche Übersicht ohne Lösungen.
-   Feste Anker: #welten (je Welt #welt-<nr>), #niveaus („Was ist für welches Niveau?“, Daten GET /api/niveaus),
+   Feste Anker: #welten (je Welt #welt-<nr>), #werkzeugkarten (Liste WK1–WK6 + Abitur-Anlage, K15), #niveaus („Was ist für welches Niveau?“, Daten GET /api/niveaus),
    #kategorien, #fallen (je Falle #fallen-P1 … #fallen-P10 – Ziel der Diagnose-Chips), #werkzeuge.
    Daten: GET /api/themen und GET /api/niveaus. Fehlt ein Abschnitt im HTML, wird er angelegt. Texte nur als Textknoten.
    Kein externer Link auf die Krypto-Werkstatt, bis die Erlaubnis geklärt ist (Design O11, M4 Festlegung 7). */
@@ -35,7 +35,7 @@ const KRThemen = (() => {
   /* ---------- #welten ---------- */
 
   function akte(l) {
-    const b = l.abBlatt;
+    const b = l.akte;
     if (!b) return null;
     if (b.url) return h('a', { class: 'akte-link', href: b.url }, KR.symbol('icons', 'i-download'), b.titel, ' (PDF)');
     return h('span', { class: 'text-2' }, b.titel, ' – nach der Anmeldung');
@@ -88,6 +88,27 @@ const KRThemen = (() => {
       abschnitt('welten', 'Epochen und Level'),
       liste.length ? liste.map(weltAbschnitt) : h('p', { class: 'text-2' }, 'Noch keine Epochen geladen.'),
       h('p', { class: 'text-2 klein' }, 'Akten (Arbeitsblätter) stehen nach der Anmeldung als PDF bereit. Lösungen gibt es nur für Lehrkräfte.')
+    );
+  }
+
+  /* ---------- #werkzeugkarten (Liste, K15) ---------- */
+
+  const wkTitel = (x) => (x.nr <= 6 ? `WK${x.nr} · ${x.titel}` : x.titel);
+
+  function werkzeugkarten(d) {
+    const liste = d.werkzeugkarten || [];
+    mount(
+      abschnitt('werkzeugkarten', 'Werkzeugkarten'),
+      liste.length
+        ? h(
+            'ul',
+            { class: 'themen-weitere' },
+            liste.map((x) =>
+              h('li', null, x.url ? h('a', { class: 'akte-link', href: x.url }, KR.symbol('icons', 'i-download'), wkTitel(x), ' (PDF)') : h('span', null, wkTitel(x), h('span', { class: 'text-2' }, ' – nach der Anmeldung')))
+            )
+          )
+        : h('p', { class: 'text-2' }, 'Noch keine Werkzeugkarten.'),
+      h('p', { class: 'text-2 klein' }, 'Die Werkzeugkarten fassen Verfahren, Methoden und Operatoren für Klausur und Abitur zusammen (PDF nach der Anmeldung).')
     );
   }
 
@@ -267,6 +288,7 @@ const KRThemen = (() => {
     if (t instanceof Error) KR.fehler(abschnitt('welten', 'Epochen und Level'), new Error('Die Themen konnten nicht geladen werden. Bitte lade die Seite neu.'));
     else {
       welten(t);
+      werkzeugkarten(t);
       kategorien(t);
       fallen(t);
     }

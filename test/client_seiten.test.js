@@ -286,7 +286,7 @@ test('Start: Sitzung leitet weiter; ohne Sitzung Anmelden-Knopf, Hinweis bei ?ab
   assert.ok(k.eins(haupt, 'a[href="/themen"]'));
 });
 test('Themen: Anker #fallen-P3 und #niveaus, Niveau-Chips aus /api/niveaus', async () => {
-  const themen = { welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', aufgaben: 4, abBlatt: { titel: 'Akte W9·1 – Blöcke', url: null, demo: false } }], boss: null, training: [], warmup: 0, arbeitsblaetter: [], weitere: [] }], kategorien: [], fallen: [{ p: 'P3', titel: 'Umkehrung falsch', text: 'Erläuterung', anzahl: 1, orte: [] }] };
+  const themen = { welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', aufgaben: 4, akte: { titel: 'Akte W9·1 – Blöcke', url: null, demo: false } }, { id: 'W9-L2', nr: '2', titel: 'Lücken', niveau: 'kern', aufgaben: 3, akte: { titel: 'Akte W9·2 – Lücken', url: '/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf', demo: true } }], boss: null, training: [], warmup: 0, akten: [], weitere: [] }], werkzeugkarten: [{ nr: 1, titel: 'Abitur-Anlage kompakt', url: '/akten/00_Werkzeugkarten/KR_WK1.pdf', demo: false }, { nr: 2, titel: 'Die 5-Schritte-Methode', url: null, demo: false }], kategorien: [], fallen: [{ p: 'P3', titel: 'Umkehrung falsch', text: 'Erläuterung', anzahl: 1, orte: [] }] };
   const niveaus = { niveaus: ['eA', 'gA'], kategorien: [{ id: 'kern', kurz: 'Kern', lang: 'Kern', gA: true, eA: true }], welten: [{ nr: 0, titel: 'Die Antike', quelle: 'plan', levels: [{ id: '0.1', titel: 'Skytale', niveau: 'kern', aufgaben: { kern: 7 }, hinweis: '', akte: null }], boss: null }], weitere: [] };
   const k = D.lade([...BASIS, 'krypto/themen.js'], { url: 'http://x.test/themen', fetch: { 'GET /api/sitzung': { status: 200, body: { rolle: null, kurse: [] } }, 'GET /api/themen': { status: 200, body: themen }, 'GET /api/niveaus': { status: 200, body: niveaus } } });
   const sektion = k.document.createElement('section'); sektion.setAttribute('id', 'niveaus');
@@ -297,6 +297,15 @@ test('Themen: Anker #fallen-P3 und #niveaus, Niveau-Chips aus /api/niveaus', asy
   assert.ok(k.document.getElementById('welt-9'));
   assert.match(k.text(k.document.getElementById('niveaus')), /Skytale/);
   assert.match(k.text(k.document.getElementById('haupt')), /nach der Anmeldung/, 'Akte ohne url');
+  // Akte mit url als Link (K15), Werkzeugkarten als Liste
+  const akteLink = k.eins(k.document.getElementById('welt-9'), 'a.akte-link[href="/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf"]');
+  assert.ok(akteLink);
+  assert.match(k.text(akteLink), /Akte W9·2 – Lücken/);
+  const wk = k.document.getElementById('werkzeugkarten');
+  assert.ok(wk, 'Abschnitt #werkzeugkarten');
+  assert.equal(k.alle(wk, 'li').length, 2);
+  assert.ok(k.eins(wk, 'a[href="/akten/00_Werkzeugkarten/KR_WK1.pdf"]'));
+  assert.match(k.text(wk), /WK2 · Die 5-Schritte-Methode/);
 });
 test('Board: Liste, Welt-Fortschritt, Aktualisierung alle 20 s, 404-Hinweis', async () => {
   let n = 0;
@@ -419,13 +428,18 @@ test('Vorschau: Niveau-Chips auch für Kern, Hinweis „im gA-Kurs ausgeblendet�
   assert.ok(k2.eins(h2, 'a[href="#/vorschau/aufgabe/W9-L1-02"]'));
 });
 test('Materialien: Liste je Welt mit Download-Links und Sprungleiste', async () => {
-  const m = { allgemein: [{ art: 'lehrerhinweise', titel: 'Gesamtübersicht', ds: [], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/a.pdf', lehrkraft: true }] }], welten: [{ nr: 9, eintraege: [{ art: 'praesentation', titel: 'Folien Welt 9', ds: [1], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/b.pdf', lehrkraft: true }, { label: 'fehlt', url: null }] }] }] };
+  const m = { allgemein: [{ art: 'lehrerhinweise', titel: 'Gesamtübersicht', ds: [], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/a.pdf', lehrkraft: true }] }, { art: 'werkzeug', titel: 'WK1', ds: [], dateien: [{ label: 'Karte', url: '/akten/00_Werkzeugkarten/WK1.pdf', lehrkraft: false }] }], welten: [{ nr: 9, eintraege: [{ art: 'praesentation', titel: 'Folien Welt 9', ds: [1], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/b.pdf', lehrkraft: true }, { label: 'fehlt', url: null }] }, { art: 'boss', titel: 'Papier-Boss', dateien: [] }, { art: 'warmup', titel: 'Karten', dateien: [] }, { art: 'funkraum', titel: 'Rollen', dateien: [] }, { art: 'probeklausur', titel: 'PK', dateien: [] }, { art: 'hinweise', titel: 'LH', dateien: [] }] }] };
   const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/materialien', fetch: lehrerFetch({ 'GET /api/lehrer/materialien': { status: 200, body: m } }), vorher: seiteLehrer });
   await k.ruhe();
   const haupt = k.document.getElementById('haupt');
   assert.ok(k.eins(haupt, 'a[href="/lehrkraft/dateien/b.pdf"]'));
   assert.ok(k.eins(haupt, 'a[href="#material-welt-9"]'));
   assert.ok(k.document.getElementById('material-welt-9'));
+  // Arten mit Anzeigenamen (Task 97), Schülerfassung unter /akten/
+  const text = k.text(haupt);
+  for (const s of ['Papier-Boss', 'Warm-up', 'Funkraum', 'Werkzeugkarte', 'Probeklausur', 'Lehrerhinweise']) assert.match(text, new RegExp(s), s);
+  for (const roh of [/\bboss\b/, /\bwarmup\b/, /\bfunkraum\b/, /\bwerkzeug\b/, /\bprobeklausur\b/, /\bhinweise\b/]) assert.doesNotMatch(text, roh);
+  assert.ok(k.eins(haupt, 'a[href="/akten/00_Werkzeugkarten/WK1.pdf"]'));
 });
 test('Scoreboard-Tab: Rangliste des Kurses, Aktualisierung alle 20 s', async () => {
   const sb = { welt: null, liste: [{ id: 1, name: 'Mika R.', punkte: 30, abzeichen: 1, geloest: 3, platz: 1 }] };

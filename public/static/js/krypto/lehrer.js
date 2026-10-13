@@ -807,7 +807,21 @@ const KRLehrer = (() => {
 
   /* ---------- Materialien (Task 63) ---------- */
 
-  const ART = { praesentation: 'Präsentation', lehrerhinweise: 'Lehrerhinweise', klausur: 'Klausur', loesung: 'Lösung', akte: 'Akte', erwartungshorizont: 'Erwartungshorizont' };
+  const ART = {
+    praesentation: 'Präsentation',
+    lehrerhinweise: 'Lehrerhinweise',
+    hinweise: 'Lehrerhinweise',
+    klausur: 'Klausur',
+    probeklausur: 'Probeklausur',
+    loesung: 'Lösung',
+    akte: 'Akte',
+    ab: 'Akte',
+    erwartungshorizont: 'Erwartungshorizont',
+    boss: 'Papier-Boss',
+    warmup: 'Warm-up',
+    funkraum: 'Funkraum',
+    werkzeug: 'Werkzeugkarte'
+  };
 
   function materialEintrag(e) {
     return h(

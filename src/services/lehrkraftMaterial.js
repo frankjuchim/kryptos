@@ -2,19 +2,19 @@
 // Materialien für Lehrkräfte (Lehrkraft-Bereich → Materialien): Lösungen, Erwartungshorizonte, Präsentationen,
 // Lehrerhinweise, Klausuren als PDF. Grundlage ist materialien/Lehrkraft_PDF/verzeichnis.json (erzeugt von
 // werkzeuge/lehrkraft_pdf.py). Ausgeliefert werden NUR Dateien, die dort verzeichnet sind; Schülerfassungen
-// (Arbeitsblaetter_PDF/…) verweisen auf /arbeitsblaetter/… (nur nach Anmeldung, außer Demo-PDFs), alles andere auf
+// (Akten_PDF/…, Kryptos K15) verweisen auf /akten/… (nur nach Anmeldung, außer Demo-PDFs), alles andere auf
 // /lehrkraft/dateien/…, die nur angemeldete Lehrkräfte erreichen (außer den Demo-Dateien aus seed/demo_materialien.json).
 
 const fs = require('node:fs');
 const path = require('node:path');
 
-const OEFFENTLICH = 'Arbeitsblaetter_PDF/';
+const OEFFENTLICH = 'Akten_PDF/'; // Schülerbereich (nur nach Anmeldung), Kryptos K15
 const URL_LEHRKRAFT = '/lehrkraft/dateien/';
 const kodiert = (rel) => rel.split('/').map(encodeURIComponent).join('/');
 
 /**
  * @param {{materialienDir: string|null, abDir: string|null, log?: Function}} opts
- *   materialienDir: Ordner mit Lehrkraft_PDF/ und Loesungen_Portal/; abDir: öffentliche Arbeitsblatt-PDFs
+ *   materialienDir: Ordner mit Lehrkraft_PDF/ und Loesungen_Portal/; abDir: Akten-PDFs (Schülerbereich, /akten/)
  */
 function createLehrkraftMaterial({ materialienDir, abDir, demo = { schueler: new Set(), lehrkraft: new Set() }, log = () => {} }) {
   let verzeichnis = null;
@@ -34,7 +34,7 @@ function createLehrkraftMaterial({ materialienDir, abDir, demo = { schueler: new
     if (typeof rel !== 'string' || rel.includes('..') || !rel.toLowerCase().endsWith('.pdf')) return null;
     if (rel.startsWith(OEFFENTLICH)) {
       const r = rel.slice(OEFFENTLICH.length);
-      return abDir && fs.existsSync(path.join(abDir, r)) ? '/arbeitsblaetter/' + kodiert(r) : null;
+      return abDir && fs.existsSync(path.join(abDir, r)) ? '/akten/' + kodiert(r) : null;
     }
     const abs = path.join(materialienDir, rel);
     if (!fs.existsSync(abs)) return null;

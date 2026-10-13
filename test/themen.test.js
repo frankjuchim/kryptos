@@ -1,5 +1,6 @@
 'use strict';
-// Themenübersicht /themen: öffentlich, ohne Lösungen, Verweise auf Level und Arbeitsblatt-PDFs; PDF-Auslieferung.
+// Themenübersicht /themen: öffentlich, ohne Lösungen, Verweise auf Level und Akten-PDFs; PDF-Auslieferung unter /akten/
+// (Kryptos K15: seed/akten.json statt arbeitsblaetter.json, Route /akten statt /arbeitsblaetter; Plan M5 Task 97).
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -10,7 +11,7 @@ const H = require('./helpers');
 // Kryptos: bis zu den eigenen Welten und Akten (M5) prüft die Kern-Fixture (Testwelt 9, Fixture-PDFs).
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
 const MAT = path.join(__dirname, 'fixtures', 'materialien');
-const PDF_DIR = path.join(MAT, 'Arbeitsblaetter_PDF');
+const PDF_DIR = path.join(MAT, 'Akten_PDF');
 
 test('Themenübersicht: öffentlich, alle Welten und Level, keine Lösungen/Erklärungen/Tipps', async () => {
   const app = H.makeApp({ seedDir: SEED, arbeitsblaetterDir: PDF_DIR });
@@ -22,18 +23,26 @@ test('Themenübersicht: öffentlich, alle Welten und Level, keine Lösungen/Erkl
   assert.equal(levels.length, W.levels.length);
   const text = JSON.stringify(d);
   for (const verboten of ['"loesung"', '"erklaerung"', '"tipps"', '"inhalt"', '"interaktion"']) assert.ok(!text.includes(verboten), verboten);
-  // Jedes Level mit Arbeitsblatt-Angabe (ab) ist zugeordnet, und jedes Arbeitsblatt hat eine ausgelieferte PDF
-  for (const l of levels.filter((x) => x.ab)) assert.ok(l.abBlatt && l.abBlatt.url, `Level ${l.id} ohne Arbeitsblatt (${l.ab})`);
-  assert.ok(levels.some((x) => x.abBlatt && x.abBlatt.url));
-  const abs = d.welten.flatMap((w) => w.arbeitsblaetter);
-  assert.equal(abs.length, 2);
-  for (const a of abs) assert.match(a.url, /^\/arbeitsblaetter\/Welt_\d_[A-Za-z]+\/KR_W\d-AB\d_[A-Za-z0-9_-]+\.pdf$/);
-  assert.ok(d.werkzeugkarten.url.endsWith('.pdf'));
+  // Akte je Level aus seed/akten.json (Zuordnung über `level`), mit ausgelieferter PDF
+  const l1 = levels.find((l) => l.id === 'W9-L1');
+  assert.deepEqual(l1.akte, { titel: 'Akte W9·1 – Blöcke und Lücken', url: '/akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf', demo: true });
+  assert.equal(levels.find((l) => l.id === 'W9-L2').akte.titel, 'Akte W9·2 – Alle Interaktionen');
+  assert.equal(levels.find((l) => l.id === 'W9-L6').akte, null);
+  for (const l of levels) assert.ok(!('abBlatt' in l), 'abBlatt (Kern) ersetzt durch akte');
+  for (const w of d.welten) assert.ok(!('arbeitsblaetter' in w), 'Welt hat akten statt arbeitsblaetter');
+  const akten = d.welten.flatMap((w) => w.akten);
+  assert.equal(akten.length, 2);
+  for (const a of akten) assert.match(a.url, /^\/akten\/Welt_\d_[A-Za-z]+\/KR_W\d-AB\d_[A-Za-z0-9_-]+\.pdf$/);
+  assert.deepEqual(akten.map((a) => a.nr), ['1', '2']);
+  // Werkzeugkarten sind eine Liste
+  assert.ok(Array.isArray(d.werkzeugkarten));
+  assert.deepEqual(d.werkzeugkarten.map((x) => [x.nr, x.titel]), [[1, 'Werkzeugkarten (Test)']]);
+  assert.match(d.werkzeugkarten[0].url, /^\/akten\/00_Werkzeugkarten\/.+\.pdf$/);
   // Papier-Boss und Warm-up-Karten je Welt
   const weitere = d.welten.flatMap((w) => w.weitere);
   assert.equal(weitere.length, 2);
   assert.deepEqual(d.welten.map((w) => w.weitere.map((x) => x.art).join('+')), ['boss+warmup']);
-  for (const x of weitere) assert.match(x.url, /^\/arbeitsblaetter\/Welt_\d_[A-Za-z]+\/KR_W\d-(Boss|Probeklausur|Warm-up-Karten)[A-Za-z0-9_-]*\.pdf$/);
+  for (const x of weitere) assert.match(x.url, /^\/akten\/Welt_\d_[A-Za-z]+\/KR_W\d-(Boss|Probeklausur|Warm-up-Karten)[A-Za-z0-9_-]*\.pdf$/);
   // Querschnitte: Kategorien und Fallen verweisen auf existierende Level
   const ids = new Set(levels.map((l) => l.id));
   for (const k of d.kategorien) for (const o of k.orte) assert.ok(ids.has(o.id));
@@ -43,12 +52,13 @@ test('Themenübersicht: öffentlich, alle Welten und Level, keine Lösungen/Erkl
   assert.ok(d.fallen.some((f) => f.anzahl > 0));
 });
 
-test('Arbeitsblatt-PDFs: nur Demo-PDFs ohne Anmeldung, alle anderen für Schüler und Lehrkräfte; Pfad-Tricks nicht', async () => {
+test('Akten-PDFs (/akten/): nur Demo-PDFs ohne Anmeldung, alle anderen für Schüler und Lehrkräfte; Pfad-Tricks nicht', async () => {
   const sz = await H.szenario({ seedDir: SEED, arbeitsblaetterDir: PDF_DIR });
   const app = sz.app;
   const d = (await request(app).get('/api/themen')).body;
-  const url = d.welten[0].arbeitsblaetter[1].url;
-  assert.equal(d.welten[0].arbeitsblaetter[1].demo, false);
+  const url = d.welten[0].akten[1].url;
+  assert.equal(url, '/akten/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf');
+  assert.equal(d.welten[0].akten[1].demo, false);
   const g = await request(app).get(url).expect(401);
   assert.match(g.text, /Nur nach Anmeldung/);
   assert.match(g.text, /\/static\/css\/tokens\.css\?v=/, 'Hinweisseite im neuen CSS (K20, E36)');
@@ -61,42 +71,52 @@ test('Arbeitsblatt-PDFs: nur Demo-PDFs ohne Anmeldung, alle anderen für Schüle
     assert.match(r.headers['cache-control'], /private/);
   }
   // Demo-PDFs (seed/demo_materialien.json): ohne Anmeldung
-  const demos = [d.werkzeugkarten, ...d.welten.flatMap((w) => [...w.arbeitsblaetter, ...(w.weitere || [])])].filter((a) => a.demo);
+  const demos = [...d.werkzeugkarten, ...d.welten.flatMap((w) => [...w.akten, ...(w.weitere || [])])].filter((a) => a.demo);
   assert.deepEqual(demos.map((a) => a.url.split('/').pop()), ['KR_Werkzeugkarten_Test.pdf', 'KR_W9-AB1_Bloecke_und_Luecken.pdf']);
-  for (const a of demos) await request(app).get(a.url).expect(200);
+  for (const a of demos) {
+    const r = await request(app).get(a.url).expect(200);
+    assert.equal(r.headers['content-type'], 'application/pdf');
+  }
   // Papier-Boss, Probeklausur, Warm-up-Karten: nur angemeldet
   for (const x of d.welten.flatMap((w) => w.weitere || [])) await request(app).get(x.url).expect(401);
-  await request(app).get('/arbeitsblaetter/Welt_9_Testwelt/gibt_es_nicht.pdf').expect(404);
-  await request(app).get('/arbeitsblaetter/').expect(404);
-  await request(app).get('/arbeitsblaetter/Welt_9_Testwelt/').expect(404);
-  await request(app).get('/arbeitsblaetter/..%2f..%2fpackage.json').expect(404);
-  await request(app).get('/arbeitsblaetter/%2e%2e/%2e%2e/seed/arbeitsblaetter.json').expect(404);
+  await request(app).get('/akten/Welt_9_Testwelt/gibt_es_nicht.pdf').expect(404);
+  await request(app).get('/akten/').expect(404);
+  await request(app).get('/akten/Welt_9_Testwelt/').expect(404);
+  await request(app).get('/akten/..%2f..%2fpackage.json').expect(404);
+  await request(app).get('/akten/../seed/akten.json').expect(404);
+  await request(app).get('/akten/%2e%2e/%2e%2e/seed/akten.json').expect(404);
+  await sz.s.get('/akten/%2e%2e/%2e%2e/seed/akten.json').expect(404);
+  await sz.s.get('/akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.txt').expect(404);
+  // die Kern-Route /arbeitsblaetter gibt es nicht mehr
+  await request(app).get('/arbeitsblaetter/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf').expect(404);
+  await sz.s.get('/arbeitsblaetter/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf').expect(404);
   await request(app).get('/themen').expect(200).expect('Content-Type', /html/);
 });
 
-test('Themenübersicht ohne Arbeitsblatt-Ordner: Level ja, PDF-Links leer', async () => {
+test('Themenübersicht ohne Akten-Ordner: Level ja, PDF-Links leer', async () => {
   const app = H.makeApp({ seedDir: SEED, arbeitsblaetterDir: null });
   const d = (await request(app).get('/api/themen').expect(200)).body;
   assert.equal(d.welten.length, 1);
   assert.ok(d.welten[0].levels.length > 0);
-  assert.ok(d.welten.flatMap((w) => w.arbeitsblaetter).every((a) => a.url === null));
+  assert.ok(d.welten.flatMap((w) => w.akten).every((a) => a.url === null));
+  assert.equal(d.welten[0].levels[0].akte.url, null);
 });
 
-test('Verzeichnis seed/arbeitsblaetter.json passt zu den erzeugten PDFs', () => {
-  const v = JSON.parse(fs.readFileSync(path.join(SEED, 'arbeitsblaetter.json'), 'utf8'));
+test('Verzeichnis akten.json (Fixture) passt zu den PDFs', () => {
+  const v = JSON.parse(fs.readFileSync(path.join(SEED, 'akten.json'), 'utf8'));
   const alle = [
-    v.werkzeugkarten,
-    ...v.welten.flatMap((w) => [...w.arbeitsblaetter, ...(w.weitere || [])].map((a) => ({ ...a, datei: `${w.ordner}/${a.datei}` })))
+    ...v.werkzeugkarten,
+    ...v.welten.flatMap((w) => [...w.akten, ...(w.weitere || [])].map((a) => ({ ...a, datei: `${w.ordner}/${a.datei}` })))
   ];
   for (const a of alle) {
-    assert.ok(fs.existsSync(path.join(PDF_DIR, a.datei)), `PDF fehlt: ${a.datei} (python3 werkzeuge/arbeitsblaetter_pdf.py)`);
+    assert.ok(fs.existsSync(path.join(PDF_DIR, a.datei)), `PDF fehlt: ${a.datei}`);
     assert.match(path.basename(a.datei), /^[A-Za-z0-9_.-]+$/, 'Dateiname ohne Umlaute und Leerzeichen');
   }
 });
 
 test('Öffentlicher PDF-Ordner enthält nie Klausuren, Erwartungshorizonte oder Lösungen', () => {
-  const v = JSON.parse(fs.readFileSync(path.join(SEED, 'arbeitsblaetter.json'), 'utf8'));
-  const quellen = [v.werkzeugkarten.quelle, ...v.welten.flatMap((w) => [...w.arbeitsblaetter, ...(w.weitere || [])].map((a) => a.quelle))];
+  const v = JSON.parse(fs.readFileSync(path.join(SEED, 'akten.json'), 'utf8'));
+  const quellen = [...v.werkzeugkarten.map((x) => x.quelle), ...v.welten.flatMap((w) => [...w.akten, ...(w.weitere || [])].map((a) => a.quelle))];
   for (const q of quellen) {
     assert.ok(!/5_Loesungen|_LSG|Erwartungshorizont|(^|[/_])Klausur|Nachschreib/i.test(q), `nicht öffentlich: ${q}`);
   }
@@ -106,13 +126,13 @@ test('Öffentlicher PDF-Ordner enthält nie Klausuren, Erwartungshorizonte oder 
   for (const w of v.welten) for (const x of w.weitere || []) if (x.art === 'warmup') assert.equal(x.ohneLoesungsteil, true, x.datei);
 });
 
-test('Lösungen: nie über /arbeitsblaetter oder statisch erreichbar; im Image nur Loesungen_Portal/Lehrkraft_PDF unter materialien/', async () => {
+test('Lösungen: nie über /akten oder statisch erreichbar; im Image nur Loesungen_Portal/Lehrkraft_PDF unter materialien/', async () => {
   const app = H.makeApp({ seedDir: SEED, arbeitsblaetterDir: PDF_DIR });
   const lsg = path.join(MAT, 'Loesungen_Portal', 'Welt_9_Testwelt');
   const datei = fs.existsSync(lsg) ? fs.readdirSync(lsg)[0] : 'x.pdf';
   for (const url of [
-    `/arbeitsblaetter/..%2fLoesungen_Portal/Welt_9_Testwelt/${datei}`,
-    `/arbeitsblaetter/%2e%2e/Loesungen_Portal/Welt_9_Testwelt/${datei}`,
+    `/akten/..%2fLoesungen_Portal/Welt_9_Testwelt/${datei}`,
+    `/akten/%2e%2e/Loesungen_Portal/Welt_9_Testwelt/${datei}`,
     `/Loesungen_Portal/Welt_9_Testwelt/${datei}`,
     `/materialien/Loesungen_Portal/Welt_9_Testwelt/${datei}`,
     `/lehrkraft/dateien/Loesungen_Portal/Welt_9_Testwelt/${datei}`,
@@ -145,6 +165,6 @@ test('demo_materialien.json: _LSG, _EH und Klausuren werden nie öffentlich (Pla
   }
   fs.writeFileSync(path.join(seed, 'demo_materialien.json'), JSON.stringify({ schueler: [...verboten, erlaubt], lehrkraft: [] }));
   const app = H.makeApp({ seedDir: seed, arbeitsblaetterDir: pdf });
-  for (const d of verboten) await request(app).get(`/arbeitsblaetter/${d}`).expect(401);
-  await request(app).get(`/arbeitsblaetter/${erlaubt}`).expect(200);
+  for (const d of verboten) await request(app).get(`/akten/${d}`).expect(401);
+  await request(app).get(`/akten/${erlaubt}`).expect(200);
 });

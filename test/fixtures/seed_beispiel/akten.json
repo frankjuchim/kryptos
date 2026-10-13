@@ -1,30 +1,41 @@
 {
- "_hinweis": "Kern-Fixture: Verzeichnis der Schülermaterialien der Testwelt 9 (PDFs in test/fixtures/materialien/Arbeitsblaetter_PDF).",
- "werkzeugkarten": {
-  "titel": "Werkzeugkarten (Test)",
-  "quelle": "Werkzeuge/KR_Werkzeugkarten_Test.docx",
-  "datei": "00_Werkzeugkarten/KR_Werkzeugkarten_Test.pdf"
- },
+ "_hinweis": "Kern-Fixture (Kryptos-Format, TECHNIK §14.2): Verzeichnis der Schülermaterialien der Testwelt 9 (PDFs in test/fixtures/materialien/Akten_PDF).",
+ "werkzeugkarten": [
+  {
+   "nr": 1,
+   "titel": "Werkzeugkarten (Test)",
+   "quelle": "Werkzeuge/KR_Werkzeugkarten_Test.docx",
+   "datei": "00_Werkzeugkarten/KR_Werkzeugkarten_Test.pdf"
+  }
+ ],
  "welten": [
   {
    "welt": 9,
    "ordner": "Welt_9_Testwelt",
-   "arbeitsblaetter": [
+   "akten": [
     {
-     "nr": 1,
+     "nr": "1",
      "titel": "Blöcke und Lücken",
      "ds": [
       1
+     ],
+     "niveau": "kern",
+     "level": [
+      "W9-L1"
      ],
      "quelle": "Welt9_Testwelt/KR_W9_AB1.docx",
      "datei": "KR_W9-AB1_Bloecke_und_Luecken.pdf"
     },
     {
-     "nr": 2,
+     "nr": "2",
      "titel": "Alle Interaktionen",
      "ds": [
       2,
       3
+     ],
+     "niveau": "kern",
+     "level": [
+      "W9-L2"
      ],
      "quelle": "Welt9_Testwelt/KR_W9_AB2.docx",
      "datei": "KR_W9-AB2_Alle_Interaktionen.pdf"

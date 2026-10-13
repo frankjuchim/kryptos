@@ -227,3 +227,15 @@ test('Werkzeug-Freigaben und Board-Schlüssel (M4 Task 49): Rollen, fremder/gesp
   app.locals.db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(kurs.id);
   assert.equal((await lk.post(url).send({})).status, 403);
 });
+
+test('Akten /akten/ (K15, E48): ohne Sitzung 401 außer Demo-PDFs, Schüler und Lehrkraft 200; /arbeitsblaetter gibt es nicht', async () => {
+  const path = require('node:path');
+  const fixtures = path.join(__dirname, 'fixtures');
+  const { app, s, lk } = await H.szenario({ seedDir: path.join(fixtures, 'seed_beispiel'), arbeitsblaetterDir: path.join(fixtures, 'materialien', 'Akten_PDF') });
+  const geschuetzt = '/akten/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf';
+  await request(app).get(geschuetzt).expect(401);
+  await s.get(geschuetzt).expect(200);
+  await lk.get(geschuetzt).expect(200);
+  await request(app).get('/akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf').expect(200);
+  for (const c of [request(app), s, lk]) await c.get('/arbeitsblaetter/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf').expect(404);
+});

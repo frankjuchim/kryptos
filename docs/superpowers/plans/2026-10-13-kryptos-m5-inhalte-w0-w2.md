@@ -1493,16 +1493,23 @@ Funkraum W1 `_LSG`. Der Test „Akten_PDF → /akten/…“ ist `todo` bis Task 
   Design-Spec §10.3 (E48)
 - Test: `test/themen.test.js`, `test/lehrkraft_material.test.js`, `test/client_seiten.test.js`, `test/rechte.test.js` (öffentlich/geschützt)
 
-- [ ] **Step 1: Failing tests** – `GET /akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf`: ohne Sitzung 200 nur für Demo-Dateien,
+- [x] **Step 1: Failing tests** – `GET /akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf`: ohne Sitzung 200 nur für Demo-Dateien,
   sonst 401 mit Hinweisseite; mit Schüler- oder Lehrkraft-Sitzung 200 `application/pdf`; `/akten/../seed/akten.json` und Nicht-PDF → 404;
   `/arbeitsblaetter/…` → 404; `GET /api/themen`: Level `W9-L1` hat `akte.titel` aus `akten.json`, Welt hat `akten` (nicht `arbeitsblaetter`),
   `werkzeugkarten` ist eine Liste; Lehrkraft-Materialien verlinken öffentliche Dateien auf `/akten/…`; Client: Themenseite rendert Akte-
   Link und Werkzeugkarten-Liste → FAIL.
-- [ ] **Step 2: Implement** (Kern-Option `arbeitsblaetterDir` behält ihren Namen, TECHNIK §16.2).
-- [ ] **Step 3: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test` grün (inkl. Task-96-Teil).
-- [ ] **Step 4: Probelauf** `npm run dev` + Playwright-Skript (Scratchpad): `/themen` zeigt Welten 0–2 mit Akten-Links; Klick ohne Sitzung →
+- [x] **Step 2: Implement** (Kern-Option `arbeitsblaetterDir` behält ihren Namen, TECHNIK §16.2).
+- [x] **Step 3: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test` grün (inkl. Task-96-Teil).
+- [x] **Step 4: Probelauf** `npm run dev` + Playwright-Skript (Scratchpad): `/themen` zeigt Welten 0–2 mit Akten-Links; Klick ohne Sitzung →
   Hinweisseite; 360 px ohne Querscrollen; danach Dev-Server beenden, `./data` entfernen.
-- [ ] **Step 5: Commit** `git commit -m "Akten-Route /akten, seed/akten.json in Themenseite und Lehrkraft-Materialien (K15)"`.
+- [x] **Step 5: Commit** `git commit -m "Akten-Route /akten, seed/akten.json in Themenseite und Lehrkraft-Materialien (K15)"`.
+
+**Umsetzungsnotiz (Task 97):** `/akten/…` ersetzt `/arbeitsblaetter/…` (gleiche Prüfung; `/arbeitsblaetter/` → 404), `ladeVerzeichnis` liest
+`seed/akten.json`; Themen-API: je Welt `akten`, je Level `akte { titel, url, demo }` über `level`, `werkzeugkarten` als Liste (eigener Abschnitt
+`#werkzeugkarten` auf `/themen`); Lehrkraft-Materialien mit Präfix `Akten_PDF/` → `/akten/`, Arten mit Anzeigenamen. Fixture-Ordner
+`test/fixtures/materialien/Akten_PDF`, Fixture `seed_beispiel/akten.json` im Kryptos-Format (Akten-PDF-Namen der Kern-Fixture behalten).
+Der `todo`-Test aus Task 96 ist aktiv (25 Schülerfassungen nach dem Funkraum-Umzug). Probelauf: `/themen` zeigt W0–W2 mit 19 Akte-Links
+und 7 Werkzeugkarten, Klick ohne Sitzung → 401-Hinweisseite, 360 px ohne Querscrollen.
 
 ### Task 98: Level-Seite mit Akte und Video, QR-Weiterleitung `/level/<nr>`, `seed/videos.json` (E50, E51, K38)
 

@@ -70,8 +70,8 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 | `src/services/auswertung.js` | A | Matrix/Statistik niveau-gefiltert, Niveau-Spalte; `board(schluessel)` statt `board(kurscode)`; Kursübersicht für das Portal (§6.8); CSV-Dateiname `kryptos_…` |
 | `src/services/kurse.js` | E | Kurse kommen vom Portal: `upsertAusToken`, `kursFuer(konto, id)` (Lehrkraft nur aktive `kurs_lehrkraefte`, Superadmin alle), `kursAendern` (nur `einstellungen`, **kein** Umbenennen), `einstellungen()` (Kern-Logik + Niveau/Werkzeuge/Kür); Beitritt, Codes, Umbenennen, Löschen **entfernt** |
 | `src/services/konten.js` | E | Konten nach `sub` (§6.6): `upsert`, `ausSitzung`, `teilnahmen(sub)`; Registrierung/Passwörter/Freigabe **entfernt** |
-| `src/services/themen.js` | A | liest `seed/akten.json` (Schlüssel `akten`, Fallback `arbeitsblaetter`), Level-Feld `akte` (Muster `Akte W<n>·<k>`), Querschnitte Kategorien/Fallen mit Anzeigenamen |
-| `src/services/lehrkraftMaterial.js` | A | öffentlicher Präfix `Akten_PDF/` statt `Arbeitsblaetter_PDF/`, öffentliche URL `/akten/` |
+| `src/services/themen.js` | A | liest `seed/akten.json` (§14.2): je Welt `akten` (`{ nr, titel, ds, niveau, url, demo }`, statt `arbeitsblaetter`), je Level `akte: { titel: "Akte W<n>·<nr> – <titel>", url, demo } \| null` über die Zuordnung `level` (statt `abBlatt`/`abNummer`), `weitere` (Papier-Boss, Probeklausur, Warm-up), `werkzeugkarten` als **Liste** `[{ nr, titel, url, demo }]`; URLs `/akten/…` (M5 Task 97, K15); Querschnitte Kategorien/Fallen mit Anzeigenamen |
+| `src/services/lehrkraftMaterial.js` | A | Präfix des Schülerbereichs `Akten_PDF/` statt `Arbeitsblaetter_PDF/`, URL `/akten/` (nur nach Anmeldung, außer Demo-PDFs; M5 Task 97, K15) |
 | `src/services/gast.js` | A | Demo-Kurs mit Kryptos-Namen/Fallen/Niveau; Gast-Werkzeugliste `['scheibe']` |
 | `src/services/manifest.js` | A | Kryptos-Manifest (§6.9), Fähigkeiten-Liste, `auth.modus` fest `portal` |
 | `src/routes/schueler.js` | A | Beitritt/Anmeldung/`/kurs/:code` **entfernt**; Rest unverändert + Archivfund, Labor, Sitzungs-Kurswahl |
@@ -557,7 +557,9 @@ mit 503 (nur im Testmodus möglich).
   `/sso/ende` → Wächter …); `/labor` ist für **beide** Rollen (`waechter('beide')`: `kr_s` oder `kr_l`, §6.3 Schritt 9,
   §11.1 – M4 E18); ohne Sitzung **still**
   `302 /sso/start?ziel=<Pfad>`. Öffentlich: `/`, `/gast`, `/themen`, `/datenschutz`, `/board/:schluessel`, `/healthz`,
-  `/api/plattform`, `/api/niveaus`, `/api/themen`, `/akten/*`, `/static/*`, `/robots.txt`.
+  `/api/plattform`, `/api/niveaus`, `/api/themen`, `/akten/*` (eigene Prüfung: ohne Sitzung nur die Demo-PDFs aus
+  `seed/demo_materialien.json`, sonst `401` mit Hinweisseite; Schüler- oder Lehrkraft-Sitzung → PDF; Plan M5 E48, vorläufig),
+  `/static/*`, `/robots.txt`. `/arbeitsblaetter/…` (Kern) gibt es nicht mehr (404).
 - **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen). Kurswahl und
   Rückfall auf die erste aktive Teilnahme **verlängern die Sitzung nicht**: Das neue `kr_s` übernimmt das `exp` des
   bisherigen Cookies, `Max-Age` = Restlaufzeit. Nur `/sso/ende` setzt eine Sitzung mit voller Laufzeit.
@@ -1525,7 +1527,8 @@ materialien/00_Lehrerhinweise/   KR_Gesamtuebersicht_DS1-18.docx, KR_W<n>_Lehrer
 materialien/Welt<N>_<Name>/1_Praesentation  2_Akten  3_Online-IDE  4_Boss  5_Loesungen
 materialien/Werkzeuge/            KR_WK1…WK6_*.docx, Warm-up-Karten/, Funkraum/
 materialien/Videos/               NN_Kurz/video.json → Folien + Skript (erzeugt)
-materialien/Akten_PDF/            ERZEUGT, öffentlich: Akten, Werkzeugkarten, Papier-Bosse W0–W5, Warm-up ohne Lösungsteil
+materialien/Akten_PDF/            ERZEUGT, Schülerbereich unter /akten/ – nur nach Anmeldung (vorläufig, Plan M5 E48; ohne
+                                  Anmeldung nur die Demo-PDFs): Akten, Werkzeugkarten, Papier-Bosse W0–W5, Warm-up (Schülerfassung)
 materialien/Loesungen_Portal/     ERZEUGT, nur Lehrkraft (im Image)
 materialien/Loesungen_Akten/      ERZEUGT, nur Lehrkraft (nach Art)
 materialien/Lehrkraft_PDF/        ERZEUGT, nur Lehrkraft (Präsentationen, Lehrerhinweise, Klausuren) + verzeichnis.json

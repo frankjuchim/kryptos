@@ -625,9 +625,11 @@ Ohne Umlaute, Unterstrich als Trenner.
 
 ### 10.3 Pipeline und Sichtbarkeit (wie AlgoQuest)
 
-`.docx`/`.pptx` sind maßgeblich → `soffice` → PDF. Öffentlich (`/themen`): Akten, Werkzeugkarten, Papier-Bosse W0–W5,
-Warm-up ohne Lösungsteil. Nur Lehrkraft (Whitelist): Lösungen, Erwartungshorizonte, Präsentationen, Lehrerhinweise,
-Probeklausur, Klausuren. Tests wachen darüber.
+`.docx`/`.pptx` sind maßgeblich → `soffice` → PDF. **Nach Anmeldung** (Schüler und Lehrkräfte, verlinkt auf `/themen`, Route
+`/akten/…`): Akten, Werkzeugkarten, Papier-Bosse W0–W5, Warm-up (Schülerfassung); ohne Anmeldung nur die Demo-PDFs des
+Gastmodus (`seed/demo_materialien.json`, nie Lösungen) – wie Algo Quest 2.8.2 (vorläufig festgelegt, Plan M5 E48 / offene
+Entscheidung 3). Nur Lehrkraft (Whitelist): Lösungen, Erwartungshorizonte, Präsentationen, Lehrerhinweise, Funkraum-
+Rollenkarten (Regie-Teile), Probeklausur, Klausuren. Tests wachen darüber.
 
 ### 10.4 Akte: Aufbau (Vorlage)
 
