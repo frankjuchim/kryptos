@@ -542,9 +542,11 @@ mit 503 (nur im Testmodus möglich).
   `aktiv = 1` (Superadmin: alle Kurse).
 - **API ohne Sitzung:** `401 { error, anmelden: true, sso: "/sso/start" }`; der Client leitet auf
   `/sso/start?ziel=<location.pathname + location.hash>` (ziel URL-kodiert; Hash bleibt so erhalten).
-- **Seiten-Wächter** (serverseitig, vor `sendFile`): `/spiel`, `/labor`, `/funkraum`, `/werkstatt` brauchen `kr_s`
-  (Lehrkraft-Sitzung → `302 /lehrer`); `/lehrer`, `/lehrer/urkunden`, `/beamer/*` brauchen `kr_l` (Schüler-Sitzung →
-  `302 /spiel`, sonst Schleife Wächter → SSO → `/sso/ende` → Wächter …); ohne Sitzung **still**
+- **Seiten-Wächter** (serverseitig, vor `sendFile`): `/spiel`, `/funkraum`, `/werkstatt` brauchen `kr_s`
+  (Lehrkraft-Sitzung → `302 /lehrer`); `/lehrer`, `/lehrer/urkunden`, `/beamer/funkraum/:id`, `/beamer/arena/:id`
+  (`:id` nur Ziffern, sonst 404) brauchen `kr_l` (Schüler-Sitzung → `302 /spiel`, sonst Schleife Wächter → SSO →
+  `/sso/ende` → Wächter …); `/labor` ist für **beide** Rollen (`waechter('beide')`: `kr_s` oder `kr_l`, §6.3 Schritt 9,
+  §11.1 – M4 E18); ohne Sitzung **still**
   `302 /sso/start?ziel=<Pfad>`. Öffentlich: `/`, `/gast`, `/themen`, `/datenschutz`, `/board/:schluessel`, `/healthz`,
   `/api/plattform`, `/api/niveaus`, `/api/themen`, `/akten/*`, `/static/*`, `/robots.txt`.
 - **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen). Kurswahl und
@@ -1209,7 +1211,7 @@ Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 | `labor.html` | `/labor` | Schüler/Lehrkraft | §10 |
 | `funkraum.html` | `/funkraum` | Schüler | Rolle, Netz, Nachrichten senden/empfangen (§12) |
 | `werkstatt.html` | `/werkstatt` | Schüler | Baukasten-Editor, Arena-Ansicht (§9) |
-| `beamer.html` | `/beamer/funkraum/:id`, `/beamer/arena/:id` | Lehrkraft | Vollbild auf `--nacht` |
+| `beamer.html` | `/beamer/funkraum/:id`, `/beamer/arena/:id` (`:id` = Ziffern, sonst 404) | Lehrkraft | Vollbild auf `--nacht` |
 | `lehrer.html` | `/lehrer` | Lehrkraft/Superadmin | Kurse, Einstellungen (Welten, Boss, Niveau, Werkzeuge, Kür, Scoreboard, Beamer), Auswertung, Vorschau, Materialien, Teams, Funkraum-Regie, Arena-Regie, Urkunden; Superadmin: Inhalte, Backup, Warm-up, Wartung |
 | `urkunden.html` | `/lehrer/urkunden` | Lehrkraft | Druck A4 quer (DESIGNSYSTEM §10) |
 | `board.html` | `/board/:schluessel` | öffentlich (wenn aktiviert) | Scoreboard-Beamer (Kern) |

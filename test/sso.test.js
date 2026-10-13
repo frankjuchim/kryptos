@@ -744,3 +744,24 @@ test('Inaktive Teilnahmen: nicht im Scoreboard und auf dem Board; Lehrkraft-List
   assert.equal(u.anzahl, 2);
   assert.ok(u.schueler.every((x) => Number.isInteger(x.platz)));
 });
+
+test('Seiten-Wächter M4: /labor für beide Rollen, Funkraum/Werkstatt nur Schüler, Beamer nur Lehrkraft (E18)', async () => {
+  const { app, s, lk } = await H.szenario();
+  const anon = H.client(app);
+  const ort = (r) => r.headers.location;
+  assert.equal(ort(await anon.get('/labor').expect(302)), '/sso/start?ziel=%2Flabor');
+  await s.get('/labor').expect(200).expect('Content-Type', /html/);
+  await lk.get('/labor').expect(200);
+  for (const p of ['/funkraum', '/werkstatt']) {
+    await s.get(p).expect(200);
+    assert.equal(ort(await lk.get(p).expect(302)), '/lehrer', p);
+    assert.equal(ort(await anon.get(p).expect(302)), '/sso/start?ziel=' + encodeURIComponent(p));
+  }
+  for (const p of ['/beamer/funkraum/7', '/beamer/arena/12']) {
+    await lk.get(p).expect(200);
+    assert.equal(ort(await s.get(p).expect(302)), '/spiel', p);
+    assert.equal(ort(await anon.get(p).expect(302)), '/sso/start?ziel=' + encodeURIComponent(p));
+  }
+  await lk.get('/beamer/arena/x1').expect(404);
+  await lk.get('/beamer/sonstwas/1').expect(404);
+});

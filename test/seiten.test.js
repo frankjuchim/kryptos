@@ -103,3 +103,47 @@ test('SVG-Dateien ohne Skript und ohne externe Verweise', () => {
     assert.doesNotMatch(svg, /href\s*=\s*"(https?:)?\/\//i, `${rel(p)}: externer Verweis`);
   }
 });
+
+/* ---------- Seitenliste, Grundgerüst, Skript-Reihenfolge (M4 Task 48, TECHNIK §11.1, §4.4) ---------- */
+const SEITEN = ['index', 'spiel', 'labor', 'funkraum', 'werkstatt', 'beamer', 'lehrer', 'urkunden', 'board', 'themen', 'gast', 'datenschutz', '404', 'fehler/keine-berechtigung', 'fehler/anmeldung-fehlgeschlagen', 'fehler/kurs-gesperrt'];
+const seite = (n) => path.join(PUBLIC, n + '.html');
+const skripte = (html) => [...html.matchAll(/<script\b[^>]*\ssrc="\/static\/js\/([^"?]+)[^"]*"[^>]*>/gi)].map((m) => ({ datei: m[1], defer: /\sdefer\b/.test(m[0]), index: m.index }));
+
+test('Seitenliste TECHNIK §11.1: alle Seiten vorhanden', () => {
+  for (const n of SEITEN) assert.ok(fs.existsSync(seite(n)), `${n}.html fehlt`);
+});
+
+test('Grundgerüst: jede fertige Seite (ohne „Platzhalter (M0)“) nach dem gemeinsamen Baustein', () => {
+  const fertig = htmlDateien.filter((p) => !lies(p).includes('Platzhalter (M0)'));
+  assert.ok(fertig.length >= 4, 'mindestens labor, funkraum, werkstatt, beamer');
+  for (const p of fertig) {
+    const f = rel(p);
+    const html = lies(p);
+    assert.match(html, /<html\b[^>]*\sdata-theme="auto"/, `${f}: data-theme="auto"`);
+    assert.match(html, /<html\b[^>]*\sdata-epoche="\d+"/, `${f}: data-epoche`);
+    const css = [...html.matchAll(/<link rel="stylesheet" href="\/static\/css\/([a-z-]+)\.css/g)].map((m) => m[1]);
+    assert.deepEqual(css.slice(0, 5), ['schriften', 'tokens', 'epochen', 'basis', 'komponenten'], `${f}: Basis-Stylesheets`);
+    const kopfEnde = html.indexOf('</head>');
+    const sk = skripte(html);
+    for (const datei of ['common.js', 'krypto/oberflaeche.js']) {
+      const s = sk.find((x) => x.datei === datei);
+      assert.ok(s && s.index < kopfEnde && !s.defer, `${f}: ${datei} ohne defer im <head>`);
+    }
+    assert.ok(sk.findIndex((x) => x.datei === 'common.js') < sk.findIndex((x) => x.datei === 'krypto/oberflaeche.js'), `${f}: common.js vor oberflaeche.js`);
+    for (const s of sk.filter((x) => x.index > kopfEnde)) assert.ok(s.defer, `${f}: ${s.datei} im <body> mit defer`);
+    assert.match(html, /<a class="sprung" href="#haupt">/, `${f}: Sprunglink`);
+    assert.match(html, /<main id="haupt"/, `${f}: <main id="haupt"`);
+  }
+});
+
+test('Skript-Reihenfolge TECHNIK §4.4 auf Seiten mit aufgabe.js', () => {
+  const REIHE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js'];
+  for (const p of htmlDateien) {
+    const sk = skripte(lies(p)).map((x) => x.datei);
+    if (!sk.includes('aufgabe.js')) continue;
+    const pos = REIHE.map((d) => sk.indexOf(d));
+    assert.ok(pos.every((i) => i >= 0), `${rel(p)}: es fehlt ${REIHE.filter((d, i) => pos[i] < 0).join(', ')}`);
+    assert.deepEqual([...pos].sort((a, b) => a - b), pos, `${rel(p)}: Reihenfolge ${REIHE.join(' → ')}`);
+    assert.ok(pos.at(-1) < sk.length - 1, `${rel(p)}: aufgabe.js vor dem Seitenskript`);
+  }
+});

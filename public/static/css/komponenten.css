@@ -133,17 +133,19 @@
 .menue > summary::-webkit-details-marker { display: none; }
 .menue-gruppe { display: grid; gap: 2px; margin: 0; padding: var(--a-2); border: 0; border-top: 1px solid var(--tinte-3); }
 .menue-gruppe:first-child { border-top: 0; }
-.menue-gruppe legend, .menue-gruppe > label { padding: 0 0 var(--a-1); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--auf-tinte-2); }
+.menue-gruppe legend, .menue-titel { padding: 0 0 var(--a-1); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--auf-tinte-2); }
 .menue-wahl { display: flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); padding: 0 6px; color: var(--auf-tinte); font-size: .9rem; cursor: pointer; }
 .menue-wahl input { width: 20px; height: 20px; accent-color: var(--messing-hell); }
 .menue-zeile { display: flex; gap: var(--a-2); align-items: center; }
-.menue-zeile select { min-height: var(--ziel); flex: 1; min-width: 0; }
+.menue-zeile select { min-height: var(--ziel); flex: 1; min-width: 0; background: var(--papier); color: var(--text); }
 .kopf-seiten { display: flex; align-items: center; gap: var(--a-1); }
 .rang-ring { transform: rotate(-90deg); }
 .rang .ring-spur { fill: none; stroke: var(--tinte-3); stroke-width: 4; }
 .rang .ring-wert { fill: none; stroke: var(--messing-hell); stroke-width: 4; stroke-linecap: round; }
 .entsiegeln .roh, [aria-label] > .roh { opacity: .7; }
 .fuss-innen .knopf-reihe { gap: var(--a-4); }
+.geruest { padding-block: var(--a-6) var(--a-7); display: grid; gap: var(--a-5); align-content: start; }
+.geruest .klein { font-size: .88rem; }
 
 /* ---------- Fuß ---------- */
 .fuss {
@@ -200,11 +202,11 @@
 .knopf-messing { background: var(--messing-hell); border-color: var(--messing-hell); color: var(--nacht); }
 .knopf-messing:hover { filter: brightness(1.08); }
 .knopf-gefahr { background: var(--fehler); border-color: var(--fehler); color: var(--auf-akzent); }
-.tinte .knopf-zweit, .nacht .knopf-zweit {
+.tinte .knopf-zweit, .nacht .knopf-zweit, .kopf .knopf-zweit {
   border-color: color-mix(in srgb, var(--auf-tinte) 35%, transparent);
   color: var(--auf-tinte);
 }
-.tinte .knopf-zweit:hover, .nacht .knopf-zweit:hover { border-color: var(--messing-hell); }
+.tinte .knopf-zweit:hover, .nacht .knopf-zweit:hover, .kopf .knopf-zweit:hover { border-color: var(--messing-hell); }
 .tinte .knopf-leise, .nacht .knopf-leise { color: var(--auf-tinte-2); }
 .tinte .knopf-leise:hover, .nacht .knopf-leise:hover { color: var(--auf-tinte); background: var(--tinte-2); }
 .knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: center; }
@@ -565,6 +567,9 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
   /* Bereichs-Links als zweite Zeile, scrollen nur in ihrem Block */
   .kopf-seiten { order: 3; flex: 1 0 100%; overflow-x: auto; scrollbar-width: thin; }
   .kopf-seiten .kopf-link { flex: none; }
+}
+@media (max-width: 420px) {
+  .logo span { display: none; }
 }
 @media (max-width: 640px) {
   .rang-text, .kopf-link .lang { display: none; }

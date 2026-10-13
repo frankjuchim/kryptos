@@ -163,16 +163,22 @@ function createApp(opts) {
     res.set('Cache-Control', 'no-store');
     res.sendFile(path.join(PUBLIC_DIR, file));
   };
-  // Seiten-Wächter (TECHNIK §6.4): ohne passende Sitzung still 302 /sso/start?ziel=<Pfad>. Weitere geschützte Seiten
-  // kommen mit ihren Phasen hinzu – Schüler: /labor, /funkraum, /werkstatt (waechterSchueler); Lehrkraft: /beamer/*
-  // (waechterLehrkraft). Öffentlich: /, /gast, /themen, /datenschutz, /board/:schluessel, /healthz, /api/plattform,
-  // /akten/*, /static/*, /robots.txt.
+  // Seiten-Wächter (TECHNIK §6.4): ohne passende Sitzung still 302 /sso/start?ziel=<Pfad>. Schüler: /spiel, /funkraum,
+  // /werkstatt; Lehrkraft: /lehrer, /lehrer/urkunden, /beamer/funkraum/:id, /beamer/arena/:id; beide Rollen: /labor.
+  // Öffentlich: /, /gast, /themen, /datenschutz, /board/:schluessel, /healthz, /api/plattform, /akten/*, /static/*,
+  // /robots.txt.
   const waechterSchueler = sitzung.waechter('schueler');
   const waechterLehrkraft = sitzung.waechter('lehrkraft');
+  const waechterBeide = sitzung.waechter('beide');
   app.get('/', page('index.html'));
   app.get('/spiel', waechterSchueler, page('spiel.html'));
   app.get('/lehrer', waechterLehrkraft, page('lehrer.html'));
   app.get('/lehrer/urkunden', waechterLehrkraft, page('urkunden.html'));
+  app.get('/labor', waechterBeide, page('labor.html'));
+  app.get('/funkraum', waechterSchueler, page('funkraum.html'));
+  app.get('/werkstatt', waechterSchueler, page('werkstatt.html'));
+  // Beamer (Funkraum/Knack-Arena, Inhalte M7): :id nur Ziffern, sonst weiter zur 404-Seite
+  app.get('/beamer/:art/:id', (req, res, next) => (['funkraum', 'arena'].includes(req.params.art) && /^\d{1,9}$/.test(req.params.id) ? next() : next('route')), waechterLehrkraft, page('beamer.html'));
   app.get('/admin', (req, res) => res.redirect('/lehrer#/admin'));
   app.get('/board/:schluessel', page('board.html'));
   app.get('/datenschutz', page('datenschutz.html'));

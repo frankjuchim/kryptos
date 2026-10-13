@@ -77,7 +77,7 @@ const KRKopf = (() => {
         AQ.toast(e.message, true);
       }
     });
-    return h('div', { class: 'menue-gruppe' }, h('label', { for: 'kopf-kurs' }, 'Kurs wechseln'), h('div', { class: 'menue-zeile' }, wahl, knopf));
+    return h('div', { class: 'menue-gruppe' }, h('label', { for: 'kopf-kurs', class: 'menue-titel' }, 'Kurs wechseln'), h('div', { class: 'menue-zeile' }, wahl, knopf));
   }
 
   async function abmelden(ueberall) {
@@ -132,7 +132,7 @@ const KRKopf = (() => {
     if (rolle) {
       if (rolle === 'schueler') rechts.appendChild(h('a', { class: 'rang', id: 'kopf-rang', href: '/spiel#/profil', hidden: true }));
       rechts.appendChild(link('/labor', 'Labor', { aktiv: aktiv === 'labor', symbol: 'i-labor', kurz: true, label: 'Kryptolabor' }));
-      if (s.portal) rechts.appendChild(link(s.portal, '⌂ Portal', { symbol: 'i-portal', kurz: true, label: 'Zurück ins Portal InfoLabs' }));
+      if (s.portal) rechts.appendChild(link(s.portal, 'Portal', { symbol: 'i-portal', kurz: true, label: 'Zurück ins Portal InfoLabs' }));
     } else {
       rechts.appendChild(h('a', { class: 'knopf knopf-messing anmelden', href: '/sso/start?ziel=' + encodeURIComponent('/spiel') }, 'Anmelden über InfoLabs'));
     }

@@ -100,11 +100,16 @@ function createSitzung({ db, secret }) {
   /**
    * Seiten-Wächter (vor sendFile): rolle 'schueler' braucht kr_s (Lehrkraft-Sitzung → 302 /lehrer), rolle 'lehrkraft'
    * braucht kr_l (Schüler-Sitzung → 302 /spiel – sonst Schleife über das SSO, weil das Portal den Schüler wieder als
-   * Schüler anmeldet). Ohne Sitzung still 302 /sso/start?ziel=<Pfad> (ungültiges Cookie wird gelöscht).
+   * Schüler anmeldet). Rolle 'beide' (z. B. /labor, TECHNIK §6.3 Schritt 9): Schüler- oder Lehrkraft-Sitzung.
+   * Ohne Sitzung still 302 /sso/start?ziel=<Pfad> (ungültiges Cookie wird gelöscht).
    */
   function waechter(rolle) {
     return (req, res, next) => {
-      if (rolle === 'schueler') {
+      if (rolle === 'beide') {
+        if (schueler(req, res) || lehrkraft(req)) return next();
+        if (req.sS) S.clearCookie(req, res, S.COOKIE_SCHUELER);
+        if (req.sL) S.clearCookie(req, res, S.COOKIE_LEHRKRAFT);
+      } else if (rolle === 'schueler') {
         if (schueler(req, res)) return next();
         if (lehrkraft(req)) return res.redirect(302, '/lehrer');
         if (req.sS) S.clearCookie(req, res, S.COOKIE_SCHUELER);

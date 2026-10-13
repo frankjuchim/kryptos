@@ -1,0 +1,25 @@
+/* Funkraum, Werkstatt, Beamer (TECHNIK §11.3) – M4: nur Nacht-/Beamerfläche und Leerzustand; Inhalte folgen in M7.
+   Farben nur über Tokens. */
+
+/* Beamer: Nacht-Vollbild ohne Kopfzeile, für 1920 × 1080 und kleiner */
+body.seite-beamer { min-height: 100vh; background-color: var(--nacht); color: var(--auf-tinte); }
+.beamer-flaeche {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--a-6);
+  padding: clamp(16px, 4vw, 64px);
+}
+.beamer-titel { display: flex; align-items: center; gap: var(--a-4); }
+.beamer-titel svg { width: clamp(40px, 5vw, 72px); height: clamp(40px, 5vw, 72px); color: var(--messing-hell); flex: none; }
+.beamer-titel h1 { margin: 0; color: var(--auf-tinte); font-size: clamp(1.8rem, 4vw, 3.4rem); }
+.beamer-flaeche .leer-zustand {
+  align-self: center;
+  justify-self: center;
+  width: min(100%, 880px);
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  color: var(--auf-tinte-2);
+  border-color: var(--tinte-3);
+}
+.beamer-flaeche .leer-zustand svg { width: clamp(48px, 8vw, 120px); height: clamp(48px, 8vw, 120px); color: var(--messing-hell); }
+.beamer-flaeche a { color: var(--auf-tinte); }
