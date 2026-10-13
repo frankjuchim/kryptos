@@ -402,3 +402,20 @@ test('Verbund-API: jti bleibt nach echtem Neustart verbraucht (zwei App-Instanze
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('Kursübersicht nach echtem Funkraum- und Arena-Lauf: nur Kennzahlen nach §6, keine Freitexte, Teams oder Abzeichen (Plan M7 Task 148)', async () => {
+  const F = require('./hilfen_funk');
+  const f = await F.arenaMitChiffren(3, { phase: 'angriff', beschreibung: 'BESCHREIBUNGSTEXT' });
+  await f.angriff(0, 1, { klartext: F.TEXT2 }).expect(200);
+  await f.phase('beurteilung');
+  await f.teams[0].c.put(`/api/arena/${f.arenaId}/beurteilung`).send({ text: 'BEURTEILUNGSTEXT' }).expect(200);
+  const sz = await F.starte(f, 'botenlauf');
+  await f.teams[0].c.post(`/api/funk/${sz.id}/nachrichten`).send({ text: 'FUNKINHALT', klartext: 'haltet' }).expect(200);
+  const u = (await vb(f.app, 'get', `/api/verbund/kurse/${kid(f.kurs)}/uebersicht`, 'kurs-uebersicht').expect(200)).body;
+  assert.deepEqual(Object.keys(u).sort(), ['kurs', 'schueler', 'stand', 'welten']);
+  assert.equal(u.schueler.length, 3);
+  for (const s of u.schueler) assert.deepEqual(Object.keys(s).sort(), ['anteil', 'geloest', 'punkte', 'sub', 'zuletzt']);
+  for (const s of u.schueler) assert.equal(s.punkte, 0, 'Funkraum und Arena bringen keine Punkte (Design §7.4)');
+  const text = JSON.stringify(u);
+  for (const n of ['BESCHREIBUNGSTEXT', 'BEURTEILUNGSTEXT', 'FUNKINHALT', 'Team', 'Arena-Knacker', 'Unknackbar', 'arena_knacker', 'unknackbar', 'Mika']) assert.ok(!text.includes(n), n);
+});

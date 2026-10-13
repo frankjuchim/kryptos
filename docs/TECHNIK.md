@@ -1186,6 +1186,11 @@ der Spec-Dokumente: `baukasten.STUFEN` folgt W3, `verfahren.TYPEN` folgt Delta �
 `verfahren`, `beschreibung`, `geheimtext`, `klartext_hash = HMAC-SHA256(arena.salz, nurBuchstaben(klartext))`,
 `klartext_laenge`, `hinweise`. **Klartext und Schlüssel werden nicht gespeichert** (nur im Speicher während der Anfrage).
 
+Grenze: **20 Einreichungen je Team in 10 Minuten** (429 mit `Retry-After`). Gezählt wird **jeder** Versuch nach der
+Team-Prüfung – auch abgelehnte (400 wegen Verfahren/Klartext/Länge, 409 wegen der Phase); sonst wäre die Einreichung eine
+unbegrenzte Prüfstelle neben `POST /api/werkstatt/pruefen` (eigene Grenze 60 je Minute). Festlegung des Orchestrators
+zum offenen Punkt aus Plan M7 Task 144 (so gebaut, Test `arena_einreichung.test.js`).
+
 ### 9.5 Angriffe (Phase `angriff`)
 
 `POST /api/arena/:id/chiffren/:cid/angriff` mit **einem** von:

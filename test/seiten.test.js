@@ -204,3 +204,25 @@ test('Fremdcode (M6 E66): FREMDCODE.md vorhanden, nichts aus der Werkstatt über
   const verboten = /andrebodendiek|kryptologie-werkstatt|\bKW\.(player|shell|controls|workbench)\b|portal\.js/i;
   for (const p of [...htmlDateien, ...jsDateien, ...cssDateien]) assert.doesNotMatch(lies(p), verboten, `${rel(p)}: Werkstatt-Spur`);
 });
+
+test('Datenschutzseite nennt Funkraum, Werkstatt/Arena, Teams und Abzeichen mit Fristen (Plan M7 Task 148, E116)', () => {
+  const html = lies(path.join(PUBLIC, 'datenschutz.html'));
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  for (const muss of [
+    'A–Z, 0–9', // Whitelist
+    '24 Stunden', // Funkraum spätestens
+    '30 Tage', // Arena nach dem Schließen
+    'Prüfwert', // Klartext nur als Hash
+    'Mallory', // Simulation hält vorgegebene Auftragstexte bis zum Beenden
+    'Auftragstexte',
+    'Zuordnung', // Wettknacken überträgt nur die Zuordnung
+    'Entwurf', // Werkstatt-Entwurf nur im Browser
+    'Abmelden',
+    'kr-werkstatt',
+    'Schlüssel und Klartext werden nie gespeichert',
+    'feste Namen', // Teams
+    'Abzeichen'
+  ]) assert.ok(text.includes(muss), `Datenschutzseite: „${muss}“ fehlt`);
+  for (const id of ['ds-funkraum', 'ds-arena', 'ds-teams', 'ds-abzeichen']) assert.match(html, new RegExp(`aria-labelledby="${id}"`), id);
+  assert.doesNotMatch(html, /style=/, 'keine Inline-Styles');
+});

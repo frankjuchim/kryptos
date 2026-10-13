@@ -140,3 +140,83 @@ test('Restore holt Gelöschte nicht zurück: gelöschte Konten/Kurse samt abhän
   assert.equal(db.prepare('SELECT zeit FROM loeschungen WHERE schluessel = ?').get(mika).zeit, zeit);
   assert.equal(H.zaehle(app, 'loeschungen'), 2);
 });
+
+/* ---------- M7 Task 148: Gesamtprüfung Funkraum/Arena (Design §12, TECHNIK §15, Review Focus 1–4) ---------- */
+const F = require('./hilfen_funk');
+const WETT = require('node:path').join(__dirname, '..', 'seed', 'funkraum', 'wettknacken.json');
+const bearerVon = (app, zweck) => 'Bearer ' + H.verbundToken(zweck, {}, { app });
+
+test('Löschung nach sub mitten in Funkraum und offener Arena: keine Zeile der Person; Team-Ergebnis bleibt', async () => {
+  const f = await F.arenaMitChiffren(2, { phase: 'angriff', proTeam: 2, extra: { funkraumDatei: WETT } });
+  const sz = await F.starte(f, 'wettknacken');
+  const mika = f.teams[0].s[0];
+  await mika.put(`/api/funk/${sz.id}/zuordnung`).send({ zuordnung: { U: 'e' } }).expect(200);
+  await f.angriff(0, 1, { klartext: F.TEXT2 }).expect(200); // Angriff durch teams[0].c = Mika
+  assert.ok(H.zaehle(f.app, 'arena_versuche', 'schueler_id = ?', mika.id) > 0, 'Testdaten: Versuch von Mika');
+  await request(f.app).post('/api/verbund/loeschen').set('Authorization', bearerVon(f.app, 'loeschen')).send({ sub: mika.sub }).expect(200);
+  for (const [tab, n] of Object.entries(treffer(f.db, mika.sub, [mika.id]))) assert.equal(n, 0, tab);
+  assert.equal(H.zaehle(f.app, 'arena_chiffren', 'team_id = ?', f.teams[0].id), 1, 'Team hat noch ein Mitglied');
+  assert.equal(H.zaehle(f.app, 'funk_rollen', 'team_id = ?', f.teams[0].id), 1);
+  assert.deepEqual(F.fundstellen(f.db, 'Mika'), []);
+  // das übrige Teammitglied spielt weiter (Stand, Arena-Liste)
+  const ida = f.teams[0].s[1];
+  await F.stand(ida, sz.id).expect(200);
+  await ida.get(`/api/arena/${f.arenaId}/chiffren`).expect(200);
+});
+
+test('Whitelist auf jedem Weg in funk_nachrichten.inhalt (Review Focus 3)', async () => {
+  const wege = [
+    ['botenlauf', 0, 'nachrichten', () => ({ text: 'grüße', klartext: 'x' })],
+    ['botenlauf', 0, 'nachrichten', () => ({ text: 'HALLO\nWELT', klartext: 'hallo welt' })],
+    ['schluesseltausch', 0, 'oeffentlich', () => ({ wert: 'A 1' })],
+    ['doppelter-schluessel', 0, 'nachrichten', () => ({ text: 'ZZ!', klartext: 'HEUTE', abschnitt: 1 })],
+    ['mallory', 2, 'mallory', (f) => ({ aktion: 'schluessel', an: f.teams[0].id, etikett: 'S41; DROP', zertifikat: 'keins' })]
+  ];
+  for (const [typ, team, pfad, body] of wege) {
+    const f = await F.kursMitTeams(3);
+    const sz = await F.starte(f, typ);
+    await f.teams[team].c.post(`/api/funk/${sz.id}/${pfad}`).send(body(f)).expect(400);
+    assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM funk_nachrichten').get().n, 0, typ);
+  }
+});
+
+test('Keine Freitexte nach außen: Kursübersicht (Verbund), Beamer-Board, Manifest', async () => {
+  const f = await F.arenaMitChiffren(3, { phase: 'beurteilung', beschreibung: 'BESCHREIBUNGSTEXT' });
+  await f.teams[0].c.put(`/api/arena/${f.arenaId}/beurteilung`).send({ text: 'BEURTEILUNGSTEXT' }).expect(200);
+  const sz = await F.starte(f, 'botenlauf');
+  await f.teams[0].c.post(`/api/funk/${sz.id}/nachrichten`).send({ text: 'FUNKINHALT', klartext: 'haltet' }).expect(200);
+  await f.lk.patch(`/api/lehrer/kurse/${f.kurs.id}`).send({ einstellungen: { beamer: true } }).expect(200);
+  const texte = [
+    (await request(f.app).get(`/api/verbund/kurse/${encodeURIComponent(f.kurs.kurs)}/uebersicht`).set('Authorization', bearerVon(f.app, 'kurs-uebersicht')).expect(200)).text,
+    (await H.client(f.app).get(`/api/board/${f.kurs.boardSchluessel}`).expect(200)).text,
+    (await H.client(f.app).get('/api/plattform').expect(200)).text
+  ];
+  assert.match(texte[1], /Unknackbar/, 'Board zeigt Abzeichen-Erfolge (ohne Team und Inhalt)');
+  for (const t of texte) for (const n of ['BESCHREIBUNGSTEXT', 'BEURTEILUNGSTEXT', 'FUNKINHALT', 'Team Skytale', 'Team Scheibe', 'Team Quadrat']) assert.ok(!t.includes(n), n);
+});
+
+test('Beurteilung und Beschreibung nur für das eigene Team und die Lehrkraft (TECHNIK §9.6)', async () => {
+  const f = await F.arenaMitChiffren(2, { phase: 'beurteilung', beschreibung: 'BESCHREIBUNGSTEXT' });
+  await f.teams[0].c.put(`/api/arena/${f.arenaId}/beurteilung`).send({ text: 'BEURTEILUNGSTEXT' }).expect(200);
+  const fremd = (await f.teams[1].c.get(`/api/arena/${f.arenaId}/chiffren`).expect(200)).text;
+  assert.ok(!fremd.includes('BEURTEILUNGSTEXT'), 'fremde Beurteilung');
+  assert.ok(!(await f.teams[1].c.get('/api/arena').expect(200)).text.includes('BEURTEILUNGSTEXT'), 'fremder Status');
+  assert.equal((await f.teams[0].c.get('/api/arena').expect(200)).body.eigene.beurteilung, 'BEURTEILUNGSTEXT', 'eigener Status');
+  const regie = (await f.lk.get(`/api/lehrer/arena/${f.arenaId}`).expect(200)).text;
+  assert.ok(regie.includes('BEURTEILUNGSTEXT'));
+  const beamer = (await f.lk.get(`/api/lehrer/arena/${f.arenaId}/beamer`).expect(200)).text;
+  for (const n of ['BEURTEILUNGSTEXT', 'BESCHREIBUNGSTEXT']) assert.ok(!beamer.includes(n), n);
+});
+
+test('Kurs gelöscht (Verbund): Funkraum, Arena, Teams und Teilnahmen des Kurses vollständig weg', async () => {
+  const f = await F.arenaMitChiffren(3, { phase: 'angriff' });
+  const sz = await F.starte(f, 'botenlauf');
+  await f.teams[0].c.post(`/api/funk/${sz.id}/nachrichten`).send({ text: 'FUNKINHALT', klartext: 'haltet' }).expect(200);
+  await f.angriff(0, 1, { klartext: 'falsch geraten' }).expect(200);
+  await request(f.app).post('/api/verbund/loeschen').set('Authorization', bearerVon(f.app, 'loeschen')).send({ kurs: f.kurs.kurs }).expect(200);
+  for (const tab of ['teams', 'team_mitglieder', 'funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse', 'funk_teilnahmen', 'arena', 'arena_chiffren', 'arena_versuche']) {
+    assert.equal(H.zaehle(f.app, tab), 0, tab);
+  }
+  for (const n of ['FUNKINHALT', 'Team Skytale']) assert.deepEqual(F.fundstellen(f.db, n), [], n);
+  assert.deepEqual(F.fundstellen(f.db, 'Mika'), ['konten.name'], 'nur das Konto bleibt (Portal verwaltet es, VERTRAG §6)');
+});

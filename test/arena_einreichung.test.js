@@ -109,3 +109,11 @@ test('Einreichen: Hash = HMAC(Arena-Salz, nurBuchstaben), XOR-Grenzfall 300 Buch
   await f.einreichen(f.teams[0], { verfahren: CAESAR, schluessel: { k: 7 }, klartext: TEXT1, beschreibung: 'B' }).expect(403);
   for (const nadel of ['SCHLUESSELNOTIZ', 'LATERNE', 'ABCDEFGHIJABCDEFGHIJ', 'abcdefghijabcdefghij']) assert.deepEqual(F.fundstellen(f.db, nadel), [], nadel);
 });
+
+test('Grenze zählt auch abgelehnte Einreichungen (TECHNIK §9.4, Festlegung zu Plan M7 Task 144)', async () => {
+  const f = await arena();
+  const ok = { verfahren: FUNKGITTER, schluessel: { wort: 'LATERNE' }, klartext: TEXT1, beschreibung: 'B' };
+  for (let i = 0; i < 20; i++) await f.einreichen(f.teams[0], { ...ok, klartext: 'zu kurz' }).expect(400);
+  await f.einreichen(f.teams[0], ok).expect(429);
+  await f.einreichen(f.teams[1], ok).expect(200); // je Team getrennt
+});

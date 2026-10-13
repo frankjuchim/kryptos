@@ -2051,7 +2051,7 @@ Beamer bei 1920 × 1080.
 
 **Interfaces:** – (Prüf-Task; Code nur, wenn ein Test eine Lücke zeigt – dann in `src/krypto/funkraum|arena`).
 
-- [ ] **Step 1: Failing tests** (Auszug):
+- [x] **Step 1: Failing tests** (Auszug):
   ```js
   // datenschutz.test.js
   const F = require('./hilfen_funk');
@@ -2123,13 +2123,13 @@ Beamer bei 1920 × 1080.
   ```
   (`F.arenaMitChiffren(n, { phase, proTeam, beschreibung, extra })` aus Task 146; der Botenlauf läuft parallel zur Arena –
   beide Bereiche sind unabhängig.)
-- [ ] **Step 2: Run** → FAIL (Datenschutzseite ohne E116-Text; ggf. Lücken).
-- [ ] **Step 3: Implement** Lücken; `public/datenschutz.html` ergänzt: Funkraum (Mallory-Simulation hält die vorgegebenen
+- [x] **Step 2: Run** → FAIL (Datenschutzseite ohne E116-Text; ggf. Lücken).
+- [x] **Step 3: Implement** Lücken; `public/datenschutz.html` ergänzt: Funkraum (Mallory-Simulation hält die vorgegebenen
   Auftragstexte bis zum Beenden; Wettknacken überträgt nur die Zuordnung; Klartexte nur als Prüfwert), Werkstatt (Entwurf nur
   im Browser des Teams, beim Abmelden gelöscht; Schlüssel und Klartext werden nie gespeichert), Teams (feste Namen),
   Abzeichen. Keine Inline-Styles.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Datenschutz und Rechte: Funkraum, Arena und Teams geprüft, Datenschutzseite ergänzt"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Datenschutz und Rechte: Funkraum, Arena und Teams geprüft, Datenschutzseite ergänzt"`.
 
 ### Task 149: Lehrkraft-Tab „Teams“ und Dev-Portal-Konten (TECHNIK §11.1, §12.2, E106, E117)
 
@@ -2908,6 +2908,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   `niveau.test.js` behält sein Icon). Plan-Test ergänzt: alle drei Teams Veteran, Erfolgsmeldung ohne Inhalte, Fehlversuch ohne
   Knacker, Unknackbar erst beim Ende der Angriffsphase und über die Frist, `welt9_gemeistert` → `a-welt`, Kern-Identität.
   Bis Task 159 zeigt das Profil für die drei neuen Abzeichen noch das Server-Icon als Text (Sprites folgen dort).
+- **Task 148:** Keine Lücke im Server gefunden – alle Plan-Tests liefen nach dem Schreiben grün außer der Datenschutzseite
+  (E116 ergänzt: Abschnitte Teams, Funkraum, Werkstatt/Arena, Abzeichen; Werkstatt-Entwurf auch unter „Speicher im Browser“).
+  Plan-Tests ergänzt: Rechte-Tabelle um alle Funkraum-/Arena-Routen (Rollen, Sonderaktionen, Arena-Schülerrouten, Schüler eines
+  anderen Kurses 404, CSRF mit Sitzung); Beurteilung/Beschreibung nur eigenes Team (über `GET /api/arena`) und Lehrkraft, nie
+  Beamer; Löschung eines Kurses entfernt alle Funkraum-/Arena-/Team-Zeilen (das Konto bleibt, VERTRAG §6); Kursübersicht nach
+  echtem Lauf (`verbund.test.js`, keine Punkte aus Funkraum/Arena). Festlegung zum offenen Punkt aus Task 144: Die
+  Einreichungs-Grenze (20 je Team in 10 min) zählt weiter **jeden** Versuch nach der Team-Prüfung, auch abgelehnte – in TECHNIK
+  §9.4 dokumentiert, Test `arena_einreichung.test.js` („Grenze zählt auch abgelehnte Einreichungen“).
 
 ## Reihenfolge und Abhängigkeiten
 

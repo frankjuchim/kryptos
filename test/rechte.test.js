@@ -297,3 +297,48 @@ test('Teams (Plan M7 Task 133): nur Lehrkraft des Kurses, Herkunft geprüft, ges
   assert.equal((await lk.get(url)).status, 200);
   assert.equal((await lk.put(url).send(soll)).status, 403);
 });
+
+test('Funkraum/Arena/Teams (Plan M7 Task 148): Rollen, fremde Kurse, Herkunft', async () => {
+  const F = require('./hilfen_funk');
+  const f = await F.arenaMitChiffren(3, { phase: 'angriff' });
+  const sz = await F.starte(f, 'botenlauf');
+  const fremdLk = await H.lehrkraftClient(f.app, { name: 'Herr B.' });
+  const lehrer = [
+    ['get', `/api/lehrer/kurse/${f.kurs.id}/teams`], ['put', `/api/lehrer/kurse/${f.kurs.id}/teams`], ['get', `/api/lehrer/kurse/${f.kurs.id}/funk`],
+    ['post', `/api/lehrer/kurse/${f.kurs.id}/funk`], ['post', `/api/lehrer/funk/${sz.id}/status`], ['put', `/api/lehrer/funk/${sz.id}/rollen`],
+    ['get', `/api/lehrer/funk/${sz.id}/stand`], ['post', `/api/lehrer/funk/${sz.id}/hinweis`], ['post', `/api/lehrer/funk/${sz.id}/sonderkarte`],
+    ['post', `/api/lehrer/funk/${sz.id}/station`], ['post', `/api/lehrer/funk/${sz.id}/zertifikat`],
+    ['post', `/api/lehrer/funk/${sz.id}/nachrichten/1/ausblenden`], ['post', `/api/lehrer/funk/${sz.id}/teams/${f.teams[0].id}/stumm`],
+    ['get', `/api/lehrer/kurse/${f.kurs.id}/arena`], ['post', `/api/lehrer/kurse/${f.kurs.id}/arena`],
+    ['get', `/api/lehrer/arena/${f.arenaId}`], ['get', `/api/lehrer/arena/${f.arenaId}/beamer`], ['post', `/api/lehrer/arena/${f.arenaId}/phase`], ['delete', `/api/lehrer/arena/${f.arenaId}`]
+  ];
+  for (const [m, p] of lehrer) {
+    assert.equal((await f.teams[0].c[m](p).send({})).status, 401, `Schüler ${m} ${p}`);
+    assert.equal((await fremdLk[m](p).send({})).status, 404, `fremde Lehrkraft ${m} ${p}`);
+    assert.equal((await H.client(f.app)[m](p).send({})).status, 401, `ohne Sitzung ${m} ${p}`);
+  }
+  const schueler = [
+    ['get', '/api/funk'], ['get', `/api/funk/${sz.id}/stand`], ['post', `/api/funk/${sz.id}/nachrichten`], ['post', `/api/funk/${sz.id}/empfangen`],
+    ['post', `/api/funk/${sz.id}/knacken`], ['post', `/api/funk/${sz.id}/oeffentlich`], ['post', `/api/funk/${sz.id}/k-melden`],
+    ['put', `/api/funk/${sz.id}/zuordnung`], ['post', `/api/funk/${sz.id}/mallory`],
+    ['get', '/api/arena'], ['get', `/api/arena/${f.arenaId}/chiffren`], ['post', `/api/arena/${f.arenaId}/chiffre`],
+    ['post', `/api/arena/${f.arenaId}/chiffren/${f.cid(1)}/angriff`], ['put', `/api/arena/${f.arenaId}/beurteilung`], ['post', '/api/werkstatt/pruefen']
+  ];
+  for (const [m, p] of schueler) {
+    assert.equal((await f.lk[m](p).send({})).status, 401, `Lehrkraft ${m} ${p}`); // Lehrkraft-Sitzung ist keine Schüler-Sitzung
+    assert.equal((await H.client(f.app)[m](p).send({})).status, 401, `ohne Sitzung ${m} ${p}`);
+  }
+  const ohneHerkunft = require('supertest').agent(f.app).set('Host', H.HOST);
+  for (const [m, p] of [['post', `/api/lehrer/funk/${sz.id}/status`], ['post', `/api/funk/${sz.id}/nachrichten`], ['put', `/api/lehrer/kurse/${f.kurs.id}/teams`], ['delete', `/api/lehrer/arena/${f.arenaId}`]]) {
+    assert.equal((await ohneHerkunft[m](p).send({})).status, 403, `ohne Herkunft ${m} ${p}`);
+  }
+  // auch mit Lehrkraft-/Schüler-Cookie ohne Origin → 403 (CSRF)
+  assert.equal((await f.lk.post(`/api/lehrer/funk/${sz.id}/status`).unset('Origin').send({ aktion: 'pausieren' })).status, 403);
+  assert.equal((await f.teams[0].c.post(`/api/funk/${sz.id}/nachrichten`).unset('Origin').send({ text: 'ABC', klartext: 'abc' })).status, 403);
+  // Schüler eines anderen Kurses: fremdes Szenario/fremde Arena → 404
+  const k2 = await H.kursAnlegen(f.lk, 'GK 12 (gA)');
+  const fremdS = await H.schuelerClient(f.app, k2, 'Lea W.');
+  assert.equal((await fremdS.get(`/api/funk/${sz.id}/stand`)).status, 404);
+  assert.equal((await fremdS.get(`/api/arena/${f.arenaId}/chiffren`)).status, 404);
+  assert.equal((await fremdS.post(`/api/arena/${f.arenaId}/chiffren/${f.cid(1)}/angriff`).send({ klartext: 'abc' })).status, 404);
+});
