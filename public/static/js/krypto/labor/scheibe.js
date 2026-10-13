@@ -26,7 +26,8 @@
     let basis = v.basis === 0 ? 0 : 1;
     let richtung = v.richtung === 'ent' ? 'ent' : 'ver';
     let text = typeof v.text === 'string' ? v.text.slice(0, 200) : '';
-    let abgefangen = BEISPIEL.geheimtext;
+    // Funkraum (M7 Task 152): beginnt die Voreinstellung mit dem Reiter „alle“, ist text der abgefangene Geheimtext
+    let abgefangen = Array.isArray(v.reiter) && v.reiter[0] === 'alle' && text.trim() ? text : BEISPIEL.geheimtext;
     let aktiv = null; // gewählter Klartextbuchstabe (GROSS)
     let gesperrt = false;
     let nachspiel = null;

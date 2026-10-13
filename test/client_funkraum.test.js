@@ -246,3 +246,155 @@ test('Kopfzeile: Funkraum-Punkt aus GET /api/funk, alle 20 s, nicht bei hidden; 
   await f.ruhe();
   assert.equal(f.anfragen.filter((a) => a.pfad === '/api/funk').length, 0);
 });
+
+/* ---------- Task 152: Szenen Botenlauf und Wettknacken ---------- */
+const LABOR = ['krypto/labor/bausteine.js', 'krypto/labor/scheibe.js', 'krypto/labor/haeufigkeit.js', 'krypto/labor/substitution.js'];
+const SEITE_MIT_LABOR = [...SEITE, ...LABOR];
+const BOTE = { id: 11, von: 1, an: 2, angezeigtVon: null, art: 'nachricht', inhalt: 'OHSAL AKLUW HZZ', lesbar: true, ausgeblendet: false, angekommen: false, geknackt: false, zeit: '2026-10-13T08:00:00Z', version: 4 };
+const SCHEIBE = [{ id: 'scheibe', voreinstellung: { reiter: ['alle', 'scheibe', 'text'] } }];
+
+test('Wettknacken: Werkbank-Haken sendet die Zuordnung, Anteil erscheint mit Komma; Analysator mit Reiter Bigramme', async () => {
+  const puts = [];
+  const k = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 8, typ: 'wettknacken', status: 'laeuft', phase: 'knacken' }),
+      'GET /api/funk/8/stand': { status: 200, body: stand(2, { id: 8, typ: 'wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'knacker', anteil: 0 }, anzeigen: { geheimtext: 'DHCPQ NRUMV UDNCU', laenge: 15, hinweise: ['U ≙ e'] }, werkzeuge: [{ id: 'haeufigkeit', voreinstellung: { text: 'DHCPQ NRUMV UDNCU', reiter: ['histogramm', 'bigramme'] } }, { id: 'substitution', voreinstellung: { text: 'DHCPQ NRUMV UDNCU' } }] }) },
+      'PUT /api/funk/8/zuordnung': (b) => {
+        puts.push(b);
+        return puts.length === 1 ? { status: 200, body: { anteil: 0.193 } } : { status: 429, body: { error: 'Höchstens eine Zuordnung je Team in 2 Sekunden.' } };
+      }
+    }
+  });
+  // Umgebung der eingebetteten Werkzeuge abfangen (vor dem ersten Rendern – die Abrufe laufen erst nach setImmediate)
+  const L = k.wert('KRLabor');
+  const echt = L.oeffne;
+  const umgebung = {};
+  L.oeffne = (id, v, c, u) => {
+    umgebung[id] = u;
+    return echt(id, v, c, u);
+  };
+  await k.ruhe();
+  assert.equal(umgebung.substitution.modus, 'funkraum');
+  assert.equal(umgebung.haeufigkeit.modus, 'funkraum');
+  umgebung.substitution.beiAenderung({ U: 'e', Y: '' }); // die Werkbank ruft das entprellt auf (M6 Task 115); leere Felder fallen weg
+  await k.ruhe();
+  assert.deepEqual(k.roh(puts), [{ zuordnung: { U: 'e' } }]);
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /19,3 %/);
+  assert.equal(k.eins(k.document, '.funk-anteil-balken').getAttribute('aria-valuenow'), '19');
+  assert.ok(k.eins(k.document, 'div.funk-werkzeug[data-werkzeug="haeufigkeit"] [role=tab][data-reiter="bigramme"]'));
+  assert.ok(k.eins(k.document, '.funk-werkzeug[data-werkzeug="substitution"]'));
+  assert.match(k.text(k.eins(k.document, 'ul.funk-hinweise')), /U ≙ e/);
+  assert.match(k.text(k.eins(k.document, '.funk-geheimtext')), /DHCPQ/);
+  // 429 still: keine Fehlermeldung, Anteil bleibt
+  umgebung.substitution.beiAenderung({ U: 'e', Y: 'c' });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /19,3 %/);
+  assert.equal(k.alle(k.document, '.funk-wett .fehler').length, 0);
+  k.wert('KRFunkraum').stopp();
+});
+
+test('Wettknacken: fertig zeigt „Geschafft! Platz 1“', async () => {
+  const k = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    vorher: (kk) => (kk.medien['(prefers-reduced-motion: reduce)'] = true),
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 8, typ: 'wettknacken', status: 'laeuft', phase: 'knacken' }),
+      'GET /api/funk/8/stand': { status: 200, body: stand(9, { id: 8, typ: 'wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'knacker', anteil: 0.97, fertig: true, platz: 1 }, anzeigen: { geheimtext: 'DHCPQ', laenge: 5, hinweise: [] }, werkzeuge: [] }) }
+    }
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.funk-fertig')), /Geschafft! Platz 1/);
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /97 %/);
+  assert.equal(k.alle(k.document, '.funken').length, 0, 'reduzierte Bewegung: keine Funken');
+  k.wert('KRFunkraum').stopp();
+});
+
+test('Botenlauf: Bob meldet Empfang, Eve knackt – Ergebnis, Ticker und Scheibe mit Reiter „alle“', async () => {
+  const posts = [];
+  const bob = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' }, TEAMS[1]),
+      'GET /api/funk/7/stand': { status: 200, body: stand(5, { ich: { team: TEAMS[1], rolle: 'bob', partner: 1 }, nachrichten: [BOTE], werkzeuge: SCHEIBE }) },
+      'POST /api/funk/7/empfangen': (b) => {
+        posts.push(b);
+        return { status: 200, body: { richtig: posts.length === 1 } };
+      }
+    }
+  });
+  await bob.ruhe();
+  const form = bob.eins(bob.document, 'form.funk-empfangen[data-nachricht="11"]');
+  bob.tippe(bob.eins(form, 'input.funk-klartext'), 'haltet den pass');
+  bob.klick(bob.eins(form, 'button'));
+  await bob.ruhe();
+  assert.deepEqual(bob.roh(posts[0]), { nachricht: 11, klartext: 'haltet den pass' });
+  assert.match(bob.text(bob.eins(form, 'p.funk-ergebnis')), /Stimmt – angekommen/);
+  bob.klick(bob.eins(form, 'button'));
+  await bob.ruhe();
+  assert.match(bob.text(bob.eins(form, 'p.funk-ergebnis')), /Stimmt nicht/);
+  // Bob: Scheibe mit Text-Reiter zuerst; „In der Scheibe öffnen“ übernimmt den Geheimtext
+  assert.ok(bob.eins(bob.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] [role=tab][data-reiter="text"]'));
+  assert.ok(bob.eins(bob.document, 'form.funk-senden input.funk-klartext'), 'Quittung über das Senden-Formular');
+  bob.wert('KRFunkraum').stopp();
+
+  let geknackt = false;
+  const eve = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' }, TEAMS[2]),
+      'GET /api/funk/7/stand': () => ({
+        status: 200,
+        body: stand(geknackt ? 6 : 5, {
+          ich: { team: TEAMS[2], rolle: 'eve', partner: null },
+          nachrichten: [{ ...BOTE, geknackt }],
+          ereignisse: geknackt ? [{ id: 9, code: 'geknackt', daten: { nachricht: 11, team: 3, sekunden: 70 }, zeit: '2026-10-13T08:01:10Z', version: 6 }] : [],
+          werkzeuge: SCHEIBE
+        })
+      }),
+      'POST /api/funk/7/knacken': (b) => {
+        posts.push(b);
+        geknackt = true;
+        return { status: 200, body: { richtig: true } };
+      }
+    }
+  });
+  await eve.ruhe();
+  assert.ok(eve.eins(eve.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] [role=tab][data-reiter="alle"]'));
+  assert.match(eve.text(eve.eins(eve.document, 'li.funk-nachricht[data-id="11"]')), /gesendet vor/);
+  const kn = eve.eins(eve.document, 'form.funk-knacken[data-nachricht="11"]');
+  eve.tippe(eve.eins(kn, 'input.funk-klartext'), 'haltet den pass');
+  eve.klick(eve.eins(kn, 'button[type="submit"]'));
+  await eve.ruhe();
+  assert.deepEqual(eve.roh(posts.at(-1)), { nachricht: 11, klartext: 'haltet den pass' });
+  assert.match(eve.text(eve.eins(kn, 'p.funk-ergebnis')), /Stimmt – geknackt nach 1:10 min/);
+  assert.match(eve.text(eve.eins(eve.document, 'ol.funk-ticker')), /geknackt \(nach 1:10 min\)/);
+  // „In der Scheibe öffnen“ legt den Geheimtext in den Reiter „alle“
+  eve.klick(eve.eins(eve.document, 'li.funk-nachricht[data-id="11"] button.in-scheibe'));
+  await eve.ruhe();
+  assert.equal(eve.eins(eve.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] textarea.labor-eingabe').value, 'OHSAL AKLUW HZZ');
+  eve.wert('KRFunkraum').stopp();
+});
+
+test('Botenlauf: Alice sieht die Befehlskarte (sechs Befehle) und die Scheibe zum Verschlüsseln', async () => {
+  const k = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    fetch: { 'GET /api/sitzung': SITZUNG, 'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' }), 'GET /api/funk/7/stand': { status: 200, body: stand(5, { werkzeuge: SCHEIBE }) } }
+  });
+  await k.ruhe();
+  assert.deepEqual(k.alle(k.document, 'ul.befehle li').map((li) => k.text(li)), ['marschiert nach norden', 'haltet den pass', 'schickt zwei kohorten', 'wartet auf das signal', 'brecht das lager ab', 'rueckt bei sonnenaufgang vor']);
+  assert.ok(k.eins(k.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] [role=tab][data-reiter="text"]'));
+  // Boss-Kampf sperrt die eingebetteten Werkzeuge
+  k.wert('KRFunkraum').stopp();
+  const b = D.lade(SEITE_MIT_LABOR, {
+    url: 'http://x.test/funkraum',
+    fetch: { 'GET /api/sitzung': SITZUNG, 'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' }), 'GET /api/funk/7/stand': { status: 200, body: stand(5, { werkzeuge: [], boss: true }) } }
+  });
+  await b.ruhe();
+  assert.match(b.text(b.eins(b.document, 'div.funk-werkzeug[data-werkzeug="scheibe"]')), /Während eines Boss-Kampfs sind die Werkzeuge gesperrt/);
+  b.wert('KRFunkraum').stopp();
+});

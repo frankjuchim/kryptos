@@ -2371,7 +2371,7 @@ Beamer bei 1920 × 1080.
   Server nimmt Groß/Klein); Antwort → `p.funk-anteil` „Euer Anteil: 19,3 %“ + `progress`; 429 still (nächste Änderung sendet
   erneut); Hinweise der Lehrkraft als `ul.funk-hinweise`; bei `fertig` „Geschafft! Platz 1“ (ohne Konfetti bei `AQ.ruhig()`).
 
-- [ ] **Step 1: Failing test** (Auszug; `SEITE_MIT_LABOR` = `SEITE` + `krypto/labor/bausteine.js`, `labor/scheibe.js`,
+- [x] **Step 1: Failing test** (Auszug; `SEITE_MIT_LABOR` = `SEITE` + `krypto/labor/bausteine.js`, `labor/scheibe.js`,
   `labor/haeufigkeit.js`, `labor/substitution.js` vorab geladen, damit `KRLabor.lade` nichts nachlädt):
   ```js
   test('Wettknacken: Werkbank-Haken sendet die Zuordnung, Anteil erscheint mit Komma; Analysator mit Reiter Bigramme', async () => {
@@ -2401,9 +2401,9 @@ Beamer bei 1920 × 1080.
   `/api/funk/7/empfangen`, Antwort `{ richtig: true }` → `p.funk-ergebnis` „Stimmt – angekommen.“; Eves `form.funk-knacken` →
   `{ richtig: true }`, Ereignis `geknackt { sekunden: 70 }` im nächsten Stand → „geknackt nach 1:10 min“ im Ticker; die
   eingebettete Scheibe hat `[role=tab][data-reiter="alle"]`.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (drei Kontexte
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (drei Kontexte
   Botenlauf mit echter Scheibe; Wettknacken mit zwei Kontexten, Fortschritt im Regie-Tab).
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenen Botenlauf und Wettknacken mit eingebetteter Scheibe, Werkbank und Analysator"`.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenen Botenlauf und Wettknacken mit eingebetteter Scheibe, Werkbank und Analysator"`.
 
 ### Task 153: Bit-Lupe-Voreinstellungen und Szenen „Der doppelte Schlüssel“, „Schlüsseltausch“ (W3 §9.1/§9.3, W4 §9.1/§9.3, E94, E95, E98)
 
@@ -2949,6 +2949,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Szenarios an (W0, W1, W3, W4, W5). Attrappe: `fetch`-Routen bekommen `(body, { query, headers })`, Antworten mit
   `headers`/304/`netzfehler`, `k.verstecke`. Plan-Test korrigiert: keine Abweichung; ergänzt um Mischen/hidden/15 s,
   Leerzustände (auch 429), Verbindungsstörung, Ticker, Regie-Polling (`client_lehrer_funk.test.js`).
+
+- **Task 152:** Eingebettete Werkzeuge über `KRFunkSzenen.einbettung` (ein Werkzeug je Rahmen, `oeffne` schließt das alte).
+  Botenlauf: Reiter-Reihenfolge je Rolle umsortiert (Alice/Bob „Text“ zuerst, Bob/Eve `richtung: 'ent'`, Eve „Alle“
+  zuerst); Knopf „In der Scheibe öffnen“ je Nachricht (Bob, Eve). Dafür nimmt die Scheibe (M6) den `text` der Voreinstellung
+  als abgefangenen Geheimtext, wenn die Voreinstellung mit dem Reiter „alle“ beginnt (Test `labor_scheibe.test.js`). Nach dem
+  Knacken sperrt nur das Knack-Formular. Eves Ergebnis nennt die Zeit aus dem `geknackt`-Ereignis. Wettknacken: leere
+  Werkbank-Felder werden vor dem `PUT` entfernt; 429 bleibt still, ein zweiter Versuch folgt nach 2,5 s; Funken bei „fertig“
+  nur beim Wechsel und ohne reduzierte Bewegung. Sichtprüfung: Anteile 28,4 % (U/Y/C) bzw. 19,3 % (U) wie nachgerechnet.
 
 ## Reihenfolge und Abhängigkeiten
 

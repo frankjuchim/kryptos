@@ -94,3 +94,9 @@ test('Scheibe: ungültige Voreinstellung fällt auf den Standard zurück (k = 3,
   const w = oeffne('scheibe', { voreinstellung: { k: 99, basis: 7, richtung: 'quer' } });
   assert.deepEqual([w.zustand().k, w.zustand().basis, w.zustand().richtung], [3, 1, 'ver']);
 });
+
+test('Scheibe (Funkraum, M7 Task 152): beginnt die Voreinstellung mit „alle“, ist text der abgefangene Geheimtext', () => {
+  const w = oeffne('scheibe', { voreinstellung: { reiter: ['alle', 'scheibe', 'text'], text: 'OHSAL AKLUW HZZ' } });
+  assert.equal(w.k.eins(w.flaeche, 'textarea.labor-eingabe').value, 'OHSAL AKLUW HZZ');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.alle-schluessel td.ergebnis')[7]).replace(/\s/g, ''), K.klein(K.alleCaesar('OHSALAKLUWHZZ')[7].text).slice(0, 20));
+});

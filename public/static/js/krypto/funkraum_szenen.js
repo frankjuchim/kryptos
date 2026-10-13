@@ -347,7 +347,9 @@ const KRFunkSzenen = (() => {
           li._inhalt.textContent = n.ausgeblendet ? '(ausgeblendet)' : n.inhalt || '';
           AQ.mount(li._chips, chips(n));
           li._n = n;
-          if (n.ausgeblendet || n.geknackt) for (const x of li._aktion.querySelectorAll('button, input, select, textarea')) x.disabled = true;
+          // ausgeblendet: alles aus; geknackt: nur die Knack-Formulare (Eve kann die Nachricht weiter ansehen)
+          const aus = n.ausgeblendet ? li._aktion.querySelectorAll('button, input, select, textarea') : n.geknackt ? li._aktion.querySelectorAll('form.funk-knacken button, form.funk-knacken input') : [];
+          for (const x of aus) x.disabled = true;
         }
       });
     }
@@ -413,11 +415,225 @@ const KRFunkSzenen = (() => {
     };
   }
 
+  /* ---------- Eingebettete Werkzeuge (E98) ---------- */
+
+  /**
+   * Werkzeug-Rahmen div.funk-werkzeug[data-werkzeug] im Funkraum; oeffne(voreinstellung, umgebungExtra) schließt ein
+   * vorher geöffnetes Werkzeug und öffnet neu (z. B. mit dem Geheimtext einer Nachricht).
+   */
+  function einbettung(ctx, id, titel) {
+    const w = typeof KRLabor !== 'undefined' ? KRLabor.werkzeug(id) : null;
+    const innen = h('div', { class: 'funk-werkzeug-innen' });
+    const element = h('div', { class: 'funk-werkzeug', 'data-werkzeug': id, 'data-epoche': w ? String(w.welt) : null }, h('h3', null, titel || (w ? w.titel : 'Werkzeug')), innen);
+    let steuer = null;
+    return {
+      element,
+      oeffne(voreinstellung, umgebungExtra = {}) {
+        if (steuer) steuer.schliesse();
+        steuer = ctx.werkzeug(id, voreinstellung, innen, umgebungExtra);
+        return steuer;
+      },
+      steuer: () => steuer,
+      schliesse() {
+        if (steuer) steuer.schliesse();
+        steuer = null;
+      }
+    };
+  }
+
+  /** Reiter einer Voreinstellung umsortieren (erste zuerst), ohne neue hinzuzufügen */
+  function reiterZuerst(v, erste) {
+    const liste = Array.isArray(v.reiter) ? v.reiter : [];
+    return { ...v, reiter: [...erste.filter((r) => liste.includes(r)), ...liste.filter((r) => !erste.includes(r))] };
+  }
+
+  /* ---------- Szene „Botenlauf“ (W0 §9.3, Plan M7 Task 152) ---------- */
+
+  const BEFEHLE = Object.freeze(['marschiert nach norden', 'haltet den pass', 'schickt zwei kohorten', 'wartet auf das signal', 'brecht das lager ab', 'rueckt bei sonnenaufgang vor']);
+
+  /** Sekunden des geknackt-Ereignisses einer Nachricht (oder null) */
+  function knackSekunden(stand, nid) {
+    const e = (stand.ereignisse || []).find((x) => x.code === 'geknackt' && x.daten && x.daten.nachricht === nid);
+    return e ? e.daten.sekunden : null;
+  }
+
+  registriere('botenlauf', (ctx) => {
+    const st = ctx.stand();
+    const rolle = st.ich.rolle;
+    const teile = [];
+    const scheibeVor = ctx.voreinstellung('scheibe');
+    const scheibe = scheibeVor ? einbettung(ctx, 'scheibe', 'Chiffrierscheibe') : null;
+    const oeffneScheibe = (extra = {}) => {
+      if (!scheibe) return;
+      const erste = rolle === 'eve' ? ['alle', 'text', 'scheibe'] : ['text', 'scheibe', 'alle'];
+      scheibe.oeffne({ ...reiterZuerst(scheibeVor, erste), ...(rolle === 'alice' ? {} : { richtung: 'ent' }), ...extra });
+    };
+    let formular = null;
+    if (rolle === 'alice') {
+      teile.push(h('section', { class: 'funk-karte befehlskarte', 'aria-labelledby': 'befehle-titel' }, h('h3', { id: 'befehle-titel' }, 'Befehlskarte'), h('p', { class: 'text-2 klein' }, 'Wählt einen Befehl (oder einen eigenen mit 15–40 Buchstaben) und verschlüsselt ihn mit Caesar.'), h('ul', { class: 'befehle' }, BEFEHLE.map((b) => h('li', null, h('code', null, b))))));
+    }
+    if (rolle === 'alice' || rolle === 'bob') {
+      formular = sendeFormular(ctx, { klartext: true, titel: rolle === 'alice' ? 'Befehl senden' : 'Quittung senden', hinweis: rolle === 'bob' ? 'Antwortet mit der verschlüsselten Quittung „befehl erhalten“ – mit demselben Schlüssel.' : 'Nur der Geheimtext geht ins Netz. Der Klartext dient nur zum Prüfen und wird nicht gespeichert.' });
+      teile.push(formular.element);
+    }
+    const inScheibe = (n) => {
+      if (!scheibe) return null;
+      const k = h('button', { type: 'button', class: 'knopf knopf-leise in-scheibe' }, 'In der Scheibe öffnen');
+      k.addEventListener('click', () => {
+        oeffneScheibe({ text: n.inhalt });
+        scheibe.element.scrollIntoView && scheibe.element.scrollIntoView({ block: 'nearest' });
+      });
+      return k;
+    };
+    const post = posteingang(ctx, {
+      titel: rolle === 'eve' ? 'Abgefangene Nachrichten' : 'Eure Nachrichten',
+      leer: rolle === 'eve' ? 'Noch nichts abgefangen.' : 'Noch keine Nachrichten.',
+      zeit: rolle === 'eve',
+      aktionen: (n) => {
+        const st2 = ctx.stand();
+        const meins = n.von === st2.ich.team.id;
+        if (rolle === 'bob' && !meins && n.art === 'nachricht') {
+          return [inScheibe(n), pruefFormular(ctx, n, { art: 'empfangen', pfad: 'empfangen', label: 'Entschlüsselter Klartext', knopf: 'Entschlüsselt – melden', erfolg: 'Stimmt – angekommen.', misserfolg: 'Stimmt nicht – prüft eure Entschlüsselung.' })];
+        }
+        if (rolle === 'eve') {
+          return [
+            inScheibe(n),
+            pruefFormular(ctx, n, {
+              art: 'knacken',
+              pfad: 'knacken',
+              label: 'Geknackter Klartext',
+              knopf: 'Geknackt – melden',
+              erfolg: () => {
+                const sek = knackSekunden(ctx.stand(), n.id);
+                return sek === null ? 'Stimmt – geknackt.' : `Stimmt – geknackt nach ${KRNetz.dauer(sek)}.`;
+              },
+              misserfolg: 'Stimmt nicht – probiert weiter.'
+            })
+          ];
+        }
+        return null;
+      }
+    });
+    teile.push(post.element);
+    if (scheibe) teile.push(scheibe.element);
+    else teile.push(h('div', { class: 'funk-werkzeug', 'data-werkzeug': 'scheibe' }, h('p', { class: 'text-2' }, st.boss ? 'Während eines Boss-Kampfs sind die Werkzeuge gesperrt.' : 'Für eure Rolle gibt es hier kein Werkzeug.')));
+    const element = h('div', { class: 'funk-szene-botenlauf' }, teile);
+    if (scheibe) oeffneScheibe();
+    return {
+      element,
+      aktualisiere(stand) {
+        post.aktualisiere(stand.nachrichten);
+        if (formular) formular.pruefe();
+      },
+      schliesse() {
+        if (scheibe) scheibe.schliesse();
+      }
+    };
+  });
+
+  /* ---------- Szene „Wettknacken“ (W1 §9.2/§9.3, Plan M7 Task 152) ---------- */
+
+  const RETRY_MS = 2500;
+  /** Zuordnung der Werkbank → nur Paare aus einzelnen Buchstaben (leere Felder fallen weg) */
+  function zuordnungFuerServer(z) {
+    const out = {};
+    for (const [g, k] of Object.entries(z || {})) if (/^[A-Za-z]$/.test(g) && typeof k === 'string' && /^[A-Za-z]$/.test(k)) out[g.toUpperCase()] = k.toLowerCase();
+    return out;
+  }
+  const prozentKomma = (x) => `${(Math.round((Number(x) || 0) * 1000) / 10).toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 1 })} %`;
+
+  registriere('wettknacken', (ctx) => {
+    const st = ctx.stand();
+    const a = st.anzeigen || {};
+    const anteilEl = h('p', { class: 'funk-anteil', 'aria-live': 'polite' });
+    const balkenWert = h('span');
+    const balken = h('div', { class: 'progress funk-anteil-balken', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-label': 'Euer Anteil richtig entschlüsselter Buchstaben' }, balkenWert);
+    const fertigEl = h('p', { class: 'funk-fertig', hidden: true });
+    const hinweiseEl = h('ul', { class: 'funk-hinweise' });
+    const hinweisBereich = h('section', { class: 'funk-karte funk-hinweise-bereich', hidden: true }, h('h3', null, 'Hinweise der Lehrkraft'), hinweiseEl);
+    let anteil = st.ich && typeof st.ich.anteil === 'number' ? st.ich.anteil : 0;
+    let warFertig = !!(st.ich && st.ich.fertig);
+    function zeigeAnteil() {
+      anteilEl.textContent = `Euer Anteil: ${prozentKomma(anteil)}`;
+      const pct = Math.round(anteil * 100);
+      balken.setAttribute('aria-valuenow', String(pct));
+      balkenWert.style.setProperty('--wert', `${pct}%`);
+    }
+    // Zuordnung senden (höchstens eine je 2 s; 429 still, ein zweiter Versuch nach 2,5 s)
+    let offen = null;
+    let timer = null;
+    let laeuft = false;
+    async function sende() {
+      timer = null;
+      if (!offen || laeuft || ctx.gesperrt()) return;
+      const z = offen;
+      offen = null;
+      laeuft = true;
+      try {
+        const r = await ctx.aktion('zuordnung', { zuordnung: z }, 'PUT');
+        if (r && typeof r.anteil === 'number') anteil = r.anteil;
+        zeigeAnteil();
+      } catch (e) {
+        if (e && e.status === 429) {
+          if (!offen) offen = z;
+          if (!timer) timer = setTimeout(sende, RETRY_MS);
+        }
+      } finally {
+        laeuft = false;
+      }
+    }
+    const werkzeuge = [];
+    const analysatorVor = ctx.voreinstellung('haeufigkeit');
+    const werkbankVor = ctx.voreinstellung('substitution');
+    const analysator = analysatorVor ? einbettung(ctx, 'haeufigkeit', 'Häufigkeits-Analysator') : null;
+    const werkbank = werkbankVor ? einbettung(ctx, 'substitution', 'Substitutions-Werkbank') : null;
+    if (analysator) werkzeuge.push(analysator);
+    if (werkbank) werkzeuge.push(werkbank);
+    const element = h(
+      'div',
+      { class: 'funk-szene-wettknacken funk-wett' },
+      h('section', { class: 'funk-karte funk-geheimtext', 'aria-labelledby': 'wett-titel' }, h('h3', { id: 'wett-titel' }, `Abgefangener Brief (${a.laenge || '–'} Buchstaben)`), a.geheimtext && typeof KRB !== 'undefined' ? KRB.geheimtext(a.geheimtext) : h('code', { class: 'funk-inhalt' }, a.geheimtext || ''), anteilEl, balken, fertigEl),
+      hinweisBereich,
+      werkzeuge.map((w) => w.element),
+      werkzeuge.length ? null : h('div', { class: 'funk-werkzeug', 'data-werkzeug': 'substitution' }, h('p', { class: 'text-2' }, st.boss ? 'Während eines Boss-Kampfs sind die Werkzeuge gesperrt.' : 'Für diese Phase gibt es keine Werkzeuge.'))
+    );
+    if (analysator) analysator.oeffne(analysatorVor);
+    if (werkbank)
+      werkbank.oeffne(werkbankVor, {
+        beiAenderung(z) {
+          offen = zuordnungFuerServer(z);
+          if (!timer) sende();
+        }
+      });
+    zeigeAnteil();
+    return {
+      element,
+      aktualisiere(stand) {
+        const ich = stand.ich || {};
+        if (typeof ich.anteil === 'number') anteil = ich.anteil;
+        zeigeAnteil();
+        const hinweise = (stand.anzeigen && stand.anzeigen.hinweise) || [];
+        hinweisBereich.hidden = !hinweise.length;
+        abgleich(hinweiseEl, hinweise, { schluessel: (x) => x, baue: (x) => h('li', null, x) });
+        fertigEl.hidden = !ich.fertig;
+        if (ich.fertig) {
+          fertigEl.textContent = `Geschafft! Platz ${ich.platz || '–'}`;
+          if (!warFertig) AQ.effekt.funken(fertigEl, { stark: true });
+        }
+        warFertig = !!ich.fertig;
+      },
+      schliesse() {
+        clearTimeout(timer);
+        for (const w of werkzeuge) w.schliesse();
+      }
+    };
+  });
+
   /** Szene für den Typ bauen (registriert oder allgemein) */
   function zeige(typ, ctx) {
     const fabrik = SZENEN.get(typ) || allgemein;
     return fabrik(ctx);
   }
 
-  return { registriere, zeige, rollenkarte, sendeFormular, posteingang, pruefFormular, abgleich, bereite, fehlerText, vor, chips, ROLLEN_TEXTE, MAX };
+  return { registriere, zeige, rollenkarte, sendeFormular, posteingang, pruefFormular, abgleich, bereite, fehlerText, vor, chips, einbettung, reiterZuerst, ROLLEN_TEXTE, BEFEHLE, MAX };
 })();

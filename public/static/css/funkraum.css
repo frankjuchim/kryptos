@@ -103,6 +103,17 @@ svg.funk-netz { display: block; width: 100%; height: auto; max-height: 60vh; }
 .funk-zeile input { flex: 1 1 12rem; min-width: 0; }
 .funk-werkzeug-innen { min-width: 0; }
 
+/* Szenen Botenlauf und Wettknacken (Task 152) */
+.befehle { margin: 0; padding-left: 1.2em; display: grid; gap: var(--a-1); }
+.befehle code { font-family: var(--f-mono); }
+.funk-werkzeug .labor-werkzeug { min-width: 0; }
+.funk-anteil { margin: 0; font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.funk-anteil-balken { height: 14px; }
+.funk-anteil-balken > span { width: var(--wert, 0%); }
+.funk-fertig { margin: 0; font-size: 1.3rem; font-weight: 700; color: var(--ok); }
+.funk-fertig::before { content: "✓ "; }
+.funk-hinweise { margin: 0; padding-left: 1.2em; font-family: var(--f-mono); }
+
 /* Ticker */
 .funk-ticker-bereich[hidden] { display: none; }
 .funk-ticker-bereich h2 { margin: 0 0 var(--a-2); font-size: 1.05rem; }
