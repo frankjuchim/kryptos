@@ -181,10 +181,86 @@ async function ziele44(page, ort) {
   if (klein.length) throw new Error(`${ort}: Touch-Ziele unter 44 px: ${klein.slice(0, 8).join('; ')}`);
 }
 
+/**
+ * Kontraste aller sichtbaren Texte (Review M4 W1): berechnete Textfarbe gegen den effektiven Hintergrund (Stapel der
+ * Hintergrundfarben bis zur ersten deckenden Fläche, Deckkraft der Vorfahren eingerechnet). Soll ≥ 4,5 : 1, großer
+ * Text (≥ 24 px oder fett ≥ 18,66 px) ≥ 3 : 1. Ausgenommen: deaktivierte Bedienelemente (WCAG 1.4.3), aria-hidden,
+ * Flächen mit Verlauf (nicht berechenbar). Liefert die Verstöße als Text.
+ */
+async function kontraste(page, ort) {
+  return page.evaluate((ort) => {
+    function rgba(s) {
+      const m = /rgba?\(([^)]+)\)/.exec(s || '');
+      if (!m) return null;
+      const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number);
+      return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+    }
+    function lum({ r, g, b }) {
+      const f = (c) => {
+        c /= 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+    }
+    function mix(o, u) {
+      return { r: o.r * o.a + u.r * (1 - o.a), g: o.g * o.a + u.g * (1 - o.a), b: o.b * o.a + u.b * (1 - o.a), a: 1 };
+    }
+    function hintergrund(el) {
+      const stapel = [];
+      let verlauf = false;
+      for (let x = el; x && x.nodeType === 1; x = x.parentElement) {
+        const s = getComputedStyle(x);
+        if (s.backgroundImage && s.backgroundImage !== 'none' && !/url\(/.test(s.backgroundImage)) verlauf = true;
+        const c = rgba(s.backgroundColor);
+        if (c && c.a > 0) {
+          stapel.push(c);
+          if (c.a >= 1) break;
+        }
+      }
+      let farbe = { r: 255, g: 255, b: 255, a: 1 };
+      for (let i = stapel.length - 1; i >= 0; i--) farbe = mix(stapel[i], farbe);
+      return { farbe, verlauf };
+    }
+    const aus = [];
+    const gesehen = new Set();
+    for (const el of document.querySelectorAll('body *')) {
+      if (!el.offsetParent && getComputedStyle(el).position !== 'fixed') continue;
+      if (!['', 'auto'].includes(el.getAttribute('aria-hidden') || '') || el.closest('[aria-hidden="true"]')) continue;
+      if (!([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) || (el.matches('input, select, textarea') && el.value))) continue;
+      const s = getComputedStyle(el);
+      if (s.visibility === 'hidden') continue;
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      if (el.disabled || el.closest('[disabled], [aria-disabled="true"]')) continue;
+      let deck = 1;
+      for (let x = el; x && x.nodeType === 1; x = x.parentElement) deck *= parseFloat(getComputedStyle(x).opacity);
+      if (deck === 0) continue;
+      const { farbe, verlauf } = hintergrund(el);
+      if (verlauf) continue;
+      const roh = rgba(s.color);
+      if (!roh) continue;
+      const vg = mix({ ...roh, a: roh.a * deck }, farbe);
+      const L1 = lum(vg);
+      const L2 = lum(farbe);
+      const k = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+      const px = parseFloat(s.fontSize);
+      const gross = px >= 24 || (parseInt(s.fontWeight, 10) >= 700 && px >= 18.66);
+      const soll = gross ? 3 : 4.5;
+      if (k + 0.005 >= soll) continue;
+      const t = (el.value || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+      const schluessel = `${el.tagName}.${el.className}|${t}`;
+      if (gesehen.has(schluessel)) continue;
+      gesehen.add(schluessel);
+      aus.push(`${ort}: ${k.toFixed(2)} < ${soll} ${el.tagName.toLowerCase()}.${[...el.classList].join('.')} „${t}“ (Text ${s.color} auf rgb(${Math.round(farbe.r)}, ${Math.round(farbe.g)}, ${Math.round(farbe.b)}))`);
+    }
+    return aus;
+  }, ort);
+}
+
 /** Hash-Route im laufenden Seitenskript öffnen und auf Ruhe warten. */
 async function gehe(page, url) {
   await page.goto(url);
   await page.waitForLoadState('networkidle');
 }
 
-module.exports = { chromiumPfad, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, gehe, RICHTIG, Krypto, WURZEL };
+module.exports = { chromiumPfad, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };

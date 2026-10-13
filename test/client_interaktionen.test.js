@@ -435,3 +435,32 @@ test('bits-rechnen lawine: nur das gekippte Bit des Blocks ist markiert', () => 
   assert.equal(k.alle(zeilen[0], '.bit.markiert').length, 1);
   assert.equal(k.alle(zeilen[1], '.bit.markiert').length, 0);
 });
+test('Review M4 K4: Zuordnung – Vorschau nicht live; nur der Anteil wird angesagt (entprellt, eigene Live-Region)', async () => {
+  const { k, c } = baue(oeffentlich('W9-L3-02'));
+  assert.equal(k.eins(c.el, 'p.zuordnung-vorschau').getAttribute('aria-live'), null, 'Vorschau wird nicht angesagt');
+  assert.equal(k.eins(c.el, 'p.zuordnung-anteil').getAttribute('aria-live'), null, 'sichtbarer Anteil ohne aria-live');
+  const ansage = k.eins(c.el, '.zuordnung-ansage');
+  assert.equal(ansage.getAttribute('aria-live'), 'polite');
+  assert.equal(k.alle(c.el, '[aria-live]').length, 1, 'genau eine Live-Region');
+  c.feedback({ ok: false, teile: [{ ok: false, anteil: 0.5, buchstaben: {} }] });
+  c.feedback({ ok: false, teile: [{ ok: false, anteil: 0.62, buchstaben: {} }] });
+  assert.equal(k.text(ansage), '', 'noch nicht angesagt (entprellt)');
+  await new Promise((r) => setTimeout(r, 400));
+  assert.equal(k.text(ansage), '62 % der Textstellen richtig');
+});
+test('Review M4 K5: bits-rechnen mit rovingem tabindex (ein Tabstopp je Bitfolge, Pfeiltasten wechseln)', () => {
+  const { k, c } = baue(oeffentlich('W9-L6-01'));
+  const bits = k.alle(c.el, '.bits-eingabe button.bit');
+  const stopps = () => bits.map((b) => b.getAttribute('tabindex'));
+  assert.deepEqual(stopps(), ['0', '-1', '-1', '-1', '-1', '-1', '-1', '-1']);
+  bits[0].focus();
+  k.taste(bits[0], 'ArrowRight');
+  assert.equal(k.document.activeElement, bits[1]);
+  assert.deepEqual(stopps().filter((x) => x === '0').length, 1);
+  assert.equal(bits[1].getAttribute('tabindex'), '0');
+  k.taste(bits[1], 'End');
+  assert.equal(bits[7].getAttribute('tabindex'), '0');
+  k.klick(bits[3]); bits[3].focus();
+  assert.equal(bits[3].getAttribute('tabindex'), '0');
+  assert.equal(stopps().filter((x) => x === '0').length, 1);
+});

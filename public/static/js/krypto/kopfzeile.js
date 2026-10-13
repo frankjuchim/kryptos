@@ -146,7 +146,7 @@ const KRKopf = (() => {
         'div',
         { class: 'kopf-innen' },
         h('a', { class: 'logo', href: startHref, 'aria-label': startText }, KR.symbol('icons', 'logo-ring'), h('span', { 'aria-hidden': 'true' }, 'KRYPTOS')),
-        h('div', { class: 'kopf-epoche', 'aria-live': 'polite' }, h('i', { 'aria-hidden': 'true' }), h('span', { id: 'kopf-epoche-text' }, 'Archiv der verborgenen Schriften')),
+        h('div', { class: 'kopf-epoche' }, h('i', { 'aria-hidden': 'true' }), h('span', { id: 'kopf-epoche-text' }, 'Archiv der verborgenen Schriften')),
         h(
           'nav',
           { class: 'kopf-seiten', 'aria-label': 'Bereiche' },

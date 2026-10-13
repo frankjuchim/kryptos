@@ -72,3 +72,30 @@ test('AQA: ohnePunkte (Archivfund) – Kopf ohne „0 Punkte“, Rückmeldungen 
   await k.ruhe();
   assert.doesNotMatch(k.text(el), /Punkte möglich/);
 });
+test('Review M4 W3: nach dem Lösen und nach „Lösung zeigen“ liegt der Fokus auf der Rückmeldung (nicht auf body)', async () => {
+  const k = D.lade(SKRIPTE);
+  const a = { id: 'W9-L1-01', titel: 'Test', stufe: 1, punkte: 10, kategorie: 'begriffe', niveau: 'kern', fallen: [], tippsAnzahl: 0, inhalt: [{ t: 'text', md: 'Antwort: [[g1]]' }], interaktion: { kind: 'gaps', felder: { g1: {} } } };
+  const cfg = { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, moeglich: 10 }, modus: 'lab', weiter: { href: '#/aufgabe/W9-L1-02', text: 'Nächste Aufgabe →' }, pruefen: async () => ({ ok: true, geloest: true, punkteErhalten: 10, zustand: { status: 'geloest', punkte: 10 } }), aufdecken: async () => ({ loesung: { g1: ['x'] }, muster: { g1: 'x' }, erklaerung: [], zustand: { status: 'angesehen' } }) };
+  let el = k.wert('AQA').ansicht(cfg);
+  k.document.body.appendChild(el);
+  k.tippe(k.eins(el, 'input.luecke'), 'X');
+  const pr = k.eins(el, '#pruefen');
+  pr.focus();
+  k.klick(pr);
+  await k.ruhe();
+  let f = k.document.activeElement;
+  assert.ok(f && f !== k.document.body, 'Fokus nicht auf body');
+  assert.ok(f.classList.contains('feedback') && f.getAttribute('tabindex') === '-1', `Fokus auf der Rückmeldung (tabindex=-1), ist ${f.localName}.${f.className}`);
+  // „Lösung zeigen“-Pfad
+  el.remove();
+  el = k.wert('AQA').ansicht(cfg);
+  k.document.body.appendChild(el);
+  const zeigen = k.alle(el, 'button').find((b) => /Lösung zeigen/.test(k.text(b)));
+  zeigen.focus();
+  k.klick(zeigen);
+  await k.ruhe();
+  k.klick(k.alle(k.eins(k.document, 'dialog'), 'button').find((b) => /Lösung zeigen/.test(k.text(b))));
+  await k.ruhe();
+  f = k.document.activeElement;
+  assert.ok(f && f !== k.document.body && f.classList.contains('feedback'), 'nach „Lösung zeigen“ Fokus auf der Rückmeldung');
+});

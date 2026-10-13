@@ -122,3 +122,9 @@ test('Sprite-Verweise mit ?v=<Version> aus dem Skript-Tag von oberflaeche.js (Ca
   const ohne = D.lade(['common.js', 'krypto/oberflaeche.js']);
   assert.equal(ohne.wert('KR').sprite('icons', 'i-labor'), '/static/img/icons.svg#i-labor', 'ohne Versionsquelle kein ?v=');
 });
+test('Review M4 K4: Epochenanzeige im Kopf ohne aria-live (wechselt bei jeder Seite)', () => {
+  const k = lade();
+  k.wert('KRKopf').baue({ rolle: 'schueler', aktiv: 'zeitleiste', sitzung: SITZUNG_S });
+  const ep = k.eins(k.document.getElementById('kopf'), '.kopf-epoche');
+  assert.equal(ep.getAttribute('aria-live'), null);
+});

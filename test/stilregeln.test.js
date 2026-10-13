@@ -55,3 +55,13 @@ test('Aufgaben-Knopfleiste: auf dem Handy nicht klebend (verdeckt sonst Inhalt),
   assert.match(mq[1], /\.aktionen\s*\{[^}]*position:\s*sticky/);
   assert.match(mq[1], /scroll-padding-bottom/);
 });
+test('Review M4 W1: Linkfarbe auf Tinte/Nacht/Kopf gilt nicht für Knöpfe (Messing-Knopf behält --nacht)', () => {
+  const css = lies(path.join(CSS, 'komponenten.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+  for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const sel = m[1].split(',').map((s) => s.trim());
+    if (!/(^|;)\s*color\s*:\s*var\(--auf-tinte\)/.test(m[2])) continue;
+    for (const s of sel) {
+      if (/^\.(tinte|nacht|kopf)\s+a$/.test(s)) assert.fail(`„${s}“ färbt auch a.knopf (Messing-Knopf 2,1 : 1) – a:not(.knopf) verwenden`);
+    }
+  }
+});

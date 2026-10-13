@@ -547,8 +547,19 @@ const KRI = (() => {
         )
       )
     );
-    const vorschau = h('p', { class: 'zuordnung-vorschau', 'aria-live': 'polite' });
-    const anteil = h('p', { class: 'zuordnung-anteil', 'aria-live': 'polite' });
+    // Review M4 K4: die Live-Vorschau wird nicht angesagt (ändert sich bei jedem Buchstaben); angesagt wird nur der
+    // Anteil nach dem Prüfen – entprellt über eine eigene Live-Region
+    const vorschau = h('p', { class: 'zuordnung-vorschau' });
+    const anteil = h('p', { class: 'zuordnung-anteil' });
+    const ansage = h('p', { class: 'zuordnung-ansage sr', 'aria-live': 'polite' });
+    let ansageTimer = null;
+    function sageAnteil(text) {
+      anteil.textContent = text;
+      clearTimeout(ansageTimer);
+      ansageTimer = setTimeout(() => {
+        if (ansage.textContent !== text) ansage.textContent = text;
+      }, 300);
+    }
     let vorschauTimer = null;
     let vorschauZuletzt = 0;
     const klartext = () => [...geheim].map((g) => (zu[g] ? zu[g].toLowerCase() : '·')).join('');
@@ -625,7 +636,7 @@ const KRI = (() => {
       merke();
       zu = leereZuordnung();
       vorkommend.forEach(markeWeg);
-      anteil.textContent = '';
+      sageAnteil('');
       zeichne();
       kontext.geaendert();
     });
@@ -637,7 +648,7 @@ const KRI = (() => {
       rueckgaengig,
       zuruecksetzen
     );
-    const haupt = h('div', { class: 'zuordnung-haupt' }, leiste, h('figure', { class: 'zuordnung-figur' }, h('figcaption', { class: 'sr' }, 'Geheimtext mit zugeordnetem Klartext'), text), vorschau, anteil);
+    const haupt = h('div', { class: 'zuordnung-haupt' }, leiste, h('figure', { class: 'zuordnung-figur' }, h('figcaption', { class: 'sr' }, 'Geheimtext mit zugeordnetem Klartext'), text), vorschau, anteil, ansage);
     const seiten = ia.haeufigkeit === true ? h('aside', { class: 'zuordnung-haeufigkeit', 'aria-label': 'Häufigkeiten des Geheimtextes' }, KRB.haeufigkeit({ quelle: 'text', text: geheim, referenz: 'deutsch', sortierung: 'absteigend', titel: 'Häufigkeiten im Geheimtext' })) : null;
     const box = h('div', { class: 'zuordnung' + (seiten ? ' mit-haeufigkeit' : '') }, steuerung, h('div', { class: 'zuordnung-flaeche' }, haupt, seiten));
     zeichne();
@@ -665,7 +676,7 @@ const KRI = (() => {
       },
       feedback(r) {
         if (!r) return;
-        if (typeof r.anteil === 'number') anteil.textContent = `${Math.round(r.anteil * 100)} % der Textstellen richtig`;
+        if (typeof r.anteil === 'number') sageAnteil(`${Math.round(r.anteil * 100)} % der Textstellen richtig`);
         if (istObjekt(r.buchstaben)) {
           for (const [g, ok] of Object.entries(r.buchstaben)) {
             const li = eintraege.get(g);
@@ -909,34 +920,43 @@ const KRI = (() => {
       beschrifte(i);
       kontext.geaendert();
     }
+    /** Review M4 K5: roving tabindex – die Bitfolge ist ein Tabstopp (zuletzt fokussiertes Bit), Pfeiltasten wechseln. */
+    function tabStopp(i) {
+      knoepfe.forEach((x, j) => x.setAttribute('tabindex', j === i ? '0' : '-1'));
+    }
+    function geheZu(i) {
+      tabStopp(i);
+      knoepfe[i].focus();
+    }
     let eingabe = null;
     if (op !== 'ascii' || ia.richtung !== 'zu-text') {
       for (let i = 0; i < n; i++) {
         werte.push('');
         const ende = (i + 1) % gruppe === 0 && i < n - 1;
-        const b = h('button', { type: 'button', class: 'bit' + (lawine ? ' lawine' : '') + (ende ? ' gruppe-ende' : '') });
+        const b = h('button', { type: 'button', class: 'bit' + (lawine ? ' lawine' : '') + (ende ? ' gruppe-ende' : ''), tabindex: i === 0 ? '0' : '-1' });
         b.addEventListener('click', () => {
           if (lawine) setzeBit(i, werte[i] === '1' ? '' : '1');
           else setzeBit(i, werte[i] === '' ? '0' : werte[i] === '0' ? '1' : '0');
         });
+        b.addEventListener('focus', () => tabStopp(i));
         b.addEventListener('keydown', (ev) => {
           if (ev.key === 'ArrowLeft' && i > 0) {
             ev.preventDefault();
-            knoepfe[i - 1].focus();
+            geheZu(i - 1);
           } else if (ev.key === 'ArrowRight' && i + 1 < n) {
             ev.preventDefault();
-            knoepfe[i + 1].focus();
+            geheZu(i + 1);
           } else if (ev.key === 'Home' || ev.key === 'End') {
             ev.preventDefault();
-            knoepfe[ev.key === 'Home' ? 0 : n - 1].focus();
+            geheZu(ev.key === 'Home' ? 0 : n - 1);
           } else if (!lawine && (ev.key === '0' || ev.key === '1')) {
             ev.preventDefault();
             setzeBit(i, ev.key);
-            if (i + 1 < n) knoepfe[i + 1].focus();
+            if (i + 1 < n) geheZu(i + 1);
           } else if (!lawine && (ev.key === 'Backspace' || ev.key === 'Delete')) {
             ev.preventDefault();
             setzeBit(i, '');
-            if (ev.key === 'Backspace' && i > 0 && !werte[i]) knoepfe[i - 1].focus();
+            if (ev.key === 'Backspace' && i > 0 && !werte[i]) geheZu(i - 1);
           }
         });
         knoepfe.push(b);

@@ -5,7 +5,7 @@
  * Bit-Aufgabe nur mit keyboard.press und sichtbarem Fokusrahmen.
  */
 const assert = require('node:assert/strict');
-const { anmelden, foto, gehe, keinQuerScrollen, ziele44 } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, ziele44, kontraste } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 
 const VIEWPORTS = [
@@ -49,6 +49,41 @@ async function szenario9(ctx) {
     }
   }
 
+  // Kontraste (Review M4 W1): alle Seiten hell und dunkel, ruhig (keine Einblendungen während der Messung)
+  const gastSeiten = ['/gast#/schueler', '/gast#/schueler/aufgabe/W8-L1-01', '/gast#/lehrkraft/auswertung', '/gast#/lehrkraft/einstellungen'];
+  const verstoesse = [];
+  for (const schema of ['light', 'dark']) {
+    const opt = { colorScheme: schema, reducedMotion: 'reduce' };
+    const p = await neueSeite(ctx, opt, `Kontrast ${schema} (öffentlich)`);
+    const m = await neueSeite(ctx, opt, `Kontrast ${schema} (Mika)`);
+    await anmelden(m.page, ctx, 'Mika R.', '/spiel');
+    const f = await neueSeite(ctx, opt, `Kontrast ${schema} (Frau M.)`);
+    await anmelden(f.page, ctx, 'Frau M.', '/lehrer');
+    const a = await neueSeite(ctx, opt, `Kontrast ${schema} (Admin)`);
+    await anmelden(a.page, ctx, 'Admin', '/lehrer');
+    const runde = [
+      [p.page, [...oeffentlich, ...gastSeiten]],
+      [m.page, schuelerSeiten],
+      [f.page, [...lehrerSeiten, `/lehrer#/kurs/${lk}/schueler`, `/lehrer#/kurs/${lk}/scoreboard`, '/lehrer#/materialien']],
+      [a.page, ['/lehrer#/admin/inhalte', '/lehrer#/admin/wartung']]
+    ];
+    for (const [page, seiten] of runde) {
+      for (const s of seiten) {
+        await gehe(page, ctx.basis + s);
+        await page.waitForTimeout(100);
+        verstoesse.push(...(await kontraste(page, `${schema} ${s}`)));
+      }
+    }
+    // Zustände mit Rückmeldung: falsche Antwort in einer Aufgabe
+    await gehe(m.page, ctx.basis + '/spiel#/aufgabe/W9-L5-05');
+    await m.page.locator('input.chiffre-zeile').fill('QQ');
+    await m.page.locator('#pruefen').click();
+    await m.page.locator('.feedback').first().waitFor();
+    verstoesse.push(...(await kontraste(m.page, `${schema} Aufgabe mit Rückmeldung`)));
+    for (const x of [p, m, f, a]) await x.kontext.close();
+  }
+  assert.deepEqual(verstoesse, [], `Kontraste unter WCAG AA:\n  ${verstoesse.join('\n  ')}`);
+
   // Beamer 1920 × 1080
   await pub.page.setViewportSize({ width: 1920, height: 1080 });
   await pruefeSeite(pub.page, `${ctx.basis}/board/${encodeURIComponent(ctx.boardSchluessel)}`, '1920 Board', 1920);
@@ -84,7 +119,7 @@ async function szenario9(ctx) {
   const fokus = () =>
     ida.page.evaluate(() => {
       const el = document.activeElement;
-      if (!el || el === document.body) return { bit: false, pruefen: false, rahmen: true, text: 'body' };
+      if (!el || el === document.body) return { bit: false, pruefen: false, rahmen: false, text: 'body (Fokus verloren)' };
       const s = getComputedStyle(el);
       return { bit: el.matches('button.bit'), pruefen: el.id === 'pruefen', rahmen: s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0, text: `${el.tagName.toLowerCase()}.${[...el.classList].join('.')} „${(el.textContent || '').trim().slice(0, 30)}“` };
     });
@@ -102,6 +137,15 @@ async function szenario9(ctx) {
   await tabBis('pruefen');
   await ida.page.keyboard.press('Enter');
   await ida.page.locator('.feedback.ok', { hasText: 'Richtig' }).waitFor();
+  // Review M4 W3: Fokus geht nach dem Prüfen nicht verloren, sondern liegt auf der Rückmeldung
+  const nachPruefen = await ida.page.evaluate(() => {
+    const el = document.activeElement;
+    return { body: !el || el === document.body, feedback: !!(el && el.classList.contains('feedback')), text: el ? `${el.tagName.toLowerCase()}.${[...el.classList].join('.')}` : '-' };
+  });
+  assert.ok(!nachPruefen.body && nachPruefen.feedback, `Fokus nach dem Prüfen auf der Rückmeldung (ist ${nachPruefen.text})`);
+  await ida.page.keyboard.press('Tab');
+  const weiter = await fokus();
+  assert.ok(weiter.rahmen, `Tab nach der Rückmeldung: sichtbarer Fokus (${weiter.text})`);
   await ida.kontext.close();
 }
 

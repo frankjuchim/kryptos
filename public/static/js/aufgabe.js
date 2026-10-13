@@ -97,6 +97,7 @@ const AQA = (() => {
       else ctrl.sperren(true);
       if (cfg.abzeichenToast) cfg.abzeichenToast(r.neueAbzeichen);
       knoepfe(true);
+      fokusHalten();
       if (cfg.nachLoesen) cfg.nachLoesen(r);
     }
 
@@ -149,6 +150,7 @@ const AQA = (() => {
         zeigeLoesung(r);
         mount(feedbackBox, h('div', { class: 'feedback info' }, 'Lösung angezeigt. Lies die Erklärung und versuche es später noch einmal.'));
         knoepfe(true);
+        fokusHalten();
       } catch (e) {
         toast(e.message, true);
       }
@@ -159,6 +161,20 @@ const AQA = (() => {
       mount(feedbackBox);
       mount(erklaerungBox);
       knoepfe(false, true);
+    }
+
+    /**
+     * Fokus nach dem Abschluss (Review M4 W3, K36): Der fokussierte Knopf („Prüfen“, „Lösung zeigen“) verschwindet mit
+     * knoepfe(true) – ging der Fokus dabei verloren (body, entfernt, deaktiviert), bekommt ihn die Rückmeldung
+     * (tabindex=-1, Ansage über aria-live), ohne Rückmeldung der Weiter-Link („Nächste Aufgabe“).
+     */
+    function fokusHalten() {
+      const akt = document.activeElement;
+      if (akt && akt !== document.body && akt.isConnected !== false && !akt.disabled) return;
+      const ziel = feedbackBox.firstElementChild || aktionen.querySelector('a, button');
+      if (!ziel) return;
+      if (ziel === feedbackBox.firstElementChild) ziel.setAttribute('tabindex', '-1');
+      ziel.focus();
     }
 
     function knoepfe(fertig, ueben = false) {

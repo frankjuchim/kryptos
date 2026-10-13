@@ -12,7 +12,8 @@
 }
 .tinte { background-color: var(--tinte); }
 .nacht { background-color: var(--nacht); }
-.tinte a, .nacht a, .kopf a { color: var(--auf-tinte); }
+/* Links auf Tinte/Nacht hell – Knöpfe behalten ihre Variantenfarbe (Review M4 W1: Messing-Knopf sonst 2,1 : 1) */
+.tinte a:not(.knopf), .nacht a:not(.knopf), .kopf a:not(.knopf) { color: var(--auf-tinte); }
 .textur, .kopf, .tinte, .nacht, .zeitsprung {
   background-image: var(--textur, none);
   background-repeat: repeat;
@@ -209,8 +210,8 @@
   color: var(--auf-tinte);
 }
 .tinte .knopf-zweit:hover, .nacht .knopf-zweit:hover, .kopf .knopf-zweit:hover { border-color: var(--messing-hell); }
-.tinte .knopf-leise, .nacht .knopf-leise { color: var(--auf-tinte-2); }
-.tinte .knopf-leise:hover, .nacht .knopf-leise:hover { color: var(--auf-tinte); background: var(--tinte-2); }
+.tinte .knopf-leise, .nacht .knopf-leise, .kopf .knopf-leise { color: var(--auf-tinte-2); }
+.tinte .knopf-leise:hover, .nacht .knopf-leise:hover, .kopf .knopf-leise:hover { color: var(--auf-tinte); background: var(--tinte-2); }
 .knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: center; }
 
 /* ---------- Karten ---------- */
