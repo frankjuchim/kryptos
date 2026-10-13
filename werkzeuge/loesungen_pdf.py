@@ -2,8 +2,8 @@
 """Erzeugt alle Lösungen (docx) als PDF in zwei Sortierungen – NUR für die Lehrkraft, nicht für Schüler:
 
   materialien/Loesungen_Portal/<Welt_n_Name>/   je Welt die Lösungsfassungen, gleichnamig zur docx (…_LSG.pdf, …_EH.pdf):
-                                                zu jeder Akte, jedem Papier-Boss, den Warm-up-Karten und Funkraum-Rollenkarten
-                                                aus seed/akten.json (W0–W2) sowie die vorhandenen Lösungen W4–W6
+                                                zu jeder Akte, jedem Papier-Boss, den Warm-up-Karten aus seed/akten.json
+                                                (W0–W2), zu den Funkraum-Rollenkarten aus FUNKRAUM (nur Lehrkraft) sowie die vorhandenen Lösungen W4–W6
                                                 (5_Loesungen: Akten, Bosse) und die Erwartungshorizonte der Klausuren W6
   materialien/Loesungen_Akten/                  dieselben PDFs nach Art: 01_Akten, 02_Bosse_und_Probeklausuren, 03_Klausuren,
                                                 04_Warm-up-Karten, 05_Funkraum
@@ -32,6 +32,14 @@ ART_ORDNER = {"akte": "01_Akten", "boss": "02_Bosse_und_Probeklausuren", "probek
 
 # Welten mit vorhandenem Lehrkraftmaterial, deren Schüler-Akten noch nicht in seed/akten.json stehen (E49; W3 folgt in M8)
 WEITERE_WELTEN = {4: "Welt_4_Schluesselproblem", 5: "Welt_5_Netz", 6: "Welt_6_Zeitmaschine"}
+
+# Funkraum-Rollenkarten W0/W1: enthalten Regie-Teile (erwartete Auswertung, Hinweis- und Befehlskarten) und sind deshalb
+# NUR Lehrkraft-Material (nicht in seed/akten.json; Plan M5 E49 geändert). (Welt, Quelle relativ zu materialien/, Titel);
+# Rollenkarten-PDF: lehrkraft_pdf.py, Lösungsfassung (falls vorhanden): hier.
+FUNKRAUM = [
+    (0, "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx", "Funkraum „Botenlauf“: Rollenkarten"),
+    (1, "Werkzeuge/Funkraum/KR_W1_Funkraum_Wettknacken.docx", "Funkraum „Wettknacken“: Rollenkarten"),
+]
 
 # Erwartungshorizonte der Klausuren W6 (Aufgabenblätter: lehrkraft_pdf.KLAUSUREN)
 KLAUSUREN = [
@@ -99,6 +107,11 @@ def eintraege():
             q = loesung_von(x["quelle"], x["art"])
             if q:
                 neu(q, x["art"], w["welt"], w["ordner"])
+    ordner_von = {w["welt"]: w["ordner"] for w in akten_verzeichnis()["welten"]}
+    for welt, quelle, _ in FUNKRAUM:
+        q = loesung_von(quelle, "funkraum")
+        if q:
+            neu(q, "funkraum", welt, ordner_von[welt])
     klausuren = {q for q, _ in KLAUSUREN}
     for nr, ordner in WEITERE_WELTEN.items():
         for p in sorted((welt_quellordner(nr) / "5_Loesungen").glob("*.docx")):

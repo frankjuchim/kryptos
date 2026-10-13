@@ -38,8 +38,17 @@ test('akten.json: jede Quelle existiert, jede Datei ist .pdf, keine Lösungen/Er
   assert.equal(AKTEN.werkzeugkarten.length, 7);
   assert.deepEqual(AKTEN.werkzeugkarten.map((w) => w.nr), [1, 2, 3, 4, 5, 6, 7]);
   for (const w of AKTEN.welten) {
-    for (const x of w.weitere || []) assert.ok(['boss', 'probeklausur', 'warmup', 'funkraum'].includes(x.art), x.art);
+    for (const x of w.weitere || []) assert.ok(['boss', 'probeklausur', 'warmup'].includes(x.art), x.art);
   }
+});
+
+test('Funkraum-Rollenkarten (Regie-Teile) nie im Schülerbereich: nicht in akten.json, nicht in Akten_PDF (E49 geändert)', () => {
+  for (const e of alleEintraege()) {
+    assert.ok(!/funkraum/i.test(e.quelle) && !/funkraum/i.test(e.datei), `Funkraum im Schülerverzeichnis: ${e.quelle}`);
+  }
+  const pdfDir = path.join(MAT, 'Akten_PDF');
+  const alle = fs.existsSync(pdfDir) ? fs.readdirSync(pdfDir, { recursive: true }).map(String) : [];
+  assert.deepEqual(alle.filter((p) => /funkraum/i.test(p)), []);
 });
 
 test('akten.json ↔ Seeds W0–W2: jede Akte verweist auf vorhandene Level, jedes Level hat genau eine Akte', () => {
@@ -75,6 +84,24 @@ const ohnePypdf = python.error || python.status !== 0 ? 'python3/pypdf fehlen �
 test('Akten-PDFs vollständig, ohne überzählige Dateien und ohne Lösungsstempel (akten_pdf.py --pruefen)', { skip: ohnePypdf }, () => {
   const r = spawnSync('python3', ['-I', path.join(WURZEL, 'werkzeuge/akten_pdf.py'), '--pruefen'], { cwd: WURZEL, encoding: 'utf8', timeout: 300000 });
   assert.equal(r.status, 0, r.stdout + r.stderr);
+});
+
+test('akten_pdf.py --pruefen: Funkraum-Eintrag im Schülerverzeichnis ist ein Fehler', { skip: ohnePypdf }, () => {
+  const os = require('node:os');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'akten-funk-'));
+  try {
+    const akten = JSON.parse(JSON.stringify(AKTEN));
+    akten.welten[0].weitere.push({ art: 'funkraum', titel: 'Funkraum „Botenlauf“: Rollenkarten',
+      quelle: 'Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx', datei: 'KR_W0_Funkraum_Botenlauf.pdf' });
+    const datei = path.join(tmp, 'akten.json');
+    fs.writeFileSync(datei, JSON.stringify(akten));
+    const r = spawnSync('python3', ['-I', path.join(WURZEL, 'werkzeuge/akten_pdf.py'), '--pruefen', '--verzeichnis', datei],
+      { cwd: WURZEL, encoding: 'utf8', timeout: 300000 });
+    assert.equal(r.status, 1, r.stdout + r.stderr);
+    assert.match(r.stdout, /Funkraum.*nur Lehrkr/i);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test('Validator: keine Hinweise „akte ↔ akten.json“ für die echten Seeds', () => {

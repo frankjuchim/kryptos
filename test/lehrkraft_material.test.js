@@ -137,6 +137,13 @@ test('echtes verzeichnis.json: Pfade vorhanden, Lösungen/EH/Klausuren nie unter
       assert.deepEqual(e.dateien.map((d) => d.label), ['Akte', 'Lösung'], e.titel);
     }
   }
+  // Funkraum-Rollenkarten (Regie-Teile) nur für Lehrkräfte (E49 geändert): W0/W1 unter Lehrkraft_PDF, nie unter Akten_PDF
+  for (const p of pfade) assert.ok(!(p.startsWith('Akten_PDF/') && /funkraum/i.test(p)), `Funkraum im Schülerbereich: ${p}`);
+  for (const nr of [0, 1]) {
+    const funk = v.welten.find((x) => x.welt === nr).eintraege.filter((e) => e.art === 'funkraum');
+    assert.equal(funk.length, 1, `Welt ${nr}: Funkraum-Rollenkarten`);
+    assert.match(funk[0].dateien[0].pfad, /^Lehrkraft_PDF\/Welt_\d_\w+\/KR_W\d_Funkraum_\w+\.pdf$/);
+  }
   assert.equal(v.welten.find((x) => x.welt === 0).eintraege[0].titel, 'Kickoff-Präsentation (Start der Einheit)', 'Kickoff zuerst');
   const w6 = v.welten.find((x) => x.welt === 6);
   assert.equal(w6.eintraege.filter((e) => e.art === 'klausur').length, 4, 'Klausur und Nachschreibklausur je eA/gA');
@@ -165,6 +172,6 @@ test('echtes Material: Schülerfassungen (Akten_PDF/…) zeigen auf /akten/…',
   const { lk } = await H.szenario({ seedDir: SEED, materialienDir: ECHT, arbeitsblaetterDir: path.join(ECHT, 'Akten_PDF') });
   const m = (await lk.get('/api/lehrer/materialien').expect(200)).body;
   const schueler = alleDateien(m).filter((d) => !d.lehrkraft);
-  assert.ok(schueler.length >= 27);
+  assert.ok(schueler.length >= 25);
   for (const d of schueler) assert.match(d.url, /^\/akten\//);
 });

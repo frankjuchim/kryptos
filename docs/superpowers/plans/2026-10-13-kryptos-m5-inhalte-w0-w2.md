@@ -104,7 +104,7 @@ Nummern setzen die M4-Liste (E17–E37) fort.
 | E46 | Generator-Wortlisten: W0 §8/W1 §8 verlangen „keine Wörter aus Lab, Akten, Bossen und Videos“, nennen aber selbst Beispiele, die dort vorkommen (`legion` W0-L4-03, `forum` W0-B-15, `tribun` W0-B-14, `tigris` W1-L1-03, `sultan` W1-L1-01 …); W2 §8 schließt nur Video-Wörter aus, seine Beispiele (`kanal`/`ROT` = W2-B-02, `maskenball`/`VELA` = W2-B-06, `gondel`, `palazzo`, `seidenhandel`, `hafenmauer`) erzeugen Boss-/Lab-Aufgaben 1 : 1 | **Regel vor Beispiel**, für alle drei Welten: kein Generator-Wort kommt in Lab, Akten, Bossen, Warm-up, Präsentationen, Funkraum-Material, Gast-Demo oder Videos vor (Abgleich-Test, Task 90). Kollidierende Spec-Beispiele werden ersetzt; vorgeschlagene Listen in Task 90 (offene Entscheidung 1) | Task 90 (SPEC W0 §8, W1 §8, W2 §8: Beispiele ersetzen, Regel ergänzen) |
 | E47 | Warm-up-Karten: Spec §7 (Text) und `quellen/material/W*/warmup_W*.json` (Titel teils abweichend, z. B. WU-W1-10 „Spirale W0“ ↔ „Spirale W0 · Caesar“) | Aufgabe/Lösung wörtlich aus Spec §7, `titel` und `kategorie` aus der Materialquelle (die gebaute `.docx` ist maßgeblich); Test vergleicht ids, Titel, Kategorie, Minuten mit der Materialquelle | Task 89 |
 | E48 | Sichtbarkeit der Akten: Design §10.3 und TECHNIK §14.1 „öffentlich (`/themen`)“; Kern (Algo Quest 2.8.2), `src/app.js` (K20) und Lehrkraft-Auftrag: Schülerfassungen **nur nach Anmeldung**, ohne Anmeldung nur die Demo-PDFs aus `seed/demo_materialien.json` | Code-Stand gilt (nur nach Anmeldung, Demo-PDFs öffentlich) – Design §10.3 sagt selbst „wie AlgoQuest“; Wortlaut in Design §10.3 und TECHNIK §14.1 angleichen (offene Entscheidung 3) | Task 97 |
-| E49 | Material-Umfang: `materialien/` enthält W4–W6 als `.docx`, W0–W3 fehlen (nur Lehrerhinweise und Warm-up für alle); M5-Abnahme nennt W0–W2 | M5 baut W0–W2 (+ Kickoff); W3 baut M8. Die PDF-Skripte verarbeiten **alles Vorhandene**: `Akten_PDF`/`seed/akten.json` = W0–W2 + Werkzeugkarten + Funkraum-Rollenkarten W0/W1; `Lehrkraft_PDF`/`Loesungen_Portal` = W0–W2 und die vorhandenen W4–W6-Lehrkraftdateien (Präsentationen, Lehrerhinweise, Klausuren mit EH), weil Lehrkräfte sie jetzt brauchen; Akten W4–W6 kommen mit ihren Seeds (M8) ins Schüler-Verzeichnis (offene Entscheidung 7) | Task 95 |
+| E49 | Material-Umfang: `materialien/` enthält W4–W6 als `.docx`, W0–W3 fehlen (nur Lehrerhinweise und Warm-up für alle); M5-Abnahme nennt W0–W2 | M5 baut W0–W2 (+ Kickoff); W3 baut M8. Die PDF-Skripte verarbeiten **alles Vorhandene**: `Akten_PDF`/`seed/akten.json` = W0–W2 + Werkzeugkarten (**geändert nach Task 96:** Funkraum-Rollenkarten W0/W1 enthalten Regie-Teile – erwartete Auswertung, Hinweiskarten wie „U ≙ e“, Befehlskarten – und werden **nur an Lehrkräfte** ausgeliefert: `Lehrkraft_PDF/<Welt>/` + Eintrag `art: funkraum` in `verzeichnis.json`, Liste `loesungen_pdf.FUNKRAUM`; nicht in `akten.json`/`Akten_PDF`, `akten_pdf.py --pruefen` meldet Funkraum-Dateien im Schülerbereich als Fehler); `Lehrkraft_PDF`/`Loesungen_Portal` = W0–W2 und die vorhandenen W4–W6-Lehrkraftdateien (Präsentationen, Lehrerhinweise, Klausuren mit EH), weil Lehrkräfte sie jetzt brauchen; Akten W4–W6 kommen mit ihren Seeds (M8) ins Schüler-Verzeichnis (offene Entscheidung 7) | Task 95 |
 | E50 | QR-Codes der Akten (`kr_docx.py` `imlab`) zeigen auf `https://kryptos.frankjuchim.de/level/<nr>` (z. B. `/level/0.1`, `/level/K1`); die Route fehlt | `GET /level/:nr` (öffentlich): bekannte `nr` → 302 `/spiel#/level/<id>` (der Wächter von `/spiel` übernimmt die Anmeldung), unbekannt → 404-Seite | Task 98 |
 | E51 | `seed/videos.json`: Videos sind „NICHT öffentlich bis zur Veröffentlichung“ (`materialien/Videos/00_Uebersicht.md`); Validator meldet `video.nr` ohne URL als Hinweis | `seed/videos.json` = `{ "videos": [ { "nr", "titel", "url": null } ] }` für 0–7 (Titel aus Design §11); Hinweis nur, wenn die `nr` **fehlt**; Level-Seite verlinkt erst mit `url` (E35) | Task 98 |
 | E52 | Boss-Rahmentext (Specs §5 „Rahmentext (geduzt)“) hat kein Feld im Format | neues optionales Boss-Feld `rahmen` (Mini-Markdown, ≤ 800 Zeichen, keine Lösungen) – Validator, Inhalte-Dienst, Boss-Startseite | Task 72 (Delta §10, TECHNIK §13.1) |
@@ -1438,7 +1438,9 @@ Spec §3 ohne Klammerzusatz, `ds`/`niveau` aus den Seeds, K1 `ds: []`), je Welt 
 27 PDFs, 6,9 MB. `akten_pdf.py --pruefen` prüft zusätzlich Lösungsstempel per pypdf (gegen `_LSG`/`_EH`-PDFs gegengeprüft).
 Angesehen: alle Akten/Bosse (Task 93, gleiche Quellen), Warm-up W0–W2 (ohne Rückseiten), Funkraum W0/W1, WK2, Boss W2.
 **Zur Kenntnis/Frage:** Die Funkraum-Rollenkarten enthalten Regie-Teile (erwartete Auswertung, Hinweiskarten „U ≙ e“, Befehlskarten) –
-Teil des Plans (E49), aber für Schülerinnen und Schüler nach Anmeldung abrufbar.
+Teil des Plans (E49), aber für Schülerinnen und Schüler nach Anmeldung abrufbar. **Erledigt (E49 geändert):** Rollenkarten nur noch im
+Lehrkraft-Bereich (`Lehrkraft_PDF/Welt_0_Antike/KR_W0_Funkraum_Botenlauf.pdf`, `…/Welt_1_Bagdad/KR_W1_Funkraum_Wettknacken.pdf`),
+`seed/akten.json` und `Akten_PDF` ohne Funkraum (25 statt 27 PDFs).
 
 ### Task 96: `loesungen_pdf.py` und `lehrkraft_pdf.py` → `Loesungen_Portal`, `Loesungen_Akten`, `Lehrkraft_PDF`
 
@@ -1672,7 +1674,7 @@ Generatoren/Werkzeuge, §13.1, §14, §15, §16), `docs/AUFGABENFORMAT_KRYPTO.md
 | W0 §7 | WU-W0-01 … 12 | 89 |
 | W0 §8 | `caesar_ver/_ent`, `caesar_paar`, `mod_a1` (M3), `skytale`; `WOERTER_ANTIKE` | 91, 90 |
 | W0 §3, §4, §6 | Akten W0·1–4 (+ LSG), Präsentation + Kickoff, Papier-Boss (+ EH) | 93, 95, 96 |
-| W0 §9 | Werkzeuge Skytale & Gitter, Chiffrierscheibe; Funkraum Botenlauf | M6/M7 (Rollenkarten-PDF: 95) |
+| W0 §9 | Werkzeuge Skytale & Gitter, Chiffrierscheibe; Funkraum Botenlauf | M6/M7 (Rollenkarten-PDF nur Lehrkraft: 96, E49 geändert) |
 | W0 §10, §11, §12 | Lehrerhinweise (vorhanden → PDF 96); Abdeckungsmatrix (alle ids im Seed: 73); Prüfprotokoll (Prüfwerte: 73) | 73, 96 |
 | W1 Festlegungen 1–3, §0.1, §0.3 | Welt-Felder W1, Archivfund W1-AF → W1-A-01 | 79 |
 | W1 §2 Level 1.1 | W1-L1-01 … 08 (8) | 79 |
@@ -1682,7 +1684,7 @@ Generatoren/Werkzeuge, §13.1, §14, §15, §16), `docs/AUFGABENFORMAT_KRYPTO.md
 | W1 §7 | WU-W1-01 … 12 | 89 |
 | W1 §8 | `schluesselwort_alphabet`, `affin`, `invers_mod26` (M3, ergänzt), `substitution_ver_ent`, `haeufigkeit_caesar`; Listen | 91, 90 |
 | W1 §3, §4, §6 | Akten W1·1–3, Präsentation, Papier-Boss Gewürzliste | 93, 95, 96 |
-| W1 §9, §10–§12 | Werkzeuge/Funkraum (M6/M7; Rollenkarten + LSG als PDF), Lehrerhinweise, Abdeckung, Prüfprotokoll | 95, 96, 73 |
+| W1 §9, §10–§12 | Werkzeuge/Funkraum (M6/M7; Rollenkarten + LSG als Lehrkraft-PDF, E49 geändert), Lehrerhinweise, Abdeckung, Prüfprotokoll | 96, 73 |
 | W2 §0.1, §0.3, §0.8 | Welt-Felder W2, Archivfund W2-A → W2-A-01, `kapitel` | 83 |
 | W2 §2 Level 2.1 | W2-L21-01 … 08 → W2-L1-01 … 08 | 83 |
 | W2 §2 Level 2.2 | W2-L22-01 … 08 → W2-L2-01 … 08 | 84 |

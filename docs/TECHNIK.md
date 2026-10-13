@@ -1545,17 +1545,20 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
                    "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte2_Kasiskis_Spur.docx",
                    "datei": "KR_W2_Akte2_Kasiskis_Spur.pdf" } ],
       "weitere": [ { "art": "boss", "titel": "Papier-Boss: Das Zwei-Quadrat", "quelle": "…/4_Boss/KR_W2_Boss2_Zwei-Quadrat.docx", "datei": "KR_W2_Boss2_Zwei-Quadrat.pdf" },
-                   { "art": "warmup", "titel": "Warm-up-Karten Welt 2", "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx", "datei": "KR_W2_Warmup.pdf" },
-                   { "art": "funkraum", "titel": "Funkraum „Botenlauf“: Rollenkarten", "quelle": "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx", "datei": "KR_W0_Funkraum_Botenlauf.pdf" } ] } ] }
+                   { "art": "warmup", "titel": "Warm-up-Karten Welt 2", "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx", "datei": "KR_W2_Warmup.pdf" } ] } ] }
 ```
 
 `werkzeugkarten` ist eine **Liste** (WK1–WK6, `nr` 7 = Abitur-Anlage), PDFs unter `00_Werkzeugkarten/`. `nr` der Akten ist
-eine Zeichenkette (`"1"` … , Kür `"K1"` mit `niveau: "kuer"`). `art` ∈ `boss | probeklausur | warmup | funkraum`; Warm-up-Karten
+eine Zeichenkette (`"1"` … , Kür `"K1"` mit `niveau: "kuer"`). `art` ∈ `boss | probeklausur | warmup`. **Funkraum-Rollenkarten** enthalten Regie-Teile (erwartete
+Auswertung, Hinweiskarten wie „U ≙ e“, Befehlskarten) und stehen deshalb **nicht** in `akten.json`, sondern nur im
+Lehrkraft-Verzeichnis (`loesungen_pdf.FUNKRAUM` → `Lehrkraft_PDF/<Welt>/KR_W<n>_Funkraum_<Szenario>.pdf`, Lösungsfassung in
+`Loesungen_Portal`; Plan M5 E49 geändert); `akten_pdf.py --pruefen` meldet jede Funkraum-Datei im Schülerbereich als Fehler. Warm-up-Karten
 haben in Kryptos eine eigene Lösungsdatei (`_LSG`), `ohneLoesungsteil` (Schnitt vor „Lösungen der Warm-up-Karten“, Kern)
 wird deshalb nicht gebraucht. `level` verknüpft Akte ↔ Level (zusätzlich zur Kern-Logik über `akte: "Akte W2·2 …"`); der
 Validator-Hook `dateien` (`src/krypto/validierung.js`) liest `akten.json` neben dem Ordner der Welt-Datei und prüft beide
 Richtungen (Hinweis „akte ↔ akten.json“). Erzeugen/prüfen: `python3 werkzeuge/akten_pdf.py [--pruefen]` (`--pruefen`:
-Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, kein Lösungsstempel im PDF-Text; `test/akten.test.js`).
+Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, keine Funkraum-Datei, kein Lösungsstempel im PDF-Text;
+`test/akten.test.js`).
 
 ### 14.3 Werkzeuge (übernommen und angepasst)
 
@@ -1563,7 +1566,7 @@ Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, kein L�
 |---|---|---|
 | `werkzeuge/akten_pdf.py` | `arbeitsblaetter_pdf.py` | liest `seed/akten.json`, Ziel `materialien/Akten_PDF`, Lösungsteil-Marker „Lösungen der Warm-up-Karten“ bleibt; `--pruefen` |
 | `werkzeuge/loesungen_pdf.py` | übernommen | Quellmuster `_LSG`/`_EH` je Akte/Boss, `KLAUSUREN`-Liste Kryptos (Probeklausur eA/gA, Klausur/Nachschreibklausur eA/gA mit EH); Ziele `Loesungen_Portal`, `Loesungen_Akten` |
-| `werkzeuge/lehrkraft_pdf.py` | übernommen | `welt_quellordner` → `Welt<N>_<Name>`, `GESAMT` → `KR_Gesamtuebersicht_DS1-18`, Präfix `Akten_PDF/` für öffentliche Verweise, Funkraum-Rollenkarten |
+| `werkzeuge/lehrkraft_pdf.py` | übernommen | `welt_quellordner` → `Welt<N>_<Name>`, `GESAMT` → `KR_Gesamtuebersicht_DS1-18`, Präfix `Akten_PDF/` für Schülerfassungen, Funkraum-Rollenkarten W0/W1 nur als Lehrkraft-PDF (`Lehrkraft_PDF/`) |
 | `werkzeuge/video_folien.py`, `video_bilder.js` | übernommen | Branding aus `video.json` (Kanal „frankjuchim“, „Kryptos #N“), Bilder über `render.js` **+ Krypto-Renderer** (Skript lädt `shared/krypto.js`, `krypto/bloecke.js`); Kamera-Zone unverändert |
 | `werkzeuge/materialien_pruefen.py` | übernommen, Regeln ersetzt | Altbegriffe (Chiffrat, Friedmann, Merkel, Kerkhoff, Kata, XP), Nummerierungshinweis je Akte, Geheimtexte in Fünfergruppen (Consolas-Läufe), Operatoren aus KC-Liste fett, BE-Summen von Bossen/Klausuren (eA 30/gA 25 je Aufgabe), Struktogramm-Regeln EH §5 bleiben; `--rendern` |
 | `werkzeuge/workspaces_erzeugen.py`, `ide-pruefung/ide_pruefen.py` | übernommen (M5 Task 94) | Gerüste `CaesarWerkstatt` (W0, vorhanden), `MeineChiffre` (W3, M8), Kür-Vigenère-Knacker (Idee); NI-Bibliothek/Grafik-Nachbau entfernt (nicht benötigt), Testrunner (`java/aq/ide`) bleibt und gibt zusätzlich die Hauptprogramm-Ausgabe aus (`AUSGABE …`, im JSON-Bericht `ausgabe`, dazu `gruen`/`gesamt`); Workspaces je Welt `materialien/Online-IDE/KR_Welt<N>_<Name>_Workspaces.json`, Musterlösungen `Online-IDE/Lehrkraft/KR_Welt<N>_<Name>_LSG_Workspaces.json`; Prüfung `test/material_pipeline.test.js` (ohne `javac` übersprungen) |

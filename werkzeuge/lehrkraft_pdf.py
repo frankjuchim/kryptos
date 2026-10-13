@@ -3,6 +3,7 @@
 
   Lehrkraft_PDF/00_Allgemein/        Gesamtübersicht DS 1–18
   Lehrkraft_PDF/Welt_<n>_<Name>/     Präsentationen (pptx → PDF, Kickoff zuerst), Lehrerhinweise der Welt,
+                                     Funkraum-Rollenkarten W0/W1 (Regie-Teile, nie im Schülerbereich; Plan M5 E49 geändert),
                                      in Welt 6 zusätzlich Klausur, Nachschreibklausur und Probeklausur je eA/gA (Aufgaben)
   Lehrkraft_PDF/verzeichnis.json     Verzeichnis für das Lab: je Welt alle Materialien mit Schülerfassung
                                      (Akten_PDF, Schülerbereich) und Lehrkraft-Dateien (Lösungen aus Loesungen_Portal,
@@ -115,13 +116,24 @@ def plan():
                                   "dateien": [datei("Akte", f"{AKTEN_PDF}/{o}/{a['datei']}"),
                                               datei("Lösung", lsg[L.loesung_von(a["quelle"], "akte")])]})
             for x in aw.get("weitere", []):
-                label = {"boss": "Papier-Boss", "probeklausur": "Probeklausur", "warmup": "Karten (ohne Lösungen)",
-                         "funkraum": "Rollenkarten"}[x["art"]]
+                if x["art"] == "funkraum":
+                    sys.exit(f"Funkraum-Rollenkarten gehören nicht in seed/akten.json (nur Lehrkraft): {x['quelle']}")
+                label = {"boss": "Papier-Boss", "probeklausur": "Probeklausur", "warmup": "Karten (ohne Lösungen)"}[x["art"]]
                 dateien = [datei(label, f"{AKTEN_PDF}/{o}/{x['datei']}")]
                 q = L.loesung_von(x["quelle"], x["art"])
                 if q:
                     dateien.append(datei("Erwartungshorizont" if x["art"] in ("boss", "probeklausur") else "Lösungen", lsg[q]))
                 eintraege.append({"art": x["art"], "titel": x["titel"], "dateien": dateien})
+            for welt, quelle, titel in L.FUNKRAUM:
+                if welt != nr:
+                    continue
+                ziel = f"Lehrkraft_PDF/{o}/{Path(quelle).stem}.pdf"
+                render.append((quelle, ziel))
+                dateien = [datei("Rollenkarten", ziel)]
+                q = L.loesung_von(quelle, "funkraum")
+                if q:
+                    dateien.append(datei("Lösungen", lsg[q]))
+                eintraege.append({"art": "funkraum", "titel": titel, "dateien": dateien})
         else:
             # W4–W6: nur Lehrkraft-Dateien (Schüler-Akten kommen mit den Seeds, M8)
             klausur_eh = {q for q, _ in L.KLAUSUREN}
@@ -176,6 +188,8 @@ def main():
         probleme += [f"fehlt: materialien/{p}" for p in alle_pfade(verzeichnis) if not (MAT / p).exists()]
         probleme += [f"Lösung im Schülerbereich: {p}" for p in alle_pfade(verzeichnis)
                      if p.startswith(AKTEN_PDF + "/") and re.search(r"_LSG|_EH|Klausur", p)]
+        probleme += [f"Funkraum-Rollenkarten (Regie) im Schülerbereich: {p}" for p in alle_pfade(verzeichnis)
+                     if p.startswith(AKTEN_PDF + "/") and re.search(r"funkraum", p, re.I)]
         for p in probleme:
             print("✘ " + p)
         print(f"{len(alle_pfade(verzeichnis))} Lehrkraft-Downloads verzeichnet, {len(probleme)} Problem(e).")

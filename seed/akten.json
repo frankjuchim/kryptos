@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, Demo-PDFs siehe demo_materialien.json; vorläufig festgelegt, Plan M5 offene Entscheidung 3). Quelle der PDFs in materialien/Akten_PDF (python3 werkzeuge/akten_pdf.py) und der Verweise auf der Themenseite. 'nr' = Aktennummer innerhalb der Welt (Kür „K1“), 'level' = Level-ids der Seeds (Validator prüft level.akte ↔ akten.json). 'weitere'.art: boss | probeklausur | warmup | funkraum. Nie Lösungen, Erwartungshorizonte, Klausuren.",
+  "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, Demo-PDFs siehe demo_materialien.json; vorläufig festgelegt, Plan M5 offene Entscheidung 3). Quelle der PDFs in materialien/Akten_PDF (python3 werkzeuge/akten_pdf.py) und der Verweise auf der Themenseite. 'nr' = Aktennummer innerhalb der Welt (Kür „K1“), 'level' = Level-ids der Seeds (Validator prüft level.akte ↔ akten.json). 'weitere'.art: boss | probeklausur | warmup. Funkraum-Rollenkarten enthalten Regie-Teile und stehen nur im Lehrkraft-Verzeichnis (werkzeuge/lehrkraft_pdf.py, Plan M5 E49 geändert). Nie Lösungen, Erwartungshorizonte, Klausuren.",
   "werkzeugkarten": [
     {
       "nr": 1,
@@ -114,12 +114,6 @@
           "titel": "Warm-up-Karten Welt 0",
           "quelle": "Werkzeuge/Warm-up-Karten/KR_W0_Warmup.docx",
           "datei": "KR_W0_Warmup.pdf"
-        },
-        {
-          "art": "funkraum",
-          "titel": "Funkraum „Botenlauf“: Rollenkarten",
-          "quelle": "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx",
-          "datei": "KR_W0_Funkraum_Botenlauf.pdf"
         }
       ]
     },
@@ -179,12 +173,6 @@
           "titel": "Warm-up-Karten Welt 1",
           "quelle": "Werkzeuge/Warm-up-Karten/KR_W1_Warmup.docx",
           "datei": "KR_W1_Warmup.pdf"
-        },
-        {
-          "art": "funkraum",
-          "titel": "Funkraum „Wettknacken“: Rollenkarten",
-          "quelle": "Werkzeuge/Funkraum/KR_W1_Funkraum_Wettknacken.docx",
-          "datei": "KR_W1_Funkraum_Wettknacken.pdf"
         }
       ]
     },

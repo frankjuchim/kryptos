@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Erzeugt materialien/Akten_PDF: alle Schülermaterialien als PDF – Akten, Werkzeugkarten, Papier-Bosse, Warm-up-Karten
-(Schülerfassung) und Funkraum-Rollenkarten –, sortiert nach Welten, mit sprechenden Dateinamen ohne Umlaute.
+"""Erzeugt materialien/Akten_PDF: alle Schülermaterialien als PDF – Akten, Werkzeugkarten, Papier-Bosse und Warm-up-Karten
+(Schülerfassung) –, sortiert nach Welten, mit sprechenden Dateinamen ohne Umlaute. Funkraum-Rollenkarten enthalten
+Regie-Teile (erwartete Auswertung, Hinweis- und Befehlskarten) und gehören NICHT hierher, sondern nur in den
+Lehrkraft-Bereich (werkzeuge/lehrkraft_pdf.py; Plan M5 E49 geändert).
 
 Übernommen aus Algo Quest 2.8.2 (werkzeuge/arbeitsblaetter_pdf.py, TECHNIK §14.3) und auf Kryptos umgestellt:
 Verzeichnis seed/akten.json (Werkzeugkarten als Liste, Welten mit `akten` und `weitere`), Ziel materialien/Akten_PDF.
@@ -8,9 +10,11 @@ Die Warm-up-Karten haben in Kryptos eine eigene Lösungsfassung (`_LSG`); der L�
 (`ohneLoesungsteil`) bleibt für Einträge mit diesem Feld erhalten.
 Umwandlung mit LibreOffice (soffice, eigenes Profil); Calibri wird dabei durch das maßgleiche Carlito ersetzt.
 
-Aufruf: python3 werkzeuge/akten_pdf.py [--pruefen]
+Aufruf: python3 werkzeuge/akten_pdf.py [--pruefen] [--verzeichnis <akten.json>]
   --pruefen: nichts erzeugen; Exit-Code 1, wenn eine PDF fehlt oder überzählig ist, ein Name nach Lösung klingt
-             (_LSG, _EH, Klausur) oder eine PDF einen Lösungsstempel enthält (pypdf nötig).
+             (_LSG, _EH, Klausur), eine Funkraum-Datei im Schülerbereich liegt oder eine PDF einen Lösungsstempel
+             enthält (pypdf nötig).
+  --verzeichnis: anderes Verzeichnis statt seed/akten.json (für Tests).
 """
 import json
 import re
@@ -26,13 +30,21 @@ ZIEL = MAT / "Akten_PDF"
 
 LOESUNGSTEIL = "Lösungen der Warm-up-Karten"
 VERBOTENE_NAMEN = re.compile(r"_LSG|_EH\b|_EH\.|Klausur|Loesung|Erwartungshorizont", re.I)
+# Regie-Material nur für Lehrkräfte (Funkraum-Rollenkarten mit erwarteter Auswertung, Hinweis- und Befehlskarten)
+NUR_LEHRKRAFT = re.compile(r"funkraum", re.I)
 # Stempel der Lösungsfassungen (kr_docx.py): Kopfband, Lösungskästen, Erwartungshorizont, Warm-up-Rückseite
 STEMPEL = ("NUR FÜR LEHRKRÄFTE", "ENTSCHLÜSSELT", "ERWARTUNGSHORIZONT", "Erwartungshorizont", "RÜCKSEITE · LÖSUNG")
 
 
+def verzeichnis_pfad():
+    if "--verzeichnis" in sys.argv:
+        return Path(sys.argv[sys.argv.index("--verzeichnis") + 1])
+    return REPO / "seed" / "akten.json"
+
+
 def eintraege():
     """[(quelle relativ zu materialien/, ziel relativ zu Akten_PDF/, ohne_loesungsteil)]"""
-    v = json.loads((REPO / "seed" / "akten.json").read_text(encoding="utf-8"))
+    v = json.loads(verzeichnis_pfad().read_text(encoding="utf-8"))
     erg = [(w["quelle"], w["datei"], False) for w in v["werkzeugkarten"]]
     for w in v["welten"]:
         for a in w["akten"]:
@@ -76,6 +88,11 @@ def pruefen(soll):
     for q, d, _ in soll:
         if VERBOTENE_NAMEN.search(q) or VERBOTENE_NAMEN.search(d):
             probleme.append(f"Lösungsdatei im Schülerverzeichnis: {q} → {d}")
+        if NUR_LEHRKRAFT.search(q) or NUR_LEHRKRAFT.search(d):
+            probleme.append(f"Funkraum-Rollenkarten (Regie-Teile) sind nur Lehrkraft-Material: {q} → {d}")
+    for p in sorted(vorhanden):
+        if NUR_LEHRKRAFT.search(p):
+            probleme.append(f"Funkraum-Datei im Schülerbereich, nur Lehrkraft-Material: materialien/Akten_PDF/{p}")
     try:
         import pypdf  # noqa: F401
     except ImportError:
