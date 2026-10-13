@@ -14,6 +14,21 @@ test('Labor-Seite: Raster nach Epoche, gesperrt mit Grund, Boss-Banner', async (
   assert.match(k.text(k.eins(haupt, '.werkzeug-karte.gesperrt')), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
 });
 
+test('Labor-Seite: Umgebung aus /api/labor (niveau, welten) an KRLabor.oeffne; Lehrkraft sieht Reiter-Hinweis (M6 Task 110)', async () => {
+  const werkzeuge = [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, frei: true, grund: null }];
+  const k = D.lade([...BASIS, 'krypto/labor/registry.js', 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/vigenere', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'gA', welten: [0, 1, 2], werkzeuge } } } });
+  k.wert('globalThis.__oeffne = []; KRLabor.oeffne = (id, v, f, u) => { __oeffne.push([id, v, u]); return { schliesse() {} }; };');
+  await k.ruhe();
+  assert.deepEqual(k.roh(k.wert('__oeffne')), [['vigenere', {}, { modus: 'labor', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]]);
+  assert.doesNotMatch(k.text(k.document.getElementById('haupt')), /Reiter-Regeln/);
+  const SITZUNG_L0 = { rolle: 'lehrkraft', name: 'Frau M.', kurse: [], portal: 'https://portal.test', version: '0.2.0' };
+  const l = D.lade([...BASIS, 'krypto/labor/registry.js', 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/vigenere', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_L0 }, 'GET /api/lehrer/werkzeuge': { status: 200, body: [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, gast: false }] } } });
+  l.wert('globalThis.__oeffne = []; KRLabor.oeffne = (id, v, f, u) => { __oeffne.push([id, v, u]); return { schliesse() {} }; };');
+  await l.ruhe();
+  assert.deepEqual(l.roh(l.wert('__oeffne')), [['vigenere', {}, { modus: 'labor', rolle: 'lehrkraft' }]]);
+  assert.match(l.text(l.document.getElementById('haupt')), /Für Schülerinnen und Schüler gelten Reiter-Regeln \(Welt, Niveau\)\./);
+});
+
 /* ---------- Schüler-Seite (M4 Tasks 57–60) ---------- */
 const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js'];
 const welt = (nr, extra = {}) => ({ nr, titel: `Welt ${nr}`, epoche: 'Testepoche', jahr: { von: 1900 + nr, bis: 2000, anzeige: '1900 – 2000' }, farbe: '#5B6B7C', akzentHell: '#C9D3DD', frei: true, punkte: 10, maxPunkte: 40, anteil: 0.25, training: true, archivfund: { titel: 'Die Testdepesche', status: 'offen' }, kapitel: null, boss: { titel: 'Testboss', frei: false, grund: 'Erst 60 % der Level-Punkte.', besiegt: false }, levels: [{ id: `W${nr}-L1`, nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', akte: 'Akte W9·1 – Blöcke und Lücken', anzahl: 4, geloest: 4, punkte: 40, maxPunkte: 40, anteil: 1 }, { id: `W${nr}-L3`, nr: '3', titel: 'Analyse', niveau: 'eA', rolle: 'kryptoanalyse', anzahl: 2, geloest: 0, punkte: 0, maxPunkte: 20, anteil: 0 }, { id: `W${nr}-L4`, nr: 'K1', titel: 'Kür', niveau: 'kuer', kuer: true, rolle: 'kryptoanalyse', anzahl: 1, geloest: 0, punkte: 0, maxPunkte: 10, anteil: 0 }], ...extra });

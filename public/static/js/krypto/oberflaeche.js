@@ -237,5 +237,5 @@ const KR = (() => {
     if (mq && typeof mq.addEventListener === 'function') mq.addEventListener('change', weltfarbeAnwenden);
   }
 
-  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, RAENGE, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
+  return { VERSION, thema, bewegung, epoche, KATEGORIEN, FALLEN, RAENGE, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

@@ -1228,6 +1228,17 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 - Jedes Werkzeugmodul (`public/static/js/krypto/labor/<id>.js`) exportiert über `KRLabor.registriere(id, { titel,
   oeffne(container, voreinstellung, umgebung) → { schliesse() } })`; Rechnungen **nur** über `Krypto` – kein Serverzugriff,
   keine Aufgabendaten, keine Lösungen.
+- **Rahmen (Plan M6 Task 110):** `KRLabor.oeffne` lädt fehlende Module nach (`KRLabor.lade(id)`: einmal
+  `labor/bausteine.js`, dann `labor/<id>.js` mit `?v=<KR.VERSION>` an `document.head`; bis dahin „Wird geladen …“, bei
+  Fehler „Dieses Werkzeug konnte nicht geladen werden.“). `umgebung = { modus, rolle, niveau, welten }` steuert die
+  Reiter-Regeln (`KRLabor.REITER_REGELN`, `erlaubt`, `reiterFuer`; Lehrkraft sieht alle Reiter). Gemeinsame Bausteine
+  `KRLaborBau` (Reiter, Textfeld, Zahlregler, Richtung, Ausgabe mit Kopieren, Hinweis, Tabelle, Details).
+  `KRLabor.nachspiel(ziel, { schritte, zeige, titel, start, beiLauf })` spielt Zustände ab (Einzelschritt Standard,
+  Zeitlupe 2400 ms, Normal 900 ms; Tasten ←/→, Pos1/Ende, Leertaste; Zähler „Schritt i von n“, Text `aria-live`); bei
+  reduzierter Bewegung (`AQ.ruhig()`: Media-Query oder Profil „Bewegung aus“) nur Einzelschritt, Abspielen gesperrt,
+  Leertaste = Schritt vor, nie animiert. `KRLabor.alleSchluessel` zeigt alle Versuche als Tabelle mit Nachspiel und
+  markiert **nie** einen Schlüssel als richtig. `test/labor_regeln.test.js` verbietet in Werkzeug-Modulen eigene
+  Rechnungen, Speicher- und Netzzugriffe.
 
 ### 10.2 Registry
 

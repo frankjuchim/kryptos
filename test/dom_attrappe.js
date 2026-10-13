@@ -7,6 +7,8 @@
  *   k.wert('AQ') · k.document · k.window · k.eins(el, sel) · k.alle(el, sel) · k.text(el)
  *   k.klick(el) · k.tippe(el, 'abc') · k.taste(el, 'Enter') · k.anfragen · k.navigiert · k.neugeladen · k.gedruckt
  *   k.medien · k.zwischenablage (Liste der geschriebenen Texte) · k.timer · k.roh(x) · await k.ruhe()
+ *   k.skripte · k.skriptEreignis(src, 'load'|'error') · k.zeiger(el, 'pointerdown', { clientX, clientY })
+ *   D.lade(…, { zeitraffer: 100 }) – Timer laufen 100-mal schneller (k.timer zeigt die angeforderte Zeit)
  *   D.fuehreAus(k, ['weiteres.js'])
  *
  * Skripte liegen relativ zu public/static/js. Das Seiten-Grundgerüst (header#kopf, main#haupt, footer#fuss) wird immer
@@ -244,6 +246,8 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
       if (i < 0) this.childNodes.push(kind);
       else this.childNodes.splice(i, 0, kind);
       kind.parentNode = this;
+      // angehängte <script src> protokollieren (k.skripte, M6 E72) – geladen wird nichts
+      if (kind.nodeType === 1 && kind.localName === 'script' && kind.hasAttribute('src') && kind.isConnected && dom.beiSkript) dom.beiSkript(kind);
       return kind;
     }
     appendChild(kind) {
@@ -566,6 +570,21 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
     set maxLength(v) {
       this.setAttribute('maxlength', String(v));
     }
+    get src() {
+      return this.getAttribute('src') || '';
+    }
+    set src(v) {
+      this.setAttribute('src', v);
+    }
+    setPointerCapture(id) {
+      this._zeiger = id;
+    }
+    releasePointerCapture() {
+      this._zeiger = undefined;
+    }
+    hasPointerCapture(id) {
+      return this._zeiger === id;
+    }
     get placeholder() {
       return this.getAttribute('placeholder') || '';
     }
@@ -580,6 +599,7 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
         return gew ? gew.value : '';
       }
       if (this.localName === 'option') return this.hasAttribute('value') ? this.getAttribute('value') : this.textContent;
+      if (this.localName === 'output') return this.textContent;
       if (this._wert !== undefined) return this._wert;
       if (this.localName === 'textarea') return this.textContent;
       return this.getAttribute('value') ?? (this.type === 'checkbox' || this.type === 'radio' ? 'on' : '');
@@ -587,6 +607,7 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
     set value(v) {
       const s = v === null || v === undefined ? '' : String(v);
       if (this.localName === 'option') this.setAttribute('value', s);
+      else if (this.localName === 'output') this.textContent = s;
       else if (this.localName === 'select') {
         this._wert = s;
         for (const o of this.querySelectorAll('option')) o._selected = o.value === s;
@@ -811,6 +832,8 @@ function lade(dateien = [], opt = {}) {
     medien: {},
     zwischenablage: [],
     timer: [],
+    skripte: [], // src angehängter <script>-Elemente (KRLabor.lade, M6 E72)
+    _skriptEl: [],
     _offen: { fetch: 0, timer: new Set() },
     _ctx: null
   };
@@ -895,10 +918,13 @@ function lade(dateien = [], opt = {}) {
     }
   };
 
-  // Timer (echt, unref) – kurze Einmal-Timer (≤ 50 ms) zählen für k.ruhe()
+  // Timer (echt, unref) – kurze Einmal-Timer (≤ 50 ms) zählen für k.ruhe(). opt.zeitraffer = n teilt die echte Wartezeit
+  // durch n (Nachspiele im Kryptolabor, M6); k.timer zeigt die angeforderte Zeit.
+  const raffer = Number(opt.zeitraffer) > 1 ? Number(opt.zeitraffer) : 1;
   function setTimeout_(fn, ms = 0, ...args) {
-    const dauer = Number(ms) || 0;
-    k.timer.push({ ms: dauer, wiederholt: false });
+    const angefordert = Number(ms) || 0;
+    const dauer = Math.ceil(angefordert / raffer);
+    k.timer.push({ ms: angefordert, wiederholt: false });
     const h = setTimeout(() => {
       k._offen.timer.delete(h);
       if (typeof fn === 'function') fn(...args);
@@ -1062,6 +1088,23 @@ function lade(dateien = [], opt = {}) {
   };
   k.taste = (el, key, mehr = {}) => {
     const ev = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key, ...mehr });
+    el.dispatchEvent(ev);
+    return ev;
+  };
+  // angehängte Skripte: k.skripte (src), k.skriptEreignis(src, 'load'|'error') feuert das Ereignis am Element
+  dom.beiSkript = (el) => {
+    k.skripte.push(el.getAttribute('src'));
+    k._skriptEl.push(el);
+  };
+  k.skriptEreignis = (src, typ) => {
+    const el = k._skriptEl.find((x) => x.getAttribute('src') === src);
+    if (!el) throw new Error('Kein angehängtes Skript: ' + src);
+    el.dispatchEvent(new Event(typ));
+  };
+  // Zeiger-Ereignisse (pointerdown/move/up) mit pointerId 1 und Koordinaten
+  k.zeiger = (el, typ, { clientX = 0, clientY = 0, pointerId = 1 } = {}) => {
+    const ev = new Event(typ, { bubbles: true, cancelable: true });
+    Object.assign(ev, { clientX, clientY, pointerId, button: 0, isPrimary: true, pointerType: 'mouse' });
     el.dispatchEvent(ev);
     return ev;
   };

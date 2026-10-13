@@ -1,6 +1,7 @@
 /* Kryptos – Seite /labor (TECHNIK §10.1, M4 Task 53): Kopfzeile für beide Rollen, Werkzeug-Raster nach Epoche mit
    Freigaben (Schüler: GET /api/labor, Lehrkraft: GET /api/lehrer/werkzeuge – alles frei), gesperrte Werkzeuge mit Grund,
-   Boss-Banner; #/<id> öffnet das Werkzeug als Vollseite über KRLabor (ohne Modul: „noch in Arbeit“). */
+   Boss-Banner; #/<id> öffnet das Werkzeug als Vollseite über KRLabor (Modul wird nachgeladen) mit der Umgebung für die
+   Reiter-Regeln (Schüler: niveau/welten aus /api/labor; Lehrkraft: alle Reiter + Hinweis, M6 E71/E87). */
 'use strict';
 
 const KRLaborSeite = (() => {
@@ -10,7 +11,7 @@ const KRLaborSeite = (() => {
     welt: 'Wird mit der Epoche freigeschaltet.',
     boss: 'Während eines Boss-Kampfs ist das Labor geschlossen.'
   };
-  let daten = null; // { rolle, boss, werkzeuge: [{ id, titel, welt, frei, grund }] }
+  let daten = null; // { rolle, boss, niveau, welten, werkzeuge: [{ id, titel, welt, frei, grund }] }
   let offen = null;
 
   function zurueck(sitzung) {
@@ -20,7 +21,7 @@ const KRLaborSeite = (() => {
   async function lade(sitzung) {
     if (sitzung.rolle === 'schueler') {
       const r = await AQ.api('GET', '/api/labor');
-      return { rolle: 'schueler', boss: !!r.boss, werkzeuge: Array.isArray(r.werkzeuge) ? r.werkzeuge : [] };
+      return { rolle: 'schueler', boss: !!r.boss, niveau: r.niveau === 'gA' ? 'gA' : 'eA', welten: Array.isArray(r.welten) ? r.welten : [], werkzeuge: Array.isArray(r.werkzeuge) ? r.werkzeuge : [] };
     }
     const liste = await AQ.api('GET', '/api/lehrer/werkzeuge');
     return { rolle: sitzung.rolle, boss: false, werkzeuge: (Array.isArray(liste) ? liste : []).map((w) => ({ ...w, frei: true, grund: null })) };
@@ -79,17 +80,21 @@ const KRLaborSeite = (() => {
       return;
     }
     const flaeche = h('div', { class: 'werkzeug-flaeche' });
+    // Umgebung für die Reiter-Regeln (E71); Lehrkräfte sehen alle Reiter und einen Hinweis darauf (E87)
+    const lehrkraft = daten.rolle !== 'schueler';
+    const umgebung = lehrkraft ? { modus: 'labor', rolle: 'lehrkraft' } : { modus: 'labor', rolle: 'schueler', niveau: daten.niveau, welten: daten.welten };
     AQ.mount(
       haupt,
       h(
         'section',
         { class: 'labor-vollseite', 'data-epoche': String(w.welt), 'aria-labelledby': 'werkzeug-titel' },
         h('div', { class: 'werkzeug-kopfband' }, KR.symbol('icons', 'i-labor'), h('h1', { id: 'werkzeug-titel' }, w.titel), h('span', { class: 'werkzeug-epoche' }, KR.WELTEN_KURZ[w.welt] || '')),
+        lehrkraft ? h('p', { class: 'labor-lehrkraft-hinweis text-2', role: 'note' }, 'Für Schülerinnen und Schüler gelten Reiter-Regeln (Welt, Niveau).') : null,
         flaeche,
         h('div', { class: 'labor-steuerleiste' }, h('a', { class: 'knopf knopf-zweit', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Labor'))
       )
     );
-    offen = KRLabor.oeffne(id, {}, flaeche, { modus: 'labor' });
+    offen = KRLabor.oeffne(id, {}, flaeche, umgebung);
   }
 
   function route(haupt, sitzung) {

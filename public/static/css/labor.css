@@ -67,3 +67,170 @@ dialog.werkzeug-dialog {
   border-top: 1px solid var(--linie);
   background: var(--karte);
 }
+
+/* ======================================================================
+   Labor-Rahmen II (Plan M6 Task 110): Reiter, Bausteine, Nachspiel, Alle Schlüssel
+   ====================================================================== */
+.labor-lehrkraft-hinweis { margin: 0; padding: var(--a-2) var(--a-4); background: var(--papier-2); }
+.werkzeug-flaeche .laden { margin: 0; }
+.labor-werkzeug { display: grid; gap: var(--a-4); min-width: 0; }
+.labor-werkzeug > * { min-width: 0; }
+
+/* ---------- Reiterleiste ---------- */
+.labor-reiter-rahmen { display: grid; gap: var(--a-3); min-width: 0; }
+.labor-reiter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-1);
+  border-bottom: 2px solid var(--linie);
+}
+.labor-reiter[hidden] { display: none; }
+.labor-tab {
+  min-height: var(--ziel);
+  padding: var(--a-2) var(--a-3);
+  border: 1.5px solid transparent;
+  border-bottom: 0;
+  border-radius: var(--r-knopf) var(--r-knopf) 0 0;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.labor-tab:hover { color: var(--text); background: var(--papier-2); }
+.labor-tab[aria-selected="true"] {
+  color: var(--text);
+  background: var(--karte);
+  border-color: var(--linie);
+  box-shadow: inset 0 -4px 0 var(--akzent); /* Markierung zusätzlich zur Fläche: nicht nur Farbe (Unterstrich) */
+}
+.labor-reiterflaeche { display: grid; gap: var(--a-4); min-width: 0; }
+.labor-reiterflaeche:focus { outline: none; }
+
+/* ---------- Eingaben ---------- */
+.labor-steuer { display: flex; flex-wrap: wrap; gap: var(--a-3) var(--a-5); align-items: end; }
+.labor-textfeld { display: grid; gap: var(--a-1); min-width: 0; }
+.labor-textfeld label, .zahl-beschriftung, .labor-ausgabe-titel { font-weight: 700; }
+.labor-eingabe {
+  width: 100%;
+  min-height: calc(var(--ziel) * 2);
+  padding: var(--a-2) var(--a-3);
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+  font-family: var(--f-mono);
+  font-size: var(--gr-mono);
+  resize: vertical;
+}
+.labor-eingabe:disabled { opacity: .6; }
+.labor-laenge { margin: 0; font-size: .85rem; color: var(--text-2); }
+.labor-zahl { display: grid; gap: var(--a-1); }
+.zahl-steuer { display: inline-flex; align-items: center; gap: var(--a-1); }
+.zahl-steuer .knopf { min-width: var(--ziel); font-size: 1.2rem; border: 1.5px solid var(--linie); }
+.zahl-wert {
+  display: inline-grid;
+  place-items: center;
+  min-width: calc(var(--ziel) * 1.4);
+  min-height: var(--ziel);
+  padding: 0 var(--a-2);
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  font-family: var(--f-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.labor-richtung, .labor-basis, .nachspiel-tempo { display: inline-flex; flex-wrap: wrap; border: 1.5px solid var(--linie); border-radius: var(--r-knopf); overflow: hidden; }
+.labor-richtung button, .labor-basis button, .nachspiel-tempo button {
+  min-height: var(--ziel);
+  padding: 0 var(--a-3);
+  border: 0;
+  background: var(--karte);
+  color: var(--text-2);
+  font: inherit;
+  cursor: pointer;
+}
+.labor-richtung button[aria-checked="true"], .labor-basis button[aria-checked="true"], .nachspiel-tempo button[aria-checked="true"] {
+  background: var(--akzent);
+  color: var(--auf-akzent);
+  font-weight: 700;
+}
+.labor-richtung button[aria-checked="true"]::before, .labor-basis button[aria-checked="true"]::before, .nachspiel-tempo button[aria-checked="true"]::before { content: "✓ "; }
+.labor-richtung button:disabled { opacity: .6; cursor: default; }
+
+/* ---------- Ausgabe und Hinweise ---------- */
+.labor-ausgabe-rahmen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--a-1) var(--a-3);
+  align-items: center;
+  padding: var(--a-3) var(--a-4);
+  border: 1.5px solid var(--linie);
+  border-left: 6px solid var(--akzent);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+}
+.labor-ausgabe-titel { grid-column: 1 / -1; font-size: .9rem; color: var(--text-2); }
+.labor-ausgabe {
+  min-height: 1.6em;
+  font-family: var(--f-mono);
+  font-size: 1.2rem;
+  letter-spacing: .04em;
+  overflow-wrap: anywhere;
+}
+.labor-ausgabe.art-geheimtext { font-weight: 700; }
+.labor-hinweis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  align-items: center;
+  margin: 0;
+  padding: var(--a-2) var(--a-3);
+  border-radius: var(--r-knopf);
+  background: var(--hinweis-flaeche);
+  color: var(--text);
+}
+.labor-hinweis.hinweis-warnung, .labor-hinweis.hinweis-falle { background: var(--fehler-flaeche); }
+.labor-hinweis.hinweis-ok { background: var(--ok-flaeche); }
+.labor-hinweis-symbol { font-weight: 700; }
+.labor-details { border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); }
+.labor-details > summary { min-height: var(--ziel); display: flex; align-items: center; padding: 0 var(--a-4); font-weight: 700; cursor: pointer; }
+.labor-details-inhalt { display: grid; gap: var(--a-3); padding: 0 var(--a-4) var(--a-4); min-width: 0; }
+.labor-tabelle { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.labor-tabelle caption { text-align: left; font-weight: 700; padding-bottom: var(--a-1); }
+.labor-tabelle th, .labor-tabelle td { padding: var(--a-1) var(--a-2); border: 1px solid var(--linie); text-align: center; }
+
+/* ---------- Nachspiel ---------- */
+.nachspiel {
+  display: grid;
+  gap: var(--a-2);
+  padding: var(--a-3);
+  border: 1.5px dashed var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--papier-2);
+}
+.nachspiel-titel { margin: 0; font-weight: 700; }
+.nachspiel-leiste { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.nachspiel-leiste .knopf { border: 1.5px solid var(--linie); }
+.nachspiel-leiste .knopf:disabled { opacity: .5; }
+.nachspiel-status { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-4); align-items: center; }
+.nachspiel-zaehler { font-weight: 700; font-variant-numeric: tabular-nums; }
+.nachspiel-tempo[hidden] { display: none; }
+.nachspiel-ruhig { margin: 0; font-size: .9rem; }
+.nachspiel-text { margin: 0; min-height: 1.5em; font-family: var(--f-mono); }
+
+/* ---------- Alle Schlüssel ---------- */
+.alle-schluessel { display: grid; gap: var(--a-3); min-width: 0; }
+.alle-tabelle { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.alle-tabelle caption { text-align: left; font-weight: 700; padding-bottom: var(--a-1); }
+.alle-tabelle th, .alle-tabelle td { padding: var(--a-1) var(--a-2); border-bottom: 1px solid var(--linie); text-align: left; white-space: nowrap; }
+.alle-tabelle td.ergebnis { font-family: var(--f-mono); letter-spacing: .03em; }
+.alle-tabelle td.anmerkung { color: var(--text-2); white-space: normal; }
+.alle-tabelle tr.aktuell { background: var(--hinweis-flaeche); outline: 2px solid var(--hinweis); outline-offset: -2px; }
+.alle-tabelle tr.aktuell th { font-weight: 700; }
+
+/* Geheimtext-Markierungen (E86): Farbe nie einziges Signal – unterstrichen */
+mark.markiert { background: var(--hinweis-flaeche); color: inherit; text-decoration: underline 2px; text-underline-offset: 3px; }
+mark.markiert.art-b { text-decoration-style: dashed; }
+mark.markiert.art-c { text-decoration-style: dotted; }

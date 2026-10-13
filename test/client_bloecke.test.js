@@ -120,7 +120,8 @@ test('werkzeug: Karte öffnet Dialog mit Fokusfalle; Boss rendert nichts; gesper
   const d = k.eins(k.document, 'dialog.werkzeug-dialog');
   assert.equal(d.hasAttribute('open'), true);
   assert.match(k.text(d), /Häufigkeits-Analysator/);
-  assert.match(k.text(d), /noch in Arbeit/);
+  assert.match(k.text(d), /Wird geladen/, 'Modul wird nachgeladen (M6 E72)');
+  assert.ok(k.skripte.some((x) => /\/krypto\/labor\/bausteine\.js/.test(x)), 'erst die Bausteine, dann das Modul');
   k.taste(d, 'Escape');
   assert.equal(d.hasAttribute('open'), false);
   assert.equal(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe' }, 0, { modus: 'boss' }), null);
@@ -128,4 +129,23 @@ test('werkzeug: Karte öffnet Dialog mit Fokusfalle; Boss rendert nichts; gesper
   assert.ok(el.classList.contains('gesperrt'));
   assert.equal(k.eins(el, 'button.werkzeug-oeffnen').disabled, true);
   assert.match(k.text(el), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
+});
+
+test('werkzeug: Block reicht ctx.laborUmgebung und Voreinstellung an KRLabor.dialog weiter (M6 Task 110)', () => {
+  const { k, el } = bau({ t: 'werkzeug', id: 'vigenere', voreinstellung: { reiter: ['quadrat'] } }, { laborUmgebung: { rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] } });
+  k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
+  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
+  assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', { reiter: ['quadrat'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]]);
+});
+test('Geheimtext-Zeile mit Markierungen: mark.markiert, Art als Klasse, Beschreibung über aria-describedby (M6 E86)', () => {
+  const k = D.lade(SKRIPTE);
+  const el = k.wert('KRB').geheimtext('AVEEDYAAFGXVEE', { markiert: [{ von: 3, laenge: 4, art: 'a' }, { von: 11, laenge: 3, art: 'a' }] });
+  k.document.body.appendChild(el);
+  const marken = k.alle(el, 'mark.markiert');
+  assert.deepEqual(marken.map(k.text), ['ED', 'YA', 'VEE'], 'Markierung über eine Gruppengrenze wird geteilt');
+  assert.ok(marken.every((m) => m.classList.contains('art-a')));
+  assert.deepEqual(k.alle(el, 'span.gruppe').map((g) => g.textContent), ['AVEED', 'YAAFG', 'XVEE'], 'Gruppen bleiben');
+  const id = el.getAttribute('aria-describedby');
+  assert.ok(id);
+  assert.match(k.text(k.document.getElementById(id)), /Markiert: Position 3 bis 6, Position 11 bis 13/);
 });

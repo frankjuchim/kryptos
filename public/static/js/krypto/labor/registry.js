@@ -1,6 +1,8 @@
-/* Kryptos – Labor-Registry im Client (TECHNIK §10.2, M4 Task 53): Werkzeugliste (= src/krypto/werkzeuge.js, Test
-   labor.test.js), Registrierung der Werkzeug-Module (M6), Öffnen in einem Container oder in einem <dialog> mit Kopfband
-   im Epochenakzent, Fokusfalle, Esc und Rückkehr des Fokus. Ohne Modul: Leerzustand „noch in Arbeit“. */
+/* Kryptos – Labor-Registry im Client (TECHNIK §10.1/§10.2, M4 Task 53, M6 Task 110): Werkzeugliste (= src/krypto/werkzeuge.js,
+   Test labor.test.js), Registrierung der Werkzeug-Module, Öffnen in einem Container oder in einem <dialog> mit Kopfband
+   im Epochenakzent, Fokusfalle, Esc und Rückkehr des Fokus. M6: Nachladen der Module (lade, E72), Reiter-Regeln nach
+   Welt und Niveau (REITER_REGELN, erlaubt, reiterFuer – E71, E87), Nachspiel-Modus (nachspiel, E67) und die
+   Brute-Force-Demo „Alle Schlüssel ausprobieren“ (alleSchluessel) – Werkzeuge bauen keine eigenen Abspieler. */
 'use strict';
 
 const KRLabor = (() => {
@@ -42,16 +44,120 @@ const KRLabor = (() => {
     return MODULE.has(id);
   }
 
-  /** Werkzeug in container öffnen; liefert { schliesse() }. Ohne Modul: Leerzustand. */
+  /* ---------- Nachladen (E72) ---------- */
+
+  const SKRIPTE = new Map(); // src → Promise
+  const PFAD = '/static/js/krypto/labor/';
+  function version() {
+    return typeof KR !== 'undefined' && KR.VERSION ? `?v=${encodeURIComponent(KR.VERSION)}` : '';
+  }
+  /** <script src> einmal an document.head hängen (synchron) und auf load/error warten. */
+  function skript(src) {
+    if (SKRIPTE.has(src)) return SKRIPTE.get(src);
+    const p = new Promise((ok, fehler) => {
+      const el = document.createElement('script');
+      el.addEventListener('load', () => ok());
+      el.addEventListener('error', () => {
+        SKRIPTE.delete(src);
+        el.remove();
+        fehler(new Error('Skript konnte nicht geladen werden.'));
+      });
+      el.setAttribute('src', src);
+      document.head.appendChild(el);
+    });
+    SKRIPTE.set(src, p);
+    return p;
+  }
+  /** Werkzeug-Modul (und einmal labor/bausteine.js) nachladen; Promise erfüllt, sobald das Modul registriert ist. */
+  function lade(id) {
+    if (!NACH_ID.has(id)) return Promise.reject(new Error('Dieses Werkzeug gibt es nicht.'));
+    const bauDa = () => typeof KRLaborBau !== 'undefined';
+    if (MODULE.has(id) && bauDa()) return Promise.resolve();
+    const modul = () =>
+      MODULE.has(id)
+        ? Promise.resolve()
+        : skript(`${PFAD}${id}.js${version()}`).then(() => {
+            if (!MODULE.has(id)) throw new Error('Werkzeug hat sich nicht registriert.');
+          });
+    return bauDa() ? modul() : skript(`${PFAD}bausteine.js${version()}`).then(modul);
+  }
+
+  /* ---------- Reiter-Regeln (E71, E87) ---------- */
+
+  const REITER_REGELN = Object.freeze({
+    'haeufigkeit.teiltexte': Object.freeze({ welt: 2 }),
+    'haeufigkeit.kennzahlen': Object.freeze({ welt: 2, niveau: 'eA' }),
+    'vigenere.koinzidenz': Object.freeze({ niveau: 'eA' }),
+    'skytale.ring': Object.freeze({ welt: 6 }),
+    'vigenere.modus.pendel': Object.freeze({ welt: 6 }),
+    'vigenere.modus.frei': Object.freeze({ welt: 6 })
+  });
+  /** Ist der Reiter/Modus „<id>.<reiter>“ in dieser Umgebung sichtbar? Lehrkraft oder fehlende Angaben → ja. */
+  function erlaubt(schluessel, umgebung) {
+    const regel = REITER_REGELN[schluessel];
+    const u = umgebung || {};
+    if (!regel || u.rolle === 'lehrkraft') return true;
+    if (regel.welt !== undefined && Array.isArray(u.welten) && !u.welten.includes(regel.welt)) return false;
+    if (regel.niveau !== undefined && u.niveau && u.niveau !== regel.niveau) return false;
+    return true;
+  }
+  /** Sichtbare Reiter eines Werkzeugs: Voreinstellung (wenn gültig) oder alle, gefiltert nach den Regeln. */
+  function reiterFuer(id, voreinstellung, umgebung) {
+    const w = werkzeug(id);
+    if (!w || !w.reiter.length) return [];
+    const v = voreinstellung && Array.isArray(voreinstellung.reiter) ? voreinstellung.reiter : null;
+    const gueltig = v && v.length > 0 && v.every((r) => w.reiter.includes(r)) && new Set(v).size === v.length;
+    const liste = (gueltig ? v : w.reiter).filter((r) => erlaubt(`${id}.${r}`, umgebung));
+    if (liste.length) return liste;
+    const erster = w.reiter.find((r) => erlaubt(`${id}.${r}`, umgebung));
+    return [erster || w.reiter[0]];
+  }
+
+  /* ---------- Öffnen ---------- */
+
+  let zuletzt = null;
+  /** Das zuletzt geöffnete Steuerobjekt (nur lesend, e2e): { schliesse(), zustand() }. */
+  function aktiv() {
+    return zuletzt;
+  }
+
+  /** Werkzeug in container öffnen; liefert { schliesse(), zustand() }. Fehlt das Modul, wird es nachgeladen. */
   function oeffne(id, voreinstellung, container, umgebung = { modus: 'labor' }) {
-    const modul = MODULE.get(id);
-    if (!modul) {
-      AQ.mount(container, h('div', { class: 'leer-zustand' }, KR.symbol('icons', 'i-labor'), h('p', { class: 'leer-zustand-text' }, 'Dieses Werkzeug ist noch in Arbeit.')));
-      return { schliesse() {} };
+    const v = voreinstellung && typeof voreinstellung === 'object' && !Array.isArray(voreinstellung) ? voreinstellung : {};
+    const u = umgebung || { modus: 'labor' };
+    let innen = null;
+    let zu = false;
+    function starte() {
+      AQ.clear(container);
+      const r = MODULE.get(id).oeffne(container, v, u);
+      innen = r && typeof r === 'object' ? r : {};
     }
-    AQ.clear(container);
-    const r = modul.oeffne(container, voreinstellung && typeof voreinstellung === 'object' ? voreinstellung : {}, umgebung || { modus: 'labor' });
-    return r && typeof r.schliesse === 'function' ? r : { schliesse() {} };
+    const steuer = {
+      schliesse() {
+        zu = true;
+        if (innen && typeof innen.schliesse === 'function') innen.schliesse();
+        innen = null;
+      },
+      zustand() {
+        return innen && typeof innen.zustand === 'function' ? innen.zustand() : null;
+      }
+    };
+    zuletzt = steuer;
+    if (MODULE.has(id) && typeof KRLaborBau !== 'undefined') {
+      starte();
+      return steuer;
+    }
+    AQ.mount(container, h('p', { class: 'laden', role: 'status' }, 'Wird geladen …'));
+    lade(id).then(
+      () => {
+        if (!zu) starte();
+      },
+      () => {
+        if (zu) return;
+        AQ.mount(container, h('div', { class: 'leer-zustand', role: 'status' }, KR.symbol('icons', 'i-labor'), h('p', { class: 'leer-zustand-text' }, 'Dieses Werkzeug konnte nicht geladen werden.'), h('p', { class: 'text-2' }, 'Bitte lade die Seite neu.')));
+      }
+    );
+    return steuer;
   }
 
   const FOKUSSIERBAR = ['a[href]', 'button', 'input', 'select', 'textarea', '[tabindex]', 'summary'];
@@ -113,5 +219,223 @@ const KRLabor = (() => {
     return d;
   }
 
-  return { WERKZEUGE, werkzeug, registriere, hat, oeffne, dialog };
+  /* ---------- Nachspiel (E67) ---------- */
+
+  const TEMPO = Object.freeze({ einzel: { titel: 'Einzelschritt', ms: 0 }, zeitlupe: { titel: 'Zeitlupe', ms: 2400 }, normal: { titel: 'Normal', ms: 900 } });
+
+  /**
+   * Nachspiel-Leiste in ziel: o = { titel, schritte: [{ text, daten }], zeige(schritt, index, { animiert }), start, beiLauf(an) }.
+   * Schritte sind Zustände; zeige baut den Zustand i vollständig (idempotent). Tempo „Einzelschritt“ (Standard),
+   * „Zeitlupe“ (2400 ms), „Normal“ (900 ms). Bei reduzierter Bewegung (AQ.ruhig) nur Einzelschritt, nie animiert.
+   * → { element, gehe(i), vor(), zurueck(), anfang(), ende(), abspielen(), pause(), tempo(t), index(), laeuft(), schliesse() }
+   */
+  function nachspiel(ziel, o = {}) {
+    const schritte = Array.isArray(o.schritte) && o.schritte.length ? o.schritte : [{ text: '' }];
+    const zeige = typeof o.zeige === 'function' ? o.zeige : () => {};
+    const ruhig = AQ.ruhig();
+    let index = Number.isInteger(o.start) && o.start >= -1 && o.start < schritte.length ? o.start : 0;
+    let tempoWahl = 'einzel';
+    let timer = null;
+    let laeuftJetzt = false;
+    let fertig = false;
+
+    const knopf = (klasse, text, aria) => h('button', { type: 'button', class: `knopf knopf-leise ${klasse}`, 'aria-label': aria || null }, text);
+    const kAnfang = knopf('nachspiel-anfang', '⏮ Anfang', 'Zum Anfang');
+    const kZurueck = knopf('nachspiel-zurueck', '◀ Schritt zurück');
+    const kAbspielen = h('button', { type: 'button', class: 'knopf knopf-zweit nachspiel-abspielen', 'aria-pressed': 'false', disabled: ruhig }, '▶ Abspielen');
+    const kVor = knopf('nachspiel-vor', 'Schritt vor ▶');
+    const kEnde = knopf('nachspiel-ende', 'Ende ⏭', 'Zum Ende');
+    const zaehler = h('span', { class: 'nachspiel-zaehler' });
+    const text = h('p', { class: 'nachspiel-text', 'aria-live': 'polite' });
+    const tempoKnoepfe = Object.keys(TEMPO).map((t) => h('button', { type: 'button', role: 'radio', class: 'nachspiel-tempo-wahl', 'data-tempo': t, 'aria-checked': String(t === tempoWahl), tabindex: t === tempoWahl ? '0' : '-1' }, TEMPO[t].titel));
+    const tempoGruppe = h('div', { class: 'nachspiel-tempo', role: 'radiogroup', 'aria-label': 'Tempo', hidden: ruhig }, tempoKnoepfe);
+    const element = h(
+      'div',
+      { class: 'nachspiel', role: 'group', 'aria-label': 'Nachspielen' },
+      o.titel ? h('p', { class: 'nachspiel-titel' }, String(o.titel)) : null,
+      h('div', { class: 'nachspiel-leiste' }, kAnfang, kZurueck, kAbspielen, kVor, kEnde),
+      h('div', { class: 'nachspiel-status' }, zaehler, tempoGruppe),
+      ruhig ? h('p', { class: 'nachspiel-ruhig text-2' }, 'Bewegung reduziert: Schritt für Schritt mit „Schritt vor“, → oder Leertaste.') : null,
+      text
+    );
+
+    function anzeigen(animiert) {
+      const i = index;
+      zaehler.textContent = `Schritt ${i + 1} von ${schritte.length}`;
+      text.textContent = i >= 0 ? String(schritte[i].text ?? '') : '';
+      kAnfang.disabled = i <= 0;
+      kZurueck.disabled = i <= 0;
+      kVor.disabled = i >= schritte.length - 1;
+      kEnde.disabled = i >= schritte.length - 1;
+      if (i >= 0) zeige(schritte[i], i, { animiert: !!animiert && !ruhig && tempoWahl !== 'einzel' });
+    }
+    function setzeLauf(an) {
+      if (laeuftJetzt === an) return;
+      laeuftJetzt = an;
+      if (an) ziel.dataset.nachspiel = 'laeuft';
+      else delete ziel.dataset.nachspiel;
+      kAbspielen.setAttribute('aria-pressed', String(an));
+      kAbspielen.textContent = an ? '⏸ Anhalten' : '▶ Abspielen';
+      if (typeof o.beiLauf === 'function') o.beiLauf(an);
+    }
+    function gehe(i, animiert = false) {
+      if (fertig) return;
+      const neu = Math.max(0, Math.min(schritte.length - 1, Number(i) || 0));
+      index = neu;
+      anzeigen(animiert);
+    }
+    function pause() {
+      if (timer) clearTimeout(timer);
+      timer = null;
+      setzeLauf(false);
+    }
+    function takt() {
+      timer = null;
+      if (fertig || !laeuftJetzt) return;
+      gehe(index + 1, true);
+      if (index >= schritte.length - 1) pause();
+      else timer = setTimeout(takt, TEMPO[tempoWahl].ms);
+    }
+    function tempo(t) {
+      if (!TEMPO[t] || ruhig) return tempoWahl;
+      tempoWahl = t;
+      for (const b of tempoKnoepfe) {
+        const an = b.dataset.tempo === t;
+        b.setAttribute('aria-checked', String(an));
+        b.setAttribute('tabindex', an ? '0' : '-1');
+      }
+      if (laeuftJetzt && t === 'einzel') pause();
+      return tempoWahl;
+    }
+    function abspielen() {
+      if (fertig || ruhig) return;
+      if (tempoWahl === 'einzel') tempo('normal');
+      if (index >= schritte.length - 1) gehe(0, false);
+      setzeLauf(true);
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(takt, TEMPO[tempoWahl].ms);
+    }
+    const vor = () => {
+      pause();
+      gehe(index + 1, false);
+    };
+    const zurueck = () => {
+      pause();
+      gehe(index - 1, false);
+    };
+    const anfang = () => {
+      pause();
+      gehe(0, false);
+    };
+    const ende = () => {
+      pause();
+      gehe(schritte.length - 1, false);
+    };
+    kAnfang.addEventListener('click', anfang);
+    kZurueck.addEventListener('click', zurueck);
+    kVor.addEventListener('click', vor);
+    kEnde.addEventListener('click', ende);
+    kAbspielen.addEventListener('click', () => (laeuftJetzt ? pause() : abspielen()));
+    for (const b of tempoKnoepfe) b.addEventListener('click', () => tempo(b.dataset.tempo));
+    element.addEventListener('keydown', (e) => {
+      const t = e.target;
+      if (t && ['input', 'textarea', 'select'].includes(t.localName)) return;
+      if (t && t.getAttribute && t.getAttribute('role') === 'radio' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+        const liste = Object.keys(TEMPO);
+        const neu = liste[(liste.indexOf(tempoWahl) + (e.key === 'ArrowRight' ? 1 : liste.length - 1)) % liste.length];
+        tempo(neu);
+        const ziel2 = tempoKnoepfe.find((b) => b.dataset.tempo === neu);
+        if (ziel2) ziel2.focus();
+        e.preventDefault();
+        return;
+      }
+      const aktion = { ArrowRight: vor, ArrowLeft: zurueck, Home: anfang, End: ende, ' ': ruhig ? vor : () => (laeuftJetzt ? pause() : abspielen()) }[e.key];
+      if (!aktion) return;
+      e.preventDefault();
+      aktion();
+    });
+    ziel.appendChild(element);
+    anzeigen(false);
+    return {
+      element,
+      gehe: (i) => {
+        pause();
+        gehe(i, false);
+      },
+      vor,
+      zurueck,
+      anfang,
+      ende,
+      abspielen,
+      pause,
+      tempo,
+      index: () => index,
+      laeuft: () => laeuftJetzt,
+      schliesse() {
+        pause();
+        fertig = true;
+        element.remove();
+      }
+    };
+  }
+
+  /* ---------- Alle Schlüssel ausprobieren (Brute-Force-Demo) ---------- */
+
+  /**
+   * Tabelle aller Versuche + Nachspiel „Nacheinander ausprobieren“. o = { titel, schluessel: [...], beschriftung(k),
+   * probiere(k) → Text (nur Krypto.*), anmerkung(k), zeichen, eingabe }. Keine Zeile wird als richtig markiert.
+   */
+  function alleSchluessel(ziel, o = {}) {
+    const liste = Array.isArray(o.schluessel) ? o.schluessel : [];
+    const beschriftung = typeof o.beschriftung === 'function' ? o.beschriftung : (k) => String(k);
+    const zeichen = Number.isInteger(o.zeichen) && o.zeichen > 0 ? o.zeichen : 20;
+    const kurz = (t, n) => (t.length > n ? `${t.slice(0, n)}…` : t);
+    const versuche = liste.map((k) => {
+      let ergebnis = '';
+      let anmerkung = typeof o.anmerkung === 'function' ? o.anmerkung(k) : null;
+      try {
+        ergebnis = Krypto.klein(String(o.probiere(k)));
+      } catch (e) {
+        if (!e || e.name !== 'KryptoFehler') throw e;
+        anmerkung = 'passt nicht';
+      }
+      return { k, ergebnis, anmerkung };
+    });
+    const zeilen = versuche.map((v) =>
+      h(
+        'tr',
+        { 'data-schluessel': String(v.k) },
+        h('th', { scope: 'row' }, h('span', { class: 'zeiger', 'aria-hidden': 'true' }), beschriftung(v.k)),
+        h('td', { class: 'ergebnis' }, kurz(v.ergebnis, zeichen)),
+        h('td', { class: 'anmerkung' }, v.anmerkung || '')
+      )
+    );
+    const titel = o.titel ? String(o.titel) : 'Alle Schlüssel ausprobieren';
+    const box = h(
+      'div',
+      { class: 'alle-schluessel' },
+      h('div', { class: 'scroll-x' }, h('table', { class: 'alle-tabelle' }, h('caption', null, titel), h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Schlüssel'), h('th', { scope: 'col' }, 'Ergebnis'), h('th', { scope: 'col' }, 'Anmerkung'))), h('tbody', null, zeilen)))
+    );
+    ziel.appendChild(box);
+    const eingabe = o.eingabe ? String(o.eingabe) : '';
+    const ns = nachspiel(box, {
+      titel: 'Nacheinander ausprobieren',
+      start: o.start === -1 ? -1 : 0,
+      schritte: versuche.map((v) => ({
+        text: v.anmerkung === 'passt nicht' && !v.ergebnis ? `${beschriftung(v.k)}: passt nicht.` : `${beschriftung(v.k)}: ${eingabe ? `Aus ${kurz(eingabe, 5)} wird ` : 'Ergebnis '}${kurz(v.ergebnis, 5)} – ist das lesbares Deutsch?`,
+        daten: { k: v.k }
+      })),
+      zeige(_s, i) {
+        zeilen.forEach((z, j) => {
+          z.classList.toggle('aktuell', j === i);
+          z.querySelector('.zeiger').textContent = j === i ? '▶ ' : '';
+          if (j === i) z.setAttribute('aria-current', 'true');
+          else z.removeAttribute('aria-current');
+        });
+      }
+    });
+    return { element: box, nachspiel: ns, schliesse: () => ns.schliesse() };
+  }
+
+  return { WERKZEUGE, REITER_REGELN, werkzeug, registriere, hat, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
 })();

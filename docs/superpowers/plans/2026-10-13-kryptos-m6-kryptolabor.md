@@ -948,7 +948,7 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   (`r` = Antwort von `/api/labor`); Lehrkraft: `{ modus: 'labor', rolle: 'lehrkraft' }` und Hinweis „Für Schülerinnen und Schüler gelten
   Reiter-Regeln (Welt, Niveau).“
 
-- [ ] **Step 1: Failing tests** – `test/labor_rahmen.test.js`:
+- [x] **Step 1: Failing tests** – `test/labor_rahmen.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1053,11 +1053,11 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   `test/client_seiten.test.js`: Labor-Seite reicht `niveau`/`welten` aus `/api/labor` an `KRLabor.oeffne` weiter (Spion auf
   `KRLabor.oeffne` im `vorher`), Lehrkraft-Hinweis „Reiter-Regeln“; `test/client_bloecke.test.js`: `KRB.geheimtext` mit
   `markiert` setzt `mark.markiert` + Unterstreichung, `aria-describedby`.
-- [ ] **Step 2: Run** `node --test test/labor_rahmen.test.js test/labor_regeln.test.js test/client_seiten.test.js test/client_bloecke.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Attrappe zuerst: `k.skripte`, `k.skriptEreignis`, `k.zeiger`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Nachspiel-Leiste und Reiterleiste mit einem Test-Modul im
+- [x] **Step 2: Run** `node --test test/labor_rahmen.test.js test/labor_regeln.test.js test/client_seiten.test.js test/client_bloecke.test.js` → FAIL.
+- [x] **Step 3: Implement** (Attrappe zuerst: `k.skripte`, `k.skriptEreignis`, `k.zeiger`).
+- [x] **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Nachspiel-Leiste und Reiterleiste mit einem Test-Modul im
   Scratchpad (360/1280 px, Touch-Ziele ≥ 44 px, Fokus-Ring sichtbar).
-- [ ] **Step 5: Commit** `git commit -m "Labor-Rahmen: Nachladen, Reiter-Regeln, Nachspiel, Alle-Schlüssel, Bausteine, Rechenregel-Test"`.
+- [x] **Step 5: Commit** `git commit -m "Labor-Rahmen: Nachladen, Reiter-Regeln, Nachspiel, Alle-Schlüssel, Bausteine, Rechenregel-Test"`.
 
 ### Task 111: Werkzeug „Chiffrierscheibe“ mit Brute-Force-Demo (W0 §9.2, Gast)
 

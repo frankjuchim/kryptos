@@ -38,7 +38,7 @@ const KRB = (() => {
    * Geheimtext (GROSS, Fünfergruppen) bzw. Klartext (klein) als Zeile mit Screenreader-Fassung, Positionsleiste,
    * Kopieren und „buchstabenweise vorlesen“.
    */
-  function geheimtext(text, { art = 'geheim', gruppe = 5, positionen = false, kopieren = true, unveraendert = false } = {}) {
+  function geheimtext(text, { art = 'geheim', gruppe = 5, positionen = false, kopieren = true, unveraendert = false, markiert = [] } = {}) {
     const klar = art === 'klar';
     // unveraendert: Text wie im Seed (fremde Verfahren `frei`: Wortgrenzen und Schreibweise gehören zum Verfahren)
     let roh = unveraendert ? String(text ?? '').trim() : Krypto.normalisieren(String(text ?? ''));
@@ -50,8 +50,45 @@ const KRB = (() => {
     else for (let i = 0; i < roh.length; i += n) gruppen.push(roh.slice(i, i + n));
     const name = klar ? 'Klartext' : 'Geheimtext';
     const sr = h('span', { class: 'sr' }, `${name}, buchstabiert: ${gruppen.map((g) => [...g.replace(/\s+/g, '')].join(' ')).join(', ')}`);
-    const zeile = h('span', { class: 'geheimtext-gruppen', 'aria-hidden': 'true' }, gruppen.map((g) => h('span', { class: 'gruppe' }, g)));
+    // Markierungen (M6 E86): [{ von, laenge, art }] mit Positionen ab 0 im normalisierten Text – mark.markiert (unterstrichen),
+    // Beschreibung für Screenreader über aria-describedby
+    const marken = (Array.isArray(markiert) ? markiert : []).filter((m) => m && Number.isInteger(m.von) && Number.isInteger(m.laenge) && m.laenge > 0 && m.von >= 0);
+    const artAn = (pos) => {
+      const m = marken.find((x) => pos >= x.von && pos < x.von + x.laenge);
+      return m ? String(m.art ?? 'a') : null;
+    };
+    function gruppeMitMarken(g, start) {
+      const kinder = [];
+      let lauf = null;
+      [...g].forEach((ch, j) => {
+        const a = artAn(start + j);
+        if (a === null) {
+          lauf = null;
+          kinder.push(ch);
+        } else if (lauf && lauf.art === a) lauf.el.appendChild(document.createTextNode(ch));
+        else {
+          lauf = { art: a, el: h('mark', { class: `markiert art-${a}` }, ch) };
+          kinder.push(lauf.el);
+        }
+      });
+      return h('span', { class: 'gruppe' }, kinder);
+    }
+    let start = 0;
+    const zeile = h(
+      'span',
+      { class: 'geheimtext-gruppen', 'aria-hidden': 'true' },
+      gruppen.map((g) => {
+        const el = marken.length ? gruppeMitMarken(g, start) : h('span', { class: 'gruppe' }, g);
+        start += g.length;
+        return el;
+      })
+    );
     const box = h('div', { class: klar ? 'klartext klartext-zeile' : 'geheimtext' });
+    if (marken.length) {
+      const id = neueId();
+      box.setAttribute('aria-describedby', id);
+      box.appendChild(h('span', { class: 'sr', id }, `Markiert: ${marken.map((m) => `Position ${m.von} bis ${m.von + m.laenge - 1}`).join(', ')}`));
+    }
     box.appendChild(h('div', { class: 'geheimtext-text' }, zeile, sr));
     if (positionen) {
       box.appendChild(h('div', { class: 'positionen', 'aria-hidden': 'true' }, gruppen.map((g, i) => h('span', null, String(i * n)))));
@@ -619,7 +656,9 @@ const KRB = (() => {
     const knopf = h('button', { type: 'button', class: 'knopf knopf-primaer werkzeug-oeffnen', disabled: !frei }, b.titel ? String(b.titel) : `${name} öffnen`);
     knopf.addEventListener('click', () => {
       const modus = ctx && ctx.modus === 'gast' ? 'gast' : 'lab';
-      KRLabor.dialog(b.id, b.voreinstellung, { modus });
+      // Umgebung für die Reiter-Regeln (rolle, niveau, welten – M6 E71) kommt von der Seite über ctx.laborUmgebung
+      const extra = ctx && ctx.laborUmgebung && typeof ctx.laborUmgebung === 'object' ? ctx.laborUmgebung : {};
+      KRLabor.dialog(b.id, b.voreinstellung, { ...extra, modus });
     });
     return h(
       'div',
