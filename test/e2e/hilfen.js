@@ -51,8 +51,10 @@ async function freiePorts() {
 
 /**
  * Dev-Portal und Kryptos starten. Liefert { basis, portal, beenden(), log() }.
+ * Standard: Fixture-Welt 9 + e2e-Gast-Demo (Szenarien 1–10). `{ echt: true }` (Szenario 11, M5 Task 101): die echten
+ * Seeds aus seed/ (Welten 0–2, Warm-up, Gast, Akten) ohne WELT_DATEIEN.
  */
-async function starte() {
+async function starte({ echt = false } = {}) {
   const [port, portalPort] = await freiePorts();
   const basis = `http://localhost:${port}`;
   const portal = `http://localhost:${portalPort}`;
@@ -73,8 +75,8 @@ async function starte() {
       AUTH_MODUS: 'portal',
       SESSION_SECRET: 'e2e-nur-lokal-0123456789abcdef-0123456789',
       TRUST_PROXY: 'false',
-      WELT_DATEIEN: path.join(WURZEL, 'test', 'fixtures', 'welt_beispiel.json'),
-      SEED_DIR: path.join(WURZEL, 'test', 'e2e', 'seed')
+      WELT_DATEIEN: echt ? '' : path.join(WURZEL, 'test', 'fixtures', 'welt_beispiel.json'),
+      SEED_DIR: echt ? path.join(WURZEL, 'seed') : path.join(WURZEL, 'test', 'e2e', 'seed')
     },
     stdio: ['ignore', 'pipe', 'pipe']
   });

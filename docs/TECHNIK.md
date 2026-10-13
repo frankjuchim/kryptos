@@ -1642,7 +1642,9 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 `SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung – ausgenommen nur erwartete Status 400–429 von `/api/…` –,
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
-`fehler.js` (Nr. 10); Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 10 → 9. Nr. 4–6 folgen mit M6/M7.
+`fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
+ohne Fotos); Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 10 → 9 → 11. Nr. 4–6 folgen mit M6/M7. `E2E_NUR=11` (Komma-Liste)
+führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
 2. Level mit allen neuen Interaktionen (Fixture): `chiffre` mit Schrittprüfung und Fallen-Chip P3, `zuordnung` mit
@@ -1659,6 +1661,12 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
    nie auf `body`, nach dem Prüfen auf der Rückmeldung); Kontrastmessung aller Seiten hell und dunkel über berechnete
    Farben (≥ 4,5 : 1, großer Text ≥ 3 : 1, Review M4).
 10. Fehlerzustände: Server-500 (JSON und HTML) und Netzwerkfehler per `route` → verständlicher Hinweis (Review M4).
+11. Welten 0–2 spielbar mit den echten Seeds (M5 Task 101): Frau M. öffnet die Welten 0–2 (LK 13 eA, Boss „Offen“;
+    GK 12 gA, Kür gesperrt); Mika R.: Zeitleiste (0–2 offen, 3–6 „noch verschlüsselt“), Archivfund W0 (ohne Punkte),
+    W0-L1-03 (+10 Punkte), W0-L2-02 in falscher Richtung → Fallen-Chip P3, Level-Seite 0.1 „Akte als PDF“ (200,
+    `application/pdf`), QR-Ziel `/level/0.4` → Level-Seite, Boss W0 (8 Aufgaben, eine Antwort, Auswertung mit Lösung);
+    im GK 12 fehlen Level 2.3 und – bis „Kür: Frei“ – K1; 360 px ohne Querscrollen (Zeitleiste, Epoche, Level, Aufgabe,
+    Archivfund, Boss-Start, Themen).
 
 ---
 

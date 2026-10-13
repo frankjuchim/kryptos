@@ -1594,17 +1594,24 @@ Boss 8/25 min, Trainingsplatz, Warm-up 12, 7 Werkzeugkarten. `WELT_PLAN` unverä
 **Files:** Create `test/e2e/inhalte.js`; Modify `test/e2e/e2e.js` (Reihenfolge: nach Szenario 9), `test/e2e/hilfen.js` (zweiter App-Start mit
 `SEED_DIR=seed`, ohne `WELT_DATEIEN`), `docs/TECHNIK.md` §15 (Szenario 10)
 
-**Szenario 10 (Schüler „Mika R.“ im eA-Kurs `k:1`, Lehrkraft „Frau M.“ schaltet Welten 0–2 frei):** Zeitleiste zeigt Antike, Bagdad,
+**Szenario 11** (im Plan zuerst „Szenario 10“; die Nummer 10 trägt seit dem Review M4 „Fehlerzustände“) **(Schüler „Mika R.“ im eA-Kurs `k:1`, Lehrkraft „Frau M.“ schaltet Welten 0–2 frei):** Zeitleiste zeigt Antike, Bagdad,
 Renaissance offen, 3–6 „noch verschlüsselt“; Archivfund W0 lösen (`dieflottelaeuftbeineumondaus`, 0 Punkte, Zeitleiste entsiegelt);
 W0-L1-03 lösen (Punkte 10); W0-L2-02 mit `uyafc` (in die falsche Richtung verschoben) → Fallen-Chip P3 (Richtung) sichtbar; Level-Seite 0.1 zeigt „Akte als PDF“
 (200, `application/pdf`); `/level/0.4` landet auf der Level-Seite; Boss W0 (nach Freischaltung durch die Lehrkraft „frei“) starten, eine
 Antwort, abgeben, Auswertung mit Lösung; Wechsel in den gA-Kurs `k:2`: Level 2.3 fehlt, Kür K1 nur bei Einstellung „frei“. Keine
 Konsolenfehler, keine CSP-Verstöße, 360 px ohne Querscrollen. **Keine neuen Fotos** (Grenze 30 aus M4 erreicht; `E2E_FOTOS` unverändert).
 
-- [ ] **Step 1: Failing test** – Szenario schreiben → `npm run e2e` → FAIL (z. B. fehlende Freischaltung im Ablauf).
-- [ ] **Step 2: Implement** (nur Testcode; Fehler in App/Seeds beheben, nicht den Test aufweichen).
-- [ ] **Step 3: Run** `npm run e2e` → alle Szenarien grün.
-- [ ] **Step 4: Commit** `git commit -m "e2e Szenario 10: Welten 0–2 mit den echten Seeds spielbar"`.
+- [x] **Step 1: Failing test** – Szenario schreiben → `npm run e2e` → FAIL (z. B. fehlende Freischaltung im Ablauf).
+- [x] **Step 2: Implement** (nur Testcode; Fehler in App/Seeds beheben, nicht den Test aufweichen).
+- [x] **Step 3: Run** `npm run e2e` → alle Szenarien grün.
+- [x] **Step 4: Commit** `git commit -m "e2e Szenario 11: Welten 0–2 mit den echten Seeds spielbar"`.
+
+**Umsetzungsnotiz (Task 101):** Szenario heißt **11** (Nr. 10 = Fehlerzustände aus dem Review M4). `hilfen.starte({ echt: true })`
+startet eine zweite App mit `SEED_DIR=seed` ohne `WELT_DATEIEN`; `e2e.js` führt Szenario 11 nach 1–10 aus (`E2E_NUR=11` nur dieses).
+Erste Läufe rot (Tor-Titel „Das Haus der Weisheit“ statt „Bagdad“; Skytale-Aufgaben haben eine Antwortzeile statt Kästchen;
+Boss-Ziehung zufällig → erste beantwortbare Aufgabe; Kür-Einstellung wirkt erst nach Neuladen der Schülerseite) – alles
+Testseite, kein App- oder Seed-Fehler. Lehrkraft „schaltet Welten 0–2 frei“ = Häkchen 0–2 (der Katalog bietet genau diese),
+Boss W0 „frei“ = Einstellung „Offen“. Keine neuen Fotos. `npm run e2e`: Szenarien 1–11 grün.
 
 ### Task 102: CI und Skripte für Inhalte und Material-Pipeline (K22, K30)
 
