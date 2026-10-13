@@ -2,7 +2,8 @@
 /*
  * e2e – Kryptolabor (TECHNIK §15 Nr. 4, Plan M6 Task 128): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis
  * gegen Krypto (Node); gesperrtes Werkzeug (Chiffrierscheibe aus 7a) wird nicht geladen; Nachspiel per Tastatur; Dialog
- * aus einer Aufgabe mit Rückkehr des Fokus; 360 px ohne Querscrollen, Touch-Ziele; reduzierte Bewegung.
+ * aus einer Aufgabe mit Rückkehr des Fokus; 360 px ohne Querscrollen, Touch-Ziele in allen Werkzeugen und Reitern; reduzierte
+ * Bewegung.
  * Keine Fotos (E88). Stellt die Werkzeug-Einstellungen von 7a am Ende wieder her (Scheibe bleibt gesperrt).
  */
 const assert = require('node:assert/strict');
@@ -147,14 +148,18 @@ async function szenario4(ctx) {
   assert.equal(await page.locator('dialog.werkzeug-dialog').count(), 0);
   assert.equal(await page.evaluate(() => !!document.activeElement && document.activeElement.classList.contains('werkzeug-oeffnen')), true, 'Fokus zurück auf dem Knopf');
 
-  // 360 px: kein Querscrollen in allen Werkzeugen, Touch-Ziele ≥ 44 px
+  // 360 px: kein Querscrollen und Touch-Ziele ≥ 44 px in allen Werkzeugen und allen sichtbaren Reitern (Review M6)
   await page.setViewportSize({ width: 360, height: 740 });
   for (const id of IDS) {
     await oeffne(page, ctx, id);
-    await keinQuerScrollen(page, `/labor#/${id}`);
+    const reiter = await flaeche(page).locator('[role="tab"]').evaluateAll((l) => l.map((x) => x.dataset.reiter));
+    for (const r of reiter.length ? reiter : [null]) {
+      if (r) await flaeche(page).locator(`[role="tab"][data-reiter="${r}"]`).first().click();
+      const ort = `/labor#/${id}${r ? ` (${r})` : ''} bei 360 px`;
+      await keinQuerScrollen(page, ort);
+      await ziele44(page, ort);
+    }
   }
-  await oeffne(page, ctx, 'skytale');
-  await ziele44(page, '/labor#/skytale');
 
   // reduzierte Bewegung: keine Animationen
   await page.emulateMedia({ reducedMotion: 'reduce' });
