@@ -1438,5 +1438,52 @@ class BibliothekM6III(unittest.TestCase):
             self.assertEqual(K._mini_enigma_zeile(i, 'DAHBFCGE', 'EGHFADBC'), K.MINI_ENIGMA_TABELLE[s_], s_)
 
 
+class BibliothekM6IV(unittest.TestCase):
+    """Plan M6 Task 108 (W4 §9, W5 §0a/§9, E68, E69)."""
+
+    def test_ordnung_teilen_probedivision(self):
+        self.assertEqual([K.ordnung(3, 17), K.ordnung(2, 17), K.ordnung(5, 23), K.ordnung(2, 101), K.ordnung(1, 7)], [16, 8, 22, 100, 1])
+        self.assertIsNone(K.ordnung(4, 26))
+        self.assertRaises(F, K.ordnung, 3, 1)
+        self.assertEqual(K.teile_mit_rest(63, 26), {'q': 2, 'r': 11})
+        self.assertEqual(K.teile_mit_rest(-5, 26), {'q': -1, 'r': 21})
+        self.assertEqual(K.probedivision(2209), {'teiler': 47, 'versuche': 46})
+        self.assertEqual(K.probedivision(55), {'teiler': 5, 'versuche': 4})
+        self.assertEqual(K.probedivision(91), {'teiler': 7, 'versuche': 6})
+        self.assertEqual(K.probedivision(97), {'teiler': None, 'versuche': 8})
+        self.assertRaises(F, K.probedivision, 1)
+
+    def test_pruefsummen_ausgleich_hashzahl_signatur(self):
+        self.assertEqual([[K.pruefsumme(t), K.pruefsumme(t, 'gewichtet')] for t in ('regal', 'lager')], [[14, 26], [14, 0]])
+        self.assertEqual(K.kryptos_hash_ausgleichen('bote', 2, 'a'), {'beitrag': 19, 'wort': 'bato'})
+        self.assertEqual(K.kryptos_hash('bato')['wert'], K.kryptos_hash('bote')['wert'])
+        self.assertEqual(K.kryptos_hash_ausgleichen('nebel', 1, 'i'), {'beitrag': 12, 'wort': None})
+        self.assertRaises(F, K.kryptos_hash_ausgleichen, 'bote', 0, 'a')
+        self.assertEqual(K.hash_zahl('treffen um neun', verfahren='kh', modul=55), 15)
+        zert = 'name=bob.example;schluessel=91,5;gueltig=2026-01-01..2026-12-31;aussteller=Trent CA'
+        self.assertEqual(K.hash_zahl(zert, verfahren='sha256', modul=65), 32)
+        self.assertEqual(K.hash_zahl(zert.replace('91,5', '51,3'), verfahren='sha256', modul=65), 41)
+        self.assertEqual(K.rsa_signieren(15, 27, 55), 5)
+        self.assertEqual(K.rsa_pruefen(5, 3, 55), 15)
+        self.assertEqual(K.rsa_pruefen(K.rsa_signieren(2, 11, 51), 3, 55), 17)
+        self.assertRaises(F, K.rsa_signieren, 55, 27, 55)
+
+    def test_sha256_fips_und_hashlib(self):
+        """FIPS 180-4 (Anhang B / NIST-Beispiele); die eine Million „a“ nur hier (Laufzeit), dazu Abgleich mit hashlib."""
+        import hashlib
+        fips = {'': 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
+                'abc': 'BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD',
+                'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq':
+                    '248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1',
+                'a' * 1000000: 'CDC76E5C9914FB9281A1C7E284D73E67F1809A48A497200E046D39CCC7112CD0'}
+        for t, soll in fips.items():
+            self.assertEqual(K.sha256(t), soll, t[:20])
+            self.assertEqual(hashlib.sha256(t.encode('utf-8')).hexdigest().upper(), soll)
+        for t in ('Grüße', 'Mäßig 😀 ✓ €', 'a' * 55, 'a' * 56, 'a' * 64):
+            self.assertEqual(K.sha256(t), hashlib.sha256(t.encode('utf-8')).hexdigest().upper())
+        self.assertRaises(F, K.sha256, '\ud800')
+        self.assertRaises(F, K.sha256, 42)
+
+
 if __name__ == '__main__':
     unittest.main()

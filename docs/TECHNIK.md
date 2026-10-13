@@ -403,6 +403,10 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | `miniEnigma(text, stellung = 'A', richtung = 'ver', { walze = 'DAHBFCGE', reflektor = 'EGHFADBC' })` | *(M6, Runden-Labor Reiter Mini-Enigma)* Mini-Enigma nach W3 K2 (Definition unten): Ausgabe A–H GROSS; Text nach `nurBuchstaben` nur A–H, sonst `KryptoFehler`; `richtung` wird nur geprüft (involutorisch); `walze` = Bilder von A … H (Permutation), `reflektor` = fixpunktfreie Involution, sonst `KryptoFehler`. Tests: `bach` (A) → `HHAF`, `chef` (E) → `EGBC` |
 | `miniEnigma.tabelle(stellung, optionen)` / `miniEnigma.weg(buchstabe, stellung, optionen)` | *(M6)* Zeile der Stellungstabelle (Bild von A … H, 8 Zeichen; `tabelle('A')` = `EHFGACDB`) bzw. Stromweg `{ eingang, stationen: [x + s, W, − s, R, + s, W⁻¹, − s], ausgang }` (Buchstaben; `weg('B', 'A')`: B → A → A → E → E → H → H) |
 | `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` mit `schritte: [{ buchstabe, w, vorher, summe, nachher }]` (Rundentabelle) |
+| `kryptosHash.ausgleichen(wort, j, neu)` | *(M6, Hash-Labor Kollisionsbaukasten)* `{ beitrag, wort }`: der Buchstabe an Position j vom Ende (j ≥ 1; der letzte Buchstabe, j = 0, gleicht aus) wird `neu`; `beitrag` = (3ʲ · Δ) mod 29 mit Δ = w(neu) − w(alt); der letzte Buchstabe wird so gewählt, dass der KH-Wert gleich bleibt (Wort klein); ist dafür kein Buchstabe 1–26 möglich → `wort: null`. `ausgleichen('bote', 2, 'a')` = `{ beitrag: 19, wort: 'bato' }`, `ausgleichen('nebel', 1, 'i')` = `{ beitrag: 12, wort: null }`; j außerhalb 1 … Länge − 1 → `KryptoFehler` |
+| `pruefsumme(text, art = 'summe', modul = 29)` | *(M6)* Prüfsummen nach W5 §0a: `summe` S(t) = (Σ wᵢ) mod 29, `gewichtet` G(t) = (Σ i · wᵢ) mod 29 (i ab 1, A = 1, Text wie KRYPTOS-Hash normalisiert); `modul` 2–1000. S/G(„regal“) = 14/26, S/G(„lager“) = 14/0 |
+| `sha256(text)` | *(M6, Plan M6 E68)* SHA-256 nach FIPS 180-4, **eigene Umsetzung** in der Bibliothek (synchron, ohne Web Crypto) über die UTF-8-Bytes des **unveränderten** Texts → 64 Hexziffern GROSS; einzelne Ersatzzeichen (U+D800–DFFF) → `KryptoFehler`. Tests: FIPS-Vektoren „“, „abc“, 448-Bit-Nachricht (JS und Python), eine Million „a“ (nur Python); Zwilling = `hashlib` |
+| `hashZahl(text, { verfahren = 'kh', modul })` | *(M6, Signatur-Simulator, Plan M6 E69)* Hashwert als Zahl < `modul` (2 … 10⁹): `kh` → KH-Wert mod `modul`; `sha256` → erste 8 Hexziffern als Zahl mod `modul`. Zertifikate immer mit `sha256` (KRYPTOS-Hash ignoriert Ziffern) |
 | `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment): Kandidaten kürzeste zuerst über `alphabet` (Std. a–z), der Text selbst zählt nicht (weder als Kollision noch als Versuch; `max` begrenzt die Versuche); `{ text, wert, versuche }` oder `null` |
 
 **Definitionen (inzwischen festgelegt, verbindlich):**
@@ -467,8 +471,12 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `inverses(a, m)` | `a⁻¹ mod m` (kleinster nicht negativer Rest) oder `null`; m ≥ 2 |
 | `modpow(basis, exponent, modul, { protokoll = false })` | schnelles Potenzieren (BigInt intern); `protokoll` liefert die Quadrieren-und-Multiplizieren-Tabelle `{ wert, schritte: [{ exponent, basis, ergebnis }] }` wie der Trace `potenzMod` (W4 Akte W4·K3: 37⁴³ mod 77 → 7 Zeilen) |
 | `istPrim(n)` | Probedivision (n < 10⁷) |
+| `ordnung(a, m)` | *(M6, Modulo-Uhr)* kleinstes x ≥ 1 mit aˣ ≡ 1 (mod m); ggT(a, m) ≠ 1 → `null`; m 2 … 10⁶. `ordnung(3, 17)` = 16, `ordnung(2, 101)` = 100 |
+| `teileMitRest(a, m)` | *(M6, Rechenzeile „a = q · m + r“)* `{ q, r }` mit r = `mod(a, m)`; `teileMitRest(-5, 26)` = `{ q: -1, r: 21 }` |
+| `probedivision(n)` | *(M6, RSA-Rechenwerk Eve-Modus – einzige „Faktorisierung“ im Labor)* Proben t = 2, 3, 4, … solange t² ≤ n → `{ teiler, versuche }`: erster Teiler oder `null` (n prim) und die Zahl der Proben bis dahin; n 2 … 10⁷. `probedivision(2209)` = `{ teiler: 47, versuche: 46 }` |
 | `rsa.schluessel(p, q, e = null)` | `{ N, phi, e, d }`; `e` Std. = kleinstes e ≥ 3 mit ggT(e, φ) = 1; prüft p ≠ q prim |
 | `rsa.verschluesseln(m, e, N)` / `rsa.entschluesseln(c, d, N)` | `m < N` Pflicht |
+| `rsa.signieren(h, d, N)` / `rsa.pruefen(s, e, N)` | *(M6, Plan M6 E69)* Signatur s = hᵈ mod N bzw. Prüfwert sᵉ mod N (mit dem Hashwert vergleichen); 0 ≤ h, s < N, N ≥ 2. `rsa.signieren(15, 27, 55)` = 5, `rsa.pruefen(5, 3, 55)` = 15 |
 | `dh.oeffentlich(g, geheim, p)` | `g^geheim mod p` |
 | `dh.gemeinsam(fremdOeffentlich, geheim, p)` | `B^a mod p` |
 | `dh.dlogKlein(g, A, p)` | kleinstes x ≥ 1 mit `g^x ≡ A` (p < 10 000, Brute Force – für Eve-Prüfung im Funkraum); keins → `null` |
@@ -499,7 +507,8 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
   `mini_enigma`, `mini_enigma_tabelle`, `mini_enigma_weg`, `kryptos_hash`,
   `haeufigkeiten`, `koinzidenzindex`, `friedman`, `kasiski`, `teiltexte`, `ngramme`, `teilsubstitution`, `muster_suchen`,
   `teiler_tabelle`, `primfaktoren`, `mittlerer_koinzidenzindex`, `koinzidenzindex_bruch`, `ggt`, `erweiterter_euklid`, `inverses`,
-  `modpow`, `rsa_schluessel`, `dh_*`, `schluesselanzahl`, `verfahren_anwenden`, `baukasten_verschluesseln/entschluesseln`).
+  `modpow`, `ordnung`, `teile_mit_rest`, `probedivision`, `rsa_schluessel`, `rsa_signieren`, `rsa_pruefen`, `dh_*`,
+  `schluesselanzahl`, `pruefsumme`, `kryptos_hash_ausgleichen`, `sha256` (über `hashlib`), `hash_zahl`, `verfahren_anwenden`, `baukasten_verschluesseln/entschluesseln`).
 - `werkzeuge/krypto/bruecke.py`: liest JSON-Zeilen `{ "f": "vigenere", "args": [...] }` von stdin, schreibt
   `{ "ok": true, "r": … }` bzw. `{ "ok": false, "fehler": "…" }` (Fehlerfälle müssen in beiden Implementierungen
   übereinstimmen: gleiche Fehler**art**, Meldung egal).

@@ -1010,7 +1010,8 @@ Datei `seed/warmup/welt5.json` + `KR_W5_Warmup.docx` (mit/ohne Lösungsteil). Sp
 ### 9.1 Hash-Labor (Kryptolabor, W5)
 
 **Zweck:** Eigenschaften von Hashfunktionen erleben; KRYPTOS-Hash Schritt für Schritt; Vergleich mit SHA-256.
-Clientseitig (SHA-256 über die Web-Crypto-Schnittstelle des Browsers, KRYPTOS-Hash aus `shared/krypto.js`).
+Clientseitig (SHA-256 und KRYPTOS-Hash aus `shared/krypto.js`: `Krypto.sha256` ist eine eigene Umsetzung nach FIPS 180-4,
+synchron und mit Python-Zwilling – statt Web Crypto, Plan M6 E68).
 
 | Ansicht | Zeigt | Parameter | Grenzen |
 |---|---|---|---|
@@ -1028,7 +1029,10 @@ MD5 und SHA-1 werden nur als Text mit dem Etikett „gebrochen – nicht verwend
 **Zweck:** Ablauf von Signatur, Zertifikatsprüfung und Man-in-the-Middle-Angriff als Bühne mit Akteuren; jede
 Manipulation wird mit der Reaktion der Prüfung beantwortet. Kryptografie im Hintergrund: KRYPTOS-Hash (Modus
 „schwacher Hash“) oder SHA-256 (gekürzt angezeigt), RSA mit kleinen Zahlen (Alice (55, 3)/(55, 27), Bob (91, 5)/(91, 29),
-Mallory (51, 3)/(51, 11), Trent-CA (65, 5)/(65, 29)); Werte nur zur Anzeige, keine Aufgabenlösungen.
+Mallory (51, 3)/(51, 11), Trent-CA (65, 5)/(65, 29)); Werte nur zur Anzeige, keine Aufgabenlösungen. Der Hashwert wird
+als Zahl kleiner N signiert: `Krypto.hashZahl` (KRYPTOS-Hash: KH-Wert mod N; SHA-256: erste 8 Hexziffern mod N),
+Signatur `Krypto.rsa.signieren`, Prüfung `Krypto.rsa.pruefen`; Zertifikate immer mit SHA-256, weil der KRYPTOS-Hash
+Ziffern ignoriert (ein ausgetauschter Schlüssel fiele sonst nicht auf) – Plan M6 E69.
 
 **Akteure:** Alice (Absenderin), Bob (Empfänger), Mallory (aktive Angreiferin auf dem Kanal), Trent (CA), Schlüsselserver
 (Verzeichnis öffentlicher Schlüssel), Browser/Vertrauensspeicher (vorinstallierte Wurzelzertifikate).

@@ -41,6 +41,9 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | kryptos16.bitweg, .kacheln      | kryptos16_bitweg, kryptos16_kacheln | kryptos16.ausKacheln        | kryptos16_aus_kacheln       |
 | rm16.rundenschluessel / .runde  | rm16_rundenschluessel, rm16_runde | rm16.verschluesseln/…ent…     | rm16_verschluesseln / rm16_entschluesseln |
 | miniEnigma                      | mini_enigma                     | miniEnigma.tabelle / .weg       | mini_enigma_tabelle / mini_enigma_weg |
+| ordnung, teileMitRest           | ordnung, teile_mit_rest         | probedivision                   | probedivision               |
+| rsa.signieren / .pruefen        | rsa_signieren, rsa_pruefen      | pruefsumme, sha256, hashZahl    | pruefsumme, sha256 (hashlib), hash_zahl |
+| kryptosHash.ausgleichen         | kryptos_hash_ausgleichen        |                                 |                             |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -53,6 +56,7 @@ setzt sie für den Vergleich wieder in camelCase.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import re
 import unicodedata
@@ -1395,6 +1399,62 @@ def kryptos_hash_kollision_suchen(text, *, max=10000, alphabet='abcdefghijklmnop
         laenge += 1
 
 
+def kryptos_hash_ausgleichen(wort, j, neu):
+    """W5 §9.1 Kollisionsbaukasten: Beitrag 3ʲ · Δ mod 29; der passende letzte Buchstabe wird durch Probieren aller
+    26 Buchstaben gesucht (gleicher KH-Wert), keiner → wort None."""
+    w = nur_buchstaben(_text(wort, 'Wort')).lower()
+    j = _ganz(j, 'j')
+    if not 1 <= j < len(w):
+        raise KryptoFehler('j liegt zwischen 1 und Wortlänge − 1.')
+    n = nur_buchstaben(_text(neu, 'neuer Buchstabe')).lower()
+    if len(n) != 1:
+        raise KryptoFehler('Genau ein neuer Buchstabe.')
+    i = len(w) - 1 - j
+    beitrag = pow(3, j, 29) * ((ord(n) - 96) - (ord(w[i]) - 96)) % 29
+    ziel = kryptos_hash(w)['wert']
+    vorne = w[:i] + n + w[i + 1:-1]
+    for c in 'abcdefghijklmnopqrstuvwxyz':
+        if kryptos_hash(vorne + c)['wert'] == ziel:
+            return {'beitrag': beitrag, 'wort': vorne + c}
+    return {'beitrag': beitrag, 'wort': None}
+
+
+def pruefsumme(text, art='summe', modul=29):
+    """W5 §0a: S(t) = Σ wᵢ mod modul, G(t) = Σ i · wᵢ mod modul (i ab 1)."""
+    if art not in ('summe', 'gewichtet'):
+        raise KryptoFehler('art ist „summe“ oder „gewichtet“.')
+    modul = _ganz(modul, 'Modul')
+    if not 2 <= modul <= 1000:
+        raise KryptoFehler('Der Modul liegt zwischen 2 und 1000.')
+    werte = zahlen(text)
+    if art == 'summe':
+        return sum(werte) % modul
+    return sum(i * w for i, w in enumerate(werte, start=1)) % modul
+
+
+def sha256(text):
+    """Zwilling über hashlib (Plan M6 E68): UTF-8 des unveränderten Texts, 64 Hexziffern GROSS."""
+    try:
+        daten = _text(text).encode('utf-8')
+    except UnicodeEncodeError as fehler:
+        raise KryptoFehler('Der Text enthält ein ungültiges Zeichen.') from fehler
+    return hashlib.sha256(daten).hexdigest().upper()
+
+
+def hash_zahl(text, *, verfahren='kh', modul=None):
+    """Plan M6 E69: kh → KH-Wert mod modul; sha256 → erste 8 Hexziffern (32 Bit) mod modul."""
+    if verfahren not in ('kh', 'sha256'):
+        raise KryptoFehler('verfahren ist „kh“ oder „sha256“.')
+    if modul is None:
+        raise KryptoFehler('Der Modul fehlt.')
+    modul = _ganz(modul, 'Modul')
+    if not 2 <= modul <= 10 ** 9:
+        raise KryptoFehler('Der Modul liegt zwischen 2 und 10⁹.')
+    if verfahren == 'kh':
+        return kryptos_hash(text)['wert'] % modul
+    return int.from_bytes(bytes.fromhex(sha256(text))[:4], 'big') % modul
+
+
 # ───────────────────────────── Kryptoanalyse ─────────────────────────────
 
 # Beutelspacher, Kryptologie (Springer Spektrum) – SPEC W2 §0.9 / W1, Prozent.
@@ -1698,6 +1758,52 @@ def ist_prim(n):
     return all(n % t for t in range(2, math.isqrt(n) + 1))
 
 
+def _phi(m):
+    ergebnis, rest, p = m, m, 2
+    while p * p <= rest:
+        if rest % p == 0:
+            while rest % p == 0:
+                rest //= p
+            ergebnis -= ergebnis // p
+        p += 1
+    if rest > 1:
+        ergebnis -= ergebnis // rest
+    return ergebnis
+
+
+def ordnung(a, m):
+    """Kleinster Teiler x von φ(m) mit aˣ ≡ 1 (Satz von Euler/Lagrange) – nicht durch Hochzählen."""
+    a = _ganz(a, 'a')
+    m = _ganz(m, 'Modul')
+    if not 2 <= m <= 10 ** 6:
+        raise KryptoFehler('Der Modul liegt zwischen 2 und 10⁶.')
+    if math.gcd(a, m) != 1:
+        return None
+    phi = _phi(m)
+    teiler = sorted({d for k in range(1, math.isqrt(phi) + 1) if phi % k == 0 for d in (k, phi // k)})
+    return next(x for x in teiler if pow(a, x, m) == 1)
+
+
+def teile_mit_rest(a, m):
+    a = _ganz(a, 'a')
+    m = _ganz(m, 'Modul')
+    if m <= 0:
+        raise KryptoFehler('Der Modul muss positiv sein.')
+    q, r = divmod(a, m)  # Python: r ≥ 0 bei m > 0
+    return {'q': q, 'r': r}
+
+
+def probedivision(n):
+    """Proben 2 … ⌊√n⌋; Versuche bis zum ersten Teiler t sind t − 1."""
+    n = _ganz(n, 'n')
+    if not 2 <= n <= 10 ** 7:
+        raise KryptoFehler('n liegt zwischen 2 und 10⁷.')
+    for t in range(2, math.isqrt(n) + 1):
+        if n % t == 0:
+            return {'teiler': t, 'versuche': t - 1}
+    return {'teiler': None, 'versuche': math.isqrt(n) - 1}
+
+
 def rsa_schluessel(p, q, e=None):
     p = _ganz(p, 'p')
     q = _ganz(q, 'q')
@@ -1730,6 +1836,15 @@ def rsa_verschluesseln(m, e, n):
 
 def rsa_entschluesseln(c, d, n):
     return _rsa(c, d, n, 'c')
+
+
+def rsa_signieren(h, d, n):
+    """Plan M6 E69: s = hᵈ mod N, 0 ≤ h < N."""
+    return _rsa(h, d, n, 'h')
+
+
+def rsa_pruefen(s_, e, n):
+    return _rsa(s_, e, n, 's')
 
 
 def _dh_modul(p):

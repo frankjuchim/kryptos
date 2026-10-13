@@ -1448,6 +1448,121 @@
     return null;
   };
 
+  /**
+   * Kollisionsbaukasten (W5 §9.1): Buchstabe an Position j vom Ende (j ≥ 1; der letzte, j = 0, gleicht aus) wird `neu`;
+   * beitrag = (3ʲ · Δ) mod 29; der letzte Buchstabe wird so gewählt, dass der KH-Wert gleich bleibt (Wert 1–26,
+   * sonst wort: null). Wort klein.
+   */
+  kryptosHash.ausgleichen = function (wort, j, neu) {
+    const w = nurBuchstaben(pruefeText(wort, 'Das Wort'));
+    pruefeGanzzahl(j, 'Die Position j');
+    if (j < 1 || j >= w.length) throw new KryptoFehler('Die Position j zählt vom Ende ab 1 und liegt im Wort (der letzte Buchstabe gleicht aus).');
+    const n = nurBuchstaben(pruefeText(neu, 'Der neue Buchstabe'));
+    if (n.length !== 1) throw new KryptoFehler('Es wird genau ein neuer Buchstabe A–Z erwartet.');
+    const i = w.length - 1 - j;
+    const delta = wert(n) - wert(w[i]);
+    const beitrag = mod(modpow(3, j, 29) * delta, 29);
+    const letzter = mod(wert(w[w.length - 1]) - beitrag, 29);
+    if (letzter < 1 || letzter > 26) return { beitrag, wort: null };
+    const neuesWort = w.slice(0, i) + n + w.slice(i + 1, w.length - 1) + buchstabe(letzter);
+    return { beitrag, wort: neuesWort.toLowerCase() };
+  };
+
+  const PRUEFSUMMEN = ['summe', 'gewichtet'];
+
+  /** Prüfsummen (W5 §0a): S(t) = (Σ wᵢ) mod modul, G(t) = (Σ i · wᵢ) mod modul (i ab 1, A = 1; Text wie KH normalisiert) */
+  function pruefsumme(text, art = 'summe', modul = 29) {
+    if (!PRUEFSUMMEN.includes(art)) throw new KryptoFehler('Die Prüfsumme ist „summe“ oder „gewichtet“.');
+    pruefeGanzzahl(modul, 'Der Modul');
+    if (modul < 2 || modul > 1000) throw new KryptoFehler('Der Modul liegt zwischen 2 und 1000.');
+    const w = zahlen(text);
+    return mod(w.reduce((s, x, i) => s + (art === 'gewichtet' ? (i + 1) * x : x), 0), modul);
+  }
+
+  // ───────────────────────────── SHA-256 (FIPS 180-4, eigene Umsetzung, Plan M6 E68) ─────────────────────────────
+
+  const SHA_K = [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
+    0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
+    0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+    0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
+    0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+    0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+  ];
+  const SHA_H0 = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+
+  /** Text → UTF-8-Bytes (einzelne Ersatzzeichen U+D800–U+DFFF → KryptoFehler) */
+  function utf8Bytes(text) {
+    const aus = [];
+    for (const zeichen of text) {
+      const c = zeichen.codePointAt(0);
+      if (c >= 0xd800 && c <= 0xdfff) throw new KryptoFehler('Der Text enthält ein ungültiges Zeichen (einzelnes Ersatzzeichen).');
+      if (c < 0x80) aus.push(c);
+      else if (c < 0x800) aus.push(0xc0 | (c >>> 6), 0x80 | (c & 0x3f));
+      else if (c < 0x10000) aus.push(0xe0 | (c >>> 12), 0x80 | ((c >>> 6) & 0x3f), 0x80 | (c & 0x3f));
+      else aus.push(0xf0 | (c >>> 18), 0x80 | ((c >>> 12) & 0x3f), 0x80 | ((c >>> 6) & 0x3f), 0x80 | (c & 0x3f));
+    }
+    return aus;
+  }
+
+  const rotr = (x, n) => ((x >>> n) | (x << (32 - n))) >>> 0;
+
+  /** SHA-256 über die UTF-8-Bytes des unveränderten Texts → 64 Hexziffern GROSS */
+  function sha256(text) {
+    const bytes = utf8Bytes(pruefeText(text));
+    const bitLaenge = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    const hoch = Math.floor(bitLaenge / 0x100000000);
+    const tief = bitLaenge >>> 0;
+    for (const wort of [hoch, tief]) bytes.push((wort >>> 24) & 0xff, (wort >>> 16) & 0xff, (wort >>> 8) & 0xff, wort & 0xff);
+    const H = SHA_H0.slice();
+    const W = new Array(64);
+    for (let b = 0; b < bytes.length; b += 64) {
+      for (let t = 0; t < 16; t++) {
+        const i = b + 4 * t;
+        W[t] = ((bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] << 8) | bytes[i + 3]) >>> 0;
+      }
+      for (let t = 16; t < 64; t++) {
+        const s0 = rotr(W[t - 15], 7) ^ rotr(W[t - 15], 18) ^ (W[t - 15] >>> 3);
+        const s1 = rotr(W[t - 2], 17) ^ rotr(W[t - 2], 19) ^ (W[t - 2] >>> 10);
+        W[t] = (W[t - 16] + s0 + W[t - 7] + s1) >>> 0;
+      }
+      let [a, bb, c, d, e, f, g, h] = H;
+      for (let t = 0; t < 64; t++) {
+        const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+        const ch = (e & f) ^ (~e & g);
+        const T1 = (h + S1 + ch + SHA_K[t] + W[t]) >>> 0;
+        const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+        const maj = (a & bb) ^ (a & c) ^ (bb & c);
+        const T2 = (S0 + maj) >>> 0;
+        h = g;
+        g = f;
+        f = e;
+        e = (d + T1) >>> 0;
+        d = c;
+        c = bb;
+        bb = a;
+        a = (T1 + T2) >>> 0;
+      }
+      [a, bb, c, d, e, f, g, h].forEach((x, i) => (H[i] = (H[i] + x) >>> 0));
+    }
+    return H.map((x) => x.toString(16).toUpperCase().padStart(8, '0')).join('');
+  }
+
+  /**
+   * Hash als Zahl < modul (Signatur-Simulator, Plan M6 E69): kh → KH-Wert mod modul; sha256 → erste 8 Hexziffern als
+   * Zahl mod modul. modul 2 … 10⁹.
+   */
+  function hashZahl(text, { verfahren = 'kh', modul } = {}) {
+    if (verfahren !== 'kh' && verfahren !== 'sha256') throw new KryptoFehler('Das Hashverfahren ist „kh“ oder „sha256“.');
+    pruefeGanzzahl(modul, 'Der Modul');
+    if (modul < 2 || modul > 1e9) throw new KryptoFehler('Der Modul liegt zwischen 2 und 1 000 000 000.');
+    if (verfahren === 'kh') return mod(kryptosHash(text).wert, modul);
+    return mod(parseInt(sha256(text).slice(0, 8), 16), modul);
+  }
+
   // ───────────────────────────── Kryptoanalyse ─────────────────────────────
 
   /**
@@ -1822,6 +1937,40 @@
     return true;
   }
 
+  /** Ordnung von a modulo m: kleinstes x ≥ 1 mit aˣ ≡ 1 (mod m); ggT(a, m) ≠ 1 → null; m 2 … 10⁶ */
+  function ordnung(a, m) {
+    pruefeGanzzahl(a, 'a');
+    pruefeGanzzahl(m, 'Modul');
+    if (m < 2 || m > 1e6) throw new KryptoFehler('Der Modul liegt zwischen 2 und 1 000 000.');
+    if (ggT(a, m) !== 1) return null;
+    const b = mod(a, m);
+    let w = b;
+    let x = 1;
+    while (w !== 1) {
+      w = (w * b) % m;
+      x++;
+    }
+    return x;
+  }
+
+  /** Teilen mit Rest: { q, r } mit a = q · m + r und r = mod(a, m) */
+  function teileMitRest(a, m) {
+    const r = mod(a, m);
+    return { q: (a - r) / m, r };
+  }
+
+  /** Probedivision (W4 §9.2, Eve-Modus): Proben t = 2, 3, 4, … solange t² ≤ n → { teiler (erster oder null), versuche }; n 2 … 10⁷ */
+  function probedivision(n) {
+    pruefeGanzzahl(n, 'Zahl');
+    if (n < 2 || n > 1e7) throw new KryptoFehler('Die Zahl liegt zwischen 2 und 10 000 000.');
+    let versuche = 0;
+    for (let t = 2; t * t <= n; t++) {
+      versuche++;
+      if (n % t === 0) return { teiler: t, versuche };
+    }
+    return { teiler: null, versuche };
+  }
+
   function pruefeNichtNegativ(n, name) {
     pruefeGanzzahl(n, name);
     if (n < 0) throw new KryptoFehler(`${name} darf nicht negativ sein.`);
@@ -1854,6 +2003,22 @@
       pruefeGanzzahl(N, 'N');
       if (c >= N) throw new KryptoFehler('Die Geheimzahl muss kleiner als N sein.');
       return modpow(c, pruefeNichtNegativ(d, 'd'), N);
+    },
+    /** Signatur s = hᵈ mod N (0 ≤ h < N, Plan M6 E69) */
+    signieren(h, d, N) {
+      pruefeNichtNegativ(h, 'Der Hashwert');
+      pruefeGanzzahl(N, 'N');
+      if (N < 2) throw new KryptoFehler('N muss mindestens 2 sein.');
+      if (h >= N) throw new KryptoFehler('Der Hashwert muss kleiner als N sein.');
+      return modpow(h, pruefeNichtNegativ(d, 'd'), N);
+    },
+    /** Prüfung: sᵉ mod N (0 ≤ s < N) – mit dem Hashwert der Nachricht vergleichen */
+    pruefen(s, e, N) {
+      pruefeNichtNegativ(s, 'Die Signatur');
+      pruefeGanzzahl(N, 'N');
+      if (N < 2) throw new KryptoFehler('N muss mindestens 2 sein.');
+      if (s >= N) throw new KryptoFehler('Die Signatur muss kleiner als N sein.');
+      return modpow(s, pruefeNichtNegativ(e, 'e'), N);
     },
   };
 
@@ -2467,6 +2632,9 @@
     rm16,
     miniEnigma,
     kryptosHash,
+    pruefsumme,
+    sha256,
+    hashZahl,
     // Kryptoanalyse
     DEUTSCH,
     haeufigkeiten,
@@ -2493,6 +2661,9 @@
     inverses,
     modpow,
     istPrim,
+    ordnung,
+    teileMitRest,
+    probedivision,
     rsa,
     dh,
     schluesselanzahl,

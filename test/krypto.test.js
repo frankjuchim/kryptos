@@ -2235,3 +2235,44 @@ test('M6 Bibliothek III: Stellungstabelle der Mini-Enigma = W3 K2 (alle acht Zei
   const tabelle = ['EHFGACDB', 'HEDCBGFA', 'CFAEDBHG', 'ECBGAHDF', 'BAEFCDHG', 'EDFBACHG', 'HEFGBCDA', 'GDFBHCAE'];
   [...'ABCDEFGH'].forEach((s, i) => assert.equal(K.miniEnigma.tabelle(s), tabelle[i], `Stellung ${s}`));
 });
+
+// ───────────────────────────── M6 Bibliothek IV (Plan M6 Task 108) ─────────────────────────────
+test('M6 Bibliothek IV: Ordnung, Teilen mit Rest, Probedivision (W4 §9.1, §9.2)', () => {
+  assert.deepEqual([K.ordnung(3, 17), K.ordnung(2, 17), K.ordnung(5, 23), K.ordnung(2, 101), K.ordnung(1, 7)], [16, 8, 22, 100, 1]);
+  assert.equal(K.ordnung(4, 26), null);
+  assert.throws(() => K.ordnung(3, 1), K.KryptoFehler);
+  assert.deepEqual(K.teileMitRest(63, 26), { q: 2, r: 11 });
+  assert.deepEqual(K.teileMitRest(-5, 26), { q: -1, r: 21 });
+  assert.deepEqual(K.probedivision(2209), { teiler: 47, versuche: 46 });
+  assert.deepEqual(K.probedivision(55), { teiler: 5, versuche: 4 });
+  assert.deepEqual(K.probedivision(91), { teiler: 7, versuche: 6 });
+  assert.deepEqual(K.probedivision(97), { teiler: null, versuche: 8 });
+  assert.throws(() => K.probedivision(1), K.KryptoFehler);
+});
+test('M6 Bibliothek IV: Prüfsummen, Kollisionsbaukasten, SHA-256, Hash als Zahl, Signatur (W5 §0a, §9, E68, E69)', () => {
+  assert.deepEqual(['regal', 'lager'].map((t) => [K.pruefsumme(t), K.pruefsumme(t, 'gewichtet')]), [[14, 26], [14, 0]]);
+  assert.deepEqual(K.kryptosHash.ausgleichen('bote', 2, 'a'), { beitrag: 19, wort: 'bato' });
+  assert.equal(K.kryptosHash('bato').wert, K.kryptosHash('bote').wert);
+  assert.deepEqual(K.kryptosHash.ausgleichen('nebel', 1, 'i'), { beitrag: 12, wort: null });
+  assert.throws(() => K.kryptosHash.ausgleichen('bote', 0, 'a'), K.KryptoFehler);
+  assert.equal(K.sha256('abc'), 'BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD');
+  assert.equal(K.sha256(''), 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855');
+  assert.equal(K.sha256('Grüße'), require('node:crypto').createHash('sha256').update('Grüße', 'utf8').digest('hex').toUpperCase());
+  assert.equal(K.hashZahl('treffen um neun', { verfahren: 'kh', modul: 55 }), 15);
+  const zert = 'name=bob.example;schluessel=91,5;gueltig=2026-01-01..2026-12-31;aussteller=Trent CA';
+  assert.equal(K.hashZahl(zert, { verfahren: 'sha256', modul: 65 }), 32);
+  assert.equal(K.hashZahl(zert.replace('91,5', '51,3'), { verfahren: 'sha256', modul: 65 }), 41);
+  assert.equal(K.rsa.signieren(15, 27, 55), 5);
+  assert.equal(K.rsa.pruefen(5, 3, 55), 15);
+  assert.equal(K.rsa.pruefen(K.rsa.signieren(2, 11, 51), 3, 55), 17, 'Mallorys Signatur mit Alices Schlüssel geprüft');
+  assert.throws(() => K.rsa.signieren(55, 27, 55), K.KryptoFehler);
+});
+test('M6 Bibliothek IV: SHA-256 nach FIPS 180-4 (448-Bit-Nachricht, Padding-Grenzen, UTF-8 bis 4 Byte gegen node:crypto)', () => {
+  assert.equal(K.sha256('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'), '248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1');
+  const ref = (t) => require('node:crypto').createHash('sha256').update(t, 'utf8').digest('hex').toUpperCase();
+  for (const t of ['a'.repeat(55), 'a'.repeat(56), 'a'.repeat(63), 'a'.repeat(64), 'a'.repeat(65), 'x'.repeat(1000), 'Mäßig 😀 ✓ €', '\u0000', '😀'.repeat(20)]) {
+    assert.equal(K.sha256(t), ref(t), JSON.stringify(t.slice(0, 20)));
+  }
+  assert.throws(() => K.sha256('\ud800'), K.KryptoFehler, 'einzelnes Ersatzzeichen');
+  assert.throws(() => K.sha256(42), K.KryptoFehler);
+});

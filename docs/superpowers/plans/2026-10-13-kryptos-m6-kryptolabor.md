@@ -792,7 +792,7 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   - `hashZahl(text, { verfahren = 'kh' | 'sha256', modul })` → Zahl < modul (E69) / `hash_zahl`.
   - `rsa.signieren(h, d, N)` = hᵈ mod N mit 0 ≤ h < N; `rsa.pruefen(s, e, N)` = sᵉ mod N / `rsa_signieren`, `rsa_pruefen`.
 
-- [ ] **Step 1: Failing test** – `test/krypto.test.js`:
+- [x] **Step 1: Failing test** – `test/krypto.test.js`:
   ```js
   test('M6 Bibliothek IV: Ordnung, Teilen mit Rest, Probedivision (W4 §9.1, §9.2)', () => {
     assert.deepEqual([K.ordnung(3, 17), K.ordnung(2, 17), K.ordnung(5, 23), K.ordnung(2, 101), K.ordnung(1, 7)], [16, 8, 22, 100, 1]);
@@ -827,11 +827,11 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   ```
   `vergleich.js`: alle Funktionen, darunter `sha256` mit Umlauten, Emoji (4-Byte-UTF-8), 55/56/64 Bytes (Padding-Grenzen)
   und 1 000 Zeichen; `ordnung` mit m bis 10⁶ (Laufzeit ≤ 1 s je Fall), `probedivision` bis 10⁷.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (JS-SHA-256 nach FIPS 180-4 mit `Math.imul`/`>>> 0` – die Bibliothek darf Bit-Operatoren
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (JS-SHA-256 nach FIPS 180-4 mit `Math.imul`/`>>> 0` – die Bibliothek darf Bit-Operatoren
   benutzen, nur Werkzeug-Module nicht).
-- [ ] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Bibliothek: Ordnung, Probedivision, Prüfsummen, KH-Ausgleich, SHA-256, Hash als Zahl, RSA-Signatur (+ Zwilling)"`.
+- [x] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Bibliothek: Ordnung, Probedivision, Prüfsummen, KH-Ausgleich, SHA-256, Hash als Zahl, RSA-Signatur (+ Zwilling)"`.
 
 ### Task 109: Server – Reiter in der Registry, `/api/labor` mit Welten und Niveau, Level-Feld `werkzeug` mit Voreinstellung, Validator (E70, E71, E73, E75)
 

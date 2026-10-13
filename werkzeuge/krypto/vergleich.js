@@ -652,6 +652,36 @@ const FAELLE = {
     fest: [['B', 'A'], ['b', 'h'], ['I', 'A'], ['B', 'I'], ['BB', 'A'], ['B', 'A', { walze: 'ABCDEFGH' }]],
     zufall: () => [selten() ? wahl(['I', '', 'AB', 'ä']) : wahl([...'ABCDEFGHabcdefgh']), meStellung(), ...(zufall() < 0.6 ? [meVerdrahtung()] : [])],
   },
+
+  // ── M6 Bibliothek IV (Plan M6 Task 108) ──
+  ordnung: {
+    fest: [[3, 17], [2, 17], [5, 23], [2, 101], [1, 7], [4, 26], [3, 1], [3, 2], [-3, 17], [0, 7], [2, 1000000], [3, 999983], [2, 1000001], [1.5, 7], [7, 7]],
+    zufall: () => [ganz(-50, 2000), selten() ? wahl([0, 1, 1000001, 2.5]) : zufall() < 0.05 ? ganz(100000, 1000000) : ganz(2, 5000)],
+  },
+  teileMitRest: { fest: [[63, 26], [-5, 26], [0, 1], [5, 0], [5, -3], [1.5, 2]], zufall: () => [ganz(-100000, 100000), selten() ? wahl([0, -4, 2.5]) : ganz(1, 1000)] },
+  probedivision: {
+    fest: [[2209], [55], [91], [97], [1], [2], [3], [4], [9999991], [10000000], [10000001], [9999973 * 1], [2.5]],
+    zufall: () => [selten() ? wahl([0, 1, -5, 10000001, 1.5]) : zufall() < 0.1 ? ganz(9000000, 10000000) : ganz(2, 100000)],
+  },
+  pruefsumme: {
+    fest: [['regal'], ['lager', 'gewichtet'], [''], ['rabe', 'summe', 26], ['abc', 'quer'], ['abc', 'summe', 1], ['abc', 'summe', 1001], ['abc', 'summe', 2.5], ['Grüße', 'gewichtet']],
+    zufall: () => [textOderDeutsch(60), ...(zufall() < 0.8 ? [selten(0.05) ? 'quer' : wahl(['summe', 'gewichtet']), ...(zufall() < 0.4 ? [selten() ? wahl([0, 1, 1001]) : ganz(2, 100)] : [])] : [])],
+  },
+  'kryptosHash.ausgleichen': {
+    fest: [['bote', 2, 'a'], ['nebel', 1, 'i'], ['bote', 0, 'a'], ['bote', 3, 'a'], ['bote', 4, 'a'], ['a', 1, 'b'], ['bote', 1, 'ab'], ['bote', 1, ''], ['bote', 1, 't'], ['Bäre', 2, 'Z'], ['bote', 1.5, 'a'], [3, 1, 'a']],
+    zufall: () => { const w = selten(0.05) ? wahl(['', 'a', 'Bär 1']) : buchstaben(2, 12).toLowerCase(); return [w, selten() ? wahl([0, -1, w.length, 1.5]) : ganz(1, Math.max(1, w.length - 1)), selten() ? wahl(['', 'ab', '1', 'ä']) : wahl([...GROSS, ...GROSS.toLowerCase()])]; },
+  },
+  sha256: {
+    fest: [[''], ['abc'], ['abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'], ['Grüße'], ['😀'], ['Mäßig 😀 ✓ €'], ['a'.repeat(55)], ['a'.repeat(56)], ['a'.repeat(63)], ['a'.repeat(64)], ['a'.repeat(65)], ['a'.repeat(119)], ['a'.repeat(120)], ['x'.repeat(1000)], ['ü'.repeat(500)], ['\u0000'], ['\ud800'], ['a\udc00b'], [42], [null]],
+    // ganze Codepunkte (1–4 UTF-8-Bytes); text() mit diesem Vorrat zerlegt Ersatzpaare (einzelne Ersatzzeichen → Fehlerfall)
+    zufall: () => [zufall() < 0.5 ? text(300) : zufall() < 0.3 ? 'a'.repeat(ganz(50, 130)) : zufall() < 0.85 ? Array.from({ length: ganz(0, 80) }, () => wahl(['a', 'ä', '€', '😀', '𝄞', ' ', 'ß'])).join('') : text(40, 'aä€😀𝄞 ')],
+  },
+  hashZahl: {
+    fest: [['treffen um neun', { verfahren: 'kh', modul: 55 }], ['name=bob.example;schluessel=91,5;gueltig=2026-01-01..2026-12-31;aussteller=Trent CA', { verfahren: 'sha256', modul: 65 }], ['abc', { modul: 1 }], ['abc', {}], ['abc', { verfahren: 'md5', modul: 55 }], ['abc', { verfahren: 'kh', modul: 7 }], ['abc', { verfahren: 'sha256', modul: 1000000000 }], ['abc', { verfahren: 'sha256', modul: 1000000001 }], ['\ud800', { verfahren: 'sha256', modul: 55 }], ['abc', { modul: 55.5 }]],
+    zufall: () => [textOderDeutsch(80), { verfahren: selten(0.05) ? 'md5' : wahl(['kh', 'sha256']), modul: selten() ? wahl([0, 1, 1.5, null]) : zufall() < 0.2 ? ganz(2, 1000000000) : ganz(2, 100) }],
+  },
+  'rsa.signieren': { fest: [[15, 27, 55], [2, 11, 51], [55, 27, 55], [-1, 3, 55], [0, 3, 1], [3, -1, 55], [3, 3, 2]], zufall: () => { const n = ganz(selten() ? 0 : 2, 5000); return [ganz(selten() ? -2 : 0, selten() ? n + 2 : Math.max(0, n - 1)), ganz(selten() ? -1 : 0, 500), n]; } },
+  'rsa.pruefen': { fest: [[5, 3, 55], [8, 3, 55], [55, 3, 55], [-1, 3, 55]], zufall: () => { const n = ganz(selten() ? 0 : 2, 5000); return [ganz(selten() ? -2 : 0, selten() ? n + 2 : Math.max(0, n - 1)), ganz(selten() ? -1 : 0, 500), n]; } },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).
