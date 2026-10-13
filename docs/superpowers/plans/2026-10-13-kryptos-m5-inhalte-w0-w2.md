@@ -5,7 +5,8 @@
 > Nummerierung setzt den Gesamtplan `docs/superpowers/plans/2026-10-12-kryptos-plattform.md`, den M3-Plan
 > `2026-10-13-kryptos-m3-aufgabenformat.md` und den M4-Plan `2026-10-13-kryptos-m4-oberflaeche.md` fort (Tasks **69–103**).
 >
-> **Status: offen** – Ausgangsstand Branch `feature/m0-kern`, HEAD `9face3a`, 582 Tests grün, `package.json` 0.2.27,
+> **Status: erledigt** (13.10.2026, Task 103; 695 Tests grün, e2e Szenarien 1–11 grün, `package.json` 0.2.41; offene Entscheidungen
+> unten bleiben vorläufig festgelegt) – Ausgangsstand Branch `feature/m0-kern`, HEAD `9face3a`, 582 Tests grün, `package.json` 0.2.27,
 > `seed/welten/`, `seed/warmup/`, `seed/gast/` leer, `materialien/Akten_PDF|Loesungen_Portal|Lehrkraft_PDF` nur `.gitkeep`.
 
 **Goal:** Die Welten 0–2 werden im Unterricht spielbar (Unterrichtsreife/MVP, Gesamtplan Teil A): `seed/welten/welt0–2.json`
@@ -341,7 +342,7 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   Zusammenhänge, die kein Lösungsfeld sind (z. B. `affin("en", 3, 10)` = `WX` zu W1-L2-07), und werden von `pruefwerte.py`
   nachgerechnet sowie vom Abgleich-Test `inhalte_pruefwerte.test.js` (Task 73) in der Aufgabe gesucht.
 
-- [ ] **Step 1: Failing test** (`test/seed_pruefen.test.js`, neuer Test; Welt und Prüfwerte im Temp-Ordner, Fixture bleibt unverändert):
+- [x] **Step 1: Failing test** (`test/seed_pruefen.test.js`, neuer Test; Welt und Prüfwerte im Temp-Ordner, Fixture bleibt unverändert):
   ```js
   test('seed_pruefen.py: Prüfwert-Gruppe (gapsFeld, gapsFelder) für mehrfeldrige gaps', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-gruppe-'));
@@ -368,13 +369,13 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   });
   ```
   (`c1`: `[26]` gegen `'26'` – Liste mit einem Element wird wie Einzelwert verglichen; das gehört zum Verhalten.)
-- [ ] **Step 2: Run** `node --test test/seed_pruefen.test.js` → FAIL (`W7-L1-01`/`W7-L1-02` melden „erwartet je gaps-Feld … oder genau ein Feld“).
-- [ ] **Step 3: Implement** – `gaps()` sammelt Einträge (`id == ref` → altes Verhalten, `aufgabe == ref` → Gruppe); `gleicher_wert` für
+- [x] **Step 2: Run** `node --test test/seed_pruefen.test.js` → FAIL (`W7-L1-01`/`W7-L1-02` melden „erwartet je gaps-Feld … oder genau ein Feld“).
+- [x] **Step 3: Implement** – `gaps()` sammelt Einträge (`id == ref` → altes Verhalten, `aufgabe == ref` → Gruppe); `gleicher_wert` für
   Einzelfelder, Listen mit genau einem Element auspacken; `gapsFelder` zeichenweise bzw. elementweise. `pruefwerte.py` unverändert in
   der Logik (nur Docstring). Doku-Sätze in Delta §4.1/§11 und TECHNIK §14.3.
-- [ ] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py --pruefwerte test/fixtures/pruefwerte test/fixtures/welt_beispiel.json`
+- [x] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py --pruefwerte test/fixtures/pruefwerte test/fixtures/welt_beispiel.json`
   → „0 Abweichungen“; `npm run krypto:pruefwerte` grün; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "seed_pruefen.py: Prüfwert-Gruppen für mehrfeldrige Lücken (gapsFeld, gapsFelder)"`.
+- [x] **Step 5: Commit** `git commit -m "seed_pruefen.py: Prüfwert-Gruppen für mehrfeldrige Lücken (gapsFeld, gapsFelder)"`.
 
 ### Task 70: Fremde Verfahren der Welten 0–2 (`fremde_verfahren.py`, E43)
 
@@ -394,7 +395,7 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
 | `homophon_kalif` | W1-L2-06 (Tabellen-Ausschnitt s 56, 83 · e 42, 77, 19, 85 · i 15, 92 · d 13) | Homophone eines Buchstabens der Reihe nach (1. Vorkommen → 1. Zahl …, danach von vorn); Ausgabe Zahlen ohne Trenner (z. B. `5642151377`); `ent` über die Umkehrtabelle |
 | `depesche_rose` | W2 §5 Material zu B11–B13 | Vigenère mit dem Quadrat der Anlage; nach jedem vollständigen Durchlauf des Schlüsselworts wird jeder Schlüsselbuchstabe um 1 weitergeschoben (Schlüsselstrom ROSE SPTF TQUG …) |
 
-- [ ] **Step 1: Failing test** `werkzeuge/krypto/test_fremde_verfahren.py` mit **allen** Spec-Vektoren (nachgerechnet im Scratchpad
+- [x] **Step 1: Failing test** `werkzeuge/krypto/test_fremde_verfahren.py` mit **allen** Spec-Vektoren (nachgerechnet im Scratchpad
   `m5plan/fremd.py` am 13.10.2026):
   ```python
   import os, sys, unittest
@@ -428,13 +429,13 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   if __name__ == '__main__':
       unittest.main()
   ```
-- [ ] **Step 2: Run** `python3 -I werkzeuge/krypto/test_fremde_verfahren.py` → FAIL (`ImportError`/`KeyError`).
-- [ ] **Step 3: Implement** – je Verfahren eine parametrisierte Funktion (`spiegelbote(text, k, richtung)`,
+- [x] **Step 2: Run** `python3 -I werkzeuge/krypto/test_fremde_verfahren.py` → FAIL (`ImportError`/`KeyError`).
+- [x] **Step 3: Implement** – je Verfahren eine parametrisierte Funktion (`spiegelbote(text, k, richtung)`,
   `spiegelkurier(text, t, richtung)`, `nomenklator(text, richtung, codebuch, alphabet)`, `homophon(text, richtung, tabelle)`,
   `depesche(text, schluessel, richtung)`), `VERFAHREN` bindet die Namen mit `functools.partial`; Konstanten `NOMEN_850`
   (Codebuch, `TUSCHE`, Blender) und `KALIF_HOMOPHONE` wörtlich aus der Spec. Kein Import von `krypto.py`.
-- [ ] **Step 4: Run** → PASS; `node --test test/seed_pruefen.test.js` grün (neuer Unterpunkt startet den Python-Test, überspringt ohne `python3`).
-- [ ] **Step 5: Commit** `git commit -m "Fremde Verfahren W0–W2 für den Prüfnachweis: Spiegelbote, Spiegel-Kurier, NOMEN-850, homophon, Depesche"`.
+- [x] **Step 4: Run** → PASS; `node --test test/seed_pruefen.test.js` grün (neuer Unterpunkt startet den Python-Test, überspringt ohne `python3`).
+- [x] **Step 5: Commit** `git commit -m "Fremde Verfahren W0–W2 für den Prüfnachweis: Spiegelbote, Spiegel-Kurier, NOMEN-850, homophon, Depesche"`.
 
 ### Task 71: Offene Punkte aus M4 und Validator-Nachträge (E55, E58, E59, E51)
 
@@ -453,7 +454,7 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   enthält keinen Kleinbuchstaben → „Klartext klein schreiben (Design §6.2)“.
 - `ladeDemo`: `ok(x)` zusätzlich `!/(_lsg|_eh)(\.|_)|klausur/i.test(x)`.
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
   ```js
   // validator.test.js
   test('Welt 8: kein Hinweis „akte fehlt“; Kür-Level erwartet „Akte W<n>·K<k>“', () => {
@@ -485,11 +486,11 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
      passenden Dateien im Akten-Ordner → GET ohne Sitzung: alle 401 (Hinweisseite), nicht 200 */ });
   ```
   (Helfer `fixtureKopie()`/`validiere()`/`demoWelt()` wie in `validator.test.js` vorhanden bzw. dort ergänzen.)
-- [ ] **Step 2: Run** `node --test test/validator.test.js test/generatoren.test.js test/themen.test.js` → FAIL.
-- [ ] **Step 3: Implement** wie Interfaces; Fixture-Lösungen klein (Neuberechnung normalisiert, Antworten in `antworten.js`
+- [x] **Step 2: Run** `node --test test/validator.test.js test/generatoren.test.js test/themen.test.js` → FAIL.
+- [x] **Step 3: Implement** wie Interfaces; Fixture-Lösungen klein (Neuberechnung normalisiert, Antworten in `antworten.js`
   bleiben gültig – prüfen); Generatoren `loesung.text = klar.toLowerCase()`.
-- [ ] **Step 4: Run** → PASS; `npm run validate` (Fixture/Demo: Hinweise „akte fehlt“ für W8 weg), `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Validator: Welt 8 ohne Akten-Hinweis, Kür-Akte, Videos ohne URL, Klartext klein; Demo-Filter für _LSG/_EH"`.
+- [x] **Step 4: Run** → PASS; `npm run validate` (Fixture/Demo: Hinweise „akte fehlt“ für W8 weg), `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Validator: Welt 8 ohne Akten-Hinweis, Kür-Akte, Videos ohne URL, Klartext klein; Demo-Filter für _LSG/_EH"`.
 
 ### Task 72: Boss-Rahmentext `boss.rahmen` (E52)
 
@@ -500,14 +501,14 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   `docs/TECHNIK.md` §13.1, `docs/KERN_ABWEICHUNGEN.md` (K08, K09), Version (`version_setzen.js patch`)
 - Test: `test/boss.test.js`, `test/validator.test.js`, `test/client_seiten.test.js`
 
-- [ ] **Step 1: Failing tests** – Fixture-Boss bekommt `"rahmen": "Ein Drache bewacht das Testarchiv. Du hast 25 Minuten."`;
+- [x] **Step 1: Failing tests** – Fixture-Boss bekommt `"rahmen": "Ein Drache bewacht das Testarchiv. Du hast 25 Minuten."`;
   `boss.test.js`: `GET /api/boss/9` (Status vor dem Start) enthält `rahmen` als Text, `aufgaben` fehlt weiterhin;
   `validator.test.js`: `rahmen` mit 801 Zeichen → Fehler „rahmen: höchstens 800 Zeichen“; `client_seiten.test.js`: Boss-Start
   zeigt den Rahmentext als Textknoten (kein HTML).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Boss-Rahmentext (boss.rahmen) im Seed, in der API und auf der Boss-Startseite"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Boss-Rahmentext (boss.rahmen) im Seed, in der API und auf der Boss-Startseite"`.
 
 ### Task 73: Abgleich-Tests Spec ↔ Seed, Prüfwerte ↔ Seed, Katalog ↔ Plan, Videos ↔ Seed
 
@@ -546,11 +547,11 @@ Jede Inhalts-Task erweitert in **Step 1** `S.UMFANG[<welt>]` um ihren Abschnitt 
   (`seed/welten`, `seed/warmup`, `seed/gast`); Ausnahmeliste `BEKANNT = [{ wort: 'nachtwache', aufgabe: 'W2-L1-06', begruendung:
   'offene Entscheidung 4 (Plan M5)' }]`.
 
-- [ ] **Step 1: Failing test** – zuerst nur der Parser-Selbsttest (1) und ein Probelauf mit `UMFANG = { 0: ['W0-L1'] }` → FAIL
+- [x] **Step 1: Failing test** – zuerst nur der Parser-Selbsttest (1) und ein Probelauf mit `UMFANG = { 0: ['W0-L1'] }` → FAIL
   („W0-L1-01 fehlt im Seed“), dann `UMFANG` wieder leeren.
-- [ ] **Step 2: Implement** `hilfen_spec.js` und die vier Testdateien.
-- [ ] **Step 3: Run** `node --test test/inhalte_*.test.js` → PASS (leerer `UMFANG`; Videos-Test ohne Seeds trivial grün); `npm test` grün.
-- [ ] **Step 4: Commit** `git commit -m "Abgleich-Tests: Spec-Tabellen, Prüfwerte, WELT_PLAN und Video-Beispiele gegen die Seeds"`.
+- [x] **Step 2: Implement** `hilfen_spec.js` und die vier Testdateien.
+- [x] **Step 3: Run** `node --test test/inhalte_*.test.js` → PASS (leerer `UMFANG`; Videos-Test ohne Seeds trivial grün); `npm test` grün.
+- [x] **Step 4: Commit** `git commit -m "Abgleich-Tests: Spec-Tabellen, Prüfwerte, WELT_PLAN und Video-Beispiele gegen die Seeds"`.
 
 ---
 
@@ -1644,12 +1645,30 @@ Generatoren/Werkzeuge, §13.1, §14, §15, §16), `docs/AUFGABENFORMAT_KRYPTO.md
 `docs/MATERIALFORMAT.md` (Pipeline-Skripte), Design-Spec §5.1/§10.1/§10.3, `docs/superpowers/plans/2026-10-12-kryptos-plattform.md`
 (Teil A: M5 **erledigt**), dieser Plan (Status, Häkchen, Umsetzungsnotizen)
 
-- [ ] **Step 1: Selbstprüfung** gegen die Tabelle „Selbstprüfung“ unten (jede Zeile erledigt oder als offene Entscheidung vermerkt).
-- [ ] **Step 2: Run** `npm run pruefen`; `python3 -I werkzeuge/krypto/seed_pruefen.py` (Welten + Gast) → 0 Abweichungen;
+- [x] **Step 1: Selbstprüfung** gegen die Tabelle „Selbstprüfung“ unten (jede Zeile erledigt oder als offene Entscheidung vermerkt).
+- [x] **Step 2: Run** `npm run pruefen`; `python3 -I werkzeuge/krypto/seed_pruefen.py` (Welten + Gast) → 0 Abweichungen;
   `node scripts/validate.js` → 0 Fehler, nur die in den Tasks genannten erwarteten Hinweise; `npm run krypto:vergleich -- --anzahl 2000`;
   alle `--pruefen`-Werkzeuge; `npm run e2e`; `node scripts/vertrag_pruefen.js http://localhost:3000` gegen `npm run dev` → leer.
-- [ ] **Step 3: Commit** `git commit -m "Abschluss M5: Welten 0–2 spielbar, Akten angebunden, Dokumente nachgeführt"`; Merge-Vorschlag an die
+- [x] **Step 3: Commit** `git commit -m "Abschluss M5: Welten 0–2 spielbar, Akten angebunden, Dokumente nachgeführt"`; Merge-Vorschlag an die
   Lehrkraft (Gesamtplan Teil A) mit der Liste der offenen Entscheidungen.
+
+**Umsetzungsnotiz (Task 103):** Selbstprüfung: jede Zeile der Tabelle „Selbstprüfung“ ist mit ihrer Task erledigt (Commits der Tasks
+69–102); bewusst nicht in M5 (unverändert): Labor-Werkzeuge W0–W2 (M6), Funkraum online (M7), Inhalte/Material W3–W6, Schüler-Akten
+W4–W6, `scripts/abdeckung.js` (M8), `materialien_pruefen.py`, `video_folien.py --pruefen`, Video-Bilder, Deploy (M9). Die Häkchen
+der Tasks 69–73 sind hier nachgetragen (Commits `3f35610`, `79d505a`, `393a2c2`, `80cfda6`, `4a4efdf`). Dokumente: Gesamtplan Teil A M5
+**erledigt**; TECHNIK §2.3 (Seeds vorhanden), §14.3 (Kontrast-Werkzeuge, npm-Skripte), §15 (`material_pipeline.test.js`,
+`docker.test.js`), §16.2; AUFGABENFORMAT_KRYPTO §12 (Gast-Datei, Demo-PDFs, Schloss auf der Themenseite); MATERIALFORMAT
+(PDF-Pipeline); KERN_ABWEICHUNGEN K21 (Dockerfile-Kommentar, Docker-Abgleich), K22/K30 schon in Task 102, K08/K09/K13/K15/K20/K38
+waren aus den Tasks 72/97/98 aktuell; README „Stand der Plattform“ (Abschnitt 4.1). Design-Spec §5.1/§10.1/§10.3 waren aktuell
+(Tasks 93/97/100). Neu `test/docker.test.js`: COPY-Quellen und `.dockerignore` gegen den Dateibaum, Image-Inhalt (Akten laut
+`akten.json`, Lehrkraft-Verzeichnis, Demo-PDFs, relative `require()`), Nachbau von `/app` im Temp-Ordner mit Validator und
+Server (`NODE_ENV=production`). Zusätzlich vor Task 101: Themenseite zeigt Akten-/Werkzeugkarten-Links ohne Sitzung mit
+Schloss und „(nach der Anmeldung)“ (Demo-PDFs ohne), Version 0.2.41.
+Prüfung: `npm run pruefen` grün (695 Tests; Validator 0 Fehler, 5 erwartete Hinweise W0-L1-08, W1-L1-04, W1-L2-05, W1-A-01,
+W1-L1-07; Prüfwerte 853/0; Seeds + Gast 192/0); `krypto:vergleich --anzahl 2000` 0 Abweichungen; alle `--pruefen`-Werkzeuge,
+`ide_pruefen.py`, `test_kontrast.py`, `test_fremde_verfahren.py` grün; `npm run e2e` Szenarien 1–11 grün (Fotos nicht neu
+eingecheckt – nur Versionsnummer im Fuß geändert); `vertrag_pruefen.js` gegen `npm run dev` → „erfüllt Vertrag v1.2“.
+Merge-Vorschlag an die Lehrkraft mit den offenen Entscheidungen 1–12 (unten).
 
 ---
 

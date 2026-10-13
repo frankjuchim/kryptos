@@ -14,6 +14,17 @@ python3 werkzeuge/material/bauen.py [quelle.json …] [--aus materialien] [--pdf
 - `kr_stil.py` → Farben/Schriften/Epochen (eine Quelle für alles); `textfarbe(farbe, hintergrund)` wählt lesbare
   Textfarben (DESIGNSYSTEM §2.2), `kr_kontrast.py <dateien>` prüft gebaute docx/pptx, `test_kontrast.py` (CI)
 
+**PDF-Pipeline** (TECHNIK §14.3, M5 Tasks 94–96, 102) – nach dem Bauen bzw. nach jeder Änderung an einer `.docx`/`.pptx`
+in dieser Reihenfolge, die erzeugten PDFs mitcommitten (mit `-- --pruefen` nur prüfen, so läuft es auch in der CI):
+
+```
+npm run akten        # materialien/Akten_PDF (Schülerfassungen laut seed/akten.json; keine _LSG/_EH/Klausur/Funkraum)
+npm run loesungen    # materialien/Loesungen_Portal + Loesungen_Akten (nur Lehrkraft)
+npm run lehrkraft    # materialien/Lehrkraft_PDF + verzeichnis.json (Präsentationen, Lehrerhinweise, Klausuren, Funkraum)
+npm run workspaces   # materialien/Online-IDE (nach Änderungen an Gerüst/LSG in 3_Online-IDE bzw. 5_Loesungen)
+npm run ide:pruefen  # Online-IDE-Prüfstand (Java 21): Gerüst kompiliert, LSG alle Tests grün, Testklassen identisch
+```
+
 **Maßgeblich** sind nach dem ersten Erzeugen die `.docx`/`.pptx` in `materialien/` (wie in Algo Quest: direkt
 bearbeiten, danach PDF neu erzeugen). Die JSON-Quellen bleiben als Referenz und für Neu-Erzeugung im selben Design
 erhalten (`quellen/material/`). Wer eine Quelle ändert und neu baut, überschreibt die `.docx`/`.pptx`.

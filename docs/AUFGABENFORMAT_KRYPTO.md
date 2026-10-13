@@ -874,6 +874,12 @@ im Kern) zeigt die Welten 0–2 von Kryptos, das Fallen-Profil mit den Krypto-Fa
 lesend). Test `test/gast.test.js`: keine id außer `W8-*` über die Gast-API, keine Lösungen vor dem Lösen, Werkzeug-
 Liste im Gastmodus = `["scheibe"]`.
 
+Stand M5 (Task 99): `seed/gast/demo.json` ist vorhanden (inhaltsgleich mit der e2e-Vorlage `test/e2e/seed/gast/demo.json`);
+`test/inhalte_gast.test.js` prüft, dass kein Demo-Wort (Eingaben, Geheimtexte, Lösungen, Schlüssel, ≥ 6 Buchstaben) in Welten,
+Warm-up, Materialquellen oder Videos vorkommt. Die ohne Anmeldung abrufbaren PDFs stehen in `seed/demo_materialien.json`
+(Akte W0·1, WK2, Kickoff-Präsentation; nie `_LSG`/`_EH`/Klausur – Filter in `src/app.js`, K20). Die Themenseite zeigt alle
+anderen Akten- und Werkzeugkarten-Links ohne Sitzung mit Schloss und „(nach der Anmeldung)“.
+
 ---
 
 ## 13. Beispielwelt-Fixture (`test/fixtures/welt_beispiel.json`, Welt 9)

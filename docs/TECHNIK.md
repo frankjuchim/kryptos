@@ -99,14 +99,14 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 
 | Pfad | Art | Bemerkung |
 |---|---|---|
-| `seed/welten/welt0–6.json` | E | Kryptos-Inhalte (Claude Code, nach `AUFGABENFORMAT_KRYPTO.md`) |
-| `seed/warmup/*.json`, `seed/gast/demo.json` | E | neue Inhalte |
-| `seed/arbeitsblaetter.json` | E | → `seed/akten.json` (§14.2) |
-| `seed/funkraum/*.json`, `seed/videos.json` | N | Wettknacken-Texte (§12.6), Video-Links |
+| `seed/welten/welt0–6.json` | E | Kryptos-Inhalte (Claude Code, nach `AUFGABENFORMAT_KRYPTO.md`); **vorhanden: `welt0–2.json`** (M5, mit Archivfund, Boss-Pools, Epochen-Daten), 3–6 folgen mit M8 |
+| `seed/warmup/*.json`, `seed/gast/demo.json` | E | neue Inhalte; vorhanden: `w0–w2.json` (je 12 Karten), `gast/demo.json` (M5), dazu `seed/demo_materialien.json` (Demo-PDFs) |
+| `seed/arbeitsblaetter.json` | E | → `seed/akten.json` (§14.2), vorhanden (M5: Akten W0–W2 + K1, Werkzeugkarten, Papier-Bosse, Warm-up) |
+| `seed/funkraum/*.json`, `seed/videos.json` | N | Wettknacken-Texte (§12.6, M7), Video-Links (`videos.json` vorhanden, M5: Titel 0–7, `url: null` bis zur Veröffentlichung) |
 | `test/*` | A/E/N | siehe §15 |
 | `werkzeuge/` | A/E/N | siehe §14 |
 | `.github/workflows/pruefung.yml` | A | siehe §16.1 |
-| `Dockerfile`, `.dockerignore`, `captain-definition` | A | siehe §16.2 |
+| `Dockerfile`, `.dockerignore`, `captain-definition` | A | siehe §16.2; `test/docker.test.js` gleicht COPY-Quellen und `.dockerignore`-Ausnahmen mit dem Dateibaum ab (M5 Task 103) |
 | `docs/AUFGABENFORMAT.md` | U | Kern-Format |
 | `docs/ONLINE-IDE_TESTPROTOKOLL.md` | E | für die drei Kryptos-Gerüste |
 | `materialien/`, `quellen/` | E | Kryptos-Material (Cowork), Algo-Quest-Material nie kopieren |
@@ -1578,9 +1578,10 @@ Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, keine F
 | `werkzeuge/krypto/seed_pruefen.py` | neu | Python-Neuberechnung aller Seed-Lösungen (Delta §11); mehrfeldrige `gaps` über Prüfwert-Gruppen (Einträge mit `aufgabe` + `gapsFeld`/`gapsFelder`, Delta §4.1) |
 | `werkzeuge/krypto/pruefwerte.py` | neu | prüft `quellen/pruefwerte/W0.json … W6.json`, `pruefungen.json`, `videos.json` (Rechnungen aus Akten, Bossen, Klausuren, Videos, Warm-up und Specs: `{ id, ort, art, verfahren, eingabe, optionen?, richtung?, feld?, als?, ausschnitt?, runden?, erwartet, herkunft }`, `verfahren` = JS-Name wie in `bruecke.py`) direkt mit dem Python-Zwilling; Abweichung mit `ort` → Exit 1; Überschneidung Video ↔ Prüfung/Boss (gleiche Eingabe) → Exit 1; gemeldete Fälle (`bekannt_abweichend` / `ueberschneidung_bekannt` + `begruendung`) gesondert ausgewiesen; `--ordner` für Test-Fixtures. Nicht abbildbare Rechnungen (fremde Verfahren) stehen je Datei unter `nicht_abbildbar`. Einmaliger Import aus `quellen/analyse/verifikation/` (log.jsonl, w*.py): `pruefwerte_import.py` |
 | `werkzeuge/schriften_pruefen.py` | neu | Glyphenabdeckung (§11.4) |
+| `werkzeuge/material/kr_kontrast.py`, `test_kontrast.py` | neu (M5) | Kontrastregel der Material-Pipeline (Akzent nie als Text auf Papier-2, sonst ≥ 4,5 : 1, großer Text ≥ 3 : 1; `kr_stil.textfarbe`) in gebauten docx/pptx; `test_kontrast.py` im CI-Job `inhalte` |
 | `scripts/abdeckung.js` | neu | KC-Kompetenz ↔ Level ↔ Akte ↔ Boss aus `quellen/specs/LAB_LEVELS.md` + Seed; Fehler bei Lücke (Design §1 Kriterium 1) |
 
-`.docx`/`.pptx` bleiben maßgeblich (`soffice` → PDF), Sichtbarkeit wie Design §10.3; `test/themen.test.js` und
+Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen` nur prüfen) und `npm run ide:pruefen` (§16.5). `.docx`/`.pptx` bleiben maßgeblich (`soffice` → PDF), Sichtbarkeit wie Design §10.3; `test/themen.test.js` und
 `test/lehrkraft_material.test.js` wachen darüber, dass nie `_LSG`/`_EH`/Klausur unter `/akten/` liegt.
 
 ---
@@ -1635,6 +1636,8 @@ Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, keine F
 | `client_bloecke.test.js`, `client_interaktionen.test.js` | neu (M4) | Renderer der sieben Blöcke und vier Interaktionen (Tastatur, Feedback, Lösung, verdeckter Schlüssel, Boss ohne Werkzeug) |
 | `client_seiten.test.js` | neu (M4) | Seitenskripte Schüler, Lehrkraft, öffentliche Seiten, Gastmodus (Router, Leer- und Fehlerzustände, nur lesende Demo) |
 | `version_setzen.test.js` | neu (M4) | `werkzeuge/version_setzen.js` setzt `package.json`, `package-lock.json` und alle `?v=` gleich |
+| `material_pipeline.test.js` | neu (M5) | Online-IDE-Prüfstand (Gerüst/LSG W0), Workspaces aktuell, `akten_pdf.py`/`loesungen_pdf.py`/`lehrkraft_pdf.py --pruefen` (ohne `python3`/`javac`/`pypdf` übersprungen) |
+| `docker.test.js` | neu (M5) | Docker ohne Daemon: COPY-Quellen und `.dockerignore`-Ausnahmen gegen den Dateibaum, Image-Inhalt (Akten laut `seed/akten.json`, Lehrkraft-Verzeichnis, Demo-PDFs, relative `require()`, keine Lösung unter `/app/akten`), Image-Nachbau im Temp-Ordner: `scripts/validate.js` und `src/server.js` mit `NODE_ENV=production` (`/healthz`, `/api/themen` mit Akten-URLs, Demo-PDFs 200, andere Akte 401, Manifest) |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
 Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 MB, `E2E_FOTOS=0` schaltet aus –, Viewports
@@ -1714,7 +1717,7 @@ CMD ["node", "src/server.js"]
 `.dockerignore`: `.git`, `node_modules`, `data`, `test`, `werkzeuge`, `quellen`, `docs/*` außer den zwei Formatdateien,
 `docs/screenshots`, `materialien/*` außer `!materialien/Akten_PDF`, `!materialien/Loesungen_Portal`,
 `!materialien/Lehrkraft_PDF`, `scripts/*` außer `validate.js`/`vertrag_pruefen.js`, `*.log`, `.DS_Store`, `__pycache__`,
-`.env*`. Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name).
+`.env*`. Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name). `test/docker.test.js` prüft beides gegen den Dateibaum und startet einen Nachbau des Image-Inhalts (M5 Task 103).
 
 ### 16.3 CapRover
 

@@ -8,10 +8,10 @@ und Zertifikaten – und werden dabei abwechselnd zu Alice (Kryptografie) und Ev
 Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbunds **InfoLabs**
 (https://labs.frankjuchim.de) · Anmeldung ausschließlich über das Portal.
 
-> **Stand (12.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
-> und geprüft. Die Plattform wird nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` gebaut
-> (Meilensteine M0–M9; unterrichtsreif ab M5 mit den Welten 0–2). Bis dahin läuft die Einheit vollständig mit den
-> Papiermaterialien.
+> **Stand (13.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
+> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M5** gebaut: die
+> Welten 0–2 sind spielbar (Branch `feature/m0-kern`, noch nicht live) – siehe „Stand der Plattform“ (Abschnitt 4.1).
+> Welten 3–6, Kryptolabor, Funkraum und Werkstatt folgen mit M6–M8; bis dahin laufen sie mit den Papiermaterialien.
 
 ---
 
@@ -42,7 +42,7 @@ Chiffren-Werkstatt W3). Die Rechnungen im Abitur-Format sind ohne Taschenrechner
 CLAUDE.md                         Arbeitsanweisungen und Konventionen (zuerst lesen)
 docs/
   superpowers/specs/2026-10-12-kryptos-design.md   Design-Spezifikation (Didaktik, DS-Plan, Plattform, Materialien)
-  superpowers/plans/2026-10-12-kryptos-plattform.md Implementierungsplan M0–M9, Detail-Tasks 1–18
+  superpowers/plans/2026-10-12-kryptos-plattform.md Implementierungsplan M0–M9, Detail-Tasks 1–18 (+ Detailpläne M3–M5)
   TECHNIK.md                      technische Spezifikation (Übernahme, Hooks, krypto.js, SSO/Verbund, Datenmodell, Tests)
   AUFGABENFORMAT_KRYPTO.md        Delta zum AlgoQuest-Aufgabenformat
   DESIGNSYSTEM.md                 Designsystem „Chronoskop“ (Plattform, Akten, Folien)
@@ -59,6 +59,11 @@ materialien/                      fertiges Material (docx/pptx, maßgebliche Fas
   Werkzeuge/                      WK1–WK6, Abitur-Anlage, Warm-up-Karten/, Funkraum/
   Videos/                         Übersicht, je Video video.json, Skript.md, Folien (pptx)
 werkzeuge/material/               Material-Pipeline (Python: docx, Node: pptx, LibreOffice: PDF)
+werkzeuge/                        PDF-Pipeline (akten_pdf.py, loesungen_pdf.py, lehrkraft_pdf.py), Online-IDE-Prüfstand,
+                                  krypto/ (Python-Zwilling, Prüfwerte, Seed-Nachrechnung), Schriften, Version
+src/, public/                     Server (Express) und Oberfläche (Vanilla-JS, ohne Build)
+seed/                             Inhalte: welten/, warmup/, gast/, akten.json, videos.json, demo_materialien.json
+test/                             node:test, Dev-Portal (test/devportal), e2e (test/e2e)
 prototyp/kryptos_prototyp.html    klickbarer Design-Prototyp der Plattform (visuelle Referenz für M4)
 ```
 
@@ -89,6 +94,48 @@ strikte CSP, Prüfung ausschließlich serverseitig. Der Kern (Lab, Bosse, Traini
 Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-Regel, `docs/KERN_ABWEICHUNGEN.md`).
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
+
+### 4.1 Stand der Plattform (M0–M5)
+
+| Meilenstein | Was läuft |
+|---|---|
+| M0 Kern | Algo-Quest-Kern (2.8.2) übernommen, Fach-Listen Kryptos, Abweichungen in `docs/KERN_ABWEICHUNGEN.md` |
+| M1 Verbund | Anmeldung nur über das Portal (SSO, Ed25519), Verbund-API, Manifest `GET /api/plattform` (Vertrag v1.2), Dev-Portal |
+| M2 Bibliothek | `public/static/js/shared/krypto.js` mit Python-Zwilling (`werkzeuge/krypto/`), Prüfwerte aller Materialien |
+| M3 Aufgabenformat | Krypto-Blöcke und -Interaktionen, Fallen-Diagnose P1–P10, Niveau gA/eA/Kür, Generatoren, Validator mit Neuberechnung |
+| M4 Oberfläche | Designsystem „Chronoskop“, Zeitleiste, Level, Boss, Warm-up, Profil, Lehrkraft-Ansicht, Themenseite, Gastmodus |
+| M5 Inhalte | Welten 0–2 (`seed/welten/welt0–2.json`: Archivfunde, 12 Level mit 91 Aufgaben inkl. Kür K1, drei Boss-Pools), Warm-up W0–W2, Gast-Demo; Akten, Lösungen und Lehrkraft-PDFs aus `materialien/` (Akten nur nach Anmeldung, ohne Anmeldung nur Demo-PDFs), QR-Codes der Akten (`/level/0.1` …) |
+
+Noch nicht da: Welten 3–6 (M8), Kryptolabor-Werkzeuge (M6), Funkraum, Chiffren-Werkstatt und Knack-Arena (M7),
+Deploy (M9). Die Seiten dafür zeigen „kommt bald“.
+
+**Lokal starten** (Node ≥ 20):
+
+```
+npm install
+npm run dev        # Dev-Portal auf :3100 und Kryptos auf :3000 (Daten in ./data)
+```
+
+Danach http://localhost:3000 öffnen und „Anmelden über InfoLabs“ wählen: Das Dev-Portal bietet die Testkonten
+„Mika R.“ (Schüler in „LK 13 (eA)“ und „GK 12 (gA)“), „Ida K.“ (nur GK 12), „Frau M.“ (Lehrkraft) und „Admin“ an.
+Der Signaturschlüssel des Dev-Portals entsteht beim Start in `./data`; für die Live-Konfiguration siehe Abschnitt 5.
+Mit der Beispielwelt der Tests: `WELT_DATEIEN=test/fixtures/welt_beispiel.json npm run dev`.
+
+**Prüfungen:**
+
+```
+npm test                       # Unit-, API- und Client-Tests (node:test), inkl. Docker-Abgleich ohne Daemon
+npm run validate               # Inhalts-Validator für seed/welten/*.json und seed/gast/demo.json
+npm run pruefen                # test + validate + Prüfwerte (Python-Zwilling) + Seeds unabhängig nachrechnen
+npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–11, Fotos nach docs/screenshots/
+npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
+npm run akten -- --pruefen     # ebenso loesungen, lehrkraft, workspaces; Erzeugen ohne --pruefen (braucht LibreOffice)
+npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)
+node scripts/vertrag_pruefen.js http://localhost:3000   # Manifest gegen den Vertrag prüfen
+```
+
+Die CI (`.github/workflows/pruefung.yml`) führt das in den Jobs `app`, `krypto`, `inhalte` (Java 21, LibreOffice,
+Python-Pakete aus `werkzeuge/material/requirements.txt`) und – bei Pull Requests nach `main` – `e2e` aus.
 
 ## 5. Verbund InfoLabs
 

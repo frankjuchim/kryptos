@@ -25,8 +25,8 @@ COPY public ./public
 COPY seed ./seed
 COPY scripts/validate.js scripts/vertrag_pruefen.js ./scripts/
 COPY docs/AUFGABENFORMAT.md docs/AUFGABENFORMAT_KRYPTO.md ./docs/
-# Akten (Schülerfassung, PDF) für die Themenseite. Die drei materialien-Ordner existieren im Repo vorerst nur mit
-# .gitkeep (Material-Pipeline TECHNIK §14 folgt), damit der Build nicht an fehlenden Ordnern scheitert.
+# Akten (Schülerfassung, PDF; erzeugt mit werkzeuge/akten_pdf.py): nur nach Anmeldung, ohne Anmeldung nur die Demo-PDFs
+# aus seed/demo_materialien.json. test/docker.test.js gleicht COPY-Quellen und .dockerignore mit dem Dateibaum ab.
 COPY materialien/Akten_PDF ./akten
 # Nur für angemeldete Lehrkräfte: Lösungen, Präsentationen, Lehrerhinweise, Klausuren.
 # Der Server liefert daraus nur Dateien aus materialien/Lehrkraft_PDF/verzeichnis.json und nur an Lehrkräfte.
