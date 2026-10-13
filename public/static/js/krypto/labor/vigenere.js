@@ -44,7 +44,10 @@
     const wurzel = h('div', { class: 'labor-werkzeug vigenere-werkzeug' }, r.element);
     container.appendChild(wurzel);
 
+    let analyseTimer = null; // Entprellung der Analyse-Eingabe (Review M6)
     function schliesseTeile() {
+      if (analyseTimer) clearTimeout(analyseTimer);
+      analyseTimer = null;
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
     }
@@ -378,7 +381,15 @@
     }
 
     function baueAnalyse(id) {
-      const kopf = B.textfeld({ beschriftung: 'Geheimtext (bis 2 000 Zeichen)', max: MAX, wert: text, art: 'geheimtext', zeilen: 3, beiEingabe: (t) => { text = t; A.st.schluessel = null; zeichne(); } });
+      const kopf = B.textfeld({ beschriftung: 'Geheimtext (bis 2 000 Zeichen)', max: MAX, wert: text, art: 'geheimtext', zeilen: 3, beiEingabe: (t) => { text = t; A.st.schluessel = null; spaeter(); } });
+      // Analyse (Kasiski, Koinzidenz, Teiltexte …) erst nach 300 ms Tipp-Pause neu zeichnen
+      const spaeter = () => {
+        if (analyseTimer) clearTimeout(analyseTimer);
+        analyseTimer = setTimeout(() => {
+          analyseTimer = null;
+          zeichne();
+        }, 300);
+      };
       const zeileOrt = h('div', { class: 'vg-textzeile' });
       const inhalt = h('div', { class: 'vg-inhalt' });
       r.flaeche.append(kopf.element, zeileOrt, inhalt);

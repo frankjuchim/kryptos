@@ -1774,55 +1774,83 @@
     pruefeGanzzahl(anzahl, 'Anzahl');
     const t = nurBuchstaben(text);
     const n = t.length;
-    const gruppen = []; // { laenge, positionen }
-    // Gruppen gleicher Folgen der Länge L; nur wiederholte Positionen werden verlängert
+    // Gruppen gleicher Folgen der Länge L als Positionslisten; Verlängern um ein Zeichen verteilt eine Gruppe nach dem
+    // folgenden Buchstaben (ohne Teilzeichenketten, Review M6). Gespeichert werden nur maximale Gruppen: weder alle
+    // Vorkommen nach rechts noch alle nach links mit demselben Zeichen verlängerbar (auch über n/2 hinaus).
+    // Aufwand höchstens Summe der Gruppengrößen über alle Längen – 3000 Zeichen periodisch in wenigen Millisekunden.
+    const code = Int8Array.from(t, (c) => ALPHABET.indexOf(c));
+    const maximal = []; // { laenge, positionen (Int32Array, aufsteigend) }
     let L = min;
-    let aktuell = new Map();
+    const start = new Map();
     for (let i = 0; i + L <= n; i++) {
       const f = t.slice(i, i + L);
-      if (!aktuell.has(f)) aktuell.set(f, []);
-      aktuell.get(f).push(i);
+      if (!start.has(f)) start.set(f, []);
+      start.get(f).push(i);
     }
-    while (L <= Math.floor(n / 2)) {
-      const wiederholt = [...aktuell.values()].filter((p) => p.length >= 2);
-      if (wiederholt.length === 0) break;
-      for (const p of wiederholt) gruppen.push({ laenge: L, positionen: p });
-      const naechste = new Map();
-      for (const p of wiederholt) {
-        for (const i of p) {
-          if (i + L + 1 > n) continue;
-          const f = t.slice(i, i + L + 1);
-          if (!naechste.has(f)) naechste.set(f, []);
-          naechste.get(f).push(i);
+    let ebene = [...start.values()].filter((p) => p.length >= 2).map((p) => Int32Array.from(p));
+    const anzahlJe = new Int32Array(26);
+    while (ebene.length && L <= Math.floor(n / 2)) {
+      const naechste = [];
+      for (const p of ebene) {
+        // Positionen am Textende stehen hinten (aufsteigend sortiert)
+        let ende = p.length;
+        while (ende > 0 && p[ende - 1] + L >= n) ende--;
+        const amEnde = ende < p.length;
+        let links = p[0] > 0;
+        const vorne = links ? code[p[0] - 1] : -1;
+        anzahlJe.fill(0);
+        let verschieden = 0;
+        for (let j = 0; j < p.length; j++) {
+          const i = p[j];
+          if (links && (i === 0 || code[i - 1] !== vorne)) links = false;
+          if (j < ende && anzahlJe[code[i + L]]++ === 0) verschieden++;
+        }
+        const rechts = !amEnde && verschieden === 1;
+        if (!rechts && !links) maximal.push({ laenge: L, positionen: p });
+        if (verschieden === 1) {
+          if (ende >= 2) naechste.push(amEnde ? p.subarray(0, ende) : p); // eine Fortsetzung: Positionen bleiben (ohne Kopie)
+        } else if (verschieden > 1) {
+          const eimer = [];
+          for (let c = 0; c < 26; c++) if (anzahlJe[c] >= 2) eimer[c] = { q: new Int32Array(anzahlJe[c]), k: 0 };
+          for (let j = 0; j < ende; j++) {
+            const e = eimer[code[p[j] + L]];
+            if (e) e.q[e.k++] = p[j];
+          }
+          for (const e of eimer) if (e) naechste.push(e.q);
         }
       }
-      aktuell = naechste;
+      ebene = naechste;
       L++;
     }
-    // maximal: weder alle Vorkommen nach rechts noch alle nach links mit demselben Zeichen verlängerbar
-    const maximal = gruppen.filter(({ laenge, positionen: p }) => {
-      const rechts = p.every((i) => i + laenge < n && t[i + laenge] === t[p[0] + laenge]);
-      const links = p.every((i) => i > 0 && t[i - 1] === t[p[0] - 1]);
-      return !rechts && !links;
-    });
     maximal.sort((a, b) => b.laenge - a.laenge || b.positionen.length - a.positionen.length || a.positionen[0] - b.positionen[0]);
-    const wiederholungen = maximal.slice(0, Math.max(0, anzahl)).map(({ laenge, positionen }) => ({
-      folge: t.slice(positionen[0], positionen[0] + laenge),
-      positionen: positionen.slice(),
-      abstaende: positionen.slice(1).map((p, i) => p - positionen[i]),
-    }));
-    // Gesamt-Abstände ohne Doppelzählung (Paare, die in einer längeren Folge mit gleichem Abstand liegen)
+    const wiederholungen = maximal.slice(0, Math.max(0, anzahl)).map(({ laenge, positionen: q }) => {
+      const positionen = Array.from(q);
+      return { folge: t.slice(positionen[0], positionen[0] + laenge), positionen, abstaende: positionen.slice(1).map((p, i) => p - positionen[i]) };
+    });
+    // Gesamt-Abstände ohne Doppelzählung (Paare, die in einer längeren Folge mit gleichem Abstand liegen): Paar (a, d) der
+    // Länge l ist gedeckt, wenn ein früheres Paar mit demselben d bei q.a ≤ a beginnt und bis a + l reicht. Je d ein
+    // Fenwick-Baum (Präfix-Maximum des Endes über den Anfang) – sonst quadratisch bei langen periodischen Texten.
     const abstaende = [];
-    const paare = []; // { a, ende, d }
+    const baeume = new Map(); // d → Map(Index → größtes Ende)
+    const hoechstesEnde = (d, a) => {
+      const b = baeume.get(d);
+      let m = -1;
+      if (b) for (let i = a + 1; i > 0; i -= i & -i) m = Math.max(m, b.get(i) ?? -1);
+      return m;
+    };
+    const eintragen = (d, a, ende) => {
+      if (!baeume.has(d)) baeume.set(d, new Map());
+      const b = baeume.get(d);
+      for (let i = a + 1; i <= n + 1; i += i & -i) if (!((b.get(i) ?? -1) >= ende)) b.set(i, ende);
+    };
     for (const w of wiederholungen) {
       const l = w.folge.length;
       for (let i = 1; i < w.positionen.length; i++) {
         const a = w.positionen[i - 1];
         const d = w.positionen[i] - a;
-        const gedeckt = paare.some((q) => q.d === d && q.a <= a && a + l <= q.ende);
-        if (!gedeckt) {
+        if (hoechstesEnde(d, a) < a + l) {
           abstaende.push(d);
-          paare.push({ a, ende: a + l, d });
+          eintragen(d, a, a + l);
         }
       }
     }

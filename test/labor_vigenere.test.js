@@ -171,3 +171,14 @@ test('Analyse: kein Speicher, keine Anfragen, kein automatisch „richtiger“ S
   assert.deepEqual(w.k.anfragen, []);
   assert.equal(w.k.window.localStorage.length, 0);
 });
+
+test('Analyse-Reiter: Eingabe entprellt (300 ms) – Kasiski & Co. rechnen erst nach einer Tipp-Pause (Review M6)', async () => {
+  const w = oeffne('vigenere', { voreinstellung: { reiter: ['kasiski'], text: 'ABCDEFGH' } });
+  const vorher = w.text('.vg-textzeile');
+  w.k.tippe(w.k.eins(w.flaeche, 'textarea.labor-eingabe'), 'XYZABCXYZ');
+  assert.equal(w.text('.vg-textzeile'), vorher, 'noch nicht neu gezeichnet');
+  assert.ok(w.k.timer.some((t) => t.ms === 300), 'Entprellung 300 ms');
+  await w.k.ruhe();
+  assert.notEqual(w.text('.vg-textzeile'), vorher);
+  assert.deepEqual(w.zustand().wiederholungen.map((x) => x.folge), ['ABC', 'XYZ']);
+});

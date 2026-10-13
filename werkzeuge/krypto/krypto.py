@@ -1634,36 +1634,63 @@ def kasiski(text, *, min=3, anzahl=30):  # noqa: A002
     t = nur_buchstaben(text)
     n = len(t)
     oben = n // 2
-    wiederholt = {}
-    for laenge in range(mindest, oben + 1):
-        vorkommen = {}
-        for i in range(n - laenge + 1):
-            vorkommen.setdefault(t[i:i + laenge], []).append(i)
-        neu = {f: p for f, p in vorkommen.items() if len(p) >= 2}
-        if not neu:
-            break  # ohne Wiederholung der Länge L gibt es auch keine längere
-        wiederholt.update(neu)
+    # Positionsgruppen gleicher Folgen der Länge L, Verlängern um ein Zeichen nach dem folgenden Buchstaben (ohne
+    # Teilzeichenketten); nur maximale Gruppen werden gespeichert: weder alle Vorkommen nach rechts noch alle nach links
+    # mit demselben Zeichen verlängerbar – auch über n/2 hinaus (Review M6: wie krypto.js, Aufwand ohne Faktor L)
+    laenge = mindest
+    start = {}
+    for i in range(n - laenge + 1):
+        start.setdefault(t[i:i + laenge], []).append(i)
+    ebene = [p for p in start.values() if len(p) >= 2]
+    maximal = []  # (laenge, positionen)
+    while ebene and laenge <= oben:
+        naechste = []
+        for p in ebene:
+            eimer = {}
+            am_ende = False
+            for i in p:
+                if i + laenge >= n:
+                    am_ende = True
+                    continue
+                eimer.setdefault(t[i + laenge], []).append(i)
+            rechts = not am_ende and len(eimer) == 1
+            links = p[0] > 0 and all(i > 0 and t[i - 1] == t[p[0] - 1] for i in p)
+            if not rechts and not links:
+                maximal.append((laenge, p))
+            naechste.extend(q for q in eimer.values() if len(q) >= 2)
+        ebene = naechste
+        laenge += 1
 
-    def erweiterbar(folge, pos):
-        """Lässt sich jedes Vorkommen gleich nach links oder rechts verlängern (Folge in einer längeren – auch über
-        n/2 hinaus – enthalten)?"""
-        rechts = {t[p + len(folge)] if p + len(folge) < n else None for p in pos}
-        links = {t[p - 1] if p > 0 else None for p in pos}
-        return (len(rechts) == 1 and None not in rechts) or (len(links) == 1 and None not in links)
-
-    maximal = [(f, p) for f, p in wiederholt.items() if not erweiterbar(f, p)]
-    maximal.sort(key=lambda e: (-len(e[0]), -len(e[1]), e[1][0]))
+    maximal.sort(key=lambda e: (-e[0], -len(e[1]), e[1][0]))
     maximal = maximal[:anzahl]
-    wiederholungen = [{'folge': f, 'positionen': list(p), 'abstaende': [b - a for a, b in zip(p, p[1:])]}
-                      for f, p in maximal]
+    wiederholungen = [{'folge': t[p[0]:p[0] + l_], 'positionen': list(p), 'abstaende': [b - a for a, b in zip(p, p[1:])]}
+                      for l_, p in maximal]
+    # Abstände ohne Doppelzählung: Paar (a, d) der Länge l ist gedeckt, wenn ein früheres Paar mit demselben d bei
+    # q_a <= a beginnt und bis a + l reicht (je d Präfix-Maximum des Endes über den Anfang, Fenwick-Baum wie krypto.js)
     abstaende = []
-    for f, p in maximal:
+    baeume = {}
+
+    def hoechstes_ende(d, a):
+        b_ = baeume.get(d, {})
+        m, i = -1, a + 1
+        while i > 0:
+            m = max(m, b_.get(i, -1))
+            i -= i & -i
+        return m
+
+    def eintragen(d, a, ende):
+        b_ = baeume.setdefault(d, {})
+        i = a + 1
+        while i <= n + 1:
+            if b_.get(i, -1) < ende:
+                b_[i] = ende
+            i += i & -i
+
+    for l_, p in maximal:
         for a, b in zip(p, p[1:]):
-            enthalten = any(len(g) > len(f) and any(q2 - q1 == b - a and q1 <= a and a + len(f) <= q1 + len(g)
-                                                    for q1, q2 in zip(q, q[1:]))
-                            for g, q in maximal)
-            if not enthalten:
+            if hoechstes_ende(b - a, a) < a + l_:
                 abstaende.append(b - a)
+                eintragen(b - a, a, a + l_)
     teiler = {t_: sum(1 for d in abstaende if d % t_ == 0) for t_ in range(2, 21)}
     vorschlag = sorted((t_ for t_ in teiler if teiler[t_] > 0), key=lambda t_: (-teiler[t_], -t_))
     return {'wiederholungen': wiederholungen, 'abstaende': abstaende, 'teiler': teiler, 'vorschlag': vorschlag}

@@ -449,7 +449,7 @@ const FAELLE = {
     zufall: () => [selten() ? wahl([0, 1, 2.5]) : ganz(2, 2000), selten() ? wahl([-0.1, 1.5, '0,05']) : zufall() * 0.1, ...(zufall() < 0.3 ? [{ iD: 0.0765, iZ: 0.0385 }] : [])],
   },
   kasiski: {
-    fest: [['ABCDEFG'], [''], ['ABCABCABC'], ['ABC', { min: 2 }], ['ABC', { min: 7 }], ['AAAAAAAAAA'], ['ABABABABAB'], ['XYZXYZ'], ['ABCDABCDXABCD']],
+    fest: [['ABCDEFG'], [''], ['ABCABCABC'], ['ABC', { min: 2 }], ['ABC', { min: 7 }], ['AAAAAAAAAA'], ['ABABABABAB'], ['XYZXYZ'], ['ABCDABCDXABCD'], ['A'.repeat(700)], ['KRYPTOS'.repeat(90), { anzahl: 40 }], ['AB'.repeat(200) + 'C' + 'AB'.repeat(150)]],
     zufall: () => {
       const t = zufall() < 0.7 ? K.vigenere(deutsch(60), buchstaben(2, 7)) : zufall() < 0.5 ? text(300, 'ABCD') : text(100);
       return [t, ...(zufall() < 0.4 ? [{ min: selten() ? wahl([2, 7]) : ganz(3, 6), anzahl: ganz(1, 40) }] : [])];
