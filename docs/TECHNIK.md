@@ -558,7 +558,8 @@ mit 503 (nur im Testmodus möglich).
   §11.1 – M4 E18); ohne Sitzung **still**
   `302 /sso/start?ziel=<Pfad>`. Öffentlich: `/`, `/gast`, `/themen`, `/datenschutz`, `/board/:schluessel`, `/healthz`,
   `/api/plattform`, `/api/niveaus`, `/api/themen`, `/akten/*` (eigene Prüfung: ohne Sitzung nur die Demo-PDFs aus
-  `seed/demo_materialien.json`, sonst `401` mit Hinweisseite; Schüler- oder Lehrkraft-Sitzung → PDF; Plan M5 E48, vorläufig),
+  `seed/demo_materialien.json`, sonst `401` mit Hinweisseite; Schüler- oder Lehrkraft-Sitzung → PDF; Plan M5 E48, vorläufig; Schüler nur Akten, deren `niveau` in
+  `seed/akten.json` im Kurs sichtbar ist wie ein Level – eA nicht im gA-Kurs, Kür nicht bei gesperrter Kür, sonst `404`, K40),
   `/static/*`, `/robots.txt`. `/arbeitsblaetter/…` (Kern) gibt es nicht mehr (404).
 - **Kurswahl:** `POST /api/sitzung/kurs { kurs: "k:17" }` setzt `t` neu (nur eigene aktive Teilnahmen). Kurswahl und
   Rückfall auf die erste aktive Teilnahme **verlängern die Sitzung nicht**: Das neue `kr_s` übernimmt das `exp` des

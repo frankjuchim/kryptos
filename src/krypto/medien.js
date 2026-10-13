@@ -31,4 +31,19 @@ function createLevelMedien({ verzeichnis, pdfVorhanden = () => false, videos = n
   });
 }
 
-module.exports = { createLevelMedien };
+/**
+ * Niveau je Akten-PDF (Pfad relativ zu /akten, z. B. „Welt_2_Renaissance/KR_W2_Akte3_….pdf“) aus seed/akten.json –
+ * für den Zugriff nach Kursniveau und Kür wie bei den Leveln (M5-Inhaltsprüfung; Dienst-Option `sichtbar`).
+ * Einträge ohne niveau (Papier-Boss, Warm-up, Werkzeugkarten) → null (immer erlaubt).
+ */
+function createAktenNiveau(verzeichnis) {
+  const niveau = new Map();
+  for (const w of (verzeichnis && Array.isArray(verzeichnis.welten) && verzeichnis.welten) || []) {
+    for (const a of Array.isArray(w.akten) ? w.akten : []) {
+      if (a && typeof a.datei === 'string' && typeof a.niveau === 'string') niveau.set(`${w.ordner}/${a.datei}`, a.niveau);
+    }
+  }
+  return (datei) => niveau.get(datei) || null;
+}
+
+module.exports = { createLevelMedien, createAktenNiveau };

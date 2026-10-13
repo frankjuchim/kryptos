@@ -239,3 +239,39 @@ test('Akten /akten/ (K15, E48): ohne Sitzung 401 außer Demo-PDFs, Schüler und 
   await request(app).get('/akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf').expect(200);
   for (const c of [request(app), s, lk]) await c.get('/arbeitsblaetter/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf').expect(404);
 });
+
+test('Akten /akten/ nach Kursniveau und Kür (M5-Inhaltsprüfung): eA-Akte nicht im gA-Kurs, Kür-Akte nicht bei gesperrter Kür', async () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const path = require('node:path');
+  const fixtures = path.join(__dirname, 'fixtures');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-akten-niveau-'));
+  fs.cpSync(path.join(fixtures, 'seed_beispiel'), path.join(tmp, 'seed'), { recursive: true });
+  fs.cpSync(path.join(fixtures, 'materialien', 'Akten_PDF'), path.join(tmp, 'pdf'), { recursive: true });
+  fs.copyFileSync(path.join(tmp, 'pdf', 'Welt_9_Testwelt', 'KR_W9-AB1_Bloecke_und_Luecken.pdf'), path.join(tmp, 'pdf', 'Welt_9_Testwelt', 'KR_W9-AK1_Kuer.pdf'));
+  const akten = JSON.parse(fs.readFileSync(path.join(tmp, 'seed', 'akten.json'), 'utf8'));
+  const w9 = akten.welten.find((w) => w.welt === 9);
+  w9.akten.find((a) => a.nr === '2').niveau = 'eA';
+  w9.akten.push({ nr: 'K1', titel: 'Kür (Test)', ds: [], niveau: 'kuer', level: ['W9-L4'], quelle: 'Welt9_Testwelt/KR_W9_AK1.docx', datei: 'KR_W9-AK1_Kuer.pdf' });
+  fs.writeFileSync(path.join(tmp, 'seed', 'akten.json'), JSON.stringify(akten));
+  const { app, s, lk, kurs } = await H.szenario({ seedDir: path.join(tmp, 'seed'), arbeitsblaetterDir: path.join(tmp, 'pdf') });
+  const kern = '/akten/Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf';
+  const eA = '/akten/Welt_9_Testwelt/KR_W9-AB2_Alle_Interaktionen.pdf';
+  const kuer = '/akten/Welt_9_Testwelt/KR_W9-AK1_Kuer.pdf';
+  // eA-Kurs, Kür frei (Standard): alles
+  for (const u of [kern, eA, kuer]) await s.get(u).expect(200);
+  // gA-Kurs: eA-Akte wie ein unsichtbares Level → 404; Kür bleibt nach Einstellung
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  await s.get(eA).expect(404);
+  await s.get(kern).expect(200);
+  await s.get(kuer).expect(200);
+  // Kür gesperrt → Kür-Akte 404
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'eA', kuer: 'gesperrt' } }).expect(200);
+  await s.get(kuer).expect(404);
+  await s.get(eA).expect(200);
+  // Lehrkräfte sehen alle Akten
+  for (const u of [kern, eA, kuer]) await lk.get(u).expect(200);
+  // ohne Sitzung weiterhin 401 (Demo-PDF bleibt öffentlich)
+  await request(app).get(eA).expect(401);
+  await request(app).get(kern).expect(200);
+});

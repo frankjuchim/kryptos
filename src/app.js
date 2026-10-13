@@ -16,7 +16,7 @@ const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
 const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
 const { createLabor } = require('./krypto/labor');
-const { createLevelMedien } = require('./krypto/medien');
+const { createLevelMedien, createAktenNiveau } = require('./krypto/medien');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -66,6 +66,8 @@ function createApp(opts) {
   // Dienst-Optionen (TECHNIK §4.2): Krypto-Hooks, in Tests durch opts.optionen überschreibbar;
   // K38: Akte und Video je Level (seed/akten.json, seed/videos.json) für das Level-Detail
   const levelMedien = createLevelMedien({ verzeichnis: aktenVerzeichnis, pdfVorhanden, videos: ladeVideos(opts, log) });
+  // K40: Niveau je Akten-PDF (eA-/Kür-Akten nur für Kurse, die die Level sehen)
+  const aktenNiveau = createAktenNiveau(aktenVerzeichnis);
   const optionen = { ...require('./krypto').dienstOptionen(), levelMedien, ...(opts.optionen || {}) };
   const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed, optionen };
   const svc = createServices(ctx);
@@ -224,7 +226,11 @@ function createApp(opts) {
         res.set('Cache-Control', 'public, max-age=3600');
         return next();
       }
-      if (!helpers.schueler(req) && !helpers.lehrkraft(req)) return nurMitAnmeldung(res);
+      const schueler = helpers.schueler(req);
+      if (!schueler && !helpers.lehrkraft(req)) return nurMitAnmeldung(res);
+      // K40: Schüler nur Akten, deren Niveau im Kurs sichtbar ist (eA nicht im gA-Kurs, Kür nicht bei gesperrter Kür)
+      const niveau = aktenNiveau(rel);
+      if (schueler && !helpers.lehrkraft(req) && niveau && !optionen.sichtbar({ niveau }, svc.lernen.einstellungenVon(schueler))) return res.status(404).end();
       res.set('Cache-Control', 'private, max-age=3600');
       next();
     });
