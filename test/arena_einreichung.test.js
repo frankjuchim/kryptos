@@ -2,10 +2,8 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const F = require('./hilfen_funk');
+const { TEXT1, TEXT2, FUNKGITTER, CAESAR } = F;
 const K = require('../public/static/js/shared/krypto.js');
-
-const TEXT1 = 'Am Nordtor der alten Hafenstadt stehen drei Waechter. Jeden Abend tauschen sie die Losung, damit kein Fremder durch das Tor kommt. Wer die Losung kennt, darf passieren und bringt Nachrichten in die Stadt.';
-const FUNKGITTER = { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$wort' } }, { typ: 'spaltentransposition', param: { schluessel: '$wort' } }] };
 const ZAUN_XOR = { version: 1, name: 'Zaun und XOR', stufen: [{ typ: 'gartenzaun', param: { zeilen: 3 } }, { typ: 'xor', param: { schluessel: '$w' } }] };
 
 async function arena(n = 2) {
@@ -81,7 +79,6 @@ test('Einreichen: Hash = HMAC(Arena-Salz, nurBuchstaben), XOR-Grenzfall 300 Buch
   const crypto = require('node:crypto');
   const H = require('./helpers');
   const f = await arena();
-  const CAESAR = { version: 1, name: 'Nur Caesar', stufen: [{ typ: 'caesar', param: { k: '$k' } }] };
   await f.einreichen(f.teams[0], { verfahren: CAESAR, schluessel: { k: 7 }, klartext: TEXT1, beschreibung: '  Caesar  ' }).expect(200);
   const zeile = f.db.prepare('SELECT * FROM arena_chiffren').get();
   const salz = f.db.prepare('SELECT salz FROM arena').get().salz;

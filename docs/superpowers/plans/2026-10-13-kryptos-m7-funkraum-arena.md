@@ -1906,7 +1906,7 @@ Beamer bei 1920 × 1080.
   sekunden, angriffe, stufen: [kürzel] (erst ab beurteilung) }], ticker: [{ von, ziel, zeit }] }` – **keine** Beschreibung,
   keine Beurteilung, keine Hinweise.
 
-- [ ] **Step 1: Failing test** – `test/arena_beurteilung.test.js` (Aufbau wie Task 145, Helfer `angriffsphase` in
+- [x] **Step 1: Failing test** – `test/arena_beurteilung.test.js` (Aufbau wie Task 145, Helfer `angriffsphase` in
   `test/hilfen_funk.js` übernehmen: `arenaMitChiffren(n)`):
   ```js
   'use strict';
@@ -1963,9 +1963,9 @@ Beamer bei 1920 × 1080.
   `angriff(t, ziel, body)`, `arenaId`, `cid(i)` zurück; `F.TEXT1`, `F.TEXT2`, `F.FUNKGITTER`, `F.CAESAR` werden aus
   `hilfen_funk.js` exportiert und in `arena_einreichung.test.js`/`arena_angriff.test.js` statt der lokalen Konstanten
   verwendet – gleicher Commit.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (ETag nach E103 mit `crypto.createHash('sha1')`; `If-None-Match` wie Funkraum).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Arena: Chiffren-Liste, Beurteilung, Lehrkraft-Ansicht und Beamer-Stand (ETag)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (ETag nach E103 mit `crypto.createHash('sha1')`; `If-None-Match` wie Funkraum).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Arena: Chiffren-Liste, Beurteilung, Lehrkraft-Ansicht und Beamer-Stand (ETag)"`.
 
 ### Task 147: Abzeichen – Funkraum-Veteran, Arena-Knacker, Unknackbar, Artefakte, Server-Icons (TECHNIK §4.2, §9.6, §12.7, E100, E112)
 
@@ -2889,6 +2889,15 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Arena“ entstand in einer zweiten App (eigene Datenbank, gleiche ids → wäre ein gültiger Angriff im eigenen Kurs) – jetzt
   zweiter Kurs in derselben App, dazu unbekannte Chiffre 404. Zusatztest: XOR-Chiffre per Schlüssel, `rest`, Schlüssel-Form,
   abgelehnte Versuche zählen nicht, `Retry-After`, ohne Team/gesperrter Kurs 403.
+- **Task 146:** `geknacktNachSek` bzw. Beamer-`sekunden` = Sekunden vom **ersten Angriff auf die Chiffre** bis zum ersten
+  Knacken (die Tabelle `arena` hat keine Spalte für den Start der Angriffsphase; keine Migration, E103). `geknacktVon` in der
+  Reihenfolge der ersten Erfolge; Ticker = erster Erfolg je Team und Chiffre, nach Zeit. Beamer in der `werkstatt`: Karten nur
+  mit Team und „eingereicht“ (`name`, `ausschnitt` = null – andere Chiffren sind dort unsichtbar, TECHNIK §9.1); `ausschnitt`
+  bekommt „…“ nur, wenn die Darstellung länger als 29 Zeichen ist. Eigene Chiffre in der Liste mit Hinweisen (E104), fremde
+  erst ab `beurteilung`. Beurteilen: Team ohne Chiffre → 409, Text getrimmt gespeichert. `test/hilfen_funk.js` exportiert
+  `arenaMitChiffren`, `TEXT1`, `TEXT2`, `FUNKGITTER`, `CAESAR`; `arena_angriff.test.js` nutzt den Helfer statt einer eigenen
+  `angriffsphase`. TECHNIK §13.3/§13.4 (Liste, Lehrkraft-Ansicht, Beamer ohne `seit`) angeglichen. Zusatztest: Rückblick
+  (`geknacktVon`, Zeit, Versuche je Team), Beamer in der Werkstatt, Ticker-Reihenfolge, kein Hash/Salz in Antworten, Rechte.
 
 ## Reihenfolge und Abhängigkeiten
 

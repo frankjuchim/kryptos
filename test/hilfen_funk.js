@@ -51,6 +51,32 @@ async function starte(f, typ, o = {}) {
 const stand = (c, id, seit = 0) => c.get(`/api/funk/${id}/stand?seit=${seit}`);
 const regie = (f, id, seit = 0, ansicht = 'regie') => f.lk.get(`/api/lehrer/funk/${id}/stand?seit=${seit}&ansicht=${ansicht}`);
 
+/* Arena (Plan M7 Tasks 144–146): erfundene Testtexte und Verfahren (nicht aus Lab/Akten) */
+const TEXT1 = 'Am Nordtor der alten Hafenstadt stehen drei Waechter. Jeden Abend tauschen sie die Losung, damit kein Fremder durch das Tor kommt. Wer die Losung kennt, darf passieren und bringt Nachrichten in die Stadt.';
+const TEXT2 = 'Der Leuchtturm blinkt dreimal kurz und einmal lang, wenn ein Schiff in den Hafen einlaufen darf. Bei Nebel bleibt das Licht aus und die Boote warten draussen vor der Mole bis zum Morgen.';
+const FUNKGITTER = { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$wort' } }, { typ: 'spaltentransposition', param: { schluessel: '$wort' } }] };
+const CAESAR = { version: 1, name: 'Nur Caesar', stufen: [{ typ: 'caesar', param: { k: '$k' } }] };
+
+/** Kurs mit n Teams, Arena und je Team einer Chiffre (gerade: FUNKGITTER/LATERNE/TEXT1, ungerade: Nur Caesar/k = 7/TEXT2),
+    danach Phase `phase` (werkstatt | angriff | beurteilung) → f mit arenaId, cid(i), phase(name), angriff(t, ziel, body) */
+async function arenaMitChiffren(n = 2, { phase = 'angriff', beschreibung = 'B', proTeam = 1, extra = {} } = {}) {
+  const f = await kursMitTeams(n, { proTeam, extra });
+  const a = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/arena`).send({}).expect(200)).body;
+  f.arenaId = a.id;
+  const ein = [[FUNKGITTER, { wort: 'LATERNE' }, TEXT1], [CAESAR, { k: 7 }, TEXT2]];
+  for (let i = 0; i < n; i++) {
+    const [v, schl, t] = ein[i % 2];
+    await f.teams[i].c.post(`/api/arena/${a.id}/chiffre`).send({ verfahren: v, schluessel: schl, klartext: t, beschreibung }).expect(200);
+  }
+  f.phase = (name) => f.lk.post(`/api/lehrer/arena/${a.id}/phase`).send({ phase: name }).expect(200);
+  const ids = () => f.db.prepare('SELECT id, team_id FROM arena_chiffren WHERE arena_id = ?').all(a.id);
+  f.cid = (teamIdx) => ids().find((c) => c.team_id === f.teams[teamIdx].id).id;
+  f.angriff = (teamIdx, ziel, body) => f.teams[teamIdx].c.post(`/api/arena/${a.id}/chiffren/${f.cid(ziel)}/angriff`).send(body);
+  if (phase === 'angriff' || phase === 'beurteilung') await f.phase('angriff');
+  if (phase === 'beurteilung') await f.phase('beurteilung');
+  return f;
+}
+
 /** Volltextsuche über alle TEXT-Spalten aller Tabellen → [`tabelle.spalte`] mit Treffer. Groß/Klein zählt (instr):
     „GEHEIMTEXT“ soll nicht das Wort „Geheimtext“ in Aufgabentexten finden. */
 function fundstellen(db, nadel) {
@@ -66,4 +92,4 @@ function fundstellen(db, nadel) {
   return treffer;
 }
 
-module.exports = { NAMEN, festerZufall, kursMitTeams, anlegen, starte, aktion, stand, regie, fundstellen };
+module.exports = { NAMEN, festerZufall, kursMitTeams, anlegen, starte, aktion, stand, regie, fundstellen, TEXT1, TEXT2, FUNKGITTER, CAESAR, arenaMitChiffren };

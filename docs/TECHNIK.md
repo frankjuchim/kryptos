@@ -1632,7 +1632,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `POST /api/werkstatt/pruefen` | `{ verfahren, schluessel, text }` | `{ ok, fehler, geheimtext, zwischen, rueck }` (Hinweise P6–P8 **nicht**) | 60/min |
 | `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung, klartextLaenge, hinweise } \| null }` (offene Arena, sonst die jüngste geschlossene; eigene Hinweise sofort, Plan M7 E104) | – |
 | `POST /api/arena/:id/chiffre` | `{ verfahren, schluessel, klartext, beschreibung }` | `{ ok, geheimtext }` | 20/10 min je Team; 409 ≠ werkstatt |
-| `GET /api/arena/:id/chiffren` | – | `[{ id, team, verfahren, beschreibung, geheimtext, klartextLaenge, geknackt, versuche }]` (ab `angriff`; Hinweise ab `beurteilung`) | – |
+| `GET /api/arena/:id/chiffren` | – | `[{ id, team: { id, name }, name, stufen: [{ typ, kuerzel, param }] (Platzhalter als „geheim“), beschreibung, geheimtext, klartextLaenge, geknackt, versuche, eigene }]` (in `werkstatt` nur die eigene; Hinweise der eigenen sofort, fremde ab `beurteilung`; ab `beurteilung` zusätzlich `geknacktVon`, `geknacktNachSek` = Sekunden vom ersten Angriff auf die Chiffre bis zum ersten Knacken – Plan M7 Task 146) | – |
 | `POST /api/arena/:id/chiffren/:cid/angriff` | `{ klartext }` \| `{ schluessel }` | `{ erfolg, geknackt, rest: { chiffre, team } }` | 1/30 s je Team+Chiffre (Plan M7 E101), 60/10 min je Team; 429 mit `Retry-After`; 409 ≠ angriff; 400 eigene |
 | `PUT /api/arena/:id/beurteilung` | `{ text }` | `{ ok }` | 409 ≠ beurteilung |
 
@@ -1661,8 +1661,8 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/lehrer/kurse/:kursId/arena` | – | `{ arena \| null }` (offene bzw. letzte Arena des Kurses) |
 | `POST /api/lehrer/kurse/:kursId/arena` | `{ angriffBis? }` | Arena · 409 wenn eine offen |
 | `POST /api/lehrer/arena/:id/phase` | `{ phase, angriffBis? }` | Arena |
-| `GET /api/lehrer/arena/:id` | – | Arena mit allen Chiffren, Versuchen (Zähler), Beurteilungen |
-| `GET /api/lehrer/arena/:id/beamer?seit=v` | – | Beamer-Stand (ETag wie §12.4) |
+| `GET /api/lehrer/arena/:id` | – | Regie-Ansicht + `chiffren` (wie Schüler-Liste ab `beurteilung`, dazu `beurteilung`, `hinweise`, `versucheJeTeam: { [teamId]: { gesamt, erfolg } }`) |
+| `GET /api/lehrer/arena/:id/beamer` | – | Beamer-Stand `{ id, status, angriffBis, karten: [{ team, name, ausschnitt, geknackt, von, sekunden, angriffe, stufen? }], ticker: [{ von, ziel, zeit }] }` – ETag nach §9.7 (E103), 304 bei `If-None-Match`, kein `seit`; in `werkstatt` ohne Name/Ausschnitt, Stufen-Kürzel ab `beurteilung`, nie Beschreibung, Beurteilung, Hinweise; 120/min |
 | `DELETE /api/lehrer/arena/:id` | – | `{ ok }` |
 | `GET /api/admin/wartung` | Superadmin | letzter Wartungslauf |
 

@@ -433,6 +433,152 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     return { erfolg, geknackt, rest: { chiffre: Math.ceil(GRENZEN.angriffChiffreMs / 1000), team: Math.max(0, GRENZEN.angriffTeam.max - vorher - 1) } };
   }
 
+  /* ---------- Chiffren-Liste, Beurteilung, Lehrkraft-Ansicht, Beamer (TECHNIK §9.6/§9.7, Plan M7 Task 146, E103, E104) ---------- */
+
+  const sqlL = {
+    chiffren: db.prepare('SELECT c.*, t.name AS team_name, t.nr AS team_nr FROM arena_chiffren c JOIN teams t ON t.id = c.team_id WHERE c.arena_id = ? ORDER BY t.nr'),
+    versuche: db.prepare('SELECT v.chiffre_id, v.team_id, v.erfolg, v.zeit, t.name AS team_name FROM arena_versuche v JOIN teams t ON t.id = v.team_id WHERE v.arena_id = ? ORDER BY v.id'),
+    beurteilung: db.prepare('UPDATE arena_chiffren SET beurteilung = ? WHERE id = ?'),
+    etag: db.prepare(
+      `SELECT (SELECT COUNT(*) FROM arena_chiffren WHERE arena_id = @id) AS chiffren,
+              (SELECT MAX(id) FROM arena_versuche WHERE arena_id = @id) AS versuch,
+              (SELECT COUNT(*) FROM arena_chiffren WHERE arena_id = @id AND geknackt_at IS NOT NULL) AS geknackt,
+              (SELECT MAX(eingereicht_at) FROM arena_chiffren WHERE arena_id = @id) AS eingereicht`
+    )
+  };
+  const STUFE_KUERZEL = Object.fromEntries(Krypto.baukasten.STUFEN.map((st) => [st.typ, st.kuerzel]));
+
+  /** öffentliche Stufen: Platzhalter als „geheim“, Konstanten sichtbar (Kerckhoffs) */
+  function oeffentlicheStufen(verfahren) {
+    return verfahren.stufen.map((st) => ({
+      typ: st.typ,
+      kuerzel: STUFE_KUERZEL[st.typ] || '?',
+      param: Object.fromEntries(Object.entries(st.param || {}).map(([k, w]) => [k, typeof w === 'string' && w.startsWith('$') ? 'geheim' : w]))
+    }));
+  }
+
+  /** Auswertung der Versuche je Chiffre: { anzahl, je: { teamId: { gesamt, erfolg } }, von: [{ id, name }], erster, erfolge: [...] } */
+  function versuchsDaten(arenaId) {
+    const je = new Map();
+    for (const v of sqlL.versuche.all(arenaId)) {
+      if (!je.has(v.chiffre_id)) je.set(v.chiffre_id, { anzahl: 0, je: {}, von: [], erster: null, erfolge: [] });
+      const d = je.get(v.chiffre_id);
+      d.anzahl++;
+      if (!d.erster) d.erster = v.zeit;
+      const t = (d.je[v.team_id] = d.je[v.team_id] || { gesamt: 0, erfolg: 0 });
+      t.gesamt++;
+      if (v.erfolg) {
+        t.erfolg++;
+        if (!d.von.some((x) => x.id === v.team_id)) {
+          d.von.push({ id: v.team_id, name: v.team_name });
+          d.erfolge.push({ von: v.team_name, zeit: v.zeit });
+        }
+      }
+    }
+    return (cid) => je.get(cid) || { anzahl: 0, je: {}, von: [], erster: null, erfolge: [] };
+  }
+
+  /** Sekunden vom ersten Angriff auf die Chiffre bis zum ersten Knacken (keine Spalte für den Start der Angriffsphase) */
+  const nachSek = (c, d) => (c.geknackt_at && d.erster ? Math.max(0, Math.round((Date.parse(c.geknackt_at) - Date.parse(d.erster)) / 1000)) : null);
+
+  /** Listeneintrag einer Chiffre für ein Team (bzw. die Lehrkraft mit lehrkraft: true) – nie Hash, Salz, Beurteilung fremder Teams */
+  function listenEintrag(a, c, d, { teamId = null, lehrkraft = false } = {}) {
+    const verfahren = JSON.parse(c.verfahren);
+    const eigene = c.team_id === teamId;
+    const e = {
+      id: c.id,
+      team: { id: c.team_id, name: c.team_name },
+      name: verfahren.name || null,
+      stufen: oeffentlicheStufen(verfahren),
+      beschreibung: c.beschreibung,
+      geheimtext: c.geheimtext,
+      klartextLaenge: c.klartext_laenge,
+      geknackt: !!c.geknackt_at,
+      versuche: d.anzahl,
+      eigene
+    };
+    // Hinweise: eigene sofort (E104), fremde erst ab beurteilung (TECHNIK §9.3)
+    if (eigene || lehrkraft || ['beurteilung', 'geschlossen'].includes(a.status)) e.hinweise = JSON.parse(c.hinweise || '[]');
+    if (lehrkraft || ['beurteilung', 'geschlossen'].includes(a.status)) {
+      e.geknacktVon = d.von.map((x) => ({ ...x }));
+      e.geknacktNachSek = nachSek(c, d);
+    }
+    if (lehrkraft) {
+      e.beurteilung = c.beurteilung;
+      e.versucheJeTeam = d.je;
+    }
+    return e;
+  }
+
+  /** GET /api/arena/:id/chiffren – werkstatt: nur die eigene; ab angriff alle (ohne Schlüssel, Hash, fremde Beurteilungen) */
+  function chiffren(s, id) {
+    const { a, team } = teilnehmer(s, id);
+    const d = versuchsDaten(a.id);
+    return sqlL
+      .chiffren.all(a.id)
+      .filter((c) => a.status !== 'werkstatt' || c.team_id === team.id)
+      .map((c) => listenEintrag(a, c, d(c.id), { teamId: team.id }));
+  }
+
+  /** PUT /api/arena/:id/beurteilung { text } – Teammitglied mit Chiffre, Phase beurteilung, 1–4000 Zeichen */
+  function beurteilen(s, id, body) {
+    const { a, team } = teilnehmer(s, id);
+    if (a.status !== 'beurteilung') throw new V.ConflictError(`Das geht in der Phase ‚${PHASE_NAME[a.status]}‘ nicht.`);
+    const c = sql.chiffreTeam.get(a.id, team.id);
+    if (!c) throw new V.ConflictError('Euer Team hat keine Chiffre eingereicht.');
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const text = typeof b.text === 'string' ? b.text.trim() : '';
+    if (text.length < 1 || text.length > 4000) throw new V.ValidationError('Die Beurteilung braucht 1 bis 4000 Zeichen.');
+    sqlL.beurteilung.run(text, c.id);
+    return { ok: true };
+  }
+
+  /** GET /api/lehrer/arena/:id → Regie-Ansicht + alle Chiffren mit Beurteilungen, Hinweisen, Versuchen je Team */
+  function lehrkraftAnsicht(lk, id) {
+    const { a } = ladeLk(lk, id);
+    const d = versuchsDaten(a.id);
+    return { ...regieAnsicht(a), chiffren: sqlL.chiffren.all(a.id).map((c) => listenEintrag(a, c, d(c.id), { lehrkraft: true })) };
+  }
+
+  /** ETag nach E103: SHA-1 über status, angriff_bis, Anzahl Chiffren, max(Versuch-id), Anzahl geknackt, max(eingereicht_at) */
+  function beamerEtag(a) {
+    const z = sqlL.etag.get({ id: a.id });
+    const roh = [a.status, a.angriff_bis || '', z.chiffren, z.versuch || 0, z.geknackt, z.eingereicht || ''].join('|');
+    return `"${crypto.createHash('sha1').update(roh).digest('hex').slice(0, 16)}"`;
+  }
+
+  /**
+   * GET /api/lehrer/arena/:id/beamer → { etag, daten | null } (null = 304). Karten ohne Beschreibung, Beurteilung, Hinweise;
+   * in der Werkstatt nur „eingereicht“; Stufen-Kürzel erst ab beurteilung.
+   */
+  function beamer(lk, id, { etag } = {}) {
+    const { a } = ladeLk(lk, id);
+    const tag = beamerEtag(a);
+    if (typeof etag === 'string' && etag === tag) return { etag: tag, daten: null };
+    const d = versuchsDaten(a.id);
+    const offen = a.status !== 'werkstatt';
+    const auswertung = ['beurteilung', 'geschlossen'].includes(a.status);
+    const ticker = [];
+    const karten = sqlL.chiffren.all(a.id).map((c) => {
+      const v = JSON.parse(c.verfahren);
+      const dd = d(c.id);
+      for (const e of dd.erfolge) ticker.push({ von: e.von, ziel: c.team_name, zeit: e.zeit });
+      const k = {
+        team: { id: c.team_id, name: c.team_name },
+        name: offen ? v.name || null : null,
+        ausschnitt: offen ? (c.geheimtext.length > 29 ? c.geheimtext.slice(0, 29) + '…' : c.geheimtext) : null,
+        geknackt: !!c.geknackt_at,
+        von: dd.von.map((x) => x.name),
+        sekunden: nachSek(c, dd),
+        angriffe: dd.anzahl
+      };
+      if (auswertung) k.stufen = v.stufen.map((st) => STUFE_KUERZEL[st.typ] || '?');
+      return k;
+    });
+    ticker.sort((x, y) => (x.zeit < y.zeit ? -1 : x.zeit > y.zeit ? 1 : 0));
+    return { etag: tag, daten: { id: a.id, status: a.status, angriffBis: a.angriff_bis, karten, ticker } };
+  }
+
   return {
     PHASEN,
     anlegen,
@@ -443,6 +589,10 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     pruefen,
     einreichen,
     angriff,
+    chiffren,
+    beurteilen,
+    lehrkraftAnsicht,
+    beamer,
     GRENZEN,
     pruefeFrist,
     fristenPruefen,

@@ -2,27 +2,10 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const F = require('./hilfen_funk');
+const { TEXT1, TEXT2, CAESAR } = F;
 
-const TEXT1 = 'Am Nordtor der alten Hafenstadt stehen drei Waechter. Jeden Abend tauschen sie die Losung, damit kein Fremder durch das Tor kommt. Wer die Losung kennt, darf passieren und bringt Nachrichten in die Stadt.';
-const TEXT2 = 'Der Leuchtturm blinkt dreimal kurz und einmal lang, wenn ein Schiff in den Hafen einlaufen darf. Bei Nebel bleibt das Licht aus und die Boote warten draussen vor der Mole bis zum Morgen.';
-const FUNKGITTER = { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$wort' } }, { typ: 'spaltentransposition', param: { schluessel: '$wort' } }] };
-const CAESAR = { version: 1, name: 'Nur Caesar', stufen: [{ typ: 'caesar', param: { k: '$k' } }] };
-
-async function angriffsphase(n) {
-  const f = await F.kursMitTeams(n);
-  const a = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/arena`).send({}).expect(200)).body;
-  const ein = [[FUNKGITTER, { wort: 'LATERNE' }, TEXT1], [CAESAR, { k: 7 }, TEXT2]];
-  for (let i = 0; i < n; i++) {
-    const [v, s, t] = ein[i % 2];
-    await f.teams[i].c.post(`/api/arena/${a.id}/chiffre`).send({ verfahren: v, schluessel: s, klartext: t, beschreibung: 'B' }).expect(200);
-  }
-  await f.lk.post(`/api/lehrer/arena/${a.id}/phase`).send({ phase: 'angriff' }).expect(200);
-  const ch = f.db.prepare('SELECT id, team_id FROM arena_chiffren ORDER BY team_id').all();
-  f.cid = (teamIdx) => ch.find((c) => c.team_id === f.teams[teamIdx].id).id;
-  f.angriff = (teamIdx, ziel, body) => f.teams[teamIdx].c.post(`/api/arena/${a.id}/chiffren/${f.cid(ziel)}/angriff`).send(body);
-  f.arenaId = a.id;
-  return f;
-}
+/** Arena in der Angriffsphase mit einer Chiffre je Team (Helfer aus hilfen_funk.js, Plan M7 Task 146) */
+const angriffsphase = (n) => F.arenaMitChiffren(n);
 
 test('Angriff per Klartext (Normalisierung, Umlaute) und per Schlüssel; eigene Chiffre 400; nichts gespeichert', async () => {
   const f = await angriffsphase(2);
