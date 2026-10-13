@@ -1233,6 +1233,9 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
   aus Seeds, Akten-Verzeichnis, Warm-up, Materialquellen W0–W6/Prüfungen und Videos – markierte Stellen, Lösungen, Titel;
   Caesar-Geheimtexte für alle 26 k, verdeckte Klartexte von Substitution und Bit-Lupe über die Bibliothek nachgerechnet).
   Rechnungen **nur** über `Krypto` – kein Serverzugriff, keine Speicherung, keine Aufgabendaten, keine Lösungen.
+  Ansagen (Review M6): Ausgaben (`B.ausgabe`) sind nicht selbst live, sondern sagen über `B.ansager()` entprellt (500 ms)
+  „Ergebnis aktualisiert, n Zeichen“ an; je Reiter höchstens ein laufender Live-Bereich (plus Antworten auf Knöpfe); die
+  Scheibe sagt k nur über `aria-valuetext` an (Test `labor_ansage.test.js`).
   CSS-Klassen der Werkzeuge tragen ein Werkzeug-Präfix (`enigma-stellungen`, `fleissner-loch`, `skytale-ring`,
   `werkbank-zuordnung`, `gitter-bit` …), damit allgemeine Regeln aus `aufgaben.css`/`komponenten.css` sie nicht treffen
   (Test `labor_css.test.js`; bewusst geteilt sind nur Knöpfe, Hinweise, Alphabet-Leiste, Geheimtext-Zeilen, Fallen-Chip).
@@ -1242,7 +1245,8 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
   Reiter-Regeln (`KRLabor.REITER_REGELN`, `erlaubt`, `reiterFuer`; Lehrkraft sieht alle Reiter). Gemeinsame Bausteine
   `KRLaborBau` (Reiter, Textfeld, Zahlregler, Richtung, Ausgabe mit Kopieren, Hinweis, Tabelle, Details).
   `KRLabor.nachspiel(ziel, { schritte, zeige, titel, start, beiLauf })` spielt Zustände ab (Einzelschritt Standard,
-  Zeitlupe 2400 ms, Normal 900 ms; Tasten ←/→, Pos1/Ende, Leertaste; Zähler „Schritt i von n“, Text `aria-live`); bei
+  Zeitlupe 2400 ms, Normal 900 ms; Tasten ←/→, Pos1/Ende, Leertaste; Zähler „Schritt i von n“, Text `aria-live` – im Tempo
+  „Normal“ während des Abspielens `off`, Review M6); bei
   reduzierter Bewegung (`AQ.ruhig()`: Media-Query oder Profil „Bewegung aus“) nur Einzelschritt, Abspielen gesperrt,
   Leertaste = Schritt vor, nie animiert. `KRLabor.alleSchluessel` zeigt alle Versuche als Tabelle mit Nachspiel und
   markiert **nie** einen Schlüssel als richtig. `test/labor_regeln.test.js` verbietet in Werkzeug-Modulen eigene

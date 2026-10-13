@@ -95,22 +95,25 @@
     /* ======================= Rechenwerk ======================= */
     function baueRechenwerk() {
       const hinweisOrt = h('div', { class: 'rsa-hinweise' });
-      const schl = h('div', { class: 'rsa-schluessel', 'aria-live': 'polite' });
+      const schl = h('div', { class: 'rsa-schluessel' });
       const probe = h('p', { class: 'rsa-probe' });
-      const warnungen = h('ul', { class: 'rsa-warnungen', 'aria-live': 'polite' });
+      const warnungen = h('ul', { class: 'rsa-warnungen' });
       const richtung = B.richtung({ wert: st.richtung, beiWechsel: (x) => { st.richtung = x; rechne(); }, texte: { ver: 'Verschlüsseln (mit e)', ent: 'Entschlüsseln (mit d)' } });
       const mId = B.neueId('rsa-m');
       const mFeld = h('input', { type: 'text', inputmode: 'numeric', id: mId, class: 'zahl-eingabe rsa-m', autocomplete: 'off', spellcheck: 'false' });
       mFeld.value = String(st.eingabe ?? '');
       const mLabel = h('label', { for: mId }, 'Klarzahl m');
       mFeld.addEventListener('input', () => { st.eingabe = zahlVon(mFeld.value); rechne(); });
-      const ergebnis = h('p', { class: 'rsa-ergebnis', 'aria-live': 'polite' });
+      const ergebnis = h('p', { class: 'rsa-ergebnis' });
       const ketteOrt = h('div', { class: 'rsa-kette' });
       const nsOrt = h('div', { class: 'rsa-nachspiel' });
       const eveKnopf = h('button', { type: 'button', class: 'knopf knopf-zweit eve-zerlegen' }, 'Eve: N zerlegen (Probedivision)');
       const eveErgebnis = h('p', { class: 'eve-ergebnis', 'aria-live': 'polite' });
+      const ansage = B.ansager(); // ein entprellter Live-Bereich statt Schlüssel/Warnungen/Ergebnis einzeln (Review M6)
+      let erstesMal = true;
       const steuer = steuerung(rechne);
       r.flaeche.append(
+        ansage.element,
         steuer.element,
         hinweisOrt,
         schl,
@@ -130,6 +133,11 @@
       });
 
       function rechne() {
+        rechneRechenwerk();
+        if (!erstesMal) ansage.sage(ergebnis.textContent || z.warnungen.join(' ') || hinweisOrt.textContent);
+        erstesMal = false;
+      }
+      function rechneRechenwerk() {
         schliesseTeile();
         AQ.clear(hinweisOrt);
         AQ.clear(schl);

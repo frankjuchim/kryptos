@@ -203,13 +203,35 @@ const KRLaborBau = (() => {
     return roh;
   }
 
+  const ANSAGE_MS = 500;
   /**
-   * Ausgabe (output, aria-live=polite) mit Kopierknopf; Kopieren ohne Leerzeichen der Gruppen.
-   * → { element, ausgabe, setze(wert), wert() }
+   * Entprellte Ansage für Screenreader (Review M6): span.sr.labor-ansage[aria-live=polite]; sage(text) schreibt erst nach
+   * 500 ms Ruhe – beim Tippen kommt nur die letzte Ansage an. → { element, sage(text) }
+   */
+  function ansager() {
+    const element = h('span', { class: 'sr labor-ansage', 'aria-live': 'polite' });
+    let timer = null;
+    return {
+      element,
+      sage(text) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          timer = null;
+          element.textContent = String(text ?? '');
+        }, ANSAGE_MS);
+      }
+    };
+  }
+
+  /**
+   * Ausgabe (output, nicht live) mit Kopierknopf und entprellter Ansage „Ergebnis aktualisiert, n Zeichen“ (erste Belegung
+   * still); Kopieren ohne Leerzeichen der Gruppen. → { element, ausgabe, setze(wert), wert() }
    */
   function ausgabe({ beschriftung = 'Ergebnis', art = 'geheimtext' } = {}) {
     const id = neueId('labor-ausgabe');
-    const out = h('output', { class: `labor-ausgabe art-${art}`, id, 'aria-live': 'polite' });
+    const out = h('output', { class: `labor-ausgabe art-${art}`, id, 'aria-live': 'off' });
+    const ansage = ansager();
+    let belegt = false;
     let roh = '';
     const kopieren = h('button', { type: 'button', class: 'knopf knopf-leise labor-kopieren', disabled: true }, 'Kopieren');
     kopieren.addEventListener('click', async () => {
@@ -220,15 +242,22 @@ const KRLaborBau = (() => {
         AQ.toast('Kopieren ist hier nicht möglich.', true);
       }
     });
-    const element = h('div', { class: 'labor-ausgabe-rahmen' }, h('span', { class: 'labor-ausgabe-titel', id: `${id}-t` }, beschriftung), out, kopieren);
+    const element = h('div', { class: 'labor-ausgabe-rahmen' }, h('span', { class: 'labor-ausgabe-titel', id: `${id}-t` }, beschriftung), out, kopieren, ansage.element);
     out.setAttribute('aria-labelledby', `${id}-t`);
     return {
       element,
       ausgabe: out,
       setze(wert) {
-        roh = String(wert ?? '');
+        const neu = String(wert ?? '');
+        const geaendert = neu !== roh;
+        roh = neu;
         out.textContent = anzeigeVon(art, roh);
         kopieren.disabled = !roh;
+        if (belegt && geaendert) {
+          const n = [...roh.replace(/\s+/g, '')].length;
+          ansage.sage(n ? `Ergebnis aktualisiert, ${n} Zeichen` : 'Ergebnis leer');
+        }
+        belegt = true;
       },
       wert: () => roh
     };
@@ -271,5 +300,5 @@ const KRLaborBau = (() => {
     return h('details', { class: `labor-details ${klasse}`.trim(), open: offen }, h('summary', null, titel), h('div', { class: 'labor-details-inhalt' }, inhalt));
   }
 
-  return { reiter, textfeld, zahl, richtung, ausgabe, hinweis, tabelle, details, neueId };
+  return { reiter, textfeld, zahl, richtung, ausgabe, ansager, hinweis, tabelle, details, neueId };
 })();

@@ -196,7 +196,8 @@ test('Bausteine: Reiter per Pfeiltaste, Zahlregler mit Grenzen, Ausgabe kopiert 
   const a = B.ausgabe({ beschriftung: 'Geheimtext', art: 'geheimtext' });
   a.setze('WTPIEARNSHDSAEXLNX');
   assert.equal(k.text(a.element.querySelector('output')), 'WTPIE ARNSH DSAEX LNX');
-  assert.equal(a.element.querySelector('output').getAttribute('aria-live'), 'polite');
+  assert.equal(a.element.querySelector('output').getAttribute('aria-live'), 'off', 'Ausgabe nicht live – Ansage entprellt (Review M6)');
+  assert.equal(a.element.querySelector('.labor-ansage').getAttribute('aria-live'), 'polite');
   k.klick(k.eins(a.element, '.labor-kopieren'));
   await k.ruhe();
   assert.deepEqual(k.zwischenablage, ['WTPIEARNSHDSAEXLNX']);

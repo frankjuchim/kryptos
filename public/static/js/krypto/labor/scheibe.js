@@ -62,7 +62,7 @@
       innenZeichen.push({ b, t: ti, n: ni });
     });
 
-    const kAnzeige = h('output', { class: 'scheibe-k', 'aria-live': 'polite' });
+    const kAnzeige = h('output', { class: 'scheibe-k', 'aria-hidden': 'true' }); // angesagt wird k über aria-valuetext des Drehknopfs
     const minus = h('button', { type: 'button', class: 'knopf knopf-leise scheibe-minus', 'aria-label': 'Innenring zurückdrehen (k − 1)' }, '−');
     const plus = h('button', { type: 'button', class: 'knopf knopf-leise scheibe-plus', 'aria-label': 'Innenring weiterdrehen (k + 1)' }, '+');
     const drehknopf = h('div', { class: 'scheibe-drehknopf', role: 'slider', tabindex: '0', 'aria-label': 'Innenring der Chiffrierscheibe', 'aria-valuemin': '0', 'aria-valuemax': '25', 'aria-orientation': 'horizontal' }, svg);

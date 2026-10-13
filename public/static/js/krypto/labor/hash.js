@@ -89,7 +89,7 @@
     const schritt = { text: vText ?? BEISPIEL.schritte };
     function baueSchritte() {
       const feldT = B.textfeld({ beschriftung: 'Text (bis 60 Zeichen)', max: 60, wert: schritt.text, art: 'frei', zeilen: 2, beiEingabe: (t) => { schritt.text = t; rechne(); } });
-      const norm = h('p', { class: 'labor-normal hash-normal', 'aria-live': 'polite' });
+      const norm = h('p', { class: 'labor-normal hash-normal' });
       const ort = h('div', { class: 'hash-runden-ort' });
       const nsOrt = h('div', { class: 'hash-nachspiel' });
       const ergebnis = h('p', { class: 'hash-ergebnis', 'aria-live': 'polite' });
@@ -135,7 +135,7 @@
     function baueLawine() {
       const fa = feld('lawine-a', 'Text A (bis 200 Zeichen)', lawine.a, 200, (t) => { lawine.a = t; rechne(); });
       const fb = feld('lawine-b', 'Text B (bis 200 Zeichen)', lawine.b, 200, (t) => { lawine.b = t; rechne(); });
-      const kh = h('div', { class: 'lawine-kh', 'aria-live': 'polite' });
+      const kh = h('div', { class: 'lawine-kh' });
       const sha = h('div', { class: 'lawine-sha' });
       const zaehler = h('p', { class: 'lawine-zaehler', 'aria-live': 'polite' });
       const raster = h('div', { class: 'lawine-raster' });
@@ -251,8 +251,8 @@
       const nId = B.neueId('baukasten-buchstabe');
       const fn = h('input', { type: 'text', id: nId, class: 'hash-eingabe baukasten-buchstabe', maxlength: '1', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'off' });
       fn.addEventListener('input', () => { bau.neu = fn.value; rechne(false); });
-      const anzeige = h('p', { class: 'baukasten-wortanzeige', 'aria-live': 'polite' });
-      const beitrag = h('p', { class: 'baukasten-beitrag', 'aria-live': 'polite' });
+      const anzeige = h('p', { class: 'baukasten-wortanzeige' });
+      const beitrag = h('p', { class: 'baukasten-beitrag' });
       const knopf = h('button', { type: 'button', class: 'knopf knopf-primaer ausgleichen' }, 'Ausgleichen mit dem letzten Buchstaben');
       const ergebnis = h('div', { class: 'baukasten-ergebnis', 'aria-live': 'polite' });
       r.flaeche.append(
@@ -382,7 +382,7 @@
     function bauePruefsumme() {
       const fa = feld('pruef-a', 'Text 1 (bis 30 Zeichen)', pruef.a, 30, (t) => { pruef.a = t; rechne(); });
       const fb = feld('pruef-b', 'Text 2 (bis 30 Zeichen)', pruef.b, 30, (t) => { pruef.b = t; rechne(); });
-      const s = h('p', { class: 'pruef-s', 'aria-live': 'polite' });
+      const s = h('p', { class: 'pruef-s' });
       const g = h('p', { class: 'pruef-g', 'aria-live': 'polite' });
       r.flaeche.append(
         h('p', { class: 'text-2' }, 'S(t) = Summe der Buchstabenwerte mod 29 · G(t) = Σ i · wᵢ mod 29 (Position i ab 1).'),

@@ -355,9 +355,24 @@ const KRLabor = (() => {
       kEnde.disabled = i >= schritte.length - 1;
       if (i >= 0) zeige(schritte[i], i, { animiert: !!animiert && !ruhig && tempoWahl !== 'einzel' });
     }
+    /** Ansage (Review M6): im Tempo „Normal“ während des Abspielens still, sonst live; beim Verstummen-Ende den aktuellen
+        Schritt einmal neu schreiben, damit er angesagt wird. */
+    function liveSetzen() {
+      const still = laeuftJetzt && tempoWahl === 'normal';
+      const war = text.getAttribute('aria-live');
+      text.setAttribute('aria-live', still ? 'off' : 'polite');
+      if (war === 'off' && !still) {
+        const t = text.textContent;
+        text.textContent = '';
+        setTimeout(() => {
+          if (!fertig && !text.textContent) text.textContent = t;
+        }, 50);
+      }
+    }
     function setzeLauf(an) {
       if (laeuftJetzt === an) return;
       laeuftJetzt = an;
+      liveSetzen();
       if (an) ziel.dataset.nachspiel = 'laeuft';
       else delete ziel.dataset.nachspiel;
       kAbspielen.setAttribute('aria-pressed', String(an));
@@ -391,6 +406,7 @@ const KRLabor = (() => {
         b.setAttribute('tabindex', an ? '0' : '-1');
       }
       if (laeuftJetzt && t === 'einzel') pause();
+      liveSetzen();
       return tempoWahl;
     }
     function abspielen() {
