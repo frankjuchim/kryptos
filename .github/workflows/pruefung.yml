@@ -8,6 +8,7 @@ on:
     branches: ['**']
   pull_request:
     branches: [main]
+  workflow_dispatch: # von Hand (z. B. für den e2e-Durchlauf auf einem Feature-Branch)
 
 jobs:
   app:
@@ -73,3 +74,26 @@ jobs:
       # folgen (TECHNIK §16.1, mit Java 21 und pip install python-docx python-pptx pypdf):
       #   ide_pruefen.py, workspaces_erzeugen.py --pruefen, materialien_pruefen.py, akten_pdf.py --pruefen,
       #   loesungen_pdf.py --pruefen, lehrkraft_pdf.py --pruefen, video_folien.py --pruefen
+
+  e2e:
+    name: e2e (Playwright, App + Dev-Portal)
+    # nur von Hand und bei Pull Requests nach main (TECHNIK §16.1) – nicht bei jedem Push
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Chromium für Playwright
+        run: npx playwright-core install --with-deps chromium
+      - run: npm run e2e
+      - name: Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: docs/screenshots
+          if-no-files-found: ignore

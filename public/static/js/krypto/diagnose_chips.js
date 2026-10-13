@@ -14,7 +14,17 @@ const KRDiag = (() => {
 
   /** Diagnose-Liste [{ p, code, text }] → div.diagnose (höchstens zwei Einträge) oder null. */
   function chips(liste) {
-    const eintraege = (Array.isArray(liste) ? liste : []).filter((d) => d && typeof d === 'object').slice(0, MAX);
+    // gleiche Diagnose (oben und aus teile[i]) nur einmal (p + code + text)
+    const gesehen = new Set();
+    const eintraege = (Array.isArray(liste) ? liste : [])
+      .filter((d) => d && typeof d === 'object')
+      .filter((d) => {
+        const k = `${d.p}|${d.code}|${d.text}`;
+        if (gesehen.has(k)) return false;
+        gesehen.add(k);
+        return true;
+      })
+      .slice(0, MAX);
     if (!eintraege.length) return null;
     return h(
       'div',

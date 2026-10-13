@@ -18,6 +18,12 @@ test('KRDiag.chips: höchstens zwei, Link auf /themen#fallen-P3, Text als Textkn
   assert.equal(k.eins(el, 'a.chip-falle').getAttribute('href'), '/themen#fallen-P3');
   assert.equal(k.wert('KRDiag').chips([]), null);
 });
+test('KRDiag.chips: gleiche Diagnose (oben und je Teil) nur einmal', () => {
+  const k = D.lade(SKRIPTE);
+  const d = { p: 'P3', code: 'richtung', text: 'Richtung vertauscht.' };
+  const el = k.wert('KRDiag').chips([d, { ...d }, { p: 'P1', code: 'zaehlbasis', text: 'a' }]);
+  assert.deepEqual(k.alle(el, 'a.chip-falle').map((x) => k.text(x)), ['P3 Umkehrung falsch', 'P1 Zählbasis verwechselt']);
+});
 test('AQI.aufgabe: ctx.modus, zusatz und kontext.aufgabe; Schritt-Schalter (E29)', () => {
   const k = D.lade(SKRIPTE);
   let gesehen = null; let kontextAufgabe = null;
