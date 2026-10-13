@@ -2145,3 +2145,40 @@ test('M6 Bibliothek I: Ring und Pendel (W6 §2, §9.1), Schlüsselstrom (W2 §9.
   assert.equal(K.schluesselstrom('a'.repeat(10), 'SAND', { modus: 'pendel' }), 'SANDNASAND');
   assert.throws(() => K.schluesselstrom('abc', 'KEY', { modus: 'beaufort' }), K.KryptoFehler);
 });
+
+// ───────────────────────────── M6 Bibliothek II (Plan M6 Task 106) ─────────────────────────────
+test('M6 Bibliothek II: N-Gramme, Teil-Substitution, Mustersuche (W1 §9.1/§9.2)', () => {
+  const t = 'die dichter und denker der dichten nacht';
+  assert.deepEqual(K.ngramme(t, { n: 3, top: 1 }), [{ folge: 'CHT', anzahl: 3, positionen: [5, 24, 31] }]);
+  assert.deepEqual(K.ngramme(t, { n: 2, top: 10 }).map((x) => [x.folge, x.anzahl]), K.bigramme(t, { top: 10 }).map((x) => [x.bigramm, x.anzahl]));
+  assert.deepEqual(K.ngramme('', { n: 3 }), []);
+  assert.throws(() => K.ngramme(t, { n: 6 }), K.KryptoFehler);
+  assert.equal(K.substitution('kryptolabor', K.schluesselwortAlphabet('tinte')), 'HQYOSMJTIMQ');
+  assert.equal(K.teilsubstitution('HQYOS MJTIM Q', { H: 'k', q: 'R', S: 'o', T: '' }), 'kr··o·····r');
+  assert.equal(K.teilsubstitution('HQ', {}, { unbekannt: '_' }), '__');
+  assert.throws(() => K.teilsubstitution('HQ', { H: 'ab' }), K.KryptoFehler);
+  assert.deepEqual(K.musterSuchen('ananas', 'ABA'), [0, 1, 2]);
+  assert.deepEqual(K.musterSuchen('ABCABC', 'ABCA'), [0, 1, 2]);
+  assert.deepEqual(K.musterSuchen('abc', 'AA'), []);
+  assert.throws(() => K.musterSuchen('abc', 'A'), K.KryptoFehler);
+});
+test('M6 Bibliothek II: Teilertabelle, Primfaktoren, mittlerer Koinzidenzindex (W2 §9.1 Testfälle 1 und 2)', () => {
+  const W2 = require('../quellen/pruefwerte/W2.json').werte;
+  const eve = W2.find((x) => x.id === 'W2-2-v1').eingabe[0];
+  const ks = K.kasiski(eve);
+  assert.deepEqual(K.teilerTabelle(ks.abstaende), ks.teiler);
+  assert.equal(K.teilerTabelle(ks.abstaende.filter((a) => a !== 125))[5], 8, 'Zufallstreffer 125 ausgeschlossen');
+  assert.deepEqual(Object.keys(K.teilerTabelle([12], { von: 2, bis: 4 })), ['2', '3', '4']);
+  assert.deepEqual(K.primfaktoren(40), [2, 2, 2, 5]);
+  assert.deepEqual(K.primfaktoren(125), [5, 5, 5]);
+  assert.deepEqual(K.primfaktoren(1), []);
+  assert.throws(() => K.primfaktoren(0), K.KryptoFehler);
+  assert.equal(K.mittlererKoinzidenzindex(eve, 5).toFixed(4), '0.0961');
+  assert.equal(K.mittlererKoinzidenzindex(eve, 10).toFixed(4), '0.0988');
+  const lab = 'JSCGU UPHSD QDKBR WJWPJ KGLQJ HPQGA DRTBE DMRTH MSDDT REHTP CLTUP QKRWH MSDFN SYNKO FVMSY XGRTH CONKK OXWUF OHYDL OGGEH YYPQT HOLKU PVGBO WKBYL IVEXT RWDKG DWJWP JKGLQ JHPQT ONKJS CPKGD HNSCH OB';
+  assert.equal(K.mittlererKoinzidenzindex(lab, 4).toFixed(4), '0.0914');
+  assert.equal(K.mittlererKoinzidenzindex('A', 3), null);
+  assert.deepEqual(K.koinzidenzindexBruch(eve), { zaehler: 2434, nenner: 51756 });
+  assert.deepEqual(K.koinzidenzindexBruch(lab), { zaehler: 1132, nenner: 26082 });
+  assert.equal(K.koinzidenzindexBruch('A'), null);
+});

@@ -643,7 +643,7 @@ TECHNIK §5.2 „Kryptoanalyse“, §5.3), Version patch
   - `koinzidenzindexBruch(text)` → `{ zaehler: Σ nᵢ(nᵢ − 1), nenner: n(n − 1) }` (n < 2 → `null`) für die Bruchanzeige in
     Häufigkeits-Analysator und Vigenère-Werkbank / `koinzidenzindex_bruch`.
 
-- [ ] **Step 1: Failing test** – `test/krypto.test.js`:
+- [x] **Step 1: Failing test** – `test/krypto.test.js`:
   ```js
   test('M6 Bibliothek II: N-Gramme, Teil-Substitution, Mustersuche (W1 §9.1/§9.2)', () => {
     const t = 'die dichter und denker der dichten nacht';
@@ -683,10 +683,10 @@ TECHNIK §5.2 „Kryptoanalyse“, §5.3), Version patch
   ```
   `vergleich.js`: Fälle für alle sieben Funktionen (u. a. `n` 0/1/5/6, `top` 0, Muster mit Kleinbuchstaben/Ziffern, leere
   Abstände, `primfaktoren` 2/9 999 991/10 000 001, `k` größer als die Textlänge).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Python: Mustersuche über kanonische Form „erste Vorkommen nummerieren“, unabhängig von JS).
-- [ ] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Bibliothek: N-Gramme, Teil-Substitution, Mustersuche, Teilertabelle, Primfaktoren, IC-Bruch und -Mittel (+ Zwilling)"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Python: Mustersuche über kanonische Form „erste Vorkommen nummerieren“, unabhängig von JS).
+- [x] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Bibliothek: N-Gramme, Teil-Substitution, Mustersuche, Teilertabelle, Primfaktoren, IC-Bruch und -Mittel (+ Zwilling)"`.
 
 ### Task 107: Bibliothek III – KRYPTOS-16 ohne S-Box, Bitweg, Kacheln, RM-16, Mini-Enigma (W3 §9.2, §6, K2)
 

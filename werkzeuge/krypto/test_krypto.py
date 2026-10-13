@@ -1333,5 +1333,43 @@ class BibliothekM6I(unittest.TestCase):
         self.assertRaises(F, K.schluesselstrom, 'abc', 'KEY', modus='beaufort')
 
 
+class BibliothekM6II(unittest.TestCase):
+    """Plan M6 Task 106 (W1 §9.1/§9.2, W2 §9.1 Testfälle 1 und 2)."""
+
+    def test_ngramme_teilsubstitution_muster(self):
+        t = 'die dichter und denker der dichten nacht'
+        self.assertEqual(K.ngramme(t, n=3, top=1), [{'folge': 'CHT', 'anzahl': 3, 'positionen': [5, 24, 31]}])
+        self.assertEqual([(x['folge'], x['anzahl']) for x in K.ngramme(t, n=2, top=10)],
+                         [(x['bigramm'], x['anzahl']) for x in K.bigramme(t, top=10)])
+        self.assertEqual(K.ngramme('', n=3), [])
+        self.assertRaises(F, K.ngramme, t, n=6)
+        self.assertEqual(K.substitution('kryptolabor', K.schluesselwort_alphabet('tinte')), 'HQYOSMJTIMQ')
+        self.assertEqual(K.teilsubstitution('HQYOS MJTIM Q', {'H': 'k', 'q': 'R', 'S': 'o', 'T': ''}), 'kr··o·····r')
+        self.assertEqual(K.teilsubstitution('HQ', {}, unbekannt='_'), '__')
+        self.assertRaises(F, K.teilsubstitution, 'HQ', {'H': 'ab'})
+        self.assertEqual(K.muster_suchen('ananas', 'ABA'), [0, 1, 2])
+        self.assertEqual(K.muster_suchen('ABCABC', 'ABCA'), [0, 1, 2])
+        self.assertEqual(K.muster_suchen('abc', 'AA'), [])
+        self.assertRaises(F, K.muster_suchen, 'abc', 'A')
+
+    def test_teiler_primfaktoren_koinzidenz(self):
+        eve = gross(EVES_BRIEF)
+        ks = K.kasiski(eve)
+        self.assertEqual(K.teiler_tabelle(ks['abstaende']), ks['teiler'])
+        self.assertEqual(K.teiler_tabelle([a for a in ks['abstaende'] if a != 125])[5], 8)
+        self.assertEqual(list(K.teiler_tabelle([12], von=2, bis=4)), [2, 3, 4])
+        self.assertEqual(K.primfaktoren(40), [2, 2, 2, 5])
+        self.assertEqual(K.primfaktoren(125), [5, 5, 5])
+        self.assertEqual(K.primfaktoren(1), [])
+        self.assertRaises(F, K.primfaktoren, 0)
+        self.assertEqual(f'{K.mittlerer_koinzidenzindex(eve, 5):.4f}', '0.0961')
+        self.assertEqual(f'{K.mittlerer_koinzidenzindex(eve, 10):.4f}', '0.0988')
+        self.assertEqual(f'{K.mittlerer_koinzidenzindex(GOLD_TEXT, 4):.4f}', '0.0914')
+        self.assertIsNone(K.mittlerer_koinzidenzindex('A', 3))
+        self.assertEqual(K.koinzidenzindex_bruch(eve), {'zaehler': 2434, 'nenner': 51756})
+        self.assertEqual(K.koinzidenzindex_bruch(GOLD_TEXT), {'zaehler': 1132, 'nenner': 26082})
+        self.assertIsNone(K.koinzidenzindex_bruch('A'))
+
+
 if __name__ == '__main__':
     unittest.main()

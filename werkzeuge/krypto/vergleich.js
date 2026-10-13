@@ -542,6 +542,40 @@ const FAELLE = {
     fest: [['treffen', 'ZU', { modus: 'autokey' }], ['SLXWJJS', 'ZU', { modus: 'autokey', richtung: 'ent' }], ['abc defg', 'KEY'], ['a'.repeat(10), 'SAND', { modus: 'pendel' }], ['abc', 'KEY', { modus: 'beaufort' }], ['', 'KEY'], ['abc', ''], ['abc', 'KEY', { richtung: 'quer' }], ['abc', 'A', { modus: 'pendel' }]],
     zufall: () => [textOderDeutsch(120), schluesselwort(), ...(zufall() < 0.8 ? [{ modus: selten(0.05) ? 'beaufort' : wahl(STROM_MODI), richtung: richtung() }] : [])],
   },
+
+  // ── M6 Bibliothek II (Plan M6 Task 106) ──
+  ngramme: {
+    fest: [['die dichter und denker der dichten nacht', { n: 3, top: 1 }], ['', { n: 3 }], ['abc', { n: 0 }], ['abc', { n: 1 }], ['abcabc', { n: 5 }], ['abc', { n: 6 }], ['abc', { top: 0 }], ['AAAA'], ['ab', { n: 3 }], ['abc', { n: 2.5 }]],
+    zufall: () => [zufall() < 0.3 ? text(200, 'ABCDE') : textOderDeutsch(), ...(zufall() < 0.8 ? [{ n: selten() ? wahl([0, 6, 1.5]) : ganz(1, 5), top: selten() ? wahl([0, -1]) : ganz(1, 30) }] : [])],
+  },
+  teilsubstitution: {
+    fest: [['HQYOS MJTIM Q', { H: 'k', q: 'R', S: 'o', T: '' }], ['HQ', {}, { unbekannt: '_' }], ['HQ', { H: 'ab' }], ['HQ', { HQ: 'a' }], ['HQ', { '': 'a' }], ['HQ', { H: 'a', h: 'b' }], ['HQ', { H: 'a', h: 'a' }], ['HQ', { H: 'a', h: '' }], ['HQ', { H: null }], ['HQ', null], ['HQ', ['A']], ['HQ', { Ä: 'a' }], ['HQ', { H: 'ä' }], ['HQ', { 1: 'a' }], ['', { H: 'k' }], ['HQ', { H: 'k' }, { unbekannt: 3 }], ['HQ', { H: 'k' }, { unbekannt: '' }]],
+    zufall: () => {
+      const z = {};
+      for (let i = ganz(0, 12); i > 0; i--) {
+        const g = selten(0.05) ? wahl(['ä', '1', 'AB', '']) : zufall() < 0.3 ? GROSS[ganz(0, 25)].toLowerCase() : GROSS[ganz(0, 25)];
+        z[g] = selten(0.05) ? wahl(['ab', 'ß', null, 3]) : zufall() < 0.15 ? '' : zufall() < 0.5 ? GROSS[ganz(0, 25)].toLowerCase() : GROSS[ganz(0, 25)];
+      }
+      return [textOderDeutsch(), z, ...(zufall() < 0.3 ? [{ unbekannt: wahl(['·', '_', '?', '']) }] : [])];
+    },
+  },
+  musterSuchen: {
+    fest: [['ananas', 'ABA'], ['ABCABC', 'ABCA'], ['abc', 'AA'], ['abc', 'A'], ['abc', 'aba'], ['abc', 'A1A'], ['abc', ''], ['abc', 'ABCDEFGHIJKLM'], ['', 'AB'], ['aaaa', 'AAA'], ['abc', 3], ['abc', 'ÄB']],
+    zufall: () => [zufall() < 0.5 ? text(200, 'ABCDEF') : textOderDeutsch(), selten() ? wahl(['A', 'A1', 'ÄB', 'abcdefghijklm', '']) : zufall() < 0.3 ? buchstaben(2, 12).toLowerCase() : text(ganz(2, 12), 'ABCD').padEnd(2, 'A')],
+  },
+  teilerTabelle: {
+    fest: [[[12], { von: 2, bis: 4 }], [[]], [[0]], [[-3]], [[2.5]], ['12'], [[12, 18, 125]], [[12], { von: 0 }], [[12], { von: 1 }], [[12], { von: 5, bis: 4 }], [[12], { bis: 101 }], [[12], { bis: 100 }]],
+    zufall: () => [Array.from({ length: ganz(0, 20) }, () => (selten(0.02) ? wahl([0, -1, 1.5]) : ganz(1, 400))), ...(zufall() < 0.5 ? [{ von: selten() ? wahl([0, 101]) : ganz(1, 10), bis: selten() ? 101 : ganz(10, 100) }] : [])],
+  },
+  primfaktoren: {
+    fest: [[40], [125], [1], [0], [-4], [2], [9999991], [10000000], [10000001], [2.5], [9999999], [65536]],
+    zufall: () => [selten() ? wahl([0, -1, 1.5, 10000001]) : zufall() < 0.2 ? ganz(9000000, 10000000) : ganz(1, 100000)],
+  },
+  mittlererKoinzidenzindex: {
+    fest: [['A', 3], ['', 1], ['AB', 1], ['AAB', 2], ['abc', 0], ['abc', 41], ['abc', 40], ['abc', 1.5]],
+    zufall: () => [zufall() < 0.6 ? K.vigenere(deutsch(80), buchstaben(1, 8)) : text(), selten() ? wahl([0, 41, 1.5]) : ganz(1, 40)],
+  },
+  koinzidenzindexBruch: { fest: [['A'], [''], ['AA'], ['BALLADE']], zufall: () => [textOderDeutsch()] },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).

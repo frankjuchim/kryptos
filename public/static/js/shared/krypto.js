@@ -1283,6 +1283,122 @@
     return Object.values(h).reduce((s, x) => s + x * (x - 1), 0) / (n * (n - 1));
   }
 
+  /** Bruch des Koinzidenzindex für die Anzeige: { zaehler: Σ nᵢ(nᵢ − 1), nenner: n(n − 1) }; n < 2 → null */
+  function koinzidenzindexBruch(text) {
+    const h = haeufigkeiten(text);
+    const n = Object.values(h).reduce((a, b) => a + b, 0);
+    if (n < 2) return null;
+    return { zaehler: Object.values(h).reduce((s, x) => s + x * (x - 1), 0), nenner: n * (n - 1) };
+  }
+
+  /** Mittel der Koinzidenzindizes der k Teiltexte (k 1–40) mit mindestens 2 Zeichen; keiner → null */
+  function mittlererKoinzidenzindex(text, k) {
+    pruefeGanzzahl(k, 'Die Anzahl der Teiltexte');
+    if (k < 1 || k > 40) throw new KryptoFehler('Die Anzahl der Teiltexte liegt zwischen 1 und 40.');
+    const werte = teiltexte(text, k).map(koinzidenzindex).filter((w) => w !== null);
+    if (werte.length === 0) return null;
+    return werte.reduce((a, b) => a + b, 0) / werte.length;
+  }
+
+  /**
+   * N-Gramme (W1 §9.1): überlappend gezählte Folgen der Länge n (1–5) als [{ folge, anzahl, positionen (ab 0) }],
+   * absteigend nach Anzahl, Gleichstand alphabetisch, höchstens top (≥ 1).
+   */
+  function ngramme(text, { n = 2, top = 10 } = {}) {
+    pruefeGanzzahl(n, 'Die Länge n');
+    if (n < 1 || n > 5) throw new KryptoFehler('Die Länge der N-Gramme liegt zwischen 1 und 5.');
+    pruefeGanzzahl(top, 'Anzahl');
+    if (top < 1) throw new KryptoFehler('Es muss mindestens ein N-Gramm angezeigt werden.');
+    const t = nurBuchstaben(text);
+    const z = new Map();
+    for (let i = 0; i + n <= t.length; i++) {
+      const f = t.slice(i, i + n);
+      if (!z.has(f)) z.set(f, []);
+      z.get(f).push(i);
+    }
+    return [...z]
+      .map(([folge, positionen]) => ({ folge, anzahl: positionen.length, positionen }))
+      .sort((a, b) => b.anzahl - a.anzahl || (a.folge < b.folge ? -1 : 1))
+      .slice(0, top);
+  }
+
+  /**
+   * Teil-Substitution (W1 §9.2): je Buchstabe von nurBuchstaben(text) der zugeordnete Klartextbuchstabe (klein) oder
+   * `unbekannt`. zuordnung: Objekt Geheim → Klar (normalisiert; leerer Wert = nicht zugeordnet; mehr als ein Buchstabe
+   * oder widersprüchliche Doppelungen → KryptoFehler).
+   */
+  function teilsubstitution(text, zuordnung, { unbekannt = '·' } = {}) {
+    if (!istObjekt(zuordnung)) throw new KryptoFehler('Die Zuordnung muss ein Objekt Geheimtext → Klartext sein.');
+    pruefeText(unbekannt, 'Das Zeichen für Unbekannt');
+    const tabelle = new Map();
+    for (const [g, k] of Object.entries(zuordnung)) {
+      const gn = nurBuchstaben(g);
+      const kn = nurBuchstaben(pruefeText(k, 'Ein Klartextbuchstabe'));
+      if (gn.length !== 1) throw new KryptoFehler('Jeder Geheimtextbuchstabe der Zuordnung ist genau ein Buchstabe A–Z.');
+      if (kn.length > 1) throw new KryptoFehler('Einem Geheimtextbuchstaben wird höchstens ein Klartextbuchstabe zugeordnet.');
+      if (kn.length === 0) continue;
+      if (tabelle.has(gn) && tabelle.get(gn) !== kn) throw new KryptoFehler(`Dem Buchstaben ${gn} sind zwei verschiedene Klartextbuchstaben zugeordnet.`);
+      tabelle.set(gn, kn);
+    }
+    let aus = '';
+    for (const c of nurBuchstaben(text)) aus += tabelle.has(c) ? tabelle.get(c).toLowerCase() : unbekannt;
+    return aus;
+  }
+
+  /**
+   * Mustersuche (W1 §9.2): Startpositionen (ab 0) der Teilfolgen von nurBuchstaben(text) mit demselben
+   * Gleichheitsmuster wie `muster` (A–Z, auch klein, Länge 2–12; „ABA“ = erster und dritter gleich, zweiter verschieden).
+   */
+  function musterSuchen(text, muster) {
+    pruefeText(muster, 'Das Muster');
+    const m = muster.toUpperCase();
+    if (!/^[A-Z]{2,12}$/.test(m)) throw new KryptoFehler('Das Muster besteht aus 2 bis 12 Buchstaben A–Z.');
+    const t = nurBuchstaben(text);
+    const treffer = [];
+    for (let i = 0; i + m.length <= t.length; i++) {
+      let passt = true;
+      for (let a = 0; a < m.length && passt; a++) {
+        for (let b = a + 1; b < m.length; b++) {
+          if ((m[a] === m[b]) !== (t[i + a] === t[i + b])) {
+            passt = false;
+            break;
+          }
+        }
+      }
+      if (passt) treffer.push(i);
+    }
+    return treffer;
+  }
+
+  /** Teilertabelle (W2 §9.1 Reiter 3): { t: Anzahl der durch t teilbaren Abstände } für t = von … bis (1 ≤ von ≤ bis ≤ 100) */
+  function teilerTabelle(abstaende, { von = 2, bis = 20 } = {}) {
+    if (!Array.isArray(abstaende) || !abstaende.every((d) => Number.isInteger(d) && d >= 1)) {
+      throw new KryptoFehler('Die Abstände sind eine Liste ganzer Zahlen ab 1.');
+    }
+    pruefeGanzzahl(von, 'Der kleinste Teiler');
+    pruefeGanzzahl(bis, 'Der größte Teiler');
+    if (von < 1 || bis < von || bis > 100) throw new KryptoFehler('Die Teiler liegen zwischen 1 und 100 (von ≤ bis).');
+    const tabelle = {};
+    for (let t = von; t <= bis; t++) tabelle[t] = abstaende.filter((d) => d % t === 0).length;
+    return tabelle;
+  }
+
+  /** Primfaktoren aufsteigend mit Vielfachheit (1 → []); n ganz, 1 … 10⁷ */
+  function primfaktoren(n) {
+    pruefeGanzzahl(n, 'Zahl');
+    if (n < 1 || n > 1e7) throw new KryptoFehler('Die Zahl liegt zwischen 1 und 10 000 000.');
+    const faktoren = [];
+    let rest = n;
+    for (let p = 2; p * p <= rest; p++) {
+      while (rest % p === 0) {
+        faktoren.push(p);
+        rest /= p;
+      }
+    }
+    if (rest > 1) faktoren.push(rest);
+    return faktoren;
+  }
+
   /** Friedman: k ≈ (iD − iZ)·n / ((n − 1)·I − iZ·n + iD) (Design §6.4: iZ = 0,038, nie 1/26); Nenner 0 → null */
   function friedmanWert(n, I, { iD = 0.076, iZ = 0.038 } = {}) {
     pruefeGanzzahl(n, 'Textlänge n');
@@ -2126,7 +2242,14 @@
     rangfolge,
     teiltexte,
     bigramme,
+    ngramme,
     koinzidenzindex,
+    koinzidenzindexBruch,
+    mittlererKoinzidenzindex,
+    teilsubstitution,
+    musterSuchen,
+    teilerTabelle,
+    primfaktoren,
     friedman,
     friedmanWert,
     kasiski,

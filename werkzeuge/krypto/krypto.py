@@ -36,6 +36,8 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | umkehrung, blockrotation        | umkehrung, blockrotation        | friedmanWert, kasiski           | friedman_wert, kasiski      |
 | skytaleRaster, ringFolge, ring  | skytale_raster, ring_folge, ring | pendelFolge, schluesselstrom   | pendel_folge, schluesselstrom |
 | gartenzaunSchienen              | gartenzaun_schienen             | fleissnerStellungen/-Drehgruppen | fleissner_stellungen/_drehgruppen |
+| ngramme, teilsubstitution       | ngramme, teilsubstitution       | musterSuchen, teilerTabelle     | muster_suchen, teiler_tabelle |
+| primfaktoren                    | primfaktoren                    | mittlererKoinzidenzindex, koinzidenzindexBruch | mittlerer_koinzidenzindex, koinzidenzindex_bruch |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -1222,6 +1224,97 @@ def koinzidenzindex(text):
     if n < 2:
         return None
     return float(Fraction(sum(v * (v - 1) for v in h.values()), n * (n - 1)))
+
+
+def koinzidenzindex_bruch(text):
+    """Zähler Σ nᵢ(nᵢ − 1) und Nenner n(n − 1) des Koinzidenzindex; n < 2 → None."""
+    werte = list(haeufigkeiten(text).values())
+    n = sum(werte)
+    if n < 2:
+        return None
+    return {'zaehler': sum(v * v - v for v in werte), 'nenner': n * n - n}
+
+
+def mittlerer_koinzidenzindex(text, k):
+    """Mittel (exakt als Bruch gerechnet) der Teiltext-Indizes mit mindestens 2 Zeichen; keiner → None."""
+    k = _ganz(k, 'k')
+    if not 1 <= k <= 40:
+        raise KryptoFehler('k liegt zwischen 1 und 40.')
+    brueche = [koinzidenzindex_bruch(t) for t in teiltexte(text, k)]
+    brueche = [Fraction(b['zaehler'], b['nenner']) for b in brueche if b is not None]
+    if not brueche:
+        return None
+    return float(sum(brueche) / len(brueche))
+
+
+def ngramme(text, *, n=2, top=10):
+    n = _ganz(n, 'n')
+    top = _ganz(top, 'top')
+    if not 1 <= n <= 5:
+        raise KryptoFehler('n liegt zwischen 1 und 5.')
+    if top < 1:
+        raise KryptoFehler('top muss mindestens 1 sein.')
+    t = nur_buchstaben(text)
+    stellen = {}
+    for i in range(len(t) - n + 1):
+        stellen.setdefault(t[i:i + n], []).append(i)
+    reihe = sorted(stellen.items(), key=lambda e: (-len(e[1]), e[0]))[:top]
+    return [{'folge': f, 'anzahl': len(p), 'positionen': p} for f, p in reihe]
+
+
+def teilsubstitution(text, zuordnung, *, unbekannt='·'):
+    if not isinstance(zuordnung, dict):
+        raise KryptoFehler('Die Zuordnung ist ein Objekt Geheim → Klar.')
+    _text(unbekannt, 'unbekannt')
+    klar = {}
+    for g, k in zuordnung.items():
+        g = nur_buchstaben(_text(g, 'Geheimbuchstabe'))
+        k = nur_buchstaben(_text(k, 'Klarbuchstabe'))
+        if len(g) != 1 or len(k) > 1:
+            raise KryptoFehler('Zugeordnet wird genau ein Buchstabe zu höchstens einem Buchstaben.')
+        if k:
+            if klar.get(g, k) != k:
+                raise KryptoFehler('Widersprüchliche Zuordnung.')
+            klar[g] = k
+    return ''.join(klar[c].lower() if c in klar else unbekannt for c in nur_buchstaben(text))
+
+
+def _kanonisch(folge):
+    """Gleichheitsmuster: jedes Zeichen durch die Nummer seines ersten Auftretens ersetzt (ABA → 0 1 0)."""
+    nummer = {}
+    return tuple(nummer.setdefault(c, len(nummer)) for c in folge)
+
+
+def muster_suchen(text, muster):
+    m = _text(muster, 'Muster').upper()
+    if not re.fullmatch(r'[A-Z]{2,12}', m):
+        raise KryptoFehler('Das Muster besteht aus 2 bis 12 Buchstaben.')
+    ziel = _kanonisch(m)
+    t = nur_buchstaben(text)
+    return [i for i in range(len(t) - len(m) + 1) if _kanonisch(t[i:i + len(m)]) == ziel]
+
+
+def teiler_tabelle(abstaende, *, von=2, bis=20):
+    if not isinstance(abstaende, list) or any(isinstance(d, bool) or not _ist_ganz(d) or d < 1 for d in abstaende):
+        raise KryptoFehler('Abstände sind ganze Zahlen ab 1.')
+    von = _ganz(von, 'von')
+    bis = _ganz(bis, 'bis')
+    if not 1 <= von <= bis <= 100:
+        raise KryptoFehler('Es gilt 1 ≤ von ≤ bis ≤ 100.')
+    return {t: sum(1 for d in abstaende if _ganz(d) % t == 0) for t in range(von, bis + 1)}
+
+
+def primfaktoren(n):
+    """Zerlegung durch wiederholtes Abspalten des kleinsten Teilers."""
+    n = _ganz(n, 'n')
+    if not 1 <= n <= 10 ** 7:
+        raise KryptoFehler('n liegt zwischen 1 und 10 000 000.')
+    faktoren = []
+    while n > 1:
+        p = next((d for d in range(2, math.isqrt(n) + 1) if n % d == 0), n)
+        faktoren.append(p)
+        n //= p
+    return faktoren
 
 
 def friedman_wert(n, i_wert, *, i_d=0.076, i_z=0.038):
