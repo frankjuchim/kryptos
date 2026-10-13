@@ -647,6 +647,60 @@ const KRSpiel = (() => {
     await statistik();
   }
 
+  /* ---------- Routen (Task 60): Profil, Scoreboard ---------- */
+
+  async function profilRoute(_arg, r) {
+    epoche(null);
+    const p = await api('GET', '/api/profil');
+    if (!r.gueltig()) return;
+    if (p.rang) KRKopf.rang(p.rang);
+    seite('Profil', KRProfil.ansicht(p));
+  }
+
+  async function scoreboardRoute(weltRoh, r) {
+    epoche(null);
+    const d = await welten();
+    if (!r.gueltig()) return;
+    if (!d.scoreboard) {
+      seite('Scoreboard', h('div', { class: 'wrap aufgabe-seite' }, h('h1', null, 'Scoreboard'), h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, 'Das Scoreboard ist in deinem Kurs ausgeschaltet.'))));
+      return;
+    }
+    const welt = weltRoh !== undefined && weltRoh !== '' && /^\d+$/.test(weltRoh) ? Number(weltRoh) : null;
+    const url = '/api/scoreboard' + (welt === null ? '' : `?welt=${welt}`);
+    const sb = await api('GET', url);
+    if (!r.gueltig()) return;
+    const box = h('div', { class: 'scoreboard-box', 'aria-live': 'polite' }, KRProfil.scoreboardTabelle(sb));
+    const stand = h('p', { class: 'text-2' });
+    const zeitStempel = () => (stand.textContent = `Aktualisiert sich alle 20 s (zuletzt ${new Date().toLocaleTimeString('de-DE')}).`);
+    zeitStempel();
+    const knopf = (text, aktiv, hash) => h('button', { type: 'button', class: 'chip', 'aria-pressed': aktiv ? 'true' : 'false', onclick: () => (location.hash = hash) }, text);
+    seite(
+      'Scoreboard',
+      h(
+        'div',
+        { class: 'wrap aufgabe-seite scoreboard-seite' },
+        h('h1', null, 'Scoreboard'),
+        h('div', { class: 'chip-reihe training-wahl', role: 'group', 'aria-label': 'Wertung' }, knopf('Gesamt', sb.welt === null || sb.welt === undefined, '#/scoreboard'), (sb.welten || []).map((w) => knopf(w.titel || `Welt ${w.nr}`, sb.welt === w.nr, `#/scoreboard/${w.nr}`))),
+        h('section', { class: 'karte' }, box, stand)
+      )
+    );
+    const t = setInterval(async () => {
+      if (document.hidden) return;
+      try {
+        const neu = await api('GET', url);
+        if (r.gueltig()) {
+          AQ.mount(box, KRProfil.scoreboardTabelle(neu));
+          zeitStempel();
+        }
+      } catch {
+        /* nächster Versuch in 20 s */
+      }
+    }, 20000);
+    beimVerlassen(() => clearInterval(t));
+  }
+
+  ROUTEN.set('profil', profilRoute);
+  ROUTEN.set('scoreboard', scoreboardRoute);
   ROUTEN.set('training', trainingRoute);
   ROUTEN.set('boss', bossRoute);
   ROUTEN.set('kampf', kampfRoute);

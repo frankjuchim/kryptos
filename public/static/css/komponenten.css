@@ -366,7 +366,7 @@ button.chip, a.chip { min-height: var(--ziel); text-decoration: none; }
 .rueckmeldung > :first-child { grid-row: 1; }
 
 /* ---------- Toast ---------- */
-.toast {
+.toast, #toast {
   position: fixed;
   left: 50%;
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));
@@ -385,7 +385,8 @@ button.chip, a.chip { min-height: var(--ziel); text-decoration: none; }
   font-size: .9rem;
   --fokus: var(--messing-hell);
 }
-.toast svg { width: 18px; height: 18px; color: var(--messing-hell); margin-top: 2px; }
+#toast.err { border-color: var(--fehler-hell); } /* AQ.toast: id toast, Klasse err/gold */
+.toast svg, #toast svg { width: 18px; height: 18px; color: var(--messing-hell); margin-top: 2px; }
 
 /* ---------- Dialog ---------- */
 dialog {
@@ -545,7 +546,8 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
   :root:not([data-bewegung="aus"]) .ring .ring-wert { transition: stroke-dashoffset 1s ease-out; }
   :root:not([data-bewegung="aus"]) .kopf .punkt-funk { animation: kr-puls 1.8s infinite; }
   :root:not([data-bewegung="aus"]) .laden::before { animation: kr-drehen 1s linear infinite; }
-  :root:not([data-bewegung="aus"]) .toast:not([hidden]) { animation: kr-einblenden .3s ease-out; }
+  :root:not([data-bewegung="aus"]) .toast:not([hidden]),
+  :root:not([data-bewegung="aus"]) #toast:not([hidden]) { animation: kr-einblenden .3s ease-out; }
   :root:not([data-bewegung="aus"]) .zeitsprung.an { animation: kr-zeitsprung .75s ease both; }
   :root:not([data-bewegung="aus"]) .zeitsprung .ring-dreh { transform-origin: 50% 50%; animation: kr-ring .7s cubic-bezier(.6, 0, .2, 1) both; }
   :root:not([data-bewegung="aus"]) .zeitsprung-text { animation: kr-zeitsprung-text .7s ease both; }
@@ -701,6 +703,42 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
 .video-hinweis { color: var(--text-2); }
 .archivfund-seite .aufgabe-kopf { border-left: 6px double var(--akzent); padding-left: var(--a-3); }
 
+/* ---------- Profil, Fallen-Radar, Scoreboard ---------- */
+.profil-seite { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-5); padding-block: var(--a-5) var(--a-7); }
+.profil-seite h1 { margin: 0; }
+.profil-raster { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--a-4); }
+.profil-rang-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-4); }
+.profil-rang-zeile h2 { margin: 0; }
+.rangleiter-hell li { color: var(--text-2); }
+.rangleiter-hell li i { background: var(--linie); }
+.rangleiter-hell li.erreicht i { background: var(--messing); }
+.rangleiter-hell li.jetzt { color: var(--text); }
+.rangleiter-hell li.jetzt i { background: var(--messing-dunkel); outline-color: var(--messing-dunkel); }
+.profil-zahl { font-family: var(--f-ueberschrift); font-size: 2.4rem; font-weight: 600; line-height: 1; }
+.regal-hell .artefakt { color: var(--text-2); }
+.regal-hell .artefakt-bild { color: var(--linie); }
+.regal-hell .artefakt.hat { color: var(--text); }
+.regal-hell .artefakt.hat .artefakt-bild { color: var(--messing-dunkel); }
+.abzeichen-raster { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); gap: var(--a-3); }
+.abzeichen { display: grid; justify-items: center; gap: var(--a-1); text-align: center; padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); font-size: .85rem; }
+.abzeichen.offen { border-style: dashed; }
+.abzeichen-bild { width: 44px; height: 44px; color: var(--messing-dunkel); font-size: 2rem; line-height: 44px; }
+.abzeichen.offen .abzeichen-bild { color: var(--linie); opacity: .7; }
+.abzeichen-status { font-weight: 700; color: var(--text-2); }
+.abzeichen.erhalten .abzeichen-status { color: var(--ok); }
+.fallen-radar { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: var(--a-5); align-items: start; margin: 0; }
+.radar { width: 100%; height: auto; overflow: visible; }
+.radar-ring { fill: none; stroke: var(--linie); stroke-width: 1; }
+.radar-achse { stroke: var(--linie); stroke-width: 1; }
+.radar-label { fill: var(--text-2); font-family: var(--f-mono); font-size: 10px; text-anchor: middle; }
+.radar-wert { fill: color-mix(in srgb, var(--fehler) 22%, transparent); stroke: var(--fehler); stroke-width: 2; stroke-linejoin: round; }
+.fallen-tabelle caption { font-size: .85rem; }
+.profil-epochen { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
+.profil-epoche-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--a-2); margin-bottom: var(--a-1); }
+.profil-wahl { border: 0; padding: 0; margin: 0 0 var(--a-2); display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-4); }
+.profil-wahl legend { font-weight: 700; margin-bottom: var(--a-1); }
+.scoreboard-tabelle tr.ich td { background: var(--papier-2); color: var(--text); font-weight: 700; }
+
 /* ---------- Kurswahl ---------- */
 .seite-kurs { padding-block: var(--a-6) var(--a-7); }
 .kurs-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
@@ -722,6 +760,8 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
   .regal { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .kurs-karte { grid-template-columns: minmax(0, 1fr); }
   .aufgabe-eintrag > a { grid-template-columns: auto minmax(0, 1fr); }
+  .profil-raster, .fallen-radar { grid-template-columns: minmax(0, 1fr); }
+  .fallen-radar .radar { max-width: 280px; justify-self: center; }
   .aufgabe-eintrag > a > .chip-reihe { grid-column: 2; }
 }
 @media (prefers-reduced-motion: no-preference) {

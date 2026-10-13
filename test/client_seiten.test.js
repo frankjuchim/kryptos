@@ -192,3 +192,35 @@ test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
   assert.match(k.text(haupt), /Berechne 7 mod 3\./);
   assert.doesNotMatch(k.text(haupt), /XP|Kata/);
 });
+test('Profil: Rang mit nächster Schwelle, Artefakte, Abzeichen-Symbole, Fallen-Radar mit Tabelle', async () => {
+  const fallen = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'].map((p, i) => ({ p, titel: 'T' + p, text: '', fehlversuche: i === 2 ? 4 : 0 }));
+  const profil = { name: 'Mika R.', kurs: { name: 'LK 13 (eA)' }, punkte: { gesamt: 120, level: 100, boss: 20, training: 0 }, geloest: 11, rang: { name: 'Schreiber', index: 1, anteil: 0.2, naechster: { name: 'Chiffreur', ab: 0.3 }, punkte: 24, maxPunkte: 120 }, serie: { serie: 2, serie_max: 5 }, abzeichen: [{ key: 'boss9_besiegt', icon: '⚔️', name: 'Testboss besiegt', beschreibung: '…', erhalten: true, am: null }, { key: 'erste_schritte', icon: '👣', name: 'Erste Schritte', beschreibung: '…', erhalten: false, am: null }], welten: [{ nr: 0, titel: 'Die Antike', farbe: '#B5523B', frei: true, punkte: 10, maxPunkte: 100, boss: { punkte: 20, max: 30 }, training: 0 }], fallen, scoreboard: true };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/profil': { status: 200, body: profil } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/profil', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /noch 10 % bis Chiffreur/);
+  assert.equal(k.wert('KRProfil').symbol('boss3_besiegt'), 'a-lochstreifen');
+  assert.equal(k.wert('KRProfil').symbol('unbekannt'), null);
+  const radar = k.eins(haupt, 'figure.fallen-radar');
+  assert.equal(k.eins(radar, 'polygon.radar-wert').getAttribute('points').trim().split(/\s+/).length, 10);
+  assert.equal(k.alle(radar, 'table.fallen-tabelle tbody tr').length, 10);
+  assert.equal(k.eins(radar, 'svg').getAttribute('aria-describedby'), k.eins(radar, 'table').getAttribute('id'));
+});
+test('Scoreboard: Umschalter, eigene Zeile „(du)“, 20-s-Timer; ausgeschaltet → Hinweis; Abzeichen-Toast', async () => {
+  const sb = { welt: null, liste: [{ platz: 1, name: 'Ida K.', punkte: 30, abzeichen: 2, ich: false }, { platz: 2, name: 'Mika R.', punkte: 10, abzeichen: 1, ich: true }], welten: [{ nr: 9, titel: 'Testwelt' }] };
+  let k = D.lade(SPIEL, { url: 'http://x.test/spiel#/scoreboard', fetch: { ...spielFetch([welt(9)]), 'GET /api/scoreboard': { status: 200, body: sb } } });
+  await k.ruhe();
+  let haupt = k.document.getElementById('haupt');
+  assert.equal(k.alle(haupt, 'table tbody tr').length, 2);
+  assert.match(k.text(k.eins(haupt, 'tr[aria-current="true"]')), /Mika R\. \(du\)/);
+  assert.equal(k.eins(haupt, 'button[aria-pressed="true"]').textContent, 'Gesamt');
+  assert.ok(k.timer.some((t) => t.ms === 20000 && t.wiederholt));
+  k = D.lade(SPIEL, { url: 'http://x.test/spiel#/scoreboard', fetch: { ...spielFetch([welt(9)]), 'GET /api/welten': { status: 200, body: { welten: [welt(9)], scoreboard: false, niveau: 'eA' } } } });
+  await k.ruhe();
+  haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /Das Scoreboard ist in deinem Kurs ausgeschaltet\./);
+  k.wert('KRProfil').abzeichenToast([{ key: 'erste_schritte', name: 'Erste Schritte', icon: '👣' }]);
+  await new Promise((r) => setTimeout(r, 700));
+  assert.match(k.text(k.document.getElementById('toast')), /Abzeichen: Erste Schritte/);
+});
