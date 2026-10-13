@@ -1478,7 +1478,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 
 | Methode · Pfad | Request | Response |
 |---|---|---|
-| `GET /api/lehrer/kurse` | – | `[{ id, kursId, name, aktiv, schueler, zuletztAktiv, einstellungen, boardSchluessel }]` |
+| `GET /api/lehrer/kurse` | – | `[{ id, kurs, name, aktiv, einstellungen, boardSchluessel, lehrkraft, schueler, zuletztAktiv }]` – `id` = lokale Zahl für alle `/api/lehrer/kurse/:kursId/…`-Pfade und die Hash-Routen `#/kurs/<id>/…`, `kurs` = Portal-Kennung `k:<n>` (nur Anzeige; M4 E21) |
 | `PATCH /api/lehrer/kurse/:kursId` | `{ einstellungen: { welten?, boss?, scoreboard?, beamer?, niveau?, werkzeuge?, kuer? } }` (`name` → 400) | Kurs |
 | `POST /api/lehrer/kurse/:kursId/board-schluessel` | `{}` | `{ boardSchluessel }` (neu vergeben, 12 Zeichen base64url; alter Schlüssel sofort ungültig; gesperrter Kurs 403, fremder 404) |
 | `GET /api/lehrer/werkzeuge` | – | `[{ id, titel, welt, gast }]` in der Reihenfolge der Registry (§10.2) |

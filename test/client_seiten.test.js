@@ -275,3 +275,75 @@ test('Datenschutz: Link auf die Portal-Erklärung aus der Sitzung', async () => 
   await k.ruhe();
   assert.equal(a.getAttribute('href'), 'https://portal.test/datenschutz');
 });
+
+/* ---------- Lehrkraft-Seite (M4 Tasks 62–64) ---------- */
+const LEHRER = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js'];
+const SITZUNG_L = { rolle: 'lehrkraft', name: 'Frau M.', kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }], portal: 'https://portal.test' };
+const KURS = { id: 3, kurs: 'k:1', name: 'LK 13 (eA)', aktiv: true, einstellungen: { welten: [0, 1, 2, 9], boss: 'auto', scoreboard: true, beamer: false, niveau: 'eA', kuer: 'frei', werkzeuge: { substitution: 'gesperrt' } }, boardSchluessel: 'abcdefgh1234', schueler: 2, zuletztAktiv: null };
+const lehrerFetch = (extra = {}) => ({ 'GET /api/sitzung': { status: 200, body: SITZUNG_L }, 'GET /api/lehrer/ich': { status: 200, body: { rolle: 'lehrkraft', name: 'Frau M.' } }, 'GET /api/lehrer/kurse': { status: 200, body: [KURS] }, 'GET /api/lehrer/kurse/3': { status: 200, body: KURS }, 'GET /api/lehrer/werkzeuge': { status: 200, body: [{ id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, gast: true }, { id: 'substitution', titel: 'Substitutions-Werkbank', welt: 1, gast: false }] }, 'GET /api/lehrer/vorschau': { status: 200, body: { welten: [{ nr: 9, titel: 'Testwelt', levels: [], boss: null }] } }, ...extra });
+const seiteLehrer = (k) => k.document.body.classList.add('seite-lehrer');
+test('Lehrkraft: Kursliste mit lokaler id im Link und Portal-Kennung als Text (E21)', async () => {
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/', fetch: lehrerFetch(), vorher: seiteLehrer });
+  await k.ruhe();
+  const a = k.eins(k.document.getElementById('haupt'), 'a[href="#/kurs/3/schueler"]');
+  assert.match(k.text(a.closest('tr')), /k:1/);
+  assert.match(k.text(a.closest('tr')), /eA/);
+});
+test('Lehrkraft: leere Kursliste mit Hinweis aufs Portal; unbekannter Kurs → Fehlerbox', async () => {
+  let k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/', fetch: lehrerFetch({ 'GET /api/lehrer/kurse': { status: 200, body: [] } }), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Kurse legen Sie im Portal an/);
+  k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/99/schueler', fetch: lehrerFetch(), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Kurs nicht gefunden/);
+  assert.ok(!k.anfragen.some((x) => x.pfad.startsWith('/api/lehrer/kurse/99')), 'keine Anfrage für fremde Kurse');
+});
+test('Lehrkraft: Schülerliste ohne Codes, inaktive gekennzeichnet; Tabs per Pfeiltaste', async () => {
+  const liste = [{ id: 1, name: 'Mika R.', aktiv: true, punkte: 30, geloest: 3, abzeichen: 1, rang: 'Schreiber', zuletztAktiv: null }, { id: 2, name: 'Ida K.', aktiv: false, punkte: 0, geloest: 0, abzeichen: 0, rang: 'Lehrling', zuletztAktiv: null }];
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/schueler', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3/schueler': { status: 200, body: liste } }), vorher: seiteLehrer });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  const zeilen = k.alle(haupt, 'table.schueler-tabelle tbody tr');
+  assert.equal(zeilen.length, 2);
+  assert.match(k.text(zeilen[1]), /nicht mehr im Kurs \(Portal\)/);
+  const tabs = k.alle(haupt, '.tabs[role="tablist"] button[role="tab"]');
+  assert.equal(tabs.find((t) => t.getAttribute('aria-selected') === 'true').getAttribute('data-tab'), 'schueler');
+  k.taste(tabs[0], 'ArrowRight');
+  await k.ruhe();
+  assert.equal(k.window.location.hash, '#/kurs/3/einstellungen');
+});
+test('Einstellungen: Niveau gA und Werkzeug-Freigabe senden nur Geänderte; gesperrter Kurs nur lesbar', async () => {
+  const f = lehrerFetch({ 'PATCH /api/lehrer/kurse/3': (body) => ({ status: 200, body: { ...KURS, einstellungen: { ...KURS.einstellungen, ...body.einstellungen } } }) });
+  let k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  const form = k.eins(k.document, 'form.einstellungen');
+  k.klick(k.eins(form, 'input[name="niveau"][value="gA"]'));
+  const sel = k.eins(form, 'select[name="werkzeug-scheibe"]');
+  assert.equal(k.eins(form, 'select[name="werkzeug-substitution"]').value, 'gesperrt');
+  sel.value = 'gesperrt'; sel.dispatchEvent(new k.window.Event('change'));
+  k.klick(k.eins(form, 'button[type="submit"]'));
+  await k.ruhe();
+  assert.deepEqual(k.anfragen.find((x) => x.methode === 'PATCH').body, { einstellungen: { niveau: 'gA', werkzeuge: { scheibe: 'gesperrt' } } });
+  k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3': { status: 200, body: { ...KURS, aktiv: false } }, 'GET /api/lehrer/kurse': { status: 200, body: [{ ...KURS, aktiv: false }] } }), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.ok(k.alle(k.document, 'form.einstellungen input, form.einstellungen select').every((x) => x.disabled));
+  assert.match(k.text(k.document.getElementById('haupt')), /im Portal abgeschaltet/);
+});
+test('Einstellungen: Welt abwählen behält nicht angezeigte Welten; Board-Link und neuer Schlüssel nach Bestätigung', async () => {
+  const f = lehrerFetch({ 'PATCH /api/lehrer/kurse/3': (body) => ({ status: 200, body: { ...KURS, einstellungen: { ...KURS.einstellungen, ...body.einstellungen } } }), 'POST /api/lehrer/kurse/3/board-schluessel': { status: 200, body: { boardSchluessel: 'neuerschl123' } } });
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  const form = k.eins(k.document, 'form.einstellungen');
+  assert.ok(k.eins(form, 'a[href="/board/abcdefgh1234"]'));
+  k.klick(k.eins(form, 'input[name="welt"][value="9"]'));
+  k.klick(k.eins(form, 'button[type="submit"]'));
+  await k.ruhe();
+  assert.deepEqual(k.anfragen.find((x) => x.methode === 'PATCH').body, { einstellungen: { welten: [0, 1, 2] } });
+  k.klick(k.eins(form, 'button.board-neu'));
+  await k.ruhe();
+  const dlg = k.eins(k.document, 'dialog[open]');
+  k.klick(k.alle(dlg, 'button').find((b) => /erzeugen/i.test(k.text(b))));
+  await k.ruhe();
+  assert.ok(k.anfragen.some((x) => x.methode === 'POST' && x.pfad === '/api/lehrer/kurse/3/board-schluessel'));
+  assert.ok(k.eins(k.document, 'a[href="/board/neuerschl123"]'));
+});

@@ -1,0 +1,38 @@
+/* Kryptos – Lehrkraft-Seite (M4 Tasks 62–64, TECHNIK §11.3): Kursliste, Kurs-Kopf, Tabs, Schülerliste, Einstellungen.
+   Farben nur über Tokens. */
+
+.seite-lehrer main#haupt { min-height: 60vh; }
+.lehrer-seite { display: grid; gap: var(--a-5); padding-block: var(--a-6) var(--a-7); min-width: 0; }
+.lehrer-seite > h1, .kurs-kopf h1 { margin: 0; }
+.kurs-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2) var(--a-3); }
+.chip-kursniveau { font-weight: 700; }
+
+.kurs-tabelle, .schueler-tabelle, .werkzeug-tabelle { width: 100%; }
+.kurs-tabelle .zahl, .schueler-tabelle .zahl { text-align: right; font-variant-numeric: tabular-nums; }
+.kurs-tabelle th[scope="row"], .schueler-tabelle th[scope="row"] { font-weight: 700; }
+a.kurs-link { display: inline-flex; align-items: center; min-height: var(--ziel); }
+.kurs-tabelle tr.abgeschaltet th, .kurs-tabelle tr.abgeschaltet td { color: var(--text-2); }
+.schueler-tabelle tr.inaktiv th, .schueler-tabelle tr.inaktiv td { color: var(--text-2); }
+.inaktiv-hinweis { font-weight: 400; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: var(--a-1); border-bottom: 1.5px solid var(--linie); }
+.tab-inhalt { display: grid; gap: var(--a-4); min-width: 0; }
+
+.einstellungen { display: grid; gap: var(--a-4); max-width: 56rem; }
+.einstellungen fieldset { display: grid; gap: var(--a-2); margin: 0; min-width: 0; }
+.einstellungen legend { font-family: var(--f-ueberschrift); font-weight: 700; font-size: var(--h3); padding-inline: var(--a-1); }
+.einstellungen p { margin: 0; }
+.wahl { display: flex; align-items: flex-start; gap: var(--a-3); min-height: var(--ziel); padding-block: var(--a-1); cursor: pointer; }
+.wahl input { margin-top: .2em; flex: none; }
+.wahl > span { display: grid; gap: 2px; min-width: 0; }
+.wahl-raster { display: grid; gap: var(--a-1) var(--a-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.werkzeug-tabelle select { min-width: 10em; }
+.einstellungen fieldset:disabled, .einstellungen input:disabled + span { color: var(--text-2); }
+@media (max-width: 600px) {
+  .werkzeug-tabelle thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .werkzeug-tabelle tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--a-1) var(--a-3); padding-block: var(--a-2); border-bottom: 1px solid var(--linie); }
+  .werkzeug-tabelle th, .werkzeug-tabelle td { display: block; border: 0; padding: 0; }
+  .werkzeug-tabelle th { grid-column: 1 / -1; }
+  .werkzeug-tabelle td:first-of-type { align-self: center; color: var(--text-2); }
+  .werkzeug-tabelle select { min-width: 0; }
+}
