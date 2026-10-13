@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "karten": [
+    {"id":"WU-W0-01","welt":0,"kategorie":"begriffe","titel":"Zwei Seiten","aufgabe":"Wer betreibt Kryptografie, wer Kryptoanalyse: Alice, Bob, Eve? Wie heißt der Oberbegriff?","loesung":"Alice und Bob: Kryptografie; Eve: Kryptoanalyse; Oberbegriff Kryptologie.","minuten":1},
+    {"id":"WU-W0-02","welt":0,"kategorie":"begriffe","titel":"Geheim oder nicht?","aufgabe":"Ist der ASCII-Code eine Verschlüsselung? Begründe in einem Satz.","loesung":"Nein – öffentliche Codierung ohne geheimen Schlüssel; jeder kann die Tabelle nachschlagen.","minuten":1},
+    {"id":"WU-W0-03","welt":0,"kategorie":"transposition","titel":"Mini-Skytale","aufgabe":"Skytale, Umfang u = 2 (2 Zeilen, zeilenweise schreiben, spaltenweise lesen, Füllzeichen X): `eilbote`","loesung":"Raster `eilb / otex` → `EOITL EBX`","minuten":2},
+    {"id":"WU-W0-04","welt":0,"kategorie":"transposition","titel":"Mini-Zaun","aufgabe":"Gartenzaun mit 2 Schienen: `seeschlacht`","loesung":"Schiene 1 `seclct`, Schiene 2 `eshah` → `SECLC TESHA H`","minuten":2},
+    {"id":"WU-W0-05","welt":0,"kategorie":"verschluesseln","titel":"Drei Buchstaben","aufgabe":"Nummerierung: A = 1 … Z = 26. Caesar, k = 5: `tor`","loesung":"`YTW`","minuten":1},
+    {"id":"WU-W0-06","welt":0,"kategorie":"modulo","titel":"Die Null","aufgabe":"Nummerierung: A = 1 … Z = 26. Berechne (22 + 4) mod 26 und gib den Buchstaben an, der bei Caesar mit k = 4 aus V wird.","loesung":"(22 + 4) mod 26 = 0 → Z (26); Formel: ((22 + 4 − 1) mod 26) + 1 = 26","minuten":1},
+    {"id":"WU-W0-07","welt":0,"kategorie":"schluesselraum","titel":"Wie viele?","aufgabe":"Wie viele Schlüssel hat Caesar, wie viele davon sind sinnvoll – und warum?","loesung":"26 Schlüssel (0–25), 25 sinnvoll; k = 0 lässt den Klartext unverändert.","minuten":1},
+    {"id":"WU-W0-08","welt":0,"kategorie":"sicherheit-beurteilen","titel":"Kerckhoffs","aufgabe":"Formuliere das Kerckhoffs-Prinzip in einem Satz.","loesung":"Die Sicherheit eines Verfahrens darf nur von der Geheimhaltung des Schlüssels abhängen, nicht von der des Verfahrens.","minuten":1},
+    {"id":"WU-W0-09","welt":0,"kategorie":"sicherheit-beurteilen","titel":"Doppelschritt","aufgabe":"Ein Text wird mit Caesar k = 7 und danach mit k = 19 verschlüsselt. Was kommt heraus?","loesung":"(7 + 19) mod 26 = 0 → wieder der Klartext (P8)","minuten":1},
+    {"id":"WU-W0-10","welt":0,"kategorie":"implementierung","titel":"ASCII-Rechnen","aufgabe":"`G` hat den ASCII-Wert 71. Welchen Wert hat G im Programm (A = 0) und in der Anlage (A = 1)?","loesung":"6 und 7 (P1)","minuten":1},
+    {"id":"WU-W0-11","welt":0,"kategorie":"modulo","titel":"Java-Rest","aufgabe":"Was liefert Java für `-5 % 26`, und was ist −5 mod 26 nach der Anlage?","loesung":"Java: −5; Anlage: 21 (P2)","minuten":1},
+    {"id":"WU-W0-12","welt":0,"kategorie":"substitution-mono","titel":"Spiegel","aufgabe":"Atbash (A ↔ Z, B ↔ Y, …): `mond`. Was passiert, wenn du das Ergebnis noch einmal mit Atbash verschlüsselst?","loesung":"`NLMW`; zweimal Atbash ergibt wieder `mond` (involutorisch)","minuten":2}
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "karten": [
+    {"id":"WU-W1-01","welt":1,"kategorie":"haeufigkeitsanalyse","titel":"ENISRAT","aufgabe":"Nenne die sieben häufigsten Buchstaben im Deutschen in der richtigen Reihenfolge.","loesung":"E, N, I, S, R, A, T","minuten":1},
+    {"id":"WU-W1-02","welt":1,"kategorie":"substitution-mono","titel":"Schlüsselwort","aufgabe":"Geheimtextalphabet zu `OASE` (Rest ab A): Gib die ersten 8 Buchstaben an.","loesung":"`OASEBCDF`","minuten":1},
+    {"id":"WU-W1-03","welt":1,"kategorie":"schluesselraum","titel":"Fixpunkt","aufgabe":"Mit dem Alphabet zu `KALIF` (`KALIFBCDEGHJMNOPQRSTUVWXYZ`): Verschlüssele `mond`. Was fällt auf?","loesung":"`MONI` – m, o, n bleiben gleich (Fixpunkte, schwacher Schlüssel)","minuten":1},
+    {"id":"WU-W1-04","welt":1,"kategorie":"sicherheit-beurteilen","titel":"26!","aufgabe":"Warum scheitert Brute Force bei der monoalphabetischen Substitution, und warum ist sie trotzdem unsicher?","loesung":"26! ≈ 4 · 10²⁶ Schlüssel; Häufigkeitsanalyse braucht kein Ausprobieren.","minuten":2},
+    {"id":"WU-W1-05","welt":1,"kategorie":"modulo","titel":"Inverses","aufgabe":"Bestimme 9⁻¹ mod 26 ohne Taschenrechner.","loesung":"3 (9 · 3 = 27 = 26 + 1)","minuten":1},
+    {"id":"WU-W1-06","welt":1,"kategorie":"verschluesseln","titel":"Affin, A = 0","aufgabe":"(m, t) = (3, 1), Nummerierung A = 0 … Z = 25: Verschlüssele `b`.","loesung":"3 · 1 + 1 = 4 → `E`","minuten":1},
+    {"id":"WU-W1-07","welt":1,"kategorie":"schluesselraum","titel":"Verbotenes m","aufgabe":"Zeige, dass m = 2 bei c = (m · p) mod 26 (A = 0) nicht funktioniert.","loesung":"a = 0 → A und n = 13 → 26 mod 26 = 0 → A","minuten":2},
+    {"id":"WU-W1-08","welt":1,"kategorie":"haeufigkeitsanalyse","titel":"CH","aufgabe":"Warum hilft das Bigramm „ch“ beim Knacken einer Substitution?","loesung":"c steht im Deutschen fast nur vor h oder k; ein Geheimzeichen, das fast immer vor demselben Zeichen steht, ist wahrscheinlich c (und das folgende h).","minuten":1},
+    {"id":"WU-W1-09","welt":1,"kategorie":"sicherheit-beurteilen","titel":"Homophon","aufgabe":"Was ändert eine homophone Chiffre an der Häufigkeitsverteilung – und was nicht?","loesung":"Einzelhäufigkeiten werden flacher; Bigramme/Umgebungen bleiben erkennbar.","minuten":1},
+    {"id":"WU-W1-10","welt":1,"kategorie":"entschluesseln","titel":"Spirale W0 · Caesar","aufgabe":"Nummerierung: A = 1 … Z = 26. Caesar, k = 12: Entschlüssele `YMDE`.","loesung":"`mars`","minuten":2},
+    {"id":"WU-W1-11","welt":1,"kategorie":"transposition","titel":"Spirale W0 · Skytale","aufgabe":"Skytale, Umfang u = 2 (Füllzeichen X): `oasen`","loesung":"Raster `oas / enx` → `OEANS X`","minuten":2},
+    {"id":"WU-W1-12","welt":1,"kategorie":"begriffe","titel":"Codebuch","aufgabe":"Ist ein geheimes Codebuch eine Codierung oder ein Schlüssel? Begründe.","loesung":"Ein Schlüssel – es ist geheim und nur Sender/Empfänger bekannt; eine Codierung wäre öffentlich.","minuten":1}
+  ]
+}

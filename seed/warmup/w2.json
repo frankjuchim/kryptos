@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "karten": [
+    {"id":"WU-W2-01","welt":2,"kategorie":"verschluesseln","titel":"Caesar zum Aufwärmen (W0)","aufgabe":"Nummerierung: A = 1 … Z = 26. Verschlüssele `rom` mit Caesar, Schlüssel D (Verschiebung 3).","loesung":"`URP`","minuten":1},
+    {"id":"WU-W2-02","welt":2,"kategorie":"modulo","titel":"mod mit A = 1 (W0)","aufgabe":"Berechne ((24 + 5 − 1) mod 26) + 1 und gib den Buchstaben an (A = 1 … Z = 26).","loesung":"28 mod 26 = 2; 2 + 1 = 3 → C","minuten":2},
+    {"id":"WU-W2-03","welt":2,"kategorie":"schluesselraum","titel":"Schlüsselräume (W0/W1)","aufgabe":"Wie viele Schlüssel hat Caesar? Wie viele eine monoalphabetische Substitution mit beliebig gemischtem Alphabet?","loesung":"26 (davon 25 sinnvoll); 26! ≈ 4 · 10²⁶","minuten":2},
+    {"id":"WU-W2-04","welt":2,"kategorie":"verschluesseln","titel":"Mit dem Quadrat","aufgabe":"Verschlüssele `bote` mit Vigenère, Schlüsselwort LUNA (Anlage).","loesung":"`MIGE`","minuten":2},
+    {"id":"WU-W2-05","welt":2,"kategorie":"einordnen","titel":"Mono oder poly?","aufgabe":"`ebbe` wird zu `FCDG`. Mono- oder polyalphabetisch? Begründe in einem Satz.","loesung":"Polyalphabetisch: b wird einmal zu C, einmal zu D (e zu F und G). (Vigenère mit BBCC)","minuten":1},
+    {"id":"WU-W2-06","welt":2,"kategorie":"kasiski-friedman","titel":"Jede dritte Stelle","aufgabe":"Bilde die drei Teiltexte von `QWERT ZUIOP AS` (Schlüssellänge 3).","loesung":"`QRUP` · `WTIA` · `EZOS`","minuten":2},
+    {"id":"WU-W2-07","welt":2,"kategorie":"kasiski-friedman","titel":"Kasiski blitzschnell","aufgabe":"Abstände 12, 18, 30. Welche Schlüssellängen kommen in Frage, welche ist am wahrscheinlichsten?","loesung":"Teiler von ggT = 6: 2, 3, 6; am wahrscheinlichsten 6 (Prüfung über Teiltexte)","minuten":2},
+    {"id":"WU-W2-08","welt":2,"kategorie":"kasiski-friedman","titel":"Koinzidenz im Kopf (eA)","aufgabe":"Berechne den Koinzidenzindex von `ABBA`.","loesung":"(2 + 2)/(4 · 3) = 4/12 = 1/3","minuten":2},
+    {"id":"WU-W2-09","welt":2,"kategorie":"sicherheit-beurteilen","titel":"Doppelt hält besser?","aufgabe":"Alice verschlüsselt mit Porta (Schlüsselwort SIEGEL) und „zur Sicherheit“ gleich noch einmal mit SIEGEL. Was kommt heraus?","loesung":"Der Klartext – Porta ist involutorisch (P8).","minuten":1},
+    {"id":"WU-W2-10","welt":2,"kategorie":"fremde-chiffre","titel":"Playfair vorbereiten","aufgabe":"Bereite `kaffee` für Playfair vor.","loesung":"`KA FX FE EX`","minuten":2},
+    {"id":"WU-W2-11","welt":2,"kategorie":"haeufigkeitsanalyse","titel":"Al-Kindi lässt grüßen (W1)","aufgabe":"In einem langen Caesar-Geheimtext ist H der häufigste Buchstabe. Welcher Schlüssel ist wahrscheinlich (A = 1 … Z = 26)?","loesung":"H ↦ e: Verschiebung 3 → Schlüssel D","minuten":2},
+    {"id":"WU-W2-12","welt":2,"kategorie":"einordnen","titel":"Einordnen im Schnelldurchlauf","aufgabe":"Ordne ein: Atbash · Skytale · Vigenère · Playfair (Transposition/Substitution, mono/poly).","loesung":"Atbash: Substitution, mono · Skytale: Transposition · Vigenère: Substitution, poly · Playfair: Substitution, mono auf Bigrammen","minuten":3}
+  ]
+}

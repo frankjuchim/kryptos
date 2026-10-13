@@ -1214,11 +1214,15 @@ u = 2 (2 Zeilen, zeilenweise schreiben, spaltenweise lesen, Füllzeichen X): `ei
 `OASE` → `OASEBCDF`; (3, 1) b → `E`; `YMDE`/12 → `mars`; `oasen`/u 2 → `OEANS X`; `rom`/D → `URP`; `bote`/LUNA → `MIGE`;
 `QWERTZUIOPAS` → `QRUP · WTIA · EZOS`; `kaffee` → `KA FX FE EX`.
 
-- [ ] **Step 1: Failing test** `warmup_seed.test.js` → FAIL (Dateien fehlen).
-- [ ] **Step 2: Implement** die drei Dateien.
-- [ ] **Step 3: Run** `node --test test/warmup_seed.test.js test/inhalte_pruefwerte.test.js` → PASS; `npm run krypto:pruefwerte`; `npm test`.
-- [ ] **Step 4: Kontrollfragen K1, K2, K4** (Lösungen nur in `loesung`; WU-W2-08 ist eA – offene Entscheidung 6).
-- [ ] **Step 5: Commit** `git commit -m "Warm-up-Karten W0–W2 (36 Karten) aus den Welt-Specs"`.
+- [x] **Step 1: Failing test** `warmup_seed.test.js` → FAIL (Dateien fehlen).
+- [x] **Step 2: Implement** die drei Dateien.
+- [x] **Step 3: Run** `node --test test/warmup_seed.test.js test/inhalte_pruefwerte.test.js` → PASS; `npm run krypto:pruefwerte`; `npm test`.
+- [x] **Step 4: Kontrollfragen K1, K2, K4** (Lösungen nur in `loesung`; WU-W2-08 ist eA – offene Entscheidung 6).
+- [x] **Step 5: Commit** `git commit -m "Warm-up-Karten W0–W2 (36 Karten) aus den Welt-Specs"`.
+
+**Umgesetzt (Ergänzung):** Die Warm-up-Seite zeigt Aufgabe und Lösung als Mini-Markdown (`AQR.md`), damit die
+Backticks aus Spec §7 als Klartext/Geheimtext-Auszeichnung erscheinen; in W2 sind Klartexte (`*rom*` → `` `rom` ``) und
+Geheimtexte wie in der Materialquelle in Backticks gesetzt (normalisiert unverändert).
 
 ### Task 90: Generator-Wortlisten W0–W2 vervollständigen und abgleichen (E46)
 

@@ -590,14 +590,14 @@ const KRSpiel = (() => {
           { class: 'karte warmup-karte' },
           h('div', { class: 'chip-reihe' }, h('span', { class: 'chip chip-neutral' }, weltName(c.welt)), h('span', { class: 'chip chip-neutral' }, katName(c.kategorie)), h('span', { class: 'chip chip-neutral' }, i.neu ? 'neu' : `Fach ${i.fach}`), c.minuten ? h('span', { class: 'chip chip-neutral' }, `${c.minuten} min`) : null),
           h('h2', null, c.titel),
-          h('div', { class: 'warmup-text' }, c.aufgabe),
+          h('div', { class: 'warmup-text' }, AQR.md(c.aufgabe, null, 'div')),
           c.code ? h('pre', { class: 'code-pre' }, c.code) : null,
           st.offen
             ? h(
                 'div',
                 { class: 'warmup-loesung' },
                 h('h3', null, 'Lösung'),
-                h('div', { class: 'warmup-text' }, c.loesung),
+                h('div', { class: 'warmup-text' }, AQR.md(c.loesung, null, 'div')),
                 c.loesungCode ? h('pre', { class: 'code-pre' }, c.loesungCode) : null,
                 h('p', { class: 'text-2' }, 'Wie lief es? Schätze dich ehrlich ein:'),
                 h('div', { class: 'knopf-reihe' }, h('button', { type: 'button', class: 'knopf knopf-primaer', onclick: () => antwort('gewusst') }, '✓ gewusst'), h('button', { type: 'button', class: 'knopf knopf-zweit', onclick: () => antwort('teilweise') }, '≈ teilweise'), h('button', { type: 'button', class: 'knopf knopf-zweit', onclick: () => antwort('nicht') }, '✗ nicht gewusst'))

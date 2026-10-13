@@ -200,7 +200,7 @@ test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
     'POST /api/training/9/neu': { status: 201, body: { id: 7, status: 'offen', fehlversuche: 0, aufgabe: { id: 'T-7', titel: 'Übung', stufe: 1, punkte: 1, inhalt: [{ t: 'text', md: 'Rechne.' }], interaktion: { kind: 'gaps', felder: { a: { loesung: [] } } } } } },
     'GET /api/kata/meta': { status: 200, body: { welten: [{ welt: 9, anzahl: 2 }], kategorien: [{ kategorie: 'modulo', anzahl: 2 }], weltNamen: [{ nr: 9, name: 'Testwelt' }] } },
     'GET /api/kata/statistik': { status: 200, body: { neu: 2, faecher: [0, 0, 0, 0, 0, 0], faellig: 2, gesamt: 2, wiederholungen: 0, gewusst: 0, teilweise: 0, nicht: 0 } },
-    'POST /api/kata/ziehen': { status: 200, body: { card: { id: 'K1', welt: 9, kategorie: 'modulo', titel: 'Rest', aufgabe: 'Berechne 7 mod 3.', loesung: '1', minuten: 2 }, neu: true, fach: 0, faellig: 2, gesamt: 2 } }
+    'POST /api/kata/ziehen': { status: 200, body: { card: { id: 'K1', welt: 9, kategorie: 'modulo', titel: 'Rest', aufgabe: 'Berechne 7 mod 3. Schreibe `rom` dazu.', loesung: '1', minuten: 2 }, neu: true, fach: 0, faellig: 2, gesamt: 2 } }
   };
   let k = D.lade(SPIEL, { url: 'http://x.test/spiel#/boss/9', fetch: f });
   await k.ruhe();
@@ -230,6 +230,9 @@ test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
   k.klick(k.eins(haupt, 'button.karte-ziehen'));
   await k.ruhe();
   assert.match(k.text(haupt), /Berechne 7 mod 3\./);
+  // Warm-up-Texte als Mini-Markdown (Plan M5 Task 89: Klartext/Geheimtext in Backticks wie in Spec §7)
+  assert.equal(k.text(k.eins(haupt, '.warmup-text code')), 'rom');
+  assert.doesNotMatch(k.text(haupt), /`/);
   assert.doesNotMatch(k.text(haupt), /XP|Kata/);
 });
 test('Profil: Rang mit nächster Schwelle, Artefakte, Abzeichen-Symbole, Fallen-Radar mit Tabelle', async () => {
