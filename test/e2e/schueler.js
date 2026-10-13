@@ -127,41 +127,35 @@ async function szenario2(ctx) {
   await kontext.close();
 }
 
-/** Nr. 3: Boss im gA-Kurs (Ida, nur k:2 – nach Szenario 7a gA und Boss offen). */
+/** Nr. 3: Boss im gA-Kurs (Ida, nur k:2 – nach Szenario 7a gA und Boss offen; Pool nur Kern: W9-B-01, -03, -05). */
 async function szenario3(ctx) {
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 3');
   await anmelden(page, ctx, 'Ida K.', '/spiel');
   await gehe(page, `${ctx.basis}/spiel#/boss/9`);
-  await page.getByRole('button', { name: /Kampf beginnen/ }).click();
-  await page.locator('dialog[open]').getByRole('button').last().click();
+  await page.getByRole('button', { name: 'Kampf beginnen' }).click();
+  await page.locator('dialog[open]').getByRole('button', { name: 'Kampf beginnen' }).click();
   await page.waitForURL(/#\/kampf\//);
-  const teile = page.locator('.boss-aufgabe');
+  const teile = page.locator('section.boss-aufgabe');
   await teile.first().waitFor();
   assert.equal(await teile.count(), 3, 'drei Boss-Aufgaben');
   assert.equal(await page.locator('.werkzeug-karte').count(), 0, 'kein Werkzeug im Boss');
   assert.equal(await page.locator('a[href^="/labor"]').count(), 0, 'kein Labor-Link im Boss');
-  const ids = await teile.evaluateAll((l) => l.map((x) => x.getAttribute('data-id')));
-  assert.deepEqual([...ids].sort(), ['W9-B-01', 'W9-B-03', 'W9-B-05']);
+  const titel = (await teile.locator('h2').allTextContents()).map((t) => t.replace(/^Aufgabe \d+: /, ''));
+  assert.deepEqual([...titel].sort(), ['Die verschlüsselte Losung', 'Ganzzahlige Division', 'Vergleich von Zeichenketten']);
+  const box = (t) => teile.filter({ has: page.locator('h2', { hasText: t }) });
+  await box('Ganzzahlige Division').locator('input').first().fill('3');
+  await box('Vergleich von Zeichenketten').locator('button.option', { hasText: 'equals' }).click();
+  const falsch = Krypto.vigenere('XZWJNHYVCX', 'EIS', 'ver'); // Richtung vertauscht (P3)
+  const k = box('Die verschlüsselte Losung').locator('input.kaestchen');
+  for (let i = 0; i < falsch.length; i++) await k.nth(i).fill(falsch[i]);
+  await page.locator('.boss-speicher', { hasText: 'gespeichert' }).waitFor();
   await foto(page, 'boss-kampf', { ganz: true });
-  for (const id of ids) {
-    const box = page.locator(`.boss-aufgabe[data-id="${id}"]`);
-    if (id === 'W9-B-01') await box.locator('input').first().fill('3');
-    else if (id === 'W9-B-03') await box.locator('label', { hasText: /.+/ }).filter({ has: page.locator('input[value="b"]') }).first().click();
-    else {
-      const falsch = Krypto.vigenere('XZWJNHYVCX', 'EIS', 'ver');
-      const k = box.locator('input.kaestchen');
-      if ((await k.count()) > 0) for (let i = 0; i < falsch.length; i++) await k.nth(i).fill(falsch[i]);
-      else await box.locator('input.chiffre-zeile').fill(falsch);
-    }
-    await box.getByRole('button', { name: /speichern|Antwort festlegen|festlegen/i }).first().click();
-    await box.getByText(/gespeichert/i).first().waitFor();
-  }
-  await page.getByRole('button', { name: /Kampf beenden/ }).click();
-  await page.locator('dialog[open]').getByRole('button').last().click();
-  const b05 = page.locator('.boss-ergebnis[data-id="W9-B-05"]');
+  await page.getByRole('button', { name: 'Kampf beenden' }).click();
+  await page.locator('dialog[open]').getByRole('button', { name: 'Beenden und auswerten' }).click();
+  const b05 = page.locator('section.boss-ergebnis-aufgabe', { has: page.locator('h3', { hasText: 'Die verschlüsselte Losung' }) });
   await b05.waitFor();
   await b05.getByText('P3 Umkehrung falsch').first().waitFor();
-  assert.ok(((await b05.textContent()) || '').toLowerCase().includes('lösung'), 'Auswertung zeigt die Lösung');
+  await b05.locator('h4', { hasText: 'Lösung' }).waitFor();
   await page.locator('a[href^="/labor"]').first().waitFor();
   await foto(page, 'boss-auswertung', { ganz: true });
   await kontext.close();

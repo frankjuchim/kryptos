@@ -11,10 +11,18 @@
 const { chromium } = require('playwright-core');
 const H = require('./hilfen');
 const schueler = require('./schueler');
+const lehrkraft = require('./lehrkraft');
+const gast = require('./gast');
+const geraete = require('./geraete');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
-  ['2 Neue Interaktionen', schueler.szenario2]
+  ['2 Neue Interaktionen', schueler.szenario2],
+  ['7a Lehrkraft: Einstellungen, Auswertung, Vorschau', lehrkraft.szenario7a],
+  ['3 Boss im gA-Kurs', schueler.szenario3],
+  ['7b Wirkung der Einstellungen', lehrkraft.szenario7b],
+  ['8 Gastmodus', gast.szenario8],
+  ['9 Geräte, Dunkelmodus, Tastatur', geraete.szenario9]
 ];
 
 async function main() {
@@ -40,6 +48,16 @@ async function main() {
   } finally {
     if (browser) await browser.close();
     await ctx.beenden();
+  }
+  // Fotos im Repo: höchstens 30 PNG, zusammen ≤ 5 MB (M4 Task 67)
+  if (ok && process.env.E2E_FOTOS !== '0') {
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const ordner = path.join(H.WURZEL, 'docs', 'screenshots');
+    const fotos = fs.readdirSync(ordner).filter((f) => /^m4-.*\.png$/.test(f));
+    const groesse = fotos.reduce((s, f) => s + fs.statSync(path.join(ordner, f)).size, 0);
+    if (fotos.length > 30 || groesse > 5 * 1024 * 1024) ctx.fehler.push(`Fotos: ${fotos.length} Dateien, ${(groesse / 1048576).toFixed(1)} MB (höchstens 30 und 5 MB)`);
+    else console.log(`Fotos: ${fotos.length} Dateien, ${(groesse / 1048576).toFixed(1)} MB in docs/screenshots/`);
   }
   if (ctx.fehler.length) {
     ok = false;
