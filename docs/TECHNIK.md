@@ -959,7 +959,7 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 |---|---|---|---|
 | `welten`, `boss`, `scoreboard`, `beamer` | Kern | Kern | Kern (`anmeldung` entfällt) |
 | `niveau` | `eA` \| `gA` | `eA` (Design §3.2) | §8 |
-| `werkzeuge` | Objekt `id → "auto" \| "frei" \| "gesperrt"` | `{}` (alle `auto`) | `auto` = frei, sobald die Welt des Werkzeugs freigeschaltet ist (§10.3) |
+| `werkzeuge` | Objekt `id → "frei" \| "gesperrt"` (gespeichert ohne `auto`) | `{}` (alle `auto`) | `auto` = frei, sobald die Welt des Werkzeugs freigeschaltet ist (§10.3). `PATCH` mit `werkzeuge: { id: "auto" \| "frei" \| "gesperrt" }` **führt zusammen**, `"auto"` entfernt den Eintrag; unbekannte id, anderer Wert oder kein Objekt → 400; ungültige gespeicherte Einträge werden beim Lesen verworfen |
 | `kuer` | `frei` \| `gesperrt` | `frei` | Kür-Level sichtbar (in freigeschalteten Welten) |
 
 `pruefeEinstellungen` (Kern) lehnt unbekannte Schlüssel ab, prüft Werkzeug-ids gegen die Registry.
@@ -1190,9 +1190,11 @@ vergleicht beide Listen).
 
 ### 10.3 Freigabe je Kurs und Sperre im Boss
 
-`GET /api/labor` (Schüler) → `{ werkzeuge: [{ id, titel, welt, frei, grund }] }` mit `frei` nach `einst.werkzeuge[id]`:
-`frei` → frei; `gesperrt` → gesperrt („Deine Lehrkraft schaltet dieses Werkzeug später frei“); `auto`/fehlend → frei, wenn
-die Welt freigeschaltet ist. Lehrkraft: alle frei. **Läuft für die Teilnahme ein Boss-Kampf** (`boss_versuche` ohne
+`GET /api/labor` (nur Schüler, sonst 401 wie die Kern-Schülerrouten; `src/krypto/labor.js`) →
+`{ boss: bool, werkzeuge: [{ id, titel, welt, frei, grund }] }` mit `grund` ∈ `null | 'lehrkraft' | 'welt' | 'boss'` nach
+`einst.werkzeuge[id]`: `frei` → frei (auch in nicht freigeschalteter Welt); `gesperrt` → `grund: 'lehrkraft'` („Deine
+Lehrkraft schaltet dieses Werkzeug später frei“); `auto`/fehlend → frei, wenn die Welt freigeschaltet ist, sonst
+`grund: 'welt'`. Texte macht der Client. Lehrkraft: alle frei (Liste über `GET /api/lehrer/werkzeuge`). **Läuft für die Teilnahme ein Boss-Kampf** (`boss_versuche` ohne
 `ende_at`, Frist nicht abgelaufen), sind **alle** Werkzeuge gesperrt (`grund: 'boss'`); die Boss-Ansicht rendert keine
 `werkzeug`-Blöcke und keine Labor-Links. Grenze (dokumentiert, nicht behebbar): Die Bibliothek ist im Browser geladen;
 wer die Entwicklerwerkzeuge bedient, kann rechnen lassen – die Sperre ist didaktisch, wie im Abitur sichert die
@@ -1443,7 +1445,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/welten` | Schüler | – | Kern + je Welt `epoche`, `jahr`, `akzentHell`, `archivfund: { titel, status } \| null`, `kapitel` (erst nach besiegtem Boss, sonst `null`), Level mit `niveau`, `rolle`, `kuer`, `werkzeug`; nur sichtbare Level | – |
 | `GET /api/archivfund/:welt` · `POST …/pruefen` · `…/tipp` · `…/aufdecken` | Schüler | wie Aufgaben | wie Aufgaben, `punkte` immer 0 | 90/min (Kern-Limit) |
 | `POST /api/aufgaben/:id/pruefen` | Schüler | Kern + Delta §14 | Kern + `diagnose`, `zeichen`, `bits`, `anteil` | 90/min |
-| `GET /api/labor` | Schüler | – | `{ werkzeuge: [{ id, titel, welt, frei, grund }] }` | – |
+| `GET /api/labor` | Schüler | – | `{ boss, werkzeuge: [{ id, titel, welt, frei, grund }] }` (`grund`: `null`/`lehrkraft`/`welt`/`boss`, §10.3) | – |
 
 ### 13.2 Funkraum (Schüler)
 
@@ -1475,8 +1477,8 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 |---|---|---|
 | `GET /api/lehrer/kurse` | – | `[{ id, kursId, name, aktiv, schueler, zuletztAktiv, einstellungen, boardSchluessel }]` |
 | `PATCH /api/lehrer/kurse/:kursId` | `{ einstellungen: { welten?, boss?, scoreboard?, beamer?, niveau?, werkzeuge?, kuer? } }` (`name` → 400) | Kurs |
-| `POST /api/lehrer/kurse/:kursId/board-schluessel` | – | `{ boardSchluessel }` (neu vergeben) |
-| `GET /api/lehrer/werkzeuge` | – | Registry (§10.2) |
+| `POST /api/lehrer/kurse/:kursId/board-schluessel` | `{}` | `{ boardSchluessel }` (neu vergeben, 12 Zeichen base64url; alter Schlüssel sofort ungültig; gesperrter Kurs 403, fremder 404) |
+| `GET /api/lehrer/werkzeuge` | – | `[{ id, titel, welt, gast }]` in der Reihenfolge der Registry (§10.2) |
 | `GET /api/lehrer/kurse/:kursId/teams` | – | `[{ id, nr, name, mitglieder: [{ id, name }] }]`, `ohneTeam: [...]` |
 | `PUT /api/lehrer/kurse/:kursId/teams` | `{ teams: [{ nr, name, mitglieder: [schuelerId] }] }` (Namen ∈ `TEAM_NAMEN`) | Teams |
 | `POST /api/lehrer/kurse/:kursId/funk` | `{ typ, rollen?: [{ teamId, rolle, partnerId? }], optionen?: { wiederholerTeamId?, textId? } }` | Szenario (Status `vorbereitung`) · 409 wenn schon eins |

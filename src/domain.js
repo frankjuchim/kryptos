@@ -57,7 +57,8 @@ const STANDARD_EINSTELLUNGEN = {
   beamer: false,
   anmeldung: true,
   niveau: 'eA', // Kursniveau (TECHNIK §7.2, §8): 'eA' Leistungskurs · 'gA' Grundkurs
-  kuer: 'frei' // Kür-Level: 'frei' · 'gesperrt'
+  kuer: 'frei', // Kür-Level: 'frei' · 'gesperrt'
+  werkzeuge: Object.freeze({}) // Labor-Freigaben je Werkzeug (TECHNIK §7.2, §10.3): id → 'frei' | 'gesperrt'; fehlt = auto
 };
 
 /**

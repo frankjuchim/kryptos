@@ -955,11 +955,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.deepEqual(f.haeufigkeit, [false, 'lehrkraft']);
     assert.deepEqual(f.bitlupe, [true, null], 'frei schlägt Welt-Sperre');
     await lk.patch(url).send({ einstellungen: { boss: 'offen' } }).expect(200);
-    const kampf = (await s.post('/api/boss/9/start').expect(201)).body;
+    const kampf = (await s.post('/api/boss/9/start').send({}).expect(201)).body;
     const r = await s.get('/api/labor').expect(200);
     assert.equal(r.body.boss, true);
     assert.ok(r.body.werkzeuge.every((w) => w.frei === false && w.grund === 'boss'));
-    await s.post(`/api/boss/kampf/${kampf.id}/beenden`).expect(200);
+    await s.post(`/api/boss/kampf/${kampf.id}/beenden`).send({}).expect(200);
     assert.equal((await s.get('/api/labor').expect(200)).body.boss, false);
     assert.equal((await lk.get('/api/labor')).status, 401, 'Lehrkraft nutzt /api/lehrer/werkzeuge');
   });
@@ -2390,10 +2390,12 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
    als „noch verschlüsselt“ sichtbar sein (Server müsste dann Welten aus `fach.WELTEN` ohne Inhalt melden)?
 3. **Funkraum/Werkstatt/Beamer als Gerüst (E20):** Die Seiten existieren mit Wächter und Leerzustand; Kopfzeile zeigt den
    Funkraum-Link erst mit M7. Einverstanden, dass Schülerinnen und Schüler die leeren Seiten über die URL erreichen können?
+   **Vorläufig festgelegt (Orchestrator):** ja – Gerüst nur mit Sitzung (Wächter), Hinweis „kommt bald“; umgesetzt in Task 48.
 4. **Zuordnung ohne Ziehen (E28):** Die Substitutions-Werkbank wird per Tippen bedient (je Geheimbuchstabe ein Feld). Reicht
    das, oder soll Ziehen (Drag & Drop) für Tablets nachgerüstet werden?
 5. **Labor-Freigaben schon in M4 (E19):** Die Lehrkraft kann Werkzeuge ab M4 sperren/freigeben, obwohl die Werkzeuge erst in
    M6 kommen (bis dahin „noch in Arbeit“). Einverstanden?
+   **Vorläufig festgelegt (Orchestrator):** ja – umgesetzt in Task 49.
 6. **Screenshots im Repo:** Der Plan legt bis zu 30 PNGs aus dem e2e unter `docs/screenshots/` ab (wie Algo Quest).
    Gewünscht, oder nur als CI-Artefakt?
 7. **Krypto-Werkstatt-Link auf der Themenseite (Design O11):** Der Plan setzt einen externen Link auf

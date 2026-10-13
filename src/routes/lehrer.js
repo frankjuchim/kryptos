@@ -5,6 +5,7 @@
 
 const express = require('express');
 const V = require('../validate');
+const { WERKZEUGE } = require('../krypto/werkzeuge');
 
 function lehrerRoutes(api, h) {
   const { svc } = h;
@@ -23,7 +24,8 @@ function lehrerRoutes(api, h) {
   const router = express.Router();
   const r = {
     get: (p, ...f) => router.get(p, auth, ...f),
-    patch: (p, ...f) => router.patch(p, auth, ...f)
+    patch: (p, ...f) => router.patch(p, auth, ...f),
+    post: (p, ...f) => router.post(p, auth, ...f)
   };
 
   r.get('/ich', (req, res) => res.json(svc.konten.ansicht(req.lk.konto)));
@@ -52,6 +54,10 @@ function lehrerRoutes(api, h) {
   r.get('/kurse', (req, res) => res.json(svc.kurse.kursListe(req.lk)));
   r.get('/kurse/:kursId', (req, res) => res.json(svc.kurse.kursFuer(req.lk, kid(req))));
   r.patch('/kurse/:kursId', (req, res) => res.json(svc.kurse.kursAendern(req.lk, kid(req), req.body)));
+  r.post('/kurse/:kursId/board-schluessel', (req, res) => res.json(svc.kurse.boardSchluesselNeu(req.lk, kid(req))));
+
+  /** Labor-Werkzeuge für die Freigaben je Kurs (TECHNIK §10.2/§10.3), Reihenfolge der Server-Registry. */
+  r.get('/werkzeuge', (req, res) => res.json(WERKZEUGE.map(({ id, titel, welt, gast }) => ({ id, titel, welt, gast }))));
 
   r.get('/kurse/:kursId/schueler', (req, res) => res.json(svc.auswertung.schuelerListe(req.lk, kid(req))));
 

@@ -7,6 +7,7 @@
 const V = require('../validate');
 const S = require('../security');
 const { STANDARD_EINSTELLUNGEN } = require('../domain');
+const { WERKZEUG_IDS } = require('../krypto/werkzeuge');
 
 const { ValidationError, NotFoundError } = V;
 
@@ -34,6 +35,15 @@ function createKurse(ctx) {
     if (!['eA', 'gA'].includes(out.niveau)) out.niveau = STANDARD_EINSTELLUNGEN.niveau;
     if (!['frei', 'gesperrt'].includes(out.kuer)) out.kuer = STANDARD_EINSTELLUNGEN.kuer;
     if (!Array.isArray(out.welten)) out.welten = [...STANDARD_EINSTELLUNGEN.welten];
+    out.werkzeuge = werkzeugeLesen(out.werkzeuge);
+    return out;
+  }
+
+  /** Gespeicherte Werkzeug-Freigaben: nur bekannte ids mit 'frei'/'gesperrt' (Ungültiges wird verworfen), immer neue Kopie. */
+  function werkzeugeLesen(w) {
+    const out = {};
+    if (!w || typeof w !== 'object' || Array.isArray(w)) return out;
+    for (const id of WERKZEUG_IDS) if (w[id] === 'frei' || w[id] === 'gesperrt') out[id] = w[id];
     return out;
   }
 
@@ -109,8 +119,30 @@ function createKurse(ctx) {
       if (!['frei', 'gesperrt'].includes(e.kuer)) throw new ValidationError('kuer muss frei oder gesperrt sein.');
       out.kuer = e.kuer;
     }
+    if (e.werkzeuge !== undefined) {
+      // zusammenführen: 'auto' entfernt den Eintrag (TECHNIK §7.2, §10.3)
+      const w = e.werkzeuge;
+      if (!w || typeof w !== 'object' || Array.isArray(w)) throw new ValidationError('werkzeuge muss ein Objekt { Werkzeug: auto, frei oder gesperrt } sein.');
+      const neu = werkzeugeLesen(out.werkzeuge);
+      for (const [id, wert] of Object.entries(w)) {
+        if (!WERKZEUG_IDS.includes(id)) throw new ValidationError(`werkzeuge: unbekanntes Werkzeug „${String(id).slice(0, 40)}“.`);
+        if (!['auto', 'frei', 'gesperrt'].includes(wert)) throw new ValidationError(`werkzeuge: ${id} muss auto, frei oder gesperrt sein.`);
+        if (wert === 'auto') delete neu[id];
+        else neu[id] = wert;
+      }
+      out.werkzeuge = neu;
+    }
     for (const k of ENTFALLEN) delete out[k];
     return out;
+  }
+
+  /** Board-Schlüssel neu vergeben (der alte wird sofort ungültig); gesperrter Kurs → 403, fremder → 404. */
+  function boardSchluesselNeu(lk, kursId) {
+    const k = kursFuer(lk, kursId);
+    if (!k.aktiv) throw new V.ForbiddenError('Kryptos ist für diesen Kurs im Portal abgeschaltet. Der Kurs ist nur lesbar.');
+    const neu = S.zufallsText(9);
+    db.prepare('UPDATE kurse SET board_schluessel = ?, updated_at = ? WHERE id = ?').run(neu, iso(), k.id);
+    return { boardSchluessel: neu };
   }
 
   /** Nur Einstellungen; den Namen verwaltet das Portal (TECHNIK §6.5: `name` wird abgelehnt). */
@@ -198,7 +230,7 @@ function createKurse(ctx) {
     db.prepare('UPDATE schueler SET last_active_at = ? WHERE id = ?').run(iso(), schuelerId);
   }
 
-  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, aktiv, upsertAusToken };
+  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, boardSchluesselNeu, aktiv, upsertAusToken };
 }
 
 module.exports = { createKurse };

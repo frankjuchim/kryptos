@@ -11,7 +11,7 @@ test('Kurs vom Portal: Kurs-ID, Board-Schl√ºssel, Standard-Einstellungen (ohne ‚
   const k = (await lk.get(`/api/lehrer/kurse/${kurs.id}`).expect(200)).body;
   assert.match(k.kurs, /^k:\d+$/);
   assert.match(k.boardSchluessel, /^[A-Za-z0-9_-]{12}$/);
-  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, niveau: 'eA', kuer: 'frei' });
+  assert.deepEqual(k.einstellungen, { welten: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], boss: 'auto', scoreboard: true, beamer: false, niveau: 'eA', kuer: 'frei', werkzeuge: {} });
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { boss: 'irgendwie' } })).status, 400);
   assert.equal((await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: 'alle' } })).status, 400);
   const r = await lk.patch(`/api/lehrer/kurse/${k.id}`).send({ einstellungen: { welten: [4, 4, 2], scoreboard: false, anmeldung: false } });

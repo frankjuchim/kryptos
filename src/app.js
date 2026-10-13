@@ -15,6 +15,7 @@ const { createLehrkraftMaterial, URL_LEHRKRAFT } = require('./services/lehrkraft
 const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
 const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
+const { createLabor } = require('./krypto/labor');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -247,6 +248,8 @@ function createApp(opts) {
   });
 
   schuelerRoutes(api, helpers);
+  // Kryptolabor: Freigaben je Schüler (TECHNIK §10.3, M4 E19)
+  createLabor({ db, svc, now: ctx.now }).routen(api, helpers);
   lehrerRoutes(api, helpers);
   adminRoutes(api, helpers);
   gastRoutes(api, helpers);

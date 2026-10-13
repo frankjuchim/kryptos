@@ -194,3 +194,23 @@ test('Archivfund-Routen (Delta §2): nur für Schüler – Lehrkraft und ohne Si
     for (const p of ['pruefen', 'tipp', 'aufdecken']) assert.equal((await c.post(`/api/archivfund/9/${p}`).send({ antwort: 'x' })).status, 401, p);
   }
 });
+
+test('Werkzeug-Freigaben und Board-Schlüssel (M4 Task 49): Rollen, fremder/gesperrter Kurs, Herkunft', async () => {
+  const { app, s, lk, kurs } = await H.szenario();
+  const ohne = H.client(app);
+  // Werkzeugliste nur für Lehrkräfte
+  assert.equal((await s.get('/api/lehrer/werkzeuge')).status, 401);
+  assert.equal((await ohne.get('/api/lehrer/werkzeuge')).status, 401);
+  assert.equal((await lk.get('/api/lehrer/werkzeuge')).status, 200);
+  // Labor-Freigaben nur für Schüler
+  assert.equal((await ohne.get('/api/labor')).status, 401);
+  assert.equal((await s.get('/api/labor')).status, 200);
+  // Board-Schlüssel: fremder Kurs 404, ohne Herkunft 403, Schüler 401, gesperrter Kurs 403
+  const fremd = await H.lehrkraftClient(app, { name: 'Herr A.' });
+  const url = `/api/lehrer/kurse/${kurs.id}/board-schluessel`;
+  assert.equal((await fremd.post(url).send({})).status, 404);
+  assert.equal((await s.post(url).send({})).status, 401);
+  assert.equal((await lk.post(url).unset('Origin').send({})).status, 403);
+  app.locals.db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(kurs.id);
+  assert.equal((await lk.post(url).send({})).status, 403);
+});
