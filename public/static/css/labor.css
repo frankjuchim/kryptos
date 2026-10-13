@@ -809,3 +809,51 @@ mark.markiert.wiederholung { font-weight: 700; }
 .rsa-eve { padding: var(--a-3); border: 1.5px dashed var(--linie); border-radius: var(--r-karte); }
 .rsa-eve p { margin: 0; }
 .rsa-lehrkraft { margin: 0; }
+
+/* ======================================================================
+   Hash-Labor (W5 §9.1, M6 Task 123)
+   ====================================================================== */
+.hash-feld input { width: min(100%, 16rem); min-height: var(--ziel); font-family: var(--f-mono); }
+.hash-zwei .hash-feld { flex: 1 1 14rem; }
+.hash-zwei .hash-feld input { width: 100%; }
+.hash-regel, .hash-unter { margin: 0; }
+.hash-unter { font-size: 1rem; }
+.hash-ergebnis { margin: 0; font-family: var(--f-mono); font-size: 1.15rem; font-weight: 700; }
+.runden-tabelle td, .runden-tabelle th { font-family: var(--f-mono); }
+.runden-tabelle tr.kommt td, .runden-tabelle tr.kommt th { visibility: hidden; }
+.runden-tabelle tr.aktuell { outline: 2px solid var(--hinweis); outline-offset: -2px; background: var(--hinweis-flaeche); }
+.lawine-kh, .lawine-sha { display: grid; gap: var(--a-1); min-width: 0; }
+.hash-zeile { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.hash-hex { font-size: .9rem; }
+.lawine-zaehler { margin: 0; font-weight: 700; }
+.bitraster { font-family: var(--f-mono); font-size: .8rem; }
+.bitraster caption { font-family: var(--f-text); font-size: .9rem; }
+.bitraster th, .bitraster td { padding: 2px 3px; min-width: 1.2em; }
+.bitraster tbody th { font-family: var(--f-text); font-size: .72rem; color: var(--text-2); white-space: nowrap; }
+.bitraster td.anders { position: relative; box-shadow: inset 0 0 0 2px var(--akzent); background: var(--hinweis-flaeche); font-weight: 700; }
+.bitraster td.anders::after { content: ""; position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; border-radius: 50%; background: var(--text); }
+.kollision-meldung { margin: 0; font-weight: 700; }
+.kollision-meldung:empty { display: none; }
+.faecher-info { margin: 0; }
+.faecher { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: var(--a-1); }
+.faecher li { display: grid; align-content: start; gap: 2px; min-height: 3.6rem; padding: var(--a-1) var(--a-2); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); overflow-wrap: anywhere; }
+.fach-nr { font-family: var(--f-mono); font-size: .8rem; color: var(--text-2); }
+.fach-woerter { font-family: var(--f-mono); font-size: .9rem; }
+.faecher li.belegt { background: var(--papier-2); }
+.faecher li.kollision { border: 3px solid var(--fehler); background: var(--fehler-flaeche); }
+.faecher li.kollision .fach-nr::after { content: " ⚠ Kollision"; font-weight: 700; color: var(--text); }
+.faecher li.neu { animation: fach-fallen .45s ease-out; }
+@keyframes fach-fallen { from { transform: translateY(-.8rem); opacity: .3; } }
+.baukasten-wortanzeige, .baukasten-beitrag { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.baukasten-beitrag { font-weight: 700; }
+.hash-feld input.baukasten-buchstabe { width: 4rem; text-align: center; }
+.ausgleichen { justify-self: start; }
+.baukasten-ergebnis:empty, .login-ergebnis:empty { display: none; }
+.passwort-felder { display: flex; flex-wrap: wrap; gap: var(--a-3); }
+.passwort-tabelle td { font-family: var(--f-mono); }
+.hash-schalter { justify-self: start; }
+.pruef-s, .pruef-g { margin: 0; padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); font-family: var(--f-mono); font-weight: 700; }
+.pruef-s.gleich, .pruef-g.gleich { background: var(--ok-flaeche); }
+.pruef-s.verschieden, .pruef-g.verschieden { background: var(--fehler-flaeche); }
+@media (prefers-reduced-motion: reduce) { .faecher li.neu { animation: none; } }
+:root[data-bewegung="aus"] .faecher li.neu { animation: none; }

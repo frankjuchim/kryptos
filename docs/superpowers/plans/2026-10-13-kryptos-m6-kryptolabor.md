@@ -2083,7 +2083,7 @@ sich im Nachspiel „nächste Runde“.
 - **Prüfsummen:** zwei Texte ≤ 30; S(t), G(t) (`Krypto.pruefsumme`) mit „gleich/verschieden“ (Symbol + Text).
 - `zustand()` → `{ reiter, wert, runden, khA, khB, shaA, shaB, verschiedeneBits, faecher, kollisionNach, baukasten, konten, login, pruefsummen }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_hash.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_hash.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2149,9 +2149,9 @@ sich im Nachspiel „nächste Runde“.
   ```
   (Salz-Formel im Werkzeug: Buchstabe = `Krypto.buchstabe(1 + Math.floor(zufall() * 26))` – Indexarithmetik, keine
   Krypto-Rechnung; Folge 0 → A, 0,5 → N, 0,1 → C, 0,2 → F, 0,9 → X, 0,95 → Y.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
   (Bitraster 16 × 16 bei 360 px, Fächer).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Hash-Labor (KRYPTOS-Hash Schritt für Schritt, Lawine mit SHA-256, Schubfach, Baukasten, Salz, Prüfsummen)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Hash-Labor (KRYPTOS-Hash Schritt für Schritt, Lawine mit SHA-256, Schubfach, Baukasten, Salz, Prüfsummen)"`.
 
 ### Task 124: Werkzeug „Signatur- & Zertifikats-Simulator“ (W5 §9.2, E69, E90)
 
