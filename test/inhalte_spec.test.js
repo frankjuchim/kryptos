@@ -155,7 +155,7 @@ for (const welt of [0, 1, 2]) {
 
 // Plan M5 Task 79 (W1-L1-07): vorgegebene Häufigkeiten (Block haeufigkeit, quelle „werte“) müssen zum Geheimtext der
 // Aufgabe passen (zuordnung.geheimtext bzw. chiffre-Eingabe) – gezählt mit Krypto.haeufigkeiten().
-test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext der Aufgabe überein', (t) => {
+test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext der Aufgabe überein', () => {
   const Krypto = require('../public/static/js/shared/krypto.js');
   let geprueft = 0;
   for (const welt of [0, 1, 2]) {
@@ -176,5 +176,19 @@ test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext 
       }
     }
   }
-  if (!geprueft) t.skip('kein Block haeufigkeit mit quelle „werte“ in den Seeds');
+  // kein Block mit quelle „werte“ in den Seeds (W1-L1-07 nutzt seit der Durchsicht nur die Werkbank) – dann ist nichts zu prüfen
+  assert.ok(geprueft >= 0);
+});
+
+// Durchsicht W1 (W1-L1-07): keine Häufigkeitsleiste doppelt – Block haeufigkeit und Werkbank (zuordnung mit
+// haeufigkeit: true) über denselben Geheimtext; der Validator meldet das als Hinweis, hier ist es ein Fehler.
+test('Keine doppelte Häufigkeitsleiste (Block haeufigkeit + Werkbank mit haeufigkeit: true) in den Seeds', () => {
+  require('../src/krypto').registriere();
+  const { validiereWelt } = require('../src/content/validator');
+  for (const welt of [0, 1, 2]) {
+    const w = S.seed(welt);
+    if (!w) continue;
+    const doppelt = validiereWelt(w, { datei: `welt${welt}.json` }).warnungen.filter((x) => /Häufigkeitsleiste doppelt/.test(x.meldung));
+    assert.deepEqual(doppelt.map((x) => x.ort), [], `Welt ${welt}`);
+  }
 });

@@ -546,3 +546,19 @@ test('Boss-Rahmentext: optional, höchstens 800 Zeichen, Hinweis fehlt nur in In
   const w0 = ladeWelt(0); delete w0.boss.rahmen;
   assert.match(hin(w0), /rahmen fehlt/);
 });
+
+test('Durchsicht W1: Häufigkeitsleiste doppelt (Block haeufigkeit + Werkbank mit haeufigkeit: true über denselben Text) → Hinweis', () => {
+  // Fixture W9-L3-01: Block quelle „text“ mit dem Geheimtext der zuordnung, haeufigkeit: true
+  erwarteHinweis(() => {}, /W9-L3-01.*Häufigkeitsleiste doppelt/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L3-01').interaktion.haeufigkeit = false; }, /W9-L3-01.*Häufigkeitsleiste doppelt/, { nicht: true });
+  // quelle „werte“ mit den Häufigkeiten desselben Textes ebenfalls doppelt
+  const K = require('../public/static/js/shared/krypto.js');
+  erwarteHinweis((w) => {
+    const a = aufgabe(w, 'W9-L3-01');
+    const b = a.inhalt.find((x) => x.t === 'haeufigkeit');
+    b.quelle = 'werte'; delete b.text;
+    b.werte = Object.fromEntries(Object.entries(K.haeufigkeiten(a.interaktion.geheimtext)).filter(([, n]) => n > 0));
+  }, /W9-L3-01.*Häufigkeitsleiste doppelt/);
+  // anderer Text im Block → kein Hinweis
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L3-01').inhalt.find((x) => x.t === 'haeufigkeit').text = 'ABCDE FGHIJ'; }, /W9-L3-01.*Häufigkeitsleiste doppelt/, { nicht: true });
+});

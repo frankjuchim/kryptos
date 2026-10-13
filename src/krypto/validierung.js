@@ -13,6 +13,7 @@ const CHIFFRE = require('./interaktionen/chiffre');
 const N = require('./neuberechnung');
 const { FALLEN_PLAUSIBEL } = require('./fach');
 
+const Krypto = require('../../public/static/js/shared/krypto.js');
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const CODE = /^[a-z_]{1,30}$/;
 
@@ -207,6 +208,18 @@ function aufgabe(a, fa, wa, { data } = {}) {
     for (const m of t.matchAll(/`([^`]+)`/g)) {
       const g = m[1];
       if (/^[A-Z ]+$/.test(g) && g.replace(/ /g, '').length >= 6 && !FUENFERGRUPPEN.test(g)) wa('inhalt', `Geheimtext „${g}“ steht nicht in Fünfergruppen.`);
+    }
+  }
+  // Häufigkeitsleiste doppelt (Durchsicht W1): Die Werkbank (zuordnung mit haeufigkeit: true) zeigt die Häufigkeiten des
+  // Geheimtextes schon – ein Block haeufigkeit über denselben Text wiederholt sie.
+  for (const { interaktion: ia } of F.teile(a)) {
+    if (!istObjekt(ia) || ia.kind !== 'zuordnung' || ia.haeufigkeit !== true || typeof ia.geheimtext !== 'string') continue;
+    const zaehle = (t) => Object.entries(Krypto.haeufigkeiten(String(t))).filter(([, n]) => n > 0).sort().join(';');
+    const soll = zaehle(ia.geheimtext);
+    for (const b of alleBloecke(a, { erklaerung: false })) {
+      if (b.t !== 'haeufigkeit') continue;
+      const ist = b.quelle === 'werte' && istObjekt(b.werte) ? Object.entries(b.werte).filter(([, n]) => n > 0).sort().join(';') : typeof b.text === 'string' ? zaehle(b.text) : null;
+      if (ist === soll) wa('inhalt', 'Häufigkeitsleiste doppelt: Der Block haeufigkeit zählt denselben Text wie die Werkbank (zuordnung mit haeufigkeit: true) – Block weglassen oder haeufigkeit: false.');
     }
   }
   // Kern-Bestandteile ohne Kryptos-Verwendung (Delta §1)

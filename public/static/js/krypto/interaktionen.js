@@ -88,7 +88,9 @@ const KRI = (() => {
   function teilChiffre(ia, kontext, nr) {
     const richtung = ia.richtung === 'ver' ? 'ver' : 'ent';
     const zahlen = ia.ausgabe === 'zahlen';
-    const verdeckt = ia.schluesselVerdeckt === true;
+    // Fremde Verfahren (`frei`) haben keine Schlüssel-Parameter – kein Hinweis „Schlüssel verdeckt“ (Durchsicht W1)
+    const frei = typVon(ia) === 'frei';
+    const verdeckt = ia.schluesselVerdeckt === true && !frei;
     const regel = zeichenRegel(ia);
     const n = laenge(ia);
     const eingabe = eingabeNorm(ia);
@@ -107,7 +109,8 @@ const KRI = (() => {
       h('span', { class: 'chiffre-richtung' }, richtung === 'ver' ? ' · verschlüsseln' : ' · entschlüsseln'),
       verdeckt ? h('span', { class: 'chiffre-verdeckt' }, ' · Schlüssel verdeckt') : null
     );
-    const eingabeEl = richtung === 'ent' ? KRB.geheimtext(ia.eingabe, { positionen: false }) : KRB.geheimtext(ia.eingabe, { art: 'klar' });
+    // `frei`: Eingabe unverändert (keine Fünfergruppen, Schreibweise wie im Seed) – das Verfahren braucht die Wortgrenzen
+    const eingabeEl = KRB.geheimtext(ia.eingabe, { art: richtung === 'ent' ? 'geheim' : 'klar', unveraendert: frei });
     const ergebnis = h('p', { class: 'chiffre-ergebnis', 'aria-live': 'polite' });
     const box = h('div', { class: 'chiffre' + (darstellung === 'zeile' ? ' chiffre-als-zeile' : '') }, kopf, eingabeEl);
 

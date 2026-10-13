@@ -267,7 +267,7 @@ Ein Verfahren wird überall gleich beschrieben – als JSON-Objekt mit `typ` und
 | `blockrotation` | **`block`** 2–16, **`um`** 1…block−1 | jeden Block um `um` Stellen nach links rotieren (letzter Block in seiner eigenen Länge) |
 | `xor` | **`schluessel`** (Text) **oder** **`schluesselBits`** | ASCII-Bytes ⊕ Schlüsselbytes (wiederholt); Ausgabe **Hex in Zweiergruppen** |
 | `baukasten` | **`verfahren`** (Stufenliste), **`schluessel`** (Werte) | Hintereinanderausführung (TECHNIK §9.2) |
-| `frei` | `name` (optional, Verweis auf `werkzeuge/krypto/fremde_verfahren.py`) | **fremde Chiffre** aus dem Aufgabentext; keine Neuberechnung, keine Diagnose außer §9.6 |
+| `frei` | `name` (optional, Verweis auf `werkzeuge/krypto/fremde_verfahren.py`) | **fremde Chiffre** aus dem Aufgabentext; keine Neuberechnung, keine Diagnose außer §9.6. Die Werkbank zeigt die `eingabe` **unverändert** (keine Fünfergruppen, Schreibweise wie im Seed – Wortgrenzen gehören zum Verfahren) und keinen Hinweis „Schlüssel verdeckt“ (Durchsicht W1) |
 
 Gemeinsame Option `basis` (`1` Std. | `0`): wirkt nur auf Zahlenausgaben (`ausgabe: "zahlen"`) und die Hilfszeile `zahlen`; `affin` rechnet mit dem eigenen Parameter `verfahren.basis` (Std. **0**, TECHNIK §5.2).
 Eingaben werden vor der Anwendung mit `krypto` normalisiert (Ziffern nur bei `polybios`/`adfgvx`/`xor` sinnvoll).
@@ -614,6 +614,9 @@ Ein nacktes Objekt `{ "T": "E" }` wird ebenfalls akzeptiert (Hülle wie im Kern)
 **Validator:** `loesung.zuordnung` injektiv, deckt **alle** Geheimbuchstaben ab; **Neuberechnung**: Anwenden auf
 `geheimtext` ergibt `loesung.klartext` (Fehler); `vorgabe` ⊆ Lösung (Fehler, sonst wäre die Aufgabe unlösbar);
 Hinweis bei < 60 Buchstaben und Kategorie `haeufigkeitsanalyse` (P6). Boss: `haeufigkeit: true` → Fehler.
+Hinweis „Häufigkeitsleiste doppelt“, wenn `haeufigkeit: true` und zusätzlich ein Block `haeufigkeit` denselben Text
+zählt (`quelle: text` mit gleichen Häufigkeiten bzw. `quelle: werte` = Häufigkeiten des Geheimtextes) – Block weglassen
+oder `haeufigkeit: false` (Durchsicht W1).
 
 **Schrittprüfung:** nein. **Boss:** kein Feedback, kein Anteil; Vorschau bleibt (sie ist nur Darstellung, kein Werkzeug).
 

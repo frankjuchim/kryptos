@@ -82,6 +82,20 @@ test('chiffre mit verdecktem Schlüssel: Hinweis, keine Schlüsselzeile', () => 
   assert.match(k.text(k.eins(c.el, '.chiffre-kopf')), /Schlüssel verdeckt/);
   assert.equal(k.alle(c.el, '.hilfszeile-schluessel').length, 0);
 });
+test('chiffre frei (fremdes Verfahren, W1-L3-01): Eingabe unverändert (Wortgrenzen), kein Hinweis „Schlüssel verdeckt“', () => {
+  const ver = baue({ id: 'W9-L2-11', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'frei', name: 'NOMEN-850' }, schluesselVerdeckt: true, eingabe: 'der wesir bringt gold und seide' } });
+  assert.equal(k_text(ver, '.chiffre .geheimtext-gruppen'), 'der wesir bringt gold und seide');
+  assert.doesNotMatch(ver.k.text(ver.k.eins(ver.c.el, '.chiffre-kopf')), /Schlüssel verdeckt/);
+  const ent = baue({ id: 'W9-L2-12', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'frei', name: 'NOMEN-850' }, schluesselVerdeckt: true, eingabe: '3947H OWTOQ HQ005 862DK 35' } });
+  assert.equal(k_text(ent, '.chiffre .geheimtext-gruppen'), '3947H OWTOQ HQ005 862DK 35');
+  assert.doesNotMatch(ent.k.text(ent.k.eins(ent.c.el, '.chiffre-kopf')), /Schlüssel verdeckt/);
+  // andere Verfahren bleiben in Fünfergruppen
+  const caesar = baue({ id: 'W9-L2-13', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'der wesir bringt' } });
+  assert.equal(caesar.k.alle(caesar.c.el, '.chiffre .geheimtext-gruppen .gruppe').map(caesar.k.text).join(' '), 'derwe sirbr ingt');
+});
+function k_text({ k, c }, sel) {
+  return k.text(k.eins(c.el, sel)).replace(/\s+/g, ' ').trim();
+}
 test('chiffre Schrittprüfung: Präfix an den Server, erste falsche Position markiert', async () => {
   const praefixe = [];
   const { k, c } = baue(oeffentlich('W9-L5-01'), { schritt: async (teil, antwort) => { praefixe.push(antwort); return antwort.length === 2 ? { ok: false, ersteFalschePosition: 1 } : { ok: true, vollstaendig: false }; } });
