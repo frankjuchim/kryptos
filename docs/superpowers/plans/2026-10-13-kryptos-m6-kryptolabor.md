@@ -284,6 +284,10 @@ docs/KERN_ABWEICHUNGEN.md (K09 fortgeschrieben)
 })();
 ```
 
+- **Kennzeichen `BEREIT`** (`labor/registry.js`, Nachtrag nach Task 117): nur Werkzeuge in `BEREIT` werden nachgeladen;
+  andere zeigen „Dieses Werkzeug ist noch in Arbeit.“ ohne Skript-Anforderung (kein 404). Jede Werkzeug-Task trägt ihre
+  id in `BEREIT` ein (Test `labor_rahmen.test.js`: `BEREIT` = vorhandene Module); echte Ladefehler bleiben „konnte nicht
+  geladen werden“.
 - Kein globaler Name je Modul (IIFE). `voreinstellung` ist bereits ein Objekt (Registry), unbekannte Schlüssel werden
   ignoriert, ungültige Werte fallen auf den Standard zurück (Hinweis im Werkzeug, kein Fehler).
 - `umgebung = { modus: 'labor'|'lab'|'gast'|'vorschau', rolle: 'schueler'|'lehrkraft'|null, niveau: 'eA'|'gA'|null,

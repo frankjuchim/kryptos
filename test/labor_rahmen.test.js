@@ -111,28 +111,53 @@ test('Nachladen: fehlendes Modul → Skript mit ?v= wird angehängt, Ladehinweis
   const k = lade({ vorher: (kk) => { kk.document.head.appendChild(Object.assign(kk.document.createElement('script'), { src: '/static/js/krypto/oberflaeche.js?v=9.9.9' })); } });
   assert.equal(k.wert('KR.VERSION'), '9.9.9');
   const flaeche = k.document.createElement('div');
-  const ctrl = k.wert('KRLabor').oeffne('rsa', {}, flaeche, { modus: 'labor' });
+  const ctrl = k.wert('KRLabor').oeffne('skytale', {}, flaeche, { modus: 'labor' });
   assert.match(k.text(flaeche), /Wird geladen/);
-  assert.ok(k.skripte.some((s) => s === '/static/js/krypto/labor/rsa.js?v=9.9.9'));
+  assert.ok(k.skripte.some((s) => s === '/static/js/krypto/labor/skytale.js?v=9.9.9'));
   assert.equal(k.skripte.filter((s) => s.includes('bausteine')).length, 0, 'Bausteine sind schon da');
   assert.equal(ctrl.zustand(), null);
-  k.skriptEreignis('/static/js/krypto/labor/rsa.js?v=9.9.9', 'error'); // Attrappe feuert „error“ am angehängten Skript
+  k.skriptEreignis('/static/js/krypto/labor/skytale.js?v=9.9.9', 'error'); // Attrappe feuert „error“ am angehängten Skript
   await k.ruhe();
   assert.match(k.text(flaeche), /konnte nicht geladen werden/);
   // erfolgreich: Modul registriert sich beim Laden; Bausteine fehlen → erst bausteine.js, dann das Modul
   const m = D.lade(BASIS.filter((d) => d !== 'krypto/labor/bausteine.js'), { zeitraffer: ZEITRAFFER });
   const f2 = m.document.createElement('div');
-  m.wert('KRLabor').oeffne('hash', { text: 'x' }, f2, { modus: 'labor' });
+  m.wert('KRLabor').oeffne('scheibe', { text: 'x' }, f2, { modus: 'labor' });
   assert.deepEqual(m.skripte.filter((s) => s.includes('/labor/')), ['/static/js/krypto/labor/bausteine.js']);
   D.fuehreAus(m, ['krypto/labor/bausteine.js']);
   m.skriptEreignis('/static/js/krypto/labor/bausteine.js', 'load');
   await m.ruhe();
-  assert.deepEqual(m.skripte.filter((s) => s.includes('/labor/')), ['/static/js/krypto/labor/bausteine.js', '/static/js/krypto/labor/hash.js']);
-  m.wert(`KRLabor.registriere('hash', { titel: 'Hash-Labor', oeffne(c, v) { c.appendChild(document.createTextNode('Hash bereit: ' + v.text)); return { schliesse() {}, zustand: () => ({ v }) }; } })`);
-  m.skriptEreignis('/static/js/krypto/labor/hash.js', 'load');
+  assert.deepEqual(m.skripte.filter((s) => s.includes('/labor/')), ['/static/js/krypto/labor/bausteine.js', '/static/js/krypto/labor/scheibe.js']);
+  m.wert(`KRLabor.registriere('scheibe', { titel: 'Chiffrierscheibe', oeffne(c, v) { c.appendChild(document.createTextNode('Scheibe bereit: ' + v.text)); return { schliesse() {}, zustand: () => ({ v }) }; } })`);
+  m.skriptEreignis('/static/js/krypto/labor/scheibe.js', 'load');
   await m.ruhe();
-  assert.match(m.text(f2), /Hash bereit: x/);
+  assert.match(m.text(f2), /Scheibe bereit: x/);
   assert.deepEqual(m.roh(m.wert('KRLabor').aktiv().zustand()), { v: { text: 'x' } });
+});
+
+test('Noch nicht gebaute Werkzeuge: „noch in Arbeit“ ohne Ladeversuch; gebaute laden nach (KRLabor.bereit)', async () => {
+  const k = lade();
+  const L = k.wert('KRLabor');
+  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere']);
+  const f = k.document.createElement('div');
+  const ctrl = L.oeffne('rsa', {}, f, { modus: 'labor' });
+  assert.match(k.text(f), /Dieses Werkzeug ist noch in Arbeit\./);
+  assert.doesNotMatch(k.text(f), /konnte nicht geladen werden|Wird geladen/);
+  assert.equal(k.skripte.filter((s) => s.includes('/labor/')).length, 0, 'kein Skript angefordert (kein 404 in der Konsole)');
+  assert.equal(ctrl.zustand(), null);
+  // ein registriertes Modul (Test) öffnet trotzdem – das Kennzeichen betrifft nur das Nachladen
+  k.wert(`KRLabor.registriere('rsa', { titel: 'RSA', oeffne(c) { c.appendChild(document.createTextNode('RSA da')); return {}; } })`);
+  const f2 = k.document.createElement('div');
+  L.oeffne('rsa', {}, f2, { modus: 'labor' });
+  assert.match(k.text(f2), /RSA da/);
+  // Dialog zeigt dieselbe Meldung
+  const d = L.dialog('hash', {}, { modus: 'lab' });
+  assert.match(k.text(d), /noch in Arbeit/);
+  // bereites Werkzeug ohne geladenes Modul: Nachladen
+  const f3 = k.document.createElement('div');
+  L.oeffne('vigenere', {}, f3, { modus: 'labor' });
+  assert.match(k.text(f3), /Wird geladen/);
+  assert.ok(k.skripte.some((s) => s.startsWith('/static/js/krypto/labor/vigenere.js')));
 });
 
 test('Bausteine: Reiter per Pfeiltaste, Zahlregler mit Grenzen, Ausgabe kopiert ohne Gruppen', async () => {
@@ -173,4 +198,13 @@ test('Bausteine: Reiter per Pfeiltaste, Zahlregler mit Grenzen, Ausgabe kopiert 
   const h = B.hinweis('falle', '(p + k) mod 26 = 0 → Z', { falle: 'P2' });
   assert.equal(h.getAttribute('role'), 'status');
   assert.match(k.text(h), /P2/);
+});
+
+test('BEREIT = vorhandene Werkzeug-Module (labor/<id>.js)', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const k = lade();
+  const L = k.wert('KRLabor');
+  const dateien = new Set(fs.readdirSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor')).map((d) => d.replace(/\.js$/, '')));
+  for (const w of k.roh(L.WERKZEUGE)) assert.equal(L.bereit(w.id), dateien.has(w.id), w.id);
 });

@@ -2,7 +2,8 @@
    Test labor.test.js), Registrierung der Werkzeug-Module, Öffnen in einem Container oder in einem <dialog> mit Kopfband
    im Epochenakzent, Fokusfalle, Esc und Rückkehr des Fokus. M6: Nachladen der Module (lade, E72), Reiter-Regeln nach
    Welt und Niveau (REITER_REGELN, erlaubt, reiterFuer – E71, E87), Nachspiel-Modus (nachspiel, E67) und die
-   Brute-Force-Demo „Alle Schlüssel ausprobieren“ (alleSchluessel) – Werkzeuge bauen keine eigenen Abspieler. */
+   Brute-Force-Demo „Alle Schlüssel ausprobieren“ (alleSchluessel) – Werkzeuge bauen keine eigenen Abspieler.
+   Noch nicht gebaute Werkzeuge (BEREIT) zeigen „noch in Arbeit“ statt eines Ladefehlers. */
 'use strict';
 
 const KRLabor = (() => {
@@ -26,6 +27,13 @@ const KRLabor = (() => {
   );
   const NACH_ID = new Map(WERKZEUGE.map((w) => [w.id, w]));
   const MODULE = new Map();
+  // Werkzeuge, deren Modul gebaut ist (labor/<id>.js vorhanden). Andere zeigen „noch in Arbeit“, ohne ein Skript
+  // anzufordern (kein 404); echte Ladefehler gebauter Module bleiben Fehler. Mit jedem neuen Modul ergänzen (M6).
+  const BEREIT = new Set(['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere']);
+  /** Ist das Modul des Werkzeugs gebaut (nachladbar)? */
+  function bereit(id) {
+    return BEREIT.has(id);
+  }
 
   /** Eintrag zur id oder null. */
   function werkzeug(id) {
@@ -145,6 +153,10 @@ const KRLabor = (() => {
     zuletzt = steuer;
     if (MODULE.has(id) && typeof KRLaborBau !== 'undefined') {
       starte();
+      return steuer;
+    }
+    if (!BEREIT.has(id)) {
+      AQ.mount(container, h('div', { class: 'leer-zustand', role: 'status' }, KR.symbol('icons', 'i-labor'), h('p', { class: 'leer-zustand-text' }, 'Dieses Werkzeug ist noch in Arbeit.'), h('p', { class: 'text-2' }, 'Es kommt mit einer der nächsten Versionen.')));
       return steuer;
     }
     AQ.mount(container, h('p', { class: 'laden', role: 'status' }, 'Wird geladen …'));
@@ -437,5 +449,5 @@ const KRLabor = (() => {
     return { element: box, nachspiel: ns, schliesse: () => ns.schliesse() };
   }
 
-  return { WERKZEUGE, REITER_REGELN, werkzeug, registriere, hat, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
+  return { WERKZEUGE, REITER_REGELN, werkzeug, registriere, hat, bereit, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
 })();
