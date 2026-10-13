@@ -1772,6 +1772,11 @@ def verfahren_varianten(v, text, richtung, *, basis=1, ausgabe='buchstaben'):
         q = ''.join(quadrat(v['quadrat'], groesse=6))
         dazu('P3', 'reihenfolge',
              lambda: spaltentransposition(polybios(t, 'ent', schluessel=q, kopf='ADFGVX'), v['schluessel'], 'ent'))
+    if richtung == 'ent' and typ == 'affin':
+        # t nach statt vor der Multiplikation abgezogen: p' = m^-1 * c - t (SPEC W1 §8)
+        bas, b = v.get('basis', 0), v.get('b', 0)
+        dazu('P3', 'reihenfolge',
+             lambda: ''.join(buchstabe(inverses(v['a'], 26) * wert(c, bas) - b, bas) for c in nur_buchstaben(t)))
     if typ == 'caesar':
         for dk in (1, -1):
             dazu('P1', 'zaehlbasis', lambda dk=dk: caesar(t, v['k'] + dk, richtung))

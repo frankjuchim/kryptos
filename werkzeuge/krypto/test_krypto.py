@@ -1269,6 +1269,9 @@ class VerfahrenBaukasten(unittest.TestCase):
         self.assertIn(K.vigenere('kanal', 'SPU'), finde(v, 'P1', 'zaehlbasis'))
         self.assertIn(K.vigenere('kanal', 'OTR'), finde(v, 'P1', 'position'))
         self.assertIn(K.affin('dattel', 5, 6, 'ver', 1), finde(va({'typ': 'affin', 'a': 5, 'b': 6}, 'dattel', 'ver'), 'P1', 'zaehlbasis'))
+        # affin ent: t nach statt vor der Multiplikation abgezogen (SPEC W1 §8): CPQN, (21, 7), m^-1 = 5 -> DQVG
+        self.assertEqual(finde(va({'typ': 'affin', 'a': 21, 'b': 7}, 'CPQN', 'ent'), 'P3', 'reihenfolge'), ['DQVG'])
+        self.assertEqual(finde(va({'typ': 'affin', 'a': 21, 'b': 7}, 'abc', 'ver'), 'P3', 'reihenfolge'), [])
         sk = va({'typ': 'skytale', 'umfang': 3}, 'wirhaltendenpass', 'ver')
         self.assertEqual(len(finde(sk, 'P3', 'permutation')), 1)
         self.assertIn(K.skytale('wirhaltendenpass', 3, fuellzeichen=None), finde(sk, 'P4', 'fuellung'))

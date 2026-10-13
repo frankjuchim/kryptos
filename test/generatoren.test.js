@@ -397,14 +397,14 @@ test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau 
   assert.deepEqual(['w4_dh', 'w4_rsa_ver'].map((k) => G.GENERATOREN[k].niveau), ['ergaenzung', 'ergaenzung']);
 });
 
-test('Alle 16 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA)', () => {
-  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'schluesselwort_alphabet', 'vigenere', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
+test('Alle 19 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + W0/W1-Ergänzungen, Plan M5 Task 91)', () => {
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'schluesselwort_alphabet', 'skytale', 'substitution_ver_ent', 'vigenere', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
   // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
   for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
 
 test('Entschlüsselungs-Generatoren liefern Klartext klein (Design §6.2, Plan M5 E58)', () => {
-  for (const key of ['caesar_ent', 'affin', 'vigenere']) {
+  for (const key of ['caesar_ent', 'affin', 'vigenere', 'skytale', 'substitution_ver_ent']) {
     let ent = 0;
     for (let s = 1; s <= 40; s++) {
       const a = G.erzeuge(key, s);
@@ -414,4 +414,147 @@ test('Entschlüsselungs-Generatoren liefern Klartext klein (Design §6.2, Plan M
     }
     assert.ok(ent > 0, `${key}: keine Entschlüsselungsaufgabe in 40 Seeds`);
   }
+});
+
+/* ---------- Plan M5 Task 91: weitere Generatoren Welten 0 und 1 (W0 §8, W1 §8) ---------- */
+
+/** Skytale unabhängig: Raster mit u Zeilen zeilenweise füllen (ohne Füllung: letzte Zeile kürzer), spaltenweise lesen. */
+function skytaleRaster(text, u, fuellen = true) {
+  let t = nurAZ(text);
+  const m = Math.ceil(t.length / u);
+  if (fuellen) t += 'X'.repeat(u * m - t.length);
+  let out = '';
+  for (let s = 0; s < m; s++) for (let z = 0; z < u; z++) if (z * m + s < t.length) out += t[z * m + s];
+  return out;
+}
+
+test('skytale: Raster unabhängig nachgerechnet, ver/ent, Füllzeichen X, Diagnose P3/P4', () => {
+  const richtungen = new Set();
+  let p3 = 0;
+  for (const a of grundpruefung('skytale')) {
+    const ia = a.interaktion;
+    const u = ia.verfahren.umfang;
+    assert.ok([2, 3, 4, 5].includes(u), `u = ${u}`);
+    assert.equal(a.kategorie, 'transposition');
+    assert.match(a.inhalt[0].md, new RegExp(`Umfang u = ${u} .*Füllzeichen X`));
+    richtungen.add(ia.richtung);
+    if (ia.richtung === 'ver') {
+      const woerter = ia.eingabe.split(' ');
+      assert.ok(woerter.length >= 2 && woerter.length <= 3 && woerter.every((w) => W.WOERTER_ANTIKE.includes(w)), ia.eingabe);
+      const n = nurAZ(ia.eingabe).length;
+      assert.ok(n >= 8 && n <= 24, `${n} Buchstaben`);
+      assert.equal(a.loesung.text, skytaleRaster(ia.eingabe, u));
+      assert.ok(u * Math.ceil(n / u) - n < Math.ceil(n / u), 'keine Zeile nur aus Füllzeichen');
+      // X fehlt → P4 (nur wenn aufgefüllt wurde)
+      // (bei quadratischem Raster u = m mit genau einer Lücke gleicht das Raster ohne Füllung der P3-Umkehrung – dann P3)
+      if (n % u) {
+        const ohne = skytaleRaster(ia.eingabe, u, false);
+        const ps = C.pruefeAufgabe(a, ohne, { diagnose: true }).diagnose.map((d) => d.p);
+        assert.ok(ps.includes('P4') || (Math.ceil(n / u) === u && ps[0] === 'P3'), `${ia.eingabe}/${u}: ${ps}`);
+      }
+      // zeilenweise statt spaltenweise: Klartext spaltenweise eintragen, zeilenweise lesen → P3
+      if (n % u === 0) {
+        const t = nurAZ(ia.eingabe), m = n / u;
+        let falsch = '';
+        for (let z = 0; z < u; z++) for (let s = 0; s < m; s++) falsch += t[s * u + z];
+        if (falsch !== a.loesung.text) { p3++; assert.equal(C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose[0].p, 'P3'); }
+      }
+    } else {
+      assert.equal(a.loesung.text, a.loesung.text.toLowerCase(), 'Klartext klein');
+      assert.equal(skytaleRaster(a.loesung.text, u), nurAZ(ia.eingabe), 'Klartext ergibt den Geheimtext');
+      assert.match(ia.eingabe, /^([A-Z]{5} )*[A-Z]{1,5}$/, 'Fünfergruppen');
+      const ohneX = a.loesung.text.replace(/x+$/, '');
+      if (ohneX !== a.loesung.text) assert.deepEqual(a.loesung.alternativen, [ohneX]);
+      assert.equal(C.pruefeAufgabe(a, ohneX).ok, true, 'abschließende X dürfen fehlen');
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+  assert.ok(p3 > 0, 'P3-Fall geprüft');
+});
+
+test('substitution_ver_ent: Schlüsselwort-Alphabet unabhängig, Alphabet-Leiste, Diagnose P3', () => {
+  const richtungen = new Set();
+  for (const a of grundpruefung('substitution_ver_ent')) {
+    const ia = a.interaktion;
+    const wort = ia.verfahren.schluesselwort;
+    assert.ok(W.SCHLUESSELWOERTER_W1.includes(wort.toLowerCase()), wort);
+    const ohne = [...new Set(wort)].join('');
+    const alph = ohne + [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].filter((c) => !ohne.includes(c)).join('');
+    const leiste = a.inhalt.find((b) => b.t === 'alphabet');
+    assert.ok(leiste, 'Block alphabet');
+    assert.deepEqual(leiste.zeilen.map((z) => z.werte), ['abcdefghijklmnopqrstuvwxyz', alph]);
+    const ver = (t) => [...nurAZ(t)].map((c) => alph[c.charCodeAt(0) - 65]).join('');
+    const ent = (t) => [...nurAZ(t)].map((c) => String.fromCharCode(65 + alph.indexOf(c))).join('');
+    const [klar, geheim] = ia.richtung === 'ver' ? [ia.eingabe, a.loesung.text] : [a.loesung.text, ia.eingabe];
+    assert.ok(W.WOERTER_BAGDAD.includes(klar.toLowerCase().replace(/ /g, '')), klar);
+    assert.equal(ver(klar), nurAZ(geheim));
+    assert.notEqual(nurAZ(klar), nurAZ(geheim), 'kein unveränderter Text');
+    if (ia.richtung === 'ent') assert.equal(a.loesung.text, a.loesung.text.toLowerCase());
+    const falsch = ia.richtung === 'ver' ? ent(ia.eingabe) : ver(ia.eingabe);
+    if (falsch !== nurAZ(a.loesung.text)) assert.equal(C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose[0].p, 'P3');
+    richtungen.add(ia.richtung);
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+});
+
+test('haeufigkeit_caesar: e eindeutig häufigster Klartextbuchstabe, k entschlüsselt, Top 5, Fehlmuster P1/P3', () => {
+  for (const a of grundpruefung('haeufigkeit_caesar', 300)) {
+    const k = Number(a.loesung.k[0]);
+    assert.ok(k >= 1 && k <= 25);
+    const block = a.inhalt.find((b) => b.t === 'haeufigkeit');
+    assert.equal(block.quelle, 'text');
+    const geheim = nurAZ(block.text);
+    assert.ok(geheim.length >= 60 && geheim.length <= 120, `${geheim.length} Buchstaben`);
+    assert.match(a.inhalt.map((b) => b.md || '').join(' '), /Nummerierung: A = 1/);
+    const klar = za(az(geheim).map((x) => x - k));
+    const zaehl = {};
+    for (const c of klar) zaehl[c] = (zaehl[c] || 0) + 1;
+    const sortiert = Object.entries(zaehl).sort((x, y) => y[1] - x[1]);
+    assert.equal(sortiert[0][0], 'E', klar);
+    assert.ok(sortiert[0][1] > sortiert[1][1], 'e eindeutig am häufigsten');
+    // Top 5 des Geheimtextes im Text
+    const gz = {};
+    for (const c of geheim) gz[c] = (gz[c] || 0) + 1;
+    const top = Object.entries(gz).sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0])).slice(0, 5);
+    for (const [c, n] of top) assert.match(a.inhalt[0].md, new RegExp(`${c} ${n}\\b`));
+    // Fehlmuster
+    const d = (x) => (C.pruefeAufgabe(a, { k: String(x) }, { diagnose: true }).diagnose || []).map((y) => y.p);
+    if (k + 1 <= 25) assert.deepEqual(d(k + 1), ['P1']);
+    if (k - 1 >= 0) assert.deepEqual(d(k - 1), ['P1']);
+    if (26 - k !== k) assert.deepEqual(d(26 - k), ['P3']);
+  }
+});
+
+test('schluesselwort_alphabet: Rest ab dem letzten Schlüsselwortbuchstaben → P4 „Kryptos-Regel: Rest ab A“', () => {
+  let geprueft = 0;
+  for (const seed of SEEDS.slice(0, 60)) {
+    const a = G.erzeuge('schluesselwort_alphabet', seed);
+    const [, wort, n] = /Schlüsselwort ([A-Z]+) .*ersten (\d+)/.exec(a.inhalt[0].md);
+    const ohne = [...new Set(wort)].join('');
+    const letzter = ohne.charCodeAt(ohne.length - 1) - 65;
+    const rest = [];
+    for (let i = 1; i <= 26; i++) { const c = String.fromCharCode(65 + ((letzter + i) % 26)); if (!ohne.includes(c)) rest.push(c); }
+    const falsch = (ohne + rest.join('')).slice(0, Number(n));
+    if (falsch === a.loesung.a[0]) continue;
+    geprueft++;
+    const d = C.pruefeAufgabe(a, { a: falsch }, { diagnose: true }).diagnose;
+    assert.equal(d[0].p, 'P4');
+    assert.equal(d[0].code, 'rest_ab_letztem');
+    assert.match(d[0].text, /Rest ab A/);
+  }
+  assert.ok(geprueft > 30, `${geprueft}`);
+});
+
+test('affin (ent): t nach statt vor der Multiplikation abgezogen → P3', () => {
+  let geprueft = 0;
+  for (const a of grundpruefung('affin')) {
+    if (a.interaktion.richtung !== 'ent') continue;
+    const { a: m, b: t } = a.interaktion.verfahren;
+    const inv = Number(/m⁻¹ = (\d+)/.exec(a.inhalt[0].md)[1]);
+    const falsch = za(az(a.interaktion.eingabe).map((c) => inv * c - t));
+    if (falsch === nurAZ(a.loesung.text) || t === 0) continue;
+    geprueft++;
+    assert.equal(C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose[0].p, 'P3', `${m}, ${t}`);
+  }
+  assert.ok(geprueft > 10);
 });

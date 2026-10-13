@@ -1297,13 +1297,13 @@ Ergänzungen bestehender Generatoren (W1 §8 Prüfregeln):
 - `SATZBAUSTEINE_W1` (vorläufig, offene Entscheidung 2): drei Listen (Satzanfang, Mitte, Ende) aus `WOERTER_BAGDAD` und Funktionswörtern
   („der“, „die“, „und“, „ein“, „im“, „am“); der Generator prüft die Eindeutigkeit von e.
 
-- [ ] **Step 1: Failing tests** (`generatoren.test.js`, unabhängige Nachrechnung wie M3 Task 37: Skytale über eigenes Raster-Lesen,
+- [x] **Step 1: Failing tests** (`generatoren.test.js`, unabhängige Nachrechnung wie M3 Task 37: Skytale über eigenes Raster-Lesen,
   Substitution über `indexOf` im Alphabet, Häufigkeit über eigene Zählung; `haeufigkeit_caesar`: in 300 Seeds ist e im Klartext
   eindeutig häufigster Buchstabe und die Antwort k entschlüsselt den Geheimtext; `affin` ent: Antwort `reihenfolge` → Diagnose P3) → FAIL.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Bibliotheksvariante zuerst, dann Generatoren; jede Generator-Aufgabe läuft durch den Validator).
-- [ ] **Step 4: Run** → PASS; `npm run krypto:vergleich -- --anzahl 300`; `python3 -I werkzeuge/krypto/test_krypto.py`; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "Generatoren W0/W1: Skytale, Substitution, Häufigkeit-Caesar; Diagnosen Schlüsselwort-Rest und affine Reihenfolge"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Bibliotheksvariante zuerst, dann Generatoren; jede Generator-Aufgabe läuft durch den Validator).
+- [x] **Step 4: Run** → PASS; `npm run krypto:vergleich -- --anzahl 300`; `python3 -I werkzeuge/krypto/test_krypto.py`; `npm test`.
+- [x] **Step 5: Commit** `git commit -m "Generatoren W0/W1: Skytale, Substitution, Häufigkeit-Caesar; Diagnosen Schlüsselwort-Rest und affine Reihenfolge"`.
 
 ### Task 92: Weitere Generatoren Welt 2 (W2 §8 Nr. 4–8)
 

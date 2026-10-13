@@ -139,7 +139,9 @@ src/
     generatoren/               caesar.js, schluesselpaar.js, modulo.js, affin.js, schluesselwort.js, vigenere.js,
                                kasiski.js, koinzidenz.js, xor.js, kryptos16.js, toyhash.js, schluesselanzahl.js, dhrsa.js
                                (12 Pflicht-Generatoren nach Design §7.6 + dhrsa.js als Ergänzung = 13 Dateien,
-                               16 Generator-Schlüssel nach Welt-Spec §8; index.js registriert, woerter.js Wortlisten)
+                               16 Generator-Schlüssel nach Welt-Spec §8; index.js registriert, woerter.js Wortlisten);
+                               M5 (W0/W1 §8): skytale.js (skytale), substitution.js (substitution_ver_ent),
+                               haeufigkeit_caesar.js (haeufigkeit_caesar) – 16 Dateien, 19 Generator-Schlüssel
     teams.js                   Tischgruppen je Kurs
     funkraum/                  szenarien.js (Konfiguration §12.6), dienst.js, routen.js
     arena/                     dienst.js, routen.js

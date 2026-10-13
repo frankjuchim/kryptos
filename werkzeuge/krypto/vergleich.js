@@ -463,7 +463,7 @@ const FAELLE = {
     },
   },
   'verfahren.varianten': {
-    fest: [[{ typ: 'frei' }, 'abc', 'ver'], [{ typ: 'caesar', k: 6 }, 'treffpunkt', 'ver'], [{ typ: 'caesar', k: 3 }, 'WXY', 'ver', { ausgabe: 'zahlen' }], [{ typ: 'caesar', k: 3 }, 'ABC', 'ent', { ausgabe: 'zahlen' }], [{ typ: 'playfair', schluessel: 'RIALTO' }, 'ballett', 'ver'], [{ typ: 'atbash' }, 'abc', 'ver']],
+    fest: [[{ typ: 'frei' }, 'abc', 'ver'], [{ typ: 'caesar', k: 6 }, 'treffpunkt', 'ver'], [{ typ: 'caesar', k: 3 }, 'WXY', 'ver', { ausgabe: 'zahlen' }], [{ typ: 'caesar', k: 3 }, 'ABC', 'ent', { ausgabe: 'zahlen' }], [{ typ: 'playfair', schluessel: 'RIALTO' }, 'ballett', 'ver'], [{ typ: 'atbash' }, 'abc', 'ver'], [{ typ: 'affin', a: 21, b: 7 }, 'CPQN', 'ent'], [{ typ: 'affin', a: 21, b: 7, basis: 1 }, 'CPQN', 'ent', { ausgabe: 'zahlen', basis: 1 }]],
     zufall: () => {
       let v = verfahrensObjekt();
       if (v.typ === 'frei' && zufall() < 0.8) v = { typ: 'caesar', k: ganz(0, 25) };

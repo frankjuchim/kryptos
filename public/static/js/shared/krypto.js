@@ -1843,6 +1843,12 @@
       });
       if (v.typ === 'fleissner') dazu('P3', 'permutation', () => aus(rechne({ ...v, drehung: v.drehung === 'links' ? 'rechts' : 'links' }, text, richtung)));
     }
+    // P3: affin entschlüsseln mit t nach statt vor der Multiplikation abgezogen, p' = m⁻¹ · c − t (SPEC W1 §8)
+    if (v.typ === 'affin' && richtung === 'ent') {
+      const bas = v.basis === undefined ? 0 : v.basis;
+      const b = v.b === undefined ? 0 : v.b;
+      dazu('P3', 'reihenfolge', () => aus([...nurBuchstaben(text)].map((c) => buchstabe(inversMod26(v.a) * wert(c, bas) - b, bas)).join('')));
+    }
     // P1: Zählbasis und Position
     if (v.typ === 'caesar') {
       dazu('P1', 'zaehlbasis', () => aus(caesar(text, v.k + 1, richtung)));

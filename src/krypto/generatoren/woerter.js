@@ -62,9 +62,25 @@ const PLAYFAIR_W2 = Object.freeze([
 ]);
 
 /**
+ * Satzbaukasten Welt 1 für den Generator haeufigkeit_caesar (SPEC W1 §8; vorläufig, offene Entscheidung 2 des M5-Plans):
+ * Satz = anfang + mitte + zwei verschiedene ende-Teile (Nomen aus WOERTER_BAGDAD, dazu Funktionswörter und wenige
+ * neutrale Verben). Der Generator verwirft Sätze, in denen e nicht eindeutig der häufigste Buchstabe ist.
+ */
+const SATZBAUSTEINE_W1 = Object.freeze({
+  anfang: Object.freeze(['der kaufmann', 'der buchbinder', 'der uebersetzer', 'die laterne', 'der teppich', 'das astrolab', 'die wasseruhr', 'der globus', 'die waage', 'das tintenfass', 'der federkiel', 'die sternkarte']),
+  mitte: Object.freeze(['liegt im innenhof', 'steht am euphrat', 'wartet im lehrsaal', 'ruht im rosengarten', 'steht neben dem backofen', 'liegt in der schatzkammer', 'steht unter der kuppel', 'wartet an der arkade']),
+  ende: Object.freeze([
+    'und der honig duftet nach kardamom', 'und die melone liegt neben der zitrone', 'und ein dromedar trinkt am damm',
+    'und der zirkel liegt bei dem lineal', 'und die rosine liegt neben der walnuss', 'und der sesam liegt auf dem fladenbrot',
+    'und die myrrhe duftet wie weihrauch', 'und ein kamel ruht hinter der duene', 'und der ingwer liegt neben dem kurkuma',
+    'und die aprikose liegt bei der pistazie'
+  ])
+});
+
+/**
  * Welt 5 (vorläufig; SPEC W5 §8 verlangt ≈ 300 Wörter) – ohne Video-Wörter und nie die Paare aus SPEC W5 §0a
  * (nebel, heute, morgen, ueberweise, zwei, tausend, euro).
  */
 const WOERTER_W5 = Object.freeze(['mauer', 'kabel', 'router', 'wolke', 'daten', 'paket', 'server', 'signal']);
 
-module.exports = { WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2, PLAYFAIR_W2, WOERTER_W5 };
+module.exports = { WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2, PLAYFAIR_W2, SATZBAUSTEINE_W1, WOERTER_W5 };

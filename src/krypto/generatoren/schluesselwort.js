@@ -13,8 +13,14 @@ function schluesselwortAlphabet(z) {
   const loesung = K.schluesselwortAlphabet(wort).slice(0, n);
   // Fehlmuster P4: Wiederholungen nicht gestrichen
   const ohneStreichen = (wort + [...ALPHABET].filter((c) => !wort.includes(c)).join('')).slice(0, n);
+  // Fehlmuster P4 (Verfahrensregel, SPEC W1 §8 „Kryptos-Regel: Rest ab A“; offene Entscheidung 9 des M5-Plans):
+  // Rest ab dem letzten Schlüsselwortbuchstaben statt ab A
+  const abLetztem = K.schluesselwortAlphabet(wort, { rest: 'ab_letztem' }).slice(0, n);
   const lo = { a: [loesung] };
-  if (ohneStreichen !== loesung) lo._fehlmuster = { a: [{ wert: ohneStreichen, p: 'P4', code: 'wiederholung' }] };
+  const fm = [];
+  if (ohneStreichen !== loesung) fm.push({ wert: ohneStreichen, p: 'P4', code: 'wiederholung' });
+  if (abLetztem !== loesung && abLetztem !== ohneStreichen) fm.push({ wert: abLetztem, p: 'P4', code: 'rest_ab_letztem' });
+  if (fm.length) lo._fehlmuster = { a: fm };
   return {
     titel: 'Schlüsselwort-Alphabet',
     stufe: 1,

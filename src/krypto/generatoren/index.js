@@ -5,10 +5,13 @@
 
 const MODULE = [
   require('./caesar'),
+  require('./skytale'),
   require('./schluesselpaar'),
   require('./modulo'),
   require('./affin'),
   require('./schluesselwort'),
+  require('./substitution'),
+  require('./haeufigkeit_caesar'),
   require('./vigenere'),
   require('./kasiski'),
   require('./koinzidenz'),

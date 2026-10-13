@@ -29,7 +29,8 @@ const TEXTE = Object.freeze({
   '*:ueberlauf': 'Über Z hinaus geht es wieder bei A weiter – rechne mod 26.',
   '*:negativ': 'mod liefert den kleinsten nicht negativen Rest.',
   '*:paare': 'Prüfe die Paarbildung: Doppelbuchstaben trennen, J = I, Füllzeichen.',
-  '*:fuellung': 'Prüfe Füllzeichen und die unvollständige letzte Zeile.'
+  '*:fuellung': 'Prüfe Füllzeichen und die unvollständige letzte Zeile.',
+  '*:rest_ab_letztem': 'Kryptos-Regel: Rest ab A – nach dem Schlüsselwort folgen die übrigen Buchstaben ab A, nicht ab dem letzten Schlüsselwortbuchstaben.'
 });
 
 /** Text zu Interaktion, Falle und Code; unbekannter Code → allgemeiner Hinweis auf die Falle. */

@@ -2050,6 +2050,9 @@ test('verfahren.varianten: Fehlrechnungen (Delta §9.2)', () => {
   assert.ok(finde(v, 'P1', 'position').includes(K.vigenere('kanal', 'OTR')));
   // affin: andere Zählbasis
   assert.ok(finde(va({ typ: 'affin', a: 5, b: 6 }, 'dattel', 'ver'), 'P1', 'zaehlbasis').includes(K.affin('dattel', 5, 6, 'ver', 1)));
+  // affin ent: t nach statt vor der Multiplikation abgezogen (SPEC W1 §8, Plan M5 Task 91): CPQN, (21, 7), m⁻¹ = 5 → DQVG
+  assert.deepEqual(finde(va({ typ: 'affin', a: 21, b: 7 }, 'CPQN', 'ent'), 'P3', 'reihenfolge'), ['DQVG']);
+  assert.deepEqual(finde(va({ typ: 'affin', a: 21, b: 7 }, 'abc', 'ver'), 'P3', 'reihenfolge'), []);
   // Transposition: Permutation nicht umgekehrt, Füllzeichen
   const sk = va({ typ: 'skytale', umfang: 3 }, 'wirhaltendenpass', 'ver');
   assert.ok(finde(sk, 'P3', 'permutation').length === 1);
