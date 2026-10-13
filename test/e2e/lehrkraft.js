@@ -25,6 +25,17 @@ async function speichern(page) {
   await page.locator('#toast', { hasText: 'Gespeichert.' }).waitFor();
 }
 
+/** Kurs über das Menü der Kopfzeile wählen (Menü → #kopf-kurs → button.kurs-wechseln); ohne Wechsel nur Menü schließen. */
+async function kursWaehlen(page, name) {
+  const wahl = page.locator('#kopf-kurs');
+  await page.locator('details.menue > summary').click();
+  const wert = await wahl.locator('option', { hasText: name }).getAttribute('value');
+  if ((await wahl.inputValue()) !== wert) {
+    await wahl.selectOption(wert);
+    await Promise.all([page.waitForEvent('load'), page.locator('button.kurs-wechseln').click()]);
+  } else await page.locator('details.menue > summary').click();
+}
+
 async function szenario7a(ctx) {
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 7a');
   await anmelden(page, ctx, 'Frau M.', '/lehrer');
@@ -96,13 +107,7 @@ async function szenario7b(ctx) {
   // Mika im LK 13: Chiffrierscheibe gesperrt
   const mika = await neueSeite(ctx, {}, 'Szenario 7b (Mika)');
   await anmelden(mika.page, ctx, 'Mika R.', '/spiel');
-  const wahl = mika.page.locator('#kopf-kurs');
-  await mika.page.locator('details.menue > summary').click();
-  const lk = await wahl.locator('option', { hasText: 'LK 13 (eA)' }).getAttribute('value');
-  if ((await wahl.inputValue()) !== lk) {
-    await wahl.selectOption(lk);
-    await Promise.all([mika.page.waitForEvent('load'), mika.page.locator('button.kurs-wechseln').click()]);
-  } else await mika.page.locator('details.menue > summary').click();
+  await kursWaehlen(mika.page, 'LK 13 (eA)');
   await gehe(mika.page, `${ctx.basis}/spiel#/level/W9-L1`);
   await mika.page.locator('.aufgaben-liste').waitFor();
   assert.equal(await mika.page.locator('a[href="/labor#/scheibe"]').count(), 0, 'gesperrtes Werkzeug ohne Labor-Karte');
@@ -113,4 +118,4 @@ async function szenario7b(ctx) {
   await mika.kontext.close();
 }
 
-module.exports = { szenario7a, szenario7b };
+module.exports = { szenario7a, szenario7b, kursWaehlen };

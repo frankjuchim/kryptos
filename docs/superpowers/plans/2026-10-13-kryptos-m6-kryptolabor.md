@@ -2428,7 +2428,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   (nur lesend, für den Ergebnisvergleich), `KRLabor.hat(id)`.
 - Produces: `szenario4(ctx)`.
 
-- [ ] **Step 1: Szenario schreiben** – `test/e2e/labor.js`:
+- [x] **Step 1: Szenario schreiben** – `test/e2e/labor.js`:
   ```js
   'use strict';
   /* e2e – Kryptolabor (TECHNIK §15 Nr. 4): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis gegen Krypto;
@@ -2507,9 +2507,17 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   ```
   (Feinheiten der Selektoren – `input.bit-schluessel`, `input.hash-text` – an die Umsetzung der Tasks 118/123 angleichen;
   die Erwartung bleibt „Ergebnis = Krypto“.)
-- [ ] **Step 2: Run** `E2E_NUR=1,7a,3,4,7b npm run e2e` → FAIL vor der Einbindung, dann grün; danach `npm run e2e` komplett grün
+- [x] **Step 2: Run** `E2E_NUR=1,7a,3,4,7b npm run e2e` → FAIL vor der Einbindung, dann grün; danach `npm run e2e` komplett grün
   (Szenarien 1–4, 7–11).
-- [ ] **Step 3: Commit** `git commit -m "e2e Szenario 4: Kryptolabor – jedes freigegebene Werkzeug rechnet wie Krypto, gesperrtes Werkzeug, Tastatur, 360 px"`.
+- [x] **Step 3: Commit** `git commit -m "e2e Szenario 4: Kryptolabor – jedes freigegebene Werkzeug rechnet wie Krypto, gesperrtes Werkzeug, Tastatur, 360 px"`.
+- **Umsetzungsnotizen:** `KRLabor` ist ein `const` im klassischen Skript (keine `window`-Eigenschaft) – das Szenario wartet mit
+  `typeof KRLabor !== 'undefined'`. Selektoren an die Werkzeuge angeglichen (`input.xor-schluessel`, Hash über
+  `textarea.labor-eingabe`, Häufigkeit über die Tabelle des Histogramms, Runden-Erwartung aus `zustand().block/schluessel/runden`,
+  Signatur mit Alices Beispielschlüssel aus Task 124 statt (55, 27)). Reiter-Regeln werden gegen `/api/labor` geprüft
+  (Ring/MitM nur mit Welt 6, Koinzidenz nur eA) statt fest „kein Ring“; jede Erwartung muss vorhanden sein (kein null = null).
+  Der Dialog-Test wartet auf die (versteckte) Tabelle mit `state: 'attached'` und prüft die Voreinstellung `IMQRH AGTZF`.
+  `geraete.js`: die drei Labor-Seiten laufen als Lehrkraft (alle Reiter) und damit auch durch die Kontrastmessung.
+  Der volle Lauf schreibt die vorhandenen `m4-*`-Fotos neu (Versionsnummer im Fuß) – sie werden nicht mitcommittet (E88).
 
 ### Task 129: Abschluss M6 – Dokumente, Kern-Abweichungen, Prüfung
 

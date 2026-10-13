@@ -1709,14 +1709,17 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
-ohne Fotos); Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 10 → 9 → 11. Nr. 4–6 folgen mit M6/M7. `E2E_NUR=11` (Komma-Liste)
+ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88); Reihenfolge 1 → 2 → 7a → 3 → 4 → 7b → 8 → 10 → 9 → 11.
+Nr. 5–6 folgen mit M7. `E2E_NUR=11` (Komma-Liste)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
 2. Level mit allen neuen Interaktionen (Fixture): `chiffre` mit Schrittprüfung und Fallen-Chip P3, `zuordnung` mit
    Vorschau, `schaubild-ergaenzen`, `bits-rechnen`; Lösung zeigen; Tipp.
 3. Boss: Start, keine Werkzeuge/Labor-Links, Abgabe, Auswertung mit Diagnose.
-4. Kryptolabor: jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis gegen `Krypto` prüfen; gesperrtes Werkzeug.
+4. Kryptolabor (umgesetzt M6 Task 128): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis gegen `Krypto` prüfen;
+   gesperrtes Werkzeug (Scheibe aus 7a) wird nicht geladen; Reiter-Regeln des Kurses; Nachspiel per Tastatur; Dialog aus
+   einer Aufgabe mit Voreinstellung und Fokus-Rückkehr; 360 px ohne Querscrollen; reduzierte Bewegung. Ohne Fotos.
 5. Funkraum-Durchlauf „Botenlauf“ mit **drei Teams** (drei Browser-Kontexte) + Beamer: Nachricht, Empfang, Knacken,
    Beenden → Inhalte weg.
 6. Arena: zwei Teams reichen ein, Angriff, Knacken, Beurteilung, Abzeichen.

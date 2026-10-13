@@ -27,7 +27,7 @@ async function szenario9(ctx) {
   const lk = ctx.kurse.lk;
   const oeffentlich = ['/', '/themen', '/themen#niveaus', '/gast', '/datenschutz', `/board/${encodeURIComponent(ctx.boardSchluessel)}`, '/404-gibt-es-nicht'];
   const schuelerSeiten = ['/spiel#/', '/spiel#/epoche/9', '/spiel#/level/W9-L5', '/spiel#/aufgabe/W9-L5-02', '/spiel#/aufgabe/W9-L3-01', '/spiel#/aufgabe/W9-L6-06', '/spiel#/profil', '/spiel#/scoreboard', '/spiel#/warmup', '/labor', '/funkraum', '/werkstatt'];
-  const lehrerSeiten = ['/lehrer#/', `/lehrer#/kurs/${lk}/einstellungen`, `/lehrer#/kurs/${lk}/auswertung`, '/lehrer#/vorschau/welt/9', `/lehrer/urkunden?kurs=${lk}`, '/beamer/funkraum/1'];
+  const lehrerSeiten = ['/lehrer#/', `/lehrer#/kurs/${lk}/einstellungen`, `/lehrer#/kurs/${lk}/auswertung`, '/lehrer#/vorschau/welt/9', `/lehrer/urkunden?kurs=${lk}`, '/beamer/funkraum/1', '/labor#/skytale', '/labor#/vigenere', '/labor#/signatur']; // Labor als Lehrkraft: alle Reiter (M6 Task 128)
 
   const pub = await neueSeite(ctx, {}, 'Szenario 9 (öffentlich)');
   const mika = await neueSeite(ctx, {}, 'Szenario 9 (Mika)');

@@ -3,8 +3,8 @@
 /*
  * End-to-End-Durchlauf (M4 Tasks 66/67, TECHNIK §15): Kryptos + Dev-Portal (test/devportal) mit der Fixture-Welt 9
  * (test/fixtures/welt_beispiel.json) und der e2e-Gast-Demo (test/e2e/seed). Szenarien in der Reihenfolge
- * 1 → 2 → 7a → 3 → 7b → 8 → 10 → 9 (4–6: Labor-Werkzeuge, Funkraum, Arena kommen mit M6/M7; 10 Fehlerzustände
- * und die Kontrastmessung in 9 aus dem Review M4). Danach Szenario 11 „Welten 0–2 spielbar“ (M5 Task 101) mit einem
+ * 1 → 2 → 7a → 3 → 4 → 7b → 8 → 10 → 9 (4 Kryptolabor aus M6 Task 128, ohne Fotos (E88); 5–6 Funkraum und Arena kommen
+ * mit M7; 10 Fehlerzustände und die Kontrastmessung in 9 aus dem Review M4). Danach Szenario 11 „Welten 0–2 spielbar“ (M5 Task 101) mit einem
  * zweiten App-Start auf den echten Seeds (seed/, ohne WELT_DATEIEN), ohne Fotos.
  * E2E_NUR=11 (o. Ä., Komma-Liste) führt nur die genannten Szenarien aus – zum Entwickeln; Fotos dann aus.
  * Fotos nach docs/screenshots/m4-*.png (E2E_FOTOS=0 schaltet aus).
@@ -19,12 +19,14 @@ const gast = require('./gast');
 const geraete = require('./geraete');
 const fehlerzustaende = require('./fehler');
 const inhalte = require('./inhalte');
+const labor = require('./labor');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
   ['2 Neue Interaktionen', schueler.szenario2],
   ['7a Lehrkraft: Einstellungen, Auswertung, Vorschau', lehrkraft.szenario7a],
   ['3 Boss im gA-Kurs', schueler.szenario3],
+  ['4 Kryptolabor', labor.szenario4],
   ['7b Wirkung der Einstellungen', lehrkraft.szenario7b],
   ['8 Gastmodus', gast.szenario8],
   ['10 Fehlerzustände', fehlerzustaende.szenario10],
