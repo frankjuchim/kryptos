@@ -409,3 +409,57 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .kennzahl-bruch, .kennzahl-wert { margin: 0; font-family: var(--f-mono); font-size: 1.1rem; overflow-wrap: anywhere; }
 .kennzahl-wert { font-size: 1.5rem; font-weight: 700; }
 .kennzahl-referenz { margin: 0; }
+
+/* ======================================================================
+   Werkzeug „Substitutions-Werkbank“ (W1 §9.2, Plan M6 Task 115)
+   ====================================================================== */
+.werkbank-klartext-rahmen { display: grid; gap: var(--a-1); padding: var(--a-3) var(--a-4); border: 1.5px solid var(--linie); border-left: 6px solid var(--hinweis); border-radius: var(--r-knopf); background: var(--karte); }
+.werkbank-klartext-titel { font-size: .9rem; font-weight: 700; color: var(--text-2); }
+.werkbank-klartext, .verlauf-klartext { margin: 0; font-family: var(--f-mono); font-size: var(--gr-mono); letter-spacing: .12em; word-spacing: 1ch; overflow-wrap: anywhere; color: var(--text-2); }
+.werkbank-klartext .gruppe { white-space: nowrap; }
+/* bekannte Buchstaben: Lapis UND fett (Farbe nie einziges Signal) */
+.werkbank-klartext b.bekannt { color: var(--hinweis); font-weight: 700; }
+.werkbank-fortschritt, .werkbank-grenze, .werkbank-legende, .muster-status { margin: 0; }
+.werkbank-hinweise { display: grid; gap: var(--a-2); }
+.werkbank-hinweise:empty { display: none; }
+.werkbank-steuer { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-5); align-items: center; }
+.werkbank-steuer .knopf { border: 1.5px solid var(--linie); }
+.werkbank-steuer .knopf:disabled { opacity: .5; }
+.werkbank-schalter { display: inline-flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); font-weight: 700; cursor: pointer; }
+.werkbank-schalter input { width: 22px; height: 22px; }
+.werkbank-hilfen { display: grid; gap: var(--a-2); }
+.werkbank-hilfen[hidden] { display: none; }
+.werkbank-muster input { max-width: 16rem; min-height: var(--ziel); padding: 0 var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); color: var(--text); font-family: var(--f-mono); font-size: 1.1rem; text-transform: uppercase; }
+.werkbank-haelften { display: grid; gap: var(--a-3); min-width: 0; }
+.werkbank { border-collapse: collapse; font-variant-numeric: tabular-nums; background: var(--karte); }
+.werkbank th, .werkbank td { padding: 2px; border: 1px solid var(--linie); text-align: center; min-width: 2.6rem; }
+.werkbank thead th { font-family: var(--f-mono); font-size: 1.1rem; background: var(--papier-2); }
+.werkbank tbody th { padding: 2px var(--a-2); font-size: .82rem; white-space: nowrap; text-align: left; background: var(--papier-2); }
+.werkbank .ecke { font-family: var(--f-text); font-size: .8rem; }
+.werkbank-schloss { font-size: .75rem; }
+.werkbank td.anzahl, .werkbank td.rang { font-size: .9rem; color: var(--text-2); }
+/* td.rang: Rang-Plakette (.rang, komponenten.css) gilt hier nicht */
+.werkbank td.rang { display: table-cell; min-height: 0; padding: 2px; border: 1px solid var(--linie); border-radius: 0; background: transparent; text-decoration: none; }
+.werkbank tr.werkbank-referenz[hidden] { display: none; }
+.werkbank td.referenz { font-family: var(--f-mono); color: var(--text-2); font-style: italic; }
+.werkbank td.eingabe { position: relative; }
+.werkbank td.fehlt { background: var(--papier); }
+input.zuordnung {
+  width: 2.6rem;
+  min-height: var(--ziel);
+  border: 1.5px solid var(--linie);
+  border-radius: 6px;
+  background: var(--karte);
+  color: var(--hinweis);
+  font-family: var(--f-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: lowercase;
+}
+input.zuordnung[readonly] { background: var(--papier-2); color: var(--text); border-style: dashed; }
+input.zuordnung.konflikt { border: 2.5px solid var(--fehler); background: var(--fehler-flaeche); color: var(--text); }
+.konflikt-zeichen { position: absolute; top: 0; right: 3px; color: var(--fehler); font-weight: 700; font-size: .8rem; }
+mark.markiert.muster { text-decoration-style: solid; text-decoration-thickness: 3px; }
+mark.markiert.bigramm { background: transparent; text-decoration-style: dashed; }
+mark.markiert.trigramm { background: transparent; text-decoration-style: dotted; text-decoration-thickness: 3px; }

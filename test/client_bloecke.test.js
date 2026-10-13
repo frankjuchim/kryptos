@@ -178,3 +178,11 @@ test('Geheimtext-Zeile mit Markierungen: mark.markiert, Art als Klasse, Beschrei
   assert.ok(id);
   assert.match(k.text(k.document.getElementById(id)), /Markiert: Position 3 bis 6, Position 11 bis 13/);
 });
+test('Geheimtext-Markierungen (M6 Task 115): eigene Klasse, data-von, aneinanderstoßende Markierungen bleiben getrennt', () => {
+  const k = D.lade(SKRIPTE);
+  const el = k.wert('KRB').geheimtext('ABABAB', { markiert: [{ von: 0, laenge: 3, art: 'c', klasse: 'muster' }, { von: 3, laenge: 3, art: 'c', klasse: 'muster' }] });
+  const marken = k.alle(el, 'mark.muster');
+  assert.deepEqual(marken.map(k.text), ['ABA', 'BA', 'B'], 'Gruppengrenze teilt, Nachbar-Markierung nicht verschmolzen');
+  assert.deepEqual(marken.map((m) => m.dataset.von), ['0', '3', '3'], 'Fundstelle über data-von zählbar');
+  assert.ok(marken.every((m) => m.classList.contains('markiert') && m.classList.contains('art-c')));
+});

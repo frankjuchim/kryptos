@@ -1398,8 +1398,12 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
 
 **Interfaces:**
 - Kein Reiter. Voreinstellung `text` (Geheimtext), `vorgabe` (Objekt Geheim → Klar, gesperrte Felder).
-  `BEISPIEL = { text: 'EFAWA QHITL HZAFC SGAEA ZUMQE LULCR MBMQS FKHJT QSAXS TL' }` (= `Krypto.substitution('die werkbank
-  zeigt jede zuordnung sofort im klartext an', Krypto.schluesselwortAlphabet('tinte'))`, erfunden).
+  `BEISPIEL = { text: 'EFAWA QHITL HEANH SGAEA WTDJO QMKOS FKJAR ASAXS TUB' }` (= `Krypto.substitution('die werkbank
+  deckt jede wahl prompt im lesetext auf', Krypto.schluesselwortAlphabet('tinte'))`, erfunden; umgesetzt statt des
+  zuerst geplanten Satzes, der die Seed-Wörter „zuordnung“, „sofort“, „klartext“ enthielt – Regeltest Task 110).
+  Umgesetzt zusätzlich: `KRB.geheimtext`-Markierungen mit eigener Klasse (`klasse`, hier `muster`/`bigramm`/`trigramm`)
+  und `data-von`; aneinanderstoßende Fundstellen bleiben getrennte `<mark>` (Test zählt Fundstellen über `data-von`,
+  weil Fünfergruppen eine Fundstelle teilen können); Attrappe kennt `readOnly`.
 - Oben `KRB.geheimtext(text)` (Fünfergruppen), darunter `p.werkbank-klartext[aria-live=polite]` =
   `Krypto.teilsubstitution(text, zuordnung)` (bekannte Buchstaben klein in Lapis **und** fett, unbekannte `·`).
 - Zuordnungstabelle `table.werkbank` mit 26 Spalten: Geheimbuchstabe · Anzahl (`Krypto.haeufigkeiten`) · Rang
@@ -1417,7 +1421,7 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
 - Tastatur: Tippen im Feld springt zum nächsten Feld; ←/→ zwischen Feldern; Rücktaste leert und bleibt; Strg+Z/Y.
 - `zustand()` → `{ text, zuordnung, klartext, konflikte, zugeordnet, verschieden }` (`text` = normalisierter Geheimtext).
 
-- [ ] **Step 1: Failing test** – `test/labor_substitution.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_substitution.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1468,9 +1472,9 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
     assert.equal(w.k.window.localStorage.length, 0);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (26
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (26
   Spalten in `.scroll-x`, bei 360 px zweizeilig A–M / N–Z wie `alphabet`).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Substitutions-Werkbank (Live-Klartext, Konflikte, Verlauf, Hinweise, Funkraum-Haken)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Substitutions-Werkbank (Live-Klartext, Konflikte, Verlauf, Hinweise, Funkraum-Haken)"`.
 
 ### Task 116: Werkzeug „Vigenère-Werkbank“ I – Quadrat und Ver-/Entschlüsseln (W2 §9.1 Reiter 1–2, W6 §9.1 Pendel/frei)
 

@@ -523,6 +523,12 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
     set open(v) {
       this._bool('open', v);
     }
+    get readOnly() {
+      return this.hasAttribute('readonly');
+    }
+    set readOnly(v) {
+      this._bool('readonly', v);
+    }
     get required() {
       return this.hasAttribute('required');
     }

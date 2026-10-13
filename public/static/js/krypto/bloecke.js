@@ -53,21 +53,21 @@ const KRB = (() => {
     // Markierungen (M6 E86): [{ von, laenge, art }] mit Positionen ab 0 im normalisierten Text – mark.markiert (unterstrichen),
     // Beschreibung für Screenreader über aria-describedby
     const marken = (Array.isArray(markiert) ? markiert : []).filter((m) => m && Number.isInteger(m.von) && Number.isInteger(m.laenge) && m.laenge > 0 && m.von >= 0);
-    const artAn = (pos) => {
-      const m = marken.find((x) => pos >= x.von && pos < x.von + x.laenge);
-      return m ? String(m.art ?? 'a') : null;
-    };
+    // M6 Task 115: je Markierung optional eine eigene Klasse (klasse) und data-von; aneinanderstoßende Markierungen
+    // bleiben getrennte <mark> (eine Fundstelle = ein Element, auch bei gleicher Art)
+    const markeAn = (pos) => marken.find((x) => pos >= x.von && pos < x.von + x.laenge) || null;
+    const klasseVon = (m) => (typeof m.klasse === 'string' && /^[a-z][a-z0-9-]*$/.test(m.klasse) ? ` ${m.klasse}` : '');
     function gruppeMitMarken(g, start) {
       const kinder = [];
       let lauf = null;
       [...g].forEach((ch, j) => {
-        const a = artAn(start + j);
-        if (a === null) {
+        const m = markeAn(start + j);
+        if (m === null) {
           lauf = null;
           kinder.push(ch);
-        } else if (lauf && lauf.art === a) lauf.el.appendChild(document.createTextNode(ch));
+        } else if (lauf && lauf.m === m) lauf.el.appendChild(document.createTextNode(ch));
         else {
-          lauf = { art: a, el: h('mark', { class: `markiert art-${a}` }, ch) };
+          lauf = { m, el: h('mark', { class: `markiert art-${String(m.art ?? 'a')}${klasseVon(m)}`, 'data-von': String(m.von) }, ch) };
           kinder.push(lauf.el);
         }
       });

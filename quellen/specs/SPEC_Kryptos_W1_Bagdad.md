@@ -803,7 +803,7 @@ Entscheidung 1 des M5-Plans); die Beispiele hier sind deren Anfänge.
 | Bereich | Spezifikation |
 |---|---|
 | Ansicht | Oben der Geheimtext in Fünfergruppen, darunter **Live-Klartext**: zugeordnete Buchstaben klein und farbig (Lapis), unbekannte als `·`. |
-| Zuordnungstabelle | 26 Spalten: Geheimtextbuchstabe · Anzahl im Text · Rang · Eingabefeld Klartextbuchstabe (Tippen oder Ziehen aus einer Klartextleiste). |
+| Zuordnungstabelle | 26 Spalten: Geheimtextbuchstabe · Anzahl im Text · Rang · Eingabefeld Klartextbuchstabe (Tippen bzw. Tastatur; Ziehen entfällt – M4 E28, M6 E78). |
 | Konflikte | Wird ein Klartextbuchstabe zweimal vergeben, werden beide Felder markiert („n ist schon Q zugeordnet“) – erlaubt, aber sichtbar. |
 | Hilfen | „Rückgängig/Wiederholen“, „Alle zurücksetzen“, Hinweise ein/aus: Referenzrang neben jedem Geheimbuchstaben, Markierung häufiger Bigramme/Trigramme, Musterwortsuche („Zeige Stellen mit Muster ABA“). |
 | Fortschritt | „x von y verschiedenen Geheimbuchstaben zugeordnet“ (kein Richtig/Falsch – geprüft wird in der Aufgabe bzw. im Funkraum). |
