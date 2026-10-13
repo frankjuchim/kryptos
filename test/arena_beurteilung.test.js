@@ -85,3 +85,15 @@ test('Rückblick: geknacktVon, Zeit, Versuche je Team (Lehrkraft); Beamer in der
   await f.lk.get(`/api/lehrer/arena/${f.arenaId}`).expect(200);
   await f.teams[0].c.put(`/api/arena/${f.arenaId}/beurteilung`).send({ text: 'Gut' }).expect(403);
 });
+
+test('Liste: Schlüsselfelder je Platzhalter (Name, Art, Bereich, Stufen) für den Angriff per Schlüssel – nie Werte', async () => {
+  const f = await F.arenaMitChiffren(2, { phase: 'angriff' });
+  const alle = (await f.teams[1].c.get(`/api/arena/${f.arenaId}/chiffren`).expect(200)).body;
+  const funk = alle.find((c) => c.name === 'FUNKGITTER');
+  // $wort in VIG (1–20) und SPA (2–10): gemeinsamer Bereich 2–10
+  assert.deepEqual(funk.schluesselFelder, [{ name: 'wort', art: 'wort', min: 2, max: 10, stufen: [1, 2] }]);
+  assert.deepEqual(alle.find((c) => c.name === 'Nur Caesar').schluesselFelder, [{ name: 'k', art: 'zahl', min: 0, max: 25, stufen: [1] }]);
+  assert.ok(!JSON.stringify(alle).includes('LATERNE'));
+  // Angriff mit genau diesen Feldern
+  assert.equal((await f.angriff(1, 0, { schluessel: { wort: 'LATERNE' } }).expect(200)).body.erfolg, true);
+});

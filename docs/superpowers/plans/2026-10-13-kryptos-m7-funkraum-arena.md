@@ -2609,11 +2609,11 @@ Beamer bei 1920 × 1080.
   weil …“), Zähler ≤ 4000, Speichern; Hinweise P6–P8 aller Chiffren sichtbar; Abzeichen-Toast (`KRProfil.abzeichenToast`) nach
   Erfolg/Phasenwechsel, wenn `GET /api/profil` neue Abzeichen zeigt.
 
-- [ ] **Step 1: Failing test** (Auszug): Angriff per Schlüssel sendet `{ schluessel: { wort: 'LATERNE' } }` mit den Feldern aus
+- [x] **Step 1: Failing test** (Auszug): Angriff per Schlüssel sendet `{ schluessel: { wort: 'LATERNE' } }` mit den Feldern aus
   den Platzhaltern des fremden Verfahrens; eigene Chiffre ohne Formular; in `werkstatt` keine fremden Chiffren; Beurteilung
   sendet `PUT` mit Text und zeigt „Gespeichert“.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (zwei Teams).
-- [ ] **Step 5: Commit** `git commit -m "Knack-Arena: Ansicht für Teams (Chiffren, Angriffe, Grenzen, Beurteilung)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (zwei Teams).
+- [x] **Step 5: Commit** `git commit -m "Knack-Arena: Ansicht für Teams (Chiffren, Angriffe, Grenzen, Beurteilung)"`.
 
 ### Task 158: Lehrkraft-Tab „Arena“ und Beamer „Arena“ (TECHNIK §9.7, §13.4, E102, E103)
 
@@ -3004,6 +3004,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Schülerinnen und Schüler (Wächter), daher keine Lehrkraft-Vorschau. Phasenwechsel bemerkt der Editor alle 15 s
   (`GET /api/arena`). Plan-Test korrigiert: `k.tippe` hängt bei Feldern mit `maxlength` an – der Test leert vorher.
   Hinweise (P6–P8) zeigt die Bibliothek nur ohne Fehler (unverändert).
+
+- **Task 157:** Die Chiffren-Liste nennt je Platzhalter `schluesselFelder: [{ name, art, min, max, stufen }]` (gemeinsamer
+  Bereich, wenn ein Platzhalter mehrere Stufen speist) – `stufen[].param` zeigt nur „geheim“, ohne Namen könnte die Seite den
+  Angriff per Schlüssel nicht bauen (Werte nie; Test `arena_beurteilung.test.js`, TECHNIK §13.3). Die Arena ist ein Reiter von
+  `/werkstatt` (`#/arena`, Router in `werkstatt.js`); `KRPoll` pollt `/api/arena` (5 s, ohne ETag), danach die Liste;
+  Karten werden je Chiffre abgeglichen (Eingaben bleiben beim Polling erhalten), nach einem Angriff wird die Liste sofort neu
+  geladen. Restzeit läuft im Sekundentakt aus `angriffBis`. Abzeichen-Toast über `GET /api/profil` (Vergleich mit dem
+  Stand beim Öffnen, nach Erfolg und Phasenwechsel). `werkstatt.html` lädt zusätzlich `aufgaben.css` (Fünfergruppen von
+  `KRB.geheimtext`, in der Sichtprüfung fehlten die Abstände), `profil.js`, `funkpoll.js`. Sichtprüfung: drei Teams von
+  Werkstatt bis geschlossen (Einreichen über die Oberfläche, Klartext falsch → Grenze 30 s als Meldung → Schlüssel richtig,
+  Klartext richtig per Tastatur, Beurteilung gespeichert, Unknackbar/Arena-Knacker vergeben).
 
 ## Reihenfolge und Abhängigkeiten
 

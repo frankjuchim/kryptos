@@ -465,6 +465,29 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     }));
   }
 
+  /**
+   * Felder für einen Angriff per Schlüssel: je Platzhalter Name, Art, gemeinsamer Bereich und Stufen (öffentlich nach
+   * Kerckhoffs – das Verfahren ist bekannt, die Werte nie)
+   */
+  function schluesselFelder(verfahren) {
+    const felder = new Map();
+    verfahren.stufen.forEach((st, i) => {
+      const def = Krypto.baukasten.STUFEN.find((x) => x.typ === st.typ);
+      if (!def) return;
+      for (const [p, w] of Object.entries(st.param || {})) {
+        const spec = def.parameter[p];
+        if (!spec || typeof w !== 'string' || !w.startsWith('$')) continue;
+        const name = w.slice(1);
+        const f = felder.get(name) || { name, art: spec.art, min: spec.min, max: spec.max, stufen: [] };
+        f.min = Math.max(f.min, spec.min);
+        f.max = Math.min(f.max, spec.max);
+        if (!f.stufen.includes(i + 1)) f.stufen.push(i + 1);
+        felder.set(name, f);
+      }
+    });
+    return [...felder.values()];
+  }
+
   /** Auswertung der Versuche je Chiffre: { anzahl, je: { teamId: { gesamt, erfolg } }, von: [{ id, name }], erster, erfolge: [...] } */
   function versuchsDaten(arenaId) {
     const je = new Map();
@@ -498,6 +521,7 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
       team: { id: c.team_id, name: c.team_name },
       name: verfahren.name || null,
       stufen: oeffentlicheStufen(verfahren),
+      schluesselFelder: schluesselFelder(verfahren),
       beschreibung: c.beschreibung,
       geheimtext: c.geheimtext,
       klartextLaenge: c.klartext_laenge,

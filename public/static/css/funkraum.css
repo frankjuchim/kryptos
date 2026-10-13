@@ -328,3 +328,56 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .werkstatt-entwurf { display: grid; gap: var(--a-2); border-top: 1px solid var(--linie); padding-top: var(--a-3); }
 .werkstatt-entwurf p { margin: 0; }
 .entwurf-verwerfen { justify-self: start; }
+
+/* ---------- Knack-Arena für Teams (Plan M7 Task 157) ---------- */
+.arena { display: grid; gap: var(--a-4); min-width: 0; }
+.arena.gestoert .arena-phase::after { content: " (Verbindung unterbrochen – wird wiederhergestellt)"; }
+.arena-kopf { display: grid; gap: var(--a-2); }
+.arena-kopf p { margin: 0; }
+.arena-restzeit { font-family: var(--f-mono); font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.arena-restzeit[hidden] { display: none; }
+.arena-raster { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1024px) {
+  .arena-raster { grid-template-columns: minmax(0, 8fr) minmax(0, 3fr); }
+}
+.arena-haupt { display: grid; gap: var(--a-4); min-width: 0; }
+.arena-leer[hidden] { display: none; }
+.arena-chiffren { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-4); }
+.arena-chiffre { display: grid; gap: var(--a-2); min-width: 0; border-left: 4px solid var(--linie); }
+.arena-chiffre.eigene { border-left-color: var(--akzent, var(--messing)); }
+.arena-chiffre p { margin: 0; }
+.arena-chiffre-titel { margin: 0; display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; font-size: var(--h3); }
+.arena-stufen { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.arena-beschreibung { white-space: pre-wrap; overflow-wrap: anywhere; }
+.arena-beschreibung-bereich summary { min-height: var(--ziel); display: inline-flex; align-items: center; cursor: pointer; font-weight: 700; }
+.arena-geheimtext { min-width: 0; }
+.chip.ungeknackt { border-color: var(--ok); }
+.arena-hinweis-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-1); }
+.arena-angriff { display: grid; gap: var(--a-2); padding-top: var(--a-2); border-top: 1px solid var(--linie); }
+.arena-reiter-zeile { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.arena-reiter[aria-pressed="true"] { border-color: var(--akzent, var(--messing)); box-shadow: inset 0 -3px 0 var(--akzent, var(--messing)); font-weight: 700; }
+.arena-panel { display: grid; gap: var(--a-2); }
+.arena-panel[hidden] { display: none; }
+.arena-panel p { margin: 0; }
+.arena-klartext { width: 100%; min-height: var(--ziel); font-family: var(--f-mono); }
+.arena-feld { display: grid; gap: var(--a-1); }
+.arena-feld label { font-weight: 700; }
+.arena-feld input { min-height: var(--ziel); max-width: 100%; font-family: var(--f-mono); }
+.arena-feld input[type="text"] { text-transform: uppercase; }
+.arena-senden { justify-self: start; }
+.arena-ergebnis:empty, .arena-rest:empty, .arena-beurteilung-meldung:empty { display: none; }
+.arena-ergebnis.ok, .arena-beurteilung-meldung.ok { color: var(--ok); font-weight: 700; }
+.arena-ergebnis.ok::before, .arena-beurteilung-meldung.ok::before { content: "✓ "; }
+.arena-ergebnis.falsch, .arena-ergebnis.fehler, .arena-beurteilung-meldung.fehler { color: var(--fehler); font-weight: 700; }
+.arena-ergebnis.falsch::before, .arena-ergebnis.fehler::before { content: "✗ "; }
+.arena-labor-hinweis { display: grid; gap: var(--a-2); }
+.arena-labor-hinweis h2 { margin: 0; font-size: var(--h3); }
+.arena-labor-hinweis p { margin: 0; }
+.arena-labor-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.arena-labor-liste .knopf { width: 100%; justify-content: flex-start; }
+.arena-beurteilung { display: grid; gap: var(--a-2); }
+.arena-beurteilung h2 { margin: 0; font-size: var(--h2); }
+.arena-beurteilung p { margin: 0; }
+.arena-vorlage { margin: 0; padding-left: 1.3em; display: grid; gap: var(--a-1); }
+.arena-beurteilung textarea { width: 100%; }
+.arena-beurteilung .knopf { justify-self: start; }

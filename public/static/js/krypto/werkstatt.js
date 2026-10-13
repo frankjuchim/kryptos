@@ -632,7 +632,12 @@ const KRWerkstatt = (() => {
       felder = null;
       const ort = h('div', { class: 'werkstatt-arena-ort' });
       AQ.mount(haupt, h('div', { class: 'wrap werkstatt' }, h('h1', null, 'Knack-Arena'), reiter('arena'), ort));
-      ansichtArena = KRArena.zeige(ort, { info: () => info, aktualisiere: aktualisiereArena });
+      ansichtArena = KRArena.zeige(ort, {
+        info: () => info,
+        setzeInfo: (d) => {
+          info = { ...info, ...d };
+        }
+      });
       merkeZustand = z;
       return;
     }

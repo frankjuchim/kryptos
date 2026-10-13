@@ -203,3 +203,122 @@ test('Teilen bleibt beim Umordnen, Entfernen und Typwechsel erhalten (Wert wande
   assert.deepEqual(z.verfahren.stufen.map((s) => s.typ), ['caesar', 'spaltentransposition']);
   assert.equal(z.schluessel.s2, 'LATERNE');
 });
+
+/* ---------- Knack-Arena (Task 157) ---------- */
+const ARENA_SEITE = [...WERKSTATT.slice(0, -1), 'krypto/profil.js', 'krypto/funkpoll.js', 'krypto/arena.js', 'krypto/werkstatt.js'];
+const CHIFFRE = (id, team, extra = {}) => ({
+  id,
+  team,
+  name: id === 1 ? 'FUNKGITTER' : 'Nur Caesar',
+  stufen: id === 1 ? [{ typ: 'vigenere', kuerzel: 'VIG', param: { schluessel: 'geheim' } }, { typ: 'spaltentransposition', kuerzel: 'SPA', param: { schluessel: 'geheim' } }] : [{ typ: 'caesar', kuerzel: 'CAE', param: { k: 'geheim' } }],
+  schluesselFelder: id === 1 ? [{ name: 'wort', art: 'wort', min: 2, max: 10, stufen: [1, 2] }] : [{ name: 'k', art: 'zahl', min: 0, max: 25, stufen: [1] }],
+  beschreibung: id === 1 ? 'Stufe 1 Vigenère, Stufe 2 Spalten.' : 'Caesar.',
+  geheimtext: id === 1 ? 'MRESE IEAUI SIRUT' : 'KLYSL BJOAA',
+  klartextLaenge: 167,
+  geknackt: false,
+  versuche: 0,
+  eigene: false,
+  ...extra
+});
+const SKYTALE = { id: 1, name: 'Team Skytale' };
+const SCHEIBE = { id: 2, name: 'Team Scheibe' };
+function ladeArena(status, chiffren, routen = {}) {
+  return D.lade(ARENA_SEITE, {
+    url: 'http://x.test/werkstatt#/arena',
+    zeitraffer: 10,
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/arena': ARENA(status, { team: { id: 2, nr: 2, name: 'Team Scheibe' } }),
+      'GET /api/arena/4/chiffren': { status: 200, body: chiffren },
+      'GET /api/profil': { status: 200, body: { abzeichen: [] } },
+      ...routen
+    }
+  });
+}
+
+test('Arena: in der Werkstatt nur die eigene Chiffre, ohne Angriffsformular; Hinweis auf den Start', async () => {
+  const k = ladeArena('werkstatt', [CHIFFRE(2, SCHEIBE, { eigene: true })]);
+  await k.ruhe();
+  assert.match(k.text(k.document.body), /Die Angriffsphase beginnt, wenn eure Lehrkraft sie startet\./);
+  const li = k.alle(k.document, 'ol.arena-chiffren li.arena-chiffre');
+  assert.equal(li.length, 1);
+  assert.equal(li[0].querySelector('form.arena-angriff'), null);
+  assert.match(k.text(li[0]), /eure Chiffre/);
+});
+
+test('Arena: Angriff per Schlüssel mit den Feldern der Platzhalter, per Klartext, Grenzen und 429; eigene Chiffre ohne Formular', async () => {
+  const gesendet = [];
+  let n = 0;
+  const k = ladeArena('angriff', [CHIFFRE(1, SKYTALE), CHIFFRE(2, SCHEIBE, { eigene: true })], {
+    'POST /api/arena/4/chiffren/1/angriff': (b) => {
+      gesendet.push(b);
+      n++;
+      if (n === 3) return { status: 429, headers: { 'retry-after': '20' }, body: { error: 'Ein Versuch je 30 Sekunden auf dieselbe Chiffre.' } };
+      return { status: 200, body: { erfolg: n === 2, geknackt: n === 2, rest: { chiffre: 30, team: 60 - n } } };
+    }
+  });
+  await k.ruhe();
+  const fremd = k.eins(k.document, 'li.arena-chiffre[data-id="1"]');
+  const eigen = k.eins(k.document, 'li.arena-chiffre[data-id="2"]');
+  assert.equal(eigen.querySelector('form.arena-angriff'), null, 'eigene Chiffre ohne Formular');
+  assert.match(k.text(fremd), /Team Skytale/);
+  assert.match(k.text(fremd), /VIG.*SPA/);
+  assert.match(k.text(fremd), /Stufe 1 Vigenère, Stufe 2 Spalten\./);
+  assert.match(k.text(fremd), /ungeknackt/);
+  const form = k.eins(fremd, 'form.arena-angriff');
+  // Reiter Klartext
+  k.tippe(k.eins(form, 'textarea.arena-klartext'), 'am nordtor');
+  form.dispatchEvent(new k.window.Event('submit', { cancelable: true }));
+  await k.ruhe();
+  assert.deepEqual(k.roh(gesendet[0]), { klartext: 'am nordtor' });
+  assert.match(k.text(k.eins(fremd, 'p.arena-ergebnis')), /Leider nicht\./);
+  assert.match(k.text(k.eins(fremd, 'p.arena-rest')), /Nächster Versuch auf diese Chiffre in 30 s · noch 59 Versuche in 10 min/);
+  // Reiter Schlüssel: je Platzhalter ein Feld
+  k.klick(k.eins(form, 'button.arena-reiter[data-reiter="schluessel"]'));
+  const felder = k.alle(form, 'input.arena-schluessel');
+  assert.deepEqual(felder.map((f) => f.getAttribute('data-name')), ['wort']);
+  k.tippe(felder[0], 'LATERNE');
+  form.dispatchEvent(new k.window.Event('submit', { cancelable: true }));
+  await k.ruhe();
+  assert.deepEqual(k.roh(gesendet[1]), { schluessel: { wort: 'LATERNE' } });
+  assert.match(k.text(k.eins(fremd, 'p.arena-ergebnis')), /Geknackt!/);
+  // 429 als Meldung
+  form.dispatchEvent(new k.window.Event('submit', { cancelable: true }));
+  await k.ruhe();
+  assert.match(k.text(k.eins(fremd, 'p.arena-ergebnis')), /Ein Versuch je 30 Sekunden/);
+  // Labor-Links ohne Texte in der URL
+  const links = k.alle(k.document, 'a.arena-labor').map((a) => a.getAttribute('href'));
+  assert.deepEqual(links, ['/labor#/haeufigkeit', '/labor#/vigenere', '/labor#/bitlupe']);
+  // Zahl-Platzhalter wird als Zahl gesendet
+  const k2 = ladeArena('angriff', [CHIFFRE(3, SKYTALE)], { 'POST /api/arena/4/chiffren/3/angriff': (b) => (gesendet.push(b), { status: 200, body: { erfolg: false, geknackt: false, rest: { chiffre: 30, team: 59 } } }) });
+  await k2.ruhe();
+  const f2 = k2.eins(k2.document, 'form.arena-angriff');
+  k2.klick(k2.eins(f2, 'button.arena-reiter[data-reiter="schluessel"]'));
+  k2.tippe(k2.eins(f2, 'input.arena-schluessel[data-name="k"]'), '7');
+  f2.dispatchEvent(new k2.window.Event('submit', { cancelable: true }));
+  await k2.ruhe();
+  assert.deepEqual(k2.roh(gesendet.at(-1)), { schluessel: { k: 7 } });
+});
+
+test('Arena: Beurteilung sendet PUT mit Text, zeigt „Gespeichert“; Hinweise aller Chiffren sichtbar; geschlossen nur lesen', async () => {
+  const puts = [];
+  const k = ladeArena('beurteilung', [CHIFFRE(1, SKYTALE, { geknackt: true, geknacktVon: [{ id: 2, name: 'Team Scheibe' }], geknacktNachSek: 70, hinweise: [] }), CHIFFRE(2, SCHEIBE, { eigene: true, hinweise: [{ p: null, text: 'Nur Substitutionsstufen: Wortgrenzen …' }] })], {
+    'PUT /api/arena/4/beurteilung': (b) => (puts.push(b), { status: 200, body: { ok: true } })
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, 'li.arena-chiffre[data-id="1"]')), /geknackt von Team Scheibe/);
+  assert.match(k.text(k.eins(k.document, 'li.arena-chiffre[data-id="2"]')), /Nur Substitutionsstufen/);
+  const form = k.eins(k.document, 'form.arena-beurteilung');
+  assert.match(k.text(form), /Schlüsselraum/);
+  assert.match(k.text(form), /Fehlerfortpflanzung/);
+  k.tippe(k.eins(form, 'textarea'), 'Insgesamt ist unser Verfahren schwach, weil Caesar nur 25 Schlüssel hat.');
+  form.dispatchEvent(new k.window.Event('submit', { cancelable: true }));
+  await k.ruhe();
+  assert.deepEqual(k.roh(puts), [{ text: 'Insgesamt ist unser Verfahren schwach, weil Caesar nur 25 Schlüssel hat.' }]);
+  assert.match(k.text(form), /Gespeichert/);
+  assert.equal(k.alle(k.document, 'form.arena-angriff').length, 0, 'keine Angriffe in der Beurteilung');
+  const g = ladeArena('geschlossen', [CHIFFRE(1, SKYTALE), CHIFFRE(2, SCHEIBE, { eigene: true })]);
+  await g.ruhe();
+  assert.equal(g.alle(g.document, 'form').length, 0, 'geschlossen: nur lesen');
+  assert.match(g.text(g.document.body), /nur lesen/);
+});
