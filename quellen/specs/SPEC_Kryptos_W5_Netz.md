@@ -1028,8 +1028,11 @@ MD5 und SHA-1 werden nur als Text mit dem Etikett „gebrochen – nicht verwend
 
 **Zweck:** Ablauf von Signatur, Zertifikatsprüfung und Man-in-the-Middle-Angriff als Bühne mit Akteuren; jede
 Manipulation wird mit der Reaktion der Prüfung beantwortet. Kryptografie im Hintergrund: KRYPTOS-Hash (Modus
-„schwacher Hash“) oder SHA-256 (gekürzt angezeigt), RSA mit kleinen Zahlen (Alice (55, 3)/(55, 27), Bob (91, 5)/(91, 29),
-Mallory (51, 3)/(51, 11), Trent-CA (65, 5)/(65, 29)); Werte nur zur Anzeige, keine Aufgabenlösungen. Der Hashwert wird
+„schwacher Hash“) oder SHA-256 (gekürzt angezeigt), RSA mit kleinen Zahlen; Werte nur zur Anzeige, keine Aufgabenlösungen. **Eigene Beispielwerte, die in keinem
+Material vorkommen** (Plan M6 Task 124, Festlegung des Orchestrators zu offener Entscheidung 6: der Simulator rechnet keine
+Akte vor): Alice (85, 7)/(85, 55), Bob (119, 5)/(119, 77), Mallory (69, 3)/(69, 15), Trent-CA (95, 5)/(95, 29), Nachricht
+„die laterne brennt“, Kollisionspaar „zahle zehn taler“/„zahle hundert taler“ (KH 24); Test `labor_signatur.test.js`
+(Überschneidung mit Prüfwerten, Materialquellen, Seeds; Python-Zwilling über `pruefwerte.py`). Der Hashwert wird
 als Zahl kleiner N signiert: `Krypto.hashZahl` (KRYPTOS-Hash: KH-Wert mod N; SHA-256: erste 8 Hexziffern mod N),
 Signatur `Krypto.rsa.signieren`, Prüfung `Krypto.rsa.pruefen`; Zertifikate immer mit SHA-256, weil der KRYPTOS-Hash
 Ziffern ignoriert (ein ausgetauschter Schlüssel fiele sonst nicht auf) – Plan M6 E69.
@@ -1066,8 +1069,9 @@ Kette (optional mit Zwischen-CA) → ⑤ Ampel grün/rot mit Begründung je Prü
 | Mallory fügt „Mallory Root“ in Alices Vertrauensspeicher ein (Lehrkraft-Schalter) | **keine** – Prüfung grün! Lerntext: „Wer den Vertrauensanker kontrolliert, kontrolliert alles.“ |
 
 **Modus „MitM“:** Schlüsselaustausch Alice ↔ Bob über Mallory mit animierten Pfeilen ①–⑥ (wie W5-L3-04); Schalter
-„Zertifikate an“ zeigt, an welcher Stelle der Angriff scheitert. Variante „Diffie-Hellman“ mit p = 23, g = 5 (Werte aus
-Akte W5·3 Auftrag 7).
+„Zertifikate an“ zeigt, an welcher Stelle der Angriff scheitert. Variante „Diffie-Hellman“ mit eigenen Werten p = 43, g = 3, a = 8,
+b = 13, Mallory m = 5 (A = 25, B = 12, M = 28, K_Alice = 24, K_Bob = 34, ohne Mallory K = 14) – nicht die Werte aus Akte W5·3
+Auftrag 7.
 **Grenzen:** keine freie Texteingabe für Mallory über 60 Zeichen, keine echten Domains, alle Namen erfunden
 (`*.example`).
 

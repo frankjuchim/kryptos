@@ -857,3 +857,52 @@ mark.markiert.wiederholung { font-weight: 700; }
 .pruef-s.verschieden, .pruef-g.verschieden { background: var(--fehler-flaeche); }
 @media (prefers-reduced-motion: reduce) { .faecher li.neu { animation: none; } }
 :root[data-bewegung="aus"] .faecher li.neu { animation: none; }
+
+/* ======================================================================
+   Signatur- & Zertifikats-Simulator (W5 §9.2, M6 Task 124)
+   ====================================================================== */
+.buehne { display: grid; gap: var(--a-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .buehne { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); } .buehne > :nth-child(4) { grid-column: 1 / -1; } }
+.buehne .akteur, .buehne .kanal { display: grid; gap: var(--a-2); align-content: start; padding: var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); min-width: 0; }
+.buehne .kanal { border: 2px dashed var(--fehler); }
+.buehne h3 { margin: 0; font-size: 1rem; }
+.akteur-inhalt { display: grid; gap: var(--a-1); min-width: 0; }
+.buehne-zeile { margin: 0; font-family: var(--f-mono); font-size: .92rem; overflow-wrap: anywhere; }
+.buehne-nr { font-family: var(--f-text); font-weight: 700; }
+.buehne-zeile.kommt { visibility: hidden; }
+.buehne-zeile.aktuell { outline: 2px solid var(--hinweis); outline-offset: 2px; background: var(--hinweis-flaeche); border-radius: 4px; }
+.manipulationen { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.manipulationen .knopf { border: 1.5px solid var(--linie); text-align: left; }
+.manipulationen .knopf[aria-pressed="true"] { border-color: var(--fehler); background: var(--fehler-flaeche); color: var(--text); font-weight: 700; }
+.manipulationen .knopf[aria-pressed="true"]::before { content: "✓ "; }
+.manipulationen .knopf:disabled { opacity: .55; }
+.manipulationen .lehrkraft-schalter { border-style: dashed; }
+.kollision-notiz { margin: 0; }
+.kollision-notiz:empty { display: none; }
+.hash-feld input.mallory-text { width: 100%; }
+.pruefung-ort { display: grid; gap: var(--a-1); }
+.pruefung-ergebnis { margin: 0; font-size: 1.2rem; font-weight: 700; padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); }
+.pruefung-ergebnis.gueltig { background: var(--ok-flaeche); }
+.pruefung-ergebnis.ungueltig { background: var(--fehler-flaeche); }
+.lerntext { margin: 0; font-weight: 700; }
+.zert-datum { margin: 0; font-weight: 700; align-self: center; }
+.zert-text { margin: 0; padding: var(--a-2); font-family: var(--f-mono); font-size: .85rem; background: var(--papier-2); border-radius: 4px; overflow-wrap: anywhere; }
+.zert-pruefungen { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--a-1); }
+.zert-pruefungen li { padding: var(--a-1) var(--a-2); border-radius: 4px; overflow-wrap: anywhere; }
+.zert-pruefungen li.ok { background: var(--ok-flaeche); }
+.zert-pruefungen li.nicht-ok { background: var(--fehler-flaeche); }
+.pruef-symbol { font-weight: 700; margin-right: .3em; }
+.ampel { display: inline-flex; align-items: center; gap: var(--a-2); justify-self: start; padding: var(--a-2) var(--a-4); border: 2px solid var(--text); border-radius: 999px; font-weight: 700; }
+.ampel[data-farbe="gruen"] { background: var(--ok-flaeche); }
+.ampel[data-farbe="rot"] { background: var(--fehler-flaeche); }
+.ampel-licht { font-size: 1.3rem; }
+.ampel[data-farbe="gruen"] .ampel-licht { color: var(--ok); }
+.ampel[data-farbe="rot"] .ampel-licht { color: var(--fehler); }
+.sig-ablauf .schaubild-liste li.aktuell { font-weight: 700; background: var(--hinweis-flaeche); }
+.sig-ablauf .schaubild-svg .aktuell .pfeil { stroke: var(--hinweis); }
+.sig-ablauf .schaubild-svg .aktuell .handlung { stroke: var(--hinweis); stroke-width: 3; }
+.sig-ablauf .schaubild-liste li.scheitert { text-decoration: line-through 2px; }
+.sig-ablauf .schaubild-svg .scheitert .pfeil { stroke: var(--fehler); stroke-dasharray: 6 4; }
+.mitm-werte { display: grid; gap: var(--a-1); }
+.mitm-scheitert:empty { display: none; }
+.sig-schalter { justify-self: start; }

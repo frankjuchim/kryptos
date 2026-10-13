@@ -2160,6 +2160,13 @@ sich im Nachspiel „nächste Runde“.
 - Modify: `public/static/css/labor.css`, `quellen/specs/SPEC_Kryptos_W5_Netz.md` §9.2 (E69: Hash als Zahl, Zertifikate mit
   SHA-256), Version patch
 
+> **Umgesetzt mit eigenen Beispielwerten (Orchestrator, offene Entscheidung 6):** Alice (85, 7)/(85, 55), Bob (119, 5)/(119, 77),
+> Mallory (69, 3)/(69, 15), Trent (95, 5)/(95, 29), `BEISPIEL.nachricht = 'die laterne brennt'` (KH 22), Kollisionspaar
+> `['zahle zehn taler', 'zahle hundert taler']` (KH 24), Zertifikat `schluessel=119,5`, DH p = 43, g = 3, a = 8, b = 13, m = 5
+> (A 25, B 12, M 28, K_Alice 24, K_Bob 34, ohne Mallory 14). Der Test unten ist entsprechend angepasst
+> (`test/labor_signatur.test.js`), dazu Überschneidungstest (Prüfwerte, Materialquellen, Seeds) und Nachrechnung mit dem
+> Python-Zwilling über `pruefwerte.py`. Die Werte der Interfaces-Liste unten (55/91/51/65, „treffen um neun“, p = 23) gelten nicht.
+
 **Bedienidee (eigene Umsetzung):** Eine Bühne mit Akteuren (Alice, Bob, Mallory, Trent, Schlüsselserver, Vertrauensspeicher);
 Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; der Ablauf ①–⑦ läuft im Nachspiel.
 
@@ -2189,7 +2196,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   W5·3 A7, offene Entscheidung 6) über `Krypto.dh.*`: A = 8, B = 11, M = 4, K_Alice = 2, K_Bob = 13, ohne Mallory K = 9.
 - `zustand()` → `{ szene, hash, h1, h2, signatur, gueltig, lerntext, pruefungen, ampel, mitm }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_signatur.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_signatur.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2247,9 +2254,9 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
     assert.match(w.text('.mitm-scheitert'), /Schritt ③/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (Bühne bei
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (Bühne bei
   360 px als senkrechte Liste, Ampel mit Text, Beamer 1920 px).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Signatur- & Zertifikats-Simulator (Mallorys Eingriffe, Zertifikatsprüfung, MitM mit DH)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Signatur- & Zertifikats-Simulator (Mallorys Eingriffe, Zertifikatsprüfung, MitM mit DH)"`.
 
 ### Task 125: Einbettung – Level-Karten mit Reiter, Werkzeug-Block mit Voreinstellung und Umgebung, Seeds W2 (E63, E70, E71)
 
