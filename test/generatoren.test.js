@@ -162,7 +162,7 @@ test('caesar_ver/caesar_ent: unabhängig nachgerechnet, Diagnose P3', () => {
   }
   for (const a of grundpruefung('caesar_ent')) {
     assert.equal(za(az(a.loesung.text).map((x) => x + a.interaktion.verfahren.k)), za(az(a.interaktion.eingabe)));
-    assert.match(a.interaktion.eingabe, /^[A-Z]{5}( [A-Z]{5})*( [A-Z]{1,5})?$/, 'Fünfergruppen');
+    assert.match(a.interaktion.eingabe, /^([A-Z]{5} )*[A-Z]{1,5}$/, 'Fünfergruppen'); // auch kurze Wörter (toga → 4 Buchstaben)
   }
   assert.notDeepEqual(G.erzeuge('caesar_ver', 1), G.erzeuge('caesar_ver', 2));
 });
@@ -270,7 +270,7 @@ test('Generatoren: Fallen und Fehlmuster-Fallen passen zur Kategorie (kein Plaus
   assert.equal(G.erzeuge('koinzidenz', 1).loesung._fehlmuster.z[0].p, 'P4');
 });
 
-test('koinzidenz: gekürzter Bruch (BALLADE 2/21)', () => {
+test('koinzidenz: gekürzter Bruch (GONDOLIERE 2/45, KASSETTE 3/28)', () => {
   const ggt = (x, y) => (y ? ggt(y, x % y) : x);
   const gesehen = new Map();
   for (const a of grundpruefung('koinzidenz')) {
@@ -280,8 +280,9 @@ test('koinzidenz: gekürzter Bruch (BALLADE 2/21)', () => {
     assert.deepEqual([a.loesung.z[0], a.loesung.n[0]], [String(zae / g), String(nen / g)]);
     gesehen.set(w, `${a.loesung.z[0]}/${a.loesung.n[0]}`);
   }
-  assert.equal(gesehen.get('BALLADE'), '2/21');
-  assert.equal(gesehen.get('ANANAS'), '4/15');
+  // Handrechnung: GONDOLIERE O 2·1 + E 2·1 = 4, 10 · 9 = 90 → 2/45; KASSETTE S, E, T je 2·1 = 6, 8 · 7 = 56 → 3/28
+  assert.equal(gesehen.get('GONDOLIERE'), '2/45');
+  assert.equal(gesehen.get('KASSETTE'), '3/28');
   assert.equal(G.GENERATOREN.koinzidenz.niveau, 'eA');
 });
 

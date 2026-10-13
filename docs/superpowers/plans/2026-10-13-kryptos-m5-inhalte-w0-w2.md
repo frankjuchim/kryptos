@@ -1265,11 +1265,11 @@ Schlüssel- und Koinzidenzlisten zusätzlich gegen die Schlüssel der Seeds (`ve
 
 Wird ein Wort durch spätere Inhalte (Akten W3–W6, M8) verboten, schlägt der Test an und das Wort wird ersetzt.
 
-- [ ] **Step 1: Failing test** `inhalte_woerter.test.js` → FAIL (M3-Listen kollidieren: `legion`, `forum`, `tribun`, `sultan`, `kanal` …).
-- [ ] **Step 2: Implement** Listen; Spec-§8-Texte anpassen (Beispiele = neue Listen-Anfänge; Satz „Regel vor Beispiel“).
-- [ ] **Step 3: Run** `node --test test/inhalte_woerter.test.js test/generatoren.test.js` → PASS (Generator-Tests laufen mit den neuen
+- [x] **Step 1: Failing test** `inhalte_woerter.test.js` → FAIL (M3-Listen kollidieren: `legion`, `forum`, `tribun`, `sultan`, `kanal` …).
+- [x] **Step 2: Implement** Listen; Spec-§8-Texte anpassen (Beispiele = neue Listen-Anfänge; Satz „Regel vor Beispiel“).
+- [x] **Step 3: Run** `node --test test/inhalte_woerter.test.js test/generatoren.test.js` → PASS (Generator-Tests laufen mit den neuen
   Listen; Wortlängen-Annahmen in den Tests – z. B. `caesar_paar` 3–6 Buchstaben – prüfen); `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Generator-Wortlisten W0–W2 vervollständigt, Abgleich gegen Lab, Akten, Bosse, Warm-up und Videos"`.
+- [x] **Step 4: Commit** `git commit -m "Generator-Wortlisten W0–W2 vervollständigt, Abgleich gegen Lab, Akten, Bosse, Warm-up und Videos"`.
 
 ### Task 91: Weitere Generatoren Welten 0 und 1 (W0 §8, W1 §8)
 

@@ -768,11 +768,15 @@ sofort sichtbar, da 9 · 3 = 27) – volle Punktzahl.
 ## §8 Trainingsplatz-Generatoren Welt 1
 
 Wortlisten ohne Wörter aus Lab, Akten, Bossen und Videos.
+**Regel vor Beispiel (Plan M5 E46):** Kein Generator-Wort kommt in Lab, Akten, Bossen, Warm-up, Präsentationen,
+Funkraum-Material, Gast-Demo oder Videos vor (Wörter ab 4 Buchstaben auch nicht als Teil eines Wortes; Abgleich-Test
+`test/inhalte_woerter.test.js`). Maßgeblich sind die Listen in `src/krypto/generatoren/woerter.js` (vorläufig, offene
+Entscheidung 1 des M5-Plans); die Beispiele hier sind deren Anfänge.
 
 | Name | Parameterbereich | Aufgabentext-Muster | Lösung | Prüfregel |
 |---|---|---|---|---|
-| `schluesselwort_alphabet` | Schlüsselwort aus Liste `SCHLUESSELWOERTER_W1` (40 Wörter, 4–12 Buchstaben, z. B. `minarett`, `dattelpalme`, `karawanserei`, `tigris`) | „Bilde das Geheimtextalphabet zum Schlüsselwort {WORT} (ohne Wiederholungen, Rest ab A). Gib die ersten {n} Buchstaben an.“ (n = 10 oder 26) | Präfix des Alphabets | exakt; Diagnose: Wiederholung nicht gestrichen → P4; Rest ab letztem Schlüsselwortbuchstaben statt ab A → Hinweis „Kryptos-Regel: Rest ab A“. |
-| `substitution_ver_ent` | Alphabet aus `schluesselwort_alphabet`, Wort aus `WOERTER_BAGDAD` (60 Wörter) | „Verschlüssele/Entschlüssele mit dem Alphabet {ALPHABET}: {text}“ | Text | Normalisierung; Diagnose: Richtung vertauscht (oben/unten) → P3. |
+| `schluesselwort_alphabet` | Schlüsselwort aus Liste `SCHLUESSELWOERTER_W1` (≥ 40 Wörter, 4–12 Buchstaben, z. B. `dattelpalme`, `euphrat`, `astrolab`, `kalligrafie`) | „Bilde das Geheimtextalphabet zum Schlüsselwort {WORT} (ohne Wiederholungen, Rest ab A). Gib die ersten {n} Buchstaben an.“ (n = 10 oder 26) | Präfix des Alphabets | exakt; Diagnose: Wiederholung nicht gestrichen → P4; Rest ab letztem Schlüsselwortbuchstaben statt ab A → Hinweis „Kryptos-Regel: Rest ab A“. |
+| `substitution_ver_ent` | Alphabet aus `schluesselwort_alphabet`, Wort aus `WOERTER_BAGDAD` (≥ 60 Wörter, z. B. `alchemie`, `astrolab`, `diwan`, `moschee`) | „Verschlüssele/Entschlüssele mit dem Alphabet {ALPHABET}: {text}“ | Text | Normalisierung; Diagnose: Richtung vertauscht (oben/unten) → P3. |
 | `affin` | m ∈ {3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25}, t ∈ {0, …, 25}, Wort 3–6 Buchstaben, Richtung ver/ent (bei ent: m⁻¹ angegeben) | „Nummerierung: A = 0 … Z = 25. Affine Chiffre (m, t) = ({m}, {t}). {Verschlüssele/Entschlüssele}: {text}“ | Text | Diagnose: Ergebnis passt zu A = 1-Rechnung → P1; mit m statt m⁻¹ entschlüsselt → P3; t nach statt vor der Multiplikation abgezogen → P3. |
 | `invers_mod26` | m wie oben | „Bestimme m⁻¹ mit (m · m⁻¹) mod 26 = 1 für m = {m}.“ | m⁻¹ | Ganzzahl gleich; Diagnose: 26 − m⁻¹ → Vorzeichenfehler (P2). |
 | `haeufigkeit_caesar` | erzeugter deutscher Satz (Satzbaukasten, 60–120 Buchstaben, **e als eindeutig häufigster Buchstabe** vom Generator geprüft), k ∈ {1, …, 25} | „Nummerierung: A = 1 … Z = 26. Ein Caesar-Geheimtext hat folgende Häufigkeiten: {Top 5}. Bestimme den wahrscheinlichsten Schlüssel.“ (Geheimtext wird mit angezeigt) | k | Ganzzahl gleich; Diagnose: k ± 1 → P1; 26 − k → P3. |

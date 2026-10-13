@@ -1559,9 +1559,13 @@ Einsatz ab DS 2 (DS 2: 01–04, DS 3: 05–09, später spiralförmig 10–12 und
 
 Deterministisch per Seed, serverseitig geprüft (`src/krypto/generatoren.js`, Zwilling in `werkzeuge/krypto/krypto.py`).
 Eingabe tolerant (Groß/Klein, Leerzeichen, Gruppierung egal; Normalisierung `krypto`). 1 Punkt je Aufgabe, max. 30/Tag.
-Wortliste `WOERTER_ANTIKE` (60 Wörter, 3–12 Buchstaben, nur a–z, z. B. `legion`, `senat`, `forum`, `tribun`, `galeere`,
-`hoplit`, `amphore`, `therme`, `kurier`, `lager`, `mauer`, `hafen`, `olymp`, `orakel`, `tempel`, …) – keine Wörter aus
-Lab, Akten, Bossen und Videos.
+Wortliste `WOERTER_ANTIKE` (≥ 60 Wörter, 3–12 Buchstaben, nur a–z, z. B. `aquaedukt`, `atrium`, `ballista`, `basilika`,
+`centurio`, `diadem`, `dolch`, `fibel`, `gladius`, `amphore`, `therme`, `orakel`, …) – keine Wörter aus Lab, Akten,
+Bossen und Videos.
+**Regel vor Beispiel (Plan M5 E46):** Kein Generator-Wort kommt in Lab, Akten, Bossen, Warm-up, Präsentationen,
+Funkraum-Material, Gast-Demo oder Videos vor (Wörter ab 4 Buchstaben auch nicht als Teil eines Wortes; Abgleich-Test
+`test/inhalte_woerter.test.js`). Maßgeblich sind die Listen in `src/krypto/generatoren/woerter.js` (vorläufig, offene
+Entscheidung 1 des M5-Plans); die Beispiele hier sind deren Anfänge.
 
 | Name | Parameterbereich | Aufgabentext-Muster | Lösung | Prüfregel |
 |---|---|---|---|---|
