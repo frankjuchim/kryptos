@@ -624,6 +624,8 @@ test('M6: werkzeug-Voreinstellung reiter/richtung/modus geprüft, Level-Objekte,
   assert.match(fehler({ id: 'scheibe', voreinstellung: { richtung: 'quer' } }).join(), /richtung/);
   assert.match(fehler({ id: 'vigenere', voreinstellung: { modus: 'beaufort' } }).join(), /modus/);
   assert.match(fehler({ id: 'runden', voreinstellung: { variante: 'aes' } }).join(), /variante/);
+  assert.match(fehler({ id: 'bitlupe', voreinstellung: { schluesselart: 'dez' } }).join(), /schluesselart/);
+  assert.deepEqual(fehler({ id: 'bitlupe', voreinstellung: { schluesselart: 'hex', c1: '55 85', c2: '50 8F' } }), []);
   assert.match(fehler({ id: 'substitution', voreinstellung: { reiter: ['x'] } }).join(), /nicht erlaubt/);
   const l = levelMit({ werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['quadrat'] } }, 'scheibe'] });
   assert.deepEqual(levelFehler(l), []);

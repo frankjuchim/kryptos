@@ -2430,7 +2430,7 @@ Beamer bei 1920 × 1080.
   `form.oeffentlich` (Zahl) und `form.k-melden` („K verdeckt an die Spielleitung melden“); Eve: Tabelle je Paar `p, g, A, B`
   und `form.funk-tipp[data-paar]` („Tipp gespeichert – die Auflösung zeigt, ob er stimmt.“).
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   // labor_bitlupe.test.js
   test('Bit-Lupe: Voreinstellung schluesselart hex (OTP) und c1/c2 (Doppelnutzung, W3-Demonstration)', () => {
@@ -2469,10 +2469,10 @@ Beamer bei 1920 × 1080.
   24 Zeichen überschreiten würde, ist `disabled`; `select.abschnitt` bietet Abschnitt 1 nur, solange er frei ist oder
   `ich.erneutErlaubt` gilt; Senden schickt `{ text, klartext, abschnitt }`; Eve: `ul.funk-paare` öffnet die Bit-Lupe mit
   `c1`/`c2` der beiden Sprüche.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `npm run validate` grün;
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `npm run validate` grün;
   Sichtprüfung (OTP mit Demonstrationsschlüssel über festen Zufall im Dev-Server nicht möglich → Bit-Lupe direkt mit den Werten
   oben; DH Runde 2 mit Modulo-Uhr p = 101 bei 360 px).
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenen Doppelter Schlüssel und Schlüsseltausch, Bit-Lupe mit Hex-Schlüssel und C1/C2"`.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenen Doppelter Schlüssel und Schlüsseltausch, Bit-Lupe mit Hex-Schlüssel und C1/C2"`.
 
 ### Task 154: Szene „Mallory im Netz“ (W5 §9.3, E96, E115)
 
@@ -2957,6 +2957,18 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Knacken sperrt nur das Knack-Formular. Eves Ergebnis nennt die Zeit aus dem `geknackt`-Ereignis. Wettknacken: leere
   Werkbank-Felder werden vor dem `PUT` entfernt; 429 bleibt still, ein zweiter Versuch folgt nach 2,5 s; Funken bei „fertig“
   nur beim Wechsel und ohne reduzierte Bewegung. Sichtprüfung: Anteile 28,4 % (U/Y/C) bzw. 19,3 % (U) wie nachgerechnet.
+
+- **Task 153:** Bit-Lupe: `schluesselart` (Radiogruppe vorbelegt), `c1`/`c2` (Hex, 1–24 Byte); ungültige Werte → Hinweis oben
+  im Werkzeug und Standard. Schlüssel-Voreinstellung jetzt bis 300 Zeichen (Hex mit Leerzeichen). Server `werkzeuge.js`:
+  `WERTE.schluesselart = { bitlupe: ['text','hex','bits'] }`, geprüft wie `modus`/`variante` (Validator-Test). **Abweichung:**
+  Die Doppelnutzungs-Tabelle hat eine Zeile „als Zeichen“ (C1 ⊕ C2 als Anlagezeichen, sonst ·) – damit entschlüsselt Bob
+  im Funkraum mit derselben Bit-Lupe (C1 = Funkspruch, C2 = Abschnitt, M = C ⊕ K; der Text-Reiter XOR nimmt keinen Hex-Text);
+  für Eve zeigt die Zeile nur M1 ⊕ M2 (Leerzeichen ⊕ Buchstabe = Kleinbuchstabe ist ein legitimer Crib-Hinweis). Der
+  OTP-Schlüssel in der Bit-Lupe ist der Abschnitt gekürzt auf die Spruchlänge. Abschnitt-Auswahl ohne Server-Feld: 0
+  gesendet → nur 1; 1 gesendet → 2 (Sparschwein zusätzlich 1); 2 → keine. Schlüsseltausch: Kanalwerte der laufenden Runde
+  aus Nachrichten der Art `oeffentlich` ab der Version des `phase`-Ereignisses; Eve-Tipps ohne Rückmeldung; die Modulo-Uhr
+  (nur Reiter „uhr“) wird bei neuem p neu geöffnet und mit a = g vorbelegt. Sichtprüfung: Demonstration 16 von 19, Crib
+  „MORGEN “ → „HEUTE 8“, Runde 2 K = 82 (a = 37, b = 58) wie nachgerechnet.
 
 ## Reihenfolge und Abhängigkeiten
 

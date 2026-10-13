@@ -76,10 +76,35 @@
     let bitsEingabe = typeof v.bits === 'string' ? v.bits.slice(0, 300) : '';
     let umschalter = typeof v.bits === 'string' ? 'bits-zeichen' : 'zeichen-bits';
     let modus = v.modus === 'otp' ? 'otp' : 'wiederholung';
+    // Voreinstellungen schluesselart, c1, c2 (M7 Task 153, Funkraum): ungültig → Standard mit Hinweis
+    const vorHinweise = [];
     let schluesselArt = 'text';
-    let schluessel = typeof v.schluessel === 'string' ? v.schluessel.slice(0, 80) : BEISPIEL.schluessel;
+    if (v.schluesselart !== undefined) {
+      if (SCHLUESSELARTEN.some((x) => x.id === v.schluesselart)) schluesselArt = v.schluesselart;
+      else vorHinweise.push('Unbekannte Schlüsselart in der Voreinstellung – der Schlüssel wird als Text gelesen.');
+    }
+    let schluessel = typeof v.schluessel === 'string' ? v.schluessel.slice(0, 300) : BEISPIEL.schluessel;
+    /** Hex-Voreinstellung (≤ 24 Byte) oder null */
+    function hexVor(x) {
+      if (typeof x !== 'string') return null;
+      try {
+        const b = Krypto.vonHex(x);
+        return b.length >= 1 && b.length <= MAX ? Krypto.gruppieren(Krypto.hex(b), 2) : null;
+      } catch (e) {
+        if (!istKryptoFehler(e)) throw e;
+        return null;
+      }
+    }
     let c1 = BEISPIEL.c1;
     let c2 = BEISPIEL.c2;
+    if (v.c1 !== undefined || v.c2 !== undefined) {
+      const a = hexVor(v.c1);
+      const b = hexVor(v.c2);
+      if (a && b) {
+        c1 = a;
+        c2 = b;
+      } else vorHinweise.push(`C1 und C2 der Voreinstellung sind kein gültiges Hex (höchstens ${MAX} Byte) – es gilt das Beispiel.`);
+    }
     let crib = '';
     let cribPosition = 0;
     let nachspiel = null;
@@ -87,7 +112,7 @@
     let z = { bytes: [], ergebnisHex: '', cribErgebnis: '', statistik: null };
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
-    const wurzel = h('div', { class: 'labor-werkzeug bitlupe-werkzeug' }, r.element);
+    const wurzel = h('div', { class: 'labor-werkzeug bitlupe-werkzeug' }, vorHinweise.map((t) => B.hinweis('warnung', t)), r.element);
     container.appendChild(wurzel);
 
     function schliesseTeile() {
@@ -506,6 +531,8 @@
             null,
             h('tr', null, h('th', { scope: 'row' }, 'Hex'), bytes.map((b, i) => zelle(i, Krypto.hex([b])))),
             h('tr', { class: 'doppel-bits' }, h('th', { scope: 'row' }, 'Bits'), bitsListe.map((x, i) => zelle(i, vierer(x)))),
+            // als Zeichen (M7 Task 153): ist C2 der Schlüssel, steht hier der Klartext (M = C ⊕ K, Bob im Funkraum)
+            h('tr', { class: 'doppel-zeichen' }, h('th', { scope: 'row' }, 'als Zeichen'), bytes.map((b, i) => zelle(i, zeichenAnzeige(zeichenOderPunkt(b))))),
             h('tr', null, h('th', { scope: 'row' }, 'Deutung'), bytes.map((_, i) => zelle(i, deutung(i)))),
             h('tr', { class: 'doppel-crib' }, h('th', { scope: 'row' }, 'Crib'), bytes.map((_, i) => zelle(i, imCrib(i) ? zeichenAnzeige(cribZeichen[i - cribPosition]) : ''))),
             h('tr', { class: 'doppel-cribergebnis' }, h('th', { scope: 'row' }, '(C1 ⊕ C2) ⊕ Crib'), bytes.map((_, i) => zelle(i, imCrib(i) ? zeichenAnzeige(ergebnis[i - cribPosition]) : '', imCrib(i) && ergebnis[i - cribPosition] === '·' ? 'unlesbar' : '')))

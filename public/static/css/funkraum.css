@@ -114,6 +114,27 @@ svg.funk-netz { display: block; width: 100%; height: auto; max-height: 60vh; }
 .funk-fertig::before { content: "✓ "; }
 .funk-hinweise { margin: 0; padding-left: 1.2em; font-family: var(--f-mono); }
 
+/* Szenen „Der doppelte Schlüssel“ und „Schlüsseltausch“ (Task 153) */
+.funk-abschnitte { display: grid; gap: var(--a-2); }
+.abschnitt-zeile { display: grid; gap: var(--a-1); }
+.abschnitt-titel { font-size: .9rem; color: var(--text-2); }
+code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.funk-bausteine { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.funk-bausteine .baustein { font-family: var(--f-mono); }
+.funk-spruch { margin: 0; font-family: var(--f-mono); font-size: 1.15rem; font-weight: 700; }
+.funk-spruch-laenge { margin: 0; }
+.funk-hex { width: 100%; min-height: var(--ziel); font-family: var(--f-mono); }
+.funk-paare { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.funk-paare li { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; }
+.funk-woerter { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--a-1) var(--a-3); font-family: var(--f-mono); }
+.funk-parameter { margin: 0; font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.funk-dh { display: grid; gap: var(--a-2); }
+.funk-dh p { margin: 0; }
+.funk-dh input[type="number"], .funk-dh-paare input[type="number"] { min-height: var(--ziel); max-width: 9rem; }
+.funk-dh-paare { width: 100%; }
+.funk-dh-paare td.zahl { font-variant-numeric: tabular-nums; font-size: 1.1rem; }
+.funk-dh-paare form label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
 /* Ticker */
 .funk-ticker-bereich[hidden] { display: none; }
 .funk-ticker-bereich h2 { margin: 0 0 var(--a-2); font-size: 1.05rem; }

@@ -629,6 +629,364 @@ const KRFunkSzenen = (() => {
     };
   });
 
+  /* ---------- Szene „Der doppelte Schlüssel“ (W3 §9.1/§9.3, Plan M7 Task 153, E94) ---------- */
+
+  const MAX_SPRUCH = 24;
+  /** Abschnitt (Hex-Paare) auf n Byte kürzen – der One-Time-Pad-Schlüssel ist so lang wie der Spruch */
+  function praefix(hexPaare, n) {
+    const b = Krypto.vonHex(hexPaare || '');
+    return Krypto.gruppieren(Krypto.hex(b.slice(0, Math.max(0, n))), 2);
+  }
+  const hexLaenge = (hex) => {
+    try {
+      return Krypto.vonHex(hex || '').length;
+    } catch {
+      return 0;
+    }
+  };
+
+  registriere('doppelter-schluessel', (ctx) => {
+    const st = ctx.stand();
+    const rolle = st.ich.rolle;
+    const ich = () => ctx.stand().ich || {};
+    const bitlupeVor = ctx.voreinstellung('bitlupe');
+    const lupe = bitlupeVor ? einbettung(ctx, 'bitlupe', 'Bit-Lupe') : null;
+    const teile = [];
+    let alice = null;
+
+    // Schlüsselblock (Alice und Bob)
+    const blockEl = h('div', { class: 'funk-abschnitte' });
+    if (rolle === 'alice' || rolle === 'bob') {
+      teile.push(h('section', { class: 'funk-karte funk-block', 'aria-labelledby': 'block-titel' }, h('h3', { id: 'block-titel' }, 'Euer Schlüsselblock (64 Byte)'), h('p', { class: 'text-2 klein' }, 'Nur euer Funkpaar sieht ihn – „vorher offline übergeben“.'), blockEl));
+    }
+    const zeigeBlock = () => {
+      const ab = ich().abschnitte || [];
+      AQ.mount(blockEl, ab.map((hex, i) => h('div', { class: 'abschnitt-zeile' }, h('span', { class: 'abschnitt-titel' }, `Abschnitt ${i + 1} (Byte ${i * 32}–${i * 32 + 31})`), h('code', { class: 'abschnitt', 'data-nr': String(i + 1) }, hex))));
+    };
+
+    if (rolle === 'alice') {
+      let woerter = [];
+      const spruchEl = h('p', { class: 'funk-spruch', 'aria-live': 'polite' }, '–');
+      const laengeEl = h('p', { class: 'text-2 klein funk-spruch-laenge' });
+      const zurueck = h('button', { type: 'button', class: 'knopf knopf-leise baustein-zurueck', 'aria-label': 'Letztes Wort entfernen' }, '⌫ Zurück');
+      const knoepfe = (ich().bausteine || []).map((w) => h('button', { type: 'button', class: 'knopf knopf-zweit baustein', 'data-wort': w }, w));
+      const spruch = () => woerter.join(' ');
+      const hexFeld = h('input', { type: 'text', class: 'funk-hex', id: 'funk-hex', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'characters', maxlength: String(3 * MAX_SPRUCH) });
+      const abschnittWahl = h('select', { class: 'abschnitt', id: 'funk-abschnitt' });
+      const senden = h('button', { type: 'submit', class: 'knopf knopf-primaer funk-senden-knopf' }, 'Funkspruch senden');
+      const ergebnis = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+      const inLupe = h('button', { type: 'button', class: 'knopf knopf-zweit in-bitlupe' }, 'In der Bit-Lupe verschlüsseln');
+      const uebernehmen = h('button', { type: 'button', class: 'knopf knopf-leise hex-uebernehmen' }, 'Ergebnis der Bit-Lupe übernehmen');
+      const sparschwein = h('div', { class: 'rueckmeldung info funk-sparschwein', hidden: true }, h('p', null, 'Zusatzkarte (verdeckt): „Der Nachschub an Schlüsselstreifen ist knapp. Benutzt für euren zweiten Funkspruch denselben Abschnitt eures Schlüsselblocks wie für den ersten.“'));
+      const gesendet = () => (ctx.stand().nachrichten || []).filter((n) => n.von === ich().team.id && n.art === 'nachricht').length;
+      function erlaubteAbschnitte() {
+        const g = gesendet();
+        if (g === 0) return [1];
+        if (g === 1) return ich().erneutErlaubt ? [1, 2] : [2];
+        return [];
+      }
+      function pruefe() {
+        const t = spruch();
+        spruchEl.textContent = t || '–';
+        laengeEl.textContent = `${t.length} von ${MAX_SPRUCH} Zeichen`;
+        for (const k of knoepfe) k.disabled = (t ? t.length + 1 : 0) + k.getAttribute('data-wort').length > MAX_SPRUCH;
+        zurueck.disabled = !woerter.length;
+        const erlaubt = erlaubteAbschnitte();
+        const alt = abschnittWahl.value;
+        const werte = [...abschnittWahl.options].map((o) => o.value).join(',');
+        if (werte !== erlaubt.join(',')) {
+          AQ.mount(abschnittWahl, erlaubt.map((nr) => h('option', { value: String(nr) }, `Abschnitt ${nr}`)));
+          if (erlaubt.includes(Number(alt))) abschnittWahl.value = alt;
+        }
+        sparschwein.hidden = !ich().erneutErlaubt;
+        inLupe.disabled = !t || !lupe || !erlaubt.length;
+        senden.disabled = !t || !erlaubt.length || !hexFeld.value.trim() || ctx.gesperrt();
+        if (!erlaubt.length) ergebnis.textContent = 'Ihr habt beide Funksprüche gesendet.';
+      }
+      knoepfe.forEach((k) =>
+        k.addEventListener('click', () => {
+          woerter.push(k.getAttribute('data-wort'));
+          hexFeld.value = '';
+          pruefe();
+        })
+      );
+      zurueck.addEventListener('click', () => {
+        woerter.pop();
+        hexFeld.value = '';
+        pruefe();
+      });
+      hexFeld.addEventListener('input', pruefe);
+      abschnittWahl.addEventListener('change', pruefe);
+      inLupe.addEventListener('click', () => {
+        const nr = Number(abschnittWahl.value) || 1;
+        const ab = (ich().abschnitte || [])[nr - 1];
+        if (!ab || !lupe) return;
+        lupe.oeffne({ ...bitlupeVor, reiter: ['xor'], modus: 'otp', schluesselart: 'hex', text: spruch(), schluessel: praefix(ab, spruch().length) });
+      });
+      uebernehmen.addEventListener('click', () => {
+        const z = lupe && lupe.steuer() ? lupe.steuer().zustand() : null;
+        if (z && z.ergebnisHex) hexFeld.value = Krypto.gruppieren(z.ergebnisHex, 2);
+        pruefe();
+      });
+      const form = h(
+        'form',
+        { class: 'funk-otp-senden funk-senden', novalidate: true },
+        h('h3', null, 'Funkspruch bauen und senden'),
+        h('p', { class: 'text-2 klein' }, 'Nur Wörter aus dem Funkspruch-Baukasten, höchstens 24 Zeichen. Spruch 1 mit Abschnitt 1, Spruch 2 mit Abschnitt 2.'),
+        h('div', { class: 'funk-bausteine', role: 'group', 'aria-label': 'Funkspruch-Baukasten' }, knoepfe),
+        h('div', { class: 'funk-zeile' }, h('span', null, 'Euer Spruch: '), spruchEl, zurueck),
+        laengeEl,
+        h('p', { class: 'feld' }, h('label', { for: 'funk-abschnitt' }, 'Schlüsselabschnitt '), abschnittWahl),
+        h('div', { class: 'knopf-reihe' }, inLupe, uebernehmen),
+        h('label', { for: 'funk-hex' }, 'Geheimtext (Hex-Paare, z. B. 55 85 A8)'),
+        hexFeld,
+        h('div', { class: 'knopf-reihe' }, senden),
+        ergebnis
+      );
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        if (senden.disabled) return;
+        senden.disabled = true;
+        try {
+          await ctx.senden({ text: hexFeld.value.trim().toUpperCase(), klartext: spruch(), abschnitt: Number(abschnittWahl.value) });
+          ergebnis.className = 'funk-ergebnis ok';
+          ergebnis.textContent = 'Gesendet.';
+          woerter = [];
+          hexFeld.value = '';
+        } catch (e) {
+          ergebnis.className = 'funk-ergebnis fehler';
+          ergebnis.textContent = fehlerText(e);
+        } finally {
+          pruefe();
+        }
+      });
+      teile.push(sparschwein, form);
+      alice = { pruefe };
+    }
+
+    // Eve: Wortkarten und Spruch-Paare
+    const paareEl = h('ul', { class: 'funk-paare' });
+    if (rolle === 'eve') {
+      teile.push(
+        h('section', { class: 'funk-karte', 'aria-labelledby': 'paare-titel' }, h('h3', { id: 'paare-titel' }, 'Sprüche desselben Absenders'), h('p', { class: 'text-2 klein' }, 'Vergleicht je zwei Sprüche: C1 ⊕ C2. Viele Bytes mit 000 … – gleicher Schlüssel?'), paareEl),
+        h('section', { class: 'funk-karte', 'aria-labelledby': 'woerter-titel' }, h('h3', { id: 'woerter-titel' }, 'Wortkarten (Funkspruch-Baukasten)'), h('ul', { class: 'funk-woerter' }, (ich().bausteine || []).map((w) => h('li', null, h('code', null, w)))))
+      );
+    }
+    const zeigePaare = () => {
+      const n = (id) => (ctx.stand().nachrichten || []).find((x) => x.id === id);
+      abgleich(paareEl, (ich().paare || []).filter(([a, b]) => n(a) && n(b)), {
+        schluessel: ([a, b]) => `${a}-${b}`,
+        baue: ([a, b]) => {
+          const k = h('button', { type: 'button', class: 'knopf knopf-zweit' }, 'In der Bit-Lupe vergleichen');
+          k.addEventListener('click', () => lupe && lupe.oeffne({ ...bitlupeVor, reiter: ['doppelnutzung', 'xor'], c1: n(a).inhalt, c2: n(b).inhalt }));
+          return h('li', null, h('span', null, `${ctx.teamName(n(a).von)}: Spruch ${a} und ${b} `), k);
+        }
+      });
+    };
+
+    const post = posteingang(ctx, {
+      titel: rolle === 'eve' ? 'Abgefangene Funksprüche (Hex)' : 'Funksprüche',
+      zeit: rolle === 'eve',
+      aktionen: (n) => {
+        if (n.art !== 'nachricht') return null;
+        if (rolle === 'bob' && n.von !== ich().team.id) {
+          const wahl = h('select', { class: 'abschnitt-bob', 'aria-label': `Abschnitt für Spruch ${n.id}` }, [1, 2].map((nr) => h('option', { value: String(nr) }, `Abschnitt ${nr}`)));
+          const k = h('button', { type: 'button', class: 'knopf knopf-zweit in-bitlupe' }, 'In der Bit-Lupe entschlüsseln');
+          k.addEventListener('click', () => {
+            const ab = (ich().abschnitte || [])[Number(wahl.value) - 1];
+            if (ab && lupe) lupe.oeffne({ ...bitlupeVor, reiter: ['doppelnutzung'], c1: n.inhalt, c2: praefix(ab, hexLaenge(n.inhalt)) });
+          });
+          return [h('div', { class: 'funk-zeile' }, wahl, k), h('p', { class: 'text-2 klein' }, 'M = C ⊕ K: die Zeile „als Zeichen“ zeigt den Klartext.'), pruefFormular(ctx, n, { art: 'empfangen', pfad: 'empfangen', label: 'Klartext', knopf: 'Empfangen und gelesen', erfolg: 'Stimmt – empfangen und gelesen.', misserfolg: 'Stimmt nicht – prüft Abschnitt und Entschlüsselung.' })];
+        }
+        if (rolle === 'eve') return pruefFormular(ctx, n, { art: 'knacken', pfad: 'knacken', label: 'Rekonstruierter Spruch', knopf: 'Eintragen', erfolg: 'Stimmt – Eve gewinnt!', misserfolg: 'Stimmt nicht – probiert weiter.' });
+        return null;
+      }
+    });
+    teile.push(post.element);
+    const eveEl = h('p', { class: 'rueckmeldung info funk-eve-gewinnt', hidden: true });
+    teile.push(eveEl);
+    if (lupe) teile.push(lupe.element);
+    const element = h('div', { class: 'funk-szene-otp' }, teile);
+    if (lupe) lupe.oeffne(bitlupeVor);
+    return {
+      element,
+      aktualisiere(stand) {
+        zeigeBlock();
+        post.aktualisiere((stand.nachrichten || []).filter((n) => n.art === 'nachricht'));
+        if (rolle === 'eve') zeigePaare();
+        if (alice) alice.pruefe();
+        const a = stand.anzeigen || {};
+        eveEl.hidden = stand.phase !== 'aufloesung' || a.eveGewinnt === undefined;
+        eveEl.textContent = a.eveGewinnt ? 'Auflösung: Eve gewinnt – mindestens ein Spruch wurde rekonstruiert.' : 'Auflösung: Eve hat keinen Spruch rekonstruiert.';
+      },
+      schliesse() {
+        if (lupe) lupe.schliesse();
+      }
+    };
+  });
+
+  /* ---------- Szene „Schlüsseltausch vor Eves Augen“ (W4 §9.1/§9.3, Plan M7 Task 153, E95) ---------- */
+
+  /** Zahl aus einem Eingabefeld (ganzzahlig) oder null */
+  const zahl = (feld) => (/^\s*\d{1,4}\s*$/.test(feld.value) ? Number(feld.value) : null);
+
+  /** Zahlen-Formular: form.<klasse> mit input und Knopf; senden(wert) → Promise */
+  function zahlFormular({ klasse, label, knopf, min, max, senden, erfolg }) {
+    const id = neueId(klasse);
+    const feld = h('input', { type: 'number', id, inputmode: 'numeric', min: String(min), max: String(max), step: '1', autocomplete: 'off' });
+    const ergebnis = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+    const k = h('button', { type: 'submit', class: 'knopf knopf-zweit' }, knopf);
+    const form = h('form', { class: klasse, novalidate: true }, h('label', { for: id }, label), h('div', { class: 'funk-zeile' }, feld, k), ergebnis);
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const w = zahl(feld);
+      if (w === null || w < min || w > max) {
+        ergebnis.className = 'funk-ergebnis fehler';
+        ergebnis.textContent = `Bitte eine ganze Zahl von ${min} bis ${max}.`;
+        return;
+      }
+      k.disabled = true;
+      try {
+        await senden(w);
+        ergebnis.className = 'funk-ergebnis ok';
+        ergebnis.textContent = typeof erfolg === 'function' ? erfolg(w) : erfolg;
+      } catch (e) {
+        ergebnis.className = 'funk-ergebnis fehler';
+        ergebnis.textContent = fehlerText(e);
+      } finally {
+        k.disabled = false;
+      }
+    });
+    return { form, feld, ergebnis };
+  }
+
+  /** Kanal-Werte der laufenden Runde je Paar (Alice-Team) → Map paar → { A, B } (Nachrichten „A 17“/„B 4“) */
+  function kanalWerte(stand) {
+    const phasen = (stand.ereignisse || []).filter((e) => e.code === 'phase' && e.daten && e.daten.phase === stand.phase);
+    const ab = phasen.length ? phasen[phasen.length - 1].version : 0;
+    const out = new Map();
+    for (const n of stand.nachrichten || []) {
+      if (n.art !== 'oeffentlich' || n.ausgeblendet || n.version < ab) continue;
+      const m = /^([AB]) (\d+)$/.exec(n.inhalt || '');
+      if (!m) continue;
+      const paar = m[1] === 'A' ? n.von : n.an;
+      const x = out.get(paar) || { A: null, B: null };
+      x[m[1]] = Number(m[2]);
+      out.set(paar, x);
+    }
+    return out;
+  }
+
+  registriere('schluesseltausch', (ctx) => {
+    const st = ctx.stand();
+    const rolle = st.ich.rolle;
+    const ich = () => ctx.stand().ich || {};
+    const param = h('p', { class: 'funk-parameter' });
+    const uhrVor = ctx.voreinstellung('modulo');
+    const uhr = uhrVor ? einbettung(ctx, 'modulo', 'Modulo-Uhr') : null;
+    let uhrFuer = null;
+    const teile = [h('section', { class: 'funk-karte', 'aria-labelledby': 'dh-param' }, h('h3', { id: 'dh-param' }, 'Öffentliche Parameter dieser Runde'), param)];
+    let alice = null;
+    let eve = null;
+    if (rolle === 'alice' || rolle === 'bob') {
+      const buchstabe = rolle === 'alice' ? 'a' : 'b';
+      const gross = rolle === 'alice' ? 'A' : 'B';
+      const geheim = h('input', { type: 'number', class: 'geheimzahl', id: 'geheimzahl', inputmode: 'numeric', min: '1', step: '1', autocomplete: 'off' });
+      const meins = h('p', { class: 'funk-meins' });
+      const partnerWert = h('p', { class: 'funk-partner' });
+      const oeff = zahlFormular({ klasse: 'oeffentlich', label: `Öffentlicher Wert ${gross} = g^${buchstabe} mod p`, knopf: `${gross} senden`, min: 1, max: 100, senden: (wert) => ctx.aktion('oeffentlich', { wert }), erfolg: (w) => `${gross} = ${w} ist im Kanal – alle sehen ihn.` });
+      const kMeld = zahlFormular({ klasse: 'k-melden', label: 'Euer Schlüssel K', knopf: 'K verdeckt an die Spielleitung melden', min: 0, max: 100, senden: (k) => ctx.aktion('k-melden', { k }), erfolg: 'Gemeldet – nur eure Lehrkraft sieht K.' });
+      teile.push(
+        h(
+          'section',
+          { class: 'funk-karte funk-dh', 'aria-labelledby': 'dh-titel' },
+          h('h3', { id: 'dh-titel' }, 'Schlüsseltausch'),
+          h('p', { class: 'feld' }, h('label', { for: 'geheimzahl' }, `Eure Geheimzahl ${buchstabe} (von der Karte)`), geheim),
+          h('p', { class: 'text-2 klein' }, 'Eure Geheimzahl verlässt dieses Tablet nicht – sie wird nie gesendet.'),
+          oeff.form,
+          partnerWert,
+          kMeld.form,
+          meins
+        )
+      );
+      alice = {
+        aktualisiere(stand) {
+          const a = stand.anzeigen || {};
+          if (a.p) {
+            for (const f of [oeff.feld, kMeld.feld]) f.max = String(a.p - 1);
+          }
+          const i = stand.ich || {};
+          meins.textContent = i.oeffentlich !== null && i.oeffentlich !== undefined ? `Gesendet: ${gross} = ${i.oeffentlich}${i.k !== null && i.k !== undefined ? ` · gemeldet: K = ${i.k}` : ''}` : '';
+          const w = kanalWerte(stand).get(rolle === 'alice' ? i.team.id : i.partner) || {};
+          const anderes = rolle === 'alice' ? 'B' : 'A';
+          partnerWert.textContent = w[anderes] !== null && w[anderes] !== undefined ? `Euer Partner-Team hat ${anderes} = ${w[anderes]} gesendet.` : `Noch kein ${anderes} von eurem Partner-Team.`;
+        }
+      };
+    }
+    if (rolle === 'eve') {
+      const tbody = h('tbody');
+      teile.push(
+        h(
+          'section',
+          { class: 'funk-karte', 'aria-labelledby': 'eve-dh-titel' },
+          h('h3', { id: 'eve-dh-titel' }, 'Mitgehört: p, g, A und B je Paar'),
+          h('div', { class: 'scroll-x' }, h('table', { class: 'funk-dh-paare' }, h('caption', { class: 'sr' }, 'Öffentliche Werte je Paar'), h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Paar'), h('th', { scope: 'col' }, 'p'), h('th', { scope: 'col' }, 'g'), h('th', { scope: 'col' }, 'A'), h('th', { scope: 'col' }, 'B'), h('th', { scope: 'col' }, 'Euer Tipp für K'))), tbody))
+        )
+      );
+      eve = {
+        aktualisiere(stand) {
+          const a = stand.anzeigen || {};
+          const werte = kanalWerte(stand);
+          const paare = (stand.teams || []).filter((t) => t.rolle === 'alice' && werte.has(t.id));
+          abgleich(tbody, paare, {
+            schluessel: (t) => `${stand.phase}-${t.id}`,
+            baue: (t) => {
+              const f = zahlFormular({ klasse: 'funk-tipp', label: `Tipp für das Paar ${t.name}`, knopf: 'Tipp abgeben', min: 0, max: (a.p || 101) - 1, senden: (k) => ctx.aktion('knacken', { paar: t.id, k }), erfolg: 'Tipp gespeichert – die Auflösung zeigt, ob er stimmt.' });
+              f.form.setAttribute('data-paar', String(t.id));
+              const tr = h('tr', null, h('th', { scope: 'row' }, t.name), h('td', { class: 'zahl dh-p' }), h('td', { class: 'zahl dh-g' }), h('td', { class: 'zahl dh-a' }), h('td', { class: 'zahl dh-b' }), h('td', null, f.form));
+              tr._f = f;
+              return tr;
+            },
+            aktualisiere: (tr, t) => {
+              const w = werte.get(t.id) || {};
+              const z = (sel, v) => (tr.querySelector(sel).textContent = v === null || v === undefined ? '–' : String(v));
+              z('.dh-p', a.p);
+              z('.dh-g', a.g);
+              z('.dh-a', w.A);
+              z('.dh-b', w.B);
+              const tipp = ((stand.ich || {}).tipps || {})[t.id];
+              if (tipp !== undefined && !tr._f.ergebnis.textContent) tr._f.ergebnis.textContent = `Euer Tipp: K = ${tipp}`;
+            }
+          });
+        }
+      };
+    }
+    const kanal = posteingang(ctx, { titel: 'Kanal (alle hören mit)', leer: 'Noch keine öffentlichen Werte.' });
+    teile.push(kanal.element);
+    if (uhr) teile.push(uhr.element);
+    const element = h('div', { class: 'funk-szene-dh' }, teile);
+    return {
+      element,
+      aktualisiere(stand) {
+        const a = stand.anzeigen || {};
+        param.textContent = a.p ? `Runde ${a.runde}: p = ${a.p}, g = ${a.g}` : 'Auflösung – die Lehrkraft zeigt die Ergebnisse am Beamer.';
+        kanal.aktualisiere((stand.nachrichten || []).filter((n) => n.art === 'oeffentlich'));
+        if (alice) alice.aktualisiere(stand);
+        if (eve) eve.aktualisiere(stand);
+        // Modulo-Uhr mit p und g der Runde (nur Reiter „uhr“ – keine Wertetabelle, E98)
+        const v = ctx.voreinstellung('modulo');
+        const key = v ? `${v.modul}-${v.g}` : null;
+        if (uhr && v && key !== uhrFuer) {
+          uhrFuer = key;
+          uhr.oeffne({ ...v, a: v.g }); // Basis g auf der Uhr vorbelegt (Potenzieren wählen die Teams selbst)
+        }
+      },
+      schliesse() {
+        if (uhr) uhr.schliesse();
+      }
+    };
+  });
+
   /** Szene für den Typ bauen (registriert oder allgemein) */
   function zeige(typ, ctx) {
     const fabrik = SZENEN.get(typ) || allgemein;

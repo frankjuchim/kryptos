@@ -63,3 +63,26 @@ test('Bit-Lupe: Nachspiel Bit für Bit', () => {
   w.k.taste(leiste, 'End');
   assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /Bit 8: 0 ⊕ 1 = 1/);
 });
+
+test('Bit-Lupe: Voreinstellung schluesselart hex (OTP) und c1/c2 (Doppelnutzung, W3-Demonstration)', () => {
+  const KEY = '1D C0 FD 7A B3 6C B4 DB 68 9E D3 74 B5 6E 06 AB 8A 96 CA 68';
+  const w = oeffne('bitlupe', { voreinstellung: { reiter: ['xor'], modus: 'otp', schluesselart: 'hex', text: 'HEUTE 8 UHR AM HAFEN', schluessel: KEY } });
+  assert.equal(w.zustand().ergebnisHex, K.xor('HEUTE 8 UHR AM HAFEN', K.vonHex(KEY)));
+  assert.equal(w.zustand().ergebnisHex, '5585A82EF64C8CFB3DD68154F42326E3CBD08F26');
+  assert.equal(w.k.eins(w.flaeche, '[data-schluesselart="hex"]').getAttribute('aria-checked'), 'true');
+  const d = oeffne('bitlupe', { voreinstellung: { reiter: ['doppelnutzung'], c1: '55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26', c2: '50 8F AF 3D F6 22 94 99 29 D6 9D 3C FA 28 26 E5 C5 C4 8E' } });
+  assert.deepEqual(d.zustand().statistik, { beginnen000: 16, von: 19 });
+  assert.equal(d.k.eins(d.flaeche, 'input.doppel-c1').value, '55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26');
+  const x = oeffne('bitlupe', { voreinstellung: { reiter: ['xor'], schluesselart: 'quatsch' } });
+  assert.match(x.text('.labor-hinweis'), /Schlüsselart/);
+  const y = oeffne('bitlupe', { voreinstellung: { reiter: ['doppelnutzung'], c1: 'XYZ', c2: '00 '.repeat(25) } });
+  assert.match(y.text('.labor-hinweis'), /C1.*C2|Beispiel/);
+  assert.equal(y.k.eins(y.flaeche, 'input.doppel-c1').value, '16 62 28 6A 35', 'ungültig → Standard');
+});
+
+test('Bit-Lupe Doppelnutzung: Zeile „als Zeichen“ – C ⊕ Schlüssel ergibt den Klartext (Bob im Funkraum)', () => {
+  const KEY = '1D C0 FD 7A B3 6C B4 DB 68 9E D3 74 B5 6E 06 AB 8A 96 CA 68';
+  const d = oeffne('bitlupe', { voreinstellung: { reiter: ['doppelnutzung'], c1: '55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26', c2: KEY } });
+  const zeichen = d.k.alle(d.flaeche, 'tr.doppel-zeichen td').map((c) => d.k.text(c)).join('');
+  assert.equal(zeichen.replace(/␣/g, ' '), 'HEUTE 8 UHR AM HAFEN');
+});

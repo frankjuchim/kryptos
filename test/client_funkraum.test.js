@@ -398,3 +398,169 @@ test('Botenlauf: Alice sieht die Befehlskarte (sechs Befehle) und die Scheibe zu
   assert.match(b.text(b.eins(b.document, 'div.funk-werkzeug[data-werkzeug="scheibe"]')), /Während eines Boss-Kampfs sind die Werkzeuge gesperrt/);
   b.wert('KRFunkraum').stopp();
 });
+
+/* ---------- Task 153: Szenen „Der doppelte Schlüssel“ und „Schlüsseltausch“ ---------- */
+const BAUSTEINE = ['HEUTE', 'MORGEN', 'UM', '6', '7', '8', '9', 'UHR', 'AM', 'BEIM', 'HAFEN', 'BAHNHOF', 'NORDTOR', 'MARKT', 'NORD', 'SUED', 'TREFFEN', 'ABHOLEN', 'PAKET', 'BOOT', 'ZUG'];
+const DEMO_KEY = '1D C0 FD 7A B3 6C B4 DB 68 9E D3 74 B5 6E 06 AB 8A 96 CA 68 00 11 22 33 44 55 66 77 88 99 AA BB';
+const C1 = '55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26';
+const C2 = '50 8F AF 3D F6 22 94 99 29 D6 9D 3C FA 28 26 E5 C5 C4 8E';
+const OTP_ALICE = [{ id: 'bitlupe', voreinstellung: { reiter: ['xor'], modus: 'otp', schluesselart: 'hex' } }];
+const otpStand = (v, ich, extra = {}) => stand(v, { id: 10, typ: 'doppelter-schluessel', titel: 'Der doppelte Schlüssel', phase: 'funken', phasen: ['funken', 'lauschen', 'aufloesung'], ich, anzeigen: { eveGewinnt: false }, ...extra });
+const SEITE_BITLUPE = [...SEITE, 'krypto/labor/bausteine.js', 'krypto/labor/bitlupe.js', 'krypto/labor/modulo.js'];
+
+test('Doppelter Schlüssel: Bausteine bauen den Spruch, Abschnitt 1 erneut nur für das Sparschwein-Paar sichtbar', async () => {
+  const gesendet = [];
+  let nachrichten = [];
+  const k = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 10, typ: 'doppelter-schluessel', status: 'laeuft', phase: 'funken' }),
+      'GET /api/funk/10/stand': () => ({ status: 200, body: otpStand(3 + nachrichten.length, { team: TEAMS[0], rolle: 'alice', partner: 2, bausteine: BAUSTEINE, erneutErlaubt: false, abschnitte: [DEMO_KEY, DEMO_KEY.split(' ').reverse().join(' ')] }, { nachrichten, werkzeuge: OTP_ALICE }) }),
+      'POST /api/funk/10/nachrichten': (b) => {
+        gesendet.push(b);
+        nachrichten = [...nachrichten, { id: 20 + nachrichten.length, von: 1, an: 2, art: 'nachricht', inhalt: b.text, lesbar: true, angekommen: false, geknackt: false, zeit: '2026-10-13T08:00:00Z', version: 4 }];
+        return { status: 200, body: { nachricht: { id: 20 } } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'code.abschnitt').length, 2);
+  assert.match(k.text(k.eins(k.document, 'code.abschnitt[data-nr="1"]')), /^1D C0 FD/);
+  const knopf = (w) => k.alle(k.document, 'button.baustein').find((b) => b.getAttribute('data-wort') === w);
+  for (const w of ['HEUTE', '8', 'UHR']) k.klick(knopf(w));
+  assert.equal(k.text(k.eins(k.document, 'p.funk-spruch')), 'HEUTE 8 UHR');
+  for (const w of ['AM', 'HAFEN']) k.klick(knopf(w));
+  assert.equal(k.text(k.eins(k.document, 'p.funk-spruch')), 'HEUTE 8 UHR AM HAFEN');
+  assert.equal(knopf('BAHNHOF').disabled, true, 'würde 24 Zeichen überschreiten');
+  assert.equal(knopf('UM').disabled, false);
+  // erster Spruch: nur Abschnitt 1
+  assert.deepEqual(k.alle(k.document, 'select.abschnitt option').map((o) => o.value), ['1']);
+  // Bit-Lupe mit dem Abschnitt-Schlüssel (so lang wie der Spruch)
+  k.klick(k.eins(k.document, 'button.in-bitlupe'));
+  await k.ruhe();
+  const L = k.wert('KRLabor');
+  assert.equal(L.aktiv().zustand().ergebnisHex, '5585A82EF64C8CFB3DD68154F42326E3CBD08F26');
+  k.klick(k.eins(k.document, 'button.hex-uebernehmen'));
+  assert.equal(k.eins(k.document, 'input.funk-hex').value, C1);
+  k.klick(k.eins(k.document, 'form.funk-otp-senden button[type="submit"]'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(gesendet[0]), { text: C1, klartext: 'HEUTE 8 UHR AM HAFEN', abschnitt: 1 });
+  // zweiter Spruch: ohne Sparschwein nur Abschnitt 2
+  assert.deepEqual(k.alle(k.document, 'select.abschnitt option').map((o) => o.value), ['2']);
+  // Rücktaste
+  k.klick(knopf('ZUG'));
+  k.klick(k.eins(k.document, 'button.baustein-zurueck'));
+  assert.equal(k.text(k.eins(k.document, 'p.funk-spruch')), '–');
+  k.wert('KRFunkraum').stopp();
+
+  // Sparschwein-Paar: nach dem ersten Spruch Abschnitt 1 und 2
+  const s = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 10, typ: 'doppelter-schluessel', status: 'laeuft', phase: 'funken' }),
+      'GET /api/funk/10/stand': { status: 200, body: otpStand(5, { team: TEAMS[0], rolle: 'alice', partner: 2, bausteine: BAUSTEINE, erneutErlaubt: true, abschnitte: [DEMO_KEY, DEMO_KEY] }, { nachrichten: [{ id: 20, von: 1, an: 2, art: 'nachricht', inhalt: C1, lesbar: true, zeit: '2026-10-13T08:00:00Z', version: 4 }], werkzeuge: OTP_ALICE }) }
+    }
+  });
+  await s.ruhe();
+  assert.deepEqual(s.alle(s.document, 'select.abschnitt option').map((o) => o.value), ['1', '2']);
+  assert.match(s.text(s.eins(s.document, '.funk-sparschwein')), /Nachschub an Schlüsselstreifen ist knapp/);
+  s.wert('KRFunkraum').stopp();
+});
+
+test('Doppelter Schlüssel: Eve vergleicht ein Paar in der Bit-Lupe (c1/c2), Bob entschlüsselt mit seinem Abschnitt', async () => {
+  const funks = [{ id: 20, von: 1, an: 2, art: 'nachricht', inhalt: C1, lesbar: true, zeit: '2026-10-13T08:00:00Z', version: 4 }, { id: 21, von: 1, an: 2, art: 'nachricht', inhalt: C2, lesbar: true, zeit: '2026-10-13T08:01:00Z', version: 5 }];
+  const eve = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 10, typ: 'doppelter-schluessel', status: 'laeuft', phase: 'lauschen' }, TEAMS[2]),
+      'GET /api/funk/10/stand': { status: 200, body: otpStand(6, { team: TEAMS[2], rolle: 'eve', partner: null, bausteine: BAUSTEINE, paare: [[20, 21]] }, { phase: 'lauschen', nachrichten: funks, werkzeuge: [{ id: 'bitlupe', voreinstellung: { reiter: ['doppelnutzung', 'xor'] } }] }) },
+      'POST /api/funk/10/knacken': { status: 200, body: { richtig: false } }
+    }
+  });
+  await eve.ruhe();
+  assert.equal(eve.alle(eve.document, 'ul.funk-paare li').length, 1);
+  eve.klick(eve.eins(eve.document, 'ul.funk-paare button'));
+  await eve.ruhe();
+  assert.deepEqual(eve.roh(eve.wert('KRLabor').aktiv().zustand().statistik), { beginnen000: 16, von: 19 });
+  assert.equal(eve.alle(eve.document, 'ul.funk-woerter li').length, 21, 'Wortkarten');
+  assert.ok(eve.eins(eve.document, 'form.funk-knacken[data-nachricht="20"]'));
+  eve.wert('KRFunkraum').stopp();
+
+  const bob = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 10, typ: 'doppelter-schluessel', status: 'laeuft', phase: 'funken' }, TEAMS[1]),
+      'GET /api/funk/10/stand': { status: 200, body: otpStand(6, { team: TEAMS[1], rolle: 'bob', partner: 1, bausteine: BAUSTEINE, erneutErlaubt: false, abschnitte: [DEMO_KEY, DEMO_KEY] }, { nachrichten: funks.slice(0, 1), werkzeuge: OTP_ALICE }) }
+    }
+  });
+  await bob.ruhe();
+  const li = bob.eins(bob.document, 'li.funk-nachricht[data-id="20"]');
+  bob.klick(bob.eins(li, 'button.in-bitlupe'));
+  await bob.ruhe();
+  const zeichen = bob.alle(bob.document, '.funk-werkzeug[data-werkzeug="bitlupe"] tr.doppel-zeichen td').map((c) => bob.text(c)).join('').replace(/␣/g, ' ');
+  assert.equal(zeichen, 'HEUTE 8 UHR AM HAFEN');
+  assert.ok(bob.eins(li, 'form.funk-empfangen'));
+  bob.wert('KRFunkraum').stopp();
+});
+
+test('Schlüsseltausch: Geheimzahl bleibt im Browser; öffentlich und K-Meldung senden nur Zahlen', async () => {
+  const k = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 9, typ: 'schluesseltausch', status: 'laeuft', phase: 'runde-1' }),
+      'GET /api/funk/9/stand': { status: 200, body: stand(4, { id: 9, typ: 'schluesseltausch', phasen: ['runde-1', 'runde-2', 'aufloesung'], anzeigen: { runde: 1, p: 23, g: 5 } }) },
+      'POST /api/funk/9/oeffentlich': { status: 200, body: { ok: true } },
+      'POST /api/funk/9/k-melden': { status: 200, body: { ok: true } }
+    }
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.funk-parameter')), /p = 23.*g = 5/);
+  k.tippe(k.eins(k.document, 'input.geheimzahl'), '7');
+  assert.match(k.text(k.eins(k.document, '.funk-dh')), /Eure Geheimzahl verlässt dieses Tablet nicht/);
+  k.tippe(k.eins(k.document, 'form.oeffentlich input'), '17');
+  k.klick(k.eins(k.document, 'form.oeffentlich button'));
+  k.tippe(k.eins(k.document, 'form.k-melden input'), '8');
+  k.klick(k.eins(k.document, 'form.k-melden button'));
+  await k.ruhe();
+  const posts = k.anfragen.filter((a) => a.methode === 'POST');
+  assert.deepEqual(posts.map((a) => [a.pfad, k.roh(a.body)]), [['/api/funk/9/oeffentlich', { wert: 17 }], ['/api/funk/9/k-melden', { k: 8 }]]);
+  assert.ok(!JSON.stringify(k.roh(k.anfragen)).includes('geheim'));
+  k.wert('KRFunkraum').stopp();
+});
+
+test('Schlüsseltausch: Eve sieht p, g, A, B je Paar und gibt Tipps ohne Rückmeldung ab; Modulo-Uhr nur Reiter „uhr“', async () => {
+  const tipps = [];
+  const kanal = [
+    { id: 30, von: 1, an: 2, art: 'oeffentlich', inhalt: 'A 17', lesbar: true, zeit: '2026-10-13T08:00:00Z', version: 4 },
+    { id: 31, von: 2, an: 1, art: 'oeffentlich', inhalt: 'B 4', lesbar: true, zeit: '2026-10-13T08:00:10Z', version: 5 }
+  ];
+  const k = D.lade(SEITE_BITLUPE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 9, typ: 'schluesseltausch', status: 'laeuft', phase: 'runde-1' }, TEAMS[2]),
+      'GET /api/funk/9/stand': { status: 200, body: stand(6, { id: 9, typ: 'schluesseltausch', phasen: ['runde-1', 'runde-2', 'aufloesung'], ich: { team: TEAMS[2], rolle: 'eve', partner: null, tipps: {} }, nachrichten: kanal, ereignisse: [{ id: 1, code: 'phase', daten: { phase: 'runde-1' }, zeit: '2026-10-13T07:59:00Z', version: 2 }], anzeigen: { runde: 1, p: 23, g: 5 }, werkzeuge: [{ id: 'modulo', voreinstellung: { reiter: ['uhr'], modul: 23, g: 5 } }] }) },
+      'POST /api/funk/9/knacken': (b) => {
+        tipps.push(b);
+        return { status: 200, body: { ok: true } };
+      }
+    }
+  });
+  await k.ruhe();
+  const zeile = k.eins(k.document, 'table.funk-dh-paare tbody tr');
+  assert.deepEqual(k.alle(zeile, 'td').map((c) => k.text(c)).slice(0, 4), ['23', '5', '17', '4']);
+  const f = k.eins(k.document, 'form.funk-tipp[data-paar="1"]');
+  k.tippe(k.eins(f, 'input'), '8');
+  k.klick(k.eins(f, 'button'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(tipps), [{ paar: 1, k: 8 }]);
+  assert.match(k.text(k.eins(f, 'p.funk-ergebnis')), /Tipp gespeichert – die Auflösung zeigt, ob er stimmt/);
+  assert.doesNotMatch(k.text(f), /richtig|falsch/);
+  assert.deepEqual(k.alle(k.document, '.funk-werkzeug[data-werkzeug="modulo"] [role=tab]').map((t) => t.getAttribute('data-reiter')), ['uhr']);
+  k.wert('KRFunkraum').stopp();
+});

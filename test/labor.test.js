@@ -61,6 +61,9 @@ test('Registry M6: Reiter je Werkzeug und Voreinstellungs-Schlüssel (E73)', () 
   assert.deepEqual(werkzeug('substitution').reiter, []);
   for (const w of WERKZEUGE) assert.equal(w.voreinstellung.includes('reiter'), w.reiter.length > 0, w.id);
   assert.ok(werkzeug('runden').voreinstellung.includes('variante') && werkzeug('runden').voreinstellung.includes('stellung'));
+  // M7 Task 153: Bit-Lupe mit Schlüsselart und C1/C2 (Funkraum „Der doppelte Schlüssel“)
+  for (const k of ['schluesselart', 'c1', 'c2']) assert.ok(werkzeug('bitlupe').voreinstellung.includes(k), k);
+  assert.deepEqual([...require('../src/krypto/werkzeuge').WERTE.schluesselart.bitlupe], ['text', 'hex', 'bits']);
   const D = require('./dom_attrappe');
   const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
   assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter }) => ({ id, titel, welt, reiter: [...reiter] })));
