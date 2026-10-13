@@ -86,3 +86,10 @@ test('Workspace-Dateien für online-ide.de sind aktuell (workspaces_erzeugen.py 
   assert.equal(lehrkraft[0].modules[0].text, fs.readFileSync(path.join(WURZEL, LSG), 'utf8'));
   assert.ok(!JSON.stringify(schueler).includes('MUSTERLOESUNG'), 'keine Musterlösung im Schüler-Workspace');
 });
+
+for (const skript of ['loesungen_pdf.py', 'lehrkraft_pdf.py']) {
+  test(`Lehrkraft-PDFs vollständig und aktuell (${skript} --pruefen)`, { skip: python ? false : 'python3 fehlt' }, () => {
+    const r = spawnSync('python3', ['-I', path.join(WURZEL, 'werkzeuge', skript), '--pruefen'], { cwd: WURZEL, encoding: 'utf8', timeout: 300000 });
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+  });
+}

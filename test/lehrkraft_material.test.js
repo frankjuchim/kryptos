@@ -110,3 +110,61 @@ test('Demo-Dateien (seed/demo_materialien.json): ohne Anmeldung abrufbar, alle a
     await s.get(u).expect(404);
   }
 });
+
+/* ---------- Echtes Material (M5 Task 96): materialien/Lehrkraft_PDF/verzeichnis.json ---------- */
+
+const ECHT = path.join(__dirname, '..', 'materialien');
+const echtesVerzeichnis = () => JSON.parse(fs.readFileSync(path.join(ECHT, 'Lehrkraft_PDF', 'verzeichnis.json'), 'utf8'));
+const LOESUNGSARTIG = /_LSG|_EH|Klausur/;
+const ARTEN = ['praesentation', 'lehrerhinweise', 'akte', 'boss', 'warmup', 'funkraum', 'klausur', 'probeklausur', 'werkzeug'];
+
+test('echtes verzeichnis.json: Pfade vorhanden, Lösungen/EH/Klausuren nie unter Akten_PDF, Arten nach Plan', () => {
+  const v = echtesVerzeichnis();
+  const eintraege = [...v.allgemein, ...v.welten.flatMap((w) => w.eintraege)];
+  for (const e of eintraege) assert.ok(ARTEN.includes(e.art), `Art ${e.art}`);
+  const pfade = eintraege.flatMap((e) => e.dateien.map((d) => d.pfad));
+  for (const p of pfade) {
+    assert.match(p, /^(Lehrkraft_PDF|Loesungen_Portal|Akten_PDF)\/[A-Za-z0-9_./-]+\.pdf$/, p);
+    assert.ok(fs.existsSync(path.join(ECHT, p)), `fehlt: ${p} (python3 werkzeuge/lehrkraft_pdf.py)`);
+    if (LOESUNGSARTIG.test(p)) assert.ok(!p.startsWith('Akten_PDF/'), `Lösung im Schülerbereich: ${p}`);
+  }
+  // W0–W2 vollständig: jede Akte mit Lösung, Boss mit EH, Warm-up mit Lösungen, Präsentationen und Lehrerhinweise
+  for (const nr of [0, 1, 2]) {
+    const w = v.welten.find((x) => x.welt === nr);
+    const arten = w.eintraege.map((e) => e.art);
+    for (const a of ['praesentation', 'lehrerhinweise', 'akte', 'boss', 'warmup']) assert.ok(arten.includes(a), `Welt ${nr} ohne ${a}`);
+    for (const e of w.eintraege.filter((x) => x.art === 'akte')) {
+      assert.deepEqual(e.dateien.map((d) => d.label), ['Akte', 'Lösung'], e.titel);
+    }
+  }
+  assert.equal(v.welten.find((x) => x.welt === 0).eintraege[0].titel, 'Kickoff-Präsentation (Start der Einheit)', 'Kickoff zuerst');
+  const w6 = v.welten.find((x) => x.welt === 6);
+  assert.equal(w6.eintraege.filter((e) => e.art === 'klausur').length, 4, 'Klausur und Nachschreibklausur je eA/gA');
+  assert.equal(w6.eintraege.filter((e) => e.art === 'probeklausur').length, 2, 'Probeklausur eA/gA');
+});
+
+test('echtes Material: Lösungs-/Lehrkraft-PDFs nur mit Lehrkraft-Sitzung, ohne Sitzung und für Schüler 404', async () => {
+  const { app, lk, s } = await H.szenario({ seedDir: SEED, materialienDir: ECHT, arbeitsblaetterDir: path.join(ECHT, 'Akten_PDF') });
+  const m = (await lk.get('/api/lehrer/materialien').expect(200)).body;
+  const dateien = alleDateien(m);
+  assert.ok(dateien.length > 60, `${dateien.length} Dateien`);
+  const geschuetzt = dateien.filter((d) => d.url && d.url.startsWith('/lehrkraft/dateien/') && /Loesungen_Portal|Lehrkraft_PDF/.test(d.url));
+  assert.ok(geschuetzt.length > 40);
+  for (const d of geschuetzt.filter((_, i) => i % 7 === 0)) {
+    const r = await lk.get(d.url).expect(200);
+    assert.equal(r.headers['content-type'], 'application/pdf');
+    await request(app).get(d.url).expect(404);
+    await s.get(d.url).expect(404);
+  }
+  for (const d of dateien.filter((x) => x.url && LOESUNGSARTIG.test(decodeURIComponent(x.url)))) {
+    assert.ok(d.lehrkraft && d.url.startsWith('/lehrkraft/dateien/'), `${d.url} muss geschützt sein`);
+  }
+});
+
+test('echtes Material: Schülerfassungen (Akten_PDF/…) zeigen auf /akten/…', { todo: 'Task 97 (Route /akten/, Präfix Akten_PDF/ im Dienst lehrkraftMaterial.js, K15)' }, async () => {
+  const { lk } = await H.szenario({ seedDir: SEED, materialienDir: ECHT, arbeitsblaetterDir: path.join(ECHT, 'Akten_PDF') });
+  const m = (await lk.get('/api/lehrer/materialien').expect(200)).body;
+  const schueler = alleDateien(m).filter((d) => !d.lehrkraft);
+  assert.ok(schueler.length >= 27);
+  for (const d of schueler) assert.match(d.url, /^\/akten\//);
+});

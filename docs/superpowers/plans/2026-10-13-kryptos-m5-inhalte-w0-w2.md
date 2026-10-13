@@ -1458,14 +1458,24 @@ Teil des Plans (E49), aber für Schülerinnen und Schüler nach Anmeldung abrufb
   `test/fixtures/materialien/Lehrkraft_PDF/verzeichnis.json`, Pfade relativ zu `materialien/`, öffentliche Pfade mit Präfix `Akten_PDF/`)
   mit `art` ∈ `praesentation | lehrerhinweise | akte | boss | warmup | funkraum | klausur | probeklausur | werkzeug`.
 
-- [ ] **Step 1: Failing tests** – `lehrkraft_material.test.js` mit `materialienDir` = echtes `materialien/`: jeder Pfad in `verzeichnis.json`
+- [x] **Step 1: Failing tests** – `lehrkraft_material.test.js` mit `materialienDir` = echtes `materialien/`: jeder Pfad in `verzeichnis.json`
   existiert; jeder Pfad mit `_LSG`/`_EH`/`Klausur` liegt **nicht** unter `Akten_PDF/` und wird nur über `/lehrkraft/dateien/` (Lehrkraft-
   Sitzung) ausgeliefert, ohne Sitzung 401/404; Akten_PDF-Pfade zeigen auf `/akten/…` (nach Task 97: Präfix); `material_pipeline.test.js`:
   `loesungen_pdf.py --pruefen` und `lehrkraft_pdf.py --pruefen` Exit 0 → FAIL.
-- [ ] **Step 2: Implement** und PDFs erzeugen; Kontaktbogen je Präsentation und je `_LSG` einer Akte ansehen (Lösungsstempel vorhanden).
-- [ ] **Step 3: Run** → PASS (der `/akten/`-Teil wird in Task 97 grün; bis dahin `todo`-Markierung im Test mit Verweis auf Task 97); `npm test`.
-- [ ] **Step 4: Größe** – `du -sh materialien/{Akten_PDF,Loesungen_Portal,Loesungen_Akten,Lehrkraft_PDF}` im Commit-Text nennen.
-- [ ] **Step 5: Commit** `git commit -m "Lösungs- und Lehrkraft-PDFs mit verzeichnis.json (W0–W2 vollständig, W4–W6 vorhandenes Lehrkraftmaterial)"`.
+- [x] **Step 2: Implement** und PDFs erzeugen; Kontaktbogen je Präsentation und je `_LSG` einer Akte ansehen (Lösungsstempel vorhanden).
+- [x] **Step 3: Run** → PASS (der `/akten/`-Teil wird in Task 97 grün; bis dahin `todo`-Markierung im Test mit Verweis auf Task 97); `npm test`.
+- [x] **Step 4: Größe** – `du -sh materialien/{Akten_PDF,Loesungen_Portal,Loesungen_Akten,Lehrkraft_PDF}` im Commit-Text nennen.
+- [x] **Step 5: Commit** `git commit -m "Lösungs- und Lehrkraft-PDFs mit verzeichnis.json (W0–W2 vollständig, W4–W6 vorhandenes Lehrkraftmaterial)"`.
+
+**Umsetzungsnotiz (Task 96):** `loesungen_pdf.py`: 36 Lösungsdateien → 72 PDFs (`Loesungen_Portal/<Welt_n_Name>/` und
+`Loesungen_Akten/01–05`), gleichnamig `…_LSG.pdf`/`…_EH.pdf`; W0–W2 aus `seed/akten.json` (Funkraum W0 hat keine LSG), W4–W6 alle
+`5_Loesungen` (W3: kein Material), Klausuren W6 (Probeklausur, Klausur, Nachschreibklausur je eA/gA). `lehrkraft_pdf.py`: 21 PDFs
+(Gesamtübersicht, 7 Präsentationen mit Kickoff zuerst, Lehrerhinweise W0–W6, 6 Aufgabenblätter W6), `verzeichnis.json` mit 84 Downloads;
+W4–W6-Einträge nur mit Lehrkraft-Datei (Schüler-Akten folgen mit den Seeds, E49). Größen: Akten_PDF 6,9 MB, Loesungen_Portal 11 MB,
+Loesungen_Akten 11 MB (Doppel nach Art, nicht im Image), Lehrkraft_PDF 14 MB. Angesehen: Präsentationen W4/W5/W6 (W0–W2 in Task 93),
+Gesamtübersicht, Lehrerhinweise W3, Klausur eA W6, Akte W4·2 `_LSG` (Stempel „ENTSCHLÜSSELT · NUR FÜR LEHRKRÄFTE“), Warm-up W0 `_LSG`,
+Funkraum W1 `_LSG`. Der Test „Akten_PDF → /akten/…“ ist `todo` bis Task 97 (bis dahin liefert der Dienst Akten_PDF-Pfade über
+`/lehrkraft/dateien/` aus, also nur an Lehrkräfte).
 
 ### Task 97: Akten-Route `/akten/…`, Themenseite und Lehrkraft-Materialien auf Akten umstellen (K15, K20, E48)
 

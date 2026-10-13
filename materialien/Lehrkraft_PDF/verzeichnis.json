@@ -1,0 +1,773 @@
+{
+ "_hinweis": "ERZEUGT von werkzeuge/lehrkraft_pdf.py – nicht von Hand ändern. Pfade relativ zu materialien/. Akten_PDF/… ist der Schülerbereich (nur nach Anmeldung), alles andere liefert das Lab nur an angemeldete Lehrkräfte aus.",
+ "allgemein": [
+  {
+   "art": "lehrerhinweise",
+   "titel": "Gesamtübersicht DS 1–18 (Einstieg in die Einheit)",
+   "dateien": [
+    {
+     "label": "Lehrerhinweise",
+     "pfad": "Lehrkraft_PDF/00_Allgemein/KR_Gesamtuebersicht_DS1-18.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK1: Abitur-Anlage kompakt",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK1_Abitur-Anlage.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK2: Die 5-Schritte-Methode",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK2_5-Schritte-Methode.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK3: Beurteilungsraster Sicherheit",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK3_Beurteilungsraster.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK4: Ablaufschaubilder",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK4_Ablaufschaubilder.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK5: Operatoren in der Kryptologie",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK5_Operatoren.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Werkzeugkarte WK6: Struktogramm · Zeichenketten",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_WK6_Struktogramm_Zeichenketten.pdf"
+    }
+   ]
+  },
+  {
+   "art": "werkzeug",
+   "titel": "Abitur-Anlage",
+   "dateien": [
+    {
+     "label": "Karte",
+     "pfad": "Akten_PDF/00_Werkzeugkarten/KR_Anlage_Abitur.pdf"
+    }
+   ]
+  }
+ ],
+ "welten": [
+  {
+   "welt": 0,
+   "ordner": "Welt_0_Antike",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Kickoff-Präsentation (Start der Einheit)",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Kickoff.pdf"
+      }
+     ]
+    },
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Die Antike“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_0_Antike/KR_W0_Praesentation_Antike.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 0",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_0_Antike/KR_W0_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W0·1 – Die Skytale von Sparta",
+     "ds": [
+      1
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Akte1_Skytale_von_Sparta_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W0·2 – Caesars Botschaft",
+     "ds": [
+      2
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Akte2_Caesars_Botschaft.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Akte2_Caesars_Botschaft_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W0·3 – Die Werkstatt des Schreibers",
+     "ds": [
+      3
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Akte3_Werkstatt_des_Schreibers.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Akte3_Werkstatt_des_Schreibers_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W0·4 – Fremde Chiffre I: Die Fackelchiffre",
+     "ds": [
+      3
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Akte4_Fremde_Chiffre_I.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Akte4_Fremde_Chiffre_I_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Das Mosaik von Pompeji",
+     "dateien": [
+      {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Boss0_Mosaik_von_Pompeji.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Boss0_Mosaik_von_Pompeji_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 0",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_0_Antike/KR_W0_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Funkraum „Botenlauf“: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Akten_PDF/Welt_0_Antike/KR_W0_Funkraum_Botenlauf.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 1,
+   "ordner": "Welt_1_Bagdad",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Das Haus der Weisheit“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_1_Bagdad/KR_W1_Praesentation_Bagdad.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 1",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_1_Bagdad/KR_W1_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W1·1 – Al-Kindis Handschrift",
+     "ds": [
+      4
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Akte1_Al-Kindis_Handschrift.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Akte1_Al-Kindis_Handschrift_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W1·2 – Die Gegenmittel",
+     "ds": [
+      5
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Akte2_Die_Gegenmittel.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Akte2_Die_Gegenmittel_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W1·3 – Fremde Chiffre II: Der Nomenklator",
+     "ds": [
+      5
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Akte3_Fremde_Chiffre_II.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Akte3_Fremde_Chiffre_II_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Die Gewürzliste",
+     "dateien": [
+      {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Boss1_Gewuerzliste.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Boss1_Gewuerzliste_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 1",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Funkraum „Wettknacken“: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Akten_PDF/Welt_1_Bagdad/KR_W1_Funkraum_Wettknacken.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_1_Bagdad/KR_W1_Funkraum_Wettknacken_LSG.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 2,
+   "ordner": "Welt_2_Renaissance",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Le chiffre indéchiffrable“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_2_Renaissance/KR_W2_Praesentation_Renaissance.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 2",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_2_Renaissance/KR_W2_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W2·1 – Das unentzifferbare Quadrat",
+     "ds": [
+      6
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Akte1_Das_unentzifferbare_Quadrat.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Akte1_Das_unentzifferbare_Quadrat_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W2·2 – Kasiskis Spur",
+     "ds": [
+      7
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Akte2_Kasiskis_Spur.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Akte2_Kasiskis_Spur_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W2·3 – Friedmans Zufall",
+     "ds": [
+      8
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Akte3_Friedmans_Zufall.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Akte3_Friedmans_Zufall_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W2·4 – Fremde Chiffre III: Playfair und Kreuzquadrat",
+     "ds": [
+      8
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Akte4_Playfair_und_Kreuzquadrat.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Akte4_Playfair_und_Kreuzquadrat_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W2·K1 – Kür: Friedmans Formel",
+     "ds": [],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_AkteK1_Friedmans_Formel.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_AkteK1_Friedmans_Formel_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Das Zwei-Quadrat",
+     "dateien": [
+      {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Boss2_Zwei-Quadrat.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Boss2_Zwei-Quadrat_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 2",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_2_Renaissance/KR_W2_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_2_Renaissance/KR_W2_Warmup_LSG.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 3,
+   "ordner": "Welt_3_Maschinenzeitalter",
+   "eintraege": [
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 3",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_3_Maschinenzeitalter/KR_W3_Lehrerhinweise.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 4,
+   "ordner": "Welt_4_Schluesselproblem",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Das Schlüsselproblem“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_4_Schluesselproblem/KR_W4_Praesentation_Stanford.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 4",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_4_Schluesselproblem/KR_W4_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W4·1 – Das Schlüsselproblem",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Akte1_Schluesselproblem_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W4·2 – RSA und das hybride Prinzip",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Akte2_RSA_und_Hybrid_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W4·K3 – Euklids Erbe",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_AkteK3_Euklids_Erbe_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Das Kurierbüro",
+     "dateien": [
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Boss4_Kurierbuero_EH.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 5,
+   "ordner": "Welt_5_Netz",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Das Netz“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_5_Netz/KR_W5_Praesentation_Das_Netz.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 5",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_5_Netz/KR_W5_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W5·1 – Fingerabdrücke",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte1_Fingerabdruecke_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W5·2 – Das Siegel",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte2_Das_Siegel_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W5·3 – Mallory im Netz",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte3_Mallory_im_Netz_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Der Messenger",
+     "dateien": [
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Boss5_Messenger_EH.pdf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "welt": 6,
+   "ordner": "Welt_6_Zeitmaschine",
+   "eintraege": [
+    {
+     "art": "praesentation",
+     "titel": "Präsentation „Die Zeitmaschine“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Praesentation_Zeitmaschine.pdf"
+      }
+     ]
+    },
+    {
+     "art": "lehrerhinweise",
+     "titel": "Lehrerhinweise Welt 6",
+     "dateien": [
+      {
+       "label": "Lehrerhinweise",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Lehrerhinweise.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W6·1 – Fallenjagd",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte1_Fallenjagd_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W6·2 – Eves Chiffre",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte2_Eves_Chiffre_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W6·3 – Generalprobe",
+     "dateien": [
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte3_Generalprobe_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "probeklausur",
+     "titel": "Probeklausur (eA)",
+     "dateien": [
+      {
+       "label": "Probeklausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_eA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Probeklausur_eA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "probeklausur",
+     "titel": "Probeklausur (gA)",
+     "dateien": [
+      {
+       "label": "Probeklausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_gA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Probeklausur_gA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "klausur",
+     "titel": "Klausur (eA)",
+     "dateien": [
+      {
+       "label": "Klausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Klausur_eA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Klausur_eA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "klausur",
+     "titel": "Klausur (gA)",
+     "dateien": [
+      {
+       "label": "Klausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Klausur_gA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Klausur_gA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "klausur",
+     "titel": "Nachschreibklausur (eA)",
+     "dateien": [
+      {
+       "label": "Klausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Nachschreibklausur_eA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Nachschreibklausur_eA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "klausur",
+     "titel": "Nachschreibklausur (gA)",
+     "dateien": [
+      {
+       "label": "Klausur",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Nachschreibklausur_gA.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Nachschreibklausur_gA_EH.pdf"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
