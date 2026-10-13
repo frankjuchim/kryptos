@@ -99,6 +99,30 @@ test('bits:Gruppen à 4, ⊕-Trennzeile, Lückenzeile, markierte Spalten, Screen
   assert.equal(k.alle(zeilen[0], 'span.bit.markiert[aria-current="true"]').length, 2);
   assert.equal(k.text(k.eins(zeilen[0], 'span.sr')), 'M: 0 1 0 0, 1 0 1 1');
 });
+test('quadrat vigenere (M6 Task 116): Zellen mit data-zeile/-spalte; waehlbar – Klick, Roving-tabindex, Pfeile, Enter, steuer.waehle', () => {
+  const gewaehlt = [];
+  const steuer = {};
+  const { k, el } = bau({ t: 'quadrat', art: 'vigenere', waehlbar: true, beiWahl: (z, sp) => gewaehlt.push(`${z}${sp}`), steuer });
+  const zelle = (z, sp) => k.eins(el, `td[data-zeile="${z}"][data-spalte="${sp}"]`);
+  assert.equal(k.text(zelle('L', 'K')), K.vigenere('K', 'L'));
+  assert.equal(k.alle(el, 'td[tabindex="0"]').length, 1, 'genau eine Zelle im Tab-Fluss');
+  k.klick(zelle('L', 'K'));
+  assert.ok(zelle('L', 'K').classList.contains('schnitt'));
+  assert.equal(zelle('L', 'K').getAttribute('aria-selected'), 'true');
+  assert.ok(zelle('L', 'A').classList.contains('hervor') && zelle('C', 'K').classList.contains('hervor'));
+  assert.equal(zelle('L', 'K').getAttribute('tabindex'), '0');
+  k.taste(zelle('L', 'K'), 'ArrowRight');
+  assert.equal(k.document.activeElement, zelle('L', 'L'));
+  k.taste(zelle('L', 'L'), 'ArrowDown');
+  assert.equal(k.document.activeElement, zelle('M', 'L'));
+  k.taste(zelle('M', 'L'), 'Enter');
+  assert.ok(zelle('M', 'L').classList.contains('schnitt') && !zelle('L', 'K').classList.contains('schnitt'));
+  steuer.waehle('A', 'Z');
+  assert.ok(zelle('A', 'Z').classList.contains('schnitt'));
+  assert.deepEqual(gewaehlt, ['LK', 'ML'], 'steuer.waehle meldet nicht zurück');
+  // ohne waehlbar: keine tabindex-Zellen (Lab-Blöcke unverändert)
+  assert.equal(bau({ t: 'quadrat', art: 'vigenere' }).el.querySelectorAll('td[tabindex]').length, 0);
+});
 test('quadrat vigenere: Ausschnitt, Schnittpunkt U/R = L, Hinweistext; playfair I/J; polybios 6×6 ADFGVX', () => {
   let { k, el } = bau({ t: 'quadrat', art: 'vigenere', ausschnitt: ['L', 'U', 'N', 'A'], hervorheben: { zeile: 'U', spalte: 'R' } });
   assert.deepEqual(k.alle(el, 'tbody th[scope="row"]').map(k.text), ['L', 'U', 'N', 'A']);

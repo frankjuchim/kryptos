@@ -463,3 +463,48 @@ input.zuordnung.konflikt { border: 2.5px solid var(--fehler); background: var(--
 mark.markiert.muster { text-decoration-style: solid; text-decoration-thickness: 3px; }
 mark.markiert.bigramm { background: transparent; text-decoration-style: dashed; }
 mark.markiert.trigramm { background: transparent; text-decoration-style: dotted; text-decoration-thickness: 3px; }
+
+/* ======================================================================
+   Werkzeug „Vigenère-Werkbank“ (W2 §9.1, W6 §9.1, Plan M6 Tasks 116/117)
+   ====================================================================== */
+.vq-bereich { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1100px) { .vq-bereich { grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr); } }
+.vq-rechnerteil { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.vq-rechner { display: flex; flex-wrap: wrap; align-items: end; gap: var(--a-2); }
+.vq-feld { display: grid; gap: var(--a-1); }
+.vq-feld label { font-size: .85rem; font-weight: 700; }
+.vq-feld input, .vg-wort input, .korrektur-feld input {
+  width: 3.2rem;
+  min-height: var(--ziel);
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+  font-family: var(--f-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+}
+input.vq-klar { text-transform: lowercase; }
+input.vq-schluessel, input.vq-geheim, .vg-wort input, .korrektur-feld input { text-transform: uppercase; }
+.vq-op { padding-bottom: 10px; font-size: 1.2rem; font-weight: 700; color: var(--text-2); }
+.vq-rechnung { margin: 0; font-family: var(--f-mono); font-size: 1rem; overflow-wrap: anywhere; }
+.quadrat-vigenere td[tabindex] { cursor: pointer; }
+.quadrat-vigenere td[tabindex]:focus-visible { outline: 3px solid var(--fokus); outline-offset: -3px; }
+.vg-wort input { width: min(100%, 16rem); text-align: left; padding: 0 var(--a-3); }
+.vg-info { display: grid; gap: var(--a-2); }
+.vg-info:empty { display: none; }
+.vg-pendel, .vg-frei { margin: 0; font-family: var(--f-mono); }
+.vg-autokey { margin: 0; }
+.vq-leiste { display: grid; gap: var(--a-2); justify-items: start; min-width: 0; }
+.vq-leiste > * { max-width: 100%; }
+.vq-alphabet { width: 100%; min-width: 0; }
+.porta-tafel { font-family: var(--f-mono); }
+.vg-zeilen { border-collapse: collapse; font-family: var(--f-mono); font-size: 1.1rem; background: var(--karte); }
+.vg-zeilen th { padding: 2px var(--a-2); font-family: var(--f-text); font-size: .85rem; text-align: left; white-space: nowrap; background: var(--papier-2); }
+.vg-zeilen td { min-width: 1.6em; padding: 2px; text-align: center; border-left: 1px solid var(--linie); }
+.vg-zeilen tr.strom td { color: var(--text-2); }
+.vg-zeilen tr.geheim td { font-weight: 700; }
+.vg-zeilen td.aktuell { background: var(--hinweis-flaeche); box-shadow: inset 0 0 0 2px var(--hinweis); text-decoration: underline; }
+.vg-quadratzeile:empty { display: none; }
+.vq-alphabet tr.zahlen th { min-width: 6.5rem; }

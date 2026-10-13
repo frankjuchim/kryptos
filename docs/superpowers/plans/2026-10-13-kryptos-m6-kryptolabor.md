@@ -1507,7 +1507,12 @@ und zeigt die Rechnung; beim Verschlüsseln wandert die Hervorhebung im Nachspie
   den Strom bis i).
 - `zustand()` → `{ reiter, modus, richtung, text, schluessel, strom, ausgabe, zelle }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_vigenere.test.js`:
+- Umgesetzt mit kleinen Test-Anpassungen: Felder mit `maxlength` > 1 werden vor dem Tippen geleert (`k.tippe` hängt an);
+  das Nachspiel startet bei −1 (ganzer Strom sichtbar, wie Häufigkeits-Nachspiel), daher drei Schritte bis „ZUT“; die
+  Stromzeile wird über ihre `td` gelesen (die Zeilenüberschrift „Schlüsselstrom“ enthält ein großes S). Schlüsselwort
+  nur mit dem eigenen Beispiel vorbelegt (Text aus der Voreinstellung → leeres Schlüsselfeld). `KRB.quadrat`:
+  `waehlbar`, `beiWahl(zeile, spalte)`, `steuer.waehle`.
+- [x] **Step 1: Failing test** – `test/labor_vigenere.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1557,9 +1562,9 @@ und zeigt die Rechnung; beim Verschlüsseln wandert die Hervorhebung im Nachspie
     assert.deepEqual(w.k.alle(w.flaeche, '[role="tab"]').map((t) => t.dataset.reiter), ['quadrat', 'verschluesseln']);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (zuerst `KRB.quadrat`-Erweiterung mit Test).
-- [ ] **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (Quadrat mit Sticky-Köpfen, 360 px nur Block-Scroll).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Vigenère-Werkbank I (Quadrat mit Rechner, Vigenère/Autokey/Porta/Pendel)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (zuerst `KRB.quadrat`-Erweiterung mit Test).
+- [x] **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung (Quadrat mit Sticky-Köpfen, 360 px nur Block-Scroll).
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Vigenère-Werkbank I (Quadrat mit Rechner, Vigenère/Autokey/Porta/Pendel)"`.
 
 ### Task 117: Werkzeug „Vigenère-Werkbank“ II – Kasiski, Teiltexte, Koinzidenzindex, Verschiebung, Korrektur (W2 §9.1 Reiter 3–7, Testfälle 1–3, E76, E84)
 

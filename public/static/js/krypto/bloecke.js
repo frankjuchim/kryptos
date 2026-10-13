@@ -432,29 +432,76 @@ const KRB = (() => {
 
     if (art === 'vigenere') {
       const zeilen = Array.isArray(b.ausschnitt) && b.ausschnitt.length ? b.ausschnitt.map((x) => String(x).toUpperCase()) : ALPHABET.split('');
-      const hz = hv.zeile ? String(hv.zeile).toUpperCase() : null;
-      const hs = hv.spalte ? ALPHABET.indexOf(String(hv.spalte).toUpperCase()) : -1;
-      tabelle.appendChild(h('thead', null, h('tr', null, h('td', { class: 'ecke' }), ALPHABET.split('').map((c, i) => h('th', { scope: 'col', class: i === hs ? 'hervor' : null }, c)))));
-      tabelle.appendChild(
-        h(
-          'tbody',
-          null,
-          zeilen.map((z) => {
-            const k = Krypto.wert(z) - 1;
-            const zeileHervor = z === hz;
-            return h(
-              'tr',
-              { class: zeileHervor ? 'hervor' : null },
-              h('th', { scope: 'row' }, z),
-              ALPHABET.split('').map((c, i) => {
-                const wert = Krypto.caesar(c, k);
-                const schnitt = zeileHervor && i === hs;
-                return h('td', { class: schnitt ? 'schnitt hervor' : i === hs ? 'hervor' : null, 'aria-label': schnitt ? `Schnittpunkt: ${wert}` : null }, wert);
-              })
-            );
+      let hz = hv.zeile ? String(hv.zeile).toUpperCase() : null;
+      let hs = hv.spalte ? ALPHABET.indexOf(String(hv.spalte).toUpperCase()) : -1;
+      // M6 Task 116: Zellen tragen data-zeile/data-spalte; waehlbar → Roving-tabindex, Pfeiltasten, Enter/Leertaste/Klick
+      // wählen (beiWahl(zeile, spalte)); b.steuer.waehle(zeile, spalte) setzt die Hervorhebung ohne Rückmeldung
+      const waehlbar = b.waehlbar === true;
+      const kopfZellen = ALPHABET.split('').map((c) => h('th', { scope: 'col' }, c));
+      const zeilenEl = [];
+      const zellen = zeilen.map((z) => {
+        const k = Krypto.wert(z) - 1;
+        const reihe = ALPHABET.split('').map((c) => h('td', { 'data-zeile': z, 'data-spalte': c }, Krypto.caesar(c, k)));
+        zeilenEl.push(h('tr', null, h('th', { scope: 'row' }, z), reihe));
+        return reihe;
+      });
+      function markiere() {
+        kopfZellen.forEach((th, i) => th.classList.toggle('hervor', i === hs));
+        zeilen.forEach((z, r) => {
+          const zeileHervor = z === hz;
+          zeilenEl[r].classList.toggle('hervor', zeileHervor);
+          zellen[r].forEach((td, i) => {
+            const schnitt = zeileHervor && i === hs;
+            td.classList.toggle('schnitt', schnitt);
+            td.classList.toggle('hervor', schnitt || i === hs || (waehlbar && zeileHervor));
+            if (schnitt) td.setAttribute('aria-label', `Schnittpunkt: ${td.textContent}`);
+            else td.removeAttribute('aria-label');
+            if (waehlbar) td.setAttribute('aria-selected', String(schnitt));
+          });
+        });
+      }
+      function fokusZelle(r, i, fokus) {
+        for (const reihe of zellen) for (const td of reihe) td.setAttribute('tabindex', '-1');
+        const td = zellen[r][i];
+        td.setAttribute('tabindex', '0');
+        if (fokus) td.focus();
+      }
+      function waehle(z, sp, melden) {
+        const r = zeilen.indexOf(String(z).toUpperCase());
+        const i = ALPHABET.indexOf(String(sp).toUpperCase());
+        if (r < 0 || i < 0) return;
+        hz = zeilen[r];
+        hs = i;
+        markiere();
+        if (waehlbar) fokusZelle(r, i, false);
+        if (melden && typeof b.beiWahl === 'function') b.beiWahl(hz, ALPHABET[i]);
+      }
+      if (waehlbar) {
+        zellen.forEach((reihe, r) =>
+          reihe.forEach((td, i) => {
+            td.addEventListener('click', () => waehle(zeilen[r], ALPHABET[i], true));
+            td.addEventListener('keydown', (e) => {
+              const ziel = { ArrowRight: [r, i + 1], ArrowLeft: [r, i - 1], ArrowDown: [r + 1, i], ArrowUp: [r - 1, i], Home: [r, 0], End: [r, 25] }[e.key];
+              if (ziel) {
+                e.preventDefault();
+                const [nr, ni] = ziel;
+                if (nr >= 0 && nr < zeilen.length && ni >= 0 && ni < 26) fokusZelle(nr, ni, true);
+              } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                waehle(zeilen[r], ALPHABET[i], true);
+                td.focus();
+              }
+            });
           })
-        )
-      );
+        );
+        const r0 = Math.max(0, zeilen.indexOf(hz));
+        fokusZelle(r0, Math.max(0, hs), false);
+        tabelle.setAttribute('role', 'grid');
+      }
+      if (b.steuer && typeof b.steuer === 'object') b.steuer.waehle = (z, sp) => waehle(z, sp, false);
+      markiere();
+      tabelle.appendChild(h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfZellen)));
+      tabelle.appendChild(h('tbody', null, zeilenEl));
       hinweis = h('p', { class: 'quadrat-hinweis' }, 'Zeile = Schlüsselbuchstabe, Spalte = Klartextbuchstabe (Schlüssel A = Verschiebung 0).');
     } else {
       let zellen;
