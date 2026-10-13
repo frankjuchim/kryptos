@@ -196,6 +196,13 @@ test('echte Gast-Demo: genau W8-L1-01 … 06, keine Lösung vor dem Lösen, Werk
   assert.deepEqual((await c.get('/api/gast/lehrkraft').expect(200)).body.werkzeuge, ['scheibe']);
 });
 
+test('gast.html bindet keine Werkzeug-Module statisch ein – nur labor/registry.js; die Scheibe wird nachgeladen (M6 Task 126)', () => {
+  const fs = require('node:fs');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'gast.html'), 'utf8');
+  const labor = [...html.matchAll(/src="\/static\/js\/krypto\/labor\/([\w-]+)\.js/g)].map((m) => m[1]);
+  assert.deepEqual(labor, ['registry']);
+});
+
 test('Demo-PDFs (seed/demo_materialien.json): nur Schülerfassungen bzw. Folien, ohne Sitzung 200; jede andere Akte 401', async () => {
   const fs = require('node:fs');
   const request = require('supertest');

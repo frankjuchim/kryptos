@@ -2336,7 +2336,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
 **Interfaces:**
 - Consumes: `KRLabor.lade('scheibe')` (E72); Server `GET /api/gast/lehrkraft` → `werkzeuge: ['scheibe']` (unverändert).
 
-- [ ] **Step 1: Failing tests** – `test/client_seiten.test.js`:
+- [x] **Step 1: Failing tests** – `test/client_seiten.test.js`:
   ```js
   test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigenere lädt nichts', async () => {
     const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
@@ -2355,8 +2355,11 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   `test/e2e/gast.js`: `/gast#/labor/scheibe` → `.scheibe-drehknopf` fokussieren, dreimal `ArrowRight`, Reiter „Text“,
   `kryptolabor` tippen, Ausgabe = `Krypto.caesar('kryptolabor', k)` (k aus `aria-valuenow`); weiterhin keine Cookies, kein
   `localStorage`, keine schreibenden Anfragen.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `E2E_NUR=8 npm run e2e` grün.
-- [ ] **Step 5: Commit** `git commit -m "Gastmodus: Chiffrierscheibe im Labor-Platz und in der Demo-Aufgabe"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `E2E_NUR=8 npm run e2e` grün.
+- [x] **Step 5: Commit** `git commit -m "Gastmodus: Chiffrierscheibe im Labor-Platz und in der Demo-Aufgabe"`.
+- **Umsetzungsnotiz:** Die Scheibe startet mit k = 3 (Task 111) – e2e prüft „dreimal → um drei weiter“ statt eines festen k.
+  Die Demo-Aufgabe reicht `laborUmgebung = { modus: 'gast', rolle: null }` an den Werkzeug-Block (Test „Labor-Platz und
+  Demo-Aufgabe …“); e2e 8 prüft zusätzlich, dass `#/labor/vigenere` kein Modul nachlädt.
 
 ### Task 127: Boss-Sperre prüfen – Server, Labor-Seite, Werkzeug-Block, Fristablauf (TECHNIK §10.3, Review Focus 3)
 

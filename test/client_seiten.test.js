@@ -633,6 +633,30 @@ test('Gast: Demo-Aufgabe schickt Fehlversuche/Tipps mit, Werkzeug Scheibe frei',
   assert.equal(posts[1].body.fehlversuche, 1, 'Zähler aus dem Browser');
 });
 
+test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigenere lädt nichts (M6 Task 126)', async () => {
+  const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
+  await k.ruhe();
+  assert.ok(k.eins(k.document, '.scheibe-drehknopf'));
+  assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);
+  k.window.location.hash = '#/labor/vigenere';
+  await new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /nur die Chiffrierscheibe/);
+  assert.equal(k.skripte.filter((x) => /labor\/vigenere\.js/.test(x)).length, 0);
+  assert.equal(k.window.localStorage.length, 0);
+});
+test('Gast: Labor-Platz und Demo-Aufgabe öffnen die Scheibe mit { modus: „gast“, rolle: null } (M6 Task 126)', async () => {
+  const a = { id: 'W8-L1-01', titel: 'Scheibe', stufe: 1, punkte: 10, kategorie: 'entschluesseln', inhalt: [{ t: 'werkzeug', id: 'scheibe' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 7 }, eingabe: 'UVYKS', schluesselVerdeckt: false } };
+  const d = { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, tipps: [], punkte: 0, moeglich: 10 }, ort: { index: 0, anzahl: 6, vorher: null, nachher: null } };
+  const k = D.lade(GAST, { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({ 'GET /api/gast/aufgaben/W8-L1-01': { status: 200, body: d } }), vorher: seiteGast });
+  k.wert('globalThis.__o = []; KRLabor.oeffne = (id, v, f, u) => { __o.push([id, u]); return { schliesse() {} }; }; KRLabor.dialog = (id, v, u) => { __o.push([id, u]); };');
+  await k.ruhe();
+  k.window.location.hash = '#/schueler/aufgabe/W8-L1-01';
+  await new Promise((r) => setTimeout(r, 5));
+  await k.ruhe();
+  k.klick(k.eins(k.document, 'button.werkzeug-oeffnen'));
+  assert.deepEqual(k.roh(k.wert('__o')), [['scheibe', { modus: 'gast', rolle: null }], ['scheibe', { modus: 'gast', rolle: null }]]);
+});
 test('Gast-Lehrkraft: Auswertung mit Fallen-Profil, Einstellungen nur lesend', async () => {
   const lk = { kurs: { name: 'Demo-Kurs Informatik 12', schueler: 2 }, einstellungen: { welten: [0], boss: 'auto', scoreboard: true, beamer: true, niveau: 'eA', kuer: 'frei', werkzeuge: {} }, werkzeuge: ['scheibe'], levels: [{ id: 'W0-L1', nr: '1', titel: 'Erstes', maxPunkte: 40 }], schueler: [{ name: 'Lena S.', punkte: 30, geloest: 3, rang: 'Schreiber', zuletztAktiv: '2026-10-12T08:00:00Z' }], matrix: { zeilen: [{ name: 'Lena S.', werte: [{ anteil: 0.75, punkte: 30, geloest: 3, angesehen: 0 }] }] }, boss: { welten: [], zeilen: [] }, fallen: [{ p: 'P3', titel: 'Umkehrung falsch', fehlversuche: 4, schueler: 2, schuelerGesamt: 2 }], aufgaben: [], materialien: { welt0: [], weitere: 0 }, weltenGesamt: 1 };
   let k = D.lade(GAST, { url: 'http://x.test/gast#/lehrkraft/auswertung', fetch: gastFetch({ 'GET /api/gast/lehrkraft': { status: 200, body: lk } }), vorher: seiteGast });

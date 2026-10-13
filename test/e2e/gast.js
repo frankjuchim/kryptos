@@ -4,7 +4,7 @@
  * lösen, Demo-Kurs mit Fallen-Profil und nur lesenden Einstellungen, Labor-Platz der Chiffrierscheibe.
  */
 const assert = require('node:assert/strict');
-const { foto, gehe } = require('./hilfen');
+const { foto, gehe, Krypto } = require('./hilfen');
 const { neueSeite, richtig } = require('./schueler');
 const DEMO = require('./seed/gast/demo.json');
 
@@ -53,9 +53,25 @@ async function szenario8(ctx) {
   const offen = await page.locator('form.einstellungen').locator('input, select, button[type="submit"]').evaluateAll((l) => l.filter((x) => !x.disabled).length);
   assert.equal(offen, 0, 'Einstellungen nur lesend');
 
-  // Labor-Platz: Chiffrierscheibe (M6 Task 111, wird nachgeladen; ausführlich in Task 126)
+  // Labor-Platz: Chiffrierscheibe (M6 Task 126, wird nachgeladen) – per Tastatur drehen, Text verschlüsseln, Ergebnis = Krypto
   await gehe(page, ctx.basis + '/gast#/labor/scheibe');
-  await page.locator('.scheibe-drehknopf').waitFor();
+  const knopf = page.locator('.scheibe-drehknopf');
+  await knopf.waitFor();
+  await knopf.focus();
+  const kStart = Number(await knopf.getAttribute('aria-valuenow'));
+  for (let i = 0; i < 3; i++) await page.keyboard.press('ArrowRight');
+  const kWert = Number(await knopf.getAttribute('aria-valuenow'));
+  assert.equal(kWert, (kStart + 3) % 26, 'dreimal → dreht den Innenring um drei weiter');
+  await page.locator('[role="tab"][data-reiter="text"]').click();
+  await page.locator('textarea.labor-eingabe').fill('kryptolabor');
+  const ausgabe = (await page.locator('output.labor-ausgabe').first().textContent()).replace(/\s+/g, '');
+  assert.equal(ausgabe, Krypto.caesar('kryptolabor', kWert), 'Scheibe rechnet wie Krypto');
+  // andere Werkzeuge gibt es im Gastmodus nicht – und sie werden nicht nachgeladen
+  const geladen = [];
+  page.on('request', (r) => { if (/\/krypto\/labor\/vigenere\.js/.test(r.url())) geladen.push(r.url()); });
+  await gehe(page, ctx.basis + '/gast#/labor/vigenere');
+  await page.getByText('Im Gastmodus gibt es nur die Chiffrierscheibe.').waitFor();
+  assert.deepEqual(geladen, [], 'kein Nachladen anderer Werkzeuge');
   assert.deepEqual(schreibend, [], 'Gastmodus: keine schreibenden Anfragen');
   assert.deepEqual((await kontext.cookies()).map((c) => c.name), [], 'Gastmodus: keine Cookies');
   assert.deepEqual(await page.evaluate(() => Object.keys(localStorage)), [], 'Gastmodus: kein localStorage');

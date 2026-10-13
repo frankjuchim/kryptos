@@ -4,7 +4,7 @@
      #/schueler · #/schueler/aufgabe/<id>   Demo-Aufgaben (W8-*) aus GET /api/gast/schueler, Prüfung serverseitig;
                                             Fehlversuche/Tipps zählt der Browser und schickt sie nur zur Anzeige mit
      #/lehrkraft/<tab> · #/lehrkraft/vorschau/<id>   erfundener Demo-Kurs nur lesend (Bausteine aus KRLehrer)
-     #/labor/scheibe                        Chiffrierscheibe über KRLabor (bis M6 „noch in Arbeit“)
+     #/labor/scheibe                        Chiffrierscheibe über KRLabor (nachgeladen, M6 Task 126); andere ids: Hinweis, kein Nachladen
    Startet nur auf body.seite-gast. Texte nur als Textknoten (AQ.h). */
 'use strict';
 
@@ -13,6 +13,7 @@ const KRGast = (() => {
   const enc = encodeURIComponent;
   const WERKZEUG = 'scheibe'; // einziges Werkzeug im Gastmodus (Delta §12)
   const werkzeugFrei = (id) => id === WERKZEUG;
+  const UMGEBUNG = Object.freeze({ modus: 'gast', rolle: null }); // Gast: keine Rolle, alle Scheiben-Reiter (E71)
   const zaehler = new Map(); // id → { fehlversuche, tipps, angesehen } – nur im Browser, nur zur Anzeige
   let haupt = null;
   let routeNr = 0;
@@ -138,7 +139,7 @@ const KRGast = (() => {
       aufgabe: d.aufgabe,
       zustand: { ...d.zustand, fehlversuche: z.fehlversuche, tippsGenutzt: z.tipps },
       modus: 'gast',
-      zusatz: { werkzeugFrei },
+      zusatz: { werkzeugFrei, laborUmgebung: UMGEBUNG },
       anzeige: KRDiag.anzeige,
       pruefen: async (body) => merke(await api('POST', `${pfad}/pruefen`, { ...body, fehlversuche: z.fehlversuche, tipps: z.tipps, angesehen: z.angesehen })),
       tipp: async () => merke(await api('POST', `${pfad}/tipp`, { fehlversuche: z.fehlversuche, tipps: z.tipps })),
@@ -307,7 +308,7 @@ const KRGast = (() => {
         h('div', { class: 'labor-steuerleiste' }, h('a', { class: 'knopf knopf-zweit', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Gastmodus'))
       )
     );
-    offen = KRLabor.oeffne(id, {}, flaeche, { modus: 'gast' });
+    offen = KRLabor.oeffne(id, {}, flaeche, { ...UMGEBUNG }); // Modul wird nachgeladen (E72)
   }
 
   /* ---------- Router ---------- */
