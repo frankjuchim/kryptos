@@ -274,7 +274,7 @@
     /* ---------- Tastatur und Eingabe ---------- */
     const reihenfolge = () => BUCHSTABEN.map((g) => felder.get(g));
     function naechstes(g) {
-      const i = BUCHSTABEN.indexOf(g);
+      const i = Krypto.wert(g, 0);
       return BUCHSTABEN.slice(i + 1).find((x) => text.includes(x) && !vorgabe[x]) || null;
     }
     for (const [g, f] of felder) {

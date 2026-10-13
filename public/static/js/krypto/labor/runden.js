@@ -198,7 +198,7 @@
     let geloescht = false;
     let betroffen = { ecb: [], cbc: [] };
     const startStellung = typeof v.stellung === 'string' && ME.includes(v.stellung.toUpperCase()) ? v.stellung.toUpperCase() : 'A';
-    let stellung0 = ME.indexOf(startStellung);
+    let stellung0 = Krypto.wert(startStellung, 0); // Stellung A … H → 0 … 7
     let enigmaText = '';
     let enigmaAusgabe = '';
     let verdrahtung = 'spec';

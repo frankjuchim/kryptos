@@ -33,13 +33,14 @@ function ohneTexte(src) {
 }
 const VERBOTEN = [
   [/%/, 'Rest-Operator – Krypto.mod verwenden'],
-  [/\b(charCodeAt|fromCharCode|codePointAt)\b/, 'Zeichencodes – Krypto.wert/ascii verwenden'],
+  [/\b(charCodeAt|fromCharCode|codePointAt|fromCodePoint)\b/, 'Zeichencodes – Krypto.wert/ascii verwenden'],
+  [/Math\.(floor|trunc)\([^)]*\/[^)]*\)\s*\*|\*\s*Math\.(floor|trunc)\([^)]*\//, 'Rest von Hand (a − m · ⌊a/m⌋) – Krypto.mod/teileMitRest'],
   [/[\w)\]]\s*(\^|<<|>>>?|~)\s*[\w(]/, 'Bit-Operator – Krypto.xorBits/…'],
-  [/[\w)\]] [&|] [\w(]/, 'Bit-Operator & | – Krypto.undBits/oderBits'],
+  [/[\w)\]]\s*(?<![&|])[&|](?![&|=])\s*[\w(]/, 'Bit-Operator & | – Krypto.undBits/oderBits'],
   [/\*\*|\bMath\.pow\b|\bBigInt\b/, 'Potenz – Krypto.modpow'],
   [/\.toString\(\s*(2|16)\s*\)|parseInt\([^)]*,\s*(2|16)\s*\)/, 'Basiswechsel – Krypto.byteZuBits/hex'],
-  [/ALPHABET\.indexOf|""\.indexOf/, 'Alphabetposition – Krypto.wert'],
-  [/\b(fetch|XMLHttpRequest|localStorage|sessionStorage|indexedDB)\b|AQ\.api|document\.cookie/, 'kein Server, keine Speicherung'],
+  [/\b[A-Z][A-Z_]*\.indexOf\(|""\.indexOf/, 'Alphabetposition (ALPHABET/BUCHSTABEN.indexOf) – Krypto.wert'],
+  [/\b(fetch|XMLHttpRequest|localStorage|sessionStorage|indexedDB|sendBeacon|WebSocket|EventSource)\b|\bimport\s*\(|AQ\.api|document\.cookie/, 'kein Server, keine Speicherung'],
   [/innerHTML|outerHTML|insertAdjacentHTML|document\.write/, 'CSP']
 ];
 
@@ -54,6 +55,19 @@ test('Regeltest-Selbstprüfung: ohneTexte und Muster erkennen Verstöße, Texte 
   assert.equal(treffer('const p = 2 ** 8;').length, 1);
   assert.equal(treffer('const t = `${n.toString(2)}`;').length, 1);
   assert.equal(treffer('localStorage.setItem("x", 1);').length, 1);
+  // Review M6: weitere Umgehungen
+  assert.equal(treffer('const x = a&b;').length, 1);
+  assert.equal(treffer('const x = (a)|0;').length, 1);
+  assert.equal(treffer('x &= 1; const y = a&&b || c;').length, 0);
+  assert.equal(treffer('const c = String.fromCodePoint(65 + k);').length, 1);
+  assert.equal(treffer('const r = a - m * Math.floor(a / m);').length, 1);
+  assert.equal(treffer('const r = a - Math.trunc(a / m) * m;').length, 1);
+  assert.equal(treffer('const i = ALPHABET.indexOf(b);').length, 1);
+  assert.equal(treffer('const i = BUCHSTABEN.indexOf(b);').length, 1);
+  assert.equal(treffer('navigator.sendBeacon("/x", d);').length, 1);
+  assert.equal(treffer('new WebSocket(u); new EventSource(u);').length, 1);
+  assert.equal(treffer('import("./x.js").then(f);').length, 1);
+  assert.equal(treffer('const liste = reiter.indexOf(r); Math.floor(n / 2);').length, 0);
 });
 
 test('Rechenregel: kein Werkzeug rechnet selbst (M6, Orchestrator)', () => {
