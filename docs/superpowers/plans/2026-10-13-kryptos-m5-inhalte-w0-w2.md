@@ -1179,11 +1179,19 @@ Mix: ★ B01–B05, ★★ B06–B11, ★★★ B12–B15; fremde Chiffre B10, B
 `ALVEH RA` → `BRUNNEN`; Porta SIEGEL `BKPWE ZP` → `STEMPEL`; HU → MQ, WI → IB; Depesche `gefahramkanal`/ROSE → `XSXEZ GTRDQ HGF`;
 Friedman (601; 0,0507) → 2,98 ≈ 3.
 
-- [ ] **Step 1: Failing test** – `UMFANG[2]` += `'W2-B'` → FAIL; in `inhalte_plan.test.js`: Boss W2 Pool kern 13 / eA 2 = `WELT_PLAN`.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5**; Probelauf: gA-Kurs zieht nie B09/B14 (100 Ziehungen mit `random`-Seed im `node -e`).
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Boss „Die Venezianische Depesche“ (Pool 15, zwei eA-Aufgaben, vier fremde Chiffren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[2]` += `'W2-B'` → FAIL; in `inhalte_plan.test.js`: Boss W2 Pool kern 13 / eA 2 = `WELT_PLAN`.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5**; Probelauf: gA-Kurs zieht nie B09/B14 (100 Ziehungen mit `random`-Seed im `node -e`).
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Boss „Die Venezianische Depesche“ (Pool 15, zwei eA-Aufgaben, vier fremde Chiffren)"`.
+
+- **Umgesetzt (Task 88):** Material Depeschen-Chiffre wörtlich im Inhalt von B11–B13; Vigenère-/Autokey-Aufgaben (B02,
+  B06, B07) und B11 mit Block `quadrat` vigenere, B08 mit Porta-Tafel, B10 mit Block `quadrat` playfair RIALTO. Fallen
+  nach E53 aus der Spec-Erklärung. Konsistenz-Eintrag `koinzidenzindex("BALLADE")` mit 3 Nachkommastellen (0,095 – so
+  steht der Wert in der Erklärung; 0,0952 kommt im Seed nicht vor). Probelauf (100 Ziehungen je Kurs, Zufallsfolge mit
+  Startwert): gA-Kurs zieht nie B09/B14, eA-Kurs beide; je 8 Aufgaben im Mix 3/3/2; W2-B-11 sendet nur
+  `{ typ: "frei", name: "Depeschen-Chiffre" }`.
+
 
 ---
 
