@@ -1,0 +1,275 @@
+{
+  "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, Demo-PDFs siehe demo_materialien.json; vorläufig festgelegt, Plan M5 offene Entscheidung 3). Quelle der PDFs in materialien/Akten_PDF (python3 werkzeuge/akten_pdf.py) und der Verweise auf der Themenseite. 'nr' = Aktennummer innerhalb der Welt (Kür „K1“), 'level' = Level-ids der Seeds (Validator prüft level.akte ↔ akten.json). 'weitere'.art: boss | probeklausur | warmup | funkraum. Nie Lösungen, Erwartungshorizonte, Klausuren.",
+  "werkzeugkarten": [
+    {
+      "nr": 1,
+      "titel": "Abitur-Anlage kompakt",
+      "quelle": "Werkzeuge/KR_WK1_Abitur-Anlage.docx",
+      "datei": "00_Werkzeugkarten/KR_WK1_Abitur-Anlage.pdf"
+    },
+    {
+      "nr": 2,
+      "titel": "Die 5-Schritte-Methode",
+      "quelle": "Werkzeuge/KR_WK2_5-Schritte-Methode.docx",
+      "datei": "00_Werkzeugkarten/KR_WK2_5-Schritte-Methode.pdf"
+    },
+    {
+      "nr": 3,
+      "titel": "Beurteilungsraster Sicherheit",
+      "quelle": "Werkzeuge/KR_WK3_Beurteilungsraster.docx",
+      "datei": "00_Werkzeugkarten/KR_WK3_Beurteilungsraster.pdf"
+    },
+    {
+      "nr": 4,
+      "titel": "Ablaufschaubilder",
+      "quelle": "Werkzeuge/KR_WK4_Ablaufschaubilder.docx",
+      "datei": "00_Werkzeugkarten/KR_WK4_Ablaufschaubilder.pdf"
+    },
+    {
+      "nr": 5,
+      "titel": "Operatoren in der Kryptologie",
+      "quelle": "Werkzeuge/KR_WK5_Operatoren.docx",
+      "datei": "00_Werkzeugkarten/KR_WK5_Operatoren.pdf"
+    },
+    {
+      "nr": 6,
+      "titel": "Struktogramm · Zeichenketten",
+      "quelle": "Werkzeuge/KR_WK6_Struktogramm_Zeichenketten.docx",
+      "datei": "00_Werkzeugkarten/KR_WK6_Struktogramm_Zeichenketten.pdf"
+    },
+    {
+      "nr": 7,
+      "titel": "Abitur-Anlage",
+      "quelle": "Werkzeuge/KR_Anlage_Abitur.docx",
+      "datei": "00_Werkzeugkarten/KR_Anlage_Abitur.pdf"
+    }
+  ],
+  "welten": [
+    {
+      "welt": 0,
+      "ordner": "Welt_0_Antike",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Die Skytale von Sparta",
+          "ds": [
+            1
+          ],
+          "niveau": "kern",
+          "level": [
+            "W0-L1"
+          ],
+          "quelle": "Welt0_Antike/2_Akten/KR_W0_Akte1_Skytale_von_Sparta.docx",
+          "datei": "KR_W0_Akte1_Skytale_von_Sparta.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Caesars Botschaft",
+          "ds": [
+            2
+          ],
+          "niveau": "kern",
+          "level": [
+            "W0-L2"
+          ],
+          "quelle": "Welt0_Antike/2_Akten/KR_W0_Akte2_Caesars_Botschaft.docx",
+          "datei": "KR_W0_Akte2_Caesars_Botschaft.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Die Werkstatt des Schreibers",
+          "ds": [
+            3
+          ],
+          "niveau": "kern",
+          "level": [
+            "W0-L3"
+          ],
+          "quelle": "Welt0_Antike/2_Akten/KR_W0_Akte3_Werkstatt_des_Schreibers.docx",
+          "datei": "KR_W0_Akte3_Werkstatt_des_Schreibers.pdf"
+        },
+        {
+          "nr": "4",
+          "titel": "Fremde Chiffre I: Die Fackelchiffre",
+          "ds": [
+            3
+          ],
+          "niveau": "kern",
+          "level": [
+            "W0-L4"
+          ],
+          "quelle": "Welt0_Antike/2_Akten/KR_W0_Akte4_Fremde_Chiffre_I.docx",
+          "datei": "KR_W0_Akte4_Fremde_Chiffre_I.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Das Mosaik von Pompeji",
+          "quelle": "Welt0_Antike/4_Boss/KR_W0_Boss0_Mosaik_von_Pompeji.docx",
+          "datei": "KR_W0_Boss0_Mosaik_von_Pompeji.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 0",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W0_Warmup.docx",
+          "datei": "KR_W0_Warmup.pdf"
+        },
+        {
+          "art": "funkraum",
+          "titel": "Funkraum „Botenlauf“: Rollenkarten",
+          "quelle": "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx",
+          "datei": "KR_W0_Funkraum_Botenlauf.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 1,
+      "ordner": "Welt_1_Bagdad",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Al-Kindis Handschrift",
+          "ds": [
+            4
+          ],
+          "niveau": "kern",
+          "level": [
+            "W1-L1"
+          ],
+          "quelle": "Welt1_Bagdad/2_Akten/KR_W1_Akte1_Al-Kindis_Handschrift.docx",
+          "datei": "KR_W1_Akte1_Al-Kindis_Handschrift.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Die Gegenmittel",
+          "ds": [
+            5
+          ],
+          "niveau": "kern",
+          "level": [
+            "W1-L2"
+          ],
+          "quelle": "Welt1_Bagdad/2_Akten/KR_W1_Akte2_Die_Gegenmittel.docx",
+          "datei": "KR_W1_Akte2_Die_Gegenmittel.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Fremde Chiffre II: Der Nomenklator",
+          "ds": [
+            5
+          ],
+          "niveau": "kern",
+          "level": [
+            "W1-L3"
+          ],
+          "quelle": "Welt1_Bagdad/2_Akten/KR_W1_Akte3_Fremde_Chiffre_II.docx",
+          "datei": "KR_W1_Akte3_Fremde_Chiffre_II.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Die Gewürzliste",
+          "quelle": "Welt1_Bagdad/4_Boss/KR_W1_Boss1_Gewuerzliste.docx",
+          "datei": "KR_W1_Boss1_Gewuerzliste.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 1",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W1_Warmup.docx",
+          "datei": "KR_W1_Warmup.pdf"
+        },
+        {
+          "art": "funkraum",
+          "titel": "Funkraum „Wettknacken“: Rollenkarten",
+          "quelle": "Werkzeuge/Funkraum/KR_W1_Funkraum_Wettknacken.docx",
+          "datei": "KR_W1_Funkraum_Wettknacken.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 2,
+      "ordner": "Welt_2_Renaissance",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Das unentzifferbare Quadrat",
+          "ds": [
+            6
+          ],
+          "niveau": "kern",
+          "level": [
+            "W2-L1"
+          ],
+          "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte1_Das_unentzifferbare_Quadrat.docx",
+          "datei": "KR_W2_Akte1_Das_unentzifferbare_Quadrat.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Kasiskis Spur",
+          "ds": [
+            7
+          ],
+          "niveau": "kern",
+          "level": [
+            "W2-L2"
+          ],
+          "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte2_Kasiskis_Spur.docx",
+          "datei": "KR_W2_Akte2_Kasiskis_Spur.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Friedmans Zufall",
+          "ds": [
+            8
+          ],
+          "niveau": "eA",
+          "level": [
+            "W2-L3"
+          ],
+          "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte3_Friedmans_Zufall.docx",
+          "datei": "KR_W2_Akte3_Friedmans_Zufall.pdf"
+        },
+        {
+          "nr": "4",
+          "titel": "Fremde Chiffre III: Playfair und Kreuzquadrat",
+          "ds": [
+            8
+          ],
+          "niveau": "kern",
+          "level": [
+            "W2-L4"
+          ],
+          "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte4_Playfair_und_Kreuzquadrat.docx",
+          "datei": "KR_W2_Akte4_Playfair_und_Kreuzquadrat.pdf"
+        },
+        {
+          "nr": "K1",
+          "titel": "Kür: Friedmans Formel",
+          "ds": [],
+          "niveau": "kuer",
+          "level": [
+            "W2-L5"
+          ],
+          "quelle": "Welt2_Renaissance/2_Akten/KR_W2_AkteK1_Friedmans_Formel.docx",
+          "datei": "KR_W2_AkteK1_Friedmans_Formel.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Das Zwei-Quadrat",
+          "quelle": "Welt2_Renaissance/4_Boss/KR_W2_Boss2_Zwei-Quadrat.docx",
+          "datei": "KR_W2_Boss2_Zwei-Quadrat.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 2",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx",
+          "datei": "KR_W2_Warmup.pdf"
+        }
+      ]
+    }
+  ]
+}

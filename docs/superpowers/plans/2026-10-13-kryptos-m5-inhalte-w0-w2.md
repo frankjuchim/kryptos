@@ -1424,14 +1424,21 @@ Akte W2·3 `niveau: "eA"`.
 (Werkzeugkarten → `00_Werkzeugkarten/`); `--pruefen`: jede PDF vorhanden, keine überzählige, keine Datei mit `_LSG`/`_EH`/`Klausur`
 im Namen, und (mit `pypdf`) kein Lösungsstempel im Text („NUR FÜR LEHRKRÄFTE“, „ENTSCHLÜSSELT“, „ERWARTUNGSHORIZONT“) → Exit 1 sonst.
 
-- [ ] **Step 1: Failing test** `test/akten.test.js`: `seed/akten.json` gültig (jede `quelle` existiert unter `materialien/`, jede `datei`
+- [x] **Step 1: Failing test** `test/akten.test.js`: `seed/akten.json` gültig (jede `quelle` existiert unter `materialien/`, jede `datei`
   `.pdf`, keine `_LSG`/`_EH`/Klausur); jede Akte verweist auf vorhandene Level der Seeds; jedes Level der Seeds W0–W2 hat genau
   eine Akte, und `level.akte` beginnt mit „Akte W<n>·<nr> – <titel>“; `python3 werkzeuge/akten_pdf.py --pruefen` Exit 0
   (übersprungen ohne `python3`/`pypdf`) → FAIL.
-- [ ] **Step 2: Implement** `seed/akten.json`, `akten_pdf.py`, Validator-Hinweis; PDFs erzeugen (`python3 werkzeuge/akten_pdf.py`).
-- [ ] **Step 3: Ansehen** – je eine Akte und den Papier-Boss jeder Welt als PDF (Kontaktbogen) prüfen; Warm-up-PDF ohne Rückseiten.
-- [ ] **Step 4: Run** → PASS; `npm run validate` (Hinweise „akte ↔ akten.json“ = 0); `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "seed/akten.json und Akten-PDFs W0–W2, Werkzeugkarten, Papier-Bosse, Warm-up, Funkraum"`.
+- [x] **Step 2: Implement** `seed/akten.json`, `akten_pdf.py`, Validator-Hinweis; PDFs erzeugen (`python3 werkzeuge/akten_pdf.py`).
+- [x] **Step 3: Ansehen** – je eine Akte und den Papier-Boss jeder Welt als PDF (Kontaktbogen) prüfen; Warm-up-PDF ohne Rückseiten.
+- [x] **Step 4: Run** → PASS; `npm run validate` (Hinweise „akte ↔ akten.json“ = 0); `npm test`.
+- [x] **Step 5: Commit** `git commit -m "seed/akten.json und Akten-PDFs W0–W2, Werkzeugkarten, Papier-Bosse, Warm-up, Funkraum"`.
+
+**Umsetzungsnotiz (Task 95):** `seed/akten.json` mit 7 Werkzeugkarten (WK1–WK6, Anlage), W0 4 Akten, W1 3, W2 4 + K1 (Titel nach
+Spec §3 ohne Klammerzusatz, `ds`/`niveau` aus den Seeds, K1 `ds: []`), je Welt Papier-Boss und Warm-up, Funkraum-Rollenkarten W0/W1.
+27 PDFs, 6,9 MB. `akten_pdf.py --pruefen` prüft zusätzlich Lösungsstempel per pypdf (gegen `_LSG`/`_EH`-PDFs gegengeprüft).
+Angesehen: alle Akten/Bosse (Task 93, gleiche Quellen), Warm-up W0–W2 (ohne Rückseiten), Funkraum W0/W1, WK2, Boss W2.
+**Zur Kenntnis/Frage:** Die Funkraum-Rollenkarten enthalten Regie-Teile (erwartete Auswertung, Hinweiskarten „U ≙ e“, Befehlskarten) –
+Teil des Plans (E49), aber für Schülerinnen und Schüler nach Anmeldung abrufbar.
 
 ### Task 96: `loesungen_pdf.py` und `lehrkraft_pdf.py` → `Loesungen_Portal`, `Loesungen_Akten`, `Lehrkraft_PDF`
 

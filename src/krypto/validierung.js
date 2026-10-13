@@ -453,11 +453,48 @@ function boss(b, f, w, { data, aufgaben }) {
 
 /* ---------- Dateiübergreifend (Delta §2, §11) ---------- */
 
-/** Hook dateien: Zeitleiste aufsteigend, Abdeckung fremde Chiffre je Inhaltswelt (Hinweise). */
+/** seed/akten.json neben dem Ordner der Welt-Datei (…/welten/weltN.json → …/akten.json) oder null. */
+function aktenVerzeichnis(datei) {
+  if (typeof datei !== 'string') return null;
+  const p = path.join(path.dirname(path.dirname(datei)), 'akten.json');
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/** Level-`akte` ↔ seed/akten.json (`level`), beide Richtungen, nur Inhaltswelten (TECHNIK §14.2; Hinweise). */
+function akteAbgleich(x, hinweis) {
+  const verz = aktenVerzeichnis(x.datei);
+  if (!istObjekt(verz) || !Array.isArray(verz.welten)) return;
+  const w = verz.welten.find((v) => istObjekt(v) && v.welt === x.d.welt);
+  const akten = w && Array.isArray(w.akten) ? w.akten.filter(istObjekt) : [];
+  const levels = Array.isArray(x.d.levels) ? x.d.levels.filter(istObjekt) : [];
+  const ids = new Set(levels.map((l) => l.id));
+  for (const l of levels) {
+    const treffer = akten.filter((a) => Array.isArray(a.level) && a.level.includes(l.id));
+    if (treffer.length !== 1) {
+      hinweis(x.i, `akte ↔ akten.json: Level ${l.id} hat ${treffer.length} Einträge in seed/akten.json (erwartet 1).`);
+      continue;
+    }
+    const soll = `Akte W${x.d.welt}·${treffer[0].nr} – ${treffer[0].titel}`;
+    if (typeof l.akte !== 'string' || !l.akte.startsWith(soll)) {
+      hinweis(x.i, `akte ↔ akten.json: Level ${l.id} „${l.akte}“ beginnt nicht mit „${soll}“.`);
+    }
+  }
+  for (const a of akten) {
+    for (const id of Array.isArray(a.level) ? a.level : []) {
+      if (!ids.has(id)) hinweis(x.i, `akte ↔ akten.json: Akte W${x.d.welt}·${a.nr} verweist auf Level ${id}, das es nicht gibt.`);
+    }
+  }
+}
+
+/** Hook dateien: Zeitleiste aufsteigend, Abdeckung fremde Chiffre je Inhaltswelt, Level-akte ↔ seed/akten.json (Hinweise). */
 function dateien(eintraege, ergebnisse) {
   const hinweis = (i, meldung) => ergebnisse[i].warnungen.push({ datei: ergebnisse[i].datei, ebene: 'datei', ort: '', meldung, aufgabe: null });
   const welten = eintraege
-    .map((e, i) => ({ i, d: e && e.data }))
+    .map((e, i) => ({ i, d: e && e.data, datei: e && (e.pfad || e.datei) }))
     .filter(({ i, d }) => ergebnisse[i] && istObjekt(d) && istInhaltswelt(d.welt))
     .sort((x, y) => x.d.welt - y.d.welt);
   let vorher = null;
@@ -472,6 +509,7 @@ function dateien(eintraege, ergebnisse) {
     if (!auf.some((a) => a.kategorie === 'fremde-chiffre' && typeof a.id === 'string' && !ARCHIVFUND.test(a.id))) {
       hinweis(x.i, `Abdeckung fremde Chiffre: Welt ${x.d.welt} hat keine Level- oder Boss-Aufgabe mit kategorie fremde-chiffre (Design §1).`);
     }
+    akteAbgleich(x, hinweis);
   }
 }
 

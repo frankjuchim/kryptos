@@ -1537,20 +1537,25 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 ### 14.2 `seed/akten.json`
 
 ```json
-{ "_hinweis": "Verzeichnis der öffentlichen Schülermaterialien. Nie Lösungen, Erwartungshorizonte, Klausuren.",
+{ "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, vorläufig – Plan M5 E48). Nie Lösungen, Erwartungshorizonte, Klausuren.",
   "werkzeugkarten": [ { "nr": 1, "titel": "Abitur-Anlage kompakt", "quelle": "Werkzeuge/KR_WK1_Abitur-Anlage.docx",
                         "datei": "00_Werkzeugkarten/KR_WK1_Abitur-Anlage.pdf" } ],
   "welten": [ { "welt": 2, "ordner": "Welt_2_Renaissance",
-      "akten": [ { "nr": 2, "titel": "Kasiskis Spur", "ds": [7], "niveau": "kern", "level": ["W2-L2"],
+      "akten": [ { "nr": "2", "titel": "Kasiskis Spur", "ds": [7], "niveau": "kern", "level": ["W2-L2"],
                    "quelle": "Welt2_Renaissance/2_Akten/KR_W2_Akte2_Kasiskis_Spur.docx",
                    "datei": "KR_W2_Akte2_Kasiskis_Spur.pdf" } ],
       "weitere": [ { "art": "boss", "titel": "Papier-Boss: Das Zwei-Quadrat", "quelle": "…/4_Boss/KR_W2_Boss2_Zwei-Quadrat.docx", "datei": "KR_W2_Boss2_Zwei-Quadrat.pdf" },
-                   { "art": "warmup", "titel": "Warm-up-Karten Welt 2", "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx", "datei": "KR_W2_Warmup.pdf", "ohneLoesungsteil": true },
-                   { "art": "funkraum", "titel": "Rollenkarten …", "quelle": "…", "datei": "…" } ] } ] }
+                   { "art": "warmup", "titel": "Warm-up-Karten Welt 2", "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx", "datei": "KR_W2_Warmup.pdf" },
+                   { "art": "funkraum", "titel": "Funkraum „Botenlauf“: Rollenkarten", "quelle": "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx", "datei": "KR_W0_Funkraum_Botenlauf.pdf" } ] } ] }
 ```
 
-`art` ∈ `boss | probeklausur | warmup | funkraum`. `level` verknüpft Akte ↔ Level (zusätzlich zur Kern-Logik über
-`akte: "Akte W2·2 …"`); der Validator prüft beide Richtungen (Hinweis bei Abweichung).
+`werkzeugkarten` ist eine **Liste** (WK1–WK6, `nr` 7 = Abitur-Anlage), PDFs unter `00_Werkzeugkarten/`. `nr` der Akten ist
+eine Zeichenkette (`"1"` … , Kür `"K1"` mit `niveau: "kuer"`). `art` ∈ `boss | probeklausur | warmup | funkraum`; Warm-up-Karten
+haben in Kryptos eine eigene Lösungsdatei (`_LSG`), `ohneLoesungsteil` (Schnitt vor „Lösungen der Warm-up-Karten“, Kern)
+wird deshalb nicht gebraucht. `level` verknüpft Akte ↔ Level (zusätzlich zur Kern-Logik über `akte: "Akte W2·2 …"`); der
+Validator-Hook `dateien` (`src/krypto/validierung.js`) liest `akten.json` neben dem Ordner der Welt-Datei und prüft beide
+Richtungen (Hinweis „akte ↔ akten.json“). Erzeugen/prüfen: `python3 werkzeuge/akten_pdf.py [--pruefen]` (`--pruefen`:
+Vollständigkeit, keine überzählige Datei, keine `_LSG`/`_EH`/Klausur, kein Lösungsstempel im PDF-Text; `test/akten.test.js`).
 
 ### 14.3 Werkzeuge (übernommen und angepasst)
 
