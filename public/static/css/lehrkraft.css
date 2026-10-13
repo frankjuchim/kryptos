@@ -2,7 +2,7 @@
    Farben nur über Tokens. */
 
 .seite-lehrer main#haupt { min-height: 60vh; }
-.lehrer-seite { display: grid; gap: var(--a-5); padding-block: var(--a-6) var(--a-7); min-width: 0; }
+.lehrer-seite { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-5); padding-block: var(--a-6) var(--a-7); min-width: 0; }
 .lehrer-seite > h1, .kurs-kopf h1 { margin: 0; }
 .kurs-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2) var(--a-3); }
 .chip-kursniveau { font-weight: 700; }
@@ -16,7 +16,7 @@ a.kurs-link { display: inline-flex; align-items: center; min-height: var(--ziel)
 .inaktiv-hinweis { font-weight: 400; }
 
 .tabs { display: flex; flex-wrap: wrap; gap: var(--a-1); border-bottom: 1.5px solid var(--linie); }
-.tab-inhalt { display: grid; gap: var(--a-4); min-width: 0; }
+.tab-inhalt { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-4); min-width: 0; }
 
 .einstellungen { display: grid; gap: var(--a-4); max-width: 56rem; }
 .einstellungen fieldset { display: grid; gap: var(--a-2); margin: 0; min-width: 0; }
@@ -36,3 +36,52 @@ a.kurs-link { display: inline-flex; align-items: center; min-height: var(--ziel)
   .werkzeug-tabelle td:first-of-type { align-self: center; color: var(--text-2); }
   .werkzeug-tabelle select { min-width: 0; }
 }
+
+/* ---------- Auswertung (Task 63) ---------- */
+.auswertung-teil { display: grid; gap: var(--a-3); min-width: 0; }
+.auswertung-teil h2 { margin: 0; }
+.matrix-block { display: grid; gap: var(--a-2); min-width: 0; }
+.matrix-lehrkraft { border-collapse: separate; border-spacing: 2px; }
+.matrix-lehrkraft th, .matrix-lehrkraft td { padding: 6px 8px; white-space: nowrap; }
+.matrix-lehrkraft thead th { font-family: var(--f-mono); font-size: .85rem; text-align: center; border-bottom: 3px solid var(--akzent, var(--linie)); }
+.matrix-lehrkraft thead th.matrix-ecke { text-align: left; font-family: var(--f-text); border-bottom-color: var(--linie); }
+.matrix-lehrkraft tbody th { position: sticky; left: 0; background: var(--papier); z-index: 1; }
+.matrix-lehrkraft td.matrix-zelle, .legende-feld { text-align: center; font-variant-numeric: tabular-nums; border-radius: 6px; color: var(--text); }
+.stufe-0 { background: transparent; color: var(--text-2); }
+.stufe-1 { background: color-mix(in srgb, var(--ok) 8%, var(--karte)); }
+.stufe-2 { background: color-mix(in srgb, var(--ok) 16%, var(--karte)); }
+.stufe-3 { background: color-mix(in srgb, var(--ok) 24%, var(--karte)); }
+.stufe-4 { background: color-mix(in srgb, var(--ok) 30%, var(--karte)); box-shadow: inset 0 0 0 2px var(--ok); font-weight: 700; }
+td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
+.matrix-legende { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; margin: 0; }
+.legende-feld { padding: 2px 8px; border: 1px solid var(--linie); }
+.matrix-lehrkraft tr.inaktiv th, .boss-tabelle tr.inaktiv th, .scoreboard-tabelle tr.inaktiv th { color: var(--text-2); }
+
+.fallen-profil { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.fallen-profil li { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: var(--a-1) var(--a-3); align-items: center; }
+.fallen-profil li > .klein { grid-column: 2; }
+.fallen-profil .chip-falle { justify-self: start; }
+.fallen-balken > span { background: var(--fehler); }
+@media (max-width: 600px) {
+  .fallen-profil li { grid-template-columns: minmax(0, 1fr); }
+  .fallen-profil li > .klein { grid-column: 1; }
+}
+.aufgaben-statistik .zahl, .scoreboard-tabelle .zahl, .boss-tabelle .zahl { text-align: right; font-variant-numeric: tabular-nums; }
+.falsche-antworten { margin: 0; padding-left: 1.1em; }
+.falsche-antworten code { overflow-wrap: anywhere; }
+
+/* ---------- Vorschau und Materialien (Task 63) ---------- */
+.vorschau-welten, .material-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
+.vorschau-welten { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.vorschau-welten a.karte-link { display: grid; gap: var(--a-1); border-top: 6px solid var(--akzent); }
+.vorschau-level { display: grid; gap: var(--a-3); }
+.vorschau-level-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2) var(--a-3); }
+.vorschau-level-kopf h2 { margin: 0; font-size: var(--h3); }
+.vorschau-aufgaben { margin: 0; padding-left: 1.6em; display: grid; gap: var(--a-2); }
+.vorschau-aufgabe { padding-block: var(--a-1); }
+.vorschau-aufgabe > * { margin-right: var(--a-2); }
+.vorschau-aufgabe > a { display: inline-flex; align-items: center; min-height: var(--ziel); font-weight: 700; }
+.material-eintrag { display: grid; gap: var(--a-1); padding-bottom: var(--a-3); border-bottom: 1px solid var(--linie); }
+.material-eintrag:last-child { border-bottom: 0; }
+.material-welt { border-top: 6px solid var(--akzent); scroll-margin-top: var(--a-4); }
+.material-welt h2, .materialien .karte > h2 { margin: 0 0 var(--a-3); }

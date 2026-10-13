@@ -427,10 +427,405 @@ const KRLehrer = (() => {
     mount(box, einstellungen(kurs, { werkzeuge, welten: (vorschau.welten || []).map((w) => ({ nr: w.nr, titel: w.titel })) }));
   });
 
+  /* ---------- Tab Auswertung (Task 63) ---------- */
+
+  /** Stufe 0–4 eines Anteils (Fläche + Text, nie nur Farbe). */
+  function stufe(anteil) {
+    const a = Math.max(0, Math.min(1, Number(anteil) || 0));
+    if (a <= 0) return 0;
+    if (a >= 1) return 4;
+    if (a < 1 / 3) return 1;
+    if (a < 2 / 3) return 2;
+    return 3;
+  }
+
+  /** Fortschrittsmatrix: Spalten je sichtbarem Level, Zeilen je Schüler, Zellen mit Prozent als Text. */
+  function matrixTabelle(m, { niveau = 'eA' } = {}) {
+    const levels = (m && m.levels) || [];
+    const zeilen = (m && m.zeilen) || [];
+    if (!zeilen.length) return h('p', { class: 'text-2' }, 'Noch keine Schülerinnen und Schüler.');
+    return h(
+      'div',
+      { class: 'matrix-block' },
+      h(
+        'div',
+        { class: 'scroll-x' },
+        h(
+          'table',
+          { class: 'matrix-lehrkraft' },
+          h('caption', { class: 'sr' }, 'Fortschritt je Level in Prozent der Level-Punkte'),
+          h(
+            'thead',
+            null,
+            h(
+              'tr',
+              null,
+              h('th', { scope: 'col', class: 'matrix-ecke' }, `Niveau: ${niveau === 'gA' ? 'gA' : 'eA'}`),
+              levels.map((l) => h('th', { scope: 'col', title: l.titel, 'data-epoche': l.welt >= 0 && l.welt <= 6 ? String(l.welt) : null }, h('span', { 'aria-hidden': 'true' }, l.nr || l.id), h('span', { class: 'sr' }, `${l.nr || l.id} ${l.titel}`)))
+            )
+          ),
+          h(
+            'tbody',
+            null,
+            zeilen.map((z) =>
+              h(
+                'tr',
+                { class: z.aktiv === false ? 'inaktiv' : null },
+                h('th', { scope: 'row' }, z.name, z.aktiv === false ? h('span', { class: 'klein text-2 inaktiv-hinweis' }, ' – nicht mehr im Kurs') : null),
+                (z.werte || []).map((w) => {
+                  const st = stufe(w.anteil);
+                  return h('td', { class: `matrix-zelle stufe-${st}`, title: `${w.punkte} Punkte · ${w.geloest} gelöst${w.angesehen ? ` · ${w.angesehen} Lösung angesehen` : ''}` }, st === 0 ? '—' : KR.prozent(w.anteil));
+                })
+              )
+            )
+          )
+        )
+      ),
+      h(
+        'p',
+        { class: 'matrix-legende klein text-2' },
+        'Anteil der Level-Punkte: ',
+        [['stufe-0', '— nichts'], ['stufe-1', 'unter 34 %'], ['stufe-2', '34–66 %'], ['stufe-3', 'über 66 %'], ['stufe-4', '100 %']].map(([k, t]) => h('span', { class: `legende-feld ${k}` }, t))
+      )
+    );
+  }
+
+  /** Boss-Ergebnisse: bester Versuch je Schüler und Welt. */
+  function bossTabelle(b) {
+    const welten = (b && b.welten) || [];
+    const zeilen = (b && b.zeilen) || [];
+    if (!welten.length || !zeilen.length) return h('p', { class: 'text-2' }, 'Noch keine Boss-Kämpfe.');
+    return h(
+      'div',
+      { class: 'scroll-x' },
+      h(
+        'table',
+        { class: 'boss-tabelle' },
+        h('caption', { class: 'sr' }, 'Boss-Ergebnisse (bester Versuch)'),
+        h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Name'), welten.map((w) => h('th', { scope: 'col' }, `Welt ${w.nr}: ${w.titel}`)))),
+        h(
+          'tbody',
+          null,
+          zeilen.map((z) =>
+            h(
+              'tr',
+              { class: z.aktiv === false ? 'inaktiv' : null },
+              h('th', { scope: 'row' }, z.name, z.aktiv === false ? h('span', { class: 'klein text-2' }, ' – nicht mehr im Kurs') : null),
+              (z.werte || []).map((v) => h('td', null, v ? `${v.punkte}/${v.max} (${v.versuche} ${v.versuche === 1 ? 'Versuch' : 'Versuche'})` : '—'))
+            )
+          )
+        )
+      )
+    );
+  }
+
+  /** Fallen-Profil des Kurses: je Falle Fehlversuche (Balken + Text) und betroffene Schüler. */
+  function fallenProfil(f) {
+    const liste = Array.isArray(f) ? f : [];
+    const max = Math.max(1, ...liste.map((x) => x.fehlversuche || 0));
+    return h(
+      'ul',
+      { class: 'fallen-profil' },
+      liste.map((x) =>
+        h(
+          'li',
+          { class: x.fehlversuche ? null : 'leer' },
+          h('a', { class: 'chip chip-falle', href: `/themen#fallen-${x.p}` }, `${x.p} ${KR.FALLEN[x.p] || x.titel || ''}`.trim()),
+          AQ.progress((x.fehlversuche || 0) / max, 'fallen-balken'),
+          h('span', { class: 'klein' }, `${x.fehlversuche || 0} Fehlversuche · ${x.schueler || 0} von ${x.schuelerGesamt || 0} Schülern`)
+        )
+      )
+    );
+  }
+
+  /** Aufgabenstatistik: nur bearbeitete Aufgaben, schwierigste zuerst; häufigste falsche Antworten als Text. */
+  function aufgabenStatistik(liste) {
+    const bearbeitet = (Array.isArray(liste) ? liste : []).filter((a) => a.versucht > 0).sort((a, b) => (a.quote ?? 1) - (b.quote ?? 1) || b.versucht - a.versucht);
+    if (!bearbeitet.length) return h('p', { class: 'text-2' }, 'Noch keine Aufgabe bearbeitet.');
+    return h(
+      'div',
+      { class: 'scroll-x' },
+      h(
+        'table',
+        { class: 'aufgaben-statistik' },
+        h('caption', { class: 'sr' }, 'Aufgabenstatistik, schwierigste zuerst'),
+        h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Aufgabe'), h('th', { scope: 'col', class: 'zahl' }, 'versucht'), h('th', { scope: 'col', class: 'zahl' }, 'Lösungsquote'), h('th', { scope: 'col', class: 'zahl' }, 'Ø Fehlversuche'), h('th', { scope: 'col' }, 'häufige falsche Antworten'))),
+        h(
+          'tbody',
+          null,
+          bearbeitet.map((a) =>
+            h(
+              'tr',
+              null,
+              h('th', { scope: 'row' }, h('a', { href: `#/vorschau/aufgabe/${enc(a.id)}` }, a.titel), h('div', { class: 'klein text-2 mono' }, a.id)),
+              h('td', { class: 'zahl' }, String(a.versucht)),
+              h('td', { class: 'zahl' }, a.quote === null ? '–' : KR.prozent(a.quote)),
+              h('td', { class: 'zahl' }, a.fehlversucheSchnitt === null ? '–' : (Math.round(a.fehlversucheSchnitt * 10) / 10).toLocaleString('de-DE')),
+              h('td', null, (a.falscheAntworten || []).length ? h('ul', { class: 'falsche-antworten' }, a.falscheAntworten.map((f) => h('li', null, h('code', null, f.antwort), ` × ${f.anzahl}`))) : '–')
+            )
+          )
+        )
+      )
+    );
+  }
+
+  function csvKnoepfe(kursId) {
+    return h(
+      'p',
+      { class: 'knopf-reihe' },
+      [['uebersicht', 'Übersicht (CSV)'], ['matrix', 'Matrix (CSV)'], ['aufgaben', 'Aufgaben (CSV)']].map(([art, text]) =>
+        h('a', { class: 'knopf knopf-zweit', href: `/api/lehrer/kurse/${enc(kursId)}/export.csv?art=${art}`, download: '' }, KR.symbol('icons', 'i-download'), text)
+      )
+    );
+  }
+
+  tab('auswertung', 'Auswertung', async (kurs, box) => {
+    const d = await api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/auswertung`);
+    mount(
+      box,
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-matrix' }, h('h2', { id: 'aw-matrix' }, 'Fortschritt je Level'), matrixTabelle(d.matrix, { niveau: d.niveau })),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-fallen' }, h('h2', { id: 'aw-fallen' }, 'Fallen-Profil des Kurses'), h('p', { class: 'klein text-2' }, 'Fehlversuche mit erkannter Falle (Diagnose der Prüfer). Der Link führt zur Erläuterung.'), fallenProfil(d.fallen)),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-boss' }, h('h2', { id: 'aw-boss' }, 'Boss-Ergebnisse'), bossTabelle(d.boss)),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-aufgaben' }, h('h2', { id: 'aw-aufgaben' }, 'Aufgabenstatistik'), aufgabenStatistik(d.aufgaben)),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-csv' }, h('h2', { id: 'aw-csv' }, 'Export'), csvKnoepfe(kurs.id))
+    );
+  });
+
+  /* ---------- Tab Scoreboard (Task 63) ---------- */
+
+  function scoreboardTabelle(sb) {
+    const liste = (sb && sb.liste) || [];
+    if (!liste.length) return h('p', { class: 'text-2' }, 'Noch keine Punkte.');
+    return h(
+      'div',
+      { class: 'scroll-x' },
+      h(
+        'table',
+        { class: 'scoreboard-tabelle' },
+        h('caption', { class: 'sr' }, 'Scoreboard des Kurses'),
+        h('thead', null, h('tr', null, h('th', { scope: 'col', class: 'zahl' }, 'Platz'), h('th', { scope: 'col' }, 'Name'), h('th', { scope: 'col', class: 'zahl' }, 'Punkte'), h('th', { scope: 'col', class: 'zahl' }, 'gelöst'), h('th', { scope: 'col', class: 'zahl' }, 'Abzeichen'))),
+        h(
+          'tbody',
+          null,
+          liste.map((r) =>
+            h(
+              'tr',
+              { class: r.aktiv === false ? 'inaktiv' : null },
+              h('td', { class: 'zahl' }, `${r.platz}.`),
+              h('th', { scope: 'row' }, r.name, r.aktiv === false ? h('span', { class: 'klein text-2' }, ' – nicht mehr im Kurs') : null),
+              h('td', { class: 'zahl' }, String(r.punkte)),
+              h('td', { class: 'zahl' }, String(r.geloest || 0)),
+              h('td', { class: 'zahl' }, String(r.abzeichen || 0))
+            )
+          )
+        )
+      )
+    );
+  }
+
+  tab('scoreboard', 'Scoreboard', async (kurs, box, { r }) => {
+    const pfad = `/api/lehrer/kurse/${enc(kurs.id)}/scoreboard`;
+    const ziel = h('div', { 'aria-live': 'polite' }, scoreboardTabelle(await api('GET', pfad)));
+    mount(box, h('p', { class: 'klein text-2' }, 'Aktualisiert sich alle 20 Sekunden. Das Beamer-Board schalten Sie unter „Einstellungen“ ein.'), ziel);
+    const t = setInterval(async () => {
+      if (!r.gueltig()) return clearInterval(t);
+      try {
+        mount(ziel, scoreboardTabelle(await api('GET', pfad)));
+      } catch {
+        /* nächster Versuch */
+      }
+    }, 20000);
+    beimVerlassen(() => clearInterval(t));
+  });
+
+  /* ---------- Vorschau (Task 63) ---------- */
+
+  const istEpoche = (nr) => Number.isInteger(nr) && nr >= 0 && nr <= 6;
+  const vorschauNiveau = (n) => AQ.niveau(n || 'kern', { vorschau: true });
+
+  function aufgabeZeile(a) {
+    return h(
+      'li',
+      { class: 'vorschau-aufgabe' },
+      h('a', { href: `#/vorschau/aufgabe/${enc(a.id)}` }, a.titel),
+      h('span', { class: 'aufgabe-meta' }, AQ.sterne(a.stufe), h('span', { class: 'klein text-2' }, ` ${a.punkte} P. · ${KR.KATEGORIEN[a.kategorie] || a.kategorie}`)),
+      vorschauNiveau(a.niveau),
+      a.gAAusgeblendet && a.niveau !== 'eA' ? h('span', { class: 'klein text-2' }, 'im gA-Kurs ausgeblendet') : null,
+      (a.fallen || []).map((p) => KRDiag.chip(p)),
+      h('span', { class: 'klein text-2 mono' }, a.id)
+    );
+  }
+
+  async function vorschauRoute(teile, r) {
+    const [art, wert] = teile;
+    if (art === 'aufgabe' && wert) return vorschauAufgabe(wert, r);
+    const d = await api('GET', '/api/lehrer/vorschau');
+    if (!r.gueltig()) return;
+    const welten = d.welten || [];
+    if (art === 'welt') {
+      const w = welten.find((x) => String(x.nr) === String(wert));
+      if (!w) return fehler(new Error('Diese Welt gibt es nicht.'), { href: '#/vorschau', text: 'Zur Aufgaben-Übersicht' });
+      KR.epoche(w.nr, { farbe: w.farbe, akzentHell: w.akzentHell });
+      KRKopf.epoche(w.titel);
+      return seite(
+        `Vorschau ${w.titel}`,
+        h(
+          'div',
+          { class: 'wrap lehrer-seite vorschau' },
+          h('nav', { class: 'brotkrumen', 'aria-label': 'Brotkrümel' }, h('a', { href: '#/vorschau' }, 'Aufgaben'), h('span', { 'aria-hidden': 'true' }, '›'), h('span', { 'aria-current': 'page' }, `Welt ${w.nr}`)),
+          h('h1', null, `Welt ${w.nr} · ${w.titel}`),
+          h('p', { class: 'text-2 lesen' }, 'Vorschau mit allen Inhalten und Lösungen. Niveau-Chips zeigen, was ein gA-Kurs nicht sieht.'),
+          w.archivfund && w.archivfund.aufgabe
+            ? h('section', { class: 'karte archivfund-karte' }, h('span', { class: 'etikett' }, 'Archivfund'), h('h2', null, w.archivfund.titel || w.archivfund.aufgabe.titel), h('p', null, h('a', { href: `#/vorschau/aufgabe/${enc(w.archivfund.aufgabe.id)}` }, 'Archivfund ansehen')))
+            : null,
+          (w.levels || []).map((l) =>
+            h(
+              'section',
+              { class: 'karte vorschau-level', 'aria-labelledby': `vl-${l.id}` },
+              h(
+                'div',
+                { class: 'vorschau-level-kopf' },
+                h('h2', { id: `vl-${l.id}` }, h('span', { class: 'mono' }, l.nr || l.id), ' ', l.titel),
+                vorschauNiveau(l.niveau),
+                l.rolle ? h('span', { class: 'chip chip-rolle rolle-' + l.rolle }, AQ.rolleText(l.rolle).replace(/^\S+\s/, '')) : null,
+                l.gAAusgeblendet && l.niveau !== 'eA' ? h('span', { class: 'klein text-2' }, 'im gA-Kurs ausgeblendet') : null
+              ),
+              (l.aufgaben || []).length ? h('ol', { class: 'vorschau-aufgaben' }, l.aufgaben.map(aufgabeZeile)) : h('p', { class: 'text-2' }, 'Keine Aufgaben.')
+            )
+          ),
+          w.boss
+            ? h('section', { class: 'karte vorschau-level boss-pool', 'aria-labelledby': 'vl-boss' }, h('h2', { id: 'vl-boss' }, `Boss: ${w.boss.titel}`), h('p', { class: 'klein text-2' }, `${w.boss.anzahl} Aufgaben aus dem Pool, ${w.boss.dauerMin} Minuten. Im gA-Kurs zieht der Boss nur Kern-Aufgaben.`), h('ol', { class: 'vorschau-aufgaben' }, (w.boss.pool || []).map(aufgabeZeile)))
+            : null
+        )
+      );
+    }
+    seite(
+      'Aufgaben',
+      h(
+        'div',
+        { class: 'wrap lehrer-seite vorschau' },
+        h('h1', null, 'Aufgaben-Vorschau'),
+        h('p', { class: 'text-2 lesen' }, 'Alle Welten mit Leveln, Aufgaben und Lösungen – nur für Lehrkräfte. Schülerstände werden dabei nicht verändert.'),
+        welten.length
+          ? h(
+              'ul',
+              { class: 'vorschau-welten' },
+              welten.map((w) => {
+                const li = h(
+                  'li',
+                  { 'data-epoche': istEpoche(w.nr) ? String(w.nr) : null },
+                  h('a', { class: 'karte karte-link', href: `#/vorschau/welt/${w.nr}` }, h('b', null, `Welt ${w.nr} · ${w.titel}`), h('span', { class: 'klein text-2' }, `${(w.levels || []).length} Level · ${w.aufgabenAnzahl || 0} Aufgaben${w.boss ? ' · Boss' : ''}`))
+                );
+                if (!istEpoche(w.nr) && w.farbe) li.style.setProperty('--akzent', w.farbe);
+                return li;
+              })
+            )
+          : h('p', { class: 'text-2' }, 'Noch keine Inhalte geladen.')
+      )
+    );
+  }
+
+  async function vorschauAufgabe(id, r) {
+    const d = await api('GET', `/api/lehrer/vorschau/${enc(id)}`);
+    if (!r.gueltig()) return;
+    const a = d.aufgabe;
+    const o = d.ort || {};
+    const w = o.welt || { nr: 6, titel: '' };
+    KR.epoche(w.nr, { farbe: w.farbe });
+    KRKopf.epoche(w.titel);
+    const ctrl = AQI.aufgabe(a, { modus: 'vorschau', vorschau: true, zusatz: { werkzeugFrei: () => true } });
+    ctrl.loesung(d.loesung, d.muster);
+    ctrl.sperren(true);
+    const nav = (aid, text) => (aid ? h('a', { class: 'knopf knopf-zweit', href: `#/vorschau/aufgabe/${enc(aid)}` }, text) : null);
+    seite(
+      `Vorschau ${a.titel}`,
+      h(
+        'div',
+        { class: 'wrap lehrer-seite vorschau aufgabe-seite' },
+        h(
+          'nav',
+          { class: 'brotkrumen', 'aria-label': 'Brotkrümel' },
+          h('a', { href: '#/vorschau' }, 'Aufgaben'),
+          h('span', { 'aria-hidden': 'true' }, '›'),
+          h('a', { href: `#/vorschau/welt/${w.nr}` }, `Welt ${w.nr}`),
+          h('span', { 'aria-hidden': 'true' }, '›'),
+          h('span', null, o.level ? `${o.level.nr || o.level.id} ${o.level.titel}` : o.boss ? `Boss-Pool: ${o.boss.titel}` : 'Archivfund'),
+          o.anzahl ? [h('span', { 'aria-hidden': 'true' }, '›'), h('span', { 'aria-current': 'page' }, `${o.index + 1} von ${o.anzahl}`)] : null
+        ),
+        h(
+          'div',
+          { class: 'aufgabe-kopf' },
+          h('h1', null, a.titel),
+          AQ.sterne(a.stufe),
+          h('span', { class: 'pill gold' }, `${a.punkte} ${a.punkte === 1 ? 'Punkt' : 'Punkte'}`),
+          a.kategorie ? h('span', { class: 'pill' }, KR.KATEGORIEN[a.kategorie] || a.kategorie) : null,
+          vorschauNiveau(a.niveau),
+          (a.fallen || []).map((p) => KRDiag.chip(p)),
+          h('span', { class: 'chip chip-neutral mono' }, a.id)
+        ),
+        h('div', { class: 'rueckmeldung info' }, h('p', null, 'Vorschau mit eingesetzter Lösung. Nur lesend – Schülerstände werden nicht verändert.')),
+        h('section', { class: 'card' }, ctrl.el),
+        d.tipps && d.tipps.length ? h('section', { class: 'card' }, h('h2', null, '💡 Tipps'), d.tipps.map((t, i) => h('div', { class: 'tipp-box' }, h('strong', null, `Tipp ${i + 1}: `), AQR.md(t, null, 'span')))) : null,
+        d.erklaerung && d.erklaerung.length ? h('section', { class: 'card erklaerung' }, h('h2', null, '📖 Erklärung'), AQR.bloecke(d.erklaerung, null)) : null,
+        h('p', { class: 'knopf-reihe' }, nav(o.vorher, '← vorherige Aufgabe'), h('a', { class: 'knopf knopf-zweit', href: `#/vorschau/welt/${w.nr}` }, 'Übersicht der Welt'), nav(o.nachher, 'nächste Aufgabe →'))
+      )
+    );
+  }
+
+  /* ---------- Materialien (Task 63) ---------- */
+
+  const ART = { praesentation: 'Präsentation', lehrerhinweise: 'Lehrerhinweise', klausur: 'Klausur', loesung: 'Lösung', akte: 'Akte', erwartungshorizont: 'Erwartungshorizont' };
+
+  function materialEintrag(e) {
+    return h(
+      'li',
+      { class: 'material-eintrag' },
+      h('b', null, e.titel),
+      h('span', { class: 'klein text-2' }, [ART[e.art] || e.art, (e.ds || []).length ? `DS ${e.ds.join(', ')}` : null].filter(Boolean).join(' · ')),
+      h(
+        'span',
+        { class: 'knopf-reihe' },
+        (e.dateien || []).map((d) => (d.url ? h('a', { class: 'knopf knopf-zweit', href: d.url, target: '_blank', rel: 'noopener' }, KR.symbol('icons', 'i-download'), d.label || 'PDF') : h('span', { class: 'klein text-2' }, `${d.label || 'Datei'}: noch nicht vorhanden`)))
+      )
+    );
+  }
+
+  async function materialienRoute(_teile, r) {
+    const d = await api('GET', '/api/lehrer/materialien');
+    if (!r.gueltig()) return;
+    const welten = d.welten || [];
+    seite(
+      'Materialien',
+      h(
+        'div',
+        { class: 'wrap lehrer-seite materialien' },
+        h('h1', null, 'Materialien'),
+        h('p', { class: 'text-2 lesen' }, 'Präsentationen, Lehrerhinweise, Lösungen und Klausuren – nur für Lehrkräfte. Die Akten für Schülerinnen und Schüler stehen auch auf der Seite „Themen“.'),
+        welten.length ? h('nav', { class: 'sprungleiste', 'aria-label': 'Welten' }, welten.map((w) => h('a', { class: 'chip', href: `#material-welt-${w.nr}` }, `Welt ${w.nr}`))) : null,
+        (d.allgemein || []).length ? h('section', { class: 'karte', 'aria-labelledby': 'material-allgemein' }, h('h2', { id: 'material-allgemein' }, 'Allgemein'), h('ul', { class: 'material-liste' }, d.allgemein.map(materialEintrag))) : null,
+        welten.map((w) =>
+          h('section', { class: 'karte material-welt', id: `material-welt-${w.nr}`, 'data-epoche': istEpoche(w.nr) ? String(w.nr) : null, 'aria-labelledby': `material-welt-${w.nr}-titel` }, h('h2', { id: `material-welt-${w.nr}-titel` }, istEpoche(w.nr) ? `Welt ${w.nr} · ${KR.WELTEN_KURZ[w.nr] || 'Die Zeitmaschine'}` : `Welt ${w.nr}`), h('ul', { class: 'material-liste' }, (w.eintraege || []).map(materialEintrag)))
+        ),
+        !welten.length && !(d.allgemein || []).length ? h('p', { class: 'text-2' }, 'Auf diesem Server liegen noch keine Materialien.') : null
+      )
+    );
+    // Sprunglinks innerhalb der Hash-Route: scrollen statt navigieren
+    haupt.querySelectorAll('.sprungleiste a').forEach((a) =>
+      a.addEventListener('click', (e) => {
+        const ziel = document.getElementById(a.getAttribute('href').slice(1));
+        if (!ziel) return;
+        e.preventDefault();
+        if (typeof ziel.scrollIntoView === 'function') ziel.scrollIntoView();
+      })
+    );
+  }
+
   /* ---------- Router ---------- */
 
   ROUTEN.set('', kursliste);
   ROUTEN.set('kurs', kursRoute);
+  ROUTEN.set('vorschau', vorschauRoute);
+  ROUTEN.set('materialien', materialienRoute);
 
   /** Route registrieren (Vorschau, Materialien, Verwaltung in Tasks 63/64; M7 ergänzt weitere). */
   function route(name, fn) {
@@ -505,6 +900,11 @@ const KRLehrer = (() => {
     kursListeTabelle,
     schuelerTabelle,
     einstellungen,
+    matrixTabelle,
+    bossTabelle,
+    fallenProfil,
+    aufgabenStatistik,
+    scoreboardTabelle,
     sitzung: () => sitzung,
     neu: navigiere
   };

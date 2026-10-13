@@ -347,3 +347,48 @@ test('Einstellungen: Welt abwählen behält nicht angezeigte Welten; Board-Link 
   assert.ok(k.anfragen.some((x) => x.methode === 'POST' && x.pfad === '/api/lehrer/kurse/3/board-schluessel'));
   assert.ok(k.eins(k.document, 'a[href="/board/neuerschl123"]'));
 });
+test('Auswertung: Matrix mit Niveau-Kopf und Text je Zelle, Fallen-Profil mit Kurztiteln, CSV-Links', async () => {
+  const ausw = { kurs: KURS, niveau: 'gA', matrix: { levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', maxPunkte: 40 }], zeilen: [{ id: 1, name: 'Mika R.', aktiv: true, werte: [{ anteil: 0.75, punkte: 30, geloest: 3, angesehen: 0 }] }, { id: 2, name: 'Ida K.', aktiv: false, werte: [{ anteil: 0, punkte: 0, geloest: 0, angesehen: 0 }] }] }, boss: { welten: [], zeilen: [] }, aufgaben: [], fallen: [{ p: 'P3', titel: 'Umkehrung falsch', fehlversuche: 4, schueler: 1, schuelerGesamt: 2 }] };
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/auswertung', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3/auswertung': { status: 200, body: ausw } }), vorher: seiteLehrer });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(k.eins(haupt, 'table.matrix-lehrkraft thead')), /Niveau: gA/);
+  assert.equal(k.text(k.alle(haupt, 'table.matrix-lehrkraft tbody td')[0]), '75 %');
+  assert.match(k.text(k.alle(haupt, 'table.matrix-lehrkraft tbody tr')[1]), /nicht mehr im Kurs/);
+  assert.match(k.text(haupt), /P3 Umkehrung falsch/);
+  assert.ok(k.eins(haupt, 'a[href="/themen#fallen-P3"]'));
+  assert.ok(k.eins(haupt, 'a[href="/api/lehrer/kurse/3/export.csv?art=matrix"], button[data-csv="matrix"]'));
+});
+test('Vorschau: Niveau-Chips auch für Kern, Hinweis „im gA-Kurs ausgeblendet“, Aufgabe mit eingesetzter Lösung', async () => {
+  const vw = { welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', levels: [{ id: 'W9-L3', nr: '3', titel: 'Analyse', niveau: 'eA', rolle: 'kryptoanalyse', gAAusgeblendet: true, aufgaben: [{ id: 'W9-L3-01', titel: 'Werkbank', stufe: 3, punkte: 30, kategorie: 'haeufigkeitsanalyse', niveau: 'eA', fallen: [], arten: ['zuordnung'], gAAusgeblendet: true }] }, { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', gAAusgeblendet: false, aufgaben: [] }], boss: null, archivfund: null }] };
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/vorschau/welt/9', fetch: lehrerFetch({ 'GET /api/lehrer/vorschau': { status: 200, body: vw } }), vorher: seiteLehrer });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /im gA-Kurs ausgeblendet/);
+  assert.ok(k.eins(haupt, 'a[href="#/vorschau/aufgabe/W9-L3-01"]'));
+  assert.ok(k.alle(haupt, '.chip-niveau').some((c) => k.text(c) === 'K'), 'Kern-Chip in der Vorschau');
+  const a = { id: 'W9-L1-01', titel: 'Lücke', stufe: 1, punkte: 10, kategorie: 'begriffe', niveau: 'kern', fallen: ['P3'], inhalt: [{ t: 'text', md: 'Antwort: [[g1]]' }], interaktion: { kind: 'gaps', felder: { g1: {} } } };
+  const k2 = D.lade(LEHRER, { url: 'http://x.test/lehrer#/vorschau/aufgabe/W9-L1-01', fetch: lehrerFetch({ 'GET /api/lehrer/vorschau/W9-L1-01': { status: 200, body: { aufgabe: a, loesung: { g1: ['geheim'] }, muster: { g1: 'geheim' }, erklaerung: [{ t: 'text', md: 'Weil.' }], tipps: ['Denk nach.'], ort: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, level: { id: 'W9-L1', nr: '1', titel: 'Blöcke' }, boss: null, index: 0, anzahl: 2, vorher: null, nachher: 'W9-L1-02' } } } }), vorher: seiteLehrer });
+  await k2.ruhe();
+  const h2 = k2.document.getElementById('haupt');
+  assert.equal(k2.eins(h2, 'input').value, 'geheim');
+  assert.match(k2.text(h2), /Denk nach\./);
+  assert.match(k2.text(h2), /Weil\./);
+  assert.ok(k2.eins(h2, 'a[href="#/vorschau/aufgabe/W9-L1-02"]'));
+});
+test('Materialien: Liste je Welt mit Download-Links und Sprungleiste', async () => {
+  const m = { allgemein: [{ art: 'lehrerhinweise', titel: 'Gesamtübersicht', ds: [], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/a.pdf', lehrkraft: true }] }], welten: [{ nr: 9, eintraege: [{ art: 'praesentation', titel: 'Folien Welt 9', ds: [1], dateien: [{ label: 'PDF', url: '/lehrkraft/dateien/b.pdf', lehrkraft: true }, { label: 'fehlt', url: null }] }] }] };
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/materialien', fetch: lehrerFetch({ 'GET /api/lehrer/materialien': { status: 200, body: m } }), vorher: seiteLehrer });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.ok(k.eins(haupt, 'a[href="/lehrkraft/dateien/b.pdf"]'));
+  assert.ok(k.eins(haupt, 'a[href="#material-welt-9"]'));
+  assert.ok(k.document.getElementById('material-welt-9'));
+});
+test('Scoreboard-Tab: Rangliste des Kurses, Aktualisierung alle 20 s', async () => {
+  const sb = { welt: null, liste: [{ id: 1, name: 'Mika R.', punkte: 30, abzeichen: 1, geloest: 3, platz: 1 }] };
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/scoreboard', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3/scoreboard': { status: 200, body: sb } }), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Mika R\./);
+  assert.ok(k.timer.some((t) => t.ms === 20000 && t.wiederholt));
+});
