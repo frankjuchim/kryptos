@@ -879,11 +879,15 @@ erwartet die karawane in bagdad“; L3-03 → „der wesir flieht nach basra“;
 
 **Erwartete Hinweise:** keine (Kategorie `fremde-chiffre`/`sicherheit-beurteilen`).
 
-- [ ] **Step 1: Failing test** – `UMFANG[1]` += `'W1-L3'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 1: Level 1.3 „Fremde Chiffre II: Der Nomenklator“"`.
+- [x] **Step 1: Failing test** – `UMFANG[1]` += `'W1-L3'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 1: Level 1.3 „Fremde Chiffre II: Der Nomenklator“"`.
+
+- **Umgesetzt (Task 81):** Material NOMEN-850 im Level-`intro` als `hinweis` (Codebuch, Blender, Regeln, Beispiel wörtlich;
+  Alphabet als Verweis „siehe Leiste“) plus Block `alphabet` (TUSCHE); in W1-L3-01/-02/-03/-06 als Blöcke `tabelle`
+  (Codebuch + Blender), `alphabet` und Regel-Text. Offene Frage c) von W1-L3-06 als Denkfrage in Teil b) (E64).
 
 ### Task 82: Welt 1 – Boss online „Der Kalif und der Kurier“
 
