@@ -573,3 +573,22 @@ test('Durchsicht W1: Häufigkeitsleiste doppelt (Block haeufigkeit + Werkbank mi
   // anderer Text im Block → kein Hinweis
   erwarteHinweis((w) => { aufgabe(w, 'W9-L3-01').inhalt.find((x) => x.t === 'haeufigkeit').text = 'ABCDE FGHIJ'; }, /W9-L3-01.*Häufigkeitsleiste doppelt/, { nicht: true });
 });
+
+// M5-Inhaltsprüfung: Boss-Aufgaben ohne Fallen-Nummer und Verweise auf andere Aufgaben in Schülertexten → Hinweis
+test('Hinweis: Boss-Aufgabe ohne fallen (Diagnose und Auswertung brauchen eine P-Nummer)', () => {
+  // Fixture W9-B-02 hat fallen [] – das ist der Hinweis
+  erwarteHinweis(() => {}, /W9-B-02.*ohne fallen/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-B-02').fallen = ['P4']; }, /W9-B-02.*ohne fallen/, { nicht: true });
+  erwarteHinweis((w) => { delete aufgabe(w, 'W9-B-01').fallen; }, /W9-B-01.*ohne fallen/);
+  // Lab-Aufgaben ohne fallen sind erlaubt (z. B. Einführungen)
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L1-01').fallen = []; }, /W9-L1-01.*ohne fallen/, { nicht: true });
+});
+
+test('Hinweis: Verweis auf eine andere Aufgabe (id) in einem Schülertext – Aufgaben sind frei anwählbar', () => {
+  erwarteHinweis(() => {}, /Verweis auf die Aufgabe/, { nicht: true });
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').inhalt[0].md = 'Material wie in W9-B-03.'; }, /W9-L5-01.*Verweis auf die Aufgabe W9-B-03/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').tipps = ['Siehe WU-W9-02.']; }, /W9-L5-01.*Verweis auf die Aufgabe WU-W9-02/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').erklaerung = [{ t: 'text', md: 'Wie W9-L1-02.' }]; }, /W9-L5-01.*Verweis auf die Aufgabe W9-L1-02/);
+  // die eigene id (z. B. in einer Überschrift) ist kein Verweis
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').inhalt[0].md = 'Aufgabe W9-L5-01'; }, /Verweis auf die Aufgabe/, { nicht: true });
+});

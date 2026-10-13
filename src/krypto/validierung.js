@@ -58,6 +58,7 @@ const FUENFERGRUPPEN = /^[A-Z]{5}( [A-Z]{5})*( [A-Z]{1,5})?$/;
 const DIE_LERNENDEN = /\b[Dd]ie Lernenden\b/;
 const DUZEN = 'Lernende duzen: „Die Lernenden …“ in Du-Form umschreiben (Spec-Lernziele sind für Lehrkräfte formuliert).';
 const KERN_BLOECKE = ['baum', 'adt', 'klassenkarte'];
+const AUFGABEN_VERWEIS = /\b(W\d-(?:L\d{1,2}|B|A)-\d{2}|WU-W\d-\d{2})\b/g;
 
 /** Alle Blöcke einer Aufgabe (Inhalt, Teil-Inhalte, Erklärung). */
 function alleBloecke(a, { erklaerung = true } = {}) {
@@ -197,6 +198,12 @@ function aufgabe(a, fa, wa, { data } = {}) {
     wa('inhalt', `Altbegriff „${x}“ – bitte „${ersatz}“ schreiben.`);
   }
   if (texte.some((t) => DIE_LERNENDEN.test(t))) wa('inhalt', DUZEN);
+  // Verweise auf andere Aufgaben (M5-Inhaltsprüfung): Aufgaben sind frei anwählbar, ein „wie W1-B-11“ setzt eine
+  // bestimmte Reihenfolge voraus – Material in der Aufgabe wiederholen statt verweisen.
+  const verweise = new Set();
+  const erklaerungen = (Array.isArray(a.erklaerung) ? a.erklaerung : []).filter((b) => istObjekt(b) && typeof b.md === 'string').map((b) => b.md);
+  for (const t of [...texte, ...erklaerungen]) for (const m of t.matchAll(AUFGABEN_VERWEIS)) if (m[1] !== id) verweise.add(m[1]);
+  for (const v of verweise) wa('inhalt', `Verweis auf die Aufgabe ${v} im Schülertext – Aufgaben sind frei anwählbar; Material wiederholen statt verweisen.`);
   // Klartext klein (Design §6.2, Plan M5 E58): Entschlüsselungs-Lösungen mit Buchstabenausgabe
   F.teile(a).forEach((t, i, alle) => {
     const ia = t.interaktion;
@@ -419,6 +426,8 @@ function boss(b, f, w, { data, aufgaben }) {
     if (a.niveau === undefined) fb('niveau fehlt (Boss-Aufgaben: kern | eA).', aid);
     else if (!BOSS_NIVEAUS.includes(a.niveau)) fb(`niveau ${a.niveau} ist im Boss nicht erlaubt (nur kern | eA).`, aid);
     if (alleBloecke(a, { erklaerung: false }).some((x) => x.t === 'werkzeug')) fb('Block werkzeug ist in Boss-Aufgaben nicht erlaubt.', aid);
+    // Fallen-Nummer (M5-Inhaltsprüfung): Boss-Auswertung und Lehrkraft-Diagnose ordnen Fehler über fallen zu
+    if (!Array.isArray(a.fallen) || a.fallen.length === 0) w('boss', `boss › ${aid}`, 'Boss-Aufgabe ohne fallen – passende P-Nummer(n) nach FALLEN_PLAUSIBEL eintragen.');
     for (const { interaktion: ia } of F.teile(a)) {
       if (!istObjekt(ia)) continue;
       if (ia.kind === 'zuordnung' && ia.haeufigkeit === true) fb('zuordnung mit haeufigkeit: true ist in Boss-Aufgaben nicht erlaubt.', aid);
