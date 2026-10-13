@@ -177,3 +177,14 @@ test('Fehlerseiten und 404 statisch: nur common.js und oberflaeche.js, Kopf mit 
 test('Kein externer Link auf die Krypto-Werkstatt (Design O11, bis die Erlaubnis geklärt ist)', () => {
   for (const p of [...htmlDateien, ...jsDateien]) assert.doesNotMatch(lies(p), /andrebodendiek|enigma\./i, rel(p));
 });
+test('Review M4 K6: Fehlerseiten trennen die Anrede (kein Absatz mit du und Sie zugleich)', () => {
+  const du = /\b(du|dein|deine|deinen|deinem|deiner|dich|dir)\b/i;
+  const sie = /\b(Sie|Ihr|Ihre|Ihren|Ihrem|Ihrer|Ihnen)\b/;
+  for (const n of ['fehler/keine-berechtigung.html', 'fehler/anmeldung-fehlgeschlagen.html', 'fehler/kurs-gesperrt.html', '404.html']) {
+    const html = fs.readFileSync(path.join(__dirname, '..', 'public', n), 'utf8');
+    for (const m of html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)) {
+      const t = m[1].replace(/<[^>]+>/g, ' ');
+      assert.ok(!(du.test(t) && sie.test(t)), `${n}: gemischte Anrede in „${t.trim()}“`);
+    }
+  }
+});

@@ -106,7 +106,7 @@ test('chiffre Bedienung: Einfügen verteilt, Pfeiltasten, Umlaut, Länge je Verf
   k.tippe(kae[0], 'zuver laessig');
   assert.equal(kae.map((x) => x.value).join(''), 'ZUVERLAESSIG');
   assert.equal(kae[0].getAttribute('maxlength'), '1');
-  assert.equal(kae[0].getAttribute('autocapitalize'), 'characters');
+  assert.equal(kae[0].getAttribute('autocapitalize'), 'off', 'Klartext-Ergebnis (ent): Tastatur klein (Review M4 K8)');
   k.taste(kae[4], 'ArrowLeft');
   assert.equal(k.document.activeElement, kae[3]);
   k.taste(kae[3], 'ArrowRight');
@@ -463,4 +463,18 @@ test('Review M4 K5: bits-rechnen mit rovingem tabindex (ein Tabstopp je Bitfolge
   k.klick(bits[3]); bits[3].focus();
   assert.equal(bits[3].getAttribute('tabindex'), '0');
   assert.equal(stopps().filter((x) => x === '0').length, 1);
+});
+test('Review M4 K8: Antwort-Kästchen zeigen das Ergebnis in der Konvention – Klartext klein, Geheimtext GROSS', () => {
+  const fs = require('node:fs'); const path = require('node:path');
+  let { k, c } = baue(oeffentlich('W9-L5-01')); // ent → Klartext
+  assert.ok(k.alle(c.el, 'input.kaestchen').every((x) => x.classList.contains('klar')), 'ent: Kästchen als Klartext (klein)');
+  k.tippe(k.eins(c.el, 'input.kaestchen'), 'z');
+  assert.equal(c.antwort()[0], 'Z', 'gesendet wird weiter normalisiert');
+  ({ k, c } = baue(oeffentlich('W9-L5-02'))); // ver → Geheimtext
+  assert.ok(k.alle(c.el, 'input.kaestchen').every((x) => !x.classList.contains('klar')), 'ver: Geheimtext (GROSS)');
+  ({ k, c } = baue(oeffentlich('W9-L5-03'))); // Zahlen: keine Schreibweise
+  assert.ok(k.alle(c.el, 'input.kaestchen').every((x) => !x.classList.contains('klar')));
+  const css = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'css', 'aufgaben.css'), 'utf8');
+  assert.match(css, /\.kaestchen\.klar[^{]*\{[^}]*text-transform:\s*lowercase/);
+  assert.match(css, /\.chiffre-zeile\.klar[^{]*\{[^}]*text-transform:\s*lowercase|\.kaestchen\.klar,\s*\.chiffre-zeile\.klar[^{]*\{[^}]*lowercase/);
 });

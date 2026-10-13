@@ -95,6 +95,9 @@ const KRI = (() => {
     const darstellung = ia.darstellung === 'zeile' ? 'zeile' : ia.darstellung === 'zeichenweise' || (n !== null && n <= MAX_KAESTCHEN) ? 'zeichenweise' : 'zeile';
     const zeichentreu = n !== null && ZEICHENTREU.has(typVon(ia)) && n === eingabe.length;
     const gruppe = ia.gruppe === 0 ? 0 : 5;
+    // Review M4 K8: Anzeige nach Konvention (Design §6.2) – Ergebnis Klartext (ent) klein, Geheimtext (ver) GROSS;
+    // Zahlen und Hex ohne Schreibweise. Gesendet wird weiter normalisiert (GROSS).
+    const klarErgebnis = richtung === 'ent' && !zahlen && ia.ausgabe !== 'hex';
     let gesperrt = false;
 
     const kopf = h(
@@ -115,7 +118,8 @@ const KRI = (() => {
     function zeichneVorschau() {
       if (!vorschau) return;
       const v = String(zeile.value || '');
-      vorschau.textContent = zahlen ? v.trim().split(/[\s,;]+/).filter(Boolean).join(' ') : Krypto.gruppieren(Krypto.normalisieren(v), 5);
+      const norm = Krypto.normalisieren(v);
+      vorschau.textContent = zahlen ? v.trim().split(/[\s,;]+/).filter(Boolean).join(' ') : Krypto.gruppieren(klarErgebnis ? norm.toLowerCase() : norm, 5);
     }
     /* ---------- Darstellung „zeichenweise“ ---------- */
     const kaestchen = [];
@@ -155,11 +159,11 @@ const KRI = (() => {
 
     function neuesKaestchen() {
       const el = h('input', {
-        class: 'kaestchen' + (zahlen ? ' zahl' : ''),
+        class: 'kaestchen' + (zahlen ? ' zahl' : '') + (klarErgebnis ? ' klar' : ''),
         type: 'text',
         maxlength: zahlen ? 2 : 1,
         inputmode: zahlen ? 'numeric' : ia.ausgabe === 'hex' ? 'text' : null,
-        autocapitalize: 'characters',
+        autocapitalize: klarErgebnis ? 'off' : 'characters',
         autocomplete: 'off',
         autocorrect: 'off',
         spellcheck: 'false'
@@ -320,7 +324,7 @@ const KRI = (() => {
         box.appendChild(h('div', { class: 'knopf-reihe' }, mehrKnopf));
       }
     } else {
-      zeile = h('input', { class: 'chiffre-zeile', type: 'text', 'aria-label': 'Antwort', autocomplete: 'off', autocorrect: 'off', autocapitalize: zahlen ? 'off' : 'characters', spellcheck: 'false', inputmode: zahlen ? 'numeric' : null });
+      zeile = h('input', { class: 'chiffre-zeile' + (klarErgebnis ? ' klar' : ''), type: 'text', 'aria-label': 'Antwort', autocomplete: 'off', autocorrect: 'off', autocapitalize: zahlen || klarErgebnis ? 'off' : 'characters', spellcheck: 'false', inputmode: zahlen ? 'numeric' : null });
       vorschau = h('div', { class: 'chiffre-zeile-vorschau', 'aria-hidden': 'true' });
       zeichenFeedback = h('div', { class: 'zeichen-feedback', 'aria-hidden': 'true' });
       zeile.addEventListener('input', () => {

@@ -560,3 +560,15 @@ test('Review M4 K2: ungespeicherte Einstellungen – Rückfrage beim Tabwechsel'
   assert.equal(k.alle(k.document, 'form.einstellungen').length, 0);
   void form;
 });
+test('Review M4 K7: Kurswahl mit nur einem aktiven Kurs – kein „Du bist in mehreren Kursen“', async () => {
+  const s = { ...SITZUNG_S, kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }, { id: 'k:3', name: 'Alt', aktiv: false }] };
+  let k = D.lade(SPIEL, { url: 'http://x.test/spiel#/kurs', fetch: { ...spielFetch([welt(9)]), 'GET /api/sitzung': { status: 200, body: s } } });
+  await k.ruhe();
+  let t = k.text(k.document.getElementById('haupt'));
+  assert.doesNotMatch(t, /mehreren Kursen/);
+  assert.match(t, /nur in einem Kurs/);
+  k = D.lade(SPIEL, { url: 'http://x.test/spiel#/kurs', fetch: { ...spielFetch([welt(9)]), 'GET /api/sitzung': { status: 200, body: { ...SITZUNG_S, kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }, { id: 'k:2', name: 'GK 12 (gA)', aktiv: true }] } } } });
+  await k.ruhe();
+  t = k.text(k.document.getElementById('haupt'));
+  assert.match(t, /Du bist in mehreren Kursen/);
+});

@@ -81,3 +81,14 @@ test('Attrappen-DOM: Formulare, Kästchen-Sprung, Hash, dataset, verbotenes inne
   assert.throws(() => { f.innerHTML = '<b>x</b>'; }, /verboten/);
   assert.equal(k.document.getElementById('haupt').tagName, 'MAIN');
 });
+test('Review M4 K1: Antwort ohne JSON (HTML 500/502 eines Proxys) → verständlicher Hinweis, neutral formuliert', async () => {
+  const html = '<html><body><h1>502 Bad Gateway</h1></body></html>';
+  const k = D.lade(['common.js'], { fetch: { 'GET /api/x': { status: 502, typ: 'text/html', text: html }, 'POST /api/y': { status: 500, typ: 'text/html', text: html }, 'GET /api/z': { status: 404, typ: 'text/html', text: html } } });
+  const AQ = k.wert('AQ');
+  await assert.rejects(AQ.api('GET', '/api/x'), (e) => e.message === 'Der Server antwortet gerade nicht (Fehler 502). Bitte später erneut versuchen.' && e.status === 502);
+  await assert.rejects(AQ.api('POST', '/api/y', {}), /Der Server antwortet gerade nicht \(Fehler 500\)/);
+  await assert.rejects(AQ.api('GET', '/api/z'), (e) => !/<|html/i.test(e.message) && /404/.test(e.message));
+  // Netzwerkfehler: neutral (Lehrkraft-Seite siezt, Schüler-Seite duzt – common.js dient beiden)
+  const k2 = D.lade(['common.js'], { vorher: (kk) => { kk.window.fetch = () => Promise.reject(new TypeError('Failed to fetch')); } });
+  await assert.rejects(k2.wert('AQ').api('GET', '/api/q'), (e) => e.status === 0 && !/\b(prüfe|bitte prüfen Sie)\b/.test(e.message) && /Keine Verbindung zum Server/.test(e.message));
+});

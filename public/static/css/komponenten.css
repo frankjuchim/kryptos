@@ -866,6 +866,7 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
 .fehlerseite h1 { margin: 0; }
 
 /* ---------- Gastmodus (M4 Task 65) ---------- */
+.wrap.gast { padding-block: var(--a-6) var(--a-7); } /* Review M4 K9: Abstand zur Kopfzeile wie die übrigen Seiten */
 .gast-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--a-4); margin-block: var(--a-4); }
 a.gast-karte { text-decoration: none; color: var(--text); border-top: 6px solid var(--akzent); min-height: 44px; }
 a.gast-karte:hover { border-color: var(--akzent); }

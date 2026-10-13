@@ -112,7 +112,7 @@ const KRSpiel = (() => {
         'div',
         { class: 'wrap stapel seite-kurs' },
         h('h1', null, 'Kurs wählen'),
-        h('p', { class: 'text-2' }, 'Du bist in mehreren Kursen. Punkte, Fortschritt und Scoreboard gehören immer zum gewählten Kurs.'),
+        h('p', { class: 'text-2' }, aktive.length > 1 ? 'Du bist in mehreren Kursen. Punkte, Fortschritt und Scoreboard gehören immer zum gewählten Kurs.' : aktive.length === 1 ? 'Du bist zurzeit nur in einem Kurs – Punkte, Fortschritt und Scoreboard gehören zu diesem Kurs. Weitere Kurse vergibt deine Lehrkraft im Portal.' : 'Du bist zurzeit in keinem aktiven Kurs. Kurse vergibt deine Lehrkraft im Portal.'),
         aktive.length
           ? h(
               'ul',

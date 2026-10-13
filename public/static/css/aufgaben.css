@@ -552,6 +552,8 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
   border-radius: 6px;
 }
 .kaestchen.zahl { font-size: 1rem; letter-spacing: -.02em; }
+/* Review M4 K8: Ergebnis Klartext klein (Design §6.2), Geheimtext bleibt GROSS */
+.kaestchen.klar, .chiffre-zeile.klar { text-transform: lowercase; }
 .kaestchen:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
 .kaestchen.ok, .chiffre-zeile.ok { border: 3px solid var(--ok); background: var(--ok-flaeche); }
 .kaestchen.falsch, .chiffre-zeile.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }

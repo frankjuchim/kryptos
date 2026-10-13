@@ -938,6 +938,9 @@ function lade(dateien = [], opt = {}) {
     antwort = antwort || { status: 200, body: null };
     const status = antwort.status ?? 200;
     const daten = antwort.body === undefined ? null : JSON.parse(JSON.stringify(antwort.body));
+    // { typ, text }: Antwort ohne JSON (z. B. HTML-Fehlerseite eines Proxys, Review M4 K1)
+    const typ = antwort.typ || 'application/json; charset=utf-8';
+    const roh = typeof antwort.text === 'string' ? antwort.text : JSON.stringify(daten);
     k._offen.fetch++;
     return new Promise((resolve) => {
       setImmediate(() => {
@@ -945,9 +948,9 @@ function lade(dateien = [], opt = {}) {
         resolve({
           ok: status >= 200 && status < 300,
           status,
-          headers: { get: (n) => (String(n).toLowerCase() === 'content-type' ? 'application/json; charset=utf-8' : null) },
-          json: async () => JSON.parse(JSON.stringify(daten)),
-          text: async () => JSON.stringify(daten)
+          headers: { get: (n) => (String(n).toLowerCase() === 'content-type' ? typ : null) },
+          json: async () => JSON.parse(roh),
+          text: async () => roh
         });
       });
     });

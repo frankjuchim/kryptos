@@ -66,7 +66,8 @@ const AQ = (() => {
     try {
       res = await fetch(url, opts);
     } catch {
-      const e = new Error('Keine Verbindung zum Server. Bitte prüfe das Netzwerk.');
+      // neutral formuliert: common.js dient der Schüler- (du) und der Lehrkraft-Seite (Sie) – Review M4 K1/K35
+      const e = new Error('Keine Verbindung zum Server. Bitte die Netzwerkverbindung prüfen.');
       e.status = 0;
       throw e;
     }
@@ -79,7 +80,10 @@ const AQ = (() => {
       return new Promise(() => {}); // Seite wechselt; keine Fehlermeldung anzeigen
     }
     if (!res.ok) {
-      const err = new Error((data && data.error) || `Fehler ${res.status}`);
+      // Antwort ohne JSON (HTML-Fehlerseite eines Proxys bei 500/502/503/504): verständlich statt „Fehler 502“
+      const ohneJson = !ct.includes('application/json');
+      const text = data && data.error ? data.error : ohneJson && res.status >= 500 ? `Der Server antwortet gerade nicht (Fehler ${res.status}). Bitte später erneut versuchen.` : ohneJson ? `Unerwartete Antwort vom Server (Fehler ${res.status}). Bitte später erneut versuchen.` : `Fehler ${res.status}`;
+      const err = new Error(text);
       err.status = res.status;
       err.data = data;
       err.details = data && data.details;

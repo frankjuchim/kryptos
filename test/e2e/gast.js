@@ -12,6 +12,9 @@ async function szenario8(ctx) {
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 8');
   await gehe(page, ctx.basis + '/gast');
   await page.locator('a.gast-karte').first().waitFor();
+  // Review M4 K9: Überschrift mit Abstand zur Kopfzeile (wie die übrigen Seiten)
+  const abstand = await page.evaluate(() => document.querySelector('main h1').getBoundingClientRect().top - document.getElementById('kopf').getBoundingClientRect().bottom);
+  assert.ok(abstand >= 24, `Abstand h1 ↔ Kopfzeile ${abstand} px (mindestens 24)`);
   await foto(page, 'gast-start');
   await page.locator('a.gast-karte', { hasText: 'Als Schülerin/Schüler' }).click();
   await page.locator('.aufgaben-liste').waitFor();
