@@ -6,6 +6,7 @@
 const KRKopf = (() => {
   const { h } = AQ;
   let rangGeladen = false;
+  let laborEl = null; // Labor-Link (im Boss-Kampf ausgeblendet, laborLink)
 
   const BEREICHE = {
     schueler: (o) => [
@@ -131,7 +132,8 @@ const KRKopf = (() => {
     const rechts = h('div', { class: 'kopf-nav' });
     if (rolle) {
       if (rolle === 'schueler') rechts.appendChild(h('a', { class: 'rang', id: 'kopf-rang', href: '/spiel#/profil', hidden: true }));
-      rechts.appendChild(link('/labor', 'Labor', { aktiv: aktiv === 'labor', symbol: 'i-labor', kurz: true, label: 'Kryptolabor' }));
+      laborEl = link('/labor', 'Labor', { aktiv: aktiv === 'labor', symbol: 'i-labor', kurz: true, label: 'Kryptolabor', klasse: 'labor-link' });
+      rechts.appendChild(laborEl);
       if (s.portal) rechts.appendChild(link(s.portal, 'Portal', { symbol: 'i-portal', kurz: true, label: 'Zurück ins Portal InfoLabs' }));
     } else {
       rechts.appendChild(h('a', { class: 'knopf knopf-messing anmelden', href: '/sso/start?ziel=' + encodeURIComponent('/spiel') }, 'Anmelden über InfoLabs'));
@@ -148,7 +150,11 @@ const KRKopf = (() => {
         h(
           'nav',
           { class: 'kopf-seiten', 'aria-label': 'Bereiche' },
-          bereiche.map(([id, href, text]) => link(href, text, { aktiv: aktiv === id }))
+          bereiche.map(([id, href, text]) => {
+            const a = link(href, text, { aktiv: aktiv === id });
+            a.setAttribute('data-bereich', id);
+            return a;
+          })
         ),
         rechts
       )
@@ -221,5 +227,27 @@ const KRKopf = (() => {
     nav.insertBefore(a, nav.querySelector('.menue'));
   }
 
-  return { baue, epoche, rang, funkPunkt };
+  /** Labor-Link ein-/ausblenden (Boss-Kampf: aus dem DOM entfernt, damit auch kein versteckter Link bleibt). */
+  function laborLink(an) {
+    if (!laborEl) return;
+    if (!an) {
+      laborEl.remove();
+      return;
+    }
+    if (laborEl.isConnected) return;
+    const nav = document.querySelector('#kopf .kopf-nav');
+    if (!nav) return;
+    const portal = [...nav.querySelectorAll('a.kopf-link')].find((a) => !a.classList.contains('funk'));
+    nav.insertBefore(laborEl, portal || nav.querySelector('.menue'));
+  }
+
+  /** Aktiven Bereich (aria-current) nachträglich setzen – für Hash-Routen derselben Seite. */
+  function aktiv(id) {
+    document.querySelectorAll('#kopf .kopf-seiten a.kopf-link').forEach((a) => {
+      if (a.getAttribute('data-bereich') === id) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+  }
+
+  return { baue, epoche, rang, funkPunkt, laborLink, aktiv };
 })();

@@ -24,7 +24,29 @@ const KR = (() => {
     if (wert === undefined) return AQ.einstellung('thema');
     AQ.einstellung('thema', wert);
     html.setAttribute('data-theme', wert);
+    weltfarbeAnwenden();
     return wert;
+  }
+
+  /** Dunkel dargestellt? (data-theme="dunkel" oder „auto“ mit dunklem System) */
+  function dunkel() {
+    const t = html.getAttribute('data-theme');
+    if (t === 'dunkel') return true;
+    if (t === 'hell') return false;
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+
+  // Weltfarbe einer Welt ohne Epochen-Thema (8 Gast, 9 Labor/Fixture): inline per CSSOM. Im Dunkelmodus gilt wie in
+  // epochen.css der helle Akzent – Inline-Werte überstimmen die Stylesheet-Regel, deshalb hier.
+  let weltfarbe = null;
+  function weltfarbeAnwenden() {
+    if (!weltfarbe) {
+      html.style.removeProperty('--akzent');
+      html.style.removeProperty('--akzent-hell');
+      return;
+    }
+    html.style.setProperty('--akzent', dunkel() ? weltfarbe.hell : weltfarbe.farbe);
+    html.style.setProperty('--akzent-hell', weltfarbe.hell);
   }
 
   /** Bewegung lesen oder setzen: auto | aus (aus = alle Animationen enden, siehe CSS :root[data-bewegung="aus"]). */
@@ -39,13 +61,8 @@ const KR = (() => {
   function epoche(nr, { farbe, akzentHell } = {}) {
     html.setAttribute('data-epoche', String(nr));
     const bekannt = Number.isInteger(Number(nr)) && Number(nr) >= 0 && Number(nr) <= 6;
-    if (!bekannt && farbe) {
-      html.style.setProperty('--akzent', farbe);
-      html.style.setProperty('--akzent-hell', akzentHell || farbe);
-    } else {
-      html.style.removeProperty('--akzent');
-      html.style.removeProperty('--akzent-hell');
-    }
+    weltfarbe = !bekannt && farbe ? { farbe, hell: akzentHell || farbe } : null;
+    weltfarbeAnwenden();
   }
 
   /** Kurztitel der Epochen 0–5 für das Labor-Raster (Welt 6 hat keine Werkzeuge). */
@@ -209,9 +226,16 @@ const KR = (() => {
     P10: 'Operator verfehlt'
   });
 
+  /** Ränge (= RAENGE in src/krypto/fach.js, Schwellen 0/10/30/55/80 % der Level-Punkte; Test client_seiten). */
+  const RAENGE = Object.freeze(['Lehrling', 'Schreiber', 'Chiffreur', 'Kryptoanalytiker', 'Meister der Chiffren']);
+
   // sofort anwenden (vor dem ersten Zeichnen)
   html.setAttribute('data-theme', AQ.einstellung('thema'));
   html.setAttribute('data-bewegung', AQ.einstellung('bewegung'));
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq && typeof mq.addEventListener === 'function') mq.addEventListener('change', weltfarbeAnwenden);
+  }
 
-  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
+  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, RAENGE, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

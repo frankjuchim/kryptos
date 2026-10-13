@@ -13,3 +13,74 @@ test('Labor-Seite: Raster nach Epoche, gesperrt mit Grund, Boss-Banner', async (
   assert.equal(k.eins(haupt, 'a.werkzeug-karte').getAttribute('href'), '#/scheibe');
   assert.match(k.text(k.eins(haupt, '.werkzeug-karte.gesperrt')), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
 });
+
+/* ---------- Schüler-Seite (M4 Tasks 57–60) ---------- */
+const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js'];
+const welt = (nr, extra = {}) => ({ nr, titel: `Welt ${nr}`, epoche: 'Testepoche', jahr: { von: 1900 + nr, bis: 2000, anzeige: '1900 – 2000' }, farbe: '#5B6B7C', akzentHell: '#C9D3DD', frei: true, punkte: 10, maxPunkte: 40, anteil: 0.25, training: true, archivfund: { titel: 'Die Testdepesche', status: 'offen' }, kapitel: null, boss: { titel: 'Testboss', frei: false, grund: 'Erst 60 % der Level-Punkte.', besiegt: false }, levels: [{ id: `W${nr}-L1`, nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', akte: 'Akte W9·1 – Blöcke und Lücken', anzahl: 4, geloest: 4, punkte: 40, maxPunkte: 40, anteil: 1 }, { id: `W${nr}-L3`, nr: '3', titel: 'Analyse', niveau: 'eA', rolle: 'kryptoanalyse', anzahl: 2, geloest: 0, punkte: 0, maxPunkte: 20, anteil: 0 }, { id: `W${nr}-L4`, nr: 'K1', titel: 'Kür', niveau: 'kuer', kuer: true, rolle: 'kryptoanalyse', anzahl: 1, geloest: 0, punkte: 0, maxPunkte: 10, anteil: 0 }], ...extra });
+const spielFetch = (welten) => ({ 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/welten': { status: 200, body: { welten, scoreboard: true, niveau: 'eA' } }, 'GET /api/profil': { status: 200, body: { rang: { name: 'Schreiber', index: 1, anteil: 0.12, naechster: { name: 'Chiffreur', ab: 0.3 } }, punkte: { gesamt: 10 }, welten: [], fallen: [], abzeichen: [] } }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [] } } });
+test('Zeitleiste: Position logarithmisch, Mindestabstand, Tore frei/gesperrt, Entsiegeln einmalig', async () => {
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/', fetch: spielFetch([welt(9), welt(8, { frei: false, titel: 'Die Antike' })]) });
+  k.medien['(prefers-reduced-motion: reduce)'] = true;
+  await k.ruhe();
+  const Z = k.wert('KRZeitleiste');
+  assert.equal(Z.position(-500), 0);
+  assert.equal(Z.position(2026), 1);
+  assert.ok(Z.position(850) > Z.position(-50));
+  const px = Z.verteile([0, 0.01, 0.02, 0.9], 1000, 140);
+  assert.ok(px.every((x, i) => i === 0 || x - px[i - 1] >= 140) && px.at(-1) <= 1000);
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(k.eins(haupt, 'h1')), /Willkommen zurück, Mika R\./);
+  assert.equal(k.eins(haupt, 'a.tor').getAttribute('href'), '#/epoche/9');
+  const zu = k.eins(haupt, '.tor.gesperrt');
+  assert.match(k.text(zu), /noch verschlüsselt/);
+  assert.doesNotMatch(k.text(zu), /Antike/, 'Titel gesperrter Epochen nur als Geheimtext');
+  assert.deepEqual(JSON.parse(k.window.localStorage.getItem('kr_entsiegelt')), [9]);
+  assert.deepEqual([...k.wert('KR.RAENGE')], require('../src/krypto/fach').RAENGE.map((r) => r.name));
+});
+test('Epoche: Level-Karten mit Aktenzeichen, Rolle, Niveau nur ≠ Kern, Kür-Abschnitt, Boss gesperrt mit Grund', async () => {
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/epoche/9', fetch: spielFetch([welt(9)]) });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  const karten = k.alle(haupt, 'a.karte-akte');
+  assert.deepEqual(karten.map((a) => a.getAttribute('href')), ['#/level/W9-L1', '#/level/W9-L3', '#/level/W9-L4']);
+  assert.match(k.text(karten[0]), /Akte W9·1/);
+  assert.match(k.text(karten[0]), /🛡 Kryptografie/);
+  assert.equal(k.alle(karten[0], '.chip-niveau').length, 0);
+  assert.equal(k.text(k.eins(karten[1], '.chip-niveau')), 'eA');
+  assert.ok(k.eins(haupt, 'section.kuer a.karte-akte[href="#/level/W9-L4"]'));
+  assert.match(k.text(k.eins(haupt, '.boss-karte')), /Erst 60 % der Level-Punkte/);
+  assert.equal(k.document.documentElement.style.getPropertyValue('--akzent'), '#5B6B7C');
+  assert.ok(k.eins(haupt, 'a[href="#/archivfund/9"]'));
+});
+test('Kurswahl: aktive Kurse, Wahl sendet POST /api/sitzung/kurs und lädt neu', async () => {
+  const s = { ...SITZUNG_S, kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }, { id: 'k:2', name: 'GK 12 (gA)', aktiv: true }, { id: 'k:3', name: 'Alt', aktiv: false }] };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/kurs', fetch: { ...spielFetch([welt(9)]), 'GET /api/sitzung': { status: 200, body: s }, 'POST /api/sitzung/kurs': { status: 200, body: { ok: true } } } });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  const knoepfe = k.alle(haupt, 'button.kurs-waehlen');
+  assert.equal(knoepfe.length, 2, 'nur aktive Kurse');
+  assert.match(k.text(haupt), /aktueller Kurs/);
+  k.klick(knoepfe[1]);
+  await k.ruhe();
+  assert.deepEqual(k.anfragen.find((a) => a.pfad === '/api/sitzung/kurs').body, { kurs: 'k:2' });
+  assert.equal(k.neugeladen, 1);
+});
+test('Router: unbekannte Route → Zeitleiste; Lehrkraft-Sitzung → Startseite', async () => {
+  let k = D.lade(SPIEL, { url: 'http://x.test/spiel#/gibtsnicht', fetch: spielFetch([welt(9)]) });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Willkommen zurück/);
+  assert.match(k.document.title, /Zeitleiste · Kryptos/);
+  k = D.lade(SPIEL, { url: 'http://x.test/spiel#/', fetch: { ...spielFetch([]), 'GET /api/sitzung': { status: 200, body: { rolle: 'lehrkraft', name: 'Frau M.', kurse: [] } } } });
+  await k.ruhe();
+  assert.deepEqual(k.navigiert, ['/']);
+});
+test('Zeitleiste: Epochen ohne Seed (fach.WELTEN) erscheinen als „noch verschlüsselt“, nicht anklickbar', async () => {
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/', fetch: spielFetch([welt(9)]) });
+  k.medien['(prefers-reduced-motion: reduce)'] = true;
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.equal(k.alle(haupt, 'ol.tore li.tor-li').length, 8, '7 Epochen + Testwelt 9');
+  assert.equal(k.alle(haupt, '.tor.gesperrt').length, 7);
+  assert.equal(k.alle(haupt, '.tor.gesperrt[href], .tor.gesperrt a').length, 0);
+  assert.deepEqual(k.roh(k.wert('KRZeitleiste.EPOCHEN').map((e) => e.titel)), require('../src/krypto/fach').WELTEN.map((w) => w.titel));
+});

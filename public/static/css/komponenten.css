@@ -577,3 +577,129 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
   .logo span { letter-spacing: .14em; font-size: .95rem; }
   .karte { padding: var(--a-4); }
 }
+
+/* ==================== Schüler-Seite (M4 Tasks 57–60): Zeitleiste, Epoche, Level, Kurswahl ==================== */
+h1[tabindex="-1"]:focus { outline: none; } /* Fokus nach dem Routenwechsel (Screenreader), ohne Ring */
+.brotkrumen { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); font-size: .9rem; color: var(--text-2); }
+.brotkrumen a { display: inline-flex; align-items: center; min-height: var(--ziel); }
+.tinte .brotkrumen, .nacht .brotkrumen { color: var(--auf-tinte-2); }
+
+/* Fortschrittsbalken (AQ.progress) */
+.progress { position: relative; height: 8px; border-radius: 4px; background: var(--papier-2); overflow: hidden; border: 1px solid var(--linie); }
+.progress > span { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--akzent); }
+.tinte .progress, .nacht .progress { background: var(--tinte-3); border-color: var(--tinte-3); }
+.tinte .progress > span, .nacht .progress > span { background: var(--akzent-hell, var(--messing-hell)); }
+
+/* ---------- Zeitleiste ---------- */
+.seite-spiel main#haupt { min-height: 60vh; }
+.zeitleiste { color: var(--auf-tinte); padding-bottom: var(--a-7); }
+.zeitleiste .etikett { color: var(--messing-hell); }
+.zl-kopf { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--a-5); align-items: end; padding-block: var(--a-6) var(--a-2); }
+.zl-kopf h1 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); margin-top: var(--a-1); }
+.zl-kopf p { color: var(--auf-tinte-2); max-width: 60ch; margin-top: var(--a-2); }
+.rang-karte { display: grid; gap: var(--a-2); min-width: min(330px, 100%); padding: var(--a-3) var(--a-4); border: 1px solid var(--tinte-3); border-radius: var(--r-karte); background-color: var(--tinte); }
+.rang-karte-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: var(--a-3); }
+.rang-karte-kopf b { font-family: var(--f-ueberschrift); font-size: 1.15rem; color: var(--messing-hell); }
+.rang-karte-kopf span, .rang-naechster { font-size: .8rem; color: var(--auf-tinte-2); }
+.rangleiter { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--a-1); }
+.rangleiter li { display: grid; gap: var(--a-1); justify-items: center; align-content: start; text-align: center; font-size: .68rem; line-height: 1.2; color: var(--auf-tinte-2); hyphens: auto; }
+.rangleiter li i { display: block; width: 100%; height: 6px; border-radius: 3px; background: var(--tinte-3); }
+.rangleiter li.erreicht i { background: var(--messing); }
+.rangleiter li.jetzt { color: var(--messing-hell); font-weight: 700; }
+.rangleiter li.jetzt i { background: var(--messing-hell); outline: 2px solid var(--messing); outline-offset: 1px; }
+.zeitachse { padding-block: var(--a-5) var(--a-4); }
+.zeitachse-hinweis { display: flex; justify-content: space-between; gap: var(--a-3); margin-bottom: var(--a-2); font-family: var(--f-mono); font-size: .74rem; color: var(--auf-tinte-2); }
+.tore { --spalt: clamp(6px, 1.4vw, 18px); list-style: none; margin: 0; padding: 14px 0 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--spalt); position: relative; }
+.tore::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 2px; background: var(--messing); }
+.tore.gemessen { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: minmax(0, 1fr); }
+.tore.gemessen > .tor-li { grid-area: 1 / 1; width: var(--w, 120px); margin-left: var(--x, 0); }
+.tor-li { position: relative; min-width: 0; }
+.tor-li::before { content: ""; position: absolute; left: 50%; top: -14px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--messing-hell); background: var(--nacht); }
+.tor-li:has(> a.tor)::before { background: var(--messing-hell); }
+.tor { color: var(--auf-tinte); }
+.tor:focus-visible { outline-color: var(--messing-hell); }
+.tor-ring-spur { fill: none; stroke: var(--tinte-3); stroke-width: 6; }
+.tor-ring { fill: none; stroke: var(--akzent-hell, var(--messing-hell)); stroke-width: 6; stroke-linecap: round; }
+.tor-prozent { fill: var(--auf-tinte); font-family: var(--f-ueberschrift); font-weight: 600; font-size: 17px; text-anchor: middle; }
+.tor-artefakt { color: var(--akzent-hell, var(--messing-hell)); }
+.tor-schloss { fill: none; stroke: var(--auf-tinte-2); stroke-width: 2.4; stroke-linecap: round; }
+.tor.gesperrt .tor-artefakt { color: var(--auf-tinte-2); opacity: .5; }
+.tor-siegel { position: absolute; right: -6%; bottom: 4%; width: 38%; max-width: 46px; aspect-ratio: 1; color: var(--messing-hell); }
+.tor-siegel svg { width: 100%; height: 100%; display: block; }
+.tor-neu { position: absolute; left: 50%; top: -8px; transform: translateX(-50%); z-index: 1; padding: 1px 8px; border-radius: var(--r-chip); background: var(--messing-hell); color: var(--nacht); font-family: var(--f-mono); font-size: .62rem; font-weight: 700; letter-spacing: .12em; }
+.tor-name { min-height: 2.4em; overflow-wrap: anywhere; }
+.zl-unten { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--a-5); padding-top: var(--a-5); }
+.panel-tinte { display: grid; gap: var(--a-3); align-content: start; padding: var(--a-5); border: 1px solid var(--tinte-3); border-radius: var(--r-karte); background-color: var(--tinte); color: var(--auf-tinte); }
+.panel-tinte h2.etikett { font-size: .74rem; margin: var(--a-2) 0 0; color: var(--messing-hell); }
+.weiter-karte { display: grid; gap: var(--a-2); }
+.weiter-karte h2 { font-size: 1.25rem; }
+.weiter-karte p { color: var(--auf-tinte-2); }
+.regal { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--a-2); }
+.artefakt { display: grid; justify-items: center; gap: var(--a-1); text-align: center; font-size: .68rem; line-height: 1.25; color: var(--auf-tinte-2); }
+.artefakt-bild { width: 100%; max-width: 52px; aspect-ratio: 1; color: var(--tinte-3); }
+.artefakt.hat { color: var(--auf-tinte); }
+.artefakt.hat .artefakt-bild { color: var(--messing-hell); }
+.kapitel-liste { display: grid; gap: var(--a-2); }
+.kapitel { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--a-1) var(--a-3); align-items: baseline; padding: var(--a-3) var(--a-4); border-radius: var(--r-knopf); background: var(--papier); color: var(--text); }
+.kapitel .mono { grid-row: span 2; font-size: .78rem; font-weight: 700; color: var(--text-2); }
+.kapitel b { font-family: var(--f-ueberschrift); font-weight: 600; }
+.kapitel > :nth-child(n+3) { grid-column: 2; font-size: .9rem; color: var(--text-2); }
+.kapitel.zu { background: transparent; border: 1px dashed var(--tinte-3); color: var(--auf-tinte-2); }
+.kapitel.zu .mono, .kapitel.zu > :nth-child(n+3) { color: var(--auf-tinte-2); }
+.kapitel.zu p { font-family: var(--f-mono); letter-spacing: .12em; font-size: .8rem; }
+
+/* ---------- Epoche ---------- */
+.epoche-kopf { position: relative; overflow: hidden; border-bottom: 6px solid var(--akzent-hell, var(--messing-hell)); }
+.epoche-ornament { position: absolute; right: -40px; top: -30px; width: 340px; height: 340px; color: var(--akzent-hell, var(--messing-hell)); opacity: .09; pointer-events: none; }
+.epoche-kopf-innen { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--a-5); align-items: center; padding-block: var(--a-5) var(--a-6); }
+.epoche-kopf .etikett { color: var(--akzent-hell, var(--messing-hell)); }
+.epoche-kopf h1 { font-size: clamp(1.8rem, 4.4vw, 2.8rem); font-style: italic; margin-top: var(--a-1); }
+.epoche-wechsel { display: flex; flex-wrap: wrap; gap: var(--a-2); margin-top: var(--a-4); }
+.epoche-pille { border-color: var(--tinte-3); color: var(--auf-tinte); font-weight: 400; }
+.epoche-pille:hover { border-color: var(--akzent-hell, var(--messing-hell)); }
+.epoche-fortschritt { display: grid; justify-items: center; gap: var(--a-1); text-align: center; color: var(--auf-tinte-2); font-size: .85rem; }
+.ring-gross { width: 104px; height: 104px; }
+.ring-gross .ring-text { font-size: 1.3rem; }
+.epoche-inhalt { display: grid; gap: var(--a-6); padding-block: var(--a-6) var(--a-7); }
+.akten, .kuer { display: grid; gap: var(--a-3); }
+.akten-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--a-4); }
+a.karte-akte, a.karte-link { text-decoration: none; color: var(--text); }
+a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
+.level-karte { gap: var(--a-2); }
+.level-karte > * { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+.akte-kopf { justify-content: space-between; }
+.akte-titel { font-family: var(--f-ueberschrift); font-size: 1.2rem; font-weight: 600; line-height: 1.25; }
+.akte-fortschritt { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; font-size: .85rem; color: var(--text-2); }
+.siegel-klein { width: 30px; height: 30px; }
+.kuer { padding: var(--a-4); border: 2px dashed var(--linie); border-radius: var(--r-karte); }
+.epoche-extras { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--a-4); }
+.archivfund-karte { border-left: 6px double var(--akzent); }
+.boss-karte { border-top: 6px solid var(--messing); }
+.boss-karte.gesperrt { border-top-style: dashed; border-top-color: var(--linie); }
+.boss-zustand { display: flex; align-items: center; gap: var(--a-2); }
+.training-karte { border-top: 6px solid var(--akzent); }
+
+/* ---------- Kurswahl ---------- */
+.seite-kurs { padding-block: var(--a-6) var(--a-7); }
+.kurs-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
+.kurs-karte { grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; }
+
+@media (max-width: 860px) {
+  .zl-kopf, .zl-unten, .epoche-kopf-innen { grid-template-columns: minmax(0, 1fr); }
+  .epoche-fortschritt { justify-items: start; grid-auto-flow: column; align-items: center; }
+}
+@media (max-width: 719px) {
+  .tore, .tore.gemessen { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); padding: 0 0 0 22px; gap: var(--a-2); }
+  .tore.gemessen > .tor-li { grid-area: auto; width: auto; margin-left: 0; }
+  .tore::before { left: 6px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+  .zeitachse-hinweis { display: none; }
+  .tor-li::before { left: -22px; top: 40px; margin-left: 0; }
+  .tor { grid-template-columns: 76px minmax(0, 1fr); grid-template-rows: auto auto 1fr; justify-items: start; align-items: start; text-align: left; column-gap: var(--a-4); row-gap: 2px; }
+  .tor-bild { grid-row: 1 / 4; width: 76px; }
+  .tor-name { min-height: 0; font-size: 1.05rem; }
+  .regal { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .kurs-karte { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-bewegung="aus"]) .tore.gemessen > .tor-li { transition: margin-left .3s ease-out; }
+}

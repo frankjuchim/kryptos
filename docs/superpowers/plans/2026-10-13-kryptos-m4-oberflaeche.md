@@ -2388,6 +2388,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
    **Vorläufig festgelegt (Orchestrator):** ja, Symbol-Familie „KR Symbole“ wie E23 – umgesetzt in Task 43.
 2. **Zeitleiste ohne Seeds (E31):** Bis M5/M8 gibt es nur für die geladenen Welten Tore. Sollen die fehlenden Epochen schon
    als „noch verschlüsselt“ sichtbar sein (Server müsste dann Welten aus `fach.WELTEN` ohne Inhalt melden)?
+   **Vorläufig festgelegt (Orchestrator):** ja – Epochen 0–6 ohne Seed erscheinen als „noch verschlüsselt“, nicht
+   anklickbar. Umgesetzt in Task 57 **im Client** (`KRZeitleiste.EPOCHEN`, Titel = `fach.WELTEN`, Test), Server unverändert.
 3. **Funkraum/Werkstatt/Beamer als Gerüst (E20):** Die Seiten existieren mit Wächter und Leerzustand; Kopfzeile zeigt den
    Funkraum-Link erst mit M7. Einverstanden, dass Schülerinnen und Schüler die leeren Seiten über die URL erreichen können?
    **Vorläufig festgelegt (Orchestrator):** ja – Gerüst nur mit Sitzung (Wächter), Hinweis „kommt bald“; umgesetzt in Task 48.

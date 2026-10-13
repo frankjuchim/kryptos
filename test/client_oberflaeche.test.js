@@ -23,6 +23,21 @@ test('KR.epoche: 0–6 über data-epoche, sonst Akzent per CSSOM', () => {
   assert.equal(html.style.getPropertyValue('--akzent'), '#5B6B7C');
   assert.equal(html.style.getPropertyValue('--akzent-hell'), '#C9D3DD');
 });
+test('KR.epoche im Dunkelmodus: Weltfarbe ohne Epochen-Thema nimmt den hellen Akzent (Kontrast), auch nach Themenwechsel', () => {
+  const k = lade();
+  const KR = k.wert('KR');
+  const html = k.document.documentElement;
+  KR.thema('dunkel');
+  KR.epoche(9, { farbe: '#5B6B7C', akzentHell: '#C9D3DD' });
+  assert.equal(html.style.getPropertyValue('--akzent'), '#C9D3DD');
+  KR.thema('hell');
+  assert.equal(html.style.getPropertyValue('--akzent'), '#5B6B7C');
+  k.medien['(prefers-color-scheme: dark)'] = true;
+  KR.thema('auto');
+  assert.equal(html.style.getPropertyValue('--akzent'), '#C9D3DD');
+  KR.epoche(2);
+  assert.equal(html.style.getPropertyValue('--akzent'), '');
+});
 test('KR.entsiegeln: bei reduzierter Bewegung sofort, aria-label sofort', async () => {
   const k = lade();
   k.medien['(prefers-reduced-motion: reduce)'] = true;
