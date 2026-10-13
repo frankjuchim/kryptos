@@ -1021,11 +1021,16 @@ Lösung (a) bezieht sich nur auf diese (Spec unverändert).
 
 **Erwartete Hinweise:** keine (Kategorie `kasiski-friedman` verlangt keinen Prüfwert).
 
-- [ ] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L2'` → FAIL.
-- [ ] **Step 2: Implement** (Geheimtexte in Fünfergruppen, Positionen „ab 0 gezählt“ wie in der Spec).
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5** (K1: Video 03 nutzt KRYPTOS und einen eigenen Brief).
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Level 2.2 „Kasiskis Spur“"`.
+- [x] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L2'` → FAIL.
+- [x] **Step 2: Implement** (Geheimtexte in Fünfergruppen, Positionen „ab 0 gezählt“ wie in der Spec).
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5** (K1: Video 03 nutzt KRYPTOS und einen eigenen Brief).
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Level 2.2 „Kasiskis Spur“"`.
+
+- **Umgesetzt (Task 84):** Wiederholungsfolgen fett statt in Backticks (Validator-Hinweis „Fünfergruppen“), Geheimtexte
+  in Fünfergruppen. W2-L2-04 als Block `tabelle` „Teilertabelle“ (Lücken `n2` … `n10`) + Lücke `k` im Text. W2-L2-07 dreiteilig
+  (a/b/c `gaps`), Prüfwert-Gruppe für `klar` und Konsistenz-Eintrag `kasiski(…).vorschlag[0]` = 4. Erwarteter Hinweis
+  bis Task 86: „Abdeckung fremde Chiffre“.
 
 ### Task 85: Welt 2 – Level 2.3 „Friedmans Zufall“ (eA)
 
