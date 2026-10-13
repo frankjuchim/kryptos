@@ -81,3 +81,17 @@ test('Welt 2: Level 2.3 „Friedmans Zufall“ (eA) nur im eA-Kurs', async (t) =
   await s.get('/api/levels/W2-L3').expect(404);
   await s.get('/api/aufgaben/W2-L3-01').expect(404);
 });
+
+// Plan M5 Task 87: Kür K1 „Friedmans Formel“ (W2-L5) – sichtbar bei kuer: frei (auch im gA-Kurs), unsichtbar bei kuer: gesperrt.
+test('Welt 2: Kür K1 nur bei Kurseinstellung kuer „frei“', async (t) => {
+  if (!(S.UMFANG[2] || []).includes('W2-L5')) return t.skip('W2-L5 noch nicht im UMFANG');
+  const { s, lk, kurs } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt2.json')] });
+  const levels = async () => (await s.get('/api/welten').expect(200)).body.welten.find((w) => w.nr === 2).levels;
+  const k1 = (await levels()).find((l) => l.id === 'W2-L5');
+  assert.ok(k1 && k1.kuer === true && k1.nr === 'K1' && k1.titel === 'Friedmans Formel', 'Kür sichtbar (Standard kuer frei)');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.ok((await levels()).some((l) => l.id === 'W2-L5'), 'Kür auch im gA-Kurs');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { kuer: 'gesperrt' } }).expect(200);
+  assert.ok(!(await levels()).some((l) => l.id === 'W2-L5'), 'gesperrte Kür unsichtbar');
+  await s.get('/api/levels/W2-L5').expect(404);
+});

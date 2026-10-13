@@ -173,7 +173,8 @@ const NIVEAU_KATEGORIEN = [
  * Plan der Welten (Design §5, §5.1; Welt-Specs quellen/specs/SPEC_Kryptos_W<n>_*.md): Level mit Niveau, Akte und Zahl
  * der Lab-Aufgaben je Niveau (ohne Archivfund), Online-Boss mit Pool je Niveau. Rückfall der Niveau-Übersicht
  * (src/krypto/niveauUebersicht.js), solange eine Welt noch nicht im Seed steht (Seeds kommen mit M5); danach gilt der
- * Katalog. Enthält nur Titel und Anzahlen – keine Aufgaben, keine Lösungen.
+ * Katalog. Enthält nur Titel und Anzahlen – keine Aufgaben, keine Lösungen. Kür-Level ohne Präfix „Kür:“ im Titel
+ * (Plan M5 Task 87: wie im Seed; die Kür ist am Niveau `kuer` bzw. am Chip erkennbar).
  */
 const WELT_PLAN = [
   { nr: 0, levels: [
@@ -192,19 +193,19 @@ const WELT_PLAN = [
     { id: '2.2', titel: 'Kasiskis Spur', niveau: 'kern', akte: 'W2·2', aufgaben: { kern: 8 } },
     { id: '2.3', titel: 'Friedmans Zufall', niveau: 'eA', akte: 'W2·3', aufgaben: { eA: 7 } },
     { id: '2.4', titel: 'Fremde Chiffre III: Playfair und Kreuzquadrat', niveau: 'kern', akte: 'W2·4', aufgaben: { kern: 8 } },
-    { id: 'K1', titel: 'Kür: Friedmans Formel', niveau: 'kuer', akte: 'W2·K1', aufgaben: { kuer: 7 } }
+    { id: 'K1', titel: 'Friedmans Formel', niveau: 'kuer', akte: 'W2·K1', aufgaben: { kuer: 7 } }
   ], boss: { titel: 'Die Venezianische Depesche', pool: { kern: 13, eA: 2 } } },
   { nr: 3, levels: [
     { id: '3.1', titel: 'Vernams Lochstreifen', niveau: 'kern', akte: 'W3·1', aufgaben: { kern: 8 } },
     { id: '3.2', titel: 'Der Blockchiffre-Baukasten', niveau: 'eA', akte: 'W3·2', aufgaben: { eA: 8 } },
     { id: '3.3', titel: 'Die Chiffren-Werkstatt', niveau: 'eA', akte: 'W3·3', aufgaben: { eA: 7 } },
     { id: '3.4', titel: 'Fremde Chiffre IV: ADFGVX', niveau: 'kern', akte: 'W3·4', aufgaben: { kern: 7 } },
-    { id: 'K2', titel: 'Kür: Die Enigma', niveau: 'kuer', akte: 'W3·K2', aufgaben: { kuer: 5 } }
+    { id: 'K2', titel: 'Die Enigma', niveau: 'kuer', akte: 'W3·K2', aufgaben: { kuer: 5 } }
   ], boss: { titel: 'Der Fernschreiber', pool: { kern: 10, eA: 5 } } },
   { nr: 4, levels: [
     { id: '4.1', titel: 'Das Schlüsselproblem', niveau: 'kern', akte: 'W4·1', akteHinweis: 'Aufträge 4–5: Ergänzung, Auftrag 6: eA', aufgaben: { kern: 5, ergaenzung: 2, eA: 1 } },
     { id: '4.2', titel: 'RSA und das hybride Prinzip', niveau: 'kern', akte: 'W4·2', akteHinweis: 'Aufträge 1, 2, 5: Ergänzung', aufgaben: { kern: 5, ergaenzung: 3 } },
-    { id: 'K3', titel: 'Kür: Euklids Erbe', niveau: 'kuer', akte: 'W4·K3', aufgaben: { kuer: 7 } }
+    { id: 'K3', titel: 'Euklids Erbe', niveau: 'kuer', akte: 'W4·K3', aufgaben: { kuer: 7 } }
   ], boss: { titel: 'Der Schlüsseltausch', pool: { kern: 13, eA: 2 } } },
   { nr: 5, levels: [
     { id: '5.1', titel: 'Fingerabdrücke', niveau: 'kern', akte: 'W5·1', aufgaben: { kern: 8 } },

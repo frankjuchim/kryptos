@@ -1132,11 +1132,17 @@ Kür: Friedmans Formel“ (E59), kein Video. Alle Aufgaben `fallen: []`.
 
 **Erwartete Hinweise:** keine. Validator: `kuer: true` ↔ `niveau: kuer`; Akte `Akte W2·K1` (E59).
 
-- [ ] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L5'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5**; zusätzlich Kurseinstellung `kuer: gesperrt` → Level unsichtbar (bestehender Test `niveau.test.js` mit echtem Seed im Probelauf).
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Kür K1 „Friedmans Formel“"`.
+- [x] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L5'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5**; zusätzlich Kurseinstellung `kuer: gesperrt` → Level unsichtbar (bestehender Test `niveau.test.js` mit echtem Seed im Probelauf).
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Kür K1 „Friedmans Formel“"`.
+
+- **Umgesetzt (Task 87):** `WELT_PLAN` (src/krypto/fach.js): Kür-Titel ohne Präfix „Kür:“ – K1 „Friedmans Formel“ und
+  für die Einheitlichkeit auch K2 „Die Enigma“, K3 „Euklids Erbe“ (Design §5.1 behält die Tabellenbeschriftung).
+  `ds: []` (DS frei). W2-L5-03: Tipp 2 „n · (n − n/k)/2 = 12 · 8 / 2.“ als ein Tipp (der Spec-Trenner „ / “ steht auch
+  in der Formel). W2-L5-06 `order` mit Teilen `1`–`5` (Formeln wörtlich). Neuer Test in `inhalte_plan.test.js`: Kür im
+  eA- und gA-Kurs sichtbar, bei `kuer: gesperrt` weder in `/api/welten` noch über `/api/levels/W2-L5`.
 
 ### Task 88: Welt 2 – Boss online „Die Venezianische Depesche“
 
