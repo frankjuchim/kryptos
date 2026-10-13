@@ -1174,8 +1174,10 @@ Schablone wird gedreht. Unter jedem Objekt steht das Raster als Tabelle; „Alle
 - Reiter `skytale`, `gartenzaun`, `fleissner` (+ `ring` in Task 113); Modus „Verschlüsseln / Entschlüsseln“
   (`labor-richtung`); Eingabe ≤ 120 Zeichen (ver: Klartext, live normalisiert und klein angezeigt; ent: Geheimtext, GROSS,
   Fünfergruppen erlaubt); Voreinstellung `text`, `umfang`, `zeilen`, `schablone`, `richtung`, `reiter`.
-  `BEISPIEL = { text: 'wachwechsel am nordtor', schablone: [[1, 2], [2, 1], [2, 4], [3, 3]] }` (gültige erfundene
-  Schablone, Test `schablonePruefen(…).ok`).
+  `BEISPIEL = { text: 'wachwechsel am suedturm', schablone: [[1, 1], [1, 3], [2, 4], [3, 2]] }` (gültige erfundene
+  Schablone, Test `schablonePruefen(…).ok`; **korrigiert bei der Umsetzung:** die ursprüngliche Schablone
+  `[[1,2],[2,1],[2,4],[3,3]]` war ungültig – (1,2)/(2,4)/(4,3)/(3,1) mehrfach frei –, und „nordtor“ steht in
+  `quellen/material/W3/funkraum_W3.json`).
 - **Skytale:** `zahl` „Umfang u“ 2–10 (am Stab: Knöpfe „Stab dünner/dicker“ = −/+); Raster `table.skytale-raster` aus
   `Krypto.skytaleRaster` mit Zeilenpfeilen (Schreibrichtung) und Spaltenpfeilen (Leserichtung), Füllzeichen X mit Klasse
   `fuell` **und** Schraffur/Text „Füllzeichen“; Ausgabe `Krypto.skytale(text, u, richtung)`; Entschlüsseln mit unpassender
@@ -1189,7 +1191,8 @@ Schablone wird gedreht. Unter jedem Objekt steht das Raster als Tabelle; „Alle
   Positionen (ab 0), Schienen mit Muster **und** Beschriftung „Schiene 1 …“; Zähler „Plätze je Schiene: 5 · 10 · 5“;
   Ausgabe `Krypto.gartenzaun`. Nachspiel: Zickzack Zeichen für Zeichen, dann Schienen nacheinander lesen.
 - **Fleißner (4 × 4):** Schablone `table.schablone` mit 16 `button.loch[aria-pressed]` (Tippen setzt/entfernt, höchstens 4 –
-  fünftes Loch: Hinweis), Drehgruppen-Ansicht (Symbol ● ▲ ■ ◆ je Gruppe aus `Krypto.fleissnerDrehgruppen`), Gültigkeit aus
+  bei vier Löchern versetzt Tippen das Loch innerhalb der Drehgruppe, wenn diese genau ein Loch hat, sonst Hinweis
+  „Höchstens 4 Löcher“; Bearbeiten zeigt wieder Stellung 1), Drehgruppen-Ansicht (Symbol ● ▲ ■ ◆ je Gruppe aus `Krypto.fleissnerDrehgruppen`), Gültigkeit aus
   `Krypto.schablonePruefen` (Meldung der Bibliothek, z. B. „Feld (1,1) wird mehrfach frei.“, plus „8 von 16 Feldern“);
   Knopf `button.drehen` „90° im Uhrzeigersinn drehen“ (Stellung 1 → 2 …, Animation 400 ms nur ohne `AQ.ruhig()`),
   Stellungen aus `Krypto.fleissnerStellungen` mit zeilenweiser Beschriftung 1–4; Ausgabe `Krypto.fleissner` (nur bei
@@ -1200,7 +1203,7 @@ Schablone wird gedreht. Unter jedem Objekt steht das Raster als Tabelle; „Alle
   `tabindex`), Leertaste/Enter setzt ein Loch; `r` dreht (zusätzlich zum Knopf).
 - `zustand()` → `{ reiter, richtung, text, umfang, zeilen, schablone, stellung, gueltig, ausgabe }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_skytale.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_skytale.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1229,7 +1232,7 @@ Schablone wird gedreht. Unter jedem Objekt steht das Raster als Tabelle; „Alle
     const w = oeffne('skytale', { voreinstellung: { reiter: ['gartenzaun'], text: 'versorgung kommt spaet', zeilen: 3 } });
     assert.equal(w.ohneLeer('output.labor-ausgabe'), 'VONMPESRUGOMSATRGKTE');
     assert.match(w.text('.zaun-plaetze'), /5 · 10 · 5/);
-    const schiene = w.k.alle(w.flaeche, 'table.zaun td[data-position]').map((z) => z.dataset.schiene).join('');
+    const schiene = w.k.alle(w.flaeche, 'table.zaun td[data-position]').sort((a, b) => Number(a.dataset.position) - Number(b.dataset.position)).map((z) => z.dataset.schiene).join(''); // Tabelle zeilenweise je Schiene
     assert.equal(schiene, K.gartenzaunSchienen(20, 3).join(''));
   });
   test('Fleißner: Löcher tippen, Gültigkeit, Drehgruppen, Drehen, Ausgabe = Krypto.fleissner', () => {
@@ -1256,11 +1259,11 @@ Schablone wird gedreht. Unter jedem Objekt steht das Raster als Tabelle; „Alle
     assert.equal(w.k.eins(w.flaeche, '.schablone-flaeche').classList.contains('dreht'), false);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/labor_skytale.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; Regeltest grün; `npm test` grün; Sichtprüfung `blick.js skytale` (Raster in `.scroll-x` bei 360 px,
+- [x] **Step 2: Run** `node --test test/labor_skytale.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; Regeltest grün; `npm test` grün; Sichtprüfung `blick.js skytale` (Raster in `.scroll-x` bei 360 px,
   Zaun-Muster ohne Farbe unterscheidbar, Stab-Ansicht).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Skytale & Gitter (Skytale mit Stab und alle Stäbe, Gartenzaun, Fleißner-Schablone)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Skytale & Gitter (Skytale mit Stab und alle Stäbe, Gartenzaun, Fleißner-Schablone)"`.
 
 ### Task 113: „Skytale & Gitter“, Modus „Ring“ (W6 §9.1, E82)
 

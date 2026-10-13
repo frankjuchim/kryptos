@@ -104,7 +104,8 @@ dialog.werkzeug-dialog {
   border-color: var(--linie);
   box-shadow: inset 0 -4px 0 var(--akzent); /* Markierung zusätzlich zur Fläche: nicht nur Farbe (Unterstrich) */
 }
-.labor-reiterflaeche { display: grid; gap: var(--a-4); min-width: 0; }
+.labor-reiterflaeche { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-4); min-width: 0; }
+.labor-reiterflaeche > *, .labor-details { min-width: 0; }
 .labor-reiterflaeche:focus { outline: none; }
 
 /* ---------- Eingaben ---------- */
@@ -280,3 +281,86 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .scheibe-leiste .markiert { background: var(--papier-2); }
 @media (prefers-reduced-motion: reduce) { .scheibe-innen.animiert, .scheibe-innen.animiert text { transition: none; } }
 :root[data-bewegung="aus"] .scheibe-innen.animiert, :root[data-bewegung="aus"] .scheibe-innen.animiert text { transition: none; }
+
+/* ======================================================================
+   Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112)
+   ====================================================================== */
+.labor-kopf { display: grid; gap: var(--a-2); min-width: 0; }
+.labor-normal { margin: 0; font-family: var(--f-mono); font-size: .9rem; overflow-wrap: anywhere; }
+.skytale-stab-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.skytale-stab-knoepfe .knopf, .stab-abwickeln { border: 1.5px solid var(--linie); }
+.skytale-raster, .zaun { font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
+.skytale-raster td, .zaun td { min-width: 2em; height: 2.2em; font-size: 1.1rem; }
+.skytale-raster thead th, .zaun thead th { font-family: var(--f-text); font-size: .8rem; color: var(--text-2); background: var(--papier-2); }
+.skytale-raster tbody th, .zaun tbody th, .schablone tbody th { font-family: var(--f-text); font-size: .85rem; white-space: nowrap; text-align: left; background: var(--papier-2); }
+.skytale-raster td.fuell, .fuell-muster {
+  background: repeating-linear-gradient(135deg, var(--papier-2) 0 4px, var(--karte) 4px 8px);
+  color: var(--text-2);
+  font-style: italic;
+}
+.fuell-muster { display: inline-block; width: 1.2em; height: 1.2em; border: 1px solid var(--linie); vertical-align: middle; }
+.skytale-raster caption, .zaun caption, .schablone caption { font-family: var(--f-text); }
+.skytale-legende { margin: var(--a-1) 0 0; font-size: .85rem; }
+.skytale-raster td.geschrieben, .zaun td.geschrieben { box-shadow: inset 0 0 0 2px var(--hinweis); }
+.skytale-raster td.gelesen, .zaun td.gelesen { background: var(--hinweis-flaeche); font-weight: 700; text-decoration: underline 2px; }
+.skytale-zeilen-hinweis { margin: 0; padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); background: var(--ok-flaeche); }
+.skytale-zeilen-hinweis.anders { background: var(--fehler-flaeche); }
+.skytale-info { font-size: .95rem; }
+.skytale-meldung:empty, .skytale-raster-ort:empty { display: none; }
+.skytale-stab { display: block; max-width: none; }
+.stab-holz { fill: var(--messing-hell); stroke: var(--messing-dunkel); stroke-width: 2; }
+.stab-streifen { fill: var(--karte); stroke: var(--linie); }
+.stab-zeichen { font-family: var(--f-mono); font-size: 15px; fill: var(--text); }
+.stab-band .stab-zeichen { font-size: 14px; }
+.skytale-stab .stab-band { opacity: 0; }
+.skytale-stab.abgewickelt .stab-band { opacity: 1; }
+.skytale-stab.abgewickelt .stab-gewickelt { opacity: 0; }
+.skytale-stab.animiert .stab-band, .skytale-stab.animiert .stab-gewickelt { transition: opacity .6s ease; }
+
+/* Gartenzaun: Schienen mit Muster und Beschriftung (nicht nur Farbe) */
+.zaun td.leer { background: var(--papier); }
+.zaun td.besetzt { font-weight: 700; }
+.zaun td.schiene-1 { border-bottom: 3px solid var(--akzent); }
+.zaun td.schiene-2 { border-bottom: 3px dashed var(--akzent); }
+.zaun td.schiene-3 { border-bottom: 3px dotted var(--akzent); }
+.zaun td.schiene-4 { border-bottom: 3px double var(--akzent); }
+.zaun td.schiene-5, .zaun td.schiene-6, .zaun td.schiene-7, .zaun td.schiene-8 { border-bottom: 3px solid var(--linie); }
+.zaun-plaetze { margin: 0; font-weight: 700; }
+
+/* Fleißner-Schablone */
+.schablone-bereich { display: flex; flex-wrap: wrap; gap: var(--a-4); align-items: start; }
+.schablone-seite { display: grid; gap: var(--a-3); flex: 1 1 16rem; min-width: 0; }
+.schablone-flaeche { display: inline-block; }
+.schablone-flaeche.dreht .schablone tbody { animation: schablone-drehen .4s ease-out; }
+@keyframes schablone-drehen { from { transform: rotate(-90deg); } to { transform: rotate(0); } }
+.schablone { border-collapse: collapse; }
+.schablone caption { text-align: left; font-size: .85rem; color: var(--text-2); padding-bottom: var(--a-1); max-width: 18rem; }
+.schablone thead th { font-size: .8rem; color: var(--text-2); }
+.schablone td { padding: 2px; }
+.loch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  min-width: var(--ziel);
+  min-height: var(--ziel);
+  border: 1.5px solid var(--linie);
+  border-radius: 6px;
+  background: var(--tinte-2);
+  color: var(--auf-tinte);
+  font: inherit;
+  cursor: pointer;
+}
+.loch[aria-pressed="true"] { outline: 3px dashed var(--akzent); outline-offset: -5px; }
+.loch.frei { background: var(--karte); color: var(--text); border: 2px solid var(--akzent); }
+.loch.aktuell { box-shadow: 0 0 0 3px var(--hinweis); }
+.loch:disabled { cursor: default; }
+.loch-symbol { position: absolute; top: 2px; left: 4px; font-size: .75rem; }
+.loch-nr { position: absolute; bottom: 2px; right: 4px; font-size: .7rem; font-weight: 700; }
+.loch-zeichen { font-family: var(--f-mono); font-size: 1.2rem; font-weight: 700; }
+.schablone-stellung { margin: 0; font-weight: 700; }
+.schablone-pruefung { display: grid; gap: var(--a-2); }
+.schablone-legende { margin: 0; font-size: .9rem; }
+@media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .schablone tbody { animation: none; } .skytale-stab.animiert * { transition: none; } }
+:root[data-bewegung="aus"] .schablone-flaeche.dreht .schablone tbody { animation: none; }
