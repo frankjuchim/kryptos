@@ -795,3 +795,34 @@ test('Review M4 K7: Kurswahl mit nur einem aktiven Kurs – kein „Du bist in m
   t = k.text(k.document.getElementById('haupt'));
   assert.match(t, /Du bist in mehreren Kursen/);
 });
+
+test('Abzeichen: Server-Icons als Sprite (a-funk, a-knacker, a-unknackbar), unbekannte ids → Rückfall; alle Icons im Sprite', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const sprite = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'img', 'abzeichen.svg'), 'utf8');
+  const ids = new Set([...sprite.matchAll(/<symbol id="([\w-]+)"/g)].map((m) => m[1]));
+  const { ICONS, ARTEFAKT } = require('../src/krypto/abzeichen');
+  for (const id of [...Object.values(ICONS), ...ARTEFAKT]) assert.ok(ids.has(id), `Symbol ${id} fehlt in abzeichen.svg`);
+  for (const id of ['a-funk', 'a-knacker', 'a-unknackbar']) assert.match(sprite, new RegExp(`<symbol id="${id}" viewBox="0 0 48 48">`), id);
+  const abz = [
+    { key: 'arena_knacker', icon: 'a-knacker', name: 'Arena-Knacker', beschreibung: '…', erhalten: true, am: null },
+    { key: 'funkraum_veteran', icon: 'a-funk', name: 'Funkraum-Veteran', beschreibung: '…', erhalten: false, am: null },
+    { key: 'neu_erfunden', icon: 'a-gibtsnicht', name: 'Unbekannt', beschreibung: '…', erhalten: false, am: null },
+    { key: 'boss2_besiegt', icon: 'a-tafel', name: 'Artefakt: Vigenère-Tafel', beschreibung: '…', erhalten: true, am: null }
+  ];
+  const profil = { name: 'Mika R.', punkte: { gesamt: 0 }, rang: { name: 'Lehrling', index: 0, anteil: 0 }, abzeichen: abz, welten: [], fallen: [] };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/profil', fetch: { ...spielFetch([welt(9)]), 'GET /api/profil': { status: 200, body: profil } } });
+  await k.ruhe();
+  const P = k.wert('KRProfil');
+  assert.deepEqual([...P.SPRITE].sort(), [...ids].sort(), 'Client-Liste = Symbole im Sprite');
+  assert.equal(P.symbol('arena_knacker', 'a-knacker'), 'a-knacker');
+  assert.equal(P.symbol('neu_erfunden', 'a-gibtsnicht'), null);
+  assert.equal(P.symbol('unknackbar', '<script>'), 'a-unknackbar', 'ungültiges Icon → eigene Abbildung');
+  const li = k.alle(k.document, 'ul.abzeichen-raster li');
+  assert.match(li[0].querySelector('use').getAttribute('href'), /#a-knacker$/);
+  assert.match(li[1].querySelector('use').getAttribute('href'), /#a-funk$/);
+  assert.equal(li[2].querySelector('use'), null);
+  assert.match(k.text(li[2]), /★/, 'Rückfall Stern statt Kennungstext');
+  assert.doesNotMatch(k.text(k.eins(k.document, 'ul.abzeichen-raster')), /a-knacker|a-funk|a-gibtsnicht/, 'kein Kennungstext');
+  assert.match(k.text(li[3]), /Artefakt: Vigenère-Tafel/);
+});

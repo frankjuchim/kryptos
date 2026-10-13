@@ -2648,11 +2648,11 @@ Beamer bei 1920 × 1080.
 **Interfaces:** `KRProfil.symbol(key, icon)`; Profil zeigt „Artefakt: Skytale“ usw. vom Server; die Artefakt-Regale
 (Profil/Zeitleiste/Urkunden) bleiben auf `boss<n>_besiegt` (keine Änderung).
 
-- [ ] **Step 1: Failing test**: Profil mit Abzeichen `{ key: 'arena_knacker', icon: 'a-knacker' }` → `use[href$="#a-knacker"]`;
+- [x] **Step 1: Failing test**: Profil mit Abzeichen `{ key: 'arena_knacker', icon: 'a-knacker' }` → `use[href$="#a-knacker"]`;
   unbekanntes `icon: 'a-gibtsnicht'` → Rückfall auf Emoji/Stern; alle `ICONS`-Werte aus `src/krypto/abzeichen.js` existieren als
   `<symbol id>` in `abzeichen.svg`.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Profil hell/dunkel.
-- [ ] **Step 5: Commit** `git commit -m "Abzeichen: Symbole Funkraum-Veteran, Arena-Knacker, Unknackbar; Profil nutzt Server-Icons"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Profil hell/dunkel.
+- [x] **Step 5: Commit** `git commit -m "Abzeichen: Symbole Funkraum-Veteran, Arena-Knacker, Unknackbar; Profil nutzt Server-Icons"`.
 
 ### Task 160: e2e Szenario 5 „Botenlauf mit drei Teams und Beamer“ (TECHNIK §15 Nr. 5, E117, E118)
 
@@ -3025,6 +3025,13 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   „Keine Arena geöffnet.“ nach Löschen (404 → Poller stoppt; Chromium meldet den 404 als Konsolenzeile). Test-Schnittstelle
   `KRBeamer._poller()`. Plan-Test: „jetzt + 25 min“ mit Toleranz gegen die echte Uhr (die Attrappe hat keine steuerbare
   `Date`). Sichtprüfung 1920 × 1080 (Werkstatt, Angriff, Beurteilung, geschlossen) und Tab 360/768/1280 hell/dunkel.
+
+- **Task 159:** `KRProfil.symbol(key, icon)`: ein Server-Icon der Form `^a-[a-z]+$` gilt nur, wenn es in
+  `KRProfil.SPRITE` steht (Liste der Symbole in `abzeichen.svg`; der Test gleicht Liste, Sprite und `ICONS`/`ARTEFAKT` aus
+  `src/krypto/abzeichen.js` ab) – sonst Rückfall auf ★, nie die Kennung als Text; andere Werte (z. B. ungültig) fallen auf
+  die Abbildung nach dem Schlüssel zurück (`FEST` kennt jetzt auch die drei neuen Abzeichen). Abzeichen-Toast nutzt das
+  Server-Icon ebenso. Symbole `a-funk` (Mast mit Wellen), `a-knacker` (offenes Schloss), `a-unknackbar` (Schloss im
+  Schild), eigene Zeichnungen, `currentColor`, viewBox 48. Sichtprüfung Profil 1280 hell / 360 dunkel.
 
 ## Reihenfolge und Abhängigkeiten
 

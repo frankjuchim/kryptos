@@ -19,12 +19,21 @@ const KRProfil = (() => {
     makellos: 'a-siegel',
     fallensucher: 'a-falle',
     trainingsprofi: 'a-training',
-    kata_meister: 'a-warmup'
+    kata_meister: 'a-warmup',
+    funkraum_veteran: 'a-funk',
+    arena_knacker: 'a-knacker',
+    unknackbar: 'a-unknackbar'
   });
+  /** Symbole in abzeichen.svg (Test: Abgleich mit dem Sprite) – Server-Icons (Hook abzeichenAnzeige, Plan M7 E112) nur aus dieser Liste */
+  const SPRITE = Object.freeze(['a-skytale', 'a-manuskript', 'a-tafel', 'a-lochstreifen', 'a-schluessel', 'a-siegel', 'a-kern', 'a-stern', 'a-serie', 'a-falle', 'a-training', 'a-warmup', 'a-welt', 'a-funk', 'a-knacker', 'a-unknackbar']);
   const FALLEN_IDS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'];
 
-  /** Sprite-id zu einem Abzeichen-Schlüssel oder null (dann Emoji des Servers). */
-  function symbol(key) {
+  /**
+   * Sprite-id zu einem Abzeichen oder null (dann Emoji des Servers bzw. Stern). icon (vom Server, z. B. „a-knacker“) hat
+   * Vorrang, wenn es ^a-[a-z]+$ erfüllt und im Sprite vorhanden ist; sonst die bisherige Abbildung nach dem Schlüssel.
+   */
+  function symbol(key, icon) {
+    if (typeof icon === 'string' && /^a-[a-z]+$/.test(icon)) return SPRITE.includes(icon) ? icon : null;
     const k = String(key || '');
     let m = /^boss(\d+)_besiegt$/.exec(k);
     if (m) return ARTEFAKT[Number(m[1])] || 'a-siegel';
@@ -34,9 +43,11 @@ const KRProfil = (() => {
   }
 
   function abzeichenBild(a, klasse = 'abzeichen-bild') {
-    const id = symbol(a.key);
+    const id = symbol(a.key, a.icon);
     if (id) return KR.symbol('abzeichen', id, { klasse });
-    return h('span', { class: klasse + ' abzeichen-emoji', 'aria-hidden': 'true' }, a.icon || '★');
+    // Rückfall: Emoji des Servers, nie eine Sprite-Kennung als Text
+    const emoji = typeof a.icon === 'string' && a.icon && !/^a-/.test(a.icon) && a.icon.length <= 8 ? a.icon : '★';
+    return h('span', { class: klasse + ' abzeichen-emoji', 'aria-hidden': 'true' }, emoji);
   }
 
   /** Abzeichen-Toast je neuem Abzeichen (nacheinander). */
@@ -47,7 +58,7 @@ const KRProfil = (() => {
         AQ.toast(`Abzeichen: ${b.name}`, 'gold');
         const t = document.getElementById('toast');
         if (t) {
-          const id = symbol(b.key);
+          const id = symbol(b.key, b.icon);
           if (id) t.insertBefore(KR.symbol('abzeichen', id), t.firstChild);
           AQ.effekt.funken(t, { stark: true });
         }
@@ -197,5 +208,5 @@ const KRProfil = (() => {
     );
   }
 
-  return { ARTEFAKT, ARTEFAKT_NAME, symbol, radar, ansicht, abzeichenToast, scoreboardTabelle };
+  return { ARTEFAKT, ARTEFAKT_NAME, SPRITE, symbol, radar, ansicht, abzeichenToast, scoreboardTabelle };
 })();
