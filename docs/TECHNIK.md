@@ -1677,8 +1677,8 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 | Job | Schritte |
 |---|---|
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` |
-| `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture und Seeds), `python3 -I werkzeuge/krypto/pruefwerte.py` |
-| `inhalte` | Python 3.12 + Java 21 + `pip install python-docx python-pptx pypdf fonttools`: `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `materialien_pruefen.py`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, `video_folien.py --pruefen`, `schriften_pruefen.py` |
+| `krypto` | Node 20 + Python 3.12: `node --test test/fach.test.js`, `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/pruefwerte.py`, `python3 -I werkzeuge/krypto/test_fremde_verfahren.py`, `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture mit `--pruefwerte test/fixtures/pruefwerte`; ohne Argumente: echte Seeds + Gast) |
+| `inhalte` | Node 20 + Python 3.12 + Java 21 (Temurin) + `pip install -r werkzeuge/material/requirements.txt python-pptx pypdf brotli` + LibreOffice (Writer, Impress), Carlito, Cairo: `py_compile` der Werkzeuge, `schriften_pruefen.py`, `test_kontrast.py`, `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, Render-Probe `soffice` (Akte W0·1 + Kickoff-Präsentation), `node --test test/material_pipeline.test.js` (umgesetzt M5 Task 102); folgen: `materialien_pruefen.py`, `video_folien.py --pruefen` (M9) |
 | `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install --with-deps chromium` in CI), `npm run e2e`, Artefakt: `docs/screenshots` (umgesetzt M4 Task 66) |
 
 `main` ist mit CapRover verbunden (jeder Push = Live-Build) → nur Feature-Branches, Merge nach `main` nur nach
@@ -1743,9 +1743,12 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `abdeckung`, `akten`, `loesungen`, `lehrkraft`,
-`workspaces`, `pruefen` (= test + validate + krypto + inhalte), Version startet bei `0.1.0`, `1.0.0` mit dem ersten
-Live-Deploy.
+`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `akten`, `loesungen`,
+`lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
+`pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds`; die Material-Prüfungen brauchen Python-Pakete,
+LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese
+Abhängigkeiten überspringt); `abdeckung` folgt mit `scripts/abdeckung.js` (M8). Version startet bei `0.1.0`, `1.0.0` mit
+dem ersten Live-Deploy.
 
 ---
 

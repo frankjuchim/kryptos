@@ -1623,9 +1623,19 @@ Boss W0 „frei“ = Einstellung „Offen“. Keine neuen Fotos. `npm run e2e`: 
   `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, `ide_pruefen.py` (Gerüst/LSG W0), `workspaces_erzeugen.py --pruefen`,
   `schriften_pruefen.py`. Job `krypto`: zusätzlich `python3 -I werkzeuge/krypto/test_fremde_verfahren.py`; `seed_pruefen.py` ohne
   Argumente prüft jetzt echte Seeds + Gast.
-- [ ] **Step 1:** Workflow lokal nachstellen (alle Schritte einzeln ausführen) → grün.
-- [ ] **Step 2:** `test/material_pipeline.test.js` deckt die `--pruefen`-Aufrufe ab (übersprungen ohne Abhängigkeiten).
-- [ ] **Step 3: Commit** `git commit -m "CI: Material-Pipeline, Online-IDE-Prüfstand und fremde Verfahren"`.
+- [x] **Step 1:** Workflow lokal nachstellen (alle Schritte einzeln ausführen) → grün.
+- [x] **Step 2:** `test/material_pipeline.test.js` deckt die `--pruefen`-Aufrufe ab (übersprungen ohne Abhängigkeiten).
+- [x] **Step 3: Commit** `git commit -m "CI: Material-Pipeline, Online-IDE-Prüfstand und fremde Verfahren"`.
+
+**Umsetzungsnotiz (Task 102):** Skripte `akten`, `loesungen`, `lehrkraft`, `workspaces`, `ide:pruefen` (`python3 -I …`). CI-Job `inhalte`:
+Java 21 (Temurin), `pip install -r werkzeuge/material/requirements.txt python-pptx pypdf brotli`, LibreOffice Writer/Impress +
+Carlito; Schritte Schriften, Kontrast (`test_kontrast.py`), Online-IDE-Prüfstand, Workspaces, drei PDF-`--pruefen`, eine
+`soffice`-Render-Probe (Akte W0·1, Kickoff-Präsentation) und `test/material_pipeline.test.js`. Job `krypto` hatte
+`test_fremde_verfahren.py` und `seed_pruefen.py` ohne Argumente schon (Task 70/99). `material_pipeline.test.js` deckt jetzt auch
+`akten_pdf.py --pruefen` ab (ohne `pypdf` übersprungen). Lokal nachgestellt: alle Schritte der Jobs `app`, `krypto`, `inhalte`
+einzeln grün (Validator 0 Fehler, Zwilling 0 Abweichungen in 186 513 Fällen, Prüfwerte 853/0, Seeds 192/0, IDE 2 Dateien/0,
+Workspaces 2/0, Akten 25/0, Lösungen 72/0, Lehrkraft 84/0, Render-Probe ok). `materialien_pruefen.py`/`video_folien.py --pruefen`
+bleiben für M9.
 
 ### Task 103: Abschluss M5 – Dokumente, Kern-Abweichungen, Prüfung
 

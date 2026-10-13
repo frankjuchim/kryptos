@@ -1,4 +1,5 @@
-// Material-Pipeline (TECHNIK §14.3, M5 Tasks 94–96): Online-IDE-Prüfstand und Workspace-Dateien.
+// Material-Pipeline (TECHNIK §14.3, §16.1, M5 Tasks 94–96, 102): Online-IDE-Prüfstand, Workspace-Dateien und die
+// `--pruefen`-Aufrufe der PDF-Skripte (akten, loesungen, lehrkraft).
 // Ohne javac/python3 übersprungen (die CI prüft im Job `inhalte` mit Java 21).
 'use strict';
 const test = require('node:test');
@@ -87,8 +88,15 @@ test('Workspace-Dateien für online-ide.de sind aktuell (workspaces_erzeugen.py 
   assert.ok(!JSON.stringify(schueler).includes('MUSTERLOESUNG'), 'keine Musterlösung im Schüler-Workspace');
 });
 
-for (const skript of ['loesungen_pdf.py', 'lehrkraft_pdf.py']) {
-  test(`Lehrkraft-PDFs vollständig und aktuell (${skript} --pruefen)`, { skip: python ? false : 'python3 fehlt' }, () => {
+// akten_pdf.py --pruefen liest die PDFs mit pypdf (Lösungsstempel) – ohne pypdf übersprungen (CI-Job `inhalte` installiert es)
+const ohnePypdf = !python ? 'python3 fehlt' : !vorhanden('python3', ['-I', '-c', 'import pypdf']) ? 'pypdf fehlt – Akten-Prüfung übersprungen' : false;
+const PDF_SKRIPTE = [
+  ['akten_pdf.py', 'Akten-PDFs (Schülerfassungen) vollständig, ohne Lösungen und Funkraum-Regieteile', ohnePypdf],
+  ['loesungen_pdf.py', 'Lösungs-PDFs vollständig und aktuell', python ? false : 'python3 fehlt'],
+  ['lehrkraft_pdf.py', 'Lehrkraft-PDFs vollständig und aktuell', python ? false : 'python3 fehlt']
+];
+for (const [skript, titel, skip] of PDF_SKRIPTE) {
+  test(`${titel} (${skript} --pruefen)`, { skip }, () => {
     const r = spawnSync('python3', ['-I', path.join(WURZEL, 'werkzeuge', skript), '--pruefen'], { cwd: WURZEL, encoding: 'utf8', timeout: 300000 });
     assert.equal(r.status, 0, r.stdout + r.stderr);
   });

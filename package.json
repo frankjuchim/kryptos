@@ -13,6 +13,11 @@
     "krypto:pruefwerte": "python3 -I werkzeuge/krypto/pruefwerte.py",
     "krypto:seeds": "python3 -I werkzeuge/krypto/seed_pruefen.py",
     "e2e": "node test/e2e/e2e.js",
+    "akten": "python3 -I werkzeuge/akten_pdf.py",
+    "loesungen": "python3 -I werkzeuge/loesungen_pdf.py",
+    "lehrkraft": "python3 -I werkzeuge/lehrkraft_pdf.py",
+    "workspaces": "python3 -I werkzeuge/workspaces_erzeugen.py",
+    "ide:pruefen": "python3 -I werkzeuge/ide-pruefung/ide_pruefen.py",
     "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds"
   },
   "engines": {
