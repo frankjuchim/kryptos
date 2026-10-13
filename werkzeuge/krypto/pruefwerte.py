@@ -18,6 +18,8 @@ mit Einträgen
 - `runden`: Zahl der Nachkommastellen, auf die das Ergebnis vor dem Vergleich gerundet wird (Material rundet).
 - `erwartet`: Wert aus dem Material. Zeichenketten werden ohne Leerraum/Satzzeichen und ohne Groß/Klein verglichen
   (Klartext klein, Geheimtext GROSS in Fünfergruppen), Listen elementweise, Zahlen genau (bzw. nach `runden`).
+- `aufgabe`, `gapsFeld`, `gapsFelder`: Zuordnung zu einer Seed-Aufgabe (Prüfwert-Gruppe für mehrfeldrige Lücken, Delta §4.1);
+  beim Rechnen ignoriert – `seed_pruefen.py` vergleicht `erwartet` mit der Lösung der Felder.
 - `art`: akte | boss | bosspool | lab | warmup | archivfund | pruefung | video | praesentation | spec.
 - `bekannt_abweichend: true` + `begruendung`: gemeldeter möglicher Materialfehler – wird gerechnet und gesondert
   ausgewiesen, macht die Prüfung aber nicht rot (die Lehrkraft entscheidet).

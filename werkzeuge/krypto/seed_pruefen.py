@@ -18,6 +18,11 @@ JS-Bibliothek, die der Validator (`npm run validate`) benutzt. Geprüft werden:
   = deren Lösung).
 - `gaps` mit `pruefnachweis` `quellen/pruefwerte/W<n>.json#<id>` (Review M3 W3): `erwartet` des Eintrags = Lösung –
   als Objekt { feld: wert } je Feld, als Einzelwert für das einzige Feld (Hauptlösung, Zahlen numerisch verglichen).
+  Prüfwert-Gruppe (Plan M5 E44): alle Einträge mit `"aufgabe": "<id>"` gehören zur Aufgabe; `"gapsFeld": "<feld>"` →
+  `erwartet` = Hauptlösung des Felds, `"gapsFelder": ["g1", …]` → `erwartet` als Zeichenkette (Zeichen i) bzw. Liste
+  (Element i) = Hauptlösung von Feld i (Länge muss passen). Felder ohne Eintrag sind keine Abweichung (Lücken ohne
+  Rechnung); Einträge mit `aufgabe`, aber ohne gapsFeld/gapsFelder sind Konsistenz-Einträge (nur `pruefwerte.py`).
+- `chiffre` mit `ausgabe` `paare`/`hex` wird wie `buchstaben` nachgerechnet (wie die JS-Seite).
 
 Aufruf: python3 -I werkzeuge/krypto/seed_pruefen.py [--pruefwerte <ordner>] [dateien …]
         (--pruefwerte: Ordner der Prüfwert-Dateien statt quellen/pruefwerte, z. B. test/fixtures/pruefwerte)
@@ -150,8 +155,20 @@ class Pruefung:
 
     # ───────────── Interaktionen ─────────────
 
+    def gruppe(self, datei_name, ref):
+        """Einträge der Prüfwert-Datei mit `aufgabe == ref` (Prüfwert-Gruppe, Delta §4.1/§11)."""
+        self.pruefwert(datei_name, ref)  # lädt die Datei
+        return [w for w in self._pruefwerte[datei_name].values() if w.get('aufgabe') == ref]
+
     def gaps(self, datei, a, ia, lo, ort):
-        """gaps mit pruefnachweis auf einen Prüfwert: erwartet (Objekt je Feld oder Einzelwert) = Hauptlösung."""
+        """gaps mit pruefnachweis `quellen/pruefwerte/W<n>.json#<ref>`.
+
+        - Eintrag mit `id == ref`: `erwartet` als Objekt { feld: wert } je Feld oder als Einzelwert für das einzige Feld.
+        - Prüfwert-Gruppe (Einträge mit `aufgabe == ref`): `gapsFeld` → `erwartet` = Hauptlösung dieses Felds (eine
+          Liste mit genau einem Element zählt wie der Einzelwert); `gapsFelder` → `erwartet` als Zeichenkette (Zeichen i
+          nach `kompakt`) oder Liste (Element i) = Hauptlösung von Feld i. Felder ohne Eintrag sind keine Abweichung
+          (Lücken ohne Rechnung); Einträge ohne gapsFeld/gapsFelder sind Konsistenz-Einträge und werden hier nicht verglichen.
+        """
         nw = a.get('pruefnachweis')
         m = NACHWEIS_PRUEFWERT.match(nw) if isinstance(nw, str) else None
         if not m or not isinstance(lo, dict) or not isinstance(ia.get('felder'), dict):
@@ -159,22 +176,41 @@ class Pruefung:
         aid = a.get('id')
         felder = [f for f in ia['felder'] if f in lo]
         eintrag = self.pruefwert(m.group(1), m.group(2))
-        if eintrag is None:
+        gruppe = self.gruppe(m.group(1), m.group(2))
+        if eintrag is None and not gruppe:
             self.geprueft += 1
             self.melde(datei, aid, 'pruefnachweis', f'Eintrag {nw}', 'keinen')
             return
-        erw = eintrag.get('erwartet')
-        if isinstance(erw, dict):
-            paare = [(f, erw[f]) for f in felder if f in erw]
-        elif len(felder) == 1:
-            paare = [(felder[0], erw)]
-        else:
-            paare = []
-        if not paare:
-            self.geprueft += 1
-            self.melde(datei, aid, 'pruefnachweis', 'erwartet je gaps-Feld ({ feld: wert }) oder genau ein Feld', ', '.join(felder) or 'keine Felder')
-            return
+        paare = []
+        if eintrag is not None:
+            erw = eintrag.get('erwartet')
+            if isinstance(erw, dict):
+                paare = [(f, erw[f]) for f in felder if f in erw]
+            elif len(felder) == 1:
+                paare = [(felder[0], erw)]
+            if not paare and not gruppe:
+                self.geprueft += 1
+                self.melde(datei, aid, 'pruefnachweis', 'erwartet je gaps-Feld ({ feld: wert }) oder genau ein Feld', ', '.join(felder) or 'keine Felder')
+                return
+        for e in gruppe:
+            erw = e.get('erwartet')
+            if isinstance(e.get('gapsFeld'), str):
+                if isinstance(erw, list) and len(erw) == 1:
+                    erw = erw[0]
+                paare.append((e['gapsFeld'], erw))
+            elif isinstance(e.get('gapsFelder'), list):
+                fl = e['gapsFelder']
+                teile = list(erw) if isinstance(erw, list) else list(kompakt(erw))
+                if len(teile) != len(fl):
+                    self.geprueft += 1
+                    self.melde(datei, aid, f'pruefnachweis {e.get("id")} (Länge)', f'{len(fl)} Werte für {", ".join(fl)}', len(teile))
+                    continue
+                paare.extend(zip(fl, teile))
         for f, wert in paare:
+            if f not in lo:
+                self.geprueft += 1
+                self.melde(datei, aid, f'{ort}.{f}', f'ein Lösungsfeld {f} (Prüfwert)', 'keines')
+                continue
             werte = lo[f] if isinstance(lo[f], list) else [lo[f]]
             gefunden = werte[0] if werte else None
             self.vergleiche(datei, aid, f'{ort}.{f}', wert, gefunden, gleich=gleicher_wert)
@@ -188,7 +224,8 @@ class Pruefung:
         if v.get('typ') == 'frei':
             self.nachweis(datei, a, ort + '.text', ia.get('eingabe', ''), richtung, lo['text'])
             return
-        ausgabe = ia.get('ausgabe', 'buchstaben')
+        # wie src/krypto/interaktionen/chiffre.js: paare/hex sind Eingabeformen von Buchstabenfolgen, nur zahlen rechnet anders
+        ausgabe = 'zahlen' if ia.get('ausgabe') == 'zahlen' else 'buchstaben'
         ok, erg = self.rechne(datei, aid, ort + '.text', lambda: K.verfahren_anwenden(
             v, ia.get('eingabe', ''), richtung, basis=ia.get('basis', 1), ausgabe=ausgabe))
         if not ok:
