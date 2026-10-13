@@ -1739,6 +1739,13 @@ test('rsa: SPEC W4 §12, Video 05, W5 Signaturen', () => {
   assert.deepEqual(K.rsa.schluessel(5, 13, 5), { N: 65, phi: 48, e: 5, d: 29 });
   assert.equal(K.rsa.schluessel(5, 13, 7).d, 7); // e = d: schwacher Schlüssel
   assert.deepEqual(K.rsa.schluessel(3, 17, 3), { N: 51, phi: 32, e: 3, d: 11 });
+  // Review M6: zulässige öffentliche Exponenten für das RSA-Rechenwerk (3 ≤ e < φ, ggT(e, φ) = 1)
+  assert.deepEqual(K.rsa.eKandidaten(5, 11), [3, 7, 9, 11, 13, 17, 19, 21, 23, 27, 29, 31, 33, 37, 39]);
+  assert.deepEqual(K.rsa.eKandidaten(3, 5), [3, 5, 7]);
+  assert.deepEqual(K.rsa.eKandidaten(2, 3), []);
+  assert.equal(K.rsa.eKandidaten(11, 17)[0], K.rsa.schluessel(11, 17).e);
+  assert.throws(() => K.rsa.eKandidaten(7, 7), K.KryptoFehler);
+  assert.throws(() => K.rsa.eKandidaten(7, 9), K.KryptoFehler);
   assert.deepEqual(K.rsa.schluessel(17, 23, 27), { N: 391, phi: 352, e: 27, d: 339 });
   assert.equal(K.rsa.schluessel(13, 17, 5).d, 77);
   assert.equal(K.rsa.schluessel(7, 19, 5).d, 65); // Video 05

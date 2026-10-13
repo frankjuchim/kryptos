@@ -73,3 +73,11 @@ test('Rechenwerk: Standardwerte eigens gewählt, Produktkette = Zwischenergebnis
   w.k.taste(leiste, 'End');
   assert.equal(w.k.alle(w.flaeche, 'table.quadrierkette tbody tr.kommt').length, 0);
 });
+
+test('Rechenwerk: e-Auswahl aus der Bibliothek (Krypto.rsa.eKandidaten), φ nicht selbst gerechnet (Review M6)', () => {
+  const w = oeffne('rsa', { voreinstellung: { p: 13, q: 19 } });
+  const werte = w.k.alle(w.flaeche, 'select.rsa-e option').map((o) => Number(o.value));
+  assert.deepEqual(werte, K.rsa.eKandidaten(13, 19));
+  const src = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'rsa.js'), 'utf8');
+  assert.doesNotMatch(src, /-\s*1\)\s*\*\s*\(/, 'kein (p − 1) · (q − 1) im Werkzeug');
+});

@@ -46,13 +46,6 @@
       nachspiel = null;
     }
 
-    /** gültige e für φ: 3 ≤ e < φ, ggT(e, φ) = 1 */
-    function eListe(phi) {
-      const aus = [];
-      for (let e = 3; e < phi; e++) if (Krypto.ggT(e, phi) === 1) aus.push(e);
-      return aus;
-    }
-
     /** Schlüssel aus st berechnen → { ok, grund } und z füllen. */
     function schluessel() {
       z.p = st.p;
@@ -62,8 +55,7 @@
       z.d = null;
       z.e = null;
       if (st.p === st.q) return { ok: false, grund: 'gleich' };
-      const phiZahl = (st.p - 1) * (st.q - 1);
-      const liste = eListe(phiZahl);
+      const liste = Krypto.rsa.eKandidaten(st.p, st.q); // 3 ≤ e < φ, ggT(e, φ) = 1
       if (!liste.includes(st.e)) st.e = liste.includes(BEISPIEL.e) ? BEISPIEL.e : liste[0];
       const k = Krypto.rsa.schluessel(st.p, st.q, st.e);
       Object.assign(z, { N: k.N, phi: k.phi, e: k.e, d: k.d });

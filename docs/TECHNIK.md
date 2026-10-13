@@ -476,6 +476,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `teileMitRest(a, m)` | *(M6, Rechenzeile „a = q · m + r“)* `{ q, r }` mit r = `mod(a, m)`; `teileMitRest(-5, 26)` = `{ q: -1, r: 21 }` |
 | `probedivision(n)` | *(M6, RSA-Rechenwerk Eve-Modus – einzige „Faktorisierung“ im Labor)* Proben t = 2, 3, 4, … solange t² ≤ n → `{ teiler, versuche }`: erster Teiler oder `null` (n prim) und die Zahl der Proben bis dahin; n 2 … 10⁷. `probedivision(2209)` = `{ teiler: 47, versuche: 46 }` |
 | `rsa.schluessel(p, q, e = null)` | `{ N, phi, e, d }`; `e` Std. = kleinstes e ≥ 3 mit ggT(e, φ) = 1; prüft p ≠ q prim |
+| `rsa.eKandidaten(p, q)` | *(Review M6, RSA-Rechenwerk)* alle e mit 3 ≤ e < φ und ggT(e, φ) = 1, aufsteigend (leer bei φ ≤ 3); prüft p ≠ q prim. Tests: `eKandidaten(5, 11)` = `[3, 7, 9, 11, 13, 17, 19, 21, 23, 27, 29, 31, 33, 37, 39]`, `eKandidaten(3, 5)` = `[3, 5, 7]` |
 | `rsa.verschluesseln(m, e, N)` / `rsa.entschluesseln(c, d, N)` | `m < N` Pflicht |
 | `rsa.signieren(h, d, N)` / `rsa.pruefen(s, e, N)` | *(M6, Plan M6 E69)* Signatur s = hᵈ mod N bzw. Prüfwert sᵉ mod N (mit dem Hashwert vergleichen); 0 ≤ h, s < N, N ≥ 2. `rsa.signieren(15, 27, 55)` = 5, `rsa.pruefen(5, 3, 55)` = 15 |
 | `dh.oeffentlich(g, geheim, p)` | `g^geheim mod p` |

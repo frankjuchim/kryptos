@@ -2020,6 +2020,15 @@
       if (e < 2 || e >= phi || ggT(e, phi) !== 1) throw new KryptoFehler('e muss zwischen 2 und φ(N) − 1 liegen und teilerfremd zu φ(N) sein.');
       return { N, phi, e, d: inverses(e, phi) };
     },
+    /** zulässige öffentliche Exponenten: alle e mit 3 ≤ e < φ und ggT(e, φ) = 1 (aufsteigend); p ≠ q prim (Review M6) */
+    eKandidaten(p, q) {
+      if (!istPrim(p) || !istPrim(q)) throw new KryptoFehler('p und q müssen Primzahlen sein.');
+      if (p === q) throw new KryptoFehler('p und q müssen verschieden sein.');
+      const phi = (p - 1) * (q - 1);
+      const liste = [];
+      for (let e = 3; e < phi; e++) if (ggT(e, phi) === 1) liste.push(e);
+      return liste;
+    },
     verschluesseln(m, e, N) {
       pruefeNichtNegativ(m, 'Die Klarzahl');
       pruefeGanzzahl(N, 'N');

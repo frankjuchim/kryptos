@@ -69,7 +69,7 @@ ZUORDNUNG = {
     'verschiebungSchaetzen': (K.verschiebung_schaetzen, None), 'chiQuadrat': (K.chi_quadrat, None),
     'ggT': (K.ggt, None), 'erweiterterEuklid': (K.erweiterter_euklid, None), 'inverses': (K.inverses, None),
     'modpow': (K.modpow, 3), 'istPrim': (K.ist_prim, None),
-    'rsa.schluessel': (K.rsa_schluessel, None), 'rsa.verschluesseln': (K.rsa_verschluesseln, None),
+    'rsa.schluessel': (K.rsa_schluessel, None), 'rsa.eKandidaten': (K.rsa_e_kandidaten, None), 'rsa.verschluesseln': (K.rsa_verschluesseln, None),
     'rsa.entschluesseln': (K.rsa_entschluesseln, None),
     'dh.oeffentlich': (K.dh_oeffentlich, None), 'dh.gemeinsam': (K.dh_gemeinsam, None),
     'dh.dlogKlein': (K.dh_dlog_klein, None), 'schluesselanzahl': (K.schluesselanzahl, None),

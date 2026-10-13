@@ -465,6 +465,10 @@ const FAELLE = {
     zufall: () => [ganz(-500, 5000), selten() ? -1 : ganz(0, 3000), selten() ? wahl([0, -7]) : ganz(2, 100000), ...(zufall() < 0.3 ? [{ protokoll: true }] : [])],
   },
   istPrim: { fest: [[2], [1], [0], [-7], [9999991], [10000000], [2.5]], zufall: () => [selten() ? ganz(9999000, 10000010) : ganz(-5, 20000)] },
+  'rsa.eKandidaten': {
+    fest: [[5, 11], [3, 5], [2, 3], [7, 7], [7, 9], [11, 17], [1, 5]],
+    zufall: () => [selten() ? ganz(1, 50) : wahl(PRIM.slice(0, 30)), selten() ? ganz(1, 50) : wahl(PRIM.slice(0, 30))],
+  },
   'rsa.schluessel': {
     fest: [[7, 11, 7], [5, 13, 5], [7, 11], [5, 11], [7, 7], [7, 9], [7, 11, 6], [7, 11, 1], [7, 11, 61], [7, 11, null]],
     zufall: () => {

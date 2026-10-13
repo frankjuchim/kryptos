@@ -43,6 +43,7 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | miniEnigma                      | mini_enigma                     | miniEnigma.tabelle / .weg       | mini_enigma_tabelle / mini_enigma_weg |
 | ordnung, teileMitRest           | ordnung, teile_mit_rest         | probedivision                   | probedivision               |
 | rsa.signieren / .pruefen        | rsa_signieren, rsa_pruefen      | pruefsumme, sha256, hashZahl    | pruefsumme, sha256 (hashlib), hash_zahl |
+| rsa.eKandidaten (Review M6)     | rsa_e_kandidaten                |                                 |                                         |
 | kryptosHash.ausgleichen         | kryptos_hash_ausgleichen        |                                 |                             |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
@@ -1846,6 +1847,16 @@ def rsa_schluessel(p, q, e=None):
         if not 1 < e < phi or math.gcd(e, phi) != 1:
             raise KryptoFehler('e muss zwischen 1 und φ liegen und teilerfremd zu φ sein.')
     return {'N': p * q, 'phi': phi, 'e': e, 'd': pow(e, -1, phi)}
+
+
+def rsa_e_kandidaten(p, q):
+    """Review M6: zulässige öffentliche Exponenten 3 <= e < φ mit ggT(e, φ) = 1 (aufsteigend); p != q prim."""
+    p = _ganz(p, 'p')
+    q = _ganz(q, 'q')
+    if p == q or not ist_prim(p) or not ist_prim(q):
+        raise KryptoFehler('p und q müssen verschiedene Primzahlen sein.')
+    phi = (p - 1) * (q - 1)
+    return [e for e in range(3, phi) if math.gcd(e, phi) == 1]
 
 
 def _rsa(x, exp, n, name):
