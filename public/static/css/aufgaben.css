@@ -348,3 +348,85 @@ button.zelle .klick-nr { min-height: 1em; text-align: center; font-size: .72rem;
   .puzzle { grid-template-columns: minmax(0, 1fr); }
   .aufgabe-kopf h1 { font-size: var(--h3); }
 }
+
+/* =====================================================================================================================
+   Teil 2 (M4 Task 51): Geheimtext-Zeile, alphabet, haeufigkeit, bits (Delta §7.1, §7.2, §7.4)
+   ===================================================================================================================== */
+
+/* ---------- Geheimtext-Zeile (Grundstil .geheimtext/.klartext in komponenten.css) ---------- */
+.geheimtext, .klartext-zeile { display: grid; gap: var(--a-2); }
+.klartext-zeile { padding: 10px 14px; border-left: 3px solid var(--linie); background: var(--karte); }
+.geheimtext-gruppen { display: flex; flex-wrap: wrap; gap: 0 1ch; }
+.geheimtext-gruppen .gruppe { white-space: nowrap; }
+.positionen { display: flex; flex-wrap: wrap; gap: 0 calc(var(--gr-mono) * .6); font-size: .72rem; color: var(--text-2); letter-spacing: 0; }
+.positionen span { min-width: calc(var(--gr-mono) * 3.6); }
+.geheimtext-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.geheimtext-knoepfe .knopf { text-transform: none; letter-spacing: normal; word-spacing: normal; font-family: var(--f-text); font-size: .88rem; }
+.vorlesen .sr {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  letter-spacing: .3em;
+}
+.vorlesen .geheimtext-gruppen { display: none; }
+
+/* ---------- alphabet ---------- */
+figure.alphabet, figure.haeufigkeit, figure.schaubild { margin: 0; display: grid; gap: var(--a-2); min-width: 0; }
+figure.alphabet figcaption, figure.haeufigkeit figcaption, figure.schaubild figcaption { font-weight: 700; font-family: var(--f-ueberschrift); }
+.alphabet-haelften { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 29rem), 1fr)); gap: var(--a-3); }
+.alphabet-teil { border-collapse: collapse; font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
+.alphabet-teil th, .alphabet-teil td { border: 1px solid var(--linie); padding: 4px 1px; min-width: 1.75em; text-align: center; }
+.alphabet-teil thead th { background: var(--papier-2); color: var(--text); }
+.alphabet-teil td.ecke { border: 0; background: transparent; }
+.alphabet-teil tbody th[scope="row"] { font-family: var(--f-text); font-size: .8rem; font-weight: 700; text-align: left; max-width: 6.5em; white-space: normal; padding: 4px 6px; }
+.alphabet-teil tr.zahlen td { font-family: var(--f-text); font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--text-2); }
+.alphabet-teil .markiert { font-weight: 700; box-shadow: inset 0 0 0 2px var(--akzent); }
+.alphabet-teil thead th.markiert { border-bottom: 3px solid var(--akzent); }
+.alphabet-teil .luecke { min-width: 1.8em; width: 1.8em; padding: 2px; text-align: center; margin: 0; }
+
+/* ---------- haeufigkeit ---------- */
+.haeufigkeit-steuerung .knopf[aria-pressed="true"] { border-color: var(--tinte); box-shadow: inset 0 0 0 1.5px var(--tinte); }
+.haeufigkeit-steuerung .knopf[aria-pressed="true"]::before { content: "✓"; }
+.histogramm { width: 100%; height: auto; max-width: 720px; background: var(--karte); border: 1px solid var(--linie); border-radius: var(--r-knopf); }
+.histogramm .achse { stroke: var(--text); stroke-width: 1.5; }
+.histogramm .balken { fill: var(--text-2); }
+.histogramm .balken.markiert { fill: var(--akzent); stroke: var(--text); stroke-width: 1.5; }
+.histogramm .balken-deutsch { stroke: var(--text-2); stroke-width: .8; }
+.histogramm .schraffur-grund { fill: var(--karte); }
+.histogramm .schraffur-linie { stroke: var(--text-2); stroke-width: 1.6; }
+.histogramm .marke-dreieck { fill: var(--text); }
+.histogramm text.buchstabe { font-family: var(--f-mono); font-size: 13px; fill: var(--text); text-anchor: middle; }
+.histogramm text.buchstabe.markiert { font-weight: 700; text-decoration: underline; }
+.haeufigkeit-legende { margin: 0; font-size: .85rem; color: var(--text-2); }
+.haeufigkeit-tabelle { font-variant-numeric: tabular-nums; }
+.haeufigkeit-tabelle tr.markiert th { text-decoration: underline; }
+
+/* ---------- bits ---------- */
+.bits {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  gap: 6px var(--a-3);
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: var(--gr-mono);
+}
+.bits-zeile, .bits-trenner { display: contents; }
+.bits-label { font-family: var(--f-text); font-size: .9rem; font-weight: 700; text-align: right; }
+.bits-werte { display: inline-flex; align-items: center; }
+.bit { display: inline-block; width: 1.6ch; text-align: center; border: 1.5px solid transparent; border-radius: 3px; }
+.bit.gruppe-ende { margin-right: 1ch; }
+.bit.markiert { border-color: var(--akzent); font-weight: 700; }
+.bits-symbol { text-align: right; font-weight: 700; }
+.bits-linie { display: block; border-top: 2px solid var(--text); min-width: 100%; }
+.bits-luecke { font-family: var(--f-mono); letter-spacing: .2em; min-width: 12ch; }
+
+@media (max-width: 600px) {
+  .alphabet-teil tbody th[scope="row"] { font-size: .72rem; max-width: 5em; }
+}
