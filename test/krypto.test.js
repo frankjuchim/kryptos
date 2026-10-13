@@ -2182,3 +2182,56 @@ test('M6 Bibliothek II: Teilertabelle, Primfaktoren, mittlerer Koinzidenzindex (
   assert.deepEqual(K.koinzidenzindexBruch(lab), { zaehler: 1132, nenner: 26082 });
   assert.equal(K.koinzidenzindexBruch('A'), null);
 });
+
+// ───────────────────────────── M6 Bibliothek III (Plan M6 Task 107) ─────────────────────────────
+test('M6 Bibliothek III: KRYPTOS-16 ohne S-Box ist affin, Bitweg (W3 §9.2)', () => {
+  const E = (p) => K.kryptos16.verschluesseln(p, 0xa36d, { sbox: false });
+  for (const [p1, p2] of [[0x4f4b, 0x1234], [0xffff, 0x0f0f], [0x8001, 0x7ffe]]) assert.equal(E(p1) ^ E(p2) ^ E(0), E(p1 ^ p2));
+  const prot = K.kryptos16.verschluesseln(0x4f4b, 0xa36d, { sbox: false, runden: 1, protokoll: true }).runden[0];
+  assert.equal(prot.nachSBox, prot.nachXor);
+  assert.equal(K.kryptos16.entschluesseln(E(0x4f4b), 0xa36d, { sbox: false }), 0x4f4b);
+  assert.deepEqual(K.kryptos16.bitweg(1, { variante: 'kryptos16', runden: 1 }).runden[0].nachTransposition, [1, 5, 9, 13]);
+  const ohne = K.kryptos16.bitweg(1, { variante: 'ohneSBox' });
+  assert.deepEqual([ohne.ende, ohne.schluesselbits], [[1], [1, 5, 9, 13]]);
+  const rm = K.kryptos16.bitweg(10, { variante: 'rm16' });
+  assert.deepEqual(rm.runden.map((r) => [r.nachXor, r.nachMitte, r.nachTransposition, r.schluessel]), [[[10], [12], [15], [10]], [[15], [16], [16], [3]], [[16], [13], [4], [8]]]);
+  assert.deepEqual([rm.ende, rm.schluesselbits], [[4], [10, 3, 8]]);
+});
+test('M6 Bibliothek III: Kacheln des Pixelbilds, ECB/CBC (W3 §9.2)', () => {
+  const spec = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'quellen', 'specs', 'SPEC_Kryptos_W3_Maschinen.md'), 'utf8');
+  const raster = spec.split('**Pixelbild „Schlüssel“**')[1].split('```')[1].trim().split('\n');
+  const b = K.kryptos16.kacheln(raster);
+  assert.equal(b.length, 64);
+  assert.equal(b.filter((x) => x === 0).length, 39);
+  assert.equal(new Set(b).size, 23);
+  assert.deepEqual(K.kryptos16.ausKacheln(b, 32), raster);
+  const ecb = K.kryptos16.modus(b, 0x2b7e, 'ECB', null, { runden: 4 });
+  assert.equal(K.hex(ecb[b.indexOf(0)]), '4081');
+  assert.equal(new Set(ecb).size, 23);
+  assert.equal(new Set(K.kryptos16.modus(b, 0x2b7e, 'CBC', 0x1917, { runden: 4 })).size, 64);
+  assert.throws(() => K.kryptos16.kacheln(['###']), K.KryptoFehler);
+});
+test('M6 Bibliothek III: RM-16 (W3 §6 Abbildung 2) und Mini-Enigma (W3 K2)', () => {
+  const p = K.rm16.verschluesseln(0x6ca3, 0x963d, { protokoll: true });
+  assert.equal(p.ergebnis, 0xc848);
+  assert.deepEqual(p.runden.map((r) => [r.schluessel, r.nachXor, r.nachRotation, r.nachTransposition].map((x) => K.hex(x))), [
+    ['963D', 'FA9E', 'F567', '8FBD'], ['63D9', 'EC64', 'E992', 'E896'], ['3D96', 'D500', 'DA00', 'C848']]);
+  assert.equal(K.rm16.entschluesseln(0xc848, 0x963d), 0x6ca3);
+  assert.equal(K.rm16.rundenschluessel(0x963d, 3), 0x3d96);
+  assert.equal(K.miniEnigma('bach'), 'HHAF');
+  assert.equal(K.miniEnigma('chef', 'E'), 'EGBC');
+  assert.equal(K.miniEnigma('EGBC', 'E', 'ent'), 'CHEF');
+  assert.equal(K.miniEnigma.tabelle('A'), 'EHFGACDB');
+  assert.deepEqual(K.miniEnigma.weg('B', 'A'), { eingang: 'B', stationen: ['B', 'A', 'A', 'E', 'E', 'H', 'H'], ausgang: 'H' });
+  for (const s of 'ABCDEFGH') for (const x of 'ABCDEFGH') assert.notEqual(K.miniEnigma(x, s), x, 'fixpunktfrei');
+  assert.throws(() => K.miniEnigma('zug'), K.KryptoFehler);
+  assert.equal(K.miniEnigma('bach', 'A', 'ver', { walze: 'DAHBFCGE', reflektor: 'EGHFADBC' }), 'HHAF');
+  const eigen = K.miniEnigma('abcdefgh', 'C', 'ver', { walze: 'ABCDEFGH' });
+  assert.equal(K.miniEnigma(eigen, 'C', 'ent', { walze: 'ABCDEFGH' }), 'ABCDEFGH');
+  assert.throws(() => K.miniEnigma('a', 'A', 'ver', { reflektor: 'ABCDEFGH' }), K.KryptoFehler, 'Reflektor mit Fixpunkten');
+  assert.throws(() => K.miniEnigma('a', 'A', 'ver', { walze: 'AACDEFGH' }), K.KryptoFehler, 'Walze keine Permutation');
+});
+test('M6 Bibliothek III: Stellungstabelle der Mini-Enigma = W3 K2 (alle acht Zeilen)', () => {
+  const tabelle = ['EHFGACDB', 'HEDCBGFA', 'CFAEDBHG', 'ECBGAHDF', 'BAEFCDHG', 'EDFBACHG', 'HEFGBCDA', 'GDFBHCAE'];
+  [...'ABCDEFGH'].forEach((s, i) => assert.equal(K.miniEnigma.tabelle(s), tabelle[i], `Stellung ${s}`));
+});

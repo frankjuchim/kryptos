@@ -715,7 +715,7 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
     `{ eingang, stationen: [x+s, W, −s, R, +s, W⁻¹, −s], ausgang }` (Buchstaben) / `mini_enigma`, `mini_enigma_tabelle`,
     `mini_enigma_weg`.
 
-- [ ] **Step 1: Failing test** – `test/krypto.test.js`:
+- [x] **Step 1: Failing test** – `test/krypto.test.js`:
   ```js
   test('M6 Bibliothek III: KRYPTOS-16 ohne S-Box ist affin, Bitweg (W3 §9.2)', () => {
     const E = (p) => K.kryptos16.verschluesseln(p, 0xa36d, { sbox: false });
@@ -767,11 +767,11 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   ```
   `vergleich.js`: `kryptos16.*` mit `sbox` an/aus, `kryptos16.bitweg` (Bit 0/1/16/17, alle Varianten, Runden 1–6),
   `kryptos16.kacheln`/`ausKacheln` (Zufallsraster 4–32, falsche Maße), `rm16.*`, `miniEnigma*`.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Python: RM-16 über 4×4-Listen, Mini-Enigma über die Stellungstabelle aus der Spec statt über
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Python: RM-16 über 4×4-Listen, Mini-Enigma über die Stellungstabelle aus der Spec statt über
   die Formel – unabhängiger Weg).
-- [ ] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Bibliothek: KRYPTOS-16 ohne S-Box, Bitweg, Pixel-Kacheln, RM-16, Mini-Enigma (+ Zwilling)"`.
+- [x] **Step 4: Run** → PASS; Zwillingsvergleich (300) grün; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Bibliothek: KRYPTOS-16 ohne S-Box, Bitweg, Pixel-Kacheln, RM-16, Mini-Enigma (+ Zwilling)"`.
 
 ### Task 108: Bibliothek IV – Ordnung, Teilen mit Rest, Probedivision, Prüfsummen, Kollisionsbaukasten, SHA-256, Hash als Zahl, Signatur (W4 §9, W5 §9, E68, E69)
 

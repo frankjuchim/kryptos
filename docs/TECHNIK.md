@@ -389,13 +389,19 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 | Funktion | Semantik |
 |---|---|
 | `kryptos16.rundenschluessel(schluessel16, runde)` | Definition: `quellen/specs/SPEC_Kryptos_W3_Maschinen.md §0a` |
-| `kryptos16.runde(block16, rundenschluessel, richtung)` | eine Runde in der Reihenfolge **XOR mit Rundenschlüssel → S-Box je Zeile → Transposition** (W3 §0a); kein abschließendes XOR nach der letzten Runde |
+| `kryptos16.runde(block16, rundenschluessel, richtung, { sbox = true })` | eine Runde in der Reihenfolge **XOR mit Rundenschlüssel → S-Box je Zeile → Transposition** (W3 §0a); kein abschließendes XOR nach der letzten Runde. *(M6)* Option `sbox: false` (auch bei `verschluesseln`, `entschluesseln`, `lawine`): Schritt (2) entfällt (Runden-Labor „ohne S-Box“, zeigt Linearität: E(p₁) ⊕ E(p₂) ⊕ E(0) = E(p₁ ⊕ p₂); im Protokoll `nachSBox = nachXor`); kein Wahrheitswert → `KryptoFehler` |
 | `kryptos16.verschluesseln(block16, schluessel16, { runden = 4, protokoll = false })` | Blöcke und Schlüssel als Zahlen 0–FFFF; `protokoll: true` liefert `{ ergebnis, runden: [{ runde, eingang, schluessel, nachXor, nachSBox, nachTransposition }] }` (Runden-Labor) |
 | `kryptos16.entschluesseln(…)` | Umkehrung |
 | `kryptos16.lawine(block16, schluessel16, bit, { runden })` | Positionen, die sich je Runde unterscheiden, wenn `bit` gekippt wird: `[{ runde, positionen, anzahl }]`; Bitnummern 1 (b1, höchstwertig) … 16 |
 | `kryptos16.modus(bloecke, schluessel, 'ECB'\|'CBC', iv, { richtung = 'ver', runden = 4 })` | Betriebsmodi für das Pixelbild-Experiment und die Fehlerfortpflanzung (W3-L2-07); `iv` nur bei CBC (Pflicht) |
 | `kryptos16.SBOX`, `kryptos16.SBOX_INV`, `kryptos16.sbox(block16, richtung)`, `kryptos16.transponiere(block16)` | Tabellen und Einzelschritte (Runden-Labor, Aufgaben W3-L2-02/03) |
 | `kryptos16.textZuBloecken(text)` / `kryptos16.bloeckeZuText(bloecke)` | ASCII → 16-Bit-Blöcke mit Auffüllen nach §0a.7 (immer: ungerade → Byte `01`, gerade → Block `0202`) bzw. zurück mit Prüfung und Entfernen der Füllbytes |
+| `kryptos16.bitweg(bit, { variante = 'kryptos16', runden })` | *(M6, Runden-Labor Bit-Verfolgung)* Weg eines Klartextbits (1 … 16, b1 = MSB) als Mengen von Bitnummern (aufsteigende Listen): `{ runden: [{ runde, nachXor, nachMitte, nachTransposition, schluessel }], ende, schluesselbits }`. XOR behält die Positionen; `schluessel` = beteiligte Bits der **ursprünglichen** Schlüsselmatrix K (Position p in Kᵢ = Position p + 4(i − 1) mod 16 in K); Mitte: `kryptos16` alle vier Bits der betroffenen Zeilen („beeinflusst“), `ohneSBox` unverändert, `rm16` Zeilenrotation; Transposition (z, s) → (s, z); `schluesselbits` = alle beteiligten Schlüsselbits in der Reihenfolge des ersten Auftretens. `runden` Standard 4 (`rm16`: 3), 1–16. Test: Bit 10 mit RM-16 → Ende Bit 4, Schlüsselbits 10, 3, 8 (W3 §6 Abbildung 2) |
+| `kryptos16.kacheln(raster)` / `kryptos16.ausKacheln(bloecke, breite)` | *(M6, ECB vs. CBC am Pixelbild)* Schwarz-Weiß-Raster (Zeilen-Strings aus `#`/`.` oder `1`/`0`, Breite und Höhe Vielfache von 4) → Blöcke 0–FFFF in Kachelreihenfolge zeilenweise, Kachel = 4 × 4 Pixel zeilenweise = b1 … b16; zurück als Raster aus `#`/`.` mit `breite` Pixeln je Zeile. Pixelbild „Schlüssel“ (W3 §9.2): 64 Kacheln, 39 weiß, 23 verschiedene; ECB (K = 2B7E, R = 4) weiße Kachel → `4081` |
+| `rm16.rundenschluessel(k, i)`, `rm16.runde(block, rk, richtung = 'ver')` | *(M6)* RM-16 nach W3 §6 Abbildung 1 (Definition unten); `runde` `ver` (1) XOR, (2) Zeilenrotation, (3) Transposition, `ent` umgekehrt |
+| `rm16.verschluesseln(block, k, { runden = 3, protokoll = false })` / `rm16.entschluesseln(block, k, { runden = 3 })` | *(M6)* Protokoll `{ ergebnis, runden: [{ runde, eingang, schluessel, nachXor, nachRotation, nachTransposition }] }`. Test (Abbildung 2): K = `963D`, P = `6CA3` → C = `C848` |
+| `miniEnigma(text, stellung = 'A', richtung = 'ver', { walze = 'DAHBFCGE', reflektor = 'EGHFADBC' })` | *(M6, Runden-Labor Reiter Mini-Enigma)* Mini-Enigma nach W3 K2 (Definition unten): Ausgabe A–H GROSS; Text nach `nurBuchstaben` nur A–H, sonst `KryptoFehler`; `richtung` wird nur geprüft (involutorisch); `walze` = Bilder von A … H (Permutation), `reflektor` = fixpunktfreie Involution, sonst `KryptoFehler`. Tests: `bach` (A) → `HHAF`, `chef` (E) → `EGBC` |
+| `miniEnigma.tabelle(stellung, optionen)` / `miniEnigma.weg(buchstabe, stellung, optionen)` | *(M6)* Zeile der Stellungstabelle (Bild von A … H, 8 Zeichen; `tabelle('A')` = `EHFGACDB`) bzw. Stromweg `{ eingang, stationen: [x + s, W, − s, R, + s, W⁻¹, − s], ausgang }` (Buchstaben; `weg('B', 'A')`: B → A → A → E → E → H → H) |
 | `kryptosHash(text, { protokoll = false })` | Definition: `quellen/specs/SPEC_Kryptos_W5_Netz.md §0a`; Rückgabe `{ wert, schritte? }` mit `schritte: [{ buchstabe, w, vorher, summe, nachher }]` (Rundentabelle) |
 | `kryptosHash.kollisionSuchen(text, { max = 10000, alphabet })` | erste gefundene Kollision (Schubfach-Experiment): Kandidaten kürzeste zuerst über `alphabet` (Std. a–z), der Text selbst zählt nicht (weder als Kollision noch als Versuch; `max` begrenzt die Versuche); `{ text, wert, versuche }` oder `null` |
 
@@ -411,6 +417,20 @@ macht die Oberfläche). Eingaben werden intern mit `nurBuchstaben()` normalisier
 - **KRYPTOS-Hash** (SPEC W5 §0a): Text normalisieren (nur a–z, Umlaute ae/oe/ue/ss), A = 1 … Z = 26; h = 0; je
   Buchstabe h ← (3·h + w) mod 29; Hashwert = letztes h (0…28). **Testvektoren:** KH(nebel) = 9; Kollisionen
   heute/morgen (22), „ueberweise zwei/tausend euro“ (18). Absichtlich schwach (keine Einweg-/Kollisionsresistenz).
+- **RM-16** (SPEC W3 §6 Abbildung 1, wörtlich): Klartextblock, Schlüssel und Geheimtextblock bestehen aus je 16 Bit
+  und werden als 4×4-Matrix geschrieben: Zeile 1 enthält die Bits 1–4, Zeile 2 die Bits 5–8 usw. Rundenschlüssel:
+  K₁ = K. Den Rundenschlüssel Kᵢ₊₁ erhält man aus Kᵢ, indem man alle Zeilen zyklisch um eine Zeile nach oben verschiebt
+  (Zeile 1 wird zu Zeile 4). Eine Runde besteht aus drei Schritten: (1) XOR der Matrix mit dem Rundenschlüssel Kᵢ
+  (XOR ist genau dann 1, wenn genau eines der Bits 1 ist). (2) Zeilenrotation: Zeile z wird um z − 1 Stellen zyklisch
+  nach links verschoben (Zeile 1 bleibt, Zeile 2 um 1, Zeile 3 um 2, Zeile 4 um 3 Stellen). (3) Transposition: Die
+  Zeilen werden zu Spalten (Zeile 1 wird Spalte 1, …). RM-16 verschlüsselt mit drei Runden.
+  **Testvektor** (Abbildung 2): K = `1001 0110 0011 1101`, P = `0110 1100 1010 0011` → C = `1100 1000 0100 1000`.
+- **Mini-Enigma** (SPEC W3 Kür K2 „Mini-Enigma (verbindlich)“, wörtlich): Alphabet A–H (8 Buchstaben, intern 0–7).
+  Walze W: A→D, B→A, C→H, D→B, E→F, F→C, G→G, H→E. Reflektor: A↔E, B↔G, C↔H, D↔F. Stellung s ∈ {A … H} (= 0 … 7).
+  Bei Stellung s wird x verschlüsselt zu W⁻¹(R(W(x + s) − s) + s) − s (alles mod 8). Der erste Buchstabe wird in der
+  Startstellung verschlüsselt, danach dreht die Walze vor jedem weiteren Buchstaben um eine Stellung weiter (H → A).
+  Stellungstabelle (Eingang A … H): A `EHFGACDB` · B `HEDCBGFA` · C `CFAEDBHG` · D `ECBGAHDF` · E `BAEFCDHG` ·
+  F `EDFBACHG` · G `HEFGBCDA` · H `GDFBHCAE`.
 
 Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `werkzeuge/krypto/test_krypto.py` übernommen.
 
@@ -475,7 +495,8 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 - Namen in `snake_case`, 1:1-Zuordnung in einer Tabelle am Dateianfang (`caesar`, `affin`, `schluesselwort_alphabet`,
   `vigenere`, `autokey`, `porta`, `playfair`, `kreuzquadrat`, `zwei_quadrat_zahl`, `polybios`, `adfgvx`, `gartenzaun`, `skytale`, `fleissner`,
   `spaltentransposition`, `umkehrung`, `blockrotation`, `skytale_raster`, `gartenzaun_schienen`, `fleissner_stellungen`,
-  `fleissner_drehgruppen`, `ring_folge`, `ring`, `pendel_folge`, `schluesselstrom`, `xor`, `text_zu_bits`, `xor_bits`, `kryptos16_*`, `kryptos_hash`,
+  `fleissner_drehgruppen`, `ring_folge`, `ring`, `pendel_folge`, `schluesselstrom`, `xor`, `text_zu_bits`, `xor_bits`, `kryptos16_*` (auch `kryptos16_bitweg`, `kryptos16_kacheln`, `kryptos16_aus_kacheln`), `rm16_*`,
+  `mini_enigma`, `mini_enigma_tabelle`, `mini_enigma_weg`, `kryptos_hash`,
   `haeufigkeiten`, `koinzidenzindex`, `friedman`, `kasiski`, `teiltexte`, `ngramme`, `teilsubstitution`, `muster_suchen`,
   `teiler_tabelle`, `primfaktoren`, `mittlerer_koinzidenzindex`, `koinzidenzindex_bruch`, `ggt`, `erweiterter_euklid`, `inverses`,
   `modpow`, `rsa_schluessel`, `dh_*`, `schluesselanzahl`, `verfahren_anwenden`, `baukasten_verschluesseln/entschluesseln`).

@@ -1067,25 +1067,33 @@
     return aus;
   }
 
-  /** eine Runde: ver XOR → S-Box → Transposition; ent Transposition → S⁻¹ → XOR */
-  function k16Runde(block16, rundenschluessel, richtung = 'ver') {
+  function pruefeSboxOption(sbox) {
+    if (typeof sbox !== 'boolean') throw new KryptoFehler('Die Option sbox ist true oder false.');
+    return sbox;
+  }
+
+  /** eine Runde: ver XOR → S-Box → Transposition; ent Transposition → S⁻¹ → XOR; sbox: false lässt Schritt (2) weg */
+  function k16Runde(block16, rundenschluessel, richtung = 'ver', { sbox = true } = {}) {
     pruefeBlock(block16);
     pruefeBlock(rundenschluessel, 'Der Rundenschlüssel');
     pruefeRichtung(richtung);
-    if (richtung === 'ver') return k16Transponiere(k16Sbox(block16 ^ rundenschluessel));
-    return k16Sbox(k16Transponiere(block16), 'ent') ^ rundenschluessel;
+    pruefeSboxOption(sbox);
+    const S = (x, r) => (sbox ? k16Sbox(x, r) : x);
+    if (richtung === 'ver') return k16Transponiere(S(block16 ^ rundenschluessel, 'ver'));
+    return S(k16Transponiere(block16), 'ent') ^ rundenschluessel;
   }
 
-  function k16Verschluesseln(block16, schluessel16, { runden = 4, protokoll = false } = {}) {
+  function k16Verschluesseln(block16, schluessel16, { runden = 4, protokoll = false, sbox = true } = {}) {
     pruefeBlock(block16);
     pruefeBlock(schluessel16, 'Der Schlüssel');
     pruefeRunden(runden);
+    pruefeSboxOption(sbox);
     let x = block16;
     const liste = [];
     for (let r = 1; r <= runden; r++) {
       const k = k16Rundenschluessel(schluessel16, r);
       const nachXor = x ^ k;
-      const nachSBox = k16Sbox(nachXor);
+      const nachSBox = sbox ? k16Sbox(nachXor) : nachXor;
       const nachTransposition = k16Transponiere(nachSBox);
       if (protokoll) liste.push({ runde: r, eingang: x, schluessel: k, nachXor, nachSBox, nachTransposition });
       x = nachTransposition;
@@ -1093,21 +1101,22 @@
     return protokoll ? { ergebnis: x, runden: liste } : x;
   }
 
-  function k16Entschluesseln(block16, schluessel16, { runden = 4 } = {}) {
+  function k16Entschluesseln(block16, schluessel16, { runden = 4, sbox = true } = {}) {
     pruefeBlock(block16);
     pruefeBlock(schluessel16, 'Der Schlüssel');
     pruefeRunden(runden);
+    pruefeSboxOption(sbox);
     let x = block16;
-    for (let r = runden; r >= 1; r--) x = k16Runde(x, k16Rundenschluessel(schluessel16, r), 'ent');
+    for (let r = runden; r >= 1; r--) x = k16Runde(x, k16Rundenschluessel(schluessel16, r), 'ent', { sbox });
     return x;
   }
 
   /** Lawine: je Runde die Bitpositionen (1 = höchstwertig … 16), die sich unterscheiden, wenn Bit `bit` kippt */
-  function k16Lawine(block16, schluessel16, bit, { runden = 4 } = {}) {
+  function k16Lawine(block16, schluessel16, bit, { runden = 4, sbox = true } = {}) {
     pruefeGanzzahl(bit, 'Bitposition');
     if (bit < 1 || bit > 16) throw new KryptoFehler('Die Bitposition liegt zwischen 1 und 16.');
-    const a = k16Verschluesseln(block16, schluessel16, { runden, protokoll: true }).runden;
-    const b = k16Verschluesseln(block16 ^ (1 << (16 - bit)), schluessel16, { runden, protokoll: true }).runden;
+    const a = k16Verschluesseln(block16, schluessel16, { runden, protokoll: true, sbox }).runden;
+    const b = k16Verschluesseln(block16 ^ (1 << (16 - bit)), schluessel16, { runden, protokoll: true, sbox }).runden;
     return a.map((ra, i) => {
       const d = ra.nachTransposition ^ b[i].nachTransposition;
       const positionen = [];
@@ -1162,6 +1171,98 @@
     return bytesZuText(bytes.slice(0, bytes.length - n));
   }
 
+  const BITWEG_VARIANTEN = ['kryptos16', 'ohneSBox', 'rm16'];
+
+  /** Bitnummer 1…16 (b1 = MSB) → [Zeile, Spalte] ab 0 und zurück */
+  const bitZS = (p) => [Math.floor((p - 1) / 4), (p - 1) % 4];
+  const zsBit = (z, s) => 4 * z + s + 1;
+  const aufsteigend = (liste) => [...new Set(liste)].sort((a, b) => a - b);
+
+  /**
+   * Bit-Verfolgung (W3 §9.2): Weg eines Klartextbits durch die Runden als Mengen von Bitnummern. XOR behält die
+   * Positionen (schluessel = beteiligte Bits der ursprünglichen Schlüsselmatrix K); Mitte: S-Box → alle vier Bits der
+   * betroffenen Zeilen („beeinflusst“), ohne S-Box unverändert, RM-16 Zeilenrotation; Transposition (z, s) → (s, z).
+   */
+  function k16Bitweg(bit, { variante = 'kryptos16', runden = null } = {}) {
+    pruefeGanzzahl(bit, 'Bitposition');
+    if (bit < 1 || bit > 16) throw new KryptoFehler('Die Bitposition liegt zwischen 1 und 16.');
+    if (!BITWEG_VARIANTEN.includes(variante)) throw new KryptoFehler('Die Variante ist „kryptos16“, „ohneSBox“ oder „rm16“.');
+    const r = runden === null || runden === undefined ? (variante === 'rm16' ? 3 : 4) : runden;
+    pruefeRunden(r);
+    if (r > 16) throw new KryptoFehler('Die Bit-Verfolgung zeigt höchstens 16 Runden.');
+    let menge = [bit];
+    const liste = [];
+    const schluesselbits = [];
+    for (let i = 1; i <= r; i++) {
+      const nachXor = menge.slice();
+      const schluessel = aufsteigend(nachXor.map((p) => ((p - 1 + 4 * (i - 1)) % 16) + 1));
+      let nachMitte;
+      if (variante === 'kryptos16') {
+        const zeilen = new Set(nachXor.map((p) => bitZS(p)[0]));
+        nachMitte = aufsteigend([...zeilen].flatMap((z) => [0, 1, 2, 3].map((s) => zsBit(z, s))));
+      } else if (variante === 'ohneSBox') {
+        nachMitte = nachXor.slice();
+      } else {
+        nachMitte = aufsteigend(nachXor.map((p) => {
+          const [z, s] = bitZS(p);
+          return zsBit(z, mod(s - z, 4));
+        }));
+      }
+      const nachTransposition = aufsteigend(nachMitte.map((p) => {
+        const [z, s] = bitZS(p);
+        return zsBit(s, z);
+      }));
+      for (const k of schluessel) if (!schluesselbits.includes(k)) schluesselbits.push(k);
+      liste.push({ runde: i, nachXor, nachMitte, nachTransposition, schluessel });
+      menge = nachTransposition;
+    }
+    return { runden: liste, ende: menge, schluesselbits };
+  }
+
+  /** Schwarz-Weiß-Raster (Zeilen aus # . bzw. 1 0, Maße Vielfache von 4) → Blöcke, Kachel = 4 × 4 Pixel = b1 … b16 */
+  function k16Kacheln(raster) {
+    if (!Array.isArray(raster) || raster.length === 0 || !raster.every((z) => typeof z === 'string')) {
+      throw new KryptoFehler('Das Bild ist eine Liste von Zeilen.');
+    }
+    const hoehe = raster.length;
+    const breite = raster[0].length;
+    if (breite === 0 || breite % 4 || hoehe % 4 || !raster.every((z) => z.length === breite)) {
+      throw new KryptoFehler('Breite und Höhe des Bildes müssen Vielfache von 4 sein (alle Zeilen gleich lang).');
+    }
+    if (!raster.every((z) => /^[#.10]*$/.test(z))) throw new KryptoFehler('Ein Bild besteht nur aus # und . (oder 1 und 0).');
+    const bloecke = [];
+    for (let ty = 0; ty < hoehe; ty += 4) {
+      for (let tx = 0; tx < breite; tx += 4) {
+        let w = 0;
+        for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) w = 2 * w + ('#1'.includes(raster[ty + y][tx + x]) ? 1 : 0);
+        bloecke.push(w);
+      }
+    }
+    return bloecke;
+  }
+
+  /** Blöcke → Raster aus # und . mit `breite` Pixeln je Zeile (Vielfaches von 4) */
+  function k16AusKacheln(bloecke, breite) {
+    if (!Array.isArray(bloecke) || bloecke.length === 0) throw new KryptoFehler('Es wird eine nicht leere Liste von Blöcken erwartet.');
+    bloecke.forEach((b) => pruefeBlock(b));
+    pruefeGanzzahl(breite, 'Die Breite');
+    if (breite < 4 || breite % 4) throw new KryptoFehler('Die Breite muss ein Vielfaches von 4 sein.');
+    const jeZeile = breite / 4;
+    if (bloecke.length % jeZeile) throw new KryptoFehler('Die Zahl der Blöcke passt nicht zur Breite.');
+    const zeilen = [];
+    for (let k = 0; k < bloecke.length; k += jeZeile) {
+      for (let y = 0; y < 4; y++) {
+        let zeile = '';
+        for (let j = 0; j < jeZeile; j++) {
+          const bits = byteZuBits(bloecke[k + j], 16).slice(4 * y, 4 * y + 4);
+          zeile += bits.replace(/1/g, '#').replace(/0/g, '.');
+        }
+        zeilen.push(zeile);
+      }
+    }
+    return zeilen;
+  }
+
   const kryptos16 = {
     SBOX: SBOX.slice(),
     SBOX_INV: SBOX_INV.slice(),
@@ -1175,6 +1276,135 @@
     modus: k16Modus,
     textZuBloecken: k16TextZuBloecken,
     bloeckeZuText: k16BloeckeZuText,
+    bitweg: k16Bitweg,
+    kacheln: k16Kacheln,
+    ausKacheln: k16AusKacheln,
+  };
+
+  // ───────────────────────────── RM-16 (SPEC W3 §6 Abbildung 1) ─────────────────────────────
+
+  /** Zeilenrotation: Zeile z (ab 1) um z − 1 Stellen zyklisch nach links (ent: nach rechts) */
+  function rm16Rotation(block16, richtung) {
+    let aus = 0;
+    for (let z = 0; z < 4; z++) {
+      const zeile = (block16 >>> (12 - 4 * z)) & 0xf;
+      const r = richtung === 'ver' ? z : (4 - z) % 4;
+      aus |= (((zeile << r) | (zeile >>> (4 - r))) & 0xf) << (12 - 4 * z);
+    }
+    return aus;
+  }
+
+  /** K₁ = K, Kᵢ₊₁ = Kᵢ mit allen Zeilen eine Zeile nach oben (Zeile 1 wird Zeile 4) */
+  function rm16Rundenschluessel(schluessel16, runde) {
+    return k16Rundenschluessel(schluessel16, runde);
+  }
+
+  /** eine Runde: ver (1) XOR, (2) Zeilenrotation, (3) Transposition; ent umgekehrt */
+  function rm16Runde(block16, rundenschluessel, richtung = 'ver') {
+    pruefeBlock(block16);
+    pruefeBlock(rundenschluessel, 'Der Rundenschlüssel');
+    pruefeRichtung(richtung);
+    if (richtung === 'ver') return k16Transponiere(rm16Rotation(block16 ^ rundenschluessel, 'ver'));
+    return rm16Rotation(k16Transponiere(block16), 'ent') ^ rundenschluessel;
+  }
+
+  function rm16Verschluesseln(block16, schluessel16, { runden = 3, protokoll = false } = {}) {
+    pruefeBlock(block16);
+    pruefeBlock(schluessel16, 'Der Schlüssel');
+    pruefeRunden(runden);
+    let x = block16;
+    const liste = [];
+    for (let r = 1; r <= runden; r++) {
+      const k = rm16Rundenschluessel(schluessel16, r);
+      const nachXor = x ^ k;
+      const nachRotation = rm16Rotation(nachXor, 'ver');
+      const nachTransposition = k16Transponiere(nachRotation);
+      if (protokoll) liste.push({ runde: r, eingang: x, schluessel: k, nachXor, nachRotation, nachTransposition });
+      x = nachTransposition;
+    }
+    return protokoll ? { ergebnis: x, runden: liste } : x;
+  }
+
+  function rm16Entschluesseln(block16, schluessel16, { runden = 3 } = {}) {
+    pruefeBlock(block16);
+    pruefeBlock(schluessel16, 'Der Schlüssel');
+    pruefeRunden(runden);
+    let x = block16;
+    for (let r = runden; r >= 1; r--) x = rm16Runde(x, rm16Rundenschluessel(schluessel16, r), 'ent');
+    return x;
+  }
+
+  const rm16 = {
+    rundenschluessel: rm16Rundenschluessel,
+    runde: rm16Runde,
+    verschluesseln: rm16Verschluesseln,
+    entschluesseln: rm16Entschluesseln,
+  };
+
+  // ───────────────────────────── Mini-Enigma (SPEC W3 Kür K2) ─────────────────────────────
+
+  const ME = 'ABCDEFGH';
+
+  /** Walze (Bilder von A … H, Permutation) und Reflektor (fixpunktfreie Involution) prüfen → Indexlisten */
+  function meVerdrahtung(optionen) {
+    const { walze = 'DAHBFCGE', reflektor = 'EGHFADBC' } = optionen || {};
+    const w = pruefeText(walze, 'Die Walze').toUpperCase();
+    if (!/^[A-H]{8}$/.test(w) || new Set(w).size !== 8) throw new KryptoFehler('Die Walze ordnet A … H jeweils einen anderen Buchstaben A–H zu.');
+    const r = pruefeText(reflektor, 'Der Reflektor').toUpperCase();
+    const ok = /^[A-H]{8}$/.test(r) && [...r].every((c, i) => c !== ME[i] && r[ME.indexOf(c)] === ME[i]);
+    if (!ok) throw new KryptoFehler('Der Reflektor verbindet A … H paarweise (jeder Buchstabe mit einem anderen).');
+    const W = [...w].map((c) => ME.indexOf(c));
+    const Winv = new Array(8);
+    W.forEach((b, a) => (Winv[b] = a));
+    return { W, Winv, R: [...r].map((c) => ME.indexOf(c)) };
+  }
+
+  function meBuchstabe(x, name) {
+    const b = pruefeText(x, name).toUpperCase();
+    if (!/^[A-H]$/.test(b)) throw new KryptoFehler(`${name} ist ein Buchstabe A–H.`);
+    return ME.indexOf(b);
+  }
+
+  /** Stationen x + s, W, − s, R, + s, W⁻¹, − s (alles mod 8) */
+  function meStationen(x, s, v) {
+    const a = (x + s) % 8;
+    const b = v.W[a];
+    const c = mod(b - s, 8);
+    const d = v.R[c];
+    const e = (d + s) % 8;
+    const f = v.Winv[e];
+    return [a, b, c, d, e, f, mod(f - s, 8)];
+  }
+
+  /**
+   * Mini-Enigma (W3 K2): erster Buchstabe in der Startstellung, danach vor jedem Buchstaben eine Stellung weiter;
+   * x ↦ W⁻¹(R(W(x + s) − s) + s) − s. Nur A–H; involutorisch (richtung wird nur geprüft).
+   */
+  function miniEnigma(text, stellung = 'A', richtung = 'ver', optionen = {}) {
+    pruefeRichtung(richtung);
+    const v = meVerdrahtung(optionen);
+    const s0 = meBuchstabe(stellung, 'Die Stellung');
+    const t = nurBuchstaben(text);
+    if (/[^A-H]/.test(t)) throw new KryptoFehler('Die Mini-Enigma kennt nur die Buchstaben A–H.');
+    let aus = '';
+    for (let i = 0; i < t.length; i++) aus += ME[meStationen(ME.indexOf(t[i]), (s0 + i) % 8, v)[6]];
+    return aus;
+  }
+
+  /** Bild von A … H in einer Stellung (Zeile der Stellungstabelle) */
+  miniEnigma.tabelle = function (stellung = 'A', optionen = {}) {
+    const v = meVerdrahtung(optionen);
+    const s = meBuchstabe(stellung, 'Die Stellung');
+    return [...ME].map((c, x) => ME[meStationen(x, s, v)[6]]).join('');
+  };
+
+  /** Stromweg eines Buchstabens: { eingang, stationen (7 Buchstaben), ausgang } */
+  miniEnigma.weg = function (buchstabe, stellung = 'A', optionen = {}) {
+    const v = meVerdrahtung(optionen);
+    const x = meBuchstabe(buchstabe, 'Der Buchstabe');
+    const s = meBuchstabe(stellung, 'Die Stellung');
+    const stationen = meStationen(x, s, v).map((i) => ME[i]);
+    return { eingang: ME[x], stationen, ausgang: stationen[6] };
   };
 
   // ───────────────────────────── KRYPTOS-Hash (SPEC W5 §0a) ─────────────────────────────
@@ -2234,6 +2464,8 @@
     rotiereBits,
     // Moderne Toy-Verfahren
     kryptos16,
+    rm16,
+    miniEnigma,
     kryptosHash,
     // Kryptoanalyse
     DEUTSCH,

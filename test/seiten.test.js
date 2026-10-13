@@ -176,7 +176,8 @@ test('Fehlerseiten und 404 statisch: nur common.js und oberflaeche.js, Kopf mit 
   }
 });
 test('Kein externer Link auf die Krypto-Werkstatt (Design O11, bis die Erlaubnis geklärt ist)', () => {
-  for (const p of [...htmlDateien, ...jsDateien]) assert.doesNotMatch(lies(p), /andrebodendiek|enigma\./i, rel(p));
+  // Adresse der Werkstatt (Rechnername „enigma.…“), nicht Bezeichner wie Krypto.miniEnigma.tabelle (M6 Task 107)
+  for (const p of [...htmlDateien, ...jsDateien]) assert.doesNotMatch(lies(p), /andrebodendiek|\/\/enigma\./i, rel(p));
 });
 test('Review M4 K6: Fehlerseiten trennen die Anrede (kein Absatz mit du und Sie zugleich)', () => {
   const du = /\b(du|dein|deine|deinen|deinem|deiner|dich|dir)\b/i;

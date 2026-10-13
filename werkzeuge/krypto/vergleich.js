@@ -116,6 +116,32 @@ const fuell = () => (selten(0.1) ? wahl(['1', 'XY', '', 'j', 5]) : wahl(['X', 'Q
 const zahlenschluessel = () =>
   selten(0.1) ? wahl(['', '35', '3a', [1, 7], [], '3 1']) : zufall() < 0.3 ? bytes(ganz(1, 6), 0, 4) : bytes(ganz(1, 6), 0, 4).join('');
 
+// Mini-Enigma: Stellung und Verdrahtung (zufällige Permutation bzw. fixpunktfreie Involution, selten ungültig)
+const meStellung = () => (selten(0.05) ? wahl(['I', '', 'AB', 3]) : wahl([...'ABCDEFGHabcdefgh']));
+function meVerdrahtung() {
+  const o = {};
+  if (zufall() < 0.7) {
+    const p = [...'ABCDEFGH'];
+    for (let i = 7; i > 0; i--) {
+      const j = ganz(0, i);
+      [p[i], p[j]] = [p[j], p[i]];
+    }
+    o.walze = selten(0.1) ? wahl(['AACDEFGH', 'ABCDEFG', 'ABCDEFGI']) : p.join('');
+  }
+  if (zufall() < 0.7) {
+    const rest = [...'ABCDEFGH'];
+    const r = new Array(8);
+    while (rest.length) {
+      const a = rest.shift();
+      const b = rest.splice(ganz(0, rest.length - 1), 1)[0];
+      r['ABCDEFGH'.indexOf(a)] = b;
+      r['ABCDEFGH'.indexOf(b)] = a;
+    }
+    o.reflektor = selten(0.1) ? wahl(['ABCDEFGH', 'BCADFEHG', 'BADCFEH']) : r.join('');
+  }
+  return o;
+}
+
 // Verfahrens-Objekte (Delta §6) und Baukasten-Verfahren (TECHNIK §9.2)
 const STUFENTYPEN = ['caesar', 'substitution', 'vigenere', 'spaltentransposition', 'gartenzaun', 'blockrotation', 'umkehrung', 'xor'];
 function stufe(typ, zuletzt) {
@@ -377,13 +403,22 @@ const FAELLE = {
   'kryptos16.rundenschluessel': { fest: [[0xa36d, 1], [0xa36d, 5], [0x10000, 1], [1, 0], [0x7777, 2]], zufall: () => [selten() ? wahl([-1, 65536, 1.5]) : ganz(0, 65535), ganz(selten() ? -1 : 1, 10)] },
   'kryptos16.sbox': { fest: [[0xecc6], [0xdb38, 'ent'], [0x10000]], zufall: () => [ganz(0, 65535), ...(zufall() < 0.6 ? [richtung()] : [])] },
   'kryptos16.transponiere': { fest: [[0xdb38], [0xf000], [-1]], zufall: () => [ganz(0, 65535)] },
-  'kryptos16.runde': { fest: [[0x4f4b, 0xa36d], [0xd86e, 0xa36d, 'ent']], zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.6 ? [richtung()] : [])] },
-  'kryptos16.verschluesseln': {
-    fest: [[0x4f4b, 0xa36d], [0x4f4b, 0xa36d, { runden: 2, protokoll: true }], [0x10000, 1], [1, 1, { runden: 0 }]],
-    zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: selten(0.05) ? 0 : ganz(1, 8), protokoll: zufall() < 0.3 }] : [])],
+  'kryptos16.runde': {
+    fest: [[0x4f4b, 0xa36d], [0xd86e, 0xa36d, 'ent'], [0x4f4b, 0xa36d, 'ver', { sbox: false }], [0x4f4b, 0xa36d, 'ent', { sbox: false }], [1, 1, 'ver', { sbox: 'nein' }]],
+    zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.6 ? [richtung(), ...(zufall() < 0.5 ? [{ sbox: selten(0.05) ? 0 : zufall() < 0.5 }] : [])] : [])],
   },
-  'kryptos16.entschluesseln': { fest: [[0xf5f8, 0xa36d], [1, 1, { runden: 0 }]], zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: ganz(1, 8) }] : [])] },
-  'kryptos16.lawine': { fest: [[0x4f4b, 0xa36d, 16], [0x4a41, 0x5c9e, 16], [0x4f4b, 0xa36d, 16, { runden: 1 }], [0, 0, 17], [0, 0, 0]], zufall: () => [ganz(0, 65535), ganz(0, 65535), ganz(selten() ? 0 : 1, selten() ? 17 : 16), ...(zufall() < 0.5 ? [{ runden: ganz(1, 6) }] : [])] },
+  'kryptos16.verschluesseln': {
+    fest: [[0x4f4b, 0xa36d], [0x4f4b, 0xa36d, { runden: 2, protokoll: true }], [0x10000, 1], [1, 1, { runden: 0 }], [0x4f4b, 0xa36d, { sbox: false, protokoll: true }], [1, 1, { sbox: null }]],
+    zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: selten(0.05) ? 0 : ganz(1, 8), protokoll: zufall() < 0.3, ...(zufall() < 0.5 ? { sbox: selten(0.05) ? 1 : zufall() < 0.5 } : {}) }] : [])],
+  },
+  'kryptos16.entschluesseln': {
+    fest: [[0xf5f8, 0xa36d], [1, 1, { runden: 0 }], [0xf5f8, 0xa36d, { sbox: false }], [1, 1, { sbox: 'ja' }]],
+    zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: ganz(1, 8), ...(zufall() < 0.5 ? { sbox: zufall() < 0.5 } : {}) }] : [])],
+  },
+  'kryptos16.lawine': {
+    fest: [[0x4f4b, 0xa36d, 16], [0x4a41, 0x5c9e, 16], [0x4f4b, 0xa36d, 16, { runden: 1 }], [0, 0, 17], [0, 0, 0], [0x4f4b, 0xa36d, 1, { sbox: false }]],
+    zufall: () => [ganz(0, 65535), ganz(0, 65535), ganz(selten() ? 0 : 1, selten() ? 17 : 16), ...(zufall() < 0.5 ? [{ runden: ganz(1, 6), ...(zufall() < 0.5 ? { sbox: zufall() < 0.5 } : {}) }] : [])],
+  },
   'kryptos16.modus': {
     fest: [[[0x4a41, 0x4a41], 0x5c9e, 'ECB', null, { runden: 1 }], [[0x4a41, 0x4a41], 0x5c9e, 'CBC', 0x30c3, { runden: 1 }], [[1], 1, 'CBC'], [[1], 1, 'OFB', 0], [[], 1, 'ECB'], [[], 1, 'CBC', 5]],
     zufall: () => [bytes(ganz(0, 6), 0, 65535), ganz(0, 65535), selten(0.05) ? 'OFB' : wahl(['ECB', 'CBC']), selten(0.1) ? null : ganz(0, 65535), { richtung: wahl(RICHTUNGEN), runden: ganz(1, 6) }],
@@ -576,6 +611,47 @@ const FAELLE = {
     zufall: () => [zufall() < 0.6 ? K.vigenere(deutsch(80), buchstaben(1, 8)) : text(), selten() ? wahl([0, 41, 1.5]) : ganz(1, 40)],
   },
   koinzidenzindexBruch: { fest: [['A'], [''], ['AA'], ['BALLADE']], zufall: () => [textOderDeutsch()] },
+
+  // ── M6 Bibliothek III (Plan M6 Task 107) ──
+  'kryptos16.bitweg': {
+    fest: [[1, { variante: 'kryptos16', runden: 1 }], [1, { variante: 'ohneSBox' }], [10, { variante: 'rm16' }], [0], [17], [16], [1], [1, { variante: 'aes' }], [1, { runden: 0 }], [1, { runden: 17 }], [1, { runden: 16 }], [2.5]],
+    zufall: () => [selten() ? wahl([0, 17, 1.5]) : ganz(1, 16), ...(zufall() < 0.8 ? [{ variante: selten(0.05) ? 'aes' : wahl(['kryptos16', 'ohneSBox', 'rm16']), ...(zufall() < 0.7 ? { runden: selten(0.05) ? wahl([0, 17]) : ganz(1, 6) } : {}) }] : [])],
+  },
+  'kryptos16.kacheln': {
+    fest: [[['###']], [[]], [['####', '....', '#.#.', '.#.#']], [['1111', '0000', '1010', '0101']], [['####', '....', '#.#.']], [['####', '....', '#.#.', '.#.']], [['####', '....', '#.#.', '.#.x']], ['####'], [['', '', '', '']], [['########', '........', '#.#.#.#.', '.#.#.#.#']]],
+    zufall: () => {
+      const b = 4 * ganz(1, 8);
+      const h = 4 * ganz(1, 8);
+      const raster = Array.from({ length: h }, () => Array.from({ length: b }, () => wahl(zufall() < 0.8 ? ['#', '.'] : ['1', '0'])).join(''));
+      if (selten()) raster.pop();
+      if (selten()) raster[0] = raster[0].slice(1);
+      if (selten(0.05)) raster[0] = 'x' + raster[0].slice(1);
+      return [raster];
+    },
+  },
+  'kryptos16.ausKacheln': {
+    fest: [[[0, 65535], 8], [[0, 65535], 4], [[0, 65535], 12], [[], 4], [[1], 0], [[1], 6], [[65536], 4], [[1, 2, 3], 8]],
+    zufall: () => { const b = 4 * ganz(1, 8); return [bytes((b / 4) * ganz(1, 8) + (selten() ? 1 : 0), 0, selten(0.02) ? 70000 : 65535), selten() ? wahl([0, 6, 2.5]) : b]; },
+  },
+  'rm16.rundenschluessel': { fest: [[0x963d, 3], [0x963d, 1], [0x963d, 5], [0x963d, 0], [0x10000, 1]], zufall: () => [ganz(0, 65535), ganz(selten() ? 0 : 1, 9)] },
+  'rm16.runde': { fest: [[0x6ca3, 0x963d], [0x8fbd, 0x963d, 'ent'], [1, 1, 'quer']], zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.6 ? [richtung()] : [])] },
+  'rm16.verschluesseln': {
+    fest: [[0x6ca3, 0x963d, { protokoll: true }], [0x6ca3, 0x963d], [1, 1, { runden: 0 }], [0x10000, 1]],
+    zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: selten(0.05) ? 0 : ganz(1, 8), protokoll: zufall() < 0.4 }] : [])],
+  },
+  'rm16.entschluesseln': { fest: [[0xc848, 0x963d], [1, 1, { runden: 0 }]], zufall: () => [ganz(0, 65535), ganz(0, 65535), ...(zufall() < 0.7 ? [{ runden: ganz(1, 8) }] : [])] },
+  miniEnigma: {
+    fest: [['bach'], ['chef', 'E'], ['EGBC', 'E', 'ent'], ['zug'], [''], ['abc', 'I'], ['abc', 'e'], ['abc', 'AB'], ['abc', 'A', 'quer'], ['bach', 'A', 'ver', { walze: 'DAHBFCGE', reflektor: 'EGHFADBC' }], ['abcdefgh', 'C', 'ver', { walze: 'ABCDEFGH' }], ['a', 'A', 'ver', { reflektor: 'ABCDEFGH' }], ['a', 'A', 'ver', { walze: 'AACDEFGH' }], ['a', 'A', 'ver', { walze: 'dahbfcge' }], ['a', 'A', 'ver', { reflektor: 'BADCFEHG' }], ['a', 'A', 'ver', { reflektor: 'BCADFEHG' }], ['a', 'A', 'ver', { walze: 'ABCDEFGHI' }]],
+    zufall: () => [zufall() < 0.85 ? text(30, 'abcdefghABCDEFGH ') : text(20), meStellung(), wahl(RICHTUNGEN), ...(zufall() < 0.5 ? [meVerdrahtung()] : [])],
+  },
+  'miniEnigma.tabelle': {
+    fest: [['A'], ['H'], ['I'], [''], ['C', { walze: 'ABCDEFGH' }], ['C', { reflektor: 'ABCDEFGH' }]],
+    zufall: () => [meStellung(), ...(zufall() < 0.6 ? [meVerdrahtung()] : [])],
+  },
+  'miniEnigma.weg': {
+    fest: [['B', 'A'], ['b', 'h'], ['I', 'A'], ['B', 'I'], ['BB', 'A'], ['B', 'A', { walze: 'ABCDEFGH' }]],
+    zufall: () => [selten() ? wahl(['I', '', 'AB', 'ä']) : wahl([...'ABCDEFGHabcdefgh']), meStellung(), ...(zufall() < 0.6 ? [meVerdrahtung()] : [])],
+  },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).

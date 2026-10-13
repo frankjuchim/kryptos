@@ -38,6 +38,9 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | gartenzaunSchienen              | gartenzaun_schienen             | fleissnerStellungen/-Drehgruppen | fleissner_stellungen/_drehgruppen |
 | ngramme, teilsubstitution       | ngramme, teilsubstitution       | musterSuchen, teilerTabelle     | muster_suchen, teiler_tabelle |
 | primfaktoren                    | primfaktoren                    | mittlererKoinzidenzindex, koinzidenzindexBruch | mittlerer_koinzidenzindex, koinzidenzindex_bruch |
+| kryptos16.bitweg, .kacheln      | kryptos16_bitweg, kryptos16_kacheln | kryptos16.ausKacheln        | kryptos16_aus_kacheln       |
+| rm16.rundenschluessel / .runde  | rm16_rundenschluessel, rm16_runde | rm16.verschluesseln/…ent…     | rm16_verschluesseln / rm16_entschluesseln |
+| miniEnigma                      | mini_enigma                     | miniEnigma.tabelle / .weg       | mini_enigma_tabelle / mini_enigma_weg |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -1020,12 +1023,21 @@ def kryptos16_transponiere(block16):
     return _aus_bitliste([matrix[s][z] for z in range(4) for s in range(4)])
 
 
-def kryptos16_runde(block16, rundenschluessel, richtung='ver'):
+def _sbox_option(sbox):
+    if not isinstance(sbox, bool):
+        raise KryptoFehler('sbox ist ein Wahrheitswert.')
+    return sbox
+
+
+def kryptos16_runde(block16, rundenschluessel, richtung='ver', *, sbox=True):
     x = _block16(block16)
     k = _block16(rundenschluessel, 'Rundenschlüssel')
+    mit_s = _sbox_option(sbox)
     if _richtung(richtung) == 'ver':
-        return kryptos16_transponiere(kryptos16_sbox(x ^ k))
-    return kryptos16_sbox(kryptos16_transponiere(x), 'ent') ^ k
+        y = x ^ k
+        return kryptos16_transponiere(kryptos16_sbox(y) if mit_s else y)
+    y = kryptos16_transponiere(x)
+    return (kryptos16_sbox(y, 'ent') if mit_s else y) ^ k
 
 
 def _runden(runden):
@@ -1035,15 +1047,16 @@ def _runden(runden):
     return r
 
 
-def kryptos16_verschluesseln(block16, schluessel16, *, runden=4, protokoll=False):
+def kryptos16_verschluesseln(block16, schluessel16, *, runden=4, protokoll=False, sbox=True):
     x = _block16(block16)
     k = _block16(schluessel16, 'Schlüssel')
     r = _runden(runden)
+    mit_s = _sbox_option(sbox)
     tabelle = []
     for i in range(1, r + 1):
         ki = kryptos16_rundenschluessel(k, i)
         nach_xor = x ^ ki
-        nach_s = kryptos16_sbox(nach_xor)
+        nach_s = kryptos16_sbox(nach_xor) if mit_s else nach_xor
         nach_t = kryptos16_transponiere(nach_s)
         tabelle.append({'runde': i, 'eingang': x, 'schluessel': ki, 'nach_xor': nach_xor, 'nach_s_box': nach_s,
                         'nach_transposition': nach_t})
@@ -1053,15 +1066,16 @@ def kryptos16_verschluesseln(block16, schluessel16, *, runden=4, protokoll=False
     return x
 
 
-def kryptos16_entschluesseln(block16, schluessel16, *, runden=4):
+def kryptos16_entschluesseln(block16, schluessel16, *, runden=4, sbox=True):
     x = _block16(block16)
     k = _block16(schluessel16, 'Schlüssel')
+    _sbox_option(sbox)
     for i in range(_runden(runden), 0, -1):
-        x = kryptos16_runde(x, kryptos16_rundenschluessel(k, i), 'ent')
+        x = kryptos16_runde(x, kryptos16_rundenschluessel(k, i), 'ent', sbox=sbox)
     return x
 
 
-def kryptos16_lawine(block16, schluessel16, bit, *, runden=4):
+def kryptos16_lawine(block16, schluessel16, bit, *, runden=4, sbox=True):
     x = _block16(block16)
     k = _block16(schluessel16, 'Schlüssel')
     bit = _ganz(bit, 'Bit')
@@ -1072,7 +1086,7 @@ def kryptos16_lawine(block16, schluessel16, bit, *, runden=4):
     ergebnis = []
     for i in range(1, r + 1):
         ki = kryptos16_rundenschluessel(k, i)
-        x, y = kryptos16_runde(x, ki), kryptos16_runde(y, ki)
+        x, y = kryptos16_runde(x, ki, sbox=sbox), kryptos16_runde(y, ki, sbox=sbox)
         positionen = [j + 1 for j, (a, b) in enumerate(zip(_bitliste(x), _bitliste(y))) if a != b]
         ergebnis.append({'runde': i, 'positionen': positionen, 'anzahl': len(positionen)})
     return ergebnis
@@ -1125,6 +1139,215 @@ def kryptos16_bloecke_zu_text(bloecke):
     else:
         raise KryptoFehler('Die Füllbytes fehlen oder sind falsch.')
     return bytes_zu_text(b)
+
+
+def kryptos16_bitweg(bit, *, variante='kryptos16', runden=None):
+    """W3 §9.2 Bit-Verfolgung über Mengen von Koordinaten (z, s) ab 0; Bitnummer = 4z + s + 1."""
+    bit = _ganz(bit, 'Bit')
+    if not 1 <= bit <= 16:
+        raise KryptoFehler('Bitnummern gehen von 1 bis 16.')
+    if variante not in ('kryptos16', 'ohneSBox', 'rm16'):
+        raise KryptoFehler('Unbekannte Variante.')
+    r = _runden((3 if variante == 'rm16' else 4) if runden is None else runden)
+    if r > 16:
+        raise KryptoFehler('Höchstens 16 Runden.')
+
+    def nummern(felder):
+        return sorted({4 * z + sp + 1 for z, sp in felder})
+
+    felder = {divmod(bit - 1, 4)}
+    runden_liste, schluesselbits = [], []
+    for i in range(1, r + 1):
+        # Kᵢ = K um 4(i − 1) Bit nach links: Position p in Kᵢ ist Position p + 4(i − 1) (mod 16) in K
+        schluessel = sorted({(4 * z + sp + 4 * (i - 1)) % 16 + 1 for z, sp in felder})
+        if variante == 'kryptos16':
+            mitte = {(z, spalte) for z, _ in felder for spalte in range(4)}
+        elif variante == 'ohneSBox':
+            mitte = set(felder)
+        else:
+            mitte = {(z, (sp - z) % 4) for z, sp in felder}
+        danach = {(sp, z) for z, sp in mitte}
+        runden_liste.append({'runde': i, 'nach_xor': nummern(felder), 'nach_mitte': nummern(mitte),
+                             'nach_transposition': nummern(danach), 'schluessel': schluessel})
+        schluesselbits += [k for k in schluessel if k not in schluesselbits]
+        felder = danach
+    return {'runden': runden_liste, 'ende': nummern(felder), 'schluesselbits': schluesselbits}
+
+
+def kryptos16_kacheln(raster):
+    if not isinstance(raster, list) or not raster or not all(isinstance(z, str) for z in raster):
+        raise KryptoFehler('Das Bild ist eine nicht leere Liste von Zeilen.')
+    breite, hoehe = len(raster[0]), len(raster)
+    if breite == 0 or breite % 4 or hoehe % 4 or any(len(z) != breite for z in raster):
+        raise KryptoFehler('Breite und Höhe sind Vielfache von 4.')
+    if any(c not in '#.10' for z in raster for c in z):
+        raise KryptoFehler('Erlaubt sind nur # . 1 0.')
+    bits = [[1 if c in '#1' else 0 for c in z] for z in raster]
+    bloecke = []
+    for ky in range(hoehe // 4):
+        for kx in range(breite // 4):
+            kachel = [bits[4 * ky + y][4 * kx + x] for y in range(4) for x in range(4)]
+            bloecke.append(_aus_bitliste(kachel))
+    return bloecke
+
+
+def kryptos16_aus_kacheln(bloecke, breite):
+    if not isinstance(bloecke, list) or not bloecke:
+        raise KryptoFehler('Mindestens ein Block.')
+    bl = [_block16(b) for b in bloecke]
+    breite = _ganz(breite, 'Breite')
+    if breite < 4 or breite % 4:
+        raise KryptoFehler('Die Breite ist ein Vielfaches von 4.')
+    je_zeile = breite // 4
+    if len(bl) % je_zeile:
+        raise KryptoFehler('Die Blockzahl passt nicht zur Breite.')
+    zeilen = []
+    for k in range(0, len(bl), je_zeile):
+        reihe = [_bitliste(b) for b in bl[k:k + je_zeile]]
+        for y in range(4):
+            zeilen.append(''.join('#' if b[4 * y + x] else '.' for b in reihe for x in range(4)))
+    return zeilen
+
+
+# ───────────────────────────── RM-16 (SPEC W3 §6 Abbildung 1) ─────────────────────────────
+
+def _matrix(x):
+    b = _bitliste(x)
+    return [b[4 * z:4 * z + 4] for z in range(4)]
+
+
+def _aus_matrix(m):
+    return _aus_bitliste([bit for zeile in m for bit in zeile])
+
+
+def rm16_rundenschluessel(schluessel16, runde):
+    """Kᵢ: Zeilen von K um i − 1 Zeilen zyklisch nach oben."""
+    m = _matrix(_block16(schluessel16, 'Schlüssel'))
+    runde = _ganz(runde, 'Runde')
+    if runde < 1:
+        raise KryptoFehler('Runden zählen ab 1.')
+    v = (runde - 1) % 4
+    return _aus_matrix(m[v:] + m[:v])
+
+
+def _rm16_rotation(m, richtung):
+    return [zeile[z:] + zeile[:z] if richtung == 'ver' else zeile[-z:] + zeile[:-z] if z else zeile[:]
+            for z, zeile in enumerate(m)]
+
+
+def _transponiert(m):
+    return [[m[z][sp] for z in range(4)] for sp in range(4)]
+
+
+def _xor_matrix(a, b):
+    return [[x ^ y for x, y in zip(za, zb)] for za, zb in zip(a, b)]
+
+
+def rm16_runde(block16, rundenschluessel, richtung='ver'):
+    m = _matrix(_block16(block16))
+    k = _matrix(_block16(rundenschluessel, 'Rundenschlüssel'))
+    if _richtung(richtung) == 'ver':
+        return _aus_matrix(_transponiert(_rm16_rotation(_xor_matrix(m, k), 'ver')))
+    return _aus_matrix(_xor_matrix(_rm16_rotation(_transponiert(m), 'ent'), k))
+
+
+def rm16_verschluesseln(block16, schluessel16, *, runden=3, protokoll=False):
+    m = _matrix(_block16(block16))
+    k = _block16(schluessel16, 'Schlüssel')
+    tabelle = []
+    for i in range(1, _runden(runden) + 1):
+        ki = _matrix(rm16_rundenschluessel(k, i))
+        nach_xor = _xor_matrix(m, ki)
+        nach_rot = _rm16_rotation(nach_xor, 'ver')
+        nach_t = _transponiert(nach_rot)
+        tabelle.append({'runde': i, 'eingang': _aus_matrix(m), 'schluessel': _aus_matrix(ki), 'nach_xor': _aus_matrix(nach_xor),
+                        'nach_rotation': _aus_matrix(nach_rot), 'nach_transposition': _aus_matrix(nach_t)})
+        m = nach_t
+    if protokoll:
+        return {'ergebnis': _aus_matrix(m), 'runden': tabelle}
+    return _aus_matrix(m)
+
+
+def rm16_entschluesseln(block16, schluessel16, *, runden=3):
+    x = _block16(block16)
+    k = _block16(schluessel16, 'Schlüssel')
+    for i in range(_runden(runden), 0, -1):
+        x = rm16_runde(x, rm16_rundenschluessel(k, i), 'ent')
+    return x
+
+
+# ───────────────────────────── Mini-Enigma (SPEC W3 Kür K2) ─────────────────────────────
+
+_ME = 'ABCDEFGH'
+_ME_WALZE = 'DAHBFCGE'
+_ME_REFLEKTOR = 'EGHFADBC'
+# Stellungstabelle wörtlich aus SPEC W3 Kür K2 (Eingang A … H je Stellung)
+MINI_ENIGMA_TABELLE = {'A': 'EHFGACDB', 'B': 'HEDCBGFA', 'C': 'CFAEDBHG', 'D': 'ECBGAHDF',
+                       'E': 'BAEFCDHG', 'F': 'EDFBACHG', 'G': 'HEFGBCDA', 'H': 'GDFBHCAE'}
+
+
+def _me_verdrahtung(walze, reflektor):
+    w = _text(walze, 'Walze').upper()
+    if not re.fullmatch('[A-H]{8}', w) or len(set(w)) != 8:
+        raise KryptoFehler('Die Walze ist eine Anordnung von A–H.')
+    r = _text(reflektor, 'Reflektor').upper()
+    if not re.fullmatch('[A-H]{8}', r):
+        raise KryptoFehler('Der Reflektor ist eine Anordnung von A–H.')
+    paare = dict(zip(_ME, r))
+    if any(a == b or paare[b] != a for a, b in paare.items()):
+        raise KryptoFehler('Der Reflektor muss die Buchstaben paarweise ohne Fixpunkt verbinden.')
+    return w, r
+
+
+def _me_index(x, name):
+    b = _text(x, name).upper()
+    if len(b) != 1 or b not in _ME:
+        raise KryptoFehler(f'{name}: ein Buchstabe A–H.')
+    return _ME.index(b)
+
+
+def _mini_enigma_zeile(s, walze, reflektor):
+    """Zeile der Stellungstabelle über die gedrehte Verdrahtung: Walze in Stellung s = W_s(x) = W(x + s) − s,
+    Bild = W_s⁻¹(R(W_s(x)))."""
+    w = [_ME.index(c) for c in walze]
+    gedreht = [(w[(x + s) % 8] - s) % 8 for x in range(8)]
+    zurueck = {b: a for a, b in enumerate(gedreht)}
+    r = [_ME.index(c) for c in reflektor]
+    return ''.join(_ME[zurueck[r[gedreht[x]]]] for x in range(8))
+
+
+def mini_enigma_tabelle(stellung='A', *, walze=_ME_WALZE, reflektor=_ME_REFLEKTOR):
+    w, r = _me_verdrahtung(walze, reflektor)
+    s = _me_index(stellung, 'Stellung')
+    if (w, r) == (_ME_WALZE, _ME_REFLEKTOR):
+        return MINI_ENIGMA_TABELLE[_ME[s]]
+    return _mini_enigma_zeile(s, w, r)
+
+
+def mini_enigma(text, stellung='A', richtung='ver', *, walze=_ME_WALZE, reflektor=_ME_REFLEKTOR):
+    _richtung(richtung)
+    w, r = _me_verdrahtung(walze, reflektor)
+    s = _me_index(stellung, 'Stellung')
+    t = nur_buchstaben(text)
+    if any(c not in _ME for c in t):
+        raise KryptoFehler('Nur die Buchstaben A–H.')
+    zeilen = [mini_enigma_tabelle(_ME[k], walze=w, reflektor=r) for k in range(8)]
+    return ''.join(zeilen[(s + i) % 8][_ME.index(c)] for i, c in enumerate(t))
+
+
+def mini_enigma_weg(buchstabe, stellung='A', *, walze=_ME_WALZE, reflektor=_ME_REFLEKTOR):
+    w, r = _me_verdrahtung(walze, reflektor)
+    x = _me_index(buchstabe, 'Buchstabe')
+    s = _me_index(stellung, 'Stellung')
+    weg = [(x + s) % 8]
+    weg.append(_ME.index(w[weg[-1]]))           # Walze W
+    weg.append((weg[-1] - s) % 8)               # − s
+    weg.append(_ME.index(r[weg[-1]]))           # Reflektor R
+    weg.append((weg[-1] + s) % 8)               # + s
+    weg.append(w.index(_ME[weg[-1]]))           # W⁻¹
+    weg.append((weg[-1] - s) % 8)               # − s
+    stationen = [_ME[i] for i in weg]
+    return {'eingang': _ME[x], 'stationen': stationen, 'ausgang': stationen[-1]}
 
 
 # ───────────────────────────── KRYPTOS-Hash (SPEC W5 §0a) ─────────────────────────────

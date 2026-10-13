@@ -1371,5 +1371,72 @@ class BibliothekM6II(unittest.TestCase):
         self.assertIsNone(K.koinzidenzindex_bruch('A'))
 
 
+def _pixelbild():
+    pfad = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'quellen', 'specs', 'SPEC_Kryptos_W3_Maschinen.md')
+    with open(pfad, encoding='utf8') as f:
+        spec = f.read()
+    return spec.split('**Pixelbild „Schlüssel“**')[1].split('```')[1].strip().split('\n')
+
+
+class BibliothekM6III(unittest.TestCase):
+    """Plan M6 Task 107 (W3 §9.2, §6 Abbildung 1/2, Kür K2)."""
+
+    def test_ohne_sbox_und_bitweg(self):
+        def e(p):
+            return K.kryptos16_verschluesseln(p, 0xA36D, sbox=False)
+        for p1, p2 in [(0x4F4B, 0x1234), (0xFFFF, 0x0F0F), (0x8001, 0x7FFE)]:
+            self.assertEqual(e(p1) ^ e(p2) ^ e(0), e(p1 ^ p2))
+        prot = K.kryptos16_verschluesseln(0x4F4B, 0xA36D, sbox=False, runden=1, protokoll=True)['runden'][0]
+        self.assertEqual(prot['nach_s_box'], prot['nach_xor'])
+        self.assertEqual(K.kryptos16_entschluesseln(e(0x4F4B), 0xA36D, sbox=False), 0x4F4B)
+        self.assertEqual(K.kryptos16_bitweg(1, variante='kryptos16', runden=1)['runden'][0]['nach_transposition'], [1, 5, 9, 13])
+        ohne = K.kryptos16_bitweg(1, variante='ohneSBox')
+        self.assertEqual((ohne['ende'], ohne['schluesselbits']), ([1], [1, 5, 9, 13]))
+        rm = K.kryptos16_bitweg(10, variante='rm16')
+        self.assertEqual([[r['nach_xor'], r['nach_mitte'], r['nach_transposition'], r['schluessel']] for r in rm['runden']],
+                         [[[10], [12], [15], [10]], [[15], [16], [16], [3]], [[16], [13], [4], [8]]])
+        self.assertEqual((rm['ende'], rm['schluesselbits']), ([4], [10, 3, 8]))
+
+    def test_kacheln_ecb_cbc(self):
+        raster = _pixelbild()
+        b = K.kryptos16_kacheln(raster)
+        self.assertEqual(len(b), 64)
+        self.assertEqual(b.count(0), 39)
+        self.assertEqual(len(set(b)), 23)
+        self.assertEqual(K.kryptos16_aus_kacheln(b, 32), raster)
+        ecb = K.kryptos16_modus(b, 0x2B7E, 'ECB', None, runden=4)
+        self.assertEqual(K.hex_text(ecb[b.index(0)]), '4081')
+        self.assertEqual(len(set(ecb)), 23)
+        self.assertEqual(len(set(K.kryptos16_modus(b, 0x2B7E, 'CBC', 0x1917, runden=4))), 64)
+        self.assertRaises(F, K.kryptos16_kacheln, ['###'])
+
+    def test_rm16_und_mini_enigma(self):
+        p = K.rm16_verschluesseln(0x6CA3, 0x963D, protokoll=True)
+        self.assertEqual(p['ergebnis'], 0xC848)
+        self.assertEqual([[K.hex_text(r[k]) for k in ('schluessel', 'nach_xor', 'nach_rotation', 'nach_transposition')] for r in p['runden']],
+                         [['963D', 'FA9E', 'F567', '8FBD'], ['63D9', 'EC64', 'E992', 'E896'], ['3D96', 'D500', 'DA00', 'C848']])
+        self.assertEqual(K.rm16_entschluesseln(0xC848, 0x963D), 0x6CA3)
+        self.assertEqual(K.rm16_rundenschluessel(0x963D, 3), 0x3D96)
+        self.assertEqual(K.mini_enigma('bach'), 'HHAF')
+        self.assertEqual(K.mini_enigma('chef', 'E'), 'EGBC')
+        self.assertEqual(K.mini_enigma('EGBC', 'E', 'ent'), 'CHEF')
+        self.assertEqual(K.mini_enigma_tabelle('A'), 'EHFGACDB')
+        self.assertEqual(K.mini_enigma_weg('B', 'A'), {'eingang': 'B', 'stationen': ['B', 'A', 'A', 'E', 'E', 'H', 'H'], 'ausgang': 'H'})
+        for s_ in 'ABCDEFGH':
+            for x in 'ABCDEFGH':
+                self.assertNotEqual(K.mini_enigma(x, s_), x)
+        self.assertRaises(F, K.mini_enigma, 'zug')
+        self.assertEqual(K.mini_enigma('bach', 'A', 'ver', walze='DAHBFCGE', reflektor='EGHFADBC'), 'HHAF')
+        eigen = K.mini_enigma('abcdefgh', 'C', 'ver', walze='ABCDEFGH')
+        self.assertEqual(K.mini_enigma(eigen, 'C', 'ent', walze='ABCDEFGH'), 'ABCDEFGH')
+        self.assertRaises(F, K.mini_enigma, 'a', 'A', 'ver', reflektor='ABCDEFGH')
+        self.assertRaises(F, K.mini_enigma, 'a', 'A', 'ver', walze='AACDEFGH')
+
+    def test_stellungstabelle_aus_der_verdrahtung(self):
+        """Die Rechnung über die gedrehte Verdrahtung reproduziert die Tabelle aus W3 K2 (alle acht Stellungen)."""
+        for i, s_ in enumerate('ABCDEFGH'):
+            self.assertEqual(K._mini_enigma_zeile(i, 'DAHBFCGE', 'EGHFADBC'), K.MINI_ENIGMA_TABELLE[s_], s_)
+
+
 if __name__ == '__main__':
     unittest.main()
