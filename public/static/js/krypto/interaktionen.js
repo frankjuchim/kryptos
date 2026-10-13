@@ -1,5 +1,5 @@
 /* Kryptos – Interaktionen im Client (Delta §8, TECHNIK §4.4), registriert über AQI.registriere:
-   chiffre (Task 54), zuordnung (Task 55). Prüfung NUR auf dem Server: Die Oberfläche berechnet nie eine Lösung (auch nicht zur Längen-
+   chiffre (Task 54), zuordnung (Task 55), schaubild-ergaenzen und bits-rechnen (Task 56). Prüfung NUR auf dem Server: Die Oberfläche berechnet nie eine Lösung (auch nicht zur Längen-
    bestimmung, E26) und zeigt Lösungen nur aus Server-Antworten. Antwortformen = Server-Verträge
    (src/krypto/interaktionen/*.js, bereinige). Alles als DOM-Textknoten (AQ.h), keine Inline-Styles (CSP). */
 'use strict';
@@ -700,8 +700,390 @@ const KRI = (() => {
     return self;
   }
 
+  /* ================= schaubild-ergaenzen (Delta §8.3, E27: Chips in der Listenansicht) ================= */
+
+  const SCHLUESSEL_ARTEN = Object.freeze({ oeffentlich: 'öffentlicher Schlüssel', privat: 'privater Schlüssel', sitzung: 'Sitzungsschlüssel' });
+
+  function teilSchaubild(ia, kontext) {
+    const felderDef = istObjekt(ia.felder) ? ia.felder : {};
+    const aufgabe = kontext && kontext.aufgabe;
+    const block = aufgabe && Array.isArray(aufgabe.inhalt) && istObjekt(aufgabe.inhalt[ia.block]) ? aufgabe.inhalt[ia.block] : {};
+    const akteure = (Array.isArray(block.akteure) ? block.akteure : []).filter((a) => istObjekt(a) && typeof a.id === 'string');
+    const nameVon = (id) => {
+      const a = akteure.find((x) => x.id === id);
+      return a ? String(a.name ?? a.id) : String(id);
+    };
+    /** Nummer des Schritts, dessen Text [[id]] enthält */
+    const schrittNr = (id) => {
+      const st = (Array.isArray(block.schritte) ? block.schritte : []).find((x) => istObjekt(x) && String(x.text ?? '').includes(`[[${id}]]`));
+      return st ? String(st.nr ?? '') : '?';
+    };
+    const els = new Map(); // id → { typ, el, marke?, art?, inhaber?, summary? }
+    let gesperrt = false;
+    const ergebnis = h('p', { class: 'sb-ergebnis', 'aria-live': 'polite' });
+
+    function chipText(e) {
+      const a = e.art.value;
+      const i = e.inhaber.value;
+      return a && i ? `${SCHLUESSEL_ARTEN[a] || a} von ${nameVon(i)}` : 'Schlüssel wählen';
+    }
+    function markeWeg(e) {
+      e.el.classList.remove('ok', 'falsch', 'loesung');
+      e.marke.textContent = '';
+    }
+    function baueFeld(id) {
+      const f = istObjekt(felderDef[id]) ? felderDef[id] : {};
+      const nr = schrittNr(id);
+      const marke = h('span', { class: 'sb-marke', 'aria-hidden': 'true' });
+      if (f.typ === 'schluessel') {
+        const arten = Array.isArray(f.arten) ? f.arten.filter((x) => Object.hasOwn(SCHLUESSEL_ARTEN, x)) : Object.keys(SCHLUESSEL_ARTEN);
+        const inhaber = Array.isArray(f.inhaber) ? f.inhaber.map(String) : akteure.map((a) => a.id);
+        const art = h('select', { class: 'sb-art', 'aria-label': `Schritt ${nr}: Schlüsselart` }, h('option', { value: '' }, '– Schlüsselart –'), arten.map((x) => h('option', { value: x }, SCHLUESSEL_ARTEN[x])));
+        const inh = h('select', { class: 'sb-inhaber', 'aria-label': `Schritt ${nr}: Inhaber` }, h('option', { value: '' }, '– Inhaber –'), inhaber.map((x) => h('option', { value: x }, `von ${nameVon(x)}`)));
+        const text = h('span', { class: 'sb-chip-text' }, 'Schlüssel wählen');
+        const summary = h('summary', null, text, marke);
+        const el = h('details', { class: 'sb-chip' }, summary, h('span', { class: 'sb-wahl' }, art, inh));
+        const e = { typ: 'schluessel', el, marke, art, inhaber: inh, text };
+        const neu = () => {
+          markeWeg(e);
+          text.textContent = chipText(e);
+          if (art.value && inh.value) el.open = false;
+          kontext.geaendert();
+        };
+        art.addEventListener('change', neu);
+        inh.addEventListener('change', neu);
+        // Escape schließt die Auswahl und gibt den Fokus an den Chip zurück
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape' && el.open) {
+            el.open = false;
+            summary.focus();
+          }
+        });
+        return e;
+      }
+      if (f.typ === 'auswahl') {
+        const optionen = Array.isArray(f.optionen) ? f.optionen.map(String) : [];
+        const sel = h('select', { class: 'sb-auswahl', 'aria-label': `Schritt ${nr}: Auswahl` }, h('option', { value: '' }, '–'), (optionen.length >= 3 ? AQ.mische(optionen) : optionen).map((o) => h('option', { value: o }, o)));
+        const el = h('span', { class: 'sb-feld' }, sel, marke);
+        const e = { typ: 'auswahl', el, marke, eingabe: sel };
+        sel.addEventListener('change', () => {
+          markeWeg(e);
+          kontext.geaendert();
+        });
+        return e;
+      }
+      const inp = h('input', { class: 'sb-text', type: 'text', 'aria-label': `Schritt ${nr}: Eingabe`, autocomplete: 'off', autocorrect: 'off', spellcheck: 'false', maxlength: 200 });
+      const el = h('span', { class: 'sb-feld' }, inp, marke);
+      const e = { typ: 'text', el, marke, eingabe: inp };
+      inp.addEventListener('input', () => {
+        markeWeg(e);
+        kontext.geaendert();
+      });
+      return e;
+    }
+    function setzeFeld(e, v) {
+      if (e.typ === 'schluessel') {
+        e.art.value = istObjekt(v) && v.art ? String(v.art) : '';
+        e.inhaber.value = istObjekt(v) && v.inhaber ? String(v.inhaber) : '';
+        e.text.textContent = chipText(e);
+        return;
+      }
+      const s = v === null || v === undefined ? '' : String(v);
+      if (e.typ === 'auswahl' && s && ![...e.eingabe.querySelectorAll('option')].some((o) => o.value === s)) e.eingabe.appendChild(h('option', { value: s }, s));
+      e.eingabe.value = s;
+    }
+    const alleEingaben = (e) => (e.typ === 'schluessel' ? [e.art, e.inhaber] : [e.eingabe]);
+
+    const self = {
+      kind: 'schaubild-ergaenzen',
+      besitzt: (id) => Object.hasOwn(felderDef, id),
+      feld(id) {
+        if (!els.has(id)) els.set(id, baueFeld(id));
+        return els.get(id).el;
+      },
+      ui: h('div', { class: 'sb-teil' }, h('p', { class: 'hint' }, 'Ergänze die Lücken in den Schritten des Schaubilds.'), ergebnis),
+      antwort() {
+        const a = {};
+        for (const [id, e] of els) {
+          if (e.typ === 'schluessel') {
+            if (e.art.value && e.inhaber.value) a[id] = { art: e.art.value, inhaber: e.inhaber.value };
+          } else if (String(e.eingabe.value || '').trim() !== '') a[id] = e.eingabe.value;
+        }
+        return a;
+      },
+      leer() {
+        return Object.keys(self.antwort()).length === 0;
+      },
+      setze(a) {
+        if (!istObjekt(a)) return;
+        for (const [id, e] of els) {
+          setzeFeld(e, a[id]);
+          markeWeg(e);
+        }
+      },
+      feedback(r) {
+        if (!r || !istObjekt(r.felder)) return;
+        let richtig = 0;
+        for (const [id, ok] of Object.entries(r.felder)) {
+          const e = els.get(id);
+          if (ok) richtig++;
+          if (!e) continue;
+          e.el.classList.toggle('ok', !!ok);
+          e.el.classList.toggle('falsch', !ok);
+          e.marke.textContent = ok ? ' ✓' : ' ✗';
+          alleEingaben(e).forEach((x) => x.setAttribute('aria-invalid', ok ? 'false' : 'true'));
+        }
+        ergebnis.textContent = `${richtig} von ${Object.keys(r.felder).length} Lücken richtig`;
+      },
+      loesung(lo, muster) {
+        for (const [id, e] of els) {
+          const l = istObjekt(lo) ? lo[id] : undefined;
+          const v = Array.isArray(l) ? l[0] : l !== undefined ? l : istObjekt(muster) ? muster[id] : undefined;
+          if (v === undefined || v === null) continue;
+          setzeFeld(e, v);
+          markeWeg(e);
+          e.el.classList.add('loesung');
+        }
+      },
+      sperren(an) {
+        gesperrt = !!an;
+        for (const e of els.values()) alleEingaben(e).forEach((x) => (x.disabled = gesperrt));
+      }
+    };
+    return self;
+  }
+
+  /* ================= bits-rechnen (Delta §8.4) ================= */
+
+  const LEER = '·';
+
+  function teilBits(ia, kontext) {
+    const op = String(ia.operation || '');
+    const gruppe = ia.gruppe === 8 ? 8 : 4;
+    const normBits = (x) => (typeof x === 'string' ? Krypto.normBits(x) : '');
+    const labels = Array.isArray(ia.labels) ? ia.labels.map(String) : [];
+    const box = h('div', { class: 'bits-rechnen' });
+    let gesperrt = false;
+    let textFeld = null;
+    const ergebnis = h('p', { class: 'bits-ergebnis', 'aria-live': 'polite' });
+
+    /** Bit-Zeilen wie Block bits (KRB.bits) plus Ergebniszeile */
+    function tafel(zeilen, ergebnisLabel, ergebnisEl, markiert) {
+      const b = KRB.bits({ gruppe, zeilen, markiert });
+      if (ergebnisEl) b.appendChild(h('div', { class: 'bits-zeile bits-ergebniszeile' }, h('span', { class: 'bits-label' }, ergebnisLabel), h('span', { class: 'bits-werte' }, ergebnisEl)));
+      return b;
+    }
+
+    // Länge der Ergebniszeile
+    let n = Number.isInteger(ia.laenge) && ia.laenge > 0 ? ia.laenge : null;
+    if (n === null && op === 'xor' && Array.isArray(ia.operanden) && ia.operanden.length) n = normBits(ia.operanden[0]).length || null;
+    if (n === null && op === 'ascii' && ia.richtung === 'zu-bits') n = 8 * String(ia.text ?? '').length || null;
+    if (n === null && (op === 'kryptos16' || op === 'lawine')) n = 16;
+    if (n === null) n = 8;
+    n = Math.min(n, 64);
+
+    /* ---------- Bit-Schaltflächen ---------- */
+    const werte = [];
+    const knoepfe = [];
+    const lawine = op === 'lawine';
+    function beschrifte(i) {
+      const b = knoepfe[i];
+      if (lawine) {
+        b.textContent = String(i);
+        b.setAttribute('aria-pressed', String(werte[i] === '1'));
+        b.setAttribute('aria-label', `Bit ${i + 1} von ${n} (Position ${i}), ${werte[i] === '1' ? 'verändert' : 'unverändert'}`);
+        return;
+      }
+      b.textContent = werte[i] || LEER;
+      b.setAttribute('aria-pressed', String(werte[i] === '1'));
+      b.setAttribute('aria-label', `Bit ${i + 1} von ${n}, ${werte[i] ? `Wert ${werte[i]}` : 'leer'}`);
+    }
+    function markeWeg(i) {
+      knoepfe[i].classList.remove('ok', 'falsch', 'loesung');
+    }
+    function setzeBit(i, v) {
+      if (gesperrt) return;
+      werte[i] = v;
+      markeWeg(i);
+      ergebnis.textContent = '';
+      beschrifte(i);
+      kontext.geaendert();
+    }
+    let eingabe = null;
+    if (op !== 'ascii' || ia.richtung !== 'zu-text') {
+      for (let i = 0; i < n; i++) {
+        werte.push('');
+        const ende = (i + 1) % gruppe === 0 && i < n - 1;
+        const b = h('button', { type: 'button', class: 'bit' + (lawine ? ' lawine' : '') + (ende ? ' gruppe-ende' : '') });
+        b.addEventListener('click', () => {
+          if (lawine) setzeBit(i, werte[i] === '1' ? '' : '1');
+          else setzeBit(i, werte[i] === '' ? '0' : werte[i] === '0' ? '1' : '0');
+        });
+        b.addEventListener('keydown', (ev) => {
+          if (ev.key === 'ArrowLeft' && i > 0) {
+            ev.preventDefault();
+            knoepfe[i - 1].focus();
+          } else if (ev.key === 'ArrowRight' && i + 1 < n) {
+            ev.preventDefault();
+            knoepfe[i + 1].focus();
+          } else if (ev.key === 'Home' || ev.key === 'End') {
+            ev.preventDefault();
+            knoepfe[ev.key === 'Home' ? 0 : n - 1].focus();
+          } else if (!lawine && (ev.key === '0' || ev.key === '1')) {
+            ev.preventDefault();
+            setzeBit(i, ev.key);
+            if (i + 1 < n) knoepfe[i + 1].focus();
+          } else if (!lawine && (ev.key === 'Backspace' || ev.key === 'Delete')) {
+            ev.preventDefault();
+            setzeBit(i, '');
+            if (ev.key === 'Backspace' && i > 0 && !werte[i]) knoepfe[i - 1].focus();
+          }
+        });
+        knoepfe.push(b);
+      }
+      knoepfe.forEach((_, i) => beschrifte(i));
+      eingabe = h(
+        'div',
+        { class: 'bits-eingabe' + (lawine ? ' bits-lawine' : ''), role: 'group', 'aria-label': lawine ? 'Ergebnis: veränderte Bits antippen' : 'Ergebnis: Bits eintragen (Tasten 0 und 1)' },
+        // je Gruppe ein nicht umbrechender Abschnitt (schmale Geräte brechen nur zwischen Gruppen um)
+        Array.from({ length: Math.ceil(n / gruppe) }, (_, g) => h('span', { class: 'bit-gruppe' }, knoepfe.slice(g * gruppe, (g + 1) * gruppe)))
+      );
+    }
+
+    switch (op) {
+      case 'xor': {
+        const ops = Array.isArray(ia.operanden) ? ia.operanden : [];
+        const std = ops.length === 2 ? ['M', 'K', 'C'] : [...ops.map((_, i) => `Operand ${i + 1}`), 'Ergebnis'];
+        const zeilen = ops.map((x, i) => ({ label: labels[i] ?? std[i], bits: String(x) }));
+        zeilen.push({ trenner: '⊕' });
+        box.appendChild(tafel(zeilen, labels[ops.length] ?? std[ops.length], eingabe));
+        break;
+      }
+      case 'kryptos16':
+        box.appendChild(h('p', { class: 'bits-hinweis' }, `Runden: ${ia.runden ?? 1}, Richtung: ${ia.richtung === 'ent' ? 'ent' : 'ver'}`));
+        box.appendChild(tafel([{ label: labels[0] ?? 'Block', bits: String(ia.block ?? '') }, { label: labels[1] ?? 'Schlüssel K', bits: String(ia.schluessel ?? '') }, { trenner: '→' }], labels[2] ?? 'Ergebnis', eingabe));
+        break;
+      case 'lawine': {
+        const kippe = Number.isInteger(ia.kippe) ? ia.kippe : null;
+        box.appendChild(h('p', { class: 'bits-hinweis' }, `Runden: ${ia.runden ?? 1}. Gekippt wird das Bit an Position ${kippe} (markiert). Tippe die Bits an, die sich am Ende unterscheiden.`));
+        const t = tafel([{ label: labels[0] ?? 'Block', bits: String(ia.block ?? '') }, { label: labels[1] ?? 'Schlüssel K', bits: String(ia.schluessel ?? '') }], labels[2] ?? 'verändert', eingabe, kippe === null ? [] : [kippe]);
+        // markiert ist nur das gekippte Bit des Blocks, nicht die Schlüsselzeile
+        t.querySelectorAll('.bits-zeile').forEach((z, j) => {
+          if (j === 0) return;
+          z.querySelectorAll('.bit.markiert').forEach((b) => {
+            b.classList.remove('markiert');
+            b.removeAttribute('aria-current');
+          });
+        });
+        box.appendChild(t);
+        break;
+      }
+      case 'ascii':
+        if (ia.richtung === 'zu-text') {
+          const bits = normBits(String(ia.bits ?? ''));
+          textFeld = h('input', { class: 'bits-text', type: 'text', maxlength: Math.max(1, Math.floor(bits.length / 8)), 'aria-label': 'Zeichen', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' });
+          textFeld.addEventListener('input', () => {
+            textFeld.classList.remove('ok', 'falsch', 'loesung');
+            ergebnis.textContent = '';
+            kontext.geaendert();
+          });
+          box.appendChild(tafel([{ label: labels[0] ?? 'Bits', bits }], labels[1] ?? 'Zeichen', textFeld));
+        } else {
+          // Rohtext zeigen (ASCII 32–126, Groß/Klein und Leerzeichen zählen) – keine Krypto-Normalisierung
+          const t = String(ia.text ?? '');
+          box.appendChild(h('p', { class: 'bits-ascii' }, h('span', { 'aria-hidden': 'true' }, 'Text: ', h('code', { class: 'ascii-text' }, t)), h('span', { class: 'sr' }, `Text, buchstabiert: ${[...t].map((c) => (c === ' ' ? 'Leerzeichen' : c)).join(' ')}`)));
+          box.appendChild(tafel([], labels[0] ?? 'Bits', eingabe));
+        }
+        break;
+      default:
+        box.appendChild(tafel([], labels[0] ?? 'Ergebnis', eingabe));
+    }
+    box.appendChild(ergebnis);
+
+    function setzeBits(s) {
+      const folge = [...String(s ?? '')].filter((c) => c === '0' || c === '1' || c === '_');
+      knoepfe.forEach((_, i) => {
+        werte[i] = folge[i] === '0' || folge[i] === '1' ? folge[i] : '';
+        markeWeg(i);
+        beschrifte(i);
+      });
+    }
+    function setzePositionen(liste) {
+      const p = new Set((Array.isArray(liste) ? liste : []).map(Number));
+      knoepfe.forEach((_, i) => {
+        werte[i] = p.has(i) ? '1' : '';
+        markeWeg(i);
+        beschrifte(i);
+      });
+    }
+
+    const self = {
+      kind: 'bits-rechnen',
+      ui: box,
+      antwort() {
+        if (textFeld) return textFeld.value;
+        if (lawine) return werte.map((w, i) => (w === '1' ? i : -1)).filter((i) => i >= 0);
+        return werte.map((w) => w || '_').join('');
+      },
+      leer() {
+        if (textFeld) return String(textFeld.value || '').trim() === '';
+        return werte.every((w) => !w);
+      },
+      setze(a) {
+        if (a === null || a === undefined) return;
+        if (textFeld) {
+          textFeld.value = String(istObjekt(a) ? a.text ?? '' : a);
+          return;
+        }
+        if (lawine) return setzePositionen(istObjekt(a) ? a.positionen : a);
+        setzeBits(istObjekt(a) ? a.bits : a);
+      },
+      feedback(r) {
+        if (!r) return;
+        if (textFeld) {
+          textFeld.classList.toggle('ok', !!r.ok);
+          textFeld.classList.toggle('falsch', !r.ok);
+          textFeld.setAttribute('aria-invalid', r.ok ? 'false' : 'true');
+          return;
+        }
+        if (lawine || !Array.isArray(r.bits)) return; // lawine: keine Einzelrückmeldung vor dem Lösen
+        // Der Server entfernt _ (Bit-Normalisierung, Delta §5.2): Positionen stimmen nur bis zur ersten Lücke.
+        const luecke = werte.findIndex((w) => !w);
+        const bis = luecke < 0 ? n : luecke;
+        knoepfe.forEach((b, i) => {
+          markeWeg(i);
+          if (i < bis) {
+            const ok = r.bits[i] === true;
+            b.classList.add(ok ? 'ok' : 'falsch');
+          } else if (!werte[i]) b.classList.add('falsch');
+        });
+        const richtig = knoepfe.filter((b) => b.classList.contains('ok')).length;
+        ergebnis.textContent = `${richtig} von ${n} Bits richtig`;
+      },
+      loesung(lo, muster) {
+        if (textFeld) {
+          textFeld.value = istObjekt(lo) && typeof lo.text === 'string' ? lo.text : String(muster ?? '');
+          textFeld.classList.remove('ok', 'falsch');
+          textFeld.classList.add('loesung');
+          return;
+        }
+        if (lawine) setzePositionen(istObjekt(lo) && Array.isArray(lo.positionen) ? lo.positionen : muster);
+        else setzeBits(normBits(istObjekt(lo) && typeof lo.bits === 'string' ? lo.bits : typeof muster === 'string' ? muster : ''));
+        knoepfe.forEach((b) => b.classList.add('loesung'));
+      },
+      sperren(an) {
+        gesperrt = !!an;
+        knoepfe.forEach((b) => (b.disabled = gesperrt));
+        if (textFeld) textFeld.disabled = gesperrt;
+      }
+    };
+    return self;
+  }
+
   AQI.registriere('chiffre', teilChiffre);
   AQI.registriere('zuordnung', teilZuordnung);
+  AQI.registriere('schaubild-ergaenzen', teilSchaubild);
+  AQI.registriere('bits-rechnen', teilBits);
   AQI.schrittArten.add('chiffre');
   AQI.schrittAus.add('chiffre');
 

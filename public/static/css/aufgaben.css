@@ -680,3 +680,81 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 .zuordnung-anteil { margin: 0; font-weight: 700; }
 .zuordnung-anteil:empty { display: none; }
 .zuordnung-haeufigkeit { min-width: 0; }
+
+/* =====================================================================================================================
+   Teil 6 (M4 Task 56): Interaktionen schaubild-ergaenzen (Chips in der Liste, E27) und bits-rechnen (Delta §8.3, §8.4)
+   ===================================================================================================================== */
+
+/* ---------- schaubild-ergaenzen ---------- */
+.sb-chip { display: inline-block; vertical-align: middle; margin: 2px 0; }
+.sb-chip summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--ziel);
+  padding: 4px 12px;
+  border: 2px solid var(--hinweis);
+  border-radius: var(--r-chip);
+  background: var(--karte);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.sb-chip summary::-webkit-details-marker { display: none; }
+.sb-chip summary::after { content: "▾"; color: var(--text-2); }
+.sb-chip[open] summary::after { content: "▴"; }
+.sb-chip summary:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.sb-wahl { display: flex; flex-wrap: wrap; gap: var(--a-2); padding: var(--a-2) 0; }
+.sb-wahl select, .sb-auswahl, .sb-text { min-height: var(--ziel); max-width: 100%; }
+.sb-feld { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; vertical-align: middle; }
+.sb-text { width: 14ch; }
+.sb-chip.ok summary, .sb-feld.ok select, .sb-feld.ok input { border: 3px solid var(--ok); }
+.sb-chip.falsch summary, .sb-feld.falsch select, .sb-feld.falsch input { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+.sb-chip.loesung summary, .sb-feld.loesung select, .sb-feld.loesung input { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+.sb-marke { font-weight: 700; }
+.ok > .sb-marke, .ok summary .sb-marke { color: var(--ok); }
+.falsch > .sb-marke, .falsch summary .sb-marke { color: var(--fehler); }
+.sb-ergebnis, .bits-ergebnis { margin: 0; font-weight: 700; }
+.sb-ergebnis:empty, .bits-ergebnis:empty { display: none; }
+
+/* ---------- bits-rechnen ---------- */
+.bits-rechnen { display: grid; gap: var(--a-3); min-width: 0; }
+.bits-rechnen .bits { padding-bottom: var(--a-1); }
+.bits-hinweis, .bits-ascii { margin: 0; color: var(--text-2); }
+.ascii-text { font-family: var(--f-mono); font-variant-ligatures: none; font-size: 1.2rem; font-weight: 700; color: var(--text); white-space: pre; }
+.bits-eingabe { display: inline-flex; flex-wrap: nowrap; gap: 3px var(--a-3); }
+.bit-gruppe { display: inline-flex; flex-wrap: nowrap; gap: 3px; }
+.bits-eingabe .bit {
+  width: var(--ziel);
+  min-width: var(--ziel);
+  height: var(--ziel);
+  padding: 0;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--karte);
+  border: 2px solid var(--text-2);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.bits-eingabe .bit[aria-pressed="true"] { background: var(--papier-2); }
+.bits-eingabe .bit:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.bits-eingabe .bit.ok { border: 3px solid var(--ok); }
+.bits-eingabe .bit.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+.bits-eingabe .bit.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+.bits-eingabe .bit:disabled { cursor: default; }
+.bits-lawine .bit.lawine { font-family: var(--f-text); font-size: .85rem; font-weight: 400; }
+.bits-lawine .bit.lawine[aria-pressed="true"] { font-weight: 700; border: 3px solid var(--tinte); background: var(--papier-2); }
+.bits-lawine .bit.lawine[aria-pressed="true"]::before { content: "Δ"; display: block; font-size: .7rem; line-height: 1; }
+.bits-text { width: 6ch; min-height: var(--ziel); font-family: var(--f-mono); font-size: 1.2rem; text-align: center; }
+.bits-text.ok { border: 3px solid var(--ok); }
+.bits-text.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+.bits-text.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+@media (max-width: 600px) {
+  .bits-rechnen .bits { grid-template-columns: max-content minmax(0, 1fr); }
+  .bits-eingabe { flex-wrap: wrap; row-gap: var(--a-2); }
+  .bits-rechnen .bits-werte { flex-wrap: wrap; }
+}
