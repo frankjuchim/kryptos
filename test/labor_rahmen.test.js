@@ -138,7 +138,7 @@ test('Nachladen: fehlendes Modul → Skript mit ?v= wird angehängt, Ladehinweis
 test('Noch nicht gebaute Werkzeuge: „noch in Arbeit“ ohne Ladeversuch; gebaute laden nach (KRLabor.bereit)', async () => {
   const k = lade();
   const L = k.wert('KRLabor');
-  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe']);
+  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden']);
   const f = k.document.createElement('div');
   const ctrl = L.oeffne('rsa', {}, f, { modus: 'labor' });
   assert.match(k.text(f), /Dieses Werkzeug ist noch in Arbeit\./);

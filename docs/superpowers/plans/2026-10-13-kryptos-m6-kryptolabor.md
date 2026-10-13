@@ -1770,7 +1770,7 @@ verfolgt; die Runde deckt sich im Nachspiel Schritt für Schritt auf.
 - `zustand()` → `{ reiter, variante, block, schluessel, runden, ergebnis, protokoll, gekippt, zaehler, weg }`
   (Zahlen als Hex-Strings).
 
-- [ ] **Step 1: Failing test** – `test/labor_runden.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_runden.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1816,9 +1816,9 @@ verfolgt; die Runde deckt sich im Nachspiel Schritt für Schritt auf.
     assert.deepEqual(w.k.alle(w.flaeche, '.verfolgung-schluessel button.bit.weg').map((b) => Number(b.dataset.bit)).sort((a, b) => a - b), [3, 8, 10]);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
   (vier Matrizen je Runde bei 360 px untereinander, 1280 px nebeneinander).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Runden-Labor I (KRYPTOS-16/ohne S-Box/RM-16 Runde für Runde, Lawine, Bit-Verfolgung)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Runden-Labor I (KRYPTOS-16/ohne S-Box/RM-16 Runde für Runde, Lawine, Bit-Verfolgung)"`.
 
 ### Task 120: Werkzeug „Runden-Labor“ II – ECB vs. CBC am Pixelbild, Fehler einbauen, Mini-Enigma (W3 §9.2, K2, E81)
 
@@ -2537,7 +2537,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
 2. **Steganographie/Codierung als Ergänzungs-Werkzeug (Gesamtplan Teil C, optional):** nicht in M6 geplant (keine Spec §9, keine
    Registry-id). Gewünscht – dann als eigene Welt-0-Spec-Ergänzung vor dem Bau? **Vorläufig:** nein.
 3. **RM-16 im Runden-Labor (E83):** Das Werkzeug kann die Teilaufgaben b) und d) des Papier-Bosses W3 vorrechnen. Reicht es, das
-   Runden-Labor in der Papier-Boss-Stunde über die Freigaben zu sperren? **Vorläufig:** ja, wie Spec.
+   Runden-Labor in der Papier-Boss-Stunde über die Freigaben zu sperren? **Vorläufig:** ja, wie Spec. **Stand Task 119:** Das Werkzeug zeigt Lehrkräften einen Hinweis, das Runden-Labor in der Papier-Boss-Stunde über die Werkzeug-Freigaben zu sperren.
 4. **Reiter in Level 2.4 (E70):** „Häufigkeits-Analysator (Reiter Bigramme)“ – Vorschlag: Bigramme **und** Histogramm sichtbar
    (Playfair-Analyse). Oder nur Bigramme? **Vorläufig:** beide.
 5. **P04-Beispiel (W2 §9.1 Testfall 4, E84):** Der Volltext „JUKVM XTXQW …“ (100 Zeichen) fehlt im Repo. Bitte nachliefern, dann

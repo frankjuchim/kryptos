@@ -611,3 +611,51 @@ mark.markiert.wiederholung { font-weight: 700; }
 .crib-schieber:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
 .doppel-tabelle-rahmen { display: grid; gap: var(--a-1); min-width: 0; }
 .doppel-legende { margin: 0; font-size: .85rem; }
+
+/* ======================================================================
+   Runden-Labor (W3 §9.2, M6 Tasks 119/120)
+   ====================================================================== */
+.runden-lehrkraft { margin: 0; padding: var(--a-2) var(--a-3); border-left: 3px solid var(--hinweis); background: var(--hinweis-flaeche); color: var(--text); }
+.runden-steuerung { display: grid; gap: var(--a-3); min-width: 0; }
+.runden-feld input { width: 10rem; min-height: var(--ziel); font-family: var(--f-mono); text-transform: uppercase; }
+.runden-hinweis { display: grid; gap: var(--a-2); }
+.runden-hinweis:empty { display: none; }
+.runden-ergebnis { margin: 0; font-family: var(--f-mono); font-weight: 700; overflow-wrap: anywhere; }
+.runden-ergebnis:empty { display: none; }
+.runden-schalter { display: inline-flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); font-weight: 700; cursor: pointer; }
+.runden-schalter input { width: 20px; height: 20px; }
+.runden-inhalt, .verfolgung-inhalt { display: grid; gap: var(--a-4); min-width: 0; }
+.runde { display: grid; gap: var(--a-2); padding: var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); min-width: 0; }
+.runde h3 { margin: 0; font-size: 1rem; }
+.runde-matrizen { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); align-items: start; }
+.runde-schritt { margin: 0; }
+.runde-schluessel .bitgitter { background: var(--papier-2); }
+.bitgitter { border-collapse: collapse; font-family: var(--f-mono); font-variant-numeric: tabular-nums; background: var(--karte); }
+.bitgitter caption { text-align: left; font-family: var(--f-text); font-size: .85rem; font-weight: 700; padding-bottom: var(--a-1); caption-side: top; }
+.bitgitter-hex { display: block; font-family: var(--f-mono); font-weight: 400; }
+.bitgitter td { width: 2em; height: 2em; padding: 0; border: 1px solid var(--linie); text-align: center; font-size: 1.05rem; position: relative; }
+.bitgitter.verdeckt td { color: var(--text-2); background: var(--papier-2); border-style: dashed; }
+/* abweichendes Bit: Rahmen und Punkt (Farbe nie einziges Signal) */
+.bitgitter td.anders { box-shadow: inset 0 0 0 3px var(--fehler); font-weight: 700; }
+.bitgitter td.anders::after { content: "•"; position: absolute; top: -2px; right: 2px; font-size: .7rem; line-height: 1; color: var(--fehler); }
+.bitgitter td.weg { box-shadow: inset 0 0 0 3px var(--hinweis); background: var(--hinweis-flaeche); font-weight: 700; }
+.bitgitter td.beeinflusst { background: repeating-linear-gradient(135deg, var(--hinweis-flaeche) 0 4px, var(--karte) 4px 8px); box-shadow: inset 0 0 0 2px var(--hinweis); }
+.eingabematrix td { width: var(--ziel); height: var(--ziel); }
+.eingabematrix button.bit { width: var(--ziel); min-height: var(--ziel); padding: 0; border: 0; background: transparent; color: var(--text); font-family: var(--f-mono); font-size: 1.1rem; cursor: pointer; }
+.eingabematrix button.bit[aria-pressed="true"] { font-weight: 700; text-decoration: underline 2px; }
+.eingabematrix button.bit:focus-visible { outline: 3px solid var(--fokus); outline-offset: -3px; }
+.eingabematrix button.bit:disabled { cursor: default; color: var(--text); }
+.lawine-eingabe, .verfolgung-eingabe { display: flex; flex-wrap: wrap; gap: var(--a-4); }
+.lawine-eingabe figure, .verfolgung-eingabe figure { margin: 0; }
+.lawine-zurueck { justify-self: start; border: 1.5px solid var(--linie); }
+.laeufe { display: grid; gap: var(--a-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .laeufe { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.lauf { display: grid; gap: var(--a-2); padding: var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); min-width: 0; }
+.lauf h3 { margin: 0; font-size: 1rem; }
+.lauf-matrizen { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); }
+.lawine-zaehler td { text-align: left; }
+.lawine-balken { position: relative; display: block; width: min(16rem, 40vw); height: 1.1rem; border: 1px solid var(--linie); background: var(--papier-2); }
+.lawine-fuellung { position: absolute; inset: 0 auto 0 0; width: var(--anteil, 0%); background: repeating-linear-gradient(90deg, var(--text-2) 0 6px, var(--text) 6px 8px); }
+.lawine-linie { position: absolute; top: -3px; bottom: -3px; left: 50%; border-left: 2px dashed var(--fehler); }
+.lawine-info { margin: 0; }
+.verfolgung-liste { margin: 0; padding-left: 1.4em; display: grid; gap: var(--a-1); font-size: .95rem; }
