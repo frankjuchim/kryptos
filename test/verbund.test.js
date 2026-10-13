@@ -335,6 +335,21 @@ test('kurs-aendern aktiv:false: laufendes Funkraum-Szenario beendet (Inhalte gel
   assert.equal(H.zaehle(app, 'fortschritt', 'schueler_id = ?', t), 1);
 });
 
+test('kurs-aendern aktiv:false: Funkraum-Szenario in vorbereitung wird gelöscht, keine Teilnahme (Plan M7 E111)', async () => {
+  const app = H.makeApp();
+  const k = H.kurs(app);
+  const s = H.konto(app, 'schueler', 'Mika R.');
+  const t = H.teilnahme(app, k, s, 'Mika R.');
+  const { szenario } = H.befuelle(app, k, [t]);
+  app.locals.db.prepare("UPDATE funk_szenarien SET status = 'vorbereitung' WHERE id = ?").run(szenario);
+  app.locals.db.prepare('DELETE FROM funk_teilnahmen').run();
+  const r = await vb(app, 'post', `/api/verbund/kurse/${kid(k)}`, 'kurs-aendern').send({ aktiv: false });
+  assert.equal(r.status, 200);
+  assert.equal(H.zaehle(app, 'funk_szenarien'), 0);
+  for (const tab of ['funk_rollen', 'funk_nachrichten', 'funk_ereignisse', 'funk_teilnahmen']) assert.equal(H.zaehle(app, tab), 0, tab);
+  assert.equal(H.zaehle(app, 'arena', "kurs_id = ? AND status != 'geschlossen'", k.id), 0);
+});
+
 test('Verbund-API: Rate-Limit 600 gültige Aufträge je 10 Minuten (gesamt) → 429', async () => {
   const app = H.makeApp();
   for (let i = 0; i < 600; i++) {

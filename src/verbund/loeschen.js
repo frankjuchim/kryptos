@@ -62,24 +62,32 @@ function nachKurs(db, kursId, { jetzt, merken = true } = {}) {
 }
 
 /**
- * Inhalte eines gesperrten Kurses (kurs-aendern aktiv:false, TECHNIK §6.7/§7.3) in der Transaktion des Aufrufers:
- * - laufendes Funkraum-Szenario wie „Beenden“ (§12.7): Status `auswertung`, Nachrichteninhalte und Klartext-Hashes
- *   geleert, Rollen-Zustände (Schlüssel, Zuordnungen) geleert, Funkraum-Teilnahme der Teammitglieder vermerkt;
+ * Inhalte eines gesperrten Kurses (kurs-aendern aktiv:false, TECHNIK §6.7/§7.3, Plan M7 E111) in der Transaktion des
+ * Aufrufers:
+ * - Funkraum-Szenario in `vorbereitung` wird gelöscht (wie „abbrechen“, keine Funkraum-Teilnahme);
+ * - laufendes/pausiertes Szenario wird beendet: mit Callback `szenarioBeenden(db, szenarioId, jetzt)` – der
+ *   Funkraum-Dienst beendet mit Auswertung (§12.7; `src/verbund/` bleibt krypto-frei) –, ohne Callback generisch
+ *   (Inhalte, Klartext-Hashes, Schlüssel-Etiketten, Rollen-Zustände und konfig geleert, Teilnahmen vermerkt, Status
+ *   `auswertung`, keine Auswertung);
  * - offene Arena (Status ≠ geschlossen) gelöscht – mit Chiffren, Beurteilungen und Versuchen (Kaskade).
- * Die anonyme Auswertung (Zähler je Team in konfig.auswertung) schreibt der Funkraum-Dienst, sobald es ihn gibt.
  * @param {number} kursLokal  kurse.id
  * @param {string} jetztIso
+ * @param {{ szenarioBeenden?: Function }} [o]
  */
-function kursInhalteBeenden(db, kursLokal, jetztIso) {
-  const sz = db.prepare("SELECT id, typ FROM funk_szenarien WHERE kurs_id = ? AND status IN ('vorbereitung', 'laeuft', 'pausiert')").get(kursLokal);
-  if (sz) {
-    db.prepare("UPDATE funk_nachrichten SET inhalt = '', klartext_hash = NULL WHERE szenario_id = ?").run(sz.id);
+function kursInhalteBeenden(db, kursLokal, jetztIso, { szenarioBeenden } = {}) {
+  const sz = db.prepare("SELECT id, typ, status FROM funk_szenarien WHERE kurs_id = ? AND status IN ('vorbereitung', 'laeuft', 'pausiert')").get(kursLokal);
+  if (sz && sz.status === 'vorbereitung') {
+    db.prepare('DELETE FROM funk_szenarien WHERE id = ?').run(sz.id);
+  } else if (sz && szenarioBeenden) {
+    szenarioBeenden(db, sz.id, jetztIso);
+  } else if (sz) {
+    db.prepare("UPDATE funk_nachrichten SET inhalt = '', klartext_hash = NULL, fuer_schluessel = NULL WHERE szenario_id = ?").run(sz.id);
     db.prepare("UPDATE funk_rollen SET zustand = '{}' WHERE szenario_id = ?").run(sz.id);
     db.prepare(
       `INSERT OR IGNORE INTO funk_teilnahmen (schueler_id, typ, at)
        SELECT m.schueler_id, ?, ? FROM funk_rollen r JOIN team_mitglieder m ON m.team_id = r.team_id WHERE r.szenario_id = ?`
     ).run(sz.typ, jetztIso, sz.id);
-    db.prepare("UPDATE funk_szenarien SET status = 'auswertung', beendet_at = ?, version = version + 1 WHERE id = ?").run(jetztIso, sz.id);
+    db.prepare("UPDATE funk_szenarien SET status = 'auswertung', konfig = '{}', beendet_at = ?, version = version + 1 WHERE id = ?").run(jetztIso, sz.id);
   }
   db.prepare("DELETE FROM arena WHERE kurs_id = ? AND status != 'geschlossen'").run(kursLokal);
 }

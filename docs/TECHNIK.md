@@ -1573,9 +1573,13 @@ Szenario-Regeln im Detail:
 
 ### 12.7 Beenden und Löschen
 
-„Beenden“ (Status `auswertung`): in einer Transaktion `UPDATE funk_nachrichten SET inhalt = '', klartext_hash = NULL`,
-`UPDATE funk_rollen SET zustand = '{}'`, Auswertung (Zähler je Team) in `konfig.auswertung` schreiben, `funk_teilnahmen`
-für alle Teammitglieder eintragen (Abzeichen `funkraum_veteran`: Teilnahme an **3 verschiedenen** Szenario-Typen).
+„Beenden“ (Status `auswertung`, `src/krypto/funkraum/loeschen.js` `beenden`): in **einer** Transaktion die Auswertung
+vorher berechnen (typ-spezifisch oder generisch: je Team mit Rolle `gesendet`/`angekommen`/`geknackt`, Ereignis-Codes
+gezählt – nur Zahlen, ids, Codes), `UPDATE funk_nachrichten SET inhalt = '', klartext_hash = NULL, fuer_schluessel =
+NULL`, `UPDATE funk_rollen SET zustand = '{}'`, `konfig` = `{ auswertung }` (Salz, Schlüssel, Lösungen entfernt),
+`funk_teilnahmen` für alle Mitglieder der Teams **mit Rolle** eintragen (Abzeichen `funkraum_veteran`: Teilnahme an
+**3 verschiedenen** Szenario-Typen), `version + 1`, Ereignis `status { status: 'auswertung' }`. Kurs gesperrt:
+`vorbereitung` → löschen, sonst beenden (Plan M7 E111, §7.3).
 „Schließen“ bzw. Wartungsjob nach 24 h: Szenario-Zeile löschen (Kaskade). Datenschutzseite nennt die Fristen.
 
 ---

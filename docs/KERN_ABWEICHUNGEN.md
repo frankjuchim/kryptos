@@ -162,9 +162,10 @@ Ersatz entsteht in `src/verbund/` (TECHNIK §2.4, Kern-Kandidat „lab-kern“):
   den Namen (1–80 Zeichen) und sperrt/entsperrt (`kurse.aktiv`), unbekannter Kurs → `{ ok: true }` ohne Anlage.
 - `loeschen.js` (Task 8): `nachSub(db, sub)`, `nachKurs(db, kursId)` (je eine Transaktion, Fremdschlüssel-Kaskaden,
   leere Teams nach `nachSub` samt Funkraum-Rollen und Arena-Chiffren gelöscht – TECHNIK §7.3) und
-  `kursInhalteBeenden(db, kursLokal, jetzt)` für gesperrte Kurse (laufendes Funkraum-Szenario wie „Beenden“ §12.7:
-  Inhalte/Hashes/Rollen-Zustände geleert, Funkraum-Teilnahmen vermerkt, Status `auswertung`; offene Arena gelöscht).
-  Die anonyme Auswertung `konfig.auswertung` ergänzt der Funkraum-Dienst (M6). Review M1: `nachSub`/`nachKurs`
+  `kursInhalteBeenden(db, kursLokal, jetzt, { szenarioBeenden })` für gesperrte Kurse (Plan M7 Task 132, E111:
+  Szenario in `vorbereitung` gelöscht; laufendes/pausiertes über den Callback `szenarioBeenden` des Funkraum-Dienstes
+  mit Auswertung beendet, ohne Callback generisch geleert inkl. `fuer_schluessel` und `konfig`; offene Arena gelöscht).
+  `createVerbundRouter({ …, szenarioBeenden })` reicht den Callback durch; `src/verbund/` bleibt krypto-frei. Review M1: `nachSub`/`nachKurs`
   schreiben einen Löschvermerk (`loeschungen`: Art, Kennung, Zeit – kein Name; Option `{ jetzt, merken }`).
 
 ## Entfernte Kern-Tests (Task 4)

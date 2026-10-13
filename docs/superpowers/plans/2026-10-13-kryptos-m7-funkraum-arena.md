@@ -512,7 +512,7 @@ Beamer bei 1920 × 1080.
     `beenden`).
 - Consumes: Schema TECHNIK §7.1.
 
-- [ ] **Step 1: Failing test** – `test/funkraum_loeschen.test.js` (Roh-SQL über `H.befuelle`, weil der Dienst erst ab Task 134
+- [x] **Step 1: Failing test** – `test/funkraum_loeschen.test.js` (Roh-SQL über `H.befuelle`, weil der Dienst erst ab Task 134
   existiert; Task 137 wiederholt den Durchlauf über die API):
   ```js
   'use strict';
@@ -591,13 +591,13 @@ Beamer bei 1920 × 1080.
   ```
   In `test/verbund.test.js` den bestehenden Sperr-Test um einen Fall ergänzen: Szenario in `vorbereitung` →
   nach `kurs-aendern { aktiv: false }` gelöscht.
-- [ ] **Step 2: Run** → FAIL (Modul fehlt).
-- [ ] **Step 3: Implement** `loeschen.js`; `src/verbund/loeschen.kursInhalteBeenden` ruft
+- [x] **Step 2: Run** → FAIL (Modul fehlt).
+- [x] **Step 3: Implement** `loeschen.js`; `src/verbund/loeschen.kursInhalteBeenden` ruft
   `L.kursGesperrt(db, kursLokal, jetztIso, { beenden: szenarioBeenden })` und löscht danach die offene Arena wie bisher;
   der Kopfkommentar von `src/verbund/loeschen.js` nennt den Callback („Funkraum-Dienst beendet mit Auswertung; ohne
   Callback generisch“).
-- [ ] **Step 4: Run** `node --test test/funkraum_loeschen.test.js test/verbund.test.js test/wartung.test.js test/datenschutz.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Löschregeln Beenden/Schließen/24 h/Kurs gesperrt (Tests zuerst)"`.
+- [x] **Step 4: Run** `node --test test/funkraum_loeschen.test.js test/verbund.test.js test/wartung.test.js test/datenschutz.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Löschregeln Beenden/Schließen/24 h/Kurs gesperrt (Tests zuerst)"`.
 
 ### Task 133: Teams (Tischgruppen) – Dienst, Lehrkraft-Routen, Testhilfe (TECHNIK §12.2, §13.4, E106)
 
@@ -2744,6 +2744,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
 - **Task 131:** `pruefeInhalt` prüft vor `toUpperCase()` zusätzlich `^[A-Za-z0-9 ]*$`, weil `'ß'.toUpperCase()` = `'SS'`
   eine stille Umformung wäre (Test „STRASSE ß“ → 400). Tests um Grenzfälle ergänzt (Klartext 160/161, Nicht-Strings,
   ungerade Hex-Länge).
+- **Task 132:** `src/verbund/loeschen.kursInhalteBeenden` ruft **nicht** `L.kursGesperrt` aus `src/krypto/` (sonst wäre
+  `src/verbund/` nicht mehr krypto-frei, E111), sondern erledigt `vorbereitung` → löschen selbst und ruft für
+  `laeuft`/`pausiert` den Callback `szenarioBeenden(db, szId, jetzt)`; ohne Callback bleibt die generische Leerung (jetzt
+  auch `fuer_schluessel` und `konfig`). `createVerbundRouter` nimmt die Option `szenarioBeenden`; `src/app.js` reicht
+  `funkraum/loeschen.beenden` ab Task 133 durch (K41), ab Task 134 den Dienst. `fundstellen` vergleicht mit `instr`
+  (Groß/Klein zählt), weil `LIKE` „GEHEIMTEXT“ im Wort „Geheimtext“ der Fixture-Aufgaben findet. Zusätzliche Tests:
+  Version/Ereignis beim Beenden, zweites Beenden ohne Wirkung, Typ aus der Zeile, `pausiert` mit eigenem Callback,
+  `fuer_schluessel` geleert.
 
 ## Reihenfolge und Abhängigkeiten
 

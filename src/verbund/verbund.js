@@ -25,9 +25,11 @@ const istObjekt = (b) => !!b && typeof b === 'object' && !Array.isArray(b);
  * @param {object} o.svc        Dienste (auswertung.kursUebersicht)
  * @param {object} o.konfig     Verbund-Konfiguration (ladeKonfig)
  * @param {Function} o.now      Uhr (ms)
+ * @param {Function} [o.szenarioBeenden]  (db, szenarioId, jetztIso) – beendet ein laufendes Funkraum-Szenario beim
+ *   Sperren des Kurses mit Auswertung (Funkraum-Dienst, Plan M7 E111); ohne: generisch (loeschen.kursInhalteBeenden)
  * @returns {import('express').Router}
  */
-function createVerbundRouter({ db, svc, konfig, now }) {
+function createVerbundRouter({ db, svc, konfig, now, szenarioBeenden }) {
   const r = express.Router();
   const limit = new S.Limiter({ max: 600, windowMs: 10 * 60 * 1000 }); // gültige Aufträge (gesamt)
   const abgelehntLimit = new S.Limiter({ max: 120, windowMs: 10 * 60 * 1000 }); // abgelehnte Anfragen je IP
@@ -117,7 +119,7 @@ function createVerbundRouter({ db, svc, konfig, now }) {
       if (name !== undefined) db.prepare('UPDATE kurse SET name = ?, updated_at = ? WHERE id = ?').run(name, jetzt, k.id);
       if (b.aktiv !== undefined) {
         db.prepare('UPDATE kurse SET aktiv = ?, updated_at = ? WHERE id = ?').run(b.aktiv ? 1 : 0, jetzt, k.id);
-        if (!b.aktiv) L.kursInhalteBeenden(db, k.id, jetzt);
+        if (!b.aktiv) L.kursInhalteBeenden(db, k.id, jetzt, { szenarioBeenden });
       }
     })();
     res.json({ ok: true });
