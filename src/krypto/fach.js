@@ -175,6 +175,8 @@ const NIVEAU_KATEGORIEN = [
  * (src/krypto/niveauUebersicht.js), solange eine Welt noch nicht im Seed steht (Seeds kommen mit M5); danach gilt der
  * Katalog. Enthält nur Titel und Anzahlen – keine Aufgaben, keine Lösungen. Kür-Level ohne Präfix „Kür:“ im Titel
  * (Plan M5 Task 87: wie im Seed; die Kür ist am Niveau `kuer` bzw. am Chip erkennbar).
+ * Stand M5 (Task 100): Welten 0–2 kommen aus dem Katalog und stimmen mit diesen Einträgen überein (Abgleich
+ * test/niveaus.test.js, test/inhalte_plan.test.js); für die Welten 3–6 bleibt WELT_PLAN die Quelle.
  */
 const WELT_PLAN = [
   { nr: 0, levels: [

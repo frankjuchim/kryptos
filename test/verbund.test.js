@@ -71,6 +71,14 @@ test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgem�
   assert.deepEqual(m.umfang, { welten: 0, level: 0, aufgaben: 0, bosse: 0 });
 });
 
+test('Manifest mit den echten Seeds W0–W2: Umfang aus dem Katalog (91 Level-Aufgaben + 3 Boss-Pools à 15), vertragsgemäß (Plan M5 Task 100)', async () => {
+  const app = H.makeApp({ seedDir: require('node:path').join(__dirname, '..', 'seed'), weltDateien: [] });
+  const m = (await request(app).get('/api/plattform').expect(200)).body;
+  assert.deepEqual(pruefeManifest(m), []);
+  assert.deepEqual(m.umfang, { welten: 3, level: 12, aufgaben: 91 + 45, bosse: 3 });
+  assert.deepEqual(m.welten.map((w) => [w.nr, w.titel, w.level]), [[0, 'Die Antike', 4], [1, 'Das Haus der Weisheit', 3], [2, 'Le chiffre indéchiffrable', 5]]);
+});
+
 test('pruefeManifest erkennt Vertragsverstöße', () => {
   assert.ok(pruefeManifest(null).length);
   const f = pruefeManifest({ vertrag: '2.0', id: 'Algo Quest', urls: {}, auth: { modus: 'x', sso: true }, faehigkeiten: [] });

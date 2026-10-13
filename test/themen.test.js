@@ -168,3 +168,26 @@ test('demo_materialien.json: _LSG, _EH und Klausuren werden nie öffentlich (Pla
   for (const d of verboten) await request(app).get(`/akten/${d}`).expect(401);
   await request(app).get(`/akten/${erlaubt}`).expect(200);
 });
+
+test('Themenübersicht mit den echten Seeds: drei Welten, je Level Akte mit URL, Boss 8 Aufgaben/25 min, Trainingsplatz, Warm-up 12 (Plan M5 Task 100)', async () => {
+  const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
+  const d = (await request(app).get('/api/themen').expect(200)).body;
+  assert.deepEqual(d.welten.map((w) => w.nr), [0, 1, 2]);
+  assert.deepEqual(d.welten.map((w) => w.boss.titel), ['Der Bote des Feldherrn', 'Der Kalif und der Kurier', 'Die Venezianische Depesche']);
+  for (const w of d.welten) {
+    assert.deepEqual([w.boss.anzahl, w.boss.dauerMin], [8, 25], `Welt ${w.nr}: Boss`);
+    assert.equal(w.warmup, 12, `Welt ${w.nr}: Warm-up`);
+    assert.ok(w.training.length >= 5, `Welt ${w.nr}: Trainingsplatz`);
+    assert.deepEqual(w.weitere.map((x) => x.art), ['boss', 'warmup']);
+    for (const l of w.levels) {
+      assert.ok(l.akte && l.akte.url, `${l.id}: Akte`);
+      assert.match(l.akte.url, new RegExp(`^/akten/Welt_${w.nr}_\\w+/KR_W${w.nr}_Akte`));
+      assert.ok(l.akte.titel.startsWith(`Akte W${w.nr}·${l.nr === 'K1' ? 'K1' : l.nr.split('.')[1]} – `), l.akte.titel);
+    }
+  }
+  assert.deepEqual(d.welten.map((w) => w.levels.length), [4, 3, 5]);
+  assert.equal(d.werkzeugkarten.length, 7);
+  assert.ok(d.werkzeugkarten.every((x) => x.url && x.url.startsWith('/akten/00_Werkzeugkarten/')));
+  const text = JSON.stringify(d);
+  for (const verboten of ['"loesung"', '"erklaerung"', '"tipps"', '_LSG', '_EH', 'Funkraum']) assert.ok(!text.includes(verboten), verboten);
+});

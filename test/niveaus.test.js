@@ -118,3 +118,23 @@ test('Seite /themen#niveaus: Abschnitt und Skript ohne Inline-Code, Skript rende
   assert.doesNotMatch(js, /innerHTML|outerHTML|insertAdjacentHTML|document\.write/);
   await request(app).get(`/static/js/krypto/themen.js?v=${VERSION}`).expect(200);
 });
+
+test('Niveau-Übersicht mit den echten Seeds: W0–W2 aus dem Katalog (= WELT_PLAN), W3–W6 aus dem Plan (Plan M5 Task 100)', async () => {
+  const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
+  const d = (await request(app).get('/api/niveaus').expect(200)).body;
+  assert.deepEqual(d.welten.map((w) => [w.nr, w.quelle]), [[0, 'katalog'], [1, 'katalog'], [2, 'katalog'], [3, 'plan'], [4, 'plan'], [5, 'plan'], [6, 'plan']]);
+  for (const nr of [0, 1, 2]) {
+    const w = d.welten[nr];
+    const plan = WELT_PLAN.find((p) => p.nr === nr);
+    assert.deepEqual(w.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), plan.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), `Welt ${nr}: Level wie WELT_PLAN`);
+    assert.equal(w.boss.titel, plan.boss.titel);
+    assert.deepEqual(w.boss.pool, plan.boss.pool, `Welt ${nr}: Boss-Pool`);
+    for (const l of w.levels) assert.ok(l.akte && l.akte.name.startsWith(`Akte ${plan.levels.find((p) => p.id === l.id).akte} – `), `${l.id}: ${l.akte && l.akte.name}`);
+  }
+  const w2 = d.welten[2];
+  assert.deepEqual(w2.levels.find((l) => l.id === '2.3').aufgaben, { eA: 7 });
+  assert.deepEqual(w2.levels.find((l) => l.id === 'K1').aufgaben, { kuer: 7 });
+  assert.deepEqual(w2.boss.pool, { kern: 13, eA: 2 });
+  // Archivfunde zählen nicht: 91 Level-Aufgaben in W0–W2 (30 + 23 + 38)
+  assert.deepEqual([0, 1, 2].map((nr) => d.welten[nr].levels.reduce((s, l) => s + summe(l.aufgaben), 0)), [30, 23, 38]);
+});

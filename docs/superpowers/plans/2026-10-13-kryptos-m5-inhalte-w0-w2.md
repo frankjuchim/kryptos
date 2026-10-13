@@ -1574,14 +1574,20 @@ Lösung in `inhalt`/`tipps`, Gast-API liefert vor dem Lösen weder Lösung noch 
 **Files:** Modify `test/niveaus.test.js`, `test/verbund.test.js`, `test/themen.test.js`, `src/krypto/fach.js` (nur Kommentar, falls `WELT_PLAN` für 0–2
 unverändert bleibt), `docs/TECHNIK.md` §6.10, Design-Spec §5.1 (Umfang-Zeile, wenn Zahlen abweichen)
 
-- [ ] **Step 1: Failing tests** – App mit `seedDir: 'seed'`: `GET /api/niveaus` → Welten 0–2 `quelle: 'katalog'`, Zahlen = `WELT_PLAN`
+- [x] **Step 1: Failing tests** – App mit `seedDir: 'seed'`: `GET /api/niveaus` → Welten 0–2 `quelle: 'katalog'`, Zahlen = `WELT_PLAN`
   (W2: 2.3 `{ eA: 7 }`, K1 `{ kuer: 7 }`, Boss `{ kern: 13, eA: 2 }`), Welten 3–6 `quelle: 'plan'`; `GET /api/plattform`: `umfang`
   zählt 91 Level-Aufgaben (W0 30, W1 23, W2 38; Archivfunde nicht), `pruefeManifest` leer; `GET /api/themen`: drei Welten, je Level
   Akte mit URL, Boss mit 8 Aufgaben/25 min, Trainingsplatz-Titel, Warm-up 12 → FAIL, wo noch etwas fehlt (sonst sofort grün und nur
   als Regressionstest behalten).
-- [ ] **Step 2: Implement** (fehlende Stellen; `WELT_PLAN` bleibt für 3–6 die Quelle).
-- [ ] **Step 3: Run** → PASS; `npm run dev` + `node scripts/vertrag_pruefen.js http://localhost:3000` → leer; Dev-Server beenden.
-- [ ] **Step 4: Commit** `git commit -m "Niveau-Übersicht, Manifest und Themenseite lesen die Welten 0–2 aus dem Katalog"`.
+- [x] **Step 2: Implement** (fehlende Stellen; `WELT_PLAN` bleibt für 3–6 die Quelle).
+- [x] **Step 3: Run** → PASS; `npm run dev` + `node scripts/vertrag_pruefen.js http://localhost:3000` → leer; Dev-Server beenden.
+- [x] **Step 4: Commit** `git commit -m "Niveau-Übersicht, Manifest und Themenseite lesen die Welten 0–2 aus dem Katalog"`.
+
+**Umsetzungsnotiz (Task 100):** Die Tests waren sofort grün (bis auf einen Tippfehler im neuen Test) und bleiben als Regressionstests:
+`/api/niveaus` W0–W2 `katalog` = `WELT_PLAN` (Titel, Niveau, Anzahlen, Boss-Pool, Akte), W3–W6 `plan`; Manifest `umfang` = `{ welten: 3,
+level: 12, aufgaben: 136 (91 Level-Aufgaben + 3 × 15 Boss), bosse: 3 }`, `pruefeManifest` leer; Themen: drei Welten, Akte mit URL je Level,
+Boss 8/25 min, Trainingsplatz, Warm-up 12, 7 Werkzeugkarten. `WELT_PLAN` unverändert (nur Kommentar), TECHNIK §6.10 und Design §5.1 ohne
+Änderung (Zahlen stimmen). `npm run dev` + `node scripts/vertrag_pruefen.js http://localhost:3000` → „erfüllt Vertrag v1.2“.
 
 ### Task 101: e2e „Welten 0–2 spielbar“ mit den echten Seeds
 
