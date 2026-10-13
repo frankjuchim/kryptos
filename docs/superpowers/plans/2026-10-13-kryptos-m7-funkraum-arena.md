@@ -2697,8 +2697,8 @@ Beamer bei 1920 × 1080.
    Lehrkraft sieht beide gesammelt, Ole sieht Mikas Beurteilung nicht.
 6. Lehrkraft schließt und löscht die Arena; `/werkstatt#/arena` zeigt „Keine Arena“. 360 px ohne Querscrollen; keine Fotos.
 
-- [ ] **Step 1–3:** wie Task 160 (`E2E_NUR=6`, dann alle).
-- [ ] **Step 4: Commit** `git commit -m "e2e Szenario 6: Knack-Arena mit Einreichen, Angriff, Abzeichen und Beurteilung"`.
+- [x] **Step 1–3:** wie Task 160 (`E2E_NUR=6`, dann alle).
+- [x] **Step 4: Commit** `git commit -m "e2e Szenario 6: Knack-Arena mit Einreichen, Angriff, Abzeichen und Beurteilung"`.
 
 ### Task 162: Abschluss M7 – Dokumente, Kern-Abweichungen, Material W5, Version, Prüfung
 
@@ -3043,6 +3043,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   wirkt nur auf die Datenbankdatei). Neu `walLeeren(db)` (`src/verbund/loeschen.js`, `wal_checkpoint(TRUNCATE)`) nach
   Verbund-Löschung, Kurs-Sperre, Funkraum beenden/schließen/abbrechen/ausblenden, Arena löschen und im Wartungsjob; Test
   `test/datenschutz_wal.test.js`, TECHNIK §7.3/§7.4. Das e2e-Szenario prüft Datenbankdatei **und** WAL.
+
+- **Task 161:** Personen wie in Task 160 (Verteilung alphabetisch): Mika = Team Skytale (FUNKGITTER), **Ole = Team
+  Quadrat** (Nur Caesar, nicht „Team 2“), Nia reicht nichts ein (die Arena startet ab zwei Chiffren). Stufen über
+  `KRWerkstatt.setzeStufen`, Name/Text/Beschreibung per Tastatur, Einreichen über den Knopf; Geheimtext gegen
+  `Krypto.baukasten.verschluesseln` (Node) und den Planwert `MRESE IEAUI SIRUT`. Zusätzlich geprüft: Restzeit-Uhr am
+  Beamer, Karte „geknackt“, Mikas Abzeichen über `/api/profil`, Mikas Beurteilung in keiner API-Antwort an Ole und nicht am
+  Beamer. `test/e2e/hilfen.js` meldet bei Seitenfehlern jetzt die ersten zwei Stack-Zeilen. **Befunde (je eigener
+  Commit):** (1) Der Abzeichen-Toast der Arena erschien nie – `/api/profil` listet **alle** Abzeichen mit `erhalten`, der
+  Vergleich nahm alle Schlüssel (`arena.js` filtert jetzt `erhalten`, Client-Test). (2) `/werkstatt#/arena` mit einem
+  Entwurf im Browser warf beim Laden einen TypeError (Baukasten-Felder fehlen auf `#/arena`, danach kein Router) –
+  `werkstatt.js` merkt die Werte jetzt für die Rückkehr in den Baukasten (Client-Test). Version 0.3.14 bzw. 0.3.15.
 
 ## Reihenfolge und Abhängigkeiten
 

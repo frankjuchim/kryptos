@@ -1818,7 +1818,7 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
-ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160, ohne Fotos – E118);
+ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
 Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11. `E2E_NUR=11` (Komma-Liste)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
@@ -1838,7 +1838,15 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
    Inhalt leer); Phasen bis zur Auflösung (Tabelle am Beamer); **Beenden** → „Alle Nachrichten wurden gelöscht.“ bei
    allen, Regie-Stand ohne Inhalte, keine Fundstelle in `kryptos.db` **und** `kryptos.db-wal` (§7.3); Schließen; 360 px
    bei Mika ohne Querscrollen. Ohne Fotos.
-6. Arena: zwei Teams reichen ein, Angriff, Knacken, Beurteilung, Abzeichen.
+6. Arena (umgesetzt M7 Task 161): Teams aus Nr. 5; Frau M. legt die Arena an; Mika (Team Skytale) baut FUNKGITTER
+   (Vigenère + Spaltentransposition, geteilter Schlüssel LATERNE, Text 1, 167 Buchstaben; Geheimtext =
+   `Krypto.baukasten`, beginnt `MRESE IEAUI SIRUT`), Ole (Team Quadrat) „Nur Caesar“ (k = 7, Text 2, Hinweis „Nur
+   Substitutionsstufen“); beide reichen über die Oberfläche ein (Stufen über `KRWerkstatt.setzeStufen`); Angriffsphase
+   25 min, Beamer mit zwei Karten und Restzeit, nie eine Beschreibung; Ole greift Mikas Chiffre mit falschem Schlüssel
+   an („Leider nicht.“, Grenzen als Text), Mika knackt Oles Caesar per Klartext („Geknackt!“, Toast „Arena-Knacker“,
+   Ticker und Karte „geknackt“ am Beamer); Ende der Angriffsphase → Toast „Unknackbar“ bei Mika; beide beurteilen, die
+   Lehrkraft sieht beide gesammelt, Ole (Seite und API-Antworten) und der Beamer nie Mikas Beurteilung; Schließen,
+   Löschen → Beamer „Keine Arena geöffnet.“, `/werkstatt#/arena` „keine Arena offen“; 360 px ohne Querscrollen. Ohne Fotos.
 7. Lehrkraft: Niveau gA → Level 2.3 verschwindet bei Schülern; Werkzeug sperren; Teams anlegen; Auswertung; Vorschau.
 8. Gastmodus: sechs Demo-Aufgaben, Chiffrierscheibe, Demo-Kurs; keine Cookies, kein `localStorage`, keine schreibenden
    Anfragen außer Prüfen/Tipp der Demo.

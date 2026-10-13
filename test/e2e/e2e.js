@@ -21,6 +21,7 @@ const fehlerzustaende = require('./fehler');
 const inhalte = require('./inhalte');
 const labor = require('./labor');
 const funkraum = require('./funkraum');
+const arena = require('./arena');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
@@ -29,6 +30,7 @@ const SZENARIEN = [
   ['3 Boss im gA-Kurs', schueler.szenario3],
   ['4 Kryptolabor', labor.szenario4],
   ['5 Funkraum: Botenlauf mit drei Teams und Beamer', funkraum.szenario5],
+  ['6 Knack-Arena: Einreichen, Angriff, Abzeichen, Beurteilung', arena.szenario6],
   ['7b Wirkung der Einstellungen', lehrkraft.szenario7b],
   ['8 Gastmodus', gast.szenario8],
   ['10 Fehlerzustände', fehlerzustaende.szenario10],

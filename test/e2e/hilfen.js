@@ -121,7 +121,7 @@ const ERWARTET = /status of (400|401|403|404|409|429)\b/;
  * (/api/…) – fehlende Schriften, Sprites, Stylesheets oder Skripte (404) fallen auf (Review M4).
  */
 function beobachte(page, name, fehler) {
-  page.on('pageerror', (e) => fehler.push(`${name}: Seitenfehler ${e.message}`));
+  page.on('pageerror', (e) => fehler.push(`${name}: Seitenfehler ${e.message} ${(e.stack || '').split('\n').slice(1, 3).join(' ')}`));
   page.on('console', (m) => {
     if (m.type() !== 'error') return;
     const t = m.text();
