@@ -7,6 +7,9 @@ const KRKopf = (() => {
   const { h } = AQ;
   let rangGeladen = false;
   let laborEl = null; // Labor-Link (im Boss-Kampf ausgeblendet, laborLink)
+  let funkAn = false; // letzter Zustand des Funkraum-Punkts (bleibt beim Neuaufbau der Kopfzeile)
+  let funkTimer = null; // Abfrage des Funkraum-Punkts (Schüler, alle 20 s)
+  const FUNK_INTERVALL = 20000;
 
   const BEREICHE = {
     schueler: (o) => [
@@ -163,8 +166,23 @@ const KRKopf = (() => {
       rangGeladen = true;
       rangNeu();
     }
+    // Funkraum-Punkt (M7 Task 151): Schüler-Seiten fragen GET /api/funk beim Aufbau und alle 20 s (nicht bei hidden);
+    // die Funkraum-Seite selbst pollt ihren Stand und setzt den Punkt dort
+    if (funkAn) funkPunkt(true);
+    if (rolle === 'schueler' && aktiv !== 'funkraum' && !funkTimer) {
+      funkPruefe();
+      funkTimer = setInterval(funkPruefe, FUNK_INTERVALL);
+    }
     fuss(s);
     return kopf;
+  }
+
+  /** GET /api/funk → Punkt an, solange ein Szenario läuft oder pausiert; Fehler (429, 403 …) still */
+  function funkPruefe() {
+    if (typeof document !== 'undefined' && (document.hidden === true || document.visibilityState === 'hidden')) return;
+    AQ.api('GET', '/api/funk')
+      .then((d) => funkPunkt(!!(d && d.szenario && ['laeuft', 'pausiert'].includes(d.szenario.status))))
+      .catch(() => {});
   }
 
   /** Fußzeile (Themen, Datenschutz, Portal, Version), nur wenn #fuss noch leer ist. */
@@ -217,8 +235,9 @@ const KRKopf = (() => {
     el.hidden = false;
   }
 
-  /** Funkraum-Punkt (Haken für M7, E33): Link mit pulsierendem Punkt nur, solange ein Szenario läuft. */
+  /** Funkraum-Punkt (M4 E33, M7 Task 151): Link mit pulsierendem Punkt nur, solange ein Szenario läuft. */
   function funkPunkt(an) {
+    funkAn = !!an;
     const nav = document.querySelector('#kopf .kopf-nav');
     if (!nav) return;
     const alt = nav.querySelector('a.funk');
@@ -254,5 +273,5 @@ const KRKopf = (() => {
     });
   }
 
-  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv };
+  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv, _funkPruefe: funkPruefe };
 })();

@@ -23,3 +23,104 @@ body.seite-beamer { min-height: 100vh; background-color: var(--nacht); color: va
 }
 .beamer-flaeche .leer-zustand svg { width: clamp(48px, 8vw, 120px); height: clamp(48px, 8vw, 120px); color: var(--messing-hell); }
 .beamer-flaeche a { color: var(--auf-tinte); }
+
+/* ---------- Funkraum-Seite (Plan M7 Task 151): Kopf, Raster, Netz, Senden, Posteingang, Ticker ---------- */
+.funkraum { display: grid; gap: var(--a-4); min-width: 0; }
+.funk-kopf { display: grid; gap: var(--a-1); }
+.funk-kopf h1 { margin: 0; }
+.funk-kopf p { margin: 0; }
+.funk-rolle { font-size: 1.15rem; }
+.funk-verbindung.gestoert { color: var(--fehler); font-weight: 700; }
+.funk-banner:empty { display: none; }
+.funk-banner { display: grid; gap: var(--a-2); }
+.funk-raster { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1024px) {
+  .funk-raster { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+.funk-spalte-netz, .funk-spalte-szene { display: grid; gap: var(--a-4); min-width: 0; }
+.funk-rollenkarte { display: grid; gap: var(--a-2); }
+.funk-rollenkarte h2 { margin: 0; font-size: 1.05rem; }
+.funk-rollenkarte p, .funk-schritte { margin: 0; }
+.funk-schritte { padding-left: 1.3em; display: grid; gap: var(--a-1); }
+
+/* Netz (KRNetz): Tablet auf Karte, Beamer auf Nacht */
+.funk-netz-ort { min-width: 0; }
+svg.funk-netz { display: block; width: 100%; height: auto; max-height: 60vh; }
+.funk-netz .netz-linie { stroke: var(--linie); stroke-width: 2; }
+.funk-netz .knoten-kreis { fill: var(--karte); stroke: var(--text-2); stroke-width: 2; }
+.funk-netz .knoten.ich .knoten-kreis { stroke: var(--messing-dunkel); stroke-width: 4; }
+.funk-netz .knoten.sonder .knoten-kreis { stroke: var(--fehler); stroke-width: 3; stroke-dasharray: 6 4; }
+.funk-netz text { fill: var(--text); font-family: var(--f-text); }
+.funk-netz .knoten-nr { font-weight: 700; font-size: 16px; }
+.funk-netz .knoten-name { font-size: 14px; font-weight: 700; }
+.funk-netz .knoten-rolle { font-size: 13px; fill: var(--text-2); }
+.funk-netz .nachricht { fill: var(--messing); stroke: var(--text); stroke-width: 1; }
+.funk-netz .nachricht.angekommen { fill: var(--ok); }
+.funk-netz .nachricht.geknackt { fill: var(--fehler); }
+.funk-netz .nachricht.ausgeblendet { fill: var(--linie); }
+.funk-netz .nachricht-symbol { font-size: 12px; font-weight: 700; }
+.funk-netz .nachricht-symbol.geknackt { fill: var(--fehler); }
+.funk-netz .nachricht-symbol.angekommen { fill: var(--ok); }
+.funk-netz .nachricht-vorschau { font-family: var(--f-mono); font-size: 12px; }
+.funk-netz-details summary { min-height: var(--ziel); display: inline-flex; align-items: center; cursor: pointer; }
+.funk-netz-tabelle { width: 100%; }
+.funk-netz-tabelle tr.ich th { font-weight: 700; }
+
+/* Senden, Posteingang, Prüf-Formulare */
+.funk-szene { display: grid; gap: var(--a-4); min-width: 0; }
+.funk-szene > * { min-width: 0; }
+.funk-senden, .funk-post-bereich, .funk-werkzeug, .funk-karte {
+  display: grid;
+  gap: var(--a-2);
+  padding: var(--a-3);
+  border: 1px solid var(--linie);
+  border-radius: var(--r-karte);
+  background: var(--karte);
+  min-width: 0;
+}
+.funk-senden h3, .funk-post-bereich h3, .funk-werkzeug h3, .funk-karte h3 { margin: 0; font-size: 1.05rem; }
+.funk-senden label, .funk-empfangen label, .funk-knacken label { font-weight: 700; }
+.funk-text, .funk-klartext { width: 100%; min-height: var(--ziel); font-family: var(--f-mono); font-size: 1.05rem; }
+.funk-text { text-transform: uppercase; }
+.funk-ersetzt, .funk-fehler, .funk-ergebnis { margin: 0; }
+.funk-ergebnis:empty { display: none; }
+.funk-ergebnis.ok { color: var(--ok); font-weight: 700; }
+.funk-ergebnis.falsch, .funk-ergebnis.fehler, .funk-fehler { color: var(--fehler); font-weight: 700; }
+.funk-ergebnis.ok::before { content: "✓ "; }
+.funk-ergebnis.falsch::before, .funk-ergebnis.fehler::before { content: "✗ "; }
+.funk-post { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.funk-nachricht { display: grid; gap: var(--a-1); padding: var(--a-2); border: 1px solid var(--linie); border-radius: 8px; min-width: 0; }
+.funk-nachricht-kopf { margin: 0; }
+.funk-inhalt { font-family: var(--f-mono); font-size: 1.05rem; overflow-wrap: anywhere; letter-spacing: .04em; }
+.funk-nachricht.ausgeblendet .funk-inhalt { color: var(--text-2); font-style: italic; }
+.funk-chips { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.funk-chips:empty { display: none; }
+.chip.angekommen { border-color: var(--ok); }
+.chip.geknackt { border-color: var(--fehler); }
+.chip.ausgeblendet { border-style: dashed; }
+.funk-aktion:empty { display: none; }
+.funk-zeile { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; }
+.funk-zeile input { flex: 1 1 12rem; min-width: 0; }
+.funk-werkzeug-innen { min-width: 0; }
+
+/* Ticker */
+.funk-ticker-bereich[hidden] { display: none; }
+.funk-ticker-bereich h2 { margin: 0 0 var(--a-2); font-size: 1.05rem; }
+.funk-ticker { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-1); font-size: .95rem; }
+.funk-ticker li { padding: var(--a-1) 0; border-bottom: 1px solid var(--linie); }
+
+/* Auswertung */
+.funk-auswertung-bereich { display: grid; gap: var(--a-3); min-width: 0; }
+.funk-auswertung-bereich > *, .funk-auswertung-teil > * { min-width: 0; }
+.funk-auswertung-teil { display: grid; gap: var(--a-3); min-width: 0; }
+.funk-auswertung { width: 100%; }
+.funk-auswertung caption { text-align: left; font-weight: 700; padding-bottom: var(--a-1); }
+.funk-kennzahlen { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-5); margin: 0; }
+.funk-kennzahlen dt { font-size: .85rem; color: var(--text-2); }
+.funk-kennzahlen dd { margin: 0; font-weight: 700; }
+
+/* Bewegung: fliegende Nachrichten nur ohne reduzierte Bewegung */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-bewegung="aus"]) .funk-netz .nachricht.fliegt { animation: kr-funkflug .8s ease-out both; }
+}
+@keyframes kr-funkflug { from { transform: translate(var(--dx, 0), var(--dy, 0)); } to { transform: none; } }

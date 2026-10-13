@@ -7,6 +7,9 @@
  *   k.wert('AQ') · k.document · k.window · k.eins(el, sel) · k.alle(el, sel) · k.text(el)
  *   k.klick(el) · k.tippe(el, 'abc') · k.waehle(select, 'wert') · k.taste(el, 'Enter') · k.bestaetigen = true|false · k.anfragen · k.navigiert · k.neugeladen · k.gedruckt
  *   k.medien · k.zwischenablage (Liste der geschriebenen Texte) · k.timer · k.roh(x) · await k.ruhe()
+ *   k.verstecke(true|false) – document.hidden/visibilityState setzen und visibilitychange auslösen (M7 Task 151)
+ *   fetch-Routen: { status, body, headers: { etag } } · { status: 304 } (ohne Körper) · { netzfehler: true } (TypeError);
+ *   Funktionen bekommen (body, { query, headers }); k.anfragen enthält { methode, pfad, body, query, headers }
  *   k.skripte · k.skriptEreignis(src, 'load'|'error') · k.zeiger(el, 'pointerdown', { clientX, clientY })
  *   D.lade(…, { zeitraffer: 100 }) – Timer laufen 100-mal schneller (k.timer zeigt die angeforderte Zeit)
  *   D.fuehreAus(k, ['weiteres.js'])
@@ -965,23 +968,39 @@ function lade(dateien = [], opt = {}) {
         body = String(init.body);
       }
     }
-    k.anfragen.push({ methode, pfad: u.pathname, body });
+    // Protokoll mit Query (Objekt) und Kopfzeilen (wie übergeben); Routen-Funktionen bekommen (body, { query, headers })
+    const query = Object.fromEntries(u.searchParams.entries());
+    const headers = { ...(init.headers || {}) };
+    k.anfragen.push({ methode, pfad: u.pathname, body, query, headers });
     const eintrag = routen[`${methode} ${u.pathname}`];
-    let antwort = eintrag === undefined ? { status: 404, body: { error: 'Unbekannte API-Route.' } } : typeof eintrag === 'function' ? eintrag(body) : eintrag;
+    let antwort = eintrag === undefined ? { status: 404, body: { error: 'Unbekannte API-Route.' } } : typeof eintrag === 'function' ? eintrag(body, { query, headers }) : eintrag;
     antwort = antwort || { status: 200, body: null };
-    const status = antwort.status ?? 200;
-    const daten = antwort.body === undefined ? null : JSON.parse(JSON.stringify(antwort.body));
-    // { typ, text }: Antwort ohne JSON (z. B. HTML-Fehlerseite eines Proxys, Review M4 K1)
-    const typ = antwort.typ || 'application/json; charset=utf-8';
-    const roh = typeof antwort.text === 'string' ? antwort.text : JSON.stringify(daten);
     k._offen.fetch++;
+    // { netzfehler: true }: fetch scheitert wie im Browser ohne Netz (TypeError)
+    if (antwort.netzfehler) {
+      return new Promise((_ok, fehler) => {
+        setImmediate(() => {
+          k._offen.fetch--;
+          fehler(new TypeError('Failed to fetch'));
+        });
+      });
+    }
+    const status = antwort.status ?? 200;
+    // 304: ohne Körper
+    const daten = status === 304 || antwort.body === undefined ? null : JSON.parse(JSON.stringify(antwort.body));
+    // { typ, text }: Antwort ohne JSON (z. B. HTML-Fehlerseite eines Proxys, Review M4 K1)
+    const typ = status === 304 ? null : antwort.typ || 'application/json; charset=utf-8';
+    const roh = status === 304 ? '' : typeof antwort.text === 'string' ? antwort.text : JSON.stringify(daten);
+    // Antwort-Kopfzeilen: { headers: { etag: '"7-3"' } } (Groß/Klein egal)
+    const kopf = new Map(Object.entries(antwort.headers || {}).map(([n, w]) => [n.toLowerCase(), String(w)]));
+    if (typ) kopf.set('content-type', typ);
     return new Promise((resolve) => {
       setImmediate(() => {
         k._offen.fetch--;
         resolve({
           ok: status >= 200 && status < 300,
           status,
-          headers: { get: (n) => (String(n).toLowerCase() === 'content-type' ? typ : null) },
+          headers: { get: (n) => (kopf.has(String(n).toLowerCase()) ? kopf.get(String(n).toLowerCase()) : null) },
           json: async () => JSON.parse(roh),
           text: async () => roh
         });
@@ -1112,6 +1131,14 @@ function lade(dateien = [], opt = {}) {
         if (ok) ok.click();
       } else d.dispatchEvent(new Event('cancel', { cancelable: true }));
     }, 0);
+  };
+  // Sichtbarkeit der Seite (document.hidden/visibilityState) umschalten und visibilitychange auslösen
+  document.hidden = false;
+  document.visibilityState = 'visible';
+  k.verstecke = (an) => {
+    document.hidden = !!an;
+    document.visibilityState = an ? 'hidden' : 'visible';
+    document.dispatchEvent(new Event('visibilitychange'));
   };
   k.taste = (el, key, mehr = {}) => {
     const ev = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key, ...mehr });

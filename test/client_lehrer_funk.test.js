@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 
 const NAMEN = ['Team Skytale', 'Team Scheibe', 'Team Quadrat', 'Team Lochstreifen', 'Team Enigma', 'Team Schlüsselpaar', 'Team Siegel', 'Team Chronoskop', 'Team Tafel', 'Team Manuskript', 'Team Lochkarte', 'Team Kompass'];
-const LEHRER = ['common.js', 'krypto/oberflaeche.js', 'krypto/kopfzeile.js', 'krypto/lehrer.js', 'krypto/lehrer_funkraum.js'];
+const LEHRER = ['common.js', 'krypto/oberflaeche.js', 'krypto/kopfzeile.js', 'krypto/lehrer.js', 'krypto/funkpoll.js', 'krypto/lehrer_funkraum.js'];
 const KURS = { id: 5, kurs: 'k:17', name: 'LK 13 (eA)', aktiv: true, einstellungen: { welten: [9], niveau: 'eA', werkzeuge: {} } };
 const TEAMS = { teams: [{ id: 1, nr: 1, name: 'Team Skytale', mitglieder: [{ id: 11, name: 'Mika R.' }] }], ohneTeam: [{ id: 12, name: 'Ida K.' }, { id: 13, name: 'Ole B.' }], namen: NAMEN };
 const seiteLehrer = (k) => k.document.body.classList.add('seite-lehrer');
@@ -154,6 +154,50 @@ test('Funkraum-Regie: Anlegen sendet Typ und Rollen; Beenden fragt nach; Ausblen
   k.klick(k.eins(k.document, 'button.aktion[data-aktion="beenden"]'));
   await k.ruhe();
   assert.deepEqual(aufrufe[aufrufe.length - 1], ['status', 'beenden']);
+});
+
+test('Funkraum-Regie pollt (Task 151): ETag und seit, Delta wird zusammengeführt, 304 zeichnet nicht neu, Szenario weg → Auswahl', async () => {
+  let n = 0;
+  let weg = false;
+  const beobachtet = {};
+  const LAUF = { id: 7, typ: 'botenlauf', titel: 'Botenlauf', status: 'laeuft', phase: 'runde-1', phasen: ['runde-1', 'runde-2', 'runde-3', 'aufloesung'], rollen: [{ teamId: 1, team: 'Team Skytale', rolle: 'alice', partnerId: 2 }, { teamId: 2, team: 'Team Scheibe', rolle: 'bob', partnerId: 1 }, { teamId: 3, team: 'Team Quadrat', rolle: 'eve', partnerId: null }], teams: [], anzeigen: {}, optionen: {}, stumm: {} };
+  const k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    zeitraffer: 1000,
+    fetch: {
+      ...GRUND(),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+      'GET /api/lehrer/kurse/5/funk': () => ({ status: 200, body: { szenario: weg ? null : { id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' } } }),
+      'GET /api/lehrer/funk/7/stand': (b, { query, headers }) => {
+        n++;
+        assert.equal(query.ansicht, 'regie');
+        if (n === 1) {
+          assert.equal(query.seit, '0');
+          return { status: 200, headers: { etag: '"7-3"' }, body: { ...LAUF, version: 3, nachrichten: [{ id: 11, von: 1, an: 2, art: 'nachricht', inhalt: 'OHSAL', lesbar: true }], ereignisse: [{ id: 1, code: 'status', daten: { status: 'laeuft' }, zeit: '2026-10-13T08:00:00Z', version: 2 }] } };
+        }
+        if (n === 2) {
+          assert.equal(query.seit, '3');
+          assert.equal(headers['If-None-Match'], '"7-3"');
+          beobachtet.vor304 = k.document.getElementById('haupt').querySelector('.funk-regie');
+          return { status: 304 };
+        }
+        if (n === 3) {
+          beobachtet.nach304 = k.document.getElementById('haupt').querySelector('.funk-regie');
+          return { status: 200, headers: { etag: '"7-4"' }, body: { ...LAUF, version: 4, nachrichten: [{ id: 12, von: 2, an: 1, art: 'nachricht', inhalt: 'QUITT', lesbar: true }], ereignisse: [] } };
+        }
+        beobachtet.nachrichten = k.alle(k.document, 'li.regie-nachricht').map((li) => li.getAttribute('data-id'));
+        weg = true;
+        return { status: 404, body: { error: 'Szenario nicht gefunden.' } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.ok(n >= 4);
+  assert.equal(beobachtet.vor304, beobachtet.nach304, '304: Regie bleibt stehen');
+  assert.deepEqual(beobachtet.nachrichten, ['12', '11'], 'Delta zusammengeführt');
+  assert.equal(k.alle(k.document, 'article.szenario-wahl').length, 5, 'nach 404 wieder die Auswahl');
+  assert.ok(k.timer.some((t) => t.ms === 3000));
 });
 
 test('Funkraum-Regie: zu wenige Teams → Hinweis mit Link auf den Teams-Tab', async () => {

@@ -2290,7 +2290,7 @@ Beamer bei 1920 × 1080.
   'schueler', ...umgebungExtra })` (Module über `KRLabor.lade`), nur wenn `stand.boss` falsch ist; sonst „Während eines
   Boss-Kampfs sind die Werkzeuge gesperrt.“
 
-- [ ] **Step 1: Failing test** – `test/client_funkraum.test.js` (Auszug):
+- [x] **Step 1: Failing test** – `test/client_funkraum.test.js` (Auszug):
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2349,10 +2349,10 @@ Beamer bei 1920 × 1080.
   `a.funk` in `#kopf .kopf-nav` und `k.timer` mit 20000. **Seitentests ohne `zeitraffer`:** dann zählen die 2-s-Timer des
   Pollers nicht für `k.ruhe()` (nur Timer ≤ 50 ms), die Seite bleibt nach dem ersten Abruf ruhig; `KRPoll` selbst wird mit
   `zeitraffer: 1000` und einer endlichen Antwortfolge (endet mit 404) geprüft. `KRFunkraum.stopp()` beendet den Poller.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün (inkl. `seiten.test.js`,
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün (inkl. `seiten.test.js`,
   `client_oberflaeche.test.js`); Sichtprüfung mit drei Kontexten (Botenlauf, nur Rahmen), Netzwerk im DevTools-Modus
   „offline“ → Anzeige „Verbindung unterbrochen – wird wiederhergestellt“, danach automatisch weiter.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum-Seite: Rahmen mit Poller, Netz, Senden, Posteingang und Kopfzeilen-Punkt"`.
+- [x] **Step 5: Commit** `git commit -m "Funkraum-Seite: Rahmen mit Poller, Netz, Senden, Posteingang und Kopfzeilen-Punkt"`.
 
 ### Task 152: Szenen „Botenlauf“ und „Wettknacken“ – Scheibe und Werkbank eingebettet (W0 §9.3, W1 §9.2/§9.3, E98, M6 E74)
 
@@ -2933,6 +2933,22 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   (Teamnamen statt ids, ja/nein, Prozent). Zusätze: Abbrechen/Schließen fragen nach, Stumm nur für Teams mit Rolle, Ereignisliste
   (letzte 15). Plan-Test ergänzt: Rollen tauschen, Phase, Stumm, Auswertung, Schließen; Wettknacken-Hinweise/Fortschritt;
   Mallory-Station/Zertifikat; zu wenige Teams; Spiegel-Test.
+
+- **Task 151:** `KRPoll.starte` zusätzlich mit `mischen` (Nachrichten/Ereignisse nach id zusammenführen – `?seit=v` liefert
+  nur Neues, E109) und `sofort: false`; `stand()` liefert den zusammengeführten Stand. 429/5xx/Antwort ohne JSON zählen wie
+  ein Netzfehler (Rückfall). Die Lehrkraft-Regie pollt über `KRPoll` (3 s, `?seit=…&ansicht=regie`, `mischen`), jede Aktion
+  ruft `jetzt()`; ein Neuzeichnen wartet, solange ein Eingabefeld der Regie den Fokus hat; der Knopf „Aktualisieren“
+  entfällt; ohne `KRPoll` (Altseite) lädt die Regie wie bisher. Die Kopfzeile pollt `GET /api/funk` nicht auf der
+  Funkraum-Seite selbst (dort setzt die Seite den Punkt; Grenze 6/min). `GET /api/funk` mit 429 zeigt „gerade sehr gefragt“
+  und versucht es nach 10 s erneut; ohne Szenario sieht die Seite alle 20 s nach. Szenen bekommen `aktualisiere(stand)`
+  statt eines Neuaufbaus (keyed Listen, `KRFunkSzenen.abgleich`), damit Eingaben und eingebettete Werkzeuge beim Polling
+  erhalten bleiben; Pause sperrt alle Eingaben der Szene. Ticker-Texte und gedrosselter Ticker (`KRNetz.ereignisText`,
+  `KRNetz.ticker`: erster Aufbau still, danach höchstens eine Ansage je 5 s) liegen in `funknetz.js`, damit der Beamer sie
+  ohne `funkraum_szenen.js` nutzt; Sonderkarten (`sonderkarte`) und `fortschritt` erscheinen nicht im Ticker. Paarlinien
+  kennt die Schüler-Sicht nur für das eigene Paar (`ich.partner`) und aus den Nachrichten. Seite nimmt die Epoche des
+  Szenarios an (W0, W1, W3, W4, W5). Attrappe: `fetch`-Routen bekommen `(body, { query, headers })`, Antworten mit
+  `headers`/304/`netzfehler`, `k.verstecke`. Plan-Test korrigiert: keine Abweichung; ergänzt um Mischen/hidden/15 s,
+  Leerzustände (auch 429), Verbindungsstörung, Ticker, Regie-Polling (`client_lehrer_funk.test.js`).
 
 ## Reihenfolge und Abhängigkeiten
 

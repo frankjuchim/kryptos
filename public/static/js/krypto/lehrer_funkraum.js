@@ -286,7 +286,7 @@ const KRLehrerFunk = (() => {
 
   /**
    * Funkraum-Regie in box: ohne Szenario Auswahl, sonst je Status Rollen (vorbereitung), Regie (laeuft/pausiert) oder
-   * Auswertung. Lädt nach jeder Aktion neu; „Aktualisieren“ bis zum Polling (Task 151).
+   * Auswertung. Lädt nach jeder Aktion neu; laufende Szenarien pollt KRPoll (Task 151).
    */
   function funkraumAnsicht(kurs, box, teamsDaten) {
     const nurLesen = !kurs.aktiv;
@@ -314,13 +314,80 @@ const KRLehrerFunk = (() => {
       }
     }
 
-    async function lade() {
-      const { szenario } = await api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/funk`);
-      if (!szenario) return auswahl();
-      if (szenario.status === 'vorbereitung') return vorbereitung(szenario);
-      const stand = await api('GET', `/api/lehrer/funk/${enc(szenario.id)}/stand?ansicht=regie`);
+    /* --- Polling der Regie (Plan M7 Task 151): KRPoll auf den Regie-Stand (ETag/seit, 3 s, Pause bei hidden); nach
+       jeder Aktion sofort. Ein Neuzeichnen wartet, solange ein Eingabefeld der Regie den Fokus hat. --- */
+    let poll = null;
+    let pollId = null;
+    let laedt = false;
+    let wartend = null;
+    const standUrl = (id, seit = 0) => `/api/lehrer/funk/${enc(id)}/stand?seit=${enc(seit)}&ansicht=regie`;
+    function stoppePoll() {
+      if (poll) poll.stopp();
+      poll = null;
+      pollId = null;
+    }
+    if (typeof KRLehrer !== 'undefined' && typeof KRLehrer.beimVerlassen === 'function') KRLehrer.beimVerlassen(stoppePoll);
+    const eingabeAktiv = () => {
+      const a = document.activeElement;
+      return !!a && box.contains(a) && ['input', 'select', 'textarea'].includes(a.localName);
+    };
+    function zeigeStand(stand) {
+      wartend = null;
       if (stand.status === 'auswertung') return auswertungAnsicht(stand);
       return regie(stand);
+    }
+    box.addEventListener('focusout', () =>
+      setTimeout(() => {
+        if (wartend && !eingabeAktiv() && box.isConnected) zeigeStand(wartend);
+      }, 0)
+    );
+    function starteRegiePoll(id) {
+      if (poll && pollId === id) return;
+      stoppePoll();
+      pollId = id;
+      poll = KRPoll.starte({
+        url: (seit) => standUrl(id, seit),
+        intervall: 3000,
+        mischen: true,
+        sofort: false,
+        beiDaten: (stand) => {
+          if (!box.isConnected) return stoppePoll();
+          if (laedt) return;
+          if (eingabeAktiv()) wartend = stand;
+          else zeigeStand(stand);
+        },
+        beiZustand: (z) => {
+          if (!box.isConnected) return stoppePoll();
+          if (z === 'ende') {
+            stoppePoll();
+            lade().catch(() => {});
+            return;
+          }
+          const el = box.querySelector('.funk-verbindung');
+          if (el) el.textContent = z === 'gestoert' ? 'Verbindung unterbrochen – wird wiederhergestellt' : 'Aktualisiert sich alle 3 Sekunden.';
+        }
+      });
+    }
+
+    async function lade() {
+      const { szenario } = await api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/funk`);
+      if (!szenario) {
+        stoppePoll();
+        return auswahl();
+      }
+      if (szenario.status === 'vorbereitung') {
+        stoppePoll();
+        return vorbereitung(szenario);
+      }
+      if (typeof KRPoll === 'undefined') return zeigeStand(await api('GET', standUrl(szenario.id)));
+      starteRegiePoll(szenario.id);
+      laedt = true;
+      try {
+        await poll.jetzt();
+      } finally {
+        laedt = false;
+      }
+      return zeigeStand((poll && poll.stand()) || (await api('GET', standUrl(szenario.id))));
     }
 
     /* --- ohne Szenario: Auswahl --- */
@@ -574,8 +641,6 @@ const KRLehrerFunk = (() => {
       });
       const nachrichten = (stand.nachrichten || []).slice().reverse();
       const ereignisse = (stand.ereignisse || []).slice(-15).reverse();
-      const aktualisieren = regieKnopf('knopf-leise aktualisieren', 'Aktualisieren', () => ausfuehren(async () => null));
-      aktualisieren.disabled = false;
       mount(
         box,
         h(
@@ -589,9 +654,9 @@ const KRLehrerFunk = (() => {
             stand.status === 'pausiert' ? aktionKnopf(stand, 'fortsetzen', 'Fortsetzen', 'knopf-primaer') : aktionKnopf(stand, 'pausieren', 'Pausieren'),
             naechste ? aktionKnopf(stand, 'phase', `Weiter: ${PHASE[naechste] || naechste}`) : null,
             aktionKnopf(stand, 'beenden', 'Beenden', 'knopf-gefahr', ['Szenario beenden?', 'Alle Nachrichten und Schlüssel werden jetzt gelöscht. Übrig bleibt nur die Auswertung.', 'Beenden']),
-            h('a', { class: 'knopf knopf-zweit beamer-oeffnen', href: `/beamer/funkraum/${stand.id}`, target: '_blank', rel: 'noopener' }, 'Beamer öffnen'),
-            aktualisieren
+            h('a', { class: 'knopf knopf-zweit beamer-oeffnen', href: `/beamer/funkraum/${stand.id}`, target: '_blank', rel: 'noopener' }, 'Beamer öffnen')
           ),
+          h('p', { class: 'funk-verbindung text-2 klein', role: 'status' }, typeof KRPoll === 'undefined' ? '' : 'Aktualisiert sich alle 3 Sekunden.'),
           fehlerZeile(),
           typRegie(stand),
           h('h3', null, 'Teams'),
