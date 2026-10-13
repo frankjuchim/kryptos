@@ -194,7 +194,10 @@ const KRSpiel = (() => {
       aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
       weiter: o.nachher ? { href: `#/aufgabe/${enc(o.nachher)}`, text: 'Nächste Aufgabe →' } : { href: `#/level/${enc(o.level.id)}`, text: 'Zurück zum Level →' },
       abzeichenToast,
-      nachLoesen: () => welten({ neu: true }).catch(() => {})
+      nachLoesen: (x) => {
+        welten({ neu: true }).catch(() => {});
+        if (x && x.punkteErhalten) KRKopf.rangNeu(); // Rang-Plakette sofort aktualisieren
+      }
     });
     seite(
       d.aufgabe.titel,

@@ -161,9 +161,7 @@ const KRKopf = (() => {
     );
     if (rolle === 'schueler' && !rangGeladen) {
       rangGeladen = true;
-      AQ.api('GET', '/api/profil')
-        .then((p) => p && p.rang && rang(p.rang))
-        .catch(() => {});
+      rangNeu();
     }
     fuss(s);
     return kopf;
@@ -189,6 +187,13 @@ const KRKopf = (() => {
   function epoche(text) {
     const el = document.getElementById('kopf-epoche-text');
     if (el) el.textContent = text;
+  }
+
+  /** Rang neu vom Server holen (GET /api/profil) – beim Aufbau und nach dem Lösen mit Punkten (sonst bliebe 0 %). */
+  function rangNeu() {
+    return AQ.api('GET', '/api/profil')
+      .then((p) => p && p.rang && rang(p.rang))
+      .catch(() => {});
   }
 
   /** Rang-Badge mit Fortschrittsring (anteil 0…1). */
@@ -249,5 +254,5 @@ const KRKopf = (() => {
     });
   }
 
-  return { baue, epoche, rang, funkPunkt, laborLink, aktiv };
+  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv };
 })();

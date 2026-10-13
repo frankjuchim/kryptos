@@ -119,6 +119,37 @@ test('Aufgabe: Prüfen sendet die Antwort, Diagnose-Chip erscheint, Erklärung n
   await k.ruhe();
   assert.match(k.text(haupt), /Zurückrechnen\./);
 });
+test('Rang-Plakette: nach dem Lösen mit Punkten neu geladen, ohne Punkte nicht (Beobachtung M5 Task 79–82)', async () => {
+  const a = { id: 'W9-L5-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', fallen: [], tippsAnzahl: 0, inhalt: [{ t: 'text', md: 'Entschlüssele.' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };
+  let profile = 0;
+  const ort = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, level: { id: 'W9-L5', nr: '5', titel: 'Werkbank' }, index: 0, anzahl: 1, vorher: null, nachher: null };
+  const f = {
+    ...spielFetch([welt(9)]),
+    'GET /api/profil': () => ({ status: 200, body: { rang: { name: profile++ ? 'Schreiber' : 'Lehrling', index: 0, anteil: profile > 1 ? 0.12 : 0 }, punkte: { gesamt: 0 }, welten: [], fallen: [], abzeichen: [] } }),
+    'GET /api/aufgaben/W9-L5-01': { status: 200, body: { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, moeglich: 10 }, ort } },
+    'POST /api/aufgaben/W9-L5-01/pruefen': { status: 200, body: { ok: true, geloest: true, punkteErhalten: 10, loesung: { text: 'zuv' }, erklaerung: [], zustand: { status: 'geloest', punkte: 10 } } }
+  };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/aufgabe/W9-L5-01', fetch: f });
+  await k.ruhe();
+  const plakette = k.document.getElementById('kopf-rang');
+  assert.match(k.text(plakette), /Lehrling.*0 %/);
+  const haupt = k.document.getElementById('haupt');
+  k.alle(haupt, 'input.kaestchen').forEach((x, i) => k.tippe(x, 'zuv'[i]));
+  k.klick(k.eins(haupt, '#pruefen'));
+  await k.ruhe();
+  assert.equal(k.anfragen.filter((x) => x.pfad === '/api/profil').length, 2, 'Profil nach dem Lösen neu geladen');
+  assert.match(k.text(plakette), /Schreiber.*12 %/);
+  // Archivfund (0 Punkte): kein erneuter Abruf
+  const ohne = { ...f, 'POST /api/aufgaben/W9-L5-01/pruefen': { status: 200, body: { ok: true, geloest: true, punkteErhalten: 0, loesung: { text: 'zuv' }, erklaerung: [], zustand: { status: 'geloest', punkte: 0 } } } };
+  profile = 0;
+  const k2 = D.lade(SPIEL, { url: 'http://x.test/spiel#/aufgabe/W9-L5-01', fetch: ohne });
+  await k2.ruhe();
+  const h2 = k2.document.getElementById('haupt');
+  k2.alle(h2, 'input.kaestchen').forEach((x, i) => k2.tippe(x, 'zuv'[i]));
+  k2.klick(k2.eins(h2, '#pruefen'));
+  await k2.ruhe();
+  assert.equal(k2.anfragen.filter((x) => x.pfad === '/api/profil').length, 1, 'ohne Punkte kein neuer Abruf');
+});
 test('Archivfund: Kopfzusatz, ohne Punkte, Prüfen an /api/archivfund/<nr>/pruefen, Link zur Epoche', async () => {
   const a = { id: 'W9-A-01', titel: 'Depesche', stufe: 1, punkte: 0, kategorie: 'entschluesseln', inhalt: [{ t: 'text', md: 'Was steht da?' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'DE' } };
   const f = { ...spielFetch([welt(9)]), 'GET /api/archivfund/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, titel: 'Die Testdepesche', aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, moeglich: 0 } } }, 'POST /api/archivfund/9/pruefen': { status: 200, body: { ok: true, geloest: true, punkteErhalten: 0, zustand: { status: 'geloest', punkte: 0 } } } };
