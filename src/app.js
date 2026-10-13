@@ -1,6 +1,7 @@
 'use strict';
 const path = require('node:path');
 const fs = require('node:fs');
+const crypto = require('node:crypto');
 const express = require('express');
 const helmet = require('helmet');
 const { openDatabase } = require('./db');
@@ -17,6 +18,8 @@ const { createManifest } = require('./services/manifest');
 const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
 const { createLabor } = require('./krypto/labor');
 const { createLevelMedien, createAktenNiveau } = require('./krypto/medien');
+const { createTeams } = require('./krypto/teams');
+const funkLoeschen = require('./krypto/funkraum/loeschen');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -41,6 +44,8 @@ const VERSION = require('../package.json').version;
  * @param {Function} [opts.now]           Uhr (ms) – für Tests
  * @param {Function} [opts.random]        Zufall [0,1) für Boss-Ziehung – für Tests
  * @param {Function} [opts.trainingSeed]  Seed-Quelle für Generatoren – für Tests
+ * @param {Function} [opts.zufallBytes]   (n) → Buffer mit n Zufallsbytes (Funkraum/Arena: Salze, Schlüsselblöcke,
+ *                                         Auftragskarten) – für Tests fest (K41, Plan M7 E113); Standard crypto.randomBytes
  * @param {object} [opts.optionen]        Dienst-Optionen (TECHNIK §4.2), überschreiben dienstOptionen() – für Tests
  * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Akten-PDFs, ausgeliefert unter /akten/ (Kern-Name der Option
  *                                         bleibt, TECHNIK §16.2; Standard: ARBEITSBLAETTER_DIR, sonst ./akten im Image bzw.
@@ -70,6 +75,8 @@ function createApp(opts) {
   const aktenNiveau = createAktenNiveau(aktenVerzeichnis);
   const optionen = { ...require('./krypto').dienstOptionen(), levelMedien, ...(opts.optionen || {}) };
   const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed, optionen };
+  // K41 (Plan M7 E113): Server-Zufall für Funkraum/Arena nur über ctx.zufallBytes(n)
+  ctx.zufallBytes = opts.zufallBytes || ((n) => crypto.randomBytes(n));
   const svc = createServices(ctx);
   ladeInhalte(svc, opts, log);
   // Ohne Anmeldung nur die Demo-PDFs aus seed/demo_materialien.json (Gastmodus, Themenseite)
@@ -148,7 +155,9 @@ function createApp(opts) {
   app.use('/sso', createSsoRouter({ db, svc, konfig, sitzung, secret, now: ctx.now }));
 
   /* ---------- Verbund-API (VERTRAG §6, TECHNIK §6.7): vor dem API-Router, ohne Origin-Prüfung ---------- */
-  app.use('/api/verbund', createVerbundRouter({ db, svc, konfig, now: ctx.now }));
+  // K41 (Plan M7 E111): Kurs gesperrt beendet ein laufendes Funkraum-Szenario mit Auswertung (src/verbund/ bleibt krypto-frei)
+  const szenarioBeenden = (dbx, szId, jetzt) => funkLoeschen.beenden(dbx, szId, { jetzt });
+  app.use('/api/verbund', createVerbundRouter({ db, svc, konfig, now: ctx.now, szenarioBeenden }));
 
   /* ---------- Helfer für die Routen ---------- */
   const helpers = {
@@ -277,6 +286,9 @@ function createApp(opts) {
   // Kryptolabor: Freigaben je Schüler (TECHNIK §10.3, M4 E19)
   createLabor({ db, svc, now: ctx.now }).routen(api, helpers);
   lehrerRoutes(api, helpers);
+  // K41: Teams (Tischgruppen) je Kurs – GET/PUT /api/lehrer/kurse/:kursId/teams (Plan M7 Task 133)
+  const teams = createTeams({ db, svc });
+  teams.routen(api, helpers);
   adminRoutes(api, helpers);
   gastRoutes(api, helpers);
 
@@ -304,6 +316,7 @@ function createApp(opts) {
   app.locals.services = svc;
   app.locals.wartung = wartung;
   app.locals.ctx = ctx;
+  app.locals.teams = teams;
   return app;
 }
 

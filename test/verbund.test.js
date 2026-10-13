@@ -327,6 +327,8 @@ test('kurs-aendern aktiv:false: laufendes Funkraum-Szenario beendet (Inhalte gel
   const sz = app.locals.db.prepare('SELECT * FROM funk_szenarien WHERE id = ?').get(szenario);
   assert.equal(sz.status, 'auswertung');
   assert.ok(sz.beendet_at);
+  // Funkraum-Callback der App (K41, Plan M7 E111): Auswertung bleibt, Salz und Schlüssel sind weg
+  assert.deepEqual(Object.keys(JSON.parse(sz.konfig)), ['auswertung']);
   assert.equal(H.zaehle(app, 'funk_nachrichten', "szenario_id = ? AND (inhalt != '' OR klartext_hash IS NOT NULL)", szenario), 0);
   assert.equal(H.zaehle(app, 'funk_rollen', "szenario_id = ? AND zustand != '{}'", szenario), 0);
   assert.equal(H.zaehle(app, 'arena', "kurs_id = ? AND status != 'geschlossen'", k.id), 0);

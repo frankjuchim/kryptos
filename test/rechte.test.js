@@ -275,3 +275,25 @@ test('Akten /akten/ nach Kursniveau und Kür (M5-Inhaltsprüfung): eA-Akte nicht
   await request(app).get(eA).expect(401);
   await request(app).get(kern).expect(200);
 });
+
+test('Teams (Plan M7 Task 133): nur Lehrkraft des Kurses, Herkunft geprüft, gesperrter Kurs nur lesend', async () => {
+  const { app, s, lk, kurs } = await H.szenario();
+  const ohne = H.client(app);
+  const fremd = await H.lehrkraftClient(app, { name: 'Herr A.' });
+  const admin = await H.adminClient(app, 'Admin 2');
+  const url = `/api/lehrer/kurse/${kurs.id}/teams`;
+  const soll = { teams: [{ nr: 1, name: 'Team Skytale', mitglieder: [s.id] }] };
+  assert.equal((await ohne.get(url)).status, 401);
+  assert.equal((await s.get(url)).status, 401);
+  assert.equal((await s.put(url).send(soll)).status, 401);
+  assert.equal((await fremd.get(url)).status, 404);
+  assert.equal((await fremd.put(url).send(soll)).status, 404);
+  assert.equal((await lk.put(url).unset('Origin').send(soll)).status, 403);
+  assert.equal((await lk.put(url).send(soll)).status, 200);
+  assert.equal((await admin.get(url)).status, 200);
+  assert.equal((await lk.get('/api/lehrer/kurse/999999/teams')).status, 404);
+  assert.equal((await lk.get('/api/lehrer/kurse/abc/teams')).status, 400);
+  app.locals.db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(kurs.id);
+  assert.equal((await lk.get(url)).status, 200);
+  assert.equal((await lk.put(url).send(soll)).status, 403);
+});

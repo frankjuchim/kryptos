@@ -616,7 +616,7 @@ Beamer bei 1920 × 1080.
   Fehler: 400 (Name ∉ `TEAM_NAMEN`, Name doppelt, `nr` ∉ 1–12 oder doppelt, Teilnahme fremd/inaktiv/doppelt, > 12 Teams),
   404 fremder Kurs, 403 gesperrter Kurs, 409 E106.
 
-- [ ] **Step 1: Failing test** – `test/teams.test.js`:
+- [x] **Step 1: Failing test** – `test/teams.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -691,13 +691,13 @@ Beamer bei 1920 × 1080.
     assert.deepEqual(f.teams.map((t) => [t.nr, t.name, t.c.name]), [[1, 'Team Skytale', 'Mika R.'], [2, 'Team Scheibe', 'Ida K.'], [3, 'Team Quadrat', 'Ole B.']]);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/teams.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Transaktion: Validierung komplett vor dem ersten Schreiben; `INSERT … ON CONFLICT(kurs_id, nr) DO UPDATE
+- [x] **Step 2: Run** `node --test test/teams.test.js` → FAIL.
+- [x] **Step 3: Implement** (Transaktion: Validierung komplett vor dem ersten Schreiben; `INSERT … ON CONFLICT(kurs_id, nr) DO UPDATE
   SET name`; `team_mitglieder` je Team neu setzen; Löschen fehlender Teams nach `imEinsatz`-Prüfung). `kursFuer` aus
   `svc.kurse` für Rechte; schreibend bei `!k.aktiv` → `ForbiddenError`. `src/app.js`: `opts.zufallBytes` in `ctx`
   aufnehmen (`ctx.zufallBytes = opts.zufallBytes || ((n) => crypto.randomBytes(n))`, E113) – im selben Commit (K41).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Teams: Tischgruppen je Kurs (Lehrkraft-Routen, Sollstand in place, Testhilfe Funkraum)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Teams: Tischgruppen je Kurs (Lehrkraft-Routen, Sollstand in place, Testhilfe Funkraum)"`.
 
 ### Task 134: Funkraum-Zustandsautomat, Szenario-Konfiguration, Rollenvorschlag (TECHNIK §12.1, §12.2, E107, E113)
 
@@ -2752,6 +2752,11 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   (Groß/Klein zählt), weil `LIKE` „GEHEIMTEXT“ im Wort „Geheimtext“ der Fixture-Aufgaben findet. Zusätzliche Tests:
   Version/Ereignis beim Beenden, zweites Beenden ohne Wirkung, Typ aus der Zeile, `pausiert` mit eigenem Callback,
   `fuer_schluessel` geleert.
+- **Task 133:** `src/app.js` (K41) reicht zusätzlich `szenarioBeenden` = `funkraum/loeschen.beenden` an den
+  Verbund-Router (Kurs gesperrt → Auswertung, Test in `verbund.test.js`) und legt den Teams-Dienst unter
+  `app.locals.teams` ab (Tests für `teamVon`/`mitglieder`/`imEinsatz`). 409-Texte getrennt: „Team … spielt gerade im
+  Funkraum.“ bzw. „Team … hat eine Chiffre in der offenen Arena.“ Unbekannte Felder in einem Team → 400.
+  `liste`/`mitglieder` zeigen nur aktive Teilnahmen.
 
 ## Reihenfolge und Abhängigkeiten
 
