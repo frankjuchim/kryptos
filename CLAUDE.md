@@ -117,5 +117,5 @@ In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright insta
   docx/pptx in `materialien/` sind danach maßgeblich (nie von Hand gegen die Quelle laufen lassen).
 - Keine Klarnamen in Beispieldaten, Tests, Screenshots. Keine Abituraufgaben auf der Plattform veröffentlichen.
 - Fremdcode (z. B. Fork der „Krypto-Werkstatt“, Design O11) nur mit geklärter Lizenz übernehmen, Rechnungen immer über
-  `Krypto.*`, Herkunft in `docs/FREMDCODE.md`.
+  `Krypto.*`, Herkunft in `docs/FREMDCODE.md`. Stand M6: nichts übernommen, siehe docs/FREMDCODE.md.
 - Toy-Verfahren und historische Angaben vorsichtig formulieren („wird zugeschrieben“, „soll“), keine wörtlichen Zitate.

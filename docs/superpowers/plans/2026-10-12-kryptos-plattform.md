@@ -64,7 +64,7 @@ TECHNIK.md und den Welt-Specs); Teil B dieses Dokuments enthält die Detailaufga
 | **M3** | Aufgabenformat | Hooks (TECHNIK §4), neue Blöcke/Interaktionen/Normalisierungen, Fallen-Diagnose, Validator-Neuberechnung, Niveau, 12 Generatoren, Fixture Welt 9 deckt alles ab | M2 | **erledigt** (Tasks 19–42, Detailplan `2026-10-13-kryptos-m3-aufgabenformat.md`) |
 | **M4** | Oberfläche | Designsystem (Tokens, Schriften, Epochen), alle Seiten TECHNIK §11.1 (Themenseite mit Niveau-Übersicht `#niveaus` im Designsystem, Inhalt aus `GET /api/niveaus`), Renderer der neuen Blöcke/Interaktionen, Lehrkraft-Ansicht inkl. Niveau/Werkzeuge; Vorlage: `prototyp/kryptos_prototyp.html` | M1, M3 | **erledigt** (Tasks 43–68, Detailplan `2026-10-13-kryptos-m4-oberflaeche.md`; e2e Szenarien 1, 2, 3, 7, 8, 9) |
 | **M5** | Inhalte W0–W2 + Akten-Anbindung | `seed/welten/welt0–2.json` (mit `niveau` je Level/Aufgabe – die Niveau-Übersicht liest dann den Katalog statt `WELT_PLAN`; Abweichungen vom Plan klären), Bosse, Warm-up W0–W2, Gast-Demo, `seed/akten.json`, PDFs aus `materialien/` | M3, M4 | **erledigt** (Tasks 69–103, Detailplan `2026-10-13-kryptos-m5-inhalte-w0-w2.md`; e2e Szenario 11; offene Lehrkraft-Entscheidungen dort) |
-| **M6** | Kryptolabor | 11 Werkzeuge (Design §7.3), Einbettung in Aufgaben (Freigaben je Kurs und Sperre im Boss: erledigt in M4, Task 49) | M2, M4 | offen |
+| **M6** | Kryptolabor | 11 Werkzeuge (Design §7.3), Einbettung in Aufgaben (Freigaben je Kurs und Sperre im Boss: erledigt in M4, Task 49); neu: Nachspiel, Brute-Force-Demo, Einbettung, e2e 4 (Detailplan `2026-10-13-kryptos-m6-kryptolabor.md`) | M2, M4 | offen |
 | **M7** | Funkraum + Werkstatt/Arena | 5 Szenarien, Beamer, Moderation, Löschung; Baukasten, Einreichung, Angriffe, Abzeichen | M1, M4 | offen |
 | **M8** | Inhalte W3–W6 | Seeds W3–W6, Bosse, Warm-up, Trainingsplatz vollständig, Abdeckungsskript `scripts/abdeckung.js` grün | M5 | offen |
 | **M9** | Abschluss und Deploy | e2e (TECHNIK §15), Datenschutzseite, Screenshots, Video-Bilder, CapRover-App, Portal-Eintrag, Ende-zu-Ende nach INTEGRATION §6, Version 1.0.0 | alle | offen |
@@ -445,14 +445,15 @@ Python-Zwilling) nachgerechnet (Design §13.1). Grundlage sind die unabhängigen
 - **M4 Oberfläche:** Designsystem 1:1 aus `docs/DESIGNSYSTEM.md`; der Prototyp `prototyp/kryptos_prototyp.html` ist visuelle Referenz (nicht Code-Vorlage: dort Inline-Skripte, Google Fonts – im Produkt verboten). Schriften selbst gehostet mit Lizenzen. `seiten.test.js` bleibt grün.
 - **M5/M8 Inhalte:** Seeds aus den Welt-Specs §2 (Lab-Level) und §5 (Boss-Pool), Warm-up aus §7, Generatoren aus §8; Akten-Zuordnung `seed/akten.json` auf die erzeugten `materialien/Welt*/2_Akten/*.docx`; jede Lösung über die Bibliothek nachgerechnet (Validator) **und** gegen das Prüfprotokoll §12 der Spec.
 - **M6 Labor:** Werkzeug-Specs je Welt §9; jedes Werkzeug ruft nur `Krypto.*`; Sperre im Boss serverseitig.
-  **Vor dem Detailplan:** den Fork der „Krypto-Werkstatt“ (André Bodendiek, `frankjuchim/<WERKSTATT-FORK>`) sichten
-  (Design-Spec O11, TECHNIK T8). Übernommen werden Bedienidee (Objekt direkt bedienen: Scheibe drehen, Stab, Tabellenbreite,
-  Schablone, Walzen), Grafiken und der **Nachspiel-Modus (Zeitlupe/Einzelschritt)** – als allgemeine Funktion der
-  Labor-Registry für alle Werkzeuge – sowie die Brute-Force-Demo „Alle Schlüssel ausprobieren“. Nicht übernommen werden
-  eigene Rechenlogik (immer `Krypto.*`, Konventionen Design §6), Inline-Skripte/-Styles, externe Ressourcen und das
-  Login der „Codezentrale“. Pflicht: Lizenz/Erlaubnis liegt schriftlich vor, Namensnennung in Werkzeug und Impressum,
-  Tastaturbedienung und WCAG AA (§11), übernommene Dateien in `docs/FREMDCODE.md` mit Herkunft und Commit protokollieren.
-  Steganographie/Codierung aus der Werkstatt optional als Ergänzungs-Werkzeug in Welt 0.
+  Die „Krypto-Werkstatt“ (André Bodendiek) wurde vor dem Detailplan gesichtet (Design-Spec O11, TECHNIK T8):
+  **Beschluss des Orchestrators (Plan M6 E66):** keine Lizenzdatei, keine Lizenzangabe → bis zu einer schriftlichen
+  Erlaubnis wird **nichts übernommen** (kein Code, keine Grafik, kein Text, kein Link). Nur die Bedienideen (Objekt
+  direkt bedienen: Scheibe drehen, Stab, Tabellenbreite, Schablone, Walzen) werden eigenständig umgesetzt, dazu der
+  **Nachspiel-Modus (Zeitlupe/Einzelschritt)** als allgemeine Funktion der Labor-Registry für alle Werkzeuge
+  (`KRLabor.nachspiel`) und die Brute-Force-Demo „Alle Schlüssel ausprobieren“ (`KRLabor.alleSchluessel`) – beide
+  eigene Umsetzungen. Rechnungen immer über `Krypto.*` (Konventionen Design §6), keine Inline-Skripte/-Styles, keine
+  externen Ressourcen; Tastaturbedienung und WCAG AA (§11). Befund und Bedienideen in `docs/FREMDCODE.md`.
+  Steganographie/Codierung optional als eigenes Ergänzungs-Werkzeug in Welt 0.
 - **M7 Funkraum/Arena:** Szenarien je Welt §9 (Rollen, Zahlen, Texte) + TECHNIK §9/§12; Löschregeln und Whitelist mit Tests zuerst.
 - **M9:** e2e-Szenarien TECHNIK §15; Material-Pipeline (`werkzeuge/material/bauen.py` + PDF-Skripte) in CI; Portal-Eintrag nach TECHNIK §16.3.
 
@@ -464,7 +465,6 @@ Python-Zwilling) nachgerechnet (Design §13.1). Grundlage sind die unabhängigen
 
 ```
 Wir bauen Kryptos, eine Plattform des Verbunds InfoLabs (Kryptologie, Informatik-Oberstufe Niedersachsen).
-(Lesezugriff außerdem auf frankjuchim/<WERKSTATT-FORK> – erst in M6 relevant, siehe Plan Teil C.)
 Lies zuerst CLAUDE.md, dann docs/superpowers/specs/2026-10-12-kryptos-design.md, docs/TECHNIK.md und
 docs/superpowers/plans/2026-10-12-kryptos-plattform.md. Verbindlich ist der Vertrag
 https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (v1.2). Arbeite den Plan ab Task 1 mit

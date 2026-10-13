@@ -25,6 +25,7 @@ const lies = (p) => fs.readFileSync(p, 'utf8');
 
 const htmlDateien = alleDateien(PUBLIC).filter((p) => p.endsWith('.html'));
 const jsDateien = alleDateien(path.join(PUBLIC, 'static', 'js')).filter((p) => p.endsWith('.js'));
+const cssDateien = alleDateien(path.join(PUBLIC, 'static', 'css')).filter((p) => p.endsWith('.css'));
 const TEXT_ENDUNGEN = /\.(html|js|css|svg|json|txt|md)$/;
 
 test('es gibt HTML-Seiten und Skripte', () => {
@@ -194,4 +195,11 @@ test('Scrollbereiche (.scroll-x) halten absolut positionierte Screenreader-Texte
   const regel = /\.scroll-x\s*\{([^}]*)\}/.exec(css);
   assert.ok(regel, '.scroll-x fehlt in basis.css');
   assert.match(regel[1], /position:\s*relative/, '.scroll-x braucht position: relative (sonst ragen .sr-Spans der Matrix-Köpfe aus der Seite)');
+});
+test('Fremdcode (M6 E66): FREMDCODE.md vorhanden, nichts aus der Werkstatt übernommen, kein Link', () => {
+  const fremd = fs.readFileSync(path.join(__dirname, '..', 'docs', 'FREMDCODE.md'), 'utf8');
+  assert.match(fremd, /nichts übernommen; nur Bedienideen; Lizenz ungeklärt/);
+  assert.doesNotMatch(fremd, /https?:\/\/|andrebodendiek|enigma\./i, 'kein Link auf die Werkstatt');
+  const verboten = /andrebodendiek|kryptologie-werkstatt|\bKW\.(player|shell|controls|workbench)\b|portal\.js/i;
+  for (const p of [...htmlDateien, ...jsDateien, ...cssDateien]) assert.doesNotMatch(lies(p), verboten, `${rel(p)}: Werkstatt-Spur`);
 });

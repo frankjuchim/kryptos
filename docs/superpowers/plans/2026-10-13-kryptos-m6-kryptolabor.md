@@ -517,7 +517,7 @@ Screenshots mit dem Read-Werkzeug ansehen; Befund (Layout, Lesbarkeit, Kontrast,
 - Tabelle „Weitere Fremdquellen“: Schriften (verweist auf `public/static/fonts/LIZENZEN/`), OKLab-Formeln (öffentliche
   Beschreibung, eigene Umsetzung, E80), SHA-256 (FIPS 180-4, eigene Umsetzung, E68).
 
-- [ ] **Step 1: Failing test** – `test/seiten.test.js` (anhängen):
+- [x] **Step 1: Failing test** – `test/seiten.test.js` (anhängen):
   ```js
   test('Fremdcode (M6 E66): FREMDCODE.md vorhanden, nichts aus der Werkstatt übernommen, kein Link', () => {
     const fremd = fs.readFileSync(path.join(__dirname, '..', 'docs', 'FREMDCODE.md'), 'utf8');
@@ -529,15 +529,15 @@ Screenshots mit dem Read-Werkzeug ansehen; Befund (Layout, Lesbarkeit, Kontrast,
   ```
   (`jsDateien`/`cssDateien` = alle Dateien unter `public/static/js/**` bzw. `public/static/css/**`; falls die Helfer im Test
   noch fehlen, am Dateianfang wie `htmlDateien` über `fs.readdirSync(…, { recursive: true })` anlegen.)
-- [ ] **Step 2: Run** `node --test test/seiten.test.js` → FAIL (Datei fehlt).
-- [ ] **Step 3: Implement** – `docs/FREMDCODE.md` schreiben (ohne URLs); Design O11: „in M6 nur Bedienideen eigenständig
+- [x] **Step 2: Run** `node --test test/seiten.test.js` → FAIL (Datei fehlt).
+- [x] **Step 3: Implement** – `docs/FREMDCODE.md` schreiben (ohne URLs); Design O11: „in M6 nur Bedienideen eigenständig
   umgesetzt (nichts übernommen, Lizenz ungeklärt – `docs/FREMDCODE.md`); Übernahme von Code/Grafik erst nach schriftlicher
   Erlaubnis; bis dahin kein Link“ – die Adresse der Werkstatt und der Fork-Platzhalter entfallen in O11, im Gesamtplan
   (Teil C, Startprompt) und in TECHNIK T8; TECHNIK T8: „erledigt in M6 ohne Fremdcode: `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6
   E67)“; Gesamtplan Teil C M6-Absatz entsprechend (Sätze „Übernommen werden … Grafiken“ und „Pflicht: Lizenz/Erlaubnis
   liegt schriftlich vor …“ durch den Orchestrator-Beschluss ersetzen).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Fremdcode: Werkstatt gesichtet, nichts übernommen (FREMDCODE.md, Design O11, TECHNIK T8)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Fremdcode: Werkstatt gesichtet, nichts übernommen (FREMDCODE.md, Design O11, TECHNIK T8)"`.
 
 ### Task 105: Bibliothek I – Raster, Schienen, Schablonen-Stellungen, Ring, Pendel, Schlüsselstrom (W0 §9.1, W2 §9.1, W6 §9.1)
 

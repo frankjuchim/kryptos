@@ -705,7 +705,7 @@ keine externen Ressourcen, kein Tracking. Keine Klarnamen in Beispieldaten, Scre
 | O8 | Abituraufgaben als Übungsmaterial | nur als Verweis/Quelle für die Lehrkraft, nicht auf der Plattform veröffentlichen |
 | O9 | Lizenz der Materialien und Schriften (Fußzeile „© Frank Juchim · für den Unterricht“; Atkinson Hyperlegible: Lizenz vor der Selbst-Hostung prüfen, Fraunces und JetBrains Mono OFL) | Lehrkraft entscheidet vor der Veröffentlichung; Lizenztexte nach `public/static/fonts/LIZENZEN/` |
 | O10 | Rangregel „nur Kern/eA zählen“ steht nicht im labs-Vertrag v1.2 | Rang über alle sichtbaren Level (vertragsnah); Vorschlag V2 (`docs/VERTRAG_VORSCHLAEGE.md`) mit dem Portal abstimmen |
-| O11 | „Krypto-Werkstatt“ von André Bodendiek (enigma.andrebodendiek.de/werkstatt; Fork `frankjuchim/<WERKSTATT-FORK>`): direkte Bedienung der Objekte, Nachspielen in Einzelschritten | in M6 Bedienidee, Grafiken und Nachspiel-Modus ins Kryptolabor übernehmen, Rechnungen über `krypto.js`; vorher Lizenz/Erlaubnis und Namensnennung klären; bis dahin als Link in Themenseite und Lehrerhinweisen W0 |
+| O11 | „Krypto-Werkstatt“ von André Bodendiek: direkte Bedienung der Objekte, Nachspielen in Einzelschritten | in M6 nur Bedienideen eigenständig umgesetzt (nichts übernommen, Lizenz ungeklärt – `docs/FREMDCODE.md`; Nachspiel-Modus und „Alle Schlüssel ausprobieren“ als eigene Funktionen der Labor-Registry, Rechnungen über `krypto.js`); Übernahme von Code/Grafik erst nach schriftlicher Erlaubnis mit Namensnennung; bis dahin kein Link |
 
 ---
 

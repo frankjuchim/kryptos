@@ -175,6 +175,7 @@ test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
 test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js fehler.js, seed/ (Gast-Demo für den e2e, §15)
 test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
+                   FREMDCODE.md (M6: Fremdquellen; aus der Krypto-Werkstatt nichts übernommen)
 ```
 
 ---
@@ -1768,4 +1769,4 @@ dem ersten Live-Deploy.
 | T5 | ~~Lizenz der Atkinson-Hyperlegible-Fassung~~ – **erledigt**: OFL-1.1-Fassung aus `@fontsource/atkinson-hyperlegible` 5.3.0 („Copyright 2020 Braille Institute of America, Inc.“, M4 Task 43) | – |
 | T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
-| T8 | Fremdcode „Krypto-Werkstatt“ (Fork `frankjuchim/<WERKSTATT-FORK>`) | in M6: Registry (§10.2) um `nachspielen(schritte)` erweitern (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`); Werkstatt-Komponenten nur als Darstellung, Rechnung über `Krypto.*`; CSP-konform umbauen; Herkunft, Lizenz und Commit in `docs/FREMDCODE.md` (Design O11) |
+| T8 | Fremdcode „Krypto-Werkstatt“ | **erledigt in M6 ohne Fremdcode:** `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`), Rechnung über `Krypto.*`; aus der Werkstatt nichts übernommen (Lizenz ungeklärt, nur Bedienideen) – `docs/FREMDCODE.md` (Design O11) |
