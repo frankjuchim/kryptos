@@ -699,11 +699,17 @@ Standard-Quadrat in Aufgaben als Block `{ "t": "quadrat", "art": "polybios" }`.
 
 **Erwartete Hinweise:** keine. Nach dieser Task: Abdeckung „fremde Chiffre“ (Level-Kategorie `fremde-chiffre` in 0.4) erfüllt.
 
-- [ ] **Step 1: Failing test** – `UMFANG[0]` += `'W0-L4'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 0: Level 0.4 „Fremde Chiffre I: Polybios und Atbash“"`.
+- [x] **Step 1: Failing test** – `UMFANG[0]` += `'W0-L4'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 0: Level 0.4 „Fremde Chiffre I: Polybios und Atbash“"`.
+
+- **Umgesetzt (Task 77):** W0-L4-05 a) steht im Block `quadrat` `art: "polybios"` mit `schluessel: "KORINTH"` **und**
+  `zellen` (Lücken) statt `frei`: Die Schlüsselwort-Erkennung bei `frei` findet aus den bekannten Zeilen (`KORIN`,
+  `MPQSU`, `VWXYZ`) kein eindeutiges Schlüsselwort und rechnet die Lücken dann nicht nach; mit `schluessel` rechnen
+  Validator und `seed_pruefen.py` jede Lücke nach (zusätzlich zur Prüfwert-Gruppe). Schlüsselwörter im Text fett
+  (`**KORINTH**`) statt in Backticks (sonst Hinweis „Fünfergruppen“), Erklärung W0-L4-03 `OVTRL M`.
 
 ### Task 78: Welt 0 – Boss online „Der Bote des Feldherrn“
 
