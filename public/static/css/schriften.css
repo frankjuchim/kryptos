@@ -1,0 +1,63 @@
+/* Schriften (TECHNIK §11.4, DESIGNSYSTEM §3) – selbst gehostet, Teilmengen aus werkzeuge/schriften_bauen.py.
+   Herkunft, Versionen und Lizenzen: /static/fonts/LIESMICH.md und /static/fonts/LIZENZEN/OFL-*.txt (SIL OFL 1.1).
+   „KR Symbole“ ergänzt die Hausschriften um ⊕ ← → ≡ ≠ ≤ ≥ φ ★ ✓ ✗ (E23) und steht in jedem Schriftstapel
+   direkt hinter der Hausschrift (tokens.css). */
+
+/* Überschriften: Fraunces (variabel, Achsen opsz und wght) */
+@font-face {
+  font-family: 'Fraunces';
+  src: url("/static/fonts/Fraunces-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fließtext: Atkinson Hyperlegible */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  src: url("/static/fonts/AtkinsonHyperlegible-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  src: url("/static/fonts/AtkinsonHyperlegible-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geheimtext, Code, Schlüssel: JetBrains Mono (Teilmenge ohne Programmier-Ligaturen) */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("/static/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url("/static/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Symbole: Noto Sans Math und Noto Sans Symbols 2 (je eine winzige Teilmenge) */
+@font-face {
+  font-family: 'KR Symbole';
+  src: url("/static/fonts/NotoSansMath-Symbole.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+03C6, U+2190-2193, U+21D2, U+21D4, U+2260-2261, U+2264-2265, U+2295, U+2605, U+2713;
+}
+@font-face {
+  font-family: 'KR Symbole';
+  src: url("/static/fonts/NotoSansSymbols2-Symbole.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+2717-2718;
+}

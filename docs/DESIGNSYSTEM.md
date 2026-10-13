@@ -67,6 +67,12 @@ Rahmen bleibt, Papier wird `#1A2238`, Text `#ECE6D8`, Akzent = `--akzent-hell`. 
 | Geheimtext, Bits, Code | **JetBrains Mono** 400/700 | **Consolas** | 1,05 rem / 11 pt / 22 pt |
 | Zahlen in Tabellen | Atkinson, tabellarische Ziffern | Calibri | – |
 
+Schriftstapel (Plattform, `tokens.css`): `--f-ueberschrift: 'Fraunces', 'KR Symbole', Georgia, 'Times New Roman',
+serif` · `--f-text: 'Atkinson Hyperlegible', 'KR Symbole', system-ui, sans-serif` · `--f-mono: 'JetBrains Mono', 'KR
+Symbole', ui-monospace, Consolas, monospace`. „KR Symbole“ (Teilmengen aus Noto Sans Math und Noto Sans Symbols 2, OFL)
+liefert ⊕ ← → ≡ ≠ ≤ ≥ φ ★ ✓ ✗, die den Hausschriften fehlen (TECHNIK §11.4). JetBrains Mono ohne Ligaturen (`!=` bleibt
+`!=`).
+
 Geheimtext-Stil: GROSSBUCHSTABEN, Fünfergruppen, Buchstabenabstand 0,12 em, Gruppenabstand 1 ch, Farbe `--text`,
 Hintergrund `--papier-2`, linker Rand 3 px in `--akzent`. Klartext: kleinbuchstaben, kursiv **nicht** verwenden
 (schlechte Lesbarkeit), stattdessen normale Schrift in `--text-2`.

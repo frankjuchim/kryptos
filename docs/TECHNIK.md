@@ -150,7 +150,8 @@ public/
   static/
     css/   tokens.css schriften.css basis.css komponenten.css aufgaben.css epochen.css labor.css
            funkraum.css lehrkraft.css druck.css
-    fonts/ Fraunces-*.woff2 AtkinsonHyperlegible-*.woff2 JetBrainsMono-*.woff2  LIZENZEN/OFL-*.txt
+    fonts/ Fraunces-*.woff2 AtkinsonHyperlegible-*.woff2 JetBrainsMono-*.woff2
+           NotoSansMath-Symbole.woff2 NotoSansSymbols2-Symbole.woff2 („KR Symbole“)  LIZENZEN/OFL-*.txt  LIESMICH.md
     img/   ornamente.svg (Sprite: Mäander, Girih, Ranke, Lochstreifen, Scanline, Netz, Zahnrad)
            texturen.svg siegel.svg abzeichen.svg icons.svg
     js/    common.js render.js interact.js aufgabe.js            (Kern, angepasst)
@@ -161,6 +162,7 @@ public/
                            bitlupe.js runden.js modulo.js rsa.js hash.js signatur.js
                     funkraum.js beamer.js werkstatt.js arena.js lehrer.js lehrer_funkraum.js lehrer_arena.js
                     gast.js start.js board.js themen.js urkunden.js
+werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
@@ -1251,11 +1253,21 @@ Farbe; dynamische Werte per CSSOM (`el.style.setProperty('--wert', …)`, CSP-ko
 
 `public/static/fonts/`: `Fraunces-Variable.woff2` (Achsen opsz, wght; Unterschnitt 600 genutzt),
 `AtkinsonHyperlegible-Regular.woff2`, `-Bold.woff2`, `JetBrainsMono-Regular.woff2`, `-Bold.woff2` – jeweils Teilmenge
-Latin + Latin-1 + benötigte Zeichen (⊕ ← → ≡ ≠ ≤ ≥ · – „“ φ ★ ✓ ✗). Lizenzen: `fonts/LIZENZEN/OFL-Fraunces.txt`,
-`OFL-AtkinsonHyperlegible.txt`, `OFL-JetBrainsMono.txt` (vollständiger SIL-OFL-1.1-Text mit Copyright-Zeile der
-jeweiligen Quelle) + `LIESMICH.md` (Herkunft, Version, Teilmengen-Befehl). Vor dem Einbinden die Lizenz der jeweils
-verwendeten Version prüfen (Atkinson Hyperlegible: Fassung unter OFL verwenden). CI prüft mit `fonttools`, dass die
-Zeichenliste abgedeckt ist (`werkzeuge/schriften_pruefen.py`), und `seiten.test.js`, dass jede Schrift eine
+Latin + Latin-1 + typografische Zeichen (· – „“ ‚‘ … €); JetBrains Mono ohne Programmier-Ligaturen (`calt`, `liga`,
+`dlig` entfernt, zusätzlich `font-variant-ligatures: none`).
+Keine der drei Familien enthält ⊕ ★ ✓ ✗ (Fraunces und Atkinson auch ← → ≡ φ nicht). Deshalb gibt es die Symbol-Familie
+**„KR Symbole“** (M4-Plan E23): `NotoSansMath-Symbole.woff2` (← ↑ → ↓ ⇒ ⇔ ≠ ≡ ≤ ≥ ⊕ φ ★ ✓) und
+`NotoSansSymbols2-Symbole.woff2` (✗ ✘), je eine winzige Teilmenge mit `unicode-range` in `schriften.css`; sie steht in
+jedem Schriftstapel direkt hinter der Hausschrift (`--f-ueberschrift`, `--f-text`, `--f-mono` in `tokens.css`).
+**Bezugsweg:** nur aus der npm-Registry per `npm pack` in ein Scratchpad (keine Abhängigkeit in `package.json`):
+`@fontsource-variable/fraunces`, `@fontsource/atkinson-hyperlegible` (OFL-Fassung), `@fontsource/jetbrains-mono`,
+`@fontsource/noto-sans-math`, `@fontsource/noto-sans-symbols-2`, alle 5.3.0; Teilmengen mit
+`python3 -I werkzeuge/schriften_bauen.py --quelle <ordner>` (fontTools, `name`-Tabelle mit Copyright bleibt).
+Lizenzen: `fonts/LIZENZEN/OFL-Fraunces.txt`, `OFL-AtkinsonHyperlegible.txt`, `OFL-JetBrainsMono.txt`,
+`OFL-NotoSansMath.txt`, `OFL-NotoSansSymbols2.txt` (unveränderte `LICENSE` des Pakets: Copyright-Zeile und vollständiger
+SIL-OFL-1.1-Text) + `LIESMICH.md` (Herkunft, Version, Teilmengen-Befehl). CI prüft mit `fonttools`, dass die
+Zeichenliste je Rolle in „Hausschrift ∪ KR Symbole“ abgedeckt ist und jede Datei eine Lizenz hat
+(`python3 -I werkzeuge/schriften_pruefen.py`, Job `inhalte`), und `seiten.test.js`, dass jede Schrift eine
 Lizenzdatei hat. `font-src 'self'`.
 
 ### 11.5 CSP und Sicherheitsköpfe
@@ -1269,6 +1281,7 @@ Ursprung), Videos nur als Link.
 ### 11.6 Cache-Busting
 
 Wie Kern: `?v=<package.json version>` an allen `static`-Verweisen in `public/*.html`; `express.static` mit `maxAge: 1h`.
+Version setzen mit `node werkzeuge/version_setzen.js <x.y.z|patch|minor>` (package.json, package-lock.json, alle `?v=`).
 Test `seiten.test.js`: alle `?v=` in allen HTML-Dateien gleich der `package.json`-Version.
 
 ### 11.7 Barrierefreiheit und Geräte
@@ -1681,7 +1694,7 @@ Live-Deploy.
 | T2 | Stufen-Katalog der Werkstatt kann durch SPEC W3 verfeinert werden | §9.2 ist Mindestumfang; W3 geht vor |
 | T3 | ~~Levelzahl~~ – **erledigt** (Design-Spec 1.1: 26 Level) | Manifest zählt aus dem Seed |
 | T4 | ~~W6-Farbe~~ – **erledigt** (Design-Spec 1.1: `#8A5F1A`, Plattformfarbe `#B07D2B`) | – |
-| T5 | Lizenz der Atkinson-Hyperlegible-Fassung | vor dem Einbinden prüfen (§11.4) |
+| T5 | ~~Lizenz der Atkinson-Hyperlegible-Fassung~~ – **erledigt**: OFL-1.1-Fassung aus `@fontsource/atkinson-hyperlegible` 5.3.0 („Copyright 2020 Braille Institute of America, Inc.“, M4 Task 43) | – |
 | T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
 | T8 | Fremdcode „Krypto-Werkstatt“ (Fork `frankjuchim/<WERKSTATT-FORK>`) | in M6: Registry (§10.2) um `nachspielen(schritte)` erweitern (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`); Werkstatt-Komponenten nur als Darstellung, Rechnung über `Krypto.*`; CSP-konform umbauen; Herkunft, Lizenz und Commit in `docs/FREMDCODE.md` (Design O11) |

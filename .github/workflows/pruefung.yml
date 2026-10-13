@@ -66,6 +66,10 @@ jobs:
         run: |
           python3 -m py_compile werkzeuge/material/*.py
           node --check werkzeuge/material/kr_pptx.js
-      # folgen (TECHNIK §16.1, mit Java 21 und pip install python-docx python-pptx pypdf fonttools):
+      - name: Schriften (Glyphenabdeckung und Lizenzen, TECHNIK §11.4)
+        run: |
+          pip install fonttools brotli
+          python3 -I werkzeuge/schriften_pruefen.py
+      # folgen (TECHNIK §16.1, mit Java 21 und pip install python-docx python-pptx pypdf):
       #   ide_pruefen.py, workspaces_erzeugen.py --pruefen, materialien_pruefen.py, akten_pdf.py --pruefen,
-      #   loesungen_pdf.py --pruefen, lehrkraft_pdf.py --pruefen, video_folien.py --pruefen, schriften_pruefen.py
+      #   loesungen_pdf.py --pruefen, lehrkraft_pdf.py --pruefen, video_folien.py --pruefen

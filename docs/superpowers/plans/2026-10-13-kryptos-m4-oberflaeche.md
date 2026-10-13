@@ -2385,6 +2385,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
 1. **Schriften (E23):** Fraunces, Atkinson Hyperlegible und JetBrains Mono decken ⊕ ← → ≡ φ ★ ✓ ✗ nicht ab. Vorschlag: eine
    kleine Symbol-Ergänzung aus Noto Sans Math / Noto Sans Symbols 2 (OFL, je ≈ 4 KB). Alternative: Symbole nur als SVG-Icons
    (dann dürfen sie in Aufgabentexten nicht als Zeichen vorkommen). Bitte bestätigen.
+   **Vorläufig festgelegt (Orchestrator):** ja, Symbol-Familie „KR Symbole“ wie E23 – umgesetzt in Task 43.
 2. **Zeitleiste ohne Seeds (E31):** Bis M5/M8 gibt es nur für die geladenen Welten Tore. Sollen die fehlenden Epochen schon
    als „noch verschlüsselt“ sichtbar sein (Server müsste dann Welten aus `fach.WELTEN` ohne Inhalt melden)?
 3. **Funkraum/Werkstatt/Beamer als Gerüst (E20):** Die Seiten existieren mit Wächter und Leerzustand; Kopfzeile zeigt den
