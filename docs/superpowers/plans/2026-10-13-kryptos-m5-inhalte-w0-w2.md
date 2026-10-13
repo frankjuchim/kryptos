@@ -1705,6 +1705,8 @@ Merge-Vorschlag an die Lehrkraft mit den offenen Entscheidungen 1–12 (unten).
    (aus Spec §0.1/§0.8) bitte freigeben oder eigene Texte liefern.
 6. **Warm-up-Karte WU-W2-08 „Koinzidenz im Kopf (eA)“:** Warm-up-Karten haben im Kern kein Niveau; gA-Kurse sehen die Karte. Hinnehmen
    (Titel nennt „eA“) oder ein Niveau-Feld für Karten einführen (Kern-Änderung)? **Vorläufig:** hinnehmen.
+   **Umgesetzt nach der M5-Inhaltsprüfung (Orchestrator, W7):** Feld `niveau` für Karten (K39), WU-W2-08 = eA; im
+   gA-Kurs wird die Karte nicht gezogen (`test/warmup_niveau.test.js`).
 7. **Material-Umfang (E49):** M5 baut W0–W2, W3 folgt in M8. Die Lehrkraft-PDFs (Präsentationen, Lehrerhinweise, Lösungen, Klausuren) der
    vorhandenen W4–W6-Materialien werden schon jetzt erzeugt und im Lehrkraft-Bereich angeboten; die Schüler-Akten W4–W6 erst mit ihren Seeds.
    Einverstanden?

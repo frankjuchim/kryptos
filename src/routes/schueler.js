@@ -69,19 +69,22 @@ function schuelerRoutes(api, h) {
   st.get('/profil', (req, res) => res.json(svc.lernen.profil(req.schueler)));
   st.get('/scoreboard', (req, res) => res.json(svc.lernen.scoreboardFuerSchueler(req.schueler, req.query.welt)));
 
-  const kataFilter = (q) => ({
+  // Kryptos (K39): im gA-Kurs keine eA-Warm-up-Karten – gA aus dem Kursniveau, nie aus der Anfrage
+  const gAKurs = (s) => svc.lernen.einstellungenVon(s).niveau === 'gA';
+  const kataFilter = (q, s) => ({
     welt: q.welt === undefined || q.welt === '' ? undefined : q.welt,
-    kategorie: typeof q.kategorie === 'string' && q.kategorie ? q.kategorie : undefined
+    kategorie: typeof q.kategorie === 'string' && q.kategorie ? q.kategorie : undefined,
+    gA: gAKurs(s)
   });
-  st.get('/kata/meta', (req, res) => res.json(svc.kata.meta()));
-  st.get('/kata/statistik', (req, res) => res.json(svc.kata.statistik(req.schueler.id, kataFilter(req.query))));
+  st.get('/kata/meta', (req, res) => res.json(svc.kata.meta({ gA: gAKurs(req.schueler) })));
+  st.get('/kata/statistik', (req, res) => res.json(svc.kata.statistik(req.schueler.id, kataFilter(req.query, req.schueler))));
   st.post('/kata/ziehen', (req, res) => {
     const b = req.body || {};
-    res.json(svc.kata.ziehen(req.schueler.id, kataFilter(b), { excludeId: typeof b.excludeId === 'string' ? b.excludeId : null, force: b.force === true }));
+    res.json(svc.kata.ziehen(req.schueler.id, kataFilter(b, req.schueler), { excludeId: typeof b.excludeId === 'string' ? b.excludeId : null, force: b.force === true }));
   });
   st.post('/kata/antwort', (req, res) => {
     const b = req.body || {};
-    const r = svc.kata.antworten(req.schueler.id, String(b.kataId || ''), b.ergebnis);
+    const r = svc.kata.antworten(req.schueler.id, String(b.kataId || ''), b.ergebnis, { gA: gAKurs(req.schueler) });
     const neu = svc.stand.pruefeAbzeichen(req.schueler);
     res.json({ ...r, neueAbzeichen: neu });
   });

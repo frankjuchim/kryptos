@@ -323,6 +323,10 @@ const MIGRATIONEN = [
     zeit       TEXT NOT NULL,                                -- ISO-Zeitpunkt der (letzten) Löschung
     PRIMARY KEY (art, schluessel)
   );
+  `,
+  // Migration 3 (M5-Inhaltsprüfung W7): Niveau der Warm-up-Karten – eA-Karten zieht der Leitner-Trainer im gA-Kurs nicht.
+  `
+  ALTER TABLE katas ADD COLUMN niveau TEXT NOT NULL DEFAULT 'kern' CHECK (niveau IN ('kern', 'eA'));
   `
 ];
 

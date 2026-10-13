@@ -757,7 +757,7 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 Unverändert aus Algo Quest (Definition dort): `meta`, `welten`, `fortschritt`, `fallen_zaehler`, `falsche_antworten`,
 `ide_erledigt`, `abzeichen`, `erfolge`, `training`, `boss_versuche`, `katas`, `leitner`. Alle Fremdschlüssel
 `ON DELETE CASCADE`, `PRAGMA foreign_keys = ON`, `PRAGMA secure_delete = ON` (gelöschte Inhalte werden in der Datei
-überschrieben). Schema-Änderungen nur als neue Migration am Ende von `MIGRATIONEN` (Migration 2: `loeschungen`).
+überschrieben). Schema-Änderungen nur als neue Migration am Ende von `MIGRATIONEN` (Migration 2: `loeschungen`, Migration 3: `katas.niveau` – Warm-up-Karten `kern` \| `eA`, §8.2).
 
 ```sql
 -- ===== Konten und Kurse (ersetzt lehrkraefte, kurse, schueler aus Algo Quest) =====
@@ -1036,6 +1036,7 @@ Test: `test/wartung.test.js` mit steuerbarer Uhr.
 | Rang, Kursübersicht `anteil`, Welt-Fortschrittsring | alle sichtbaren Level-Punkte / Maximum aller sichtbaren Level-Aufgaben freigeschalteter Welten (VERTRAG v1.2 §6/§9; Ergänzung und Kür zählen mit) | dito |
 | Abzeichen „Welt gemeistert“ | alle sichtbaren `kern`-Aufgaben der Welt gelöst (ohne Ergänzung/Kür) | alle `kern`- und `eA`-Aufgaben der Welt gelöst (ohne Ergänzung/Kür) |
 | Trainingsplatz | Generatoren mit `niveau: 'ergaenzung'` (DH/RSA) bleiben verfügbar, Generatoren `eA` (KRYPTOS-16) nur im eA-Kurs | |
+| Warm-up | Karten mit `niveau: 'eA'` werden nicht gezogen und nicht gezählt (Spalte `katas.niveau`, Migration 3, K39) | alle Karten |
 | Auswertung (Lehrkraft) | Matrix zeigt sichtbare Level; Spalte „Niveau: gA“ im Kopf | |
 
 ### 8.3 Rechenvorschrift (für `stand.staende` und Kursübersicht)

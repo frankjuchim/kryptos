@@ -1,17 +1,19 @@
 'use strict';
 // Warm-up-Trainer (Leitner, 5 Fächer) – aus v1 übernommen, ohne Punkte. Karten: seed/warmup/*.json.
+// Kryptos (KERN_ABWEICHUNGEN K39): Feld niveau (kern | eA, Standard kern); Filter gA: true blendet eA-Karten aus.
 
 const crypto = require('node:crypto');
 const V = require('../validate');
 const { KATA_KATEGORIEN, LEITNER_INTERVAL_DAYS, WELTEN } = require('../domain');
 
 const { ValidationError, NotFoundError } = V;
+const KARTEN_NIVEAUS = ['kern', 'eA'];
 
 function createKata(ctx) {
   const { db } = ctx;
 
   function kataRow(k) {
-    return { id: k.id, welt: k.welt, kategorie: k.kategorie, titel: k.titel, aufgabe: k.aufgabe, code: k.code, loesung: k.loesung, loesungCode: k.loesung_code, minuten: k.minuten };
+    return { id: k.id, welt: k.welt, kategorie: k.kategorie, titel: k.titel, aufgabe: k.aufgabe, code: k.code, loesung: k.loesung, loesungCode: k.loesung_code, minuten: k.minuten, niveau: k.niveau || 'kern' };
   }
 
   function filterSql(filter = {}) {
@@ -26,6 +28,8 @@ function createKata(ctx) {
       where.push('k.kategorie = ?');
       params.push(filter.kategorie);
     }
+    // gA-Kurs: eA-Karten nicht ziehen und nicht zählen (wird serverseitig aus dem Kursniveau gesetzt, nie vom Client)
+    if (filter.gA === true) where.push("k.niveau <> 'eA'");
     return { sql: where.length ? 'WHERE ' + where.join(' AND ') : '', params };
   }
 
@@ -34,14 +38,21 @@ function createKata(ctx) {
     return db.prepare(`SELECT * FROM katas k ${f.sql} ORDER BY k.welt, k.id`).all(...f.params).map(kataRow);
   }
 
-  function meta() {
-    const welten = db.prepare('SELECT welt, COUNT(*) AS n FROM katas GROUP BY welt ORDER BY welt').all();
-    const kategorien = db.prepare('SELECT kategorie, COUNT(*) AS n FROM katas GROUP BY kategorie').all();
+  function meta(filter = {}) {
+    const f = filterSql({ gA: filter.gA });
+    const welten = db.prepare(`SELECT welt, COUNT(*) AS n FROM katas k ${f.sql} GROUP BY welt ORDER BY welt`).all(...f.params);
+    const kategorien = db.prepare(`SELECT kategorie, COUNT(*) AS n FROM katas k ${f.sql} GROUP BY kategorie`).all(...f.params);
     return {
       welten: welten.map((w) => ({ welt: w.welt, anzahl: w.n })),
       kategorien: KATA_KATEGORIEN.filter((k) => kategorien.some((x) => x.kategorie === k)).map((k) => ({ kategorie: k, anzahl: kategorien.find((x) => x.kategorie === k).n })),
       weltNamen: WELTEN.map((w) => ({ nr: w.nr, name: w.name }))
     };
+  }
+
+  function niveauVon(n, where) {
+    if (n === undefined || n === null || n === '') return 'kern';
+    if (!KARTEN_NIVEAUS.includes(n)) throw new ValidationError(`${where}: niveau muss kern oder eA sein.`);
+    return n;
   }
 
   function pruefeKarte(k, i) {
@@ -60,7 +71,8 @@ function createKata(ctx) {
       code: V.str(k.code === undefined ? '' : k.code, `${where}: code`, { max: 20000, trim: false }),
       loesung: V.str(k.loesung, `${where}: loesung`, { min: 1, max: 20000, trim: false }),
       loesungCode: V.str(k.loesungCode === undefined ? '' : k.loesungCode, `${where}: loesungCode`, { max: 20000, trim: false }),
-      minuten: k.minuten === undefined ? 5 : V.int(k.minuten, `${where}: minuten`, { min: 1, max: 90 })
+      minuten: k.minuten === undefined ? 5 : V.int(k.minuten, `${where}: minuten`, { min: 1, max: 90 }),
+      niveau: niveauVon(k.niveau, where)
     };
   }
 
@@ -88,11 +100,11 @@ function createKata(ctx) {
     let aktualisiert = 0;
     const exists = db.prepare('SELECT 1 FROM katas WHERE id = ?');
     const upsert = db.prepare(
-      `INSERT INTO katas (id, welt, kategorie, titel, aufgabe, code, loesung, loesung_code, minuten, updated_at)
-       VALUES (@id, @welt, @kategorie, @titel, @aufgabe, @code, @loesung, @loesungCode, @minuten, datetime('now'))
+      `INSERT INTO katas (id, welt, kategorie, titel, aufgabe, code, loesung, loesung_code, minuten, niveau, updated_at)
+       VALUES (@id, @welt, @kategorie, @titel, @aufgabe, @code, @loesung, @loesungCode, @minuten, @niveau, datetime('now'))
        ON CONFLICT(id) DO UPDATE SET welt = excluded.welt, kategorie = excluded.kategorie, titel = excluded.titel,
          aufgabe = excluded.aufgabe, code = excluded.code, loesung = excluded.loesung, loesung_code = excluded.loesung_code,
-         minuten = excluded.minuten, updated_at = excluded.updated_at`
+         minuten = excluded.minuten, niveau = excluded.niveau, updated_at = excluded.updated_at`
     );
     db.transaction(() => {
       for (const c of clean) {
@@ -170,10 +182,10 @@ function createKata(ctx) {
 
   const ERGEBNISSE = ['gewusst', 'teilweise', 'nicht'];
 
-  function antworten(sid, kataId, result) {
+  function antworten(sid, kataId, result, { gA = false } = {}) {
     if (!ERGEBNISSE.includes(result)) throw new ValidationError('Ungültige Selbsteinschätzung.');
-    const kata = db.prepare('SELECT id FROM katas WHERE id = ?').get(String(kataId));
-    if (!kata) throw new NotFoundError('Karte nicht gefunden.');
+    const kata = db.prepare('SELECT id, niveau FROM katas WHERE id = ?').get(String(kataId));
+    if (!kata || (gA && kata.niveau === 'eA')) throw new NotFoundError('Karte nicht gefunden.');
     const now = new Date(ctx.now());
     const cur = db.prepare('SELECT * FROM leitner WHERE schueler_id = ? AND kata_id = ?').get(sid, kata.id);
     const oldBox = cur ? cur.box : 1;
