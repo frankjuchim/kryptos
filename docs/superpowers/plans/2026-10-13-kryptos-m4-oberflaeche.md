@@ -1,11 +1,11 @@
 # Kryptos M4 „Oberfläche“ – Detailplan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or
-> superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 > Nummerierung setzt den Gesamtplan `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` und den M3-Plan
 > `2026-10-13-kryptos-m3-aufgabenformat.md` fort (Tasks **43–68**).
 >
-> **Status: offen** – Ausgangsstand Branch `feature/m0-kern`, HEAD `e1699c6`, 466 Tests grün, `package.json` 0.1.2.
+> **Status: erledigt** (Tasks 43–68) – Ausgangsstand Branch `feature/m0-kern`, HEAD `e1699c6`, 466 Tests grün, `package.json` 0.1.2; Abschluss: 582 Tests grün, `npm run pruefen` und `npm run e2e` (Szenarien 1, 2, 7a, 3, 7b, 8, 9) grün, Version 0.2.27.
 
 **Goal:** Kryptos bekommt seine eigene Oberfläche im Designsystem „Chronoskop“: selbst gehostete Schriften, Tokens und
 Epochen-Themen, alle Seiten aus TECHNIK §11.1 (Schüler-Zeitreise mit Zeitleiste, Epoche, Level, Aufgabe, Archivfund,
@@ -310,7 +310,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `'Atkinson Hyperlegible'` (400/700), `'JetBrains Mono'` (400/700), `'KR Symbole'` (zweimal, je mit `unicode-range` der
     Teilmenge). URLs absolut `url("/static/fonts/<Datei>")`.
 
-- [ ] **Step 1: Failing tests** `test/version_setzen.test.js` und `test/schriften.test.js`:
+- [x] **Step 1: Failing tests** `test/version_setzen.test.js` und `test/schriften.test.js`:
   ```js
   // test/version_setzen.test.js
   'use strict';
@@ -385,8 +385,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.match(r.stdout, /fehlt: ueberschrift .*U\+225C/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/version_setzen.test.js test/schriften.test.js` → FAIL (Skript/Dateien fehlen).
-- [ ] **Step 3: Implement** – Versionswerkzeug (nur `node:fs`/`node:path`, ohne Abhängigkeiten); Schriften:
+- [x] **Step 2: Run** `node --test test/version_setzen.test.js test/schriften.test.js` → FAIL (Skript/Dateien fehlen).
+- [x] **Step 3: Implement** – Versionswerkzeug (nur `node:fs`/`node:path`, ohne Abhängigkeiten); Schriften:
   ```bash
   S=/tmp/claude-0/-home-user/87e7dbc0-e51b-5e05-93c8-31b751eb05b0/scratchpad/fontpack   # Scratchpad, nicht ins Repo
   mkdir -p "$S" && cd "$S"
@@ -401,8 +401,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   (Pakete sind Daten aus dem Netz: nur entpacken und lesen, nichts darin ausführen.) `LIESMICH.md`: Tabelle Datei · Paket@Version ·
   Quelldatei · Unicode-Bereich · Lizenz, darunter die Befehle oben. `schriften.css` noch **nicht** in die HTML-Seiten
   einbinden (das tun die Seiten-Tasks mit dem Grundgerüst); `seiten.test.js` prüft die Lizenzen bereits.
-- [ ] **Step 4: Run** `node --test test/version_setzen.test.js test/schriften.test.js test/seiten.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Schriften selbst gehostet (Teilmengen, OFL-Lizenzen, Prüfskript), Versionswerkzeug"`
+- [x] **Step 4: Run** `node --test test/version_setzen.test.js test/schriften.test.js test/seiten.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Schriften selbst gehostet (Teilmengen, OFL-Lizenzen, Prüfskript), Versionswerkzeug"`
   (K22 fortgeschrieben).
 
 ### Task 44: Farb-Tokens, Epochen-Themen und Kontrastprüfung
@@ -435,7 +435,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     [data-epoche] { --akzent: var(--akzent-hell); }` plus dieselbe Regel für `data-theme="auto"` in der Media-Query.
     Welten ohne Eintrag (8, 9) setzt `KR.epoche()` per CSSOM (Task 47).
 
-- [ ] **Step 1: Failing test** `test/designsystem.test.js`:
+- [x] **Step 1: Failing test** `test/designsystem.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -492,10 +492,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     }
   });
   ```
-- [ ] **Step 2: Run** `node --test test/designsystem.test.js` → FAIL (Dateien fehlen).
-- [ ] **Step 3: Implement** (Werte oben; Kommentarkopf je Datei mit Verweis auf DESIGNSYSTEM §2; keine anderen Regeln).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Designsystem: Farb-Tokens, Epochen-Themen, Kontrastprüfung (WCAG AA)"`.
+- [x] **Step 2: Run** `node --test test/designsystem.test.js` → FAIL (Dateien fehlen).
+- [x] **Step 3: Implement** (Werte oben; Kommentarkopf je Datei mit Verweis auf DESIGNSYSTEM §2; keine anderen Regeln).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Designsystem: Farb-Tokens, Epochen-Themen, Kontrastprüfung (WCAG AA)"`.
 
 ### Task 45: Basis, Komponenten, Sprites und Texturen; Stilregeln
 
@@ -540,7 +540,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     Bürstung), `fill`/`stroke` in Messing hell, **`opacity` ≤ 0,06** am Wurzel-`<g>`; `epochen.css` setzt
     `--textur: url("/static/img/texturen/epoche-<n>.svg")` je Epoche. Texturen nur auf `.kopf`, `.tinte`, `.nacht`, `.zeitsprung`.
 
-- [ ] **Step 1: Failing test** `test/stilregeln.test.js`:
+- [x] **Step 1: Failing test** `test/stilregeln.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -588,11 +588,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   ```
   Ergänze in `test/seiten.test.js` den Test „SVG-Dateien ohne Skript und ohne externe Verweise“ (`public/static/**/*.svg`:
   kein `<script`, kein `on\w+=`, kein `href="http`).
-- [ ] **Step 2: Run** `node --test test/stilregeln.test.js test/seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement** – CSS aus dem Prototyp übernehmen und auf TECHNIK-Namen umstellen (E17); Platzhalterseiten nur
+- [x] **Step 2: Run** `node --test test/stilregeln.test.js test/seiten.test.js` → FAIL.
+- [x] **Step 3: Implement** – CSS aus dem Prototyp übernehmen und auf TECHNIK-Namen umstellen (E17); Platzhalterseiten nur
   so weit anpassen, dass sie mit dem neuen CSS lesbar sind (sie werden in Tasks 48–65 ersetzt).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Designsystem: Basis, Komponenten, SVG-Sprites, Epochen-Texturen"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Designsystem: Basis, Komponenten, SVG-Sprites, Epochen-Texturen"`.
 
 ### Task 46: Attrappen-DOM für Client-Tests und `common.js` für Kryptos (K35)
 
@@ -648,7 +648,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `AQ.rolleText(rolle)` → `{ kryptografie: '🛡 Kryptografie', kryptoanalyse: '🔍 Kryptoanalyse' }[rolle] || ''`.
   - unverändert: `h`, `s`, `mount`, `api` (K27), `toast`, `bestaetigen`, `mische`, `lade`, `speichere` …
 
-- [ ] **Step 1: Failing test** `test/client_common.test.js`:
+- [x] **Step 1: Failing test** `test/client_common.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -705,13 +705,13 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     await assert.rejects(AQ.api('GET', '/api/b'), /Gesperrt\./);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_common.test.js` → FAIL (`dom_attrappe` fehlt).
-- [ ] **Step 3: Implement** Attrappe (≈ 350 Zeilen, nur `node:vm`, `node:fs`, `node:path`; Selektor-Parser für die oben
+- [x] **Step 2: Run** `node --test test/client_common.test.js` → FAIL (`dom_attrappe` fehlt).
+- [x] **Step 3: Implement** Attrappe (≈ 350 Zeilen, nur `node:vm`, `node:fs`, `node:path`; Selektor-Parser für die oben
   genannten Formen, sonst `Error('Selektor nicht unterstützt: …')`), `common.js` wie oben (alte `NIVEAU_TEXT` für `alle/eA/plus`
   und `kursart` entfernen). `client_hooks.test.js` lädt über `D.lade(['common.js', 'render.js', 'interact.js'])` statt der
   eigenen Mini-Attrappe.
-- [ ] **Step 4: Run** `node --test test/client_common.test.js test/client_hooks.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Attrappen-DOM für Client-Tests; common.js: Niveau-Chips, Einstellungen, ruhig (K35)"`.
+- [x] **Step 4: Run** `node --test test/client_common.test.js test/client_hooks.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Attrappen-DOM für Client-Tests; common.js: Niveau-Chips, Einstellungen, ruhig (K35)"`.
 
 ### Task 47: Theme-Schicht `oberflaeche.js` und Kopfzeile `kopfzeile.js`
 
@@ -757,7 +757,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `KRKopf.epoche(text)`, `KRKopf.rang({ name, anteil })` (Badge mit Ring), `KRKopf.funkPunkt(an)` (Haken für M7, E33).
   - Abmelden: `POST /api/abmelden { ueberall }` → `location.href = antwort.weiter`.
 
-- [ ] **Step 1: Failing test** `test/client_oberflaeche.test.js`:
+- [x] **Step 1: Failing test** `test/client_oberflaeche.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -823,11 +823,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   (`D.fuehreAus(k, dateien)` führt weitere Skripte im selben Kontext aus – in Task 46 mit anlegen, falls noch nicht vorhanden.)
-- [ ] **Step 2: Run** `node --test test/client_oberflaeche.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Kopfzeile nach DESIGNSYSTEM §5 und Prototyp-Abschnitt „Kopfzeile“; Rang-Badge lädt
+- [x] **Step 2: Run** `node --test test/client_oberflaeche.test.js` → FAIL.
+- [x] **Step 3: Implement** (Kopfzeile nach DESIGNSYSTEM §5 und Prototyp-Abschnitt „Kopfzeile“; Rang-Badge lädt
   `/api/profil` nur für Schüler und nur einmal je Seitenaufruf).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Oberfläche: Theme-Schicht (Thema, Epoche, Entsiegeln, Zeitsprung) und Kopfzeile"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Oberfläche: Theme-Schicht (Thema, Epoche, Entsiegeln, Zeitsprung) und Kopfzeile"`.
 
 ### Task 48: Seiten-Wächter „beide“, neue Seitenrouten, Gerüstseiten Funkraum/Werkstatt/Beamer
 
@@ -862,7 +862,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `render.js`, `interact.js`, `krypto/bloecke.js`, `krypto/interaktionen.js`, `aufgabe.js` in dieser Reihenfolge vor dem
     letzten Skript (Seitenskript).
 
-- [ ] **Step 1: Failing tests** – `test/sso.test.js`:
+- [x] **Step 1: Failing tests** – `test/sso.test.js`:
   ```js
   test('Seiten-Wächter M4: /labor für beide Rollen, Funkraum/Werkstatt nur Schüler, Beamer nur Lehrkraft (E18)', async () => {
     const { app, s, lk } = await H.szenario();
@@ -886,11 +886,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   `test/seiten.test.js`: die drei Prüfungen oben (Seitenliste, Grundgerüst, Skript-Reihenfolge) als eigene `test(...)`.
-- [ ] **Step 2: Run** `node --test test/sso.test.js test/seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement**; die vier neuen HTML-Seiten nach dem Grundgerüst (Titel „Kryptolabor · Kryptos“, „Funkraum ·
+- [x] **Step 2: Run** `node --test test/sso.test.js test/seiten.test.js` → FAIL.
+- [x] **Step 3: Implement**; die vier neuen HTML-Seiten nach dem Grundgerüst (Titel „Kryptolabor · Kryptos“, „Funkraum ·
   Kryptos“, „Werkstatt · Kryptos“, „Beamer · Kryptos“).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Seiten-Wächter für beide Rollen, Seiten Labor/Funkraum/Werkstatt/Beamer als Gerüst (K13)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Seiten-Wächter für beide Rollen, Seiten Labor/Funkraum/Werkstatt/Beamer als Gerüst (K13)"`.
 
 ### Task 49: Werkzeug-Freigaben je Kurs, `GET /api/labor`, Werkzeugliste und Board-Schlüssel für die Lehrkraft
 
@@ -920,7 +920,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `'lehrkraft'`; `'frei'` → frei; fehlend (= auto) → frei, wenn `svc.stand.istFrei(einst, welt)`, sonst `'welt'`.
     Texte macht der Client (Task 53).
 
-- [ ] **Step 1: Failing test** `test/labor.test.js` (+ Anpassung `verwaltung.test.js`: `werkzeuge: {}` in der erwarteten
+- [x] **Step 1: Failing test** `test/labor.test.js` (+ Anpassung `verwaltung.test.js`: `werkzeuge: {}` in der erwarteten
   Standard-Einstellung):
   ```js
   'use strict';
@@ -976,10 +976,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   ```
   `rechte.test.js`: `GET /api/lehrer/werkzeuge` (Schüler 401, Lehrkraft 200), `POST …/board-schluessel` (fremder Kurs 404,
   gesperrter Kurs 403, ohne Origin 403), `GET /api/labor` (anonym 401) in die bestehende Matrix.
-- [ ] **Step 2: Run** `node --test test/labor.test.js test/verwaltung.test.js test/rechte.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Kern-Bedingung für `/api/board` bleibt: Kurs aktiv **und** `einstellungen.beamer`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Werkzeug-Freigaben je Kurs, GET /api/labor, Werkzeugliste und Board-Schlüssel (K12, K13, K16, K17)"`.
+- [x] **Step 2: Run** `node --test test/labor.test.js test/verwaltung.test.js test/rechte.test.js` → FAIL.
+- [x] **Step 3: Implement** (Kern-Bedingung für `/api/board` bleibt: Kurs aktiv **und** `einstellungen.beamer`).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Werkzeug-Freigaben je Kurs, GET /api/labor, Werkzeugliste und Board-Schlüssel (K12, K13, K16, K17)"`.
 
 ### Task 50: Kern-Client – `ctx.modus`, Aufgaben-Kopf, Diagnose-Chips, Kern-Klassen im CSS (K05, K36)
 
@@ -1011,7 +1011,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `null` bei leerer Liste; `KRDiag.anzeige` = `{ kategorie: (s) => KR.KATEGORIEN[s] || s, falle: KRDiag.chip, diagnose:
     KRDiag.chips }` (für alle Kryptos-Seiten).
 
-- [ ] **Step 1: Failing test** `test/client_aufgabe.test.js`:
+- [x] **Step 1: Failing test** `test/client_aufgabe.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1069,12 +1069,12 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.deepEqual(fehlt, [], 'Klassen ohne Regel in aufgaben.css/komponenten.css');
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_aufgabe.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Kern-Klassen werden **nicht** umbenannt; `aufgaben.css` gibt ihnen das Chronoskop-Aussehen:
+- [x] **Step 2: Run** `node --test test/client_aufgabe.test.js` → FAIL.
+- [x] **Step 3: Implement** (Kern-Klassen werden **nicht** umbenannt; `aufgaben.css` gibt ihnen das Chronoskop-Aussehen:
   `.btn` = `.knopf`, `.btn.secondary` = `.knopf-zweit`, `.pill.gold` = Punkte-Chip, `.feedback.ok/.falsch/.info` =
   `.rueckmeldung`, `.tipp-box`, `.hint`, `.muted`, `.luecke`, `.teil`, `.stufe-box`, `.stufe-versteckt`, `.wackeln` …).
-- [ ] **Step 4: Run** → PASS; `node --test test/client_hooks.test.js` und `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Aufgaben-Ansicht: Modus, Diagnose-Chips, Fallen-Kurztitel, Kern-Klassen im Designsystem (K05, K36)"`.
+- [x] **Step 4: Run** → PASS; `node --test test/client_hooks.test.js` und `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Aufgaben-Ansicht: Modus, Diagnose-Chips, Fallen-Kurztitel, Kern-Klassen im Designsystem (K05, K36)"`.
 
 ### Task 51: Renderer I – Geheimtext-Zeile, `alphabet`, `haeufigkeit`, `bits` (Delta §7.1, §7.2, §7.4)
 
@@ -1110,7 +1110,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `aria-label="<label>: Bits eintragen"`, `inputmode="numeric"`; `markiert` → `span.bit.markiert[aria-current="true"]` in
     allen Zeilen.
 
-- [ ] **Step 1: Failing test** `test/client_bloecke.test.js`:
+- [x] **Step 1: Failing test** `test/client_bloecke.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1185,10 +1185,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.equal(k.text(k.eins(zeilen[0], 'span.sr')), 'M: 0 1 0 0, 1 0 1 1');
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_bloecke.test.js` → FAIL.
-- [ ] **Step 3: Implement** (alle Rechnungen nur über `Krypto`; SVG über `AQ.s`; ids eindeutig über einen Zähler `kr-<n>`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Renderer: Geheimtext-Zeile, Alphabetleiste, Histogramm, Bitfolgen"`.
+- [x] **Step 2: Run** `node --test test/client_bloecke.test.js` → FAIL.
+- [x] **Step 3: Implement** (alle Rechnungen nur über `Krypto`; SVG über `AQ.s`; ids eindeutig über einen Zähler `kr-<n>`).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Renderer: Geheimtext-Zeile, Alphabetleiste, Histogramm, Bitfolgen"`.
 
 ### Task 52: Renderer II – `quadrat`, `matrix`, `schaubild` (Delta §7.3, §7.5, §7.6)
 
@@ -1223,7 +1223,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     Schaubild Lücken hat (E27); sonst blendet CSS die Liste ab 600 px Breite visuell aus (`.sr`-Technik, nicht `display:none`)
     und das SVG unter 600 px aus.
 
-- [ ] **Step 1: Failing tests** (an `test/client_bloecke.test.js` anhängen):
+- [x] **Step 1: Failing tests** (an `test/client_bloecke.test.js` anhängen):
   ```js
   test('quadrat vigenere: Ausschnitt, Schnittpunkt U/R = L, Hinweistext; playfair I/J; polybios 6×6 ADFGVX', () => {
     let { k, el } = bau({ t: 'quadrat', art: 'vigenere', ausschnitt: ['L', 'U', 'N', 'A'], hervorheben: { zeile: 'U', spalte: 'R' } });
@@ -1271,10 +1271,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   Die Attrappe braucht `Element.contains(other)` – in Task 46 mit anlegen bzw. hier ergänzen.
-- [ ] **Step 2: Run** `node --test test/client_bloecke.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Renderer: Quadrate, Transpositionsraster/Fleißner, Ablaufschaubild"`.
+- [x] **Step 2: Run** `node --test test/client_bloecke.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Renderer: Quadrate, Transpositionsraster/Fleißner, Ablaufschaubild"`.
 
 ### Task 53: Kryptolabor-Rahmen – `KRLabor`, Block `werkzeug`, Seite `/labor` (Delta §7.7, TECHNIK §10.1)
 
@@ -1305,7 +1305,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     geschlossen.“ (Hinweisbanner oben bei `boss: true`). `#/<id>` → Vollseite (Kopfband in Epochenakzent, Werkzeugfläche
     Papier, Steuerleiste unten) mit `KRLabor.oeffne`; gesperrtes Werkzeug → Grundtext + Link zurück.
 
-- [ ] **Step 1: Failing tests** – `test/labor.test.js` (anhängen):
+- [x] **Step 1: Failing tests** – `test/labor.test.js` (anhängen):
   ```js
   test('Registry Server = Client (TECHNIK §10.2)', () => {
     const D = require('./dom_attrappe');
@@ -1351,10 +1351,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   ```
   (`D.lade` legt das HTML-Grundgerüst – `#kopf`, `#haupt`, `#fuss` – in `document.body` an, wenn `opt.url` gesetzt ist; in
   Task 46 mit anlegen.)
-- [ ] **Step 2: Run** `node --test test/labor.test.js test/client_bloecke.test.js test/client_seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor-Rahmen: Werkzeug-Registry im Client, Werkzeug-Block mit Dialog, Labor-Seite"`.
+- [x] **Step 2: Run** `node --test test/labor.test.js test/client_bloecke.test.js test/client_seiten.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor-Rahmen: Werkzeug-Registry im Client, Werkzeug-Block mit Dialog, Labor-Seite"`.
 
 ### Task 54: Interaktion `chiffre` – Kästchen, Zeile, Hilfszeilen, Schrittprüfung (Delta §8.1)
 
@@ -1402,7 +1402,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     - `loesung(lo)`: `lo.text` in die Kästchen bzw. das Feld (Zahlen: Leerzeichen-getrennt), Klasse `loesung`.
     - `sperren(an)`: alle Eingaben `disabled`.
 
-- [ ] **Step 1: Failing test** `test/client_interaktionen.test.js`:
+- [x] **Step 1: Failing test** `test/client_interaktionen.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1490,10 +1490,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.ok(kae[1].classList.contains('falsch'));
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_interaktionen.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion chiffre im Client: Kästchen, Zeilenfeld, Hilfszeilen, Schrittprüfung"`.
+- [x] **Step 2: Run** `node --test test/client_interaktionen.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktion chiffre im Client: Kästchen, Zeilenfeld, Hilfszeilen, Schrittprüfung"`.
 
 ### Task 55: Interaktion `zuordnung` – Substitutions-Werkbank (Delta §8.2)
 
@@ -1519,7 +1519,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `feedback(r)`: `r.anteil` → `p.zuordnung-anteil` „62 % der Textstellen richtig“; `r.buchstaben` → `li.ok`/`li.falsch`
     (+ ✓/✗); `loesung(lo)` → alle Felder aus `lo.zuordnung`, Vorschau = `lo.klartext` (klein); `sperren(an)`.
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   test('zuordnung (W9-L3-01): Leiste nach Häufigkeit, Vorgabe gesperrt, Live-Klartext, doppelt, Rückgängig, Antwort', () => {
     const a = oeffentlich('W9-L3-01');
@@ -1555,8 +1555,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   (Bei mehrteiligen Feedbacks reicht `AQI.aufgabe` `teile[i]` an den Teil; einteilig ebenso – Kern-Verhalten.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion zuordnung im Client: Substitutions-Werkbank mit Live-Klartext"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktion zuordnung im Client: Substitutions-Werkbank mit Live-Klartext"`.
 
 ### Task 56: Interaktionen `schaubild-ergaenzen` und `bits-rechnen` (Delta §8.3, §8.4)
 
@@ -1587,7 +1587,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     `leer()`: keine Stelle gesetzt. `feedback(r)`: `r.bits` → `button.bit.ok/.falsch`; `lawine` ohne Einzelrückmeldung vor
     dem Lösen. `loesung(lo)`: `lo.bits`/`lo.text`/`lo.positionen`.
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   test('schaubild-ergaenzen (W9-L6-05): Chips in der Liste, Auswahlpaare mit Schritt-Label, Antwort nur vollständig', () => {
     const { k, c } = baue(oeffentlich('W9-L6-05'));
@@ -1638,8 +1638,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   (`k.window.Event` = Ereignis-Klasse der Attrappe, Task 46.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Interaktionen schaubild-ergaenzen und bits-rechnen im Client"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Interaktionen schaubild-ergaenzen und bits-rechnen im Client"`.
 
 ### Task 57: Schüler-Seite I – Router, Zeitleiste, Epoche, Kurswahl (Design §7.1, TECHNIK §11.1/§11.2)
 
@@ -1692,7 +1692,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `#/kurs`: Liste der aktiven Kurse aus `/api/sitzung` mit Knopf „Diesen Kurs wählen“ → `POST /api/sitzung/kurs` → `#/`.
   - `KRKopf.laborLink(an)` blendet den Labor-Link aus (Boss-Kampf, Task 59).
 
-- [ ] **Step 1: Failing tests** (an `test/client_seiten.test.js` anhängen):
+- [x] **Step 1: Failing tests** (an `test/client_seiten.test.js` anhängen):
   ```js
   const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js'];
   const welt = (nr, extra = {}) => ({ nr, titel: `Welt ${nr}`, epoche: 'Testepoche', jahr: { von: 1900 + nr, bis: 2000, anzeige: '1900 – 2000' }, farbe: '#5B6B7C', akzentHell: '#C9D3DD', frei: true, punkte: 10, maxPunkte: 40, anteil: 0.25, training: true, archivfund: { titel: 'Die Testdepesche', status: 'offen' }, kapitel: null, boss: { titel: 'Testboss', frei: false, grund: 'Erst 60 % der Level-Punkte.', besiegt: false }, levels: [{ id: `W${nr}-L1`, nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', akte: 'Akte W9·1 – Blöcke und Lücken', anzahl: 4, geloest: 4, punkte: 40, maxPunkte: 40, anteil: 1 }, { id: `W${nr}-L3`, nr: '3', titel: 'Analyse', niveau: 'eA', rolle: 'kryptoanalyse', anzahl: 2, geloest: 0, punkte: 0, maxPunkte: 20, anteil: 0 }, { id: `W${nr}-L4`, nr: 'K1', titel: 'Kür', niveau: 'kuer', kuer: true, rolle: 'kryptoanalyse', anzahl: 1, geloest: 0, punkte: 0, maxPunkte: 10, anteil: 0 }], ...extra });
@@ -1732,10 +1732,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.ok(k.eins(haupt, 'a[href="#/archivfund/9"]'));
   });
   ```
-- [ ] **Step 2: Run** `node --test test/client_seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Zeitleiste/Epoche optisch nach Prototyp-Abschnitten 2 und 3; Fortschritt mit Text, nie nur Ring).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Schüler-Seite: Router, Zeitleiste mit Epochen-Toren, Epoche, Kurswahl"`.
+- [x] **Step 2: Run** `node --test test/client_seiten.test.js` → FAIL.
+- [x] **Step 3: Implement** (Zeitleiste/Epoche optisch nach Prototyp-Abschnitten 2 und 3; Fortschritt mit Text, nie nur Ring).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Schüler-Seite: Router, Zeitleiste mit Epochen-Toren, Epoche, Kurswahl"`.
 
 ### Task 58: Schüler-Seite II – Level, Aufgabe, Archivfund
 
@@ -1764,7 +1764,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - Route `#/archivfund/<nr>` → `AQA.ansicht` mit `punkteText: () => '✔ Entschlüsselt! (Archivfund – ohne Punkte)'`,
     Kopfzusatz „Archivfund · Einstiegsrätsel der Epoche“; danach Link zur Epoche.
 
-- [ ] **Step 1: Failing tests** (anhängen):
+- [x] **Step 1: Failing tests** (anhängen):
   ```js
   test('Level: Archivwissen, Aufgabenliste mit Status, Werkzeug-Karte nur wenn frei, IDE-Schalter', async () => {
     const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', werkzeug: ['scheibe', 'haeufigkeit'], akte: 'Akte W9·1 – Blöcke und Lücken', video: { nr: 1, titel: 'Testvideo' }, ide: 'Test-IDE', intro: [{ t: 'hinweis', md: '**Archivwissen:** A = 1' }], maxPunkte: 20 }, aufgaben: [{ id: 'W9-L1-01', titel: 'Eins', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', status: 'geloest', erreicht: 10, arten: ['gaps'] }, { id: 'W9-L1-02', titel: 'Zwei', stufe: 2, punkte: 20, kategorie: 'modulo', niveau: 'ergaenzung', status: 'offen', erreicht: 0, arten: ['gaps'] }], ideErledigt: false, vorher: null, nachher: { id: 'W9-L2', titel: 'Zwei' } };
@@ -1802,8 +1802,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.match(k.text(haupt), /Zurückrechnen\./);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Schüler-Seite: Level mit Archivwissen und Labor-Karten, Aufgabe, Archivfund"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Schüler-Seite: Level mit Archivwissen und Labor-Karten, Aufgabe, Archivfund"`.
 
 ### Task 59: Schüler-Seite III – Trainingsplatz, Boss (Kampf, Auswertung), Warm-up
 
@@ -1833,7 +1833,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     Erklärung, **Diagnose-Chips** (`KRDiag.chips(a.diagnose)`); `KRKopf.laborLink(true)`.
   - `#/warmup`: Leitner-Trainer wie Kern (`kata()`), Texte „Warm-up“, ohne Punkte; Filter Welt/Kategorie mit `KR.KATEGORIEN`.
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   test('Boss-Kampf: keine Werkzeug-Blöcke, kein Labor-Link, Antwort wird gespeichert; Auswertung mit Diagnose', async () => {
     const aufgabe = { id: 'W9-B-05', titel: 'Depesche', stufe: 3, punkte: 30, kategorie: 'entschluesseln', niveau: 'kern', inhalt: [{ t: 'text', md: 'Entschlüsseln Sie.' }, { t: 'werkzeug', id: 'vigenere' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'vigenere' }, schluesselVerdeckt: true, eingabe: 'XZWJN' }, antwort: null };
@@ -1863,8 +1863,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.ok(k.eins(k.document, 'a[href="/labor"]'), 'Labor-Link nach dem Kampf wieder da');
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Schüler-Seite: Trainingsplatz, Boss-Kampf ohne Werkzeuge, Auswertung mit Diagnose, Warm-up"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Schüler-Seite: Trainingsplatz, Boss-Kampf ohne Werkzeuge, Auswertung mit Diagnose, Warm-up"`.
 
 ### Task 60: Schüler-Seite IV – Profil (Rang, Artefakte, Abzeichen, Fallen-Radar), Scoreboard, Abzeichen-Toast
 
@@ -1895,7 +1895,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     markiert mit Text „(du)“), aktualisiert sich alle 20 s (Timer endet beim Routenwechsel). Nur wenn `scoreboard`, sonst
     Hinweis „Das Scoreboard ist in deinem Kurs ausgeschaltet.“
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   test('Profil: Rang mit nächster Schwelle, Artefakte, Abzeichen-Symbole, Fallen-Radar mit Tabelle', async () => {
     const fallen = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'].map((p, i) => ({ p, titel: 'T' + p, text: '', fehlversuche: i === 2 ? 4 : 0 }));
@@ -1913,8 +1913,8 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.equal(k.eins(radar, 'svg').getAttribute('aria-describedby'), k.eins(radar, 'table').getAttribute('id'));
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Schüler-Seite: Profil mit Artefakten und Fallen-Radar, Scoreboard, Abzeichen-Toast"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Schüler-Seite: Profil mit Artefakten und Fallen-Radar, Scoreboard, Abzeichen-Toast"`.
 
 ### Task 61: Öffentliche Seiten – Start, Themen mit `#niveaus`, Board, Datenschutz, 404, Fehlerseiten
 
@@ -1959,7 +1959,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - **404** und **Fehlerseiten**: statisch (nur `common.js`/`oberflaeche.js`, keine Seitenskripte), Kopfzeile als statisches
     HTML (Logo + „⌂ Zum Portal“ `/sso/portal` + „Gastmodus“), Texte wie bisher.
 
-- [ ] **Step 1: Failing tests** – `test/client_seiten.test.js` (anhängen) und `test/niveaus.test.js` (letzten Test auf
+- [x] **Step 1: Failing tests** – `test/client_seiten.test.js` (anhängen) und `test/niveaus.test.js` (letzten Test auf
   `krypto/themen.js` umstellen: `<section … id="niveaus">` im HTML, Skript-Tag `krypto/themen.js?v=…` mit `defer`,
   `themen.js` enthält `/api/niveaus` und kein `innerHTML`):
   ```js
@@ -1999,10 +1999,10 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   (`k.timer` = Liste der angelegten Timer der Attrappe `{ ms, wiederholt }` – in Task 46 mit anlegen.) In
   `test/seiten.test.js`: kein HTML enthält mehr `Platzhalter (M0)` außer `lehrer.html`, `urkunden.html`, `gast.html` (die
   folgen in Tasks 62–65; Task 68 entfernt die Ausnahme).
-- [ ] **Step 2: Run** `node --test test/client_seiten.test.js test/niveaus.test.js test/seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement**.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Öffentliche Seiten: Start, Themen mit Niveau-Übersicht, Board, Datenschutz, Fehlerseiten (K20)"`.
+- [x] **Step 2: Run** `node --test test/client_seiten.test.js test/niveaus.test.js test/seiten.test.js` → FAIL.
+- [x] **Step 3: Implement**.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Öffentliche Seiten: Start, Themen mit Niveau-Übersicht, Board, Datenschutz, Fehlerseiten (K20)"`.
 
 ### Task 62: Lehrkraft-Seite I – Kurse, Schülerliste, Einstellungen (Welten, Boss, Niveau, Werkzeuge, Kür, Board)
 
@@ -2041,7 +2041,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     „Gespeichert.“; Kurs `aktiv: false` oder `nurLesen` → alle Felder `disabled`, Hinweis „Dieser Kurs ist im Portal
     abgeschaltet – Einstellungen nur lesbar.“; Hinweis „Den Kursnamen ändern Sie im Portal.“
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   const LEHRER = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js'];
   const SITZUNG_L = { rolle: 'lehrkraft', name: 'Frau M.', kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }], portal: 'https://portal.test' };
@@ -2073,9 +2073,9 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   });
   ```
   (`opt.vorher(k)` der Attrappe läuft vor den Skripten – in Task 46 mit anlegen.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `kursListe`, `kurs`, `tabSchueler`,
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `kursListe`, `kurs`, `tabSchueler`,
   `tabEinstellungen`, aber ohne Anlegen/Löschen/Codes/Beitritt/QR). **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Kurse vom Portal, Schülerliste, Einstellungen mit Niveau und Werkzeug-Freigaben"`.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Kurse vom Portal, Schülerliste, Einstellungen mit Niveau und Werkzeug-Freigaben"`.
 
 ### Task 63: Lehrkraft-Seite II – Auswertung (Matrix, Boss, Fallen-Profil, Aufgabenstatistik, CSV), Scoreboard, Vorschau, Materialien
 
@@ -2100,7 +2100,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     volle Interaktion), Navigation vorher/nachher.
   - `#/materialien`: Liste je Welt aus `/api/lehrer/materialien` (Titel, Art, Download-Link `url`), Sprungleiste zu den Welten.
 
-- [ ] **Step 1: Failing test** (anhängen):
+- [x] **Step 1: Failing test** (anhängen):
   ```js
   test('Auswertung: Matrix mit Niveau-Kopf und Text je Zelle, Fallen-Profil mit Kurztiteln, CSV-Links', async () => {
     const ausw = { kurs: KURS, niveau: 'gA', matrix: { levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', maxPunkte: 40 }], zeilen: [{ id: 1, name: 'Mika R.', aktiv: true, werte: [{ anteil: 0.75, punkte: 30, geloest: 3, angesehen: 0 }] }, { id: 2, name: 'Ida K.', aktiv: false, werte: [{ anteil: 0, punkte: 0, geloest: 0, angesehen: 0 }] }] }, boss: { welten: [], zeilen: [] }, aufgaben: [], fallen: [{ p: 'P3', titel: 'Umkehrung falsch', fehlversuche: 4, schueler: 1, schuelerGesamt: 2 }] };
@@ -2122,9 +2122,9 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.ok(k.eins(haupt, 'a[href="#/vorschau/aufgabe/W9-L3-01"]'));
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `tabAuswertung`, `tabScoreboard`,
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `tabAuswertung`, `tabScoreboard`,
   `vorschau`, `vorschauAufgabe`, `materialien`). **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Auswertung mit Niveau, Fallen-Profil, Scoreboard, Vorschau, Materialien"`.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Auswertung mit Niveau, Fallen-Profil, Scoreboard, Vorschau, Materialien"`.
 
 ### Task 64: Lehrkraft-Seite III – Verwaltung (Superadmin), Urkunden und Druck
 
@@ -2151,7 +2151,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `druck.css`: `@page { size: A4 landscape; margin: 0 }`, je Urkunde eine Seite (`break-after: page`), Kopf-/Fußzeile und
     Bedienelemente ausgeblendet (`!important` nur hier erlaubt), Farben für den Druck (`print-color-adjust: exact`).
 
-- [ ] **Step 1: Failing tests** – `test/verwaltung.test.js`: im bestehenden Urkunden-Test zusätzlich
+- [x] **Step 1: Failing tests** – `test/verwaltung.test.js`: im bestehenden Urkunden-Test zusätzlich
   `assert.ok(u.schueler.every((s) => s.abzeichen.every((a) => typeof a.key === 'string')))`; `test/client_seiten.test.js`:
   ```js
   test('Urkunden: je Schüler eine Urkunde mit Rang und sieben Siegeln (erreicht/Umriss)', async () => {
@@ -2170,9 +2170,9 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.match(k.text(k.document.getElementById('haupt')), /Nur für den Admin/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `admin*`, `urkunden.js`).
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Vorlage AlgoQuest `lehrer.js` → `admin*`, `urkunden.js`).
   **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Verwaltung für den Admin, Urkunden mit Artefakt-Siegeln, Druckansicht (K14)"`.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft-Seite: Verwaltung für den Admin, Urkunden mit Artefakt-Siegeln, Druckansicht (K14)"`.
 
 ### Task 65: Gastmodus – Demo-Aufgaben, Demo-Kurs, Labor-Platz (Delta §12, Design §7.8)
 
@@ -2203,7 +2203,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     (`#/lehrkraft/vorschau/<id>` → `/api/gast/vorschau/:id`, Modus `vorschau`)); `#/labor/scheibe` → `KRLabor.oeffne('scheibe',
     {}, …, { modus: 'gast' })` (bis M6 „noch in Arbeit“).
 
-- [ ] **Step 1: Failing tests** – `test/gast.test.js`:
+- [x] **Step 1: Failing tests** – `test/gast.test.js`:
   ```js
   test('Demo-Kurs (Kryptos): keine Codes, kein anmeldung, Niveau eA, Werkzeugliste nur Scheibe', async () => {
     const app = H.makeApp();
@@ -2236,12 +2236,12 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.ok(k.eins(haupt, 'a[href="#/schueler/aufgabe/W8-L1-01"]'));
   });
   ```
-- [ ] **Step 2: Run** `node --test test/gast.test.js test/client_seiten.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Demo-Texte selbst erfinden, Lösungen mit `node -e "…require('./public/static/js/shared/krypto.js')…"`
+- [x] **Step 2: Run** `node --test test/gast.test.js test/client_seiten.test.js` → FAIL.
+- [x] **Step 3: Implement** (Demo-Texte selbst erfinden, Lösungen mit `node -e "…require('./public/static/js/shared/krypto.js')…"`
   im Scratchpad nachrechnen; keine Texte aus Welt-Specs, Akten, Bossen oder Videos).
-- [ ] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py test/e2e/seed/gast/demo.json` → 0 Abweichungen;
+- [x] **Step 4: Run** → PASS; `python3 -I werkzeuge/krypto/seed_pruefen.py test/e2e/seed/gast/demo.json` → 0 Abweichungen;
   `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Gastmodus: Demo-Aufgaben, Demo-Kurs nur lesend, Labor-Platz (K33)"`.
+- [x] **Step 5: Commit** `git commit -m "Gastmodus: Demo-Aufgaben, Demo-Kurs nur lesend, Labor-Platz (K33)"`.
 
 ### Task 66: e2e I – Gerüst gegen App + Dev-Portal, Szenarien 1 (Start → Zeitleiste) und 2 (alle neuen Interaktionen)
 
@@ -2288,12 +2288,12 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - `test/e2e/e2e.js`: `starte()` → Browser (`chromium.launch({ executablePath: chromiumPfad() })`) → `szenario1`, `szenario2`
     (weitere Szenarien hängt Task 67 an) → Fehlerliste leer, sonst Exit 1 mit Liste; immer `beenden()`.
 
-- [ ] **Step 1: Failing run** – Szenarien schreiben, `npm run e2e` → FAIL (zeigt die erste fehlende Stelle; die Oberfläche
+- [x] **Step 1: Failing run** – Szenarien schreiben, `npm run e2e` → FAIL (zeigt die erste fehlende Stelle; die Oberfläche
   aus Tasks 43–65 muss die Selektoren oben liefern – Abweichungen in der Oberfläche beheben, nicht im Test aufweichen).
-- [ ] **Step 2: Implement/Fix** bis `npm run e2e` grün ist; Fotos ansehen (Read-Werkzeug) – Layout, Kontraste, keine
+- [x] **Step 2: Implement/Fix** bis `npm run e2e` grün ist; Fotos ansehen (Read-Werkzeug) – Layout, Kontraste, keine
   abgeschnittenen Texte.
-- [ ] **Step 3: Run** `npm run e2e` → PASS; `npm test` grün.
-- [ ] **Step 4: Commit** `git commit -m "e2e neu: App + Dev-Portal, Start bis Zeitleiste, alle neuen Interaktionen (K22)"`
+- [x] **Step 3: Run** `npm run e2e` → PASS; `npm test` grün.
+- [x] **Step 4: Commit** `git commit -m "e2e neu: App + Dev-Portal, Start bis Zeitleiste, alle neuen Interaktionen (K22)"`
   (ohne Fotos; die kommen in Task 67).
 
 ### Task 67: e2e II – Szenarien 7 (Lehrkraft), 3 (Boss im gA-Kurs), 8 (Gast), 9 (Geräte, Dunkelmodus, Tastatur); Fotos
@@ -2337,11 +2337,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   - Fotos im Repo: höchstens 30 Dateien (die oben genannten), PNG; ältere `docs/screenshots/m4-*.png` werden beim Lauf
     überschrieben.
 
-- [ ] **Step 1: Failing run** – Szenarien schreiben, `npm run e2e` → FAIL an der ersten fehlenden Stelle.
-- [ ] **Step 2: Implement/Fix** in der Oberfläche (CSS/Seitenskripte), bis alles grün ist; jedes Foto ansehen (Layout,
+- [x] **Step 1: Failing run** – Szenarien schreiben, `npm run e2e` → FAIL an der ersten fehlenden Stelle.
+- [x] **Step 2: Implement/Fix** in der Oberfläche (CSS/Seitenskripte), bis alles grün ist; jedes Foto ansehen (Layout,
   Kontrast hell/dunkel, keine Überlappung, Lesbarkeit auf 360 px).
-- [ ] **Step 3: Run** `npm run e2e` → PASS (zweimal hintereinander, keine Flakes); `npm test` grün.
-- [ ] **Step 4: Commit** `git commit -m "e2e: Lehrkraft, Boss im gA-Kurs, Gastmodus, Geräte/Dunkelmodus/Tastatur; Screenshots"`.
+- [x] **Step 3: Run** `npm run e2e` → PASS (zweimal hintereinander, keine Flakes); `npm test` grün.
+- [x] **Step 4: Commit** `git commit -m "e2e: Lehrkraft, Boss im gA-Kurs, Gastmodus, Geräte/Dunkelmodus/Tastatur; Screenshots"`.
 
 ### Task 68: Abschluss M4 – Platzhalter weg, Dokumente, Kern-Abweichungen, Prüfung
 
@@ -2357,16 +2357,35 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
   Klassen-Kontrakt aus `komponenten.css` als Tabelle), `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` (Teil A: M4
   **erledigt**, M6-Zeile ohne „Freigaben je Kurs“, E19), dieser Plan (Status „erledigt“, Häkchen)
 
-- [ ] **Step 1: Failing test** – Ausnahme in `seiten.test.js` entfernen → Run `node --test test/seiten.test.js` → FAIL, falls
+- [x] **Step 1: Failing test** – Ausnahme in `seiten.test.js` entfernen → Run `node --test test/seiten.test.js` → FAIL, falls
   noch eine Seite den Platzhalter trägt (dann diese Seite fertigstellen, nicht den Test lockern).
-- [ ] **Step 2: Dokumente** wie oben; `grep -rn "Platzhalter" public/` leer; `grep -rn "kursart" public/` leer.
-- [ ] **Step 3: Run** `npm run pruefen` (inkl. `validate`, `krypto:pruefwerte`, `krypto:seeds`), `python3 -I
+- [x] **Step 2: Dokumente** wie oben; `grep -rn "Platzhalter" public/` leer; `grep -rn "kursart" public/` leer.
+- [x] **Step 3: Run** `npm run pruefen` (inkl. `validate`, `krypto:pruefwerte`, `krypto:seeds`), `python3 -I
   werkzeuge/schriften_pruefen.py`, `npm run e2e` → grün; `node scripts/vertrag_pruefen.js http://localhost:3000` gegen
   `npm run dev` → leer (Manifest unverändert gültig).
-- [ ] **Step 4: Commit** `git commit -m "Abschluss M4: Oberfläche vollständig, Dokumente und Kern-Abweichungen nachgeführt"`;
+- [x] **Step 4: Commit** `git commit -m "Abschluss M4: Oberfläche vollständig, Dokumente und Kern-Abweichungen nachgeführt"`;
   Merge-Vorschlag an die Lehrkraft (Gesamtplan Teil A) mit den Fotos aus `docs/screenshots/`.
 
 ---
+
+### Umsetzungsnotizen Tasks 65–68 (Abweichungen vom Plantext)
+
+- **Task 65:** `KRGast` startet nur auf `body.seite-gast` (wie `KRLehrer` auf `body.seite-lehrer`); der Client-Test setzt
+  die Klasse. Demo-Kurs: neben `werkzeuge: ['scheibe']` auch `welten: [{ nr, titel }]` (für das Einstellungs-Formular),
+  Schüler mit `aktiv: true`, Level mit `welt`; ohne Welten 0–2 auf dem Server zeigt die Auswertung statt einer leeren
+  Matrix den Hinweis „noch nicht geladen“. Demo-Aufgabe 01 (Caesar, k angegeben) und 03 (Vigenère mit Hilfszeile
+  `schluessel`) setzen `schluesselVerdeckt: false` (Level `kryptoanalyse`, M3-Hinweis). Fixture-Zusatz: `W9-L5-01`
+  `loesung.text` jetzt klein (`zuverlaessig`, Klartext-Konvention; Prüfung normalisiert).
+- **Task 66:** Fehler gefunden und behoben: Diagnose erschien doppelt (oben und aus `teile[0]`) – `KRDiag.chips` filtert
+  gleiche Einträge (Test in `client_aufgabe.test.js`). `.gitignore` `test/e2e/.daten/` angelegt, obwohl `hilfen.js` die
+  Daten in `os.tmpdir()` ablegt (vorsorglich). CI: `npx playwright-core install --with-deps chromium`.
+- **Task 67:** Dunkelmodus-Aufgabe ist `W9-L5-03` statt `W9-L5-02` (die hat Mika in Szenario 2 aufgedeckt – ohne
+  Prüfen-Knopf). Beamer-Foto nur für `/board/<schluessel>` (`/beamer/funkraum/1` wird geprüft, aber nicht fotografiert),
+  damit es genau 30 Fotos bleiben. Boss-Aufgaben werden über ihre Titel gefunden (Kampfansicht ohne `data-id`).
+- **Task 68:** `grep -rn "Platzhalter" public/` ist nicht leer: „Platzhalter“ ist in `shared/krypto.js` (Baukasten-
+  Platzhalter), `render.js`/`interact.js` (Kern: fehlende Lücke) und `zeitleiste.js` (Epochen ohne Seed) ein Fachwort.
+  `seiten.test.js` prüft deshalb: keine Seite enthält „Platzhalter“ oder „Oberfläche im Aufbau“, kein CSS/Seitenskript
+  erwähnt eine Platzhalter-Seite; das Grundgerüst gilt für **alle** Seiten.
 
 ## Reihenfolge und Abhängigkeiten
 
@@ -2401,8 +2420,11 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
    **Vorläufig festgelegt (Orchestrator):** ja – umgesetzt in Task 49.
 6. **Screenshots im Repo:** Der Plan legt bis zu 30 PNGs aus dem e2e unter `docs/screenshots/` ab (wie Algo Quest).
    Gewünscht, oder nur als CI-Artefakt?
+   **Vorläufig festgelegt (Orchestrator):** ins Repo `docs/screenshots/`, PNG, höchstens 30 Dateien, zusammen ≤ 5 MB
+   (der e2e prüft beides) – umgesetzt in Task 67 (30 Fotos, ≈ 3,5 MB); zusätzlich CI-Artefakt im Job `e2e`.
 7. **Krypto-Werkstatt-Link auf der Themenseite (Design O11):** Der Plan setzt einen externen Link auf
    `enigma.andrebodendiek.de/werkstatt` (kein Einbetten). Erlaubnis/Namensnennung vorher klären?
+   **Vorläufig festgelegt (Orchestrator):** kein externer Link, bis die Erlaubnis geklärt ist (Task 61).
 8. **Kontrast-Korrektur (E25, E37):** `--ok-flaeche` wird von `#E6F2E4` auf `#EDF6EB` aufgehellt; Akzentfarben W0/W4/W5 dürfen
    nicht als Text auf `--papier-2` stehen. Gilt sinngemäß auch für die Akten (Kopf in Akzent auf Papier-2)? Dann müsste
    `werkzeuge/material/` angepasst werden (nicht Teil von M4).

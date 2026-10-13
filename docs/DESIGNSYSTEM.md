@@ -100,7 +100,9 @@ Schriftstapel (Plattform, `tokens.css`): `--f-ueberschrift: 'Fraunces', 'KR Symb
 serif` · `--f-text: 'Atkinson Hyperlegible', 'KR Symbole', system-ui, sans-serif` · `--f-mono: 'JetBrains Mono', 'KR
 Symbole', ui-monospace, Consolas, monospace`. „KR Symbole“ (Teilmengen aus Noto Sans Math und Noto Sans Symbols 2, OFL)
 liefert ⊕ ← → ≡ ≠ ≤ ≥ φ ★ ✓ ✗, die den Hausschriften fehlen (TECHNIK §11.4). JetBrains Mono ohne Ligaturen (`!=` bleibt
-`!=`).
+`!=`). Dateien (Stand M4): `Fraunces-Variable.woff2`, `AtkinsonHyperlegible-{Regular,Bold}.woff2`,
+`JetBrainsMono-{Regular,Bold}.woff2`, `NotoSansMath-Symbole.woff2`, `NotoSansSymbols2-Symbole.woff2` mit Lizenzen in
+`public/static/fonts/LIZENZEN/`; geprüft von `werkzeuge/schriften_pruefen.py` (CI-Job `inhalte`).
 
 Geheimtext-Stil: GROSSBUCHSTABEN, Fünfergruppen, Buchstabenabstand 0,12 em, Gruppenabstand 1 ch, Farbe `--text`,
 Hintergrund `--papier-2`, linker Rand 3 px in `--akzent`. Klartext: kleinbuchstaben, kursiv **nicht** verwenden
@@ -137,6 +139,35 @@ Gelasio (metrisch = Georgia), `fonts-dejavu` als Rückfall; Consolas-Ersatz Inco
 
 Icons: eigene, schlichte Strich-SVGs (2 px), keine Icon-Bibliothek. Emojis nur für Rollen (🛡/🔍) und Lab-Rückmeldung
 sparsam.
+
+### 5.1 Klassen-Kontrakt (`komponenten.css`, Stand M4)
+
+Seitenskripte und Renderer benutzen nur diese Klassen; Farben kommen ausschließlich aus den Tokens (§2), Hervorhebung
+nie nur über Farbe.
+
+| Klasse | Bedeutung | Varianten / Hinweise |
+|---|---|---|
+| `.wrap` | Inhaltsbreite 1120 px mit Rand (basis.css) | `.lesen` = Lesebreite 72 ch |
+| `.tinte`, `.nacht`, `.textur` | Rahmenflächen (Kopf, Start, Zeitleiste, Kampf-Kopf) | Textur nur hier (`--textur`, ≤ 6 %) |
+| `.kopf`, `.kopf-link`, `.kopf-nav`, `.logo`, `.menue` | Kopfzeile (`KRKopf`) | `aria-current="page"` = aktiver Bereich |
+| `.fuss` | Fußzeile | – |
+| `.knopf` | Bedienknopf ≥ 44 × 44 px | `.knopf-primaer` (Hauptaktion), `.knopf-zweit`, `.knopf-leise`, `.knopf-messing` (auf Tinte/Nacht), `.knopf-gefahr`; `.knopf-reihe` = Zeile mit Umbruch |
+| `.karte` | Fläche `--karte` mit Linie | `.karte-akte` (Level-Karte mit Epochenband), `.karte-link`, `.karte.tinte`, `.karte.nacht`, `.gast-karte` |
+| `.chip` | Kennzeichen (999 px Radius) | `.chip-niveau.niveau-{kern,eA,ergaenzung,kuer}` (Text + Rand, E gestrichelt, Kür doppelt), `.chip-rolle.rolle-{kryptografie,kryptoanalyse}`, `.chip-falle` (Link auf `/themen#fallen-Pn`), `.chip-neutral`; `.chip-reihe` |
+| `.aktenzeichen`, `.archivwissen` | Akten-Optik (Mono-Kennung, Wissenskasten mit Doppellinie) | Text auf `--papier-2` immer `--text`/`--text-2` (E25) |
+| `.geheimtext`, `.klartext` | Geheimtext GROSS in Fünfergruppen / Klartext klein | §3 |
+| `.rueckmeldung` | Rückmeldung mit Rand + Symbol + Text | `.ok` (✓), `.falsch` (✗), `.info` (ℹ) |
+| `.toast`, `#toast` | kurze Meldung (`aria-live`) | `.err` |
+| `dialog`, `.dialog-fuss` | Rückfragen, Werkzeug-Dialog | Fokusfalle, Esc |
+| `.tabs`, `[role="tab"]` | Tab-Leiste (Lehrkraft) | Pfeiltasten, `aria-selected` |
+| `.laden`, `.leer-zustand`, `.fehler-box` | Zustände | Laden mit Drehung nur ohne reduzierte Bewegung |
+| `.tor`, `.tor-name`, `.tor-status` | Epochen-Tor der Zeitleiste | `.gesperrt` („noch verschlüsselt“), `.tor-neu` |
+| `.zeitsprung` | Overlay beim Epochenwechsel | entfällt bei reduzierter Bewegung |
+| `.siegel`, `.ring` | Siegel/Artefakte, Fortschrittsring | gesperrt = Umriss |
+| `.brotkrumen`, `.sprungleiste` | Navigation in der Seite | – |
+| `.scroll-x` | breite Inhalte (Quadrat, Matrix, Tabellen) scrollen nur im Block | nie die Seite |
+| `.werkzeug-karte` | Labor-Werkzeug (Block `werkzeug`, Level, `/labor`) | `.gesperrt` mit `.werkzeug-grund` |
+| `.aufgaben-liste`, `.aufgabe-eintrag` | Aufgabenliste eines Levels / der Gast-Demo | `.status-{offen,geloest,angesehen}` |
 
 ## 6. Bewegung
 

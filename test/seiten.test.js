@@ -122,10 +122,9 @@ test('Seitenliste TECHNIK §11.1: alle Seiten vorhanden', () => {
   for (const n of SEITEN) assert.ok(fs.existsSync(seite(n)), `${n}.html fehlt`);
 });
 
-test('Grundgerüst: jede fertige Seite (ohne „Platzhalter (M0)“) nach dem gemeinsamen Baustein', () => {
-  const fertig = htmlDateien.filter((p) => !lies(p).includes('Platzhalter (M0)'));
-  assert.ok(fertig.length >= 4, 'mindestens labor, funkraum, werkstatt, beamer');
-  for (const p of fertig) {
+test('Grundgerüst: jede Seite nach dem gemeinsamen Baustein (M4 abgeschlossen, keine Platzhalter)', () => {
+  assert.ok(htmlDateien.length >= SEITEN.length);
+  for (const p of htmlDateien) {
     const f = rel(p);
     const html = lies(p);
     assert.match(html, /<html\b[^>]*\sdata-theme="auto"/, `${f}: data-theme="auto"`);
@@ -157,9 +156,16 @@ test('Skript-Reihenfolge TECHNIK §4.4 auf Seiten mit aufgabe.js', () => {
   }
 });
 
-test('Platzhalter (M0) nur noch in lehrer.html, urkunden.html, gast.html (Tasks 62–65, Task 68 entfernt die Ausnahme)', () => {
-  const AUSNAHMEN = ['lehrer.html', 'urkunden.html', 'gast.html'];
-  for (const p of htmlDateien) if (!AUSNAHMEN.includes(rel(p))) assert.ok(!lies(p).includes('Platzhalter (M0)'), `${rel(p)}: Platzhalter`);
+test('Keine Seite trägt noch einen Platzhalter (Task 68): weder „Platzhalter“ noch „Oberfläche im Aufbau“', () => {
+  for (const p of htmlDateien) {
+    const html = lies(p);
+    assert.ok(!/Platzhalter|Oberfläche im Aufbau/.test(html), `${rel(p)}: Platzhalter`);
+  }
+  for (const d of ['css', 'js/krypto']) {
+    for (const f of fs.readdirSync(path.join(PUBLIC, 'static', d), { recursive: true }).filter((x) => /\.(css|js)$/.test(x))) {
+      assert.ok(!/Platzhalter-(Seite|Themenseite)|Oberfläche im Aufbau/.test(fs.readFileSync(path.join(PUBLIC, 'static', d, f), 'utf8')), `${d}/${f}: Platzhalter-Seite erwähnt`);
+    }
+  }
 });
 test('Fehlerseiten und 404 statisch: nur common.js und oberflaeche.js, Kopf mit Portal-Link und Gastmodus', () => {
   for (const n of ['404.html', 'fehler/keine-berechtigung.html', 'fehler/anmeldung-fehlgeschlagen.html', 'fehler/kurs-gesperrt.html']) {

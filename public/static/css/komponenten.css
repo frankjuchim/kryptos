@@ -530,7 +530,7 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
   font-weight: 600;
 }
 
-/* ---------- Übergang bis Task 61: Niveau-Übersicht der Platzhalter-Themenseite ---------- */
+/* ---------- Niveau-Übersicht der Themenseite (Legende, Welt-Abschnitte) ---------- */
 .niveau-legende { display: grid; grid-template-columns: auto 1fr; gap: var(--a-2) var(--a-3); margin: 0 0 var(--a-4); }
 .niveau-legende dd { margin: 0; }
 .niveau-welt { border-left: 4px solid var(--welt, var(--akzent, var(--messing))); padding-left: var(--a-3); margin: var(--a-5) 0 var(--a-2); }

@@ -86,12 +86,13 @@ Legende: **U** = unverändert kopieren · **A** = angepasst (Änderung in `docs/
 
 | Datei | Art | Bemerkung |
 |---|---|---|
-| `public/static/js/common.js` | A | Globale `AQ` bleibt (Kern-Name); `api()` behandelt `401 {anmelden: true}` mit Weiterleitung auf `/sso/start?ziel=<Pfad+Hash>`; neu `AQ.einstellung()` (Bewegung/Dunkelmodus, `localStorage` mit try/catch) |
+| `public/static/js/common.js` | A | Globale `AQ` bleibt (Kern-Name); `api()` behandelt `401 {anmelden: true}` mit Weiterleitung auf `/sso/start?ziel=<Pfad+Hash>`; neu `AQ.einstellung()` (Bewegung/Dunkelmodus, `localStorage` mit try/catch), `AQ.ruhig()`, `AQ.niveau()` mit den Kryptos-Chips (K27, K35) |
 | `public/static/js/render.js` | A | Registry `AQR.registriere(typ, fn)` (§4.4); Kern-Blöcke unverändert, `raster` bekommt optionale Buchstabenköpfe |
-| `public/static/js/interact.js` | A | Registry `AQI.registriere(art, fn)`; `ctx.gap()` sucht alle Teile mit `besitzt()` (nicht nur `gaps`); `SCHRITT` wird zum Set `AQI.schrittArten` (Plattform ergänzt per `add`); `AQI.teilFuer`, `AQI.gapBesitzer` |
-| `public/static/js/aufgabe.js` | A | zeigt Fallen-Diagnose als Chip „P3 Umkehrung“ + Text; „Lösung zeigen“ mit Bestätigung; Werkzeug-Dialog |
+| `public/static/js/interact.js` | A | Registry `AQI.registriere(art, fn)`; `ctx.gap()` sucht alle Teile mit `besitzt()` (nicht nur `gaps`); `SCHRITT` wird zum Set `AQI.schrittArten` (Plattform ergänzt per `add`); `AQI.teilFuer`, `AQI.gapBesitzer`; `ctx.modus`, `opt.zusatz`, `kontext.aufgabe` (K05, M4 Task 50) |
+| `public/static/js/aufgabe.js` | A | `AQA.ansicht` mit `modus`, `zusatz`, `kursNiveau`, `anzeige` (Kategorie, Fallen-Chip „P3 Umkehrung falsch“ + Diagnose-Text über `KRDiag`), `ohnePunkte`; „Lösung zeigen“ mit Bestätigung (K36). Werkzeug-Dialog kommt aus dem Block `werkzeug` (`KRLabor.dialog`) |
 | `public/static/js/shared/baum.js` | U | wird geladen, solange Kern-Interaktionen es brauchen (Validator), in Kryptos-Seiten nicht eingebunden |
-| `public/*.html`, `public/static/css/*`, `spiel.js`, `lehrer.js`, `gast.js`, `start.js`, `board.js`, `themen.js`, `urkunden.js` | **E** | komplett neue Oberfläche im Designsystem „Chronoskop“ (§11) |
+| `public/*.html`, `public/fehler/*.html`, `public/static/css/*` | **E** | komplett neue Oberfläche im Designsystem „Chronoskop“ (§11; K37) |
+| `public/static/js/krypto/*` (Seitenskripte `spiel.js`, `zeitleiste.js`, `epoche.js`, `level.js`, `profil.js`, `lehrer.js`, `urkunden.js`, `gast.js`, `start.js`, `themen.js`, `board.js`, `datenschutz.js`, `labor/seite.js`, Gerüste `funkraum.js`, `werkstatt.js`, `beamer.js`) | **N** | ersetzen die entfernten Algo-Quest-Seitenskripte (Task 2); Bausteine `oberflaeche.js`, `kopfzeile.js`, `bloecke.js`, `interaktionen.js`, `diagnose_chips.js`, `labor/registry.js` |
 | `public/static/favicon.svg` | E | Ziffernring-Logo |
 
 ### 2.3 Weiteres
@@ -148,9 +149,9 @@ public/
   urkunden.html themen.html gast.html datenschutz.html 404.html
   fehler/keine-berechtigung.html fehler/anmeldung-fehlgeschlagen.html fehler/kurs-gesperrt.html
   static/
-    css/   tokens.css schriften.css basis.css komponenten.css aufgaben.css epochen.css labor.css
-           funkraum.css lehrkraft.css druck.css
-    fonts/ Fraunces-*.woff2 AtkinsonHyperlegible-*.woff2 JetBrainsMono-*.woff2
+    css/   schriften.css tokens.css epochen.css basis.css komponenten.css aufgaben.css labor.css
+           funkraum.css lehrkraft.css druck.css   (Schichten in dieser Reihenfolge, §11.3)
+    fonts/ Fraunces-Variable.woff2 AtkinsonHyperlegible-{Regular,Bold}.woff2 JetBrainsMono-{Regular,Bold}.woff2
            NotoSansMath-Symbole.woff2 NotoSansSymbols2-Symbole.woff2 („KR Symbole“)  LIZENZEN/OFL-*.txt  LIESMICH.md
     img/   ornamente.svg (Sprite: Mäander, Girih, Ranke, Lochstreifen, Scanline, Netz, Zahnrad – nur per <use> im DOM)
            siegel.svg abzeichen.svg icons.svg  texturen/epoche-0…6.svg (Kachelmuster, Deckkraft ≤ 6 %)
@@ -158,13 +159,16 @@ public/
            shared/krypto.js                                       (Bibliothek, Server + Browser)
            krypto/  oberflaeche.js kopfzeile.js zeitleiste.js epoche.js level.js profil.js spiel.js
                     bloecke.js interaktionen.js diagnose_chips.js
-                    labor/ registry.js skytale.js scheibe.js haeufigkeit.js substitution.js vigenere.js
-                           bitlupe.js runden.js modulo.js rsa.js hash.js signatur.js
-                    funkraum.js beamer.js werkstatt.js arena.js lehrer.js lehrer_funkraum.js lehrer_arena.js
-                    gast.js start.js board.js themen.js urkunden.js
+                    labor/ registry.js seite.js (M4)   skytale.js scheibe.js haeufigkeit.js substitution.js
+                           vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js signatur.js (M6)
+                    funkraum.js beamer.js werkstatt.js (M4 Gerüste, Inhalte M7)  arena.js lehrer_funkraum.js
+                    lehrer_arena.js (M7)
+                    lehrer.js urkunden.js gast.js start.js board.js themen.js datenschutz.js
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
+test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js, seed/ (Gast-Demo für den e2e, §15)
+test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
 ```
 
@@ -1224,15 +1228,18 @@ Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 
 ### 11.2 Gemeinsame JS-Module
 
+Stand nach M4 (globale Namen in Klammern; jede Datei legt genau einen an):
+
 | Datei | Aufgabe |
 |---|---|
-| `krypto/oberflaeche.js` | Theme (`data-epoche`, `data-theme`), Einstellungen Bewegung/Dunkelmodus, Zeitsprung-Übergang, Ladezustände |
-| `krypto/kopfzeile.js` | Logo, Epochenname, „⌂ Portal“, Labor, Funkraum-Punkt (Polling alle 20 s auf `GET /api/funk`), Profil-Rang-Badge, Menü (Abmelden, Überall abmelden, Kurswahl) |
-| `krypto/zeitleiste.js` | Epochen-Tore auf der Achse; Position aus `jahr.von` über `x = log10(jahr + 600)` normiert (−500 … 2026), Mindestabstand 140 px, auf schmalen Geräten senkrechte Liste; Entsiegeln-Animation (Caesar-Rotation je Zeichen, 600 ms, aus bei `prefers-reduced-motion`/Einstellung) |
-| `krypto/bloecke.js`, `krypto/interaktionen.js` | Renderer der neuen Blöcke und Interaktionen (registriert sich bei `AQR`/`AQI`) |
-| `krypto/diagnose_chips.js` | Fallen-Chip „P3 Umkehrung“ + Text, Link auf `/themen#fallen-P3` |
-| `krypto/labor/*.js` | Werkzeuge (§10) |
-| Seitenskripte | `spiel.js`, `lehrer.js`, `funkraum.js`, `beamer.js`, `werkstatt.js`, `arena.js`, `gast.js`, `start.js`, `board.js`, `themen.js`, `urkunden.js` |
+| `krypto/oberflaeche.js` (`KR`) | Theme (`data-epoche`, `data-theme`), Einstellungen Bewegung/Dunkelmodus, Ornamente/Sprites/Symbole, Entsiegeln, Zeitsprung-Übergang, Lade- und Fehlerzustände, Listen `KATEGORIEN`, `FALLEN`, `RAENGE`, `WELTEN_KURZ` |
+| `krypto/kopfzeile.js` (`KRKopf`) | Logo, Epochenname, Bereiche je Rolle, „⌂ Portal“, Labor-Link (im Boss-Kampf ausgeblendet), Rang-Badge, Menü (Darstellung, Kurswahl, Abmelden, Überall abmelden); Funkraum-Punkt als Haken `funkPunkt()` – das Polling auf `GET /api/funk` schaltet M7 ein (M4 E33) |
+| `krypto/zeitleiste.js` (`KRZeitleiste`) | Epochen-Tore auf der Achse; Position aus `jahr.von` über `x = log10(jahr + 600)` normiert (−500 … 2026), Mindestabstand 140 px, auf schmalen Geräten senkrechte Liste; Epochen 0–6 ohne Seed als „noch verschlüsselt“; Entsiegeln-Animation (aus bei `prefers-reduced-motion`/Einstellung) |
+| `krypto/epoche.js`, `krypto/level.js`, `krypto/profil.js` (`KREpoche`, `KRLevel`, `KRProfil`) | Ansichten der Schüler-Seite (Epoche mit Akten-Karten, Level mit Aufgabenliste und Labor-Karten, Profil mit Rang, Artefakten, Abzeichen, Fallen-Radar) |
+| `krypto/bloecke.js` (`KRB`), `krypto/interaktionen.js` (`KRI`) | Renderer der neuen Blöcke und Interaktionen (registrieren sich bei `AQR`/`AQI`) |
+| `krypto/diagnose_chips.js` (`KRDiag`) | Fallen-Chip „P3 Umkehrung falsch“ + Text, Link auf `/themen#fallen-P3`, höchstens zwei, gleiche Diagnosen nur einmal; `KRDiag.anzeige` für `AQA.ansicht` |
+| `krypto/labor/registry.js` (`KRLabor`) | Werkzeugliste (= Server), `registriere`, `oeffne`, `dialog` (Fokusfalle, Esc); ohne Modul „noch in Arbeit“ (Werkzeuge §10, M6) |
+| Seitenskripte | `spiel.js` (`KRSpiel`), `lehrer.js` (`KRLehrer`, Bausteine auch für den Gastmodus), `urkunden.js`, `gast.js` (`KRGast`), `start.js` (`KRStart`), `themen.js`, `board.js`, `datenschutz.js`, `labor/seite.js` (`KRLaborSeite`); Gerüste bis M7: `funkraum.js`, `werkstatt.js`, `beamer.js`; M7: `arena.js`, `lehrer_funkraum.js`, `lehrer_arena.js` |
 
 Alle Seiten: `<html lang="de" data-epoche="…" data-theme="hell|dunkel|auto">`, keine Inline-Skripte/-Styles, kein
 `innerHTML`/`insertAdjacentHTML`/`outerHTML` (Test `seiten.test.js` durchsucht `public/static/js/**`).
@@ -1563,7 +1570,7 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 
 `node:test` + `supertest`; Helfer `test/helpers.js` (neu): erzeugt je Lauf ein Ed25519-Testschlüsselpaar,
 `makeApp({ portalPublicKey, portalUrl: 'https://portal.test', plattformUrl: 'https://kryptos.test' })` lädt nur die Fixture
-(Welt 9) und `test/fixtures/gast_demo.json`; `sso(app, { sub, rolle, name, kurse })` läuft `/sso/start` → signiertes Token
+(Welt 9) und – mit `seedDir` – `test/fixtures/seed_beispiel/gast/demo.json`; `sso(app, { sub, rolle, name, kurse })` läuft `/sso/start` → signiertes Token
 → `/sso/ende` und liefert einen Client mit Cookies; `verbundToken(zweck, extra)`; `uhr()` wie Kern.
 
 | Datei | Herkunft | Inhalt |
@@ -1596,9 +1603,21 @@ Dateimuster `KR_W<n>_<Art><k>_<Thema>[ _LSG | _EH ].docx` (ohne Umlaute, Unterst
 | `client_hooks.test.js` | neu (M3) | Client-Hooks K04/K05 in einer `vm` mit Attrappen-DOM: `AQR.registriere` (Klassen, `ctx.modus`), `raster` mit Spaltenköpfen, `AQI.registriere`/`schrittArten`/`teilFuer`/`gapBesitzer`, Kern-Namen werfen |
 | `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung (`--pruefwerte test/fixtures/pruefwerte`), manipulierte Lösungen (`kryptos16`, `frei` mit `pruefnachweis`, gaps mit Prüfwert, Lücke im bits-Block) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
 | `fixture_abdeckung.test.js` | neu (M3) | Delta §13 aus der Fixture gezählt: jeder Block/jede Interaktion/jeder Modus, Welt-/Level-Felder, Niveaus, Boss-Pool/Mix, jede Diagnose-Zeile §9 mit Fehlantwort in `fixtures/antworten.js` |
+| `schriften.test.js` | neu (M4) | Schriftdateien, `@font-face`, Lizenzen je Familie, `unicode-range` der Symbol-Familie „KR Symbole“ |
+| `designsystem.test.js` | neu (M4) | Tokens hell/dunkel, Epochen-Akzente, Paarliste aller Text/Hintergrund-Paare ≥ 4,5 : 1 (WCAG AA), keine Akzent-Schrift auf `--papier-2` (E25, E37) |
+| `stilregeln.test.js` | neu (M4) | Hex-Farben nur in `tokens.css`/`epochen.css`/`druck.css`/SVG, kein `!important` außer `druck.css`, Texturen ≤ 6 % Deckkraft, Bewegung nur ohne `prefers-reduced-motion` |
+| `client_common.test.js`, `client_oberflaeche.test.js` | neu (M4) | `AQ.niveau`/`einstellung`/`ruhig` (K35), Theme-Schicht `KR`, Kopfzeile `KRKopf` (Rollen, Kurswahl, Abmelden) im Attrappen-DOM |
+| `client_aufgabe.test.js` | neu (M4) | `AQA.ansicht` mit Modus, Diagnose-Chips (`KRDiag`, höchstens zwei, keine Dopplung), Schritt-Schalter (K05, K36) |
+| `client_bloecke.test.js`, `client_interaktionen.test.js` | neu (M4) | Renderer der sieben Blöcke und vier Interaktionen (Tastatur, Feedback, Lösung, verdeckter Schlüssel, Boss ohne Werkzeug) |
+| `client_seiten.test.js` | neu (M4) | Seitenskripte Schüler, Lehrkraft, öffentliche Seiten, Gastmodus (Router, Leer- und Fehlerzustände, nur lesende Demo) |
+| `version_setzen.test.js` | neu (M4) | `werkzeuge/version_setzen.js` setzt `package.json`, `package-lock.json` und alle `?v=` gleich |
 
-**e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf Ports, Screenshots
-nach `docs/screenshots/`, Viewports 1280×800, 768×1024, 360×740, Beamer 1920×1080):
+**e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
+Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 MB, `E2E_FOTOS=0` schaltet aus –, Viewports
+1280×800, 768×1024, 360×740, Beamer 1920×1080). Aufteilung (M4): `hilfen.js` (Start von Dev-Portal + App mit
+`SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung, `keinQuerScrollen`, `ziele44`, Fotos), `schueler.js` (Nr. 1, 2,
+3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9);
+Reihenfolge 1 → 2 → 7a → 3 → 7b → 8 → 9. Nr. 4–6 folgen mit M6/M7.
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
 2. Level mit allen neuen Interaktionen (Fixture): `chiffre` mit Schrittprüfung und Fallen-Chip P3, `zuordnung` mit
@@ -1623,7 +1642,7 @@ nach `docs/screenshots/`, Viewports 1280×800, 768×1024, 360×740, Beamer 1920�
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` |
 | `krypto` | Node 20 + Python 3.12: `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture und Seeds), `python3 -I werkzeuge/krypto/pruefwerte.py` |
 | `inhalte` | Python 3.12 + Java 21 + `pip install python-docx python-pptx pypdf fonttools`: `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `materialien_pruefen.py`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, `video_folien.py --pruefen`, `schriften_pruefen.py` |
-| `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install chromium` in CI), Artefakt: Screenshots |
+| `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install --with-deps chromium` in CI), `npm run e2e`, Artefakt: `docs/screenshots` (umgesetzt M4 Task 66) |
 
 `main` ist mit CapRover verbunden (jeder Push = Live-Build) → nur Feature-Branches, Merge nach `main` nur nach
 ausdrücklicher Freigabe und grüner Prüfung (wie Algo Quest/Portal).
