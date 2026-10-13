@@ -36,7 +36,7 @@ function affin(z) {
     kategorie: 'entschluesseln',
     inhalt: [txt(`${kopf} Entschlüssele \`${K.gruppieren(geheim)}\` (m⁻¹ = ${inv}).`)],
     interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'affin', a: m, b: t, basis: 0 }, eingabe: K.gruppieren(geheim), hilfszeilen: ['zahlen'], basis: 0 },
-    loesung: { text: wort.toUpperCase() },
+    loesung: { text: wort.toLowerCase() }, // Klartext klein (Design §6.2)
     tipps: ['Entschlüsseln: p = m⁻¹ · (c − t) mod 26 – erst t abziehen, dann mit m⁻¹ malnehmen.'],
     erklaerung: [txt(`Mit p = ${inv} · (c − ${t}) mod 26 und A = 0 ergibt sich \`${wort}\`.`)]
   };

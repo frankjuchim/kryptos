@@ -192,6 +192,17 @@ function aufgabe(a, fa, wa, { data } = {}) {
     const ersatz = ALTBEGRIFFE[Object.keys(ALTBEGRIFFE).find((k) => x.startsWith(k))];
     wa('inhalt', `Altbegriff „${x}“ – bitte „${ersatz}“ schreiben.`);
   }
+  // Klartext klein (Design §6.2, Plan M5 E58): Entschlüsselungs-Lösungen mit Buchstabenausgabe
+  F.teile(a).forEach((t, i, alle) => {
+    const ia = t.interaktion;
+    const lo = t.loesung;
+    if (!istObjekt(ia) || ia.kind !== 'chiffre' || ia.richtung !== 'ent' || !istObjekt(lo) || typeof lo.text !== 'string') return;
+    const typ = istObjekt(ia.verfahren) ? ia.verfahren.typ : undefined;
+    if (typ === 'frei' || typ === 'xor' || (ia.ausgabe !== undefined && ia.ausgabe !== 'buchstaben')) return;
+    if (/[A-Z]/.test(lo.text) && !/[a-zäöüß]/.test(lo.text)) {
+      wa(alle.length > 1 ? `loesung[${i}]` : 'loesung', 'Klartext klein schreiben (Design §6.2): Lösung einer Entschlüsselung in Kleinbuchstaben.');
+    }
+  });
   for (const t of texte) {
     for (const m of t.matchAll(/`([^`]+)`/g)) {
       const g = m[1];
@@ -330,16 +341,20 @@ function level(l, o, f, w, { aufgaben, opt }) {
     if (!istObjekt(v) || !Number.isInteger(v.nr) || v.nr < 0 || v.nr > 7 || !istText(v.titel, 200)) fl('video braucht nr 0–7 und titel.');
     else {
       const liste = videoListe(opt);
-      if (liste && !liste.some((x) => istObjekt(x) && x.nr === v.nr && typeof x.url === 'string' && x.url.trim())) {
-        wl(`video.nr ${v.nr} hat noch keinen Eintrag in seed/videos.json.`);
-      }
+      // Eintrag zählt auch mit url null (Videos sind bis zur Veröffentlichung nicht öffentlich, Plan M5 E51)
+      if (liste && !liste.some((x) => istObjekt(x) && x.nr === v.nr)) wl(`video.nr ${v.nr} fehlt in seed/videos.json.`);
     }
   }
-  // Akte (ersetzt ab, Delta §3)
-  if (l.akte === undefined) wl(typeof l.ab === 'string' && l.ab.trim() ? 'bitte `akte` verwenden (ab ist veraltet).' : 'akte fehlt.');
-  else {
-    const m = /^W(\d)-L(\d{1,2})/.exec(typeof l.id === 'string' ? l.id : '');
-    const praefix = m ? `Akte W${m[1]}·${m[2]}` : 'Akte W';
+  // Akte (ersetzt ab, Delta §3); Gast-Demo (Welt 8) und Fixture (Welt 9) haben keine Akten (Plan M5 E59)
+  const m = /^W(\d)-L(\d{1,2})/.exec(typeof l.id === 'string' ? l.id : '');
+  const ohneAkten = m && Number(m[1]) >= 8;
+  if (l.akte === undefined) {
+    if (typeof l.ab === 'string' && l.ab.trim()) wl('bitte `akte` verwenden (ab ist veraltet).');
+    else if (!ohneAkten) wl('akte fehlt.');
+  } else {
+    // Kür-Level: „Akte W2·K1“ (k aus nr), sonst „Akte W<n>·<k>“
+    const kuerNr = l.kuer === true && typeof l.nr === 'string' && /^K\d+$/.test(l.nr) ? l.nr : null;
+    const praefix = m ? `Akte W${m[1]}·${kuerNr || m[2]}` : 'Akte W';
     if (typeof l.akte !== 'string' || !l.akte.startsWith(praefix)) wl(`akte muss mit „${praefix}“ beginnen.`);
   }
   // Kryptoanalyse-Level: Werkzeug-Voreinstellung darf den Schlüssel nicht verraten (Delta §7.7)

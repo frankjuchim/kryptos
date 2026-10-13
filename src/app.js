@@ -307,7 +307,7 @@ function ladeDemo(opts, log) {
   if (!datei) return leer;
   try {
     const d = JSON.parse(fs.readFileSync(datei, 'utf8'));
-    const ok = (x) => typeof x === 'string' && x.toLowerCase().endsWith('.pdf') && !x.includes('..') && !/loesung|erwartungshorizont/i.test(x);
+    const ok = (x) => typeof x === 'string' && x.toLowerCase().endsWith('.pdf') && !x.includes('..') && !/loesung|erwartungshorizont|(_lsg|_eh)(\.|_)|klausur/i.test(x);
     return { schueler: new Set((d.schueler || []).filter(ok)), lehrkraft: new Set((d.lehrkraft || []).filter(ok)) };
   } catch (e) {
     log(`demo_materialien.json nicht lesbar: ${e.message}`);

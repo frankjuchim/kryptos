@@ -85,8 +85,8 @@ Archivfund-ids: technisch immer `W<n>-A-<nn>` (in der Regel `W<n>-A-01`). Die Be
 | `rolle` | **ja** | `kryptografie` (🛡, Alice/Bob sichern) · `kryptoanalyse` (🔍, Eve knackt). Fremde-Chiffre-Level: `kryptoanalyse`, wenn das Beurteilen/Knacken überwiegt, sonst `kryptografie` |
 | `kuer` | nein | `true` markiert ein **Kür-Level** (K1–K3). Dann **muss** `niveau = "kuer"` sein und umgekehrt (Fehler sonst). `nr` empfohlen `"K1"` … Kür-Level erscheinen auf der Epochen-Seite in einem eigenen Abschnitt „Kür“ und sind über die Kurseinstellung `kuer` (frei/gesperrt) steuerbar |
 | `werkzeug` | nein | Werkzeug-id oder Liste (≤ 3) aus der Registry (TECHNIK §10.2): `skytale`, `scheibe`, `haeufigkeit`, `substitution`, `vigenere`, `bitlupe`, `runden`, `modulo`, `rsa`, `hash`, `signatur`. Erzeugt auf der Level-Seite die Karte „Im Kryptolabor ausprobieren“ (nur wenn das Werkzeug im Kurs freigegeben ist) |
-| `akte` | empfohlen | **ersetzt `ab`** (Kern). Muss mit `Akte W<n>·<k>` beginnen (Verknüpfung zu `seed/akten.json`, Themenseite, QR-Code auf der Akte). `ab` wird weiter gelesen (Kern-Kompatibilität), aber vom Validator als Hinweis „bitte `akte` verwenden“ gemeldet |
-| `video` | nein | `nr` (0–7, Design §11), `titel`. Link wird als normale Verknüpfung auf die YouTube-Seite des Kanals gerendert, sobald in `seed/videos.json` eine URL eingetragen ist (kein Einbetten, CSP) |
+| `akte` | empfohlen | **ersetzt `ab`** (Kern). Muss mit `Akte W<n>·<k>` beginnen, bei Kür-Leveln (`kuer: true`) mit `Akte W<n>·K<k>` (`K<k>` = `nr`, z. B. `Akte W2·K1`) (Verknüpfung zu `seed/akten.json`, Themenseite, QR-Code auf der Akte). Welt 8 (Gast-Demo) und Welt 9 (Fixture) haben keine Akten – dort kein Hinweis „akte fehlt“. `ab` wird weiter gelesen (Kern-Kompatibilität), aber vom Validator als Hinweis „bitte `akte` verwenden“ gemeldet |
+| `video` | nein | `nr` (0–7, Design §11), `titel`. Link wird als normale Verknüpfung auf die YouTube-Seite des Kanals gerendert, sobald in `seed/videos.json` eine URL eingetragen ist (kein Einbetten, CSP). Ein Eintrag `{ "nr", "titel", "url": null }` zählt als vorhanden (Videos nicht öffentlich bis zur Veröffentlichung); Hinweis nur, wenn die `nr` fehlt |
 | `ide` | nein | wie Kern (Karte „Programmieren in der Online-IDE“) |
 | `id`, `nr`, `titel`, `ds`, `intro`, `aufgaben` | – | wie Kern; `id` `W<n>-L<k>` (Kür-Level bekommen normale Nummern, z. B. `W2-L5` mit `nr: "K1"`) |
 
@@ -131,7 +131,9 @@ Inhaltsregeln (aus Design §6, vom Validator als Hinweis geprüft, wo maschinell
 - Jede Aufgabe, in der mit Buchstabenwerten gerechnet wird (`chiffre` mit `affin`, `ausgabe: "zahlen"`, Blöcke `alphabet`),
   nennt die Nummerierung: entweder Block `alphabet` mit `basis` oder ein Text „Nummerierung: A = 1 … Z = 26“
   (Regex `/Nummerierung:\s*A\s*=\s*[01]/`). Fehlt beides → Hinweis „P1: Nummerierung nicht genannt“.
-- Geheimtexte im Text (`` `…` ``) sollen in Fünfergruppen stehen; Klartext klein. Altbegriffe (`Chiffrat`, `Friedmann`,
+- Geheimtexte im Text (`` `…` ``) sollen in Fünfergruppen stehen; Klartext klein – auch `loesung.text` von
+  Entschlüsselungen (`chiffre` mit `richtung: ent`, Buchstabenausgabe, nicht `frei`/`xor`): ohne Kleinbuchstaben →
+  Hinweis „Klartext klein schreiben (Design §6.2)“. Altbegriffe (`Chiffrat`, `Friedmann`,
   `Merkel`, `Kerkhoff`) → Hinweis.
 - Boss-Aufgaben: Aufgabenstellung im Abitur-Stil **gesiezt**, Operator aus der KC-Liste fett
   (`**Begründen** Sie …`); die Angabe `[x BE]` entfällt im Lab (dort zählen Punkte), Rahmentext darf duzen.
@@ -825,8 +827,8 @@ der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und
 | Ebene | Fehler | Hinweise |
 |---|---|---|
 | Welt | `epoche`, `jahr`, `farbe`, `akzentHell` fehlen (0–6); Kontrast < 4,5 : 1; `archivfund.aufgabe` fehlt, hat falsches Format, steht in Level/Boss | `kapitel` fehlt; Zeitleiste nicht aufsteigend |
-| Level | `niveau`/`rolle` fehlen oder ungültig; `kuer` ↔ `niveau` inkonsistent; unbekanntes `werkzeug`; Niveau-Regeln §3; im gA-Kurs leeres Level | `akte` fehlt / `ab` statt `akte`; `video.nr` ohne Eintrag in `seed/videos.json` |
-| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung** (auch Lücken in `bits` mit `pruefe: xor`, Alphabetzeilen und `quadrat`-Zellen, §7); `alternative` durch keine erlaubte Variante erklärbar (§8.1); verdeckter Schlüssel mit Hilfszeile `schluessel`; `schluesselVerdeckt` kein bool; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet; Knack-Formulierung ohne verdeckten Schlüssel (§8.1); gaps-Rechenergebnis ohne `pruefnachweis` (§4.1); `quadrat`/`alphabet` und `verfahren` mit verschiedenen Schlüsseln (§7.1, §7.3); Falle passt nicht zur Kategorie (§4.3) |
+| Level | `niveau`/`rolle` fehlen oder ungültig; `kuer` ↔ `niveau` inkonsistent; unbekanntes `werkzeug`; Niveau-Regeln §3; im gA-Kurs leeres Level | `akte` fehlt (nur Welten 0–6) / `ab` statt `akte` / Präfix ≠ `Akte W<n>·<k>` bzw. `Akte W<n>·K<k>` (Kür); `video.nr` fehlt in `seed/videos.json` (Eintrag mit `url: null` zählt) |
+| Aufgabe | `kategorie` nicht in §4.2; `fallen` nicht P1–P10; Boss ohne `niveau`; `pruefnachweis` fehlt bei `frei`; neue Blöcke/Interaktionen fehlerhaft (§7, §8); **Neuberechnung ≠ Lösung** (auch Lücken in `bits` mit `pruefe: xor`, Alphabetzeilen und `quadrat`-Zellen, §7); `alternative` durch keine erlaubte Variante erklärbar (§8.1); verdeckter Schlüssel mit Hilfszeile `schluessel`; `schluesselVerdeckt` kein bool; Musterantwort nicht richtig (Kern) | Nummerierung nicht genannt (P1); Altbegriffe; Geheimtext nicht in Fünfergruppen; Klartext-Lösung einer Entschlüsselung nicht klein; `werkzeug`-Voreinstellung verrät Schlüssel; `tree`/`adtsim`/`baum`/`adt`/`klassenkarte` verwendet; Knack-Formulierung ohne verdeckten Schlüssel (§8.1); gaps-Rechenergebnis ohne `pruefnachweis` (§4.1); `quadrat`/`alphabet` und `verfahren` mit verschiedenen Schlüsseln (§7.1, §7.3); Falle passt nicht zur Kategorie (§4.3) |
 | Boss | gA-Pool < `anzahl`; < 3 `fremde-chiffre`; verbotene Bestandteile §10 | Pool-Größe, Dauer, Mix ≠ Standard; gA-Mix nicht erfüllbar |
 | Dateiübergreifend | doppelte ids (Kern) | Abdeckung: je Welt mindestens ein Level mit Kategorie `fremde-chiffre` oder Boss-Anteil (Design §1, Kriterium 2) |
 

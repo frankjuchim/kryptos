@@ -178,7 +178,7 @@ test('Archivfund: 0 Punkte, zählt für nichts, wird aber gespeichert (Delta §2
   const a = (await s.get('/api/archivfund/9').expect(200)).body;
   assert.equal(a.titel, 'Die Testdepesche');
   assert.equal(a.aufgabe.punkte, 0);
-  assert.ok(!JSON.stringify(a).includes('TREFFPUNKT'), 'keine Lösung vorab');
+  assert.ok(!JSON.stringify(a).toUpperCase().includes('TREFFPUNKT'), 'keine Lösung vorab');
   await s.get('/api/aufgaben/W9-A-01').expect(404);
   let r = (await s.post('/api/archivfund/9/pruefen').send({ antwort: 'HFSTTDIBYH' }).expect(200)).body;
   assert.equal(r.ok, false);

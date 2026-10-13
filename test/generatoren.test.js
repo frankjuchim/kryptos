@@ -401,3 +401,16 @@ test('Alle 16 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH
   // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
   for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
+
+test('Entschlüsselungs-Generatoren liefern Klartext klein (Design §6.2, Plan M5 E58)', () => {
+  for (const key of ['caesar_ent', 'affin', 'vigenere']) {
+    let ent = 0;
+    for (let s = 1; s <= 40; s++) {
+      const a = G.erzeuge(key, s);
+      if (a.interaktion.richtung !== 'ent') continue;
+      ent++;
+      assert.equal(a.loesung.text, a.loesung.text.toLowerCase(), key);
+    }
+    assert.ok(ent > 0, `${key}: keine Entschlüsselungsaufgabe in 40 Seeds`);
+  }
+});

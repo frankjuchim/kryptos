@@ -42,7 +42,7 @@ function caesarEnt(z) {
     fallen: ['P1', 'P2', 'P3'],
     inhalt: [txt(`${NUMMERIERUNG} Entschlüssele mit k = ${k}: \`${geheim}\``)],
     interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k }, eingabe: geheim },
-    loesung: { text: wort.toUpperCase() },
+    loesung: { text: wort.toLowerCase() }, // Klartext klein (Design §6.2)
     tipps: ['Beim Entschlüsseln wird zurückgerechnet: jeden Buchstaben um k Stellen nach vorn; vor A geht es bei Z weiter.'],
     erklaerung: [txt(`Jeder Buchstabe wird um k = ${k} Stellen zurückgeschoben (vor A wieder ab Z, mod 26): \`${geheim}\` → \`${wort}\`.`)]
   };

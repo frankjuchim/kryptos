@@ -315,8 +315,8 @@ test('Negativ-Fixtures: je Datei der erwartete Fehler (Delta §11, §13)', () =>
 
 test('Welt/Level-Hinweise: akte, ab, kapitel, video', () => {
   const hin = (w, opt = {}) => validiereWelt(w, { datei: 't', ...opt }).warnungen.map((x) => x.meldung).join(' | ');
-  let w = basis();
-  delete w.levels.find((l) => l.id === 'W9-L2').akte;
+  let w = ladeWelt(0);
+  delete w.levels.find((l) => l.id === 'W0-L2').akte;
   assert.match(hin(w), /akte fehlt/);
   w = basis();
   delete w.levels[0].akte;
@@ -488,4 +488,36 @@ test('Level ↔ Aufgabe: kuer-Aufgabe in einem kern-Level ist erlaubt (Delta §3
   aufgabe(w, 'W9-L1-01').niveau = 'kuer';
   assert.deepEqual(fehlerVon(w), []);
   erwarteFehler((x) => { aufgabe(x, 'W9-L4-01').niveau = 'kern'; }, /Level-Niveau kuer erlaubt nur kuer-Aufgaben/);
+});
+
+/* ---------- M5 Task 71: Welt 8/9 ohne Akten-Hinweis, Kür-Akte, Videos ohne URL, Klartext klein (E51, E58, E59) ---------- */
+
+const demoWelt = () => JSON.parse(fs.readFileSync(path.join(__dirname, 'e2e', 'seed', 'gast', 'demo.json'), 'utf8'));
+const warnungenVon = (w, opt = {}) => validiereWelt(w, { datei: 't', ...opt }).warnungen;
+
+test('Welt 8: kein Hinweis „akte fehlt“; Kür-Level erwartet „Akte W<n>·K<k>“', () => {
+  assert.ok(!warnungenVon(demoWelt()).some((x) => /akte fehlt/.test(x.meldung)));
+  assert.ok(!warnungenVon(basis()).some((x) => /akte fehlt/.test(x.meldung)), 'Fixture-Welt 9: kein akte-Hinweis');
+  let w = basis();
+  const l = w.levels.find((x) => x.id === 'W9-L4');
+  l.akte = 'Akte W9·K1 – Quadrate'; l.nr = 'K1';
+  assert.ok(!warnungenVon(w).some((x) => /akte muss/.test(x.meldung)), warnungenVon(w).map((x) => x.meldung).join(' | '));
+  w = ladeWelt(2);
+  w.levels.find((x) => x.id === 'W2-L4').akte = 'Akte W2·4 – Quadrate';
+  assert.ok(warnungenVon(w).some((x) => /akte muss mit „Akte W2·K1“ beginnen/.test(x.meldung)));
+  w.levels.find((x) => x.id === 'W2-L4').akte = 'Akte W2·K1 – Quadrate';
+  assert.ok(!warnungenVon(w).some((x) => /akte muss/.test(x.meldung)));
+});
+
+test('Hinweis „Klartext klein“ bei GROSSER Entschlüsselungs-Lösung', () => {
+  const w = basis();
+  aufgabe(w, 'W9-L5-01').loesung.text = 'ZUVERLAESSIG';
+  assert.ok(warnungenVon(w).some((x) => x.ort.includes('W9-L5-01') && /Klartext klein/.test(x.meldung)));
+  assert.ok(!warnungenVon(basis()).some((x) => /Klartext klein/.test(x.meldung)), 'Fixture nach Korrektur sauber');
+});
+
+test('Video-Eintrag mit url null zählt als vorhanden', () => {
+  const r = warnungenVon(basis(), { videos: [{ nr: 1, titel: 'Testvideo', url: null }] });
+  assert.ok(!r.some((x) => /video\.nr/.test(x.meldung)), r.map((x) => x.meldung).join(' | '));
+  assert.ok(warnungenVon(basis(), { videos: [{ nr: 2, titel: 'Testvideo', url: null }] }).some((x) => /video\.nr 1 fehlt in seed\/videos\.json/.test(x.meldung)));
 });

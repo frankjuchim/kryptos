@@ -131,3 +131,20 @@ test('Lösungen: nie über /arbeitsblaetter oder statisch erreichbar; im Image n
     'materialien/Lehrkraft_PDF ./materialien/Lehrkraft_PDF'
   ], 'Lösungen nie in den öffentlichen Ordner ./akten');
 });
+
+test('demo_materialien.json: _LSG, _EH und Klausuren werden nie öffentlich (Plan M5 E55)', async () => {
+  const os = require('node:os');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-demo-'));
+  const seed = path.join(tmp, 'seed'); const pdf = path.join(tmp, 'Akten_PDF');
+  fs.cpSync(SEED, seed, { recursive: true });
+  const verboten = ['Welt_0_Antike/KR_W0_Akte1_X_LSG.pdf', 'Welt_0_Antike/KR_W0_Boss0_Y_EH.pdf', 'Welt_6/KR_W6_Klausur_eA.pdf', 'Welt_6/KR_W6_Probeklausur.pdf'];
+  const erlaubt = 'Welt_0_Antike/KR_W0_Akte1_Skytale.pdf';
+  for (const d of [...verboten, erlaubt]) {
+    fs.mkdirSync(path.dirname(path.join(pdf, d)), { recursive: true });
+    fs.copyFileSync(path.join(PDF_DIR, 'Welt_9_Testwelt', 'KR_W9-AB1_Bloecke_und_Luecken.pdf'), path.join(pdf, d));
+  }
+  fs.writeFileSync(path.join(seed, 'demo_materialien.json'), JSON.stringify({ schueler: [...verboten, erlaubt], lehrkraft: [] }));
+  const app = H.makeApp({ seedDir: seed, arbeitsblaetterDir: pdf });
+  for (const d of verboten) await request(app).get(`/arbeitsblaetter/${d}`).expect(401);
+  await request(app).get(`/arbeitsblaetter/${erlaubt}`).expect(200);
+});
