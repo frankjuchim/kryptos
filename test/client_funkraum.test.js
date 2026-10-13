@@ -150,6 +150,13 @@ test('Leerzustände: kein Szenario, kein Team, Team spielt nicht mit, Pause sper
   assert.equal(k.eins(k.document, 'textarea.funk-text').disabled, true);
   k.wert('KRFunkraum').stopp();
 
+  // Review M7 W1: in der Auflösung prüft der Server nichts mehr (409) – die Seite sperrt die Eingaben wie in der Pause
+  k = lade({ 'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'aufloesung' }), 'GET /api/funk/7/stand': { status: 200, body: stand(5, { phase: 'aufloesung', ich: { team: TEAMS[1], rolle: 'bob', partner: 1 }, nachrichten: [{ id: 1, von: 1, an: 2, art: 'nachricht', inhalt: 'KHOOR', lesbar: true, angekommen: false, geknackt: false, version: 2 }] }) } });
+  await k.ruhe();
+  assert.ok(k.alle(k.document, '.funk-szene button').length > 0);
+  assert.ok(k.alle(k.document, '.funk-szene button, .funk-szene input, .funk-szene textarea').every((el) => el.disabled), 'Auflösung sperrt alle Eingaben');
+  k.wert('KRFunkraum').stopp();
+
   k = lade({ 'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'auswertung', phase: 'aufloesung' }), 'GET /api/funk/7/stand': { status: 200, body: stand(9, { status: 'auswertung', phase: 'aufloesung', auswertung: { zeilen: [{ nachricht: 1, runde: 1, von: 1, an: 2, angekommen: true, geknackt: true, sekunden: 70, besonderheit: null }], je: { 1: { gesendet: 1, geknackt: 1 } } } }) } });
   await k.ruhe();
   const a = k.text(k.eins(k.document, '.funk-auswertung-bereich'));

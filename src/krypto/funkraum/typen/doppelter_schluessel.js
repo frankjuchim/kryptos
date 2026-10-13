@@ -78,6 +78,9 @@ module.exports = {
   BAUSTEINE,
   /** Bob und Eve prüfen über den Klartext-Hash (Task 136) */
   klartextPflicht: true,
+  /** Phasen je Prüfaktion (W3 §9.3, Review M7 W1): Bob bestätigt beim Funken, Eve knackt ab dem ersten Spruch bis zum
+      Ende des Lauschens; in der Auflösung sperrt der Dienst ohnehin alles */
+  aktionsPhasen: Object.freeze({ empfangen: Object.freeze(['funken']), knacken: Object.freeze(['funken', 'lauschen']) }),
   /** Sparschwein nur für ein Alice-Team (E94) */
   pruefeAnlegen(ctx, optionen, rollen) {
     if (optionen.wiederholerTeamId === undefined) return;

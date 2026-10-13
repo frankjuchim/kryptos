@@ -1471,7 +1471,10 @@ Beamer, Teams; Tests `funkraum*.test.js`, `teams.test.js`, `datenschutz*.test.js
                                                                                       gelöscht
 ```
 
-`pausiert`: keine Nachrichten/Angriffe, Beamer zeigt „Pause“. Jede Zustands- oder Datenänderung erhöht
+`pausiert`: keine Nachrichten/Angriffe, Beamer zeigt „Pause“. Phase `aufloesung` (letzte Phase jedes Szenarios): der
+Beamer zeigt Klartexte und Wege – deshalb lehnt der Dienst ab dann **jede** Team-Aktion ab (Senden, Empfangen, Knacken,
+`zuordnung`, `oeffentlich`, `k-melden`, `mallory` → 409 „Die Auflösung läuft …“), sonst änderte sich die Auswertung
+nachträglich (Review M7 W1); die Funkraum-Seite sperrt dann alle Eingaben. Jede Zustands- oder Datenänderung erhöht
 `funk_szenarien.version` (in derselben Transaktion) und vergibt diese Version an neue Nachrichten/Ereignisse.
 
 ### 12.2 Rollenvergabe
@@ -1565,6 +1568,7 @@ Zufall nur über `ctx.zufallBytes(n)` (Plan M7 E113), Zeit nur über `ctx.now()`
 | `sichtVorrang` | `true` | Dienst fragt `sicht` auch für eigene Nachrichten (verschlossene Umschläge) | Mallory |
 | `ereignisSicht(ctx, sz, e, betrachter)` | → `boolean` | Ereignisse je Betrachter filtern; ohne Hook sehen alle alle (nur Codes/ids) | Botenlauf (`sonderkarte`), Wettknacken (`fortschritt`), Mallory (`weitergeleitet`/`ersetzt`) |
 | `anzeigen(ctx, sz, sicht, betrachter)` | → `stand.anzeigen` je `'schueler'`/`'beamer'`/`'regie'` | jeder Stand | alle |
+| `aktionsPhasen` | `{ [aktion]: [phase, …] }` | `aktiverTeilnehmer`: Prüf-/Team-Aktion außerhalb dieser Phasen → 409 (zusätzlich zur Sperre in `aufloesung`, Review M7 W1) | Doppelter Schlüssel (`empfangen` nur `funken`, `knacken` in `funken`/`lauschen`, W3 §9.3) |
 | `klartextPflicht` | `true` | Senden ohne `klartext` → 400 | Botenlauf, Doppelter Schlüssel |
 | `textVomServer` | `true` | Senden überspringt die Whitelist des Client-Texts; der Typ liefert den Inhalt (erneut über die Whitelist) | Mallory (Auftragskarte) |
 | `aktionen.senden(ctx, sz, betrachter, { inhalt, klartext, an, body })` | → Ergänzungen `{ an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? }` | Vorprüfung beim Senden | Botenlauf, Doppelter Schlüssel, Mallory |
@@ -1604,8 +1608,9 @@ Szenario-Regeln im Detail:
   Funksprüche, ≤ 24 Zeichen, nur Wörter aus dem Funkspruch-Baukasten (`BAUSTEINE`, 21 Wörter aus W3 §9.3, durch
   Leerzeichen getrennt); Geheimtext als Hex-Paare. Der Server prüft die Rückrechnung C ⊕ K_Abschnitt = M über `Krypto.xor`
   (Klartext nur im Speicher) → sonst 400. Abschnitt 1 zweimal nur für das Sparschwein-Paar (`optionen.wiederholerTeamId` =
-  Alice-Team, verdeckt), sonst 409 „Abschnitt 1 ist verbraucht“. Phase `lauschen`: Eve rechnet C1 ⊕ C2 in der Bit-Lupe
-  und rät Wörter; Knacken über Klartext-Hash. Auflösung zeigt C1 ⊕ C2 = M1 ⊕ M2 auf dem Beamer.
+  Alice-Team, verdeckt), sonst 409 „Abschnitt 1 ist verbraucht“. Bob bestätigt („empfangen“) nur in `funken`. Phase
+  `lauschen`: Eve rechnet C1 ⊕ C2 in der Bit-Lupe und rät Wörter; Knacken über Klartext-Hash in `funken` und `lauschen`
+  (Hook `aktionsPhasen`, Review M7 W1). Auflösung zeigt C1 ⊕ C2 = M1 ⊕ M2 auf dem Beamer.
 - **Schlüsseltausch vor Eves Augen (W4 §9.3, Plan M7 E95):** Phasen `runde-1` (p = 23, g = 5) und `runde-2` (p = 101,
   g = 2), Parameter je Runde für alle Paare. `POST /api/funk/:id/oeffentlich { wert }` (1 ≤ wert < p) erzeugt die
   Kanal-Nachricht „A 17“ bzw. „B 4“; `POST /api/funk/:id/k-melden { k }` (nur Alice/Bob) meldet K **verdeckt** an die

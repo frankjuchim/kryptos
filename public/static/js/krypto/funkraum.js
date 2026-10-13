@@ -122,7 +122,8 @@ const KRFunkraum = (() => {
       return t ? t.name : id === null || id === undefined ? '–' : `Team ${id}`;
     };
     const nachricht = (id) => (stand && (stand.nachrichten || []).find((n) => n.id === id)) || null;
-    const gesperrt = () => !!stand && stand.status !== 'laeuft';
+    // Pause, Vorbereitung, Auswertung – und die Auflösung: dann prüft der Server nichts mehr (409, Review M7 W1)
+    const gesperrt = () => !!stand && (stand.status !== 'laeuft' || stand.phase === 'aufloesung');
 
     async function nachAktion() {
       if (poller) await poller.jetzt();
@@ -220,6 +221,7 @@ const KRFunkraum = (() => {
       const ich = stand.ich || {};
       const teile = [];
       if (stand.status === 'pausiert') teile.push(h('div', { class: 'rueckmeldung info funk-pause', role: 'status' }, h('p', null, 'Pause – deine Lehrkraft hat den Funkraum angehalten.')));
+      else if (stand.status === 'laeuft' && stand.phase === 'aufloesung') teile.push(h('div', { class: 'rueckmeldung info funk-aufloesung', role: 'status' }, h('p', null, 'Auflösung – schaut auf den Beamer. Gesendet und geprüft wird jetzt nichts mehr.')));
       if (ich.stummBis && Date.parse(ich.stummBis) > Date.now()) teile.push(h('div', { class: 'rueckmeldung info funk-stumm', role: 'status' }, h('p', null, `Euer Team ist bis ${new Date(ich.stummBis).toLocaleTimeString('de-DE')} stummgeschaltet.`)));
       if (stand.boss) teile.push(h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, BOSS)));
       AQ.mount(banner, teile);

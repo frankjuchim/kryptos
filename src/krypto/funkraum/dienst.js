@@ -22,6 +22,8 @@ const TYP_MODULE = Object.freeze({
 });
 
 const FRIST_MS = 24 * 3600 * 1000;
+/** letzte Phase jedes Szenarios (TECHNIK §12.6): nur Anzeige, keine Team-Aktionen mehr (Review M7 W1) */
+const AUFLOESUNG = 'aufloesung';
 const STATUS_NAME = { vorbereitung: 'Vorbereitung', laeuft: 'läuft', pausiert: 'pausiert', auswertung: 'Auswertung' };
 const AKTIONEN = ['starten', 'pausieren', 'fortsetzen', 'phase', 'beenden', 'schliessen', 'abbrechen'];
 /** Übergänge: aktion → erlaubte Ausgangszustände */
@@ -485,6 +487,11 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     if (t.sz.status !== 'laeuft') throw new V.ConflictError('Das Szenario läuft nicht.');
     const erlaubt = (Sz.SZENARIEN[t.sz.typ].aktionen || {})[t.betrachter.rolle] || [];
     if (!erlaubt.includes(aktion)) throw new V.ForbiddenError('Das darf deine Rolle in diesem Szenario nicht.');
+    // Review M7 W1: in der Auflösung zeigt der Beamer die Klartexte – danach wird nichts mehr geprüft oder geändert
+    // (sonst änderte sich die Auswertung nachträglich); Typ-Hook aktionsPhasen schränkt einzelne Aktionen weiter ein
+    if (t.sz.phase === AUFLOESUNG) throw new V.ConflictError('Die Auflösung läuft – jetzt wird nichts mehr geprüft oder gesendet.');
+    const phasen = (TYP_MODULE[t.sz.typ].aktionsPhasen || {})[aktion];
+    if (Array.isArray(phasen) && !phasen.includes(t.sz.phase)) throw new V.ConflictError('In dieser Phase geht das nicht mehr.');
     return t;
   }
 
