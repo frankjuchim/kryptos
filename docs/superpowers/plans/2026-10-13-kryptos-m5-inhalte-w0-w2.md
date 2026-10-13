@@ -1057,12 +1057,18 @@ I(OTTO) = I(RWWR) = I(ABBA) = 1/3.
 
 **Erwartete Hinweise:** keine. Validator: Level `eA` mit nur `eA`-Aufgaben → kein Fehler; gA-Kurs sieht das Level nicht.
 
-- [ ] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L3'` → FAIL; zusätzlich in `inhalte_plan.test.js`: `GET /api/welten/2/levels` im
+- [x] **Step 1: Failing test** – `UMFANG[2]` += `'W2-L3'` → FAIL; zusätzlich in `inhalte_plan.test.js`: `GET /api/welten/2/levels` im
   gA-Kurs ohne `W2-L3` (Test-App mit `weltDateien: ['seed/welten/welt2.json']`).
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Level 2.3 „Friedmans Zufall“ (eA)"`.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5.**
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Level 2.3 „Friedmans Zufall“ (eA)"`.
+
+- **Umgesetzt (Task 85):** Aufgaben erben `eA` vom Level (kein Aufgaben-`niveau`). W2-L3-04 `art` als `auswahl`
+  („deutschen Text“ / „Vigenère-Geheimtext“, Satz „Der Wert passt eher zu einem …“). W2-L3-02 `match` mit Elementen
+  `a`–`c` (Text A–C) und Kategorien `1`–`3`. In der Erklärung von W2-L3-07 entfällt der Spec-interne Verweis
+  „Siehe Korrekturnotiz §10.6.“. Neuer Test in `inhalte_plan.test.js`: W2-L3 im eA-Kurs sichtbar, im gA-Kurs weder in
+  `/api/welten` noch über `/api/levels/W2-L3` bzw. `/api/aufgaben/W2-L3-01` (404).
 
 ### Task 86: Welt 2 – Level 2.4 „Fremde Chiffre III: Playfair und Kreuzquadrat“
 

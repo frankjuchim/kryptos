@@ -68,3 +68,16 @@ test('GET /api/niveaus: Welten mit Seed kommen aus dem Katalog, mit den Zahlen d
     if (plan.boss) assert.deepEqual(w.boss && w.boss.pool, plan.boss.pool, `Welt ${nr}: Boss-Pool`);
   }
 });
+
+// Plan M5 Task 85: Level 2.3 (eA) ist im gA-Kurs ausgeblendet, im eA-Kurs sichtbar (echter Seed welt2.json).
+test('Welt 2: Level 2.3 „Friedmans Zufall“ (eA) nur im eA-Kurs', async (t) => {
+  if (!(S.UMFANG[2] || []).includes('W2-L3')) return t.skip('W2-L3 noch nicht im UMFANG');
+  const { s, lk, kurs } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt2.json')] });
+  const levels = async () => (await s.get('/api/welten').expect(200)).body.welten.find((w) => w.nr === 2).levels.map((l) => l.id);
+  assert.ok((await levels()).includes('W2-L3'), 'eA-Kurs (Standard) sieht W2-L3');
+  await s.get('/api/levels/W2-L3').expect(200);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.ok(!(await levels()).includes('W2-L3'), 'gA-Kurs sieht W2-L3 nicht');
+  await s.get('/api/levels/W2-L3').expect(404);
+  await s.get('/api/aufgaben/W2-L3-01').expect(404);
+});
