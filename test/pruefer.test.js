@@ -177,7 +177,7 @@ test('registriere() ist idempotent', () => { const R = require('../src/krypto');
 test('Werkzeug-Liste TECHNIK §10.2', () => {
   const W = require('../src/krypto/werkzeuge');
   assert.deepEqual(W.WERKZEUG_IDS, ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur']);
-  assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis'], gast: true });
+  assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis', 'richtung', 'reiter'], reiter: ['scheibe', 'text', 'alle'], gast: true }); // M6 E73
   assert.deepEqual(W.WERKZEUGE.filter((x) => x.gast).map((x) => x.id), ['scheibe']);
   assert.equal(W.werkzeug('enigma'), null);
 });

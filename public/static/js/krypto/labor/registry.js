@@ -6,20 +6,21 @@
 const KRLabor = (() => {
   const { h } = AQ;
 
+  // = src/krypto/werkzeuge.js ohne Voreinstellungs-Schlüssel (Test labor.test.js); reiter: Reihenfolge = Anzeige (M6 E73)
   const WERKZEUGE = Object.freeze(
     [
-      { id: 'skytale', titel: 'Skytale & Gitter', welt: 0 },
-      { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0 },
-      { id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1 },
-      { id: 'substitution', titel: 'Substitutions-Werkbank', welt: 1 },
-      { id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2 },
-      { id: 'bitlupe', titel: 'Bit-Lupe', welt: 3 },
-      { id: 'runden', titel: 'Runden-Labor', welt: 3 },
-      { id: 'modulo', titel: 'Modulo-Uhr & Farbmischer', welt: 4 },
-      { id: 'rsa', titel: 'RSA-Rechenwerk', welt: 4 },
-      { id: 'hash', titel: 'Hash-Labor', welt: 5 },
-      { id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5 }
-    ].map((w) => Object.freeze(w))
+      { id: 'skytale', titel: 'Skytale & Gitter', welt: 0, reiter: ['skytale', 'gartenzaun', 'fleissner', 'ring'] },
+      { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, reiter: ['scheibe', 'text', 'alle'] },
+      { id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1, reiter: ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen'] },
+      { id: 'substitution', titel: 'Substitutions-Werkbank', welt: 1, reiter: [] },
+      { id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, reiter: ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur'] },
+      { id: 'bitlupe', titel: 'Bit-Lupe', welt: 3, reiter: ['zeichen', 'xor', 'doppelnutzung'] },
+      { id: 'runden', titel: 'Runden-Labor', welt: 3, reiter: ['runden', 'lawine', 'verfolgung', 'modi', 'fehler', 'enigma'] },
+      { id: 'modulo', titel: 'Modulo-Uhr & Farbmischer', welt: 4, reiter: ['uhr', 'tabelle', 'inverses', 'farbmischer'] },
+      { id: 'rsa', titel: 'RSA-Rechenwerk', welt: 4, reiter: ['rechenwerk', 'euklid', 'text'] },
+      { id: 'hash', titel: 'Hash-Labor', welt: 5, reiter: ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme'] },
+      { id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, reiter: ['signatur', 'zertifikat', 'mitm'] }
+    ].map((w) => Object.freeze({ ...w, reiter: Object.freeze(w.reiter) }))
   );
   const NACH_ID = new Map(WERKZEUGE.map((w) => [w.id, w]));
   const MODULE = new Map();

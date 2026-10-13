@@ -207,5 +207,5 @@ test('Seed: Spalten niveau (effektiv) und archivfund', async () => {
   assert.equal(z('W9-L1-01').niveau, 'kern');
   assert.equal(z('W9-B-02').niveau, 'eA');
   const l = app.locals.services.inhalte.katalog.levels.get('W9-L1');
-  assert.deepEqual([l.rolle, l.werkzeug, l.akte], ['kryptografie', ['scheibe'], 'Akte W9·1 – Blöcke und Lücken']);
+  assert.deepEqual([l.rolle, l.werkzeug, l.akte], ['kryptografie', [{ id: 'scheibe', voreinstellung: {} }], 'Akte W9·1 – Blöcke und Lücken'], 'werkzeug als Liste von Objekten (M6 E70)');
 });

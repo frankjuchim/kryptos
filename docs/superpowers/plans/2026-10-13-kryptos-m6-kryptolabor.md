@@ -874,7 +874,7 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
     den erlaubten Schlüsseln, sonst `{}`).
   - `GET /api/labor` → `{ boss, niveau: 'eA'|'gA', welten: [nr …] (aufsteigend, einst.welten), werkzeuge: [...] }`.
 
-- [ ] **Step 1: Failing tests** – `test/labor.test.js` (anhängen; der bestehende Test „Registry Server = Client“ vergleicht
+- [x] **Step 1: Failing tests** – `test/labor.test.js` (anhängen; der bestehende Test „Registry Server = Client“ vergleicht
   künftig `{ id, titel, welt, reiter }`):
   ```js
   test('Registry M6: Reiter je Werkzeug und Voreinstellungs-Schlüssel (E73)', () => {
@@ -918,11 +918,11 @@ Abbildung 1 bzw. W3 K2 „Mini-Enigma (verbindlich)“), Version patch
   ```
   (`validiereBlock`, `levelMit`, `levelFehler`, `levelHinweise`, `aufgabeHinweise`: kleine Helfer am Anfang des neuen Tests
   über `validiereDateien` mit einer Kopie der Fixture im Temp-Ordner – Muster der vorhandenen Validator-Tests.)
-- [ ] **Step 2: Run** `node --test test/labor.test.js test/validator.test.js` → FAIL.
-- [ ] **Step 3: Implement**; `inhalte.js` normalisiert `werkzeug` zu `[{ id, voreinstellung }]` (Strings → `{ id, voreinstellung: {} }`),
+- [x] **Step 2: Run** `node --test test/labor.test.js test/validator.test.js` → FAIL.
+- [x] **Step 3: Implement**; `inhalte.js` normalisiert `werkzeug` zu `[{ id, voreinstellung }]` (Strings → `{ id, voreinstellung: {} }`),
   `level.js` und `inhalte_spec`-Abgleich (`test/hilfen_spec.js`: `ids(werkzeug)`) nachziehen, Fixture W9 unverändert gültig.
-- [ ] **Step 4: Run** → PASS; `npm run validate` ohne neue Fehler; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Labor-Server: Reiter in der Registry, /api/labor mit Welten/Niveau, Level-werkzeug mit Voreinstellung (K09)"`.
+- [x] **Step 4: Run** → PASS; `npm run validate` ohne neue Fehler; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Labor-Server: Reiter in der Registry, /api/labor mit Welten/Niveau, Level-werkzeug mit Voreinstellung (K09)"`.
 
 ### Task 110: Labor-Rahmen II – Nachladen, Reiter-Regeln, Nachspiel, Alle-Schlüssel, Bausteine, Regeltest (E67, E71, E72, E86, E87)
 

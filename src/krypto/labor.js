@@ -1,5 +1,6 @@
 'use strict';
-// Kryptolabor: Freigaben je Schüler (TECHNIK §10.3) – GET /api/labor. Die Werkzeuge selbst entstehen in M6;
+// Kryptolabor: Freigaben je Schüler (TECHNIK §10.3) – GET /api/labor { boss, niveau, welten, werkzeuge } (welten/niveau:
+// Reiter-Regeln im Client, Plan M6 E71). Die Werkzeuge selbst sind Client-Module;
 // Texte zu den Gründen macht der Client (M4 Task 53).
 //   grund: null (frei) · 'lehrkraft' (in den Kurseinstellungen gesperrt) · 'welt' (auto, Welt nicht freigeschaltet) ·
 //          'boss' (Boss-Kampf läuft: alle Werkzeuge gesperrt)
@@ -24,7 +25,9 @@ function createLabor({ db, svc, now }) {
       else if (einstellung !== 'frei' && !svc.stand.istFrei(einst, welt)) grund = 'welt';
       return { id, titel, welt, frei: grund === null, grund };
     });
-    return { boss, werkzeuge };
+    // M6 E71: freigeschaltete Welten (aufsteigend) und Niveau des Kurses für die Reiter-Regeln im Client
+    const welten = [...new Set((Array.isArray(einst.welten) ? einst.welten : []).filter((nr) => Number.isInteger(nr) && svc.stand.istFrei(einst, nr)))].sort((a, b) => a - b);
+    return { boss, niveau: einst.niveau === 'gA' ? 'gA' : 'eA', welten, werkzeuge };
   }
 
   /** GET /api/labor – nur Schüler; Antworten ohne Sitzung wie die Kern-Schülerrouten (401 bzw. 403 gesperrt). */

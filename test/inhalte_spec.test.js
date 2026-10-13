@@ -9,7 +9,8 @@ const S = require('./hilfen_spec');
 const { WELT_PLAN, LAB_KATEGORIE_NAMEN } = require('../src/krypto/fach');
 
 const summe = (o) => Object.values(o || {}).reduce((a, b) => a + b, 0);
-const alsListe = (w) => (w === undefined || w === null ? [] : Array.isArray(w) ? w : [w]);
+// werkzeug: ids vergleichen (M6 E70 – Einträge dürfen { id, voreinstellung } sein)
+const alsListe = (w) => (w === undefined || w === null ? [] : Array.isArray(w) ? w : [w]).map((e) => (e && typeof e === 'object' ? e.id : e));
 
 test('Spec-Parser: Aufgaben je Level, Boss-Pool, Archivfund und Warm-up wie WELT_PLAN', () => {
   for (const welt of [0, 1, 2]) {

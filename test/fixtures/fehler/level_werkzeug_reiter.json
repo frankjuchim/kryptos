@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Level-Feld werkzeug: Reiter, den das Werkzeug nicht hat (Plan M6 E73)",
+  "erwartet": "reiter „bigramme“",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L1.werkzeug",
+      "wert": [{ "id": "vigenere", "voreinstellung": { "reiter": ["bigramme"] } }]
+    }
+  ]
+}

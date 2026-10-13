@@ -592,3 +592,48 @@ test('Hinweis: Verweis auf eine andere Aufgabe (id) in einem Schülertext – Au
   // die eigene id (z. B. in einer Überschrift) ist kein Verweis
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').inhalt[0].md = 'Aufgabe W9-L5-01'; }, /Verweis auf die Aufgabe/, { nicht: true });
 });
+
+/* ---------- M6 Task 109: Werkzeug-Voreinstellungen (E70, E73, E75) ---------- */
+
+/** Welt mit verändertem Level W9-L1 (Felder) und optional einem Block in dessen erster Aufgabe. */
+function levelMit(felder, block) {
+  const w = basis();
+  const l = w.levels.find((x) => x.id === 'W9-L1');
+  Object.assign(l, felder);
+  if (block) aufgabe(w, l.aufgaben[0]).inhalt.push(block);
+  return w;
+}
+const levelFehler = (w) => fehlerVon(w);
+const levelHinweise = (w) => validiereWelt(w, { datei: 'test.json' }).warnungen.map((f) => `${f.ort}: ${f.meldung}`);
+const validiereBlock = (b) => levelFehler(levelMit({}, b));
+/** Hinweise einer Aufgabe (W9-L1-01) mit geänderten Feldern und zusätzlichem Block. */
+function aufgabeHinweise(felder, block) {
+  const w = basis();
+  const a = aufgabe(w, 'W9-L1-01');
+  Object.assign(a, felder);
+  a.inhalt.push(block);
+  return validiereWelt(w, { datei: 'test.json' }).warnungen.filter((f) => f.ort.includes('W9-L1-01')).map((f) => f.meldung);
+}
+
+test('M6: werkzeug-Voreinstellung reiter/richtung/modus geprüft, Level-Objekte, Schlüsselverrat erweitert, KH-Hinweis', () => {
+  const fehler = (b) => validiereBlock({ t: 'werkzeug', ...b });
+  assert.deepEqual(fehler({ id: 'vigenere', voreinstellung: { reiter: ['quadrat', 'verschluesseln'] } }), []);
+  assert.match(fehler({ id: 'vigenere', voreinstellung: { reiter: ['bigramme'] } }).join(), /reiter/);
+  assert.match(fehler({ id: 'vigenere', voreinstellung: { reiter: [] } }).join(), /reiter/);
+  assert.match(fehler({ id: 'vigenere', voreinstellung: { reiter: ['quadrat', 'quadrat'] } }).join(), /doppelt/);
+  assert.match(fehler({ id: 'scheibe', voreinstellung: { richtung: 'quer' } }).join(), /richtung/);
+  assert.match(fehler({ id: 'vigenere', voreinstellung: { modus: 'beaufort' } }).join(), /modus/);
+  assert.match(fehler({ id: 'runden', voreinstellung: { variante: 'aes' } }).join(), /variante/);
+  assert.match(fehler({ id: 'substitution', voreinstellung: { reiter: ['x'] } }).join(), /nicht erlaubt/);
+  const l = levelMit({ werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['quadrat'] } }, 'scheibe'] });
+  assert.deepEqual(levelFehler(l), []);
+  assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'vigenere' }, { id: 'vigenere' }] })).join(), /doppelt/);
+  assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['bigramme'] } }] })).join(), /reiter/);
+  assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'zauberstab' }] })).join(), /unbekannt/);
+  assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'vigenere', extra: 1 }] })).join(), /werkzeug/);
+  assert.match(levelHinweise(levelMit({ rolle: 'kryptoanalyse' }, { t: 'werkzeug', id: 'substitution', voreinstellung: { vorgabe: { A: 'e' } } })).join(), /verrät den Schlüssel/);
+  assert.match(levelHinweise(levelMit({ rolle: 'kryptoanalyse', werkzeug: [{ id: 'skytale', voreinstellung: { t: 3 } }] })).join(), /verrät den Schlüssel/);
+  assert.match(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash' }).join(), /Reiter einschränken/);
+  assert.match(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine', 'schritte'] } }).join(), /Reiter einschränken/);
+  assert.doesNotMatch(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine'] } }).join(), /Reiter einschränken/);
+});

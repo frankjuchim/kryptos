@@ -1,6 +1,7 @@
 'use strict';
 // Inhalte: Seed-Upsert der Welt-Dateien, Katalog im Speicher, Ansichten ohne Lösung.
 // K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video),
+// werkzeug ab M6 als Liste [{ id, voreinstellung }] (Plan M6 E70),
 // Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
 // M3 Task 33: oeffentlich/loesungsteil filtern interne Prüfdaten (fehlmuster, _fehlmuster) für alle Clients.
 // M3 Task 34: Lehrkraft-Vorschau zeigt alles, je Level und Aufgabe gAAusgeblendet (TECHNIK §8.2).
@@ -12,18 +13,35 @@ const { validiereWelt, aufgabePunkte } = require('../content/validator');
 const C = require('../content/checker');
 const F = require('../content/format');
 const { WELT_MAP, STUFEN_PUNKTE, NIVEAU_IDS } = require('../domain');
+const { werkzeug: werkzeugEintrag } = require('../krypto/werkzeuge');
 
 const SEED_VERSION = 'kryptos-1';
 const ARCHIVFUND_ID = /^W\d-A-\d{2,3}$/;
 const ROLLEN = ['kryptografie', 'kryptoanalyse'];
 
-/** Kryptos-Felder eines Levels (Delta §3); werkzeug immer als Liste. */
+/**
+ * Level-Feld werkzeug als Liste [{ id, voreinstellung }] (M6 E70): Strings → { id, voreinstellung: {} }; unbekannte ids
+ * entfallen; Voreinstellung nur mit den erlaubten Schlüsseln des Werkzeugs (src/krypto/werkzeuge.js).
+ */
+function werkzeugListe(w) {
+  const roh = Array.isArray(w) ? w : w === undefined || w === null ? [] : [w];
+  const out = [];
+  for (const e of roh) {
+    const id = e && typeof e === 'object' ? e.id : e;
+    const wz = typeof id === 'string' ? werkzeugEintrag(id) : null;
+    if (!wz || out.some((x) => x.id === id)) continue;
+    const v = e && typeof e === 'object' && e.voreinstellung && typeof e.voreinstellung === 'object' && !Array.isArray(e.voreinstellung) ? e.voreinstellung : {};
+    out.push({ id, voreinstellung: Object.fromEntries(Object.entries(v).filter(([k]) => wz.voreinstellung.includes(k))) });
+  }
+  return out;
+}
+
+/** Kryptos-Felder eines Levels (Delta §3); werkzeug immer als Liste von { id, voreinstellung } (M6 E70). */
 function levelFelder(l) {
-  const werkzeug = Array.isArray(l.werkzeug) ? l.werkzeug : typeof l.werkzeug === 'string' ? [l.werkzeug] : [];
   return {
     rolle: ROLLEN.includes(l.rolle) ? l.rolle : null,
     kuer: l.kuer === true,
-    werkzeug: werkzeug.filter((x) => typeof x === 'string'),
+    werkzeug: werkzeugListe(l.werkzeug),
     akte: typeof l.akte === 'string' ? l.akte : '',
     video: l.video && typeof l.video === 'object' && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: String(l.video.titel || '') } : null
   };

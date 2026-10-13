@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Block werkzeug: richtung außerhalb ver/ent (Plan M6 E73)",
+  "erwartet": "richtung muss ver oder ent",
+  "aenderungen": [
+    {
+      "pfad": "aufgaben#W9-L1-01.inhalt",
+      "anhaengen": { "t": "werkzeug", "id": "scheibe", "voreinstellung": { "richtung": "quer" } }
+    }
+  ]
+}

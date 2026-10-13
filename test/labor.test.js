@@ -51,5 +51,30 @@ test('Board-Schlüssel neu vergeben: alter Schlüssel ungültig', async () => {
 test('Registry Server = Client (TECHNIK §10.2)', () => {
   const D = require('./dom_attrappe');
   const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
-  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt }) => ({ id, titel, welt })));
+  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter }) => ({ id, titel, welt, reiter: [...reiter] })));
+});
+
+/* ---------- M6 Task 109: Reiter, Welten/Niveau, Level-Feld werkzeug mit Voreinstellung ---------- */
+test('Registry M6: Reiter je Werkzeug und Voreinstellungs-Schlüssel (E73)', () => {
+  const { werkzeug } = require('../src/krypto/werkzeuge');
+  assert.deepEqual(werkzeug('vigenere').reiter, ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur']);
+  assert.deepEqual(werkzeug('substitution').reiter, []);
+  for (const w of WERKZEUGE) assert.equal(w.voreinstellung.includes('reiter'), w.reiter.length > 0, w.id);
+  assert.ok(werkzeug('runden').voreinstellung.includes('variante') && werkzeug('runden').voreinstellung.includes('stellung'));
+  const D = require('./dom_attrappe');
+  const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
+  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter }) => ({ id, titel, welt, reiter: [...reiter] })));
+});
+test('GET /api/labor: Welten und Niveau für die Reiter-Regeln (E71)', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { welten: [9, 1], niveau: 'gA' } }).expect(200);
+  const r = await s.get('/api/labor').expect(200);
+  assert.deepEqual(r.body.welten, [1, 9]);
+  assert.equal(r.body.niveau, 'gA');
+});
+test('Level-Feld werkzeug mit Voreinstellung: /api/levels liefert Objekte (E70)', async () => {
+  const { s } = await H.szenario();
+  const r = await s.get('/api/levels/W9-L1').expect(200);
+  assert.ok(r.body.level.werkzeug.length > 0);
+  assert.ok(r.body.level.werkzeug.every((w) => typeof w.id === 'string' && typeof w.voreinstellung === 'object'));
 });

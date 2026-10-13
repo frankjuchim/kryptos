@@ -8,7 +8,7 @@ const path = require('node:path');
 const C = require('../content/checker');
 const F = require('../content/format');
 const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
-const { WERKZEUG_IDS } = require('./werkzeuge');
+const { WERKZEUG_IDS, SCHLUESSEL_VERRAT, werkzeug: werkzeugEintrag, pruefeVoreinstellung } = require('./werkzeuge');
 const CHIFFRE = require('./interaktionen/chiffre');
 const N = require('./neuberechnung');
 const { FALLEN_PLAUSIBEL } = require('./fach');
@@ -233,6 +233,14 @@ function aufgabe(a, fa, wa, { data } = {}) {
       if (ist === soll) wa('inhalt', 'Häufigkeitsleiste doppelt: Der Block haeufigkeit zählt denselben Text wie die Werkbank (zuordnung mit haeufigkeit: true) – Block weglassen oder haeufigkeit: false.');
     }
   }
+  // Hash-Labor rechnet KH Schritt für Schritt vor (M6 E75): in hash-Aufgaben den Reiter „schritte“ ausschließen
+  if (a.kategorie === 'hash') {
+    for (const b of alleBloecke(a, { erklaerung: false })) {
+      if (b.t !== 'werkzeug' || b.id !== 'hash') continue;
+      const reiter = istObjekt(b.voreinstellung) && Array.isArray(b.voreinstellung.reiter) ? b.voreinstellung.reiter : null;
+      if (!reiter || reiter.includes('schritte')) wa('inhalt', 'Hash-Labor rechnet KH Schritt für Schritt vor – Reiter einschränken (voreinstellung.reiter ohne „schritte“).');
+    }
+  }
   // Kern-Bestandteile ohne Kryptos-Verwendung (Delta §1)
   const kern = new Set();
   for (const { interaktion: ia } of F.teile(a)) {
@@ -355,10 +363,28 @@ function level(l, o, f, w, { aufgaben, opt }) {
   if (!ROLLEN.includes(l.rolle)) fl('rolle muss kryptografie oder kryptoanalyse sein.');
   if (l.kuer !== undefined && typeof l.kuer !== 'boolean') fl('kuer muss true oder false sein.');
   if ((l.kuer === true) !== (l.niveau === 'kuer')) fl('kuer: true verlangt niveau kuer und umgekehrt.');
+  // werkzeug (Delta §3, M6 E70): id, Liste von ids oder Liste mit Objekten { id, voreinstellung? } – höchstens 3, keine id doppelt
+  const werkzeugListe = l.werkzeug === undefined ? [] : Array.isArray(l.werkzeug) ? l.werkzeug : [l.werkzeug];
   if (l.werkzeug !== undefined) {
-    const liste = Array.isArray(l.werkzeug) ? l.werkzeug : [l.werkzeug];
-    if (!liste.length || liste.length > 3) fl('werkzeug muss eine Werkzeug-id oder eine Liste mit 1–3 ids sein.');
-    for (const id of liste) if (!WERKZEUG_IDS.includes(id)) fl(`werkzeug „${id}“ ist unbekannt (${WERKZEUG_IDS.join(' | ')}).`);
+    if (!werkzeugListe.length || werkzeugListe.length > 3) fl('werkzeug muss eine Werkzeug-id oder eine Liste mit 1–3 Einträgen (id oder { id, voreinstellung }) sein.');
+    const gesehen = new Set();
+    for (const e of werkzeugListe) {
+      const id = istObjekt(e) ? e.id : e;
+      if (istObjekt(e)) {
+        const fremd = Object.keys(e).filter((k) => k !== 'id' && k !== 'voreinstellung');
+        if (fremd.length) fl(`werkzeug: Eintrag „${String(id)}“ erlaubt nur id und voreinstellung (gefunden: ${fremd.join(', ')}).`);
+      }
+      if (typeof id !== 'string' || !WERKZEUG_IDS.includes(id)) {
+        fl(`werkzeug „${String(id)}“ ist unbekannt (${WERKZEUG_IDS.join(' | ')}).`);
+        continue;
+      }
+      if (gesehen.has(id)) fl(`werkzeug „${id}“ steht doppelt in der Liste.`);
+      gesehen.add(id);
+      if (istObjekt(e) && e.voreinstellung !== undefined) {
+        if (!istObjekt(e.voreinstellung)) fl(`werkzeug „${id}“: voreinstellung muss ein Objekt sein.`);
+        else pruefeVoreinstellung(werkzeugEintrag(id), e.voreinstellung, (m) => fl(`werkzeug „${id}“: ${m}`));
+      }
+    }
   }
   if (l.video !== undefined) {
     const v = l.video;
@@ -383,12 +409,19 @@ function level(l, o, f, w, { aufgaben, opt }) {
     if (typeof l.akte !== 'string' || !l.akte.startsWith(praefix)) wl(`akte muss mit „${praefix}“ beginnen.`);
   }
   // Kryptoanalyse-Level: Werkzeug-Voreinstellung darf den Schlüssel nicht verraten (Delta §7.7)
+  // M6 E73: zusätzlich vorgabe (substitution) und t (skytale, Ring); auch Voreinstellungen im Level-Feld werkzeug
+  const verraet = (v) => istObjekt(v) && SCHLUESSEL_VERRAT.some((k) => Object.hasOwn(v, k));
+  if (l.rolle === 'kryptoanalyse') {
+    for (const e of werkzeugListe) {
+      if (istObjekt(e) && verraet(e.voreinstellung)) wl(`Level-Feld werkzeug: Voreinstellung verrät den Schlüssel (werkzeug „${e.id}“ in einem Kryptoanalyse-Level).`);
+    }
+  }
   if (l.rolle === 'kryptoanalyse' && Array.isArray(l.aufgaben) && aufgaben instanceof Map) {
     for (const id of l.aufgaben) {
       const a = aufgaben.get(id);
       if (!istObjekt(a)) continue;
       for (const b of alleBloecke(a)) {
-        if (b.t === 'werkzeug' && istObjekt(b.voreinstellung) && (Object.hasOwn(b.voreinstellung, 'schluessel') || Object.hasOwn(b.voreinstellung, 'k'))) {
+        if (b.t === 'werkzeug' && verraet(b.voreinstellung)) {
           wl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
         }
       }

@@ -1231,28 +1231,30 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 
 ### 10.2 Registry
 
-| id | Titel | Welt | Voreinstellungs-Schlüssel | Gast |
-|---|---|---|---|---|
-| `skytale` | Skytale & Gitter | 0 | `text`, `umfang`, `zeilen`, `schablone` | – |
-| `scheibe` | Chiffrierscheibe | 0 | `text`, `k`, `basis` | ✓ |
-| `haeufigkeit` | Häufigkeits-Analysator | 1 | `text`, `ansicht`, `teiltexte` | – |
-| `substitution` | Substitutions-Werkbank | 1 | `text`, `vorgabe` | – |
-| `vigenere` | Vigenère-Werkbank | 2 | `text`, `schluessellaenge` | – |
-| `bitlupe` | Bit-Lupe | 3 | `text`, `bits`, `schluessel` | – |
-| `runden` | Runden-Labor | 3 | `block`, `schluessel`, `runden` (erst nach W3 §0a) | – |
-| `modulo` | Modulo-Uhr & Farbmischer | 4 | `modul`, `p`, `g` | – |
-| `rsa` | RSA-Rechenwerk | 4 | `p`, `q`, `e` | – |
-| `hash` | Hash-Labor | 5 | `text` (erst nach W5 §0a) | – |
-| `signatur` | Signatur- & Zertifikats-Simulator | 5 | `szene` | – |
+| id | Titel | Welt | Reiter (Reihenfolge = Anzeige) | Voreinstellungs-Schlüssel (M6 neu **fett**) | Gast |
+|---|---|---|---|---|---|
+| `skytale` | Skytale & Gitter | 0 | `skytale`, `gartenzaun`, `fleissner`, `ring` | `text`, `umfang`, `zeilen`, `schablone`, **`t`**, **`richtung`**, **`reiter`** | – |
+| `scheibe` | Chiffrierscheibe | 0 | `scheibe`, `text`, `alle` | `text`, `k`, `basis`, **`richtung`**, **`reiter`** | ✓ |
+| `haeufigkeit` | Häufigkeits-Analysator | 1 | `histogramm`, `bigramme`, `teiltexte`, `kennzahlen` | `text`, `ansicht`, `teiltexte`, **`reiter`** | – |
+| `substitution` | Substitutions-Werkbank | 1 | – | `text`, `vorgabe` | – |
+| `vigenere` | Vigenère-Werkbank | 2 | `quadrat`, `verschluesseln`, `kasiski`, `teiltexte`, `koinzidenz`, `verschiebung`, `korrektur` | `text`, `schluessellaenge`, **`modus`** (`vigenere`\|`autokey`\|`porta`\|`pendel`\|`frei`), **`richtung`**, **`reiter`** | – |
+| `bitlupe` | Bit-Lupe | 3 | `zeichen`, `xor`, `doppelnutzung` | `text`, `bits`, `schluessel`, **`modus`** (`otp`\|`wiederholung`), **`reiter`** | – |
+| `runden` | Runden-Labor | 3 | `runden`, `lawine`, `verfolgung`, `modi`, `fehler`, `enigma` | `block`, `schluessel`, `runden`, **`variante`** (`kryptos16`\|`ohneSBox`\|`rm16`), **`stellung`**, **`reiter`** | – |
+| `modulo` | Modulo-Uhr & Farbmischer | 4 | `uhr`, `tabelle`, `inverses`, `farbmischer` | `modul`, `p`, `g`, **`a`**, **`reiter`** | – |
+| `rsa` | RSA-Rechenwerk | 4 | `rechenwerk`, `euklid`, `text` | `p`, `q`, `e`, **`reiter`** | – |
+| `hash` | Hash-Labor | 5 | `schritte`, `lawine`, `kollision`, `baukasten`, `passwort`, `pruefsumme` | `text`, **`reiter`** | – |
+| `signatur` | Signatur- & Zertifikats-Simulator | 5 | `signatur`, `zertifikat`, `mitm` | `szene`, **`reiter`** | – |
 
-Server-Registry `src/krypto/werkzeuge.js` (id, titel, welt, erlaubte Voreinstellungen, gast) ist die Quelle für
-Validator, `GET /api/labor` und Lehrkraft-Einstellungen; der Client hat dieselben ids in `labor/registry.js` (Test
-vergleicht beide Listen).
+`richtung` ist `ver` oder `ent`; `reiter` ist eine nicht leere Liste ohne Dopplung aus den Reitern des Werkzeugs
+(Plan M6 E73, Prüfung in `pruefeVoreinstellung`). Server-Registry `src/krypto/werkzeuge.js` (id, titel, welt, erlaubte Voreinstellungen, reiter, gast) ist die Quelle für
+Validator, `GET /api/labor` und Lehrkraft-Einstellungen; der Client hat dieselben Einträge (id, titel, welt, reiter) in
+`labor/registry.js` (Test vergleicht beide Listen).
 
 ### 10.3 Freigabe je Kurs und Sperre im Boss
 
 `GET /api/labor` (nur Schüler, sonst 401 wie die Kern-Schülerrouten; `src/krypto/labor.js`) →
-`{ boss: bool, werkzeuge: [{ id, titel, welt, frei, grund }] }` mit `grund` ∈ `null | 'lehrkraft' | 'welt' | 'boss'` nach
+`{ boss: bool, niveau: 'eA'|'gA', welten: [nr …], werkzeuge: [{ id, titel, welt, frei, grund }] }` (`welten` = freigeschaltete
+Welten des Kurses aufsteigend, `niveau` = Kursniveau – Grundlage der Reiter-Regeln im Client, Plan M6 E71) mit `grund` ∈ `null | 'lehrkraft' | 'welt' | 'boss'` nach
 `einst.werkzeuge[id]`: `frei` → frei (auch in nicht freigeschalteter Welt); `gesperrt` → `grund: 'lehrkraft'` („Deine
 Lehrkraft schaltet dieses Werkzeug später frei“); `auto`/fehlend → frei, wenn die Welt freigeschaltet ist, sonst
 `grund: 'welt'`. Texte macht der Client. Lehrkraft: alle frei (Liste über `GET /api/lehrer/werkzeuge`). **Läuft für die Teilnahme ein Boss-Kampf** (`boss_versuche` ohne
@@ -1514,7 +1516,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /level/:nr` (Seite) | alle | `nr` = `0.1` … `2.4`, `K1` (QR-Codes der Akten, `kr_docx.py`) | Schüler-Sitzung → `302 /spiel#/level/<id>`; Lehrkraft → `302 /lehrer#/vorschau/welt/<n>`; ohne Sitzung → `302 /sso/start?ziel=%2Fspiel%23%2Flevel%2F<id>` (der Hash erreicht den Seiten-Wächter nicht, deshalb direkt zum SSO-Start; Ziel-Regel §6.2.4); unbekannte Nummer → 404-Seite (Plan M5 E50) | – |
 | `GET /api/archivfund/:welt` · `POST …/pruefen` · `…/tipp` · `…/aufdecken` | Schüler | wie Aufgaben | wie Aufgaben, `punkte` immer 0 | 90/min (Kern-Limit) |
 | `POST /api/aufgaben/:id/pruefen` | Schüler | Kern + Delta §14 | Kern + `diagnose`, `zeichen`, `bits`, `anteil` | 90/min |
-| `GET /api/labor` | Schüler | – | `{ boss, werkzeuge: [{ id, titel, welt, frei, grund }] }` (`grund`: `null`/`lehrkraft`/`welt`/`boss`, §10.3) | – |
+| `GET /api/labor` | Schüler | – | `{ boss, niveau, welten, werkzeuge: [{ id, titel, welt, frei, grund }] }` (`niveau` `eA`/`gA`, `welten` freigeschaltet, aufsteigend – Reiter-Regeln, Plan M6 E71) (`grund`: `null`/`lehrkraft`/`welt`/`boss`, §10.3) | – |
 | `GET /api/boss/:welt` | Schüler | – | Kern-Status + `boss.rahmen` (Rahmentext der Specs §5, Mini-Markdown oder `null`; Plan M5 E52) – nie Aufgaben vor dem Start | – |
 
 ### 13.2 Funkraum (Schüler)
@@ -1660,7 +1662,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `generatoren.test.js` | E | Determinismus je Seed, Lösung unabhängig nachgerechnet, Ausgabe validiert (Validator auf Generator-Aufgabe), Niveau der Generatoren |
 | `funkraum.test.js` | neu | Zustandsautomat (erlaubte/verbotene Übergänge → 409), Rollenvergabe, Whitelist (Umlaute, Kleinbuchstaben → groß, 161 Zeichen, Sonderzeichen), Sichtbarkeit je Rolle, Polling 200/304/`seit`, Rate-Limits, alle 5 Szenarien im Durchlauf (Hash-Knacken, DH-K-Prüfung, OTP-Wiederholer, Mallory-Umleitung + Zertifikat), Ausblenden leert Inhalt, Beenden löscht Inhalte, 24-h-Löschung |
 | `arena.test.js` | neu | Phasen, Einreichung (Umkehrbarkeit, Typregel, Klartextlänge), Klartext/Schlüssel nie gespeichert (DB-Durchsuchung), Angriff per Klartext und per Schlüssel, eigene Chiffre → 400, Rate-Limits, Abzeichen, Beurteilungen nur Lehrkraft/eigenes Team, 30-Tage-Löschung |
-| `labor.test.js` | neu | `/api/labor` Freigaben (`auto`/`frei`/`gesperrt`, Welt gesperrt, Boss läuft), Registry Server = Client, Validator-Hinweis für Schlüssel-Voreinstellung |
+| `labor.test.js` | neu | `/api/labor` Freigaben (`auto`/`frei`/`gesperrt`, Welt gesperrt, Boss läuft) mit `welten`/`niveau`, Registry Server = Client (mit Reitern), Level-Feld `werkzeug` als Objekte, Validator-Hinweis für Schlüssel-Voreinstellung |
 | `datenschutz.test.js` | neu | keine Lösung/Erklärung/Boss-Aufgabe über öffentliche Routen; `/api/plattform` und Kursübersicht ohne Freitexte; Löschung nach `sub` entfernt alle personenbezogenen Zeilen (Abfrage über alle Tabellen mit `schueler_id`/`sub`/`von_schueler_id`) |
 | `gast.test.js` | A | nur `W8-*`, keine echten ids/Lösungen, Werkzeugliste `['scheibe']`, Demo-Kurs ohne echte Daten |
 | `themen.test.js`, `lehrkraft_material.test.js` | A | Akten statt Arbeitsblätter, nie `_LSG`/`_EH`/Klausur öffentlich, Whitelist der Lehrkraft-Dateien |

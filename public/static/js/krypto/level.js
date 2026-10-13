@@ -53,8 +53,10 @@ const KRLevel = (() => {
     );
   }
 
-  function werkzeugKarten(ids, werkzeuge, werkzeugFrei) {
-    const frei = (Array.isArray(ids) ? ids : []).filter((id) => werkzeugFrei(id));
+  // Level-Feld werkzeug: Liste von { id, voreinstellung } (M6 E70; Strings aus älteren Antworten werden ebenfalls gelesen)
+  function werkzeugKarten(liste, werkzeuge, werkzeugFrei) {
+    const ids = (Array.isArray(liste) ? liste : []).map((e) => (e && typeof e === 'object' ? e.id : e)).filter((id) => typeof id === 'string');
+    const frei = ids.filter((id) => werkzeugFrei(id));
     if (!frei.length) return null;
     return h(
       'section',

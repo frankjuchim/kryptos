@@ -1,0 +1,10 @@
+{
+  "beschreibung": "Level-Feld werkzeug: dieselbe id zweimal (Plan M6 E70)",
+  "erwartet": "doppelt",
+  "aenderungen": [
+    {
+      "pfad": "levels#W9-L1.werkzeug",
+      "wert": [{ "id": "vigenere", "voreinstellung": { "reiter": ["quadrat"] } }, "vigenere"]
+    }
+  ]
+}
