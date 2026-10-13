@@ -101,7 +101,7 @@ test('W2 §9.1 Testfall 1 (Eves Brief): Kasiski, Teilertabelle, Zufallstreffer, 
   assert.equal(w.k.alle(w.flaeche, 'table.wiederholungen tbody tr').length, 8);
   assert.match(w.text('table.wiederholungen'), /125 = 5 · 5 · 5/);
   assert.ok(w.k.alle(w.flaeche, '.geheimtext mark.markiert').length >= 8, 'Wiederholungen im Text markiert');
-  assert.match(w.text('.geheimtext .positionen'), /^0 5 10/);
+  assert.deepEqual(w.k.alle(w.flaeche, '.geheimtext .gruppe-spalte .position').slice(0, 3).map(w.k.text), ['0', '5', '10']);
   w.k.klick(w.k.eins(w.flaeche, 'input.zufall[data-abstand="125"]'));
   assert.equal(w.zustand().teiler[5], 8);
   assert.equal(w.k.eins(w.flaeche, 'input.zufall[data-abstand="125"]').checked, true);

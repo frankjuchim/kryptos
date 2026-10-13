@@ -17,7 +17,11 @@ test('Geheimtext-Zeile: Fünfergruppen, buchstabiert für Screenreader, Kopieren
   k.document.body.appendChild(el);
   assert.deepEqual(k.alle(el, 'span.gruppe').map(k.text), ['AYLMM', 'WBURA']);
   assert.equal(k.text(k.eins(el, 'span.sr')), 'Geheimtext, buchstabiert: A Y L M M, W B U R A');
-  assert.deepEqual(k.alle(el, '.positionen span').map(k.text), ['0', '5']);
+  // Positionsmarke je Fünfergruppe als Teil der Gruppe (bricht mit ihr um), keine getrennte Leiste
+  assert.deepEqual(k.alle(el, '.geheimtext-gruppen .gruppe-spalte').map((s) => [k.text(k.eins(s, '.position')), k.text(k.eins(s, '.gruppe'))]), [['0', 'AYLMM'], ['5', 'WBURA']]);
+  assert.equal(k.alle(el, '.positionen').length, 0);
+  const ohne = k.wert('KRB').geheimtext('aylmm wbura');
+  assert.equal(k.alle(ohne, '.gruppe-spalte, .position').length, 0, 'ohne positionen keine Marken');
   k.klick(k.eins(el, 'button.kopieren'));
   await k.ruhe();
   assert.equal(k.zwischenablage.at(-1), 'AYLMMWBURA');

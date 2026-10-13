@@ -35,8 +35,8 @@ const KRB = (() => {
   /* ---------- Geheimtext-Zeile ---------- */
 
   /**
-   * Geheimtext (GROSS, Fünfergruppen) bzw. Klartext (klein) als Zeile mit Screenreader-Fassung, Positionsleiste,
-   * Kopieren und „buchstabenweise vorlesen“.
+   * Geheimtext (GROSS, Fünfergruppen) bzw. Klartext (klein) als Zeile mit Screenreader-Fassung, Positionsmarken
+   * (je Gruppe über der Gruppe, brechen mit ihr um), Kopieren und „buchstabenweise vorlesen“.
    */
   function geheimtext(text, { art = 'geheim', gruppe = 5, positionen = false, kopieren = true, unveraendert = false, markiert = [] } = {}) {
     const klar = art === 'klar';
@@ -77,10 +77,11 @@ const KRB = (() => {
     const zeile = h(
       'span',
       { class: 'geheimtext-gruppen', 'aria-hidden': 'true' },
-      gruppen.map((g) => {
+      gruppen.map((g, i) => {
         const el = marken.length ? gruppeMitMarken(g, start) : h('span', { class: 'gruppe' }, g);
         start += g.length;
-        return el;
+        // Positionsmarke als Teil der Gruppe (Spalte mit kleiner Zahl darüber): bricht mit der Gruppe um
+        return positionen ? h('span', { class: 'gruppe-spalte' }, h('span', { class: 'position' }, String(i * n)), el) : el;
       })
     );
     const box = h('div', { class: klar ? 'klartext klartext-zeile' : 'geheimtext' });
@@ -90,9 +91,6 @@ const KRB = (() => {
       box.appendChild(h('span', { class: 'sr', id }, `Markiert: ${marken.map((m) => `Position ${m.von} bis ${m.von + m.laenge - 1}`).join(', ')}`));
     }
     box.appendChild(h('div', { class: 'geheimtext-text' }, zeile, sr));
-    if (positionen) {
-      box.appendChild(h('div', { class: 'positionen', 'aria-hidden': 'true' }, gruppen.map((g, i) => h('span', null, String(i * n)))));
-    }
     const knoepfe = h('div', { class: 'geheimtext-knoepfe' });
     if (kopieren) {
       knoepfe.appendChild(
