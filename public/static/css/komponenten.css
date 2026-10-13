@@ -194,6 +194,7 @@
   color: var(--text);
 }
 .knopf:active { transform: translateY(1px); }
+.knopf[hidden] { display: none; } /* display: inline-flex schlägt sonst das hidden-Attribut (Review M4 K3) */
 .knopf:disabled, .knopf[aria-disabled="true"] { opacity: .55; }
 .knopf svg { width: 18px; height: 18px; }
 .knopf-primaer { background: var(--akzent); border-color: var(--akzent); color: var(--auf-akzent); }

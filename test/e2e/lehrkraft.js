@@ -20,7 +20,8 @@ async function kursId(page, ctx, name) {
 }
 
 async function speichern(page) {
-  await page.locator('form.einstellungen button[type="submit"]').click();
+  // auf die PATCH-Antwort warten – ein noch sichtbarer Toast des vorigen Speicherns zählt nicht
+  await Promise.all([page.waitForResponse((r) => r.request().method() === 'PATCH' && r.ok()), page.locator('form.einstellungen button[type="submit"]').click()]);
   await page.locator('#toast', { hasText: 'Gespeichert.' }).waitFor();
 }
 
@@ -40,8 +41,11 @@ async function szenario7a(ctx) {
   await page.locator('input[name="niveau"][value="gA"]').check();
   await page.locator('input[name="boss"][value="offen"]').check();
   await page.locator('input[name="beamer"]').check();
-  await foto(page, 'lehrkraft-einstellungen', { ganz: true });
+  assert.equal(await page.locator('a.board-link').isVisible(), false, 'Board-Link erst nach dem Speichern (Review M4 K3)');
   await speichern(page);
+  // Review M4 W2: Niveau-Chip im Kurskopf zeigt sofort das gespeicherte Niveau
+  assert.equal((await page.locator('.kurs-kopf .chip-kursniveau').textContent()).trim(), 'gA', 'Niveau-Chip nach dem Speichern');
+  await foto(page, 'lehrkraft-einstellungen', { ganz: true });
   const href = await page.locator('a.board-link').getAttribute('href');
   ctx.boardSchluessel = decodeURIComponent((href || '').replace('/board/', ''));
   assert.ok(ctx.boardSchluessel.length >= 8, 'Board-Schlüssel');

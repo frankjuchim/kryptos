@@ -497,3 +497,66 @@ test('Gast-Lehrkraft: Auswertung mit Fallen-Profil, Einstellungen nur lesend', a
   assert.ok(k.eins(haupt, 'select[name="werkzeug-scheibe"]').disabled);
   assert.ok(k.eins(haupt, 'input[name="niveau"][value="eA"]').checked);
 });
+test('Review M4 W2: Niveau-Chip im Kurskopf nach dem Speichern aktualisiert', async () => {
+  const f = lehrerFetch({ 'PATCH /api/lehrer/kurse/3': (body) => ({ status: 200, body: { ...KURS, einstellungen: { ...KURS.einstellungen, ...body.einstellungen } } }) });
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  const chip = () => k.text(k.eins(k.document, '.kurs-kopf .chip-kursniveau'));
+  assert.equal(chip(), 'eA');
+  const form = k.eins(k.document, 'form.einstellungen');
+  k.klick(k.eins(form, 'input[name="niveau"][value="gA"]'));
+  assert.equal(chip(), 'eA', 'ungespeichert: Chip unverändert');
+  k.klick(k.eins(form, 'button[type="submit"]'));
+  await k.ruhe();
+  assert.equal(chip(), 'gA');
+});
+test('Review M4 K3: „Board öffnen“ nur bei gespeichertem Beamer-Board und vorhandenem Schlüssel', async () => {
+  const f = lehrerFetch({ 'PATCH /api/lehrer/kurse/3': (body) => ({ status: 200, body: { ...KURS, einstellungen: { ...KURS.einstellungen, ...body.einstellungen } } }) });
+  let k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: f, vorher: seiteLehrer });
+  await k.ruhe();
+  const form = k.eins(k.document, 'form.einstellungen');
+  const link = k.eins(form, 'a.board-link');
+  assert.equal(link.hidden, true, 'Beamer aus → kein Link');
+  k.klick(k.eins(form, 'input[name="beamer"]'));
+  assert.equal(link.hidden, true, 'angehakt, aber nicht gespeichert → kein Link');
+  k.klick(k.eins(form, 'button[type="submit"]'));
+  await k.ruhe();
+  assert.equal(link.hidden, false, 'gespeichert → Link');
+  const ohne = { ...KURS, boardSchluessel: null, einstellungen: { ...KURS.einstellungen, beamer: true } };
+  k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3': { status: 200, body: ohne } }), vorher: seiteLehrer });
+  await k.ruhe();
+  assert.equal(k.eins(k.document, 'a.board-link').hidden, true, 'ohne Schlüssel kein Link');
+});
+test('Review M4 K2: ungespeicherte Einstellungen – Rückfrage beim Tabwechsel', async () => {
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: lehrerFetch({ 'GET /api/lehrer/kurse/3/auswertung': { status: 200, body: { kurs: KURS, niveau: 'eA', matrix: { levels: [], zeilen: [] }, boss: { welten: [], zeilen: [] }, aufgaben: [], fallen: [] } } }), vorher: seiteLehrer });
+  const ruhe = async () => {
+    await new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
+    await k.ruhe();
+  };
+  await ruhe();
+  const form = k.eins(k.document, 'form.einstellungen');
+  // ohne Änderung: keine Rückfrage
+  k.klick(k.eins(k.document, '#tab-auswertung'));
+  await ruhe();
+  assert.equal(k.window.location.hash, '#/kurs/3/auswertung');
+  assert.equal(k.alle(k.document, 'dialog[open]').length, 0);
+  k.window.location.hash = '#/kurs/3/einstellungen';
+  await ruhe();
+  k.klick(k.eins(k.document, 'form.einstellungen input[name="kuer"][value="gesperrt"]'));
+  k.klick(k.eins(k.document, '#tab-auswertung'));
+  await ruhe();
+  let dlg = k.eins(k.document, 'dialog[open]');
+  assert.match(k.text(dlg), /Ungespeicherte Änderungen verwerfen\?/);
+  k.klick(k.alle(dlg, 'button').find((b) => /Weiter bearbeiten/.test(k.text(b))));
+  await ruhe();
+  assert.equal(k.window.location.hash, '#/kurs/3/einstellungen', 'Abbrechen: bleibt auf den Einstellungen');
+  assert.equal(k.eins(k.document, 'form.einstellungen input[name="kuer"][value="gesperrt"]').checked, true, 'Änderung bleibt erhalten');
+  k.klick(k.eins(k.document, '#tab-auswertung'));
+  await ruhe();
+  dlg = k.eins(k.document, 'dialog[open]');
+  k.klick(k.alle(dlg, 'button').find((b) => /Verwerfen/.test(k.text(b))));
+  await ruhe();
+  assert.equal(k.window.location.hash, '#/kurs/3/auswertung');
+  assert.equal(k.alle(k.document, 'form.einstellungen').length, 0);
+  void form;
+});

@@ -12,6 +12,8 @@ const KRLehrer = (() => {
   let kurseAnfrage = null;
   let routeNr = 0;
   let tabFokus = false; // Tabwechsel per Tab-Leiste: danach Fokus auf den neuen Tab statt auf die Überschrift
+  let adresse = null; // zuletzt angezeigte Hash-Route (für „Weiter bearbeiten“ beim Verlassen)
+  let ungespeichert = null; // () => true, solange die angezeigte Seite ungespeicherte Änderungen hat (Review M4 K2)
   const aufraeumer = new Set();
   const ROUTEN = new Map(); // name → async (teile, r) => void
   const TABS = []; // [{ key, label, render(kurs, box, ctx) }]
@@ -283,6 +285,9 @@ const KRLehrer = (() => {
     const welten = Array.isArray(o.welten) ? o.welten : [];
     const werkzeuge = Array.isArray(o.werkzeuge) ? o.werkzeuge : [];
     const boardLink = h('a', { class: 'knopf knopf-zweit board-link', href: `/board/${enc(stand.boardSchluessel || '')}`, target: '_blank', rel: 'noopener' }, 'Board öffnen');
+    /** Review M4 K3: „Board öffnen“ nur, wenn das Beamer-Board gespeichert eingeschaltet ist und ein Schlüssel existiert. */
+    const boardZeigen = () => (boardLink.hidden = !(e().beamer && stand.boardSchluessel));
+    boardZeigen();
 
     const neuKnopf = h('button', { type: 'button', class: 'knopf knopf-leise board-neu', disabled: nurLesen }, 'Neuen Board-Link erzeugen');
     neuKnopf.addEventListener('click', async () => {
@@ -292,6 +297,7 @@ const KRLehrer = (() => {
         const r = await (o.boardNeu ? o.boardNeu() : api('POST', `/api/lehrer/kurse/${enc(stand.id)}/board-schluessel`, {}));
         stand = { ...stand, boardSchluessel: r.boardSchluessel };
         boardLink.setAttribute('href', `/board/${enc(r.boardSchluessel)}`);
+        boardZeigen();
         toast('Neuer Board-Link erzeugt.');
       } catch (err) {
         toast(err.message, true);
@@ -372,6 +378,7 @@ const KRLehrer = (() => {
     );
 
     if (nurLesen) form.querySelectorAll('input, select').forEach((x) => (x.disabled = true));
+    let speichertGerade = false; // während des Speicherns gilt nichts als ungespeichert (keine Rückfrage beim Wegklicken)
 
     /** Nur geänderte Schlüssel gegenüber dem letzten Stand. */
     function aenderungen() {
@@ -409,22 +416,48 @@ const KRLehrer = (() => {
       if (!Object.keys(neu).length) return toast('Keine Änderungen.');
       const knopf = form.querySelector('button[type="submit"]');
       knopf.disabled = true;
+      speichertGerade = true;
       try {
         stand = await (o.speichern ? o.speichern(neu) : api('PATCH', `/api/lehrer/kurse/${enc(stand.id)}`, { einstellungen: neu }));
         kurseAnfrage = null;
+        if (stand.boardSchluessel) boardLink.setAttribute('href', `/board/${enc(stand.boardSchluessel)}`);
+        boardZeigen();
+        if (typeof o.gespeichert === 'function') o.gespeichert(stand);
         toast('Gespeichert.');
       } catch (err) {
         toast(err.message, true);
       } finally {
         knopf.disabled = false;
+        speichertGerade = false;
       }
     });
+    /** Ungespeicherte Änderungen gegenüber dem letzten gespeicherten Stand (Review M4 K2). */
+    form.ungespeichert = () => !nurLesen && !speichertGerade && Object.keys(aenderungen()).length > 0;
     return form;
   }
 
-  tab('einstellungen', 'Einstellungen', async (kurs, box) => {
+  tab('einstellungen', 'Einstellungen', async (kurs, box, { r } = {}) => {
     const [werkzeuge, vorschau] = await Promise.all([api('GET', '/api/lehrer/werkzeuge').catch(() => []), api('GET', '/api/lehrer/vorschau').catch(() => ({ welten: [] }))]);
-    mount(box, einstellungen(kurs, { werkzeuge, welten: (vorschau.welten || []).map((w) => ({ nr: w.nr, titel: w.titel })) }));
+    if (r && !r.gueltig()) return;
+    const form = einstellungen(kurs, {
+      werkzeuge,
+      welten: (vorschau.welten || []).map((w) => ({ nr: w.nr, titel: w.titel })),
+      // Review M4 W2: Niveau-Chip im Kurskopf nach dem Speichern nachführen
+      gespeichert: (neu) => {
+        kurs.einstellungen = neu.einstellungen || kurs.einstellungen;
+        const alt = haupt.querySelector('.kurs-kopf .chip-kursniveau');
+        if (alt) alt.replaceWith(niveauChip(kurs.einstellungen.niveau));
+      }
+    });
+    mount(box, form);
+    ungespeichert = form.ungespeichert;
+    const warnen = (ev) => {
+      if (!form.ungespeichert()) return;
+      ev.preventDefault();
+      ev.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnen);
+    beimVerlassen(() => window.removeEventListener('beforeunload', warnen));
   });
 
   /* ---------- Tab Auswertung (Task 63) ---------- */
@@ -1060,7 +1093,28 @@ const KRLehrer = (() => {
     }
   }
 
+  /**
+   * Review M4 K2: Verlassen einer Seite mit ungespeicherten Änderungen (Tabwechsel, Brotkrümel, Kopfzeile) – die neue
+   * Adresse ist schon gesetzt; während der Rückfrage steht wieder die alte da. „Weiter bearbeiten“ bleibt, „Verwerfen“
+   * geht weiter. true = navigieren.
+   */
+  async function verlassenErlaubt() {
+    if (!ungespeichert || !ungespeichert()) return true;
+    const ziel = location.hash;
+    if (adresse !== null && history && history.replaceState) history.replaceState(null, '', adresse);
+    const ok = await AQ.bestaetigen('Ungespeicherte Änderungen verwerfen?', 'Sie haben Einstellungen geändert, aber nicht gespeichert.', { ok: 'Verwerfen', abbrechen: 'Weiter bearbeiten' });
+    if (!ok) {
+      tabFokus = false;
+      return false;
+    }
+    if (history && history.replaceState) history.replaceState(null, '', ziel);
+    return true;
+  }
+
   async function navigiere() {
+    if (!(await verlassenErlaubt())) return;
+    ungespeichert = null;
+    adresse = location.hash || '#/';
     for (const fn of aufraeumer) {
       try {
         fn();
