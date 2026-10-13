@@ -1693,7 +1693,7 @@ Schieber über die Bytes bewegt (◀ ▶), statt Positionen einzutippen.
 - Tastatur: Ergebnisbits mit ←/→ durchgehen (Roving), Enter erklärt; Crib-Schieber auch mit ←/→ auf dem Schieber.
 - `zustand()` → `{ reiter, modus, bytes, ergebnisHex, cribPosition, cribErgebnis, statistik }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_bitlupe.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_bitlupe.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1736,8 +1736,8 @@ Schieber über die Bytes bewegt (◀ ▶), statt Positionen einzutippen.
     assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /Bit 8: 0 ⊕ 1 = 1/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung.
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Bit-Lupe (Zeichen und Bits, XOR mit Erklärung, OTP-Doppelnutzung mit Crib-Schieber)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Bit-Lupe (Zeichen und Bits, XOR mit Erklärung, OTP-Doppelnutzung mit Crib-Schieber)"`.
 
 ### Task 119: Werkzeug „Runden-Labor“ I – Runde für Runde, Lawine, Bit-Verfolgung (W3 §9.2, §6, E83)
 

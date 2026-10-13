@@ -362,6 +362,9 @@ const KRB = (() => {
     const gruppe = b.gruppe === 0 ? 0 : b.gruppe === 8 ? 8 : 4;
     const markiert = new Set((Array.isArray(b.markiert) ? b.markiert : []).filter((i) => Number.isInteger(i)));
     const box = h('div', { class: 'bits', role: 'group', 'aria-label': b.titel ? String(b.titel) : 'Bitfolgen' });
+    // waehlbar (M6 Task 118, Labor): die Ergebniszeile (ergebnis: true, sonst die letzte Bitzeile) als Knöpfe
+    const bitZeilen = (Array.isArray(b.zeilen) ? b.zeilen : []).filter((z) => z && typeof z === 'object' && z.trenner === undefined && !lueckenId(z.bits));
+    const waehlZeile = b.waehlbar === true ? bitZeilen.find((z) => z.ergebnis === true) || bitZeilen[bitZeilen.length - 1] : null;
     for (const z of Array.isArray(b.zeilen) ? b.zeilen : []) {
       if (!z || typeof z !== 'object') continue;
       if (z.trenner !== undefined) {
@@ -383,6 +386,10 @@ const KRB = (() => {
       const folge = String(z.bits ?? '').replace(/\s+/g, '');
       const gruppen = [];
       for (let i = 0; i < folge.length; i += gruppe || folge.length || 1) gruppen.push([...folge.slice(i, i + (gruppe || folge.length))].join(' '));
+      if (b.waehlbar === true && z === waehlZeile) {
+        box.appendChild(waehlbareZeile(label, folge, gruppe, markiert, b));
+        continue;
+      }
       box.appendChild(
         h(
           'div',
@@ -402,6 +409,41 @@ const KRB = (() => {
       );
     }
     return box;
+  }
+
+  /**
+   * Ergebniszeile als Knöpfe button.ergebnisbit[data-index] (Labor, M6 Task 118): Roving-tabindex, ←/→ Pos1/Ende,
+   * Klick/Enter → b.beiWahl(index); b.gewaehlt markiert einen Knopf (aria-pressed). b.start verschiebt die Nummern
+   * (Teilblöcke einer längeren Folge, b.gesamt = Gesamtlänge); ← am ersten bzw. → am letzten Knopf bleibt unbehandelt
+   * (Ereignis steigt auf – der Aufrufer kann zum Nachbarblock springen).
+   */
+  function waehlbareZeile(label, folge, gruppe, markiert, b) {
+    const start = Number.isInteger(b.start) && b.start > 0 ? b.start : 0;
+    const gesamt = Number.isInteger(b.gesamt) && b.gesamt >= start + folge.length ? b.gesamt : start + folge.length;
+    const knoepfe = [...folge].map((c, i) => {
+      const ende = gruppe && (i + 1) % gruppe === 0 && i < folge.length - 1;
+      const m = markiert.has(i);
+      const an = b.gewaehlt === start + i;
+      return h('button', { type: 'button', class: 'bit ergebnisbit' + (ende ? ' gruppe-ende' : '') + (m ? ' markiert' : ''), 'data-index': String(start + i), tabindex: (Number.isInteger(b.gewaehlt) ? an : i === 0) ? '0' : '-1', 'aria-pressed': String(an), 'aria-current': m ? 'true' : null, 'aria-label': `${label}, Bit ${start + i + 1} von ${gesamt}: ${c}` }, c);
+    });
+    const fokus = (i) => {
+      for (const kn of knoepfe) kn.setAttribute('tabindex', kn === knoepfe[i] ? '0' : '-1');
+      knoepfe[i].focus();
+    };
+    knoepfe.forEach((kn, i) => {
+      kn.addEventListener('click', () => {
+        for (const x of knoepfe) x.setAttribute('aria-pressed', String(x === kn));
+        if (typeof b.beiWahl === 'function') b.beiWahl(start + i);
+      });
+      kn.addEventListener('keydown', (e) => {
+        const n = knoepfe.length;
+        const ziel = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: n - 1 }[e.key];
+        if (ziel === undefined || ziel < 0 || ziel >= n) return;
+        e.preventDefault();
+        fokus(ziel);
+      });
+    });
+    return h('div', { class: 'bits-zeile bits-waehlbar' }, h('span', { class: 'bits-label' }, label), h('span', { class: 'bits-werte', role: 'group', 'aria-label': `${label}: Bit antippen für die Erklärung` }, knoepfe));
   }
 
   /* ---------- Zelle mit Lücke oder Text (quadrat, matrix) ---------- */

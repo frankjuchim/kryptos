@@ -559,3 +559,55 @@ mark.markiert.wiederholung { font-weight: 700; }
 .korrektur-klartext .farbe-3 { text-decoration: underline double; background: var(--papier-2); }
 .korrektur-klartext .farbe-4 { text-decoration: underline wavy; }
 .korrektur-tabelle td { font-family: var(--f-mono); }
+
+/* ======================================================================
+   Bit-Lupe (W3 §9.1, M6 Task 118)
+   ====================================================================== */
+.bitlupe-hinweis:empty { display: none; }
+.bitlupe-hinweis { display: grid; gap: var(--a-2); }
+.bit-tabelle td, .bit-tabelle th { font-family: var(--f-mono); white-space: nowrap; }
+.xor-schluesselfeld input { width: min(100%, 22rem); min-height: var(--ziel); font-family: var(--f-mono); }
+.xor-bloecke { display: flex; flex-wrap: wrap; gap: var(--a-3); min-width: 0; }
+.xor-byte { margin: 0; padding: var(--a-2); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); min-width: 0; }
+.xor-byte figcaption { font-size: .85rem; font-weight: 700; color: var(--text-2); padding-bottom: var(--a-1); font-family: var(--f-mono); }
+.xor-vierer { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-4); }
+.xor-block .bits { font-size: 1.1rem; gap: 4px var(--a-2); }
+/* alle Bits einer Spalte gleich breit wie die Ergebnisknöpfe (Touch-Ziel 44 px), damit die Spalten fluchten */
+.xor-block .bit { width: var(--ziel); }
+.xor-block .bit.gruppe-ende { margin-right: 0; }
+.ergebnisbit {
+  min-height: var(--ziel);
+  padding: 0;
+  font-family: var(--f-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--papier-2);
+  border: 1.5px solid var(--linie);
+  cursor: pointer;
+}
+.ergebnisbit[aria-pressed="true"] { border: 3px solid var(--hinweis); text-decoration: underline 2px; }
+.ergebnisbit:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.xor-block .bit.markiert { border: 2.5px solid var(--hinweis); background: var(--hinweis-flaeche); }
+.bit-erklaerung { margin: 0; font-family: var(--f-mono); font-size: 1.05rem; }
+.doppel-eingaben .labor-textfeld { flex: 1 1 14rem; }
+.doppel-eingaben input, .crib-bereich input { width: 100%; min-height: var(--ziel); font-family: var(--f-mono); }
+.doppel-tabelle { border-collapse: collapse; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.doppel-tabelle caption { text-align: left; font-family: var(--f-text); font-weight: 700; padding-bottom: var(--a-1); }
+.doppel-tabelle th, .doppel-tabelle td { padding: var(--a-1) var(--a-2); border: 1px solid var(--linie); text-align: center; white-space: nowrap; }
+.doppel-tabelle tbody th, .doppel-tabelle thead th:first-child { font-family: var(--f-text); text-align: left; background: var(--papier-2); }
+.doppel-tabelle td.gleich { background: var(--ok-flaeche); font-weight: 700; }
+.doppel-tabelle td.buchstabe { background: var(--papier-2); }
+.doppel-tabelle td.crib-feld { box-shadow: inset 0 0 0 2px var(--hinweis); }
+.doppel-tabelle tr.doppel-cribergebnis td.crib-feld { font-weight: 700; font-size: 1.1rem; }
+.doppel-tabelle td.unlesbar { color: var(--text-2); }
+.doppel-statistik, .crib-ergebnis { margin: 0; }
+.crib-ergebnis { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.crib-bereich { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: end; }
+.crib-bereich .labor-textfeld { flex: 1 1 14rem; }
+.crib-steuer { display: inline-flex; align-items: center; gap: var(--a-1); }
+.crib-steuer .knopf { min-width: var(--ziel); border: 1.5px solid var(--linie); font-size: 1.1rem; }
+.crib-schieber { display: inline-flex; align-items: center; min-height: var(--ziel); padding: 0 var(--a-3); border: 1.5px dashed var(--linie); border-radius: var(--r-knopf); background: var(--karte); font-variant-numeric: tabular-nums; cursor: ew-resize; }
+.crib-schieber:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.doppel-tabelle-rahmen { display: grid; gap: var(--a-1); min-width: 0; }
+.doppel-legende { margin: 0; font-size: .85rem; }

@@ -103,6 +103,33 @@ test('bits:Gruppen à 4, ⊕-Trennzeile, Lückenzeile, markierte Spalten, Screen
   assert.equal(k.alle(zeilen[0], 'span.bit.markiert[aria-current="true"]').length, 2);
   assert.equal(k.text(k.eins(zeilen[0], 'span.sr')), 'M: 0 1 0 0, 1 0 1 1');
 });
+test('bits waehlbar (M6 Task 118): Ergebnisbits als Knöpfe mit data-index, Roving-tabindex, Pfeile, Klick meldet Index', () => {
+  const k = D.lade(SKRIPTE);
+  const gewaehlt = [];
+  const el = k.wert('KRB').bits({ gruppe: 4, waehlbar: true, beiWahl: (i) => gewaehlt.push(i), zeilen: [{ label: 'M', bits: '0100 1000' }, { label: 'K', bits: '0100 1011' }, { trenner: '⊕' }, { label: 'C', bits: '0000 0011', ergebnis: true }] });
+  k.document.body.appendChild(el);
+  const knoepfe = k.alle(el, 'button.ergebnisbit');
+  assert.equal(knoepfe.length, 8, 'nur die Ergebniszeile ist wählbar');
+  assert.equal(k.alle(el, '.bits-zeile')[0].querySelectorAll('button').length, 0);
+  assert.deepEqual(knoepfe.map((b) => b.dataset.index), ['0', '1', '2', '3', '4', '5', '6', '7']);
+  assert.deepEqual(knoepfe.map((b) => b.getAttribute('tabindex')), ['0', '-1', '-1', '-1', '-1', '-1', '-1', '-1']);
+  assert.match(knoepfe[6].getAttribute('aria-label'), /Bit 7.*1/);
+  k.klick(knoepfe[6]);
+  assert.deepEqual(k.roh(gewaehlt), [6]);
+  knoepfe[6].focus();
+  k.taste(knoepfe[6], 'ArrowRight');
+  assert.equal(k.document.activeElement, knoepfe[7]);
+  assert.equal(knoepfe[7].getAttribute('tabindex'), '0');
+  k.taste(knoepfe[7], 'Home');
+  assert.equal(k.document.activeElement, knoepfe[0]);
+  // Teilblock einer längeren Folge: Nummern ab start, Gesamtlänge im aria-label
+  const teil = k.wert('KRB').bits({ waehlbar: true, start: 8, gesamt: 16, zeilen: [{ label: 'C', bits: '0101' }] });
+  assert.deepEqual(k.alle(teil, 'button.ergebnisbit').map((b) => b.dataset.index), ['8', '9', '10', '11']);
+  assert.match(k.eins(teil, 'button.ergebnisbit').getAttribute('aria-label'), /Bit 9 von 16/);
+  // ohne waehlbar: keine Knöpfe (Lab-Blöcke unverändert)
+  const ohne = k.wert('KRB').bits({ zeilen: [{ label: 'C', bits: '0101', ergebnis: true }] });
+  assert.equal(ohne.querySelectorAll('button').length, 0);
+});
 test('quadrat vigenere (M6 Task 116): Zellen mit data-zeile/-spalte; waehlbar – Klick, Roving-tabindex, Pfeile, Enter, steuer.waehle', () => {
   const gewaehlt = [];
   const steuer = {};

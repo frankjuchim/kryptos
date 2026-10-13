@@ -1167,7 +1167,7 @@ Werkzeuge enthalten keine Lab-Lösungen und sind in Bossen gesperrt (Design-Spez
 
 | Bereich | Was es zeigt / kann | Parameter | Grenzen |
 |---|---|---|---|
-| Zeichen ↔ Bits | Eingabe Text (A–Z, 0–9, Leerzeichen) oder Bitfolge; Tabelle Zeichen · ASCII dezimal · 8 Bit in Vierergruppen · Hex; umschaltbar Zeichen→Bits und Bits→Zeichen | Text ≤ 24 Zeichen | nur ASCII 32–126 (Anlage); Nicht-Anlagezeichen werden als `·` mit Code angezeigt |
+| Zeichen ↔ Bits | Eingabe Text (A–Z, 0–9, Leerzeichen) oder Bitfolge; Tabelle Zeichen · ASCII dezimal · 8 Bit in Vierergruppen · Hex; umschaltbar Zeichen→Bits und Bits→Zeichen | Text ≤ 24 Zeichen | nur ASCII 32–126 (Anlage); Nicht-Anlagezeichen werden als `·` mit dem Hinweis „kein Anlagezeichen“ angezeigt (ohne Codenummer, Plan M6 E79) |
 | XOR | zwei Bitzeilen untereinander, ⊕-Zeile darunter (Block `bits`); Schritt-Modus Bit für Bit; jedes Ergebnisbit anklickbar mit Erklärung „gleich → 0“ | Schlüssel als Bits, Hex oder Text; Modi **OTP** (Schlüssel so lang wie Text) und **Wiederholung** (Schlüsselwort/-byte wird wiederholt, Hinweis „kein One-Time-Pad“) | Länge ≤ 24 Byte |
 | Doppelnutzung | zwei Geheimtexte (Hex) → C1 ⊕ C2; Färbung: Bytes `0000 0000` grün („gleiche Zeichen“), Bytes < 32 hellgrau („Buchstabe ⊕ Buchstabe“), Statistik „x von n Bytes beginnen mit 000“; **Crib-Schieber**: Wort eingeben, mit ◀ ▶ über alle Positionen schieben, darunter erscheint (C1 ⊕ C2) ⊕ Crib als Zeichen; druckbare Buchstaben schwarz, andere als `·` | Crib ≤ 12 Zeichen | zeigt nie den Schlüssel; Ergebnis wird nicht automatisch als „richtig“ markiert (Eve muss urteilen) |
 
