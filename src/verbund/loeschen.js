@@ -19,6 +19,24 @@
 const SUB_MUSTER = /^[asl]:\d{1,15}$/;
 const KURS_MUSTER = /^k:\d{1,15}$/;
 
+/**
+ * Nach einer Löschung: WAL in die Datenbankdatei übernehmen und auf 0 Byte kürzen (`wal_checkpoint(TRUNCATE)`), damit
+ * gelöschte bzw. geleerte Inhalte nicht als alte Seitenstände in `kryptos.db-wal` liegen bleiben – `secure_delete`
+ * überschreibt nur die Seiten der Datenbankdatei (Plan M7 Task 160, Befund e2e 5; Test test/datenschutz_wal.test.js).
+ * Nie in einer offenen Transaktion (dort ruft der Aufrufer danach); In-Memory-Datenbanken ohne Wirkung; ist die Datei
+ * gerade belegt, holt der nächste Aufruf (spätestens die stündliche Wartung) es nach.
+ * @returns {boolean} gekürzt
+ */
+function walLeeren(db) {
+  if (!db || db.memory || db.inTransaction) return false;
+  try {
+    const [r] = db.pragma('wal_checkpoint(TRUNCATE)');
+    return !!r && r.busy === 0;
+  } catch {
+    return false;
+  }
+}
+
 /** Löschvermerk schreiben bzw. Zeit aktualisieren (in der Transaktion des Aufrufers). */
 function vermerke(db, art, schluessel, jetztIso) {
   db.prepare('INSERT INTO loeschungen (art, schluessel, zeit) VALUES (?, ?, ?) ON CONFLICT(art, schluessel) DO UPDATE SET zeit = excluded.zeit').run(
@@ -39,7 +57,7 @@ function vermerke(db, art, schluessel, jetztIso) {
  */
 function nachSub(db, sub, { jetzt, merken = true } = {}) {
   if (typeof sub !== 'string' || !SUB_MUSTER.test(sub)) throw new Error('loeschen.nachSub: ungültige sub');
-  return db.transaction(() => {
+  const n = db.transaction(() => {
     if (merken) vermerke(db, 'sub', sub, jetzt);
     const teams = db
       .prepare('SELECT DISTINCT m.team_id AS id FROM team_mitglieder m JOIN schueler s ON s.id = m.schueler_id WHERE s.sub = ?')
@@ -52,6 +70,8 @@ function nachSub(db, sub, { jetzt, merken = true } = {}) {
     for (const id of teams) leer.run(id, id);
     return n;
   })();
+  walLeeren(db);
+  return n;
 }
 
 /**
@@ -63,18 +83,20 @@ function nachSub(db, sub, { jetzt, merken = true } = {}) {
  */
 function nachKurs(db, kursId, { jetzt, merken = true } = {}) {
   if (typeof kursId !== 'string' || !KURS_MUSTER.test(kursId)) throw new Error('loeschen.nachKurs: ungültige Kurs-ID');
-  return db.transaction(() => {
+  const n = db.transaction(() => {
     if (merken) vermerke(db, 'kurs', kursId, jetzt);
     const k = db.prepare('SELECT id FROM kurse WHERE kurs_id = ?').get(kursId);
     if (!k) return 0;
     const teilnahmen = db.prepare('SELECT COUNT(*) AS n FROM schueler WHERE kurs_id = ?').get(k.id).n;
     return teilnahmen + db.prepare('DELETE FROM kurse WHERE id = ?').run(k.id).changes;
   })();
+  walLeeren(db);
+  return n;
 }
 
 /**
  * Inhalte eines gesperrten Kurses (kurs-aendern aktiv:false, TECHNIK §6.7/§7.3, Plan M7 E111) in der Transaktion des
- * Aufrufers:
+ * Aufrufers (danach `walLeeren`):
  * - Funkraum-Szenario in `vorbereitung` wird gelöscht (wie „abbrechen“, keine Funkraum-Teilnahme);
  * - laufendes/pausiertes Szenario wird beendet: mit Callback `szenarioBeenden(db, szenarioId, jetzt)` – der
  *   Funkraum-Dienst beendet mit Auswertung (§12.7; `src/verbund/` bleibt krypto-frei) –, ohne Callback generisch
@@ -103,4 +125,4 @@ function kursInhalteBeenden(db, kursLokal, jetztIso, { szenarioBeenden } = {}) {
   db.prepare("DELETE FROM arena WHERE kurs_id = ? AND status != 'geschlossen'").run(kursLokal);
 }
 
-module.exports = { nachSub, nachKurs, kursInhalteBeenden, SUB_MUSTER, KURS_MUSTER };
+module.exports = { nachSub, nachKurs, kursInhalteBeenden, walLeeren, SUB_MUSTER, KURS_MUSTER };

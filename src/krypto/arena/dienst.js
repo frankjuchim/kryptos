@@ -9,6 +9,7 @@ const V = require('../../validate');
 const S = require('../../security');
 const Krypto = require('../../../public/static/js/shared/krypto');
 const T = require('../funkraum/text');
+const { walLeeren } = require('../../verbund/loeschen');
 
 const PHASEN = Object.freeze(['werkstatt', 'angriff', 'beurteilung', 'geschlossen']);
 const PHASE_NAME = Object.freeze({ werkstatt: 'Werkstatt', angriff: 'Angriff', beurteilung: 'Beurteilung', geschlossen: 'geschlossen' });
@@ -240,6 +241,7 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     const { a, kurs } = ladeLk(lk, id);
     if (!kurs.aktiv) throw new V.ForbiddenError(GESPERRT);
     sql.loesche.run(a.id);
+    walLeeren(db); // Beschreibungen, Beurteilungen, Geheimtexte auch nicht im WAL (Plan M7 Task 160)
     return { ok: true };
   }
 

@@ -8,9 +8,11 @@
 //   3. sso_jti: Einträge mit exp < jetzt − 60 s
 //   4. Boss: laufende Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion boss.raeumeAuf je Teilnahme)
 //   5. Löschvermerke (loeschungen) 400 Tage nach der Löschung entfernen
-//   6. PRAGMA optimize (höchstens wöchentlich)
+//   6. WAL leeren (wal_checkpoint(TRUNCATE), damit Gelöschtes nicht im -wal stehen bleibt; Plan M7 Task 160)
+//   7. PRAGMA optimize (höchstens wöchentlich)
 
 const { BOSS_KULANZ_MS } = require('./domain');
+const { walLeeren } = require('./verbund/loeschen');
 
 const STUNDE_MS = 3600 * 1000;
 const ARENA_FRIST_MS = 30 * 24 * STUNDE_MS;
@@ -59,6 +61,7 @@ function createWartung({ db, svc, now = () => Date.now(), log = () => {}, arenaF
     });
 
     schritt('loeschungen', () => db.prepare('DELETE FROM loeschungen WHERE zeit < ?').run(iso(t - LOESCHVERMERK_MS)).changes);
+    walLeeren(db); // gelöschte Inhalte auch aus dem WAL (Plan M7 Task 160)
 
     let optimiert = false;
     if (optimiertAm === null || t - optimiertAm >= OPTIMIZE_MS) {

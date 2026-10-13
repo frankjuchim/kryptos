@@ -1047,6 +1047,11 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 für Teilnahme oder Konto, die Zeilen sind kursweite Zähler je Antworttext (Aufgabenstatistik der Lehrkraft). Sie bleiben
 bei `loeschen {sub}` stehen und werden mit dem Kurs gelöscht (Kaskade über `kurs_id`). Allgemein gilt `PRAGMA
 secure_delete = ON`, damit gelöschte Zeilen nicht in freien Seiten der Datei weiterleben.
+Weil die Datenbank im WAL-Modus läuft, blieben alte Seitenstände (z. B. Funkraum-Geheimtexte nach dem Beenden) bis zum
+nächsten Checkpoint in `kryptos.db-wal` stehen (Befund e2e 5, Plan M7 Task 160). Deshalb ruft jede Löschung bzw. Leerung
+danach `walLeeren(db)` (`src/verbund/loeschen.js`, `PRAGMA wal_checkpoint(TRUNCATE)`, nie in einer offenen Transaktion):
+Verbund `loeschen` (sub/Kurs), Kurs gesperrt, Funkraum beenden/schließen/abbrechen/ausblenden, Arena löschen und der
+Wartungsjob. Test: `test/datenschutz_wal.test.js` (Datenbankdatei und WAL nach jedem Weg ohne Fundstelle).
 
 ### 7.4 Wartungsjob (`src/wartung.js`)
 
@@ -1058,7 +1063,8 @@ Speicher für `/api/admin/wartung` (Zeitpunkt, Anzahlen, Fehler):
 3. `DELETE FROM sso_jti WHERE exp < jetztSek − 60`.
 4. Laufende Boss-Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion `boss.raeumeAuf` für alle betroffenen Teilnahmen).
 5. Löschvermerke: `DELETE FROM loeschungen WHERE zeit < jetzt − 400 Tage` (Bericht `anzahlen.loeschungen`).
-6. `PRAGMA optimize` (wöchentlich).
+6. WAL leeren (`walLeeren`, §7.3).
+7. `PRAGMA optimize` (wöchentlich).
 
 Test: `test/wartung.test.js` mit steuerbarer Uhr.
 

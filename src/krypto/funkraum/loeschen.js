@@ -2,8 +2,11 @@
    Beenden (Status `auswertung`) leert in EINER Transaktion alle Inhalte (Nachrichten, Klartext-Hashes, Schlüssel-Etiketten
    der Umschläge), alle Rollen-Zustände (Schlüssel, Zuordnungen) und alle Geheimnisse in `konfig` (Salz, Schlüssel,
    Lösungen); übrig bleibt nur die anonyme Auswertung (Zahlen, ids, Codes) bis zum Schließen bzw. 24 h nach Anlage.
-   Kurs gesperrt: `vorbereitung` → löschen (wie „abbrechen“), `laeuft`/`pausiert` → beenden mit Auswertung. */
+   Kurs gesperrt: `vorbereitung` → löschen (wie „abbrechen“), `laeuft`/`pausiert` → beenden mit Auswertung.
+   Nach Beenden und Löschen wird das WAL geleert (`walLeeren`, Plan M7 Task 160). */
 'use strict';
+
+const { walLeeren } = require('../../verbund/loeschen');
 
 const OFFEN = ['vorbereitung', 'laeuft', 'pausiert'];
 
@@ -37,7 +40,7 @@ function auswertungGenerisch(db, szId) {
  */
 function beenden(db, szId, { jetzt, auswertung = auswertungGenerisch, typ } = {}) {
   if (typeof jetzt !== 'string') throw new Error('funkraum.beenden: jetzt fehlt');
-  return db.transaction(() => {
+  const beendet = db.transaction(() => {
     const sz = db.prepare('SELECT id, typ, status, version FROM funk_szenarien WHERE id = ?').get(szId);
     if (!sz) throw new Error('funkraum.beenden: Szenario unbekannt');
     if (sz.status === 'auswertung') return false;
@@ -63,11 +66,15 @@ function beenden(db, szId, { jetzt, auswertung = auswertungGenerisch, typ } = {}
     );
     return true;
   })();
+  if (beendet) walLeeren(db); // alte Seitenstände mit Inhalten nicht im WAL lassen (in einer Transaktion: Aufrufer)
+  return beendet;
 }
 
 /** Szenario löschen (Schließen, Abbrechen, Wartung) – Kaskade auf Rollen, Nachrichten, Ereignisse. → Anzahl */
 function loesche(db, szId) {
-  return db.prepare('DELETE FROM funk_szenarien WHERE id = ?').run(szId).changes;
+  const n = db.prepare('DELETE FROM funk_szenarien WHERE id = ?').run(szId).changes;
+  walLeeren(db);
+  return n;
 }
 
 /**

@@ -122,6 +122,7 @@ function createVerbundRouter({ db, svc, konfig, now, szenarioBeenden }) {
         if (!b.aktiv) L.kursInhalteBeenden(db, k.id, jetzt, { szenarioBeenden });
       }
     })();
+    if (b.aktiv === false) L.walLeeren(db); // geleerte Funkraum-/Arena-Inhalte auch aus dem WAL (Plan M7 Task 160)
     res.json({ ok: true });
   });
 

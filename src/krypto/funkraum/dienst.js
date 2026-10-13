@@ -11,6 +11,7 @@ const L = require('./loeschen');
 const Sz = require('./szenarien');
 const { BOSS_KULANZ_MS } = require('../../domain');
 const S = require('../../security');
+const { walLeeren } = require('../../verbund/loeschen');
 
 const TYP_MODULE = Object.freeze({
   botenlauf: require('./typen/botenlauf'),
@@ -657,6 +658,7 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
       sqlN.ausblenden.run(v, nid);
       ereignis(sz.id, 'ausgeblendet', { nachricht: nid }, v);
     })();
+    walLeeren(db); // der alte Inhalt soll auch im WAL nicht stehen bleiben (Plan M7 Task 160)
     return { ok: true };
   }
 
