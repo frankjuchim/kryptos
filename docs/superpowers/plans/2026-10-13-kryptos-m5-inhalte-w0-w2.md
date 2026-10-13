@@ -920,11 +920,16 @@ Mix: ★ 01–05 (5), ★★ 06–11 (6), ★★★ 12–15 (4); fremde Chiffre 
 **Stichproben:** `WUESTENWIND` → `WUESTNIDABCFGHJKLMOPQRVXYZ`; `kurier` → `CQMATM`; `sklave` (5, 8) → `UGLIJC`; `LVTNI` (11, 3) → `WESIR`;
 Spiegel-Kurier `basar`/4 → `DEMEN`, `GBWJS`/9 → `DINAR` (JS-Gegenprobe `affin(…, 25, t)` identisch, nur Nachweis); (7, 11): e → N, n → Y.
 
-- [ ] **Step 1: Failing test** – `UMFANG[1]` += `'W1-B'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5**; im Client-JSON von W1-B-11/12 steht nur `typ: "frei"` (kein Hinweis auf „affin“).
-- [ ] **Step 5: Commit** `git commit -m "Welt 1: Boss „Der Kalif und der Kurier“ (Pool 15, vier fremde Chiffren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[1]` += `'W1-B'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5**; im Client-JSON von W1-B-11/12 steht nur `typ: "frei"` (kein Hinweis auf „affin“).
+- [x] **Step 5: Commit** `git commit -m "Welt 1: Boss „Der Kalif und der Kurier“ (Pool 15, vier fremde Chiffren)"`.
+
+- **Umgesetzt (Task 82):** Konsistenz `affin("en", 7, 11)` = `NY` als Probe in der Erklärung von W1-B-15 (wie W1-L2-07).
+  „Nummerierung: A = 0 … Z = 25.“ bzw. „(Nummerierung: A = 1 … Z = 26)“ mit Doppelpunkt in W1-B-06/-09/-10/-11/-13/-15
+  (Validator-Regel P1). Alphabet WUESTENWIND im Text in Fünfergruppen. Probelauf: gA- und eA-Kurs ziehen je 8 Aufgaben
+  im Mix 3/3/2; W1-B-11/-12 senden nur `{ typ: "frei", name: "Spiegel-Kurier" }`.
 
 ---
 
