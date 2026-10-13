@@ -116,7 +116,7 @@
           const kl = typeof o.zelle === 'function' && !o.verdeckt ? o.zelle(p.bit) : '';
           if (!o.knopf) return h('td', { class: kl || null }, v);
           const an = typeof o.knopf.gedrueckt === 'function' && o.knopf.gedrueckt(p.bit);
-          const kn = h('button', { type: 'button', class: `bit${kl ? ' ' + kl : ''}`, 'data-bit': String(p.bit), 'aria-pressed': String(!!an), tabindex: p.bit === 1 ? '0' : '-1', disabled: !!o.knopf.gesperrt, 'aria-label': `Bit ${p.bit} (Zeile ${p.z}, Spalte ${p.s}): ${v}` }, v);
+          const kn = h('button', { type: 'button', class: `gitter-bit${kl ? ' ' + kl : ''}`, 'data-bit': String(p.bit), 'aria-pressed': String(!!an), tabindex: p.bit === 1 ? '0' : '-1', disabled: !!o.knopf.gesperrt, 'aria-label': `Bit ${p.bit} (Zeile ${p.z}, Spalte ${p.s}): ${v}` }, v);
           if (!o.knopf.gesperrt) kn.addEventListener('click', () => o.knopf.beiKlick(p.bit));
           knoepfe.push(kn);
           return h('td', { class: kl || null }, kn);
@@ -385,7 +385,7 @@
           if (menge.has(bit)) menge.delete(bit);
           else menge.add(bit);
           zeige();
-          const kn = eingabe.querySelector(`.${menge === gekippt.klartext ? 'lawine-klartext' : 'lawine-schluessel'} button.bit[data-bit="${bit}"]`);
+          const kn = eingabe.querySelector(`.${menge === gekippt.klartext ? 'lawine-klartext' : 'lawine-schluessel'} button.gitter-bit[data-bit="${bit}"]`);
           if (kn) kn.focus();
         };
         const bB = vonBits(Krypto.xorBits(bits16(block), maske(gekippt.klartext)));
@@ -451,7 +451,7 @@
         if (verfolgt) weg = Krypto.kryptos16.bitweg(verfolgt, { variante, runden });
         const schluesselBits = new Set(weg ? weg.schluesselbits : []);
         eingabe.append(
-          h('figure', { class: 'verfolgung-klartext' }, bitmatrix(block, { titel: 'Klartextblock – Bit wählen', klasse: 'eingabematrix', zelle: (bit) => (bit === verfolgt ? 'weg' : ''), knopf: { beiKlick: (bit) => { verfolgt = bit; zeige(); const kn = eingabe.querySelector(`.verfolgung-klartext button.bit[data-bit="${bit}"]`); if (kn) kn.focus(); }, gedrueckt: (bit) => bit === verfolgt } })),
+          h('figure', { class: 'verfolgung-klartext' }, bitmatrix(block, { titel: 'Klartextblock – Bit wählen', klasse: 'eingabematrix', zelle: (bit) => (bit === verfolgt ? 'weg' : ''), knopf: { beiKlick: (bit) => { verfolgt = bit; zeige(); const kn = eingabe.querySelector(`.verfolgung-klartext button.gitter-bit[data-bit="${bit}"]`); if (kn) kn.focus(); }, gedrueckt: (bit) => bit === verfolgt } })),
           h('figure', { class: 'verfolgung-schluessel' }, bitmatrix(schluessel, { titel: 'Schlüssel K – beteiligte Bits', klasse: 'eingabematrix', zelle: (bit) => (schluesselBits.has(bit) ? 'weg' : ''), knopf: { gesperrt: true, gedrueckt: (bit) => schluesselBits.has(bit) } }))
         );
         if (!weg) {
@@ -656,13 +656,13 @@
           const cbcBits = fehlerBits.cbc.slice(16 * j, 16 * j + 16);
           const spalten = POSITION.map((pos) => {
             const g = 16 * j + pos.bit - 1;
-            const kippen = h('button', { type: 'button', class: 'bit', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} kippen` }, '⇅');
-            const loeschen = h('button', { type: 'button', class: 'bit-loeschen', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} löschen` }, '✕');
+            const kippen = h('button', { type: 'button', class: 'fehler-kippen', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} kippen` }, '⇅');
+            const loeschen = h('button', { type: 'button', class: 'fehler-loeschen', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} löschen` }, '✕');
             kippen.addEventListener('click', () => {
               const m = [...fehlerBits.ecb].map((_, i) => (i === g ? '1' : '0')).join('');
               fehlerBits = { ecb: Krypto.xorBits(fehlerBits.ecb, m), cbc: Krypto.xorBits(fehlerBits.cbc, m) };
               zeige();
-              const neu = bloeckeOrt.querySelector(`.fehler-block[data-block="${j}"] button.bit[data-bit="${pos.bit}"]`);
+              const neu = bloeckeOrt.querySelector(`.fehler-block[data-block="${j}"] button.fehler-kippen[data-bit="${pos.bit}"]`);
               if (neu) neu.focus();
             });
             loeschen.addEventListener('click', () => {
@@ -861,7 +861,7 @@
             caption: 'Stellungstabelle: Bild von A … H in jeder Stellung',
             kopf: ['Stellung', ...ME],
             zeilen: ME.map((st) => [st, ...Krypto.miniEnigma.tabelle(st, opt)]),
-            klasse: 'stellungen'
+            klasse: 'enigma-stellungen'
           })
         );
         for (const tr of tabOrt.querySelectorAll('tbody tr')) tr.setAttribute('data-stellung', tr.firstChild.textContent);

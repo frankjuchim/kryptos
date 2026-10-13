@@ -311,7 +311,7 @@
               { class: `schiene schiene-${i + 1}` },
               h('th', { scope: 'row' }, `Schiene ${i + 1}`),
               [...klar].map((b, p) => {
-                if (muster[p] !== i) return h('td', { class: 'leer' });
+                if (muster[p] !== i) return h('td', { class: 'zaun-leer' });
                 const td = h('td', { class: `besetzt schiene-${i + 1}`, 'data-position': String(p), 'data-schiene': String(i), 'data-zeichen': Krypto.klein(b) }, Krypto.klein(b));
                 zellen.push({ td, p, i });
                 return td;
@@ -368,7 +368,7 @@
         const tds = [];
         for (let ss = 1; ss <= GROESSE; ss++) {
           const g = gruppen[zz - 1][ss - 1];
-          const b = h('button', { type: 'button', class: 'loch', 'data-z': String(zz), 'data-s': String(ss), 'data-gruppe': String(g), tabindex: zz === 1 && ss === 1 ? '0' : '-1' },
+          const b = h('button', { type: 'button', class: 'fleissner-loch', 'data-z': String(zz), 'data-s': String(ss), 'data-gruppe': String(g), tabindex: zz === 1 && ss === 1 ? '0' : '-1' },
             h('span', { class: 'loch-symbol', 'aria-hidden': 'true' }, SYMBOL[g]),
             h('span', { class: 'loch-zeichen' }),
             h('span', { class: 'loch-nr' })
@@ -380,7 +380,7 @@
       }
       const kopfSp = [];
       for (let ss = 1; ss <= GROESSE; ss++) kopfSp.push(h('th', { scope: 'col' }, String(ss)));
-      const tabelle = h('table', { class: 'schablone' }, h('caption', null, 'Schablone 4 × 4 (Zeile, Spalte ab 1): Löcher antippen; Symbole = Drehgruppen'), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfSp)), h('tbody', null, zeilen));
+      const tabelle = h('table', { class: 'fleissner-schablone' }, h('caption', null, 'Schablone 4 × 4 (Zeile, Spalte ab 1): Löcher antippen; Symbole = Drehgruppen'), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfSp)), h('tbody', null, zeilen));
       const flaeche = h('div', { class: 'schablone-flaeche' }, tabelle);
       const stellungText = h('p', { class: 'schablone-stellung', 'aria-live': 'polite' });
       const drehen = h('button', { type: 'button', class: 'knopf knopf-zweit drehen' }, '↻ 90° im Uhrzeigersinn drehen');
@@ -612,7 +612,7 @@
           ));
         }
         const leseText = folge.join(', ');
-        const svg = s('svg', { class: 'ring', viewBox: '0 0 300 300', width: 300, height: 300, role: 'img', 'aria-label': `Ring mit ${n} Feldern, Ringschritt ${z.t}: Lesereihenfolge ${leseText}${nieGelesen.length ? `; nie gelesen: Felder ${nieGelesen.join(', ')}` : ''}.` },
+        const svg = s('svg', { class: 'skytale-ring', viewBox: '0 0 300 300', width: 300, height: 300, role: 'img', 'aria-label': `Ring mit ${n} Feldern, Ringschritt ${z.t}: Lesereihenfolge ${leseText}${nieGelesen.length ? `; nie gelesen: Felder ${nieGelesen.join(', ')}` : ''}.` },
           s('defs', null, s('marker', { id: 'ring-spitze', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, s('path', { class: 'ring-spitze', d: 'M0 0 L10 5 L0 10 Z' }))),
           s('circle', { class: 'ring-kreis', cx: M, cy: M, r: R }),
           pfeile,

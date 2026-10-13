@@ -52,13 +52,13 @@ test('Schritt für Schritt: Nachspiel deckt Matrizen einzeln auf', () => {
 
 test('Lawine: Bit 1 kippen → Zähler = Krypto.kryptos16.lawine', () => {
   const w = oeffne('runden', { voreinstellung: { reiter: ['lawine'] } });
-  w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.bit[data-bit="1"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.gitter-bit[data-bit="1"]'));
   assert.deepEqual(w.zustand().zaehler, K.kryptos16.lawine(0x4f4b, 0xa36d, 1).map((r) => r.anzahl));
   assert.equal(w.k.alle(w.flaeche, '.lauf-b table.bitmatrix').at(-1).querySelectorAll('.anders').length, 12);
   // zurückkippen → 0; Schlüsselbit kippen wirkt ebenfalls
-  w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.bit[data-bit="1"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.gitter-bit[data-bit="1"]'));
   assert.deepEqual(w.zustand().zaehler, [0, 0, 0, 0]);
-  w.k.klick(w.k.eins(w.flaeche, '.lawine-schluessel button.bit[data-bit="16"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.lawine-schluessel button.gitter-bit[data-bit="16"]'));
   const a = K.kryptos16.verschluesseln(0x4f4b, 0xa36d, { protokoll: true }).runden;
   const b = K.kryptos16.verschluesseln(0x4f4b, 0xa36c, { protokoll: true }).runden;
   assert.deepEqual(w.zustand().zaehler, a.map((r, i) => [...K.xorBits(K.byteZuBits(r.nachTransposition, 16), K.byteZuBits(b[i].nachTransposition, 16))].filter((c) => c === '1').length));
@@ -67,13 +67,13 @@ test('Lawine: Bit 1 kippen → Zähler = Krypto.kryptos16.lawine', () => {
 
 test('Bit-Verfolgung: RM-16 Bit (3,2) → Weg und Schlüsselbits wie Bibliothek', () => {
   const w = oeffne('runden', { voreinstellung: { reiter: ['verfolgung'], variante: 'rm16', block: '6CA3', schluessel: '963D' } });
-  w.k.klick(w.k.eins(w.flaeche, '.verfolgung-klartext button.bit[data-bit="10"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.verfolgung-klartext button.gitter-bit[data-bit="10"]'));
   assert.deepEqual(w.zustand().weg, w.k.roh(K.kryptos16.bitweg(10, { variante: 'rm16' })));
-  assert.deepEqual(w.k.alle(w.flaeche, '.verfolgung-schluessel button.bit.weg').map((b) => Number(b.dataset.bit)).sort((a, b) => a - b), [3, 8, 10]);
+  assert.deepEqual(w.k.alle(w.flaeche, '.verfolgung-schluessel button.gitter-bit.weg').map((b) => Number(b.dataset.bit)).sort((a, b) => a - b), [3, 8, 10]);
   assert.match(w.text('.verfolgung-liste'), /Runde 1/);
   // mit S-Box: „beeinflusst“ (ganze Zeilen)
   const s = oeffne('runden', { voreinstellung: { reiter: ['verfolgung'] } });
-  s.k.klick(s.k.eins(s.flaeche, '.verfolgung-klartext button.bit[data-bit="1"]'));
+  s.k.klick(s.k.eins(s.flaeche, '.verfolgung-klartext button.gitter-bit[data-bit="1"]'));
   assert.ok(s.k.alle(s.flaeche, '.beeinflusst').length >= 4);
 });
 
@@ -100,9 +100,9 @@ test('ECB vs. CBC: Pixelbild der Spec – 23/23/64 verschiedene Kacheln, Malen a
 
 test('Fehler einbauen: Bit in C₂ kippen → ECB nur Block 2, CBC Blöcke 2 und 3', () => {
   const w = oeffne('runden', { voreinstellung: { reiter: ['fehler'], block: 'HAFENTOR' } });
-  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.bit[data-bit="5"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.fehler-kippen[data-bit="5"]'));
   assert.deepEqual(w.zustand().betroffen, { ecb: [1], cbc: [1, 2] });
-  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.bit-loeschen[data-bit="5"]'));
+  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.fehler-loeschen[data-bit="5"]'));
   assert.match(w.text('.labor-hinweis'), /Blockgrenzen verschoben/);
   // zurücksetzen: nichts betroffen, Klartext wieder lesbar
   w.k.klick(w.k.eins(w.flaeche, 'button.fehler-zuruecksetzen'));
@@ -114,7 +114,7 @@ test('Mini-Enigma: BACH → HHAF, CHEF ab E → EGBC, Walze dreht, Stromweg und 
   for (const b of 'BACH') w.k.klick(w.k.eins(w.flaeche, `button.taste[data-taste="${b}"]`));
   assert.equal(w.zustand().enigmaAusgabe, 'HHAF');
   assert.equal(w.zustand().stellung, 'E');
-  assert.equal(w.k.text(w.k.eins(w.flaeche, 'table.stellungen tr[data-stellung="A"]')).replace(/[^A-H]/g, '').slice(1), K.miniEnigma.tabelle('A'));
+  assert.equal(w.k.text(w.k.eins(w.flaeche, 'table.enigma-stellungen tr[data-stellung="A"]')).replace(/[^A-H]/g, '').slice(1), K.miniEnigma.tabelle('A'));
   const e = oeffne('runden', { voreinstellung: { reiter: ['enigma'], stellung: 'E' } });
   e.k.tippe(e.k.eins(e.flaeche, 'textarea.labor-eingabe'), 'chef');
   assert.equal(e.zustand().enigmaAusgabe, 'EGBC');

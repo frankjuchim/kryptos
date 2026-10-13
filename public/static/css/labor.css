@@ -292,14 +292,14 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .skytale-raster, .zaun { font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
 .skytale-raster td, .zaun td { min-width: 2em; height: 2.2em; font-size: 1.1rem; }
 .skytale-raster thead th, .zaun thead th { font-family: var(--f-text); font-size: .8rem; color: var(--text-2); background: var(--papier-2); }
-.skytale-raster tbody th, .zaun tbody th, .schablone tbody th { font-family: var(--f-text); font-size: .85rem; white-space: nowrap; text-align: left; background: var(--papier-2); }
+.skytale-raster tbody th, .zaun tbody th, .fleissner-schablone tbody th { font-family: var(--f-text); font-size: .85rem; white-space: nowrap; text-align: left; background: var(--papier-2); }
 .skytale-raster td.fuell, .fuell-muster {
   background: repeating-linear-gradient(135deg, var(--papier-2) 0 4px, var(--karte) 4px 8px);
   color: var(--text-2);
   font-style: italic;
 }
 .fuell-muster { display: inline-block; width: 1.2em; height: 1.2em; border: 1px solid var(--linie); vertical-align: middle; }
-.skytale-raster caption, .zaun caption, .schablone caption { font-family: var(--f-text); }
+.skytale-raster caption, .zaun caption, .fleissner-schablone caption { font-family: var(--f-text); }
 .skytale-legende { margin: var(--a-1) 0 0; font-size: .85rem; }
 .skytale-raster td.geschrieben, .zaun td.geschrieben { box-shadow: inset 0 0 0 2px var(--hinweis); }
 .skytale-raster td.gelesen, .zaun td.gelesen { background: var(--hinweis-flaeche); font-weight: 700; text-decoration: underline 2px; }
@@ -318,7 +318,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .skytale-stab.animiert .stab-band, .skytale-stab.animiert .stab-gewickelt { transition: opacity .6s ease; }
 
 /* Gartenzaun: Schienen mit Muster und Beschriftung (nicht nur Farbe) */
-.zaun td.leer { background: var(--papier); }
+.zaun td.zaun-leer { background: var(--papier); }
 .zaun td.besetzt { font-weight: 700; }
 .zaun td.schiene-1 { border-bottom: 3px solid var(--akzent); }
 .zaun td.schiene-2 { border-bottom: 3px dashed var(--akzent); }
@@ -331,13 +331,13 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .schablone-bereich { display: flex; flex-wrap: wrap; gap: var(--a-4); align-items: start; }
 .schablone-seite { display: grid; gap: var(--a-3); flex: 1 1 16rem; min-width: 0; }
 .schablone-flaeche { display: inline-block; }
-.schablone-flaeche.dreht .schablone tbody { animation: schablone-drehen .4s ease-out; }
+.schablone-flaeche.dreht .fleissner-schablone tbody { animation: schablone-drehen .4s ease-out; }
 @keyframes schablone-drehen { from { transform: rotate(-90deg); } to { transform: rotate(0); } }
-.schablone { border-collapse: collapse; }
-.schablone caption { text-align: left; font-size: .85rem; color: var(--text-2); padding-bottom: var(--a-1); max-width: 18rem; }
-.schablone thead th { font-size: .8rem; color: var(--text-2); }
-.schablone td { padding: 2px; }
-.loch {
+.fleissner-schablone { border-collapse: collapse; }
+.fleissner-schablone caption { text-align: left; font-size: .85rem; color: var(--text-2); padding-bottom: var(--a-1); max-width: 18rem; }
+.fleissner-schablone thead th { font-size: .8rem; color: var(--text-2); }
+.fleissner-schablone td { padding: 2px; }
+.fleissner-loch {
   position: relative;
   display: grid;
   place-items: center;
@@ -352,32 +352,32 @@ mark.markiert.art-c { text-decoration-style: dotted; }
   font: inherit;
   cursor: pointer;
 }
-.loch[aria-pressed="true"] { outline: 3px dashed var(--akzent); outline-offset: -5px; }
-.loch.frei { background: var(--karte); color: var(--text); border: 2px solid var(--akzent); }
-.loch.aktuell { box-shadow: 0 0 0 3px var(--hinweis); }
-.loch:disabled { cursor: default; }
+.fleissner-loch[aria-pressed="true"] { outline: 3px dashed var(--akzent); outline-offset: -5px; }
+.fleissner-loch.frei { background: var(--karte); color: var(--text); border: 2px solid var(--akzent); }
+.fleissner-loch.aktuell { box-shadow: 0 0 0 3px var(--hinweis); }
+.fleissner-loch:disabled { cursor: default; }
 .loch-symbol { position: absolute; top: 2px; left: 4px; font-size: .75rem; }
 .loch-nr { position: absolute; bottom: 2px; right: 4px; font-size: .7rem; font-weight: 700; }
 .loch-zeichen { font-family: var(--f-mono); font-size: 1.2rem; font-weight: 700; }
 .schablone-stellung { margin: 0; font-weight: 700; }
 .schablone-pruefung { display: grid; gap: var(--a-2); }
 .schablone-legende { margin: 0; font-size: .9rem; }
-@media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .schablone tbody { animation: none; } .skytale-stab.animiert * { transition: none; } }
-:root[data-bewegung="aus"] .schablone-flaeche.dreht .schablone tbody { animation: none; }
+@media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .fleissner-schablone tbody { animation: none; } .skytale-stab.animiert * { transition: none; } }
+:root[data-bewegung="aus"] .schablone-flaeche.dreht .fleissner-schablone tbody { animation: none; }
 
 /* Ring (W6 §9.1, Plan M6 Task 113): nie gelesene Felder rot UND durchgestrichen UND im Text genannt */
 .ring-bereich { display: flex; flex-wrap: wrap; gap: var(--a-4); align-items: start; }
 .ring-bereich > * { min-width: 0; }
 .ring-ort { flex: 1 1 16rem; max-width: 300px; }
-.ring { display: block; width: 100%; height: auto; }
+.skytale-ring { display: block; width: 100%; height: auto; }
 .ring-bereich > div:last-child { flex: 1 1 14rem; }
 .ring-kreis { fill: none; stroke: var(--linie); stroke-width: 2; stroke-dasharray: 4 4; }
-.ring .feld circle { fill: var(--karte); stroke: var(--akzent); stroke-width: 2; }
-.ring .feld-zeichen { font-family: var(--f-mono); font-size: 17px; font-weight: 700; fill: var(--text); }
-.ring .feld-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
-.ring .feld.nie circle { fill: var(--fehler-flaeche); stroke: var(--fehler); stroke-dasharray: 3 2; }
-.ring .feld-strich { stroke: var(--fehler); stroke-width: 2.5; }
-.ring .feld.aktuell circle { stroke: var(--hinweis); stroke-width: 4; }
+.skytale-ring .feld circle { fill: var(--karte); stroke: var(--akzent); stroke-width: 2; }
+.skytale-ring .feld-zeichen { font-family: var(--f-mono); font-size: 17px; font-weight: 700; fill: var(--text); }
+.skytale-ring .feld-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
+.skytale-ring .feld.nie circle { fill: var(--fehler-flaeche); stroke: var(--fehler); stroke-dasharray: 3 2; }
+.skytale-ring .feld-strich { stroke: var(--fehler); stroke-width: 2.5; }
+.skytale-ring .feld.aktuell circle { stroke: var(--hinweis); stroke-width: 4; }
 .ring-sprung line { stroke: var(--text-2); stroke-width: 1.5; }
 .ring-sprung.aktuell line { stroke: var(--hinweis); stroke-width: 3; }
 .ring-sprung-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text); paint-order: stroke; stroke: var(--papier); stroke-width: 3px; }
@@ -444,7 +444,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .werkbank td.referenz { font-family: var(--f-mono); color: var(--text-2); font-style: italic; }
 .werkbank td.eingabe { position: relative; }
 .werkbank td.fehlt { background: var(--papier); }
-input.zuordnung {
+input.werkbank-zuordnung {
   width: 2.6rem;
   min-height: var(--ziel);
   border: 1.5px solid var(--linie);
@@ -457,8 +457,8 @@ input.zuordnung {
   text-align: center;
   text-transform: lowercase;
 }
-input.zuordnung[readonly] { background: var(--papier-2); color: var(--text); border-style: dashed; }
-input.zuordnung.konflikt { border: 2.5px solid var(--fehler); background: var(--fehler-flaeche); color: var(--text); }
+input.werkbank-zuordnung[readonly] { background: var(--papier-2); color: var(--text); border-style: dashed; }
+input.werkbank-zuordnung.konflikt { border: 2.5px solid var(--fehler); background: var(--fehler-flaeche); color: var(--text); }
 .konflikt-zeichen { position: absolute; top: 0; right: 3px; color: var(--fehler); font-weight: 700; font-size: .8rem; }
 mark.markiert.muster { text-decoration-style: solid; text-decoration-thickness: 3px; }
 mark.markiert.bigramm { background: transparent; text-decoration-style: dashed; }
@@ -641,10 +641,10 @@ mark.markiert.wiederholung { font-weight: 700; }
 .bitgitter td.weg { box-shadow: inset 0 0 0 3px var(--hinweis); background: var(--hinweis-flaeche); font-weight: 700; }
 .bitgitter td.beeinflusst { background: repeating-linear-gradient(135deg, var(--hinweis-flaeche) 0 4px, var(--karte) 4px 8px); box-shadow: inset 0 0 0 2px var(--hinweis); }
 .eingabematrix td { width: var(--ziel); height: var(--ziel); }
-.eingabematrix button.bit { width: var(--ziel); min-height: var(--ziel); padding: 0; border: 0; background: transparent; color: var(--text); font-family: var(--f-mono); font-size: 1.1rem; cursor: pointer; }
-.eingabematrix button.bit[aria-pressed="true"] { font-weight: 700; text-decoration: underline 2px; }
-.eingabematrix button.bit:focus-visible { outline: 3px solid var(--fokus); outline-offset: -3px; }
-.eingabematrix button.bit:disabled { cursor: default; color: var(--text); }
+.eingabematrix button.gitter-bit { width: var(--ziel); min-height: var(--ziel); padding: 0; border: 0; background: transparent; color: var(--text); font-family: var(--f-mono); font-size: 1.1rem; cursor: pointer; }
+.eingabematrix button.gitter-bit[aria-pressed="true"] { font-weight: 700; text-decoration: underline 2px; }
+.eingabematrix button.gitter-bit:focus-visible { outline: 3px solid var(--fokus); outline-offset: -3px; }
+.eingabematrix button.gitter-bit:disabled { cursor: default; color: var(--text); }
 .lawine-eingabe, .verfolgung-eingabe { display: flex; flex-wrap: wrap; gap: var(--a-4); }
 .lawine-eingabe figure, .verfolgung-eingabe figure { margin: 0; }
 .lawine-zurueck { justify-self: start; border: 1.5px solid var(--linie); }
@@ -705,7 +705,7 @@ mark.markiert.wiederholung { font-weight: 700; }
 .strom-station { fill: var(--karte); stroke: var(--hinweis); stroke-width: 2; }
 .strom-buchstabe, .strom-ende { font-family: var(--f-mono); font-size: 15px; font-weight: 700; fill: var(--text); }
 .strom-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
-.stellungen td, .stellungen th { font-family: var(--f-mono); }
+.enigma-stellungen td, .enigma-stellungen th { font-family: var(--f-mono); }
 
 /* ======================================================================
    Modulo-Uhr & Farbmischer (W4 §9.1, M6 Task 121, E80)

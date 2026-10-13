@@ -4,11 +4,11 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { oeffne, Krypto: K } = require('./hilfen_labor');
 const G = K.substitution('die werkbank zeigt jede zuordnung sofort im klartext an', K.schluesselwortAlphabet('tinte'));
-const feld = (w, g) => w.k.eins(w.flaeche, `input.zuordnung[data-geheim="${g}"]`);
+const feld = (w, g) => w.k.eins(w.flaeche, `input.werkbank-zuordnung[data-geheim="${g}"]`);
 
 test('Werkbank: Live-Klartext = Krypto.teilsubstitution, Anzahl und Rang aus der Bibliothek', () => {
   const w = oeffne('substitution', { voreinstellung: { text: G } });
-  assert.equal(w.k.alle(w.flaeche, 'input.zuordnung').length, 26);
+  assert.equal(w.k.alle(w.flaeche, 'input.werkbank-zuordnung').length, 26);
   w.k.tippe(feld(w, 'E'), 'd');
   w.k.tippe(feld(w, 'F'), 'i');
   assert.equal(w.text('.werkbank-klartext').replace(/\s/g, ''), K.teilsubstitution(G, { E: 'd', F: 'i' }));

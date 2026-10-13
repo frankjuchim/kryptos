@@ -63,19 +63,19 @@ test('Fleißner: Löcher tippen, Gültigkeit, Drehgruppen, Drehen, Ausgabe = Kry
   assert.match(w.text('.schablone-pruefung'), /Feld \(1,1\) wird mehrfach frei.*8 von 16/s);
   assert.equal(w.k.text(w.k.eins(w.flaeche, 'output.labor-ausgabe')), '');
   // fünftes Loch in einer Drehgruppe ohne Loch → Hinweis, Schablone bleibt
-  w.k.klick(w.k.eins(w.flaeche, 'button.loch[data-z="1"][data-s="2"]'));
+  w.k.klick(w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="1"][data-s="2"]'));
   assert.match(w.text('.schablone-pruefung'), /Höchstens 4 Löcher/);
   assert.equal(w.zustand().schablone.length, 4);
-  for (const [z, s] of [[1, 4], [3, 3], [1, 1], [2, 2], [1, 2], [2, 1], [2, 3], [4, 4]]) /* erst entfernen, dann setzen (höchstens 4 Löcher) */ w.k.klick(w.k.eins(w.flaeche, `button.loch[data-z="${z}"][data-s="${s}"]`));
+  for (const [z, s] of [[1, 4], [3, 3], [1, 1], [2, 2], [1, 2], [2, 1], [2, 3], [4, 4]]) /* erst entfernen, dann setzen (höchstens 4 Löcher) */ w.k.klick(w.k.eins(w.flaeche, `button.fleissner-loch[data-z="${z}"][data-s="${s}"]`));
   assert.deepEqual(w.zustand().schablone, [[1, 2], [2, 1], [2, 3], [4, 4]]);
   assert.equal(w.zustand().gueltig, true);
   assert.equal(w.ohneLeer('output.labor-ausgabe'), 'TBNMOTTWOEANRRAE');
-  assert.deepEqual(w.k.alle(w.flaeche, 'button.loch').slice(0, 4).map((b) => b.dataset.gruppe), ['0', '1', '2', '0']);
+  assert.deepEqual(w.k.alle(w.flaeche, 'button.fleissner-loch').slice(0, 4).map((b) => b.dataset.gruppe), ['0', '1', '2', '0']);
   w.k.klick(w.k.eins(w.flaeche, 'button.drehen'));
   assert.equal(w.zustand().stellung, 2);
-  assert.deepEqual(w.k.alle(w.flaeche, 'button.loch.frei').map((b) => [Number(b.dataset.z), Number(b.dataset.s)]), K.fleissnerStellungen(4, [[1, 2], [2, 1], [2, 3], [4, 4]])[1]);
+  assert.deepEqual(w.k.alle(w.flaeche, 'button.fleissner-loch.frei').map((b) => [Number(b.dataset.z), Number(b.dataset.s)]), K.fleissnerStellungen(4, [[1, 2], [2, 1], [2, 3], [4, 4]])[1]);
   // vier Löcher, Tippen in eine Drehgruppe mit genau einem Loch → das Loch wandert innerhalb der Gruppe
-  w.k.klick(w.k.eins(w.flaeche, 'button.loch[data-z="3"][data-s="3"]'));
+  w.k.klick(w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="3"][data-s="3"]'));
   assert.deepEqual(w.zustand().schablone, [[1, 2], [2, 1], [3, 3], [4, 4]]);
   assert.equal(w.zustand().stellung, 1, 'Bearbeiten zeigt wieder Stellung 1');
   assert.equal(w.zustand().gueltig, true);
@@ -83,15 +83,15 @@ test('Fleißner: Löcher tippen, Gültigkeit, Drehgruppen, Drehen, Ausgabe = Kry
 
 test('Skytale: Schablone per Tastatur, reduzierte Bewegung ohne Animation', () => {
   const w = oeffne('skytale', { voreinstellung: { reiter: ['fleissner'] }, ruhig: true });
-  const erstes = w.k.eins(w.flaeche, 'button.loch[data-z="1"][data-s="1"]');
+  const erstes = w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="1"][data-s="1"]');
   w.k.taste(erstes, 'ArrowRight');
   assert.equal(w.k.document.activeElement.dataset.s, '2');
   w.k.taste(w.k.document.activeElement, ' ');
-  assert.equal(w.k.eins(w.flaeche, 'button.loch[data-z="1"][data-s="2"]').getAttribute('aria-pressed'), 'true');
-  assert.equal(w.k.eins(w.flaeche, 'button.loch[data-z="2"][data-s="4"]').getAttribute('aria-pressed'), 'false', 'Loch der Drehgruppe ▲ versetzt');
+  assert.equal(w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="1"][data-s="2"]').getAttribute('aria-pressed'), 'true');
+  assert.equal(w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="2"][data-s="4"]').getAttribute('aria-pressed'), 'false', 'Loch der Drehgruppe ▲ versetzt');
   w.k.klick(w.k.eins(w.flaeche, 'button.drehen'));
   assert.equal(w.k.eins(w.flaeche, '.schablone-flaeche').classList.contains('dreht'), false);
-  w.k.taste(w.k.eins(w.flaeche, 'button.loch[data-z="1"][data-s="1"]'), 'r');
+  w.k.taste(w.k.eins(w.flaeche, 'button.fleissner-loch[data-z="1"][data-s="1"]'), 'r');
   assert.equal(w.zustand().stellung, 3, 'Taste r dreht');
   const v = oeffne('skytale', { voreinstellung: { reiter: ['fleissner'] } });
   v.k.klick(v.k.eins(v.flaeche, 'button.drehen'));
@@ -115,7 +115,7 @@ test('Ring (W6): Lesereihenfolge, nie gelesene Felder, Ausgabe = Krypto.ring; nu
   assert.equal(w.ohneLeer('output.labor-ausgabe'), 'ZAICMEST');
   w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'Home'); // t = 1
   w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'ArrowUp'); // t = 2
-  assert.deepEqual(w.k.alle(w.flaeche, 'svg.ring .nie').map((x) => x.dataset.feld), ['1', '3', '5', '7']);
+  assert.deepEqual(w.k.alle(w.flaeche, 'svg.skytale-ring .nie').map((x) => x.dataset.feld), ['1', '3', '5', '7']);
   assert.match(w.text('.labor-hinweis'), /teilerfremd/);
   assert.equal(w.text('output.labor-ausgabe'), '');
 });
@@ -123,14 +123,14 @@ test('Ring (W6): Lesereihenfolge, nie gelesene Felder, Ausgabe = Krypto.ring; nu
 test('Ring: Lehrkraft sieht den Reiter, Textalternative, Nachspiel Sprung für Sprung, Entschlüsseln = Krypto.ring', () => {
   const w = oeffne('skytale', { umgebung: { rolle: 'lehrkraft', welten: undefined, niveau: undefined }, voreinstellung: { reiter: ['ring'], text: 'ZAICMEST', t: 5, richtung: 'ent' } });
   assert.equal(w.ohneLeer('output.labor-ausgabe'), K.klein(K.ring('ZAICMEST', 5, 'ent')));
-  assert.equal(w.k.eins(w.flaeche, 'svg.ring').getAttribute('role'), 'img');
-  assert.match(w.k.eins(w.flaeche, 'svg.ring').getAttribute('aria-label'), /0, 5, 2, 7, 4, 1, 6, 3/);
+  assert.equal(w.k.eins(w.flaeche, 'svg.skytale-ring').getAttribute('role'), 'img');
+  assert.match(w.k.eins(w.flaeche, 'svg.skytale-ring').getAttribute('aria-label'), /0, 5, 2, 7, 4, 1, 6, 3/);
   assert.doesNotMatch(w.k.text(w.flaeche), /\bnull\b|undefined/, 'keine leeren Platzhalter im Text');
   const leiste = w.k.eins(w.flaeche, '.nachspiel');
   w.k.taste(leiste, 'ArrowRight');
   w.k.taste(leiste, 'ArrowRight');
   assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /Feld 5: a/);
   w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[0], 'End'); // n = 12
-  assert.equal(w.k.alle(w.flaeche, 'svg.ring g.feld').length, 12);
+  assert.equal(w.k.alle(w.flaeche, 'svg.skytale-ring g.feld').length, 12);
   assert.equal(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1].getAttribute('aria-valuemax'), '11');
 });

@@ -72,7 +72,7 @@
       const ref = zeile('Deutsch (Rang)', 'referenz');
       referenzZeilen.push(ref);
       const eingaben = spalten.map((g) => {
-        const f = h('input', { type: 'text', class: 'zuordnung', 'data-geheim': g, maxlength: '1', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': vorgabe[g] ? `Klartext zu ${g} (vorgegeben)` : `Klartext zu ${g}` });
+        const f = h('input', { type: 'text', class: 'werkbank-zuordnung', 'data-geheim': g, maxlength: '1', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': vorgabe[g] ? `Klartext zu ${g} (vorgegeben)` : `Klartext zu ${g}` });
         if (vorgabe[g]) f.readOnly = true;
         felder.set(g, f);
         return h('td', { class: 'eingabe' }, f, h('span', { class: 'konflikt-zeichen', 'aria-hidden': 'true' }));

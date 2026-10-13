@@ -1233,6 +1233,9 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
   aus Seeds, Akten-Verzeichnis, Warm-up, Materialquellen W0–W6/Prüfungen und Videos – markierte Stellen, Lösungen, Titel;
   Caesar-Geheimtexte für alle 26 k, verdeckte Klartexte von Substitution und Bit-Lupe über die Bibliothek nachgerechnet).
   Rechnungen **nur** über `Krypto` – kein Serverzugriff, keine Speicherung, keine Aufgabendaten, keine Lösungen.
+  CSS-Klassen der Werkzeuge tragen ein Werkzeug-Präfix (`enigma-stellungen`, `fleissner-loch`, `skytale-ring`,
+  `werkbank-zuordnung`, `gitter-bit` …), damit allgemeine Regeln aus `aufgaben.css`/`komponenten.css` sie nicht treffen
+  (Test `labor_css.test.js`; bewusst geteilt sind nur Knöpfe, Hinweise, Alphabet-Leiste, Geheimtext-Zeilen, Fallen-Chip).
 - **Rahmen (Plan M6 Task 110):** `KRLabor.oeffne` lädt fehlende Module nach (`KRLabor.lade(id)`: einmal
   `labor/bausteine.js`, dann `labor/<id>.js` mit `?v=<KR.VERSION>` an `document.head`; bis dahin „Wird geladen …“, bei
   Fehler „Dieses Werkzeug konnte nicht geladen werden.“). `umgebung = { modus, rolle, niveau, welten }` steuert die

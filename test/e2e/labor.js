@@ -32,7 +32,7 @@ const RECHNUNG = {
     return [e, K.haeufigkeiten(text).E];
   },
   substitution: async (p) => {
-    await flaeche(p).locator('input.zuordnung').first().fill('e');
+    await flaeche(p).locator('input.werkbank-zuordnung').first().fill('e');
     const z = await zustand(p);
     return [z.klartext, K.teilsubstitution(z.text, z.zuordnung)];
   },

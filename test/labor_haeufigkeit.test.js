@@ -74,7 +74,7 @@ test('Nachspiel „Zählen“: Schritt i zeigt die Häufigkeiten des Präfixes',
 
 test('Grenzen: keine Zuordnung, keine Entschlüsselung, kein Speicher, keine Anfragen', () => {
   const w = oeffne('haeufigkeit', { voreinstellung: { text: T } });
-  assert.equal(w.k.alle(w.flaeche, 'input.zuordnung, output.labor-ausgabe').length, 0);
+  assert.equal(w.k.alle(w.flaeche, 'input.werkbank-zuordnung, output.labor-ausgabe').length, 0);
   assert.match(w.text('.haeufigkeit-grenze'), /Substitutions-Werkbank/);
   assert.deepEqual(w.k.anfragen, []);
   assert.equal(w.k.window.localStorage.length, 0);
