@@ -12,6 +12,7 @@
  * Skripte liegen relativ zu public/static/js. Das Seiten-Grundgerüst (header#kopf, main#haupt, footer#fuss) wird immer
  * angelegt; nach dem letzten Skript feuert die Attrappe DOMContentLoaded und load.
  * Selektoren: Typ, .klasse, #id, [attr], [attr="wert"], zusammengesetzt, Nachfahre (Leerzeichen), Kind (>), Komma.
+ * Timer sind echt, aber unref: ein Promise, das nur auf Attrappen-Timer wartet, erst nach `await k.ruhe()` abwarten.
  * Fehler-Konstruktoren (Error, TypeError, RangeError, SyntaxError) stammen aus dem Test-Realm, damit
  * assert.throws(…, TypeError) funktioniert; Arrays/Objekte aus dem Skript-Kontext vor deepEqual mit k.roh holen.
  */
