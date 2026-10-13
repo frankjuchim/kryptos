@@ -308,7 +308,7 @@ test('schaubild-ergaenzen (W9-L6-06): Auswahl und Textfeld', () => {
   k.tippe(k.eins(c.el, 'input.sb-text'), 'Mallory');
   assert.equal(c.antwort().z2, 'Mallory');
 });
-test('bits-rechnen xor (W9-L6-01): Bit-Schaltflächen zyklisch, Tasten 0/1, Antwort mit _', () => {
+test('bits-rechnen xor (W9-L6-01): Bit-Schaltflächen zyklisch, Tasten 0/1, Antwort mit ?', () => {
   const { k, c } = baue(oeffentlich('W9-L6-01'));
   const bits = k.alle(c.el, '.bits-eingabe button.bit');
   assert.equal(bits.length, 8);
@@ -318,7 +318,7 @@ test('bits-rechnen xor (W9-L6-01): Bit-Schaltflächen zyklisch, Tasten 0/1, Antw
   assert.equal(bits[0].getAttribute('aria-pressed'), 'true');
   k.taste(bits[1], '0');
   assert.equal(k.document.activeElement, bits[2]);
-  assert.equal(c.antwort(), '10______');
+  assert.equal(c.antwort(), '10??????');
   c.feedback({ ok: false, teile: [{ ok: false, bits: [false, true, false, false, false, false, false, false] }] });
   assert.ok(bits[0].classList.contains('falsch') && bits[1].classList.contains('ok'));
 });
@@ -379,14 +379,27 @@ test('bits-rechnen Tastatur, Rundlauf, Lücken, kryptos16 (W9-L6-01, W9-L3-03, W
   assert.equal(k.document.activeElement, bits[6]);
   k.taste(bits[6], 'Backspace');
   assert.equal(bits[6].getAttribute('aria-label'), 'Bit 7 von 8, leer');
-  // Lücke mitten in der Folge: der Server entfernt _ (Delta §5.2) – Rückmeldung nur bis zur ersten Lücke positionsgenau
+  // Lücke mitten in der Folge: ? bleibt als leere Stelle erhalten (Delta §8.4) – Rückmeldung positionsgenau über alle Bits
   k.taste(bits[2], 'Delete');
-  assert.equal(c.antwort(), '00_000_1');
+  assert.equal(c.antwort(), '00?000?1');
   s = server('bits', 'W9-L6-01', c.antwort());
+  assert.equal(s.b, '00?000?1');
+  assert.equal(s.leer, false);
+  assert.deepEqual(s.r.bits, [true, true, false, true, true, true, false, true]);
   c.feedback({ ok: false, teile: [s.r] });
   assert.ok(bits[0].classList.contains('ok') && bits[1].classList.contains('ok'));
   assert.ok(bits[2].classList.contains('falsch') && bits[6].classList.contains('falsch'), 'leere Stellen falsch');
-  assert.ok(!bits[3].classList.contains('ok') && !bits[3].classList.contains('falsch'), 'nach einer Lücke keine Einzelrückmeldung');
+  assert.ok([3, 4, 5, 7].every((i) => bits[i].classList.contains('ok')), 'nach der Lücke weiter positionsgenau');
+  assert.equal(k.text(k.eins(c.el, '.bits-ergebnis')), '6 von 8 Bits richtig');
+  // gespeicherte Antwort mit Lücke wiederherstellen
+  c.setze(s.b);
+  assert.equal(c.antwort(), '00?000?1');
+  assert.equal(bits[2].getAttribute('aria-label'), 'Bit 3 von 8, leer');
+  // nur Lücken = leer (kein Fehlversuch)
+  bits.forEach((b) => k.taste(b, 'Delete'));
+  assert.equal(c.leer(), true);
+  assert.equal(c.antwort(), '????????');
+  assert.equal(server('bits', 'W9-L6-01', c.antwort()).leer, true);
   c.loesung({ bits: '00100001' });
   assert.equal(bits.map((b) => k.text(b)).join(''), '00100001');
   // kryptos16

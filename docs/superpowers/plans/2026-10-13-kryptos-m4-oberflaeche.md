@@ -1610,7 +1610,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     k.tippe(k.eins(c.el, 'input.sb-text'), 'Mallory');
     assert.equal(c.antwort().z2, 'Mallory');
   });
-  test('bits-rechnen xor (W9-L6-01): Bit-Schaltflächen zyklisch, Tasten 0/1, Antwort mit _', () => {
+  test('bits-rechnen xor (W9-L6-01): Bit-Schaltflächen zyklisch, Tasten 0/1, Antwort mit ?', () => {
     const { k, c } = baue(oeffentlich('W9-L6-01'));
     const bits = k.alle(c.el, '.bits-eingabe button.bit');
     assert.equal(bits.length, 8);
@@ -1620,7 +1620,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
     assert.equal(bits[0].getAttribute('aria-pressed'), 'true');
     k.taste(bits[1], '0');
     assert.equal(k.document.activeElement, bits[2]);
-    assert.equal(c.antwort(), '10______');
+    assert.equal(c.antwort(), '10??????');
     c.feedback({ ok: false, teile: [{ ok: false, bits: [false, true, false, false, false, false, false, false] }] });
     assert.ok(bits[0].classList.contains('falsch') && bits[1].classList.contains('ok'));
   });

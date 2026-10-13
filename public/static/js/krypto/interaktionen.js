@@ -1001,7 +1001,7 @@ const KRI = (() => {
     box.appendChild(ergebnis);
 
     function setzeBits(s) {
-      const folge = [...String(s ?? '')].filter((c) => c === '0' || c === '1' || c === '_');
+      const folge = [...String(s ?? '')].filter((c) => c === '0' || c === '1' || c === '?');
       knoepfe.forEach((_, i) => {
         werte[i] = folge[i] === '0' || folge[i] === '1' ? folge[i] : '';
         markeWeg(i);
@@ -1023,7 +1023,7 @@ const KRI = (() => {
       antwort() {
         if (textFeld) return textFeld.value;
         if (lawine) return werte.map((w, i) => (w === '1' ? i : -1)).filter((i) => i >= 0);
-        return werte.map((w) => w || '_').join('');
+        return werte.map((w) => w || '?').join(''); // ? = leere Stelle (Delta §8.4), Positionen bleiben erhalten
       },
       leer() {
         if (textFeld) return String(textFeld.value || '').trim() === '';
@@ -1047,15 +1047,10 @@ const KRI = (() => {
           return;
         }
         if (lawine || !Array.isArray(r.bits)) return; // lawine: keine Einzelrückmeldung vor dem Lösen
-        // Der Server entfernt _ (Bit-Normalisierung, Delta §5.2): Positionen stimmen nur bis zur ersten Lücke.
-        const luecke = werte.findIndex((w) => !w);
-        const bis = luecke < 0 ? n : luecke;
+        // ? hält leere Stellen fest (Delta §8.4): r.bits ist über alle Positionen positionsgenau
         knoepfe.forEach((b, i) => {
           markeWeg(i);
-          if (i < bis) {
-            const ok = r.bits[i] === true;
-            b.classList.add(ok ? 'ok' : 'falsch');
-          } else if (!werte[i]) b.classList.add('falsch');
+          b.classList.add(r.bits[i] === true && werte[i] ? 'ok' : 'falsch');
         });
         const richtig = knoepfe.filter((b) => b.classList.contains('ok')).length;
         ergebnis.textContent = `${richtig} von ${n} Bits richtig`;

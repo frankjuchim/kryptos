@@ -2,7 +2,7 @@
 // Interaktion bits-rechnen (AUFGABENFORMAT_KRYPTO §8.4): XOR, ASCII (beide Richtungen), KRYPTOS-16-Runden
 // (SPEC W3 §0a), Lawine (Bit-Verfolgung) und fremde Verfahren (frei). Feedback je Bit (nicht bei lawine/zu-text),
 // Fallen-Diagnose §9.4, Validator mit Neuberechnung über die Bibliothek.
-// Kanonische Antwort: Bitfolge ohne Trenner (Text) · ascii/zu-text: Text (getrimmt, Groß/Klein bleibt) ·
+// Kanonische Antwort: Bitfolge ohne Trenner (Text), ? = leere Bit-Stelle (bleibt positionsgenau stehen, nur ? = leer) · ascii/zu-text: Text (getrimmt, Groß/Klein bleibt) ·
 // lawine: sortierte Liste der Positionen 0–15 (0 = höchstwertiges Bit).
 
 const K = require('../../../public/static/js/shared/krypto');
@@ -51,14 +51,18 @@ function auspacken(antwort, schluessel) {
   return antwort;
 }
 
-function bitsAntwort(x) {
+/**
+ * Bitfolge einer Antwort (Delta §5.2/§8.4): Trenner weg (normBits), ? = leere Stelle bleibt erhalten (Option A), damit
+ * sich die Positionen nach einer Lücke nicht verschieben; nur ? → '' (leer, kein Fehlversuch). Lösungen: luecken false.
+ */
+function bitsAntwort(x, { luecken = true } = {}) {
   if (x === undefined || x === null) return '';
   if (typeof x !== 'string') throw new AntwortFehler('Antwort muss eine Bitfolge sein.');
   if (x.length > 4 * MAX_BITS) throw new AntwortFehler('Antwort ist zu lang.');
   const b = K.normBits(x);
-  if (/[^01]/.test(b)) throw new AntwortFehler('Nur 0 und 1.');
+  if (luecken ? /[^01?]/.test(b) : /[^01]/.test(b)) throw new AntwortFehler('Nur 0 und 1.');
   if (b.length > MAX_BITS) throw new AntwortFehler('Antwort ist zu lang.');
-  return b;
+  return /^\?*$/.test(b) ? '' : b;
 }
 
 function textAntwort(x) {
@@ -83,7 +87,7 @@ function kanonisch(ia, antwort) {
   if (ia.operation === 'frei') {
     const a = auspacken(antwort, ['bits', 'text']);
     if (istObjekt(antwort) && Object.hasOwn(antwort, 'text')) return textAntwort(a);
-    if (typeof a === 'string' && /^[01\s_|.]*$/.test(a)) return bitsAntwort(a);
+    if (typeof a === 'string' && /^[01?\s_|.]*$/.test(a)) return bitsAntwort(a);
     return textAntwort(a);
   }
   return bitsAntwort(auspacken(antwort, ['bits']));
@@ -92,7 +96,8 @@ function kanonisch(ia, antwort) {
 const bereinige = (ia, antwort) => kanonisch(ia, antwort);
 
 function istLeer(ia, a) {
-  return Array.isArray(a) ? a.length === 0 : a === '';
+  if (Array.isArray(a)) return a.length === 0;
+  return a === '' || (typeof a === 'string' && !istTextAntwort(ia) && /^\?+$/.test(a));
 }
 
 /** Lösung in kanonischer Form (oder null, wenn keine passende Lösung vorhanden ist). */
@@ -216,14 +221,15 @@ function validiere(ia, lo, aufgabe, ort, fa, wa) {
   } else if (ia.operation === 'frei') {
     if (typeof lo.bits !== 'string' && typeof lo.text !== 'string') return fa(lort, 'bits oder text (Lösung) fehlt.');
     try {
-      soll = kanonisch(ia, typeof lo.bits === 'string' ? { bits: lo.bits } : { text: lo.text });
+      if (typeof lo.bits === 'string') soll = bitsAntwort(lo.bits, { luecken: false });
+      else soll = kanonisch(ia, { text: lo.text });
     } catch (e) {
       return fa(lort, `Lösung ist keine gültige Antwort: ${e.message}`);
     }
   } else {
     if (typeof lo.bits !== 'string') return fa(lort, 'bits (Lösung) fehlt.');
     try {
-      soll = bitsAntwort(lo.bits);
+      soll = bitsAntwort(lo.bits, { luecken: false });
     } catch (e) {
       return fa(lort, `bits (Lösung): ${e.message}`);
     }

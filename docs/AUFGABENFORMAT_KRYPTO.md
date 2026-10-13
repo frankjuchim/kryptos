@@ -225,6 +225,8 @@ reine Buchstabenantwort erwartet und gibt jemand Ziffern ein, ist die Antwort fa
 
 Für Bitfolgen in `gaps` und intern in `bits-rechnen`: entfernt Leerraum sowie die Trennzeichen `_`, `|`, `.`;
 alle anderen Zeichen bleiben stehen (eine `2` macht die Antwort also falsch). Beispiel: `0100 0001` → `01000001`.
+`_` ist also **Trenner, keine Lücke**. Leere Bit-Stellen einer `bits-rechnen`-Antwort schreibt der Client als `?`
+(§8.4, Entscheidung Option A); `?` überlebt die Normalisierung und hält die Position fest.
 
 ### 5.3 Validator
 
@@ -695,10 +697,14 @@ Tippen: `·` → 0 → 1 → 0 …; Tastatur 0/1, Pfeiltasten). `lawine`: Bits d
 (Markierung + Symbol). Barrierefreiheit: jede Bit-Schaltfläche `aria-label="Bit 3 von 8, Wert 1"`, `aria-pressed`.
 
 **Antwort Client → Server:** `"0010 0001"` oder `{ "bits": "00100001" }`; `ascii zu-text`: `"K"`; `lawine`: `[0, 3, 9]`.
+Eine leere Bit-Stelle sendet der Client als **`?`** (z. B. `"00?000?1"`), nie als `_` (das ist nach §5.2 ein Trenner und
+würde die folgenden Positionen verschieben).
 
-**Prüfregeln:** `bereinige`: `norm: bits`, nur 0/1, Länge ≤ 64 (sonst 400); `lawine`: ganze Zahlen 0–15, Menge.
-`istLeer`: keine Bits gesetzt. Richtig ⇔ gleich Lösung (`lawine`: Mengengleichheit). Feedback `bits: [true, …]` je
-Position (bei `lawine`: `positionen` richtig/falsch nur nach dem Lösen). Diagnose §9.4.
+**Prüfregeln:** `bereinige`: `norm: bits`, nur 0/1 und `?` (leere Stelle, bleibt an ihrer Position stehen), Länge ≤ 64
+(sonst 400); nur `?` → `""`; idempotent. `lawine`: ganze Zahlen 0–15, Menge. `istLeer`: keine Bits gesetzt (leer oder
+nur `?` → kein Fehlversuch). Richtig ⇔ gleich Lösung (`lawine`: Mengengleichheit). Feedback `bits: [true, …]` je
+Position über die ganze Folge; eine `?`-Stelle zählt als falsch (bei `lawine`: `positionen` richtig/falsch nur nach dem
+Lösen). Lösungen (`loesung.bits`) enthalten kein `?`. Diagnose §9.4.
 
 **Musterantwort:** `loesung.bits` / `loesung.text` / `loesung.positionen`. **Validator (Neuberechnung):** `xor` über
 `Krypto.xorBits`, `ascii` über `Krypto.textZuBits`/`bitsZuText`, `kryptos16` und `lawine` über `Krypto.kryptos16`

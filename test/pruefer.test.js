@@ -264,6 +264,28 @@ test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Po
   assert.equal(C.pruefeAufgabe(A['W9-L3-04'], [3]).bits, undefined, 'lawine: kein Feedback je Position');
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-04'], [16]), (e) => e.status === 400);
 });
+test('bits-rechnen: ? = leere Bit-Stelle bleibt positionsgenau erhalten (Option A, Delta §8.4)', () => {
+  const V = require('../src/krypto/interaktionen/bits').vertrag;
+  const a = A['W9-L6-01']; // Lösung 00100001
+  const r = C.pruefeAufgabe(a, '00?00001');
+  assert.equal(r.ok, false);
+  assert.equal(r.leer, false, 'Lücke mitten in der Folge ist eine (falsche) Antwort');
+  assert.deepEqual(r.teile[0].bits, [true, true, false, true, true, true, true, true], 'Positionen verschieben sich nicht');
+  assert.deepEqual(C.pruefeAufgabe(a, '0010 ??01').teile[0].bits, [true, true, true, true, false, false, true, true], 'Trenner werden entfernt, ? bleibt');
+  const b = V.bereinige(a.interaktion, '0_0?0 0001');
+  assert.equal(b, '00?00001');
+  assert.equal(V.bereinige(a.interaktion, b), b, 'bereinige ist idempotent');
+  assert.equal(V.bereinige(a.interaktion, { bits: '00?00001' }), '00?00001');
+  for (const leer of ['????????', '????_????', '', '  ']) {
+    const k = V.bereinige(a.interaktion, leer);
+    assert.equal(V.istLeer(a.interaktion, k), true, `leer: ${JSON.stringify(leer)}`);
+    assert.equal(V.bereinige(a.interaktion, k), k);
+    assert.equal(C.pruefeAufgabe(a, leer).leer, true, 'nur ? → kein Fehlversuch');
+  }
+  assert.equal(C.pruefeAufgabe(a, '0010?0001').teile[0].bits.length, 9, 'zu lang: Rückmeldung über alle Stellen');
+  assert.throws(() => C.pruefeAufgabe(a, '00?0002 1'), (e) => e.status === 400, 'andere Zeichen bleiben verboten');
+  assert.equal(C.pruefeAufgabe(a, '00100001').ok, true);
+});
 test('Diagnosetext bits-rechnen:richtung neutral (ver- statt entschlüsselt oder umgekehrt)', () => {
   assert.equal(D.text('bits-rechnen', 'P3', 'richtung'), 'Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).');
 });
