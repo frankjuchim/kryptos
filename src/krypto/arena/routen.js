@@ -47,6 +47,7 @@ function arenaRouten(arena) {
     /* Schüler */
     api.get('/arena', schueler, (req, res) => res.json(arena.aktuell(req.schueler)));
     api.post('/werkstatt/pruefen', schueler, mit429((req) => arena.pruefen(req.schueler, req.body)));
+    api.post('/arena/:id/chiffren/:cid/angriff', schueler, mit429((req) => arena.angriff(req.schueler, req.params.id, req.params.cid, req.body)));
     api.post('/arena/:id/chiffre', schueler, mit429((req) => arena.einreichen(req.schueler, req.params.id, req.body)));
 
     /* Lehrkraft */

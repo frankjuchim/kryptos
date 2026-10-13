@@ -1806,7 +1806,7 @@ Beamer bei 1920 × 1080.
   Erfolg → `geknackt_at`; Erfolg → `svc.stand.pruefeAbzeichen(s)` für alle Mitglieder des angreifenden Teams (Abzeichen
   greift ab Task 147). Bereits geknackte Chiffren dürfen weiter angegriffen werden (`geknackt: true`, zählt nicht erneut).
 
-- [ ] **Step 1: Failing test** – `test/arena_angriff.test.js`:
+- [x] **Step 1: Failing test** – `test/arena_angriff.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1882,9 +1882,9 @@ Beamer bei 1920 × 1080.
     await f.angriff(1, 0, { klartext: TEXT1 }).expect(409);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (zwei `S.Limiter` mit `h.now()`; Konstantzeit-Vergleich).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Arena: Angriffe per Klartext und Schlüssel, Orakel-Grenzen, Versuche ohne Inhalt"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (zwei `S.Limiter` mit `h.now()`; Konstantzeit-Vergleich).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Arena: Angriffe per Klartext und Schlüssel, Orakel-Grenzen, Versuche ohne Inhalt"`.
 
 ### Task 146: Arena – Chiffren-Liste, Beurteilung, Lehrkraft-Ansicht, Beamer-Stand mit ETag (TECHNIK §9.6/§9.7, §13.3/§13.4, E103, E104)
 
@@ -2877,6 +2877,18 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   keine. Zusatztest: HMAC mit Arena-Salz, XOR-Grenzfall 300 Buchstaben = 899 Zeichen (301 → 400), eigene Hinweise sofort,
   Eingaben (Klartext fehlt/keine Zeichenkette, Zusatzfelder in Körper und Stufe), fremde Arena 404 (zweiter Kurs in derselben
   App), gesperrter Kurs 403, DB-Durchsuchung.
+- **Task 145:** Grenzen nicht über zwei `S.Limiter`, sondern aus `arena_versuche` (gleitendes Fenster: letzter gezählter
+  Versuch des Teams auf die Chiffre < 30 s → 429; ≥ 60 gezählte Versuche des Teams in der Arena in den letzten 10 min → 429;
+  `Retry-After` aus der Zeit des maßgeblichen Versuchs). Grund: die Tabelle speichert jeden gezählten Versuch ohnehin,
+  die Grenze überlebt einen Neustart, `rest.team` ergibt sich direkt, und „erst beide prüfen, dann beide zählen“ ist eine
+  Zeile in derselben Transaktion (Prüfung dort wiederholt). Platzhalter-/Bereichsfehler eines geratenen Schlüssels erkennt
+  `baukasten.pruefe` vor dem Zählen (400, z. B. „Der Schlüsselwert „x“ wird in keiner Stufe verwendet.“); ein
+  `KryptoFehler` beim Entschlüsseln danach ist ein Fehlversuch (zählt). Klartext ohne Buchstaben bzw. > 2000 Zeichen → 400.
+  Schlüsselnamen wie Platzhalter (`^[a-z][a-z0-9]{0,11}$`). Bereits geknackte Chiffre: Versuch wird gezählt und gespeichert,
+  `geknackt_at` bleibt. Erfolg → `svc.stand.pruefeAbzeichen` für die aktiven Mitglieder. Plan-Test korrigiert: „fremde
+  Arena“ entstand in einer zweiten App (eigene Datenbank, gleiche ids → wäre ein gültiger Angriff im eigenen Kurs) – jetzt
+  zweiter Kurs in derselben App, dazu unbekannte Chiffre 404. Zusatztest: XOR-Chiffre per Schlüssel, `rest`, Schlüssel-Form,
+  abgelehnte Versuche zählen nicht, `Retry-After`, ohne Team/gesperrter Kurs 403.
 
 ## Reihenfolge und Abhängigkeiten
 

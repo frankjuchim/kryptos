@@ -1196,7 +1196,8 @@ der Spec-Dokumente: `baukasten.STUFEN` folgt W3, `verfahren.TYPEN` folgt Delta �
 
 Regeln: nicht die eigene Chiffre; Rate-Limit **1 Versuch je Team und Chiffre in 30 Sekunden** (SPEC W3 §9.4; vorher
 10 in 5 Minuten – Plan M7 E101) und **60 je Team in 10 Minuten**, jeweils 429 mit `Retry-After` (verhindert, den Server als Orakel für Brute Force zu nutzen – Brute Force gehört ins Kryptolabor); jeder
-Versuch wird als `arena_versuche` (ohne Inhalt) gespeichert. Erfolg: Ereignis „Team Skytale hat die Chiffre von Team
+gezählte Versuch wird als `arena_versuche` (ohne Inhalt) gespeichert; die Grenzen zählen diese Zeilen im gleitenden Fenster,
+abgelehnte Versuche (400, z. B. fehlender Platzhalterwert) zählen nicht (Plan M7 Task 145). Erfolg: Ereignis „Team Skytale hat die Chiffre von Team
 Siegel geknackt“ (Beamer), `geknackt_at` der Chiffre beim ersten Erfolg. Antwort `{ erfolg, geknackt: bool, rest }`.
 Bereits geknackte Chiffren dürfen weiter angegriffen werden (Lerneffekt, zählt aber nicht erneut).
 

@@ -25,7 +25,13 @@ const GRENZEN = Object.freeze({
   beschreibungMax: 2000,
   rohMax: 20000,
   einreichen: { max: 20, ms: 10 * 60 * 1000 },
-  pruefen: { max: 60, ms: 60 * 1000 }
+  pruefen: { max: 60, ms: 60 * 1000 },
+  /** Angriffe (E101): 1 je 30 s je Team und Chiffre (W3 §9.4), 60 je Team in 10 min (TECHNIK §9.5) */
+  angriffChiffreMs: 30 * 1000,
+  angriffTeam: { max: 60, ms: 10 * 60 * 1000 },
+  schluesselEintraege: 12,
+  schluesselWortMax: 26,
+  angriffKlartextMax: 2000
 });
 const VERFAHREN_FELDER = ['version', 'name', 'stufen'];
 const STUFE_FELDER = ['typ', 'param'];
@@ -100,6 +106,13 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
          geheimtext = excluded.geheimtext, klartext_hash = excluded.klartext_hash, klartext_laenge = excluded.klartext_laenge,
          hinweise = excluded.hinweise, eingereicht_at = excluded.eingereicht_at`
     )
+  };
+  const sqlV = {
+    chiffre: db.prepare('SELECT * FROM arena_chiffren WHERE id = ? AND arena_id = ?'),
+    letzterAufChiffre: db.prepare('SELECT MAX(zeit) AS zeit FROM arena_versuche WHERE chiffre_id = ? AND team_id = ?'),
+    imFenster: db.prepare('SELECT COUNT(*) AS n, MIN(zeit) AS erster FROM arena_versuche WHERE arena_id = ? AND team_id = ? AND zeit > ?'),
+    neu: db.prepare('INSERT INTO arena_versuche (arena_id, chiffre_id, team_id, schueler_id, art, erfolg, zeit) VALUES (?, ?, ?, ?, ?, ?, ?)'),
+    geknackt: db.prepare('UPDATE arena_chiffren SET geknackt_at = ? WHERE id = ? AND geknackt_at IS NULL')
   };
   const einreichLimit = new S.Limiter({ max: GRENZEN.einreichen.max, windowMs: GRENZEN.einreichen.ms });
   const pruefLimit = new S.Limiter({ max: GRENZEN.pruefen.max, windowMs: GRENZEN.pruefen.ms });
@@ -334,6 +347,92 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     return { ok: true, geheimtext };
   }
 
+  /** Form eines geratenen Schlüssels: Objekt, ≤ 12 Einträge, Namen wie Platzhalter, Werte Text ≤ 26 oder Ganzzahl → 400 */
+  function schluesselForm(k) {
+    const meldung = `Der Schlüssel ist ein Objekt mit höchstens ${GRENZEN.schluesselEintraege} Einträgen (Wörter bis ${GRENZEN.schluesselWortMax} Zeichen oder ganze Zahlen).`;
+    if (!k || typeof k !== 'object' || Array.isArray(k)) throw new V.ValidationError(meldung);
+    const eintraege = Object.entries(k);
+    if (eintraege.length < 1 || eintraege.length > GRENZEN.schluesselEintraege) throw new V.ValidationError(meldung);
+    for (const [name, w] of eintraege) {
+      if (!/^[a-z][a-z0-9]{0,11}$/.test(name)) throw new V.ValidationError(meldung);
+      const ok = (typeof w === 'string' && w.length >= 1 && w.length <= GRENZEN.schluesselWortMax) || (Number.isInteger(w) && Math.abs(w) <= 1e6);
+      if (!ok) throw new V.ValidationError(meldung);
+    }
+  }
+
+  /**
+   * Orakel-Grenzen aus arena_versuche (gezählte Versuche, gleitendes Fenster): 1 je 30 s je Team und Chiffre, 60 je Team in
+   * 10 min. Erst beide prüfen, dann zählt der Aufrufer (Zeile in arena_versuche). → Anzahl im Team-Fenster vor diesem Versuch
+   */
+  function pruefeGrenzen(a, c, team, jetzt) {
+    const letzter = sqlV.letzterAufChiffre.get(c.id, team.id).zeit;
+    if (letzter && Date.parse(letzter) > jetzt - GRENZEN.angriffChiffreMs) {
+      throw new ZuVieleError('Ein Versuch je 30 Sekunden auf dieselbe Chiffre.', (Date.parse(letzter) + GRENZEN.angriffChiffreMs - jetzt) / 1000);
+    }
+    const f = sqlV.imFenster.get(a.id, team.id, iso(jetzt - GRENZEN.angriffTeam.ms));
+    if (f.n >= GRENZEN.angriffTeam.max) {
+      throw new ZuVieleError(
+        `Euer Team hat in 10 Minuten ${GRENZEN.angriffTeam.max} Angriffe gestartet – Brute Force gehört ins Kryptolabor.`,
+        (Date.parse(f.erster) + GRENZEN.angriffTeam.ms - jetzt) / 1000
+      );
+    }
+    return f.n;
+  }
+
+  /**
+   * POST /api/arena/:id/chiffren/:cid/angriff { klartext } | { schluessel } → { erfolg, geknackt, rest: { chiffre, team } }.
+   * Eingereichte Klartexte und Schlüssel werden nie gespeichert; arena_versuche ohne Inhalt. Abgelehnte Versuche zählen nicht.
+   */
+  function angriff(s, id, cidRoh, body) {
+    const { a, team } = teilnehmer(s, id);
+    if (a.status !== 'angriff') throw new V.ConflictError(`Das geht in der Phase ‚${PHASE_NAME[a.status]}‘ nicht.`);
+    const c = sqlV.chiffre.get(V.id(cidRoh, 'Chiffre'), a.id);
+    if (!c) throw new V.NotFoundError('Chiffre nicht gefunden.');
+    if (c.team_id === team.id) throw new V.ValidationError('Eure eigene Chiffre könnt ihr nicht angreifen.');
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const mitK = b.klartext !== undefined && b.klartext !== null;
+    const mitS = b.schluessel !== undefined && b.schluessel !== null;
+    if (mitK === mitS) throw new V.ValidationError('Gebt entweder einen Klartext oder einen Schlüssel an.');
+    const verfahren = JSON.parse(c.verfahren);
+    let art;
+    if (mitK) {
+      art = 'klartext';
+      if (typeof b.klartext !== 'string' || b.klartext.length > GRENZEN.angriffKlartextMax || !Krypto.nurBuchstaben(b.klartext).length) {
+        throw new V.ValidationError(`Der Klartext braucht Buchstaben (höchstens ${GRENZEN.angriffKlartextMax} Zeichen).`);
+      }
+    } else {
+      art = 'schluessel';
+      schluesselForm(b.schluessel);
+      // fehlende oder ungültige Platzhalterwerte → 400 (zählt nicht)
+      const p = bibliothek(() => Krypto.baukasten.pruefe(verfahren, b.schluessel));
+      if (!p.ok) throw new V.ValidationError(p.fehler[0]);
+    }
+    const jetzt = now();
+    const vorher = pruefeGrenzen(a, c, team, jetzt);
+    let kandidat = null;
+    if (art === 'klartext') kandidat = b.klartext;
+    else {
+      try {
+        kandidat = Krypto.baukasten.entschluesseln(verfahren, b.schluessel, c.geheimtext.replace(/ /g, ''));
+      } catch (e) {
+        if (!(e && e.name === 'KryptoFehler')) throw e;
+        kandidat = null; // z. B. nicht druckbare Bytes nach falschem XOR-Schlüssel → Fehlversuch (zählt)
+      }
+    }
+    const erfolg = kandidat !== null && T.gleich(klartextHash(a.salz, kandidat), c.klartext_hash);
+    const geknackt = db.transaction(() => {
+      const frisch = sql.eine.get(a.id);
+      if (!frisch || frisch.status !== 'angriff') throw new V.ConflictError(`Das geht in der Phase ‚${PHASE_NAME[frisch ? frisch.status : a.status]}‘ nicht.`);
+      pruefeGrenzen(a, c, team, jetzt);
+      sqlV.neu.run(a.id, c.id, team.id, s.id, art, erfolg ? 1 : 0, iso(jetzt));
+      if (erfolg) sqlV.geknackt.run(iso(jetzt), c.id);
+      return !!sqlV.chiffre.get(c.id, a.id).geknackt_at;
+    })();
+    // Abzeichen „Arena-Knacker“ (Task 147) an alle aktuellen Mitglieder des angreifenden Teams
+    if (erfolg) for (const m of teams.mitglieder(team.id)) svc.stand.pruefeAbzeichen({ id: m.id });
+    return { erfolg, geknackt, rest: { chiffre: Math.ceil(GRENZEN.angriffChiffreMs / 1000), team: Math.max(0, GRENZEN.angriffTeam.max - vorher - 1) } };
+  }
+
   return {
     PHASEN,
     anlegen,
@@ -343,6 +442,7 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     aktuell,
     pruefen,
     einreichen,
+    angriff,
     GRENZEN,
     pruefeFrist,
     fristenPruefen,
