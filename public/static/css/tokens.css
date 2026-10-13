@@ -45,6 +45,10 @@
   /* Text auf Akzentflächen, Fokus-Ring */
   --auf-akzent: #FFFFFF;
   --fokus: #1F4E8C;
+  /* Farbmischer (M6 E80): Topffarben, ≥ 3 : 1 auf Papier/Karte/Papier-2 (Grafik); Text nie darauf */
+  --farbe-gelb: #A87F00;
+  --farbe-rot: #B83A2E;
+  --farbe-blau: #2F5DA8;
 
   /* Schriftstapel: „KR Symbole“ direkt hinter der Hausschrift (TECHNIK §11.4) */
   --f-ueberschrift: 'Fraunces', 'KR Symbole', Georgia, 'Times New Roman', serif;
@@ -92,6 +96,9 @@
   --hinweis-flaeche: #22355A;
   --auf-akzent: #0B1426;
   --fokus: #8FB4EA;
+  --farbe-gelb: #E3BE3B;
+  --farbe-rot: #E57A6E;
+  --farbe-blau: #7DA4E6;
   --messing-dunkel: #D9A441;
   --niveau-kern: #ECE6D8;
   --niveau-eA: #D98C8C;
@@ -116,6 +123,9 @@
     --hinweis-flaeche: #22355A;
     --auf-akzent: #0B1426;
     --fokus: #8FB4EA;
+    --farbe-gelb: #E3BE3B;
+    --farbe-rot: #E57A6E;
+    --farbe-blau: #7DA4E6;
     --messing-dunkel: #D9A441;
     --niveau-kern: #ECE6D8;
     --niveau-eA: #D98C8C;

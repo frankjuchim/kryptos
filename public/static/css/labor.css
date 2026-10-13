@@ -706,3 +706,76 @@ mark.markiert.wiederholung { font-weight: 700; }
 .strom-buchstabe, .strom-ende { font-family: var(--f-mono); font-size: 15px; font-weight: 700; fill: var(--text); }
 .strom-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
 .stellungen td, .stellungen th { font-family: var(--f-mono); }
+
+/* ======================================================================
+   Modulo-Uhr & Farbmischer (W4 §9.1, M6 Task 121, E80)
+   ====================================================================== */
+.modulo-hinweis { display: grid; gap: var(--a-2); }
+.modulo-hinweis:empty { display: none; }
+.modulo-feld input { width: 8rem; min-height: var(--ziel); font-family: var(--f-mono); }
+.uhr-bereich { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 768px) { .uhr-bereich { grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr); } }
+.uhr { display: block; width: min(100%, 22rem); height: auto; }
+.uhr-rand { fill: var(--karte); stroke: var(--linie); stroke-width: 2; }
+.uhr-feld text { font-family: var(--f-mono); font-size: 13px; fill: var(--text); }
+.uhr-marke { fill: var(--text-2); }
+.uhr-feld.start .uhr-marke { fill: none; stroke: var(--text); stroke-width: 2; }
+.uhr-feld.ziel text { font-weight: 700; font-size: 16px; text-decoration: underline; }
+.uhr-feld.ziel .uhr-marke { fill: var(--akzent); }
+.uhr-feld.pfad text { font-weight: 700; }
+.uhr-pfad { fill: none; stroke: var(--hinweis); stroke-width: 2; stroke-dasharray: 5 3; }
+.zeiger { stroke: var(--akzent); stroke-width: 4; stroke-linecap: round; transform: rotate(var(--winkel, 0deg)); transform-box: view-box; transform-origin: 150px 150px; }
+.zeiger.animiert { transition: transform .7s ease-in-out; }
+.uhr-nabe { fill: var(--akzent); }
+.uhr-text { display: grid; gap: var(--a-3); min-width: 0; }
+.uhr-zeile { margin: 0; font-family: var(--f-mono); font-size: 1.15rem; font-weight: 700; overflow-wrap: anywhere; }
+.uhr-potenzen { margin: 0; padding-left: 1.4em; font-family: var(--f-mono); display: grid; gap: 2px; }
+.uhr-potenzen:empty { display: none; }
+.tabelle-kopf { margin: 0; font-weight: 700; }
+.tabelle-scroll { max-height: 26rem; overflow-y: auto; }
+.modulo-tabelle td { font-family: var(--f-mono); }
+.modulo-tabelle tr.eins td, .modulo-tabelle tr.treffer td, .modulo-tabelle tr.treffer th { font-weight: 700; background: var(--ok-flaeche); color: var(--text); }
+.modulo-tabelle tr.treffer { outline: 2px solid var(--ok); outline-offset: -2px; }
+/* Farbmischer: Topffarben nur als Fläche, nie als Text; jede Farbe mit eigenem Muster */
+.farb-proben { display: none; }
+.farb-probe.farbe-gelb { color: var(--farbe-gelb); }
+.farb-probe.farbe-rot { color: var(--farbe-rot); }
+.farb-probe.farbe-blau { color: var(--farbe-blau); }
+.muster { display: inline-block; width: 1.5rem; height: 1.5rem; border: 1.5px solid var(--text); border-radius: 50%; vertical-align: middle; flex: none; }
+.muster-gelb { background: radial-gradient(circle, var(--karte) 0 1.5px, transparent 2px) 0 0 / 6px 6px, var(--farbe-gelb); }
+.muster-rot { background: repeating-linear-gradient(45deg, var(--farbe-rot) 0 4px, var(--karte) 4px 6px); }
+.muster-blau { background: repeating-conic-gradient(var(--farbe-blau) 0 25%, var(--karte) 0 50%) 0 0 / 8px 8px; }
+.muster-reihe { display: inline-flex; flex-wrap: wrap; gap: 3px; vertical-align: middle; }
+.muster-reihe .muster { width: 1.1rem; height: 1.1rem; }
+.farb-toepfe { display: flex; flex-wrap: wrap; gap: var(--a-3); }
+.topf { display: grid; grid-template-columns: auto auto; grid-template-areas: "farbe name" "farbe rolle"; align-items: center; gap: 0 var(--a-2); min-height: var(--ziel); padding: var(--a-2) var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); color: var(--text); text-align: left; cursor: pointer; }
+.topf .topf-farbe { grid-area: farbe; width: 2.2rem; height: 2.2rem; border-radius: 0 0 40% 40%; }
+.topf-name { grid-area: name; font-weight: 700; }
+.topf-rolle { grid-area: rolle; font-size: .8rem; color: var(--text-2); }
+.topf.geschuettet .topf-farbe { animation: topf-kippen .5s ease-in-out; }
+@keyframes topf-kippen { 50% { transform: rotate(-35deg); } }
+.topf-info, .farb-merksatz { margin: 0; }
+.farb-merksatz { font-weight: 700; }
+.modulo-schalter { justify-self: start; }
+.dh-eingaben { display: flex; flex-wrap: wrap; gap: var(--a-3); }
+.dh-eingaben[hidden] { display: none; }
+.farb-buehne { display: grid; gap: var(--a-3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .farb-buehne { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); } }
+.farb-karte, .eve-leiste { display: grid; gap: var(--a-2); align-content: start; padding: var(--a-3); border: 1.5px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); min-width: 0; }
+.farb-karte h3, .eve-leiste h3 { margin: 0; font-size: 1rem; }
+.eve-leiste { border-style: dashed; }
+.eve-leiste ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--a-1); }
+.farb-zeile { display: flex; gap: var(--a-3); align-items: center; }
+.farbkreis { width: 4.5rem; height: 4.5rem; border-radius: 50%; border: 2px solid var(--text); background: var(--mischung, var(--papier-2)); flex: none; }
+.farbkreis.neu { animation: farbe-neu .5s ease-out; }
+@keyframes farbe-neu { from { transform: scale(.8); } }
+.farbname { margin: 0 0 var(--a-1); font-weight: 700; }
+.dh-zeile { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.dh-k { font-weight: 700; }
+.eve-bereich { display: grid; gap: var(--a-2); justify-items: start; }
+.eve-ergebnis:empty { display: none; }
+.eve-ergebnis { font-family: var(--f-text); }
+@media (prefers-reduced-motion: reduce) {
+  .zeiger.animiert { transition: none; }
+  .topf.geschuettet .topf-farbe, .farbkreis.neu { animation: none; }
+}

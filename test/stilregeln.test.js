@@ -65,3 +65,14 @@ test('Review M4 W1: Linkfarbe auf Tinte/Nacht/Kopf gilt nicht für Knöpfe (Mess
     }
   }
 });
+
+test('Labor-Werkzeuge setzen per CSSOM nur Custom Properties; Farbwerte nur als --mischung im Farbmischer (M6 E80)', () => {
+  const DIR = path.join(PUB, 'static', 'js', 'krypto', 'labor');
+  for (const f of fs.readdirSync(DIR).filter((x) => x.endsWith('.js'))) {
+    const src = lies(path.join(DIR, f));
+    for (const m of src.matchAll(/style\.setProperty\(\s*(['`])([^'`]*)\1/g)) assert.match(m[2], /^--/, `${f}: setProperty nur für --Variablen`);
+    assert.doesNotMatch(src, /\.style\.(?!setProperty)\w+\s*=/, `${f}: keine direkten style-Zuweisungen`);
+    const farben = [...src.matchAll(/setProperty\(\s*'(--[\w-]+)'\s*,\s*`?(?:rgb|#)/g)].map((m) => m[1]);
+    for (const v of farben) assert.ok(f === 'modulo.js' && v === '--mischung', `${f}: Farbwert per CSSOM nur --mischung im Farbmischer (${v})`);
+  }
+});

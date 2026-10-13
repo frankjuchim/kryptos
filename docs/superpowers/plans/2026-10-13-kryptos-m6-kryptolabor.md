@@ -1916,7 +1916,7 @@ Farbmischers werden angetippt und „geschüttet“; der Ablauf läuft im Nachsp
   nur p, g, A, B. **Keine** Funktion „a aus A“ (W4 §9.1 Grenze).
 - `zustand()` → `{ reiter, m, zeiger, zeile, potenzen, primitiv, inverses, alice, bob, eve, A, B, K }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_modulo.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_modulo.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1968,10 +1968,10 @@ Farbmischers werden angetippt und „geschüttet“; der Ablauf läuft im Nachsp
     assert.equal(w.k.eins(w.flaeche, 'line.zeiger').classList.contains('animiert'), false);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest (einzige Ausnahme sRGB-Gamma in
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest (einzige Ausnahme sRGB-Gamma in
   `farbeMischen`), `designsystem.test.js`, `npm test` grün; Sichtprüfung (Uhr bei 360 px, Farbmischer hell/dunkel,
   Muster ohne Farbe unterscheidbar).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Modulo-Uhr (Addieren, Multiplizieren, Potenzen, Inverse) und Farbmischer mit Zahlen"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Modulo-Uhr (Addieren, Multiplizieren, Potenzen, Inverse) und Farbmischer mit Zahlen"`.
 
 ### Task 122: Werkzeug „RSA-Rechenwerk“ (W4 §9.2)
 

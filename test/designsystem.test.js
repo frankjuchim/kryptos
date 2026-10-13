@@ -56,3 +56,13 @@ test('E25/E37: Akzent und --ok nie als Text auf --papier-2', () => {
     }
   }
 });
+
+test('Farbmischer-Töpfe (M6 E80): --farbe-gelb/-rot/-blau hell und dunkel ≥ 3 : 1 auf Papier, Karte, Papier-2 (Grafik, WCAG 1.4.11)', () => {
+  const AUTO = { ...HELL, ...block(T, ':root[data-theme="auto"]') };
+  for (const [name, t] of [['hell', HELL], ['dunkel', DUNKEL], ['auto', AUTO]]) {
+    for (const f of ['--farbe-gelb', '--farbe-rot', '--farbe-blau']) {
+      assert.ok(t[f], `${name}: ${f} fehlt`);
+      for (const h of ['--papier', '--karte', '--papier-2']) assert.ok(kontrast(t[f], t[h]) >= 3, `${name}: ${f} auf ${h} = ${kontrast(t[f], t[h]).toFixed(2)}`);
+    }
+  }
+});
