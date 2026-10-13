@@ -1254,7 +1254,7 @@ Beamer bei 1920 × 1080.
   Schlüsselblock und `c` **berechnet**, nicht gespeichert), `abschnitt`; je Paar gleicher Abschnitte `xor` (Hex) und
   `nullen` = Anzahl Bytes < 0x20, `laenge`; nach dem Beenden nur Zahlen (`nullen`, `laenge`, geknackt).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_otp.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_otp.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1310,8 +1310,8 @@ Beamer bei 1920 × 1080.
     await sende(K.xor('MORGEN BAHNHOF NORD', k2), 'MORGEN BAHNHOF NORD', 2).expect(200);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenario Der doppelte Schlüssel (Schlüsselblock, Abschnitte, Sparschwein, Auflösung C1 ⊕ C2)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenario Der doppelte Schlüssel (Schlüsselblock, Abschnitte, Sparschwein, Auflösung C1 ⊕ C2)"`.
 
 ### Task 140: Szenario „Schlüsseltausch vor Eves Augen“ (W4 §9.3, E95, E98)
 
@@ -2814,6 +2814,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   anteil, fertig, platz, verlauf }], hinweise }`. `src/app.js`: Standard `<seedDir>/funkraum/wettknacken.json` (K41 ergänzt);
   `seed/` liegt ganz im Image (Dockerfile unverändert), `docker.test.js` prüft die Datei. Zusatztests: Hinweise/Ticker/Platz 2/
   Auflösung, Lader.
+- **Task 139:** Der Abschnitt einer Nachricht steht bis zum Beenden in `funk_nachrichten.fuer_schluessel` (`A1`/`A2`; die
+  Spalte wird beim Beenden geleert) – der Vorprüfungs-Hook kennt die Nachrichten-id noch nicht, ein Zähler in `zustand` könnte
+  bei einer danach abgelehnten Speicherung (200er-Grenze) auseinanderlaufen. Prüfreihenfolge: Phase `funken` (409) →
+  Baukasten (400) → Abschnitt 1|2 (400) → Hex (400) → Rückrechnung C ⊕ K = M, exakt GROSS (400) → Reihenfolge (409: dritter
+  Spruch; erster Spruch nicht mit Abschnitt 1; Abschnitt 1 erneut ohne Sparschwein). Sparschwein: `wiederholerTeamId` muss
+  beim Anlegen und beim Start ein Alice-Team sein (400). Regie sieht `sprueche` (mit `m`) und `vergleiche` immer (W3: „sieht
+  alle Klartexte“), der Beamer erst in `aufloesung`; `eveGewinnt` sehen alle. Eve-`paare` und Vergleiche nur aus sichtbaren
+  (nicht ausgeblendeten) Sprüchen. Zusatztest: fremde Blöcke unsichtbar, Beamer verdeckt, Abschnitts-Reihenfolge, Auswertung.
 
 ## Reihenfolge und Abhängigkeiten
 
