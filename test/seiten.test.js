@@ -92,3 +92,14 @@ test('Schriften: jede Schriftdatei hat eine Lizenz in fonts/LIZENZEN/OFL-<Famili
     assert.match(lies(lizenz), /Copyright/i, `${rel(lizenz)}: Copyright-Zeile fehlt`);
   }
 });
+
+test('SVG-Dateien ohne Skript und ohne externe Verweise', () => {
+  const svgs = alleDateien(path.join(PUBLIC, 'static')).filter((p) => p.endsWith('.svg'));
+  assert.ok(svgs.length >= 1, 'keine SVG-Dateien');
+  for (const p of svgs) {
+    const svg = lies(p);
+    assert.doesNotMatch(svg, /<script/i, `${rel(p)}: <script>`);
+    assert.doesNotMatch(svg, /\son\w+\s*=/i, `${rel(p)}: Event-Handler-Attribut`);
+    assert.doesNotMatch(svg, /href\s*=\s*"(https?:)?\/\//i, `${rel(p)}: externer Verweis`);
+  }
+});

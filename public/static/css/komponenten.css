@@ -1,0 +1,556 @@
+/* Komponenten (TECHNIK §11.3, DESIGNSYSTEM §5): Kopfzeile, Fuß, Knöpfe, Karten, Akte, Archivwissen, Chips, Siegel,
+   Fortschrittsring, Geheimtext/Klartext, Rückmeldung, Toast, Dialog, Tabs, Lade-/Leer-/Fehlerzustand, Epochen-Tor,
+   Zeitsprung, Rahmenflächen (Tinte/Nacht) mit Textur. Gestalt nach prototyp/kryptos_prototyp.html, Namen nach TECHNIK
+   (E17). Farben nur über Tokens; Hervorhebung nie nur über Farbe (Rand, Symbol, Text).
+   Animationen stehen nur in den Blöcken am Ende (Bewegung erlaubt) – bei prefers-reduced-motion oder
+   data-bewegung="aus" gibt es keine, Inhalte sind sofort vollständig sichtbar. */
+
+/* ---------- Rahmenflächen (Tinte, Nacht) und Textur ---------- */
+.tinte, .nacht, .kopf, .zeitsprung {
+  --fokus: var(--messing-hell);
+  color: var(--auf-tinte);
+}
+.tinte { background-color: var(--tinte); }
+.nacht { background-color: var(--nacht); }
+.tinte a, .nacht a, .kopf a { color: var(--auf-tinte); }
+.textur, .kopf, .tinte, .nacht, .zeitsprung {
+  background-image: var(--textur, none);
+  background-repeat: repeat;
+}
+
+/* ---------- Kopfzeile ---------- */
+.kopf {
+  background-color: var(--tinte);
+  border-bottom: 3px solid var(--akzent-hell, var(--messing-hell));
+  position: relative;
+  z-index: 20;
+}
+.kopf-innen {
+  display: flex;
+  align-items: center;
+  gap: var(--a-4);
+  min-height: 60px;
+  padding-block: 6px;
+  max-width: var(--inhalt);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 32px);
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--ziel);
+  padding: var(--a-1) 2px;
+  color: var(--auf-tinte);
+  text-decoration: none;
+  background: none;
+  border: 0;
+}
+.logo svg { width: 34px; height: 34px; color: var(--messing-hell); }
+.logo span {
+  font-family: var(--f-ueberschrift);
+  font-weight: 600;
+  letter-spacing: .2em;
+  font-size: 1.05rem;
+}
+.kopf-epoche {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a-2);
+  flex: 1;
+  min-width: 0;
+  font-size: .92rem;
+  color: var(--auf-tinte-2);
+}
+.kopf-epoche i {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--akzent-hell, var(--messing-hell));
+}
+.kopf-epoche span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kopf-nav { display: flex; align-items: center; gap: var(--a-1); margin-left: auto; }
+.kopf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--ziel);
+  min-width: var(--ziel);
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--r-knopf);
+  background: none;
+  color: var(--auf-tinte);
+  font-size: .88rem;
+  text-decoration: none;
+}
+.kopf-link:hover, .kopf-link[aria-current="page"] { background: color-mix(in srgb, var(--auf-tinte) 8%, transparent); }
+.kopf-link[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--messing-hell); }
+.kopf-link svg { width: 18px; height: 18px; }
+.kopf .punkt-funk {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fehler-hell);
+}
+.rang {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--ziel);
+  padding: var(--a-1) var(--a-3) var(--a-1) var(--a-1);
+  border-radius: var(--r-chip);
+  background: var(--tinte-2);
+  border: 1px solid color-mix(in srgb, var(--messing-hell) 40%, transparent);
+  color: var(--auf-tinte);
+  text-decoration: none;
+}
+.rang svg { width: 34px; height: 34px; color: var(--messing-hell); }
+.rang-text { display: grid; line-height: 1.15; }
+.rang-text b { font-size: .84rem; color: var(--messing-hell); }
+.rang-text small { font-size: .72rem; color: var(--auf-tinte-2); }
+.menue { position: relative; }
+.menue-liste {
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--a-2));
+  min-width: 240px;
+  display: grid;
+  gap: 2px;
+  padding: var(--a-2);
+  list-style: none;
+  margin: 0;
+  background: var(--tinte-2);
+  border: 1px solid color-mix(in srgb, var(--messing-hell) 35%, transparent);
+  border-radius: var(--r-knopf);
+  box-shadow: var(--schatten);
+  z-index: 30;
+}
+.menue-liste .kopf-link { width: 100%; justify-content: flex-start; }
+
+/* ---------- Fuß ---------- */
+.fuss {
+  background-color: var(--nacht);
+  color: var(--auf-tinte-2);
+  font-size: .85rem;
+  --fokus: var(--messing-hell);
+}
+.fuss-innen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2) var(--a-5);
+  justify-content: space-between;
+  align-items: center;
+  padding-block: var(--a-4);
+  max-width: var(--inhalt);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 32px);
+}
+.fuss a {
+  color: var(--auf-tinte);
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ziel);
+}
+
+/* ---------- Knöpfe ---------- */
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--a-2);
+  min-height: var(--ziel);
+  padding: 0 18px;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-knopf);
+  font-weight: 700;
+  font-size: .95rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  background: transparent;
+  color: var(--text);
+}
+.knopf:active { transform: translateY(1px); }
+.knopf:disabled, .knopf[aria-disabled="true"] { opacity: .55; }
+.knopf svg { width: 18px; height: 18px; }
+.knopf-primaer { background: var(--akzent); border-color: var(--akzent); color: var(--auf-akzent); }
+.knopf-primaer:hover { filter: brightness(1.08); }
+.knopf-zweit { border-color: var(--linie); color: var(--text); }
+.knopf-zweit:hover { border-color: var(--akzent); }
+.knopf-leise { color: var(--text-2); padding: 0 10px; }
+.knopf-leise:hover { color: var(--text); background: var(--papier-2); }
+.knopf-messing { background: var(--messing-hell); border-color: var(--messing-hell); color: var(--nacht); }
+.knopf-messing:hover { filter: brightness(1.08); }
+.knopf-gefahr { background: var(--fehler); border-color: var(--fehler); color: var(--auf-akzent); }
+.tinte .knopf-zweit, .nacht .knopf-zweit {
+  border-color: color-mix(in srgb, var(--auf-tinte) 35%, transparent);
+  color: var(--auf-tinte);
+}
+.tinte .knopf-zweit:hover, .nacht .knopf-zweit:hover { border-color: var(--messing-hell); }
+.tinte .knopf-leise, .nacht .knopf-leise { color: var(--auf-tinte-2); }
+.tinte .knopf-leise:hover, .nacht .knopf-leise:hover { color: var(--auf-tinte); background: var(--tinte-2); }
+.knopf-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: center; }
+
+/* ---------- Karten ---------- */
+.karte {
+  background: var(--karte);
+  color: var(--text);
+  border: 1px solid var(--linie);
+  border-radius: var(--r-karte);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  align-content: start;
+}
+.karte > .etikett { color: var(--text-2); }
+.karte.tinte, .karte.nacht { border-color: var(--tinte-2); color: var(--auf-tinte); }
+.karte.tinte { background-color: var(--tinte); }
+.karte.nacht { background-color: var(--nacht); }
+.karte-akte {
+  padding: 0;
+  overflow: hidden;
+  border-top: 6px solid var(--akzent);
+  gap: 0;
+  text-align: left;
+}
+.karte-akte > * { padding-inline: var(--a-4); }
+.karte-akte > :first-child { padding-top: var(--a-3); }
+.karte-akte > :last-child { padding-bottom: var(--a-3); }
+.aktenzeichen {
+  font-family: var(--f-mono);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--akzent);
+}
+.archivwissen {
+  background: var(--papier-2);
+  color: var(--text);
+  border-left: 6px double var(--akzent);
+  border-radius: 0 var(--r-knopf) var(--r-knopf) 0;
+  padding: var(--a-4) var(--a-5);
+  display: grid;
+  gap: var(--a-2);
+}
+.archivwissen h2, .archivwissen h3 { color: var(--text); }
+
+/* ---------- Chips ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border: 1px solid var(--linie);
+  border-radius: var(--r-chip);
+  background: transparent;
+  color: var(--text);
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+button.chip, a.chip { min-height: var(--ziel); text-decoration: none; }
+.chip-niveau, .niveau-chip {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 1px 9px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--r-chip);
+  background: transparent;
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.chip-niveau.niveau-kern, .niveau-chip.niveau-kern { color: var(--niveau-kern); }
+.chip-niveau.niveau-eA, .niveau-chip.niveau-eA { color: var(--niveau-eA); }
+.chip-niveau.niveau-ergaenzung, .niveau-chip.niveau-ergaenzung { color: var(--niveau-ergaenzung); border-style: dashed; }
+.chip-niveau.niveau-kuer, .niveau-chip.niveau-kuer { color: var(--niveau-kuer); border-style: double; border-width: 3px; }
+.chip-rolle { background: var(--papier-2); color: var(--text); font-weight: 400; }
+.chip-rolle.rolle-kryptografie::before { content: "🛡"; }
+.chip-rolle.rolle-kryptoanalyse::before { content: "🔍"; }
+.chip-falle { color: var(--fehler); border: 1.5px solid var(--fehler); background: transparent; }
+.chip-falle.aktiv, .chip-falle[aria-pressed="true"] { background: var(--fehler); color: var(--papier); }
+.chip-neutral { background: var(--papier-2); color: var(--text-2); font-weight: 400; }
+.chip-reihe { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+/* ---------- Siegel und Fortschrittsring ---------- */
+.siegel { display: inline-block; width: 48px; height: 48px; color: var(--messing); flex: none; }
+.siegel svg { width: 100%; height: 100%; display: block; }
+.siegel.gesperrt { color: var(--linie); }
+.siegel.voll { color: var(--messing-dunkel); }
+.tinte .siegel.voll, .nacht .siegel.voll { color: var(--messing-hell); }
+.ring { display: inline-grid; place-items: center; width: 64px; height: 64px; position: relative; flex: none; }
+.ring svg { width: 100%; height: 100%; display: block; transform: rotate(-90deg); }
+.ring .ring-spur { fill: none; stroke: var(--linie); stroke-width: 6; }
+.ring .ring-wert { fill: none; stroke: var(--akzent); stroke-width: 6; stroke-linecap: round; }
+.tinte .ring .ring-spur, .nacht .ring .ring-spur { stroke: var(--tinte-3); }
+.tinte .ring .ring-wert, .nacht .ring .ring-wert { stroke: var(--akzent-hell, var(--messing-hell)); }
+.ring-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-ueberschrift);
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+/* ---------- Geheimtext und Klartext (DESIGNSYSTEM §3) ---------- */
+.geheimtext {
+  font-family: var(--f-mono);
+  font-size: var(--gr-mono);
+  font-variant-ligatures: none;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  word-spacing: 1ch;
+  color: var(--text);
+  background: var(--papier-2);
+  border-left: 3px solid var(--akzent);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 14px;
+  overflow-wrap: anywhere;
+}
+.klartext {
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  text-transform: lowercase;
+  letter-spacing: .06em;
+  color: var(--text-2);
+  font-style: normal;
+}
+
+/* ---------- Rückmeldung (Rand + Symbol + Text) ---------- */
+.rueckmeldung {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--a-1) var(--a-3);
+  align-items: start;
+  padding: var(--a-3) var(--a-4);
+  border: 1.5px solid var(--linie);
+  border-left-width: 6px;
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+}
+.rueckmeldung::before { font-weight: 700; font-size: 1.1rem; line-height: 1.4; }
+.rueckmeldung.ok { border-color: var(--ok); background: var(--ok-flaeche); }
+.rueckmeldung.ok::before { content: "✓"; color: var(--ok); }
+.rueckmeldung.falsch { border-color: var(--fehler); background: var(--fehler-flaeche); }
+.rueckmeldung.falsch::before { content: "✗"; color: var(--fehler); }
+.rueckmeldung.info { border-color: var(--hinweis); background: var(--hinweis-flaeche); }
+.rueckmeldung.info::before { content: "ℹ"; color: var(--hinweis); }
+.rueckmeldung > * { grid-column: 2; }
+.rueckmeldung > :first-child { grid-row: 1; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  max-width: min(520px, calc(100vw - 32px));
+  padding: var(--a-3) var(--a-4);
+  background: var(--tinte);
+  color: var(--auf-tinte);
+  border: 1px solid color-mix(in srgb, var(--messing-hell) 50%, transparent);
+  border-radius: 12px;
+  box-shadow: var(--schatten);
+  font-size: .9rem;
+  --fokus: var(--messing-hell);
+}
+.toast svg { width: 18px; height: 18px; color: var(--messing-hell); margin-top: 2px; }
+
+/* ---------- Dialog ---------- */
+dialog {
+  max-width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: var(--a-5);
+  border: 1px solid var(--linie);
+  border-top: 6px solid var(--akzent, var(--messing));
+  border-radius: var(--r-karte);
+  background: var(--karte);
+  color: var(--text);
+  box-shadow: var(--schatten);
+}
+dialog:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent); }
+.dialog-fuss { display: flex; flex-wrap: wrap; gap: var(--a-3); justify-content: flex-end; margin-top: var(--a-5); }
+
+/* ---------- Tabs ---------- */
+.tabs {
+  display: flex;
+  gap: var(--a-1);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--linie);
+  scrollbar-width: thin;
+}
+[role="tab"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--a-4);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--text-2);
+  font-weight: 700;
+  white-space: nowrap;
+}
+[role="tab"]:hover { color: var(--text); }
+[role="tab"][aria-selected="true"] { color: var(--text); border-bottom-color: var(--akzent); }
+
+/* ---------- Zustände: Laden, leer, Fehler ---------- */
+.laden {
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+  padding: var(--a-6) 0;
+  color: var(--text-2);
+  justify-content: center;
+}
+.laden::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid var(--linie);
+  border-top-color: var(--akzent, var(--messing));
+}
+.leer-zustand {
+  display: grid;
+  justify-items: center;
+  gap: var(--a-3);
+  text-align: center;
+  padding: var(--a-7) var(--a-4);
+  color: var(--text-2);
+  border: 1.5px dashed var(--linie);
+  border-radius: var(--r-karte);
+}
+.leer-zustand svg { width: 48px; height: 48px; color: var(--messing); }
+.fehler-box {
+  padding: var(--a-4);
+  border: 1.5px solid var(--fehler);
+  border-left-width: 6px;
+  border-radius: var(--r-knopf);
+  background: var(--fehler-flaeche);
+  color: var(--text);
+}
+.fehler-box::before { content: "✗ "; color: var(--fehler); font-weight: 700; }
+
+/* ---------- Epochen-Tor (Zeitleiste) ---------- */
+.tor {
+  display: grid;
+  justify-items: center;
+  gap: var(--a-1);
+  width: 100%;
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--auf-tinte);
+  text-align: center;
+  text-decoration: none;
+}
+.tor-bild { position: relative; width: 100%; max-width: 132px; }
+.tor-bild svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tor-flaeche { fill: var(--tinte); }
+.tor-rand { fill: none; stroke: var(--akzent-hell, var(--messing-hell)); stroke-width: 2; }
+.tor-ornament { color: var(--akzent-hell, var(--messing-hell)); opacity: .16; }
+.tor-jahr { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .06em; color: var(--akzent-hell, var(--messing-hell)); }
+.tor-name {
+  font-family: var(--f-ueberschrift);
+  font-weight: 600;
+  font-size: clamp(.82rem, 1.3vw, 1rem);
+  line-height: 1.2;
+}
+.tor-status { font-size: .74rem; color: var(--auf-tinte-2); line-height: 1.3; }
+.tor:hover:not(.gesperrt) .tor-rand { stroke-width: 3; }
+.tor.gesperrt { cursor: not-allowed; }
+.tor.gesperrt .tor-flaeche { fill: var(--nacht); }
+.tor.gesperrt .tor-rand { stroke: var(--auf-tinte-2); stroke-dasharray: 4 5; }
+.tor.gesperrt .tor-jahr, .tor.gesperrt .tor-status { color: var(--auf-tinte-2); }
+.tor.gesperrt .tor-name {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  font-size: .76rem;
+  letter-spacing: .1em;
+  color: var(--auf-tinte-2);
+}
+
+/* ---------- Zeitsprung (Overlay beim Epochenwechsel) ---------- */
+.zeitsprung {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background-color: var(--nacht);
+  color: var(--akzent-hell, var(--messing-hell));
+  pointer-events: none;
+}
+.zeitsprung svg { grid-area: 1 / 1; width: min(70vmin, 520px); height: min(70vmin, 520px); }
+.zeitsprung-text { grid-area: 1 / 1; text-align: center; color: var(--auf-tinte); }
+.zeitsprung-text .mono { color: var(--akzent-hell, var(--messing-hell)); font-size: .9rem; letter-spacing: .2em; }
+.zeitsprung-text b {
+  display: block;
+  font-family: var(--f-ueberschrift);
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ---------- Übergang bis Task 61: Niveau-Übersicht der Platzhalter-Themenseite ---------- */
+.niveau-legende { display: grid; grid-template-columns: auto 1fr; gap: var(--a-2) var(--a-3); margin: 0 0 var(--a-4); }
+.niveau-legende dd { margin: 0; }
+.niveau-welt { border-left: 4px solid var(--welt, var(--akzent, var(--messing))); padding-left: var(--a-3); margin: var(--a-5) 0 var(--a-2); }
+
+/* ---------- Bewegung (nur ohne prefers-reduced-motion und ohne data-bewegung="aus") ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-bewegung="aus"]) .knopf,
+  :root:not([data-bewegung="aus"]) .kopf-link,
+  :root:not([data-bewegung="aus"]) [role="tab"] { transition: background-color .2s, border-color .2s, color .2s, transform .15s; }
+  :root:not([data-bewegung="aus"]) .kopf { transition: border-color .5s; }
+  :root:not([data-bewegung="aus"]) .logo svg { transition: transform .6s cubic-bezier(.5, 0, .2, 1); }
+  :root:not([data-bewegung="aus"]) .logo:hover svg { transform: rotate(-30deg); }
+  :root:not([data-bewegung="aus"]) .tor { transition: transform .25s; }
+  :root:not([data-bewegung="aus"]) .tor:hover:not(.gesperrt) { transform: translateY(-4px); }
+  :root:not([data-bewegung="aus"]) .ring .ring-wert { transition: stroke-dashoffset 1s ease-out; }
+  :root:not([data-bewegung="aus"]) .kopf .punkt-funk { animation: kr-puls 1.8s infinite; }
+  :root:not([data-bewegung="aus"]) .laden::before { animation: kr-drehen 1s linear infinite; }
+  :root:not([data-bewegung="aus"]) .toast:not([hidden]) { animation: kr-einblenden .3s ease-out; }
+  :root:not([data-bewegung="aus"]) .zeitsprung.an { animation: kr-zeitsprung .75s ease both; }
+  :root:not([data-bewegung="aus"]) .zeitsprung .ring-dreh { transform-origin: 50% 50%; animation: kr-ring .7s cubic-bezier(.6, 0, .2, 1) both; }
+  :root:not([data-bewegung="aus"]) .zeitsprung-text { animation: kr-zeitsprung-text .7s ease both; }
+}
+@keyframes kr-puls {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fehler-hell) 70%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 8px transparent; }
+}
+@keyframes kr-drehen { to { transform: rotate(360deg); } }
+@keyframes kr-einblenden { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes kr-ring { from { transform: rotate(0); } to { transform: rotate(200deg); } }
+@keyframes kr-zeitsprung { 0% { opacity: 0; } 18%, 75% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes kr-zeitsprung-text { 0% { opacity: 0; transform: scale(.94); } 35%, 70% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+/* ---------- Responsiv ---------- */
+@media (max-width: 860px) {
+  .kopf-epoche { display: none; }
+  .kopf-innen { justify-content: space-between; gap: var(--a-2); }
+}
+@media (max-width: 640px) {
+  .rang-text, .kopf-link .lang { display: none; }
+  .rang { padding: var(--a-1); }
+  .logo span { letter-spacing: .14em; font-size: .95rem; }
+  .karte { padding: var(--a-4); }
+}

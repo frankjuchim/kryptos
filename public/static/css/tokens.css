@@ -36,6 +36,12 @@
   --hinweis: #1F4E8C;
   --hinweis-flaeche: #E6EEF8;
 
+  /* Niveau-Chips (DESIGNSYSTEM §5): K Tinte, eA Ochsenblut, E Lapis, Kür Messing dunkel – je Rand + Text */
+  --niveau-kern: #14213D;
+  --niveau-eA: #7A2E2E;
+  --niveau-ergaenzung: #1F4E8C;
+  --niveau-kuer: #8A5F1A;
+
   /* Text auf Akzentflächen, Fokus-Ring */
   --auf-akzent: #FFFFFF;
   --fokus: #1F4E8C;
@@ -87,6 +93,10 @@
   --auf-akzent: #0B1426;
   --fokus: #8FB4EA;
   --messing-dunkel: #D9A441;
+  --niveau-kern: #ECE6D8;
+  --niveau-eA: #D98C8C;
+  --niveau-ergaenzung: #8FB4EA;
+  --niveau-kuer: #D9A441;
   color-scheme: dark;
 }
 
@@ -107,6 +117,10 @@
     --auf-akzent: #0B1426;
     --fokus: #8FB4EA;
     --messing-dunkel: #D9A441;
+    --niveau-kern: #ECE6D8;
+    --niveau-eA: #D98C8C;
+    --niveau-ergaenzung: #8FB4EA;
+    --niveau-kuer: #D9A441;
     color-scheme: dark;
   }
 }

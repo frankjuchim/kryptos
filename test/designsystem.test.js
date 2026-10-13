@@ -32,7 +32,11 @@ test('Epochen = fach.WELTEN (Akzent) und DESIGNSYSTEM §2.2 (Akzent hell)', () =
   }
   assert.match(E, /:root\[data-theme="dunkel"\]\[data-epoche\][\s\S]*--akzent:\s*var\(--akzent-hell\)/);
 });
-const PAARE = [['--text', '--papier'], ['--text-2', '--papier'], ['--text', '--papier-2'], ['--text-2', '--papier-2'], ['--text', '--karte'], ['--text-2', '--karte'], ['--messing-dunkel', '--papier'], ['--messing-dunkel', '--karte'], ['--ok', '--papier'], ['--ok', '--karte'], ['--ok', '--ok-flaeche'], ['--fehler', '--papier'], ['--fehler', '--fehler-flaeche'], ['--hinweis', '--papier'], ['--hinweis', '--hinweis-flaeche'], ['--auf-tinte', '--tinte'], ['--auf-tinte', '--tinte-2'], ['--auf-tinte', '--tinte-3'], ['--auf-tinte-2', '--tinte'], ['--auf-tinte-2', '--tinte-2'], ['--auf-tinte-2', '--nacht'], ['--messing-hell', '--tinte'], ['--messing-hell', '--tinte-2'], ['--messing-hell', '--nacht'], ['--ok-hell', '--tinte'], ['--fehler-hell', '--tinte']];
+const PAARE = [['--text', '--papier'], ['--text-2', '--papier'], ['--text', '--papier-2'], ['--text-2', '--papier-2'], ['--text', '--karte'], ['--text-2', '--karte'], ['--messing-dunkel', '--papier'], ['--messing-dunkel', '--karte'], ['--ok', '--papier'], ['--ok', '--karte'], ['--ok', '--ok-flaeche'], ['--fehler', '--papier'], ['--fehler', '--fehler-flaeche'], ['--hinweis', '--papier'], ['--hinweis', '--hinweis-flaeche'], ['--auf-tinte', '--tinte'], ['--auf-tinte', '--tinte-2'], ['--auf-tinte', '--tinte-3'], ['--auf-tinte-2', '--tinte'], ['--auf-tinte-2', '--tinte-2'], ['--auf-tinte-2', '--nacht'], ['--messing-hell', '--tinte'], ['--messing-hell', '--tinte-2'], ['--messing-hell', '--nacht'], ['--ok-hell', '--tinte'], ['--fehler-hell', '--tinte'],
+  // Niveau-Chips (Task 45): Text + Rand auf allen Inhaltsflächen
+  ...['--niveau-kern', '--niveau-eA', '--niveau-ergaenzung', '--niveau-kuer'].flatMap((n) => [[n, '--papier'], [n, '--papier-2'], [n, '--karte']]),
+  // Knöpfe und aktive Fallen-Chips
+  ['--papier', '--fehler'], ['--auf-akzent', '--fehler'], ['--nacht', '--messing-hell']];
 test('Kontraste ≥ 4,5 : 1 – hell und dunkel, je Epoche (WCAG AA)', () => {
   for (const [name, t] of [['hell', HELL], ['dunkel', DUNKEL]]) {
     for (const [v, h] of PAARE) assert.ok(kontrast(t[v], t[h]) >= 4.5, `${name}: ${v} auf ${h} = ${kontrast(t[v], t[h]).toFixed(2)}`);

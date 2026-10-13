@@ -130,7 +130,7 @@ Gelasio (metrisch = Georgia), `fonts-dejavu` als Rückfall; Consolas-Ersatz Inco
 | **Rückmeldung** | Feld-genau; richtig: grüner Rand + ✓ + Text; falsch: roter Rand + ✗ + Text; Fallen-Hinweis als Chip „P3 Umkehrung“ mit Kurztext |
 | **Geheimtext-Zeile** | siehe §3, mit Kopierknopf und optionaler Positionsleiste (0, 5, 10, …) |
 | **Alphabetleiste** | 26 Zellen, oben Buchstabe, unten Zahl (A = 1 oder A = 0, beschriftet), optional zweite Zeile Geheimtextalphabet; aktive Zelle in `--akzent` |
-| **Chips** | Niveau: K (Tinte), eA (Ochsenblut), E (Lapis), Kür (Messing dunkel) · Rolle: 🛡 Kryptografie / 🔍 Kryptoanalyse · Fallen: P1–P10 (Fehler-Rot umrandet) |
+| **Chips** | Niveau (Tokens `--niveau-kern`, `-eA`, `-ergaenzung`, `-kuer`, als Text + Rand; E gestrichelt, Kür doppelt umrandet; dunkel: Text, Ochsenblut hell, Lapis hell, Messing hell): K (Tinte), eA (Ochsenblut), E (Lapis), Kür (Messing dunkel) · Rolle: 🛡 Kryptografie / 🔍 Kryptoanalyse · Fallen: P1–P10 (Fehler-Rot umrandet) |
 | **Siegel/Artefakte** | runde SVG-Medaillen in Messing mit Epochen-Ornament; gesperrt = Umriss |
 | **Funkraum-Netz** | Beamer-Ansicht auf `--nacht`: Teams als Knoten (Kreis + Name), Nachrichten als wandernde Punkte mit Geheimtext-Vorschau, Eve/Mallory-Knoten in `--fehler`-Umriss |
 | **Labor-Werkzeug** | Kopfband in Epochenakzent, Werkzeugfläche Papier, Steuerleiste unten (Tablet-Daumenbereich) |

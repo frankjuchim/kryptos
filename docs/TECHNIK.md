@@ -152,8 +152,8 @@ public/
            funkraum.css lehrkraft.css druck.css
     fonts/ Fraunces-*.woff2 AtkinsonHyperlegible-*.woff2 JetBrainsMono-*.woff2
            NotoSansMath-Symbole.woff2 NotoSansSymbols2-Symbole.woff2 („KR Symbole“)  LIZENZEN/OFL-*.txt  LIESMICH.md
-    img/   ornamente.svg (Sprite: Mäander, Girih, Ranke, Lochstreifen, Scanline, Netz, Zahnrad)
-           texturen.svg siegel.svg abzeichen.svg icons.svg
+    img/   ornamente.svg (Sprite: Mäander, Girih, Ranke, Lochstreifen, Scanline, Netz, Zahnrad – nur per <use> im DOM)
+           siegel.svg abzeichen.svg icons.svg  texturen/epoche-0…6.svg (Kachelmuster, Deckkraft ≤ 6 %)
     js/    common.js render.js interact.js aufgabe.js            (Kern, angepasst)
            shared/krypto.js                                       (Bibliothek, Server + Browser)
            krypto/  oberflaeche.js kopfzeile.js zeitleiste.js epoche.js level.js profil.js spiel.js
@@ -1238,7 +1238,7 @@ Alle Seiten: `<html lang="de" data-epoche="…" data-theme="hell|dunkel|auto">`,
 | Datei | Inhalt |
 |---|---|
 | `tokens.css` | alle Tokens aus DESIGNSYSTEM §2 (`--tinte`, `--nacht`, `--messing*`, `--papier*`, `--linie`, `--text*`, `--ok`, `--fehler`, `--hinweis`), Abstände (4er-Skala), Radien, Schatten, Typo-Größen; Dunkelmodus unter `:root[data-theme="dunkel"]` und `@media (prefers-color-scheme: dark)` mit `:root[data-theme="auto"]` |
-| `epochen.css` | `[data-epoche="0"] { --akzent: #B5523B; --akzent-hell: #E8957B; --ornament: url(/static/img/ornamente.svg#maeander); }` … bis 6; im Dunkelmodus `--akzent: var(--akzent-hell)` |
+| `epochen.css` | `[data-epoche="0"] { --akzent: #B5523B; --akzent-hell: #E8957B; --textur: url("/static/img/texturen/epoche-0.svg"); }` … bis 6; im Dunkelmodus `--akzent: var(--akzent-hell)`. CSS kann nicht auf ein `<symbol>` im Sprite zeigen (M4 E24): Ornamente nur im DOM (`<svg><use href="/static/img/ornamente.svg#o-maeander">`, Zuordnung `KR.ORNAMENT[nr]`), Texturen als eigene Dateien `img/texturen/epoche-<n>.svg` (≤ 6 % Deckkraft, nur auf `.kopf`, `.tinte`, `.nacht`, `.zeitsprung`) |
 | `schriften.css` | `@font-face` (§11.4), `font-display: swap` |
 | `basis.css` | Reset, Typografie, Fokus-Ring (3 px), Lesebreite 72 ch, Layout-Raster (Inhalt 1120 px), Touch-Ziele ≥ 44 px |
 | `komponenten.css` | Kopfzeile, Epochen-Tor, Akte-Karte, Archivwissen, Chips, Siegel, Knöpfe, Dialog, Toast, Fortschrittsring |
