@@ -128,7 +128,7 @@ test('Level: Archivwissen, Aufgabenliste mit Status, Werkzeug-Karte nur wenn fre
   assert.match(k.text(li[0]), /gelöst/);
   assert.match(k.text(li[1]), /Modulo-Rechnen/);
   assert.equal(k.text(k.eins(li[1], '.chip-niveau')), 'E');
-  assert.deepEqual(k.alle(haupt, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/scheibe']);
+  assert.deepEqual(k.alle(haupt, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/scheibe?level=W9-L1']);
   assert.match(k.text(haupt), /Erklärvideo Nr\. 1: Testvideo/);
   // Akte als PDF (K38); Video ohne url: nur Titel, kein Link (E35/E51)
   const akte = k.eins(haupt, 'a.akte-pdf[href="/akten/Welt_9_Testwelt/KR_W9-AB1.pdf"]');
@@ -175,7 +175,25 @@ test('Level-Seite: Labor-Karte trägt die Reiter-Voreinstellung (Level 2.1, E70)
   const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L1': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'eA', welten: [9], werkzeuge: [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, frei: true, grund: null }, { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: true, grund: null }] } } };
   const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W9-L1', fetch: f });
   await k.ruhe();
-  assert.deepEqual(k.alle(k.document, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/vigenere?reiter=quadrat,verschluesseln', '/labor#/scheibe']);
+  assert.deepEqual(k.alle(k.document, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/vigenere?reiter=quadrat,verschluesseln&level=W9-L1', '/labor#/scheibe?level=W9-L1'], 'mit Level-Kontext (Review M6)');
+});
+test('Labor-Seite: #/signatur?level=W5-L3 gibt den Level-Kontext weiter (MitM ausgeblendet); ungültige Level-ids fallen weg (Review M6)', async () => {
+  const werkzeuge = [{ id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, frei: true, grund: null }];
+  const lade = (hash) => {
+    const k = D.lade([...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/seite.js'], { url: `http://x.test/labor${hash}`, fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'eA', welten: [0, 1, 2, 3, 4, 5, 6], werkzeuge } } } });
+    k.wert('globalThis.__oeffne = []; KRLabor.oeffne = (id, v, f, u) => { __oeffne.push([id, v, u]); return { schliesse() {} }; };');
+    return k;
+  };
+  const k = lade('#/signatur?reiter=signatur,mitm&level=W5-L3');
+  await k.ruhe();
+  const [id, v, u] = k.roh(k.wert('__oeffne')).at(-1);
+  assert.deepEqual([id, v, u], ['signatur', { reiter: ['signatur', 'mitm'] }, { modus: 'labor', rolle: 'schueler', niveau: 'eA', welten: [0, 1, 2, 3, 4, 5, 6], level: 'W5-L3' }]);
+  assert.equal(k.wert('KRLabor').erlaubt('signatur.mitm', u), false, 'MitM im Level W5-L3 ausgeblendet');
+  for (const falsch of ['W5-L3x1', 'W5-L3%3Cb%3E', 'x', 'W55-L3', '%E0%A4%A']) {
+    const j = lade(`#/signatur?level=${falsch}`);
+    await j.ruhe();
+    assert.equal(j.roh(j.wert('__oeffne')).at(-1)[2].level, undefined, falsch);
+  }
 });
 test('Labor-Seite: #/vigenere?reiter=… öffnet mit Voreinstellung und Kurs-Umgebung; unbekannte Reiter fallen weg', async () => {
   const werkzeuge = [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, frei: true, grund: null }];

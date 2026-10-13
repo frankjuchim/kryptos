@@ -110,7 +110,7 @@ async function szenario7b(ctx) {
   await kursWaehlen(mika.page, 'LK 13 (eA)');
   await gehe(mika.page, `${ctx.basis}/spiel#/level/W9-L1`);
   await mika.page.locator('.aufgaben-liste').waitFor();
-  assert.equal(await mika.page.locator('a[href="/labor#/scheibe"]').count(), 0, 'gesperrtes Werkzeug ohne Labor-Karte');
+  assert.equal(await mika.page.locator('a[href^="/labor#/scheibe"]').count(), 0, 'gesperrtes Werkzeug ohne Labor-Karte');
   await gehe(mika.page, `${ctx.basis}/labor`);
   const karte = mika.page.locator('.werkzeug-karte.gesperrt', { hasText: 'Chiffrierscheibe' });
   await karte.waitFor();

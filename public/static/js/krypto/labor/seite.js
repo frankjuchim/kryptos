@@ -2,7 +2,8 @@
    Freigaben (Schüler: GET /api/labor, Lehrkraft: GET /api/lehrer/werkzeuge – alles frei), gesperrte Werkzeuge mit Grund,
    Boss-Banner; #/<id> öffnet das Werkzeug als Vollseite über KRLabor (Modul wird nachgeladen) mit der Umgebung für die
    Reiter-Regeln (Schüler: niveau/welten aus /api/labor; Lehrkraft: alle Reiter + Hinweis, M6 E71/E87);
-   #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125).
+   #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125);
+   &level=W5-L3 setzt den Level-Kontext der Reiter-Regeln (nichtImLevel, Review M6).
    Review M6: /api/labor vor jedem Raster/Werkzeug frisch; bei Rückkehr in den Tab neu gefragt (KRLabor.wache) und ein
    offenes Werkzeug bei laufendem Kampf geschlossen (KRLabor.sperreAlle). */
 'use strict';
@@ -79,7 +80,20 @@ const KRLaborSeite = (() => {
     return reiter.length ? { reiter } : {};
   }
 
-  function vollseite(haupt, id, voreinstellung = {}) {
+  /** Level-Kontext aus „?level=W5-L3“ (Level-Karten, Review M6): nur gültige Level-ids (Format wie im Validator), sonst null. */
+  function levelAus(abfrage) {
+    const m = /(?:^|&)level=([^&]*)/.exec(abfrage || '');
+    if (!m) return null;
+    let roh = '';
+    try {
+      roh = decodeURIComponent(m[1]);
+    } catch {
+      return null;
+    }
+    return /^W\d-L\d{1,2}[a-z]?$/.test(roh) ? roh : null;
+  }
+
+  function vollseite(haupt, id, voreinstellung = {}, level = null) {
     const w = daten.werkzeuge.find((x) => x.id === id);
     if (!w) {
       KR.fehler(haupt, new Error('Dieses Werkzeug gibt es nicht.'), { zurueck: { href: '#/', text: 'Zum Labor' } });
@@ -96,7 +110,7 @@ const KRLaborSeite = (() => {
     const flaeche = h('div', { class: 'werkzeug-flaeche' });
     // Umgebung für die Reiter-Regeln (E71); Lehrkräfte sehen alle Reiter und einen Hinweis darauf (E87)
     const lehrkraft = daten.rolle !== 'schueler';
-    const umgebung = lehrkraft ? { modus: 'labor', rolle: 'lehrkraft' } : { modus: 'labor', rolle: 'schueler', niveau: daten.niveau, welten: daten.welten };
+    const umgebung = lehrkraft ? { modus: 'labor', rolle: 'lehrkraft' } : { modus: 'labor', rolle: 'schueler', niveau: daten.niveau, welten: daten.welten, ...(level ? { level } : {}) };
     AQ.mount(
       haupt,
       h(
@@ -129,7 +143,7 @@ const KRLaborSeite = (() => {
     const neu = await lade(sitzung);
     if (meine !== routeNr) return;
     daten = neu;
-    if (id) vollseite(haupt, id, voreinstellungAus(id, abfrage));
+    if (id) vollseite(haupt, id, voreinstellungAus(id, abfrage), levelAus(abfrage));
     else raster(haupt, sitzung);
     if (typeof haupt.focus === 'function') haupt.focus();
   }

@@ -54,16 +54,19 @@ const KRLevel = (() => {
   }
 
   // Level-Feld werkzeug: Liste von { id, voreinstellung } (M6 E70; Strings aus älteren Antworten werden ebenfalls gelesen)
-  function werkzeugKarten(liste, werkzeuge, werkzeugFrei) {
+  function werkzeugKarten(liste, werkzeuge, werkzeugFrei, levelId) {
     const eintraege = (Array.isArray(liste) ? liste : [])
       .map((e) => (e && typeof e === 'object' ? { id: e.id, voreinstellung: e.voreinstellung } : { id: e }))
       .filter((e) => typeof e.id === 'string');
     const frei = eintraege.filter((e) => werkzeugFrei(e.id));
     if (!frei.length) return null;
-    // nur die Reiter wandern in den Link (keine Texte in URLs, E70); die Labor-Seite prüft sie erneut
+    // nur die Reiter und die Level-id wandern in den Link (keine Texte in URLs, E70); die Labor-Seite prüft sie erneut.
+    // Level-Kontext (Review M6): Reiter-Regeln mit nichtImLevel (MitM in W5-L3) greifen auch im Labor.
+    const level = typeof levelId === 'string' && /^W\d-L\d{1,2}[a-z]?$/.test(levelId) ? levelId : null;
     const link = (e) => {
       const r = e.voreinstellung && Array.isArray(e.voreinstellung.reiter) ? e.voreinstellung.reiter.filter((x) => typeof x === 'string' && /^[a-z]+$/.test(x)) : [];
-      return `/labor#/${enc(e.id)}${r.length ? `?reiter=${r.join(',')}` : ''}`;
+      const teile = [...(r.length ? [`reiter=${r.join(',')}`] : []), ...(level ? [`level=${level}`] : [])];
+      return `/labor#/${enc(e.id)}${teile.length ? `?${teile.join('&')}` : ''}`;
     };
     return h(
       'section',
@@ -138,7 +141,7 @@ const KRLevel = (() => {
         ? h('section', { class: 'archivwissen', 'aria-labelledby': 'archivwissen-titel' }, h('h2', { id: 'archivwissen-titel' }, KR.ornament(d.welt.nr, { klasse: 'ornament-initial' }), 'Archivwissen'), AQR.bloecke(l.intro, null))
         : null,
       h('section', { class: 'level-aufgaben', 'aria-labelledby': 'aufgaben-titel' }, h('h2', { id: 'aufgaben-titel' }, 'Aufgaben'), d.aufgaben.length ? aufgabenListe(d.aufgaben, d.niveau) : h('p', { class: 'leer-zustand' }, 'Für dein Niveau gibt es hier keine Aufgaben.')),
-      werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei),
+      werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei, l.id),
       ideKarte(l, d.ideErledigt),
       medienKarte(l),
       h(

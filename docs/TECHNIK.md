@@ -1255,7 +1255,9 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 - **Umgebung und Einbettung (Plan M6 Tasks 125–127):** `umgebung = { modus: 'labor'|'lab'|'gast'|'vorschau', rolle:
   'schueler'|'lehrkraft'|null, niveau, welten, level?, gesperrt? }`. Vollseite `/labor#/<id>`: Schüler mit `niveau`/`welten`
   aus `/api/labor`, Lehrkraft `{ rolle: 'lehrkraft' }` (alle Reiter, Hinweis auf die Reiter-Regeln); `#/<id>?reiter=a,b`
-  (Level-Karten, nur Reiter wandern in den Link) wird zur Voreinstellung `{ reiter }`, unbekannte Reiter fallen weg.
+  (Level-Karten, nur Reiter wandern in den Link) wird zur Voreinstellung `{ reiter }`, unbekannte Reiter fallen weg;
+  `&level=<Level-id>` (Level-Karten, Review M6; nur Format `W<n>-L<m>`) setzt `umgebung.level`, damit `nichtImLevel`
+  auch im Labor greift (MitM aus der Level-Karte W5-L3 ausgeblendet).
   Aufgaben: Block `werkzeug` öffnet `KRLabor.dialog(id, voreinstellung, { ...ctx.laborUmgebung, modus })`; die Schüler-Seite
   setzt `laborUmgebung = { modus: 'lab', rolle: 'schueler', niveau, welten, level: <Level-id> }` (im Kampf zusätzlich
   `gesperrt: 'boss'`), die Lehrkraft-Vorschau `{ modus: 'vorschau', rolle: 'lehrkraft' }`, der Gastmodus `{ modus: 'gast',
