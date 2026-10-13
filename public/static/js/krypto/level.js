@@ -1,6 +1,6 @@
 /* Kryptos – Schüler-Seite: Level-Ansicht (M4 Task 58). Brotkrumen, Akten-Kopf, „Archivwissen“ (Intro-Blöcke),
    Aufgabenliste mit Status, Kategorie und Punkten, Kryptolabor-Karten nur für freigegebene Werkzeuge, Online-IDE-Karte
-   mit Schalter „erledigt“, Erklärvideo-Hinweis (E35, ohne Link), Navigation vorher/nachher. Texte nur als Textknoten. */
+   mit Schalter „erledigt“, Akte als PDF und Erklärvideo (Link nur mit url, E35/E51, K38), Navigation vorher/nachher. Texte nur als Textknoten. */
 'use strict';
 
 const KRLevel = (() => {
@@ -93,6 +93,22 @@ const KRLevel = (() => {
     );
   }
 
+  /** Akte als PDF (K38, nur mit url) und Erklärvideo (Link nur mit url, sonst Hinweis ohne Link – E35, E51). */
+  function medienKarte(l) {
+    const akte = l.akteDatei && l.akteDatei.url ? l.akteDatei : null;
+    const video = l.video && l.video.titel ? l.video : null;
+    if (!akte && !video) return null;
+    const videoText = video ? `Erklärvideo Nr. ${video.nr}: ${video.titel}` : '';
+    return h(
+      'section',
+      { class: 'karte level-medien', 'aria-label': 'Akte und Erklärvideo' },
+      akte ? h('p', null, h('a', { class: 'knopf knopf-zweit akte-pdf', href: akte.url, target: '_blank', rel: 'noopener' }, KR.symbol('icons', 'i-download'), 'Akte als PDF'), ' ', h('span', { class: 'text-2 klein' }, akte.titel)) : null,
+      video
+        ? h('p', { class: 'video-hinweis' }, h('span', { 'aria-hidden': 'true' }, '▶ '), video.url ? h('a', { href: video.url, target: '_blank', rel: 'noopener' }, videoText) : videoText)
+        : null
+    );
+  }
+
   /** Level-Ansicht: d = GET /api/levels/:id; werkzeugFrei(id), werkzeuge = Liste aus GET /api/labor. */
   function ansicht(d, { werkzeugFrei = () => false, werkzeuge = [] } = {}) {
     const l = d.level;
@@ -115,7 +131,7 @@ const KRLevel = (() => {
       h('section', { class: 'level-aufgaben', 'aria-labelledby': 'aufgaben-titel' }, h('h2', { id: 'aufgaben-titel' }, 'Aufgaben'), d.aufgaben.length ? aufgabenListe(d.aufgaben, d.niveau) : h('p', { class: 'leer-zustand' }, 'Für dein Niveau gibt es hier keine Aufgaben.')),
       werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei),
       ideKarte(l, d.ideErledigt),
-      l.video && l.video.titel ? h('p', { class: 'video-hinweis' }, h('span', { 'aria-hidden': 'true' }, '▶ '), `Erklärvideo Nr. ${l.video.nr}: ${l.video.titel}`) : null,
+      medienKarte(l),
       h(
         'nav',
         { class: 'knopf-reihe level-nav', 'aria-label': 'Weitere Level' },

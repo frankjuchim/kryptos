@@ -1,0 +1,13 @@
+{
+  "_hinweis": "Erklärvideos 0–7 (Design §11). Videos sind NICHT öffentlich bis zur Veröffentlichung (materialien/Videos/00_Uebersicht.md): url bleibt null, bis die Lehrkraft eine Adresse einträgt; die Level-Seite verlinkt nur mit url (Plan M5 E51, E35). Level verweisen über video.nr.",
+  "videos": [
+    { "nr": 0, "titel": "Kryptos: So funktioniert die Zeitreise", "url": null },
+    { "nr": 1, "titel": "Caesar, das Alphabet A = 1 und Modulo", "url": null },
+    { "nr": 2, "titel": "Häufigkeitsanalyse: Wie Al-Kindi jede Substitution knackt", "url": null },
+    { "nr": 3, "titel": "Vigenère knacken: Kasiski-Test und Friedman-Test", "url": null },
+    { "nr": 4, "titel": "XOR, One-Time-Pad und Blockchiffren", "url": null },
+    { "nr": 5, "titel": "Das Schlüsselproblem: asymmetrisch, Diffie-Hellman, RSA, hybrid", "url": null },
+    { "nr": 6, "titel": "Hash, Signatur, Zertifikat: Vertrauen im Netz", "url": null },
+    { "nr": 7, "titel": "Abi-Check: Fremde Chiffren in 5 Schritten + die 10 Fallen", "url": null }
+  ]
+}

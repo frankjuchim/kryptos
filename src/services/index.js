@@ -28,7 +28,9 @@ const STANDARD_OPTIONEN = Object.freeze({
   bossBezug: () => true,
   generatorSichtbar: () => true,
   zusatzAbzeichen: () => [],
-  zusatzBedingungen: () => new Set()
+  zusatzBedingungen: () => new Set(),
+  // K38: Akte (PDF) und Video je Level für das Level-Detail – Kern: keine Akte, Video wie im Seed
+  levelMedien: (l) => ({ akteDatei: null, video: l.video || null })
 });
 
 function createServices(ctx) {

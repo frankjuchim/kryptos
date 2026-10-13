@@ -16,6 +16,7 @@ const { createGast } = require('./services/gast');
 const { createManifest } = require('./services/manifest');
 const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
 const { createLabor } = require('./krypto/labor');
+const { createLevelMedien } = require('./krypto/medien');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -59,17 +60,21 @@ function createApp(opts) {
       { PORTAL_URL: opts.portalUrl, PORTAL_PUBLIC_KEY: opts.portalPublicKey, PLATTFORM_URL: opts.plattformUrl, PLATTFORM_ID: opts.plattformId, SESSION_SECRET: opts.sessionSecret, VERTRAG_VERSION: opts.vertragVersion },
       { test: true }
     );
-  // Dienst-Optionen (TECHNIK §4.2): Krypto-Hooks, in Tests durch opts.optionen überschreibbar
-  const optionen = { ...require('./krypto').dienstOptionen(), ...(opts.optionen || {}) };
+  const abDir = arbeitsblaetterOrdner(opts);
+  const aktenVerzeichnis = ladeVerzeichnis(opts, log);
+  const pdfVorhanden = (datei) => !!abDir && fs.existsSync(path.join(abDir, datei));
+  // Dienst-Optionen (TECHNIK §4.2): Krypto-Hooks, in Tests durch opts.optionen überschreibbar;
+  // K38: Akte und Video je Level (seed/akten.json, seed/videos.json) für das Level-Detail
+  const levelMedien = createLevelMedien({ verzeichnis: aktenVerzeichnis, pdfVorhanden, videos: ladeVideos(opts, log) });
+  const optionen = { ...require('./krypto').dienstOptionen(), levelMedien, ...(opts.optionen || {}) };
   const ctx = { db, now: opts.now || (() => Date.now()), log, random: opts.random, trainingSeed: opts.trainingSeed, optionen };
   const svc = createServices(ctx);
   ladeInhalte(svc, opts, log);
-  const abDir = arbeitsblaetterOrdner(opts);
   // Ohne Anmeldung nur die Demo-PDFs aus seed/demo_materialien.json (Gastmodus, Themenseite)
   const demo = ladeDemo(opts, log);
   const themen = createThemen(ctx, { inhalte: svc.inhalte }, {
-    verzeichnis: ladeVerzeichnis(opts, log),
-    pdfVorhanden: (datei) => !!abDir && fs.existsSync(path.join(abDir, datei)),
+    verzeichnis: aktenVerzeichnis,
+    pdfVorhanden,
     demo: (datei) => demo.schueler.has(datei)
   });
   const material = createLehrkraftMaterial({ materialienDir: materialienOrdner(opts), abDir, demo, log });
@@ -186,6 +191,20 @@ function createApp(opts) {
   app.get('/datenschutz', page('datenschutz.html'));
   app.get('/themen', page('themen.html'));
   app.get('/gast', page('gast.html'));
+  // QR-Codes der Akten (Plan M5 E50, K13): /level/<nr> (z. B. 0.1, K1) → Level-Seite. Schüler direkt, Lehrkraft in die
+  // Vorschau der Welt, ohne Sitzung über den SSO-Start mit ziel=/spiel#/level/<id> (der Hash erreicht den Seiten-Wächter
+  // von /spiel nicht, TECHNIK §6.2/§6.4). Unbekannte Nummer → 404-Seite.
+  app.get('/level/:nr', (req, res, next) => {
+    const nr = String(req.params.nr);
+    if (!/^(\d\.\d|K\d)$/.test(nr)) return next();
+    const treffer = [...svc.inhalte.katalog.levels.values()].filter((l) => l.nr === nr).sort((a, b) => (a.welt <= 6 ? 0 : 1) - (b.welt <= 6 ? 0 : 1) || a.welt - b.welt);
+    const l = treffer[0];
+    if (!l) return next();
+    res.set('Cache-Control', 'no-store');
+    if (helpers.schueler(req, res)) return res.redirect(302, `/spiel#/level/${encodeURIComponent(l.id)}`);
+    if (helpers.lehrkraft(req)) return res.redirect(302, `/lehrer#/vorschau/welt/${l.welt}`);
+    res.redirect(302, '/sso/start?ziel=' + encodeURIComponent(`/spiel#/level/${l.id}`));
+  });
   app.use('/static', express.static(path.join(PUBLIC_DIR, 'static'), { maxAge: '1h', index: false }));
   // Akten (Schülerfassung, PDF; Kryptos K15: /akten statt /arbeitsblaetter) – nur .pdf, ohne Verzeichnislisten
   if (abDir) {
@@ -352,6 +371,20 @@ function ladeVerzeichnis(opts, log) {
     return JSON.parse(fs.readFileSync(datei, 'utf8'));
   } catch (e) {
     log(`akten.json nicht lesbar: ${e.message}`);
+    return null;
+  }
+}
+
+/** seedDir/videos.json (sonst seed/videos.json des Repos): Liste der Erklärvideos { nr, titel, url } oder null. */
+function ladeVideos(opts, log) {
+  const seedDir = opts.seedDir === undefined ? path.join(ROOT_DIR, 'seed') : opts.seedDir;
+  const datei = [seedDir && path.join(seedDir, 'videos.json'), path.join(ROOT_DIR, 'seed', 'videos.json')].find((d) => d && fs.existsSync(d));
+  if (!datei) return null;
+  try {
+    const d = JSON.parse(fs.readFileSync(datei, 'utf8'));
+    return Array.isArray(d && d.videos) ? d.videos : null;
+  } catch (e) {
+    log(`videos.json nicht lesbar: ${e.message}`);
     return null;
   }
 }

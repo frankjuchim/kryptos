@@ -85,7 +85,7 @@ test('Zeitleiste: Epochen ohne Seed (fach.WELTEN) erscheinen als „noch verschl
   assert.deepEqual(k.roh(k.wert('KRZeitleiste.EPOCHEN').map((e) => e.titel)), require('../src/krypto/fach').WELTEN.map((w) => w.titel));
 });
 test('Level: Archivwissen, Aufgabenliste mit Status, Werkzeug-Karte nur wenn frei, IDE-Schalter', async () => {
-  const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', werkzeug: ['scheibe', 'haeufigkeit'], akte: 'Akte W9·1 – Blöcke und Lücken', video: { nr: 1, titel: 'Testvideo' }, ide: 'Test-IDE', intro: [{ t: 'hinweis', md: '**Archivwissen:** A = 1' }], maxPunkte: 20 }, aufgaben: [{ id: 'W9-L1-01', titel: 'Eins', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', status: 'geloest', erreicht: 10, arten: ['gaps'] }, { id: 'W9-L1-02', titel: 'Zwei', stufe: 2, punkte: 20, kategorie: 'modulo', niveau: 'ergaenzung', status: 'offen', erreicht: 0, arten: ['gaps'] }], ideErledigt: false, vorher: null, nachher: { id: 'W9-L2', titel: 'Zwei' } };
+  const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', werkzeug: ['scheibe', 'haeufigkeit'], akte: 'Akte W9·1 – Blöcke und Lücken', akteDatei: { titel: 'Akte W9·1 – Blöcke und Lücken', url: '/akten/Welt_9_Testwelt/KR_W9-AB1.pdf' }, video: { nr: 1, titel: 'Testvideo', url: null }, ide: 'Test-IDE', intro: [{ t: 'hinweis', md: '**Archivwissen:** A = 1' }], maxPunkte: 20 }, aufgaben: [{ id: 'W9-L1-01', titel: 'Eins', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', status: 'geloest', erreicht: 10, arten: ['gaps'] }, { id: 'W9-L1-02', titel: 'Zwei', stufe: 2, punkte: 20, kategorie: 'modulo', niveau: 'ergaenzung', status: 'offen', erreicht: 0, arten: ['gaps'] }], ideErledigt: false, vorher: null, nachher: { id: 'W9-L2', titel: 'Zwei' } };
   const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L1': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [{ id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: true, grund: null }, { id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1, frei: false, grund: 'lehrkraft' }] } }, 'POST /api/levels/W9-L1/ide': { status: 200, body: { erledigt: true } } };
   const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W9-L1', fetch: f });
   await k.ruhe();
@@ -97,10 +97,27 @@ test('Level: Archivwissen, Aufgabenliste mit Status, Werkzeug-Karte nur wenn fre
   assert.equal(k.text(k.eins(li[1], '.chip-niveau')), 'E');
   assert.deepEqual(k.alle(haupt, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/scheibe']);
   assert.match(k.text(haupt), /Erklärvideo Nr\. 1: Testvideo/);
+  // Akte als PDF (K38); Video ohne url: nur Titel, kein Link (E35/E51)
+  const akte = k.eins(haupt, 'a.akte-pdf[href="/akten/Welt_9_Testwelt/KR_W9-AB1.pdf"]');
+  assert.ok(akte);
+  assert.match(k.text(akte), /Akte als PDF/);
+  assert.equal(k.alle(haupt, '.video-hinweis a').length, 0);
   k.klick(k.eins(haupt, 'input.ide-erledigt'));
   await k.ruhe();
   assert.deepEqual(k.anfragen.find((a) => a.pfad === '/api/levels/W9-L1/ide').body, { erledigt: true });
   assert.equal(k.window.localStorage.getItem('kr_zuletzt'), '"W9-L1"');
+});
+test('Level: Video mit url als Link, ohne akteDatei kein PDF-Knopf', async () => {
+  const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', werkzeug: [], akte: null, akteDatei: null, video: { nr: 3, titel: 'Vigenère knacken', url: 'https://video.example/v3' }, intro: [], maxPunkte: 0 }, aufgaben: [], ideErledigt: false, vorher: null, nachher: null };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L1': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W9-L1', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.equal(k.alle(haupt, 'a.akte-pdf').length, 0);
+  const a = k.eins(haupt, '.video-hinweis a[href="https://video.example/v3"]');
+  assert.ok(a);
+  assert.equal(a.getAttribute('rel'), 'noopener');
+  assert.match(k.text(a), /Erklärvideo Nr\. 3: Vigenère knacken/);
 });
 test('Aufgabe: Prüfen sendet die Antwort, Diagnose-Chip erscheint, Erklärung nach dem Lösen', async () => {
   const a = { id: 'W9-L5-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', fallen: ['P3'], tippsAnzahl: 1, inhalt: [{ t: 'text', md: 'Entschlüssele.' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };

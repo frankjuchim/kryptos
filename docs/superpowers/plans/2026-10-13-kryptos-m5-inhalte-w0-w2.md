@@ -105,7 +105,7 @@ Nummern setzen die M4-Liste (E17–E37) fort.
 | E47 | Warm-up-Karten: Spec §7 (Text) und `quellen/material/W*/warmup_W*.json` (Titel teils abweichend, z. B. WU-W1-10 „Spirale W0“ ↔ „Spirale W0 · Caesar“) | Aufgabe/Lösung wörtlich aus Spec §7, `titel` und `kategorie` aus der Materialquelle (die gebaute `.docx` ist maßgeblich); Test vergleicht ids, Titel, Kategorie, Minuten mit der Materialquelle | Task 89 |
 | E48 | Sichtbarkeit der Akten: Design §10.3 und TECHNIK §14.1 „öffentlich (`/themen`)“; Kern (Algo Quest 2.8.2), `src/app.js` (K20) und Lehrkraft-Auftrag: Schülerfassungen **nur nach Anmeldung**, ohne Anmeldung nur die Demo-PDFs aus `seed/demo_materialien.json` | Code-Stand gilt (nur nach Anmeldung, Demo-PDFs öffentlich) – Design §10.3 sagt selbst „wie AlgoQuest“; Wortlaut in Design §10.3 und TECHNIK §14.1 angleichen (offene Entscheidung 3) | Task 97 |
 | E49 | Material-Umfang: `materialien/` enthält W4–W6 als `.docx`, W0–W3 fehlen (nur Lehrerhinweise und Warm-up für alle); M5-Abnahme nennt W0–W2 | M5 baut W0–W2 (+ Kickoff); W3 baut M8. Die PDF-Skripte verarbeiten **alles Vorhandene**: `Akten_PDF`/`seed/akten.json` = W0–W2 + Werkzeugkarten (**geändert nach Task 96:** Funkraum-Rollenkarten W0/W1 enthalten Regie-Teile – erwartete Auswertung, Hinweiskarten wie „U ≙ e“, Befehlskarten – und werden **nur an Lehrkräfte** ausgeliefert: `Lehrkraft_PDF/<Welt>/` + Eintrag `art: funkraum` in `verzeichnis.json`, Liste `loesungen_pdf.FUNKRAUM`; nicht in `akten.json`/`Akten_PDF`, `akten_pdf.py --pruefen` meldet Funkraum-Dateien im Schülerbereich als Fehler); `Lehrkraft_PDF`/`Loesungen_Portal` = W0–W2 und die vorhandenen W4–W6-Lehrkraftdateien (Präsentationen, Lehrerhinweise, Klausuren mit EH), weil Lehrkräfte sie jetzt brauchen; Akten W4–W6 kommen mit ihren Seeds (M8) ins Schüler-Verzeichnis (offene Entscheidung 7) | Task 95 |
-| E50 | QR-Codes der Akten (`kr_docx.py` `imlab`) zeigen auf `https://kryptos.frankjuchim.de/level/<nr>` (z. B. `/level/0.1`, `/level/K1`); die Route fehlt | `GET /level/:nr` (öffentlich): bekannte `nr` → 302 `/spiel#/level/<id>` (der Wächter von `/spiel` übernimmt die Anmeldung), unbekannt → 404-Seite | Task 98 |
+| E50 | QR-Codes der Akten (`kr_docx.py` `imlab`) zeigen auf `https://kryptos.frankjuchim.de/level/<nr>` (z. B. `/level/0.1`, `/level/K1`); die Route fehlt | `GET /level/:nr` (öffentlich): bekannte `nr` → 302 `/spiel#/level/<id>` (der Wächter von `/spiel` übernimmt die Anmeldung), unbekannt → 404-Seite. **Korrigiert in Task 98:** Der Hash erreicht den Wächter nicht (er würde nur `ziel=/spiel` weitergeben) – ohne Sitzung deshalb direkt `302 /sso/start?ziel=%2Fspiel%23%2Flevel%2F<id>` (Ziel-Regel TECHNIK §6.2.4), Schüler-Sitzung → `/spiel#/level/<id>`, Lehrkraft → `/lehrer#/vorschau/welt/<n>` | Task 98 |
 | E51 | `seed/videos.json`: Videos sind „NICHT öffentlich bis zur Veröffentlichung“ (`materialien/Videos/00_Uebersicht.md`); Validator meldet `video.nr` ohne URL als Hinweis | `seed/videos.json` = `{ "videos": [ { "nr", "titel", "url": null } ] }` für 0–7 (Titel aus Design §11); Hinweis nur, wenn die `nr` **fehlt**; Level-Seite verlinkt erst mit `url` (E35) | Task 98 |
 | E52 | Boss-Rahmentext (Specs §5 „Rahmentext (geduzt)“) hat kein Feld im Format | neues optionales Boss-Feld `rahmen` (Mini-Markdown, ≤ 800 Zeichen, keine Lösungen) – Validator, Inhalte-Dienst, Boss-Startseite | Task 72 (Delta §10, TECHNIK §13.1) |
 | E53 | Boss-Aufgaben haben in den Specs keinen Titel; Kern verlangt `titel` | `titel` = Anzeigename der Kategorie aus `LAB_KATEGORIE_NAMEN` (z. B. „Grundbegriffe“, „Fremde Chiffre“) – abgeleitet, nicht erfunden; Fallen = alle P-Nummern der Spec-Spalte „Erklärung“ (Boss-Tabellen haben keine Fallen-Spalte), sonst `[]` | Task 73 (Abgleich-Test kodiert die Regel) |
@@ -1520,17 +1520,25 @@ Video-Link nur mit `url`), Version, `docs/KERN_ABWEICHUNGEN.md` (K38 neu, K13), 
 
 **`seed/videos.json`:** `{ "videos": [ { "nr": 0, "titel": "Kryptos: So funktioniert die Zeitreise", "url": null }, …, { "nr": 7, "titel": "Abi-Check: Fremde Chiffren in 5 Schritten + die 10 Fallen", "url": null } ] }` (Titel Design §11).
 
-**`GET /level/:nr`:** `nr` passt auf `^(\d\.\d|K\d)$` und ein Level des Katalogs hat dieses `nr` → 302 `/spiel#/level/<id>`; sonst die
-404-Seite. Öffentlich (kein Wächter; `/spiel` übernimmt die Anmeldung über das Portal).
+**`GET /level/:nr`:** `nr` passt auf `^(\d\.\d|K\d)$` und ein Level des Katalogs hat dieses `nr` → Schüler-Sitzung 302 `/spiel#/level/<id>`,
+Lehrkraft 302 `/lehrer#/vorschau/welt/<n>`, ohne Sitzung 302 `/sso/start?ziel=` + kodiert `/spiel#/level/<id>` (korrigiert, E50); sonst die
+404-Seite. Öffentlich (kein Wächter).
 
-- [ ] **Step 1: Failing tests** – `/level/0.1` → 302 `Location: /spiel#/level/W0-L1` (Test-App mit `seed/welten/welt0.json`), `/level/K1` → `W2-L5`,
+- [x] **Step 1: Failing tests** – `/level/0.1` → 302 `Location: /spiel#/level/W0-L1` (Test-App mit `seed/welten/welt0.json`), `/level/K1` → `W2-L5`,
   `/level/9.9` und `/level/x` → 404; Level-Detail W9-L1 (Fixture mit Akte in `seed_beispiel/akten.json`) liefert `akteDatei.url`
   `/akten/…`, `video.url` `null`; Client zeigt „Akte als PDF“ und den Videotitel ohne Link → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm run validate` (Video-Hinweise = 0); `npm test`.
-- [ ] **Step 4: Probelauf** QR-Code einer gebauten Akte (Task 93) mit `zbarimg` oder durch Lesen der URL aus `kr_docx.py` (`S.BASIS_URL`) gegen
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm run validate` (Video-Hinweise = 0); `npm test`.
+- [x] **Step 4: Probelauf** QR-Code einer gebauten Akte (Task 93) mit `zbarimg` oder durch Lesen der URL aus `kr_docx.py` (`S.BASIS_URL`) gegen
   die lokale Route prüfen (`/level/0.1`).
-- [ ] **Step 5: Commit** `git commit -m "Level-Seite mit Akte und Video, /level/<nr> für die QR-Codes der Akten, seed/videos.json"`.
+- [x] **Step 5: Commit** `git commit -m "Level-Seite mit Akte und Video, /level/<nr> für die QR-Codes der Akten, seed/videos.json"`.
+
+**Umsetzungsnotiz (Task 98):** `seed/videos.json` (0–7, Titel Design §11, `url: null`); Dienst-Option `levelMedien` (K38, Kryptos
+`src/krypto/medien.js`): `level.akteDatei` nur mit ausgelieferter PDF, `level.video.url` nur `https://…`; Level-Seite mit Karte „Akte als PDF“
+und Video-Hinweis (Link nur mit `url`). `/level/<nr>` wie oben (E50 korrigiert). QR-Prüfung: Die QR-Bilder in den gebauten Akten W0·1 und
+W2·K1 sind bytegleich mit frisch erzeugten QR-Codes für `https://kryptos.frankjuchim.de/level/0.1` bzw. `/level/K1` (kein `zbarimg` in der
+Umgebung); alle 12 Akten-Nummern (`quellen/material/W0–W2/akte_*.json`, Block `imlab`) leiten lokal auf das richtige Level. `npm run validate`:
+keine Video-Hinweise.
 
 ### Task 99: Gast-Demo `seed/gast/demo.json` und Demo-PDFs `seed/demo_materialien.json` (Delta §12)
 
