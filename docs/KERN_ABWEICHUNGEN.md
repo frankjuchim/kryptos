@@ -96,6 +96,15 @@ Lehrkraft-Downloads ohne `verzeichnis.json`). `.gitkeep` landet im Image, wird a
   `test/e2e/{e2e,hilfen,schueler}.js` gegen App + Dev-Portal (Szenarien TECHNIK §15), Demo-Seed `test/e2e/seed/`.
 - **Inhalte (Task 1):** `seed/` ohne Algo-Quest-Inhalte (leere Platzhalter).
 
+## Werkzeuge aus Algo Quest (Art A, außerhalb der App)
+
+- `werkzeuge/ide-pruefung/ide_pruefen.py` + `java/aq/ide/*` und `werkzeuge/workspaces_erzeugen.py` (M5 Task 94, TECHNIK
+  §14.3): kopiert aus Algo Quest 2.8.2. Abweichungen: Nachbauten `java/aq/ni`, `java/aq/grafik`, `java/aq/werkzeug` und
+  deren Importe entfallen; `Testrunner` gibt die Hauptprogramm-Ausgabe als `AUSGABE <Zeile>` aus, der Bericht enthält
+  `ausgabe`, `gruen`, `gesamt`; Dokstring ohne Verweis auf `docs/ONLINE-IDE_TESTPROTOKOLL.md`; Workspace-Listen und
+  Dateinamen (`KR_Welt<N>_<Name>[_LSG]_Workspaces.json`, je Welt statt „Alle Welten“) für Kryptos. Rückführbar: die
+  `AUSGABE`-Erweiterung ja, der Rest ist Fach.
+
 ## Algo-Quest-eigene Verbund-Dateien (in M1 ersetzt)
 
 AlgoQuest 2.8.2 bringt bereits eine eigene Anbindung an InfoLabs mit (README Teil H dort, Phase 1). Sie arbeitete auf dem

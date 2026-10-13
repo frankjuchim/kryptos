@@ -1379,13 +1379,19 @@ und „Hauptprogramm-Ausgabe LSG“; Vorlagen `/home/user/AlgoQuest/werkzeuge/id
 `javac` + Testrunner; Ausgabe je Datei „kompiliert · Hauptprogramm ok · x/y grün“; Vergleich Gerüst ↔ LSG: identische Testklassen.
 NI-Bibliothek und Grafik-Nachbau entfallen (TECHNIK §14.3). `workspaces_erzeugen.py [--pruefen]` erzeugt die Import-Dateien für online-ide.de.
 
-- [ ] **Step 1: Failing test** `test/material_pipeline.test.js` (übersprungen ohne `javac`): `ide_pruefen.py --json` meldet für das Gerüst
+- [x] **Step 1: Failing test** `test/material_pipeline.test.js` (übersprungen ohne `javac`): `ide_pruefen.py --json` meldet für das Gerüst
   `kompiliert: true`, `gruen: 1`, `gesamt: 23`, für die LSG `23/23`, Testklassen identisch; LSG-Hauptprogramm gibt
   `KPLSL NPVUG PLOAU HJOUV YKLU` aus (Spec §12) → FAIL (Dateien fehlen).
-- [ ] **Step 2: Implement** – Texte aus Spec §2a **zeichengenau** übernehmen (Kopfblock, „DEIN TEIL“, „TESTS – hier nichts veraendern!“,
+- [x] **Step 2: Implement** – Texte aus Spec §2a **zeichengenau** übernehmen (Kopfblock, „DEIN TEIL“, „TESTS – hier nichts veraendern!“,
   Umlaute in Kommentaren als ae/oe/ue); Werkzeuge portieren.
-- [ ] **Step 3: Run** → PASS; `python3 werkzeuge/workspaces_erzeugen.py --pruefen` → aktuell; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Online-IDE Caesar-Werkstatt (W0) mit Prüfstand und Workspace-Dateien"`.
+- [x] **Step 3: Run** → PASS; `python3 werkzeuge/workspaces_erzeugen.py --pruefen` → aktuell; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Online-IDE Caesar-Werkstatt (W0) mit Prüfstand und Workspace-Dateien"`.
+
+**Umsetzungsnotiz (Task 94):** Gerüst und LSG zeichengenau aus SPEC W0 §2a (LSG = Gerüst mit Kopfzeile „MUSTERLOESUNG (nur
+Lehrkraft)“, Abschnitt „MUSTERLOESUNG – Klasse CaesarWerkstatt“ und Musterlösungs-Klasse). Prüfstand: Gerüst kompiliert, Hauptprogramm
+ok, 1/23 grün (`erweiterung_verschluesseln_leer`); LSG 23/23, Ausgabe wie §2a (30 Zeilen); Testklassen identisch. Der Testrunner gibt
+die Hauptprogramm-Ausgabe jetzt aus (`AUSGABE`), damit der Spec-Vergleich maschinell läuft. Workspace-Dateien je Welt (keine
+„Alle Welten“-Datei, solange nur W0 ein Gerüst hat).
 
 ### Task 95: `seed/akten.json` und `werkzeuge/akten_pdf.py` → `materialien/Akten_PDF`
 

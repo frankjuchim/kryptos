@@ -1,0 +1,370 @@
+// =====================================================================
+//  DIE WERKSTATT DES SCHREIBERS – CAESAR IN JAVA – MUSTERLOESUNG (nur Lehrkraft)
+//  Informatik · Online-IDE · Kryptos · Welt 0 – Die Antike (DS 3)
+//  Level 0.3 "Die Werkstatt des Schreibers"
+//
+//  Im Archiv steht die Schreibstube eines roemischen Schreibers.
+//  Tausende Botschaften hat er von Hand verschoben - Buchstabe fuer
+//  Buchstabe. Du baust ihm eine Maschine, die das in Sekunden kann.
+//  Und danach eine, die jede Caesar-Botschaft knackt.
+//
+//  ANLEITUNG:
+//  1. Du arbeitest NUR im Abschnitt "DEIN TEIL" in der Klasse
+//     CaesarWerkstatt. Ersetze dort jeweils die Zeile mit "// TODO"
+//     und die vorlaeufige return-Anweisung durch deine Loesung.
+//
+//  2. Tests starten: Oeffne den Reiter "Testrunner" und klicke auf den
+//     gruenen Dreieckspfeil neben einer Testklasse (alle Tests dieser
+//     Klasse) oder neben einem einzelnen Test. Gruen = bestanden,
+//     rot = noch nicht bestanden. Lies bei roten Tests die Meldung -
+//     sie verraet dir, welcher Fall noch nicht klappt.
+//
+//  3. Es gibt drei Stufen - arbeite sie der Reihe nach ab:
+//
+//      Stufe         Testklasse                    Methoden
+//      ---------------------------------------------------------------------
+//      Basis         CaesarBasisTest               buchstabeZuZahl,
+//                                                  zahlZuBuchstabe,
+//                                                  alphabetNummer, verschiebe
+//      Erweiterung   CaesarErweiterungTest         grossbuchstabe,
+//                                                  verschluesseln,
+//                                                  entschluesseln
+//      Experte       CaesarExperteTest             fuenfergruppen, bruteForce,
+//                                                  findeSchluessel,
+//                                                  rateSchluessel
+//
+//     Eine Stufe ist geschafft, wenn ALLE Tests ihrer Testklasse gruen
+//     sind. Ein paar Tests sind am Anfang zufaellig gruen, weil die
+//     vorlaeufigen return-Werte passen. Das zaehlt noch nicht.
+//
+//  4. Die Testklassen darfst du NICHT veraendern. Du glaubst, ein Test
+//     ist falsch? Melde ihn deiner Lehrkraft.
+//
+//  5. Mit dem gruenen Startknopf oben laeuft das Hauptprogramm ganz
+//     unten. Dort kannst du deine Methoden selbst ausprobieren.
+//
+//  ACHTUNG ZAEHLBASIS (Falle P1):
+//  - Auf Papier und in der Abitur-Anlage gilt A = 1 ... Z = 26.
+//  - In diesem Programm rechnen wir INTERN mit A = 0 ... Z = 25, weil
+//    das direkt aus dem ASCII-Wert folgt: (int) 'A' = 65, also
+//    Wert = (int) b - 65. Nur alphabetNummer liefert A = 1 ... Z = 26.
+//  - Der Java-Operator % liefert bei negativen Zahlen einen NEGATIVEN
+//    Rest (-3 % 26 ergibt -3). Das "mod" der Abitur-Anlage ist immer
+//    der kleinste positive Rest (Falle P2). Rechne also vorher + 26.
+//
+//  SPIELREGELN (wie im Abitur):
+//  - Zeichenketten nur mit length(), charAt(i), substring(a, b), +,
+//    equals(...), contains(...), compareTo(...) bearbeiten.
+//  - Zeichen <-> Zahl nur mit (int) c und (char) n.
+//    NICHT erlaubt: toUpperCase, toLowerCase, indexOf, replace, split,
+//    Character.isLetter, ...
+//  - Zeichen darfst du mit <, <=, >, >= vergleichen ('a' <= c).
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+//  MUSTERLOESUNG – Klasse CaesarWerkstatt
+// ---------------------------------------------------------------------
+
+class CaesarWerkstatt {
+
+    // ===================== Stufe BASIS =====================
+
+    // buchstabeZuZahl(b: Zeichen): Ganzzahl   (A = 0 ... Z = 25)
+    public static int buchstabeZuZahl(char b) {
+        return (int) b - 65;
+    }
+
+    // zahlZuBuchstabe(z: Ganzzahl): Zeichen   (0 -> 'A' ... 25 -> 'Z')
+    public static char zahlZuBuchstabe(int z) {
+        return (char) (z + 65);
+    }
+
+    // alphabetNummer(b: Zeichen): Ganzzahl    (A = 1 ... Z = 26, wie die Anlage)
+    public static int alphabetNummer(char b) {
+        return (int) b - 64;
+    }
+
+    // verschiebe(b: Zeichen, k: Ganzzahl): Zeichen
+    public static char verschiebe(char b, int k) {
+        int wert = buchstabeZuZahl(b);
+        wert = (wert + k) % 26;              // wert + k ist nie negativ
+        return zahlZuBuchstabe(wert);
+    }
+
+
+    // ================== Stufe ERWEITERUNG ==================
+
+    // grossbuchstabe(c: Zeichen): Zeichen
+    public static char grossbuchstabe(char c) {
+        if (c >= 'a' && c <= 'z') {
+            return (char) ((int) c - 32);    // 97 - 65 = 32
+        }
+        return c;
+    }
+
+    // verschluesseln(klartext: Zeichenkette, k: Ganzzahl): Zeichenkette
+    public static String verschluesseln(String klartext, int k) {
+        String geheimtext = "";
+        for (int i = 0; i < klartext.length(); i++) {
+            char c = grossbuchstabe(klartext.charAt(i));
+            if (c >= 'A' && c <= 'Z') {
+                geheimtext = geheimtext + verschiebe(c, k);
+            }
+        }
+        return geheimtext;
+    }
+
+    // entschluesseln(geheimtext: Zeichenkette, k: Ganzzahl): Zeichenkette
+    public static String entschluesseln(String geheimtext, int k) {
+        String klartext = "";
+        for (int i = 0; i < geheimtext.length(); i++) {
+            char c = geheimtext.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                int wert = (buchstabeZuZahl(c) - k + 26) % 26;   // + 26 gegen negative Reste (P2)
+                klartext = klartext + (char) (wert + 97);         // 97 = 'a'
+            }
+        }
+        return klartext;
+    }
+
+
+    // ==================== Stufe EXPERTE ====================
+
+    // fuenfergruppen(text: Zeichenkette): Zeichenkette
+    public static String fuenfergruppen(String text) {
+        String ergebnis = "";
+        for (int i = 0; i < text.length(); i++) {
+            if (i > 0 && i % 5 == 0) {
+                ergebnis = ergebnis + " ";
+            }
+            ergebnis = ergebnis + text.charAt(i);
+        }
+        return ergebnis;
+    }
+
+    // bruteForce(geheimtext: Zeichenkette): Reihung von Zeichenkette
+    public static String[] bruteForce(String geheimtext) {
+        String[] alle = new String[26];
+        for (int k = 0; k < 26; k++) {
+            alle[k] = entschluesseln(geheimtext, k);
+        }
+        return alle;
+    }
+
+    // findeSchluessel(klartext: Zeichenkette, geheimtext: Zeichenkette): Ganzzahl
+    public static int findeSchluessel(String klartext, String geheimtext) {
+        if (klartext.length() == 0 || klartext.length() != geheimtext.length()) {
+            return -1;
+        }
+        int k = (buchstabeZuZahl(geheimtext.charAt(0)) - buchstabeZuZahl(grossbuchstabe(klartext.charAt(0))) + 26) % 26;
+        for (int i = 1; i < klartext.length(); i++) {
+            if (verschiebe(grossbuchstabe(klartext.charAt(i)), k) != geheimtext.charAt(i)) {
+                return -1;
+            }
+        }
+        return k;
+    }
+
+    // rateSchluessel(geheimtext: Zeichenkette): Ganzzahl
+    public static int rateSchluessel(String geheimtext) {
+        int[] anzahl = new int[26];
+        for (int i = 0; i < geheimtext.length(); i++) {
+            char c = geheimtext.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                anzahl[buchstabeZuZahl(c)] = anzahl[buchstabeZuZahl(c)] + 1;
+            }
+        }
+        int max = 0;                          // Index des haeufigsten Buchstabens
+        for (int i = 1; i < 26; i++) {
+            if (anzahl[i] > anzahl[max]) {    // echtes > : bei Gleichstand bleibt der fruehere
+                max = i;
+            }
+        }
+        return (max - 4 + 26) % 26;           // e = 4
+    }
+}
+
+
+// ---------------------------------------------------------------------
+//  TESTS – hier nichts veraendern!
+// ---------------------------------------------------------------------
+//  Jede Testklasse gehoert zu einer Stufe:
+//      CaesarBasisTest          Basis
+//      CaesarErweiterungTest    Erweiterung
+//      CaesarExperteTest        Experte
+//  Eine Stufe ist geschafft, wenn ALLE Tests ihrer Klasse gruen sind.
+// ---------------------------------------------------------------------
+
+class CaesarBasisTest {
+
+    @Test
+    public void basis_buchstabeZuZahl_raender() {
+        assertEquals(0, CaesarWerkstatt.buchstabeZuZahl('A'), "'A' muss 0 ergeben - intern gilt A = 0 (Falle P1)");
+        assertEquals(25, CaesarWerkstatt.buchstabeZuZahl('Z'), "'Z' muss 25 ergeben");
+    }
+
+    @Test
+    public void basis_buchstabeZuZahl_mitte() {
+        assertEquals(10, CaesarWerkstatt.buchstabeZuZahl('K'), "'K' hat den ASCII-Wert 75, also 75 - 65 = 10");
+    }
+
+    @Test
+    public void basis_zahlZuBuchstabe() {
+        assertEquals('A', CaesarWerkstatt.zahlZuBuchstabe(0), "0 muss 'A' ergeben");
+        assertEquals('M', CaesarWerkstatt.zahlZuBuchstabe(12), "12 muss 'M' ergeben");
+        assertEquals('Z', CaesarWerkstatt.zahlZuBuchstabe(25), "25 muss 'Z' ergeben");
+    }
+
+    @Test
+    public void basis_alphabetNummer_wieAnlage() {
+        assertEquals(1, CaesarWerkstatt.alphabetNummer('A'), "In der Abitur-Anlage gilt A = 1 (Falle P1)");
+        assertEquals(11, CaesarWerkstatt.alphabetNummer('K'), "'K' hat in der Anlage die Nummer 11");
+        assertEquals(26, CaesarWerkstatt.alphabetNummer('Z'), "'Z' hat in der Anlage die Nummer 26");
+    }
+
+    @Test
+    public void basis_verschiebe_ohneUeberlauf() {
+        assertEquals('D', CaesarWerkstatt.verschiebe('A', 3), "verschiebe('A', 3) muss 'D' ergeben");
+        assertEquals('R', CaesarWerkstatt.verschiebe('H', 10), "verschiebe('H', 10) muss 'R' ergeben");
+    }
+
+    @Test
+    public void basis_verschiebe_ueberlauf() {
+        assertEquals('A', CaesarWerkstatt.verschiebe('X', 3), "verschiebe('X', 3) muss 'A' ergeben - nach Z geht es mit A weiter (mod 26)");
+        assertEquals('Y', CaesarWerkstatt.verschiebe('Z', 25), "verschiebe('Z', 25) muss 'Y' ergeben");
+    }
+
+    @Test
+    public void basis_verschiebe_zuZ() {
+        assertEquals('Z', CaesarWerkstatt.verschiebe('W', 3), "verschiebe('W', 3) muss 'Z' ergeben - Z ist ein ganz normaler Buchstabe (Falle P2)");
+    }
+
+    @Test
+    public void basis_verschiebe_schluesselNull() {
+        assertEquals('Q', CaesarWerkstatt.verschiebe('Q', 0), "Mit k = 0 bleibt jeder Buchstabe gleich (schwacher Schluessel)");
+    }
+}
+
+
+class CaesarErweiterungTest {
+
+    @Test
+    public void erweiterung_grossbuchstabe() {
+        assertEquals('A', CaesarWerkstatt.grossbuchstabe('a'), "'a' muss 'A' ergeben");
+        assertEquals('Z', CaesarWerkstatt.grossbuchstabe('z'), "'z' muss 'Z' ergeben");
+        assertEquals('M', CaesarWerkstatt.grossbuchstabe('M'), "'M' ist schon gross und bleibt 'M'");
+        assertEquals('!', CaesarWerkstatt.grossbuchstabe('!'), "'!' ist kein Buchstabe und bleibt '!'");
+    }
+
+    @Test
+    public void erweiterung_verschluesseln_veni() {
+        assertEquals("YHQLYLGLYLFL", CaesarWerkstatt.verschluesseln("Veni, vidi, vici!", 3),
+            "verschluesseln(\"Veni, vidi, vici!\", 3) - Leer- und Satzzeichen fallen weg, Ergebnis gross");
+    }
+
+    @Test
+    public void erweiterung_verschluesseln_ueberlauf() {
+        assertEquals("ABC", CaesarWerkstatt.verschluesseln("xyz", 3), "verschluesseln(\"xyz\", 3) muss \"ABC\" ergeben");
+        assertEquals("ZUDBZDRZQ", CaesarWerkstatt.verschluesseln("Ave Caesar", 25), "verschluesseln(\"Ave Caesar\", 25)");
+    }
+
+    @Test
+    public void erweiterung_verschluesseln_leer() {
+        assertEquals("", CaesarWerkstatt.verschluesseln("", 7), "Leerer Klartext -> leerer Geheimtext");
+        assertEquals("", CaesarWerkstatt.verschluesseln("2025 !", 7), "Ohne Buchstaben bleibt nichts uebrig");
+    }
+
+    @Test
+    public void erweiterung_entschluesseln_negativerRest() {
+        assertEquals("xyz", CaesarWerkstatt.entschluesseln("ABC", 3),
+            "entschluesseln(\"ABC\", 3) muss \"xyz\" ergeben - -3 % 26 ist in Java -3: erst + 26 rechnen (Falle P2)");
+    }
+
+    @Test
+    public void erweiterung_entschluesseln_fuenfergruppen() {
+        assertEquals("venividivici", CaesarWerkstatt.entschluesseln("YHQLY LGLYL FL", 3),
+            "Leerzeichen der Fuenfergruppen werden uebersprungen, der Klartext ist klein");
+    }
+
+    @Test
+    public void erweiterung_hinUndZurueck() {
+        String g = CaesarWerkstatt.verschluesseln("Alea iacta est", 5);
+        assertEquals("FQJFNFHYFJXY", g, "verschluesseln(\"Alea iacta est\", 5)");
+        assertEquals("aleaiactaest", CaesarWerkstatt.entschluesseln(g, 5), "Entschluesseln muss das Verschluesseln aufheben (Falle P3)");
+    }
+}
+
+
+class CaesarExperteTest {
+
+    @Test
+    public void experte_fuenfergruppen() {
+        assertEquals("YHQLY LGLYL FL", CaesarWerkstatt.fuenfergruppen("YHQLYLGLYLFL"), "Nach je 5 Zeichen ein Leerzeichen");
+        assertEquals("ABCDE", CaesarWerkstatt.fuenfergruppen("ABCDE"), "Kein Leerzeichen am Ende");
+        assertEquals("ABCDE FGHIJ", CaesarWerkstatt.fuenfergruppen("ABCDEFGHIJ"), "Kein Leerzeichen am Ende, auch bei 10 Zeichen");
+        assertEquals("", CaesarWerkstatt.fuenfergruppen(""), "Leere Zeichenkette bleibt leer");
+    }
+
+    @Test
+    public void experte_bruteForce_laenge() {
+        assertEquals(26, CaesarWerkstatt.bruteForce("FCA").length, "Es gibt 26 Schluessel 0 ... 25, also 26 Eintraege");
+    }
+
+    @Test
+    public void experte_bruteForce_eintraege() {
+        String[] alle = CaesarWerkstatt.bruteForce("FCA");
+        assertEquals("fca", alle[0], "Index 0: Schluessel 0 aendert nichts (nur klein geschrieben)");
+        assertEquals("rom", alle[14], "Index 14: mit k = 14 entsteht \"rom\"");
+        assertEquals("gdb", alle[25], "Index 25: Verschiebung um -25 entspricht +1");
+    }
+
+    @Test
+    public void experte_findeSchluessel_passt() {
+        assertEquals(14, CaesarWerkstatt.findeSchluessel("rom", "FCA"), "r -> F ist eine Verschiebung um 14");
+        assertEquals(0, CaesarWerkstatt.findeSchluessel("ave", "AVE"), "Gleicher Text: Schluessel 0");
+    }
+
+    @Test
+    public void experte_findeSchluessel_widerspruch() {
+        assertEquals(-1, CaesarWerkstatt.findeSchluessel("rom", "FCB"), "m -> B passt nicht zu k = 14: kein Caesar-Paar");
+        assertEquals(-1, CaesarWerkstatt.findeSchluessel("rom", "FC"), "Verschiedene Laengen: -1");
+        assertEquals(-1, CaesarWerkstatt.findeSchluessel("", ""), "Leere Zeichenketten: -1");
+    }
+
+    @Test
+    public void experte_rateSchluessel_langerText() {
+        assertEquals(8, CaesarWerkstatt.rateSchluessel("LMZNM QVLAB MPBDW ZLMVB WZMV"),
+            "Haeufigster Buchstabe ist M (5-mal); M = 12, e = 4, also k = 8");
+    }
+
+    @Test
+    public void experte_rateSchluessel_grenze() {
+        assertEquals(17, CaesarWerkstatt.rateSchluessel("CVIIDWVGVIOZKJMOVN"),
+            "Haeufigster Buchstabe ist V (4-mal) -> k = 17. Der echte Schluessel ist 21: In kurzen Texten ist e nicht immer vorn (Falle P6)");
+    }
+
+    @Test
+    public void experte_rateSchluessel_gleichstand() {
+        assertEquals(1, CaesarWerkstatt.rateSchluessel("FFHH"), "F und H je 2-mal: F gewinnt (frueher im Alphabet), F = 5, also k = 1");
+    }
+}
+
+
+// ---------------------------------------------------------------------
+//  Programmstart – hier kannst du deine Methoden selbst ausprobieren
+// ---------------------------------------------------------------------
+
+String botschaft = "Die Legion zieht nach Norden";
+int k = 7;
+
+String geheim = CaesarWerkstatt.verschluesseln(botschaft, k);
+println("Klartext:      " + botschaft);
+println("Geheimtext:    " + CaesarWerkstatt.fuenfergruppen(geheim));
+println("Zurueck:       " + CaesarWerkstatt.entschluesseln(geheim, k));
+println("Geraten (e):   k = " + CaesarWerkstatt.rateSchluessel(geheim));
+
+String[] alle = CaesarWerkstatt.bruteForce("ZUDBZ DRZQ");
+for (int i = 0; i < alle.length; i++) {
+    println(i + ": " + alle[i]);
+}
