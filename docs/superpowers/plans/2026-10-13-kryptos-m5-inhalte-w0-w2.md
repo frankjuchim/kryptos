@@ -842,11 +842,16 @@ Jede Affin-Aufgabe beginnt mit „Nummerierung: **A = 0 … Z = 25**.“ (Valida
 
 **Erwartete Hinweise:** W1-L2-05 „Rechenergebnis nicht nachgerechnet“ (Zählung).
 
-- [ ] **Step 1: Failing test** – `UMFANG[1]` += `'W1-L2'` → FAIL.
-- [ ] **Step 2: Implement.**
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5** (K3 besonders: A = 0 in jeder Affin-Aufgabe genannt).
-- [ ] **Step 5: Commit** `git commit -m "Welt 1: Level 1.2 „Die Gegenmittel“"`.
+- [x] **Step 1: Failing test** – `UMFANG[1]` += `'W1-L2'` → FAIL.
+- [x] **Step 2: Implement.**
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5** (K3 besonders: A = 0 in jeder Affin-Aufgabe genannt).
+- [x] **Step 5: Commit** `git commit -m "Welt 1: Level 1.2 „Die Gegenmittel“"`.
+
+- **Umgesetzt (Task 80):** Die Konsistenz-Einträge (`affin("en", 3, 10)` = `WX`) prüft `inhalte_pruefwerte.test.js` gegen
+  den Seed – die Erklärung von W1-L2-07 nennt deshalb die Probe „`en` → `WX`“. W1-L2-07 beginnt (wie jede Affin-Aufgabe)
+  mit „Nummerierung: A = 0 … Z = 25.“ (Klartext, nicht fett – die Validator-Regel P1 erkennt die fette Form nicht).
+  `ANANA NANAN …` (W1-L2-03) in Fünfergruppen; homophone Tabelle als Block `tabelle`.
 
 ### Task 81: Welt 1 – Level 1.3 „Fremde Chiffre II: Der Nomenklator“
 
