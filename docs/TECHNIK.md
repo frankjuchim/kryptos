@@ -1114,8 +1114,9 @@ werkstatt ──(Lehrkraft: Angriff starten)──► angriff ──(Lehrkraft o
 ```
 
 Beim Übergang `angriff → beurteilung` werden die Abzeichen vergeben (§9.6). Die Werkstatt ohne Arena (Level 3.3) arbeitet
-rein im Browser: Entwürfe liegen nur lokal (`localStorage`, try/catch), Prüfung über `shared/krypto.js`; serverseitig
-gespeichert wird erst die Einreichung in eine Arena.
+rein im Browser: Entwürfe liegen nur lokal (`localStorage` unter `kr-werkstatt:<teilnahme>`, try/catch), Prüfung über
+`shared/krypto.js`; serverseitig gespeichert wird erst die Einreichung in eine Arena. „Abmelden“/„Überall abmelden“ im
+Kopfzeilen-Menü und „Entwurf verwerfen“ löschen die Entwürfe (geteilte Tablets, Plan M7 E105).
 
 ### 9.2 Baukasten-Format (Verfahren öffentlich, Schlüssel geheim – Kerckhoffs)
 
@@ -1636,7 +1637,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | Methode · Pfad | Request | Response | Limit / Fehler |
 |---|---|---|---|
 | `POST /api/werkstatt/pruefen` | `{ verfahren, schluessel, text }` | `{ ok, fehler, geheimtext, zwischen, rueck }` (Hinweise P6–P8 **nicht**) | 60/min |
-| `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung, klartextLaenge, hinweise } \| null }` (offene Arena, sonst die jüngste geschlossene; eigene Hinweise sofort, Plan M7 E104) | – |
+| `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung, klartextLaenge, hinweise } \| null, teilnahme }` (offene Arena, sonst die jüngste geschlossene; eigene Hinweise sofort, Plan M7 E104; `teilnahme` = eigene id für den Entwurfsschlüssel `kr-werkstatt:<teilnahme>`, Plan M7 Task 156) | – |
 | `POST /api/arena/:id/chiffre` | `{ verfahren, schluessel, klartext, beschreibung }` | `{ ok, geheimtext }` | 20/10 min je Team; 409 ≠ werkstatt |
 | `GET /api/arena/:id/chiffren` | – | `[{ id, team: { id, name }, name, stufen: [{ typ, kuerzel, param }] (Platzhalter als „geheim“), beschreibung, geheimtext, klartextLaenge, geknackt, versuche, eigene }]` (in `werkstatt` nur die eigene; Hinweise der eigenen sofort, fremde ab `beurteilung`; ab `beurteilung` zusätzlich `geknacktVon`, `geknacktNachSek` = Sekunden vom ersten Angriff auf die Chiffre bis zum ersten Knacken – Plan M7 Task 146) | – |
 | `POST /api/arena/:id/chiffren/:cid/angriff` | `{ klartext }` \| `{ schluessel }` | `{ erfolg, geknackt, rest: { chiffre, team } }` | 1/30 s je Team+Chiffre (Plan M7 E101), 60/10 min je Team; 429 mit `Retry-After`; 409 ≠ angriff; 400 eigene |

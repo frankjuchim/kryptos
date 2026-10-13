@@ -244,3 +244,87 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
   .balken { grid-template-columns: minmax(0, 1fr) auto; }
   .balken-spur { grid-column: 1 / -1; grid-row: 2; }
 }
+
+/* ---------- Chiffren-Werkstatt (Plan M7 Task 156): Baukasten-Editor, Prüfung, Einreichen ---------- */
+.werkstatt { display: grid; gap: var(--a-4); min-width: 0; }
+.werkstatt h1 { margin: 0; }
+.werkstatt-kopf p { margin: 0; }
+.werkstatt-kopf-info { display: grid; gap: var(--a-1); }
+.werkstatt-reiter { display: flex; flex-wrap: wrap; gap: var(--a-2); border-bottom: 1px solid var(--linie); }
+.werkstatt-reiter .reiter-link { min-height: var(--ziel); display: inline-flex; align-items: center; padding: 0 var(--a-3); color: var(--text); text-decoration: none; border-bottom: 3px solid transparent; font-weight: 700; }
+.werkstatt-reiter .reiter-link.aktiv { border-bottom-color: var(--akzent, var(--messing)); }
+.werkstatt-raster { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1024px) {
+  .werkstatt-raster { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+}
+.baukasten, .werkstatt-pruefung {
+  display: grid;
+  gap: var(--a-3);
+  padding: var(--a-4);
+  background: var(--karte);
+  border: 1px solid var(--linie);
+  border-radius: var(--r-karte);
+  min-width: 0;
+}
+.baukasten h2, .werkstatt-pruefung h2 { margin: 0; font-size: var(--h2); }
+.werkstatt-pruefung h3, .baukasten h3 { margin: 0; font-size: var(--h3); }
+.baukasten .feld { display: grid; gap: var(--a-1); min-width: 0; }
+.baukasten .feld p { margin: 0; }
+.baukasten label { font-weight: 700; }
+.baukasten input[type="text"], .baukasten input[type="number"], .baukasten select, .baukasten textarea { min-height: var(--ziel); max-width: 100%; }
+.werkstatt-name { width: 100%; }
+.werkstatt-klartext, .werkstatt-beschreibung { width: 100%; font-size: 1rem; }
+.werkstatt-klartext { font-family: var(--f-mono); }
+.werkstatt-laenge { margin: 0; font-variant-numeric: tabular-nums; }
+.werkstatt-laenge.ok { color: var(--ok); font-weight: 700; }
+.werkstatt-laenge.ok::before { content: "✓ "; }
+.stufen { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.stufe { display: grid; gap: var(--a-2); padding: var(--a-3); border: 1px solid var(--linie); border-left: 4px solid var(--akzent, var(--messing)); border-radius: 8px; background: var(--papier); min-width: 0; }
+.stufe-kopf { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; }
+.stufe-nr { font-weight: 700; font-family: var(--f-ueberschrift); min-width: 4.5em; }
+.stufe-typ { flex: 1 1 14rem; min-width: 0; }
+.stufe-knoepfe { display: inline-flex; gap: var(--a-1); }
+.stufe-knoepfe .knopf { min-width: var(--ziel); min-height: var(--ziel); padding: 0 var(--a-2); font-size: 1.1rem; }
+.stufe-parameter { display: grid; gap: var(--a-2); }
+.stufe-feld { display: grid; gap: var(--a-1); min-width: 0; }
+.stufe-feld-zeile { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.stufe-feld-zeile input { flex: 1 1 10rem; min-width: 0; font-family: var(--f-mono); }
+.stufe-feld-zeile input[type="text"] { text-transform: uppercase; }
+.stufe-feld-zeile select { flex: 0 1 auto; }
+.stufe-einordnung, .stufe-ohne { margin: 0; }
+.stufe-neu { justify-self: start; }
+.werkstatt-rueck { margin: 0; font-weight: 700; }
+.werkstatt-rueck[hidden] { display: none; }
+.werkstatt-rueck.ok { color: var(--ok); }
+.werkstatt-fehler-bereich[hidden], .werkstatt-hinweise-bereich[hidden], .werkstatt-zwischen[hidden], .werkstatt-eigene[hidden] { display: none; }
+.werkstatt-fehler-bereich p { margin: 0; }
+.werkstatt-fehler { margin: 0; padding-left: 1.3em; }
+.werkstatt-hinweise-bereich { display: grid; gap: var(--a-1); }
+.werkstatt-hinweise-bereich p { margin: 0; }
+.werkstatt-hinweise { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.werkstatt-hinweis { display: flex; flex-wrap: wrap; gap: var(--a-1); align-items: baseline; }
+.werkstatt-ausgabe { display: grid; gap: var(--a-2); min-width: 0; }
+.werkstatt-geheimtext, .werkstatt-eingereicht {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: var(--gr-mono);
+  letter-spacing: .04em;
+  overflow-wrap: anywhere;
+  padding: var(--a-2) var(--a-3);
+  background: var(--papier-2);
+  border-radius: 8px;
+}
+.werkstatt-zwischen summary { min-height: var(--ziel); display: inline-flex; align-items: center; cursor: pointer; }
+.werkstatt-zwischen-liste { margin: 0; padding-left: 1.3em; display: grid; gap: var(--a-1); }
+.werkstatt-zwischen-liste code { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.werkstatt-checkliste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-1); }
+.werkstatt-checkliste li { display: flex; gap: var(--a-2); align-items: baseline; }
+.werkstatt-checkliste .check-symbol { font-weight: 700; width: 1.2em; }
+.werkstatt-checkliste li.erfuellt .check-symbol { color: var(--ok); }
+.werkstatt-checkliste li.offen { color: var(--text-2); }
+.werkstatt-einreichen-zeile { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.werkstatt-eigene { display: grid; gap: var(--a-2); }
+.werkstatt-eigene p { margin: 0; }
+.werkstatt-entwurf { display: grid; gap: var(--a-2); border-top: 1px solid var(--linie); padding-top: var(--a-3); }
+.werkstatt-entwurf p { margin: 0; }
+.entwurf-verwerfen { justify-self: start; }

@@ -84,7 +84,22 @@ const KRKopf = (() => {
     return h('div', { class: 'menue-gruppe' }, h('label', { for: 'kopf-kurs', class: 'menue-titel' }, 'Kurs wechseln'), h('div', { class: 'menue-zeile' }, wahl, knopf));
   }
 
+  /** Werkstatt-Entwürfe (Klartext und Schlüssel des Teams, Plan M7 E105) aus dem Browser entfernen – geteilte Tablets */
+  function entwuerfeLoeschen() {
+    try {
+      const weg = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const n = localStorage.key(i);
+        if (typeof n === 'string' && n.startsWith('kr-werkstatt:')) weg.push(n);
+      }
+      for (const n of weg) localStorage.removeItem(n);
+    } catch {
+      /* ohne Speicher gibt es nichts zu löschen */
+    }
+  }
+
   async function abmelden(ueberall) {
+    entwuerfeLoeschen();
     try {
       const r = await AQ.api('POST', '/api/abmelden', { ueberall });
       location.href = (r && r.weiter) || '/';
@@ -273,5 +288,5 @@ const KRKopf = (() => {
     });
   }
 
-  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv, _funkPruefe: funkPruefe };
+  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv, entwuerfeLoeschen, _funkPruefe: funkPruefe };
 })();

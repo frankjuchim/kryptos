@@ -2557,7 +2557,7 @@ Beamer bei 1920 × 1080.
   Änderung (try/catch), Laden beim Start, `button.entwurf-verwerfen`; Hinweis „Auf geteilten Tablets nach der Stunde
   abmelden – dann wird der Entwurf gelöscht.“ Ohne Speicher (Fehler) läuft alles weiter.
 
-- [ ] **Step 1: Failing test** – `test/client_werkstatt.test.js` (Auszug):
+- [x] **Step 1: Failing test** – `test/client_werkstatt.test.js` (Auszug):
   ```js
   test('Editor: FUNKGITTER mit geteiltem Schlüssel ergibt das W3-Beispiel; Hinweise mit Fallen-Chip; XOR nur zuletzt', async () => {
     const k = D.lade(WERKSTATT, { url: 'http://x.test/werkstatt#/', fetch: { 'GET /api/sitzung': SITZUNG, 'GET /api/arena': { status: 200, body: { arena: null, team: { id: 1, name: 'Team Skytale' }, eigene: null } } } });
@@ -2583,9 +2583,9 @@ Beamer bei 1920 × 1080.
   „Abmelden“ im Kopfzeilen-Menü `null`; mit werfendem `localStorage` (Haken `vorher`) lädt die Seite ohne Fehler.)
   (`KRWerkstatt.setzeStufen`/`zustand` sind Test- und e2e-Schnittstellen; die Bedienung im Test zusätzlich einmal über die
   echten Felder.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (360 px: Stufen
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (360 px: Stufen
   untereinander, Tastatur ↑/↓ zum Umordnen, Fallen-Chips).
-- [ ] **Step 5: Commit** `git commit -m "Chiffren-Werkstatt: Baukasten-Editor mit Live-Prüfung, Hinweisen, Entwurf und Einreichen"`.
+- [x] **Step 5: Commit** `git commit -m "Chiffren-Werkstatt: Baukasten-Editor mit Live-Prüfung, Hinweisen, Entwurf und Einreichen"`.
 
 ### Task 157: Knack-Arena – Ansicht für Teams (TECHNIK §9.4–§9.6, W3 §9.4, E101, E104)
 
@@ -2992,6 +2992,18 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Schüler-Teams aus (nur die Oberfläche blendete es aus) – damit hätte Eve das Verfahren eines Alice-Teams im JSON gesehen.
   Jetzt filtert `typen/botenlauf.js` `ereignisSicht`: Schüler-Teams nie, Beamer erst ab `aufloesung`, Regie immer
   (Test `funkraum_botenlauf.test.js`, TECHNIK §12.6).
+
+- **Task 156:** `GET /api/arena` liefert zusätzlich `teilnahme` (eigene id) – sonst kennt die Seite den Entwurfsschlüssel
+  `kr-werkstatt:<teilnahme>` nicht (`/api/sitzung` nennt keine Teilnahme-id; Test `arena.test.js`, TECHNIK §9.1/§13.3).
+  Platzhalter werden über alle Parameter fortlaufend vergeben (`$s1`, `$s2` …, auch zwei Parameter derselben Stufe wie
+  Blockrotation); „wie Stufe n“ nur auf frühere Stufen mit gleicher Parameterart. XOR bleibt immer zuletzt: Typwahl nur in der
+  letzten Stufe, „+ Stufe“ fügt vor einem XOR ein, Umordnen über XOR hinweg gesperrt. Umordnen (Knöpfe ↑/↓, Alt + ↑/↓),
+  Entfernen und Typwechsel halten geteilte Schlüssel gültig (der Wert wandert mit, die Teilung kehrt sich bei Bedarf um –
+  Zusatztest, gefunden in der Sichtprüfung). Checkliste der Einreich-Bedingungen (✓/○, nicht nur Farbe). Ohne Entwurf lädt
+  die Seite die eingereichte Chiffre (Verfahren und Beschreibung, ohne Schlüssel/Text). `/werkstatt` ist nur für
+  Schülerinnen und Schüler (Wächter), daher keine Lehrkraft-Vorschau. Phasenwechsel bemerkt der Editor alle 15 s
+  (`GET /api/arena`). Plan-Test korrigiert: `k.tippe` hängt bei Feldern mit `maxlength` an – der Test leert vorher.
+  Hinweise (P6–P8) zeigt die Bibliothek nur ohne Fehler (unverändert).
 
 ## Reihenfolge und Abhängigkeiten
 

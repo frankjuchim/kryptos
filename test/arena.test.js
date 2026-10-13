@@ -101,3 +101,10 @@ test('Regie-Stand je Kurs, Eingaben (Phase, angriffBis ≤ 3 h, Zusatzfeld), Hak
   await f.lk.get(`/api/lehrer/kurse/${f.kurs.id}/arena`).expect(200);
   await phase(f, a.id, { phase: 'geschlossen' }).expect(403);
 });
+
+test('GET /api/arena nennt die eigene Teilnahme (Schlüssel des Werkstatt-Entwurfs im Browser, E105) – auch ohne Team und Arena', async () => {
+  const f = await F.kursMitTeams(1);
+  const ohne = (await f.teams[0].c.get('/api/arena').expect(200)).body;
+  assert.equal(ohne.arena, null);
+  assert.equal(ohne.teilnahme, f.teams[0].c.id);
+});

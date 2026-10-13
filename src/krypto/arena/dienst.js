@@ -269,14 +269,16 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     };
   }
 
-  /** GET /api/arena → { arena: { id, status, angriffBis } | null, team, eigene } */
+  /** GET /api/arena → { arena: { id, status, angriffBis } | null, team, eigene, teilnahme } – `teilnahme` (eigene id)
+      benennt den Werkstatt-Entwurf im Browser (`kr-werkstatt:<teilnahme>`, E105) */
   function aktuell(s) {
     const a = arenaVonKurs(s.kurs_id);
     const team = teams.teamVon(s.id);
     return {
       arena: a ? { id: a.id, status: a.status, angriffBis: a.angriff_bis } : null,
       team: team ? { id: team.id, nr: team.nr, name: team.name } : null,
-      eigene: a && team ? eigeneAnsicht(sql.chiffreTeam.get(a.id, team.id)) : null
+      eigene: a && team ? eigeneAnsicht(sql.chiffreTeam.get(a.id, team.id)) : null,
+      teilnahme: s.id
     };
   }
 
