@@ -134,7 +134,8 @@ src/
                                in Blöcken ↔ verfahren, Hinweis pruefnachweis für gaps (Review M3 W3, K8)
     validierung.js             Validator-Hooks welt/level/aufgabe/boss/dateien (Delta §11)
     niveau.js                  Sichtbarkeit, Rangrelevanz, Boss-Filter (§8)
-    abzeichen.js               Artefakte, Leistungsabzeichen (§9.6, §12.8)
+    abzeichen.js               Artefakte (= boss<n>_besiegt), Funkraum-Veteran, Arena-Knacker, Unknackbar, Hook
+                               abzeichenAnzeige (Sprite-ids; §4.2, §9.6, §12.7, Plan M7 E100/E112)
     werkzeuge.js               Labor-Registry (serverseitige Liste, §10.2)
     generatoren/               caesar.js, schluesselpaar.js, modulo.js, affin.js, schluesselwort.js, vigenere.js,
                                kasiski.js, koinzidenz.js, xor.js, kryptos16.js, toyhash.js, schluesselanzahl.js, dhrsa.js
@@ -150,7 +151,7 @@ src/
                                szenarien.js (Konfiguration §12.6, Rollenvorschlag), dienst.js (Zustandsautomat, Polling,
                                Nachrichten, Moderation), typen/{botenlauf,wettknacken,doppelter_schluessel,
                                schluesseltausch,mallory}.js (je Szenario ein Modul mit festem Vertrag), routen.js (Plan M7)
-    arena/                     dienst.js, routen.js
+    arena/                     dienst.js (Phasen, Einreichung, Angriffe, Beurteilung, Beamer-ETag), routen.js (§9, §13.3/§13.4)
     labor.js                   GET /api/labor (Freigaben)
 public/
   index.html spiel.html labor.html funkraum.html werkstatt.html beamer.html lehrer.html board.html
@@ -170,13 +171,17 @@ public/
                     labor/ registry.js seite.js (M4)  bausteine.js (KRLaborBau, M6)  skytale.js scheibe.js
                            haeufigkeit.js substitution.js vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js
                            signatur.js (M6 erledigt: elf Werkzeuge, nachgeladen über KRLabor.lade)
-                    funkraum.js beamer.js werkstatt.js (M4 Gerüste, Inhalte M7)  arena.js lehrer_funkraum.js
-                    lehrer_arena.js funkpoll.js (KRPoll) funknetz.js (KRNetz) funkraum_szenen.js (KRFunkSzenen) (M7)
+                    funkraum.js (KRFunkraum) beamer.js (KRBeamer) werkstatt.js (KRWerkstatt) arena.js (KRArena)
+                    lehrer_funkraum.js (KRLehrerFunk: Tabs Teams, Funkraum) lehrer_arena.js (KRLehrerArena)
+                    funkpoll.js (KRPoll) funknetz.js (KRNetz) funkraum_szenen.js (KRFunkSzenen) (M7 erledigt)
                     lehrer.js urkunden.js gast.js start.js board.js themen.js datenschutz.js
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py test_fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
-test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js labor.js gast.js geraete.js fehler.js inhalte.js, seed/ (Gast-Demo für den e2e, §15)
+test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js labor.js funkraum.js arena.js gast.js geraete.js fehler.js inhalte.js,
+                   seed/ (Gast-Demo für den e2e, §15)
+test/hilfen_funk.js  Testhilfe Funkraum/Arena: kursMitTeams, anlegen, starte, aktion, stand, regie, fundstellen,
+                   arenaMitChiffren, festerZufall (Plan M7 Task 133)
 test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
                    FREMDCODE.md (M6: Fremdquellen; aus der Krypto-Werkstatt nichts übernommen)
@@ -1110,6 +1115,9 @@ neu (keine gespeicherten Ränge).
 
 ## 9. Chiffren-Werkstatt und Knack-Arena (Design §7.5)
 
+Stand M7 (erledigt): Werkstatt (`/werkstatt`, Baukasten-Editor), Arena (`/werkstatt#/arena`), Lehrkraft-Tab „Knack-Arena“,
+Beamer `/beamer/arena/:id`; Tests `arena*.test.js`, `client_werkstatt.test.js`, e2e Nr. 6.
+
 ### 9.1 Ablauf und Phasen
 
 ```
@@ -1361,12 +1369,12 @@ Boss-Kampf sperrt auch die eingebetteten Werkzeuge (`werkzeuge: []`, `boss: true
 
 ### 11.2 Gemeinsame JS-Module
 
-Stand nach M6 (globale Namen in Klammern; jede Datei legt genau einen an – Werkzeug-Module keinen):
+Stand nach M7 (globale Namen in Klammern; jede Datei legt genau einen an – Werkzeug-Module keinen):
 
 | Datei | Aufgabe |
 |---|---|
 | `krypto/oberflaeche.js` (`KR`) | Theme (`data-epoche`, `data-theme`), Einstellungen Bewegung/Dunkelmodus, Ornamente/Sprites/Symbole, Entsiegeln, Zeitsprung-Übergang, Lade- und Fehlerzustände, Listen `KATEGORIEN`, `FALLEN`, `RAENGE`, `WELTEN_KURZ` |
-| `krypto/kopfzeile.js` (`KRKopf`) | Logo, Epochenname, Bereiche je Rolle, „⌂ Portal“, Labor-Link (im Boss-Kampf ausgeblendet), Rang-Badge, Menü (Darstellung, Kurswahl, Abmelden, Überall abmelden); Funkraum-Punkt als Haken `funkPunkt()` – das Polling auf `GET /api/funk` schaltet M7 ein (M4 E33) |
+| `krypto/kopfzeile.js` (`KRKopf`) | Logo, Epochenname, Bereiche je Rolle, „⌂ Portal“, Labor-Link (im Boss-Kampf ausgeblendet), Rang-Badge, Menü (Darstellung, Kurswahl, Abmelden, Überall abmelden); Funkraum-Punkt `funkPunkt()` – pollt `GET /api/funk` alle 20 s (nicht auf der Funkraum-Seite selbst); „Abmelden“ löscht alle Werkstatt-Entwürfe `kr-werkstatt:*` (M7 E105) |
 | `krypto/zeitleiste.js` (`KRZeitleiste`) | Epochen-Tore auf der Achse; Position aus `jahr.von` über `x = log10(jahr + 600)` normiert (−500 … 2026), Mindestabstand 140 px, auf schmalen Geräten senkrechte Liste; Epochen 0–6 ohne Seed als „noch verschlüsselt“; Entsiegeln-Animation (aus bei `prefers-reduced-motion`/Einstellung) |
 | `krypto/epoche.js`, `krypto/level.js`, `krypto/profil.js` (`KREpoche`, `KRLevel`, `KRProfil`) | Ansichten der Schüler-Seite (Epoche mit Akten-Karten, Level mit Aufgabenliste und Labor-Karten, Profil mit Rang, Artefakten, Abzeichen, Fallen-Radar) |
 | `krypto/bloecke.js` (`KRB`), `krypto/interaktionen.js` (`KRI`) | Renderer der neuen Blöcke und Interaktionen (registrieren sich bei `AQR`/`AQI`) |
@@ -1374,7 +1382,10 @@ Stand nach M6 (globale Namen in Klammern; jede Datei legt genau einen an – Wer
 | `krypto/labor/registry.js` (`KRLabor`) | Werkzeugliste mit Reitern (= Server), `registriere`, `hat`, `bereit`, `lade` (Nachladen, E72), `REITER_REGELN`/`erlaubt`/`reiterFuer`, `GRUND`, `oeffne` (Sperre über `umgebung.gesperrt`), `aktiv`, `dialog` (Fokusfalle, Esc, Fokus-Rückkehr), `nachspiel`, `alleSchluessel` (§10.1) |
 | `krypto/labor/bausteine.js` (`KRLaborBau`) | Bausteine der Werkzeuge: `reiter`, `textfeld` (Live-Normalisierung, Längenanzeige), `zahl` (Spinbutton), `richtung`, `ausgabe` (Kopieren ohne Gruppen-Leerzeichen), `hinweis` (info/warnung/falle), `tabelle`, `details` („Mehr ausprobieren“), `neueId`; einmal nachgeladen bzw. auf `/labor` statisch |
 | `krypto/labor/<id>.js` (kein globaler Name) | die elf Werkzeuge (§10.2), je eine IIFE mit `KRLabor.registriere` |
-| Seitenskripte | `spiel.js` (`KRSpiel`), `lehrer.js` (`KRLehrer`, Bausteine auch für den Gastmodus), `urkunden.js`, `gast.js` (`KRGast`), `start.js` (`KRStart`), `themen.js`, `board.js`, `datenschutz.js`, `labor/seite.js` (`KRLaborSeite`); Gerüste bis M7: `funkraum.js`, `werkstatt.js`, `beamer.js`; M7: `arena.js`, `lehrer_funkraum.js`, `lehrer_arena.js` |
+| `krypto/funkpoll.js` (`KRPoll`) | gemeinsamer Poller: `starte({ url(seit), intervall, mischen, sofort, beiDaten, beiZustand })` → `{ stopp(), jetzt(), version(), stand() }`; `If-None-Match`, 304 ohne Arbeit, Rückfall 2 → 4 → 8 → 15 s (auch 429/5xx), Pause bei `document.hidden`, nach `auswertung` 15 s, 403/404 → `ende` |
+| `krypto/funknetz.js` (`KRNetz`) | Netz-Grafik (SVG, Tablet und Beamer, Zustände mit Symbol, „fliegt“ nur ohne `AQ.ruhig()`, Geheimtext-Vorschau am Beamer) mit Tabellen-Alternative; `ereignisText` (Ticker-Texte), `ticker` (gedrosselt, höchstens eine Ansage je 5 s), `ROLLE`, `PHASE`, `STATUS`, `dauer` |
+| `krypto/funkraum_szenen.js` (`KRFunkSzenen`) | Rollenkarten und Szenen je Typ (`registriere`, `zeige`, `aktualisiere(stand)` mit keyed Listen `abgleich`), Senden-Formular mit sichtbarer Umlaut-Ersetzung, Posteingang, Prüf-Formulare, eingebettete Werkzeuge (`einbettung`, E98) |
+| Seitenskripte | `spiel.js` (`KRSpiel`), `lehrer.js` (`KRLehrer`, Bausteine auch für den Gastmodus), `urkunden.js`, `gast.js` (`KRGast`), `start.js` (`KRStart`), `themen.js`, `board.js`, `datenschutz.js`, `labor/seite.js` (`KRLaborSeite`); M7: `funkraum.js` (`KRFunkraum`), `beamer.js` (`KRBeamer`, Funkraum und Arena; Testschnittstelle `_poller()`), `werkstatt.js` (`KRWerkstatt`; Testschnittstellen `setzeStufen`, `zustand`, `aktualisiereArena`), `arena.js` (`KRArena`), `lehrer_funkraum.js` (`KRLehrerFunk`), `lehrer_arena.js` (`KRLehrerArena`) |
 
 Alle Seiten: `<html lang="de" data-epoche="…" data-theme="hell|dunkel|auto">`, keine Inline-Skripte/-Styles, kein
 `innerHTML`/`insertAdjacentHTML`/`outerHTML` (Test `seiten.test.js` durchsucht `public/static/js/**`).
@@ -1442,6 +1453,9 @@ Histogramm/Schaubild/Zeitleiste, Geheimtext mit „buchstabenweise vorlesen“. 
 ---
 
 ## 12. Funkraum (Design §7.4)
+
+Stand M7 (erledigt, Plan `docs/superpowers/plans/2026-10-13-kryptos-m7-funkraum-arena.md`): fünf Szenarien, Regie,
+Beamer, Teams; Tests `funkraum*.test.js`, `teams.test.js`, `datenschutz*.test.js`, e2e Nr. 5.
 
 ### 12.1 Zustandsautomat eines Szenarios
 
@@ -1537,9 +1551,35 @@ Botenlauf, 12-Byte-OTP, (p, g) je Paar mit Caesar-Nachricht und Etiketten „K7Q
 }
 ```
 
-Jeder Typ ist ein Modul `src/krypto/funkraum/typen/<typ>.js` mit festem Vertrag (`start`, `ich`, `sicht`, `anzeigen`,
-`aktionen`, `werkzeuge`, `auswertung`); der Dienst kennt nur Zustandsautomat, Sichtbarkeits-Grundregeln, Versionen,
-Grenzen und Löschung. Zufall nur über `ctx.zufallBytes(n)` (Plan M7 E113).
+Jeder Typ ist ein Modul `src/krypto/funkraum/typen/<typ>.js` mit festem Vertrag; der Dienst
+(`src/krypto/funkraum/dienst.js`) kennt nur Zustandsautomat, Sichtbarkeits-Grundregeln, Versionen, Grenzen und Löschung.
+Zufall nur über `ctx.zufallBytes(n)` (Plan M7 E113), Zeit nur über `ctx.now()`/`ctx.iso()`. Ist-Stand nach M7:
+
+| Hook | Form | Wer ruft wann | Typen |
+|---|---|---|---|
+| `typ` | `'botenlauf'` … | Zuordnung des Moduls | alle |
+| `pruefeAnlegen(o, optionen, rollen)` | wirft `ValidationError` | Dienst beim Anlegen (`o = { quelle, log, krypto }`) | Wettknacken (Seed-Text vorhanden), Doppelter Schlüssel (Sparschwein-Paar ist Alice) |
+| `start(ctx, sz, rollen)` | → `{ konfig?, zustaende?: { [teamId]: … } }` | `vorbereitung → laeuft`, in der Start-Transaktion | alle |
+| `ich(ctx, sz, rolle, alleRollen)` | → zusätzliche Felder für `ich` (nur eigene Geheimnisse) | jeder Schüler-Stand | alle außer Botenlauf |
+| `sicht(ctx, sz, n, betrachter)` | → `{ sichtbar, lesbar, inhalt? }` | Teams nur, wenn keine Grundregel greift; Beamer immer (E99) | Mallory (die übrigen über `SZENARIEN.sicht` und die Grundregeln) |
+| `sichtVorrang` | `true` | Dienst fragt `sicht` auch für eigene Nachrichten (verschlossene Umschläge) | Mallory |
+| `ereignisSicht(ctx, sz, e, betrachter)` | → `boolean` | Ereignisse je Betrachter filtern; ohne Hook sehen alle alle (nur Codes/ids) | Botenlauf (`sonderkarte`), Wettknacken (`fortschritt`), Mallory (`weitergeleitet`/`ersetzt`) |
+| `anzeigen(ctx, sz, sicht, betrachter)` | → `stand.anzeigen` je `'schueler'`/`'beamer'`/`'regie'` | jeder Stand | alle |
+| `klartextPflicht` | `true` | Senden ohne `klartext` → 400 | Botenlauf, Doppelter Schlüssel |
+| `textVomServer` | `true` | Senden überspringt die Whitelist des Client-Texts; der Typ liefert den Inhalt (erneut über die Whitelist) | Mallory (Auftragskarte) |
+| `aktionen.senden(ctx, sz, betrachter, { inhalt, klartext, an, body })` | → Ergänzungen `{ an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? }` | Vorprüfung beim Senden | Botenlauf, Doppelter Schlüssel, Mallory |
+| `aktionen.empfangen` / `aktionen.knacken` | übernimmt die Prüfaktion ganz | Dienst, Transaktion, Grenze 30 je 5 min | Schlüsseltausch (Eve-Tipps), Mallory (Bob) |
+| `aktionen.<name>` (`zuordnung`, `oeffentlich`, `k-melden`, `mallory`) | → Antwort | `teamAktion(s, id, name, body)`: Rolle laut `SZENARIEN.aktionen`, Status `laeuft`, eine Transaktion | Wettknacken, Schlüsseltausch, Mallory |
+| `grenzen[name]` | `'senden'` (Stummschaltung + 1 je 10 s wie Nachrichten) oder `{ max, ms, text }` | `teamAktion`, gezählt erst nach gültiger Aktion, 429 mit `Retry-After` | Wettknacken, Schlüsseltausch, Mallory |
+| `regie.<name>(ctx, sz, body, { lk })` | → Antwort | `regieAktion(lk, id, name, body)`: unbekannt 400, beendet 409, gesperrt 403 | Botenlauf (`sonderkarte`), Wettknacken (`hinweis`), Mallory (`zertifikat`, `station`) |
+| `werkzeuge(sz, rolle, ctx)` | → `[{ id, voreinstellung }]` (E98) | Schüler-Stand; im Boss-Kampf `[]` | Botenlauf (Scheibe), Wettknacken (Werkbank), Doppelter Schlüssel (Bit-Lupe), Schlüsseltausch (Modulo-Uhr, nur `uhr`) |
+| `auswertung(ctx, sz)` | → nur Zahlen, ids, Codes | vor dem Leeren beim Beenden; Regie/Beamer in `aufloesung` live | alle |
+
+`ctx` (`typCtx`): `db, now, iso, zufallBytes, krypto, log, quelle, hash(text)` (HMAC mit `konfig.salz`, `normalisieren`),
+lesend `version(), szenario(), konfig(), rollen(), zustand(teamId), nachricht(nid), nachrichten(), ereignisse(code),
+phaseZu(v)`, schreibend `setzeKonfig, setzeZustand, neueVersion(), ereignis(code, daten, v), neueNachricht({ … }, v)`
+(Whitelist + 200er-Grenze) und `aendereNachricht` (neue Version, E109). `betrachter = { art: 'team'|'beamer'|'regie',
+teamId?, rolle?, partner? }`.
 
 Szenario-Regeln im Detail:
 
@@ -1595,6 +1635,9 @@ NULL`, `UPDATE funk_rollen SET zustand = '{}'`, `konfig` = `{ auswertung }` (Sal
 **3 verschiedenen** Szenario-Typen), `version + 1`, Ereignis `status { status: 'auswertung' }`. Kurs gesperrt:
 `vorbereitung` → löschen, sonst beenden (Plan M7 E111, §7.3).
 „Schließen“ bzw. Wartungsjob nach 24 h: Szenario-Zeile löschen (Kaskade). Datenschutzseite nennt die Fristen.
+Nach Beenden, Schließen, Abbrechen und Ausblenden leert `walLeeren` das WAL (§7.3, Plan M7 Task 160), damit kein
+Geheimtext als alter Seitenstand in `kryptos.db-wal` bleibt. Nach erfolgreichem Beenden prüft der Dienst das Abzeichen
+`funkraum_veteran` für alle aktiven Mitglieder der Teams mit Rolle (auch beim Sperren des Kurses).
 
 ---
 
@@ -1628,7 +1671,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 
 | Methode · Pfad | Request | Response | Limit / Fehler |
 |---|---|---|---|
-| `GET /api/funk` | – | `{ szenario: { id, typ, status, phase } \| null }` (für den Kopfzeilen-Punkt) | 6/min |
+| `GET /api/funk` | – | `{ szenario: { id, typ, titel, status, phase } \| null, team: { id, nr, name } \| null }` (Kopfzeilen-Punkt, Funkraum-Seite) | 6/min |
 | `GET /api/funk/:id/stand?seit=v` | `If-None-Match` | §12.4 (200/304) | 60/min; 403 kein Team |
 | `POST /api/funk/:id/nachrichten` | `{ an?: teamId, text, klartext?, fuerSchluessel? }` | `{ nachricht }` | 1/10 s je Team; 400 Whitelist; 409 Phase |
 | `POST /api/funk/:id/oeffentlich` | `{ wert }` (Schlüsseltausch: Zahl 1 ≤ wert < p → Kanal-Nachricht „A 17“; Mallory-Szenario: Bob veröffentlicht seine Schlüsselnummer) | `{ ok }` | 409 Phase (Plan M7 E95, E96) |

@@ -9,10 +9,10 @@ Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbu
 (https://labs.frankjuchim.de) · Anmeldung ausschließlich über das Portal.
 
 > **Stand (13.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
-> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M6** gebaut: die
-> Welten 0–2 sind spielbar, das Kryptolabor hat alle elf Werkzeuge (Branch `feature/m0-kern`, noch nicht live) – siehe
-> „Stand der Plattform“ (Abschnitt 4.1). Welten 3–6, Funkraum und Werkstatt folgen mit M7–M8; bis dahin laufen sie mit
-> den Papiermaterialien.
+> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M7** gebaut: die
+> Welten 0–2 sind spielbar, das Kryptolabor hat alle elf Werkzeuge, der Funkraum alle fünf Live-Szenarien, dazu
+> Chiffren-Werkstatt und Knack-Arena (Branch `feature/m0-kern`, Version 0.4.0, noch nicht live) – siehe „Stand der
+> Plattform“ (Abschnitt 4.1). Die Welten 3–6 folgen mit M8; bis dahin laufen sie mit den Papiermaterialien.
 
 ---
 
@@ -96,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M6)
+### 4.1 Stand der Plattform (M0–M7)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -108,8 +108,9 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 | M5 Inhalte | Welten 0–2 (`seed/welten/welt0–2.json`: Archivfunde, 12 Level mit 91 Aufgaben inkl. Kür K1, drei Boss-Pools), Warm-up W0–W2, Gast-Demo; Akten, Lösungen und Lehrkraft-PDFs aus `materialien/` (Akten nur nach Anmeldung, ohne Anmeldung nur Demo-PDFs), QR-Codes der Akten (`/level/0.1` …) |
 | M6 Kryptolabor | elf Werkzeuge unter `/labor` (Skytale & Gitter, Chiffrierscheibe, Häufigkeits-Analysator, Substitutions- und Vigenère-Werkbank, Bit-Lupe, Runden-Labor, Modulo-Uhr & Farbmischer, RSA-Rechenwerk, Hash-Labor, Signatur- & Zertifikats-Simulator) – tablet- und tastaturbedienbar, rechnen nur über `Krypto.*`, speichern nichts; Nachspiel (Einzelschritt/Zeitlupe), „Alle Schlüssel ausprobieren“, Reiter-Regeln nach Welt/Niveau, Einbettung in Aufgaben und Level-Karten, Freigaben je Kurs, Sperre im Boss, Gastmodus mit Chiffrierscheibe |
 
-Noch nicht da: Welten 3–6 (M8), Funkraum, Chiffren-Werkstatt und Knack-Arena (M7), Deploy (M9). Die Seiten dafür
-zeigen „kommt bald“.
+| M7 Funkraum, Werkstatt, Arena | Teams (Tischgruppen mit festen Namen) im Lehrkraft-Tab „Teams“; Funkraum `/funkraum` mit Botenlauf, Wettknacken, Der doppelte Schlüssel, Schlüsseltausch vor Eves Augen, Mallory im Netz – Regie im Tab „Funkraum“, Beamer `/beamer/funkraum/<id>` mit QR-Code, eingebettete Labor-Werkzeuge; Nachrichten nur A–Z/0–9/Leerzeichen (≤ 160), Klartexte nur als HMAC, **Beenden löscht alle Inhalte** (auch aus dem WAL der Datenbank), 24 h nach Anlage ist alles weg; Chiffren-Werkstatt `/werkstatt` (Baukasten aus 1–4 Stufen, Live-Prüfung, Entwurf nur im Browser) und Knack-Arena `/werkstatt#/arena` (Angriffe per Klartext oder Schlüssel mit Grenzen, Beurteilung nur für Team und Lehrkraft, Beamer `/beamer/arena/<id>`); Abzeichen Funkraum-Veteran, Arena-Knacker, Unknackbar |
+
+Noch nicht da: Welten 3–6 (M8), Deploy (M9).
 
 **Lokal starten** (Node ≥ 20):
 
@@ -119,7 +120,8 @@ npm run dev        # Dev-Portal auf :3100 und Kryptos auf :3000 (Daten in ./data
 ```
 
 Danach http://localhost:3000 öffnen und „Anmelden über InfoLabs“ wählen: Das Dev-Portal bietet die Testkonten
-„Mika R.“ (Schüler in „LK 13 (eA)“ und „GK 12 (gA)“), „Ida K.“ (nur GK 12), „Frau M.“ (Lehrkraft) und „Admin“ an.
+„Mika R.“ (Schüler in „LK 13 (eA)“ und „GK 12 (gA)“), „Ida K.“ (nur GK 12), „Ole B.“ und „Nia T.“ (nur LK 13 – für den
+Funkraum mit drei Teams), „Frau M.“ (Lehrkraft) und „Admin“ an.
 Der Signaturschlüssel des Dev-Portals entsteht beim Start in `./data`; für die Live-Konfiguration siehe Abschnitt 5.
 Mit der Beispielwelt der Tests: `WELT_DATEIEN=test/fixtures/welt_beispiel.json npm run dev`.
 
@@ -129,7 +131,7 @@ Mit der Beispielwelt der Tests: `WELT_DATEIEN=test/fixtures/welt_beispiel.json n
 npm test                       # Unit-, API- und Client-Tests (node:test), inkl. Docker-Abgleich ohne Daemon
 npm run validate               # Inhalts-Validator für seed/welten/*.json und seed/gast/demo.json
 npm run pruefen                # test + validate + Prüfwerte (Python-Zwilling) + Seeds unabhängig nachrechnen
-npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–4 und 7–11, Fotos nach docs/screenshots/
+npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–11 (5 Funkraum, 6 Arena), Fotos nach docs/screenshots/
 npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
 npm run akten -- --pruefen     # ebenso loesungen, lehrkraft, workspaces; Erzeugen ohne --pruefen (braucht LibreOffice)
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)

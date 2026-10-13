@@ -104,6 +104,28 @@ In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright insta
   Punkte entstehen nur automatisch. Punkteformel `round(punkte × max(0.25, 1 − 0.25·Fehlversuche − 0.2·Tipps))`,
   Stufen 10/20/30, Rangschwellen 0/10/30/55/80 %.
 
+## Funkraum und Arena (M7, TECHNIK §9, §12)
+
+- **Whitelist:** Funkraum-Eingaben der Lernenden sind nur `^[A-Z0-9 ]{1,160}$` (nach `toUpperCase()`, mindestens ein
+  Zeichen ≠ Leerzeichen, Umlaute → 400 – der Client ersetzt sichtbar), Zahlen oder Auswahl aus festen Listen; das gilt für
+  **jeden** Weg in `funk_nachrichten.inhalt` (`src/krypto/funkraum/text.js`). Kein anderer Freitext im Funkraum.
+- **Klartexte nie speichern:** Funkraum nur `HMAC-SHA256(salz, Krypto.normalisieren(text))`, Arena-Klartext nur als Hash
+  (`nurBuchstaben`), Arena-Schlüssel gar nicht. Einzige Freitexte: Arena-`beschreibung`/`beurteilung` (nur Team und Lehrkraft,
+  nie Beamer, Portal, Kursübersicht).
+- **Löschregeln (Tests zuerst):** Beenden leert Inhalte, Hashes, Rollen-Zustände und `konfig` bis auf `auswertung` in
+  **einer** Transaktion; Schließen bzw. 24 h nach Anlage löscht das Szenario; Kurs gesperrt: `vorbereitung` löschen, sonst
+  beenden; Arena löschen bzw. 30 Tage nach Schließen. Nach jeder Löschung `walLeeren(db)` (`src/verbund/loeschen.js`), sonst
+  bleiben Inhalte im `kryptos.db-wal` (Test `test/datenschutz_wal.test.js`).
+- **Szenario-Typ-Vertrag:** je Szenario ein Modul `src/krypto/funkraum/typen/<typ>.js` mit den Hooks aus TECHNIK §12.6
+  (`start`, `ich`, `sicht`/`sichtVorrang`, `ereignisSicht`, `anzeigen`, `aktionen`, `grenzen`, `regie`, `werkzeuge`,
+  `pruefeAnlegen`, `klartextPflicht`, `textVomServer`, `auswertung`); der Dienst (`dienst.js`) macht Zustandsautomat,
+  Sichtbarkeit, Versionen, Grenzen, Löschung. Ereignis-`daten` nur Codes/Zahlen/ids. Beamer-Sicht verdeckt bis `aufloesung`.
+  Zufall nur `ctx.zufallBytes(n)`, Zeit nur `ctx.now()`.
+- **Tests:** `test/hilfen_funk.js` (`kursMitTeams`, `starte`, `aktion`, `stand`, `regie`, `fundstellen`,
+  `arenaMitChiffren`, `festerZufall`); jede neue Funkraum-/Arena-Route in `rechte.test.js` und `datenschutz.test.js`; e2e
+  Szenarien 5 (Botenlauf, drei Teams + Beamer) und 6 (Arena) ohne Fotos. Dev-Portal-Konten für drei Teams: Mika R., Ole B.,
+  Nia T. (LK 13).
+
 ## Arbeitsweise
 
 - Alles auf Deutsch (Bezeichner, Kommentare, UI, Commits, Doku).

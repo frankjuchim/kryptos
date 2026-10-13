@@ -12,7 +12,9 @@
 > Seiten-Gerüste `/funkraum`, `/werkstatt`, `/beamer/{funkraum,arena}/:id` (M4 E20, nur Leerzustand) existieren. **Keine**
 > Funkraum-, Arena- oder Team-Route, kein `src/krypto/abzeichen.js`, keine Funkraum-Anbindung der Werkbank (M6 E74).
 >
-> **Status: in Arbeit** (13.10.2026, ab Task 130). Offene Lehrkraft-Fragen am Ende; bis zur Antwort gelten die vorläufigen Festlegungen.
+> **Status: erledigt** (13.10.2026, Tasks 130–162; Task 163 optional, nicht gebaut). Version 0.4.0, 1008 Tests grün,
+> e2e Szenarien 1–11 grün (5 und 6 ohne Fotos). Offene Lehrkraft-Fragen am Ende; bis zur Antwort gelten die vorläufigen
+> Festlegungen.
 
 **Goal:** Der Funkraum mit den fünf Live-Szenarien (Botenlauf, Wettknacken, Der doppelte Schlüssel, Schlüsseltausch vor
 Eves Augen, Mallory im Netz) und die Chiffren-Werkstatt mit Knack-Arena werden gebaut – serverseitig erzwungen,
@@ -2711,10 +2713,10 @@ Beamer bei 1920 × 1080.
   --pdf <scratch>` (PDF ansehen) und betroffene PDFs nach `npm run lehrkraft`, `package.json` **0.4.0**
   (`node werkzeuge/version_setzen.js minor`)
 
-- [ ] **Step 1:** Dokumente nachführen; Abweichungen vom Plantext unter „Umsetzungsnotizen“.
-- [ ] **Step 2: Run** `npm run pruefen` und `npm run e2e` → grün; `node scripts/vertrag_pruefen.js http://localhost:3000` (Dev)
+- [x] **Step 1:** Dokumente nachführen; Abweichungen vom Plantext unter „Umsetzungsnotizen“.
+- [x] **Step 2: Run** `npm run pruefen` und `npm run e2e` → grün; `node scripts/vertrag_pruefen.js http://localhost:3000` (Dev)
   → keine Befunde.
-- [ ] **Step 3: Commit** `git commit -m "Abschluss M7: Funkraum mit fünf Szenarien, Werkstatt und Knack-Arena, Abzeichen, e2e 5 und 6"`.
+- [x] **Step 3: Commit** `git commit -m "Abschluss M7: Funkraum mit fünf Szenarien, Werkstatt und Knack-Arena, Abzeichen, e2e 5 und 6"`.
 
 ### Task 163 (optional – nur nach Freigabe der Lehrkraft): Reiter-Sperre je Kurs (Vorschlag zu M6 offene Entscheidung 6)
 
@@ -3054,6 +3056,16 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Vergleich nahm alle Schlüssel (`arena.js` filtert jetzt `erhalten`, Client-Test). (2) `/werkstatt#/arena` mit einem
   Entwurf im Browser warf beim Laden einen TypeError (Baukasten-Felder fehlen auf `#/arena`, danach kein Router) –
   `werkstatt.js` merkt die Werte jetzt für die Rückkehr in den Baukasten (Client-Test). Version 0.3.14 bzw. 0.3.15.
+
+- **Task 162:** TECHNIK §12.6 hat jetzt die Tabelle aller Typ-Hooks (Ist-Stand: `pruefeAnlegen`, `start`, `ich`, `sicht`,
+  `sichtVorrang`, `ereignisSicht`, `anzeigen`, `klartextPflicht`, `textVomServer`, `aktionen.*`, `grenzen`, `regie.*`,
+  `werkzeuge`, `auswertung`) und den `ctx` der Typen; §2.4, §9, §11.2, §12, §12.7, §13.2, §15 auf Ist-Stand; DESIGNSYSTEM §5
+  (Netz, Funkraum-Tablet, Beamer, Baukasten, Arena-Karte, Abzeichen-Symbole); K41/K42 „umgesetzt“; README/CLAUDE.md.
+  **Abweichung E119:** „Team Kasiski“ wird **„Team Lochstreifen“** statt „Team Enigma“ – Team Enigma steht in derselben
+  Tabelle schon als Paar 3 (doppelt wäre falsch); „Team Polybios“ → „Team Quadrat“ wie geplant. Gebaut nur
+  `funkraum_W5.json` (PDF Seite 3 angesehen); die W5-Funkraumkarte gehört noch nicht zu den Lehrkraft-Downloads
+  (`npm run lehrkraft -- --pruefen`: 84 Downloads, 0 Probleme) – keine PDFs neu zu erzeugen. `vertrag_pruefen.js` gegen den
+  Dev-Server: Vertrag v1.2 erfüllt (0.4.0). e2e-Fotos nach dem Lauf zurückgesetzt (nur Versionsfuß, E118).
 
 ## Reihenfolge und Abhängigkeiten
 
