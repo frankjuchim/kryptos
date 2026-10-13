@@ -2000,7 +2000,7 @@ Quadrier- und Produktkette bzw. die Euklid-Tabelle im Nachspiel („nächste Zei
 - Grenze N ≤ 2209.
 - `zustand()` → `{ reiter, p, q, e, N, phi, d, warnungen, m, c, kette, eve, euklid }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_rsa.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_rsa.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2048,8 +2048,8 @@ Quadrier- und Produktkette bzw. die Euklid-Tabelle im Nachspiel („nächste Zei
     assert.match(t.text('.labor-hinweis'), /monoalphabetische Substitution – unsicher \(P5\)/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung.
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: RSA-Rechenwerk (Schlüssel mit Probe und Warnungen, Quadrierkette, Euklid, Eve-Modus)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: RSA-Rechenwerk (Schlüssel mit Probe und Warnungen, Quadrierkette, Euklid, Eve-Modus)"`.
 
 ### Task 123: Werkzeug „Hash-Labor“ (W5 §9.1, E68, E75, E89)
 

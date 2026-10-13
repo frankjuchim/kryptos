@@ -779,3 +779,33 @@ mark.markiert.wiederholung { font-weight: 700; }
   .zeiger.animiert { transition: none; }
   .topf.geschuettet .topf-farbe, .farbkreis.neu { animation: none; }
 }
+
+/* ======================================================================
+   RSA-Rechenwerk (W4 §9.2, M6 Task 122)
+   ====================================================================== */
+.rsa-auswahl { min-height: var(--ziel); min-width: 5.5rem; padding: 0 var(--a-2); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); color: var(--text); font-family: var(--f-mono); font-size: 1rem; }
+.rsa-feld input { width: 8rem; min-height: var(--ziel); font-family: var(--f-mono); }
+.rsa-hinweise { display: grid; gap: var(--a-2); }
+.rsa-hinweise:empty { display: none; }
+.rsa-schluessel { display: grid; gap: var(--a-1); }
+.rsa-schluessel:empty { display: none; }
+.rsa-zeile, .rsa-probe, .rsa-ergebnis, .euklid-ende { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.rsa-paar, .rsa-ergebnis, .euklid-ende { font-weight: 700; }
+.rsa-probe:empty, .rsa-ergebnis:empty, .euklid-ende:empty { display: none; }
+.rsa-warnungen { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--a-1); }
+.rsa-warnungen:empty { display: none; }
+.rsa-warnungen li { padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); background: var(--fehler-flaeche); }
+.rsa-unter { margin: 0; font-size: 1rem; }
+.rsa-kette { display: grid; gap: var(--a-2); min-width: 0; }
+.rsa-kette:empty { display: none; }
+.quadrierkette td, .euklid-tabelle td, .text-zahlen td { font-family: var(--f-mono); }
+.quadrierkette tr.gebraucht td { font-weight: 700; }
+.quadrierkette tr.aktuell, .euklid-tabelle tr.aktuell { outline: 2px solid var(--hinweis); outline-offset: -2px; background: var(--hinweis-flaeche); }
+.quadrierkette tr.kommt td, .produktkette li.kommt, .euklid-tabelle td.kommt { visibility: hidden; }
+.produktkette { margin: 0; padding-left: 1.6em; display: grid; gap: 2px; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.produktkette:empty { display: none; }
+.euklid-tabelle td.rueck { background: var(--papier-2); }
+.text-zahlen .gleich { font-weight: 700; text-decoration: underline 2px; text-underline-offset: 3px; }
+.rsa-eve { padding: var(--a-3); border: 1.5px dashed var(--linie); border-radius: var(--r-karte); }
+.rsa-eve p { margin: 0; }
+.rsa-lehrkraft { margin: 0; }

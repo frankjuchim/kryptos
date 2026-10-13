@@ -138,18 +138,18 @@ test('Nachladen: fehlendes Modul → Skript mit ?v= wird angehängt, Ladehinweis
 test('Noch nicht gebaute Werkzeuge: „noch in Arbeit“ ohne Ladeversuch; gebaute laden nach (KRLabor.bereit)', async () => {
   const k = lade();
   const L = k.wert('KRLabor');
-  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo']);
+  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa']);
   const f = k.document.createElement('div');
-  const ctrl = L.oeffne('rsa', {}, f, { modus: 'labor' });
+  const ctrl = L.oeffne('signatur', {}, f, { modus: 'labor' });
   assert.match(k.text(f), /Dieses Werkzeug ist noch in Arbeit\./);
   assert.doesNotMatch(k.text(f), /konnte nicht geladen werden|Wird geladen/);
   assert.equal(k.skripte.filter((s) => s.includes('/labor/')).length, 0, 'kein Skript angefordert (kein 404 in der Konsole)');
   assert.equal(ctrl.zustand(), null);
   // ein registriertes Modul (Test) öffnet trotzdem – das Kennzeichen betrifft nur das Nachladen
-  k.wert(`KRLabor.registriere('rsa', { titel: 'RSA', oeffne(c) { c.appendChild(document.createTextNode('RSA da')); return {}; } })`);
+  k.wert(`KRLabor.registriere('signatur', { titel: 'Signatur', oeffne(c) { c.appendChild(document.createTextNode('Signatur da')); return {}; } })`);
   const f2 = k.document.createElement('div');
-  L.oeffne('rsa', {}, f2, { modus: 'labor' });
-  assert.match(k.text(f2), /RSA da/);
+  L.oeffne('signatur', {}, f2, { modus: 'labor' });
+  assert.match(k.text(f2), /Signatur da/);
   // Dialog zeigt dieselbe Meldung
   const d = L.dialog('hash', {}, { modus: 'lab' });
   assert.match(k.text(d), /noch in Arbeit/);
