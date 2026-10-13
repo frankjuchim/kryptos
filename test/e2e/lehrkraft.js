@@ -118,4 +118,4 @@ async function szenario7b(ctx) {
   await mika.kontext.close();
 }
 
-module.exports = { szenario7a, szenario7b, kursWaehlen };
+module.exports = { szenario7a, szenario7b, kursWaehlen, kursId };

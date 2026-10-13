@@ -2675,10 +2675,10 @@ Beamer bei 1920 × 1080.
 7. 360 px bei Mika: kein Querscrollen; reduzierte Bewegung am Beamer: keine Klasse `fliegt`; keine Konsolen-/CSP-Fehler
    (erwartete 429 ausgenommen). Keine Fotos (E118).
 
-- [ ] **Step 1:** Szenario schreiben (Selektoren aus „DOM-Konventionen“), `E2E_NUR=5 npm run e2e` → FAIL bis alles stimmt.
-- [ ] **Step 2:** Abweichungen in Oberfläche/Server beheben (eigener Commit je Ursache, falls größer).
-- [ ] **Step 3: Run** `npm run e2e` (alle Szenarien) → grün.
-- [ ] **Step 4: Commit** `git commit -m "e2e Szenario 5: Botenlauf mit drei Teams und Beamer, Beenden löscht Inhalte"`.
+- [x] **Step 1:** Szenario schreiben (Selektoren aus „DOM-Konventionen“), `E2E_NUR=5 npm run e2e` → FAIL bis alles stimmt.
+- [x] **Step 2:** Abweichungen in Oberfläche/Server beheben (eigener Commit je Ursache, falls größer).
+- [x] **Step 3: Run** `npm run e2e` (alle Szenarien) → grün.
+- [x] **Step 4: Commit** `git commit -m "e2e Szenario 5: Botenlauf mit drei Teams und Beamer, Beenden löscht Inhalte"`.
 
 ### Task 161: e2e Szenario 6 „Knack-Arena“ (TECHNIK §15 Nr. 6)
 
@@ -3032,6 +3032,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   die Abbildung nach dem Schlüssel zurück (`FEST` kennt jetzt auch die drei neuen Abzeichen). Abzeichen-Toast nutzt das
   Server-Icon ebenso. Symbole `a-funk` (Mast mit Wellen), `a-knacker` (offenes Schloss), `a-unknackbar` (Schloss im
   Schild), eigene Zeichnungen, `currentColor`, viewBox 48. Sichtprüfung Profil 1280 hell / 360 dunkel.
+
+- **Task 160:** Die automatische Verteilung sortiert alphabetisch (Mika R., Nia T., Ole B.) – damit ist **Nia** Bob (Team
+  Scheibe) und **Ole** Eve (Team Quadrat), nicht umgekehrt wie im Plantext; Schritt 5 blendet deshalb Nias Quittung aus
+  („befehl erhalten“, k = 7), und Ole sieht „ausgeblendet“. `teamsEinteilen` meldet Mika, Ole und Nia vorher an
+  (Teilnahme; mit `E2E_NUR=5` fehlt sonst Mika) und prüft die Verteilung. Der Beamer läuft die ganze Zeit mit reduzierter
+  Bewegung (keine Klasse `fliegt` nach neuen Nachrichten und in der Auflösung). Am Ende schließt die Lehrkraft das
+  Szenario (Szenario 6 braucht die Teams). `test/e2e/hilfen.js` liefert `dataDir`, `lehrkraft.js` exportiert `kursId`.
+  **Befund (eigener Commit):** Nach dem Beenden stand der Geheimtext noch in `kryptos.db-wal` (WAL-Modus; `secure_delete`
+  wirkt nur auf die Datenbankdatei). Neu `walLeeren(db)` (`src/verbund/loeschen.js`, `wal_checkpoint(TRUNCATE)`) nach
+  Verbund-Löschung, Kurs-Sperre, Funkraum beenden/schließen/abbrechen/ausblenden, Arena löschen und im Wartungsjob; Test
+  `test/datenschutz_wal.test.js`, TECHNIK §7.3/§7.4. Das e2e-Szenario prüft Datenbankdatei **und** WAL.
 
 ## Reihenfolge und Abhängigkeiten
 

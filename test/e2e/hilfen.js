@@ -50,7 +50,7 @@ async function freiePorts() {
 }
 
 /**
- * Dev-Portal und Kryptos starten. Liefert { basis, portal, beenden(), log() }.
+ * Dev-Portal und Kryptos starten. Liefert { basis, portal, dataDir, beenden(), log() } (dataDir: Datenbank-Prüfung in e2e 5).
  * Standard: Fixture-Welt 9 + e2e-Gast-Demo (Szenarien 1–10). `{ echt: true }` (Szenario 11, M5 Task 101): die echten
  * Seeds aus seed/ (Welten 0–2, Warm-up, Gast, Akten) ohne WELT_DATEIEN.
  */
@@ -96,7 +96,7 @@ async function starte({ echt = false } = {}) {
     if (kind.exitCode !== null) break;
     try {
       const r = await fetch(basis + '/healthz');
-      if (r.ok) return { basis, portal, beenden, log: () => log };
+      if (r.ok) return { basis, portal, dataDir, beenden, log: () => log };
     } catch {
       /* noch nicht bereit */
     }

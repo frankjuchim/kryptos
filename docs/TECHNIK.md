@@ -1818,8 +1818,8 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
-ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88); Reihenfolge 1 → 2 → 7a → 3 → 4 → 7b → 8 → 10 → 9 → 11.
-Nr. 5–6 folgen mit M7. `E2E_NUR=11` (Komma-Liste)
+ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160, ohne Fotos – E118);
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11. `E2E_NUR=11` (Komma-Liste)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -1829,8 +1829,15 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 4. Kryptolabor (umgesetzt M6 Task 128): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis gegen `Krypto` prüfen;
    gesperrtes Werkzeug (Scheibe aus 7a) wird nicht geladen; Reiter-Regeln des Kurses; Nachspiel per Tastatur; Dialog aus
    einer Aufgabe mit Voreinstellung und Fokus-Rückkehr; 360 px ohne Querscrollen; reduzierte Bewegung. Ohne Fotos.
-5. Funkraum-Durchlauf „Botenlauf“ mit **drei Teams** (drei Browser-Kontexte) + Beamer: Nachricht, Empfang, Knacken,
-   Beenden → Inhalte weg.
+5. Funkraum-Durchlauf „Botenlauf“ mit **drei Teams** (drei Browser-Kontexte) + Beamer (umgesetzt M7 Task 160): Frau M.
+   verteilt Mika R., Nia T., Ole B. automatisch auf drei Teams (alphabetisch: Skytale = Alice, Scheibe = Bob,
+   Quadrat = Eve), legt den Botenlauf an und startet; Beamer 1920 × 1080 mit reduzierter Bewegung (QR-Code, keine Klasse
+   `fliegt`); Mika verschlüsselt mit der eingebetteten Scheibe (k = 7, Ergebnis = `Krypto.caesar`) und sendet – Beamer
+   zeigt Punkt und Vorschau in ≤ 4 s; Nia meldet den Empfang („angekommen“ bei Mika und am Beamer); Ole knackt über
+   „Alle Verschiebungen“ (Ticker bei allen und am Beamer); die Lehrkraft blendet Nias Quittung aus (bei Ole „ausgeblendet“,
+   Inhalt leer); Phasen bis zur Auflösung (Tabelle am Beamer); **Beenden** → „Alle Nachrichten wurden gelöscht.“ bei
+   allen, Regie-Stand ohne Inhalte, keine Fundstelle in `kryptos.db` **und** `kryptos.db-wal` (§7.3); Schließen; 360 px
+   bei Mika ohne Querscrollen. Ohne Fotos.
 6. Arena: zwei Teams reichen ein, Angriff, Knacken, Beurteilung, Abzeichen.
 7. Lehrkraft: Niveau gA → Level 2.3 verschwindet bei Schülern; Werkzeug sperren; Teams anlegen; Auswertung; Vorschau.
 8. Gastmodus: sechs Demo-Aufgaben, Chiffrierscheibe, Demo-Kurs; keine Cookies, kein `localStorage`, keine schreibenden
