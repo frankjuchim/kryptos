@@ -443,7 +443,7 @@ Beamer bei 1920 × 1080.
   - `grossName(teamName) → string` („Team Schlüsselpaar“ → „TEAM SCHLUESSELPAAR“: je Wort `Krypto.normalisieren`);
   - `neuesSalz(zufallBytes) → string` (32 Byte base64url).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_text.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_text.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -483,11 +483,11 @@ Beamer bei 1920 × 1080.
     assert.match(T.neuesSalz((n) => Buffer.alloc(n, 7)), /^[A-Za-z0-9_-]{43}$/);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/funkraum_text.test.js` → FAIL (Modul fehlt).
-- [ ] **Step 3: Implement** (`ValidationError` aus `src/validate.js`, Krypto aus `public/static/js/shared/krypto.js`; keine
+- [x] **Step 2: Run** `node --test test/funkraum_text.test.js` → FAIL (Modul fehlt).
+- [x] **Step 3: Implement** (`ValidationError` aus `src/validate.js`, Krypto aus `public/static/js/shared/krypto.js`; keine
   stille Umformung außer `toUpperCase()`; Regex `/^[A-Z0-9 ]{1,160}$/` plus `/[A-Z0-9]/`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Whitelist, Normalisierung und Klartext-Hash (Tests zuerst)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Whitelist, Normalisierung und Klartext-Hash (Tests zuerst)"`.
 
 ### Task 132: Löschregeln Funkraum – Beenden, Schließen, 24 h, Kurs gesperrt – Tests zuerst (TECHNIK §7.3, §12.7, E111)
 
@@ -2740,6 +2740,10 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
 ## Umsetzungsnotizen (Abweichungen vom Plantext)
 
 *(wird während der Umsetzung je Task ergänzt)*
+
+- **Task 131:** `pruefeInhalt` prüft vor `toUpperCase()` zusätzlich `^[A-Za-z0-9 ]*$`, weil `'ß'.toUpperCase()` = `'SS'`
+  eine stille Umformung wäre (Test „STRASSE ß“ → 400). Tests um Grenzfälle ergänzt (Klartext 160/161, Nicht-Strings,
+  ungerade Hex-Länge).
 
 ## Reihenfolge und Abhängigkeiten
 
