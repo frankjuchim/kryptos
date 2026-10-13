@@ -46,6 +46,8 @@ jobs:
         run: npm run krypto:vergleich -- --anzahl 2000
       - name: Prüfwerte der Materialien (Akten, Bosse, Klausuren, Videos) gegen den Zwilling
         run: python3 -I werkzeuge/krypto/pruefwerte.py
+      - name: Fremde Verfahren W0–W2 (Spec-Vektoren)
+        run: python3 -I werkzeuge/krypto/test_fremde_verfahren.py
       - name: Seeds unabhängig nachrechnen (Python-Zwilling, Delta §11)
         run: |
           python3 -I werkzeuge/krypto/seed_pruefen.py --pruefwerte test/fixtures/pruefwerte test/fixtures/welt_beispiel.json

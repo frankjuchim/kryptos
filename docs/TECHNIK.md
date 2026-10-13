@@ -165,7 +165,7 @@ public/
                     lehrer_arena.js (M7)
                     lehrer.js urkunden.js gast.js start.js board.js themen.js datenschutz.js
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
-werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py pruefwerte.py pruefwerte_import.py
+werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py test_fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
 test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js fehler.js, seed/ (Gast-Demo für den e2e, §15)
 test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests

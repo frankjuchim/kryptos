@@ -88,3 +88,8 @@ test('seed_pruefen.py: chiffre mit ausgabe „paare“ (Polybios) wird wie Buchs
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /0 Abweichungen/);
 });
+
+test('fremde_verfahren.py: Spec-Vektoren der fremden Verfahren W0–W2 (test_fremde_verfahren.py)', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
+  const r = spawnSync('python3', ['-I', path.join(__dirname, '..', 'werkzeuge', 'krypto', 'test_fremde_verfahren.py')], { encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+});
