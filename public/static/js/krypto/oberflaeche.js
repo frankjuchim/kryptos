@@ -7,6 +7,18 @@ const KR = (() => {
   const html = document.documentElement;
   const SPRITES = '/static/img/';
 
+  /** Cache-Version aus dem eigenen Skript-Tag (…/oberflaeche.js?v=x.y.z, gesetzt von werkzeuge/version_setzen.js). */
+  const VERSION = (() => {
+    const eigen = document.currentScript || [...document.querySelectorAll('script[src]')].find((x) => /\/krypto\/oberflaeche\.js(\?|$)/.test(x.getAttribute('src') || ''));
+    const m = eigen ? /[?&]v=([^&#]+)/.exec(eigen.getAttribute('src') || '') : null;
+    return m ? m[1] : '';
+  })();
+
+  /** Verweis auf ein Symbol im Sprite mit Cache-Version: /static/img/<datei>.svg?v=<Version>#<id>. */
+  function sprite(datei, id) {
+    return `${SPRITES}${datei}.svg${VERSION ? `?v=${encodeURIComponent(VERSION)}` : ''}#${id}`;
+  }
+
   /** Thema lesen (ohne Wert) oder setzen und im Profil speichern: auto | hell | dunkel. */
   function thema(wert) {
     if (wert === undefined) return AQ.einstellung('thema');
@@ -48,7 +60,7 @@ const KR = (() => {
       attrs.role = 'img';
       attrs['aria-label'] = titel;
     } else attrs['aria-hidden'] = 'true';
-    return AQ.s('svg', attrs, titel ? AQ.s('title', null, titel) : null, AQ.s('use', { href: `${SPRITES}${datei}.svg#${id}` }));
+    return AQ.s('svg', attrs, titel ? AQ.s('title', null, titel) : null, AQ.s('use', { href: sprite(datei, id) }));
   }
 
   /** Ornament der Epoche nr (dekorativ). */
@@ -109,7 +121,7 @@ const KR = (() => {
     const box = AQ.h(
       'div',
       { class: 'zeitsprung an', 'aria-hidden': 'true' },
-      AQ.s('svg', { viewBox: '0 0 48 48', focusable: 'false' }, AQ.s('g', { class: 'ring-dreh' }, AQ.s('use', { href: SPRITES + 'icons.svg#logo-ring' }))),
+      AQ.s('svg', { viewBox: '0 0 48 48', focusable: 'false' }, AQ.s('g', { class: 'ring-dreh' }, AQ.s('use', { href: sprite('icons', 'logo-ring') }))),
       AQ.h('div', { class: 'zeitsprung-text' }, jahr ? AQ.h('div', { class: 'mono' }, jahr) : null, titel ? AQ.h('b', null, titel) : null)
     );
     document.body.appendChild(box);
@@ -201,5 +213,5 @@ const KR = (() => {
   html.setAttribute('data-theme', AQ.einstellung('thema'));
   html.setAttribute('data-bewegung', AQ.einstellung('bewegung'));
 
-  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, WELTEN_KURZ, ORNAMENT, ornament, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
+  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

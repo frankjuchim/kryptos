@@ -493,8 +493,6 @@ const KRB = (() => {
   /* ---------- schaubild (Delta §7.5, E27) ---------- */
 
   const KREIS = (nr) => (nr >= 1 && nr <= 20 ? String.fromCharCode(0x2460 + nr - 1) : `(${nr})`);
-  const SPRITE_ICONS = '/static/img/icons.svg#i-schild';
-  const SPRITE_CA = '/static/img/siegel.svg#s-ca';
 
   /** Text für das SVG: Lücken → „?“, Mini-Markdown-Zeichen weg. */
   function svgText(t) {
@@ -548,9 +546,9 @@ const KRB = (() => {
         const art = ['angreifer', 'ca', 'server'].includes(a.art) ? a.art : 'person';
         const symbol =
           art === 'angreifer'
-            ? s('g', { class: 'akteur-symbol' }, s('use', { href: SPRITE_ICONS, x: x - 62, y: 18, width: 18, height: 18 }), s('line', { class: 'kreuz', x1: x - 62, y1: 36, x2: x - 44, y2: 18 }))
+            ? s('g', { class: 'akteur-symbol' }, s('use', { href: KR.sprite('icons', 'i-schild'), x: x - 62, y: 18, width: 18, height: 18 }), s('line', { class: 'kreuz', x1: x - 62, y1: 36, x2: x - 44, y2: 18 }))
             : art === 'ca'
-              ? s('use', { class: 'akteur-symbol', href: SPRITE_CA, x: x - 62, y: 18, width: 18, height: 18 })
+              ? s('use', { class: 'akteur-symbol', href: KR.sprite('siegel', 's-ca'), x: x - 62, y: 18, width: 18, height: 18 })
               : null;
         return s(
           'g',

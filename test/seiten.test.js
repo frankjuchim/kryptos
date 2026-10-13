@@ -73,11 +73,20 @@ test('(d) jede HTML-Seite hat lang="de" und einen Titel', () => {
 test('Cache-Versionen: jedes ?v= gleich der package.json-Version, verlinkte static-Dateien existieren', () => {
   for (const p of htmlDateien) {
     const html = lies(p);
-    for (const m of html.matchAll(/\?v=([^"'&\s>]+)/g)) assert.equal(m[1], VERSION, `${rel(p)}: ?v=${m[1]} ≠ ${VERSION}`);
-    for (const m of html.matchAll(/(?:src|href)="(\/static\/[^"?#]+)(?:\?v=([^"]+))?"/g)) {
+    for (const m of html.matchAll(/\?v=([^"'&\s>#]+)/g)) assert.equal(m[1], VERSION, `${rel(p)}: ?v=${m[1]} ≠ ${VERSION}`);
+    for (const m of html.matchAll(/(?:src|href)="(\/static\/[^"?#]+)(?:\?v=([^"#]+))?(?:#[^"]*)?"/g)) {
       assert.ok(fs.existsSync(path.join(PUBLIC, m[1])), `${rel(p)}: ${m[1]} fehlt`);
       if (/\.(js|css)$/.test(m[1])) assert.equal(m[2], VERSION, `${rel(p)}: ${m[1]} ohne ?v=${VERSION}`);
     }
+  }
+});
+
+test('Sprite-Verweise mit ?v=: <use href> in HTML mit aktueller Version, im JS nur über KR.sprite/KR.symbol', () => {
+  for (const p of htmlDateien) {
+    for (const m of lies(p).matchAll(/<use\b[^>]*\shref="(\/static\/img\/[^"]+)"/g)) assert.match(m[1], new RegExp(`\\.svg\\?v=${VERSION.replace(/\./g, '\\.')}#[\\w-]+$`), `${rel(p)}: ${m[1]} ohne ?v=${VERSION}`);
+  }
+  for (const p of alleDateien(path.join(PUBLIC, 'static', 'js')).filter((x) => x.endsWith('.js'))) {
+    assert.doesNotMatch(lies(p), /\/static\/img\/[\w/-]+\.svg#/, `${rel(p)}: Sprite-Verweis ohne Version – KR.sprite(datei, id) benutzen`);
   }
 });
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 // Version setzen (TECHNIK §11.6, Cache-Busting): package.json, package-lock.json (oben und packages[""]) und jedes
-// ?v=<alt> in <wurzel>/public/**/*.html – auch veraltete Werte werden auf die neue Version gesetzt.
+// ?v=<alt> in <wurzel>/public/**/*.html – auch veraltete Werte werden auf die neue Version gesetzt (auch Sprite-Verweise
+// <use href="/static/img/x.svg?v=<alt>#id">; der Anker #id bleibt stehen).
 //
 //   node werkzeuge/version_setzen.js <x.y.z|patch|minor|major> [--wurzel <ordner>]
 //
@@ -74,7 +75,7 @@ function main(argv) {
   let html = 0;
   for (const p of htmlDateien(path.join(wurzel, 'public'))) {
     const vorher = fs.readFileSync(p, 'utf8');
-    const nachher = vorher.replace(/\?v=[^"'&\s>]+/g, `?v=${neu}`);
+    const nachher = vorher.replace(/\?v=[^"'&\s>#]+/g, `?v=${neu}`); // # gehört zum Sprite-Anker (…svg?v=x#id)
     if (nachher !== vorher) {
       fs.writeFileSync(p, nachher);
       html++;

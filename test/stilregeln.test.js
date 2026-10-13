@@ -29,9 +29,13 @@ test('jede verwendete Sprite-id existiert; Texturen höchstens 6 % Deckkraft', (
   const ids = new Map();
   for (const p of alle(IMG, '.svg')) ids.set(path.relative(IMG, p), new Set([...lies(p).matchAll(/<symbol id="([\w-]+)"/g)].map((m) => m[1])));
   const quellen = [...alle(path.join(PUB, 'static', 'js'), '.js'), ...alle(PUB, '.html'), ...alle(CSS, '.css')];
-  for (const q of quellen) for (const m of lies(q).matchAll(/\/static\/img\/([\w/-]+\.svg)#([\w-]+)/g)) {
-    assert.ok(ids.has(m[1]), `${path.relative(PUB, q)}: ${m[1]} fehlt`);
-    assert.ok(ids.get(m[1]).has(m[2]), `${path.relative(PUB, q)}: #${m[2]} fehlt in ${m[1]}`);
+  const treffer = (text) => [
+    ...[...text.matchAll(/\/static\/img\/([\w/-]+\.svg)(?:\?v=[^"'#\s]*)?#([\w-]+)/g)].map((m) => [m[1], m[2]]),
+    ...[...text.matchAll(/\b(?:symbol|sprite)\('([\w-]+)',\s*'([\w-]+)'/g)].map((m) => [m[1] + '.svg', m[2]])
+  ];
+  for (const q of quellen) for (const [datei, id] of treffer(lies(q))) {
+    assert.ok(ids.has(datei), `${path.relative(PUB, q)}: ${datei} fehlt`);
+    assert.ok(ids.get(datei).has(id), `${path.relative(PUB, q)}: #${id} fehlt in ${datei}`);
   }
   for (let n = 0; n <= 6; n++) {
     const t = lies(path.join(IMG, 'texturen', `epoche-${n}.svg`));

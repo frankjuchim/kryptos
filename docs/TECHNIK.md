@@ -1287,6 +1287,9 @@ Ursprung), Videos nur als Link.
 Wie Kern: `?v=<package.json version>` an allen `static`-Verweisen in `public/*.html`; `express.static` mit `maxAge: 1h`.
 Version setzen mit `node werkzeuge/version_setzen.js <x.y.z|patch|minor>` (package.json, package-lock.json, alle `?v=`).
 Test `seiten.test.js`: alle `?v=` in allen HTML-Dateien gleich der `package.json`-Version.
+Sprite-Verweise ebenso: in HTML `<use href="/static/img/icons.svg?v=<Version>#i-labor">` (setzt `version_setzen.js` mit), im
+Client nur über `KR.sprite(datei, id)` bzw. `KR.symbol(…)` – die Version stammt aus dem `?v=` des Skript-Tags von
+`krypto/oberflaeche.js`; `seiten.test.js` verbietet Sprite-Pfade ohne Version im JS.
 
 ### 11.7 Barrierefreiheit und Geräte
 

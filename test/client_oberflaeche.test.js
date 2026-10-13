@@ -93,3 +93,17 @@ test('Kopfzeile öffentlich, Rang-Badge, Funk-Punkt, Entsiegeln mit Animation, F
   assert.equal(k.eins(box, 'a').getAttribute('href'), '/spiel#/');
   assert.equal(KR.prozent(0.616), '62 %');
 });
+test('Sprite-Verweise mit ?v=<Version> aus dem Skript-Tag von oberflaeche.js (Cache-Busting)', () => {
+  const k = D.lade(['common.js', 'krypto/oberflaeche.js'], {
+    vorher(k) {
+      const sc = k.document.createElement('script');
+      sc.setAttribute('src', '/static/js/krypto/oberflaeche.js?v=9.8.7');
+      k.document.head.appendChild(sc);
+    }
+  });
+  const KR = k.wert('KR');
+  assert.equal(KR.sprite('icons', 'i-labor'), '/static/img/icons.svg?v=9.8.7#i-labor');
+  assert.equal(k.eins(KR.symbol('siegel', 's-ca'), 'use').getAttribute('href'), '/static/img/siegel.svg?v=9.8.7#s-ca');
+  const ohne = D.lade(['common.js', 'krypto/oberflaeche.js']);
+  assert.equal(ohne.wert('KR').sprite('icons', 'i-labor'), '/static/img/icons.svg#i-labor', 'ohne Versionsquelle kein ?v=');
+});
