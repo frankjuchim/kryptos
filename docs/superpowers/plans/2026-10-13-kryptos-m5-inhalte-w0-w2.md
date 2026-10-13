@@ -802,11 +802,19 @@ Al-Kindis Handschrift“, Video `{ "nr": 2, "titel": "Häufigkeitsanalyse: Wie A
 
 **Erwartete Hinweise:** W1-L1-04 „Rechenergebnis nicht nachgerechnet“ (Größenordnung); W1-L1-05 (`f` Fixpunkte) dito; Boss fehlt bis Task 82.
 
-- [ ] **Step 1: Failing test** – `UMFANG[1] = ['W1-A', 'W1-L1']` → FAIL.
-- [ ] **Step 2: Implement** (E64-Ausnahmen für W1-L1-05 in `hilfen_spec.js` als Tabelle `TEIL_OHNE_EINGABE`).
-- [ ] **Step 3: Prüfkette P1–P5** (`<N>` = 1).
-- [ ] **Step 4: Kontrollfragen K1–K5** (K1: Video 02 nutzt ZIFFER und einen eigenen Brief – kein Schlüsselwort aus 1.1).
-- [ ] **Step 5: Commit** `git commit -m "Welt 1: Epochen-Daten, Archivfund „Al-Kindis Manuskript“, Level 1.1"`.
+- [x] **Step 1: Failing test** – `UMFANG[1] = ['W1-A', 'W1-L1']` → FAIL.
+- [x] **Step 2: Implement** (E64-Ausnahmen für W1-L1-05 in `hilfen_spec.js` als Tabelle `TEIL_OHNE_EINGABE`).
+- [x] **Step 3: Prüfkette P1–P5** (`<N>` = 1).
+- [x] **Step 4: Kontrollfragen K1–K5** (K1: Video 02 nutzt ZIFFER und einen eigenen Brief – kein Schlüsselwort aus 1.1).
+- [x] **Step 5: Commit** `git commit -m "Welt 1: Epochen-Daten, Archivfund „Al-Kindis Manuskript“, Level 1.1"`.
+
+- **Umgesetzt (Task 79):** Geheimtexte und Alphabete im Text in Fünfergruppen (`RDBPD Q`, `YASMI NBCDE …`, `KALIF BCDEG …`),
+  Schlüsselwörter fett statt in Backticks (Validator-Hinweis „Fünfergruppen“). W1-L1-05/-06 tragen Alphabet-Leisten bzw. die
+  Buchstaben als `order`-Teile; die offene Frage c) (E64) steht als Denkfrage in Teil b) mit Verweis auf die Erklärung.
+  Neuer Abgleich in `inhalte_spec.test.js`: Häufigkeits-Blöcke mit `quelle: "werte"` = `Krypto.haeufigkeiten()` des
+  Geheimtextes der Aufgabe (W1-L1-07). Abweichend von „Erwartete Hinweise“: W1-L1-05 meldet keinen Hinweis (die
+  Prüfwert-Gruppe für `m` genügt dem Validator), dafür zwei P6-Hinweise „Häufigkeitsanalyse mit nur 41/56 Buchstaben“
+  (W1-A-01, W1-L1-07 – Textlängen aus der Spec, die Kürze ist bei W1-L1-07 Lerninhalt).
 
 ### Task 80: Welt 1 – Level 1.2 „Die Gegenmittel“
 

@@ -152,3 +152,29 @@ for (const welt of [0, 1, 2]) {
     for (const a of w.aufgaben || []) assert.ok(ids.has(a.id), `${a.id} hat keine Zeile in ${S.SPEC_DATEIEN[welt]}`);
   });
 }
+
+// Plan M5 Task 79 (W1-L1-07): vorgegebene Häufigkeiten (Block haeufigkeit, quelle „werte“) müssen zum Geheimtext der
+// Aufgabe passen (zuordnung.geheimtext bzw. chiffre-Eingabe) – gezählt mit Krypto.haeufigkeiten().
+test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext der Aufgabe überein', (t) => {
+  const Krypto = require('../public/static/js/shared/krypto.js');
+  let geprueft = 0;
+  for (const welt of [0, 1, 2]) {
+    const w = S.seed(welt);
+    if (!w) continue;
+    for (const a of w.aufgaben || []) {
+      const bloecke = (a.inhalt || []).filter((b) => b && b.t === 'haeufigkeit' && b.quelle === 'werte');
+      if (!bloecke.length) continue;
+      const teile = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
+      const quelle = teile.find((ia) => ia && (ia.kind === 'zuordnung' || ia.kind === 'chiffre'));
+      assert.ok(quelle, `${a.id}: kein Geheimtext zum Häufigkeits-Block`);
+      const gezaehlt = Krypto.haeufigkeiten(quelle.kind === 'zuordnung' ? quelle.geheimtext : quelle.eingabe);
+      const ohneNull = Object.fromEntries(Object.entries(gezaehlt).filter(([, n]) => n > 0));
+      for (const b of bloecke) {
+        const soll = Object.fromEntries(Object.entries(b.werte).filter(([, n]) => n > 0));
+        assert.deepEqual(soll, ohneNull, `${a.id}: Häufigkeiten`);
+        geprueft++;
+      }
+    }
+  }
+  if (!geprueft) t.skip('kein Block haeufigkeit mit quelle „werte“ in den Seeds');
+});
