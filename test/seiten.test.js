@@ -156,3 +156,18 @@ test('Skript-Reihenfolge TECHNIK §4.4 auf Seiten mit aufgabe.js', () => {
     assert.ok(pos.at(-1) < sk.length - 1, `${rel(p)}: aufgabe.js vor dem Seitenskript`);
   }
 });
+
+test('Platzhalter (M0) nur noch in lehrer.html, urkunden.html, gast.html (Tasks 62–65, Task 68 entfernt die Ausnahme)', () => {
+  const AUSNAHMEN = ['lehrer.html', 'urkunden.html', 'gast.html'];
+  for (const p of htmlDateien) if (!AUSNAHMEN.includes(rel(p))) assert.ok(!lies(p).includes('Platzhalter (M0)'), `${rel(p)}: Platzhalter`);
+});
+test('Fehlerseiten und 404 statisch: nur common.js und oberflaeche.js, Kopf mit Portal-Link und Gastmodus', () => {
+  for (const n of ['404.html', 'fehler/keine-berechtigung.html', 'fehler/anmeldung-fehlgeschlagen.html', 'fehler/kurs-gesperrt.html']) {
+    const html = lies(path.join(PUBLIC, n));
+    assert.deepEqual(skripte(html).map((x) => x.datei), ['common.js', 'krypto/oberflaeche.js'], n);
+    assert.match(html, /<header class="kopf"[^>]*>[\s\S]*href="\/sso\/portal"[\s\S]*href="\/gast"[\s\S]*<\/header>/, n);
+  }
+});
+test('Kein externer Link auf die Krypto-Werkstatt (Design O11, bis die Erlaubnis geklärt ist)', () => {
+  for (const p of [...htmlDateien, ...jsDateien]) assert.doesNotMatch(lies(p), /andrebodendiek|enigma\./i, rel(p));
+});

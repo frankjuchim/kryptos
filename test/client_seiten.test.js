@@ -225,3 +225,53 @@ test('Scoreboard: Umschalter, eigene Zeile „(du)“, 20-s-Timer; ausgeschaltet
   await new Promise((r) => setTimeout(r, 700));
   assert.match(k.text(k.document.getElementById('toast')), /Abzeichen: Erste Schritte/);
 });
+
+/* ---------- Öffentliche Seiten (M4 Task 61) ---------- */
+test('Start: Sitzung leitet weiter; ohne Sitzung Anmelden-Knopf, Hinweis bei ?abgebrochen=1, Fakten aus dem Manifest', async () => {
+  let k = D.lade([...BASIS, 'krypto/start.js'], { url: 'http://x.test/', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S } } });
+  await k.ruhe();
+  assert.equal(k.navigiert.at(-1), '/spiel');
+  k = D.lade([...BASIS, 'krypto/start.js'], { url: 'http://x.test/', fetch: { 'GET /api/sitzung': { status: 200, body: { rolle: 'lehrkraft', name: 'Frau M.', kurse: [] } } } });
+  await k.ruhe();
+  assert.equal(k.navigiert.at(-1), '/lehrer');
+  k = D.lade([...BASIS, 'krypto/start.js'], { url: 'http://x.test/?abgebrochen=1', fetch: { 'GET /api/sitzung': { status: 200, body: { rolle: null, kurse: [], portal: 'https://portal.test' } }, 'GET /api/plattform': { status: 200, body: { umfang: { welten: 7, level: 26, aufgaben: 307, bosse: 7 } } } } });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.equal(k.eins(haupt, 'a.knopf-primaer').getAttribute('href'), '/sso/start?ziel=%2Fspiel');
+  assert.match(k.text(haupt), /Die Anmeldung wurde abgebrochen/);
+  assert.match(k.text(haupt), /26\s*Level/);
+  assert.ok(k.eins(haupt, 'a[href="/gast"]'));
+  assert.ok(k.eins(haupt, 'a[href="/themen"]'));
+});
+test('Themen: Anker #fallen-P3 und #niveaus, Niveau-Chips aus /api/niveaus', async () => {
+  const themen = { welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', aufgaben: 4, abBlatt: { titel: 'Akte W9·1 – Blöcke', url: null, demo: false } }], boss: null, training: [], warmup: 0, arbeitsblaetter: [], weitere: [] }], kategorien: [], fallen: [{ p: 'P3', titel: 'Umkehrung falsch', text: 'Erläuterung', anzahl: 1, orte: [] }] };
+  const niveaus = { niveaus: ['eA', 'gA'], kategorien: [{ id: 'kern', kurz: 'Kern', lang: 'Kern', gA: true, eA: true }], welten: [{ nr: 0, titel: 'Die Antike', quelle: 'plan', levels: [{ id: '0.1', titel: 'Skytale', niveau: 'kern', aufgaben: { kern: 7 }, hinweis: '', akte: null }], boss: null }], weitere: [] };
+  const k = D.lade([...BASIS, 'krypto/themen.js'], { url: 'http://x.test/themen', fetch: { 'GET /api/sitzung': { status: 200, body: { rolle: null, kurse: [] } }, 'GET /api/themen': { status: 200, body: themen }, 'GET /api/niveaus': { status: 200, body: niveaus } } });
+  const sektion = k.document.createElement('section'); sektion.setAttribute('id', 'niveaus');
+  k.document.getElementById('haupt').appendChild(sektion);
+  await k.ruhe();
+  assert.ok(k.document.getElementById('fallen-P3'));
+  assert.match(k.text(k.document.getElementById('fallen-P3')), /P3 Umkehrung falsch/);
+  assert.ok(k.document.getElementById('welt-9'));
+  assert.match(k.text(k.document.getElementById('niveaus')), /Skytale/);
+  assert.match(k.text(k.document.getElementById('haupt')), /nach der Anmeldung/, 'Akte ohne url');
+});
+test('Board: Liste, Welt-Fortschritt, Aktualisierung alle 20 s, 404-Hinweis', async () => {
+  let n = 0;
+  const k = D.lade([...BASIS, 'krypto/board.js'], { url: 'http://x.test/board/abcdefgh1234', fetch: { 'GET /api/board/abcdefgh1234': () => { n++; return { status: 200, body: { kurs: { name: 'LK 13 (eA)' }, schueler: 2, liste: [{ platz: 1, name: 'Mika R.', punkte: 50, rang: 'Schreiber' }, { platz: 2, name: 'Ida K.', punkte: 30, rang: 'Lehrling' }], welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', anteil: 0.4 }], erfolge: [] } }; } } });
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'table.board-liste tbody tr').length, 2);
+  assert.match(k.text(k.document.getElementById('haupt')), /40 %/);
+  assert.equal(n, 1);
+  assert.ok(k.timer.some((t) => t.ms === 20000 && t.wiederholt), 'setInterval 20 s');
+  const k2 = D.lade([...BASIS, 'krypto/board.js'], { url: 'http://x.test/board/falsch', fetch: { 'GET /api/board/falsch': { status: 404, body: { error: 'x' } } } });
+  await k2.ruhe();
+  assert.match(k2.text(k2.document.getElementById('haupt')), /Kein Board für diesen Schlüssel/);
+});
+test('Datenschutz: Link auf die Portal-Erklärung aus der Sitzung', async () => {
+  const k = D.lade([...BASIS, 'krypto/datenschutz.js'], { url: 'http://x.test/datenschutz', fetch: { 'GET /api/sitzung': { status: 200, body: { rolle: null, kurse: [], portal: 'https://portal.test' } } } });
+  const a = k.document.createElement('a'); a.setAttribute('id', 'portal-datenschutz'); a.setAttribute('href', '/sso/portal');
+  k.document.getElementById('haupt').appendChild(a);
+  await k.ruhe();
+  assert.equal(a.getAttribute('href'), 'https://portal.test/datenschutz');
+});

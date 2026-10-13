@@ -4,24 +4,40 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
 <title>Anmeldung fehlgeschlagen · Kryptos</title>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/basis.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.19">
+<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/basis.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.20">
+<script src="/static/js/common.js?v=0.2.20"></script>
+<script src="/static/js/krypto/oberflaeche.js?v=0.2.20"></script>
 </head>
-<body>
-<!-- Platzhalter (M0): wird in M4 (Task 61) durch die Oberfläche „Chronoskop“ ersetzt (TECHNIK §11.1). -->
-<!-- Statische Fehlerseite der Anmeldung über das Portal (TECHNIK §6.3) – ohne reflektierten Inhalt. -->
-<main class="wrap" id="haupt">
-  <h1>Anmeldung fehlgeschlagen</h1>
-  <section class="karte">
-    <p>Die Anmeldung über das Portal hat nicht geklappt – sie war abgelaufen, wurde schon verwendet oder in einem anderen Fenster begonnen.</p>
-    <p class="text-2">Starte die Anmeldung einfach noch einmal.</p>
-    <p class="knopf-reihe"><a class="knopf knopf-primaer" href="/sso/start">Erneut anmelden</a> <a class="knopf knopf-zweit" href="/">Startseite</a></p>
-  </section>
+<body class="seite-fehler">
+<a class="sprung" href="#haupt">Zum Inhalt springen</a>
+<!-- Statische Fehlerseite der Anmeldung über das Portal (TECHNIK §6.3) – ohne reflektierten Inhalt, ohne Seitenskript. -->
+<header class="kopf" id="kopf">
+<div class="kopf-innen">
+<a class="logo" href="/" aria-label="Kryptos – zur Startseite"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=0.2.20#logo-ring"></use></svg><span aria-hidden="true">KRYPTOS</span></a>
+<div class="kopf-epoche"><i aria-hidden="true"></i><span>Archiv der verborgenen Schriften</span></div>
+<nav class="kopf-nav" aria-label="Wege">
+<a class="kopf-link" href="/sso/portal" aria-label="Zum Portal InfoLabs"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=0.2.20#i-portal"></use></svg><span class="lang">⌂ Zum Portal</span></a>
+<a class="kopf-link" href="/gast">Gastmodus</a>
+</nav>
+</div>
+</header>
+<main id="haupt" tabindex="-1">
+<div class="wrap fehlerseite">
+<section class="karte stapel">
+<h1>Anmeldung fehlgeschlagen</h1>
+<p>Die Anmeldung über das Portal hat nicht geklappt – sie war abgelaufen, wurde schon verwendet oder in einem anderen Fenster begonnen.</p>
+<p class="text-2">Starte die Anmeldung einfach noch einmal.</p>
+<p class="knopf-reihe"><a class="knopf knopf-primaer" href="/sso/start">Erneut anmelden</a> <a class="knopf knopf-zweit" href="/">Startseite</a></p>
+</section>
+</div>
 </main>
+<footer class="fuss" id="fuss"><div class="fuss-innen"><span>Kryptos – Die Zeitreise der Geheimschriften</span><span class="knopf-reihe"><a href="/themen">Themen</a><a href="/datenschutz">Datenschutz</a><a href="/sso/portal">⌂ Portal</a></span></div></footer>
 </body>
 </html>

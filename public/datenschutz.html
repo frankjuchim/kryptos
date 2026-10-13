@@ -4,23 +4,65 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Datenschutz · Kryptos – Die Zeitreise der Geheimschriften</title>
+<meta name="color-scheme" content="light dark">
+<title>Datenschutz · Kryptos</title>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/basis.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.19">
+<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/basis.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.20">
+<script src="/static/js/common.js?v=0.2.20"></script>
+<script src="/static/js/krypto/oberflaeche.js?v=0.2.20"></script>
 </head>
-<body>
-<!-- Platzhalter (M0): wird in M4 durch die Oberfläche „Chronoskop“ ersetzt (TECHNIK §11.1). -->
-<main class="wrap" id="haupt">
-  <h1>Datenschutz</h1>
-  <section class="karte">
-    <p>Diese Seite ist im Aufbau. Maßgeblich ist die zentrale Datenschutzerklärung des Portals InfoLabs (https://labs.frankjuchim.de/datenschutz); Kryptos speichert nur Pseudonyme, Lernstände und Kurszuordnungen, die das Portal übermittelt.</p>
-    <p class="text-2">Oberfläche im Aufbau.</p>
-    <p class="knopf-reihe"><a class="knopf knopf-primaer" href="/">Startseite</a></p>
-  </section>
+<body class="seite-datenschutz">
+<a class="sprung" href="#haupt">Zum Inhalt springen</a>
+<header class="kopf" id="kopf"></header>
+<main id="haupt" tabindex="-1">
+<div class="wrap lesen datenschutz">
+<h1>Datenschutz</h1>
+<p>Kryptos gehört zum Plattform-Verbund <strong>InfoLabs</strong>. Maßgeblich ist die <a id="portal-datenschutz" href="/sso/portal">zentrale Datenschutzerklärung des Portals</a>. Hier stehen nur die Besonderheiten von Kryptos.</p>
+<section class="karte" aria-labelledby="ds-daten">
+<h2 id="ds-daten">Welche Daten Kryptos speichert</h2>
+<ul>
+<li>Eine <strong>pseudonyme Kennung</strong> aus dem Portal (<code>sub</code>), den selbst gewählten <strong>Anzeigenamen</strong> und die <strong>Kurs-Kennungen</strong>.</li>
+<li>Den <strong>Lernstand</strong>: gelöste Aufgaben, Punkte, Fehlversuche, genutzte Tipps, Boss-Ergebnisse, Abzeichen, Warm-up-Stand.</li>
+<li>Keine Passwörter, keine persönlichen Codes, keine E-Mail-Adressen – angemeldet wird ausschließlich über das Portal.</li>
+</ul>
+</section>
+<section class="karte" aria-labelledby="ds-cookies">
+<h2 id="ds-cookies">Cookies – nur technisch notwendig</h2>
+<ul>
+<li><code>kr_s</code> – Sitzung für Schülerinnen und Schüler, 30 Tage.</li>
+<li><code>kr_l</code> – Sitzung für Lehrkräfte, 8 Stunden.</li>
+<li><code>kr_sso_state</code> – Schutz der Anmeldung über das Portal, 10 Minuten.</li>
+</ul>
+<p>Es gibt keine Werbe-, Statistik- oder Tracking-Cookies.</p>
+</section>
+<section class="karte" aria-labelledby="ds-browser">
+<h2 id="ds-browser">Speicher im Browser</h2>
+<p>Nur auf deinem Gerät und nie an den Server übertragen: Darstellung und Bewegung (<code>kr_einstellungen</code>), das zuletzt geöffnete Level (<code>kr_zuletzt</code>), schon entsiegelte Epochen (<code>kr_entsiegelt</code>), die Wahl „Jeden Schritt sofort prüfen“ sowie Filter im Trainingsplatz und Warm-up.</p>
+</section>
+<section class="karte" aria-labelledby="ds-funkraum">
+<h2 id="ds-funkraum">Funkraum</h2>
+<p>Nachrichten im Funkraum bestehen nur aus den Zeichen A–Z, 0–9 und Leerzeichen (höchstens 160 Zeichen), sind nur im eigenen Kurs sichtbar und werden beim Beenden des Szenarios gelöscht, spätestens nach 24 Stunden.</p>
+</section>
+<section class="karte" aria-labelledby="ds-arena">
+<h2 id="ds-arena">Knack-Arena</h2>
+<p>Gespeichert werden Verfahren, Geheimtext und die Beurteilung, sichtbar nur im eigenen Kurs. Den Klartext speichert Kryptos nur als Prüfwert (Hash). Alles wird mit der Arena gelöscht, spätestens 30 Tage nach dem Schließen.</p>
+</section>
+<section class="karte" aria-labelledby="ds-extern">
+<h2 id="ds-extern">Keine externen Dienste</h2>
+<p>Kryptos lädt keine Schriften, Skripte oder Bilder von fremden Servern und verwendet kein Tracking. Alle Dateien kommen von diesem Server.</p>
+</section>
+<section class="karte" aria-labelledby="ds-loeschen">
+<h2 id="ds-loeschen">Löschung</h2>
+<p>Konten und Kurse werden im Portal verwaltet. Wird dort ein Konto oder ein Kurs gelöscht, löscht das Portal die zugehörigen Daten auch in Kryptos.</p>
+</section>
+</div>
 </main>
+<footer class="fuss" id="fuss"></footer>
+<script src="/static/js/krypto/kopfzeile.js?v=0.2.20" defer></script>
+<script src="/static/js/krypto/datenschutz.js?v=0.2.20" defer></script>
 </body>
 </html>

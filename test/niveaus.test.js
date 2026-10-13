@@ -111,10 +111,10 @@ test('Seite /themen#niveaus: Abschnitt und Skript ohne Inline-Code, Skript rende
   const app = H.makeApp({ seedDir: SEED });
   const html = (await request(app).get('/themen').expect(200)).text;
   assert.match(html, /<section[^>]*id="niveaus"/);
-  assert.match(html, new RegExp(`<script src="/static/js/common\\.js\\?v=${VERSION.replace(/\./g, '\\.')}" defer></script>`));
-  assert.match(html, new RegExp(`<script src="/static/js/krypto/niveaus\\.js\\?v=${VERSION.replace(/\./g, '\\.')}" defer></script>`));
-  const js = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'niveaus.js'), 'utf8');
+  assert.match(html, new RegExp(`<script src="/static/js/common\\.js\\?v=${VERSION.replace(/\./g, '\\.')}"></script>`));
+  assert.match(html, new RegExp(`<script src="/static/js/krypto/themen\\.js\\?v=${VERSION.replace(/\./g, '\\.')}" defer></script>`));
+  const js = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'themen.js'), 'utf8');
   assert.match(js, /\/api\/niveaus/);
   assert.doesNotMatch(js, /innerHTML|outerHTML|insertAdjacentHTML|document\.write/);
-  await request(app).get(`/static/js/krypto/niveaus.js?v=${VERSION}`).expect(200);
+  await request(app).get(`/static/js/krypto/themen.js?v=${VERSION}`).expect(200);
 });

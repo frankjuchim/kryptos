@@ -281,18 +281,20 @@ function createApp(opts) {
   return app;
 }
 
-/** Hinweisseite für PDFs, die nur nach Anmeldung abrufbar sind (401). */
+/** Hinweisseite für Akten-PDFs, die nur nach Anmeldung abrufbar sind (401) – im Designsystem (K20, M4 E36). */
 function nurMitAnmeldung(res) {
+  const css = ['schriften', 'tokens', 'epochen', 'basis', 'komponenten'].map((n) => `<link rel="stylesheet" href="/static/css/${n}.css?v=${VERSION}">`).join('');
   res
     .status(401)
     .type('html')
     .send(
-      '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<title>Nur nach Anmeldung – Kryptos</title><link rel="stylesheet" href="/static/css/basis.css"></head>' +
-        '<body><main class="narrow" id="haupt"><section class="card"><h1>🔒 Nur nach Anmeldung</h1>' +
-        '<p>Die Arbeitsblätter, Papier-Bosse und Warm-up-Karten stehen nach der Anmeldung im Lab zur Verfügung (Schüler und Lehrkräfte). Ohne Anmeldung zeigt der Gastmodus einige Beispiele.</p>' +
-        '<p class="btn-row"><a class="btn" href="/">Anmelden</a> <a class="btn secondary" href="/lehrer">Bereich für Lehrkräfte</a> <a class="btn secondary" href="/gast">👀 Gastmodus</a></p>' +
-        '</section></main></body></html>'
+      '<!doctype html><html lang="de" data-theme="auto" data-epoche="6"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+        '<meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light dark">' +
+        `<title>Nur nach Anmeldung · Kryptos</title><link rel="icon" href="/static/favicon.svg" type="image/svg+xml">${css}</head>` +
+        '<body class="seite-fehler"><main id="haupt"><div class="wrap fehlerseite"><section class="karte stapel"><h1>Nur nach Anmeldung</h1>' +
+        '<p>Die Akten, Papier-Bosse und Warm-up-Karten stehen nach der Anmeldung über das Portal InfoLabs bereit (Schülerinnen, Schüler und Lehrkräfte). Ohne Anmeldung zeigt der Gastmodus einige Beispiele.</p>' +
+        '<p class="knopf-reihe"><a class="knopf knopf-primaer" href="/sso/start">Anmelden über InfoLabs</a> <a class="knopf knopf-zweit" href="/gast">Gastmodus</a> <a class="knopf knopf-zweit" href="/themen">Themen</a></p>' +
+        '</section></div></main></body></html>'
     );
 }
 

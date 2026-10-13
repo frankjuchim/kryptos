@@ -676,7 +676,7 @@ MUSS-Abweichung:
 - **Manifest (§7):** `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
   Niveaus. `scripts/vertrag_pruefen.js` (byte-gleich aus labs) prüft beide Felder.
 - **Niveau-Übersicht (§9 MUSS, ohne Anmeldung):** Abschnitt `#niveaus` auf `/themen` (bis M4 schlicht, Skript
-  `public/static/js/krypto/niveaus.js`) mit den Daten aus `GET /api/niveaus` (öffentlich, `src/krypto/niveauUebersicht.js`):
+  `public/static/js/krypto/themen.js`, M4 Task 61) mit den Daten aus `GET /api/niveaus` (öffentlich, `src/krypto/niveauUebersicht.js`):
   `{ niveaus, kategorien: [{ id, kurz, lang, gA, eA }], welten: [{ nr, titel, epoche, farbe, quelle, levels: [{ id, titel,
   niveau, aufgaben: { kern?, eA?, ergaenzung?, kuer? }, hinweis, akte: { name, niveau, hinweis } | null }], boss: { titel,
   pool: { … } } | null }], weitere: [{ titel, text }] }` – Kategorien `kern`/`eA`/`ergaenzung`/`kuer` nach Design §3.2,

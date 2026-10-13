@@ -169,7 +169,7 @@ const KRKopf = (() => {
     return kopf;
   }
 
-  /** Fußzeile (Datenschutz, Themen, Version), nur wenn #fuss noch leer ist. */
+  /** Fußzeile (Themen, Datenschutz, Portal, Version), nur wenn #fuss noch leer ist. */
   function fuss(sitzung) {
     const f = document.getElementById('fuss');
     if (!f || f.firstChild) return;
@@ -180,7 +180,7 @@ const KRKopf = (() => {
         'div',
         { class: 'fuss-innen' },
         h('span', null, 'Kryptos – Die Zeitreise der Geheimschriften', sitzung && sitzung.version ? ` · Version ${sitzung.version}` : ''),
-        h('span', { class: 'knopf-reihe' }, h('a', { href: '/themen' }, 'Themen'), h('a', { href: '/datenschutz' }, 'Datenschutz'))
+        h('span', { class: 'knopf-reihe' }, h('a', { href: '/themen' }, 'Themen'), h('a', { href: '/datenschutz' }, 'Datenschutz'), h('a', { href: '/sso/portal' }, '⌂ Portal'))
       )
     );
   }

@@ -4,36 +4,62 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Themen · Kryptos – Die Zeitreise der Geheimschriften</title>
+<meta name="color-scheme" content="light dark">
+<title>Themen · Kryptos</title>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/basis.css?v=0.2.19">
-<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.19">
+<link rel="stylesheet" href="/static/css/schriften.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/tokens.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/epochen.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/basis.css?v=0.2.20">
+<link rel="stylesheet" href="/static/css/komponenten.css?v=0.2.20">
+<script src="/static/js/common.js?v=0.2.20"></script>
+<script src="/static/js/krypto/oberflaeche.js?v=0.2.20"></script>
 </head>
-<body>
-<!-- Platzhalter (M0): wird in M4 durch die Oberfläche „Chronoskop“ ersetzt (TECHNIK §11.1). -->
-<main class="wrap" id="haupt">
-  <h1>Themen</h1>
-  <section class="karte">
-    <p>Oberfläche im Aufbau. Hier entsteht die Übersicht über Epochen, Level, Akten und Fallen.</p>
-    <p class="text-2">Oberfläche im Aufbau. Die Niveau-Übersicht unten ist schon vollständig.</p>
-    <p class="knopf-reihe"><a class="knopf knopf-primaer" href="/">Startseite</a> <a class="knopf knopf-zweit" href="/gast">Gastmodus</a> <a class="knopf knopf-zweit" href="#niveaus">gA / eA</a></p>
-  </section>
-  <section class="karte" id="niveaus" aria-labelledby="niveaus-titel">
-    <h2 id="niveaus-titel">Was ist für welches Niveau?</h2>
-    <p>Kryptos ist für den <strong>Grundkurs (gA, grundlegendes Anforderungsniveau)</strong> und den <strong>Leistungskurs (eA, erhöhtes Anforderungsniveau)</strong> gedacht. Jedes Level, jede Akte, jede Lab-Aufgabe und jede Boss-Aufgabe trägt ein Niveau:</p>
-    <dl class="niveau-legende">
-      <dt><span class="chip-niveau niveau-kern">Kern</span></dt><dd>verbindlich für gA und eA</dd>
-      <dt><span class="chip-niveau niveau-eA">eA</span></dt><dd>nur Leistungskurs; im gA-Kurs ausgeblendet</dd>
-      <dt><span class="chip-niveau niveau-ergaenzung">E</span></dt><dd>KC-Ergänzung (RSA, Diffie-Hellman): freiwillig für gA und eA, nie Rechnungen im Online-Boss</dd>
-      <dt><span class="chip-niveau niveau-kuer">Kür</span></dt><dd>Vertiefung über das Abitur hinaus: freiwillig für gA und eA</dd>
-    </dl>
-    <div id="niveau-inhalt" aria-live="polite"><p class="text-2">Die Übersicht je Welt wird geladen … (dafür ist JavaScript nötig; die Daten stehen auch unter <a href="/api/niveaus">/api/niveaus</a>).</p></div>
-  </section>
+<body class="seite-themen">
+<a class="sprung" href="#haupt">Zum Inhalt springen</a>
+<header class="kopf" id="kopf"></header>
+<main id="haupt" tabindex="-1">
+<div class="wrap themen">
+<h1>Themen und Niveaus</h1>
+<p class="lesen">Kryptos führt in sieben Epochen durch 2500 Jahre Geheimschriften – von der Skytale bis zu Signaturen und Zertifikaten. Hier steht, was in welcher Epoche vorkommt, welches Niveau es hat und welche typischen Fallen geübt werden. Lösungen stehen hier nie.</p>
+<nav class="sprungleiste" aria-label="Abschnitte">
+<a class="chip" href="#welten">Epochen und Level</a>
+<a class="chip" href="#niveaus">gA / eA</a>
+<a class="chip" href="#kategorien">Aufgaben nach Art</a>
+<a class="chip" href="#fallen">Fallen P1–P10</a>
+<a class="chip" href="#werkzeuge">Werkzeuge</a>
+</nav>
+<section id="welten" class="themen-abschnitt" aria-labelledby="welten-titel">
+<h2 id="welten-titel">Epochen und Level</h2>
+<div id="welten-inhalt"><p class="laden" role="status">Wird geladen …</p><noscript><p class="karte">Für die Übersicht ist JavaScript nötig.</p></noscript></div>
+</section>
+<section id="niveaus" class="themen-abschnitt karte" aria-labelledby="niveaus-titel">
+<h2 id="niveaus-titel">Was ist für welches Niveau?</h2>
+<p>Kryptos ist für den <strong>Grundkurs (gA, grundlegendes Anforderungsniveau)</strong> und den <strong>Leistungskurs (eA, erhöhtes Anforderungsniveau)</strong> gedacht. Jedes Level, jede Akte, jede Lab-Aufgabe und jede Boss-Aufgabe trägt ein Niveau:</p>
+<dl class="niveau-legende">
+<dt><span class="chip chip-niveau niveau-kern">K</span></dt><dd>Kern – verbindlich für gA und eA</dd>
+<dt><span class="chip chip-niveau niveau-eA">eA</span></dt><dd>nur Leistungskurs; im gA-Kurs ausgeblendet</dd>
+<dt><span class="chip chip-niveau niveau-ergaenzung">E</span></dt><dd>KC-Ergänzung (RSA, Diffie-Hellman): freiwillig für gA und eA, nie Rechnungen im Online-Boss</dd>
+<dt><span class="chip chip-niveau niveau-kuer">Kür</span></dt><dd>Vertiefung über das Abitur hinaus: freiwillig für gA und eA</dd>
+</dl>
+<div id="niveau-inhalt" aria-live="polite"><p class="text-2">Die Übersicht je Welt wird geladen … (dafür ist JavaScript nötig; die Daten stehen auch unter <a href="/api/niveaus">/api/niveaus</a>).</p></div>
+</section>
+<section id="kategorien" class="themen-abschnitt" aria-labelledby="kategorien-titel">
+<h2 id="kategorien-titel">Aufgaben nach Art</h2>
+<div id="kategorien-inhalt"></div>
+</section>
+<section id="fallen" class="themen-abschnitt" aria-labelledby="fallen-titel">
+<h2 id="fallen-titel">Typische Fallen P1–P10</h2>
+<div id="fallen-inhalt"></div>
+</section>
+<section id="werkzeuge" class="themen-abschnitt" aria-labelledby="werkzeuge-titel">
+<h2 id="werkzeuge-titel">Werkzeuge</h2>
+<div id="werkzeuge-inhalt"></div>
+</section>
+</div>
 </main>
-<script src="/static/js/common.js?v=0.2.19" defer></script>
-<script src="/static/js/krypto/niveaus.js?v=0.2.19" defer></script>
+<footer class="fuss" id="fuss"></footer>
+<script src="/static/js/krypto/kopfzeile.js?v=0.2.20" defer></script>
+<script src="/static/js/krypto/themen.js?v=0.2.20" defer></script>
 </body>
 </html>

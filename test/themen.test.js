@@ -51,6 +51,9 @@ test('Arbeitsblatt-PDFs: nur Demo-PDFs ohne Anmeldung, alle anderen für Schüle
   assert.equal(d.welten[0].arbeitsblaetter[1].demo, false);
   const g = await request(app).get(url).expect(401);
   assert.match(g.text, /Nur nach Anmeldung/);
+  assert.match(g.text, /\/static\/css\/tokens\.css\?v=/, 'Hinweisseite im neuen CSS (K20, E36)');
+  assert.match(g.text, /Akten/);
+  assert.doesNotMatch(g.text, /Arbeitsblätter|class="(?:btn|card|narrow)/);
   for (const c of [sz.s, sz.lk]) {
     const r = await c.get(url).expect(200);
     assert.equal(r.headers['content-type'], 'application/pdf');
