@@ -112,7 +112,7 @@ test('Alle Schlüssel: Tabelle, Anmerkung, Nachspiel markiert Zeile, keine autom
   k.taste(k.eins(ziel, '.nachspiel'), 'ArrowRight');
   assert.ok(zeilen[1].classList.contains('aktuell'));
   assert.ok(!zeilen[0].classList.contains('aktuell'));
-  assert.match(k.text(k.eins(ziel, '.nachspiel-text')), /k = 1: Aus HLNSZ… wird gkmry… – ist das lesbares Deutsch\?/);
+  assert.match(k.text(k.eins(ziel, '.nachspiel-text')), /k = 1: HLNSZ… → gkmry… Sinnvoller Text oder Buchstabensalat\?/);
   assert.equal(k.alle(ziel, '.richtig, [data-richtig]').length, 0, 'keine automatische Erkennung');
   // Fehler der Bibliothek je Schlüssel → „passt nicht“
   const z2 = k.document.createElement('div');

@@ -36,9 +36,15 @@ auf die Werkstatt (weder auf den Fork noch auf eine öffentliche Seite). Der Tes
 | **Objekt direkt bedienen:** Das historische Gerät steht groß im Werkzeug; der Schlüssel wird am Gerät selbst verändert (Ring drehen, Stab dicker oder dünner, Schienen hinzufügen, Löcher stanzen, Walze weiterstellen), nicht nur über ein Zahlenfeld | Chiffrierscheibe, Skytale, Gartenzaun, Fleißner-Schablone, Mini-Enigma |
 | **Zeichen antippen → Rechnung erscheint:** ein Zeichen am Objekt wählen und seinen Weg (Zahlen, Formel, Stromweg) sehen | Formel-Modus der Scheibe, Vigenère-Quadrat, Stromweg der Mini-Enigma, Bit-Lupe |
 | **Nachspielen** der eigenen Nachricht in wählbarem Tempo (Einzelschritt, Zeitlupe, normal), Bedienung währenddessen gesperrt | `KRLabor.nachspiel` für alle Werkzeuge |
-| **Alle Schlüssel ausprobieren** als Folge von Versuchen mit der Frage „Ist das lesbar?“ – ohne automatische Erkennung | `KRLabor.alleSchluessel` (Scheibe, Skytale) |
+| **Alle Schlüssel ausprobieren** als Folge von Versuchen mit einer offenen Frage an die Lernenden – ohne automatische Erkennung | `KRLabor.alleSchluessel` (Scheibe, Skytale) |
 | **Raster einblenden** unter dem Objekt und weitere Funktionen in einem aufklappbaren Bereich | Skytale-Raster als Tabelle, Zusatzfunktionen in `<details>` |
 | **Ergebnis kopieren**, letzten Buchstaben löschen, neue Nachricht | gemeinsame Ausgabe-Bausteine des Labors |
+
+**Textnähe (Review M6):** Zwei Labor-Sätze lagen zu nah an Werkstatt-Formulierungen und sind eigenständig neu gefasst:
+Nachspiel der Brute-Force-Demo „k = 1: HLNSZ… → gkmry… Sinnvoller Text oder Buchstabensalat?“ (vorher „Aus … wird … – ist
+das lesbares Deutsch?“) und der Transpositions-Hinweis der Skytale „die Buchstaben tauschen nur ihre Plätze“ (vorher „nur
+die Reihenfolge ändert sich“); ebenso die Hinweise in Scheibe und Vigenère-Werkbank. Test in `test/labor_regeln.test.js`
+(„Eigene Formulierungen“).
 
 Bewusst **nicht** aufgegriffen: „Material erst bauen“ und Eingabe nur am Objekt ohne Textfeld (die Welt-Specs verlangen
 Eingabefelder, Plan M6 E85), Missionsmodus in eingebetteten Seiten, Sie-Form, Töne.

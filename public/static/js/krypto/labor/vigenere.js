@@ -573,7 +573,7 @@
       });
       inhalt.append(
         B.tabelle({ caption: `Verschiebung je Teiltext bei k = ${A.st.k}: Korrelation mit Deutsch χ(v) = Σ p_D(x) · f_T(x + v)`, kopf: ['Teiltext', 'Länge', 'Vorschlag', 'drei beste Kandidaten', 'Schnellmethode'], zeilen, klasse: 'verschiebung' }),
-        h('p', { class: 'vg-vorschlag' }, `Zusammen: ${b.vorschlag} – übernimm ihn im Reiter Korrektur und prüfe, ob lesbares Deutsch entsteht.`)
+        h('p', { class: 'vg-vorschlag' }, `Zusammen: ${b.vorschlag} – übernimm ihn im Reiter Korrektur und prüfe, ob ein sinnvoller Text entsteht.`)
       );
     }
 

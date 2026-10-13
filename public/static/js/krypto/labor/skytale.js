@@ -84,7 +84,7 @@
       return h(
         'p',
         { class: `skytale-zeilen-hinweis transposition-pruefung ${gleich ? 'ok' : 'anders'}` },
-        gleich ? `Buchstaben unverändert: ✓${zusatz} – nur die Reihenfolge ändert sich (Transposition). Eine Häufigkeitsanalyse zeigt deshalb deutsche Häufigkeiten (Falle P6).` : 'Buchstaben unverändert: ✗'
+        gleich ? `Buchstaben unverändert: ✓${zusatz} – die Buchstaben tauschen nur ihre Plätze (Transposition). Eine Häufigkeitsanalyse zeigt deshalb deutsche Häufigkeiten (Falle P6).` : 'Buchstaben unverändert: ✗'
       );
     }
 

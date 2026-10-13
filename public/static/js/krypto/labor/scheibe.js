@@ -264,7 +264,7 @@
     function baueAlle() {
       const feld = B.textfeld({ beschriftung: 'Abgefangener Geheimtext', max: 200, wert: abgefangen, art: 'geheimtext', beiEingabe: (t) => { abgefangen = t; liste(); } });
       const ort = h('div', { class: 'scheibe-alle' });
-      r.flaeche.append(feld.element, h('p', { class: 'text-2' }, 'Probiere alle 26 Verschiebungen. Welche Zeile ist lesbares Deutsch? Das entscheidest du.'), ort);
+      r.flaeche.append(feld.element, h('p', { class: 'text-2' }, 'Probiere alle 26 Verschiebungen. Welche Zeile ergibt einen sinnvollen Text? Das entscheidest du.'), ort);
       function liste() {
         if (alle) alle.schliesse();
         AQ.clear(ort);

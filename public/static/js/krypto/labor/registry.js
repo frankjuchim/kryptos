@@ -524,7 +524,7 @@ const KRLabor = (() => {
       titel: 'Nacheinander ausprobieren',
       start: o.start === -1 ? -1 : 0,
       schritte: versuche.map((v) => ({
-        text: v.anmerkung === 'passt nicht' && !v.ergebnis ? `${beschriftung(v.k)}: passt nicht.` : `${beschriftung(v.k)}: ${eingabe ? `Aus ${kurz(eingabe, 5)} wird ` : 'Ergebnis '}${kurz(v.ergebnis, 5)} – ist das lesbares Deutsch?`,
+        text: v.anmerkung === 'passt nicht' && !v.ergebnis ? `${beschriftung(v.k)}: passt nicht.` : `${beschriftung(v.k)}: ${eingabe ? `${kurz(eingabe, 5)} → ` : ''}${kurz(v.ergebnis, 5)} Sinnvoller Text oder Buchstabensalat?`,
         daten: { k: v.k }
       })),
       zeige(_s, i) {

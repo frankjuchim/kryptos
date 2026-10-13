@@ -161,3 +161,11 @@ test('Beispieltexte der Werkzeuge kommen nicht aus Seeds, Akten, Warm-up, Materi
     }
   }
 });
+
+test('Eigene Formulierungen: keine Sätze aus der Krypto-Werkstatt (Review M6, docs/FREMDCODE.md)', () => {
+  const NAH = [/lesbares Deutsch/i, /nur (die|ihre) Reihenfolge ändert sich/i, /Aus .{0,40} wird .{0,40} – ist das/i];
+  for (const f of fs.readdirSync(DIR).filter((x) => x.endsWith('.js'))) {
+    const src = fs.readFileSync(path.join(DIR, f), 'utf8');
+    for (const m of NAH) assert.doesNotMatch(src, m, `${f}: ${m}`);
+  }
+});
