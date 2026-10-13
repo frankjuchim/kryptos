@@ -1312,8 +1312,9 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
 **Interfaces:**
 - Reiter `histogramm`, `bigramme`, `teiltexte` (ab Welt 2), `kennzahlen` (ab Welt 2 und eA, E71); Eingabe ≤ 3 000 Zeichen
   (`textfeld` Art `geheimtext`), Anzeige `p.labor-laenge` „n = 86 Buchstaben“; Voreinstellung `text`, `ansicht`
-  (`alphabetisch`|`absteigend`), `teiltexte` (k 1–12), `reiter`. `BEISPIEL = { text: 'Im Labor zaehlen wir jeden
-  Buchstaben einzeln und vergleichen das Ergebnis mit der deutschen Sprache' }`.
+  (`alphabetisch`|`absteigend`), `teiltexte` (k 1–12), `reiter`. `BEISPIEL = { text: 'Im Labor zaehlt man jede Spur: Was
+  kehrt oft zurueck, was fehlt fast ganz, und was zeigen uns die Balken am Ende' }` (umgesetzt: der ursprünglich geplante
+  Satz enthielt Seed-Wörter wie „buchstaben“, „ergebnis“, „sprache“ – Regeltest Task 110; die Tests benutzen ihn weiter).
 - Histogramm: `KRB.haeufigkeit({ t: 'haeufigkeit', quelle: 'text', text, referenz: 'deutsch', sortierung: ansicht,
   referenzRang: true, einheitUmschalter: true, titel: 'Häufigkeiten im Text' })` mit Quellenangabe „Referenz Deutsch nach
   Beutelspacher“; bei n < 100 `hinweis('warnung', 'Kurzer Text – die Ränge weichen stark ab (P6).')`; Nachspiel „Zählen“
@@ -1330,7 +1331,7 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
   Link, wenn diese gesperrt ist).
 - `zustand()` → `{ reiter, n, sortierung, einheit, markiert, k, s }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_haeufigkeit.test.js`:
+- [x] **Step 1: Failing test** – `test/labor_haeufigkeit.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1381,9 +1382,9 @@ befragt); das Zählen selbst lässt sich nachspielen (Balken wachsen Buchstabe f
     assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /Buchstabe 4: A – A jetzt 2-mal/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (zuerst `KRB.haeufigkeit`-Optionen mit Test in `client_bloecke.test.js`).
-- [ ] **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung `blick.js haeufigkeit` (Histogramm bei 360 px, Schraffur).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Häufigkeits-Analysator (Histogramm mit Rang-Referenz, N-Gramme, Teiltexte, Kennzahlen)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (zuerst `KRB.haeufigkeit`-Optionen mit Test in `client_bloecke.test.js`).
+- [x] **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung `blick.js haeufigkeit` (Histogramm bei 360 px, Schraffur).
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Häufigkeits-Analysator (Histogramm mit Rang-Referenz, N-Gramme, Teiltexte, Kennzahlen)"`.
 
 ### Task 115: Werkzeug „Substitutions-Werkbank“ (W1 §9.2, E74, E78)
 

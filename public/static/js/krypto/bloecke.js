@@ -182,6 +182,16 @@ const KRB = (() => {
   const BASIS_Y = 186;
   const MAX_H = 150;
 
+  /** deutsche Buchstaben nach Häufigkeit (Beutelspacher), Gleichstand alphabetisch – Rang i ↔ i-häufigster Buchstabe */
+  function deutschNachRang() {
+    return ALPHABET.split('').sort((x, y) => Krypto.DEUTSCH[y] - Krypto.DEUTSCH[x] || x.localeCompare(y));
+  }
+
+  /**
+   * Histogramm mit Tabellen-Alternative. M6 Task 114: referenzRang (bei Sortierung nach Häufigkeit liegt die Referenz
+   * ebenfalls sortiert daneben, Spalte „Deutsch (Rang)“), einheitUmschalter (Knöpfe absolut/relativ) und beiAnsicht
+   * ({ sortierung, einheit } nach jedem Umschalten – für Werkzeuge, die den Zustand kennen müssen).
+   */
   function haeufigkeit(b) {
     const id = neueId();
     const tabId = `${id}-tabelle`;
@@ -194,13 +204,15 @@ const KRB = (() => {
     const summe = ALPHABET.split('').reduce((x, c) => x + anzahl[c], 0);
     const prozent = (c) => (summe ? (anzahl[c] / summe) * 100 : 0);
     const mitReferenz = b.referenz === 'deutsch';
-    const proz = b.einheit === 'prozent';
+    const mitRang = mitReferenz && b.referenzRang === true;
+    const umschalter = b.einheitUmschalter === true;
+    let proz = b.einheit === 'prozent';
     const wert = (c) => (proz ? prozent(c) : anzahl[c]);
     const deutsch = (c) => (proz ? Krypto.DEUTSCH[c] : (Krypto.DEUTSCH[c] * summe) / 100);
     const markiert = new Set((Array.isArray(b.markiert) ? b.markiert : []).map((c) => String(c).toUpperCase()));
-    const max = Math.max(1e-9, ...ALPHABET.split('').map((c) => Math.max(wert(c), mitReferenz ? deutsch(c) : 0)));
     const titel = b.titel ? String(b.titel) : 'Häufigkeiten';
     let sortierung = b.sortierung === 'absteigend' ? 'absteigend' : 'alphabetisch';
+    const deutschRang = mitRang ? deutschNachRang() : [];
 
     const svg = s('svg', { class: 'histogramm', role: 'img', 'aria-label': `${titel} (Säulendiagramm)`, 'aria-describedby': tabId, viewBox: `0 0 ${BREITE} ${HOEHE}`, focusable: 'false' });
     const tbody = h('tbody');
@@ -208,18 +220,23 @@ const KRB = (() => {
       'table',
       { class: 'haeufigkeit-tabelle', id: tabId, hidden: true },
       h('caption', null, `${titel} als Tabelle`),
-      h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Buchstabe'), h('th', { scope: 'col' }, 'Anzahl'), h('th', { scope: 'col' }, 'Prozent'), mitReferenz ? h('th', { scope: 'col' }, 'Deutsch %') : null)),
+      h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Buchstabe'), h('th', { scope: 'col' }, 'Anzahl'), h('th', { scope: 'col' }, 'Prozent'), mitReferenz ? h('th', { scope: 'col' }, 'Deutsch %') : null, mitRang ? h('th', { scope: 'col' }, 'Deutsch (Rang)') : null)),
       tbody
     );
 
+    function nachHaeufigkeit() {
+      return ALPHABET.split('').sort((x, y) => anzahl[y] - anzahl[x] || x.localeCompare(y));
+    }
     function reihenfolge() {
-      const liste = ALPHABET.split('');
-      if (sortierung === 'absteigend') liste.sort((x, y) => anzahl[y] - anzahl[x] || x.localeCompare(y));
-      return liste;
+      return sortierung === 'absteigend' ? nachHaeufigkeit() : ALPHABET.split('');
     }
 
     function zeichne() {
       const liste = reihenfolge();
+      const rangVon = new Map(nachHaeufigkeit().map((c, i) => [c, i]));
+      // Referenz je Slot: nach Rang sortiert (referenzRang + absteigend) oder zum Buchstaben des Slots
+      const referenzVon = (c, i) => (mitRang && sortierung === 'absteigend' ? deutschRang[i] : c);
+      const max = Math.max(1e-9, ...ALPHABET.split('').map((c) => Math.max(wert(c), mitReferenz ? deutsch(c) : 0)));
       const slot = (BREITE - 2 * LINKS) / 26;
       const bw = mitReferenz ? slot * 0.5 : slot * 0.7;
       const dw = slot * 0.28;
@@ -237,8 +254,10 @@ const KRB = (() => {
           const hb = hoehe(wert(c));
           const teile = [s('rect', { class: 'balken' + (markiert.has(c) ? ' markiert' : ''), 'data-buchstabe': c, x: x.toFixed(2), y: (BASIS_Y - hb).toFixed(2), width: bw.toFixed(2), height: hb })];
           if (mitReferenz) {
-            const hd = hoehe(deutsch(c));
-            teile.push(s('rect', { class: 'balken-deutsch', 'data-buchstabe': c, x: (x + bw).toFixed(2), y: (BASIS_Y - hd).toFixed(2), width: dw.toFixed(2), height: hd, fill: `url(#${musterId})` }));
+            const r = referenzVon(c, i);
+            const hd = hoehe(deutsch(r));
+            teile.push(s('rect', { class: 'balken-deutsch', 'data-buchstabe': r, x: (x + bw).toFixed(2), y: (BASIS_Y - hd).toFixed(2), width: dw.toFixed(2), height: hd, fill: `url(#${musterId})` }));
+            if (r !== c) teile.push(s('text', { class: 'buchstabe-deutsch', x: (x + bw + dw / 2).toFixed(2), y: BASIS_Y + 32 }, Krypto.klein(r)));
           }
           if (markiert.has(c)) {
             const mx = x + bw / 2;
@@ -258,11 +277,16 @@ const KRB = (() => {
             h('th', { scope: 'row' }, c),
             h('td', null, Number.isInteger(anzahl[c]) ? String(anzahl[c]) : komma(anzahl[c])),
             h('td', null, komma(prozent(c))),
-            mitReferenz ? h('td', null, komma(Krypto.DEUTSCH[c], 2)) : null
+            mitReferenz ? h('td', null, komma(Krypto.DEUTSCH[c], 2)) : null,
+            mitRang ? h('td', { class: 'deutsch-rang' }, `${deutschRang[rangVon.get(c)]} ${komma(Krypto.DEUTSCH[deutschRang[rangVon.get(c)]], 2)}`) : null
           )
         )
       );
       for (const k of sortKnoepfe) k.setAttribute('aria-pressed', String(k.dataset.sortierung === sortierung));
+      for (const k of einheitKnoepfe) k.setAttribute('aria-pressed', String((k.dataset.einheit === 'relativ') === proz));
+    }
+    function melde() {
+      if (typeof b.beiAnsicht === 'function') b.beiAnsicht({ sortierung, einheit: proz ? 'relativ' : 'absolut' });
     }
 
     const sortKnoepfe = [
@@ -279,11 +303,34 @@ const KRB = (() => {
           onclick: () => {
             sortierung = wert_;
             zeichne();
+            melde();
           }
         },
         text
       )
     );
+    const einheitKnoepfe = umschalter
+      ? [
+          ['absolut', 'absolut'],
+          ['relativ', 'relativ (%)']
+        ].map(([wert_, text]) =>
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'knopf knopf-zweit',
+              'aria-pressed': 'false',
+              dataset: { einheit: wert_ },
+              onclick: () => {
+                proz = wert_ === 'relativ';
+                zeichne();
+                melde();
+              }
+            },
+            text
+          )
+        )
+      : [];
     const alsTabelle = h('button', { type: 'button', class: 'knopf knopf-leise als-tabelle', 'aria-expanded': 'false', 'aria-controls': tabId }, 'Als Tabelle');
     alsTabelle.addEventListener('click', () => {
       const zeigen = tabelle.hidden;
@@ -293,13 +340,20 @@ const KRB = (() => {
     });
     zeichne();
 
+    const legende = mitRang ? 'Volle Säule: dieser Text · schraffierte Säule: Deutsch (Beutelspacher); nach Häufigkeit sortiert steht Rang neben Rang' : 'Volle Säule: dieser Text · schraffierte Säule: Deutsch (Beutelspacher)';
     return h(
       'figure',
       { class: 'haeufigkeit' },
       h('figcaption', null, titel),
-      h('div', { class: 'haeufigkeit-steuerung knopf-reihe', role: 'group', 'aria-label': 'Sortierung und Ansicht' }, sortKnoepfe, alsTabelle),
+      h(
+        'div',
+        { class: 'haeufigkeit-steuerung knopf-reihe', role: 'group', 'aria-label': 'Sortierung und Ansicht' },
+        sortKnoepfe,
+        umschalter ? h('span', { class: 'haeufigkeit-einheit', role: 'group', 'aria-label': 'Einheit' }, einheitKnoepfe) : null,
+        alsTabelle
+      ),
       svg,
-      mitReferenz ? h('p', { class: 'haeufigkeit-legende' }, h('span', { class: 'legende-text' }, 'Volle Säule: dieser Text · schraffierte Säule: Deutsch (Beutelspacher)')) : null,
+      mitReferenz ? h('p', { class: 'haeufigkeit-legende' }, h('span', { class: 'legende-text' }, legende)) : null,
       h('div', { class: 'scroll-x' }, tabelle)
     );
   }

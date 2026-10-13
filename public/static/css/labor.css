@@ -388,3 +388,24 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .ring-nie { margin: 0; color: var(--fehler); font-weight: 700; }
 .ring-grenze { margin: 0; font-size: .9rem; }
 .ring-meldung:empty { display: none; }
+
+/* ======================================================================
+   Werkzeug „Häufigkeits-Analysator“ (W1 §9.1, Plan M6 Task 114)
+   ====================================================================== */
+.haeufigkeit-quelle, .haeufigkeit-grenze, .haeufigkeit-status, .teiltext-info { margin: 0; font-size: .9rem; }
+.haeufigkeit-einheit { display: inline-flex; flex-wrap: wrap; gap: var(--a-1); }
+.histogramm text.buchstabe-deutsch { font-family: var(--f-mono); font-size: 10px; fill: var(--text-2); text-anchor: middle; }
+.haeufigkeit-histo, .teiltext { display: grid; gap: var(--a-3); min-width: 0; }
+.ngramme-listen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--a-3) var(--a-5); }
+.ngramme-titel { margin: 0 0 var(--a-2); font-size: 1rem; }
+.ngramme { display: flex; flex-wrap: wrap; gap: var(--a-1); margin: 0; padding: 0; list-style: none; }
+.ngramm { min-height: var(--ziel); padding: 0 var(--a-3); border: 1.5px solid var(--linie); font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.ngramm[aria-pressed="true"] { background: var(--hinweis-flaeche); border-color: var(--hinweis); box-shadow: inset 0 0 0 1.5px var(--hinweis); font-weight: 700; }
+.ngramm[aria-pressed="true"]::before { content: "✓ "; }
+/* Text ohne Fünfergruppen (Markierungen über Gruppengrenzen bleiben eine Marke): Umbruch an jeder Stelle */
+.haeufigkeit-text .geheimtext-gruppen .gruppe { white-space: normal; word-break: break-all; }
+.teiltext-zeile { margin: 0; }
+.kennzahlen { display: grid; gap: var(--a-2); }
+.kennzahl-bruch, .kennzahl-wert { margin: 0; font-family: var(--f-mono); font-size: 1.1rem; overflow-wrap: anywhere; }
+.kennzahl-wert { font-size: 1.5rem; font-weight: 700; }
+.kennzahl-referenz { margin: 0; }

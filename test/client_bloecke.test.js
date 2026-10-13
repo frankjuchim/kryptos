@@ -60,7 +60,36 @@ test('haeufigkeit: Balken aus Krypto.haeufigkeiten, Referenz schraffiert, markie
   assert.equal(k.alle(svg, 'rect.balken')[0].getAttribute('data-buchstabe'), 'A');
   assert.equal(k.text(k.eins(tab, 'tbody tr th')), 'A');
 });
-test('bits: Gruppen à 4, ⊕-Trennzeile, Lückenzeile, markierte Spalten, Screenreader-Text', () => {
+test('haeufigkeit (M6 Task 114): referenzRang – Deutsch sortiert daneben, Spalte „Deutsch (Rang)“; Einheit umschaltbar', () => {
+  const text = 'TCHTA TBTCG TNYBM COQCN QHSMN INCYB TMVCT CBMNY BFSTN NTF';
+  const gemeldet = [];
+  const { k, el } = bau({ t: 'haeufigkeit', quelle: 'text', text, referenz: 'deutsch', sortierung: 'absteigend', referenzRang: true, einheitUmschalter: true, beiAnsicht: (a) => gemeldet.push(a) });
+  const tab = k.eins(el, 'table.haeufigkeit-tabelle');
+  assert.deepEqual(k.alle(tab, 'thead th').map(k.text), ['Buchstabe', 'Anzahl', 'Prozent', 'Deutsch %', 'Deutsch (Rang)']);
+  const rangDeutsch = Object.keys(K.DEUTSCH).sort((a, b) => K.DEUTSCH[b] - K.DEUTSCH[a] || a.localeCompare(b));
+  assert.deepEqual(k.alle(tab, 'td.deutsch-rang').map((z) => k.text(z).slice(0, 1)), rangDeutsch);
+  assert.match(k.text(k.eins(tab, 'td.deutsch-rang')), /^E 17,40$/);
+  // Referenzbalken in Rang-Reihenfolge (Slot i = i-häufigster deutscher Buchstabe)
+  assert.deepEqual(k.alle(el, 'svg rect.balken-deutsch').map((r) => r.getAttribute('data-buchstabe')), rangDeutsch);
+  // alphabetisch: Referenz wieder je Buchstabe, Rang-Spalte = deutscher Buchstabe gleichen Rangs
+  k.klick(k.eins(el, 'button[data-sortierung="alphabetisch"]'));
+  assert.equal(k.alle(el, 'svg rect.balken-deutsch')[0].getAttribute('data-buchstabe'), 'A');
+  const zeileT = k.alle(tab, 'tbody tr').find((z) => k.text(z.querySelector('th')) === 'T');
+  assert.equal(k.text(zeileT.querySelector('td.deutsch-rang')).slice(0, 1), 'E', 'T ist im Text am häufigsten');
+  // Einheit: absolut ↔ relativ (aria-pressed), Rückmeldung an das Werkzeug
+  const rel = k.eins(el, 'button[data-einheit="relativ"]');
+  assert.equal(k.eins(el, 'button[data-einheit="absolut"]').getAttribute('aria-pressed'), 'true');
+  const hoeheT = () => Number(k.alle(el, 'svg rect.balken').find((r) => r.getAttribute('data-buchstabe') === 'T').getAttribute('height'));
+  const vorher = hoeheT();
+  k.klick(rel);
+  assert.equal(rel.getAttribute('aria-pressed'), 'true');
+  assert.ok(Math.abs(hoeheT() - vorher) < 0.01, 'gleiche Skala, nur andere Einheit');
+  assert.deepEqual(k.roh(gemeldet), [{ sortierung: 'alphabetisch', einheit: 'absolut' }, { sortierung: 'alphabetisch', einheit: 'relativ' }]);
+  // ohne die Optionen: keine Rang-Spalte, keine Einheit-Knöpfe (Lab-Blöcke unverändert)
+  const ohne = bau({ t: 'haeufigkeit', quelle: 'text', text, referenz: 'deutsch' });
+  assert.equal(ohne.el.querySelectorAll('td.deutsch-rang, button[data-einheit]').length, 0);
+});
+test('bits:Gruppen à 4, ⊕-Trennzeile, Lückenzeile, markierte Spalten, Screenreader-Text', () => {
   const { k, el, gaps } = bau({ t: 'bits', gruppe: 4, pruefe: 'xor', zeilen: [{ label: 'M', bits: '0100 1011' }, { label: 'K', bits: '0110 1010' }, { trenner: '⊕' }, { label: 'C', bits: '[[c1]]' }], markiert: [2, 7] });
   const zeilen = k.alle(el, '.bits-zeile');
   assert.equal(k.alle(zeilen[0], 'span.bit').length, 8);
