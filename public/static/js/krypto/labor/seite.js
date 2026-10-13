@@ -1,7 +1,8 @@
 /* Kryptos – Seite /labor (TECHNIK §10.1, M4 Task 53): Kopfzeile für beide Rollen, Werkzeug-Raster nach Epoche mit
    Freigaben (Schüler: GET /api/labor, Lehrkraft: GET /api/lehrer/werkzeuge – alles frei), gesperrte Werkzeuge mit Grund,
    Boss-Banner; #/<id> öffnet das Werkzeug als Vollseite über KRLabor (Modul wird nachgeladen) mit der Umgebung für die
-   Reiter-Regeln (Schüler: niveau/welten aus /api/labor; Lehrkraft: alle Reiter + Hinweis, M6 E71/E87). */
+   Reiter-Regeln (Schüler: niveau/welten aus /api/labor; Lehrkraft: alle Reiter + Hinweis, M6 E71/E87);
+   #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125). */
 'use strict';
 
 const KRLaborSeite = (() => {
@@ -65,7 +66,22 @@ const KRLaborSeite = (() => {
     );
   }
 
-  function vollseite(haupt, id) {
+  /** Voreinstellung aus dem Hash-Parameter „?reiter=a,b“ (Level-Karten, E70): nur Reiter des Werkzeugs, sonst {}. */
+  function voreinstellungAus(id, abfrage) {
+    const w = KRLabor.werkzeug(id);
+    const m = /(?:^|&)reiter=([^&]*)/.exec(abfrage || '');
+    if (!w || !m) return {};
+    let roh = '';
+    try {
+      roh = decodeURIComponent(m[1]);
+    } catch {
+      return {};
+    }
+    const reiter = [...new Set(roh.split(','))].filter((r) => w.reiter.includes(r));
+    return reiter.length ? { reiter } : {};
+  }
+
+  function vollseite(haupt, id, voreinstellung = {}) {
     const w = daten.werkzeuge.find((x) => x.id === id);
     if (!w) {
       KR.fehler(haupt, new Error('Dieses Werkzeug gibt es nicht.'), { zurueck: { href: '#/', text: 'Zum Labor' } });
@@ -94,7 +110,7 @@ const KRLaborSeite = (() => {
         h('div', { class: 'labor-steuerleiste' }, h('a', { class: 'knopf knopf-zweit', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Labor'))
       )
     );
-    offen = KRLabor.oeffne(id, {}, flaeche, umgebung);
+    offen = KRLabor.oeffne(id, voreinstellung, flaeche, umgebung);
   }
 
   function route(haupt, sitzung) {
@@ -102,8 +118,14 @@ const KRLaborSeite = (() => {
       offen.schliesse();
       offen = null;
     }
-    const id = decodeURIComponent((location.hash || '').replace(/^#\/?/, '').split('/')[0] || '');
-    if (id) vollseite(haupt, id);
+    const [pfad, abfrage] = (location.hash || '').replace(/^#\/?/, '').split('?');
+    let id = '';
+    try {
+      id = decodeURIComponent(pfad.split('/')[0] || '');
+    } catch {
+      id = '?';
+    }
+    if (id) vollseite(haupt, id, voreinstellungAus(id, abfrage));
     else raster(haupt, sitzung);
     if (typeof haupt.focus === 'function') haupt.focus();
   }

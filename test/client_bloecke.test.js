@@ -4,8 +4,8 @@ const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 const K = require('../public/static/js/shared/krypto.js');
 const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js'];
-function bau(b, ctx = {}) {
-  const k = D.lade(SKRIPTE);
+function bau(b, ctx = {}, extraSkripte = []) {
+  const k = D.lade([...SKRIPTE, ...extraSkripte]);
   const gaps = {};
   const el = k.wert('AQR').block(b, 0, { modus: 'lab', gap: (id) => (gaps[id] = k.document.createElement('input')), ...ctx });
   k.document.body.appendChild(el);
@@ -220,6 +220,23 @@ test('werkzeug: Block reicht ctx.laborUmgebung und Voreinstellung an KRLabor.dia
   k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
   k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
   assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', { reiter: ['quadrat'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]]);
+});
+test('werkzeug-Block: Dialog öffnet das nachgeladene Modul mit Voreinstellung und Kurs-Umgebung (M6 Task 125)', () => {
+  const { k, el } = bau({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, { laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0] } }, ['krypto/labor/bausteine.js', 'krypto/labor/scheibe.js']);
+  const knopf = k.eins(el, 'button.werkzeug-oeffnen');
+  knopf.focus();
+  k.klick(knopf);
+  const d = k.eins(k.document, 'dialog.werkzeug-dialog');
+  assert.equal(k.text(k.eins(d, '.scheibe-k')), 'k = 7');
+  assert.equal(k.skripte.length, 0, 'Modul war schon geladen – nichts nachgeladen');
+  k.taste(d, 'Escape');
+  assert.equal(k.document.activeElement, knopf);
+});
+test('werkzeug-Block in der Lehrkraft-Vorschau: Umgebung modus „vorschau“, Rolle Lehrkraft (M6 Task 125)', () => {
+  const { k, el } = bau({ t: 'werkzeug', id: 'vigenere' }, { modus: 'vorschau', laborUmgebung: { modus: 'vorschau', rolle: 'lehrkraft' } });
+  k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
+  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
+  assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', null, { modus: 'vorschau', rolle: 'lehrkraft' }]]);
 });
 test('Geheimtext-Zeile mit Markierungen: mark.markiert, Art als Klasse, Beschreibung über aria-describedby (M6 E86)', () => {
   const k = D.lade(SKRIPTE);

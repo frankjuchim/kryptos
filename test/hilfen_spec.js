@@ -47,6 +47,12 @@ const WERKZEUG = {
   '2.1': ['vigenere', 'scheibe'], '2.2': ['vigenere'], '2.3': ['vigenere'], '2.4': ['haeufigkeit'], K1: ['vigenere']
 };
 
+/** M6 E70: Reiter-Voreinstellungen der Level-Köpfe (Spec §2 „Labor-Werkzeug: … nur Reiter …“); fehlt ein Eintrag → keine */
+const REITER = {
+  '2.1': { vigenere: ['quadrat', 'verschluesseln'] },
+  '2.4': { haeufigkeit: ['bigramme', 'histogramm'] }
+};
+
 /** E40: Spec-Interaktion `grid` → Seed-Interaktion (Ausfülltabellen als gaps, Fleißner-Schablone als chiffre) */
 const GRID = { 'W0-L1-07': 'chiffre', 'W0-L3-05': 'gaps', 'W2-L2-04': 'gaps', 'W2-L4-01': 'gaps' };
 
@@ -297,7 +303,7 @@ function texte(wert) {
 }
 
 module.exports = {
-  WURZEL, SPEC_DATEIEN, UMFANG, ROLLE, WERKZEUG, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
+  WURZEL, SPEC_DATEIEN, UMFANG, ROLLE, WERKZEUG, REITER, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
   technischeId, abschnittVon, specAufgaben, specLevels, specZeilen, archivfundTitel, zellen,
   kindsErwartet, kindsSeed, teile, choiceLoesung, loesungsTeile, kennungen,
   seed, warmup, normalisiert, texte

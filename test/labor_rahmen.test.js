@@ -25,6 +25,19 @@ test('Reiter-Regeln: Welt 2 für Teiltexte, eA für Koinzidenz, Welt 6 für Ring
   assert.equal(k.wert('KRLabor').erlaubt('vigenere.modus.pendel', { modus: 'gast', rolle: null, niveau: null }), true, 'fehlende Angaben → erlaubt');
 });
 
+test('Reiter-Regel MitM (Orchestrator): Szene „mitm“ zeigt den Ablauf von W5-L3-04 – im Level-Kontext W5-L3 aus, frei erst ab Welt 6 oder für Lehrkräfte', () => {
+  const k = lade();
+  const R = (v, u) => k.roh(k.wert('KRLabor').reiterFuer('signatur', v, u));
+  const s5 = { modus: 'labor', rolle: 'schueler', niveau: 'eA', welten: [0, 1, 2, 3, 4, 5] };
+  assert.deepEqual(R({}, s5), ['signatur', 'zertifikat'], 'freies Labor bis Welt 5: ohne MitM');
+  assert.deepEqual(R({}, { ...s5, welten: [...s5.welten, 6] }), ['signatur', 'zertifikat', 'mitm'], 'ab Welt 6 sichtbar');
+  assert.deepEqual(R({}, { ...s5, modus: 'lab', level: 'W5-L3', welten: [0, 1, 2, 3, 4, 5, 6] }), ['signatur', 'zertifikat'], 'Level-Kontext W5-L3: immer ausgeblendet');
+  assert.deepEqual(R({ reiter: ['mitm'] }, { ...s5, modus: 'lab', level: 'W5-L3' }), ['signatur'], 'auch eine Voreinstellung öffnet MitM in W5-L3 nicht');
+  assert.deepEqual(R({}, { modus: 'labor', rolle: 'lehrkraft' }), ['signatur', 'zertifikat', 'mitm'], 'Lehrkraft sieht alles');
+  assert.deepEqual(R({}, { modus: 'vorschau', rolle: 'lehrkraft', level: 'W5-L3' }), ['signatur', 'zertifikat', 'mitm'], 'Lehrkraft-Vorschau: alles (E87)');
+  assert.deepEqual(k.roh(k.wert('KRLabor').REITER_REGELN['signatur.mitm']), { welt: 6, nichtImLevel: ['W5-L3'] });
+});
+
 test('Nachspiel: Einzelschritt, Tasten, Abspielen mit Timer, reduzierte Bewegung, Sperre, Aufräumen (E67)', async () => {
   const k = lade();
   const ziel = k.document.createElement('div');

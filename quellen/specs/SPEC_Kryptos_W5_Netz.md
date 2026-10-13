@@ -1071,7 +1071,10 @@ Kette (optional mit Zwischen-CA) → ⑤ Ampel grün/rot mit Begründung je Prü
 **Modus „MitM“:** Schlüsselaustausch Alice ↔ Bob über Mallory mit animierten Pfeilen ①–⑥ (wie W5-L3-04); Schalter
 „Zertifikate an“ zeigt, an welcher Stelle der Angriff scheitert. Variante „Diffie-Hellman“ mit eigenen Werten p = 43, g = 3, a = 8,
 b = 13, Mallory m = 5 (A = 25, B = 12, M = 28, K_Alice = 24, K_Bob = 34, ohne Mallory K = 14) – nicht die Werte aus Akte W5·3
-Auftrag 7.
+Auftrag 7. **Sichtbarkeit (Orchestrator, M6, vorläufig):** Weil die Szene den Ablauf von W5-L3-04 (Lösung) zeigt, ist der Reiter
+„MitM“ im Level-Kontext W5-L3 (Aufgaben von Level 5.3) ausgeblendet und im freien Labor erst mit freigeschalteter Welt 6
+sichtbar; Lehrkräfte sehen ihn immer (Regel `signatur.mitm` in `REITER_REGELN`, Test `labor_rahmen.test.js`). Das ersetzt
+für Schülerinnen und Schüler den Hinweis „Modus Zertifikat und MitM“ im Level-Kopf 5.3 (§2).
 **Grenzen:** keine freie Texteingabe für Mallory über 60 Zeichen, keine echten Domains, alle Namen erfunden
 (`*.example`).
 

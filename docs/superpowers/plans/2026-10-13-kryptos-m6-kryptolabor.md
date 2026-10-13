@@ -359,10 +359,11 @@ const REITER_REGELN = Object.freeze({
   'vigenere.koinzidenz': { niveau: 'eA' },
   'skytale.ring': { welt: 6 },
   'vigenere.modus.pendel': { welt: 6 },
-  'vigenere.modus.frei': { welt: 6 }
+  'vigenere.modus.frei': { welt: 6 },
+  'signatur.mitm': { welt: 6, nichtImLevel: ['W5-L3'] } // Orchestrator (Task 125): Szene zeigt den Ablauf von W5-L3-04
 });
-// erlaubt(schluessel, umgebung): Lehrkraft oder fehlende Angaben → true; sonst welt ∈ umgebung.welten und
-// (niveau fehlt oder umgebung.niveau === niveau)
+// erlaubt(schluessel, umgebung): Lehrkraft oder fehlende Angaben → true; umgebung.level ∈ nichtImLevel → false; sonst
+// welt ∈ umgebung.welten und (niveau fehlt oder umgebung.niveau === niveau)
 // reiterFuer(id, v, u) = (v.reiter gültig ? v.reiter : WERKZEUG.reiter).filter((r) => erlaubt(`${id}.${r}`, u)); leer → [erster erlaubter Standardreiter]
 ```
 
@@ -2278,7 +2279,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
 - Produces: Level-Karten-Links mit `?reiter=`; Werkzeug-Dialog in Aufgaben mit Voreinstellung **und** Reiter-Regeln des Kurses;
   Lehrkraft-Vorschau öffnet Werkzeuge ohne Einschränkung.
 
-- [ ] **Step 1: Failing tests** – `test/client_seiten.test.js`:
+- [x] **Step 1: Failing tests** – `test/client_seiten.test.js`:
   ```js
   test('Level-Seite: Labor-Karte trägt die Reiter-Voreinstellung (Level 2.1, E70)', async () => {
     const level = { level: { id: 'W9-L1', nr: '9.1', titel: 'Probe', niveau: 'kern', rolle: 'kryptografie', werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['quadrat', 'verschluesseln'] } }, { id: 'scheibe', voreinstellung: {} }], intro: [], aufgaben: [] }, welt: { nr: 9, titel: 'Probe' } };
@@ -2313,11 +2314,17 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   });
   ```
   (`bau(block, ctx, extraSkripte)` – Helfer im Test um den dritten Parameter erweitern.)
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement**; Seeds anpassen, `node scripts/validate.js seed/welten/welt2.json` ohne Fehler, `seed_pruefen.py`
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement**; Seeds anpassen, `node scripts/validate.js seed/welten/welt2.json` ohne Fehler, `seed_pruefen.py`
   unverändert 0 Abweichungen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Level 2.1 (Karte), Aufgabe W9-L3-01 (Dialog mit Häufigkeits-Analysator).
-- [ ] **Step 5: Commit** `git commit -m "Labor-Einbettung: Level-Karten mit Reiter, Werkzeug-Dialog mit Voreinstellung und Kurs-Umgebung, Seeds W2"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung Level 2.1 (Karte), Aufgabe W9-L3-01 (Dialog mit Häufigkeits-Analysator).
+- [x] **Step 5: Commit** `git commit -m "Labor-Einbettung: Level-Karten mit Reiter, Werkzeug-Dialog mit Voreinstellung und Kurs-Umgebung, Seeds W2"`.
+- **Umsetzungsnotiz (Orchestrator-Festlegung MitM):** Die MitM-Szene des Signatur-Simulators zeigt den Ablauf von W5-L3-04
+  (Lösung). Regel `signatur.mitm: { welt: 6, nichtImLevel: ['W5-L3'] }` in `REITER_REGELN`: im Level-Kontext W5-L3 ausgeblendet
+  (Aufgaben reichen `laborUmgebung.level = <Level-id>` weiter), im freien Labor vorläufig erst mit freigeschalteter Welt 6,
+  Lehrkräfte sehen sie immer. Eine Lehrkraft-Sperre einzelner Reiter gibt es noch nicht (M7/M8 prüfen). Vermerk in W5 §9.2.
+  Der Hash-Parameter `?reiter=` wird auf der Labor-Seite erneut gegen die Reiter des Werkzeugs gefiltert; die Spec-Zeilen
+  in W2 §2 bleiben zeilengleich (Prüfwerte verweisen auf Zeilennummern).
 
 ### Task 126: Gastmodus – nur Chiffrierscheibe (Design §7.8, TECHNIK §10.1)
 

@@ -151,6 +151,38 @@ test('Aufgabe: Prüfen sendet die Antwort, Diagnose-Chip erscheint, Erklärung n
   await k.ruhe();
   assert.match(k.text(haupt), /Zurückrechnen\./);
 });
+/* ---------- Einbettung (M6 Task 125) ---------- */
+test('Level-Seite: Labor-Karte trägt die Reiter-Voreinstellung (Level 2.1, E70)', async () => {
+  const level = { level: { id: 'W9-L1', nr: '9.1', titel: 'Probe', niveau: 'kern', rolle: 'kryptografie', werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['quadrat', 'verschluesseln'] } }, { id: 'scheibe', voreinstellung: {} }], intro: [], aufgaben: [] }, welt: { nr: 9, titel: 'Probe' }, aufgaben: [] };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L1': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'eA', welten: [9], werkzeuge: [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, frei: true, grund: null }, { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: true, grund: null }] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W9-L1', fetch: f });
+  await k.ruhe();
+  assert.deepEqual(k.alle(k.document, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/vigenere?reiter=quadrat,verschluesseln', '/labor#/scheibe']);
+});
+test('Labor-Seite: #/vigenere?reiter=… öffnet mit Voreinstellung und Kurs-Umgebung; unbekannte Reiter fallen weg', async () => {
+  const werkzeuge = [{ id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, frei: true, grund: null }];
+  const k = D.lade([...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/seite.js'], {
+    url: 'http://x.test/labor#/vigenere?reiter=quadrat,quatsch',
+    fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'gA', welten: [0, 1, 2], werkzeuge } } }
+  });
+  k.wert('globalThis.__oeffne = []; KRLabor.oeffne = (id, v, f, u) => { __oeffne.push([id, v, u]); return { schliesse() {} }; };');
+  await k.ruhe();
+  assert.deepEqual(k.roh(k.wert('__oeffne')).at(-1), ['vigenere', { reiter: ['quadrat'] }, { modus: 'labor', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]);
+  assert.equal(k.text(k.eins(k.document, '#werkzeug-titel')), 'Vigenère-Werkbank');
+  k.window.location.hash = '#/vigenere?reiter=quatsch';
+  await new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
+  await k.ruhe();
+  assert.deepEqual(k.roh(k.wert('__oeffne')).at(-1)[1], {}, 'nur unbekannte Reiter → keine Voreinstellung');
+});
+test('Aufgabe: Werkzeug-Block bekommt die Kurs-Umgebung aus /api/labor (ctx.laborUmgebung, E71)', async () => {
+  const a = { id: 'W9-L1-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', inhalt: [{ t: 'werkzeug', id: 'haeufigkeit', voreinstellung: { reiter: ['histogramm'] } }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/aufgaben/W9-L1-01': { status: 200, body: { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, moeglich: 10 }, ort: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, level: { id: 'W9-L1', nr: '1', titel: 'Blöcke' }, index: 0, anzahl: 1, vorher: null, nachher: null } } }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'gA', welten: [0, 1, 9], werkzeuge: [{ id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1, frei: true, grund: null }] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/aufgabe/W9-L1-01', fetch: f });
+  k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
+  await k.ruhe();
+  k.klick(k.eins(k.document, 'button.werkzeug-oeffnen'));
+  assert.deepEqual(k.roh(k.wert('__dialog')), [['haeufigkeit', { reiter: ['histogramm'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 9], level: 'W9-L1' }]], 'mit Level-Kontext (Reiter-Regel MitM in W5-L3)');
+});
 test('Rang-Plakette: nach dem Lösen mit Punkten neu geladen, ohne Punkte nicht (Beobachtung M5 Task 79–82)', async () => {
   const a = { id: 'W9-L5-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', fallen: [], tippsAnzahl: 0, inhalt: [{ t: 'text', md: 'Entschlüssele.' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };
   let profile = 0;

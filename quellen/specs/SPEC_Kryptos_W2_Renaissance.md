@@ -222,7 +222,7 @@ P, K und Y – polyalphabetisch!“ ✔ nachgerechnet.
 - **Lernziel:** Die Lernenden beschreiben das Prinzip der polyalphabetischen Substitution, ver- und entschlüsseln
   mit dem Vigenère-Quadrat der Abitur-Anlage (auch rechnerisch mit A = 1), wenden Autokey und Porta an und
   erkennen schwache bzw. gleichwertige Schlüssel.
-- **Labor-Werkzeug:** Vigenère-Werkbank (nur Reiter „Quadrat“ und „Ver-/Entschlüsseln“, §9.1), Chiffrierscheibe.
+- **Labor-Werkzeug:** Vigenère-Werkbank (nur Reiter „Quadrat“ und „Ver-/Entschlüsseln“, §9.1; Seed `voreinstellung: { "reiter": ["quadrat", "verschluesseln"] }`, M6 E70), Chiffrierscheibe.
 
 **Merkkasten (Archivwissen):**
 
@@ -320,7 +320,7 @@ Stufenmix 3 × ★, 3 × ★★, 1 × ★★★.
   entschlüsseln mit einem fremden Zwei-Quadrat-Verfahren (Kreuzquadrat), ordnen beide als monoalphabetische
   Bigramm-Substitution ein und beurteilen ihre Sicherheit (Bigramm-Häufigkeiten, Schlüsselraum, schwache
   Schlüssel) – Abitur-Muster anwenden → einordnen → beurteilen.
-- **Labor-Werkzeug:** Häufigkeits-Analysator (W1, Reiter „Bigramme“); Playfair-/Kreuzquadrat-Ansicht im Block
+- **Labor-Werkzeug:** Häufigkeits-Analysator (W1, Reiter „Bigramme“ und „Histogramm“ – vorläufig, M6 E70; Seed `voreinstellung: { "reiter": ["bigramme", "histogramm"] }`); Playfair-/Kreuzquadrat-Ansicht im Block
   `quadrat` (5×5, Hervorhebung von Zeile/Spalte/Rechteck).
 
 **Merkkasten (Archivwissen):**

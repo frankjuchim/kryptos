@@ -766,7 +766,7 @@ const KRLehrer = (() => {
     const w = o.welt || { nr: 6, titel: '' };
     KR.epoche(w.nr, { farbe: w.farbe });
     KRKopf.epoche(w.titel);
-    const ctrl = AQI.aufgabe(a, { modus: 'vorschau', vorschau: true, zusatz: { werkzeugFrei: () => true } });
+    const ctrl = AQI.aufgabe(a, { modus: 'vorschau', vorschau: true, zusatz: { werkzeugFrei: () => true, laborUmgebung: { modus: 'vorschau', rolle: 'lehrkraft' } } }); // Vorschau: alle Reiter (E87)
     ctrl.loesung(d.loesung, d.muster);
     ctrl.sperren(true);
     const nav = (aid, text) => (aid ? h('a', { class: 'knopf knopf-zweit', href: `#/vorschau/aufgabe/${enc(aid)}` }, text) : null);

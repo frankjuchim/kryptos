@@ -25,15 +25,26 @@ const KRSpiel = (() => {
     return weltenAnfrage;
   }
 
-  /** Werkzeug-Freigaben (GET /api/labor), je Route einmal; liefert werkzeugFrei(id) (unbekannt/Fehler → false). */
+  /** Werkzeug-Freigaben (GET /api/labor), je Route einmal; liefert werkzeugFrei(id) (unbekannt/Fehler → false),
+      niveau, welten und laborUmgebung (Reiter-Regeln, M6 E71). */
   function labor() {
     if (!laborAnfrage) {
       laborAnfrage = api('GET', '/api/labor')
         .then((r) => {
           const liste = Array.isArray(r && r.werkzeuge) ? r.werkzeuge : [];
-          return { boss: !!(r && r.boss), werkzeuge: liste, werkzeugFrei: (id) => liste.some((w) => w.id === id && w.frei) };
+          const niveau = r && r.niveau === 'gA' ? 'gA' : 'eA';
+          const weltenFrei = Array.isArray(r && r.welten) ? r.welten : [];
+          return {
+            boss: !!(r && r.boss),
+            niveau,
+            welten: weltenFrei,
+            werkzeuge: liste,
+            werkzeugFrei: (id) => liste.some((w) => w.id === id && w.frei),
+            // Umgebung für Werkzeug-Dialoge in Aufgaben: Reiter-Regeln des aktiven Kurses (M6 E71, Task 125)
+            laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau, welten: weltenFrei }
+          };
         })
-        .catch(() => ({ boss: false, werkzeuge: [], werkzeugFrei: () => false }));
+        .catch(() => ({ boss: false, niveau: 'eA', welten: [], werkzeuge: [], werkzeugFrei: () => false, laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'eA', welten: [] } }));
     }
     return laborAnfrage;
   }
@@ -186,7 +197,7 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei },
+      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: { ...lab.laborUmgebung, level: o.level.id } }, // Level-Kontext für Reiter-Regeln (MitM in W5-L3)
       anzeige: KRDiag.anzeige,
       kursNiveau: w.niveau || (sitzung.kurs && sitzung.kurs.niveau) || 'eA',
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
@@ -222,7 +233,7 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei },
+      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: lab.laborUmgebung },
       anzeige: KRDiag.anzeige,
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
       tipp: () => api('POST', `${pfad}/tipp`, {}),

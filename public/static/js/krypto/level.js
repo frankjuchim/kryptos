@@ -55,9 +55,16 @@ const KRLevel = (() => {
 
   // Level-Feld werkzeug: Liste von { id, voreinstellung } (M6 E70; Strings aus älteren Antworten werden ebenfalls gelesen)
   function werkzeugKarten(liste, werkzeuge, werkzeugFrei) {
-    const ids = (Array.isArray(liste) ? liste : []).map((e) => (e && typeof e === 'object' ? e.id : e)).filter((id) => typeof id === 'string');
-    const frei = ids.filter((id) => werkzeugFrei(id));
+    const eintraege = (Array.isArray(liste) ? liste : [])
+      .map((e) => (e && typeof e === 'object' ? { id: e.id, voreinstellung: e.voreinstellung } : { id: e }))
+      .filter((e) => typeof e.id === 'string');
+    const frei = eintraege.filter((e) => werkzeugFrei(e.id));
     if (!frei.length) return null;
+    // nur die Reiter wandern in den Link (keine Texte in URLs, E70); die Labor-Seite prüft sie erneut
+    const link = (e) => {
+      const r = e.voreinstellung && Array.isArray(e.voreinstellung.reiter) ? e.voreinstellung.reiter.filter((x) => typeof x === 'string' && /^[a-z]+$/.test(x)) : [];
+      return `/labor#/${enc(e.id)}${r.length ? `?reiter=${r.join(',')}` : ''}`;
+    };
     return h(
       'section',
       { class: 'level-labor', 'aria-labelledby': 'level-labor-titel' },
@@ -65,9 +72,9 @@ const KRLevel = (() => {
       h(
         'div',
         { class: 'labor-raster' },
-        frei.map((id) => {
-          const w = (werkzeuge || []).find((x) => x.id === id);
-          return h('a', { class: 'werkzeug-karte werkzeug-link', href: `/labor#/${enc(id)}` }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w ? w.titel : id), h('span', { class: 'werkzeug-ort' }, 'Im Labor öffnen'));
+        frei.map((e) => {
+          const w = (werkzeuge || []).find((x) => x.id === e.id);
+          return h('a', { class: 'werkzeug-karte werkzeug-link', href: link(e) }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w ? w.titel : e.id), h('span', { class: 'werkzeug-ort' }, 'Im Labor öffnen'));
         })
       )
     );

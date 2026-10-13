@@ -98,13 +98,18 @@ const KRLabor = (() => {
     'vigenere.koinzidenz': Object.freeze({ niveau: 'eA' }),
     'skytale.ring': Object.freeze({ welt: 6 }),
     'vigenere.modus.pendel': Object.freeze({ welt: 6 }),
-    'vigenere.modus.frei': Object.freeze({ welt: 6 })
+    'vigenere.modus.frei': Object.freeze({ welt: 6 }),
+    // Orchestrator (M6): Die MitM-Szene zeigt den Ablauf von W5-L3-04 (Lösung) – im Level-Kontext W5-L3 (Welt 5 Level 5.3)
+    // ausgeblendet, im freien Labor vorläufig erst mit freigeschalteter Welt 6 (Lehrkräfte sehen sie immer)
+    'signatur.mitm': Object.freeze({ welt: 6, nichtImLevel: Object.freeze(['W5-L3']) })
   });
-  /** Ist der Reiter/Modus „<id>.<reiter>“ in dieser Umgebung sichtbar? Lehrkraft oder fehlende Angaben → ja. */
+  /** Ist der Reiter/Modus „<id>.<reiter>“ in dieser Umgebung sichtbar? Lehrkraft oder fehlende Angaben → ja;
+      umgebung.level (Level-id der Aufgabe) sperrt Reiter mit nichtImLevel. */
   function erlaubt(schluessel, umgebung) {
     const regel = REITER_REGELN[schluessel];
     const u = umgebung || {};
     if (!regel || u.rolle === 'lehrkraft') return true;
+    if (regel.nichtImLevel && typeof u.level === 'string' && regel.nichtImLevel.includes(u.level)) return false;
     if (regel.welt !== undefined && Array.isArray(u.welten) && !u.welten.includes(regel.welt)) return false;
     if (regel.niveau !== undefined && u.niveau && u.niveau !== regel.niveau) return false;
     return true;

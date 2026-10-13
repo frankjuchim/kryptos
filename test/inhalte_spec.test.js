@@ -116,6 +116,12 @@ function pruefeLevel(welt, w, abschnitt) {
   assert.equal(l.niveau, sl.niveau, `${abschnitt}: niveau`);
   assert.equal(l.rolle, sl.rolle, `${abschnitt}: rolle (E39)`);
   assert.deepEqual(alsListe(l.werkzeug), sl.werkzeug, `${abschnitt}: werkzeug (E63)`);
+  // M6 E70: Reiter-Voreinstellungen (2.1 Vigenère nur Quadrat + Ver-/Entschlüsseln, 2.4 Bigramme + Histogramm)
+  for (const e of Array.isArray(l.werkzeug) ? l.werkzeug : []) {
+    const soll = ((S.REITER[sl.nr] || {})[typeof e === 'object' ? e.id : e]) || null;
+    const ist = e && typeof e === 'object' && e.voreinstellung && Array.isArray(e.voreinstellung.reiter) ? e.voreinstellung.reiter : null;
+    assert.deepEqual(ist, soll, `${abschnitt}: Reiter von ${typeof e === 'object' ? e.id : e} (E70)`);
+  }
   if (sl.kuer) assert.equal(l.kuer, true, `${abschnitt}: kuer`);
   const akte = `Akte W${welt}·${sl.kuer ? sl.nr : sl.nr.split('.')[1]}`;
   assert.ok(typeof l.akte === 'string' && l.akte.startsWith(akte), `${abschnitt}: akte beginnt mit „${akte}“`);
