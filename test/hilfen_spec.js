@@ -29,7 +29,7 @@ const SPEC_DATEIEN = { 0: 'SPEC_Kryptos_W0_Antike.md', 1: 'SPEC_Kryptos_W1_Bagda
  * Abschnitte, die vollständig und spec-treu im Seed stehen müssen. Jede Inhalts-Task (74–89) ergänzt hier ihren
  * Abschnitt in Step 1 (z. B. 'W0-L1', 'W0-B', 'W0-A', 'WU-W0'); bis dahin sind die Abgleich-Tests leer grün.
  */
-const UMFANG = { 0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4'], 1: [], 2: [] };
+const UMFANG = { 0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B'], 1: [], 2: [] };
 
 /* ---------- Entscheidungen des Plans als Tabellen ---------- */
 

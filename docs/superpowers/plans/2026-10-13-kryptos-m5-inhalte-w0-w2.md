@@ -748,12 +748,17 @@ S/7, V/4 → 26 Z, H/25 → 7 G; `castra` → `LJBCAJ` nur bei k = 9; `HEMBE IFK
 
 **Erwartete Hinweise:** keine (Boss-Werte Standard).
 
-- [ ] **Step 1: Failing test** – `UMFANG[0]` += `'W0-B'` → FAIL.
-- [ ] **Step 2: Implement** Boss + 15 Aufgaben + Prüfwert-Gruppen (`art: "bosspool"`).
-- [ ] **Step 3: Prüfkette P1–P5**; zusätzlich `node --test test/boss.test.js` (Ziehung mit echtem Pool im Probelauf:
+- [x] **Step 1: Failing test** – `UMFANG[0]` += `'W0-B'` → FAIL.
+- [x] **Step 2: Implement** Boss + 15 Aufgaben + Prüfwert-Gruppen (`art: "bosspool"`).
+- [x] **Step 3: Prüfkette P1–P5**; zusätzlich `node --test test/boss.test.js` (Ziehung mit echtem Pool im Probelauf:
   `node -e` mit `createApp({ weltDateien: ['seed/welten/welt0.json'] })`, gA-Kurs zieht 8 Aufgaben im Mix 3/3/2).
-- [ ] **Step 4: Kontrollfragen K1–K5**; Boss-Texte gesiezt, Rahmentext geduzt.
-- [ ] **Step 5: Commit** `git commit -m "Welt 0: Boss „Der Bote des Feldherrn“ (Pool 15, drei fremde Chiffren)"`.
+- [x] **Step 4: Kontrollfragen K1–K5**; Boss-Texte gesiezt, Rahmentext geduzt.
+- [x] **Step 5: Commit** `git commit -m "Welt 0: Boss „Der Bote des Feldherrn“ (Pool 15, drei fremde Chiffren)"`.
+
+- **Umgesetzt (Task 78):** Der Konsistenz-Eintrag `mod(26, 26) = 0` zu W0-B-14 entfällt: `pruefwerte.py` meldet ihn als
+  Überschneidung mit Video 01 (V01-e9, Hinweis „26 mod 26 = 0“) – Boss-Prüfwerte dürfen keine Video-Rechnung enthalten;
+  der Gruppen-Eintrag `caesar("tribun", 0) = TRIBUN` belegt die Lösung. Geheimtexte im Boss in Fünfergruppen
+  (`LJBCA J`, `TNPSU HFJ`, `TRIBU N`; Validator-Hinweis). Probelauf: gA- und eA-Kurs ziehen je 8 Aufgaben im Mix 3/3/2.
 
 ---
 
