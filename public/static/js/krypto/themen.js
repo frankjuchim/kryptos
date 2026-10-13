@@ -34,10 +34,26 @@ const KRThemen = (() => {
 
   /* ---------- #welten ---------- */
 
+  /** Ohne Sitzung (gesetzt in start) sind nur Demo-PDFs frei abrufbar; alle anderen Links tragen Schloss und Zusatz. */
+  let angemeldet = false;
+  const gesperrt = (x) => !angemeldet && !x.demo;
+
+  /** PDF-Link (Akte, Werkzeugkarte, weitere Akte): ohne Sitzung und nicht Demo mit Schloss (Textalternative) und „(nach der Anmeldung)“. */
+  function pdfLink(x, text, { symbol = true } = {}) {
+    const zu = gesperrt(x);
+    return h(
+      'a',
+      { class: zu ? 'akte-link akte-gesperrt' : 'akte-link', href: x.url },
+      symbol ? KR.symbol('icons', 'i-download') : null,
+      // ein Textbaustein (sonst zerlegt inline-flex den Text in schmale Spalten)
+      h('span', null, text, zu ? [' ', KR.symbol('icons', 'i-schloss', { titel: 'nur nach der Anmeldung', klasse: 'schloss' }), h('span', { class: 'text-2', 'aria-hidden': 'true' }, ' (nach der Anmeldung)')] : null)
+    );
+  }
+
   function akte(l) {
     const b = l.akte;
     if (!b) return null;
-    if (b.url) return h('a', { class: 'akte-link', href: b.url }, KR.symbol('icons', 'i-download'), b.titel, ' (PDF)');
+    if (b.url) return pdfLink(b, [b.titel, ' (PDF)']);
     return h('span', { class: 'text-2' }, b.titel, ' – nach der Anmeldung');
   }
 
@@ -74,7 +90,7 @@ const KRThemen = (() => {
         w.training && w.training.length ? [h('dt', null, 'Trainingsplatz'), h('dd', null, w.training.join(' · '))] : null,
         [h('dt', null, 'Warm-up'), h('dd', null, w.warmup ? `${w.warmup} Karten` : 'noch keine Karten')],
         (w.weitere || []).length
-          ? [h('dt', null, 'Weitere Akten'), h('dd', null, h('ul', { class: 'themen-weitere' }, w.weitere.map((x) => h('li', null, x.url ? h('a', { href: x.url }, x.titel) : x.titel))))]
+          ? [h('dt', null, 'Weitere Akten'), h('dd', null, h('ul', { class: 'themen-weitere' }, w.weitere.map((x) => h('li', null, x.url ? pdfLink(x, x.titel, { symbol: false }) : x.titel))))]
           : null
       )
     );
@@ -104,7 +120,7 @@ const KRThemen = (() => {
             'ul',
             { class: 'themen-weitere' },
             liste.map((x) =>
-              h('li', null, x.url ? h('a', { class: 'akte-link', href: x.url }, KR.symbol('icons', 'i-download'), wkTitel(x), ' (PDF)') : h('span', null, wkTitel(x), h('span', { class: 'text-2' }, ' – nach der Anmeldung')))
+              h('li', null, x.url ? pdfLink(x, [wkTitel(x), ' (PDF)']) : h('span', null, wkTitel(x), h('span', { class: 'text-2' }, ' – nach der Anmeldung')))
             )
           )
         : h('p', { class: 'text-2' }, 'Noch keine Werkzeugkarten.'),
@@ -280,6 +296,7 @@ const KRThemen = (() => {
     KR.epoche(6);
     const sitzung = await AQ.api('GET', '/api/sitzung').catch(() => ({}));
     const rolle = sitzung && ['schueler', 'lehrkraft', 'superadmin'].includes(sitzung.rolle) ? sitzung.rolle : null;
+    angemeldet = !!rolle;
     KRKopf.baue({ rolle, aktiv: rolle ? null : 'themen', sitzung: sitzung || {} });
     const laden = document.querySelector('#haupt > .laden');
     if (laden) laden.remove();

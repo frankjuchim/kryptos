@@ -324,6 +324,37 @@ test('Themen: Anker #fallen-P3 und #niveaus, Niveau-Chips aus /api/niveaus', asy
   assert.ok(k.eins(wk, 'a[href="/akten/00_Werkzeugkarten/KR_WK1.pdf"]'));
   assert.match(k.text(wk), /WK2 · Die 5-Schritte-Methode/);
 });
+test('Themen: Akten- und Werkzeugkarten-Links ohne Sitzung mit Zusatz „(nach der Anmeldung)“ und Schloss, Demo-PDFs ohne', async () => {
+  const themen = { welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', levels: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', aufgaben: 4, akte: { titel: 'Akte W9·1 – Blöcke', url: '/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf', demo: false } }, { id: 'W9-L2', nr: '2', titel: 'Lücken', niveau: 'kern', aufgaben: 3, akte: { titel: 'Akte W9·2 – Lücken', url: '/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf', demo: true } }], boss: null, training: [], warmup: 0, akten: [], weitere: [{ art: 'boss', titel: 'Papier-Boss', url: '/akten/Welt_9_Testwelt/KR_W9_Boss.pdf', demo: false }] }], werkzeugkarten: [{ nr: 1, titel: 'Abitur-Anlage kompakt', url: '/akten/00_Werkzeugkarten/KR_WK1.pdf', demo: false }, { nr: 2, titel: 'Die 5-Schritte-Methode', url: '/akten/00_Werkzeugkarten/KR_WK2.pdf', demo: true }], kategorien: [], fallen: [] };
+  const niveaus = { niveaus: ['eA', 'gA'], kategorien: [], welten: [], weitere: [] };
+  const lade = (sitzung) => D.lade([...BASIS, 'krypto/themen.js'], { url: 'http://x.test/themen', fetch: { 'GET /api/sitzung': { status: 200, body: sitzung }, 'GET /api/themen': { status: 200, body: themen }, 'GET /api/niveaus': { status: 200, body: niveaus } } });
+  const pruefe = (k, sel, gesperrt) => {
+    const a = k.eins(k.document.getElementById('haupt'), `a[href="${sel}"]`);
+    assert.ok(a, sel);
+    if (gesperrt) {
+      assert.match(k.text(a), /\(nach der Anmeldung\)/, `${sel}: Zusatz`);
+      const schloss = k.eins(a, 'svg[role="img"]');
+      assert.ok(schloss, `${sel}: Schloss-Symbol`);
+      assert.equal(schloss.getAttribute('aria-label'), 'nur nach der Anmeldung', `${sel}: Textalternative`);
+      assert.match(k.eins(schloss, 'use').getAttribute('href'), /#i-schloss$/);
+    } else {
+      assert.doesNotMatch(k.text(a), /nach der Anmeldung/, `${sel}: kein Zusatz`);
+      assert.equal(k.alle(a, 'svg[role="img"]').length, 0, `${sel}: kein Schloss`);
+    }
+  };
+  // ohne Sitzung: nur Demo-PDFs frei
+  let k = lade({ rolle: null, kurse: [] });
+  await k.ruhe();
+  pruefe(k, '/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf', true);
+  pruefe(k, '/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf', false);
+  pruefe(k, '/akten/Welt_9_Testwelt/KR_W9_Boss.pdf', true);
+  pruefe(k, '/akten/00_Werkzeugkarten/KR_WK1.pdf', true);
+  pruefe(k, '/akten/00_Werkzeugkarten/KR_WK2.pdf', false);
+  // mit Sitzung: kein Zusatz
+  k = lade({ rolle: 'schueler', name: 'Mika R.', kurse: [] });
+  await k.ruhe();
+  for (const u of ['/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf', '/akten/Welt_9_Testwelt/KR_W9_Boss.pdf', '/akten/00_Werkzeugkarten/KR_WK1.pdf']) pruefe(k, u, false);
+});
 test('Board: Liste, Welt-Fortschritt, Aktualisierung alle 20 s, 404-Hinweis', async () => {
   let n = 0;
   const k = D.lade([...BASIS, 'krypto/board.js'], { url: 'http://x.test/board/abcdefgh1234', fetch: { 'GET /api/board/abcdefgh1234': () => { n++; return { status: 200, body: { kurs: { name: 'LK 13 (eA)' }, schueler: 2, liste: [{ platz: 1, name: 'Mika R.', punkte: 50, rang: 'Schreiber' }, { platz: 2, name: 'Ida K.', punkte: 30, rang: 'Lehrling' }], welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', anteil: 0.4 }], erfolge: [] } }; } } });
