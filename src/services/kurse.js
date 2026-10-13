@@ -16,6 +16,8 @@ const { ValidationError, NotFoundError } = V;
  * `kursart` (Kern) heißt in Kryptos `niveau` (TECHNIK §7.2, Plan M3 E4).
  */
 const ENTFALLEN = ['anmeldung', 'kursart'];
+/** Einstellungen, die eine Lehrkraft setzen darf (= STANDARD_EINSTELLUNGEN ohne ENTFALLEN). */
+const BEKANNT = new Set(Object.keys(STANDARD_EINSTELLUNGEN).filter((k) => !ENTFALLEN.includes(k)));
 
 function createKurse(ctx) {
   const { db } = ctx;
@@ -102,6 +104,10 @@ function createKurse(ctx) {
   function pruefeEinstellungen(alt, e) {
     const out = { ...alt };
     if (!e || typeof e !== 'object' || Array.isArray(e)) throw new ValidationError('Einstellungen fehlen.');
+    // TECHNIK §7.2: unbekannte Schlüssel ablehnen; entfallene Kern-Schlüssel (ENTFALLEN) still ignorieren
+    for (const k of Object.keys(e)) {
+      if (!BEKANNT.has(k) && !ENTFALLEN.includes(k)) throw new ValidationError(`Unbekannte Einstellung: ${k.slice(0, 40)}`);
+    }
     if (e.welten !== undefined) {
       if (!Array.isArray(e.welten) || e.welten.length > 10) throw new ValidationError('welten muss eine Liste von Weltnummern sein.');
       out.welten = [...new Set(e.welten.map((x) => V.int(x, 'Welt', { min: 0, max: 9 })))].sort((a, b) => a - b);

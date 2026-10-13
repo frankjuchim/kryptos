@@ -186,6 +186,19 @@ test('Einstellung „anmeldung“ (Kern) wird ignoriert und nicht angezeigt (TEC
   assert.equal(r.body.einstellungen.beamer, true);
 });
 
+test('Unbekannte Einstellung → 400 „Unbekannte Einstellung: <name>“, nichts gespeichert; kursart wird ignoriert (TECHNIK §7.2)', async () => {
+  const { lk, kurs } = await H.szenario();
+  const url = `/api/lehrer/kurse/${kurs.id}`;
+  for (const [name, wert] of [['zauber', true], ['__proto__x', 1], ['Beamer', false]]) {
+    const r = await lk.patch(url).send({ einstellungen: { beamer: true, [name]: wert } });
+    assert.equal(r.status, 400, name);
+    assert.equal(r.body.error, `Unbekannte Einstellung: ${name}`);
+  }
+  assert.equal((await lk.get('/api/lehrer/kurse')).body.find((k) => k.id === kurs.id).einstellungen.beamer, false, 'nichts gespeichert');
+  const r = await lk.patch(url).send({ einstellungen: { kursart: 'LK', beamer: true } }).expect(200);
+  assert.equal(r.body.einstellungen.kursart, undefined);
+});
+
 test('Archivfund-Routen (Delta §2): nur für Schüler – Lehrkraft und ohne Sitzung 401', async () => {
   const { app, lk } = await H.szenario();
   const ohne = H.client(app);

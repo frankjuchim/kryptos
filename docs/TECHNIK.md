@@ -962,7 +962,7 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 | `werkzeuge` | Objekt `id → "frei" \| "gesperrt"` (gespeichert ohne `auto`) | `{}` (alle `auto`) | `auto` = frei, sobald die Welt des Werkzeugs freigeschaltet ist (§10.3). `PATCH` mit `werkzeuge: { id: "auto" \| "frei" \| "gesperrt" }` **führt zusammen**, `"auto"` entfernt den Eintrag; unbekannte id, anderer Wert oder kein Objekt → 400; ungültige gespeicherte Einträge werden beim Lesen verworfen |
 | `kuer` | `frei` \| `gesperrt` | `frei` | Kür-Level sichtbar (in freigeschalteten Welten) |
 
-`pruefeEinstellungen` (Kern) lehnt unbekannte Schlüssel ab, prüft Werkzeug-ids gegen die Registry.
+`pruefeEinstellungen` (Kern) lehnt unbekannte Schlüssel mit 400 „Unbekannte Einstellung: <name>“ ab (die entfallenen Kern-Schlüssel `anmeldung` und `kursart` werden still ignoriert), prüft Werkzeug-ids gegen die Registry.
 
 ### 7.3 Löschregeln
 
