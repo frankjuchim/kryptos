@@ -192,3 +192,27 @@ test('Keine doppelte Häufigkeitsleiste (Block haeufigkeit + Werkbank mit haeufi
     assert.deepEqual(doppelt.map((x) => x.ort), [], `Welt ${welt}`);
   }
 });
+
+// Plan M5 E41 (Task 83): Porta-Tafeln (Block tabelle mit Titel „Porta-Tafel …“) – jede Zelle = Krypto.porta
+// (Kopfzeile a–m = Klartextbuchstabe, erste Spalte „A/B“ … = Schlüsselbuchstaben-Paar).
+test('Porta-Tafeln in den Seeds stimmen Zelle für Zelle mit Krypto.porta überein', () => {
+  const Krypto = require('../public/static/js/shared/krypto.js');
+  let tafeln = 0;
+  for (const welt of [0, 1, 2]) {
+    const w = S.seed(welt);
+    if (!w) continue;
+    for (const a of w.aufgaben || []) {
+      for (const b of S.teile(a).flatMap((t) => [...(a.inhalt || []), ...((t.interaktion && t.interaktion.inhalt) || [])])) {
+        if (!b || b.t !== 'tabelle' || !/^Porta-Tafel/.test(String(b.titel || ''))) continue;
+        assert.equal(b.zeilen.length, 13, `${a.id}: 13 Zeilen`);
+        b.zeilen.forEach((z, i) => {
+          const paar = String.fromCharCode(65 + 2 * i) + '/' + String.fromCharCode(66 + 2 * i);
+          assert.equal(z[0], paar, `${a.id}: Zeile ${i + 1}`);
+          for (let s = 1; s < b.kopf.length; s++) assert.equal(z[s], Krypto.porta(b.kopf[s], paar[0]).toUpperCase(), `${a.id}: ${paar} / ${b.kopf[s]}`);
+        });
+        tafeln++;
+      }
+    }
+  }
+  if (S.UMFANG[2].includes('W2-L1')) assert.ok(tafeln >= 1, 'W2-L1-06 hat eine Porta-Tafel');
+});

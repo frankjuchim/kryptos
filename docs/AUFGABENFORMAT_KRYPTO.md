@@ -40,8 +40,8 @@ werden in Kryptos-Inhalten aber nicht verwendet (Validator-Hinweis, kein Fehler)
 ```json
 {
   "version": 2, "welt": 2, "titel": "Le chiffre indéchiffrable",
-  "epoche": "Renaissance bis 19. Jahrhundert",
-  "jahr": { "von": 1467, "bis": 1900, "anzeige": "1467 – 19. Jh." },
+  "epoche": "Renaissance bis 19. Jh.",
+  "jahr": { "von": 1467, "bis": 1920, "anzeige": "1467 – um 1920" },
   "farbe": "#7A2E2E", "akzentHell": "#D98C8C",
   "archivfund": { "aufgabe": "W2-A-01", "titel": "Brief einer Diplomatin" },
   "kapitel": { "titel": "Das unentzifferbare Quadrat fällt", "md": "Rund 300 Jahre galt …" },

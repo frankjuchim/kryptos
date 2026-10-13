@@ -29,7 +29,7 @@ const SPEC_DATEIEN = { 0: 'SPEC_Kryptos_W0_Antike.md', 1: 'SPEC_Kryptos_W1_Bagda
  * Abschnitte, die vollständig und spec-treu im Seed stehen müssen. Jede Inhalts-Task (74–89) ergänzt hier ihren
  * Abschnitt in Step 1 (z. B. 'W0-L1', 'W0-B', 'W0-A', 'WU-W0'); bis dahin sind die Abgleich-Tests leer grün.
  */
-const UMFANG = { 0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B'], 2: [] };
+const UMFANG = { 0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B'], 2: ['W2-A', 'W2-L1'] };
 
 /* ---------- Entscheidungen des Plans als Tabellen ---------- */
 
@@ -53,8 +53,11 @@ const GRID = { 'W0-L1-07': 'chiffre', 'W0-L3-05': 'gaps', 'W2-L2-04': 'gaps', 'W
 /** E64: Teil ohne Eingabe (offene Begründungsfrage – Spec-Antwort in der Erklärung); Wert = entfallener Teil */
 const TEIL_OHNE_EINGABE = { 'W1-L1-05': 'c', 'W1-L3-06': 'c' };
 
-/** E65: in der Spec eine Interaktion, im Seed die verlangten Ergebnisse als Teile */
-const TEILE_ERGAENZT = { 'W2-L1-05': ['gaps', 'chiffre'], 'W2-L1-06': ['chiffre', 'chiffre'] };
+/**
+ * E65: in der Spec eine Interaktion, im Seed die verlangten Ergebnisse als Teile. W2-L1-06 b) als gaps (nicht als
+ * chiffre mit dem Geheimtext aus a) als Eingabe – die stünde schon vor dem Lösen von a) im Client, Task 83).
+ */
+const TEILE_ERGAENZT = { 'W2-L1-05': ['gaps', 'chiffre'], 'W2-L1-06': ['chiffre', 'gaps'] };
 
 /* ---------- ids ---------- */
 

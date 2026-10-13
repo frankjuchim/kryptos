@@ -120,7 +120,7 @@ Nummern setzen die M4-Liste (E17–E37) fort.
 | E62 | `choice`-Optionen: Spec nummeriert mit „(A) …“ bzw. „(1) …“; der Client mischt die Reihenfolge | Options-ids = Spec-Kennung klein (`a`…`f` bzw. `1`…`6`), `md` ohne Kennung; der Abgleich-Test vergleicht `loesung.richtig` mit der Spec-Lösung | Task 73 |
 | E63 | Welt 2, Level 2.4: Spec-Werkzeug „Häufigkeits-Analysator (Reiter Bigramme)“; Level 2.1 „Vigenère-Werkbank (nur Reiter Quadrat, Ver-/Entschlüsseln), Chiffrierscheibe“ | `werkzeug` je Level aus der Spec (Registry-ids): 0.1 `skytale`, 0.2/0.3 `scheibe`, 0.4 –, 1.1 `haeufigkeit`+`substitution`, 1.2 `haeufigkeit`, 1.3 `substitution`, 2.1 `vigenere`+`scheibe`, 2.2/2.3/K1 `vigenere`, 2.4 `haeufigkeit`; Reiter-Einschränkungen sind M6 (Werkzeug-Voreinstellung) | – |
 | E64 | `choice`-Teile ohne Optionen in der Spec: W0-L2-08 c) „Ist die doppelte Verschlüsselung sicherer?“, W1-L1-05 c) „Warum ist KALIF ein schwacher Schlüssel?“, W1-L3-06 c) „Was folgt daraus?“ | Ja/Nein-Frage → Optionen „Ja“/„Nein“ (W0-L2-08 c); offene Begründungsfrage → **keine Eingabe**, die Spec-Antwort steht als „c) …“ in der Erklärung, die Aufgabe bleibt mehrteilig aus a) und b) (W1-L1-05, W1-L3-06; Ausnahmeliste `TEIL_OHNE_EINGABE` im Abgleich-Test). Keine erfundenen Distraktoren (offene Entscheidung 8) | Tasks 75, 79, 81 |
-| E65 | Spec-Aufgaben mit zwei verlangten Ergebnissen, aber einer Interaktion: W2-L21-05 „Gib Schlüsselstrom und Geheimtext an“ (`chiffre`), W2-L21-06 „… noch einmal mit LUNA. Was fällt auf?“ (`chiffre`) | als mehrteilige Aufgabe aus den in der Spec verlangten Ergebnissen: W2-L1-05 a) `gaps` Schlüsselstrom + b) `chiffre`; W2-L1-06 a) `chiffre` + b) `chiffre` auf den eigenen Geheimtext, „Was fällt auf?“ in der Erklärung. Ausnahmeliste `TEILE_ERGAENZT` im Abgleich-Test | Task 83 |
+| E65 | Spec-Aufgaben mit zwei verlangten Ergebnissen, aber einer Interaktion: W2-L21-05 „Gib Schlüsselstrom und Geheimtext an“ (`chiffre`), W2-L21-06 „… noch einmal mit LUNA. Was fällt auf?“ (`chiffre`) | als mehrteilige Aufgabe aus den in der Spec verlangten Ergebnissen: W2-L1-05 a) `gaps` Schlüsselstrom + b) `chiffre`; W2-L1-06 a) `chiffre` + b) `gaps` „Was kommt beim zweiten Verschlüsseln heraus?“ (Task 83: als `chiffre` mit dem Geheimtext aus a) als Eingabe stünde die Lösung von a) schon im Client), „Was fällt auf?“ in der Erklärung. Ausnahmeliste `TEILE_ERGAENZT` im Abgleich-Test | Task 83 |
 
 ### Befund Material- und PDF-Lage (geprüft am 13.10.2026)
 
@@ -964,7 +964,7 @@ unentzifferbare Quadrat“, kein Video.
 | W2-L21-03 → W2-L1-03 | `gaps` `a`, `b`, `c` (`text`, `norm: krypto`) | `B`, `D`, `A` | Prüfwert-Gruppe `vigenere("r", "K")`, `vigenere("w", "H")`, `vigenere("z", "B")` |
 | W2-L21-04 → W2-L1-04 | `chiffre` `ent` vigenere ROSA + `quadrat` `ausschnitt` [R, O, S, A] | `seidenhandel` | Neuberechnung |
 | W2-L21-05 → W2-L1-05 | mehrteilig (E65): a) `gaps` `strom` (`text`, `norm: krypto`) · b) `chiffre` `ver` `{ typ: "autokey", schluessel: "RIO" }` + `quadrat` | `RIOPALA`; `GIZPZKO` | a) Prüfwert-Gruppe: `vigenere("GIZPZKO", "PALAZZO", "ent")` = `RIOPALA` (Schlüsselstrom = Geheimtext − Klartext); b) Neuberechnung |
-| W2-L21-06 → W2-L1-06 | mehrteilig (E65): a) `chiffre` `ver` `{ typ: "porta", schluessel: "LUNA" }`, `eingabe` `nachtwache` · b) `chiffre` `ver` porta LUNA, `eingabe` `FQWUL GUPPU`; Block `tabelle` „Porta-Tafel“ (E41); „Was fällt auf?“ → Erklärung | `FQWULGUPPU`; `nachtwache` | Neuberechnung; Porta-Tafel-Test; Video-Ausnahme `nachtwache` (offene Entscheidung 4) |
+| W2-L21-06 → W2-L1-06 | mehrteilig (E65): a) `chiffre` `ver` `{ typ: "porta", schluessel: "LUNA" }`, `eingabe` `nachtwache` · b) `gaps` `zweimal` (`text`, `norm: krypto`; Prüfwert `porta("FQWULGUPPU", "LUNA")`); Block `tabelle` „Porta-Tafel“ (E41); „Was fällt auf?“ → Erklärung | `FQWULGUPPU`; `nachtwache` | Neuberechnung; Porta-Tafel-Test; Video-Ausnahme `nachtwache` (offene Entscheidung 4) |
 | W2-L21-07 → W2-L1-07 | `choice` `mehrfach` A–F | `["a","b","c","e"]` | Abgleich; Beispiele `hafenwache` AB = ABAB → `HBFFN XADHF`, `venedig`/DDDD → `YHQHG LJ` in der Erklärung |
 | W2-L21-08 → W2-L1-08 | `gaps` `strom`, `wort` (`text`, `norm: krypto`) | `TORTORTORT`, `TOR` | Prüfwert-Gruppe: `vigenere("AOWXBDTIVK", "HAFENMAUER", "ent")` = `TORTORTORT` (`strom`), dasselbe mit `ausschnitt` [0, 3] (`wort`) |
 
@@ -979,11 +979,19 @@ Known-Plaintext → `TORTORTORT`.
 
 **Erwartete Hinweise:** W2-A-01 a) „Rechenergebnis nicht nachgerechnet“ entfällt (Kategorie `substitution-poly`); keine.
 
-- [ ] **Step 1: Failing test** – `UMFANG[2] = ['W2-A', 'W2-L1']` → FAIL.
-- [ ] **Step 2: Implement** (Abbildung der ids nach E38; Ausnahmen E65 in `hilfen_spec.js` als `TEILE_ERGAENZT`).
-- [ ] **Step 3: Prüfkette P1–P5** (`<N>` = 2).
-- [ ] **Step 4: Kontrollfragen K1–K5**; Archivfund verrät LAGUNE weder in `inhalt` noch im Block.
-- [ ] **Step 5: Commit** `git commit -m "Welt 2: Epochen-Daten, Archivfund „Brief einer Diplomatin“, Level 2.1"`.
+- [x] **Step 1: Failing test** – `UMFANG[2] = ['W2-A', 'W2-L1']` → FAIL.
+- [x] **Step 2: Implement** (Abbildung der ids nach E38; Ausnahmen E65 in `hilfen_spec.js` als `TEILE_ERGAENZT`).
+- [x] **Step 3: Prüfkette P1–P5** (`<N>` = 2).
+- [x] **Step 4: Kontrollfragen K1–K5**; Archivfund verrät LAGUNE weder in `inhalt` noch im Block.
+- [x] **Step 5: Commit** `git commit -m "Welt 2: Epochen-Daten, Archivfund „Brief einer Diplomatin“, Level 2.1"`.
+
+- **Umgesetzt (Task 83):** W2-L1-06 b) als `gaps` `zweimal` statt `chiffre` mit `eingabe` `FQWUL GUPPU` – die Eingabe
+  stünde schon vor dem Lösen von a) im Client (Review Focus 1); `TEILE_ERGAENZT['W2-L1-06']` = `['chiffre', 'gaps']`,
+  Prüfwert-Gruppe `porta("FQWULGUPPU", "LUNA")`. Prüfwert-Einträge nennen in `ort` die Spec-id (`W2-L21-03`), die
+  technische id steht in `aufgabe`. Archivfund mit Block `quadrat` vigenere (vollständig) und Teil b) verdeckt; der
+  Spec-Text nennt „Gesandte an der Lagune“ (gewollter Hinweis zum Rätsel). Lernziele wörtlich aus der Spec („Die
+  Lernenden …“). Kapitel aus §0.8 (Alberti, Bellaso, Vigenère, Babbage, Kasiski, Friedman) + Ausblick §0.7.
+  Erwarteter Hinweis bis Task 86: „Abdeckung fremde Chiffre“.
 
 ### Task 84: Welt 2 – Level 2.2 „Kasiskis Spur“
 
