@@ -11,7 +11,7 @@
  *
  * Skripte liegen relativ zu public/static/js. Das Seiten-Grundgerüst (header#kopf, main#haupt, footer#fuss) wird immer
  * angelegt; nach dem letzten Skript feuert die Attrappe DOMContentLoaded und load.
- * Selektoren: Typ, .klasse, #id, [attr], [attr="wert"], zusammengesetzt, Nachfahre (Leerzeichen), Kind (>), Komma.
+ * Selektoren: Typ, .klasse, #id, [attr], [attr="wert"] (auch ^= $= *=), zusammengesetzt, Nachfahre (Leerzeichen), Kind (>), Komma.
  * Timer sind echt, aber unref: ein Promise, das nur auf Attrappen-Timer wartet, erst nach `await k.ruhe()` abwarten.
  * Fehler-Konstruktoren (Error, TypeError, RangeError, SyntaxError) stammen aus dem Test-Realm, damit
  * assert.throws(…, TypeError) funktioniert; Arrays/Objekte aus dem Skript-Kontext vor deepEqual mit k.roh holen.
@@ -110,15 +110,15 @@ function parseSelektor(sel) {
       if (schritte.length && ws[0].length) comb = ws[1] ? '>' : ' ';
       rest = rest.slice(ws[0].length);
       if (!rest.length) break;
-      const m = /^([a-zA-Z][a-zA-Z0-9-]*|\*)?((?:[.#][a-zA-Z0-9_-]+|\[[a-zA-Z_:][a-zA-Z0-9_:.-]*(?:=(?:"[^"]*"|'[^']*'|[^\]\s"']+))?\])*)/.exec(rest);
+      const m = /^([a-zA-Z][a-zA-Z0-9-]*|\*)?((?:[.#][a-zA-Z0-9_-]+|\[[a-zA-Z_:][a-zA-Z0-9_:.-]*(?:[\^$*]?=(?:"[^"]*"|'[^']*'|[^\]\s"']+))?\])*)/.exec(rest);
       if (!m || !m[0].length) throw new Error('Selektor nicht unterstützt: ' + sel);
       const comp = { tag: m[1] && m[1] !== '*' ? m[1].toLowerCase() : null, ids: [], klassen: [], attrs: [] };
-      const re = /([.#])([a-zA-Z0-9_-]+)|\[([a-zA-Z_:][a-zA-Z0-9_:.-]*)(?:=(?:"([^"]*)"|'([^']*)'|([^\]\s"']+)))?\]/g;
+      const re = /([.#])([a-zA-Z0-9_-]+)|\[([a-zA-Z_:][a-zA-Z0-9_:.-]*)(?:([\^$*]?)=(?:"([^"]*)"|'([^']*)'|([^\]\s"']+)))?\]/g;
       let x;
       while ((x = re.exec(m[2]))) {
         if (x[1] === '#') comp.ids.push(x[2]);
         else if (x[1] === '.') comp.klassen.push(x[2]);
-        else comp.attrs.push({ name: x[3], wert: x[4] ?? x[5] ?? x[6] ?? null });
+        else comp.attrs.push({ name: x[3], op: x[4] || '', wert: x[5] ?? x[6] ?? x[7] ?? null });
       }
       schritte.push({ comb: schritte.length ? comb || ' ' : null, comp });
       comb = null;
@@ -136,7 +136,10 @@ function passtComp(el, c) {
   for (const k of c.klassen) if (!el.classList.contains(k)) return false;
   for (const a of c.attrs) {
     if (!el.hasAttribute(a.name)) return false;
-    if (a.wert !== null && el.getAttribute(a.name) !== a.wert) return false;
+    if (a.wert !== null) {
+      const v = el.getAttribute(a.name);
+      if (a.op === '^' ? !v.startsWith(a.wert) : a.op === '$' ? !v.endsWith(a.wert) : a.op === '*' ? !v.includes(a.wert) : v !== a.wert) return false;
+    }
   }
   return true;
 }

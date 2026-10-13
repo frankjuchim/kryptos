@@ -758,3 +758,39 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
   .bits-eingabe { flex-wrap: wrap; row-gap: var(--a-2); }
   .bits-rechnen .bits-werte { flex-wrap: wrap; }
 }
+
+/* ---------- Schüler-Seite (M4 Task 59): Trainingsplatz, Boss-Kampf, Auswertung, Warm-up ---------- */
+.training-stand { color: var(--text-2); }
+.training-wahl .chip[aria-pressed="true"] { background: var(--akzent); border-color: var(--akzent); color: var(--auf-akzent); }
+.boss-regeln { margin: 0; padding-left: 1.2em; display: grid; gap: var(--a-1); }
+.kampf-kopf { position: sticky; top: 0; z-index: 6; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--a-4); align-items: center; padding: var(--a-4) var(--a-5); border-radius: var(--r-karte); }
+.kampf-kopf h1 { margin: var(--a-1) 0 0; font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.kampf-kopf p { color: var(--auf-tinte-2); margin: var(--a-1) 0 0; }
+.kampf-kopf .etikett { color: var(--messing-hell); }
+.boss-timer { font-family: var(--f-mono); font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; font-variant-numeric: tabular-nums; padding: var(--a-2) var(--a-3); border: 2px solid var(--messing-hell); border-radius: var(--r-knopf); color: var(--auf-tinte); }
+.boss-timer.knapp { border-color: var(--fehler-hell); }
+.boss-timer.knapp::before { content: "⏳ "; }
+.boss-aufgabe, .boss-ergebnis-aufgabe { min-width: 0; }
+.boss-aufgabe h2 { font-size: var(--h3); margin: 0; }
+.kampf-aktionen { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: center; justify-content: space-between; }
+.boss-ergebnis { border-top: 6px solid var(--messing); }
+.boss-ergebnis.besiegt .siegel { width: 64px; height: 64px; }
+.boss-punkte { font-size: 1.1rem; font-weight: 700; }
+.boss-ergebnis-aufgabe.ok { border-left: 6px solid var(--ok); }
+.boss-ergebnis-aufgabe.falsch { border-left: 6px solid var(--fehler); }
+.boss-ergebnis-aufgabe h3 { margin: 0; font-size: var(--h3); }
+.boss-ergebnis-aufgabe h4 { margin: var(--a-2) 0 0; font-size: 1rem; }
+.warmup-filter-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: end; }
+.warmup-filter-reihe label { display: grid; gap: var(--a-1); flex: 1 1 12rem; font-weight: 700; }
+.warmup-karte { border-top: 6px solid var(--messing); }
+.warmup-text { white-space: pre-wrap; }
+.warmup-loesung { display: grid; gap: var(--a-2); padding-top: var(--a-3); border-top: 1px dashed var(--linie); }
+.warmup-faecher { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--a-2); }
+.warmup-faecher li { display: grid; justify-items: center; padding: var(--a-2); border: 1px solid var(--linie); border-radius: var(--r-knopf); font-size: .8rem; color: var(--text-2); }
+.warmup-faecher b { font-size: 1.3rem; color: var(--text); }
+.code-pre { padding: var(--a-3); border-radius: var(--r-knopf); background: var(--papier-2); color: var(--text); }
+@media (max-width: 640px) {
+  .kampf-kopf { grid-template-columns: minmax(0, 1fr); padding: var(--a-3) var(--a-4); }
+  .kampf-kopf p { display: none; }
+  .warmup-faecher { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

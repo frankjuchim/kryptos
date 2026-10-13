@@ -11,6 +11,8 @@ test('Attrappen-DOM: Selektoren, Ereignisse, Textknoten', () => {
   k.document.body.appendChild(box);
   assert.equal(k.eins(k.document, 'button.bit[aria-pressed="true"]'), b);
   assert.equal(k.alle(k.document, '#x p, #x button').length, 2);
+  assert.equal(k.alle(k.document, 'button[aria-pressed^="tr"], button[aria-pressed$="ue"], button[class*="nopf b"]').length, 1, '^= $= *=');
+  assert.equal(k.alle(k.document, 'button[aria-pressed^="fa"]').length, 0);
   k.klick(b);
   assert.equal(n, 1);
   assert.equal(k.text(box), 'a <b> 1');

@@ -133,3 +133,62 @@ test('Archivfund: Kopfzusatz, ohne Punkte, Prüfen an /api/archivfund/<nr>/pruef
   assert.match(k.text(haupt), /Entschlüsselt! \(Archivfund – ohne Punkte\)/);
   assert.ok(k.eins(haupt, 'a[href="#/epoche/9"]'));
 });
+test('Boss-Kampf: keine Werkzeug-Blöcke, kein Labor-Link, Antwort wird gespeichert; Auswertung mit Diagnose', async () => {
+  const aufgabe = { id: 'W9-B-05', titel: 'Depesche', stufe: 3, punkte: 30, kategorie: 'entschluesseln', niveau: 'kern', inhalt: [{ t: 'text', md: 'Entschlüsseln Sie.' }, { t: 'werkzeug', id: 'vigenere' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'vigenere' }, schluesselVerdeckt: true, eingabe: 'XZWJN' }, antwort: null };
+  const jetzt = new Date().toISOString();
+  const ende = new Date(Date.now() + 25 * 60000).toISOString();
+  const f = { ...spielFetch([welt(9)]), 'GET /api/boss/kampf/5': { status: 200, body: { id: 5, welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, titel: 'Testboss', start: jetzt, deadline: ende, serverZeit: jetzt, maxPunkte: 30, laeuft: true, aufgaben: [aufgabe] } }, 'PUT /api/boss/kampf/5/antwort': { status: 200, body: { gespeichert: true, anzahl: 1 } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/kampf/5', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.equal(k.alle(haupt, '.block-werkzeug, .werkzeug-karte').length, 0);
+  assert.equal(k.alle(k.document, 'a[href^="/labor"]').length, 0, 'kein Labor-Link während des Kampfs');
+  assert.ok(k.eins(haupt, '[role="timer"]'));
+  k.tippe(k.eins(haupt, 'input.kaestchen'), 'T');
+  await new Promise((r) => setTimeout(r, 900));
+  await k.ruhe();
+  assert.deepEqual(k.anfragen.find((a) => a.methode === 'PUT').body, { aufgabeId: 'W9-B-05', antwort: ['T', '', '', '', ''] });
+});
+test('Boss-Auswertung zeigt Diagnose-Chips und Lösung', async () => {
+  const jetzt = new Date().toISOString();
+  const a = { id: 'W9-B-05', titel: 'Depesche', stufe: 3, punkte: 30, kategorie: 'entschluesseln', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'vigenere', schluessel: 'EIS' }, eingabe: 'XZWJN' }, ok: false, erreicht: 0, antwort: 'BHOND', diagnose: [{ p: 'P3', code: 'richtung', text: 'Richtung.' }], loesung: { text: 'TREFF' }, erklaerung: [{ t: 'text', md: 'Zurück.' }] };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/boss/kampf/6': { status: 200, body: { id: 6, welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, titel: 'Testboss', start: jetzt, deadline: jetzt, serverZeit: jetzt, maxPunkte: 30, laeuft: false, ende: jetzt, punkte: 0, anteil: 0, besiegt: false, aufgaben: [a] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/kampf/6', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /P3 Umkehrung falsch/);
+  assert.match(k.text(haupt), /Zurück\./);
+  assert.ok(k.eins(k.document, 'a[href="/labor"]'), 'Labor-Link nach dem Kampf wieder da');
+});
+test('Boss-Übersicht, Trainingsplatz und Warm-up', async () => {
+  const f = {
+    ...spielFetch([welt(9)]),
+    'GET /api/boss/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, boss: { titel: 'Testboss', dauerMin: 30, anzahl: 4 }, frei: false, grund: 'Erst 60 % der Level-Punkte.', laufend: null, gesperrtBis: null, bester: null, versuche: [] } },
+    'GET /api/training/9': { status: 200, body: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, generatoren: [{ key: 'caesar', titel: 'Caesar' }], heute: 3, maxProTag: 30, geloestGesamt: 5, offen: null } },
+    'POST /api/training/9/neu': { status: 201, body: { id: 7, status: 'offen', fehlversuche: 0, aufgabe: { id: 'T-7', titel: 'Übung', stufe: 1, punkte: 1, inhalt: [{ t: 'text', md: 'Rechne.' }], interaktion: { kind: 'gaps', felder: { a: { loesung: [] } } } } } },
+    'GET /api/kata/meta': { status: 200, body: { welten: [{ welt: 9, anzahl: 2 }], kategorien: [{ kategorie: 'modulo', anzahl: 2 }], weltNamen: [{ nr: 9, name: 'Testwelt' }] } },
+    'GET /api/kata/statistik': { status: 200, body: { neu: 2, faecher: [0, 0, 0, 0, 0, 0], faellig: 2, gesamt: 2, wiederholungen: 0, gewusst: 0, teilweise: 0, nicht: 0 } },
+    'POST /api/kata/ziehen': { status: 200, body: { card: { id: 'K1', welt: 9, kategorie: 'modulo', titel: 'Rest', aufgabe: 'Berechne 7 mod 3.', loesung: '1', minuten: 2 }, neu: true, fach: 0, faellig: 2, gesamt: 2 } }
+  };
+  let k = D.lade(SPIEL, { url: 'http://x.test/spiel#/boss/9', fetch: f });
+  await k.ruhe();
+  let haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /keine Werkzeuge/);
+  assert.match(k.text(haupt), /Erst 60 % der Level-Punkte/);
+  assert.ok(k.eins(haupt, 'button.boss-start').disabled);
+  k = D.lade(SPIEL, { url: 'http://x.test/spiel#/training/9', fetch: f });
+  await k.ruhe();
+  haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /heute 3 von 30 Punkten/);
+  assert.match(k.text(haupt), /Übung/);
+  assert.ok(k.anfragen.some((a) => a.pfad === '/api/training/9/neu'));
+  k = D.lade(SPIEL, { url: 'http://x.test/spiel#/warmup', fetch: f });
+  await k.ruhe();
+  haupt = k.document.getElementById('haupt');
+  assert.match(k.text(k.eins(haupt, 'h1')), /Warm-up/);
+  assert.match(k.text(haupt), /Modulo-Rechnen/, 'Kategorien mit Anzeigenamen');
+  k.klick(k.eins(haupt, 'button.karte-ziehen'));
+  await k.ruhe();
+  assert.match(k.text(haupt), /Berechne 7 mod 3\./);
+  assert.doesNotMatch(k.text(haupt), /XP|Kata/);
+});
