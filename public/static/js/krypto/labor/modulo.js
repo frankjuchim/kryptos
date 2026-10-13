@@ -60,14 +60,18 @@
     const [l3, m3, q3] = [l * l * l, m * m * m, q * q * q];
     return [4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * q3, -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * q3, -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * q3].map(gamma);
   }
-  /** Gewichtetes Mittel der Topffarben in OKLab → 'rgb(r g b)' oder null (Farben nicht lesbar). */
+  /** Deckkraft einer Farbe in der Mischung: Menge³ – eine doppelte Menge deckt achtmal so stark. So hebt sich Eves
+      Mischung (Gelb doppelt) sichtbar von der gemeinsamen Farbe ab (ΔE_OK ≈ 0,09 statt 0,03 bei linearem Mittel);
+      Mischungen 1 : 1 (: 1) bleiben unverändert. Darstellung der Analogie, keine fachliche Rechnung (E80). */
+  const deckkraft = (n) => n * n * n;
+  /** Gewichtetes Mittel der Topffarben in OKLab (Gewicht = Deckkraft) → 'rgb(r g b)' oder null (Farben nicht lesbar). */
   function farbeMischen(mengen, basis) {
     if (!basis) return null;
-    const summe = FARBEN.reduce((n, f) => n + (mengen[f] || 0), 0);
+    const summe = FARBEN.reduce((n, f) => n + deckkraft(mengen[f] || 0), 0);
     if (!summe) return null;
     const mittel = [0, 0, 0];
     for (const f of FARBEN) {
-      const w = (mengen[f] || 0) / summe;
+      const w = deckkraft(mengen[f] || 0) / summe;
       if (!w) continue;
       zuOklab(basis[f]).forEach((x, i) => (mittel[i] += w * x));
     }
@@ -78,7 +82,7 @@
   const menge = (o) => ({ ...leer(), ...o });
   function farbName(mg) {
     const teile = FARBEN.filter((f) => mg[f]).map((f) => `${mg[f]} × ${FARB_TITEL[f]}`).join(' + ');
-    const name = mg.gelb && mg.rot && mg.blau ? (mg.gelb > 1 ? 'helleres Braun (Gelb doppelt)' : 'Braun') : mg.gelb && mg.rot ? 'Orange' : mg.gelb && mg.blau ? 'Grün' : mg.gelb ? 'Gelb' : mg.rot ? 'Rot' : mg.blau ? 'Blau' : '–';
+    const name = mg.gelb && mg.rot && mg.blau ? (mg.gelb > 1 ? 'Ocker (Gelb doppelt)' : 'Braun') : mg.gelb && mg.rot ? 'Orange' : mg.gelb && mg.blau ? 'Grün' : mg.gelb ? 'Gelb' : mg.rot ? 'Rot' : mg.blau ? 'Blau' : '–';
     return `${name} (${teile || 'leer'})`;
   }
 
@@ -428,7 +432,7 @@
         } else {
           z.eve = menge({ gelb: 2, rot: 1, blau: 1 });
           AQ.mount(eveErgebnis, farbKarte('eve-mischung', 'Eve kippt beide Mischungen zusammen', z.eve));
-          eveErgebnis.appendChild(h('p', { class: 'text-2' }, 'Gelb ist jetzt doppelt drin – eine andere Farbe als bei Alice und Bob. Entmischen kann Eve nicht.'));
+          eveErgebnis.appendChild(h('p', { class: 'text-2' }, 'Gelb ist jetzt doppelt drin (Muster: zwei Punkte-Töpfe) – deutlich gelber als die gemeinsame Farbe von Alice und Bob. Entmischen kann Eve nicht.'));
         }
       });
       let basis = null;

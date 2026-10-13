@@ -47,7 +47,7 @@ Drei Gestaltungsgesetze:
 | `--hinweis-flaeche` | `#E6EEF8` | Fläche Tipp/Info | `--hinweis` darauf ≥ 4,5 : 1 |
 | `--auf-akzent` | `#FFFFFF` | Text auf Akzentflächen (Primärknopf) | auf jedem Epochenakzent ≥ 4,5 : 1 |
 | `--fokus` | `#1F4E8C` | Fokus-Ring 3 px (auf Tinte/Nacht: `--messing-hell`) | – |
-| `--farbe-gelb` / `--farbe-rot` / `--farbe-blau` | `#A87F00` / `#B83A2E` / `#2F5DA8` (dunkel `#E3BE3B` / `#E57A6E` / `#7DA4E6`) | **Farbmischer** (Modulo-Uhr & Farbmischer, M6 E80): Topffarben nur als Fläche mit Muster (Punkte/Streifen/Karo), nie als Text; die Mischung (OKLab-Mittel) setzt das Werkzeug per CSSOM als `--mischung` (einzige Farbe aus JavaScript) | ≥ 3 : 1 auf Papier, Karte, Papier-2 (Grafik, WCAG 1.4.11) |
+| `--farbe-gelb` / `--farbe-rot` / `--farbe-blau` | `#A87F00` / `#B83A2E` / `#2F5DA8` (dunkel `#E3BE3B` / `#E57A6E` / `#7DA4E6`) | **Farbmischer** (Modulo-Uhr & Farbmischer, M6 E80): Topffarben nur als Fläche mit Muster (Punkte/Streifen/Karo), nie als Text; die Mischung (OKLab-Mittel, Gewicht = Menge³, damit Eves Mischung mit doppeltem Gelb sichtbar abweicht: ΔE_OK ≥ 0,08 hell und dunkel, Test) setzt das Werkzeug per CSSOM als `--mischung` (einzige Farbe aus JavaScript) | ≥ 3 : 1 auf Papier, Karte, Papier-2 (Grafik, WCAG 1.4.11) |
 
 Alle Werte stehen in `public/static/css/tokens.css`; `test/designsystem.test.js` prüft die Paarliste (≥ 4,5 : 1, hell
 und dunkel). `--ok` und `--fehler` stehen als Text nie auf `--papier-2` (`--ok` dort nur 4,29 : 1).

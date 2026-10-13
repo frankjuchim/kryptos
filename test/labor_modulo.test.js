@@ -76,3 +76,45 @@ test('Modulo: reduzierte Bewegung – Zeiger ohne Animation', () => {
   b.k.tippe(b.k.eins(b.flaeche, 'input.uhr-b'), '5');
   assert.equal(b.k.eins(b.flaeche, 'line.zeiger').classList.contains('animiert'), true);
 });
+
+test('Farbmischer: Eves Mischung (Gelb doppelt) hebt sich deutlich von der gemeinsamen Farbe ab – hell und dunkel (ΔE_OK ≥ 0,08)', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'css', 'tokens.css'), 'utf8');
+  const werte = (name) => [...css.matchAll(new RegExp(`${name}:\\s*(#[0-9A-Fa-f]{6})`, 'g'))].map((m) => m[1]);
+  const lin = (c) => { const x = c / 255; return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4; };
+  const ok = ([r8, g8, b8]) => {
+    const [r, g, b] = [r8, g8, b8].map(lin);
+    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
+  };
+  const rgb = (t) => (String(t).match(/\d+/g) || []).slice(0, 3).map(Number);
+  const hex = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16));
+  const [gelb, rot, blau] = ['--farbe-gelb', '--farbe-rot', '--farbe-blau'].map(werte);
+  assert.ok(gelb.length >= 2, 'Tokens hell und dunkel');
+  for (const i of [0, 1]) {
+    const w = oeffne('modulo', { voreinstellung: { reiter: ['farbmischer'] } });
+    const farbe = { gelb: gelb[i], rot: rot[i], blau: blau[i] };
+    // getComputedStyle liefert die Topffarben der Tokens (hell bzw. dunkel)
+    w.k.window.getComputedStyle = (el) => {
+      const f = Object.keys(farbe).find((x) => el.classList && el.classList.contains(`farbe-${x}`));
+      return { color: f ? `rgb(${hex(farbe[f]).join(', ')})` : '', getPropertyValue: () => '' };
+    };
+    const schalter = w.k.eins(w.flaeche, 'input.mit-zahlen');
+    w.k.klick(schalter);
+    w.k.klick(schalter); // neu zeichnen mit den Topffarben
+    w.k.taste(w.k.eins(w.flaeche, '.nachspiel'), 'End');
+    w.k.klick(w.k.eins(w.flaeche, 'button.eve-mischen'));
+    const gemeinsam = rgb(w.k.eins(w.flaeche, '.farb-alice .farbkreis').style.getPropertyValue('--mischung'));
+    const eve = rgb(w.k.eins(w.flaeche, '.eve-mischung .farbkreis').style.getPropertyValue('--mischung'));
+    assert.equal(gemeinsam.length, 3);
+    assert.equal(eve.length, 3);
+    const [a, b] = [ok(gemeinsam), ok(eve)];
+    const d = Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+    assert.ok(d >= 0.08, `ΔE_OK ${d.toFixed(3)} (${i ? 'dunkel' : 'hell'})`);
+    assert.match(w.text('.eve-mischung .farbname'), /Gelb doppelt/);
+    assert.ok(w.k.alle(w.flaeche, '.eve-mischung .muster-gelb').length === 2, 'Muster zeigt Gelb doppelt');
+  }
+});
