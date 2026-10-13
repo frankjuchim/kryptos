@@ -2,7 +2,9 @@
    Freigaben (Schüler: GET /api/labor, Lehrkraft: GET /api/lehrer/werkzeuge – alles frei), gesperrte Werkzeuge mit Grund,
    Boss-Banner; #/<id> öffnet das Werkzeug als Vollseite über KRLabor (Modul wird nachgeladen) mit der Umgebung für die
    Reiter-Regeln (Schüler: niveau/welten aus /api/labor; Lehrkraft: alle Reiter + Hinweis, M6 E71/E87);
-   #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125). */
+   #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125).
+   Review M6: /api/labor vor jedem Raster/Werkzeug frisch; bei Rückkehr in den Tab neu gefragt (KRLabor.wache) und ein
+   offenes Werkzeug bei laufendem Kampf geschlossen (KRLabor.sperreAlle). */
 'use strict';
 
 const KRLaborSeite = (() => {
@@ -109,11 +111,14 @@ const KRLaborSeite = (() => {
     offen = KRLabor.oeffne(id, voreinstellung, flaeche, umgebung);
   }
 
-  function route(haupt, sitzung) {
+  let routeNr = 0;
+  /** Route: Freigaben vor jedem Raster/Werkzeug frisch aus /api/labor (Review M6: alter Tab, Kampf in einem anderen Tab). */
+  async function route(haupt, sitzung) {
     if (offen) {
       offen.schliesse();
       offen = null;
     }
+    const meine = ++routeNr;
     const [pfad, abfrage] = (location.hash || '').replace(/^#\/?/, '').split('?');
     let id = '';
     try {
@@ -121,9 +126,24 @@ const KRLaborSeite = (() => {
     } catch {
       id = '?';
     }
+    const neu = await lade(sitzung);
+    if (meine !== routeNr) return;
+    daten = neu;
     if (id) vollseite(haupt, id, voreinstellungAus(id, abfrage));
     else raster(haupt, sitzung);
     if (typeof haupt.focus === 'function') haupt.focus();
+  }
+
+  /** Rückkehr in den Tab: Freigaben neu; hat inzwischen ein Kampf begonnen, offenes Werkzeug schließen (mit Hinweis)
+      bzw. das Raster mit Banner neu zeigen. */
+  async function pruefe(haupt, sitzung) {
+    if (sitzung.rolle !== 'schueler' || !daten) return;
+    const neu = await lade(sitzung);
+    const warBoss = daten.boss;
+    daten = neu;
+    if (!neu.boss || warBoss) return;
+    if (offen) KRLabor.sperreAlle('boss');
+    else if (!(location.hash || '').replace(/^#\/?/, '')) raster(haupt, sitzung);
   }
 
   async function start() {
@@ -132,9 +152,9 @@ const KRLaborSeite = (() => {
     try {
       const sitzung = await AQ.api('GET', '/api/sitzung');
       KRKopf.baue({ rolle: sitzung.rolle, aktiv: 'labor', sitzung });
-      daten = await lade(sitzung);
-      route(haupt, sitzung);
-      window.addEventListener('hashchange', () => route(haupt, sitzung));
+      await route(haupt, sitzung);
+      window.addEventListener('hashchange', () => route(haupt, sitzung).catch((e) => KR.fehler(haupt, e, { zurueck: { href: '#/', text: 'Zum Labor' } })));
+      KRLabor.wache(() => pruefe(haupt, sitzung));
     } catch (e) {
       KR.fehler(haupt, e, { zurueck: { href: '/', text: 'Zur Startseite' } });
     }

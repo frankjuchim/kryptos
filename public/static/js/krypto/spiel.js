@@ -25,10 +25,10 @@ const KRSpiel = (() => {
     return weltenAnfrage;
   }
 
-  /** Werkzeug-Freigaben (GET /api/labor), je Route einmal; liefert werkzeugFrei(id) (unbekannt/Fehler → false),
-      niveau, welten und laborUmgebung (Reiter-Regeln, M6 E71). */
-  function labor() {
-    if (!laborAnfrage) {
+  /** Werkzeug-Freigaben (GET /api/labor), je Route einmal ({ neu: true } fragt neu); liefert werkzeugFrei(id)
+      (unbekannt/Fehler → false), niveau, welten und laborUmgebung (Reiter-Regeln, M6 E71). */
+  function labor({ neu = false } = {}) {
+    if (neu || !laborAnfrage) {
       laborAnfrage = api('GET', '/api/labor')
         .then((r) => {
           const liste = Array.isArray(r && r.werkzeuge) ? r.werkzeuge : [];
@@ -47,6 +47,15 @@ const KRSpiel = (() => {
         .catch(() => ({ boss: false, niveau: 'eA', welten: [], werkzeuge: [], werkzeugFrei: () => false, laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'eA', welten: [] } }));
     }
     return laborAnfrage;
+  }
+
+  /** Umgebung für einen Werkzeug-Dialog, frisch aus /api/labor (Review M6: Kampf in einem anderen Tab); gesperrt, wenn
+      ein Kampf läuft oder das Werkzeug inzwischen nicht mehr frei ist. extra (z. B. { level }) wird angehängt. */
+  async function laborFrisch(id, extra = {}) {
+    const l = await labor({ neu: true });
+    const w = l.werkzeuge.find((x) => x && x.id === id);
+    const gesperrt = l.boss ? 'boss' : w && !w.frei ? w.grund || 'lehrkraft' : null;
+    return { ...l.laborUmgebung, ...(gesperrt ? { gesperrt } : {}), ...extra };
   }
 
   /** Ansicht einhängen: Titel „<titel> · Kryptos“, #haupt füllen, h1 fokussieren. */
@@ -197,7 +206,7 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: { ...lab.laborUmgebung, level: o.level.id } }, // Level-Kontext für Reiter-Regeln (MitM in W5-L3)
+      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: { ...lab.laborUmgebung, level: o.level.id }, laborFrisch: (wid) => laborFrisch(wid, { level: o.level.id }) }, // Level-Kontext für Reiter-Regeln (MitM in W5-L3)
       anzeige: KRDiag.anzeige,
       kursNiveau: w.niveau || (sitzung.kurs && sitzung.kurs.niveau) || 'eA',
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
@@ -233,7 +242,7 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: lab.laborUmgebung },
+      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: lab.laborUmgebung, laborFrisch: (wid) => laborFrisch(wid) },
       anzeige: KRDiag.anzeige,
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
       tipp: () => api('POST', `${pfad}/tipp`, {}),
@@ -279,6 +288,7 @@ const KRSpiel = (() => {
           muster: t.muster,
           erklaerung: t.erklaerung,
           modus: 'training',
+          zusatz: { laborFrisch: (wid) => laborFrisch(wid) }, // Werkzeug-Blöcke: Freigaben vor dem Öffnen frisch (Review M6)
           anzeige: KRDiag.anzeige,
           pruefen: async (body) => {
             const x = await api('POST', `${pfad}/pruefen`, body);
@@ -793,6 +803,10 @@ const KRSpiel = (() => {
     }
     KRKopf.baue({ rolle: 'schueler', aktiv: 'zeitleiste', sitzung, scoreboard });
     window.addEventListener('hashchange', navigiere);
+    // Rückkehr in den Tab: Kampf in einem anderen Tab begonnen → offene Werkzeug-Dialoge schließen (Review M6)
+    KRLabor.wache(async () => {
+      if ((await labor({ neu: true })).boss) KRLabor.sperreAlle('boss');
+    });
     await navigiere();
   }
   document.addEventListener('DOMContentLoaded', start);

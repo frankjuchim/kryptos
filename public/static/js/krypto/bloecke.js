@@ -795,11 +795,25 @@ const KRB = (() => {
     const name = w ? w.titel : String(b.id ?? 'Werkzeug');
     const frei = !(ctx && typeof ctx.werkzeugFrei === 'function') || ctx.werkzeugFrei(b.id) !== false;
     const knopf = h('button', { type: 'button', class: 'knopf knopf-primaer werkzeug-oeffnen', disabled: !frei }, b.titel ? String(b.titel) : `${name} öffnen`);
+    let fragt = false;
     knopf.addEventListener('click', () => {
+      if (fragt) return;
       const modus = ctx && (ctx.modus === 'gast' || ctx.modus === 'vorschau') ? ctx.modus : 'lab';
-      // Umgebung für die Reiter-Regeln (rolle, niveau, welten – M6 E71) kommt von der Seite über ctx.laborUmgebung
+      // Umgebung für die Reiter-Regeln (rolle, niveau, welten – M6 E71) kommt von der Seite über ctx.laborUmgebung;
+      // ctx.laborFrisch(id) fragt die Freigaben vor dem Öffnen neu (Boss-Kampf in einem anderen Tab, Review M6)
       const extra = ctx && ctx.laborUmgebung && typeof ctx.laborUmgebung === 'object' ? ctx.laborUmgebung : {};
-      KRLabor.dialog(b.id, b.voreinstellung, { ...extra, modus });
+      if (!(ctx && typeof ctx.laborFrisch === 'function')) {
+        KRLabor.dialog(b.id, b.voreinstellung, { ...extra, modus });
+        return;
+      }
+      fragt = true;
+      Promise.resolve()
+        .then(() => ctx.laborFrisch(b.id))
+        .catch(() => null)
+        .then((neu) => {
+          fragt = false;
+          KRLabor.dialog(b.id, b.voreinstellung, { ...(neu && typeof neu === 'object' ? neu : extra), modus });
+        });
     });
     return h(
       'div',

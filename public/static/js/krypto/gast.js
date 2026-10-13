@@ -4,7 +4,8 @@
      #/schueler · #/schueler/aufgabe/<id>   Demo-Aufgaben (W8-*) aus GET /api/gast/schueler, Prüfung serverseitig;
                                             Fehlversuche/Tipps zählt der Browser und schickt sie nur zur Anzeige mit
      #/lehrkraft/<tab> · #/lehrkraft/vorschau/<id>   erfundener Demo-Kurs nur lesend (Bausteine aus KRLehrer)
-     #/labor/scheibe                        Chiffrierscheibe über KRLabor (nachgeladen, M6 Task 126); andere ids: Hinweis, kein Nachladen
+     #/labor/scheibe                        Chiffrierscheibe über KRLabor (nachgeladen, M6 Task 126); andere ids: Hinweis, kein Nachladen;
+                                            mit Schüler-Sitzung im laufenden Boss-Kampf gesperrt (Review M6, TECHNIK §10.3)
    Startet nur auf body.seite-gast. Texte nur als Textknoten (AQ.h). */
 'use strict';
 
@@ -19,6 +20,16 @@ const KRGast = (() => {
   let routeNr = 0;
   let lehrkraftDaten = null;
   let offen = null;
+  let schuelerSitzung = false; // angemeldete Schülerin/angemeldeter Schüler im selben Browser (Boss-Sperre, Review M6)
+
+  /** Läuft für die angemeldete Schülerin/den angemeldeten Schüler gerade ein Boss-Kampf? Ohne Schüler-Sitzung (fremdes
+      Gerät, privates Fenster) nicht feststellbar – bewusste Grenze (TECHNIK §10.3). */
+  async function bossLaeuft() {
+    if (!schuelerSitzung) return false;
+    const r = await api('GET', '/api/labor').catch(() => null);
+    return !!(r && r.boss);
+  }
+  const umgebungFrisch = async () => ((await bossLaeuft()) ? { ...UMGEBUNG, gesperrt: 'boss' } : { ...UMGEBUNG });
 
   const HINWEIS = 'Nichts wird gespeichert.';
 
@@ -139,7 +150,7 @@ const KRGast = (() => {
       aufgabe: d.aufgabe,
       zustand: { ...d.zustand, fehlversuche: z.fehlversuche, tippsGenutzt: z.tipps },
       modus: 'gast',
-      zusatz: { werkzeugFrei, laborUmgebung: UMGEBUNG },
+      zusatz: { werkzeugFrei, laborUmgebung: UMGEBUNG, laborFrisch: umgebungFrisch },
       anzeige: KRDiag.anzeige,
       pruefen: async (body) => merke(await api('POST', `${pfad}/pruefen`, { ...body, fehlversuche: z.fehlversuche, tipps: z.tipps, angesehen: z.angesehen })),
       tipp: async () => merke(await api('POST', `${pfad}/tipp`, { fehlversuche: z.fehlversuche, tipps: z.tipps })),
@@ -289,12 +300,14 @@ const KRGast = (() => {
 
   /* ---------- Labor-Platz ---------- */
 
-  function labor(id) {
+  async function labor(id, r) {
     const w = KRLabor.werkzeug(id);
     if (!w || !werkzeugFrei(id)) {
       fehler(new Error('Im Gastmodus gibt es nur die Chiffrierscheibe.'));
       return;
     }
+    const umgebung = await umgebungFrisch(); // im laufenden Kampf gesperrt (Grund statt Werkzeug)
+    if (!r.gueltig()) return;
     KR.epoche(w.welt);
     KRKopf.epoche('Gastmodus · Kryptolabor');
     const flaeche = h('div', { class: 'werkzeug-flaeche' });
@@ -308,7 +321,7 @@ const KRGast = (() => {
         h('div', { class: 'labor-steuerleiste' }, h('a', { class: 'knopf knopf-zweit', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Gastmodus'))
       )
     );
-    offen = KRLabor.oeffne(id, {}, flaeche, { ...UMGEBUNG }); // Modul wird nachgeladen (E72)
+    offen = KRLabor.oeffne(id, {}, flaeche, umgebung); // Modul wird nachgeladen (E72)
   }
 
   /* ---------- Router ---------- */
@@ -335,7 +348,7 @@ const KRGast = (() => {
       else if (bereich === 'schueler') await schuelerListe(r);
       else if (bereich === 'lehrkraft' && a === 'vorschau' && b) await lehrkraftVorschau(b, r);
       else if (bereich === 'lehrkraft') await lehrkraftTab(TABS.some(([k]) => k === a) ? a : 'schueler', r);
-      else if (bereich === 'labor' && a) labor(a);
+      else if (bereich === 'labor' && a) await labor(a, r);
       else uebersicht();
     } catch (e) {
       if (r.gueltig()) fehler(e);
@@ -348,7 +361,12 @@ const KRGast = (() => {
     const sitzung = await api('GET', '/api/sitzung').catch(() => ({}));
     const rolle = sitzung && ['schueler', 'lehrkraft', 'superadmin'].includes(sitzung.rolle) ? sitzung.rolle : null;
     KRKopf.baue({ rolle, aktiv: rolle ? null : 'gast', sitzung: sitzung || {} });
+    schuelerSitzung = rolle === 'schueler';
     window.addEventListener('hashchange', navigiere);
+    // Rückkehr in den Tab: Kampf begonnen → offene Scheibe schließen (nur mit Schüler-Sitzung)
+    if (schuelerSitzung) KRLabor.wache(async () => {
+      if (await bossLaeuft()) KRLabor.sperreAlle('boss');
+    });
     await navigiere();
   }
   document.addEventListener('DOMContentLoaded', start);

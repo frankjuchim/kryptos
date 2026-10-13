@@ -199,6 +199,7 @@ test('Aufgabe: Werkzeug-Block bekommt die Kurs-Umgebung aus /api/labor (ctx.labo
   k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
   await k.ruhe();
   k.klick(k.eins(k.document, 'button.werkzeug-oeffnen'));
+  await k.ruhe(); // Freigaben werden vor dem Dialog frisch gefragt (Review M6)
   assert.deepEqual(k.roh(k.wert('__dialog')), [['haeufigkeit', { reiter: ['histogramm'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 9], level: 'W9-L1' }]], 'mit Level-Kontext (Reiter-Regel MitM in W5-L3)');
 });
 test('Aufgabe während eines laufenden Kampfes (anderer Tab): Werkzeug-Block gesperrt, Umgebung mit gesperrt „boss“ (M6 Task 127)', async () => {
@@ -683,6 +684,7 @@ test('Gast: Labor-Platz und Demo-Aufgabe öffnen die Scheibe mit { modus: „gas
   await new Promise((r) => setTimeout(r, 5));
   await k.ruhe();
   k.klick(k.eins(k.document, 'button.werkzeug-oeffnen'));
+  await k.ruhe();
   assert.deepEqual(k.roh(k.wert('__o')), [['scheibe', { modus: 'gast', rolle: null }], ['scheibe', { modus: 'gast', rolle: null }]]);
 });
 test('Gast-Lehrkraft: Auswertung mit Fallen-Profil, Einstellungen nur lesend', async () => {

@@ -133,9 +133,27 @@ async function szenario3(ctx) {
   await anmelden(page, ctx, 'Ida K.', '/spiel');
   await gehe(page, `${ctx.basis}/spiel#/boss/9`);
   assert.match(await page.locator('.boss-karte .boss-rahmen').innerText(), /Ein Drache bewacht das Testarchiv/, 'Rahmentext über den Regeln');
+  // alter Tab (Review M6): ein zweiter Tab hat vor dem Kampf ein Werkzeug offen
+  const alt = await kontext.newPage();
+  await gehe(alt, `${ctx.basis}/labor`);
+  await alt.locator('section.labor-epoche').first().waitFor();
+  const frei = await alt.locator('a.werkzeug-karte').first().getAttribute('href');
+  assert.ok(frei, 'Ida hat ein freies Werkzeug');
+  await gehe(alt, `${ctx.basis}/labor${frei}`);
+  await alt.waitForFunction(() => typeof KRLabor !== 'undefined' && KRLabor.aktiv() && KRLabor.aktiv().zustand());
+  await page.bringToFront();
   await page.getByRole('button', { name: 'Kampf beginnen' }).click();
   await page.locator('dialog[open]').getByRole('button', { name: 'Kampf beginnen' }).click();
   await page.waitForURL(/#\/kampf\//);
+  await alt.bringToFront();
+  await alt.evaluate(() => document.dispatchEvent(new Event('visibilitychange'))); // Rückkehr in den Tab
+  await alt.locator('.werkzeug-flaeche').getByText('Das Werkzeug wurde geschlossen.').waitFor();
+  await alt.locator('.werkzeug-flaeche').getByText('Während eines Boss-Kampfs ist das Labor geschlossen.').waitFor();
+  assert.equal(await alt.locator('.werkzeug-flaeche textarea, .werkzeug-flaeche input').count(), 0, 'kein Werkzeug mehr bedienbar');
+  await gehe(alt, `${ctx.basis}/gast#/labor/scheibe`); // Gastmodus mit Schüler-Sitzung: ebenfalls gesperrt
+  await alt.locator('.werkzeug-flaeche').getByText('Während eines Boss-Kampfs ist das Labor geschlossen.').waitFor();
+  await alt.close();
+  await page.bringToFront();
   const teile = page.locator('section.boss-aufgabe');
   await teile.first().waitFor();
   assert.equal(await teile.count(), 3, 'drei Boss-Aufgaben');

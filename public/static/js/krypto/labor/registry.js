@@ -3,7 +3,8 @@
    im Epochenakzent, Fokusfalle, Esc und Rückkehr des Fokus. M6: Nachladen der Module (lade, E72), Reiter-Regeln nach
    Welt und Niveau (REITER_REGELN, erlaubt, reiterFuer – E71, E87), Nachspiel-Modus (nachspiel, E67) und die
    Brute-Force-Demo „Alle Schlüssel ausprobieren“ (alleSchluessel) – Werkzeuge bauen keine eigenen Abspieler.
-   Noch nicht gebaute Werkzeuge (BEREIT) zeigen „noch in Arbeit“ statt eines Ladefehlers. */
+   Noch nicht gebaute Werkzeuge (BEREIT) zeigen „noch in Arbeit“ statt eines Ladefehlers. Review M6: sperreAlle(grund)
+   schließt alle offenen Werkzeuge (Boss-Kampf in einem anderen Tab), wache(pruefe) fragt bei Rückkehr in den Tab neu. */
 'use strict';
 
 const KRLabor = (() => {
@@ -140,6 +141,54 @@ const KRLabor = (() => {
   function aktiv() {
     return zuletzt;
   }
+  const OFFEN = new Set(); // offene Werkzeuge (Steuerobjekte mit sperre(grund)) – für sperreAlle (Review M6, alter Tab)
+  const GESCHLOSSEN = 'Das Werkzeug wurde geschlossen.';
+
+  function grundAnzeige(container, grund, geschlossen) {
+    AQ.mount(
+      container,
+      h(
+        'div',
+        { class: 'leer-zustand werkzeug-gesperrt', role: 'status' },
+        KR.symbol('icons', 'i-labor'),
+        h('p', { class: 'leer-zustand-text' }, GRUND[grund] || GRUND.lehrkraft),
+        geschlossen ? h('p', { class: 'text-2' }, GESCHLOSSEN) : null
+      )
+    );
+  }
+
+  /** Alle offenen Werkzeuge schließen und an ihrer Stelle den Grund zeigen (z. B. Boss-Kampf in einem anderen Tab).
+      Liefert die Zahl der geschlossenen Werkzeuge. */
+  function sperreAlle(grund) {
+    let n = 0;
+    for (const s of [...OFFEN]) {
+      s.sperre(grund);
+      n++;
+    }
+    return n;
+  }
+
+  /** Bei Rückkehr in den Tab (visibilitychange → sichtbar, focus) pruefe() aufrufen – nie zwei Anfragen gleichzeitig.
+      pruefe: async () => void (fragt z. B. GET /api/labor und ruft sperreAlle). Liefert eine Abmelde-Funktion. */
+  function wache(pruefe) {
+    let laeuft = false;
+    const los = () => {
+      if (laeuft || (typeof document.visibilityState === 'string' && document.visibilityState === 'hidden')) return;
+      laeuft = true;
+      Promise.resolve()
+        .then(pruefe)
+        .catch(() => {})
+        .then(() => {
+          laeuft = false;
+        });
+    };
+    document.addEventListener('visibilitychange', los);
+    window.addEventListener('focus', los);
+    return () => {
+      document.removeEventListener('visibilitychange', los);
+      window.removeEventListener('focus', los);
+    };
+  }
 
   /** Werkzeug in container öffnen; liefert { schliesse(), zustand() }. Fehlt das Modul, wird es nachgeladen.
       umgebung.gesperrt ('boss'|'lehrkraft'|'welt') → nur der Grund, kein Modul (M6 Task 127). */
@@ -156,19 +205,26 @@ const KRLabor = (() => {
     const steuer = {
       schliesse() {
         zu = true;
+        OFFEN.delete(steuer);
         if (innen && typeof innen.schliesse === 'function') innen.schliesse();
         innen = null;
       },
       zustand() {
         return innen && typeof innen.zustand === 'function' ? innen.zustand() : null;
+      },
+      /** Werkzeug schließen und den Grund mit Hinweis „geschlossen“ zeigen (sperreAlle). */
+      sperre(grund) {
+        steuer.schliesse();
+        grundAnzeige(container, grund, true);
       }
     };
     zuletzt = steuer;
     if (u.gesperrt) {
       // zweite Sicherung für alle Aufrufer (Boss-Sperre, TECHNIK §10.3): kein Modul, kein Nachladen, nur der Grund
-      AQ.mount(container, h('div', { class: 'leer-zustand werkzeug-gesperrt', role: 'status' }, KR.symbol('icons', 'i-labor'), h('p', { class: 'leer-zustand-text' }, GRUND[u.gesperrt] || GRUND.lehrkraft)));
+      grundAnzeige(container, u.gesperrt, false);
       return steuer;
     }
+    OFFEN.add(steuer);
     if (MODULE.has(id) && typeof KRLaborBau !== 'undefined') {
       starte();
       return steuer;
@@ -467,5 +523,5 @@ const KRLabor = (() => {
     return { element: box, nachspiel: ns, schliesse: () => ns.schliesse() };
   }
 
-  return { WERKZEUGE, REITER_REGELN, GRUND, werkzeug, registriere, hat, bereit, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
+  return { WERKZEUGE, REITER_REGELN, GRUND, werkzeug, registriere, hat, bereit, lade, erlaubt, reiterFuer, oeffne, aktiv, sperreAlle, wache, dialog, nachspiel, alleSchluessel };
 })();

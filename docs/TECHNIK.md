@@ -1287,8 +1287,15 @@ Lehrkraft schaltet dieses Werkzeug später frei“); `auto`/fehlend → frei, we
 `ende_at`, Frist + 30 s Kulanz nicht abgelaufen – in der Kulanz nimmt der Boss noch Antworten an; Plan M6 Task 127), sind
 **alle** Werkzeuge gesperrt (`grund: 'boss'`), auch in den Kurseinstellungen „frei“ gesetzte; die Boss-Ansicht rendert keine
 `werkzeug`-Blöcke und keine Labor-Links, `/labor#/<id>` lädt im Kampf kein Modul, ein Werkzeug-Dialog aus einem anderen
-Tab bleibt gesperrt (`umgebung.gesperrt`). Grenze (dokumentiert, nicht behebbar): Die Bibliothek ist im Browser geladen;
-wer die Entwicklerwerkzeuge bedient, kann rechnen lassen – die Sperre ist didaktisch, wie im Abitur sichert die
+Tab bleibt gesperrt (`umgebung.gesperrt`). **Alter Tab (Review M6):** Labor-Seite und Aufgaben fragen `GET /api/labor` vor
+jedem Raster/Werkzeug bzw. Werkzeug-Dialog frisch (`ctx.laborFrisch(id)` → Umgebung mit `gesperrt`), und bei Rückkehr in
+den Tab (`visibilitychange`/`focus`, `KRLabor.wache`) neu; hat inzwischen ein Kampf begonnen, schließt
+`KRLabor.sperreAlle('boss')` jedes offene Werkzeug und zeigt den Grund mit „Das Werkzeug wurde geschlossen.“
+**Gastmodus:** Gibt es im Browser eine Schüler-Sitzung, fragt `/gast` vor dem Öffnen der Chiffrierscheibe (Labor-Platz und
+Demo-Aufgabe) und bei Rückkehr in den Tab `/api/labor`; im laufenden Kampf ist die Scheibe gesperrt (Grund wie oben).
+Grenzen (dokumentiert, bewusst nicht behebbar): Die Bibliothek ist im Browser geladen; wer die Entwicklerwerkzeuge bedient,
+kann rechnen lassen. Ebenso lässt sich der Gastmodus ohne Sitzung (fremdes Gerät, privates Fenster) oder ein externes
+Werkzeug (Taschenrechner, andere Websites) nicht sperren – die Sperre ist didaktisch, wie im Abitur sichert die
 Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 
 ---
