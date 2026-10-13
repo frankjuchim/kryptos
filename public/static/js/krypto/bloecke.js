@@ -1,5 +1,5 @@
 /* Kryptos – Renderer der Krypto-Blöcke (Delta §7, TECHNIK §4.4), registriert über AQR.registriere:
-   Geheimtext-Zeile (Hilfsfunktion), alphabet, haeufigkeit, bits (Task 51), quadrat, matrix, schaubild (Task 52). Alles als DOM/SVG mit Textknoten
+   Geheimtext-Zeile (Hilfsfunktion), alphabet, haeufigkeit, bits (Task 51), quadrat, matrix, schaubild (Task 52), werkzeug (Task 53). Alles als DOM/SVG mit Textknoten
    (AQ.h/AQ.s), Rechnungen nur über Krypto (shared/krypto.js), Höhen/Positionen als SVG-Attribute (CSP: keine
    Inline-Styles). Lücken [[id]] über ctx.gap(id); Hervorhebungen nie nur über Farbe (Rahmen, Symbol, aria-current). */
 'use strict';
@@ -608,12 +608,34 @@ const KRB = (() => {
     return h('figure', { class: 'schaubild' }, b.titel ? h('figcaption', null, String(b.titel)) : null, h('div', { class: 'schaubild-flaeche' }, svg), liste);
   }
 
+  /* ---------- werkzeug (Delta §7.7) ---------- */
+
+  function werkzeug(b, ctx) {
+    if (ctx && ctx.modus === 'boss') return null; // im Boss-Kampf kein Werkzeug, keine Labor-Links
+    const w = typeof KRLabor !== 'undefined' ? KRLabor.werkzeug(b.id) : null;
+    const name = w ? w.titel : String(b.id ?? 'Werkzeug');
+    const frei = !(ctx && typeof ctx.werkzeugFrei === 'function') || ctx.werkzeugFrei(b.id) !== false;
+    const knopf = h('button', { type: 'button', class: 'knopf knopf-primaer werkzeug-oeffnen', disabled: !frei }, b.titel ? String(b.titel) : `${name} öffnen`);
+    knopf.addEventListener('click', () => {
+      const modus = ctx && ctx.modus === 'gast' ? 'gast' : 'lab';
+      KRLabor.dialog(b.id, b.voreinstellung, { modus });
+    });
+    return h(
+      'div',
+      { class: 'werkzeug-karte' + (frei ? '' : ' gesperrt'), 'data-epoche': w ? String(w.welt) : null },
+      h('div', { class: 'werkzeug-kopf' }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('span', { class: 'werkzeug-ort' }, 'Im Kryptolabor'), h('b', { class: 'werkzeug-name' }, name)),
+      knopf,
+      frei ? null : h('p', { class: 'werkzeug-grund' }, 'Deine Lehrkraft schaltet dieses Werkzeug später frei.')
+    );
+  }
+
   AQR.registriere('alphabet', alphabet);
   AQR.registriere('haeufigkeit', haeufigkeit);
   AQR.registriere('bits', bits);
   AQR.registriere('quadrat', quadrat);
   AQR.registriere('matrix', matrix);
   AQR.registriere('schaubild', schaubild);
+  AQR.registriere('werkzeug', werkzeug);
 
-  return { geheimtext, alphabet, haeufigkeit, bits, quadrat, matrix, schaubild, neueId, luecke, lueckenId };
+  return { geheimtext, alphabet, haeufigkeit, bits, quadrat, matrix, schaubild, werkzeug, neueId, luecke, lueckenId };
 })();

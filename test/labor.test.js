@@ -48,3 +48,8 @@ test('Board-Schlüssel neu vergeben: alter Schlüssel ungültig', async () => {
   await H.client(app).get('/api/board/' + alt).expect(404);
   await H.client(app).get('/api/board/' + neu).expect(200);
 });
+test('Registry Server = Client (TECHNIK §10.2)', () => {
+  const D = require('./dom_attrappe');
+  const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
+  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt }) => ({ id, titel, welt })));
+});

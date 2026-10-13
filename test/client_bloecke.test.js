@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 const K = require('../public/static/js/shared/krypto.js');
-const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/bloecke.js'];
+const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js'];
 function bau(b, ctx = {}) {
   const k = D.lade(SKRIPTE);
   const gaps = {};
@@ -113,4 +113,19 @@ test('schaubild: Liste mit Nummern und Pfeilen, Angreifer/CA markiert, Lücken a
   assert.ok(k.eins(el, 'ol.schaubild-liste').classList.contains('sichtbar'));
   assert.ok(k.eins(el, 'svg .akteur-angreifer') && k.eins(el, 'svg .akteur-ca'));
   assert.equal(k.eins(el, 'svg.schaubild-svg').getAttribute('aria-hidden'), 'true');
+});
+test('werkzeug: Karte öffnet Dialog mit Fokusfalle; Boss rendert nichts; gesperrt mit Grund', () => {
+  let { k, el } = bau({ t: 'werkzeug', id: 'haeufigkeit', titel: 'Zähle im Häufigkeits-Analysator', voreinstellung: { text: 'ABC' } });
+  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
+  const d = k.eins(k.document, 'dialog.werkzeug-dialog');
+  assert.equal(d.hasAttribute('open'), true);
+  assert.match(k.text(d), /Häufigkeits-Analysator/);
+  assert.match(k.text(d), /noch in Arbeit/);
+  k.taste(d, 'Escape');
+  assert.equal(d.hasAttribute('open'), false);
+  assert.equal(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe' }, 0, { modus: 'boss' }), null);
+  ({ k, el } = bau({ t: 'werkzeug', id: 'scheibe' }, { werkzeugFrei: () => false }));
+  assert.ok(el.classList.contains('gesperrt'));
+  assert.equal(k.eins(el, 'button.werkzeug-oeffnen').disabled, true);
+  assert.match(k.text(el), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
 });

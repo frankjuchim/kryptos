@@ -36,6 +36,9 @@ const KR = (() => {
     }
   }
 
+  /** Kurztitel der Epochen 0–5 für das Labor-Raster (Welt 6 hat keine Werkzeuge). */
+  const WELTEN_KURZ = Object.freeze(['Antike', 'Bagdad', 'Renaissance', 'Maschinenzeitalter', 'Stanford 1976', 'Das Netz']);
+
   const ORNAMENT = ['o-maeander', 'o-girih', 'o-ranke', 'o-lochstreifen', 'o-scan', 'o-netz', 'o-zahnrad'];
 
   /** Symbol aus einem Sprite (icons, ornamente, siegel, abzeichen); mit titel als Bild beschriftet, sonst dekorativ. */
@@ -198,5 +201,5 @@ const KR = (() => {
   html.setAttribute('data-theme', AQ.einstellung('thema'));
   html.setAttribute('data-bewegung', AQ.einstellung('bewegung'));
 
-  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, ORNAMENT, ornament, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
+  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, WELTEN_KURZ, ORNAMENT, ornament, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

@@ -1,0 +1,69 @@
+/* Kryptolabor (TECHNIK §10.1, §11.3, M4 Task 53): Werkzeug-Karte (auch Block „werkzeug“ in Aufgaben – Seiten mit
+   Aufgaben binden labor.css deshalb mit ein), Werkzeug-Dialog, Labor-Raster nach Epoche, Vollseite.
+   Kopfband im Epochenakzent: Text --auf-akzent auf --akzent (Kontrast in test/designsystem.test.js). Farben nur über Tokens. */
+
+/* ---------- Werkzeug-Karte ---------- */
+.werkzeug-karte {
+  display: grid;
+  gap: var(--a-2);
+  align-content: start;
+  justify-items: start;
+  min-height: var(--ziel);
+  padding: var(--a-3) var(--a-4);
+  border: 1.5px solid var(--linie);
+  border-left: 6px solid var(--akzent);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+  text-decoration: none;
+}
+a.werkzeug-karte:hover { border-color: var(--akzent); }
+.werkzeug-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); }
+.werkzeug-symbol { width: 22px; height: 22px; color: var(--akzent); flex: none; }
+.werkzeug-ort { font-size: .82rem; font-weight: 700; color: var(--text-2); }
+.werkzeug-name { font-family: var(--f-ueberschrift); }
+.werkzeug-karte.gesperrt { border-left-style: dashed; border-left-color: var(--linie); background: var(--papier); }
+.werkzeug-karte.gesperrt .werkzeug-symbol { color: var(--text-2); }
+.werkzeug-karte.gesperrt::before { content: "gesperrt"; font-size: .78rem; font-weight: 700; color: var(--text-2); }
+.werkzeug-grund { margin: 0; font-size: .9rem; color: var(--text-2); }
+
+/* ---------- Werkzeug-Dialog ---------- */
+dialog.werkzeug-dialog {
+  width: min(960px, calc(100vw - 32px));
+  max-width: min(960px, calc(100vw - 32px));
+  padding: 0;
+  border-top: 0;
+  overflow: auto;
+}
+.werkzeug-kopfband {
+  display: flex;
+  align-items: center;
+  gap: var(--a-3);
+  padding: var(--a-3) var(--a-4);
+  background: var(--akzent);
+  color: var(--auf-akzent);
+}
+.werkzeug-kopfband h1, .werkzeug-kopfband h2 { margin: 0; flex: 1; font-size: var(--h3); color: var(--auf-akzent); }
+.werkzeug-kopfband svg { width: 24px; height: 24px; flex: none; }
+.werkzeug-kopfband .knopf { color: var(--auf-akzent); border-color: currentColor; }
+.werkzeug-epoche { font-size: .85rem; font-weight: 700; }
+.werkzeug-flaeche { padding: var(--a-4); background: var(--papier); color: var(--text); min-height: 200px; }
+
+/* ---------- Labor-Seite ---------- */
+.labor { display: grid; gap: var(--a-5); padding-block: var(--a-5); }
+.labor h1 { margin: 0; }
+.labor-epoche { display: grid; gap: var(--a-3); }
+.labor-epoche h2 { margin: 0; padding-bottom: var(--a-1); border-bottom: 3px solid var(--akzent); }
+.labor-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--a-3); }
+.labor-vollseite { display: grid; grid-template-rows: auto 1fr auto; min-height: calc(100vh - 120px); }
+.labor-vollseite .werkzeug-flaeche { padding: var(--a-5) max(var(--a-4), calc((100% - var(--inhalt)) / 2)); }
+.labor-steuerleiste {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--a-2);
+  padding: var(--a-3) var(--a-4) calc(var(--a-3) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--linie);
+  background: var(--karte);
+}
