@@ -164,15 +164,16 @@ public/
            shared/krypto.js                                       (Bibliothek, Server + Browser)
            krypto/  oberflaeche.js kopfzeile.js zeitleiste.js epoche.js level.js profil.js spiel.js
                     bloecke.js interaktionen.js diagnose_chips.js
-                    labor/ registry.js seite.js (M4)   skytale.js scheibe.js haeufigkeit.js substitution.js
-                           vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js signatur.js (M6)
+                    labor/ registry.js seite.js (M4)  bausteine.js (KRLaborBau, M6)  skytale.js scheibe.js
+                           haeufigkeit.js substitution.js vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js
+                           signatur.js (M6 erledigt: elf Werkzeuge, nachgeladen über KRLabor.lade)
                     funkraum.js beamer.js werkstatt.js (M4 Gerüste, Inhalte M7)  arena.js lehrer_funkraum.js
                     lehrer_arena.js (M7)
                     lehrer.js urkunden.js gast.js start.js board.js themen.js datenschutz.js
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py test_fremde_verfahren.py pruefwerte.py pruefwerte_import.py
 test/devportal/    server.js dev.js (Entwicklungs-Portal, §16.4)
-test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js gast.js geraete.js fehler.js, seed/ (Gast-Demo für den e2e, §15)
+test/e2e/          e2e.js hilfen.js schueler.js lehrkraft.js labor.js gast.js geraete.js fehler.js inhalte.js, seed/ (Gast-Demo für den e2e, §15)
 test/dom_attrappe.js  Attrappen-DOM + Skript-Lader (node:vm) für die Client-Tests
 docs/              TECHNIK.md AUFGABENFORMAT_KRYPTO.md KERN_ABWEICHUNGEN.md VERTRAG_VORSCHLAEGE.md DESIGNSYSTEM.md
                    FREMDCODE.md (M6: Fremdquellen; aus der Krypto-Werkstatt nichts übernommen)
@@ -1225,9 +1226,11 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 - In Aufgaben: Block `werkzeug` öffnet dasselbe Modul in einem `<dialog>` (Delta §7.7); auf Level-Seiten Karte „Im
   Kryptolabor ausprobieren“ (Level-Feld `werkzeug`).
 - Gastmodus: `/gast#/labor/scheibe` (nur Chiffrierscheibe).
-- Jedes Werkzeugmodul (`public/static/js/krypto/labor/<id>.js`) exportiert über `KRLabor.registriere(id, { titel,
-  oeffne(container, voreinstellung, umgebung) → { schliesse() } })`; Rechnungen **nur** über `Krypto` – kein Serverzugriff,
-  keine Aufgabendaten, keine Lösungen.
+- Jedes Werkzeugmodul (`public/static/js/krypto/labor/<id>.js`, IIFE ohne globalen Namen) meldet sich über
+  `KRLabor.registriere(id, { titel, oeffne(container, voreinstellung, umgebung) → { schliesse(), zustand() } })` an;
+  `zustand()` liefert den sichtbaren Zustand als JSON-fähiges Objekt (Tests, e2e über `KRLabor.aktiv()`, nur lesend).
+  Beispieltexte stehen in **einer** Konstante `BEISPIEL` am Dateianfang (eigens erfunden, Regeltest gegen Videos/Seeds).
+  Rechnungen **nur** über `Krypto` – kein Serverzugriff, keine Speicherung, keine Aufgabendaten, keine Lösungen.
 - **Rahmen (Plan M6 Task 110):** `KRLabor.oeffne` lädt fehlende Module nach (`KRLabor.lade(id)`: einmal
   `labor/bausteine.js`, dann `labor/<id>.js` mit `?v=<KR.VERSION>` an `document.head`; bis dahin „Wird geladen …“, bei
   Fehler „Dieses Werkzeug konnte nicht geladen werden.“). `umgebung = { modus, rolle, niveau, welten }` steuert die
@@ -1239,6 +1242,18 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
   Leertaste = Schritt vor, nie animiert. `KRLabor.alleSchluessel` zeigt alle Versuche als Tabelle mit Nachspiel und
   markiert **nie** einen Schlüssel als richtig. `test/labor_regeln.test.js` verbietet in Werkzeug-Modulen eigene
   Rechnungen, Speicher- und Netzzugriffe.
+- **Umgebung und Einbettung (Plan M6 Tasks 125–127):** `umgebung = { modus: 'labor'|'lab'|'gast'|'vorschau', rolle:
+  'schueler'|'lehrkraft'|null, niveau, welten, level?, gesperrt? }`. Vollseite `/labor#/<id>`: Schüler mit `niveau`/`welten`
+  aus `/api/labor`, Lehrkraft `{ rolle: 'lehrkraft' }` (alle Reiter, Hinweis auf die Reiter-Regeln); `#/<id>?reiter=a,b`
+  (Level-Karten, nur Reiter wandern in den Link) wird zur Voreinstellung `{ reiter }`, unbekannte Reiter fallen weg.
+  Aufgaben: Block `werkzeug` öffnet `KRLabor.dialog(id, voreinstellung, { ...ctx.laborUmgebung, modus })`; die Schüler-Seite
+  setzt `laborUmgebung = { modus: 'lab', rolle: 'schueler', niveau, welten, level: <Level-id> }` (im Kampf zusätzlich
+  `gesperrt: 'boss'`), die Lehrkraft-Vorschau `{ modus: 'vorschau', rolle: 'lehrkraft' }`, der Gastmodus `{ modus: 'gast',
+  rolle: null }`. Reiter-Regeln (`REITER_REGELN`): `haeufigkeit.teiltexte` Welt 2 · `haeufigkeit.kennzahlen` Welt 2 + eA ·
+  `vigenere.koinzidenz` eA · `skytale.ring`, `vigenere.modus.pendel`/`.frei` Welt 6 · `signatur.mitm` Welt 6 und **nie im
+  Level-Kontext W5-L3** (die Szene zeigt den Ablauf von W5-L3-04; Orchestrator, vorläufig). `KRLabor.oeffne` mit
+  `umgebung.gesperrt` zeigt nur den Grund (`KRLabor.GRUND`) und lädt kein Modul (zweite Sicherung der Boss-Sperre).
+  Nur Werkzeuge in `BEREIT` werden nachgeladen (sonst „noch in Arbeit“ ohne Skript-Anforderung).
 
 ### 10.2 Registry
 
@@ -1269,8 +1284,10 @@ Welten des Kurses aufsteigend, `niveau` = Kursniveau – Grundlage der Reiter-Re
 `einst.werkzeuge[id]`: `frei` → frei (auch in nicht freigeschalteter Welt); `gesperrt` → `grund: 'lehrkraft'` („Deine
 Lehrkraft schaltet dieses Werkzeug später frei“); `auto`/fehlend → frei, wenn die Welt freigeschaltet ist, sonst
 `grund: 'welt'`. Texte macht der Client. Lehrkraft: alle frei (Liste über `GET /api/lehrer/werkzeuge`). **Läuft für die Teilnahme ein Boss-Kampf** (`boss_versuche` ohne
-`ende_at`, Frist nicht abgelaufen), sind **alle** Werkzeuge gesperrt (`grund: 'boss'`); die Boss-Ansicht rendert keine
-`werkzeug`-Blöcke und keine Labor-Links. Grenze (dokumentiert, nicht behebbar): Die Bibliothek ist im Browser geladen;
+`ende_at`, Frist + 30 s Kulanz nicht abgelaufen – in der Kulanz nimmt der Boss noch Antworten an; Plan M6 Task 127), sind
+**alle** Werkzeuge gesperrt (`grund: 'boss'`), auch in den Kurseinstellungen „frei“ gesetzte; die Boss-Ansicht rendert keine
+`werkzeug`-Blöcke und keine Labor-Links, `/labor#/<id>` lädt im Kampf kein Modul, ein Werkzeug-Dialog aus einem anderen
+Tab bleibt gesperrt (`umgebung.gesperrt`). Grenze (dokumentiert, nicht behebbar): Die Bibliothek ist im Browser geladen;
 wer die Entwicklerwerkzeuge bedient, kann rechnen lassen – die Sperre ist didaktisch, wie im Abitur sichert die
 Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 
@@ -1298,7 +1315,7 @@ Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
 
 ### 11.2 Gemeinsame JS-Module
 
-Stand nach M4 (globale Namen in Klammern; jede Datei legt genau einen an):
+Stand nach M6 (globale Namen in Klammern; jede Datei legt genau einen an – Werkzeug-Module keinen):
 
 | Datei | Aufgabe |
 |---|---|
@@ -1308,7 +1325,9 @@ Stand nach M4 (globale Namen in Klammern; jede Datei legt genau einen an):
 | `krypto/epoche.js`, `krypto/level.js`, `krypto/profil.js` (`KREpoche`, `KRLevel`, `KRProfil`) | Ansichten der Schüler-Seite (Epoche mit Akten-Karten, Level mit Aufgabenliste und Labor-Karten, Profil mit Rang, Artefakten, Abzeichen, Fallen-Radar) |
 | `krypto/bloecke.js` (`KRB`), `krypto/interaktionen.js` (`KRI`) | Renderer der neuen Blöcke und Interaktionen (registrieren sich bei `AQR`/`AQI`) |
 | `krypto/diagnose_chips.js` (`KRDiag`) | Fallen-Chip „P3 Umkehrung falsch“ + Text, Link auf `/themen#fallen-P3`, höchstens zwei, gleiche Diagnosen nur einmal; `KRDiag.anzeige` für `AQA.ansicht` |
-| `krypto/labor/registry.js` (`KRLabor`) | Werkzeugliste (= Server), `registriere`, `oeffne`, `dialog` (Fokusfalle, Esc); ohne Modul „noch in Arbeit“ (Werkzeuge §10, M6) |
+| `krypto/labor/registry.js` (`KRLabor`) | Werkzeugliste mit Reitern (= Server), `registriere`, `hat`, `bereit`, `lade` (Nachladen, E72), `REITER_REGELN`/`erlaubt`/`reiterFuer`, `GRUND`, `oeffne` (Sperre über `umgebung.gesperrt`), `aktiv`, `dialog` (Fokusfalle, Esc, Fokus-Rückkehr), `nachspiel`, `alleSchluessel` (§10.1) |
+| `krypto/labor/bausteine.js` (`KRLaborBau`) | Bausteine der Werkzeuge: `reiter`, `textfeld` (Live-Normalisierung, Längenanzeige), `zahl` (Spinbutton), `richtung`, `ausgabe` (Kopieren ohne Gruppen-Leerzeichen), `hinweis` (info/warnung/falle), `tabelle`, `details` („Mehr ausprobieren“), `neueId`; einmal nachgeladen bzw. auf `/labor` statisch |
+| `krypto/labor/<id>.js` (kein globaler Name) | die elf Werkzeuge (§10.2), je eine IIFE mit `KRLabor.registriere` |
 | Seitenskripte | `spiel.js` (`KRSpiel`), `lehrer.js` (`KRLehrer`, Bausteine auch für den Gastmodus), `urkunden.js`, `gast.js` (`KRGast`), `start.js` (`KRStart`), `themen.js`, `board.js`, `datenschutz.js`, `labor/seite.js` (`KRLaborSeite`); Gerüste bis M7: `funkraum.js`, `werkstatt.js`, `beamer.js`; M7: `arena.js`, `lehrer_funkraum.js`, `lehrer_arena.js` |
 
 Alle Seiten: `<html lang="de" data-epoche="…" data-theme="hell|dunkel|auto">`, keine Inline-Skripte/-Styles, kein
@@ -1663,7 +1682,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `rechte.test.js` | A | Rollen über SSO; Kurs-Isolation (Lehrkraft ohne `kurs_lehrkraefte` → 404, Superadmin alle), CSRF (Origin), entfernte Routen → 404, gesperrter Kurs → 403, Funkraum/Arena nur eigener Kurs/Team |
 | `verwaltung.test.js` | A | Einstellungen inkl. `niveau`/`werkzeuge`/`kuer` (Validierung), kein Umbenennen, Auswertung, CSV, Board-Schlüssel, Backup/Restore (ohne flüchtige Tabellen), Warm-up |
 | `lernen.test.js` | A | Kern-Regeln (Lösung geheim, Punkte, Tipps, Aufdecken, Schrittprüfung inkl. `chiffre`), Diagnose-Zählung in `fallen_zaehler`, Archivfund (0 Punkte) |
-| `boss.test.js` | A | Kern-Regeln + niveau-gefilterte Ziehung (gA nur `kern`), Freischaltung über die Kern/eA-Menge, keine Diagnose im Kampf, Diagnose in der Auswertung, Labor gesperrt während des Kampfes |
+| `boss.test.js` | A | Kern-Regeln + niveau-gefilterte Ziehung (gA nur `kern`), Freischaltung über die Kern/eA-Menge, keine Diagnose im Kampf, Diagnose in der Auswertung, Labor gesperrt während des Kampfes (auch „frei“ gesetzte Werkzeuge, in der Kulanz weiter gesperrt, nach Fristablauf frei – M6 Task 127) |
 | `niveau.test.js` | neu | Sichtbarkeit gA/eA/Kür, Rang/Anteil über alle sichtbaren Level-Aufgaben (inkl. Ergänzung/Kür, v1.2), Boss-Freischaltung/„Welt gemeistert“ über Kern (+ eA), Niveauwechsel, Lehrkraft-Vorschau zeigt alles |
 | `abzeichen_scoreboard.test.js` | A | Kern + Artefakte, Funkraum-Veteran, Arena-Knacker, Unknackbar, Icons als SVG-Kennungen |
 | `pruefer.test.js` | A | Kern-Interaktionen + je neue Interaktion: richtig/falsch/leer/400, Feedback-Felder, **jede Diagnose-Zeile** aus Delta §9 (Antworten aus `fixtures/antworten.js`), `norm: krypto`/`bits` |
@@ -1674,6 +1693,9 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `funkraum.test.js` | neu | Zustandsautomat (erlaubte/verbotene Übergänge → 409), Rollenvergabe, Whitelist (Umlaute, Kleinbuchstaben → groß, 161 Zeichen, Sonderzeichen), Sichtbarkeit je Rolle, Polling 200/304/`seit`, Rate-Limits, alle 5 Szenarien im Durchlauf (Hash-Knacken, DH-K-Prüfung, OTP-Wiederholer, Mallory-Umleitung + Zertifikat), Ausblenden leert Inhalt, Beenden löscht Inhalte, 24-h-Löschung |
 | `arena.test.js` | neu | Phasen, Einreichung (Umkehrbarkeit, Typregel, Klartextlänge), Klartext/Schlüssel nie gespeichert (DB-Durchsuchung), Angriff per Klartext und per Schlüssel, eigene Chiffre → 400, Rate-Limits, Abzeichen, Beurteilungen nur Lehrkraft/eigenes Team, 30-Tage-Löschung |
 | `labor.test.js` | neu | `/api/labor` Freigaben (`auto`/`frei`/`gesperrt`, Welt gesperrt, Boss läuft) mit `welten`/`niveau`, Registry Server = Client (mit Reitern), Level-Feld `werkzeug` als Objekte, Validator-Hinweis für Schlüssel-Voreinstellung |
+| `labor_regeln.test.js` | neu (M6) | Rechenregel: kein Werkzeug-Modul rechnet selbst (kein `%`, Zeichencodes, Bit-Operatoren, Potenz, Basiswechsel, Alphabet-`indexOf`), kein Netz-/Speicherzugriff, kein `innerHTML`; Beispieltexte nicht aus Videos/Seeds |
+| `labor_rahmen.test.js` | neu (M6) | Reiter-Regeln (Welt, Niveau, Lehrkraft, `signatur.mitm` im Level-Kontext W5-L3), Nachspiel (Tasten, Tempo, Timer, reduzierte Bewegung, Aufräumen), Alle-Schlüssel ohne „richtig“-Markierung, Nachladen (`BEREIT`, Skript mit `?v=`), Bausteine |
+| `labor_<id>.test.js` | neu (M6) | je Werkzeug (`skytale`, `scheibe`, `haeufigkeit`, `substitution`, `vigenere`, `bitlupe`, `runden`, `modulo`, `rsa`, `hash`, `signatur`): Spec-Vektoren der Welt-Spec §9, jede Anzeige gegen dieselbe `Krypto.*`-Funktion, Tastaturwege, `aria-live`, reduzierte Bewegung; Helfer `test/hilfen_labor.js` (Werkzeug im Attrappen-DOM öffnen) |
 | `datenschutz.test.js` | neu | keine Lösung/Erklärung/Boss-Aufgabe über öffentliche Routen; `/api/plattform` und Kursübersicht ohne Freitexte; Löschung nach `sub` entfernt alle personenbezogenen Zeilen (Abfrage über alle Tabellen mit `schueler_id`/`sub`/`von_schueler_id`) |
 | `gast.test.js` | A | nur `W8-*`, keine echten ids/Lösungen, Werkzeugliste `['scheibe']`, Demo-Kurs ohne echte Daten |
 | `themen.test.js`, `lehrkraft_material.test.js` | A | Akten statt Arbeitsblätter, nie `_LSG`/`_EH`/Klausur öffentlich, Whitelist der Lehrkraft-Dateien |

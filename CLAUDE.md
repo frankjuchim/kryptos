@@ -118,4 +118,6 @@ In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright insta
 - Keine Klarnamen in Beispieldaten, Tests, Screenshots. Keine Abituraufgaben auf der Plattform veröffentlichen.
 - Fremdcode (z. B. Fork der „Krypto-Werkstatt“, Design O11) nur mit geklärter Lizenz übernehmen, Rechnungen immer über
   `Krypto.*`, Herkunft in `docs/FREMDCODE.md`. Stand M6: nichts übernommen, siehe docs/FREMDCODE.md.
+- Labor: Werkzeuge rechnen nur über `Krypto.*` (keine eigenen Rechnungen, kein Server, keine Speicherung), Regeltest
+  `test/labor_regeln.test.js`; Reiter-Regeln in `KRLabor.REITER_REGELN` (TECHNIK §10.1).
 - Toy-Verfahren und historische Angaben vorsichtig formulieren („wird zugeschrieben“, „soll“), keine wörtlichen Zitate.

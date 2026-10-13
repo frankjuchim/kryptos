@@ -6,7 +6,8 @@
 > (`2026-10-13-kryptos-m3-aufgabenformat.md`), M4 (`2026-10-13-kryptos-m4-oberflaeche.md`) und M5
 > (`2026-10-13-kryptos-m5-inhalte-w0-w2.md`) fort (Tasks **104–129**).
 >
-> **Status: offen** – Ausgangsstand Branch `feature/m0-kern`, HEAD `86f4777`, 695 Tests grün, e2e Szenarien 1–3, 7–11 grün,
+> **Status: erledigt** (13.10.2026, Version 0.3.0; 836 Tests grün, e2e Szenarien 1–4, 7–11 grün; Umsetzungsnotizen am Ende
+> des Task-Teils). Ausgangsstand war Branch `feature/m0-kern`, HEAD `86f4777`, 695 Tests grün, e2e Szenarien 1–3, 7–11 grün,
 > `package.json` 0.2.41; Labor-Rahmen (`KRLabor`, Block `werkzeug`, Seite `/labor`, Freigaben je Kurs, Sperre im Boss) aus
 > M4 Tasks 49/53 vorhanden, **kein** Werkzeug-Modul registriert („Dieses Werkzeug ist noch in Arbeit.“).
 
@@ -2530,16 +2531,32 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   fortgeschrieben, keine weiteren Kerndateien berührt), dieser Plan (Status „erledigt“, Umsetzungsnotizen), Version
   `node werkzeuge/version_setzen.js minor` (→ 0.3.0)
 
-- [ ] **Step 1: Prüfen** – `npm run pruefen` (inkl. `npm test`, Validator, Zwillingsvergleich 300, `pruefwerte.py`,
+- [x] **Step 1: Prüfen** – `npm run pruefen` (inkl. `npm test`, Validator, Zwillingsvergleich 300, `pruefwerte.py`,
   `seed_pruefen.py`, Material-Prüfungen) und `npm run e2e` grün; `grep -rn "noch in Arbeit" public/static/js/krypto/labor/`
   liefert nur noch den Rückfall in `registry.js`; `git diff 86f4777 --stat` gegen die Dateiübersicht abgleichen.
-- [ ] **Step 2: Fremdcode-Durchsicht** – `git diff 86f4777 -- public/ | grep -iE "andrebodendiek|kryptologie-werkstatt|KW\.|portal\.js"` leer;
+- [x] **Step 2: Fremdcode-Durchsicht** – `git diff 86f4777 -- public/ | grep -iE "andrebodendiek|kryptologie-werkstatt|KW\.|portal\.js"` leer;
   `docs/FREMDCODE.md` unverändert „nichts übernommen“.
-- [ ] **Step 3: Dokumente nachführen** (siehe Files), Umsetzungsnotizen je Task (Abweichungen vom Plantext) unter „Umsetzungsnotizen“
+- [x] **Step 3: Dokumente nachführen** (siehe Files), Umsetzungsnotizen je Task (Abweichungen vom Plantext) unter „Umsetzungsnotizen“
   in diesem Plan.
-- [ ] **Step 4: Commit** `git commit -m "Abschluss M6: Kryptolabor mit elf Werkzeugen, Nachspiel, Brute-Force-Demo, Einbettung, e2e 4"`.
+- [x] **Step 4: Commit** `git commit -m "Abschluss M6: Kryptolabor mit elf Werkzeugen, Nachspiel, Brute-Force-Demo, Einbettung, e2e 4"`.
 
 ---
+
+## Umsetzungsnotizen (Abweichungen vom Plantext)
+
+- **Tasks 104–124:** Abweichungen stehen an der jeweiligen Stelle (u. a. `BEREIT` nach Task 117, Beispieltext Task 114,
+  „Stand Task 117/119“ in den offenen Entscheidungen) und in den Commit-Nachrichten (`git log 86f4777..`).
+  **Orchestrator zu offener Entscheidung 6:** Der Signatur-Simulator rechnet keine Akte vor – eigene Beispielwerte
+  (Schlüssel, Nachricht, Kollisionspaar, DH p = 43, g = 3, a = 8, b = 13, m = 5) statt der Werte aus Akte W5·3 Auftrag 7.
+- **Task 125:** wie Plan; zusätzlich Level-Kontext `laborUmgebung.level` und die Reiter-Regel `signatur.mitm` (Orchestrator,
+  Notiz bei Task 125); Vorschau-Modus bleibt im Block `vorschau`; die W2-Spec-Zeilen bleiben zeilengleich (Prüfwerte
+  verweisen auf Zeilennummern).
+- **Task 126:** Scheibe startet mit k = 3 – e2e prüft „um drei weiter“.
+- **Task 127:** Labor-Sperre bis Frist **+ 30 s Kulanz** (Lücke gefunden und geschlossen); `KRLabor.GRUND` gemeinsam.
+- **Task 128:** Selektoren angeglichen, Reiter-Regeln gegen `/api/labor` geprüft, `typeof KRLabor` statt `window.KRLabor`;
+  Labor-Seiten in der Geräte-/Kontrastrunde als Lehrkraft; keine Fotos (der volle Lauf schreibt `m4-*` neu – nicht committet).
+- **Task 129:** Version 0.3.0; TECHNIK §2.4/§10/§11.2/§15, Delta §3/§7.7, DESIGNSYSTEM §5, KERN_ABWEICHUNGEN (Durchsicht),
+  Gesamtplan Teil A, CLAUDE.md, README nachgeführt.
 
 ## Reihenfolge und Abhängigkeiten
 
@@ -2575,7 +2592,9 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
    ausgelassen, Vermerk in W2 §9.1 – weiter offen.
 6. **Werte aus Akten in Werkzeugen (W5 §9.2 MitM „Werte aus Akte W5·3 Auftrag 7“, W3 §9.2 Pixelbild):** Der Simulator zeigt die
    Lösung von Auftrag 7 (A = 8, B = 11, M = 4, Schlüssel 2/13/9). So lassen (Spec) oder eigene Zahlen (z. B. a = 5, b = 7,
-   m = 3)? **Vorläufig:** wie Spec.
+   m = 3)? **Vorläufig:** wie Spec. **Stand (Orchestrator):** eigene Beispielwerte (p = 43, g = 3, a = 8, b = 13, m = 5), die
+   Szene zeigt aber weiterhin den **Ablauf** von W5-L3-04 – deshalb ist der Reiter „MitM“ im Level-Kontext W5-L3 ausgeblendet
+   und im freien Labor erst ab Welt 6 sichtbar (Task 125). Bitte bestätigen oder eine Lehrkraft-Sperre je Reiter wünschen.
 7. **Fotos (E88):** Die e2e-Fotogrenze (30 Dateien, 5 MB) ist erreicht; Szenario 4 fotografiert nicht. Grenze anheben (z. B. 45
    Dateien/8 MB für `m6-*`-Fotos der elf Werkzeuge)? **Vorläufig:** keine Fotos.
 8. **SHA-256 selbst gerechnet (E68):** Statt Web Crypto eine eigene, gegen `hashlib` geprüfte Umsetzung in `shared/krypto.js`

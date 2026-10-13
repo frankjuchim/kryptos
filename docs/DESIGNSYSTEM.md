@@ -138,7 +138,10 @@ Gelasio (metrisch = Georgia), `fonts-dejavu` als Rückfall; Consolas-Ersatz Inco
 | **Chips** | Niveau (Tokens `--niveau-kern`, `-eA`, `-ergaenzung`, `-kuer`, als Text + Rand; E gestrichelt, Kür doppelt umrandet; dunkel: Text, Ochsenblut hell, Lapis hell, Messing hell): K (Tinte), eA (Ochsenblut), E (Lapis), Kür (Messing dunkel) · Rolle: 🛡 Kryptografie / 🔍 Kryptoanalyse · Fallen: P1–P10 (Fehler-Rot umrandet) |
 | **Siegel/Artefakte** | runde SVG-Medaillen in Messing mit Epochen-Ornament; gesperrt = Umriss |
 | **Funkraum-Netz** | Beamer-Ansicht auf `--nacht`: Teams als Knoten (Kreis + Name), Nachrichten als wandernde Punkte mit Geheimtext-Vorschau, Eve/Mallory-Knoten in `--fehler`-Umriss |
-| **Labor-Werkzeug** | Kopfband in Epochenakzent, Werkzeugfläche Papier, Steuerleiste unten (Tablet-Daumenbereich) |
+| **Labor-Werkzeug** | Kopfband in Epochenakzent, Werkzeugfläche Papier, Steuerleiste unten (Tablet-Daumenbereich); als Vollseite (`/labor#/<id>`) oder `dialog.werkzeug-dialog` über der Aufgabe (Fokusfalle, Esc, Fokus kehrt zum Knopf zurück) |
+| **Reiterleiste (Labor)** | `div.labor-reiter[role=tablist]` mit `button[role=tab][aria-selected][data-reiter]`, darunter `div.labor-reiterflaeche[role=tabpanel]`; ←/→, Pos1/Ende, Aktivierung sofort; aktiver Reiter als Karte mit Rahmen und 4-px-Unterstrich in `--akzent` (nie nur Farbe); auf 360 px umbrechend, nie Querscrollen |
+| **Nachspiel-Leiste** | `div.nachspiel[role=group]`: „⏮ Anfang“, „◀ Schritt zurück“, „▶ Abspielen“/„⏸ Anhalten“ (`aria-pressed`), „Schritt vor ▶“, „Ende ⏭“, Tempo als Radiogruppe (Einzelschritt · Zeitlupe 2400 ms · Normal 900 ms), Zähler „Schritt i von n“, Erklärung `aria-live`; bei reduzierter Bewegung nur Einzelschritt (Abspielen und Tempo ausgeblendet, Hinweiszeile); während des Abspielens sind die Eingaben des Werkzeugs gesperrt |
+| **Alle-Schlüssel-Tabelle** | `div.alle-schluessel` mit echter Tabelle (Schlüssel · Ergebnis klein · Anmerkung), aktuelle Zeile `tr.aktuell` mit „▶“ und `aria-current`; **keine** Zeile wird als richtig markiert – die Frage „Ist das lesbares Deutsch?“ beantwortet die Lernende |
 
 Icons: eigene, schlichte Strich-SVGs (2 px), keine Icon-Bibliothek. Emojis nur für Rollen (🛡/🔍) und Lab-Rückmeldung
 sparsam.

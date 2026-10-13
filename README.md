@@ -9,9 +9,10 @@ Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbu
 (https://labs.frankjuchim.de) · Anmeldung ausschließlich über das Portal.
 
 > **Stand (13.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
-> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M5** gebaut: die
-> Welten 0–2 sind spielbar (Branch `feature/m0-kern`, noch nicht live) – siehe „Stand der Plattform“ (Abschnitt 4.1).
-> Welten 3–6, Kryptolabor, Funkraum und Werkstatt folgen mit M6–M8; bis dahin laufen sie mit den Papiermaterialien.
+> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M6** gebaut: die
+> Welten 0–2 sind spielbar, das Kryptolabor hat alle elf Werkzeuge (Branch `feature/m0-kern`, noch nicht live) – siehe
+> „Stand der Plattform“ (Abschnitt 4.1). Welten 3–6, Funkraum und Werkstatt folgen mit M7–M8; bis dahin laufen sie mit
+> den Papiermaterialien.
 
 ---
 
@@ -26,7 +27,7 @@ Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbu
 | **Akten** (Arbeitsblätter) | Papier-Pendant zu jedem Level, mit Abi-Check und Lösungsfassung |
 | **Fremde Chiffren** | das Abitur-Grundmuster „Verfahren aus Beschreibung anwenden → einordnen → beurteilen“ in jeder Welt (5-Schritte-Methode, Werkzeugkarte WK2) |
 | **Bosse** | online (Ziehung aus Pool, 25 min, ohne Werkzeuge) und als Papier-Boss mit Erwartungshorizont (≈ 24 BE) |
-| **Kryptolabor** | 11 Werkzeuge (Skytale & Gitter, Chiffrierscheibe, Häufigkeits-Analysator, Substitutions- und Vigenère-Werkbank, Bitlupe, Runden-Labor, Modulo-Rechner, RSA, Hash, Signatur) |
+| **Kryptolabor** | 11 Werkzeuge (Skytale & Gitter, Chiffrierscheibe, Häufigkeits-Analysator, Substitutions- und Vigenère-Werkbank, Bit-Lupe, Runden-Labor, Modulo-Uhr & Farbmischer, RSA-Rechenwerk, Hash-Labor, Signatur- & Zertifikats-Simulator) |
 | **Funkraum** | 5 Live-Szenarien im Kurs (Botenlauf, Wettknacken, Der doppelte Schlüssel, Schlüsseltausch vor Eves Augen, Mallory im Netz), dazu das optionale Abi-Duell in Welt 6 – alles auch als Papier-Rollenkarten |
 | **Chiffren-Werkstatt und Knack-Arena** (eA) | eigenes Verfahren entwerfen, implementieren, gegenseitig angreifen, beurteilen |
 | **Fallen P1–P10** | die zehn häufigsten Punktverluste im Abitur (Zählbasis, Modulo, Umkehrung, Verfahrensregel, Einordnung, Häufigkeitsanalyse, Schlüsselraum, Kombination, Schlüsselrollen, Operator) – überall gleich nummeriert |
@@ -95,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M5)
+### 4.1 Stand der Plattform (M0–M6)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -105,9 +106,10 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 | M3 Aufgabenformat | Krypto-Blöcke und -Interaktionen, Fallen-Diagnose P1–P10, Niveau gA/eA/Kür, Generatoren, Validator mit Neuberechnung |
 | M4 Oberfläche | Designsystem „Chronoskop“, Zeitleiste, Level, Boss, Warm-up, Profil, Lehrkraft-Ansicht, Themenseite, Gastmodus |
 | M5 Inhalte | Welten 0–2 (`seed/welten/welt0–2.json`: Archivfunde, 12 Level mit 91 Aufgaben inkl. Kür K1, drei Boss-Pools), Warm-up W0–W2, Gast-Demo; Akten, Lösungen und Lehrkraft-PDFs aus `materialien/` (Akten nur nach Anmeldung, ohne Anmeldung nur Demo-PDFs), QR-Codes der Akten (`/level/0.1` …) |
+| M6 Kryptolabor | elf Werkzeuge unter `/labor` (Skytale & Gitter, Chiffrierscheibe, Häufigkeits-Analysator, Substitutions- und Vigenère-Werkbank, Bit-Lupe, Runden-Labor, Modulo-Uhr & Farbmischer, RSA-Rechenwerk, Hash-Labor, Signatur- & Zertifikats-Simulator) – tablet- und tastaturbedienbar, rechnen nur über `Krypto.*`, speichern nichts; Nachspiel (Einzelschritt/Zeitlupe), „Alle Schlüssel ausprobieren“, Reiter-Regeln nach Welt/Niveau, Einbettung in Aufgaben und Level-Karten, Freigaben je Kurs, Sperre im Boss, Gastmodus mit Chiffrierscheibe |
 
-Noch nicht da: Welten 3–6 (M8), Kryptolabor-Werkzeuge (M6), Funkraum, Chiffren-Werkstatt und Knack-Arena (M7),
-Deploy (M9). Die Seiten dafür zeigen „kommt bald“.
+Noch nicht da: Welten 3–6 (M8), Funkraum, Chiffren-Werkstatt und Knack-Arena (M7), Deploy (M9). Die Seiten dafür
+zeigen „kommt bald“.
 
 **Lokal starten** (Node ≥ 20):
 
@@ -127,7 +129,7 @@ Mit der Beispielwelt der Tests: `WELT_DATEIEN=test/fixtures/welt_beispiel.json n
 npm test                       # Unit-, API- und Client-Tests (node:test), inkl. Docker-Abgleich ohne Daemon
 npm run validate               # Inhalts-Validator für seed/welten/*.json und seed/gast/demo.json
 npm run pruefen                # test + validate + Prüfwerte (Python-Zwilling) + Seeds unabhängig nachrechnen
-npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–11, Fotos nach docs/screenshots/
+npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–4 und 7–11, Fotos nach docs/screenshots/
 npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
 npm run akten -- --pruefen     # ebenso loesungen, lehrkraft, workspaces; Erzeugen ohne --pruefen (braucht LibreOffice)
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)

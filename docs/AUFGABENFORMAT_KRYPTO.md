@@ -87,7 +87,7 @@ Ebenso die Aufgaben-ids der Welt 2 (Plan M5 E38): `W2-L2k-nn` → `W2-Lk-nn` (z.
 | `niveau` | **ja** | `kern` · `eA` · `ergaenzung` · `kuer` (Design §3.2). Bestimmt Sichtbarkeit je Kurs-Niveau und Rangrelevanz (TECHNIK §8) |
 | `rolle` | **ja** | `kryptografie` (🛡, Alice/Bob sichern) · `kryptoanalyse` (🔍, Eve knackt). Fremde-Chiffre-Level: `kryptoanalyse`, wenn das Beurteilen/Knacken überwiegt, sonst `kryptografie` |
 | `kuer` | nein | `true` markiert ein **Kür-Level** (K1–K3). Dann **muss** `niveau = "kuer"` sein und umgekehrt (Fehler sonst). `nr` empfohlen `"K1"` … Kür-Level erscheinen auf der Epochen-Seite in einem eigenen Abschnitt „Kür“ und sind über die Kurseinstellung `kuer` (frei/gesperrt) steuerbar |
-| `werkzeug` | nein | Werkzeug-id, Liste von ids oder Liste mit Objekten `{ "id": "vigenere", "voreinstellung": { "reiter": ["quadrat", "verschluesseln"] } }` (≤ 3 Einträge, keine id doppelt; Plan M6 E70) aus der Registry (TECHNIK §10.2): `skytale`, `scheibe`, `haeufigkeit`, `substitution`, `vigenere`, `bitlupe`, `runden`, `modulo`, `rsa`, `hash`, `signatur`. `voreinstellung` folgt denselben Regeln wie im Block `werkzeug` (§7.7). Erzeugt auf der Level-Seite die Karte „Im Kryptolabor ausprobieren“ (nur wenn das Werkzeug im Kurs freigegeben ist). Die API liefert das Feld immer als Liste `[{ id, voreinstellung }]` |
+| `werkzeug` | nein | Werkzeug-id, Liste von ids oder Liste mit Objekten `{ "id": "vigenere", "voreinstellung": { "reiter": ["quadrat", "verschluesseln"] } }` (≤ 3 Einträge, keine id doppelt; Plan M6 E70) aus der Registry (TECHNIK §10.2): `skytale`, `scheibe`, `haeufigkeit`, `substitution`, `vigenere`, `bitlupe`, `runden`, `modulo`, `rsa`, `hash`, `signatur`. `voreinstellung` folgt denselben Regeln wie im Block `werkzeug` (§7.7). Erzeugt auf der Level-Seite die Karte „Im Kryptolabor ausprobieren“ (nur wenn das Werkzeug im Kurs freigegeben ist); hat der Eintrag `voreinstellung.reiter`, verlinkt die Karte `/labor#/<id>?reiter=a,b` (nur Reiter wandern in den Link). Die API liefert das Feld immer als Liste `[{ id, voreinstellung }]`. Beispiel (Seed W2): Level 2.1 `[{ "id": "vigenere", "voreinstellung": { "reiter": ["quadrat", "verschluesseln"] } }, "scheibe"]` |
 | `akte` | empfohlen | **ersetzt `ab`** (Kern). Muss mit `Akte W<n>·<k>` beginnen, bei Kür-Leveln (`kuer: true`) mit `Akte W<n>·K<k>` (`K<k>` = `nr`, z. B. `Akte W2·K1`) (Verknüpfung zu `seed/akten.json`, Themenseite, QR-Code auf der Akte). Welt 8 (Gast-Demo) und Welt 9 (Fixture) haben keine Akten – dort kein Hinweis „akte fehlt“. `ab` wird weiter gelesen (Kern-Kompatibilität), aber vom Validator als Hinweis „bitte `akte` verwenden“ gemeldet |
 | `video` | nein | `nr` (0–7, Design §11), `titel`. Link wird als normale Verknüpfung auf die YouTube-Seite des Kanals gerendert, sobald in `seed/videos.json` eine URL eingetragen ist (kein Einbetten, CSP). Ein Eintrag `{ "nr", "titel", "url": null }` zählt als vorhanden (Videos nicht öffentlich bis zur Veröffentlichung); Hinweis nur, wenn die `nr` fehlt |
 | `ide` | nein | wie Kern (Karte „Programmieren in der Online-IDE“) |
@@ -471,8 +471,10 @@ als dunkle Felder mit Loch-Symbol; bei `stellungen` vier kleine Raster mit Drehp
 **Darstellung:** Karte „🧪 Im Kryptolabor“ mit Knopf; öffnet das Werkzeug in einem `<dialog>` über der Aufgabe
 (Fokusfalle, Esc schließt). Ist das Werkzeug im Kurs gesperrt: Karte ausgegraut „Deine Lehrkraft schaltet dieses
 Werkzeug später frei“. `reiter` schränkt die sichtbaren Reiter ein (erster = Start); Welt- und Niveau-Regeln der
-Reiter (TECHNIK §10.3, Plan M6 E71) gelten zusätzlich. **Im Boss-Kampf wird der Block nicht gerendert**; in Boss-Pool-Aufgaben ist er ein
-**Validator-Fehler**. Im Gastmodus nur `scheibe`.
+Reiter (TECHNIK §10.1/§10.3, Plan M6 E71) gelten zusätzlich – mit dem Level-Kontext der Aufgabe (z. B. Szene „MitM“ des
+Signatur-Simulators nie in Level W5-L3). Die Lehrkraft-Vorschau öffnet das Werkzeug ohne Einschränkung. **Im Boss-Kampf wird
+der Block nicht gerendert**; läuft ein Kampf, ist er auch in anderen Tabs gesperrt; in Boss-Pool-Aufgaben ist er ein
+**Validator-Fehler**. Im Gastmodus nur `scheibe` (Stand M6 abschließend).
 
 ---
 
