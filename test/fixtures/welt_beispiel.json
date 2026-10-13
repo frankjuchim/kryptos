@@ -387,7 +387,7 @@
       "inhalt": [ { "t": "text", "md": "Nummerierung: A = 1 … Z = 26. Entschlüssele mit Caesar, k = 3." },
         { "t": "alphabet", "basis": 1, "zeilen": [ { "label": "Geheimtext", "werte": "DEFGHIJKLMNOPQRSTUVWXYZABC" }, { "label": "Klartext", "werte": "abcdefghijklmnopqrstuvwxyz" } ], "markiert": [2], "titel": "Caesar mit k = 3" } ],
       "interaktion": { "kind": "chiffre", "richtung": "ent", "verfahren": { "typ": "caesar", "k": 3 }, "eingabe": "CXYHU ODHVV LJ", "hilfszeilen": ["positionen"] },
-      "loesung": { "text": "ZUVERLAESSIG" },
+      "loesung": { "text": "zuverlaessig" },
       "tipps": ["Beim Entschlüsseln wird um k zurückgezählt."],
       "erklaerung": [ { "t": "text", "md": "C → z, X → u, Y → v … Klartext: zuverlaessig." } ] },
     { "id": "W9-L5-02", "titel": "Vigenère am Kanal", "stufe": 2, "kategorie": "verschluesseln", "fallen": ["P1", "P2"],

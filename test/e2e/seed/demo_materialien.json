@@ -1,0 +1,10 @@
+{
+ "_hinweis": "Kern-Fixture: Demo-PDFs ohne Anmeldung (nie Lösungen).",
+ "schueler": [
+  "Welt_9_Testwelt/KR_W9-AB1_Bloecke_und_Luecken.pdf",
+  "00_Werkzeugkarten/KR_Werkzeugkarten_Test.pdf"
+ ],
+ "lehrkraft": [
+  "Lehrkraft_PDF/Welt_9_Testwelt/KR_W9-Praesentation_Testwelt.pdf"
+ ]
+}

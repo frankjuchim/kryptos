@@ -435,3 +435,65 @@ test('Verwaltung (Admin): Inhalte mit Zahlen und Neu-Laden nach Bestätigung, Wa
   await k.ruhe();
   assert.match(k.text(k.document.getElementById('haupt')), /auftraege|Aufträge/);
 });
+
+/* ---------- Gastmodus (Task 65) ---------- */
+
+const GAST = [...LEHRER, 'krypto/gast.js'];
+const gastFetch = (extra = {}) => ({ 'GET /api/sitzung': { status: 200, body: { rolle: null, kurse: [] } }, ...extra });
+const seiteGast = (k) => k.document.body.classList.add('seite-gast');
+
+test('Gast: Demo-Aufgabe mit Scheibe frei, Hinweis „Nichts wird gespeichert“; Demo-Kurs nur lesend', async () => {
+  const demo = { vorhanden: true, titel: 'Probe-Akte', farbe: '#8A5F1A', level: 'Reinschnuppern', intro: [], aufgaben: [{ id: 'W8-L1-01', titel: 'Scheibe', stufe: 1, punkte: 10, kategorie: 'entschluesseln', arten: ['chiffre'] }] };
+  const k = D.lade(GAST, { url: 'http://x.test/gast#/schueler', fetch: gastFetch({ 'GET /api/gast/schueler': { status: 200, body: demo } }), vorher: seiteGast });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /Nichts wird gespeichert/);
+  assert.ok(k.eins(haupt, 'a[href="#/schueler/aufgabe/W8-L1-01"]'));
+  assert.ok(!k.anfragen.some((a) => a.pfad.startsWith('/api/lehrer')), 'Gast fragt keine Lehrkraft-API');
+});
+
+test('Gast: Übersicht mit drei Karten, Kopfzeile ohne Rolle', async () => {
+  const k = D.lade(GAST, { url: 'http://x.test/gast#/', fetch: gastFetch(), vorher: seiteGast });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.ok(k.eins(haupt, 'a[href="#/schueler"]'));
+  assert.ok(k.eins(haupt, 'a[href^="#/lehrkraft"]'));
+  assert.ok(k.eins(haupt, 'a[href="#/labor/scheibe"]'));
+  assert.match(k.text(haupt), /Chiffrierscheibe/);
+});
+
+test('Gast: Demo-Aufgabe schickt Fehlversuche/Tipps mit, Werkzeug Scheibe frei', async () => {
+  const a = { id: 'W8-L1-01', titel: 'Scheibe', stufe: 1, punkte: 10, kategorie: 'entschluesseln', fallen: ['P3'], tippsAnzahl: 1, inhalt: [{ t: 'text', md: 'Dreh.' }, { t: 'werkzeug', id: 'scheibe' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 7 }, eingabe: 'UVYKS PJOA', schluesselVerdeckt: false } };
+  const d = { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, tipps: [], punkte: 0, moeglich: 10 }, ort: { index: 0, anzahl: 6, vorher: null, nachher: 'W8-L1-02' } };
+  const falsch = { ok: false, zustand: { status: 'offen', fehlversuche: 1, tippsGenutzt: 0, tipps: [], punkte: 0, moeglich: 8 } };
+  const k = D.lade(GAST, { url: 'http://x.test/gast#/schueler/aufgabe/W8-L1-01', fetch: gastFetch({ 'GET /api/gast/aufgaben/W8-L1-01': { status: 200, body: d }, 'POST /api/gast/aufgaben/W8-L1-01/pruefen': { status: 200, body: falsch }, 'GET /api/labor/gast': { status: 404, body: {} } }), vorher: seiteGast });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.match(k.text(haupt), /Nichts wird gespeichert/);
+  const karte = k.eins(haupt, '.werkzeug-karte');
+  assert.ok(!karte.classList.contains('gesperrt'), 'Scheibe ist im Gastmodus frei');
+  k.alle(haupt, 'input.kaestchen').forEach((x, i) => k.tippe(x, 'ABCDEFGHI'[i]));
+  k.klick(k.eins(haupt, '#pruefen'));
+  await k.ruhe();
+  k.klick(k.eins(haupt, '#pruefen'));
+  await k.ruhe();
+  const posts = k.anfragen.filter((x) => x.methode === 'POST');
+  assert.equal(posts.length, 2);
+  assert.equal(posts[1].body.fehlversuche, 1, 'Zähler aus dem Browser');
+});
+
+test('Gast-Lehrkraft: Auswertung mit Fallen-Profil, Einstellungen nur lesend', async () => {
+  const lk = { kurs: { name: 'Demo-Kurs Informatik 12', schueler: 2 }, einstellungen: { welten: [0], boss: 'auto', scoreboard: true, beamer: true, niveau: 'eA', kuer: 'frei', werkzeuge: {} }, werkzeuge: ['scheibe'], levels: [{ id: 'W0-L1', nr: '1', titel: 'Erstes', maxPunkte: 40 }], schueler: [{ name: 'Lena S.', punkte: 30, geloest: 3, rang: 'Schreiber', zuletztAktiv: '2026-10-12T08:00:00Z' }], matrix: { zeilen: [{ name: 'Lena S.', werte: [{ anteil: 0.75, punkte: 30, geloest: 3, angesehen: 0 }] }] }, boss: { welten: [], zeilen: [] }, fallen: [{ p: 'P3', titel: 'Umkehrung falsch', fehlversuche: 4, schueler: 2, schuelerGesamt: 2 }], aufgaben: [], materialien: { welt0: [], weitere: 0 }, weltenGesamt: 1 };
+  let k = D.lade(GAST, { url: 'http://x.test/gast#/lehrkraft/auswertung', fetch: gastFetch({ 'GET /api/gast/lehrkraft': { status: 200, body: lk } }), vorher: seiteGast });
+  await k.ruhe();
+  let haupt = k.document.getElementById('haupt');
+  assert.ok(k.eins(haupt, '.fallen-profil'));
+  assert.match(k.text(haupt), /75 %/);
+  k = D.lade(GAST, { url: 'http://x.test/gast#/lehrkraft/einstellungen', fetch: gastFetch({ 'GET /api/gast/lehrkraft': { status: 200, body: lk } }), vorher: seiteGast });
+  await k.ruhe();
+  haupt = k.document.getElementById('haupt');
+  const eingaben = k.alle(haupt, 'form.einstellungen input');
+  assert.ok(eingaben.length > 0 && eingaben.every((x) => x.disabled), 'alle Eingaben gesperrt');
+  assert.ok(k.eins(haupt, 'select[name="werkzeug-scheibe"]').disabled);
+  assert.ok(k.eins(haupt, 'input[name="niveau"][value="eA"]').checked);
+});

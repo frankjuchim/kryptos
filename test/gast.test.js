@@ -74,9 +74,9 @@ test('Gast-Lehrkraft: erfundener Demo-Kurs, nur lesend, Download-Links nur auf D
   const app = H.makeApp({ ...opts, weltDateien: [datei] });
   const c = H.client(app);
   const d = (await c.get('/api/gast/lehrkraft').expect(200)).body;
-  assert.equal(d.kurs.code, 'DEMO-K');
+  assert.ok(!('code' in d.kurs), 'Kryptos kennt keine Kurscodes (Portal)');
   assert.equal(d.schueler.length, 8);
-  assert.ok(d.schueler.every((s) => s.code === '•••-•••'));
+  assert.ok(d.schueler.every((s) => !('code' in s)), 'keine persönlichen Codes');
   assert.ok(d.levels.length > 0 && d.matrix.zeilen.every((z) => z.werte.length === d.levels.length));
   assert.equal(d.fallen.length, 10);
   const text = JSON.stringify(d);
@@ -128,4 +128,50 @@ test('Gast-Schüler: Fallen-Diagnose und Feedback je Zeichen; fehlmuster verlass
   sauber((await c.post('/api/gast/aufgaben/W8-L1-02/aufdecken').send({}).expect(200)).body, 'aufgedeckt');
   sauber((await c.get('/api/gast/aufgaben/W8-L1-02').expect(200)).body, 'Aufgabe');
   sauber((await c.get('/api/gast/vorschau/W8-L1-02').expect(200)).body, 'Vorschau');
+});
+
+test('Demo-Kurs (Kryptos): keine Codes, kein anmeldung, Niveau eA, Werkzeugliste nur Scheibe', async () => {
+  const app = H.makeApp();
+  const d = (await H.client(app).get('/api/gast/lehrkraft').expect(200)).body;
+  const text = JSON.stringify(d);
+  assert.ok(!/"code"/.test(text), 'keine Codes');
+  assert.ok(!('anmeldung' in d.einstellungen));
+  assert.equal(d.einstellungen.niveau, 'eA');
+  assert.equal(d.einstellungen.kuer, 'frei');
+  assert.deepEqual(d.einstellungen.werkzeuge, {});
+  assert.deepEqual(d.werkzeuge, ['scheibe']);
+});
+
+test('e2e-Demo-Datei (test/e2e/seed/gast/demo.json) ist validatorfrei und deckt Delta §12 ab', () => {
+  require('../src/krypto').registriere();
+  const { validiereDateien } = require('../src/content/validator');
+  const datei = path.join(__dirname, 'e2e', 'seed', 'gast', 'demo.json');
+  const [r] = validiereDateien([datei]);
+  assert.equal(r.fehler.length, 0, JSON.stringify(r.fehler));
+  const W = require(datei);
+  const arten = W.aufgaben.map((a) => (Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion]).map((t) => t.kind).join('+'));
+  assert.deepEqual(arten, ['chiffre', 'zuordnung', 'chiffre', 'bits-rechnen', 'order', 'choice']);
+  assert.ok(W.aufgaben.every((a) => /^W8-L1-0[1-6]$/.test(a.id) && a.erklaerung && a.erklaerung.length), 'nur W8-ids, alle mit Erklärung');
+  assert.ok(W.aufgaben.some((a) => (a.tipps || []).length), 'mindestens ein Tipp');
+  const bloecke = (a) => [...(a.inhalt || []), ...(a.erklaerung || [])].map((b) => b.t);
+  assert.ok(bloecke(W.aufgaben[0]).includes('werkzeug') && bloecke(W.aufgaben[1]).includes('haeufigkeit') && bloecke(W.aufgaben[2]).includes('quadrat'));
+  assert.ok(bloecke(W.aufgaben[3]).includes('bits') && bloecke(W.aufgaben[4]).includes('schaubild'));
+  assert.equal(W.aufgaben[5].kategorie, 'fremde-chiffre');
+  assert.match(JSON.stringify(W.levels[0].intro), /Nichts wird gespeichert/);
+});
+
+test('e2e-Demo über die Gast-API: Caesar gelöst, Richtung vertauscht → P3, nur W8-ids', async () => {
+  const app = H.makeApp({ seedDir: path.join(__dirname, 'e2e', 'seed') });
+  const c = H.client(app);
+  const s = (await c.get('/api/gast/schueler').expect(200)).body;
+  assert.deepEqual(s.aufgaben.map((a) => a.id), ['W8-L1-01', 'W8-L1-02', 'W8-L1-03', 'W8-L1-04', 'W8-L1-05', 'W8-L1-06']);
+  const a3 = (await c.get('/api/gast/aufgaben/W8-L1-03').expect(200)).body;
+  assert.equal(a3.aufgabe.interaktion.verfahren.schluessel, 'TAG', 'Hilfszeile schluessel braucht den offenen Schlüssel');
+  const W = require('./e2e/seed/gast/demo.json');
+  const K = require('../public/static/js/shared/krypto.js');
+  const falsch = (await c.post('/api/gast/aufgaben/W8-L1-01/pruefen').send({ antwort: K.caesar('UVYKSPJOA', 7, 'ver') }).expect(200)).body;
+  assert.equal(falsch.ok, false);
+  assert.ok((falsch.diagnose || []).some((d) => d.p === 'P3'), JSON.stringify(falsch.diagnose));
+  const ok = (await c.post('/api/gast/aufgaben/W8-L1-01/pruefen').send({ antwort: W.aufgaben[0].loesung.text }).expect(200)).body;
+  assert.equal(ok.ok, true);
 });

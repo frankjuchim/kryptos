@@ -3,6 +3,8 @@
 //  - Schüler: eigene Demo-Aufgaben aus seed/gast/demo.json (nicht aus den Welten 0–6), Prüfung serverseitig,
 //    nichts wird gespeichert (Fehlversuche/Tipps zählt der Browser und schickt sie nur zur Punkte-Anzeige mit).
 //  - Lehrkraft: erfundener Demo-Kurs (Namen, Lernstände) – nur lesend; Materialien nur als Titel ohne Downloads.
+//    Kryptos (K33): Kurse kommen aus dem Portal → keine Kurs- und persönlichen Codes, keine Einstellung „anmeldung“;
+//    Einstellungen mit Niveau, Kür und Werkzeug-Freigaben; im Gastmodus ist nur die Chiffrierscheibe offen.
 
 const fs = require('node:fs');
 const C = require('../content/checker');
@@ -13,6 +15,17 @@ const { NotFoundError, ValidationError } = require('../validate');
 const { ohneInterna } = require('./inhalte');
 
 const DEMO_NAMEN = ['Lena S.', 'Tom K.', 'Aylin D.', 'Jonas B.', 'Mia W.', 'Noah F.', 'Emma R.', 'Ben T.'];
+/** Werkzeuge des Gastmodus (Delta §12): nur die Chiffrierscheibe. */
+const GAST_WERKZEUGE = Object.freeze(['scheibe']);
+/** Häufige falsche Antworten je Demo-Aufgabe (erfunden, passend zu den sechs Krypto-Demo-Aufgaben in Delta §12). */
+const FALSCHE_ANTWORTEN = [
+  [{ antwort: 'BCFRZWQVH (vorwärts gedreht)', anzahl: 3 }],
+  [{ antwort: 'O → n, I → e (vertauscht)', anzahl: 2 }],
+  [{ antwort: 'MPUHFUOIY (Schlüsselbuchstabe A = 1 gezählt)', anzahl: 2 }],
+  [{ antwort: '0010 0100 (UND statt XOR)', anzahl: 2 }],
+  [{ antwort: 'mit Bos privatem Schlüssel', anzahl: 3 }],
+  [{ antwort: 'Monoalphabetische Substitution', anzahl: 2 }]
+];
 
 /** kleiner deterministischer Zufall (gleiche Demo-Daten bei jedem Aufruf) */
 function zufall(seed) {
@@ -153,7 +166,7 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
       const punkte = werte.reduce((s, w) => s + w.punkte, 0);
       return {
         name,
-        code: '•••-•••',
+        aktiv: true,
         punkte,
         geloest: werte.reduce((s, w) => s + w.geloest, 0),
         rang: rangFuer(punkte / maxGesamt).name,
@@ -172,7 +185,7 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
           return {
             id, titel: a.titel, stufe: a.stufe, kategorie: a.kategorie, fallen: a.fallen,
             versucht: DEMO_NAMEN.length, quote, fehlversucheSchnitt: Math.round((1 - quote) * 30) / 10, angesehen: i % 3 === 1 ? 1 : 0,
-            falscheAntworten: [[{ antwort: 'g3: 30', anzahl: 2 }], [{ antwort: 'g1: =', anzahl: 3 }, { antwort: 'g2: länge(r)', anzahl: 2 }], [{ antwort: 'Zeile 5', anzahl: 2 }], [{ antwort: '20, 10, 5 …', anzahl: 1 }], [], [{ antwort: '(1,2) zusätzlich', anzahl: 1 }]][i] || []
+            falscheAntworten: FALSCHE_ANTWORTEN[i] || []
           };
         })
       : [];
@@ -190,9 +203,11 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
         }
       : { welt0: [], weitere: 0 };
     return {
-      kurs: { name: 'Demo-Kurs Informatik 12', code: 'DEMO-K', schueler: DEMO_NAMEN.length },
-      einstellungen: { welten: welten.map((w) => w.nr), boss: 'auto', scoreboard: true, beamer: true, anmeldung: false },
-      levels: levels.map(({ id, nr, titel, maxPunkte }) => ({ id, nr, titel, maxPunkte })),
+      kurs: { name: 'Demo-Kurs Informatik 12', schueler: DEMO_NAMEN.length },
+      einstellungen: { welten: welten.map((w) => w.nr), boss: 'auto', scoreboard: true, beamer: true, niveau: 'eA', kuer: 'frei', werkzeuge: {} },
+      welten: welten.map((w) => ({ nr: w.nr, titel: w.titel })),
+      werkzeuge: [...GAST_WERKZEUGE],
+      levels: levels.map(({ id, nr, titel, welt, maxPunkte }) => ({ id, nr, titel, welt, maxPunkte })),
       schueler: schuelerListe.map(({ werte, ...s }) => s),
       matrix: { zeilen: schuelerListe.map((s) => ({ name: s.name, werte: s.werte })) },
       boss,
@@ -213,4 +228,4 @@ function createGast(ctx, { datei, inhalte, material, log = () => {} }) {
   return { schueler, aufgabe, pruefen, tipp, aufdecken, lehrkraft, vorschau, vorhanden: () => !!demo };
 }
 
-module.exports = { createGast };
+module.exports = { createGast, GAST_WERKZEUGE };

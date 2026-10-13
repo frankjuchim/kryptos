@@ -862,3 +862,12 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
 .datenschutz ul { margin: 0; }
 .fehlerseite { padding-block: var(--a-7); max-width: 46rem; }
 .fehlerseite h1 { margin: 0; }
+
+/* ---------- Gastmodus (M4 Task 65) ---------- */
+.gast-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: var(--a-4); margin-block: var(--a-4); }
+a.gast-karte { text-decoration: none; color: var(--text); border-top: 6px solid var(--akzent); min-height: 44px; }
+a.gast-karte:hover { border-color: var(--akzent); }
+.gast-karte-symbol { width: 32px; height: 32px; color: var(--akzent); }
+.gast-karte-titel { font-family: var(--f-ueberschrift); font-size: 1.2rem; font-weight: 600; }
+.gast-tabs { margin-block: var(--a-3); }
+.gast-hinweis { margin-block: var(--a-3); }
