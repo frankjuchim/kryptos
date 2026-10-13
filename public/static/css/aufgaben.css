@@ -786,7 +786,9 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 .boss-ergebnis-aufgabe h3 { margin: 0; font-size: var(--h3); }
 .boss-ergebnis-aufgabe h4 { margin: var(--a-2) 0 0; font-size: 1rem; }
 .warmup-filter-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: end; }
-.warmup-filter-reihe label { display: grid; gap: var(--a-1); flex: 1 1 12rem; font-weight: 700; }
+.warmup-filter-reihe label { display: grid; gap: var(--a-1); flex: 1 1 12rem; font-weight: 700; min-width: 0; }
+/* lange Kategorienamen mit Anzahl dürfen die Auswahl nicht über 360 px hinaus verbreitern */
+.warmup-filter-reihe select { min-width: 0; max-width: 100%; }
 .warmup-karte { border-top: 6px solid var(--messing); }
 .warmup-text { white-space: pre-wrap; }
 .warmup-loesung { display: grid; gap: var(--a-2); padding-top: var(--a-3); border-top: 1px dashed var(--linie); }
