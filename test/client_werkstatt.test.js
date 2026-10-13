@@ -322,3 +322,36 @@ test('Arena: Beurteilung sendet PUT mit Text, zeigt „Gespeichert“; Hinweise 
   assert.equal(g.alle(g.document, 'form').length, 0, 'geschlossen: nur lesen');
   assert.match(g.text(g.document.body), /nur lesen/);
 });
+
+test('Arena: Abzeichen-Toast nur für neu erhaltene Abzeichen (/api/profil listet alle mit „erhalten“)', async () => {
+  let erhalten = false;
+  const profil = () => ({
+    status: 200,
+    body: {
+      abzeichen: [
+        { key: 'erste_schritte', icon: 'a-stern', name: 'Erste Schritte', erhalten: true, am: '2026-10-13T08:00:00.000Z' },
+        { key: 'arena_knacker', icon: 'a-knacker', name: 'Arena-Knacker', erhalten, am: erhalten ? '2026-10-13T09:00:00.000Z' : null },
+        { key: 'unknackbar', icon: 'a-unknackbar', name: 'Unknackbar', erhalten: false, am: null }
+      ]
+    }
+  });
+  const k = ladeArena('angriff', [CHIFFRE(1, SKYTALE), CHIFFRE(2, SCHEIBE, { eigene: true })], {
+    'GET /api/profil': profil,
+    'POST /api/arena/4/chiffren/1/angriff': () => {
+      erhalten = true;
+      return { status: 200, body: { erfolg: true, geknackt: true, rest: { chiffre: 30, team: 59 } } };
+    }
+  });
+  await k.ruhe();
+  const toast = () => k.document.getElementById('toast');
+  assert.ok(!toast() || toast().hidden || !/Abzeichen/.test(k.text(toast())), 'kein Toast beim Öffnen');
+  const form = k.eins(k.document, 'li.arena-chiffre[data-id="1"] form.arena-angriff');
+  k.tippe(k.eins(form, 'textarea.arena-klartext'), 'am nordtor');
+  form.dispatchEvent(new k.window.Event('submit', { cancelable: true }));
+  await k.ruhe();
+  await new Promise((r) => setTimeout(r, 100)); // Toast nach 300 ms (Zeitraffer 10)
+  await k.ruhe();
+  assert.ok(toast(), 'Toast vorhanden');
+  assert.match(k.text(toast()), /Abzeichen: Arena-Knacker/);
+  assert.doesNotMatch(k.text(toast()), /Unknackbar|Erste Schritte/);
+});

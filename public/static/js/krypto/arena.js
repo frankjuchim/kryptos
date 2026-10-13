@@ -68,7 +68,8 @@ const KRArena = (() => {
       if (typeof KRProfil === 'undefined') return;
       try {
         const p = await AQ.api('GET', '/api/profil');
-        const jetzt = Array.isArray(p && p.abzeichen) ? p.abzeichen : [];
+        // /api/profil listet alle Abzeichen mit „erhalten“ – verglichen werden nur die erhaltenen (Befund e2e 6)
+        const jetzt = Array.isArray(p && p.abzeichen) ? p.abzeichen.filter((a) => a && a.erhalten) : [];
         if (bekannte) {
           const neu = jetzt.filter((a) => a && !bekannte.has(a.key));
           if (neu.length) KRProfil.abzeichenToast(neu);
