@@ -75,6 +75,8 @@ function funkRouten(funk) {
     api.post('/funk/:id/empfangen', schueler, mit429((req) => funk.empfangen(req.schueler, req.params.id, req.body)));
     api.post('/funk/:id/knacken', schueler, mit429((req) => funk.knacken(req.schueler, req.params.id, req.body)));
     // Aktionen der Szenario-Typen (Tasks 138–141)
+    api.post('/funk/:id/oeffentlich', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'oeffentlich', req.body)));
+    api.post('/funk/:id/k-melden', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'k-melden', req.body)));
     api.put('/funk/:id/zuordnung', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'zuordnung', req.body)));
     api.get('/funk/:id/stand', schueler, limit(standLimit, proSchueler), (req, res) => sendeStand(res, funk.stand(req.schueler, req.params.id, abfrage(req))));
 

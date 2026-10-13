@@ -1334,7 +1334,7 @@ Beamer bei 1920 × 1080.
 - `werkzeuge`: alle Rollen `[{ id: 'modulo', voreinstellung: { reiter: ['uhr'], modul: p, g } }]` (keine Wertetabelle, W4).
 - `auswertung`: je Paar und Runde `{ paar, runde, kGleich, eveRichtig, eveSekunden }` (nur Wahrheitswerte/Zahlen).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_dh.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_dh.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1382,9 +1382,9 @@ Beamer bei 1920 × 1080.
     assert.deepEqual((await F.stand(f.teams[2].c, sz.id)).body.werkzeuge, [{ id: 'modulo', voreinstellung: { reiter: ['uhr'], modul: 23, g: 5 } }]);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Ganzzahlprüfung über `V.int`; DH nur über `Krypto.dh`/`Krypto.modpow`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenario Schlüsseltausch (zwei Runden, verdeckte Meldungen, Eve ohne Orakel)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Ganzzahlprüfung über `V.int`; DH nur über `Krypto.dh`/`Krypto.modpow`).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenario Schlüsseltausch (zwei Runden, verdeckte Meldungen, Eve ohne Orakel)"`.
 
 ### Task 141: Szenario „Mallory im Netz“ (W5 §9.3, E96, E115)
 
@@ -2822,6 +2822,15 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   beim Anlegen und beim Start ein Alice-Team sein (400). Regie sieht `sprueche` (mit `m`) und `vergleiche` immer (W3: „sieht
   alle Klartexte“), der Beamer erst in `aufloesung`; `eveGewinnt` sehen alle. Eve-`paare` und Vergleiche nur aus sichtbaren
   (nicht ausgeblendeten) Sprüchen. Zusatztest: fremde Blöcke unsichtbar, Beamer verdeckt, Abschnitts-Reihenfolge, Auswertung.
+- **Task 140:** Ganzzahlprüfung mit eigener Meldung statt `V.int` (Text „Der öffentliche Wert liegt zwischen 1 und 22 (p − 1).“).
+  `oeffentlich` zählt wie eine Nachricht (Stummschaltung, 1 je Team in 10 s, Ereignisse `gesendet` + `oeffentlich`, Antwort
+  `{ ok, nachricht }`), `k-melden` 30 je 5 min, Eve-Tipps über den `knacken`-Hook unter der Versuchsgrenze (30 je 5 min); alle
+  Aktionen nur in `runde-1`/`runde-2` (sonst 409); `paar` muss ein Alice-Team sein (400). Zwei Eve-Teams (W4: „2 bei mehr als 6
+  Teams“): `eve` = Tipp des ersten Eve-Teams, zusätzlich `eve2` (nur dann vorhanden); `auswertung.eveRichtig` = irgendein Eve-Team
+  richtig, `eveSekunden` = kürzeste Zeit vom späteren der beiden öffentlichen Werte bis zum richtigen Tipp. `kGleich` = Alice
+  = Bob = wahres K. Meldungen umfassen die bisher erreichten Runden. In `aufloesung` und nach dem Beenden zeigt `anzeigen`
+  `{ runde: null, p: null, g: null }` (Werkzeug: Parameter der Runde 2); Teams sehen nur eigene Werte (`ich`: öffentlicher Wert und
+  gemeldetes K bzw. eigene Tipps der laufenden Runde). Zusatztest: zwei Eve-Teams, Zeitbedarf, Eingabegrenzen, Datenleck, Löschung.
 
 ## Reihenfolge und Abhängigkeiten
 
