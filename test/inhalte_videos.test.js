@@ -12,7 +12,7 @@ const S = require('./hilfen_spec');
 const VIDEOS = require('../quellen/pruefwerte/videos.json').werte;
 
 /** Bekannte, von der Lehrkraft zu entscheidende Überschneidungen */
-const BEKANNT = [{ wort: 'nachtwache', aufgabe: 'W2-L1-06', begruendung: 'offene Entscheidung 4 (Plan M5)' }];
+const BEKANNT = []; // W2-L1-06 nutzt seit der M5-Inhaltsprüfung eigene Wörter (nachtwache nur noch in Akte, Folie, Papier-Boss)
 /** Video-Texte, die kein Beispiel im Sinne von Design §11 sind (Plattformname; Alphabete und Folgen wie EEEEEEE stehen in jedem Material) */
 const KEIN_BEISPIEL = new Set(['KRYPTOS']);
 

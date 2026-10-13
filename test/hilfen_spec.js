@@ -54,10 +54,10 @@ const GRID = { 'W0-L1-07': 'chiffre', 'W0-L3-05': 'gaps', 'W2-L2-04': 'gaps', 'W
 const TEIL_OHNE_EINGABE = { 'W1-L1-05': 'c', 'W1-L3-06': 'c' };
 
 /**
- * E65: in der Spec eine Interaktion, im Seed die verlangten Ergebnisse als Teile. W2-L1-06 b) als gaps (nicht als
- * chiffre mit dem Geheimtext aus a) als Eingabe – die stünde schon vor dem Lösen von a) im Client, Task 83).
+ * E65: in der Spec eine Interaktion, im Seed die verlangten Ergebnisse als Teile. (W2-L1-06 seit der M5-Inhaltsprüfung
+ * mit zwei chiffre-Teilen – b) entschlüsselt einen eigenen Geheimtext statt des Rückwegs aus a) –, keine Ausnahme mehr.)
  */
-const TEILE_ERGAENZT = { 'W2-L1-05': ['gaps', 'chiffre'], 'W2-L1-06': ['chiffre', 'gaps'] };
+const TEILE_ERGAENZT = { 'W2-L1-05': ['gaps', 'chiffre'] };
 
 /* ---------- ids ---------- */
 

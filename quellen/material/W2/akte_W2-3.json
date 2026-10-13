@@ -161,7 +161,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "**Berechne** den Koinzidenzindex von SERENISSIMA und von LAGUNE (Bruch und Dezimalzahl)."
+     "md": "**Berechne** den Koinzidenzindex von SERENISSIMA und von GONDEL (Bruch und Dezimalzahl)."
     },
     {
      "t": "p",
@@ -170,14 +170,14 @@
     },
     {
      "t": "p",
-     "md": "LAGUNE: n = [[luecke:6]], Σ n~i~(n~i~ − 1) = [[luecke:16]], I = [[luecke:16]]",
+     "md": "GONDEL: n = [[luecke:6]], Σ n~i~(n~i~ − 1) = [[luecke:16]], I = [[luecke:16]]",
      "nur_schueler": true
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "SERENISSIMA (n = 11; S 3, E 2, I 2, sonst je 1): (6 + 2 + 2)/110 = 10/110 = **1/11 ≈ 0,091**; LAGUNE: alle verschieden → 0/30 = **0**."
+     "md": "SERENISSIMA (n = 11; S 3, E 2, I 2, sonst je 1): (6 + 2 + 2)/110 = 10/110 = **1/11 ≈ 0,091**; GONDEL: alle verschieden → 0/30 = **0**."
     },
     {
      "t": "p",

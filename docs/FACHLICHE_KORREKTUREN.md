@@ -52,3 +52,34 @@ Abituranalyse (außerhalb des Pakets): `quellen/analyse/abitur_eA.md` nennt 300 
 | F7 | Nachschreibklausur gA f) | Beispiel trifft einen echten Klartextbuchstaben (R → S an Position 6 → GEHEHMTUERXX) |
 | F8 | Akte W3·4 Abi-Check a) | eigener Klartext „nord3“ → XGXGF XAADA |
 | N2–N9 | Design §5/§10, Specs, TECHNIK | Titel „Kreuzquadrat“, Inventar und Dateinamen am Bestand, O-W2-1 erledigt, NK eA g) Auffüll-Reihenfolge, Plan-Verweis W3 §2, `kryptos16.runde`-Reihenfolge, Manifest `aufgaben` aus dem Seed |
+
+## C. Korrekturen nach der M5-Inhaltsprüfung (13.10.2026)
+
+Grundsatz: Aufgaben sind frei anwählbar – keine Lösung einer Lab-, Boss- oder Archivfund-Aufgabe darf wörtlich in einem
+anderen Schülertext derselben Welt stehen (andere Aufgabe, Level-Intro, Archivfund, Akte, Warm-up). Schutz:
+`test/inhalte_loesungsverrat.test.js` (normalisiert, ≥ 6 Zeichen bzw. ganzes Alphabet/Quadrat, Ausnahmeliste mit
+Begründung). Wo eine Akte (mit Folien und DS-Verlauf) dasselbe Beispiel wie eine Lab-Aufgabe nutzt, bekommt in der Regel
+die **Lab-Aufgabe** ein eigenes Beispiel – Akte, Folien und Stundenverlauf bleiben stimmig. Alle neuen Werte sind mit
+Bibliothek und Python-Zwilling nachgerechnet (`quellen/pruefwerte`).
+
+| # | Was | Warum | Wo |
+|---|---|---|---|
+| C1 | Level-Intro 2.4 ohne RIALTO-Quadrat; W2-L24-01 mit eigenem Schlüsselwort GALEERE (Zeilen I K M N O / P Q S T U), Titel „Das Quadrat der Galeere“ | Intro und Aufgaben 03–05 (und Akte W2·4) zeigten das Quadrat, das 01 abfragt | SPEC W2 §2 Level 2.4 (Material, W2-L24-01), §12; Seed W2-L4, W2-L4-01 |
+| C2 | W2-L24-02 *gewitter* → GE WI TX TE RX statt *ballett*; W2-L24-03 Paare GK/LY/PE → HM/DL/UB (Ablenker BU/YS) statt OD/BG/RS | *ballett* und OD/BG/RS stehen als Beispiele in Akte W2·4 (und auf den Folien 23/24) | SPEC W2 W2-L24-02/03, §12; Seed |
+| C3 | W1-L1-02 mit eigenem Schlüsselwort DSCHINN (harun → BDQUL) | zeigte das komplette SULTAN-Alphabet = Lösung W1-L1-01 | SPEC W1 W1-L1-02, §12; Seed |
+| C4 | W1-L1-05 „Ein fauler Kadi“: KADI (15 Fixpunkte L–Z), *rubin* → RUAGN | KALIF/14/mond → MONI stehen in Akte W1·1 (Archivwissen 1) und WU-W1-03 | SPEC W1 W1-L1-05, §12; Seed |
+| C5 | W1-L1-07 mit unbekanntem Schlüsselwort SMARAGD (Geheimtext, Häufigkeiten, Tipps neu) | mit SULTAN war das Alphabet aus 01 bekannt – Häufigkeitsanalyse unnötig | SPEC W1 W1-L1-07, §12; Seed |
+| C6 | W1-B-03 mit eigenem Alphabet SEXTANT (kurier → GRODAO) | das WUESTENWIND-Alphabet ist die Lösung von W1-B-01 | SPEC W1 §5 W1-B-03, §12; Seed; Lehrerhinweise W1 |
+| C7 | W2-L21-06: a) *kerzenlicht*/LUNA → SUKMZ KSVXX M, b) `OOUFW OURKU K` entschlüsseln → *glasblaeser* | *nachtwache*/LUNA steht in Akte W2·1 (und Video 01); b) war ohne Rechnung eintragbar (Rückweg von a) | SPEC W2 W2-L21-06, §12; Seed (zwei chiffre-Teile, TEILE_ERGAENZT entfällt, Video-Ausnahme entfällt) |
+| C8 | W2-L23-01 „TERRASSE“ (6/56 = 3/28 ≈ 0,107) statt ANANAS | ANANAS ist das Beispiel in Akte W2·3 und auf Folie 20 | SPEC W2 W2-L23-01, §12; Seed |
+| C9 | Akte W2·3 Auftrag 1: GONDEL statt LAGUNE; Archivfund und Akte W2·1 „Gesandte der Republik“ statt „an der Lagune“, „Du schon?“ statt „Ihr schon?“ | LAGUNE ist das Schlüsselwort des Archivfunds; Schülertexte im Du | SPEC W2 §0.1, Akte W2·1/W2·3, §12; Seed W2-A-01 |
+| C10 | Akte W0·4 Abi-Check a) mit THEBEN (perser → 32 51 31 12 51 31) | das KORINTH-Quadrat ist die Lösung von W0-L4-05 | SPEC W0 Akte W0·4, §12; Akte W0·4 |
+| C11 | W2-B-12 (C) „spätestens nach 26 · L Zeichen“; (B) ohne „Caesar, deren Verschiebung wächst“ | Periode teilt 26 · L, kann kürzer sein (AJS: Verschiebung 9 · i, Periode 26); Caesar hat eine feste Verschiebung | SPEC W2 §5 W2-B-12, §12; Seed; Lehrerhinweise W2 |
+| C12 | Depeschen-Material: Beispiel DOGE → DOGE EPHF FQIG GRJH statt ROSE | mit ROSE verriet das Material den Schlüsselstrom von W2-B-11 | SPEC W2 §5, Seed W2-B-11…13, Lehrerhinweise W2 |
+| C13 | W1-L2-07: e → T, n → Q, (m, t) = (17, 3) | mit 9m ≡ 1 verriet der Hinweis 9⁻¹ = 3 direkt m | SPEC W1 W1-L2-07; Seed; Prüfwerte |
+| C14 | W1-AF Tipp ohne Verweis auf den Wettknacken-Text; W1-B-12 ohne „(wie W1-B-11)“ und ohne DEMEN/basar in der Erklärung | Funkraum nicht in jedem Kurs; Aufgaben frei anwählbar (Validator-Hinweis „Verweis auf die Aufgabe …“) | SPEC W1 §2/§5; Seed |
+| C15 | W0-L2-04 Schlüssel als eigenes Feld, Nummerierung genannt | „Bestimme Schlüssel und Klartext“ fragte den Schlüssel nicht ab | SPEC W0 W0-L2-04; Seed; Prüfwerte |
+| C16 | W2-K1-05 „k ≈ 3 (2,99)“ statt „genau k = 3“ | mit dem gerundeten I = 0,0484 ergibt die Formel 2,99 | SPEC W2 W2-K1-05, §12; Seed |
+| C17 | Fallen: W0-L4-02 P4 (statt P3), W2-L21-07 nur P7 (P1-Hinweis aus der Erklärung entfernt); Boss W0-B-01/06/08/09/15, W1-B-02/03/07/13/14/15, W2-B-04/05/08/09/11/14 mit P-Nummer in Erklärung und `fallen` | Erklärung und Feld widersprachen sich bzw. Falle passte nicht zur Kategorie; Boss-Auswertung braucht `fallen` (Validator-Hinweis) | SPECs W0–W2; Seeds |
+| C18 | W0-L1-07 „Fleißners Drehgitter“ statt „Das Gitter aus Athen“ (Hinweis auf Fleißner 1881 in der Erklärung) | die Drehschablone ist eine Erfindung des 19. Jahrhunderts | SPEC W0 W0-L1-07; Seed |
+| C19 | Kickoff-Folie K3: Ring Venedig **1600** statt 1553 | Archivfund „um 1600“, Boss 1605 (1553 = Bellaso, Inhalt der W2-Folie 11) | SPEC W0 §4a K3; Kickoff-Präsentation |

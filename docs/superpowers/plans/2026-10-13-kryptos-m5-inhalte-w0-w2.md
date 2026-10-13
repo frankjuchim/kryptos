@@ -1699,6 +1699,8 @@ Merge-Vorschlag an die Lehrkraft mit den offenen Entscheidungen 1–12 (unten).
 4. **Video-Überschneidung `nachtwache` (Design §11):** Video 01 nutzt `nachtwache` (Caesar k = 19) als Brute-Force-Beispiel; W2-L21-06
    (Porta, LUNA), W2-Präsentation F9 und der Papier-Boss W2 verwenden dasselbe Wort mit anderen Verfahren. Video ändern oder W2-Material
    ändern? **Vorläufig:** unverändert, im Abgleich-Test als bekannte Ausnahme mit Begründung.
+   **Stand nach der M5-Inhaltsprüfung (13.10.2026):** W2-L1-06 nutzt eigene Wörter (*kerzenlicht*, *glasblaeser*) – kein
+   Seed enthält *nachtwache* mehr, die Ausnahme im Video-Abgleich entfällt. Offen bleibt nur Akte W2·1, Folie 9, Papier-Boss.
 5. **Jahreszahlen und Kapiteltexte (E54):** Zeitleisten-Werte W0 −500 … −50, W1 850, W2 1467 … 1920 und die verdichteten Kapiteltexte
    (aus Spec §0.1/§0.8) bitte freigeben oder eigene Texte liefern.
 6. **Warm-up-Karte WU-W2-08 „Koinzidenz im Kopf (eA)“:** Warm-up-Karten haben im Kern kein Niveau; gA-Kurse sehen die Karte. Hinnehmen

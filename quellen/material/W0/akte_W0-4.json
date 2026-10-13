@@ -519,12 +519,12 @@
    "teile": [
     {
      "bez": "a)",
-     "text": "**Bestimmen Sie** mit der Fackelchiffre und dem Schlüsselwort KORINTH den Geheimtext zum Klartext „perser“. Das Quadrat zu KORINTH lautet zeilenweise: K O R I N / T H A B C / D E F G L / M P Q S U / V W X Y Z.",
+     "text": "**Bestimmen Sie** mit der Fackelchiffre und dem Schlüsselwort THEBEN den Geheimtext zum Klartext „perser“. Das Quadrat zu THEBEN lautet zeilenweise: T H E B N / A C D F G / I K L M O / P Q R S U / V W X Y Z.",
      "be": 3,
      "loesung": [
       {
        "t": "p",
-       "md": "Atbash `perser` → `kvihvi`; KORINTH-Quadrat: k = 11, v = 51, i = 14, h = 22 → **11 51 14 22 51 14** [3]."
+       "md": "Atbash `perser` → `kvihvi`; THEBEN-Quadrat: k = 32, v = 51, i = 31, h = 12 → **32 51 31 12 51 31** [3]."
       }
      ],
      "fallen": [

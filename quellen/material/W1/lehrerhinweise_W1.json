@@ -587,8 +587,8 @@
     [
      "W1-B-03",
      "★",
-     "Geheimtext zu „kurier“ mit Alphabet `WUESTNIDABCFGHJKLMOPQRVXYZ`.",
-     "`CQMATM`"
+     "Geheimtext zu „kurier“ mit Alphabet `SEXTANBCDFGHIJKLMOPQRUVWYZ`.",
+     "`GRODAO`"
     ],
     [
      "W1-B-04",
@@ -642,7 +642,7 @@
      "W1-B-12",
      "★★★",
      "Spiegel-Kurier: a) Klartext zu `GBWJS` mit t = 9; b) Wie entschlüsselt man? (A) dieselbe Vorschrift – involutorisch (B) c = (t + p) mod 26 (C) inverser Schlüssel von t",
-     "a) `dinar`; b) (A) (`DEMEN` mit t = 4 → `basar`)"
+     "a) `dinar`; b) (A) (Probe: `dinar` mit t = 9 → wieder `GBWJS`)"
     ],
     [
      "W1-B-13",
