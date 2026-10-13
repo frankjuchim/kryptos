@@ -1422,10 +1422,10 @@ Beamer bei 1920 × 1080.
   eigenes), `siegel` (Mallory `veraendert`), `fehlt` (kein Zertifikat oder Phase 1).
 - `empfangen { nachricht }` (Bob, nur lesbare Umschläge an Bob) → `{ ok }`, `angekommen = 1`, Ereignis `gemeldet`.
 - Regie `station` → alle wartenden Sendungen unverändert weiterleiten (E115); Antwort `{ weitergeleitet: n }`.
-- `auswertung`: je Alice-Team und Phase `{ team, phase, verandert: bool, ueberMallory: bool, schluesselErsetzt: bool,
+- `auswertung`: je Alice-Team und Phase `{ team, phase, veraendert: bool, ueberMallory: bool, schluesselErsetzt: bool,
   gemeldet: bool }`; in `aufloesung` für Beamer/Regie zusätzlich `original`/`empfangen` (Kartentexte) und der Weg.
 
-- [ ] **Step 1: Failing test** – `test/funkraum_mallory.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_mallory.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1488,16 +1488,16 @@ Beamer bei 1920 × 1080.
     const sz = await F.starte(f, 'mallory');
     await bob.c.post(`/api/funk/${sz.id}/oeffentlich`).send({}).expect(200);
     await alice.c.post(`/api/funk/${sz.id}/mallory`).send({ aktion: 'weiterleiten', nachricht: 1 }).expect(403);
-    assert.deepEqual((await f.lk.post(`/api/lehrer/funk/${sz.id}/station`).expect(200)).body, { weitergeleitet: 1 });
+    assert.deepEqual((await f.lk.post(`/api/lehrer/funk/${sz.id}/station`).send({}).expect(200)).body, { weitergeleitet: 1 });
     assert.equal((await F.stand(alice.c, sz.id)).body.ich.schluessel[0].etikett, 'S23');
     assert.equal((await F.stand(mallory.c, sz.id)).body.ich.station.length, 0);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Ziel = Partner von `angezeigt_von` über `funk_rollen.partner_id`;
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Ziel = Partner von `angezeigt_von` über `funk_rollen.partner_id`;
   Zertifikatsvariante je Sendung in `zustand` des Mallory-Teams; Whitelist für jeden Inhalt, auch Etiketten
   `^S\d{2}$`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenario Mallory im Netz (Station, Umschläge, Trent-Zertifikate, Auflösung)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenario Mallory im Netz (Station, Umschläge, Trent-Zertifikate, Auflösung)"`.
 
 ### Task 142: Löschregeln im Betrieb – Szenarien über die API, Löschung nach `sub`, Kurs gesperrt, Backup (TECHNIK §7.3, §12.7, Review Focus 2)
 
@@ -2831,6 +2831,25 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   = Bob = wahres K. Meldungen umfassen die bisher erreichten Runden. In `aufloesung` und nach dem Beenden zeigt `anzeigen`
   `{ runde: null, p: null, g: null }` (Werkzeug: Parameter der Runde 2); Teams sehen nur eigene Werte (`ich`: öffentlicher Wert und
   gemeldetes K bzw. eigene Tipps der laufenden Runde). Zusatztest: zwei Eve-Teams, Zeitbedarf, Eingabegrenzen, Datenleck, Löschung.
+- **Task 141:** Plan-Test korrigiert: `…/station` braucht einen JSON-Körper (`.send({})`, sonst 415, wie Task 136); Tippfehler
+  `verandert` → `veraendert`. Neuer Typ-Schalter `sichtVorrang` (Dienst): der Typ entscheidet auch über eigene
+  Nachrichten – ein Umschlag mit fremdem Etikett bleibt auch beim Empfänger „UMSCHLAG S41“. Lesbar: Etikett gehört dem Team,
+  oder Alices eigenes Original. Station je Paar (`konfig.station`, Paar i → Mallory-Team i mod m); Bob veröffentlicht an die
+  Station (`angezeigt_von` = Bob), Alice sendet nur die Auftragskarte der Phase für ein **erhaltenes** Etikett (sonst 400; ein
+  Client-`text` wird ignoriert). Zertifikatsvariante je Sendung in `zustand.varianten` des Mallory-Teams (`echt` = Bobs
+  Sendung, beim Weiterleiten vererbt; Schlüsselnummer ersetzen → `keins`). Status: Phase 1 oder `keins` → `fehlt`; `eigenes`
+  → `name` mit dem Zertifikatstext des Mallory-Teams (Trent bestätigt jedem seinen eigenen Schlüssel); `veraendert` →
+  `siegel`; `echt` → `gueltig`, wenn Trent dem behaupteten Absender genau diese Nummer bestätigt hat, sonst `fehlt`. Mallory:
+  `schluessel` mit Zertifikat ≠ `keins` in Phase 1 → 409; Umschlag neu verschließen nur, wenn Mallory ihn öffnen kann (403),
+  Ziel-Etikett muss existieren; Eingaben (Aktion, Whitelist, Etikett-Form) werden vor dem Zustand geprüft. Bobs `empfangen`
+  ohne Klartext (die Simulation öffnet den Umschlag), nur lesbare Umschläge an Bob, Ereignis `gemeldet`. Ticker:
+  `weitergeleitet`/`ersetzt` und Mallorys eigene `gesendet` sehen nur Mallory-Teams und die Regie, der Beamer ab der Auflösung.
+  Regie `station`: `von_schueler_id` der Weiterleitung = die der Original-Sendung (Spalte NOT NULL). Auswertung je Alice-Team
+  und Phase zusätzlich `gesendet`; `ueberMallory` = der Umschlag trug ein Mallory-Etikett (Mallory konnte ihn öffnen);
+  Weg über die Ereignisse `weitergeleitet`/`ersetzt`; letzte Sendung eines Alice-Teams je Phase zählt. Keine
+  Szenario-Werkzeuge (W5 nennt keins). Offener Punkt für die Oberfläche (Task 154/155): Der Beamer zeigt Schlüssel-Sendungen im
+  Klartext („S41“) – wer genau hinsieht, erkennt eine untergeschobene Nummer schon vor der Auflösung. Zusatztest: zwei
+  Mallory-Teams, Datenleck je Rolle, Whitelist auf allen Wegen, Zertifikate nur in Phase 2, Ticker, Auswertung ohne Texte.
 
 ## Reihenfolge und Abhängigkeiten
 

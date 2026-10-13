@@ -332,7 +332,9 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
       const eigen = n.von_team_id === betrachter.teamId || n.an_team_id === betrachter.teamId;
       const alle = betrachter.rolle && sicht[betrachter.rolle] === 'alle';
       const oeffentlich = n.an_team_id === null || (sicht.alle === 'oeffentlich' && n.art === 'oeffentlich');
-      if (eigen || alle || oeffentlich) s = { sichtbar: true, lesbar: true };
+      // typ.sichtVorrang (Mallory, Task 141): der Typ entscheidet auch über eigene Nachrichten (verschlossene Umschläge)
+      if (typ.sichtVorrang && typeof typ.sicht === 'function') s = typ.sicht(ctx, sz, n, betrachter);
+      else if (eigen || alle || oeffentlich) s = { sichtbar: true, lesbar: true };
       else if (typeof typ.sicht === 'function') s = typ.sicht(ctx, sz, n, betrachter);
     } else {
       // Beamer: öffentliche Sicht – alles außer verdeckten Arten, die der Typ festlegt (E99)

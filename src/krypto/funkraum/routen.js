@@ -77,6 +77,7 @@ function funkRouten(funk) {
     // Aktionen der Szenario-Typen (Tasks 138–141)
     api.post('/funk/:id/oeffentlich', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'oeffentlich', req.body)));
     api.post('/funk/:id/k-melden', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'k-melden', req.body)));
+    api.post('/funk/:id/mallory', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'mallory', req.body)));
     api.put('/funk/:id/zuordnung', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'zuordnung', req.body)));
     api.get('/funk/:id/stand', schueler, limit(standLimit, proSchueler), (req, res) => sendeStand(res, funk.stand(req.schueler, req.params.id, abfrage(req))));
 
@@ -88,6 +89,8 @@ function funkRouten(funk) {
     api.post('/lehrer/funk/:id/teams/:teamId/stumm', lehrkraft, (req, res) => res.json(funk.stumm(req.lk, req.params.id, req.params.teamId, req.body)));
     // Regie-Aktionen der Szenario-Typen (Tasks 137–141)
     api.post('/lehrer/funk/:id/hinweis', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'hinweis', req.body)));
+    api.post('/lehrer/funk/:id/zertifikat', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'zertifikat', req.body)));
+    api.post('/lehrer/funk/:id/station', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'station', req.body)));
     api.post('/lehrer/funk/:id/sonderkarte', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'sonderkarte', req.body)));
     api.get('/lehrer/funk/:id/stand', lehrkraft, limit(lkLimit, proLk), (req, res) =>
       sendeStand(res, funk.standLehrkraft(req.lk, req.params.id, { ...abfrage(req), ansicht: req.query.ansicht === undefined ? 'regie' : req.query.ansicht }))
