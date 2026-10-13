@@ -77,6 +77,29 @@ test('seed_pruefen.py: gapsFelder mit falscher Länge ist eine Abweichung', { sk
   assert.match(r.stdout, /W7-L1-02 › .*Länge/);
 });
 
+test('seed_pruefen.py: Prüfwert-Gruppe einer mehrteiligen Aufgabe – jedes Feld wird in seinem Teil verglichen (W0-L2-08)', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-gruppe-'));
+  fs.mkdirSync(path.join(dir, 'pw'));
+  const welt = { version: 2, welt: 7, titel: 'Gruppe', farbe: '#5B6B7C', levels: [], aufgaben: [
+    { id: 'W7-L1-04', titel: 'Doppelt', stufe: 3, kategorie: 'sicherheit-beurteilen', fallen: [], inhalt: [{ t: 'text', md: '`feldzug`' }],
+      interaktion: [
+        { kind: 'gaps', frage: 'a) [[zw]]', felder: { zw: { typ: 'text', norm: 'krypto' } } },
+        { kind: 'gaps', frage: 'b) [[k]]', felder: { k: { typ: 'zahl' } } } ],
+      loesung: [{ zw: ['UTASOJV'] }, { k: ['1'] }], pruefnachweis: 'quellen/pruefwerte/W7.json#W7-L1-04' } ] };
+  const pw = { beschreibung: 'Test', werte: [
+    { id: 'W7-L1-04-zw', aufgabe: 'W7-L1-04', gapsFeld: 'zw', ort: 't', art: 'lab', verfahren: 'caesar', eingabe: ['feldzug', 15], richtung: 'ver', erwartet: 'UTASOJV' },
+    { id: 'W7-L1-04-k', aufgabe: 'W7-L1-04', gapsFeld: 'k', ort: 't', art: 'lab', verfahren: 'mod', eingabe: [26, 26], erwartet: 0 },
+    { id: 'W7-L1-04-x', aufgabe: 'W7-L1-04', gapsFeld: 'gibtsnicht', ort: 't', art: 'lab', verfahren: 'mod', eingabe: [1, 26], erwartet: 1 } ] };
+  fs.writeFileSync(path.join(dir, 'w.json'), JSON.stringify(welt));
+  fs.writeFileSync(path.join(dir, 'pw', 'W7.json'), JSON.stringify(pw));
+  const r = spawnSync('python3', ['-I', SKRIPT, '--pruefwerte', path.join(dir, 'pw'), path.join(dir, 'w.json')], { encoding: 'utf8' });
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /W7-L1-04 › loesung\[1\]\.k: erwartet 0 gefunden 1/);   // Feld k im Teil b) verglichen
+  assert.match(r.stdout, /W7-L1-04 › .*gibtsnicht/);                             // Feld in keinem Teil → Abweichung
+  assert.doesNotMatch(r.stdout, /\.zw|loesung\[0\]\.k|loesung\[1\]\.zw/);        // kein „Feld fehlt“ für Felder anderer Teile
+  assert.match(r.stdout, /2 Abweichungen/);
+});
+
 test('seed_pruefen.py: chiffre mit ausgabe „paare“ (Polybios) wird wie Buchstaben nachgerechnet', { skip: py.status !== 0 && 'python3 fehlt' }, () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-paare-'));
   const welt = { version: 2, welt: 7, titel: 'Paare', farbe: '#5B6B7C', levels: [], aufgaben: [

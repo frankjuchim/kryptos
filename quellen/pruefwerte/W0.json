@@ -107,7 +107,14 @@
   {"id": "WU-W0-e7", "ort": "quellen/material/W0/warmup_W0.json Karte WU-W0-10 (Lösung)", "art": "warmup", "verfahren": "wert", "eingabe": ["G", 1], "erwartet": 7, "herkunft": "ergaenzt: Materialquelle"},
   {"id": "WU-W0-e8", "ort": "quellen/material/W0/warmup_W0.json Karte WU-W0-11 (Lösung)", "art": "warmup", "verfahren": "mod", "eingabe": [-5, 26], "erwartet": 21, "herkunft": "ergaenzt: Materialquelle"},
   {"id": "WU-W0-e9", "ort": "quellen/material/W0/warmup_W0.json Karte WU-W0-12 (Lösung)", "art": "warmup", "verfahren": "atbash", "eingabe": ["mond"], "erwartet": "NLMW", "herkunft": "ergaenzt: Materialquelle"},
-  {"id": "WU-W0-e10", "ort": "quellen/material/W0/warmup_W0.json Karte WU-W0-12 (Lösung)", "art": "warmup", "verfahren": "atbash", "eingabe": ["NLMW"], "erwartet": "mond", "herkunft": "ergaenzt: Materialquelle"}
+  {"id": "WU-W0-e10", "ort": "quellen/material/W0/warmup_W0.json Karte WU-W0-12 (Lösung)", "art": "warmup", "verfahren": "atbash", "eingabe": ["NLMW"], "erwartet": "mond", "herkunft": "ergaenzt: Materialquelle"},
+  {"id": "W0-L2-03-p", "aufgabe": "W0-L2-03", "gapsFelder": ["p_q", "p_u", "p_i", "p_z"], "ort": "seed/welten/welt0.json W0-L2-03 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "zahlen", "eingabe": ["quiz"], "erwartet": [17, 21, 9, 26], "herkunft": "Buchstabenwerte A = 1 … Z = 26"},
+  {"id": "W0-L2-03-c", "aufgabe": "W0-L2-03", "gapsFelder": ["c_q", "c_u", "c_i", "c_z"], "ort": "seed/welten/welt0.json W0-L2-03 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "verfahren.anwenden", "eingabe": [{"typ": "caesar", "k": 9}, "quiz"], "richtung": "ver", "optionen": {"ausgabe": "zahlen", "basis": 1}, "erwartet": [26, 4, 18, 9], "herkunft": "c = ((p + 9 − 1) mod 26) + 1"},
+  {"id": "W0-L2-05-k", "aufgabe": "W0-L2-05", "gapsFeld": "k", "ort": "seed/welten/welt0.json W0-L2-05 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "mod", "eingabe": [-12, 26], "erwartet": 14, "herkunft": "F (6) − r (18) = −12; mod 26"},
+  {"id": "W0-L2-05-v", "aufgabe": "W0-L2-05", "gapsFeld": "v", "ort": "seed/welten/welt0.json W0-L2-05 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "mod", "eingabe": [-14, 26], "erwartet": 12, "herkunft": "26 − k"},
+  {"id": "W0-L2-08-zw", "aufgabe": "W0-L2-08", "gapsFeld": "zw", "ort": "seed/welten/welt0.json W0-L2-08 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "caesar", "eingabe": ["feldzug", 15], "richtung": "ver", "erwartet": "UTASOJV", "herkunft": "Caesar k = 15"},
+  {"id": "W0-L2-08-ende", "aufgabe": "W0-L2-08", "gapsFeld": "ende", "ort": "seed/welten/welt0.json W0-L2-08 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "caesar", "eingabe": ["UTASOJV", 11], "richtung": "ver", "erwartet": "FELDZUG", "herkunft": "Caesar k = 11 auf das Zwischenergebnis"},
+  {"id": "W0-L2-08-k", "aufgabe": "W0-L2-08", "gapsFeld": "k", "ort": "seed/welten/welt0.json W0-L2-08 (SPEC W0 §2 Level 0.2)", "art": "lab", "verfahren": "mod", "eingabe": [26, 26], "erwartet": 0, "herkunft": "(15 + 11) mod 26"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W0/akte_W0-1.json Auftrag 7 b)", "werte": "256 brauchbare Schablonen / 1820 Vierer-Lochmengen (Kombinatorik)"},

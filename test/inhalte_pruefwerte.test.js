@@ -1,8 +1,8 @@
 'use strict';
 // Abgleich Prüfwerte (§12 der Welt-Specs, quellen/pruefwerte/W<n>.json) ↔ Seed (Plan M5 Task 73, Review Focus 2):
 // Jeder nachgerechnete Wert aus Lab, Boss-Pool, Archivfund und Warm-up findet sich in der zugehörigen Seed-Aufgabe –
-// sobald deren Abschnitt in S.UMFANG steht. Einträge einer Prüfwert-Gruppe (aufgabe + gapsFeld, E44) müssen exakt
-// der Hauptlösung des Felds entsprechen.
+// sobald deren Abschnitt in S.UMFANG steht. Einträge einer Prüfwert-Gruppe (aufgabe + gapsFeld bzw. gapsFelder, E44)
+// müssen exakt der Hauptlösung des Felds (bzw. Feld i ↔ Wert i) entsprechen.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -68,6 +68,20 @@ for (const welt of [0, 1, 2]) {
         const erw = Array.isArray(e.erwartet) && e.erwartet.length === 1 ? e.erwartet[0] : e.erwartet;
         if (zahl(erw) !== null && zahl(haupt) !== null) assert.equal(zahl(haupt), zahl(erw), `${e.id}: ${id}.${e.gapsFeld}`);
         else assert.equal(S.normalisiert(haupt), S.normalisiert(alsText(erw)), `${e.id}: ${id}.${e.gapsFeld}`);
+        continue;
+      }
+      if (e.aufgabe !== undefined && Array.isArray(e.gapsFelder)) {
+        // Prüfwert-Gruppe mit mehreren Feldern (E44): Element i (Liste) bzw. Zeichen i (Zeichenkette) = Hauptlösung von Feld i
+        assert.equal(e.aufgabe, id, `${e.id}: aufgabe ${e.aufgabe} ≠ ${id}`);
+        const werte = Array.isArray(e.erwartet) ? e.erwartet : [...S.normalisiert(e.erwartet)];
+        assert.equal(werte.length, e.gapsFelder.length, `${e.id}: Anzahl Werte ↔ gapsFelder`);
+        e.gapsFelder.forEach((f, i) => {
+          const lo = S.teile(quelle).map((x) => x.loesung).find((x) => x && Object.hasOwn(x, f));
+          assert.ok(lo, `${e.id}: Feld ${f} fehlt in der Lösung von ${id}`);
+          const haupt = [].concat(lo[f])[0];
+          if (zahl(werte[i]) !== null && zahl(haupt) !== null) assert.equal(zahl(haupt), zahl(werte[i]), `${e.id}: ${id}.${f}`);
+          else assert.equal(S.normalisiert(haupt), S.normalisiert(alsText(werte[i])), `${e.id}: ${id}.${f}`);
+        });
         continue;
       }
       const soll = S.normalisiert(alsText(e.erwartet));

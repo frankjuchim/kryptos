@@ -632,11 +632,17 @@ Zahlen `26 4 18 9` (ZDRI); `feldzug` 15 → `UTASOJV`, dann 11 → `FELDZUG`; Kn
 
 **Erwartete Hinweise:** keine neuen.
 
-- [ ] **Step 1: Failing test** – `UMFANG[0]` += `'W0-L2'` → FAIL.
-- [ ] **Step 2: Implement** Level + Aufgaben + Prüfwert-Gruppen (`aufgabe`, `gapsFeld`/`gapsFelder`, `ort` „seed/welten/welt0.json W0-L2-0x (SPEC W0 §2 Level 0.2)“).
-- [ ] **Step 3: Prüfkette P1–P5.**
-- [ ] **Step 4: Kontrollfragen K1–K5** (K1: Video 01 nutzt `treffpunktambrunnen`, `geheimbotschaft`, `nachtwache` – nicht in 0.2).
-- [ ] **Step 5: Commit** `git commit -m "Welt 0: Level 0.2 „Caesars Botschaft“"`.
+- [x] **Step 1: Failing test** – `UMFANG[0]` += `'W0-L2'` → FAIL.
+- [x] **Step 2: Implement** Level + Aufgaben + Prüfwert-Gruppen (`aufgabe`, `gapsFeld`/`gapsFelder`, `ort` „seed/welten/welt0.json W0-L2-0x (SPEC W0 §2 Level 0.2)“).
+- [x] **Step 3: Prüfkette P1–P5.**
+- [x] **Step 4: Kontrollfragen K1–K5** (K1: Video 01 nutzt `treffpunktambrunnen`, `geheimbotschaft`, `nachtwache` – nicht in 0.2).
+- [x] **Step 5: Commit** `git commit -m "Welt 0: Level 0.2 „Caesars Botschaft“"`.
+
+- **Umgesetzt (Task 75):** `seed_pruefen.py` verglich eine Prüfwert-Gruppe je `gaps`-Teil und meldete die Felder der
+  anderen Teile als fehlend (W0-L2-08: a) `zw`/`ende`, b) `k`) → jedes Feld wird jetzt in seinem Teil verglichen, ein Feld
+  in keinem Teil bleibt eine Abweichung (Test in `seed_pruefen.test.js`, Delta §4.1). `inhalte_pruefwerte.test.js` prüft
+  Gruppen-Einträge mit `gapsFelder` jetzt feldweise (wie `gapsFeld`). Erklärung W0-L2-08 mit `UTASO JV`/`FELDZ UG` in
+  Fünfergruppen (Hinweis des Validators).
 
 ### Task 76: Welt 0 – Level 0.3 „Die Werkstatt des Schreibers“
 

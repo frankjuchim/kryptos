@@ -168,6 +168,8 @@ class Pruefung:
           Liste mit genau einem Element zählt wie der Einzelwert); `gapsFelder` → `erwartet` als Zeichenkette (Zeichen i
           nach `kompakt`) oder Liste (Element i) = Hauptlösung von Feld i. Felder ohne Eintrag sind keine Abweichung
           (Lücken ohne Rechnung); Einträge ohne gapsFeld/gapsFelder sind Konsistenz-Einträge und werden hier nicht verglichen.
+        - Mehrteilige Aufgaben: Jedes Feld wird in dem Teil verglichen, zu dem es gehört; ein Feld, das in keinem Teil
+          vorkommt, ist eine Abweichung (gemeldet beim ersten gaps-Teil).
         """
         nw = a.get('pruefnachweis')
         m = NACHWEIS_PRUEFWERT.match(nw) if isinstance(nw, str) else None
@@ -175,9 +177,17 @@ class Pruefung:
             return
         aid = a.get('id')
         felder = [f for f in ia['felder'] if f in lo]
+        # Mehrteilige Aufgabe: Gruppen-Einträge zu Feldern anderer Teile prüft deren Teil; Meldungen, die die ganze
+        # Aufgabe betreffen (kein Eintrag, Feld in keinem Teil), nur beim ersten gaps-Teil.
+        teile = a['interaktion'] if isinstance(a.get('interaktion'), list) else [ia]
+        gaps_teile = [t for t in teile if isinstance(t, dict) and t.get('kind') == 'gaps' and isinstance(t.get('felder'), dict)]
+        alle_felder = {f for t in gaps_teile for f in t['felder']}
+        erster_teil = not gaps_teile or gaps_teile[0] is ia
         eintrag = self.pruefwert(m.group(1), m.group(2))
         gruppe = self.gruppe(m.group(1), m.group(2))
         if eintrag is None and not gruppe:
+            if not erster_teil:
+                return
             self.geprueft += 1
             self.melde(datei, aid, 'pruefnachweis', f'Eintrag {nw}', 'keinen')
             return
@@ -202,12 +212,18 @@ class Pruefung:
                 fl = e['gapsFelder']
                 teile = list(erw) if isinstance(erw, list) else list(kompakt(erw))
                 if len(teile) != len(fl):
+                    if not erster_teil:
+                        continue
                     self.geprueft += 1
                     self.melde(datei, aid, f'pruefnachweis {e.get("id")} (Länge)', f'{len(fl)} Werte für {", ".join(fl)}', len(teile))
                     continue
                 paare.extend(zip(fl, teile))
         for f, wert in paare:
+            if f not in ia['felder'] and f in alle_felder:
+                continue  # Feld eines anderen Teils
             if f not in lo:
+                if f not in alle_felder and not erster_teil:
+                    continue
                 self.geprueft += 1
                 self.melde(datei, aid, f'{ort}.{f}', f'ein Lösungsfeld {f} (Prüfwert)', 'keines')
                 continue
