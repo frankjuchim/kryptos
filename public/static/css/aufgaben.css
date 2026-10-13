@@ -120,13 +120,16 @@
 .inhalt > .block { min-width: 0; }
 .block { max-width: 100%; }
 .aktionen {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
   margin-top: var(--a-4);
   padding: var(--a-3) 0 calc(var(--a-3) + env(safe-area-inset-bottom, 0px));
   background: var(--papier);
   border-top: 1px solid var(--linie);
+}
+/* Klebende Knopfleiste nur, wenn genug Platz ist: auf dem Handy (zwei bis drei Knopfzeilen) würde sie ein Viertel des
+   Bildschirms dauerhaft verdecken – dort steht sie am Ende der Aufgabe. scroll-padding hält fokussierte Kästchen frei. */
+@media (min-width: 768px) and (min-height: 640px) {
+  .aktionen { position: sticky; bottom: 0; z-index: 5; }
+  html:has(.aktionen) { scroll-padding-bottom: 6rem; }
 }
 
 /* ---------- Teile, Bug-Hunt-Stufe ---------- */

@@ -45,3 +45,13 @@ test('jede verwendete Sprite-id existiert; Texturen höchstens 6 % Deckkraft', (
   }
   assert.match(lies(path.join(CSS, 'epochen.css')), /--textur:\s*url\("\/static\/img\/texturen\/epoche-0\.svg"\)/);
 });
+test('Aufgaben-Knopfleiste: auf dem Handy nicht klebend (verdeckt sonst Inhalt), klebend nur mit Platz und scroll-padding', () => {
+  const css = lies(path.join(CSS, 'aufgaben.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const grund = css.match(/(?:^|\n)\.aktionen\s*\{([^}]*)\}/);
+  assert.ok(grund, '.aktionen-Regel fehlt');
+  assert.doesNotMatch(grund[1], /position:\s*sticky/, '.aktionen außerhalb einer Media-Query nicht sticky');
+  const mq = css.match(/@media \(min-width: 768px\) and \(min-height: 640px\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(mq, 'Media-Query für die klebende Leiste fehlt');
+  assert.match(mq[1], /\.aktionen\s*\{[^}]*position:\s*sticky/);
+  assert.match(mq[1], /scroll-padding-bottom/);
+});

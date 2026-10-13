@@ -53,3 +53,16 @@ test('Kern-Klassen aus render.js, interact.js, aufgabe.js haben eine CSS-Regel',
   const fehlt = [...klassen].filter((c) => !new RegExp(`\\.${c}(?![\\w-])`).test(css));
   assert.deepEqual(fehlt, [], 'Klassen ohne Regel in aufgaben.css/komponenten.css');
 });
+test('AQA: ohnePunkte (Archivfund) – Kopf ohne „0 Punkte“, Rückmeldungen ohne Punktzahlen', async () => {
+  const k = D.lade(SKRIPTE);
+  const a = { id: 'W9-AF', titel: 'Fund', stufe: 1, punkte: 0, kategorie: 'entschluesseln', niveau: 'kern', fallen: [], tippsAnzahl: 0, inhalt: [{ t: 'text', md: 'Antwort: [[g1]]' }], interaktion: { kind: 'gaps', felder: { g1: {} } } };
+  const el = k.wert('AQA').ansicht({ aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, moeglich: 0 }, modus: 'lab', ohnePunkte: 'Archivfund – ohne Punkte', pruefen: async () => ({ ok: false, zustand: { status: 'offen', fehlversuche: 1, moeglich: 0 } }), aufdecken: async () => ({}) });
+  k.document.body.appendChild(el);
+  const kopf = k.text(k.eins(el, '.aufgabe-kopf'));
+  assert.doesNotMatch(kopf, /\d+\s*Punkte?/);
+  assert.match(kopf, /Archivfund – ohne Punkte/);
+  k.tippe(k.eins(el, 'input'), 'x');
+  k.klick(k.eins(el, '#pruefen'));
+  await k.ruhe();
+  assert.doesNotMatch(k.text(el), /Punkte möglich/);
+});

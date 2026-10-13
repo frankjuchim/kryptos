@@ -9,12 +9,16 @@ const AQA = (() => {
    * @param {object} cfg { aufgabe, zustand, loesung?, muster?, erklaerung?, pruefen(body), tipp?(), aufdecken(), weiter?, kopfZusatz,
    *   nachLoesen?, abzeichenToast?, punkteText?(r), modus? ('lab'|'boss'|'vorschau'|'gast'|'training', an AQI.aufgabe),
    *   zusatz? (ctx-Zusatz, z. B. werkzeugFrei), kursNiveau? ('eA'|'gA'), anzeige? { kategorie(slug) → Text,
-   *   falle(p) → Element, diagnose(liste) → Element|null } } – K36: ohne anzeige wie im Kern
+   *   falle(p) → Element, diagnose(liste) → Element|null }, ohnePunkte? (Text statt Punkte im Kopf, z. B. Archivfund;
+   *   Rückmeldungen dann ohne Punktzahlen) } – K36: ohne anzeige wie im Kern
    */
   function aufgabenAnsicht(cfg) {
     const a = cfg.aufgabe;
     const modus = cfg.modus || 'lab';
     const anzeige = cfg.anzeige || {};
+    const ohnePunkte = !!cfg.ohnePunkte;
+    /** „ Noch bis zu x Punkte möglich.“ – nicht bei Aufgaben ohne Punkte. */
+    const restText = () => (!ohnePunkte && zustand && zustand.status === 'offen' ? ` Noch bis zu ${zustand.moeglich} Punkte möglich.` : '');
     let zustand = cfg.zustand;
     const feedbackBox = h('div', { 'aria-live': 'polite' });
     const tippBox = h('div');
@@ -34,8 +38,7 @@ const AQA = (() => {
             zustand = r.zustand || zustand;
             if (r.ok) mount(feedbackBox, h('div', { class: 'feedback ok' }, '✔ Richtig, das ist die fehlerhafte Zeile. Weiter mit Teil b).'));
             else {
-              const rest = zustand && zustand.status === 'offen' ? ` Noch bis zu ${zustand.moeglich} Punkte möglich.` : '';
-              mount(feedbackBox, h('div', { class: 'feedback falsch' }, '✘ Das ist nicht die fehlerhafte Zeile.' + rest));
+              mount(feedbackBox, h('div', { class: 'feedback falsch' }, '✘ Das ist nicht die fehlerhafte Zeile.' + restText()));
             }
             return r;
           } catch (e) {
@@ -69,7 +72,7 @@ const AQA = (() => {
     function zeigeStand(diagnose = null) {
       if (!zustand) return;
       if (zustand.status === 'offen' && zustand.fehlversuche) {
-        mount(feedbackBox, h('div', { class: 'feedback falsch' }, `Fehlversuche: ${zustand.fehlversuche} – du kannst noch bis zu ${zustand.moeglich} Punkte erreichen.`, diagnose));
+        mount(feedbackBox, h('div', { class: 'feedback falsch' }, ohnePunkte ? `Fehlversuche: ${zustand.fehlversuche}.` : `Fehlversuche: ${zustand.fehlversuche} – du kannst noch bis zu ${zustand.moeglich} Punkte erreichen.`, diagnose));
       } else if (diagnose) mount(feedbackBox, h('div', { class: 'feedback falsch' }, diagnose));
     }
 
@@ -118,8 +121,7 @@ const AQA = (() => {
         } else if (Number.isInteger(r.ersteFalschePosition)) {
           detail = ` Bis Position ${r.ersteFalschePosition} stimmt es – danach nicht mehr.`;
         }
-        const rest = zustand && zustand.status === 'offen' ? ` Noch bis zu ${zustand.moeglich} Punkte möglich.` : '';
-        const fb = h('div', { class: 'feedback falsch' }, '✘ Leider noch nicht richtig.' + detail + rest, diagnoseVon(r));
+        const fb = h('div', { class: 'feedback falsch' }, '✘ Leider noch nicht richtig.' + detail + restText(), diagnoseVon(r));
         mount(feedbackBox, fb);
         AQ.effekt.wackeln(fb);
       } catch (e) {
@@ -139,7 +141,7 @@ const AQA = (() => {
     }
 
     async function aufdecken() {
-      const ok = await bestaetigen('Lösung zeigen?', 'Danach bekommst du für diese Aufgabe 0 Punkte. Du kannst sie aber weiter üben.', { ok: 'Lösung zeigen', gefahr: !!(zustand && zustand.status === 'offen') });
+      const ok = await bestaetigen('Lösung zeigen?', ohnePunkte ? 'Du kannst die Aufgabe danach weiter üben.' : 'Danach bekommst du für diese Aufgabe 0 Punkte. Du kannst sie aber weiter üben.', { ok: 'Lösung zeigen', gefahr: !!(zustand && zustand.status === 'offen') });
       if (!ok) return;
       try {
         const r = await cfg.aufdecken();
@@ -185,7 +187,7 @@ const AQA = (() => {
     const fertig = zustand && zustand.status !== 'offen';
     if (fertig && cfg.loesung !== undefined) {
       zeigeLoesung(cfg);
-      mount(feedbackBox, h('div', { class: zustand.status === 'geloest' ? 'feedback ok' : 'feedback info' }, zustand.status === 'geloest' ? `✔ Gelöst – ${zustand.punkte} ${zustand.punkte === 1 ? 'Punkt' : 'Punkte'} erhalten.` : zustand.nachgeloest ? 'Lösung angesehen und danach selbst gelöst.' : 'Du hast dir die Lösung angesehen (0 Punkte).'));
+      mount(feedbackBox, h('div', { class: zustand.status === 'geloest' ? 'feedback ok' : 'feedback info' }, zustand.status === 'geloest' ? (ohnePunkte ? '✔ Gelöst.' : `✔ Gelöst – ${zustand.punkte} ${zustand.punkte === 1 ? 'Punkt' : 'Punkte'} erhalten.`) : zustand.nachgeloest ? 'Lösung angesehen und danach selbst gelöst.' : ohnePunkte ? 'Du hast dir die Lösung angesehen.' : 'Du hast dir die Lösung angesehen (0 Punkte).'));
     } else zeigeStand();
     knoepfe(fertig);
     return h(
@@ -196,7 +198,9 @@ const AQA = (() => {
         { class: 'aufgabe-kopf' },
         h('h1', null, a.titel),
         sterne(a.stufe),
-        h('span', { class: 'pill gold' }, zustand && zustand.status === 'geloest' ? `${zustand.punkte}/${a.punkte} Punkte` : `${a.punkte} ${a.punkte === 1 ? 'Punkt' : 'Punkte'}`),
+        ohnePunkte
+          ? h('span', { class: 'pill' }, typeof cfg.ohnePunkte === 'string' ? cfg.ohnePunkte : 'ohne Punkte')
+          : h('span', { class: 'pill gold' }, zustand && zustand.status === 'geloest' ? `${zustand.punkte}/${a.punkte} Punkte` : `${a.punkte} ${a.punkte === 1 ? 'Punkt' : 'Punkte'}`),
         a.kategorie ? h('span', { class: 'pill' }, typeof anzeige.kategorie === 'function' ? anzeige.kategorie(a.kategorie) : a.kategorie) : null,
         niveauChip(),
         (a.fallen || []).map((p) => (typeof anzeige.falle === 'function' ? anzeige.falle(p) : h('span', { class: 'pill red', title: 'Typische Falle' }, '⚠ ' + p))),

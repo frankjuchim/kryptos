@@ -125,7 +125,8 @@ test('Archivfund: Kopfzusatz, ohne Punkte, Prüfen an /api/archivfund/<nr>/pruef
   const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/archivfund/9', fetch: f });
   await k.ruhe();
   const haupt = k.document.getElementById('haupt');
-  assert.match(k.text(haupt), /Archivfund · Einstiegsrätsel der Epoche/);
+  assert.match(k.text(k.eins(haupt, '.aufgabe-kopf')), /Archivfund – ohne Punkte.*Einstiegsrätsel der Epoche/);
+  assert.doesNotMatch(k.text(k.eins(haupt, '.aufgabe-kopf')), /\d\s*Punkte/);
   k.alle(haupt, 'input.kaestchen').forEach((x, i) => k.tippe(x, 'AB'[i]));
   k.klick(k.eins(haupt, '#pruefen'));
   await k.ruhe();

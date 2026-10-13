@@ -225,7 +225,8 @@ const KRSpiel = (() => {
       tipp: () => api('POST', `${pfad}/tipp`, {}),
       aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
       punkteText: () => '✔ Entschlüsselt! (Archivfund – ohne Punkte)',
-      kopfZusatz: h('span', { class: 'chip chip-neutral' }, 'Archivfund · Einstiegsrätsel der Epoche'),
+      ohnePunkte: 'Archivfund – ohne Punkte',
+      kopfZusatz: h('span', { class: 'chip chip-neutral' }, 'Einstiegsrätsel der Epoche'),
       weiter: { href: `#/epoche/${d.welt.nr}`, text: 'Zur Epoche →' },
       nachLoesen: () => welten({ neu: true }).catch(() => {})
     });
