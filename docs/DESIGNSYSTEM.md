@@ -26,17 +26,30 @@ Drei Gestaltungsgesetze:
 | `--tinte` | `#14213D` | Rahmen, Kopfzeile, Titelfolien | Papier darauf 14,9 : 1 |
 | `--nacht` | `#0B1426` | Hintergrund Zeitleiste, Dunkelmodus | – |
 | `--tinte-2` | `#22335A` | Flächen im Rahmen, Karten auf Tinte | Papier darauf 11,6 : 1 |
+| `--tinte-3` | `#2D4170` | aktive/hervorgehobene Flächen im Rahmen (z. B. aktueller Menüpunkt) | `--auf-tinte` darauf ≥ 4,5 : 1 |
+| `--auf-tinte` | `#FBF7EE` | Text auf Tinte, Nacht, Tinte-2/-3 | auf Tinte 14,9 : 1 |
+| `--auf-tinte-2` | `#C9C3B5` | Nebentext auf Tinte/Nacht | ≥ 4,5 : 1 |
+| `--ok-hell` / `--fehler-hell` | `#7BC67E` / `#F28B82` | richtig/falsch auf Tinte (Zeitleiste, Beamer) | ≥ 4,5 : 1 auf Tinte |
 | `--messing` | `#B07D2B` | Belohnung, Siegel, Linien, Icons (dekorativ) | auf Tinte 4,4 : 1 – **nicht** für Fließtext auf Papier |
 | `--messing-hell` | `#D9A441` | Text/Icons auf Tinte | auf Tinte 7,1 : 1 |
 | `--messing-dunkel` | `#8A5F1A` | Messing-Text auf Papier | auf Papier 5,3 : 1 |
 | `--papier` | `#FBF7EE` | Inhaltsfläche | – |
-| `--papier-2` | `#F2EADB` | Kästen, Tabellenköpfe, Zebra | – |
+| `--papier-2` | `#F2EADB` | Kästen, Tabellenköpfe, Zebra – Text darauf nur `--text`/`--text-2` | – |
+| `--karte` | `#FFFDF8` | Karten auf Papier (Level-Karte, Aufgabe) | – |
 | `--linie` | `#D8CDB8` | Rahmenlinien auf Papier | – |
 | `--text` | `#1B1B1F` | Fließtext | auf Papier 16,1 : 1 |
 | `--text-2` | `#4A4A55` | Nebentext | auf Papier ≥ 8 : 1 |
 | `--ok` | `#2E7D32` | richtig (immer mit ✓ und Text) | 4,8 : 1 |
 | `--fehler` | `#B3261E` | falsch (immer mit ✗ und Text) | 6,1 : 1 |
 | `--hinweis` | `#1F4E8C` | Tipp-Kästen | 7,8 : 1 |
+| `--ok-flaeche` | `#EDF6EB` | Fläche „richtig“ | `--ok` darauf 4,63 : 1 (vorher `#E6F2E4` = 4,44 : 1, unter AA – M4 E37) |
+| `--fehler-flaeche` | `#FBE8E5` | Fläche „falsch“ | `--fehler` darauf ≥ 4,5 : 1 |
+| `--hinweis-flaeche` | `#E6EEF8` | Fläche Tipp/Info | `--hinweis` darauf ≥ 4,5 : 1 |
+| `--auf-akzent` | `#FFFFFF` | Text auf Akzentflächen (Primärknopf) | auf jedem Epochenakzent ≥ 4,5 : 1 |
+| `--fokus` | `#1F4E8C` | Fokus-Ring 3 px (auf Tinte/Nacht: `--messing-hell`) | – |
+
+Alle Werte stehen in `public/static/css/tokens.css`; `test/designsystem.test.js` prüft die Paarliste (≥ 4,5 : 1, hell
+und dunkel). `--ok` und `--fehler` stehen als Text nie auf `--papier-2` (`--ok` dort nur 4,29 : 1).
 
 ### 2.2 Epochen
 
@@ -50,13 +63,29 @@ Drei Gestaltungsgesetze:
 | 5 | Das Netz | `#0E7C86` Cyan (4,6 : 1) | `#5CC8D2` | Netzknoten und Linien | Glas, feine Punkte |
 | 6 | Zeitmaschine | `#8A5F1A` Messing dunkel (5,3 : 1) | `#D9A441` | Zahnräder, Ziffernring | Messing gebürstet |
 
+**Akzent als Text nur auf `--papier`/`--karte`** (E25): Auf `--papier-2` liegen W0 (4,15 : 1), W4 (4,39 : 1) und W5
+(4,14 : 1) unter AA – dort steht Text immer in `--text`/`--text-2`, der Akzent nur als Rand oder Fläche (Test
+`designsystem.test.js`). Für die Akten (Kopf in Akzent auf Papier-2) ist das ein offener Punkt außerhalb von M4.
+
 Texturen sind **SVG-Muster mit max. 6 % Deckkraft** und liegen nur im Rahmen (Kopf, Epochenband, Titelfolien), nie
 hinter Lesetext.
 
 ### 2.3 Dunkelmodus (Plattform)
 
-Rahmen bleibt, Papier wird `#1A2238`, Text `#ECE6D8`, Akzent = `--akzent-hell`. Umschaltbar, Standard nach
-`prefers-color-scheme`.
+Rahmen bleibt, Papier wird `#1A2238`, Text `#ECE6D8`, Akzent = `--akzent-hell`. Umschaltbar (`data-theme="hell" |
+"dunkel" | "auto"` am `<html>`), Standard `auto` nach `prefers-color-scheme`. Vollständige Dunkel-Tokens (alle übrigen
+bleiben):
+
+| Token | dunkel | Token | dunkel |
+|---|---|---|---|
+| `--papier` | `#1A2238` | `--ok-flaeche` | `#1F3A2A` |
+| `--papier-2` | `#232D48` | `--fehler` | `#F28B82` |
+| `--karte` | `#1F2840` | `--fehler-flaeche` | `#43252B` |
+| `--linie` | `#3A4767` | `--hinweis` | `#8FB4EA` |
+| `--text` | `#ECE6D8` | `--hinweis-flaeche` | `#22355A` |
+| `--text-2` | `#BDB7A9` | `--auf-akzent` | `#0B1426` |
+| `--ok` | `#7BC67E` | `--fokus` | `#8FB4EA` |
+| `--messing-dunkel` | `#D9A441` | `--akzent` | `var(--akzent-hell)` |
 
 ## 3. Typografie
 

@@ -1,0 +1,112 @@
+/* Farb-, Schrift- und Maß-Tokens (DESIGNSYSTEM §2–§4, TECHNIK §11.3) – Designsystem „Chronoskop“.
+   Farben stehen nur hier und in epochen.css (Hex-Werte anderswo: Test stilregeln.test.js); Kontraste prüft
+   test/designsystem.test.js (WCAG 2.1 AA, hell und dunkel). Regel E25/E37: Akzent, --ok und --fehler als Text nur auf
+   --papier/--karte, nie auf --papier-2.
+   Dunkelmodus: data-theme="dunkel" fest, data-theme="auto" nach prefers-color-scheme (beide Blöcke gleich). */
+
+:root {
+  /* Rahmen (Tinte, Nacht) und Text darauf */
+  --tinte: #14213D;
+  --nacht: #0B1426;
+  --tinte-2: #22335A;
+  --tinte-3: #2D4170;
+  --auf-tinte: #FBF7EE;
+  --auf-tinte-2: #C9C3B5;
+  --ok-hell: #7BC67E;
+  --fehler-hell: #F28B82;
+
+  /* Messing (Belohnung, Siegel) */
+  --messing: #B07D2B;
+  --messing-hell: #D9A441;
+  --messing-dunkel: #8A5F1A;
+
+  /* Inhaltsflächen und Text */
+  --papier: #FBF7EE;
+  --papier-2: #F2EADB;
+  --karte: #FFFDF8;
+  --linie: #D8CDB8;
+  --text: #1B1B1F;
+  --text-2: #4A4A55;
+
+  /* Rückmeldungen (immer zusätzlich Symbol und Text) */
+  --ok: #2E7D32;
+  --ok-flaeche: #EDF6EB;
+  --fehler: #B3261E;
+  --fehler-flaeche: #FBE8E5;
+  --hinweis: #1F4E8C;
+  --hinweis-flaeche: #E6EEF8;
+
+  /* Text auf Akzentflächen, Fokus-Ring */
+  --auf-akzent: #FFFFFF;
+  --fokus: #1F4E8C;
+
+  /* Schriftstapel: „KR Symbole“ direkt hinter der Hausschrift (TECHNIK §11.4) */
+  --f-ueberschrift: 'Fraunces', 'KR Symbole', Georgia, 'Times New Roman', serif;
+  --f-text: 'Atkinson Hyperlegible', 'KR Symbole', system-ui, sans-serif;
+  --f-mono: 'JetBrains Mono', 'KR Symbole', ui-monospace, Consolas, monospace;
+
+  /* Abstände (4er-Skala), Radien, Schatten */
+  --a-1: 4px;
+  --a-2: 8px;
+  --a-3: 12px;
+  --a-4: 16px;
+  --a-5: 24px;
+  --a-6: 32px;
+  --a-7: 48px;
+  --a-8: 64px;
+  --r-karte: 14px;
+  --r-knopf: 10px;
+  --r-chip: 999px;
+  --schatten: 0 6px 24px rgba(11, 20, 38, .25);
+
+  /* Schriftgrößen und Maße */
+  --h1: 2rem;
+  --h2: 1.5rem;
+  --h3: 1.15rem;
+  --gr-mono: 1.05rem;
+  --lesebreite: 72ch;
+  --inhalt: 1120px;
+  --ziel: 44px;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dunkel"] {
+  --papier: #1A2238;
+  --papier-2: #232D48;
+  --karte: #1F2840;
+  --linie: #3A4767;
+  --text: #ECE6D8;
+  --text-2: #BDB7A9;
+  --ok: #7BC67E;
+  --ok-flaeche: #1F3A2A;
+  --fehler: #F28B82;
+  --fehler-flaeche: #43252B;
+  --hinweis: #8FB4EA;
+  --hinweis-flaeche: #22355A;
+  --auf-akzent: #0B1426;
+  --fokus: #8FB4EA;
+  --messing-dunkel: #D9A441;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] {
+    --papier: #1A2238;
+    --papier-2: #232D48;
+    --karte: #1F2840;
+    --linie: #3A4767;
+    --text: #ECE6D8;
+    --text-2: #BDB7A9;
+    --ok: #7BC67E;
+    --ok-flaeche: #1F3A2A;
+    --fehler: #F28B82;
+    --fehler-flaeche: #43252B;
+    --hinweis: #8FB4EA;
+    --hinweis-flaeche: #22355A;
+    --auf-akzent: #0B1426;
+    --fokus: #8FB4EA;
+    --messing-dunkel: #D9A441;
+    color-scheme: dark;
+  }
+}

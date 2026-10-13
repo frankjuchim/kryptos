@@ -2401,6 +2401,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
 8. **Kontrast-Korrektur (E25, E37):** `--ok-flaeche` wird von `#E6F2E4` auf `#EDF6EB` aufgehellt; Akzentfarben W0/W4/W5 dürfen
    nicht als Text auf `--papier-2` stehen. Gilt sinngemäß auch für die Akten (Kopf in Akzent auf Papier-2)? Dann müsste
    `werkzeuge/material/` angepasst werden (nicht Teil von M4).
+   **Vorläufig festgelegt (Orchestrator):** Akten-Kontrast nicht in M4; offener Punkt (DESIGNSYSTEM §2.2).
 
 ## Selbstprüfung (Spec-Abdeckung)
 

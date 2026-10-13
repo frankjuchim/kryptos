@@ -1,0 +1,20 @@
+/* Epochen-Themen (DESIGNSYSTEM §2.2, TECHNIK §11.3): Akzent je Welt (= fach.WELTEN[].farbe) und Akzent hell (auf
+   Tinte/Nacht und im Dunkelmodus). Akzent als Text nur auf --papier/--karte, nie auf --papier-2 (E25).
+   Welten ohne Eintrag (8 Gastmodus, 9 Labor) setzt KR.epoche() per CSSOM. */
+
+[data-epoche="0"] { --akzent: #B5523B; --akzent-hell: #E8957B; }
+[data-epoche="1"] { --akzent: #1F4E8C; --akzent-hell: #7FA8E0; }
+[data-epoche="2"] { --akzent: #7A2E2E; --akzent-hell: #D98C8C; }
+[data-epoche="3"] { --akzent: #556B2F; --akzent-hell: #A9C27A; }
+[data-epoche="4"] { --akzent: #1E7B4F; --akzent-hell: #5FD39A; }
+[data-epoche="5"] { --akzent: #0E7C86; --akzent-hell: #5CC8D2; }
+[data-epoche="6"] { --akzent: #8A5F1A; --akzent-hell: #D9A441; }
+
+/* Dunkelmodus: Akzent = Akzent hell (fest gewählt oder nach Systemeinstellung) */
+:root[data-theme="dunkel"][data-epoche],
+:root[data-theme="dunkel"] [data-epoche] { --akzent: var(--akzent-hell); }
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"][data-epoche],
+  :root[data-theme="auto"] [data-epoche] { --akzent: var(--akzent-hell); }
+}
