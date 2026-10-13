@@ -599,3 +599,84 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
   .hilfszeilen-labels { display: none; }
   .hilfszeilen-legende { display: block; }
 }
+
+/* =====================================================================================================================
+   Teil 5 (M4 Task 55): Interaktion zuordnung – Substitutions-Werkbank (Delta §8.2, E28: Tippen/Tastatur)
+   ===================================================================================================================== */
+
+.zuordnung { display: grid; gap: var(--a-3); min-width: 0; }
+.zuordnung-steuerung .knopf[aria-pressed="true"] { border-color: var(--tinte); box-shadow: inset 0 0 0 1.5px var(--tinte); }
+.zuordnung-steuerung .knopf[aria-pressed="true"]::before { content: "✓"; }
+.zuordnung-flaeche { display: grid; gap: var(--a-4); min-width: 0; }
+.zuordnung.mit-haeufigkeit .zuordnung-flaeche { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1000px) {
+  .zuordnung.mit-haeufigkeit .zuordnung-flaeche { grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr); align-items: start; }
+}
+.zuordnung-haupt { display: grid; gap: var(--a-3); min-width: 0; }
+.zuordnung-leiste { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.z-eintrag {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 4px;
+  padding: 4px 6px;
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+}
+.z-buchstabe { font-family: var(--f-mono); font-variant-ligatures: none; font-weight: 700; font-size: 1.05rem; }
+.z-anzahl { font-size: .75rem; color: var(--text-2); }
+.z-eintrag .z-feld { grid-column: 1 / -1; }
+.z-feld {
+  width: var(--ziel);
+  height: var(--ziel);
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--karte);
+  border: 2px solid var(--text-2);
+  border-radius: 6px;
+}
+.z-feld:disabled { opacity: 1; cursor: default; }
+.z-eintrag.vorgabe { background: var(--papier-2); border-style: dotted; }
+.z-eintrag.vorgabe .z-feld { border-style: dotted; background: var(--papier-2); }
+.z-eintrag.doppelt { border: 2px dashed var(--fehler); }
+.z-eintrag.doppelt::before {
+  content: "2×";
+  position: absolute;
+  bottom: -.6em;
+  left: -.4em;
+  padding: 0 4px;
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--fehler);
+  background: var(--karte);
+  border: 1.5px solid var(--fehler);
+  border-radius: var(--r-chip);
+}
+.z-eintrag.ok { border: 2.5px solid var(--ok); }
+.z-eintrag.falsch { border: 2.5px dashed var(--fehler); }
+.z-feld.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+.z-marke { position: absolute; top: -.6em; right: -.4em; font-size: .75rem; font-weight: 700; line-height: 1; background: var(--karte); border-radius: var(--r-chip); }
+.z-marke:empty { display: none; }
+.z-eintrag.ok .z-marke { color: var(--ok); border: 1.5px solid var(--ok); padding: 1px 3px; }
+.z-eintrag.falsch .z-marke { color: var(--fehler); border: 1.5px solid var(--fehler); padding: 1px 3px; }
+.zuordnung-figur { margin: 0; min-width: 0; }
+.zuordnung-text { display: flex; flex-wrap: wrap; gap: var(--a-2) 1.2ch; padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); font-family: var(--f-mono); font-variant-ligatures: none; }
+.z-gruppe { display: inline-flex; }
+.z-paar { display: inline-grid; justify-items: center; min-width: 1.3ch; }
+.z-geheim { font-weight: 700; color: var(--text); }
+.z-klar { color: var(--hinweis); border-top: 1px solid var(--linie); min-width: 1.3ch; text-align: center; }
+.zuordnung-vorschau { margin: 0; font-family: var(--f-mono); font-variant-ligatures: none; color: var(--text-2); overflow-wrap: anywhere; }
+.zuordnung-anteil { margin: 0; font-weight: 700; }
+.zuordnung-anteil:empty { display: none; }
+.zuordnung-haeufigkeit { min-width: 0; }

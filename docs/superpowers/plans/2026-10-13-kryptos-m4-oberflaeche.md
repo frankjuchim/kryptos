@@ -2393,6 +2393,7 @@ reduce)'] = true`), `localStorage` ist eine Map-Attrappe, `<dialog>` hat `showMo
    **Vorläufig festgelegt (Orchestrator):** ja – Gerüst nur mit Sitzung (Wächter), Hinweis „kommt bald“; umgesetzt in Task 48.
 4. **Zuordnung ohne Ziehen (E28):** Die Substitutions-Werkbank wird per Tippen bedient (je Geheimbuchstabe ein Feld). Reicht
    das, oder soll Ziehen (Drag & Drop) für Tablets nachgerüstet werden?
+   **Vorläufig festgelegt (Orchestrator):** Tippen/Tastatur reicht, kein Drag & Drop – umgesetzt in Task 55.
 5. **Labor-Freigaben schon in M4 (E19):** Die Lehrkraft kann Werkzeuge ab M4 sperren/freigeben, obwohl die Werkzeuge erst in
    M6 kommen (bis dahin „noch in Arbeit“). Einverstanden?
    **Vorläufig festgelegt (Orchestrator):** ja – umgesetzt in Task 49.

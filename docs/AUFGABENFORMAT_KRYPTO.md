@@ -583,7 +583,8 @@ Boss-Aufgaben erlaubt (Material), Werkzeuge nicht.
 
 **Darstellung:** Geheimtext in Fünfergruppen; unter jedem Buchstaben der aktuelle Klartextbuchstabe (klein) bzw. `·`.
 Darüber eine Leiste der vorkommenden Geheimbuchstaben (nach Häufigkeit oder alphabetisch) mit je einem Eingabefeld;
-Bedienung per Tippen (Geheimbuchstabe wählen → Klarbuchstabe auf eingeblendeter Tastatur) oder Ziehen. Doppelt
+Bedienung per Tippen/Tastatur: je Geheimbuchstabe ein Eingabefeld, Pfeiltasten springen zwischen den Feldern (M4 E28:
+Ziehen entfällt). Doppelt
 vergebene Klarbuchstaben werden markiert (Hinweis, keine Sperre). „Rückgängig“ (letzte 20 Schritte), „Alles
 zurücksetzen“. Live-Vorschau rein clientseitig. Barrierefreiheit: Leiste als Liste von Eingabefeldern
 `aria-label="Geheimbuchstabe T, 9-mal, Klartext:"`; Vorschau als Textzeile mit `aria-live="polite"` (gedrosselt).

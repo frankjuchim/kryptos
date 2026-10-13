@@ -1,5 +1,5 @@
 /* Kryptos – Interaktionen im Client (Delta §8, TECHNIK §4.4), registriert über AQI.registriere:
-   chiffre (Task 54). Prüfung NUR auf dem Server: Die Oberfläche berechnet nie eine Lösung (auch nicht zur Längen-
+   chiffre (Task 54), zuordnung (Task 55). Prüfung NUR auf dem Server: Die Oberfläche berechnet nie eine Lösung (auch nicht zur Längen-
    bestimmung, E26) und zeigt Lösungen nur aus Server-Antworten. Antwortformen = Server-Verträge
    (src/krypto/interaktionen/*.js, bereinige). Alles als DOM-Textknoten (AQ.h), keine Inline-Styles (CSP). */
 'use strict';
@@ -447,7 +447,261 @@ const KRI = (() => {
     return self;
   }
 
+  /* ================= zuordnung (Delta §8.2, E28: Tippen/Tastatur, kein Ziehen) ================= */
+
+  const MAX_VERLAUF = 20;
+
+  function teilZuordnung(ia, kontext) {
+    const geheim = Krypto.nurBuchstaben(String(ia.geheimtext ?? ''));
+    const anzahl = Krypto.haeufigkeiten(geheim);
+    const vorkommend = Object.keys(anzahl).filter((g) => anzahl[g] > 0);
+    const vorgabe = {};
+    if (istObjekt(ia.vorgabe)) {
+      for (const [g, kl] of Object.entries(ia.vorgabe)) {
+        const gg = Krypto.nurBuchstaben(String(g));
+        const kk = Krypto.nurBuchstaben(String(kl ?? ''));
+        if (gg.length === 1 && kk.length === 1 && anzahl[gg] > 0) vorgabe[gg] = kk;
+      }
+    }
+    /** aktuelle Zuordnung Geheim → Klar (GROSS, '' = nicht vergeben) */
+    let zu = {};
+    const leereZuordnung = () => Object.fromEntries(vorkommend.map((g) => [g, vorgabe[g] || '']));
+    zu = leereZuordnung();
+    const verlauf = [];
+    let sortierung = 'haeufigkeit';
+    let gesperrt = false;
+
+    const felder = new Map();
+    const eintraege = new Map();
+    const doppeltSr = new Map();
+    const klarSpans = new Map(vorkommend.map((g) => [g, []]));
+
+    const rueckgaengig = h('button', { type: 'button', class: 'knopf knopf-zweit rueckgaengig', disabled: true }, '↶ Rückgängig');
+    const zuruecksetzen = h('button', { type: 'button', class: 'knopf knopf-zweit zuruecksetzen' }, 'Alles zurücksetzen');
+    const sortKnoepfe = [
+      ['haeufigkeit', 'nach Häufigkeit'],
+      ['alphabetisch', 'alphabetisch']
+    ].map(([wert, text]) => {
+      const b = h('button', { type: 'button', class: 'knopf knopf-leise', 'aria-pressed': String(wert === sortierung) }, text);
+      b.addEventListener('click', () => {
+        sortierung = wert;
+        sortKnoepfe.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        ordne();
+      });
+      return b;
+    });
+    const leiste = h('ul', { class: 'zuordnung-leiste', 'aria-label': 'Geheimbuchstaben und zugeordnete Klartextbuchstaben' });
+    for (const g of vorkommend) {
+      const fest = Object.hasOwn(vorgabe, g);
+      const feld = h('input', {
+        class: 'z-feld',
+        type: 'text',
+        maxlength: 1,
+        autocapitalize: 'characters',
+        autocomplete: 'off',
+        autocorrect: 'off',
+        spellcheck: 'false',
+        'aria-label': `Geheimbuchstabe ${g}, ${anzahl[g]}-mal, Klartext:`,
+        value: zu[g],
+        disabled: fest
+      });
+      feld.addEventListener('input', () => eingabe(g, feld));
+      feld.addEventListener('keydown', (ev) => taste(g, ev));
+      feld.addEventListener('focus', () => feld.select());
+      const sr = h('span', { class: 'sr' });
+      doppeltSr.set(g, sr);
+      const li = h(
+        'li',
+        { class: 'z-eintrag' + (fest ? ' vorgabe' : ''), 'data-g': g },
+        h('span', { class: 'z-buchstabe', 'aria-hidden': 'true' }, g),
+        h('span', { class: 'z-anzahl', 'aria-hidden': 'true' }, `${anzahl[g]}×`),
+        feld,
+        fest ? h('span', { class: 'sr' }, 'vorgegeben') : null,
+        h('span', { class: 'z-marke', 'aria-hidden': 'true' }),
+        sr
+      );
+      felder.set(g, feld);
+      eintraege.set(g, li);
+    }
+    function ordne() {
+      const reihe = [...vorkommend].sort((x, y) => (sortierung === 'alphabetisch' ? x.localeCompare(y) : anzahl[y] - anzahl[x] || x.localeCompare(y)));
+      AQ.mount(leiste, reihe.map((g) => eintraege.get(g)));
+    }
+    ordne();
+
+    // Text in Fünfergruppen: oben Geheimbuchstabe, unten Klartext (klein) bzw. ·
+    const gruppen = [];
+    for (let i = 0; i < geheim.length; i += 5) gruppen.push(geheim.slice(i, i + 5));
+    const text = h(
+      'div',
+      { class: 'zuordnung-text', 'aria-hidden': 'true' },
+      gruppen.map((gr) =>
+        h(
+          'span',
+          { class: 'z-gruppe' },
+          [...gr].map((g) => {
+            const klar = h('span', { class: 'z-klar' }, '·');
+            klarSpans.get(g).push(klar);
+            return h('span', { class: 'z-paar' }, h('span', { class: 'z-geheim' }, g), klar);
+          })
+        )
+      )
+    );
+    const vorschau = h('p', { class: 'zuordnung-vorschau', 'aria-live': 'polite' });
+    const anteil = h('p', { class: 'zuordnung-anteil', 'aria-live': 'polite' });
+    let vorschauTimer = null;
+    let vorschauZuletzt = 0;
+    const klartext = () => [...geheim].map((g) => (zu[g] ? zu[g].toLowerCase() : '·')).join('');
+    function vorschauJetzt() {
+      vorschauTimer = null;
+      vorschauZuletzt = Date.now();
+      vorschau.textContent = `Klartext: ${Krypto.gruppieren(klartext(), 5)}`;
+    }
+    /** Vorschau höchstens alle 400 ms (Screenreader-Ansage gedrosselt) */
+    function vorschauSpaeter() {
+      if (vorschauTimer) return;
+      vorschauTimer = setTimeout(vorschauJetzt, Math.max(0, 400 - (Date.now() - vorschauZuletzt)));
+    }
+
+    function zeichne() {
+      const zaehler = {};
+      for (const g of vorkommend) if (zu[g]) zaehler[zu[g]] = (zaehler[zu[g]] || 0) + 1;
+      for (const g of vorkommend) {
+        const f = felder.get(g);
+        if (f.value !== zu[g]) f.value = zu[g];
+        for (const sp of klarSpans.get(g)) sp.textContent = zu[g] ? zu[g].toLowerCase() : '·';
+        const doppelt = !!zu[g] && zaehler[zu[g]] > 1;
+        eintraege.get(g).classList.toggle('doppelt', doppelt);
+        doppeltSr.get(g).textContent = doppelt ? 'doppelt vergeben' : '';
+      }
+      rueckgaengig.disabled = gesperrt || !verlauf.length;
+      vorschauSpaeter();
+    }
+    function merke() {
+      verlauf.push({ ...zu });
+      if (verlauf.length > MAX_VERLAUF) verlauf.shift();
+    }
+    function markeWeg(g) {
+      const li = eintraege.get(g);
+      li.classList.remove('ok', 'falsch');
+      li.querySelector('.z-marke').textContent = '';
+      felder.get(g).removeAttribute('aria-invalid');
+    }
+    function eingabe(g, feld) {
+      if (gesperrt || Object.hasOwn(vorgabe, g)) return;
+      const roh = String(feld.value || '');
+      const n = roh.trim() === '' ? '' : /^[A-Za-z]$/.test(roh.trim()) ? roh.trim().toUpperCase() : null;
+      if (n === null) {
+        toast('Nur Buchstaben A–Z.', true);
+        feld.value = zu[g];
+        if (!zu[g]) feld.value = '';
+        return;
+      }
+      if (n === zu[g]) return zeichne();
+      merke();
+      zu[g] = n;
+      markeWeg(g);
+      zeichne();
+      kontext.geaendert();
+    }
+    function taste(g, ev) {
+      if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
+      const offen = [...leiste.querySelectorAll('input.z-feld')].filter((f) => !f.disabled);
+      const i = offen.indexOf(felder.get(g));
+      const j = ev.key === 'ArrowLeft' ? i - 1 : i + 1;
+      if (i < 0 || j < 0 || j >= offen.length) return;
+      ev.preventDefault();
+      offen[j].focus();
+    }
+    rueckgaengig.addEventListener('click', () => {
+      if (gesperrt || !verlauf.length) return;
+      zu = verlauf.pop();
+      vorkommend.forEach(markeWeg);
+      zeichne();
+      kontext.geaendert();
+    });
+    zuruecksetzen.addEventListener('click', () => {
+      if (gesperrt) return;
+      merke();
+      zu = leereZuordnung();
+      vorkommend.forEach(markeWeg);
+      anteil.textContent = '';
+      zeichne();
+      kontext.geaendert();
+    });
+
+    const steuerung = h(
+      'div',
+      { class: 'zuordnung-steuerung knopf-reihe', role: 'group', 'aria-label': 'Werkbank' },
+      h('span', { class: 'knopf-reihe', role: 'group', 'aria-label': 'Reihenfolge der Leiste' }, sortKnoepfe),
+      rueckgaengig,
+      zuruecksetzen
+    );
+    const haupt = h('div', { class: 'zuordnung-haupt' }, leiste, h('figure', { class: 'zuordnung-figur' }, h('figcaption', { class: 'sr' }, 'Geheimtext mit zugeordnetem Klartext'), text), vorschau, anteil);
+    const seiten = ia.haeufigkeit === true ? h('aside', { class: 'zuordnung-haeufigkeit', 'aria-label': 'Häufigkeiten des Geheimtextes' }, KRB.haeufigkeit({ quelle: 'text', text: geheim, referenz: 'deutsch', sortierung: 'absteigend', titel: 'Häufigkeiten im Geheimtext' })) : null;
+    const box = h('div', { class: 'zuordnung' + (seiten ? ' mit-haeufigkeit' : '') }, steuerung, h('div', { class: 'zuordnung-flaeche' }, haupt, seiten));
+    zeichne();
+    vorschauJetzt();
+
+    const self = {
+      kind: 'zuordnung',
+      ui: box,
+      antwort() {
+        return { zuordnung: { ...zu } };
+      },
+      leer() {
+        return vorkommend.every((g) => Object.hasOwn(vorgabe, g) || !zu[g]);
+      },
+      setze(a) {
+        if (!istObjekt(a)) return;
+        const z = istObjekt(a.zuordnung) ? a.zuordnung : a;
+        for (const g of vorkommend) {
+          if (Object.hasOwn(vorgabe, g)) continue;
+          const v = Krypto.nurBuchstaben(String(z[g] ?? ''));
+          zu[g] = v.length === 1 ? v : '';
+        }
+        vorkommend.forEach(markeWeg);
+        zeichne();
+      },
+      feedback(r) {
+        if (!r) return;
+        if (typeof r.anteil === 'number') anteil.textContent = `${Math.round(r.anteil * 100)} % der Textstellen richtig`;
+        if (istObjekt(r.buchstaben)) {
+          for (const [g, ok] of Object.entries(r.buchstaben)) {
+            const li = eintraege.get(g);
+            if (!li) continue;
+            li.classList.toggle('ok', !!ok);
+            li.classList.toggle('falsch', !ok);
+            li.querySelector('.z-marke').textContent = ok ? '✓' : '✗';
+            felder.get(g).setAttribute('aria-invalid', ok ? 'false' : 'true');
+          }
+        }
+      },
+      loesung(lo, muster) {
+        const z = (istObjekt(lo) && istObjekt(lo.zuordnung) && lo.zuordnung) || (istObjekt(muster) && istObjekt(muster.zuordnung) && muster.zuordnung) || {};
+        for (const g of vorkommend) {
+          const v = Krypto.nurBuchstaben(String(z[g] ?? ''));
+          zu[g] = v.length === 1 ? v : zu[g];
+          markeWeg(g);
+          felder.get(g).classList.add('loesung');
+        }
+        zeichne();
+        if (vorschauTimer) clearTimeout(vorschauTimer);
+        vorschauJetzt();
+        if (istObjekt(lo) && typeof lo.klartext === 'string') vorschau.textContent = `Klartext: ${Krypto.gruppieren(lo.klartext.toLowerCase(), 5)}`;
+      },
+      sperren(an) {
+        gesperrt = !!an;
+        for (const [g, f] of felder) f.disabled = gesperrt || Object.hasOwn(vorgabe, g);
+        zuruecksetzen.disabled = gesperrt;
+        rueckgaengig.disabled = gesperrt || !verlauf.length;
+      }
+    };
+    return self;
+  }
+
   AQI.registriere('chiffre', teilChiffre);
+  AQI.registriere('zuordnung', teilZuordnung);
   AQI.schrittArten.add('chiffre');
   AQI.schrittAus.add('chiffre');
 
