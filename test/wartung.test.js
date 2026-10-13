@@ -133,5 +133,5 @@ test('Wartungsbericht nur für den Superadmin: GET /api/admin/wartung', async ()
   app.locals.wartung.lauf();
   const r = await admin.get('/api/admin/wartung').expect(200);
   assert.ok(r.body.bericht.zeit);
-  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'boss', 'funkraum', 'jti', 'loeschungen']);
+  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'arenaFrist', 'boss', 'funkraum', 'jti', 'loeschungen']);
 });

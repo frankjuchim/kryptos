@@ -21,6 +21,8 @@ const { createLevelMedien, createAktenNiveau } = require('./krypto/medien');
 const { createTeams } = require('./krypto/teams');
 const { createFunkraum } = require('./krypto/funkraum/dienst');
 const { funkRouten } = require('./krypto/funkraum/routen');
+const { createArena } = require('./krypto/arena/dienst');
+const { arenaRouten } = require('./krypto/arena/routen');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -95,8 +97,12 @@ function createApp(opts) {
   const sitzung = createSitzung({ db, secret });
   const manifest = createManifest({ inhalte: svc.inhalte, version: VERSION, konfig });
   const niveaus = createNiveauUebersicht({ inhalte: svc.inhalte });
+  // K41: Teams (Tischgruppen, Plan M7 Task 133) und Arena-Dienst (Task 143) vor dem Wartungsjob – er beendet abgelaufene
+  // Angriffsphasen als Rückfall (E102)
+  const teams = createTeams({ db, svc });
+  const arena = createArena({ db, svc, teams, now: ctx.now, zufallBytes: ctx.zufallBytes, log });
   // Wartungsjob (TECHNIK §7.4): server.js startet ihn (wartung.starte()); Tests rufen wartung.lauf() direkt
-  const wartung = createWartung({ db, svc, now: ctx.now, log });
+  const wartung = createWartung({ db, svc, now: ctx.now, log, arenaFrist: () => arena.fristenPruefen() });
 
   const app = express();
   app.disable('x-powered-by');
@@ -158,8 +164,7 @@ function createApp(opts) {
   app.use('/sso', createSsoRouter({ db, svc, konfig, sitzung, secret, now: ctx.now }));
 
   /* ---------- Verbund-API (VERTRAG §6, TECHNIK §6.7): vor dem API-Router, ohne Origin-Prüfung ---------- */
-  // K41: Teams (Tischgruppen) und Funkraum-Dienst (Plan M7 Tasks 133, 134; Zufall nur über ctx.zufallBytes, E113)
-  const teams = createTeams({ db, svc });
+  // K41: Funkraum-Dienst (Plan M7 Task 134; Zufall nur über ctx.zufallBytes, E113; Teams oben)
   // Wettknacken-Seed (Plan M7 Task 138): opts.funkraumDatei, sonst <seedDir>/funkraum/wettknacken.json; ohne seedDir keiner
   const funkSeedDir = opts.seedDir === undefined ? path.join(ROOT_DIR, 'seed') : opts.seedDir;
   const funkraumDatei = opts.funkraumDatei !== undefined ? opts.funkraumDatei : funkSeedDir ? path.join(funkSeedDir, 'funkraum', 'wettknacken.json') : null;
@@ -300,6 +305,8 @@ function createApp(opts) {
   teams.routen(api, helpers);
   // K41: Funkraum – Regie-Routen (Plan M7 Task 134)
   funkRouten(funkraum)(api, helpers);
+  // K41: Werkstatt und Arena (Plan M7 Tasks 143–146)
+  arenaRouten(arena)(api, helpers);
   adminRoutes(api, helpers);
   gastRoutes(api, helpers);
 
@@ -329,6 +336,7 @@ function createApp(opts) {
   app.locals.ctx = ctx;
   app.locals.teams = teams;
   app.locals.funkraum = funkraum;
+  app.locals.arena = arena;
   return app;
 }
 

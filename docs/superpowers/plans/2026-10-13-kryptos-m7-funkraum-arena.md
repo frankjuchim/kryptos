@@ -1604,7 +1604,7 @@ Beamer bei 1920 × 1080.
   `teams.teamVon`; `eigene` ab Task 144.
 - Lehrkraft `GET /api/lehrer/kurse/:kursId/arena` → `{ arena: Regie-Ansicht | null }` (Regie-Ansicht ohne `salz`).
 
-- [ ] **Step 1: Failing test** – `test/arena.test.js`:
+- [x] **Step 1: Failing test** – `test/arena.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1674,9 +1674,9 @@ Beamer bei 1920 × 1080.
     for (const t of ['arena', 'arena_chiffren', 'arena_versuche']) assert.equal(f.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get().n, 0, t);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Rechte über `svc.kurse.kursFuer`, gesperrt → 403; Router mit `delete`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün (inkl. `wartung.test.js` mit `arenaFrist`).
-- [ ] **Step 5: Commit** `git commit -m "Arena: Phasen, Lehrkraft-Regie, Frist der Angriffsphase, Schüler-Status"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Rechte über `svc.kurse.kursFuer`, gesperrt → 403; Router mit `delete`).
+- [x] **Step 4: Run** → PASS; `npm test` grün (inkl. `wartung.test.js` mit `arenaFrist`).
+- [x] **Step 5: Commit** `git commit -m "Arena: Phasen, Lehrkraft-Regie, Frist der Angriffsphase, Schüler-Status"`.
 
 ### Task 144: Arena – Werkstatt-Prüfung und Einreichung; Klartext und Schlüssel nie gespeichert (TECHNIK §9.2–§9.4, W3 §9.4, E104)
 
@@ -2858,6 +2858,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   zuerst, dass sie vor dem Beenden in den Funkraum-Tabellen stehen. Zusatztests: je Typ Löschung nach `sub` von jedem der drei
   Teams mitten im Spiel (übrige Stände, Regie, Beamer, alle Phasen, Beenden ohne Fehler); Szenario ohne verbleibende Rolle.
   `src/verbund/loeschen.js`: Kopfkommentar listet die Funkraum-/Arena-Zeilen einer Löschung nach `sub`.
+- **Task 143:** `src/app.js` (K41): `createTeams` rückt vor `createWartung` (vorher im Verbund-Block), damit
+  `createArena` vor dem Wartungsjob steht; die Wartung bekommt die Option `arenaFrist` (Standard `() => 0`, Schritt vor der
+  30-Tage-Löschung). Die Routen hängen über `arenaRouten(arena)(api, helpers)` (`src/krypto/arena/routen.js`, wie
+  `funkRouten`) statt `arena.routen`. Regie-Ansicht `{ id, kursId, status, angriffBis, createdAt, geschlossenAt, chiffren }`
+  (Anzahl, nie das Salz); `team` im Schüler-Status mit `nr` wie `/api/funk`. `angriffBis` auch beim Anlegen (gleiche
+  Prüfung: ISO, Zukunft, ≤ 3 h), bei anderen Phasen 400; unbekannte Phase 400, Zusatzfeld beim Anlegen 400. Eine fremde
+  Arena liefert 404 „Arena nicht gefunden.“ Zusatztest: Regie-Stand je Kurs, Eingaben, Haken `beimPhasenwechsel` über die
+  Frist, kein Salz in Antworten, anderer Kurs, gesperrter Kurs (Schüler 403, Lehrkraft liest).
 
 ## Reihenfolge und Abhängigkeiten
 
