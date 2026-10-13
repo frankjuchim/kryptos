@@ -156,3 +156,28 @@ td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
   .funk-fortschritt li { grid-template-columns: minmax(0, 1fr) auto; }
   .funk-fortschritt .progress { grid-column: 1 / -1; grid-row: 2; }
 }
+
+/* Tab „Knack-Arena“ (Plan M7 Task 158) */
+.arena-tab { display: grid; gap: var(--a-3); min-width: 0; }
+.arena-tab h2, .arena-tab h3 { margin: 0; }
+.arena-tab p { margin: 0; }
+.arena-steuerung { align-items: flex-end; }
+.arena-dauer-label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); font-weight: 700; }
+.arena-dauer-label input { min-height: var(--ziel); width: 6rem; }
+.arena-beamer-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-4); }
+.arena-qr-rahmen { margin: 0; display: grid; justify-items: center; gap: var(--a-1); }
+.arena-qr { width: 120px; height: 120px; border-radius: 6px; }
+.lk-arena-chiffren { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
+.lk-arena-chiffre { display: grid; gap: var(--a-1); padding: var(--a-3); border: 1px solid var(--linie); border-radius: 10px; background: var(--karte); min-width: 0; }
+.lk-arena-chiffre h4 { margin: 0; font-size: 1.05rem; }
+.lk-arena-chiffre .arena-stufen { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.lk-arena-chiffre .arena-beschreibung { white-space: pre-wrap; overflow-wrap: anywhere; }
+.lk-arena-chiffre .arena-hinweis-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-1); }
+.arena-matrix { width: 100%; }
+.arena-matrix caption { text-align: left; font-weight: 700; padding-bottom: var(--a-1); }
+.arena-matrix td { font-variant-numeric: tabular-nums; }
+.arena-matrix td.erfolg { font-weight: 700; color: var(--ok); }
+.beurteilungen { display: grid; gap: var(--a-2); }
+.beurteilungen-liste { margin: 0; display: grid; gap: var(--a-3); }
+.beurteilungen-liste dt { font-weight: 700; }
+.beurteilungen-liste dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }

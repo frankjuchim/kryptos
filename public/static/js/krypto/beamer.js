@@ -1,7 +1,9 @@
 /* Kryptos – Beamer-Ansicht /beamer/funkraum/:id und /beamer/arena/:id (DESIGNSYSTEM §5, TECHNIK §11.1, Plan M7 Task 155,
    E99, E114): Nacht-Vollbild ohne Kopfzeile. Funkraum: KRPoll auf den Lehrkraft-Stand mit ?ansicht=beamer (verdeckt bis zur
    Auflösung, E99), Netz (KRNetz, Ansicht beamer, Geheimtext-Vorschau), Ticker (letzte 8, gedrosselt), QR-Code zum
-   Funkraum, Pause-Banner und je Szenario Fortschritt bzw. Auflösung. Die Arena folgt in Task 158 (bis dahin Leerzustand).
+   Funkraum, Pause-Banner und je Szenario Fortschritt bzw. Auflösung. Arena (Task 158, E103): KRPoll auf
+   /api/lehrer/arena/<id>/beamer (2 s, ETag/304), Karten je Team (nie Beschreibung oder Beurteilung), Ticker der Erfolge,
+   Restzeit-Uhr bis angriffBis, QR-Code zur Werkstatt.
    Texte nur als Textknoten; Werte per CSSOM nur als Custom Properties. */
 'use strict';
 
@@ -13,6 +15,7 @@ const KRBeamer = (() => {
   const INTERVALL = 2000;
   let poller = null;
   let ticker = null;
+  let uhr = null; // Restzeit der Arena
 
   /** Art und id aus dem Pfad: { art: 'funkraum'|'arena'|null, id } */
   function art(pfad = location.pathname) {
@@ -26,16 +29,17 @@ const KRBeamer = (() => {
     poller = null;
     if (ticker) ticker.stopp();
     ticker = null;
+    clearInterval(uhr);
   }
 
-  function leer(haupt, titel) {
+  function leer(haupt, titel, text = 'Kein laufendes Szenario.') {
     AQ.mount(
       haupt,
       h(
         'div',
         { class: 'beamer-flaeche' },
         h('div', { class: 'beamer-titel' }, KR.symbol('icons', 'logo-ring'), h('h1', null, titel)),
-        h('div', { class: 'leer-zustand' }, KR.ornament(6), h('p', null, 'Kein laufendes Szenario.'), h('a', { class: 'knopf knopf-zweit', href: '/lehrer#/' }, 'Zurück zur Lehrkraft-Ansicht'))
+        h('div', { class: 'leer-zustand' }, KR.ornament(6), h('p', null, text), h('a', { class: 'knopf knopf-zweit', href: '/lehrer#/' }, 'Zurück zur Lehrkraft-Ansicht'))
       )
     );
   }
@@ -227,14 +231,86 @@ const KRBeamer = (() => {
     });
   }
 
+  /* ---------- Arena (Task 158) ---------- */
+  const ARENA_PHASE = Object.freeze({ werkstatt: 'Werkstatt – die Teams bauen ihre Verfahren', angriff: 'Angriffsphase', beurteilung: 'Beurteilung', geschlossen: 'geschlossen' });
+
+  function arena(haupt, id) {
+    const titel = h('h1', null, 'Knack-Arena');
+    const phase = h('p', { class: 'beamer-phase' });
+    const rest = h('p', { class: 'beamer-restzeit', 'aria-label': 'Restzeit der Angriffsphase' });
+    const karten = h('ol', { class: 'beamer-arena-karten' });
+    const tickerOl = h('ol', { class: 'arena-ticker' });
+    const verbindung = h('p', { class: 'beamer-verbindung', role: 'status' });
+    const qr = h('figure', { class: 'beamer-qr-rahmen' }, h('img', { class: 'beamer-qr', src: '/api/lehrer/qr.svg?ziel=werkstatt', alt: 'QR-Code zur Werkstatt', width: '220', height: '220' }), h('figcaption', null, 'Werkstatt öffnen'));
+    KR.epoche(3);
+    AQ.mount(
+      haupt,
+      h(
+        'div',
+        { class: 'beamer-flaeche beamer-arena' },
+        h('div', { class: 'beamer-kopf' }, h('div', { class: 'beamer-titel' }, KR.symbol('icons', 'logo-ring'), h('div', null, titel, phase)), rest, qr),
+        h('div', { class: 'beamer-raster' }, h('div', { class: 'beamer-haupt' }, karten), h('aside', { class: 'beamer-seite', 'aria-labelledby': 'beamer-ticker-titel' }, h('h2', { id: 'beamer-ticker-titel' }, 'Geknackt'), tickerOl, verbindung))
+      )
+    );
+    let bis = NaN;
+    function restzeit() {
+      if (Number.isNaN(bis)) {
+        rest.hidden = true;
+        return;
+      }
+      const sek = Math.max(0, Math.round((bis - Date.now()) / 1000));
+      rest.hidden = false;
+      rest.textContent = `${Math.floor(sek / 60)}:${String(sek % 60).padStart(2, '0')}`;
+    }
+    clearInterval(uhr);
+    uhr = setInterval(restzeit, 1000);
+    function karte(k, status) {
+      const symbol = k.geknackt ? '🔓' : '🔒';
+      const zustand = status === 'werkstatt' ? 'eingereicht' : k.geknackt ? `geknackt von ${(k.von || []).join(', ')}${Number.isInteger(k.sekunden) ? ` nach ${KRNetz.dauer(k.sekunden)}` : ''}` : 'ungeknackt';
+      return h(
+        'li',
+        { class: `beamer-arena-karte${k.geknackt ? ' geknackt' : ''}` },
+        h('h2', null, k.team.name),
+        k.name ? h('p', { class: 'beamer-arena-name' }, k.name) : null,
+        k.ausschnitt ? h('p', { class: 'beamer-arena-ausschnitt' }, k.ausschnitt) : null,
+        Array.isArray(k.stufen) && k.stufen.length ? h('p', { class: 'beamer-arena-stufen' }, k.stufen.join(' → ')) : null,
+        h('p', { class: 'beamer-arena-status' }, h('span', { 'aria-hidden': 'true' }, status === 'werkstatt' ? '✉' : symbol), ' ', zustand),
+        status === 'werkstatt' ? null : h('p', { class: 'beamer-arena-angriffe' }, `${k.angriffe} ${k.angriffe === 1 ? 'Angriff' : 'Angriffe'}`)
+      );
+    }
+    function zeige(d) {
+      document.title = 'Knack-Arena · Beamer · Kryptos';
+      phase.textContent = ARENA_PHASE[d.status] || d.status;
+      bis = d.status === 'angriff' && d.angriffBis ? Date.parse(d.angriffBis) : NaN;
+      restzeit();
+      AQ.mount(karten, (d.karten || []).map((k) => karte(k, d.status)));
+      const t = (d.ticker || []).slice(-8).reverse();
+      AQ.mount(tickerOl, t.length ? t.map((e) => h('li', null, `${e.von} hat die Chiffre von ${e.ziel} geknackt`)) : h('li', { class: 'leer' }, 'Noch nichts geknackt.'));
+    }
+    poller = KRPoll.starte({
+      url: () => `/api/lehrer/arena/${encodeURIComponent(id)}/beamer`,
+      intervall: INTERVALL,
+      beiDaten: zeige,
+      beiZustand: (z) => {
+        if (z === 'ende') {
+          stopp();
+          leer(haupt, 'Knack-Arena', 'Keine Arena geöffnet.');
+          return;
+        }
+        verbindung.textContent = z === 'gestoert' ? 'Verbindung unterbrochen – wird wiederhergestellt' : '';
+      }
+    });
+  }
+
   function start() {
     const haupt = document.getElementById('haupt');
     const a = art();
     const titel = TITEL[a] || 'Beamer';
     document.title = `${titel} · Beamer · Kryptos`;
     if (a === 'funkraum' && typeof KRPoll !== 'undefined') return funkraum(haupt, idAusPfad());
+    if (a === 'arena' && typeof KRPoll !== 'undefined') return arena(haupt, idAusPfad());
     leer(haupt, titel);
   }
   document.addEventListener('DOMContentLoaded', start);
-  return { start, art, stopp };
+  return { start, art, stopp, _poller: () => poller };
 })();

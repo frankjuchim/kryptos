@@ -797,3 +797,53 @@ test('Beamer Doppelter Schlüssel, Schlüsseltausch und Mallory: verdeckt bis zu
   assert.match(zeile, /Team Skytale → Team Quadrat \(S41\) → Team Scheibe \(S23\)/);
   ma.wert('KRBeamer').stopp();
 });
+
+/* ---------- Task 158: Beamer „Arena“ ---------- */
+const ladeArenaBeamer = (antwort) => D.lade(BEAMER, { url: 'http://x.test/beamer/arena/4', fetch: { 'GET /api/lehrer/arena/4/beamer': antwort } });
+const BKARTE = (name, extra = {}) => ({ team: { id: name.length, name }, name: 'FUNKGITTER', ausschnitt: 'MRESE IEAUI SIRUT TLEFR RCESS…', geknackt: false, von: [], sekunden: null, angriffe: 0, ...extra });
+
+test('Beamer Arena: Karten je Team ohne Beschreibung, Ticker der Erfolge, Restzeit, QR zur Werkstatt; 304 ändert nichts', async () => {
+  let n = 0;
+  const bis = new Date(Date.now() + 12 * 60e3).toISOString();
+  const daten = {
+    id: 4,
+    status: 'angriff',
+    angriffBis: bis,
+    karten: [BKARTE('Team Skytale', { beschreibung: 'GEHEIME BESCHREIBUNG', geknackt: true, von: ['Team Scheibe'], sekunden: 70, angriffe: 3 }), BKARTE('Team Scheibe', { name: null, angriffe: 1 })],
+    ticker: [{ von: 'Team Scheibe', ziel: 'Team Skytale', zeit: '2026-10-13T08:05:00Z' }]
+  };
+  const k = ladeArenaBeamer((b, { headers }) => {
+    n++;
+    if (n === 1) return { status: 200, headers: { etag: '"abc"' }, body: daten };
+    assert.equal(headers['If-None-Match'], '"abc"');
+    return { status: 304 };
+  });
+  await k.ruhe();
+  const karten = k.alle(k.document, 'li.beamer-arena-karte');
+  assert.equal(karten.length, 2);
+  assert.match(k.text(karten[0]), /Team Skytale/);
+  assert.match(k.text(karten[0]), /FUNKGITTER/);
+  assert.match(k.text(karten[0]), /MRESE IEAUI/);
+  assert.match(k.text(karten[0]), /geknackt von Team Scheibe/);
+  assert.match(k.text(karten[0]), /3 Angriffe/);
+  assert.match(k.text(karten[1]), /ungeknackt/);
+  assert.doesNotMatch(k.text(k.document.body), /GEHEIME BESCHREIBUNG/);
+  assert.match(k.text(k.eins(k.document, 'ol.arena-ticker')), /Team Scheibe hat die Chiffre von Team Skytale geknackt/);
+  assert.match(k.text(k.eins(k.document, '.beamer-restzeit')), /^1[12]:\d\d$/);
+  assert.equal(k.eins(k.document, 'img.beamer-qr').getAttribute('src'), '/api/lehrer/qr.svg?ziel=werkstatt');
+  const vorher = k.text(k.eins(k.document, 'ol.beamer-arena-karten'));
+  await k.wert('KRBeamer')._poller().jetzt();
+  await k.ruhe();
+  assert.ok(n >= 2);
+  assert.equal(k.text(k.eins(k.document, 'ol.beamer-arena-karten')), vorher, '304 ändert nichts');
+  k.wert('KRBeamer').stopp();
+  // Werkstatt: nur „eingereicht“; Beurteilung: Stufen-Kürzel
+  const w = ladeArenaBeamer({ status: 200, body: { id: 4, status: 'werkstatt', angriffBis: null, karten: [BKARTE('Team Skytale', { name: null, ausschnitt: null })], ticker: [] } });
+  await w.ruhe();
+  assert.match(w.text(w.eins(w.document, 'li.beamer-arena-karte')), /eingereicht/);
+  w.wert('KRBeamer').stopp();
+  const u = ladeArenaBeamer({ status: 200, body: { id: 4, status: 'beurteilung', angriffBis: null, karten: [BKARTE('Team Skytale', { stufen: ['VIG', 'SPA'] })], ticker: [] } });
+  await u.ruhe();
+  assert.match(u.text(u.eins(u.document, 'li.beamer-arena-karte')), /VIG → SPA/);
+  u.wert('KRBeamer').stopp();
+});

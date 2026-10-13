@@ -2632,10 +2632,10 @@ Beamer bei 1920 × 1080.
   Ausschnitt, Status mit Symbol, Angriffe, ab Beurteilung Stufen-Kürzel), Ticker der Erfolge, Restzeit-Uhr bei `angriffBis`,
   QR zur Werkstatt.
 
-- [ ] **Step 1: Failing tests** (Auszug): Start der Angriffsphase sendet `{ phase: 'angriff', angriffBis }` mit `jetzt + 25 min`
+- [x] **Step 1: Failing tests** (Auszug): Start der Angriffsphase sendet `{ phase: 'angriff', angriffBis }` mit `jetzt + 25 min`
   (Attrappen-Uhr); Beamer-Karten zeigen nie `beschreibung`; 304 ändert nichts.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung 1920 × 1080.
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft-Tab Arena und Beamer Arena (Regie, Beurteilungen, Versuche, Ticker)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung 1920 × 1080.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft-Tab Arena und Beamer Arena (Regie, Beurteilungen, Versuche, Ticker)"`.
 
 ### Task 159: Abzeichen in der Oberfläche – Sprites, Server-Icons, Profil (E112, M4 E32)
 
@@ -3015,6 +3015,16 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   `KRB.geheimtext`, in der Sichtprüfung fehlten die Abstände), `profil.js`, `funkpoll.js`. Sichtprüfung: drei Teams von
   Werkstatt bis geschlossen (Einreichen über die Oberfläche, Klartext falsch → Grenze 30 s als Meldung → Schlüssel richtig,
   Klartext richtig per Tastatur, Beurteilung gespeichert, Unknackbar/Arena-Knacker vergeben).
+
+- **Task 158:** Tab „Knack-Arena“ (`lehrer_arena.js`, `KRLehrerArena`) nach den Tabs „Funkraum“/„Teams“; pollt
+  `GET /api/lehrer/arena/:id` über `KRPoll` alle 5 s (kein Neuzeichnen, solange ein Eingabefeld den Fokus hat; nach dem
+  Schließen kein Polling). Matrix: Zeilen = alle Teams (Angreifer), Spalten = Chiffren (Ziel), Zelle „eigene“ / Anzahl /
+  „n · geknackt ✓“ (Symbol, nicht nur Farbe). Dauer 1–180 min (Server-Grenze 3 h), sonst Meldung ohne Anfrage. Nach dem
+  Schließen „Neue Arena anlegen“. Beamer: Karten mit Symbol (✉ eingereicht, 🔒/🔓) und gestrichelter Umrandung bei
+  „geknackt“, Restzeit als große Uhr (Sekundentakt), Ticker „Geknackt“ (letzte 8, neueste oben), Leerzustand
+  „Keine Arena geöffnet.“ nach Löschen (404 → Poller stoppt; Chromium meldet den 404 als Konsolenzeile). Test-Schnittstelle
+  `KRBeamer._poller()`. Plan-Test: „jetzt + 25 min“ mit Toleranz gegen die echte Uhr (die Attrappe hat keine steuerbare
+  `Date`). Sichtprüfung 1920 × 1080 (Werkstatt, Angriff, Beurteilung, geschlossen) und Tab 360/768/1280 hell/dunkel.
 
 ## Reihenfolge und Abhängigkeiten
 

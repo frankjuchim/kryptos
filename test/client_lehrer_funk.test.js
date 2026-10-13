@@ -328,3 +328,109 @@ test('Funkraum-Regie: Szenario-Liste des Clients = SZENARIEN des Servers; Sparsc
   assert.deepEqual(k2.roh(gesendet), { typ: 'doppelter-schluessel', optionen: { wiederholerTeamId: 1 } });
   assert.match(k2.text(k2.eins(k2.document, 'p.fehler')), /Test/);
 });
+
+/* ---------- Task 158: Tab „Arena“ ---------- */
+const LEHRER_ARENA = [...LEHRER, 'shared/krypto.js', 'krypto/diagnose_chips.js', 'krypto/lehrer_arena.js'];
+const TEAMS3 = { teams: [1, 2, 3].map((i) => ({ id: i, nr: i, name: NAMEN[i - 1], mitglieder: [{ id: 10 + i, name: `S${i}` }] })), ohneTeam: [], namen: NAMEN };
+const REGIE = (status, extra = {}) => ({ id: 4, kursId: 5, status, angriffBis: null, createdAt: '2026-10-13T08:00:00Z', geschlossenAt: null, chiffren: 2, ...extra });
+const LK_CHIFFRE = (id, team, extra = {}) => ({
+  id,
+  team,
+  name: id === 1 ? 'FUNKGITTER' : null,
+  stufen: [{ typ: 'vigenere', kuerzel: 'VIG', param: { schluessel: 'geheim' } }],
+  schluesselFelder: [],
+  beschreibung: `Beschreibung ${team.name}`,
+  geheimtext: 'MRESE IEAUI',
+  klartextLaenge: 167,
+  geknackt: false,
+  versuche: 0,
+  eigene: false,
+  hinweise: [{ p: 'P8', text: 'Stufen 1 und 2 verschmelzen.' }],
+  geknacktVon: [],
+  geknacktNachSek: null,
+  beurteilung: null,
+  versucheJeTeam: {},
+  ...extra
+});
+function ladeArenaTab(regie, ansicht, routen = {}) {
+  return D.lade(LEHRER_ARENA, {
+    url: 'http://x.test/lehrer#/kurs/5/arena',
+    vorher: seiteLehrer,
+    fetch: {
+      ...GRUND(),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: TEAMS3 },
+      'GET /api/lehrer/kurse/5/arena': { status: 200, body: { arena: regie } },
+      'GET /api/lehrer/arena/4': { status: 200, body: ansicht },
+      ...routen
+    }
+  });
+}
+
+test('Arena-Tab: ohne Arena „Arena anlegen“; Werkstatt zeigt eingereichte Chiffren, Start sendet angriffBis = jetzt + 25 min', async () => {
+  let angelegt = 0;
+  const k = ladeArenaTab(null, null, { 'POST /api/lehrer/kurse/5/arena': () => (angelegt++, { status: 200, body: REGIE('werkstatt', { chiffren: 0 }) }) });
+  await k.ruhe();
+  assert.match(k.text(k.document.body), /Teams/);
+  k.klick(k.eins(k.document, 'button.arena-anlegen'));
+  await k.ruhe();
+  assert.equal(angelegt, 1);
+
+  const phasen = [];
+  const w = ladeArenaTab(REGIE('werkstatt'), { ...REGIE('werkstatt'), chiffren: [LK_CHIFFRE(1, { id: 1, name: 'Team Skytale' }), LK_CHIFFRE(2, { id: 2, name: 'Team Scheibe' })] }, {
+    'POST /api/lehrer/arena/4/phase': (b) => (phasen.push(b), { status: 200, body: REGIE('angriff', { angriffBis: b.angriffBis }) })
+  });
+  await w.ruhe();
+  const liste = w.text(w.eins(w.document, '.lk-arena-chiffren'));
+  assert.match(liste, /Team Skytale/);
+  assert.match(liste, /FUNKGITTER/);
+  assert.match(liste, /VIG/);
+  assert.match(liste, /Beschreibung Team Skytale/);
+  assert.match(liste, /P8/);
+  assert.equal(w.eins(w.document, 'input.dauer').value, '25');
+  const vor = Date.now();
+  w.klick(w.eins(w.document, 'button.angriff-starten'));
+  await w.ruhe();
+  assert.equal(phasen.length, 1);
+  assert.equal(phasen[0].phase, 'angriff');
+  const bis = Date.parse(phasen[0].angriffBis);
+  assert.ok(bis >= vor + 25 * 60e3 - 1000 && bis <= Date.now() + 25 * 60e3 + 1000, 'jetzt + 25 min');
+  // Link zum Beamer und QR zur Werkstatt
+  assert.equal(w.eins(w.document, 'a.beamer-oeffnen').getAttribute('href'), '/beamer/arena/4');
+  assert.equal(w.eins(w.document, 'img.arena-qr').getAttribute('src'), '/api/lehrer/qr.svg?ziel=werkstatt');
+});
+
+test('Arena-Tab: Versuche-Matrix, Beurteilungen gesammelt, Beenden/Schließen/Löschen mit Bestätigung', async () => {
+  const aufrufe = [];
+  const ansicht = {
+    ...REGIE('beurteilung'),
+    chiffren: [
+      LK_CHIFFRE(1, { id: 1, name: 'Team Skytale' }, { geknackt: true, geknacktVon: [{ id: 2, name: 'Team Scheibe' }], geknacktNachSek: 70, versuche: 3, versucheJeTeam: { 2: { gesamt: 2, erfolg: 1 }, 3: { gesamt: 1, erfolg: 0 } }, beurteilung: 'Insgesamt ist unser Verfahren stark, weil …' }),
+      LK_CHIFFRE(2, { id: 2, name: 'Team Scheibe' }, { beurteilung: null })
+    ]
+  };
+  const k = ladeArenaTab(REGIE('beurteilung'), ansicht, {
+    'POST /api/lehrer/arena/4/phase': (b) => (aufrufe.push(['phase', b]), { status: 200, body: REGIE('geschlossen') }),
+    'DELETE /api/lehrer/arena/4': () => (aufrufe.push(['loeschen']), { status: 200, body: { ok: true } })
+  });
+  await k.ruhe();
+  const matrix = k.eins(k.document, 'table.arena-matrix');
+  const zeile = (team) => k.alle(matrix, 'tbody tr').find((tr) => k.text(tr.querySelector('th')) === team);
+  assert.deepEqual(k.alle(zeile('Team Scheibe'), 'td').map((td) => k.text(td)), ['2 · geknackt ✓', 'eigene']);
+  assert.deepEqual(k.alle(zeile('Team Quadrat'), 'td').map((td) => k.text(td)), ['1', '0']);
+  assert.deepEqual(k.alle(zeile('Team Skytale'), 'td').map((td) => k.text(td)), ['eigene', '0']);
+  const b = k.text(k.eins(k.document, 'section.beurteilungen'));
+  assert.match(b, /Insgesamt ist unser Verfahren stark/);
+  assert.match(b, /Team Scheibe.*noch keine Beurteilung/);
+  k.bestaetigen = true;
+  k.klick(k.eins(k.document, 'button.arena-schliessen'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(aufrufe[0]), ['phase', { phase: 'geschlossen' }]);
+  k.bestaetigen = undefined;
+  k.klick(k.eins(k.document, 'button.arena-loeschen'));
+  await k.ruhe();
+  const dialog = k.eins(k.document, 'dialog');
+  assert.match(k.text(dialog), /Alle Chiffren, Beurteilungen und Versuche werden gelöscht\./);
+  k.klick(k.eins(dialog, '.btn-row button'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(aufrufe.at(-1)), ['loeschen']);
+});

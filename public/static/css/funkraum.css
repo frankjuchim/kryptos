@@ -381,3 +381,21 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .arena-vorlage { margin: 0; padding-left: 1.3em; display: grid; gap: var(--a-1); }
 .arena-beurteilung textarea { width: 100%; }
 .arena-beurteilung .knopf { justify-self: start; }
+
+/* ---------- Beamer „Knack-Arena“ (Plan M7 Task 158) ---------- */
+.beamer-restzeit { margin: 0; font-family: var(--f-mono); font-size: clamp(2rem, 5vw, 5rem); font-weight: 700; color: var(--messing-hell); font-variant-numeric: tabular-nums; }
+.beamer-restzeit[hidden] { display: none; }
+.beamer-arena-karten { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+.beamer-arena-karte { display: grid; gap: var(--a-2); align-content: start; padding: var(--a-4); border: 2px solid var(--tinte-3); border-radius: var(--r-karte); background: var(--tinte-2); min-width: 0; }
+.beamer-arena-karte.geknackt { border-color: var(--fehler-hell); border-style: dashed; }
+.beamer-arena-karte h2 { margin: 0; color: var(--auf-tinte); font-size: clamp(1.3rem, 2vw, 2rem); }
+.beamer-arena-karte p { margin: 0; }
+.beamer-arena-name { font-size: clamp(1.1rem, 1.6vw, 1.6rem); color: var(--messing-hell); font-weight: 700; }
+.beamer-arena-ausschnitt { font-family: var(--f-mono); font-size: clamp(1rem, 1.4vw, 1.4rem); letter-spacing: .05em; overflow-wrap: anywhere; color: var(--auf-tinte); }
+.beamer-arena-stufen { font-family: var(--f-mono); font-size: clamp(1rem, 1.4vw, 1.4rem); color: var(--auf-tinte); }
+.beamer-arena-status { font-size: clamp(1.05rem, 1.5vw, 1.5rem); font-weight: 700; color: var(--auf-tinte); }
+.beamer-arena-karte.geknackt .beamer-arena-status { color: var(--fehler-hell); }
+.beamer-arena-angriffe { color: var(--auf-tinte-2); font-size: clamp(.95rem, 1.2vw, 1.25rem); }
+.arena-ticker { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); font-size: clamp(1rem, 1.3vw, 1.35rem); color: var(--auf-tinte); }
+.arena-ticker li { padding: var(--a-1) 0; border-bottom: 1px solid var(--tinte-3); }
+.arena-ticker li.leer { color: var(--auf-tinte-2); }
