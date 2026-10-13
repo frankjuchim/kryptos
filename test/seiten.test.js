@@ -188,3 +188,10 @@ test('Review M4 K6: Fehlerseiten trennen die Anrede (kein Absatz mit du und Sie 
     }
   }
 });
+
+test('Scrollbereiche (.scroll-x) halten absolut positionierte Screenreader-Texte (.sr) fest – kein Querscrollen bei 360 px', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'css', 'basis.css'), 'utf8');
+  const regel = /\.scroll-x\s*\{([^}]*)\}/.exec(css);
+  assert.ok(regel, '.scroll-x fehlt in basis.css');
+  assert.match(regel[1], /position:\s*relative/, '.scroll-x braucht position: relative (sonst ragen .sr-Spans der Matrix-Köpfe aus der Seite)');
+});

@@ -122,6 +122,7 @@ main:focus { outline: none; }
 main.wrap { padding-block: var(--a-6) var(--a-7); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-5); align-content: start; }
 .lesen { max-width: var(--lesebreite); }
 .scroll-x {
+  position: relative; /* hält absolut positionierte .sr-Texte im Scrollbereich (sonst Querscrollen bei 360 px) */
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
