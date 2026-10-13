@@ -135,6 +135,19 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .funk-dh-paare td.zahl { font-variant-numeric: tabular-nums; font-size: 1.1rem; }
 .funk-dh-paare form label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
+/* Szene „Mallory im Netz“ (Task 154) */
+.auftragskarte { margin: 0; font-family: var(--f-mono); font-size: 1.15rem; font-weight: 700; }
+.schluessel-angebote, .station { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.schluessel-angebot, .station-sendung { display: grid; gap: var(--a-2); padding: var(--a-2); border: 1px solid var(--linie); border-radius: 8px; min-width: 0; }
+.schluessel-angebot p, .station-sendung p { margin: 0; }
+.zertifikat-status { font-weight: 700; }
+.zertifikat-status.ok { color: var(--ok); }
+.zertifikat-status.falsch { color: var(--fehler); }
+.zertifikat-symbol { font-size: 1.2rem; }
+.station-sendung .funk-senden { padding: 0; border: 0; background: transparent; }
+.funk-bob-nummer { font-weight: 700; }
+.funk-szene-mallory select { min-height: var(--ziel); max-width: 100%; }
+
 /* Ticker */
 .funk-ticker-bereich[hidden] { display: none; }
 .funk-ticker-bereich h2 { margin: 0 0 var(--a-2); font-size: 1.05rem; }

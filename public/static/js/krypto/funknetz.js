@@ -45,11 +45,13 @@ const KRNetz = (() => {
     const cx = m.b / 2;
     const cy = m.h / 2;
     const ring = teams.filter((t) => t.id !== mitte);
+    // zwei Teams (z. B. ein Paar um Mallory) links und rechts, sonst ab oben im Uhrzeigersinn; Platz unten für die Namen
+    const start = ring.length === 2 ? Math.PI : -Math.PI / 2;
     ring.forEach((t, i) => {
-      const w = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(1, ring.length);
-      pos.set(t.id, { x: Math.round(cx + m.kreis * 1.35 * Math.cos(w)), y: Math.round(cy + m.kreis * Math.sin(w)) });
+      const w = start + (2 * Math.PI * i) / Math.max(1, ring.length);
+      pos.set(t.id, { x: Math.round(cx + m.kreis * 1.35 * Math.cos(w)), y: Math.round(cy - m.r * 0.4 + m.kreis * 0.82 * Math.sin(w)) });
     });
-    if (mitte !== null && mitte !== undefined && teams.some((t) => t.id === mitte)) pos.set(mitte, { x: cx, y: cy });
+    if (mitte !== null && mitte !== undefined && teams.some((t) => t.id === mitte)) pos.set(mitte, { x: cx, y: Math.round(cy - m.r * 0.4) });
     return pos;
   }
 

@@ -2493,12 +2493,12 @@ Beamer bei 1920 × 1080.
   Umschlägen Inhalt + `textarea.funk-text` (Whitelist-Formular) + `select.neu-verschliessen`, `form.schluessel-unterschieben`
   (an, Etikett, Zertifikat keins/eigenes/verändert), `button.alle-weiterleiten`.
 
-- [ ] **Step 1: Failing test** (Auszug): Mallory ändert einen offenen Umschlag – POST-Körper `{ aktion: 'ersetzen', nachricht,
+- [x] **Step 1: Failing test** (Auszug): Mallory ändert einen offenen Umschlag – POST-Körper `{ aktion: 'ersetzen', nachricht,
   text: 'LIEFERE 5 KISTEN AN TOR 8', etikett: 'S23' }`; Alice sieht bei Status `siegel` das Symbol ✗ und den Text „Siegel
   ungültig“; Bob sieht bei fremdem Etikett keinen Inhalt.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (drei Kontexte,
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (drei Kontexte,
   Phase 1 und 2, Regie stellt Zertifikat aus).
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szene Mallory im Netz (Station, Umschläge, Zertifikatsprüfung)"`.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szene Mallory im Netz (Station, Umschläge, Zertifikatsprüfung)"`.
 
 ### Task 155: Beamer „Funkraum“ – Netz, fliegende Nachrichten, Ticker, QR-Code, Auflösung je Szenario (DESIGNSYSTEM §5, TECHNIK §11.1, E99, E114)
 
@@ -2969,6 +2969,13 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   aus Nachrichten der Art `oeffentlich` ab der Version des `phase`-Ereignisses; Eve-Tipps ohne Rückmeldung; die Modulo-Uhr
   (nur Reiter „uhr“) wird bei neuem p neu geöffnet und mit a = g vorbelegt. Sichtprüfung: Demonstration 16 von 19, Crib
   „MORGEN “ → „HEUTE 8“, Runde 2 K = 82 (a = 37, b = 58) wie nachgerechnet.
+
+- **Task 154:** Alice sendet `{ etikett }` (Text kommt vom Server); der Zertifikatsstatus erscheint ab Phase 2 für alle
+  Angebote (Schlüssel aus Phase 1 → „kein gültiges Zertifikat“), in Phase 1 der Hinweis „Zertifikate gibt es noch nicht“.
+  Mallory: offener Umschlag mit vorbelegtem Text im Whitelist-Formular (`KRFunkSzenen.sendeFormular` ohne eigenen Knopf),
+  `select.neu-verschliessen` mit allen gesehenen Schlüsselnummern (eigene und an der Station gesehene), `ersetzen` sendet nur
+  geänderte Felder; „Alle weiterleiten“ nacheinander. Bob sieht fremde Umschläge als „Umschlag für S41 – du kannst ihn nicht
+  öffnen.“ ohne Melde-Knopf. Netz: zwei Ring-Teams links/rechts (Paar um Mallory), Platz für Namen unten.
 
 ## Reihenfolge und Abhängigkeiten
 

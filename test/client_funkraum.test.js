@@ -564,3 +564,137 @@ test('Schlüsseltausch: Eve sieht p, g, A, B je Paar und gibt Tipps ohne Rückme
   assert.deepEqual(k.alle(k.document, '.funk-werkzeug[data-werkzeug="modulo"] [role=tab]').map((t) => t.getAttribute('data-reiter')), ['uhr']);
   k.wert('KRFunkraum').stopp();
 });
+
+/* ---------- Task 154: Szene „Mallory im Netz“ ---------- */
+const MTEAMS = [{ id: 1, nr: 1, name: 'Team Skytale', rolle: 'alice' }, { id: 2, nr: 2, name: 'Team Scheibe', rolle: 'bob' }, { id: 3, nr: 3, name: 'Team Quadrat', rolle: 'mallory' }];
+const mStand = (v, ich, extra = {}) => stand(v, { id: 12, typ: 'mallory', titel: 'Mallory im Netz', phase: 'ohne-zertifikate', phasen: ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'], teams: MTEAMS, ich, anzeigen: {}, ...extra });
+
+test('Mallory: Station leitet weiter, ändert einen offenen Umschlag, schiebt einen Schlüssel unter; alle weiterleiten', async () => {
+  const posts = [];
+  const station = [
+    { id: 40, art: 'schluessel', inhalt: 'S23', lesbar: true, etikett: null, von: 2, angezeigtVon: 2, ziel: 1 },
+    { id: 41, art: 'nachricht', inhalt: 'LIEFERE 5 KISTEN AN TOR 3', lesbar: true, etikett: 'S41', von: 1, angezeigtVon: 1, ziel: 2 },
+    { id: 42, art: 'nachricht', inhalt: 'UMSCHLAG S23', lesbar: false, etikett: 'S23', von: 1, angezeigtVon: 1, ziel: 2 }
+  ];
+  const k = D.lade(SEITE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 12, typ: 'mallory', status: 'laeuft', phase: 'ohne-zertifikate' }, MTEAMS[2]),
+      'GET /api/funk/12/stand': { status: 200, body: mStand(5, { team: MTEAMS[2], rolle: 'mallory', partner: null, etiketten: ['S41', 'S42'], station }) },
+      'POST /api/funk/12/mallory': (b) => {
+        posts.push(b);
+        return { status: 200, body: { ok: true, nachricht: 50 } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.funk-simulation')), /Simulation: Die Plattform verschließt die Umschläge/);
+  assert.equal(k.alle(k.document, 'ol.station > li').length, 3);
+  // fremder Umschlag: kein Inhalt, kein Textfeld
+  const fremd = k.eins(k.document, 'ol.station > li[data-id="42"]');
+  assert.doesNotMatch(k.text(fremd), /LIEFERE|TREFFEN/);
+  assert.equal(k.alle(fremd, 'textarea').length, 0);
+  // offener Umschlag ändern und neu verschließen
+  const offen = k.eins(k.document, 'ol.station > li[data-id="41"]');
+  assert.match(k.text(offen), /LIEFERE 5 KISTEN AN TOR 3/);
+  assert.equal(k.eins(offen, 'textarea.funk-text').value, 'LIEFERE 5 KISTEN AN TOR 3', 'Inhalt zum Bearbeiten vorbelegt');
+  k.eins(offen, 'textarea.funk-text').value = '';
+  k.tippe(k.eins(offen, 'textarea.funk-text'), 'liefere 5 kisten an tor 8');
+  k.waehle(k.eins(offen, 'select.neu-verschliessen'), 'S23');
+  k.klick(k.eins(offen, 'button.ersetzen'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts.at(-1)), { aktion: 'ersetzen', nachricht: 41, text: 'LIEFERE 5 KISTEN AN TOR 8', etikett: 'S23' });
+  // Schlüssel: Nummer ersetzen
+  const sch = k.eins(k.document, 'ol.station > li[data-id="40"]');
+  k.waehle(k.eins(sch, 'select.etikett-ersetzen'), 'S42');
+  k.klick(k.eins(sch, 'button.ersetzen'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts.at(-1)), { aktion: 'ersetzen', nachricht: 40, etikett: 'S42' });
+  k.klick(k.eins(fremd, 'button.weiterleiten'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts.at(-1)), { aktion: 'weiterleiten', nachricht: 42 });
+  // Schlüssel unterschieben (Phase 1: nur ohne Zertifikat)
+  const f = k.eins(k.document, 'form.schluessel-unterschieben');
+  assert.deepEqual(k.alle(f, 'select.zertifikat-art option').map((o) => o.value), ['keins']);
+  k.waehle(k.eins(f, 'select.an'), '1');
+  k.waehle(k.eins(f, 'select.etikett'), 'S41');
+  k.klick(k.eins(f, 'button[type="submit"]'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts.at(-1)), { aktion: 'schluessel', an: 1, etikett: 'S41', zertifikat: 'keins' });
+  const vorher = posts.length;
+  k.klick(k.eins(k.document, 'button.alle-weiterleiten'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts.slice(vorher)).map((p) => [p.aktion, p.nachricht]), [['weiterleiten', 40], ['weiterleiten', 41], ['weiterleiten', 42]]);
+  k.wert('KRFunkraum').stopp();
+});
+
+test('Mallory: Alice sieht Zertifikatsstatus mit Symbol und Text, sendet die Auftragskarte; Bob sieht fremde Umschläge nicht', async () => {
+  const posts = [];
+  const schluessel = [
+    { nachricht: 50, etikett: 'S23', von: 2, phase: 'mit-zertifikaten', zertifikat: { status: 'gueltig', text: 'ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE' } },
+    { nachricht: 51, etikett: 'S41', von: 2, phase: 'mit-zertifikaten', zertifikat: { status: 'siegel', text: 'ZERTIFIKAT TEAM SCHEIBE S41 GUELTIG HEUTE' } },
+    { nachricht: 52, etikett: 'S42', von: 2, phase: 'mit-zertifikaten', zertifikat: { status: 'name', text: 'ZERTIFIKAT TEAM QUADRAT S42 GUELTIG HEUTE' } },
+    { nachricht: 53, etikett: 'S42', von: 2, phase: 'mit-zertifikaten', zertifikat: { status: 'fehlt' } }
+  ];
+  const k = D.lade(SEITE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 12, typ: 'mallory', status: 'laeuft', phase: 'mit-zertifikaten' }, MTEAMS[0]),
+      'GET /api/funk/12/stand': { status: 200, body: mStand(8, { team: MTEAMS[0], rolle: 'alice', partner: 2, auftrag: 'TREFFEN UM 14 UHR AM HAFEN', schluessel }, { phase: 'mit-zertifikaten' }) },
+      'POST /api/funk/12/nachrichten': (b) => {
+        posts.push(b);
+        return { status: 200, body: { nachricht: { id: 60 } } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, 'p.auftragskarte')), /TREFFEN UM 14 UHR AM HAFEN/);
+  const li = (id) => k.eins(k.document, `ul.schluessel-angebote li[data-nachricht="${id}"]`);
+  assert.match(k.text(li(50)), /✓.*Siegel gültig, Name passt/);
+  assert.match(k.text(li(51)), /✗.*Siegel ungültig/);
+  assert.match(k.text(li(52)), /✗.*Name passt nicht: ZERTIFIKAT TEAM QUADRAT S42/);
+  assert.match(k.text(li(53)), /✗.*kein gültiges Zertifikat/);
+  k.klick(k.eins(li(50), 'button.umschlag-senden[data-etikett="S23"]'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts), [{ etikett: 'S23' }]);
+  // roter Status in Phase 2 fragt nach – Abbrechen sendet nichts
+  k.bestaetigen = false;
+  k.klick(k.eins(li(51), 'button.umschlag-senden'));
+  await k.ruhe();
+  assert.equal(posts.length, 1);
+  k.bestaetigen = true;
+  k.klick(k.eins(li(51), 'button.umschlag-senden'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(posts[1]), { etikett: 'S41' });
+  k.wert('KRFunkraum').stopp();
+
+  const meld = [];
+  const bob = D.lade(SEITE, {
+    url: 'http://x.test/funkraum',
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 12, typ: 'mallory', status: 'laeuft', phase: 'ohne-zertifikate' }, MTEAMS[1]),
+      'GET /api/funk/12/stand': { status: 200, body: mStand(8, { team: MTEAMS[1], rolle: 'bob', partner: 1, etikett: 'S23', zertifikat: null }, { nachrichten: [{ id: 70, von: 3, an: 2, angezeigtVon: 1, art: 'nachricht', inhalt: 'UMSCHLAG S41', lesbar: false, angekommen: false, geknackt: false, zeit: '2026-10-13T08:00:00Z', version: 6 }, { id: 71, von: 3, an: 2, angezeigtVon: 1, art: 'nachricht', inhalt: 'LIEFERE 5 KISTEN AN TOR 8', lesbar: true, angekommen: false, geknackt: false, zeit: '2026-10-13T08:00:00Z', version: 7 }] }) },
+      'POST /api/funk/12/oeffentlich': (b) => {
+        meld.push(['oeffentlich', b]);
+        return { status: 200, body: { ok: true } };
+      },
+      'POST /api/funk/12/empfangen': (b) => {
+        meld.push(['empfangen', b]);
+        return { status: 200, body: { ok: true } };
+      }
+    }
+  });
+  await bob.ruhe();
+  assert.match(bob.text(bob.eins(bob.document, '.funk-bob-nummer')), /S23/);
+  const zu = bob.eins(bob.document, 'li.funk-nachricht[data-id="70"]');
+  assert.match(bob.text(zu), /Umschlag für S41 – du kannst ihn nicht öffnen/);
+  assert.equal(bob.alle(zu, 'button.auftrag-melden').length, 0);
+  bob.klick(bob.eins(bob.document, 'button.schluessel-veroeffentlichen'));
+  bob.klick(bob.eins(bob.document, 'li.funk-nachricht[data-id="71"] button.auftrag-melden'));
+  await bob.ruhe();
+  assert.deepEqual(bob.roh(meld), [['oeffentlich', {}], ['empfangen', { nachricht: 71 }]]);
+  bob.wert('KRFunkraum').stopp();
+});

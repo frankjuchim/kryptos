@@ -987,6 +987,247 @@ const KRFunkSzenen = (() => {
     };
   });
 
+  /* ---------- Szene „Mallory im Netz“ (W5 §9.3, Plan M7 Task 154, E96, E115) ---------- */
+
+  const ZERT = Object.freeze({
+    gueltig: { symbol: '✓', klasse: 'ok', text: () => 'Siegel gültig, Name passt' },
+    fehlt: { symbol: '✗', klasse: 'falsch', text: () => 'kein gültiges Zertifikat' },
+    name: { symbol: '✗', klasse: 'falsch', text: (z) => `Name passt nicht: ${z.text || ''}`.trim() },
+    siegel: { symbol: '✗', klasse: 'falsch', text: () => 'Siegel ungültig' }
+  });
+  const ZERT_ART = Object.freeze({ keins: 'ohne Zertifikat', eigenes: 'mit eigenem Zertifikat (anderer Name)', veraendert: 'mit verändertem Zertifikat' });
+
+  /** Knopf mit Rückmeldung in ergebnis: fn() → Promise */
+  function aktionKnopf(klasse, text, fn, ergebnis, attrs = {}) {
+    const k = h('button', { type: 'button', class: `knopf ${klasse}`, ...attrs }, text);
+    k.addEventListener('click', async () => {
+      k.disabled = true;
+      try {
+        const t = await fn();
+        if (ergebnis && t) {
+          ergebnis.className = 'funk-ergebnis ok';
+          ergebnis.textContent = t;
+        }
+      } catch (e) {
+        if (ergebnis) {
+          ergebnis.className = 'funk-ergebnis fehler';
+          ergebnis.textContent = fehlerText(e);
+        }
+      } finally {
+        k.disabled = false;
+      }
+    });
+    return k;
+  }
+
+  registriere('mallory', (ctx) => {
+    const st = ctx.stand();
+    const rolle = st.ich.rolle;
+    const ich = () => ctx.stand().ich || {};
+    const phase2 = () => ctx.stand().phase === 'mit-zertifikaten';
+    const teile = [h('p', { class: 'rueckmeldung info funk-simulation' }, 'Simulation: Die Plattform verschließt die Umschläge – echte Kryptografie steckt hier nicht dahinter.')];
+    const updates = [];
+
+    if (rolle === 'alice') {
+      const auftrag = h('p', { class: 'auftragskarte' });
+      const angebote = h('ul', { class: 'schluessel-angebote' });
+      const ergebnis = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+      teile.push(
+        h('section', { class: 'funk-karte', 'aria-labelledby': 'auftrag-titel' }, h('h3', { id: 'auftrag-titel' }, 'Eure Auftragskarte (verdeckt)'), auftrag),
+        h('section', { class: 'funk-karte', 'aria-labelledby': 'angebote-titel' }, h('h3', { id: 'angebote-titel' }, 'Empfangene Schlüssel'), h('p', { class: 'text-2 klein' }, 'Wählt einen Schlüssel, um euren Auftrag darin zu verschließen. Ab Phase 2 prüft euer Tablet Name und Siegel des Zertifikats.'), angebote, ergebnis)
+      );
+      updates.push(() => {
+        auftrag.textContent = ich().auftrag || 'In dieser Phase gibt es keinen Auftrag.';
+        abgleich(angebote, (ich().schluessel || []).slice().reverse(), {
+          schluessel: (x) => x.nachricht,
+          baue: (x) => {
+            const li = h('li', { class: 'schluessel-angebot', 'data-nachricht': String(x.nachricht) });
+            li._status = h('p', { class: 'zertifikat-status' });
+            const senden = h('button', { type: 'button', class: 'knopf knopf-primaer umschlag-senden', 'data-etikett': x.etikett }, `Auftrag mit ${x.etikett} verschließen und senden`);
+            senden.addEventListener('click', async () => {
+              const z = li._x.zertifikat || { status: 'fehlt' };
+              if (phase2() && z.status !== 'gueltig' && !(await AQ.bestaetigen('Ohne gültiges Zertifikat senden?', `Das Zertifikat für ${li._x.etikett} ist nicht grün geprüft. Wer den Schlüssel geschickt hat, ist nicht sicher.`, { ok: 'Trotzdem senden', gefahr: true }))) return;
+              senden.disabled = true;
+              try {
+                await ctx.senden({ etikett: li._x.etikett });
+                ergebnis.className = 'funk-ergebnis ok';
+                ergebnis.textContent = `Umschlag für ${li._x.etikett} ist unterwegs.`;
+              } catch (e) {
+                ergebnis.className = 'funk-ergebnis fehler';
+                ergebnis.textContent = fehlerText(e);
+              } finally {
+                senden.disabled = false;
+              }
+            });
+            li.append(h('p', null, h('span', { class: 'mono' }, x.etikett), ` – angeblich von ${ctx.teamName(x.von)}`), li._status, senden);
+            return li;
+          },
+          aktualisiere: (li, x) => {
+            li._x = x;
+            const z = x.zertifikat || { status: 'fehlt' };
+            const d = ZERT[z.status] || ZERT.fehlt;
+            const zeigen = phase2() || x.phase === 'mit-zertifikaten' || z.status === 'gueltig';
+            li._status.className = `zertifikat-status ${zeigen ? d.klasse : 'neutral'}`;
+            AQ.mount(li._status, zeigen ? [h('span', { class: 'zertifikat-symbol', 'aria-hidden': 'true' }, d.symbol), ' ', h('span', null, d.text(z))] : h('span', { class: 'text-2' }, 'Phase 1: Zertifikate gibt es noch nicht.'));
+          }
+        });
+      });
+    }
+
+    let post = null;
+    if (rolle === 'bob') {
+      const nummer = h('p', { class: 'funk-bob-nummer' });
+      const zert = h('p', { class: 'mono funk-bob-zertifikat' });
+      const ergebnis = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+      const veroeff = aktionKnopf('knopf-primaer schluessel-veroeffentlichen', 'Schlüsselnummer veröffentlichen', async () => {
+        await ctx.aktion('oeffentlich', {});
+        return 'Veröffentlicht – die Nummer ist unterwegs zu eurem Alice-Team.';
+      }, ergebnis);
+      teile.push(h('section', { class: 'funk-karte', 'aria-labelledby': 'bob-titel' }, h('h3', { id: 'bob-titel' }, 'Euer Schlüssel'), nummer, zert, h('div', { class: 'knopf-reihe' }, veroeff), ergebnis));
+      updates.push(() => {
+        nummer.textContent = ich().etikett ? `Eure Schlüsselnummer: ${ich().etikett} (die Schlüsselkarte bleibt bei euch)` : 'Ihr habt keine Schlüsselnummer.';
+        zert.textContent = ich().zertifikat ? `Euer Zertifikat: ${ich().zertifikat}` : phase2() ? 'Noch kein Zertifikat – fragt Trent (eure Lehrkraft).' : '';
+      });
+      post = posteingang(ctx, {
+        titel: 'Eure Post',
+        leer: 'Noch keine Umschläge.',
+        kopf: (n) => `angeblich von ${ctx.teamName(n.angezeigtVon ?? n.von)}`,
+        aktionen: (n) => {
+          if (n.art !== 'nachricht' || !n.lesbar) return null;
+          const erg = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+          return [
+            aktionKnopf('knopf-zweit auftrag-melden', 'Auftrag melden', async () => {
+              await ctx.aktion('empfangen', { nachricht: n.id });
+              return 'Gemeldet – die Auflösung zeigt, ob es euer echter Auftrag war.';
+            }, erg),
+            erg
+          ];
+        }
+      });
+      teile.push(post.element);
+    }
+
+    if (rolle === 'mallory') {
+      const etiketten = h('p', { class: 'funk-mallory-nummern' });
+      const ergebnis = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+      const stationOl = h('ol', { class: 'station' });
+      const stationLeer = h('p', { class: 'text-2' }, 'Gerade liegt nichts an eurer Station.');
+      const bekannt = new Set(); // gesehene Schlüsselnummern (eigene und fremde)
+      const sende = (body) => ctx.aktion('mallory', body);
+      const alle = aktionKnopf('knopf-zweit alle-weiterleiten', 'Alle weiterleiten', async () => {
+        const liste = (ich().station || []).map((x) => x.id);
+        for (const id of liste) await sende({ aktion: 'weiterleiten', nachricht: id });
+        return liste.length ? `${liste.length} Sendung(en) weitergeleitet.` : 'Nichts weiterzuleiten.';
+      }, ergebnis);
+      // Schlüssel unterschieben
+      const an = h('select', { class: 'an', id: 'mallory-an' });
+      const etikett = h('select', { class: 'etikett', id: 'mallory-etikett' });
+      const zertArt = h('select', { class: 'zertifikat-art', id: 'mallory-zertifikat' });
+      const unterErg = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+      const unter = h(
+        'form',
+        { class: 'schluessel-unterschieben funk-karte', novalidate: true },
+        h('h3', null, 'Eigenen Schlüssel unterschieben'),
+        h('p', { class: 'feld' }, h('label', { for: 'mallory-an' }, 'an das Alice-Team '), an),
+        h('p', { class: 'feld' }, h('label', { for: 'mallory-etikett' }, 'eure Schlüsselnummer '), etikett),
+        h('p', { class: 'feld' }, h('label', { for: 'mallory-zertifikat' }, 'Zertifikat '), zertArt),
+        h('div', { class: 'knopf-reihe' }, h('button', { type: 'submit', class: 'knopf knopf-zweit' }, 'Als Bobs Schlüssel senden')),
+        unterErg
+      );
+      unter.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        try {
+          await sende({ aktion: 'schluessel', an: Number(an.value), etikett: etikett.value, zertifikat: zertArt.value });
+          unterErg.className = 'funk-ergebnis ok';
+          unterErg.textContent = `${etikett.value} ist unterwegs – angeblich von Bob.`;
+        } catch (e) {
+          unterErg.className = 'funk-ergebnis fehler';
+          unterErg.textContent = fehlerText(e);
+        }
+      });
+      teile.push(
+        h('section', { class: 'funk-karte', 'aria-labelledby': 'station-titel' }, h('h3', { id: 'station-titel' }, 'Eure Station (Postamt)'), etiketten, stationLeer, stationOl, h('div', { class: 'knopf-reihe' }, alle), ergebnis),
+        unter
+      );
+      const optionen = (sel, werte) => {
+        const alt = sel.value;
+        const neu = werte.map(([w]) => w).join(',');
+        if ([...sel.options].map((o) => o.value).join(',') === neu) return;
+        AQ.mount(sel, werte.map(([w, t]) => h('option', { value: String(w) }, t)));
+        if (werte.some(([w]) => String(w) === alt)) sel.value = alt;
+      };
+      updates.push(() => {
+        const eigene = ich().etiketten || [];
+        for (const e of eigene) bekannt.add(e);
+        for (const x of ich().station || []) if (x.art === 'schluessel' && /^S\d{2}$/.test(x.inhalt)) bekannt.add(x.inhalt);
+        etiketten.textContent = `Eure Schlüsselnummern: ${eigene.join(', ') || '–'}`;
+        optionen(an, (ctx.stand().teams || []).filter((t) => t.rolle === 'alice').map((t) => [t.id, t.name]));
+        optionen(etikett, eigene.map((e) => [e, e]));
+        optionen(zertArt, (phase2() ? ['keins', 'eigenes', 'veraendert'] : ['keins']).map((z) => [z, ZERT_ART[z]]));
+        const liste = ich().station || [];
+        stationLeer.hidden = liste.length > 0;
+        abgleich(stationOl, liste, {
+          schluessel: (x) => x.id,
+          baue: (x) => {
+            const li = h('li', { class: 'station-sendung', 'data-id': String(x.id), 'data-art': x.art });
+            const erg = h('p', { class: 'funk-ergebnis', 'aria-live': 'polite' });
+            const kopf = h('p', { class: 'klein text-2' }, `${x.art === 'schluessel' ? 'Schlüssel' : 'Umschlag'} angeblich von ${ctx.teamName(x.angezeigtVon)} an ${ctx.teamName(x.ziel)}`);
+            const weiter = aktionKnopf('knopf-zweit weiterleiten', 'Unverändert weiterleiten', async () => {
+              await sende({ aktion: 'weiterleiten', nachricht: x.id });
+              return 'Weitergeleitet.';
+            }, erg);
+            const teile2 = [kopf, h('code', { class: 'funk-inhalt' }, x.lesbar ? x.inhalt : `${x.inhalt} – nicht euer Schlüssel, ihr könnt ihn nicht öffnen`)];
+            if (x.art === 'schluessel') {
+              const wahl = h('select', { class: 'etikett-ersetzen', 'aria-label': `Schlüsselnummer statt ${x.inhalt}` }, (ich().etiketten || []).map((e) => h('option', { value: e }, e)));
+              teile2.push(h('div', { class: 'funk-zeile' }, wahl, aktionKnopf('knopf-zweit ersetzen', 'Nummer ersetzen', async () => {
+                await sende({ aktion: 'ersetzen', nachricht: x.id, etikett: wahl.value });
+                return `Ersetzt durch ${wahl.value}.`;
+              }, erg)));
+            } else if (x.lesbar) {
+              const f = sendeFormular(ctx, { titel: null, knopf: 'Text übernehmen' });
+              f.element.querySelector('.funk-senden-knopf').closest('.knopf-reihe').hidden = true;
+              f.feld.value = x.inhalt;
+              f.pruefe();
+              const wahl = h('select', { class: 'neu-verschliessen', 'aria-label': 'Neu verschließen mit' }, [...bekannt].sort().map((e) => h('option', { value: e, selected: e === x.etikett }, e)));
+              wahl.addEventListener('focus', () => {
+                const alt = wahl.value;
+                AQ.mount(wahl, [...bekannt].sort().map((e) => h('option', { value: e }, e)));
+                wahl.value = alt;
+              });
+              teile2.push(
+                f.element,
+                h('p', { class: 'feld' }, h('span', null, 'neu verschließen mit '), wahl),
+                aktionKnopf('knopf-primaer ersetzen', 'Ändern und weiterleiten', async () => {
+                  const b = bereite(f.feld.value);
+                  if (!b.gueltig) throw new Error('Nur A–Z, 0–9 und Leerzeichen');
+                  const body = { aktion: 'ersetzen', nachricht: x.id };
+                  if (b.text !== x.inhalt) body.text = b.text;
+                  if (wahl.value !== x.etikett) body.etikett = wahl.value;
+                  if (body.text === undefined && body.etikett === undefined) body.text = b.text;
+                  await sende(body);
+                  return 'Verändert und weitergeleitet.';
+                }, erg)
+              );
+            }
+            teile2.push(h('div', { class: 'knopf-reihe' }, weiter), erg);
+            li.append(...teile2);
+            return li;
+          }
+        });
+      });
+    }
+
+    const element = h('div', { class: 'funk-szene-mallory' }, teile);
+    return {
+      element,
+      aktualisiere(stand) {
+        for (const f of updates) f();
+        if (post) post.aktualisiere((stand.nachrichten || []).filter((n) => n.an === (stand.ich.team || {}).id && n.art === 'nachricht').map((n) => (n.lesbar ? n : { ...n, inhalt: `Umschlag für ${String(n.inhalt).replace(/^UMSCHLAG\s*/, '') || '?'} – du kannst ihn nicht öffnen.` })));
+      },
+      schliesse() {}
+    };
+  });
+
   /** Szene für den Typ bauen (registriert oder allgemein) */
   function zeige(typ, ctx) {
     const fabrik = SZENEN.get(typ) || allgemein;
