@@ -54,6 +54,9 @@ const NUMMERIERUNG = /Nummerierung:\s*A\s*=\s*[01]/;
 const ALTBEGRIFFE = { Chiffrat: 'Geheimtext', Friedmann: 'Friedman', Merkel: 'Merkle', Kerkhoff: 'Kerckhoffs' };
 const ALTBEGRIFF = /\b(Chiffrat\w*|Friedmann|Merkel|Kerkhoffs?)\b/g;
 const FUENFERGRUPPEN = /^[A-Z]{5}( [A-Z]{5})*( [A-Z]{1,5})?$/;
+// Lernende werden geduzt (CLAUDE.md): „Die Lernenden …“ ist Spec-Sprache für Lehrkräfte, nicht für Schülertexte
+const DIE_LERNENDEN = /\b[Dd]ie Lernenden\b/;
+const DUZEN = 'Lernende duzen: „Die Lernenden …“ in Du-Form umschreiben (Spec-Lernziele sind für Lehrkräfte formuliert).';
 const KERN_BLOECKE = ['baum', 'adt', 'klassenkarte'];
 
 /** Alle Blöcke einer Aufgabe (Inhalt, Teil-Inhalte, Erklärung). */
@@ -193,6 +196,7 @@ function aufgabe(a, fa, wa, { data } = {}) {
     const ersatz = ALTBEGRIFFE[Object.keys(ALTBEGRIFFE).find((k) => x.startsWith(k))];
     wa('inhalt', `Altbegriff „${x}“ – bitte „${ersatz}“ schreiben.`);
   }
+  if (texte.some((t) => DIE_LERNENDEN.test(t))) wa('inhalt', DUZEN);
   // Klartext klein (Design §6.2, Plan M5 E58): Entschlüsselungs-Lösungen mit Buchstabenausgabe
   F.teile(a).forEach((t, i, alle) => {
     const ia = t.interaktion;
@@ -358,6 +362,7 @@ function level(l, o, f, w, { aufgaben, opt }) {
       if (liste && !liste.some((x) => istObjekt(x) && x.nr === v.nr)) wl(`video.nr ${v.nr} fehlt in seed/videos.json.`);
     }
   }
+  if (Array.isArray(l.intro) && l.intro.some((b) => istObjekt(b) && typeof b.md === 'string' && DIE_LERNENDEN.test(b.md))) wl(DUZEN);
   // Akte (ersetzt ab, Delta §3); Gast-Demo (Welt 8) und Fixture (Welt 9) haben keine Akten (Plan M5 E59)
   const m = /^W(\d)-L(\d{1,2})/.exec(typeof l.id === 'string' ? l.id : '');
   const ohneAkten = m && Number(m[1]) >= 8;

@@ -138,6 +138,8 @@ Inhaltsregeln (aus Design §6, vom Validator als Hinweis geprüft, wo maschinell
   Entschlüsselungen (`chiffre` mit `richtung: ent`, Buchstabenausgabe, nicht `frei`/`xor`): ohne Kleinbuchstaben →
   Hinweis „Klartext klein schreiben (Design §6.2)“. Altbegriffe (`Chiffrat`, `Friedmann`,
   `Merkel`, `Kerkhoff`) → Hinweis.
+- Lernende werden **geduzt** – auch im Level-`intro` (Spec-Lernziele „Die Lernenden …“ in Du-Form übertragen);
+  „Die Lernenden“ in Aufgabentexten oder im Intro → Hinweis „Lernende duzen“.
 - Boss-Aufgaben: Aufgabenstellung im Abitur-Stil **gesiezt**, Operator aus der KC-Liste fett
   (`**Begründen** Sie …`); die Angabe `[x BE]` entfällt im Lab (dort zählen Punkte), Rahmentext darf duzen.
 

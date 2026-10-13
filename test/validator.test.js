@@ -366,6 +366,17 @@ test('Aufgaben-Hinweise: Nummerierung, Altbegriffe, Fünfergruppen, Kern-Bestand
   assert.doesNotMatch(hin(basis()), /W9-L5-0[1-8].*Nummerierung/);
 });
 
+test('Hinweis „Lernende duzen“: „Die Lernenden …“ in Aufgabentexten und Level-Intro', () => {
+  const hin = (w) => validiereWelt(w, { datei: 't' }).warnungen.map((x) => `${x.ort}: ${x.meldung}`).join('\n');
+  assert.doesNotMatch(hin(basis()), /duzen/);
+  let w = basis();
+  aufgabe(w, 'W9-L5-01').inhalt[0].md = 'Die Lernenden verschlüsseln das Wort.';
+  assert.match(hin(w), /W9-L5-01.*Lernende duzen/);
+  w = basis();
+  w.levels[0].intro = [{ t: 'text', md: '**Lernziel:** Die Lernenden beschreiben das Verfahren.' }];
+  assert.match(hin(w), new RegExp(`${w.levels[0].id}.*Lernende duzen`));
+});
+
 test('Boss: zuordnung mit Häufigkeitsleiste verboten', () => {
   erwarteFehler((w) => {
     const z = { ...aufgabe(w, 'W9-L3-01'), id: 'W9-B-07', niveau: 'kern' };
