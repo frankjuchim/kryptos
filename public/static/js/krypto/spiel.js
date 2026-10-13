@@ -151,6 +151,93 @@ const KRSpiel = (() => {
     );
   }
 
+  /* ---------- Routen (Task 58): Level, Aufgabe, Archivfund ---------- */
+
+  const enc = encodeURIComponent;
+  const abzeichenToast = (neu) => typeof KRProfil.abzeichenToast === 'function' && KRProfil.abzeichenToast(neu);
+
+  /** Welt-Kopf aus einer Antwort ({ nr, titel, farbe }) – akzentHell aus dem Welten-Cache, falls vorhanden. */
+  async function weltVon(w) {
+    try {
+      const d = await welten();
+      return (d.welten || []).find((x) => x.nr === w.nr) || w;
+    } catch {
+      return w;
+    }
+  }
+
+  async function levelRoute(id, r) {
+    const [d, lab] = await Promise.all([api('GET', `/api/levels/${enc(id)}`), labor()]);
+    if (!r.gueltig()) return;
+    epoche(await weltVon(d.welt));
+    seite(d.level.titel, KRLevel.ansicht(d, { werkzeugFrei: lab.werkzeugFrei, werkzeuge: lab.werkzeuge }));
+  }
+
+  async function aufgabeRoute(id, r) {
+    const [d, lab, w] = await Promise.all([api('GET', `/api/aufgaben/${enc(id)}`), labor(), welten().catch(() => ({}))]);
+    if (!r.gueltig()) return;
+    const o = d.ort;
+    const pfad = `/api/aufgaben/${enc(id)}`;
+    epoche(await weltVon(o.welt));
+    const ansicht = AQA.ansicht({
+      aufgabe: d.aufgabe,
+      zustand: d.zustand,
+      loesung: d.loesung,
+      muster: d.muster,
+      erklaerung: d.erklaerung,
+      modus: 'lab',
+      zusatz: { werkzeugFrei: lab.werkzeugFrei },
+      anzeige: KRDiag.anzeige,
+      kursNiveau: w.niveau || (sitzung.kurs && sitzung.kurs.niveau) || 'eA',
+      pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
+      tipp: () => api('POST', `${pfad}/tipp`, {}),
+      aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
+      weiter: o.nachher ? { href: `#/aufgabe/${enc(o.nachher)}`, text: 'Nächste Aufgabe →' } : { href: `#/level/${enc(o.level.id)}`, text: 'Zurück zum Level →' },
+      abzeichenToast,
+      nachLoesen: () => welten({ neu: true }).catch(() => {})
+    });
+    seite(
+      d.aufgabe.titel,
+      h(
+        'div',
+        { class: 'wrap aufgabe-seite' },
+        KRLevel.brotkrumen(o.welt, h('a', { href: `#/level/${enc(o.level.id)}` }, o.level.titel), h('span', { 'aria-current': 'page' }, `Aufgabe ${o.index + 1} von ${o.anzahl}`)),
+        ansicht
+      )
+    );
+  }
+
+  async function archivfundRoute(nr, r) {
+    const pfad = `/api/archivfund/${enc(nr)}`;
+    const [d, lab] = await Promise.all([api('GET', pfad), labor()]);
+    if (!r.gueltig()) return;
+    epoche(await weltVon(d.welt));
+    const ansicht = AQA.ansicht({
+      aufgabe: d.aufgabe,
+      zustand: d.zustand,
+      loesung: d.loesung,
+      muster: d.muster,
+      erklaerung: d.erklaerung,
+      modus: 'lab',
+      zusatz: { werkzeugFrei: lab.werkzeugFrei },
+      anzeige: KRDiag.anzeige,
+      pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
+      tipp: () => api('POST', `${pfad}/tipp`, {}),
+      aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
+      punkteText: () => '✔ Entschlüsselt! (Archivfund – ohne Punkte)',
+      kopfZusatz: h('span', { class: 'chip chip-neutral' }, 'Archivfund · Einstiegsrätsel der Epoche'),
+      weiter: { href: `#/epoche/${d.welt.nr}`, text: 'Zur Epoche →' },
+      nachLoesen: () => welten({ neu: true }).catch(() => {})
+    });
+    seite(
+      d.titel || d.aufgabe.titel,
+      h('div', { class: 'wrap aufgabe-seite archivfund-seite' }, KRLevel.brotkrumen(d.welt, h('span', { 'aria-current': 'page' }, `Archivfund: ${d.titel || d.aufgabe.titel}`)), ansicht)
+    );
+  }
+
+  ROUTEN.set('level', levelRoute);
+  ROUTEN.set('aufgabe', aufgabeRoute);
+  ROUTEN.set('archivfund', archivfundRoute);
   ROUTEN.set('', zeitleiste);
   ROUTEN.set('epoche', epocheRoute);
   ROUTEN.set('kurs', kurs);

@@ -679,6 +679,28 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
 .boss-zustand { display: flex; align-items: center; gap: var(--a-2); }
 .training-karte { border-top: 6px solid var(--akzent); }
 
+/* ---------- Level, Aufgabe, Archivfund ---------- */
+.level-seite, .aufgabe-seite { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-5); padding-block: var(--a-5) var(--a-7); }
+.level-kopf { gap: var(--a-2); }
+.level-kopf h1 { margin: 0; }
+.archivwissen h2 { display: flex; align-items: center; gap: var(--a-2); margin: 0; }
+.ornament-initial { width: 28px; height: 28px; color: var(--text-2); flex: none; }
+.level-aufgaben, .level-labor { display: grid; gap: var(--a-3); }
+.level-aufgaben h2, .level-labor h2 { margin: 0; }
+.aufgaben-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.aufgabe-eintrag > a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--a-3); align-items: center; min-height: var(--ziel); padding: var(--a-3) var(--a-4); border: 1px solid var(--linie); border-left: 6px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); color: var(--text); text-decoration: none; }
+.aufgabe-eintrag > a:hover { border-color: var(--akzent); }
+.aufgabe-eintrag.status-geloest > a { border-left-color: var(--ok); }
+.aufgabe-eintrag.status-angesehen > a { border-left-style: dashed; border-left-color: var(--text-2); }
+.aufgabe-nr { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--linie); font-family: var(--f-mono); font-weight: 700; color: var(--text-2); }
+.aufgabe-text { display: grid; gap: 2px; min-width: 0; }
+.aufgabe-meta { font-size: .85rem; color: var(--text-2); }
+.aufgabe-meta .sterne { color: var(--messing-dunkel); letter-spacing: .1em; }
+.status-chip.status-geloest { color: var(--ok); border-color: var(--ok); }
+.status-chip.status-angesehen { color: var(--text-2); border-style: dashed; }
+.video-hinweis { color: var(--text-2); }
+.archivfund-seite .aufgabe-kopf { border-left: 6px double var(--akzent); padding-left: var(--a-3); }
+
 /* ---------- Kurswahl ---------- */
 .seite-kurs { padding-block: var(--a-6) var(--a-7); }
 .kurs-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-3); }
@@ -699,6 +721,8 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
   .tor-name { min-height: 0; font-size: 1.05rem; }
   .regal { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .kurs-karte { grid-template-columns: minmax(0, 1fr); }
+  .aufgabe-eintrag > a { grid-template-columns: auto minmax(0, 1fr); }
+  .aufgabe-eintrag > a > .chip-reihe { grid-column: 2; }
 }
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-bewegung="aus"]) .tore.gemessen > .tor-li { transition: margin-left .3s ease-out; }
