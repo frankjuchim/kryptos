@@ -43,9 +43,11 @@ const KRB = (() => {
     // unveraendert: Text wie im Seed (fremde Verfahren `frei`: Wortgrenzen und Schreibweise gehören zum Verfahren)
     let roh = unveraendert ? String(text ?? '').trim() : Krypto.normalisieren(String(text ?? ''));
     if (klar && !unveraendert) roh = roh.toLowerCase();
-    const n = unveraendert ? roh.length || 1 : Number.isInteger(gruppe) && gruppe > 0 ? gruppe : roh.length || 1;
+    const n = Number.isInteger(gruppe) && gruppe > 0 ? gruppe : roh.length || 1;
     const gruppen = [];
-    for (let i = 0; i < roh.length; i += n) gruppen.push(roh.slice(i, i + n));
+    // unveraendert: Gruppen = Wörter bzw. Gruppen des Seeds (Zeilenumbruch zwischen ihnen wie bei Fünfergruppen)
+    if (unveraendert) gruppen.push(...roh.split(/\s+/).filter(Boolean));
+    else for (let i = 0; i < roh.length; i += n) gruppen.push(roh.slice(i, i + n));
     const name = klar ? 'Klartext' : 'Geheimtext';
     const sr = h('span', { class: 'sr' }, `${name}, buchstabiert: ${gruppen.map((g) => [...g.replace(/\s+/g, '')].join(' ')).join(', ')}`);
     const zeile = h('span', { class: 'geheimtext-gruppen', 'aria-hidden': 'true' }, gruppen.map((g) => h('span', { class: 'gruppe' }, g)));

@@ -85,6 +85,8 @@ test('chiffre mit verdecktem Schlüssel: Hinweis, keine Schlüsselzeile', () => 
 test('chiffre frei (fremdes Verfahren, W1-L3-01): Eingabe unverändert (Wortgrenzen), kein Hinweis „Schlüssel verdeckt“', () => {
   const ver = baue({ id: 'W9-L2-11', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'frei', name: 'NOMEN-850' }, schluesselVerdeckt: true, eingabe: 'der wesir bringt gold und seide' } });
   assert.equal(k_text(ver, '.chiffre .geheimtext-gruppen'), 'der wesir bringt gold und seide');
+  // Wörter als Gruppen – Zeilenumbruch wie bei Fünfergruppen (360 px ohne horizontales Scrollen)
+  assert.deepEqual(ver.k.alle(ver.c.el, '.chiffre .geheimtext-gruppen .gruppe').map(ver.k.text), ['der', 'wesir', 'bringt', 'gold', 'und', 'seide']);
   assert.doesNotMatch(ver.k.text(ver.k.eins(ver.c.el, '.chiffre-kopf')), /Schlüssel verdeckt/);
   const ent = baue({ id: 'W9-L2-12', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'frei', name: 'NOMEN-850' }, schluesselVerdeckt: true, eingabe: '3947H OWTOQ HQ005 862DK 35' } });
   assert.equal(k_text(ent, '.chiffre .geheimtext-gruppen'), '3947H OWTOQ HQ005 862DK 35');
