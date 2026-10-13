@@ -6,6 +6,8 @@ const L = require('../loeschen');
 
 module.exports = {
   typ: 'botenlauf',
+  /** Alice sendet Geheimtext + Klartext (nur als Hash gespeichert, Task 136); an = Partner (Dienst-Standard) */
+  klartextPflicht: true,
   /** beim Start (vorbereitung → laeuft): konfig- und Rollen-Zustände anlegen (Zufall nur über ctx.zufallBytes) */
   start() {
     return {};

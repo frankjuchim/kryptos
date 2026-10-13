@@ -961,7 +961,7 @@ Beamer bei 1920 × 1080.
   `sichtbar = 0`, neue Version, Ereignis `ausgeblendet`); `POST /api/lehrer/funk/:id/teams/:teamId/stumm { sekunden: 60 }`
   (`konfig.stumm[teamId] = bis`, 1–300 s, Ereignis `stumm`).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_nachrichten.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_nachrichten.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1028,7 +1028,7 @@ Beamer bei 1920 × 1080.
     const [alice, bob, eve] = f.teams;
     const n = (await sende(alice, sz.id, { text: 'OHSAL AKLUW HZZ', klartext: 'haltet den pass' }).expect(200)).body.nachricht;
     const v = (await F.stand(eve.c, sz.id)).body.version;
-    await f.lk.post(`/api/lehrer/funk/${sz.id}/nachrichten/${n.id}/ausblenden`).expect(200);
+    await f.lk.post(`/api/lehrer/funk/${sz.id}/nachrichten/${n.id}/ausblenden`).send({}).expect(200);
     const zeile = f.db.prepare('SELECT * FROM funk_nachrichten WHERE id = ?').get(n.id);
     assert.deepEqual([zeile.inhalt, zeile.klartext_hash, zeile.sichtbar], ['', null, 0]);
     const neu = (await F.stand(eve.c, sz.id, v).expect(200)).body.nachrichten;
@@ -1047,12 +1047,12 @@ Beamer bei 1920 × 1080.
     }
   });
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Grenzen mit `S.Limiter` je Szenario+Team; Stummschaltung über `konfig.stumm`; Hash-Vergleich
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Grenzen mit `S.Limiter` je Szenario+Team; Stummschaltung über `konfig.stumm`; Hash-Vergleich
   mit `T.gleich`; Botenlauf-spezifische Regeln erst Task 137 – hier reicht der Typ-Standard „an = Partner, klartext
   Pflicht“ für Botenlauf).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Nachrichten senden, Empfang und Knacken über Hash, Ausblenden und Stummschalten"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Nachrichten senden, Empfang und Knacken über Hash, Ausblenden und Stummschalten"`.
 
 ### Task 137: Szenario „Botenlauf“ (W0 §9.3, E91, E92, E98, E108)
 
@@ -2778,6 +2778,16 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Teams nur gerufen, wenn keine Grundregel greift, für den Beamer immer (E99). Nachrichten mit `an_team_id = NULL` gelten als
   öffentlich. Regie-Stand enthält zusätzlich `rollen`, `optionen`, `stumm`. `auswertung`: nach dem Beenden aus `konfig`, für
   Regie/Beamer in Phase `aufloesung` live über `typ.auswertung`. Zusatztest: Stand schreibt nichts, Antwortform, getrennte ETags.
+
+- **Task 136:** Plan-Test korrigiert: `…/ausblenden` braucht wie jede schreibende API-Route einen JSON-Körper
+  (`.send({})`, sonst 415 aus der Kern-Prüfung `sameOriginCheck`). Die Sendegrenze 1/10 s wird erst nach einem
+  erfolgreichen Speichern gezählt (abgelehnte Eingaben – Whitelist, fehlender Klartext – verbrauchen sie nicht; der Plan-Test
+  sendet nach zwei 400ern sofort erfolgreich); Prüfreihenfolge sonst wie im Plan, die 200er-Grenze zusätzlich in der
+  Transaktion. Prüfversuche (empfangen/knacken, gemeinsam 30 je Team in 5 min) zählen erst nach gültiger Eingabe.
+  Typ-Hooks: `klartextPflicht` (Botenlauf `true`), `aktionen.senden(ctx, sz, betrachter, { inhalt, klartext, an, body })` als
+  Vorprüfung mit Ergänzungen `{ an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? }` (Inhalt erneut über die Whitelist),
+  `aktionen.empfangen/knacken` übernehmen eine Prüfaktion ganz (Schlüsseltausch, Task 140). Knacken eigener Nachrichten → 400;
+  Ausblenden/Stumm nach dem Beenden → 409, gesperrter Kurs → 403; `sekunden` Standard 60. Zusatztest: Rechte und Eingaben.
 
 ## Reihenfolge und Abhängigkeiten
 

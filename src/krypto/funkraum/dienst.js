@@ -10,6 +10,7 @@ const T = require('./text');
 const L = require('./loeschen');
 const Sz = require('./szenarien');
 const { BOSS_KULANZ_MS } = require('../../domain');
+const S = require('../../security');
 
 const TYP_MODULE = Object.freeze({
   botenlauf: require('./typen/botenlauf'),
@@ -34,6 +35,9 @@ const VON = {
 };
 /** zulässige Optionen je Typ (Inhalte prüfen die Typen ab Task 138/139) */
 const OPTIONEN = { 'doppelter-schluessel': ['wiederholerTeamId'], wettknacken: ['textId'] };
+
+/** Grenzen (TECHNIK §12.3): 1 Nachricht je Team in 10 s, 200 je Szenario, 30 Prüfversuche je Team in 5 min, stumm 1–300 s */
+const GRENZEN = Object.freeze({ sendenMs: 10 * 1000, maxNachrichten: 200, versuche: 30, versucheMs: 5 * 60 * 1000, stummMax: 300 });
 
 const GESPERRT = 'Kryptos ist für diesen Kurs im Portal abgeschaltet. Der Kurs ist nur lesbar.';
 
@@ -403,7 +407,173 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     return { etag: tag, daten };
   }
 
+  /* ---------- Nachrichten, Prüfen über Hash, Moderation (TECHNIK §12.3, §12.5, Plan M7 Task 136, E108, E109) ---------- */
+
+  const sendeLimit = new S.Limiter({ max: 1, windowMs: GRENZEN.sendenMs });
+  const versuchLimit = new S.Limiter({ max: GRENZEN.versuche, windowMs: GRENZEN.versucheMs });
+  const sqlN = {
+    anzahl: db.prepare('SELECT COUNT(*) AS n FROM funk_nachrichten WHERE szenario_id = ?'),
+    eine: db.prepare('SELECT * FROM funk_nachrichten WHERE id = ? AND szenario_id = ?'),
+    neu: db.prepare(
+      'INSERT INTO funk_nachrichten (szenario_id, von_team_id, an_team_id, angezeigt_von, von_schueler_id, art, inhalt, fuer_schluessel, klartext_hash, version, zeit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ),
+    angekommen: db.prepare('UPDATE funk_nachrichten SET angekommen = 1, version = ? WHERE id = ?'),
+    geknackt: db.prepare('UPDATE funk_nachrichten SET geknackt_von = ?, version = ? WHERE id = ?'),
+    ausblenden: db.prepare("UPDATE funk_nachrichten SET inhalt = '', klartext_hash = NULL, sichtbar = 0, version = ? WHERE id = ?"),
+    konfig: db.prepare('UPDATE funk_szenarien SET konfig = ? WHERE id = ?')
+  };
+
+  /** Teilnehmer mit Rolle in einem laufenden Szenario; Aktion muss der Rolle erlaubt sein */
+  function aktiverTeilnehmer(s, id, aktion) {
+    const t = teilnehmer(s, id);
+    if (!t.betrachter.rolle) throw new V.ForbiddenError('Dein Team spielt diesmal nicht mit – schau auf den Beamer.');
+    if (t.sz.status === 'pausiert') throw new V.ConflictError('Das Szenario ist pausiert.');
+    if (t.sz.status !== 'laeuft') throw new V.ConflictError('Das Szenario läuft nicht.');
+    const erlaubt = (Sz.SZENARIEN[t.sz.typ].aktionen || {})[t.betrachter.rolle] || [];
+    if (!erlaubt.includes(aktion)) throw new V.ForbiddenError('Das darf deine Rolle in diesem Szenario nicht.');
+    return t;
+  }
+
+  class ZuVieleError extends Error {
+    constructor(message, retryAfter) {
+      super(message);
+      this.status = 429;
+      this.retryAfter = Math.max(1, Math.ceil(retryAfter));
+    }
+  }
+
+  /** POST /api/funk/:id/nachrichten { an?, text, klartext? } → { nachricht } */
+  function senden(s, id, body) {
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const { sz, team, betrachter } = teilnehmer(s, id);
+    if (!betrachter.rolle) throw new V.ForbiddenError('Dein Team spielt diesmal nicht mit – schau auf den Beamer.');
+    if (sz.status === 'pausiert') throw new V.ConflictError('Das Szenario ist pausiert.');
+    if (sz.status !== 'laeuft') throw new V.ConflictError('Das Szenario läuft nicht.');
+    const k = Sz.SZENARIEN[sz.typ];
+    const typ = TYP_MODULE[sz.typ];
+    const sendePhasen = k.senden || k.phasen.filter((p) => p !== 'aufloesung');
+    if (!sendePhasen.includes(sz.phase)) throw new V.ConflictError('In dieser Phase wird nicht gesendet.');
+    if (!((k.aktionen || {})[betrachter.rolle] || []).includes('senden')) throw new V.ForbiddenError('Deine Rolle sendet in diesem Szenario nicht.');
+    const jetzt = now();
+    const stummBis = (konfigVon(sz).stumm || {})[team.id];
+    if (stummBis && Date.parse(stummBis) > jetzt) throw new ZuVieleError('Euer Team ist für eine Minute stummgeschaltet.', (Date.parse(stummBis) - jetzt) / 1000);
+    const key = `${sz.id}:${team.id}`;
+    if (sendeLimit.isBlocked(key, jetzt)) throw new ZuVieleError('Höchstens eine Nachricht je Team in 10 Sekunden.', sendeLimit.retryAfterSec(key, jetzt));
+    if (sqlN.anzahl.get(sz.id).n >= GRENZEN.maxNachrichten) throw new V.ConflictError(`In diesem Szenario wurden schon ${GRENZEN.maxNachrichten} Nachrichten gesendet.`);
+    const inhalt = T.pruefeInhalt(b.text);
+    let klartext = null;
+    if (b.klartext !== undefined && b.klartext !== null) klartext = T.pruefeKlartext(b.klartext);
+    else if (typ.klartextPflicht) throw new V.ValidationError('Gib zum Prüfen auch den Klartext an.');
+    let an = betrachter.partner;
+    if (b.an !== undefined && b.an !== null && b.an !== an) throw new V.ValidationError('Du kannst nur an dein Partner-Team senden.');
+    // Typ-spezifische Prüfungen (ab Task 137): typ.aktionen.senden(ctx, sz, betrachter, { inhalt, klartext, an, body })
+    // → Ergänzungen { an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? } (Inhalt erneut durch die Whitelist)
+    const extra = (typeof (typ.aktionen || {}).senden === 'function' && typ.aktionen.senden(typCtx(sz), sz, betrachter, { inhalt, klartext, an, body: b })) || {};
+    const endInhalt = extra.inhalt !== undefined ? T.pruefeInhalt(extra.inhalt) : inhalt;
+    if (extra.an !== undefined) an = extra.an;
+    if (an === null || an === undefined) throw new V.ValidationError('Dein Team hat kein Partner-Team.');
+    const salz = konfigVon(sz).salz;
+    const nid = db.transaction(() => {
+      if (sqlN.anzahl.get(sz.id).n >= GRENZEN.maxNachrichten) throw new V.ConflictError(`In diesem Szenario wurden schon ${GRENZEN.maxNachrichten} Nachrichten gesendet.`);
+      const v = naechsteVersion(sz.id);
+      const neu = Number(
+        sqlN.neu.run(sz.id, team.id, an, extra.angezeigtVon ?? null, s.id, extra.art || 'nachricht', endInhalt, extra.fuerSchluessel ?? null, klartext === null ? null : T.hash(salz, klartext), v, iso(jetzt))
+          .lastInsertRowid
+      );
+      ereignis(sz.id, 'gesendet', { nachricht: neu, von: team.id, an }, v);
+      return neu;
+    })();
+    sendeLimit.hit(key, jetzt);
+    const aktuellSz = sql.sz.get(sz.id);
+    return { nachricht: nachrichtFuer(aktuellSz, typ, typCtx(aktuellSz), sqlN.eine.get(nid, sz.id), betrachter) };
+  }
+
+  /** gemeinsame Prüfaktion empfangen/knacken über den Klartext-Hash; der eingereichte Klartext wird nie gespeichert */
+  function pruefe(s, id, body, aktion) {
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const { sz, team, betrachter } = aktiverTeilnehmer(s, id, aktion);
+    const typ = TYP_MODULE[sz.typ];
+    // Typ mit eigener Aktion (z. B. Schlüsseltausch-Tipps, Task 140) übernimmt ganz
+    if (typeof (typ.aktionen || {})[aktion] === 'function') return typ.aktionen[aktion](typCtx(sz), sz, betrachter, b);
+    const nid = V.id(b.nachricht, 'Nachricht');
+    const n = sqlN.eine.get(nid, sz.id);
+    if (!n) throw new V.NotFoundError('Nachricht nicht gefunden.');
+    if (aktion === 'empfangen' && n.an_team_id !== team.id) throw new V.ForbiddenError('Diese Nachricht ist nicht an euer Team.');
+    if (aktion === 'knacken') {
+      if ((Sz.SZENARIEN[sz.typ].sicht || {})[betrachter.rolle] !== 'alle') throw new V.ForbiddenError('Das darf deine Rolle in diesem Szenario nicht.');
+      if (n.von_team_id === team.id) throw new V.ValidationError('Eigene Nachrichten knackt ihr nicht.');
+    }
+    const klartext = T.pruefeKlartext(b.klartext);
+    const jetzt = now();
+    const key = `${sz.id}:${team.id}`;
+    if (!versuchLimit.take(key, jetzt)) throw new ZuVieleError('Zu viele Versuche – höchstens 30 in 5 Minuten.', versuchLimit.retryAfterSec(key, jetzt));
+    const richtig = n.klartext_hash !== null && T.gleich(T.hash(konfigVon(sz).salz, klartext), n.klartext_hash);
+    if (richtig) {
+      db.transaction(() => {
+        const frisch = sqlN.eine.get(nid, sz.id);
+        if (aktion === 'empfangen' && !frisch.angekommen) {
+          const v = naechsteVersion(sz.id);
+          sqlN.angekommen.run(v, nid);
+          ereignis(sz.id, 'angekommen', { nachricht: nid, team: team.id }, v);
+        } else if (aktion === 'knacken' && frisch.geknackt_von === null) {
+          const v = naechsteVersion(sz.id);
+          sqlN.geknackt.run(team.id, v, nid);
+          ereignis(sz.id, 'geknackt', { nachricht: nid, team: team.id, sekunden: Math.max(0, Math.round((jetzt - Date.parse(frisch.zeit)) / 1000)) }, v);
+        }
+      })();
+    }
+    return { richtig };
+  }
+
+  const empfangen = (s, id, body) => pruefe(s, id, body, 'empfangen');
+  const knacken = (s, id, body) => pruefe(s, id, body, 'knacken');
+
+  /** schreibende Lehrkraft-Aktion in einem offenen Szenario (gesperrter Kurs 403, beendet 409) */
+  function ladeLkOffen(lk, id) {
+    const { sz, kurs } = ladeLk(lk, id);
+    if (!kurs.aktiv) throw new V.ForbiddenError(GESPERRT);
+    if (sz.status === 'auswertung') throw new V.ConflictError('Das Szenario ist schon beendet.');
+    return sz;
+  }
+
+  /** POST /api/lehrer/funk/:id/nachrichten/:nid/ausblenden – Inhalt und Hash sofort leeren (E109: neue Version) */
+  function ausblenden(lk, id, nachrichtId) {
+    const sz = ladeLkOffen(lk, id);
+    const nid = V.id(nachrichtId, 'Nachricht');
+    if (!sqlN.eine.get(nid, sz.id)) throw new V.NotFoundError('Nachricht nicht gefunden.');
+    db.transaction(() => {
+      const v = naechsteVersion(sz.id);
+      sqlN.ausblenden.run(v, nid);
+      ereignis(sz.id, 'ausgeblendet', { nachricht: nid }, v);
+    })();
+    return { ok: true };
+  }
+
+  /** POST /api/lehrer/funk/:id/teams/:teamId/stumm { sekunden } – 1–300 s keine Nachrichten */
+  function stumm(lk, id, teamIdRoh, body) {
+    const sz = ladeLkOffen(lk, id);
+    const teamId = V.id(teamIdRoh, 'Team');
+    if (!sql.kursTeams.all(sz.kurs_id).some((x) => x.id === teamId)) throw new V.NotFoundError('Team nicht gefunden.');
+    const roh = body && typeof body === 'object' && body.sekunden !== undefined ? body.sekunden : 60;
+    if (!Number.isInteger(roh) || roh < 1 || roh > GRENZEN.stummMax) throw new V.ValidationError(`sekunden muss 1 bis ${GRENZEN.stummMax} sein.`);
+    db.transaction(() => {
+      const aktuellSz = sql.sz.get(sz.id);
+      const konfig = konfigVon(aktuellSz);
+      konfig.stumm = { ...(konfig.stumm || {}), [teamId]: iso(now() + roh * 1000) };
+      const v = naechsteVersion(sz.id);
+      sqlN.konfig.run(JSON.stringify(konfig), sz.id);
+      ereignis(sz.id, 'stumm', { team: teamId, sekunden: roh }, v);
+    })();
+    return { ok: true };
+  }
+
   return {
+    senden,
+    empfangen,
+    knacken,
+    ausblenden,
+    stumm,
+    GRENZEN,
     anlegen,
     rollenSetzen,
     status,

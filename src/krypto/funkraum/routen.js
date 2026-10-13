@@ -1,5 +1,6 @@
 /* Kryptos – Funkraum-Routen (TECHNIK §13.2, §13.4, Plan M7 Tasks 134–136). Lehrkraft: Szenario anlegen, Status, Rollen, Stand
-   (regie/beamer); Schüler: /api/funk, Stand mit ETag/seit (Task 135). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
+   (regie/beamer); Schüler: /api/funk, Stand mit ETag/seit (Task 135), Senden/Empfangen/Knacken; Lehrkraft:
+   Ausblenden, Stummschalten (Task 136). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
 'use strict';
 const V = require('../../validate');
 const S = require('../../security');
@@ -58,12 +59,29 @@ function funkRouten(funk) {
 
     /* Schüler (Plan M7 Task 135) */
     api.get('/funk', schueler, limit(funkLimit, proSchueler), (req, res) => res.json(funk.aktuell(req.schueler)));
+    // Nachrichten und Prüfaktionen (Task 136); 429 aus dem Dienst mit Retry-After
+    const mit429 = (f) => (req, res) => {
+      try {
+        res.json(f(req));
+      } catch (e) {
+        if (e && e.status === 429) {
+          res.set('Retry-After', String(e.retryAfter || 1));
+          return res.status(429).json({ error: e.message });
+        }
+        throw e;
+      }
+    };
+    api.post('/funk/:id/nachrichten', schueler, mit429((req) => funk.senden(req.schueler, req.params.id, req.body)));
+    api.post('/funk/:id/empfangen', schueler, mit429((req) => funk.empfangen(req.schueler, req.params.id, req.body)));
+    api.post('/funk/:id/knacken', schueler, mit429((req) => funk.knacken(req.schueler, req.params.id, req.body)));
     api.get('/funk/:id/stand', schueler, limit(standLimit, proSchueler), (req, res) => sendeStand(res, funk.stand(req.schueler, req.params.id, abfrage(req))));
 
     api.get('/lehrer/kurse/:kursId/funk', lehrkraft, (req, res) => res.json(funk.aktuellFuerKurs(req.lk, kid(req))));
     api.post('/lehrer/kurse/:kursId/funk', lehrkraft, (req, res) => res.json(funk.anlegen(req.lk, kid(req), req.body)));
     api.post('/lehrer/funk/:id/status', lehrkraft, (req, res) => res.json(funk.status(req.lk, req.params.id, req.body)));
     api.put('/lehrer/funk/:id/rollen', lehrkraft, (req, res) => res.json(funk.rollenSetzen(req.lk, req.params.id, req.body)));
+    api.post('/lehrer/funk/:id/nachrichten/:nid/ausblenden', lehrkraft, (req, res) => res.json(funk.ausblenden(req.lk, req.params.id, req.params.nid)));
+    api.post('/lehrer/funk/:id/teams/:teamId/stumm', lehrkraft, (req, res) => res.json(funk.stumm(req.lk, req.params.id, req.params.teamId, req.body)));
     api.get('/lehrer/funk/:id/stand', lehrkraft, limit(lkLimit, proLk), (req, res) =>
       sendeStand(res, funk.standLehrkraft(req.lk, req.params.id, { ...abfrage(req), ansicht: req.query.ansicht === undefined ? 'regie' : req.query.ansicht }))
     );
