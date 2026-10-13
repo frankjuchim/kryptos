@@ -4,6 +4,17 @@
 // Transaktion. Rückgabe = Anzahl gelöschter Konten + Teilnahmen (nachSub) bzw. Kurse + Teilnahmen (nachKurs).
 // Jede Löschung hinterlässt einen Löschvermerk in `loeschungen` (nur Kennung + Zeit, kein Name): Eine spätere
 // Rücksicherung eines älteren Backups filtert diese Konten/Kurse wieder heraus (TECHNIK §7.3).
+//
+// Funkraum/Arena bei einer Löschung nach `sub` (Schüler-Teilnahme; Plan M7 Task 142, Test test/funkraum_betrieb.test.js):
+//   - team_mitglieder der Teilnahme (Kaskade über schueler.id)
+//   - funk_nachrichten mit von_schueler_id = Teilnahme – auch Weiterleitungen (Mallory-Station übernimmt die id der
+//     Original-Sendung) –, samt ihrem Inhalt und Klartext-Hash
+//   - funk_teilnahmen und arena_versuche der Teilnahme
+//   - ist das Team danach leer: teams-Zeile und über teams.id funk_rollen (samt Zustand: Schlüsselblöcke, Zuordnungen,
+//     Meldungen), alle Nachrichten von/an/„angezeigt von“ dem Team, arena_chiffren (Beschreibung, Beurteilung, Hash) und
+//     deren Versuche; Partner-Rollen behalten ihre Zeile mit partner_id = NULL („Euer Partnerteam ist nicht mehr
+//     dabei.“), geknackt_von wird NULL
+//   - funk_ereignisse enthalten nur Codes/ids und bleiben bis zum Schließen bzw. 24 h nach Anlage
 
 const SUB_MUSTER = /^[asl]:\d{1,15}$/;
 const KURS_MUSTER = /^k:\d{1,15}$/;

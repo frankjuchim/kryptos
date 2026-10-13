@@ -1511,7 +1511,7 @@ Beamer bei 1920 × 1080.
 - Consumes: Tasks 132–141. Produces: keine neue Schnittstelle; legt fest: nach Löschung eines Teams (leer geworden) behält
   der Partner seine Rolle mit `partner: null` und sieht „Euer Partnerteam ist nicht mehr dabei.“ (`ich.partner = null`).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_betrieb.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_betrieb.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1578,10 +1578,10 @@ Beamer bei 1920 × 1080.
     assert.equal((await f.lk.get(`/api/lehrer/kurse/${f.kurs.id}/funk`).expect(200)).body.szenario, null);
   });
   ```
-- [ ] **Step 2: Run** → FAIL bzw. Lücken sichtbar (z. B. `partner` zeigt auf gelöschtes Team, Auswertung generisch beim Sperren).
-- [ ] **Step 3: Implement** die Lücken (nur `src/krypto/funkraum/*`, `src/verbund/*`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Löschregeln im Betrieb geprüft (sub, Kurs gesperrt, Beenden je Typ, 24 h, Backup)"`.
+- [x] **Step 2: Run** → FAIL bzw. Lücken sichtbar (z. B. `partner` zeigt auf gelöschtes Team, Auswertung generisch beim Sperren).
+- [x] **Step 3: Implement** die Lücken (nur `src/krypto/funkraum/*`, `src/verbund/*`).
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Löschregeln im Betrieb geprüft (sub, Kurs gesperrt, Beenden je Typ, 24 h, Backup)"`.
 
 ### Task 143: Arena – Phasen, Lehrkraft-Regie, Frist `angriff_bis`, Schüler-Status (TECHNIK §9.1, §9.7, §13.3/§13.4, E102)
 
@@ -2850,6 +2850,14 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Szenario-Werkzeuge (W5 nennt keins). Offener Punkt für die Oberfläche (Task 154/155): Der Beamer zeigt Schlüssel-Sendungen im
   Klartext („S41“) – wer genau hinsieht, erkennt eine untergeschobene Nummer schon vor der Auflösung. Zusatztest: zwei
   Mallory-Teams, Datenleck je Rolle, Whitelist auf allen Wegen, Zertifikate nur in Phase 2, Ticker, Auswertung ohne Texte.
+- **Task 142:** Der Dienst brauchte keine Änderung – alle Plan-Tests waren sofort grün (Kaskaden aus Migration 1,
+  `partner_id ON DELETE SET NULL`, Kurs gesperrt über `beendeIntern` seit Task 134). Plan-Test korrigiert: die Nadeln
+  `"zuordnung"`/`"U":"` werden nur in den `funk_*`-Tabellen gesucht (die Fixture-Aufgaben in `aufgaben.daten` haben die
+  Interaktion „zuordnung“). Der Typ-Test erzeugt jetzt je Typ echte Geheimnisse (Botenlauf-Nachricht, Zuordnung,
+  Schlüsselblock, öffentlicher Wert + K-Meldung, Bob-Schlüssel + Umschlag mit Auftragskarte „TREFFEN UM 14 …“) und prüft
+  zuerst, dass sie vor dem Beenden in den Funkraum-Tabellen stehen. Zusatztests: je Typ Löschung nach `sub` von jedem der drei
+  Teams mitten im Spiel (übrige Stände, Regie, Beamer, alle Phasen, Beenden ohne Fehler); Szenario ohne verbleibende Rolle.
+  `src/verbund/loeschen.js`: Kopfkommentar listet die Funkraum-/Arena-Zeilen einer Löschung nach `sub`.
 
 ## Reihenfolge und Abhängigkeiten
 
