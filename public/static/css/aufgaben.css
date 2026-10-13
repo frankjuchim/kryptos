@@ -507,3 +507,95 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
     border: 0;
   }
 }
+
+/* =====================================================================================================================
+   Teil 4 (M4 Task 54): Interaktion chiffre – Kästchen, Hilfszeilen, Zeilenfeld (Delta §8.1, E26)
+   ===================================================================================================================== */
+
+.chiffre { display: grid; gap: var(--a-3); min-width: 0; }
+.chiffre-kopf { font-weight: 700; color: var(--text); }
+.chiffre-kopf .chiffre-richtung, .chiffre-kopf .chiffre-verdeckt { font-weight: 400; color: var(--text-2); }
+.kaestchen-rahmen { min-width: 0; padding-bottom: var(--a-1); }
+.kaestchen-reihe { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--a-3) var(--a-4); }
+.kaestchen-block, .hilfszeilen-labels { display: grid; gap: 2px; }
+.kaestchen-gruppe, .hilfszeile { display: flex; gap: 4px; }
+.hilfszeile .hz, .hz-label {
+  width: var(--ziel);
+  min-height: 1.35em;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: .8rem;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--text-2);
+}
+.hz-label { width: auto; text-align: right; font-family: var(--f-text); font-weight: 700; }
+.hz-label-antwort { display: flex; align-items: center; justify-content: flex-end; min-height: var(--ziel); }
+.kaestchen-zelle { position: relative; display: inline-block; }
+.kaestchen {
+  width: var(--ziel);
+  height: var(--ziel);
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--karte);
+  border: 2px solid var(--text-2);
+  border-radius: 6px;
+}
+.kaestchen.zahl { font-size: 1rem; letter-spacing: -.02em; }
+.kaestchen:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.kaestchen.ok, .chiffre-zeile.ok { border: 3px solid var(--ok); background: var(--ok-flaeche); }
+.kaestchen.falsch, .chiffre-zeile.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+.kaestchen.loesung, .chiffre-zeile.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+.kaestchen:disabled { opacity: 1; cursor: default; }
+.kaestchen-zelle:has(.kaestchen.ok)::after, .kaestchen-zelle:has(.kaestchen.falsch)::after {
+  position: absolute;
+  top: -.55em;
+  right: -.45em;
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: var(--r-chip);
+  background: var(--karte);
+}
+.kaestchen-zelle:has(.kaestchen.ok)::after { content: "✓"; color: var(--ok); border: 1.5px solid var(--ok); }
+.kaestchen-zelle:has(.kaestchen.falsch)::after { content: "✗"; color: var(--fehler); border: 1.5px solid var(--fehler); }
+.mehr-kaestchen { font-family: var(--f-text); }
+.chiffre-zeile-rahmen { display: grid; gap: var(--a-2); min-width: 0; }
+.chiffre-zeile {
+  width: 100%;
+  min-height: var(--ziel);
+  padding: 6px 10px;
+  font-family: var(--f-mono);
+  font-variant-ligatures: none;
+  font-size: 1.1rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--karte);
+  border: 2px solid var(--text-2);
+  border-radius: var(--r-knopf);
+}
+.chiffre-zeile-vorschau { font-family: var(--f-mono); font-variant-ligatures: none; letter-spacing: .12em; word-spacing: .4em; color: var(--text-2); min-height: 1.4em; overflow-wrap: anywhere; }
+.zeichen-feedback { display: flex; flex-wrap: wrap; gap: 4px; }
+.zeichen-feedback:empty { display: none; }
+.zf { display: inline-grid; justify-items: center; min-width: 1.8em; padding: 2px 3px; border-radius: 4px; font-family: var(--f-mono); font-variant-ligatures: none; color: var(--text); }
+.zf.ok { border: 1.5px solid var(--ok); }
+.zf.falsch { border: 1.5px dashed var(--fehler); background: var(--fehler-flaeche); }
+.zf .zf-marke { font-size: .75rem; font-weight: 700; }
+.zf.ok .zf-marke { color: var(--ok); }
+.zf.falsch .zf-marke { color: var(--fehler); }
+.chiffre-ergebnis { margin: 0; font-weight: 700; color: var(--text); }
+.chiffre-ergebnis:empty { display: none; }
+.hilfszeilen-legende { display: none; margin: 0 0 var(--a-2); font-size: .85rem; color: var(--text-2); }
+@media (max-width: 600px) {
+  .hilfszeilen-labels { display: none; }
+  .hilfszeilen-legende { display: block; }
+}
