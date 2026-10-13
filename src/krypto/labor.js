@@ -3,9 +3,10 @@
 // Reiter-Regeln im Client, Plan M6 E71). Die Werkzeuge selbst sind Client-Module;
 // Texte zu den Gründen macht der Client (M4 Task 53).
 //   grund: null (frei) · 'lehrkraft' (in den Kurseinstellungen gesperrt) · 'welt' (auto, Welt nicht freigeschaltet) ·
-//          'boss' (Boss-Kampf läuft: alle Werkzeuge gesperrt)
+//          'boss' (Boss-Kampf läuft: alle Werkzeuge gesperrt – bis zur Abgabe oder bis Frist + 30 s Kulanz)
 
 const { WERKZEUGE } = require('./werkzeuge');
+const { BOSS_KULANZ_MS } = require('../domain');
 
 /**
  * @param {{ db: import('better-sqlite3').Database, svc: object, now: () => number }} o
@@ -16,7 +17,8 @@ function createLabor({ db, svc, now }) {
   /** Freigaben für eine Teilnahme (Zeile aus schueler). */
   function freigaben(s) {
     const einst = svc.kurse.einstellungen(svc.kurse.kursRow(s.kurs_id).einstellungen);
-    const boss = !!laufenderBoss.get(s.id, new Date(now()).toISOString());
+    // gesperrt bis Frist + Kulanz (in der Kulanz nimmt der Boss noch Antworten an – M6 Task 127)
+    const boss = !!laufenderBoss.get(s.id, new Date(now() - BOSS_KULANZ_MS).toISOString());
     const werkzeuge = WERKZEUGE.map(({ id, titel, welt }) => {
       const einstellung = einst.werkzeuge[id]; // 'frei' | 'gesperrt' | undefined (= auto)
       let grund = null;

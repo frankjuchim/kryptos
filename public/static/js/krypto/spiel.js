@@ -41,7 +41,7 @@ const KRSpiel = (() => {
             werkzeuge: liste,
             werkzeugFrei: (id) => liste.some((w) => w.id === id && w.frei),
             // Umgebung für Werkzeug-Dialoge in Aufgaben: Reiter-Regeln des aktiven Kurses (M6 E71, Task 125)
-            laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau, welten: weltenFrei }
+            laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau, welten: weltenFrei, ...(r && r.boss ? { gesperrt: 'boss' } : {}) }
           };
         })
         .catch(() => ({ boss: false, niveau: 'eA', welten: [], werkzeuge: [], werkzeugFrei: () => false, laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'eA', welten: [] } }));

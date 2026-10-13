@@ -29,6 +29,24 @@ test('Labor-Seite: Umgebung aus /api/labor (niveau, welten) an KRLabor.oeffne; L
   assert.match(l.text(l.document.getElementById('haupt')), /Für Schülerinnen und Schüler gelten Reiter-Regeln \(Welt, Niveau\)\./);
 });
 
+test('Labor-Seite im Boss: #/scheibe zeigt den Grund und lädt kein Modul; KRLabor.oeffne sperrt zusätzlich (M6 Task 127)', async () => {
+  const werkzeuge = [{ id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: false, grund: 'boss' }];
+  const k = D.lade([...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/scheibe', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: true, niveau: 'eA', welten: [0], werkzeuge } } } });
+  await k.ruhe();
+  assert.match(k.text(k.document.getElementById('haupt')), /Während eines Boss-Kampfs ist das Labor geschlossen/);
+  assert.deepEqual(k.skripte.filter((x) => /\/labor\/(?!registry|seite)/.test(x)), []);
+  // zweite Sicherung für alle Aufrufer: oeffne mit umgebung.gesperrt lädt nichts und zeigt den Grund
+  const f = k.document.createElement('div');
+  const ctrl = k.wert('KRLabor').oeffne('scheibe', {}, f, { modus: 'labor', gesperrt: 'boss' });
+  assert.match(k.text(f), /Boss-Kampfs/);
+  assert.deepEqual(k.skripte, []);
+  assert.equal(ctrl.zustand(), null);
+  const g = k.document.createElement('div');
+  k.wert('KRLabor').oeffne('scheibe', {}, g, { modus: 'lab', gesperrt: 'lehrkraft' });
+  assert.match(k.text(g), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
+  assert.deepEqual(k.skripte, []);
+});
+
 /* ---------- Schüler-Seite (M4 Tasks 57–60) ---------- */
 const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js'];
 const welt = (nr, extra = {}) => ({ nr, titel: `Welt ${nr}`, epoche: 'Testepoche', jahr: { von: 1900 + nr, bis: 2000, anzeige: '1900 – 2000' }, farbe: '#5B6B7C', akzentHell: '#C9D3DD', frei: true, punkte: 10, maxPunkte: 40, anteil: 0.25, training: true, archivfund: { titel: 'Die Testdepesche', status: 'offen' }, kapitel: null, boss: { titel: 'Testboss', frei: false, grund: 'Erst 60 % der Level-Punkte.', besiegt: false }, levels: [{ id: `W${nr}-L1`, nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', akte: 'Akte W9·1 – Blöcke und Lücken', anzahl: 4, geloest: 4, punkte: 40, maxPunkte: 40, anteil: 1 }, { id: `W${nr}-L3`, nr: '3', titel: 'Analyse', niveau: 'eA', rolle: 'kryptoanalyse', anzahl: 2, geloest: 0, punkte: 0, maxPunkte: 20, anteil: 0 }, { id: `W${nr}-L4`, nr: 'K1', titel: 'Kür', niveau: 'kuer', kuer: true, rolle: 'kryptoanalyse', anzahl: 1, geloest: 0, punkte: 0, maxPunkte: 10, anteil: 0 }], ...extra });
@@ -182,6 +200,16 @@ test('Aufgabe: Werkzeug-Block bekommt die Kurs-Umgebung aus /api/labor (ctx.labo
   await k.ruhe();
   k.klick(k.eins(k.document, 'button.werkzeug-oeffnen'));
   assert.deepEqual(k.roh(k.wert('__dialog')), [['haeufigkeit', { reiter: ['histogramm'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 9], level: 'W9-L1' }]], 'mit Level-Kontext (Reiter-Regel MitM in W5-L3)');
+});
+test('Aufgabe während eines laufenden Kampfes (anderer Tab): Werkzeug-Block gesperrt, Umgebung mit gesperrt „boss“ (M6 Task 127)', async () => {
+  const a = { id: 'W9-L1-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', inhalt: [{ t: 'werkzeug', id: 'scheibe' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/aufgaben/W9-L1-01': { status: 200, body: { aufgabe: a, zustand: { status: 'offen', fehlversuche: 0, tippsGenutzt: 0, moeglich: 10 }, ort: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, level: { id: 'W9-L1', nr: '1', titel: 'Blöcke' }, index: 0, anzahl: 1, vorher: null, nachher: null } } }, 'GET /api/labor': { status: 200, body: { boss: true, niveau: 'eA', welten: [0, 9], werkzeuge: [{ id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: false, grund: 'boss' }] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/aufgabe/W9-L1-01', fetch: f });
+  await k.ruhe();
+  const knopf = k.eins(k.document, 'button.werkzeug-oeffnen');
+  assert.equal(knopf.disabled, true);
+  assert.deepEqual(k.roh((await k.wert('KRSpiel').labor()).laborUmgebung), { modus: 'lab', rolle: 'schueler', niveau: 'eA', welten: [0, 9], gesperrt: 'boss' });
+  assert.deepEqual(k.skripte, [], 'nichts nachgeladen');
 });
 test('Rang-Plakette: nach dem Lösen mit Punkten neu geladen, ohne Punkte nicht (Beobachtung M5 Task 79–82)', async () => {
   const a = { id: 'W9-L5-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', fallen: [], tippsAnzahl: 0, inhalt: [{ t: 'text', md: 'Entschlüssele.' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };

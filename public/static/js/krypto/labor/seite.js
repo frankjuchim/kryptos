@@ -7,11 +7,7 @@
 
 const KRLaborSeite = (() => {
   const { h } = AQ;
-  const GRUND = {
-    lehrkraft: 'Deine Lehrkraft schaltet dieses Werkzeug später frei.',
-    welt: 'Wird mit der Epoche freigeschaltet.',
-    boss: 'Während eines Boss-Kampfs ist das Labor geschlossen.'
-  };
+  const GRUND = KRLabor.GRUND; // Texte der Sperrgründe (registry.js)
   let daten = null; // { rolle, boss, niveau, welten, werkzeuge: [{ id, titel, welt, frei, grund }] }
   let offen = null;
 

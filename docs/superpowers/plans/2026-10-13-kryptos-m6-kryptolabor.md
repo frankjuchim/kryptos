@@ -2374,7 +2374,7 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   **und** nach Fristablauf wieder frei; Labor-Seite zeigt den Grund und lädt nichts nach; Block `werkzeug` rendert im Boss
   nichts und ist in anderen Tabs (Aufgabenansicht während eines laufenden Kampfes) gesperrt.
 
-- [ ] **Step 1: Failing tests** – `test/boss.test.js`:
+- [x] **Step 1: Failing tests** – `test/boss.test.js`:
   ```js
   test('Labor während des Kampfes gesperrt – auch „frei“ gesetzte Werkzeuge; nach Fristablauf wieder frei (TECHNIK §10.3)', async () => {
     const { s, lk, kurs, uhr } = await bossSzenario();
@@ -2405,9 +2405,14 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
   ```
   Bestehende Tests bleiben: Block `werkzeug` im Boss → `null` (`client_bloecke`), Kopfzeile ohne Labor-Link im Kampf
   (`client_seiten` „Boss-Kampf …“), e2e 3 „keine Werkzeuge/Labor-Links“.
-- [ ] **Step 2: Run** → FAIL (Labor-Seite lädt bisher nach dem Grundtext nichts – nur der `oeffne`-Schutz und der Fristtest fehlen).
-- [ ] **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Boss-Sperre geprüft: Fristablauf, kein Nachladen im Kampf, Sperre in KRLabor.oeffne"`.
+- [x] **Step 2: Run** → FAIL (Labor-Seite lädt bisher nach dem Grundtext nichts – nur der `oeffne`-Schutz und der Fristtest fehlen).
+- [x] **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Boss-Sperre geprüft: Fristablauf, kein Nachladen im Kampf, Sperre in KRLabor.oeffne"`.
+- **Umsetzungsnotiz:** Der Fristtest deckte eine Lücke auf: `/api/labor` gab das Labor schon bei Fristablauf frei, der Boss
+  nimmt aber noch 30 s Kulanz lang Antworten an. Die Sperre gilt jetzt bis Abgabe **oder** Frist + `BOSS_KULANZ_MS`
+  (`src/krypto/labor.js`; Test prüft Kulanz gesperrt, danach frei). `KRLabor.GRUND` (Texte der Sperrgründe) liegt jetzt in
+  `registry.js` und wird von der Labor-Seite mitbenutzt; `KRSpiel.labor().laborUmgebung` trägt im Kampf `gesperrt: 'boss'`,
+  sodass auch ein Werkzeug-Dialog aus einem anderen Tab nichts lädt.
 
 ### Task 128: e2e Szenario 4 „Kryptolabor“ (TECHNIK §15 Nr. 4, E88)
 

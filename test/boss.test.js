@@ -226,3 +226,19 @@ test('Boss-Rahmentext (boss.rahmen, Plan M5 E52): im Status vor dem Start, ohne 
   assert.equal(st.boss.aufgaben, undefined);
   assert.equal(st.boss.pool, undefined);
 });
+
+test('Labor während des Kampfes gesperrt – auch „frei“ gesetzte Werkzeuge; in der Kulanz weiter gesperrt, nach Fristablauf wieder frei (TECHNIK §10.3, M6 Task 127)', async () => {
+  const { s, lk, kurs, uhr } = await bossSzenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { boss: 'offen', werkzeuge: { scheibe: 'frei' } } }).expect(200);
+  const k = (await s.post('/api/boss/9/start').send({}).expect(201)).body;
+  const frist = Date.parse(k.deadline) - Date.parse(k.start); // Fristdauer aus dem Boss-Seed der Fixture
+  const r = await s.get('/api/labor').expect(200);
+  assert.equal(r.body.boss, true);
+  assert.deepEqual(r.body.werkzeuge.find((w) => w.id === 'scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: false, grund: 'boss' });
+  uhr.vor(frist + 20 * 1000); // Frist abgelaufen, aber in der Kulanz (30 s) – Antworten werden noch angenommen
+  assert.equal((await s.get('/api/labor').expect(200)).body.boss, true, 'in der Kulanz bleibt das Labor zu');
+  uhr.vor(60 * 1000); // Kulanz vorbei, Kampf nicht beendet
+  const n = await s.get('/api/labor').expect(200);
+  assert.equal(n.body.boss, false);
+  assert.equal(n.body.werkzeuge.find((w) => w.id === 'scheibe').frei, true);
+});

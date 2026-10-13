@@ -128,13 +128,21 @@ const KRLabor = (() => {
 
   /* ---------- Öffnen ---------- */
 
+  // Gründe für gesperrte Werkzeuge (= /api/labor grund; Labor-Seite und zweite Sicherung in oeffne, M6 Task 127)
+  const GRUND = Object.freeze({
+    lehrkraft: 'Deine Lehrkraft schaltet dieses Werkzeug später frei.',
+    welt: 'Wird mit der Epoche freigeschaltet.',
+    boss: 'Während eines Boss-Kampfs ist das Labor geschlossen.'
+  });
+
   let zuletzt = null;
   /** Das zuletzt geöffnete Steuerobjekt (nur lesend, e2e): { schliesse(), zustand() }. */
   function aktiv() {
     return zuletzt;
   }
 
-  /** Werkzeug in container öffnen; liefert { schliesse(), zustand() }. Fehlt das Modul, wird es nachgeladen. */
+  /** Werkzeug in container öffnen; liefert { schliesse(), zustand() }. Fehlt das Modul, wird es nachgeladen.
+      umgebung.gesperrt ('boss'|'lehrkraft'|'welt') → nur der Grund, kein Modul (M6 Task 127). */
   function oeffne(id, voreinstellung, container, umgebung = { modus: 'labor' }) {
     const v = voreinstellung && typeof voreinstellung === 'object' && !Array.isArray(voreinstellung) ? voreinstellung : {};
     const u = umgebung || { modus: 'labor' };
@@ -156,6 +164,11 @@ const KRLabor = (() => {
       }
     };
     zuletzt = steuer;
+    if (u.gesperrt) {
+      // zweite Sicherung für alle Aufrufer (Boss-Sperre, TECHNIK §10.3): kein Modul, kein Nachladen, nur der Grund
+      AQ.mount(container, h('div', { class: 'leer-zustand werkzeug-gesperrt', role: 'status' }, KR.symbol('icons', 'i-labor'), h('p', { class: 'leer-zustand-text' }, GRUND[u.gesperrt] || GRUND.lehrkraft)));
+      return steuer;
+    }
     if (MODULE.has(id) && typeof KRLaborBau !== 'undefined') {
       starte();
       return steuer;
@@ -454,5 +467,5 @@ const KRLabor = (() => {
     return { element: box, nachspiel: ns, schliesse: () => ns.schliesse() };
   }
 
-  return { WERKZEUGE, REITER_REGELN, werkzeug, registriere, hat, bereit, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
+  return { WERKZEUGE, REITER_REGELN, GRUND, werkzeug, registriere, hat, bereit, lade, erlaubt, reiterFuer, oeffne, aktiv, dialog, nachspiel, alleSchluessel };
 })();
