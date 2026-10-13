@@ -508,3 +508,54 @@ input.vq-schluessel, input.vq-geheim, .vg-wort input, .korrektur-feld input { te
 .vg-zeilen td.aktuell { background: var(--hinweis-flaeche); box-shadow: inset 0 0 0 2px var(--hinweis); text-decoration: underline; }
 .vg-quadratzeile:empty { display: none; }
 .vq-alphabet tr.zahlen th { min-width: 6.5rem; }
+/* Vigenère II: Angriff (Reiter 3–7) */
+.vg-inhalt { display: grid; gap: var(--a-4); min-width: 0; }
+.vg-inhalt > * { min-width: 0; }
+.vg-textzeile .positionen span { min-width: 0; }
+mark.markiert.wiederholung { font-weight: 700; }
+.wiederholungen .vg-folge { font-family: var(--f-mono); letter-spacing: .06em; }
+.wiederholungen tr.art-b .vg-folge { text-decoration: underline dashed; }
+.wiederholungen tr.art-a .vg-folge { text-decoration: underline; }
+.wiederholungen tr.art-c .vg-folge { text-decoration: underline dotted; }
+.vg-abstaende { text-align: left; }
+.vg-abstand { display: inline-flex; align-items: center; gap: var(--a-1); min-height: var(--ziel); margin-right: var(--a-3); white-space: nowrap; cursor: pointer; }
+.vg-abstand input { width: 20px; height: 20px; }
+.vg-abstand input:checked + span { text-decoration: line-through; color: var(--text-2); }
+.vg-balken-zelle { min-width: 8rem; }
+.vg-balken { display: block; height: 14px; width: calc(var(--anteil, 0) * 100%); min-width: 2px; background: var(--text-2); border-radius: 2px; }
+.teiler tr.maximum th, .teiler tr.maximum td { font-weight: 700; background: var(--hinweis-flaeche); }
+.teiler tr.maximum .vg-balken { background: var(--hinweis); }
+.vg-marke { white-space: nowrap; text-align: left; }
+.vg-skala { position: relative; min-width: 8rem; height: 20px; border-bottom: 1px solid var(--linie); }
+.kennzahlen .vg-skala { max-width: 28rem; height: 34px; }
+.vg-skala .vg-balken { position: absolute; left: 0; top: 3px; }
+.vg-ref { position: absolute; top: 0; bottom: 0; border-left: 2px dashed var(--text); font-size: .7rem; padding-left: 2px; color: var(--text); }
+.vg-ref-z { left: 38%; }
+.vg-ref-d { left: 76%; }
+.kennzahlen .vg-ref { top: auto; bottom: -1px; height: 34px; padding-top: 16px; }
+.ic-mittel tr.hoch th, .ic-mittel tr.hoch td { font-weight: 700; background: var(--hinweis-flaeche); }
+.friedman, .vg-ic-teile, .vg-vorschlag, .vg-grenze { margin: 0; }
+.friedman { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.vg-schalter { display: inline-flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); cursor: pointer; }
+.vg-schalter input { width: 20px; height: 20px; }
+.vg-teiltexte { display: grid; gap: var(--a-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
+.vg-teiltext { display: grid; gap: var(--a-2); min-width: 0; }
+.vg-teiltext h3 { margin: 0; font-size: 1rem; }
+.verschiebung td { font-family: var(--f-mono); white-space: nowrap; }
+.korrektur-felder { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.korrektur-feld { display: grid; grid-template-columns: auto 3.2rem auto; grid-template-areas: "nr nr nr" "minus feld plus"; align-items: center; justify-items: center; gap: 2px; padding: var(--a-1); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); }
+.korrektur-nr { grid-area: nr; font-size: .75rem; color: var(--text-2); }
+.korrektur-feld .zahl-minus { grid-area: minus; }
+.korrektur-feld .zahl-plus { grid-area: plus; }
+.korrektur-feld input { grid-area: feld; width: 3.2rem; }
+.korrektur-feld .knopf { min-width: var(--ziel); border: 1.5px solid var(--linie); font-size: 1.1rem; }
+.korrektur-vorschlag { justify-self: start; border: 1.5px solid var(--linie); }
+.korrektur-klartext { margin: 0; font-family: var(--f-mono); font-size: var(--gr-mono); letter-spacing: .08em; word-spacing: 1ch; overflow-wrap: anywhere; }
+.korrektur-klartext .periode { white-space: nowrap; }
+/* Spalten: Muster der Unterstreichung + Hintergrund (Farbe nie einziges Signal; Spaltennummer im title und in der Tabelle) */
+.korrektur-klartext .farbe-0 { text-decoration: underline solid; }
+.korrektur-klartext .farbe-1 { text-decoration: underline dashed; background: var(--papier-2); }
+.korrektur-klartext .farbe-2 { text-decoration: underline dotted; }
+.korrektur-klartext .farbe-3 { text-decoration: underline double; background: var(--papier-2); }
+.korrektur-klartext .farbe-4 { text-decoration: underline wavy; }
+.korrektur-tabelle td { font-family: var(--f-mono); }

@@ -38,6 +38,7 @@
     let zelle = null; // { zeile, spalte } im Quadrat
     let nachspiel = null;
     const A = analyse(v);
+    let zuletzt = null;
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     const wurzel = h('div', { class: 'labor-werkzeug vigenere-werkzeug' }, r.element);
@@ -320,14 +321,300 @@
     }
 
     /* ======================= Reiter 3–7: Angriff (Task 117) ======================= */
-    function analyse() {
-      return null;
-    }
-    function baueAnalyse() {
-      r.flaeche.append(B.hinweis('info', 'Dieser Bereich ist noch in Arbeit.'));
+    /** Zustand des Angriffs (ohne DOM): Mindestlänge, ausgeschlossene Abstände, Annahme k, Korrektur-Schlüssel. */
+    function analyse(vor) {
+      const st = {
+        min: 3,
+        aus: new Set(),
+        k: Number.isInteger(vor.schluessellaenge) && vor.schluessellaenge >= 1 && vor.schluessellaenge <= 20 ? vor.schluessellaenge : 1,
+        schluessel: null // null = Vorschläge aus Reiter 6
+      };
+      function berechne() {
+        const t = Krypto.nurBuchstaben(text);
+        const kas = Krypto.kasiski(t, { min: st.min });
+        const teiler = Krypto.teilerTabelle(kas.abstaende.filter((d) => !st.aus.has(d)), { von: 2, bis: 20 });
+        let maximum = null;
+        for (let x = 2; x <= 20; x++) if (teiler[x] > 0 && (maximum === null || teiler[x] >= teiler[maximum])) maximum = x;
+        const icMittel = {};
+        for (let x = 1; x <= 20; x++) icMittel[x] = Krypto.mittlererKoinzidenzindex(t, x);
+        const teile = Krypto.teiltexte(t, st.k);
+        const schaetzung = teile.map((x) => Krypto.verschiebungSchaetzen(x));
+        const vorschlag = schaetzung.map((x) => x.buchstabe).join('');
+        const schluessel = st.schluessel && st.schluessel.length === st.k ? st.schluessel : vorschlag;
+        return {
+          t,
+          kas,
+          teiler,
+          maximum,
+          ic: Krypto.koinzidenzindex(t),
+          bruch: Krypto.koinzidenzindexBruch(t),
+          friedman: Krypto.friedman(t),
+          icMittel,
+          teile,
+          schaetzung,
+          vorschlag,
+          schluessel,
+          klartext: t ? Krypto.klein(Krypto.vigenere(t, schluessel, 'ent')) : ''
+        };
+      }
+      return {
+        st,
+        berechne,
+        zustand() {
+          const b = berechne();
+          return { wiederholungen: b.kas.wiederholungen, teiler: b.teiler, maximum: b.maximum, ic: b.ic, friedman: b.friedman, icMittel: b.icMittel, k: st.k, vorschlag: b.vorschlag, schluessel: b.schluessel, klartext: b.klartext };
+        }
+      };
     }
 
-    let zuletzt = null;
+    const komma = (x, stellen) => (x === null || x === undefined ? '–' : x.toFixed(stellen).replace('.', ','));
+    const ARTEN = ['a', 'b', 'c'];
+
+    /** Balken 0 … 1 (CSSOM --anteil, CSP-konform). */
+    function balken(anteil, klasse = '') {
+      const b = h('span', { class: `vg-balken ${klasse}`.trim(), 'aria-hidden': 'true' });
+      b.style.setProperty('--anteil', String(Math.max(0, Math.min(1, anteil))));
+      return b;
+    }
+
+    function baueAnalyse(id) {
+      const kopf = B.textfeld({ beschriftung: 'Geheimtext (bis 2 000 Zeichen)', max: MAX, wert: text, art: 'geheimtext', zeilen: 3, beiEingabe: (t) => { text = t; A.st.schluessel = null; zeichne(); } });
+      const zeileOrt = h('div', { class: 'vg-textzeile' });
+      const inhalt = h('div', { class: 'vg-inhalt' });
+      r.flaeche.append(kopf.element, zeileOrt, inhalt);
+      function zeichne() {
+        const b = A.berechne();
+        const marken = id === 'kasiski' ? b.kas.wiederholungen.flatMap((w, i) => w.positionen.map((p) => ({ von: p, laenge: w.folge.length, art: ARTEN[Krypto.mod(i, 3)], klasse: 'wiederholung' }))) : [];
+        AQ.mount(zeileOrt, b.t ? KRB.geheimtext(b.t, { positionen: true, kopieren: false, markiert: marken }) : h('p', { class: 'text-2' }, 'Gib oben einen Geheimtext ein.'));
+        AQ.clear(inhalt);
+        if (!b.t) return;
+        ({ kasiski: zeigeKasiski, teiltexte: zeigeTeiltexte, koinzidenz: zeigeKoinzidenz, verschiebung: zeigeVerschiebung, korrektur: zeigeKorrektur })[id](b, zeichne);
+      }
+      // Regler und Schalter behalten den Fokus: sie liegen außerhalb von „inhalt“ oder werden nach dem Zeichnen wieder fokussiert
+      if (id === 'kasiski') {
+        const zm = B.zahl({ beschriftung: 'Mindestlänge der Folgen', min: 3, max: 6, wert: A.st.min, beiWechsel: (x) => { A.st.min = x; zeichne(); } });
+        r.flaeche.insertBefore(h('div', { class: 'labor-steuer' }, zm.element), inhalt);
+      } else if (id === 'teiltexte') {
+        const zk = B.zahl({ beschriftung: 'angenommene Schlüssellänge k', min: 1, max: 20, wert: A.st.k, format: (x) => `k = ${x}`, beiWechsel: (x) => { A.st.k = x; A.st.schluessel = null; zeichne(); } });
+        r.flaeche.insertBefore(h('div', { class: 'labor-steuer' }, zk.element, schalterReferenz.element, schalterVerschoben.element), inhalt);
+      }
+      zeichne();
+    }
+
+    /** Kleiner Schalter (Checkbox mit Beschriftung). */
+    function schalter(klasse, titel, an) {
+      const id = B.neueId(klasse);
+      const box = h('input', { type: 'checkbox', id, class: klasse });
+      box.checked = an;
+      return { element: h('label', { class: 'vg-schalter', for: id }, box, ` ${titel}`), box };
+    }
+    const schalterReferenz = schalter('referenz-an', 'Referenz Deutsch einblenden', true);
+    const schalterVerschoben = schalter('verschoben-an', 'um den Schlüsselbuchstaben zurückschieben (Reiter 6/7)', false);
+    for (const sch of [schalterReferenz, schalterVerschoben]) {
+      sch.box.addEventListener('change', () => {
+        if (zuletzt !== 'teiltexte') return;
+        baue('teiltexte');
+        sch.box.focus();
+      });
+    }
+
+    function zeigeKasiski(b, zeichne) {
+      const inhalt = r.flaeche.querySelector('.vg-inhalt');
+      const ws = b.kas.wiederholungen;
+      if (!ws.length) {
+        inhalt.append(B.hinweis('info', `Keine Wiederholung ab ${A.st.min} Buchstaben gefunden.`));
+        return;
+      }
+      const abstandZelle = (d) => {
+        const id = B.neueId('zufall');
+        const box = h('input', { type: 'checkbox', id, class: 'zufall', 'data-abstand': String(d), 'aria-label': `Abstand ${d} als Zufallstreffer ausschließen` });
+        box.checked = A.st.aus.has(d);
+        box.addEventListener('change', () => {
+          if (box.checked) A.st.aus.add(d);
+          else A.st.aus.delete(d);
+          zeichne();
+          const neu = r.flaeche.querySelector(`input.zufall[data-abstand="${d}"]`);
+          if (neu) neu.focus();
+        });
+        return h('label', { class: 'vg-abstand', for: id }, box, h('span', null, `${d} = ${Krypto.primfaktoren(d).join(' · ')}`));
+      };
+      inhalt.append(
+        h(
+          'div',
+          { class: 'scroll-x' },
+          h(
+            'table',
+            { class: 'labor-tabelle wiederholungen' },
+            h('caption', null, 'Wiederholungen (Positionen ab 0) – Haken: Abstand als Zufallstreffer ausschließen'),
+            h('thead', null, h('tr', null, ['Folge', 'Positionen', 'Abstände = Primfaktoren'].map((x) => h('th', { scope: 'col' }, x)))),
+            h('tbody', null, ws.map((w, i) => h('tr', { class: `art-${ARTEN[Krypto.mod(i, 3)]}` }, h('th', { scope: 'row', class: 'vg-folge' }, w.folge), h('td', null, w.positionen.join(', ')), h('td', { class: 'vg-abstaende' }, w.abstaende.map(abstandZelle)))))
+          )
+        )
+      );
+      const werte = Object.keys(b.teiler).map(Number);
+      const hoechst = b.maximum === null ? 0 : b.teiler[b.maximum];
+      inhalt.append(
+        h(
+          'div',
+          { class: 'scroll-x' },
+          h(
+            'table',
+            { class: 'labor-tabelle teiler' },
+            h('caption', null, `Teilertabelle: Wie viele der ${b.kas.abstaende.length - b.kas.abstaende.filter((d) => A.st.aus.has(d)).length} Abstände sind durch t teilbar?`),
+            h('thead', null, h('tr', null, ['t', 'Anzahl', 'Balken', ''].map((x) => h('th', { scope: 'col' }, x)))),
+            h(
+              'tbody',
+              null,
+              werte.map((t) => {
+                const max = hoechst > 0 && b.teiler[t] === hoechst;
+                return h('tr', { 'data-t': String(t), class: max ? 'maximum' : null }, h('th', { scope: 'row' }, String(t)), h('td', null, String(b.teiler[t])), h('td', { class: 'vg-balken-zelle' }, balken(hoechst ? b.teiler[t] / hoechst : 0)), h('td', { class: 'vg-marke' }, max ? '★ Maximum' : ''));
+              })
+            )
+          )
+        ),
+        h('p', { class: 'text-2 vg-grenze' }, 'Die Tabelle zählt nur. Welche Schlüssellänge passt, entscheidest du – prüfe sie mit Teiltexten und Koinzidenzindex.')
+      );
+    }
+
+    function zeigeTeiltexte(b) {
+      const inhalt = r.flaeche.querySelector('.vg-inhalt');
+      const mitRef = schalterReferenz.box.checked;
+      const zurueck = schalterVerschoben.box.checked;
+      const liste = h('div', { class: 'vg-teiltexte' });
+      b.teile.forEach((teil, j) => {
+        const sb = b.schluessel[j];
+        const zeigeText = zurueck && teil ? Krypto.caesar(teil, Krypto.wert(sb, 0), 'ent') : teil;
+        liste.append(
+          h(
+            'section',
+            { class: 'vg-teiltext' },
+            h('h3', null, `T${j + 1}: Positionen ${j}, ${j + A.st.k}, ${j + 2 * A.st.k}, … · ${teil.length} Buchstaben${zurueck ? ` · um ${sb} zurückgeschoben` : ''}`),
+            h('p', { class: 'geheimtext teiltext-zeile' }, teil ? Krypto.gruppieren(teil) : '–'),
+            KRB.haeufigkeit({ t: 'haeufigkeit', quelle: 'text', text: zeigeText, referenz: mitRef ? 'deutsch' : null, titel: `Häufigkeiten in T${j + 1}${zurueck ? ` (zurückgeschoben um ${sb})` : ''}` })
+          )
+        );
+      });
+      inhalt.append(liste);
+    }
+
+    function zeigeKoinzidenz(b) {
+      const inhalt = r.flaeche.querySelector('.vg-inhalt');
+      const n = b.t.length;
+      if (!b.bruch) {
+        inhalt.append(B.hinweis('info', 'Für den Koinzidenzindex braucht der Text mindestens zwei Buchstaben.'));
+        return;
+      }
+      let friedman;
+      if (n < 30) friedman = 'Friedman: Text zu kurz (erst ab n = 30).';
+      else if (b.friedman === null || b.friedman <= 0) friedman = 'I ≤ I_Z: Schlüssel etwa so lang wie der Text.';
+      else friedman = `Friedman: k ≈ (I_D − I_Z)·n / ((n − 1)·I − I_Z·n + I_D) ≈ ${komma(b.friedman, 2)}`;
+      const skala = h('div', { class: 'vg-skala', 'aria-hidden': 'true' }, balken(b.ic / 0.1, 'vg-skala-wert'), h('span', { class: 'vg-ref vg-ref-z' }, 'I_Z'), h('span', { class: 'vg-ref vg-ref-d' }, 'I_D'));
+      inhalt.append(
+        h(
+          'div',
+          { class: 'kennzahlen' },
+          h('p', { class: 'kennzahl-bruch' }, `I = Σ nᵢ(nᵢ − 1) / (n(n − 1)) = ${b.bruch.zaehler} / ${b.bruch.nenner}`),
+          h('p', { class: 'kennzahl-wert' }, `I ≈ ${komma(b.ic, 4)}`),
+          skala,
+          h('p', { class: 'kennzahl-referenz text-2' }, 'Referenzlinien: zufällige Buchstaben I_Z = 0,038 · deutscher Text I_D = 0,076.'),
+          h('p', { class: 'friedman' }, friedman)
+        )
+      );
+      const icK = b.teile.map((x) => Krypto.koinzidenzindex(x));
+      inhalt.append(h('p', { class: 'vg-ic-teile' }, `Bei k = ${A.st.k} (Reiter Teiltexte): ${icK.map((x, j) => `T${j + 1} ${komma(x, 4)}`).join(' · ')}`));
+      inhalt.append(
+        h(
+          'div',
+          { class: 'scroll-x' },
+          h(
+            'table',
+            { class: 'labor-tabelle ic-mittel' },
+            h('caption', null, 'Mittlerer Koinzidenzindex der Teiltexte für k = 1 … 20 (▲ = mindestens 0,060)'),
+            h('thead', null, h('tr', null, ['k', 'mittlerer I', 'Balken', ''].map((x) => h('th', { scope: 'col' }, x)))),
+            h(
+              'tbody',
+              null,
+              Object.keys(b.icMittel).map((x) => {
+                const wert = b.icMittel[x];
+                const hoch = wert !== null && wert >= 0.06;
+                return h('tr', { 'data-k': x, class: hoch ? 'hoch' : null }, h('th', { scope: 'row' }, x), h('td', null, komma(wert, 4)), h('td', { class: 'vg-balken-zelle' }, h('div', { class: 'vg-skala' }, balken((wert || 0) / 0.1), h('span', { class: 'vg-ref vg-ref-z' }), h('span', { class: 'vg-ref vg-ref-d' }))), h('td', { class: 'vg-marke' }, hoch ? '▲' : ''));
+              })
+            )
+          )
+        )
+      );
+    }
+
+    function zeigeVerschiebung(b) {
+      const inhalt = r.flaeche.querySelector('.vg-inhalt');
+      inhalt.append(B.hinweis('warnung', 'Vorschlag ist ein Hinweis, keine Lösung – Prüfe am Klartext!'));
+      const zeilen = b.teile.map((teil, j) => {
+        const sch = b.schaetzung[j];
+        const haeufig = Krypto.rangfolge(teil)[0];
+        const schnell = haeufig ? Krypto.buchstabe(Krypto.alleCaesar(haeufig).findIndex((x) => x.text === 'E'), 0) : '–';
+        return [
+          `T${j + 1}`,
+          String(teil.length),
+          `${sch.buchstabe} (Nummer ${Krypto.wert(sch.buchstabe)})`,
+          sch.kandidaten.map((x) => `${x.buchstabe}: χ = ${komma(x.wert, 3)}`).join(' · '),
+          haeufig ? `${haeufig} ↦ e → ${schnell}` : '–'
+        ];
+      });
+      inhalt.append(
+        B.tabelle({ caption: `Verschiebung je Teiltext bei k = ${A.st.k}: Korrelation mit Deutsch χ(v) = Σ p_D(x) · f_T(x + v)`, kopf: ['Teiltext', 'Länge', 'Vorschlag', 'drei beste Kandidaten', 'Schnellmethode'], zeilen, klasse: 'verschiebung' }),
+        h('p', { class: 'vg-vorschlag' }, `Zusammen: ${b.vorschlag} – übernimm ihn im Reiter Korrektur und prüfe, ob lesbares Deutsch entsteht.`)
+      );
+    }
+
+    function zeigeKorrektur(b, zeichne) {
+      const inhalt = r.flaeche.querySelector('.vg-inhalt');
+      const k = A.st.k;
+      const sch = b.schluessel;
+      const setze = (j, buchstabe, fokus) => {
+        const neu = [...sch];
+        neu[j] = buchstabe;
+        A.st.schluessel = neu.join('');
+        zeichne();
+        if (fokus) {
+          const el = r.flaeche.querySelector(`.korrektur-feld[data-spalte="${j}"] ${fokus}`);
+          if (el) el.focus();
+        }
+      };
+      const felder = [...sch].map((c, j) => {
+        const minus = h('button', { type: 'button', class: 'knopf knopf-leise zahl-minus', 'aria-label': `Spalte ${j + 1}: Buchstabe zurück` }, '−');
+        const plus = h('button', { type: 'button', class: 'knopf knopf-leise zahl-plus', 'aria-label': `Spalte ${j + 1}: Buchstabe weiter` }, '+');
+        const f = h('input', { type: 'text', maxlength: '1', autocomplete: 'off', spellcheck: 'false', 'aria-label': `Schlüsselbuchstabe Spalte ${j + 1}` });
+        f.value = c;
+        minus.addEventListener('click', () => setze(j, Krypto.buchstabe(Krypto.wert(c, 0) - 1, 0), '.zahl-minus'));
+        plus.addEventListener('click', () => setze(j, Krypto.buchstabe(Krypto.wert(c, 0) + 1, 0), '.zahl-plus'));
+        f.addEventListener('focus', () => typeof f.select === 'function' && f.select());
+        f.addEventListener('input', () => {
+          const x = einBuchstabe(f.value);
+          if (x) setze(j, x, 'input');
+        });
+        return h('div', { class: 'korrektur-feld', 'data-spalte': String(j) }, h('span', { class: 'korrektur-nr' }, String(j + 1)), minus, f, plus);
+      });
+      const zurueck = h('button', { type: 'button', class: 'knopf knopf-leise korrektur-vorschlag' }, `Vorschläge wiederherstellen (${b.vorschlag})`);
+      zurueck.addEventListener('click', () => {
+        A.st.schluessel = null;
+        zeichne();
+      });
+      const perioden = [];
+      for (let i = 0; i < b.klartext.length; i += k) perioden.push(b.klartext.slice(i, i + k));
+      const live = h(
+        'p',
+        { class: 'korrektur-klartext', 'aria-live': 'polite' },
+        perioden.map((p, pi) => [pi ? ' ' : null, h('span', { class: 'periode' }, [...p].map((c, j) => h('span', { class: `spalte-${j} farbe-${Krypto.mod(j, 5)}`, title: `Spalte ${j + 1} (Schlüssel ${sch[j]})` }, c)))])
+      );
+      inhalt.append(
+        h('div', { class: 'korrektur-felder', role: 'group', 'aria-label': `Schlüsselwort mit ${k} Buchstaben` }, felder),
+        zurueck,
+        h('div', { class: 'werkbank-klartext-rahmen' }, h('span', { class: 'werkbank-klartext-titel' }, `Live-Entschlüsselung mit ${sch} (Blöcke à k = ${k}, Spalten markiert)`), live),
+        B.details('Als Tabelle (eine Spalte je Schlüsselbuchstabe)', B.tabelle({ caption: 'Klartext nach Spalten', kopf: [...sch].map((c, j) => `${j + 1}: ${c}`), zeilen: perioden.map((p) => [...p]), zeilenkopf: false, klasse: 'korrektur-tabelle' })),
+        h('p', { class: 'text-2' }, 'Nichts wird gespeichert – probiere ruhig aus.')
+      );
+    }
+
     function baue(id) {
       schliesseTeile();
       AQ.clear(r.flaeche);

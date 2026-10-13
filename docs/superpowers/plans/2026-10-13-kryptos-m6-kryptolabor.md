@@ -1594,7 +1594,12 @@ Bibliothek), Version patch
   `title`/Tabellenansicht; nichts wird gespeichert.
 - `zustand()` zusätzlich `{ wiederholungen, teiler, maximum, ic, friedman, icMittel, vorschlag, schluessel, klartext }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_vigenere.test.js` (anhängen):
+- Umgesetzt: Testfälle 1–3 als Werkbank-Tests; **Testfall 4 ausgelassen** (P04-Volltext fehlt im Repo, offene
+  Entscheidung 5; Regressionswert nur über `Krypto.friedmanWert` in der Bibliothek, Vermerk in W2 §9.1). Zusätzlich
+  getestet: Teiltexte-Anzeige, Primfaktoren-Spalte, Positionsleiste ab 0, „I ≤ I_Z“, Korrektur per Buchstabe,
+  keine automatische Markierung, kein Speicher. Annahme k ohne Voreinstellung = 1 (keine automatische Übernahme des
+  Kasiski-Maximums); Teiltext-Histogramme können um den Schlüsselbuchstaben zurückgeschoben werden (`Krypto.caesar`).
+- [x] **Step 1: Failing test** – `test/labor_vigenere.test.js` (anhängen):
   ```js
   const W2 = require('../quellen/pruefwerte/W2.json').werte;
   const EVE = W2.find((x) => x.id === 'W2-2-v1').eingabe[0];
@@ -1649,9 +1654,9 @@ Bibliothek), Version patch
     assert.match(kurz.text('.friedman'), /Text zu kurz/);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
   (Teilertabelle, Markierungen im Text unterscheidbar ohne Farbe, Beamer 1920 px für „Eve knackt live“, W2 §9.2).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Vigenère-Werkbank II (Kasiski, Teiltexte, Koinzidenzindex, Verschiebung, Korrektur)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Vigenère-Werkbank II (Kasiski, Teiltexte, Koinzidenzindex, Verschiebung, Korrektur)"`.
 
 ### Task 118: Werkzeug „Bit-Lupe“ (W3 §9.1, E79)
 
@@ -2532,7 +2537,8 @@ Mallorys Eingriffe sind Knöpfe direkt am Kanal, die Prüfung antwortet sofort; 
 4. **Reiter in Level 2.4 (E70):** „Häufigkeits-Analysator (Reiter Bigramme)“ – Vorschlag: Bigramme **und** Histogramm sichtbar
    (Playfair-Analyse). Oder nur Bigramme? **Vorläufig:** beide.
 5. **P04-Beispiel (W2 §9.1 Testfall 4, E84):** Der Volltext „JUKVM XTXQW …“ (100 Zeichen) fehlt im Repo. Bitte nachliefern, dann
-   kommt der Werkbank-Regressionstest dazu. **Vorläufig:** nur `friedmanWert` (10,1 / 11,6).
+   kommt der Werkbank-Regressionstest dazu. **Vorläufig:** nur `friedmanWert` (10,1 / 11,6). **Stand Task 117 (Orchestrator):** Testfall 4
+   ausgelassen, Vermerk in W2 §9.1 – weiter offen.
 6. **Werte aus Akten in Werkzeugen (W5 §9.2 MitM „Werte aus Akte W5·3 Auftrag 7“, W3 §9.2 Pixelbild):** Der Simulator zeigt die
    Lösung von Auftrag 7 (A = 8, B = 11, M = 4, Schlüssel 2/13/9). So lassen (Spec) oder eigene Zahlen (z. B. a = 5, b = 7,
    m = 3)? **Vorläufig:** wie Spec.

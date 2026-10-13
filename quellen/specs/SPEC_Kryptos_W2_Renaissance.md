@@ -1267,7 +1267,7 @@ Entscheidung 1 des M5-Plans); die Beispiele hier sind deren Anfänge.
 
 **Zweck:** Vigenère-Verfahren verstehen (Quadrat), anwenden (ver-/entschlüsseln, Varianten) und angreifen (Kasiski,
 Koinzidenzindex, Teiltexte, Verschiebungsvorschlag) – Schritt für Schritt, sodass jeder Analyseschritt sichtbar bleibt.
-Rein clientseitig über `shared/krypto.js`; Prüfstand-Zwilling = Logik von `kw2.py` (§12). In Bossen gesperrt; Freigabe
+Rein clientseitig über `shared/krypto.js`; Prüfstand-Zwilling = `werkzeuge/krypto/krypto.py` (TECHNIK §5.3; `kw2.py` liegt nicht im Repo – M6 E76). In Bossen gesperrt; Freigabe
 je Kurs durch die Lehrkraft (Standard: ab DS 6 Reiter 1–2, ab DS 7 alle, Reiter 5 nur bei Niveau eA sichtbar).
 
 **Eingabe:** Textfeld bis 2000 Zeichen. Normalisierung `krypto` (ä → ae, ö → oe, ü → ue, ß → ss, nur A–Z, Großschrift).
@@ -1294,6 +1294,8 @@ Anzeige als Geheimtext-Zeile in Fünfergruppen mit Positionsleiste (0, 5, 10, �
 3. Archivfund (64 Zeichen, LAGUNE): Quadrat-/Entschlüsselungstest; Klartext §0.1.
 4. P04-Beispiel der Lehrkraft (100 Zeichen, JUKVM …): I = 410/9900 ≈ 0,0414; Friedman ≈ 10,1 (mit 0,076/0,038) bzw.
    ≈ 11,6 (mit 0,0765/0,0385) – Regressionstest für §10.6.
+   Der Volltext liegt nicht im Repo: Regressionstest nur über die Bibliothek (`Krypto.friedmanWert(100, 410/9900)`),
+   kein Werkbank-Test (M6 E84, offene Entscheidung 5 – Volltext bei der Lehrkraft erfragen).
 
 ### 9.2 Einsatz am Beamer „Eve knackt live“ (DS 7, statt Funkraum)
 
