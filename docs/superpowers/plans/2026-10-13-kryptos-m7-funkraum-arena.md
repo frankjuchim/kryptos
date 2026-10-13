@@ -2213,7 +2213,7 @@ Beamer bei 1920 × 1080.
   Mallory `button.station-leeren` und in Phase 2 `form.zertifikat` (Team, Etikett, ausstellen/verweigern).
 - `auswertung`: Auswertungstabelle je Typ (Zahlen), Knopf `schliessen` („Szenario endgültig löschen“).
 
-- [ ] **Step 1: Failing test** – in `test/client_lehrer_funk.test.js`:
+- [x] **Step 1: Failing test** – in `test/client_lehrer_funk.test.js`:
   ```js
   test('Funkraum-Regie: Anlegen sendet Typ und Rollen; Beenden fragt nach; Ausblenden ruft die Route', async () => {
     const aufrufe = [];
@@ -2243,9 +2243,9 @@ Beamer bei 1920 × 1080.
   });
   ```
   (`k.bestaetigen` steuert `confirm()` der Attrappe; falls nicht vorhanden, ergänzen.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Regie neben
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Regie neben
   laufenden Schüler-Tablets: Anlegen → Starten → Ausblenden → Beenden).
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft: Funkraum-Regie (Anlegen, Rollen, Phasen, Moderation, Auswertung)"`.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft: Funkraum-Regie (Anlegen, Rollen, Phasen, Moderation, Auswertung)"`.
 
 ### Task 151: Funkraum-Seite – Rahmen, Poller, Netz, Senden, Kopfzeilen-Punkt (TECHNIK §11.2, §12.4, Design O4, M4 E33)
 
@@ -2922,6 +2922,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   hängt hinten an (Sollstand `[11, 12]` wie im Plan). Attrappe: `k.waehle(select, wert)` und `k.bestaetigen` (beantwortet
   `AQ.bestaetigen`-Dialoge, für Task 150). Zusatz: Anzeige „Ungespeicherte Änderungen“, Test für Name/Neu/Entfernen/Verteilen,
   gesperrter Kurs, `devportal.test.js` prüft die neuen Konten. `funkpoll.js` wird erst mit Task 151 eingebunden.
+- **Task 150:** Plan-Test korrigiert wie Task 149 (`vorher: seiteLehrer`, `GET /api/lehrer/kurse/5`). Die Regie lädt nach
+  jeder Aktion neu und hat bis Task 151 den Knopf „Aktualisieren“; `funkpoll.js` ist noch nicht eingebunden. Das
+  Sparschwein-Paar (`optionen.wiederholerTeamId`) wird beim **Anlegen** gewählt (`select.option-wiederholer` auf der Karte
+  „Der doppelte Schlüssel“, nur Alice-Teams laut Rollenvorschlag – der Server kennt keine Route, Optionen später zu ändern);
+  `KRLehrerFunk.SZENARIEN`/`vorschlag` spiegeln den Server (Test vergleicht Titel, Welt, DS, `teamsMin`, Phasen und den
+  Vorschlag). Lernziel je Karte aus Welt-Spec §9.3 (gekürzt). „Spielt nicht mit“ = Option der Rollenwahl; Partnerwahl macht das
+  Gegenüber zum Partner (Alice ↔ Bob). Mallory-Zertifikat: Schlüsselnummer des Bob-Teams vorbelegt (`S` + 23 + 4i), Text des
+  Zertifikats als Rückmeldung. Auswertung und Regie-Tabellen (Meldungen, Funksprüche) über eine generische Tabellenanzeige
+  (Teamnamen statt ids, ja/nein, Prozent). Zusätze: Abbrechen/Schließen fragen nach, Stumm nur für Teams mit Rolle, Ereignisliste
+  (letzte 15). Plan-Test ergänzt: Rollen tauschen, Phase, Stumm, Auswertung, Schließen; Wettknacken-Hinweise/Fortschritt;
+  Mallory-Station/Zertifikat; zu wenige Teams; Spiegel-Test.
 
 ## Reihenfolge und Abhängigkeiten
 

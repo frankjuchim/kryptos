@@ -118,3 +118,41 @@ td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
   .teams-tabelle td:nth-child(3), .teams-tabelle td:nth-child(4) { grid-column: 1 / -1; }
   .teams-tabelle .zahl { width: auto; }
 }
+
+/* ---------- Funkraum-Regie (Plan M7 Task 150) ---------- */
+.funk-tab { display: grid; gap: var(--a-3); min-width: 0; }
+.funk-tab h2, .funk-tab h3 { margin: 0; }
+.funk-tab > p { margin: 0; }
+.szenario-liste { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.szenario-wahl { display: grid; gap: var(--a-2); align-content: start; border-top: 6px solid var(--akzent); }
+.szenario-wahl h3, .szenario-wahl p { margin: 0; }
+.szenario-wahl select, .funk-regie select, .zertifikat input { min-height: var(--ziel); max-width: 100%; }
+.option-feld { display: grid; gap: var(--a-1); }
+.rollen, .funk-teams { width: 100%; }
+.funk-status { font-size: 1.05rem; }
+.funk-typ { display: grid; gap: var(--a-3); padding: var(--a-3); border: 1px solid var(--linie); border-radius: 10px; background: var(--karte); min-width: 0; }
+.funk-fortschritt { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.funk-fortschritt li { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) auto; gap: var(--a-2); align-items: center; }
+.funk-fortschritt .progress { height: 14px; }
+.funk-fortschritt .progress > span { width: var(--wert, 0%); }
+.funk-fortschritt .zahl { font-variant-numeric: tabular-nums; }
+.sonderkarten { display: grid; gap: var(--a-2); }
+.sonderkarten p { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+.sonderkarte-team { font-weight: 700; min-width: 10rem; }
+.zertifikat { display: grid; gap: var(--a-2); }
+.zertifikat .feld { margin: 0; display: grid; gap: var(--a-1); max-width: 20rem; }
+.zertifikat-text { margin: 0; overflow-wrap: anywhere; font-weight: 700; }
+.regie-nachrichten { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); }
+.regie-nachricht { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); padding: var(--a-2); border: 1px solid var(--linie); border-radius: 8px; min-width: 0; }
+.regie-nachricht .funk-inhalt { overflow-wrap: anywhere; min-width: 0; }
+.regie-nachricht.ausgeblendet .funk-inhalt { color: var(--text-2); font-style: italic; }
+.regie-ereignisse { margin: 0; padding-left: 1.4em; display: grid; gap: 2px; }
+.auswertung-funk { width: 100%; }
+.auswertung-funk caption { text-align: left; font-weight: 700; padding-bottom: var(--a-1); }
+.funk-kennzahlen { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-5); margin: 0; }
+.funk-kennzahlen dt { font-size: .85rem; color: var(--text-2); }
+.funk-kennzahlen dd { margin: 0; font-weight: 700; }
+@media (max-width: 600px) {
+  .funk-fortschritt li { grid-template-columns: minmax(0, 1fr) auto; }
+  .funk-fortschritt .progress { grid-column: 1 / -1; grid-row: 2; }
+}

@@ -103,3 +103,184 @@ test('Teams-Tab: gesperrter Kurs nur lesend', async () => {
   }
   assert.match(k.text(k.eins(k.document, '.tab-inhalt')), /nur lesbar/);
 });
+
+/* ---------- Task 150: Funkraum-Regie ---------- */
+const DREI = { ...TEAMS, teams: [1, 2, 3].map((nr) => ({ id: nr, nr, name: NAMEN[nr - 1], mitglieder: [{ id: 10 + nr, name: 'X' }] })), ohneTeam: [] };
+
+test('Funkraum-Regie: Anlegen sendet Typ und Rollen; Beenden fragt nach; Ausblenden ruft die Route', async () => {
+  const aufrufe = [];
+  let zustand = null;
+  const k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    fetch: {
+      ...GRUND(),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+      'GET /api/lehrer/kurse/5/funk': () => ({ status: 200, body: { szenario: zustand } }),
+      'POST /api/lehrer/kurse/5/funk': (b) => {
+        aufrufe.push(['anlegen', b]);
+        zustand = { id: 7, typ: b.typ, status: 'vorbereitung', phase: 'runde-1', phasen: ['runde-1', 'runde-2', 'runde-3', 'aufloesung'], rollen: [{ teamId: 1, rolle: 'alice', partnerId: 2 }, { teamId: 2, rolle: 'bob', partnerId: 1 }, { teamId: 3, rolle: 'eve' }] };
+        return { status: 200, body: zustand };
+      },
+      'POST /api/lehrer/funk/7/status': (b) => {
+        aufrufe.push(['status', b.aktion]);
+        zustand = { ...zustand, status: b.aktion === 'starten' ? 'laeuft' : 'auswertung' };
+        return { status: 200, body: zustand };
+      },
+      'GET /api/lehrer/funk/7/stand': () => ({ status: 200, body: { ...zustand, version: 3, nachrichten: [{ id: 11, von: 1, an: 2, art: 'nachricht', inhalt: 'OHSAL', lesbar: true }], ereignisse: [], teams: [], anzeigen: {} } }),
+      'POST /api/lehrer/funk/7/nachrichten/11/ausblenden': () => {
+        aufrufe.push(['ausblenden', 11]);
+        return { status: 200, body: { ok: true } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'article.szenario-wahl').length, 5);
+  k.klick(k.eins(k.document, 'article.szenario-wahl[data-typ="botenlauf"] button'));
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'table.rollen select.rolle').length, 3);
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="starten"]'));
+  await k.ruhe();
+  k.klick(k.eins(k.document, 'button.ausblenden[data-id="11"]'));
+  await k.ruhe();
+  k.bestaetigen = false;
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="beenden"]'));
+  await k.ruhe();
+  assert.deepEqual(aufrufe.map((a) => (a[0] === 'anlegen' ? a[1].typ : a[1])), ['botenlauf', 'starten', 11]);
+  assert.equal(k.eins(k.document, 'a.beamer-oeffnen').getAttribute('href'), '/beamer/funkraum/7');
+  assert.equal(k.eins(k.document, 'a.beamer-oeffnen').getAttribute('rel'), 'noopener');
+  // mit Bestätigung wird beendet
+  k.bestaetigen = true;
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="beenden"]'));
+  await k.ruhe();
+  assert.deepEqual(aufrufe[aufrufe.length - 1], ['status', 'beenden']);
+});
+
+test('Funkraum-Regie: zu wenige Teams → Hinweis mit Link auf den Teams-Tab', async () => {
+  const k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    fetch: { ...GRUND(), 'GET /api/lehrer/kurse/5/teams': { status: 200, body: TEAMS }, 'GET /api/lehrer/kurse/5/funk': { status: 200, body: { szenario: null } } }
+  });
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.tab-inhalt')), /Bitte zuerst Teams einteilen/);
+  assert.ok(k.eins(k.document, 'a[href="#/kurs/5/teams"]'));
+  // Wettknacken braucht 2 Teams, alle übrigen 3: mit einem Team ist jedes Anlegen gesperrt
+  for (const b of k.alle(k.document, 'article.szenario-wahl button')) assert.ok(b.disabled);
+});
+
+test('Funkraum-Regie: Rollen tauschen (PUT), Phase, Stumm, Beenden mit Auswertung, Schließen', async () => {
+  const aufrufe = [];
+  let zustand = { id: 8, typ: 'doppelter-schluessel', status: 'vorbereitung', phase: 'funken', phasen: ['funken', 'lauschen', 'aufloesung'], rollen: [{ teamId: 1, rolle: 'alice', partnerId: 2 }, { teamId: 2, rolle: 'bob', partnerId: 1 }, { teamId: 3, rolle: 'eve', partnerId: null }], optionen: {} };
+  let anzeigen = {};
+  const k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    fetch: {
+      ...GRUND(),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+      'GET /api/lehrer/kurse/5/funk': () => ({ status: 200, body: { szenario: zustand } }),
+      'PUT /api/lehrer/funk/8/rollen': (b) => {
+        aufrufe.push(['rollen', b.rollen]);
+        zustand = { ...zustand, rollen: b.rollen };
+        return { status: 200, body: zustand };
+      },
+      'POST /api/lehrer/funk/8/status': (b) => {
+        aufrufe.push(['status', b.aktion]);
+        if (b.aktion === 'schliessen') {
+          zustand = null;
+          return { status: 200, body: { geschlossen: true } };
+        }
+        zustand = { ...zustand, status: { starten: 'laeuft', phase: 'laeuft', beenden: 'auswertung' }[b.aktion], phase: b.aktion === 'phase' ? 'lauschen' : zustand.phase };
+        return { status: 200, body: zustand };
+      },
+      'GET /api/lehrer/funk/8/stand': () => ({ status: 200, body: { ...zustand, version: 4, nachrichten: [], ereignisse: [{ id: 1, code: 'phase', daten: { phase: 'funken' }, zeit: '2026-10-13T08:00:00Z', version: 2 }], teams: DREI.teams.map((t) => ({ id: t.id, nr: t.nr, name: t.name })), anzeigen, auswertung: zustand.status === 'auswertung' ? { sprueche: [{ nachricht: 1, team: 1, abschnitt: 1, geknackt: true }], vergleiche: [], eveGewinnt: true } : null } }),
+      'POST /api/lehrer/funk/8/teams/1/stumm': (b) => {
+        aufrufe.push(['stumm', b.sekunden]);
+        return { status: 200, body: { ok: true } };
+      }
+    }
+  });
+  await k.ruhe();
+  // Rollen tauschen: Team 3 nimmt nicht teil → PUT ohne Team 3
+  k.waehle(k.eins(k.document, 'select.rolle[data-team="3"]'), '');
+  k.klick(k.eins(k.document, 'button.rollen-speichern'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(aufrufe[0]), ['rollen', [{ teamId: 1, rolle: 'alice', partnerId: 2 }, { teamId: 2, rolle: 'bob', partnerId: 1 }]]);
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="starten"]'));
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.funk-regie')), /Nächste Phase: Lauschen/);
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="phase"]'));
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'button.stumm[data-team="3"]').length, 0, 'Team ohne Rolle: kein Stumm-Knopf');
+  k.klick(k.eins(k.document, 'button.stumm[data-team="1"]'));
+  await k.ruhe();
+  k.bestaetigen = true;
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="beenden"]'));
+  await k.ruhe();
+  assert.ok(k.eins(k.document, 'table.auswertung-funk'), 'Auswertungstabelle');
+  k.klick(k.eins(k.document, 'button.aktion[data-aktion="schliessen"]'));
+  await k.ruhe();
+  assert.deepEqual(aufrufe.slice(1).map((a) => a[1]), ['starten', 'phase', 60, 'beenden', 'schliessen']);
+  assert.equal(k.alle(k.document, 'article.szenario-wahl').length, 5, 'nach dem Schließen wieder die Auswahl');
+});
+
+test('Funkraum-Regie: Wettknacken-Hinweise und Fortschritt, Mallory-Station und Zertifikat', async () => {
+  const aufrufe = [];
+  const lauf = (typ, phase, phasen, rollen, anzeigen, ereignisse = []) => ({ id: 9, typ, status: 'laeuft', phase, phasen, rollen, optionen: {}, version: 5, nachrichten: [], ereignisse, teams: DREI.teams.map((t) => ({ id: t.id, nr: t.nr, name: t.name })), anzeigen });
+  let stand = lauf('wettknacken', 'knacken', ['knacken', 'aufloesung'], [1, 2, 3].map((i) => ({ teamId: i, rolle: 'knacker', partnerId: null })), { fortschritt: [{ team: 1, anteil: 0.42, fertig: false, platz: null }, { team: 2, anteil: 0.96, fertig: true, platz: 1 }] }, [{ id: 3, code: 'hinweis', daten: { nr: 1 }, zeit: '2026-10-13T08:00:00Z', version: 4 }]);
+  const fetch = {
+    ...GRUND(),
+    'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+    'GET /api/lehrer/kurse/5/funk': () => ({ status: 200, body: { szenario: stand } }),
+    'GET /api/lehrer/funk/9/stand': () => ({ status: 200, body: stand }),
+    'POST /api/lehrer/funk/9/hinweis': (b) => (aufrufe.push(['hinweis', b.nr]), { status: 200, body: { ok: true } }),
+    'POST /api/lehrer/funk/9/station': () => (aufrufe.push(['station']), { status: 200, body: { weitergeleitet: 2 } }),
+    'POST /api/lehrer/funk/9/zertifikat': (b) => (aufrufe.push(['zertifikat', b]), { status: 200, body: { ok: true, text: 'ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE' } })
+  };
+  let k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/5/funkraum', vorher: seiteLehrer, fetch });
+  await k.ruhe();
+  assert.ok(k.eins(k.document, 'button.hinweis[data-nr="1"]').disabled, 'Hinweis 1 schon gesendet');
+  k.klick(k.eins(k.document, 'button.hinweis[data-nr="2"]'));
+  await k.ruhe();
+  assert.match(k.text(k.eins(k.document, '.funk-fortschritt')), /42 %/);
+  assert.match(k.text(k.eins(k.document, '.funk-fortschritt')), /Platz 1/);
+  stand = lauf('mallory', 'mit-zertifikaten', ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'], [{ teamId: 1, rolle: 'alice', partnerId: 2 }, { teamId: 2, rolle: 'bob', partnerId: 1 }, { teamId: 3, rolle: 'mallory', partnerId: null }], {});
+  k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/5/funkraum', vorher: seiteLehrer, fetch });
+  await k.ruhe();
+  k.klick(k.eins(k.document, 'button.station-leeren'));
+  await k.ruhe();
+  const form = k.eins(k.document, 'form.zertifikat');
+  assert.equal(k.eins(form, 'input.zertifikat-etikett').value, 'S23', 'Schlüsselnummer des ersten Bob-Teams vorbelegt');
+  k.klick(k.eins(form, 'button.zertifikat-ausstellen'));
+  await k.ruhe();
+  assert.deepEqual(k.roh(aufrufe), [['hinweis', 2], ['station'], ['zertifikat', { teamId: 2, etikett: 'S23', ausstellen: true }]]);
+  assert.match(k.text(k.eins(k.document, '.tab-inhalt')), /ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG HEUTE/);
+});
+
+test('Funkraum-Regie: Szenario-Liste des Clients = SZENARIEN des Servers; Sparschwein-Auswahl nur Alice-Teams', async () => {
+  const S = require('../src/krypto/funkraum/szenarien');
+  const k = D.lade(LEHRER);
+  const C = k.roh(k.wert('KRLehrerFunk').SZENARIEN);
+  assert.deepEqual(Object.keys(C), S.TYPEN);
+  for (const typ of S.TYPEN) {
+    const { titel, welt, ds, teamsMin, phasen } = S.SZENARIEN[typ];
+    assert.deepEqual({ titel: C[typ].titel, welt: C[typ].welt, ds: C[typ].ds, teamsMin: C[typ].teamsMin, phasen: C[typ].phasen }, { titel, welt, ds, teamsMin, phasen: [...phasen] }, typ);
+    const teams = [1, 2, 3, 4, 5].map((nr) => ({ id: 10 + nr, nr }));
+    assert.deepEqual(k.roh(k.wert('KRLehrerFunk').vorschlag(typ, teams)), S.rollenVorschlag(typ, teams), typ);
+  }
+  let gesendet = null;
+  const k2 = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    fetch: { ...GRUND(), 'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI }, 'GET /api/lehrer/kurse/5/funk': { status: 200, body: { szenario: null } }, 'POST /api/lehrer/kurse/5/funk': (b) => ((gesendet = b), { status: 400, body: { error: 'Test' } }) }
+  });
+  await k2.ruhe();
+  const wahl = k2.eins(k2.document, 'select.option-wiederholer');
+  assert.deepEqual(k2.alle(wahl, 'option').map((o) => o.value), ['', '1']);
+  k2.waehle(wahl, '1');
+  k2.klick(k2.eins(k2.document, 'article.szenario-wahl[data-typ="doppelter-schluessel"] button.knopf-primaer'));
+  await k2.ruhe();
+  assert.deepEqual(k2.roh(gesendet), { typ: 'doppelter-schluessel', optionen: { wiederholerTeamId: 1 } });
+  assert.match(k2.text(k2.eins(k2.document, 'p.fehler')), /Test/);
+});
