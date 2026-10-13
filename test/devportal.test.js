@@ -96,3 +96,11 @@ test('Dev-Portal: Verbund-Knöpfe rufen die Verbund-API mit gültigem Token auf 
   const l = await request(dp.app).post('/verbund/loeschen').type('form').send({ sub: 's:1' }).expect(200);
   assert.match(l.text, /&quot;geloescht&quot;: 3/);
 });
+
+test('Dev-Portal: Ole B. und Nia T. im LK 13 (Plan M7 E117)', () => {
+  const { KONTEN, KURSE } = require('./devportal/server');
+  assert.deepEqual(KONTEN.ole, { sub: 's:3', rolle: 'schueler', name: 'Ole B.', kurse: ['k:1'] });
+  assert.deepEqual(KONTEN.nia, { sub: 's:4', rolle: 'schueler', name: 'Nia T.', kurse: ['k:1'] });
+  assert.equal(KURSE['k:1'], 'LK 13 (eA)');
+  assert.equal(new Set(Object.values(KONTEN).map((k) => k.sub)).size, Object.keys(KONTEN).length, 'sub eindeutig');
+});

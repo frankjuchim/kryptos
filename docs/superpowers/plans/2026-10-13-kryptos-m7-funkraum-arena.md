@@ -2150,7 +2150,7 @@ Beamer bei 1920 × 1080.
   Name (`localeCompare('de')`), reihum auf Teams 1…anzahl, Namen `TEAM_NAMEN[0…anzahl−1]` (aus `namen` der GET-Antwort).
 - Gesperrter Kurs: alles nur lesend, Hinweis wie Einstellungen.
 
-- [ ] **Step 1: Failing test** – `test/client_lehrer_funk.test.js`:
+- [x] **Step 1: Failing test** – `test/client_lehrer_funk.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -2189,9 +2189,9 @@ Beamer bei 1920 × 1080.
   ```
   (`k.waehle(select, wert)` – falls die Attrappe es nicht kennt, in `test/dom_attrappe.js` ergänzen: Wert setzen +
   `change`-Ereignis.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Lehrkraft
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Lehrkraft
   360/1280 px, Tastatur: Tab-Reihenfolge Name → Mitglieder → Entfernen; Dev-Portal zeigt die neuen Konten).
-- [ ] **Step 5: Commit** `git commit -m "Lehrkraft: Tab Teams (Tischgruppen zuteilen, automatisch verteilen), Dev-Portal mit Ole B. und Nia T."`.
+- [x] **Step 5: Commit** `git commit -m "Lehrkraft: Tab Teams (Tischgruppen zuteilen, automatisch verteilen), Dev-Portal mit Ole B. und Nia T."`.
 
 ### Task 150: Lehrkraft-Tab „Funkraum“ – Regie (TECHNIK §12.5, §13.4, E91, E94, E96, E97, E99, E115)
 
@@ -2916,6 +2916,12 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   echtem Lauf (`verbund.test.js`, keine Punkte aus Funkraum/Arena). Festlegung zum offenen Punkt aus Task 144: Die
   Einreichungs-Grenze (20 je Team in 10 min) zählt weiter **jeden** Versuch nach der Team-Prüfung, auch abgelehnte – in TECHNIK
   §9.4 dokumentiert, Test `arena_einreichung.test.js` („Grenze zählt auch abgelehnte Einreichungen“).
+- **Task 149:** Plan-Test korrigiert: Die Lehrkraft-Seite startet nur mit `body.seite-lehrer` (`vorher: seiteLehrer` wie in
+  `client_seiten.test.js`), und `kursRoute` lädt `GET /api/lehrer/kurse/5` (Attrappen-Antwort ergänzt). `verteile(schueler,
+  anzahl, namen)` begrenzt auf 2–12 und höchstens auf die Zahl der Schülerinnen und Schüler (keine leeren Tischgruppen); Zuteilen
+  hängt hinten an (Sollstand `[11, 12]` wie im Plan). Attrappe: `k.waehle(select, wert)` und `k.bestaetigen` (beantwortet
+  `AQ.bestaetigen`-Dialoge, für Task 150). Zusatz: Anzeige „Ungespeicherte Änderungen“, Test für Name/Neu/Entfernen/Verteilen,
+  gesperrter Kurs, `devportal.test.js` prüft die neuen Konten. `funkpoll.js` wird erst mit Task 151 eingebunden.
 
 ## Reihenfolge und Abhängigkeiten
 

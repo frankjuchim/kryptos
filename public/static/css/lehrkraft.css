@@ -94,3 +94,27 @@ td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
 .seed-bericht li.mit-fehler > b::before { content: "✗ "; }
 .admin-inhalt h2 { margin: var(--a-2) 0 0; font-size: var(--h3); }
 .admin-inhalt input[type="file"] { max-width: 100%; }
+
+/* ---------- Teams (Plan M7 Task 149) ---------- */
+.teams-tab { display: grid; gap: var(--a-3); min-width: 0; }
+.teams-tab h2, .teams-tab h3 { margin: 0; }
+.teams-tab > p { margin: 0; }
+.teams-tabelle { width: 100%; }
+.teams-tabelle .zahl { text-align: right; font-variant-numeric: tabular-nums; width: 3em; }
+.teams-tabelle td { vertical-align: top; }
+.teams-tabelle select, .ohne-team select { min-height: var(--ziel); max-width: 100%; }
+.mitglieder { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.mitglieder .chip { cursor: pointer; }
+.ohne-team { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--a-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.ohne-team li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--a-1) var(--a-2); padding: var(--a-1) var(--a-2); border: 1px solid var(--linie); border-radius: 8px; min-width: 0; }
+.ohne-team-name { font-weight: 700; overflow-wrap: anywhere; }
+.verteilen-feld { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+.verteilen-anzahl { width: 5em; min-height: var(--ziel); }
+.teams-tab p.fehler { margin: 0; }
+@media (max-width: 600px) {
+  .teams-tabelle thead { display: none; }
+  .teams-tabelle tr { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--a-1) var(--a-2); padding-block: var(--a-2); border-bottom: 1px solid var(--linie); }
+  .teams-tabelle th, .teams-tabelle td { padding: 0; border: 0; }
+  .teams-tabelle td:nth-child(3), .teams-tabelle td:nth-child(4) { grid-column: 1 / -1; }
+  .teams-tabelle .zahl { width: auto; }
+}

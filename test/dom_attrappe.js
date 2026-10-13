@@ -5,7 +5,7 @@
  *   const D = require('./dom_attrappe');
  *   const k = D.lade(['common.js', 'krypto/oberflaeche.js'], { url, fetch, vorher(k) {} });
  *   k.wert('AQ') · k.document · k.window · k.eins(el, sel) · k.alle(el, sel) · k.text(el)
- *   k.klick(el) · k.tippe(el, 'abc') · k.taste(el, 'Enter') · k.anfragen · k.navigiert · k.neugeladen · k.gedruckt
+ *   k.klick(el) · k.tippe(el, 'abc') · k.waehle(select, 'wert') · k.taste(el, 'Enter') · k.bestaetigen = true|false · k.anfragen · k.navigiert · k.neugeladen · k.gedruckt
  *   k.medien · k.zwischenablage (Liste der geschriebenen Texte) · k.timer · k.roh(x) · await k.ruhe()
  *   k.skripte · k.skriptEreignis(src, 'load'|'error') · k.zeiger(el, 'pointerdown', { clientX, clientY })
  *   D.lade(…, { zeitraffer: 100 }) – Timer laufen 100-mal schneller (k.timer zeigt die angeforderte Zeit)
@@ -704,6 +704,7 @@ function erzeugeDom({ url = 'http://x.test/' } = {}) {
     }
     showModal() {
       this.open = true;
+      if (dom.beiModal) dom.beiModal(this);
     }
     show() {
       this.open = true;
@@ -1091,6 +1092,26 @@ function lade(dateien = [], opt = {}) {
     }
     el.value = String(text);
     el.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+  // Auswahl in einem <select>: Wert setzen, dann input und change (wie der Browser)
+  k.waehle = (el, wert) => {
+    el.value = String(wert);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+  // Bestätigungsdialoge (AQ.bestaetigen, <dialog> mit .btn-row): k.bestaetigen = true klickt den ersten Knopf (OK),
+  // false bricht ab (cancel); undefined lässt den Dialog offen. Antwort im nächsten Timer-Takt (zählt für k.ruhe()).
+  k.bestaetigen = undefined;
+  dom.beiModal = (d) => {
+    if (typeof k.bestaetigen !== 'boolean') return;
+    const wahl = k.bestaetigen;
+    setTimeout_(() => {
+      if (!d.open) return;
+      if (wahl) {
+        const ok = d.querySelector('.btn-row button');
+        if (ok) ok.click();
+      } else d.dispatchEvent(new Event('cancel', { cancelable: true }));
+    }, 0);
   };
   k.taste = (el, key, mehr = {}) => {
     const ev = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key, ...mehr });

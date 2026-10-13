@@ -25,6 +25,9 @@ const KURSE = {
 const KONTEN = {
   mika: { sub: 's:1', rolle: 'schueler', name: 'Mika R.', kurse: ['k:1', 'k:2'] },
   ida: { sub: 's:2', rolle: 'schueler', name: 'Ida K.', kurse: ['k:2'] },
+  // Plan M7 E117: zwei weitere Schüler im LK 13 für den Funkraum mit drei Teams (e2e 5, Sichtprüfung)
+  ole: { sub: 's:3', rolle: 'schueler', name: 'Ole B.', kurse: ['k:1'] },
+  nia: { sub: 's:4', rolle: 'schueler', name: 'Nia T.', kurse: ['k:1'] },
   lehrkraft: { sub: 'l:1', rolle: 'lehrkraft', name: 'Frau M.', kurse: ['k:1', 'k:2'] },
   admin: { sub: 'a:1', rolle: 'superadmin', name: 'Admin', kurse: [] }
 };
