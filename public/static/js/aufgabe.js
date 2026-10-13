@@ -7,10 +7,14 @@ const AQA = (() => {
   /**
    * Aufgaben-Ansicht.
    * @param {object} cfg { aufgabe, zustand, loesung?, muster?, erklaerung?, pruefen(body), tipp?(), aufdecken(), weiter?, kopfZusatz,
-   *   nachLoesen?, abzeichenToast?, punkteText?(r) }
+   *   nachLoesen?, abzeichenToast?, punkteText?(r), modus? ('lab'|'boss'|'vorschau'|'gast'|'training', an AQI.aufgabe),
+   *   zusatz? (ctx-Zusatz, z. B. werkzeugFrei), kursNiveau? ('eA'|'gA'), anzeige? { kategorie(slug) → Text,
+   *   falle(p) → Element, diagnose(liste) → Element|null } } – K36: ohne anzeige wie im Kern
    */
   function aufgabenAnsicht(cfg) {
     const a = cfg.aufgabe;
+    const modus = cfg.modus || 'lab';
+    const anzeige = cfg.anzeige || {};
     let zustand = cfg.zustand;
     const feedbackBox = h('div', { 'aria-live': 'polite' });
     const tippBox = h('div');
@@ -21,6 +25,8 @@ const AQA = (() => {
 
     function baue(mitLoesung) {
       ctrl = AQI.aufgabe(a, {
+        modus,
+        zusatz: cfg.zusatz,
         // Bug-Hunt gestuft: Teil a) (Zeilenwahl) einzeln prüfen, danach erscheint Teil b)
         teilPruefen: mitLoesung ? null : async (teil, antwort) => {
           try {
@@ -41,7 +47,7 @@ const AQA = (() => {
           try {
             const r = await cfg.pruefen({ antwort, teilweise: true, teil });
             zustand = r.zustand || zustand;
-            if (r.ok === false) zeigeStand();
+            if (r.ok === false) zeigeStand(diagnoseVon(r));
             if (r.geloest || (r.ok && r.vollstaendig)) geloest(r);
             return r;
           } catch (e) {
@@ -53,11 +59,18 @@ const AQA = (() => {
       mount(ctrlBox, ctrl.el);
     }
 
-    function zeigeStand() {
+    /** Diagnose der Server-Antwort (oben oder je Teil) als Element über anzeige.diagnose, sonst null (K36). */
+    function diagnoseVon(r) {
+      if (!r || typeof anzeige.diagnose !== 'function') return null;
+      const liste = [...(Array.isArray(r.diagnose) ? r.diagnose : []), ...(Array.isArray(r.teile) ? r.teile.flatMap((t) => (t && Array.isArray(t.diagnose) ? t.diagnose : [])) : [])];
+      return liste.length ? anzeige.diagnose(liste) : null;
+    }
+
+    function zeigeStand(diagnose = null) {
       if (!zustand) return;
       if (zustand.status === 'offen' && zustand.fehlversuche) {
-        mount(feedbackBox, h('div', { class: 'feedback falsch' }, `Fehlversuche: ${zustand.fehlversuche} – du kannst noch bis zu ${zustand.moeglich} Punkte erreichen.`));
-      }
+        mount(feedbackBox, h('div', { class: 'feedback falsch' }, `Fehlversuche: ${zustand.fehlversuche} – du kannst noch bis zu ${zustand.moeglich} Punkte erreichen.`, diagnose));
+      } else if (diagnose) mount(feedbackBox, h('div', { class: 'feedback falsch' }, diagnose));
     }
 
     function zeigeTipps() {
@@ -106,7 +119,7 @@ const AQA = (() => {
           detail = ` Bis Position ${r.ersteFalschePosition} stimmt es – danach nicht mehr.`;
         }
         const rest = zustand && zustand.status === 'offen' ? ` Noch bis zu ${zustand.moeglich} Punkte möglich.` : '';
-        const fb = h('div', { class: 'feedback falsch' }, '✘ Leider noch nicht richtig.' + detail + rest);
+        const fb = h('div', { class: 'feedback falsch' }, '✘ Leider noch nicht richtig.' + detail + rest, diagnoseVon(r));
         mount(feedbackBox, fb);
         AQ.effekt.wackeln(fb);
       } catch (e) {
@@ -126,7 +139,7 @@ const AQA = (() => {
     }
 
     async function aufdecken() {
-      const ok = await bestaetigen('Lösung zeigen?', zustand && zustand.status === 'offen' ? 'Danach bekommst du für diese Aufgabe 0 Punkte. Du kannst sie aber weiter üben.' : 'Die Lösung wird angezeigt.', { ok: 'Lösung zeigen', gefahr: zustand && zustand.status === 'offen' });
+      const ok = await bestaetigen('Lösung zeigen?', 'Danach bekommst du für diese Aufgabe 0 Punkte. Du kannst sie aber weiter üben.', { ok: 'Lösung zeigen', gefahr: !!(zustand && zustand.status === 'offen') });
       if (!ok) return;
       try {
         const r = await cfg.aufdecken();
@@ -159,6 +172,14 @@ const AQA = (() => {
       );
     }
 
+    /** Niveau-Chip (K36): in der Vorschau immer, sonst nur für eA/Ergänzung/Kür (Kern ist der Normalfall). */
+    function niveauChip() {
+      const n = { alle: 'kern', plus: 'kuer' }[a.niveau] || a.niveau || 'kern';
+      const vorschau = modus === 'vorschau';
+      if (!vorschau && !['eA', 'ergaenzung', 'kuer'].includes(n)) return null;
+      return AQ.niveau(n, { kursNiveau: cfg.kursNiveau, vorschau });
+    }
+
     baue(false);
     zeigeTipps();
     const fertig = zustand && zustand.status !== 'offen';
@@ -176,9 +197,9 @@ const AQA = (() => {
         h('h1', null, a.titel),
         sterne(a.stufe),
         h('span', { class: 'pill gold' }, zustand && zustand.status === 'geloest' ? `${zustand.punkte}/${a.punkte} Punkte` : `${a.punkte} ${a.punkte === 1 ? 'Punkt' : 'Punkte'}`),
-        h('span', { class: 'pill' }, a.kategorie),
-        AQ.niveau(a.niveau, { kursart: cfg.kursart }),
-        (a.fallen || []).map((p) => h('span', { class: 'pill red', title: 'Typische Falle' }, '⚠ ' + p)),
+        a.kategorie ? h('span', { class: 'pill' }, typeof anzeige.kategorie === 'function' ? anzeige.kategorie(a.kategorie) : a.kategorie) : null,
+        niveauChip(),
+        (a.fallen || []).map((p) => (typeof anzeige.falle === 'function' ? anzeige.falle(p) : h('span', { class: 'pill red', title: 'Typische Falle' }, '⚠ ' + p))),
         cfg.kopfZusatz || null
       ),
       h('section', { class: 'card' }, ctrlBox, tippBox, feedbackBox),

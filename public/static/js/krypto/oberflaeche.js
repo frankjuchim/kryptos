@@ -151,9 +151,52 @@ const KR = (() => {
     return Math.round(Math.max(0, Math.min(1, Number(x) || 0)) * 100) + ' %';
   }
 
+  /** Anzeigenamen der Lab-Kategorien (= LAB_KATEGORIE_NAMEN in src/krypto/fach.js, Test client_aufgabe). */
+  const KATEGORIEN = Object.freeze({
+    begriffe: 'Grundbegriffe',
+    transposition: 'Transposition',
+    'substitution-mono': 'Monoalphabetische Substitution',
+    'substitution-poly': 'Polyalphabetische Substitution',
+    modulo: 'Modulo-Rechnen',
+    verschluesseln: 'Verschlüsseln',
+    entschluesseln: 'Entschlüsseln',
+    einordnen: 'Verfahren einordnen',
+    haeufigkeitsanalyse: 'Häufigkeitsanalyse',
+    'kasiski-friedman': 'Kasiski- und Friedman-Test',
+    schluesselraum: 'Schlüsselraum',
+    'sicherheit-beurteilen': 'Sicherheit beurteilen',
+    'bits-xor': 'Bits und XOR',
+    blockchiffre: 'Blockchiffre',
+    schluesselaustausch: 'Schlüsselaustausch',
+    asymmetrisch: 'Asymmetrische Verfahren',
+    hybrid: 'Hybridverfahren',
+    hash: 'Hashfunktionen',
+    signatur: 'Digitale Signatur',
+    zertifikat: 'Zertifikate',
+    protokoll: 'Protokolle und Angriffe',
+    struktogramm: 'Struktogramm',
+    implementierung: 'Implementierung',
+    'fremde-chiffre': 'Fremde Chiffre',
+    gesellschaft: 'Datenschutz und Gesellschaft'
+  });
+
+  /** Kurztitel der Fallen P1–P10 (= FALLEN[p].titel in src/krypto/fach.js, Design §3.3). */
+  const FALLEN = Object.freeze({
+    P1: 'Zählbasis verwechselt',
+    P2: 'Modulo falsch',
+    P3: 'Umkehrung falsch',
+    P4: 'Verfahrensregel übersehen',
+    P5: 'Falsch eingeordnet',
+    P6: 'Häufigkeitsanalyse pauschal',
+    P7: 'Schlüsselraum falsch',
+    P8: 'Kombination überschätzt',
+    P9: 'Schlüsselrollen verwechselt',
+    P10: 'Operator verfehlt'
+  });
+
   // sofort anwenden (vor dem ersten Zeichnen)
   html.setAttribute('data-theme', AQ.einstellung('thema'));
   html.setAttribute('data-bewegung', AQ.einstellung('bewegung'));
 
-  return { thema, bewegung, epoche, ORNAMENT, ornament, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
+  return { thema, bewegung, epoche, KATEGORIEN, FALLEN, ORNAMENT, ornament, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

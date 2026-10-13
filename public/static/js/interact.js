@@ -12,6 +12,10 @@ const AQI = (() => {
   }
   /** Arten mit Schrittprüfung (K05: Plattform darf ergänzen, z. B. AQI.schrittArten.add('chiffre')). */
   const schrittArten = new Set(['tree:klick', 'array:tausch', 'array:klick', 'order']);
+  /** Schritt-Arten, bei denen der Schalter standardmäßig aus ist (K05, M4 E29; Plattform darf ergänzen, z. B. 'chiffre'). */
+  const schrittAus = new Set(['order']);
+  /** ctx-Schlüssel, die opt.zusatz nicht überschreiben darf (K05). */
+  const CTX_GESCHUETZT = new Set(['gap', 'zeilenWahl', 'modus']);
   /** Kern-Arten (nicht überschreibbar) und Registry der Plattform-Interaktionen (K05, TECHNIK §4.4). */
   const KERN_ARTEN = new Set(['gaps', 'choice', 'order', 'lines', 'match', 'tree:klick', 'tree:bauen', 'array:tausch', 'array:klick', 'grid', 'adtsim']);
   const REGISTRY = new Map();
@@ -911,16 +915,21 @@ const AQI = (() => {
 
   /**
    * @param {object} aufgabe öffentliche Aufgabe {inhalt, interaktion}
-   * @param {object} opt { schritt: async (teil, antwort) => Ergebnis | undefined, onChange }
+   * @param {object} opt { modus = 'lab' ('lab'|'boss'|'vorschau'|'gast'|'training'), zusatz (wird in ctx übernommen, z. B.
+   *   werkzeugFrei; gap/zeilenWahl/modus nicht überschreibbar), schritt: async (teil, antwort) => Ergebnis | undefined,
+   *   teilPruefen, onChange, vorschau }
    */
   function aufgabe(a, opt = {}) {
+    const modus = typeof opt.modus === 'string' && opt.modus ? opt.modus : 'lab';
     const ias = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
     const mehrteilig = Array.isArray(a.interaktion);
     const schrittSchalter = h('input', { type: 'checkbox' });
     const schrittTeile = ias.filter((ia) => schrittArten.has(art(ia)));
-    schrittSchalter.checked = AQ.lade('aql_schritt', true) && schrittTeile.some((ia) => art(ia) !== 'order');
+    schrittSchalter.checked = AQ.lade('aql_schritt', true) && schrittTeile.some((ia) => !schrittAus.has(art(ia)));
     schrittSchalter.addEventListener('change', () => AQ.speichere('aql_schritt', schrittSchalter.checked));
     const kontext = {
+      modus,
+      aufgabe: a, // Teil-Fabriken sehen die Aufgabe (z. B. Akteure eines Schaubilds, K05)
       vorschau: !!opt.vorschau, // Lehrkraft-Vorschau: Lösung direkt in die Interaktion einsetzen
       geaendert: () => opt.onChange && opt.onChange(),
       schrittAktiv: (teil) => !!opt.schritt && schrittSchalter.checked && schrittArten.has(teil.kind),
@@ -935,8 +944,11 @@ const AQI = (() => {
       zeilenWahl(blockIndex) {
         const t = teile.find((x) => x.kind === 'lines' && x.block === blockIndex);
         return t ? { klick: (nr) => t.klick(nr), registriere: (els) => t.registriere(els) } : null;
-      }
+      },
+      modus
     };
+    const zusatz = opt.zusatz && typeof opt.zusatz === 'object' ? opt.zusatz : {};
+    for (const [k, v] of Object.entries(zusatz)) if (!CTX_GESCHUETZT.has(k)) ctx[k] = v;
     const inhaltEl = R.bloecke(a.inhalt, ctx);
     const teilEls = [];
     const box = h('div', { class: 'aufgabe-box' }, inhaltEl);
@@ -955,7 +967,7 @@ const AQI = (() => {
       teilEls.push(el);
       box.appendChild(el);
     });
-    if (opt.schritt && schrittArten.length) {
+    if (opt.schritt && schrittTeile.length) {
       box.appendChild(h('label', { class: 'check small' }, schrittSchalter, 'Jeden Schritt sofort prüfen (ein falscher Schritt zählt als Fehlversuch)'));
     }
 
@@ -1067,5 +1079,5 @@ const AQI = (() => {
     };
   }
 
-  return { aufgabe, art, registriere, schrittArten, teilFuer, gapBesitzer };
+  return { aufgabe, art, registriere, schrittArten, schrittAus, teilFuer, gapBesitzer };
 })();
