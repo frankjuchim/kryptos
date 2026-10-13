@@ -206,6 +206,9 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     if (Array.isArray(rollen) && rollen.length < k.teamsMin) throw new V.ValidationError(`Für dieses Szenario braucht ihr mindestens ${k.teamsMin} Teams.`);
     const liste = Sz.pruefeRollen(typ, rollen, alleTeams);
     const optionen = pruefeOptionen(typ, b.optionen, alleTeams);
+    // Typ-Vorbedingung (Wettknacken: Seed-Text vorhanden, Task 138)
+    const typMod = TYP_MODULE[typ];
+    if (typeof typMod.pruefeAnlegen === 'function') typMod.pruefeAnlegen({ quelle, log, krypto: Krypto }, optionen, liste);
     const id = db.transaction(() => {
       if (sql.szKurs.get(kurs.id)) throw new V.ConflictError('In diesem Kurs gibt es schon ein Funkraum-Szenario.');
       const jetzt = now();
@@ -424,12 +427,12 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
       rolle: betrachter.rolle,
       partner: betrachter.partner,
       stummBis: stumm && Date.parse(stumm) > now() ? stumm : null,
-      ...(rolleZeile && typeof typ.ich === 'function' ? typ.ich(ctx, sz, rolleZeile, sql.rollen.all(sz.id)) || {} : {})
+      ...(rolleZeile && typeof typ.ich === 'function' ? typ.ich(ctx, sz, { ...rolleZeile, team_id: team.id }, sql.rollen.all(sz.id)) || {} : {})
     };
     // E98: Szenario-Werkzeuge nur eingebettet; ein laufender Boss-Kampf sperrt auch sie
     const boss = !!sqlStand.laufenderBoss.get(s.id, iso(now() - BOSS_KULANZ_MS));
     daten.boss = boss;
-    daten.werkzeuge = boss || !rolleZeile || typeof typ.werkzeuge !== 'function' ? [] : typ.werkzeuge(sz, betrachter.rolle) || [];
+    daten.werkzeuge = boss || !rolleZeile || typeof typ.werkzeuge !== 'function' ? [] : typ.werkzeuge(sz, betrachter.rolle, ctx) || [];
     return { etag: tag, daten };
   }
 

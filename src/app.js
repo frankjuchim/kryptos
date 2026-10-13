@@ -47,7 +47,8 @@ const VERSION = require('../package.json').version;
  * @param {Function} [opts.trainingSeed]  Seed-Quelle für Generatoren – für Tests
  * @param {Function} [opts.zufallBytes]   (n) → Buffer mit n Zufallsbytes (Funkraum/Arena: Salze, Schlüsselblöcke,
  *                                         Auftragskarten) – für Tests fest (K41, Plan M7 E113); Standard crypto.randomBytes
- * @param {string|null} [opts.funkraumDatei] Seed-Datei des Wettknackens (Tests; Standard seed/funkraum/wettknacken.json, Plan M7 Task 138)
+ * @param {string|null} [opts.funkraumDatei] Seed-Datei des Wettknackens (Standard <seedDir>/funkraum/wettknacken.json, ohne
+ *                                         seedDir keine; Plan M7 Task 138)
  * @param {object} [opts.optionen]        Dienst-Optionen (TECHNIK §4.2), überschreiben dienstOptionen() – für Tests
  * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Akten-PDFs, ausgeliefert unter /akten/ (Kern-Name der Option
  *                                         bleibt, TECHNIK §16.2; Standard: ARBEITSBLAETTER_DIR, sonst ./akten im Image bzw.
@@ -159,7 +160,10 @@ function createApp(opts) {
   /* ---------- Verbund-API (VERTRAG §6, TECHNIK §6.7): vor dem API-Router, ohne Origin-Prüfung ---------- */
   // K41: Teams (Tischgruppen) und Funkraum-Dienst (Plan M7 Tasks 133, 134; Zufall nur über ctx.zufallBytes, E113)
   const teams = createTeams({ db, svc });
-  const funkraum = createFunkraum({ db, svc, teams, now: ctx.now, zufallBytes: ctx.zufallBytes, log, quelle: opts.funkraumDatei || null });
+  // Wettknacken-Seed (Plan M7 Task 138): opts.funkraumDatei, sonst <seedDir>/funkraum/wettknacken.json; ohne seedDir keiner
+  const funkSeedDir = opts.seedDir === undefined ? path.join(ROOT_DIR, 'seed') : opts.seedDir;
+  const funkraumDatei = opts.funkraumDatei !== undefined ? opts.funkraumDatei : funkSeedDir ? path.join(funkSeedDir, 'funkraum', 'wettknacken.json') : null;
+  const funkraum = createFunkraum({ db, svc, teams, now: ctx.now, zufallBytes: ctx.zufallBytes, log, quelle: funkraumDatei });
   // K41 (Plan M7 E111): Kurs gesperrt beendet ein laufendes Funkraum-Szenario über den Funkraum-Dienst mit Auswertung
   // (typ-spezifisch; src/verbund/ bleibt krypto-frei)
   const szenarioBeenden = (dbx, szId, jetzt) => funkraum.beendeIntern(szId, jetzt);

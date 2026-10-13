@@ -137,7 +137,7 @@ test('Image-Inhalt: Akten, Lehrkraft-Verzeichnis, Demo-PDFs und relative require
   for (const p of demo.schueler) assert.ok(hat(`akten/${p}`), `Demo-PDF fehlt: ${p}`);
   for (const p of demo.lehrkraft) assert.ok(hat(`materialien/${p}`), `Demo-PDF fehlt: ${p}`);
   // Seeds, Videos, Gast, Formatdateien
-  for (const p of ['seed/welten/welt0.json', 'seed/welten/welt1.json', 'seed/welten/welt2.json', 'seed/gast/demo.json', 'seed/videos.json', 'seed/warmup/w0.json', 'docs/AUFGABENFORMAT_KRYPTO.md', 'public/static/js/shared/krypto.js', 'package-lock.json']) {
+  for (const p of ['seed/welten/welt0.json', 'seed/welten/welt1.json', 'seed/welten/welt2.json', 'seed/gast/demo.json', 'seed/funkraum/wettknacken.json', 'seed/videos.json', 'seed/warmup/w0.json', 'docs/AUFGABENFORMAT_KRYPTO.md', 'public/static/js/shared/krypto.js', 'package-lock.json']) {
     assert.ok(hat(p), `${p} fehlt im Image`);
   }
   // Schülerbereich ohne Lösungen

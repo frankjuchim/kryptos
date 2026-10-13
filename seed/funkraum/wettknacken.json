@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "texte": [
+    {
+      "id": "w1-papyrus",
+      "titel": "Brief aus dem Haus der Weisheit",
+      "geheimtext": "DHCPQ NRUMV UDNCU DODIA PBRPR PMAUD OUIRD UBUGU CMOUI OPBQI RIPYC ONDUQ UAUMN UOZUI RDUNY CMDSO UIRUM BMDUY CUIQI RKUMN UMDIR DUPMP ADNYC UNKMP YCUQI RNPHH UGIRP NVDNN UIRUM BPIZU IVUGO UDIUN PAUIR NSDIR UOUDI EQIBU MNYCM UDAUM UDIUI AMDUS RUIID UHPIR GUNUI FPIIE URUMA QYCNO PAUDN ORQMY CUDIU IPIRU MUIUM NUOZO RUMNY CMUDA UMUMD IIUMO NDYCP IRDUG UCMUR UNKCD GJNJK CUIPG FDIRD HPIZP UCGOV DUJSO EURUN ZUDYC UITJM FJHHO DIEUR UMNKM PYCUB DAOUN AQYCN OPAUI RDUNU CMCPU QSDBN DIRQI RPIRU MURDU NUGOU IUMNY CUDIU IVUMB UIQBO UWOCP OSDIR UONJN YCMDO OSQUM NYCMD OORUI BPIZU INYCG QUNNU G",
+      "laenge": 486,
+      "loesung": {
+        "zuordnung": {
+          "D": "I",
+          "H": "M",
+          "C": "H",
+          "P": "A",
+          "Q": "U",
+          "N": "S",
+          "R": "D",
+          "U": "E",
+          "M": "R",
+          "V": "W",
+          "O": "T",
+          "I": "N",
+          "A": "B",
+          "B": "G",
+          "G": "L",
+          "Y": "C",
+          "Z": "Z",
+          "S": "F",
+          "K": "P",
+          "E": "J",
+          "F": "K",
+          "J": "O",
+          "T": "V",
+          "W": "X"
+        }
+      },
+      "klartext": "im haus der weisheit in bagdad arbeiten die gelehrten tag und nacht sie uebersetzen die schriften der griechen und perser in die arabische sprache und sammeln das wissen der ganzen welt eines abends findet ein junger schreiber einen brief den niemand lesen kann jeder buchstabe ist durch einen anderen ersetzt der schreiber erinnert sich an die lehre des philosophen al kindi man zaehlt wie oft jedes zeichen vorkommt in jeder sprache gibt es buchstaben die sehr haeufig sind und andere die selten erscheinen wer genug text hat findet so schritt fuer schritt den ganzen schluessel",
+      "hinweise": [
+        "U ≙ e",
+        "YC ≙ ch",
+        "RUM ≙ der"
+      ]
+    }
+  ]
+}

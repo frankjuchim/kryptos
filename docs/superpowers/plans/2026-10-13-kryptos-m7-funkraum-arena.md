@@ -1164,7 +1164,7 @@ Beamer bei 1920 × 1080.
   voreinstellung: { text } }]`.
 - Hinweise: `POST /api/lehrer/funk/:id/hinweis { nr }` (1–3, Reihenfolge egal, je einmal; Ereignis `hinweis { nr }`).
 
-- [ ] **Step 1: Failing test** – `test/funkraum_wettknacken.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum_wettknacken.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1223,8 +1223,8 @@ Beamer bei 1920 × 1080.
     await g.lk.post(`/api/lehrer/kurse/${g.kurs.id}/funk`).send({ typ: 'wettknacken' }).expect(400);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `npm run validate` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenario Wettknacken (Seed-Text, Anteil, Ziellinie, Hinweise, Verlauf)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; `npm run validate` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenario Wettknacken (Seed-Text, Anteil, Ziellinie, Hinweise, Verlauf)"`.
 
 ### Task 139: Szenario „Der doppelte Schlüssel“ (W3 §9.3, E94, E98)
 
@@ -2803,6 +2803,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   `anzeigen.auswertung` nicht (erst `auswertung` nach dem Beenden). `funkraum.test.js` (Sperren über den Verbund) prüft jetzt
   die Botenlauf-Auswertung (`zeilen`, `je`) statt der generischen. W0 §9.3 Schritt 3 nach E92 angepasst (Plattform-Spalte
   „Zeit vom Senden bis zum Knacken“).
+- **Task 138:** Seed `seed/funkraum/wettknacken.json` mit Krypto erzeugt und gegen den Spec-Block geprüft (Skript
+  `scratchpad/m7_137/wett_seed.js`; Klartext klein ohne Satzzeichen, „Al-Kindi“ → „al kindi“; Zuordnung in Reihenfolge des
+  ersten Vorkommens). Neue Typ-Hooks: `pruefeAnlegen(ctx, optionen)` (Dienst ruft ihn beim Anlegen; Wettknacken ohne gültigen
+  Text → 400), `werkzeuge(sz, rolle, ctx)` (dritter Parameter, damit die Voreinstellung den Geheimtext tragen kann), `ich`
+  bekommt die Rollenzeile mit `team_id`. Lader prüft zusätzlich ≥ 400 Buchstaben und genau drei Hinweise; jede Datei wird
+  einmal gelesen (Cache je Pfad). Fremde `fortschritt`-Ereignisse sehen Teams nicht (`ereignisSicht`), `fertig` ist öffentlich
+  (Ziellinie). Verlauf: Punkt `{ s, anteil }` (Sekunden seit Start), innerhalb von 30 s wird der letzte Punkt überschrieben.
+  Zuordnung nur in Phase `knacken` (sonst 409). Nach dem Beenden ist `anzeigen` leer, `auswertung` = `{ teams: [{ team,
+  anteil, fertig, platz, verlauf }], hinweise }`. `src/app.js`: Standard `<seedDir>/funkraum/wettknacken.json` (K41 ergänzt);
+  `seed/` liegt ganz im Image (Dockerfile unverändert), `docker.test.js` prüft die Datei. Zusatztests: Hinweise/Ticker/Platz 2/
+  Auflösung, Lader.
 
 ## Reihenfolge und Abhängigkeiten
 

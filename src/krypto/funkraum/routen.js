@@ -74,6 +74,8 @@ function funkRouten(funk) {
     api.post('/funk/:id/nachrichten', schueler, mit429((req) => funk.senden(req.schueler, req.params.id, req.body)));
     api.post('/funk/:id/empfangen', schueler, mit429((req) => funk.empfangen(req.schueler, req.params.id, req.body)));
     api.post('/funk/:id/knacken', schueler, mit429((req) => funk.knacken(req.schueler, req.params.id, req.body)));
+    // Aktionen der Szenario-Typen (Tasks 138–141)
+    api.put('/funk/:id/zuordnung', schueler, mit429((req) => funk.teamAktion(req.schueler, req.params.id, 'zuordnung', req.body)));
     api.get('/funk/:id/stand', schueler, limit(standLimit, proSchueler), (req, res) => sendeStand(res, funk.stand(req.schueler, req.params.id, abfrage(req))));
 
     api.get('/lehrer/kurse/:kursId/funk', lehrkraft, (req, res) => res.json(funk.aktuellFuerKurs(req.lk, kid(req))));
@@ -83,6 +85,7 @@ function funkRouten(funk) {
     api.post('/lehrer/funk/:id/nachrichten/:nid/ausblenden', lehrkraft, (req, res) => res.json(funk.ausblenden(req.lk, req.params.id, req.params.nid)));
     api.post('/lehrer/funk/:id/teams/:teamId/stumm', lehrkraft, (req, res) => res.json(funk.stumm(req.lk, req.params.id, req.params.teamId, req.body)));
     // Regie-Aktionen der Szenario-Typen (Tasks 137–141)
+    api.post('/lehrer/funk/:id/hinweis', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'hinweis', req.body)));
     api.post('/lehrer/funk/:id/sonderkarte', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'sonderkarte', req.body)));
     api.get('/lehrer/funk/:id/stand', lehrkraft, limit(lkLimit, proLk), (req, res) =>
       sendeStand(res, funk.standLehrkraft(req.lk, req.params.id, { ...abfrage(req), ansicht: req.query.ansicht === undefined ? 'regie' : req.query.ansicht }))
