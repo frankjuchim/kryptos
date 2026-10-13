@@ -738,7 +738,7 @@ Beamer bei 1920 × 1080.
 - Regie-Ansicht: `{ id, typ, titel, status, phase, phasen, version, rollen: [{ teamId, team, rolle, partnerId }], optionen,
   endetSpaetestens, gestartetAt }` – nie `salz`.
 
-- [ ] **Step 1: Failing test** – `test/funkraum.test.js`:
+- [x] **Step 1: Failing test** – `test/funkraum.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -807,12 +807,12 @@ Beamer bei 1920 × 1080.
     await F.aktion(f, sz.id, 'starten').expect(403);
   });
   ```
-- [ ] **Step 2: Run** `node --test test/funkraum.test.js` → FAIL.
-- [ ] **Step 3: Implement** (Konfiguration aus Task 130 wörtlich; `rollenVorschlag` mit s = n − 2·⌊(n − 1)/2⌋; Typ-Module
+- [x] **Step 2: Run** `node --test test/funkraum.test.js` → FAIL.
+- [x] **Step 3: Implement** (Konfiguration aus Task 130 wörtlich; `rollenVorschlag` mit s = n − 2·⌊(n − 1)/2⌋; Typ-Module
   über `require('./typen/' + datei)`; Lehrkraft-Rechte über `svc.kurse.kursFuer`; gesperrter Kurs → `ForbiddenError`;
   Verbund-Callback in `verbund.js`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün (inkl. `verbund.test.js`: Sperren beendet jetzt über den Dienst).
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Zustandsautomat, Szenario-Konfiguration, Rollenvorschlag und Regie-Routen"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün (inkl. `verbund.test.js`: Sperren beendet jetzt über den Dienst).
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Zustandsautomat, Szenario-Konfiguration, Rollenvorschlag und Regie-Routen"`.
 
 ### Task 135: Polling-Protokoll und Sichtbarkeit (TECHNIK §12.4, E99, E109, E110)
 
@@ -2757,6 +2757,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   `app.locals.teams` ab (Tests für `teamVon`/`mitglieder`/`imEinsatz`). 409-Texte getrennt: „Team … spielt gerade im
   Funkraum.“ bzw. „Team … hat eine Chiffre in der offenen Arena.“ Unbekannte Felder in einem Team → 400.
   `liste`/`mitglieder` zeigen nur aktive Teilnahmen.
+
+- **Task 134:** `src/verbund/verbund.js` blieb unverändert – der Callback `szenarioBeenden` existierte seit Task 133;
+  `src/app.js` (K41) reicht jetzt `funkraum.beendeIntern` (typ-spezifische Auswertung) durch. Der Rollenvorschlag nimmt nur
+  Teams mit mindestens einem aktiven Mitglied (leere Tischgruppen bekommen keine Rolle); explizite Rollen dürfen jedes Team
+  des Kurses nennen. In `vorbereitung` steht `phase = phasen[0]` (Spalte NOT NULL); Anlegen schreibt das Ereignis
+  `status { status: 'vorbereitung' }` (Version 1). Ein Szenario nach `endet_spaetestens` gilt bis zum Wartungslauf als
+  gelöscht (404, ohne Schreiben). `GET /api/lehrer/kurse/:kursId/funk` ist auch bei gesperrtem Kurs lesbar; Status/Rollen
+  → 403. Optionen nur `wiederholerTeamId` (Doppelter Schlüssel, Team des Kurses) und `textId` (Wettknacken), sonst 400;
+  Typ-Gerüste enthalten `typ`, `start` → `{}`, leere `aktionen`, `auswertung` generisch. App-Option `funkraumDatei`
+  (Wettknacken-Seed, ab Task 138). Zusätzliche Tests: Sperren über den Verbund beendet über den Dienst (Teilnahmen,
+  Auswertung je Team), Optionen/Salz.
 
 ## Reihenfolge und Abhängigkeiten
 

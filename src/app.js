@@ -19,7 +19,8 @@ const { createNiveauUebersicht } = require('./krypto/niveauUebersicht');
 const { createLabor } = require('./krypto/labor');
 const { createLevelMedien, createAktenNiveau } = require('./krypto/medien');
 const { createTeams } = require('./krypto/teams');
-const funkLoeschen = require('./krypto/funkraum/loeschen');
+const { createFunkraum } = require('./krypto/funkraum/dienst');
+const { funkRouten } = require('./krypto/funkraum/routen');
 const { ladeKonfig } = require('./verbund/konfig');
 const { createSitzung } = require('./verbund/sitzung');
 const { createSsoRouter } = require('./verbund/sso');
@@ -46,6 +47,7 @@ const VERSION = require('../package.json').version;
  * @param {Function} [opts.trainingSeed]  Seed-Quelle für Generatoren – für Tests
  * @param {Function} [opts.zufallBytes]   (n) → Buffer mit n Zufallsbytes (Funkraum/Arena: Salze, Schlüsselblöcke,
  *                                         Auftragskarten) – für Tests fest (K41, Plan M7 E113); Standard crypto.randomBytes
+ * @param {string|null} [opts.funkraumDatei] Seed-Datei des Wettknackens (Tests; Standard seed/funkraum/wettknacken.json, Plan M7 Task 138)
  * @param {object} [opts.optionen]        Dienst-Optionen (TECHNIK §4.2), überschreiben dienstOptionen() – für Tests
  * @param {string|null} [opts.arbeitsblaetterDir] Ordner mit den Akten-PDFs, ausgeliefert unter /akten/ (Kern-Name der Option
  *                                         bleibt, TECHNIK §16.2; Standard: ARBEITSBLAETTER_DIR, sonst ./akten im Image bzw.
@@ -155,8 +157,12 @@ function createApp(opts) {
   app.use('/sso', createSsoRouter({ db, svc, konfig, sitzung, secret, now: ctx.now }));
 
   /* ---------- Verbund-API (VERTRAG §6, TECHNIK §6.7): vor dem API-Router, ohne Origin-Prüfung ---------- */
-  // K41 (Plan M7 E111): Kurs gesperrt beendet ein laufendes Funkraum-Szenario mit Auswertung (src/verbund/ bleibt krypto-frei)
-  const szenarioBeenden = (dbx, szId, jetzt) => funkLoeschen.beenden(dbx, szId, { jetzt });
+  // K41: Teams (Tischgruppen) und Funkraum-Dienst (Plan M7 Tasks 133, 134; Zufall nur über ctx.zufallBytes, E113)
+  const teams = createTeams({ db, svc });
+  const funkraum = createFunkraum({ db, svc, teams, now: ctx.now, zufallBytes: ctx.zufallBytes, log, quelle: opts.funkraumDatei || null });
+  // K41 (Plan M7 E111): Kurs gesperrt beendet ein laufendes Funkraum-Szenario über den Funkraum-Dienst mit Auswertung
+  // (typ-spezifisch; src/verbund/ bleibt krypto-frei)
+  const szenarioBeenden = (dbx, szId, jetzt) => funkraum.beendeIntern(szId, jetzt);
   app.use('/api/verbund', createVerbundRouter({ db, svc, konfig, now: ctx.now, szenarioBeenden }));
 
   /* ---------- Helfer für die Routen ---------- */
@@ -287,8 +293,9 @@ function createApp(opts) {
   createLabor({ db, svc, now: ctx.now }).routen(api, helpers);
   lehrerRoutes(api, helpers);
   // K41: Teams (Tischgruppen) je Kurs – GET/PUT /api/lehrer/kurse/:kursId/teams (Plan M7 Task 133)
-  const teams = createTeams({ db, svc });
   teams.routen(api, helpers);
+  // K41: Funkraum – Regie-Routen (Plan M7 Task 134)
+  funkRouten(funkraum)(api, helpers);
   adminRoutes(api, helpers);
   gastRoutes(api, helpers);
 
@@ -317,6 +324,7 @@ function createApp(opts) {
   app.locals.wartung = wartung;
   app.locals.ctx = ctx;
   app.locals.teams = teams;
+  app.locals.funkraum = funkraum;
   return app;
 }
 
