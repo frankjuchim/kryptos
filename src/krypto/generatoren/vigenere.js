@@ -36,7 +36,7 @@ function vigenere(z) {
     interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'vigenere', schluessel }, eingabe: K.gruppieren(geheim), hilfszeilen: ['schluessel'] },
     loesung: { text: klar.toLowerCase() }, // Klartext klein (Design §6.2)
     tipps: [tipp, 'Beim Entschlüsseln wird der Wert des Schlüsselbuchstabens abgezogen.'],
-    erklaerung: [txt(`Jeder Geheimtextbuchstabe wird um den Wert des Schlüsselbuchstabens zurückgeschoben (A = 0, mod 26): \`${K.gruppieren(geheim)}\` → \`${klar}\`.`)]
+    erklaerung: [txt(`Jeder Geheimtextbuchstabe wird um den Wert des Schlüsselbuchstabens nach links verschoben (A = 0, mod 26): \`${K.gruppieren(geheim)}\` → \`${klar}\`.`)]
   };
 }
 

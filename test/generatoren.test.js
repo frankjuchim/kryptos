@@ -684,3 +684,22 @@ test('friedman (eA): alle 14 Kombinationen n ∈ {501, 1001}, k ∈ 2 … 8 lief
   assert.equal(kombis.size, 14, 'alle Kombinationen kommen vor');
   assert.equal(G.GENERATOREN.friedman.niveau, 'eA');
 });
+
+// M5-Inhaltsprüfung: eine Sprachregelung für Verschiebungen wie in Specs, Akten und Lab – Verschlüsseln „nach rechts“
+// (nach Z weiter mit A), Entschlüsseln „nach links“ (vor A weiter mit Z); nicht „nach hinten/vorn“, „vorwärts“,
+// „zurückgeschoben“.
+test('Generatoren: Richtungsangaben einheitlich „nach rechts“ / „nach links“', () => {
+  const ALT = /nach hinten|nach vorn|vorwärts|rückwärts verschoben|zurückgeschoben/i;
+  const texte = (a) => JSON.stringify([a.inhalt, a.tipps, a.erklaerung, a.titel]);
+  let rechts = 0;
+  let links = 0;
+  for (const key of Object.keys(G.GENERATOREN)) {
+    for (const s of SEEDS.slice(0, 20)) {
+      const t = texte(G.erzeuge(key, s));
+      assert.doesNotMatch(t, ALT, key);
+      if (/nach rechts/.test(t)) rechts++;
+      if (/nach links/.test(t)) links++;
+    }
+  }
+  assert.ok(rechts > 0 && links > 0, `nach rechts ${rechts}, nach links ${links}`);
+});

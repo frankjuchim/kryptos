@@ -32,8 +32,8 @@ function caesarPaar(z) {
     inhalt: [txt(`Das Wort \`${wort}\` wurde mit Caesar zu \`${geheim}\`. Bestimme den Schlüssel k (0 … 25): k = [[k]]`)],
     interaktion: { kind: 'gaps', felder: { k: { typ: 'zahl', breite: 4 } } },
     loesung: { k: [String(k)], _fehlmuster: { k: fehlmuster(k) } },
-    tipps: ['Vergleiche den ersten Klartextbuchstaben mit dem ersten Geheimtextbuchstaben: Um wie viele Stellen wurde vorwärts verschoben?'],
-    erklaerung: [txt(`Von \`${wort[0]}\` nach \`${geheim[0]}\` sind es ${k} Stellen vorwärts (mod 26) – das gilt für jeden Buchstaben, also k = ${k}.`)]
+    tipps: ['Vergleiche den ersten Klartextbuchstaben mit dem ersten Geheimtextbuchstaben: Um wie viele Stellen wurde nach rechts verschoben?'],
+    erklaerung: [txt(`Von \`${wort[0]}\` nach \`${geheim[0]}\` sind es ${k} Stellen nach rechts (mod 26) – das gilt für jeden Buchstaben, also k = ${k}.`)]
   };
 }
 

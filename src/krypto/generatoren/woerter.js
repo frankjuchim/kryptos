@@ -13,7 +13,7 @@ const WOERTER_ANTIKE = Object.freeze([
   'wachturm', 'meilenstein', 'pflaster', 'hafenkran', 'dreiruderer', 'speer', 'schleuder', 'katapult', 'rammbock',
   'herold', 'redner', 'gesandter', 'senator', 'tribunal', 'edikt', 'muenze', 'bronze', 'kupfer', 'marmor', 'ziegel',
   'lehm', 'amphitheater', 'theater', 'chor', 'tragoedie', 'komoedie', 'akademie', 'gymnasion', 'stadion',
-  'speerwurf', 'ringkampf', 'siegerkranz', 'altar', 'priester', 'vestalin', 'augur', 'oellampe', 'griffel',
+  'speerwurf', 'ringkampf', 'siegerkranz', 'altar', 'priester', 'vestalin', 'augur', 'tonkrug', 'griffel',
   'schriftrolle'
 ]);
 
@@ -23,7 +23,7 @@ const WOERTER_BAGDAD = Object.freeze([
   'muskat', 'nelke', 'ingwer', 'kurkuma', 'pistazie', 'mandel', 'granatapfel', 'aprikose', 'teppich', 'baumwolle',
   'kamelhaar', 'kamel', 'dromedar', 'duene', 'sandsturm', 'laterne', 'kalligrafie', 'buchbinder', 'papiermuehle',
   'uebersetzer', 'wasseruhr', 'zahlenrad', 'rechenbrett', 'abakus', 'waage', 'kaufmann', 'silberling', 'goldstueck',
-  'schatzkammer', 'thron', 'euphrat', 'dhau', 'damm', 'schoepfrad', 'bewaesserung', 'feigenbaum', 'weihrauch',
+  'gewoelbe', 'thron', 'euphrat', 'dhau', 'damm', 'schoepfrad', 'bewaesserung', 'feigenbaum', 'weihrauch',
   'myrrhe', 'sternbild', 'sternkarte', 'himmelskarte', 'rosengarten', 'turban', 'kaftan', 'honig', 'sesam', 'linsen',
   'zitrone', 'melone', 'traube', 'rosine', 'walnuss', 'lehrsaal', 'tintenfass', 'federkiel', 'lineal', 'zirkel',
   'globus', 'backofen', 'fladenbrot'
@@ -33,14 +33,14 @@ const WOERTER_BAGDAD = Object.freeze([
 const SCHLUESSELWOERTER_W1 = Object.freeze([
   'dattelpalme', 'euphrat', 'astrolab', 'kalligrafie', 'rosengarten', 'zimtstange', 'granatapfel', 'papiermuehle',
   'wasseruhr', 'sandsturm', 'moschee', 'kuppelsaal', 'laterne', 'safranfeld', 'seidenweg', 'buchbinder',
-  'schatzkammer', 'innenhof', 'wuestenrose', 'rechenbrett', 'abakus', 'alchemie', 'pistazie', 'mandelbaum',
+  'gewoelbe', 'innenhof', 'wuestenrose', 'rechenbrett', 'abakus', 'alchemie', 'pistazie', 'mandelbaum',
   'dromedar', 'weihrauch', 'myrrhe', 'sternbild', 'zahlenrad', 'lehrsaal', 'diwan', 'arkade', 'sternkarte',
   'himmelskarte', 'tintenfass', 'federkiel', 'kardamom', 'muskatnuss', 'ingwerwurzel', 'feigenbaum'
 ]);
 
 /** Welt 2 (SPEC W2 §8): Klartexte ≥ 20, 5–12 Buchstaben. */
 const KLARTEXTE_W2 = Object.freeze([
-  'lagunenstadt', 'campanile', 'fischerboot', 'spiegelglas', 'mosaikboden', 'kirchturm', 'glockenspiel',
+  'speicherhaus', 'campanile', 'fischerboot', 'spiegelglas', 'mosaikboden', 'kirchturm', 'glockenspiel',
   'marktplatz', 'brueckenzoll', 'gewuerzhaus', 'schreibpult', 'wachsiegel', 'briefbote', 'kurierpost', 'geheimrat',
   'ratsherr', 'senatssaal', 'karneval', 'maskentanz', 'gaukler', 'mandoline', 'gondolier', 'ruderer', 'salzlager',
   'kristall', 'laterne'
@@ -68,7 +68,7 @@ const PLAYFAIR_W2 = Object.freeze([
  */
 const SATZBAUSTEINE_W1 = Object.freeze({
   anfang: Object.freeze(['der kaufmann', 'der buchbinder', 'der uebersetzer', 'die laterne', 'der teppich', 'das astrolab', 'die wasseruhr', 'der globus', 'die waage', 'das tintenfass', 'der federkiel', 'die sternkarte']),
-  mitte: Object.freeze(['liegt im innenhof', 'steht am euphrat', 'wartet im lehrsaal', 'ruht im rosengarten', 'steht neben dem backofen', 'liegt in der schatzkammer', 'steht unter der kuppel', 'wartet an der arkade']),
+  mitte: Object.freeze(['liegt im innenhof', 'steht am euphrat', 'wartet im lehrsaal', 'ruht im rosengarten', 'steht neben dem backofen', 'liegt im gewoelbe', 'steht unter der kuppel', 'wartet an der arkade']),
   ende: Object.freeze([
     'und der honig duftet nach kardamom', 'und die melone liegt neben der zitrone', 'und ein dromedar trinkt am damm',
     'und der zirkel liegt bei dem lineal', 'und die rosine liegt neben der walnuss', 'und der sesam liegt auf dem fladenbrot',

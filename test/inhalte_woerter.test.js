@@ -93,3 +93,33 @@ for (const [name, regel] of Object.entries(LISTEN)) {
     assert.deepEqual(funde, [], `${name}: verbotene Wörter`);
   });
 }
+
+// M5-Inhaltsprüfung: reservierte Video-Wörter (Specs §8: KRYPTOS, treffpunktambrunnen, geheimbotschaft, SCHATZ,
+// LAMPE, INFO) und Video-Texte (quellen/pruefwerte/videos.json, ab 5 Buchstaben) dürfen in keinem Generator-Wort und
+// keinem Satzbaustein auch nur als Teil stehen (oellampe ⊃ LAMPE, schatzkammer ⊃ SCHATZ).
+const RESERVIERT = ['KRYPTOS', 'TREFFPUNKTAMBRUNNEN', 'GEHEIMBOTSCHAFT', 'SCHATZ', 'LAMPE', 'INFO'];
+const VIDEO_TEXTE = require('../quellen/pruefwerte/videos.json').werte
+  .flatMap((v) => [...(Array.isArray(v.eingabe) ? v.eingabe : []), v.erwartet])
+  .filter((x) => typeof x === 'string' && !/^[01 ]+$/.test(x))
+  .map((x) => norm(x).replace(/[^a-z]/g, '').toUpperCase())
+  .filter((x) => x.length >= 5);
+
+function generatorTexte() {
+  const out = [];
+  (function lauf(x, ort) {
+    if (typeof x === 'string') out.push({ ort, text: norm(x).replace(/[^a-z]/g, '').toUpperCase() });
+    else if (Array.isArray(x)) x.forEach((y) => lauf(y, ort));
+    else if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) lauf(v, `${ort}.${k}`);
+  })(W, 'woerter');
+  return out;
+}
+
+test('Generator-Wörter und Satzbausteine enthalten keine reservierten Video-Wörter, auch nicht als Teilwort', () => {
+  const texte = generatorTexte();
+  assert.ok(texte.length >= 200, `nur ${texte.length} Generator-Texte gefunden`);
+  const funde = [];
+  for (const { ort, text } of texte) {
+    for (const r of [...RESERVIERT, ...VIDEO_TEXTE]) if (text.includes(r)) funde.push(`${ort}: ${text} ⊃ ${r}`);
+  }
+  assert.deepEqual([...new Set(funde)], []);
+});
