@@ -28,7 +28,7 @@ test('Mallory Phase 1: Schlüssel ersetzen, Umschlag öffnen und ändern, Bob me
   assert.deepEqual(post_.map((n) => [n.inhalt, n.lesbar, n.angezeigtVon]), [['LIEFERE 5 KISTEN AN TOR 8', true, alice.id]]);
   await post(bob, 'empfangen', { nachricht: post_[0].id }).expect(200);
   // Eve gibt es nicht; Beamer sieht in Phase 1 nur Umschläge
-  assert.ok((await F.regie(f, sz.id, 0, 'beamer')).body.nachrichten.every((n) => n.art !== 'nachricht' || n.inhalt.startsWith('UMSCHLAG ')));
+  assert.ok((await F.regie(f, sz.id, 0, 'beamer')).body.nachrichten.every((n) => n.art !== 'nachricht' || n.inhalt === 'UMSCHLAG'));
   // Phase 2: Trent stellt Bob ein Zertifikat aus; Mallory schiebt S42 mit verändertem Zertifikat unter
   await F.aktion(f, sz.id, 'phase').expect(200);
   f.uhr.vor(10_000); // 1 Sendung je Team in 10 s
@@ -127,4 +127,29 @@ test('Mallory: Datenleck je Rolle, Whitelist auf allen Wegen, Zertifikate nur in
   const ausw = JSON.stringify((await F.stand(a1.c, sz.id)).body.auswertung);
   assert.ok(!/UMSCHLAG|TALER|KISTEN|HAFEN|LAGER|S\d\d/.test(ausw), ausw);
   assert.deepEqual(F.fundstellen(f.db, 'S27'), []);
+});
+
+test('Mallory: Beamer verdeckt Schlüssel-Etiketten (S23, S41 …) bis zur Auflösung – Schlüssel-Sendungen und Umschläge', async () => {
+  const f = await F.kursMitTeams(3);
+  const [alice, bob, mallory] = f.teams;
+  const sz = await F.starte(f, 'mallory');
+  const post = (t, pfad, body) => t.c.post(`/api/funk/${sz.id}/${pfad}`).send(body);
+  const ich = async (t) => (await F.stand(t.c, sz.id)).body.ich;
+  await post(bob, 'oeffentlich', {}).expect(200);
+  const sk = (await ich(mallory)).station[0];
+  await post(mallory, 'mallory', { aktion: 'ersetzen', nachricht: sk.id, etikett: 'S41' }).expect(200);
+  await post(alice, 'nachrichten', { etikett: 'S41' }).expect(200);
+  const beamer = async () => (await F.regie(f, sz.id, 0, 'beamer').expect(200)).body;
+  const vorher = await beamer();
+  assert.ok(vorher.nachrichten.length >= 3);
+  assert.ok(!/S\d{2}/.test(JSON.stringify(vorher)), 'kein Etikett im Beamer-Stand vor der Auflösung');
+  assert.deepEqual([...new Set(vorher.nachrichten.map((n) => [n.art, n.inhalt, n.lesbar].join('|')))].sort(), ['nachricht|UMSCHLAG|false', 'schluessel|SCHLUESSEL|false']);
+  // Regie sieht alles, die Teams wie bisher
+  assert.ok(JSON.stringify((await F.regie(f, sz.id)).body.nachrichten).includes('S41'));
+  assert.equal((await ich(alice)).schluessel[0].etikett, 'S41');
+  await F.aktion(f, sz.id, 'phase').expect(200);
+  await F.aktion(f, sz.id, 'phase').expect(200); // Auflösung
+  const nachher = await beamer();
+  assert.ok(nachher.nachrichten.some((n) => n.art === 'schluessel' && n.inhalt === 'S41' && n.lesbar));
+  assert.ok(nachher.nachrichten.some((n) => n.art === 'nachricht' && n.inhalt === 'LIEFERE 5 KISTEN AN TOR 3'));
 });

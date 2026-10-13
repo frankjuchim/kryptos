@@ -198,13 +198,17 @@ module.exports = {
         })
     };
   },
-  /** Sicht: nur Beteiligte; Umschläge lesbar nur mit eigenem Etikett (Beamer erst in der Auflösung) */
+  /** Sicht: nur Beteiligte; Umschläge lesbar nur mit eigenem Etikett. Beamer: bis zur Auflösung verdeckt – Umschläge ohne
+      Etikett („UMSCHLAG“), Schlüssel-Sendungen ohne Nummer („SCHLUESSEL“), sonst erkennte die Klasse eine untergeschobene
+      Nummer (S41) vorab (Festlegung Orchestrator M7, E99) */
   sicht(ctx, sz, n, betrachter) {
-    const l = lage(ctx);
     if (betrachter.art === 'beamer') {
-      if (n.art !== 'nachricht' || sz.phase === 'aufloesung') return { sichtbar: true, lesbar: true };
-      return { sichtbar: true, lesbar: false, inhalt: umschlag(n) };
+      if (sz.phase === 'aufloesung' || sz.status === 'auswertung') return { sichtbar: true, lesbar: true };
+      if (n.art === 'schluessel') return { sichtbar: true, lesbar: false, inhalt: 'SCHLUESSEL' };
+      if (n.art === 'nachricht') return { sichtbar: true, lesbar: false, inhalt: 'UMSCHLAG' };
+      return { sichtbar: true, lesbar: true };
     }
+    const l = lage(ctx);
     if (n.von_team_id !== betrachter.teamId && n.an_team_id !== betrachter.teamId) return { sichtbar: false };
     return lesbarFuer(l, n, betrachter.teamId) ? { sichtbar: true, lesbar: true } : { sichtbar: true, lesbar: false, inhalt: umschlag(n) };
   },

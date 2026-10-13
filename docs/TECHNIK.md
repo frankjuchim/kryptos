@@ -1472,8 +1472,8 @@ Nummer); die Lehrkraft kann vor dem Start tauschen. Schüler ohne Team sehen „
 - Grenzen: 1 Nachricht je Team in 10 s, 200 Nachrichten je Szenario, 30 Knack-Versuche je Team in 5 min.
 - Sichtbarkeit (serverseitig gefiltert): eigene gesendete/empfangene; Eve/Mallory zusätzlich alle (szenarioabhängig);
   ausgeblendete nur als „ausgeblendet“. Lehrkraft-Stand mit `?ansicht=regie` (alles, Standard) oder `?ansicht=beamer`
-  (öffentliche Sicht: Geheimtexte, öffentliche Werte, Fortschritt, Ereignisse; Umschläge nur als „UMSCHLAG S23“, keine
-  K-Meldungen, Eve-Tipps, Auftragsinhalte oder Schlüsselblöcke bis zur Phase `aufloesung` – Plan M7 E99; vorher „Beamer
+  (öffentliche Sicht: Geheimtexte, öffentliche Werte, Fortschritt, Ereignisse; Umschläge nur als „UMSCHLAG“ und Schlüssel-Sendungen
+  nur als „SCHLUESSEL“ – ohne Schlüsselnummer (S23, S41 …), Festlegung Orchestrator M7 –, keine K-Meldungen, Eve-Tipps, Auftragsinhalte oder Schlüsselblöcke bis zur Phase `aufloesung` – Plan M7 E99; vorher „Beamer
   alle“).
 
 ### 12.4 Polling-Protokoll
