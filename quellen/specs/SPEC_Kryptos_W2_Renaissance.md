@@ -1219,7 +1219,7 @@ h) nur „Schlüsselraum riesig → sicher“ (P7).
 
 ## §7 Warm-up-Karten
 
-Datei: `seed/warmup/w2.json` + `KR_W2_Warm-up-Karten.docx` (mit/ohne Lösungsteil).
+Datei: `seed/warmup/w2.json` + `materialien/Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx` bzw. `KR_W2_Warmup_LSG.docx` (ohne/mit Lösungsteil; Dateiname nach Design §10.1, E57).
 
 | ID | Titel | Aufgabe (Vorderseite) | Lösung (Rückseite) | Min | Kategorie |
 |---|---|---|---|---|---|

@@ -593,7 +593,9 @@ Serverzugriff auf Aufgabendaten.
 
 ### 10.1 Inventar
 
-Stand 12.10.2026 (gezählt im Dateibaum; der Validator gleicht die Tabelle in M5 automatisch mit `materialien/` ab).
+Stand 13.10.2026 (gezählt im Dateibaum): gebaut sind W0–W2 (M5: 4 Präsentationen inkl. Kickoff, 12 Akten + 12 `_LSG`, 3 Papier-Bosse
++ 3 `_EH`) und W4–W6; W3 folgt in M8. Der Abgleich der Tabelle mit `materialien/` und `seed/akten.json` läuft in `test/akten.test.js`
+und den `--pruefen`-Werkzeugen (M5, Tasks 95/96).
 
 | Art | Anzahl | Format | Ablage · Dateimuster |
 |---|---|---|---|

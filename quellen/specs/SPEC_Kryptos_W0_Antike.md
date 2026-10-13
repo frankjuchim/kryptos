@@ -1369,7 +1369,7 @@ Reihenfolge aus, entsteht derselbe Geheimtext.“ [2 BE]
 
 ### §4a Kickoff-Präsentation (eigene Datei) – Entscheidung und Begründung
 
-**Entscheidung:** Der Kickoff ist eine **eigene kurze Präsentation** `KR_Kickoff_Praesentation.pptx` (9 Folien,
+**Entscheidung:** Der Kickoff ist eine **eigene kurze Präsentation** `KR_W0_Praesentation_Kickoff.pptx` (Dateiname nach Design §10.1, E57; 9 Folien,
 ≈ 20 min), getrennt von der Welt-0-Präsentation `KR_W0_Praesentation_Antike.pptx`.
 **Begründung:** (1) Das Material-Inventar der Design-Spezifikation (§10.1) sieht 8 Präsentationen vor – Kickoff + je
 Welt; die Welt-Präsentationen bleiben damit einheitlich aufgebaut (Titel → Archivfund → Inhalt). (2) Der Kickoff
@@ -1535,7 +1535,7 @@ vollständig richtig, aber nur 2 BE (kein Ausnutzen der Häufigkeit).
 
 ## §7 Warm-up-Karten Welt 0
 
-Datei `seed/warmup/w0.json` + `materialien/Werkzeuge/Warm-up-Karten/KR_Warmup_W0.docx` (mit/ohne Lösungsteil).
+Datei `seed/warmup/w0.json` + `materialien/Werkzeuge/Warm-up-Karten/KR_W0_Warmup.docx` bzw. `KR_W0_Warmup_LSG.docx` (ohne/mit Lösungsteil; Dateiname nach Design §10.1, E57).
 Einsatz ab DS 2 (DS 2: 01–04, DS 3: 05–09, später spiralförmig 10–12 und Wiederholung in W1/W2).
 
 | ID | Titel | Aufgabe (Vorderseite) | Lösung (Rückseite) | Min. | Kategorie |
@@ -1643,7 +1643,7 @@ aber an den Häufigkeiten (viele e, n), dass nur umgestellt wurde, und findet mi
 **Papier-Alternative (ohne Tablets/Netz):** Boten (je ein Lernender pro Paar) tragen Zettel quer durch den Raum; das
 Eve-Team sitzt am „Stadttor“ (Tisch in der Mitte) und darf jeden Zettel 30 Sekunden abschreiben. Zeiten notiert die
 Lehrkraft an der Tafel (Nachricht, Abschrift, geknackt nach … min). Chiffrierscheiben aus Pappe; Rollenkarten und
-Befehlslisten als `KR_Funkraum_Botenlauf_Rollenkarten.docx`.
+Befehlslisten als `materialien/Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx` (Dateiname nach Design §10.1, E57).
 
 **Datenschutz/Schutz:** Inhalte nur A–Z, 0–9, Leerzeichen; Teamnamen aus fester Liste; Lehrkraft kann jede Nachricht
 ausblenden; Löschung beim Beenden, spätestens nach 24 h; keine Punkte (Abzeichen „Funkraum-Veteran“).

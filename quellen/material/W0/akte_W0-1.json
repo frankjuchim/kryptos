@@ -553,6 +553,10 @@
    ]
   },
   {
+   "t": "seitenumbruch",
+   "nur_schueler": true
+  },
+  {
    "t": "auftrag",
    "nr": 3,
    "stufe": 2,

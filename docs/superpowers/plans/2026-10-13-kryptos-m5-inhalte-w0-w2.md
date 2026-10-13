@@ -1336,7 +1336,7 @@ Ergänzungen bestehender Generatoren (W1 §8 Prüfregeln):
 **Quelle:** `quellen/material/W0–W2/*.json` (MATERIALFORMAT), Specs §3 (Akten), §4 (Präsentationen), §6 (Papier-Bosse).
 **Vorab:** offene Entscheidung 10 (Akten-Kontrast aus M4) – fällt sie für eine Änderung an `kr_stil.py` aus, **vor** dieser Task umsetzen.
 
-- [ ] **Step 1: Bauen** – ausdrücklich nur fehlende Dateien (nie ohne Quellliste, Global Constraints):
+- [x] **Step 1: Bauen** – ausdrücklich nur fehlende Dateien (nie ohne Quellliste, Global Constraints):
   ```bash
   S=<scratchpad>/m5pdf; mkdir -p "$S"
   python3 werkzeuge/material/bauen.py \
@@ -1348,14 +1348,21 @@ Ergänzungen bestehender Generatoren (W1 §8 Prüfregeln):
   ```
   Erwartet: 12 Akten + 12 `_LSG` + 3 Papier-Bosse + 3 `_EH` (`.docx`) + 4 Präsentationen (`.pptx`) = 34 Dateien; `git status`
   zeigt **keine** Änderung an vorhandenen Dateien (`00_Lehrerhinweise`, `Werkzeuge`, `Videos`, `Welt4–6`).
-- [ ] **Step 2: Ansehen** – je PDF ein Kontaktbogen (`pdftoppm -jpeg -r 40`, mit PIL zu einer Übersicht je Dokument zusammengesetzt,
+- [x] **Step 2: Ansehen** – je PDF ein Kontaktbogen (`pdftoppm -jpeg -r 40`, mit PIL zu einer Übersicht je Dokument zusammengesetzt,
   Skript im Scratchpad) und **jeden** Kontaktbogen per Read ansehen: Seitenumbrüche, Sonderzeichen (← ≤ ≠ ⊕ ★), Fünfergruppen in
   Consolas, QR-Code „Im Lab üben“ vorhanden, Lösungskästen **nur** in `_LSG`/`_EH`, Folien ohne Überlauf (Warnungen von `kr_pptx.js`
   lesen). Befunde in der Materialquelle beheben und **nur die betroffene Quelle** neu bauen.
-- [ ] **Step 3: Werte prüfen** – `python3 -I werkzeuge/krypto/pruefwerte.py` (Einträge `art: akte`/`boss` verweisen auf dieselben
+- [x] **Step 3: Werte prüfen** – `python3 -I werkzeuge/krypto/pruefwerte.py` (Einträge `art: akte`/`boss` verweisen auf dieselben
   Quellen) → Exit 0; Stichprobe gegen die Spec: Archivfund-Geheimtexte in Akte W0·1/W1·1/W2·1 zeichengleich mit den Seeds.
-- [ ] **Step 4: Größe** – `du -sh materialien/Welt{0,1,2}_*` notieren (Erwartung < 15 MB); keine PDFs im Repo (die entstehen in Tasks 95/96).
-- [ ] **Step 5: Commit** `git commit -m "Materialien W0–W2 gebaut: Akten, Lösungen, Papier-Bosse, Präsentationen (docx/pptx maßgeblich)"`.
+- [x] **Step 4: Größe** – `du -sh materialien/Welt{0,1,2}_*` notieren (Erwartung < 15 MB); keine PDFs im Repo (die entstehen in Tasks 95/96).
+- [x] **Step 5: Commit** `git commit -m "Materialien W0–W2 gebaut: Akten, Lösungen, Papier-Bosse, Präsentationen (docx/pptx maßgeblich)"`.
+
+**Umsetzungsnotiz (Task 93):** 34 Dateien gebaut (`bauen.py` mit Quellliste), keine vorhandene Datei verändert; alle 34 PDFs als
+Kontaktbogen angesehen. Befunde behoben: Porta-Tafel (W2-Präsentation Folie 9) lief unten aus der Folie → `schrift_folie` 14 → 11
+(Quelle); Struktogramm-Kopf (W0-Präsentation Folie 26) abgeschnitten → `kr_bilder.struktogramm` verbreitert das Bild, wenn die
+Kopfzeile länger ist; Akte W0·1: Geheimtext von Auftrag 3 stand ohne Auftrag auf der Folgeseite → `seitenumbruch` mit
+`nur_schueler` vor Auftrag 3 (Quelle). `pruefwerte.py` Exit 0; Archivfund-Geheimtexte W0/W1/W2 zeichengleich mit `W<n>-A-01`.
+Größe: Welt0 3,5 MB, Welt1 2,4 MB, Welt2 2,0 MB (zusammen 7,9 MB). Kontrast (`kr_kontrast.py`) der 34 Dateien: 0 Verstöße.
 
 ### Task 94: Online-IDE „Caesar-Werkstatt“ (Level 0.3) mit Prüfstand (E56)
 

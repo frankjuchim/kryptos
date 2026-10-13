@@ -446,6 +446,8 @@ def struktogramm(spec, px=1600, breite=900):
     s = []
     y0 = 4
     if spec.get("kopf"):
+        # Kopfzeile (Consolas fett, ≈ 0,6 em je Zeichen) darf nicht abgeschnitten werden: Bild notfalls breiter
+        breite = max(breite, int(len(spec["kopf"]) * (_SG + 1) * 0.62) + 12)
         s.append(f'<text x="4" y="{y0+_SG+2}" font-family="Consolas, Inconsolata" font-size="{_SG+1}" '
                  f'font-weight="bold" fill="{_c(S.TEXT)}">{escape(spec["kopf"])}</text>')
         y0 += _ZH + 8
