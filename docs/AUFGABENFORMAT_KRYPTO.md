@@ -547,7 +547,7 @@ gültiger Geheimtext sein (Playfair gerade Länge, Polybios-Paare aus dem Kopf �
 `Krypto.verfahren.anwenden(verfahren, eingabe, richtung, {basis})` muss **gleich `loesung.text`** sein (Fehler mit
 erwarteter Ausgabe); jede `alternative` muss sich von `text` unterscheiden und durch eine bekannte Variante erklärbar
 sein – sonst **Fehler** (Review M3 K5, vorher Hinweis): Textvariante der Lösung (I/J vertauscht, Füllzeichen `X` am
-Ende angehängt/weggelassen) oder Neuberechnung mit einer erlaubten Verfahrensvariante (`playfair`/`polybios` mit dem
+Ende angehängt/weggelassen – auch mehrere, z. B. `xxx` bei der Skytale, Plan M5 E45) oder Neuberechnung mit einer erlaubten Verfahrensvariante (`playfair`/`polybios` mit dem
 anderen I/J-Quadrat, `skytale`/`spaltentransposition` mit bzw. ohne Füllzeichen `X`). Bei `typ: frei`: keine Neuberechnung, `pruefnachweis` Pflicht.
 **Verdeckter Schlüssel:** `schluesselVerdeckt` muss bool sein; ist der Schlüssel verdeckt (explizit oder automatisch
 im Kryptoanalyse-Level), ist `hilfszeilen: ["schluessel"]` ein Fehler. Hinweis, wenn eine Aufgabe der Kategorien

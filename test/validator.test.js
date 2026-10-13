@@ -234,6 +234,18 @@ test('chiffre-Validator: Neuberechnung, Parameter, Alternativen, frei', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-05').loesung.alternativen = ['NHQZSFJKRHJT']; }, /keine bekannte Variante/);
 });
 
+test('chiffre-Validator: mehrere Füllzeichen X am Ende als Alternative (Plan M5 E45, W0-L1-04 „+ xxx“)', () => {
+  const mitX = (alternativen) => {
+    const w = basis();
+    const a = aufgabe(w, 'W9-L5-01');
+    a.interaktion.eingabe = 'CXYHU ODHVV LJAAA'; // k = 3: A → x
+    a.loesung = { text: 'zuverlaessigxxx', alternativen };
+    return fehlerVon(w);
+  };
+  assert.deepEqual(mitX(['zuverlaessig', 'zuverlaessigx']), []);
+  assert.ok(mitX(['zuverlaessigxy']).some((x) => /keine bekannte Variante/.test(x)));
+});
+
 test('_fehlmuster: Format und kein Treffer auf eine akzeptierte Lösung', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].wert = '26'; }, /_fehlmuster gleicht einer akzeptierten Lösung/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.gibts = [{ wert: '1', p: 'P2', code: 'x' }]; }, /_fehlmuster.*gibts/);

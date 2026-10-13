@@ -132,7 +132,9 @@ const anzeige = (x) => (Array.isArray(x) ? x.join(' ') : String(x));
 function bekannteVariante(text, alt) {
   if (Array.isArray(text) || Array.isArray(alt)) return false;
   const ij = (s) => s.replace(/J/g, 'I');
-  return ij(text) === ij(alt) || alt === text + 'X' || text === alt + 'X';
+  // Füllzeichen X am Ende angehängt/weggelassen – auch mehrere (Skytale „+ xxx“, Plan M5 E45)
+  const nurX = (lang, kurz) => lang.length > kurz.length && lang.startsWith(kurz) && /^X+$/.test(lang.slice(kurz.length));
+  return ij(text) === ij(alt) || nurX(alt, text) || nurX(text, alt);
 }
 
 /**

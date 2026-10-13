@@ -594,12 +594,18 @@ L1-03 → `WTPIE ARNSH DSAEX LNX`; L1-04 → `NACHSCHUBKOMMTMORGENFRUEHXXX`; L1-
 **Erwartete Hinweise (P1):** W0-L1-08 „Rechenergebnis nicht nachgerechnet“ (Kategorie `schluesselraum`, Teilermenge);
 Datei „boss fehlt“ bzw. Abdeckung „fremde Chiffre“ bis Task 78.
 
-- [ ] **Step 1: Failing test** – `UMFANG[0] = ['W0-A', 'W0-L1']` → Run `node --test test/inhalte_spec.test.js` → FAIL („Welt 0 fehlt“).
-- [ ] **Step 2: Implement** `seed/welten/welt0.json` (Welt-Kopf, `archivfund`, `kapitel`, Level `W0-L1`, neun Aufgaben).
-- [ ] **Step 3: Prüfkette P1–P5** (`<N>` = 0).
-- [ ] **Step 4: Kontrollfragen K1–K5**; zusätzlich: `GET /api/welten` (Test-App mit `weltDateien: ['seed/welten/welt0.json']`)
+- [x] **Step 1: Failing test** – `UMFANG[0] = ['W0-A', 'W0-L1']` → Run `node --test test/inhalte_spec.test.js` → FAIL („Welt 0 fehlt“).
+- [x] **Step 2: Implement** `seed/welten/welt0.json` (Welt-Kopf, `archivfund`, `kapitel`, Level `W0-L1`, neun Aufgaben).
+- [x] **Step 3: Prüfkette P1–P5** (`<N>` = 0).
+- [x] **Step 4: Kontrollfragen K1–K5**; zusätzlich: `GET /api/welten` (Test-App mit `weltDateien: ['seed/welten/welt0.json']`)
   liefert `epoche`, `jahr`, `akzentHell`, `archivfund` – im Probelauf per `node -e` ansehen.
-- [ ] **Step 5: Commit** `git commit -m "Welt 0: Epochen-Daten, Archivfund „Die Botschaft am Stab“, Level 0.1"`.
+- [x] **Step 5: Commit** `git commit -m "Welt 0: Epochen-Daten, Archivfund „Die Botschaft am Stab“, Level 0.1"`.
+
+- **Umgesetzt (Task 74):** zwei Nachträge, die der Plan nicht vorsah: (1) Der Validator erklärte als Alternative nur
+  **ein** angehängtes/weggelassenes X; E45 verlangt `nachschubkommtmorgenfrueh` ohne `xxx` → `bekannteVariante`
+  (`src/krypto/interaktionen/chiffre.js`) akzeptiert jetzt beliebig viele X am Ende (Test in `validator.test.js`, Delta §8.1).
+  (2) `inhalte_plan.test.js` vergleicht eine Welt, deren Boss-Abschnitt (`W<n>-B`) noch nicht in `UMFANG` steht, nur
+  für die schon geseedeten Level (in Plan-Reihenfolge) und ohne Boss – sonst wäre der Test nach Task 74 bis Task 78 rot.
 
 ### Task 75: Welt 0 – Level 0.2 „Caesars Botschaft“
 
