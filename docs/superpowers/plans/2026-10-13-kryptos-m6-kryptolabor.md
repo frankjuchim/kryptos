@@ -1846,7 +1846,7 @@ Version patch
   Buchstabe für Buchstabe“.
 - `zustand()` zusätzlich `{ kacheln: { original, ecb, cbc }, betroffen: { ecb, cbc }, stellung, enigmaAusgabe }`.
 
-- [ ] **Step 1: Failing test** – `test/labor_runden.test.js` (anhängen):
+- [x] **Step 1: Failing test** – `test/labor_runden.test.js` (anhängen):
   ```js
   test('ECB vs. CBC: Pixelbild der Spec – 23/23/64 verschiedene Kacheln, Malen aktualisiert', () => {
     const w = oeffne('runden', { voreinstellung: { reiter: ['modi'] } });
@@ -1877,9 +1877,9 @@ Version patch
   });
   ```
   (Walze/Reflektor-Optionen der Bibliothek aus Task 107.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Regeltest, `npm test` grün; Sichtprüfung
   (Pixelbilder bei 360 px untereinander, `image-rendering: pixelated`, Stromweg lesbar).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Runden-Labor II (ECB/CBC-Pixelbild, Fehlerfortpflanzung, Mini-Enigma mit Stromweg)"`.
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Runden-Labor II (ECB/CBC-Pixelbild, Fehlerfortpflanzung, Mini-Enigma mit Stromweg)"`.
 
 ### Task 121: Werkzeug „Modulo-Uhr & Farbmischer“ (W4 §9.1, E80)
 

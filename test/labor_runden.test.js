@@ -83,3 +83,51 @@ test('Runden-Labor: Hinweis für Lehrkräfte zur Papier-Boss-Stunde (offene Ents
   const s = oeffne('runden');
   assert.equal(s.k.alle(s.flaeche, '.runden-lehrkraft').length, 0);
 });
+
+test('ECB vs. CBC: Pixelbild der Spec – 23/23/64 verschiedene Kacheln, Malen aktualisiert', () => {
+  const w = oeffne('runden', { voreinstellung: { reiter: ['modi'] } });
+  assert.deepEqual(w.zustand().kacheln, { original: 23, ecb: 23, cbc: 64 });
+  assert.match(w.k.eins(w.flaeche, 'svg.pixelbild[data-modus="ecb"]').getAttribute('aria-label'), /23 verschiedene Kacheln von 64/);
+  const raster = w.k.eins(w.flaeche, '.malraster');
+  w.k.taste(raster, ' '); // Pixel (0,0) schwarz
+  assert.equal(w.zustand().kacheln.original, 24);
+  // Cursor bewegen und zurückmalen; anderer Schlüssel ändert ECB nicht in der Zahl der Kacheln
+  w.k.taste(raster, ' ');
+  assert.equal(w.zustand().kacheln.original, 23);
+  w.k.tippe(w.k.eins(w.flaeche, 'input.modi-schluessel'), 'A36D');
+  assert.equal(w.zustand().kacheln.ecb, 23);
+});
+
+test('Fehler einbauen: Bit in C₂ kippen → ECB nur Block 2, CBC Blöcke 2 und 3', () => {
+  const w = oeffne('runden', { voreinstellung: { reiter: ['fehler'], block: 'HAFENTOR' } });
+  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.bit[data-bit="5"]'));
+  assert.deepEqual(w.zustand().betroffen, { ecb: [1], cbc: [1, 2] });
+  w.k.klick(w.k.eins(w.flaeche, '.fehler-block[data-block="1"] button.bit-loeschen[data-bit="5"]'));
+  assert.match(w.text('.labor-hinweis'), /Blockgrenzen verschoben/);
+  // zurücksetzen: nichts betroffen, Klartext wieder lesbar
+  w.k.klick(w.k.eins(w.flaeche, 'button.fehler-zuruecksetzen'));
+  assert.deepEqual(w.zustand().betroffen, { ecb: [], cbc: [] });
+});
+
+test('Mini-Enigma: BACH → HHAF, CHEF ab E → EGBC, Walze dreht, Stromweg und Tabelle aus der Bibliothek', () => {
+  const w = oeffne('runden', { voreinstellung: { reiter: ['enigma'] } });
+  for (const b of 'BACH') w.k.klick(w.k.eins(w.flaeche, `button.taste[data-taste="${b}"]`));
+  assert.equal(w.zustand().enigmaAusgabe, 'HHAF');
+  assert.equal(w.zustand().stellung, 'E');
+  assert.equal(w.k.text(w.k.eins(w.flaeche, 'table.stellungen tr[data-stellung="A"]')).replace(/[^A-H]/g, '').slice(1), K.miniEnigma.tabelle('A'));
+  const e = oeffne('runden', { voreinstellung: { reiter: ['enigma'], stellung: 'E' } });
+  e.k.tippe(e.k.eins(e.flaeche, 'textarea.labor-eingabe'), 'chef');
+  assert.equal(e.zustand().enigmaAusgabe, 'EGBC');
+  e.k.taste(e.k.eins(e.flaeche, '.nachspiel'), 'Home');
+  assert.deepEqual(e.k.alle(e.flaeche, 'svg.stromweg [data-station]').map((x) => x.textContent), e.k.roh(K.miniEnigma.weg('C', 'E')).stationen);
+});
+
+test('Mini-Enigma: eigene Verdrahtung wird von der Bibliothek geprüft', () => {
+  const w = oeffne('runden', { voreinstellung: { reiter: ['enigma'] } });
+  w.k.klick(w.k.eins(w.flaeche, '[data-verdrahtung="eigen"]'));
+  w.k.tippe(w.k.eins(w.flaeche, 'input.enigma-walze'), 'ABCDEFGH');
+  w.k.tippe(w.k.eins(w.flaeche, 'textarea.labor-eingabe'), 'ab');
+  assert.equal(w.zustand().enigmaAusgabe, K.miniEnigma('ab', 'A', 'ver', { walze: 'ABCDEFGH' }));
+  w.k.tippe(w.k.eins(w.flaeche, 'input.enigma-reflektor'), 'AAAAAAAA');
+  assert.match(w.text('.labor-hinweis'), /Reflektor/);
+});

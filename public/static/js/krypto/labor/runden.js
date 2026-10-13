@@ -4,13 +4,53 @@
    Rechnet nur über Krypto.*; Indexarithmetik nur für Zeilen/Spalten der Matrizen. Speichert nichts. */
 'use strict';
 (() => {
-  const { h } = AQ;
+  const { h, s } = AQ;
   const B = KRLaborBau;
-  // Standard = Testvektor des Lernverfahrens (W3 §0a), kein Lab-Wert
-  const BEISPIEL = { block: 'OK', schluessel: 'A36D' };
+  // Standard = Testvektor des Lernverfahrens (W3 §0a, kein Lab-Wert); Pixelbild „Schlüssel“ aus W3 §9.2 (Lernmaterial);
+  // Fehler-Text erfunden
+  const BEISPIEL = {
+    block: 'OK',
+    schluessel: 'A36D',
+    modiSchluessel: '2B7E',
+    iv: '1917',
+    fehlertext: 'Kiste im Keller',
+    pixel: [
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '......########..................',
+    '.....##########.................',
+    '....############................',
+    '...#####....#####...............',
+    '...####......####...............',
+    '...###........################..',
+    '...###........################..',
+    '...###........################..',
+    '...###........################..',
+    '...####......####.....###.####..',
+    '...#####....#####.....###.####..',
+    '....############......###.####..',
+    '.....##########.......###.####..',
+    '......########........###.####..',
+    '..........................####..',
+    '..........................####..',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................'
+    ]
+  };
   const REITER_TITEL = { runden: 'Runde für Runde', lawine: 'Lawine', verfolgung: 'Bit-Verfolgung', modi: 'ECB vs. CBC', fehler: 'Fehler einbauen', enigma: 'Mini-Enigma' };
-  const GEBAUT = ['runden', 'lawine', 'verfolgung'];
-  const VARIANTEN = [
+    const VARIANTEN = [
     { id: 'kryptos16', titel: 'KRYPTOS-16' },
     { id: 'ohneSBox', titel: 'ohne S-Box' },
     { id: 'rm16', titel: 'RM-16' }
@@ -19,6 +59,10 @@
   // Mittelwerte aus W3 §0a.8 (Info neben dem Zähler, keine Rechnung im Werkzeug)
   const LAWINE_MITTEL = ['16,4 %', '43,1 %', '48,2 %', '49,4 %'];
   const HEX4 = /^[0-9A-Fa-f]{4}$/;
+  // Verdrahtung der Mini-Enigma laut W3 Kür K2 (Anzeige als Vorgabe für „eigene Verdrahtung“; gerechnet wird in Krypto.miniEnigma)
+  const SPEC_VERDRAHTUNG = { walze: 'DAHBFCGE', reflektor: 'EGHFADBC' };
+  const ME = [...'ABCDEFGH'];
+  const PIXEL = 32;
 
   /** Bitnummer 1 … 16 (b1 = höchstwertig, zeilenweise) ↔ Zeile/Spalte ab 1 – reine Indexarithmetik der Matrix. */
   const POSITION = [];
@@ -129,8 +173,7 @@
 
   function oeffne(container, voreinstellung, umgebung) {
     const v = voreinstellung || {};
-    const reiterListe = KRLabor.reiterFuer('runden', v, umgebung).filter((r) => GEBAUT.includes(r));
-    if (!reiterListe.length) reiterListe.push('runden');
+    const reiterListe = KRLabor.reiterFuer('runden', v, umgebung);
     let variante = VARIANTEN.some((x) => x.id === v.variante) ? v.variante : 'kryptos16';
     let blockEingabe = typeof v.block === 'string' ? v.block.slice(0, 16) : BEISPIEL.block;
     let schluesselEingabe = typeof v.schluessel === 'string' ? v.schluessel.slice(0, 20) : BEISPIEL.schluessel;
@@ -144,6 +187,22 @@
     let verfolgt = null; // Bitnummer
     let zaehler = [];
     let weg = null;
+    // Reiter 4–6 (Task 120)
+    let pixel = BEISPIEL.pixel.slice();
+    let cursor = { z: 0, s: 0 };
+    let modiK = BEISPIEL.modiSchluessel;
+    let modiIv = BEISPIEL.iv;
+    let kacheln = null;
+    let fehlerText = typeof v.block === 'string' && [...v.block].length > 4 ? v.block.slice(0, 16) : BEISPIEL.fehlertext;
+    let fehlerBits = null; // { ecb, cbc } veränderte Geheimtexte als Bitfolgen
+    let geloescht = false;
+    let betroffen = { ecb: [], cbc: [] };
+    const startStellung = typeof v.stellung === 'string' && ME.includes(v.stellung.toUpperCase()) ? v.stellung.toUpperCase() : 'A';
+    let stellung0 = ME.indexOf(startStellung);
+    let enigmaText = '';
+    let enigmaAusgabe = '';
+    let verdrahtung = 'spec';
+    let eigene = { ...SPEC_VERDRAHTUNG };
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     const wurzel = h(
@@ -428,12 +487,397 @@
       st.aktualisiere();
     }
 
+
+    /* ======================= ECB vs. CBC (Task 120) ======================= */
+    const leseHex4 = (t) => {
+      const x = String(t ?? '').replace(/\s+/g, '');
+      if (!HEX4.test(x)) throw new Krypto.KryptoFehler('4 Hexziffern (16 Bit), z. B. 2B7E.');
+      return vonBits(Krypto.vonHex(x).map((b) => Krypto.byteZuBits(b)).join(''));
+    };
+    const verschiedene = (liste) => new Set(liste).size;
+    function hexFeld(klasse, titel, wert, setze, nachher) {
+      const id = B.neueId(klasse);
+      const f = h('input', { type: 'text', id, class: klasse, autocomplete: 'off', spellcheck: 'false', autocapitalize: 'characters' });
+      f.value = wert;
+      f.addEventListener('input', () => {
+        setze(f.value.slice(0, 8));
+        nachher();
+      });
+      return h('div', { class: 'labor-textfeld runden-feld' }, h('label', { for: id }, titel), f);
+    }
+    /** Pixelbild als SVG (schwarze Pixel als Rechtecke, Kachelgitter), role=img mit Zählung. */
+    function pixelbild(raster, modus, titel, anzahl) {
+      const svg = s('svg', { class: 'pixelbild', 'data-modus': modus, viewBox: `0 0 ${PIXEL} ${PIXEL}`, role: 'img', 'aria-label': `${titel}: ${anzahl} verschiedene Kacheln von 64`, 'shape-rendering': 'crispEdges' }, s('rect', { class: 'pixel-grund', x: 0, y: 0, width: PIXEL, height: PIXEL }));
+      raster.forEach((zeile, y) => [...zeile].forEach((c, x) => c === '#' && svg.appendChild(s('rect', { class: 'pixel', x, y, width: 1, height: 1 }))));
+      for (let i = 4; i < PIXEL; i += 4) svg.append(s('line', { class: 'kachel-linie', x1: i, y1: 0, x2: i, y2: PIXEL }), s('line', { class: 'kachel-linie', x1: 0, y1: i, x2: PIXEL, y2: i }));
+      return h('figure', { class: 'pixel-figur' }, svg, h('figcaption', null, h('strong', null, titel), ` – ${anzahl} verschiedene Kacheln von 64`));
+    }
+    function baueModi() {
+      const hinweisOrt = h('div', { class: 'runden-hinweis' });
+      const bilder = h('div', { class: 'pixelbilder' });
+      const status = h('p', { class: 'malraster-status', 'aria-live': 'polite' });
+      const malSvg = s('svg', { class: 'malraster-bild', viewBox: `0 0 ${PIXEL} ${PIXEL}`, 'aria-hidden': 'true', 'shape-rendering': 'crispEdges' });
+      const raster = h('div', { class: 'malraster', role: 'group', 'aria-roledescription': 'Mal-Raster', tabindex: '0', 'aria-label': 'Eigenes Bild malen: Pfeiltasten bewegen den Cursor, Leertaste kippt das Pixel' }, malSvg);
+      const zuruecksetzen = h('button', { type: 'button', class: 'knopf knopf-leise modi-zuruecksetzen' }, 'Bild der Spec');
+      const leeren = h('button', { type: 'button', class: 'knopf knopf-leise modi-leeren' }, 'Leeren');
+      r.flaeche.append(
+        h('div', { class: 'labor-steuer' }, hexFeld('modi-schluessel', 'Schlüssel K (4 Hex)', modiK, (x) => (modiK = x), zeige), hexFeld('modi-iv', 'IV für CBC (4 Hex)', modiIv, (x) => (modiIv = x), zeige)),
+        h('p', { class: 'text-2' }, 'Jede Kachel aus 4 × 4 Pixeln ist ein 16-Bit-Block (KRYPTOS-16, 4 Runden). Gleiche Klartextkacheln ergeben in ECB gleiche Geheimtextkacheln.'),
+        hinweisOrt,
+        bilder,
+        h('div', { class: 'malbereich' }, h('div', { class: 'malraster-rahmen' }, raster, status), h('div', { class: 'malraster-knoepfe' }, zuruecksetzen, leeren))
+      );
+      function kippe(z, sp) {
+        const zeile = [...pixel[z]];
+        zeile[sp] = zeile[sp] === '#' ? '.' : '#';
+        pixel[z] = zeile.join('');
+        zeige();
+      }
+      raster.addEventListener('keydown', (e) => {
+        const d = { ArrowRight: [0, 1], ArrowLeft: [0, -1], ArrowDown: [1, 0], ArrowUp: [-1, 0] }[e.key];
+        if (d) {
+          e.preventDefault();
+          cursor = { z: Math.max(0, Math.min(PIXEL - 1, cursor.z + d[0])), s: Math.max(0, Math.min(PIXEL - 1, cursor.s + d[1])) };
+          zeigeRaster();
+        } else if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          kippe(cursor.z, cursor.s);
+        }
+      });
+      malSvg.addEventListener('pointerdown', (e) => {
+        const b = malSvg.getBoundingClientRect();
+        if (!b.width || !b.height) return;
+        const sp = Math.floor(((e.clientX - b.left) * PIXEL) / b.width);
+        const z = Math.floor(((e.clientY - b.top) * PIXEL) / b.height);
+        if (z < 0 || z >= PIXEL || sp < 0 || sp >= PIXEL) return;
+        cursor = { z, s: sp };
+        kippe(z, sp);
+      });
+      zuruecksetzen.addEventListener('click', () => {
+        pixel = BEISPIEL.pixel.slice();
+        zeige();
+      });
+      leeren.addEventListener('click', () => {
+        pixel = pixel.map((zeile) => zeile.replace(/#/g, '.'));
+        zeige();
+      });
+      function zeigeRaster() {
+        while (malSvg.firstChild) malSvg.firstChild.remove();
+        malSvg.appendChild(s('rect', { class: 'pixel-grund', x: 0, y: 0, width: PIXEL, height: PIXEL }));
+        pixel.forEach((zeile, y) => [...zeile].forEach((c, x) => c === '#' && malSvg.appendChild(s('rect', { class: 'pixel', x, y, width: 1, height: 1 }))));
+        malSvg.appendChild(s('rect', { class: 'mal-cursor', x: cursor.s, y: cursor.z, width: 1, height: 1 }));
+        status.textContent = `Cursor Zeile ${cursor.z + 1}, Spalte ${cursor.s + 1}: ${pixel[cursor.z][cursor.s] === '#' ? 'schwarz' : 'weiß'}`;
+      }
+      function zeige() {
+        AQ.clear(hinweisOrt);
+        AQ.clear(bilder);
+        zeigeRaster();
+        let k;
+        let iv;
+        try {
+          k = leseHex4(modiK);
+          iv = leseHex4(modiIv);
+        } catch (e) {
+          if (!istKryptoFehler(e)) throw e;
+          hinweisOrt.appendChild(B.hinweis('warnung', `Schlüssel und IV: ${e.message}`));
+          kacheln = null;
+          return;
+        }
+        const klar = Krypto.kryptos16.kacheln(pixel);
+        const ecb = Krypto.kryptos16.modus(klar, k, 'ECB');
+        const cbc = Krypto.kryptos16.modus(klar, k, 'CBC', iv);
+        kacheln = { original: verschiedene(klar), ecb: verschiedene(ecb), cbc: verschiedene(cbc) };
+        bilder.append(pixelbild(pixel, 'original', 'Original', kacheln.original), pixelbild(Krypto.kryptos16.ausKacheln(ecb, PIXEL), 'ecb', 'ECB', kacheln.ecb), pixelbild(Krypto.kryptos16.ausKacheln(cbc, PIXEL), 'cbc', 'CBC', kacheln.cbc));
+      }
+      zeige();
+    }
+
+    /* ======================= Fehler einbauen (Task 120) ======================= */
+    function baueFehler() {
+      const feld = B.textfeld({ beschriftung: 'Klartext (bis 16 Zeichen)', max: 16, wert: fehlerText, art: 'frei', zeilen: 1, beiEingabe: (t) => { fehlerText = t; fehlerBits = null; geloescht = false; zeige(); } });
+      const hinweisOrt = h('div', { class: 'runden-hinweis' });
+      const bloeckeOrt = h('div', { class: 'fehler-bloecke' });
+      const ergebnisOrt = h('div', { class: 'fehler-ergebnis' });
+      const zurueck = h('button', { type: 'button', class: 'knopf knopf-leise fehler-zuruecksetzen' }, 'Geheimtexte zurücksetzen');
+      zurueck.addEventListener('click', () => {
+        fehlerBits = null;
+        geloescht = false;
+        zeige();
+      });
+      r.flaeche.append(
+        feld.element,
+        h('p', { class: 'text-2' }, `ECB und CBC mit K = ${BEISPIEL.modiSchluessel}, IV = ${BEISPIEL.iv}, 4 Runden. „⇅“ kippt ein Bit, „✕“ löscht es – in beiden Geheimtexten an derselben Stelle.`),
+        hinweisOrt,
+        bloeckeOrt,
+        zurueck,
+        ergebnisOrt
+      );
+      const blockZeichen = (b) => {
+        const bits = bits16(b);
+        return [bits.slice(0, 8), bits.slice(8)].map((x) => {
+          try {
+            return Krypto.zeichenAusAscii(Krypto.bitsZuByte(x));
+          } catch (e) {
+            if (!istKryptoFehler(e)) throw e;
+            return '·';
+          }
+        }).join('');
+      };
+      const inBloecke = (bits) => {
+        const aus = [];
+        for (let i = 0; i + 16 <= bits.length; i += 16) aus.push(vonBits(bits.slice(i, i + 16)));
+        return aus;
+      };
+      function zeige() {
+        AQ.clear(hinweisOrt);
+        AQ.clear(bloeckeOrt);
+        AQ.clear(ergebnisOrt);
+        betroffen = { ecb: [], cbc: [] };
+        let klar;
+        try {
+          klar = Krypto.kryptos16.textZuBloecken(fehlerText);
+        } catch (e) {
+          if (!istKryptoFehler(e)) throw e;
+          hinweisOrt.appendChild(B.hinweis('warnung', 'Nur Zeichen der Anlage (ASCII 32–126, keine Umlaute).'));
+          return;
+        }
+        const k = leseHex4(BEISPIEL.modiSchluessel);
+        const iv = leseHex4(BEISPIEL.iv);
+        if (!fehlerBits) {
+          const zuBits = (l) => l.map(bits16).join('');
+          fehlerBits = { ecb: zuBits(Krypto.kryptos16.modus(klar, k, 'ECB')), cbc: zuBits(Krypto.kryptos16.modus(klar, k, 'CBC', iv)) };
+        }
+        if (geloescht) hinweisOrt.appendChild(B.hinweis('warnung', 'Bit gelöscht – alle folgenden Bits rücken nach vorn: Blockgrenzen verschoben.'));
+        const rest = fehlerBits.ecb.length - 16 * inBloecke(fehlerBits.ecb).length;
+        if (rest) hinweisOrt.appendChild(B.hinweis('info', `Am Ende bleiben ${rest} Bits übrig – kein ganzer Block mehr.`));
+        const n = inBloecke(fehlerBits.ecb).length;
+        for (let j = 0; j < n; j++) {
+          const ecbBits = fehlerBits.ecb.slice(16 * j, 16 * j + 16);
+          const cbcBits = fehlerBits.cbc.slice(16 * j, 16 * j + 16);
+          const spalten = POSITION.map((pos) => {
+            const g = 16 * j + pos.bit - 1;
+            const kippen = h('button', { type: 'button', class: 'bit', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} kippen` }, '⇅');
+            const loeschen = h('button', { type: 'button', class: 'bit-loeschen', 'data-bit': String(pos.bit), 'aria-label': `Block C${j + 1}, Bit ${pos.bit} löschen` }, '✕');
+            kippen.addEventListener('click', () => {
+              const m = [...fehlerBits.ecb].map((_, i) => (i === g ? '1' : '0')).join('');
+              fehlerBits = { ecb: Krypto.xorBits(fehlerBits.ecb, m), cbc: Krypto.xorBits(fehlerBits.cbc, m) };
+              zeige();
+              const neu = bloeckeOrt.querySelector(`.fehler-block[data-block="${j}"] button.bit[data-bit="${pos.bit}"]`);
+              if (neu) neu.focus();
+            });
+            loeschen.addEventListener('click', () => {
+              fehlerBits = { ecb: fehlerBits.ecb.slice(0, g) + fehlerBits.ecb.slice(g + 1), cbc: fehlerBits.cbc.slice(0, g) + fehlerBits.cbc.slice(g + 1) };
+              geloescht = true;
+              zeige();
+            });
+            return h('div', { class: 'fehler-spalte' }, h('span', { class: 'fehler-nr', 'aria-hidden': 'true' }, String(pos.bit)), h('span', { class: 'fehler-wert', title: 'ECB' }, ecbBits[pos.bit - 1]), h('span', { class: 'fehler-wert cbc', title: 'CBC' }, cbcBits[pos.bit - 1]), kippen, loeschen);
+          });
+          const gruppen = [0, 4, 8, 12].map((a) => h('div', { class: 'fehler-gruppe' }, spalten.slice(a, a + 4)));
+          bloeckeOrt.appendChild(
+            h(
+              'figure',
+              { class: 'fehler-block', 'data-block': String(j) },
+              h('figcaption', null, `Geheimtextblock C${j + 1}`, h('span', { class: 'sr' }, `: ECB ${Krypto.gruppieren(ecbBits, 4)}, CBC ${Krypto.gruppieren(cbcBits, 4)}`)),
+              h('div', { class: 'fehler-legende', 'aria-hidden': 'true' }, h('span', null, 'Nr.'), h('span', null, 'ECB'), h('span', null, 'CBC')),
+              h('div', { class: 'fehler-spalten' }, gruppen)
+            )
+          );
+        }
+        const decE = n ? Krypto.kryptos16.modus(inBloecke(fehlerBits.ecb), k, 'ECB', null, { richtung: 'ent' }) : [];
+        const decC = n ? Krypto.kryptos16.modus(inBloecke(fehlerBits.cbc), k, 'CBC', iv, { richtung: 'ent' }) : [];
+        const anders = (dec) => dec.map((b, i) => (b !== klar[i] ? i : null)).filter((i) => i !== null);
+        betroffen = { ecb: anders(decE), cbc: anders(decC) };
+        const zeile = (titel, liste, betr) => h('tr', null, h('th', { scope: 'row' }, titel), liste.map((b, i) => h('td', { class: betr.includes(i) ? 'betroffen' : null }, h('span', { class: 'fehler-hex' }, Krypto.hex(b)), ' ', h('span', { class: 'fehler-zeichen' }, blockZeichen(b)), betr.includes(i) ? h('span', { class: 'betroffen-zeichen' }, ' !') : null)));
+        ergebnisOrt.append(
+          h(
+            'div',
+            { class: 'scroll-x' },
+            h(
+              'table',
+              { class: 'labor-tabelle fehler-tabelle' },
+              h('caption', null, 'Entschlüsselt (Hex und Zeichen, · = kein Anlagezeichen, ! = betroffen)'),
+              h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Block'), klar.map((_, i) => h('th', { scope: 'col' }, `P${i + 1}`)))),
+              h('tbody', null, zeile('Klartext', klar, []), zeile('ECB', decE, betroffen.ecb), zeile('CBC', decC, betroffen.cbc))
+            )
+          ),
+          h('p', { class: 'fehler-fazit', 'aria-live': 'polite' }, `Betroffen – ECB: ${betroffen.ecb.length ? betroffen.ecb.map((i) => `P${i + 1}`).join(', ') : 'keiner'} · CBC: ${betroffen.cbc.length ? betroffen.cbc.map((i) => `P${i + 1}`).join(', ') : 'keiner'}`)
+        );
+      }
+      zeige();
+    }
+
+    /* ======================= Mini-Enigma (Kür K2, Task 120) ======================= */
+    function baueEnigma() {
+      const optionen = () => (verdrahtung === 'eigen' ? { walze: eigene.walze, reflektor: eigene.reflektor } : {});
+      const zahl = B.zahl({ beschriftung: 'Startstellung der Walze', min: 0, max: 7, wert: stellung0, format: (n) => Krypto.buchstabe(n, 0), minusLabel: 'Walze eine Stellung zurück', plusLabel: 'Walze eine Stellung weiter', beiWechsel: (n) => { stellung0 = n; zeige(); } });
+      const tastatur = h('div', { class: 'enigma-tastatur', role: 'group', 'aria-label': 'Tastatur A bis H' }, ME.map((b) => h('button', { type: 'button', class: 'knopf taste', 'data-taste': b }, b)));
+      const feld = B.textfeld({ beschriftung: 'Text (nur A–H, bis 40 Zeichen)', max: 40, wert: enigmaText, art: 'klartext', zeilen: 1, beiEingabe: (t) => { enigmaText = t; zeige(); } });
+      const lampen = ME.map((b) => h('span', { class: 'lampe', 'data-lampe': b }, b));
+      const lampenfeld = h('div', { class: 'enigma-lampen', 'aria-hidden': 'true' }, lampen);
+      const aus = B.ausgabe({ beschriftung: 'Ausgabe (Lampenfeld)', art: 'frei' });
+      const stellungJetzt = h('p', { class: 'enigma-stellung', 'aria-live': 'polite' });
+      const hinweisOrt = h('div', { class: 'runden-hinweis' });
+      const wegOrt = h('div', { class: 'enigma-weg' });
+      const nsOrt = h('div', { class: 'enigma-nachspiel' });
+      const tabOrt = h('div', { class: 'enigma-tabelle' });
+      const wahl = radiogruppe(
+        [
+          { id: 'spec', titel: 'Verdrahtung der Spec' },
+          { id: 'eigen', titel: 'eigene Verdrahtung' }
+        ],
+        verdrahtung,
+        'verdrahtung',
+        'Verdrahtung',
+        'enigma-verdrahtung',
+        (x) => {
+          verdrahtung = x;
+          eigenFelder.hidden = x !== 'eigen';
+          zeige();
+        }
+      );
+      const eigenFeld = (klasse, titel, schluessel) => {
+        const id = B.neueId(klasse);
+        const f = h('input', { type: 'text', id, class: klasse, autocomplete: 'off', spellcheck: 'false', autocapitalize: 'characters' });
+        f.value = eigene[schluessel];
+        f.addEventListener('input', () => {
+          eigene[schluessel] = f.value.slice(0, 8).toUpperCase();
+          zeige();
+        });
+        return h('div', { class: 'labor-textfeld runden-feld' }, h('label', { for: id }, titel), f);
+      };
+      const eigenFelder = h('div', { class: 'labor-steuer enigma-eigen', hidden: verdrahtung !== 'eigen' }, eigenFeld('enigma-walze', 'Walze: Bilder von A … H', 'walze'), eigenFeld('enigma-reflektor', 'Reflektor: Partner von A … H', 'reflektor'));
+      r.flaeche.append(
+        h('div', { class: 'labor-steuer' }, zahl.element, stellungJetzt),
+        wahl.element,
+        eigenFelder,
+        hinweisOrt,
+        tastatur,
+        feld.element,
+        lampenfeld,
+        aus.element,
+        wegOrt,
+        nsOrt,
+        tabOrt
+      );
+      for (const kn of tastatur.querySelectorAll('button.taste')) {
+        kn.addEventListener('click', () => {
+          if (Krypto.nurBuchstaben(enigmaText).length >= 40) return;
+          enigmaText = `${enigmaText}${Krypto.klein(kn.dataset.taste)}`;
+          feld.setze(enigmaText);
+          zeige();
+          kn.focus();
+        });
+      }
+      /** Stromweg als SVG: hin (gestrichelt) über Walze zum Reflektor, zurück (durchgezogen); Stationen ①–⑦. */
+      function stromweg(w, s0) {
+        const STUFEN = [
+          ['+ s', 'Eingang Walze'],
+          ['W', 'Walze'],
+          ['− s', 'zum Reflektor'],
+          ['R', 'Reflektor'],
+          ['+ s', 'zurück'],
+          ['W⁻¹', 'Walze rückwärts'],
+          ['− s', 'Lampe']
+        ];
+        const ort = (i) => (i < 3 ? [70 + 75 * i, 30] : i === 3 ? [295, 80] : [70 + 75 * (6 - i), 130]);
+        const svg = s('svg', { class: 'stromweg', viewBox: '0 0 340 160', role: 'img', 'aria-label': `Stromweg von ${w.eingang} in Stellung ${s0}: ${w.stationen.join(' → ')}; Lampe ${w.ausgang}` });
+        const linie = (a, b, klasse) => svg.appendChild(s('line', { class: `strom ${klasse}`, x1: a[0], y1: a[1], x2: b[0], y2: b[1] }));
+        linie([20, 30], ort(0), 'hin');
+        for (let i = 0; i < 6; i++) linie(ort(i), ort(i + 1), i < 3 ? 'hin' : 'rueck');
+        linie(ort(6), [20, 130], 'rueck');
+        svg.append(s('text', { class: 'strom-ende', x: 14, y: 34, 'text-anchor': 'middle' }, w.eingang), s('text', { class: 'strom-ende', x: 14, y: 134, 'text-anchor': 'middle' }, w.ausgang));
+        w.stationen.forEach((b, i) => {
+          const [x, y] = ort(i);
+          svg.append(
+            s('circle', { class: 'strom-station', cx: x, cy: y, r: 16 }),
+            s('text', { class: 'strom-buchstabe', x, y: y + 5, 'text-anchor': 'middle', 'data-station': String(i + 1) }, b),
+            s('text', { class: 'strom-nr', x, y: i < 3 || i === 3 ? y - 21 : y + 30, 'text-anchor': 'middle' }, `${String(i + 1)} ${STUFEN[i][0]}`)
+          );
+        });
+        return svg;
+      }
+      function zeigeWeg(i, liste) {
+        AQ.clear(wegOrt);
+        for (const l of lampen) l.classList.remove('leuchtet');
+        if (i < 0 || !liste[i]) {
+          wegOrt.appendChild(h('p', { class: 'text-2' }, 'Tippe einen Buchstaben – dann leuchtet eine Lampe und der Stromweg erscheint.'));
+          return;
+        }
+        const x = liste[i];
+        wegOrt.appendChild(h('figure', { class: 'stromweg-figur' }, stromweg(x.weg, x.stellung), h('figcaption', null, `Buchstabe ${i + 1}: ${x.weg.eingang} in Stellung ${x.stellung} → ${x.weg.stationen.join(' → ')} → Lampe ${x.weg.ausgang}`)));
+        const l = lampen.find((y) => y.dataset.lampe === x.weg.ausgang);
+        if (l) l.classList.add('leuchtet');
+      }
+      function zeige() {
+        schliesseTeile();
+        AQ.clear(hinweisOrt);
+        AQ.clear(nsOrt);
+        AQ.clear(tabOrt);
+        const t = Krypto.nurBuchstaben(enigmaText);
+        const opt = optionen();
+        stellungJetzt.textContent = `Walze jetzt in Stellung ${Krypto.buchstabe(Krypto.mod(stellung0 + t.length, 8), 0)}`;
+        try {
+          Krypto.miniEnigma.tabelle('A', opt);
+        } catch (e) {
+          if (!istKryptoFehler(e)) throw e;
+          hinweisOrt.appendChild(B.hinweis('warnung', e.message));
+          enigmaAusgabe = '';
+          aus.setze('');
+          zeigeWeg(-1, []);
+          return;
+        }
+        if (/[^A-H]/.test(t)) {
+          hinweisOrt.appendChild(B.hinweis('warnung', 'Die Mini-Enigma kennt nur die Buchstaben A–H.'));
+          enigmaAusgabe = '';
+          aus.setze('');
+          zeigeWeg(-1, []);
+        } else {
+          const s0 = Krypto.buchstabe(stellung0, 0);
+          enigmaAusgabe = Krypto.miniEnigma(t, s0, 'ver', opt);
+          aus.setze(enigmaAusgabe);
+          const liste = [...t].map((b, i) => {
+            const st = Krypto.buchstabe(Krypto.mod(stellung0 + i, 8), 0);
+            return { stellung: st, weg: Krypto.miniEnigma.weg(b, st, opt) };
+          });
+          zeigeWeg(liste.length - 1, liste);
+          if (liste.length) {
+            nachspiel = KRLabor.nachspiel(nsOrt, {
+              titel: 'Stromweg Buchstabe für Buchstabe',
+              start: liste.length - 1,
+              schritte: liste.map((x, i) => ({ text: `Buchstabe ${i + 1}: ${x.weg.eingang} in Stellung ${x.stellung} → Lampe ${x.weg.ausgang}`, daten: { i } })),
+              zeige(schritt) {
+                zeigeWeg(schritt.daten.i, liste);
+              },
+              beiLauf: (an) => {
+                feld.sperre(an);
+                zahl.sperre(an);
+                for (const kn of tastatur.querySelectorAll('button')) kn.disabled = !!an;
+              }
+            });
+          }
+        }
+        tabOrt.appendChild(
+          B.tabelle({
+            caption: 'Stellungstabelle: Bild von A … H in jeder Stellung',
+            kopf: ['Stellung', ...ME],
+            zeilen: ME.map((st) => [st, ...Krypto.miniEnigma.tabelle(st, opt)]),
+            klasse: 'stellungen'
+          })
+        );
+        for (const tr of tabOrt.querySelectorAll('tbody tr')) tr.setAttribute('data-stellung', tr.firstChild.textContent);
+      }
+      zeige();
+    }
+
     function baue(id) {
       schliesseTeile();
       AQ.clear(r.flaeche);
       if (id === 'runden') baueRunden();
       else if (id === 'lawine') baueLawine();
       else if (id === 'verfolgung') baueVerfolgung();
+      else if (id === 'modi') baueModi();
+      else if (id === 'fehler') baueFehler();
+      else if (id === 'enigma') baueEnigma();
     }
     baue(r.aktiv());
 
@@ -453,7 +897,11 @@
           protokoll: p ? p.runden.map((x) => ({ runde: x.runde, eingang: Krypto.hex(x.eingang), schluessel: Krypto.hex(x.schluessel), nachXor: Krypto.hex(x.nachXor), mitte: Krypto.hex(x.mitte), nachTransposition: Krypto.hex(x.nachTransposition) })) : [],
           gekippt: { klartext: [...gekippt.klartext].sort((a, b) => a - b), schluessel: [...gekippt.schluessel].sort((a, b) => a - b) },
           zaehler,
-          weg
+          weg,
+          kacheln,
+          betroffen,
+          stellung: Krypto.buchstabe(Krypto.mod(stellung0 + Krypto.nurBuchstaben(enigmaText).length, 8), 0),
+          enigmaAusgabe
         };
       }
     };

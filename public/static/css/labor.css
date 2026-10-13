@@ -659,3 +659,50 @@ mark.markiert.wiederholung { font-weight: 700; }
 .lawine-linie { position: absolute; top: -3px; bottom: -3px; left: 50%; border-left: 2px dashed var(--fehler); }
 .lawine-info { margin: 0; }
 .verfolgung-liste { margin: 0; padding-left: 1.4em; display: grid; gap: var(--a-1); font-size: .95rem; }
+/* Runden-Labor II: ECB/CBC-Pixelbild, Fehler einbauen, Mini-Enigma (Task 120) */
+.pixelbilder { display: grid; gap: var(--a-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); }
+.pixel-figur { margin: 0; display: grid; gap: var(--a-1); }
+.pixel-figur figcaption { font-size: .9rem; }
+.pixelbild, .malraster-bild { display: block; width: 100%; max-width: 20rem; height: auto; image-rendering: pixelated; border: 1.5px solid var(--linie); }
+.pixel-grund { fill: var(--karte); }
+.pixel { fill: var(--text); }
+.kachel-linie { stroke: var(--linie); stroke-width: .06; }
+.malbereich { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: start; }
+.malraster-rahmen { display: grid; gap: var(--a-1); width: min(100%, 20rem); }
+.malraster { cursor: crosshair; touch-action: manipulation; border-radius: 2px; }
+.malraster:focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.mal-cursor { fill: none; stroke: var(--hinweis); stroke-width: .25; }
+.malraster:not(:focus-visible) .mal-cursor { stroke-dasharray: .3 .2; }
+.malraster-status { margin: 0; font-size: .85rem; color: var(--text-2); }
+.malraster-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.malraster-knoepfe .knopf, .fehler-zuruecksetzen { border: 1.5px solid var(--linie); justify-self: start; }
+.fehler-bloecke { display: grid; gap: var(--a-3); min-width: 0; }
+.fehler-block { margin: 0; padding: var(--a-2); border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--a-1) var(--a-2); min-width: 0; }
+.fehler-block figcaption { grid-column: 1 / -1; font-weight: 700; font-size: .9rem; }
+.fehler-legende { display: grid; grid-template-rows: 1.2rem 1.6rem 1.6rem; align-content: start; font-size: .78rem; font-weight: 700; color: var(--text-2); }
+.fehler-spalten { display: flex; flex-wrap: wrap; gap: var(--a-2) var(--a-3); }
+.fehler-gruppe { display: flex; gap: 2px; }
+.fehler-spalte { display: grid; grid-template-rows: 1.2rem 1.6rem 1.6rem auto auto; justify-items: center; gap: 2px; }
+.fehler-nr { font-size: .72rem; color: var(--text-2); }
+.fehler-wert { font-family: var(--f-mono); font-size: 1.05rem; }
+.fehler-wert.cbc { font-weight: 700; }
+.fehler-spalte button { width: var(--ziel); min-height: var(--ziel); padding: 0; border: 1.5px solid var(--linie); border-radius: var(--r-knopf); background: var(--papier-2); color: var(--text); cursor: pointer; }
+.fehler-spalte button:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; }
+.fehler-tabelle td { font-family: var(--f-mono); white-space: nowrap; }
+.fehler-tabelle td.betroffen { box-shadow: inset 0 0 0 3px var(--fehler); background: var(--fehler-flaeche); font-weight: 700; }
+.fehler-fazit { margin: 0; }
+.enigma-tastatur, .enigma-lampen { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.enigma-tastatur .taste { min-width: var(--ziel); border: 1.5px solid var(--linie); font-family: var(--f-mono); font-size: 1.15rem; border-radius: 50%; }
+.lampe { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border: 1.5px dashed var(--linie); border-radius: 50%; font-family: var(--f-mono); color: var(--text-2); }
+.lampe.leuchtet { border: 3px solid var(--messing-dunkel); background: var(--hinweis-flaeche); color: var(--text); font-weight: 700; text-decoration: underline 2px; }
+.enigma-stellung { margin: 0; align-self: end; font-weight: 700; }
+.enigma-eigen[hidden] { display: none; }
+.stromweg-figur { margin: 0; display: grid; gap: var(--a-1); }
+.stromweg-figur figcaption { font-family: var(--f-mono); font-size: .9rem; overflow-wrap: anywhere; }
+.stromweg { display: block; width: 100%; max-width: 30rem; height: auto; }
+.strom { stroke: var(--text); stroke-width: 2; }
+.strom.hin { stroke-dasharray: 6 4; }
+.strom-station { fill: var(--karte); stroke: var(--hinweis); stroke-width: 2; }
+.strom-buchstabe, .strom-ende { font-family: var(--f-mono); font-size: 15px; font-weight: 700; fill: var(--text); }
+.strom-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
+.stellungen td, .stellungen th { font-family: var(--f-mono); }
