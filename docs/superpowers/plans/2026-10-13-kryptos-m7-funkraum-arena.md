@@ -1995,7 +1995,7 @@ Beamer bei 1920 × 1080.
 - Vergabe: Arena-Erfolg (Task 145, `pruefeAbzeichen` je Mitglied), Übergang `angriff → beurteilung` (alle Mitglieder aller
   Teams mit Chiffre), Funkraum `beenden` (alle Mitglieder der Teams mit Rolle).
 
-- [ ] **Step 1: Failing test** – in `test/abzeichen_scoreboard.test.js` ergänzen:
+- [x] **Step 1: Failing test** – in `test/abzeichen_scoreboard.test.js` ergänzen:
   ```js
   const F = require('./hilfen_funk');
   const keys = async (c) => (await c.get('/api/profil').expect(200)).body.abzeichen.filter((a) => a.erhalten).map((a) => a.key);
@@ -2037,10 +2037,10 @@ Beamer bei 1920 × 1080.
   ```
   (Welten 0–6 → Artefakt; andere Welten (Fixture 9) behalten Namen und bekommen `a-siegel`. `KRProfil.ARTEFAKT` ist
   exportiert.)
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Hook-Aufruf in `stand.definitionen()` für jede Definition; Kern ohne
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Hook-Aufruf in `stand.definitionen()` für jede Definition; Kern ohne
   Krypto = Identität; K42 in `KERN_ABWEICHUNGEN.md`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün (inkl. `niveau.test.js` mit `zusatzAbzeichen`-Test).
-- [ ] **Step 5: Commit** `git commit -m "Abzeichen: Funkraum-Veteran, Arena-Knacker, Unknackbar, Artefakte und Server-Icons"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün (inkl. `niveau.test.js` mit `zusatzAbzeichen`-Test).
+- [x] **Step 5: Commit** `git commit -m "Abzeichen: Funkraum-Veteran, Arena-Knacker, Unknackbar, Artefakte und Server-Icons"`.
 
 ### Task 148: Datenschutz und Rechte – Gesamtprüfung Funkraum/Arena, Datenschutzseite (Design §12, TECHNIK §15, E116, Review Focus 1–4)
 
@@ -2902,6 +2902,12 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Mallory-Szenarios verdeckt bis zur Auflösung alle Schlüsselnummern: Schlüssel-Sendungen erscheinen als „SCHLUESSEL“,
   Umschläge als „UMSCHLAG“ (ohne Etikett), beide `lesbar: false`; ab `aufloesung` (und nach dem Beenden) wie bisher. Teams
   und Regie unverändert (`typen/mallory.js` `sicht`, Test `funkraum_mallory.test.js`, TECHNIK §12.3).
+- **Task 147:** Vergabe „Unknackbar“ über einen fest eingetragenen Haken in `beimPhasenwechsel` (`arena/dienst.js`, greift
+  bei Lehrkraft-Phase und bei abgelaufener Frist, E102); „Funkraum-Veteran“ in `funkraum.beendeIntern` nach erfolgreichem
+  Beenden (gilt auch beim Sperren des Kurses). `abzeichenAnzeige` lässt unbekannte Schlüssel unverändert (Test-Hook in
+  `niveau.test.js` behält sein Icon). Plan-Test ergänzt: alle drei Teams Veteran, Erfolgsmeldung ohne Inhalte, Fehlversuch ohne
+  Knacker, Unknackbar erst beim Ende der Angriffsphase und über die Frist, `welt9_gemeistert` → `a-welt`, Kern-Identität.
+  Bis Task 159 zeigt das Profil für die drei neuen Abzeichen noch das Server-Icon als Text (Sprites folgen dort).
 
 ## Reihenfolge und Abhängigkeiten
 

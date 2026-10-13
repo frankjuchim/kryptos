@@ -119,6 +119,12 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
 
   /** Haken beim Übergang angriff → beurteilung (Abzeichen „Unknackbar“, Task 147): f(arenaZeile) in der Transaktion */
   const beimPhasenwechsel = [];
+  // „Unknackbar“ (E100): beim Ende der Angriffsphase alle aktiven Mitglieder der Teams mit Chiffre prüfen
+  beimPhasenwechsel.push((arenaZeile) => {
+    for (const c of db.prepare('SELECT team_id FROM arena_chiffren WHERE arena_id = ?').all(arenaZeile.id)) {
+      for (const m of teams.mitglieder(c.team_id)) svc.stand.pruefeAbzeichen({ id: m.id });
+    }
+  });
 
   /** Regie-Ansicht (nie das Salz) */
   function regieAnsicht(a) {

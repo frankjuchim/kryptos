@@ -17,6 +17,7 @@ const validierung = require('./validierung');
 const N = require('./niveau');
 const G = require('../content/generators');
 const generatoren = require('./generatoren');
+const A = require('./abzeichen');
 
 let registriert = false;
 
@@ -58,7 +59,7 @@ function fallenAusErgebnis(a, erg) {
   return p.size ? [...p] : a.fallen || [];
 }
 
-/** Dienst-Optionen für den Kern (TECHNIK §4.2); Niveau nach TECHNIK §8 (src/krypto/niveau.js). */
+/** Dienst-Optionen für den Kern (TECHNIK §4.2); Niveau nach TECHNIK §8 (src/krypto/niveau.js), Abzeichen src/krypto/abzeichen.js. */
 function dienstOptionen() {
   return {
     diagnose: true,
@@ -67,7 +68,11 @@ function dienstOptionen() {
     rangrelevant: N.rangrelevant,
     bossPool: N.bossPool,
     bossBezug: N.bossBezug,
-    generatorSichtbar: N.generatorSichtbar
+    generatorSichtbar: N.generatorSichtbar,
+    // Abzeichen (TECHNIK §4.2, Plan M7 Task 147): Funkraum-Veteran, Arena-Knacker, Unknackbar, Artefakte, Server-Icons
+    zusatzAbzeichen: A.zusatzAbzeichen,
+    zusatzBedingungen: A.zusatzBedingungen,
+    abzeichenAnzeige: A.abzeichenAnzeige
   };
 }
 

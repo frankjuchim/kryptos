@@ -29,6 +29,8 @@ const STANDARD_OPTIONEN = Object.freeze({
   generatorSichtbar: () => true,
   zusatzAbzeichen: () => [],
   zusatzBedingungen: () => new Set(),
+  // K42: Anzeige einer Abzeichen-Definition (Name, Icon) – Kern: unverändert
+  abzeichenAnzeige: (d) => d,
   // K38: Akte (PDF) und Video je Level für das Level-Detail – Kern: keine Akte, Video wie im Seed
   levelMedien: (l) => ({ akteDatei: null, video: l.video || null })
 });

@@ -3,7 +3,7 @@
 // K07: Archivfund-Aufgaben (Delta §2) zählen weder bei geloest noch bei Punkten, Abzeichen oder Weltenbummler.
 // Niveau (TECHNIK §8.2/§8.3): Sichtbarkeit (optionen.sichtbar), Bezugsmenge für Rang/anteil (optionen.rangrelevant, labs
 // v1.2: = sichtbar) und für Boss-Freischaltung/„Welt gemeistert“ (optionen.bossBezug); Abzeichen-Hooks zusatzAbzeichen/
-// zusatzBedingungen.
+// zusatzBedingungen, abzeichenAnzeige (K42).
 
 const { rangFuer, BOSS_AUTO_ANTEIL, BOSS_BESIEGT_ANTEIL, FALLEN_IDS } = require('../domain');
 
@@ -171,7 +171,8 @@ function createStand(ctx, { inhalte, kurse }) {
     // Hook (TECHNIK §4.2): z. B. Artefakte, Funkraum-/Arena-Abzeichen
     const zusatz = opt().zusatzAbzeichen(kat());
     if (Array.isArray(zusatz)) liste.push(...zusatz);
-    return liste;
+    // K42: Anzeige-Hook (Kryptos: Artefakt-Namen, Sprite-Kennungen als Icon); Kern: Identität
+    return liste.map((d) => opt().abzeichenAnzeige(d));
   }
 
   /** Bedingungen auswerten und neue Abzeichen vergeben. Liefert die neu erhaltenen. */

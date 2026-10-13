@@ -241,10 +241,13 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     const sz = sql.sz.get(szId);
     if (!sz) return false;
     const typ = TYP_MODULE[sz.typ];
-    return L.beenden(db, szId, {
+    const beendet = L.beenden(db, szId, {
       jetzt: jetztIso,
       auswertung: () => (typ && typeof typ.auswertung === 'function' ? typ.auswertung(typCtx(sz), sz) : L.auswertungGenerisch(db, szId))
     });
+    // „Funkraum-Veteran“ (TECHNIK §12.7, Plan M7 Task 147): alle aktiven Mitglieder der Teams mit Rolle prüfen
+    if (beendet) for (const r of sql.rollen.all(szId)) for (const m of teams.mitglieder(r.team_id)) svc.stand.pruefeAbzeichen({ id: m.id });
+    return beendet;
   }
 
   /** POST /api/lehrer/funk/:id/status { aktion } → Regie-Ansicht bzw. { geschlossen: true } */

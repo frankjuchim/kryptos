@@ -160,3 +160,70 @@ test('Beamer-Board: nur wenn aktiviert; Top 15, Weltfortschritt, letzte 8 Erfolg
   assert.equal(seite.status, 200);
   assert.match(seite.text, /noindex/);
 });
+
+/* ---------- M7 Task 147: Funkraum-Veteran, Arena-Knacker, Unknackbar, Artefakte, Server-Icons (E100, E112) ---------- */
+const F = require('./hilfen_funk');
+const keys = async (c) => (await c.get('/api/profil').expect(200)).body.abzeichen.filter((a) => a.erhalten).map((a) => a.key);
+
+test('Funkraum-Veteran nach drei verschiedenen Szenario-Typen (nicht nach dreimal Botenlauf)', async () => {
+  const f = await F.kursMitTeams(3, { zufallBytes: F.festerZufall() });
+  for (const typ of ['botenlauf', 'botenlauf', 'schluesseltausch']) {
+    const sz = await F.starte(f, typ);
+    await F.aktion(f, sz.id, 'beenden').expect(200);
+    await F.aktion(f, sz.id, 'schliessen').expect(200);
+  }
+  assert.ok(!(await keys(f.teams[0].c)).includes('funkraum_veteran'));
+  const sz = await F.starte(f, 'mallory');
+  await F.aktion(f, sz.id, 'beenden').expect(200);
+  for (const t of f.teams) assert.ok((await keys(t.c)).includes('funkraum_veteran'), t.name);
+  // Erfolgsmeldung im Kurs (Beamer-Board) ohne Funkraum-Inhalte
+  const erfolge = f.db.prepare("SELECT text FROM erfolge WHERE text LIKE '%Funkraum-Veteran%'").all();
+  assert.equal(erfolge.length, 3);
+});
+
+test('Arena-Knacker sofort für alle Mitglieder des angreifenden Teams; Unknackbar beim Ende der Angriffsphase (E100)', async () => {
+  const f = await F.arenaMitChiffren(3, { phase: 'angriff', proTeam: 2 });
+  await f.angriff(0, 1, { klartext: F.TEXT2 }).expect(200);
+  for (const c of f.teams[0].s) assert.ok((await keys(c)).includes('arena_knacker'));
+  assert.ok(!(await keys(f.teams[1].s[0])).includes('arena_knacker'));
+  // Fehlversuch bringt nichts
+  await f.angriff(2, 0, { klartext: F.TEXT2 }).expect(200);
+  assert.ok(!(await keys(f.teams[2].s[0])).includes('arena_knacker'));
+  for (const c of f.teams[0].s) assert.ok(!(await keys(c)).includes('unknackbar'), 'erst beim Ende der Angriffsphase');
+  await f.phase('beurteilung');
+  for (const c of [...f.teams[0].s, ...f.teams[2].s]) assert.ok((await keys(c)).includes('unknackbar'), c.name);
+  for (const c of f.teams[1].s) assert.ok(!(await keys(c)).includes('unknackbar'));
+});
+
+test('Unknackbar auch, wenn die Frist die Angriffsphase beendet (E102)', async () => {
+  const f = await F.arenaMitChiffren(2, { phase: 'werkstatt' });
+  const bis = new Date(f.uhr() + 60 * 60 * 1000).toISOString();
+  await f.lk.post(`/api/lehrer/arena/${f.arenaId}/phase`).send({ phase: 'angriff', angriffBis: bis }).expect(200);
+  f.uhr.vor(2 * 60 * 60 * 1000);
+  await f.teams[0].c.get(`/api/arena/${f.arenaId}/chiffren`).expect(200);
+  assert.ok((await keys(f.teams[0].c)).includes('unknackbar'));
+  assert.ok((await keys(f.teams[1].c)).includes('unknackbar'));
+});
+
+test('Artefakte und Server-Icons (E112): Boss-Abzeichen heißt „Artefakt: …“, Icons sind Sprite-Kennungen', async () => {
+  const { s } = await H.szenario();
+  const liste = (await s.get('/api/profil').expect(200)).body.abzeichen;
+  for (const a of liste) assert.match(a.icon, /^a-[a-z]+$/, a.key);
+  for (const k of ['funkraum_veteran', 'arena_knacker', 'unknackbar']) assert.ok(liste.some((a) => a.key === k), k);
+  assert.equal(liste.find((a) => a.key === 'boss9_besiegt').icon, 'a-siegel', 'Fixture-Welt 9: kein Artefakt, Siegel');
+  assert.equal(liste.find((a) => a.key === 'welt9_gemeistert').icon, 'a-welt');
+  const A = require('../src/krypto/abzeichen');
+  assert.deepEqual(A.abzeichenAnzeige({ key: 'boss0_besiegt', icon: '⚔️', name: 'Der Tribun besiegt', beschreibung: 'x', welt: 0 }), { key: 'boss0_besiegt', icon: 'a-skytale', name: 'Artefakt: Skytale', beschreibung: 'Der Tribun besiegt – das Artefakt der Epoche gehört dir.', welt: 0 });
+  assert.deepEqual(A.abzeichenAnzeige({ key: 'boss9_besiegt', icon: '⚔️', name: 'X besiegt', beschreibung: 'y', welt: 9 }), { key: 'boss9_besiegt', icon: 'a-siegel', name: 'X besiegt', beschreibung: 'y', welt: 9 });
+  assert.equal(A.abzeichenAnzeige({ key: 'unbekannt', icon: 'siegel', name: 'n', beschreibung: 'b' }).icon, 'siegel', 'unbekannte Abzeichen behalten ihr Icon');
+  const D = require('./dom_attrappe');
+  const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/profil.js']);
+  assert.deepEqual(k.roh(k.wert('KRProfil').ARTEFAKT), A.ARTEFAKT);
+  assert.deepEqual(k.roh(k.wert('KRProfil').ARTEFAKT_NAME), A.ARTEFAKT_NAME);
+});
+
+test('Kern ohne Krypto-Hook: abzeichenAnzeige ist die Identität (K42)', async () => {
+  const { STANDARD_OPTIONEN } = require('../src/services');
+  const d = { key: 'boss0_besiegt', icon: '⚔️', name: 'n', beschreibung: 'b' };
+  assert.equal(STANDARD_OPTIONEN.abzeichenAnzeige(d), d);
+});
