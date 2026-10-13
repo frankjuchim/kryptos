@@ -2521,13 +2521,13 @@ Beamer bei 1920 × 1080.
 - QR-Route: nur Lehrkraft (sonst 401), `ziel` ∉ {funkraum, werkstatt} → 400; SVG über `qrcode.toString(konfig.plattformUrl
   + '/' + ziel, { type: 'svg', margin: 1 })`, `Content-Type: image/svg+xml`, `Cache-Control: no-store`.
 
-- [ ] **Step 1: Failing tests**: QR-Route (`image/svg+xml`, Körper beginnt mit `<svg`, enthält kein `<script`, Schüler 401,
+- [x] **Step 1: Failing tests**: QR-Route (`image/svg+xml`, Körper beginnt mit `<svg`, enthält kein `<script`, Schüler 401,
   `ziel=x` 400); Beamer-Client im Attrappen-DOM: Botenlauf-Stand mit 2 Nachrichten → zwei Punkte `circle.nachricht`, Tabelle;
   Wettknacken-Stand → zwei `progress`/`div.balken` mit Teamnamen und Prozent; `aufloesung` → Kurven `polyline`; reduzierte
   Bewegung → keine Klasse `fliegt`.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung **1920 × 1080**
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung **1920 × 1080**
   und 1280 px (Kontrast auf `--nacht`, Lesbarkeit aus 6 m: Schrift ≥ 28 px für Geheimtexte), reduzierte Bewegung.
-- [ ] **Step 5: Commit** `git commit -m "Beamer Funkraum: Netz, Ticker, QR-Code und Auflösung je Szenario"`.
+- [x] **Step 5: Commit** `git commit -m "Beamer Funkraum: Netz, Ticker, QR-Code und Auflösung je Szenario"`.
 
 ### Task 156: Chiffren-Werkstatt – Baukasten-Editor, Live-Prüfung, Entwurf, Einreichen (TECHNIK §9.1–§9.4, W3 Tabelle B, E104, E105)
 
@@ -2976,6 +2976,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   `select.neu-verschliessen` mit allen gesehenen Schlüsselnummern (eigene und an der Station gesehene), `ersetzen` sendet nur
   geänderte Felder; „Alle weiterleiten“ nacheinander. Bob sieht fremde Umschläge als „Umschlag für S41 – du kannst ihn nicht
   öffnen.“ ohne Melde-Knopf. Netz: zwei Ring-Teams links/rechts (Paar um Mallory), Platz für Namen unten.
+
+- **Task 155:** QR-Route in `funkraum/routen.js` mit `helpers.konfig.plattformUrl` (ohne Konfiguration die Adresse der
+  Anfrage); Test vergleicht mit `qrcode.toString(PLATTFORM_URL + '/funkraum')`. Beamer: `KRPoll` mit `mischen` auf
+  `?seit=…&ansicht=beamer` (2 s), Ticker über `KRNetz.ticker` (8 Einträge), Netz mit Geheimtext-Vorschau (28 px) auf der
+  Seite der Laufrichtung; in der Auflösung stehen die Ergebnisse oben und das Netz verkleinert darunter (passt auf
+  1920 × 1080). Wettknacken: Balken mit Name, Prozent und Muster (`data-muster`, nie nur Farbe), Kurven als Polylinien mit
+  95-%-Linie; Doppelter Schlüssel: Hex-Liste, in der Auflösung C1 ⊕ C2 mit hervorgehobenen Bytes < 0x20 und Klartexte;
+  Schlüsseltausch: Kanal-Tabelle p, g, A, B, in der Auflösung K gleich ✓/✗ und Eve ✓/✗; Mallory: Netz mit Mallory in der
+  Mitte, „UMSCHLAG“/„SCHLUESSEL“ ohne Nummer, in der Auflösung Original/empfangen/Weg. Arena-Beamer unverändert (Task 158).
+  Hinweis: Nach dem Schließen meldet Chromium den letzten Stand-Abruf (404) als Konsolenzeile „Failed to load resource“ –
+  der Poller stoppt danach (kein Skriptfehler).
 
 ## Reihenfolge und Abhängigkeiten
 

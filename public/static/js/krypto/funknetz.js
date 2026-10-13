@@ -114,10 +114,13 @@ const KRNetz = (() => {
         const dx = q.x - p.x;
         const dy = q.y - p.y;
         const laenge = Math.hypot(dx, dy) || 1;
-        const versatz = m.r * 0.28;
-        const x = Math.round(p.x + dx * t + (-dy / laenge) * versatz);
-        const y = Math.round(p.y + dy * t + (dx / laenge) * versatz);
-        const [klasse, symbol] = ZUSTAND[z];
+        const versatz = m.r * (o.vorschau ? 0.5 : 0.28);
+        const nx = -dy / laenge;
+        const ny = dx / laenge;
+        const x = Math.round(p.x + dx * t + nx * versatz);
+        const y = Math.round(p.y + dy * t + ny * versatz);
+        const [klasse, zeichen] = ZUSTAND[z];
+        const symbol = z === 'unterwegs' && dx < 0 ? '←' : zeichen; // Pfeil in Laufrichtung
         const fliegt = bewegt && !schonDa.has(n.id);
         const kreis = s(
           'circle',
@@ -132,7 +135,9 @@ const KRNetz = (() => {
         texte.push(s('text', { class: `nachricht-symbol ${klasse}`, x: x + Math.round(m.r * 0.42), y: y - Math.round(m.r * 0.3), 'aria-hidden': 'true' }, symbol));
         if (o.vorschau && i === neueste.length - 1 && n.inhalt) {
           const vorschau = String(n.inhalt).length > 14 ? `${String(n.inhalt).slice(0, 14)}…` : String(n.inhalt);
-          texte.push(s('text', { class: 'nachricht-vorschau', x, y: y + Math.round(m.r * 0.95), 'text-anchor': 'middle' }, vorschau));
+          // Vorschau auf der Seite der Richtung (Hin- und Rückweg getrennt), nie über dem Punkt
+          const ab = m.r * 1.6;
+          texte.push(s('text', { class: 'nachricht-vorschau', x: Math.round(x + nx * ab), y: Math.round(y + ny * ab + (ny >= 0 ? m.r * 0.4 : 0)), 'text-anchor': Math.abs(nx) > 0.5 ? (nx > 0 ? 'start' : 'end') : 'middle' }, vorschau));
         }
       });
     }

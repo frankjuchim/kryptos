@@ -116,3 +116,22 @@ test('Stand-Abfragen schreiben nichts; Regie und Beamer haben getrennte ETags; A
   await f.lk.get(`/api/lehrer/funk/${sz.id}/stand?ansicht=beamer`).set('If-None-Match', beamer.headers.etag).expect(304);
   assert.deepEqual(f.db.prepare('SELECT version, konfig FROM funk_szenarien WHERE id = ?').get(sz.id), vorher);
 });
+
+test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, ziel funkraum|werkstatt', async () => {
+  const f = await F.kursMitTeams(2);
+  const r = await f.lk.get('/api/lehrer/qr.svg?ziel=funkraum').expect(200);
+  assert.match(r.headers['content-type'], /^image\/svg\+xml/);
+  assert.equal(r.headers['cache-control'], 'no-store');
+  const svg = r.text || (r.body && r.body.toString());
+  assert.match(svg, /^<svg/);
+  assert.doesNotMatch(svg, /<script/i);
+  await f.lk.get('/api/lehrer/qr.svg?ziel=werkstatt').expect(200);
+  await f.lk.get('/api/lehrer/qr.svg?ziel=x').expect(400);
+  await f.lk.get('/api/lehrer/qr.svg').expect(400);
+  await f.teams[0].c.get('/api/lehrer/qr.svg?ziel=funkraum').expect(401);
+  const QR = require('qrcode');
+  const erwartet = await QR.toString('http://kryptos.test/funkraum', { type: 'svg', margin: 1 });
+  const g = await F.kursMitTeams(2, { extra: { plattformUrl: 'http://kryptos.test' } });
+  const r2 = await g.lk.get('/api/lehrer/qr.svg?ziel=funkraum').expect(200);
+  assert.equal(r2.text || r2.body.toString(), erwartet, 'QR-Code auf PLATTFORM_URL + /funkraum');
+});

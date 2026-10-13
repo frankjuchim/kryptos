@@ -698,3 +698,102 @@ test('Mallory: Alice sieht Zertifikatsstatus mit Symbol und Text, sendet die Auf
   assert.deepEqual(bob.roh(meld), [['oeffentlich', {}], ['empfangen', { nachricht: 71 }]]);
   bob.wert('KRFunkraum').stopp();
 });
+
+/* ---------- Task 155: Beamer „Funkraum“ ---------- */
+const BEAMER = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'krypto/funkpoll.js', 'krypto/funknetz.js', 'krypto/beamer.js'];
+const bstand = (v, extra = {}) => ({ ...stand(v, extra), ich: null, werkzeuge: [], boss: false, ...extra, ich: null });
+const ladeBeamer = (antwort, opt = {}) => D.lade(BEAMER, { url: 'http://x.test/beamer/funkraum/7', ...opt, fetch: { 'GET /api/lehrer/funk/7/stand': antwort, ...(opt.fetch || {}) } });
+
+test('Beamer Botenlauf: Netz mit Punkten, Tabelle, QR-Code, Ticker; Auflösung mit Tabelle Runde · Absender · geknackt · Zeit', async () => {
+  const k = ladeBeamer((b, { query }) => {
+    assert.equal(query.ansicht, 'beamer');
+    return { status: 200, headers: { etag: '"7-5-beamer"' }, body: bstand(5, { nachrichten: [BOTE, { ...BOTE, id: 12, von: 2, an: 1, inhalt: 'XEZYI', angekommen: true }], ereignisse: [{ id: 3, code: 'gesendet', daten: { nachricht: 11, von: 1, an: 2 }, zeit: '2026-10-13T08:00:00Z', version: 4 }] }) };
+  });
+  await k.ruhe();
+  assert.equal(k.alle(k.document, 'svg.funk-netz circle.nachricht').length, 2);
+  assert.equal(k.alle(k.document, 'table.funk-netz-tabelle tbody tr').length, 3);
+  assert.match(k.text(k.eins(k.document, 'svg.funk-netz')), /OHSAL AKLUW/);
+  const qr = k.eins(k.document, 'img.beamer-qr');
+  assert.equal(qr.getAttribute('src'), '/api/lehrer/qr.svg?ziel=funkraum');
+  assert.equal(qr.getAttribute('alt'), 'QR-Code zum Funkraum');
+  assert.match(k.text(k.eins(k.document, 'ol.funk-ticker')), /Team Skytale hat eine Nachricht an Team Scheibe gesendet/);
+  assert.match(k.text(k.eins(k.document, 'h1')), /Botenlauf/);
+  k.wert('KRBeamer').stopp();
+
+  const a = ladeBeamer({ status: 200, body: bstand(9, { phase: 'aufloesung', anzeigen: { runde: null, merksatz: 'Schlüsselraum zu klein: 25 sinnvolle Schlüssel – Kerckhoffs: Geheim ist nur der Schlüssel.' }, auswertung: { zeilen: [{ nachricht: 11, runde: 3, von: 1, an: 2, angekommen: true, geknackt: true, sekunden: 70, besonderheit: 'doppelt' }], je: {} } }) });
+  await a.ruhe();
+  const zeile = a.alle(a.document, 'table.beamer-auswertung tbody tr')[0];
+  assert.deepEqual(a.alle(zeile, 'td, th').map((c) => a.text(c)), ['3', 'Team Skytale', '✓ ja', '1:10 min', 'zweimal Caesar']);
+  assert.match(a.text(a.eins(a.document, '.beamer-merksatz')), /Kerckhoffs/);
+  a.wert('KRBeamer').stopp();
+});
+
+test('Beamer Wettknacken: Fortschrittsbalken je Team (Name, Prozent, Muster); Auflösung mit Kurven und Klartext', async () => {
+  const k = ladeBeamer({ status: 200, body: bstand(4, { typ: 'wettknacken', titel: 'Wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], teams: TEAMS.map((t) => ({ ...t, rolle: 'knacker' })), anzeigen: { geheimtext: 'DHCPQ', laenge: 486, hinweise: [], fortschritt: [{ team: 1, anteil: 0.284, fertig: false, platz: null }, { team: 2, anteil: 0.193, fertig: false, platz: null }], verlauf: { 1: [{ s: 0, anteil: 0 }, { s: 60, anteil: 0.284 }], 2: [{ s: 30, anteil: 0.193 }] } } }) });
+  await k.ruhe();
+  const balken = k.alle(k.document, 'div.balken');
+  assert.equal(balken.length, 2);
+  assert.match(k.text(balken[0]), /Team Skytale.*28 %/);
+  assert.notEqual(balken[0].getAttribute('data-muster'), balken[1].getAttribute('data-muster'));
+  assert.equal(k.alle(k.document, 'polyline').length, 0);
+  assert.doesNotMatch(k.text(k.document.body), /DHCPQ/, 'keine Inhalte, nur Fortschritt');
+  k.wert('KRBeamer').stopp();
+  const a = ladeBeamer({ status: 200, body: bstand(9, { typ: 'wettknacken', titel: 'Wettknacken', phase: 'aufloesung', phasen: ['knacken', 'aufloesung'], teams: TEAMS.map((t) => ({ ...t, rolle: 'knacker' })), anzeigen: { geheimtext: 'DHCPQ', laenge: 486, hinweise: [], klartext: 'Im Namen Gottes', fortschritt: [{ team: 1, anteil: 0.96, fertig: true, platz: 1 }, { team: 2, anteil: 0.193, fertig: false, platz: null }], verlauf: { 1: [{ s: 0, anteil: 0 }, { s: 600, anteil: 0.96 }], 2: [{ s: 30, anteil: 0.193 }, { s: 90, anteil: 0.2 }] } } }) });
+  await a.ruhe();
+  assert.equal(a.alle(a.document, 'svg.beamer-kurven polyline').length, 2);
+  assert.match(a.text(a.eins(a.document, '.beamer-klartext')), /Im Namen Gottes/);
+  assert.match(a.text(a.eins(a.document, 'div.balken')), /Platz 1/);
+  a.wert('KRBeamer').stopp();
+});
+
+test('Beamer: neue Nachricht fliegt nur ohne reduzierte Bewegung; 404 → „Kein laufendes Szenario.“', async () => {
+  for (const ruhig of [false, true]) {
+    let n = 0;
+    const gesehen = {};
+    const k = ladeBeamer(
+      () => {
+        n++;
+        if (n === 1) return { status: 200, body: bstand(4, { nachrichten: [BOTE] }) };
+        if (n === 2) return { status: 200, body: bstand(5, { nachrichten: [{ ...BOTE, id: 12, version: 5 }] }) };
+        gesehen.fliegt = k.alle(k.document, 'circle.fliegt').length;
+        gesehen.punkte = k.alle(k.document, 'circle.nachricht').length;
+        return { status: 404, body: { error: 'Szenario nicht gefunden.' } };
+      },
+      { zeitraffer: 1000, vorher: (kk) => (kk.medien['(prefers-reduced-motion: reduce)'] = ruhig) }
+    );
+    await k.ruhe();
+    assert.equal(gesehen.punkte, 2, 'Delta zusammengeführt');
+    assert.equal(gesehen.fliegt, ruhig ? 0 : 1, ruhig ? 'ruhig' : 'bewegt');
+    assert.match(k.text(k.eins(k.document, '.leer-zustand')), /Kein laufendes Szenario/);
+  }
+});
+
+test('Beamer Doppelter Schlüssel, Schlüsseltausch und Mallory: verdeckt bis zur Auflösung, dann Vergleich, K und Wege', async () => {
+  const otp = ladeBeamer({ status: 200, body: bstand(9, { typ: 'doppelter-schluessel', titel: 'Der doppelte Schlüssel', phase: 'aufloesung', phasen: ['funken', 'lauschen', 'aufloesung'], nachrichten: [{ ...BOTE, id: 20, inhalt: C1 }, { ...BOTE, id: 21, inhalt: C2 }], anzeigen: { eveGewinnt: true, vergleiche: [{ a: 20, b: 21, xor: '05 0A 07 13 00 6E 18 62 14 00 1C 68 0E 0B 00 06 0E 14 01', nullen: 16, laenge: 19 }], sprueche: [{ nachricht: 20, team: 1, c: C1, m: 'HEUTE 8 UHR AM HAFEN', abschnitt: 1 }] } }) });
+  await otp.ruhe();
+  assert.match(otp.text(otp.eins(otp.document, '.beamer-vergleich')), /16 von 19 Bytes beginnen mit 000/);
+  assert.equal(otp.alle(otp.document, '.beamer-vergleich .byte.null').length, 16);
+  assert.match(otp.text(otp.eins(otp.document, '.beamer-hexliste')), /55 85 A8/);
+  otp.wert('KRBeamer').stopp();
+
+  const dh = ladeBeamer({ status: 200, body: bstand(9, { typ: 'schluesseltausch', titel: 'Schlüsseltausch vor Eves Augen', phase: 'aufloesung', phasen: ['runde-1', 'runde-2', 'aufloesung'], anzeigen: { runde: null, p: null, g: null, meldungen: [{ paar: 1, runde: 1, kAlice: 8, kBob: 8, kWahr: 8, eve: { k: 8, richtig: true } }, { paar: 1, runde: 2, kAlice: 82, kBob: 81, kWahr: 82, eve: { k: 5, richtig: false } }] } }) });
+  await dh.ruhe();
+  const z = dh.alle(dh.document, 'table.beamer-dh tbody tr').map((tr) => dh.text(tr));
+  assert.match(z[0], /Team Skytale.*1.*✓.*✓/);
+  assert.match(z[1], /2.*✗.*✗/);
+  dh.wert('KRBeamer').stopp();
+
+  const m = ladeBeamer({ status: 200, body: bstand(6, { typ: 'mallory', titel: 'Mallory im Netz', phase: 'ohne-zertifikate', phasen: ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'], teams: MTEAMS, nachrichten: [{ ...BOTE, id: 40, von: 2, an: 3, art: 'schluessel', inhalt: 'SCHLUESSEL', lesbar: false }, { ...BOTE, id: 41, von: 1, an: 3, art: 'nachricht', inhalt: 'UMSCHLAG', lesbar: false }], anzeigen: {} }) });
+  await m.ruhe();
+  const t = m.text(m.eins(m.document, 'svg.funk-netz'));
+  assert.match(t, /SCHLUESSEL/);
+  assert.doesNotMatch(t, /S\d\d/);
+  assert.equal(m.eins(m.document, 'svg.funk-netz g.knoten.rolle-mallory circle').getAttribute('cx'), '480', 'Mallory in der Mitte');
+  m.wert('KRBeamer').stopp();
+  const ma = ladeBeamer({ status: 200, body: bstand(9, { typ: 'mallory', titel: 'Mallory im Netz', phase: 'aufloesung', phasen: ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'], teams: MTEAMS, anzeigen: { auswertung: [{ team: 1, phase: 'ohne-zertifikate', gesendet: true, veraendert: true, ueberMallory: true, schluesselErsetzt: true, gemeldet: true, original: 'LIEFERE 5 KISTEN AN TOR 3', empfangen: 'LIEFERE 5 KISTEN AN TOR 8', weg: [{ nachricht: 41, von: 1, an: 3, etikett: 'S41' }, { nachricht: 43, von: 3, an: 2, etikett: 'S23' }] }] } }) });
+  await ma.ruhe();
+  const zeile = ma.text(ma.eins(ma.document, 'table.beamer-mallory tbody tr'));
+  assert.match(zeile, /TOR 3.*TOR 8/);
+  assert.match(zeile, /Team Skytale → Team Quadrat \(S41\) → Team Scheibe \(S23\)/);
+  ma.wert('KRBeamer').stopp();
+});

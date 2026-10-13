@@ -169,3 +169,78 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
   :root:not([data-bewegung="aus"]) .funk-netz .nachricht.fliegt { animation: kr-funkflug .8s ease-out both; }
 }
 @keyframes kr-funkflug { from { transform: translate(var(--dx, 0), var(--dy, 0)); } to { transform: none; } }
+
+/* ---------- Beamer „Funkraum“ (Plan M7 Task 155): Nacht, 1920 × 1080, Schrift aus 6 m lesbar ---------- */
+.beamer-funkraum { grid-template-rows: auto auto 1fr; gap: var(--a-4); }
+.beamer-kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--a-4); flex-wrap: wrap; }
+.beamer-phase { margin: var(--a-1) 0 0; font-size: clamp(1.1rem, 1.8vw, 2rem); color: var(--auf-tinte-2); }
+.beamer-qr-rahmen { margin: 0; display: grid; justify-items: center; gap: var(--a-1); padding: var(--a-2); background: var(--papier); border-radius: var(--r-karte); color: var(--text); }
+.beamer-qr { display: block; width: clamp(110px, 11vw, 220px); height: auto; }
+.beamer-qr-rahmen figcaption { font-size: 1rem; font-weight: 700; }
+.beamer-banner:empty { display: none; }
+.beamer-pause { margin: 0; padding: var(--a-2) var(--a-4); border: 3px solid var(--messing-hell); border-radius: var(--r-karte); font-size: clamp(1.6rem, 3vw, 3rem); font-weight: 700; text-align: center; }
+.beamer-raster { display: grid; gap: var(--a-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1100px) {
+  .beamer-raster { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); }
+}
+.beamer-haupt, .beamer-seite { display: grid; gap: var(--a-4); min-width: 0; }
+.beamer-seite h2 { margin: 0; color: var(--auf-tinte); }
+.beamer-ticker { font-size: clamp(1rem, 1.3vw, 1.4rem); }
+.beamer-ticker li { border-bottom-color: var(--tinte-3); }
+.beamer-verbindung { margin: 0; color: var(--fehler-hell); font-weight: 700; }
+.beamer-verbindung:empty { display: none; }
+.beamer-netz svg.funk-netz { max-height: 62vh; }
+.beamer-netz .funk-netz-details { display: none; }
+.nacht .funk-netz .netz-linie { stroke: var(--tinte-3); stroke-width: 3; }
+.nacht .funk-netz .knoten-kreis { fill: var(--tinte-2); stroke: var(--auf-tinte-2); stroke-width: 3; }
+.nacht .funk-netz .knoten.sonder .knoten-kreis { stroke: var(--fehler-hell); stroke-width: 4; }
+.nacht .funk-netz text { fill: var(--auf-tinte); }
+.nacht .funk-netz .knoten-nr { font-size: 30px; }
+.nacht .funk-netz .knoten-name { font-size: 24px; }
+.nacht .funk-netz .knoten-rolle { font-size: 20px; fill: var(--auf-tinte-2); }
+.nacht .funk-netz .nachricht { stroke: var(--auf-tinte); stroke-width: 2; fill: var(--messing-hell); }
+.nacht .funk-netz .nachricht.angekommen { fill: var(--ok-hell); }
+.nacht .funk-netz .nachricht.geknackt { fill: var(--fehler-hell); }
+.nacht .funk-netz .nachricht-symbol { font-size: 22px; }
+.nacht .funk-netz .nachricht-symbol.angekommen { fill: var(--ok-hell); }
+.nacht .funk-netz .nachricht-symbol.geknackt { fill: var(--fehler-hell); }
+.nacht .funk-netz .nachricht-vorschau { font-size: 28px; font-weight: 700; }
+.beamer-typ { display: grid; gap: var(--a-4); min-width: 0; }
+.beamer-gross { margin: 0; font-size: clamp(1.4rem, 2.4vw, 2.6rem); font-weight: 700; }
+.beamer-klein { display: block; font-size: 1rem; color: var(--auf-tinte-2); }
+.beamer-merksatz { margin: 0; font-size: clamp(1.3rem, 2vw, 2.2rem); border-left: 6px solid var(--messing-hell); padding-left: var(--a-3); }
+.beamer-tabelle { width: 100%; font-size: clamp(1rem, 1.5vw, 1.6rem); color: var(--auf-tinte); }
+.beamer-aufloesung .beamer-netz svg.funk-netz { max-height: 30vh; }
+.beamer-tabelle caption { color: var(--auf-tinte); text-align: left; font-weight: 700; padding-bottom: var(--a-2); font-size: 1.1em; }
+.beamer-tabelle th, .beamer-tabelle td { border-bottom: 1px solid var(--tinte-3); padding: var(--a-2); text-align: left; }
+.beamer-tabelle code, .beamer-hexliste code, .beamer-bytes code { font-family: var(--f-mono); font-size: clamp(1.2rem, 1.6vw, 1.8rem); overflow-wrap: anywhere; }
+.beamer-hexliste { margin: 0; padding-left: 1.4em; display: grid; gap: var(--a-2); }
+.beamer-hexliste code { font-size: clamp(1.4rem, 1.8vw, 1.9rem); }
+.beamer-vergleich { display: grid; gap: var(--a-2); }
+.beamer-vergleich h2 { margin: 0; color: var(--auf-tinte); }
+.beamer-bytes { margin: 0; display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.beamer-bytes .byte { padding: 2px 6px; border: 2px solid var(--tinte-3); border-radius: 6px; }
+.beamer-bytes .byte.null { border-color: var(--ok-hell); color: var(--ok-hell); font-weight: 700; }
+.beamer-balken { display: grid; gap: var(--a-3); }
+.balken { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) auto; gap: var(--a-3); align-items: center; font-size: clamp(1.1rem, 1.8vw, 1.9rem); }
+.balken-name { font-weight: 700; }
+.balken-spur { position: relative; height: 1.4em; border: 2px solid var(--tinte-3); border-radius: 8px; overflow: hidden; }
+.balken-wert { position: absolute; inset: 0 auto 0 0; width: var(--wert, 0%); background: var(--messing-hell); }
+.balken[data-muster="1"] .balken-wert { background: repeating-linear-gradient(45deg, var(--akzent-hell, var(--messing-hell)) 0 10px, transparent 10px 16px); }
+.balken[data-muster="2"] .balken-wert { background: repeating-linear-gradient(90deg, var(--ok-hell) 0 12px, transparent 12px 18px); }
+.balken[data-muster="3"] .balken-wert { background: repeating-linear-gradient(-45deg, var(--auf-tinte-2) 0 6px, transparent 6px 12px); }
+.balken-zahl { font-variant-numeric: tabular-nums; font-weight: 700; }
+.beamer-kurven { width: 100%; height: auto; max-height: 26vh; }
+.beamer-kurven .kurve polyline { fill: none; stroke: var(--messing-hell); stroke-width: 4; }
+.beamer-kurven .kurve.muster-1 polyline { stroke: var(--akzent-hell, var(--messing-hell)); stroke-dasharray: 12 6; }
+.beamer-kurven .kurve.muster-2 polyline { stroke: var(--ok-hell); stroke-dasharray: 3 5; }
+.beamer-kurven .kurve.muster-3 polyline { stroke: var(--auf-tinte-2); stroke-dasharray: 16 4 3 4; }
+.beamer-kurven .kurve-ziel { stroke: var(--fehler-hell); stroke-width: 2; stroke-dasharray: 4 4; }
+.beamer-kurven .kurve-achse { stroke: var(--tinte-3); stroke-width: 2; }
+.beamer-kurven .kurve-text { fill: var(--auf-tinte); font-size: 14px; }
+.beamer-klartext h2 { margin: 0 0 var(--a-2); color: var(--auf-tinte); }
+.beamer-klartext p { margin: 0; font-size: clamp(1.1rem, 1.6vw, 1.7rem); line-height: 1.5; }
+@media (max-width: 700px) {
+  .balken { grid-template-columns: minmax(0, 1fr) auto; }
+  .balken-spur { grid-column: 1 / -1; grid-row: 2; }
+}

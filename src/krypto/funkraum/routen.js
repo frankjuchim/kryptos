@@ -1,9 +1,10 @@
 /* Kryptos – Funkraum-Routen (TECHNIK §13.2, §13.4, Plan M7 Tasks 134–136). Lehrkraft: Szenario anlegen, Status, Rollen, Stand
    (regie/beamer); Schüler: /api/funk, Stand mit ETag/seit (Task 135), Senden/Empfangen/Knacken; Lehrkraft:
-   Ausblenden, Stummschalten (Task 136); Szenario-Aktionen je Typ (Tasks 137–141). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
+   Ausblenden, Stummschalten (Task 136); Szenario-Aktionen je Typ (Tasks 137–141); QR-Code für den Beamer (Task 155). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
 'use strict';
 const V = require('../../validate');
 const S = require('../../security');
+const QR = require('qrcode');
 
 function zuViele(res, limiter, key, jetzt, text) {
   res.set('Retry-After', String(limiter.retryAfterSec(key, jetzt)));
@@ -92,6 +93,16 @@ function funkRouten(funk) {
     api.post('/lehrer/funk/:id/zertifikat', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'zertifikat', req.body)));
     api.post('/lehrer/funk/:id/station', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'station', req.body)));
     api.post('/lehrer/funk/:id/sonderkarte', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'sonderkarte', req.body)));
+    // QR-Code zum Funkraum bzw. zur Werkstatt für den Beamer (Task 155, E114): PLATTFORM_URL + /<ziel>, sonst die Adresse
+    // der Anfrage; SVG ohne Skript, nicht zwischengespeichert
+    api.get('/lehrer/qr.svg', lehrkraft, async (req, res) => {
+      const ziel = req.query.ziel;
+      if (!['funkraum', 'werkstatt'].includes(ziel)) return res.status(400).json({ error: 'ziel muss funkraum oder werkstatt sein.' });
+      const basis = (h.konfig && h.konfig.plattformUrl) || `${req.protocol}://${req.get('host')}`;
+      const svg = await QR.toString(`${basis.replace(/\/$/, '')}/${ziel}`, { type: 'svg', margin: 1 });
+      res.set('Cache-Control', 'no-store');
+      res.type('image/svg+xml').send(svg);
+    });
     api.get('/lehrer/funk/:id/stand', lehrkraft, limit(lkLimit, proLk), (req, res) =>
       sendeStand(res, funk.standLehrkraft(req.lk, req.params.id, { ...abfrage(req), ansicht: req.query.ansicht === undefined ? 'regie' : req.query.ansicht }))
     );
