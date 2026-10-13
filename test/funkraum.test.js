@@ -76,7 +76,7 @@ test('Kurs gesperrt (Verbund): laufendes Szenario wird über den Funkraum-Dienst
   const zeile = f.db.prepare('SELECT status, konfig FROM funk_szenarien WHERE id = ?').get(sz.id);
   assert.equal(zeile.status, 'auswertung');
   assert.deepEqual(Object.keys(JSON.parse(zeile.konfig)), ['auswertung']);
-  assert.deepEqual(Object.keys(JSON.parse(zeile.konfig).auswertung.teams).map(Number), f.teams.map((t) => t.id));
+  assert.deepEqual(Object.keys(JSON.parse(zeile.konfig).auswertung), ['zeilen', 'je'], 'typ-spezifische Auswertung des Botenlaufs (Task 137)');
   assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM funk_teilnahmen WHERE typ = 'botenlauf'").get().n, 3);
   // Regie liest weiter (gesperrter Kurs: nur lesend), Status-Aktionen → 403
   assert.equal((await f.lk.get(`/api/lehrer/kurse/${f.kurs.id}/funk`).expect(200)).body.szenario.status, 'auswertung');

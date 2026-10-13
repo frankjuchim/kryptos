@@ -68,19 +68,64 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     ereignis: db.prepare('INSERT INTO funk_ereignisse (szenario_id, code, daten, version, zeit) VALUES (?, ?, ?, ?, ?)')
   };
 
-  /** Kontext für die Typ-Module (Plan M7 „Szenario-Typ-Vertrag“) */
+  /**
+   * Kontext für die Typ-Module (Plan M7 „Szenario-Typ-Vertrag“). Lesende Hilfen gelten überall; die schreibenden
+   * (`neueVersion`, `ereignis`, `setzeKonfig`, `setzeZustand`, `neueNachricht`, `aendereNachricht`) rufen die Typen nur in
+   * Aktionen, die der Dienst in EINE Transaktion legt (Tasks 137–141). Inhalte gehen nur über die Whitelist.
+   */
   function typCtx(sz) {
     const konfig = JSON.parse(sz.konfig || '{}');
-    return {
+    const ctx = {
       db,
       now,
+      iso,
       zufallBytes,
       krypto: Krypto,
       log,
       quelle,
       hash: (text) => T.hash(konfig.salz, text),
-      version: () => sql.sz.get(sz.id).version
+      version: () => sql.sz.get(sz.id).version,
+      /** frische Szenario-Zeile */
+      szenario: () => sql.sz.get(sz.id),
+      konfig: () => konfigVon(sql.sz.get(sz.id)),
+      setzeKonfig: (k) => db.prepare('UPDATE funk_szenarien SET konfig = ? WHERE id = ?').run(JSON.stringify(k), sz.id),
+      rollen: () => sql.rollen.all(sz.id).map((r) => ({ ...r, zustand: JSON.parse(r.zustand || '{}') })),
+      zustand: (teamId) => {
+        const r = db.prepare('SELECT zustand FROM funk_rollen WHERE szenario_id = ? AND team_id = ?').get(sz.id, teamId);
+        return r ? JSON.parse(r.zustand || '{}') : null;
+      },
+      setzeZustand: (teamId, z) => sql.zustand.run(JSON.stringify(z), sz.id, teamId),
+      nachricht: (nid) => db.prepare('SELECT * FROM funk_nachrichten WHERE id = ? AND szenario_id = ?').get(nid, sz.id),
+      nachrichten: () => db.prepare('SELECT * FROM funk_nachrichten WHERE szenario_id = ? ORDER BY id').all(sz.id),
+      ereignisse: (code) =>
+        db
+          .prepare('SELECT id, code, daten, version, zeit FROM funk_ereignisse WHERE szenario_id = ? AND code = ? ORDER BY id')
+          .all(sz.id, code)
+          .map((e) => ({ ...e, daten: JSON.parse(e.daten || '{}') })),
+      /** Runde (Phase) zu einer Version: Phase, deren phase-Ereignis die größte Version ≤ v hat (E91) */
+      phaseZu: (v) => {
+        let p = null;
+        for (const e of ctx.ereignisse('phase')) if (e.version <= v) p = e.daten.phase;
+        return p;
+      },
+      neueVersion: () => naechsteVersion(sz.id),
+      ereignis: (code, daten, v) => ereignis(sz.id, code, daten, v),
+      /** neue Nachricht (Inhalt über die Whitelist, 200er-Grenze) → id */
+      neueNachricht: ({ von, an = null, angezeigtVon = null, schuelerId, art = 'nachricht', inhalt, fuerSchluessel = null, klartextHash = null }, v) => {
+        if (sqlN.anzahl.get(sz.id).n >= GRENZEN.maxNachrichten) throw new V.ConflictError(`In diesem Szenario wurden schon ${GRENZEN.maxNachrichten} Nachrichten gesendet.`);
+        return Number(sqlN.neu.run(sz.id, von, an, angezeigtVon, schuelerId, art, T.pruefeInhalt(inhalt), fuerSchluessel, klartextHash, v, iso()).lastInsertRowid);
+      },
+      /** Nachricht ändern (angekommen, geknackt_von …) – setzt die Version neu (E109) */
+      aendereNachricht: (nid, felder, v) => {
+        const erlaubt = ['angekommen', 'geknackt_von'];
+        for (const [k, w] of Object.entries(felder)) {
+          if (!erlaubt.includes(k)) throw new Error('aendereNachricht: Feld ' + k);
+          db.prepare(`UPDATE funk_nachrichten SET ${k} = ? WHERE id = ?`).run(w, nid);
+        }
+        db.prepare('UPDATE funk_nachrichten SET version = ? WHERE id = ?').run(v, nid);
+      }
     };
+    return ctx;
   }
 
   /** Szenario-Zeile oder 404 (abgelaufene gelten als gelöscht – der Wartungsjob entfernt sie) */
@@ -460,7 +505,8 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     const key = `${sz.id}:${team.id}`;
     if (sendeLimit.isBlocked(key, jetzt)) throw new ZuVieleError('Höchstens eine Nachricht je Team in 10 Sekunden.', sendeLimit.retryAfterSec(key, jetzt));
     if (sqlN.anzahl.get(sz.id).n >= GRENZEN.maxNachrichten) throw new V.ConflictError(`In diesem Szenario wurden schon ${GRENZEN.maxNachrichten} Nachrichten gesendet.`);
-    const inhalt = T.pruefeInhalt(b.text);
+    // Typen mit vorgegebenem Text (Mallory: Auftragskarte) übernehmen den Inhalt nicht vom Client
+    const inhalt = typ.textVomServer ? null : T.pruefeInhalt(b.text);
     let klartext = null;
     if (b.klartext !== undefined && b.klartext !== null) klartext = T.pruefeKlartext(b.klartext);
     else if (typ.klartextPflicht) throw new V.ValidationError('Gib zum Prüfen auch den Klartext an.');
@@ -470,6 +516,7 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     // → Ergänzungen { an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? } (Inhalt erneut durch die Whitelist)
     const extra = (typeof (typ.aktionen || {}).senden === 'function' && typ.aktionen.senden(typCtx(sz), sz, betrachter, { inhalt, klartext, an, body: b })) || {};
     const endInhalt = extra.inhalt !== undefined ? T.pruefeInhalt(extra.inhalt) : inhalt;
+    if (endInhalt === null) throw new V.ValidationError('Die Nachricht ist leer.');
     if (extra.an !== undefined) an = extra.an;
     if (an === null || an === undefined) throw new V.ValidationError('Dein Team hat kein Partner-Team.');
     const salz = konfigVon(sz).salz;
@@ -493,8 +540,16 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
     const { sz, team, betrachter } = aktiverTeilnehmer(s, id, aktion);
     const typ = TYP_MODULE[sz.typ];
-    // Typ mit eigener Aktion (z. B. Schlüsseltausch-Tipps, Task 140) übernimmt ganz
-    if (typeof (typ.aktionen || {})[aktion] === 'function') return typ.aktionen[aktion](typCtx(sz), sz, betrachter, b);
+    // Typ mit eigener Aktion (z. B. Schlüsseltausch-Tipps, Task 140) übernimmt ganz – in einer Transaktion, mit derselben
+    // Versuchsgrenze (gezählt erst nach gültiger Eingabe)
+    if (typeof (typ.aktionen || {})[aktion] === 'function') {
+      const key = `${sz.id}:${team.id}`;
+      const jetzt = now();
+      if (versuchLimit.isBlocked(key, jetzt)) throw new ZuVieleError('Zu viele Versuche – höchstens 30 in 5 Minuten.', versuchLimit.retryAfterSec(key, jetzt));
+      const antwort = db.transaction(() => typ.aktionen[aktion](typCtx(sz), sql.sz.get(sz.id), betrachter, b))();
+      versuchLimit.hit(key, jetzt);
+      return antwort;
+    }
     const nid = V.id(b.nachricht, 'Nachricht');
     const n = sqlN.eine.get(nid, sz.id);
     if (!n) throw new V.NotFoundError('Nachricht nicht gefunden.');
@@ -527,6 +582,54 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
 
   const empfangen = (s, id, body) => pruefe(s, id, body, 'empfangen');
   const knacken = (s, id, body) => pruefe(s, id, body, 'knacken');
+
+  /* ---------- Typ-spezifische Aktionen (Plan M7 Tasks 137–141) ---------- */
+
+  /** Grenzen typ-spezifischer Team-Aktionen: typ.grenzen[name] = 'senden' (wie Nachrichten: stumm, 1 je 10 s) oder
+      { max, ms, text } (eigener Zähler je Szenario und Team); gezählt wird erst nach einer gültigen Aktion */
+  const aktionsLimits = new Map();
+  function aktionsLimit(typName, name, g) {
+    const key = `${typName}:${name}`;
+    if (!aktionsLimits.has(key)) aktionsLimits.set(key, new S.Limiter({ max: g.max, windowMs: g.ms }));
+    return aktionsLimits.get(key);
+  }
+
+  /** POST/PUT /api/funk/:id/<aktion> – Aktion des Typs (zuordnung, oeffentlich, k-melden, mallory) für die eigene Rolle */
+  function teamAktion(s, id, name, body) {
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const { sz, team, betrachter } = aktiverTeilnehmer(s, id, name);
+    const typ = TYP_MODULE[sz.typ];
+    const f = (typ.aktionen || {})[name];
+    if (typeof f !== 'function') throw new V.ForbiddenError('Das darf deine Rolle in diesem Szenario nicht.');
+    const g = (typ.grenzen || {})[name];
+    const jetzt = now();
+    const key = `${sz.id}:${team.id}`;
+    let limiter = null;
+    let text = 'Zu viele Anfragen. Bitte warte kurz.';
+    if (g === 'senden') {
+      const stummBis = (konfigVon(sz).stumm || {})[team.id];
+      if (stummBis && Date.parse(stummBis) > jetzt) throw new ZuVieleError('Euer Team ist für eine Minute stummgeschaltet.', (Date.parse(stummBis) - jetzt) / 1000);
+      limiter = sendeLimit;
+      text = 'Höchstens eine Nachricht je Team in 10 Sekunden.';
+    } else if (g) {
+      limiter = aktionsLimit(sz.typ, name, g);
+      text = g.text || text;
+    }
+    if (limiter && limiter.isBlocked(key, jetzt)) throw new ZuVieleError(text, limiter.retryAfterSec(key, jetzt));
+    const antwort = db.transaction(() => f(typCtx(sz), sql.sz.get(sz.id), { ...betrachter, team }, b))();
+    if (limiter) limiter.hit(key, jetzt);
+    return antwort;
+  }
+
+  /** POST /api/lehrer/funk/:id/<aktion> – Regie-Aktion des Typs (sonderkarte, hinweis, zertifikat, station) */
+  function regieAktion(lk, id, name, body) {
+    const sz = ladeLkOffen(lk, id);
+    const typ = TYP_MODULE[sz.typ];
+    const f = (typ.regie || {})[name];
+    if (typeof f !== 'function') throw new V.ValidationError(`Diese Aktion gibt es im Szenario „${Sz.SZENARIEN[sz.typ].titel}“ nicht.`);
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    return db.transaction(() => f(typCtx(sz), sql.sz.get(sz.id), b, { lk }))();
+  }
 
   /** schreibende Lehrkraft-Aktion in einem offenen Szenario (gesperrter Kurs 403, beendet 409) */
   function ladeLkOffen(lk, id) {
@@ -569,6 +672,8 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
 
   return {
     senden,
+    teamAktion,
+    regieAktion,
     empfangen,
     knacken,
     ausblenden,

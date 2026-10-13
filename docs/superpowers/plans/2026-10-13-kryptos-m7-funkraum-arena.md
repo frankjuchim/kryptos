@@ -1074,7 +1074,7 @@ Beamer bei 1920 × 1080.
   `doppelt`/`zaun`/`null`, nur für Nachrichten der Runde 3 des vermerkten Teams). Regie/Beamer sehen sie ab `aufloesung` in `anzeigen.auswertung`, nach dem Beenden in
   `auswertung`.
 
-- [ ] **Step 1: Failing test** – `test/funkraum_botenlauf.test.js` (vollständiger Durchlauf):
+- [x] **Step 1: Failing test** – `test/funkraum_botenlauf.test.js` (vollständiger Durchlauf):
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1130,10 +1130,10 @@ Beamer bei 1920 × 1080.
     assert.ok(beamer.includes('OHSAL AKLUW HZZ') && !/[0-9a-f]{64}/.test(beamer));
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Runde einer Nachricht nach E91 aus den `phase`-Ereignissen; `sekunden`
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Runde einer Nachricht nach E91 aus den `phase`-Ereignissen; `sekunden`
   = Knackzeit − Sendezeit). W0 §9.3 Schritt 3 um den Satz aus E92 ergänzen.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Funkraum: Szenario Botenlauf (drei Runden, Sonderkarten, Auswertung, Scheibe für alle Rollen)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Funkraum: Szenario Botenlauf (drei Runden, Sonderkarten, Auswertung, Scheibe für alle Rollen)"`.
 
 ### Task 138: Szenario „Wettknacken“ mit Seed-Text (W1 §9.2/§9.3, E97, E98)
 
@@ -2788,6 +2788,21 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Vorprüfung mit Ergänzungen `{ an?, inhalt?, art?, fuerSchluessel?, angezeigtVon? }` (Inhalt erneut über die Whitelist),
   `aktionen.empfangen/knacken` übernehmen eine Prüfaktion ganz (Schlüsseltausch, Task 140). Knacken eigener Nachrichten → 400;
   Ausblenden/Stumm nach dem Beenden → 409, gesperrter Kurs → 403; `sekunden` Standard 60. Zusatztest: Rechte und Eingaben.
+
+- **Task 137:** Der Dienst bekommt allgemeine Typ-Aktionen: `teamAktion(s, id, name, body)` (Rolle laut `SZENARIEN.aktionen`,
+  Grenze aus `typ.grenzen[name]` – `'senden'` = Stummschaltung + 1 je 10 s wie Nachrichten, sonst `{ max, ms, text }` –,
+  gezählt erst nach gültiger Aktion, alles in einer Transaktion) und `regieAktion(lk, id, name, body)` (`typ.regie[name]`,
+  unbekannt → 400, beendet → 409, gesperrt → 403); `typCtx` hat schreibende Hilfen (`neueVersion`, `ereignis`,
+  `setzeKonfig`, `setzeZustand`, `neueNachricht` mit Whitelist und 200er-Grenze, `aendereNachricht` mit neuer Version E109)
+  und lesende (`konfig`, `rollen`, `zustand`, `nachrichten`, `ereignisse`, `phaseZu`). Übernimmt ein Typ `empfangen`/`knacken`,
+  läuft der Hook in einer Transaktion unter derselben Versuchsgrenze (30 je 5 min). `typ.textVomServer` (Mallory) überspringt
+  die Whitelist-Prüfung des Client-Texts; der Typ liefert den Inhalt (erneut über die Whitelist). Botenlauf: Runde einer
+  Nachricht über die Version ihres **`gesendet`-Ereignisses** (nicht der Nachrichten-Version, die sich beim Ankommen/Knacken
+  ändert, E109) – sonst zählte eine in Runde 2 geknackte Runde-1-Nachricht zu Runde 2 (Zusatztest). `je` hat die Schlüssel
+  1–3. Sonderkarte: falsche Karte bzw. kein Alice-Team → 400, nicht Runde 3 → 409, anderer Typ → 400. Teams sehen
+  `anzeigen.auswertung` nicht (erst `auswertung` nach dem Beenden). `funkraum.test.js` (Sperren über den Verbund) prüft jetzt
+  die Botenlauf-Auswertung (`zeilen`, `je`) statt der generischen. W0 §9.3 Schritt 3 nach E92 angepasst (Plattform-Spalte
+  „Zeit vom Senden bis zum Knacken“).
 
 ## Reihenfolge und Abhängigkeiten
 

@@ -1629,7 +1629,7 @@ Minuten liest. Geheimhaltung des Verfahrens oder doppelte Verschlüsselung rette
 | 0 Vorbereitung | vor der Stunde | Lehrkraft legt Teams fest (Paare + Eve) | Funkraum-Regie: Szenario „Botenlauf“, Teams zuweisen |
 | 1 Schlüssel ziehen | 2 | Jedes Paar zieht geheim eine Schlüsselkarte (Alice und Bob einigen sich ohne Netz, „beim Abschied in Rom“). | – |
 | 2 Runde 1 | 6 | Alice verschlüsselt einen Befehl (15–40 Buchstaben) auf Papier, sendet nur den Geheimtext. Bob entschlüsselt und sendet eine verschlüsselte Quittung (`befehl erhalten`). Eve sammelt und knackt. | Nachrichten A–Z/0–9/Leerzeichen, ≤ 160 Zeichen; Beamer zeigt fliegende Nachrichten mit Geheimtext-Vorschau |
-| 3 Abfangmeldung | laufend | Eve meldet „geknackt: {Absender-Team} – {Klartext}“; das Absender-Team bestätigt per Knopf „stimmt“ / „stimmt nicht“. | Zeit vom Senden bis zur Bestätigung je Nachricht wird angezeigt |
+| 3 Abfangmeldung | laufend | Eve meldet „geknackt: {Absender-Team} – {Klartext}“. Die Plattform prüft Eves Klartext automatisch (Hash-Vergleich); eine Bestätigung des Absenders entfällt (Plan M7 E92; Papier-Alternative unverändert). | Zeit vom Senden bis zum Knacken je Nachricht wird angezeigt |
 | 4 Runde 2 | 6 | Paare ziehen eine neue Schlüsselkarte („Hilft ein neuer Schlüssel?“). | – |
 | 5 Runde 3 | 6 | Lehrkraft gibt heimlich je einem Paar eine Sonderkarte: Paar A verschlüsselt **zweimal** (zwei Schlüsselkarten), Paar B benutzt statt Caesar heimlich den **Gartenzaun mit 3 Schienen** („geheimes Verfahren“). | – |
 | 6 Auswertung | 5 | Beamer: Tabelle Nachricht · geknackt ja/nein · Zeit. Kurze Runde: Welche Nachrichten waren am schnellsten geknackt? Was hat Paar A, was hat Paar B geholfen? | Auswertungsansicht; danach „Beenden“ → alle Nachrichten gelöscht |

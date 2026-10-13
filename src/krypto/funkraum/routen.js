@@ -1,6 +1,6 @@
 /* Kryptos – Funkraum-Routen (TECHNIK §13.2, §13.4, Plan M7 Tasks 134–136). Lehrkraft: Szenario anlegen, Status, Rollen, Stand
    (regie/beamer); Schüler: /api/funk, Stand mit ETag/seit (Task 135), Senden/Empfangen/Knacken; Lehrkraft:
-   Ausblenden, Stummschalten (Task 136). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
+   Ausblenden, Stummschalten (Task 136); Szenario-Aktionen je Typ (Tasks 137–141). Rechte: Lehrkraft nur eigene Kurse (fremde → 404), gesperrter Kurs → 403 beim Schreiben. */
 'use strict';
 const V = require('../../validate');
 const S = require('../../security');
@@ -82,6 +82,8 @@ function funkRouten(funk) {
     api.put('/lehrer/funk/:id/rollen', lehrkraft, (req, res) => res.json(funk.rollenSetzen(req.lk, req.params.id, req.body)));
     api.post('/lehrer/funk/:id/nachrichten/:nid/ausblenden', lehrkraft, (req, res) => res.json(funk.ausblenden(req.lk, req.params.id, req.params.nid)));
     api.post('/lehrer/funk/:id/teams/:teamId/stumm', lehrkraft, (req, res) => res.json(funk.stumm(req.lk, req.params.id, req.params.teamId, req.body)));
+    // Regie-Aktionen der Szenario-Typen (Tasks 137–141)
+    api.post('/lehrer/funk/:id/sonderkarte', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'sonderkarte', req.body)));
     api.get('/lehrer/funk/:id/stand', lehrkraft, limit(lkLimit, proLk), (req, res) =>
       sendeStand(res, funk.standLehrkraft(req.lk, req.params.id, { ...abfrage(req), ansicht: req.query.ansicht === undefined ? 'regie' : req.query.ansicht }))
     );
