@@ -141,7 +141,10 @@ src/
                                (12 Pflicht-Generatoren nach Design §7.6 + dhrsa.js als Ergänzung = 13 Dateien,
                                16 Generator-Schlüssel nach Welt-Spec §8; index.js registriert, woerter.js Wortlisten);
                                M5 (W0/W1 §8): skytale.js (skytale), substitution.js (substitution_ver_ent),
-                               haeufigkeit_caesar.js (haeufigkeit_caesar) – 16 Dateien, 19 Generator-Schlüssel
+                               haeufigkeit_caesar.js (haeufigkeit_caesar); M5 (W2 §8 Nr. 4–8): vigenere_zeichen.js
+                               (vigenere_zeichen = Spec „vigenere-zeichen“, Unterstrich wegen der Schlüssel-Regel
+                               a–z/0–9/_), teiltext.js, playfair.js, porta.js, friedman.js (Niveau eA) –
+                               21 Dateien, 24 Generator-Schlüssel
     teams.js                   Tischgruppen je Kurs
     funkraum/                  szenarien.js (Konfiguration §12.6), dienst.js, routen.js
     arena/                     dienst.js, routen.js

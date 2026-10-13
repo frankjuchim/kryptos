@@ -1318,12 +1318,12 @@ Ergänzungen bestehender Generatoren (W1 §8 Prüfregeln):
 | `porta` | [2] · kern | `chiffre` ver, Eingabe ein Buchstabe, `{ typ: "porta", schluessel: S }` + Porta-Tafel (E41) | Buchstabe, Schlüsselbuchstabe zufällig | Tafelwert |
 | `friedman` | [2] · **eA** | `gaps` `k` (`zahl`) | n ∈ {501, 1001}, k ∈ 2 … 8, I = ((n − k)·0,076 + n(k − 1)·0,038)/((n − 1)k), auf 4 Stellen gerundet | k; Test prüft alle 14 Kombinationen: `round(friedmanWert(n, I))` = k (Spec §8 „für alle 14 Kombinationen geprüft“) |
 
-- [ ] **Step 1: Failing tests** (unabhängige Nachrechnung: Vigenère über A = 1-Formel `((p + s − 2) mod 26) + 1`, Teiltext über Indizes,
+- [x] **Step 1: Failing tests** (unabhängige Nachrechnung: Vigenère über A = 1-Formel `((p + s − 2) mod 26) + 1`, Teiltext über Indizes,
   Playfair über die drei Regeln aus dem Merkkasten, Porta über die Tafel-Konstruktion, Friedman über die Formel) → FAIL.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** (Generator `friedman` mit `niveau: 'eA'` – im gA-Kurs unsichtbar, TECHNIK §8.2).
-- [ ] **Step 4: Run** → PASS; `npm test`; Themenseite zeigt die neuen Generatoren (Titel) bei Welt 2.
-- [ ] **Step 5: Commit** `git commit -m "Generatoren W2: Vigenère-Zeichen, Teiltext, Playfair, Porta, Friedman (eA)"`.
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** (Generator `friedman` mit `niveau: 'eA'` – im gA-Kurs unsichtbar, TECHNIK §8.2).
+- [x] **Step 4: Run** → PASS; `npm test`; Themenseite zeigt die neuen Generatoren (Titel) bei Welt 2.
+- [x] **Step 5: Commit** `git commit -m "Generatoren W2: Vigenère-Zeichen, Teiltext, Playfair, Porta, Friedman (eA)"`.
 
 ---
 

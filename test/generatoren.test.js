@@ -316,11 +316,12 @@ test('kryptos16_runde: eigene Runde nach W3 §0a, keine schwachen Schlüssel, Ni
   assert.equal(G.GENERATOREN.kryptos16_runde.niveau, 'eA');
 });
 
-test('Trainingsplatz Welt 2: koinzidenz (eA) fehlt im gA-Kurs', async () => {
+test('Trainingsplatz Welt 2: koinzidenz und friedman (eA) fehlen im gA-Kurs', async () => {
   const { s, lk, kurs } = await H.szenario();
   assert.ok((await s.get('/api/training/2')).body.generatoren.some((g) => g.key === 'koinzidenz'));
+  assert.ok((await s.get('/api/training/2')).body.generatoren.some((g) => g.key === 'friedman'));
   await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
-  assert.deepEqual((await s.get('/api/training/2')).body.generatoren.map((g) => g.key), ['vigenere', 'kasiski']);
+  assert.deepEqual((await s.get('/api/training/2')).body.generatoren.map((g) => g.key), ['vigenere', 'kasiski', 'vigenere_zeichen', 'teiltext', 'playfair', 'porta']);
   assert.equal((await s.post('/api/training/3/neu').send({ generator: 'kryptos16_runde' })).status, 400);
 });
 
@@ -397,14 +398,14 @@ test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau 
   assert.deepEqual(['w4_dh', 'w4_rsa_ver'].map((k) => G.GENERATOREN[k].niveau), ['ergaenzung', 'ergaenzung']);
 });
 
-test('Alle 19 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + W0/W1-Ergänzungen, Plan M5 Task 91)', () => {
-  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'schluesselwort_alphabet', 'skytale', 'substitution_ver_ent', 'vigenere', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
+test('Alle 24 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + Ergänzungen W0–W2, Plan M5 Tasks 91/92)', () => {
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
   // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
   for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
 
 test('Entschlüsselungs-Generatoren liefern Klartext klein (Design §6.2, Plan M5 E58)', () => {
-  for (const key of ['caesar_ent', 'affin', 'vigenere', 'skytale', 'substitution_ver_ent']) {
+  for (const key of ['caesar_ent', 'affin', 'vigenere', 'skytale', 'substitution_ver_ent', 'playfair']) {
     let ent = 0;
     for (let s = 1; s <= 40; s++) {
       const a = G.erzeuge(key, s);
@@ -557,4 +558,129 @@ test('affin (ent): t nach statt vor der Multiplikation abgezogen → P3', () => 
     assert.equal(C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose[0].p, 'P3', `${m}, ${t}`);
   }
   assert.ok(geprueft > 10);
+});
+
+/* ---------- Plan M5 Task 92: weitere Generatoren Welt 2 (W2 §8 Nr. 4–8) ---------- */
+
+const A1 = (c) => c.toUpperCase().charCodeAt(0) - 64; // A = 1 … Z = 26
+const B1 = (n) => String.fromCharCode(64 + ((((n - 1) % 26) + 26) % 26) + 1);
+
+test('vigenere_zeichen: A = 1-Formel ((p + s − 2) mod 26) + 1, Stufe 2 umgekehrt, Fehlmuster ±1 → P1', () => {
+  const stufen = new Set();
+  for (const a of grundpruefung('vigenere_zeichen')) {
+    const md = a.inhalt[0].md;
+    assert.match(md, /Nummerierung: A = 1/);
+    const s = /s = ([A-Z])\b/.exec(md)[1];
+    assert.notEqual(s, 'A', 'Schlüsselbuchstabe A ändert nichts');
+    stufen.add(a.stufe);
+    if (a.stufe === 1) {
+      const p = /p = ([a-z])\b/.exec(md)[1];
+      const c = B1(((A1(p) + A1(s) - 2) % 26) + 1);
+      assert.equal(a.loesung.c[0], c);
+      const fm = a.loesung._fehlmuster.c.map((f) => [f.wert, f.p]);
+      assert.deepEqual(fm.sort(), [[B1(A1(c) + 1), 'P1'], [B1(A1(c) - 1), 'P1']].sort());
+    } else {
+      const c = /c = ([A-Z])\b/.exec(md)[1];
+      const p = B1((((A1(c) - A1(s)) % 26) + 26) % 26 + 1).toLowerCase();
+      assert.equal(a.loesung.p[0], p);
+      assert.equal(B1(((A1(p) + A1(s) - 2) % 26) + 1), c, 'Probe');
+      assert.deepEqual(C.pruefeAufgabe(a, { p: B1(A1(p) + 1) }, { diagnose: true }).diagnose.map((d) => d.p), ['P1']);
+    }
+  }
+  assert.deepEqual([...stufen].sort(), [1, 2]);
+});
+
+test('teiltext: Positionen j − 1, j − 1 + k, … (ab 0), Fehlmuster T_{j±1} → P1', () => {
+  for (const a of grundpruefung('teiltext')) {
+    const md = a.inhalt[0].md;
+    const k = Number(/Schlüssellänge (\d)/.exec(md)[1]);
+    const j = Number(/Teiltext T_?(\d)/.exec(md.replace(/[₁₂₃₄]/g, (x) => '₁₂₃₄'.indexOf(x) + 1))[1]);
+    const g = nurAZ(/`([A-Z ]+)`/.exec(md)[1]);
+    assert.ok([2, 3, 4].includes(k) && j >= 1 && j <= k);
+    assert.ok(g.length >= 12 && g.length <= 20);
+    assert.match(md, new RegExp(`Positionen ab 0: ${j - 1}, ${j - 1 + k}`));
+    let t = '';
+    for (let i = j - 1; i < g.length; i += k) t += g[i];
+    assert.equal(a.loesung.t[0], t);
+    for (const f of a.loesung._fehlmuster.t) {
+      assert.equal(f.p, 'P1');
+      assert.notEqual(f.wert, t);
+    }
+  }
+});
+
+test('playfair: drei Regeln aus dem Merkkasten unabhängig nachgerechnet, Fall in der Erklärung', () => {
+  const faelle = new Set();
+  const richtungen = new Set();
+  for (const a of grundpruefung('playfair')) {
+    const ia = a.interaktion;
+    const schl = ia.verfahren.schluessel;
+    assert.ok(W.PLAYFAIR_W2.includes(schl));
+    assert.ok(a.inhalt.some((b) => b.t === 'quadrat' && b.art === 'playfair' && b.schluessel === schl));
+    // Quadrat: Schlüsselwort ohne Wiederholung, Rest ohne J
+    const q = [...new Set(schl.replace(/J/g, 'I') + 'ABCDEFGHIKLMNOPQRSTUVWXYZ')].join('');
+    const pos = (c) => [Math.floor(q.indexOf(c) / 5), q.indexOf(c) % 5];
+    const bei = (z, s) => q[((z + 5) % 5) * 5 + ((s + 5) % 5)];
+    const ver = (x, y) => {
+      const [zx, sx] = pos(x), [zy, sy] = pos(y);
+      if (zx === zy) return ['Zeile', bei(zx, sx + 1) + bei(zy, sy + 1)];
+      if (sx === sy) return ['Spalte', bei(zx + 1, sx) + bei(zy + 1, sy)];
+      return ['Rechteck', bei(zx, sy) + bei(zy, sx)];
+    };
+    const [klar, geheim] = ia.richtung === 'ver' ? [ia.eingabe, a.loesung.text] : [a.loesung.text, ia.eingabe];
+    const kp = nurAZ(klar);
+    assert.equal(kp.length, 2);
+    assert.notEqual(kp[0], kp[1]);
+    assert.ok(!kp.includes('J'));
+    const [fall, erg] = ver(kp[0], kp[1]);
+    assert.equal(nurAZ(geheim), erg);
+    assert.match(a.erklaerung[0].md, new RegExp(fall));
+    assert.equal(a.stufe, ia.richtung === 'ver' ? 1 : 2);
+    if (ia.richtung === 'ent') assert.equal(a.loesung.text, a.loesung.text.toLowerCase());
+    faelle.add(fall);
+    richtungen.add(ia.richtung);
+  }
+  assert.deepEqual([...faelle].sort(), ['Rechteck', 'Spalte', 'Zeile']);
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+});
+
+test('porta: Tafelwert über die Tafel-Konstruktion, Porta-Tafel als Block', () => {
+  // Tafel: Schlüsselpaar j = ⌊s/2⌋ (A/B = 0 …), Kopfzeile a–m; Zeile j ist N…Z um j nach rechts rotiert
+  const zeile = (j) => { const u = 'NOPQRSTUVWXYZ'; return u.slice(13 - j) + u.slice(0, 13 - j); };
+  for (const a of grundpruefung('porta')) {
+    const ia = a.interaktion;
+    const s = ia.verfahren.schluessel;
+    assert.equal(s.length, 1);
+    const j = Math.floor((s.charCodeAt(0) - 65) / 2);
+    const x = nurAZ(ia.eingabe);
+    assert.equal(x.length, 1);
+    const i = x.charCodeAt(0) - 65;
+    const erw = i < 13 ? zeile(j)[i] : String.fromCharCode(65 + zeile(j).indexOf(x));
+    assert.equal(nurAZ(a.loesung.text), erw);
+    const tafel = a.inhalt.find((b) => b.t === 'tabelle');
+    assert.ok(tafel, 'Porta-Tafel');
+    assert.deepEqual(tafel.zeilen.map((r) => r.slice(1).join('')), Array.from({ length: 13 }, (_, n) => zeile(n)));
+  }
+});
+
+test('friedman (eA): alle 14 Kombinationen n ∈ {501, 1001}, k ∈ 2 … 8 liefern gerundet k', () => {
+  const kombis = new Set();
+  for (const a of grundpruefung('friedman', 300)) {
+    const md = a.inhalt[0].md;
+    const n = Number(/n = (\d+)/.exec(md)[1]);
+    const I = Number(/I = (0,\d{4})\b/.exec(md)[1].replace(',', '.'));
+    const k = Number(a.loesung.k[0]);
+    assert.ok([501, 1001].includes(n) && k >= 2 && k <= 8);
+    const I_erw = Math.round((((n - k) * 0.076 + n * (k - 1) * 0.038) / ((n - 1) * k)) * 10000) / 10000;
+    assert.equal(I, I_erw);
+    const schaetzung = ((0.076 - 0.038) * n) / ((n - 1) * I - 0.038 * n + 0.076);
+    assert.equal(Math.round(schaetzung), k);
+    kombis.add(`${n}:${k}`);
+  }
+  for (const n of [501, 1001]) for (let k = 2; k <= 8; k++) {
+    const I = Math.round((((n - k) * 0.076 + n * (k - 1) * 0.038) / ((n - 1) * k)) * 10000) / 10000;
+    assert.equal(Math.round(((0.076 - 0.038) * n) / ((n - 1) * I - 0.038 * n + 0.076)), k, `${n}, ${k}`);
+  }
+  assert.equal(kombis.size, 14, 'alle Kombinationen kommen vor');
+  assert.equal(G.GENERATOREN.friedman.niveau, 'eA');
 });
