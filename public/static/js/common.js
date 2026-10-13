@@ -204,9 +204,44 @@ const AQ = (() => {
     }
   }
 
+  /* ---------- Profil-Einstellungen (nur in diesem Browser) ---------- */
+  const EINSTELLUNGEN = { thema: ['auto', 'hell', 'dunkel'], bewegung: ['auto', 'aus'] };
+  const EINSTELLUNGEN_SCHLUESSEL = 'kr_einstellungen';
+  function einstellungenLesen() {
+    try {
+      const v = JSON.parse(localStorage.getItem(EINSTELLUNGEN_SCHLUESSEL));
+      return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+    } catch {
+      return {};
+    }
+  }
+  /** einstellung(name) liest, einstellung(name, wert) schreibt; unbekannter Name/Wert → TypeError. */
+  function einstellung(name, wert) {
+    const erlaubt = Object.prototype.hasOwnProperty.call(EINSTELLUNGEN, name) ? EINSTELLUNGEN[name] : null;
+    if (!erlaubt) throw new TypeError('Unbekannte Einstellung: ' + name);
+    if (wert === undefined) {
+      const v = einstellungenLesen()[name];
+      return erlaubt.includes(v) ? v : erlaubt[0];
+    }
+    if (!erlaubt.includes(wert)) throw new TypeError(`Einstellung ${name}: ungültiger Wert.`);
+    const alle = einstellungenLesen();
+    alle[name] = wert;
+    try {
+      localStorage.setItem(EINSTELLUNGEN_SCHLUESSEL, JSON.stringify(alle));
+    } catch {
+      /* Speicher gesperrt – Einstellung gilt nur bis zum Neuladen */
+    }
+    return wert;
+  }
+
   /* ---------- Effekte (rein dekorativ, aria-hidden; bei „Bewegung reduzieren“ aus) ---------- */
-  const ruhig = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const FUNKEN_FARBEN = ['#e8b923', '#b8860b', '#ffd86b', '#548235', '#7fb35a', '#ffffff', '#5b8fc7'];
+  /** true, wenn das System reduzierte Bewegung wünscht oder im Profil „Bewegung aus“ gewählt ist. */
+  function ruhig() {
+    const medien = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return !!medien || einstellung('bewegung') === 'aus';
+  }
+  // Ausnahme von der Token-Regel (nur dieser Effekt, dekorativ): Messing, Papier, Akzente als feste Farben
+  const FUNKEN_FARBEN = ['#D9A441', '#B07D2B', '#FBF7EE', '#7BC67E', '#E8957B'];
 
   /** Funkenregen an einem Element (richtige Antwort, Boss besiegt …). stark = mehr und weiter. */
   function funken(el, { stark = false } = {}) {
@@ -253,26 +288,25 @@ const AQ = (() => {
 
   const effekt = { funken, schweben, wackeln };
 
-  /* ---------- Niveau nach KC 2017: alle (GK + LK) · eA (nur LK) · plus (über den KC hinaus) ---------- */
+  /* ---------- Niveau (Kryptos, DESIGNSYSTEM §5): Kern · eA · Ergänzung · Kür ---------- */
   const NIVEAU_TEXT = {
-    eA: { kurz: 'LK', pill: 'nur Leistungskurs (eA)', gA: 'LK-Stoff – im Grundkurs freiwillig', titel: 'Kerncurriculum: Erweiterung eA – im Abitur nur für den Leistungskurs' },
-    plus: { kurz: '+', pill: 'Zusatz – über das Kerncurriculum hinaus', gA: 'Zusatz – über das Kerncurriculum hinaus', titel: 'Geht über das Kerncurriculum hinaus (Vertiefung, nicht abiturrelevant)' },
-    alle: { kurz: '', pill: 'Grund- und Leistungskurs', gA: 'Grund- und Leistungskurs', titel: 'Kerncurriculum: für Grund- und Leistungskurs' }
+    kern: { kurz: 'K', lang: 'Kern – für gA und eA' },
+    eA: { kurz: 'eA', lang: 'nur erhöhtes Niveau (eA)' },
+    ergaenzung: { kurz: 'E', lang: 'Ergänzung – freiwillig für gA und eA' },
+    kuer: { kurz: 'Kür', lang: 'Kür – Vertiefung über das Abitur hinaus' }
   };
-  /**
-   * Niveau-Kennzeichnung. art: 'pill' (Text) oder 'tag' (kurzes Eck-Etikett).
-   * gemischt: Level/Boss für alle mit einzelnen eA-Aufgaben. kursart 'gA' → Hinweis „im Grundkurs freiwillig“.
-   */
-  function niveau(n, { art = 'pill', gemischt = false, kursart = 'eA', alleZeigen = false } = {}) {
-    const t = NIVEAU_TEXT[n] || NIVEAU_TEXT.alle;
-    if (art === 'tag') {
-      if (n === 'eA' || n === 'plus') return h('span', { class: `niveau-tag ${n === 'eA' ? 'ea' : 'plus'}`, title: t.titel }, t.kurz);
-      return gemischt ? h('span', { class: 'niveau-tag teils', title: 'Einzelne Aufgaben nur für den Leistungskurs (eA)' }, 'teils LK') : null;
-    }
-    if (n === 'alle' && !gemischt && !alleZeigen) return null;
-    const text = n === 'alle' && gemischt ? 'Grund- und Leistungskurs · einzelne Aufgaben nur LK' : kursart === 'gA' ? t.gA : t.pill;
-    return h('span', { class: `pill niveau ${n === 'eA' ? 'ea' : n === 'plus' ? 'plus' : 'alle'}`, title: t.titel }, text);
+  const NIVEAU_ALT = { alle: 'kern', plus: 'kuer' };
+  /** Niveau-Chip; vorschau: Lehrkraft-Vorschau (eA-Inhalte mit Hinweis „im gA-Kurs ausgeblendet“). */
+  function niveau(n, { kursNiveau = 'eA', vorschau = false } = {}) {
+    const id = NIVEAU_ALT[n] || (Object.prototype.hasOwnProperty.call(NIVEAU_TEXT, n) ? n : 'kern');
+    const t = NIVEAU_TEXT[id];
+    const zusatz = vorschau && id === 'eA' ? ' · im gA-Kurs ausgeblendet' : '';
+    return h('span', { class: `chip chip-niveau niveau-${id}`, title: t.lang + zusatz }, t.kurz + zusatz);
   }
 
-  return { SVG_NS, h, s, clear, mount, api, toast, fmtDatum, progress, prozent, sterne, bestaetigen, download, readFile, mische, speichere, lade, effekt, niveau };
+  function rolleText(rolle) {
+    return { kryptografie: '🛡 Kryptografie', kryptoanalyse: '🔍 Kryptoanalyse' }[rolle] || '';
+  }
+
+  return { SVG_NS, h, s, clear, mount, api, toast, fmtDatum, progress, prozent, sterne, bestaetigen, download, readFile, mische, speichere, lade, effekt, ruhig, einstellung, niveau, NIVEAU_TEXT, rolleText };
 })();
