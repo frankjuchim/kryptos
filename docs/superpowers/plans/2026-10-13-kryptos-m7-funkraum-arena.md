@@ -1698,7 +1698,7 @@ Beamer bei 1920 × 1080.
   `eingereicht_at`. **`schluessel` und `klartext` werden nirgends gespeichert oder geloggt.**
 - `aktuell(s).eigene` → `{ verfahren, geheimtext, beschreibung, beurteilung, klartextLaenge, hinweise }` des eigenen Teams.
 
-- [ ] **Step 1: Failing test** – `test/arena_einreichung.test.js`:
+- [x] **Step 1: Failing test** – `test/arena_einreichung.test.js`:
   ```js
   'use strict';
   const { test } = require('node:test');
@@ -1779,10 +1779,10 @@ Beamer bei 1920 × 1080.
     assert.equal(K.nurBuchstaben(TEXT1).length, 167);
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (HMAC über `node:crypto` mit `arena.salz`; Darstellung über
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (HMAC über `node:crypto` mit `arena.salz`; Darstellung über
   `Krypto.gruppieren` bzw. `T.hexPaare`; Fehlerkörper mit `details`).
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Arena: Werkstatt-Prüfung und Einreichung (Umkehrbarkeit, Typregel, 150–300 Buchstaben, nur Hash)"`.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Arena: Werkstatt-Prüfung und Einreichung (Umkehrbarkeit, Typregel, 150–300 Buchstaben, nur Hash)"`.
 
 ### Task 145: Arena – Angriffe per Klartext und per Schlüssel, Grenzen (TECHNIK §9.5, W3 §9.4, E101)
 
@@ -2866,6 +2866,17 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   Prüfung: ISO, Zukunft, ≤ 3 h), bei anderen Phasen 400; unbekannte Phase 400, Zusatzfeld beim Anlegen 400. Eine fremde
   Arena liefert 404 „Arena nicht gefunden.“ Zusatztest: Regie-Stand je Kurs, Eingaben, Haken `beimPhasenwechsel` über die
   Frist, kein Salz in Antworten, anderer Kurs, gesperrter Kurs (Schüler 403, Lehrkraft liest).
+- **Task 144:** Prüfreihenfolge beim Einreichen: Arena des Kurses (404) → Team (403) → Grenze 20 je Team in 10 min (gezählt
+  wird **jeder** Versuch nach der Team-Prüfung, auch abgelehnte – ein abgelehntes Einreichen liefert die Fehlerliste wie
+  `pruefen`) → Phase (409) → unbekanntes Feld im Körper (400) → Verfahren-Form → Klartext ist Text (400) →
+  `baukasten.pruefe` mit `klartext` (400, `details` = alle Fehler) → 150–300 Buchstaben → Darstellung ≤ 900 →
+  Beschreibung 1–2000 nach `trim` (gespeichert getrimmt). Parameterwerte im Verfahren nur Zahl/Text (sonst 400).
+  `KryptoFehler` der Bibliothek → 400. `pruefen` liefert bei Fehlern 200 mit `{ ok: false, fehler, geheimtext: null,
+  zwischen: [], rueck: false }`; fehlender Text → 400. Hash im Dienst (`klartextHash`, nurBuchstaben – nicht
+  `T.hash`, das Ziffern behält, E93). TECHNIK §13.3 (`eigene` mit `klartextLaenge`, `hinweise`) ergänzt. Plan-Test korrigiert:
+  keine. Zusatztest: HMAC mit Arena-Salz, XOR-Grenzfall 300 Buchstaben = 899 Zeichen (301 → 400), eigene Hinweise sofort,
+  Eingaben (Klartext fehlt/keine Zeichenkette, Zusatzfelder in Körper und Stufe), fremde Arena 404 (zweiter Kurs in derselben
+  App), gesperrter Kurs 403, DB-Durchsuchung.
 
 ## Reihenfolge und Abhängigkeiten
 

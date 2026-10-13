@@ -1629,7 +1629,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | Methode · Pfad | Request | Response | Limit / Fehler |
 |---|---|---|---|
 | `POST /api/werkstatt/pruefen` | `{ verfahren, schluessel, text }` | `{ ok, fehler, geheimtext, zwischen, rueck }` (Hinweise P6–P8 **nicht**) | 60/min |
-| `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung } \| null }` | – |
+| `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung, klartextLaenge, hinweise } \| null }` (offene Arena, sonst die jüngste geschlossene; eigene Hinweise sofort, Plan M7 E104) | – |
 | `POST /api/arena/:id/chiffre` | `{ verfahren, schluessel, klartext, beschreibung }` | `{ ok, geheimtext }` | 20/10 min je Team; 409 ≠ werkstatt |
 | `GET /api/arena/:id/chiffren` | – | `[{ id, team, verfahren, beschreibung, geheimtext, klartextLaenge, geknackt, versuche }]` (ab `angriff`; Hinweise ab `beurteilung`) | – |
 | `POST /api/arena/:id/chiffren/:cid/angriff` | `{ klartext }` \| `{ schluessel }` | `{ erfolg, geknackt, rest: { chiffre, team } }` | 1/30 s je Team+Chiffre (Plan M7 E101), 60/10 min je Team; 429 mit `Retry-After`; 409 ≠ angriff; 400 eigene |

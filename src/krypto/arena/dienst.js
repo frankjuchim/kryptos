@@ -4,7 +4,10 @@
    gespeichert – nur HMAC-SHA256(arena.salz, nurBuchstaben(klartext)); das Salz verlässt den Server nie.
    Zeit nur über `now`, Zufall nur über `zufallBytes` (E113). */
 'use strict';
+const crypto = require('node:crypto');
 const V = require('../../validate');
+const S = require('../../security');
+const Krypto = require('../../../public/static/js/shared/krypto');
 const T = require('../funkraum/text');
 
 const PHASEN = Object.freeze(['werkstatt', 'angriff', 'beurteilung', 'geschlossen']);
@@ -13,8 +16,67 @@ const PHASE_NAME = Object.freeze({ werkstatt: 'Werkstatt', angriff: 'Angriff', b
 const VON = Object.freeze({ angriff: 'werkstatt', beurteilung: 'angriff', geschlossen: 'beurteilung' });
 const MIN_CHIFFREN = 2;
 const ANGRIFF_MAX_MS = 3 * 3600 * 1000;
+/** Grenzen (TECHNIK §9.3/§9.4, §13.3): Klartext 150–300 Buchstaben, Darstellung ≤ 900, Beschreibung ≤ 2000;
+    Einreichen 20 je Team in 10 min, Prüfen 60 je Teilnahme und Minute */
+const GRENZEN = Object.freeze({
+  klartextMin: 150,
+  klartextMax: 300,
+  darstellungMax: 900,
+  beschreibungMax: 2000,
+  rohMax: 20000,
+  einreichen: { max: 20, ms: 10 * 60 * 1000 },
+  pruefen: { max: 60, ms: 60 * 1000 }
+});
+const VERFAHREN_FELDER = ['version', 'name', 'stufen'];
+const STUFE_FELDER = ['typ', 'param'];
+const EINREICHEN_FELDER = ['verfahren', 'schluessel', 'klartext', 'beschreibung'];
 
 const GESPERRT = 'Kryptos ist für diesen Kurs im Portal abgeschaltet. Der Kurs ist nur lesbar.';
+
+/** 429 mit Retry-After (die Routen setzen den Kopf) */
+class ZuVieleError extends Error {
+  constructor(message, retryAfter) {
+    super(message);
+    this.status = 429;
+    this.retryAfter = Math.max(1, Math.ceil(retryAfter));
+  }
+}
+
+/** HMAC-SHA256(salz, nurBuchstaben(text)) – Arena normalisiert nur A–Z (E93, TECHNIK §9.4) */
+function klartextHash(salz, text) {
+  return crypto.createHmac('sha256', String(salz)).update(Krypto.nurBuchstaben(String(text)), 'utf8').digest('hex');
+}
+
+/** Geheimtext-Darstellung: Buchstaben in Fünfergruppen, nach XOR (letzte Stufe) Hex-Paare */
+function darstellung(verfahren, roh) {
+  const letzte = verfahren.stufen[verfahren.stufen.length - 1];
+  return letzte && letzte.typ === 'xor' ? T.hexPaare(roh) : Krypto.gruppieren(roh, 5);
+}
+
+/** Form des Verfahrens (nur bekannte Felder) → neu serialisierbares Objekt aus den geprüften Feldern; sonst 400 */
+function verfahrenForm(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) throw new V.ValidationError('Das Verfahren muss ein Objekt sein.');
+  const fremd = Object.keys(v).filter((k) => !VERFAHREN_FELDER.includes(k));
+  if (fremd.length) throw new V.ValidationError(`Unbekanntes Feld im Verfahren: ${fremd[0]}`);
+  if (!Array.isArray(v.stufen)) throw new V.ValidationError('Das Verfahren braucht eine Liste von Stufen.');
+  const stufen = v.stufen.map((st) => {
+    if (!st || typeof st !== 'object' || Array.isArray(st)) throw new V.ValidationError('Eine Stufe ist ungültig.');
+    const f = Object.keys(st).filter((k) => !STUFE_FELDER.includes(k));
+    if (f.length) throw new V.ValidationError(`Unbekanntes Feld im Verfahren: ${f[0]}`);
+    if (st.param === undefined) return { typ: st.typ };
+    if (!st.param || typeof st.param !== 'object' || Array.isArray(st.param)) throw new V.ValidationError('Parameter einer Stufe müssen ein Objekt sein.');
+    const param = {};
+    for (const [k, w] of Object.entries(st.param)) {
+      if (typeof w !== 'string' && typeof w !== 'number') throw new V.ValidationError('Parameterwerte sind Zahlen, Wörter oder Platzhalter.');
+      param[k] = w;
+    }
+    return { typ: st.typ, param };
+  });
+  const out = { version: v.version };
+  if (v.name !== undefined) out.name = v.name;
+  out.stufen = stufen;
+  return out;
+}
 
 /**
  * @param {{ db: import('better-sqlite3').Database, svc: object, teams: object, now: () => number,
@@ -29,8 +91,18 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     neu: db.prepare("INSERT INTO arena (kurs_id, status, salz, angriff_bis, created_at) VALUES (?, 'werkstatt', ?, ?, ?)"),
     anzahl: db.prepare('SELECT COUNT(*) AS n FROM arena_chiffren WHERE arena_id = ?'),
     faellig: db.prepare("SELECT * FROM arena WHERE status = 'angriff' AND angriff_bis IS NOT NULL AND angriff_bis <= ?"),
-    loesche: db.prepare('DELETE FROM arena WHERE id = ?')
+    loesche: db.prepare('DELETE FROM arena WHERE id = ?'),
+    chiffreTeam: db.prepare('SELECT * FROM arena_chiffren WHERE arena_id = ? AND team_id = ?'),
+    upsert: db.prepare(
+      `INSERT INTO arena_chiffren (arena_id, team_id, verfahren, beschreibung, geheimtext, klartext_hash, klartext_laenge, hinweise, eingereicht_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(arena_id, team_id) DO UPDATE SET verfahren = excluded.verfahren, beschreibung = excluded.beschreibung,
+         geheimtext = excluded.geheimtext, klartext_hash = excluded.klartext_hash, klartext_laenge = excluded.klartext_laenge,
+         hinweise = excluded.hinweise, eingereicht_at = excluded.eingereicht_at`
+    )
   };
+  const einreichLimit = new S.Limiter({ max: GRENZEN.einreichen.max, windowMs: GRENZEN.einreichen.ms });
+  const pruefLimit = new S.Limiter({ max: GRENZEN.pruefen.max, windowMs: GRENZEN.pruefen.ms });
 
   /** Haken beim Übergang angriff → beurteilung (Abzeichen „Unknackbar“, Task 147): f(arenaZeile) in der Transaktion */
   const beimPhasenwechsel = [];
@@ -165,6 +237,19 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     return { arena: regieAnsicht(arenaVonKurs(kurs.id)) };
   }
 
+  /** eigene Chiffre des Teams (nur für Teammitglieder; eigene Hinweise sofort, E104) */
+  function eigeneAnsicht(c) {
+    if (!c) return null;
+    return {
+      verfahren: JSON.parse(c.verfahren),
+      geheimtext: c.geheimtext,
+      beschreibung: c.beschreibung,
+      beurteilung: c.beurteilung,
+      klartextLaenge: c.klartext_laenge,
+      hinweise: JSON.parse(c.hinweise || '[]')
+    };
+  }
+
   /** GET /api/arena → { arena: { id, status, angriffBis } | null, team, eigene } */
   function aktuell(s) {
     const a = arenaVonKurs(s.kurs_id);
@@ -172,8 +257,81 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     return {
       arena: a ? { id: a.id, status: a.status, angriffBis: a.angriff_bis } : null,
       team: team ? { id: team.id, nr: team.nr, name: team.name } : null,
-      eigene: null
+      eigene: a && team ? eigeneAnsicht(sql.chiffreTeam.get(a.id, team.id)) : null
     };
+  }
+
+  /** Arena des eigenen Kurses (fremde → 404, Frist geprüft) und Team der Teilnahme (ohne → 403) */
+  function teilnehmer(s, id) {
+    const aid = V.id(id, 'Arena');
+    const roh = sql.eine.get(aid);
+    if (!roh || roh.kurs_id !== s.kurs_id) throw new V.NotFoundError('Arena nicht gefunden.');
+    const team = teams.teamVon(s.id);
+    if (!team) throw new V.ForbiddenError('Du bist keinem Team zugeteilt.');
+    return { a: pruefeFrist(roh), team };
+  }
+
+  /** KryptoFehler der Bibliothek → 400; alles andere weiterwerfen */
+  function bibliothek(f) {
+    try {
+      return f();
+    } catch (e) {
+      if (e && e.name === 'KryptoFehler') throw new V.ValidationError(e.message);
+      throw e;
+    }
+  }
+
+  /**
+   * POST /api/werkstatt/pruefen { verfahren, schluessel, text } → { ok, fehler, geheimtext, zwischen, rueck } – ohne
+   * Hinweise (TECHNIK §13.3), speichert nichts. 60 je Teilnahme und Minute.
+   */
+  function pruefen(s, body) {
+    const jetzt = now();
+    const key = 's:' + s.id;
+    if (!pruefLimit.take(key, jetzt)) throw new ZuVieleError('Zu viele Prüfungen – höchstens 60 in der Minute.', pruefLimit.retryAfterSec(key, jetzt));
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    if (typeof b.text !== 'string' || b.text.length > GRENZEN.rohMax) throw new V.ValidationError('Gib einen Text zum Prüfen an.');
+    const p = bibliothek(() => Krypto.baukasten.pruefe(b.verfahren, b.schluessel, { klartext: b.text }));
+    if (!p.ok) return { ok: false, fehler: p.fehler, geheimtext: null, zwischen: [], rueck: false };
+    const v = bibliothek(() => Krypto.baukasten.verschluesseln(b.verfahren, b.schluessel, b.text));
+    const rueck = bibliothek(() => Krypto.baukasten.entschluesseln(b.verfahren, b.schluessel, v.geheimtext)) === Krypto.nurBuchstaben(b.text);
+    return { ok: true, fehler: [], geheimtext: v.geheimtext ? darstellung(b.verfahren, v.geheimtext) : '', zwischen: v.zwischen, rueck };
+  }
+
+  /**
+   * POST /api/arena/:id/chiffre { verfahren, schluessel, klartext, beschreibung } → { ok, geheimtext }.
+   * Speichert Verfahren, Beschreibung, Geheimtext, HMAC des Klartexts, Länge, Hinweise – Schlüssel und Klartext nie.
+   */
+  function einreichen(s, id, body) {
+    const { a, team } = teilnehmer(s, id);
+    const jetzt = now();
+    const key = 't:' + team.id;
+    if (!einreichLimit.take(key, jetzt)) throw new ZuVieleError('Höchstens 20 Einreichungen je Team in 10 Minuten.', einreichLimit.retryAfterSec(key, jetzt));
+    if (a.status !== 'werkstatt') throw new V.ConflictError(`Das geht in der Phase ‚${PHASE_NAME[a.status]}‘ nicht.`);
+    const b = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+    const fremd = Object.keys(b).filter((k) => !EINREICHEN_FELDER.includes(k));
+    if (fremd.length) throw new V.ValidationError(`Unbekanntes Feld: ${fremd[0]}`);
+    const verfahren = verfahrenForm(b.verfahren);
+    if (typeof b.klartext !== 'string' || b.klartext.length > GRENZEN.rohMax) throw new V.ValidationError('Euer Klartext fehlt.');
+    const p = bibliothek(() => Krypto.baukasten.pruefe(verfahren, b.schluessel, { klartext: b.klartext }));
+    if (!p.ok) throw new V.ValidationError(p.fehler[0], p.fehler);
+    const laenge = Krypto.nurBuchstaben(b.klartext).length;
+    if (laenge < GRENZEN.klartextMin || laenge > GRENZEN.klartextMax) {
+      throw new V.ValidationError(`Euer Text braucht ${GRENZEN.klartextMin} bis ${GRENZEN.klartextMax} Buchstaben (jetzt ${laenge}).`);
+    }
+    const roh = bibliothek(() => Krypto.baukasten.verschluesseln(verfahren, b.schluessel, b.klartext)).geheimtext;
+    const geheimtext = darstellung(verfahren, roh);
+    if (geheimtext.length > GRENZEN.darstellungMax) throw new V.ValidationError(`Der Geheimtext ist zu lang (höchstens ${GRENZEN.darstellungMax} Zeichen).`);
+    const beschreibung = typeof b.beschreibung === 'string' ? b.beschreibung.trim() : '';
+    if (beschreibung.length < 1 || beschreibung.length > GRENZEN.beschreibungMax) {
+      throw new V.ValidationError(`Die Beschreibung braucht 1 bis ${GRENZEN.beschreibungMax} Zeichen.`);
+    }
+    db.transaction(() => {
+      const frisch = sql.eine.get(a.id);
+      if (!frisch || frisch.status !== 'werkstatt') throw new V.ConflictError(`Das geht in der Phase ‚${PHASE_NAME[frisch ? frisch.status : a.status]}‘ nicht.`);
+      sql.upsert.run(a.id, team.id, JSON.stringify(verfahren), beschreibung, geheimtext, klartextHash(frisch.salz, b.klartext), laenge, JSON.stringify(p.hinweise), iso(jetzt));
+    })();
+    return { ok: true, geheimtext };
   }
 
   return {
@@ -183,6 +341,9 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     loesche,
     aktuellFuerKurs,
     aktuell,
+    pruefen,
+    einreichen,
+    GRENZEN,
     pruefeFrist,
     fristenPruefen,
     beimPhasenwechsel,
@@ -191,4 +352,4 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
   };
 }
 
-module.exports = { createArena, PHASEN };
+module.exports = { createArena, PHASEN, GRENZEN, klartextHash, darstellung };

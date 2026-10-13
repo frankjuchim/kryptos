@@ -31,8 +31,23 @@ function arenaRouten(arena) {
     };
     const kid = (req) => V.id(req.params.kursId, 'Kurs');
 
+    // 429 aus dem Dienst mit Retry-After
+    const mit429 = (f) => (req, res) => {
+      try {
+        res.json(f(req));
+      } catch (e) {
+        if (e && e.status === 429) {
+          res.set('Retry-After', String(e.retryAfter || 1));
+          return res.status(429).json({ error: e.message });
+        }
+        throw e;
+      }
+    };
+
     /* Schüler */
     api.get('/arena', schueler, (req, res) => res.json(arena.aktuell(req.schueler)));
+    api.post('/werkstatt/pruefen', schueler, mit429((req) => arena.pruefen(req.schueler, req.body)));
+    api.post('/arena/:id/chiffre', schueler, mit429((req) => arena.einreichen(req.schueler, req.params.id, req.body)));
 
     /* Lehrkraft */
     api.get('/lehrer/kurse/:kursId/arena', lehrkraft, (req, res) => res.json(arena.aktuellFuerKurs(req.lk, kid(req))));
