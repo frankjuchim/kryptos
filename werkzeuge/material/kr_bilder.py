@@ -193,7 +193,7 @@ DEUTSCH = dict(E=17.40, N=9.78, I=7.55, S=7.27, R=7.00, A=6.51, T=6.15, D=5.08, 
 
 
 def haeufigkeit(werte=None, text=None, referenz=False, farbe=S.TINTE, titel=None, absolut=None, px=1600,
-                hoehe=330, sortiert=False):
+                hoehe=360, sortiert=False):
     """Balkendiagramm A–Z. werte: dict Buchstabe→Zahl. text: wird gezählt (absolute Häufigkeiten).
     referenz: zusätzlich deutsche Verteilung (Prozent) als dünne Balken. absolut: Beschriftung absolut statt %."""
     if text is not None:
@@ -210,19 +210,20 @@ def haeufigkeit(werte=None, text=None, referenz=False, farbe=S.TINTE, titel=None
     prozent = {b: 100 * werte.get(b, 0) / gesamt for b in buchst}
     maxp = max(list(prozent.values()) + ([max(DEUTSCH.values())] if referenz else []))
     W, H = 1000, hoehe
-    oben, unten, links = 34 if titel else 14, 46, 46
+    # Beschriftung lesbar auch verkleinert auf der Akte (≈ 16 cm Breite): Achse ≥ 20, Buchstaben 24 (M5-Inhaltsprüfung)
+    oben, unten, links = 40 if titel else 16, 62, 70
     bw = (W - links - 10) / 26
     s = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}">',
          f'<rect width="{W}" height="{H}" fill="white"/>']
     if titel:
-        s.append(f'<text x="{links}" y="22" font-family="Calibri, Carlito" font-size="20" font-weight="bold" '
+        s.append(f'<text x="{links}" y="26" font-family="Calibri, Carlito" font-size="24" font-weight="bold" '
                  f'fill="{_c(S.TEXT)}">{escape(titel)}</text>')
     ch = H - oben - unten
     schritt = 5 if maxp > 12 else 2
     for g in range(0, int(maxp) + 1, schritt):
         y = oben + ch - ch * g / maxp
         s.append(f'<line x1="{links}" y1="{y:.1f}" x2="{W-10}" y2="{y:.1f}" stroke="{_c(S.LINIE)}" stroke-width="1"/>')
-        s.append(f'<text x="{links-6}" y="{y+5:.1f}" font-family="Calibri, Carlito" font-size="14" '
+        s.append(f'<text x="{links-8}" y="{y+7:.1f}" font-family="Calibri, Carlito" font-size="21" '
                  f'text-anchor="end" fill="{_c(S.TEXT2)}">{g} %</text>')
     for i, b in enumerate(buchst):
         x = links + i * bw
@@ -234,18 +235,18 @@ def haeufigkeit(werte=None, text=None, referenz=False, farbe=S.TINTE, titel=None
             hr = ch * DEUTSCH[b] / maxp
             s.append(f'<rect x="{x+bw*0.14+breite:.1f}" y="{oben+ch-hr:.1f}" width="{bw*0.24:.1f}" '
                      f'height="{hr:.1f}" fill="{_c(S.MESSING)}"/>')
-        s.append(f'<text x="{x+bw/2:.1f}" y="{H-unten+20}" font-family="Consolas, Inconsolata" font-size="17" '
+        s.append(f'<text x="{x+bw/2:.1f}" y="{H-unten+26}" font-family="Consolas, Inconsolata" font-size="24" '
                  f'font-weight="bold" text-anchor="middle" fill="{_c(S.TEXT)}">{b}</text>')
         if absolut and werte.get(b, 0):
-            s.append(f'<text x="{x+bw/2:.1f}" y="{H-unten+38}" font-family="Calibri, Carlito" font-size="13" '
+            s.append(f'<text x="{x+bw/2:.1f}" y="{H-unten+52}" font-family="Calibri, Carlito" font-size="19" '
                      f'text-anchor="middle" fill="{_c(S.TEXT2)}">{werte[b]}</text>')
     s.append(f'<line x1="{links}" y1="{oben+ch}" x2="{W-10}" y2="{oben+ch}" stroke="{_c(S.TEXT)}" stroke-width="1.5"/>')
     if referenz:
-        s.append(f'<rect x="{W-300}" y="{oben-2}" width="14" height="14" fill="{_c(farbe)}"/>'
-                 f'<text x="{W-280}" y="{oben+10}" font-family="Calibri, Carlito" font-size="15" fill="{_c(S.TEXT)}">'
+        s.append(f'<rect x="{W-380}" y="{oben-2}" width="18" height="18" fill="{_c(farbe)}"/>'
+                 f'<text x="{W-356}" y="{oben+14}" font-family="Calibri, Carlito" font-size="20" fill="{_c(S.TEXT)}">'
                  f'Geheimtext</text>'
-                 f'<rect x="{W-180}" y="{oben-2}" width="14" height="14" fill="{_c(S.MESSING)}"/>'
-                 f'<text x="{W-160}" y="{oben+10}" font-family="Calibri, Carlito" font-size="15" fill="{_c(S.TEXT)}">'
+                 f'<rect x="{W-236}" y="{oben-2}" width="18" height="18" fill="{_c(S.MESSING)}"/>'
+                 f'<text x="{W-212}" y="{oben+14}" font-family="Calibri, Carlito" font-size="20" fill="{_c(S.TEXT)}">'
                  f'Deutsch (Referenz)</text>')
     s.append("</svg>")
     return _cache("haeufigkeit", "".join(s), px)

@@ -168,31 +168,23 @@
      ]
     },
     {
-     "t": "zweispaltig",
-     "anteil": 0.5,
-     "links": [
-      {
-       "t": "haeufigkeit",
-       "sortiert": true,
-       "titel": "Deutsch nach Rang (Beutelspacher)"
-      }
-     ],
-     "rechts": [
-      {
-       "t": "p",
-       "md": "**Vorgehen:**"
-      },
-      {
-       "t": "liste",
-       "nummeriert": true,
-       "items": [
-        "Geheimtextbuchstaben **zählen** und nach Häufigkeit ordnen.",
-        "Häufigster Geheimtextbuchstabe ≙ **e**.",
-        "Weitere Kandidaten mit n, i, s, r, a, t vergleichen – aber **nicht blind** zuordnen.",
-        "**Bigramme** und **Muster** nutzen (Archivwissen 4).",
-        "Teilweise entschlüsselten Text **lesen**, Wörter ergänzen, Zuordnung verbessern."
-       ]
-      }
+     "t": "haeufigkeit",
+     "sortiert": true,
+     "titel": "Deutsch nach Rang (Beutelspacher)"
+    },
+    {
+     "t": "p",
+     "md": "**Vorgehen:**"
+    },
+    {
+     "t": "liste",
+     "nummeriert": true,
+     "items": [
+      "Geheimtextbuchstaben **zählen** und nach Häufigkeit ordnen.",
+      "Häufigster Geheimtextbuchstabe ≙ **e**.",
+      "Weitere Kandidaten mit n, i, s, r, a, t vergleichen – aber **nicht blind** zuordnen.",
+      "**Bigramme** und **Muster** nutzen (Archivwissen 4).",
+      "Teilweise entschlüsselten Text **lesen**, Wörter ergänzen, Zuordnung verbessern."
      ]
     },
     {
