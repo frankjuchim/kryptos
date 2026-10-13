@@ -569,7 +569,7 @@ Screenshots mit dem Read-Werkzeug ansehen; Befund (Layout, Lesbarkeit, Kontrast,
     `nurBuchstaben(text)`; `vigenere`: Schlüssel wiederholt; `autokey`: Schlüssel + Klartext (bei `ent` aus dem
     entschlüsselten Klartext rekonstruiert); `pendel`: `pendelFolge(schluessel, n)` / `schluesselstrom`.
 
-- [ ] **Step 1: Failing test** – `test/krypto.test.js` (anhängen) und dieselben Vektoren in `test_krypto.py`:
+- [x] **Step 1: Failing test** – `test/krypto.test.js` (anhängen) und dieselben Vektoren in `test_krypto.py`:
   ```js
   test('M6 Bibliothek I: Skytale-Raster, Gartenzaun-Schienen, Fleißner-Stellungen, Drehgruppen (W0 §9.1)', () => {
     assert.deepEqual(K.skytaleRaster('wir halten den pass', 3), ['WIRHAL', 'TENDEN', 'PASSXX']);
@@ -614,11 +614,11 @@ Screenshots mit dem Read-Werkzeug ansehen; Befund (Layout, Lesbarkeit, Kontrast,
   `ring`, `pendelFolge`, `schluesselstrom` mit Grenzfällen (leerer Text, Umfang > Textlänge, `zeilen` 1/11, unvollständige
   und ungültige Schablonen, `t` = 0/n/teilerfremd/nicht teilerfremd, `block` 3/13, Pendel L = 1/2, leerer Schlüssel,
   `richtung` ungültig) und Zufallsfällen.
-- [ ] **Step 2: Run** `node --test test/krypto.test.js` und `python3 -I werkzeuge/krypto/test_krypto.py` → FAIL.
-- [ ] **Step 3: Implement** JS und **unabhängig** Python (Ring über Feldliste, Pendel über Index-Spiegelung `i mod (2L−2)`).
-- [ ] **Step 4: Run** → PASS; `npm run krypto:vergleich -- --anzahl 300` und `python3 -I werkzeuge/krypto/pruefwerte.py`
+- [x] **Step 2: Run** `node --test test/krypto.test.js` und `python3 -I werkzeuge/krypto/test_krypto.py` → FAIL.
+- [x] **Step 3: Implement** JS und **unabhängig** Python (Ring über Feldliste, Pendel über Index-Spiegelung `i mod (2L−2)`).
+- [x] **Step 4: Run** → PASS; `npm run krypto:vergleich -- --anzahl 300` und `python3 -I werkzeuge/krypto/pruefwerte.py`
   grün; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Bibliothek: Skytale-Raster, Gartenzaun-Schienen, Fleißner-Stellungen, Ring, Pendel, Schlüsselstrom (+ Zwilling)"`.
+- [x] **Step 5: Commit** `git commit -m "Bibliothek: Skytale-Raster, Gartenzaun-Schienen, Fleißner-Stellungen, Ring, Pendel, Schlüsselstrom (+ Zwilling)"`.
 
 ### Task 106: Bibliothek II – N-Gramme, Teil-Substitution, Mustersuche, Teilertabelle, Primfaktoren, Koinzidenz-Bruch und -Mittel (W1 §9.1/§9.2, W2 §9.1)
 

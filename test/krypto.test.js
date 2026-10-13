@@ -2105,3 +2105,43 @@ test('zwilling: verschiebungSchaetzen entscheidet einen exakten Gleichstand für
   assert.equal(v.k, 4);
   assert.deepEqual(v.kandidaten.map((c) => c.k), [4, 14, 0]);
 });
+
+// ───────────────────────────── M6 Bibliothek I (Plan M6 Task 105) ─────────────────────────────
+test('M6 Bibliothek I: Skytale-Raster, Gartenzaun-Schienen, Fleißner-Stellungen, Drehgruppen (W0 §9.1)', () => {
+  assert.deepEqual(K.skytaleRaster('wir halten den pass', 3), ['WIRHAL', 'TENDEN', 'PASSXX']);
+  assert.deepEqual(K.skytaleRaster('abcde', 2, { fuellzeichen: null }), ['ABC', 'DE']);
+  assert.equal(K.skytaleRaster('wir halten den pass', 3).join(''), 'WIRHALTENDENPASSXX');
+  assert.throws(() => K.skytaleRaster('abc', 1), K.KryptoFehler);
+  assert.equal(K.gartenzaunSchienen(20, 3).join(''), '01210121012101210121');
+  assert.deepEqual([0, 1, 2].map((r) => K.gartenzaunSchienen(20, 3).filter((x) => x === r).length), [5, 10, 5]);
+  assert.deepEqual(K.gartenzaunSchienen(3, 5), [0, 1, 2]);
+  assert.throws(() => K.gartenzaunSchienen(5, 1), K.KryptoFehler);
+  assert.deepEqual(K.fleissnerStellungen(4, [[1, 2], [2, 1], [2, 3], [4, 4]]), [
+    [[1, 2], [2, 1], [2, 3], [4, 4]], [[1, 3], [2, 4], [3, 3], [4, 1]], [[1, 1], [3, 2], [3, 4], [4, 3]], [[1, 4], [2, 2], [3, 1], [4, 2]]]);
+  assert.deepEqual(K.fleissnerStellungen(4, [[1, 2]], { drehung: 'links' }), [[[1, 2]], [[3, 1]], [[4, 3]], [[2, 4]]]);
+  assert.throws(() => K.fleissnerStellungen(4, [[5, 1]]), K.KryptoFehler);
+  assert.deepEqual(K.fleissnerDrehgruppen(4), [[0, 1, 2, 0], [2, 3, 3, 1], [1, 3, 3, 2], [0, 2, 1, 0]]);
+  // Konsistenz mit fleissner(): Raster aus den Stellungen = Geheimtext (Archivwissen 4)
+  assert.equal(K.fleissner('boten warten am tor', 4, [[1, 2], [2, 1], [2, 3], [4, 4]]), 'TBNMOTTWOEANRRAE');
+});
+test('M6 Bibliothek I: Ring und Pendel (W6 §2, §9.1), Schlüsselstrom (W2 §9.1 Reiter 2)', () => {
+  assert.deepEqual(K.ringFolge(8, 5), { folge: [0, 5, 2, 7, 4, 1, 6, 3], nieGelesen: [] });
+  assert.deepEqual(K.ringFolge(8, 3).folge, [0, 3, 6, 1, 4, 7, 2, 5]);
+  assert.deepEqual(K.ringFolge(8, 2), { folge: [0, 2, 4, 6, 0, 2, 4, 6], nieGelesen: [1, 3, 5, 7] });
+  assert.equal(K.ring('ZEITMASC', 5), 'ZAICMEST');
+  assert.equal(K.ring('zeitmaschine', 3), 'ZTSEMCIAHEXIXXNX');
+  assert.equal(K.ring('ZTSEMCIAHEXIXXNX', 3, 'ent'), 'ZEITMASCHINEXXXX');
+  assert.throws(() => K.ring('ZEITMASC', 2), /teilerfremd/);
+  assert.throws(() => K.ring('ABC', 3, 'ent'), K.KryptoFehler);
+  assert.equal(K.vigenere(K.ring('zeitreisebeendet', 3), 'UHRH'), 'TAZLLZZLYLVIHAVK'); // Prüfwert W6-2-e3
+  assert.equal(K.pendelFolge('SAND'), 'SANDNA');
+  assert.equal(K.pendelFolge('SAND', 10), 'SANDNASAND');
+  assert.equal(K.pendelFolge('uhr'), 'UHRH');
+  assert.equal(K.pendelFolge('A', 3), 'AAA');
+  assert.equal(K.vigenere('ZAICMESTHRNIFIEE', K.pendelFolge('SAND')), 'RAVFZEKTUUAIXIRH'); // Prüfwert W6-2-e4
+  assert.equal(K.schluesselstrom('treffen', 'ZU', { modus: 'autokey' }), 'ZUTREFF');
+  assert.equal(K.schluesselstrom('SLXWJJS', 'ZU', { modus: 'autokey', richtung: 'ent' }), 'ZUTREFF');
+  assert.equal(K.schluesselstrom('abc defg', 'KEY'), 'KEYKEYK');
+  assert.equal(K.schluesselstrom('a'.repeat(10), 'SAND', { modus: 'pendel' }), 'SANDNASAND');
+  assert.throws(() => K.schluesselstrom('abc', 'KEY', { modus: 'beaufort' }), K.KryptoFehler);
+});

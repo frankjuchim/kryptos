@@ -37,6 +37,11 @@ ZUORDNUNG = {
     'bitsZuText': (K.bits_zu_text, None), 'xorBits': (K.xor_bits, None), 'undBits': (K.und_bits, None),
     'oderBits': (K.oder_bits, None), 'xor': (K.xor, None), 'hex': (K.hex_text, None), 'vonHex': (K.von_hex, None),
     'rotiereBits': (K.rotiere_bits, None),
+    # M6 (Plan Task 105–108)
+    'skytaleRaster': (K.skytale_raster, 2), 'gartenzaunSchienen': (K.gartenzaun_schienen, None),
+    'fleissnerStellungen': (K.fleissner_stellungen, 2), 'fleissnerDrehgruppen': (K.fleissner_drehgruppen, None),
+    'ringFolge': (K.ring_folge, None), 'ring': (K.ring, 3), 'pendelFolge': (K.pendel_folge, None),
+    'schluesselstrom': (K.schluesselstrom, 2),
     'kryptos16.rundenschluessel': (K.kryptos16_rundenschluessel, None), 'kryptos16.sbox': (K.kryptos16_sbox, None),
     'kryptos16.transponiere': (K.kryptos16_transponiere, None), 'kryptos16.runde': (K.kryptos16_runde, None),
     'kryptos16.verschluesseln': (K.kryptos16_verschluesseln, 2),

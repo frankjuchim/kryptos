@@ -76,6 +76,7 @@ const mitLeerraum = (s) => s.replace(/(.{4})/g, (m) => m + wahl(['', ' ', ' ', '
 const bytes = (n, min = 0, max = 255) => Array.from({ length: n }, () => ganz(min, max));
 const PRIM = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 251, 257, 509, 997, 1009, 2003, 4999, 7919, 9973, 10007];
 const GERADE_GROESSEN = [2, 4, 6, 8];
+const STROM_MODI = ['vigenere', 'autokey', 'pendel'];
 
 function schablone(n) {
   // je Drehgruppe (Feld im linken oberen Viertel) eine zufällige Stellung → gültige Schablone
@@ -496,6 +497,50 @@ const FAELLE = {
       } catch { /* ungültiges Verfahren */ }
       return [b.verfahren, b.schluessel, g];
     },
+  },
+
+  // ── M6 Bibliothek I (Plan M6 Task 105) ──
+  skytaleRaster: {
+    fest: [['', 3], ['wir halten den pass', 3], ['abcde', 2, { fuellzeichen: null }], ['abc', 5], ['abc', 5, { fuellzeichen: null }], ['abcd', 3, { fuellzeichen: null }], ['abc', 1], ['abc', 31], ['abc', 30], ['abc', 2.5], ['abc', 3, { fuellzeichen: '1' }], ['abc', 3, { fuellzeichen: 'q' }]],
+    zufall: () => [textOderDeutsch(120), selten() ? wahl([0, 1, 31, 2.5]) : ganz(2, 30), ...(zufall() < 0.5 ? [{ fuellzeichen: fuell() }] : [])],
+  },
+  gartenzaunSchienen: {
+    fest: [[0, 3], [20, 3], [3, 5], [5, 1], [5, 11], [5, 10], [-1, 3], [2.5, 3], [7, 2]],
+    zufall: () => [selten() ? wahl([-1, 1.5]) : ganz(0, 80), selten() ? wahl([0, 1, 11, 2.5]) : ganz(2, 10)],
+  },
+  fleissnerStellungen: {
+    fest: [[4, [[1, 2], [2, 1], [2, 3], [4, 4]]], [4, [[1, 2]], { drehung: 'links' }], [4, [[5, 1]]], [4, []], [4, [[1, 1], [1, 1]]], [5, [[1, 1]]], [12, [[1, 1]]], [4, [[1, 2]], { drehung: 'oben' }], [4, 'abc'], [4, [[1]]], [4, [[0, 1]]], [2, [[1, 1], [2, 2]]]],
+    zufall: () => {
+      const n = selten(0.05) ? wahl([3, 0, 12]) : wahl([2, 4, 6, 8, 10]);
+      const m = Math.max(2, n % 2 ? n + 1 : n);
+      const l = zufall() < 0.5 ? schabloneVielleicht(Math.min(m, 10)) : Array.from({ length: ganz(0, m) }, () => [ganz(selten() ? 0 : 1, m + (selten() ? 1 : 0)), ganz(1, m)]);
+      return [n, l, ...(zufall() < 0.4 ? [{ drehung: selten(0.05) ? 'oben' : wahl(['rechts', 'links']) }] : [])];
+    },
+  },
+  fleissnerDrehgruppen: { fest: [[2], [4], [6], [8], [10], [3], [12], [0], [4.5]], zufall: () => [selten() ? wahl([1, 3, 11, 12, -2]) : wahl([2, 4, 6, 8, 10])] },
+  ringFolge: {
+    fest: [[8, 5], [8, 3], [8, 2], [8, 0], [8, 8], [4, 1], [12, 11], [3, 1], [13, 1], [9, 3], [8, 1.5]],
+    zufall: () => { const n = selten() ? wahl([3, 13, 2.5]) : ganz(4, 12); return [n, selten() ? wahl([0, n, -1]) : ganz(1, Math.max(1, (Number.isInteger(n) ? n : 4) - 1))]; },
+  },
+  ring: {
+    fest: [['ZEITMASC', 5], ['zeitmaschine', 3], ['ZTSEMCIAHEXIXXNX', 3, 'ent'], ['ZEITMASC', 2], ['ABC', 3, 'ent'], ['', 3], ['', 3, 'ent'], ['abc', 0], ['abc', 8], ['abc', 3, 'ver', { block: 3 }], ['abc', 3, 'ver', { block: 13 }], ['abcdefghij', 3, 'ver', { block: 10 }], ['abcdefghij', 2, 'ver', { block: 9 }], ['abc', 3, 'quer'], ['abc', 3, 'ver', { fuellzeichen: null }], ['abc', 3, 'ver', { fuellzeichen: 'q' }]],
+    zufall: () => {
+      const block = selten() ? wahl([3, 13]) : ganz(4, 12);
+      const teilerfremd = Array.from({ length: block - 1 }, (_, i) => i + 1).filter((x) => K.ggT(x, block) === 1);
+      const t = selten() ? wahl([0, block, -1]) : zufall() < 0.75 ? wahl(teilerfremd) : ganz(1, Math.max(1, block - 1));
+      const r = richtung();
+      let txt = zufall() < 0.5 ? textOderDeutsch(80) : buchstaben(0, 40);
+      if (r === 'ent' && zufall() < 0.9) { try { txt = K.ring(txt, t, 'ver', { block }); } catch { /* ungültig */ } }
+      return [txt, t, r, ...(block !== 8 || zufall() < 0.6 ? [{ block, ...(selten(0.2) ? { fuellzeichen: fuell() } : {}) }] : [])];
+    },
+  },
+  pendelFolge: {
+    fest: [['SAND'], ['SAND', 10], ['uhr'], ['A', 3], ['A'], ['AB'], ['AB', 5], ['EVE', 12], [''], ['123'], ['SAND', 0], ['SAND', -1], ['SAND', 2.5], ['SAND', null]],
+    zufall: () => [schluesselwort(), ...(zufall() < 0.7 ? [selten() ? wahl([-1, 1.5, null]) : ganz(0, 60)] : [])],
+  },
+  schluesselstrom: {
+    fest: [['treffen', 'ZU', { modus: 'autokey' }], ['SLXWJJS', 'ZU', { modus: 'autokey', richtung: 'ent' }], ['abc defg', 'KEY'], ['a'.repeat(10), 'SAND', { modus: 'pendel' }], ['abc', 'KEY', { modus: 'beaufort' }], ['', 'KEY'], ['abc', ''], ['abc', 'KEY', { richtung: 'quer' }], ['abc', 'A', { modus: 'pendel' }]],
+    zufall: () => [textOderDeutsch(120), schluesselwort(), ...(zufall() < 0.8 ? [{ modus: selten(0.05) ? 'beaufort' : wahl(STROM_MODI), richtung: richtung() }] : [])],
   },
 };
 

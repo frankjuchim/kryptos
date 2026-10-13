@@ -288,6 +288,40 @@
     return aus;
   }
 
+  /**
+   * Pendel-Schlüsselfolge (W6 §2): Wort vorwärts, dann rückwärts ohne die Endbuchstaben zu wiederholen
+   * (SAND → SANDNA, Periode 2L − 2; L = 1: das Wort selbst); mit laenge auf diese Länge fortgesetzt.
+   */
+  function pendelFolge(wort, laenge = null) {
+    const w = schluesselBuchstaben(wort);
+    const periode = w.length === 1 ? w : w + [...w.slice(1, -1)].reverse().join('');
+    if (laenge === null || laenge === undefined) return periode;
+    pruefeGanzzahl(laenge, 'Die Länge');
+    if (laenge < 0) throw new KryptoFehler('Die Länge darf nicht negativ sein.');
+    let aus = '';
+    while (aus.length < laenge) aus += periode;
+    return aus.slice(0, laenge);
+  }
+
+  const STROM_MODI = ['vigenere', 'autokey', 'pendel'];
+
+  /**
+   * Schlüsselstrom (W2 §9.1 Reiter 2): Schlüsselbuchstabe je Buchstabe von nurBuchstaben(text). vigenere: Schlüssel
+   * wiederholt; autokey: Schlüssel + Klartext (ent: Klartext aus der Entschlüsselung); pendel: pendelFolge.
+   */
+  function schluesselstrom(text, schluessel, { modus = 'vigenere', richtung = 'ver' } = {}) {
+    if (!STROM_MODI.includes(modus)) throw new KryptoFehler('Der Modus muss „vigenere“, „autokey“ oder „pendel“ sein.');
+    pruefeRichtung(richtung);
+    const s = schluesselBuchstaben(schluessel);
+    const t = nurBuchstaben(text);
+    const n = t.length;
+    if (modus === 'pendel') return pendelFolge(s, n);
+    if (modus === 'autokey') return (s + (richtung === 'ver' ? t : autokey(t, s, 'ent'))).slice(0, n);
+    let aus = '';
+    for (let i = 0; i < n; i++) aus += s[i % s.length];
+    return aus;
+  }
+
   // ───────────────────────────── Quadrate und Bigramme ─────────────────────────────
 
   const ZIFFERN = '0123456789';
@@ -727,6 +761,125 @@
       aus.push(...teil.slice(r), ...teil.slice(0, r));
     }
     return istListe ? aus : aus.join('');
+  }
+
+  /** Skytale-Raster (W0 §9.1): umfang Zeilen (2–30) mit m = ⌈n/umfang⌉ Spalten, zeilenweise gefüllt */
+  function skytaleRaster(text, umfang, { fuellzeichen = 'X' } = {}) {
+    pruefeGanzzahl(umfang, 'Der Umfang');
+    if (umfang < 2 || umfang > 30) throw new KryptoFehler('Der Umfang der Skytale liegt zwischen 2 und 30.');
+    const f = pruefeFuellzeichenOderNull(fuellzeichen);
+    let t = nurBuchstaben(text);
+    const m = Math.ceil(t.length / umfang);
+    if (f !== null) t += f.repeat(umfang * m - t.length);
+    const zeilen = [];
+    for (let z = 0; z < umfang; z++) zeilen.push(t.slice(z * m, (z + 1) * m));
+    return zeilen;
+  }
+
+  /** Schiene (ab 0) je Position im Zickzack des Gartenzauns; zeilen 2–10, laenge ≥ 0 */
+  function gartenzaunSchienen(laenge, zeilen) {
+    pruefeGanzzahl(laenge, 'Die Länge');
+    if (laenge < 0) throw new KryptoFehler('Die Länge darf nicht negativ sein.');
+    pruefeGanzzahl(zeilen, 'Die Anzahl der Schienen');
+    if (zeilen < 2 || zeilen > 10) throw new KryptoFehler('Ein Gartenzaun hat 2 bis 10 Schienen.');
+    const muster = [];
+    let z = 0;
+    let d = 1;
+    for (let i = 0; i < laenge; i++) {
+      muster.push(z);
+      if (z === 0) d = 1;
+      else if (z === zeilen - 1) d = -1;
+      z += d;
+    }
+    return muster;
+  }
+
+  function pruefeSchablonenGroesse(groesse) {
+    if (!Number.isInteger(groesse) || groesse < 2 || groesse > 10 || groesse % 2) {
+      throw new KryptoFehler('Die Größe der Schablone muss eine gerade Zahl von 2 bis 10 sein.');
+    }
+    return groesse;
+  }
+
+  /**
+   * Fleißner-Stellungen (W0 §9.1): vier Listen der Löcher [z, s] (ab 1) je Stellung, zeilenweise sortiert; prüft nur
+   * die Größe und dass jedes Loch im Raster liegt (auch unvollständige Schablonen).
+   */
+  function fleissnerStellungen(groesse, loecher, { drehung = 'rechts' } = {}) {
+    pruefeSchablonenGroesse(groesse);
+    if (drehung !== 'rechts' && drehung !== 'links') throw new KryptoFehler('Die Drehung muss „rechts“ oder „links“ sein.');
+    if (!Array.isArray(loecher)) throw new KryptoFehler('Die Schablone muss eine Liste von Löchern sein.');
+    for (const l of loecher) {
+      const ok = Array.isArray(l) && l.length === 2 && l.every((v) => Number.isInteger(v) && v >= 1 && v <= groesse);
+      if (!ok) throw new KryptoFehler(`Das Loch ${JSON.stringify(l)} liegt nicht im Raster ${groesse} × ${groesse}.`);
+    }
+    const aus = [];
+    let stellung = loecher.map((l) => l.slice());
+    for (let r = 0; r < 4; r++) {
+      aus.push(stellung.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]));
+      stellung = stellung.map((l) => drehe(l, groesse, drehung));
+    }
+    return aus;
+  }
+
+  /** Drehgruppen: Matrix groesse × groesse mit Gruppennummer (ab 0, Reihenfolge des ersten Auftretens zeilenweise) */
+  function fleissnerDrehgruppen(groesse) {
+    pruefeSchablonenGroesse(groesse);
+    const gruppe = Array.from({ length: groesse }, () => new Array(groesse).fill(-1));
+    let naechste = 0;
+    for (let z = 1; z <= groesse; z++) {
+      for (let s = 1; s <= groesse; s++) {
+        if (gruppe[z - 1][s - 1] >= 0) continue;
+        let feld = [z, s];
+        for (let r = 0; r < 4; r++) {
+          gruppe[feld[0] - 1][feld[1] - 1] = naechste;
+          feld = drehe(feld, groesse, 'rechts');
+        }
+        naechste++;
+      }
+    }
+    return gruppe;
+  }
+
+  /** Ring (W6 §2): Felder 0 … n − 1 ab Feld 0 in Sprüngen von t gelesen; n 4–12, t 1 … n − 1 */
+  function ringFolge(n, t) {
+    pruefeGanzzahl(n, 'Die Feldzahl');
+    if (n < 4 || n > 12) throw new KryptoFehler('Ein Ring hat 4 bis 12 Felder.');
+    pruefeGanzzahl(t, 'Der Ringschritt');
+    if (t < 1 || t > n - 1) throw new KryptoFehler(`Der Ringschritt liegt zwischen 1 und ${n - 1}.`);
+    const folge = [];
+    for (let i = 0; i < n; i++) folge.push((i * t) % n);
+    const nieGelesen = [];
+    for (let f = 0; f < n; f++) if (!folge.includes(f)) nieGelesen.push(f);
+    return { folge, nieGelesen };
+  }
+
+  /**
+   * Ring-Transposition (W6 §2, Eves Uhrwerk Stufe 1): Blöcke zu `block` Zeichen (letzter mit Füllzeichen), gelesen in
+   * ringFolge(block, t).folge; t und block müssen teilerfremd sein; ent verlangt eine Länge als Vielfaches von block.
+   */
+  function ring(text, t, richtung = 'ver', { block = 8, fuellzeichen = 'X' } = {}) {
+    pruefeRichtung(richtung);
+    const { folge } = ringFolge(block, t);
+    if (ggT(t, block) !== 1) throw new KryptoFehler('Der Ring ist nicht umkehrbar – t und n müssen teilerfremd sein.');
+    const f = pruefeFuellzeichen(fuellzeichen, 'Das Füllzeichen', null);
+    let s = nurBuchstaben(text);
+    if (richtung === 'ent' && s.length % block) {
+      throw new KryptoFehler(`Die Länge des Geheimtextes muss ein Vielfaches von ${block} sein.`);
+    }
+    if (s.length % block) s += f.repeat(block - (s.length % block));
+    let aus = '';
+    for (let b = 0; b < s.length; b += block) {
+      const teil = s.slice(b, b + block);
+      if (richtung === 'ver') {
+        aus += folge.map((feld) => teil[feld]).join('');
+      } else {
+        const felder = new Array(block);
+        folge.forEach((feld, j) => (felder[feld] = teil[j]));
+        aus += felder.join('');
+      }
+    }
+    return aus;
   }
 
   // ───────────────────────────── Bits, ASCII, XOR ─────────────────────────────
@@ -1923,6 +2076,8 @@
     vigenere,
     autokey,
     porta,
+    pendelFolge,
+    schluesselstrom,
     quadrat,
     playfairPaare,
     playfair,
@@ -1939,6 +2094,12 @@
     spaltentransposition,
     umkehrung,
     blockrotation,
+    skytaleRaster,
+    gartenzaunSchienen,
+    fleissnerStellungen,
+    fleissnerDrehgruppen,
+    ringFolge,
+    ring,
     // Bits, ASCII, XOR
     ascii,
     zeichenAusAscii,

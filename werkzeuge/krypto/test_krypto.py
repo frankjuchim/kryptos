@@ -1291,5 +1291,47 @@ class VerfahrenBaukasten(unittest.TestCase):
         self.assertEqual(finde(va({'typ': 'atbash'}, 'abc', 'ver'), 'P3', 'richtung'), [])
 
 
+class BibliothekM6I(unittest.TestCase):
+    """Plan M6 Task 105 (W0 §9.1, W2 §9.1, W6 §2/§9.1) – dieselben Vektoren wie test/krypto.test.js."""
+
+    def test_raster_schienen_stellungen(self):
+        self.assertEqual(K.skytale_raster('wir halten den pass', 3), ['WIRHAL', 'TENDEN', 'PASSXX'])
+        self.assertEqual(K.skytale_raster('abcde', 2, fuellzeichen=None), ['ABC', 'DE'])
+        self.assertRaises(F, K.skytale_raster, 'abc', 1)
+        self.assertEqual(''.join(map(str, K.gartenzaun_schienen(20, 3))), '01210121012101210121')
+        self.assertEqual([K.gartenzaun_schienen(20, 3).count(r) for r in range(3)], [5, 10, 5])
+        self.assertEqual(K.gartenzaun_schienen(3, 5), [0, 1, 2])
+        self.assertRaises(F, K.gartenzaun_schienen, 5, 1)
+        self.assertEqual(K.fleissner_stellungen(4, [[1, 2], [2, 1], [2, 3], [4, 4]]), [
+            [[1, 2], [2, 1], [2, 3], [4, 4]], [[1, 3], [2, 4], [3, 3], [4, 1]], [[1, 1], [3, 2], [3, 4], [4, 3]],
+            [[1, 4], [2, 2], [3, 1], [4, 2]]])
+        self.assertEqual(K.fleissner_stellungen(4, [[1, 2]], drehung='links'), [[[1, 2]], [[3, 1]], [[4, 3]], [[2, 4]]])
+        self.assertRaises(F, K.fleissner_stellungen, 4, [[5, 1]])
+        self.assertEqual(K.fleissner_drehgruppen(4), [[0, 1, 2, 0], [2, 3, 3, 1], [1, 3, 3, 2], [0, 2, 1, 0]])
+        self.assertEqual(K.fleissner('boten warten am tor', 4, [[1, 2], [2, 1], [2, 3], [4, 4]]), 'TBNMOTTWOEANRRAE')
+
+    def test_ring_pendel_schluesselstrom(self):
+        self.assertEqual(K.ring_folge(8, 5), {'folge': [0, 5, 2, 7, 4, 1, 6, 3], 'nie_gelesen': []})
+        self.assertEqual(K.ring_folge(8, 3)['folge'], [0, 3, 6, 1, 4, 7, 2, 5])
+        self.assertEqual(K.ring_folge(8, 2), {'folge': [0, 2, 4, 6, 0, 2, 4, 6], 'nie_gelesen': [1, 3, 5, 7]})
+        self.assertEqual(K.ring('ZEITMASC', 5), 'ZAICMEST')
+        self.assertEqual(K.ring('zeitmaschine', 3), 'ZTSEMCIAHEXIXXNX')
+        self.assertEqual(K.ring('ZTSEMCIAHEXIXXNX', 3, 'ent'), 'ZEITMASCHINEXXXX')
+        with self.assertRaisesRegex(F, 'teilerfremd'):
+            K.ring('ZEITMASC', 2)
+        self.assertRaises(F, K.ring, 'ABC', 3, 'ent')
+        self.assertEqual(K.vigenere(K.ring('zeitreisebeendet', 3), 'UHRH'), 'TAZLLZZLYLVIHAVK')  # Prüfwert W6-2-e3
+        self.assertEqual(K.pendel_folge('SAND'), 'SANDNA')
+        self.assertEqual(K.pendel_folge('SAND', 10), 'SANDNASAND')
+        self.assertEqual(K.pendel_folge('uhr'), 'UHRH')
+        self.assertEqual(K.pendel_folge('A', 3), 'AAA')
+        self.assertEqual(K.vigenere('ZAICMESTHRNIFIEE', K.pendel_folge('SAND')), 'RAVFZEKTUUAIXIRH')  # Prüfwert W6-2-e4
+        self.assertEqual(K.schluesselstrom('treffen', 'ZU', modus='autokey'), 'ZUTREFF')
+        self.assertEqual(K.schluesselstrom('SLXWJJS', 'ZU', modus='autokey', richtung='ent'), 'ZUTREFF')
+        self.assertEqual(K.schluesselstrom('abc defg', 'KEY'), 'KEYKEYK')
+        self.assertEqual(K.schluesselstrom('a' * 10, 'SAND', modus='pendel'), 'SANDNASAND')
+        self.assertRaises(F, K.schluesselstrom, 'abc', 'KEY', modus='beaufort')
+
+
 if __name__ == '__main__':
     unittest.main()

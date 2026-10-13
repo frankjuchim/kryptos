@@ -34,6 +34,8 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | spaltenReihenfolge              | spalten_reihenfolge             | rangfolge, teiltexte, bigramme  | rangfolge, teiltexte, bigramme |
 | spaltentransposition            | spaltentransposition            | koinzidenzindex, friedman       | koinzidenzindex, friedman   |
 | umkehrung, blockrotation        | umkehrung, blockrotation        | friedmanWert, kasiski           | friedman_wert, kasiski      |
+| skytaleRaster, ringFolge, ring  | skytale_raster, ring_folge, ring | pendelFolge, schluesselstrom   | pendel_folge, schluesselstrom |
+| gartenzaunSchienen              | gartenzaun_schienen             | fleissnerStellungen/-Drehgruppen | fleissner_stellungen/_drehgruppen |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -300,6 +302,44 @@ def porta(text, schluessel, richtung='ver'):
         y = 13 + (x - j) % 13 if x < 13 else (x - 13 + j) % 13
         aus.append(ALPHABET[y])
     return ''.join(aus)
+
+
+def pendel_folge(wort, laenge=None):
+    """W6 §2: Pendel ohne doppelte Enden über Index-Spiegelung i mod (2L − 2); L = 1: das Wort selbst."""
+    w = _schluesselwort(wort)
+    L = len(w)
+    p = 1 if L == 1 else 2 * L - 2
+    if laenge is None:
+        anzahl = p
+    else:
+        anzahl = _ganz(laenge, 'Länge')
+        if anzahl < 0:
+            raise KryptoFehler('Die Länge darf nicht negativ sein.')
+    aus = []
+    for i in range(anzahl):
+        j = i % p
+        aus.append(w[j if j < L else p - j])
+    return ''.join(aus)
+
+
+def schluesselstrom(text, schluessel, *, modus='vigenere', richtung='ver'):
+    """W2 §9.1 Reiter 2: Schlüsselbuchstabe je Klartext-/Geheimtextbuchstabe."""
+    if modus not in ('vigenere', 'autokey', 'pendel'):
+        raise KryptoFehler('Unbekannter Modus des Schlüsselstroms.')
+    _richtung(richtung)
+    s = _schluesselwort(schluessel)
+    t = nur_buchstaben(text)
+    if modus == 'pendel':
+        return pendel_folge(s, len(t))
+    if modus == 'vigenere':
+        return ''.join(s[i % len(s)] for i in range(len(t)))
+    strom = list(s)
+    for i, c in enumerate(t):  # autokey: Strom wächst um den Klartextbuchstaben
+        if richtung == 'ver':
+            strom.append(c)
+        else:
+            strom.append(ALPHABET[(ALPHABET.index(c) - ALPHABET.index(strom[i])) % 26])
+    return ''.join(strom[:len(t)])
 
 
 # ───────────────────────────── Quadrate und Bigramme ─────────────────────────────
@@ -685,6 +725,124 @@ def blockrotation(folge, block, um, richtung='ver'):
             r = (len(teil) - r) % len(teil)
         aus.extend(teil[r:] + teil[:r])
     return ''.join(aus) if ist_text else aus
+
+
+def skytale_raster(text, umfang, *, fuellzeichen='X'):
+    """W0 §9.1: Zeilen des Skytale-Rasters (umfang 2–30), Zelle (z, s) = Zeichen z · m + s."""
+    u = _ganz(umfang, 'Umfang')
+    if not 2 <= u <= 30:
+        raise KryptoFehler('Der Umfang liegt zwischen 2 und 30.')
+    f = _fuell_oder_none(fuellzeichen)
+    t = nur_buchstaben(text)
+    m = -(-len(t) // u)
+    zeilen = []
+    for z in range(u):
+        zeile = ''
+        for sp in range(m):
+            i = z * m + sp
+            if i < len(t):
+                zeile += t[i]
+            elif f is not None:
+                zeile += f
+        zeilen.append(zeile)
+    return zeilen
+
+
+def gartenzaun_schienen(laenge, zeilen):
+    """Schiene je Position über die Periode 2(z − 1): Rest r, Schiene r bzw. 2(z − 1) − r."""
+    n = _ganz(laenge, 'Länge')
+    z = _ganz(zeilen, 'Zeilen')
+    if n < 0:
+        raise KryptoFehler('Die Länge darf nicht negativ sein.')
+    if not 2 <= z <= 10:
+        raise KryptoFehler('Ein Gartenzaun hat 2 bis 10 Schienen.')
+    p = 2 * (z - 1)
+    return [i % p if i % p < z else p - i % p for i in range(n)]
+
+
+def _schablonen_groesse(groesse):
+    if not _ist_ganz(groesse) or not 2 <= _ganz(groesse) <= 10 or _ganz(groesse) % 2:
+        raise KryptoFehler('Die Schablonengröße ist eine gerade Zahl von 2 bis 10.')
+    return _ganz(groesse)
+
+
+def fleissner_stellungen(groesse, loecher, *, drehung='rechts'):
+    n = _schablonen_groesse(groesse)
+    if drehung not in ('rechts', 'links'):
+        raise KryptoFehler('drehung muss „rechts“ oder „links“ sein.')
+    liste = _loecher(n, loecher)
+    if liste is None or any(not (1 <= z <= n and 1 <= sp <= n) for z, sp in liste):
+        raise KryptoFehler('Jedes Loch [z, s] muss im Raster liegen.')
+    stellungen = []
+    for _ in range(4):
+        stellungen.append([[z, sp] for z, sp in sorted(liste)])
+        liste = [_drehe(z, sp, n, drehung) for z, sp in liste]
+    return stellungen
+
+
+def fleissner_drehgruppen(groesse):
+    """Gruppe = Bahn eines Feldes unter vier Rechtsdrehungen; Nummer nach erstem Auftreten (zeilenweise)."""
+    n = _schablonen_groesse(groesse)
+
+    def bahn(z, sp):
+        felder = []
+        for _ in range(4):
+            felder.append((z, sp))
+            z, sp = _drehe(z, sp, n, 'rechts')
+        return min(felder)
+
+    nummer = {}
+    matrix = []
+    for z in range(1, n + 1):
+        zeile = []
+        for sp in range(1, n + 1):
+            vertreter = bahn(z, sp)
+            nummer.setdefault(vertreter, len(nummer))
+            zeile.append(nummer[vertreter])
+        matrix.append(zeile)
+    return matrix
+
+
+def ring_folge(n, t):
+    """W6 §2: ab Feld 0 jeweils t Felder weiter (n Schritte)."""
+    n = _ganz(n, 'Felderzahl')
+    t = _ganz(t, 'Ringschritt')
+    if not 4 <= n <= 12:
+        raise KryptoFehler('Ein Ring hat 4 bis 12 Felder.')
+    if not 1 <= t <= n - 1:
+        raise KryptoFehler('Der Ringschritt liegt zwischen 1 und n − 1.')
+    folge, feld = [], 0
+    for _ in range(n):
+        folge.append(feld)
+        feld = (feld + t) % n
+    return {'folge': folge, 'nie_gelesen': sorted(set(range(n)) - set(folge))}
+
+
+def ring(text, t, richtung='ver', *, block=8, fuellzeichen='X'):
+    """W6 §2 (Eves Uhrwerk, Stufe 1) über eine Feldliste je Block."""
+    _richtung(richtung)
+    folge = ring_folge(block, t)['folge']
+    n, t = _ganz(block), _ganz(t)
+    if math.gcd(t, n) != 1:
+        raise KryptoFehler('Nicht umkehrbar – t und n müssen teilerfremd sein.')
+    f = _fuell_oder_none(fuellzeichen)
+    if f is None:
+        raise KryptoFehler('Das Füllzeichen muss ein Buchstabe sein.')
+    s = nur_buchstaben(text)
+    if richtung == 'ent' and len(s) % n:
+        raise KryptoFehler('Die Länge muss ein Vielfaches der Blocklänge sein.')
+    s += f * (-len(s) % n)
+    aus = []
+    for b in range(0, len(s), n):
+        if richtung == 'ver':
+            felder = dict(enumerate(s[b:b + n]))  # Feld → Zeichen
+            aus.extend(felder[k] for k in folge)
+        else:
+            felder = {}
+            for j, c in enumerate(s[b:b + n]):
+                felder[t * j % n] = c  # Zeichen j wurde von Feld t · j mod n gelesen
+            aus.extend(felder[k] for k in range(n))
+    return ''.join(aus)
 
 
 # ───────────────────────────── Bits, ASCII, XOR ─────────────────────────────
