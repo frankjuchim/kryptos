@@ -1279,7 +1279,7 @@ Version patch
   ein Block wird gezeichnet (der erste), die Ausgabe gilt für den ganzen Text; keine Schlüsselsuche.
 - Nachspiel: Sprung für Sprung („Feld 5: A“).
 
-- [ ] **Step 1: Failing test** – `test/labor_skytale.test.js` (anhängen):
+- [x] **Step 1: Failing test** – `test/labor_skytale.test.js` (anhängen):
   ```js
   test('Ring (W6): Lesereihenfolge, nie gelesene Felder, Ausgabe = Krypto.ring; nur ab Welt 6', () => {
     const ohne = oeffne('skytale', { umgebung: { welten: [0, 1, 2] } });
@@ -1294,8 +1294,8 @@ Version patch
     assert.equal(w.text('output.labor-ausgabe'), '');
   });
   ```
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Ring bei 360 px).
-- [ ] **Step 5: Commit** `git commit -m "Kryptolabor: Skytale & Gitter, Modus Ring (W6)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `npm test` grün; Sichtprüfung (Ring bei 360 px).
+- [x] **Step 5: Commit** `git commit -m "Kryptolabor: Skytale & Gitter, Modus Ring (W6)"`.
 
 ### Task 114: Werkzeug „Häufigkeits-Analysator“ (W1 §9.1)
 

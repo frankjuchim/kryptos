@@ -364,3 +364,27 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .schablone-legende { margin: 0; font-size: .9rem; }
 @media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .schablone tbody { animation: none; } .skytale-stab.animiert * { transition: none; } }
 :root[data-bewegung="aus"] .schablone-flaeche.dreht .schablone tbody { animation: none; }
+
+/* Ring (W6 §9.1, Plan M6 Task 113): nie gelesene Felder rot UND durchgestrichen UND im Text genannt */
+.ring-bereich { display: flex; flex-wrap: wrap; gap: var(--a-4); align-items: start; }
+.ring-bereich > * { min-width: 0; }
+.ring-ort { flex: 1 1 16rem; max-width: 300px; }
+.ring { display: block; width: 100%; height: auto; }
+.ring-bereich > div:last-child { flex: 1 1 14rem; }
+.ring-kreis { fill: none; stroke: var(--linie); stroke-width: 2; stroke-dasharray: 4 4; }
+.ring .feld circle { fill: var(--karte); stroke: var(--akzent); stroke-width: 2; }
+.ring .feld-zeichen { font-family: var(--f-mono); font-size: 17px; font-weight: 700; fill: var(--text); }
+.ring .feld-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text-2); }
+.ring .feld.nie circle { fill: var(--fehler-flaeche); stroke: var(--fehler); stroke-dasharray: 3 2; }
+.ring .feld-strich { stroke: var(--fehler); stroke-width: 2.5; }
+.ring .feld.aktuell circle { stroke: var(--hinweis); stroke-width: 4; }
+.ring-sprung line { stroke: var(--text-2); stroke-width: 1.5; }
+.ring-sprung.aktuell line { stroke: var(--hinweis); stroke-width: 3; }
+.ring-sprung-nr { font-family: var(--f-text); font-size: 10px; fill: var(--text); paint-order: stroke; stroke: var(--papier); stroke-width: 3px; }
+.ring-spitze { fill: var(--text-2); }
+.ring-folge-titel { margin: 0; font-weight: 700; }
+.ring-folge { display: flex; flex-wrap: wrap; gap: var(--a-1) var(--a-3); margin: var(--a-1) 0; padding: 0; list-style: none; font-family: var(--f-mono); font-size: 1.2rem; }
+.ring-folge li.doppelt { text-decoration: underline wavy var(--fehler); }
+.ring-nie { margin: 0; color: var(--fehler); font-weight: 700; }
+.ring-grenze { margin: 0; font-size: .9rem; }
+.ring-meldung:empty { display: none; }

@@ -106,3 +106,31 @@ test('Skytale & Gitter: Beispiel-Schablone gültig, Standardtext, keine Anfragen
   assert.deepEqual(w.k.anfragen, []);
   assert.equal(w.k.window.localStorage.length, 0);
 });
+
+test('Ring (W6): Lesereihenfolge, nie gelesene Felder, Ausgabe = Krypto.ring; nur ab Welt 6', () => {
+  const ohne = oeffne('skytale', { umgebung: { welten: [0, 1, 2] } });
+  assert.equal(ohne.k.alle(ohne.flaeche, '[role="tab"][data-reiter="ring"]').length, 0);
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['ring'], text: 'ZEITMASC', t: 5 } });
+  assert.match(w.text('ol.ring-folge'), /0\s*5\s*2\s*7\s*4\s*1\s*6\s*3/);
+  assert.equal(w.ohneLeer('output.labor-ausgabe'), 'ZAICMEST');
+  w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'Home'); // t = 1
+  w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'ArrowUp'); // t = 2
+  assert.deepEqual(w.k.alle(w.flaeche, 'svg.ring .nie').map((x) => x.dataset.feld), ['1', '3', '5', '7']);
+  assert.match(w.text('.labor-hinweis'), /teilerfremd/);
+  assert.equal(w.text('output.labor-ausgabe'), '');
+});
+
+test('Ring: Lehrkraft sieht den Reiter, Textalternative, Nachspiel Sprung für Sprung, Entschlüsseln = Krypto.ring', () => {
+  const w = oeffne('skytale', { umgebung: { rolle: 'lehrkraft', welten: undefined, niveau: undefined }, voreinstellung: { reiter: ['ring'], text: 'ZAICMEST', t: 5, richtung: 'ent' } });
+  assert.equal(w.ohneLeer('output.labor-ausgabe'), K.klein(K.ring('ZAICMEST', 5, 'ent')));
+  assert.equal(w.k.eins(w.flaeche, 'svg.ring').getAttribute('role'), 'img');
+  assert.match(w.k.eins(w.flaeche, 'svg.ring').getAttribute('aria-label'), /0, 5, 2, 7, 4, 1, 6, 3/);
+  assert.doesNotMatch(w.k.text(w.flaeche), /\bnull\b|undefined/, 'keine leeren Platzhalter im Text');
+  const leiste = w.k.eins(w.flaeche, '.nachspiel');
+  w.k.taste(leiste, 'ArrowRight');
+  w.k.taste(leiste, 'ArrowRight');
+  assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /Feld 5: a/);
+  w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[0], 'End'); // n = 12
+  assert.equal(w.k.alle(w.flaeche, 'svg.ring g.feld').length, 12);
+  assert.equal(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1].getAttribute('aria-valuemax'), '11');
+});

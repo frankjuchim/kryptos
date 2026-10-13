@@ -1,5 +1,6 @@
 /* Kryptos – Labor-Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112): Skytale (Stab, Raster, alle Stäbe),
-   Gartenzaun (Zickzack, Schienen), Fleißner-Schablone (Löcher stanzen, Drehgruppen, drehen). Stab, Zaun und Schablone
+   Gartenzaun (Zickzack, Schienen), Fleißner-Schablone (Löcher stanzen, Drehgruppen, drehen), ab Welt 6 der Ring
+   (W6 §9.1, Task 113: Lesereihenfolge, nie gelesene Felder, keine Schlüsselsuche). Stab, Zaun und Schablone
    sind die Objekte; darunter steht das Raster als echte Tabelle. Rechnet nur über Krypto.*; speichert nichts. */
 'use strict';
 (() => {
@@ -32,7 +33,7 @@
 
   function oeffne(container, voreinstellung, umgebung) {
     const v = voreinstellung || {};
-    const reiterListe = KRLabor.reiterFuer('skytale', v, umgebung).filter((r) => REITER_TITEL[r] && r !== 'ring');
+    const reiterListe = KRLabor.reiterFuer('skytale', v, umgebung).filter((r) => REITER_TITEL[r]);
     if (!reiterListe.length) reiterListe.push('skytale');
     const ruhig = AQ.ruhig();
     const z = {
@@ -42,8 +43,11 @@
       zeilen: ganz(v.zeilen, 2, 8, 3),
       schablone: lochListe(v.schablone) || BEISPIEL.schablone.map((l) => l.slice()),
       stellung: 1,
+      block: 8,
+      t: ganz(v.t, 1, 11, 3),
       ausgabe: ''
     };
+    if (z.t > z.block - 1) z.t = 3;
     let teil = null; // { schliesse(), zustand() } des aktiven Reiters
     const timer = new Set();
 
@@ -542,6 +546,103 @@
       };
     }
 
+    /* ---------- Ring (W6 §9.1, Plan M6 Task 113) ---------- */
+
+    function baueRing() {
+      let ns = null;
+      const k = kopf(zeichne);
+      const blockZahl = B.zahl({ beschriftung: 'Blocklänge n', min: 4, max: 12, wert: z.block, beiWechsel: (n) => { z.block = n; tZahl.grenzen(1, n - 1); z.t = tZahl.wert(); zeichne(); } });
+      const tZahl = B.zahl({ beschriftung: 'Ringschritt t', min: 1, max: z.block - 1, wert: z.t, beiWechsel: (t) => { z.t = t; zeichne(); } });
+      const ringOrt = h('div', { class: 'ring-ort' });
+      const folgeOrt = h('div');
+      const meldung = h('div', { class: 'ring-meldung' });
+      const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
+      const nsOrt = h('div');
+      r.flaeche.append(k.element, h('div', { class: 'labor-steuer' }, blockZahl.element, tZahl.element), meldung, h('div', { class: 'ring-bereich' }, ringOrt, folgeOrt), aus.element, h('p', { class: 'text-2 ring-grenze' }, 'Gezeichnet ist der erste Block; die Ausgabe gilt für den ganzen Text. Ausprobieren musst du selbst – das Werkzeug sucht keinen Schlüssel.'), nsOrt);
+      function sperre(an) {
+        k.sperre(an);
+        blockZahl.sperre(an);
+        tZahl.sperre(an);
+      }
+      function zeichne() {
+        if (ns) ns.schliesse();
+        ns = null;
+        for (const el of [ringOrt, folgeOrt, meldung, nsOrt]) AQ.clear(el);
+        const n = z.block;
+        const { folge, nieGelesen } = Krypto.ringFolge(n, z.t);
+        const umkehrbar = nieGelesen.length === 0;
+        const ver = z.richtung === 'ver';
+        let erg = { wert: '' };
+        if (!umkehrbar) meldung.appendChild(B.hinweis('warnung', `Nicht umkehrbar – t und n müssen teilerfremd sein (Felder ${nieGelesen.join(', ')} werden nie gelesen).`));
+        else {
+          erg = versuche(() => Krypto.ring(z.text, z.t, z.richtung, { block: n }));
+          if (erg.fehler) meldung.appendChild(B.hinweis('warnung', erg.fehler));
+        }
+        setzeAusgabe(aus, erg.wert || '');
+        const klar = ver ? Krypto.nurBuchstaben(z.text) : Krypto.nurBuchstaben(erg.wert || '');
+        const feldZeichen = (f) => (klar[f] ? Krypto.klein(klar[f]) : '');
+        // Kreis mit n Feldern, Sprungpfeilen und Nummern (Geometrie = Darstellung)
+        const M = 150;
+        const R = 110;
+        const pos = (f) => {
+          const b = ((f * 360) / n) * (Math.PI / 180);
+          return [M + R * Math.sin(b), M - R * Math.cos(b)];
+        };
+        const pfeile = [];
+        for (let i = 0; i + 1 < folge.length; i++) {
+          const [x1, y1] = pos(folge[i]);
+          const [x2, y2] = pos(folge[i + 1]);
+          const lang = Math.hypot(x2 - x1, y2 - y1) || 1;
+          const kx = ((x2 - x1) / lang) * 24;
+          const ky = ((y2 - y1) / lang) * 24;
+          pfeile.push(s('g', { class: 'ring-sprung', 'data-schritt': String(i + 1) },
+            s('line', { x1: x1 + kx, y1: y1 + ky, x2: x2 - kx, y2: y2 - ky, 'marker-end': 'url(#ring-spitze)' }),
+            s('text', { class: 'ring-sprung-nr', x: (x1 + x2) / 2, y: (y1 + y2) / 2, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, String(i + 1))
+          ));
+        }
+        const felder = [];
+        for (let f = 0; f < n; f++) {
+          const [x, y] = pos(f);
+          const nie = nieGelesen.includes(f);
+          felder.push(s('g', { class: `feld${nie ? ' nie' : ''}`, 'data-feld': String(f) },
+            s('circle', { cx: x, cy: y, r: 22 }),
+            s('text', { class: 'feld-zeichen', x, y: y - 3, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, feldZeichen(f)),
+            s('text', { class: 'feld-nr', x, y: y + 13, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, String(f)),
+            nie ? s('line', { class: 'feld-strich', x1: x - 18, y1: y + 18, x2: x + 18, y2: y - 18 }) : null
+          ));
+        }
+        const leseText = folge.join(', ');
+        const svg = s('svg', { class: 'ring', viewBox: '0 0 300 300', width: 300, height: 300, role: 'img', 'aria-label': `Ring mit ${n} Feldern, Ringschritt ${z.t}: Lesereihenfolge ${leseText}${nieGelesen.length ? `; nie gelesen: Felder ${nieGelesen.join(', ')}` : ''}.` },
+          s('defs', null, s('marker', { id: 'ring-spitze', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, s('path', { class: 'ring-spitze', d: 'M0 0 L10 5 L0 10 Z' }))),
+          s('circle', { class: 'ring-kreis', cx: M, cy: M, r: R }),
+          pfeile,
+          felder
+        );
+        ringOrt.appendChild(h('div', { class: 'scroll-x' }, svg));
+        folgeOrt.append(
+          ...[
+          h('p', { class: 'ring-folge-titel' }, 'Lesereihenfolge:'),
+          h('ol', { class: 'ring-folge' }, folge.map((f) => h('li', { class: nieGelesen.length && folge.indexOf(f) !== folge.lastIndexOf(f) ? 'doppelt' : null }, String(f)))),
+          nieGelesen.length ? h('p', { class: 'ring-nie' }, `Nie gelesen (durchgestrichen): Felder ${nieGelesen.join(', ')}`) : null
+          ].filter(Boolean)
+        );
+        if (umkehrbar && !erg.fehler && klar.length) {
+          ns = KRLabor.nachspiel(nsOrt, {
+            titel: 'Sprung für Sprung',
+            start: -1,
+            beiLauf: sperre,
+            schritte: folge.map((f, i) => ({ text: `Sprung ${i}: Feld ${f}: ${feldZeichen(f)}`, daten: { feld: f, schritt: i } })),
+            zeige(st) {
+              for (const g of felder) g.classList.toggle('aktuell', g.dataset.feld === String(st.daten.feld));
+              for (const p of pfeile) p.classList.toggle('aktuell', Number(p.dataset.schritt) === st.daten.schritt);
+            }
+          });
+        }
+      }
+      zeichne();
+      return { schliesse: () => ns && ns.schliesse() };
+    }
+
     /* ---------- Reiterwechsel ---------- */
 
     function baue(id) {
@@ -551,6 +652,7 @@
       AQ.clear(r.flaeche);
       if (id === 'gartenzaun') teil = baueZaun();
       else if (id === 'fleissner') teil = baueFleissner();
+      else if (id === 'ring') teil = baueRing();
       else teil = baueSkytale();
     }
     baue(r.aktiv());
@@ -563,7 +665,7 @@
       },
       zustand() {
         const gueltig = Krypto.schablonePruefen(GROESSE, z.schablone).ok;
-        return { reiter: r.aktiv(), richtung: z.richtung, text: z.text, umfang: z.umfang, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, gueltig, ausgabe: z.ausgabe };
+        return { reiter: r.aktiv(), richtung: z.richtung, text: z.text, umfang: z.umfang, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, block: z.block, t: z.t, gueltig, ausgabe: z.ausgabe };
       }
     };
   }
