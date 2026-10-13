@@ -145,8 +145,11 @@ src/
                                (vigenere_zeichen = Spec „vigenere-zeichen“, Unterstrich wegen der Schlüssel-Regel
                                a–z/0–9/_), teiltext.js, playfair.js, porta.js, friedman.js (Niveau eA) –
                                21 Dateien, 24 Generator-Schlüssel
-    teams.js                   Tischgruppen je Kurs
-    funkraum/                  szenarien.js (Konfiguration §12.6), dienst.js, routen.js
+    teams.js                   Tischgruppen je Kurs (Liste, Sollstand setzen, teamVon; Plan M7 E106)
+    funkraum/                  text.js (Whitelist, Normalisierung, HMAC; §12.3), loeschen.js (Beenden/Löschen, §12.7),
+                               szenarien.js (Konfiguration §12.6, Rollenvorschlag), dienst.js (Zustandsautomat, Polling,
+                               Nachrichten, Moderation), typen/{botenlauf,wettknacken,doppelter_schluessel,
+                               schluesseltausch,mallory}.js (je Szenario ein Modul mit festem Vertrag), routen.js (Plan M7)
     arena/                     dienst.js, routen.js
     labor.js                   GET /api/labor (Freigaben)
 public/
@@ -168,7 +171,7 @@ public/
                            haeufigkeit.js substitution.js vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js
                            signatur.js (M6 erledigt: elf Werkzeuge, nachgeladen über KRLabor.lade)
                     funkraum.js beamer.js werkstatt.js (M4 Gerüste, Inhalte M7)  arena.js lehrer_funkraum.js
-                    lehrer_arena.js (M7)
+                    lehrer_arena.js funkpoll.js (KRPoll) funknetz.js (KRNetz) funkraum_szenen.js (KRFunkSzenen) (M7)
                     lehrer.js urkunden.js gast.js start.js board.js themen.js datenschutz.js
 werkzeuge/         schriften_bauen.py schriften_pruefen.py (§11.4) version_setzen.js (§11.6)
 werkzeuge/krypto/  krypto.py bruecke.py vergleich.js seed_pruefen.py fremde_verfahren.py test_fremde_verfahren.py pruefwerte.py pruefwerte_import.py
@@ -1034,7 +1037,7 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 | Verbund `loeschen {kurs}` | Kurs und alles darunter (Teilnahmen + Lernstand, Teams, Funkraum, Arena, falsche_antworten, erfolge, kurs_lehrkraefte); Konten bleiben (Portal löscht kurslose Schüler separat) | `DELETE FROM kurse WHERE kurs_id=?` (Kaskade) |
 | Funkraum „Beenden“ (Lehrkraft) | **alle Nachrichteninhalte, Klartext-Hashes, Rollen-Zustände (Schlüssel, Zuordnungen)**; übrig bleibt bis zum Schließen nur die anonyme Auswertung (Zähler je Team, Ereignis-Codes) | §12.7 |
 | Funkraum „Schließen“ bzw. 24 h nach Anlage | das ganze Szenario | Wartungsjob/Route |
-| Kurs gesperrt (`aktiv:false`) | laufendes Funkraum-Szenario und offene Arena des Kurses | wie „Beenden“/„Arena löschen“ |
+| Kurs gesperrt (`aktiv:false`) | Funkraum-Szenario in `vorbereitung` wird **gelöscht** (wie „abbrechen“, keine Teilnahme); `laeuft`/`pausiert` wird **beendet mit Auswertung**; offene Arena des Kurses gelöscht (Plan M7 E111) | `kursInhalteBeenden(db, kurs, jetzt, { szenarioBeenden })` – Callback des Funkraum-Dienstes, ohne Callback generische Auswertung (`src/krypto/funkraum/loeschen.js`); Arena wie „Arena löschen“ |
 | Arena „Löschen“ (Lehrkraft) bzw. **30 Tage** nach `geschlossen_at` | Arena mit Chiffren, Beurteilungen, Versuchen | Route/Wartungsjob |
 | Teilnahme inaktiv | nichts (Lernstand bleibt bis Löschung, VERTRAG §5) | – |
 | jede Verbund-Löschung (`sub` bzw. `kurs`) | – (zusätzlich **Löschvermerk** in `loeschungen`: nur Kennung + Zeit, kein Name) | Backup/Restore filtert vermerkte Konten/Kurse heraus (§7.1); Vermerke nach **400 Tagen** gelöscht (Wartungsjob) |
@@ -1191,8 +1194,8 @@ der Spec-Dokumente: `baukasten.STUFEN` folgt W3, `verfahren.TYPEN` folgt Delta �
 - `{ "schluessel": { "wort": "…", "zeilen": 3 } }` → Server entschlüsselt `geheimtext` mit dem öffentlichen Verfahren und
   dem geratenen Schlüssel und vergleicht den Hash des Ergebnisses.
 
-Regeln: nicht die eigene Chiffre; Rate-Limit **10 Versuche je Team und Chiffre in 5 Minuten** und **60 je Team in
-10 Minuten** (verhindert, den Server als Orakel für Brute Force zu nutzen – Brute Force gehört ins Kryptolabor); jeder
+Regeln: nicht die eigene Chiffre; Rate-Limit **1 Versuch je Team und Chiffre in 30 Sekunden** (SPEC W3 §9.4; vorher
+10 in 5 Minuten – Plan M7 E101) und **60 je Team in 10 Minuten**, jeweils 429 mit `Retry-After` (verhindert, den Server als Orakel für Brute Force zu nutzen – Brute Force gehört ins Kryptolabor); jeder
 Versuch wird als `arena_versuche` (ohne Inhalt) gespeichert. Erfolg: Ereignis „Team Skytale hat die Chiffre von Team
 Siegel geknackt“ (Beamer), `geknackt_at` der Chiffre beim ersten Erfolg. Antwort `{ erfolg, geknackt: bool, rest }`.
 Bereits geknackte Chiffren dürfen weiter angegriffen werden (Lerneffekt, zählt aber nicht erneut).
@@ -1201,8 +1204,8 @@ Bereits geknackte Chiffren dürfen weiter angegriffen werden (Lerneffekt, zählt
 
 | Abzeichen | Regel | Vergabe |
 |---|---|---|
-| `arena_knacker` „Arena-Knacker“ | Mitglied eines Teams mit ≥ 1 erfolgreichem Angriff auf eine fremde Chiffre | sofort beim Erfolg an alle aktuellen Teammitglieder |
-| `unknackbar` „Unknackbar“ | eigene Chiffre am Ende der Angriffsphase ungeknackt **und** mindestens 3 Angriffsversuche von mindestens 2 anderen Teams | beim Übergang `angriff → beurteilung` an alle Teammitglieder |
+| `arena_knacker` „Arena-Knacker“ | Mitglied eines Teams mit ≥ 1 erfolgreichem Angriff auf eine fremde Chiffre (W3 „einmal je Konto“ = einmal je Teilnahme, Abzeichen sind kursbezogen – Plan M7 E100) | sofort beim Erfolg an alle aktuellen Teammitglieder |
+| `unknackbar` „Unknackbar“ | eigene Chiffre am Ende der Angriffsphase ungeknackt (SPEC W3 §9.4 gilt, Plan M7 E100; die strengere Bedingung „mindestens 3 Angriffsversuche von mindestens 2 anderen Teams“ ist offene Entscheidung 3 des Plans M7) | beim Übergang `angriff → beurteilung` an alle Teammitglieder |
 
 Beurteilung: `PUT /api/arena/:id/beurteilung { text }` (Phase `beurteilung`, ≤ 4000 Zeichen, Teammitglieder). Die
 Lehrkraft sieht alle Beurteilungen gesammelt (`GET /api/lehrer/arena/:id`), Schüler nur die eigene. Freitexte werden nie
@@ -1211,7 +1214,11 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 ### 9.7 Beamer und Lehrkraft-Regie
 
 `/beamer/arena/:id` (Lehrkraft-Sitzung): Teams als Karten (Name, Verfahrensname, Geheimtext-Ausschnitt, Status
-„ungeknackt/geknackt von …“, Anzahl Angriffe), Ereignis-Ticker; Polling wie Funkraum (§12.4). Regie:
+„ungeknackt/geknackt von …“, Anzahl Angriffe), Ereignis-Ticker; Polling alle 2 s wie Funkraum (§12.4), aber ohne `seit`:
+die Tabelle `arena` hat keine `version`, deshalb **ETag = SHA-1** über `status, angriff_bis, Anzahl Chiffren,
+max(arena_versuche.id), Anzahl geknackt, max(eingereicht_at)` (erste 16 Hex), 200 Vollstand bzw. 304 (Ticker = alle
+Erfolge, ≤ 12 × 11 Einträge; keine Migration – Plan M7 E103). Ende der Angriffsphase `angriff_bis`: Umschalten beim
+nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall (Plan M7 E102). Regie:
 `POST /api/lehrer/kurse/:kursId/arena` (anlegen), `POST /api/lehrer/arena/:id/phase { phase, angriffBis? }`,
 `DELETE /api/lehrer/arena/:id`.
 
@@ -1309,6 +1316,13 @@ Grenzen (dokumentiert, bewusst nicht behebbar): Die Bibliothek ist im Browser ge
 kann rechnen lassen. Ebenso lässt sich der Gastmodus ohne Sitzung (fremdes Gerät, privates Fenster) oder ein externes
 Werkzeug (Taschenrechner, andere Websites) nicht sperren – die Sperre ist didaktisch, wie im Abitur sichert die
 Aufgabengestaltung (fremde Verfahren, Begründungen) die Aussagekraft.
+
+**Funkraum (Plan M7 E98):** Szenario-Werkzeuge erscheinen **nur eingebettet im Funkraum** – der Stand liefert je Rolle
+`werkzeuge: [{ id, voreinstellung }]` (Reiter eingeschränkt), die Seite öffnet sie über `KRLabor.oeffne` mit
+`umgebung.modus = 'funkraum'` (Werkbank: `umgebung.beiAenderung`). `/api/labor` und die Kurs-Freigaben bleiben
+unverändert (W1 §10: Werkbank vor DS 4 im Labor gesperrt, damit der Archivfund nicht vorab geknackt wird). Ein laufender
+Boss-Kampf sperrt auch die eingebetteten Werkzeuge (`werkzeuge: []`, `boss: true`). Schlüsseltausch: Modulo-Uhr nur Reiter
+`uhr` (keine Wertetabelle → kein diskreter Logarithmus).
 
 ---
 
@@ -1446,11 +1460,20 @@ Nummer); die Lehrkraft kann vor dem Start tauschen. Schüler ohne Team sehen „
 - `inhalt`: `String(text).toUpperCase()` muss `^[A-Z0-9 ]{1,160}$` erfüllen – sonst **400** „Nur A–Z, 0–9 und
   Leerzeichen, höchstens 160 Zeichen“. Keine stille Umformung außer Großschreibung (Umlaute werden abgelehnt, der Client
   ersetzt sie vorher sichtbar).
-- `klartext` (optional, je nach Szenario Pflicht): wird mit `nurBuchstaben` normalisiert, nur als
-  `HMAC-SHA256(konfig.salz, …)` gespeichert, 1–160 Buchstaben.
+  Zusätzlich muss mindestens ein Zeichen ≠ Leerzeichen sein; Nicht-Strings bzw. fehlender Text, Steuerzeichen, Tab und
+  Zeilenumbruch → 400 (Plan M7 E108). Die Regel gilt für **jeden** Weg in `funk_nachrichten.inhalt` (Senden,
+  Mallory-Ersetzen, öffentliche Werte). Botenlauf zusätzlich: Geheimtext = Klartext (normalisiert) → 400 „Du hast den
+  Klartext gesendet – verschlüssele zuerst.“
+- `klartext` (optional, je nach Szenario Pflicht): wird mit **`Krypto.normalisieren`** (A–Z und 0–9, Umlaute aufgelöst,
+  Leerzeichen weg) normalisiert – Ziffern tragen Bedeutung (W3 „HEUTE 8 UHR“, W5 „TOR 3 → TOR 8“); mit `nurBuchstaben`
+  wäre „TOR 8“ ein Treffer für „TOR 3“ (Plan M7 E93; die Arena bleibt bei `nurBuchstaben`, §9.4). Gespeichert wird nur
+  `HMAC-SHA256(konfig.salz, …)`, 1–160 Zeichen (Funktionen in `src/krypto/funkraum/text.js`).
 - Grenzen: 1 Nachricht je Team in 10 s, 200 Nachrichten je Szenario, 30 Knack-Versuche je Team in 5 min.
 - Sichtbarkeit (serverseitig gefiltert): eigene gesendete/empfangene; Eve/Mallory zusätzlich alle (szenarioabhängig);
-  Beamer alle; ausgeblendete nur als „ausgeblendet“.
+  ausgeblendete nur als „ausgeblendet“. Lehrkraft-Stand mit `?ansicht=regie` (alles, Standard) oder `?ansicht=beamer`
+  (öffentliche Sicht: Geheimtexte, öffentliche Werte, Fortschritt, Ereignisse; Umschläge nur als „UMSCHLAG S23“, keine
+  K-Meldungen, Eve-Tipps, Auftragsinhalte oder Schlüsselblöcke bis zur Phase `aufloesung` – Plan M7 E99; vorher „Beamer
+  alle“).
 
 ### 12.4 Polling-Protokoll
 
@@ -1459,7 +1482,11 @@ Nummer); die Lehrkraft kann vor dem Start tauschen. Schüler ohne Team sehen „
   `{ version, status, phase, ich: { team, rolle, partner }, teams: [{ id, name, rolle?, oeffentlich? }],
      nachrichten: [Nachrichten mit version > seit, für mich sichtbar], ereignisse: [… version > seit],
      anzeigen: { … szenario-spezifisch, z. B. Fortschritt Wettknacken } }`.
-- `seit=0` oder Lücke (Client-Version < kleinste vorhandene) → Vollstand. Nachrichten-Objekt:
+- **Vollstand**, wenn `seit` fehlt, nicht ganzzahlig, ≤ 0 oder **größer als die aktuelle Version** ist (Client einer
+  gelöschten/neuen Instanz); **304**, wenn `If-None-Match` = aktueller ETag **oder** `seit` = Version (Plan M7 E110 –
+  Nachrichten werden vor dem Beenden nie gelöscht, eine „Lücke“ im engeren Sinn gibt es nicht). Jede Änderung an einer
+  Nachricht (ausblenden, angekommen, geknackt, weitergeleitet) setzt `funk_nachrichten.version` in derselben Transaktion
+  auf die neue Szenario-Version, damit Clients mit `seit` sie erhalten (Plan M7 E109). Nachrichten-Objekt:
   `{ id, von: teamId, an: teamId|null, inhalt, art, lesbar: bool, angekommen, geknackt: bool, zeit }` (Klartext-Hashes
   nie).
 - Fehlertoleranz (Design O4): bei Netzfehlern Wartezeit 2 → 4 → 8 → 15 s, dann weiter alle 15 s; Anzeige „Verbindung
@@ -1475,63 +1502,74 @@ sieht alle Inhalte (Geheimtexte, keine Klartexte – gibt es nicht).
 
 ### 12.6 Die fünf Szenarien (Konfiguration `src/krypto/funkraum/szenarien.js`)
 
+Neu gefasst nach den Welt-Specs §9.3 (Plan M7 E91, E94–E97; die frühere Fassung mit `schluessel`/`funken`-Phasen im
+Botenlauf, 12-Byte-OTP, (p, g) je Paar mit Caesar-Nachricht und Etiketten „K7Q3“ ist ersetzt):
+
 ```js
 {
-  botenlauf: { ds: 2, teamsMin: 3,
-    rollen: { paare: ['alice', 'bob'], einzel: ['eve'] },
-    phasen: ['schluessel', 'funken', 'aufloesung'],
-    nachricht: { art: 'nachricht', klartextPflicht: true, an: 'partner' },
-    sicht: { eve: 'alle' },
-    aktionen: { bob: ['empfangen'], eve: ['knacken'] } },          // empfangen/knacken = Klartext einreichen → Hash-Vergleich
-  wettknacken: { ds: 4, teamsMin: 2,
-    rollen: { alle: 'knacker' }, phasen: ['knacken', 'aufloesung'],
-    quelle: 'seed/funkraum/wettknacken.json',                       // Texte + Lösungszuordnung, nur serverseitig
-    aktionen: { knacker: ['zuordnung'] },                           // PUT Zuordnung (max. alle 2 s) → Anteil richtiger Textstellen
-    beamer: 'fortschrittsbalken' },
-  'doppelter-schluessel': { ds: 9, teamsMin: 3,
-    rollen: { paare: ['alice', 'bob'], einzel: ['eve'] }, phasen: ['funken', 'aufloesung'],
-    schluessel: { art: 'otp-bytes', laenge: 12, wiederholer: 'lehrkraft-waehlt' },  // ein Alice-Team bekommt denselben Schlüssel 2×
-    nachricht: { format: 'hex', klartextPflicht: true, klartextMax: 12, anzahl: 2 },
-    sicht: { eve: 'alle' }, aktionen: { eve: ['knacken'], bob: ['empfangen'] } },
-  schluesseltausch: { ds: 12, teamsMin: 3,
-    rollen: { paare: ['alice', 'bob'], einzel: ['eve'] }, phasen: ['tauschen', 'funken', 'eve', 'aufloesung'],
-    parameter: [[23, 5], [29, 2], [47, 5], [59, 2], [83, 2]],       // (p, g) je Paar; geheime a, b bleiben auf dem Tablet
-    oeffentlich: { art: 'oeffentlich', wert: 'zahl < p' },
-    nachricht: { verfahren: 'caesar', schluessel: 'K mod 26', klartextPflicht: true },
-    aktionen: { eve: ['k-raten'] } },                               // Server prüft über dh.dlogKlein (p klein)
-  mallory: { ds: 16, teamsMin: 3,
-    rollen: { paare: ['alice', 'bob'], einzel: ['mallory'], lehrkraft: 'trent' },
-    phasen: ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'],
-    schluessel: { art: 'etikett' },                                 // Server vergibt je Team ein Schlüssel-Etikett (z. B. „K7Q3“)
-    leitung: 'ueber-mallory',                                       // alle Nachrichten/Schlüssel zwischen Paaren laufen über Mallory
-    aktionen: { mallory: ['weiterleiten', 'ersetzen', 'eigenen-schluessel-unterschieben'], trent: ['zertifikat'] } }
+  botenlauf:  { titel: 'Botenlauf', welt: 0, ds: 2, teamsMin: 3, rollen: { paar: ['alice', 'bob'], sonder: 'eve' },
+                phasen: ['runde-1', 'runde-2', 'runde-3', 'aufloesung'], senden: ['runde-1', 'runde-2', 'runde-3'],
+                aktionen: { alice: ['senden'], bob: ['senden', 'empfangen'], eve: ['knacken'] }, sicht: { eve: 'alle' } },
+  wettknacken: { titel: 'Wettknacken', welt: 1, ds: 4, teamsMin: 2, rollen: { alle: 'knacker' }, phasen: ['knacken', 'aufloesung'],
+                quelle: 'seed/funkraum/wettknacken.json', aktionen: { knacker: ['zuordnung'] } },
+  'doppelter-schluessel': { titel: 'Der doppelte Schlüssel', welt: 3, ds: 9, teamsMin: 3, rollen: { paar: ['alice', 'bob'], sonder: 'eve' },
+                phasen: ['funken', 'lauschen', 'aufloesung'], schluesselblock: 64, abschnitt: 32, sprueche: 2, maxZeichen: 24,
+                aktionen: { alice: ['senden'], bob: ['empfangen'], eve: ['knacken'] }, sicht: { eve: 'alle' } },
+  schluesseltausch: { titel: 'Schlüsseltausch vor Eves Augen', welt: 4, ds: 12, teamsMin: 3, rollen: { paar: ['alice', 'bob'], sonder: 'eve' },
+                phasen: ['runde-1', 'runde-2', 'aufloesung'], parameter: { 'runde-1': { p: 23, g: 5 }, 'runde-2': { p: 101, g: 2 } },
+                aktionen: { alice: ['oeffentlich', 'k-melden'], bob: ['oeffentlich', 'k-melden'], eve: ['knacken'] }, sicht: { eve: 'alle', alle: 'oeffentlich' } },
+  mallory:    { titel: 'Mallory im Netz', welt: 5, ds: 16, teamsMin: 3, rollen: { paar: ['alice', 'bob'], sonder: 'mallory', lehrkraft: 'trent' },
+                phasen: ['ohne-zertifikate', 'mit-zertifikaten', 'aufloesung'], leitung: 'ueber-mallory',
+                aktionen: { alice: ['senden'], bob: ['oeffentlich', 'empfangen'], mallory: ['mallory'] } }
 }
 ```
 
+Jeder Typ ist ein Modul `src/krypto/funkraum/typen/<typ>.js` mit festem Vertrag (`start`, `ich`, `sicht`, `anzeigen`,
+`aktionen`, `werkzeuge`, `auswertung`); der Dienst kennt nur Zustandsautomat, Sichtbarkeits-Grundregeln, Versionen,
+Grenzen und Löschung. Zufall nur über `ctx.zufallBytes(n)` (Plan M7 E113).
+
 Szenario-Regeln im Detail:
 
-- **Botenlauf:** Paare vereinbaren offline einen Caesar-Schlüssel (Phase `schluessel`, nichts wird gespeichert), Alice
-  sendet Geheimtext + Klartext (Hash). Bob reicht seinen entschlüsselten Klartext ein → „angekommen“. Eve sieht alle
-  Geheimtexte und reicht Klartexte ein → „geknackt“ (Beamer-Ereignis). Auflösung: Anzahl Nachrichten, angekommen,
-  geknackt, Zeit bis zum Knacken; Merksatz Schlüsselraum 26/Kerckhoffs.
-- **Wettknacken:** Server wählt einen Text aus `seed/funkraum/wettknacken.json` (`{ id, geheimtext, loesung: { zuordnung },
-  laenge }`, ≥ 400 Buchstaben, nicht aus Lab/Akten). Teams arbeiten mit der Substitutions-Werkbank; der Server speichert
-  die Zuordnung je Team und meldet nur den Anteil richtiger Textstellen; Beamer: Fortschrittsbalken je Team. Auflösung:
-  Klartext auf dem Beamer.
-- **Der doppelte Schlüssel:** Server erzeugt je Alice-Team einen 12-Byte-Schlüssel (nur Alice und Bob sehen ihn, in der
-  Bit-Lupe vorbelegt); das von der Lehrkraft gewählte Team erhält ihn für beide Nachrichten. Nachrichten als Hex
-  (Zweiergruppen, Whitelist-konform). Eve sieht alle Hex-Geheimtexte, rechnet C1 ⊕ C2 in der Bit-Lupe und rät Wörter;
-  Knacken über Klartext-Hash. Auflösung zeigt C1 ⊕ C2 = M1 ⊕ M2 auf dem Beamer.
-- **Schlüsseltausch vor Eves Augen:** je Paar (p, g) aus der Liste; Teams veröffentlichen A bzw. B (`oeffentlich`, nur
-  Ziffern < p). Mit K mod 26 als Caesar-Schlüssel senden sie eine Nachricht (Klartext-Hash). Eve reicht je Paar ein K ein;
-  der Server berechnet das wahre K aus A, B, p, g über `dh.dlogKlein` und vergleicht. Auflösung: Einwegfunktion (bei
-  großen p unmöglich), Schlüsseltausch ohne geheimen Kanal.
-- **Mallory im Netz:** Jedes Team erhält ein Schlüssel-Etikett; „verschlüsselt für Etikett X“ heißt: nur der Inhaber von
-  X sieht den Inhalt (serverseitig erzwungen – eine **Simulation**, keine echte Kryptografie; im UI so benannt). Phase
-  `ohne-zertifikate`: Schlüsselanfragen und Nachrichten laufen über Mallory, der weiterleitet, ersetzt (behaupteter
-  Absender `angezeigt_von`) oder sein eigenes Etikett als „Schlüssel von Bob“ unterschiebt. Phase `mit-zertifikaten`:
-  Schlüssel gelten nur mit Zertifikat von Trent (Lehrkraft bestätigt Etikett ↔ Team); ein untergeschobenes Etikett trägt
-  sichtbar „Zertifikat: Mallory“ bzw. „kein gültiges Zertifikat“. Auflösung: wahre Absender und Wege werden gezeigt.
+- **Botenlauf (W0 §9.3, Plan M7 E91, E92):** drei Runden `runde-1` … `runde-3`, dann `aufloesung`. Vor jeder Runde ziehen
+  die Paare offline einen Caesar-Schlüssel (nichts wird gespeichert; Runde 2 neuer Schlüssel). Alice sendet Geheimtext +
+  Klartext (Hash); Geheimtext = Klartext → 400. Bob reicht seinen entschlüsselten Klartext ein → „angekommen“. Eve sieht
+  alle Geheimtexte und reicht Klartexte ein → „geknackt“ (**Hash-Vergleich**, kein Bestätigungsknopf des Absenders).
+  Runde einer Nachricht = Phase, deren `phase`-Ereignis die größte Version ≤ Nachrichten-Version hat (keine neue Spalte).
+  Runde 3: Regie vermerkt Sonderkarten (`POST /api/lehrer/funk/:id/sonderkarte { teamId, karte: 'doppelt'|'zaun' }`, nur
+  Alice-Teams) für die Spalte „Besonderheit“. Auflösung: Anzahl Nachrichten, angekommen, geknackt, Zeit „gesendet →
+  geknackt“; Merksatz Schlüsselraum 26/Kerckhoffs.
+- **Wettknacken (W1 §9.2/§9.3, Plan M7 E97):** Text aus `seed/funkraum/wettknacken.json` (`{ id, geheimtext, loesung: {
+  zuordnung }, laenge }`, ≥ 400 Buchstaben, nicht aus Lab/Akten). Teams arbeiten mit der eingebetteten
+  Substitutions-Werkbank; der Server speichert die Zuordnung je Team und meldet nur den **Anteil = richtig entschlüsselte
+  Positionen / Textlänge** (Zuordnung Geheim → Klar, Groß/Klein egal). **Fertig ≥ 0,95** → Ereignis `fertig { team, platz }`
+  einmal je Team; Hinweise 1–3 als `POST /api/lehrer/funk/:id/hinweis { nr }` (Texte aus dem Seed, Ereignis `hinweis`);
+  Verlauf je Team in `funk_rollen.zustand.verlauf` (höchstens ein Punkt je 30 s, ≤ 60 Punkte) für die Kurven. Klartext nur
+  in Regie/Beamer ab `aufloesung`.
+- **Der doppelte Schlüssel (W3 §9.3, Plan M7 E94):** Schlüsselblock **64 Byte** je Paar (`zufallBytes(64)`, nur Alice und
+  Bob sehen ihn, in der Bit-Lupe vorbelegt), Abschnitt 1 = Byte 0–31, Abschnitt 2 = Byte 32–63. Je Alice-Team **2**
+  Funksprüche, ≤ 24 Zeichen, nur Wörter aus dem Funkspruch-Baukasten (`BAUSTEINE`, 21 Wörter aus W3 §9.3, durch
+  Leerzeichen getrennt); Geheimtext als Hex-Paare. Der Server prüft die Rückrechnung C ⊕ K_Abschnitt = M über `Krypto.xor`
+  (Klartext nur im Speicher) → sonst 400. Abschnitt 1 zweimal nur für das Sparschwein-Paar (`optionen.wiederholerTeamId` =
+  Alice-Team, verdeckt), sonst 409 „Abschnitt 1 ist verbraucht“. Phase `lauschen`: Eve rechnet C1 ⊕ C2 in der Bit-Lupe
+  und rät Wörter; Knacken über Klartext-Hash. Auflösung zeigt C1 ⊕ C2 = M1 ⊕ M2 auf dem Beamer.
+- **Schlüsseltausch vor Eves Augen (W4 §9.3, Plan M7 E95):** Phasen `runde-1` (p = 23, g = 5) und `runde-2` (p = 101,
+  g = 2), Parameter je Runde für alle Paare. `POST /api/funk/:id/oeffentlich { wert }` (1 ≤ wert < p) erzeugt die
+  Kanal-Nachricht „A 17“ bzw. „B 4“; `POST /api/funk/:id/k-melden { k }` (nur Alice/Bob) meldet K **verdeckt** an die
+  Spielleitung (nur Regie sieht es). Eve `POST …/knacken { paar, k }` speichert **einen Tipp je Paar und Runde ohne
+  Rückmeldung** (sonst Orakel: 22 Werte in Runde 1). Wahres K = B^(dlog_g A) mod p über `Krypto.dh.dlogKlein`/`Krypto.modpow`.
+  Keine Caesar-Nachricht. Die optionale Mallory-Zusatzrolle (W4, eA) ist nicht digital (offene Entscheidung 4, T9).
+  Auflösung: Einwegfunktion (bei großen p unmöglich), Schlüsseltausch ohne geheimen Kanal.
+- **Mallory im Netz (W5 §9.3, Plan M7 E96, E115):** Bob-Team i (Paarreihenfolge) erhält die Schlüsselnummer
+  **`S` + (23 + 4i)** (S23, S27, S31, S35, S39, S43), Mallory-Team j **`S41`/`S42`** bzw. **`S51`/`S52`**; Bob
+  veröffentlicht seine Nummer (`oeffentlich`). Alice-Teams ziehen serverseitig je eine der vier **Auftragskarten**
+  (`AUFTRAGSKARTEN` aus W5) und senden nur diese; alle Sendungen gehen an Mallorys Station. Mallory: `weiterleiten`,
+  `ersetzen { text?, etikett? }` (Inhalt nur bei eigenem Etikett änderbar), `schluessel { an, etikett, zertifikat:
+  'keins'|'eigenes'|'veraendert' }`; „öffnen“ = Mallory sieht Inhalte von Umschlägen mit eigenem Etikett automatisch.
+  „Verschlüsselt für S23“ heißt: nur der Inhaber sieht den Inhalt – eine **Simulation** (serverseitig verschlossen, im UI
+  so benannt). Phase `mit-zertifikaten`: Trent (Lehrkraft) stellt Zertifikate aus (`ZERTIFIKAT TEAM SCHEIBE S23 GUELTIG
+  HEUTE`); Zertifikatsstatus beim Empfänger `gueltig` (Trent-Zertifikat, Name = behaupteter Absender), `fehlt`, `name`
+  (Zertifikat für ein anderes Team), `siegel` (verändert). Regie-Knopf „Station leeren“ (`POST /api/lehrer/funk/:id/station`)
+  leitet alle wartenden Sendungen unverändert weiter; Mallory-UI hat „Alle weiterleiten“. Auflösung: wahre Absender und Wege.
 
 ### 12.7 Beenden und Löschen
 
@@ -1575,11 +1613,12 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/funk` | – | `{ szenario: { id, typ, status, phase } \| null }` (für den Kopfzeilen-Punkt) | 6/min |
 | `GET /api/funk/:id/stand?seit=v` | `If-None-Match` | §12.4 (200/304) | 60/min; 403 kein Team |
 | `POST /api/funk/:id/nachrichten` | `{ an?: teamId, text, klartext?, fuerSchluessel? }` | `{ nachricht }` | 1/10 s je Team; 400 Whitelist; 409 Phase |
-| `POST /api/funk/:id/oeffentlich` | `{ wert }` (Ziffern/Etikett) | `{ ok }` | 409 Phase |
+| `POST /api/funk/:id/oeffentlich` | `{ wert }` (Schlüsseltausch: Zahl 1 ≤ wert < p → Kanal-Nachricht „A 17“; Mallory-Szenario: Bob veröffentlicht seine Schlüsselnummer) | `{ ok }` | 409 Phase (Plan M7 E95, E96) |
+| `POST /api/funk/:id/k-melden` | `{ k }` (Schlüsseltausch, nur Alice/Bob; verdeckt, nur Regie sieht es) | `{ ok }` | 409 Phase (Plan M7 E95) |
 | `POST /api/funk/:id/empfangen` | `{ nachricht: id, klartext }` | `{ richtig }` | 30/5 min je Team |
-| `POST /api/funk/:id/knacken` | `{ nachricht: id, klartext }` \| `{ paar: teamId, k }` | `{ richtig }` | 30/5 min je Team |
+| `POST /api/funk/:id/knacken` | `{ nachricht: id, klartext }` \| `{ paar: teamId, k }` | `{ richtig }` bzw. beim Schlüsseltausch `{ ok }` (Tipp ohne Rückmeldung, einer je Paar und Runde – Plan M7 E95) | 30/5 min je Team |
 | `PUT /api/funk/:id/zuordnung` | `{ zuordnung: { "Q": "E" } }` | `{ anteil }` | 1/2 s je Team |
-| `POST /api/funk/:id/mallory` | `{ aktion: 'weiterleiten'\|'ersetzen'\|'schluessel', nachricht?, text?, etikett? }` | `{ ok }` | nur Mallory-Team |
+| `POST /api/funk/:id/mallory` | `{ aktion: 'weiterleiten'\|'ersetzen'\|'schluessel', nachricht?, text?, etikett?, an?, zertifikat? }` (Plan M7 E96) | `{ ok }` | nur Mallory-Team |
 
 ### 13.3 Werkstatt und Arena (Schüler)
 
@@ -1589,7 +1628,7 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `GET /api/arena` | – | `{ arena: { id, status, angriffBis } \| null, team: { id, name } \| null, eigene: { verfahren, geheimtext, beschreibung, beurteilung } \| null }` | – |
 | `POST /api/arena/:id/chiffre` | `{ verfahren, schluessel, klartext, beschreibung }` | `{ ok, geheimtext }` | 20/10 min je Team; 409 ≠ werkstatt |
 | `GET /api/arena/:id/chiffren` | – | `[{ id, team, verfahren, beschreibung, geheimtext, klartextLaenge, geknackt, versuche }]` (ab `angriff`; Hinweise ab `beurteilung`) | – |
-| `POST /api/arena/:id/chiffren/:cid/angriff` | `{ klartext }` \| `{ schluessel }` | `{ erfolg, geknackt, rest: { chiffre, team } }` | 10/5 min je Team+Chiffre, 60/10 min je Team; 409 ≠ angriff; 400 eigene |
+| `POST /api/arena/:id/chiffren/:cid/angriff` | `{ klartext }` \| `{ schluessel }` | `{ erfolg, geknackt, rest: { chiffre, team } }` | 1/30 s je Team+Chiffre (Plan M7 E101), 60/10 min je Team; 429 mit `Retry-After`; 409 ≠ angriff; 400 eigene |
 | `PUT /api/arena/:id/beurteilung` | `{ text }` | `{ ok }` | 409 ≠ beurteilung |
 
 ### 13.4 Lehrkraft
@@ -1600,15 +1639,21 @@ wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §
 | `PATCH /api/lehrer/kurse/:kursId` | `{ einstellungen: { welten?, boss?, scoreboard?, beamer?, niveau?, werkzeuge?, kuer? } }` (`name` → 400) | Kurs |
 | `POST /api/lehrer/kurse/:kursId/board-schluessel` | `{}` | `{ boardSchluessel }` (neu vergeben, 12 Zeichen base64url; alter Schlüssel sofort ungültig; gesperrter Kurs 403, fremder 404) |
 | `GET /api/lehrer/werkzeuge` | – | `[{ id, titel, welt, gast }]` in der Reihenfolge der Registry (§10.2) |
-| `GET /api/lehrer/kurse/:kursId/teams` | – | `[{ id, nr, name, mitglieder: [{ id, name }] }]`, `ohneTeam: [...]` |
-| `PUT /api/lehrer/kurse/:kursId/teams` | `{ teams: [{ nr, name, mitglieder: [schuelerId] }] }` (Namen ∈ `TEAM_NAMEN`) | Teams |
+| `GET /api/lehrer/kurse/:kursId/teams` | – | `{ teams: [{ id, nr, name, mitglieder: [{ id, name }] }], ohneTeam: [{ id, name }], namen: TEAM_NAMEN }` (auch bei gesperrtem Kurs lesbar) |
+| `PUT /api/lehrer/kurse/:kursId/teams` | `{ teams: [{ nr, name, mitglieder: [schuelerId] }] }` (Namen ∈ `TEAM_NAMEN`, im Kurs eindeutig; `nr` 1–12 eindeutig; Mitglieder nur aktive Teilnahmen des Kurses, jede höchstens einmal) | wie GET. PUT beschreibt den **Sollstand**: Teams bleiben je `nr` erhalten (Update in place), fehlende werden gelöscht – außer sie haben eine Rolle in einem nicht beendeten Szenario oder eine Chiffre in einer offenen Arena → **409** (Plan M7 E106) |
 | `POST /api/lehrer/kurse/:kursId/funk` | `{ typ, rollen?: [{ teamId, rolle, partnerId? }], optionen?: { wiederholerTeamId?, textId? } }` | Szenario (Status `vorbereitung`) · 409 wenn schon eins |
 | `POST /api/lehrer/funk/:id/status` | `{ aktion: 'starten'\|'pausieren'\|'fortsetzen'\|'phase'\|'beenden'\|'schliessen'\|'abbrechen' }` | Szenario |
 | `PUT /api/lehrer/funk/:id/rollen` | `{ rollen: [...] }` (nur `vorbereitung`) | Szenario |
 | `POST /api/lehrer/funk/:id/nachrichten/:nid/ausblenden` | – | `{ ok }` |
 | `POST /api/lehrer/funk/:id/teams/:teamId/stumm` | `{ sekunden: 60 }` | `{ ok }` |
 | `POST /api/lehrer/funk/:id/zertifikat` | `{ teamId, etikett, ausstellen: bool }` | `{ ok }` (Mallory, Phase 2) |
-| `GET /api/lehrer/funk/:id/stand?seit=v` | – | wie §12.4, alles sichtbar (Beamer); 120/min |
+| `GET /api/lehrer/kurse/:kursId/funk` | – | `{ szenario \| null }` (aktuelles Szenario des Kurses) |
+| `POST /api/lehrer/funk/:id/hinweis` | `{ nr: 1\|2\|3 }` (Wettknacken) | `{ ok }` (Ereignis `hinweis`, Plan M7 E97) |
+| `POST /api/lehrer/funk/:id/sonderkarte` | `{ teamId, karte: 'doppelt'\|'zaun' }` (Botenlauf Runde 3, nur Alice-Teams) | `{ ok }` (Plan M7 E91) |
+| `POST /api/lehrer/funk/:id/station` | – (Mallory: „Station leeren“) | `{ ok, weitergeleitet }` (Plan M7 E115) |
+| `GET /api/lehrer/funk/:id/stand?seit=v&ansicht=regie\|beamer` | – | wie §12.4; `regie` (Standard) alles, `beamer` öffentliche Sicht bis `aufloesung` (Plan M7 E99); 120/min |
+| `GET /api/lehrer/qr.svg?ziel=funkraum\|werkstatt` | – | `image/svg+xml`, `Cache-Control: no-store`, QR-Code auf `PLATTFORM_URL/<ziel>` (Beamer, Plan M7 E114) |
+| `GET /api/lehrer/kurse/:kursId/arena` | – | `{ arena \| null }` (offene bzw. letzte Arena des Kurses) |
 | `POST /api/lehrer/kurse/:kursId/arena` | `{ angriffBis? }` | Arena · 409 wenn eine offen |
 | `POST /api/lehrer/arena/:id/phase` | `{ phase, angriffBis? }` | Arena |
 | `GET /api/lehrer/arena/:id` | – | Arena mit allen Chiffren, Versuchen (Zähler), Beurteilungen |
@@ -1709,6 +1754,11 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `krypto.test.js` | neu | Bibliothek: feste Vektoren (Delta-Beispiele, Lehrbuch, Anlage), Eigenschaften (ver∘ent = id für alle Verfahren und 500 Zufallsfälle, Involution Atbash/Porta, Fleißner-Vollständigkeit, Kasiski-Positionen ab 0), Fehlerfälle; KRYPTOS-16/Hash-Vektoren nach W3/W5 |
 | `krypto_zwilling.test.js` | neu | ruft `werkzeuge/krypto/vergleich.js --anzahl 300` (übersprungen mit Hinweis, wenn `python3` fehlt; in CI Pflicht) |
 | `generatoren.test.js` | E | Determinismus je Seed, Lösung unabhängig nachgerechnet, Ausgabe validiert (Validator auf Generator-Aufgabe), Niveau der Generatoren |
+| `funkraum_text.test.js`, `funkraum_loeschen.test.js`, `teams.test.js` | neu (M7) | Whitelist/Normalisierung/HMAC (Plan M7 E93, E108); Löschregeln Beenden/Schließen/24 h/Kurs gesperrt (E111); Tischgruppen (Sollstand in place, Validierung, 409 im Einsatz, Rechte – E106); Testhilfe `test/hilfen_funk.js` (`kursMitTeams`, `festerZufall`, `fundstellen` = Volltextsuche über alle TEXT-Spalten) |
+| `funkraum_polling.test.js`, `funkraum_nachrichten.test.js` | neu (M7) | Polling 200/304/`seit` inkl. nachträglich geänderter Nachrichten (E109, E110), Senden/Prüfen über Hash, Moderation |
+| `funkraum_botenlauf.test.js`, `funkraum_wettknacken.test.js`, `funkraum_otp.test.js`, `funkraum_dh.test.js`, `funkraum_mallory.test.js` | neu (M7) | je Szenario ein Durchlauf über die API, Sichtbarkeit je Rolle (JSON aller Rollen durchsucht), Löschung nach dem Beenden |
+| `arena_einreichung.test.js`, `arena_angriff.test.js`, `arena_beurteilung.test.js` | neu (M7) | Einreichung (Klartext/Schlüssel nie gespeichert), Angriffe und Grenzen (E101), Beurteilung, Beamer-ETag (E103) |
+| `client_funkraum.test.js`, `client_werkstatt.test.js`, `client_lehrer_funk.test.js` | neu (M7) | `KRPoll` (Rückfall, Pause), `KRNetz`, Funkraum-Seite und Szenen, Werkstatt/Arena, Lehrkraft-Tabs Teams/Funkraum/Arena im Attrappen-DOM |
 | `funkraum.test.js` | neu | Zustandsautomat (erlaubte/verbotene Übergänge → 409), Rollenvergabe, Whitelist (Umlaute, Kleinbuchstaben → groß, 161 Zeichen, Sonderzeichen), Sichtbarkeit je Rolle, Polling 200/304/`seit`, Rate-Limits, alle 5 Szenarien im Durchlauf (Hash-Knacken, DH-K-Prüfung, OTP-Wiederholer, Mallory-Umleitung + Zertifikat), Ausblenden leert Inhalt, Beenden löscht Inhalte, 24-h-Löschung |
 | `arena.test.js` | neu | Phasen, Einreichung (Umkehrbarkeit, Typregel, Klartextlänge), Klartext/Schlüssel nie gespeichert (DB-Durchsuchung), Angriff per Klartext und per Schlüssel, eigene Chiffre → 400, Rate-Limits, Abzeichen, Beurteilungen nur Lehrkraft/eigenes Team, 30-Tage-Löschung |
 | `labor.test.js` | neu | `/api/labor` Freigaben (`auto`/`frei`/`gesperrt`, Welt gesperrt, Boss läuft) mit `welten`/`niveau`, Registry Server = Client (mit Reitern), Level-Feld `werkzeug` als Objekte, Validator-Hinweis für Schlüssel-Voreinstellung |
@@ -1874,3 +1924,4 @@ dem ersten Live-Deploy.
 | T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
 | T8 | Fremdcode „Krypto-Werkstatt“ | **erledigt in M6 ohne Fremdcode:** `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`), Rechnung über `Krypto.*`; aus der Werkstatt nichts übernommen (Lizenz ungeklärt, nur Bedienideen) – `docs/FREMDCODE.md` (Design O11) |
+| T9 | Mallory-Zusatzrolle im Schlüsseltausch (W4 §9.3, eA, optional) | **offen** (Plan M7 offene Entscheidung 4): vorläufig nur als Papierkarte; „Mallory im Netz“ (W5) zeigt den Angriff digital |

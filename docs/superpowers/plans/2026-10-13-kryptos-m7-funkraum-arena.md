@@ -12,7 +12,7 @@
 > Seiten-Gerüste `/funkraum`, `/werkstatt`, `/beamer/{funkraum,arena}/:id` (M4 E20, nur Leerzustand) existieren. **Keine**
 > Funkraum-, Arena- oder Team-Route, kein `src/krypto/abzeichen.js`, keine Funkraum-Anbindung der Werkbank (M6 E74).
 >
-> **Status: geplant** (13.10.2026). Offene Lehrkraft-Fragen am Ende; bis zur Antwort gelten die vorläufigen Festlegungen.
+> **Status: in Arbeit** (13.10.2026, ab Task 130). Offene Lehrkraft-Fragen am Ende; bis zur Antwort gelten die vorläufigen Festlegungen.
 
 **Goal:** Der Funkraum mit den fünf Live-Szenarien (Botenlauf, Wettknacken, Der doppelte Schlüssel, Schlüsseltausch vor
 Eves Augen, Mallory im Netz) und die Chiffren-Werkstatt mit Knack-Arena werden gebaut – serverseitig erzwungen,
@@ -418,14 +418,14 @@ Beamer bei 1920 × 1080.
 }
 ```
 
-- [ ] **Step 1:** TECHNIK-Stellen nach der Entscheidungstabelle ändern; jede geänderte Zeile verweist auf „Plan M7 E…“.
+- [x] **Step 1:** TECHNIK-Stellen nach der Entscheidungstabelle ändern; jede geänderte Zeile verweist auf „Plan M7 E…“.
   Neue Routen in §13.2: `POST /api/funk/:id/k-melden { k }` (Schlüsseltausch), `POST /api/funk/:id/oeffentlich`
   (auch Bob-Schlüsselnummer im Mallory-Szenario); §13.4: `GET /api/lehrer/kurse/:kursId/funk` (`{ szenario | null }`),
   `GET /api/lehrer/kurse/:kursId/arena` (`{ arena | null }`), `POST /api/lehrer/funk/:id/hinweis { nr }`,
   `POST /api/lehrer/funk/:id/sonderkarte { teamId, karte }`, `POST /api/lehrer/funk/:id/station`,
   `GET /api/lehrer/funk/:id/stand?seit=v&ansicht=regie|beamer`, `GET /api/lehrer/qr.svg?ziel=funkraum|werkstatt`.
-- [ ] **Step 2:** `node --test test/seiten.test.js test/fach.test.js` (Doku-Links unverändert) und `npm test` → grün.
-- [ ] **Step 3: Commit** `git commit -m "Detailplan M7: Entscheidungen in TECHNIK übernommen (Funkraum, Arena)"`.
+- [x] **Step 2:** `node --test test/seiten.test.js test/fach.test.js` (Doku-Links unverändert) und `npm test` → grün.
+- [x] **Step 3: Commit** `git commit -m "Detailplan M7: Entscheidungen in TECHNIK übernommen (Funkraum, Arena)"`.
 
 ### Task 131: Whitelist, Normalisierung und Klartext-Hash – Tests zuerst (TECHNIK §12.3, E93, E108)
 
