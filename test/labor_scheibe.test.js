@@ -63,11 +63,11 @@ test('Scheibe: Alle Verschiebungen (Brute-Force) ohne automatische Erkennung', (
   const w = oeffne('scheibe', { voreinstellung: { reiter: ['alle'] } });
   const zeilen = w.k.alle(w.flaeche, '.alle-schluessel tr[data-schluessel]');
   assert.equal(zeilen.length, 26);
-  assert.deepEqual(zeilen.map((z) => w.k.text(z.querySelector('td.ergebnis')).replace(/\s/g, '')), K.alleCaesar('WHWFYBZ').map((x) => K.klein(x.text).slice(0, 20)));
+  assert.deepEqual(zeilen.map((z) => w.k.text(z.querySelector('td.ergebnis')).replace(/\s/g, '')), K.alleCaesar('HLNSZWOPC').map((x) => K.klein(x.text).slice(0, 20)));
   assert.match(w.k.text(zeilen[0]), /schwacher Schlüssel/);
   assert.equal(w.k.alle(w.flaeche, '.richtig, [data-richtig]').length, 0);
   w.k.tippe(w.k.eins(w.flaeche, 'textarea.labor-eingabe'), 'X');
-  assert.equal(w.k.text(w.k.alle(w.flaeche, '.alle-schluessel td.ergebnis')[1]).replace(/\s/g, ''), K.klein(K.alleCaesar('WHWFYBZX')[1].text));
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.alle-schluessel td.ergebnis')[1]).replace(/\s/g, ''), K.klein(K.alleCaesar('HLNSZWOPCX')[1].text));
 });
 
 test('Scheibe: Wechsel Text → Alle übernimmt die eigene Ausgabe als abgefangenen Geheimtext', () => {

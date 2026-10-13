@@ -71,42 +71,79 @@ test('Rechenregel: kein Werkzeug rechnet selbst (M6, Orchestrator)', () => {
   }
 });
 
-/** Wörter ≥ 6 Buchstaben (klein) aus einem Text. */
-const woerterVon = (s) => String(s).toLowerCase().match(/[a-zäöüß]{6,}/g) || [];
+/** Wörter ≥ 5 Buchstaben (klein) aus einem Text (Review M6: Mindestlänge 5). */
+const woerterVon = (s) => String(s).toLowerCase().match(/[a-zäöüß]{5,}/g) || [];
+const Krypto = require('../public/static/js/shared/krypto.js');
 
 /**
- * Seed-Wörter sammeln: Backtick-Texte aller Zeichenketten (Lab, Boss, Archivfund) und alle Texte in interaktion und
- * loesung (Geheimtexte, Lösungen).
+ * Verbotene Wörter sammeln (Review M6): aus allen Zeichenketten die markierten Stellen – `Code`, **fett**, „zitiert“,
+ * "zitiert", GROSSBUCHSTABEN (Geheimtexte, Schlüsselwörter, auch in Fünfergruppen zusammengezogen) – und ganz die
+ * Felder interaktion, loesung, titel und mono (Geheimtexte, Lösungen, Akten-/Folientitel, Schreibmaschinentexte).
  */
-function sammleSeed(x, ziel, ganz = false) {
+function sammle(x, ziel, ganz = false) {
   if (typeof x === 'string') {
     if (ganz) for (const w of woerterVon(x)) ziel.add(w);
-    for (const m of x.matchAll(/`([^`]+)`/g)) for (const w of woerterVon(m[1])) ziel.add(w);
-  } else if (Array.isArray(x)) for (const e of x) sammleSeed(e, ziel, ganz);
-  else if (x && typeof x === 'object') for (const [k, e] of Object.entries(x)) sammleSeed(e, ziel, ganz || k === 'interaktion' || k === 'loesung');
+    for (const m of x.matchAll(/`([^`]+)`|\*\*([^*]+)\*\*|„([^“]+)“|"([^"]+)"/g)) for (const w of woerterVon(m[1] ?? m[2] ?? m[3] ?? m[4])) ziel.add(w);
+    for (const m of x.matchAll(/\b[A-ZÄÖÜ]{2,}(?:\s+[A-ZÄÖÜ]{2,})*\b/g)) for (const w of [...woerterVon(m[0]), ...woerterVon(m[0].replace(/\s+/g, ''))]) ziel.add(w);
+  } else if (Array.isArray(x)) for (const e of x) sammle(e, ziel, ganz);
+  else if (x && typeof x === 'object') for (const [k, e] of Object.entries(x)) sammle(e, ziel, ganz || ['interaktion', 'loesung', 'titel', 'mono'].includes(k));
 }
+const jsonDateien = (ordner, re = /\.json$/) => (fs.existsSync(ordner) ? fs.readdirSync(ordner, { recursive: true }).filter((f) => re.test(f)).map((f) => path.join(ordner, f)) : []);
+const WURZEL = path.join(__dirname, '..');
+/** Quellen: Seeds (Welten, Gast-Demo, Akten-Verzeichnis, Warm-up), Materialquellen W0–W6/Prüfungen/Videos, Video-Dateien. */
+const QUELLEN = () => [
+  ...jsonDateien(path.join(SEED, 'welten')),
+  path.join(SEED, 'gast', 'demo.json'),
+  path.join(SEED, 'akten.json'),
+  ...jsonDateien(path.join(SEED, 'warmup')),
+  ...jsonDateien(path.join(WURZEL, 'quellen', 'material')),
+  ...jsonDateien(path.join(WURZEL, 'materialien', 'Videos'), /video\.json$/)
+].filter((d) => fs.existsSync(d));
 
-test('Beispieltexte der Werkzeuge kommen nicht aus Videos, Seeds oder Gast-Demo', () => {
+/**
+ * Verdeckte Klartexte verschlüsselter Standardwerte (nur hier, nicht im Werkzeug): die Bibliothek rechnet sie nach, dann
+ * gelten für sie dieselben Regeln. Caesar-Geheimtexte (nur GROSSBUCHSTABEN) prüft der Test zusätzlich für alle 26 k.
+ */
+const VERDECKT = {
+  'substitution.js': (b) => {
+    const klar = 'der stoepsel huepft quer auf zwoelf kacheln im bad';
+    assert.equal(Krypto.substitution(klar, Krypto.schluesselwortAlphabet('wimpel')), Krypto.nurBuchstaben(b.text), 'substitution.js: Beispiel = Bibliothek');
+    return [klar, 'wimpel'];
+  },
+  'bitlupe.js': (b) => {
+    const [p1, p2, schluessel] = ['GURKE', 'WOLLE', 'Q7z!p'];
+    assert.equal(Krypto.xor(p1, schluessel), b.c1.replace(/\s+/g, ''), 'bitlupe.js: C1 = Bibliothek');
+    assert.equal(Krypto.xor(p2, schluessel), b.c2.replace(/\s+/g, ''), 'bitlupe.js: C2 = Bibliothek');
+    return [p1, p2];
+  }
+};
+
+test('Beispieltexte der Werkzeuge kommen nicht aus Seeds, Akten, Warm-up, Materialien oder Videos (auch verschlüsselt)', () => {
   const VIDEO = require('../quellen/pruefwerte/videos.json');
-  const video = new Set();
-  for (const v of VIDEO.werte) for (const w of woerterVon(JSON.stringify([v.eingabe, v.erwartet]))) video.add(w);
-  const seed = new Set();
-  const dateien = [
-    ...fs.readdirSync(path.join(SEED, 'welten')).filter((d) => d.endsWith('.json')).map((d) => path.join(SEED, 'welten', d)),
-    path.join(SEED, 'gast', 'demo.json')
-  ].filter((d) => fs.existsSync(d));
-  for (const d of dateien) sammleSeed(JSON.parse(fs.readFileSync(d, 'utf8')), seed);
-  assert.ok(seed.size > 20, 'Seed-Wörter gesammelt');
+  const verboten = new Set();
+  for (const v of VIDEO.werte) for (const w of woerterVon(JSON.stringify([v.eingabe, v.erwartet]))) verboten.add(w);
+  const quellen = QUELLEN();
+  assert.ok(quellen.length > 40, 'Quellen gefunden');
+  for (const d of quellen) sammle(JSON.parse(fs.readFileSync(d, 'utf8')), verboten);
+  for (const w of ['papyrus', 'kerze', 'licht', 'hafen']) assert.ok(verboten.has(w), `Selbstprüfung: „${w}“ wird erkannt`);
+  assert.ok(verboten.size > 1000, 'Wörter gesammelt');
   for (const f of werkzeugModule()) {
-    const beispiele = [...fs.readFileSync(path.join(DIR, f), 'utf8').matchAll(/BEISPIEL\w*\s*=\s*(\{[\s\S]*?\});/g)].map((m) => m[1]);
+    const src = fs.readFileSync(path.join(DIR, f), 'utf8');
+    const beispiele = [...src.matchAll(/BEISPIEL\w*\s*=\s*(\{[\s\S]*?\});/g)].map((m) => m[1]);
     assert.ok(beispiele.length <= 1, `${f}: Beispieltexte in genau einer Konstante BEISPIEL`);
     for (const b of beispiele) {
       // nur die Werte (String-Literale), nicht die Schlüsselnamen der Konstante
-      const werte = [...b.matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)].map((m) => m[1] ?? m[2] ?? m[3]).join(' ');
-      for (const w of woerterVon(werte)) {
-        assert.ok(!video.has(w), `${f}: Beispielwort „${w}“ stammt aus einem Video`);
-        assert.ok(!seed.has(w), `${f}: Beispielwort „${w}“ steht in einem Seed (Lab/Boss/Gast)`);
+      const werte = [...b.matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)].map((m) => m[1] ?? m[2] ?? m[3]);
+      const kandidaten = new Map(); // Wort → Herkunft
+      for (const t of werte) {
+        for (const w of woerterVon(t)) kandidaten.set(w, t);
+        if (/^[A-Z ]+$/.test(t) && /[A-Z]{3}/.test(t)) for (let k = 0; k < 26; k++) for (const w of woerterVon(Krypto.caesar(t, k, 'ent'))) kandidaten.set(w, `${t} (Caesar k = ${k})`);
       }
+      if (VERDECKT[f]) {
+        const objekt = Function(`return (${b});`)();
+        for (const t of VERDECKT[f](objekt)) for (const w of woerterVon(t)) kandidaten.set(w, `${t} (verdeckt)`);
+      }
+      for (const [w, herkunft] of kandidaten) assert.ok(!verboten.has(w), `${f}: Beispielwort „${w}“ aus „${herkunft}“ steht in Seeds/Material/Videos`);
     }
   }
 });

@@ -6,7 +6,7 @@
 (() => {
   const { h, s } = AQ;
   const B = KRLaborBau;
-  const BEISPIEL = { text: 'kryptolabor', geheimtext: 'WHWFY BZ' };
+  const BEISPIEL = { text: 'zinnober', geheimtext: 'HLNSZ WOPC' }; // eigene Wörter (Review M6), in keinem Material
   const REITER_TITEL = { scheibe: 'Scheibe', text: 'Text-Modus', alle: 'Alle Verschiebungen' };
   const MITTE = 160;
   const SCHRITT = 360 / 26; // Grad je Rastung

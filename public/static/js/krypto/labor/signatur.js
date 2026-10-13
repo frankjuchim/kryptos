@@ -13,7 +13,7 @@
   const B = KRLaborBau;
   const BEISPIEL = {
     nachricht: 'die laterne brennt',
-    kollision: ['zahle zehn taler', 'zahle hundert taler'],
+    kollision: ['bringe zwei krapfen', 'bringe zwanzig krapfen'],
     schluessel: { alice: [5, 17, 7], bob: [7, 17, 5], mallory: [3, 23, 3], trent: [5, 19, 5] },
     dh: { p: 43, g: 3, a: 8, b: 13, m: 5 },
     mitmZahl: 20

@@ -7,8 +7,8 @@
 (() => {
   const { h } = AQ;
   const B = KRLaborBau;
-  // erfunden: Krypto.substitution('die werkbank deckt jede wahl prompt im lesetext auf', Krypto.schluesselwortAlphabet('tinte'))
-  const BEISPIEL = { text: 'EFAWA QHITL HEANH SGAEA WTDJO QMKOS FKJAR ASAXS TUB' };
+  // erfunden (Klartext und Schlüsselwort nachgerechnet in test/labor_regeln.test.js, in keinem Material)
+  const BEISPIEL = { text: 'PEQRS KENRE GBTEN LSOTE QWTLZ VKEGL FWMBE GJCHI WP' };
   const BUCHSTABEN = [...Krypto.ALPHABET];
   const MAX = 3000;
   const FUNK_MS = 2000;

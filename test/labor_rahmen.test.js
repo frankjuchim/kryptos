@@ -103,16 +103,16 @@ test('Alle Schlüssel: Tabelle, Anmerkung, Nachspiel markiert Zeile, keine autom
   const k = lade();
   const ziel = k.document.createElement('div');
   const K = k.wert('Krypto');
-  k.wert('KRLabor').alleSchluessel(ziel, { titel: 'Alle Verschiebungen', schluessel: [...Array(26).keys()], beschriftung: (x) => `k = ${x}`, probiere: (x) => K.alleCaesar('WHWFYBZ')[x].text, anmerkung: (x) => (x === 0 ? '= Geheimtext (schwacher Schlüssel)' : null), zeichen: 20, eingabe: 'WHWFYBZ' });
+  k.wert('KRLabor').alleSchluessel(ziel, { titel: 'Alle Verschiebungen', schluessel: [...Array(26).keys()], beschriftung: (x) => `k = ${x}`, probiere: (x) => K.alleCaesar('HLNSZWOPC')[x].text, anmerkung: (x) => (x === 0 ? '= Geheimtext (schwacher Schlüssel)' : null), zeichen: 20, eingabe: 'HLNSZWOPC' });
   const zeilen = k.alle(ziel, 'tr[data-schluessel]');
   assert.equal(zeilen.length, 26);
-  assert.match(k.text(zeilen[7]), /k = 7\s*papyrus/);
+  assert.match(k.text(zeilen[11]), /k = 11\s*wacholder/);
   assert.match(k.text(zeilen[0]), /schwacher Schlüssel/);
   assert.equal(k.eins(ziel, 'table caption').textContent, 'Alle Verschiebungen');
   k.taste(k.eins(ziel, '.nachspiel'), 'ArrowRight');
   assert.ok(zeilen[1].classList.contains('aktuell'));
   assert.ok(!zeilen[0].classList.contains('aktuell'));
-  assert.match(k.text(k.eins(ziel, '.nachspiel-text')), /k = 1: Aus WHWFY… wird vgvex… – ist das lesbares Deutsch\?/);
+  assert.match(k.text(k.eins(ziel, '.nachspiel-text')), /k = 1: Aus HLNSZ… wird gkmry… – ist das lesbares Deutsch\?/);
   assert.equal(k.alle(ziel, '.richtig, [data-richtig]').length, 0, 'keine automatische Erkennung');
   // Fehler der Bibliothek je Schlüssel → „passt nicht“
   const z2 = k.document.createElement('div');

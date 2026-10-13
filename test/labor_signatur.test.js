@@ -14,7 +14,7 @@ const WURZEL = path.join(__dirname, '..');
 // eigene Werte des Werkzeugs (= BEISPIEL in labor/signatur.js)
 const ALICE = { N: 85, e: 7, d: 55 };
 const NACHRICHT = 'die laterne brennt';
-const KOLLISION = ['zahle zehn taler', 'zahle hundert taler'];
+const KOLLISION = ['bringe zwei krapfen', 'bringe zwanzig krapfen'];
 const SCHLUESSEL = { alice: [5, 17, 7], bob: [7, 17, 5], mallory: [3, 23, 3], trent: [5, 19, 5] };
 const DH = { p: 43, g: 3, a: 8, b: 13, m: 5 };
 
@@ -41,7 +41,7 @@ test('Mallorys Eingriffe: ungültig bei Nachricht/Signatur/Hash/eigener Signatur
   const k = oeffne('signatur');
   manip(k, 'kollision');
   assert.equal(K.kryptosHash(KOLLISION[0]).wert, K.kryptosHash(KOLLISION[1]).wert);
-  assert.match(k.text('.kanal'), /zahle hundert taler/);
+  assert.match(k.text('.kanal'), /bringe zwanzig krapfen/);
 });
 
 test('SHA-256-Modus: Kollision deaktiviert, alle Eingriffe außer Schlüsselserver und Replay ungültig', () => {
@@ -145,8 +145,8 @@ test('Beispielwerte des Simulators: Python-Zwilling rechnet nach (pruefwerte.py)
     eintrag('h', 'hashZahl', [NACHRICHT], h, { verfahren: 'kh', modul: ALICE.N });
     eintrag('h-sha', 'hashZahl', [NACHRICHT], K.hashZahl(NACHRICHT, { verfahren: 'sha256', modul: ALICE.N }), { verfahren: 'sha256', modul: ALICE.N });
     eintrag('sig', 'rsa.signieren', [h, ALICE.d, ALICE.N], K.rsa.signieren(h, ALICE.d, ALICE.N));
-    eintrag('k0', 'kryptosHash', [KOLLISION[0]], 24, null, 'wert');
-    eintrag('k1', 'kryptosHash', [KOLLISION[1]], 24, null, 'wert');
+    eintrag('k0', 'kryptosHash', [KOLLISION[0]], 23, null, 'wert');
+    eintrag('k1', 'kryptosHash', [KOLLISION[1]], 23, null, 'wert');
     const { p, g, a, b, m } = DH;
     eintrag('A', 'dh.oeffentlich', [g, a, p], 25);
     eintrag('B', 'dh.oeffentlich', [g, b, p], 12);
@@ -158,7 +158,7 @@ test('Beispielwerte des Simulators: Python-Zwilling rechnet nach (pruefwerte.py)
     const r = spawnSync('python3', ['-I', path.join(WURZEL, 'werkzeuge/krypto/pruefwerte.py'), '--ordner', ordner], { cwd: WURZEL, encoding: 'utf8' });
     assert.equal(r.status, 0, r.stdout + r.stderr);
     assert.match(r.stdout, /0 Abweichungen, 0 Überschneidungen/);
-    assert.doesNotMatch(r.stdout, /HINWEIS.*(laterne|taler)/i);
+    assert.doesNotMatch(r.stdout, /HINWEIS.*(laterne|krapfen)/i);
   } finally {
     fs.rmSync(ordner, { recursive: true, force: true });
   }

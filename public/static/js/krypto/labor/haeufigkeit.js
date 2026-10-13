@@ -6,7 +6,7 @@
 (() => {
   const { h } = AQ;
   const B = KRLaborBau;
-  const BEISPIEL = { text: 'Im Labor zaehlt man jede Spur: Was kehrt oft zurueck, was fehlt fast ganz, und was zeigen uns die Balken am Ende' };
+  const BEISPIEL = { text: 'Quallen tanzen nachts um Bojen, ein Krake zupft an Tauen, Muscheln schweigen, und Moewen kreischen laut am Kai der Mole' };
   const REITER_TITEL = { histogramm: 'Histogramm', bigramme: 'Bigramme & Trigramme', teiltexte: 'Teiltexte', kennzahlen: 'Kennzahlen' };
   const MAX = 3000;
 

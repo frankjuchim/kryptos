@@ -13,7 +13,7 @@
     schluessel: 'A36D',
     modiSchluessel: '2B7E',
     iv: '1917',
-    fehlertext: 'Kiste im Keller',
+    fehlertext: 'Lachs im Teich',
     pixel: [
     '................................',
     '................................',

@@ -41,10 +41,10 @@ test('XOR: Schlüssel als Hex und als Bits rechnet wie Krypto.xor / Krypto.xorBi
 
 test('Doppelnutzung: C1 ⊕ C2, Statistik, Crib-Schieber ohne Schlüsselanzeige', () => {
   const w = oeffne('bitlupe', { voreinstellung: { reiter: ['doppelnutzung'] } });
-  assert.equal(w.zustand().ergebnisHex, '1C1414080B');
+  assert.equal(w.zustand().ergebnisHex, '101A1E0700');
   assert.match(w.text('.doppel-statistik'), /5 von 5 Bytes beginnen mit 000/);
-  w.k.tippe(w.k.eins(w.flaeche, 'input.crib'), 'HAFEN');
-  assert.equal(w.zustand().cribErgebnis, 'TURME');
+  w.k.tippe(w.k.eins(w.flaeche, 'input.crib'), 'GURKE');
+  assert.equal(w.zustand().cribErgebnis, 'WOLLE');
   w.k.klick(w.k.eins(w.flaeche, 'button.crib-rechts'));
   assert.equal(w.zustand().cribPosition, 1);
   assert.doesNotMatch(w.k.text(w.flaeche), /Q7z!p/);
@@ -53,7 +53,7 @@ test('Doppelnutzung: C1 ⊕ C2, Statistik, Crib-Schieber ohne Schlüsselanzeige'
   const schieber = w.k.eins(w.flaeche, '.crib-schieber');
   w.k.taste(schieber, 'ArrowLeft');
   assert.equal(w.zustand().cribPosition, 0);
-  assert.equal(w.zustand().cribErgebnis, 'TURME');
+  assert.equal(w.zustand().cribErgebnis, 'WOLLE');
 });
 
 test('Bit-Lupe: Nachspiel Bit für Bit', () => {

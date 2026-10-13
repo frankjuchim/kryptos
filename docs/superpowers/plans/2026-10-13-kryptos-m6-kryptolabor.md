@@ -1077,7 +1077,7 @@ seinen Rechenweg. „Alle Verschiebungen“ spielt die Versuche nacheinander ab 
 
 **Interfaces:**
 - Reiter `scheibe` (Darstellung + Formel), `text` (Text-Modus), `alle` (Brute-Force); Voreinstellung `text`, `k` (0–25,
-  Standard 3 wie das Beispiel der Spec „k = 3“), `basis` (1 | 0, Standard 1), `richtung`, `reiter`. `BEISPIEL = { text: 'kryptolabor', geheimtext: 'WHWFY BZ' }`.
+  Standard 3 wie das Beispiel der Spec „k = 3“), `basis` (1 | 0, Standard 1), `richtung`, `reiter`. `BEISPIEL = { text: 'kryptolabor', geheimtext: 'WHWFY BZ' }`. *(Review M6: ersetzt durch `{ text: 'zinnober', geheimtext: 'HLNSZ WOPC' }` – PAPYRUS ist das W1-Schlüsselwort; ebenso neue Beispielwerte in Häufigkeit, Substitution, Vigenère, Bit-Lupe, Runden-Fehlertext und Kollisionspaar, Regeltest `labor_regeln.test.js`.)*
 - DOM: `div.scheibe-drehknopf[role=slider][tabindex=0][aria-valuemin=0][aria-valuemax=25][aria-valuenow][aria-valuetext="k = 3: a wird zu D"]`
   mit `svg.scheibe-ringe` (außen a–z klein, innen A–Z, unter jedem Buchstaben die Nummer nach `basis`; Innenring
   `g.scheibe-innen` per SVG-`transform`-Attribut gedreht); `button.scheibe-minus`, `button.scheibe-plus`,

@@ -7,8 +7,9 @@
 (() => {
   const { h } = AQ;
   const B = KRLaborBau;
-  // erfunden: HAFEN und TURME mit demselben Schlüssel (der Schlüssel steht nicht im Werkzeug)
-  const BEISPIEL = { text: 'HALLO', schluessel: 'K', c1: '19 76 3C 64 3E', c2: '05 62 28 6C 35' };
+  // erfunden: zwei Wörter mit demselben Schlüssel (Klartexte nachgerechnet in test/labor_regeln.test.js; der Schlüssel steht
+  // nicht im Werkzeug)
+  const BEISPIEL = { text: 'HALLO', schluessel: 'K', c1: '16 62 28 6A 35', c2: '06 78 36 6D 35' };
   const REITER_TITEL = { zeichen: 'Zeichen ↔ Bits', xor: 'XOR', doppelnutzung: 'Doppelnutzung' };
   const MAX = 24; // Zeichen bzw. Bytes
   const CRIB_MAX = 12;

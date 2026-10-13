@@ -7,7 +7,7 @@
 (() => {
   const { h } = AQ;
   const B = KRLaborBau;
-  const BEISPIEL = { klartext: 'kerze', schluessel: 'LICHT' };
+  const BEISPIEL = { klartext: 'pflaume', schluessel: 'GLOBUS' };
   const REITER_TITEL = { quadrat: 'Quadrat', verschluesseln: 'Ver-/Entschlüsseln', kasiski: 'Kasiski', teiltexte: 'Teiltexte', koinzidenz: 'Koinzidenzindex', verschiebung: 'Verschiebung', korrektur: 'Korrektur' };
   const MODI = [
     { id: 'vigenere', titel: 'Vigenère' },

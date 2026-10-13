@@ -1229,7 +1229,9 @@ an das Portal, das Beamer-Board oder andere Kurse gegeben.
 - Jedes Werkzeugmodul (`public/static/js/krypto/labor/<id>.js`, IIFE ohne globalen Namen) meldet sich über
   `KRLabor.registriere(id, { titel, oeffne(container, voreinstellung, umgebung) → { schliesse(), zustand() } })` an;
   `zustand()` liefert den sichtbaren Zustand als JSON-fähiges Objekt (Tests, e2e über `KRLabor.aktiv()`, nur lesend).
-  Beispieltexte stehen in **einer** Konstante `BEISPIEL` am Dateianfang (eigens erfunden, Regeltest gegen Videos/Seeds).
+  Beispieltexte stehen in **einer** Konstante `BEISPIEL` am Dateianfang (eigens erfunden; Regeltest: kein Wort ab 5 Buchstaben
+  aus Seeds, Akten-Verzeichnis, Warm-up, Materialquellen W0–W6/Prüfungen und Videos – markierte Stellen, Lösungen, Titel;
+  Caesar-Geheimtexte für alle 26 k, verdeckte Klartexte von Substitution und Bit-Lupe über die Bibliothek nachgerechnet).
   Rechnungen **nur** über `Krypto` – kein Serverzugriff, keine Speicherung, keine Aufgabendaten, keine Lösungen.
 - **Rahmen (Plan M6 Task 110):** `KRLabor.oeffne` lädt fehlende Module nach (`KRLabor.lade(id)`: einmal
   `labor/bausteine.js`, dann `labor/<id>.js` mit `?v=<KR.VERSION>` an `document.head`; bis dahin „Wird geladen …“, bei
@@ -1700,7 +1702,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `funkraum.test.js` | neu | Zustandsautomat (erlaubte/verbotene Übergänge → 409), Rollenvergabe, Whitelist (Umlaute, Kleinbuchstaben → groß, 161 Zeichen, Sonderzeichen), Sichtbarkeit je Rolle, Polling 200/304/`seit`, Rate-Limits, alle 5 Szenarien im Durchlauf (Hash-Knacken, DH-K-Prüfung, OTP-Wiederholer, Mallory-Umleitung + Zertifikat), Ausblenden leert Inhalt, Beenden löscht Inhalte, 24-h-Löschung |
 | `arena.test.js` | neu | Phasen, Einreichung (Umkehrbarkeit, Typregel, Klartextlänge), Klartext/Schlüssel nie gespeichert (DB-Durchsuchung), Angriff per Klartext und per Schlüssel, eigene Chiffre → 400, Rate-Limits, Abzeichen, Beurteilungen nur Lehrkraft/eigenes Team, 30-Tage-Löschung |
 | `labor.test.js` | neu | `/api/labor` Freigaben (`auto`/`frei`/`gesperrt`, Welt gesperrt, Boss läuft) mit `welten`/`niveau`, Registry Server = Client (mit Reitern), Level-Feld `werkzeug` als Objekte, Validator-Hinweis für Schlüssel-Voreinstellung |
-| `labor_regeln.test.js` | neu (M6) | Rechenregel: kein Werkzeug-Modul rechnet selbst (kein `%`, Zeichencodes, Bit-Operatoren, Potenz, Basiswechsel, Alphabet-`indexOf`), kein Netz-/Speicherzugriff, kein `innerHTML`; Beispieltexte nicht aus Videos/Seeds |
+| `labor_regeln.test.js` | neu (M6) | Rechenregel: kein Werkzeug-Modul rechnet selbst (kein `%`, Zeichencodes, Bit-Operatoren, Potenz, Basiswechsel, Alphabet-`indexOf`), kein Netz-/Speicherzugriff, kein `innerHTML`; Beispieltexte nicht aus Videos/Seeds/Akten/Warm-up/Materialquellen (auch verschlüsselt, Review M6) |
 | `labor_rahmen.test.js` | neu (M6) | Reiter-Regeln (Welt, Niveau, Lehrkraft, `signatur.mitm` im Level-Kontext W5-L3), Nachspiel (Tasten, Tempo, Timer, reduzierte Bewegung, Aufräumen), Alle-Schlüssel ohne „richtig“-Markierung, Nachladen (`BEREIT`, Skript mit `?v=`), Bausteine |
 | `labor_<id>.test.js` | neu (M6) | je Werkzeug (`skytale`, `scheibe`, `haeufigkeit`, `substitution`, `vigenere`, `bitlupe`, `runden`, `modulo`, `rsa`, `hash`, `signatur`): Spec-Vektoren der Welt-Spec §9, jede Anzeige gegen dieselbe `Krypto.*`-Funktion, Tastaturwege, `aria-live`, reduzierte Bewegung; Helfer `test/hilfen_labor.js` (Werkzeug im Attrappen-DOM öffnen) |
 | `datenschutz.test.js` | neu | keine Lösung/Erklärung/Boss-Aufgabe über öffentliche Routen; `/api/plattform` und Kursübersicht ohne Freitexte; Löschung nach `sub` entfernt alle personenbezogenen Zeilen (Abfrage über alle Tabellen mit `schueler_id`/`sub`/`von_schueler_id`) |
