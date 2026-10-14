@@ -5,7 +5,7 @@
 > Nummerierung setzt den Gesamtplan `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` und die Detailpläne M3–M8
 > fort (Tasks **205–219**, Entscheidungen **E148–E166**, nächste Kern-Abweichung **K45**).
 >
-> **Status: geplant** (14.10.2026) – Ausgangsstand Branch `feature/m0-kern`, HEAD `caae826`, `npm run pruefen` grün
+> **Status: erledigt bis auf Freigabe (F1–F12)** (14.10.2026, Version 1.0.0, Bericht `docs/ABSCHLUSS_1.0.md`; GitHub Actions ruhen – lokale Prüfung maßgeblich). Geplant ab – Ausgangsstand Branch `feature/m0-kern`, HEAD `caae826`, `npm run pruefen` grün
 > (1122 Tests, Validator 0 Fehler, Prüfwerte 1112/0, Seeds 398/0, Abdeckung 0 Lücken), e2e Szenarien 1–12 grün,
 > Version `0.4.10`. labs main `3f48c5c` (VERTRAG v1.2; `src/jwt.js` und `scripts/vertrag_pruefen.js` byte-gleich,
 > SHA-256 am 14.10.2026 nachgeprüft), AlgoQuest main `60fe4a1` (2.8.2).
@@ -543,8 +543,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Consumes: alle Tasks 205–218
 
-- [ ] **Step 1: Version** – `node werkzeuge/version_setzen.js 1.0.0`; `node --test test/version_setzen.test.js test/verbund.test.js` (Manifest-Version = `/healthz`) → PASS.
-- [ ] **Step 2: Gesamtprüfung** (alle Ausgaben mit Zahlen in den Bericht):
+- [x] **Step 1: Version** – `node werkzeuge/version_setzen.js 1.0.0`; `node --test test/version_setzen.test.js test/verbund.test.js` (Manifest-Version = `/healthz`) → PASS.
+- [x] **Step 2: Gesamtprüfung** (alle Ausgaben mit Zahlen in den Bericht):
   `npm run pruefen` · `npm run krypto:vergleich -- --anzahl 2000` · `python3 -I werkzeuge/krypto/test_krypto.py` · `python3 -I werkzeuge/krypto/test_fremde_verfahren.py` ·
   `npm run ide:pruefen` · `npm run workspaces -- --pruefen` · `npm run akten -- --pruefen` · `npm run loesungen -- --pruefen` · `npm run lehrkraft -- --pruefen` ·
   `python3 -I werkzeuge/materialien_pruefen.py` · `python3 werkzeuge/material/video_folien.py --pruefen` · `python3 -I werkzeuge/schriften_pruefen.py` ·
@@ -552,9 +552,11 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   `npm run konfig:pruefen` mit Produktionswerten (Testschlüssel, `https://kryptos.example`) → Exit 0 und mit `http://kryptos.example` → Exit 1 ·
   `npm start`-Probe mit Produktionswerten (`PORT` frei, `DATA_DIR` temp) + `node scripts/vertrag_pruefen.js http://localhost:<p>` → „erfüllt Vertrag v1.2 … Version 1.0.0, Anmeldung: portal“.
   Alles grün; sonst Fund beheben (eigener Commit mit Test) und von vorn.
-- [ ] **Step 3: Abschlussbericht** `docs/ABSCHLUSS_1.0.md`: (1) Umfang 1.0.0 (Welten, Level, Aufgaben, Bosse, Warm-up, Generatoren, Werkzeuge, Szenarien – Zahlen aus den Tests); (2) Prüfergebnisse aus Step 2; (3) Sicherheits-Review (Funde 207–209 mit Commit, sonst „keine Funde“); (4) Portal-Ende-zu-Ende (labs-Commit, Ablauf, Befunde); (5) bekannte Grenzen (Docker-Job erst auf GitHub geprüft – E148; Werkzeug-Sperre je Aufgabe nicht durchsetzbar; Skript.md ohne Generator; …); (6) **Freigabe-Checkliste F1–F12** (unten) zum Abhaken; (7) Verweis auf die gesammelten Entscheidungen L1–L50 dieses Plans mit Spalte „Antwort der Lehrkraft“ (leer); (8) Vorschlag für `CLAUDE.md` (E164: Befehle `abdeckung`, `konfig:pruefen`, `e2e:portal`; Abschnitt Betrieb mit Verweis auf README §6).
-- [ ] **Step 4: Plan abschließen** – Checkboxen 205–219, Umsetzungsnotizen je Task, Selbstprüfung „Stand Abschluss“; Gesamtplan M9-Zeile „erledigt bis auf Freigabe (F1–F12)“. `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Kryptos 1.0.0: Gesamtprüfung, Abschlussbericht und Freigabe-Checkliste (M9 Task 219)"` – **kein Push, kein Merge.**
+- [x] **Step 3: Abschlussbericht** `docs/ABSCHLUSS_1.0.md`: (1) Umfang 1.0.0 (Welten, Level, Aufgaben, Bosse, Warm-up, Generatoren, Werkzeuge, Szenarien – Zahlen aus den Tests); (2) Prüfergebnisse aus Step 2; (3) Sicherheits-Review (Funde 207–209 mit Commit, sonst „keine Funde“); (4) Portal-Ende-zu-Ende (labs-Commit, Ablauf, Befunde); (5) bekannte Grenzen (Docker-Job erst auf GitHub geprüft – E148; Werkzeug-Sperre je Aufgabe nicht durchsetzbar; Skript.md ohne Generator; …); (6) **Freigabe-Checkliste F1–F12** (unten) zum Abhaken; (7) Verweis auf die gesammelten Entscheidungen L1–L50 dieses Plans mit Spalte „Antwort der Lehrkraft“ (leer); (8) Vorschlag für `CLAUDE.md` (E164: Befehle `abdeckung`, `konfig:pruefen`, `e2e:portal`; Abschnitt Betrieb mit Verweis auf README §6).
+- [x] **Step 4: Plan abschließen** – Checkboxen 205–219, Umsetzungsnotizen je Task, Selbstprüfung „Stand Abschluss“; Gesamtplan M9-Zeile „erledigt bis auf Freigabe (F1–F12)“. `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Kryptos 1.0.0: Gesamtprüfung, Abschlussbericht und Freigabe-Checkliste (M9 Task 219)"` – **kein Push, kein Merge.**
+
+> Umsetzung: alle Prüfungen aus Step 2 grün, Zahlen in `docs/ABSCHLUSS_1.0.md` §2 (1175 Tests, Prüfwerte 1133/0, Seeds 399/0, Zwilling 256 867 Fälle/0, e2e 1–14 mit 30 Fotos, e2e:portal gegen labs `3f48c5c`, Vertragsprüfung am `npm start` mit 1.0.0/portal). Abweichung F2: die GitHub Actions ruhen (Ausgabenlimit, Lehrkraft) – CI-Datei unverändert, lokale Prüfung `pruefen` + `e2e` + `e2e:portal` maßgeblich, CI-Job `docker` nie gelaufen (Bericht §5); README §4/§6 vermerkt das. Funde während 217 mit eigenen Commits (funk-Limit, Toast).
 
 ---
 
@@ -584,7 +586,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 
 | Nr. | Schritt | vorbereitet in |
 |---|---|---|
-| F1 | Plan M9, Abschlussbericht und gesammelte Entscheidungen L1–L50 lesen, Antworten geben (Abweichungen werden eigene Tasks nach M9) | 219 |
+| F1 | Plan M9, Abschlussbericht und gesammelte Entscheidungen L1–L52 lesen, Antworten geben (Abweichungen werden eigene Tasks nach M9) | 219 |
 | F2 | Pull Request `feature/m0-kern` → `main` öffnen (nur Prüfung, kein Merge): CI-Jobs `app`, `krypto`, `inhalte`, `e2e`, **`docker`** müssen grün sein (erster echter Image-Bau, E148) | 206 |
 | F3 | Datenschutz: Schule ergänzt die Angaben in `[…]` (Schulleitung/DSB) – vor dem Einsatz mit Lernenden | 210 |
 | F4 | Lizenz der Materialien festlegen (Design O9) und ggf. Fußzeile anpassen | L47 |
@@ -697,7 +699,7 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | Version 1.0.0, Abschlussbericht | 219 |
 | Material-Pipeline in CI (Gesamtplan Teil C) | 211, 214 (CI `inhalte`), 206 (CI `docker`) |
 | Merge/Push/Deploy/Portal-Eintrag live nur vorbereiten, „Freigabe der Lehrkraft nötig“ | Abschnitt F1–F12, 218, 219 |
-| Offene Lehrkraft-Entscheidungen M3–M8 gesammelt | Abschnitt L1–L50 |
+| Offene Lehrkraft-Entscheidungen M3–M8 gesammelt | Abschnitt L1–L52 |
 
 ### Spec → Tasks
 
@@ -726,7 +728,13 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 4 | 206 `Image-Nachbau: zweiter Start …` |
 | 5 | 207 `cookies_hinter_proxy`, `hsts_bei_https`, `host_kopf_wirkungslos` |
 
+### Stand Abschluss (14.10.2026)
+
+- Tasks 205–219 umgesetzt und abgehakt; Version 1.0.0; `npm run pruefen`, `npm run e2e`, `npm run e2e:portal` grün.
+- Kern-Abweichungen M9: K45–K47. Lehrkraft-Fragen L51, L52 neu. Offen nur die Freigabeschritte F1–F12 (F2 lokal statt CI,
+  solange die GitHub Actions ruhen).
+
 ### Zählung
 
-- Tasks **205–219 = 15**; Entscheidungen **E148–E166 = 19**; gesammelte Lehrkraft-Entscheidungen **L1–L50**; Freigabeschritte
+- Tasks **205–219 = 15**; Entscheidungen **E148–E166 = 19**; gesammelte Lehrkraft-Entscheidungen **L1–L52**; Freigabeschritte
   **F1–F12**. Neue Kern-Abweichung: K45 (`src/server.js`), weitere nur bei Funden in 207–209.

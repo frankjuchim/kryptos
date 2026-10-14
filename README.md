@@ -156,6 +156,11 @@ Die CI (`.github/workflows/pruefung.yml`) führt das in den Jobs `app`, `krypto`
 Python-Pakete aus `werkzeuge/material/requirements.txt`), `docker` (Image bauen, mit frischem Volume starten,
 Vertragsprüfung, Neustart) und – bei Pull Requests nach `main` – `e2e` aus.
 
+> **Stand 1.0.0: GitHub Actions ruhen** (Ausgabenlimit, Entscheidung der Lehrkraft: „nutzen wir erstmal nicht“). Die
+> CI-Datei bleibt unverändert; bis zur Rücknahme ist die **lokale Prüfung** maßgeblich: `npm run pruefen`, `npm run e2e`
+> und `LABS_DIR=… npm run e2e:portal`. Der Job `docker` (echter Image-Bau) ist **nie gelaufen** – geprüft ist nur der
+> Nachbau `node --test test/docker.test.js` (siehe `docs/ABSCHLUSS_1.0.md`).
+
 ## 5. Verbund InfoLabs
 
 Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag
@@ -189,7 +194,8 @@ Verzeichnis der Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` …) stehen 
 
 > ⚠️ **`main` ist direkt mit CapRover verbunden: Jeder Push auf `main` startet sofort den Live-Build.** Gearbeitet wird
 > nur auf Feature-Branches. Nach `main` kommt eine Version nur nach **Freigabe der Lehrkraft**, mit grüner Prüfung
-> (`npm run pruefen`, `npm run e2e`, CI einschließlich Job `docker`) – als Fast-Forward:
+> (`npm run pruefen`, `npm run e2e`, `npm run e2e:portal`; CI einschließlich Job `docker`, sobald die GitHub Actions
+> wieder laufen) – als Fast-Forward:
 > `git fetch origin main && git merge-base --is-ancestor origin/main HEAD && git push origin HEAD:main`.
 > Danach `https://kryptos.frankjuchim.de/healthz` aufrufen: `{"status":"ok","version":"…"}` muss die neue Version zeigen.
 
