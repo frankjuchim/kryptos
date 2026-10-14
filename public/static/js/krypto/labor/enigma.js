@@ -153,7 +153,7 @@
       const tastatur = h('div', { class: 'enigma-tastatur', role: 'group', 'aria-label': 'Tastatur' }, reihe('taste', tasten));
       const steckerbrett = h('div', { class: 'enigma-steckerbrett', role: 'group', 'aria-label': 'Steckerbrett' }, reihe('buchse', buchsen));
       const kabelSvg = s('svg', { class: 'enigma-kabel', 'aria-hidden': 'true', focusable: 'false' });
-      const brettTeil = h('div', { class: 'enigma-brett-teil' }, steckerbrett, kabelSvg, h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Steckerbrett'));
+      const brettTeil = h('div', { class: 'enigma-brett-teil' }, kabelSvg, steckerbrett); // Kabel liegen hinter Buchsen und Beschriftung
       const gehaeuse = h(
         'div',
         { class: 'enigma-gehaeuse enigma-maschine', tabindex: '-1' },
@@ -162,6 +162,7 @@
         lampenfeld,
         h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Tastatur'),
         tastatur,
+        h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Steckerbrett'),
         brettTeil
       );
 
