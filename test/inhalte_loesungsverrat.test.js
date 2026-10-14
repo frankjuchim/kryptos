@@ -3,7 +3,8 @@
 // Archivfund-Aufgabe darf nicht wörtlich in einem anderen Schülertext derselben Welt stehen – andere Aufgabe (Text,
 // Interaktion, Tipps, Erklärung), Level-Intro, Archivfund/Kapitel, Akte-Quelle (ohne Lösungsteile) oder Warm-up-Karte.
 // Aufgaben sind frei anwählbar, also verrät jede andere Stelle die Antwort.
-// Verglichen wird normalisiert (A–Z, 0–9): Lösungstexte und Lückenwerte mit ≥ 6 Zeichen (und ≥ 3 verschiedenen), dazu
+// Verglichen wird normalisiert (A–Z, 0–9): Lösungstexte und Lückenwerte mit ≥ 6 Zeichen (und ≥ 3 verschiedenen; Bitfolgen
+// aus nur 0/1 ab 16 Zeichen, Plan M8 Task 171), dazu
 // die Lückenwerte einer Aufgabe hintereinander (z. B. Zeilen eines Quadrats, ein ganzes Geheimtextalphabet). Blöcke
 // werden so gelesen, wie sie erscheinen: Zellen einer Zeile/eines Quadrats zusammen, Playfair-/Polybios-Quadrate mit
 // Schlüssel ausgerechnet.
@@ -15,7 +16,12 @@ const S = require('./hilfen_spec');
 const Krypto = require('../public/static/js/shared/krypto.js');
 
 /** Begründete Ausnahmen: { aufgabe, quelle (Anfang der Fundstelle), begruendung } */
-const AUSNAHMEN = [];
+const AUSNAHMEN = [
+  {
+    aufgabe: 'W6-L2-01', quelle: 'Akte akte_W6-2',
+    begruendung: 'Plan M8 E137: Die Lesereihenfolge 0 5 2 7 4 1 6 3 (t = 5) steht als Archivwissen-Tabelle in Akte W6·2 – Nachschlagen im Archivwissen ist in dieser Aufgabe gewollt.'
+  }
+];
 const GENUTZT = new Set();
 
 const N = (t) => S.normalisiert(t);
@@ -37,6 +43,8 @@ function stuecke(wert, { ohne = [] } = {}) {
     if (x.t === 'quadrat' && (x.art === 'playfair' || x.art === 'polybios') && typeof x.schluessel === 'string') {
       out.push(Krypto.quadrat(x.schluessel, { groesse: x.groesse || 5 }).join(''));
     }
+    // Blöcke bits: jede Bitfolge als ein Stück (Trenner weg), Plan M8 Task 171
+    if (x.t === 'bits' && Array.isArray(x.zeilen)) for (const z of x.zeilen) if (z && typeof z.bits === 'string') out.push(N(z.bits));
     // Akten-Quadrate: Zeilen als Zeichenketten („RIALT“, „OBCDE“, …) – ganzes Quadrat als ein Stück
     if (x.t === 'quadrat' && Array.isArray(x.zeilen) && x.zeilen.every((z) => typeof z === 'string')) out.push(N(x.zeilen.join('')));
     for (const [k, v] of Object.entries(x)) if (!ohne.includes(k) && !k.startsWith('_')) lauf(v);
@@ -44,7 +52,7 @@ function stuecke(wert, { ohne = [] } = {}) {
   return out.filter(Boolean);
 }
 
-/** Lösungen einer Aufgabe: normalisierte Zeichenketten (≥ 6 Zeichen, ≥ 3 verschiedene) */
+/** Lösungen einer Aufgabe: normalisierte Zeichenketten (≥ 6 Zeichen, ≥ 3 verschiedene; nur 0/1: ≥ 16 Zeichen) */
 function loesungen(a) {
   const roh = [];
   for (const lo of [].concat(a.loesung || [])) {
@@ -60,7 +68,8 @@ function loesungen(a) {
     }
     if (luecken.length > 1) roh.push(luecken.join(''));
   }
-  return [...new Set(roh.map(N))].filter((t) => t.length >= 6 && new Set(t).size >= 3);
+  const zaehlt = (t) => (/^[01]+$/.test(t) ? t.length >= 16 : t.length >= 6 && new Set(t).size >= 3);
+  return [...new Set(roh.map(N))].filter(zaehlt);
 }
 
 /** Schülertexte einer Welt: [{ quelle, aufgabe (id oder null), stuecke }] */
@@ -121,9 +130,14 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet in Alphabet-Block, Qu
   assert.ok(stuecke({ t: 'quadrat', zeilen: ['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ'] }).some((s) => s.includes('FGHKMNPQSU')));
   assert.deepEqual(stuecke({ t: 'p', md: 'Lösung', nur_loesung: true }), []);
   assert.deepEqual(loesungen({ loesung: { text: 'XXXXXX' } }), [], 'zu wenig verschiedene Zeichen');
+  // Plan M8 Task 171: Bitlösungen ab 16 Bit, gefunden in einem bits-Block
+  assert.deepEqual(loesungen({ loesung: { bits: '0110101011010100' } }), ['0110101011010100']);
+  assert.deepEqual(loesungen({ loesung: { bits: '01101010' } }), [], 'kürzere Bitfolgen zählen nicht');
+  const b = stuecke({ t: 'bits', zeilen: [{ label: 'T', bits: '0110 1010 1101 0100' }, { trenner: '⊕' }] });
+  assert.ok(b.some((s) => s.includes('0110101011010100')));
 });
 
-for (const welt of [0, 1, 2]) {
+for (const welt of S.WELTEN) {
   test(`Welt ${welt}: keine Lösung einer Aufgabe wörtlich in einem anderen Schülertext derselben Welt`, () => {
     const f = funde(welt).map((x) => `${x.aufgabe}: „${x.loesung}“ in ${x.quelle}`);
     assert.deepEqual(f, []);
@@ -131,10 +145,13 @@ for (const welt of [0, 1, 2]) {
 }
 
 test('Ausnahmen der Lösungsverrat-Prüfung sind begründet und werden gebraucht', () => {
-  for (const welt of [0, 1, 2]) funde(welt);
+  for (const welt of S.WELTEN) funde(welt);
   for (const x of AUSNAHMEN) {
     assert.ok(x.begruendung && x.begruendung.length >= 20, `${x.aufgabe}: Begründung fehlt`);
-    assert.ok(GENUTZT.has(x), `${x.aufgabe} (${x.quelle}): Ausnahme wird nicht mehr gebraucht`);
+    // erst prüfbar, wenn die Aufgabe im Seed steht (W3–W6 entstehen in Plan M8)
+    const welt = Number(/^W(\d)/.exec(x.aufgabe)[1]);
+    const imSeed = (S.seed(welt) || { aufgaben: [] }).aufgaben.some((a) => a.id === x.aufgabe);
+    if (imSeed) assert.ok(GENUTZT.has(x), `${x.aufgabe} (${x.quelle}): Ausnahme wird nicht mehr gebraucht`);
   }
 });
 

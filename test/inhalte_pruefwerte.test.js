@@ -36,7 +36,7 @@ const zahl = (x) => {
 };
 
 test('Prüfwerte: jeder Eintrag (lab, bosspool, archivfund, warmup) ist einer Spec-Aufgabe zugeordnet', () => {
-  for (const welt of [0, 1, 2]) {
+  for (const welt of S.WELTEN) {
     const ids = new Set(S.specAufgaben(welt).map((a) => a.specId));
     ids.add(`W${welt}-AF`);
     for (const e of pruefwerte(welt).filter((x) => ARTEN.includes(x.art))) {
@@ -47,7 +47,7 @@ test('Prüfwerte: jeder Eintrag (lab, bosspool, archivfund, warmup) ist einer Sp
   }
 });
 
-for (const welt of [0, 1, 2]) {
+for (const welt of S.WELTEN) {
   test(`Welt ${welt}: Prüfwerte der Abschnitte in UMFANG stehen im Seed`, (t) => {
     const umfang = new Set(S.UMFANG[welt]);
     if (!umfang.size) return t.skip('UMFANG leer (noch kein Abschnitt eingetragen)');

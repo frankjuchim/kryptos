@@ -1,6 +1,6 @@
 'use strict';
-// Warm-up-Karten W0–W2 (Plan M5 Task 89, E47): seed/warmup/w<n>.json gegen Welt-Spec §7 (Aufgabe, Lösung) und
-// Materialquelle quellen/material/W<n>/warmup_W<n>.json (Titel, Kategorie, Minuten); Kern-Import lädt alle 36 Karten.
+// Warm-up-Karten W0–W6 (Plan M5 Task 89, E47; W3–W6 ab Plan M8 Task 190, bis dahin übersprungen): seed/warmup/w<n>.json gegen Welt-Spec §7 (Aufgabe, Lösung) und
+// Materialquelle quellen/material/W<n>/warmup_W<n>.json (Titel, Kategorie, Minuten); Kern-Import lädt alle vorhandenen Karten.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -13,9 +13,10 @@ const material = (welt) => JSON.parse(fs.readFileSync(path.join(S.WURZEL, 'quell
 /** Spec-Text ohne Prüfvermerk „✔ nachgerechnet“ (normalisiert verglichen) */
 const ohneVermerk = (t) => String(t).replace(/✔\s*nachgerechnet/g, '');
 
-for (const welt of [0, 1, 2]) {
-  test(`Warm-up W${welt}: 12 Karten, ids, Titel/Kategorie/Minuten wie Materialquelle, Texte wie Spec §7`, () => {
+for (const welt of S.WELTEN) {
+  test(`Warm-up W${welt}: 12 Karten, ids, Titel/Kategorie/Minuten wie Materialquelle, Texte wie Spec §7`, (t) => {
     const wu = S.warmup(welt);
+    if (welt >= 3 && !(S.UMFANG[welt] || []).includes(`WU-W${welt}`) && !wu) return t.skip(`seed/warmup/w${welt}.json gibt es noch nicht (Plan M8 Task 190)`);
     assert.ok(wu, `seed/warmup/w${welt}.json fehlt`);
     assert.equal(wu.version, 1);
     assert.equal(wu.karten.length, 12);
@@ -43,13 +44,15 @@ for (const welt of [0, 1, 2]) {
   });
 }
 
-test('Warm-up W0–W2: Kern-Seed lädt 36 Karten ohne Fehler', () => {
+test('Warm-up: Kern-Seed lädt alle vorhandenen Karten (12 je Welt) ohne Fehler', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-wu-'));
   fs.mkdirSync(path.join(dir, 'warmup'));
-  for (const n of [0, 1, 2]) fs.copyFileSync(path.join(S.WURZEL, 'seed', 'warmup', `w${n}.json`), path.join(dir, 'warmup', `w${n}.json`));
+  const da = S.WELTEN.filter((n) => fs.existsSync(path.join(S.WURZEL, 'seed', 'warmup', `w${n}.json`)));
+  assert.ok([0, 1, 2].every((n) => da.includes(n)), 'W0–W2 vorhanden');
+  for (const n of da) fs.copyFileSync(path.join(S.WURZEL, 'seed', 'warmup', `w${n}.json`), path.join(dir, 'warmup', `w${n}.json`));
   const app = H.makeApp({ seedDir: dir });
   const svc = app.locals.services;
   const u = svc.kata.meta();
-  assert.deepEqual(u.welten.map((w) => [w.welt, w.anzahl]), [[0, 12], [1, 12], [2, 12]]);
-  assert.equal(svc.kata.liste({}).length, 36);
+  assert.deepEqual(u.welten.map((w) => [w.welt, w.anzahl]), da.map((n) => [n, 12]));
+  assert.equal(svc.kata.liste({}).length, 12 * da.length);
 });

@@ -13,10 +13,10 @@ const { WELT_PLAN } = require('../src/krypto/fach');
 const MIT_SEED = [0, 1, 2, 3, 4, 5, 6].filter((n) => S.seed(n) && WELT_PLAN.some((p) => p.nr === n));
 
 /**
- * Eine Welt entsteht Level für Level (Plan M5 Tasks 74–88); ihr Boss-Abschnitt kommt zuletzt in S.UMFANG. Bis dahin
+ * Eine Welt entsteht Level für Level (Plan M5 Tasks 74–88, Plan M8 Tasks 172–189); ihr Boss-Abschnitt kommt zuletzt in S.UMFANG. Bis dahin
  * gilt der Abgleich nur für die Level, die schon im Seed stehen (in Plan-Reihenfolge), der Boss wird noch nicht geprüft.
  */
-const vollstaendig = (nr) => (S.UMFANG[nr] || []).includes(`W${nr}-B`) || ![0, 1, 2].includes(nr);
+const vollstaendig = (nr) => (S.UMFANG[nr] || []).includes(`W${nr}-B`); // gilt seit M8 auch für W3–W6
 function planFuer(nr, w) {
   const plan = WELT_PLAN.find((p) => p.nr === nr);
   if (vollstaendig(nr)) return plan;

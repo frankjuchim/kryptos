@@ -65,7 +65,9 @@ Hinweis Welt 8/9: `epoche`, `jahr`, `akzentHell` sind dort optional; `farbe` ble
 Archivfund-ids: technisch immer `W<n>-A-<nn>` (in der Regel `W<n>-A-01`). Die Bezeichnungen in den Welt-Specs
 (`W0-AF`, `W1-AF`, `W2-A`, `W3-L1-00`) sind Arbeitsnamen und werden beim Seed-Bau (M5/M8) auf diese Form abgebildet.
 Ebenso die Aufgaben-ids der Welt 2 (Plan M5 E38): `W2-L2k-nn` → `W2-Lk-nn` (z. B. `W2-L21-03` → `W2-L1-03`), Kür
-`W2-K1-nn` → `W2-L5-nn` (Kür-Level `W2-L5` mit `nr: "K1"`). Die Abbildung steht einmal in `test/hilfen_spec.js`
+`W2-K1-nn` → `W2-L5-nn` (Kür-Level `W2-L5` mit `nr: "K1"`). Welten 3–6 (Plan M8 E120): Archivfund `W3-L1-00` bzw. der
+Archivfund-Absatz ohne id (W4–W6) → `W<n>-A-01`; Kür `W3-K2-nn` → `W3-L5-nn` (`nr: "K2"`, nach den Leveln 3.1–3.4),
+`W4-K3-nn` → `W4-L3-nn` (`nr: "K3"`). Die Abbildung steht einmal in `test/hilfen_spec.js`
 (`technischeId`); Spec-ids und Prüfwert-`ort`-Angaben bleiben unverändert.
 
 ---

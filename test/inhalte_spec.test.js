@@ -13,7 +13,7 @@ const summe = (o) => Object.values(o || {}).reduce((a, b) => a + b, 0);
 const alsListe = (w) => (w === undefined || w === null ? [] : Array.isArray(w) ? w : [w]).map((e) => (e && typeof e === 'object' ? e.id : e));
 
 test('Spec-Parser: Aufgaben je Level, Boss-Pool, Archivfund und Warm-up wie WELT_PLAN', () => {
-  for (const welt of [0, 1, 2]) {
+  for (const welt of S.WELTEN) {
     const plan = WELT_PLAN.find((p) => p.nr === welt);
     const aufgaben = S.specAufgaben(welt);
     const levels = S.specLevels(welt);
@@ -39,13 +39,52 @@ test('Spec-Parser: Aufgaben je Level, Boss-Pool, Archivfund und Warm-up wie WELT
       assert.ok(Object.hasOwn(LAB_KATEGORIE_NAMEN, a.kategorie), `${a.specId}: Kategorie ${a.kategorie}`);
       assert.ok(S.kindsErwartet(a.interaktion, a.id).length >= 1, `${a.specId}: Interaktion „${a.interaktion}“ nicht abbildbar`);
     }
-    // choice-Lösungen lesbar (E62/E64)
+    // choice-Lösungen lesbar (E62/E64; M8 E130: ohne Kennung über den Text, E131: feste Lösungen)
     for (const a of aufgaben.filter((x) => x.interaktion && S.kindsErwartet(x.interaktion, x.id).includes('choice'))) {
+      if (S.CHOICE_OHNE_KENNUNG[a.id]) {
+        const lo = S.normalisiert(a.loesung);
+        for (const t of Object.values(S.CHOICE_OHNE_KENNUNG[a.id]).flat()) assert.ok(lo.includes(S.normalisiert(t)), `${a.specId}: „${t}“ steht nicht in der Spec-Lösung`);
+        continue;
+      }
+      if (S.CHOICE_FEST[a.id]) continue;
       const t = S.loesungsTeile(String(a.loesung));
       const gelesen = t ? Object.values(t).map(S.kennungen).filter(Boolean) : [S.kennungen(a.loesung)].filter(Boolean);
       assert.ok(gelesen.length, `${a.specId}: choice-Lösung „${a.loesung}“ nicht lesbar`);
     }
   }
+});
+
+test('Spec-Parser W3–W6 (Plan M8 Task 171): Zeilenzahlen, ids (E120), Niveau-/Merkkasten-Varianten, Tipps, Mapping', () => {
+  const zahl = (welt, art) => S.specAufgaben(welt).filter((a) => a.art === art).length;
+  assert.deepEqual([3, 4, 5, 6].map((w) => zahl(w, 'lab')), [35, 23, 23, 30], 'Lab-Zeilen (gezählt 14.10.2026)');
+  assert.deepEqual([3, 4, 5, 6].map((w) => zahl(w, 'boss')), [15, 15, 15, 15], 'Boss-Zeilen');
+  assert.deepEqual([3, 4, 5, 6].map((w) => zahl(w, 'warmup')), [12, 12, 12, 12], 'Warm-up-Zeilen');
+  assert.equal(S.technischeId('W3-L1-00'), 'W3-A-01');
+  assert.equal(S.technischeId('W3-K2-04'), 'W3-L5-04');
+  assert.equal(S.technischeId('W4-K3-02'), 'W4-L3-02');
+  assert.deepEqual(S.specLevels(3).map((l) => l.id), ['W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5']);
+  assert.deepEqual(S.specLevels(4).map((l) => l.id), ['W4-L1', 'W4-L2', 'W4-L3']);
+  assert.equal(S.specLevels(3)[4].titel, 'Die Enigma', 'Titel ohne „(vereinfacht)“');
+  assert.deepEqual(S.specLevels(6).map((l) => l.ds), [[17], [17], [17, 18]], 'DS_FEST (E146)');
+  assert.deepEqual([3, 4, 5, 6].map((w) => S.specAufgaben(w).find((a) => a.art === 'archivfund').titel),
+    ['Der Lochstreifen von 1917', 'Der Brief mit dem verlorenen Schlüssel', 'Die gefälschte Website', 'Eves Chiffre']);
+  assert.ok(S.specLevels(6)[0].merkkasten.startsWith('Im Abitur gehen Punkte selten verloren'), 'Merkkasten als eingerückter Fließtext (W6)');
+  assert.deepEqual(S.tippsAus('T1: 8 · 7 = 56. T2: Der letzte Rest.'), ['8 · 7 = 56.', 'Der letzte Rest.']);
+  assert.deepEqual(S.tippsAus('1: Lesereihenfolge 0, 3. / 2: A bedeutet 0.'), ['Lesereihenfolge 0, 3.', 'A bedeutet 0.']);
+  assert.equal(S.specAufgaben(6).find((a) => a.id === 'W6-L2-10').niveau, 'kern', 'E132: „kern (D: eA)“ → kern');
+  assert.ok(S.specAufgaben(6).find((a) => a.id === 'W6-L2-06').inhalt.includes('\nA) '), '<br> → Zeilenumbruch');
+  assert.deepEqual(S.kindsErwartet('zuordnung', 'W4-L2-03'), ['match'], 'E127');
+  assert.deepEqual(S.kindsErwartet('gaps (Freitext mit Hash-Prüfer)', 'W5-L1-07'), ['hash-ziel'], 'E126');
+  assert.deepEqual(S.kindsErwartet('choice + gaps (Begründung, lines)', 'W3-L2-08'), ['choice'], 'E129');
+  assert.deepEqual(S.kindsErwartet('bits-rechnen', 'W3-L1-04'), ['bits-rechnen', 'gaps'], 'E128');
+  assert.deepEqual(S.kindsErwartet('`bits-rechnen` (Matrix)'), ['bits-rechnen']);
+  assert.deepEqual(S.kindsErwartet(S.specAufgaben(3).find((a) => a.art === 'archivfund').interaktion, 'W3-A-01'), ['bits-rechnen', 'gaps'], 'Archivfund W3 aus dem Absatz');
+  assert.deepEqual(S.kindsErwartet(null, 'W5-A-01'), ['gaps', 'choice'], 'E134');
+  assert.deepEqual(S.choiceLoesung({ loesung: '(1) w (2) w (3) f (4) f (5) w' }), ['1', '2', '5'], 'w/f je Aussage (E130)');
+  assert.deepEqual(S.choiceLoesung({ loesung: 'a) B b) A c) B' }, 2), ['b'], 'je Stufe');
+  assert.deepEqual(S.choiceLoesung({ loesung: '**(B)**' }), ['b'], 'fett');
+  assert.deepEqual(S.choiceLoesung({ loesung: 'korrekt: (1), (2) ✔' }), ['1', '2']);
+  assert.deepEqual(S.choiceText({ id: 'W4-L2-02' }), ['Bobs öffentlicher Schlüssel']);
 });
 
 test('Spec-Parser: id-Abbildung (E38) und Interaktions-Mapping (E40, E64, E65)', () => {
@@ -95,9 +134,15 @@ function pruefeAufgabe(welt, w, spec) {
   const fallen = new Set(a.fallen || []);
   if (spec.art === 'boss') for (const p of spec.fallen) assert.ok(fallen.has(p), `${o}: Falle ${p} aus der Erklärung (E53)`);
   else if (spec.art === 'lab') assert.deepEqual([...fallen].sort(), [...spec.fallen].sort(), `${o}: Fallen`);
-  if (spec.interaktion) assert.deepEqual(S.kindsSeed(a), S.kindsErwartet(spec.interaktion, spec.id), `${o}: Interaktionsarten zu „${spec.interaktion}“`);
+  if (spec.interaktion || S.TEILE_ERGAENZT[spec.id]) assert.deepEqual(S.kindsSeed(a), S.kindsErwartet(spec.interaktion, spec.id), `${o}: Interaktionsarten zu „${spec.interaktion}“`);
   S.teile(a).forEach(({ interaktion: ia, loesung: lo }, i) => {
     if (!ia || ia.kind !== 'choice') return;
+    if (S.CHOICE_OHNE_KENNUNG[spec.id]) {
+      // M8 E130: Optionen ohne Kennung – die richtigen Optionen tragen die Lösungstexte
+      const texte = (ia.optionen || []).filter((op) => ((lo && lo.richtig) || []).includes(op.id)).map((op) => S.normalisiert(op.text)).sort();
+      assert.deepEqual(texte, (S.choiceText(spec, i) || []).map(S.normalisiert).sort(), `${o}: choice-Lösung über den Optionstext (E130)`);
+      return;
+    }
     const soll = S.choiceLoesung(spec, i);
     assert.ok(soll, `${o}: Spec-Lösung des choice-Teils ${i} nicht lesbar`);
     assert.deepEqual([...((lo && lo.richtig) || [])].sort(), [...soll].sort(), `${o}: choice-Lösung (E62)`);
@@ -131,7 +176,7 @@ function pruefeLevel(welt, w, abschnitt) {
   assert.deepEqual([...l.aufgaben].sort(), [...specIds].sort(), `${abschnitt}: Aufgabenliste wie in der Spec`);
 }
 
-for (const welt of [0, 1, 2]) {
+for (const welt of S.WELTEN) {
   test(`Welt ${welt}: Abschnitte in UMFANG stehen vollständig und spec-treu im Seed`, (t) => {
     const umfang = S.UMFANG[welt];
     if (!umfang.length) return t.skip('UMFANG leer (noch kein Abschnitt eingetragen)');
@@ -165,7 +210,7 @@ for (const welt of [0, 1, 2]) {
 test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext der Aufgabe überein', () => {
   const Krypto = require('../public/static/js/shared/krypto.js');
   let geprueft = 0;
-  for (const welt of [0, 1, 2]) {
+  for (const welt of S.WELTEN) {
     const w = S.seed(welt);
     if (!w) continue;
     for (const a of w.aufgaben || []) {
@@ -192,7 +237,7 @@ test('Vorgegebene Häufigkeiten (quelle „werte“) stimmen mit dem Geheimtext 
 test('Keine doppelte Häufigkeitsleiste (Block haeufigkeit + Werkbank mit haeufigkeit: true) in den Seeds', () => {
   require('../src/krypto').registriere();
   const { validiereWelt } = require('../src/content/validator');
-  for (const welt of [0, 1, 2]) {
+  for (const welt of S.WELTEN) {
     const w = S.seed(welt);
     if (!w) continue;
     const doppelt = validiereWelt(w, { datei: `welt${welt}.json` }).warnungen.filter((x) => /Häufigkeitsleiste doppelt/.test(x.meldung));
@@ -205,7 +250,7 @@ test('Keine doppelte Häufigkeitsleiste (Block haeufigkeit + Werkbank mit haeufi
 test('Porta-Tafeln in den Seeds stimmen Zelle für Zelle mit Krypto.porta überein', () => {
   const Krypto = require('../public/static/js/shared/krypto.js');
   let tafeln = 0;
-  for (const welt of [0, 1, 2]) {
+  for (const welt of S.WELTEN) {
     const w = S.seed(welt);
     if (!w) continue;
     for (const a of w.aufgaben || []) {

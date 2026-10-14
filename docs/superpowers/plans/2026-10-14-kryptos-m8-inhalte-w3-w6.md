@@ -472,12 +472,13 @@ Version; Tests `test/lernen.test.js`, `test/client_seiten.test.js`, `test/valida
   `bits` als ein Stück; Ausnahme W6-L2-01 (E137) mit Begründung.
 - `inhalte_spec` Parser-Selbsttest um W3–W6: Lab 35/23/23/30, Boss 15 je Welt, Warm-up 12 je Welt (gezählt 14.10.2026).
 
-- [ ] **Step 1: Failing test** – Parser-Selbsttest W3–W6 und Probelauf `UMFANG[3] = ['W3-L1']` → FAIL („Welt 3 fehlt“); dann
+- [x] **Step 1: Failing test** – Parser-Selbsttest W3–W6 und Probelauf `UMFANG[3] = ['W3-L1']` → FAIL („Welt 3 fehlt“); dann
   `UMFANG` für 3–6 leeren. Lösungsverrat-Selbsttest: Bitlösung `0110101011010100` in einem `bits`-Block wird gefunden.
-- [ ] **Step 2: Implement.** **Step 3: Run** `node --test test/inhalte_*.test.js test/warmup_seed.test.js` → PASS; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Abgleich-Tests für die Welten 3–6: Spec-Parser, ids, Bitlösungen im Lösungsverrat-Test"`.
+- [x] **Step 2: Implement.** **Step 3: Run** `node --test test/inhalte_*.test.js test/warmup_seed.test.js` → PASS; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Abgleich-Tests für die Welten 3–6: Spec-Parser, ids, Bitlösungen im Lösungsverrat-Test"`.
 
 ---
+- [x] **Umsetzungsnotiz:** Tabellen-Schlüssel sind technische ids (`W4-K3-02` → `W4-L3-02`, `W3-K2-03` → `W3-L5-03` …). `technischeId` für Kür jetzt `W<n>-L<KUER_LEVEL[n]>` (die alte Formel KUER_LEVEL + K − 1 hätte W3-K2 auf L6 gelegt). Zeilen-Filter nach Spaltenzahl (§11/§12-Zeilen mit Aufgaben-ids zählten in W6 sonst mit). Zusätzlich festgelegt (für die Inhalts-Tasks verbindlich): `TEILE_ERGAENZT` `W4-L2-07` [gaps, choice] (Spec-Spalte „choice + gaps“, Teile aber a) d, b) Entscheidung) und `W5-L2-05` [gaps] (ja/nein als Klappliste wie E130); `CHOICE_OHNE_KENNUNG` als Tabelle Teil → Lösungstexte (`W4-L1-01` 6, `W4-L2-02` Bobs öffentlicher Schlüssel, `W3-B-13` b) 0000 0000/1111 1111, `W5-L1-05` G); `CHOICE_FEST` `W3-L2-07` mit Options-ids 1–5 = P₁–P₅ (a → 2, 3; c → 2); Einzelaussage „korrekt.“ (W3-L2-08) → Option `korrekt`. Archivfund W3 erhält die Interaktion aus dem Absatz (`bits-rechnen` + `gaps`); `TEILE_ERGAENZT` greift auch ohne Spec-Interaktion (W5-A-01). Ausnahme W6-L2-01 wird erst als „gebraucht“ geprüft, wenn die Aufgabe im Seed steht; Warm-up-Tests W3–W6 übersprungen bis Task 190.
 
 ### Task 172: Welt 3 – Datei, Epochen-Daten, Archivfund und Level 3.1 „Vernams Lochstreifen“
 
