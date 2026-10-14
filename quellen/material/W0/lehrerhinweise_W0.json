@@ -595,7 +595,8 @@
     "Stufe",
     "Kategorie",
     "Aufgabenstellung",
-    "Lösung"
+    "Lösung",
+    "Fallen"
    ],
    "zeilen": [
     [
@@ -603,113 +604,129 @@
      "★",
      "begriffe",
      "Welcher Begriff bezeichnet das Brechen eines Verfahrens ohne Kenntnis des Schlüssels? (A) Kryptografie (B) Kryptoanalyse (C) Codierung (D) Transposition",
-     "(B)"
+     "(B)",
+     "P5"
     ],
     [
      "W0-B-02",
      "★",
      "begriffe",
      "**Entscheiden** Sie: Welches Beispiel ist eine Verschlüsselung und keine bloße Codierung? (A) ASCII-Darstellung eines Textes (B) Morsezeichen (C) Gartenzaun mit vereinbarter Schienenzahl (D) Barcode auf einer Verpackung",
-     "(C) – nur (C) hat einen geheimen Schlüssel (P5)"
+     "(C) – nur (C) hat einen geheimen Schlüssel (P5)",
+     "P5"
     ],
     [
      "W0-B-03",
      "★",
      "verschluesseln",
      "Nummerierung: A = 1 … Z = 26. **Bestimmen** Sie den Geheimtext zu „legat“ mit dem Caesar-Schlüssel k = 6.",
-     "`RKMGZ` (t (20) + 6 = 26 → Z, P2)"
+     "`RKMGZ` (t (20) + 6 = 26 → Z, P2)",
+     "P2"
     ],
     [
      "W0-B-04",
      "★★",
      "entschluesseln",
      "Eine Skytale mit dem Umfang u = 3 (3 Zeilen; zeilenweise geschrieben, spaltenweise gelesen) erzeugte `FRAEI GUMEE LR`. **Bestimmen** Sie den Klartext.",
-     "`feuerimlager` (12 : 3 = 4 Spalten, P3)"
+     "`feuerimlager` (12 : 3 = 4 Spalten, P3)",
+     "P3"
     ],
     [
      "W0-B-05",
      "★",
      "einordnen",
      "**Ordnen** Sie zu (Transposition / Substitution): Skytale · Caesar · Gartenzaun · Atbash · Polybios-Quadrat · Fleißner-Schablone",
-     "Transposition: Skytale, Gartenzaun, Fleißner · Substitution: Caesar, Atbash, Polybios"
+     "Transposition: Skytale, Gartenzaun, Fleißner · Substitution: Caesar, Atbash, Polybios",
+     "P5"
     ],
     [
      "W0-B-06",
      "★★",
      "entschluesseln",
      "Nummerierung: A = 1 … Z = 26. **Bestimmen** Sie den Klartext zu `PYLLU NCGMY HUN` (Caesar, k = 20).",
-     "`verratimsenat`"
+     "`verratimsenat`",
+     "P3"
     ],
     [
      "W0-B-07",
      "★★",
      "modulo",
      "Nummerierung: A = 1 … Z = 26, c = ((p + k − 1) mod 26) + 1. **Bestimmen** Sie c und den Buchstaben für (a) S, k = 7 (b) V, k = 4 (c) H, k = 25.",
-     "(a) 26, Z (b) 26, Z (c) 7, G"
+     "(a) 26, Z (b) 26, Z (c) 7, G",
+     "P2"
     ],
     [
      "W0-B-08",
      "★★",
      "schluesselraum",
      "Es ist bekannt, dass „castra“ zu `LJBCAJ` verschlüsselt wurde (Caesar). **Bestimmen** Sie den Schlüssel k und die Verschiebung, mit der man entschlüsselt.",
-     "k = 9; Entschlüsseln mit 17"
+     "k = 9; Entschlüsseln mit 17",
+     "P3"
     ],
     [
      "W0-B-09",
      "★★",
      "entschluesseln",
      "Gartenzaun mit n = 3 Schienen (Zickzack oben beginnend). **Bestimmen** Sie den Klartext zu `HEMBE IFKMT EESEL OUR`.",
-     "`hilfekommtuebersee` (Schienen 5 / 9 / 4)"
+     "`hilfekommtuebersee` (Schienen 5 / 9 / 4)",
+     "P4"
     ],
     [
      "W0-B-10",
      "★★",
      "sicherheit-beurteilen",
      "**Entscheiden** Sie, welche Aussage korrekt ist: (A) „Caesar ist sicher, solange niemand weiß, dass Caesar benutzt wurde.“ (B) „Nach dem Kerckhoffs-Prinzip ist Caesar unsicher, weil bei bekanntem Verfahren nur 25 sinnvolle Schlüssel zu prüfen sind.“ (C) „Caesar ist sicher, weil es 26! Schlüssel gibt.“ (D) „Kerckhoffs fordert, das Verfahren geheim zu halten.“",
-     "(B) (P7, P10)"
+     "(B) (P7, P10)",
+     "P7, P10"
     ],
     [
      "W0-B-11",
      "★★★",
      "fremde-chiffre",
      "Material **Spiegelbote:** Klartext in Blöcke zu 4 Buchstaben (letzter Block mit X aufgefüllt), jeden Block rückwärts schreiben, dann jeden Buchstaben mit Caesar um k verschieben (A = 1 … Z = 26). Beispiel k = 1: „rom siegt“ → `roms` `iegt` → `smor` `tgei` → `TNPSUHFJ`. **Bestimmen** Sie den Geheimtext zu „wir kommen“ mit k = 2.",
-     "`MTKYG OOQZZ ZP` (Blöcke `wirk` `omme` `nxxx` → `kriw` `emmo` `xxxn`; auch X wird verschoben, P4)"
+     "`MTKYG OOQZZ ZP` (Blöcke `wirk` `omme` `nxxx` → `kriw` `emmo` `xxxn`; auch X wird verschoben, P4)",
+     "P4"
     ],
     [
      "W0-B-12",
      "★★★",
      "fremde-chiffre",
      "Material Spiegelbote. a) **Bestimmen** Sie den Klartext zu `LKFVE HIIQQ HUAAQ H` mit k = 3. b) Welches Vorgehen entschlüsselt korrekt? (A) erst jeden Buchstaben um 3 zurückverschieben, dann jeden Block umdrehen (B) erst um 3 weiterverschieben, dann umdrehen (C) jeden Block umdrehen und danach noch einmal mit k = 3 verschlüsseln",
-     "a) `schiffebrennen` (+ `xx`); b) (A) (P3)"
+     "a) `schiffebrennen` (+ `xx`); b) (A) (P3)",
+     "P3"
     ],
     [
      "W0-B-13",
      "★★★",
      "fremde-chiffre",
      "Material **Wechselschritt:** Buchstaben an ungeraden Positionen (1., 3., …) Caesar um 3, an geraden Positionen um 5 (A = 1 … Z = 26). „essen“ → `HXVJQ`. **Entscheiden** Sie: (A) Transposition (B) monoalphabetische Substitution (C) polyalphabetische Substitution (D) Codierung",
-     "(C) – „eee“ → `HJH` (P5)"
+     "(C) – „eee“ → `HJH` (P5)",
+     "P5"
     ],
     [
      "W0-B-14",
      "★★★",
      "sicherheit-beurteilen",
      "Ein Tribun verschlüsselt „tribun“ zuerst mit k = 8, dann mit k = 18 (Caesar). a) **Geben** Sie den resultierenden Geheimtext **an**. b) **Entscheiden** Sie: Die doppelte Verschlüsselung (A) erhöht den Schlüsselraum auf 26 · 26 (B) entspricht einer Caesar-Verschiebung um 0 und ist damit wertlos (C) entspricht einer Verschiebung um 10",
-     "a) `TRIBUN`; b) (B) – (8 + 18) mod 26 = 0 (P7, P8)"
+     "a) `TRIBUN`; b) (B) – (8 + 18) mod 26 = 0 (P7, P8)",
+     "P7, P8"
     ],
     [
      "W0-B-15",
      "★",
      "entschluesseln",
      "Polybios-Standardquadrat (A B C D E / F G H I K / L M N O P / Q R S T U / V W X Y Z; I = J; erst Zeile, dann Spalte). **Bestimmen** Sie den Klartext zu `21 34 42 45 32`.",
-     "`forum`"
+     "`forum`",
+     "P4"
     ]
    ],
    "breiten": [
     1.7,
     1.5,
     2.4,
-    7.3,
-    3.5
+    6.0,
+    3.5,
+    1.3
    ],
    "schrift": 8
   },
@@ -719,7 +736,7 @@
   },
   {
    "t": "p",
-   "md": "Deterministisch per Seed, serverseitig geprüft; Eingabe tolerant (Groß/Klein, Leerzeichen, Gruppierung egal). 1 Punkt je Aufgabe, max. 30/Tag. Wortliste `WOERTER_ANTIKE` (60 Wörter, 3–12 Buchstaben, z. B. legion, senat, forum, tribun, galeere, hoplit …) – keine Wörter aus Lab, Akten, Bossen und Videos.",
+   "md": "Deterministisch per Seed, serverseitig geprüft; Eingabe tolerant (Groß/Klein, Leerzeichen, Gruppierung egal). 1 Punkt je Aufgabe, max. 30/Tag. Wortliste `WOERTER_ANTIKE` (70 Wörter, 3–12 Buchstaben, z. B. aquaedukt, atrium, ballista, fibel, toga, lorbeer …) – keine Wörter aus Lab, Akten, Bossen und Videos.",
    "klein": true
   },
   {

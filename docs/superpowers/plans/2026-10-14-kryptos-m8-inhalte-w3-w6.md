@@ -1277,11 +1277,12 @@ Neubau `materialien/00_Lehrerhinweise/KR_W<n>_Lehrerhinweise.docx`
 **Regel:** Die Boss-Tabelle jeder Lehrerhinweise bekommt die Spalte **„Fallen“** mit den P-Nummern des Seeds
 (`aufgabe.fallen`, „–“ bei leer); Reihenfolge und ids wie im Seed; Lösungsspalte unverändert.
 
-- [ ] **Step 1: Failing test** – `lehrerhinweise_boss.test.js`: für jede Welt 0–6 die Boss-Tabelle der Materialquelle lesen und
+- [x] **Step 1: Failing test** – `lehrerhinweise_boss.test.js`: für jede Welt 0–6 die Boss-Tabelle der Materialquelle lesen und
   mit dem Seed vergleichen (ids vollständig, Stufe, Niveau, Fallen-Spalte = `fallen` des Seeds) → FAIL.
-- [ ] **Step 2: Implement** – Spalte in den sieben JSON-Quellen; `bauen.py` je Lehrerhinweise; Textdiff: nur die neue Spalte.
-- [ ] **Step 3:** `kr_kontrast.py` → 0; PDF ansehen (Tabellenbreite, `breiten` anpassen); `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Lehrerhinweise W0–W6: Boss-Tabellen mit Fallen-Spalte, Abgleich mit den Seeds"`.
+- [x] **Step 2: Implement** – Spalte in den sieben JSON-Quellen; `bauen.py` je Lehrerhinweise; Textdiff: nur die neue Spalte.
+- [x] **Step 3:** `kr_kontrast.py` → 0; PDF ansehen (Tabellenbreite, `breiten` anpassen); `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Lehrerhinweise W0–W6: Boss-Tabellen mit Fallen-Spalte, Abgleich mit den Seeds"`.
+- [x] **Umsetzungsnotiz:** Test `lehrerhinweise_boss.test.js` (rot für W0–W6): Boss-Tabelle der Quelle = Tabelle mit ≥ 14 Boss-ids; ids in Seed-Reihenfolge, Stufe (★ in den ID-/Stufe-/Niveau-Spalten), Niveau (wo genannt), Spalte „Fallen“ = `fallen` des Seeds („–“ bei leer), `breiten` je Spalte. Spalte per Skript (Scratchpad `m8mat/fallen_spalte.py`) als letzte Spalte eingefügt, Breite 1,3 cm von der Aufgabenspalte genommen; W2/W4 (eigene JSON-Formatierung) zeilengenau bearbeitet. Mit dem Auftrag „inkl. der neuen Wortlisten“ zusätzlich die Generator-Anhänge an die Listen angeglichen: W0 (`WOERTER_ANTIKE`, 70 Wörter, Beispiele aus der Liste), W1 (`SCHLUESSELWOERTER_W1`-Beispiele, `WOERTER_BAGDAD` 70), W2 (Beispiele aus `KLARTEXTE_W2`, `SCHLUESSEL_W2`, `KOINZIDENZ_W2`, `PLAYFAIR_W2` – die alten standen nicht in den Listen), W4 (RSA e < φ, Video-Schlüssel), W5 (`WOERTER_W5` vorläufig 123, Schutzziele vorläufig 3 Bausteine), W6 (Fallen-Mix ohne XOR, Klappliste). **Korrektur:** Die Boss-Tabelle W6 nannte für B-15 noch AB/CDE → CEEDDF (Werte von W2-B-15); jetzt BA/CAD → DAECBD wie SPEC W6 §5 (E138, D7). Textvergleich der sieben docx: nur Fallen-Spalte und diese Texte; `kr_kontrast.py` 0; PDF W5/W6 angesehen (Tabellenbreite passt).
 
 ### Task 199: Akten-Verzeichnis W3–W6, PDFs, Funkraumkarten für Lehrkräfte
 

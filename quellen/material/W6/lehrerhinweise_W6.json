@@ -585,7 +585,8 @@
     "Kategorie",
     "Aufgabe (gekürzt, gesiezt)",
     "Lösung",
-    "Bezug"
+    "Bezug",
+    "Fallen"
    ],
    "schrift": 8,
    "breiten": [
@@ -593,9 +594,10 @@
     1.45,
     0.9,
     1.9,
-    6.35,
+    5.05,
     2.8,
-    1.7
+    1.7,
+    1.3
    ],
    "zeilen": [
     [
@@ -605,7 +607,8 @@
      "verschlüsseln",
      "**Wenden** Sie das Caesar-Verfahren mit k = 4 auf „dachs“ **an**.",
      "`HEGLW`",
-     "W0"
+     "W0",
+     "P2"
     ],
     [
      "W6-B-02",
@@ -614,7 +617,8 @@
      "einordnen",
      "Blöcke zu fünf Zeichen, jeder Block rückwärts notiert: Welches Prinzip? (A Transposition, B mono-, C polyalphabetische Substitution, D Codierung)",
      "**A**",
-     "W0, P5"
+     "W0, P5",
+     "P5"
     ],
     [
      "W6-B-03",
@@ -623,7 +627,8 @@
      "Schlüsselraum",
      "Anzahl der Schlüssel einer allgemeinen monoalphabetischen Substitution? (A 25, B 26, C 26², D 26! ≈ 4 · 10²⁶)",
      "**D**",
-     "W1, P7"
+     "W1, P7",
+     "P7"
     ],
     [
      "W6-B-04",
@@ -632,7 +637,8 @@
      "Schlüsselraum",
      "Neun Personen, paarweise: Schlüssel symmetrisch / asymmetrisch?",
      "**36**; **18**",
-     "W4, P7"
+     "W4, P7",
+     "P7"
     ],
     [
      "W6-B-05",
@@ -641,7 +647,8 @@
      "Signatur",
      "Mit welchem Schlüssel verschlüsselt Alice beim Signieren den Hashwert? (A Bobs öffentlichem, B Bobs privatem, C ihrem öffentlichen, D ihrem privaten)",
      "**D**",
-     "W5, P9"
+     "W5, P9",
+     "P9"
     ],
     [
      "W6-B-06",
@@ -650,7 +657,8 @@
      "Vigenère",
      "**Wenden** Sie Vigenère mit dem Schlüsselwort TAU auf „kerze“ **an**.",
      "`DELSE`",
-     "W2"
+     "W2",
+     "P1"
     ],
     [
      "W6-B-07",
@@ -659,7 +667,8 @@
      "Kasiski",
      "Wiederholungen in den Abständen 18, 30 und 42: wahrscheinlichste Schlüssellänge? (A 3, B 6, C 12, D 90)",
      "**B** (ggT 6)",
-     "W2"
+     "W2",
+     "P4"
     ],
     [
      "W6-B-08",
@@ -668,7 +677,8 @@
      "XOR",
      "**Berechnen** Sie `0110 1100 ⊕ 1010 0101`.",
      "`1100 1001`",
-     "W3"
+     "W3",
+     "P4"
     ],
     [
      "W6-B-09",
@@ -677,7 +687,8 @@
      "fremde Chiffre",
      "MULTIPLIKATIONSRAD (A = 1): Geheimwert = (Wert · 3) mod 26, Rest 0 → 26; Entschlüsseln: · 9 mod 26. Klartext zu `GCPK`?",
      "**kanu**",
-     "W1, P2"
+     "W1, P2",
+     "P2"
     ],
     [
      "W6-B-10",
@@ -686,6 +697,7 @@
      "fremde Chiffre",
      "SPIEGELPAAR (A = 1): Stufe 1 Wert → 27 − Wert, Stufe 2 Caesar + 2. Klartext zu `MTOJXQ`?",
      "**pinsel** (falsche Reihenfolge: LEJOAH)",
+     "P3",
      "P3"
     ],
     [
@@ -695,7 +707,8 @@
      "Hash",
      "Welche Aussage über kryptografische Hashfunktionen ist korrekt? (A entschlüsselbar, B kollisionsfrei, C Einweg + zwangsläufig Kollisionen, D so lang wie die Nachricht)",
      "**C**",
-     "W5, P9"
+     "W5, P9",
+     "P9"
     ],
     [
      "W6-B-12",
@@ -704,7 +717,8 @@
      "fremde Chiffre",
      "TREPPE: Verschiebungen 1, 2, 3, 1, 2, 3, … („leuchte“ → MGXDJWF). Welche Aussage ist korrekt? (A mono, B = Vigenère BCD ohne geheimen Schlüssel – keine Sicherheit, C Transposition, D sicherer als Vigenère)",
      "**B**",
-     "W2, P5"
+     "W2, P5",
+     "P5"
     ],
     [
      "W6-B-13",
@@ -713,7 +727,8 @@
      "Blockchiffre",
      "Toy-Blockchiffre, 8 Bit, 4 Runden (⊕ Rundenschlüssel, Rotation um 2): Ein Klartextbit gekippt – wie viele Geheimtextbits ändern sich? (A genau 1, B genau 2, C etwa 4, D alle 8)",
      "**A**",
-     "W3, P8"
+     "W3, P8",
+     "P8"
     ],
     [
      "W6-B-14",
@@ -722,16 +737,18 @@
      "Zertifikat",
      "Man-in-the-Middle-Angriff: fünf Schritte ordnen (Alice sendet Schlüssel → Mallory tauscht ihn aus → Bob verschlüsselt → Mallory liest/ändert → Mallory leitet weiter).",
      "Reihenfolge wie angegeben",
-     "W5"
+     "W5",
+     "P9"
     ],
     [
      "W6-B-15",
      "★★★",
      "kern",
      "Vigenère",
-     "Vigenère zuerst mit AB, dann mit CDE: Länge und Schlüsselwort der gleichwertigen Einzelverschlüsselung?",
-     "Länge **6**, `CEEDDF`",
-     "W2, P8"
+     "Vigenère zuerst mit BA, dann mit CAD: Länge und Schlüsselwort der gleichwertigen Einzelverschlüsselung?",
+     "Länge **6**, `DAECBD`",
+     "W2, P8",
+     "P8"
     ]
    ]
   },
@@ -771,8 +788,8 @@
     ],
     [
      "G-W6-3 „Fallen-Mix“",
-     "Basisgenerator (Caesar ver/ent mit A = 1, mod-Rechnen, Vigenère ver/ent, Schlüsselanzahl, XOR-Bytes) + zufällige Falle aus {P1, P2, P3, P7}; erzeugt eine Schülerlösung mit genau diesem Fehler. „In dieser Lösung steckt genau eine Falle. Welche? Gib außerdem das richtige Ergebnis an.“",
-     "Fallen-Nummer (choice) **und** korrektes Ergebnis (normalisiert) müssen stimmen; 1 Punkt."
+     "Basisgenerator (Caesar ver/ent mit A = 1, mod-Rechnen, Vigenère ver/ent, Schlüsselanzahl; XOR-Bytes entfällt, weil keine der vier Fallen einen XOR-Fehler beschreibt) + zufällige Falle aus {P1, P2, P3, P7}; erzeugt eine Schülerlösung mit genau diesem Fehler. „In dieser Lösung steckt genau eine Falle. Welche? Gib außerdem das richtige Ergebnis an.“",
+     "Falle (Klappliste) **und** korrektes Ergebnis (normalisiert) müssen stimmen; 1 Punkt."
     ]
    ]
   }

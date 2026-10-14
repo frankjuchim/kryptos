@@ -670,105 +670,122 @@
     "ID",
     "Stufe · Niveau",
     "Aufgabe (gesiezt)",
-    "Lösung"
+    "Lösung",
+    "Fallen"
    ],
    "zeilen": [
     [
      "B-01",
      "★ kern",
      "**Bestimmen** Sie den ASCII-Wert und die 8-Bit-Darstellung des Zeichens R.",
-     "82, `0101 0010`"
+     "82, `0101 0010`",
+     "P1"
     ],
     [
      "B-02",
      "★ kern",
      "**Berechnen** Sie `1011 0110 ⊕ 0110 1101`.",
-     "`1101 1011`"
+     "`1101 1011`",
+     "P4"
     ],
     [
      "B-03",
      "★ kern",
      "Welche Bedingung ist für die perfekte Sicherheit des One-Time-Pads **nicht** erforderlich? (A) zufällig (B) mindestens so lang wie die Nachricht (C) Verfahren geheim (D) nur einmal verwendet",
-     "C (Kerckhoffs)"
+     "C (Kerckhoffs)",
+     "P10"
     ],
     [
      "B-04",
      "★ eA",
      "Welche Aussage beschreibt Diffusion? (A) Jedes Klartextbit beeinflusst möglichst viele Geheimtextbits. (B) Schlüssel in Rundenschlüssel zerlegt. (C) Gleiche Blöcke gleich verschlüsselt. (D) Geheimtext länger als Klartext.",
-     "A"
+     "A",
+     "P5"
     ],
     [
      "B-05",
      "★ kern",
      "**Wenden** Sie Stufe 1 von ADFGVX mit dem Quadrat des Materials auf „tor“ **an**.",
-     "**GFGAAF** (T = GF, O = GA, R = AF)"
+     "**GFGAAF** (T = GF, O = GA, R = AF)",
+     "P4"
     ],
     [
      "B-06",
      "★★ kern",
      "C1 ⊕ C2 = `0000 0001 · 0001 0110 · 0000 0001` (gleicher Einmalschlüssel), erste Nachricht OST. **Bestimmen** Sie die zweite Nachricht.",
-     "`0100 1110 · 0100 0101 · 0101 0101` = **NEU**"
+     "`0100 1110 · 0100 0101 · 0101 0101` = **NEU**",
+     "P8"
     ],
     [
      "B-07",
      "★★ eA",
      "Zustand nach dem Schlüssel-XOR: `1011 0100 0011 1001`. **Wenden** Sie S-Box und Transposition **an**.",
-     "S: `1110 0111 1001 0010`; T: **`1010 1100 1101 0110`**"
+     "S: `1110 0111 1001 0010`; T: **`1010 1100 1101 0110`**",
+     "P4"
     ],
     [
      "B-08",
      "★★ eA",
      "**Bestimmen** Sie K~3~ für K = `0011 1010 1100 0101`.",
-     "**`1100 0101 0011 1010`**"
+     "**`1100 0101 0011 1010`**",
+     "P7"
     ],
     [
      "B-09",
      "★★ eA",
      "Vier Blöcke mit P~1~ = P~3~. In welchem Modus gilt sicher C~1~ = C~3~? (A) ECB (B) CBC (C) beide (D) keiner",
-     "A"
+     "A",
+     "P4"
     ],
     [
      "B-10",
      "★★ kern",
      "**Wenden** Sie TELEX-ROT mit k = `0100 0011` auf „TOR“ **an**.",
-     "**`0001 0111 · 1100 1001 · 0101 1111`**"
+     "**`0001 0111 · 1100 1001 · 0101 1111`**",
+     "P4"
     ],
     [
      "B-11",
      "★★ kern",
      "**Entscheiden** Sie, wie TELEX-ROT einzuordnen ist (k = `0100 0011`): (A) Transposition (B) monoalphabetisch (C) polyalphabetisch mit Periode 8 (D) One-Time-Pad",
-     "C"
+     "C",
+     "P5"
     ],
     [
      "B-12",
      "★★★ eA",
      "Fünf Blöcke in CBC; ein Bit in C~3~ kippt. **Geben** Sie **an**, welche Klartextblöcke fehlerhaft sind und welcher nur in genau einem Bit.",
-     "P~3~ und P~4~; P~4~ nur in einem Bit"
+     "P~3~ und P~4~; P~4~ nur in einem Bit",
+     "P4"
     ],
     [
      "B-13",
      "★★★ kern",
      "a) Anzahl der Schlüssel k, bei denen sich die Schlüsselbytes von TELEX-ROT spätestens nach 2 Zeichen wiederholen? b) Bei welchen ist TELEX-ROT monoalphabetisch?",
-     "a) **4**: `0000 0000`, `1111 1111`, `0101 0101`, `1010 1010` b) `0000 0000` und `1111 1111`"
+     "a) **4**: `0000 0000`, `1111 1111`, `0101 0101`, `1010 1010` b) `0000 0000` und `1111 1111`",
+     "P7"
     ],
     [
      "B-14",
      "★★★ kern",
      "„Erst mit k~1~, dann mit k~2~ per XOR (je ein Byte für alle Zeichen) ist so sicher wie ein 16-Bit-Schlüssel.“ (A) korrekt (B) falsch, wirkt wie k~1~ ⊕ k~2~ (C) falsch, XOR nicht umkehrbar",
-     "B"
+     "B",
+     "P8"
     ],
     [
      "B-15",
      "★★★ kern",
      "XOR mit Schlüsselwort der Länge 3: `0000 1010 · 0000 0100 · 0001 0001 · 0001 0110 · 0000 0100 · 0000 0101 · 0000 0000 · 0000 0100 · 0000 1010 · 0000 0110`; Klartext beginnt mit HEU. **Bestimmen** Sie Schlüsselwort und Klartext.",
-     "**BAD**, **HEUTEABEND**"
+     "**BAD**, **HEUTEABEND**",
+     "P4"
     ]
    ],
    "breiten": [
     1.2,
     1.9,
-    8.9,
-    4.8
+    7.6,
+    4.8,
+    1.3
    ]
   },
   {

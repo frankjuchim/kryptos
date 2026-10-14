@@ -624,104 +624,121 @@
     "ID · Stufe · Niveau",
     "Aufgabenstellung (gesiezt)",
     "Lösung",
-    "Erklärung"
+    "Erklärung",
+    "Fallen"
    ],
    "breiten": [
     2.3,
-    7.6,
+    6.3,
     2.9,
-    3.4
+    3.4,
+    1.3
    ],
    "zeilen": [
     [
      "**W5-B-01**\n★ · kern\n*hash · choice*",
      "Welche Aussage beschreibt den Lawineneffekt einer Hashfunktion? (A) Der Hashwert wächst mit der Nachrichtenlänge. (B) Eine kleine Änderung der Nachricht ändert den Hashwert stark. (C) Zu jedem Hashwert gibt es genau eine Nachricht. (D) Der Hashwert kann mit einem Schlüssel zurückgerechnet werden.",
      "**(B)**",
-     "(A) widerspricht fester Länge, (C) dem Schubfachprinzip, (D) beschreibt Verschlüsselung (P9)."
+     "(A) widerspricht fester Länge, (C) dem Schubfachprinzip, (D) beschreibt Verschlüsselung (P9).",
+     "P9"
     ],
     [
      "**W5-B-02**\n★ · kern\n*signatur · choice*",
      "Mit welchem Schlüssel prüft Bob eine digitale Signatur von Alice? (A) Bobs privatem (B) Bobs öffentlichem (C) Alices privatem (D) Alices öffentlichem",
      "**(D)**",
-     "Geprüft wird mit dem öffentlichen Schlüssel der Absenderin (P9)."
+     "Geprüft wird mit dem öffentlichen Schlüssel der Absenderin (P9).",
+     "P9"
     ],
     [
      "**W5-B-03**\n★ · kern\n*zertifikat · choice*",
      "Wer signiert das Zertifikat einer Website? (A) die Website selbst (B) der Browser (C) eine Zertifizierungsstelle (D) der Internetanbieter",
      "**(C)**",
-     "Die CA bestätigt mit ihrer Signatur die Zuordnung Schlüssel ↔ Domain."
+     "Die CA bestätigt mit ihrer Signatur die Zuordnung Schlüssel ↔ Domain.",
+     "P9"
     ],
     [
      "**W5-B-04**\n★ · kern\n*signatur · match*",
      "Ordnen Sie zu: (1) Vertraulichkeit (2) Integrität (3) Authentizität – (A) Die Nachricht stammt nachweislich vom angegebenen Absender. (B) Nur Befugte können den Inhalt lesen. (C) Die Nachricht wurde nicht verändert.",
      "**1–B · 2–C · 3–A**",
-     "Schutzziele mit Fachbegriffen benennen (P10)."
+     "Schutzziele mit Fachbegriffen benennen (P10).",
+     "P10"
     ],
     [
      "**W5-B-05**\n★ · kern\n*gesellschaft · choice*",
      "Ein Schulportal speichert Krankmeldungen auch noch zehn Jahre nach dem Abitur. Welcher DSGVO-Grundsatz ist verletzt? (A) Zweckbindung (B) Speicherbegrenzung (C) Richtigkeit (D) Transparenz",
      "**(B)**",
-     "Daten dürfen nur so lange gespeichert werden, wie es der Zweck erfordert."
+     "Daten dürfen nur so lange gespeichert werden, wie es der Zweck erfordert.",
+     "P10"
     ],
     [
      "**W5-B-06**\n★★ · kern\n*hash · gaps*",
      "KRYPTOS-Hash (A = 1 … Z = 26, Start 0, h ← (3 · h + w) mod 29). Bestimmen Sie KH(„eis“). Zustände nach jeder Runde: [1], [2], [3].",
      "**5 · 24 · 4**",
-     "3 · 5 + 9 = 24; 3 · 24 + 19 = 91 = 3 · 29 + 4."
+     "3 · 5 + 9 = 24; 3 · 24 + 19 = 91 = 3 · 29 + 4.",
+     "P2"
     ],
     [
      "**W5-B-07**\n★★ · kern\n*fremde-chiffre · gaps*",
      "**Material „Produkt-Hash“:** PH(t) = (Produkt aller Buchstabenwerte) mod 13, A = 1 … Z = 26; nach jeder Multiplikation mod 13. Bestimmen Sie PH(„rabe“) [1] und PH(„kai“) [2].",
      "**[1] 11 · [2] 8**",
-     "rabe: 18 mod 13 = 5, · 1 = 5, · 2 = 10, · 5 = 50 mod 13 = 11. kai: 11 · 1 = 11, · 9 = 99 mod 13 = 8."
+     "rabe: 18 mod 13 = 5, · 1 = 5, · 2 = 10, · 5 = 50 mod 13 = 11. kai: 11 · 1 = 11, · 9 = 99 mod 13 = 8.",
+     "P2"
     ],
     [
      "**W5-B-08**\n★★ · kern\n*fremde-chiffre · choice (mehrfach)*",
      "Produkt-Hash wie in W5-B-07. Korrekt? (1) „rabe“ und „bear“ haben denselben Hashwert. (2) Jede Nachricht, die ein m oder ein z enthält, hat den Hashwert 0. (3) Der Produkt-Hash erfüllt den Lawineneffekt. (4) Der Produkt-Hash hat keine Kollisionen.",
      "**(1), (2)**",
-     "(1) Multiplikation ist vertauschbar → Anagramme kollidieren. (2) m = 13 und z = 26 sind Vielfache von 13. (3)/(4) falsch: nur 13 Werte."
+     "(1) Multiplikation ist vertauschbar → Anagramme kollidieren. (2) m = 13 und z = 26 sind Vielfache von 13. (3)/(4) falsch: nur 13 Werte.",
+     "P5"
     ],
     [
      "**W5-B-09**\n★★ · kern\n*signatur · schaubild*",
      "Signaturprüfung bei Bob: ④ empfangene Nachricht → [L1] → H₁ · ⑤ Signatur → entschlüsseln mit [L2] → H₂ · ⑥ [L3]. Ergänzen Sie L1 bis L3.",
      "**L1** Hashfunktion · **L2** öffentlicher Schlüssel von Alice · **L3** H₁ und H₂ vergleichen",
-     "Ohne Vergleich keine Prüfung (P9)."
+     "Ohne Vergleich keine Prüfung (P9).",
+     "P9"
     ],
     [
      "**W5-B-10**\n★★ · kern\n*protokoll · order*",
      "Ordnen Sie den TLS-Verbindungsaufbau: (a) Server sendet Zertifikat (b) Browser prüft Zertifikatskette (c) Sitzungsschlüssel wird asymmetrisch vereinbart (d) Daten werden symmetrisch verschlüsselt (e) Browser nennt unterstützte Verfahren",
      "**e – a – b – c – d**",
-     "Zertifikatsprüfung vor Schlüsselvereinbarung, sonst MitM."
+     "Zertifikatsprüfung vor Schlüsselvereinbarung, sonst MitM.",
+     "P3"
     ],
     [
      "**W5-B-11**\n★★ · kern\n*zertifikat · choice*",
      "Kette Wurzel-CA → Zwischen-CA → Serverzertifikat. Mit welchem Schlüssel prüft der Browser die Signatur im Serverzertifikat? (A) öffentlicher Schlüssel des Servers (B) öffentlicher Schlüssel der Zwischen-CA (C) privater Schlüssel der Wurzel-CA (D) öffentlicher Schlüssel des Browsers",
      "**(B)**",
-     "Jede Signatur wird mit dem öffentlichen Schlüssel ihres Ausstellers geprüft."
+     "Jede Signatur wird mit dem öffentlichen Schlüssel ihres Ausstellers geprüft.",
+     "P9"
     ],
     [
      "**W5-B-12**\n★★★ · kern\n*fremde-chiffre · choice (mehrfach)*",
      "**Material „Tausch-Siegel“:** Alice und Bob vereinbaren persönlich eine geheime Verschiebung k. Alice sendet den KRYPTOS-Hash h sowie s = (h + k) mod 29. Bob prüft, ob (s − k) mod 29 dem selbst berechneten Hash entspricht. Korrekt? (1) symmetrisches Verfahren (2) Bob kann einem Gericht beweisen, dass Alice gesiegelt hat (3) Wer ein Paar (h, s) mitliest, kann k berechnen (4) leistet Verbindlichkeit wie eine digitale Signatur",
      "**(1), (3)**",
-     "(2)/(4) falsch: Auch Bob kennt k → keine Verbindlichkeit. (3) k = (s − h) mod 29."
+     "(2)/(4) falsch: Auch Bob kennt k → keine Verbindlichkeit. (3) k = (s − h) mod 29.",
+     "P10"
     ],
     [
      "**W5-B-13**\n★★★ · kern\n*signatur · gaps*",
      "Alice signiert „ueberweise zwei euro“ mit dem KRYPTOS-Hash. Mallory ersetzt die Nachricht durch „ueberweise tausend euro“ (KH 18) und lässt die Signatur unverändert. Bobs Prüfung ergibt [1] (gültig/ungültig). Ausgenutzt wird die fehlende [2] (Einwegeigenschaft/Kollisionsresistenz/Vertraulichkeit). Mallory benötigt Alices privaten Schlüssel: [3] (ja/nein).",
      "**[1] gültig · [2] Kollisionsresistenz · [3] nein**",
-     "Die alte Signatur passt zum unveränderten Hashwert; Signaturen sind nur so sicher wie die Hashfunktion."
+     "Die alte Signatur passt zum unveränderten Hashwert; Signaturen sind nur so sicher wie die Hashfunktion.",
+     "P9"
     ],
     [
      "**W5-B-14**\n★★★ · kern\n*zertifikat · match*",
      "Alice ruft `rathaus-chronopolis.example` auf. Ordnen Sie zu: (1) Zertifikat für `rathaus-chron0polis.example` (Null statt o) (2) echtes Zertifikat gesperrt, privater Schlüssel gestohlen (3) Mallory signiert ein Zertifikat für die Domain selbst (4) echtes Zertifikat seit gestern abgelaufen – (A) Name passt nicht (B) Widerruf (Sperrliste) (C) kein Vertrauensanker (D) Gültigkeitszeitraum",
      "**1–A · 2–B · 3–C · 4–D**",
-     "Alle vier Prüfungen gehören zur Zertifikatsprüfung; gestohlene Schlüssel stoppt nur der Widerruf."
+     "Alle vier Prüfungen gehören zur Zertifikatsprüfung; gestohlene Schlüssel stoppt nur der Widerruf.",
+     "P9"
     ],
     [
      "**W5-B-15**\n★★★ · eA\n*fremde-chiffre · choice*",
      "**Material „Kurz-Signatur“:** Alice verschlüsselt den Hashwert mit ihrem **öffentlichen** Schlüssel und sendet ihn mit. Beurteilen Sie: (A) gleichwertig zur Signatur (B) unbrauchbar: jede Person kann solche Werte erzeugen, prüfen könnte nur Alice (C) sicherer als eine Signatur, weil der Hash vertraulich ist",
      "**(B)**",
-     "Signieren erfordert den privaten Schlüssel der Absenderin, sonst fehlen Authentizität und Verbindlichkeit (P9)."
+     "Signieren erfordert den privaten Schlüssel der Absenderin, sonst fehlen Authentizität und Verbindlichkeit (P9).",
+     "P9"
     ]
    ]
   },
@@ -750,7 +767,7 @@
     [
      "**KRYPTOS-Hash** (`w5_kryptoshash`)",
      "kern",
-     "Wortliste (≈ 300 deutsche Wörter, 3–7 Buchstaben, normalisiert, ohne Video-Wörter und ohne die reservierten Paare); Variante „mit Zwischenständen“",
+     "Wortliste `WOERTER_W5` (Ziel ≈ 300 deutsche Wörter, vorläufig 123 – Essen, Haushalt, Tiere; 3–7 Buchstaben, normalisiert, ohne Video-Wörter und ohne die reservierten Paare); Variante „mit Zwischenständen“",
      "„Bestimme KH(„{wort}“). Gib die Zustände nach jeder Runde an.“",
      "Zustandsfolge und KH; Endwert exakt, Zwischenstände einzeln; Wert ≥ 29 → Hinweis P2; mit A = 0 gerechnet → Hinweis P1"
     ],
@@ -778,7 +795,7 @@
     [
      "**Schutzziele** (`w5_schutzziele`)",
      "kern",
-     "24 Szenario-Bausteine × 4 Schutzziele",
+     "24 Szenario-Bausteine × 4 Schutzziele (vorläufig 3 Bausteine mit fester Lösung aus Akte W5·2 Auftrag 4: nur verschlüsseln, nur signieren, beides)",
      "„Welche Schutzziele werden im folgenden Szenario erreicht? {szenario}“",
      "Mengenvergleich; fehlende Vertraulichkeit bei Signatur → Hinweis P9"
     ]

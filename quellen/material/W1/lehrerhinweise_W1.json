@@ -569,106 +569,123 @@
     "ID",
     "Stufe",
     "Aufgabenstellung (Kurzfassung)",
-    "Lösung"
+    "Lösung",
+    "Fallen"
    ],
    "zeilen": [
     [
      "W1-B-01",
      "★",
      "Ersten zehn Buchstaben des Geheimtextalphabets zum Schlüsselwort WUESTENWIND (Rest ab A).",
-     "`WUESTNIDAB` (vollständig `WUESTNIDABCFGHJKLMOPQRVXYZ`)"
+     "`WUESTNIDAB` (vollständig `WUESTNIDABCFGHJKLMOPQRVXYZ`)",
+     "P4"
     ],
     [
      "W1-B-02",
      "★",
      "Zweithäufigster Buchstabe in deutschen Texten? (A) E (B) N (C) S (D) A",
-     "(B)"
+     "(B)",
+     "P6"
     ],
     [
      "W1-B-03",
      "★",
      "Geheimtext zu „kurier“ mit Alphabet `SEXTANBCDFGHIJKLMOPQRUVWYZ`.",
-     "`GRODAO`"
+     "`GRODAO`",
+     "P3"
     ],
     [
      "W1-B-04",
      "★",
      "Anzahl der Geheimtextalphabete: (A) 25 (B) 26 (C) 26² (D) 26! ≈ 4 · 10^26^",
-     "(D)"
+     "(D)",
+     "P7"
     ],
     [
      "W1-B-05",
      "★",
      "Mehrere Geheimzeichen je Klartextbuchstabe, jedes Zeichen zu genau einem Buchstaben – Name? (A) Transposition (B) homophone Substitution (C) Caesar (D) Codierung",
-     "(B)"
+     "(B)",
+     "P5"
     ],
     [
      "W1-B-06",
      "★★",
      "A = 0 … Z = 25: Geheimtext zu „sklave“ mit c = (5 · p + 8) mod 26.",
-     "`UGLIJC`"
+     "`UGLIJC`",
+     "P1"
     ],
     [
      "W1-B-07",
      "★★",
      "Inverser Schlüssel zu m = 7 modulo 26.",
-     "15 (7 · 15 = 105 = 4 · 26 + 1)"
+     "15 (7 · 15 = 105 = 4 · 26 + 1)",
+     "P2"
     ],
     [
      "W1-B-08",
      "★★",
      "Brauchbare Faktoren m mod 26: (1) 4 (2) 5 (3) 13 (4) 17 (5) 22 (6) 25",
-     "(2), (4), (6)"
+     "(2), (4), (6)",
+     "P7"
     ],
     [
      "W1-B-09",
      "★★",
      "A = 0 … Z = 25, Schlüssel (11, 3), Inverses 19: Klartext zu `LVTNI` mit p = 19 · (c − 3) mod 26.",
-     "`wesir`"
+     "`wesir`",
+     "P3"
     ],
     [
      "W1-B-10",
      "★★",
      "Langer Caesar-Geheimtext (A = 1 … Z = 26), häufigster Buchstabe K: wahrscheinlichster Schlüssel k?",
-     "k = 6 (e = 5 → K = 11)"
+     "k = 6 (e = 5 → K = 11)",
+     "P6"
     ],
     [
      "W1-B-11",
      "★★",
      "Spiegel-Kurier (A = 0 … Z = 25, c = (t − p) mod 26): Geheimtext zu „basar“ mit t = 4.",
-     "`DEMEN`"
+     "`DEMEN`",
+     "P2"
     ],
     [
      "W1-B-12",
      "★★★",
      "Spiegel-Kurier: a) Klartext zu `GBWJS` mit t = 9; b) Wie entschlüsselt man? (A) dieselbe Vorschrift – involutorisch (B) c = (t + p) mod 26 (C) inverser Schlüssel von t",
-     "a) `dinar`; b) (A) (Probe: `dinar` mit t = 9 → wieder `GBWJS`)"
+     "a) `dinar`; b) (A) (Probe: `dinar` mit t = 9 → wieder `GBWJS`)",
+     "P8"
     ],
     [
      "W1-B-13",
      "★★★",
      "Spiegel-Kurier: (A) affine Chiffre mit m = 25 (B) polyalphabetisch (C) Transposition (D) 26! Schlüssel",
-     "(A) – c = (25 · p + t) mod 26, da −1 ≡ 25"
+     "(A) – c = (25 · p + t) mod 26, da −1 ≡ 25",
+     "P5"
     ],
     [
      "W1-B-14",
      "★★★",
      "NOMEN-850: Eve kennt „und“ ↔ 16, die Zahl 16 kommt sehr oft vor. Korrekte Folgerung? (A) Buchstabenteil sofort lesbar (B) Eve erfährt, wo „und“ steht, und kann Satzstrukturen ableiten; Buchstabenteil weiter per Häufigkeitsanalyse (C) vollständig gebrochen (D) wertlos",
-     "(B)"
+     "(B)",
+     "P8"
     ],
     [
      "W1-B-15",
      "★★★",
      "Affin (A = 0 … Z = 25), häufigste Buchstaben N und Y; e → N, n → Y: 4m + t ≡ 13, 13m + t ≡ 24 (mod 26). (m, t)? Hinweis 9^−1^ mod 26 = 3.",
-     "(m, t) = (7, 11) (9m ≡ 11 → m = 33 mod 26 = 7; t = 13 − 28 = −15 ≡ 11)"
+     "(m, t) = (7, 11) (9m ≡ 11 → m = 33 mod 26 = 7; t = 13 − 28 = −15 ≡ 11)",
+     "P3"
     ]
    ],
    "schrift": 8.5,
    "breiten": [
     1.7,
     1.5,
-    8.4,
-    5.2
+    7.1,
+    5.2,
+    1.3
    ]
   },
   {
@@ -691,13 +708,13 @@
    "zeilen": [
     [
      "`schluesselwort_alphabet`",
-     "Schlüsselwort aus `SCHLUESSELWOERTER_W1` (40 Wörter, 4–12 Buchstaben, z. B. minarett, dattelpalme, karawanserei, tigris)",
+     "Schlüsselwort aus `SCHLUESSELWOERTER_W1` (40 Wörter, 4–12 Buchstaben, z. B. dattelpalme, euphrat, astrolab, zimtstange)",
      "„Bilde das Geheimtextalphabet zum Schlüsselwort {WORT} (ohne Wiederholungen, Rest ab A). Gib die ersten {n} Buchstaben an.“ (n = 10 oder 26)",
      "Präfix des Alphabets, exakt; Diagnose: Wiederholung nicht gestrichen → P4; Rest ab letztem Schlüsselwortbuchstaben → Hinweis „Kryptos-Regel: Rest ab A“."
     ],
     [
      "`substitution_ver_ent`",
-     "Alphabet aus `schluesselwort_alphabet`, Wort aus `WOERTER_BAGDAD` (60 Wörter)",
+     "Alphabet aus `schluesselwort_alphabet`, Wort aus `WOERTER_BAGDAD` (70 Wörter)",
      "„Verschlüssele/Entschlüssele mit dem Alphabet {ALPHABET}: {text}“",
      "Text nach Normalisierung; Diagnose: Richtung vertauscht (oben/unten) → P3."
     ],
