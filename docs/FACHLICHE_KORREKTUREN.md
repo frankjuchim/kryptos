@@ -86,3 +86,22 @@ Bibliothek und Python-Zwilling nachgerechnet (`quellen/pruefwerte`).
 | C20 | Akte W1·1: Häufigkeitsdiagramm über die volle Breite, Achsen-/Buchstabenbeschriftung größer | auf halber Breite unlesbar | Akte W1·1, `werkzeuge/material/kr_bilder.py` (auch Funkraum W1) |
 | C21 | Generator-Wortlisten: *tonkrug* statt *oellampe*, *gewoelbe* statt *schatzkammer* (auch Satzbaustein), *speicherhaus* statt *lagunenstadt*; Test auch auf reservierte Video-Wörter als Teilwort | LAMPE/SCHATZ sind für Videos reserviert (Specs §8); *lagunenstadt* deutet auf den Archivfund-Schlüssel LAGUNE | `src/krypto/generatoren/woerter.js`, SPEC W2 §8, `test/inhalte_woerter.test.js` |
 | C22 | Generator-Texte: Verschiebung „nach rechts“ (Verschlüsseln) / „nach links“ (Entschlüsseln) statt „nach hinten/vorn“, „vorwärts“, „zurückgeschoben“ | eine Sprachregelung wie in Specs, Akten und Lab | `caesar.js`, `schluesselpaar.js`, `vigenere.js`, `test/generatoren.test.js` |
+
+## D. Korrekturen vor dem Seed W3–W6 (M8, 14.10.2026)
+
+Grundsatz wie Teil C (kein Lösungsverrat innerhalb einer Welt). Vorprüfung vor dem Seed (Plan M8, Befund
+Lösungsverrat): Die Lab-Aufgaben bekommen eigene Werte; Akten, Folien und Stundenverlauf bleiben unverändert. Alle neuen
+Werte sind mit `shared/krypto.js` und dem Python-Zwilling (`bruecke.py`) nachgerechnet und stehen in
+`quellen/pruefwerte/W3.json`, `W4.json`, `W6.json` (Einträge `W3-spec-v2` ff., `W4-spec-v1` ff., `W4-lab-v3`,
+`W6-spec-v1` ff.). Ausnahme: W6-L2-01 fragt die Lesereihenfolge 0 5 2 7 4 1 6 3 (t = 5) ab, die die Akte W6·2 als
+Archivwissen-Tabelle zeigt – Nachschlagen im Archivwissen ist gewollt (Plan M8 E137, Ausnahmeliste im Lösungsverrat-Test).
+
+| # | Was | Warum | Wo |
+|---|---|---|---|
+| D1 | W3-L2-03: Zustand `0110 1011 1100 0010` transponieren → `0110 1010 1101 0100`; Tipp 2 „Spalte 1 … 0, 1, 1, 0.“ | `1101 1011 0011 1000` → `1101 1000 0110 1110` ist das Beispiel „OK“ (Runde 1) in Akte W3·2 (Archivwissen 2) und steht im Inhalt von W3-L2-06 | SPEC W3 W3-L2-03, §12; Prüfwerte W3 |
+| D2 | W3-L2-05: K = `0110 1101 0010 1011` → K₂ `1101 0010 1011 0110`, K₃ `0010 1011 0110 1101`, K₄ `1011 0110 1101 0010`; b) 16 | K = `0101 1100 1001 1110` ist der Schlüssel der Akte W3·2 (Vorlage zu Auftrag 3/4, Lösung K₂–K₄) | SPEC W3 W3-L2-05, §12; Prüfwerte W3 |
+| D3 | W6-L2-03: *mondhell*, t = 3, ZEIT → Zwischentext `MDLOHLNE`, Pendel ZEITIEZE, Geheimtext `LHTHP PMI`; W6-L2-06 D: vertauscht `LWKSP PVI` | *abendrot* → `ZRWUL XDV` rechnet die Akte W6·2 (Auftrag Diffusion) vor; W6-L2-06 verweist mit Tipp 2 auf das Beispiel aus Aufgabe 03 | SPEC W6 W6-L2-03, W6-L2-06, §12; Prüfwerte W6 |
+| D4 | W4-K3-01/-02: φ = 40, e = 7 (p = 5, q = 11): a 5, b 5, c 1, d 2, e 1; Tabelle (0, 1), (1, −2), (−2, 3), (3, −17) → d = −17 mod 40 = **23** | Akte W4·K3 Archivwissen 1 zeigt die vollständige Euklid-Tabelle für (60, 7) mit d = 43 | SPEC W4 W4-K3-01, -02, §12; Prüfwerte W4 (`W4-lab-v3`); Lehrerhinweise W4 Anhang B |
+| D5 | W4-K3-04: 5¹³ mod 23 – 2, 4, 16 → **21**; Erklärung ohne Verweis auf W4-L1-06 | 3¹³ mod 17 (9, 13, 16 → 12) rechnet die Akte W4·K3 (Archivwissen 2) vor | SPEC W4 W4-K3-04, §12; Prüfwerte W4; Lehrerhinweise W4 Anhang B |
+| D6 | W4-K3-06: Schlüssel (77, 43), c = 48 – Kette 48, 71, 36, 64, 15, 71; Produkt 20, 48, **20** (20⁷ mod 77 = 48); Erklärung ohne Verweis auf Akte W4·2 | die Quadrierkette für c = 37 (→ 9) steht in Akte W4·2 Archivwissen 1 | SPEC W4 W4-K3-06, §12; Prüfwerte W4; Lehrerhinweise W4 Anhang B |
+| D7 | Prüfprotokoll W6 §12, Boss B-15: BA ∘ CAD = DAECBD (*sternwarte* beide Wege `VTITO ZDRXG`) | die Zeile nannte noch AB ∘ CDE = CEEDDF (Wert von W2-B-15); §5 und Folie F6 waren richtig (Plan M8 E138) | SPEC W6 §12; Prüfwerte W6 |

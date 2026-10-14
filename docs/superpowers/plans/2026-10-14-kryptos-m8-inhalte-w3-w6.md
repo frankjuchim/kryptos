@@ -303,20 +303,23 @@ Seed W3–W6 (M8)“, Zeilen D1–D7 mit Was/Warum/Wo), `quellen/material/W4/leh
 K3 – Lösungen auf einen Blick“: Zeilen K3-01, -02, -04, -06 auf D4–D6; die Lehrerhinweise W3/W6 enthalten keine
 Lab-Lösungstabelle – geprüft 14.10.2026; Neubau der docx in Task 197)
 
-- [ ] **Step 1: Nachrechnen** – Scratchpad-Skript (Muster `m8plan/werte.js` + `zwilling.jsonl`) mit `transponiere(0x6BC2)`,
+- [x] **Step 1: Nachrechnen** – Scratchpad-Skript (Muster `m8plan/werte.js` + `zwilling.jsonl`) mit `transponiere(0x6BC2)`,
   `kryptos16.rundenschluessel(0x6D2B, 2…4)`, `ring("mondhell", 3)`, `vigenere(…, pendelFolge("ZEIT", 8))`,
   `erweiterterEuklid(40, 7)`, `inverses(7, 40)`, `modpow(5, 13, 23)` samt Quadrierschritten, `modpow(48, 43, 77)` samt
   Kette, `modpow(20, 7, 77)`, `vigenere("sternwarte", "DAECBD")` – JS **und** Zwilling, Werte wie in der Tabelle D1–D7.
-- [ ] **Step 2: Spec ändern** – nur die genannten Zellen (Inhalt, Lösung, Tipps, Erklärung) und die §12-Zeilen;
+- [x] **Step 2: Spec ändern** – nur die genannten Zellen (Inhalt, Lösung, Tipps, Erklärung) und die §12-Zeilen;
   Tipp-Texte sinngemäß gleich (z. B. D5 Tipp 1 „5² = 25 = 23 + 2.“, Tipp 2 „2 · 2 = 4; 4 · 4 = 16.“; D4 Tipp 1
   „5 · 7 = 35.“). Keine anderen Aufgaben anfassen.
-- [ ] **Step 2a: Lehrerhinweise W4** – Anhang-B-Zeilen K3-01 „5 · 5 · 1 · 2 · 1“, K3-02 „(0, 1), (1, −2), (−2, 3), (3, −17); d = 23“,
+- [x] **Step 2a: Lehrerhinweise W4** – Anhang-B-Zeilen K3-01 „5 · 5 · 1 · 2 · 1“, K3-02 „(0, 1), (1, −2), (−2, 3), (3, −17); d = 23“,
   K3-04 „2 · 4 · 16 · 21“, K3-06 „Kette 48 · 71 · 36 · 64 · 15 · 71; m = 20“ (Feldfolge wie die neue Spec-Zelle).
-- [ ] **Step 3: Prüfwerte** – neue Einträge `art: "spec"` mit `ort` = Spec-Zeile (Muster `W3-spec-v1`); `W4-lab-v3` neu.
+- [x] **Step 3: Prüfwerte** – neue Einträge `art: "spec"` mit `ort` = Spec-Zeile (Muster `W3-spec-v1`); `W4-lab-v3` neu.
   `python3 -I werkzeuge/krypto/pruefwerte.py` → Exit 0.
-- [ ] **Step 4: Vorprüfung wiederholen** – `scratchpad/m8plan/verrat.py` (nach Task 171 der echte Test): die Funde
+- [x] **Step 4: Vorprüfung wiederholen** – `scratchpad/m8plan/verrat.py` (nach Task 171 der echte Test): die Funde
   W3-L2-03/-05, W4-K3, W6-L2-03 sind weg; W6-L2-01 bleibt (Ausnahme E137).
-- [ ] **Step 5: Commit** `git commit -m "Spec W3/W4/W6: Lab-Beispiele ohne Akten-Werte (D1–D7), Prüfwerte, FACHLICHE_KORREKTUREN Teil D"`.
+- [x] **Umsetzungsnotiz:** Die docx `00_Lehrerhinweise/KR_W4_Lehrerhinweise.docx` und ihr Lehrkraft-PDF sind schon hier neu
+  gebaut (Auftrag „Material neu bauen nur für betroffene Quellen“; Textvergleich alt ↔ neu: genau die vier Anhang-B-Zeilen).
+  Die Vorprüfung `verrat.py` liest die W6-Zeilen mit `<br>` nicht – D3 von Hand gegen Akten/Videos geprüft (kein Fund).
+- [x] **Step 5: Commit** `git commit -m "Spec W3/W4/W6: Lab-Beispiele ohne Akten-Werte (D1–D7), Prüfwerte, FACHLICHE_KORREKTUREN Teil D"`.
 
 ### Task 165: Verfahrens-Typen `ring`, `uhrwerk`, `mini_enigma` (E123)
 
