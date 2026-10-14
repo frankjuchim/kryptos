@@ -66,3 +66,17 @@ test('Farbmischer-Töpfe (M6 E80): --farbe-gelb/-rot/-blau hell und dunkel ≥ 3
     }
   }
 });
+
+test('Review M7 K7: Grafiklinien im Funkraum-Netz ≥ 3 : 1 (WCAG 1.4.11) – eigene Token hell, dunkel, Beamer', () => {
+  const AUTO = { ...HELL, ...block(T, ':root[data-theme="auto"]') };
+  for (const [name, t] of [['hell', HELL], ['dunkel', DUNKEL], ['auto', AUTO]]) {
+    assert.ok(t['--netz-linie'], `${name}: --netz-linie fehlt`);
+    for (const h of ['--karte', '--papier', '--papier-2']) assert.ok(kontrast(t['--netz-linie'], t[h]) >= 3, `${name}: --netz-linie auf ${h} = ${kontrast(t['--netz-linie'], t[h]).toFixed(2)}`);
+  }
+  for (const h of ['--nacht', '--tinte']) assert.ok(kontrast(HELL['--netz-linie-nacht'], HELL[h]) >= 3, `--netz-linie-nacht auf ${h}`);
+  const F = lies('funkraum.css');
+  assert.match(F, /\.funk-netz \.netz-linie \{ stroke: var\(--netz-linie\);/);
+  assert.match(F, /\.funk-netz \.nachricht\.ausgeblendet \{ fill: var\(--netz-linie\);/);
+  assert.match(F, /\.nacht \.funk-netz \.netz-linie \{ stroke: var\(--netz-linie-nacht\);/);
+  assert.doesNotMatch(F, /netz-linie \{ stroke: var\(--(linie|tinte-3)\)/);
+});

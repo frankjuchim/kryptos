@@ -37,6 +37,8 @@ Drei Gestaltungsgesetze:
 | `--papier-2` | `#F2EADB` | Kästen, Tabellenköpfe, Zebra – Text darauf nur `--text`/`--text-2` | – |
 | `--karte` | `#FFFDF8` | Karten auf Papier (Level-Karte, Aufgabe) | – |
 | `--linie` | `#D8CDB8` | Rahmenlinien auf Papier | – |
+| `--netz-linie` | `#8C7B5E` | Grafiklinien des Funkraum-Netzes und ausgeblendete Nachrichtenpunkte (Review M7 K7; dunkel `#7684A8`) | ≥ 3 : 1 auf Karte, Papier, Papier-2 (WCAG 1.4.11) |
+| `--netz-linie-nacht` | `#6176A8` | Netzlinien auf Nacht/Tinte (Beamer) | ≥ 3 : 1 auf Nacht und Tinte |
 | `--text` | `#1B1B1F` | Fließtext | auf Papier 16,1 : 1 |
 | `--text-2` | `#4A4A55` | Nebentext | auf Papier ≥ 8 : 1 |
 | `--ok` | `#2E7D32` | richtig (immer mit ✓ und Text) | 4,8 : 1 |

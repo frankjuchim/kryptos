@@ -25,6 +25,8 @@
   --papier-2: #F2EADB;
   --karte: #FFFDF8;
   --linie: #D8CDB8;
+  --netz-linie: #8C7B5E;       /* Grafiklinien Funkraum-Netz ≥ 3 : 1 auf Karte/Papier (Review M7 K7) */
+  --netz-linie-nacht: #6176A8; /* dito auf Nacht/Tinte (Beamer) */
   --text: #1B1B1F;
   --text-2: #4A4A55;
 
@@ -86,6 +88,7 @@
   --papier-2: #232D48;
   --karte: #1F2840;
   --linie: #3A4767;
+  --netz-linie: #7684A8;
   --text: #ECE6D8;
   --text-2: #BDB7A9;
   --ok: #7BC67E;
@@ -113,6 +116,7 @@
     --papier-2: #232D48;
     --karte: #1F2840;
     --linie: #3A4767;
+    --netz-linie: #7684A8;
     --text: #ECE6D8;
     --text-2: #BDB7A9;
     --ok: #7BC67E;

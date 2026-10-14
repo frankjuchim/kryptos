@@ -46,7 +46,7 @@ body.seite-beamer { min-height: 100vh; background-color: var(--nacht); color: va
 /* Netz (KRNetz): Tablet auf Karte, Beamer auf Nacht */
 .funk-netz-ort { min-width: 0; }
 svg.funk-netz { display: block; width: 100%; height: auto; max-height: 60vh; }
-.funk-netz .netz-linie { stroke: var(--linie); stroke-width: 2; }
+.funk-netz .netz-linie { stroke: var(--netz-linie); stroke-width: 2; }
 .funk-netz .knoten-kreis { fill: var(--karte); stroke: var(--text-2); stroke-width: 2; }
 .funk-netz .knoten.ich .knoten-kreis { stroke: var(--messing-dunkel); stroke-width: 4; }
 .funk-netz .knoten.sonder .knoten-kreis { stroke: var(--fehler); stroke-width: 3; stroke-dasharray: 6 4; }
@@ -57,7 +57,7 @@ svg.funk-netz { display: block; width: 100%; height: auto; max-height: 60vh; }
 .funk-netz .nachricht { fill: var(--messing); stroke: var(--text); stroke-width: 1; }
 .funk-netz .nachricht.angekommen { fill: var(--ok); }
 .funk-netz .nachricht.geknackt { fill: var(--fehler); }
-.funk-netz .nachricht.ausgeblendet { fill: var(--linie); }
+.funk-netz .nachricht.ausgeblendet { fill: var(--netz-linie); }
 .funk-netz .nachricht-symbol { font-size: 12px; font-weight: 700; }
 .funk-netz .nachricht-symbol.geknackt { fill: var(--fehler); }
 .funk-netz .nachricht-symbol.angekommen { fill: var(--ok); }
@@ -191,7 +191,7 @@ code.abschnitt { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .beamer-verbindung:empty { display: none; }
 .beamer-netz svg.funk-netz { max-height: 62vh; }
 .beamer-netz .funk-netz-details { display: none; }
-.nacht .funk-netz .netz-linie { stroke: var(--tinte-3); stroke-width: 3; }
+.nacht .funk-netz .netz-linie { stroke: var(--netz-linie-nacht); stroke-width: 3; }
 .nacht .funk-netz .knoten-kreis { fill: var(--tinte-2); stroke: var(--auf-tinte-2); stroke-width: 3; }
 .nacht .funk-netz .knoten.sonder .knoten-kreis { stroke: var(--fehler-hell); stroke-width: 4; }
 .nacht .funk-netz text { fill: var(--auf-tinte); }
