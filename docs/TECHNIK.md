@@ -128,7 +128,7 @@ src/
     fach.js                    WELTEN, LAB_KATEGORIEN(+Namen), FALLEN, FALLEN_PLAUSIBEL, RAENGE, TEAM_NAMEN, PLATTFORM, NIVEAU_KATEGORIEN, WELT_PLAN
     niveauUebersicht.js        öffentliche Niveau-Übersicht GET /api/niveaus (VERTRAG v1.2 §9, §6.10)
     bloecke.js                 Validierung + Lücken-Texte der neuen Blöcke (Delta §7)
-    interaktionen/             chiffre.js, zuordnung.js, schaubild.js, bits.js (Delta §8)
+    interaktionen/             chiffre.js, zuordnung.js, schaubild.js, bits.js, hashziel.js (Delta §8; hashziel Plan M8 E126)
     diagnose.js                Fallen-Diagnose (Delta §9), feste Texte
     neuberechnung.js           Validator-Neuberechnung über shared/krypto.js: Lücken in bits/alphabet/quadrat, Schlüssel
                                in Blöcken ↔ verfahren, Hinweis pruefnachweis für gaps (Review M3 W3, K8)
@@ -145,7 +145,13 @@ src/
                                haeufigkeit_caesar.js (haeufigkeit_caesar); M5 (W2 §8 Nr. 4–8): vigenere_zeichen.js
                                (vigenere_zeichen = Spec „vigenere-zeichen“, Unterstrich wegen der Schlüssel-Regel
                                a–z/0–9/_), teiltext.js, playfair.js, porta.js, friedman.js (Niveau eA) –
-                               21 Dateien, 24 Generator-Schlüssel
+                               21 Dateien, 24 Generator-Schlüssel; M8 (W3–W6 §8, Tasks 191–194): W3 ascii_bits.js,
+                               otp.js (otp, otp_doppelt), adfgvx.js (adfgvx_stufe1), spalten.js (spaltentransposition),
+                               kryptos16.js + kryptos16_teilschritt (eA); W4 modpotenz.js, rsa.js (w4_rsa_schluessel),
+                               inverses.js (w4_inverses, Kür); W5 kollision.js, pruefsumme.js, signatur.js, schutzziele.js
+                               (vorläufig 3 Bausteine, Plan M8 offene Entscheidung 20); W6 uhrwerk.js (eves_uhrwerk),
+                               zeitplan.js (gaps-toleranz, K43), fallenmix.js (fallen_mix) – Stand M8: 35 Dateien,
+                               40 Generator-Schlüssel, jede Welt ≥ 3 (W0 5, W1 5, W2 8, W3 8, W4 6, W5 5, W6 3)
     teams.js                   Tischgruppen je Kurs (Liste, Sollstand setzen, teamVon; Plan M7 E106)
     funkraum/                  text.js (Whitelist, Normalisierung, HMAC; §12.3), loeschen.js (Beenden/Löschen, §12.7),
                                szenarien.js (Konfiguration §12.6, Rollenvorschlag), dienst.js (Zustandsautomat, Polling,
@@ -281,6 +287,10 @@ mit ihrem KH-Wert stehen – das `beispiel` füllt das Feld nur bei „Lösung z
 der Runde `runden` bzw. Einzelschritt `sbox`/`sbox-inv`/`transposition`/`rundenschluessel`) und `text` (2 Zeichen, ASCII)
 statt `block`; die Neuberechnung steht in `interaktionen/bits.js` (`erwartet`), die Diagnose in `diagnose.js`
 (`kryptos16SchrittKandidaten`), der Zwilling in `seed_pruefen.py` (`kryptos16_wert`). `xor`-Operanden 8–64 Bit.
+Stand M8 (Task 204): registriert sind `chiffre`, `zuordnung`, `schaubild-ergaenzen`, `bits-rechnen`, `hash-ziel`; jede kommt
+in den Seeds W0–W6 vor (`scripts/abdeckung.js`, Regel „gesamt“). Neu in M8 für `chiffre`: Verfahren `uhrwerk` (W6),
+`adfgvx`/`polybios` mit Diagnose-Variante `zeile_spalte` (P4), `spaltentransposition` mit `spaltenlaengen` (P4); für
+`gaps`: `toleranz` (K43).
 
 ### 4.4 Client-Hooks
 
@@ -2028,11 +2038,11 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `akten`, `loesungen`,
+`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `akten`, `loesungen`,
 `lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
-`pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds`; die Material-Prüfungen brauchen Python-Pakete,
+`pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds` + `abdeckung`; die Material-Prüfungen brauchen Python-Pakete,
 LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese
-Abhängigkeiten überspringt); `abdeckung` folgt mit `scripts/abdeckung.js` (M8). Version startet bei `0.1.0`, `1.0.0` mit
+Abhängigkeiten überspringt); `abdeckung` = `node scripts/abdeckung.js` (M8 Task 200). Version startet bei `0.1.0`, `1.0.0` mit
 dem ersten Live-Deploy.
 
 ---

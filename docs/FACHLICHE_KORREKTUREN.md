@@ -105,3 +105,15 @@ Archivwissen-Tabelle zeigt – Nachschlagen im Archivwissen ist gewollt (Plan M8
 | D5 | W4-K3-04: 5¹³ mod 23 – 2, 4, 16 → **21**; Erklärung ohne Verweis auf W4-L1-06 | 3¹³ mod 17 (9, 13, 16 → 12) rechnet die Akte W4·K3 (Archivwissen 2) vor | SPEC W4 W4-K3-04, §12; Prüfwerte W4; Lehrerhinweise W4 Anhang B |
 | D6 | W4-K3-06: Schlüssel (77, 43), c = 48 – Kette 48, 71, 36, 64, 15, 71; Produkt 20, 48, **20** (20⁷ mod 77 = 48); Erklärung ohne Verweis auf Akte W4·2 | die Quadrierkette für c = 37 (→ 9) steht in Akte W4·2 Archivwissen 1 | SPEC W4 W4-K3-06, §12; Prüfwerte W4; Lehrerhinweise W4 Anhang B |
 | D7 | Prüfprotokoll W6 §12, Boss B-15: BA ∘ CAD = DAECBD (*sternwarte* beide Wege `VTITO ZDRXG`) | die Zeile nannte noch AB ∘ CDE = CEEDDF (Wert von W2-B-15); §5 und Folie F6 waren richtig (Plan M8 E138) | SPEC W6 §12; Prüfwerte W6 |
+
+**Nachträge während des Seeds und der Materialarbeit (M8 Tasks 172–203):**
+
+| # | Was | Warum | Wo |
+|---|---|---|---|
+| D8 | Lösungsverrat-Ausnahme W3-L1-04 a): „OST“ in ASCII-Bits steht in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) | Akte und Aufgabe nutzen dasselbe Spec-Beispiel; Ausnahme begründet (Plan M8 offene Entscheidung 16) | `test/inhalte_loesungsverrat.test.js` (Ausnahmeliste) |
+| D9 | W3-B-06 als `gaps` (Bitfolge + Wort NEU) statt `bits-rechnen` | der Operand „OST in Bits“ wäre die Lösung von W3-L1-04 a) und nähme dem Boss den Codierschritt | Seed W3-B-06; Prüfwerte W3 (Plan M8 Task 177) |
+| D10 | W6-B-15 Erklärung ohne die Spec-Lösung „*sternwarte*: beide Wege VTITO ZDRXG“ (Video 07) und ohne „bewusst andere Schlüssel als W2-B-15“ | Video-Beispiele kommen in keinem anderen Material vor; Aufgaben verweisen nicht auf andere Aufgaben (Validator) | Seed W6-B-15; Prüfwerte W6 (*laterne*, Plan M8 Task 189) |
+| D11 | Generator-Wortlisten W3–W6 ohne Wörter aus Lab, Akten, Bossen, Warm-up, Präsentationen, Videos (auch als Teilwort); Spec-§8-Beispiele angeglichen; G-W6-1-Beispiel *standuhr*, t = 3, RITZEL → SNHTD RAU → JVASH CET (früher *zahnradwerk*, UHR) | die alten Spec-Beispiele (BOJE, HAFEN, NORD …, UHR, ZEIT, SAND, *zahnradwerk*, *zeitzone* …) stehen in den Materialien (Plan M8 E147) | SPEC W3/W5/W6 §8, §12; `src/krypto/generatoren/woerter.js`; Lehrerhinweise W3/W6 |
+| D12 | Lehrerhinweise W6, Boss-Tabelle B-15: BA/CAD → DAECBD statt AB/CDE → CEEDDF | dieselbe Verwechslung wie D7, hier im Lehrkraft-Material | `quellen/material/W6/lehrerhinweise_W6.json` (Plan M8 Task 198) |
+| D13 | Lehrerhinweise W0–W2, W4–W6: Generator-Anhänge mit Beispielen aus den aktuellen Wortlisten (W0 70, W1 70 Wörter; W2 aus `KLARTEXTE_W2` usw.), W4 RSA mit e < φ, W5 Wortliste vorläufig 123, Schutzziele vorläufig 3 Bausteine, W6 Fallen-Mix ohne XOR | Anhänge nannten Wörter, die nicht (mehr) in den Listen stehen | `quellen/material/W*/lehrerhinweise_W*.json` (Plan M8 Task 198) |
+| D14 | Hash-ziel-Rückmeldung (W5-L1-07): nach einer richtigen eigenen Kollision bleibt die Eingabe mit ihrem KH-Wert stehen | der Client überschrieb sie mit dem Lösungsbeispiel „haffk“ (gefunden in e2e Szenario 12) | `public/static/js/krypto/interaktionen.js` (Plan M8 Task 202) |

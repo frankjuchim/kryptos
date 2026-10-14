@@ -1373,14 +1373,15 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 (Delta-Stand), `docs/FACHLICHE_KORREKTUREN.md` (Teil D vollständig), `docs/KERN_ABWEICHUNGEN.md` (K43, K22, K30 geprüft),
 `CLAUDE.md` (Befehle: `node scripts/abdeckung.js`), Plan-Selbstprüfung abhaken
 
-- [ ] **Step 1: Gesamtprüfung** – `npm run pruefen`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/test_krypto.py`,
+- [x] **Step 1: Gesamtprüfung** – `npm run pruefen`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/test_krypto.py`,
   `python3 -I werkzeuge/krypto/test_fremde_verfahren.py`, `npm run ide:pruefen`, `python3 -I werkzeuge/workspaces_erzeugen.py --pruefen`,
   `python3 -I werkzeuge/{akten,loesungen,lehrkraft}_pdf.py --pruefen`, `npm run e2e` – alles grün.
-- [ ] **Step 2: Lösungsverrat gesamt** – `node --test test/inhalte_loesungsverrat.test.js` über W0–W6; einzige Ausnahme W6-L2-01.
-- [ ] **Step 3: Stichprobe von Hand** – je Welt drei zufällige Aufgaben im Dev-Portal als Mika lösen, eine falsch (Diagnose prüfen),
+- [x] **Step 2: Lösungsverrat gesamt** – `node --test test/inhalte_loesungsverrat.test.js` über W0–W6; einzige Ausnahme W6-L2-01.
+- [x] **Step 3: Stichprobe von Hand** – je Welt drei zufällige Aufgaben im Dev-Portal als Mika lösen, eine falsch (Diagnose prüfen),
   eine mit Tipp; je Welt Boss einmal bis zum Ende (Artefakt ab 50 %).
-- [ ] **Step 4: Doku** – Abschnitte oben, Selbstprüfung dieses Plans (alle Spec-Abschnitte → erledigt).
-- [ ] **Step 5: Commit** `git commit -m "Abschluss M8: Inhalte W3–W6 vollständig, Doku und Selbstprüfung"`.
+- [x] **Step 4: Doku** – Abschnitte oben, Selbstprüfung dieses Plans (alle Spec-Abschnitte → erledigt).
+- [x] **Step 5: Commit** `git commit -m "Abschluss M8: Inhalte W3–W6 vollständig, Doku und Selbstprüfung"`.
+- [x] **Umsetzungsnotiz:** **Step 1:** `npm run pruefen` grün (1122 Tests; Validator 0 Fehler, 8 bekannte Hinweise; Prüfwerte 1112/0; Seeds 398/0; Abdeckung 0 Lücken), `krypto:vergleich --anzahl 2000` 0 Abweichungen in 256 867 Fällen, `test_krypto.py` 84 OK, `test_fremde_verfahren.py` 11 OK, `ide:pruefen` 4 Dateien (W0, W3) 0 Probleme, `workspaces --pruefen` 4/0, `akten` 48/0, `loesungen` 94/0, `lehrkraft` 122/0, `npm run e2e` alle 13 Szenarien grün (nach Task 202; seitdem nur Doku/CI). **Step 2:** Lösungsverrat W0–W6 grün; Ausnahmen W6-L2-01 (E137) **und** W3-L1-04 a) (offene Entscheidung 16, Task 172) – beide begründet, der Test prüft, dass jede gebraucht wird. **Step 3:** Stichprobe als Skript gegen die App mit den echten Seeds (Scratchpad `m8ab/stichprobe.js`, fester Startwert), weil die Browser-Wege der neuen Interaktionen schon e2e Szenario 11/12 abdecken: je Welt drei zufällige Level-Aufgaben – eine richtig (Punkte 10–30), eine falsch (abgelehnt, keine Lösung in der Antwort), eine nach Tipp richtig (Punkte gemindert, z. B. 10 → 8, 30 → 24); je Welt eine `chiffre`-Aufgabe mit der ersten Fehlrechnung aus `Krypto.verfahren.varianten` → Diagnose W0-L1-03 P3 `permutation`, W1-L2-01 P3 `richtung`, W2-L1-02 P3, W3-L4-02 P3, W6-L2-04 P4 `pendel` (W4/W5 haben keine berechenbare `chiffre` außerhalb des Archivfunds); je Welt Boss mit Musterantworten bis zum Ende (8/8, W0–W5 25 min, W6 30 min) → alle sieben Artefakte im Profil. **Step 4:** TECHNIK §2.4 (Generatoren: 35 Dateien, 40 Schlüssel; `hashziel.js`), §4.3 (Stand der Interaktionen und neuen Verfahren/Varianten), §15 (Nr. 12), §16.1/§16.5 (`abdeckung`); AUFGABENFORMAT §8.5 (hash-ziel nach dem Lösen) und §11 (Abdeckung, **Liste der 8 bekannten Hinweise** mit Begründung – darunter W3-L3-07 „P6, 34 Buchstaben“ = Spec-Text der Knack-Aufgabe, und W3-L5-05 „ohne pruefnachweis“ = Zählung ohne Rechenfunktion; beide in den Tasks 174/176 als erwartet vermerkt, daher nicht behoben); FACHLICHE_KORREKTUREN Teil D um D8–D14 ergänzt; KERN_ABWEICHUNGEN K22, K30, K43 geprüft; Selbstprüfung oben. `CLAUDE.md` (Befehl `node scripts/abdeckung.js`) nicht geändert – Projektanweisungen ändert nur die Lehrkraft; Vorschlag im Bericht.
 
 ---
 
@@ -1487,3 +1488,7 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 - Archivfunde: 4 (W3-A-01 … W6-A-01). Boss-Aufgaben: 4 × 15 = **60**. Warm-up: **48**. Generatoren: 16 neu (6 + 7 + 3) zu den
   5 vorhandenen der Welten 3–5.
 - Tasks: **164–204 = 41**.
+- **Stand Abschluss (Task 204):** alle Zeilen der Tabelle „Spec-Abschnitte → Tasks“ und „Auftrag → Tasks“ erledigt (Tasks
+  164–204 abgehakt, je mit Umsetzungsnotiz). Zählung nachgeprüft: Level-Aufgaben 202 (W3 35, W4 23, W5 23, W6 30;
+  `niveaus.test.js`), Archivfunde 4, Boss-Aufgaben 60 (4 × 15), Warm-up 48 (4 × 12), Generatoren 16 neu (W3 6, W4 3, W5 4,
+  W6 3) – zusammen 40 Generator-Schlüssel in W0–W6; `scripts/abdeckung.js` 0 Lücken.

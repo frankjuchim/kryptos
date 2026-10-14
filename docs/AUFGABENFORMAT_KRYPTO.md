@@ -906,6 +906,23 @@ Mehrfeldrige `gaps` belegt eine **Prüfwert-Gruppe** (Einträge mit `aufgabe` + 
 Eintrag bleibt ein normaler Prüfwert, den `pruefwerte.py` nachrechnet. `chiffre` mit `ausgabe` `paare`/`hex` rechnet
 `seed_pruefen.py` wie `buchstaben` nach (wie `interaktionen/chiffre.js`).
 
+**Abdeckung (Stand M8):** `node scripts/abdeckung.js` prüft dateiübergreifend gegen die Abdeckungsmatrizen §11 der
+Welt-Specs (KC-Zeile → Level-Aufgabe, Akte, Boss; fremde Chiffren in Lab und Boss; Fallen-Abdeckung; alle Kategorien und
+Interaktionen; `WELT_PLAN`; Warm-up und Generatoren) – Exit 1 bei Lücke, bewusste Lücken mit Spec-Zitat im Skript.
+
+**Bekannte Hinweise der echten Seeds (Stand Abschluss M8, alle gewollt, 0 Fehler):**
+
+| Aufgabe | Hinweis | Warum gewollt |
+|---|---|---|
+| W0-L1-08 | Rechenergebnis ohne `pruefnachweis` | Teilermenge/Schlüsselraum – Zählung ohne Rechenfunktion der Bibliothek (Plan M5) |
+| W1-A-01 | Häufigkeitsanalyse mit 41 Buchstaben (P6) | Textlänge aus der Spec (Archivfund W1, Plan M5 Task 79) |
+| W1-L1-04 | Rechenergebnis ohne `pruefnachweis` | Größenordnung des Schlüsselraums (Plan M5) |
+| W1-L1-07 | Häufigkeitsanalyse mit 56 Buchstaben (P6) | Textlänge aus der Spec; die Kürze ist Lerninhalt (Plan M5 Task 79) |
+| W1-L2-05 | Rechenergebnis ohne `pruefnachweis` | Zählung (Plan M5) |
+| W3-L3-07 | Häufigkeitsanalyse mit 34 Buchstaben (P6) | Spec-Text der Knack-Aufgabe (Plan M8 Task 174) |
+| W3-L5-05 | Rechenergebnis ohne `pruefnachweis` (w, r, s, n) | Zählung 8!, 7 · 5 · 3 · 1, 8, Produkt – keine Rechenfunktion (Plan M8 Task 176) |
+| W4-L3-05 | Rechenergebnis ohne `pruefnachweis` | Zählaufgabe ohne Rechenfunktion (Plan M8 Task 180) |
+
 ---
 
 ## 12. Gastmodus: Demo-Aufgaben (`seed/gast/demo.json`, Welt 8)
