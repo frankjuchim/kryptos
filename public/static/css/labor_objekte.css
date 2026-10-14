@@ -100,7 +100,6 @@
 .station-schritt[aria-current="step"] .station-schritt-nr { background: var(--akzent); color: var(--auf-akzent); }
 .station-schritt.erledigt { color: var(--text); }
 .station-schritt.erledigt .station-schritt-nr { background: var(--ok); color: var(--auf-akzent); }
-.station-schritt.erledigt .station-schritt-nr::after { content: " ✓"; font-size: .7rem; }
 
 /* ---------- Erklärfeld ---------- */
 .station-erklaerung { min-height: 4.5rem; padding: var(--a-3) var(--a-4); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
@@ -177,3 +176,54 @@
 .labor-vier-vorher { color: var(--text-2); }
 .labor-vier-nachher { font-weight: 700; color: var(--text); }
 .labor-vier-text { margin: 0; font-size: .92rem; }
+
+/* ======================================================================
+   Chiffrierscheibe nach der Krypto-Werkstatt (Plan M10 Task 226; stationen/caesar.html)
+   Messing-Grundscheibe (Klartext außen, klein), Papierscheibe (Geheimtext innen, GROSS), Fenster, Nabe mit Stift.
+   ====================================================================== */
+.scheibe-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); grid-template-areas: "buehne" "bedienung" "unten"; align-items: start; }
+.scheibe-objekt > .scheibe-buehne { grid-area: buehne; }
+.scheibe-objekt > .scheibe-bedienung { grid-area: bedienung; }
+.scheibe-objekt > .scheibe-unten { grid-area: unten; display: grid; gap: var(--a-3); min-width: 0; }
+@media (min-width: 900px) { .scheibe-objekt { grid-template-columns: minmax(0, 1.3fr) minmax(17rem, 1fr); grid-template-areas: "buehne bedienung" "unten bedienung"; } }
+.scheibe-buehne, .scheibe-bedienung { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.scheibe { display: grid; gap: var(--a-2); justify-items: center; }
+.scheibe-drehknopf { width: min(100%, 30rem); border-radius: 50%; cursor: grab; }
+.scheibe-drehknopf[aria-disabled="true"] { cursor: default; }
+.scheibe-drehknopf:focus-visible { outline: 3px solid var(--fokus); outline-offset: 4px; }
+.scheibe-ringe { display: block; width: 100%; height: auto; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+.scheibe-grund { fill: var(--mat-gehaeuse); stroke: var(--mat-messing); stroke-width: 1.5; }
+.scheibe-teilung { stroke: var(--mat-gehaeuse-tinte); stroke-opacity: .16; stroke-width: .7; }
+.scheibe-segment { fill: transparent; cursor: pointer; transition: fill .15s; }
+.scheibe-segment:hover { fill: color-mix(in srgb, var(--mat-lampe-an) 22%, transparent); }
+.scheibe-klar { font: 600 12.5px var(--f-mono); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.scheibe-klar.aktiv { fill: var(--mat-lampe-an); font-weight: 800; text-decoration: underline; }
+.scheibe-innen { transform: rotate(var(--drehung, 0deg)); transform-box: view-box; transform-origin: 160px 160px; cursor: grab; }
+.scheibe-innen.animiert { transition: transform .35s ease-out; }
+.scheibe-papier { fill: var(--mat-band); stroke: var(--mat-holz); stroke-width: 1.2; }
+.scheibe-teilung-innen { stroke: var(--mat-band-tinte); stroke-opacity: .2; stroke-width: .6; }
+.scheibe-segment-innen { fill: transparent; cursor: pointer; }
+.scheibe-geheim { font: 700 11.5px var(--f-mono); fill: var(--mat-band-tinte); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.scheibe-geheim.aktiv { fill: var(--mat-holz-dunkel); font-weight: 800; text-decoration: underline; }
+.scheibe-fenster { fill: color-mix(in srgb, var(--mat-lampe-an) 18%, transparent); stroke: var(--mat-lampe-an); stroke-width: 1.2; pointer-events: none; transform: rotate(var(--fenster, 0deg)); transform-box: view-box; transform-origin: 160px 160px; }
+.scheibe-fenster.animiert { transition: transform .3s ease-in-out; }
+.scheibe-nabe { fill: var(--mat-gehaeuse); stroke: var(--mat-messing); stroke-width: 1.2; }
+.scheibe-nabe-buchstabe { font: 700 17px var(--f-mono); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.scheibe-nabe-zeile { font: 500 7.5px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.scheibe-stift { stroke: var(--mat-holz-dunkel); stroke-width: .9; }
+.scheibe-klammer { stroke: var(--mat-holz-dunkel); stroke-width: 1.2; }
+.scheibe-messing-1 { stop-color: var(--mat-holz-hell); }
+.scheibe-messing-2 { stop-color: var(--mat-messing); }
+.scheibe-messing-3 { stop-color: var(--mat-holz-dunkel); }
+.scheibe-hilfe { margin: 0; font-size: .9rem; text-align: center; }
+.scheibe-schluesselfeld { display: grid; gap: var(--a-1); }
+.scheibe-feldtitel { font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+.scheibe-steuer { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+.scheibe-steuer .knopf { min-width: var(--ziel); font-size: 1.3rem; border: 1.5px solid var(--linie); }
+.scheibe-schluessel { display: grid; place-items: center; min-width: 3.2rem; min-height: var(--ziel); padding: 0 var(--a-2); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--mat-band); color: var(--mat-band-tinte); font: 700 1.5rem var(--f-mono); }
+.scheibe-k { font-family: var(--f-mono); font-size: 1rem; color: var(--text-2); }
+.scheibe-sperre:empty { display: none; }
+.scheibe-sperre { display: grid; gap: var(--a-2); padding: var(--a-3); border-radius: var(--r-knopf); background: var(--hinweis-flaeche); color: var(--hinweis); }
+.scheibe-sperre p { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .scheibe-innen.animiert, .scheibe-fenster.animiert, .scheibe-segment { transition: none; } }
+:root[data-bewegung="aus"] .scheibe-innen.animiert, :root[data-bewegung="aus"] .scheibe-fenster.animiert { transition: none; }

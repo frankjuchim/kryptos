@@ -728,6 +728,10 @@ test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigener
   await k.ruhe();
   assert.ok(k.eins(k.document, '.scheibe-drehknopf'));
   assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);
+  // M10 Task 226: Gast-Scheibe erbt Objekt, Bänder und Herkunftszeile
+  assert.equal(k.text(k.eins(k.document, 'p.werkzeug-herkunft')), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
+  k.klick(k.eins(k.document, '.scheibe-aussen [data-buchstabe="g"]'));
+  assert.equal(k.text(k.eins(k.document, '.station-baender output.geheim')).replace(/\s+/g, ''), 'J');
   k.window.location.hash = '#/labor/vigenere';
   await new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
   await k.ruhe();

@@ -536,7 +536,7 @@ Schlüsseländerung mitten in einer Nachricht → Hinweis „Neue Nachricht mit 
 Kerckhoffs). **Bleibt:** Nummern unter den Buchstaben mit Schalter A = 1/A = 0, Formel-Modus, Alphabet-Leiste als Tabelle,
 Reiter `text` und `alle`, Voreinstellungen, `aria-valuetext`-Ansage.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Scheibe: Außenring antippen schreibt Klartext und Geheimtext (Flug), Rechnung = Krypto.caesar', () => {
     const w = oeffne('scheibe', { voreinstellung: { k: 3 } });
@@ -551,9 +551,12 @@ Reiter `text` und `alle`, Voreinstellungen, `aria-valuetext`-Ansage.
   test('Scheibe: Herkunftszeile', () => { /* p.werkzeug-herkunft vorhanden */ });
   ```
   `test/gast.test.js`: Gast-Scheibe zeigt `.werkzeug-herkunft`, kein `localStorage`-Zugriff.
-- [ ] **Step 2:** FAIL. **Step 3:** Portieren (Geometrie, Ringe, Markierung, Animationen aus `caesar.html`; CSS-Präfix `scheibe-`).
-- [ ] **Step 4:** `npm test` grün; Browser 360/1280, hell/dunkel, ruhig, Tastatur; Gast `/gast#/labor/scheibe` ansehen.
-- [ ] **Step 5: Commit** `M10: Chiffrierscheibe nach der Krypto-Werkstatt – am Objekt schreiben, Bänder, Nachspielen (Task 226)`
+- [x] **Step 2:** FAIL. **Step 3:** Portieren (Geometrie, Ringe, Markierung, Animationen aus `caesar.html`; CSS-Präfix `scheibe-`).
+- [x] **Step 4:** `npm test` grün; Browser 360/1280, hell/dunkel, ruhig, Tastatur; Gast `/gast#/labor/scheibe` ansehen.
+- [x] **Step 5: Commit** `M10: Chiffrierscheibe nach der Krypto-Werkstatt – am Objekt schreiben, Bänder, Nachspielen (Task 226)`
+- Umsetzung: Nachspielen öffnet sich über „▶ Nachspielen“ (Handgriffe gesperrt, „■ Nachspiel beenden“ stellt die Nachricht
+  wieder her); „Text eintippen“ (`details`) schreibt dieselbe Nachricht (E171); Gast-Prüfung in `test/client_seiten.test.js`
+  (dort liegt der Gast-Client-Test). Der Ziehen-Test nutzt jetzt den Radius der Papierscheibe (Werkstatt-Geometrie, E195).
 
 ### Task 227: Skytale & Gitter I – Holzstab mit Band, Reiter „Pflügen · Zusatz“ (E175, E181)
 

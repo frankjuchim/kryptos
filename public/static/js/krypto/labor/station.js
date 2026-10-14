@@ -256,6 +256,7 @@ const KRStation = (() => {
         if (j === aktuell) li.setAttribute('aria-current', 'step');
         else li.removeAttribute('aria-current');
         li.classList.toggle('erledigt', j < aktuell);
+        li.firstChild.textContent = j < aktuell ? '✓' : String(j + 1);
       });
     }
     texte(schritte);

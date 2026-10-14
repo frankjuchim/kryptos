@@ -243,29 +243,9 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 /* ======================================================================
    Werkzeug „Chiffrierscheibe“ (W0 §9.2, Plan M6 Task 111)
    ====================================================================== */
+/* M10 Task 226: Objekt der Scheibe (Ringe, Fenster, Nabe, Bänder) nach der Krypto-Werkstatt in labor_objekte.css */
 .scheibe-bereich { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
-@media (min-width: 768px) { .scheibe-bereich { grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr); } }
-.scheibe { display: grid; gap: var(--a-2); justify-items: center; }
-.scheibe-drehknopf { width: min(100%, 20rem); border-radius: 50%; touch-action: none; cursor: grab; }
-.scheibe-drehknopf[aria-disabled="true"] { cursor: default; }
-.scheibe-drehknopf:focus-visible { outline: 3px solid var(--fokus); outline-offset: 4px; }
-.scheibe-ringe { display: block; width: 100%; height: auto; overflow: visible; user-select: none; }
-.scheibe-ring-aussen { fill: var(--karte); stroke: var(--linie); stroke-width: 2; }
-.scheibe-ring-innen { fill: var(--papier-2); stroke: var(--akzent); stroke-width: 2; }
-.scheibe-nabe { fill: var(--akzent); }
-.scheibe-zeiger { fill: var(--akzent); }
-.scheibe-innen { transform: rotate(var(--drehung, 0deg)); transform-box: view-box; transform-origin: 160px 160px; }
-.scheibe-innen.animiert, .scheibe-innen.animiert text { transition: transform .35s ease-out; }
-/* Buchstaben des Innenrings bleiben aufrecht lesbar (Gegendrehung um die eigene Mitte) */
-.scheibe-innen text { transform: rotate(calc(-1 * var(--drehung, 0deg))); transform-box: fill-box; transform-origin: center; }
-.scheibe-klar, .scheibe-geheim { font-family: var(--f-mono); font-size: 17px; fill: var(--text); }
-.scheibe-geheim { font-weight: 700; }
-.scheibe-nummer { font-family: var(--f-text); font-size: 9.5px; fill: var(--text-2); }
-.scheibe-klar.aktiv, .scheibe-geheim.aktiv { fill: var(--akzent); font-weight: 700; text-decoration: underline; }
-.scheibe-steuer { display: inline-flex; align-items: center; gap: var(--a-2); }
-.scheibe-steuer .knopf { min-width: var(--ziel); font-size: 1.3rem; border: 1.5px solid var(--linie); }
-.scheibe-k { font-family: var(--f-mono); font-size: 1.6rem; font-weight: 700; min-width: 5ch; text-align: center; }
-.scheibe-hilfe { margin: 0; font-size: .85rem; text-align: center; }
+@media (min-width: 900px) { .scheibe-bereich { grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 1fr); } }
 .scheibe-formelteil, .scheibe-text { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
 .scheibe-formel { margin: 0; font-family: var(--f-mono); font-size: 1.05rem; overflow-wrap: anywhere; }
 .scheibe-hinweis:empty { display: none; }
@@ -283,8 +263,6 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .scheibe-leiste th, .scheibe-leiste td { padding: 0; }
 .scheibe-leiste tbody td { padding: 4px 2px; }
 .scheibe-leiste .markiert { background: var(--papier-2); }
-@media (prefers-reduced-motion: reduce) { .scheibe-innen.animiert, .scheibe-innen.animiert text { transition: none; } }
-:root[data-bewegung="aus"] .scheibe-innen.animiert, :root[data-bewegung="aus"] .scheibe-innen.animiert text { transition: none; }
 
 /* ======================================================================
    Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112)
