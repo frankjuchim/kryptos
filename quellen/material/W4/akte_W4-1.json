@@ -139,7 +139,7 @@
      "rechts": [
       {
        "t": "bild",
-       "pfad": "/home/claude/kryptos/quellen/material/W4/bilder/W4_vier_personen_leer.png",
+       "pfad": "quellen/material/W4/bilder/W4_vier_personen_leer.png",
        "breite_cm": 4.4
       }
      ]
@@ -162,7 +162,7 @@
      "rechts": [
       {
        "t": "bild",
-       "pfad": "/home/claude/kryptos/quellen/material/W4/bilder/W4_vier_personen_loesung.png",
+       "pfad": "quellen/material/W4/bilder/W4_vier_personen_loesung.png",
        "breite_cm": 4.4
       }
      ]

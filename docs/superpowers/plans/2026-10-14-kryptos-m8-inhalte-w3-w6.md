@@ -1224,16 +1224,17 @@ Pendelwörter und Klartexte aus Task 191 (`PENDEL_W6`, `KLARTEXTE_W6`); t ∈ {3
 `W6/praesentation_W6.json`, `W6/bilder/ring_bilder.py`, `.gitignore`; Create `materialien/Welt3_Maschinenzeitalter/**`
 (1_Praesentation, 2_Akten, 4_Boss, 5_Loesungen); Delete sechs `materialien/**/.DS_Store` (`git rm`)
 
-- [ ] **Step 1: Failing test** – `test/material_pipeline.test.js`: keine Materialquelle enthält `/home/` (Regex über alle
+- [x] **Step 1: Failing test** – `test/material_pipeline.test.js`: keine Materialquelle enthält `/home/` (Regex über alle
   `quellen/material/**/*.json` und `*.py`) → FAIL (6 Funde).
-- [ ] **Step 2: Pfade** – repo-relativ `quellen/material/W<n>/bilder/<datei>.png` (Muster W1); `ring_bilder.py` schreibt nach
+- [x] **Step 2: Pfade** – repo-relativ `quellen/material/W<n>/bilder/<datei>.png` (Muster W1); `ring_bilder.py` schreibt nach
   `Path(__file__).parent`. Test → PASS.
-- [ ] **Step 3: Bauen** – `python3 werkzeuge/material/bauen.py quellen/material/W3/*.json` (ohne `funkraum_W3`, `arena_W3`,
+- [x] **Step 3: Bauen** – `python3 werkzeuge/material/bauen.py quellen/material/W3/*.json` (ohne `funkraum_W3`, `arena_W3`,
   `lehrerhinweise_W3`, `warmup_W3` – die liegen in `Werkzeuge/`/`00_Lehrerhinweise`, Task 197) → 13 Dateien; `soffice`
   nach PDF ins Scratchpad, ansehen (Akte 2 mit Pixelbild ECB/CBC, Boss-Tabelle, Präsentation 1. und letzte Folie);
   `python3 -I werkzeuge/material/kr_kontrast.py <datei>` je Datei → 0 Verstöße.
-- [ ] **Step 4:** `git rm` der `.DS_Store`, `.gitignore` += `.DS_Store`; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "Material: repo-relative Bildpfade, Welt 3 gebaut (Akten, Boss, Präsentation), .DS_Store entfernt"`.
+- [x] **Step 4:** `git rm` der `.DS_Store`, `.gitignore` += `.DS_Store`; `npm test`.
+- [x] **Step 5: Commit** `git commit -m "Material: repo-relative Bildpfade, Welt 3 gebaut (Akten, Boss, Präsentation), .DS_Store entfernt"`.
+- [x] **Umsetzungsnotiz:** Test in `material_pipeline.test.js` (rot mit 6 Dateien, 10 Pfaden), Pfade repo-relativ, `ring_bilder.py` schreibt nach `Path(__file__).parent`. Gebaut mit Quellliste (Akten 1–4, K2, Boss, Präsentation) → 13 Dateien, `kr_kontrast.py` je Datei 0 Verstöße; PDFs angesehen (Akte 2 mit Pixelbild Original/ECB/CBC, Papier-Boss Seite 1, Präsentation erste und letzte Folie, Schülerfassung ohne Lösungen). Die Präsentation W3 kommt automatisch ins Lehrkraft-Verzeichnis (`lehrkraft_pdf.py`; nur das neue PDF und `verzeichnis.json` übernommen, die übrigen nur neu gestempelten PDFs zurückgesetzt). `.DS_Store`: alle elf versionierten Dateien entfernt (`.gitignore` hatte den Eintrag schon).
 
 ### Task 196: Online-IDE Welt 3 „Chiffren-Werkstatt“ (`MeineChiffre`)
 

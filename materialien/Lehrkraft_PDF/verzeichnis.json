@@ -486,6 +486,16 @@
    "ordner": "Welt_3_Maschinenzeitalter",
    "eintraege": [
     {
+     "art": "praesentation",
+     "titel": "Präsentation „Das Maschinenzeitalter“",
+     "dateien": [
+      {
+       "label": "Folien",
+       "pfad": "Lehrkraft_PDF/Welt_3_Maschinenzeitalter/KR_W3_Praesentation_Maschinenzeitalter.pdf"
+      }
+     ]
+    },
+    {
      "art": "lehrerhinweise",
      "titel": "Lehrerhinweise Welt 3",
      "dateien": [

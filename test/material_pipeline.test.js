@@ -101,3 +101,18 @@ for (const [skript, titel, skip] of PDF_SKRIPTE) {
     assert.equal(r.status, 0, r.stdout + r.stderr);
   });
 }
+
+// Plan M8 Task 195: Materialquellen nutzen repo-relative Pfade (keine absoluten Pfade einer anderen Maschine)
+test('Materialquellen enthalten keine absoluten /home/-Pfade (JSON und Python)', () => {
+  const fs = require('node:fs');
+  const funde = [];
+  const lauf = (ordner) => {
+    for (const e of fs.readdirSync(ordner, { withFileTypes: true })) {
+      const p = path.join(ordner, e.name);
+      if (e.isDirectory()) lauf(p);
+      else if (/\.(json|py)$/.test(e.name) && fs.readFileSync(p, 'utf8').includes('/home/')) funde.push(path.relative(WURZEL, p));
+    }
+  };
+  lauf(path.join(WURZEL, 'quellen', 'material'));
+  assert.deepEqual(funde, []);
+});

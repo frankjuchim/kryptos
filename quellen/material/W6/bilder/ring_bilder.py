@@ -1,7 +1,8 @@
 """Ring-Grafiken für Eves Uhrwerk (Welt 6) als PNG (SVG → cairosvg)."""
 import math, cairosvg, sys
+from pathlib import Path
 AKZ="#8A5F1A"; MESS="#B07D2B"; HELL="#D9A441"; TINTE="#14213D"; TEXT="#1B1B1F"; T2="#4A4A55"; PAP="#FBF7EE"; PAP2="#F2EADB"; LIN="#D8CDB8"
-OUT="/home/claude/kryptos/quellen/material/W6/bilder/"
+OUT=str(Path(__file__).parent) + "/"  # Ausgabe neben dem Skript (Plan M8 Task 195)
 def pol(cx,cy,r,a): return cx+r*math.sin(a), cy-r*math.cos(a)
 def ring(name, buchst=None, t=None, badges=False, titel=None, schablone=False, W=900):
     H=W+ (90 if titel else 0)

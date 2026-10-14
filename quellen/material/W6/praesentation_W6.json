@@ -44,7 +44,7 @@
     },
     {
      "t": "bild",
-     "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_skizze.png",
+     "pfad": "quellen/material/W6/bilder/ring_t3_skizze.png",
      "breite_folie": 3.5,
      "alt": "Skizze eines Rings mit acht Feldern und Sprüngen von drei Feldern"
     }
@@ -81,7 +81,7 @@
    "links": [
     {
      "t": "bild",
-     "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_mitterna.png",
+     "pfad": "quellen/material/W6/bilder/ring_t3_mitterna.png",
      "breite_folie": 4.6,
      "alt": "Ring mit MITTERNA, Lesereihenfolge 0 3 6 1 4 7 2 5"
     }

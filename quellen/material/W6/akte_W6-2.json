@@ -70,7 +70,7 @@
      "rechts": [
       {
        "t": "bild",
-       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_t3_mitterna.png",
+       "pfad": "quellen/material/W6/bilder/ring_t3_mitterna.png",
        "breite_cm": 5.3,
        "unterschrift": "Ring mit Block 1 des Beispiels, t = 3"
       }
@@ -1067,14 +1067,14 @@
      "links": [
       {
        "t": "bild",
-       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_schablone.png",
+       "pfad": "quellen/material/W6/bilder/ring_schablone.png",
        "breite_cm": 7.2
       }
      ],
      "rechts": [
       {
        "t": "bild",
-       "pfad": "/home/claude/kryptos/quellen/material/W6/bilder/ring_schablone.png",
+       "pfad": "quellen/material/W6/bilder/ring_schablone.png",
        "breite_cm": 7.2
       }
      ]

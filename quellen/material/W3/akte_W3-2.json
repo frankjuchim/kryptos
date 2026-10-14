@@ -901,7 +901,7 @@
     },
     {
      "t": "bild",
-     "pfad": "/home/claude/kryptos/quellen/material/W3/bilder/W3_pixel_ecb_cbc.png",
+     "pfad": "quellen/material/W3/bilder/W3_pixel_ecb_cbc.png",
      "breite_cm": 9.5,
      "unterschrift": "Pixelbild „Schlüssel“ (32 × 32, eine 4×4-Kachel = ein Block) – Original · ECB · CBC (KRYPTOS-16, K = 2B7E, IV = 1917)"
     }
