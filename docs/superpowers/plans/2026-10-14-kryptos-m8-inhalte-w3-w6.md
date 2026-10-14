@@ -1243,12 +1243,13 @@ Pendelwörter und Klartexte aus Task 191 (`PENDEL_W6`, `KLARTEXTE_W6`); t ∈ {3
 (Welt 3), `werkzeuge/ide-pruefung/ide_pruefen.py` (Pfade), SPEC W3 §9.5 (Ablage-Satz), `docs/TECHNIK.md` §11 (Liste);
 Create `materialien/Online-IDE/KR_Welt3_Maschinenzeitalter_Workspaces.json`, `Lehrkraft/…`; Level 3.3 (`ide`-Karte, Task 174)
 
-- [ ] **Step 1:** `python3 -I werkzeuge/ide-pruefung/ide_pruefen.py` vor dem Verschieben → Gerüst 0/19 (kompiliert), LSG 19/19 grün,
+- [x] **Step 1:** `python3 -I werkzeuge/ide-pruefung/ide_pruefen.py` vor dem Verschieben → Gerüst 0/19 (kompiliert), LSG 19/19 grün,
   Testklassen identisch (Befund 14.10.2026).
-- [ ] **Step 2:** `git mv` beider Dateien; Pfade in beiden Skripten; `npm run workspaces` → neue Workspaces; `npm run ide:pruefen` → grün.
-- [ ] **Step 3:** `python3 -I werkzeuge/workspaces_erzeugen.py --pruefen` → aktuell; Seed W3-L3 verweist auf die Workspace-Datei
+- [x] **Step 2:** `git mv` beider Dateien; Pfade in beiden Skripten; `npm run workspaces` → neue Workspaces; `npm run ide:pruefen` → grün.
+- [x] **Step 3:** `python3 -I werkzeuge/workspaces_erzeugen.py --pruefen` → aktuell; Seed W3-L3 verweist auf die Workspace-Datei
   (Feld `ide` wie W0-L3); `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Online-IDE Welt 3: Chiffren-Werkstatt (MeineChiffre) nach materialien, Workspaces erzeugt"`.
+- [x] **Step 4: Commit** `git commit -m "Online-IDE Welt 3: Chiffren-Werkstatt (MeineChiffre) nach materialien, Workspaces erzeugt"`.
+- [x] **Umsetzungsnotiz:** Vor dem Verschieben: Gerüst 0/19 (kompiliert, Hauptprogramm ok), LSG 19/19. `git mv` beider Dateien; `ide_pruefen.py` findet sie über das Muster `materialien/Welt*/3_Online-IDE|5_Loesungen` ohne Änderung, `workspaces_erzeugen.py` bekam die Einträge für Welt 3 (Workspace „W3 Chiffren-Werkstatt (Level 3.3, eA)“, Datei `MeineChiffre`; LSG im Lehrkraft-Ordner). `npm run ide:pruefen`: W0 und W3 grün (W3-Gerüst 0/19, LSG 19/19), `workspaces --pruefen` aktuell. Das Level-Feld `ide` von W3-L3 nennt die Datei schon seit Task 174. SPEC W3 §9.5 und TECHNIK §16 angeglichen.
 
 ### Task 197: Neubau W4–W6, Werkzeugkarten, Lehrerhinweise, Prüfungen (Kontrastregel, E143)
 

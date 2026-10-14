@@ -1309,10 +1309,10 @@ Plattformpunkte. Beurteilungsvorlage als Arbeitsblatt (Akte W3·3).
 
 ### 9.5 Online-IDE-Gerüst „Chiffren-Werkstatt“ (eA)
 
-**Dateien** (im Repo-Gerüst abgelegt, nach Freigabe nach `materialien/Welt3_Maschinenzeitalter/3_Online-IDE/` bzw.
-`…/5_Loesungen/` verschieben):
-- `quellen/specs/W3_Online-IDE/KR_W3_ChiffrenWerkstatt_Geruest.txt` (475 Zeilen)
-- `quellen/specs/W3_Online-IDE/KR_W3_ChiffrenWerkstatt_LSG.txt` (Musterlösung, nur Lehrkraft)
+**Dateien** (Plan M8 E144/Task 196: nach `materialien/` verschoben; Workspaces `materialien/Online-IDE/KR_Welt3_Maschinenzeitalter_Workspaces.json`,
+Musterlösung `Online-IDE/Lehrkraft/…_LSG_Workspaces.json`):
+- `materialien/Welt3_Maschinenzeitalter/3_Online-IDE/KR_W3_ChiffrenWerkstatt_Geruest.txt` (475 Zeilen)
+- `materialien/Welt3_Maschinenzeitalter/5_Loesungen/KR_W3_ChiffrenWerkstatt_LSG.txt` (Musterlösung, nur Lehrkraft)
 
 **Aufbau** (Online-IDE-Dialekt nach AlgoQuest-CLAUDE.md: `println` ohne `System.out`, JUnit `@Test`,
 `assertEquals(erwartet, tatsächlich, Meldung)`, nur erlaubte Zeichenkettenoperationen, Kommentare ohne Umlaute):

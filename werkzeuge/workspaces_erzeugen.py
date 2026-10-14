@@ -25,9 +25,11 @@ ZIEL = MAT / "Online-IDE"
 # (Welt-Ordner, Datei, Workspace-Name, Dateiname im Workspace)
 GERUESTE = [
     ("Welt0_Antike", "KR_W0_CaesarWerkstatt_Geruest.txt", "W0 Caesar-Werkstatt (Level 0.3)", "CaesarWerkstatt"),
+    ("Welt3_Maschinenzeitalter", "KR_W3_ChiffrenWerkstatt_Geruest.txt", "W3 Chiffren-Werkstatt (Level 3.3, eA)", "MeineChiffre"),
 ]
 LEHRKRAFT = [
     ("Welt0_Antike", "KR_W0_CaesarWerkstatt_LSG.txt", "LSG W0 Caesar-Werkstatt", "CaesarWerkstatt"),
+    ("Welt3_Maschinenzeitalter", "KR_W3_ChiffrenWerkstatt_LSG.txt", "LSG W3 Chiffren-Werkstatt", "MeineChiffre"),
 ]
 
 
