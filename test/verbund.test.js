@@ -71,19 +71,13 @@ test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgem�
   assert.deepEqual(m.umfang, { welten: 0, level: 0, aufgaben: 0, bosse: 0 });
 });
 
-test('Manifest mit den echten Seeds W0–W2: Umfang aus dem Katalog (91 Level-Aufgaben + 3 Boss-Pools à 15), vertragsgemäß (Plan M5 Task 100)', async () => {
+test('Manifest mit den echten Seeds W0–W6: Umfang aus dem Katalog (202 Level-Aufgaben + 7 Boss-Pools à 15), vertragsgemäß (Plan M5 Task 100, M8 Task 201)', async () => {
   const app = H.makeApp({ seedDir: require('node:path').join(__dirname, '..', 'seed'), weltDateien: [] });
   const m = (await request(app).get('/api/plattform').expect(200)).body;
   assert.deepEqual(pruefeManifest(m), []);
-  // W0–W2 fest (91 Level-Aufgaben + 3 Boss-Pools à 15); W3–W6 kommen in Plan M8 Task für Task dazu (Umfang aus den Seeds)
-  const fs = require('node:fs');
-  const ordner = require('node:path').join(__dirname, '..', 'seed', 'welten');
-  const weitere = fs.readdirSync(ordner).filter((x) => /^welt[3-6]\.json$/.test(x)).map((x) => JSON.parse(fs.readFileSync(require('node:path').join(ordner, x), 'utf8')));
-  const zahl = (w) => w.levels.reduce((s, l) => s + l.aufgaben.length, 0) + (w.boss ? w.boss.pool.length : 0);
-  assert.deepEqual(m.umfang, {
-    welten: 3 + weitere.length, level: 12 + weitere.reduce((s, w) => s + w.levels.length, 0),
-    aufgaben: 91 + 45 + weitere.reduce((s, w) => s + zahl(w), 0), bosse: 3 + weitere.filter((w) => w.boss).length
-  });
+  // Archivfunde zählen nicht (eigene Aufgaben außerhalb der Level)
+  assert.deepEqual(m.umfang, { welten: 7, level: 26, aufgaben: 202 + 7 * 15, bosse: 7 });
+  assert.deepEqual(m.welten.map((w) => [w.nr, w.level]), [[0, 4], [1, 3], [2, 5], [3, 5], [4, 3], [5, 3], [6, 3]]);
   assert.deepEqual(m.welten.slice(0, 3).map((w) => [w.nr, w.titel, w.level]), [[0, 'Die Antike', 4], [1, 'Das Haus der Weisheit', 3], [2, 'Le chiffre indéchiffrable', 5]]);
 });
 
@@ -290,6 +284,35 @@ test('Kursübersicht: Format VERTRAG §6, nur freigeschaltete Welten, inaktive T
   const leer = (await vb(app, 'get', `/api/verbund/kurse/${kid(k)}/uebersicht`, 'kurs-uebersicht')).body;
   assert.deepEqual(leer.welten, []);
   assert.equal(leer.schueler.find((x) => x.sub === mika).anteil, 0);
+});
+
+test('Kursübersicht mit den echten Seeds (W4): anteil über alle sichtbaren Level-Aufgaben inkl. Ergänzung/Kür, kein Feld niveau (Vertrag v1.2, Plan M8 Task 201)', async () => {
+  const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
+  const w4 = require('../seed/welten/welt4.json');
+  const a4 = new Map(w4.aufgaben.map((a) => [a.id, a]));
+  const pkt = (id) => a4.get(id).punkte ?? { 1: 10, 2: 20, 3: 30 }[a4.get(id).stufe];
+  const niv = (l, id) => a4.get(id).niveau || l.niveau || 'kern';
+  const alle = w4.levels.flatMap((l) => l.aufgaben.map((id) => [id, niv(l, id)]));
+  assert.equal(alle.length, 23);
+  const maxVon = (ok) => alle.filter(([, n]) => ok(n)).reduce((s, [id]) => s + pkt(id), 0);
+  const kuer = alle.find(([, n]) => n === 'kuer')[0];
+  const erg = alle.find(([, n]) => n === 'ergaenzung')[0];
+  const fall = async (einstellungen) => {
+    const k = H.kurs(app, 'LK 13', { einstellungen: { ...einstellungen, welten: [4] } });
+    const mika = H.konto(app, 'schueler', 'Mika R.');
+    const t = H.teilnahme(app, k, mika, 'Mika R.');
+    const ein = app.locals.db.prepare("INSERT INTO fortschritt (schueler_id, aufgabe_id, status, punkte, updated_at) VALUES (?, ?, 'geloest', ?, ?)");
+    for (const id of [kuer, erg]) ein.run(t, id, pkt(id), new Date().toISOString());
+    const u = (await vb(app, 'get', `/api/verbund/kurse/${kid(k)}/uebersicht`, 'kurs-uebersicht')).body;
+    const m = u.schueler.find((x) => x.sub === mika);
+    assert.ok(!JSON.stringify(u).includes('"niveau"'), 'kein Feld niveau');
+    assert.deepEqual(u.welten.map((w) => w.nr), [4]);
+    return m.anteil;
+  };
+  // eA-Kurs, Kür frei: Bezug = alle 23 Level-Aufgaben (kern, ergaenzung, eA, kuer)
+  assert.equal(await fall({ niveau: 'eA', kuer: 'frei' }), Math.round(((pkt(kuer) + pkt(erg)) / maxVon(() => true)) * 100) / 100);
+  // gA-Kurs, Kür gesperrt: eA und Kür nicht sichtbar → nicht im Bezug, gelöste Kür zählt nicht
+  assert.equal(await fall({ niveau: 'gA', kuer: 'gesperrt' }), Math.round((pkt(erg) / maxVon((n) => n === 'kern' || n === 'ergaenzung')) * 100) / 100);
 });
 
 test('Kursübersicht: unbekannter Kurs → 404, falscher zweck → 401', async () => {

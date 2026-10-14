@@ -119,24 +119,24 @@ test('Seite /themen#niveaus: Abschnitt und Skript ohne Inline-Code, Skript rende
   await request(app).get(`/static/js/krypto/themen.js?v=${VERSION}`).expect(200);
 });
 
-test('Niveau-Übersicht mit den echten Seeds: W0–W2 aus dem Katalog (= WELT_PLAN), W3–W6 aus dem Plan (Plan M5 Task 100)', async () => {
+test('Niveau-Übersicht mit den echten Seeds: alle sieben Welten aus dem Katalog (= WELT_PLAN), 202 Level-Aufgaben (Plan M8 Task 201)', async () => {
   const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
   const d = (await request(app).get('/api/niveaus').expect(200)).body;
-  // Welten mit Seed kommen aus dem Katalog (Plan M8: W3–W6 entstehen Task für Task), die übrigen aus WELT_PLAN
-  const mitSeed = (nr) => fs.existsSync(path.join(__dirname, '..', 'seed', 'welten', `welt${nr}.json`));
-  assert.deepEqual(d.welten.map((w) => [w.nr, w.quelle]), [0, 1, 2, 3, 4, 5, 6].map((nr) => [nr, mitSeed(nr) ? 'katalog' : 'plan']));
-  for (const nr of [0, 1, 2]) {
-    const w = d.welten[nr];
-    const plan = WELT_PLAN.find((p) => p.nr === nr);
-    assert.deepEqual(w.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), plan.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), `Welt ${nr}: Level wie WELT_PLAN`);
+  assert.deepEqual(d.welten.map((w) => [w.nr, w.quelle]), [0, 1, 2, 3, 4, 5, 6].map((nr) => [nr, 'katalog']));
+  for (const w of d.welten) {
+    const plan = WELT_PLAN.find((p) => p.nr === w.nr);
+    assert.deepEqual(w.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), plan.levels.map((l) => [l.id, l.titel, l.niveau, l.aufgaben]), `Welt ${w.nr}: Level wie WELT_PLAN`);
     assert.equal(w.boss.titel, plan.boss.titel);
-    assert.deepEqual(w.boss.pool, plan.boss.pool, `Welt ${nr}: Boss-Pool`);
+    assert.deepEqual(w.boss.pool, plan.boss.pool, `Welt ${w.nr}: Boss-Pool`);
+    assert.equal(summe(w.boss.pool), 15, `Welt ${w.nr}: Boss 15`);
     for (const l of w.levels) assert.ok(l.akte && l.akte.name.startsWith(`Akte ${plan.levels.find((p) => p.id === l.id).akte} – `), `${l.id}: ${l.akte && l.akte.name}`);
   }
   const w2 = d.welten[2];
   assert.deepEqual(w2.levels.find((l) => l.id === '2.3').aufgaben, { eA: 7 });
   assert.deepEqual(w2.levels.find((l) => l.id === 'K1').aufgaben, { kuer: 7 });
-  assert.deepEqual(w2.boss.pool, { kern: 13, eA: 2 });
-  // Archivfunde zählen nicht: 91 Level-Aufgaben in W0–W2 (30 + 23 + 38)
-  assert.deepEqual([0, 1, 2].map((nr) => d.welten[nr].levels.reduce((s, l) => s + summe(l.aufgaben), 0)), [30, 23, 38]);
+  assert.deepEqual(d.welten[4].levels.find((l) => l.id === '4.1').aufgaben, { kern: 5, ergaenzung: 2, eA: 1 });
+  // Archivfunde zählen nicht: 202 Level-Aufgaben (30 + 23 + 38 + 35 + 23 + 23 + 30)
+  const jeWelt = d.welten.map((w) => w.levels.reduce((s, l) => s + summe(l.aufgaben), 0));
+  assert.deepEqual(jeWelt, [30, 23, 38, 35, 23, 23, 30]);
+  assert.equal(summe(jeWelt), 202);
 });

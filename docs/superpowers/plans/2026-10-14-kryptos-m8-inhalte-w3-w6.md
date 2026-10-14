@@ -1332,11 +1332,12 @@ Ausgabe: Tabelle „Welt · Regel · Lücke“; Exit 1 bei Lücke; `--welt <N>` 
 **Files:** Modify `src/krypto/fach.js` (Kommentar „WELT_PLAN bleibt Quelle für W3–W6“ entfernen, falls die Seeds jetzt Quelle
 sind), `test/niveaus.test.js`, `test/manifest.test.js`, `test/themen.test.js`, `test/verbund_*.test.js` (Kennzahlen)
 
-- [ ] **Step 1: Failing test** – `GET /api/niveaus`: sieben Welten, Level-Aufgaben gesamt **202** (W0 30, W1 23, W2 38, W3 35,
+- [x] **Step 1: Failing test** – `GET /api/niveaus`: sieben Welten, Level-Aufgaben gesamt **202** (W0 30, W1 23, W2 38, W3 35,
   W4 23, W5 23, W6 30 – Archivfunde nicht mitgezählt), je Welt Boss 15; Werte aus den Seeds = `WELT_PLAN`; Kursübersicht
   (Verbund §6) `anteil` über alle sichtbaren Level-Aufgaben inkl. Ergänzung/Kür (Vertrag v1.2, kein Feld `niveau`).
-- [ ] **Step 2–3:** Implement (falls nötig) → PASS; `/themen#niveaus` zeigt W3–W6 ohne „in Vorbereitung“; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Niveau-Übersicht und Themenseite: sieben Welten aus den Seeds (202 Level-Aufgaben)"`.
+- [x] **Step 2–3:** Implement (falls nötig) → PASS; `/themen#niveaus` zeigt W3–W6 ohne „in Vorbereitung“; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Niveau-Übersicht und Themenseite: sieben Welten aus den Seeds (202 Level-Aufgaben)"`.
+- [x] **Umsetzungsnotiz:** Die Implementierung war schon fertig (Katalog hat Vorrang vor `WELT_PLAN`, seit Task 189 stehen alle sieben Seeds im Katalog) – die verschärften Tests waren deshalb sofort grün; sie legen jetzt feste Werte fest: `niveaus.test.js` alle sieben Welten `quelle: katalog`, Level/Titel/Niveau/Aufgaben/Boss = `WELT_PLAN`, je Welt Boss 15, Level-Aufgaben [30, 23, 38, 35, 23, 23, 30] = 202 (Archivfunde nicht gezählt), 4.1 = kern 5/ergaenzung 2/eA 1; `verbund.test.js` Manifest-Umfang fest `{ welten: 7, level: 26, aufgaben: 307, bosse: 7 }` (202 + 7 × 15); neuer Test Kursübersicht mit echten Seeds (W4): eA-Kurs mit freier Kür → `anteil` über alle 23 Level-Aufgaben (gelöste Kür- und Ergänzungs-Aufgabe zählen), gA-Kurs mit gesperrter Kür → Bezug nur kern + ergaenzung, gelöste Kür zählt nicht; kein Feld `niveau`. `themen.test.js` prüft die sieben Welten schon seit Task 199; die Themenseite kennt keinen Text „in Vorbereitung“. Kommentar in `fach.js`: Seeds sind Quelle, `WELT_PLAN` bleibt Soll-Wert und Rückfall. `npm test` 1121 grün.
 
 ### Task 202: e2e Szenario 12 „Welten 3–6 spielbar“
 
