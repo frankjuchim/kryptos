@@ -217,8 +217,14 @@ const KRFunkraum = (() => {
       phaseEl.textContent = `${stand.status === 'vorbereitung' ? 'Vorbereitung' : `Phase: ${phaseText}${i >= 0 && phasen.length > 1 ? ` (${i + 1} von ${phasen.length})` : ''}`} · ${KRNetz.STATUS[stand.status] || stand.status}`;
     }
 
+    let bannerSchluessel = null;
     function bannerZeigen() {
       const ich = stand.ich || {};
+      const stummAktiv = !!(ich.stummBis && Date.parse(ich.stummBis) > Date.now());
+      // nur bei Änderung neu bauen – sonst läse die Live-Region (role=status) bei jedem Poll erneut vor (Review M7 W4)
+      const schluessel = [stand.status, stand.phase === 'aufloesung', stummAktiv ? ich.stummBis : '', !!stand.boss].join('|');
+      if (schluessel === bannerSchluessel) return;
+      bannerSchluessel = schluessel;
       const teile = [];
       if (stand.status === 'pausiert') teile.push(h('div', { class: 'rueckmeldung info funk-pause', role: 'status' }, h('p', null, 'Pause – deine Lehrkraft hat den Funkraum angehalten.')));
       else if (stand.status === 'laeuft' && stand.phase === 'aufloesung') teile.push(h('div', { class: 'rueckmeldung info funk-aufloesung', role: 'status' }, h('p', null, 'Auflösung – schaut auf den Beamer. Gesendet und geprüft wird jetzt nichts mehr.')));

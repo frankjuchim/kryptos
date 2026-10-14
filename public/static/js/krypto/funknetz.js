@@ -26,6 +26,7 @@ const KRNetz = (() => {
   const MASS = Object.freeze({ tablet: { b: 400, h: 300, r: 22, kreis: 108 }, beamer: { b: 960, h: 540, r: 40, kreis: 205 } });
   const PRO_LINIE = 5; // höchstens so viele Punkte je Richtung (die neuesten)
   const gesehen = new WeakMap(); // ziel → Set der schon gezeichneten Nachrichten-ids (für „fliegt“)
+  const teile = new WeakMap(); // ziel → { svg, details, ort } – „Netz als Tabelle“ bleibt beim Polling stehen (Review M7 W4)
 
   /** „Team Skytale“ → „Skytale“ (Knotenbeschriftung) */
   const kurz = (name) => String(name || '').replace(/^Team\s+/, '');
@@ -181,7 +182,19 @@ const KRNetz = (() => {
       h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Team'), h('th', { scope: 'col' }, 'Rolle'), h('th', { scope: 'col' }, 'gesendet'), h('th', { scope: 'col' }, 'empfangen'))),
       h('tbody', null, zeilen)
     );
-    AQ.mount(ziel, svg, h('details', { class: 'funk-netz-details' }, h('summary', null, 'Netz als Tabelle'), h('div', { class: 'scroll-x' }, tabelle)));
+    // Beim Neuzeichnen (Polling) nur Grafik und Tabelleninhalt tauschen: das <details> bleibt offen, Fokus auf „Netz als
+    // Tabelle“ bleibt erhalten (Review M7 W4)
+    const vorher = teile.get(ziel);
+    if (vorher && vorher.svg.parentNode === ziel && vorher.details.parentNode === ziel) {
+      ziel.replaceChild(svg, vorher.svg);
+      AQ.mount(vorher.ort, tabelle);
+      teile.set(ziel, { ...vorher, svg });
+    } else {
+      const ort = h('div', { class: 'scroll-x' }, tabelle);
+      const details = h('details', { class: 'funk-netz-details' }, h('summary', null, 'Netz als Tabelle'), ort);
+      AQ.mount(ziel, svg, details);
+      teile.set(ziel, { svg, details, ort });
+    }
     return { element: svg, tabelle };
   }
 

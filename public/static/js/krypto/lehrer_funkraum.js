@@ -625,6 +625,21 @@ const KRLehrerFunk = (() => {
       return teile.length ? h('div', { class: 'funk-typ' }, teile) : null;
     }
 
+    /* Fokus über ein Neuzeichnen retten (Review M7 W4): Schlüssel aus Element-Art, Klasse, data-Attributen und Text */
+    let regieGeruest = null;
+    const fokusSchluessel = (el) => [el.localName, el.getAttribute('class'), el.getAttribute('data-id'), el.getAttribute('data-team'), el.getAttribute('data-aktion'), el.getAttribute('href'), el.textContent].join('|');
+    function fokusMerken() {
+      const a = document.activeElement;
+      return a && a !== document.body && box.contains(a) ? fokusSchluessel(a) : null;
+    }
+    function fokusZurueck(schluessel) {
+      if (!schluessel) return;
+      const a = document.activeElement;
+      if (a && a !== document.body && box.contains(a) && fokusSchluessel(a) === schluessel) return;
+      const ziel = [...box.querySelectorAll('button, a, summary, select, input, textarea')].find((el) => fokusSchluessel(el) === schluessel);
+      if (ziel && typeof ziel.focus === 'function') ziel.focus();
+    }
+
     /* --- laeuft / pausiert --- */
     function regie(stand) {
       const k = SZENARIEN[stand.typ] || {};
@@ -646,22 +661,36 @@ const KRLehrerFunk = (() => {
       });
       const nachrichten = (stand.nachrichten || []).slice().reverse();
       const ereignisse = (stand.ereignisse || []).slice(-15).reverse();
+      const fokus = fokusMerken();
+      if (!regieGeruest || !box.contains(regieGeruest.section)) {
+        // Gerüst einmal bauen: Titel, Status und Verbindung (Live-Regionen) bleiben beim Polling dieselben Knoten und
+        // bekommen nur neuen Text (Review M7 W4)
+        const titel = h('h2', { id: 'funk-titel' });
+        const status = h('p', { class: 'funk-status', role: 'status' });
+        const knoepfe = h('div', { class: 'knopf-reihe' });
+        const verbindung = h('p', { class: 'funk-verbindung text-2 klein', role: 'status' }, typeof KRPoll === 'undefined' ? '' : 'Aktualisiert sich alle 3 Sekunden.');
+        const section = h('section', { class: 'funk-tab funk-regie', 'aria-labelledby': 'funk-titel' }, titel, status, knoepfe, verbindung);
+        mount(box, section);
+        regieGeruest = { section, titel, status, knoepfe, verbindung, statusText: null };
+      }
+      const g = regieGeruest;
+      g.titel.textContent = stand.titel || k.titel || 'Funkraum';
+      const zusatz = ` · Phase: ${PHASE[stand.phase] || stand.phase}${naechste ? ` · Nächste Phase: ${PHASE[naechste] || naechste}` : ' · letzte Phase'}`;
+      const statusText = (STATUS[stand.status] || stand.status) + zusatz;
+      if (g.statusText !== statusText) {
+        g.statusText = statusText;
+        mount(g.status, h('strong', null, STATUS[stand.status] || stand.status), zusatz);
+      }
       mount(
-        box,
-        h(
-          'section',
-          { class: 'funk-tab funk-regie', 'aria-labelledby': 'funk-titel' },
-          h('h2', { id: 'funk-titel' }, stand.titel || k.titel || 'Funkraum'),
-          h('p', { class: 'funk-status', role: 'status' }, h('strong', null, STATUS[stand.status] || stand.status), ` · Phase: ${PHASE[stand.phase] || stand.phase}`, naechste ? ` · Nächste Phase: ${PHASE[naechste] || naechste}` : ' · letzte Phase'),
-          h(
-            'div',
-            { class: 'knopf-reihe' },
-            stand.status === 'pausiert' ? aktionKnopf(stand, 'fortsetzen', 'Fortsetzen', 'knopf-primaer') : aktionKnopf(stand, 'pausieren', 'Pausieren'),
-            naechste ? aktionKnopf(stand, 'phase', `Weiter: ${PHASE[naechste] || naechste}`) : null,
-            aktionKnopf(stand, 'beenden', 'Beenden', 'knopf-gefahr', ['Szenario beenden?', 'Alle Nachrichten und Schlüssel werden jetzt gelöscht. Übrig bleibt nur die Auswertung.', 'Beenden']),
-            h('a', { class: 'knopf knopf-zweit beamer-oeffnen', href: `/beamer/funkraum/${stand.id}`, target: '_blank', rel: 'noopener' }, 'Beamer öffnen')
-          ),
-          h('p', { class: 'funk-verbindung text-2 klein', role: 'status' }, typeof KRPoll === 'undefined' ? '' : 'Aktualisiert sich alle 3 Sekunden.'),
+        g.knoepfe,
+        stand.status === 'pausiert' ? aktionKnopf(stand, 'fortsetzen', 'Fortsetzen', 'knopf-primaer') : aktionKnopf(stand, 'pausieren', 'Pausieren'),
+        naechste ? aktionKnopf(stand, 'phase', `Weiter: ${PHASE[naechste] || naechste}`) : null,
+        aktionKnopf(stand, 'beenden', 'Beenden', 'knopf-gefahr', ['Szenario beenden?', 'Alle Nachrichten und Schlüssel werden jetzt gelöscht. Übrig bleibt nur die Auswertung.', 'Beenden']),
+        h('a', { class: 'knopf knopf-zweit beamer-oeffnen', href: `/beamer/funkraum/${stand.id}`, target: '_blank', rel: 'noopener' }, 'Beamer öffnen')
+      );
+      // alles nach der Verbindungszeile neu
+      while (g.verbindung.nextSibling) g.section.removeChild(g.verbindung.nextSibling);
+      const inhalt = [
           fehlerZeile(),
           typRegie(stand),
           h('h3', null, 'Teams'),
@@ -686,8 +715,9 @@ const KRLehrerFunk = (() => {
             : h('p', { class: 'text-2' }, 'Noch keine Nachrichten.'),
           h('h3', null, 'Ereignisse'),
           ereignisse.length ? h('ol', { class: 'regie-ereignisse klein' }, ereignisse.map((e) => h('li', null, h('span', { class: 'text-2' }, KR.zeitText(e.zeit)), ' ', ereignisText(e)))) : h('p', { class: 'text-2' }, 'Noch keine Ereignisse.')
-        )
-      );
+      ];
+      for (const x of inhalt) if (x) g.section.appendChild(x);
+      fokusZurueck(fokus);
     }
 
     /* --- auswertung --- */

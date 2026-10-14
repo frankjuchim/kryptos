@@ -1538,6 +1538,12 @@ spielt es im Vorschlag nicht mit; die Lehrkraft kann vor dem Start tauschen (z. 
   unterbrochen – wird wiederhergestellt“; bei **429** wartet `KRPoll` die Sekunden aus `Retry-After` (mindestens das
   Intervall, höchstens 300 s) ohne Störungsanzeige (Review M7 K6); bei `document.hidden` Polling aussetzen; nach Rückkehr sofort `seit=<v>`.
 - Rate-Limit Stand-Abfragen: 60/min je Teilnahme (2 s ⇒ 30/min); Beamer 120/min.
+- Barrierefreiheit beim Polling (Review M7 W4): Neuzeichnen darf weder Fokus noch offene Zustände verlieren noch
+  Live-Regionen ersetzen. `KRNetz.zeichne` tauscht nur Grafik und Tabelleninhalt (das `<details>` „Netz als Tabelle“
+  bleibt offen und fokussiert); das Banner der Funkraum-Seite (Pause, Auflösung, stumm, Boss) entsteht nur bei Änderung neu;
+  die Regie baut Titel, Status- und Verbindungszeile (`role="status"`) einmal und setzt nur Text, der Rest wird neu
+  gezeichnet und ein fokussierter Knopf (Schlüssel aus Art, Klasse, `data-*`, Text) danach wieder fokussiert; während ein
+  Eingabefeld oder eine Auswahl den Fokus hat, wartet das Neuzeichnen (wie bisher).
 
 ### 12.5 Lehrkraft-Moderation
 

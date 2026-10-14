@@ -460,3 +460,44 @@ test('Review M7 K1: gesperrter Kurs – Arena löschen und Funkraum schließen b
   assert.equal(k.eins(k.document, 'button[data-aktion="schliessen"]').disabled, false);
   k.wert('KRPoll'); // geladen
 });
+
+test('Review M7 W4: Regie-Polling – Fokus auf einem Knopf bleibt, Live-Regionen bleiben dieselben Knoten', async () => {
+  let n = 0;
+  const beob = {};
+  let k = null;
+  const LAUF = { id: 7, typ: 'botenlauf', titel: 'Botenlauf', status: 'laeuft', phase: 'runde-1', phasen: ['runde-1', 'runde-2', 'runde-3', 'aufloesung'], rollen: [{ teamId: 1, team: 'Team Skytale', rolle: 'alice', partnerId: 2 }, { teamId: 2, team: 'Team Scheibe', rolle: 'bob', partnerId: 1 }, { teamId: 3, team: 'Team Quadrat', rolle: 'eve', partnerId: null }], teams: [], anzeigen: {}, optionen: {}, stumm: {} };
+  const N11 = { id: 11, von: 1, an: 2, art: 'nachricht', inhalt: 'OHSAL', lesbar: true };
+  const knopf = () => k.document.getElementById('haupt').querySelector('button.ausblenden[data-id="11"]');
+  const region = (sel) => k.document.getElementById('haupt').querySelector(sel);
+  k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    zeitraffer: 1000,
+    fetch: {
+      ...GRUND(),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+      'GET /api/lehrer/kurse/5/funk': () => ({ status: 200, body: { szenario: n >= 3 ? null : { id: 7, typ: 'botenlauf', status: 'laeuft', phase: 'runde-1' } } }),
+      'GET /api/lehrer/funk/7/stand': () => {
+        n++;
+        if (n === 1) return { status: 200, headers: { etag: '"7-3"' }, body: { ...LAUF, version: 3, voll: true, nachrichten: [N11], ereignisse: [] } };
+        if (n === 2) {
+          knopf().focus();
+          beob.status = region('.funk-status');
+          beob.verbindung = region('.funk-verbindung');
+          return { status: 200, headers: { etag: '"7-4"' }, body: { ...LAUF, version: 4, voll: false, nachrichten: [{ id: 12, von: 2, an: 1, art: 'nachricht', inhalt: 'QUITT', lesbar: true }], ereignisse: [] } };
+        }
+        if (n === 3) {
+          beob.fokus = k.document.activeElement === knopf() && !!knopf();
+          beob.zwoelf = !!k.document.getElementById('haupt').querySelector('li.regie-nachricht[data-id="12"]');
+          beob.gleicheRegionen = region('.funk-status') === beob.status && region('.funk-verbindung') === beob.verbindung;
+        }
+        return { status: 404, body: { error: 'Szenario nicht gefunden.' } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.ok(n >= 3);
+  assert.ok(beob.zwoelf, 'neu gezeichnet');
+  assert.ok(beob.fokus, 'Fokus auf „Ausblenden“ von Nachricht 11 wiederhergestellt');
+  assert.ok(beob.gleicheRegionen, 'Live-Regionen nicht ersetzt');
+});

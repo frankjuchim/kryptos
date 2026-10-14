@@ -883,3 +883,55 @@ test('Beamer Arena: Karten je Team ohne Beschreibung, Ticker der Erfolge, Restze
   assert.match(u.text(u.eins(u.document, 'li.beamer-arena-karte')), /VIG → SPA/);
   u.wert('KRBeamer').stopp();
 });
+
+/* ---------- Review M7 W4: Polling ohne Verlust von Fokus und offenem Zustand ---------- */
+
+test('W4: KRNetz.zeichne behält „Netz als Tabelle“ (offen, Fokus) und aktualisiert nur den Inhalt', async () => {
+  const k = D.lade(['common.js', 'krypto/funknetz.js']);
+  const N = k.wert('KRNetz');
+  const ort = k.document.createElement('div');
+  k.document.body.appendChild(ort);
+  const teams = [{ id: 1, nr: 1, name: 'Team Skytale', rolle: 'alice', partner: 2 }, { id: 2, nr: 2, name: 'Team Scheibe', rolle: 'bob', partner: 1 }];
+  N.zeichne(ort, { teams, nachrichten: [], ich: null, ansicht: 'tablet' });
+  const details = k.eins(ort, 'details.funk-netz-details');
+  const summary = k.eins(details, 'summary');
+  details.open = true;
+  summary.focus();
+  N.zeichne(ort, { teams, nachrichten: [{ id: 1, von: 1, an: 2, inhalt: 'KHOOR', art: 'nachricht' }], ich: null, ansicht: 'tablet' });
+  assert.ok(k.eins(ort, 'details.funk-netz-details') === details, 'dasselbe details-Element');
+  assert.equal(details.open, true, 'bleibt offen');
+  assert.ok(k.document.activeElement === summary, 'Fokus bleibt');
+  assert.equal(k.alle(ort, 'details.funk-netz-details').length, 1);
+  assert.equal(k.alle(ort, 'svg.funk-netz').length, 1);
+  const zeile = k.alle(details, 'tbody tr')[0];
+  assert.match(k.text(zeile), /Team Skytale.*1/);
+});
+
+test('W4: Funkraum-Banner wird nur bei Änderung neu gebaut (Live-Region liest nicht alle 2 s vor)', async () => {
+  let n = 0;
+  const beob = {};
+  let k = null;
+  const banner = () => k.alle(k.document, '.funk-pause')[0] || null;
+  k = D.lade(SEITE, {
+    url: 'http://x.test/funkraum',
+    zeitraffer: 1000,
+    fetch: {
+      'GET /api/sitzung': SITZUNG,
+      'GET /api/funk': funk({ id: 7, typ: 'botenlauf', status: 'pausiert', phase: 'runde-1' }),
+      'GET /api/funk/7/stand': () => {
+        n++;
+        if (n === 1) return { status: 200, headers: { etag: '"7-3-t1-alice"' }, body: stand(3, { status: 'pausiert', voll: true }) };
+        if (n === 2) {
+          beob.vorher = banner();
+          return { status: 200, headers: { etag: '"7-4-t1-alice"' }, body: stand(4, { status: 'pausiert', voll: false, ereignisse: [{ id: 9, code: 'stumm', daten: { team: 2 }, zeit: '2026-10-13T08:00:00Z', version: 4 }] }) };
+        }
+        beob.nachher = banner();
+        return { status: 404, body: { error: 'weg' } };
+      }
+    }
+  });
+  await k.ruhe();
+  assert.ok(n >= 3, `Abrufe: ${n}`);
+  assert.ok(beob.vorher, 'Pause-Banner da');
+  assert.ok(beob.nachher === beob.vorher, 'Banner-Knoten unverändert');
+});
