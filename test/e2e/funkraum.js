@@ -11,7 +11,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { anmelden, beobachte, gehe, keinQuerScrollen, Krypto: K } = require('./hilfen');
+const { anmelden, beobachte, gehe, keinQuerScrollen, kontraste, Krypto: K } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 const { kursWaehlen, kursId } = require('./lehrkraft');
 
@@ -176,6 +176,11 @@ async function szenario5(ctx) {
   await keinQuerScrollen(mp, 'Funkraum 360 px (Mika)');
   await mp.setViewportSize({ width: 1280, height: 800 });
   assert.equal(await beamer.locator('.fliegt').count(), 0, 'reduzierte Bewegung: nichts fliegt');
+  // Kontraste (Review M7 Testqualität): Tablets aller Rollen, Regie und Beamer mit Nachrichten, Ticker, ausgeblendeter Quittung
+  const verstoesse = [];
+  for (const [p, ort] of [[mp, 'Funkraum Mika (Alice)'], [np, 'Funkraum Nia (Bob)'], [op, 'Funkraum Ole (Eve)'], [lp, 'Regie'], [beamer, 'Beamer']]) {
+    verstoesse.push(...(await kontraste(p, `Szenario 5 ${ort}`)));
+  }
 
   // 6. Phasen bis zur Auflösung, Tabelle am Beamer
   for (const phase of ['Runde 2', 'Runde 3', 'Auflösung']) {
@@ -187,6 +192,12 @@ async function szenario5(ctx) {
   const zeilen = await tabelle.locator('tbody tr').allTextContents();
   assert.ok(zeilen.some((t) => t.includes('Team Skytale') && t.includes('✓ ja')), `Auflösung: Mikas Befehl geknackt (${zeilen.join(' | ')})`);
   assert.equal(await beamer.locator('.fliegt').count(), 0, 'reduzierte Bewegung: nichts fliegt (Auflösung)');
+  // Auflösung: Tablets gesperrt mit Banner, Beamer-Tabelle, Regie
+  await op.locator('.funk-aufloesung').waitFor({ timeout: LANG });
+  for (const [p, ort] of [[op, 'Funkraum Ole (Auflösung)'], [lp, 'Regie (Auflösung)'], [beamer, 'Beamer (Auflösung)']]) {
+    verstoesse.push(...(await kontraste(p, `Szenario 5 ${ort}`)));
+  }
+  assert.deepEqual(verstoesse, [], `Kontraste unter WCAG AA:\n  ${verstoesse.join('\n  ')}`);
 
   // Beenden → bei allen „Alle Nachrichten wurden gelöscht.“, Beamer „Beendet“
   await mitBestaetigung(lp, lp.locator('button.aktion[data-aktion="beenden"]'), 'Beenden');
