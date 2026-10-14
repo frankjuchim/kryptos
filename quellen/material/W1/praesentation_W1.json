@@ -22,14 +22,14 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "Randnotiz, aus dem Arabischen übersetzt: *„Wer die Zeichen zählt, braucht keinen Schlüssel.“*"
+     "md": "Randnotiz, aus dem Arabischen übersetzt: *„Wer die Häufigkeiten kennt, liest jedes Blatt.“*"
     },
     {
      "t": "p",
      "md": "**Probiert die Chiffrierscheibe:** Welche Verschiebung passt?"
     }
    ],
-   "notizen": "5 min. Archivfund vorlesen: „Das Chronoskop zeigt ‚850‘. Vor dir liegt ein Blatt aus dem Haus der Weisheit, beschrieben mit einer fremden Buchstabenfolge. Diesmal ist nicht verschoben wie bei Caesar: Jeder Buchstabe wurde durch einen beliebigen anderen ersetzt. 26! Möglichkeiten – mehr, als ein Mensch je ausprobieren könnte. Am Rand steht in arabischer Schrift eine Notiz, die das Archiv übersetzt hat: ‚Wer die Zeichen zählt, braucht keinen Schlüssel.‘ Am Ende dieser Stunde wirst du die Botschaft lesen können.“\nImpuls: Chiffrierscheibe aus Welt 0 probieren lassen – keine Verschiebung passt (z. B. U ist 9 × da; als e gedeutet ergäbe sich Verschiebung 16, dann wird aus ZPUCG kein Wort).\nNur Lehrkraft: Lösung „zaehle die zeichen und du findest den schluessel“, Schlüsselwort PAPYRUS – derselbe Schlüssel wie im Wettknacken. Nicht verraten; Auflösung auf Folie 15."
+   "notizen": "5 min. Archivfund vorlesen: „Das Chronoskop zeigt ‚850‘. Vor dir liegt ein Blatt aus dem Haus der Weisheit, beschrieben mit einer fremden Buchstabenfolge. Diesmal ist nicht verschoben wie bei Caesar: Jeder Buchstabe wurde durch einen beliebigen anderen ersetzt. 26! Möglichkeiten – mehr, als ein Mensch je ausprobieren könnte. Am Rand steht in arabischer Schrift eine Notiz, die das Archiv übersetzt hat: ‚Wer die Häufigkeiten kennt, liest jedes Blatt.‘ Am Ende dieser Stunde wirst du die Botschaft lesen können.“\nImpuls: Chiffrierscheibe aus Welt 0 probieren lassen – keine Verschiebung passt (z. B. U ist 9 × da; als e gedeutet ergäbe sich Verschiebung 16, dann wird aus ZPUCG kein Wort).\nNur Lehrkraft: Lösung „zaehle die zeichen und du findest den schluessel“, Schlüsselwort PAPYRUS – derselbe Schlüssel wie im Wettknacken. Nicht verraten; Auflösung auf Folie 15."
   },
   {
    "layout": "inhalt",
@@ -781,44 +781,6 @@
     {
      "t": "formel",
      "md": "7^−1^ = **15**     Entschlüsseln: **p = m^−1^ · (c − t) mod 26**"
-    },
-    {
-     "t": "tabelle",
-     "zentriert": true,
-     "kopfspalte": true,
-     "zeilen": [
-      [
-       "m",
-       "1",
-       "3",
-       "5",
-       "7",
-       "9",
-       "11",
-       "15",
-       "17",
-       "19",
-       "21",
-       "23",
-       "25"
-      ],
-      [
-       "m^−1^",
-       "1",
-       "9",
-       "21",
-       "15",
-       "3",
-       "19",
-       "7",
-       "23",
-       "11",
-       "5",
-       "17",
-       "25"
-      ]
-     ],
-     "schrift_folie": 16
     }
    ],
    "notizen": "5 min. Ohne Taschenrechner: Vielfache von 26 plus 1 durchgehen (27, 53, 79, 105, 131, 157, 183, 209, 235) und prüfen, welche durch m teilbar ist. Reihenfolge beim Entschlüsseln: erst − t, dann · m⁻¹ (P3); negative Zwischenwerte + 26 (P2). Beispiel Lab W1-L2-04: CPQN mit (21, 7), m⁻¹ = 5 → bote."
