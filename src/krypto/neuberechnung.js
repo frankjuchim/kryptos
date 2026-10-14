@@ -159,7 +159,8 @@ function pruefeGapsRechnung(a, bloecke, fa, wa) {
       for (const v of f.akzeptiert) if (!x.gleich(v)) fa(f.ort, `Lücke ${x.id}: Neuberechnung (${x.art}) ergibt ${x.erwartet}, Lösung „${v}“.`);
     }
   }
-  const offen = [...felder.keys()].filter((id) => !geprueft.has(id));
+  // Klapplisten (typ auswahl) sind Begriffe, keine Rechenergebnisse (Plan M8 Task 178)
+  const offen = [...felder.keys()].filter((id) => !geprueft.has(id) && !(istObjekt(felder.get(id).feld) && felder.get(id).feld.typ === 'auswahl'));
   if (offen.length && RECHEN_KATEGORIEN.includes(a.kategorie) && a.pruefnachweis === undefined) {
     wa('loesung', `Rechenergebnis nicht nachgerechnet – pruefnachweis angeben (quellen/pruefwerte/W<n>.json#<id>; Felder ${offen.join(', ')}).`);
   }

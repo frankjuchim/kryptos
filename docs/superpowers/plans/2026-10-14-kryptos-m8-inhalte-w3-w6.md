@@ -718,10 +718,11 @@ Doppelschloss C₁ `1110 1101`, C₂ `1101 0100`, C₃ `0111 0010`, C₁ ⊕ C�
 
 **Erwartete Hinweise:** keine außer „boss fehlt“ (bis Task 181).
 
-- [ ] **Step 1: Failing test** – `UMFANG[4] = ['W4-A', 'W4-L1']`, `TEILE_ERGAENZT['W4-L1-08']` → FAIL.
-- [ ] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 4). **Step 4: Kontrollfragen K1–K6** (K4: Archivfund
+- [x] **Step 1: Failing test** – `UMFANG[4] = ['W4-A', 'W4-L1']`, `TEILE_ERGAENZT['W4-L1-08']` → FAIL.
+- [x] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 4). **Step 4: Kontrollfragen K1–K6** (K4: Archivfund
   `schluesselVerdeckt: true`; Werkzeug-Block nur in 05/06).
-- [ ] **Step 5: Commit** `git commit -m "Welt 4: Epochen-Daten, Archivfund „Der Brief mit dem verlorenen Schlüssel“, Level 4.1"`.
+- [x] **Step 5: Commit** `git commit -m "Welt 4: Epochen-Daten, Archivfund „Der Brief mit dem verlorenen Schlüssel“, Level 4.1"`.
+- [x] **Umsetzungsnotiz:** Seed mit `w4/bau_welt4.js`. Archivfund `schluesselVerdeckt: true` (Aufgabenfeld), Block `werkzeug` `scheibe`, Vermerk „NOTVERFAHREN – NUR VERSCHIEBUNG“ als Textzeile. W4-L1-03 Klapplisten Alice/Bob/Eve bzw. öffentlichen/privaten. **Zwei kleine Regeländerungen:** (1) Validator: Felder `typ: auswahl` gelten nicht als „Rechenergebnis“ (`neuberechnung.js`, Test in `validator.test.js`); (2) Lösungsverrat-Test: Lösungen von Klapplisten zählen nicht (die Lösung steht ohnehin als Option im Client; sonst fände der Test „öffentlichen“ im Intro). W4-L1-06: x = 13 ohne eigenen Prüfwert (Suche in der Tabelle), Konsistenz-Einträge für die vorgegebene Hälfte und 3¹³ mod 17 = 12. W4-L1-08 a) C₁ als `bits-rechnen`, C₂/C₃ und Eves Werte als `gaps` mit Prüfwert-Gruppe (`xorBits`). Erwartete Hinweise: „akte ↔ akten.json“ (Task 199).
 
 ### Task 179: Welt 4 – Level 4.2 „RSA und das hybride Prinzip“
 

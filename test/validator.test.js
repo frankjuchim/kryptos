@@ -556,6 +556,14 @@ test('W3c: gaps-Rechenaufgabe ohne prüfbare Struktur → Hinweis „pruefnachwe
   erwarteHinweis(() => {}, /W9-L5-10.*pruefnachweis ist überflüssig/, { nicht: true });
   erwarteHinweis(() => {}, /W9-L6-02.*Rechenergebnis nicht nachgerechnet/, { nicht: true }); // per Block nachgerechnet
   erwarteHinweis(() => {}, /W9-L5-09.*Rechenergebnis nicht nachgerechnet/, { nicht: true }); // Kategorie substitution-mono
+  // Plan M8 Task 178 (W4-L1-03): Klapplisten (typ auswahl) sind keine Rechenergebnisse
+  erwarteHinweis((w) => {
+    const a = aufgabe(w, 'W9-L5-10');
+    delete a.pruefnachweis;
+    a.interaktion = { kind: 'gaps', felder: { g1: { typ: 'auswahl', optionen: ['öffentlichen', 'privaten'] } } };
+    a.loesung = { g1: ['privaten'] };
+    a.inhalt = [{ t: 'text', md: 'Entschlüsselt wird mit dem [[g1]] Schlüssel.' }];
+  }, /W9-L5-10.*Rechenergebnis nicht nachgerechnet/, { nicht: true });
 });
 
 test('K8: quadrat- bzw. alphabet-Block und verfahren derselben Aufgabe mit verschiedenen Schlüsseln → Hinweis', () => {

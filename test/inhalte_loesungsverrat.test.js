@@ -59,11 +59,16 @@ function stuecke(wert, { ohne = [] } = {}) {
 /** Lösungen einer Aufgabe: normalisierte Zeichenketten (≥ 6 Zeichen, ≥ 3 verschiedene; nur 0/1: ≥ 16 Zeichen) */
 function loesungen(a) {
   const roh = [];
+  // Klapplisten (gaps typ auswahl): die Lösung steht ohnehin als Option im Client – Begriffe, kein Lösungstext (Plan M8 Task 178)
+  const auswahl = new Set();
+  for (const ia of [].concat(a.interaktion || [])) {
+    if (ia && ia.kind === 'gaps' && ia.felder) for (const [id, f] of Object.entries(ia.felder)) if (f && f.typ === 'auswahl') auswahl.add(id);
+  }
   for (const lo of [].concat(a.loesung || [])) {
     if (!lo || typeof lo !== 'object') continue;
     const luecken = [];
     for (const [k, v] of Object.entries(lo)) {
-      if (k.startsWith('_') || k === 'richtig' || k === 'zuordnung' || k === 'reihenfolge') continue;
+      if (k.startsWith('_') || k === 'richtig' || k === 'zuordnung' || k === 'reihenfolge' || auswahl.has(k)) continue;
       if (typeof v === 'string') roh.push(v);
       else if (Array.isArray(v)) {
         v.filter((x) => typeof x === 'string').forEach((x) => roh.push(x));
@@ -134,6 +139,7 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet in Alphabet-Block, Qu
   assert.ok(stuecke({ t: 'quadrat', zeilen: ['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ'] }).some((s) => s.includes('FGHKMNPQSU')));
   assert.deepEqual(stuecke({ t: 'p', md: 'Lösung', nur_loesung: true }), []);
   assert.deepEqual(loesungen({ loesung: { text: 'XXXXXX' } }), [], 'zu wenig verschiedene Zeichen');
+  assert.deepEqual(loesungen({ interaktion: { kind: 'gaps', felder: { g: { typ: 'auswahl', optionen: ['öffentlichen', 'privaten'] } } }, loesung: { g: ['öffentlichen'] } }), [], 'Klappliste (Plan M8 Task 178)');
   // Plan M8 Task 171: Bitlösungen ab 16 Bit, gefunden in einem bits-Block
   assert.deepEqual(loesungen({ loesung: { bits: '0110101011010100' } }), ['0110101011010100']);
   assert.deepEqual(loesungen({ loesung: { bits: '01101010' } }), [], 'kürzere Bitfolgen zählen nicht');
