@@ -3067,6 +3067,20 @@ gesperrt.“; Lehrkraft-Vorschau zeigt alles mit Hinweis.
   (`npm run lehrkraft -- --pruefen`: 84 Downloads, 0 Probleme) – keine PDFs neu zu erzeugen. `vertrag_pruefen.js` gegen den
   Dev-Server: Vertrag v1.2 erfüllt (0.4.0). e2e-Fotos nach dem Lauf zurückgesetzt (nur Versionsfuß, E118).
 
+- **Review M7 (nach Task 162, Version 0.4.1):** W1 – in `aufloesung` lehnt der Dienst jede Team-Aktion ab (409), neuer
+  Typ-Hook `aktionsPhasen` (Doppelter Schlüssel: `empfangen` nur `funken`, `knacken` in `funken`/`lauschen`); die Seite
+  sperrt Eingaben in der Auflösung. W2/K3/K6 – Stand mit `voll` (Vollstand nach Phasen-/Statuswechsel seit `seit` und bei
+  ETag einer anderen Sicht), Schüler-ETag `"<id>-<v>-t<team>-<rolle>"`, `KRPoll` ersetzt bei `voll`, wartet bei 429
+  `Retry-After`. W3 – Wettknacken-Anteil für Teams in 10-%-Stufen (E97 nachgetragen), `fortschritt`-Ereignis nur
+  Regie/Beamer. W4 – Netz-Tabelle, Banner und Regie behalten Fokus/offenen Zustand/Live-Regionen. W5 – offene Arena
+  30 Tage nach Anlage geschlossen (Wartung `arenaOffen`). K1 – Arena löschen, Funkraum schließen/abbrechen auch im
+  gesperrten Kurs. K2 – Anlegen löscht ein abgelaufenes Szenario vorher. K4 – Arena-Abzeichen an die Mitglieder zum
+  Zeitpunkt (`abzeichen.mitVergabe`, Knacker-Bedingung über `arena_versuche.schueler_id`). K5 – Werkstatt-Entwurf nach
+  dem Einreichen, beim Ende der Werkstatt-Phase (Feld `arena`) und vor der Neuanmeldung nach 401 gelöscht
+  (`AQ.vorAnmeldung`, K27). K7 – Token `--netz-linie`/`--netz-linie-nacht` ≥ 3 : 1. K8 – Arenen nicht im Backup
+  (`NIE_IM_BACKUP`, ältere Backups ohne sie eingespielt). K9 – Rollenvorschlag W4/W5 nach Welt-Spec (E107 korrigiert).
+  e2e Szenario 5 misst Kontraste (Tablets, Regie, Beamer, Auflösung).
+
 ## Reihenfolge und Abhängigkeiten
 
 130 → 131 → 132 → 133 → 134 → 135 → 136 → 137 → 138 → 139 → 140 → 141 → 142 → 143 → 144 → 145 → 146 → 147 → 148 → 149 →

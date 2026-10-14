@@ -118,7 +118,8 @@ In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright insta
   bleiben Inhalte im `kryptos.db-wal` (Test `test/datenschutz_wal.test.js`).
 - **Szenario-Typ-Vertrag:** je Szenario ein Modul `src/krypto/funkraum/typen/<typ>.js` mit den Hooks aus TECHNIK §12.6
   (`start`, `ich`, `sicht`/`sichtVorrang`, `ereignisSicht`, `anzeigen`, `aktionen`, `grenzen`, `regie`, `werkzeuge`,
-  `pruefeAnlegen`, `klartextPflicht`, `textVomServer`, `auswertung`); der Dienst (`dienst.js`) macht Zustandsautomat,
+  `pruefeAnlegen`, `klartextPflicht`, `textVomServer`, `aktionsPhasen`, `auswertung`); in `aufloesung` keine Team-Aktionen
+  (409); der Dienst (`dienst.js`) macht Zustandsautomat,
   Sichtbarkeit, Versionen, Grenzen, Löschung. Ereignis-`daten` nur Codes/Zahlen/ids. Beamer-Sicht verdeckt bis `aufloesung`.
   Zufall nur `ctx.zufallBytes(n)`, Zeit nur `ctx.now()`.
 - **Tests:** `test/hilfen_funk.js` (`kursMitTeams`, `starte`, `aktion`, `stand`, `regie`, `fundstellen`,
