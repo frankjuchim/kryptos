@@ -2635,6 +2635,24 @@
     }
     if (v.typ === 'skytale') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen === null ? 'X' : null }, text, richtung)));
     if (v.typ === 'spaltentransposition') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen ? null : 'X' }, text, richtung)));
+    // Plan M8 Task 192: beim Entschlüsseln alle Spalten gleich lang (⌈n/c⌉) angenommen – nur bei kurzer letzter Zeile
+    if (v.typ === 'spaltentransposition' && richtung === 'ent') {
+      dazu('P4', 'spaltenlaengen', () => {
+        const t = nurBuchstaben(text);
+        const rang = spaltenReihenfolge(v.schluessel);
+        const zeilen = Math.ceil(t.length / rang.length);
+        const spalten = rang.map((r) => t.slice((r - 1) * zeilen, r * zeilen));
+        let aus2 = '';
+        for (let z = 0; z < zeilen; z++) for (const sp of spalten) aus2 += sp[z] || '';
+        return aus(aus2);
+      });
+    }
+    // Plan M8 Task 192: Polybios/ADFGVX Stufe 1 – Zeile und Spalte vertauscht
+    if (v.typ === 'polybios') {
+      const tausche = (paare) => (String(paare).replace(/\s+/g, '').toUpperCase().match(/../g) || []).map((x) => x[1] + x[0]).join('');
+      if (richtung === 'ver') dazu('P4', 'zeile_spalte', () => tausche(korrekt));
+      else dazu('P4', 'zeile_spalte', () => aus(rechne(v, tausche(text), 'ent')));
+    }
     return liste;
   }
 

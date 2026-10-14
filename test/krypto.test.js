@@ -2044,6 +2044,21 @@ test('verfahren.anwenden: Dispatcher (Werte aus W0–W3)', () => {
   assert.throws(() => an({ typ: 'caesar', k: 3 }, 'abc', 'ver', { ausgabe: 'roemisch' }), K.KryptoFehler);
 });
 
+// Plan M8 Task 192 (SPEC W3 §8 adfgvx_stufe1, spaltentransposition; Spec-Vektoren W3-L4-01, W6-L1-06): weitere Varianten
+test('verfahren.varianten: Polybios Zeile/Spalte vertauscht (P4), Spaltentransposition gleich lange Spalten (P4)', () => {
+  const finde = (liste, p, code) => liste.filter((x) => x.p === p && x.code === code).map((x) => x.text);
+  const pb = { typ: 'polybios', schluessel: 'ZEPPELIN18', kopf: 'ADFGVX' };
+  assert.equal(K.verfahren.anwenden(pb, 'post', 'ver'), 'AFGAGGGV'); // W3-L4-01
+  assert.deepEqual(finde(K.verfahren.varianten(pb, 'post', 'ver'), 'P4', 'zeile_spalte'), ['FAAGGGVG']);
+  assert.deepEqual(finde(K.verfahren.varianten(pb, 'FAAGGGVG', 'ent'), 'P4', 'zeile_spalte'), ['POST']);
+  const sp = { typ: 'spaltentransposition', schluessel: 'ABC' };
+  assert.equal(K.verfahren.anwenden(sp, 'SNWDOEINNN', 'ent'), 'SONNENWIND'); // W6-L1-06
+  assert.deepEqual(finde(K.verfahren.varianten(sp, 'SNWDOEINNN', 'ent'), 'P4', 'spaltenlaengen'), ['SONNENWIDN']); // Schülerlösung W6-L1-06
+  assert.deepEqual(finde(K.verfahren.varianten(sp, 'OKTCAELHRN', 'ent'), 'P4', 'spaltenlaengen').length, 1);
+  assert.deepEqual(finde(K.verfahren.varianten({ typ: 'spaltentransposition', schluessel: 'TAL' }, 'ABCDEF', 'ent'), 'P4', 'spaltenlaengen'), [], 'volle Zeilen: keine Variante');
+  assert.deepEqual(finde(K.verfahren.varianten(sp, 'sonnenwind', 'ver'), 'P4', 'spaltenlaengen'), [], 'nur beim Entschlüsseln');
+});
+
 test('verfahren: Typen ring, uhrwerk, mini_enigma (Plan M8 E123, Spec-Vektoren W3/W6)', () => {
   const A = (v, t, r = 'ver') => K.verfahren.anwenden(v, t, r);
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK'); // W6 §0.1

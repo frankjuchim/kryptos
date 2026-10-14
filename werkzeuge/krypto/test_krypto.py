@@ -1259,6 +1259,17 @@ class VerfahrenBaukasten(unittest.TestCase):
         self.assertRaises(F, an, {'typ': 'caesar', 'k': 99}, 'abc', 'ver')
         self.assertRaises(F, an, {'typ': 'caesar', 'k': 3}, 'abc', 'ver', ausgabe='roemisch')
 
+    def test_verfahren_varianten_polybios_spalten(self):  # Plan M8 Task 192
+        def finde(liste, p, code):
+            return [x['text'] for x in liste if x['p'] == p and x['code'] == code]
+        pb = {'typ': 'polybios', 'schluessel': 'ZEPPELIN18', 'kopf': 'ADFGVX'}
+        self.assertEqual(finde(K.verfahren_varianten(pb, 'post', 'ver'), 'P4', 'zeile_spalte'), ['FAAGGGVG'])
+        self.assertEqual(finde(K.verfahren_varianten(pb, 'FAAGGGVG', 'ent'), 'P4', 'zeile_spalte'), ['POST'])
+        sp = {'typ': 'spaltentransposition', 'schluessel': 'ABC'}
+        self.assertEqual(finde(K.verfahren_varianten(sp, 'SNWDOEINNN', 'ent'), 'P4', 'spaltenlaengen'), ['SONNENWIDN'])
+        self.assertEqual(finde(K.verfahren_varianten({'typ': 'spaltentransposition', 'schluessel': 'TAL'}, 'ABCDEF', 'ent'), 'P4', 'spaltenlaengen'), [])
+        self.assertEqual(finde(K.verfahren_varianten(sp, 'sonnenwind', 'ver'), 'P4', 'spaltenlaengen'), [])
+
     def test_verfahren_ring_uhrwerk_mini_enigma(self):
         """Plan M8 E123 – dieselben Spec-Vektoren wie test/krypto.test.js."""
         an = lambda v, t, r='ver': K.verfahren_anwenden(v, t, r)  # noqa: E731

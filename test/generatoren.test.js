@@ -399,8 +399,8 @@ test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau 
   assert.deepEqual(['w4_dh', 'w4_rsa_ver'].map((k) => G.GENERATOREN[k].niveau), ['ergaenzung', 'ergaenzung']);
 });
 
-test('Alle 24 Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + Ergänzungen W0–W2, Plan M5 Tasks 91/92)', () => {
-  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['affin', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'mod_a1', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
+test('Alle Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + Ergänzungen W0–W2, Plan M5 Tasks 91/92; W3–W6 Plan M8 Tasks 192–194)', () => {
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['adfgvx_stufe1', 'affin', 'ascii_bits', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'kryptos16_teilschritt', 'mod_a1', 'otp', 'otp_doppelt', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'spaltentransposition', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
   // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
   for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
@@ -703,4 +703,213 @@ test('Generatoren: Richtungsangaben einheitlich „nach rechts“ / „nach link
     }
   }
   assert.ok(rechts > 0 && links > 0, `nach rechts ${rechts}, nach links ${links}`);
+});
+
+/* ---------- Plan M8 Task 192: Trainingsplatz Welt 3 (SPEC W3 §8) ---------- */
+
+const { spawnSync } = require('node:child_process');
+const nodePath = require('node:path');
+/** Python-Zwilling über werkzeuge/krypto/bruecke.py: Aufträge [{ f, args }] → Ergebnisse (ohne python3: null). */
+function zwilling(auftraege) {
+  const r = spawnSync('python3', ['-I', nodePath.join(__dirname, '..', 'werkzeuge', 'krypto', 'bruecke.py')], { input: auftraege.map((a) => JSON.stringify(a)).join('\n') + '\n', encoding: 'utf8' });
+  if (r.error || r.status !== 0) return null;
+  return r.stdout.trim().split('\n').map((z) => JSON.parse(z)).map((x, i) => {
+    assert.ok(x.ok, `${JSON.stringify(auftraege[i])}: ${JSON.stringify(x)}`);
+    return x.r;
+  });
+}
+const PYTHON = !spawnSync('python3', ['--version']).error;
+/** unabhängig: ASCII-Bits (A = 65) ohne Trenner, XOR zweier Bitfolgen */
+const asciiBits = (t) => [...t.toUpperCase()].map((c) => c.charCodeAt(0).toString(2).padStart(8, '0')).join('');
+const xorStr = (a, b) => [...nurBits(a)].map((x, i) => (x === nurBits(b)[i] ? '0' : '1')).join('');
+const SEEDS500 = Array.from({ length: 500 }, (_, i) => i * 104729 + 3);
+const VIDEO_ASCII = new Set(VIDEOS.filter((v) => v.verfahren === 'textZuBits').map((v) => v.eingabe[0]));
+
+test('ascii_bits: ASCII (A = 65) beide Richtungen, keine Video-Zeichen, Alphabetnummer statt ASCII → P1', () => {
+  const richtungen = new Set();
+  for (const a of grundpruefung('ascii_bits')) {
+    const ia = a.interaktion;
+    richtungen.add(ia.richtung);
+    assert.match(a.inhalt[0].md, /A = 65/);
+    if (ia.richtung === 'zu-bits') {
+      assert.match(ia.text, /^[A-Z]$/);
+      assert.ok(!VIDEO_ASCII.has(ia.text), `Video-Zeichen ${ia.text}`);
+      assert.equal(a.loesung.bits, asciiBits(ia.text));
+      const alphabet = (ia.text.charCodeAt(0) - 64).toString(2).padStart(8, '0');
+      assert.equal(C.pruefeAufgabe(a, alphabet, { diagnose: true }).diagnose[0].p, 'P1');
+    } else {
+      assert.equal(ia.richtung, 'zu-text');
+      assert.equal(nurBits(ia.bits), asciiBits(a.loesung.text));
+      assert.ok(!VIDEO_ASCII.has(a.loesung.text), `Video-Zeichen ${a.loesung.text}`);
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['zu-bits', 'zu-text']);
+  if (PYTHON) {
+    const aufgaben = SEEDS500.slice(0, 50).map((s) => G.erzeuge('ascii_bits', s));
+    const r = zwilling(aufgaben.map((a) => ({ f: 'textZuBits', args: [a.interaktion.text || a.loesung.text, { gruppe: 0 }] })));
+    aufgaben.forEach((a, i) => assert.equal(r[i], a.loesung.bits || nurBits(a.interaktion.bits)));
+  }
+});
+
+test('otp: C = ASCII(W) ⊕ K bzw. zurück, Wortliste W3, OR statt XOR → P4; otp_doppelt: M2 = D ⊕ M1', () => {
+  const richtungen = new Set();
+  for (const a of grundpruefung('otp')) {
+    const teile = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
+    const lo = Array.isArray(a.loesung) ? a.loesung : [a.loesung];
+    const [x, k] = teile[0].operanden.map(nurBits);
+    assert.equal(lo[0].bits, xorStr(x, k));
+    if (teile.length === 1) {
+      richtungen.add('ver');
+      const wort = /Verschlüssele `([A-Z]+)`/.exec(a.inhalt[0].md)[1];
+      assert.ok(W.WOERTER_W3.includes(wort.toLowerCase()) && wort.length >= 3 && wort.length <= 5, wort);
+      assert.equal(x, asciiBits(wort));
+      const oder = [...x].map((b, i) => (b === '1' || k[i] === '1' ? '1' : '0')).join('');
+      if (oder !== lo[0].bits) assert.equal(C.pruefeAufgabe(a, oder, { diagnose: true }).diagnose[0].p, 'P4');
+    } else {
+      richtungen.add('ent');
+      assert.deepEqual(teile.map((t) => t.kind), ['bits-rechnen', 'gaps']);
+      assert.equal(asciiBits(lo[1].wort[0]), lo[0].bits);
+      assert.ok(W.WOERTER_W3.includes(lo[1].wort[0].toLowerCase()));
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+  for (const a of grundpruefung('otp_doppelt')) {
+    const [, d, m1] = /C₁ ⊕ C₂ = `([01 ]+)`.*erste Nachricht lautet `([A-Z]+)`/.exec(a.inhalt[0].md);
+    const m2 = a.loesung.wort[0];
+    assert.ok(m1 !== m2 && m1.length === m2.length && m1.length >= 4 && m1.length <= 6);
+    assert.ok([m1, m2].every((m) => W.WOERTER_W3.includes(m.toLowerCase())));
+    assert.equal(xorStr(asciiBits(m1), asciiBits(m2)), nurBits(d));
+  }
+  if (PYTHON) {
+    const aufgaben = SEEDS500.slice(0, 50).map((s) => G.erzeuge('otp', s));
+    const r = zwilling(aufgaben.map((a) => ({ f: 'xorBits', args: [].concat(a.interaktion)[0].operanden })));
+    aufgaben.forEach((a, i) => assert.equal(nurBits(r[i]), [].concat(a.loesung)[0].bits));
+  }
+});
+
+test('kryptos16_teilschritt (eA): S-Box, S⁻¹, Transposition, Rundenschlüssel nach W3 §0a; S statt S⁻¹ → P3', () => {
+  const S = [0xc, 0xf, 0x3, 0x9, 0x7, 0xa, 0x8, 0x6, 0x1, 0x2, 0x4, 0xe, 0xb, 0x5, 0xd, 0x0];
+  const SI = S.map((_, i) => S.indexOf(i));
+  const nib = (x) => [12, 8, 4, 0].map((s) => (x >> s) & 0xf);
+  const ausNib = (n) => (n[0] << 12) | (n[1] << 8) | (n[2] << 4) | n[3];
+  const trans = (x) => { const b = x.toString(2).padStart(16, '0'); let o = ''; for (let s = 0; s < 4; s++) for (let z = 0; z < 4; z++) o += b[z * 4 + s]; return parseInt(o, 2); };
+  const rotLinks = (k, r) => { const n = ((r - 1) % 4) * 4; return ((k << n) | (k >>> (16 - n))) & 0xffff; };
+  const b16 = (x) => x.toString(2).padStart(16, '0');
+  const schritte = new Set();
+  for (const a of grundpruefung('kryptos16_teilschritt')) {
+    const ia = a.interaktion;
+    assert.equal(ia.operation, 'kryptos16');
+    schritte.add(ia.schritt);
+    if (ia.schritt === 'rundenschluessel') {
+      const k = parseInt(nurBits(ia.schluessel), 2);
+      assert.ok(ia.runden >= 2 && ia.runden <= 4);
+      assert.equal(a.loesung.bits, b16(rotLinks(k, ia.runden)));
+    } else {
+      const x = parseInt(nurBits(ia.block), 2);
+      const soll = ia.schritt === 'sbox' ? ausNib(nib(x).map((v) => S[v])) : ia.schritt === 'sbox-inv' ? ausNib(nib(x).map((v) => SI[v])) : trans(x);
+      assert.equal(a.loesung.bits, b16(soll));
+      assert.notEqual(soll, x, 'Ergebnis ≠ Eingabe');
+      if (ia.schritt !== 'transposition') {
+        const falsch = ausNib(nib(x).map((v) => (ia.schritt === 'sbox' ? SI : S)[v]));
+        if (falsch !== soll) assert.equal(C.pruefeAufgabe(a, b16(falsch), { diagnose: true }).diagnose[0].p, 'P3');
+      }
+    }
+  }
+  assert.deepEqual([...schritte].sort(), ['rundenschluessel', 'sbox', 'sbox-inv', 'transposition']);
+  assert.equal(G.GENERATOREN.kryptos16_teilschritt.niveau, 'eA');
+});
+
+/** ADFGVX-Quadrat unabhängig: Schlüsselzeichen ohne Doppelte, dann A–Z, dann 0–9 */
+function adfgvxQuadrat(schluessel) {
+  const q = [];
+  for (const c of `${schluessel}ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`) if (!q.includes(c)) q.push(c);
+  return q;
+}
+test('adfgvx_stufe1: Paare Zeile/Spalte aus dem Quadrat, ver/ent, Zeile und Spalte vertauscht → P4', () => {
+  const richtungen = new Set();
+  const KOPF = 'ADFGVX';
+  for (const a of grundpruefung('adfgvx_stufe1')) {
+    const ia = a.interaktion;
+    const schl = ia.verfahren.schluessel;
+    assert.ok([...W.ADFGVX_W3, 'ZEPPELIN18'].includes(schl), schl);
+    assert.ok(a.inhalt.some((b) => b.t === 'quadrat' && b.schluessel === schl && b.kopf === KOPF));
+    const q = adfgvxQuadrat(schl);
+    const paare = (t, tausch = false) => [...t.toUpperCase()].map((c) => { const i = q.indexOf(c); const [z, s] = [KOPF[Math.floor(i / 6)], KOPF[i % 6]]; return tausch ? s + z : z + s; }).join('');
+    richtungen.add(ia.richtung);
+    const [klar, geheim] = ia.richtung === 'ver' ? [ia.eingabe, a.loesung.text] : [a.loesung.text, ia.eingabe];
+    assert.match(klar, /^[a-z0-9]{3,6}$/);
+    assert.equal(geheim.replace(/ /g, '').toUpperCase(), paare(klar));
+    if (ia.richtung === 'ver') {
+      const t = paare(klar, true);
+      if (t !== paare(klar)) assert.equal(C.pruefeAufgabe(a, t, { diagnose: true }).diagnose[0].p, 'P4');
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+});
+
+/** Spaltentransposition unabhängig: Zeilen füllen, Spalten in alphabetischer Schlüsselreihenfolge (gleiche Buchstaben von links) lesen */
+function spalten(text, schl) {
+  const t = text.toUpperCase();
+  const reihe = [...schl].map((c, i) => [c, i]).sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] - y[1])).map((x) => x[1]);
+  let out = '';
+  for (const s of reihe) for (let i = s; i < t.length; i += schl.length) out += t[i];
+  return out;
+}
+test('spaltentransposition: Reihenfolge alphabetisch, ver/ent, Wortlisten W3, gleich lange Spalten → P4, falsche Richtung → P3', () => {
+  const richtungen = new Set();
+  let p4 = 0;
+  for (const a of grundpruefung('spaltentransposition')) {
+    const ia = a.interaktion;
+    const schl = ia.verfahren.schluessel;
+    assert.ok(W.SPALTEN_W3.includes(schl), schl);
+    richtungen.add(ia.richtung);
+    const [klar, geheim] = ia.richtung === 'ver' ? [ia.eingabe, a.loesung.text] : [a.loesung.text, ia.eingabe];
+    assert.ok(W.KLARTEXTE_W3.includes(klar.toLowerCase()), klar);
+    assert.equal(spalten(klar, schl), nurAZ(geheim));
+    const m = a.inhalt.find((b) => b.t === 'matrix');
+    assert.deepEqual(m.kopf, [...schl]);
+    assert.equal(m.zeilen.length, Math.ceil(klar.length / schl.length));
+    if (ia.richtung === 'ver') {
+      // Gegenrichtung: Spalten in Schlüsselreihenfolge wieder auf die Zeilen verteilt (unabhängig)
+      const reihe = [...schl].map((c, i) => [c, i]).sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] - y[1])).map((x) => x[1]);
+      const t = klar.toUpperCase(); const out = Array(t.length); let j = 0;
+      for (const sp of reihe) for (let i = sp; i < t.length; i += schl.length) out[i] = t[j++];
+      const gegen = out.join('');
+      if (gegen !== nurAZ(geheim)) assert.equal(C.pruefeAufgabe(a, gegen, { diagnose: true }).diagnose[0].p, 'P3');
+    }
+    if (ia.richtung === 'ent' && klar.length % schl.length) {
+      // Fehlrechnung unabhängig: alle Spalten ⌈n/c⌉ lang angenommen, dann zeilenweise gelesen
+      const reihe = [...schl].map((c, i) => [c, i]).sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] - y[1])).map((x) => x[1]);
+      const g = nurAZ(geheim); const zl = Math.ceil(g.length / schl.length); const sp = [];
+      reihe.forEach((s, r) => { sp[s] = g.slice(r * zl, (r + 1) * zl); });
+      let falsch = ''; for (let z = 0; z < zl; z++) for (const x of sp) falsch += x[z] || '';
+      if (falsch !== nurAZ(klar)) { assert.equal(C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose[0].p, 'P4'); p4++; }
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+  assert.ok(p4 > 20, `nur ${p4} Aufgaben mit kurzer letzter Zeile`);
+});
+
+test('Trainingsplatz Welt 3: kryptos16_teilschritt (eA) fehlt im gA-Kurs, die übrigen sind sichtbar', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  const keys = async () => (await s.get('/api/training/3')).body.generatoren.map((g) => g.key);
+  assert.deepEqual(await keys(), ['xor_bytes', 'kryptos16_runde', 'kryptos16_teilschritt', 'ascii_bits', 'otp', 'otp_doppelt', 'adfgvx_stufe1', 'spaltentransposition']);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.deepEqual(await keys(), ['xor_bytes', 'ascii_bits', 'otp', 'otp_doppelt', 'adfgvx_stufe1', 'spaltentransposition']);
+});
+
+test('Zwilling (bruecke.py) rechnet ADFGVX-Stufe 1, Spaltentransposition und KRYPTOS-16-Einzelschritte nach (je 50 Seeds)', { skip: !PYTHON && 'python3 fehlt' }, () => {
+  const lauf = (key, auftrag, vergleich) => {
+    const aufgaben = SEEDS500.slice(0, 50).map((s) => G.erzeuge(key, s));
+    const r = zwilling(aufgaben.map(auftrag));
+    aufgaben.forEach((a, i) => vergleich(a, r[i]));
+  };
+  lauf('adfgvx_stufe1', (a) => ({ f: 'verfahren.anwenden', args: [a.interaktion.verfahren, a.interaktion.eingabe, a.interaktion.richtung] }), (a, r) => assert.equal(String(r).replace(/\s+/g, '').toUpperCase(), a.loesung.text.toUpperCase()));
+  lauf('spaltentransposition', (a) => ({ f: 'spaltentransposition', args: [a.interaktion.eingabe, a.interaktion.verfahren.schluessel, a.interaktion.richtung] }), (a, r) => assert.equal(nurAZ(r), nurAZ(a.loesung.text)));
+  lauf('kryptos16_teilschritt', (a) => {
+    const ia = a.interaktion;
+    if (ia.schritt === 'rundenschluessel') return { f: 'kryptos16.rundenschluessel', args: [parseInt(nurBits(ia.schluessel), 2), ia.runden] };
+    const x = parseInt(nurBits(ia.block), 2);
+    return ia.schritt === 'transposition' ? { f: 'kryptos16.transponiere', args: [x] } : { f: 'kryptos16.sbox', args: [x, ia.schritt === 'sbox' ? 'ver' : 'ent'] };
+  }, (a, r) => assert.equal(r.toString(2).padStart(16, '0'), a.loesung.bits));
 });

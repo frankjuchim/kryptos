@@ -22,6 +22,11 @@ const MODULE = [
   require('./friedman'),
   require('./xor'),
   require('./kryptos16'),
+  // Plan M8 Task 192 (Welt 3)
+  require('./ascii_bits'),
+  require('./otp'),
+  require('./adfgvx'),
+  require('./spalten'),
   require('./schluesselanzahl'),
   require('./toyhash'),
   require('./dhrsa')

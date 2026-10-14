@@ -18,6 +18,7 @@ const TEXTE = Object.freeze({
   'bits-rechnen:verknuepfung': 'Prüfe die Verknüpfung: Bei XOR ergibt 1 ⊕ 1 = 0 und 0 ⊕ 0 = 0.',
   'bits-rechnen:bitreihenfolge': 'Das höchstwertige Bit steht links – prüfe die Bitreihenfolge.',
   'bits-rechnen:ascii': 'Der ASCII-Wert liegt um eins daneben – zähle die Zweierpotenzen noch einmal nach.',
+  'bits-rechnen:alphabetnummer': 'Das ist die Nummer im Alphabet (A = 1) – gesucht ist der ASCII-Wert (A = 65).',
   'bits-rechnen:transposition': 'Nach der S-Box fehlt die Transposition (Zeile ↔ Spalte).',
   'bits-rechnen:richtung': 'Du hast in der falschen Richtung gerechnet (ver- statt entschlüsselt oder umgekehrt).',
   'zuordnung:richtung': 'Du hast die Tabelle in der falschen Richtung gelesen – gesucht ist zu jedem Geheimtextbuchstaben der Klartextbuchstabe.',
@@ -31,6 +32,8 @@ const TEXTE = Object.freeze({
   '*:negativ': 'mod liefert den kleinsten nicht negativen Rest.',
   '*:paare': 'Prüfe die Paarbildung: Doppelbuchstaben trennen, J = I, Füllzeichen.',
   '*:fuellung': 'Prüfe Füllzeichen und die unvollständige letzte Zeile.',
+  '*:zeile_spalte': 'Zeile und Spalte sind vertauscht – zuerst kommt der Zeilenbuchstabe (links), dann der Spaltenbuchstabe (oben).',
+  '*:spaltenlaengen': 'Bei unvollständiger letzter Zeile sind nur die ersten Spalten länger – nicht alle Spalten gleich lang annehmen.',
   '*:rest_ab_letztem': 'Kryptos-Regel: Rest ab A – nach dem Schlüsselwort folgen die übrigen Buchstaben ab A, nicht ab dem letzten Schlüsselwortbuchstaben.'
 });
 
@@ -363,6 +366,10 @@ function bitsKandidaten(ia, lo, kanon, soll) {
         for (const d of [1, -1]) {
           const b = textZuBitsVersetzt(ia.text, d);
           if (b) out.push({ p: 'P1', code: 'ascii', liste: [...b] });
+        }
+        // Plan M8 Task 192 (SPEC W3 §8 ascii_bits): Nummer im Alphabet (A = 1) statt ASCII-Wert
+        if (/^[A-Za-z]+$/.test(String(ia.text || ''))) {
+          out.push({ p: 'P1', code: 'alphabetnummer', liste: [...[...ia.text.toUpperCase()].map((c) => K.byteZuBits(c.charCodeAt(0) - 64, 8)).join('')] });
         }
         if (typeof soll === 'string') out.push({ p: 'P4', code: 'bitreihenfolge', liste: [...jeByteUmgedreht(soll)] });
       }

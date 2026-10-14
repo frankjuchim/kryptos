@@ -1169,10 +1169,11 @@ ein Listenwort ersetzen und neu nachrechnen.
 Wörter aus Task 191 (`WOERTER_W3`, `SPALTEN_W3`, `ADFGVX_W3`); `welten: [3]`; Video-04-Beispiele („J“, 1001 1100, NEU/ALT,
 WIRBEL-8, OHO) ausgeschlossen (Video-Abgleich wie `mod_a1`).
 
-- [ ] **Step 1: Failing tests** – je Generator: 500 Seeds deterministisch, Lösung unabhängig nachgerechnet (Zwilling über
+- [x] **Step 1: Failing tests** – je Generator: 500 Seeds deterministisch, Lösung unabhängig nachgerechnet (Zwilling über
   `bruecke.py` für 50 Seeds), Validator ohne Fehler, Video-Eingaben nie, Niveau-Filter (eA nur im eA-Kurs).
-- [ ] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Trainingsplatz Welt 3: ASCII, One-Time-Pad, KRYPTOS-16-Teilschritt, ADFGVX, Spaltentransposition"`.
+- [x] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Trainingsplatz Welt 3: ASCII, One-Time-Pad, KRYPTOS-16-Teilschritt, ADFGVX, Spaltentransposition"`.
+- [x] **Umsetzungsnotiz:** Neue Module `ascii_bits.js`, `otp.js` (`otp`, `otp_doppelt`), `adfgvx.js`, `spalten.js`, `kryptos16.js` + `kryptos16_teilschritt` (eA). `ascii_bits` ohne die elf Video-Zeichen (J N E U A L T O H W V aus `videos.json`), Diagnose neu P1 `alphabetnummer` (Nummer im Alphabet statt ASCII, `diagnose.js`). `otp` ver als `bits-rechnen xor`, ent mehrteilig xor + `gaps` Wort; `otp_doppelt` als `gaps` mit C₁ ⊕ C₂ und M₁ (beide Wörter gleich lang, 4–6). Statt generatoreigener Fehlmuster (der Validator erlaubt `fehlmuster` nur bei `frei`) zwei neue **Bibliotheks-Varianten** in JS und Zwilling, Spec-Vektor-first: Polybios P4 `zeile_spalte` (post → AFGAGGGV, vertauscht FAAGGGVG) und Spaltentransposition `ent` P4 `spaltenlaengen` (SNWDOEINNN/ABC → SONNENWIDN = Schülerlösung W6-L1-06); Delta §9.2 und TECHNIK §5.2 ergänzt, `?v=` 0.4.9. Tests: je Generator unabhängige Rechnung (60/300 Seeds der Grundprüfung, Video-Abgleich), Diagnosen P1/P3/P4, Zwilling über `bruecke.py` (je 50 Seeds), Sichtbarkeit (gA ohne die beiden KRYPTOS-16-Generatoren); `krypto:vergleich` 2000 Fälle 0 Abweichungen.
 
 ### Task 193: Generatoren Welten 4 und 5 (7 neue)
 

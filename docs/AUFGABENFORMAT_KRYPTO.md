@@ -818,6 +818,8 @@ Buchstabe **neben** der Lösung (Rest um 1 falsch, Übergang Z ↔ A verzählt).
 Ein einzelner Tippfehler an einer Umbruchstelle (z. B. `Q` statt `G` bei Caesar k = 13) ist damit kein P2-Fehler.
 | Playfair: Doppelbuchstaben nicht getrennt / J nicht ersetzt / kein Füllzeichen am Ende | Varianten der Paarbildung | **P4** · `paare` | „Prüfe die Paarbildung: Doppelbuchstaben trennen, J = I, Füllzeichen.“ |
 | Transposition: Füllzeichen fehlt/zu viel, unvollständige Matrix falsch gelesen | Varianten `fuellzeichen` an/aus | **P4** · `fuellung` | „Prüfe Füllzeichen und die unvollständige letzte Zeile.“ |
+| Spaltentransposition entschlüsseln: alle Spalten gleich lang angenommen (Plan M8 Task 192) | Spalten je ⌈n/c⌉ Zeichen in Schlüsselreihenfolge, dann zeilenweise gelesen (nur bei kurzer letzter Zeile) | **P4** · `spaltenlaengen` | „Bei unvollständiger letzter Zeile sind nur die ersten Spalten länger – nicht alle Spalten gleich lang annehmen.“ |
+| Polybios/ADFGVX Stufe 1: Zeile und Spalte vertauscht (Plan M8 Task 192) | `ver`: jedes Paar umgedreht; `ent`: Paare umgedreht gelesen | **P4** · `zeile_spalte` | „Zeile und Spalte sind vertauscht – zuerst kommt der Zeilenbuchstabe (links), dann der Spaltenbuchstabe (oben).“ |
 
 ### 9.3 `zuordnung`
 
@@ -838,6 +840,7 @@ d ∈ {+1, −1} gilt bei ≥ 80 % von V: x = Buchstabe(Wert(`loesung.zuordnung[
 | UND/ODER statt XOR | bitweises AND bzw. OR der Operanden | **P4** · `verknuepfung` |
 | Bitreihenfolge umgedreht | Lösung rückwärts (je Byte) | **P4** · `bitreihenfolge` |
 | ASCII-Wert um 1 daneben (A = 64/66) | Bits von Code ± 1 | **P1** · `ascii` |
+| Nummer im Alphabet statt ASCII-Wert (`zu-bits`, nur Buchstaben; Plan M8 Task 192) | Bits von Code − 64 (A = 1) | **P1** · `alphabetnummer` |
 | `kryptos16`: Transposition ausgelassen | Runden ohne Transposition (`sbox(x ⊕ Kᵢ)`; KRYPTOS-16 hat nach SPEC W3 §0a keine Hälften) | **P4** · `transposition` |
 | `kryptos16`: falsche Richtung/Rotation | Gegenrichtung (Ent- statt Verschlüsselung bzw. umgekehrt), S⁻¹ statt S, Rundenschlüssel rechts statt links rotiert (ab 2 Runden) | **P3** · `richtung` |
 | `kryptos16` mit `schritt` (Plan M8 E124) | Einzelschritt `sbox` ↔ `sbox-inv` vertauscht und `rundenschluessel` rechts statt links rotiert → **P3** · `richtung`; `transposition` ausgelassen (Antwort = Eingabe) → **P4** · `transposition`; Kettenzustand mit S⁻¹ statt S bzw. mit rechts rotierten Rundenschlüsseln → **P3** · `richtung`, ohne Transposition in den Runden → **P4** · `transposition` | wie links |

@@ -2513,4 +2513,22 @@ def verfahren_varianten(v, text, richtung, *, basis=1, ausgabe='buchstaben'):
     if typ == 'spaltentransposition':
         anders = None if v.get('fuellzeichen') is not None else 'X'
         dazu('P4', 'fuellung', lambda: spaltentransposition(t, v['schluessel'], richtung, fuellzeichen=anders))
+    if typ == 'spaltentransposition' and richtung == 'ent':
+        # Plan M8 Task 192: alle Spalten gleich lang (⌈n/c⌉) angenommen – nur bei kurzer letzter Zeile
+        def gleich_lang():
+            u = nur_buchstaben(t)
+            rang = spalten_reihenfolge(v['schluessel'])
+            zeilen = -(-len(u) // len(rang))
+            spalten = [u[(r - 1) * zeilen:r * zeilen] for r in rang]
+            return ''.join(sp[z] for z in range(zeilen) for sp in spalten if z < len(sp))
+        dazu('P4', 'spaltenlaengen', gleich_lang)
+    if typ == 'polybios':
+        # Plan M8 Task 192: Zeile und Spalte vertauscht
+        def tausche(paare):
+            u = ''.join(str(paare).split()).upper()
+            return ''.join(u[i + 1] + u[i] for i in range(0, len(u) - 1, 2))
+        if richtung == 'ver':
+            dazu('P4', 'zeile_spalte', lambda: tausche(richtig))
+        else:
+            dazu('P4', 'zeile_spalte', lambda: _anwenden_text(v, tausche(text), 'ent'))
     return kandidaten
