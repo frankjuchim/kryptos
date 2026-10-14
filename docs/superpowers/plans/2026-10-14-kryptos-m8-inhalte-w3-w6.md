@@ -520,9 +520,10 @@ SUED/TXRD/YORD.
 
 **Erwartete Hinweise:** W3-L1-07 b)/c) keiner (Kategorie ohne Prüfwert-Pflicht); Datei „boss fehlt“ bis Task 177.
 
-- [ ] **Step 1: Failing test** – `UMFANG[3] = ['W3-A', 'W3-L1']` → FAIL.
-- [ ] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 3). **Step 4: Kontrollfragen K1–K6.**
-- [ ] **Step 5: Commit** `git commit -m "Welt 3: Epochen-Daten, Archivfund „Der Lochstreifen von 1917“, Level 3.1"`.
+- [x] **Step 1: Failing test** – `UMFANG[3] = ['W3-A', 'W3-L1']` → FAIL.
+- [x] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 3). **Step 4: Kontrollfragen K1–K6.**
+- [x] **Step 5: Commit** `git commit -m "Welt 3: Epochen-Daten, Archivfund „Der Lochstreifen von 1917“, Level 3.1"`.
+- [x] **Umsetzungsnotiz:** Seed gebaut mit dem Scratchpad-Skript `w3/bau_welt3.js` (Titel, Tipps, Erklärungen aus dem Spec-Parser). Archivfund mit `pruefnachweis` (Prüfwert-Gruppe `bitsZuText` → FUNK; `ort` ohne `W3-L1-00`, sonst liest der Abgleich die Spec-id falsch). W3-L1-07 b)/c) mit Prüfwert-Gruppen über `xor` (D als Hex ⊕ NORD/SUEDEN/NORDEN, `ent`) statt nur Konsistenz-Einträgen; c) fragt „die Nachricht mit NORD“ und „die andere“ (feste Felder). W3-L1-06 b) Optionen `ja`/`nein` (wie W0-L2-08 c, der Abgleich liest „Nein – …“ als `nein`), NORD-Schlüssel als Konsistenz-Eintrag. W3-L1-04 Tipp 1 „(Aufgabe 01)“ → „(Teil a)“ (kein Verweis auf andere Aufgaben). **Lösungsverrat:** Die OST-Bits (Lösung W3-L1-04 a) stehen in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) → begründete, vorläufige Ausnahme im Test (Frage an die Lehrkraft). Testanpassungen: `inhalte_spec` erkennt „(mehrfach)“ und „w/f“ als Mehrfachauswahl; die Real-Seed-Tests (`docker`, `niveaus`, `themen`, `verbund` Manifest) richten sich nach den vorhandenen Seeds (W3–W6 kommen Task für Task; vollständige Prüfung W3–W6 in Task 201). Erwartete Hinweise: „Abdeckung fremde Chiffre“ (bis Task 175/177), „akte ↔ akten.json“ (bis Task 199).
 
 ### Task 173: Welt 3 – Level 3.2 „Der Blockchiffre-Baukasten“ (eA)
 

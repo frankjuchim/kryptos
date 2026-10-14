@@ -146,7 +146,8 @@ function pruefeAufgabe(welt, w, spec) {
     const soll = S.choiceLoesung(spec, i);
     assert.ok(soll, `${o}: Spec-Lösung des choice-Teils ${i} nicht lesbar`);
     assert.deepEqual([...((lo && lo.richtig) || [])].sort(), [...soll].sort(), `${o}: choice-Lösung (E62)`);
-    if (!Array.isArray(a.interaktion)) assert.equal(!!ia.mehrfach, /Mehrfachauswahl/.test(spec.interaktion), `${o}: mehrfach`);
+    // „Mehrfachauswahl“ (W0–W2), „(mehrfach)“ und „(je Aussage w/f)“ (W3, M8 E130) → mehrfach
+    if (!Array.isArray(a.interaktion)) assert.equal(!!ia.mehrfach, /Mehrfachauswahl|\(mehrfach\)|w\/f/.test(spec.interaktion), `${o}: mehrfach`);
   });
 }
 

@@ -122,7 +122,9 @@ test('Seite /themen#niveaus: Abschnitt und Skript ohne Inline-Code, Skript rende
 test('Niveau-Übersicht mit den echten Seeds: W0–W2 aus dem Katalog (= WELT_PLAN), W3–W6 aus dem Plan (Plan M5 Task 100)', async () => {
   const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
   const d = (await request(app).get('/api/niveaus').expect(200)).body;
-  assert.deepEqual(d.welten.map((w) => [w.nr, w.quelle]), [[0, 'katalog'], [1, 'katalog'], [2, 'katalog'], [3, 'plan'], [4, 'plan'], [5, 'plan'], [6, 'plan']]);
+  // Welten mit Seed kommen aus dem Katalog (Plan M8: W3–W6 entstehen Task für Task), die übrigen aus WELT_PLAN
+  const mitSeed = (nr) => fs.existsSync(path.join(__dirname, '..', 'seed', 'welten', `welt${nr}.json`));
+  assert.deepEqual(d.welten.map((w) => [w.nr, w.quelle]), [0, 1, 2, 3, 4, 5, 6].map((nr) => [nr, mitSeed(nr) ? 'katalog' : 'plan']));
   for (const nr of [0, 1, 2]) {
     const w = d.welten[nr];
     const plan = WELT_PLAN.find((p) => p.nr === nr);

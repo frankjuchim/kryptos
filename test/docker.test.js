@@ -14,6 +14,9 @@ const { spawn, spawnSync } = require('node:child_process');
 
 const WURZEL = path.join(__dirname, '..');
 const lies = (p) => fs.readFileSync(path.join(WURZEL, p), 'utf8');
+// Welten mit Seed (Plan M8: W3–W6 kommen Task für Task dazu) und Welten mit Akten in seed/akten.json (Akten W3–W6: Task 199)
+const SEED_WELTEN = fs.readdirSync(path.join(WURZEL, 'seed', 'welten')).map((d) => /^welt(\d)\.json$/.exec(d)).filter(Boolean).map((m) => Number(m[1])).sort((a, b) => a - b);
+const AKTEN_WELTEN = new Set(JSON.parse(lies('seed/akten.json')).welten.map((w) => w.welt));
 
 /** .dockerignore als Regelliste [{ muster: RegExp, ausnahme }] (Docker: Muster ab Wurzel, `*` ohne `/`, `**` beliebig). */
 function ignoreRegeln() {
@@ -196,8 +199,8 @@ test('Image-Nachbau: Validator und Server (production) laufen nur mit den Dateie
       }
       assert.ok(bereit, `Server im Image startet nicht:\n${log}`);
       const themen = await (await fetch(basis + '/api/themen')).json();
-      assert.deepEqual(themen.welten.map((w) => w.nr), [0, 1, 2]);
-      for (const w of themen.welten) for (const l of w.levels) assert.ok(l.akte && l.akte.url, `Akte mit URL für ${l.id}`);
+      assert.deepEqual(themen.welten.map((w) => w.nr), SEED_WELTEN);
+      for (const w of themen.welten.filter((x) => AKTEN_WELTEN.has(x.nr))) for (const l of w.levels) assert.ok(l.akte && l.akte.url, `Akte mit URL für ${l.id}`);
       assert.ok(themen.werkzeugkarten.every((x) => x.url), 'Werkzeugkarten mit URL');
       const demo = JSON.parse(lies('seed/demo_materialien.json'));
       for (const p of demo.schueler) assert.equal((await fetch(`${basis}/akten/${p}`)).status, 200, `Demo-PDF ${p}`);
@@ -205,7 +208,7 @@ test('Image-Nachbau: Validator und Server (production) laufen nur mit den Dateie
       assert.equal((await fetch(`${basis}/akten/Welt_0_Antike/KR_W0_Akte2_Caesars_Botschaft.pdf`)).status, 401, 'Akte ohne Anmeldung');
       const manifest = await (await fetch(basis + '/api/plattform')).json();
       assert.equal(manifest.id, 'kryptos');
-      assert.equal(manifest.umfang.welten, 3);
+      assert.equal(manifest.umfang.welten, SEED_WELTEN.length);
     } finally {
       kind.kill('SIGTERM');
       await new Promise((r) => (kind.exitCode !== null ? r() : kind.once('exit', r)));

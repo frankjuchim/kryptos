@@ -172,9 +172,13 @@ test('demo_materialien.json: _LSG, _EH und Klausuren werden nie öffentlich (Pla
 test('Themenübersicht mit den echten Seeds: drei Welten, je Level Akte mit URL, Boss 8 Aufgaben/25 min, Trainingsplatz, Warm-up 12 (Plan M5 Task 100)', async () => {
   const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
   const d = (await request(app).get('/api/themen').expect(200)).body;
-  assert.deepEqual(d.welten.map((w) => w.nr), [0, 1, 2]);
-  assert.deepEqual(d.welten.map((w) => w.boss.titel), ['Der Bote des Feldherrn', 'Der Kalif und der Kurier', 'Die Venezianische Depesche']);
-  for (const w of d.welten) {
+  // Plan M8: W3–W6 kommen Task für Task dazu (Akten Task 199, Warm-up Task 190, Generatoren Tasks 192–194) – die
+  // vollständige Prüfung gilt für W0–W2, für die übrigen Welten mit Seed nur, dass sie erscheinen
+  const mitSeed = fs.readdirSync(path.join(__dirname, '..', 'seed', 'welten')).map((x) => /^welt(\d)\.json$/.exec(x)).filter(Boolean).map((m) => Number(m[1])).sort((a, b) => a - b);
+  assert.deepEqual(d.welten.map((w) => w.nr), mitSeed);
+  const fertig = d.welten.filter((w) => w.nr <= 2);
+  assert.deepEqual(fertig.map((w) => w.boss.titel), ['Der Bote des Feldherrn', 'Der Kalif und der Kurier', 'Die Venezianische Depesche']);
+  for (const w of fertig) {
     assert.deepEqual([w.boss.anzahl, w.boss.dauerMin], [8, 25], `Welt ${w.nr}: Boss`);
     assert.equal(w.warmup, 12, `Welt ${w.nr}: Warm-up`);
     assert.ok(w.training.length >= 5, `Welt ${w.nr}: Trainingsplatz`);
@@ -185,7 +189,7 @@ test('Themenübersicht mit den echten Seeds: drei Welten, je Level Akte mit URL,
       assert.ok(l.akte.titel.startsWith(`Akte W${w.nr}·${l.nr === 'K1' ? 'K1' : l.nr.split('.')[1]} – `), l.akte.titel);
     }
   }
-  assert.deepEqual(d.welten.map((w) => w.levels.length), [4, 3, 5]);
+  assert.deepEqual(fertig.map((w) => w.levels.length), [4, 3, 5]);
   assert.equal(d.werkzeugkarten.length, 7);
   assert.ok(d.werkzeugkarten.every((x) => x.url && x.url.startsWith('/akten/00_Werkzeugkarten/')));
   const text = JSON.stringify(d);

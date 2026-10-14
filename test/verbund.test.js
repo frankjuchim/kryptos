@@ -75,8 +75,16 @@ test('Manifest mit den echten Seeds W0–W2: Umfang aus dem Katalog (91 Level-Au
   const app = H.makeApp({ seedDir: require('node:path').join(__dirname, '..', 'seed'), weltDateien: [] });
   const m = (await request(app).get('/api/plattform').expect(200)).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.deepEqual(m.umfang, { welten: 3, level: 12, aufgaben: 91 + 45, bosse: 3 });
-  assert.deepEqual(m.welten.map((w) => [w.nr, w.titel, w.level]), [[0, 'Die Antike', 4], [1, 'Das Haus der Weisheit', 3], [2, 'Le chiffre indéchiffrable', 5]]);
+  // W0–W2 fest (91 Level-Aufgaben + 3 Boss-Pools à 15); W3–W6 kommen in Plan M8 Task für Task dazu (Umfang aus den Seeds)
+  const fs = require('node:fs');
+  const ordner = require('node:path').join(__dirname, '..', 'seed', 'welten');
+  const weitere = fs.readdirSync(ordner).filter((x) => /^welt[3-6]\.json$/.test(x)).map((x) => JSON.parse(fs.readFileSync(require('node:path').join(ordner, x), 'utf8')));
+  const zahl = (w) => w.levels.reduce((s, l) => s + l.aufgaben.length, 0) + (w.boss ? w.boss.pool.length : 0);
+  assert.deepEqual(m.umfang, {
+    welten: 3 + weitere.length, level: 12 + weitere.reduce((s, w) => s + w.levels.length, 0),
+    aufgaben: 91 + 45 + weitere.reduce((s, w) => s + zahl(w), 0), bosse: 3 + weitere.filter((w) => w.boss).length
+  });
+  assert.deepEqual(m.welten.slice(0, 3).map((w) => [w.nr, w.titel, w.level]), [[0, 'Die Antike', 4], [1, 'Das Haus der Weisheit', 3], [2, 'Le chiffre indéchiffrable', 5]]);
 });
 
 test('pruefeManifest erkennt Vertragsverstöße', () => {

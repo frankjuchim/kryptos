@@ -20,6 +20,10 @@ const AUSNAHMEN = [
   {
     aufgabe: 'W6-L2-01', quelle: 'Akte akte_W6-2',
     begruendung: 'Plan M8 E137: Die Lesereihenfolge 0 5 2 7 4 1 6 3 (t = 5) steht als Archivwissen-Tabelle in Akte W6·2 – Nachschlagen im Archivwissen ist in dieser Aufgabe gewollt.'
+  },
+  {
+    aufgabe: 'W3-L1-04', quelle: 'Akte akte_W3-2',
+    begruendung: 'Plan M8 Task 172 (vorläufig, Frage an die Lehrkraft): Teil a) verlangt nur die ASCII-Codierung von OST (Nachschlagen in der Anlage); dieselbe Bitfolge steht in Akte W3·2 (eA) als Beispiel für das Auffüllen „OST“ (SPEC W3 §0a.7) – kein Rechenergebnis der Aufgabe.'
   }
 ];
 const GENUTZT = new Set();
