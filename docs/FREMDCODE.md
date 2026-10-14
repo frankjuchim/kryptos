@@ -74,7 +74,8 @@ wird mit der folgenden Task nachgetragen („folgt“).
 
 | Kryptos-Pfad | Quelle (Pfad @ Commit) | Erlaubnis | Kryptos-Commit | Änderungen |
 |---|---|---|---|---|
-| – | – | – | – | – |
+| `public/static/js/krypto/labor/station.js` | `shared/portal.js` @ `59004d9` | Lehrkraft 14.10.2026 (E167) | Task 224 | Port der Helfer `tween`/`ease`, `fly`, `stamps`, `tape`, `guide`, `say`, `details.more`, `section.info`, `tap`/`afterTap`, `grip`, `beep`/`thump`, `burst` als `KRStation` (Plan M10 „Gemeinsamer Baustein“): DOM nur über `AQ.h` (kein `innerHTML`), Flug über die Web Animations API, Bewegung entfällt bei `AQ.ruhig()`, Ton per Schalter (Standard aus), Kopieren wie `KRLaborBau`; **nicht** übernommen: Abspieler `player`, Missionsmodus, `store` (localStorage), `shell`/Aurora, Segmentschalter |
+| `public/static/css/labor_objekte.css` | `shared/portal.css` @ `59004d9` | Lehrkraft 14.10.2026 (E167) | Task 224 | Stempelkasten (Holz), Nachrichtenband, Kurzanleitung ①②③, „Mehr ausprobieren“, fliegende Buchstaben als `station-*`; Farben auf Material-Tokens `--mat-*` und Chronoskop-Tokens umgestellt, Touch-Ziele 44 px, Schriften `--f-mono`/`--f-text`; Glas, Aurora, Webschriften, Missionsmodus entfallen |
 
 ## Weitere Fremdquellen
 

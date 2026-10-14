@@ -222,7 +222,7 @@ test('werkzeug: Block reicht ctx.laborUmgebung und Voreinstellung an KRLabor.dia
   assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', { reiter: ['quadrat'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]]);
 });
 test('werkzeug-Block: Dialog öffnet das nachgeladene Modul mit Voreinstellung und Kurs-Umgebung (M6 Task 125)', () => {
-  const { k, el } = bau({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, { laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0] } }, ['krypto/labor/bausteine.js', 'krypto/labor/scheibe.js']);
+  const { k, el } = bau({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, { laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0] } }, ['krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js']);
   const knopf = k.eins(el, 'button.werkzeug-oeffnen');
   knopf.focus();
   k.klick(knopf);

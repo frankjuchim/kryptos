@@ -8,7 +8,7 @@ const D = require('./dom_attrappe');
 
 const SITZUNG_S = { rolle: 'schueler', name: 'Mika R.', kurs: { id: 'k:1', name: 'LK 13 (eA)', niveau: 'eA' }, kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }], portal: 'https://portal.test', version: '0.3.1' };
 const BASIS = ['common.js', 'krypto/oberflaeche.js', 'krypto/kopfzeile.js'];
-const LABOR = [...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'];
+const LABOR = [...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js'];
 const zeit = () => new Promise((r) => setTimeout(r, 5)); // hashchange der Attrappe kommt über einen echten Timer
 
 /** /api/labor als umschaltbare Route: zustand.boss = true simuliert den Kampfbeginn in einem anderen Tab. */
@@ -63,7 +63,7 @@ test('Labor-Seite (alter Tab): Wechsel zu einem anderen Werkzeug fragt /api/labo
   assert.deepEqual(k.skripte, [], 'kein Modul nachgeladen');
 });
 
-const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js', 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'];
+const SPIEL = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/zeitleiste.js', 'krypto/epoche.js', 'krypto/level.js', 'krypto/profil.js', 'krypto/spiel.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js'];
 const welt9 = { nr: 9, titel: 'Welt 9', epoche: 'Testepoche', jahr: { von: 1909, bis: 2000, anzeige: '1909 – 2000' }, farbe: '#5B6B7C', akzentHell: '#C9D3DD', frei: true, punkte: 0, maxPunkte: 10, anteil: 0, training: false, archivfund: null, kapitel: null, boss: null, levels: [] };
 function spielFetch(zustand) {
   const a = { id: 'W9-L1-01', titel: 'Caesar', stufe: 1, punkte: 10, kategorie: 'entschluesseln', niveau: 'kern', inhalt: [{ t: 'werkzeug', id: 'scheibe' }], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'CXY' } };
@@ -109,7 +109,7 @@ test('Aufgabe (alter Tab): offener Werkzeug-Dialog wird bei Rückkehr in den Tab
 
 /* ---------- Gastmodus (Orchestrator-Entscheidung Review M6) ---------- */
 
-const GAST = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js', 'krypto/gast.js', 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'];
+const GAST = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js', 'krypto/gast.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js'];
 const seiteGast = (k) => k.document.body.classList.add('seite-gast');
 
 test('Gast mit Schüler-Sitzung im Kampf: Scheibe gesperrt mit Hinweis, Demo-Aufgabe öffnet sie gesperrt', async () => {

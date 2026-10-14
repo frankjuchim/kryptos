@@ -80,6 +80,31 @@
   --inhalt: 1120px;
   --ziel: 44px;
 
+  /* Material der Labor-Objekte (Plan M10 E172, nach der Krypto-Werkstatt): Holz, Messing, Papierband, Karton, Fell,
+     Gehäuse, Lampe, Kabel. Tinte auf Band/Karton/Gehäuse ≥ 4,5 : 1, Lampe/Kabel ≥ 3 : 1 auf dem Gehäuse (designsystem.test.js) */
+  --mat-holz: #8F6534;
+  --mat-holz-hell: #E3C28C;
+  --mat-holz-dunkel: #5B3A1E;
+  --mat-messing: #B07D2B;
+  --mat-band: #EFE6CF;
+  --mat-band-tinte: #2B2317;
+  --mat-karton: #D9C7A0;
+  --mat-karton-tinte: #2B2317;
+  --mat-fell: #EADBB8;
+  --mat-gehaeuse: #22211E;
+  --mat-gehaeuse-tinte: #ECE6D8;
+  --mat-lampe-an: #FFC94A;
+  --mat-kabel-1: #E57373;
+  --mat-kabel-2: #64B5F6;
+  --mat-kabel-3: #81C784;
+  --mat-kabel-4: #FFB74D;
+  --mat-kabel-5: #BA68C8;
+  --mat-kabel-6: #4DD0E1;
+  --mat-kabel-7: #F06292;
+  --mat-kabel-8: #DCE775;
+  --mat-kabel-9: #A1887F;
+  --mat-kabel-10: #E0E0E0;
+
   color-scheme: light;
 }
 
@@ -107,6 +132,28 @@
   --niveau-eA: #D98C8C;
   --niveau-ergaenzung: #8FB4EA;
   --niveau-kuer: #D9A441;
+  --mat-holz: #7A5229;
+  --mat-holz-hell: #D9B47A;
+  --mat-holz-dunkel: #4A2F17;
+  --mat-messing: #C9963F;
+  --mat-band: #E4D9BE;
+  --mat-band-tinte: #2B2317;
+  --mat-karton: #CDB98F;
+  --mat-karton-tinte: #2B2317;
+  --mat-fell: #DCCBA4;
+  --mat-gehaeuse: #151513;
+  --mat-gehaeuse-tinte: #ECE6D8;
+  --mat-lampe-an: #FFD566;
+  --mat-kabel-1: #E57373;
+  --mat-kabel-2: #64B5F6;
+  --mat-kabel-3: #81C784;
+  --mat-kabel-4: #FFB74D;
+  --mat-kabel-5: #BA68C8;
+  --mat-kabel-6: #4DD0E1;
+  --mat-kabel-7: #F06292;
+  --mat-kabel-8: #DCE775;
+  --mat-kabel-9: #A1887F;
+  --mat-kabel-10: #E0E0E0;
   color-scheme: dark;
 }
 
@@ -135,6 +182,28 @@
     --niveau-eA: #D98C8C;
     --niveau-ergaenzung: #8FB4EA;
     --niveau-kuer: #D9A441;
+    --mat-holz: #7A5229;
+    --mat-holz-hell: #D9B47A;
+    --mat-holz-dunkel: #4A2F17;
+    --mat-messing: #C9963F;
+    --mat-band: #E4D9BE;
+    --mat-band-tinte: #2B2317;
+    --mat-karton: #CDB98F;
+    --mat-karton-tinte: #2B2317;
+    --mat-fell: #DCCBA4;
+    --mat-gehaeuse: #151513;
+    --mat-gehaeuse-tinte: #ECE6D8;
+    --mat-lampe-an: #FFD566;
+    --mat-kabel-1: #E57373;
+    --mat-kabel-2: #64B5F6;
+    --mat-kabel-3: #81C784;
+    --mat-kabel-4: #FFB74D;
+    --mat-kabel-5: #BA68C8;
+    --mat-kabel-6: #4DD0E1;
+    --mat-kabel-7: #F06292;
+    --mat-kabel-8: #DCE775;
+    --mat-kabel-9: #A1887F;
+    --mat-kabel-10: #E0E0E0;
     color-scheme: dark;
   }
 }

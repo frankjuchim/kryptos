@@ -702,7 +702,7 @@ test('Gast: Demo-Aufgabe schickt Fehlversuche/Tipps mit, Werkzeug Scheibe frei',
 });
 
 test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigenere lädt nichts (M6 Task 126)', async () => {
-  const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
+  const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
   await k.ruhe();
   assert.ok(k.eins(k.document, '.scheibe-drehknopf'));
   assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);

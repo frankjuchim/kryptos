@@ -68,3 +68,14 @@ test('Labor-Klassen kollidieren nicht mit allgemeinen Selektoren in aufgaben.css
   }
   assert.deepEqual(treffer, [], 'Werkzeug-Klassen mit Präfix benennen (z. B. enigma-, fleissner-, werkbank-)');
 });
+
+test('labor_objekte.css (Plan M10 E173): jeder Selektor beginnt mit einer Klasse mit Werkzeug-Präfix', () => {
+  const PRAEFIX = /^(station|scheibe|stab|pflug|karton|quadrat|signale|verstecke|enigma|analyse|werkzeug-herkunft|labor-vier)/;
+  const sel = selektoren('labor_objekte.css').filter((x) => !/^(from|to|\d+%)$/.test(x));
+  assert.ok(sel.length > 10, 'Selektoren gefunden');
+  const falsch = sel.filter((x) => {
+    const erste = /\.([a-zA-Z][\w-]*)/.exec(x.replace(/^:root(\[[^\]]*\])*\s*/, ''));
+    return !erste || !PRAEFIX.test(erste[1]);
+  });
+  assert.deepEqual(falsch, []);
+});

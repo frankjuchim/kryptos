@@ -457,7 +457,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
 `--mat-holz`, `--mat-holz-hell`, `--mat-holz-dunkel`, `--mat-messing` (= `--messing`), `--mat-band`, `--mat-band-tinte`,
 `--mat-karton`, `--mat-karton-tinte`, `--mat-fell`, `--mat-gehaeuse`, `--mat-gehaeuse-tinte`, `--mat-lampe-an`, `--mat-kabel-1` … `--mat-kabel-10`.
 
-- [ ] **Step 1: Failing tests** – `test/labor_station.test.js`:
+- [x] **Step 1: Failing tests** – `test/labor_station.test.js`:
   ```js
   test('flug und bewegung: ruhig → sofort, kein animate', async () => { /* oeffne Attrappe mit ruhig: true; KRStation.flug(a, b, 'K') löst sofort; k.animiert.length === 0; bewegung(400, f) ruft f(1, 1) genau einmal */ });
   test('schnelle_stempel_verlieren_nichts', () => { /* stempel + baender: 20 Klicks A…T → baender.text(0) === 'abcdefghijklmnopqrst' */ });
@@ -470,10 +470,15 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   `labor_regeln.test.js`: `station.js` ohne verbotene Muster (Liste `VERBOTEN` ohne die `Krypto.`-/`registriere`-Pflicht).
   `designsystem.test.js`: jeder `--mat-*`-Token in `:root` **und** im Dunkelblock; Kontrast `--mat-band-tinte` auf `--mat-band`,
   `--mat-karton-tinte` auf `--mat-karton`, `--mat-gehaeuse-tinte` auf `--mat-gehaeuse` ≥ 4,5 : 1 in beiden Modi.
-- [ ] **Step 2:** FAIL. **Step 3:** `station.js` aus `shared/portal.js` portieren (Kopf mit Herkunft, du-Form, keine
+- [x] **Step 2:** FAIL. **Step 3:** `station.js` aus `shared/portal.js` portieren (Kopf mit Herkunft, du-Form, keine
   Template-HTML-Strings – alles `AQ.h`/`AQ.s`; Kopieren über `KRLaborBau`), `labor_objekte.css` mit Grundstilen
   (`station-*`) aus `portal.css`, Farben nur Tokens; Version patch.
-- [ ] **Step 4:** `npm test` grün. **Step 5: Commit** `M10: Labor-Rahmen III – KRStation (Port aus der Krypto-Werkstatt), Material-Tokens, labor_objekte.css (Task 224)`
+- [x] **Step 4:** `npm test` grün. **Step 5: Commit** `M10: Labor-Rahmen III – KRStation (Port aus der Krypto-Werkstatt), Material-Tokens, labor_objekte.css (Task 224)`
+- Umsetzung (Abweichungen): `sperre(werkzeug, an)` bekommt die Werkzeug-Wurzel als ersten Parameter (Hinweis und Stempel
+  dort); `mehr(ziel, titel, stichworte, ...inhalt)` nimmt den Inhalt als weitere Argumente; `baender` zusätzlich
+  `setze(eintraege)`, `beschrifte(oben, unten, gruppe)`. Fremdcode-Test: in belegten Dateien darf die Herkunftszeile den
+  Quellpfad nennen (sonst träfe `portal.js` die Spurensuche). Tests, die Bausteine + Modul direkt laden, laden jetzt auch
+  `station.js` (Registry verlangt `KRStation`); `pruefwerte.test.js` unberührt.
 
 ### Task 225: Registry, Server, Reiter-Regeln, Labor-Übersicht (E177–E180, E193, E194)
 

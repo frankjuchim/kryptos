@@ -77,18 +77,22 @@ const KRLabor = (() => {
     SKRIPTE.set(src, p);
     return p;
   }
-  /** Werkzeug-Modul (und einmal labor/bausteine.js) nachladen; Promise erfüllt, sobald das Modul registriert ist. */
+  /** Werkzeug-Modul (und einmal labor/bausteine.js, danach labor/station.js – Plan M10 Task 224) nachladen; Promise
+      erfüllt, sobald das Modul registriert ist. */
   function lade(id) {
     if (!NACH_ID.has(id)) return Promise.reject(new Error('Dieses Werkzeug gibt es nicht.'));
     const bauDa = () => typeof KRLaborBau !== 'undefined';
-    if (MODULE.has(id) && bauDa()) return Promise.resolve();
+    const stationDa = () => typeof KRStation !== 'undefined';
+    if (MODULE.has(id) && bauDa() && stationDa()) return Promise.resolve();
     const modul = () =>
       MODULE.has(id)
         ? Promise.resolve()
         : skript(`${PFAD}${id}.js${version()}`).then(() => {
             if (!MODULE.has(id)) throw new Error('Werkzeug hat sich nicht registriert.');
           });
-    return bauDa() ? modul() : skript(`${PFAD}bausteine.js${version()}`).then(modul);
+    // synchron anhängen, was schon geht (kein Umweg über Mikroaufgaben)
+    const nachBau = () => (stationDa() ? modul() : skript(`${PFAD}station.js${version()}`).then(modul));
+    return bauDa() ? nachBau() : skript(`${PFAD}bausteine.js${version()}`).then(nachBau);
   }
 
   /* ---------- Reiter-Regeln (E71, E87) ---------- */
@@ -225,7 +229,7 @@ const KRLabor = (() => {
       return steuer;
     }
     OFFEN.add(steuer);
-    if (MODULE.has(id) && typeof KRLaborBau !== 'undefined') {
+    if (MODULE.has(id) && typeof KRLaborBau !== 'undefined' && typeof KRStation !== 'undefined') {
       starte();
       return steuer;
     }

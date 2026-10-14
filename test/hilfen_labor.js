@@ -4,7 +4,7 @@
 const D = require('./dom_attrappe');
 const Krypto = require('../public/static/js/shared/krypto.js');
 
-const BASIS = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js'];
+const BASIS = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js'];
 const ZEITRAFFER = 100;
 
 /** Werkzeug id im Attrappen-DOM öffnen. opt: { voreinstellung, umgebung, ruhig, zufall } */

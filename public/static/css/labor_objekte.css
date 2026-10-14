@@ -1,0 +1,166 @@
+/* Kryptolabor – Objekte der Werkstatt-Stationen (Plan M10 E172, E173).
+   Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), shared/portal.css @59004d9 – docs/FREMDCODE.md
+   Grundstile des Rahmens KRStation (station-*): Stempelkasten aus Holz, Nachrichtenbänder, Kurzanleitung ①②③, Erklärfeld,
+   „Mehr ausprobieren“, Hintergrund, fliegende Buchstaben, Sperrhinweis, Herkunftszeile. Die Werkzeuge ergänzen ihre
+   Objekte mit eigenem Präfix (scheibe-, stab-, pflug-, karton-, quadrat-, signale-, verstecke-, enigma-, analyse-).
+   Farben nur über Tokens (Material: --mat-*, tokens.css), Touch-Ziele ≥ var(--ziel), Bewegung entfällt bei reduzierter
+   Bewegung (basis.css und unten). */
+
+/* ---------- Stempelkasten ---------- */
+.station-stempelkasten {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--ziel), 1fr));
+  gap: 6px;
+  padding: var(--a-3);
+  border-radius: var(--r-karte);
+  background: linear-gradient(180deg, var(--mat-holz), var(--mat-holz-dunkel));
+  box-shadow: inset 0 2px 8px rgba(11, 20, 38, .45);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.station-stempel {
+  min-width: var(--ziel);
+  min-height: var(--ziel);
+  border: 0;
+  border-radius: 8px 8px 6px 6px;
+  cursor: pointer;
+  font: 700 1.1rem var(--f-mono);
+  color: var(--mat-karton-tinte);
+  background: linear-gradient(180deg, var(--mat-holz-hell), var(--mat-holz-hell) 55%, var(--mat-holz));
+  box-shadow: 0 3px 0 var(--mat-holz-dunkel), 0 5px 10px rgba(11, 20, 38, .3);
+  touch-action: manipulation;
+  transition: transform .1s;
+}
+.station-stempel:hover { transform: translateY(-2px); }
+.station-stempel.gedrueckt { animation: station-stempeln .28s; }
+.station-stempel.markiert { outline: 3px solid var(--mat-lampe-an); outline-offset: 1px; }
+.station-stempel:disabled { opacity: .4; cursor: default; transform: none; }
+.station-stempel:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+@keyframes station-stempeln { 50% { transform: translateY(4px) scale(.94); box-shadow: 0 0 0 var(--mat-holz-dunkel); } }
+
+/* ---------- Nachrichtenbänder ---------- */
+.station-baender { display: grid; gap: var(--a-3); min-width: 0; }
+.station-band-rahmen { display: grid; gap: var(--a-1); min-width: 0; }
+.station-band-titel { font-size: .9rem; font-weight: 700; color: var(--text-2); }
+.station-band {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: center;
+  min-height: var(--ziel);
+  padding: var(--a-2);
+  border: 1px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--mat-band);
+  color: var(--mat-band-tinte);
+}
+.station-band:empty::before { content: "noch leer"; font: 400 .9rem var(--f-text); color: var(--mat-band-tinte); opacity: .75; }
+.station-zeichen {
+  display: grid;
+  place-items: center;
+  min-width: 1.7rem;
+  height: 2.1rem;
+  border-radius: 6px;
+  border: 1px solid var(--mat-karton);
+  background: var(--karte);
+  color: var(--text);
+  font: 700 1.1rem var(--f-mono);
+}
+.station-band.geheim .station-zeichen { background: var(--mat-band-tinte); color: var(--mat-band); border-color: var(--mat-band-tinte); }
+.station-zeichen.neu { animation: station-auftauchen .45s cubic-bezier(.3, 1.6, .5, 1); }
+.station-luecke { width: 8px; }
+@keyframes station-auftauchen { 0% { transform: scale(.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.station-band-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+
+/* ---------- Kurzanleitung ①②③ ---------- */
+.station-anleitung { display: flex; flex-wrap: wrap; gap: var(--a-2); margin: 0; padding: 0; list-style: none; }
+.station-schritt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-2);
+  min-height: var(--ziel);
+  padding: 4px 14px 4px 6px;
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-chip);
+  background: var(--karte);
+  color: var(--text-2);
+  font-weight: 700;
+}
+.station-schritt-nr {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--papier-2);
+  color: var(--text);
+  font: 700 .85rem var(--f-mono);
+}
+.station-schritt[aria-current="step"] { border-color: var(--akzent); color: var(--text); }
+.station-schritt[aria-current="step"] .station-schritt-nr { background: var(--akzent); color: var(--auf-akzent); }
+.station-schritt.erledigt { color: var(--text); }
+.station-schritt.erledigt .station-schritt-nr { background: var(--ok); color: var(--auf-akzent); }
+.station-schritt.erledigt .station-schritt-nr::after { content: " ✓"; font-size: .7rem; }
+
+/* ---------- Erklärfeld ---------- */
+.station-erklaerung { min-height: 4.5rem; padding: var(--a-3) var(--a-4); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.station-erklaerung-titel { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); }
+.station-erklaerung-text { margin: var(--a-1) 0 0; font-size: 1.05rem; }
+
+/* ---------- „Mehr ausprobieren“ und Hintergrund ---------- */
+.station-mehr, .station-hintergrund { border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.station-mehr > summary, .station-hintergrund > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--a-1) var(--a-3);
+  min-height: var(--ziel);
+  padding: var(--a-2) var(--a-4);
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+.station-mehr > summary::-webkit-details-marker, .station-hintergrund > summary::-webkit-details-marker { display: none; }
+.station-mehr > summary::before, .station-hintergrund > summary::before {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--papier-2);
+  color: var(--text);
+  font: 700 1rem var(--f-mono);
+}
+.station-mehr[open] > summary::before, .station-hintergrund[open] > summary::before { content: "−"; }
+.station-mehr-stichworte { font-weight: 400; font-size: .9rem; }
+.station-mehr-inhalt { display: grid; gap: var(--a-3); padding: 0 var(--a-4) var(--a-4); min-width: 0; }
+.station-hintergrund-karten { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--a-3); padding: 0 var(--a-4) var(--a-4); }
+.station-karte { padding: var(--a-3); border-radius: var(--r-knopf); background: var(--papier); }
+.station-karte h3 { margin: 0 0 var(--a-1); font-size: 1rem; }
+.station-karte p { margin: 0; }
+.station-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--a-3); margin: 0; }
+.station-kv dt { color: var(--text-2); }
+.station-kv dd { margin: 0; font-weight: 700; }
+
+/* ---------- Fliegende Buchstaben, Greifen, Sperre, Ton, Herkunft ---------- */
+.station-flug {
+  position: fixed;
+  left: var(--flug-x, 0);
+  top: var(--flug-y, 0);
+  z-index: 60;
+  pointer-events: none;
+  font: 700 1.5rem var(--f-mono);
+  color: var(--akzent);
+  text-shadow: 0 0 10px var(--karte);
+}
+.station-greifbar { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.station-sperrhinweis { margin: 0; padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); background: var(--hinweis-flaeche); color: var(--hinweis); font-weight: 700; }
+.station-ton[aria-pressed="true"] { border-color: var(--akzent); }
+.werkzeug-herkunft { margin: var(--a-2) 0 0; font-size: .85rem; color: var(--text-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .station-stempel.gedrueckt, .station-zeichen.neu { animation: none; }
+  .station-stempel { transition: none; }
+}
+:root[data-bewegung="aus"] .station-stempel.gedrueckt, :root[data-bewegung="aus"] .station-zeichen.neu { animation: none; }

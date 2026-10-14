@@ -283,7 +283,7 @@ test('Kopfzeile: Funkraum-Punkt aus GET /api/funk, alle 20 s, nicht bei hidden; 
 });
 
 /* ---------- Task 152: Szenen Botenlauf und Wettknacken ---------- */
-const LABOR = ['krypto/labor/bausteine.js', 'krypto/labor/scheibe.js', 'krypto/labor/haeufigkeit.js', 'krypto/labor/substitution.js'];
+const LABOR = ['krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js', 'krypto/labor/haeufigkeit.js', 'krypto/labor/substitution.js'];
 const SEITE_MIT_LABOR = [...SEITE, ...LABOR];
 const BOTE = { id: 11, von: 1, an: 2, angezeigtVon: null, art: 'nachricht', inhalt: 'OHSAL AKLUW HZZ', lesbar: true, ausgeblendet: false, angekommen: false, geknackt: false, zeit: '2026-10-13T08:00:00Z', version: 4 };
 const SCHEIBE = [{ id: 'scheibe', voreinstellung: { reiter: ['alle', 'scheibe', 'text'] } }];
@@ -442,7 +442,7 @@ const C1 = '55 85 A8 2E F6 4C 8C FB 3D D6 81 54 F4 23 26 E3 CB D0 8F 26';
 const C2 = '50 8F AF 3D F6 22 94 99 29 D6 9D 3C FA 28 26 E5 C5 C4 8E';
 const OTP_ALICE = [{ id: 'bitlupe', voreinstellung: { reiter: ['xor'], modus: 'otp', schluesselart: 'hex' } }];
 const otpStand = (v, ich, extra = {}) => stand(v, { id: 10, typ: 'doppelter-schluessel', titel: 'Der doppelte Schlüssel', phase: 'funken', phasen: ['funken', 'lauschen', 'aufloesung'], ich, anzeigen: { eveGewinnt: false }, ...extra });
-const SEITE_BITLUPE = [...SEITE, 'krypto/labor/bausteine.js', 'krypto/labor/bitlupe.js', 'krypto/labor/modulo.js'];
+const SEITE_BITLUPE = [...SEITE, 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/bitlupe.js', 'krypto/labor/modulo.js'];
 
 test('Doppelter Schlüssel: Bausteine bauen den Spruch, Abschnitt 1 erneut nur für das Sparschwein-Paar sichtbar', async () => {
   const gesendet = [];

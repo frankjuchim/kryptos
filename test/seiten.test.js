@@ -217,7 +217,9 @@ test('Fremdcode (M10 E169): übernommene Dateien belegt, alles andere ohne Werks
   const NAME_ERLAUBT = new Set([...gelistet, 'public/static/js/krypto/labor/station.js', 'public/datenschutz.html', 'public/labor.html']);
   for (const p of [...htmlDateien, ...jsDateien, ...cssDateien]) {
     const r = path.relative(WURZEL, p).split(path.sep).join('/');
-    assert.doesNotMatch(lies(p), SPUR, `${r}: Werkstatt-Spur`);
+    // in belegten Dateien darf nur die Herkunftszeile den Quellpfad nennen (E168)
+    const src = gelistet.has(r) ? lies(p).split('\n').filter((z) => !/Herkunft: Krypto-Werkstatt/.test(z)).join('\n') : lies(p);
+    assert.doesNotMatch(src, SPUR, `${r}: Werkstatt-Spur`);
     if (!NAME_ERLAUBT.has(r)) assert.doesNotMatch(lies(p), /Bodendiek/, `${r}: Namensnennung nur in belegten Dateien`);
   }
 });
@@ -242,4 +244,15 @@ test('Datenschutzseite nennt Funkraum, Werkstatt/Arena, Teams und Abzeichen mit 
   ]) assert.ok(text.includes(muss), `Datenschutzseite: „${muss}“ fehlt`);
   for (const id of ['ds-funkraum', 'ds-arena', 'ds-teams', 'ds-abzeichen']) assert.match(html, new RegExp(`aria-labelledby="${id}"`), id);
   assert.doesNotMatch(html, /style=/, 'keine Inline-Styles');
+});
+
+test('Plan M10 E173: jede Seite mit labor.css lädt auch labor_objekte.css (direkt danach)', () => {
+  let n = 0;
+  for (const p of htmlDateien) {
+    const html = lies(p);
+    if (!/\/static\/css\/labor\.css/.test(html)) continue;
+    n++;
+    assert.match(html, /\/static\/css\/labor\.css\?v=[^"]+">\s*<link rel="stylesheet" href="\/static\/css\/labor_objekte\.css\?v=/, `${rel(p)}: labor_objekte.css fehlt`);
+  }
+  assert.ok(n >= 5, 'Seiten mit Labor gefunden');
 });

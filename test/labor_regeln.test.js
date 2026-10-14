@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const DIR = path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor');
 const SEED = path.join(__dirname, '..', 'seed');
-const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js']);
+const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js', 'station.js']);
 const werkzeugModule = () => fs.readdirSync(DIR).filter((f) => f.endsWith('.js') && !RAHMEN.has(f));
 
 /** Kommentare und Text in String-/Template-Literalen entfernen, ${…}-Ausdrücke behalten. */
@@ -83,6 +83,18 @@ test('Rechenregel: kein Werkzeug rechnet selbst (M6, Orchestrator)', () => {
     assert.match(src, /KRLabor\.registriere\(/, `${f}: registriert sich`);
     assert.doesNotMatch(src, /\b(setInterval)\b/, `${f}: keine eigenen Abspieler (KRLabor.nachspiel)`);
   }
+});
+
+test('Rahmen station.js (Plan M10 E196): dieselben Verbote wie Werkzeuge, keine Netz-/Speicher-API, kein setInterval', () => {
+  const datei = path.join(DIR, 'station.js');
+  assert.ok(fs.existsSync(datei), 'labor/station.js fehlt');
+  const src = ohneTexte(fs.readFileSync(datei, 'utf8'));
+  for (const [muster, grund] of VERBOTEN) {
+    const treffer = src.split('\n').filter((z) => muster.test(z));
+    assert.deepEqual(treffer, [], `station.js: ${grund}`);
+  }
+  assert.doesNotMatch(src, /\bsetInterval\b/, 'station.js: kein setInterval');
+  assert.doesNotMatch(src, /KRLabor\.registriere\(/, 'station.js registriert kein Werkzeug');
 });
 
 /** Wörter ≥ 5 Buchstaben (klein) aus einem Text (Review M6: Mindestlänge 5). */

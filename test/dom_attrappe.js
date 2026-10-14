@@ -10,7 +10,8 @@
  *   k.verstecke(true|false) – document.hidden/visibilityState setzen und visibilitychange auslösen (M7 Task 151)
  *   fetch-Routen: { status, body, headers: { etag } } · { status: 304 } (ohne Körper) · { netzfehler: true } (TypeError);
  *   Funktionen bekommen (body, { query, headers }); k.anfragen enthält { methode, pfad, body, query, headers }
- *   k.skripte · k.skriptEreignis(src, 'load'|'error') · k.zeiger(el, 'pointerdown', { clientX, clientY })
+ *   k.skripte · k.skriptEreignis(src, 'load'|'error') · k.zeiger(el, 'pointerdown', { clientX, clientY, pointerType })
+ *   k.animiert (Aufrufe von el.animate, Plan M10 Task 224) · k.audio (erzeugte AudioContext-Objekte)
  *   D.lade(…, { zeitraffer: 100 }) – Timer laufen 100-mal schneller (k.timer zeigt die angeforderte Zeit)
  *   D.fuehreAus(k, ['weiteres.js'])
  *
@@ -843,6 +844,8 @@ function lade(dateien = [], opt = {}) {
     zwischenablage: [],
     timer: [],
     skripte: [], // src angehängter <script>-Elemente (KRLabor.lade, M6 E72)
+    animiert: [], // Aufrufe von el.animate (Web Animations API, Plan M10 Task 224)
+    audio: 0, // erzeugte AudioContext-Objekte (Ton, Plan M10 E186)
     _skriptEl: [],
     _offen: { fetch: 0, timer: new Set() },
     _ctx: null
@@ -1081,6 +1084,33 @@ function lade(dateien = [], opt = {}) {
       return !ev.defaultPrevented;
     }
   };
+  // Web Animations API (Plan M10 Task 224): jeder Aufruf wird protokolliert; die Animation endet im nächsten Takt
+  dom.Element.prototype.animate = function (keyframes, optionen) {
+    k.animiert.push({ el: this, keyframes, optionen });
+    const anim = { onfinish: null, playState: 'running', cancel() { this.playState = 'idle'; }, finish() {} };
+    anim.finished = new Promise((ok) => {
+      setTimeout_(() => {
+        anim.playState = 'finished';
+        if (typeof anim.onfinish === 'function') anim.onfinish();
+        ok(anim);
+      }, 0);
+    });
+    return anim;
+  };
+  // Web Audio (Plan M10 E186): nur zählen; Oszillatoren tun nichts
+  sandbox.AudioContext = class AudioContext {
+    constructor() {
+      k.audio++;
+      this.currentTime = 0;
+      this.destination = {};
+    }
+    createOscillator() {
+      return { type: 'sine', frequency: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {}, start() {}, stop() {} };
+    }
+    createGain() {
+      return { gain: { value: 1, setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {} };
+    }
+  };
   const ctx = vm.createContext(sandbox);
   vm.runInContext('globalThis.window = globalThis; globalThis.self = globalThis;', ctx);
   k._ctx = ctx;
@@ -1156,9 +1186,9 @@ function lade(dateien = [], opt = {}) {
     el.dispatchEvent(new Event(typ));
   };
   // Zeiger-Ereignisse (pointerdown/move/up) mit pointerId 1 und Koordinaten
-  k.zeiger = (el, typ, { clientX = 0, clientY = 0, pointerId = 1 } = {}) => {
+  k.zeiger = (el, typ, { clientX = 0, clientY = 0, pointerId = 1, pointerType = 'mouse' } = {}) => {
     const ev = new Event(typ, { bubbles: true, cancelable: true });
-    Object.assign(ev, { clientX, clientY, pointerId, button: 0, isPrimary: true, pointerType: 'mouse' });
+    Object.assign(ev, { clientX, clientY, pointerId, button: 0, isPrimary: true, pointerType });
     el.dispatchEvent(ev);
     return ev;
   };
