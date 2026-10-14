@@ -5,6 +5,7 @@
 // werden trotzdem geprüft. ADMIN_EMAIL/ADMIN_PASSWORD werden bewusst nicht gelesen (Superadmin kommt vom Portal).
 
 const crypto = require('node:crypto');
+const fs = require('node:fs');
 const path = require('node:path');
 const { schluesselListe } = require('../jwt');
 
@@ -21,8 +22,14 @@ function fehler(text) {
 
 const leer = (v) => v === undefined || v === null || String(v).trim() === '';
 
-/** http(s)-Adresse ohne „/“ am Ende, ohne Query und Fragment. Gibt die Adresse unverändert zurück oder wirft. */
-function basisUrl(name, wert) {
+// Rechnernamen, für die im Betrieb (NODE_ENV=production) auch http:// erlaubt ist (Docker-Nachbau, Portal-e2e; E149)
+const LOKALE_RECHNER = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * http(s)-Adresse ohne „/“ am Ende, ohne Query und Fragment. Gibt die Adresse unverändert zurück oder wirft.
+ * Im Betrieb ({ produktion: true }) nur https://, Ausnahme lokale Rechnernamen (M9 E149).
+ */
+function basisUrl(name, wert, { produktion = false } = {}) {
   const v = String(wert).trim();
   let u;
   try {
@@ -33,12 +40,25 @@ function basisUrl(name, wert) {
   if (!['https:', 'http:'].includes(u.protocol)) throw fehler(`${name} muss mit https:// (oder http://) beginnen.`);
   if (v.endsWith('/')) throw fehler(`${name} ohne Schrägstrich am Ende angeben (z. B. https://kryptos.frankjuchim.de).`);
   if (u.search || u.hash || u.username || u.password) throw fehler(`${name} darf keine Parameter, Anker oder Zugangsdaten enthalten.`);
+  if (produktion && u.protocol !== 'https:' && !LOKALE_RECHNER.has(u.hostname)) throw fehler(`${name} muss im Betrieb mit https:// beginnen.`);
   return v;
+}
+
+/**
+ * PORTAL_PUBLIC_KEY so bereinigen, wie er beim Einfügen oft ankommt (M9 E150): umgebende Anführungszeichen,
+ * Windows-Zeilenenden (echt oder als „\r“), Leerzeichen am Rand, einzeilig mit „\n“.
+ */
+function bereinigeSchluessel(roh) {
+  let text = String(roh).trim();
+  for (let i = 0; i < 2 && /^(["']).*\1$/s.test(text); i++) text = text.slice(1, -1).trim();
+  return text.replace(/\\r/g, '').replace(/\\n/g, '\n').replace(/\r/g, '').trim();
 }
 
 /** PEM-Blöcke aus PORTAL_PUBLIC_KEY (auch einzeilig mit „\n“, mehrere Blöcke für den Schlüsselwechsel). */
 function leseSchluessel(roh) {
-  const text = String(roh).replace(/\\n/g, '\n').trim();
+  const text = bereinigeSchluessel(roh);
+  // Verwechslung mit dem privaten Schlüssel des Portals: eigene Meldung, nie den Schlüsseltext ausgeben
+  if (/PRIVATE KEY/.test(text)) throw fehler('PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel – nur den öffentlichen Schlüssel des Portals eintragen.');
   let schluessel;
   try {
     schluessel = schluesselListe(text);
@@ -69,6 +89,7 @@ function trustProxyWert(v) {
  */
 function ladeKonfig(env = process.env, { test = false } = {}) {
   const e = env || {};
+  const produktion = String(e.NODE_ENV || '').trim() === 'production';
   const pflicht = (name) => {
     if (leer(e[name])) {
       if (test) return null;
@@ -84,9 +105,9 @@ function ladeKonfig(env = process.env, { test = false } = {}) {
   if (!ID_MUSTER.test(plattformId)) throw fehler('PLATTFORM_ID muss aus Kleinbuchstaben, Ziffern und „-“ bestehen (2–31 Zeichen, Beginn mit Buchstabe).');
 
   const plattformRoh = pflicht('PLATTFORM_URL');
-  const plattformUrl = plattformRoh === null ? null : basisUrl('PLATTFORM_URL', plattformRoh);
+  const plattformUrl = plattformRoh === null ? null : basisUrl('PLATTFORM_URL', plattformRoh, { produktion });
   const portalRoh = pflicht('PORTAL_URL');
-  const portalUrl = portalRoh === null ? null : basisUrl('PORTAL_URL', portalRoh);
+  const portalUrl = portalRoh === null ? null : basisUrl('PORTAL_URL', portalRoh, { produktion });
 
   const schluesselRoh = pflicht('PORTAL_PUBLIC_KEY');
   const { schluessel, pem } = schluesselRoh === null ? { schluessel: [], pem: null } : leseSchluessel(schluesselRoh);
@@ -119,4 +140,43 @@ function ladeKonfig(env = process.env, { test = false } = {}) {
   };
 }
 
-module.exports = { ladeKonfig, STANDARD_ID, VERTRAG_VERSION };
+/** Fingerabdruck eines öffentlichen Schlüssels: „sha256:“ + erste 16 Hex von SHA-256 über die SPKI-DER-Form. */
+function fingerabdruck(key) {
+  return 'sha256:' + crypto.createHash('sha256').update(key.export({ type: 'spki', format: 'der' })).digest('hex').slice(0, 16);
+}
+
+/**
+ * Startzeile ohne Geheimnisse (M9 E151): kein SESSION_SECRET, kein Schlüsseltext – nur Anzahl und Fingerabdrücke.
+ * @returns {{ plattformId: string, plattformUrl: string|null, portalUrl: string|null, schluessel: number,
+ *   fingerabdruecke: string[], dataDir: string, port: number, trustProxy: number|boolean|string, vertrag: string }}
+ */
+function konfigZusammenfassung(konfig) {
+  return {
+    plattformId: konfig.plattformId,
+    plattformUrl: konfig.plattformUrl,
+    portalUrl: konfig.portalUrl,
+    schluessel: konfig.schluessel.length,
+    fingerabdruecke: konfig.schluessel.map(fingerabdruck),
+    dataDir: konfig.dataDir,
+    port: konfig.port,
+    trustProxy: konfig.trustProxy,
+    vertrag: konfig.vertragVersion
+  };
+}
+
+/**
+ * DATA_DIR vor dem Öffnen der Datenbank prüfen (Review Focus M9/1: CapRover-Volume gehört root, Benutzer node):
+ * rekursiv anlegen, Probe-Datei schreiben und löschen. Wirft einen Error mit deutscher Meldung.
+ */
+function pruefeDatenDir(dir) {
+  const probe = path.join(dir, '.schreibprobe');
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(probe, 'ok');
+    fs.unlinkSync(probe);
+  } catch (e) {
+    throw fehler(`DATA_DIR ${dir} ist nicht beschreibbar (${e.code || 'Fehler'}). Ordner anlegen und dem Benutzer des Servers (im Image: node) Schreibrechte geben.`);
+  }
+}
+
+module.exports = { ladeKonfig, konfigZusammenfassung, pruefeDatenDir, bereinigeSchluessel, STANDARD_ID, VERTRAG_VERSION };

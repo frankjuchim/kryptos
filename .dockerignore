@@ -22,4 +22,16 @@ scripts/*
 *.log
 .DS_Store
 __pycache__
-.env*
+# Schlüssel, Geheimnisse und Datenbanken nie ins Image – überall im Baum und auch, wenn sie erst später angelegt werden
+# (z. B. ein versehentlich kopierter Portal-Schlüssel oder eine lokale Datenbank). Steht am Ende, damit keine Ausnahme (!)
+# oben sie wieder einschließt. Geprüft in test/docker.test.js (M9 Task 206).
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.db
+**/*.db-*
+**/*.sqlite
+**/*.sqlite3
+**/.env*
+data*

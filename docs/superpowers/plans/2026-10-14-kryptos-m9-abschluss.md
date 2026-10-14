@@ -147,7 +147,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `konfigZusammenfassung(konfig) → { plattformId, plattformUrl, portalUrl, schluessel: number, fingerabdruecke: string[], dataDir, port, trustProxy, vertrag: '1.2' }` (Fingerabdruck `sha256:` + erste 16 Hex von SHA-256 über `key.export({ type: 'spki', format: 'der' })`); `pruefeDatenDir(dir) → void` (legt `dir` rekursiv an, schreibt und löscht `.schreibprobe`; wirft `Error('Konfiguration: DATA_DIR <dir> ist nicht beschreibbar (…).')`); beide aus `src/verbund/konfig.js` exportiert. `node src/verbund/konfig_pruefen.js` → Exit 0 mit `✔ Konfiguration in Ordnung` + Zusammenfassung, sonst Exit 1 mit der Meldung von `ladeKonfig`.
 
-- [ ] **Step 1: Failing tests** in `test/konfig.test.js`:
+- [x] **Step 1: Failing tests** in `test/konfig.test.js`:
   ```js
   test('production: http nur für localhost (E149)', () => {
     const p = { ...gueltig, NODE_ENV: 'production' };
@@ -178,10 +178,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('konfig_pruefen.js: Exit 0 mit „✔ Konfiguration in Ordnung“, Exit 1 mit Meldung bei fehlendem PORTAL_URL', …);
   ```
   (`PRIVAT_PEM` = `generateKeyPairSync('ed25519').privateKey.export({ type: 'pkcs8', format: 'pem' })` im Test erzeugt.)
-- [ ] **Step 2: Run** `node --test test/konfig.test.js` → FAIL (Funktionen fehlen, http in production angenommen).
-- [ ] **Step 3: Implement** in `konfig.js` (`basisUrl` bekommt `{ produktion }`; `leseSchluessel` bereinigt vor `schluesselListe`, prüft `/PRIVATE KEY/` vor dem Parsen), `konfig_pruefen.js` (nur `ladeKonfig(process.env)` + `pruefeDatenDir` + Ausgabe), `server.js` (nach `ladeKonfig`: `pruefeDatenDir(konfig.dataDir)` im selben try/catch; im `listen`-Callback zusätzlich `log('Konfiguration:', JSON.stringify(konfigZusammenfassung(konfig)))`). K45 in `KERN_ABWEICHUNGEN.md` (Art „Hook“, „ja – allgemein“). TECHNIK §6.1: E149–E151 nachtragen.
-- [ ] **Step 4: Run** `node --test test/konfig.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Konfiguration: https im Betrieb, Schlüssel-Bereinigung, Startzeile ohne Geheimnisse, DATA_DIR-Probe (M9 Task 205)"`
+- [x] **Step 2: Run** `node --test test/konfig.test.js` → FAIL (Funktionen fehlen, http in production angenommen).
+- [x] **Step 3: Implement** in `konfig.js` (`basisUrl` bekommt `{ produktion }`; `leseSchluessel` bereinigt vor `schluesselListe`, prüft `/PRIVATE KEY/` vor dem Parsen), `konfig_pruefen.js` (nur `ladeKonfig(process.env)` + `pruefeDatenDir` + Ausgabe), `server.js` (nach `ladeKonfig`: `pruefeDatenDir(konfig.dataDir)` im selben try/catch; im `listen`-Callback zusätzlich `log('Konfiguration:', JSON.stringify(konfigZusammenfassung(konfig)))`). K45 in `KERN_ABWEICHUNGEN.md` (Art „Hook“, „ja – allgemein“). TECHNIK §6.1: E149–E151 nachtragen.
+- [x] **Step 4: Run** `node --test test/konfig.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Konfiguration: https im Betrieb, Schlüssel-Bereinigung, Startzeile ohne Geheimnisse, DATA_DIR-Probe (M9 Task 205)"`
 
 ### Task 206: Docker- und CapRover-Bereitschaft
 
@@ -192,7 +192,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `konfigZusammenfassung` (Task 205) nur indirekt über die Startzeile.
 - Produces: CI-Job `docker` (Name „Docker-Image (Bau, Start, Vertrag)“), läuft bei jedem Push und PR.
 
-- [ ] **Step 1: Failing tests** in `test/docker.test.js`:
+- [x] **Step 1: Failing tests** in `test/docker.test.js`:
   ```js
   test('Build-Kontext: keine Schlüssel, Geheimnisse, Datenbanken', () => {
     const verboten = /\.(pem|key|p12|pfx|db|db-wal|db-shm|sqlite3?)$|(^|\/)\.env|(^|\/)data\//;
@@ -209,8 +209,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
     // 4. Nachbau-Baum (ohne DATA_DIR) vorher/nachher gleich (Pfade + Größen) → Server schreibt nur in DATA_DIR (Review Focus 4)
   });
   ```
-- [ ] **Step 2: Run** `node --test test/docker.test.js` → FAIL (`.dockerignore` ohne `*.pem` usw.; neuer Ablauf fehlt).
-- [ ] **Step 3: Implement** `.dockerignore` um `*.pem`, `*.key`, `*.p12`, `*.db`, `*.db-*`, `data*/` ergänzen (Kommentar mit Verweis auf den Test); Testhilfen für Anmeldung im Nachbau aus `test/helpers.js` (Testschlüssel) wiederverwenden. CI-Job `docker` (ubuntu-latest, kein Node-Cache nötig):
+- [x] **Step 2: Run** `node --test test/docker.test.js` → FAIL (`.dockerignore` ohne `*.pem` usw.; neuer Ablauf fehlt).
+- [x] **Step 3: Implement** `.dockerignore` um `*.pem`, `*.key`, `*.p12`, `*.db`, `*.db-*`, `data*/` ergänzen (Kommentar mit Verweis auf den Test); Testhilfen für Anmeldung im Nachbau aus `test/helpers.js` (Testschlüssel) wiederverwenden. CI-Job `docker` (ubuntu-latest, kein Node-Cache nötig):
   1. `docker build -t kryptos:ci .`
   2. Testschlüssel: `node -e` erzeugt Ed25519-Paar, öffentlicher Teil einzeilig in `$GITHUB_ENV`.
   3. `docker volume create kryptos-ci` → `docker run -d -p 8080:80 -v kryptos-ci:/app/data -e PLATTFORM_URL=http://localhost:8080 -e PORTAL_URL=http://localhost:3100 -e PORTAL_PUBLIC_KEY -e SESSION_SECRET=$(openssl rand -hex 32) kryptos:ci` (frisches benanntes Volume = Review Focus 1; `localhost` = E149-Ausnahme).
@@ -219,8 +219,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   6. `docker run --rm --entrypoint sh kryptos:ci -c 'test ! -e /app/test && test ! -e /app/werkzeuge && test ! -e /app/quellen && test "$(id -un)" = node && ! grep -rlE "PRIVATE KEY" /app --exclude-dir=node_modules'`.
   7. Image-Größe ausgeben (`docker image inspect --format '{{.Size}}'`), Abbruch über 600 MB.
   TECHNIK §16.1 (Job `docker`), §16.2 (`.dockerignore`), §16.3 (Volume, Startzeile) nachtragen.
-- [ ] **Step 4: Run** `node --test test/docker.test.js` → PASS; `npm test` grün; Workflow-Datei mit `python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/pruefung.yml'))"` lesbar (falls `yaml` fehlt: `node -e` mit einfachem Einrückungs-Check überspringen und im Bericht nennen). Der Job selbst läuft erst auf GitHub (E148) – im Bericht als „ungeprüft bis zum ersten PR-Lauf“ markieren.
-- [ ] **Step 5: Commit** `git commit -m "Docker: keine Schlüssel im Kontext, Neustart mit Daten, Vertragsprüfung am Nachbau, CI-Job docker (M9 Task 206)"`
+- [x] **Step 4: Run** `node --test test/docker.test.js` → PASS; `npm test` grün; Workflow-Datei mit `python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/pruefung.yml'))"` lesbar (falls `yaml` fehlt: `node -e` mit einfachem Einrückungs-Check überspringen und im Bericht nennen). Der Job selbst läuft erst auf GitHub (E148) – im Bericht als „ungeprüft bis zum ersten PR-Lauf“ markieren.
+- [x] **Step 5: Commit** `git commit -m "Docker: keine Schlüssel im Kontext, Neustart mit Daten, Vertragsprüfung am Nachbau, CI-Job docker (M9 Task 206)"`
 
 ### Task 207: Sicherheits-Review I – Header, Cookies, Proxy, Host-Kopf
 
@@ -232,7 +232,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `test/helpers.js` (`makeApp`, `sso`), `trustProxy: 1`
 - Produces: Konstante `SEITEN` in `test/sicherheit.test.js` = alle HTML-Pfade (öffentlich + mit Wächter), von Task 208 wiederverwendet (Export über `module.exports` nicht nötig – Task 208 ergänzt dieselbe Datei).
 
-- [ ] **Step 1: Failing tests** (`test/sicherheit.test.js`, Fixture-App):
+- [x] **Step 1: Failing tests** (`test/sicherheit.test.js`, Fixture-App):
   ```js
   const SEITEN_OEFFENTLICH = ['/', '/gast', '/themen', '/datenschutz', '/robots.txt', '/gibt-es-nicht', '/fehler/keine-berechtigung.html'];
   const SEITEN_SCHUELER = ['/spiel', '/labor', '/funkraum', '/werkstatt'];
@@ -255,10 +255,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('host_kopf_wirkungslos (Review Focus 5): /sso/start mit Host: boese.example → ruecksprung bleibt https://kryptos.test/sso/ende; Abmelden-weiter bleibt Portal-URL', …);
   test('statische Dateien: kein Verzeichnislisting, keine Quelltext-Dateien außerhalb public (/static/../src/app.js → 404)', …);
   ```
-- [ ] **Step 2: Run** `node --test test/sicherheit.test.js` → erwartete Ausgabe: rot nur dort, wo ein Fund vorliegt (bei durchgehend Grün: den Test durch eine absichtlich entfernte Kopfzeile in einer Scratch-Kopie einmal rot sehen und im Bericht belegen).
-- [ ] **Step 3: Implement** nur die Korrekturen der Funde (je Fund im Commit-Text nennen; Kern-Änderungen mit K-Nummer).
-- [ ] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Kopfzeilen aller Seiten, Cookies hinter dem Proxy, Host-Kopf (M9 Task 207)"`
+- [x] **Step 2: Run** `node --test test/sicherheit.test.js` → erwartete Ausgabe: rot nur dort, wo ein Fund vorliegt (bei durchgehend Grün: den Test durch eine absichtlich entfernte Kopfzeile in einer Scratch-Kopie einmal rot sehen und im Bericht belegen).
+- [x] **Step 3: Implement** nur die Korrekturen der Funde (je Fund im Commit-Text nennen; Kern-Änderungen mit K-Nummer).
+- [x] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Kopfzeilen aller Seiten, Cookies hinter dem Proxy, Host-Kopf (M9 Task 207)"`
 
 ### Task 208: Sicherheits-Review II – Routen-Inventar mit Rechten und Rate-Limits
 
@@ -269,7 +269,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `routen_rechte.json` = `[{ "methode": "GET", "pfad": "/api/levels/:id", "anonym": 401, "schueler": 200, "lehrkraft": 401, "admin": 401, "limit": "pruefen-90/min-schueler" | null, "grund"?: "…" }]` – eine Zeile je registrierter Route; `limit: null` nur mit `grund`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('routen_inventar: jede registrierte Route steht in routen_rechte.json und umgekehrt', () => {
     const ist = registrierteRouten(makeApp()); // rekursiv über app.router.stack (Express 5: layer.route.path, layer.route.methods; Unter-Router mit ihrem Mount-Pfad)
@@ -282,10 +282,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('klasse_hinter_einer_ip (Review Focus 3): 32 SSO-Anmeldungen und je 3 Prüfungen von einer IP in < 60 s ohne 429', …);
   test('verbund_ohne_origin: /api/verbund/* ohne Origin erlaubt, aber nur mit Token (401 ohne)', …);
   ```
-- [ ] **Step 2: Run** → FAIL (Tabelle fehlt).
-- [ ] **Step 3: Implement** die Tabelle aus dem tatsächlichen Code (Routen in `src/routes/*.js`, `src/verbund/*.js`, `src/krypto/**/routen.js`, `src/app.js`), Rechte aus TECHNIK §6.5/§13; jeden Unterschied zwischen Code und TECHNIK als Fund behandeln (Code korrigieren oder TECHNIK, wenn TECHNIK veraltet – im Commit nennen).
-- [ ] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Routen-Inventar mit Rechten je Rolle und Rate-Limits (M9 Task 208)"`
+- [x] **Step 2: Run** → FAIL (Tabelle fehlt).
+- [x] **Step 3: Implement** die Tabelle aus dem tatsächlichen Code (Routen in `src/routes/*.js`, `src/verbund/*.js`, `src/krypto/**/routen.js`, `src/app.js`), Rechte aus TECHNIK §6.5/§13; jeden Unterschied zwischen Code und TECHNIK als Fund behandeln (Code korrigieren oder TECHNIK, wenn TECHNIK veraltet – im Commit nennen).
+- [x] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Routen-Inventar mit Rechten je Rolle und Rate-Limits (M9 Task 208)"`
 
 ### Task 209: Sicherheits-Review III – Lösungsverrat über die Schüler-API (alle sieben Welten)
 
@@ -297,7 +297,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: echte Seeds wie `test/niveaus.test.js` (`H.makeApp({ seedDir: SEED })`), `Krypto.nurBuchstaben`
 - Produces: Helfer `geheimnisse(seed) → [{ id, art: 'loesung'|'erklaerung'|'tipp'|'boss', text }]` (in der Testdatei)
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('crawler_vor_dem_loesen: keine Lösung, Erklärung, Tipp-Text oder Boss-Aufgabe in irgendeiner Schüler-GET-Antwort', async () => {
     // Mika im LK 13 (eA), alle Welten 0–6 frei, Kür frei, Boss offen; GET /api/welten, /api/levels/:id (alle), /api/aufgaben/:id (alle),
@@ -311,10 +311,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('akten_und_dateien: /akten/* und /api/themen nennen nie _LSG, _EH, Klausur, Loesungen_Portal, Lehrkraft_PDF', …);
   ```
   Ausnahmen nur aus `test/inhalte_loesungsverrat.test.js` übernehmen (W6-L2-01, W3-L1-04 a – gleiche Begründung, Test prüft, dass jede Ausnahme gebraucht wird).
-- [ ] **Step 2: Run** → bei Grün: einmal gegen eine Scratch-Kopie mit absichtlich ausgeliefertem `loesung`-Feld rot sehen; im Bericht belegen.
-- [ ] **Step 3: Implement** Korrekturen nur bei Funden.
-- [ ] **Step 4: Run** `node --test test/sicherheit_loesungen.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Lösungsverrat-Crawler über die Schüler-API aller Welten (M9 Task 209)"`
+  **Umgesetzt (Abweichung, Festlegung Orchestrator 14.10.):** keine Ausnahmeliste. Der Crawler prüft nur die API-Ebene: ein
+  Geheimnis, das zugleich in einem sichtbaren Seed-Text steht (andere Aufgabe, Intro, Kapitel, Fallen-Text) oder im sichtbaren
+  Text derselben Aufgabe (z. B. Verschiebung 0: Lösung = Klartext), gilt als inhaltlicher Fund – er wird als Diagnose gemeldet,
+  nicht als Fehler gezählt (Inhalte bereinigt ein eigener Auftrag, `test/inhalte_loesungsverrat.test.js`).
+- [x] **Step 2: Run** → bei Grün: einmal gegen eine Scratch-Kopie mit absichtlich ausgeliefertem `loesung`-Feld rot sehen; im Bericht belegen.
+- [x] **Step 3: Implement** Korrekturen nur bei Funden.
+- [x] **Step 4: Run** `node --test test/sicherheit_loesungen.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Lösungsverrat-Crawler über die Schüler-API aller Welten (M9 Task 209)"`
 
 ### Task 210: Datenschutzseite vollständig
 
@@ -644,6 +648,7 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 48 | VV-2, VV-3, VV-4 | Portal führt Kursniveau (v1.3?); Portal-Link als MUSS; `lab-kern` nach 1.0 | nicht eingereicht; Vorschläge V1–V8 bleiben Vorschläge (F12) |
 | 49 | M9 E152, E153 | Datenschutzseite mit Platzhaltern `[…]` der Schule, Löschfristen | wie Task 210; Angaben liefert die Schule (F3) |
 | 50 | M9 E149, E154, E159 | Betrieb nur mit https (außer localhost); Foto-Satz; Version 1.0.0 = Release-Kandidat, Merge = erstes Deploy | wie Tasks 205, 217, 219 |
+| 51 | M9 Task 208 (Review) | Gastmodus-Limit 300 Anfragen je 10 min je IP (`src/routes/gast.js`): reicht das, wenn eine ganze Klasse hinter einer Schul-IP den Gastmodus öffnet (pro Aufgabe mehrere Aufrufe)? | unverändert = Algo-Quest-Wert (2.8.2, gleiche Stelle); Erhöhung nur nach Entscheidung der Lehrkraft |
 
 ---
 

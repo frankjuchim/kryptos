@@ -557,18 +557,24 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | Variable | Wert (Produktion) | Pflicht | Verhalten |
 |---|---|---|---|
 | `PLATTFORM_ID` | `kryptos` | nein (Std. aus `PLATTFORM.id`) | muss `^[a-z][a-z0-9-]{1,30}$` |
-| `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen) |
-| `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende |
-| `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
+| `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen); bei `NODE_ENV=production` nur `https://`, Ausnahme Rechnername `localhost`/`127.0.0.1`/`[::1]` (M9 E149), sonst Abbruch „PLATTFORM_URL muss im Betrieb mit https:// beginnen“ |
+| `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende; https-Regel wie `PLATTFORM_URL` (E149) |
+| `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; wird bereinigt (umgebende `"`/`'`, `\r` echt oder als Text, Leerzeichen am Rand – M9 E150); enthält er `PRIVATE KEY` → Abbruch „PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel – nur den öffentlichen Schlüssel des Portals eintragen“ (ohne Schlüsseltext); `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
 | `VERTRAG_VERSION` | `1.2` | nein (Std. `1.2`) | **nur `1.2`** (labs-Vertrag v1.2); jeder andere Wert (auch `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.2 sein …“ (auch im Testmodus). Der Wert schaltet nichts um – er verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.2"` |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
-| `DATA_DIR` | `/app/data` | nein | DB `kryptos.db` |
+| `DATA_DIR` | `/app/data` | nein | DB `kryptos.db`; vor dem Öffnen der DB Schreibprobe (`pruefeDatenDir`: anlegen, `.schreibprobe` schreiben/löschen), sonst Abbruch „DATA_DIR … ist nicht beschreibbar (…)“ (M9 Review Focus 1, K45) |
 | `PORT` | `80` | nein | |
 | `TRUST_PROXY` | `1` | nein | wie Algo Quest (für `req.secure` → `Secure`-Cookies) |
 | `TZ` | `Europe/Berlin` | nein | im Dockerfile gesetzt |
 | `SEED_DIR`, `WELT_DATEIEN` | – | nein | wie Algo Quest (Entwicklung) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | – | – | **werden nicht gelesen** (Superadmin kommt vom Portal) |
+
+**Startprüfung (M9 E151):** Nach dem Start schreibt `server.js` eine Zeile `Konfiguration: {…}` aus
+`konfigZusammenfassung(konfig)` (`plattformId`, `plattformUrl`, `portalUrl`, `schluessel` = Anzahl, `fingerabdruecke` =
+je Schlüssel `sha256:` + 16 Hex über die SPKI-DER-Form, `dataDir`, `port`, `trustProxy`, `vertrag`) – nie
+`SESSION_SECRET` oder Schlüsseltext. Dieselbe Prüfung ohne Serverstart: `npm run konfig:pruefen`
+(`src/verbund/konfig_pruefen.js`, Exit 0 „✔ Konfiguration in Ordnung“ + Zusammenfassung, sonst Exit 1 mit Meldung).
 
 `NODE_ENV=test`: Konfiguration kommt aus `createApp(opts)` (`portalUrl`, `portalPublicKey`, `plattformUrl`), keine
 Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
@@ -582,7 +588,8 @@ Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
 4. `ziel` übernehmen, wenn `typeof === 'string'`, Länge ≤ 300 und `^\/(?![\/\\])` (genau ein führender `/`, kein `//`,
    kein `\`), sonst `/`.
 5. `302` auf `PORTAL_URL/sso/autorisieren?plattform=<PLATTFORM_ID>&ruecksprung=<PLATTFORM_URL>/sso/ende&state=<state>&ziel=<ziel>`
-   (Parameter mit `URLSearchParams` kodiert).
+   (Parameter mit `URLSearchParams` kodiert), mit `Cache-Control: no-store` und `Referrer-Policy: no-referrer` (wie
+   `/sso/ende`; M9 Task 207, `test/sicherheit.test.js`).
 
 ### 6.3 `GET /sso/ende?token=…&state=…&ziel=…` bzw. `?fehler=…&state=…`
 
@@ -1699,7 +1706,12 @@ Methoden, `Cache-Control: no-store`. Fehlerformat `{ "error": "…" }` (+ `detai
 Kurse – Existenz nicht verraten) · **409** falsche Phase/Konflikt · **413** zu groß · **415** kein JSON · **429**
 Rate-Limit (`Retry-After`). Unveränderte Kern-Routen (Welten, Level, Aufgaben, Training, Boss, Profil, Scoreboard,
 Warm-up, Lehrkraft-Auswertung, Vorschau, Materialien, CSV, Urkunden, Admin-Backup/-Inhalte, Gast) sind hier nicht
-wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §14.
+wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §14. JSON-Körper höchstens 1 MB (sonst
+**413**); nur Backup-Restore und Warm-up-Import mit Superadmin-Sitzung bis 30 MB (K47, M9 Task 208).
+
+**Vollständiges Inventar** aller registrierten Routen (Seiten, SSO, Verbund, API) mit Bereich, Status je Rolle (anonym,
+Schüler, Lehrkraft, Admin) und Rate-Limit bzw. Begründung ohne Limit: `test/fixtures/routen_rechte.json`, geprüft in
+`test/sicherheit.test.js` (M9 Task 208) – eine neue Route ohne Eintrag macht den Test rot.
 
 ### 13.1 Sitzung, Schüler
 
@@ -1974,6 +1986,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` (umgesetzt M8 Task 200: Quelle sind die Abdeckungsmatrizen §11 der sieben Welt-Specs + Seeds + `seed/akten.json` + `seed/warmup/` + Generator-Registry; Regeln kc, fremd, fallen, gesamt, plan, warmup; bewusste Lücken als `AUSNAHMEN` mit Spec-Zitat; `--welt <N>`, `--json`, `--seed`, `--specs`, `--selbsttest`; auch in `npm run pruefen`) |
 | `krypto` | Node 20 + Python 3.12: `node --test test/fach.test.js`, `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/pruefwerte.py`, `python3 -I werkzeuge/krypto/test_fremde_verfahren.py` (Schritt „Fremde Verfahren W0–W6“), `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture mit `--pruefwerte test/fixtures/pruefwerte`; ohne Argumente: echte Seeds aller sieben Welten + Gast) |
 | `inhalte` | Node 20 + Python 3.12 + Java 21 (Temurin) + `pip install -r werkzeuge/material/requirements.txt python-pptx pypdf brotli` + LibreOffice (Writer, Impress), Carlito, Cairo: `py_compile` der Werkzeuge, `schriften_pruefen.py`, `test_kontrast.py`, `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, Render-Probe `soffice` (Akte W0·1 + Kickoff-Präsentation, ab M8 Task 203 auch Akte W3·2 mit Pixelbild), `node --test test/material_pipeline.test.js` (u. a. keine `/home/`-Pfade in Materialquellen) (umgesetzt M5 Task 102; `ide_pruefen.py`/`workspaces --pruefen` decken seit M8 Task 196 auch Welt 3 ab); folgen: `materialien_pruefen.py`, `video_folien.py --pruefen` (M9) |
+| `docker` | „Docker-Image (Bau, Start, Vertrag)“, bei jedem Push und PR (M9 Task 206, E148 – die Agenten-Umgebung hat keinen Docker-Daemon, lokal prüft `test/docker.test.js` einen Nachbau): `docker build`, Testschlüssel (Ed25519, einzeilig) und `SESSION_SECRET` nur für den Lauf, Start mit **frischem benanntem Volume** `kryptos-ci:/app/data` (wie das CapRover-Persistent-Directory; `PLATTFORM_URL=http://localhost:8080` = E149-Ausnahme), `/healthz` ≤ 60 s mit Version aus `package.json`, `node scripts/vertrag_pruefen.js http://localhost:8080`, `docker restart` + `/healthz`, `docker logs` enthält `Konfiguration:` und weder `BEGIN` noch das Secret, Image ohne `/app/test`, `/app/werkzeuge`, `/app/quellen` und ohne `PRIVATE KEY-----`, Benutzer `node`, Größe ≤ 600 MB. Ungeprüft bis zum ersten Lauf auf GitHub; grüner Lauf auf dem PR ist Voraussetzung der Freigabe (F2) |
 | `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install --with-deps chromium` in CI), `npm run e2e`, Artefakt: `docs/screenshots` (umgesetzt M4 Task 66) |
 
 `main` ist mit CapRover verbunden (jeder Push = Live-Build) → nur Feature-Branches, Merge nach `main` nur nach
@@ -2009,12 +2022,22 @@ CMD ["node", "src/server.js"]
 `.dockerignore`: `.git`, `node_modules`, `data`, `test`, `werkzeuge`, `quellen`, `docs/*` außer den zwei Formatdateien,
 `docs/screenshots`, `materialien/*` außer `!materialien/Akten_PDF`, `!materialien/Loesungen_Portal`,
 `!materialien/Lehrkraft_PDF`, `scripts/*` außer `validate.js`/`vertrag_pruefen.js`, `*.log`, `.DS_Store`, `__pycache__`,
-`.env*`. Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name). `test/docker.test.js` prüft beides gegen den Dateibaum und startet einen Nachbau des Image-Inhalts (M5 Task 103).
+`.env*`; am Ende (damit keine Ausnahme sie wieder einschließt, M9 Task 206) überall im Baum `**/*.pem`, `**/*.key`, `**/*.p12`,
+`**/*.pfx`, `**/*.db`, `**/*.db-*`, `**/*.sqlite`, `**/*.sqlite3`, `**/.env*` und `data*` – auch für Dateien, die erst später
+angelegt werden. `test/docker.test.js` prüft den Build-Kontext auf Schlüssel/Geheimnisse/Datenbanken (auch Text mit
+`-----BEGIN … PRIVATE KEY-----`), die Dockerfile-Vorgaben (ENV, `EXPOSE 80`, `VOLUME`, `USER node` nach allen `RUN`,
+`HEALTHCHECK`, keine Geheimnisse in `ENV`/`ARG`) und startet den Nachbau zweimal auf demselben `DATA_DIR` (Lernstand
+bleibt, `/healthz`-Version, `vertrag_pruefen.js` Exit 0, außerhalb `DATA_DIR` wird nichts geschrieben). Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name). `test/docker.test.js` prüft beides gegen den Dateibaum und startet einen Nachbau des Image-Inhalts (M5 Task 103).
 
 ### 16.3 CapRover
 
 - App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, `captain-definition` → `./Dockerfile`.
-- **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL).
+- **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL). Das Image legt `/app/data`
+  mit Besitzer `node` an; ist das eingehängte Volume nicht für `node` beschreibbar, bricht der Start mit „Konfiguration:
+  DATA_DIR /app/data ist nicht beschreibbar (…)“ ab (Schreibprobe vor der DB, §6.1, K45) – dann im Volume Besitzer bzw.
+  Rechte korrigieren.
+- Startzeile im App-Log: `Konfiguration: {…}` (ID, URLs, Anzahl und Fingerabdrücke der Portal-Schlüssel – ohne Geheimnisse,
+  §6.1); der Fingerabdruck lässt sich mit dem des Portal-Schlüssels vergleichen. Prüfung ohne Start: `npm run konfig:pruefen`.
 - Umgebungsvariablen: `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal „Einzeilig kopieren“),
   `SESSION_SECRET` (≥ 32 zufällige Zeichen), `TRUST_PROXY=1`; Rest aus dem Dockerfile.
 - Healthcheck `/healthz` → `{ "status": "ok", "version": "<package.json>" }`; Container-Healthcheck siehe Dockerfile.
@@ -2038,7 +2061,7 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `akten`, `loesungen`,
+`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
 `lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
 `pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds` + `abdeckung`; die Material-Prüfungen brauchen Python-Pakete,
 LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese

@@ -108,6 +108,66 @@ jobs:
         run: node --test test/material_pipeline.test.js
       # folgen (TECHNIK §16.1): materialien_pruefen.py und video_folien.py --pruefen (M9)
 
+  docker:
+    name: Docker-Image (Bau, Start, Vertrag)
+    # Echter Image-Bau (M9 Task 206, E148): die Agenten-Umgebung hat keinen Docker-Daemon, lokal prüft test/docker.test.js
+    # einen Nachbau. Hier: Bau, Start mit frischem benanntem Volume (wie das CapRover-Persistent-Directory), /healthz,
+    # Vertragsprüfung, Neustart, Log ohne Geheimnisse, Inhalt und Größe des Images.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Image bauen
+        run: docker build -t kryptos:ci .
+      - name: Testschlüssel (Ed25519) und Session-Geheimnis erzeugen – nur für diesen Lauf
+        run: |
+          node -e 'const k=require("crypto").generateKeyPairSync("ed25519").publicKey.export({type:"spki",format:"pem"}); console.log("PORTAL_PUBLIC_KEY="+k.trim().replace(/\n/g,"\\n"))' >> "$GITHUB_ENV"
+          secret="$(openssl rand -hex 32)"
+          echo "::add-mask::$secret"
+          echo "SESSION_SECRET=$secret" >> "$GITHUB_ENV"
+      - name: Start mit frischem Volume (Benutzer node, /app/data)
+        run: |
+          docker volume create kryptos-ci
+          docker run -d --name kryptos-ci -p 8080:80 -v kryptos-ci:/app/data \
+            -e PLATTFORM_URL=http://localhost:8080 -e PORTAL_URL=http://localhost:3100 \
+            -e PORTAL_PUBLIC_KEY -e SESSION_SECRET kryptos:ci
+      - name: /healthz abwarten (≤ 60 s), Version = package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/healthz > healthz.json 2>/dev/null; then break; fi
+            sleep 1
+          done
+          cat healthz.json || { docker logs kryptos-ci; exit 1; }
+          node -e "const h=require('./healthz.json'); if (h.status!=='ok'||h.version!=='$version') { console.error('healthz:', h); process.exit(1) }"
+      - name: Vertragsprüfung (scripts/vertrag_pruefen.js)
+        run: node scripts/vertrag_pruefen.js http://localhost:8080
+      - name: Neustart mit demselben Volume, Log ohne Geheimnisse
+        run: |
+          docker restart kryptos-ci
+          for i in $(seq 1 60); do curl -fsS http://localhost:8080/healthz > /dev/null 2>&1 && break; sleep 1; done
+          curl -fsS http://localhost:8080/healthz
+          docker logs kryptos-ci > container.log 2>&1
+          grep -q 'Konfiguration:' container.log
+          if grep -q 'BEGIN' container.log; then echo 'Schlüsseltext im Log'; exit 1; fi
+          if grep -qF "$SESSION_SECRET" container.log; then echo 'SESSION_SECRET im Log'; exit 1; fi
+      - name: Inhalt des Images (keine Tests, Werkzeuge, Quellen, Schlüssel; Benutzer node)
+        run: |
+          docker run --rm --entrypoint sh kryptos:ci -c 'test ! -e /app/test && test ! -e /app/werkzeuge && test ! -e /app/quellen && test "$(id -un)" = node && ! grep -rlE "PRIVATE KEY-----" /app --exclude-dir=node_modules'
+      - name: Image-Größe (Abbruch über 600 MB)
+        run: |
+          groesse="$(docker image inspect --format '{{.Size}}' kryptos:ci)"
+          echo "Image-Größe: $((groesse / 1024 / 1024)) MB"
+          test "$groesse" -le $((600 * 1024 * 1024))
+      - name: Aufräumen
+        if: always()
+        run: |
+          docker logs kryptos-ci 2>&1 | tail -n 20 || true
+          docker rm -f kryptos-ci || true
+          docker volume rm kryptos-ci || true
+
   e2e:
     name: e2e (Playwright, App + Dev-Portal)
     # nur von Hand und bei Pull Requests nach main (TECHNIK §16.1) – nicht bei jedem Push
