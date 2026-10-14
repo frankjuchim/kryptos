@@ -1,7 +1,7 @@
 'use strict';
 const path = require('node:path');
 const { createApp, VERSION } = require('./app');
-const { ladeKonfig } = require('./verbund/konfig');
+const { ladeKonfig, konfigZusammenfassung, pruefeDatenDir } = require('./verbund/konfig');
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 
@@ -9,6 +9,8 @@ const log = (...a) => console.log(new Date().toISOString(), ...a);
 let konfig;
 try {
   konfig = ladeKonfig(process.env, { test: process.env.NODE_ENV === 'test' });
+  // Schreibprobe vor dem Öffnen der Datenbank (K45, M9 Review Focus 1: leeres CapRover-Volume gehört root)
+  pruefeDatenDir(konfig.dataDir);
 } catch (e) {
   console.error(`Kryptos startet nicht. ${e.message}`);
   console.error('Pflicht: PLATTFORM_URL, PORTAL_URL, PORTAL_PUBLIC_KEY, SESSION_SECRET (≥ 32 Zeichen); AUTH_MODUS nur „portal“.');
@@ -38,6 +40,8 @@ try {
 
 const server = app.listen(konfig.port, () => {
   log(`Kryptos ${VERSION} läuft auf Port ${konfig.port} (Daten: ${konfig.dataDir}, Portal: ${konfig.portalUrl})`);
+  // Startzeile ohne Geheimnisse (K45, M9 E151): IDs, URLs, Anzahl und Fingerabdrücke der Portal-Schlüssel
+  log('Konfiguration:', JSON.stringify(konfigZusammenfassung(konfig)));
   // Wartungsjob (TECHNIK §7.4): sofort und danach stündlich
   app.locals.wartung.starte();
 });

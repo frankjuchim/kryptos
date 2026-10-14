@@ -147,7 +147,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `konfigZusammenfassung(konfig) → { plattformId, plattformUrl, portalUrl, schluessel: number, fingerabdruecke: string[], dataDir, port, trustProxy, vertrag: '1.2' }` (Fingerabdruck `sha256:` + erste 16 Hex von SHA-256 über `key.export({ type: 'spki', format: 'der' })`); `pruefeDatenDir(dir) → void` (legt `dir` rekursiv an, schreibt und löscht `.schreibprobe`; wirft `Error('Konfiguration: DATA_DIR <dir> ist nicht beschreibbar (…).')`); beide aus `src/verbund/konfig.js` exportiert. `node src/verbund/konfig_pruefen.js` → Exit 0 mit `✔ Konfiguration in Ordnung` + Zusammenfassung, sonst Exit 1 mit der Meldung von `ladeKonfig`.
 
-- [ ] **Step 1: Failing tests** in `test/konfig.test.js`:
+- [x] **Step 1: Failing tests** in `test/konfig.test.js`:
   ```js
   test('production: http nur für localhost (E149)', () => {
     const p = { ...gueltig, NODE_ENV: 'production' };
@@ -178,10 +178,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('konfig_pruefen.js: Exit 0 mit „✔ Konfiguration in Ordnung“, Exit 1 mit Meldung bei fehlendem PORTAL_URL', …);
   ```
   (`PRIVAT_PEM` = `generateKeyPairSync('ed25519').privateKey.export({ type: 'pkcs8', format: 'pem' })` im Test erzeugt.)
-- [ ] **Step 2: Run** `node --test test/konfig.test.js` → FAIL (Funktionen fehlen, http in production angenommen).
-- [ ] **Step 3: Implement** in `konfig.js` (`basisUrl` bekommt `{ produktion }`; `leseSchluessel` bereinigt vor `schluesselListe`, prüft `/PRIVATE KEY/` vor dem Parsen), `konfig_pruefen.js` (nur `ladeKonfig(process.env)` + `pruefeDatenDir` + Ausgabe), `server.js` (nach `ladeKonfig`: `pruefeDatenDir(konfig.dataDir)` im selben try/catch; im `listen`-Callback zusätzlich `log('Konfiguration:', JSON.stringify(konfigZusammenfassung(konfig)))`). K45 in `KERN_ABWEICHUNGEN.md` (Art „Hook“, „ja – allgemein“). TECHNIK §6.1: E149–E151 nachtragen.
-- [ ] **Step 4: Run** `node --test test/konfig.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Konfiguration: https im Betrieb, Schlüssel-Bereinigung, Startzeile ohne Geheimnisse, DATA_DIR-Probe (M9 Task 205)"`
+- [x] **Step 2: Run** `node --test test/konfig.test.js` → FAIL (Funktionen fehlen, http in production angenommen).
+- [x] **Step 3: Implement** in `konfig.js` (`basisUrl` bekommt `{ produktion }`; `leseSchluessel` bereinigt vor `schluesselListe`, prüft `/PRIVATE KEY/` vor dem Parsen), `konfig_pruefen.js` (nur `ladeKonfig(process.env)` + `pruefeDatenDir` + Ausgabe), `server.js` (nach `ladeKonfig`: `pruefeDatenDir(konfig.dataDir)` im selben try/catch; im `listen`-Callback zusätzlich `log('Konfiguration:', JSON.stringify(konfigZusammenfassung(konfig)))`). K45 in `KERN_ABWEICHUNGEN.md` (Art „Hook“, „ja – allgemein“). TECHNIK §6.1: E149–E151 nachtragen.
+- [x] **Step 4: Run** `node --test test/konfig.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Konfiguration: https im Betrieb, Schlüssel-Bereinigung, Startzeile ohne Geheimnisse, DATA_DIR-Probe (M9 Task 205)"`
 
 ### Task 206: Docker- und CapRover-Bereitschaft
 

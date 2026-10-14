@@ -557,18 +557,24 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | Variable | Wert (Produktion) | Pflicht | Verhalten |
 |---|---|---|---|
 | `PLATTFORM_ID` | `kryptos` | nein (Std. aus `PLATTFORM.id`) | muss `^[a-z][a-z0-9-]{1,30}$` |
-| `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen) |
-| `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende |
-| `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
+| `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen); bei `NODE_ENV=production` nur `https://`, Ausnahme Rechnername `localhost`/`127.0.0.1`/`[::1]` (M9 E149), sonst Abbruch „PLATTFORM_URL muss im Betrieb mit https:// beginnen“ |
+| `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende; https-Regel wie `PLATTFORM_URL` (E149) |
+| `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; wird bereinigt (umgebende `"`/`'`, `\r` echt oder als Text, Leerzeichen am Rand – M9 E150); enthält er `PRIVATE KEY` → Abbruch „PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel – nur den öffentlichen Schlüssel des Portals eintragen“ (ohne Schlüsseltext); `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
 | `VERTRAG_VERSION` | `1.2` | nein (Std. `1.2`) | **nur `1.2`** (labs-Vertrag v1.2); jeder andere Wert (auch `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.2 sein …“ (auch im Testmodus). Der Wert schaltet nichts um – er verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.2"` |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
-| `DATA_DIR` | `/app/data` | nein | DB `kryptos.db` |
+| `DATA_DIR` | `/app/data` | nein | DB `kryptos.db`; vor dem Öffnen der DB Schreibprobe (`pruefeDatenDir`: anlegen, `.schreibprobe` schreiben/löschen), sonst Abbruch „DATA_DIR … ist nicht beschreibbar (…)“ (M9 Review Focus 1, K45) |
 | `PORT` | `80` | nein | |
 | `TRUST_PROXY` | `1` | nein | wie Algo Quest (für `req.secure` → `Secure`-Cookies) |
 | `TZ` | `Europe/Berlin` | nein | im Dockerfile gesetzt |
 | `SEED_DIR`, `WELT_DATEIEN` | – | nein | wie Algo Quest (Entwicklung) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | – | – | **werden nicht gelesen** (Superadmin kommt vom Portal) |
+
+**Startprüfung (M9 E151):** Nach dem Start schreibt `server.js` eine Zeile `Konfiguration: {…}` aus
+`konfigZusammenfassung(konfig)` (`plattformId`, `plattformUrl`, `portalUrl`, `schluessel` = Anzahl, `fingerabdruecke` =
+je Schlüssel `sha256:` + 16 Hex über die SPKI-DER-Form, `dataDir`, `port`, `trustProxy`, `vertrag`) – nie
+`SESSION_SECRET` oder Schlüsseltext. Dieselbe Prüfung ohne Serverstart: `npm run konfig:pruefen`
+(`src/verbund/konfig_pruefen.js`, Exit 0 „✔ Konfiguration in Ordnung“ + Zusammenfassung, sonst Exit 1 mit Meldung).
 
 `NODE_ENV=test`: Konfiguration kommt aus `createApp(opts)` (`portalUrl`, `portalPublicKey`, `plattformUrl`), keine
 Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
@@ -2038,7 +2044,7 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `akten`, `loesungen`,
+`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
 `lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
 `pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds` + `abdeckung`; die Material-Prüfungen brauchen Python-Pakete,
 LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese
