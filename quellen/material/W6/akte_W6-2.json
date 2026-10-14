@@ -826,7 +826,7 @@
      "items": [
       "**Ordne** beide Stufen **ein** und **begründe**.",
       "**Bestimme** die Anzahl der Ringschritte und gib einen schwachen Ringschritt an.",
-      "Schreibe das Pendel zu ZEIT und zu EVE für 12 Zeichen aus. Gib jeweils die Periode an und **vergleiche** mit Vigenère.",
+      "Schreibe das Pendel zu MOND und zu EVE für 12 Zeichen aus. Gib jeweils die Periode an und **vergleiche** mit Vigenère.",
       "**Beschreibe** einen Angriff, wenn das Pendelwort 4 Buchstaben hat (Häufigkeitsanalyse auf Teiltexten).",
       "**Analysiere**: Was passiert beim Entschlüsseln, wenn ein Geheimtextzeichen falsch notiert wird – und wenn eines verloren geht?",
       "Formuliere ein **Urteil** über die Sicherheit des Uhrwerks."
@@ -849,7 +849,7 @@
     },
     {
      "t": "p",
-     "md": "c) ZEIT → `ZEITIEZEITIE`, Periode 6 = Vigenère mit ZEITIE; EVE → `EVEVEVEVEVEV`, Periode 2 = Vigenère mit EV (schwächer, als die Wortlänge vermuten lässt)."
+     "md": "c) MOND → `MONDNOMONDNO`, Periode 6 = Vigenère mit MONDNO; EVE → `EVEVEVEVEVEV`, Periode 2 = Vigenère mit EV (schwächer, als die Wortlänge vermuten lässt)."
     },
     {
      "t": "p",

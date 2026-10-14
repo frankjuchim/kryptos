@@ -56,6 +56,8 @@ function rohtexte(wert, { ohne = [] } = {}) {
     }
     if (!x || typeof x !== 'object') return;
     if (x.nur_loesung === true) return;
+    // Alphabet-/Quadratzeile mit „leer“: in der Schülerfassung leer gedruckt (kr_docx.py), Werte nur in der Lösung
+    if (x.leer === true) return;
     if (x.t === 'quadrat' && (x.art === 'playfair' || x.art === 'polybios') && typeof x.schluessel === 'string' && !Array.isArray(x.zellen)) {
       out.push(Krypto.quadrat(x.schluessel, { groesse: x.groesse || 5 }).join(''));
     }
@@ -439,6 +441,7 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet, Quadrat, Bits, Wört
   assert.ok(z.some((s) => s === 'FGHKMNPQSU'));
   assert.ok(stuecke({ t: 'quadrat', zeilen: ['RIALT', 'OBCDE', 'FGHKM', 'NPQSU', 'VWXYZ'] }).some((s) => s.includes('FGHKMNPQSU')));
   assert.deepEqual(stuecke({ t: 'p', md: 'Lösung', nur_loesung: true }), []);
+  assert.ok(!stuecke({ t: 'alphabet', zeilen: [{ label: 'Geheimtext', werte: 'SCHERAZDBF', leer: true }] }).some((t) => t.includes('SCHERAZ')), 'leer gedruckte Zeile');
   assert.deepEqual(loesungen({ loesung: { text: 'XXXXXX' } }), [], 'zu wenig verschiedene Zeichen');
   assert.deepEqual(loesungen({ interaktion: { kind: 'gaps', felder: { g: { typ: 'auswahl', optionen: ['öffentlichen', 'privaten'] } } }, loesung: { g: ['öffentlichen'] } }), [], 'Klappliste (Plan M8 Task 178)');
   assert.deepEqual(loesungen({ interaktion: { kind: 'match' }, loesung: { e1: 'hybrid' } }), [], 'match-Kategorien (Plan M8 Task 179)');

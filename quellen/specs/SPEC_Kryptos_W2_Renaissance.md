@@ -353,7 +353,7 @@ Material für das ganze Level (Block `quadrat`):
 | W2-L24-04 | Botschaft für den Rialto | ★★ | kern | verschluesseln | chiffre | P4 | Verschlüssele *wasserweg* mit Playfair (Quadrat RIALTO). | Paare WA SX SE RW EG → XI QY UD IV BM; Geheimtext XIQYU DIVBM ✔ nachgerechnet | „ss“ wird zu SX und SE. / WA bilden ein Rechteck. | Durch die X-Regel wird der Text um ein Zeichen länger. Alle fünf Paare sind Rechtecke. |
 | W2-L24-05 | Rückweg | ★★ | kern | entschluesseln | chiffre | P3, P4 | Entschlüssele HLIRO UUQTB AY (Playfair, Quadrat RIALTO). | Paare → KA RT EN SP IE LX → *kartenspiel* (X am Ende ist Füllzeichen) ✔ nachgerechnet | Beim Entschlüsseln: Zeile → links, Spalte → oben. / IR liegen in Zeile 1: I → R, R → T (zyklisch). | Die Rechteckregel ist ihr eigenes Gegenstück; nur Zeile/Spalte kehren die Richtung um (P3). Das Füllzeichen X wird am Ende gestrichen. |
 | W2-L24-06 | Das Kreuzquadrat | ★★ | kern | fremde-chiffre | chiffre | P4 | Verschlüssele *mehl* mit dem Kreuzquadrat (Quadrate GONDEL oben, MURANO unten, Regel im Material). | ME → KC, HL → FQ; Geheimtext KCFQ ✔ nachgerechnet | m oben: Zeile 3, Spalte 4; e unten: Zeile 2, Spalte 5. / 1. Buchstabe: unten, Zeile 3, Spalte 5 → K. | Erster Geheimtextbuchstabe aus dem unteren Quadrat (Zeile von a, Spalte von b), zweiter aus dem oberen (Zeile von b, Spalte von a). Quadrate verwechseln ist der typische Fehler (P4). |
-| W2-L24-07 | Einordnen | ★★★ | kern | einordnen | choice (Mehrfachauswahl) | P5 | Welche Aussagen über Playfair und das Kreuzquadrat sind richtig? (A) Beide sind Substitutionsverfahren. (B) Beide sind monoalphabetisch bezogen auf Buchstabenpaare. (C) Ein einzelner Klartextbuchstabe wird immer gleich ersetzt. (D) Bei Playfair kann ein Geheimtextpaar nie aus zwei gleichen Buchstaben bestehen. (E) Beim Kreuzquadrat wird *seidenballen* zu TBIAN EDNOQ NE – das doppelte NE zeigt die Bigramm-Monoalphabetik. | A, B, D, E ✔ nachgerechnet | Was passiert mit e in „en“ und in „ei“? / Wird ein Paar EN immer gleich verschlüsselt? | Gleiches Paar → gleiches Paar (EN → NE an beiden Stellen); ein Einzelbuchstabe hängt aber vom Partner ab (C falsch). Bei Playfair liefern alle drei Regeln zwei verschiedene Buchstaben (P5). |
+| W2-L24-07 | Einordnen | ★★★ | kern | einordnen | choice (Mehrfachauswahl) | P5 | Welche Aussagen über Playfair und das Kreuzquadrat sind richtig? (A) Beide sind Substitutionsverfahren. (B) Beide sind monoalphabetisch bezogen auf Buchstabenpaare. (C) Ein einzelner Klartextbuchstabe wird immer gleich ersetzt. (D) Bei Playfair kann ein Geheimtextpaar nie aus zwei gleichen Buchstaben bestehen. (E) Beim Kreuzquadrat wird *ananas* zu EOEOD R – das doppelte EO zeigt die Bigramm-Monoalphabetik. | A, B, D, E ✔ nachgerechnet | Was passiert mit e in „en“ und in „ei“? / Wird ein Paar EN immer gleich verschlüsselt? | Gleiches Paar → gleiches Paar (EN → NE an beiden Stellen); ein Einzelbuchstabe hängt aber vom Partner ab (C falsch). Bei Playfair liefern alle drei Regeln zwei verschiedene Buchstaben (P5). |
 | W2-L24-08 | Schwacher Schlüssel im Kreuzquadrat | ★★★ | kern | sicherheit-beurteilen | choice (Mehrfachauswahl) | P7 | Ein Bote benutzt beim Kreuzquadrat **oben und unten dasselbe Quadrat** (GONDEL). Welche Aussagen sind richtig? (A) EE wird zu EE. (B) Ein Paar aus derselben Zeile (z. B. GO) wird nur vertauscht (OG). (C) Ein Paar aus derselben Spalte (z. B. GL) bleibt unverändert. (D) Dadurch wird das Verfahren sicherer, weil man nur ein Quadrat geheim halten muss. | A, B, C ✔ nachgerechnet | Setze a = b in die Regel ein. / Gleiche Zeile: Zeile von a = Zeile von b. | Bei gleichen Quadraten bleiben alle Doppelpaare und alle Spaltenpaare stehen, Zeilenpaare werden nur vertauscht – Klartext scheint durch. Das ist ein schwacher Schlüssel (P7), keine Verbesserung. |
 
 Stufenmix 3 × ★, 3 × ★★, 2 × ★★★.
@@ -671,7 +671,7 @@ zweithäufigste Buchstabe sollte zu n, i, s, r oder a passen. Häufigste deutsch
 E 17,40 % · N 9,78 % · I 7,55 % · S 7,27 % · R 7,00 % · A 6,51 % · T 6,15 %.
 
 **AUFTRAG 1 ★ · kern · Einzelarbeit – Jede dritte Stelle**
-Der Geheimtext `VCVIZ TSWLE UKXMY` hat die Schlüssellänge 3. (a) Bilde T₁, T₂, T₃. (b) Bob verrät dir das
+Der Geheimtext `OIZRN SLZLE UMJMJ` hat die Schlüssellänge 3 (Korrektur D15: VCVIZ … ist das Beispiel des Archivwissens). (a) Bilde T₁, T₂, T₃. (b) Bob verrät dir das
 Schlüsselwort EIS. Entschlüssele die drei Teiltexte jeweils als Caesar-Text und setze den Klartext zusammen.
 
 **AUFTRAG 2 ★ · kern · Partnerarbeit – Gleiche Folgen erklären**
@@ -707,8 +707,8 @@ d) **Entscheiden Sie begründet**, ob der Kasiski-Test bei einem Geheimtext von 
 
 **LÖSUNGSTEIL**
 
-- **Auftrag 1:** (a) T₁ = VISEX, T₂ = CZWUM, T₃ = VTLKY. (b) E = Verschiebung 4, I = 8, S = 18: T₁ → *reoat*,
-  T₂ → *urome*, T₃ → *dbtsg*; reißverschlussartig zusammengesetzt *ruderbootamsteg* ✔ nachgerechnet. Typischer Fehler: Teiltexte ab dem 2. Buchstaben
+- **Auftrag 1:** (a) T₁ = ORLEJ, T₂ = INZUM, T₃ = ZSLMJ. (b) E = Verschiebung 4, I = 8, S = 18: T₁ → *knhaf*,
+  T₂ → *afrme*, T₃ → *hatur*; reißverschlussartig zusammengesetzt *kahnfahrtamufer* ✔ nachgerechnet. Typischer Fehler: Teiltexte ab dem 2. Buchstaben
   beginnen (P1).
 - **Auftrag 2:** *die* an den Positionen 0, 60, 100 fällt jeweils auf W, A, C (60 und 100 sind Vielfache von 5) → gleiche
   Geheimtextfolge ZIG. An Position 2 fiele *die* auf C, H, S → andere Folge (*d* + C = F, *i* + H = P, *e* + S = W, also
@@ -838,7 +838,7 @@ d) **Beurteilen Sie** die Aussage: „Der Friedman-Test liefert die Schlüssell�
   verschieden → 0/30 = 0 ✔ nachgerechnet. Hinweis: Bei so kurzen Wörtern sagt I nichts über die Sprache.
 - **Auftrag 2:** 0,077 → Caesar (I bleibt deutsch); 0,047 → Vigenère, Länge 5; 0,038 → zufälliger Schlüssel so lang wie
   der Text (gleichverteilt). Begründung über Archivwissen 3. (Beispielwerte zur Deutung, keine Rechnung.)
-- **Auftrag 3:** (a) AOPD; RWWR ✔ nachgerechnet. (b) *anna* 4/12 → AOPD 0/12; *otto* 4/12 → RWWR 4/12
+- **Auftrag 3:** (a) ECDH; QRQQH ✔ nachgerechnet. (b) *ebbe* 4/12 → ECDH 0/12; *nonne* 6/20 → QRQQH 6/20 (Korrektur D15: *anna*/*otto* stehen im Archivwissen 3)
   ✔ nachgerechnet. (c) Monoalphabetisch: I unverändert; polyalphabetisch: I sinkt (Richtung 0,038).
 - **Auftrag 4:** (a) Zähler 0,038 · 501 = 19,038; (n − 1) · I = 500 · 0,0456 = 22,8; Nenner 22,8 − 19,038 + 0,076 = 3,838;
   k ≈ 4,96 ≈ **5**. (b) Zähler 38,038; 1000 · 0,057 = 57; Nenner 57 − 38,038 + 0,076 = 19,038; k ≈ 2,00 ≈ **2**
@@ -1438,7 +1438,7 @@ als Hausaufgabe; Kreuzquadrat und Boss online als Hausaufgabe; Papier-Boss entf�
 | Schlüsselräume | 26⁵ = 11 881 376; 13⁵ = 371 293; 26! ≈ 4,03 · 10²⁶; 25! ≈ 1,55 · 10²⁵; 5⁴ = 625 | t09, t99 |
 | Eves Brief (WACHS, 228) | Geheimtext; Wiederholungen/Positionen; Teilertabelle (5 → 9 von 9); Teiltext-Maxima; I = 2434/51756; Friedman 4,15; Teiltext-IC k = 1 … 10 | t03, t06, t99 |
 | Lab-Text (GOLD, 162) | Geheimtext; Wiederholungen; Abstände 116, 20, 40, 40, 24; Teiltext-Maxima K, S, P, H; Friedman 6,78 | t03, t05, t99 |
-| Teiltext-Aufgaben | VCVIZ TSWLE UKXMY → VISEX/CZWUM/VTLKY (ruderbootamsteg/EIS); YLYTX EBYWU TPRP → T₂ LXYTP; Spalte mit X ↦ e → T | t09, t10, t99 |
+| Teiltext-Aufgaben | VCVIZ TSWLE UKXMY → VISEX/CZWUM/VTLKY (Archivwissen); OIZRN SLZLE UMJMJ → ORLEJ/INZUM/ZSLMJ (kahnfahrtamufer/EIS, Auftrag 1); DWETZ CVIJX NEPOQ → WZINO (Lab); YLYTX EBYWU TPRP → T₂ LXYTP; Spalte mit X ↦ e → T | t09, t10, t99 |
 | Kasiski-Zahlen | ggT(42, 63, 105, 84) = 21; ggT(28, 42, 70) = 14; ggT(18, 27, 45) = 9; ggT(21, 35, 56) = 7; Teilertabelle 40, 65, 85, 125, 15 | t09, t99 |
 | Koinzidenzindex | ANANAS 8/30; TERRASSE 6/56 = 3/28 (Lab W2-L23-01); SERENISSIMA 10/110; GONDEL 0 (Akte W2·3, bis zur M5-Inhaltsprüfung LAGUNE = Archivfund-Schlüssel); KANALBANK 10/72; BALLADE 2/21; ABBA/ANNA/OTTO/RWWR 4/12; AOPD 0; Zähltabelle 30/380 | t06, t09, t99 |
 | Friedman | (1001; 0,0475) → 3,99; (501; 0,0456) → 4,96; (1001; 0,057) → 2,00; (1001; 0,0418) → 9,91; (601; 0,0507) → 2,98; (400; 0,076) → 1; (400; 0,038) → 400; Generator 14 Kombinationen | t06, t09, t99 |

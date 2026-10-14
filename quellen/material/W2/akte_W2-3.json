@@ -291,7 +291,7 @@
      "t": "liste",
      "buchstaben": true,
      "items": [
-      "**Verschlüssele** *anna* mit Vigenère (Schlüsselwort ABCD) und *otto* mit Caesar (Schlüssel D, Nummerierung: A = 1 … Z = 26).",
+      "**Verschlüssele** *ebbe* mit Vigenère (Schlüsselwort ABCD) und *nonne* mit Caesar (Schlüssel D, Nummerierung: A = 1 … Z = 26).",
       "**Berechne** jeweils I vorher und nachher.",
       "**Formuliere** eine Regel."
      ]
@@ -308,14 +308,14 @@
      "zentriert": true,
      "zeilen": [
       [
-       "*anna*",
+       "*ebbe*",
        "",
        "Vigenère ABCD",
        "",
        ""
       ],
       [
-       "*otto*",
+       "*nonne*",
        "",
        "Caesar D",
        "",
@@ -343,18 +343,18 @@
      "zentriert": true,
      "zeilen": [
       [
-       "*anna*",
+       "*ebbe*",
        "4/12",
        "Vigenère ABCD",
-       "`AOPD`",
+       "`ECDH`",
        "0/12"
       ],
       [
-       "*otto*",
-       "4/12",
+       "*nonne*",
+       "6/20",
        "Caesar D",
-       "`RWWR`",
-       "4/12"
+       "`QRQQH`",
+       "6/20"
       ]
      ],
      "breiten": [
@@ -375,7 +375,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "a) `AOPD`; `RWWR`. b) *anna* 4/12 → `AOPD` 0/12; *otto* 4/12 → `RWWR` 4/12."
+     "md": "a) `ECDH`; `QRQQH`. b) *ebbe* 4/12 → `ECDH` 0/12; *nonne* 6/20 → `QRQQH` 6/20."
     },
     {
      "t": "p",

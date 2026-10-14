@@ -373,7 +373,7 @@ Verschlüssele „zeitmaschinefrei“ mit t = 5 und dem Pendelwort SAND.
 Nutze das Beurteilungsraster WK3.
 a) Ordne beide Stufen ein und begründe.
 b) Bestimme die Anzahl der Ringschritte und gib einen schwachen Ringschritt an.
-c) Schreibe das Pendel zu ZEIT und zu EVE für 12 Zeichen aus. Gib jeweils die Periode an und vergleiche mit Vigenère.
+c) Schreibe das Pendel zu MOND und zu EVE für 12 Zeichen aus (Korrektur D15: ZEIT ist das Beispiel des Archivwissens). Gib jeweils die Periode an und vergleiche mit Vigenère.
 d) Beschreibe einen Angriff, wenn das Pendelwort 4 Buchstaben hat (Häufigkeitsanalyse auf Teiltexten).
 e) Analysiere: Was passiert beim Entschlüsseln, wenn ein Geheimtextzeichen falsch notiert wird – und wenn eines
 verloren geht?
@@ -414,7 +414,7 @@ d) **Begründen** Sie, dass zweimaliges Anwenden von Stufe 1 mit demselben Rings
   Geheimtext **RAVFZ EKTUU AIXIR H** ✔ nachgerechnet.
 - **A4** a) Stufe 1 Transposition (gleiche Zeichen, andere Plätze); Stufe 2 polyalphabetisch (z. B. im Beispiel T → X
   mit E, T → S mit Z); symmetrisch (gleicher Schlüssel). b) 4 Ringschritte; t = 1 liest 0 1 2 … 7 → keine Umordnung
-  (schwach). c) ZEIT → ZEITIEZEITIE, Periode 6 = Vigenère mit ZEITIE; EVE → EVEVEVEVEVEV, Periode 2 = Vigenère mit EV
+  (schwach). c) MOND → MONDNOMONDNO, Periode 6 = Vigenère mit MONDNO; EVE → EVEVEVEVEVEV, Periode 2 = Vigenère mit EV
   (schwächer als die Wortlänge vermuten lässt) ✔ nachgerechnet. d) Periode 2 · 4 − 2 = 6: Geheimtext in 6 Teiltexte
   zerlegen (jede 6. Stelle); da die Transposition nur innerhalb der Blöcke umordnet, bleibt jeder Teiltext eine
   Caesar-Verschlüsselung eines Stücks deutschen Textes → je Teiltext häufigsten Buchstaben ≙ E → Pendelbuchstaben;

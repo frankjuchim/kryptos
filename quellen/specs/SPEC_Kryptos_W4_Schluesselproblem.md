@@ -224,10 +224,10 @@ Schlüssel. Sollen n Personen paarweise vertraulich kommunizieren, braucht jedes
 - Bei einem asymmetrischen Verfahren hat jede Person **ein Schlüsselpaar** (öffentlich + privat) →
   **Anzahl asymmetrischer Schlüssel = 2n** (n Schlüsselpaare).
 
-| n | 2 | 3 | 4 | 5 | 6 | 10 | 30 |
+| n | 2 | 3 | 4 | 5 | 6 | 7 | 10 |
 |---|---|---|---|---|---|---|---|
-| symmetrisch n(n − 1)/2 | 1 | 3 | 6 | 10 | 15 | 45 | 435 |
-| asymmetrisch 2n | 4 | 6 | 8 | 10 | 12 | 20 | 60 |
+| symmetrisch n(n − 1)/2 | 1 | 3 | 6 | 10 | 15 | 21 | 45 |
+| asymmetrisch 2n | 4 | 6 | 8 | 10 | 12 | 14 | 20 |
 
 ✔ nachgerechnet. Noch wichtiger als die Anzahl: Alle symmetrischen Schlüssel müssen **vorher geheim** übertragen werden
 (Kurier, Treffen). Öffentliche Schlüssel dürfen dagegen jeder und jedem bekannt sein.
