@@ -52,6 +52,8 @@ test('Seeds ↔ WELT_PLAN: Level, Akten und Boss-Pool je Niveau', (t) => {
       assert.ok(w.boss, `Welt ${nr}: Boss fehlt`);
       assert.equal(w.boss.titel, plan.boss.titel, `Welt ${nr}: Boss-Titel`);
       assert.deepEqual(zaehle(w, w.boss.pool || [], 'kern'), plan.boss.pool, `Welt ${nr}: Boss-Pool je Niveau`);
+      // Design §7.6: 25 min, „Generalprobe online“ 30 min (SPEC W6 §5, Plan M8 Task 189)
+      assert.equal(w.boss.dauerMin, nr === 6 ? 30 : 25, `Welt ${nr}: Boss-Zeit`);
     }
   }
 });

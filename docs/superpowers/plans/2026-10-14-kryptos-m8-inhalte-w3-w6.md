@@ -1091,9 +1091,10 @@ Fallen aus der Erklärung (Spec-Klammern „(W1, P7)“ usw.; die Welt-Herkunft 
 **Stichproben:** dachs → HEGLW; kerze/TAU → DELSE; ggT 6; `0110 1100 ⊕ 1010 0101 = 1100 1001`; GCPK → kanu (· 9),
 MTOJXQ → pinsel; BA ∘ CAD = DAECBD (E138, D7).
 
-- [ ] **Step 1: Failing test** – `UMFANG[6]` += `'W6-B'`; `inhalte_plan`: Boss-Zeit 30 min.
-- [ ] **Step 2–4** (Probelauf 100 Ziehungen: gA nie B-13; Mix 3/3/2; B-09/-10 senden nur `typ: "frei"`, Client sieht nie „affin“).
-- [ ] **Step 5: Commit** `git commit -m "Welt 6: Boss „Generalprobe online“ (30 min, Pool 15, eine eA-Aufgabe)"`.
+- [x] **Step 1: Failing test** – `UMFANG[6]` += `'W6-B'`; `inhalte_plan`: Boss-Zeit 30 min.
+- [x] **Step 2–4** (Probelauf 100 Ziehungen: gA nie B-13; Mix 3/3/2; B-09/-10 senden nur `typ: "frei"`, Client sieht nie „affin“).
+- [x] **Step 5: Commit** `git commit -m "Welt 6: Boss „Generalprobe online“ (30 min, Pool 15, eine eA-Aufgabe)"`.
+- [x] **Umsetzungsnotiz:** `inhalte_plan` prüft jetzt die Boss-Zeit (25 min, W6 30 min). Aufgabenstellungen wörtlich (gesiezt); Material der fremden Verfahren (MULTIPLIKATIONSRAD, SPIEGELPAAR, TREPPE) als Block `hinweis`, Verfahren im Client nur `typ: "frei"` mit Namen. W6-B-01 mit Nummerierung A = 1 … Z = 26 im Text; W6-B-06 mit Vigenère-Quadrat der Anlage (Block `quadrat`, wie W2-B-02). W6-B-15: Erklärung ohne die Spec-Lösung „*sternwarte*: beide Wege VTITO ZDRXG“ (Video 07) und ohne den Autorenvermerk „bewusst andere Schlüssel als W2-B-15“ (Validator: kein Verweis auf andere Aufgaben); Prüfwert-Gruppe `vigenere("bababa", "CAD")` = DAECBD (BA periodisch + CAD = stellenweise Summe), Konsistenz mit dem Prüfwort *laterne* (beide Wege OAXGS QH, `art: spec`). W6-B-07 Konsistenz ggT(18, 30) = 6, ggT(6, 42) = 6; W6-B-12 TREPPE = Vigenère BCD (leuchte → MGXDJWF). Probelauf (100 Ziehungen je Kurs): gA nie B-13, Mix immer 3/3/2, B-09/-10 im Client nur `{ typ: "frei", name }`. **Boss-Fallen vorläufig festgelegt** (offene Entscheidung 18; Spec: B-02 P5, B-03 P7, B-04 P7, B-05 P9, B-09 P2, B-10 P3, B-11 P9, B-12 P5, B-13 P8, B-15 P8): B-01 P2 (Caesar wie W0-B-03), B-06 P1 (Erklärung „A verschiebt nicht“ – Schlüsselbuchstabe A = Verschiebung 0), B-07 P4 (Kasiski-Regel wie W2-B-05), B-08 P4 (XOR-Regel wie W3-B-02), B-14 P9 (Schlüsselrollen beim MitM wie W5-B-14). Hinweise: nur „akte ↔ akten.json“ (Task 199).
 
 ### Task 190: Warm-up-Karten W3–W6 (48 Karten)
 
