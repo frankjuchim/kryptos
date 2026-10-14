@@ -899,11 +899,17 @@ falls Variante B), Materialien/Lehrerhinweise W0/W2 (Quell-JSON + `bauen.py` mit
 4. Spec-Tabellen und D-Eintrag in `FACHLICHE_KORREKTUREN.md`; Akten/Lösungen/Lehrerhinweise W0 und W2 nachziehen
    (Quell-JSON, `bauen.py <dateien>`, PDFs rendern und ansehen, `npm run akten`/`loesungen`/`lehrkraft`).
 
-- [ ] **Step 1: Failing tests** – Abgleich-Test: W0-L4/W2-L4 haben die Karte `quadrat`; Lösungsverrat-Test: Werkzeug-Ausgaben
+- [x] **Step 1: Failing tests** – Abgleich-Test: W0-L4/W2-L4 haben die Karte `quadrat`; Lösungsverrat-Test: Werkzeug-Ausgaben
   der Level-Voreinstellungen ⊄ Lösungen (rot, solange die alten Aufgaben bleiben).
-- [ ] **Step 2:** FAIL. **Step 3:** Aufgaben/Spec/Seed/Prüfwerte/Material ändern. **Step 4:** `npm run pruefen` grün, Level-Seiten
+- [x] **Step 2:** FAIL. **Step 3:** Aufgaben/Spec/Seed/Prüfwerte/Material ändern. **Step 4:** `npm run pruefen` grün, Level-Seiten
   im Browser ansehen (Karte, Link `#/quadrat?reiter=…&level=…`).
-- [ ] **Step 5: Commit** `M10: Werkzeug-Karte „Polybios & Playfair“ in Level 0.4 und 2.4, Aufgaben ohne Lösungsverrat umgebaut (L55, Task 239)`
+- [x] **Step 5: Commit** `M10: Werkzeug-Karte „Polybios & Playfair“ in Level 0.4 und 2.4, Aufgaben ohne Lösungsverrat umgebaut (L55, Task 239)`
+- Umsetzung (Kombination aus Umbau und Variante B): Regel `quadrat.schluesselwort` { nichtImLevel: W0-L4, W2-L4 } – im Level
+  kein Schlüsselwort-Editor (Polybios: Standardquadrat, Playfair: LEUCHTFEUER). Damit verraten KORINTH/ATHEN/GALEERE/RIALTO-
+  Aufgaben nichts mehr; umgebaut wurden nur die drei Aufgaben, die das Werkzeug trotzdem vorrechnete: W0-L4-01 (Zählung ab 0,
+  Kopf 01234, P1), W0-L4-02 (rückwärts nummeriert, Kopf 54321, P4), W2-L4-02 (Füllzeichen Q, P4). Fundklasse K10 im
+  Lösungsverrat-Test, D16 in FACHLICHE_KORREKTUREN, Specs W0/W2 (Level-Kopf und Zeilen), Prüfwerte W0/W2, Akten W0·4/W2·4
+  (Hinweis „Im Lab üben“) und Lehrerhinweise W0 (Abschnitt Kryptolabor ohne Werkstatt-Link) neu gebaut.
 
 ### Task 240: Objektbilder in Folien W0, W2, W3-Kür und Videos 00/01 (L58 entschieden)
 

@@ -120,7 +120,10 @@ const KRLabor = (() => {
     'analyse.verfahren.playfair': Object.freeze({ welt: 2 }),
     'analyse.verfahren.vigenere': Object.freeze({ welt: 2 }),
     'analyse.verfahren.enigma': Object.freeze({ welt: 3 }),
-    'enigma.vorfuehren': Object.freeze({ nichtImLevel: Object.freeze(['W3-L5']) })
+    'enigma.vorfuehren': Object.freeze({ nichtImLevel: Object.freeze(['W3-L5']) }),
+    // M10 L55 (Task 239): In den Level-Karten 0.4/2.4 bleibt das Schlüsselwort fest (Standardquadrat bzw. eigenes
+    // Beispielwort) – mit eigenem Schlüsselwort rechnete das Werkzeug die Aufgaben (KORINTH, RIALTO, GALEERE) vor
+    'quadrat.schluesselwort': Object.freeze({ nichtImLevel: Object.freeze(['W0-L4', 'W2-L4']) })
   });
   /** Ist der Reiter/Modus „<id>.<reiter>“ in dieser Umgebung sichtbar? Lehrkraft oder fehlende Angaben → ja;
       umgebung.level (Level-id der Aufgabe) sperrt Reiter mit nichtImLevel. */

@@ -463,7 +463,7 @@ Quadrat für Lab und Akte (aus dem Schlüsselwort ZEPPELIN18; Zeilen links, Spal
 ### Kür K2 – Die Enigma (vereinfacht)
 
 - **ID** K2 · **Niveau** kuer · **Rolle** 🔍 · **Labor-Werkzeug** Mini-Enigma (Erweiterung des Runden-Labors: eine
-  Walze, Reflektor, Stellung A–H, Stromweg-Animation)
+  Walze, Reflektor, Stellung A–H, Stromweg-Animation) und – M10 Task 235 – die Werkstatt-Enigma mit den Reitern „Maschine“ und „Innenleben“ (Seed `voreinstellung: { "reiter": ["maschine", "innenleben"] }`; „Vorführen“ ist im Level ausgeblendet, E180)
 - **Lernziel:** Du verschlüsselst mit einer Mini-Enigma, erklärst, warum dieselbe Einstellung entschlüsselt
   (Involution) und warum kein Buchstabe auf sich selbst abgebildet wird, und nutzt diese Eigenschaft zum Positionieren
   eines vermuteten Wortes.

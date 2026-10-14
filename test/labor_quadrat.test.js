@@ -189,3 +189,15 @@ test('quadrat: ruhig, nachspiel_sperrt_handgriffe, Herkunft, Ton aus', async () 
   assert.equal(p.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
   assert.match(p.text('details.station-hintergrund'), /25!/);
 });
+
+test('Level-Kontext 0.4/2.4 (M10 L55): Schlüsselwort fest – kein Editor, Voreinstellung ohne Wirkung; Lehrkraft frei', () => {
+  const p = oeffne('quadrat', { voreinstellung: { reiter: ['polybios'], schluesselwort: 'KORINTH' }, umgebung: { level: 'W0-L4' } });
+  assert.equal(p.k.alle(p.flaeche, 'button.quadrat-wort-aendern').length, 0);
+  assert.equal(p.zustand().schluesselwort, '', 'Standardquadrat');
+  assert.match(p.text('.quadrat-bedienung'), /im Level fest/);
+  const f = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'], schluesselwort: 'RIALTO' }, umgebung: { level: 'W2-L4' } });
+  assert.equal(f.k.alle(f.flaeche, 'button.quadrat-wort-aendern').length, 0);
+  assert.equal(f.zustand().schluesselwort, 'LEUCHTFEUER');
+  const l = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'] }, umgebung: { level: 'W2-L4', rolle: 'lehrkraft' } });
+  assert.equal(l.k.alle(l.flaeche, 'button.quadrat-wort-aendern').length, 1);
+});

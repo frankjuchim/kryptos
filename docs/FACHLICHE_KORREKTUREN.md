@@ -201,3 +201,17 @@ Lösungsspalte wird wörtlich gegen den Seed geprüft) – die Korrektur steht n
 | Akte W6·1 Abi-Check b), Akte W6·2 Auftrag 1, 2, Abi-Check a), Probeklausur eA g) | Lösungen zitierten Eingaben anderer Teile; Auftrag 1 rechnete das vorgerechnete Beispiel nach; *chronoskopkern* ist der Boss-Preis | Formulierungen ohne fremde Werte; Auftrag 1 mit `ZEITZEIT` → LXVBDEBK (P4); `WIYDI WPVHS BZDIM H` → *salbeiundminze* |
 | W6-A-01, Akte W6·2 Auftrag 2 (+ Folie 2, Lehrerhinweise W6) | Klartext *zeitreise beendet*: „Zeitreise“ steht im Plattformtitel auf jeder Seite (Krippe; Test K8 zählt jetzt Plattform- und Epochentitel) | `BLJLF ASPPI VLIUI N` (Ring 3, Pendel UHR) → Zwischentext HESELTBI VBEEONRG → *hebelistverbogen* |
 | W1-L3-02, Akte W1·3 Auftrag 3, Akte W0·1 Auftrag 5 | Klartexte mit Epochen-Kurzname bzw. -Ort (*bagdad*, *sparta*) – sichtbar auf Zeitleiste und Kopfzeilen (Test K8: Kurznamen und Orte der Epochen, Stoppliste für „heute“ u. Ä.) | `3947H OWTOQ HQ005 862DK 90` → *der kalif erwartet die karawane in basra*; `39470 0PSBD SGQPD HUHKQ ORBHK` → *der kalif schickt sieben truhen*; `DINII HFIDE TECFS BRSEE` (n = 4) → *die schiffe sind bereit* |
+
+**D16 – Werkzeug-Karten in Level 0.4 und 2.4 (Entscheidung der Lehrkraft vom 15.10.2026, L55: „Kann man die Aufgabe so
+abändern, sodass das Tool genutzt werden kann?“ – Ja):** Level 0.4 bekommt „Polybios & Playfair“ (Reiter Polybios),
+Level 2.4 zusätzlich den Reiter Playfair. Im Level-Kontext ist das Schlüsselwort fest (Regel `quadrat.schluesselwort`);
+Fundklasse K10 in `test/inhalte_loesungsverrat.test.js` prüft, dass das Werkzeug, angewandt auf die Eingaben der
+Level-Aufgaben, keine Lösung ausgibt. Neue Werte mit `shared/krypto.js` und dem Python-Zwilling nachgerechnet
+(`quellen/pruefwerte/W0.json` `W0-lab-v13`, `-v13b`; `W2.json` `W2-L4-02-paare`).
+
+| Aufgabe | Verrat durch das Werkzeug | Korrektur |
+|---|---|---|
+| W0-L4-01 | `rom` im Standardquadrat → `42 34 32` rechnet das Werkzeug direkt | Zählbasis ab 0: `31 23 21` → `rom` (Kopf `01234`, Falle P1 bleibt) |
+| W0-L4-02 | `44 42 34 24 11` → `troia` direkt | rückwärts nummeriert: `22 24 32 42 55` → `troia` (Kopf `54321`, Falle P4 bleibt) |
+| W2-L4-02 | Das Werkzeug teilt `gewitter` mit X in Paare (GE WI TX TE RX) | Füllzeichen Q: GE WI TQ TE RQ (Falle P4 bleibt) |
+| W0-L4-05, -07; W2-L4-01, -03, -04, -05 | mit eigenem Schlüsselwort (KORINTH, ATHEN, GALEERE, RIALTO) | kein Umbau: Schlüsselwort im Level fest |

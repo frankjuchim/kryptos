@@ -36,7 +36,8 @@
   function oeffne(container, voreinstellung, umgebung) {
     const v = voreinstellung || {};
     const reiterListe = KRLabor.reiterFuer('quadrat', v, umgebung);
-    const vorWort = wortVon(v.schluesselwort);
+    const wortFrei = KRLabor.erlaubt('quadrat.schluesselwort', umgebung); // im Level 0.4/2.4 fest (L55)
+    const vorWort = wortFrei ? wortVon(v.schluesselwort) : null;
     const vorRichtung = v.richtung === 'ent' ? 'ent' : 'ver';
     const stand = {
       polybios: { richtung: vorRichtung, wort: vorWort || '', liste: [] },
@@ -120,7 +121,13 @@
      * Schlüsselwort-Werkbank (Werkstatt „Schlüsselwort ändern“): Stempel, Streifen mit gestrichenen Doppelten, Aufbauen
      * (mindestens 3 Buchstaben), optional Standardquadrat. → { element, sperre(an), schliesse() }
      */
-    function wortWerkbank({ standard, beiNeu }) {
+    function wortWerkbank(o) {
+      if (!wortFrei) {
+        return { element: h('p', { class: 'quadrat-wort-fest text-2' }, 'Das Schlüsselwort ist im Level fest. Eigene Quadrate baust du im freien Kryptolabor.'), sperre() {}, schliesse() {} };
+      }
+      return wortWerkbankFrei(o);
+    }
+    function wortWerkbankFrei({ standard, beiNeu }) {
       let entwurf = '';
       const aendern = h('button', { type: 'button', class: 'knopf knopf-leise quadrat-wort-aendern' }, 'Schlüsselwort ändern');
       const streifen = h('div', { class: 'quadrat-wort-streifen', 'aria-live': 'polite' });

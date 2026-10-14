@@ -730,3 +730,51 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet, Quadrat, Bits, Wört
 });
 
 module.exports = { funde, papierFunde, papierPrueflinge, werteAusLoesung, loesungen, loesungsWerte, stuecke, eigeneFunde, schuelertexte, beschrifteteZahlen };
+
+// K10 (Plan M10 Task 239, L55): Werkzeug-Karten im Level. Das Werkzeug mit der Level-Voreinstellung (im Level-Kontext:
+// Schlüsselwort fest, KRLabor-Regel „quadrat.schluesselwort“) darf, angewandt auf die Eingaben einer Aufgabe dieses Levels,
+// deren Lösung nicht ausgeben – es soll beim Erkunden helfen, nicht vorrechnen. Keine Ausnahmen.
+test('K10: Werkzeug-Karten im Level rechnen keine Lösung der Level-Aufgaben vor (quadrat in 0.4/2.4)', () => {
+  const quelle = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'quadrat.js'), 'utf8');
+  const pfWort = /playfair:\s*'([A-Z]+)'/.exec(quelle)[1];
+  const norm = (t) => String(t).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const versuche = (f) => { try { return f(); } catch { return null; } };
+  /** Ausgaben je Reiter für eine Eingabe (nur, was das Werkzeug im Level zeigt) */
+  const AUSGABEN = {
+    polybios: (x) => [versuche(() => Krypto.polybios(x)), /^[\d\s]+$/.test(x) ? versuche(() => Krypto.polybios(x.replace(/\s+/g, ''), {}, 'ent')) : null],
+    playfair: (x) => [versuche(() => Krypto.playfair(x, pfWort)), versuche(() => Krypto.playfair(x, pfWort, 'ent')), versuche(() => Krypto.playfairPaare(x).join('')), versuche(() => Krypto.quadrat(pfWort).join(''))]
+  };
+  let geprueft = 0;
+  for (const nr of [0, 1, 2, 3, 4, 5, 6]) {
+    const w = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', `welt${nr}.json`), 'utf8'));
+    for (const l of w.levels || []) {
+      for (const karte of (Array.isArray(l.werkzeug) ? l.werkzeug : []).filter((k) => k && k.id === 'quadrat')) {
+        const reiter = (karte.voreinstellung && karte.voreinstellung.reiter) || ['polybios', 'playfair'];
+        for (const id of l.aufgaben) {
+          const a = w.aufgaben.find((x) => x.id === id);
+          const teile = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
+          const loesungen = Array.isArray(a.loesung) ? a.loesung : [a.loesung];
+          const eingaben = new Set();
+          for (const t of teile) if (t && typeof t.eingabe === 'string') eingaben.add(t.eingabe);
+          for (const m of JSON.stringify([a.inhalt, teile.map((t) => t && t.frage)]).matchAll(/`([^`]+)`/g)) eingaben.add(m[1]);
+          const ziele = [];
+          for (const lo of loesungen) {
+            if (!lo || typeof lo !== 'object') continue;
+            if (typeof lo.text === 'string') ziele.push(norm(lo.text));
+            const felder = Object.entries(lo).filter(([k, v]) => k !== 'text' && Array.isArray(v) && typeof v[0] === 'string');
+            if (felder.length) ziele.push(norm(felder.map(([, v]) => v[0]).join('')));
+          }
+          for (const x of eingaben) {
+            for (const r of reiter) {
+              for (const aus of AUSGABEN[r](x).filter(Boolean).map(norm)) {
+                for (const z of ziele.filter((y) => y.length >= 4)) assert.ok(!aus.includes(z), `${a.id}: Werkzeug ${r} gibt für „${x}“ die Lösung ${z} aus`);
+              }
+            }
+            geprueft++;
+          }
+        }
+      }
+    }
+  }
+  assert.ok(geprueft >= 10, `geprüfte Eingaben: ${geprueft}`);
+});

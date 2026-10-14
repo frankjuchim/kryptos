@@ -238,8 +238,8 @@ die grünen Tests in der IDE sind die Rückmeldung.
 
 ### Level 0.4 – Fremde Chiffre I: Polybios und Atbash
 
-- **ID:** 0.4 · **Niveau:** kern · **Rolle:** 🛡 (01–03, 05) / 🔍 (04, 06, 07) · **Labor-Werkzeug:** keins
-  (Quadrat als Block `quadrat` in den Aufgaben)
+- **ID:** 0.4 · **Niveau:** kern · **Rolle:** 🛡 (01–03, 05) / 🔍 (04, 06, 07) · **Labor-Werkzeug:** Polybios & Playfair
+  (M10 L55: nur Reiter „Polybios“, Seed `voreinstellung: { "reiter": ["polybios"] }`, Schlüsselwort im Level fest – Regel `quadrat.schluesselwort`; dazu das Quadrat als Block `quadrat` in den Aufgaben)
 - **Lernziel:** Du wendest ein unbekanntes Verfahren mit der **5-Schritte-Methode** an (lesen und nachrechnen →
   anwenden → umkehren → einordnen → beurteilen) – am Polybios-Quadrat, an Atbash und an ihrer Kombination.
 - **Merkkasten** (111 Wörter):
@@ -264,8 +264,8 @@ Standard-Polybios-Quadrat (Zeile = erste Ziffer, Spalte = zweite Ziffer):
 
 | ID | Titel | Stufe | Niveau | Kategorie | Interaktion | Fallen | Inhalt | Lösung | Tipp 1 / Tipp 2 | Erklärung |
 |---|---|---|---|---|---|---|---|---|---|---|
-| W0-L4-01 | Fackeln über Rom | ★ | kern | verschluesseln | `chiffre` + `quadrat` | P1 | Verschlüssele mit dem Standard-Polybios-Quadrat (erst Zeile, dann Spalte): `rom` | `42 34 32` ✔ nachgerechnet | R steht in Zeile 4. / O: Zeile 3, Spalte 4. | Jeder Buchstabe wird durch ein Ziffernpaar ersetzt – Substitution. |
-| W0-L4-02 | Eine Stadt aus Fackeln | ★ | kern | entschluesseln | `chiffre` + `quadrat` | P4 | Entschlüssele mit dem Standard-Quadrat: `44 42 34 24 11` | `troia` ✔ nachgerechnet | 44 = Zeile 4, Spalte 4. / 24 kann i oder j sein – hier ergibt i Sinn. | Wegen I = J ist die Entschlüsselung manchmal mehrdeutig; der Zusammenhang entscheidet (P4). |
+| W0-L4-01 | Fackeln über Rom | ★ | kern | entschluesseln | `chiffre` (Kopf `01234`) + `quadrat` | P1 | Ein Fackelträger zählt Zeilen und Spalten ab 0 (0–4): `31 23 21` – welches Wort? (M10 L55: das Werkzeug zeigt nur die Paare ab 1) | `rom` ✔ nachgerechnet | Zu jeder Ziffer 1 dazu: 31 → Zeile 4, Spalte 2. / 42 34 32 im Standardquadrat. | Ab 1 gezählt `42 34 32` → `rom`; ohne Beachtung der Zählbasis liest man `l h f` (P1). |
+| W0-L4-02 | Eine Stadt aus Fackeln | ★ | kern | entschluesseln | `chiffre` (Kopf `54321`) + `quadrat` | P4 | Station nummeriert Zeilen und Spalten rückwärts (oben/links = 5): `22 24 32 42 55` entschlüsseln (M10 L55) | `troia` ✔ nachgerechnet | Rückwärts wird 2 zu 4: 22 = Zeile 4, Spalte 4. / 42 = Zeile 2, Spalte 4 kann i oder j sein – hier ergibt i Sinn. | Vorwärts gezählt `44 42 34 24 11` → `troia`; die Nummerierung gehört zum Verfahren, und wegen I = J entscheidet manchmal der Zusammenhang (P4). |
 | W0-L4-03 | Der Spiegel | ★ | kern | verschluesseln | `chiffre` + `alphabet` | P1 | Nummerierung: A = 1 … Z = 26. Verschlüssele mit Atbash (c = 27 − p): `legion` | `OVTRLM` ✔ nachgerechnet | l = 12, 27 − 12 = 15 = O. / i = 9 → 18 = R. | Atbash hat keinen Schlüssel – wer das Verfahren kennt, kann alles lesen. |
 | W0-L4-04 | Zweimal gespiegelt | ★★ | kern | sicherheit-beurteilen | `choice` (Mehrfachauswahl) | P5, P8 | Welche Aussagen über Atbash sind richtig? (1) Zweimal Atbash ergibt wieder den Klartext. (2) Atbash ist eine Transposition. (3) Ver- und Entschlüsseln sind dieselbe Vorschrift. (4) Atbash erfüllt das Kerckhoffs-Prinzip, weil das Verfahren bekannt ist. (5) Atbash ist monoalphabetisch. | (1), (3), (5) | 27 − (27 − p) = ? / Ein Verfahren ohne Schlüssel kann Kerckhoffs nicht erfüllen. | Atbash ist involutorisch (P8) und hat keinen Schlüssel: Sobald das Verfahren bekannt ist, ist es wertlos. |
 | W0-L4-05 | Das Quadrat aus Korinth | ★★ | kern | verschluesseln | `quadrat` (ergänzen) + `chiffre` | P4 | Polybios mit Schlüsselwort `KORINTH`: erst die Buchstaben des Schlüsselworts ohne Wiederholung, dann der Rest des Alphabets (ohne J, I = J). a) Ergänze die Zeilen 2 und 3 des Quadrats (Zeile 1: K O R I N). b) Verschlüssele `sieg`. | a) Zeile 2: T H A B C, Zeile 3: D E F G L; b) `44 14 32 34` ✔ nachgerechnet | Nach KORINTH folgen A, B, C, D, … ohne bereits benutzte Buchstaben. / S steht in Zeile 4 (M P Q S U). | Das Schlüsselwort bestimmt das Quadrat – erst damit wird Polybios zu einer Verschlüsselung. |
