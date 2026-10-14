@@ -400,7 +400,7 @@ test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau 
 });
 
 test('Alle Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + Ergänzungen W0–W2, Plan M5 Tasks 91/92; W3–W6 Plan M8 Tasks 192–194)', () => {
-  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['adfgvx_stufe1', 'affin', 'ascii_bits', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'kryptos16_teilschritt', 'mod_a1', 'otp', 'otp_doppelt', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'spaltentransposition', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kryptoshash', 'xor_bytes']);
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['adfgvx_stufe1', 'affin', 'ascii_bits', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'kryptos16_teilschritt', 'mod_a1', 'otp', 'otp_doppelt', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'spaltentransposition', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_inverses', 'w4_modpotenz', 'w4_rsa_schluessel', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kollision', 'w5_kryptoshash', 'w5_pruefsumme', 'w5_schutzziele', 'w5_signatur', 'xor_bytes']);
   // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
   for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
@@ -912,4 +912,152 @@ test('Zwilling (bruecke.py) rechnet ADFGVX-Stufe 1, Spaltentransposition und KRY
     const x = parseInt(nurBits(ia.block), 2);
     return ia.schritt === 'transposition' ? { f: 'kryptos16.transponiere', args: [x] } : { f: 'kryptos16.sbox', args: [x, ia.schritt === 'sbox' ? 'ver' : 'ent'] };
   }, (a, r) => assert.equal(r.toString(2).padStart(16, '0'), a.loesung.bits));
+});
+
+/* ---------- Plan M8 Task 193: Trainingsplatz Welten 4 und 5 (SPEC W4 §8, W5 §8) ---------- */
+
+const potenzSchleife = (b, e, m) => { let r = 1; for (let i = 0; i < e; i++) r = (r * b) % m; return r; };
+const ggtZ = (x, y) => (y ? ggtZ(y, x % y) : x);
+const khZ = (t) => { let h = 0; for (const c of t.toLowerCase()) h = (3 * h + (c.charCodeAt(0) - 96)) % 29; return h; };
+
+test('w4_modpotenz (Ergänzung): gˣ mod p mit Primitivwurzel g, Fehlmuster ohne Reduktion → P2', () => {
+  for (const a of grundpruefung('w4_modpotenz')) {
+    const [, g, x, p] = /Berechne (\d+)\^(\d+) mod (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok([7, 11, 13, 17, 19, 23].includes(p) && x >= 2 && x <= 9);
+    assert.equal(new Set([...Array(p - 1).keys()].map((i) => potenzSchleife(g, i + 1, p))).size, p - 1, 'Primitivwurzel');
+    assert.equal(a.loesung.r[0], String(potenzSchleife(g, x, p)));
+    if (g ** x >= p) assert.ok(a.loesung._fehlmuster.r.some((f) => f.wert === String(g ** x) && f.p === 'P2'));
+  }
+  assert.equal(G.GENERATOREN.w4_modpotenz.niveau, 'ergaenzung');
+});
+
+test('w4_rsa_schluessel (Ergänzung): N, φ, d; e kleinstes zulässiges aus {3, 5, 7, 11, 13}, d ≠ e; φ = N − 1 → P7', () => {
+  for (const a of grundpruefung('w4_rsa_schluessel')) {
+    const [, p, q, e] = /p = (\d+), q = (\d+), e = (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok(p !== q && [3, 5, 7, 11, 13, 17, 19].includes(p) && [3, 5, 7, 11, 13, 17, 19].includes(q) && p * q <= 323);
+    assert.ok(!(p * q === 133), 'Video-Schlüssel (7, 19) ausgeschlossen');
+    const phi = (p - 1) * (q - 1);
+    let d = 1; while ((d * e) % phi !== 1) d++;
+    assert.notEqual(d, e);
+    const kleinstes = [3, 5, 7, 11, 13].find((x) => { if (x >= phi || ggtZ(x, phi) !== 1) return false; let y = 1; while ((y * x) % phi !== 1) y++; return y !== x; });
+    assert.equal(e, kleinstes);
+    assert.deepEqual([a.loesung.N[0], a.loesung.phi[0], a.loesung.d[0]], [p * q, phi, d].map(String));
+    assert.ok(a.loesung._fehlmuster.phi.some((f) => f.wert === String(p * q - 1) && f.p === 'P7'));
+  }
+});
+
+test('w4_inverses (Kür): a · a⁻¹ ≡ 1 mod m, kleinster positiver Rest; negativer Euklid-Koeffizient → P2', () => {
+  let negativ = 0;
+  for (const a of grundpruefung('w4_inverses')) {
+    const [, x, m] = /Inverse von (\d+) modulo (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok([26, 29, 31, 40, 48, 60, 72, 96].includes(m) && ggtZ(x, m) === 1 && x >= 2 && x < m);
+    const inv = Number(a.loesung.i[0]);
+    assert.ok(inv >= 1 && inv < m && (x * inv) % m === 1);
+    const f = (a.loesung._fehlmuster || {}).i || [];
+    if (f.length) { negativ++; assert.equal(f[0].p, 'P2'); assert.equal(Number(f[0].wert) + m, inv); }
+  }
+  assert.ok(negativ > 0);
+  assert.equal(G.GENERATOREN.w4_inverses.niveau, 'kuer');
+});
+
+test('w5_kollision: Musterlösung erfüllt hash-ziel, Ziel nie KH eines reservierten Paars, Varianten A (andere Nachricht) und B (Präfix)', () => {
+  const RESERVIERT = new Set([22, 18, 8, 0]); // heute/morgen, ueberweise…, treffen…, sonne/geheim (SPEC W5 §0a)
+  const varianten = new Set();
+  for (let seed = 1; seed <= 1000; seed++) {
+    const a = G.erzeuge('w5_kollision', seed * 7 + 1);
+    const ia = a.interaktion;
+    assert.equal(ia.kind, 'hash-ziel');
+    assert.ok(!RESERVIERT.has(ia.ziel), `Ziel ${ia.ziel}`);
+    assert.equal(khZ(a.loesung.beispiel), ia.ziel);
+    assert.equal(C.pruefeAufgabe(a, { text: a.loesung.beispiel }).ok, true);
+    if (ia.ungleich) {
+      varianten.add('A');
+      assert.ok(W.WOERTER_W5.includes(ia.ungleich[0]));
+      assert.equal(khZ(ia.ungleich[0]), ia.ziel);
+      assert.notEqual(a.loesung.beispiel, ia.ungleich[0]);
+      assert.equal(C.pruefeAufgabe(a, { text: ia.ungleich[0] }).ok, false);
+    } else {
+      varianten.add('B');
+      assert.match(ia.praefix, /^[a-z]{2}$/);
+      assert.ok(a.loesung.beispiel.startsWith(ia.praefix));
+    }
+  }
+  assert.deepEqual([...varianten].sort(), ['A', 'B']);
+  grundpruefung('w5_kollision');
+});
+
+test('w5_pruefsumme: S und G (mod 29) für Wort und Vertauschung, Auswahl aus den berechneten Gleichheiten', () => {
+  const S = (t) => [...t].reduce((s, c) => s + c.charCodeAt(0) - 96, 0) % 29;
+  const Gw = (t) => [...t].reduce((s, c, i) => s + (i + 1) * (c.charCodeAt(0) - 96), 0) % 29;
+  const antworten = new Set();
+  for (const a of grundpruefung('w5_pruefsumme')) {
+    const [, x, y] = /„([a-z]+)“ und „([a-z]+)“/.exec(a.inhalt[0].md);
+    assert.ok(x !== y && [...x].sort().join('') === [...y].sort().join(''), 'Vertauschung');
+    assert.ok(W.WOERTER_W5.includes(x));
+    const lo = a.loesung;
+    assert.deepEqual([lo[0].sa[0], lo[0].sb[0], lo[0].ga[0], lo[0].gb[0]], [S(x), S(y), Gw(x), Gw(y)].map(String));
+    const soll = Gw(x) !== Gw(y) ? 'G' : 'keine';
+    const opt = a.interaktion[1].optionen.find((o) => lo[1].richtig.includes(o.id));
+    assert.equal(opt.md, soll);
+    antworten.add(soll);
+  }
+  assert.ok(antworten.has('G'));
+});
+
+test('w5_signatur (Ergänzung): s³ mod N, Urteil gültig/ungültig, kein Fixpunkt; Prüfung mit d statt e → P9', () => {
+  const urteile = new Set();
+  let mitD = 0;
+  for (const a of grundpruefung('w5_signatur')) {
+    const [, N, h, s] = /\((\d+), 3\)\. Hashwert der empfangenen Nachricht: (\d+)\. Signatur s = (\d+)/.exec(a.inhalt[0].md).map(Number);
+    assert.ok([55, 33, 51].includes(N) && h >= 2 && h <= 28 && h < N);
+    const x = potenzSchleife(s, 3, N);
+    assert.equal(a.loesung.x[0], String(x));
+    const urteil = x === h ? 'gültig' : 'ungültig';
+    assert.equal(a.loesung.urteil[0], urteil);
+    urteile.add(urteil);
+    const fm = ((a.loesung._fehlmuster || {}).x || []);
+    assert.ok(fm.every((f) => f.p === 'P9' && f.wert === String(potenzSchleife(s, { 55: 27, 33: 7, 51: 11 }[N], N))));
+    if (fm.length) mitD++;
+  }
+  assert.deepEqual([...urteile].sort(), ['gültig', 'ungültig']);
+  assert.ok(mitD > 100, `Fehlmuster d statt e nur ${mitD}-mal`);
+  assert.equal(G.GENERATOREN.w5_signatur.niveau, 'ergaenzung');
+});
+
+test('w5_schutzziele: Bausteine mit fester Lösung (Akte W5·2 Auftrag 4), alle erreichbar, Mehrfachauswahl der vier Schutzziele', () => {
+  const SOLL = { 'nur verschlüsseln': ['Vertraulichkeit'], 'nur signieren': ['Integrität', 'Authentizität', 'Verbindlichkeit'], 'signieren und verschlüsseln': ['Vertraulichkeit', 'Integrität', 'Authentizität', 'Verbindlichkeit'] };
+  const gesehen = new Set();
+  for (const a of grundpruefung('w5_schutzziele')) {
+    assert.equal(a.interaktion.kind, 'choice');
+    assert.equal(a.interaktion.mehrfach, true);
+    assert.deepEqual(a.interaktion.optionen.map((o) => o.md).sort(), ['Authentizität', 'Integrität', 'Verbindlichkeit', 'Vertraulichkeit']);
+    const baustein = Object.keys(SOLL).find((b) => a.titel.endsWith(b));
+    assert.ok(baustein, a.titel);
+    gesehen.add(baustein);
+    assert.deepEqual(a.interaktion.optionen.filter((o) => a.loesung.richtig.includes(o.id)).map((o) => o.md).sort(), [...SOLL[baustein]].sort());
+  }
+  assert.equal(gesehen.size, Object.keys(SOLL).length);
+});
+
+test('Trainingsplatz Welten 4/5: Kür-Generator nur bei freigegebener Kür, Ergänzungen immer', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  const keys = async (w) => (await s.get(`/api/training/${w}`)).body.generatoren.map((g) => g.key);
+  assert.deepEqual(await keys(4), ['w4_schluesselanzahl', 'w4_dh', 'w4_rsa_ver', 'w4_modpotenz', 'w4_rsa_schluessel', 'w4_inverses']);
+  assert.deepEqual(await keys(5), ['w5_kryptoshash', 'w5_kollision', 'w5_pruefsumme', 'w5_signatur', 'w5_schutzziele']);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { kuer: 'gesperrt' } }).expect(200);
+  assert.ok(!(await keys(4)).includes('w4_inverses'));
+});
+
+test('Zwilling (bruecke.py) rechnet die Generatoren der Welten 4/5 nach (je 50 Seeds)', { skip: !PYTHON && 'python3 fehlt' }, () => {
+  const lauf = (key, auftrag, vergleich) => {
+    const aufgaben = SEEDS500.slice(0, 50).map((s) => G.erzeuge(key, s));
+    const r = zwilling(aufgaben.map(auftrag));
+    aufgaben.forEach((a, i) => vergleich(a, r[i]));
+  };
+  lauf('w4_modpotenz', (a) => ({ f: 'modpow', args: /Berechne (\d+)\^(\d+) mod (\d+)/.exec(a.inhalt[0].md).slice(1).map(Number) }), (a, r) => assert.equal(String(r), a.loesung.r[0]));
+  lauf('w4_rsa_schluessel', (a) => ({ f: 'rsa.schluessel', args: /p = (\d+), q = (\d+), e = (\d+)/.exec(a.inhalt[0].md).slice(1).map(Number) }), (a, r) => assert.deepEqual([r.N, r.phi, r.d].map(String), [a.loesung.N[0], a.loesung.phi[0], a.loesung.d[0]]));
+  lauf('w4_inverses', (a) => ({ f: 'inverses', args: /Inverse von (\d+) modulo (\d+)/.exec(a.inhalt[0].md).slice(1).map(Number) }), (a, r) => assert.equal(String(r), a.loesung.i[0]));
+  lauf('w5_kollision', (a) => ({ f: 'kryptosHash', args: [a.loesung.beispiel] }), (a, r) => assert.equal(r.wert, a.interaktion.ziel));
+  lauf('w5_pruefsumme', (a) => ({ f: 'pruefsumme', args: [/„([a-z]+)“ und/.exec(a.inhalt[0].md)[1], 'gewichtet'] }), (a, r) => assert.equal(String(r), a.loesung[0].ga[0]));
+  lauf('w5_signatur', (a) => { const [, N, , s] = /\((\d+), 3\)\. Hashwert der empfangenen Nachricht: (\d+)\. Signatur s = (\d+)/.exec(a.inhalt[0].md).map(Number); return { f: 'modpow', args: [s, 3, N] }; }, (a, r) => assert.equal(String(r), a.loesung.x[0]));
 });

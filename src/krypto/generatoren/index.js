@@ -29,7 +29,15 @@ const MODULE = [
   require('./spalten'),
   require('./schluesselanzahl'),
   require('./toyhash'),
-  require('./dhrsa')
+  require('./dhrsa'),
+  // Plan M8 Task 193 (Welten 4 und 5)
+  require('./modpotenz'),
+  require('./rsa'),
+  require('./inverses'),
+  require('./kollision'),
+  require('./pruefsumme'),
+  require('./signatur'),
+  require('./schutzziele')
 ];
 
 /** Alle Generatoren der Module in der Registry des Kerns eintragen (G = src/content/generators). */

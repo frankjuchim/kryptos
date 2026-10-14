@@ -1193,10 +1193,11 @@ WIRBEL-8, OHO) ausgeschlossen (Video-Abgleich wie `mod_a1`).
 `w5_kryptoshash` bekommt `WOERTER_W5` aus Task 191 (statt 8 Wörtern). Hat der Kern keine Sichtbarkeitsregel für `kuer`-
 Generatoren, bleibt `w4_inverses` `ergaenzung` (Spec-Abweichung als Kommentar + FACHLICHE_KORREKTUREN Teil D).
 
-- [ ] **Step 1: Failing tests** (wie Task 192; `w5_kollision`: 1000 Seeds, Musterlösung erfüllt `hash-ziel`, Ziel nie = KH eines
+- [x] **Step 1: Failing tests** (wie Task 192; `w5_kollision`: 1000 Seeds, Musterlösung erfüllt `hash-ziel`, Ziel nie = KH eines
   reservierten Paars; `w5_schutzziele`: alle 24 Bausteine erreichbar).
-- [ ] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Trainingsplatz Welten 4/5: Modulo-Potenz, RSA-Schlüssel, Inverses, Kollision, Prüfsummen, Signatur, Schutzziele"`.
+- [x] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Trainingsplatz Welten 4/5: Modulo-Potenz, RSA-Schlüssel, Inverses, Kollision, Prüfsummen, Signatur, Schutzziele"`.
+- [x] **Umsetzungsnotiz:** Module `modpotenz.js`, `rsa.js`, `inverses.js` (Kür: der Kern blendet `kuer`-Generatoren bei gesperrter Kür aus, deshalb keine Spec-Abweichung), `kollision.js`, `pruefsumme.js`, `signatur.js`, `schutzziele.js`. `w4_rsa_schluessel`: zusätzlich e < φ (sonst lehnt die Bibliothek den Schlüssel ab, z. B. p = 5, q = 3: φ = 8, e = 11), Video-Schlüssel (7, 19) ausgeschlossen. `w5_kollision`: Variante A (Regel +1/−3, `ungleich`) und B (Präfix aus einem Listenwort), Zielwerte 0, 8, 18, 22 (reservierte Paare §0a) nie. `w5_pruefsumme`: Wort + Nachbartausch oder Permutation, Auswahl S/G/beide/keine aus den berechneten Werten. `w5_signatur`: Schlüssel (55, 3), (33, 3), (51, 3), kein Fixpunkt, Hälfte manipuliert; Fehlmuster d statt e (P9). **`w5_schutzziele` vorläufig nur drei Bausteine** (Spec nennt 24, listet sie nicht; Lösungen aus Akte W5·2 Auftrag 4) – offene Entscheidung 20. Tests: unabhängige Rechnung, 1000 Seeds `w5_kollision`, Fehlmuster, Sichtbarkeit (Kür gesperrt), Zwilling je 50 Seeds.
 
 ### Task 194: Generatoren Welt 6 (3 neue)
 
@@ -1421,6 +1422,7 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 | 17 | W3-B-13 b): die vier Optionen (Schlüssel aus a) verraten die Anzahl 4 aus a) | wie Task 177 (keine erfundenen Distraktoren) | Distraktor-Schlüssel ergänzen (z. B. `0011 0011`, Periode 4) |
 | 18 | Boss-Fallen ohne P-Nummer in der Spec-Erklärung (W3: 13 Aufgaben; W4–W6 entsprechend) | vorläufig aus Kategorie, Spec §0.6 und den passenden Lab-Aufgaben abgeleitet (Tasks 177, 181, 185, 189; Listen in den Umsetzungsnotizen) | P-Nummern tauschen – reine Datenänderung |
 | 19 | Spec W5-B-15 nennt P9 bei Kategorie `fremde-chiffre`; `FALLEN_PLAUSIBEL` kannte P9 dort nicht | **vorläufig festgelegt** (Orchestrator 14.10.2026, Welt-Spec gilt): P9 (Schlüsselrollen fremder Verfahren) für `fremde-chiffre` plausibel; Validator-Test angepasst | P9 wieder streichen → Hinweis bei W5-B-15 |
+| 20 | `w5_schutzziele`: SPEC W5 §8 nennt „24 Szenario-Bausteine“, listet aber nur vier Stichwörter ohne Lösung | **vorläufig** (Task 193): nur die drei Bausteine mit fester Lösung aus der Spec (Akte W5·2 Auftrag 4: nur verschlüsseln → V; nur signieren → I, A, Vb; beides → alle vier) | Lehrkraft liefert die 24 Bausteine mit Lösungen → Tabelle `BAUSTEINE` in `schutzziele.js` erweitern (Test prüft jeden Baustein) |
 
 ---
 
