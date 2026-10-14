@@ -630,3 +630,99 @@
 .verstecke-lupe-inhalt .verstecke-zeichen.punkt::after { opacity: calc(var(--punkt-deckkraft, .35) * 2.5); }
 @media (prefers-reduced-motion: reduce) { .verstecke-brief { transform: none; } .verstecke-lupe { transition: none; } .verstecke-zeichen.gestochen::after { animation: none; } }
 :root[data-bewegung="aus"] .verstecke-lupe { transition: none; }
+
+/* ======================================================================
+   Enigma (Plan M10 Tasks 232/233; stationen/enigma.html)
+   Tagesschlüssel auf grünem Filz, Walzenkasten aus Holz, Gehäuse mit Walzenfenstern, Lampenfeld, Tastatur, Steckerbrett.
+   ====================================================================== */
+.enigma-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .enigma-objekt { grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr); } }
+.enigma-buehne, .enigma-bedienung { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.enigma-feldtitel { margin: 0; font: 700 .75rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; color: inherit; opacity: .85; }
+.enigma-bedienung .enigma-feldtitel { color: var(--text); opacity: 1; }
+.enigma-mittig { text-align: center; }
+.enigma-hinweis { margin: 0; color: var(--hinweis); font-weight: 600; }
+.enigma-hinweis:empty { display: none; }
+
+.enigma-tagesschluessel { border-radius: var(--r-karte); background: color-mix(in srgb, var(--ok) 38%, var(--mat-gehaeuse)); background-image: linear-gradient(color-mix(in srgb, var(--mat-gehaeuse-tinte) 6%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--mat-gehaeuse-tinte) 6%, transparent) 1px, transparent 1px); background-size: 16px 16px; color: var(--mat-gehaeuse-tinte); }
+.enigma-tagesschluessel > summary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2) var(--a-3); min-height: var(--ziel); padding: var(--a-2) var(--a-3); cursor: pointer; font-weight: 700; }
+.enigma-zusammenfassung { padding: 2px 8px; border-radius: 6px; background: var(--mat-gehaeuse); color: var(--mat-lampe-an); font: 700 .85rem var(--f-mono); }
+.enigma-ts-inhalt { display: grid; gap: var(--a-3); padding: 0 var(--a-3) var(--a-3); }
+.enigma-ts-inhalt .text-2 { margin: 0; color: var(--mat-gehaeuse-tinte); opacity: .9; }
+.enigma-ts-reihe { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: flex-start; }
+.enigma-ts-block { display: grid; gap: var(--a-2); }
+.enigma-walzenkasten { display: flex; flex-wrap: wrap; gap: 6px; padding: var(--a-2); border-radius: 10px; background: linear-gradient(180deg, var(--mat-holz), var(--mat-holz-dunkel)); min-height: 5.6rem; }
+.enigma-walzenstein, .enigma-platz { display: grid; justify-items: center; align-content: center; gap: 2px; width: 3.2rem; min-height: 5rem; padding: 4px 2px; border: 2px solid transparent; border-radius: 8px; background: linear-gradient(90deg, var(--mat-gehaeuse), color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, var(--mat-gehaeuse)) 50%, var(--mat-gehaeuse)); color: var(--mat-gehaeuse-tinte); cursor: pointer; touch-action: manipulation; }
+.enigma-walzenstein b, .enigma-platz b { font: 700 1.15rem var(--f-mono); }
+.enigma-walzenstein small, .enigma-platz small { font-size: .62rem; opacity: .8; }
+.enigma-nabe { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--mat-lampe-an), var(--mat-messing)); }
+.enigma-walzenstein.benutzt { visibility: hidden; }
+.enigma-walzenstein.gewaehlt, .enigma-platz.bereit { border-color: var(--mat-lampe-an); }
+.enigma-walzenstein:focus-visible, .enigma-platz:focus-visible { outline: 3px solid var(--fokus); }
+.enigma-plaetze { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.enigma-platz-teil { display: grid; justify-items: center; gap: 4px; }
+.enigma-platz-name { font: 700 .7rem var(--f-text); letter-spacing: .1em; text-transform: uppercase; }
+.enigma-walze-wahl { min-height: var(--ziel); border: 1px solid var(--linie); border-radius: 6px; background: var(--karte); color: var(--text); font: 700 1rem var(--f-mono); }
+.enigma-ring { display: grid; grid-template-columns: auto auto; align-items: center; gap: 2px 4px; justify-items: center; }
+.enigma-ring-punkt { grid-column: 1 / -1; width: 8px; height: 8px; border-radius: 50%; background: var(--fehler); }
+.enigma-ring-text { grid-column: 1 / -1; font: 600 .78rem var(--f-mono); }
+.enigma-ring .knopf { min-width: var(--ziel); padding: 0; color: var(--mat-gehaeuse-tinte); }
+.enigma-ukw { display: flex; gap: var(--a-2); }
+.enigma-ukw button { display: grid; justify-items: center; width: 3.6rem; min-height: 4.6rem; border: 2px dashed transparent; border-radius: 10px; background: var(--mat-gehaeuse); color: var(--mat-gehaeuse-tinte); cursor: pointer; }
+.enigma-ukw button span { font: 700 .7rem var(--f-text); letter-spacing: .1em; }
+.enigma-ukw button b { font: 700 1.8rem var(--f-mono); }
+.enigma-ukw button[aria-pressed="true"] { border-color: var(--mat-lampe-an); }
+.enigma-tagesschluessel .knopf-leise { color: var(--mat-gehaeuse-tinte); }
+
+.enigma-gehaeuse { position: relative; display: grid; gap: var(--a-2); padding: var(--a-4) var(--a-3); border-radius: var(--r-karte); background: radial-gradient(circle at 14px 14px, var(--mat-messing) 4px, transparent 5px), radial-gradient(circle at calc(100% - 14px) 14px, var(--mat-messing) 4px, transparent 5px), var(--mat-gehaeuse); color: var(--mat-gehaeuse-tinte); outline: none; }
+.enigma-gehaeuse:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.enigma-walzenfach { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--a-2); padding: var(--a-2); border-radius: 12px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 6%, var(--mat-gehaeuse)); }
+.enigma-ukw-schild { display: grid; justify-items: center; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--mat-gehaeuse-tinte) 30%, transparent); border-radius: 8px; }
+.enigma-ukw-schild span { font: 700 .65rem var(--f-text); letter-spacing: .1em; }
+.enigma-ukw-schild b { font: 700 1.3rem var(--f-mono); }
+.enigma-fenster { display: grid; justify-items: center; gap: 4px; }
+.enigma-fenster-titel { font: 700 .7rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; }
+.enigma-fenster-rad { display: flex; align-items: stretch; gap: 4px; }
+.enigma-walzenrad { display: grid; justify-items: center; width: clamp(2.2rem, 9vw, 3rem); padding: 2px 0; border-radius: 6px; background: linear-gradient(180deg, color-mix(in srgb, var(--mat-band) 55%, var(--mat-gehaeuse)), var(--mat-band) 35% 65%, color-mix(in srgb, var(--mat-band) 55%, var(--mat-gehaeuse))); color: var(--mat-band-tinte); font-family: var(--f-mono); font-weight: 700; }
+.enigma-fenster-oben, .enigma-fenster-unten { font-size: .95rem; opacity: .55; }
+.enigma-fenster-mitte { font-size: 1.7rem; }
+.enigma-walzenrad.dreht { animation: enigma-drehen .28s ease-out; }
+@keyframes enigma-drehen { from { transform: translateY(-8px); } }
+.enigma-fenster-knoepfe { display: grid; }
+.enigma-fenster-knoepfe button { min-width: 1.7rem; min-height: var(--ziel); border: 0; border-radius: 4px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, transparent); color: var(--mat-gehaeuse-tinte); cursor: pointer; }
+.enigma-fenster-info { min-width: 0; }
+@media (max-width: 480px) { .enigma-ukw-schild { display: none; } .enigma-walzenfach { gap: 6px; } }
+.enigma-fenster-fuss { display: flex; align-items: center; justify-content: center; gap: 4px; max-width: 5.6rem; font-size: .66rem; line-height: 1.2; text-align: center; opacity: .9; }
+.enigma-kerbe { width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 25%, transparent); }
+.enigma-kerbe.an { background: var(--mat-lampe-an); box-shadow: 0 0 8px var(--mat-lampe-an); }
+.enigma-reihe { display: flex; justify-content: center; gap: clamp(2px, 1vw, 8px); }
+.enigma-lampenfeld, .enigma-tastatur, .enigma-steckerbrett { display: grid; gap: clamp(3px, 1vw, 8px); }
+.enigma-lampe { display: grid; place-items: center; min-width: 0; width: clamp(1.7rem, 7.6vw, 2.6rem); aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, var(--mat-gehaeuse)); color: color-mix(in srgb, var(--mat-gehaeuse-tinte) 55%, transparent); font: 700 .95rem var(--f-mono); transition: background-color .15s, color .15s; }
+.enigma-lampe.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); box-shadow: 0 0 18px var(--mat-lampe-an); }
+.enigma-taste { width: clamp(1.9rem, 8.6vw, 2.9rem); height: max(var(--ziel), clamp(1.9rem, 8.6vw, 2.9rem)); min-width: 0; padding: 0; border: 3px solid var(--mat-band); border-radius: 50%; background: var(--mat-gehaeuse); color: var(--mat-band); font: 700 1.05rem var(--f-mono); cursor: pointer; touch-action: manipulation; box-shadow: 0 3px 0 color-mix(in srgb, var(--mat-band) 40%, transparent); }
+.enigma-taste:active { transform: translateY(2px); box-shadow: none; }
+.enigma-taste:focus-visible, .enigma-buchse:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.enigma-taste:disabled, .enigma-buchse:disabled { opacity: .5; cursor: default; }
+.enigma-brett-teil { position: relative; padding: var(--a-2); border-radius: 10px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 5%, var(--mat-gehaeuse)); }
+.enigma-kabel { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.enigma-kabelweg { fill: none; stroke-width: 3.5; stroke-linecap: round; opacity: .9; }
+.enigma-buchse { position: relative; display: grid; justify-items: center; gap: 1px; min-width: 0; width: clamp(1.8rem, 8.4vw, 2.8rem); min-height: var(--ziel); padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--mat-gehaeuse-tinte); cursor: pointer; touch-action: manipulation; }
+.enigma-buchse-b { font: 600 .66rem var(--f-mono); }
+.enigma-buchse-loch { width: 1.5rem; height: .85rem; border-radius: 6px; background: radial-gradient(circle at 30% 50%, var(--nacht) 2.5px, transparent 3.5px), radial-gradient(circle at 70% 50%, var(--nacht) 2.5px, transparent 3.5px), color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, var(--mat-gehaeuse)); }
+.enigma-buchse-nr { position: absolute; right: 0; top: 0; font: 700 .58rem var(--f-text); }
+.enigma-buchse.gewaehlt .enigma-buchse-loch { outline: 2px solid var(--mat-lampe-an); }
+.enigma-buchse.gesteckt .enigma-buchse-loch { background: var(--kabel, var(--mat-lampe-an)); }
+.enigma-buchse.kabel-1, .enigma-kabelweg.kabel-1 { --kabel: var(--mat-kabel-1); stroke: var(--mat-kabel-1); }
+.enigma-buchse.kabel-2, .enigma-kabelweg.kabel-2 { --kabel: var(--mat-kabel-2); stroke: var(--mat-kabel-2); }
+.enigma-buchse.kabel-3, .enigma-kabelweg.kabel-3 { --kabel: var(--mat-kabel-3); stroke: var(--mat-kabel-3); }
+.enigma-buchse.kabel-4, .enigma-kabelweg.kabel-4 { --kabel: var(--mat-kabel-4); stroke: var(--mat-kabel-4); }
+.enigma-buchse.kabel-5, .enigma-kabelweg.kabel-5 { --kabel: var(--mat-kabel-5); stroke: var(--mat-kabel-5); }
+.enigma-buchse.kabel-6, .enigma-kabelweg.kabel-6 { --kabel: var(--mat-kabel-6); stroke: var(--mat-kabel-6); }
+.enigma-buchse.kabel-7, .enigma-kabelweg.kabel-7 { --kabel: var(--mat-kabel-7); stroke: var(--mat-kabel-7); }
+.enigma-buchse.kabel-8, .enigma-kabelweg.kabel-8 { --kabel: var(--mat-kabel-8); stroke: var(--mat-kabel-8); }
+.enigma-buchse.kabel-9, .enigma-kabelweg.kabel-9 { --kabel: var(--mat-kabel-9); stroke: var(--mat-kabel-9); }
+.enigma-buchse.kabel-10, .enigma-kabelweg.kabel-10 { --kabel: var(--mat-kabel-10); stroke: var(--mat-kabel-10); }
+.enigma-buchse.gesteckt .enigma-buchse-nr { color: var(--kabel); }
+.enigma-ts-tabelle dd { font-family: var(--f-mono); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .enigma-walzenrad.dreht { animation: none; } .enigma-lampe { transition: none; } }
+:root[data-bewegung="aus"] .enigma-walzenrad.dreht { animation: none; }

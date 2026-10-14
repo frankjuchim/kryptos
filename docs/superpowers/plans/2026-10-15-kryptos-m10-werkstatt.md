@@ -755,7 +755,7 @@ Klartext/Geheimtext, Stellung jetzt; „Mehr ausprobieren“: Gegenprobe („Zur
 (springt zu `innenleben` mit dem letzten Buchstaben), Tagesschlüssel-Tabelle. Alle Werte aus `Krypto.enigmaSchritt`.
 `zustand()` → `{ reiter, einstellung, stellung, eingabe, ausgabe, lampe }`.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Enigma: Standard, Tasten → BDZGO, Stellung AAF', () => {
     const w = oeffne('enigma');
@@ -768,8 +768,12 @@ Klartext/Geheimtext, Stellung jetzt; „Mehr ausprobieren“: Gegenprobe („Zur
   test('Enigma: Gegenprobe – Grundstellung, Geheimtext tippen ergibt Klartext', () => {});
   test('Enigma: physische Tasten nur bei Fokus in der Maschine; ruhig; Herkunft', () => {});
   ```
-- [ ] **Step 2–4** (Browser: 360 px – Gehäuse skaliert per `viewBox`/Raster, Steckerbrett in `.scroll-x` nur falls nötig).
-- [ ] **Step 5: Commit** `M10: Werkzeug „Enigma“ I – Maschine mit Tagesschlüssel, Lampen und Steckerbrett nach der Krypto-Werkstatt (Task 232)`
+- [x] **Step 2–4** (Browser: 360 px – Gehäuse skaliert per `viewBox`/Raster, Steckerbrett in `.scroll-x` nur falls nötig).
+- [x] **Step 5: Commit** `M10: Werkzeug „Enigma“ I – Maschine mit Tagesschlüssel, Lampen und Steckerbrett nach der Krypto-Werkstatt (Task 232)`
+- Umsetzung: Walzen werden im Kasten **angetippt** und dann auf den Platz getippt (dazu Auswahllisten), Kabel per Antippen
+  Buchse → Partner (nochmals antippen = Kabel ab) – kein Ziehen (Touch und Tastatur ohne Sonderfälle). Schlüssel fest, solange
+  eine Nachricht steht (Hinweis „✕ Neue Nachricht“). Kabel als SVG-Kurven nur mit Layout; bei 360 px entfällt das UKW-Schild
+  im Walzenfach (UKW steht in der Zusammenfassung). Reiter Innenleben/Vorführen/Glossar folgen in Task 233.
 
 ### Task 233: Werkzeug „Enigma“ II – Innenleben, Vorführen, Glossar (E180)
 
