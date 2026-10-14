@@ -131,3 +131,19 @@ test('Zustandsrahmen (ok/falsch/loesung) an Eingabefeldern schlagen die Eingabe-
   }
   assert.deepEqual(verstoesse, [], 'zu schwach gegen basis.css input:not(…) – Zustandsrahmen bleibt unsichtbar');
 });
+test('[hidden] gewinnt gegen id-Regeln mit display (Toast verschwand nie, Fund M9 Task 217)', () => {
+  for (const p of alle(CSS, '.css')) {
+    const n = path.basename(p);
+    if (n === 'druck.css') continue;
+    const css = lies(p).replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/(^|;)\s*display\s*:\s*(?!none)/.test(m[2])) continue;
+      for (const sel of m[1].split(',')) {
+        const id = /#([\w-]+)(?![\w-]*\[hidden\])/.exec(sel);
+        if (!id || /:not\(\[hidden\]\)/.test(sel)) continue;
+        const regel = new RegExp(`#${id[1]}\\[hidden\\][^{]*\\{[^}]*display\\s*:\\s*none`);
+        assert.match(css, regel, `${n}: #${id[1]} setzt display – Regel #${id[1]}[hidden] { display: none } fehlt`);
+      }
+    }
+  }
+});
