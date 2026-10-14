@@ -158,6 +158,8 @@ function pruefeAufgabe(welt, w, spec) {
   const chTeile = S.teile(a).filter(({ interaktion: ia }) => ia && ia.kind === 'choice');
   for (const { interaktion: ia } of chTeile) {
     for (const op of ia.optionen || []) assert.doesNotMatch(String(op.md ?? op.text), /(^|\s)\(?[A-H]\)\s/, `${o}: Option ${op.id} enthält eine weitere Kennung`);
+    // Review M8 Fund 4: ein angehängter Arbeitsauftrag („Formuliere anschließend …“) gehört in den Inhalt, nicht in die Option
+    for (const op of ia.optionen || []) assert.doesNotMatch(String(op.md ?? op.text), /\b(Formuliere|Begründe|Erläutere|Beurteile|Nenne)\b/, `${o}: Option ${op.id} enthält einen Arbeitsauftrag`);
   }
   if (chTeile.length === 1 && !S.loesungsTeile(String(spec.loesung))) {
     const k = S.optionsKennungen(spec.inhalt);
