@@ -38,7 +38,7 @@ const UMFANG = {
   0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B', 'WU-W0'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B', 'WU-W1'],
   2: ['W2-A', 'W2-L1', 'W2-L2', 'W2-L3', 'W2-L4', 'W2-L5', 'W2-B', 'WU-W2'],
   // Plan M8: die Inhalts-Tasks 172–190 tragen ihre Abschnitte ein
-  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1', 'W4-L2', 'W4-L3', 'W4-B'], 5: ['W5-A', 'W5-L1', 'W5-L2', 'W5-L3', 'W5-B'], 6: ['W6-A', 'W6-L1']
+  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1', 'W4-L2', 'W4-L3', 'W4-B'], 5: ['W5-A', 'W5-L1', 'W5-L2', 'W5-L3', 'W5-B'], 6: ['W6-A', 'W6-L1', 'W6-L2']
 };
 /** Welten mit Spec (Abgleich-Tests laufen über alle) */
 const WELTEN = [0, 1, 2, 3, 4, 5, 6];
@@ -121,7 +121,9 @@ const TEILE_ERGAENZT = {
   'W3-L3-07': ['gaps', 'chiffre'],
   // Boss W3 (Plan M8 Task 177): B-06 als gaps (die OST-Bits als Operand wären die Lösung von W3-L1-04 a), E128-Muster),
   // B-12 „gaps“ der Spec als zwei Auswahlen P₁–P₅ (E131-Muster)
-  'W3-B-06': ['gaps'], 'W3-B-12': ['choice', 'choice']
+  'W3-B-06': ['gaps'], 'W3-B-12': ['choice', 'choice'],
+  // Plan M8 Task 187 (E128-Muster): a) Zwischentext (gaps), b) Geheimtext (chiffre uhrwerk)
+  'W6-L2-03': ['gaps', 'chiffre']
 };
 
 /** Plan M8 Task 184: Spec-Lücken ohne Eingabefeld (Begründung „weil …“ – Musterantwort in der Erklärung, wie E129) */
@@ -145,6 +147,11 @@ function schaubildLoesung(text) {
   for (const m of String(text || '').replace(/\*\*/g, '').matchAll(/(?:Lücke |L)(\d):?\s*([^·;]+)/g)) {
     const e = SCHAUBILD_TEXT[m[2].trim().toLowerCase()];
     if (e) out[`l${m[1]}`] = e;
+  }
+  // W6-L2-09: Lücken mit Buchstaben „A: …; B: …“ → Felder la, lb (Plan M8 Task 187)
+  for (const m of String(text || '').replace(/\*\*/g, '').matchAll(/(?:^|;\s*)([A-Z]):\s*([^;]+)/g)) {
+    const e = SCHAUBILD_TEXT[m[2].trim().toLowerCase()];
+    if (e) out[`l${m[1].toLowerCase()}`] = e;
   }
   return Object.keys(out).length ? out : null;
 }

@@ -1029,9 +1029,10 @@ Werte nach **D3** (Task 164).
 
 **Erwartete Hinweise:** W6-L2-05/-06/-10 keine; Ausnahme W6-L2-01 nur im Lösungsverrat-Test (mit Begründung).
 
-- [ ] **Step 1: Failing test** – `UMFANG[6]` += `'W6-L2'`; `TEILE_ERGAENZT['W6-L2-03'] = ['gaps', 'chiffre']`; Lösungsverrat-Test
+- [x] **Step 1: Failing test** – `UMFANG[6]` += `'W6-L2'`; `TEILE_ERGAENZT['W6-L2-03'] = ['gaps', 'chiffre']`; Lösungsverrat-Test
   ohne Ausnahme → FAIL bei W6-L2-01, dann Ausnahme mit Begründung → PASS.
-- [ ] **Step 2–4** wie Task 186. **Step 5: Commit** `git commit -m "Welt 6: Level 6.2 „Eves Chiffre“ (Werte nach D3, Ausnahme Ringtabelle)"`.
+- [x] **Step 2–4** wie Task 186. **Step 5: Commit** `git commit -m "Welt 6: Level 6.2 „Eves Chiffre“ (Werte nach D3, Ausnahme Ringtabelle)"`.
+- [x] **Umsetzungsnotiz:** Der Lösungsverrat-Test fand W6-L2-01 zunächst nicht (er hängte alle Lückenwerte samt Zwischentext aneinander, „05274163ZAICMEST“) – die vorhandene Ausnahme war damit „nicht gebraucht“ (rot). Der Test prüft jetzt zusätzlich Folgen kurzer Lückenwerte (Ziffern, Einzelbuchstaben) für sich (Muster-Test ergänzt; W0–W5 ohne neue Funde); ohne Ausnahme meldet er „05274163“ in Akte W6·2, mit Ausnahme grün. `schaubildLoesung` liest auch Lücken mit Buchstaben („A: …; B: …“ → `la`, `lb`; Parser-Test ergänzt). W6-L2-03 a) `gaps` Zwischentext, b) `chiffre` `uhrwerk` (`schluesselVerdeckt: false` in beiden Uhrwerk-Aufgaben, sonst verdeckt das Kryptoanalyse-Level den Schlüssel). W6-L2-06: Erklärung nennt für D nur den vertauschten Weg `LWKSP PVI` (der Geheimtext aus W6-L2-03 stünde sonst in einer anderen Aufgabe – Lösungsverrat); Konsistenz `pendelFolge` ZEIT/EVE und vertauschte Stufen. W6-L2-09 Schaubild „Das Siegel“ mit sechs nummerierten Schritten, Lücke C als Auswahl (drei Optionen wie im Plan). W6-L2-10 Erklärung „D (eA-Ausblick) ist falsch …“ (E132); Konsistenz `pruefsumme(…, summe, 26)` kern/nerk = 22 (V), abendrot/abendrat → ZRWUL XDV/ZRIUL XDV. Hinweise: nur „akte ↔ akten.json“ (Task 199).
 
 ### Task 188: Welt 6 – Level 6.3 „Generalprobe“
 

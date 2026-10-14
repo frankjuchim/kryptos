@@ -79,6 +79,14 @@ function loesungen(a) {
       }
     }
     if (luecken.length > 1) roh.push(luecken.join(''));
+    // Folgen kurzer Lückenwerte (Ziffern, Einzelbuchstaben) auch ohne die übrigen Felder, z. B. eine Lesereihenfolge
+    // 0 5 2 7 4 1 6 3 neben einem Zwischentext (W6-L2-01, Plan M8 E137)
+    let lauf = [];
+    for (const x of [...luecken, null]) {
+      if (x !== null && kurz(x)) { lauf.push(x); continue; }
+      if (lauf.length > 1 && lauf.length < luecken.length) roh.push(lauf.join(''));
+      lauf = [];
+    }
   }
   const zaehlt = (t) => (/^[01]+$/.test(t) ? t.length >= 16 : t.length >= 6 && new Set(t).size >= 3);
   return [...new Set(roh.map(N))].filter(zaehlt);
@@ -133,6 +141,7 @@ function funde(welt) {
 test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet in Alphabet-Block, Quadrat-Zeilen in Playfair-Quadrat)', () => {
   const lo = loesungen({ loesung: { a1: ['S'], a2: ['U'], a3: ['L'], a4: ['T'], a5: ['A'], a6: ['N'] } });
   assert.deepEqual(lo, ['SULTAN']);
+  assert.ok(loesungen({ loesung: { f0: ['0'], f1: ['5'], f2: ['2'], f3: ['7'], f4: ['4'], f5: ['1'], z: ['ZAICMEST'] } }).includes('052741'), 'Ziffernfolge neben einem Wort (E137)');
   const st = stuecke({ t: 'alphabet', zeilen: [{ label: 'Geheimtext', werte: 'SULTANBCDEFGHIJKMOPQRVWXYZ' }] });
   assert.ok(st.some((s) => s.includes('SULTAN')));
   const q = stuecke({ t: 'quadrat', art: 'playfair', schluessel: 'RIALTO' });

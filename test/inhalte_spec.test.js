@@ -85,6 +85,8 @@ test('Spec-Parser W3–W6 (Plan M8 Task 171): Zeilenzahlen, ids (E120), Niveau-/
   assert.deepEqual(S.choiceLoesung({ loesung: '**(B)**' }), ['b'], 'fett');
   assert.deepEqual(S.choiceLoesung({ loesung: 'korrekt: (1), (2) ✔' }), ['1', '2']);
   assert.deepEqual(S.choiceText({ id: 'W4-L2-02' }), ['Bobs öffentlicher Schlüssel']);
+  assert.deepEqual(S.schaubildLoesung('A: **privater Schlüssel von Alice**; B: **öffentlicher Schlüssel von Alice**; C: **h\' mit h\'\' vergleichen**'),
+    { la: { art: 'privat', inhaber: 'A' }, lb: { art: 'oeffentlich', inhaber: 'A' } }, 'Schaubild-Lücken mit Buchstaben (W6-L2-09)');
 });
 
 test('Spec-Parser: id-Abbildung (E38) und Interaktions-Mapping (E40, E64, E65)', () => {
