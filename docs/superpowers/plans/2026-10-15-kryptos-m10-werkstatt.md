@@ -642,7 +642,7 @@ Quadrat finden“ (Lernende tippen die Ziel-Felder; Rückmeldung nur zur Regel),
 Buchstabe mit verschiedenen Partnern, `playfairSchritte`), „Schlüsselwort ändern“. `zustand()` → `{ reiter, richtung,
 schluesselwort, eingabe, ausgabe, paar, regel }`.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Polybios: Antippen → Paare = Krypto.polybios', () => {
     const w = oeffne('quadrat');
@@ -660,7 +660,12 @@ schluesselwort, eingabe, ausgabe, paar, regel }`.
   test('Playfair: in Welt 0/1 ausgeblendet (E180)', () => { /* umgebung welten [0,1] → kein Reiter playfair */ });
   test('quadrat: ruhig, nachspiel_sperrt_handgriffe, Herkunft, Ton aus', () => {});
   ```
-- [ ] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Polybios & Playfair“ nach der Krypto-Werkstatt (Task 229)`
+- [x] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Polybios & Playfair“ nach der Krypto-Werkstatt (Task 229)`
+- Umsetzung: Quadrat als HTML-Knöpfe (`.quadrat-feld`, Köpfe `button.quadrat-kopf[data-zeile|data-spalte]`), Bänder
+  mit Zahlenpaaren über die neue Option `gruppen` von `KRStation.baender`, Schlüsselraum-Anzeige über `KRStation.ungefaehr`
+  (≈ 1,6 · 10²⁵), neues Material-Token `--mat-ziel` (Ergebnis-Markierung). Beispiel-Schlüsselwort LEUCHTFEUER statt KRYPTOLOGIE
+  (Regeltest). Klopfzeichen über „▶ Klopfen vorführen“ (sichtbar, Ton per Schalter). Schlüsselwort nur bei leerer Nachricht
+  änderbar (Werkstatt).
 
 ### Task 230: Werkzeug „Codes & Signale“ (`signale`, Zusatz) (E184–E186)
 

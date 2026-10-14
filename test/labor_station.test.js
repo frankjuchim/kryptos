@@ -245,3 +245,20 @@ test('KRLabor.lade: fehlt station.js, wird es nach bausteine.js und vor dem Modu
   await k.ruhe();
   assert.deepEqual(k.skripte.filter((s) => s.includes('/labor/')), ['/static/js/krypto/labor/station.js', '/static/js/krypto/labor/scheibe.js']);
 });
+
+test('baender mit Gruppengröße (Zahlenpaare) und ungefaehr für große Anzahlen (Plan M10 Task 229)', () => {
+  const { S, ziel } = rahmen();
+  const b = S.baender({ oben: 'Klartext', unten: 'Zahlenpaare', gruppe: [false, true], gruppen: [0, 2] });
+  ziel.appendChild(b.element);
+  for (const [x, y] of [['w', '52'], ['o', '34'], ['l', '31']]) b.push(x, y);
+  assert.equal(b.ausgaben[1].textContent, '52 34 31');
+  assert.equal(b.ausgaben[0].textContent, 'wol');
+  assert.equal(b.text(1), '523431', 'Rohtext ohne Lücken');
+  b.beschrifte('Klartext (Paare)', 'Geheimtext', [false, true], [2, 5]);
+  assert.equal(b.ausgaben[0].textContent, 'wo l');
+  assert.equal(S.ungefaehr('15511210043330985984000000'), '≈ 1,6 · 10²⁵');
+  assert.equal(S.ungefaehr('403291461126605635584000000'), '≈ 4,0 · 10²⁶');
+  assert.equal(S.ungefaehr('26'), '26');
+  assert.equal(S.ungefaehr('312000'), '312.000');
+  assert.equal(S.ungefaehr('9995000'), '≈ 1,0 · 10⁷');
+});

@@ -94,6 +94,7 @@
   --mat-gehaeuse: #22211E;
   --mat-gehaeuse-tinte: #ECE6D8;
   --mat-lampe-an: #FFC94A;
+  --mat-ziel: #2BB3A3;
   --mat-kabel-1: #E57373;
   --mat-kabel-2: #64B5F6;
   --mat-kabel-3: #81C784;
@@ -144,6 +145,7 @@
   --mat-gehaeuse: #151513;
   --mat-gehaeuse-tinte: #ECE6D8;
   --mat-lampe-an: #FFD566;
+  --mat-ziel: #3CCFBD;
   --mat-kabel-1: #E57373;
   --mat-kabel-2: #64B5F6;
   --mat-kabel-3: #81C784;
@@ -194,6 +196,7 @@
     --mat-gehaeuse: #151513;
     --mat-gehaeuse-tinte: #ECE6D8;
     --mat-lampe-an: #FFD566;
+    --mat-ziel: #3CCFBD;
     --mat-kabel-1: #E57373;
     --mat-kabel-2: #64B5F6;
     --mat-kabel-3: #81C784;

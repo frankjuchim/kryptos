@@ -151,7 +151,12 @@ test('Nachladen: fehlendes Modul → Skript mit ?v= wird angehängt, Ladehinweis
 test('Noch nicht gebaute Werkzeuge: „noch in Arbeit“ ohne Ladeversuch; gebaute laden nach (KRLabor.bereit)', async () => {
   const k = lade();
   const L = k.wert('KRLabor');
-  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur']);
+  // M10: BEREIT wächst mit jedem gebauten Werkstatt-Werkzeug – bereit genau die Werkzeuge mit Modul-Datei
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const gebaut = k.roh(L.WERKZEUGE).map((w) => w.id).filter((id) => fs.existsSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', `${id}.js`)));
+  assert.deepEqual(k.roh(L.WERKZEUGE.filter((w) => L.bereit(w.id)).map((w) => w.id)), gebaut);
+  for (const id of ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur', 'quadrat']) assert.ok(L.bereit(id), id);
   const f = k.document.createElement('div');
   // alle elf Werkzeuge sind gebaut; der Zweig „noch in Arbeit“ greift für jede id ohne Modul (hier eine erfundene)
   const ctrl = L.oeffne('kommt-noch', {}, f, { modus: 'labor' });

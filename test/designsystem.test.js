@@ -82,7 +82,7 @@ test('Review M7 K7: Grafiklinien im Funkraum-Netz ≥ 3 : 1 (WCAG 1.4.11) – ei
 });
 
 test('Material-Tokens (Plan M10 E172): --mat-* in :root und im Dunkelblock, Tinte auf Band/Karton/Gehäuse ≥ 4,5 : 1', () => {
-  const NAMEN = ['--mat-holz', '--mat-holz-hell', '--mat-holz-dunkel', '--mat-messing', '--mat-band', '--mat-band-tinte', '--mat-karton', '--mat-karton-tinte', '--mat-fell', '--mat-gehaeuse', '--mat-gehaeuse-tinte', '--mat-lampe-an', ...Array.from({ length: 10 }, (_, i) => `--mat-kabel-${i + 1}`)];
+  const NAMEN = ['--mat-holz', '--mat-holz-hell', '--mat-holz-dunkel', '--mat-messing', '--mat-band', '--mat-band-tinte', '--mat-karton', '--mat-karton-tinte', '--mat-fell', '--mat-gehaeuse', '--mat-gehaeuse-tinte', '--mat-lampe-an', '--mat-ziel', ...Array.from({ length: 10 }, (_, i) => `--mat-kabel-${i + 1}`)];
   const DUNKELBLOCK = block(T, ':root[data-theme="dunkel"]');
   const AUTO = { ...HELL, ...block(T, ':root[data-theme="auto"]') };
   for (const n of NAMEN) {
@@ -95,6 +95,6 @@ test('Material-Tokens (Plan M10 E172): --mat-* in :root und im Dunkelblock, Tint
       assert.ok(kontrast(wert(t, v), wert(t, h)) >= 4.5, `${name}: ${v} auf ${h} = ${kontrast(wert(t, v), wert(t, h)).toFixed(2)}`);
     }
     // Lampe und Kabel sind Grafik (WCAG 1.4.11): ≥ 3 : 1 auf dem Gehäuse
-    for (const n of ['--mat-lampe-an', ...Array.from({ length: 10 }, (_, i) => `--mat-kabel-${i + 1}`)]) assert.ok(kontrast(wert(t, n), wert(t, '--mat-gehaeuse')) >= 3, `${name}: ${n} auf --mat-gehaeuse`);
+    for (const n of ['--mat-lampe-an', '--mat-ziel', ...Array.from({ length: 10 }, (_, i) => `--mat-kabel-${i + 1}`)]) assert.ok(kontrast(wert(t, n), wert(t, '--mat-gehaeuse')) >= 3, `${name}: ${n} auf --mat-gehaeuse`);
   }
 });

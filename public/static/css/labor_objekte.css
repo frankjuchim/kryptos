@@ -349,3 +349,99 @@
 .karton-groesse { margin-top: var(--a-1); }
 @media (prefers-reduced-motion: reduce) { .karton.dreht { animation: none; } }
 :root[data-bewegung="aus"] .karton.dreht { animation: none; }
+
+/* ======================================================================
+   Polybios & Playfair (Plan M10 Task 229; stationen/polybios.html, stationen/playfair.html)
+   Papier-Quadrat mit Ziffernköpfen, Panel „Aktueller Buchstabe“ bzw. „Aktuelles Paar“ mit Regelkarten, Fackeltelegraph,
+   Klopfzeichen, Schlüsselwort-Werkbank. Quelle der Hervorhebung: --mat-lampe-an, Ergebnis: --mat-ziel.
+   ====================================================================== */
+.quadrat-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .quadrat-objekt { grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 1fr); } }
+.quadrat-buehne, .quadrat-bedienung { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.quadrat-tisch { display: flex; flex-wrap: wrap; gap: var(--a-3); align-items: stretch; }
+.quadrat-feldtitel { font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+.quadrat-schluesselfeld { display: grid; gap: 2px; }
+.quadrat-schluessel { margin: 0; }
+.quadrat-schluessel-wort { font: 700 1.05rem var(--f-mono); letter-spacing: .08em; }
+.quadrat-sperrnotiz { margin: 0; font-size: .9rem; }
+.quadrat-sperrnotiz:empty { display: none; }
+
+.quadrat-papier { position: relative; display: grid; justify-items: center; gap: var(--a-1); padding: 1.6rem var(--a-3) var(--a-3) 1.9rem; border: 2px solid var(--mat-karton); border-radius: 12px; background: var(--mat-band); color: var(--mat-band-tinte); box-shadow: 0 6px 16px rgba(11, 20, 38, .28); }
+.quadrat-papier:not(:has(.mit-kopf)) { padding: var(--a-4) var(--a-4) var(--a-2); }
+.quadrat-achse { position: absolute; font: 700 .72rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; color: var(--mat-band-tinte); opacity: .75; }
+.quadrat-achse-spalte { top: .35rem; left: 50%; transform: translateX(-50%); }
+.quadrat-achse-zeile { left: .35rem; top: 50%; writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg); }
+.quadrat-raster { display: grid; grid-template-columns: repeat(5, minmax(var(--ziel), 3.6rem)); gap: 0; }
+.quadrat-raster.mit-kopf { grid-template-columns: repeat(6, minmax(var(--ziel), 3.6rem)); gap: 0; }
+.quadrat-ecke { display: block; }
+.quadrat-feld { aspect-ratio: 1; min-width: var(--ziel); min-height: var(--ziel); margin: 0; padding: 0; border: 1.5px solid color-mix(in srgb, var(--mat-karton) 85%, var(--mat-band-tinte)); border-radius: 0; background: color-mix(in srgb, var(--auf-tinte) 35%, transparent); color: var(--mat-band-tinte); font: 700 1.6rem var(--f-mono); cursor: pointer; touch-action: manipulation; position: relative; transition: background-color .2s; }
+.quadrat-feld.ij { font-size: 1.15rem; }
+.quadrat-feld:hover { background: color-mix(in srgb, var(--mat-lampe-an) 28%, transparent); }
+.quadrat-feld.kw { background: color-mix(in srgb, var(--mat-lampe-an) 30%, var(--mat-band)); }
+.quadrat-feld.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); }
+.quadrat-feld.ziel { background: var(--mat-ziel); color: var(--mat-band-tinte); }
+.quadrat-feld.quadrat-falsch { background: var(--fehler-flaeche); color: var(--fehler); border-color: var(--fehler); }
+.quadrat-feld[data-nr]::after { content: attr(data-nr); position: absolute; top: 2px; right: 4px; font: 700 .7rem var(--f-text); }
+.quadrat-feld:focus-visible, .quadrat-kopf:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; z-index: 1; }
+.quadrat-feld.aufbau { animation: quadrat-tinte .45s ease-out both; animation-delay: calc(var(--i, 0) * 35ms); }
+@keyframes quadrat-tinte { from { opacity: 0; transform: scale(1.35); } to { opacity: 1; transform: none; } }
+.quadrat-kopf { justify-self: center; align-self: center; width: var(--ziel); height: var(--ziel); margin: 2px; border: 1.5px dashed color-mix(in srgb, var(--mat-holz) 70%, transparent); border-radius: 50%; background: transparent; color: var(--mat-holz); font: 700 1.35rem var(--f-mono); cursor: pointer; touch-action: manipulation; transition: background-color .2s; }
+.quadrat-kopf:hover { background: color-mix(in srgb, var(--mat-lampe-an) 25%, transparent); }
+.quadrat-papier.ent .quadrat-kopf { border: 2.5px solid var(--mat-lampe-an); background: color-mix(in srgb, var(--mat-lampe-an) 15%, transparent); }
+.quadrat-kopf.an { border-style: solid; border-color: var(--mat-lampe-an); background: var(--mat-lampe-an); color: var(--mat-band-tinte); }
+.quadrat-kopf-spalte.an { border-color: var(--mat-ziel); background: var(--mat-ziel); }
+.quadrat-unterschrift { margin: var(--a-2) 0 0; font: 700 .75rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; color: var(--mat-band-tinte); opacity: .8; }
+
+.quadrat-panel { flex: 1 1 12rem; display: grid; align-content: start; justify-items: center; gap: var(--a-1); padding: var(--a-3); border-radius: var(--r-karte); background: var(--mat-gehaeuse); color: var(--mat-gehaeuse-tinte); text-align: center; }
+.quadrat-panel-titel { justify-self: stretch; margin: 0; font: 700 .75rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; text-align: left; color: var(--mat-gehaeuse-tinte); opacity: .8; }
+.quadrat-panel-unter, .quadrat-panel-quadrat, .quadrat-panel .text-2 { margin: 0; color: var(--mat-gehaeuse-tinte); opacity: .85; }
+.quadrat-gross { font: 600 5rem/1.1 var(--f-mono); color: var(--mat-lampe-an); }
+.quadrat-gross.ij { font-size: 3.4rem; }
+.quadrat-koordinaten { margin: 0; font: 600 3rem/1.1 var(--f-mono); }
+.quadrat-kz-z { color: var(--mat-lampe-an); }
+.quadrat-kz-s { color: var(--mat-ziel); }
+.quadrat-paar { display: flex; align-items: center; justify-content: center; gap: .35rem; min-height: 3.6rem; margin: 0; font: 600 2.4rem var(--f-mono); }
+.quadrat-paar-b { color: var(--mat-lampe-an); }
+.quadrat-paar-e { color: var(--mat-ziel); }
+.quadrat-paar-pfeil { margin: 0 .3rem; font-size: 1.6rem; opacity: .7; }
+.quadrat-x-notiz:empty { display: none; }
+.quadrat-regeln { justify-self: stretch; display: grid; gap: var(--a-2); }
+.quadrat-regel { display: flex; align-items: center; gap: var(--a-3); padding: var(--a-2) var(--a-3); border: 1px solid color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, transparent); border-radius: var(--r-knopf); text-align: left; transition: border-color .2s, background-color .2s; }
+.quadrat-regel.an { border-color: var(--mat-lampe-an); background: color-mix(in srgb, var(--mat-lampe-an) 14%, transparent); }
+.quadrat-regel-bild { display: grid; grid-template-columns: repeat(3, 12px); gap: 2px; flex: none; }
+.quadrat-regel-bild span { width: 12px; height: 12px; border-radius: 2px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 16%, transparent); }
+.quadrat-regel-bild span.q { background: var(--mat-lampe-an); }
+.quadrat-regel-bild span.z { background: var(--mat-ziel); }
+.quadrat-regel-text { display: grid; }
+.quadrat-regel-titel { font-weight: 700; }
+.quadrat-regel-unter { color: var(--mat-gehaeuse-tinte); opacity: .8; font-size: .9rem; }
+
+.quadrat-mehr-titel { margin: 0; font-weight: 700; }
+.quadrat-fackeln { display: block; width: 100%; max-width: 360px; height: auto; border-radius: var(--r-karte); background: var(--mat-gehaeuse); }
+.quadrat-flamme { fill: var(--mat-gehaeuse-tinte); opacity: .22; transition: fill .2s, opacity .2s; }
+.quadrat-flamme.an { fill: var(--mat-lampe-an); opacity: 1; }
+.quadrat-fackeln-rechts .quadrat-flamme.an { fill: var(--mat-ziel); }
+.quadrat-fackelstab { stroke: var(--mat-messing); stroke-width: 5; stroke-linecap: round; }
+.quadrat-mauer { fill: var(--mat-holz-dunkel); }
+.quadrat-fackel-text { font: 500 13px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; }
+.quadrat-klopfen { display: flex; flex-wrap: wrap; gap: var(--a-1) var(--a-3); min-height: var(--ziel); max-height: 9rem; overflow: auto; padding: var(--a-2) var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--mat-band); color: var(--mat-band-tinte); font: 700 1.1rem/1.8 var(--f-mono); }
+.quadrat-klopfen:empty::before { content: "Schreib zuerst eine Nachricht."; font: 400 .9rem var(--f-text); opacity: .75; }
+.quadrat-schlaege { white-space: pre; }
+.quadrat-schlaege.aktuell { color: var(--hinweis); text-decoration: underline; }
+
+.quadrat-wort, .quadrat-wort-editor { display: grid; gap: var(--a-2); justify-items: start; }
+.quadrat-wort-editor[hidden] { display: none; }
+.quadrat-wort-editor > .station-stempelkasten { justify-self: stretch; }
+.quadrat-wort-streifen { display: flex; flex-wrap: wrap; gap: 4px; min-height: 2.6rem; }
+.quadrat-wort-zeichen { display: inline-grid; justify-items: center; min-width: 2.1rem; padding: 2px 4px; border: 1px solid var(--linie); border-radius: 6px; background: var(--mat-band); color: var(--mat-band-tinte); font: 700 1.1rem var(--f-mono); }
+.quadrat-wort-zeichen.doppelt .quadrat-wort-b { text-decoration: line-through; text-decoration-color: var(--fehler); text-decoration-thickness: 3px; opacity: .6; }
+.quadrat-wort-notiz { font: 700 .62rem var(--f-text); color: var(--fehler); }
+.quadrat-wort-hinweis { margin: 0; }
+.quadrat-wort-hinweis:empty { display: none; }
+.quadrat-uebung-zeile { display: flex; align-items: center; gap: var(--a-2); min-height: var(--ziel); cursor: pointer; }
+.quadrat-uebung-zeile input { width: 22px; height: 22px; }
+.quadrat-bilder { display: grid; gap: 2px; }
+.quadrat-bild { margin: 0; font-family: var(--f-mono); }
+.quadrat-bild-b { font-weight: 700; color: var(--hinweis); }
+@media (prefers-reduced-motion: reduce) { .quadrat-feld.aufbau { animation: none; } .quadrat-feld, .quadrat-kopf, .quadrat-flamme, .quadrat-regel { transition: none; } }
+:root[data-bewegung="aus"] .quadrat-feld.aufbau { animation: none; }

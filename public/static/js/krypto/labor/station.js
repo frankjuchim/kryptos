@@ -127,12 +127,16 @@ const KRStation = (() => {
 
   /**
    * Zwei Nachrichtenbänder (output.station-band, nicht .labor-ausgabe – die bleibt dem gerechneten Ergebnis): gruppe[i] = true → GROSS in Fünfergruppen (Geheimtext, Klasse „geheim“),
-   * sonst klein (Klartext, Klasse „klar“). Knöpfe ⌫ Zurück, ✕ Neue Nachricht, Kopieren (unteres Band, ohne Leerzeichen).
-   * → { element, push(ein, aus), pop(), leeren(), setze(eintraege), text(i), letztes(i), eintraege, beschrifte(oben, unten, gruppe) }
+   * sonst klein (Klartext, Klasse „klar“). gruppen[i] (Zahl, Plan M10 Task 229) setzt die Gruppengröße eines Bands
+   * (z. B. 2 für Zahlenpaare oder Playfair-Paare; 0 = ohne Lücken). Knöpfe ⌫ Zurück, ✕ Neue Nachricht, Kopieren
+   * (unteres Band, ohne Leerzeichen).
+   * → { element, push(ein, aus), pop(), leeren(), setze(eintraege), text(i), letztes(i), eintraege, beschrifte(oben, unten, gruppe, gruppen) }
    */
-  function baender({ oben = 'Klartext', unten = 'Geheimtext', gruppe = [false, true], beiAenderung } = {}) {
+  function baender({ oben = 'Klartext', unten = 'Geheimtext', gruppe = [false, true], gruppen = [], beiAenderung } = {}) {
     let eintraege = [];
     let art = [...gruppe];
+    let groesse = [...gruppen];
+    const gruppeVon = (i) => (Number.isInteger(groesse[i]) ? groesse[i] : art[i] ? 5 : 0);
     const titel = [h('span', { class: 'station-band-titel' }, oben), h('span', { class: 'station-band-titel' }, unten)];
     const ausgaben = [0, 1].map((i) => {
       const id = KRLaborBau.neueId('station-band');
@@ -158,8 +162,9 @@ const KRStation = (() => {
       const s = roh(i);
       const zeichen = [...(art[i] ? s.toUpperCase() : Krypto.klein(s))];
       let inGruppe = 0;
+      const g = gruppeVon(i);
       zeichen.forEach((c, j) => {
-        if (art[i] && inGruppe === 5) {
+        if (g > 0 && inGruppe === g) {
           ziel.appendChild(h('span', { class: 'station-luecke' }, ' '));
           inGruppe = 0;
         }
@@ -219,10 +224,11 @@ const KRStation = (() => {
       get eintraege() {
         return eintraege.map((e) => [...e]);
       },
-      beschrifte(o, u, g) {
+      beschrifte(o, u, g, gr) {
         titel[0].textContent = o;
         titel[1].textContent = u;
         if (Array.isArray(g)) art = [...g];
+        if (Array.isArray(gr)) groesse = [...gr];
         ausgaben.forEach((a, i) => {
           a.classList.toggle('geheim', !!art[i]);
           a.classList.toggle('klar', !art[i]);
@@ -498,6 +504,25 @@ const KRStation = (() => {
     };
   }
 
+  const HOCH = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+  /**
+   * Große Anzahl (Dezimalziffern als Zeichenkette, z. B. Krypto.schluesselraum(…).anzahl) gerundet lesbar machen:
+   * „15511210043330985984000000“ → „≈ 1,6 · 10²⁵“; bis 6 Stellen mit Tausenderpunkten. Nur Darstellung.
+   */
+  function ungefaehr(anzahl) {
+    const z = String(anzahl ?? '').replace(/^0+(?=\d)/, '');
+    if (!/^\d+$/.test(z)) return z;
+    if (z.length <= 6) return z.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    let m = Math.round(Number(z.slice(0, 3)) / 10);
+    let e = z.length - 1;
+    if (m >= 100) {
+      m = 10;
+      e += 1;
+    }
+    const exp = [...String(e)].map((c) => HOCH[c]).join('');
+    return `≈ ${Math.floor(m / 10)},${String(m).slice(-1)} · 10${exp}`;
+  }
+
   /** Namensnennung am Ende der Werkzeugfläche (Erlaubnis 14.10.2026, docs/FREMDCODE.md) */
   function herkunft(ziel) {
     const p = h('p', { class: 'werkzeug-herkunft' }, 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
@@ -505,5 +530,5 @@ const KRStation = (() => {
     return p;
   }
 
-  return { bewegung, flug, stempel, baender, anleitung, erklaerung, mehr, hintergrund, soGehts, nachspielKnopf, tippen, greifen, ton, tonSchalter, funken, sperre, herkunft, weich };
+  return { bewegung, flug, stempel, baender, anleitung, erklaerung, mehr, hintergrund, soGehts, nachspielKnopf, ungefaehr, tippen, greifen, ton, tonSchalter, funken, sperre, herkunft, weich };
 })();
