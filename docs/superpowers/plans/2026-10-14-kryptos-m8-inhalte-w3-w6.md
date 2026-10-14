@@ -1413,6 +1413,7 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 | 16 | Lösung W3-L1-04 a) (OST in ASCII-Bits) steht in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) | begründete Ausnahme im Lösungsverrat-Test (Task 172) | sonst Akte-Beispiel ändern (Spec-Korrektur) oder W3-L1-04 a) streichen |
 | 17 | W3-B-13 b): die vier Optionen (Schlüssel aus a) verraten die Anzahl 4 aus a) | wie Task 177 (keine erfundenen Distraktoren) | Distraktor-Schlüssel ergänzen (z. B. `0011 0011`, Periode 4) |
 | 18 | Boss-Fallen ohne P-Nummer in der Spec-Erklärung (W3: 13 Aufgaben; W4–W6 entsprechend) | vorläufig aus Kategorie, Spec §0.6 und den passenden Lab-Aufgaben abgeleitet (Tasks 177, 181, 185, 189; Listen in den Umsetzungsnotizen) | P-Nummern tauschen – reine Datenänderung |
+| 19 | Spec W5-B-15 nennt P9 bei Kategorie `fremde-chiffre`; `FALLEN_PLAUSIBEL` kannte P9 dort nicht | **vorläufig festgelegt** (Orchestrator 14.10.2026, Welt-Spec gilt): P9 (Schlüsselrollen fremder Verfahren) für `fremde-chiffre` plausibel; Validator-Test angepasst | P9 wieder streichen → Hinweis bei W5-B-15 |
 
 ---
 

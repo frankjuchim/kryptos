@@ -576,7 +576,11 @@ test('K8: quadrat- bzw. alphabet-Block und verfahren derselben Aufgabe mit versc
 test('K4: Falle bzw. Fehlmuster-Falle passt nicht zur Kategorie → Hinweis', () => {
   erwarteHinweis(() => {}, /W9-L5-0[1-9].*passt nicht zur Kategorie/, { nicht: true });
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').fallen = ['P10']; }, /W9-L5-01.*Falle P10 passt nicht zur Kategorie entschluesseln/);
-  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*fehlmuster.*Falle P9 passt nicht zur Kategorie fremde-chiffre/);
+  // Plan M8 (Spec W5-B-15): P9 (Schlüsselrollen fremder Verfahren) ist bei fremde-chiffre plausibel – kein Hinweis
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*Falle P9 passt nicht/, { nicht: true });
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').fallen = ['P9']; }, /W9-L5-08.*Falle P9 passt nicht/, { nicht: true });
+  // … ein unplausibles Fehlmuster in einer anderen Kategorie meldet weiter einen Hinweis
+  erwarteHinweis((w) => { const a = aufgabe(w, 'W9-L5-08'); a.kategorie = 'entschluesseln'; a.loesung.fehlmuster[0].p = 'P10'; }, /W9-L5-08.*fehlmuster.*Falle P10 passt nicht zur Kategorie entschluesseln/);
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P9'; }, /W9-L5-09.*_fehlmuster.*Falle P9 passt nicht zur Kategorie substitution-mono/);
 });
 

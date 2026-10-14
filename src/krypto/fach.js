@@ -129,7 +129,7 @@ const FALLEN_PLAUSIBEL = Object.freeze({
   protokoll: ['P3', 'P5', 'P7', 'P8', 'P9', 'P10'],
   struktogramm: ['P1', 'P2', 'P3', 'P4'],
   implementierung: ['P1', 'P2', 'P3', 'P4'],
-  'fremde-chiffre': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P10'],
+  'fremde-chiffre': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'], // P9: Schlüsselrollen fremder Verfahren (Spec W5-B-15, Plan M8 vorläufig)
   gesellschaft: ['P5', 'P9', 'P10']
 });
 
