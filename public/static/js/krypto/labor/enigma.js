@@ -10,6 +10,7 @@
   const { h, s } = AQ;
   const B = KRLaborBau;
   const S = KRStation;
+  const BEISPIEL = { probe: 'wetterlage' }; // eigenes Wort für Vorführungen, in keinem Material
   const REITER_TITEL = { maschine: 'Maschine', innenleben: 'Innenleben', vorfuehren: 'Vorführen', glossar: 'Glossar' };
   const WALZEN = ['I', 'II', 'III', 'IV', 'V'];
   const ABC = [...Krypto.ALPHABET];
@@ -467,16 +468,300 @@
       };
     }
 
-    /* ---------- weitere Reiter (Task 233) ---------- */
-    function baueFolgt(id) {
-      r.flaeche.appendChild(h('p', { class: 'text-2' }, `${REITER_TITEL[id]}: kommt gleich dazu.`));
+    /* ---------- gemeinsamer Hintergrund (Innenleben, Vorführen, Glossar) ---------- */
+    function hintergrundKarten() {
+      const raum = Krypto.schluesselraum('enigma', { kabel: 10 });
+      return [
+        { titel: 'Schlüsselraum', zeilen: [['Walzenlage', '5 · 4 · 3 = 60'], ['Grundstellung', '26³ = 17 576'], ['10 Kabel', S.ungefaehr(raum.formel.split(' · ').pop())], ['zusammen', S.ungefaehr(raum.anzahl)]] },
+        { titel: 'Kerckhoffs', text: 'Wie die Enigma verdrahtet ist, durfte der Gegner wissen – und wusste es. Geheim war nur der Tagesschlüssel: Walzenlage, Ringe, Stecker und Grundstellung.' },
+        { titel: 'Schwäche', text: 'Kein Buchstabe wird zu sich selbst verschlüsselt. Wer ein Stück Klartext vermutet (Crib), kann damit viele Stellungen sofort ausschließen.' }
+      ];
+    }
+
+    /* ---------- Reiter „Innenleben“: Stromweg ---------- */
+    const RH = 20;
+    const TOP = 120;
+    const yy = (b) => TOP + Krypto.wert(b, 0) * RH + RH / 2;
+    const ROT_X = [140, 320, 500];
+    const RW = 150;
+    const G = { ukwX0: 20, ukwX1: 112, ukwDot: 92, etwX0: 680, etwX1: 730, stX0: 760, stX1: 872, stL: 768, stR: 846, keyX: 930 };
+    const kurve = (x1, y1, x2, y2) => `M ${x1} ${y1} C ${x1 + (x2 - x1) * 0.42} ${y1} ${x1 + (x2 - x1) * 0.58} ${y2} ${x2} ${y2}`;
+
+    function baueInnenleben() {
+      const quelle = z.letzter || { einst: einstellung(), stellung: z.stellung, buchstabe: null };
+      let auswahl = quelle.buchstabe;
+      const anleitung = S.anleitung(null, ['Buchstaben wählen', 'Stromweg verfolgen', 'Lampe ablesen']);
+      const erklaerung = S.erklaerung(null);
+      const wahl = h('div', { class: 'enigma-wahl', role: 'group', 'aria-label': 'Buchstaben wählen' }, ABC.map((b) => h('button', { type: 'button', 'data-buchstabe': b, 'aria-pressed': 'false' }, b)));
+      const svg = s('svg', { class: 'enigma-schaubild', viewBox: '0 0 980 700', role: 'img', 'aria-label': 'Schaubild des Stromwegs durch die Enigma' });
+      const liste = h('ol', { class: 'enigma-weg' });
+      const legende = h('p', { class: 'enigma-legende text-2' }, h('span', { class: 'enigma-legende-hin' }, '━ Hinweg'), '  ', h('span', { class: 'enigma-legende-rueck' }, '┅ Rückweg'), ' · Taste → Steckerbrett → rechte, mittlere, linke Walze → Umkehrwalze → zurück zur Lampe');
+      const nsOrt = h('div', { class: 'enigma-nachspiel' });
+      const nk = S.nachspielKnopf(nsOrt, { sperre: (an) => sperre(an), beiEnde: () => zeichne(Infinity), beiLeer: (t) => erklaerung.sage('Nachspielen', t) });
+      const info = h('dl', { class: 'station-kv enigma-ts-tabelle' });
+      r.flaeche.append(
+        h('div', { class: 'enigma-objekt' }, h('div', { class: 'enigma-buehne' }, anleitung.element, h('div', { class: 'enigma-schaubild-rahmen scroll-x' }, svg), legende, erklaerung.element), h('div', { class: 'enigma-bedienung' }, h('p', { class: 'enigma-feldtitel' }, 'Buchstaben wählen'), wahl, liste, nk.element, nsOrt, h('p', { class: 'enigma-feldtitel' }, 'Einstellung'), info)),
+        S.soGehts(null, ['Vor dem Strom dreht sich die rechte Walze weiter (manchmal auch die mittlere und linke).', 'Hinweg: Steckerbrett, rechte, mittlere, linke Walze, Umkehrwalze.', 'Rückweg: durch dieselben Walzen auf anderen Drähten zurück – das Steckerbrett tauscht noch einmal, dann leuchtet die Lampe.']),
+        S.hintergrund(null, hintergrundKarten())
+      );
+      const e0 = quelle.einst;
+      for (const [dt, dd] of [['Walzen', e0.walzen.join(' – ')], ['Ringe', e0.ringe], ['UKW', e0.ukw], ['Stecker', e0.stecker || 'keine'], ['Stellung vor dem Tastendruck', quelle.stellung]]) info.append(h('dt', null, dt), h('dd', null, dd));
+
+      function stationen(sch) {
+        const w = sch.weg;
+        const n = e0.walzen;
+        return [
+          { name: 'stecker-hin', aus: w.steckerEin, text: `Steckerbrett: ${w.taste} → ${w.steckerEin}${w.taste === w.steckerEin ? ' (kein Kabel)' : ''}` },
+          ...w.vor.map((x, i) => ({ name: `vor-${i}`, aus: x.aus, text: `Walze ${x.walze} (${['rechts', 'Mitte', 'links'][i]}): ${x.ein} → ${x.aus}` })),
+          { name: 'ukw', aus: w.ukwAus, text: `Umkehrwalze ${e0.ukw}: ${w.ukwEin} → ${w.ukwAus}` },
+          ...w.zurueck.map((x, i) => ({ name: `zurueck-${i}`, aus: x.aus, text: `Walze ${x.walze} (${['links', 'Mitte', 'rechts'][i]}, zurück): ${x.ein} → ${x.aus}` })),
+          { name: 'lampe', aus: w.lampe, text: `Steckerbrett: ${w.zurueck[2].aus} → ${w.steckerAus} · Lampe ${w.lampe}` }
+        ].map((x) => ({ ...x, n }));
+      }
+      function grundgeruest(sch) {
+        AQ.clear(svg);
+        const text = (x, y, t, klasse = 'enigma-sb-titel') => s('text', { class: klasse, x, y }, t);
+        const rahmen = (x0, x1) => s('rect', { class: 'enigma-sb-kasten', x: x0, y: TOP - 6, width: x1 - x0, height: 26 * RH + 12, rx: 10 });
+        // Umkehrwalze
+        svg.append(rahmen(G.ukwX0, G.ukwX1), text((G.ukwX0 + G.ukwX1) / 2, 30, `UKW ${e0.ukw}`), text((G.ukwX0 + G.ukwX1) / 2, 48, 'dreht nicht', 'enigma-sb-unter'));
+        const u = Krypto.ENIGMA.UKW[e0.ukw];
+        ABC.forEach((b, i) => {
+          svg.appendChild(text(G.ukwX1 - 12, yy(b) + 4, b, 'enigma-sb-b'));
+          const p = u[i];
+          if (Krypto.wert(p, 0) > i) {
+            const dp = Math.min(64, 10 + (Krypto.wert(p, 0) - i) * 2.4);
+            svg.appendChild(s('path', { class: 'enigma-sb-draht', d: `M ${G.ukwDot} ${yy(b)} C ${G.ukwDot - dp} ${yy(b)} ${G.ukwDot - dp} ${yy(p)} ${G.ukwDot} ${yy(p)}` }));
+          }
+        });
+        // drei Walzen: Verdrahtung in der Stellung nach dem Drehen (nur Darstellung)
+        [0, 1, 2].forEach((i) => {
+          const x0 = ROT_X[i];
+          const name = e0.walzen[i];
+          const versatz = Krypto.wert(sch.stellung[i], 0) - Krypto.wert(e0.ringe[i], 0);
+          const v = Krypto.ENIGMA.WALZEN[name].verdrahtung;
+          svg.append(rahmen(x0, x0 + RW), text(x0 + RW / 2, 30, `Walze ${name}`), text(x0 + RW / 2, 52, `${PLATZ[i]} · Ring ${e0.ringe[i]} · Fenster ${sch.stellung[i]}`, 'enigma-sb-unter'));
+          ABC.forEach((b, r) => {
+            const innen = v[Krypto.mod(r + versatz, 26)];
+            const aus = ABC[Krypto.mod(Krypto.wert(innen, 0) - versatz, 26)];
+            svg.appendChild(s('path', { class: 'enigma-sb-draht', d: kurve(x0 + RW - 28, yy(b), x0 + 10, yy(aus)) }));
+            svg.appendChild(text(x0 + RW - 13, yy(b) + 4, ABC[Krypto.mod(r + Krypto.wert(sch.stellung[i], 0), 26)], r === 0 ? 'enigma-sb-b enigma-sb-fenster' : 'enigma-sb-b'));
+          });
+        });
+        svg.append(rahmen(G.etwX0, G.etwX1), text((G.etwX0 + G.etwX1) / 2, 30, 'ETW'), text((G.etwX0 + G.etwX1) / 2, 48, 'Eintrittswalze', 'enigma-sb-unter'));
+        svg.append(rahmen(G.stX0, G.stX1), text((G.stX0 + G.stX1) / 2, 30, 'Steckerbrett'), text((G.stX0 + G.stX1) / 2, 48, `${paareVon(e0.stecker).length} Kabel`, 'enigma-sb-unter'));
+        svg.append(rahmen(G.keyX - 24, G.keyX + 24), text(G.keyX, 30, 'Taste'), text(G.keyX, 48, 'Lampe'));
+        ABC.forEach((b) => {
+          svg.appendChild(s('line', { class: 'enigma-sb-draht', x1: G.etwX0 + 6, y1: yy(b), x2: G.etwX1 - 6, y2: yy(b) }));
+          svg.appendChild(text((G.etwX0 + G.etwX1) / 2, yy(b) + 4, b, 'enigma-sb-b'));
+          svg.appendChild(s('circle', { class: 'enigma-sb-taste', 'data-buchstabe': b, cx: G.keyX, cy: yy(b), r: 8.5 }));
+          svg.appendChild(text(G.keyX, yy(b) + 4, b, 'enigma-sb-b'));
+          const paar = paareVon(e0.stecker).find((x) => x.includes(b));
+          const p = paar ? paar.replace(b, '') : b; // Steckerbrett-Partner
+          svg.appendChild(s('path', { class: `enigma-sb-draht${p !== b ? ' gesteckt' : ''}`, d: kurve(G.stR, yy(b), G.stL, yy(p)) }));
+        });
+      }
+      let segmente = [];
+      function zeichne(bis) {
+        AQ.clear(liste);
+        for (const k of wahl.querySelectorAll('button')) k.setAttribute('aria-pressed', String(k.dataset.buchstabe === auswahl));
+        if (!auswahl) {
+          grundgeruest({ stellung: quelle.stellung });
+          liste.appendChild(h('li', { class: 'text-2' }, 'Wähle einen Buchstaben.'));
+          nk.setze(null);
+          return;
+        }
+        const sch = Krypto.enigmaSchritt(e0, quelle.stellung, auswahl);
+        grundgeruest(sch);
+        const w = sch.weg;
+        const st = stationen(sch);
+        // Segmente: [Station, Klasse, Pfad]
+        const vx = (i, seite) => (seite === 'r' ? ROT_X[i] + RW - 28 : ROT_X[i] + 10); // i = Platz 0 links … 2 rechts
+        segmente = [
+          [0, 'hin', kurve(G.keyX - 9, yy(w.taste), G.stR, yy(w.taste))],
+          [0, 'hin', kurve(G.stR, yy(w.taste), G.stL, yy(w.steckerEin))],
+          [0, 'hin', kurve(G.stL, yy(w.steckerEin), vx(2, 'r'), yy(w.steckerEin))],
+          ...w.vor.map((x, i) => [i + 1, 'hin', `${kurve(vx(2 - i, 'r'), yy(x.ein), vx(2 - i, 'l'), yy(x.aus))} ${i < 2 ? `L ${vx(1 - i, 'r')} ${yy(x.aus)}` : `L ${G.ukwDot} ${yy(x.aus)}`}`]),
+          [4, 'hin', `M ${G.ukwDot} ${yy(w.ukwEin)} C ${G.ukwDot - 60} ${yy(w.ukwEin)} ${G.ukwDot - 60} ${yy(w.ukwAus)} ${G.ukwDot} ${yy(w.ukwAus)}`],
+          ...w.zurueck.map((x, i) => [i + 5, 'rueck', `M ${i === 0 ? G.ukwDot : vx(i - 1, 'r')} ${yy(x.ein)} L ${vx(i, 'l')} ${yy(x.ein)} ${kurve(vx(i, 'l'), yy(x.ein), vx(i, 'r'), yy(x.aus)).replace(/^M [^C]*/, '')}`]),
+          [8, 'rueck', `M ${vx(2, 'r')} ${yy(w.zurueck[2].aus)} L ${G.stL} ${yy(w.zurueck[2].aus)}`],
+          [8, 'rueck', kurve(G.stL, yy(w.zurueck[2].aus), G.stR, yy(w.steckerAus))],
+          [8, 'rueck', kurve(G.stR, yy(w.steckerAus), G.keyX - 9, yy(w.lampe))]
+        ];
+        for (const [nr, art, d] of segmente) {
+          if (nr > bis) continue;
+          svg.appendChild(s('path', { class: art === 'hin' ? 'enigma-hinweg' : 'enigma-rueckweg', 'data-station': String(nr), d }));
+        }
+        const lampe = svg.querySelector(`.enigma-sb-taste[data-buchstabe="${w.lampe}"]`);
+        const taste = svg.querySelector(`.enigma-sb-taste[data-buchstabe="${w.taste}"]`);
+        if (taste) taste.classList.add('taste');
+        if (lampe && bis >= 8) lampe.classList.add('lampe');
+        st.forEach((x, i) => liste.appendChild(h('li', { 'data-station': x.name, 'data-aus': x.aus, class: i <= bis ? 'an' : null }, x.text)));
+        nk.setze({
+          titel: `Stromweg für ${auswahl}`,
+          start: -1,
+          schritte: [{ text: `Taste ${auswahl}: Zuerst drehen die Walzen ${sch.stellungVorher} → ${sch.stellung}${sch.doppelschritt ? ' (Doppelschritt)' : ''}.`, daten: { bis: -1 } }, ...st.map((x, i) => ({ text: x.text, daten: { bis: i } }))],
+          zeige: (schritt) => zeichne(schritt.daten.bis)
+        });
+        anleitung.setze(bis >= 8 ? 2 : 1);
+      }
+      function sperre(an) {
+        gesperrt = an;
+        S.sperre(r.flaeche, an);
+        for (const k of wahl.querySelectorAll('button')) k.disabled = an;
+      }
+      for (const k of wahl.querySelectorAll('button')) {
+        k.addEventListener('click', () => {
+          if (gesperrt) return;
+          auswahl = k.dataset.buchstabe;
+          zeichne(Infinity);
+          const w = Krypto.enigmaSchritt(e0, quelle.stellung, auswahl).weg;
+          erklaerung.sage(`Taste ${auswahl}`, `Der Strom läuft über ${stationen({ weg: w }).length} Stationen und kommt bei Lampe ${w.lampe} an.`);
+        });
+      }
+      zeichne(Infinity);
+      erklaerung.sage('Innenleben', auswahl ? `Dein letzter Tastendruck: ${auswahl} → Lampe ${Krypto.enigmaSchritt(e0, quelle.stellung, auswahl).weg.lampe}.` : 'Wähle einen Buchstaben – dann siehst du, welchen Weg der Strom nimmt.');
+      return { schliesse: () => nk.schliesse(), zustand: () => ({ lampe: null, auswahl }) };
+    }
+
+    /* ---------- Reiter „Vorführen“ ---------- */
+    function baueVorfuehren() {
+      const e0 = einstellung();
+      const kurz = (t) => Krypto.gruppieren(t);
+      const EXPERIMENTE = [
+        {
+          id: 'fuenfmal',
+          titel: 'Fünfmal dieselbe Taste',
+          frage: 'Was passiert, wenn du fünfmal A drückst?',
+          lauf() {
+            const aus = Krypto.enigma('AAAAA', e0);
+            let st = e0.grund;
+            const schritte = [...'AAAAA'].map((b, i) => {
+              const sch = Krypto.enigmaSchritt(e0, st, b);
+              st = sch.stellung;
+              return { text: `${i + 1}. A: Walzen ${sch.stellungVorher} → ${sch.stellung}, Lampe ${sch.weg.lampe}.` };
+            });
+            return { ergebnis: `AAAAA → ${aus}: Jeder Tastendruck benutzt ein anderes Geheimtextalphabet.`, schritte };
+          }
+        },
+        {
+          id: 'selbst',
+          titel: 'Kein Buchstabe wird zu sich selbst',
+          frage: 'Kann E jemals als E herauskommen?',
+          lauf() {
+            const aus = Krypto.enigma('E'.repeat(26), e0);
+            const anzahl = [...aus].filter((c) => c === 'E').length;
+            return { ergebnis: `26-mal E → ${kurz(aus)}: ${anzahl === 0 ? 'kein einziges E' : `${anzahl}-mal E`}. Der Strom kommt nie auf demselben Draht zurück.`, schritte: [{ text: `26-mal E ergibt ${kurz(aus)}.` }, { text: 'Die Umkehrwalze verbindet immer zwei verschiedene Kontakte – deshalb leuchtet nie die gedrückte Taste selbst.' }] };
+          }
+        },
+        {
+          id: 'gegenprobe',
+          titel: 'Gegenprobe: gleiche Einstellung, gleicher Vorgang',
+          frage: 'Wie entschlüsselt man, wenn die Maschine keinen Schalter „Entschlüsseln“ hat?',
+          lauf() {
+            const klar = BEISPIEL.probe.toUpperCase();
+            const geheim = Krypto.enigma(klar, e0);
+            const zurueck = Krypto.enigma(geheim, e0);
+            return { ergebnis: `${klar} → ${kurz(geheim)} → ${zurueck}: Dieselbe Einstellung macht den Geheimtext wieder zum Klartext.`, schritte: [{ text: `Verschlüsseln ab ${e0.grund}: ${klar} → ${kurz(geheim)}.` }, { text: `Walzen zurück auf ${e0.grund}, Geheimtext tippen: ${zurueck}.` }] };
+          }
+        },
+        {
+          id: 'doppelschritt',
+          titel: 'Doppelschritt der mittleren Walze',
+          frage: 'Beobachte die mittlere Walze ab der Stellung ADU.',
+          lauf() {
+            const e = { ...e0, walzen: ['I', 'II', 'III'], grund: 'ADU' };
+            let st = 'ADU';
+            const folge = [st];
+            const schritte = [];
+            for (let i = 0; i < 3; i++) {
+              const sch = Krypto.enigmaSchritt(e, st, 'A');
+              st = sch.stellung;
+              folge.push(st);
+              schritte.push({ text: `Taste ${i + 1}: ${sch.stellungVorher} → ${sch.stellung}${sch.doppelschritt ? ' – Doppelschritt: Die mittlere Walze dreht sich gleich noch einmal.' : ''}` });
+            }
+            return { ergebnis: `Walzen I – II – III: ${folge.join(' → ')}. Die mittlere Walze dreht sich zweimal hintereinander.`, schritte };
+          }
+        },
+        {
+          id: 'stecker',
+          titel: 'Steckerbrett vertauscht vor und nach den Walzen',
+          frage: 'Was macht ein einzelnes Kabel A–Z?',
+          lauf() {
+            const ohne = Krypto.enigmaSchritt({ ...e0, stecker: '' }, e0.grund, 'A').weg;
+            const mit = Krypto.enigmaSchritt({ ...e0, stecker: 'AZ' }, e0.grund, 'A').weg;
+            return { ergebnis: `Ohne Kabel: A → Lampe ${ohne.lampe}. Mit Kabel A–Z: A wird zu ${mit.steckerEin}, die Walzen liefern ${mit.zurueck[2].aus}, das Steckerbrett macht daraus ${mit.lampe}.`, schritte: [{ text: `Hinweg: A → ${mit.steckerEin} (Kabel).` }, { text: `Durch die Walzen: ${mit.steckerEin} → ${mit.zurueck[2].aus}.` }, { text: `Rückweg: ${mit.zurueck[2].aus} → ${mit.lampe}.` }] };
+          }
+        },
+        {
+          id: 'walzenlage',
+          titel: 'Walzenlage ändern',
+          frage: 'Wie stark ändert sich alles, wenn nur zwei Walzen getauscht werden?',
+          lauf() {
+            const klar = BEISPIEL.probe.toUpperCase();
+            const a = Krypto.enigma(klar, { ...e0, walzen: ['I', 'II', 'III'] });
+            const b = Krypto.enigma(klar, { ...e0, walzen: ['II', 'I', 'III'] });
+            return { ergebnis: `I – II – III: ${kurz(a)} · II – I – III: ${kurz(b)}. Schon eine andere Lage ergibt einen völlig anderen Geheimtext.`, schritte: [{ text: `I – II – III: ${kurz(a)}.` }, { text: `II – I – III: ${kurz(b)}.` }] };
+          }
+        }
+      ];
+      const erklaerung = S.erklaerung(null);
+      const nsOrt = h('div', { class: 'enigma-nachspiel' });
+      const karten = EXPERIMENTE.map((x) => {
+        const start = h('button', { type: 'button', class: 'knopf knopf-zweit enigma-vorfuehren-start', 'data-experiment': x.id }, '▶ Vorführen');
+        const ergebnis = h('p', { class: 'enigma-ergebnis', 'aria-live': 'polite' });
+        const ort = h('div', { class: 'enigma-experiment-nachspiel' });
+        start.addEventListener('click', () => {
+          const { ergebnis: t, schritte } = x.lauf();
+          ergebnis.textContent = t;
+          for (const o of r.flaeche.querySelectorAll('.enigma-experiment-nachspiel')) AQ.clear(o);
+          if (aktiv) aktiv.schliesse();
+          aktiv = KRLabor.nachspiel(ort, { titel: x.titel, schritte: schritte.map((sc) => ({ text: sc.text, daten: {} })), zeige: () => {} });
+          erklaerung.sage(x.titel, t);
+        });
+        return h('section', { class: 'enigma-experiment station-karte', 'data-experiment': x.id }, h('h3', null, x.titel), h('p', { class: 'text-2' }, x.frage), start, ergebnis, ort);
+      });
+      let aktiv = null;
+      r.flaeche.append(
+        h('p', { class: 'text-2' }, `Alle Vorführungen rechnen mit deinem Tagesschlüssel aus „Maschine“: ${zusammenfassung()}.`),
+        h('div', { class: 'enigma-experimente' }, karten),
+        nsOrt,
+        erklaerung.element,
+        S.hintergrund(null, hintergrundKarten())
+      );
+      erklaerung.sage('Vorführen', 'Wähle ein Experiment und lass es vorführen – Schritt für Schritt.');
+      return { schliesse: () => aktiv && aktiv.schliesse(), zustand: () => ({}) };
+    }
+
+    /* ---------- Reiter „Glossar“ ---------- */
+    function baueGlossar() {
+      const BEGRIFFE = [
+        ['Walze', 'Drehbares Rad mit 26 Kontakten auf jeder Seite, innen kreuz und quer verdrahtet. Drei davon stecken in der Maschine.', 'maschine'],
+        ['Ring', 'Der Buchstabenring einer Walze lässt sich gegen die Verdrahtung verdrehen (Ringstellung). Er verschiebt, wo die Kerbe sitzt und welcher Buchstabe im Fenster steht.', 'maschine'],
+        ['Kerbe', 'Steht eine Walze an ihrer Kerbe, nimmt sie beim nächsten Tastendruck die linke Nachbarwalze mit.', 'maschine'],
+        ['Umkehrwalze (UKW)', 'Dreht sich nicht. Sie schickt den Strom auf einem anderen Draht zurück durch die Walzen – deshalb ist die Enigma symmetrisch.', 'innenleben'],
+        ['Steckerbrett', 'Kabel vertauschen Buchstabenpaare – einmal auf dem Hinweg, einmal auf dem Rückweg.', 'maschine'],
+        ['Grundstellung', 'Die drei Buchstaben in den Fenstern, bevor die erste Taste gedrückt wird.', 'maschine'],
+        ['Tagesschlüssel', 'Walzenlage, Ringstellung, Umkehrwalze, Stecker und Grundstellung – für einen Tag festgelegt.', 'maschine'],
+        ['Crib', 'Ein vermutetes Stück Klartext („Wetterbericht“). Da kein Buchstabe zu sich selbst wird, fallen viele Stellungen sofort weg.', 'vorfuehren'],
+        ['Doppelschritt', 'Steht die mittlere Walze an ihrer Kerbe, dreht sie sich beim nächsten Tastendruck noch einmal – zusammen mit der linken.', 'vorfuehren']
+      ];
+      const liste = h(
+        'dl',
+        { class: 'enigma-glossar' },
+        BEGRIFFE.map(([b, t, ziel]) => {
+          const knopf = reiterListe.includes(ziel) ? h('button', { type: 'button', class: 'knopf knopf-leise', 'data-ziel': ziel }, `→ ${REITER_TITEL[ziel]}`) : null;
+          if (knopf) knopf.addEventListener('click', () => r.waehle(ziel, { fokus: true }));
+          return [h('dt', null, b), h('dd', null, h('span', null, t), knopf ? ' ' : null, knopf)];
+        })
+      );
+      r.flaeche.append(liste, S.hintergrund(null, hintergrundKarten(), { offen: true }));
       return { schliesse() {}, zustand: () => ({}) };
     }
 
     function baue(id) {
       schliesseTeil();
       AQ.clear(r.flaeche);
-      teil = id === 'maschine' ? baueMaschine() : baueFolgt(id);
+      teil = id === 'innenleben' ? baueInnenleben() : id === 'vorfuehren' ? baueVorfuehren() : id === 'glossar' ? baueGlossar() : baueMaschine();
     }
     baue(r.aktiv());
 

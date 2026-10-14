@@ -726,3 +726,37 @@
 .enigma-ts-tabelle dd { font-family: var(--f-mono); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .enigma-walzenrad.dreht { animation: none; } .enigma-lampe { transition: none; } }
 :root[data-bewegung="aus"] .enigma-walzenrad.dreht { animation: none; }
+/* Enigma II: Stromweg-Schaubild, Vorführungen, Glossar (Task 233) */
+.enigma-schaubild-rahmen { border-radius: var(--r-karte); background: var(--mat-gehaeuse); padding: var(--a-2); }
+.enigma-schaubild { display: block; width: 100%; min-width: 560px; height: auto; }
+.enigma-sb-kasten { fill: color-mix(in srgb, var(--mat-gehaeuse-tinte) 5%, var(--mat-gehaeuse)); stroke: color-mix(in srgb, var(--mat-gehaeuse-tinte) 25%, transparent); }
+.enigma-sb-titel { font: 700 21px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; }
+.enigma-sb-unter { font: 500 13px var(--f-text); fill: var(--mat-gehaeuse-tinte); opacity: .75; text-anchor: middle; }
+.enigma-sb-b { font: 600 13px var(--f-mono); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; }
+.enigma-sb-fenster { fill: var(--mat-lampe-an); font-weight: 800; }
+.enigma-sb-draht { fill: none; stroke: var(--mat-gehaeuse-tinte); stroke-width: .7; opacity: .22; }
+.enigma-sb-draht.gesteckt { stroke: var(--mat-kabel-2); opacity: .7; stroke-width: 1.4; }
+.enigma-sb-taste { fill: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, var(--mat-gehaeuse)); stroke: color-mix(in srgb, var(--mat-gehaeuse-tinte) 30%, transparent); }
+.enigma-sb-taste.taste { fill: color-mix(in srgb, var(--mat-lampe-an) 45%, var(--mat-gehaeuse)); }
+.enigma-sb-taste.lampe { fill: var(--mat-lampe-an); }
+.enigma-hinweg, .enigma-rueckweg { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.enigma-hinweg { stroke: var(--mat-lampe-an); }
+.enigma-rueckweg { stroke: var(--mat-ziel); stroke-dasharray: 9 6; }
+.enigma-legende-hin { color: var(--messing-dunkel); font-weight: 700; }
+.enigma-legende-rueck { color: var(--hinweis); font-weight: 700; }
+.enigma-wahl { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--ziel), 1fr)); gap: 4px; }
+.enigma-wahl button { min-height: var(--ziel); border: 1px solid var(--linie); border-radius: 8px; background: var(--karte); color: var(--text); font: 700 1rem var(--f-mono); cursor: pointer; }
+.enigma-wahl button[aria-pressed="true"] { border-color: var(--hinweis); background: var(--hinweis-flaeche); }
+.enigma-weg { display: grid; gap: 2px; margin: 0; padding-left: 1.4em; font-family: var(--f-mono); font-size: .9rem; }
+.enigma-weg li { opacity: .55; }
+.enigma-weg li.an { opacity: 1; }
+.enigma-experimente { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+.enigma-experiment { display: grid; gap: var(--a-2); align-content: start; padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.enigma-experiment h3, .enigma-experiment .text-2 { margin: 0; }
+.enigma-experiment .enigma-vorfuehren-start { justify-self: start; }
+.enigma-ergebnis { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.enigma-ergebnis:empty { display: none; }
+.enigma-glossar { display: grid; grid-template-columns: minmax(8rem, max-content) minmax(0, 1fr); gap: var(--a-2) var(--a-4); margin: 0; }
+.enigma-glossar dt { font-weight: 700; }
+.enigma-glossar dd { margin: 0; }
+@media (max-width: 600px) { .enigma-glossar { grid-template-columns: minmax(0, 1fr); } .enigma-glossar dd { margin-bottom: var(--a-2); } }

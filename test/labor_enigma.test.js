@@ -109,3 +109,54 @@ test('Enigma: physische Tasten nur bei Fokus in der Maschine; ruhig; Herkunft', 
   const L = w.k.wert('KRLabor');
   assert.equal(w.k.roh(L.WERKZEUGE.find((x) => x.id === 'enigma')).art, 'kuer');
 });
+
+test('Innenleben: Stationen = enigmaSchritt.weg', () => {
+  const w = oeffne('enigma', { voreinstellung: { reiter: ['innenleben'] } });
+  w.k.klick(w.k.eins(w.flaeche, '.enigma-wahl [data-buchstabe="A"]'));
+  const weg = K.enigmaSchritt({ walzen: ['I', 'II', 'III'], ukw: 'B', ringe: 'AAA', grund: 'AAA', stecker: '' }, 'AAA', 'A').weg;
+  assert.deepEqual(w.k.alle(w.flaeche, '.enigma-weg [data-station]').map((e) => e.dataset.aus), [weg.steckerEin, ...weg.vor.map((x) => x.aus), weg.ukwAus, ...weg.zurueck.map((x) => x.aus), weg.lampe]);
+  // Hin- und Rückweg im Schaubild: durchgezogen bzw. gestrichelt
+  assert.ok(w.k.alle(w.flaeche, 'svg.enigma-schaubild path.enigma-hinweg').length >= 4);
+  assert.ok(w.k.alle(w.flaeche, 'svg.enigma-schaubild path.enigma-rueckweg').length >= 4);
+  assert.equal(w.zustand().lampe, null, 'Innenleben schreibt keine Nachricht');
+  // Schritte über KRLabor.nachspiel (je Station ein Schritt)
+  klick(w, 'button.station-nachspielen');
+  assert.match(w.text('.nachspiel .nachspiel-zaehler'), /von 1[01]/);
+});
+
+test('Innenleben: „Blick ins Innere“ zeigt den letzten Tastendruck der Maschine', () => {
+  const w = oeffne('enigma');
+  tippe(w, 'ab');
+  klick(w, 'button.enigma-blick');
+  assert.equal(w.zustand().reiter, 'innenleben');
+  const weg = K.enigmaSchritt(STANDARD, 'AAB', 'B').weg;
+  assert.equal(w.k.alle(w.flaeche, '.enigma-weg [data-station]').at(-1).dataset.aus, weg.lampe);
+});
+
+test('vorfuehren_nicht_in_w3_l5', () => {
+  const w = oeffne('enigma', { umgebung: { level: 'W3-L5' } });
+  assert.equal(w.k.alle(w.flaeche, '[role="tab"][data-reiter="vorfuehren"]').length, 0);
+  const l = oeffne('enigma', { umgebung: { level: 'W3-L5', rolle: 'lehrkraft' } });
+  assert.equal(l.k.alle(l.flaeche, '[role="tab"][data-reiter="vorfuehren"]').length, 1);
+  const v = oeffne('enigma', { voreinstellung: { reiter: ['vorfuehren'] } });
+  klick(v, 'button.enigma-vorfuehren-start[data-experiment="selbst"]');
+  assert.match(v.text('.enigma-experiment[data-experiment="selbst"] .enigma-ergebnis'), /kein einziges E/i);
+  assert.doesNotMatch(K.enigma('E'.repeat(26), STANDARD), /E/);
+  klick(v, 'button.enigma-vorfuehren-start[data-experiment="doppelschritt"]');
+  assert.match(v.text('.enigma-experiment[data-experiment="doppelschritt"] .enigma-ergebnis'), /ADU → ADV → AEW → BFX/);
+  klick(v, 'button.enigma-vorfuehren-start[data-experiment="fuenfmal"]');
+  assert.match(v.text('.enigma-experiment[data-experiment="fuenfmal"] .enigma-ergebnis'), new RegExp(K.enigma('AAAAA', STANDARD)));
+});
+
+test('Glossar und Hintergrund: Schlüsselraum aus der Bibliothek', () => {
+  const w = oeffne('enigma');
+  w.reiter('glossar');
+  const text = w.text('.enigma-glossar');
+  for (const b of ['Walze', 'Ring', 'Kerbe', 'Umkehrwalze', 'Steckerbrett', 'Grundstellung', 'Tagesschlüssel', 'Crib', 'Doppelschritt']) assert.match(text, new RegExp(b));
+  assert.ok(w.k.alle(w.flaeche, '.enigma-glossar button[data-ziel]').length >= 3, 'Verweise auf die Reiter');
+  const raum = K.schluesselraum('enigma', { kabel: 10 });
+  assert.ok(w.text('details.station-hintergrund').includes(raum.formel.split(' · ').pop().slice(0, 3)) || /10/.test(w.text('details.station-hintergrund')));
+  assert.match(w.text('details.station-hintergrund'), /Kerckhoffs/);
+  klick(w, '.enigma-glossar button[data-ziel="maschine"]');
+  assert.equal(w.zustand().reiter, 'maschine');
+});

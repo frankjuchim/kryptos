@@ -787,7 +787,7 @@ Gegenprobe/Symmetrie, Steckerbrett vertauscht vor und nach den Walzen, Walzenlag
 `glossar`: Begriffe (Walze, Ring, Kerbe, UKW, Steckerbrett, Grundstellung, Tagesschlüssel, Crib, Doppelschritt) mit
 Verweis auf den Reiter; Hintergrund: Schlüsselraum aus `Krypto.schluesselraum('enigma', { kabel })`, Kerckhoffs.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Innenleben: Stationen = enigmaSchritt.weg', () => {
     const w = oeffne('enigma', { voreinstellung: { reiter: ['innenleben'] } });
@@ -798,7 +798,10 @@ Verweis auf den Reiter; Hintergrund: Schlüsselraum aus `Krypto.schluesselraum('
   test('vorfuehren_nicht_in_w3_l5', () => { /* umgebung level W3-L5 → kein Reiter vorfuehren; Lehrkraft → vorhanden */ });
   test('Glossar und Hintergrund: Schlüsselraum aus der Bibliothek', () => {});
   ```
-- [ ] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Enigma“ II – Stromweg, Vorführungen, Glossar (Task 233)`
+- [x] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Enigma“ II – Stromweg, Vorführungen, Glossar (Task 233)`
+- Umsetzung: Schaubild als SVG (viewBox 980 × 700, in `.scroll-x` ab 560 px Mindestbreite), alle Walzendrähte blass, der
+  aktuelle Weg farbig; Nachspiel 10 Schritte (Walzen drehen + 9 Stationen). Vorführungen: Fünfmal A, kein Buchstabe zu sich
+  selbst, Gegenprobe, Doppelschritt (ADU), Steckerbrett vor/nach den Walzen, Walzenlage; Beispielwort in `BEISPIEL.probe`.
 
 ### Task 234: Werkzeug „Angreifer-Labor“ (`analyse`) (E180, E188, E189)
 
