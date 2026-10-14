@@ -180,7 +180,7 @@ function baukastenVerfahren() {
   return { verfahren: v, schluessel };
 }
 function verfahrensObjekt() {
-  const typ = wahl(['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair', 'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'xor', 'baukasten', 'frei']);
+  const typ = wahl(['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair', 'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'ring', 'uhrwerk', 'mini_enigma', 'xor', 'baukasten', 'frei']);
   const v = { typ };
   const ungueltig = selten(0.12);
   switch (typ) {
@@ -224,6 +224,13 @@ function verfahrensObjekt() {
     }
     case 'spaltentransposition': v.schluessel = spaltenSchluessel(1, 9); if (zufall() < 0.3) v.fuellzeichen = wahl(['X', 'Q']); break;
     case 'blockrotation': v.block = ganz(2, 16); v.um = ungueltig ? 0 : ganz(1, v.block - 1); break;
+    case 'ring':
+      if (zufall() < 0.4) v.block = ungueltig ? wahl([3, 13]) : ganz(4, 12);
+      v.t = ungueltig ? wahl([0, 4, 12]) : ganz(1, (v.block || 8) - 1);
+      if (zufall() < 0.3) v.fuellzeichen = ungueltig ? null : wahl(['X', 'Q']);
+      break;
+    case 'uhrwerk': v.t = ungueltig ? wahl([2, 8, 0]) : wahl([1, 3, 5, 7]); v.pendel = ungueltig ? '' : buchstaben(1, 8); break;
+    case 'mini_enigma': v.stellung = ungueltig ? wahl(['I', 'a', 1]) : wahl([...'ABCDEFGH']); break;
     case 'xor':
       if (zufall() < 0.6) v.schluessel = ungueltig ? '' : asciiText(6) || 'K';
       else v.schluesselBits = ungueltig ? '0100' : mitLeerraum(bits(8 * ganz(1, 3)));
@@ -492,7 +499,7 @@ const FAELLE = {
     zufall: () => {
       const v = verfahrensObjekt();
       const r = wahl(RICHTUNGEN);
-      let t = textOderDeutsch(120);
+      let t = v.typ === 'mini_enigma' && zufall() < 0.8 ? text(40, 'abcdefghABCDEFGH ') : textOderDeutsch(120);
       if (r === 'ent') {
         try {
           t = K.verfahren.anwenden(v, t, 'ver');
@@ -508,7 +515,7 @@ const FAELLE = {
       let v = verfahrensObjekt();
       if (v.typ === 'frei' && zufall() < 0.8) v = { typ: 'caesar', k: ganz(0, 25) };
       const r = wahl(RICHTUNGEN);
-      let t = textOderDeutsch(60);
+      let t = v.typ === 'mini_enigma' && zufall() < 0.8 ? text(30, 'abcdefghABCDEFGH ') : textOderDeutsch(60);
       if (r === 'ent') {
         try {
           t = K.verfahren.anwenden(v, t, 'ver');

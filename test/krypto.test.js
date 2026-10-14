@@ -1959,9 +1959,9 @@ test('baukasten: Umkehrbarkeitsprüfung (dynamisch) und Zufallsverfahren', () =>
 // ───────────────────────────── Verfahrens-Objekt ─────────────────────────────
 
 test('verfahren.TYPEN: Katalog AUFGABENFORMAT_KRYPTO §6', () => {
-  const typen = ['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair', 'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'xor', 'baukasten', 'frei'];
+  const typen = ['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair', 'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'ring', 'uhrwerk', 'mini_enigma', 'xor', 'baukasten', 'frei'];
   assert.deepEqual(Object.keys(K.verfahren.TYPEN), typen);
-  assert.deepEqual(typen.filter((t) => K.verfahren.TYPEN[t].involutorisch), ['atbash', 'porta', 'umkehrung']);
+  assert.deepEqual(typen.filter((t) => K.verfahren.TYPEN[t].involutorisch), ['atbash', 'porta', 'umkehrung', 'mini_enigma']);
   assert.deepEqual(K.verfahren.TYPEN.gartenzaun.parameter.zeilen, { art: 'zahl', pflicht: true, min: 2, max: 10 }); // Delta: 2–10 (Baukasten W3: 2–6)
   assert.deepEqual(K.verfahren.TYPEN.blockrotation.parameter.block, { art: 'zahl', pflicht: true, min: 2, max: 16 });
   assert.deepEqual(K.verfahren.TYPEN.skytale.parameter.umfang, { art: 'zahl', pflicht: true, min: 2, max: 20 });
@@ -2042,6 +2042,44 @@ test('verfahren.anwenden: Dispatcher (Werte aus W0–W3)', () => {
   assert.throws(() => an({ typ: 'frei', name: 'domino' }, 'abc', 'ver'), K.KryptoFehler);
   assert.throws(() => an({ typ: 'caesar', k: 99 }, 'abc', 'ver'), K.KryptoFehler);
   assert.throws(() => an({ typ: 'caesar', k: 3 }, 'abc', 'ver', { ausgabe: 'roemisch' }), K.KryptoFehler);
+});
+
+test('verfahren: Typen ring, uhrwerk, mini_enigma (Plan M8 E123, Spec-Vektoren W3/W6)', () => {
+  const A = (v, t, r = 'ver') => K.verfahren.anwenden(v, t, r);
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK'); // W6 §0.1
+  assert.equal(A({ typ: 'uhrwerk', t: 5, pendel: 'UHR' }, 'TVZLTLEA', 'ent'), 'ZEITZONE'); // W6-L2-04
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zahnradwerk'), 'TUUHLDYHYEOYREBE'); // W6 §8 G-W6-1
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'ZEIT' }, 'mondhell'), 'LHTHPPMI'); // W6-L2-03 (D3)
+  assert.equal(A({ typ: 'ring', t: 5 }, 'ZEITMASC'), 'ZAICMEST'); // W6-L2-01
+  assert.equal(A({ typ: 'ring', t: 7 }, 'ZAHNRADX'), 'ZXDARNHA'); // WU-W6-11
+  assert.equal(A({ typ: 'ring', t: 3, block: 5, fuellzeichen: 'Q' }, 'abcdefg'), K.ring('abcdefg', 3, 'ver', { block: 5, fuellzeichen: 'Q' }));
+  assert.equal(A({ typ: 'mini_enigma', stellung: 'A' }, 'bach'), 'HHAF'); // W3-K2-01
+  assert.equal(A({ typ: 'mini_enigma', stellung: 'E' }, 'chef'), 'EGBC'); // Akte K2 A1
+  assert.equal(A({ typ: 'mini_enigma', stellung: 'A' }, 'HHAF', 'ent'), 'BACH'); // involutorisch
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, ''), '');
+  assert.throws(() => A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'ABCDEFGHI', 'ent'), K.KryptoFehler); // Länge kein Vielfaches von 8
+  assert.throws(() => A({ typ: 'mini_enigma', stellung: 'A' }, 'zug'), K.KryptoFehler); // nur A–H
+  const ok = (v) => K.verfahren.pruefe(v).ok;
+  assert.throws(() => K.verfahren.pruefe({ typ: 'ring', t: 4 }).ok || (() => { throw 0; })()); // ggT(4, 8) ≠ 1
+  assert.equal(ok({ typ: 'ring', t: 8 }), false); // t < Block
+  assert.equal(ok({ typ: 'ring', t: 4, block: 9 }), true);
+  assert.equal(ok({ typ: 'ring', t: 3, block: 13 }), false);
+  assert.equal(ok({ typ: 'ring', t: 3, fuellzeichen: null }), false);
+  assert.equal(ok({ typ: 'uhrwerk', t: 2, pendel: 'UHR' }), false);
+  assert.equal(ok({ typ: 'uhrwerk', t: 3 }), false);
+  assert.equal(ok({ typ: 'mini_enigma', stellung: 'I' }), false);
+  assert.equal(ok({ typ: 'mini_enigma', stellung: 'H' }), true);
+  // Diagnose (Delta §9.2): Stufen vertauscht, Wort zyklisch statt Pendel, Ring in der Gegenrichtung
+  const finde = (liste, p, code) => liste.filter((x) => x.p === p && x.code === code).map((x) => x.text);
+  const u = K.verfahren.varianten({ typ: 'uhrwerk', t: 3, pendel: 'ZEIT' }, 'mondhell', 'ver');
+  assert.ok(u.some((v) => v.code === 'reihenfolge'));
+  assert.deepEqual(finde(u, 'P3', 'reihenfolge'), ['LWKSPPVI']); // W6-L2-06 D (D3)
+  assert.deepEqual(finde(u, 'P4', 'pendel'), [K.vigenere(K.ring('mondhell', 3), 'ZEIT')]);
+  const ue = K.verfahren.varianten({ typ: 'uhrwerk', t: 3, pendel: 'ZEIT' }, 'LHTHPPMI', 'ent');
+  assert.deepEqual(finde(ue, 'P3', 'reihenfolge'), ['MDEOHEUL']); // Ring zuerst rückgängig gemacht
+  // Ring mit Block 5: Gegenrichtung ist eine andere Permutation (bei Block 8 ist jeder Ring selbstinvers)
+  assert.deepEqual(finde(K.verfahren.varianten({ typ: 'ring', t: 2, block: 5 }, 'abcde', 'ver'), 'P3', 'permutation'), [K.ring('abcde', 2, 'ent', { block: 5 })]);
+  assert.deepEqual(K.verfahren.varianten({ typ: 'mini_enigma', stellung: 'A' }, 'bach', 'ver'), []);
 });
 
 test('verfahren.varianten: Fehlrechnungen (Delta §9.2)', () => {

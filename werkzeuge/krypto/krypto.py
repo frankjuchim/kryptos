@@ -2150,6 +2150,12 @@ VERFAHREN_TYPEN = {
     'umkehrung': {'parameter': {}, 'involutorisch': True, 'art': 'transposition'},
     'blockrotation': {'parameter': {'block': _p('zahl', True, min=2, max=16), 'um': _p('zahl', True, min=1)},
                       'involutorisch': False, 'art': 'transposition'},
+    # M8 E123: Eves Ring (W6 §2, Stufe 1), Eves Uhrwerk (Ring, dann Vigenère mit dem Pendel), Mini-Enigma (W3 Kür K2)
+    'ring': {'parameter': {'t': _p('zahl', True, min=1, max=11), 'block': _p('zahl', min=4, max=12), 'fuellzeichen': _p('zeichen')},
+             'involutorisch': False, 'art': 'transposition'},
+    'uhrwerk': {'parameter': {'t': _p('wahl', True, werte=[1, 3, 5, 7]), 'pendel': _p('wort', True)},
+                'involutorisch': False, 'art': 'kombination'},
+    'mini_enigma': {'parameter': {'stellung': _p('wahl', True, werte=list('ABCDEFGH'))}, 'involutorisch': True, 'art': 'poly'},
     'xor': {'parameter': {'schluessel': _p('text'), 'schluesselBits': _p('bits')}, 'eins_von': ['schluessel', 'schluesselBits'],
             'involutorisch': False, 'art': 'bits'},
     'baukasten': {'parameter': {'verfahren': _p('objekt', True), 'schluessel': _p('objekt', True)},
@@ -2260,10 +2266,43 @@ def verfahren_pruefe(v):
                            ij=v.get('ij', 'I'))
         except KryptoFehler as f:
             fehler.append(str(f))
+    if typ == 'ring':
+        n = v.get('block', 8)
+        if v['t'] >= n or math.gcd(v['t'], n) != 1:
+            fehler.append('t muss kleiner als der Block und teilerfremd zu ihm sein.')
+        if 'fuellzeichen' in v and v['fuellzeichen'] is None:
+            fehler.append('Das Füllzeichen muss ein Buchstabe sein.')
     if typ == 'kreuzquadrat' and v.get('fuellzeichen') is not None:
         if v['fuellzeichen'].upper() == 'J':
             fehler.append('Das Füllzeichen muss ein Buchstabe des Quadrats sein.')
     return {'ok': not fehler, 'fehler': fehler}
+
+
+_UHRWERK_BLOCK = 8
+
+
+def _uhrwerk_aufgefuellt(text):
+    """Klartext des Uhrwerks wie im Ring auf ganze Blöcke mit X aufgefüllt (W6 §2)."""
+    s = nur_buchstaben(text)
+    return s + 'X' * (-len(s) % _UHRWERK_BLOCK)
+
+
+def _uhrwerk_vigenere(s, pendel, richtung, zyklisch=False):
+    """Vigenère mit dem Pendel bzw. (Diagnose P4) mit dem Wort zyklisch; leerer Text bleibt leer."""
+    if not s:
+        return ''
+    return vigenere(s, pendel if zyklisch else pendel_folge(pendel, len(s)), richtung)
+
+
+def uhrwerk(text, t, pendel, richtung='ver'):
+    """Eves Uhrwerk (W6 §2): ver = Ring t, dann Vigenère mit dem Pendel; ent umgekehrt (Länge Vielfaches von 8)."""
+    _richtung(richtung)
+    if richtung == 'ver':
+        return _uhrwerk_vigenere(ring(text, t, 'ver'), pendel, 'ver')
+    s = nur_buchstaben(text)
+    if len(s) % _UHRWERK_BLOCK:
+        raise KryptoFehler('Die Länge des Geheimtextes muss ein Vielfaches von 8 sein.')
+    return ring(_uhrwerk_vigenere(s, pendel, 'ent'), t, 'ent')
 
 
 def _anwenden_text(v, text, richtung):
@@ -2308,6 +2347,12 @@ def _anwenden_text(v, text, richtung):
         return umkehrung(text)
     if typ == 'blockrotation':
         return blockrotation(text, v['block'], v['um'], richtung)
+    if typ == 'ring':
+        return ring(text, v['t'], richtung, block=v.get('block', 8), fuellzeichen=v.get('fuellzeichen', 'X'))
+    if typ == 'uhrwerk':
+        return uhrwerk(text, v['t'], v['pendel'], richtung)
+    if typ == 'mini_enigma':
+        return mini_enigma(text, v['stellung'], richtung)
     if typ == 'xor':
         if 'schluessel' in v:
             k = v['schluessel']
@@ -2374,7 +2419,17 @@ def verfahren_varianten(v, text, richtung, *, basis=1, ausgabe='buchstaben'):
 
     perm = VERFAHREN_TYPEN[typ]['art'] == 'transposition'
     mehrstufig_ent = richtung == 'ent' and typ in ('baukasten', 'adfgvx')
-    if not VERFAHREN_TYPEN[typ]['involutorisch'] and typ != 'baukasten' and not mehrstufig_ent:
+    if typ == 'uhrwerk':
+        # M8 E123: Stufen vertauscht (P3 reihenfolge), Ring in der Gegenrichtung (P3 permutation); P4 pendel unten
+        if richtung == 'ver':
+            s = _uhrwerk_aufgefuellt(t)
+            dazu('P3', 'reihenfolge', lambda: ring(_uhrwerk_vigenere(s, v['pendel'], 'ver'), v['t'], 'ver'))
+            dazu('P3', 'permutation', lambda: _uhrwerk_vigenere(ring(s, v['t'], 'ent'), v['pendel'], 'ver'))
+        else:
+            s = nur_buchstaben(t)
+            dazu('P3', 'reihenfolge', lambda: _uhrwerk_vigenere(ring(s, v['t'], 'ent'), v['pendel'], 'ent'))
+            dazu('P3', 'permutation', lambda: ring(_uhrwerk_vigenere(s, v['pendel'], 'ent'), v['t'], 'ver'))
+    elif not VERFAHREN_TYPEN[typ]['involutorisch'] and typ != 'baukasten' and not mehrstufig_ent:
         def gegenrichtung():
             try:
                 return _anwenden_text(v, t, gegen)
@@ -2446,6 +2501,12 @@ def verfahren_varianten(v, text, richtung, *, basis=1, ausgabe='buchstaben'):
                     aus.append(q[za][sb] + q[zb][sa])
             return ''.join(aus)
         dazu('P4', 'paare', ohne_trennen)
+    if typ == 'uhrwerk':
+        # P4 pendel: Vigenère mit dem Pendelwort zyklisch statt mit dem Pendel
+        if richtung == 'ver':
+            dazu('P4', 'pendel', lambda: _uhrwerk_vigenere(ring(t, v['t'], 'ver'), v['pendel'], 'ver', True))
+        else:
+            dazu('P4', 'pendel', lambda: ring(_uhrwerk_vigenere(nur_buchstaben(t), v['pendel'], 'ent', True), v['t'], 'ent'))
     if typ == 'skytale':
         anders = None if v.get('fuellzeichen', 'X') is not None else 'X'
         dazu('P4', 'fuellung', lambda: skytale(t, v['umfang'], richtung, fuellzeichen=anders))

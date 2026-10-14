@@ -26,6 +26,10 @@ const KRI = (() => {
     fleissner: 'Fleißner-Schablone',
     spaltentransposition: 'Spaltentransposition',
     umkehrung: 'Umkehrung',
+    blockrotation: 'Blockrotation',
+    ring: 'Ring',
+    uhrwerk: 'Uhrwerk',
+    mini_enigma: 'Mini-Enigma',
     xor: 'XOR',
     baukasten: 'Baukasten',
     frei: 'Fremdes Verfahren'
@@ -34,7 +38,7 @@ const KRI = (() => {
   /* ================= chiffre (Delta §8.1) ================= */
 
   /** Längentreue Verfahren (ein Ausgabezeichen je Eingabezeichen). */
-  const LAENGENTREU = new Set(['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'gartenzaun', 'umkehrung']);
+  const LAENGENTREU = new Set(['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'gartenzaun', 'umkehrung', 'mini_enigma']);
   /** Verfahren, bei denen Zeichen i der Ausgabe zu Zeichen i der Eingabe gehört (für „zu Geheimtextbuchstabe D“). */
   const ZEICHENTREU = new Set(['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta']);
   const MIT_ZIFFERN = new Set(['polybios', 'adfgvx', 'xor']);

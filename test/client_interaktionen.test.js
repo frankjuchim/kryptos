@@ -76,6 +76,10 @@ test('chiffre ohne bestimmbare Länge (W9-L5-05 Playfair): Zeilenfeld mit Live-G
   assert.equal(c.antwort(), 'nhqz sfik');
   assert.equal(k.wert('KRI').laenge(oeffentlich('W9-L5-07').interaktion), null, 'Baukasten');
   assert.equal(k.wert('KRI').laenge({ kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'polybios' }, eingabe: 'abc' }), 6);
+  // M8 E123: Mini-Enigma längentreu, Ring/Uhrwerk nicht (Auffüllen auf ganze Blöcke)
+  assert.equal(k.wert('KRI').laenge({ kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'mini_enigma', stellung: 'A' }, eingabe: 'bach' }), 4);
+  assert.equal(k.wert('KRI').laenge({ kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'uhrwerk', t: 3, pendel: 'UHR' }, eingabe: 'zahnradwerk' }), null);
+  assert.equal(k.wert('KRI').laenge({ kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'ring', t: 3 }, eingabe: 'abc' }), null);
 });
 test('chiffre mit verdecktem Schlüssel: Hinweis, keine Schlüsselzeile', () => {
   const { k, c } = baue({ id: 'W9-L2-10', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'caesar' }, schluesselVerdeckt: true, eingabe: 'GYVUO XJSOR OXKEP', hilfszeilen: ['positionen'] } });

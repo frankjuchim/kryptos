@@ -267,6 +267,9 @@ Ein Verfahren wird überall gleich beschrieben – als JSON-Objekt mit `typ` und
 | `spaltentransposition` | **`schluessel`** (Wort oder Zahlenfolge), `fuellzeichen` (Std. keines = unvollständige Matrix) | zeilenweise schreiben, Spalten nach Schlüsselreihenfolge lesen |
 | `umkehrung` | – | Text rückwärts |
 | `blockrotation` | **`block`** 2–16, **`um`** 1…block−1 | jeden Block um `um` Stellen nach links rotieren (letzter Block in seiner eigenen Länge) |
+| `ring` | **`t`** 1…block−1, teilerfremd zu `block`; `block` 4–12 (Std. 8), `fuellzeichen` (Std. `X`) | Eves Ring (W6 §2, Stufe 1): je Block ab Feld 0 jeweils `t` Felder weiter lesen; letzter Block aufgefüllt (Plan M8 E123) |
+| `uhrwerk` | **`t`** 1, 3, 5 oder 7, **`pendel`** (Wort) | Eves Uhrwerk (W6 §2): `ver` = Ring `t` (Block 8, Füllzeichen X), dann Vigenère mit `pendelFolge(pendel, n)`; `ent` umgekehrt (Länge Vielfaches von 8) |
+| `mini_enigma` | **`stellung`** `A`…`H` | Mini-Enigma (W3 Kür K2), nur Buchstaben A–H, Walze rückt je Zeichen eine Stellung weiter; involutorisch |
 | `xor` | **`schluessel`** (Text) **oder** **`schluesselBits`** | ASCII-Bytes ⊕ Schlüsselbytes (wiederholt); Ausgabe **Hex in Zweiergruppen** |
 | `baukasten` | **`verfahren`** (Stufenliste), **`schluessel`** (Werte) | Hintereinanderausführung (TECHNIK §9.2) |
 | `frei` | `name` (optional, Verweis auf `werkzeuge/krypto/fremde_verfahren.py`) | **fremde Chiffre** aus dem Aufgabentext; keine Neuberechnung, keine Diagnose außer §9.6. Die Werkbank zeigt die `eingabe` **unverändert** (keine Fünfergruppen, Schreibweise wie im Seed – Wortgrenzen gehören zum Verfahren) und keinen Hinweis „Schlüssel verdeckt“ (Durchsicht W1) |
@@ -752,8 +755,10 @@ Lösen). Lösungen (`loesung.bits`) enthalten kein `?`. Diagnose §9.4.
 | Fehlmuster | Kandidat (berechnet) | Falle · `code` | Text (Beispiel) |
 |---|---|---|---|
 | Richtung vertauscht (−k statt +k) | Anwendung mit **umgekehrter** `richtung` | **P3** · `richtung` | „Du hast in die falsche Richtung verschoben – beim Entschlüsseln wird zurückgerechnet.“ |
-| Mehrstufig: Stufen beim Entschlüsseln in Vorwärtsreihenfolge invertiert | `baukasten`/`adfgvx`: Inverse der Stufen in **falscher Reihenfolge** | **P3** · `reihenfolge` | „Die Stufen müssen in umgekehrter Reihenfolge zurückgerechnet werden.“ |
-| Transposition: Lese-/Schreibrichtung vertauscht | Ver- statt Entschlüsselung (bzw. umgekehrt) bei `skytale`, `gartenzaun`, `spaltentransposition`, `fleissner` (dort auch andere Drehrichtung) | **P3** · `permutation` | „Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).“ |
+| Mehrstufig: Stufen beim Entschlüsseln in Vorwärtsreihenfolge invertiert | `baukasten`/`adfgvx`: Inverse der Stufen in **falscher Reihenfolge** | **P3** · `reihenfolge` | „Die Reihenfolge der Stufen stimmt nicht: Verschlüsseln geht Stufe für Stufe vorwärts, Entschlüsseln in umgekehrter Reihenfolge.“ |
+| Transposition: Lese-/Schreibrichtung vertauscht | Ver- statt Entschlüsselung (bzw. umgekehrt) bei `skytale`, `gartenzaun`, `spaltentransposition`, `fleissner` (dort auch andere Drehrichtung), `ring`; `uhrwerk`: Ring-Stufe in der Gegenrichtung (bei Block 8 ist jeder Ring selbstinvers – dann kein Kandidat) | **P3** · `permutation` | „Du hast die Umordnung nicht umgekehrt (inverse Permutation/Drehrichtung).“ |
+| `uhrwerk`: Stufen vertauscht | `ver`: erst Vigenère mit dem Pendel, dann Ring; `ent`: erst Ring zurück, dann Vigenère zurück | **P3** · `reihenfolge` | „Die Reihenfolge der Stufen stimmt nicht: Verschlüsseln geht Stufe für Stufe vorwärts, Entschlüsseln in umgekehrter Reihenfolge.“ |
+| `uhrwerk`: Pendel als einfache Wiederholung | Vigenère mit dem Pendelwort zyklisch statt mit `pendelFolge` | **P4** · `pendel` | „Beim Pendel läuft das Schlüsselwort vor und zurück, ohne die Enden doppelt zu lesen – du hast das Wort nur wiederholt.“ |
 | Abweichung um genau 1 (A = 0/A = 1 verwechselt) | `caesar` mit k ± 1; `vigenere`/`autokey`/`porta` mit Schlüsselbuchstaben-Wert + 1 (A = 1 statt A = 0); `affin` mit der jeweils anderen `basis` | **P1** · `zaehlbasis` | „Alle Zeichen liegen genau eine Stelle daneben – prüfe die Nummerierung (A = 1 oder A = 0).“ |
 | Positionen ab 1 statt ab 0 | Schlüsselstrom um eine Position versetzt (`vigenere` beginnt mit 2. Schlüsselbuchstaben) | **P1** · `position` | „Der Schlüssel ist um eine Stelle versetzt angelegt.“ |
 | „0 statt Z“ | `ausgabe: zahlen`: Antwort 0 an Stellen mit Lösung 26 (bei `basis: 1`) | **P2** · `null_statt_z` | „Rest 0 bedeutet bei A = 1 den Buchstaben Z (26).“ |

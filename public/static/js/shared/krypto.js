@@ -2335,6 +2335,10 @@
     spaltentransposition: { parameter: { schluessel: PF('wortOderZahlen'), fuellzeichen: P('buchstabeOderNull') }, involutorisch: false, art: 'transposition' },
     umkehrung: { parameter: {}, involutorisch: true, art: 'transposition' },
     blockrotation: { parameter: { block: PF('zahl', { min: 2, max: 16 }), um: PF('zahl', { min: 1, max: 15, kleinerAls: 'block' }) }, involutorisch: false, art: 'transposition' },
+    // M8 E123: Eves Ring (W6 §2, Stufe 1), Eves Uhrwerk (Ring, dann Vigenère mit dem Pendel), Mini-Enigma (W3 Kür K2)
+    ring: { parameter: { t: PF('zahl', { min: 1, max: 11 }), block: P('zahl', { min: 4, max: 12 }), fuellzeichen: P('buchstabe') }, involutorisch: false, art: 'transposition' },
+    uhrwerk: { parameter: { t: PF('auswahl', { werte: [1, 3, 5, 7] }), pendel: PF('wort') }, involutorisch: false, art: 'kombination' },
+    mini_enigma: { parameter: { stellung: PF('auswahl', { werte: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] }) }, involutorisch: true, art: 'substitution' },
     xor: { parameter: { schluessel: P('ascii'), schluesselBits: P('bits') }, einsVon: ['schluessel', 'schluesselBits'], involutorisch: false, art: 'substitution' },
     baukasten: { parameter: { verfahren: PF('objekt'), schluessel: PF('objekt') }, involutorisch: false, art: 'kombination' },
     frei: { parameter: { name: P('text') }, involutorisch: false, art: 'frei' },
@@ -2418,6 +2422,10 @@
       }
     }
     if (v.typ === 'baukasten' && fehler.length === 0) fehler.push(...baukastenAufloesen(v.verfahren, v.schluessel).fehler);
+    if (v.typ === 'ring' && fehler.length === 0) {
+      const n = v.block === undefined ? 8 : v.block;
+      if (v.t >= n || ggT(v.t, n) !== 1) fehler.push('„t“ muss kleiner als der Block und teilerfremd zu ihm sein.');
+    }
     return { ok: fehler.length === 0, fehler };
   }
 
@@ -2432,6 +2440,28 @@
     const o = {};
     for (const f of felder) if (v[f] !== undefined) o[f] = v[f];
     return o;
+  }
+
+  const UHRWERK_BLOCK = 8;
+
+  /** Klartext des Uhrwerks wie im Ring auf ganze Blöcke mit X aufgefüllt (W6 §2) */
+  function uhrwerkAufgefuellt(text) {
+    const s = nurBuchstaben(text);
+    return s.length % UHRWERK_BLOCK ? s + 'X'.repeat(UHRWERK_BLOCK - (s.length % UHRWERK_BLOCK)) : s;
+  }
+
+  /** Vigenère mit dem Pendel bzw. (Diagnose P4) mit dem Wort zyklisch; leerer Text bleibt leer */
+  function uhrwerkVigenere(s, pendel, richtung, zyklisch = false) {
+    if (s.length === 0) return '';
+    return vigenere(s, zyklisch ? pendel : pendelFolge(pendel, s.length), richtung);
+  }
+
+  /** Eves Uhrwerk (W6 §2): ver = Ring t, dann Vigenère mit dem Pendel; ent umgekehrt (Länge Vielfaches von 8) */
+  function uhrwerk(text, t, pendel, richtung) {
+    if (richtung === 'ver') return uhrwerkVigenere(ring(text, t, 'ver'), pendel, 'ver');
+    const s = nurBuchstaben(text);
+    if (s.length % UHRWERK_BLOCK) throw new KryptoFehler(`Die Länge des Geheimtextes muss ein Vielfaches von ${UHRWERK_BLOCK} sein.`);
+    return ring(uhrwerkVigenere(s, pendel, 'ent'), t, 'ent');
   }
 
   /** reine Berechnung ohne Prüfung (für anwenden und varianten) */
@@ -2458,6 +2488,9 @@
       case 'spaltentransposition': return spaltentransposition(text, v.schluessel, richtung, opt(v, ['fuellzeichen']));
       case 'umkehrung': return umkehrung(text);
       case 'blockrotation': return blockrotation(text, v.block, v.um, richtung);
+      case 'ring': return ring(text, v.t, richtung, opt(v, ['block', 'fuellzeichen']));
+      case 'uhrwerk': return uhrwerk(text, v.t, v.pendel, richtung);
+      case 'mini_enigma': return miniEnigma(text, v.stellung, richtung);
       case 'xor': {
         const k = v.schluessel !== undefined ? v.schluessel : bitsZuBytes(v.schluesselBits);
         return richtung === 'ver' ? xor(normalisieren(text), k) : xor(text, k, 'ent');
@@ -2490,7 +2523,7 @@
     return ausgeben(rechne(v, text, richtung), ausgabe, basis);
   }
 
-  const TRANSPOSITIONEN = ['gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'blockrotation'];
+  const TRANSPOSITIONEN = ['gartenzaun', 'skytale', 'fleissner', 'spaltentransposition', 'blockrotation', 'ring'];
 
   /**
    * Kandidaten typischer Fehlrechnungen (Delta §9.2): [{ p, code, text }] – text ist die Ausgabe in der gewählten
@@ -2532,6 +2565,17 @@
     } else if (v.typ === 'adfgvx' && richtung === 'ent') {
       const q = quadrat(v.quadrat, { groesse: 6 }).join('');
       dazu('P3', 'reihenfolge', () => aus(spaltentransposition(polybios(text, { schluessel: q, kopf: 'ADFGVX' }, 'ent'), v.schluessel, 'ent')));
+    } else if (v.typ === 'uhrwerk') {
+      // M8 E123: Stufen vertauscht (P3 reihenfolge), Ring in der Gegenrichtung (P3 permutation); P4 pendel unten
+      if (richtung === 'ver') {
+        const s = uhrwerkAufgefuellt(text);
+        dazu('P3', 'reihenfolge', () => aus(ring(uhrwerkVigenere(s, v.pendel, 'ver'), v.t, 'ver')));
+        dazu('P3', 'permutation', () => aus(uhrwerkVigenere(ring(s, v.t, 'ent'), v.pendel, 'ver')));
+      } else {
+        const s = nurBuchstaben(text);
+        dazu('P3', 'reihenfolge', () => aus(uhrwerkVigenere(ring(s, v.t, 'ent'), v.pendel, 'ent')));
+        dazu('P3', 'permutation', () => aus(ring(uhrwerkVigenere(s, v.pendel, 'ent'), v.t, 'ver')));
+      }
     } else if (!def.involutorisch && v.typ !== 'baukasten') {
       const code = TRANSPOSITIONEN.includes(v.typ) ? 'permutation' : 'richtung';
       dazu('P3', code, () => {
@@ -2583,6 +2627,11 @@
         for (let i = 0; i < t.length; i += 2) paare.push(t.slice(i, i + 2));
         return aus(playfairRechne(quadrat(v.schluessel, { groesse: 5, ij }), paare, 'ver'));
       });
+    }
+    if (v.typ === 'uhrwerk') {
+      // P4 pendel: Vigenère mit dem Pendelwort zyklisch statt mit dem Pendel
+      if (richtung === 'ver') dazu('P4', 'pendel', () => aus(uhrwerkVigenere(ring(text, v.t, 'ver'), v.pendel, 'ver', true)));
+      else dazu('P4', 'pendel', () => aus(ring(uhrwerkVigenere(nurBuchstaben(text), v.pendel, 'ent', true), v.t, 'ent')));
     }
     if (v.typ === 'skytale') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen === null ? 'X' : null }, text, richtung)));
     if (v.typ === 'spaltentransposition') dazu('P4', 'fuellung', () => aus(rechne({ ...v, fuellzeichen: v.fuellzeichen ? null : 'X' }, text, richtung)));

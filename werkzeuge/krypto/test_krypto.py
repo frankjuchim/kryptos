@@ -1196,8 +1196,9 @@ class VerfahrenBaukasten(unittest.TestCase):
     def test_verfahren_typen_pruefe(self):
         self.assertEqual(list(K.VERFAHREN_TYPEN), ['caesar', 'atbash', 'affin', 'substitution', 'vigenere', 'autokey', 'porta', 'playfair',
                                                    'kreuzquadrat', 'zweiquadrat_zahl', 'polybios', 'adfgvx', 'gartenzaun', 'skytale',
-                                                   'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'xor', 'baukasten', 'frei'])
-        self.assertEqual([t for t, e in K.VERFAHREN_TYPEN.items() if e['involutorisch']], ['atbash', 'porta', 'umkehrung'])
+                                                   'fleissner', 'spaltentransposition', 'umkehrung', 'blockrotation', 'ring', 'uhrwerk',
+                                                   'mini_enigma', 'xor', 'baukasten', 'frei'])
+        self.assertEqual([t for t, e in K.VERFAHREN_TYPEN.items() if e['involutorisch']], ['atbash', 'porta', 'umkehrung', 'mini_enigma'])
         ok = lambda v: K.verfahren_pruefe(v)['ok']  # noqa: E731
         faelle = [({'typ': 'caesar', 'k': 3}, True), ({'typ': 'caesar'}, False), ({'typ': 'caesar', 'k': 26}, False),
                   ({'typ': 'caesar', 'k': 3, 'x': 1}, False), ({'typ': 'affin', 'a': 5, 'b': 6}, True), ({'typ': 'affin', 'a': 13}, False),
@@ -1257,6 +1258,38 @@ class VerfahrenBaukasten(unittest.TestCase):
         self.assertRaises(F, an, {'typ': 'frei', 'name': 'domino'}, 'abc', 'ver')
         self.assertRaises(F, an, {'typ': 'caesar', 'k': 99}, 'abc', 'ver')
         self.assertRaises(F, an, {'typ': 'caesar', 'k': 3}, 'abc', 'ver', ausgabe='roemisch')
+
+    def test_verfahren_ring_uhrwerk_mini_enigma(self):
+        """Plan M8 E123 – dieselben Spec-Vektoren wie test/krypto.test.js."""
+        an = lambda v, t, r='ver': K.verfahren_anwenden(v, t, r)  # noqa: E731
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 5, 'pendel': 'UHR'}, 'TVZLTLEA', 'ent'), 'ZEITZONE')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zahnradwerk'), 'TUUHLDYHYEOYREBE')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'ZEIT'}, 'mondhell'), 'LHTHPPMI')
+        self.assertEqual(an({'typ': 'ring', 't': 5}, 'ZEITMASC'), 'ZAICMEST')
+        self.assertEqual(an({'typ': 'ring', 't': 7}, 'ZAHNRADX'), 'ZXDARNHA')
+        self.assertEqual(an({'typ': 'ring', 't': 3, 'block': 5, 'fuellzeichen': 'Q'}, 'abcdefg'), K.ring('abcdefg', 3, 'ver', block=5, fuellzeichen='Q'))
+        self.assertEqual(an({'typ': 'mini_enigma', 'stellung': 'A'}, 'bach'), 'HHAF')
+        self.assertEqual(an({'typ': 'mini_enigma', 'stellung': 'E'}, 'chef'), 'EGBC')
+        self.assertEqual(an({'typ': 'mini_enigma', 'stellung': 'A'}, 'HHAF', 'ent'), 'BACH')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, ''), '')
+        self.assertRaises(F, an, {'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'ABCDEFGHI', 'ent')
+        self.assertRaises(F, an, {'typ': 'mini_enigma', 'stellung': 'A'}, 'zug')
+        ok = lambda v: K.verfahren_pruefe(v)['ok']  # noqa: E731
+        for v, soll in [({'typ': 'ring', 't': 4}, False), ({'typ': 'ring', 't': 8}, False), ({'typ': 'ring', 't': 4, 'block': 9}, True),
+                        ({'typ': 'ring', 't': 3, 'block': 13}, False), ({'typ': 'ring', 't': 3, 'fuellzeichen': None}, False),
+                        ({'typ': 'uhrwerk', 't': 2, 'pendel': 'UHR'}, False), ({'typ': 'uhrwerk', 't': 3}, False),
+                        ({'typ': 'mini_enigma', 'stellung': 'I'}, False), ({'typ': 'mini_enigma', 'stellung': 'H'}, True)]:
+            self.assertEqual(ok(v), soll, v)
+        finde = lambda liste, p, code: [x['text'] for x in liste if x['p'] == p and x['code'] == code]  # noqa: E731
+        u = K.verfahren_varianten({'typ': 'uhrwerk', 't': 3, 'pendel': 'ZEIT'}, 'mondhell', 'ver')
+        self.assertEqual(finde(u, 'P3', 'reihenfolge'), ['LWKSPPVI'])
+        self.assertEqual(finde(u, 'P4', 'pendel'), [K.vigenere(K.ring('mondhell', 3), 'ZEIT')])
+        ue = K.verfahren_varianten({'typ': 'uhrwerk', 't': 3, 'pendel': 'ZEIT'}, 'LHTHPPMI', 'ent')
+        self.assertEqual(finde(ue, 'P3', 'reihenfolge'), ['MDEOHEUL'])
+        self.assertEqual(finde(K.verfahren_varianten({'typ': 'ring', 't': 2, 'block': 5}, 'abcde', 'ver'), 'P3', 'permutation'),
+                         [K.ring('abcde', 2, 'ent', block=5)])
+        self.assertEqual(K.verfahren_varianten({'typ': 'mini_enigma', 'stellung': 'A'}, 'bach', 'ver'), [])
 
     def test_verfahren_varianten(self):
         va = K.verfahren_varianten

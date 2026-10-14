@@ -339,7 +339,7 @@ Lab-Lösungstabelle – geprüft 14.10.2026; Neubau der docx in Task 197)
   `mini_enigma` keine.
 - Längentreue (Client-Kästchen, M4 E26): `ring`/`uhrwerk` nein (Auffüllen), `mini_enigma` ja.
 
-- [ ] **Step 1: Failing tests (Spec-Vektoren):**
+- [x] **Step 1: Failing tests (Spec-Vektoren):**
   ```js
   const A = (v, t, r = 'ver') => K.verfahren.anwenden(v, t, r);
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK');     // W6 §0.1
@@ -353,9 +353,10 @@ Lab-Lösungstabelle – geprüft 14.10.2026; Neubau der docx in Task 197)
   assert.throws(() => K.verfahren.pruefe({ typ: 'ring', t: 4 }).ok || (() => { throw 0; })());       // ggT(4, 8) ≠ 1
   ```
   Dasselbe in `test_krypto.py` (Zwilling).
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement** (Delta/TECHNIK im selben Commit). **Step 4: Run** → PASS;
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement** (Delta/TECHNIK im selben Commit). **Step 4: Run** → PASS;
   `npm run krypto:vergleich -- --anzahl 500` (neue Typen in der Zufallsliste) → 0 Abweichungen; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "Verfahrens-Typen ring, uhrwerk und mini_enigma mit Diagnose-Varianten (JS und Python)"`.
+- [x] **Step 5: Commit** `git commit -m "Verfahrens-Typen ring, uhrwerk und mini_enigma mit Diagnose-Varianten (JS und Python)"`.
+- [x] **Umsetzungsnotiz:** `ring.t` 1…block−1 (teilerfremd, Std.-Block 8 → 1…7) statt fest 1…7, damit Blöcke bis 12 gehen. Bei Block 8 ist jeder Ring selbstinvers (t · t ≡ 1 mod 8) – P3 `permutation` entfällt dann als Kandidat (gleich der Lösung). Die Vorgabe-Variante „W6-L2-04 ent“ eignet sich nicht als Test für `reihenfolge` (Pendel UHR mit Periode 4 vertauscht mit dem Ring t = 5); Test stattdessen mit mondhell/ZEIT (D3). Client: `mini_enigma` längentreu, Anzeigenamen Ring/Uhrwerk/Mini-Enigma (und die fehlende Blockrotation); Diagnose-Text `*:reihenfolge` für beide Richtungen formuliert, neu `*:pendel`.
 
 ### Task 166: `bits-rechnen` mit `schritt`, `text` und bis zu 64 Bit (E124, E125)
 
