@@ -305,6 +305,24 @@ test('bits-rechnen-Validator: KRYPTOS-16-Schritte (schritt, text) und Operanden 
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0'.repeat(72), '1'.repeat(72)]; }, /8–64 Bit/);
 });
 
+test('gaps-Feld toleranz (K43, Plan M8 E139): Zahl ≥ 0, nur bei typ zahl', () => {
+  const mitFeld = (feld) => (w) => {
+    const a = w.aufgaben.find((x) => x.interaktion && x.interaktion.kind === 'gaps' && Object.values(x.interaktion.felder).some((f) => f.typ === 'zahl'));
+    const fid = Object.keys(a.interaktion.felder).find((k) => a.interaktion.felder[k].typ === 'zahl');
+    Object.assign(a.interaktion.felder[fid], feld);
+  };
+  erwarteFehler(mitFeld({ toleranz: -1 }), /toleranz muss eine Zahl ≥ 0 sein/);
+  erwarteFehler(mitFeld({ toleranz: '0,5' }), /toleranz muss eine Zahl ≥ 0 sein/);
+  erwarteFehler((w) => {
+    const a = w.aufgaben.find((x) => x.interaktion && x.interaktion.kind === 'gaps' && Object.values(x.interaktion.felder).some((f) => (f.typ || 'text') === 'text'));
+    const fid = Object.keys(a.interaktion.felder).find((k) => (a.interaktion.felder[k].typ || 'text') === 'text');
+    a.interaktion.felder[fid].toleranz = 1;
+  }, /toleranz nur bei typ zahl/);
+  const w = basis();
+  mitFeld({ toleranz: 0.5 })(w);
+  assert.deepEqual(fehlerVon(w), []);
+});
+
 test('hash-ziel-Validator: Ziel, ungleich/praefix, Musterantwort nachgerechnet (Plan M8 E126)', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').loesung.beispiel = 'tee'; }, /Neuberechnung ergibt KH\(tee\) = 26 statt 4/);
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').loesung.beispiel = 'eis'; }, /beispiel darf nicht in ungleich stehen/);

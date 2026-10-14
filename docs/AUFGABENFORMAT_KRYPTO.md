@@ -969,5 +969,9 @@ lokal (Kern-Mechanik).
 | bits-rechnen | `"0010 0001"` · `{ "bits": "…" }` · `"K"` · `[0, 3, 9]` | `bits: [bool…]`, `diagnose` |
 | hash-ziel | `"haffk"` · `{ "text": "haffk" }` | `wert` (KH der Eingabe, in `teile[i]`), `diagnose` (Hinweise ohne P-Nummer) |
 
+`gaps`-Zahlenfelder (Kern-Ergänzung K43, Plan M8 E139): optional `"toleranz": 0.5` (Zahl ≥ 0, nur bei `typ: "zahl"`) –
+richtig, wenn |Eingabe − Lösung| ≤ toleranz (Komma oder Punkt); ohne `toleranz` vergleicht der Kern exakt. Für
+gerundete Rechenergebnisse wie den Zeitplan (G-W6-2, ± 0,5 min).
+
 Mehrteilige Aufgaben: Array der Teilantworten (Kern). Bei mehrteiligen Aufgaben stehen `zeichen`/`bits`/`anteil`/
 `diagnose` in `teile[i]`; bei einteiligen zusätzlich auf oberster Ebene (wie `felder`/`elemente` im Kern).

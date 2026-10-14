@@ -138,7 +138,9 @@ function feldRichtig(feld, eingabe, akzeptiert) {
       const a = F.alsZahl(eingabe);
       const b = F.alsZahl(acc);
       if (Number.isFinite(a) && Number.isFinite(b)) {
-        if (Math.abs(a - b) <= 1e-9) return true;
+        // K43: optionale toleranz (Zahl ≥ 0) – sonst exakt bis auf Rundungsfehler
+        const tol = Number.isFinite(feld && feld.toleranz) && feld.toleranz >= 0 ? feld.toleranz : 0;
+        if (Math.abs(a - b) <= tol + 1e-9) return true;
         continue;
       }
       if (F.normText(eingabe, 'code') === F.normText(acc, 'code')) return true;

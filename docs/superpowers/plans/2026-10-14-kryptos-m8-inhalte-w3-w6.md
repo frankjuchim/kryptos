@@ -412,10 +412,11 @@ Fixture + `antworten.js` (`W9-…` mit `ziel: 4`, `ungleich: ["hafen"]` – **ei
 `src/content/validator.js` (`toleranz` Zahl ≥ 0, nur bei `typ: zahl`), `docs/KERN_ABWEICHUNGEN.md` (K43), Delta §14
 (Hinweis), `docs/TECHNIK.md` §2.1 (K43); Test `test/pruefer.test.js`, `test/validator.test.js`
 
-- [ ] **Step 1: Failing test** – Feld `{ typ: 'zahl', toleranz: 0.5 }`, Lösung `22.5`: `"22"`, `"23"`, `"22,9"` richtig, `"21,9"` falsch;
+- [x] **Step 1: Failing test** – Feld `{ typ: 'zahl', toleranz: 0.5 }`, Lösung `22.5`: `"22"`, `"23"`, `"22,9"` richtig, `"21,9"` falsch;
   ohne `toleranz` unverändert exakt; `toleranz: -1` → Validator-Fehler.
-- [ ] **Step 2–4:** FAIL → Implement → PASS, `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "gaps-Feld toleranz für Zahlen (K43)"`.
+- [x] **Step 2–4:** FAIL → Implement → PASS, `npm test`.
+- [x] **Step 5: Commit** `git commit -m "gaps-Feld toleranz für Zahlen (K43)"`.
+- [x] **Umsetzungsnotiz:** Grenze inklusive (`|a − b| ≤ toleranz` + 1e-9); `toleranz` als Text („0,5“) ist ein Validator-Fehler. Hinweis in Delta §14 unter der Antwortformat-Tabelle.
 
 ### Task 169: Level-Feld `werkstatt` – Karte zur Chiffren-Werkstatt (E140)
 

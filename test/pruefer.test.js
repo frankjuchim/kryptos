@@ -51,6 +51,11 @@ test('gaps: Normalisierung typografischer Zeichen und exakt', () => {
   assert.equal(C.feldRichtig({ typ: 'zahl' }, '3.5000000000001', ['3.5']), true, 'Toleranz 1e-9');
   assert.equal(C.feldRichtig({ typ: 'zahl' }, '3.501', ['3.5']), false);
   assert.equal(C.feldRichtig({ typ: 'zahl' }, '1e2', ['100']), true);
+  // K43 (Plan M8 E139): toleranz für Zahlenfelder (G-W6-2 Zeitplan ± 0,5 min)
+  const tol = { typ: 'zahl', toleranz: 0.5 };
+  for (const x of ['22', '23', '22,9', '22.5', ' 22,0 ']) assert.equal(C.feldRichtig(tol, x, ['22.5']), true, x);
+  for (const x of ['21,9', '23,01', 'zweiundzwanzig']) assert.equal(C.feldRichtig(tol, x, ['22.5']), false, x);
+  assert.equal(C.feldRichtig({ typ: 'zahl' }, '22', ['22.5']), false, 'ohne toleranz weiter exakt');
   assert.equal(C.feldRichtig({ typ: 'zahl' }, 'abc', ['100']), false);
   assert.equal(C.feldRichtig({ typ: 'zahl' }, '-0', ['0']), true);
 });

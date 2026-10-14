@@ -317,6 +317,11 @@ function validiereInteraktion(ia, lo, aufgabe, ort, fa, wa) {
         if (!['text', 'zahl', 'auswahl'].includes(typ)) fa(o, `typ „${feld.typ}“ unbekannt (text | zahl | auswahl).`);
         if (feld.norm !== undefined && !F.NORMEN.includes(feld.norm)) fa(o, `norm „${feld.norm}“ unbekannt (${F.NORMEN.join(' | ')}).`);
         if (feld.breite !== undefined && (!Number.isInteger(feld.breite) || feld.breite < 1 || feld.breite > 80)) fa(o, 'breite muss eine ganze Zahl 1–80 sein.');
+        // K43: toleranz für Zahlenfelder (|Eingabe − Lösung| ≤ toleranz)
+        if (feld.toleranz !== undefined) {
+          if (typeof feld.toleranz !== 'number' || !Number.isFinite(feld.toleranz) || feld.toleranz < 0) fa(o, 'toleranz muss eine Zahl ≥ 0 sein.');
+          else if (typ !== 'zahl') fa(o, 'toleranz nur bei typ zahl.');
+        }
         if (typ === 'auswahl' && (!Array.isArray(feld.optionen) || feld.optionen.length < 2 || !feld.optionen.every(istSkalar))) {
           fa(o, 'auswahl braucht optionen (Liste mit mind. 2 Texten).');
         }
