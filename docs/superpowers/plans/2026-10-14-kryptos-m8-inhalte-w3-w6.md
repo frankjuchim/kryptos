@@ -611,7 +611,8 @@ BAUM → WOLKE5; HAND → MORGEN6 (JS + Zwilling).
 `verfahren.quadrat`) – dann den Vergleich in `validierung.js` für `adfgvx` auf `quadrat(schluessel, 6)` = `verfahren.quadrat`
 erweitern (kleiner Nachtrag, Test), sonst Hinweis beheben.
 
-- [ ] **Step 1–4** wie oben (`UMFANG[3]` += `'W3-L4'`). **Step 5: Commit** `git commit -m "Welt 3: Level 3.4 „Fremde Chiffre IV: ADFGVX“"`.
+- [x] **Step 1–4** wie oben (`UMFANG[3]` += `'W3-L4'`). **Step 5: Commit** `git commit -m "Welt 3: Level 3.4 „Fremde Chiffre IV: ADFGVX“"`.
+- [x] **Umsetzungsnotiz:** Quadrat ZEPPELIN18 als Block `quadrat` (`polybios`, 6, ADFGVX, `schluessel`) in W3-L4-01, -02, -04, -06 („Quadrat unten“ statt „oben“, weil der Block unter dem Text steht). Der befürchtete Hinweis „quadrat/verfahren mit verschiedenen Schlüsseln“ trat nicht auf (kein Nachtrag in `validierung.js`). Zwischentexte in Fünfergruppen (`AAGXF D`, `AXADD GADAG XD`, Validator-Regel Design §6). W3-L4-03: Matrix KARL mit dem Zwischentext zeilenweise gefüllt (`seed_pruefen` liest eine Matrix mit Schlüsselkopf zur Spaltentransposition `ver` spaltenweise nach – ein leeres Raster ist dort eine Abweichung; die Spec-Lösung zeigt dieselbe Matrix); W3-L4-04/-06 leere Raster (Entschlüsseln). W3-L4-05 a)–c) als drei `choice`-Teile; W3-L4-07 Urteil als Muster in der Erklärung (E129). Keine Werkzeuge, alle `chiffre` offen (Quadrat und Schlüsselwort genannt).
 
 ### Task 176: Welt 3 – Kür K2 „Die Enigma“
 
