@@ -97,6 +97,6 @@
   {"ort": "quellen/material/W6/akte_W6-3.json Archivwissen 1, Auftrag 1", "werte": "Zeitplan (Minuten je BE, Rundung, Kumulation)"},
   {"ort": "quellen/material/W6/akte_W6-2.json Archivwissen 1, Aufträge 2–6, Abi-Check", "werte": "Stufe 1 UHRWERK (Ring mit Schritt t) und Gesamtverfahren: zeitreisebeendet, chronoskopkern, ZRWUL XDV"},
   {"ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-01", "werte": "Zeitplan 4 · 2,25 = 9 min (Arithmetik)"},
-  {"ort": "seed/welten/welt6.json W6-L3-01, W6-L3-02, W6-L3-03 (SPEC W6 §2 Level 6.3)", "werte": "Takt 270 min / 120 BE = 2,25 und 220 min / 100 BE = 2,2 min je BE; 30 · 2,25 = 67,5; 25 · 2,2 = 55; 4 bzw. 6 BE → 9 bzw. 13,5 min; 30 − 10 · 2,25 = 7,5 (Arithmetik mit Dezimalbrüchen, keine Bibliotheksfunktion; nachgerechnet mit Python fractions)"}
+  {"ort": "seed/welten/welt6.json W6-L3-01, W6-L3-02, W6-L3-03 (SPEC W6 §2 Level 6.3)", "werte": "Takt 270 min / 120 BE = 2,25 und 220 min / 100 BE = 2,2 min je BE; 60 · 2,25 = 135; 12 · 2,25 = 27; 50 · 2,2 = 110; 15 · 2,2 = 33; 4 bzw. 8 BE → 9 bzw. 18 min; 30 − 10 · 2,25 = 7,5 (Arithmetik mit Dezimalbrüchen, keine Bibliotheksfunktion; nachgerechnet mit Python fractions)"}
  ]
 }
