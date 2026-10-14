@@ -1706,7 +1706,12 @@ Methoden, `Cache-Control: no-store`. Fehlerformat `{ "error": "…" }` (+ `detai
 Kurse – Existenz nicht verraten) · **409** falsche Phase/Konflikt · **413** zu groß · **415** kein JSON · **429**
 Rate-Limit (`Retry-After`). Unveränderte Kern-Routen (Welten, Level, Aufgaben, Training, Boss, Profil, Scoreboard,
 Warm-up, Lehrkraft-Auswertung, Vorschau, Materialien, CSV, Urkunden, Admin-Backup/-Inhalte, Gast) sind hier nicht
-wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §14.
+wiederholt; ihre Antworten enthalten zusätzlich die Felder aus §8 und Delta §14. JSON-Körper höchstens 1 MB (sonst
+**413**); nur Backup-Restore und Warm-up-Import mit Superadmin-Sitzung bis 30 MB (K47, M9 Task 208).
+
+**Vollständiges Inventar** aller registrierten Routen (Seiten, SSO, Verbund, API) mit Bereich, Status je Rolle (anonym,
+Schüler, Lehrkraft, Admin) und Rate-Limit bzw. Begründung ohne Limit: `test/fixtures/routen_rechte.json`, geprüft in
+`test/sicherheit.test.js` (M9 Task 208) – eine neue Route ohne Eintrag macht den Test rot.
 
 ### 13.1 Sitzung, Schüler
 

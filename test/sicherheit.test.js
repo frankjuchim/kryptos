@@ -191,3 +191,123 @@ test('statische Dateien: kein Verzeichnislisting, keine Quelltext-Dateien außer
   }
 });
 
+
+// ── Task 208: Routen-Inventar mit Rechten je Rolle und Rate-Limits ──
+const request = require('supertest');
+const HS = require('./hilfen_sicherheit');
+const TABELLE = require('./fixtures/routen_rechte.json');
+const ROLLEN = ['anonym', 'schueler', 'lehrkraft', 'admin'];
+const SCHREIBEND = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+// Reihenfolge wie beim Erheben der Tabelle: erst lesen, dann schreiben, Löschen zuletzt (Zustand der Fixture)
+const rang = (z) => (z.methode === 'GET' ? 0 : z.methode === 'DELETE' ? 2 : 1);
+
+test('routen_inventar: jede registrierte Route steht in routen_rechte.json und umgekehrt', () => {
+  const ist = HS.registrierteRouten(H.makeApp());
+  assert.ok(ist.length > 100, 'Routen gefunden');
+  const soll = new Set(TABELLE.map((z) => `${z.methode} ${z.pfad}`));
+  assert.equal(soll.size, TABELLE.length, 'doppelte Zeile in der Tabelle');
+  assert.deepEqual(ist.filter((r) => !soll.has(r)), [], 'Route ohne Eintrag');
+  assert.deepEqual([...soll].filter((r) => !ist.includes(r)), [], 'Eintrag ohne Route');
+  // Im Portal-Modus entfernte Kern-Routen (TECHNIK §6.5) bleiben entfernt
+  for (const r of ['POST /api/lehrer/registrieren', 'POST /api/lehrer/anmelden', 'POST /api/lehrer/passwort', 'POST /api/schueler/beitreten', 'POST /api/schueler/anmelden', 'GET /api/kurs/:code', 'GET /k/:code', 'POST /api/lehrer/kurse', 'DELETE /api/lehrer/kurse/:kursId', 'GET /api/admin/lehrkraefte']) {
+    assert.ok(!ist.includes(r), `entfernte Route wieder da: ${r}`);
+  }
+  assert.ok(!ist.some((r) => /lehrkraefte|beitreten|registrieren|passwort/.test(r)), 'Kern-Anmeldung im Portal-Modus');
+});
+
+test('rechte_je_rolle: Status für anonym/schueler/lehrkraft/admin wie in der Tabelle', { timeout: 60000 }, async () => {
+  const fx = await HS.fixture();
+  const abweichungen = [];
+  for (const z of [...TABELLE].sort((a, b) => rang(a) - rang(b))) {
+    for (const rolle of ROLLEN) {
+      const r = await HS.anfrage(fx, rolle, z.methode, z.pfad);
+      if (r.status !== z[rolle]) abweichungen.push(`${z.methode} ${z.pfad} als ${rolle}: ${r.status} statt ${z[rolle]}`);
+    }
+  }
+  assert.deepEqual(abweichungen, []);
+});
+
+test('rechte_je_bereich: Tabelle ist in sich stimmig (fremde Rollen abgewiesen, eigene Rolle nie 401/403)', () => {
+  const ab = (s) => [401, 302].includes(s); // ohne passende Sitzung: API 401, Seite Weiterleitung zum SSO-Start
+  const fehler = [];
+  for (const z of TABELLE) {
+    const w = `${z.methode} ${z.pfad}`;
+    const ok = {
+      schueler: () => ab(z.anonym) && ab(z.lehrkraft) && ab(z.admin) && !ab(z.schueler),
+      lehrkraft: () => [z.anonym, z.schueler].every((s) => ab(s) || s === 404) && ![401, 403, 302].includes(z.lehrkraft) && ![401, 403, 302].includes(z.admin),
+      admin: () => z.anonym === 401 && z.schueler === 401 && z.lehrkraft === 403 && ![401, 403].includes(z.admin),
+      verbund: () => ROLLEN.every((r) => z[r] === 401), // Sitzungen zählen nicht – nur das Verbund-Token
+      'schueler+lehrkraft': () => ab(z.anonym) && ![401, 302].includes(z.schueler) && ![401, 302].includes(z.lehrkraft),
+      oeffentlich: () => ROLLEN.every((r) => z[r] === z.anonym)
+    }[z.bereich];
+    if (!ok) fehler.push(`${w}: unbekannter Bereich ${z.bereich}`);
+    else if (!ok()) fehler.push(`${w}: Status passt nicht zum Bereich ${z.bereich}`);
+    if (z.bereich === 'oeffentlich' && SCHREIBEND.has(z.methode) && !/^\/api\/(abmelden|gast\/)/.test(z.pfad)) fehler.push(`${w}: schreibend und öffentlich`);
+  }
+  assert.deepEqual(fehler, []);
+});
+
+test('schreibende_routen_haben_limit: jede POST/PUT/PATCH/DELETE-Zeile hat limit oder grund', () => {
+  for (const z of TABELLE) {
+    assert.ok(typeof z.limit === 'string' ? z.limit.length > 3 : z.limit === null, `${z.methode} ${z.pfad}: limit`);
+    if (z.limit === null) assert.ok(typeof z.grund === 'string' && z.grund.length >= 10, `${z.methode} ${z.pfad}: limit null ohne grund`);
+  }
+  // Prüf-, Tipp- und Aufdeck-Routen der Schüler (inkl. Boss-Antwort, neue Trainingsaufgabe) und alles ohne Anmeldung, das
+  // schreibt, sind begrenzt (Warm-up-Antworten zählen nicht: Selbsteinschätzung ohne Punkte und ohne Prüfung)
+  for (const z of TABELLE.filter((x) => /\/(pruefen|tipp|aufdecken|neu)$|\/boss\/kampf\/:id\/antwort$/.test(x.pfad) && x.bereich === 'schueler')) assert.ok(z.limit, `${z.methode} ${z.pfad} ohne Limit`);
+  for (const z of TABELLE.filter((x) => x.bereich === 'oeffentlich' && SCHREIBEND.has(x.methode) && x.pfad !== '/api/abmelden')) assert.ok(z.limit, `${z.methode} ${z.pfad} ohne Limit`);
+});
+
+test('klasse_hinter_einer_ip (Review Focus 3): 32 SSO-Anmeldungen und je 3 Prüfungen von einer IP in < 60 s ohne 429', { timeout: 60000 }, async () => {
+  const app = H.makeApp({ trustProxy: 1 });
+  const beginn = Date.now();
+  const status = [];
+  for (let i = 0; i < 32; i++) {
+    // alle über dieselbe Schul-IP (X-Forwarded-For hinter dem Proxy)
+    const c = H.client(app).set('X-Forwarded-For', '203.0.113.7');
+    await H.sso(app, { sub: `s:${3000 + i}`, name: `Tablet ${i + 1}`, kurse: [{ id: 'k:77', name: 'LK 13', rolle: 'mitglied' }] }, { client: c, ziel: '/spiel' });
+    status.push(c.antwort.status);
+    for (const p of ['/spiel', '/api/sitzung', '/api/welten', '/api/profil']) status.push((await c.get(p)).status);
+    for (let j = 0; j < 3; j++) status.push((await c.post(`/api/aufgaben/W9-L1-0${j + 1}/pruefen`).send({ antwort: j === 2 ? ['a'] : { g1: '0' } })).status);
+  }
+  assert.ok(Date.now() - beginn < 60000);
+  assert.equal(status.filter((s) => s === 429).length, 0, 'Rate-Limit für eine ganze Klasse');
+  assert.equal(status.filter((s) => s === 302).length, 32, 'alle angemeldet');
+});
+
+test('verbund_ohne_origin: /api/verbund/* ohne Origin erlaubt, aber nur mit Token (401 ohne)', async () => {
+  const app = H.makeApp();
+  const ohne = await request(app).post('/api/verbund/loeschen').send({ sub: 's:1' });
+  assert.equal(ohne.status, 401);
+  const fremd = await request(app).post('/api/verbund/loeschen').set('Origin', 'https://boese.example').send({ sub: 's:1' });
+  assert.equal(fremd.status, 401, 'fremde Origin ändert nichts – nur das Token zählt');
+  // Sitzung ersetzt das Token nicht
+  const lk = await H.lehrkraftClient(app);
+  assert.equal((await lk.post('/api/verbund/loeschen').send({ sub: 's:1' })).status, 401);
+  const mit = await request(app).post('/api/verbund/loeschen').set('Authorization', 'Bearer ' + H.verbundToken('loeschen')).send({ sub: 's:1' });
+  assert.equal(mit.status, 200, JSON.stringify(mit.body));
+  const uebersicht = await request(app).get('/api/verbund/kurse/k:1/uebersicht').set('Authorization', 'Bearer ' + H.verbundToken('loeschen'));
+  assert.equal(uebersicht.status, 401, 'Token mit falschem Zweck');
+});
+
+test('json_groesse (Fund Task 208): große JSON-Körper nur für Backup-Restore und Warm-up-Import (Superadmin), sonst 413 vor dem Parsen', async () => {
+  const app = H.makeApp();
+  const gross = JSON.stringify({ x: 'a'.repeat(2 * 1024 * 1024) }); // 2 MB
+  const anonym = await H.client(app).post('/api/abmelden').set('Content-Type', 'application/json').send(gross);
+  assert.equal(anonym.status, 413, 'ohne Anmeldung kein 2-MB-Körper');
+  const s = await H.schuelerClient(app, H.kurs(app));
+  assert.equal((await s.post('/api/aufgaben/W9-L1-01/pruefen').set('Content-Type', 'application/json').send(gross)).status, 413);
+  // normale Körper bis 1 MB gehen weiter
+  assert.notEqual((await s.post('/api/aufgaben/W9-L1-01/pruefen').send({ antwort: { g1: 'x'.repeat(1000) } })).status, 413);
+  // Superadmin: Restore und Warm-up-Import nehmen große Dateien an (bis 30 MB; Inhalt hier ungültig → 400, nicht 413)
+  const admin = await H.adminClient(app);
+  for (const p of ['/api/admin/restore', '/api/admin/katas/import']) {
+    const r = await admin.post(p).set('Content-Type', 'application/json').send(gross);
+    assert.notEqual(r.status, 413, p);
+  }
+  // … aber nur mit Superadmin-Sitzung: ohne Anmeldung bzw. als Lehrkraft gilt auch dort die 1-MB-Grenze
+  assert.equal((await H.client(app).post('/api/admin/restore').set('Content-Type', 'application/json').send(gross)).status, 413);
+  const lk = await H.lehrkraftClient(app);
+  assert.equal((await lk.post('/api/admin/katas/import').set('Content-Type', 'application/json').send(gross)).status, 413);
+  assert.equal((await lk.post('/api/admin/katas/import').send({})).status, 403, 'kleiner Körper: Rechteprüfung wie bisher');
+});

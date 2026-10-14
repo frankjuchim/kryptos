@@ -269,7 +269,15 @@ function createApp(opts) {
     next();
   });
   api.use(S.sameOriginCheck);
-  api.use(express.json({ limit: '30mb' }));
+  // K47: JSON-Körper bis 1 MB; nur Backup-Restore und Warm-up-Import des Superadmins dürfen bis 30 MB groß sein – sonst
+  // ließe sich ohne Anmeldung an jede schreibende Route ein 30-MB-Körper zum Parsen schicken (Sicherheits-Review M9 Task 208)
+  const jsonKlein = express.json({ limit: '1mb' });
+  const jsonGross = express.json({ limit: '30mb' });
+  const GROSSE_KOERPER = new Set(['/admin/restore', '/admin/katas/import']);
+  api.use((req, res, next) => {
+    const l = GROSSE_KOERPER.has(req.path) ? helpers.lehrkraft(req) : null;
+    return (l && l.konto.rolle === 'superadmin' ? jsonGross : jsonKlein)(req, res, next);
+  });
 
   // Sitzung: GET /api/sitzung, Kurswahl, Abmelden (TECHNIK §6.4, §13.1)
   sitzung.routen(api, { svc, konfig, version: VERSION });

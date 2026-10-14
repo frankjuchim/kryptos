@@ -269,7 +269,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `routen_rechte.json` = `[{ "methode": "GET", "pfad": "/api/levels/:id", "anonym": 401, "schueler": 200, "lehrkraft": 401, "admin": 401, "limit": "pruefen-90/min-schueler" | null, "grund"?: "…" }]` – eine Zeile je registrierter Route; `limit: null` nur mit `grund`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('routen_inventar: jede registrierte Route steht in routen_rechte.json und umgekehrt', () => {
     const ist = registrierteRouten(makeApp()); // rekursiv über app.router.stack (Express 5: layer.route.path, layer.route.methods; Unter-Router mit ihrem Mount-Pfad)
@@ -282,10 +282,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('klasse_hinter_einer_ip (Review Focus 3): 32 SSO-Anmeldungen und je 3 Prüfungen von einer IP in < 60 s ohne 429', …);
   test('verbund_ohne_origin: /api/verbund/* ohne Origin erlaubt, aber nur mit Token (401 ohne)', …);
   ```
-- [ ] **Step 2: Run** → FAIL (Tabelle fehlt).
-- [ ] **Step 3: Implement** die Tabelle aus dem tatsächlichen Code (Routen in `src/routes/*.js`, `src/verbund/*.js`, `src/krypto/**/routen.js`, `src/app.js`), Rechte aus TECHNIK §6.5/§13; jeden Unterschied zwischen Code und TECHNIK als Fund behandeln (Code korrigieren oder TECHNIK, wenn TECHNIK veraltet – im Commit nennen).
-- [ ] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Routen-Inventar mit Rechten je Rolle und Rate-Limits (M9 Task 208)"`
+- [x] **Step 2: Run** → FAIL (Tabelle fehlt).
+- [x] **Step 3: Implement** die Tabelle aus dem tatsächlichen Code (Routen in `src/routes/*.js`, `src/verbund/*.js`, `src/krypto/**/routen.js`, `src/app.js`), Rechte aus TECHNIK §6.5/§13; jeden Unterschied zwischen Code und TECHNIK als Fund behandeln (Code korrigieren oder TECHNIK, wenn TECHNIK veraltet – im Commit nennen).
+- [x] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Routen-Inventar mit Rechten je Rolle und Rate-Limits (M9 Task 208)"`
 
 ### Task 209: Sicherheits-Review III – Lösungsverrat über die Schüler-API (alle sieben Welten)
 
