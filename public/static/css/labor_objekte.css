@@ -306,3 +306,39 @@
 .pflug-meldung:empty { display: none; }
 @media (prefers-reduced-motion: reduce) { .stab-naechst { animation: none; } }
 :root[data-bewegung="aus"] .stab-naechst { animation: none; }
+
+/* ======================================================================
+   Fleißner-Schablone als Karton (Plan M10 Task 228; stationen/schablone.html)
+   Karton mit „▲ OBEN“, Löcher als Fenster über dem Raster; dreht als Ganzes; „Lochung ändern“ zeigt Lage-Ziffern,
+   doppelt freie Felder rot mit Text „doppelt“.
+   ====================================================================== */
+.karton { position: relative; display: inline-block; padding: 2.1rem 1.6rem 1.4rem 1rem; border-radius: 12px; background: linear-gradient(160deg, var(--mat-holz-hell), var(--mat-karton) 55%, var(--mat-holz-hell)); box-shadow: 0 10px 26px rgba(11, 20, 38, .3); color: var(--mat-karton-tinte); }
+.karton .fleissner-schablone caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.karton .fleissner-schablone thead th, .karton .fleissner-schablone tbody th { background: transparent; color: var(--mat-karton-tinte); }
+.karton .fleissner-loch { background: transparent; color: var(--mat-karton-tinte); border: 1px dashed color-mix(in srgb, var(--mat-karton-tinte) 30%, transparent); border-radius: 4px; }
+.karton .fleissner-loch.frei { background: linear-gradient(145deg, var(--auf-tinte), var(--mat-band)); color: var(--mat-band-tinte); border: 2px solid var(--mat-holz-dunkel); box-shadow: inset 0 3px 8px rgba(11, 20, 38, .35); }
+.karton .fleissner-loch[aria-pressed="true"] { outline: none; }
+.karton .fleissner-loch.naechst { box-shadow: 0 0 0 3px var(--mat-lampe-an), inset 0 3px 8px rgba(11, 20, 38, .35); }
+.karton .fleissner-loch.aktuell { box-shadow: 0 0 0 3px var(--hinweis); }
+.karton:not(.abgehoben) .fleissner-loch:not(.frei) .loch-zeichen { visibility: hidden; }
+.karton .loch-symbol { color: var(--mat-karton-tinte); opacity: .7; }
+.karton-groesse-6 .fleissner-loch { width: 2.9rem; height: 2.9rem; }
+.karton-oben { position: absolute; left: 50%; top: .45rem; transform: translateX(-50%); font: 700 .85rem var(--f-text); letter-spacing: .25em; color: var(--mat-karton-tinte); white-space: nowrap; }
+.karton[data-lage="2"] .karton-oben { left: auto; right: .1rem; top: 50%; transform: translateY(-50%) rotate(90deg); }
+.karton[data-lage="3"] .karton-oben { top: auto; bottom: .2rem; transform: translateX(-50%) rotate(180deg); }
+.karton[data-lage="4"] .karton-oben { left: -.4rem; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+.karton-praegung { position: absolute; right: .35rem; bottom: .3rem; font: 600 .7rem var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mat-karton-tinte); opacity: .6; }
+.karton:not([data-lage="1"]) .karton-praegung { display: none; }
+.karton.dreht { animation: karton-drehen .4s ease-out; }
+.karton.dreht .fleissner-schablone tbody { animation: none; }
+@keyframes karton-drehen { from { transform: rotate(-90deg); } to { transform: rotate(0); } }
+.karton.abgehoben { background: var(--mat-band); box-shadow: none; outline: 2px dashed var(--mat-karton); }
+.karton.abgehoben .fleissner-loch { background: var(--auf-tinte); color: var(--mat-band-tinte); border: 1px solid var(--mat-karton); box-shadow: none; }
+.karton.abgehoben .karton-oben, .karton.abgehoben .karton-praegung { visibility: hidden; }
+.karton-lagen { position: absolute; bottom: 2px; left: 4px; font: 700 .7rem var(--f-mono); color: var(--mat-holz-dunkel); }
+.karton-doppelt { position: absolute; top: 2px; right: 3px; font: 700 .6rem var(--f-text); color: var(--fehler); }
+.karton .fleissner-loch.doppelt { border: 2px solid var(--fehler); background: var(--fehler-flaeche); color: var(--fehler); }
+.karton .fleissner-loch.doppelt .karton-lagen { color: var(--fehler); }
+.karton-groesse { margin-top: var(--a-1); }
+@media (prefers-reduced-motion: reduce) { .karton.dreht { animation: none; } }
+:root[data-bewegung="aus"] .karton.dreht { animation: none; }

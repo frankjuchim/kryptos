@@ -1,6 +1,6 @@
 {
   "name": "kryptos",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Kryptos – Die Zeitreise der Geheimschriften: Lernplattform Kryptologie (Informatik eA und gA, Niedersachsen) im Verbund InfoLabs",
   "private": true,
   "main": "src/server.js",

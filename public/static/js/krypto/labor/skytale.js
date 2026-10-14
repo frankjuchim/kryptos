@@ -1,5 +1,5 @@
 /* Kryptos – Labor-Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112, Plan M10 Tasks 227/228)
-   Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), stationen/skytale.html, stationen/pfluegen.html @59004d9 – docs/FREMDCODE.md
+   Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), stationen/skytale.html, stationen/pfluegen.html, stationen/schablone.html @59004d9 – docs/FREMDCODE.md
    M10: Holzstab mit Band (Stabwahl, Stempel, Abwickeln, Aufwickeln und Lesen) und Reiter „Pflügen · Zusatz“ nach der Werkstatt;: Skytale (Stab, Raster, alle Stäbe),
    Gartenzaun (Zickzack, Schienen), Fleißner-Schablone (Löcher stanzen, Drehgruppen, drehen), ab Welt 6 der Ring
    (W6 §9.1, Task 113: Lesereihenfolge, nie gelesene Felder, keine Schlüsselsuche). Stab, Zaun und Schablone
@@ -9,7 +9,8 @@
   const { h, s } = AQ;
   const B = KRLaborBau;
   const S = KRStation;
-  const BEISPIEL = { text: 'wachwechsel am suedturm', schablone: [[1, 1], [1, 3], [2, 4], [3, 2]] };
+  // schablone6: Lochung der Werkstatt-Station (Plan M10 E182), gültig nach Krypto.schablonePruefen(6, …)
+  const BEISPIEL = { text: 'wachwechsel am suedturm', schablone: [[1, 1], [1, 3], [2, 4], [3, 2]], schablone6: [[1, 2], [2, 1], [2, 3], [3, 2], [3, 6], [4, 4], [5, 5], [6, 3], [6, 6]] };
   const REITER_TITEL = { skytale: 'Skytale', gartenzaun: 'Gartenzaun', fleissner: 'Fleißner-Schablone', pfluegen: 'Pflügen · Zusatz', ring: 'Ring' };
   const SYMBOL = ['●', '▲', '■', '◆'];
   const GROESSE = 4;
@@ -17,10 +18,10 @@
 
   const zeilenweise = (a, b) => a[0] - b[0] || a[1] - b[1];
   const ganz = (x, lo, hi, std) => (Number.isInteger(x) && x >= lo && x <= hi ? x : std);
-  /** Gültige Lochliste aus der Voreinstellung (höchstens 4 verschiedene Felder 1–4), sonst null. */
-  function lochListe(x) {
-    if (!Array.isArray(x) || x.length > 4) return null;
-    const ok = x.every((l) => Array.isArray(l) && l.length === 2 && l.every((n) => Number.isInteger(n) && n >= 1 && n <= GROESSE));
+  /** Gültige Lochliste aus der Voreinstellung (höchstens g²/4 verschiedene Felder 1–g), sonst null. */
+  function lochListe(x, g = GROESSE) {
+    if (!Array.isArray(x) || x.length > (g * g) / 4) return null;
+    const ok = x.every((l) => Array.isArray(l) && l.length === 2 && l.every((n) => Number.isInteger(n) && n >= 1 && n <= g));
     if (!ok || new Set(x.map((l) => l.join(','))).size !== x.length) return null;
     return x.map((l) => l.slice()).sort(zeilenweise);
   }
@@ -45,13 +46,15 @@
       k: ganz(v.k, 2, 12, 5),
       umfang: ganz(v.umfang, 2, 10, 3),
       zeilen: ganz(v.zeilen, 2, 8, 3),
-      schablone: lochListe(v.schablone) || BEISPIEL.schablone.map((l) => l.slice()),
+      groesse: v.groesse === 6 ? 6 : GROESSE,
+      schablone: null,
       stellung: 1,
       block: 8,
       t: ganz(v.t, 1, 11, 3),
       ausgabe: ''
     };
     if (z.t > z.block - 1) z.t = 3;
+    z.schablone = lochListe(v.schablone, z.groesse) || (z.groesse === 6 ? BEISPIEL.schablone6 : BEISPIEL.schablone).map((l) => l.slice());
     // M10 Task 227: Ohne Voreinstellung steht das Beispiel da; der erste Stempel beginnt eine eigene Nachricht
     let beispiel = typeof v.text !== 'string';
     let teil = null; // { schliesse(), zustand() } des aktiven Reiters
@@ -587,6 +590,7 @@
       }
 
       zeichne();
+      erklaerung.sage('Bereit', z.richtung === 'ver' ? 'Wähle oben einen Stab. Dann stempel deine Nachricht auf das Band – der erste Stempel beginnt eine neue Nachricht.' : 'Wähle einen Stab und stempel den Geheimtext auf das lose Band. Dann wickle es auf und lies entlang des Stabs.');
       return {
         schliesse() {
           lauf += 1;
@@ -846,6 +850,7 @@
       }
 
       zeichne();
+      erklaerung.sage('Bereit', 'Zieh den Rand auf die gewünschte Breite. Dann stempel deine Nachricht in die Tabelle und pflüge.');
       return {
         schliesse() {
           lauf += 1;
@@ -940,23 +945,37 @@
       return { schliesse: () => ns && ns.schliesse() };
     }
 
-    /* ---------- Fleißner-Schablone ---------- */
+    /* ---------- Fleißner-Schablone als Karton (Plan M6 Task 112, Plan M10 Task 228 nach stationen/schablone.html) ---------- */
 
     function baueFleissner() {
       let ns = null;
       let meldung = '';
-      const gruppen = Krypto.fleissnerDrehgruppen(GROESSE);
-      const k = kopf(zeichne);
+      let lochungAnsicht = false; // „Lochung ändern“: Lage-Ziffern und doppelt freie Felder
+      let abgehoben = false; // Karton abgehoben: das ganze Raster ist zu sehen
+      let gesperrt = false;
+      const g = z.groesse;
+      const anzahlLoecher = (g * g) / 4;
+      const gruppen = Krypto.fleissnerDrehgruppen(g);
+      const symbol = (x) => (g === 4 ? SYMBOL[x] : String(x + 1));
+      const anleitung = S.anleitung(null, []);
+      const erklaerung = S.erklaerung(null);
+      const k = kopf(() => {
+        abgehoben = false;
+        z.stellung = 1;
+        zeichne();
+      });
       const knoepfe = [];
       const zeilen = [];
-      for (let zz = 1; zz <= GROESSE; zz++) {
+      for (let zz = 1; zz <= g; zz++) {
         const tds = [];
-        for (let ss = 1; ss <= GROESSE; ss++) {
-          const g = gruppen[zz - 1][ss - 1];
-          const b = h('button', { type: 'button', class: 'fleissner-loch', 'data-z': String(zz), 'data-s': String(ss), 'data-gruppe': String(g), tabindex: zz === 1 && ss === 1 ? '0' : '-1' },
-            h('span', { class: 'loch-symbol', 'aria-hidden': 'true' }, SYMBOL[g]),
+        for (let ss = 1; ss <= g; ss++) {
+          const gr = gruppen[zz - 1][ss - 1];
+          const b = h('button', { type: 'button', class: 'fleissner-loch karton-feld', 'data-z': String(zz), 'data-s': String(ss), 'data-gruppe': String(gr), tabindex: zz === 1 && ss === 1 ? '0' : '-1' },
+            h('span', { class: 'loch-symbol', 'aria-hidden': 'true' }, symbol(gr)),
             h('span', { class: 'loch-zeichen' }),
-            h('span', { class: 'loch-nr' })
+            h('span', { class: 'loch-nr' }),
+            h('span', { class: 'karton-lagen', 'aria-hidden': 'true' }),
+            h('span', { class: 'karton-doppelt' })
           );
           knoepfe.push(b);
           tds.push(h('td', null, b));
@@ -964,22 +983,58 @@
         zeilen.push(h('tr', null, h('th', { scope: 'row' }, String(zz)), tds));
       }
       const kopfSp = [];
-      for (let ss = 1; ss <= GROESSE; ss++) kopfSp.push(h('th', { scope: 'col' }, String(ss)));
-      const tabelle = h('table', { class: 'fleissner-schablone' }, h('caption', null, 'Schablone 4 × 4 (Zeile, Spalte ab 1): Löcher antippen; Symbole = Drehgruppen'), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfSp)), h('tbody', null, zeilen));
-      const flaeche = h('div', { class: 'schablone-flaeche' }, tabelle);
+      for (let ss = 1; ss <= g; ss++) kopfSp.push(h('th', { scope: 'col' }, String(ss)));
+      const legendeSymbole = g === 4 ? '● ▲ ■ ◆' : '1 … 9';
+      const tabelle = h('table', { class: `fleissner-schablone karton-groesse-${g}` }, h('caption', null, `Schablone ${g} × ${g} (Zeile, Spalte ab 1): Felder antippen stanzt oder klebt Löcher; Zeichen ${legendeSymbole} = Drehgruppen`), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfSp)), h('tbody', null, zeilen));
+      const oben = h('span', { class: 'karton-oben', 'aria-hidden': 'true' }, '▲ OBEN');
+      const flaeche = h('div', { class: 'schablone-flaeche karton' }, oben, tabelle, h('span', { class: 'karton-praegung', 'aria-hidden': 'true' }, 'Fleißner 1881'));
       const stellungText = h('p', { class: 'schablone-stellung', 'aria-live': 'polite' });
       const drehen = h('button', { type: 'button', class: 'knopf knopf-zweit drehen' }, '↻ 90° im Uhrzeigersinn drehen');
+      const abheben = h('button', { type: 'button', class: 'knopf knopf-zweit karton-abheben' }, 'Abheben & ablesen');
       const pruefung = h('div', { class: 'schablone-pruefung', role: 'status' });
-      const legende = h('p', { class: 'text-2 schablone-legende' }, 'Drehgruppen: ● ▲ ■ ◆ – aus jeder Gruppe genau ein Loch. Taste r dreht die Schablone.');
+      const legende = h('p', { class: 'text-2 schablone-legende' }, `Drehgruppen: ${legendeSymbole} – aus jeder Gruppe genau ein Loch. Taste r dreht die Schablone.`);
+      const groesseKnoepfe = [4, 6].map((n) => h('button', { type: 'button', role: 'radio', 'data-groesse': String(n), 'aria-checked': String(n === g), tabindex: n === g ? '0' : '-1' }, n === 4 ? '4 × 4' : '6 × 6 · Zusatz'));
+      const groesseWahl = h('div', { class: 'karton-groesse labor-basis', role: 'radiogroup', 'aria-label': 'Größe der Schablone' }, groesseKnoepfe);
+      for (const b of groesseKnoepfe) {
+        b.addEventListener('click', () => {
+          const n = Number(b.dataset.groesse);
+          if (n === z.groesse || gesperrt) return;
+          z.groesse = n;
+          z.schablone = (n === 6 ? BEISPIEL.schablone6 : BEISPIEL.schablone).map((l) => l.slice());
+          z.stellung = 1;
+          baue('fleissner');
+        });
+      }
+      const lochungKnopf = h('button', { type: 'button', class: 'knopf knopf-leise karton-lochung', 'aria-pressed': 'false' }, '✎ Lochung ändern');
+      lochungKnopf.addEventListener('click', () => {
+        lochungAnsicht = !lochungAnsicht;
+        lochungKnopf.setAttribute('aria-pressed', String(lochungAnsicht));
+        flaeche.classList.toggle('lochung', lochungAnsicht);
+        zeigeRaster();
+      });
+      const stempelTitel = h('span', { class: 'stab-feldtitel' }, 'Stempel: in die Löcher');
+      const stempel = S.stempel(null, (b) => stempeln(b), { beschriftung: 'Stempelkasten' });
+      const baender = S.baender({ beiAenderung: () => {} });
       const aus = B.ausgabe({ beschriftung: 'Ergebnis (zeilenweise)', art: 'frei' });
       const pruef = h('div');
       const nsOrt = h('div');
-      r.flaeche.append(k.element, h('div', { class: 'schablone-bereich' }, flaeche, h('div', { class: 'schablone-seite' }, stellungText, drehen, legende, pruefung)), aus.element, pruef, nsOrt);
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'eigene Lochung, Größe', h('p', { class: 'text-2' }, 'Tippe Felder am Karton an: Loch stanzen oder zukleben. Mit „Lochung ändern“ zeigen Ziffern, in welcher Lage das Feld darunter frei ist; rot und „doppelt“ = in zwei Lagen frei.'), lochungKnopf, groesseWahl);
+      const hintergrund = S.hintergrund(null, [
+        { titel: 'Schlüssel', zeilen: [['Schlüssel', `die Lochschablone (${anzahlLoecher} Löcher)`], ['Dazu', 'Startlage und Drehrichtung'], ['Anzahl Schablonen', `4^${anzahlLoecher} = ${Krypto.schluesselraum('fleissner', { groesse: g }).anzahl}`], ['Art', 'Transposition']] },
+        { titel: 'Schwäche', text: 'Die Buchstaben ändern sich nicht. Wer die Schablone nachbaut, liest alles. Ein Computer probiert alle Schablonen schnell durch.' },
+        { titel: 'Geschichte', text: 'Eduard Fleißner von Wostrowitz soll die Drehschablone 1881 beschrieben haben.' }
+      ]);
+      const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, h('div', { class: 'schablone-bereich' }, flaeche, h('div', { class: 'schablone-seite' }, stellungText, h('div', { class: 'knopf-reihe' }, drehen, abheben), legende, pruefung)), erklaerung.element);
+      const bedienung = h('div', { class: 'stab-bedienung' }, stempelTitel, stempel.element, baender.element);
+      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, aus.element, pruef, nsOrt);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      KRStation.herkunft(r.flaeche);
       let aktuell = null; // Loch im Nachspiel
 
       const istLoch = (zz, ss) => z.schablone.some((l) => l[0] === zz && l[1] === ss);
       function dreheWeiter(animiert = true) {
         z.stellung = z.stellung === 4 ? 1 : z.stellung + 1;
+        abgehoben = false;
         if (animiert && !ruhig) {
           flaeche.classList.add('dreht');
           const t = setTimeout(() => {
@@ -993,19 +1048,20 @@
       function tippe(b) {
         const zz = Number(b.dataset.z);
         const ss = Number(b.dataset.s);
-        const g = Number(b.dataset.gruppe);
+        const gr = Number(b.dataset.gruppe);
         meldung = '';
         if (istLoch(zz, ss)) z.schablone = z.schablone.filter((l) => !(l[0] === zz && l[1] === ss));
-        else if (z.schablone.length < 4) z.schablone = [...z.schablone, [zz, ss]];
+        else if (z.schablone.length < anzahlLoecher) z.schablone = [...z.schablone, [zz, ss]];
         else {
-          const inGruppe = z.schablone.filter((l) => gruppen[l[0] - 1][l[1] - 1] === g);
+          const inGruppe = z.schablone.filter((l) => gruppen[l[0] - 1][l[1] - 1] === gr);
           if (inGruppe.length === 1) {
             z.schablone = [...z.schablone.filter((l) => l !== inGruppe[0]), [zz, ss]];
-            meldung = `Loch der Drehgruppe ${SYMBOL[g]} versetzt.`;
-          } else meldung = 'Höchstens 4 Löcher – erst ein Loch entfernen.';
+            meldung = `Loch der Drehgruppe ${symbol(gr)} versetzt.`;
+          } else meldung = `Höchstens ${anzahlLoecher} Löcher – erst ein Loch entfernen.`;
         }
         z.schablone.sort(zeilenweise);
         z.stellung = 1;
+        abgehoben = false;
         zeichne();
       }
       knoepfe.forEach((b) => {
@@ -1026,42 +1082,132 @@
             if (!drehen.disabled) dreheWeiter();
             return;
           }
-          const ziel = { ArrowRight: [zz, ss + 1], ArrowLeft: [zz, ss - 1], ArrowDown: [zz + 1, ss], ArrowUp: [zz - 1, ss], Home: [zz, 1], End: [zz, GROESSE] }[e.key];
+          const ziel = { ArrowRight: [zz, ss + 1], ArrowLeft: [zz, ss - 1], ArrowDown: [zz + 1, ss], ArrowUp: [zz - 1, ss], Home: [zz, 1], End: [zz, g] }[e.key];
           if (!ziel) return;
           e.preventDefault();
-          const [nz, nsp] = [Math.max(1, Math.min(GROESSE, ziel[0])), Math.max(1, Math.min(GROESSE, ziel[1]))];
+          const [nz, nsp] = [Math.max(1, Math.min(g, ziel[0])), Math.max(1, Math.min(g, ziel[1]))];
           const nb = knoepfe.find((x) => x.dataset.z === String(nz) && x.dataset.s === String(nsp));
           for (const x of knoepfe) x.setAttribute('tabindex', x === nb ? '0' : '-1');
           nb.focus();
         });
       });
-      drehen.addEventListener('click', () => dreheWeiter());
+      drehen.addEventListener('click', () => {
+        if (gesperrt) return;
+        dreheWeiter();
+        erklaerung.sage(`Lage ${z.stellung}`, z.richtung === 'ver' ? 'Neue Felder sind frei. Stempel weiter.' : 'Lies die sichtbaren Buchstaben ab.');
+      });
+      abheben.addEventListener('click', () => {
+        if (gesperrt) return;
+        abgehoben = !abgehoben;
+        zeigeRaster();
+        zeigeBaender();
+        erklaerung.sage(abgehoben ? 'Abgehoben' : 'Aufgelegt', abgehoben ? (z.richtung === 'ver' ? `Zeilenweise gelesen: ${Krypto.gruppieren(z.ausgabe || '')}. Leere Felder bekommen ein X.` : `Lage für Lage gelesen: ${Krypto.klein(z.ausgabe || '')}.`) : 'Die Schablone liegt wieder auf.');
+      });
+
+      /** Stempeln: verschlüsseln – in das nächste freie Loch (zeilenweise je Lage), volle Lage → weiterdrehen;
+          entschlüsseln – Geheimtext zeilenweise ins Raster. */
+      function stempeln(b) {
+        if (gesperrt) return;
+        const n0 = Krypto.nurBuchstaben(z.text).length;
+        if (beispiel || abgehoben) {
+          z.text = '';
+          beispiel = false;
+          abgehoben = false;
+          z.stellung = 1;
+        }
+        const n = Krypto.nurBuchstaben(z.text).length;
+        if (n >= MAX_TEXT || (n0 === n && n >= g * g * 4)) return;
+        const ver = z.richtung === 'ver';
+        if (ver) {
+          const blockLage = Krypto.mod(Math.floor(n / anzahlLoecher), 4) + 1;
+          if (blockLage !== z.stellung) {
+            z.stellung = blockLage;
+            if (!ruhig) {
+              flaeche.classList.add('dreht');
+              const t = setTimeout(() => {
+                timer.delete(t);
+                flaeche.classList.remove('dreht');
+              }, 400);
+              timer.add(t);
+            }
+          }
+        }
+        z.text = `${z.text}${ver ? Krypto.klein(b) : b}`;
+        k.setze(z.text);
+        zeichne();
+        const m = n + 1;
+        if (ver) {
+          const imBlock = Krypto.mod(m, anzahlLoecher);
+          erklaerung.sage(`Lage ${z.stellung}`, imBlock === 0 ? `Alle ${anzahlLoecher} Löcher dieser Lage sind beschrieben. Drehe die Schablone im Uhrzeigersinn – oder stempel einfach weiter.` : `${imBlock} von ${anzahlLoecher} Löchern beschrieben. Das leuchtende Loch kommt als Nächstes.`);
+        } else erklaerung.sage(`${m} Buchstaben`, `Der Geheimtext steht zeilenweise im Raster. Lege die Schablone auf und lies Lage für Lage ab (${g * g} Felder je Block).`);
+      }
 
       function sperre(an) {
+        gesperrt = an;
         k.sperre(an);
         drehen.disabled = an;
+        abheben.disabled = an;
+        stempel.setze(!an);
         for (const b of knoepfe) b.disabled = an;
+        for (const b of groesseKnoepfe) b.disabled = an;
+        S.sperre(r.flaeche, an);
       }
 
       let raster = null; // Buchstaben je Feld (zeilenweise) des ersten Blocks
       let gueltig = false;
       function zeigeRaster() {
-        const stellungen = Krypto.fleissnerStellungen(GROESSE, z.schablone);
+        const stellungen = Krypto.fleissnerStellungen(g, z.schablone);
         const offen = stellungen[z.stellung - 1].slice().sort(zeilenweise);
-        stellungText.textContent = `Stellung ${z.stellung} von 4`;
+        const ver = z.richtung === 'ver';
+        const n = Krypto.nurBuchstaben(z.text).length;
+        // Schreibreihenfolge der Felder (Lage für Lage, je Lage zeilenweise) für die Anzeige beim Stempeln
+        const reihenfolge = [];
+        stellungen.forEach((liste) => liste.slice().sort(zeilenweise).forEach((l) => reihenfolge.push(l)));
+        const nachIndex = new Map(reihenfolge.map((l, i) => [`${l[0]},${l[1]}`, i]));
+        stellungText.textContent = abgehoben ? 'Schablone abgehoben' : `Lage ${z.stellung} von 4`;
+        flaeche.dataset.lage = String(z.stellung);
+        flaeche.classList.toggle('abgehoben', abgehoben);
+        // Lage-Ziffern (Lochung ändern): in welchen Lagen ist das Feld frei?
+        const lagenJe = new Map();
+        stellungen.forEach((liste, i) => liste.forEach((l) => {
+          const key = `${l[0]},${l[1]}`;
+          lagenJe.set(key, [...(lagenJe.get(key) || []), i + 1]);
+        }));
         for (const b of knoepfe) {
           const zz = Number(b.dataset.z);
           const ss = Number(b.dataset.s);
+          const key = `${zz},${ss}`;
           const nr = offen.findIndex((l) => l[0] === zz && l[1] === ss);
           const loch = istLoch(zz, ss);
+          const lagen = lagenJe.get(key) || [];
+          const doppelt = lagen.length > 1;
           b.setAttribute('aria-pressed', String(loch));
           b.classList.toggle('frei', nr >= 0);
           b.classList.toggle('aktuell', !!aktuell && aktuell[0] === zz && aktuell[1] === ss);
-          const zeichen = raster ? raster[(zz - 1) * GROESSE + (ss - 1)] : '';
+          b.classList.toggle('doppelt', lochungAnsicht && doppelt);
+          b.querySelector('.karton-lagen').textContent = lochungAnsicht ? lagen.join(' ') : '';
+          b.querySelector('.karton-doppelt').textContent = lochungAnsicht && doppelt ? 'doppelt' : '';
+          // Buchstabe im Feld: beim Verschlüsseln nur bereits gestempelte (und nach dem Abheben die Füll-X)
+          let zeichen = raster ? raster[(zz - 1) * g + (ss - 1)] : '';
+          if (zeichen && ver && !abgehoben && nachIndex.has(key) && nachIndex.get(key) >= n) zeichen = '';
           b.querySelector('.loch-zeichen').textContent = zeichen ? Krypto.klein(zeichen) : '';
+          const naechst = ver && !abgehoben && nachIndex.get(key) === n && n < g * g;
+          b.classList.toggle('naechst', naechst);
           b.querySelector('.loch-nr').textContent = nr >= 0 ? String(nr + 1) : '';
-          b.setAttribute('aria-label', `Feld (${zz},${ss}), Drehgruppe ${SYMBOL[Number(b.dataset.gruppe)]}${loch ? ', Loch' : ''}${nr >= 0 ? `, in Stellung ${z.stellung} frei als Nummer ${nr + 1}` : ''}${zeichen ? `, Buchstabe ${Krypto.klein(zeichen)}` : ''}`);
+          b.setAttribute('aria-label', `Feld (${zz},${ss}), Drehgruppe ${symbol(Number(b.dataset.gruppe))}${loch ? ', Loch' : ''}${nr >= 0 ? `, in Lage ${z.stellung} frei als Nummer ${nr + 1}` : ''}${lochungAnsicht && lagen.length ? `, frei in Lage ${lagen.join(' und ')}${doppelt ? ', doppelt' : ''}` : ''}${zeichen ? `, Buchstabe ${Krypto.klein(zeichen)}` : ''}`);
         }
+        anleitung.texte(ver ? ['Buchstaben in die Löcher stempeln', 'Schablone drehen', 'Abheben & ablesen'] : ['Geheimtext ins Raster stempeln', 'Schablone auflegen', 'Lage für Lage ablesen']);
+        anleitung.setze(abgehoben ? 2 : z.stellung > 1 ? 1 : 0);
+        stempelTitel.textContent = ver ? 'Stempel: in die Löcher' : 'Stempel: ins Raster (zeilenweise)';
+        abheben.textContent = abgehoben ? 'Schablone auflegen' : ver ? 'Abheben & ablesen' : 'Lage für Lage ablesen';
+      }
+      function zeigeBaender() {
+        const ver = z.richtung === 'ver';
+        const ein = Krypto.nurBuchstaben(z.text);
+        const oben = ver ? Krypto.klein(ein) : ein;
+        const unten = abgehoben && z.ausgabe ? (ver ? z.ausgabe : Krypto.klein(z.ausgabe)) : '';
+        baender.beschrifte(ver ? 'Klartext' : 'Geheimtext', ver ? 'Geheimtext' : 'Klartext', ver ? [false, true] : [true, false]);
+        baender.setze(Array.from({ length: Math.max(oben.length, unten.length) }, (_, i) => [oben[i] || '', unten[i] || '']));
       }
 
       function zeichne() {
@@ -1071,39 +1217,44 @@
         AQ.clear(pruef);
         AQ.clear(nsOrt);
         AQ.clear(pruefung);
-        const p = Krypto.schablonePruefen(GROESSE, z.schablone);
+        sperre(false);
+        const felder = g * g;
+        const p = Krypto.schablonePruefen(g, z.schablone);
         gueltig = p.ok;
         if (meldung) pruefung.appendChild(B.hinweis(/versetzt/.test(meldung) ? 'info' : 'warnung', meldung));
-        if (p.ok) pruefung.appendChild(B.hinweis('ok', `Gültig: Jedes Feld wird genau einmal frei (${p.abgedeckt} von 16 Feldern).`));
-        else if (z.schablone.length < 4) pruefung.appendChild(B.hinweis('info', `Noch ${4 - z.schablone.length} Loch/Löcher setzen – ${p.abgedeckt} von 16 Feldern werden frei.`));
-        else pruefung.appendChild(B.hinweis('warnung', `${p.fehler.join(' ')} Nur ${p.abgedeckt} von 16 Feldern werden frei – ungültig.`));
+        if (p.ok) pruefung.appendChild(B.hinweis('ok', `Gültig: Jedes Feld wird genau einmal frei (${p.abgedeckt} von ${felder} Feldern).`));
+        else if (z.schablone.length < anzahlLoecher) pruefung.appendChild(B.hinweis('info', `Noch ${anzahlLoecher - z.schablone.length} Loch/Löcher setzen – ${p.abgedeckt} von ${felder} Feldern werden frei.`));
+        else pruefung.appendChild(B.hinweis('warnung', `${p.fehler.join(' ')} Nur ${p.abgedeckt} von ${felder} Feldern werden frei – ungültig.`));
         const ein = Krypto.nurBuchstaben(z.text);
         raster = null;
         if (!gueltig) setzeAusgabe(aus, '');
         else {
-          const erg = versuche(() => Krypto.fleissner(z.text, GROESSE, z.schablone, z.richtung));
+          const erg = versuche(() => Krypto.fleissner(z.text, g, z.schablone, z.richtung));
           if (erg.fehler) {
             setzeAusgabe(aus, '');
             pruefung.appendChild(B.hinweis('warnung', erg.fehler));
           } else if (ein.length) {
             setzeAusgabe(aus, erg.wert);
-            raster = (z.richtung === 'ver' ? erg.wert : ein).slice(0, 16);
+            raster = (z.richtung === 'ver' ? erg.wert : ein).slice(0, felder);
             pruef.appendChild(pruefZeile(ein, Krypto.nurBuchstaben(erg.wert)));
-            if (ein.length > 16) pruef.appendChild(h('p', { class: 'text-2' }, 'Die Schablone zeigt den ersten Block (16 Felder); die Ausgabe gilt für den ganzen Text.'));
+            if (ein.length > felder) pruef.appendChild(h('p', { class: 'text-2' }, `Die Schablone zeigt den ersten Block (${felder} Felder); die Ausgabe gilt für den ganzen Text.`));
           } else setzeAusgabe(aus, '');
         }
+        drehen.disabled = false;
+        abheben.disabled = !raster;
         zeigeRaster();
+        zeigeBaender();
         if (raster) {
-          const stellungen = Krypto.fleissnerStellungen(GROESSE, z.schablone);
+          const stellungen = Krypto.fleissnerStellungen(g, z.schablone);
           const schritte = [];
           stellungen.forEach((liste, st) => {
             liste.slice().sort(zeilenweise).forEach(([zz, ss]) => {
-              const b = raster[(zz - 1) * GROESSE + (ss - 1)];
-              schritte.push({ text: `Stellung ${st + 1}, Loch (${zz},${ss}): ${Krypto.klein(b)}`, daten: { stellung: st + 1, loch: [zz, ss] } });
+              const b = raster[(zz - 1) * g + (ss - 1)];
+              schritte.push({ text: `Lage ${st + 1}, Loch (${zz},${ss}): ${Krypto.klein(b)}`, daten: { stellung: st + 1, loch: [zz, ss] } });
             });
           });
           ns = KRLabor.nachspiel(nsOrt, {
-            titel: 'Stellung für Stellung, Loch für Loch',
+            titel: 'Lage für Lage, Loch für Loch',
             start: -1,
             schritte,
             beiLauf: sperre,
@@ -1111,6 +1262,7 @@
               const wechsel = st.daten.stellung !== z.stellung;
               z.stellung = st.daten.stellung;
               aktuell = st.daten.loch;
+              abgehoben = false;
               if (wechsel && o.animiert) {
                 flaeche.classList.add('dreht');
                 const t = setTimeout(() => {
@@ -1125,6 +1277,7 @@
         }
       }
       zeichne();
+      erklaerung.sage('Bereit', `Die Schablone liegt in Lage 1 auf dem Raster. Stempel deine Nachricht in die Löcher – nach ${anzahlLoecher} Buchstaben dreht sie weiter.`);
       return {
         schliesse: () => ns && ns.schliesse(),
         gueltig: () => gueltig
@@ -1250,8 +1403,8 @@
         timer.clear();
       },
       zustand() {
-        const gueltig = Krypto.schablonePruefen(GROESSE, z.schablone).ok;
-        return { reiter: r.aktiv(), richtung: z.richtung, text: z.text, eingabe: Krypto.nurBuchstaben(z.text), umfang: z.umfang, k: z.k, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, block: z.block, t: z.t, gueltig, ausgabe: z.ausgabe };
+        const gueltig = Krypto.schablonePruefen(z.groesse, z.schablone).ok;
+        return { reiter: r.aktiv(), groesse: z.groesse, richtung: z.richtung, text: z.text, eingabe: Krypto.nurBuchstaben(z.text), umfang: z.umfang, k: z.k, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, block: z.block, t: z.t, gueltig, ausgabe: z.ausgabe };
       }
     };
   }

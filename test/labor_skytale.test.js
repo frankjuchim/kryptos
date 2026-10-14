@@ -246,3 +246,54 @@ test('Pflügen: stempeln, entschlüsseln, alle Zeilenlängen, ruhig, Sperre im N
   assert.equal(n.zustand().text, 'wintersonne');
   assert.equal(n.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
 });
+
+/* ---------- M10 Task 228: Fleißner-Schablone als Karton nach der Krypto-Werkstatt, Größe 6 × 6 als Zusatz ---------- */
+const L6 = [[1, 2], [2, 1], [2, 3], [3, 2], [3, 6], [4, 4], [5, 5], [6, 3], [6, 6]];
+
+test('Fleißner 6 × 6: Werkstatt-Lochung gültig, Ausgabe = Krypto.fleissner', () => {
+  assert.equal(K.schablonePruefen(6, L6).ok, true);
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['fleissner'], groesse: 6, text: 'leuchtturm am kap' } });
+  assert.deepEqual(w.zustand().schablone, L6);
+  assert.equal(w.zustand().groesse, 6);
+  assert.equal(w.zustand().gueltig, true);
+  assert.equal(w.zustand().ausgabe, K.fleissner('leuchtturm am kap', 6, L6));
+  assert.equal(w.k.alle(w.flaeche, 'button.fleissner-loch').length, 36);
+  assert.match(w.text('.karton-oben'), /OBEN/);
+  // Drehgruppen bei 6 × 6: neun Gruppen mit Ziffern 1–9
+  assert.deepEqual([...new Set(w.k.alle(w.flaeche, 'button.fleissner-loch .loch-symbol').map((x) => w.k.text(x)))].sort(), ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  // Größenwahl zurück auf 4 × 4: Beispiel-Schablone M6
+  w.k.klick(w.k.eins(w.flaeche, '.karton-groesse button[data-groesse="4"]'));
+  assert.deepEqual(w.zustand().schablone, [[1, 1], [1, 3], [2, 4], [3, 2]]);
+  assert.match(w.text('.karton-groesse button[data-groesse="6"]'), /6 × 6 · Zusatz/);
+});
+
+test('Fleißner: Lage-Ziffern und doppelt frei rot (Lochung ändern)', () => {
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['fleissner'], schablone: [[1, 1], [1, 4]] } });
+  w.k.klick(w.k.eins(w.flaeche, 'button.karton-lochung'));
+  assert.equal(w.k.eins(w.flaeche, 'button.karton-lochung').getAttribute('aria-pressed'), 'true');
+  const st = K.fleissnerStellungen(4, [[1, 1], [1, 4]]);
+  const lagen = (zz, ss) => st.map((liste, i) => (liste.some((l) => l[0] === zz && l[1] === ss) ? i + 1 : null)).filter(Boolean);
+  const feld = (zz, ss) => w.k.eins(w.flaeche, `button.karton-feld[data-z="${zz}"][data-s="${ss}"]`);
+  assert.equal(w.k.text(feld(1, 4).querySelector('.karton-lagen')), lagen(1, 4).join(' '));
+  // (1,1) und (1,4) gehören zur selben Drehgruppe: (1,4) ist frei in Lage 1 und (als (1,1) gedreht) in Lage 2 → doppelt
+  assert.ok(lagen(1, 4).length > 1);
+  assert.ok(feld(1, 4).classList.contains('doppelt'));
+  assert.match(w.k.text(feld(1, 4)), /doppelt/);
+  assert.ok(!feld(2, 2).classList.contains('doppelt'));
+  w.k.klick(feld(1, 4)); // Loch zukleben
+  assert.ok(!feld(1, 4).classList.contains('doppelt'));
+});
+
+test('Fleißner: Stempeln füllt die Löcher zeilenweise, Drehen → Lage 2, Abheben zeigt das Raster; ruhig ohne Animation', () => {
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['fleissner'], text: '' }, ruhig: true });
+  for (const b of 'ABCDE') w.k.klick(w.k.eins(w.flaeche, `button.station-stempel[data-buchstabe="${b}"]`));
+  assert.equal(w.zustand().text, 'abcde');
+  assert.equal(w.zustand().stellung, 2, 'nach vier Buchstaben dreht die Schablone weiter');
+  assert.match(w.text('.schablone-stellung'), /Lage 2 von 4/);
+  assert.equal(w.k.eins(w.flaeche, '.schablone-flaeche').classList.contains('dreht'), false, 'ruhig: keine Drehanimation');
+  w.k.klick(w.k.eins(w.flaeche, 'button.karton-abheben'));
+  assert.ok(w.k.eins(w.flaeche, '.schablone-flaeche').classList.contains('abgehoben'));
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), K.fleissner('abcde', 4, [[1, 1], [1, 3], [2, 4], [3, 2]]));
+  assert.equal(w.k.animiert.length, 0);
+  assert.equal(w.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
+});

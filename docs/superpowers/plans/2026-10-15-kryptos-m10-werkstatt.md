@@ -609,7 +609,7 @@ Feldern (`Krypto.schablonePruefen`); Größenwahl „4 × 4“ (Standard, Beispi
 E182). **Bleibt:** Drehgruppen ●▲■◆ (4 × 4; bei 6 × 6 neun Gruppen mit Ziffern 1–9), Gültigkeitsmeldung, Roving-Tabindex,
 `r` dreht, Tabellen-Alternative.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Fleißner 6 × 6: Werkstatt-Lochung gültig, Ausgabe = Krypto.fleissner', () => {
     const L = [[1, 2], [2, 1], [2, 3], [3, 2], [3, 6], [4, 4], [5, 5], [6, 3], [6, 6]];
@@ -621,7 +621,10 @@ E182). **Bleibt:** Drehgruppen ●▲■◆ (4 × 4; bei 6 × 6 neun Gruppen mit
   test('Fleißner: Drehen → Lage 2, ruhig ohne Animation; bisherige 4 × 4-Tests unverändert', () => {});
   ```
   (Beispieltext prüft der Regeltest – bei Treffer ersetzen.)
-- [ ] **Step 2–4** wie gehabt. **Step 5: Commit** `M10: Fleißner-Schablone als Karton nach der Krypto-Werkstatt, Größe 6 × 6 als Zusatz (Task 228)`
+- [x] **Step 2–4** wie gehabt. **Step 5: Commit** `M10: Fleißner-Schablone als Karton nach der Krypto-Werkstatt, Größe 6 × 6 als Zusatz (Task 228)`
+- Umsetzung: Felder bleiben jederzeit stanzbar (M6-Tests); „✎ Lochung ändern“ (in „Mehr ausprobieren“) schaltet die
+  Lage-Ziffern und die Markierung „doppelt“ ein. Stempeln dreht nach g²/4 Buchstaben selbst weiter. Größenwahl in „Mehr
+  ausprobieren“ (`.karton-groesse`).
 
 ### Task 229: Werkzeug „Polybios & Playfair“ (`quadrat`) (E180, E186)
 
