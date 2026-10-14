@@ -1,6 +1,8 @@
 /* Kryptos – Kopfzeile (DESIGNSYSTEM §5, TECHNIK §11.2): Logo, Epoche, Bereiche je Rolle, Portal, Labor, Rang, Menü
    (Darstellung, Kurswahl, Abmelden). Keine eigene Anmeldung: öffentlich nur „Anmelden über InfoLabs“. Texte als
-   Textknoten; alle Bedienelemente ≥ 44 px (CSS .kopf-link/.rang/.knopf). */
+   Textknoten; alle Bedienelemente ≥ 44 px (CSS .kopf-link/.rang/.knopf).
+   Lehrkraft/Admin mit gleichem Aufbau wie in den anderen Labs: Kurse · Aufgaben · Materialien · Themen ·
+   Verwaltung (nur Admin) · Labor (Kryptos-Zusatz), rechts Portal · Name · Abmelden · Menü (Darstellung, Überall abmelden). */
 'use strict';
 
 const KRKopf = (() => {
@@ -18,12 +20,15 @@ const KRKopf = (() => {
       ['profil', '/spiel#/profil', 'Profil'],
       o.scoreboard ? ['scoreboard', '/spiel#/scoreboard', 'Scoreboard'] : null
     ],
-    lehrkraft: () => [
+    lehrkraft: (o) => [
       ['kurse', '/lehrer#/', 'Kurse'],
       ['aufgaben', '/lehrer#/vorschau', 'Aufgaben'],
-      ['materialien', '/lehrer#/materialien', 'Materialien']
+      ['materialien', '/lehrer#/materialien', 'Materialien'],
+      ['themen', '/themen', 'Themen'],
+      o.admin ? ['verwaltung', '/lehrer#/admin', 'Verwaltung'] : null,
+      ['labor', '/labor', 'Labor']
     ],
-    superadmin: () => [...BEREICHE.lehrkraft(), ['verwaltung', '/lehrer#/admin', 'Verwaltung']],
+    superadmin: (o) => BEREICHE.lehrkraft({ ...o, admin: true }),
     oeffentlich: () => [
       ['themen', '/themen', 'Themen'],
       ['gast', '/gast', 'Gastmodus']
@@ -111,17 +116,22 @@ const KRKopf = (() => {
     }
   }
 
+  const istLehrkraft = (rolle) => rolle === 'lehrkraft' || rolle === 'superadmin';
+
   function menue(rolle, sitzung) {
+    const lk = istLehrkraft(rolle);
     const liste = h(
       'div',
       { class: 'menue-liste' },
+      lk && sitzung.name ? h('p', { class: 'menue-gruppe menue-konto' }, h('span', { class: 'menue-titel' }, 'Angemeldet als'), h('b', null, sitzung.name)) : null,
       darstellung(),
       rolle === 'schueler' ? kurswahl(sitzung) : null,
       rolle
         ? h(
             'div',
             { class: 'menue-gruppe' },
-            h('button', { type: 'button', class: 'kopf-link abmelden', onclick: () => abmelden(false) }, 'Abmelden'),
+            // Lehrkraft: „Abmelden“ steht sichtbar in der Kopfzeile (wie in den anderen Labs), im Menü nur „Überall abmelden“
+            lk ? null : h('button', { type: 'button', class: 'kopf-link abmelden', onclick: () => abmelden(false) }, 'Abmelden'),
             h('button', { type: 'button', class: 'kopf-link abmelden-ueberall', onclick: () => abmelden(true) }, 'Überall abmelden')
           )
         : null
@@ -145,13 +155,20 @@ const KRKopf = (() => {
     const kopf = document.getElementById('kopf');
     if (!kopf) return null;
     kopf.classList.add('kopf');
+    kopf.classList.toggle('kopf-lehrkraft', istLehrkraft(rolle)); // längere Navigation: Epochen-Text früher ausblenden
     const s = sitzung || {};
     const art = BEREICHE[rolle] ? rolle : 'oeffentlich';
     const [startHref, startText] = STARTSEITE[rolle] || ['/', 'Kryptos – zur Startseite'];
     const bereiche = BEREICHE[art]({ scoreboard }).filter(Boolean);
 
     const rechts = h('div', { class: 'kopf-nav' });
-    if (rolle) {
+    if (istLehrkraft(rolle)) {
+      // Labor steht bei Lehrkräften in der Hauptnavigation (laborLink betrifft nur den Boss-Kampf der Schüler)
+      laborEl = null;
+      if (s.portal) rechts.appendChild(link(s.portal, 'Portal', { symbol: 'i-portal', kurz: true, label: 'Zurück ins Portal InfoLabs' }));
+      if (s.name) rechts.appendChild(h('span', { class: 'kopf-name' }, s.name));
+      rechts.appendChild(h('button', { type: 'button', class: 'kopf-link abmelden', onclick: () => abmelden(false) }, 'Abmelden'));
+    } else if (rolle) {
       if (rolle === 'schueler') rechts.appendChild(h('a', { class: 'rang', id: 'kopf-rang', href: '/spiel#/profil', hidden: true }));
       laborEl = link('/labor', 'Labor', { aktiv: aktiv === 'labor', symbol: 'i-labor', kurz: true, label: 'Kryptolabor', klasse: 'labor-link' });
       rechts.appendChild(laborEl);

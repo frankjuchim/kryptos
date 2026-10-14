@@ -1,6 +1,10 @@
 /* Kryptos – Lehrkraft-Seite /lehrer (TECHNIK §11.1, §7.2, §13.4; M4 Tasks 62–64): Kurse kommen aus dem Portal (kein
-   Anlegen, Löschen, Umbenennen, keine Codes, kein Beitritt). Hash-Router:
+   Anlegen, Löschen, Umbenennen, keine Codes, kein Beitritt). Aufbau wie in den anderen Labs des Verbunds (gleiche Navigation, Reiter und
+   Routen in allen Labs); Kryptos-Extras stehen jeweils am Ende. Hash-Router:
      #/ Kursliste · #/kurs/<id>/<tab> · #/vorschau[/welt/<nr>|/aufgabe/<id>] · #/materialien · #/admin/<tab>
+   Kurs-Reiter: schueler · beitritt · auswertung · scoreboard · einstellungen · (teams · funkraum · arena);
+   Verwaltung: lehrkraefte · inhalte · kata · backup · (wartung). Alte Hashes: #/kurs/<id>/urkunden → Urkunden-Seite,
+   #/admin/warmup → #/admin/kata.
    <id> ist immer die LOKALE Kurs-id aus GET /api/lehrer/kurse (E21); die Portal-Kennung (kurs, „k:1“) nur als Text.
    Startet nur auf body.seite-lehrer; sonst stellt KRLehrer nur Bausteine bereit (Gastmodus). Texte nur als Textknoten. */
 'use strict';
@@ -60,7 +64,10 @@ const KRLehrer = (() => {
 
   /* ---------- Kursliste ---------- */
 
-  /** Tabelle der Kurse (Name · Kennung · Lehrkraft (nur Admin) · Schüler · zuletzt aktiv · Niveau · Zustand). */
+  /**
+   * Tabelle der Kurse wie in den anderen Labs (Kurs · Kurscode · Lehrkraft (nur Admin) · Schüler · zuletzt aktiv · Öffnen), dazu
+   * Niveau und Zustand. Der Kurscode liegt im Portal; die Portal-Kennung steht nur als Text daneben (E21).
+   */
   function kursListeTabelle(liste, { admin = false, link = (k) => `#/kurs/${k.id}/schueler` } = {}) {
     if (!liste.length) {
       return h('div', { class: 'leer-zustand karte' }, KR.symbol('icons', 'i-portal'), h('p', null, 'Noch keine Kurse. Kurse legen Sie im Portal an und schalten Kryptos dort frei.'));
@@ -75,7 +82,7 @@ const KRLehrer = (() => {
         h(
           'thead',
           null,
-          h('tr', null, h('th', { scope: 'col' }, 'Kurs'), h('th', { scope: 'col' }, 'Kennung'), admin ? h('th', { scope: 'col' }, 'Lehrkraft') : null, h('th', { scope: 'col', class: 'zahl' }, 'Schüler'), h('th', { scope: 'col' }, 'zuletzt aktiv'), h('th', { scope: 'col' }, 'Niveau'), h('th', { scope: 'col' }, 'Zustand'))
+          h('tr', null, h('th', { scope: 'col' }, 'Kurs'), h('th', { scope: 'col' }, 'Kurscode'), admin ? h('th', { scope: 'col' }, 'Lehrkraft') : null, h('th', { scope: 'col', class: 'zahl' }, 'Schüler'), h('th', { scope: 'col' }, 'zuletzt aktiv'), h('th', { scope: 'col' }, 'Niveau'), h('th', { scope: 'col' }, 'Zustand'), h('th', { scope: 'col' }, h('span', { class: 'sr' }, 'Aktion')))
         ),
         h(
           'tbody',
@@ -85,12 +92,13 @@ const KRLehrer = (() => {
               'tr',
               { class: k.aktiv ? null : 'abgeschaltet' },
               h('th', { scope: 'row' }, h('a', { class: 'kurs-link', href: link(k) }, k.name)),
-              h('td', { class: 'mono' }, k.kurs || '–'),
+              h('td', null, h('span', { title: 'Kurscode und Beitritt im Portal InfoLabs' }, 'Portal'), k.kurs ? h('span', { class: 'klein text-2 mono kurs-kennung' }, ` · ${k.kurs}`) : null),
               admin ? h('td', null, k.lehrkraft || '–') : null,
               h('td', { class: 'zahl' }, String(k.schueler || 0)),
               h('td', null, zeit(k.zuletztAktiv)),
               h('td', null, niveauChip(k.einstellungen && k.einstellungen.niveau)),
-              h('td', null, k.aktiv ? h('span', { class: 'text-2' }, 'aktiv') : h('span', { class: 'chip chip-neutral' }, '⏸ abgeschaltet'))
+              h('td', null, k.aktiv ? h('span', { class: 'text-2' }, 'aktiv') : h('span', { class: 'chip chip-neutral' }, '⏸ abgeschaltet')),
+              h('td', null, h('a', { class: 'knopf knopf-zweit', href: link(k), 'aria-label': `Kurs ${k.name} öffnen` }, 'Öffnen'))
             )
           )
         )
@@ -106,7 +114,7 @@ const KRLehrer = (() => {
       h(
         'div',
         { class: 'wrap lehrer-seite' },
-        h('h1', null, 'Ihre Kurse'),
+        h('h1', null, istAdmin() ? 'Alle Kurse' : 'Meine Kurse'),
         h('p', { class: 'text-2 lesen' }, 'Kurse, Namen und Schülerkonten verwalten Sie im Portal InfoLabs. Hier stellen Sie ein, was Ihr Kurs in Kryptos sieht, und verfolgen den Lernstand.'),
         kursListeTabelle(liste, { admin: istAdmin() })
       )
@@ -115,12 +123,24 @@ const KRLehrer = (() => {
 
   /* ---------- Kurs mit Tabs ---------- */
 
-  /** Tab registrieren (Reihenfolge = Registrierung). render(kurs, box, { neu }) füllt box. */
+  /**
+   * Reihenfolge der Kurs-Reiter wie in den anderen Labs (Schüler · Beitritt & QR · Auswertung · Scoreboard · Einstellungen),
+   * danach die Kryptos-Extras; unbekannte Reiter kommen in Registrierungsreihenfolge ans Ende.
+   */
+  const TAB_REIHENFOLGE = ['schueler', 'beitritt', 'auswertung', 'scoreboard', 'einstellungen', 'teams', 'funkraum', 'arena'];
+  const rangVon = (key) => {
+    const i = TAB_REIHENFOLGE.indexOf(key);
+    return i < 0 ? TAB_REIHENFOLGE.length : i;
+  };
+
+  /** Tab registrieren (Reihenfolge nach TAB_REIHENFOLGE, sonst Registrierung). render(kurs, box, { r }) füllt box. */
   function tab(key, label, render) {
     const i = TABS.findIndex((t) => t.key === key);
     const t = { key, label, render };
     if (i >= 0) TABS[i] = t;
     else TABS.push(t);
+    const nr = new Map(TABS.map((x, j) => [x.key, j]));
+    TABS.sort((a, b) => rangVon(a.key) - rangVon(b.key) || nr.get(a.key) - nr.get(b.key));
   }
 
   function tabLeiste(kurs, aktiv) {
@@ -158,6 +178,8 @@ const KRLehrer = (() => {
     if (!r.gueltig()) return;
     const eintrag = liste.find((k) => String(k.id) === String(idRoh));
     if (!eintrag) return fehler(new Error('Kurs nicht gefunden.'));
+    // früherer Reiter „Urkunden“: jetzt Knopf im Kurskopf wie in den anderen Labs – alte Adressen führen direkt zur Druckseite
+    if (tabRoh === 'urkunden') return location.replace(`/lehrer/urkunden?kurs=${enc(eintrag.id)}`);
     const kurs = await api('GET', `/api/lehrer/kurse/${enc(eintrag.id)}`);
     if (!r.gueltig()) return;
     const t = TABS.find((x) => x.key === tabRoh) || TABS[0];
@@ -177,7 +199,8 @@ const KRLehrer = (() => {
           h('h1', null, kurs.name),
           niveauChip(kurs.einstellungen.niveau),
           h('span', { class: 'mono text-2' }, kurs.kurs),
-          kurs.aktiv ? null : h('span', { class: 'chip chip-neutral' }, '⏸ im Portal abgeschaltet')
+          kurs.aktiv ? null : h('span', { class: 'chip chip-neutral' }, '⏸ im Portal abgeschaltet'),
+          h('a', { class: 'knopf knopf-messing kurs-urkunden', href: `/lehrer/urkunden?kurs=${enc(kurs.id)}` }, KR.symbol('icons', 'i-drucken'), 'Urkunden')
         ),
         kurs.aktiv ? null : h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, 'Dieser Kurs ist im Portal abgeschaltet – Einstellungen nur lesbar.')),
         tabLeiste(kurs, t.key),
@@ -225,12 +248,53 @@ const KRLehrer = (() => {
     );
   }
 
-  tab('schueler', 'Schülerinnen und Schüler', async (kurs, box) => {
+  tab('schueler', 'Schüler', async (kurs, box) => {
     const liste = await api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/schueler`);
     mount(
       box,
-      h('p', { class: 'text-2 lesen' }, 'Namen und Kurszugehörigkeit kommen aus dem Portal. Wer dort aus dem Kurs genommen wird, bleibt hier mit seinem Lernstand sichtbar, bis das Portal die Daten löscht.'),
-      schuelerTabelle(liste)
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'schueler-titel' },
+        h('h2', { id: 'schueler-titel' }, `Schüler (${liste.length})`),
+        h('p', { class: 'text-2 lesen klein' }, 'Namen, persönliche Codes und Kurszugehörigkeit kommen aus dem Portal. Wer dort aus dem Kurs genommen wird, bleibt hier mit seinem Lernstand sichtbar, bis das Portal die Daten löscht.'),
+        schuelerTabelle(liste)
+      )
+    );
+  });
+
+  /* ---------- Tab Beitritt & QR (wie in den anderen Labs; Beitritt läuft über das Portal) ---------- */
+
+  tab('beitritt', 'Beitritt & QR', async (kurs, box) => {
+    const portal = sitzung && sitzung.portal ? String(sitzung.portal).replace(/\/$/, '') + '/' : null;
+    const e = kurs.einstellungen || {};
+    const board = e.beamer && kurs.boardSchluessel ? `/board/${enc(kurs.boardSchluessel)}` : null;
+    mount(
+      box,
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'beitritt-titel' },
+        h('h2', { id: 'beitritt-titel' }, 'Beitritt über das Portal'),
+        h(
+          'div',
+          { class: 'beitritt-raster' },
+          h('figure', { class: 'beitritt-qr' }, h('img', { class: 'qr', src: '/api/lehrer/qr.svg?ziel=start', alt: 'QR-Code zur Startseite von Kryptos', width: '180', height: '180' }), h('figcaption', { class: 'klein text-2' }, 'QR-Code zur Startseite von Kryptos')),
+          h(
+            'div',
+            { class: 'beitritt-text' },
+            h('p', { class: 'lesen' }, 'Dieser Kurs wird im Portal InfoLabs verwaltet: Schülerinnen und Schüler treten dort mit dem Kurscode des Portals bei und kommen über „Weiter zu Kryptos“ oder diesen QR-Code hierher. Namen und persönliche Codes ändern Sie im Portal.'),
+            portal ? h('p', { class: 'knopf-reihe' }, h('a', { class: 'knopf knopf-zweit', href: portal }, KR.symbol('icons', 'i-portal'), 'Zum Portal')) : null,
+            h('p', { class: 'klein text-2' }, `Portal-Kennung des Kurses: ${kurs.kurs || '–'}`)
+          )
+        )
+      ),
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'board-titel' },
+        h('h2', { id: 'board-titel' }, 'Beamer-Board'),
+        board
+          ? h('p', null, 'Aktiv: ', h('a', { href: board, target: '_blank', rel: 'noopener' }, `${location.origin}${board}`))
+          : h('p', { class: 'text-2' }, 'Das Beamer-Board ist ausgeschaltet (Einstellungen).')
+      )
     );
   });
 
@@ -612,15 +676,45 @@ const KRLehrer = (() => {
     );
   }
 
+  /** Auswahl „Alle Welten“ / „Welt n: Titel“ (Filter wie in den anderen Labs). */
+  function weltAuswahl(name, label, welten, wert, ersteOption) {
+    return h(
+      'label',
+      { class: 'filter-feld' },
+      h('span', { class: 'klein text-2' }, label),
+      h('select', { name }, h('option', { value: '' }, ersteOption), welten.map((w) => h('option', { value: String(w.nr), selected: String(w.nr) === String(wert) }, `Welt ${w.nr}: ${w.titel}`)))
+    );
+  }
+
+  /** Vorschau-Welten (Titel für Filter), einmal je Seitenaufruf geladen. */
+  let weltenAnfrage = null;
+  function weltenListe() {
+    if (!weltenAnfrage) {
+      weltenAnfrage = api('GET', '/api/lehrer/vorschau').then((d) => (d.welten || []).map((w) => ({ nr: w.nr, titel: w.titel })));
+      weltenAnfrage.catch(() => (weltenAnfrage = null));
+    }
+    return weltenAnfrage.catch(() => []);
+  }
+
+  // Reihenfolge wie in den anderen Labs: Export · Fortschrittsmatrix · Boss · Fallen · Aufgabenstatistik (mit Welt-Filter)
   tab('auswertung', 'Auswertung', async (kurs, box) => {
-    const d = await api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/auswertung`);
+    const [d, welten] = await Promise.all([api('GET', `/api/lehrer/kurse/${enc(kurs.id)}/auswertung`), weltenListe()]);
+    const aufgaben = Array.isArray(d.aufgaben) ? d.aufgaben : [];
+    const filter = weltAuswahl('aw-welt', 'Welt', welten, '', 'Alle Welten');
+    const statistik = h('div', { class: 'aufgaben-statistik-box' });
+    const zeigeStatistik = () => {
+      const f = filter.querySelector('select').value;
+      mount(statistik, aufgabenStatistik(aufgaben.filter((a) => f === '' || String(a.welt) === f)));
+    };
+    filter.querySelector('select').addEventListener('change', zeigeStatistik);
+    zeigeStatistik();
     mount(
       box,
-      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-matrix' }, h('h2', { id: 'aw-matrix' }, 'Fortschritt je Level'), matrixTabelle(d.matrix, { niveau: d.niveau })),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-csv' }, h('h2', { id: 'aw-csv' }, 'Export'), csvKnoepfe(kurs.id)),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-matrix' }, h('h2', { id: 'aw-matrix' }, 'Fortschrittsmatrix (% der Level-Punkte)'), matrixTabelle(d.matrix, { niveau: d.niveau })),
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-boss' }, h('h2', { id: 'aw-boss' }, 'Boss-Ergebnisse (bester Versuch)'), bossTabelle(d.boss)),
       h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-fallen' }, h('h2', { id: 'aw-fallen' }, 'Fallen-Profil des Kurses'), h('p', { class: 'klein text-2' }, 'Fehlversuche mit erkannter Falle (Diagnose der Prüfer). Der Link führt zur Erläuterung.'), fallenProfil(d.fallen)),
-      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-boss' }, h('h2', { id: 'aw-boss' }, 'Boss-Ergebnisse'), bossTabelle(d.boss)),
-      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-aufgaben' }, h('h2', { id: 'aw-aufgaben' }, 'Aufgabenstatistik'), aufgabenStatistik(d.aufgaben)),
-      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-csv' }, h('h2', { id: 'aw-csv' }, 'Export'), csvKnoepfe(kurs.id))
+      h('section', { class: 'auswertung-teil', 'aria-labelledby': 'aw-aufgaben' }, h('div', { class: 'teil-kopf' }, h('h2', { id: 'aw-aufgaben' }, 'Aufgabenstatistik'), welten.length ? filter : null), statistik)
     );
   });
 
@@ -636,7 +730,7 @@ const KRLehrer = (() => {
         'table',
         { class: 'scoreboard-tabelle' },
         h('caption', { class: 'sr' }, 'Scoreboard des Kurses'),
-        h('thead', null, h('tr', null, h('th', { scope: 'col', class: 'zahl' }, 'Platz'), h('th', { scope: 'col' }, 'Name'), h('th', { scope: 'col', class: 'zahl' }, 'Punkte'), h('th', { scope: 'col', class: 'zahl' }, 'gelöst'), h('th', { scope: 'col', class: 'zahl' }, 'Abzeichen'))),
+        h('thead', null, h('tr', null, h('th', { scope: 'col', class: 'zahl' }, 'Platz'), h('th', { scope: 'col' }, 'Name'), h('th', { scope: 'col', class: 'zahl' }, 'Punkte'), h('th', { scope: 'col', class: 'zahl' }, 'Abzeichen'), h('th', { scope: 'col', class: 'zahl' }, 'gelöst'))),
         h(
           'tbody',
           null,
@@ -647,8 +741,8 @@ const KRLehrer = (() => {
               h('td', { class: 'zahl' }, `${r.platz}.`),
               h('th', { scope: 'row' }, r.name, r.aktiv === false ? h('span', { class: 'klein text-2' }, ' – nicht mehr im Kurs') : null),
               h('td', { class: 'zahl' }, String(r.punkte)),
-              h('td', { class: 'zahl' }, String(r.geloest || 0)),
-              h('td', { class: 'zahl' }, String(r.abzeichen || 0))
+              h('td', { class: 'zahl' }, String(r.abzeichen || 0)),
+              h('td', { class: 'zahl' }, String(r.geloest || 0))
             )
           )
         )
@@ -656,14 +750,44 @@ const KRLehrer = (() => {
     );
   }
 
+  /** Gewählte Welt des Scoreboard-Filters (je Browser, wie in den anderen Labs); Speicher kann fehlen. */
+  const SB_WELT = 'kr_lk_sb_welt';
+  function sbWelt(neu) {
+    try {
+      if (neu !== undefined) localStorage.setItem(SB_WELT, neu);
+      return localStorage.getItem(SB_WELT) || '';
+    } catch {
+      return neu || '';
+    }
+  }
+
+  // wie in den anderen Labs: Filter Gesamt/Welt, Hinweis zur Sichtbarkeit, Aktualisierung alle 20 s (nicht beim Bedienen des Filters)
   tab('scoreboard', 'Scoreboard', async (kurs, box, { r }) => {
-    const pfad = `/api/lehrer/kurse/${enc(kurs.id)}/scoreboard`;
-    const ziel = h('div', { 'aria-live': 'polite' }, scoreboardTabelle(await api('GET', pfad)));
-    mount(box, h('p', { class: 'klein text-2' }, 'Aktualisiert sich alle 20 Sekunden. Das Beamer-Board schalten Sie unter „Einstellungen“ ein.'), ziel);
+    const welten = await weltenListe();
+    let welt = sbWelt();
+    if (welt && !welten.some((w) => String(w.nr) === welt)) welt = '';
+    const pfad = () => `/api/lehrer/kurse/${enc(kurs.id)}/scoreboard${welt !== '' ? `?welt=${enc(welt)}` : ''}`;
+    const hinweis = h('p', { class: 'klein text-2' });
+    const ziel = h('div', { 'aria-live': 'polite' });
+    const laden = async () => {
+      const d = await api('GET', pfad());
+      if (!r.gueltig()) return;
+      mount(ziel, scoreboardTabelle(d));
+      hinweis.textContent = `${kurs.einstellungen && kurs.einstellungen.scoreboard === false ? 'Das Scoreboard ist für Schüler ausgeblendet.' : 'Das Scoreboard ist für Schüler sichtbar.'} Aktualisiert sich alle 20 Sekunden (zuletzt ${new Date().toLocaleTimeString('de-DE')}). Das Beamer-Board schalten Sie unter „Einstellungen“ ein.`;
+    };
+    const filter = weltAuswahl('sb-welt', 'Anzeigen', welten, welt, 'Gesamt');
+    const sel = filter.querySelector('select');
+    sel.addEventListener('change', () => {
+      welt = sbWelt(sel.value);
+      laden().catch((e) => toast(e.message, true));
+    });
+    await laden();
+    mount(box, h('section', { class: 'karte tab-karte', 'aria-labelledby': 'sb-titel' }, h('div', { class: 'teil-kopf' }, h('h2', { id: 'sb-titel' }, 'Scoreboard'), filter), ziel, hinweis));
     const t = setInterval(async () => {
       if (!r.gueltig()) return clearInterval(t);
+      if (document.hidden || box.contains(document.activeElement) && document.activeElement === sel) return;
       try {
-        mount(ziel, scoreboardTabelle(await api('GET', pfad)));
+        await laden();
       } catch {
         /* nächster Versuch */
       }
@@ -676,18 +800,52 @@ const KRLehrer = (() => {
   const istEpoche = (nr) => Number.isInteger(nr) && nr >= 0 && nr <= 6;
   const vorschauNiveau = (n) => AQ.niveau(n || 'kern', { vorschau: true });
 
-  function aufgabeZeile(a) {
+  /** Anzeigenamen der Interaktionen (Spalte „Interaktion“ wie in den anderen Labs). */
+  const INTERAKTION = {
+    gaps: 'Lücken',
+    choice: 'Auswahl',
+    order: 'Reihenfolge',
+    lines: 'Zeilen wählen',
+    match: 'Zuordnen',
+    grid: 'Raster',
+    chiffre: 'Ver-/Entschlüsseln',
+    zuordnung: 'Zuordnungstabelle',
+    'schaubild-ergaenzen': 'Schaubild',
+    'bits-rechnen': 'Bits rechnen',
+    'hash-ziel': 'Hash-Ziel'
+  };
+
+  /** Aufgabentabelle der Vorschau: Aufgabe · Stufe · Punkte · Kategorie · Interaktion · Fallen (wie in den anderen Labs). */
+  function aufgabenTabelle(liste) {
     return h(
-      'li',
-      { class: 'vorschau-aufgabe' },
-      h('a', { href: `#/vorschau/aufgabe/${enc(a.id)}` }, a.titel),
-      h('span', { class: 'aufgabe-meta' }, AQ.sterne(a.stufe), h('span', { class: 'klein text-2' }, ` ${a.punkte} P. · ${KR.KATEGORIEN[a.kategorie] || a.kategorie}`)),
-      vorschauNiveau(a.niveau),
-      a.gAAusgeblendet && a.niveau !== 'eA' ? h('span', { class: 'klein text-2' }, 'im gA-Kurs ausgeblendet') : null,
-      (a.fallen || []).map((p) => KRDiag.chip(p)),
-      h('span', { class: 'klein text-2 mono' }, a.id)
+      'div',
+      { class: 'scroll-x' },
+      h(
+        'table',
+        { class: 'vorschau-tabelle' },
+        h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Aufgabe'), h('th', { scope: 'col' }, 'Stufe'), h('th', { scope: 'col', class: 'zahl' }, 'Punkte'), h('th', { scope: 'col' }, 'Kategorie'), h('th', { scope: 'col' }, 'Interaktion'), h('th', { scope: 'col' }, 'Fallen'))),
+        h(
+          'tbody',
+          null,
+          liste.map((a) =>
+            h(
+              'tr',
+              { class: 'vorschau-aufgabe' },
+              h('th', { scope: 'row' }, h('a', { href: `#/vorschau/aufgabe/${enc(a.id)}` }, a.titel), h('div', { class: 'klein text-2 mono' }, a.id)),
+              h('td', null, AQ.sterne(a.stufe)),
+              h('td', { class: 'zahl' }, String(a.punkte)),
+              h('td', { class: 'klein' }, KR.KATEGORIEN[a.kategorie] || a.kategorie || '–', ' ', vorschauNiveau(a.niveau), a.gAAusgeblendet && a.niveau !== 'eA' ? h('span', { class: 'klein text-2 ga-hinweis' }, ' im gA-Kurs ausgeblendet') : null),
+              h('td', { class: 'klein' }, (a.arten || []).map((x) => INTERAKTION[x] || x).join(' + ') || '–'),
+              h('td', null, (a.fallen || []).length ? (a.fallen || []).map((p) => KRDiag.chip(p)) : '–')
+            )
+          )
+        )
+      )
     );
   }
+
+  /** Zeile „DS … · n Aufgaben · P Punkte“ eines Levels. */
+  const levelMeta = (l) => [(l.ds || []).length ? `DS ${l.ds.join(', ')}` : null, `${(l.aufgaben || []).length} Aufgaben`, l.maxPunkte !== undefined ? `${l.maxPunkte} Punkte` : null].filter(Boolean).join(' · ');
 
   async function vorschauRoute(teile, r) {
     const [art, wert] = teile;
@@ -706,8 +864,9 @@ const KRLehrer = (() => {
           'div',
           { class: 'wrap lehrer-seite vorschau' },
           h('nav', { class: 'brotkrumen', 'aria-label': 'Brotkrümel' }, h('a', { href: '#/vorschau' }, 'Aufgaben'), h('span', { 'aria-hidden': 'true' }, '›'), h('span', { 'aria-current': 'page' }, `Welt ${w.nr}`)),
-          h('h1', null, `Welt ${w.nr} · ${w.titel}`),
-          h('p', { class: 'text-2 lesen' }, 'Vorschau mit allen Inhalten und Lösungen. Niveau-Chips zeigen, was ein gA-Kurs nicht sieht.'),
+          h('h1', null, `Welt ${w.nr}: ${w.titel}`),
+          h('p', { class: 'text-2' }, `${(w.levels || []).length} Level · ${w.aufgabenAnzahl || 0} Aufgaben` + (w.maxPunkte !== undefined ? ` · ${w.maxPunkte} Level-Punkte` : '') + (w.boss ? ` · Boss-Pool ${(w.boss.pool || []).length}` : '')),
+          h('p', { class: 'text-2 lesen klein' }, 'Vorschau mit allen Inhalten und Lösungen. Niveau-Chips zeigen, was ein gA-Kurs nicht sieht.'),
           w.archivfund && w.archivfund.aufgabe
             ? h('section', { class: 'karte archivfund-karte' }, h('span', { class: 'etikett' }, 'Archivfund'), h('h2', null, w.archivfund.titel || w.archivfund.aufgabe.titel), h('p', null, h('a', { href: `#/vorschau/aufgabe/${enc(w.archivfund.aufgabe.id)}` }, 'Archivfund ansehen')))
             : null,
@@ -718,18 +877,20 @@ const KRLehrer = (() => {
               h(
                 'div',
                 { class: 'vorschau-level-kopf' },
-                h('h2', { id: `vl-${l.id}` }, h('span', { class: 'mono' }, l.nr || l.id), ' ', l.titel),
+                h('h2', { id: `vl-${l.id}` }, `Level ${l.nr || l.id} – ${l.titel}`),
                 vorschauNiveau(l.niveau),
                 l.rolle ? h('span', { class: 'chip chip-rolle rolle-' + l.rolle }, AQ.rolleText(l.rolle).replace(/^\S+\s/, '')) : null,
                 l.gAAusgeblendet && l.niveau !== 'eA' ? h('span', { class: 'klein text-2' }, 'im gA-Kurs ausgeblendet') : null
               ),
-              (l.aufgaben || []).length ? h('ol', { class: 'vorschau-aufgaben' }, l.aufgaben.map(aufgabeZeile)) : h('p', { class: 'text-2' }, 'Keine Aufgaben.'),
+              h('p', { class: 'klein text-2' }, levelMeta(l)),
+              l.akte && l.akte.titel ? h('p', { class: 'klein' }, h('b', null, 'Akte: '), l.akte.titel) : null,
+              (l.aufgaben || []).length ? aufgabenTabelle(l.aufgaben) : h('p', { class: 'text-2' }, 'Keine Aufgaben.'),
               // Plan M8 E140: Karte zur Chiffren-Werkstatt – in der Vorschau ohne Link (Werkstatt nur für Schülerinnen und Schüler)
               l.werkstatt && l.werkstatt.titel ? h('p', { class: 'klein text-2 vorschau-werkstatt' }, `Karte auf der Level-Seite: „${l.werkstatt.titel}“ (führt Schülerinnen und Schüler in die Chiffren-Werkstatt)`) : null
             )
           ),
           w.boss
-            ? h('section', { class: 'karte vorschau-level boss-pool', 'aria-labelledby': 'vl-boss' }, h('h2', { id: 'vl-boss' }, `Boss: ${w.boss.titel}`), h('p', { class: 'klein text-2' }, `${w.boss.anzahl} Aufgaben aus dem Pool, ${w.boss.dauerMin} Minuten. Im gA-Kurs zieht der Boss nur Kern-Aufgaben.`), h('ol', { class: 'vorschau-aufgaben' }, (w.boss.pool || []).map(aufgabeZeile)))
+            ? h('section', { class: 'karte vorschau-level boss-pool', 'aria-labelledby': 'vl-boss' }, h('h2', { id: 'vl-boss' }, `Boss: ${w.boss.titel}`), h('p', { class: 'klein text-2' }, `${w.boss.anzahl} von ${(w.boss.pool || []).length} Aufgaben werden gezogen · ${w.boss.dauerMin} Minuten. Im gA-Kurs zieht der Boss nur Kern-Aufgaben.`), aufgabenTabelle(w.boss.pool || []))
             : null
         )
       );
@@ -739,8 +900,8 @@ const KRLehrer = (() => {
       h(
         'div',
         { class: 'wrap lehrer-seite vorschau' },
-        h('h1', null, 'Aufgaben-Vorschau'),
-        h('p', { class: 'text-2 lesen' }, 'Alle Welten mit Leveln, Aufgaben und Lösungen – nur für Lehrkräfte. Schülerstände werden dabei nicht verändert.'),
+        h('h1', null, 'Aufgaben der Welten'),
+        h('p', { class: 'text-2 lesen' }, 'Alle Aufgaben mit Lösung und Erklärung – zum Nachschlagen passend zu den Akten (nur für Lehrkräfte sichtbar). Schülerstände werden dabei nicht verändert.'),
         welten.length
           ? h(
               'ul',
@@ -749,7 +910,7 @@ const KRLehrer = (() => {
                 const li = h(
                   'li',
                   { 'data-epoche': istEpoche(w.nr) ? String(w.nr) : null },
-                  h('a', { class: 'karte karte-link', href: `#/vorschau/welt/${w.nr}` }, h('b', null, `Welt ${w.nr} · ${w.titel}`), h('span', { class: 'klein text-2' }, `${(w.levels || []).length} Level · ${w.aufgabenAnzahl || 0} Aufgaben${w.boss ? ' · Boss' : ''}`))
+                  h('a', { class: 'karte karte-link', href: `#/vorschau/welt/${w.nr}` }, h('b', null, `Welt ${w.nr} · ${w.titel}`), h('span', { class: 'klein text-2' }, `${(w.levels || []).length} Level · ${w.aufgabenAnzahl || 0} Aufgaben${w.boss ? ` · Boss „${w.boss.titel}“ (${(w.boss.pool || []).length})` : ''}`))
                 );
                 if (!istEpoche(w.nr) && w.farbe) li.style.setProperty('--akzent', w.farbe);
                 return li;
@@ -782,9 +943,9 @@ const KRLehrer = (() => {
           { class: 'brotkrumen', 'aria-label': 'Brotkrümel' },
           h('a', { href: '#/vorschau' }, 'Aufgaben'),
           h('span', { 'aria-hidden': 'true' }, '›'),
-          h('a', { href: `#/vorschau/welt/${w.nr}` }, `Welt ${w.nr}`),
+          h('a', { href: `#/vorschau/welt/${w.nr}` }, w.titel ? `Welt ${w.nr}: ${w.titel}` : `Welt ${w.nr}`),
           h('span', { 'aria-hidden': 'true' }, '›'),
-          h('span', null, o.level ? `${o.level.nr || o.level.id} ${o.level.titel}` : o.boss ? `Boss-Pool: ${o.boss.titel}` : 'Archivfund'),
+          h('span', null, o.level ? `Level ${o.level.nr || o.level.id} – ${o.level.titel}` : o.boss ? `Boss-Pool: ${o.boss.titel}` : 'Archivfund'),
           o.anzahl ? [h('span', { 'aria-hidden': 'true' }, '›'), h('span', { 'aria-current': 'page' }, `${o.index + 1} von ${o.anzahl}`)] : null
         ),
         h(
@@ -825,35 +986,62 @@ const KRLehrer = (() => {
     werkzeug: 'Werkzeugkarte'
   };
 
-  function materialEintrag(e) {
+  /** Download-Knopf; 🔒 = nur für Lehrkräfte (Lösungen, Klausuren …), sonst Schülerfassung (wie in den anderen Labs). */
+  function materialKnopf(d) {
+    if (!d.url) return h('span', { class: 'klein text-2' }, `${d.label || 'Datei'}: noch nicht vorhanden`);
     return h(
-      'li',
-      { class: 'material-eintrag' },
-      h('b', null, e.titel),
-      h('span', { class: 'klein text-2' }, [ART[e.art] || e.art, (e.ds || []).length ? `DS ${e.ds.join(', ')}` : null].filter(Boolean).join(' · ')),
+      'a',
+      { class: 'knopf knopf-zweit', href: d.url, target: '_blank', rel: 'noopener', title: d.lehrkraft ? 'nur für Lehrkräfte' : 'Schülerfassung (für angemeldete Schülerinnen und Schüler auf „Themen“)' },
+      d.lehrkraft ? h('span', { 'aria-hidden': 'true' }, '🔒 ') : KR.symbol('icons', 'i-download'),
+      d.label || 'PDF',
+      d.lehrkraft ? h('span', { class: 'sr' }, ' (nur für Lehrkräfte)') : null
+    );
+  }
+
+  /** Tabelle Material · DS · PDF (wie in den anderen Labs). */
+  function materialTabelle(eintraege) {
+    return h(
+      'div',
+      { class: 'scroll-x' },
       h(
-        'span',
-        { class: 'knopf-reihe' },
-        (e.dateien || []).map((d) => (d.url ? h('a', { class: 'knopf knopf-zweit', href: d.url, target: '_blank', rel: 'noopener' }, KR.symbol('icons', 'i-download'), d.label || 'PDF') : h('span', { class: 'klein text-2' }, `${d.label || 'Datei'}: noch nicht vorhanden`)))
+        'table',
+        { class: 'material-tabelle' },
+        h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Material'), h('th', { scope: 'col', class: 'ds' }, 'DS'), h('th', { scope: 'col' }, 'PDF'))),
+        h(
+          'tbody',
+          null,
+          eintraege.map((e) =>
+            h(
+              'tr',
+              { class: 'material-eintrag' },
+              h('th', { scope: 'row' }, h('b', null, e.titel), h('div', { class: 'klein text-2' }, ART[e.art] || e.art)),
+              h('td', { class: 'ds klein' }, (e.ds || []).length ? e.ds.join(', ') : ''),
+              h('td', null, h('span', { class: 'knopf-reihe' }, (e.dateien || []).map(materialKnopf)))
+            )
+          )
+        )
       )
     );
   }
 
   async function materialienRoute(_teile, r) {
-    const d = await api('GET', '/api/lehrer/materialien');
+    const [d, titelListe] = await Promise.all([api('GET', '/api/lehrer/materialien'), weltenListe()]);
     if (!r.gueltig()) return;
     const welten = d.welten || [];
+    const titel = new Map(titelListe.map((w) => [w.nr, w.titel]));
+    const weltTitel = (nr) => titel.get(nr) || (istEpoche(nr) ? KR.WELTEN_KURZ[nr] : '') || '';
     seite(
       'Materialien',
       h(
         'div',
         { class: 'wrap lehrer-seite materialien' },
-        h('h1', null, 'Materialien'),
-        h('p', { class: 'text-2 lesen' }, 'Präsentationen, Lehrerhinweise, Lösungen und Klausuren – nur für Lehrkräfte. Die Akten für Schülerinnen und Schüler stehen auch auf der Seite „Themen“.'),
-        welten.length ? h('nav', { class: 'sprungleiste', 'aria-label': 'Welten' }, welten.map((w) => h('a', { class: 'chip', href: `#material-welt-${w.nr}` }, `Welt ${w.nr}`))) : null,
-        (d.allgemein || []).length ? h('section', { class: 'karte', 'aria-labelledby': 'material-allgemein' }, h('h2', { id: 'material-allgemein' }, 'Allgemein'), h('ul', { class: 'material-liste' }, d.allgemein.map(materialEintrag))) : null,
+        h('h1', null, 'Materialien für Lehrkräfte'),
+        h('p', { class: 'text-2 lesen' }, 'Lösungen, Erwartungshorizonte, Präsentationen, Lehrerhinweise und Klausuren als PDF – sortiert nach Welten. 🔒 = nur für angemeldete Lehrkräfte; die Schülerfassungen (Akten) finden angemeldete Schülerinnen und Schüler zusätzlich auf der Seite „Themen“.'),
+        h('div', { class: 'rueckmeldung info material-warnung' }, h('p', null, h('b', null, 'Bitte nicht an Schülerinnen und Schüler weitergeben: '), 'Die 🔒-Dateien enthalten Lösungen bzw. Klausuren.')),
+        (d.allgemein || []).length ? h('section', { class: 'karte', 'aria-labelledby': 'material-allgemein' }, h('h2', { id: 'material-allgemein' }, 'Allgemein'), materialTabelle(d.allgemein)) : null,
+        welten.length ? h('nav', { class: 'sprungleiste', 'aria-label': 'Sprung zur Welt' }, h('b', null, 'Welten: '), welten.map((w) => h('a', { class: 'chip', href: `#material-welt-${w.nr}` }, `Welt ${w.nr} ${weltTitel(w.nr)}`.trim()))) : null,
         welten.map((w) =>
-          h('section', { class: 'karte material-welt', id: `material-welt-${w.nr}`, 'data-epoche': istEpoche(w.nr) ? String(w.nr) : null, 'aria-labelledby': `material-welt-${w.nr}-titel` }, h('h2', { id: `material-welt-${w.nr}-titel` }, istEpoche(w.nr) ? `Welt ${w.nr} · ${KR.WELTEN_KURZ[w.nr] || 'Die Zeitmaschine'}` : `Welt ${w.nr}`), h('ul', { class: 'material-liste' }, (w.eintraege || []).map(materialEintrag)))
+          h('section', { class: 'karte material-welt', id: `material-welt-${w.nr}`, 'data-epoche': istEpoche(w.nr) ? String(w.nr) : null, 'aria-labelledby': `material-welt-${w.nr}-titel` }, h('h2', { id: `material-welt-${w.nr}-titel` }, weltTitel(w.nr) ? `Welt ${w.nr}: ${weltTitel(w.nr)}` : `Welt ${w.nr}`), materialTabelle(w.eintraege || []))
         ),
         !welten.length && !(d.allgemein || []).length ? h('p', { class: 'text-2' }, 'Auf diesem Server liegen noch keine Materialien.') : null
       )
@@ -869,24 +1057,62 @@ const KRLehrer = (() => {
     );
   }
 
-  /* ---------- Urkunden-Tab (Task 64): Link auf die Druckseite ---------- */
-
-  tab('urkunden', 'Urkunden', async (kurs, box) => {
-    mount(
-      box,
-      h('p', { class: 'lesen' }, 'Urkunden zum Abschluss der Einheit: je Schülerin und Schüler eine Seite A4 quer mit Rang, Artefakt-Siegeln der gemeisterten Epochen und Datum.'),
-      h('p', null, h('a', { class: 'knopf knopf-primaer', href: `/lehrer/urkunden?kurs=${enc(kurs.id)}` }, KR.symbol('icons', 'i-drucken'), 'Urkunden öffnen'))
-    );
-  });
-
   /* ---------- Verwaltung für den Admin (Task 64) ---------- */
 
+  // Reiter wie in den anderen Labs (Lehrkräfte & Anfragen · Inhalte · Warm-up-Import · Backup & Verbund), Kryptos-Extra Wartung am Ende
   const ADMIN_TABS = [
+    ['lehrkraefte', 'Lehrkräfte & Anfragen'],
     ['inhalte', 'Inhalte'],
-    ['backup', 'Sicherung'],
-    ['warmup', 'Warm-up-Karten'],
+    ['kata', 'Warm-up-Import'],
+    ['backup', 'Backup & Verbund'],
     ['wartung', 'Wartung']
   ];
+  const ADMIN_ALT = { warmup: 'kata' }; // frühere Kryptos-Hashes
+
+  const portalAdresse = () => (sitzung && sitzung.portal ? String(sitzung.portal).replace(/\/$/, '') + '/' : null);
+
+  /** Lehrkräfte & Anfragen: Konten und Freischaltungen liegen im Portal; hier nur, wer in Kryptos Kurse hat. */
+  async function adminLehrkraefte(box) {
+    const liste = await kurse({ neu: true });
+    const je = new Map();
+    for (const k of liste) {
+      const name = k.lehrkraft || '– (ohne Lehrkraft)';
+      const e = je.get(name) || { name, kurse: 0, schueler: 0, zuletzt: null };
+      e.kurse++;
+      e.schueler += k.schueler || 0;
+      if (k.zuletztAktiv && (!e.zuletzt || k.zuletztAktiv > e.zuletzt)) e.zuletzt = k.zuletztAktiv;
+      je.set(name, e);
+    }
+    const zeilen = [...je.values()].sort((a, b) => a.name.localeCompare(b.name, 'de'));
+    const portal = portalAdresse();
+    mount(
+      box,
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'lk-anfragen' },
+        h('h2', { id: 'lk-anfragen' }, 'Anfragen und Freischaltungen'),
+        h('p', { class: 'lesen' }, 'Konten, Zugangsanfragen und Freischaltungen (Lehrkraft × Plattform, Kurs × Plattform) verwalten Sie im Portal InfoLabs. Eine Lehrkraft erscheint hier, sobald sie über das Portal einen Kurs mit Kryptos geöffnet hat.'),
+        portal ? h('p', { class: 'knopf-reihe' }, h('a', { class: 'knopf knopf-zweit', href: portal }, KR.symbol('icons', 'i-portal'), 'Zum Portal')) : null
+      ),
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'lk-liste' },
+        h('h2', { id: 'lk-liste' }, `Lehrkräfte mit Kursen in Kryptos (${zeilen.length})`),
+        zeilen.length
+          ? h(
+              'div',
+              { class: 'scroll-x' },
+              h(
+                'table',
+                { class: 'admin-tabelle lehrkraefte-tabelle' },
+                h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Name'), h('th', { scope: 'col', class: 'zahl' }, 'Kurse'), h('th', { scope: 'col', class: 'zahl' }, 'Schüler'), h('th', { scope: 'col' }, 'zuletzt aktiv'))),
+                h('tbody', null, zeilen.map((z) => h('tr', null, h('th', { scope: 'row' }, z.name), h('td', { class: 'zahl' }, String(z.kurse)), h('td', { class: 'zahl' }, String(z.schueler)), h('td', null, zeit(z.zuletzt)))))
+              )
+            )
+          : h('p', { class: 'text-2' }, 'Noch keine Kurse.')
+      )
+    );
+  }
 
   async function adminInhalte(box) {
     const d = await api('GET', '/api/admin/inhalte');
@@ -907,7 +1133,7 @@ const KRLehrer = (() => {
     const katas = new Map(((d.katas && d.katas.welten) || []).map((x) => [x.welt, x.anzahl]));
     mount(
       box,
-      h('h2', null, 'Welten'),
+      h('h2', null, 'Geladene Welten'),
       h(
         'div',
         { class: 'scroll-x' },
@@ -923,6 +1149,7 @@ const KRLehrer = (() => {
         )
       ),
       h('h2', null, 'Seed-Bericht'),
+      h('p', { class: 'klein text-2 lesen' }, 'Welt-Dateien liegen in seed/welten/*.json und werden bei jedem Start eingelesen (Lernstände bleiben). Fehlerhafte Aufgaben werden ausgelassen; eine unbrauchbare Datei wird übersprungen.'),
       h(
         'ul',
         { class: 'seed-bericht' },
@@ -963,13 +1190,44 @@ const KRLehrer = (() => {
         toast(e.message, true);
       }
     });
+    const m = await api('GET', '/api/plattform').catch(() => null);
+    const auth = (m && m.auth) || {};
     mount(
       box,
-      h('h2', null, 'Sicherung herunterladen'),
-      h('p', { class: 'lesen' }, 'Die Sicherung enthält alle Kurse, Teilnahmen und Lernstände (JSON). Bewahren Sie sie geschützt auf – sie enthält pseudonyme Schülerdaten.'),
-      h('p', null, h('a', { class: 'knopf knopf-zweit', href: '/api/admin/backup', download: '' }, KR.symbol('icons', 'i-download'), 'Sicherung herunterladen')),
-      h('h2', null, 'Sicherung wiederherstellen'),
-      h('p', { class: 'knopf-reihe' }, h('label', { for: 'restore-datei' }, 'Sicherungsdatei'), datei, knopf)
+      h(
+        'section',
+        { class: 'karte tab-karte verbund-karte', 'aria-labelledby': 'verbund-titel' },
+        h('h2', { id: 'verbund-titel' }, '⌂ Verbund InfoLabs'),
+        m
+          ? h(
+              'dl',
+              { class: 'themen-extras' },
+              h('dt', null, 'Plattform'),
+              h('dd', null, `${m.name || m.id || 'Kryptos'} (${m.id || '–'}), Version ${m.version || '–'}, Vertrag ${m.vertrag || '–'}`),
+              h('dt', null, 'Anmeldung'),
+              h('dd', null, auth.modus === 'portal' ? 'nur über das Portal (SSO)' : String(auth.modus || '–')),
+              h('dt', null, 'Portal'),
+              h('dd', null, auth.portal ? h('a', { href: String(auth.portal).replace(/\/$/, '') + '/' }, auth.portal) : '–'),
+              h('dt', null, 'Rücksprung-Adresse'),
+              h('dd', { class: 'mono' }, m.basis ? `${String(m.basis).replace(/\/$/, '')}${(m.urls && m.urls.ssoEnde) || '/sso/ende'}` : '–')
+            )
+          : h('p', { class: 'text-2' }, 'Manifest nicht erreichbar.'),
+        h('p', { class: 'klein text-2 lesen' }, 'Kryptos ist von Anfang an über das Portal angebunden: Konten, Kurse und Löschungen kommen aus dem Portal, eine Datenübernahme („Zuordnung einspielen“) entfällt.')
+      ),
+      h(
+        'section',
+        { class: 'karte tab-karte', 'aria-labelledby': 'backup-titel' },
+        h('h2', { id: 'backup-titel' }, 'Backup herunterladen'),
+        h('p', { class: 'lesen' }, 'Die Sicherung enthält alle Kurse, Teilnahmen und Lernstände (JSON). Bewahren Sie sie geschützt auf – sie enthält pseudonyme Schülerdaten.'),
+        h('p', null, h('a', { class: 'knopf knopf-zweit', href: '/api/admin/backup', download: '' }, KR.symbol('icons', 'i-download'), 'Backup (JSON)'))
+      ),
+      h(
+        'section',
+        { class: 'karte tab-karte gefahr-zone', 'aria-labelledby': 'restore-titel' },
+        h('h2', { id: 'restore-titel' }, 'Backup wiederherstellen'),
+        h('p', { class: 'lesen' }, 'Ersetzt alle Daten von Kryptos durch den Inhalt der Datei.'),
+        h('p', { class: 'knopf-reihe' }, h('label', { for: 'restore-datei' }, 'Sicherungsdatei'), datei, knopf)
+      )
     );
   }
 
@@ -1050,16 +1308,18 @@ const KRLehrer = (() => {
 
   async function adminRoute(teile, r) {
     if (!istAdmin()) {
-      return seite('Verwaltung', h('div', { class: 'wrap lehrer-seite' }, h('h1', null, 'Verwaltung'), h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, 'Nur für den Admin.')), h('p', null, h('a', { class: 'knopf knopf-zweit', href: '#/' }, 'Zur Kursliste'))));
+      return seite('Verwaltung', h('div', { class: 'wrap lehrer-seite' }, h('h1', null, 'Verwaltung (Admin)'), h('div', { class: 'rueckmeldung info', role: 'status' }, h('p', null, 'Nur für den Admin.')), h('p', null, h('a', { class: 'knopf knopf-zweit', href: '#/' }, 'Zur Kursliste'))));
     }
-    const key = ADMIN_TABS.some(([k]) => k === teile[0]) ? teile[0] : 'inhalte';
+    if (ADMIN_ALT[teile[0]] && history && history.replaceState) history.replaceState(null, '', `#/admin/${ADMIN_ALT[teile[0]]}`);
+    const gewuenscht = ADMIN_ALT[teile[0]] || teile[0];
+    const key = ADMIN_TABS.some(([k]) => k === gewuenscht) ? gewuenscht : 'lehrkraefte';
     const box = h('div', { class: 'tab-inhalt admin-inhalt', id: 'admin-inhalt', role: 'tabpanel', 'aria-labelledby': `admin-tab-${key}` }, h('p', { class: 'laden', role: 'status' }, 'Wird geladen …'));
     const knoepfe = ADMIN_TABS.map(([k, label], i) => {
-      const b = h('button', { type: 'button', role: 'tab', id: `admin-tab-${k}`, 'aria-selected': k === key ? 'true' : 'false', tabindex: k === key ? '0' : '-1' }, label);
+      const b = h('button', { type: 'button', role: 'tab', id: `admin-tab-${k}`, 'aria-selected': k === key ? 'true' : 'false', 'aria-controls': 'admin-inhalt', tabindex: k === key ? '0' : '-1' }, label);
       b.addEventListener('click', () => (location.hash = `#/admin/${k}`));
       b.addEventListener('keydown', (e) => {
         const n = ADMIN_TABS.length;
-        const j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : null;
+        const j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : null;
         if (j === null) return;
         e.preventDefault();
         tabFokus = true;
@@ -1074,15 +1334,15 @@ const KRLehrer = (() => {
       h(
         'div',
         { class: 'wrap lehrer-seite' },
-        h('h1', null, 'Verwaltung'),
-        h('p', { class: 'text-2 lesen' }, 'Konten, Kurse und Freischaltungen verwalten Sie im Portal InfoLabs. Hier: Inhalte, Sicherung, Warm-up-Karten und Wartung von Kryptos.'),
+        h('h1', null, 'Verwaltung (Admin)'),
+        h('p', { class: 'text-2 lesen' }, 'Konten, Kurse und Freischaltungen verwalten Sie im Portal InfoLabs. Hier: Überblick über die Lehrkräfte, Inhalte, Warm-up-Import, Backup und Wartung von Kryptos.'),
         h('div', { class: 'tabs', role: 'tablist', 'aria-label': 'Verwaltung' }, knoepfe),
         box
       )
     );
     if (vonTab) haupt.querySelector(`#admin-tab-${key}`).focus();
     try {
-      await { inhalte: adminInhalte, backup: adminBackup, warmup: adminWarmup, wartung: adminWartung }[key](box);
+      await { lehrkraefte: adminLehrkraefte, inhalte: adminInhalte, kata: adminWarmup, backup: adminBackup, wartung: adminWartung }[key](box);
     } catch (e) {
       if (r.gueltig() && !(e && e.status === 401)) KR.fehler(box, e);
     }

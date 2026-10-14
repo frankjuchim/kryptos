@@ -176,7 +176,7 @@ const KRGast = (() => {
   /* ---------- Lehrkraft: Demo-Kurs (nur lesend) ---------- */
 
   const TABS = [
-    ['schueler', 'Schülerinnen und Schüler'],
+    ['schueler', 'Schüler'],
     ['auswertung', 'Auswertung'],
     ['einstellungen', 'Einstellungen'],
     ['materialien', 'Materialien'],

@@ -181,3 +181,41 @@ td.stufe-4::before, .legende-feld.stufe-4::before { content: "✓ "; }
 .beurteilungen-liste { margin: 0; display: grid; gap: var(--a-3); }
 .beurteilungen-liste dt { font-weight: 700; }
 .beurteilungen-liste dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ---------- Aufbau wie in den anderen Labs (Kursliste, Kurskopf, Beitritt & QR, Filter, Tabellen) ---------- */
+.kurs-tabelle td .knopf, .vorschau-tabelle a, .material-tabelle .knopf { white-space: nowrap; }
+.kurs-kennung { white-space: nowrap; }
+.kurs-kopf .kurs-urkunden { margin-left: auto; }
+.tab-karte { display: grid; gap: var(--a-3); min-width: 0; }
+.tab-karte > h2, .tab-karte > p { margin: 0; }
+.teil-kopf { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--a-2) var(--a-4); }
+.teil-kopf h2 { margin: 0; }
+.filter-feld { display: grid; gap: 2px; }
+.filter-feld select { min-height: var(--ziel); width: min(100%, 18rem); font: inherit; font-family: var(--f-text); }
+.filter-feld > span { font-family: var(--f-text); font-weight: 400; }
+.beitritt-raster { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--a-4); align-items: start; }
+.beitritt-qr { margin: 0; display: grid; justify-items: center; gap: var(--a-1); padding: var(--a-2); border: 1px solid var(--linie); border-radius: 10px; background: var(--karte); }
+.beitritt-qr img.qr { width: 180px; height: 180px; border-radius: 6px; }
+.beitritt-qr figcaption { text-align: center; max-width: 180px; }
+.beitritt-text { display: grid; gap: var(--a-2); min-width: 0; }
+.beitritt-text p { margin: 0; }
+.gefahr-zone { border-left: 6px solid var(--fehler); }
+.vorschau-tabelle, .material-tabelle, .lehrkraefte-tabelle { width: 100%; }
+.vorschau-tabelle .zahl, .lehrkraefte-tabelle .zahl { text-align: right; font-variant-numeric: tabular-nums; }
+.vorschau-tabelle th[scope="row"] a { display: inline-flex; align-items: center; min-height: var(--ziel); font-weight: 700; }
+.vorschau-tabelle td { vertical-align: top; }
+.material-tabelle th[scope="row"] { font-weight: 400; }
+.material-tabelle td.ds { white-space: nowrap; }
+.sprungleiste { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+@media (max-width: 600px) {
+  .beitritt-raster { grid-template-columns: minmax(0, 1fr); }
+  .beitritt-qr { justify-self: start; }
+  .kurs-kopf .kurs-urkunden { margin-left: 0; }
+  .material-tabelle th.ds, .material-tabelle td.ds { display: none; }
+  /* Aufgabentabelle der Vorschau als Karten: Titel oben, Werte darunter */
+  .vorschau-tabelle thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .vorschau-tabelle tr { display: flex; flex-wrap: wrap; gap: var(--a-1) var(--a-3); padding-block: var(--a-2); border-bottom: 1px solid var(--linie); }
+  .vorschau-tabelle th, .vorschau-tabelle td { display: block; border: 0; padding: 0; }
+  .vorschau-tabelle th[scope="row"] { flex: 1 0 100%; }
+  .vorschau-tabelle td.zahl::after { content: " P."; }
+}
