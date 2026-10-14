@@ -1231,8 +1231,8 @@ Bereits geknackte Chiffren dürfen weiter angegriffen werden (Lerneffekt, zählt
 
 | Abzeichen | Regel | Vergabe |
 |---|---|---|
-| `arena_knacker` „Arena-Knacker“ | Mitglied eines Teams mit ≥ 1 erfolgreichem Angriff auf eine fremde Chiffre (W3 „einmal je Konto“ = einmal je Teilnahme, Abzeichen sind kursbezogen – Plan M7 E100) | sofort beim Erfolg an alle aktuellen Teammitglieder |
-| `unknackbar` „Unknackbar“ | eigene Chiffre am Ende der Angriffsphase ungeknackt (SPEC W3 §9.4 gilt, Plan M7 E100; die strengere Bedingung „mindestens 3 Angriffsversuche von mindestens 2 anderen Teams“ ist offene Entscheidung 3 des Plans M7) | beim Übergang `angriff → beurteilung` an alle Teammitglieder |
+| `arena_knacker` „Arena-Knacker“ | Mitglied eines Teams mit ≥ 1 erfolgreichem Angriff auf eine fremde Chiffre (W3 „einmal je Konto“ = einmal je Teilnahme, Abzeichen sind kursbezogen – Plan M7 E100) | sofort beim Erfolg an alle Mitglieder des Teams **zu diesem Zeitpunkt**; spätere Neuberechnungen (`pruefeAbzeichen` aus anderem Anlass) zählen nur eigene erfolgreiche Versuche (`arena_versuche.schueler_id`) – wer später ins Team wechselt, bekommt es nicht (Review M7 K4) |
+| `unknackbar` „Unknackbar“ | eigene Chiffre am Ende der Angriffsphase ungeknackt (SPEC W3 §9.4 gilt, Plan M7 E100; die strengere Bedingung „mindestens 3 Angriffsversuche von mindestens 2 anderen Teams“ ist offene Entscheidung 3 des Plans M7) | beim Übergang `angriff → beurteilung` an die Mitglieder der Teams mit ungeknackter Chiffre **zu diesem Zeitpunkt** (nicht an später Wechselnde; ohne gespeicherte Bedingung). `team_mitglieder` hat keine Zeitangabe – der Arena-Dienst vergibt beide Abzeichen im Moment des Ereignisses über `abzeichen.mitVergabe(key, ids, fn)` (Review M7 K4). Das automatische Schließen nach 30 Tagen (§7.4) vergibt nichts |
 
 Beurteilung: `PUT /api/arena/:id/beurteilung { text }` (Phase `beurteilung`, ≤ 4000 Zeichen, Teammitglieder). Die
 Lehrkraft sieht alle Beurteilungen gesammelt (`GET /api/lehrer/arena/:id`), Schüler nur die eigene. Freitexte werden nie

@@ -42,24 +42,34 @@ function zusatzAbzeichen() {
 
 const SQL = {
   veteran: 'SELECT COUNT(DISTINCT typ) AS n FROM funk_teilnahmen WHERE schueler_id = ?',
-  // erfolgreicher Angriff des eigenen Teams auf eine fremde Chiffre
-  knacker: `SELECT 1 FROM team_mitglieder m
-              JOIN arena_versuche v ON v.team_id = m.team_id AND v.erfolg = 1
+  // eigener erfolgreicher Angriff auf eine fremde Chiffre (wer den Versuch abgeschickt hat, arena_versuche.schueler_id)
+  knacker: `SELECT 1 FROM arena_versuche v
               JOIN arena_chiffren c ON c.id = v.chiffre_id AND c.team_id <> v.team_id
-             WHERE m.schueler_id = ? LIMIT 1`,
-  // Chiffre des eigenen Teams nach dem Ende der Angriffsphase ungeknackt (E100)
-  unknackbar: `SELECT 1 FROM team_mitglieder m
-                 JOIN arena_chiffren c ON c.team_id = m.team_id AND c.geknackt_at IS NULL
-                 JOIN arena a ON a.id = c.arena_id AND a.status IN ('beurteilung', 'geschlossen')
-                WHERE m.schueler_id = ? LIMIT 1`
+             WHERE v.schueler_id = ? AND v.erfolg = 1 LIMIT 1`
 };
+
+/* Review M7 K4: Team-Abzeichen der Arena gelten für die Mitglieder ZUM ZEITPUNKT des Ereignisses – nicht für alle, die
+   später ins Team wechseln. team_mitglieder hat keine Zeitangabe; deshalb vergibt der Arena-Dienst im Moment des
+   Ereignisses (Erfolg bzw. Ende der Angriffsphase) über `mitVergabe(key, ids, fn)`: während fn läuft, gilt die Bedingung
+   für genau diese Teilnahmen (synchron, kein Zustand danach). Spätere Neuberechnungen kennen nur den eigenen Versuch. */
+let vergabe = null;
+function mitVergabe(key, ids, fn) {
+  const vorher = vergabe;
+  vergabe = { key, ids: new Set(ids) };
+  try {
+    return fn();
+  } finally {
+    vergabe = vorher;
+  }
+}
+const inVergabe = (key, sid) => !!vergabe && vergabe.key === key && vergabe.ids.has(sid);
 
 /** Hook zusatzBedingungen(sid, db) → Set der erfüllten Zusatz-Abzeichen */
 function zusatzBedingungen(sid, db) {
   const erfuellt = new Set();
   if (db.prepare(SQL.veteran).get(sid).n >= VETERAN_TYPEN) erfuellt.add('funkraum_veteran');
-  if (db.prepare(SQL.knacker).get(sid)) erfuellt.add('arena_knacker');
-  if (db.prepare(SQL.unknackbar).get(sid)) erfuellt.add('unknackbar');
+  if (inVergabe('arena_knacker', sid) || db.prepare(SQL.knacker).get(sid)) erfuellt.add('arena_knacker');
+  if (inVergabe('unknackbar', sid)) erfuellt.add('unknackbar');
   return erfuellt;
 }
 
@@ -84,4 +94,4 @@ function abzeichenAnzeige(d) {
   return icon ? { ...d, icon } : d;
 }
 
-module.exports = { ARTEFAKT, ARTEFAKT_NAME, ICONS, ZUSATZ, VETERAN_TYPEN, zusatzAbzeichen, zusatzBedingungen, abzeichenAnzeige, iconFuer };
+module.exports = { ARTEFAKT, ARTEFAKT_NAME, ICONS, ZUSATZ, VETERAN_TYPEN, zusatzAbzeichen, zusatzBedingungen, mitVergabe, abzeichenAnzeige, iconFuer };

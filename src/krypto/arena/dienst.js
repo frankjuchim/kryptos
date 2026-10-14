@@ -10,6 +10,7 @@ const S = require('../../security');
 const Krypto = require('../../../public/static/js/shared/krypto');
 const T = require('../funkraum/text');
 const { walLeeren } = require('../../verbund/loeschen');
+const Abz = require('../abzeichen');
 
 const PHASEN = Object.freeze(['werkstatt', 'angriff', 'beurteilung', 'geschlossen']);
 const PHASE_NAME = Object.freeze({ werkstatt: 'Werkstatt', angriff: 'Angriff', beurteilung: 'Beurteilung', geschlossen: 'geschlossen' });
@@ -120,10 +121,14 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
 
   /** Haken beim Übergang angriff → beurteilung (Abzeichen „Unknackbar“, Task 147): f(arenaZeile) in der Transaktion */
   const beimPhasenwechsel = [];
-  // „Unknackbar“ (E100): beim Ende der Angriffsphase alle aktiven Mitglieder der Teams mit Chiffre prüfen
+  // „Unknackbar“ (E100): beim Ende der Angriffsphase an die Mitglieder der Teams mit ungeknackter Chiffre – genau zu diesem
+  // Zeitpunkt (Review M7 K4, abzeichen.mitVergabe)
   beimPhasenwechsel.push((arenaZeile) => {
-    for (const c of db.prepare('SELECT team_id FROM arena_chiffren WHERE arena_id = ?').all(arenaZeile.id)) {
-      for (const m of teams.mitglieder(c.team_id)) svc.stand.pruefeAbzeichen({ id: m.id });
+    for (const c of db.prepare('SELECT team_id FROM arena_chiffren WHERE arena_id = ? AND geknackt_at IS NULL').all(arenaZeile.id)) {
+      const mitglieder = teams.mitglieder(c.team_id);
+      Abz.mitVergabe('unknackbar', mitglieder.map((m) => m.id), () => {
+        for (const m of mitglieder) svc.stand.pruefeAbzeichen({ id: m.id });
+      });
     }
   });
 
@@ -439,7 +444,13 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
       return !!sqlV.chiffre.get(c.id, a.id).geknackt_at;
     })();
     // Abzeichen „Arena-Knacker“ (Task 147) an alle aktuellen Mitglieder des angreifenden Teams
-    if (erfolg) for (const m of teams.mitglieder(team.id)) svc.stand.pruefeAbzeichen({ id: m.id });
+    // „Arena-Knacker“ an die Mitglieder beim Erfolg (Review M7 K4)
+    if (erfolg) {
+      const mitglieder = teams.mitglieder(team.id);
+      Abz.mitVergabe('arena_knacker', mitglieder.map((m) => m.id), () => {
+        for (const m of mitglieder) svc.stand.pruefeAbzeichen({ id: m.id });
+      });
+    }
     return { erfolg, geknackt, rest: { chiffre: Math.ceil(GRENZEN.angriffChiffreMs / 1000), team: Math.max(0, GRENZEN.angriffTeam.max - vorher - 1) } };
   }
 

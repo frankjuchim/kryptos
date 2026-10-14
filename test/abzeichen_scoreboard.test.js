@@ -205,6 +205,28 @@ test('Unknackbar auch, wenn die Frist die Angriffsphase beendet (E102)', async (
   assert.ok((await keys(f.teams[1].c)).includes('unknackbar'));
 });
 
+test('Review M7 K4: Arena-Abzeichen nach Mitgliedschaft zum Zeitpunkt – später ins Team Verschobene bekommen sie nicht', async () => {
+  const f = await F.arenaMitChiffren(3, { phase: 'angriff', proTeam: 2 });
+  await f.angriff(0, 1, { klartext: F.TEXT2 }).expect(200);
+  const [nachzuegler, bleibt] = f.teams[2].s; // Team 3 hat nichts geknackt
+  const stand = f.app.locals.services.stand;
+  const neueTeams = (mitglieder) => f.lk.put(`/api/lehrer/kurse/${f.kurs.id}/teams`).send({ teams: f.teams.map((t, i) => ({ nr: t.nr, name: t.name, mitglieder: mitglieder(i, t) })) }).expect(200);
+  // Nachzügler wechselt nach dem Erfolg ins Knacker-Team: keine Arena-Knacker-Vergabe bei späteren Prüfungen
+  await neueTeams((i, t) => (i === 0 ? [...t.s.map((c) => c.id), nachzuegler.id] : i === 2 ? [bleibt.id] : t.s.map((c) => c.id)));
+  stand.pruefeAbzeichen({ id: nachzuegler.id });
+  assert.ok(!(await keys(nachzuegler)).includes('arena_knacker'), 'nicht beim Erfolg im Team');
+  for (const c of f.teams[0].s) assert.ok((await keys(c)).includes('arena_knacker'), 'Mitglieder beim Erfolg behalten es');
+  // Ende der Angriffsphase: Team 1 ungeknackt – der Nachzügler ist dann Mitglied und bekommt Unknackbar
+  await f.phase('beurteilung');
+  assert.ok((await keys(nachzuegler)).includes('unknackbar'), 'Mitglied beim Phasenende');
+  // wer erst danach aus dem geknackten Team 2 in ein ungeknacktes Team wechselt, bekommt es nicht
+  const [geknackt1, wechsler] = f.teams[1].s;
+  await neueTeams((i, t) => (i === 0 ? [...t.s.map((c) => c.id), nachzuegler.id, wechsler.id] : i === 1 ? [geknackt1.id] : [bleibt.id]));
+  stand.pruefeAbzeichen({ id: wechsler.id });
+  assert.ok(!(await keys(wechsler)).includes('unknackbar'), 'nicht Mitglied beim Phasenende');
+  assert.ok(!(await keys(wechsler)).includes('arena_knacker'));
+});
+
 test('Artefakte und Server-Icons (E112): Boss-Abzeichen heißt „Artefakt: …“, Icons sind Sprite-Kennungen', async () => {
   const { s } = await H.szenario();
   const liste = (await s.get('/api/profil').expect(200)).body.abzeichen;
