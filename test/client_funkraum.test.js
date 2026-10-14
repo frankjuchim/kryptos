@@ -69,6 +69,34 @@ test('KRPoll: kein Abruf bei hidden, sofort beim Zurückkehren; mischen führt N
   assert.ok(k.timer.some((t) => t.ms === 15000), 'nach auswertung alle 15 s');
 });
 
+test('KRPoll: voll: true ersetzt den Stand statt zu mischen (Review M7 W2/K3); 429 wartet Retry-After ab (K6)', async () => {
+  let n = 0;
+  const k = D.lade(['common.js', 'krypto/funkpoll.js'], {
+    zeitraffer: 1000,
+    fetch: {
+      'GET /api/funk/7/stand': () => {
+        n++;
+        if (n === 1) return { status: 200, headers: { etag: '"7-2-t1-alice"' }, body: { id: 7, version: 2, voll: true, status: 'laeuft', nachrichten: [{ id: 1, inhalt: 'UMSCHLAG' }, { id: 2, inhalt: 'UMSCHLAG' }], ereignisse: [{ id: 1, code: 'gesendet' }] } };
+        if (n === 2) return { status: 429, headers: { 'retry-after': '7' }, body: { error: 'Zu viele Anfragen. Bitte warte kurz.' } };
+        if (n === 3) return { status: 200, headers: { etag: '"7-5-t1-alice"' }, body: { id: 7, version: 5, voll: true, status: 'laeuft', nachrichten: [{ id: 2, inhalt: 'S41' }], ereignisse: [{ id: 3, code: 'ersetzt' }] } };
+        if (n === 4) return { status: 200, headers: { etag: '"7-6-t1-alice"' }, body: { id: 7, version: 6, voll: false, status: 'laeuft', nachrichten: [{ id: 3, inhalt: 'S23' }], ereignisse: [] } };
+        return { status: 404, body: { error: 'weg' } };
+      }
+    }
+  });
+  const staende = [];
+  const zustaende = [];
+  k.wert('KRPoll').starte({ url: (s) => `/api/funk/7/stand?seit=${s}`, intervall: 2000, mischen: true, beiDaten: (d) => staende.push(k.roh(d)), beiZustand: (z) => zustaende.push(z) });
+  await k.ruhe();
+  assert.equal(n, 5);
+  assert.deepEqual(staende[1].nachrichten.map((x) => [x.id, x.inhalt]), [[2, 'S41']], 'Vollstand ersetzt: Nachricht 1 ist weg (nicht mehr sichtbar)');
+  assert.deepEqual(staende[1].ereignisse.map((e) => e.id), [3]);
+  assert.deepEqual(staende[2].nachrichten.map((x) => [x.id, x.inhalt]), [[2, 'S41'], [3, 'S23']], 'Delta wird gemischt');
+  // 429: kein Rückfall 2 → 4 s, sondern Retry-After (7 s); kein „gestört“
+  assert.deepEqual(k.timer.map((t) => t.ms).slice(0, 3), [2000, 7000, 2000]);
+  assert.ok(!zustaende.includes('gestoert'));
+});
+
 test('Funkraum-Seite: Rolle, Rollenkarte, Netz mit Tabelle, Senden mit sichtbarer Umlaut-Ersetzung, 429-Meldung', async () => {
   const gesendet = [];
   const k = D.lade(SEITE, {

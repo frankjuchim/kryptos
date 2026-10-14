@@ -1507,20 +1507,27 @@ Nummer); die Lehrkraft kann vor dem Start tauschen. Schüler ohne Team sehen „
 
 ### 12.4 Polling-Protokoll
 
-- Client: `GET /api/funk/:id/stand?seit=<v>` alle **2 s** mit `If-None-Match: "<id>-<v>"`.
-- Server: unverändert → **304** (kein Körper). Sonst **200** mit `ETag: "<id>-<version>"` und
+- Client: `GET /api/funk/:id/stand?seit=<v>` alle **2 s** mit `If-None-Match` = letzter ETag.
+- ETag: Schüler `"<id>-<version>-t<teamId>-<rolle|ohne>"`, Regie `"<id>-<version>"`, Beamer `"<id>-<version>-beamer"` –
+  die Sicht gehört zum ETag, ein Team- oder Rollenwechsel liefert nie 304 (Review M7 K3).
+- Server: unverändert → **304** (kein Körper). Sonst **200** mit dem ETag und
   `{ version, status, phase, ich: { team, rolle, partner }, teams: [{ id, name, rolle?, oeffentlich? }],
      nachrichten: [Nachrichten mit version > seit, für mich sichtbar], ereignisse: [… version > seit],
      anzeigen: { … szenario-spezifisch, z. B. Fortschritt Wettknacken } }`.
-- **Vollstand**, wenn `seit` fehlt, nicht ganzzahlig, ≤ 0 oder **größer als die aktuelle Version** ist (Client einer
-  gelöschten/neuen Instanz); **304**, wenn `If-None-Match` = aktueller ETag **oder** `seit` = Version (Plan M7 E110 –
+- **Vollstand** (`voll: true`, der Client ersetzt seinen Stand statt zu mischen), wenn `seit` fehlt, nicht ganzzahlig,
+  ≤ 0 oder **größer als die aktuelle Version** ist (Client einer gelöschten/neuen Instanz), wenn der mitgeschickte ETag
+  eine **andere Sicht** hatte (Team/Rolle, K3) oder wenn seit `seit` ein `phase`- oder `status`-Ereignis liegt – mit der
+  Phase ändert sich die Sichtbarkeit älterer Inhalte (Mallory-Umschläge und -Ereignisse, Sonderkarten am Beamer), die ein
+  Delta „version > seit“ nicht enthielte (Review M7 W2). Sonst `voll: false` (Delta). **304**, wenn `If-None-Match` =
+  aktueller ETag, ohne ETag wenn `seit` = Version (Plan M7 E110 –
   Nachrichten werden vor dem Beenden nie gelöscht, eine „Lücke“ im engeren Sinn gibt es nicht). Jede Änderung an einer
   Nachricht (ausblenden, angekommen, geknackt, weitergeleitet) setzt `funk_nachrichten.version` in derselben Transaktion
   auf die neue Szenario-Version, damit Clients mit `seit` sie erhalten (Plan M7 E109). Nachrichten-Objekt:
   `{ id, von: teamId, an: teamId|null, inhalt, art, lesbar: bool, angekommen, geknackt: bool, zeit }` (Klartext-Hashes
   nie).
 - Fehlertoleranz (Design O4): bei Netzfehlern Wartezeit 2 → 4 → 8 → 15 s, dann weiter alle 15 s; Anzeige „Verbindung
-  unterbrochen – wird wiederhergestellt“; bei `document.hidden` Polling aussetzen; nach Rückkehr sofort `seit=<v>`.
+  unterbrochen – wird wiederhergestellt“; bei **429** wartet `KRPoll` die Sekunden aus `Retry-After` (mindestens das
+  Intervall, höchstens 300 s) ohne Störungsanzeige (Review M7 K6); bei `document.hidden` Polling aussetzen; nach Rückkehr sofort `seit=<v>`.
 - Rate-Limit Stand-Abfragen: 60/min je Teilnahme (2 s ⇒ 30/min); Beamer 120/min.
 
 ### 12.5 Lehrkraft-Moderation

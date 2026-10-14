@@ -4,7 +4,9 @@
    Pause bei document.hidden, sofortiger Abruf beim Zurückkehren. Nach status 'auswertung' nur noch alle 15 s.
    401 mit anmelden → SSO-Start wie AQ.api; 403/404 → beiZustand('ende', fehler) und Stopp.
    mischen: true → beiDaten bekommt den zusammengeführten Stand (Nachrichten und Ereignisse nach id; die Antwort auf
-   ?seit=v enthält nur Neues und Geändertes, E109). */
+   ?seit=v enthält nur Neues und Geändertes, E109). Antworten mit `voll: true` (Phasen-/Statuswechsel, anderes Team oder
+   andere Rolle – Review M7 W2/K3) ersetzen den Stand, sonst blieben z. B. verdeckte Mallory-Umschläge verdeckt.
+   429: nächster Abruf nach `Retry-After` Sekunden (mindestens das Intervall), ohne Rückfall-Anzeige (Review M7 K6). */
 'use strict';
 
 const KRPoll = (() => {
@@ -13,7 +15,7 @@ const KRPoll = (() => {
 
   /** Stand zusammenführen: Nachrichten (nach id ersetzen) und Ereignisse (nach id ergänzen), sonst das Neue */
   function mische(alt, neu) {
-    if (!alt || !neu || alt.id !== neu.id) return neu;
+    if (!alt || !neu || alt.id !== neu.id || neu.voll === true) return neu;
     const nachrichten = new Map((alt.nachrichten || []).map((n) => [n.id, n]));
     for (const n of neu.nachrichten || []) nachrichten.set(n.id, n);
     const ereignisse = new Map((alt.ereignisse || []).map((e) => [e.id, e]));
@@ -43,6 +45,7 @@ const KRPoll = (() => {
     let fehlerZahl = 0;
     let zustand = 'ok';
     let auswertung = false;
+    let warteBis = 0; // ms aus Retry-After (429), gilt für den nächsten Abruf
 
     const melde = (z, fehler) => {
       if (z === zustand && z !== 'ende') return;
@@ -58,6 +61,11 @@ const KRPoll = (() => {
     }
 
     function naechsteWartezeit() {
+      if (warteBis > 0) {
+        const ms = warteBis;
+        warteBis = 0;
+        return Math.max(ms, intervall);
+      }
       if (fehlerZahl > 0) return RUECKFALL[Math.min(fehlerZahl - 1, RUECKFALL.length - 1)];
       return auswertung ? Math.max(intervall, NACH_AUSWERTUNG) : intervall;
     }
@@ -100,8 +108,14 @@ const KRPoll = (() => {
         melde('ende', e);
         return;
       }
+      if (res.status === 429) {
+        // Grenze erreicht: so lange warten, wie der Server sagt – kein Rückfall, keine Störungsanzeige
+        const s = Number((res.headers && res.headers.get('retry-after')) || 0);
+        warteBis = (Number.isFinite(s) && s > 0 ? Math.min(s, 300) : 15) * 1000;
+        return;
+      }
       if (!res.ok || !daten) {
-        // 5xx, 429 oder Antwort ohne JSON: wie ein Netzfehler (Rückfall)
+        // 5xx oder Antwort ohne JSON: wie ein Netzfehler (Rückfall)
         fehlerZahl++;
         melde('gestoert');
         return;

@@ -19,7 +19,7 @@ test('200 mit ETag, 304 bei If-None-Match und bei seit = Version; Neues nur mit 
   const sz = await F.starte(f, 'botenlauf');
   const [alice, bob, eve] = f.teams;
   const r1 = await F.stand(alice.c, sz.id, 0).expect(200);
-  assert.match(r1.headers.etag, new RegExp(`^"${sz.id}-\\d+"$`));
+  assert.match(r1.headers.etag, new RegExp(`^"${sz.id}-\\d+-t${alice.id}-alice"$`));
   await alice.c.get(`/api/funk/${sz.id}/stand?seit=0`).set('If-None-Match', r1.headers.etag).expect(304);
   await F.stand(alice.c, sz.id, r1.body.version).expect(304);
   einfuegen(f, sz.id, alice.id, bob.id, 'OHSAL AKLUW HZZ');
@@ -134,4 +134,70 @@ test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, 
   const g = await F.kursMitTeams(2, { extra: { plattformUrl: 'http://kryptos.test' } });
   const r2 = await g.lk.get('/api/lehrer/qr.svg?ziel=funkraum').expect(200);
   assert.equal(r2.text || r2.body.toString(), erwartet, 'QR-Code auf PLATTFORM_URL + /funkraum');
+});
+
+/* ---------- Review M7 W2/K3: Vollstand bei Phasenwechsel und bei anderem Team/anderer Rolle ---------- */
+
+test('W2: Mallory-Beamer – Delta über einen Phasenwechsel ist ein Vollstand (voll: true) mit aufgedeckten Umschlägen und Ereignissen', async () => {
+  const f = await F.kursMitTeams(3);
+  const [alice, bob, mallory] = f.teams;
+  const sz = await F.starte(f, 'mallory');
+  const post = (t, p, b) => t.c.post(`/api/funk/${sz.id}/${p}`).send(b);
+  await post(bob, 'oeffentlich', {}).expect(200);
+  const sk = (await F.stand(mallory.c, sz.id)).body.ich.station[0];
+  await post(mallory, 'mallory', { aktion: 'ersetzen', nachricht: sk.id, etikett: 'S41' }).expect(200);
+  await post(alice, 'nachrichten', { etikett: 'S41' }).expect(200);
+  const b1 = (await F.regie(f, sz.id, 0, 'beamer')).body;
+  assert.equal(b1.voll, true, 'seit = 0 ist ein Vollstand');
+  assert.deepEqual(b1.nachrichten.map((n) => n.inhalt), ['SCHLUESSEL', 'SCHLUESSEL', 'UMSCHLAG']);
+  // ohne Phasenwechsel bleibt es ein Delta
+  f.uhr.vor(10_000);
+  await post(bob, 'oeffentlich', {}).expect(200);
+  const d1 = (await F.regie(f, sz.id, b1.version, 'beamer')).body;
+  assert.equal(d1.voll, false);
+  assert.deepEqual(d1.nachrichten.map((n) => n.inhalt), ['SCHLUESSEL']);
+  await F.aktion(f, sz.id, 'phase').expect(200);
+  await F.aktion(f, sz.id, 'phase').expect(200);
+  const d2 = await F.regie(f, sz.id, d1.version, 'beamer').expect(200);
+  assert.equal(d2.body.voll, true, 'Phasenwechsel seit „seit“ → Vollstand');
+  assert.deepEqual(d2.body.nachrichten.map((n) => n.inhalt), ['S23', 'S41', 'LIEFERE 5 KISTEN AN TOR 3', 'S23']);
+  assert.ok(d2.body.ereignisse.some((e) => e.code === 'ersetzt'), 'Mallorys Eingriff erscheint im Ticker');
+  // danach wieder Delta
+  const d3 = await F.regie(f, sz.id, d2.body.version, 'beamer').expect(304);
+  assert.equal(d3.text, '');
+});
+
+test('W2: Schüler-Stand – Pause/Fortsetzen und Phase liefern Vollstand, Nachrichten allein nicht', async () => {
+  const f = await F.kursMitTeams(3);
+  const [alice, bob] = f.teams;
+  const sz = await F.starte(f, 'botenlauf');
+  const v0 = (await F.stand(bob.c, sz.id)).body.version;
+  einfuegen(f, sz.id, alice.id, bob.id, 'KHOOR');
+  const d = (await F.stand(bob.c, sz.id, v0)).body;
+  assert.equal(d.voll, false);
+  await F.aktion(f, sz.id, 'pausieren').expect(200);
+  const p = (await F.stand(bob.c, sz.id, d.version)).body;
+  assert.equal(p.voll, true);
+  assert.deepEqual(p.nachrichten.map((n) => n.inhalt), ['KHOOR']);
+});
+
+test('K3: ETag gehört zu Team und Rolle – Teamwechsel mit altem ETag und seit = Version → 200 Vollstand der neuen Sicht', async () => {
+  const f = await F.kursMitTeams(3);
+  const [alice, bob, eve] = f.teams;
+  const sz = await F.starte(f, 'botenlauf');
+  await alice.c.post(`/api/funk/${sz.id}/nachrichten`).send({ text: 'KHOOR', klartext: 'hallo' }).expect(200);
+  const sBob = await F.stand(bob.c, sz.id);
+  const sEve = await F.stand(eve.c, sz.id);
+  assert.notEqual(sBob.headers.etag, sEve.headers.etag, 'verschiedene Teams → verschiedene ETags');
+  assert.equal(sEve.body.nachrichten.length, 1);
+  // Eves Mitglied wechselt ins Bob-Team: Team Quadrat behält die Eve-Rolle ohne Mitglied
+  await f.lk.put(`/api/lehrer/kurse/${f.kurs.id}/teams`).send({ teams: [
+    { nr: 1, name: alice.name, mitglieder: [alice.c.id] },
+    { nr: 2, name: bob.name, mitglieder: [bob.c.id, eve.c.id] },
+    { nr: 3, name: eve.name, mitglieder: [] }] }).expect(200);
+  const r = await eve.c.get(`/api/funk/${sz.id}/stand?seit=${sEve.body.version}`).set('If-None-Match', sEve.headers.etag).expect(200);
+  assert.equal(r.body.voll, true);
+  assert.equal(r.body.ich.rolle, 'bob');
+  assert.notEqual(r.headers.etag, sEve.headers.etag);
+  await eve.c.get(`/api/funk/${sz.id}/stand?seit=${r.body.version}`).set('If-None-Match', r.headers.etag).expect(304);
 });

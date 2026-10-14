@@ -311,10 +311,19 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
   const sqlStand = {
     nachrichten: db.prepare('SELECT * FROM funk_nachrichten WHERE szenario_id = ? AND version > ? ORDER BY id'),
     ereignisse: db.prepare('SELECT id, code, daten, version, zeit FROM funk_ereignisse WHERE szenario_id = ? AND version > ? ORDER BY id'),
-    laufenderBoss: db.prepare('SELECT 1 FROM boss_versuche WHERE schueler_id = ? AND ende_at IS NULL AND deadline_at > ? LIMIT 1')
+    laufenderBoss: db.prepare('SELECT 1 FROM boss_versuche WHERE schueler_id = ? AND ende_at IS NULL AND deadline_at > ? LIMIT 1'),
+    wechsel: db.prepare("SELECT 1 FROM funk_ereignisse WHERE szenario_id = ? AND version > ? AND code IN ('phase', 'status') LIMIT 1")
   };
 
-  const etagVon = (sz, ansicht) => `"${sz.id}-${sz.version}${ansicht === 'beamer' ? '-beamer' : ''}"`;
+  /** Sicht-Teil des ETags (Review M7 K3): Beamer, Regie oder Team + Rolle – ein Team- oder Rollenwechsel ändert den ETag */
+  const sichtVon = (ansicht, betrachter) =>
+    ansicht === 'beamer' ? '-beamer' : ansicht === 'regie' || !betrachter ? '' : `-t${betrachter.teamId}-${betrachter.rolle || 'ohne'}`;
+  const etagVon = (sz, ansicht, betrachter) => `"${sz.id}-${sz.version}${sichtVon(ansicht, betrachter)}"`;
+  /** Sicht-Teil eines (alten) ETags `"<id>-<version><sicht>"` oder null */
+  function sichtAusEtag(etag) {
+    const m = typeof etag === 'string' ? /^"\d+-\d+(.*)"$/.exec(etag) : null;
+    return m ? m[1] : null;
+  }
 
   /** seit nach E110: fehlt, nicht ganzzahlig, ≤ 0 oder > Version → 0 (Vollstand) */
   function seitVon(seit, version) {
@@ -322,10 +331,23 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     return n > 0 && n <= version ? n : 0;
   }
 
-  /** 304 nach E110: If-None-Match = aktueller ETag oder seit = Version */
-  function unveraendert(sz, { seit, etag }, ansicht) {
-    if (typeof etag === 'string' && etag === etagVon(sz, ansicht)) return true;
+  /** 304 nach E110: If-None-Match = aktueller ETag; ohne ETag: seit = Version. Ein mitgeschickter ETag einer anderen
+      Sicht (Team-/Rollenwechsel, K3) ist nie „unverändert“ – auch wenn seit = Version. */
+  function unveraendert(sz, { seit, etag }, ansicht, betrachter) {
+    const aktuell = etagVon(sz, ansicht, betrachter);
+    if (typeof etag === 'string' && etag !== '') return etag === aktuell;
     return seitVon(seit, sz.version) === sz.version;
+  }
+
+  /** wirksames seit (Review M7 W2/K3): 0 = Vollstand, wenn seit ungültig ist, der Client eine andere Sicht hatte (ETag)
+      oder sich Phase bzw. Status seit `seit` geändert haben – dann ändert sich die Sichtbarkeit älterer Inhalte (Mallory-
+      Umschläge, verdeckte Ereignisse), ein Delta mit version > seit enthielte sie nicht. */
+  function seitWirksam(sz, { seit, etag }, ansicht, betrachter) {
+    const n = seitVon(seit, sz.version);
+    if (n === 0) return 0;
+    const alt = sichtAusEtag(etag);
+    if (alt !== null && alt !== sichtVon(ansicht, betrachter)) return 0;
+    return sqlStand.wechsel.get(sz.id, n) ? 0 : n;
   }
 
   /** Nachricht für einen Betrachter → Stand-Objekt oder null (nicht sichtbar). Nie klartext_hash, von_schueler_id. */
@@ -389,6 +411,8 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
       typ: sz.typ,
       titel: k.titel,
       version: sz.version,
+      // true = vollständiger Stand (Client ersetzt), false = nur Neues seit `seit` (Client führt zusammen), Review M7 W2
+      voll: seit === 0,
       status: sz.status,
       phase: sz.phase,
       phasen: [...k.phasen],
@@ -424,11 +448,11 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
   /** GET /api/funk/:id/stand → { etag, daten | null } (null = 304). Schreibt nichts. */
   function stand(s, id, { seit, etag } = {}) {
     const { sz, team, rolleZeile, betrachter } = teilnehmer(s, id);
-    const tag = etagVon(sz, 'schueler');
-    if (unveraendert(sz, { seit, etag }, 'schueler')) return { etag: tag, daten: null };
+    const tag = etagVon(sz, 'schueler', betrachter);
+    if (unveraendert(sz, { seit, etag }, 'schueler', betrachter)) return { etag: tag, daten: null };
     const typ = TYP_MODULE[sz.typ];
     const ctx = typCtx(sz);
-    const daten = standDaten(sz, seitVon(seit, sz.version), betrachter, 'schueler');
+    const daten = standDaten(sz, seitWirksam(sz, { seit, etag }, 'schueler', betrachter), betrachter, 'schueler');
     const stumm = (konfigVon(sz).stumm || {})[team.id];
     daten.ich = {
       team: { id: team.id, nr: team.nr, name: team.name },
@@ -450,7 +474,7 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     const { sz } = ladeLk(lk, id);
     const tag = etagVon(sz, ansicht);
     if (unveraendert(sz, { seit, etag }, ansicht)) return { etag: tag, daten: null };
-    const daten = standDaten(sz, seitVon(seit, sz.version), { art: ansicht }, ansicht);
+    const daten = standDaten(sz, seitWirksam(sz, { seit, etag }, ansicht), { art: ansicht }, ansicht);
     daten.ich = null;
     daten.werkzeuge = [];
     daten.boss = false;
