@@ -119,7 +119,8 @@
    "hinweis": "Balken in Lapis, R und L hervorgehoben; Referenz Deutsch als graue Linie/zweite Reihe; Tabellen-Alternative für Barrierefreiheit."
   },
   "kindi": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/kindi.png",
    "beschreibung": "Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“"
   }
  },

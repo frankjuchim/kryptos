@@ -226,7 +226,7 @@ Jetzt verschlüsseln wir unseren Klartext: treffpunkt am brunnen – zusammenges
 - Negativ: −6 mod 26 = **20**, denn −6 + 26 = 20
 - Das Alphabet ist ein Kreis: Nach Z kommt wieder A
 
-🖼 **Bild (Platzhalter):** Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A
+🖼 **Bild:** `bilder/ziffernring.png` – Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A
 
 **Regie:** Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss.
 

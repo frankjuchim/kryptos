@@ -25,7 +25,7 @@
 
 ## Hinweise für die Aufnahme und Prüfvermerke
 
-- Bildschirmfotos gibt es noch nicht: Alle Bild-Folien enthalten Platzhalter mit Bildbeschreibung (`bild: {beschreibung: …}`). Vor der Aufnahme Screenshots aus einer lokalen Demo-Instanz mit frischer Datenbank und Demo-Kurs erstellen, nach `bilder/` legen und in `bilddateien` eintragen. Keine echten Kurscodes, persönlichen Codes oder Schülernamen zeigen.
+- Bildschirmfotos: `bilder/*.png` sind ERZEUGT – Plattform mit `node werkzeuge/material/video_bilder.js materialien/Videos/00_Kryptos_Zeitreise/bilder` (echte Seeds, Dev-Portal, nur Pseudonyme), Portal aus `npm run e2e:portal -- --bilder …` (Kurscode und persönlicher Code unkenntlich). Vor der Aufnahme mit der Live-Version neu erzeugen. Keine echten Kurscodes, persönlichen Codes oder Schülernamen.
 - ✔ doppelt geprüft: alle Werte im Python-Prüfstand (assert im Erzeugungsskript) und unabhängig in JavaScript (Node) nachgerechnet – wie Design-Spezifikation §13 verlangt.
 - ✔ nachgerechnet (Punkteformel der Design-Spezifikation §2.4: round(punkte × max(0,25; 1 − 0,25 · Fehlversuche − 0,2 · Tipps))): 10 P. ohne Fehler → 10; 20 P. mit 1 Tipp → 16; 20 P. mit 1 Tipp und 1 Fehlversuch → 11; 30 P. mit 2 Fehlversuchen → 15; 20 P. mit 4 Fehlversuchen → 5 (Untergrenze 25 %); „Lösung zeigen“ → 0.
 - Regeln aus der Design-Spezifikation (§2.4, §7.6, §7.4, §7.8): Boss = 8 Aufgaben aus einem Pool von 15, 25 min (Epoche 6: 30 min), ohne Labor-Werkzeuge, Rückmeldung erst am Ende, besiegt ab 50 %, bester Versuch zählt, neuer Versuch nach 12 h, frei ab 60 % der Level-Punkte (einstellbar); Trainingsplatz 1 Punkt je Aufgabe, max. 30 pro Tag; Warm-up ohne Punkte; Ränge Lehrling → Schreiber → Chiffreur → Kryptoanalytiker → Meister der Chiffren (Schwellen 0/10/30/55/80 %); Funkraum: nur A–Z, Ziffern, Leerzeichen, kursintern, Löschung nach dem Szenario (spätestens 24 h); Gastmodus /gast mit 6 Demo-Aufgaben, nichts wird gespeichert. Vor der Aufnahme mit der laufenden Plattform abgleichen.
@@ -117,7 +117,7 @@ Die Geschichte: Seit Jahrtausenden schreiben sich Alice und Bob geheime Botschaf
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich.
+🖼 **Bild:** `bilder/portal_beitritt.png` – Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich.
 
 > **Kasten · So geht’s** (Epochenakzent)
 > - **labs.frankjuchim.de** öffnen oder QR-Code scannen
@@ -137,7 +137,7 @@ Angemeldet wirst du immer im Portal InfoLabs: labs punkt frankjuchim punkt de �
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“.
+🖼 **Bild:** `bilder/portal_weiter.png` – Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“.
 
 > **Kasten · Ein Konto für alles** (Grün (richtig))
 > - „**Weiter zu Kryptos**“ → automatisch angemeldet
@@ -157,7 +157,7 @@ Unter Meine Plattformen klickst du auf Weiter zu Kryptos – und bist drin, ohne
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil.
+🖼 **Bild:** `bilder/zeitleiste.png` – Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil.
 
 > **Kasten · Sieben Epochen** (Messing)
 > - 0 Antike · 1 Bagdad
@@ -177,7 +177,7 @@ Kryptos beginnt mit der Zeitleiste: sieben Epochen, von der Antike bis zur Zeitm
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code.
+🖼 **Bild:** `bilder/level.png` – Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code.
 
 > **Kasten · Im Level** (Epochenakzent)
 > - eine Doppelstunde
@@ -250,7 +250,7 @@ Oft nennt die Rückmeldung eine Falle, zum Beispiel P3, Umkehrung. Die zehn Fall
 
 Trainingsplatz: Zufallsaufgaben, 1 Punkt, max. 30/Tag · Warm-up: Karten auf Papier, ohne Punkte
 
-🖼 **Bild (Platzhalter):** Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“.
+🖼 **Bild:** `bilder/boss.png` – Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“.
 
 > **Kasten · Boss** (Rot (Falle))
 > - 8 Aufgaben, 25 min, **ohne** Werkzeuge
@@ -270,7 +270,7 @@ Am Ende jeder Epoche wartet der Boss: eine Abiturprobe mit acht Aufgaben in fün
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet.
+🖼 **Bild:** `bilder/labor_funk.png` – Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet.
 
 > **Kasten · Funkraum** (Lapis (Hinweis))
 > - live im Unterricht, in Teams
@@ -289,7 +289,7 @@ Im Kryptolabor findest du Werkzeuge wie die Chiffrierscheibe oder die Vigenère-
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10.
+🖼 **Bild:** `bilder/profil.png` – Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10.
 
 > **Kasten · Ränge** (Messing)
 > - Lehrling → Schreiber

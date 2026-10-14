@@ -262,6 +262,8 @@
     "Das Alphabet ist ein Kreis: Nach Z kommt wieder A"
    ],
    "bild": {
+    "t": "bild",
+    "pfad": "bilder/ziffernring.png",
     "beschreibung": "Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A"
    },
    "sprechertext": "Dieses Weiterzählen im Kreis heißt Modulo. a mod n ist der Rest bei der Division durch n. Du kennst das von der Uhr: Zehn Uhr plus fünf Stunden ist drei Uhr – fünfzehn mod zwölf ist drei. Genauso ist siebenundzwanzig mod sechsundzwanzig gleich eins. Aber aufgepasst: Sechsundzwanzig mod sechsundzwanzig ist null, denn es bleibt kein Rest. Und bei negativen Zahlen nimmst du den kleinsten nicht negativen Rest: Minus sechs mod sechsundzwanzig ist zwanzig, denn minus sechs plus sechsundzwanzig ergibt zwanzig. So ist es auch in den Ergänzenden Hinweisen zum Abitur festgelegt.",

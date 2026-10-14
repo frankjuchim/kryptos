@@ -183,11 +183,11 @@ async function main() {
     await mika.goto(`${portalUrl}/?kurs=${kurscode}`);
     await mika.waitForSelector('#kurs-info:has-text("Informatik LK 13")');
     await mika.fill('#b-name', 'Mika R.');
-    if (BILDER) await mika.screenshot({ path: path.join(BILDER, 'portal_beitritt.png'), mask: [mika.locator('#b-kurscode, #kurs-info .code, .code, .code-gross')] });
+    if (BILDER) await mika.screenshot({ path: path.join(BILDER, 'portal_beitritt.png'), mask: [mika.locator('#b-kurscode, #kurs-info .code, .code, .code-gross')], maskColor: '#14213D' });
     await mika.click('#form-beitreten button[type="submit"]');
     await mika.waitForSelector('#code-box:not([hidden])');
     assert.match((await mika.textContent('#code-wert')).trim(), /^[A-HJ-NP-Z]{3}-[2-9]{3}$/);
-    if (BILDER) await mika.screenshot({ path: path.join(BILDER, 'portal_code.png'), mask: [mika.locator('#code-wert')] });
+    if (BILDER) await mika.screenshot({ path: path.join(BILDER, 'portal_code.png'), mask: [mika.locator('#code-wert')], maskColor: '#14213D' });
     await mika.check('#code-ok');
     await mika.click('#code-weiter');
     await mika.waitForURL(/\/schueler$/);
@@ -234,9 +234,10 @@ async function main() {
     assert.ok(umbenannt, 'Kursname in Kryptos nach kurs-aendern');
     await lk.goto(portalKursUrl);
     await lk.click('text=Lernstand auf Kryptos laden');
-    const zeile = lk.locator('td', { hasText: 'Mika R.' }).first();
-    await zeile.waitFor();
-    const tabelle = await lk.locator('table:has(td:has-text("Mika R."))').last().textContent();
+    // nur die Kennzahlen-Tabelle unter dem Knopf (die Schülerliste des Portals zeigt der Lehrkraft die Codes)
+    const kennzahlen = lk.locator('div.abstand:has(> button:has-text("Lernstand auf Kryptos laden")) table');
+    await kennzahlen.locator('td', { hasText: 'Mika R.' }).first().waitFor();
+    const tabelle = await kennzahlen.textContent();
     assert.doesNotMatch(tabelle, /[A-HJ-NP-Z]{3}-[2-9]{3}/, 'kein persönlicher Code in den Kennzahlen');
     assert.match(tabelle, /Mika R\.\s*\d+/, 'Punkte in den Kennzahlen');
 

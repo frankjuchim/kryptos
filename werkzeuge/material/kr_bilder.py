@@ -477,3 +477,123 @@ if __name__ == "__main__":
                                          {"wenn": "z ist ein Großbuchstabe", "dann": [{"anw": "ergebnis ← ergebnis + verschiebe(z, k)"}],
                                           "sonst": []}]},
                                      {"gib": "ergebnis"}]}))
+
+
+# ---------------------------------------------------------------------------------------------------
+# Zeichnungen für die Erklärvideos (Plan M9 Task 213, E156): eigene Zeichnungen, keine fremden Bilder
+# ---------------------------------------------------------------------------------------------------
+
+def _pfeil_bogen(cx, cy, r, von_grad, bis_grad, farbe, breite=7):
+    """Bogen im Uhrzeigersinn von von_grad bis bis_grad (0° = oben) mit Pfeilspitze am Ende."""
+    def punkt(g, rr=r):
+        a = math.radians(g - 90)
+        return cx + rr * math.cos(a), cy + rr * math.sin(a)
+    x1, y1 = punkt(von_grad)
+    x2, y2 = punkt(bis_grad)
+    gross = 1 if (bis_grad - von_grad) % 360 > 180 else 0
+    s = (f'<path d="M{x1:.1f} {y1:.1f} A{r} {r} 0 {gross} 1 {x2:.1f} {y2:.1f}" fill="none" stroke="{farbe}" '
+         f'stroke-width="{breite}" stroke-linecap="round"/>')
+    # Spitze: tangential am Endpunkt
+    a = math.radians(bis_grad - 90)
+    tx, ty = -math.sin(a), math.cos(a)  # Tangente im Uhrzeigersinn
+    nx, ny = math.cos(a), math.sin(a)
+    l, b = 30, 16
+    p1 = (x2 + tx * 6, y2 + ty * 6)
+    p2 = (x2 - tx * l + nx * b, y2 - ty * l + ny * b)
+    p3 = (x2 - tx * l - nx * b, y2 - ty * l - ny * b)
+    s += f'<polygon points="{p1[0]:.1f},{p1[1]:.1f} {p2[0]:.1f},{p2[1]:.1f} {p3[0]:.1f},{p3[1]:.1f}" fill="{farbe}"/>'
+    return s
+
+
+def _ring(cx, cy, r, beschriftung, start_index, ziel_index, schritte, farbe_ring, farbe_pfeil, gr):
+    n = len(beschriftung)
+    s = [f'<circle cx="{cx}" cy="{cy}" r="{r + 46}" fill="{_c(S.PAPIER)}" stroke="{farbe_ring}" stroke-width="6"/>',
+         f'<circle cx="{cx}" cy="{cy}" r="{r - 46}" fill="none" stroke="{farbe_ring}" stroke-width="2"/>']
+    for i, t in enumerate(beschriftung):
+        g = i * 360 / n
+        a = math.radians(g - 90)
+        x, y = cx + r * math.cos(a), cy + r * math.sin(a)
+        hervor = i in (start_index, ziel_index)
+        if hervor:
+            s.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{gr * 0.85:.1f}" fill="{farbe_pfeil if i == ziel_index else _c(S.TINTE)}"/>')
+        s.append(f'<text x="{x:.1f}" y="{y:.1f}" fill="{_c(S.PAPIER) if hervor else _c(S.TEXT)}" font-family="Georgia, Gelasio" '
+                 f'font-size="{gr}" font-weight="{"bold" if hervor else "normal"}" text-anchor="middle" '
+                 f'dominant-baseline="central">{escape(t)}</text>')
+    von = start_index * 360 / n
+    bis = von + schritte * 360 / n
+    s.append(_pfeil_bogen(cx, cy, r - 78, von, bis, farbe_pfeil))
+    return "".join(s)
+
+
+def ziffernring(px=1600):
+    """Modulo als Kreis: 12er-Uhr 10 → +5 → 3 und Alphabetring U → +6 → A (Messing auf Papier, Video 01)."""
+    m = _c(S.MESSING_DUNKEL)
+    p = _c(S.MESSING)
+    t = _c(S.TINTE)
+    uhr = [str(12 if i == 0 else i) for i in range(12)]
+    abc = [chr(65 + i) for i in range(26)]
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 820">'
+           f'<rect width="1600" height="820" fill="{_c(S.PAPIER)}"/>'
+           + _ring(420, 400, 250, uhr, 10, 3, 5, m, p, 54)
+           + _ring(1180, 400, 270, abc, 20, 0, 6, m, p, 40)
+           + f'<text x="420" y="790" fill="{t}" font-family="Georgia, Gelasio" font-size="44" text-anchor="middle">10 + 5 → 15 mod 12 = 3</text>'
+           + f'<text x="1180" y="790" fill="{t}" font-family="Georgia, Gelasio" font-size="44" text-anchor="middle">U + 6 → A (21 + 6 − 26 = 1)</text>'
+           + '</svg>')
+    return _cache("ziffernring", svg, px)
+
+
+def _girih_stern(cx, cy, r, linie, fuell, breite=8):
+    """Achtzackiger Girih-Stern (zwei gedrehte Quadrate, wie das Ornament der Epoche 1) mit Innenrosette."""
+    def quadrat(dreh):
+        pts = []
+        for k in range(4):
+            a = math.radians(dreh + k * 90 - 90)
+            pts.append(f"{cx + r * math.cos(a):.1f},{cy + r * math.sin(a):.1f}")
+        return " ".join(pts)
+    s = (f'<polygon points="{quadrat(0)}" fill="{fuell}" stroke="{linie}" stroke-width="{breite}" stroke-linejoin="round"/>'
+         f'<polygon points="{quadrat(45)}" fill="{fuell}" stroke="{linie}" stroke-width="{breite}" stroke-linejoin="round"/>')
+    s += f'<circle cx="{cx}" cy="{cy}" r="{r * 0.42:.1f}" fill="none" stroke="{linie}" stroke-width="{breite * 0.7:.1f}"/>'
+    for k in range(8):
+        a = math.radians(k * 45 - 90)
+        s += (f'<line x1="{cx + r * 0.42 * math.cos(a):.1f}" y1="{cy + r * 0.42 * math.sin(a):.1f}" '
+              f'x2="{cx + r * 0.7 * math.cos(a):.1f}" y2="{cy + r * 0.7 * math.sin(a):.1f}" stroke="{linie}" stroke-width="{breite * 0.6:.1f}"/>')
+    s += f'<circle cx="{cx}" cy="{cy}" r="{r * 0.14:.1f}" fill="{linie}"/>'
+    return s
+
+
+def handschrift(px=1600):
+    """Stilisierte Seite einer Handschrift (Video 02): Girih-Stern in Lapis und Gold, Zierrahmen, Zeilen nur als
+    abstrakte Linien (nichts Lesbares), Beschriftung „Bagdad, 9. Jahrhundert“."""
+    e = S.epoche(1)
+    lapis = _c(e["akzent"])
+    gold = _c(S.MESSING)
+    gold_hell = _c(S.MESSING_HELL)
+    pergament = "#F3E7CC"
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">',
+         f'<rect width="1600" height="900" fill="{_c(S.PAPIER)}"/>',
+         # Seite mit Zierrahmen
+         f'<rect x="420" y="40" width="760" height="760" rx="10" fill="{pergament}" stroke="{gold}" stroke-width="6"/>',
+         f'<rect x="446" y="66" width="708" height="708" fill="none" stroke="{lapis}" stroke-width="4"/>',
+         f'<rect x="458" y="78" width="684" height="684" fill="none" stroke="{gold_hell}" stroke-width="2" stroke-dasharray="6 6"/>']
+    # Eck-Sterne
+    for x, y in [(446, 66), (1154, 66), (446, 774), (1154, 774)]:
+        s.append(_girih_stern(x, y, 22, gold, lapis, 3))
+    # Zierband oben mit kleinen Sternen
+    for i in range(7):
+        s.append(_girih_stern(560 + i * 80, 130, 20, lapis, gold_hell, 3))
+    # großer Stern in der Mitte
+    s.append(_girih_stern(800, 360, 150, gold, lapis, 9))
+    s.append(_girih_stern(800, 360, 70, gold_hell, "none", 5))
+    # abstrakte Zeilen (Linien mit leichten Wellen) – keine Schriftzeichen
+    for j in range(5):
+        y = 560 + j * 42
+        laenge = 560 - (j % 2) * 60
+        x0 = 520 + (620 - laenge) / 2
+        d = f"M{x0:.0f} {y}"
+        for k in range(1, 15):
+            d += f" q{laenge / 28:.1f} {(-7 if k % 2 else 7)} {laenge / 14:.1f} 0"
+        s.append(f'<path d="{d}" fill="none" stroke="{_c(S.TINTE)}" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round"/>')
+    s.append(f'<text x="800" y="860" fill="{_c(S.TINTE)}" font-family="Georgia, Gelasio" font-size="40" font-style="italic" '
+             f'text-anchor="middle">Bagdad, 9. Jahrhundert</text>')
+    s.append('</svg>')
+    return _cache("handschrift", "".join(s), px)

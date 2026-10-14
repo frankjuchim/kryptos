@@ -145,7 +145,7 @@ Zuerst das Verfahren, um das es geht. Statt alle Buchstaben um gleich viele Stel
 
 **Folie:**
 
-🖼 **Bild (Platzhalter):** Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“
+🖼 **Bild:** `bilder/kindi.png` – Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“
 
 > **Kasten · Die Idee** (Epochenakzent)
 > - In jeder Sprache kommen Buchstaben **unterschiedlich oft** vor

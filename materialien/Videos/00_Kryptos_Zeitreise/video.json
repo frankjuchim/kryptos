@@ -22,7 +22,7 @@
   "Keine Rechenbeispiele. Bildschirmfotos ausschließlich aus einer Demo-Instanz mit Demo-Kurs; Kurscode und persönlicher Code unkenntlich."
  ],
  "hinweise": [
-  "Bildschirmfotos gibt es noch nicht: Alle Bild-Folien enthalten Platzhalter mit Bildbeschreibung (`bild: {beschreibung: …}`). Vor der Aufnahme Screenshots aus einer lokalen Demo-Instanz mit frischer Datenbank und Demo-Kurs erstellen, nach `bilder/` legen und in `bilddateien` eintragen. Keine echten Kurscodes, persönlichen Codes oder Schülernamen zeigen.",
+  "Bildschirmfotos: `bilder/*.png` sind ERZEUGT – Plattform mit `node werkzeuge/material/video_bilder.js materialien/Videos/00_Kryptos_Zeitreise/bilder` (echte Seeds, Dev-Portal, nur Pseudonyme), Portal aus `npm run e2e:portal -- --bilder …` (Kurscode und persönlicher Code unkenntlich). Vor der Aufnahme mit der Live-Version neu erzeugen. Keine echten Kurscodes, persönlichen Codes oder Schülernamen.",
   "✔ doppelt geprüft: alle Werte im Python-Prüfstand (assert im Erzeugungsskript) und unabhängig in JavaScript (Node) nachgerechnet – wie Design-Spezifikation §13 verlangt.",
   "✔ nachgerechnet (Punkteformel der Design-Spezifikation §2.4: round(punkte × max(0,25; 1 − 0,25 · Fehlversuche − 0,2 · Tipps))): 10 P. ohne Fehler → 10; 20 P. mit 1 Tipp → 16; 20 P. mit 1 Tipp und 1 Fehlversuch → 11; 30 P. mit 2 Fehlversuchen → 15; 20 P. mit 4 Fehlversuchen → 5 (Untergrenze 25 %); „Lösung zeigen“ → 0.",
   "Regeln aus der Design-Spezifikation (§2.4, §7.6, §7.4, §7.8): Boss = 8 Aufgaben aus einem Pool von 15, 25 min (Epoche 6: 30 min), ohne Labor-Werkzeuge, Rückmeldung erst am Ende, besiegt ab 50 %, bester Versuch zählt, neuer Versuch nach 12 h, frei ab 60 % der Level-Punkte (einstellbar); Trainingsplatz 1 Punkt je Aufgabe, max. 30 pro Tag; Warm-up ohne Punkte; Ränge Lehrling → Schreiber → Chiffreur → Kryptoanalytiker → Meister der Chiffren (Schwellen 0/10/30/55/80 %); Funkraum: nur A–Z, Ziffern, Leerzeichen, kursintern, Löschung nach dem Szenario (spätestens 24 h); Gastmodus /gast mit 6 Demo-Aufgaben, nichts wird gespeichert. Vor der Aufnahme mit der laufenden Plattform abgleichen.",
@@ -61,39 +61,48 @@
  },
  "bilder": {
   "portal_beitritt": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/portal_beitritt.png",
    "beschreibung": "Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich."
   },
   "portal_code": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/portal_code.png",
    "beschreibung": "Screenshot Portal nach dem Beitritt: großer persönlicher Code im gestrichelten Kasten (unkenntlich gemacht, Format „▢▢▢-▢▢▢“) mit Hinweis „Notiere deinen Code“."
   },
   "portal_weiter": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/portal_weiter.png",
    "beschreibung": "Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“."
   },
   "zeitleiste": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/zeitleiste.png",
    "beschreibung": "Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil."
   },
   "level": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/level.png",
    "beschreibung": "Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code."
   },
   "aufgabe": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/aufgabe.png",
    "beschreibung": "Screenshot einer Gast-Demo-Aufgabe (nicht aus den Epochen): Knöpfe „Tipp“, „Prüfen“, „Lösung zeigen“; falsches Feld rot mit ✗ und Fallen-Chip „P3 Umkehrung“; Hinweis „Noch bis zu 11 Punkte möglich“."
   },
   "boss": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/boss.png",
    "beschreibung": "Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“."
   },
   "labor_funk": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/labor_funk.png",
    "beschreibung": "Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet."
   },
   "profil": {
-   "t": "platzhalter",
+   "t": "bild",
+   "pfad": "bilder/profil.png",
    "beschreibung": "Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10."
   }
  },

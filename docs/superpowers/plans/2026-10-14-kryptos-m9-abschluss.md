@@ -413,11 +413,17 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: Portal-Fotos aus Task 212 (`--bilder`), `test/e2e/hilfen.js` (`starte({ echt: true })`, Anmeldung über das Dev-Portal)
 - Produces: `node werkzeuge/material/video_bilder.js <ausgabeordner>` → `zeitleiste.png`, `level.png` (Level 0.2), `aufgabe.png` (Gast-Demo mit falschem Feld und Fallen-Chip), `boss.png` (Boss-Start W0), `labor_funk.png` (Labor-Übersicht + Funkraum-Karte), `profil.png` (Profil mit Artefakt); 1600 × 900, `deviceScaleFactor: 1`, Mika R./Frau M. als einzige Namen. `kr_bilder.ziffernring(px=1600) → pfad` (12er-Uhr 10 → +5 → 3 und Alphabetring U → +6 → A, Messing auf Papier), `kr_bilder.handschrift(px=1600) → pfad` (Girih-Stern aus `ornamente.svg`-Form der Epoche 1, Lapis/Gold, Beschriftung „Bagdad, 9. Jahrhundert“, keine Schrift außer der Beschriftung). `video_folien.bildblock`: `{"t":"bild","pfad":"bilder/x.png"}` → Block `bild` mit Pfad relativ zum Videoordner.
 
-- [ ] **Step 1: Failing tests** in `test/material_pipeline.test.js`: (a) keine `platzhalter` mehr in `materialien/Videos/*/video.json` (weder in `bilder` noch inline); (b) jede `bild`-Datei existiert, ist PNG, ≤ 1,5 MB, Breite ≥ 1200 px; (c) `bildblock({"t":"bild","pfad":"bilder/a.png"}, v)` liefert `{ t: 'bild', pfad: 'materialien/Videos/<NN>/bilder/a.png' }` (Python-Aufruf, übersprungen ohne `python3`).
-- [ ] **Step 2: Run** → FAIL (10 Platzhalter).
-- [ ] **Step 3: Implement** und erzeugen: `node werkzeuge/material/video_bilder.js materialien/Videos/00_Kryptos_Zeitreise/bilder`; Portal-Fotos aus `$S/portal_bilder` kopieren; `kr_bilder`-Zeichnungen nach `01_…/bilder/ziffernring.png`, `02_…/bilder/kindi.png`. Jedes Bild per Read ansehen (keine Klarnamen, Codes unkenntlich, Kryptos-Stil, keine fremden Inhalte). `bilder/` laut LIESMICH „ERZEUGT“ – mitcommitten.
-- [ ] **Step 4: Run** → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Erklärvideos: Bilder aus Plattform, Portal und kr_bilder statt Platzhaltern (M9 Task 213)"`
+- [x] **Step 1: Failing tests** in `test/material_pipeline.test.js`: (a) keine `platzhalter` mehr in `materialien/Videos/*/video.json` (weder in `bilder` noch inline); (b) jede `bild`-Datei existiert, ist PNG, ≤ 1,5 MB, Breite ≥ 1200 px; (c) `bildblock({"t":"bild","pfad":"bilder/a.png"}, v)` liefert `{ t: 'bild', pfad: 'materialien/Videos/<NN>/bilder/a.png' }` (Python-Aufruf, übersprungen ohne `python3`).
+- [x] **Step 2: Run** → FAIL (10 Platzhalter).
+- [x] **Step 3: Implement** und erzeugen: `node werkzeuge/material/video_bilder.js materialien/Videos/00_Kryptos_Zeitreise/bilder`; Portal-Fotos aus `$S/portal_bilder` kopieren; `kr_bilder`-Zeichnungen nach `01_…/bilder/ziffernring.png`, `02_…/bilder/kindi.png`. Jedes Bild per Read ansehen (keine Klarnamen, Codes unkenntlich, Kryptos-Stil, keine fremden Inhalte). `bilder/` laut LIESMICH „ERZEUGT“ – mitcommitten.
+- [x] **Step 4: Run** → PASS; `npm test` grün.
+  **Umgesetzt:** elf Bilder (Video 00: neun, davon drei aus dem Portal-Lauf mit `maskColor` Tinte statt Magenta; Video 01
+  `ziffernring.png`, Video 02 `kindi.png`), alle angesehen. `video_bilder.js` löst über die Seed-Lösungen einige Aufgaben und den
+  Boss der Antike, damit Zeitleiste und Profil (Artefakt Skytale) Fortschritt zeigen. `Skript.md` 00–02: Bildzeilen und der
+  Aufnahmehinweis an die `video.json` angeglichen (kein Generator, E157). Nebenbei: Kennzahlen-Prüfung in `test/e2e/portal.js`
+  auf die Tabelle unter „Lernstand auf Kryptos laden“ begrenzt (Wettlauf mit der Schülerliste des Portals, die Codes zeigt).
+  Hinweis: Die Fotos zeigen in der Fußzeile die Version 0.4.11 – vor der Aufnahme mit der Live-Version neu erzeugen.
+- [x] **Step 5: Commit** `git commit -m "Erklärvideos: Bilder aus Plattform, Portal und kr_bilder statt Platzhaltern (M9 Task 213)"`
 
 ### Task 214: Video-Folien neu bauen und prüfen
 

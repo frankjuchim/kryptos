@@ -149,3 +149,47 @@ test('materialien_pruefen.py: Altbegriffe gefunden, Ausnahmen wirken, echtes Rep
   const liste = JSON.parse(fs.readFileSync(path.join(WURZEL, 'werkzeuge', 'material', 'begriffe_ausnahmen.json'), 'utf8'));
   for (const a of liste.ausnahmen || liste) assert.ok(a.grund && a.grund.length >= 10 && a.datei && a.begriff, JSON.stringify(a));
 });
+
+// Plan M9 Task 213: Erklärvideos mit echten Bildern statt Platzhaltern
+const VIDEOS = (() => {
+  const fs = require('node:fs');
+  const basis = path.join(WURZEL, 'materialien', 'Videos');
+  return fs.readdirSync(basis).filter((d) => /^\d\d_/.test(d) && fs.statSync(path.join(basis, d)).isDirectory()).sort().map((d) => ({ ordner: d, pfad: path.join(basis, d), v: JSON.parse(fs.readFileSync(path.join(basis, d, 'video.json'), 'utf8')) }));
+})();
+/** alle Bildangaben einer video.json: Einträge in `bilder` und Inline-`bild`-Objekte der Folien */
+function bildAngaben(v) {
+  const aus = Object.entries(v.bilder || {}).map(([name, b]) => ({ ort: `bilder.${name}`, b }));
+  for (const [i, f] of (v.folien || []).entries()) if (f.bild && typeof f.bild === 'object') aus.push({ ort: `folien[${i}].bild`, b: f.bild });
+  return aus;
+}
+
+test('Erklärvideos: keine Bildplatzhalter mehr (weder in bilder noch inline)', () => {
+  const offen = [];
+  for (const { ordner, v } of VIDEOS) for (const { ort, b } of bildAngaben(v)) if (b.t === 'platzhalter' || (!b.t && !b.typ)) offen.push(`${ordner} ${ort}`);
+  assert.deepEqual(offen, []);
+});
+
+test('Erklärvideos: jede Bilddatei existiert, ist PNG, ≤ 1,5 MB und mindestens 1200 px breit', () => {
+  const fs = require('node:fs');
+  let n = 0;
+  for (const { ordner, pfad, v } of VIDEOS) {
+    for (const { ort, b } of bildAngaben(v)) {
+      if (b.t !== 'bild') continue;
+      n++;
+      const datei = path.join(pfad, b.pfad);
+      assert.ok(fs.existsSync(datei), `${ordner} ${ort}: ${b.pfad} fehlt`);
+      const kopf = fs.readFileSync(datei);
+      assert.equal(kopf.subarray(1, 4).toString('latin1'), 'PNG', `${ordner} ${ort}: kein PNG`);
+      assert.ok(kopf.length <= 1.5 * 1024 * 1024, `${ordner} ${ort}: ${(kopf.length / 1048576).toFixed(2)} MB`);
+      assert.ok(kopf.readUInt32BE(16) >= 1200, `${ordner} ${ort}: Breite ${kopf.readUInt32BE(16)} px`);
+    }
+  }
+  assert.ok(n >= 11, `Bilder: ${n}`);
+});
+
+test('video_folien.bildblock: {"t":"bild","pfad":"bilder/a.png"} → Pfad relativ zum Repo', { skip: python ? false : 'python3 fehlt' }, () => {
+  const code = 'import sys, json; sys.path.insert(0, "werkzeuge/material"); import video_folien as V; print(json.dumps(V.bildblock({"t": "bild", "pfad": "bilder/a.png"}, {"nr": 1, "kurz": "Caesar_und_Modulo"})))';
+  const r = spawnSync('python3', ['-c', code], { cwd: WURZEL, encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(JSON.parse(r.stdout.trim().split('\n').pop()), { t: 'bild', pfad: 'materialien/Videos/01_Caesar_und_Modulo/bilder/a.png' });
+});

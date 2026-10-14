@@ -63,6 +63,13 @@ def bildblock(name, v):
             hervor += [[r, c] for r in range(26)]
         return {"t": "quadrat", "art": b.get("art", "vigenere"), "hervor": hervor} if b.get("art", "vigenere") == "vigenere" \
             else {"t": "quadrat", "zeilen": b.get("zeilen"), "kopfzeile": b.get("kopfzeile"), "kopfspalte": b.get("kopfspalte")}
+    if t == "bild":
+        # Bilddatei relativ zum Videoordner (Plan M9 Task 213, E156) → Pfad relativ zum Repo für bauen.py
+        ordner = f"{int(v['nr']):02d}_{v['kurz']}"
+        block = {"t": "bild", "pfad": f"materialien/Videos/{ordner}/{b['pfad']}"}
+        if b.get("beschreibung"):
+            block["alt"] = b["beschreibung"]
+        return block
     return {"t": "platzhalter", "beschreibung": b.get("beschreibung", name)}
 
 
