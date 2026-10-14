@@ -297,7 +297,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: echte Seeds wie `test/niveaus.test.js` (`H.makeApp({ seedDir: SEED })`), `Krypto.nurBuchstaben`
 - Produces: Helfer `geheimnisse(seed) → [{ id, art: 'loesung'|'erklaerung'|'tipp'|'boss', text }]` (in der Testdatei)
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('crawler_vor_dem_loesen: keine Lösung, Erklärung, Tipp-Text oder Boss-Aufgabe in irgendeiner Schüler-GET-Antwort', async () => {
     // Mika im LK 13 (eA), alle Welten 0–6 frei, Kür frei, Boss offen; GET /api/welten, /api/levels/:id (alle), /api/aufgaben/:id (alle),
@@ -311,10 +311,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('akten_und_dateien: /akten/* und /api/themen nennen nie _LSG, _EH, Klausur, Loesungen_Portal, Lehrkraft_PDF', …);
   ```
   Ausnahmen nur aus `test/inhalte_loesungsverrat.test.js` übernehmen (W6-L2-01, W3-L1-04 a – gleiche Begründung, Test prüft, dass jede Ausnahme gebraucht wird).
-- [ ] **Step 2: Run** → bei Grün: einmal gegen eine Scratch-Kopie mit absichtlich ausgeliefertem `loesung`-Feld rot sehen; im Bericht belegen.
-- [ ] **Step 3: Implement** Korrekturen nur bei Funden.
-- [ ] **Step 4: Run** `node --test test/sicherheit_loesungen.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Lösungsverrat-Crawler über die Schüler-API aller Welten (M9 Task 209)"`
+  **Umgesetzt (Abweichung, Festlegung Orchestrator 14.10.):** keine Ausnahmeliste. Der Crawler prüft nur die API-Ebene: ein
+  Geheimnis, das zugleich in einem sichtbaren Seed-Text steht (andere Aufgabe, Intro, Kapitel, Fallen-Text) oder im sichtbaren
+  Text derselben Aufgabe (z. B. Verschiebung 0: Lösung = Klartext), gilt als inhaltlicher Fund – er wird als Diagnose gemeldet,
+  nicht als Fehler gezählt (Inhalte bereinigt ein eigener Auftrag, `test/inhalte_loesungsverrat.test.js`).
+- [x] **Step 2: Run** → bei Grün: einmal gegen eine Scratch-Kopie mit absichtlich ausgeliefertem `loesung`-Feld rot sehen; im Bericht belegen.
+- [x] **Step 3: Implement** Korrekturen nur bei Funden.
+- [x] **Step 4: Run** `node --test test/sicherheit_loesungen.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Lösungsverrat-Crawler über die Schüler-API aller Welten (M9 Task 209)"`
 
 ### Task 210: Datenschutzseite vollständig
 
