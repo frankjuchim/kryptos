@@ -169,7 +169,7 @@ const CHOICE_OHNE_KENNUNG = {
 };
 
 /** M8 E131: choice-Lösungen, die die Spec nur in Worten nennt – Teil-Index → Options-ids (W3-L2-07: ids 1–5 = P₁–P₅) */
-const CHOICE_FEST = { 'W3-L2-07': { 0: ['2', '3'], 2: ['2'] }, 'W3-B-12': { 0: ['3', '4'], 1: ['4'] },
+const CHOICE_FEST = { 'W3-L2-07': { 0: ['3', '4'], 2: ['3'] }, 'W3-B-12': { 0: ['3', '4'], 1: ['4'] },
   // E134: Archivfund W5 b) – die drei Spec-Befunde (b1–b3) neben ihren Verneinungen (v1–v3)
   'W5-A-01': { 1: ['b1', 'b2', 'b3'] } };
 

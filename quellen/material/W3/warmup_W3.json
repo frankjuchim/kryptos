@@ -119,18 +119,8 @@
    "titel": "S-Box",
    "minuten": 2,
    "kategorie": "blockchiffre",
-   "aufgabe": [
-    {
-     "t": "p",
-     "md": "KRYPTOS-16: Bestimme S(0110) und S⁻¹(1000) mit dem S-Box-Handout."
-    }
-   ],
-   "loesung": [
-    {
-     "t": "p",
-     "md": "S(0110) = `1000`, S⁻¹(1000) = `0110`"
-    }
-   ]
+   "aufgabe": "KRYPTOS-16: Bestimme S(0110) und S⁻¹(1001).",
+   "loesung": "S(0110) = `1000`, S⁻¹(1001) = `0011`"
   },
   {
    "id": "WU-W3-07",
