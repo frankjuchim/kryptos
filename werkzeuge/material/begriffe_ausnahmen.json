@@ -1,0 +1,7 @@
+{
+  "_hinweis": "Begründete Ausnahmen der Begriffsprüfung (werkzeuge/materialien_pruefen.py, Plan M9 Task 211, E158): datei = Ende des Pfads, begriff = gefundener Altbegriff. Nur Lehrkraft- bzw. Produktionstexte, nie Schülertexte.",
+  "ausnahmen": [
+    { "datei": "materialien/Videos/00_Kryptos_Zeitreise/video.json", "begriff": "Algo Quest", "grund": "Produktionshinweis für die Lehrkraft (Feld hinweise, nicht im Video): Herkunft der Punktelogik aus dem Algo-Quest-Kern, vor der Aufnahme zu bestätigen." },
+    { "datei": "materialien/Videos/00_Kryptos_Zeitreise/Skript.md", "begriff": "Algo Quest", "grund": "Derselbe Produktionshinweis im Drehbuch (Abschnitt Hinweise, kein Sprechertext)." }
+  ]
+}

@@ -355,11 +355,15 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `python3 -I werkzeuge/materialien_pruefen.py [--json] [pfad …]` → Zeilen `<datei>:<json-pfad>: „<begriff>“ → „<richtig>“`, Exit 1 bei Funden außerhalb der Ausnahmen; Ausnahmen `{ "datei": "...", "begriff": "...", "grund": "..." }`.
 
-- [ ] **Step 1: Failing test** in `test/material_pipeline.test.js`: Fixture-Ordner (Scratch-Temp) mit `{"md": "Das Chiffrat nach Friedmann"}` → Exit 1, zwei Funde; mit Ausnahme-Datei → Exit 0; echtes Repo → Exit 0 (übersprungen ohne `python3`).
-- [ ] **Step 2: Run** → FAIL (Skript fehlt).
-- [ ] **Step 3: Implement** Begriffsliste fest im Skript (`ALT = {'Chiffrat': 'Geheimtext', 'Friedmann': 'Friedman', 'Merkel': 'Merkle', 'Kerckhoff\b': 'Kerckhoffs', 'Vigenere': 'Vigenère', 'XP': '–', 'Gilde': 'Team', 'Algo Quest': 'Kryptos'}`; Wortgrenzen, Groß/Klein beachten; `Vigenere` nicht in Datei-/Ordnernamen und ids); Quellen: `quellen/material/**/*.json`, `seed/**/*.json`, `materialien/Videos/*/video.json`, `materialien/Videos/*/Skript.md`. Erst laufen lassen, Funde sichten: in Schülertexten korrigieren (Quelle + `bauen.py <quelle>`; Textgleichheit bis auf das Wort nachweisen), in Lehrkraft-Texten mit Begründung als Ausnahme (z. B. Lehrerhinweis „Chiffrat als Synonym nennen“), unklare Fälle als neue offene Entscheidung im Bericht.
-- [ ] **Step 4: Run** `python3 -I werkzeuge/materialien_pruefen.py` → „0 Funde“; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Material: Begriffsprüfung nach Design §6.3 mit Ausnahmeliste, CI-Schritt (M9 Task 211)"`
+- [x] **Step 1: Failing test** in `test/material_pipeline.test.js`: Fixture-Ordner (Scratch-Temp) mit `{"md": "Das Chiffrat nach Friedmann"}` → Exit 1, zwei Funde; mit Ausnahme-Datei → Exit 0; echtes Repo → Exit 0 (übersprungen ohne `python3`).
+- [x] **Step 2: Run** → FAIL (Skript fehlt).
+- [x] **Step 3: Implement** Begriffsliste fest im Skript (`ALT = {'Chiffrat': 'Geheimtext', 'Friedmann': 'Friedman', 'Merkel': 'Merkle', 'Kerckhoff\b': 'Kerckhoffs', 'Vigenere': 'Vigenère', 'XP': '–', 'Gilde': 'Team', 'Algo Quest': 'Kryptos'}`; Wortgrenzen, Groß/Klein beachten; `Vigenere` nicht in Datei-/Ordnernamen und ids); Quellen: `quellen/material/**/*.json`, `seed/**/*.json`, `materialien/Videos/*/video.json`, `materialien/Videos/*/Skript.md`. Erst laufen lassen, Funde sichten: in Schülertexten korrigieren (Quelle + `bauen.py <quelle>`; Textgleichheit bis auf das Wort nachweisen), in Lehrkraft-Texten mit Begründung als Ausnahme (z. B. Lehrerhinweis „Chiffrat als Synonym nennen“), unklare Fälle als neue offene Entscheidung im Bericht.
+- [x] **Step 4: Run** `python3 -I werkzeuge/materialien_pruefen.py` → „0 Funde“; `npm test` grün.
+  **Umgesetzt:** 118 Dateien, 0 Funde. Ausnahmen (Lehrkraft-/Produktionstexte): „Algo Quest“ im Aufnahmehinweis von Video 00
+  (`video.json` hinweise, `Skript.md`). Code in Backticks zählt nicht (Java-Klasse `Vigenere` in den Lehrerhinweisen W2).
+  **Abweichung:** kein CI-Schritt – die Workflow-Datei bleibt unverändert (GitHub Actions ruhen, Entscheidung der Lehrkraft);
+  die Prüfung läuft in `npm test` (`test/material_pipeline.test.js`).
+- [x] **Step 5: Commit** `git commit -m "Material: Begriffsprüfung nach Design §6.3 mit Ausnahmeliste, CI-Schritt (M9 Task 211)"`
 
 ### Task 212: Ende-zu-Ende mit dem Portal (lokale Kopie, INTEGRATION §6)
 

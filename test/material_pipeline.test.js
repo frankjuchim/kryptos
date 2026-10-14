@@ -116,3 +116,36 @@ test('Materialquellen enthalten keine absoluten /home/-Pfade (JSON und Python)',
   lauf(path.join(WURZEL, 'quellen', 'material'));
   assert.deepEqual(funde, []);
 });
+
+// Plan M9 Task 211: Begriffsprüfung nach Design §6.3 (werkzeuge/materialien_pruefen.py)
+test('materialien_pruefen.py: Altbegriffe gefunden, Ausnahmen wirken, echtes Repo ohne Funde', { skip: python ? false : 'python3 fehlt' }, () => {
+  const fs = require('node:fs');
+  const os = require('node:os');
+  const SKRIPT = path.join(WURZEL, 'werkzeuge', 'materialien_pruefen.py');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'kr-begriffe-'));
+  try {
+    const datei = path.join(tmp, 'probe.json');
+    fs.writeFileSync(datei, JSON.stringify({ bloecke: [{ md: 'Das Chiffrat nach Friedmann' }], id: 'vigenere_1', datei: 'KR_Vigenere.pdf' }));
+    const r = spawnSync('python3', ['-I', SKRIPT, '--json', datei], { cwd: WURZEL, encoding: 'utf8' });
+    assert.equal(r.status, 1, r.stdout + r.stderr);
+    const funde = JSON.parse(r.stdout);
+    assert.deepEqual(funde.map((f) => [f.begriff, f.richtig]).sort(), [['Chiffrat', 'Geheimtext'], ['Friedmann', 'Friedman']]);
+    assert.ok(funde.every((f) => f.pfad === 'bloecke[0].md'), JSON.stringify(funde));
+    const ausnahmen = path.join(tmp, 'ausnahmen.json');
+    fs.writeFileSync(ausnahmen, JSON.stringify([{ datei: 'probe.json', begriff: 'Chiffrat', grund: 'Test' }, { datei: 'probe.json', begriff: 'Friedmann', grund: 'Test' }]));
+    const r2 = spawnSync('python3', ['-I', SKRIPT, '--ausnahmen', ausnahmen, datei], { cwd: WURZEL, encoding: 'utf8' });
+    assert.equal(r2.status, 0, r2.stdout + r2.stderr);
+    // Kerckhoff ohne s, Vigenere ohne Akzent, XP, Gilde, Algo Quest; richtige Schreibweisen bleiben unbeanstandet
+    fs.writeFileSync(datei, JSON.stringify({ t: 'Kerckhoff sagt; Vigenere; 10 XP; die Gilde; Algo Quest; Kerckhoffs, Vigenère, Friedman, Merkle, Geheimtext' }));
+    const r3 = spawnSync('python3', ['-I', SKRIPT, '--json', datei], { cwd: WURZEL, encoding: 'utf8' });
+    assert.deepEqual(JSON.parse(r3.stdout).map((f) => f.begriff).sort(), ['Algo Quest', 'Gilde', 'Kerckhoff', 'Vigenere', 'XP']);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+  const echt = spawnSync('python3', ['-I', SKRIPT], { cwd: WURZEL, encoding: 'utf8', timeout: 120000 });
+  assert.equal(echt.status, 0, echt.stdout + echt.stderr);
+  assert.match(echt.stdout, /0 Funde/);
+  // jede Ausnahme hat einen Grund
+  const liste = JSON.parse(fs.readFileSync(path.join(WURZEL, 'werkzeuge', 'material', 'begriffe_ausnahmen.json'), 'utf8'));
+  for (const a of liste.ausnahmen || liste) assert.ok(a.grund && a.grund.length >= 10 && a.datei && a.begriff, JSON.stringify(a));
+});
