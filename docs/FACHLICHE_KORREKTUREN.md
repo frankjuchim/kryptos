@@ -160,4 +160,8 @@ Lernhilfe) gilt nicht als Verrat.
 | `w5_schutzziele` | bei „beides“ waren alle Optionen richtig | fünfte Option „Verfügbarkeit“ (nie richtig) |
 | W6-L2-01 (+ Akte W6·2, Folie) | Akte/Folie zeigten die Lesereihenfolgen aller t (bisher Ausnahme) | Akte und Folie nur t = 1 und 3, t = 5/7 „selbst bestimmen“ |
 | W6-L3-01 … -03 | Takt 2,25/2,2, 67,5/55 min und 13,5 min stehen im Merkkasten, in Akte W6·3, auf WK5 | Block 1 und Teilaufgaben: 135, 27; 110, 33; 8 BE → 18 |
-
+| Akte W2·2 Auftrag 1 | a) stand als Beispiel im Archivwissen 1 (VCVIZ … → VISEX/CZWUM/VTLKY) | `OIZRN SLZLE UMJMJ` (EIS → *kahnfahrtamufer*) |
+| Akte W2·3 Auftrag 3 | *anna* → AOPD, *otto* → RWWR samt I stehen im Archivwissen 3 | *ebbe* → ECDH (4/12 → 0/12), *nonne* → QRQQH (6/20) |
+| W2-L4-07 Option E | nannte die Lösung von Akte W2·4 Auftrag 6 a) (*seidenballen* → TBIAN EDNOQ NE) | *ananas* → EOEOD R |
+| Akte W4·1 Archivwissen 1 | Tabellenspalte n = 30 (435/60) beantwortete Auftrag 1 c) | Spalte n = 7 (21/14, steht schon im Abi-Check) |
+| Akte W6·2 Auftrag 4 c) | ZEIT → ZEITIEZEITIE ist das Beispiel der Verfahrensbeschreibung | MOND → MONDNOMONDNO |
