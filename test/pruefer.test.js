@@ -264,6 +264,27 @@ test('bits-rechnen: bitweises Feedback, Normalisierung, lawine als Menge ohne Po
   assert.equal(C.pruefeAufgabe(A['W9-L3-04'], [3]).bits, undefined, 'lawine: kein Feedback je Position');
   assert.throws(() => C.pruefeAufgabe(A['W9-L3-04'], [16]), (e) => e.status === 400);
 });
+test('bits-rechnen kryptos16 mit schritt und text (Plan M8 E124, Spec-Werte W3)', () => {
+  const k16 = (ia, bits) => ({ id: 'W9-X', interaktion: { kind: 'bits-rechnen', operation: 'kryptos16', ...ia }, loesung: { bits } });
+  const NO = { text: 'NO', schluessel: '0011 1111 0000 1000', runden: 1 };
+  // W3-L2-04: Kettenzustände ab dem Klartext
+  assert.equal(C.pruefeAufgabe(k16({ ...NO, schritt: 'nach-xor' }, '0111000101000111'), '0111 0001 0100 0111').ok, true);
+  assert.equal(C.pruefeAufgabe(k16({ ...NO, schritt: 'nach-sbox' }, '0110111101110110'), '0110 1111 0111 0110').ok, true);
+  assert.equal(C.pruefeAufgabe(k16({ ...NO, schritt: 'nach-transposition' }, '0100111111110110'), '0100 1111 1111 0110').ok, true);
+  // W3-B-07 (S-Box), D1 (Transposition), W3-B-08 (Rundenschlüssel K₃)
+  assert.equal(C.pruefeAufgabe(k16({ block: '1011 0100 0011 1001', schluessel: '0000 0000 0000 0000', runden: 1, schritt: 'sbox' }, '1110011110010010'), '1110 0111 1001 0010').ok, true);
+  assert.equal(C.pruefeAufgabe(k16({ block: '0110 1011 1100 0010', schritt: 'transposition' }, '0110101011010100'), '0110 1010 1101 0100').ok, true);
+  assert.equal(C.pruefeAufgabe(k16({ schluessel: '0011 1010 1100 0101', runden: 3, schritt: 'rundenschluessel' }, '1100010100111010'), '1100 0101 0011 1010').ok, true);
+  // Diagnose: S⁻¹ statt S (P3 richtung), Kettenzustand ohne Transposition (P4 transposition), Rundenschlüssel rechts (P3)
+  const dg = (a, antwort) => (C.pruefeAufgabe(a, antwort, { diagnose: true }).diagnose || []).map((x) => [x.p, x.code]);
+  assert.deepEqual(dg(k16({ ...NO, schritt: 'nach-sbox' }, '0110111101110110'), '0100 1000 1010 0100'), [['P3', 'richtung']]);
+  assert.deepEqual(dg(k16({ ...NO, schritt: 'nach-transposition' }, '0100111111110110'), '0110 1111 0111 0110'), [['P4', 'transposition']]);
+  assert.deepEqual(dg(k16({ block: '1011 0100 0011 1001', schritt: 'sbox' }, '1110011110010010'), '1100 1010 0010 0011'), [['P3', 'richtung']]); // S⁻¹ statt S
+  assert.deepEqual(dg(k16({ block: '0110 1011 1100 0010', schritt: 'transposition' }, '0110101011010100'), '0110 1011 1100 0010'), [['P4', 'transposition']]);
+  // K₂ = K um 4 Bit nach links; nach rechts rotiert → P3 (bei K₃ sind links und rechts gleich)
+  assert.deepEqual(dg(k16({ schluessel: '0011 1010 1100 0101', runden: 2, schritt: 'rundenschluessel' }, '1010110001010011'), '0101 0011 1010 1100'), [['P3', 'richtung']]);
+});
+
 test('bits-rechnen: ? = leere Bit-Stelle bleibt positionsgenau erhalten (Option A, Delta §8.4)', () => {
   const V = require('../src/krypto/interaktionen/bits').vertrag;
   const a = A['W9-L6-01']; // Lösung 00100001

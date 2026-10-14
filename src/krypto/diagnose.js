@@ -265,10 +265,55 @@ function rundenschluesselRechts(k, runde) {
   return ((k >>> r) | (k << (16 - r))) & 0xffff;
 }
 
+const KETTEN_FELD = Object.freeze({ 'nach-xor': 'nachXor', 'nach-sbox': 'nachSBox', 'nach-transposition': 'nachTransposition' });
+
+/**
+ * KRYPTOS-16-Kandidaten mit `schritt` (Plan M8 E124): Einzelschritte (S↔S⁻¹ P3, Transposition ausgelassen P4,
+ * Rundenschlüssel rechts statt links rotiert P3) und Kettenzustände der Runde `runden` mit S⁻¹ statt S (P3), ohne
+ * Transposition (P4) und mit rechts rotierten Rundenschlüsseln (P3).
+ */
+function kryptos16SchrittKandidaten(ia, x0) {
+  const k16 = K.kryptos16;
+  const b16 = (n) => K.byteZuBits(n, 16);
+  const out = [];
+  if (ia.schritt === 'rundenschluessel') {
+    out.push({ p: 'P3', code: 'richtung', liste: [...b16(rundenschluesselRechts(parseInt(K.normBits(ia.schluessel), 2), ia.runden))] });
+    return out;
+  }
+  if (ia.schritt === 'sbox' || ia.schritt === 'sbox-inv') {
+    out.push({ p: 'P3', code: 'richtung', liste: [...b16(k16.sbox(x0, ia.schritt === 'sbox' ? 'ent' : 'ver'))] });
+    return out;
+  }
+  if (ia.schritt === 'transposition') {
+    out.push({ p: 'P4', code: 'transposition', liste: [...b16(x0)] });
+    return out;
+  }
+  const key = parseInt(K.normBits(ia.schluessel), 2);
+  const feld = KETTEN_FELD[ia.schritt];
+  const kette = ({ sInv = false, ohneT = false, rechts = false }) => {
+    let x = x0;
+    let zustand = null;
+    for (let r = 1; r <= ia.runden; r++) {
+      const k = rechts ? rundenschluesselRechts(key, r) : k16.rundenschluessel(key, r);
+      const nachXor = x ^ k;
+      const nachSBox = k16.sbox(nachXor, sInv ? 'ent' : 'ver');
+      const nachTransposition = ohneT ? nachSBox : k16.transponiere(nachSBox);
+      zustand = { nachXor, nachSBox, nachTransposition };
+      x = nachTransposition;
+    }
+    return [...b16(zustand[feld])];
+  };
+  out.push({ p: 'P4', code: 'transposition', liste: kette({ ohneT: true }) });
+  out.push({ p: 'P3', code: 'richtung', liste: kette({ sInv: true }) });
+  if (ia.runden >= 2) out.push({ p: 'P3', code: 'richtung', liste: kette({ rechts: true }) });
+  return out;
+}
+
 /** KRYPTOS-16-Kandidaten (E5, SPEC W3 §0a) als Bitfolgen. */
 function kryptos16Kandidaten(ia) {
   const k16 = K.kryptos16;
-  const x0 = parseInt(K.normBits(ia.block), 2);
+  const x0 = ia.schritt === 'rundenschluessel' ? null : typeof ia.text === 'string' ? k16.textZuBloecken(ia.text)[0] : parseInt(K.normBits(ia.block), 2);
+  if (ia.schritt !== undefined) return kryptos16SchrittKandidaten(ia, x0);
   const key = parseInt(K.normBits(ia.schluessel), 2);
   const R = ia.runden;
   const ent = ia.richtung === 'ent';

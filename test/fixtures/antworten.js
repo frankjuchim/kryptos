@@ -123,6 +123,13 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L3-03', antwort: '1010 0001 1001 1011', erwartet: [['P3', 'richtung']] },
   { aufgabe: 'W9-L3-04', antwort: [3, 5, 7], erwartet: [] }
 );
+// Plan M8 Task 166: KRYPTOS-16-Schritte (schritt, text)
+Object.assign(RICHTIG, { 'W9-L3-05': '0110 1111 0111 0110', 'W9-L3-06': { bits: '1011 0100 0011 1001' } });
+Object.assign(FALSCH, { 'W9-L3-05': '0111 0001 0100 0111', 'W9-L3-06': '1101 0110 0010 0011' });
+DIAGNOSE.push(
+  { aufgabe: 'W9-L3-05', antwort: '0100 1000 1010 0100', erwartet: [['P3', 'richtung']] },
+  { aufgabe: 'W9-L3-06', antwort: '1101 0110 0010 0011', erwartet: [['P3', 'richtung']] }
+);
 // Review M3 W1: Knack-Aufgabe im Kryptoanalyse-Level (Schlüssel verdeckt)
 Object.assign(RICHTIG, { 'W9-L2-10': 'wolke nzieh enauf' });
 Object.assign(FALSCH, { 'W9-L2-10': 'WOLKENZIEHENAUX' });

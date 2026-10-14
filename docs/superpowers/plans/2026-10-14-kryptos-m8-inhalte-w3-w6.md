@@ -373,7 +373,7 @@ umbrechen), Version; `test/fixtures/welt_beispiel.json` (+ zwei Aufgaben `W9-L�
 Neuberechnung je `schritt` über `Krypto.kryptos16.*` (Kette über `verschluesseln({ protokoll: true })`, Feld
 `nachXor`/`nachSBox`/`nachTransposition` der Runde `runden`). `seed_pruefen.py` analog mit `kryptos16_*`.
 
-- [ ] **Step 1: Failing tests** – Pruefer/Validator mit Spec-Werten:
+- [x] **Step 1: Failing tests** – Pruefer/Validator mit Spec-Werten:
   - `{ operation: 'kryptos16', text: 'NO', schluessel: '0011 1111 0000 1000', runden: 1, schritt: 'nach-xor' }` → `0111000101000111`,
     `nach-sbox` → `0110111101110110`, `nach-transposition` → `0100111111110110` (W3-L2-04);
   - `{ block: '1011 0100 0011 1001', schluessel: '0000 0000 0000 0000', runden: 1, schritt: 'sbox' }` → `1110011110010010` (W3-B-07),
@@ -382,8 +382,9 @@ Neuberechnung je `schritt` über `Krypto.kryptos16.*` (Kette über `verschluesse
   - Diagnose: Antwort `S⁻¹` statt `S` → P3 `richtung`; Kettenzustand ohne Transposition → P4 `transposition`;
   - Validator: `schritt: 'nach-xor'` mit `richtung: 'ent'` → Fehler; 48-Bit-Operanden ok, 72 Bit → Fehler;
   - `seed_pruefen.py` rechnet alle drei Arten nach (Temp-Welt).
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "bits-rechnen: KRYPTOS-16-Schritte (schritt, text) und Operanden bis 64 Bit"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `node werkzeuge/version_setzen.js patch`; `npm test`.
+- [x] **Step 5: Commit** `git commit -m "bits-rechnen: KRYPTOS-16-Schritte (schritt, text) und Operanden bis 64 Bit"`.
+- [x] **Umsetzungsnotiz:** Neuberechnung steht in `src/krypto/interaktionen/bits.js` (`erwartet` → `kryptos16Wert`), nicht in `neuberechnung.js` (die rechnet nur Lücken in Blöcken nach) – dort keine Änderung. `schluessel`/`runden` sind bei den Einzelschritten `sbox`, `sbox-inv`, `transposition` optional (ohne Wirkung), Einzelschritte haben keine `richtung`. Rundenschlüssel-Diagnose „rechts statt links“ greift nur, wo sich beide unterscheiden (nicht bei K₃: Rotation um 8 Bit). Client: Hinweis „Gesucht: Zustand nach … in Runde R“ bzw. Einzelschritt, Zeile „Klartext „NO“ (ASCII)“, Ergebniszeile „Zustand“/„K₃“; ab 33 Bit je Byte ein nicht umbrechender Abschnitt (`.bit-byte`). Fixture W9-L3-05 (`nach-sbox` mit `text`), W9-L3-06 (`sbox-inv`); im Browser (360/1280 px) ohne Konsolenfehler angesehen.
 
 ### Task 167: Interaktion `hash-ziel` (E126)
 

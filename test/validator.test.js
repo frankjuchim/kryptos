@@ -280,6 +280,31 @@ test('bits-rechnen-Validator: Neuberechnung je Operation', () => {
   erwarteFehler((w) => { aufgabe(w, 'W9-L3-03').interaktion.runden = 5; }, /runden/);
 });
 
+test('bits-rechnen-Validator: KRYPTOS-16-Schritte (schritt, text) und Operanden bis 64 Bit (Plan M8 E124, E125)', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-05').loesung.bits = '0111000101000111'; }, /Neuberechnung ergibt 0110111101110110/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-06').loesung.bits = '1101011000100011'; }, /Neuberechnung ergibt 1011010000111001/);
+  erwarteFehler((w) => { Object.assign(aufgabe(w, 'W9-L3-05').interaktion, { schritt: 'nach-xor', richtung: 'ent' }); }, /Kettenzustände nur mit richtung ver/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-05').interaktion.schritt = 'nach-runde'; }, /schritt muss/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-05').interaktion.block = '0100 1110 0100 1111'; }, /genau eins von block und text/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L3-06').interaktion.block; }, /genau eins von block und text/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-05').interaktion.text = 'NOT'; }, /text muss genau 2 Buchstaben/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-05').interaktion.text = 'no'; }, /text muss genau 2 Buchstaben/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L3-05').interaktion.schluessel; }, /schluessel fehlt/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L3-06').interaktion.richtung = 'ver'; }, /richtung gibt es bei Einzelschritten nicht/);
+  erwarteFehler((w) => { Object.assign(aufgabe(w, 'W9-L3-06').interaktion, { schritt: 'rundenschluessel', schluessel: '0011 1010 1100 0101', runden: 3 }); aufgabe(w, 'W9-L3-06').loesung.bits = '1100010100111010'; }, /rundenschluessel braucht nur schluessel und runden/);
+  // Rundenschlüssel ohne block/text: fehlerfrei
+  const w = basis();
+  aufgabe(w, 'W9-L3-06').interaktion = { kind: 'bits-rechnen', operation: 'kryptos16', schluessel: '0011 1010 1100 0101', runden: 3, schritt: 'rundenschluessel' };
+  aufgabe(w, 'W9-L3-06').loesung.bits = '1100010100111010';
+  assert.deepEqual(fehlerVon(w), []);
+  // Operanden 8–64 Bit: 48 Bit ok, 72 Bit Fehler
+  const w48 = basis();
+  aufgabe(w48, 'W9-L6-01').interaktion.operanden = ['0011 1111 1110 0011 0100 1001 1010 0000 1101 0011 0110 0011', '0010 0010 1111 1001 0101 1110 1010 0000 1101 0011 0110 0011'];
+  aufgabe(w48, 'W9-L6-01').loesung.bits = '000111010001101000010111000000000000000000000000';
+  assert.deepEqual(fehlerVon(w48), []);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0'.repeat(72), '1'.repeat(72)]; }, /8–64 Bit/);
+});
+
 /* ---------- Task 30: Welt- und Level-Felder (Delta §2, §3), Negativ-Fixtures (Delta §13, E15) ---------- */
 
 const FEHLER_DIR = path.join(__dirname, 'fixtures', 'fehler');

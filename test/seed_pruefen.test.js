@@ -14,11 +14,19 @@ test('seed_pruefen.py: Fixture ohne Abweichung, manipulierte Lösung mit Exit-Co
   const w = JSON.parse(fs.readFileSync(H.FIXTURE, 'utf8'));
   w.aufgaben.find((a) => a.id === 'W9-L3-03').loesung.bits = '1101100001101111';
   w.aufgaben.find((a) => a.id === 'W9-L5-08').loesung.text = 'UVMGEOVFCCX';
+  // Plan M8 Task 166: Kettenzustand (text), Einzelschritt und Rundenschlüssel werden nachgerechnet
+  w.aufgaben.find((a) => a.id === 'W9-L3-05').loesung.bits = '0111000101000111';
+  w.aufgaben.find((a) => a.id === 'W9-L3-06').loesung.bits = '1101011000100011';
+  w.aufgaben.find((a) => a.id === 'W9-L6-01').interaktion = { kind: 'bits-rechnen', operation: 'kryptos16', schluessel: '0011 1010 1100 0101', runden: 3, schritt: 'rundenschluessel' };
+  w.aufgaben.find((a) => a.id === 'W9-L6-01').loesung = { bits: '0011101011000101' };
   const d = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kr-seed-')), 'w.json'); fs.writeFileSync(d, JSON.stringify(w));
   r = spawnSync('python3', ['-I', SKRIPT, '--pruefwerte', PRUEFWERTE, d], { encoding: 'utf8' });
   assert.equal(r.status, 1);
   assert.match(r.stdout, /W9-L3-03/);
   assert.match(r.stdout, /W9-L5-08/);
+  assert.match(r.stdout, /W9-L3-05 › .*erwartet 0110111101110110/);
+  assert.match(r.stdout, /W9-L3-06 › .*erwartet 1011010000111001/);
+  assert.match(r.stdout, /W9-L6-01 › .*erwartet 1100010100111010/);
 });
 
 test('seed_pruefen.py: gaps mit pruefnachweis (Prüfwert) und Lücke im bits-Block (pruefe xor) – Review M3 W3', { skip: py.status !== 0 && 'python3 fehlt' }, () => {

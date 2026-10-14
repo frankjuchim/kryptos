@@ -36,6 +36,7 @@ test('Delta §13: jeder Block, jede Interaktion und jeder Modus kommt vor', () =
   for (const x of ['schluessel', 'auswahl', 'text']) assert.ok(sb.includes(x), x);
   const br = teile.filter((t) => t.kind === 'bits-rechnen');
   for (const x of ['xor', 'kryptos16', 'lawine']) assert.ok(br.some((t) => t.operation === x), x);
+  assert.ok(br.some((t) => t.schritt === 'nach-sbox' && t.text) && br.some((t) => t.schritt === 'sbox-inv'), 'kryptos16 mit schritt (Plan M8 E124)');
   assert.ok(br.some((t) => t.richtung === 'zu-bits') && br.some((t) => t.richtung === 'zu-text'));
   const gn = teile.filter((t) => t.kind === 'gaps').flatMap((t) => Object.values(t.felder).map((f) => f.norm));
   assert.ok(gn.includes('krypto') && gn.includes('bits'));

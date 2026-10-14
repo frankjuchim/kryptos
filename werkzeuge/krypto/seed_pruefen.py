@@ -10,7 +10,8 @@ JS-Bibliothek, die der Validator (`npm run validate`) benutzt. Geprüft werden:
   `werkzeuge/krypto/fremde_verfahren.py:<name>` → `VERFAHREN[name](eingabe, richtung)`;
   `quellen/pruefwerte/W<n>.json#<id>` → Eintrag `id` vorhanden und `erwartet` = Lösung.
 - `zuordnung`: Geheimtext mit `loesung.zuordnung` entschlüsselt = `loesung.klartext`; `vorgabe` passt zur Zuordnung.
-- `bits-rechnen`: `xor`, `ascii` (`zu-bits`/`zu-text`), `kryptos16` (ver/ent), `lawine` (Positionen ab 0 nach der
+- `bits-rechnen`: `xor`, `ascii` (`zu-bits`/`zu-text`), `kryptos16` (ver/ent; mit `schritt` Kettenzustand oder Einzelschritt,
+  Startblock aus `text` oder `block`, Plan M8 E124), `lawine` (Positionen ab 0 nach der
   letzten Runde, gekipptes Bit `kippe` ab 0).
 - Blöcke `quadrat` (Schlüssel ↔ Zellen), `bits` mit `pruefe: xor` (auch eine Lücke [[id]] in einer Datenzeile: XOR
   der übrigen Zeilen = Lösung des gaps-Felds), `matrix` (Fleißner-Schablone; Spaltenkopf mit `reihenfolge` –
@@ -76,6 +77,28 @@ def zahl16(text):
     if len(b) != 16:
         raise K.KryptoFehler('Ein Block hat 16 Bit.')
     return int(b, 2)
+
+
+_KETTENZUSTAENDE = {'nach-xor': 'nach_xor', 'nach-sbox': 'nach_s_box', 'nach-transposition': 'nach_transposition'}
+
+
+def kryptos16_wert(ia):
+    """bits-rechnen kryptos16 mit optionalem schritt (Plan M8 E124): Startblock aus text (ASCII) oder block."""
+    schritt = ia.get('schritt')
+    if schritt == 'rundenschluessel':
+        return K.kryptos16_rundenschluessel(zahl16(ia.get('schluessel', '')), ia.get('runden', 1))
+    x0 = K.kryptos16_text_zu_bloecken(ia['text'])[0] if isinstance(ia.get('text'), str) else zahl16(ia.get('block', ''))
+    if schritt == 'sbox':
+        return K.kryptos16_sbox(x0)
+    if schritt == 'sbox-inv':
+        return K.kryptos16_sbox(x0, 'ent')
+    if schritt == 'transposition':
+        return K.kryptos16_transponiere(x0)
+    if schritt in _KETTENZUSTAENDE:
+        r = K.kryptos16_verschluesseln(x0, zahl16(ia.get('schluessel', '')), runden=ia.get('runden', 4), protokoll=True)['runden']
+        return r[ia.get('runden', 4) - 1][_KETTENZUSTAENDE[schritt]]
+    f = K.kryptos16_entschluesseln if ia.get('richtung') == 'ent' else K.kryptos16_verschluesseln
+    return f(x0, zahl16(ia.get('schluessel', '')), runden=ia.get('runden', 4))
 
 
 def zahlenliste(text):
@@ -301,8 +324,7 @@ class Pruefung:
                     self.vergleiche(datei, aid, ort + '.bits', erg, bits(lo['bits']))
         elif op == 'kryptos16' and 'bits' in lo:
             def k16():
-                f = K.kryptos16_entschluesseln if ia.get('richtung') == 'ent' else K.kryptos16_verschluesseln
-                return format(f(zahl16(ia.get('block', '')), zahl16(ia.get('schluessel', '')), runden=ia.get('runden', 4)), '016b')
+                return format(kryptos16_wert(ia), '016b')
             ok, erg = self.rechne(datei, aid, ort + '.bits', k16)
             if ok:
                 self.vergleiche(datei, aid, ort + '.bits', erg, bits(lo['bits']))

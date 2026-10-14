@@ -273,6 +273,10 @@ einteiligen Aufgaben stehen `felder`, `elemente`, `zeichen`, `bits`, `anteil`, `
 Ergebnis. Für **Kern**-Arten liefert `format.registriereDiagnose(art, fn(ia, lo, antwort, ergebnis) → Diagnose[])` eine
 Zusatzdiagnose (z. B. `gaps`, Delta §9.6).
 Blöcke (Server): `registriereBlock('quadrat', { texte, validiere(b, fe, w) })`.
+`bits-rechnen` (Plan M8 E124, E125): `kryptos16` mit `schritt` (Kettenzustand `nach-xor`/`nach-sbox`/`nach-transposition`
+der Runde `runden` bzw. Einzelschritt `sbox`/`sbox-inv`/`transposition`/`rundenschluessel`) und `text` (2 Zeichen, ASCII)
+statt `block`; die Neuberechnung steht in `interaktionen/bits.js` (`erwartet`), die Diagnose in `diagnose.js`
+(`kryptos16SchrittKandidaten`), der Zwilling in `seed_pruefen.py` (`kryptos16_wert`). `xor`-Operanden 8–64 Bit.
 
 ### 4.4 Client-Hooks
 
@@ -1868,7 +1872,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `registry.test.js` | neu (M3) | Server-Registries des Kerns (K01/K02): `registriereBlock`/`registriereInteraktion`/`registriereNorm`/`registriereDiagnose`, Dopplungen und Kern-Namen werfen, Lücken-Besitz, Prüfer-Delegation, Diagnose nur mit `{ diagnose: true }` und nur bei falscher, nicht leerer Antwort |
 | `bloecke.test.js` | neu (M3) | die sieben neuen Blöcke (Delta §7) mit Neuberechnung (`quadrat` Schlüssel ↔ Zellen, `bits` `pruefe: xor`, `matrix` Fleißner-Schablone ab 1) |
 | `client_hooks.test.js` | neu (M3) | Client-Hooks K04/K05 in einer `vm` mit Attrappen-DOM: `AQR.registriere` (Klassen, `ctx.modus`), `raster` mit Spaltenköpfen, `AQI.registriere`/`schrittArten`/`teilFuer`/`gapBesitzer`, Kern-Namen werfen |
-| `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung (`--pruefwerte test/fixtures/pruefwerte`), manipulierte Lösungen (`kryptos16`, `frei` mit `pruefnachweis`, gaps mit Prüfwert, Lücke im bits-Block) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
+| `seed_pruefen.test.js` | neu (M3) | `werkzeuge/krypto/seed_pruefen.py` (Python-Zwilling, unabhängig von der JS-Bibliothek): Fixture ohne Abweichung (`--pruefwerte test/fixtures/pruefwerte`), manipulierte Lösungen (`kryptos16` auch mit `schritt`/`text` und `rundenschluessel`, `frei` mit `pruefnachweis`, gaps mit Prüfwert, Lücke im bits-Block) → Exit-Code 1 mit Aufgaben-id (übersprungen, wenn `python3` fehlt) |
 | `hilfen_spec.js` | neu (M5) | Helfer der Abgleich-Tests: Parser der Spec-Tabellen W0–W2 (Lab 11, Boss 8, Archivfund 5, Warm-up 6 Spalten), Level-Köpfe (DS, Merkkasten), id-Abbildung (E38), Interaktions-Mapping (E40/E64/E65), Rolle/Werkzeug (E39/E63), `UMFANG` je Welt |
 | `inhalte_spec.test.js` | neu (M5) | Spec-Tabellen ↔ Seed für jeden Abschnitt in `UMFANG`: Titel, Stufe, Niveau, Kategorie, Fallen, Interaktionsarten, choice-Lösungen, Level-Kopf; keine Seed-Aufgabe ohne Spec-Zeile; Parser-Selbsttest gegen `WELT_PLAN` |
 | `inhalte_pruefwerte.test.js` | neu (M5) | Prüfwerte (`quellen/pruefwerte/W0–W2.json`, `art` lab/bosspool/archivfund/warmup) ↔ Seed: Wert kommt in der Aufgabe vor; Prüfwert-Gruppen (`gapsFeld`) exakt = Hauptlösung |

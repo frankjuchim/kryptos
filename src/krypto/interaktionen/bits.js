@@ -12,6 +12,10 @@ const { FALLEN_IDS } = require('../../domain');
 
 const { AntwortFehler } = C;
 const OPERATIONEN = ['xor', 'ascii', 'kryptos16', 'lawine', 'frei'];
+/** KRYPTOS-16-Schritte (Plan M8 E124): Kettenzustände nach diesem Schritt in Runde `runden` (nur ver) und Einzelschritte. */
+const KETTENZUSTAENDE = Object.freeze({ 'nach-xor': 'nachXor', 'nach-sbox': 'nachSBox', 'nach-transposition': 'nachTransposition' });
+const EINZELSCHRITTE = Object.freeze(['sbox', 'sbox-inv', 'transposition', 'rundenschluessel']);
+const SCHRITTE = Object.freeze([...Object.keys(KETTENZUSTAENDE), ...EINZELSCHRITTE]);
 const MAX_BITS = 64;
 const MAX_ZEICHEN = 8;
 
@@ -23,6 +27,25 @@ const bits16 = (n) => K.byteZuBits(n, 16);
 
 const istTextAntwort = (ia) => ia.operation === 'ascii' && ia.richtung === 'zu-text';
 
+/** Startblock einer KRYPTOS-16-Aufgabe: `text` (2 Zeichen, ASCII nach SPEC W3 §0a.1) oder `block`. */
+const startblock = (ia) => (typeof ia.text === 'string' ? K.kryptos16.textZuBloecken(ia.text)[0] : zahl16(ia.block));
+
+/** KRYPTOS-16 mit optionalem schritt (Plan M8 E124) als Zahl. */
+function kryptos16Wert(ia) {
+  const k16 = K.kryptos16;
+  if (ia.schritt === 'rundenschluessel') return k16.rundenschluessel(zahl16(ia.schluessel), ia.runden);
+  const x0 = startblock(ia);
+  if (ia.schritt === 'sbox') return k16.sbox(x0);
+  if (ia.schritt === 'sbox-inv') return k16.sbox(x0, 'ent');
+  if (ia.schritt === 'transposition') return k16.transponiere(x0);
+  if (Object.hasOwn(KETTENZUSTAENDE, ia.schritt || '')) {
+    const r = k16.verschluesseln(x0, zahl16(ia.schluessel), { runden: ia.runden, protokoll: true }).runden;
+    return r[ia.runden - 1][KETTENZUSTAENDE[ia.schritt]];
+  }
+  const f = ia.richtung === 'ent' ? k16.entschluesseln : k16.verschluesseln;
+  return f(x0, zahl16(ia.schluessel), { runden: ia.runden });
+}
+
 /** Erwartetes Ergebnis (Neuberechnung, auch für die Diagnose); frei → undefined. Wirft KryptoFehler. */
 function erwartet(ia) {
   switch (ia.operation) {
@@ -30,10 +53,8 @@ function erwartet(ia) {
       return K.xorBits(...ia.operanden);
     case 'ascii':
       return ia.richtung === 'zu-text' ? K.bitsZuText(ia.bits) : K.textZuBits(ia.text, { gruppe: 0 });
-    case 'kryptos16': {
-      const f = ia.richtung === 'ent' ? K.kryptos16.entschluesseln : K.kryptos16.verschluesseln;
-      return bits16(f(zahl16(ia.block), zahl16(ia.schluessel), { runden: ia.runden }));
-    }
+    case 'kryptos16':
+      return bits16(kryptos16Wert(ia));
     case 'lawine': {
       const r = K.kryptos16.lawine(zahl16(ia.block), zahl16(ia.schluessel), ia.kippe + 1, { runden: ia.runden });
       return r[r.length - 1].positionen.map((p) => p - 1);
@@ -157,6 +178,39 @@ function pruefeBitfolge(x, name, min, max, fa, ort) {
 
 const anzeige = (x) => (Array.isArray(x) ? `[${x.join(', ')}]` : String(x));
 
+/**
+ * kryptos16 (Delta §8.4, Plan M8 E124): schritt aus der Liste; Kettenzustände nur mit richtung ver; genau eins von block
+ * und text (2 Buchstaben A–Z), außer rundenschluessel (nur schluessel + runden); schluessel/runden Pflicht außer bei
+ * sbox, sbox-inv, transposition (dort optional, ohne Wirkung); Einzelschritte ohne richtung.
+ */
+function validiereKryptos16(ia, fs, ort) {
+  const schritt = ia.schritt;
+  if (schritt !== undefined && !SCHRITTE.includes(schritt)) fs(ort, `schritt muss ${SCHRITTE.join(' | ')} sein.`);
+  const kette = schritt === undefined || Object.hasOwn(KETTENZUSTAENDE, schritt);
+  const einzel = EINZELSCHRITTE.includes(schritt);
+  const ohneSchluessel = ['sbox', 'sbox-inv', 'transposition'].includes(schritt);
+  if (schritt === 'rundenschluessel') {
+    if (ia.block !== undefined || ia.text !== undefined) fs(ort, 'rundenschluessel braucht nur schluessel und runden (kein block, kein text).');
+  } else if ((ia.block === undefined) === (ia.text === undefined)) {
+    fs(ort, 'Es braucht genau eins von block und text.');
+  } else if (ia.block !== undefined) {
+    pruefeBitfolge(ia.block, 'block', 16, 16, fs, ort);
+  } else if (typeof ia.text !== 'string' || !/^[A-Z]{2}$/.test(ia.text)) {
+    fs(ort, 'text muss genau 2 Buchstaben A–Z haben (ASCII nach SPEC W3 §0a.1).');
+  }
+  if (!ohneSchluessel || ia.schluessel !== undefined) {
+    if (ia.schluessel === undefined) fs(ort, 'schluessel fehlt (Bitfolge).');
+    else pruefeBitfolge(ia.schluessel, 'schluessel', 16, 16, fs, ort);
+  }
+  if (!ohneSchluessel || ia.runden !== undefined) {
+    if (!Number.isInteger(ia.runden) || ia.runden < 1 || ia.runden > 4) fs(ort, 'runden muss 1–4 sein.');
+  }
+  if (einzel && ia.richtung !== undefined) fs(ort, 'richtung gibt es bei Einzelschritten nicht.');
+  else if (kette && schritt !== undefined && ia.richtung !== undefined && ia.richtung !== 'ver') fs(ort, 'Kettenzustände nur mit richtung ver.');
+  else if (ia.richtung !== undefined && !['ver', 'ent'].includes(ia.richtung)) fs(ort, 'richtung muss ver oder ent sein.');
+  if (ia.kippe !== undefined) fs(ort, 'kippe gibt es nur bei lawine.');
+}
+
 function validiere(ia, lo, aufgabe, ort, fa, wa) {
   const lort = ort.replace('interaktion', 'loesung');
   if (!OPERATIONEN.includes(ia.operation)) return fa(ort, `operation muss ${OPERATIONEN.join(' | ')} sein.`);
@@ -171,8 +225,8 @@ function validiere(ia, lo, aufgabe, ort, fa, wa) {
         fs(ort, 'operanden muss 2–4 Bitfolgen enthalten.');
         break;
       }
-      ia.operanden.forEach((x, i) => pruefeBitfolge(x, `operanden[${i}]`, 8, 32, fs, ort));
-      // gleiche Länge auch dann melden, wenn ein Operand außerhalb 8–32 Bit liegt
+      ia.operanden.forEach((x, i) => pruefeBitfolge(x, `operanden[${i}]`, 8, 64, fs, ort));
+      // gleiche Länge auch dann melden, wenn ein Operand außerhalb 8–64 Bit liegt
       const b = ia.operanden.map((x) => (typeof x === 'string' ? K.normBits(x) : null));
       if (b.every((x) => x !== null) && !b.every((x) => x.length === b[0].length)) fs(ort, 'operanden müssen gleich lang sein.');
       break;
@@ -188,17 +242,15 @@ function validiere(ia, lo, aufgabe, ort, fa, wa) {
       } else fs(ort, 'richtung muss zu-bits oder zu-text sein.');
       break;
     case 'kryptos16':
+      validiereKryptos16(ia, fs, ort);
+      break;
     case 'lawine':
       pruefeBitfolge(ia.block, 'block', 16, 16, fs, ort);
       pruefeBitfolge(ia.schluessel, 'schluessel', 16, 16, fs, ort);
       if (!Number.isInteger(ia.runden) || ia.runden < 1 || ia.runden > 4) fs(ort, 'runden muss 1–4 sein.');
-      if (ia.operation === 'kryptos16') {
-        if (ia.richtung !== undefined && !['ver', 'ent'].includes(ia.richtung)) fs(ort, 'richtung muss ver oder ent sein.');
-        if (ia.kippe !== undefined) fs(ort, 'kippe gibt es nur bei lawine.');
-      } else {
-        if (!Number.isInteger(ia.kippe) || ia.kippe < 0 || ia.kippe > 15) fs(ort, 'kippe muss eine Bitposition 0–15 sein.');
-        if (ia.richtung !== undefined) fs(ort, 'richtung gibt es bei lawine nicht.');
-      }
+      if (ia.text !== undefined || ia.schritt !== undefined) fs(ort, 'text und schritt gibt es bei lawine nicht.');
+      if (!Number.isInteger(ia.kippe) || ia.kippe < 0 || ia.kippe > 15) fs(ort, 'kippe muss eine Bitposition 0–15 sein.');
+      if (ia.richtung !== undefined) fs(ort, 'richtung gibt es bei lawine nicht.');
       break;
     default:
       if (typeof aufgabe.pruefnachweis !== 'string' || !aufgabe.pruefnachweis.trim()) fa('pruefnachweis', 'pruefnachweis fehlt (fremdes Verfahren).');

@@ -731,6 +731,9 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 .ascii-text { font-family: var(--f-mono); font-variant-ligatures: none; font-size: 1.2rem; font-weight: 700; color: var(--text); white-space: pre; }
 .bits-eingabe { display: inline-flex; flex-wrap: nowrap; gap: 3px var(--a-3); }
 .bit-gruppe { display: inline-flex; flex-wrap: nowrap; gap: 3px; }
+/* mehr als 32 Bit (Plan M8 E125): Umbruch nur zwischen Bytes */
+.bits-eingabe.bits-lang { flex-wrap: wrap; row-gap: var(--a-2); }
+.bit-byte { display: inline-flex; flex-wrap: nowrap; gap: 3px var(--a-3); }
 .bits-eingabe .bit {
   width: var(--ziel);
   min-width: var(--ziel);

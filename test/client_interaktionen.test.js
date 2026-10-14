@@ -449,6 +449,25 @@ test('bits-rechnen Tastatur, Rundlauf, Lücken, kryptos16 (W9-L6-01, W9-L3-03, W
   c.loesung({ positionen: [3, 5, 7, 13] });
   assert.equal(lw[13].getAttribute('aria-pressed'), 'true');
 });
+test('bits-rechnen kryptos16 mit schritt/text (Plan M8 E124) und 48 Bit nach Bytes umbrochen (E125)', () => {
+  let { k, c } = baue(oeffentlich('W9-L3-05'));
+  assert.match(k.text(c.el), /Klartext „NO“ \(ASCII\)/);
+  assert.match(k.text(c.el), /Zustand nach der S-Box in Runde 1/);
+  assert.deepEqual(k.alle(c.el, '.bits-label').map(k.text).slice(0, 1), ['Schlüssel K']);
+  assert.equal(k.alle(c.el, '.bits-eingabe button.bit').length, 16);
+  c.setze('0110 1111 0111 0110');
+  assert.equal(server('bits', 'W9-L3-05', c.antwort()).r.ok, true);
+  ({ k, c } = baue(oeffentlich('W9-L3-06')));
+  assert.match(k.text(c.el), /S⁻¹ auf jede Vierergruppe/);
+  assert.deepEqual(k.alle(c.el, '.bits-label').map(k.text).slice(0, 1), ['Block']);
+  assert.ok(!/Runden:/.test(k.text(c.el)), 'Einzelschritt ohne Runden-Hinweis');
+  ({ k, c } = baue({ id: 'W9-X', titel: 'x', inhalt: [], interaktion: { kind: 'bits-rechnen', operation: 'kryptos16', schluessel: '0011 1010 1100 0101', runden: 3, schritt: 'rundenschluessel' } }));
+  assert.match(k.text(c.el), /Rundenschlüssel K₃/);
+  ({ k, c } = baue({ id: 'W9-X', titel: 'x', inhalt: [], interaktion: { kind: 'bits-rechnen', operation: 'xor', operanden: ['0'.repeat(48), '1'.repeat(48)] } }));
+  assert.equal(k.alle(c.el, '.bits-eingabe button.bit').length, 48);
+  assert.equal(k.alle(c.el, '.bits-eingabe .bit-byte').length, 6, 'je Byte ein nicht umbrechender Abschnitt');
+});
+
 test('bits-rechnen lawine: nur das gekippte Bit des Blocks ist markiert', () => {
   const { k, c } = baue(oeffentlich('W9-L3-04'));
   const zeilen = k.alle(c.el, '.bits-zeile');

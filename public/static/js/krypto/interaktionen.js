@@ -973,11 +973,14 @@ const KRI = (() => {
         knoepfe.push(b);
       }
       knoepfe.forEach((_, i) => beschrifte(i));
+      // je Gruppe ein nicht umbrechender Abschnitt (schmale Geräte brechen nur zwischen Gruppen um)
+      const gruppen = Array.from({ length: Math.ceil(n / gruppe) }, (_, g) => h('span', { class: 'bit-gruppe' }, knoepfe.slice(g * gruppe, (g + 1) * gruppe)));
+      // mehr als 32 Bit (Plan M8 E125): je Byte ein Abschnitt, umgebrochen wird nur zwischen Bytes
+      const jeByte = n > 32 ? 8 / gruppe : 0;
       eingabe = h(
         'div',
-        { class: 'bits-eingabe' + (lawine ? ' bits-lawine' : ''), role: 'group', 'aria-label': lawine ? 'Ergebnis: veränderte Bits antippen' : 'Ergebnis: Bits eintragen (Tasten 0 und 1)' },
-        // je Gruppe ein nicht umbrechender Abschnitt (schmale Geräte brechen nur zwischen Gruppen um)
-        Array.from({ length: Math.ceil(n / gruppe) }, (_, g) => h('span', { class: 'bit-gruppe' }, knoepfe.slice(g * gruppe, (g + 1) * gruppe)))
+        { class: 'bits-eingabe' + (lawine ? ' bits-lawine' : '') + (jeByte ? ' bits-lang' : ''), role: 'group', 'aria-label': lawine ? 'Ergebnis: veränderte Bits antippen' : 'Ergebnis: Bits eintragen (Tasten 0 und 1)' },
+        jeByte ? Array.from({ length: Math.ceil(gruppen.length / jeByte) }, (_, i) => h('span', { class: 'bit-byte' }, gruppen.slice(i * jeByte, (i + 1) * jeByte))) : gruppen
       );
     }
 
@@ -990,10 +993,27 @@ const KRI = (() => {
         box.appendChild(tafel(zeilen, labels[ops.length] ?? std[ops.length], eingabe));
         break;
       }
-      case 'kryptos16':
-        box.appendChild(h('p', { class: 'bits-hinweis' }, `Runden: ${ia.runden ?? 1}, Richtung: ${ia.richtung === 'ent' ? 'ent' : 'ver'}`));
-        box.appendChild(tafel([{ label: labels[0] ?? 'Block', bits: String(ia.block ?? '') }, { label: labels[1] ?? 'Schlüssel K', bits: String(ia.schluessel ?? '') }, { trenner: '→' }], labels[2] ?? 'Ergebnis', eingabe));
+      case 'kryptos16': {
+        // Plan M8 E124: schritt (Kettenzustand der Runde bzw. Einzelschritt) und text (2 Zeichen, ASCII)
+        const schritt = typeof ia.schritt === 'string' ? ia.schritt : null;
+        const R = ia.runden ?? 1;
+        const tief = (z) => String(z).replace(/\d/g, (d) => '₀₁₂₃₄₅₆₇₈₉'[d]);
+        const KETTE = { 'nach-xor': 'dem XOR', 'nach-sbox': 'der S-Box', 'nach-transposition': 'der Transposition' };
+        const EINZEL = { sbox: 'S-Box S auf jede Vierergruppe', 'sbox-inv': 'inverse S-Box S⁻¹ auf jede Vierergruppe', transposition: 'Transposition der 4×4-Bitmatrix', rundenschluessel: `Rundenschlüssel K${tief(R)} aus K` };
+        let hinweis = `Runden: ${R}, Richtung: ${ia.richtung === 'ent' ? 'ent' : 'ver'}`;
+        if (schritt && KETTE[schritt]) hinweis = `Gesucht: Zustand nach ${KETTE[schritt]} in Runde ${R}`;
+        else if (schritt && EINZEL[schritt]) hinweis = `Gesucht: ${EINZEL[schritt]}`;
+        box.appendChild(h('p', { class: 'bits-hinweis' }, hinweis));
+        if (typeof ia.text === 'string') box.appendChild(h('p', { class: 'bits-ascii' }, 'Klartext ', h('code', { class: 'ascii-text' }, `„${ia.text}“`), ' (ASCII)'));
+        const zeilen = [];
+        let li = 0;
+        if (schritt !== 'rundenschluessel' && typeof ia.text !== 'string') zeilen.push({ label: labels[li++] ?? 'Block', bits: String(ia.block ?? '') });
+        if (!['sbox', 'sbox-inv', 'transposition'].includes(schritt) && ia.schluessel !== undefined) zeilen.push({ label: labels[li++] ?? 'Schlüssel K', bits: String(ia.schluessel) });
+        zeilen.push({ trenner: '→' });
+        const std = schritt === 'rundenschluessel' ? `K${tief(R)}` : schritt && KETTE[schritt] ? 'Zustand' : 'Ergebnis';
+        box.appendChild(tafel(zeilen, labels[li] ?? std, eingabe));
         break;
+      }
       case 'lawine': {
         const kippe = Number.isInteger(ia.kippe) ? ia.kippe : null;
         box.appendChild(h('p', { class: 'bits-hinweis' }, `Runden: ${ia.runden ?? 1}. Gekippt wird das Bit an Position ${kippe} (markiert). Tippe die Bits an, die sich am Ende unterscheiden.`));
