@@ -21,13 +21,25 @@
 <main id="haupt" tabindex="-1">
 <div class="wrap lesen datenschutz">
 <h1>Datenschutz</h1>
-<p>Kryptos gehört zum Plattform-Verbund <strong>InfoLabs</strong>. Maßgeblich ist die <a id="portal-datenschutz" href="/sso/portal">zentrale Datenschutzerklärung des Portals</a>. Hier stehen nur die Besonderheiten von Kryptos.</p>
+<div class="rueckmeldung info" role="note"><p><strong>Entwurf:</strong> Diese Hinweise beschreiben die Verarbeitung so, wie Kryptos technisch arbeitet. Die Angaben in [eckigen Klammern] und die Rechtsgrundlage müssen von der Schule (Schulleitung, Datenschutzbeauftragte bzw. Datenschutzbeauftragter) ergänzt bzw. bestätigt werden.</p></div>
+<p>Kryptos gehört zum Plattform-Verbund <strong>InfoLabs</strong>. Maßgeblich ist die <a id="portal-datenschutz" href="/sso/portal">zentrale Datenschutzerklärung des Portals</a>. Diese Seite ergänzt sie um die Besonderheiten von Kryptos.</p>
+<section class="karte" aria-labelledby="ds-verantwortlich">
+<h2 id="ds-verantwortlich">Verantwortliche Stelle</h2>
+<p>[Name der Schule], [Anschrift], vertreten durch die Schulleitung [Name].<br>
+Datenschutzbeauftragte bzw. Datenschutzbeauftragter der Schule: [Name, E-Mail].<br>
+Ansprechpartner für den Verbund: [Administrator, dienstliche E-Mail]; für einen Kurs die Lehrkraft des Kurses.</p>
+</section>
+<section class="karte" aria-labelledby="ds-zweck">
+<h2 id="ds-zweck">Zweck</h2>
+<p>Kryptos ist die Lernplattform zur Kryptologie im Informatikunterricht der Oberstufe. Schülerinnen und Schüler üben mit automatisch geprüften Aufgaben, im Kryptolabor, im Funkraum und in der Knack-Arena; die Lehrkraft sieht den Lernstand ihres Kurses, um den Unterricht zu planen. Die Ergebnisse fließen nicht in die Notengebung ein [von der Schule zu bestätigen].</p>
+</section>
 <section class="karte" aria-labelledby="ds-daten">
 <h2 id="ds-daten">Welche Daten Kryptos speichert</h2>
 <ul>
 <li>Eine <strong>pseudonyme Kennung</strong> aus dem Portal (<code>sub</code>), den selbst gewählten <strong>Anzeigenamen</strong> und die <strong>Kurs-Kennungen</strong>.</li>
 <li>Den <strong>Lernstand</strong>: gelöste Aufgaben, Punkte, Fehlversuche, genutzte Tipps, Boss-Ergebnisse, Abzeichen, Warm-up-Stand.</li>
 <li>Keine Passwörter, keine persönlichen Codes, keine E-Mail-Adressen – angemeldet wird ausschließlich über das Portal.</li>
+<li>Zur Begrenzung zu vieler Anfragen zählt der Server kurzzeitig im Arbeitsspeicher (höchstens 10 Minuten), gespeichert wird dabei nichts.</li>
 </ul>
 </section>
 <section class="karte" aria-labelledby="ds-cookies">
@@ -37,11 +49,21 @@
 <li><code>kr_l</code> – Sitzung für Lehrkräfte, 8 Stunden.</li>
 <li><code>kr_sso_state</code> – Schutz der Anmeldung über das Portal, 10 Minuten.</li>
 </ul>
-<p>Es gibt keine Werbe-, Statistik- oder Tracking-Cookies.</p>
+<p>Alle Cookies sind signiert, für Skripte nicht lesbar (httpOnly), mit SameSite=Lax und über HTTPS nur verschlüsselt übertragen. Es gibt keine Werbe-, Statistik- oder Tracking-Cookies.</p>
 </section>
 <section class="karte" aria-labelledby="ds-browser">
 <h2 id="ds-browser">Speicher im Browser</h2>
-<p>Nur auf deinem Gerät und nie an den Server übertragen: Darstellung und Bewegung (<code>kr_einstellungen</code>), das zuletzt geöffnete Level (<code>kr_zuletzt</code>), schon entsiegelte Epochen (<code>kr_entsiegelt</code>), die Wahl „Jeden Schritt sofort prüfen“ sowie Filter im Trainingsplatz und Warm-up. Dazu der Entwurf deines Teams in der Chiffren-Werkstatt (<code>kr-werkstatt:…</code>, siehe Knack-Arena).</p>
+<p>Nur auf deinem Gerät (<code>localStorage</code>) und nie an den Server übertragen:</p>
+<ul>
+<li><code>kr_einstellungen</code> – Darstellung (hell/dunkel) und Bewegung.</li>
+<li><code>kr_zuletzt</code> – das zuletzt geöffnete Level.</li>
+<li><code>kr_entsiegelt</code> – schon entsiegelte Epochen auf der Zeitleiste.</li>
+<li><code>aql_schritt</code> – die Wahl „Jeden Schritt sofort prüfen“.</li>
+<li><code>kr_training_…</code> – die gewählte Aufgabenart im Trainingsplatz je Welt.</li>
+<li><code>kr_warmup_filter</code> – Welt und Kategorie im Warm-up.</li>
+<li><code>kr_lk_sb_welt</code> – nur Lehrkräfte: die gewählte Welt im Scoreboard.</li>
+<li><code>kr-werkstatt:…</code> – der Entwurf deines Teams in der Chiffren-Werkstatt (siehe Knack-Arena).</li>
+</ul>
 </section>
 <section class="karte" aria-labelledby="ds-teams">
 <h2 id="ds-teams">Teams</h2>
@@ -72,11 +94,30 @@
 </section>
 <section class="karte" aria-labelledby="ds-extern">
 <h2 id="ds-extern">Keine externen Dienste</h2>
-<p>Kryptos lädt keine Schriften, Skripte oder Bilder von fremden Servern und verwendet kein Tracking. Alle Dateien kommen von diesem Server.</p>
+<p>Kryptos lädt keine Schriften, Skripte oder Bilder von fremden Servern und verwendet kein Tracking. Alle Dateien kommen von diesem Server; Suchmaschinen werden an der Indexierung gehindert.</p>
 </section>
-<section class="karte" aria-labelledby="ds-loeschen">
-<h2 id="ds-loeschen">Löschung</h2>
-<p>Konten und Kurse werden im Portal verwaltet. Wird dort ein Konto oder ein Kurs gelöscht, löscht das Portal die zugehörigen Daten auch in Kryptos.</p>
+<section class="karte" aria-labelledby="ds-rechtsgrundlage">
+<h2 id="ds-rechtsgrundlage">Rechtsgrundlage</h2>
+<p>[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG (Verarbeitung im Rahmen des Bildungsauftrags) oder Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO.]</p>
+</section>
+<section class="karte" aria-labelledby="ds-dauer">
+<h2 id="ds-dauer">Speicherort, Speicherdauer und Löschung</h2>
+<p>Kryptos läuft auf einem Server von [Hoster, Standort in der EU]; alle Verbindungen sind mit HTTPS verschlüsselt.</p>
+<ul>
+<li>Konten und Kurse werden im Portal verwaltet. Kryptos löscht Konten, Kurse und Lernstand, sobald das Portal es verlangt: wenn ein Kurs abläuft oder gelöscht wird, wenn die Lehrkraft jemanden aus dem Kurs entfernt und das Konto keinem weiteren Kurs angehört, oder wenn ein Konto gelöscht wird.</li>
+<li>Funkraum: Inhalte beim Beenden des Szenarios, das ganze Szenario spätestens 24 Stunden nach dem Anlegen.</li>
+<li>Knack-Arena: mit dem Löschen der Arena, spätestens 30 Tage nach dem Schließen.</li>
+<li>Sitzungs-Cookies: 30 Tage (Schülerinnen und Schüler) bzw. 8 Stunden (Lehrkräfte), beim Abmelden sofort.</li>
+<li>Sicherungskopien: [z. B. keine / Aufbewahrung höchstens … Tage].</li>
+</ul>
+</section>
+<section class="karte" aria-labelledby="ds-rechte">
+<h2 id="ds-rechte">Ihre Rechte</h2>
+<p>Betroffene haben das Recht auf Auskunft, Berichtigung (z. B. Umbenennen im Portal), Löschung, Einschränkung der Verarbeitung und Widerspruch. Ansprechpartner ist die Lehrkraft des Kurses bzw. die oder der Datenschutzbeauftragte der Schule; Konten und Kurse werden über das Portal geändert und gelöscht.</p>
+</section>
+<section class="karte" aria-labelledby="ds-beschwerde">
+<h2 id="ds-beschwerde">Beschwerde</h2>
+<p>Sie können sich bei der Aufsichtsbehörde beschweren: Die Landesbeauftragte für den Datenschutz Niedersachsen, Prinzenstraße 5, 30159 Hannover.</p>
 </section>
 </div>
 </main>

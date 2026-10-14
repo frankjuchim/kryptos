@@ -329,7 +329,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Consumes: Cookie-Namen aus `src/security.js`/`src/verbund/sitzung.js`, Speicher-Schlüssel aus `public/static/js/**`
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('pflichtangaben_mit_platzhaltern (E152)', () => {
     for (const s of ['[Name der Schule]', '[Anschrift]', '[Name, E-Mail]', '[Hoster, Standort in der EU]', 'Art. 6 Abs. 1 lit. e DSGVO']) assert.ok(html.includes(s), s);
@@ -341,10 +341,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('loeschfristen (E153): 24 Stunden, 30 Tage, 30 Tage/8 Stunden, Löschung durch das Portal', …);
   test('keine_echten_namen: keine Schulnamen/Personen außer Platzhaltern; Link #portal-datenschutz bleibt', …);
   ```
-- [ ] **Step 2: Run** `node --test test/datenschutz_seite.test.js` → FAIL.
-- [ ] **Step 3: Implement** Abschnitte (Reihenfolge wie labs): Entwurf-Kasten · Verantwortlich (Schule, DSB, Ansprechpartner Verbund) · Zweck · Welche Daten (bestehend) · Cookies · Speicher im Browser (vollständig laut Test) · Teams · Funkraum · Werkstatt/Arena · Abzeichen · Keine externen Dienste · Rechtsgrundlage `[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG …]` · Hosting `[Hoster, Standort in der EU]`, HTTPS · Speicherdauer und Löschung (E153, Sicherungskopien `[…]`) · Ihre Rechte (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch – über die Lehrkraft bzw. das Portal) · Beschwerde bei der Landesbeauftragten für den Datenschutz Niedersachsen. Ansprache: Seite richtet sich an Lernende und Eltern → wie labs neutral/gesiezt in Rechtsteilen, die bestehenden duzenden Absätze bleiben (Kryptos-Besonderheiten). Im Browser ansehen (360/1280 px, hell/dunkel), Read der Fotos.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (u. a. `seiten.test.js`, Versionsgleichstand).
-- [ ] **Step 5: Commit** `git commit -m "Datenschutzseite: Pflichtangaben mit Platzhaltern der Schule, vollständige Cookie- und Speicherliste (M9 Task 210)"`
+- [x] **Step 2: Run** `node --test test/datenschutz_seite.test.js` → FAIL.
+- [x] **Step 3: Implement** Abschnitte (Reihenfolge wie labs): Entwurf-Kasten · Verantwortlich (Schule, DSB, Ansprechpartner Verbund) · Zweck · Welche Daten (bestehend) · Cookies · Speicher im Browser (vollständig laut Test) · Teams · Funkraum · Werkstatt/Arena · Abzeichen · Keine externen Dienste · Rechtsgrundlage `[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG …]` · Hosting `[Hoster, Standort in der EU]`, HTTPS · Speicherdauer und Löschung (E153, Sicherungskopien `[…]`) · Ihre Rechte (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch – über die Lehrkraft bzw. das Portal) · Beschwerde bei der Landesbeauftragten für den Datenschutz Niedersachsen. Ansprache: Seite richtet sich an Lernende und Eltern → wie labs neutral/gesiezt in Rechtsteilen, die bestehenden duzenden Absätze bleiben (Kryptos-Besonderheiten). Im Browser ansehen (360/1280 px, hell/dunkel), Read der Fotos.
+- [x] **Step 4: Run** → PASS; `npm test` grün (u. a. `seiten.test.js`, Versionsgleichstand).
+- [x] **Step 5: Commit** `git commit -m "Datenschutzseite: Pflichtangaben mit Platzhaltern der Schule, vollständige Cookie- und Speicherliste (M9 Task 210)"`
 
 ### Task 211: Begriffsprüfung `werkzeuge/materialien_pruefen.py`
 
