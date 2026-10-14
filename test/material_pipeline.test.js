@@ -193,3 +193,13 @@ test('video_folien.bildblock: {"t":"bild","pfad":"bilder/a.png"} → Pfad relati
   assert.equal(r.status, 0, r.stderr);
   assert.deepEqual(JSON.parse(r.stdout.trim().split('\n').pop()), { t: 'bild', pfad: 'materialien/Videos/01_Caesar_und_Modulo/bilder/a.png' });
 });
+
+// Plan M9 Task 214: Video-Folien aktuell, ohne Platzhalter, Kamera-Zone frei, Kontraste, Sprechertexte im Skript
+const ohnePptx = !python ? 'python3 fehlt'
+  : !vorhanden('python3', ['-c', 'import pptx, cairosvg']) ? 'python-pptx/cairosvg fehlen – Video-Folien-Prüfung übersprungen'
+  : !require('node:fs').existsSync(path.join(WURZEL, 'werkzeuge', 'material', 'node_modules', 'pptxgenjs')) ? 'pptxgenjs fehlt (cd werkzeuge/material && npm install)' : false;
+test('video_folien.py --pruefen: acht Videos ohne Befund', { skip: ohnePptx, timeout: 600000 }, () => {
+  const r = spawnSync('python3', [path.join(WURZEL, 'werkzeuge', 'material', 'video_folien.py'), '--pruefen'], { cwd: WURZEL, encoding: 'utf8', timeout: 600000 });
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /8 Videos, 0 Befunde/);
+});

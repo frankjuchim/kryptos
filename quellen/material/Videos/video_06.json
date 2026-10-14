@@ -109,7 +109,8 @@
       2.2
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 16
     },
     {
      "t": "p",
@@ -218,7 +219,26 @@
       1.8
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 17,
+     "hervor": [
+      [
+       4,
+       0
+      ],
+      [
+       4,
+       1
+      ],
+      [
+       4,
+       2
+      ],
+      [
+       4,
+       3
+      ]
+     ]
     }
    ]
   },
@@ -300,7 +320,8 @@
         1.2
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 18
       }
      ],
      "rechts": [

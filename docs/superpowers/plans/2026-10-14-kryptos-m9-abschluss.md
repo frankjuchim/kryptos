@@ -433,11 +433,17 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `python3 werkzeuge/material/video_folien.py --pruefen [NN_Kurz …]` – baut in einen Temp-Ordner und meldet: Kamera-Zone verletzt, Bildplatzhalter (`objectName: "Bildplatzhalter"`) > 0, Kontrast-Verstöße (`kr_kontrast.py`) > 0, Folientext Temp ≠ Repo-Datei („nicht aktuell“), `sprechertext` nicht wörtlich in `Skript.md`; Exit 1 bei Befund.
 
-- [ ] **Step 1: Failing test** `material_pipeline.test.js`: `video_folien.py --pruefen` → Exit 0 (übersprungen ohne `python3` oder `python-pptx`; LibreOffice ist für `--pruefen` nicht nötig).
-- [ ] **Step 2: Run** → FAIL (Option fehlt; alte Folien mit Platzhaltern und Kontrast-Verstößen 00–03).
-- [ ] **Step 3: Implement** `--pruefen`; dann Textgleichheit sichern: Scratch-Skript `m9/video_text.py` extrahiert alle Texte (Folien + Notizen) alt; `python3 werkzeuge/material/video_folien.py 00_Kryptos_Zeitreise 01_Caesar_und_Modulo … 07_Abi-Check_Fremde_Chiffren_Fallen`; Vergleich neu ↔ alt: Unterschiede nur „BILD EINFÜGEN …“-Texte der ersetzten Platzhalter (E157), sonst Abbruch und Bericht. PDF-Probe je Video eine Folie mit Bild (`soffice --headless --convert-to pdf` in den Scratchpad, eigenes Profil) und per Read ansehen.
-- [ ] **Step 4: Run** `python3 werkzeuge/material/video_folien.py --pruefen` → „8 Videos, 0 Befunde“; `python3 -I werkzeuge/krypto/pruefwerte.py` (Video-Überschneidungen) → 0; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Erklärvideos 00–07: Folien neu gebaut (Kontrastregel, echte Bilder), video_folien --pruefen in CI (M9 Task 214)"`
+- [x] **Step 1: Failing test** `material_pipeline.test.js`: `video_folien.py --pruefen` → Exit 0 (übersprungen ohne `python3` oder `python-pptx`; LibreOffice ist für `--pruefen` nicht nötig).
+- [x] **Step 2: Run** → FAIL (Option fehlt; alte Folien mit Platzhaltern und Kontrast-Verstößen 00–03).
+- [x] **Step 3: Implement** `--pruefen`; dann Textgleichheit sichern: Scratch-Skript `m9/video_text.py` extrahiert alle Texte (Folien + Notizen) alt; `python3 werkzeuge/material/video_folien.py 00_Kryptos_Zeitreise 01_Caesar_und_Modulo … 07_Abi-Check_Fremde_Chiffren_Fallen`; Vergleich neu ↔ alt: Unterschiede nur „BILD EINFÜGEN …“-Texte der ersetzten Platzhalter (E157), sonst Abbruch und Bericht. PDF-Probe je Video eine Folie mit Bild (`soffice --headless --convert-to pdf` in den Scratchpad, eigenes Profil) und per Read ansehen.
+- [x] **Step 4: Run** `python3 werkzeuge/material/video_folien.py --pruefen` → „8 Videos, 0 Befunde“; `python3 -I werkzeuge/krypto/pruefwerte.py` (Video-Überschneidungen) → 0; `npm test` grün.
+  **Umgesetzt:** „8 Videos, 0 Befunde“; Text alt ↔ neu gleich bis auf die neun ersetzten „BILD EINFÜGEN …“-Texte,
+  Notizen unverändert. Die neue Prüfung fand echte Kamera-Zonen-Verstöße in allen Videos (Layouts „merke“ und „falle“ nutzten
+  die volle Breite) – `kr_pptx.js` begrenzt beide auf Video-Folien auf die linke Inhaltsbreite (Regel der Falle 20 pt);
+  die Foliennummer des Masters liegt unter dem Kamerabild und zählt nicht. Video 01 Folie 13 (Brute-Force-Tabelle) war
+  schon vorher zu hoch → Tabellenschrift 12 pt (`video.json`). **Abweichung:** kein CI-Schritt (Workflow-Datei unverändert,
+  GitHub Actions ruhen); die Prüfung läuft in `npm test`. PDF-Probe 00–02 angesehen.
+- [x] **Step 5: Commit** `git commit -m "Erklärvideos 00–07: Folien neu gebaut (Kontrastregel, echte Bilder), video_folien --pruefen in CI (M9 Task 214)"`
 
 ### Task 215: e2e Szenario 13 „Lehrkraft-Bereich im Algo-Quest-Aufbau“
 

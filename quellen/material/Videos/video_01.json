@@ -297,9 +297,10 @@
      ]
     },
     {
-     "t": "platzhalter",
-     "beschreibung": "Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A",
-     "hoehe": 1.6
+     "t": "bild",
+     "pfad": "materialien/Videos/01_Caesar_und_Modulo/bilder/ziffernring.png",
+     "alt": "Ziffernring/Uhr mit 12 Stunden, Pfeil von 10 um 5 Schritte weiter auf 3 (Messing-Linien, Kryptos-Stil); daneben Alphabetring A … Z mit Pfeil von U um 6 weiter auf A",
+     "_maxH": 1.9
     }
    ]
   },
@@ -737,7 +738,7 @@
        ],
        "mono": false,
        "zentriert": false,
-       "schrift_folie": 13
+       "schrift_folie": 12
       }
      ],
      "rechts": [

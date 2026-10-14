@@ -113,7 +113,8 @@
         2.6
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 20
       }
      ],
      "rechts": [
@@ -186,7 +187,8 @@
         1.4
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 20
       }
      ],
      "rechts": [
@@ -321,7 +323,22 @@
         1.2
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 15,
+       "hervor": [
+        [
+         5,
+         0
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         5,
+         2
+        ]
+       ]
       }
      ],
      "rechts": [
@@ -441,7 +458,22 @@
         1.2
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 15,
+       "hervor": [
+        [
+         2,
+         0
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         2,
+         2
+        ]
+       ]
       }
      ],
      "rechts": [
@@ -581,7 +613,8 @@
       0.44
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 14
     },
     {
      "t": "p",
@@ -649,7 +682,34 @@
         1.9
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 17,
+       "hervor": [
+        [
+         4,
+         0
+        ],
+        [
+         4,
+         1
+        ],
+        [
+         4,
+         2
+        ],
+        [
+         5,
+         0
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         5,
+         2
+        ]
+       ]
       }
      ],
      "rechts": [
@@ -722,7 +782,26 @@
         1.9
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 18,
+       "hervor": [
+        [
+         2,
+         0
+        ],
+        [
+         2,
+         1
+        ],
+        [
+         2,
+         2
+        ],
+        [
+         2,
+         3
+        ]
+       ]
       }
      ],
      "rechts": [
@@ -831,7 +910,26 @@
       1.6
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 16,
+     "hervor": [
+      [
+       1,
+       0
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       3
+      ]
+     ]
     },
     {
      "t": "p",

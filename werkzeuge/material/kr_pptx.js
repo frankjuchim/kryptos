@@ -383,7 +383,8 @@ async function baue(q, aus) {
     } else if (lay === "merke") {
       slide = pres.addSlide({ masterName: "KR Inhalt", ...sec });
       slide.addText(f.titel || "Merke", { placeholder: "titel" });
-      const x = RAND + 0.6, y = INHALT_Y + 0.2, w = W - 2 * RAND - 1.2;
+      // Video-Folien: Kasten nur in der linken Inhaltsbreite (Kamera-Zone unten rechts frei, LIESMICH; Plan M9 Task 214)
+      const x = RAND + 0.6, y = INHALT_Y + 0.2, w = (f.video ? breite : W - 2 * RAND) - 1.2;
       const hi = setzer.bloecke(slide, f.inhalt, x + 0.45, y + 0.8, w - 0.9, f.schrift || 24, true);
       const h = Math.min(INHALT_UNTEN - y, hi + 1.15);
       slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h, rectRadius: 0.1, fill: { color: "FBF3E2" }, line: { color: S.MESSING, width: 1.5 }, objectName: "Merke-Kasten" });
@@ -393,8 +394,10 @@ async function baue(q, aus) {
       slide = pres.addSlide({ masterName: "KR Inhalt", ...sec });
       slide.addText(`Falle ${f.nr} · ${f.titel}`, { placeholder: "titel" });
       let y = INHALT_Y;
-      if (f.regel) { const hr = textHoehe(f.regel, W - 2 * RAND, 22) + 0.1; slide.addText(runs(f.regel, { akzent: ctx.akzent, opt: {} }, S), { x: RAND, y, w: W - 2 * RAND, h: hr, fontSize: 22, color: S.TEXT, margin: 0, isTextBox: true, valign: "top" }); y += hr + 0.2; }
-      const sw = (W - 2 * RAND - 0.4) / 2;
+      const fb = f.video ? breite : W - 2 * RAND; // Video-Folien: Kamera-Zone frei (Plan M9 Task 214)
+      const rg = f.video ? 20 : 22; // schmalere Video-Spalten: Regel etwas kleiner, damit beide Spalten Platz haben
+      if (f.regel) { const hr = textHoehe(f.regel, fb, rg) + 0.1; slide.addText(runs(f.regel, { akzent: ctx.akzent, opt: {} }, S), { x: RAND, y, w: fb, h: hr, fontSize: rg, color: S.TEXT, margin: 0, isTextBox: true, valign: "top" }); y += hr + 0.2; }
+      const sw = (fb - 0.4) / 2;
       const spalten = [["SO NICHT  ✗", f.falsch, "FDF3F2", S.FEHLER], ["SO RICHTIG  ✓", f.richtig, "EEF6EE", S.OK]];
       spalten.forEach(([kopf, inhalt, fuell, farbe], k) => {
         const x = RAND + k * (sw + 0.4);

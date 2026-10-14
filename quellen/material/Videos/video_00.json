@@ -84,8 +84,9 @@
      "anteil": 0.6599999999999999,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/portal_beitritt.png",
+       "alt": "Screenshot Portal labs.frankjuchim.de, Reiter „Kurs beitreten“: Felder „Kurscode“ und „Name“; daneben Reiter „Anmelden“ (Name + persönlicher Code). Demo-Kurs, alle Codes unkenntlich."
       }
      ],
      "rechts": [
@@ -128,8 +129,9 @@
      "anteil": 0.6599999999999999,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/portal_weiter.png",
+       "alt": "Screenshot Portal „Meine Plattformen“: Karte „Kryptos – Die Zeitreise der Geheimschriften“ (Messing auf Tintenblau) mit Knopf „Weiter zu Kryptos“."
       }
      ],
      "rechts": [
@@ -172,8 +174,9 @@
      "anteil": 0.72,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/zeitleiste.png",
+       "alt": "Screenshot Kryptos-Startseite: Zeitleiste von 500 v. Chr. bis heute auf Nachtblau, sieben Epochen-Tore (Antike, Bagdad, Renaissance, Maschinenzeitalter, Stanford 1976, Das Netz, Zeitmaschine) mit Fortschrittsring und Artefakt-Symbol; gesperrte Tore in Geheimtext-Optik mit „noch verschlüsselt“; Kopfzeile mit „⌂ Portal“, Labor, Profil."
       }
      ],
      "rechts": [
@@ -216,8 +219,9 @@
      "anteil": 0.72,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/level.png",
+       "alt": "Screenshot Level-Seite „Caesars Botschaft“ (Akte W0·2): Kasten „Archivwissen“, Rollen-Chip 🛡/🔍, Aufgabenliste mit ★ bis ★★★ und Fortschritt, eingebettete Chiffrierscheibe, Karte „Akte als PDF“ mit QR-Code."
       }
      ],
      "rechts": [
@@ -296,7 +300,8 @@
         1.0
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 18
       }
      ],
      "rechts": [
@@ -385,7 +390,8 @@
         2.9
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 16
       }
      ],
      "rechts": [
@@ -424,8 +430,9 @@
        "md": "Trainingsplatz: Zufallsaufgaben, 1 Punkt, max. 30/Tag · Warm-up: Karten auf Papier, ohne Punkte"
       },
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/boss.png",
+       "alt": "Screenshot Boss-Startseite einer Epoche: „8 Aufgaben · 25 Minuten · ohne Werkzeuge“, Siegel-Symbol, bester Versuch, Knopf „Boss herausfordern“."
       }
      ],
      "rechts": [
@@ -468,8 +475,9 @@
      "anteil": 0.72,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/labor_funk.png",
+       "alt": "Links: Übersicht Kryptolabor mit Werkzeug-Kacheln (Chiffrierscheibe, Häufigkeits-Analysator, Substitutions-Werkbank, Vigenère-Werkbank, Bit-Lupe, Hash-Labor …). Rechts: Funkraum-Beameransicht auf Nachtblau – Teams als Knoten mit Namen aus der festen Liste (z. B. „Team Skytale“), Nachrichten als wandernde Punkte, Eve-Knoten rot umrandet."
       }
      ],
      "rechts": [
@@ -508,8 +516,9 @@
      "anteil": 0.72,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10."
+       "t": "bild",
+       "pfad": "materialien/Videos/00_Kryptos_Zeitreise/bilder/profil.png",
+       "alt": "Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10."
       }
      ],
      "rechts": [

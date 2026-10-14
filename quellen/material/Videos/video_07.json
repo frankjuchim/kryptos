@@ -307,7 +307,8 @@
       0.48
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 16
     },
     {
      "t": "p",
@@ -394,7 +395,8 @@
       4.0
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 15
     },
     {
      "t": "p",
@@ -450,7 +452,18 @@
       5.7
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 14,
+     "hervor": [
+      [
+       3,
+       0
+      ],
+      [
+       3,
+       1
+      ]
+     ]
     }
    ]
   },
@@ -543,7 +556,8 @@
       3.0
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 15
     }
    ]
   },
@@ -633,7 +647,8 @@
       3.1
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 14
     }
    ]
   },
@@ -684,7 +699,8 @@
       3.1
      ],
      "mono": false,
-     "zentriert": false
+     "zentriert": false,
+     "schrift_folie": 14
     }
    ]
   },

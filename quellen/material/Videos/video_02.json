@@ -110,8 +110,9 @@
      "anteil": 0.62,
      "links": [
       {
-       "t": "platzhalter",
-       "beschreibung": "Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“"
+       "t": "bild",
+       "pfad": "materialien/Videos/02_Haeufigkeitsanalyse/bilder/kindi.png",
+       "alt": "Stilisierte Seite einer arabischen Handschrift (keine echte Faksimile-Abbildung, nichts Lesbares) mit Girih-Stern-Ornament in Lapis und Gold; Beschriftung „Bagdad, 9. Jahrhundert“"
       }
      ],
      "rechts": [
@@ -284,7 +285,8 @@
         3.4
        ],
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 17
       }
      ],
      "rechts": [
@@ -400,7 +402,8 @@
        ],
        "breiten": null,
        "mono": false,
-       "zentriert": false
+       "zentriert": false,
+       "schrift_folie": 20
       }
      ],
      "rechts": [
