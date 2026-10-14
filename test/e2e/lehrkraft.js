@@ -41,7 +41,6 @@ async function szenario7a(ctx) {
   await anmelden(page, ctx, 'Frau M.', '/lehrer');
   await page.locator('table.kurs-tabelle').waitFor();
   assert.equal(await page.locator('table.kurs-tabelle tbody tr').count(), 2, 'zwei Kurse aus dem Portal');
-  await foto(page, 'lehrkraft-kurse');
   const gk = await kursId(page, ctx, 'GK 12 (gA)');
   const lk = await kursId(page, ctx, 'LK 13 (eA)');
   ctx.kurse = { gk, lk };
@@ -56,7 +55,6 @@ async function szenario7a(ctx) {
   await speichern(page);
   // Review M4 W2: Niveau-Chip im Kurskopf zeigt sofort das gespeicherte Niveau
   assert.equal((await page.locator('.kurs-kopf .chip-kursniveau').textContent()).trim(), 'gA', 'Niveau-Chip nach dem Speichern');
-  await foto(page, 'lehrkraft-einstellungen', { ganz: true });
   const href = await page.locator('a.board-link').getAttribute('href');
   ctx.boardSchluessel = decodeURIComponent((href || '').replace('/board/', ''));
   assert.ok(ctx.boardSchluessel.length >= 8, 'Board-Schlüssel');
@@ -73,7 +71,6 @@ async function szenario7a(ctx) {
   const zellen = await zeile.locator('td').allTextContents();
   assert.ok(zellen.length > 0 && zellen.every((t) => t.trim().length > 0), 'Zellen mit Text (nie nur Farbe)');
   await page.locator('.fallen-profil').waitFor();
-  await foto(page, 'lehrkraft-auswertung', { ganz: true });
 
   // Vorschau: eA-Level mit Hinweis, Aufgabe mit eingesetzter Lösung
   await gehe(page, `${ctx.basis}/lehrer#/vorschau/welt/9`);
@@ -82,14 +79,12 @@ async function szenario7a(ctx) {
   await page.locator('input.kaestchen').first().waitFor();
   const werte = await page.locator('input.kaestchen').evaluateAll((l) => l.map((x) => x.value).join(''));
   assert.equal(werte.toLowerCase(), 'zuverlaessig', 'Vorschau zeigt die Lösung');
-  await foto(page, 'lehrkraft-vorschau', { ganz: true });
 
   // Materialien und Urkunden
   await gehe(page, `${ctx.basis}/lehrer#/materialien`);
   await page.locator('h1', { hasText: 'Materialien' }).waitFor();
   await gehe(page, `${ctx.basis}/lehrer/urkunden?kurs=${lk}`);
   await page.locator('.urkunde').first().waitFor();
-  await foto(page, 'urkunde');
   await kontext.close();
 }
 

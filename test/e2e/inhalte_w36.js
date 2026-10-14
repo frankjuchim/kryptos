@@ -1,7 +1,7 @@
 'use strict';
 /*
  * e2e – Szenario 12 „Welten 3–6 spielbar“ mit den echten Seeds (Plan M8 Task 202, TECHNIK §15). Läuft nach Szenario 11
- * im selben App-Start (SEED_DIR=seed, ohne WELT_DATEIEN). Keine Fotos (E118). Ablauf:
+ * im selben App-Start (SEED_DIR=seed, ohne WELT_DATEIEN). Fotos archivfund-w3, aufgabe-bits-schritt, aufgabe-hash-ziel, aufgabe-uhrwerk, 360-aufgabe-w3, dunkel-zeitleiste (Plan M9 Task 217). Ablauf:
  *  1. Frau M. schaltet im LK 13 (eA) alle sieben Welten frei (Boss „Offen“ aus Szenario 11), im GK 12 (gA) ebenfalls,
  *     dort Kür gesperrt.
  *  2. Mika R. (LK 13) löst je Welt den Archivfund und je neue Interaktion eine Aufgabe: W3 `bits-rechnen` mit `schritt`
@@ -14,7 +14,7 @@
  *  4. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessung (WCAG AA) wie Szenario 9, hell und dunkel.
  */
 const assert = require('node:assert/strict');
-const { anmelden, gehe, keinQuerScrollen, kontraste, Krypto } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, kontraste, Krypto } = require('./hilfen');
 const { neueSeite, aufgabe } = require('./schueler');
 const { kursId, einstellen, kursWaehlen, kaestchen } = require('./inhalte');
 
@@ -68,11 +68,14 @@ async function szenario12(ctx) {
   await bits(page, '01000110010101010100111001001011');
   await page.getByLabel('Lücke wort').fill('FUNK');
   await richtig(page, 'Archivfund – ohne Punkte');
+  await foto(page, 'archivfund-w3');
 
   await aufgabe(page, ctx, 'W3-L2-03'); // bits-rechnen kryptos16, schritt transposition
   await page.locator('.aufgabe-box').getByText('Transposition der 4×4-Bitmatrix', { exact: false }).first().waitFor();
   await bits(page, '0110101011010100');
   await richtig(page);
+  await page.locator('.feedback.ok').first().evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await foto(page, 'aufgabe-bits-schritt');
 
   await aufgabe(page, ctx, 'W3-L4-01'); // ADFGVX: Quadrat + chiffre
   await page.locator('.quadrat-rahmen table').first().waitFor();
@@ -125,6 +128,8 @@ async function szenario12(ctx) {
   await page.locator('.feedback.falsch').first().waitFor();
   await page.locator('p.hashziel-wert', { hasText: `Dein Text hat den KRYPTOS-Hash ${Krypto.kryptosHash('tee').wert}.` }).waitFor();
   assert.ok(!(await page.locator('main, body').first().innerText()).includes('haffk'), 'Rückmeldung verrät das Lösungsbeispiel nicht');
+  await page.locator('p.hashziel-wert').evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await foto(page, 'aufgabe-hash-ziel');
   assert.equal(Krypto.kryptosHash('eis').wert, 4);
   await feld.fill('eis');
   await richtig(page);
@@ -143,6 +148,7 @@ async function szenario12(ctx) {
   await aufgabe(page, ctx, 'W6-L2-04'); // chiffre uhrwerk
   await kaestchen(page, 'ZEITZONE');
   await richtig(page);
+  await foto(page, 'aufgabe-uhrwerk');
 
   await aufgabe(page, ctx, 'W6-L1-11'); // lines mit zwei Zeilen
   const zeilen = page.locator('.code .zeile.waehlbar');
@@ -211,6 +217,7 @@ async function szenario12(ctx) {
       await gehe(klein.page, ctx.basis + route);
       await klein.page.locator(warte).first().waitFor();
       await keinQuerScrollen(klein.page, `360 px ${route}`);
+      if (name === 'Ida K.' && route === '/spiel#/aufgabe/W3-L4-01') await foto(klein.page, '360-aufgabe-w3');
     }
     await klein.kontext.close();
   }
@@ -225,6 +232,7 @@ async function szenario12(ctx) {
       await k.page.locator(warte).first().waitFor();
       await k.page.waitForTimeout(100);
       verstoesse.push(...(await kontraste(k.page, `${schema} ${route}`)));
+      if (schema === 'dark' && route === '/spiel#/') await foto(k.page, 'dunkel-zeitleiste');
     }
     // Zustand mit Rückmeldung: hash-ziel falsch
     await aufgabe(k.page, ctx, 'W5-L1-07');

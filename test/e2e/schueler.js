@@ -39,12 +39,10 @@ async function szenario1(ctx) {
   const tor = page.locator('a.tor[href="#/epoche/9"]');
   await tor.waitFor();
   await page.waitForTimeout(1200); // Entsiegeln abwarten (Foto)
-  await foto(page, 'zeitleiste');
   await tor.click();
   await page.waitForURL(/#\/epoche\/9$/);
   await page.locator('a.karte-akte').first().waitFor();
   assert.ok((await page.locator('a.karte-akte').count()) >= 4, 'Epoche zeigt mindestens vier Level-Karten');
-  await foto(page, 'epoche');
   await kontext.close();
 
   // Reduzierte Bewegung: Tor-Namen sofort vollständig, kein Zeitsprung
@@ -81,7 +79,6 @@ async function szenario2(ctx) {
   for (let i = 0; i < falsch.length; i++) await k.nth(i).fill(falsch[i]);
   await page.locator('#pruefen').click();
   await page.locator('.feedback.falsch').getByText('P3 Umkehrung falsch').waitFor();
-  await foto(page, 'aufgabe-chiffre-p3', { ganz: true });
   await page.getByRole('button', { name: /Tipp/ }).click();
   await page.locator('.tipp-box').first().waitFor();
   const loesung = RICHTIG['W9-L5-01'].toUpperCase();
@@ -94,7 +91,6 @@ async function szenario2(ctx) {
   for (const [g, x] of Object.entries(RICHTIG['W9-L3-02'])) await page.locator(`li.z-eintrag[data-g="${g}"] input.z-feld`).fill(x);
   // Vorschau (gedrosselt, höchstens alle 400 ms) zeigt den Klartext klein
   await page.waitForFunction(() => (document.querySelector('.zuordnung-vorschau') || {}).textContent.replace(/\s/g, '').includes('geheimtreffen'));
-  await foto(page, 'aufgabe-zuordnung', { ganz: true });
   await richtig(page);
 
   // schaubild-ergaenzen: Schlüssel-Chips
@@ -105,14 +101,12 @@ async function szenario2(ctx) {
     await chips.nth(i).locator('select.sb-art').selectOption(art);
     await chips.nth(i).locator('select.sb-inhaber').selectOption('A');
   }
-  await foto(page, 'aufgabe-schaubild', { ganz: true });
   await richtig(page);
 
   // bits-rechnen über die Tastatur
   await aufgabe(page, ctx, 'W9-L6-01');
   await page.locator('button.bit').first().focus();
   for (const b of '00100001') await page.keyboard.press(b);
-  await foto(page, 'aufgabe-bits', { ganz: true });
   await richtig(page);
 
   // Lösung zeigen: Rückfrage bestätigen, Kästchen gesperrt mit der Lösung
@@ -123,7 +117,6 @@ async function szenario2(ctx) {
   const werte = await page.locator('input.kaestchen').evaluateAll((l) => l.map((x) => x.value).join(''));
   assert.equal(werte, 'BOGRZNWSK');
   assert.ok(await page.locator('input.kaestchen').first().isDisabled(), 'Kästchen gesperrt');
-  await foto(page, 'aufgabe-loesung', { ganz: true });
   await kontext.close();
 }
 
@@ -168,7 +161,6 @@ async function szenario3(ctx) {
   const k = box('Die verschlüsselte Losung').locator('input.kaestchen');
   for (let i = 0; i < falsch.length; i++) await k.nth(i).fill(falsch[i]);
   await page.locator('.boss-speicher', { hasText: 'gespeichert' }).waitFor();
-  await foto(page, 'boss-kampf', { ganz: true });
   await page.getByRole('button', { name: 'Kampf beenden' }).click();
   await page.locator('dialog[open]').getByRole('button', { name: 'Beenden und auswerten' }).click();
   const b05 = page.locator('section.boss-ergebnis-aufgabe', { has: page.locator('h3', { hasText: 'Die verschlüsselte Losung' }) });
@@ -176,7 +168,6 @@ async function szenario3(ctx) {
   await b05.getByText('P3 Umkehrung falsch').first().waitFor();
   await b05.locator('h4', { hasText: 'Lösung' }).waitFor();
   await page.locator('a[href^="/labor"]').first().waitFor();
-  await foto(page, 'boss-auswertung', { ganz: true });
   await kontext.close();
 }
 

@@ -9,7 +9,7 @@
  * „Welten 3–6 spielbar“ (Plan M8 Task 202; setzt die Kurseinstellungen aus 11 voraus), danach Szenario 13 „Lehrkraft-
  * Bereich im Algo-Quest-Aufbau“ und Szenario 14 „Öffentlich und Verbund-Wege“ (Plan M9 Tasks 215, 216).
  * E2E_NUR=11 (o. Ä., Komma-Liste) führt nur die genannten Szenarien aus – zum Entwickeln; Fotos dann aus.
- * Fotos nach docs/screenshots/m4-*.png (E2E_FOTOS=0 schaltet aus).
+ * Fotos nach docs/screenshots/kr-NN-<name>.png – genau FOTO_LISTE aus hilfen.js (E2E_FOTOS=0 schaltet aus).
  *
  * Aufruf: npm run e2e   (Chromium: CHROMIUM_PATH oder PLAYWRIGHT_BROWSERS_PATH; Standard /opt/pw-browsers/…)
  */
@@ -91,15 +91,20 @@ async function main() {
     if (echt) await echt.beenden();
     await ctx.beenden();
   }
-  // Fotos im Repo: höchstens 30 PNG, zusammen ≤ 5 MB (M4 Task 67)
+  // Foto-Satz (Plan M9 Task 217): in docs/screenshots/ genau die 30 Fotos aus FOTO_LISTE, zusammen ≤ 5 MB
   if (ok && process.env.E2E_FOTOS !== '0' && !NUR.length) {
     const fs = require('node:fs');
     const path = require('node:path');
     const ordner = path.join(H.WURZEL, 'docs', 'screenshots');
-    const fotos = fs.readdirSync(ordner).filter((f) => /^m4-.*\.png$/.test(f));
-    const groesse = fotos.reduce((s, f) => s + fs.statSync(path.join(ordner, f)).size, 0);
-    if (fotos.length > 30 || groesse > 5 * 1024 * 1024) ctx.fehler.push(`Fotos: ${fotos.length} Dateien, ${(groesse / 1048576).toFixed(1)} MB (höchstens 30 und 5 MB)`);
-    else console.log(`Fotos: ${fotos.length} Dateien, ${(groesse / 1048576).toFixed(1)} MB in docs/screenshots/`);
+    const da = fs.readdirSync(ordner).filter((f) => f.endsWith('.png')).sort();
+    const soll = H.FOTO_LISTE.map(H.fotoDatei).sort();
+    const fehlen = soll.filter((f) => !da.includes(f));
+    const fremd = da.filter((f) => !soll.includes(f));
+    const groesse = da.reduce((s, f) => s + fs.statSync(path.join(ordner, f)).size, 0);
+    if (fehlen.length) ctx.fehler.push(`Fotos fehlen: ${fehlen.join(', ')}`);
+    if (fremd.length) ctx.fehler.push(`Fotos nicht in FOTO_LISTE: ${fremd.join(', ')}`);
+    if (groesse > 5 * 1024 * 1024) ctx.fehler.push(`Fotos: ${(groesse / 1048576).toFixed(1)} MB (höchstens 5 MB)`);
+    if (!fehlen.length && !fremd.length) console.log(`Fotos: ${da.length} Dateien, ${(groesse / 1048576).toFixed(1)} MB in docs/screenshots/`);
   }
   if (ctx.fehler.length) {
     ok = false;

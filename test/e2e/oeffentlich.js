@@ -10,7 +10,7 @@
  *  wieder eingeschaltet. 360 px ohne Querscrollen; Kontrastmessung hell/dunkel für /, /themen, /datenschutz, 404.
  */
 const assert = require('node:assert/strict');
-const { anmelden, gehe, keinQuerScrollen, kontraste } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, kontraste } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 
 /** Kurs im Dev-Portal für Kryptos ab- bzw. einschalten (Formular „Kryptos für den Kurs“). */
@@ -29,6 +29,7 @@ async function szenario14(ctx) {
   await gehe(page, ctx.basis + '/');
   await page.locator('#kopf a.anmelden', { hasText: 'Anmelden über InfoLabs' }).waitFor();
   assert.ok(await page.locator('a[href="/gast"]').count(), 'Link zum Gastmodus');
+  await foto(page, 'start');
   await gehe(page, ctx.basis + '/themen');
   await page.locator('#welten').waitFor();
   // Sprungziel wie der Manifest-Link des Portals (urls.niveaus): frisch geladen, Inhalte kommen asynchron
@@ -38,10 +39,13 @@ async function szenario14(ctx) {
   assert.equal(await page.locator('#niveau-inhalt .niveau-welt-abschnitt').count(), 7, 'sieben Welten');
   assert.match(await page.locator('#niveau-inhalt').textContent(), /eA/, 'eA-Kennzeichnung');
   await page.waitForFunction(() => { const r = document.getElementById('niveaus').getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0 && window.scrollY > 0; }, null, { timeout: 3000 }); // Sprungziel #niveaus im Blick
+  await page.evaluate(() => document.getElementById('niveaus').scrollIntoView({ block: 'start', behavior: 'instant' })); // Foto: Abschnitt von oben
+  await foto(page, 'themen-niveaus');
   await gehe(page, ctx.basis + '/datenschutz');
   await page.locator('.rueckmeldung.info', { hasText: 'Entwurf' }).waitFor();
   for (const t of ['[Name der Schule]', '[Hoster, Standort in der EU]']) await page.getByText(t, { exact: false }).first().waitFor();
   await page.waitForFunction((p) => document.getElementById('portal-datenschutz').getAttribute('href') === p + '/datenschutz', ctx.portal);
+  await foto(page, 'datenschutz');
   const r404 = await page.goto(ctx.basis + '/404-gibt-es-nicht');
   assert.equal(r404.status(), 404);
   await page.locator('h1', { hasText: 'Seite nicht gefunden' }).waitFor();

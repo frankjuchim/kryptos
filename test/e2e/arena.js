@@ -7,10 +7,10 @@
  * Beschreibung); Ole greift Mikas Chiffre mit falschem Schlüssel an („Leider nicht.“), Mika knackt Oles Caesar per Klartext
  * („Geknackt!“, Ticker am Beamer, Toast „Arena-Knacker“). Ende der Angriffsphase → Toast „Unknackbar“ bei Mika; beide
  * beurteilen, die Lehrkraft sieht beide, Ole nie Mikas Beurteilung. Schließen und Löschen → „keine Arena offen“.
- * 360 px ohne Querscrollen. Keine Fotos (E118).
+ * 360 px ohne Querscrollen. Fotos werkstatt-baukasten, arena-beamer (Plan M9 Task 217).
  */
 const assert = require('node:assert/strict');
-const { anmelden, beobachte, gehe, keinQuerScrollen, Krypto: K } = require('./hilfen');
+const { anmelden, beobachte, foto, gehe, keinQuerScrollen, Krypto: K } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 const { teamsEinteilen, schuelerSeite, mitBestaetigung, LANG } = require('./funkraum');
 const { TEXT1, TEXT2 } = require('../hilfen_funk');
@@ -21,7 +21,7 @@ const BEURTEILUNG_MIKA = 'Insgesamt ist unser Verfahren recht sicher, weil Vigen
 const BEURTEILUNG_OLE = 'Insgesamt ist unser Verfahren schwach, weil es nur 25 Schluessel gibt und die Haeufigkeiten erhalten bleiben.';
 
 /** Werkstatt: Stufen über die Testschnittstelle, Felder per Tastatur, Prüfung abwarten, einreichen */
-async function einreichen(page, { stufen, name, text, beschreibung, hinweis = null }) {
+async function einreichen(page, { stufen, name, text, beschreibung, hinweis = null, fotoName = null }) {
   await page.locator('p.werkstatt-phase', { hasText: 'Die Arena ist offen' }).waitFor({ timeout: LANG });
   await page.evaluate((s) => KRWerkstatt.setzeStufen(s), stufen);
   await page.locator('input.werkstatt-name').fill(name);
@@ -29,6 +29,7 @@ async function einreichen(page, { stufen, name, text, beschreibung, hinweis = nu
   await page.locator('textarea.werkstatt-beschreibung').fill(beschreibung);
   await page.locator('button.werkstatt-einreichen:enabled').waitFor();
   if (hinweis) await page.locator('ul.werkstatt-hinweise li', { hasText: hinweis }).waitFor();
+  if (fotoName) await foto(page, fotoName);
   const z = await page.evaluate(() => KRWerkstatt.zustand());
   assert.ok(z.pruefung && z.pruefung.ok, 'Verfahren umkehrbar');
   await Promise.all([page.waitForResponse((r) => /\/api\/arena\/\d+\/chiffre$/.test(r.url()) && r.request().method() === 'POST' && r.ok()), page.locator('button.werkstatt-einreichen').click()]);
@@ -58,7 +59,8 @@ async function szenario6(ctx) {
     stufen: [{ typ: 'vigenere', param: { schluessel: 'LATERNE' } }, { typ: 'spaltentransposition', teilen: { schluessel: 1 } }],
     name: 'FUNKGITTER',
     text: TEXT1,
-    beschreibung: BESCHREIBUNG_MIKA
+    beschreibung: BESCHREIBUNG_MIKA,
+    fotoName: 'werkstatt-baukasten'
   });
   assert.deepEqual(zm.schluessel, { s1: 'LATERNE' }, 'ein geteilter Schlüssel');
   assert.deepEqual(zm.verfahren.stufen.map((s) => s.param.schluessel), ['$s1', '$s1']);
@@ -107,6 +109,7 @@ async function szenario6(ctx) {
   await mikaAngriff.locator('p.arena-ergebnis', { hasText: 'Geknackt!' }).waitFor();
   await mp.locator('#toast', { hasText: 'Abzeichen: Arena-Knacker' }).waitFor({ timeout: LANG });
   await beamer.locator('ol.arena-ticker li', { hasText: 'Team Skytale hat die Chiffre von Team Quadrat geknackt' }).waitFor({ timeout: LANG });
+  await foto(beamer, 'arena-beamer', { breite: 1600 });
   await beamer.locator('li.beamer-arena-karte.geknackt', { hasText: 'Team Quadrat' }).waitFor({ timeout: LANG });
 
   // 360 px ohne Querscrollen (Arena-Ansicht)

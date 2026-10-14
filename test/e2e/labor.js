@@ -4,10 +4,10 @@
  * gegen Krypto (Node); gesperrtes Werkzeug (Chiffrierscheibe aus 7a) wird nicht geladen; Nachspiel per Tastatur; Dialog
  * aus einer Aufgabe mit Rückkehr des Fokus; 360 px ohne Querscrollen, Touch-Ziele in allen Werkzeugen und Reitern; reduzierte
  * Bewegung.
- * Keine Fotos (E88). Stellt die Werkzeug-Einstellungen von 7a am Ende wieder her (Scheibe bleibt gesperrt).
+ * Fotos labor-scheibe, labor-haeufigkeit, labor-runden (Plan M9 Task 217; Scheibe dafür kurz frei). Stellt die Werkzeug-Einstellungen von 7a am Ende wieder her (Scheibe bleibt gesperrt).
  */
 const assert = require('node:assert/strict');
-const { anmelden, gehe, keinQuerScrollen, ziele44, Krypto: K } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, ziele44, Krypto: K } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 const { kursWaehlen } = require('./lehrkraft');
 
@@ -115,8 +115,26 @@ async function szenario4(ctx) {
     const [ist, soll] = await RECHNUNG[id](page);
     assert.ok(soll !== null && soll !== undefined && soll !== '', `${id}: Erwartung vorhanden`);
     assert.deepEqual(ist, soll, `${id}: Ergebnis = Krypto`);
+    if (id === 'haeufigkeit' || id === 'runden') await foto(page, `labor-${id}`);
   }
   assert.ok(!geladen.includes('scheibe'), 'Scheibe auch später nicht geladen');
+
+  // Foto der Chiffrierscheibe: kurz freischalten, danach wieder gesperrt wie in 7a
+  const scheibeSetzen = async (wert) => {
+    await gehe(lk.page, `${ctx.basis}/lehrer#/kurs/${ctx.kurse.lk}/einstellungen`);
+    await lk.page.locator('form.einstellungen').waitFor();
+    await lk.page.locator('select[name="werkzeug-scheibe"]').selectOption(wert);
+    await Promise.all([lk.page.waitForResponse((r) => r.request().method() === 'PATCH' && r.ok()), lk.page.locator('form.einstellungen button[type="submit"]').click()]);
+  };
+  await scheibeSetzen('frei');
+  await gehe(page, `${ctx.basis}/labor#/scheibe`);
+  await page.reload(); // Freigaben lädt das Labor beim Seitenaufruf
+  await oeffne(page, ctx, 'scheibe');
+  for (let i = 0; i < 3; i++) await flaeche(page).locator('button.scheibe-plus').click(); // k = 3
+  await page.waitForTimeout(300);
+  await foto(page, 'labor-scheibe');
+  await scheibeSetzen('gesperrt');
+  await page.reload();
 
   // Reiter-Regeln des Kurses (E71): Ring und MitM (Orchestrator) nur mit freigeschalteter Welt 6, Koinzidenz nur eA
   const umgebung = await page.evaluate(() => fetch('/api/labor').then((r) => r.json()));

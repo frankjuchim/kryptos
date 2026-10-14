@@ -8,10 +8,10 @@
  *  Teams · Funkraum · Knack-Arena (je Überschrift, keine Fehlermeldung; QR-Code, CSV, Board-Link ohne Anmeldung);
  *  Urkunden; Aufgaben-Vorschau Welt 3 → Level 3.2 (eA) → W3-L2-03 mit Lösung; Materialien je Welt mit Download (Lösung W0)
  *  und Funkraum-Rollenkarte W3; Themen #niveaus; Verwaltung (Admin) mit fünf Reitern, Backup-JSON, Wartung.
- *  360 px ohne Querscrollen, Touch-Ziele ≥ 44 px. Keine Fotos (Foto-Satz kr-* folgt in Task 217).
+ *  360 px ohne Querscrollen, Touch-Ziele ≥ 44 px. Fotos lehrkraft-kurse, -auswertung, -einstellungen, -materialien, verwaltung (Task 217).
  */
 const assert = require('node:assert/strict');
-const { anmelden, gehe, keinQuerScrollen, ziele44 } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, ziele44 } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 const { kursId } = require('./inhalte');
 
@@ -52,6 +52,7 @@ async function szenario13(ctx) {
   // Kurse: LK 13 und GK 12 mit Niveau-Chip
   const lk = await kursId(page, ctx, 'LK 13 (eA)');
   await kursId(page, ctx, 'GK 12 (gA)');
+  await foto(page, 'lehrkraft-kurse');
 
   // Kurs-Reiter in Reihenfolge, je Reiter Überschrift ohne Fehler
   await gehe(page, `${ctx.basis}/lehrer#/kurs/${lk}/schueler`);
@@ -87,6 +88,7 @@ async function szenario13(ctx) {
   await gehe(page, `${ctx.basis}/lehrer#/kurs/${lk}/auswertung`);
   await reiterFertig(page, 'Auswertung');
   await page.locator('#tab-inhalt table', { hasText: 'Mika R.' }).first().waitFor();
+  await foto(page, 'lehrkraft-auswertung');
   const csvLink = page.locator('#tab-inhalt a[href*="export.csv?art=uebersicht"]');
   const csv = await kontext.request.get(ctx.basis + (await csvLink.getAttribute('href')));
   assert.equal(csv.status(), 200);
@@ -100,6 +102,7 @@ async function szenario13(ctx) {
   await page.locator('form.einstellungen').waitFor();
   assert.deepEqual(await page.locator('input[name="welt"]').evaluateAll((l) => l.map((x) => Number(x.value))), [0, 1, 2, 3, 4, 5, 6]);
   for (const sel of ['input[name="niveau"][value="eA"]', 'input[name="niveau"][value="gA"]', 'input[name="kuer"]', 'form.einstellungen select']) assert.ok(await page.locator(sel).count(), sel);
+  await foto(page, 'lehrkraft-einstellungen');
   const beamer = page.locator('input[name="beamer"]');
   if (!(await beamer.isChecked())) {
     await beamer.check();
@@ -141,6 +144,7 @@ async function szenario13(ctx) {
   // Materialien: je Welt 0–6, Download „Lösung“ W0 (PDF, 200), Funkraum-Rollenkarte W3
   await gehe(page, `${ctx.basis}/lehrer#/materialien`);
   for (let w = 0; w <= 6; w++) await page.locator(`#material-welt-${w}`).waitFor();
+  await foto(page, 'lehrkraft-materialien');
   const loesung = page.locator('#material-welt-0 a[href*="Loesungen_Portal"]').first();
   const pdf = await kontext.request.get(new URL(await loesung.getAttribute('href'), ctx.basis).toString());
   assert.equal(pdf.status(), 200);
@@ -169,6 +173,8 @@ async function szenario13(ctx) {
   await kopfzeile(admin.page, ['Kurse', 'Aufgaben', 'Materialien', 'Themen', 'Verwaltung', 'Labor']);
   await gehe(admin.page, `${ctx.basis}/lehrer#/admin`);
   assert.deepEqual(await texte(admin.page.locator('.tabs[role="tablist"] [role="tab"]')), ADMIN_REITER, 'Reiter der Verwaltung');
+  await reiterFertig(admin.page, 'Verwaltung');
+  await foto(admin.page, 'verwaltung');
   for (const key of ['lehrkraefte', 'inhalte', 'kata', 'backup', 'wartung']) {
     await gehe(admin.page, `${ctx.basis}/lehrer#/admin/${key}`);
     await reiterFertig(admin.page, `Verwaltung ${key}`);

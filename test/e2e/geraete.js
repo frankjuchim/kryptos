@@ -40,12 +40,9 @@ async function szenario9(ctx) {
     for (const s of oeffentlich) await pruefeSeite(pub.page, ctx.basis + s, `${w} ${s}`, w);
     for (const s of schuelerSeiten) {
       await pruefeSeite(mika.page, ctx.basis + s, `${w} Mika ${s}`, w);
-      if (s === '/spiel#/') await foto(mika.page, `${w}-zeitleiste`);
-      if (s === '/spiel#/aufgabe/W9-L5-02') await foto(mika.page, `${w}-aufgabe`);
     }
     for (const s of lehrerSeiten) {
       await pruefeSeite(frau.page, ctx.basis + s, `${w} Frau M. ${s}`, w);
-      if (s.endsWith('/einstellungen')) await foto(frau.page, `${w}-lehrkraft-einstellungen`);
     }
   }
 
@@ -87,7 +84,6 @@ async function szenario9(ctx) {
   // Beamer 1920 × 1080
   await pub.page.setViewportSize({ width: 1920, height: 1080 });
   await pruefeSeite(pub.page, `${ctx.basis}/board/${encodeURIComponent(ctx.boardSchluessel)}`, '1920 Board', 1920);
-  await foto(pub.page, 'beamer-board');
   await frau.page.setViewportSize({ width: 1920, height: 1080 });
   await pruefeSeite(frau.page, ctx.basis + '/beamer/funkraum/1', '1920 Beamer', 1920);
   for (const x of [pub, mika, frau]) await x.kontext.close();
@@ -97,18 +93,15 @@ async function szenario9(ctx) {
   await anmelden(dunkelMika.page, ctx, 'Mika R.', '/spiel');
   await gehe(dunkelMika.page, ctx.basis + '/spiel#/');
   await dunkelMika.page.locator('a.tor').first().waitFor();
-  await foto(dunkelMika.page, 'dunkel-zeitleiste');
   await gehe(dunkelMika.page, ctx.basis + '/spiel#/aufgabe/W9-L5-03');
   await dunkelMika.page.locator('#pruefen').waitFor();
   const hg = await dunkelMika.page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   assert.equal(hg, 'rgb(26, 34, 56)', 'Dunkelmodus: Hintergrund --papier dunkel');
-  await foto(dunkelMika.page, 'dunkel-aufgabe');
   await dunkelMika.kontext.close();
   const dunkelFrau = await neueSeite(ctx, { colorScheme: 'dark' }, 'Szenario 9 (dunkel, Frau M.)');
   await anmelden(dunkelFrau.page, ctx, 'Frau M.', '/lehrer');
   await gehe(dunkelFrau.page, `${ctx.basis}/lehrer#/kurs/${gk}/auswertung`);
   await dunkelFrau.page.locator('.fallen-profil').waitFor();
-  await foto(dunkelFrau.page, 'dunkel-lehrkraft');
   await dunkelFrau.kontext.close();
 
   // Tastatur-Durchlauf (Ida): nur keyboard.press, sichtbarer Fokusrahmen

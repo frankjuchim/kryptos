@@ -132,21 +132,47 @@ function beobachte(page, name, fehler) {
   });
 }
 
-let fotoNr = 0;
-/** Foto docs/screenshots/m4-<nr>-<name>.png (E2E_FOTOS=0 schaltet aus). */
-async function foto(page, name, { ganz = false } = {}) {
-  fotoNr++;
+/**
+ * Foto-Satz `kr-NN-<name>.png` (Plan M9 Task 217, E154): genau diese 30 Fotos aus den echten Seeds (Szenarien 11–14) bzw.
+ * für Labor, Funkraum, Arena und Gastmodus aus 4–6 und 8. NN = Position in der Liste; andere Namen sind ein Fehler.
+ */
+const FOTO_LISTE = [
+  'start', 'zeitleiste', 'epoche-w2', 'level-w0-2', 'aufgabe-chiffre-p3', 'archivfund-w3', 'aufgabe-bits-schritt',
+  'aufgabe-hash-ziel', 'aufgabe-uhrwerk', 'boss-kampf', 'boss-auswertung', 'profil-artefakte', 'labor-scheibe',
+  'labor-haeufigkeit', 'labor-runden', 'funkraum-team', 'funkraum-beamer', 'lehrkraft-funkraum-regie',
+  'werkstatt-baukasten', 'arena-beamer', 'lehrkraft-kurse', 'lehrkraft-auswertung', 'lehrkraft-einstellungen',
+  'lehrkraft-materialien', 'verwaltung', 'themen-niveaus', 'datenschutz', 'gast-aufgabe', '360-aufgabe-w3', 'dunkel-zeitleiste'
+];
+const fotoDatei = (name) => `kr-${String(FOTO_LISTE.indexOf(name) + 1).padStart(2, '0')}-${name}.png`;
+
+/**
+ * Foto docs/screenshots/kr-<NN>-<name>.png (E2E_FOTOS=0 schaltet aus). o.ganz: ganze Seite; o.breite: Viewport für das
+ * Foto vorübergehend auf diese Breite (z. B. Beamer 1920 → 1600 px), danach zurück.
+ */
+async function foto(page, name, { ganz = false, breite = null } = {}) {
+  if (!FOTO_LISTE.includes(name)) throw new Error(`Foto „${name}“ steht nicht in FOTO_LISTE (test/e2e/hilfen.js)`);
   if (process.env.E2E_FOTOS === '0') return null;
   fs.mkdirSync(FOTOS, { recursive: true });
-  const datei = path.join(FOTOS, `m4-${String(fotoNr).padStart(2, '0')}-${name}.png`);
+  const datei = path.join(FOTOS, fotoDatei(name));
+  const vorher = breite ? page.viewportSize() : null;
+  if (breite) {
+    await page.setViewportSize({ width: breite, height: Math.round((breite * 9) / 16) });
+    await page.waitForTimeout(400);
+  }
+  // ruhiges Bild: Hinweise (Toasts) abwarten und endliche Übergänge/Animationen (z. B. Tore auf der Achse) beenden lassen
+  await page.waitForFunction(() => [...document.querySelectorAll('#toast, .toast')].every((t) => t.hidden || !t.getClientRects().length), null, { timeout: 8000 }).catch(() => {});
+  await page
+    .evaluate(() => Promise.race([Promise.all(document.getAnimations().filter((a) => a.effect && a.effect.getComputedTiming().endTime !== Infinity).map((a) => a.finished.catch(() => null))), new Promise((r) => setTimeout(r, 3000))]))
+    .catch(() => {});
   await page.screenshot({ path: datei, fullPage: ganz });
+  if (vorher) await page.setViewportSize(vorher);
   return datei;
 }
 
-/** Ältere Fotos dieses Laufs entfernen (vor dem ersten Foto). */
+/** Fotos früherer Läufe entfernen (alter Satz m4-* und kr-*), vor dem ersten Foto. */
 function fotosLeeren() {
   if (process.env.E2E_FOTOS === '0' || !fs.existsSync(FOTOS)) return;
-  for (const f of fs.readdirSync(FOTOS)) if (/^m4-\d\d-.*\.png$/.test(f)) fs.rmSync(path.join(FOTOS, f));
+  for (const f of fs.readdirSync(FOTOS)) if (/^(m4|kr)-\d\d-.*\.png$/.test(f)) fs.rmSync(path.join(FOTOS, f));
 }
 
 /** Kein horizontales Seiten-Scrollen (scrollWidth ≤ innerWidth), sonst Fehler mit den drei breitesten Elementen. */
@@ -270,4 +296,4 @@ async function gehe(page, url) {
   await page.waitForLoadState('networkidle');
 }
 
-module.exports = { chromiumPfad, freiePorts, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };
+module.exports = { FOTO_LISTE, fotoDatei, chromiumPfad, freiePorts, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };

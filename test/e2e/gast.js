@@ -22,7 +22,6 @@ async function szenario8(ctx) {
   // Review M4 K9: Überschrift mit Abstand zur Kopfzeile (wie die übrigen Seiten)
   const abstand = await page.evaluate(() => document.querySelector('main h1').getBoundingClientRect().top - document.getElementById('kopf').getBoundingClientRect().bottom);
   assert.ok(abstand >= 24, `Abstand h1 ↔ Kopfzeile ${abstand} px (mindestens 24)`);
-  await foto(page, 'gast-start');
   await page.locator('a.gast-karte', { hasText: 'Als Schülerin/Schüler' }).click();
   await page.locator('.aufgaben-liste').waitFor();
   assert.equal(await page.locator('.aufgaben-liste a').count(), 6, 'sechs Demo-Aufgaben');
@@ -36,7 +35,7 @@ async function szenario8(ctx) {
   const k = page.locator('input.kaestchen');
   for (let i = 0; i < loesung.length; i++) await k.nth(i).fill(loesung[i]);
   await richtig(page);
-  await foto(page, 'gast-aufgabe', { ganz: true });
+  await foto(page, 'gast-aufgabe');
 
   // W8-L1-04: XOR über die Tastatur
   await gehe(page, ctx.basis + '/gast#/schueler/aufgabe/W8-L1-04');
@@ -47,7 +46,6 @@ async function szenario8(ctx) {
   // Demo-Kurs: Auswertung mit Fallen-Profil, Einstellungen nur lesend
   await gehe(page, ctx.basis + '/gast#/lehrkraft/auswertung');
   await page.locator('.fallen-profil').waitFor();
-  await foto(page, 'gast-lehrkraft', { ganz: true });
   await gehe(page, ctx.basis + '/gast#/lehrkraft/einstellungen');
   await page.locator('form.einstellungen').waitFor();
   const offen = await page.locator('form.einstellungen').locator('input, select, button[type="submit"]').evaluateAll((l) => l.filter((x) => !x.disabled).length);

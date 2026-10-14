@@ -6,12 +6,12 @@
  * mit reduzierter Bewegung (keine Klasse „fliegt“). Mika (Alice) verschlüsselt mit der eingebetteten Scheibe (k = 7,
  * Ergebnis = Krypto.caesar) und sendet; Nia (Bob) meldet den Empfang; Ole (Eve) knackt über „Alle Verschiebungen“; die
  * Lehrkraft blendet Nias Quittung aus; Phasen bis zur Auflösung, Beenden → Inhalte weg (Stand und Datenbankdatei), danach
- * Schließen (Szenario 6 nutzt die Teams weiter). 360 px bei Mika ohne Querscrollen. Keine Fotos (E118).
+ * Schließen (Szenario 6 nutzt die Teams weiter). 360 px bei Mika ohne Querscrollen. Fotos funkraum-team, funkraum-beamer, lehrkraft-funkraum-regie (Plan M9 Task 217, nur Pseudonyme und Szenario-Texte).
  */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { anmelden, beobachte, gehe, keinQuerScrollen, kontraste, Krypto: K } = require('./hilfen');
+const { anmelden, beobachte, foto, gehe, keinQuerScrollen, kontraste, Krypto: K } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 const { kursWaehlen, kursId } = require('./lehrkraft');
 
@@ -123,6 +123,8 @@ async function szenario5(ctx) {
   // Beamer: Punkt und Geheimtext-Vorschau (≤ 4 s)
   await beamer.locator(`svg.funk-netz circle.nachricht[data-id="${nid}"]`).waitFor({ timeout: 4000 });
   await beamer.locator('svg.funk-netz text.nachricht-vorschau', { hasText: 'OHSAL AKLUW HZ' }).waitFor({ timeout: 4000 });
+  await foto(mp, 'funkraum-team');
+  await foto(beamer, 'funkraum-beamer', { breite: 1600 });
 
   // 3. Nia (Bob) meldet den Empfang → „angekommen“ bei Mika und am Beamer
   const np = nia.page;
@@ -133,6 +135,8 @@ async function szenario5(ctx) {
   await empfang.locator('p.funk-ergebnis', { hasText: 'Stimmt – angekommen.' }).waitFor();
   await mp.locator(`li.funk-nachricht[data-id="${nid}"] span.chip.angekommen`).waitFor({ timeout: LANG });
   await beamer.locator(`svg.funk-netz circle.nachricht.angekommen[data-id="${nid}"]`).waitFor({ timeout: LANG });
+  await lp.waitForTimeout(2500); // Regie-Stand nachgeladen (Polling 2 s)
+  await foto(lp, 'lehrkraft-funkraum-regie');
 
   // 4. Ole (Eve): Nachricht in der Scheibe öffnen, „Alle Verschiebungen“, k = 7 ergibt den Klartext → melden
   const op = ole.page;

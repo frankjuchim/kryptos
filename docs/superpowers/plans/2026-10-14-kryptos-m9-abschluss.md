@@ -498,11 +498,13 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 
 `FOTO_LISTE` (Szenario in Klammern): 01 `start` (14) · 02 `zeitleiste` (11) · 03 `epoche-w2` (11) · 04 `level-w0-2` (11) · 05 `aufgabe-chiffre-p3` (11) · 06 `archivfund-w3` (12) · 07 `aufgabe-bits-schritt` (12) · 08 `aufgabe-hash-ziel` (12) · 09 `aufgabe-uhrwerk` (12) · 10 `boss-kampf` (11) · 11 `boss-auswertung` (11) · 12 `profil-artefakte` (11) · 13 `labor-scheibe` (4) · 14 `labor-haeufigkeit` (4) · 15 `labor-runden` (4) · 16 `funkraum-team` (5) · 17 `funkraum-beamer` (5) · 18 `lehrkraft-funkraum-regie` (5) · 19 `werkstatt-baukasten` (6) · 20 `arena-beamer` (6) · 21 `lehrkraft-kurse` (13) · 22 `lehrkraft-auswertung` (13) · 23 `lehrkraft-einstellungen` (13) · 24 `lehrkraft-materialien` (13) · 25 `verwaltung` (13) · 26 `themen-niveaus` (14) · 27 `datenschutz` (14) · 28 `gast-aufgabe` (8) · 29 `360-aufgabe-w3` (12) · 30 `dunkel-zeitleiste` (12, Dunkelmodus).
 
-- [ ] **Step 1: Failing check** – `npm run e2e` (voll) bricht ab: „Fotos: … nicht in FOTO_LISTE“ bzw. fehlende Namen.
-- [ ] **Step 2: Implement** `FOTO_LISTE`, Foto-Aufrufe an den genannten Stellen (Viewport 1280 × 800, `deviceScaleFactor: 1`, Beamer 1920 × 1080 verkleinert auf ≤ 1600 px Breite über `clip`/Viewport; PNG). Fixture-Szenarien 1–3, 7, 9, 10 fotografieren nicht mehr. Labor/Funkraum/Arena: nur Pseudonyme, keine Funkraum-Klartexte außer den Szenario-Texten.
-- [ ] **Step 3: Run** `npm run e2e` → „Fotos: 30 Dateien, ≤ 5,0 MB“, „e2e: alles grün“.
-- [ ] **Step 4: Sichtprüfung** – alle 30 Fotos per Read ansehen (Inhalt passend, keine Klarnamen, keine Fehlermeldungen, keine abgeschnittenen Dialoge); `du -sh docs/screenshots` ≤ 5 MB. `npm test` grün.
-- [ ] **Step 5: Commit** `git rm docs/screenshots/m4-*.png && git add docs/screenshots/kr-*.png test/e2e/ docs/TECHNIK.md && git commit -m "Screenshots: Foto-Satz kr-01…30 aus den echten Seeds, m4-Fotos entfernt (M9 Task 217)"`
+- [x] **Step 1: Failing check** – `npm run e2e` (voll) bricht ab: „Fotos: … nicht in FOTO_LISTE“ bzw. fehlende Namen.
+- [x] **Step 2: Implement** `FOTO_LISTE`, Foto-Aufrufe an den genannten Stellen (Viewport 1280 × 800, `deviceScaleFactor: 1`, Beamer 1920 × 1080 verkleinert auf ≤ 1600 px Breite über `clip`/Viewport; PNG). Fixture-Szenarien 1–3, 7, 9, 10 fotografieren nicht mehr. Labor/Funkraum/Arena: nur Pseudonyme, keine Funkraum-Klartexte außer den Szenario-Texten.
+- [x] **Step 3: Run** `npm run e2e` → „Fotos: 30 Dateien, ≤ 5,0 MB“, „e2e: alles grün“.
+- [x] **Step 4: Sichtprüfung** – alle 30 Fotos per Read ansehen (Inhalt passend, keine Klarnamen, keine Fehlermeldungen, keine abgeschnittenen Dialoge); `du -sh docs/screenshots` ≤ 5 MB. `npm test` grün.
+- [x] **Step 5: Commit** `git rm docs/screenshots/m4-*.png && git add docs/screenshots/kr-*.png test/e2e/ docs/TECHNIK.md && git commit -m "Screenshots: Foto-Satz kr-01…30 aus den echten Seeds, m4-Fotos entfernt (M9 Task 217)"`
+
+> Umsetzung: `foto(page, name, { ganz, breite })` – Beamer-Fotos mit `breite: 1600` (Viewport 1600 × 900 statt 1920 verkleinert); `foto()` wartet Toasts und endliche Übergänge ab (die Tore der Zeitleiste wurden mitten in der `margin-left`-Animation fotografiert). Funde beim Fotografieren mit eigenem Commit: `GET /api/funk` 30/min statt 6/min (Kopfzeile ruft bei jedem Seitenaufruf ab, Szenario 5 lief in 429) und `#toast[hidden]` (Toast verschwand nie, 0.4.12). Labor-Scheibe: Szenario 4 schaltet die Scheibe für das Foto kurz frei und sperrt sie danach wieder. 30 Fotos, 3,0 MB.
 
 ### Task 218: README und Betriebsanleitung
 

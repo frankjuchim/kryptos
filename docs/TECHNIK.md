@@ -1917,13 +1917,15 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `docker.test.js` | neu (M5) | Docker ohne Daemon: COPY-Quellen und `.dockerignore`-Ausnahmen gegen den Dateibaum, Image-Inhalt (Akten laut `seed/akten.json`, Lehrkraft-Verzeichnis, Demo-PDFs, relative `require()`, keine Lösung unter `/app/akten`), Image-Nachbau im Temp-Ordner: `scripts/validate.js` und `src/server.js` mit `NODE_ENV=production` (`/healthz`, `/api/themen` mit Akten-URLs, Demo-PDFs 200, andere Akte 401, Manifest) |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
-Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 MB, `E2E_FOTOS=0` schaltet aus –, Viewports
+Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-30-…png` aus den echten Seeds – genau die Namen aus `FOTO_LISTE`
+(`hilfen.js`), zusammen ≤ 5 MB, `foto()` wartet Toasts und endliche Übergänge ab, `E2E_FOTOS=0` schaltet aus (M9 Task 217) –, Viewports
 1280×800, 768×1024, 360×740, Beamer 1920×1080). Aufteilung (M4): `hilfen.js` (Start von Dev-Portal + App mit
 `SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung – ausgenommen nur erwartete Status 400–429 von `/api/…` –,
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
-ohne Fotos), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
+Fotos kr-02…05, 10–12), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, Fotos kr-06…09, 29, 30), `labor.js` (Nr. 4, M6 Task 128, Fotos kr-13…15), `funkraum.js` (Nr. 5, M7 Task 160, kr-16…18), `arena.js` (Nr. 6, M7 Task 161, kr-19, 20);
+`lehrkraft_bereich.js` (Nr. 13, kr-21…25), `oeffentlich.js` (Nr. 14, kr-01, 26, 27), `gast.js` (Nr. 8, kr-28); Nr. 1–3, 7, 9, 10 ohne Fotos;
 Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13 → 14. `E2E_NUR=11,12` (Komma-Liste; 12–14 setzen 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
@@ -1933,7 +1935,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 3. Boss: Start, keine Werkzeuge/Labor-Links, Abgabe, Auswertung mit Diagnose.
 4. Kryptolabor (umgesetzt M6 Task 128): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis gegen `Krypto` prüfen;
    gesperrtes Werkzeug (Scheibe aus 7a) wird nicht geladen; Reiter-Regeln des Kurses; Nachspiel per Tastatur; Dialog aus
-   einer Aufgabe mit Voreinstellung und Fokus-Rückkehr; 360 px ohne Querscrollen; reduzierte Bewegung. Ohne Fotos.
+   einer Aufgabe mit Voreinstellung und Fokus-Rückkehr; 360 px ohne Querscrollen; reduzierte Bewegung. Fotos kr-13…15.
 5. Funkraum-Durchlauf „Botenlauf“ mit **drei Teams** (drei Browser-Kontexte) + Beamer (umgesetzt M7 Task 160): Frau M.
    verteilt Mika R., Nia T., Ole B. automatisch auf drei Teams (alphabetisch: Skytale = Alice, Scheibe = Bob,
    Quadrat = Eve), legt den Botenlauf an und startet; Beamer 1920 × 1080 mit reduzierter Bewegung (QR-Code, keine Klasse
@@ -1942,7 +1944,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
    „Alle Verschiebungen“ (Ticker bei allen und am Beamer); die Lehrkraft blendet Nias Quittung aus (bei Ole „ausgeblendet“,
    Inhalt leer); Phasen bis zur Auflösung (Tabelle am Beamer); **Beenden** → „Alle Nachrichten wurden gelöscht.“ bei
    allen, Regie-Stand ohne Inhalte, keine Fundstelle in `kryptos.db` **und** `kryptos.db-wal` (§7.3); Schließen; 360 px
-   bei Mika ohne Querscrollen. Ohne Fotos.
+   bei Mika ohne Querscrollen. Fotos kr-16…18.
 6. Arena (umgesetzt M7 Task 161): Teams aus Nr. 5; Frau M. legt die Arena an; Mika (Team Skytale) baut FUNKGITTER
    (Vigenère + Spaltentransposition, geteilter Schlüssel LATERNE, Text 1, 167 Buchstaben; Geheimtext =
    `Krypto.baukasten`, beginnt `MRESE IEAUI SIRUT`), Ole (Team Quadrat) „Nur Caesar“ (k = 7, Text 2, Hinweis „Nur
@@ -1951,7 +1953,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
    an („Leider nicht.“, Grenzen als Text), Mika knackt Oles Caesar per Klartext („Geknackt!“, Toast „Arena-Knacker“,
    Ticker und Karte „geknackt“ am Beamer); Ende der Angriffsphase → Toast „Unknackbar“ bei Mika; beide beurteilen, die
    Lehrkraft sieht beide gesammelt, Ole (Seite und API-Antworten) und der Beamer nie Mikas Beurteilung; Schließen,
-   Löschen → Beamer „Keine Arena geöffnet.“, `/werkstatt#/arena` „keine Arena offen“; 360 px ohne Querscrollen. Ohne Fotos.
+   Löschen → Beamer „Keine Arena geöffnet.“, `/werkstatt#/arena` „keine Arena offen“; 360 px ohne Querscrollen. Fotos kr-19, 20.
 7. Lehrkraft: Niveau gA → Level 2.3 verschwindet bei Schülern; Werkzeug sperren; Teams anlegen; Auswertung; Vorschau.
 8. Gastmodus: sechs Demo-Aufgaben, Chiffrierscheibe, Demo-Kurs; keine Cookies, kein `localStorage`, keine schreibenden
    Anfragen außer Prüfen/Tipp der Demo.
@@ -1973,7 +1975,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     `chiffre` `uhrwerk`, W6-L1-11 `lines` mit zwei Zeilen, Skytale im Reiter „Ring“ über die Werkzeug-Karte 6.2; je Welt
     Boss-Start bis zum Bestätigungsdialog (25 min, W6 30 min) und Abbrechen (kein Kampf). GK 12: Level 3.2/3.3 fehlen,
     Kür 3.K2/4.K3 erst nach „Kür: Frei“. 360 px ohne Querscrollen (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten
-    W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Ohne Fotos.
+    W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Fotos kr-06…09, 29, 30.
 13. Lehrkraft-Bereich im Algo-Quest-Aufbau (Plan M9 Task 215, E161; `lehrkraft_bereich.js`, im selben App-Start nach
     Nr. 12): Ole B. und Nia T. melden sich einmal an; Frau M.: Kopfzeile Kurse · Aufgaben · Materialien · Themen · Labor +
     Portal-Link; Kurskopf mit Niveau-Chip und „Urkunden“; Kurs-Reiter Schüler · Beitritt & QR · Auswertung · Scoreboard ·
@@ -1984,7 +1986,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     als PDF (200), Funkraum-Rollenkarte W3; `/themen#niveaus` mit sieben Welten; 360 px (Kurse, Auswertung, Einstellungen)
     ohne Querscrollen, Touch-Ziele ≥ 44 px. Admin: Verwaltung vor Labor, Reiter Lehrkräfte & Anfragen · Inhalte ·
     Warm-up-Import · Backup & Verbund · Wartung; Backup-JSON `app = kryptos`, `meta.app = kryptos`, ohne `sso_jti`,
-    `loeschungen`, Funkraum- und Arena-Tabellen; Wartung mit letztem Lauf. Ohne Fotos (Foto-Satz: Task 217).
+    `loeschungen`, Funkraum- und Arena-Tabellen; Wartung mit letztem Lauf. Fotos kr-21…25.
 14. Öffentlich und Verbund-Wege (Plan M9 Task 216; `oeffentlich.js`, nach Nr. 13): ohne Anmeldung `/` („Anmelden über
     InfoLabs“, Gastmodus, keine Cookies), `/themen`, `/themen#niveaus` frisch geladen (sieben Welten, eA, Sprungziel im
     Blick), `/datenschutz` (Entwurf-Kasten, Platzhalter, Link auf `<Dev-Portal>/datenschutz`), 404-Seite im Designsystem,
@@ -1992,7 +1994,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     Mika: „Abmelden“ (lokal, `kr_s` gelöscht) und „Überall abmelden“ über `<Dev-Portal>/sso/abmelden?ruecksprung=…` zurück
     auf `/`; Ida K. (nur GK 12): Dev-Portal schaltet Kryptos für `k:2` ab (Verbund `kurs-aendern {aktiv:false}`) → API 403,
     `/spiel` → Seite „Kurs abgeschaltet“ (auch 360 px), danach wieder eingeschaltet und Ida wieder in Kryptos. 360 px ohne
-    Querscrollen; Kontraste hell/dunkel für `/`, `/themen`, `/datenschutz`, 404. Ohne Fotos.
+    Querscrollen; Kontraste hell/dunkel für `/`, `/themen`, `/datenschutz`, 404. Fotos kr-01, 26, 27.
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C

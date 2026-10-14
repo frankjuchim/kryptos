@@ -7,10 +7,10 @@
  *     (0 Punkte), W0-L1-03 (+10 Punkte), W0-L2-02 mit falscher Richtung → Fallen-Chip P3; Level-Seite 0.1 mit „Akte als
  *     PDF“ (200, application/pdf); QR-Ziel /level/0.4 → Level-Seite; Boss W0: Start, eine Antwort, Abgabe, Auswertung mit Lösung.
  *  3. Mika im GK 12 (gA): Level 2.3 (eA) fehlt, Kür K1 erst nach „Kür: Frei“ durch Frau M.
- *  4. 360 px ohne Querscrollen. Keine neuen Fotos (Grenze 30 aus M4).
+ *  4. 360 px ohne Querscrollen. Fotos zeitleiste, epoche-w2, level-w0-2, aufgabe-chiffre-p3, boss-kampf, boss-auswertung, profil-artefakte (Task 217).
  */
 const assert = require('node:assert/strict');
-const { anmelden, gehe, keinQuerScrollen } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen } = require('./hilfen');
 const { neueSeite, aufgabe } = require('./schueler');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -99,6 +99,10 @@ async function szenario11(ctx) {
   const zu = page.locator('.tor.gesperrt');
   assert.equal(await zu.count(), 4, 'Epochen 3–6 gesperrt');
   for (let i = 0; i < 4; i++) assert.match(await zu.nth(i).innerText(), /noch verschlüsselt/);
+  await foto(page, 'zeitleiste');
+  await gehe(page, `${ctx.basis}/spiel#/epoche/2`);
+  await page.locator('a.karte-akte').first().waitFor();
+  await foto(page, 'epoche-w2');
 
   // Archivfund W0: 0 Punkte, danach „Archivfund ansehen“ auf der Epochen-Seite
   await gehe(page, `${ctx.basis}/spiel#/archivfund/0`);
@@ -121,6 +125,11 @@ async function szenario11(ctx) {
   await kaestchen(page, 'UYAFC');
   await page.locator('#pruefen').click();
   await page.locator('.feedback.falsch').getByText(/^P3\b/).first().waitFor();
+  await page.locator('.feedback.falsch').evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await foto(page, 'aufgabe-chiffre-p3');
+  await gehe(page, `${ctx.basis}/spiel#/level/W0-L2`);
+  await page.locator('.aufgaben-liste').waitFor();
+  await foto(page, 'level-w0-2');
 
   // Level-Seite 0.1: Akte als PDF
   await gehe(page, `${ctx.basis}/spiel#/level/W0-L1`);
@@ -155,12 +164,19 @@ async function szenario11(ctx) {
   }
   assert.ok(beantwortet, 'eine Boss-Aufgabe beantwortet');
   await page.locator('.boss-speicher', { hasText: 'gespeichert' }).waitFor();
+  await foto(page, 'boss-kampf');
   await page.getByRole('button', { name: 'Kampf beenden' }).click();
   await page.locator('dialog[open]').getByRole('button', { name: 'Beenden und auswerten' }).click();
   const ergebnis = page.locator('section.boss-ergebnis-aufgabe');
   await ergebnis.first().waitFor();
   assert.equal(await ergebnis.count(), 8, 'Auswertung aller acht Aufgaben');
   await ergebnis.first().locator('h4', { hasText: 'Lösung' }).waitFor();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' })); // Foto mit Kopf und Ergebnis oben
+  await foto(page, 'boss-auswertung');
+  await gehe(page, `${ctx.basis}/spiel#/profil`);
+  await page.locator('main h1', { hasText: 'Profil' }).waitFor();
+  await page.waitForLoadState('networkidle');
+  await foto(page, 'profil-artefakte');
 
   // 3) Mika im GK 12 (gA, Kür gesperrt): kein Level 2.3, kein K1
   await kursWaehlen(page, 'GK 12 (gA)');
