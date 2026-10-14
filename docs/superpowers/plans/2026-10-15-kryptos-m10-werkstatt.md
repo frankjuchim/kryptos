@@ -720,7 +720,7 @@ der Punkte (Regler); „Punkte finden“: Lupe (vergrößerter Klon per CSS-Tran
 Antippen markierter Buchstaben → `Krypto.punktmethode`. Hintergrund: Verstecken ≠ Verschlüsseln, Kerckhoffs (Methode ist das
 Geheimnis), Geschichte vorsichtig („soll“).
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Nullchiffre: Brief wächst, Aufdecken = Krypto.nullchiffre', () => {
     const w = oeffne('verstecke');
@@ -735,7 +735,10 @@ Geheimnis), Geschichte vorsichtig („soll“).
     for (const n of ['Otto', 'Emma', 'Paul', 'Mia', 'Karl', 'Klaus', 'Edda', 'Uwe', 'Ute', 'Leo', 'Lena', 'Nina', 'Tim']) assert.doesNotMatch(src, new RegExp(`\\b${n}\\b`));
   });
   ```
-- [ ] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Versteckte Botschaften“ (Nullchiffre, Punktmethode) nach der Krypto-Werkstatt (Task 231)`
+- [x] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Versteckte Botschaften“ (Nullchiffre, Punktmethode) nach der Krypto-Werkstatt (Task 231)`
+- Umsetzung: eigene Wortliste (jede Kombination Buchstabe × Leseregel 1–3 hat einen Vorschlag, Test), eigenes Wort nur, wenn
+  es zur Leseregel passt; drei Übungsbriefe (Leseregel 1/2/3), Zeitungsmeldung mit der Vorgabe-Nachricht aus `BEISPIEL`;
+  Brief-Band wortweise (neue Option `woerter` von `KRStation.baender`); Lupe als vergrößerter Klon (CSS-Transform), Pfeiltasten.
 
 ### Task 232: Werkzeug „Enigma“ I – Maschine (E187, E197)
 

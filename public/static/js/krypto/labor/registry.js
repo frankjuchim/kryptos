@@ -36,7 +36,7 @@ const KRLabor = (() => {
   const MODULE = new Map();
   // Werkzeuge, deren Modul gebaut ist (labor/<id>.js vorhanden). Andere zeigen „noch in Arbeit“, ohne ein Skript
   // anzufordern (kein 404); echte Ladefehler gebauter Module bleiben Fehler. Mit jedem neuen Modul ergänzen (M6).
-  const BEREIT = new Set(['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur', 'quadrat', 'signale']);
+  const BEREIT = new Set(['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur', 'quadrat', 'signale', 'verstecke']);
   /** Ist das Modul des Werkzeugs gebaut (nachladbar)? */
   function bereit(id) {
     return BEREIT.has(id);

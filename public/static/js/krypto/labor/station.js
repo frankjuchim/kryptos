@@ -132,8 +132,9 @@ const KRStation = (() => {
    * (unteres Band, ohne Leerzeichen).
    * → { element, push(ein, aus), pop(), leeren(), setze(eintraege), text(i), letztes(i), eintraege, beschrifte(oben, unten, gruppe, gruppen) }
    */
-  function baender({ oben = 'Klartext', unten = 'Geheimtext', gruppe = [false, true], gruppen = [], beiAenderung } = {}) {
+  function baender({ oben = 'Klartext', unten = 'Geheimtext', gruppe = [false, true], gruppen = [], woerter = [], beiAenderung } = {}) {
     let eintraege = [];
+    let wortweise = [...woerter]; // wortweise[i]: jeder Eintrag als ein Wort (Brief, Task 231)
     let art = [...gruppe];
     let groesse = [...gruppen];
     const gruppeVon = (i) => (Number.isInteger(groesse[i]) ? groesse[i] : art[i] ? 5 : 0);
@@ -159,6 +160,10 @@ const KRStation = (() => {
     function zeichne(i, frisch) {
       const ziel = ausgaben[i];
       AQ.clear(ziel);
+      if (wortweise[i]) {
+        eintraege.forEach((e, j) => ziel.appendChild(h('span', { class: frisch && j === eintraege.length - 1 ? 'station-zeichen station-wort neu' : 'station-zeichen station-wort' }, e[i].trim())));
+        return;
+      }
       const s = roh(i);
       const zeichen = [...(art[i] ? s.toUpperCase() : Krypto.klein(s))];
       let inGruppe = 0;
@@ -191,7 +196,7 @@ const KRStation = (() => {
     });
     kopieren.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(roh(1).replace(/\s+/g, ''));
+        await navigator.clipboard.writeText(wortweise[1] ? eintraege.map((e) => e[1].trim()).join(' ') : roh(1).replace(/\s+/g, ''));
         AQ.toast('Kopiert.');
       } catch {
         AQ.toast('Kopieren ist hier nicht möglich.', true);
@@ -224,11 +229,12 @@ const KRStation = (() => {
       get eintraege() {
         return eintraege.map((e) => [...e]);
       },
-      beschrifte(o, u, g, gr) {
+      beschrifte(o, u, g, gr, ww) {
         titel[0].textContent = o;
         titel[1].textContent = u;
         if (Array.isArray(g)) art = [...g];
         if (Array.isArray(gr)) groesse = [...gr];
+        if (Array.isArray(ww)) wortweise = [...ww];
         ausgaben.forEach((a, i) => {
           a.classList.toggle('geheim', !!art[i]);
           a.classList.toggle('klar', !art[i]);

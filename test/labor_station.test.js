@@ -262,3 +262,14 @@ test('baender mit Gruppengröße (Zahlenpaare) und ungefaehr für große Anzahle
   assert.equal(S.ungefaehr('312000'), '312.000');
   assert.equal(S.ungefaehr('9995000'), '≈ 1,0 · 10⁷');
 });
+
+test('baender wortweise: ein Eintrag = ein Wort (Brief der Nullchiffre, Plan M10 Task 231)', () => {
+  const { S, ziel } = rahmen();
+  const b = S.baender({ oben: 'Nachricht', unten: 'Brief', woerter: [false, true] });
+  ziel.appendChild(b.element);
+  b.push('g', 'Gabel ');
+  b.push('u', 'Ufer ');
+  assert.equal(b.ausgaben[1].querySelectorAll('.station-wort').length, 2);
+  assert.equal(b.ausgaben[1].textContent, 'GabelUfer');
+  assert.equal(b.ausgaben[0].textContent, 'gu');
+});

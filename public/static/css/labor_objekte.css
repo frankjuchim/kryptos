@@ -66,6 +66,7 @@
   color: var(--text);
   font: 700 1.1rem var(--f-mono);
 }
+.station-zeichen.station-wort { padding: 0 .5rem; font: 600 1rem var(--f-text); }
 .station-band.geheim .station-zeichen { background: var(--mat-band-tinte); color: var(--mat-band); border-color: var(--mat-band-tinte); }
 .station-zeichen.neu { animation: station-auftauchen .45s cubic-bezier(.3, 1.6, .5, 1); }
 .station-luecke { width: 8px; }
@@ -575,3 +576,57 @@
 .signale-zaehl { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border: 1px solid var(--linie); border-radius: var(--r-chip); font-family: var(--f-mono); }
 @media (prefers-reduced-motion: reduce) { .signale-fell-gruppe.schwingt, .signale-rand-gruppe.schwingt { animation: none; } }
 :root[data-bewegung="aus"] .signale-fell-gruppe.schwingt, :root[data-bewegung="aus"] .signale-rand-gruppe.schwingt { animation: none; }
+
+/* ======================================================================
+   Versteckte Botschaften (Plan M10 Task 231; stationen/steganographie.html)
+   Brief auf liniertem Papier mit Lochrand, Rand und Briefmarke; Zeitungsmeldung mit Nadelstichen; Lupe (Klon, vergrößert).
+   ====================================================================== */
+.verstecke-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .verstecke-objekt { grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 1fr); } }
+.verstecke-buehne, .verstecke-bedienung, .verstecke-schreiben { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.verstecke-schreiben[hidden], .verstecke-briefwahl[hidden] { display: none; }
+.verstecke-tisch { padding: var(--a-4) var(--a-3); border-radius: var(--r-karte); background: var(--mat-gehaeuse); }
+.verstecke-feldtitel { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .04em; color: var(--text-2); }
+.verstecke-brief { position: relative; min-height: 13rem; padding: 2.4rem 1.2rem 1.6rem 3.2rem; border-radius: 4px; background-color: var(--mat-band); background-image: linear-gradient(90deg, transparent 2.3rem, color-mix(in srgb, var(--fehler) 55%, transparent) 2.3rem, color-mix(in srgb, var(--fehler) 55%, transparent) calc(2.3rem + 2px), transparent calc(2.3rem + 2px)), repeating-linear-gradient(180deg, transparent 0 2.15rem, color-mix(in srgb, var(--hinweis) 30%, transparent) 2.15rem calc(2.15rem + 1px)); background-position: 0 0, 0 1.9rem; color: var(--mat-band-tinte); box-shadow: 0 10px 24px rgba(11, 20, 38, .35); transform: rotate(-.6deg); }
+.verstecke-lochung { position: absolute; left: .7rem; top: 2.4rem; width: .9rem; height: .9rem; border-radius: 50%; background: var(--mat-gehaeuse); box-shadow: 0 6.5rem 0 var(--mat-gehaeuse); }
+.verstecke-marke { position: absolute; right: 1rem; top: .9rem; width: 3.4rem; height: 4rem; border: 3px dotted var(--mat-band); outline: 2px solid var(--mat-karton); background: linear-gradient(180deg, var(--mat-ziel) 0 58%, var(--mat-holz) 58% 100%); box-shadow: inset 0 0 0 4px var(--mat-band), 0 3px 6px rgba(11, 20, 38, .3); transform: rotate(4deg); }
+.verstecke-marke::after { content: ""; position: absolute; left: 50%; top: 32%; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--mat-lampe-an); transform: translate(-50%, -50%); }
+.verstecke-brief-titel { margin: 0 0 .4rem; padding-right: 4.4rem; min-height: 3.2rem; font: 600 .95rem var(--f-text); letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+.verstecke-brief-text { margin: 0; font: 1.25rem/2.15rem var(--f-ueberschrift); word-spacing: .15em; }
+.verstecke-leer { opacity: .7; font-size: 1.05rem; }
+.verstecke-wort { display: inline; white-space: nowrap; border-radius: 4px; }
+.verstecke-wort .zaehlt { font-weight: 800; background: color-mix(in srgb, var(--mat-lampe-an) 55%, transparent); border-radius: 3px; }
+.verstecke-wort.naechst { outline: 2px dashed var(--mat-holz); outline-offset: 2px; }
+.verstecke-wort.fertig { opacity: .75; }
+.verstecke-wort.nachspiel { outline: 2px solid var(--mat-lampe-an); outline-offset: 2px; }
+.verstecke-buchstabe { display: inline; min-width: 0; min-height: 0; margin: 0; line-height: inherit; box-shadow: none; padding: 0 1px; border: 0; border-radius: 3px; background: transparent; color: inherit; font: inherit; cursor: pointer; touch-action: manipulation; }
+.verstecke-buchstabe:hover { background: color-mix(in srgb, var(--mat-lampe-an) 30%, transparent); }
+.verstecke-buchstabe:focus-visible { outline: 3px solid var(--fokus); }
+.verstecke-briefwahl { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.verstecke-briefwahl [aria-pressed="true"] { border-color: var(--hinweis); font-weight: 700; }
+.verstecke-vorschlaege { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.verstecke-vorschlaege .text-2 { margin: 0; }
+.verstecke-eigen { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; }
+.verstecke-eigen input { flex: 1 1 9rem; min-height: var(--ziel); }
+.verstecke-stelle { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.verstecke-regler { display: flex; align-items: center; gap: var(--a-3); }
+.verstecke-regler input { flex: 1; min-height: var(--ziel); }
+
+.verstecke-zeitung { position: relative; padding: var(--a-4); border-radius: 3px; background: var(--mat-band); color: var(--mat-band-tinte); box-shadow: 0 10px 24px rgba(11, 20, 38, .35); overflow: hidden; }
+.verstecke-zeitung-kopf { margin: 0 0 var(--a-2); padding-bottom: var(--a-2); border-bottom: 3px double var(--mat-band-tinte); font: 700 1.3rem var(--f-ueberschrift); }
+.verstecke-zeitung-text, .verstecke-lupe-inhalt { margin: 0; font: 1.05rem/2 var(--f-text); hyphens: none; }
+.verstecke-zeichen { position: relative; display: inline; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; line-height: inherit; letter-spacing: inherit; box-shadow: none; background: transparent; color: inherit; font: inherit; cursor: default; }
+.verstecke-zeitung.finden .verstecke-zeitung-text .verstecke-zeichen { cursor: pointer; touch-action: manipulation; }
+.verstecke-zeichen.punkt::after { content: ""; position: absolute; left: 50%; bottom: .05em; width: 3px; height: 3px; border-radius: 50%; background: var(--mat-band-tinte); opacity: var(--punkt-deckkraft, .35); transform: translateX(-50%); }
+.verstecke-zeichen.gefunden { background: color-mix(in srgb, var(--mat-lampe-an) 55%, transparent); border-radius: 2px; }
+.verstecke-zeichen.nachspiel { outline: 2px solid var(--mat-lampe-an); }
+.verstecke-zeichen.gestochen::after { animation: verstecke-stich .5s ease-out; }
+@keyframes verstecke-stich { from { transform: translateX(-50%) scale(5); opacity: 1; } }
+.verstecke-zeichen:focus-visible { outline: 3px solid var(--fokus); }
+.verstecke-lupe { position: absolute; left: calc(var(--lupe-x, 60px) - 70px); top: calc(var(--lupe-y, 40px) - 70px); width: 140px; height: 140px; border: 5px solid var(--mat-messing); border-radius: 50%; overflow: hidden; background: var(--mat-band); box-shadow: 0 8px 18px rgba(11, 20, 38, .4), inset 0 0 18px rgba(11, 20, 38, .2); pointer-events: none; transition: left .08s, top .08s; }
+.verstecke-lupe[hidden] { display: none; }
+.verstecke-lupe:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.verstecke-lupe-inhalt { position: absolute; left: 0; top: 0; box-sizing: content-box; width: var(--text-b, 32rem); padding-left: var(--text-x, 1rem); padding-top: var(--text-y, 3rem); transform-origin: 0 0; transform: translate(calc(65px - var(--lupe-x, 60px) * var(--lupe-faktor, 2.2)), calc(65px - var(--lupe-y, 40px) * var(--lupe-faktor, 2.2))) scale(var(--lupe-faktor, 2.2)); }
+.verstecke-lupe-inhalt .verstecke-zeichen.punkt::after { opacity: calc(var(--punkt-deckkraft, .35) * 2.5); }
+@media (prefers-reduced-motion: reduce) { .verstecke-brief { transform: none; } .verstecke-lupe { transition: none; } .verstecke-zeichen.gestochen::after { animation: none; } }
+:root[data-bewegung="aus"] .verstecke-lupe { transition: none; }
