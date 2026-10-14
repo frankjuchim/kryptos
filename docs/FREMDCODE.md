@@ -1,7 +1,8 @@
 # Fremdcode und fremde Quellen
 
-Stand: M6 (Kryptolabor), 13.10.2026. Grundlage: Plan M6 `docs/superpowers/plans/2026-10-13-kryptos-m6-kryptolabor.md`,
-Entscheidung E66; Design-Spec §14 O11; TECHNIK §17 T8.
+Stand: M10 (Werkstatt-Stationen im Kryptolabor), 15.10.2026. Grundlage: Plan M10
+`docs/superpowers/plans/2026-10-15-kryptos-m10-werkstatt.md` (E167–E169), davor Plan M6 E66; Design-Spec §14 O11;
+TECHNIK §17 T8.
 
 ## Grundsatz
 
@@ -25,11 +26,25 @@ mit der „Krypto-Werkstatt“ unter `stationen/`).
 | Technik | statische Seiten mit eingebetteten Stilen und Skripten, externe Webschriften, Sie-Form, eigener Abspieler – für Kryptos ohnehin nicht verwendbar (CSP, Ansprache, Zählbasis A = 0) |
 | Inhalt | Stationen zu Caesar, Skytale, Pflügen, Freimaurer, Polybios, Playfair, Fleißner, Steganographie, Klopfzeichen, Enigma und ein Analyse-Labor |
 
-**Erlaubnis (14.10.2026):** Die Lehrkraft teilt mit, dass André Bodendiek ihr das Repo ausdrücklich zur Nutzung in Kryptos freigegeben hat (Code, Grafiken, Texte), mit Namensnennung „Ideen von A. Bodendiek“. Übernahmen ab jetzt nach „Was zu tun ist, falls eine Erlaubnis kommt“ (unten), je Datei eine Zeile in der Tabelle.
+### Erlaubnis (14.10.2026)
 
-**Ergebnis bis M9: nichts übernommen; nur Bedienideen.** Kein Code, keine Grafik, kein Text und kein Link
-auf die Werkstatt (weder auf den Fork noch auf eine öffentliche Seite). Der Test `test/seiten.test.js`
-(„Fremdcode (M6 E66)“) sucht in allen Seiten, Skripten und Stilen nach Spuren.
+André Bodendiek hat der Lehrkraft das Repository ausdrücklich zur Nutzung in Kryptos freigegeben. Wortlaut der Lehrkraft
+(14.10.2026, Plan M10 E167):
+
+> „André ist ein sehr guter Freund und hat mir das Repo extra freigegeben. Gerne können wir ihn namentlich darunter nennen
+> (Ideen von A. Bodendiek) aber bitte nutze es. er hat es mir explizit erlaubt und dafür zur Verfügung gestellt.“
+
+- **Umfang:** Code, Grafiken (SVG-Geometrie, Material-Optik) und Texte der Werkstatt dürfen übernommen werden.
+- **Bedingung:** Namensnennung **„Ideen von A. Bodendiek“** – sichtbar in jedem Werkzeug mit übernommenen Teilen
+  (`KRStation.herkunft`), auf der Datenschutz-/Infoseite (Abschnitt „Quellen und Dank“) und in README §8.
+- **Form:** Portierung, keine Einbettung (E168): CSP-Umbau, du-Form, Zählbasis A = 1, Rechnungen über `Krypto.*`,
+  Bezeichner auf Deutsch. Jede übernommene Datei trägt im Kopf
+  `Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), <Quellpfad> @59004d9 – docs/FREMDCODE.md` und steht in der Tabelle
+  „Übernommene Dateien“ (eine Zeile je Quelle). Der Test `test/seiten.test.js` („Fremdcode (M10 E169)“) prüft das.
+- **Kein Link** auf die Werkstatt, solange die Lehrkraft-Frage L53 offen ist (nur der Name).
+
+**Historisch – Ergebnis bis M9: nichts übernommen; nur Bedienideen.** Bis zur Erlaubnis wurde kein Code, keine Grafik,
+kein Text und kein Link aus der Werkstatt verwendet; die Bedienideen unten sind eigenständig umgesetzt (M6).
 
 ### Bedienideen (in eigenen Worten, eigenständig umgesetzt)
 
@@ -51,16 +66,13 @@ die Reihenfolge ändert sich“); ebenso die Hinweise in Scheibe und Vigenère-W
 Bewusst **nicht** aufgegriffen: „Material erst bauen“ und Eingabe nur am Objekt ohne Textfeld (die Welt-Specs verlangen
 Eingabefelder, Plan M6 E85), Missionsmodus in eingebetteten Seiten, Sie-Form, Töne.
 
-### Was zu tun ist, falls eine Erlaubnis kommt
+### Übernommene Dateien
 
-1. Erlaubnis schriftlich ablegen (Datum, Umfang: Code, Grafiken, Texte; Bedingungen der Namensnennung).
-2. Namensnennung im jeweiligen Werkzeug (Fußzeile „Idee/Grafik nach …“) und im Impressum bzw. in der
-   Datenschutz-/Infoseite.
-3. Je übernommene Datei eine Zeile in der Tabelle unten: Pfad in Kryptos, Pfad in der Quelle, Commit der Quelle,
-   Lizenz/Erlaubnis, Kryptos-Commit der Übernahme, Änderungen (CSP-Umbau, Ansprache, Zählbasis, Rechnung über `Krypto.*`).
-4. Design-Spec O11, TECHNIK T8 und diesen Abschnitt anpassen; erst dann ein Link auf die Werkstatt.
+Spalten: Kryptos-Pfad · Quelle (Pfad in der Werkstatt @ Commit) · Erlaubnis · Kryptos-Commit der Übernahme · Änderungen.
+Mehrere Quellen je Kryptos-Datei = mehrere Zeilen. Der Kryptos-Commit steht im Commit der Übernahme noch nicht fest und
+wird mit der folgenden Task nachgetragen („folgt“).
 
-| Kryptos-Pfad | Quelle (Pfad, Commit) | Lizenz/Erlaubnis | Kryptos-Commit | Änderungen |
+| Kryptos-Pfad | Quelle (Pfad @ Commit) | Erlaubnis | Kryptos-Commit | Änderungen |
 |---|---|---|---|---|
 | – | – | – | – | – |
 

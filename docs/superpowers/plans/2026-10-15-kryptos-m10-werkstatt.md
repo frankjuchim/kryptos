@@ -258,7 +258,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   Mehrere Quellen je Kryptos-Datei = mehrere Zeilen. Die Testfunktion `fremdcodeTabelle()` (exportiert aus
   `test/hilfen_spec.js`) → `[{ kryptos, quelle, commit }]`; spätere Tasks tragen ihre Dateien ein.
 
-- [ ] **Step 1: Failing test** – Fremdcode-Test ersetzen (`test/seiten.test.js`):
+- [x] **Step 1: Failing test** – Fremdcode-Test ersetzen (`test/seiten.test.js`):
   ```js
   test('Fremdcode (M10 E169): übernommene Dateien belegt, alles andere ohne Werkstatt-Spuren, kein Link', () => {
     const fremd = lies(path.join(__dirname, '..', 'docs', 'FREMDCODE.md'));
@@ -287,14 +287,14 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   `test/datenschutz_seite.test.js`: neuer Test `quellen_und_dank` – Abschnitt `aria-labelledby="ds-quellen"` enthält
   „Ideen von A. Bodendiek“, „Krypto-Werkstatt“ und die Liste der Werkzeuge mit übernommenen Ideen (mindestens
   „Chiffrierscheibe“, „Skytale & Gitter“; spätere Tasks ergänzen), kein `href` nach außen.
-- [ ] **Step 2:** `node --test test/seiten.test.js test/datenschutz_seite.test.js` → FAIL (`fremdcodeTabelle` fehlt, Abschnitt fehlt).
-- [ ] **Step 3: Implement** – `fremdcodeTabelle()` in `test/hilfen_spec.js` (parst die Tabelle unter „### Übernommene Dateien“,
+- [x] **Step 2:** `node --test test/seiten.test.js test/datenschutz_seite.test.js` → FAIL (`fremdcodeTabelle` fehlt, Abschnitt fehlt).
+- [x] **Step 3: Implement** – `fremdcodeTabelle()` in `test/hilfen_spec.js` (parst die Tabelle unter „### Übernommene Dateien“,
   Platzhalterzeile `| – |` zählt nicht); `FREMDCODE.md`: Abschnitt umschreiben (Erlaubnis wörtlich wie E167, Umfang Code/Grafik/Text,
   Bedingung Namensnennung, „Ergebnis bis M9“ als historisch markieren, Bedienideen-Tabelle bleibt), leere Tabelle „Übernommene
   Dateien“ mit Kopf; Datenschutzseite Abschnitt `<section aria-labelledby="ds-quellen"><h2 id="ds-quellen">Quellen und Dank</h2>` (Werkstatt,
   Schriften OFL wie README §8); README §8 Absatz „Krypto-Werkstatt“; O11/T8 „Erlaubnis 14.10.2026, Übernahme M10“.
-- [ ] **Step 4:** `npm test` → PASS (insbesondere der vorher rote Fremdcode-Test).
-- [ ] **Step 5: Commit** `M10: Fremdcode-Grundlage – Erlaubnis A. Bodendiek, Fremdcode-Test je Datei, Quellen auf der Datenschutzseite (Task 220)`
+- [x] **Step 4:** `npm test` → PASS (insbesondere der vorher rote Fremdcode-Test).
+- [x] **Step 5: Commit** `M10: Fremdcode-Grundlage – Erlaubnis A. Bodendiek, Fremdcode-Test je Datei, Quellen auf der Datenschutzseite (Task 220)`
 
 ### Task 221: Bibliothek V – Pflügen, Morse, Freimaurer, Nullchiffre, Punktmethode (E181, E184, E185)
 

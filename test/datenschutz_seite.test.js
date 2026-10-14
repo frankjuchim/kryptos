@@ -111,3 +111,13 @@ test('keine_echten_namen: keine Schulnamen/Personen außer Platzhaltern; Link #p
   // Aufsichtsbehörde ist keine Privatperson – Anschrift wie labs
   assert.match(text, /Prinzenstraße 5, 30159 Hannover/);
 });
+
+test('quellen_und_dank (Plan M10 Task 220): Krypto-Werkstatt mit Namensnennung, Werkzeuge mit übernommenen Ideen, kein Link nach außen', () => {
+  const m = /<section[^>]*aria-labelledby="ds-quellen"[^>]*>([\s\S]*?)<\/section>/.exec(html);
+  assert.ok(m, 'Abschnitt ds-quellen fehlt');
+  const abschnitt = m[1];
+  const t = abschnitt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  for (const muss of ['Ideen von A. Bodendiek', 'Krypto-Werkstatt', 'Chiffrierscheibe', 'Skytale & Gitter']) assert.ok(t.includes(muss) || abschnitt.includes(muss.replace('&', '&amp;')), `„${muss}“ fehlt`);
+  assert.match(abschnitt, /<h2 id="ds-quellen">Quellen und Dank<\/h2>/);
+  assert.doesNotMatch(abschnitt, /href\s*=\s*"(https?:)?\/\//i, 'kein Link nach außen (L53)');
+});

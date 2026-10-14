@@ -197,12 +197,29 @@ test('Scrollbereiche (.scroll-x) halten absolut positionierte Screenreader-Texte
   assert.ok(regel, '.scroll-x fehlt in basis.css');
   assert.match(regel[1], /position:\s*relative/, '.scroll-x braucht position: relative (sonst ragen .sr-Spans der Matrix-Köpfe aus der Seite)');
 });
-test('Fremdcode (M6 E66): FREMDCODE.md vorhanden, nichts aus der Werkstatt übernommen, kein Link', () => {
-  const fremd = fs.readFileSync(path.join(__dirname, '..', 'docs', 'FREMDCODE.md'), 'utf8');
-  assert.match(fremd, /nichts übernommen; nur Bedienideen; Lizenz ungeklärt/);
-  assert.doesNotMatch(fremd, /https?:\/\/|andrebodendiek|enigma\./i, 'kein Link auf die Werkstatt');
-  const verboten = /andrebodendiek|kryptologie-werkstatt|\bKW\.(player|shell|controls|workbench)\b|portal\.js/i;
-  for (const p of [...htmlDateien, ...jsDateien, ...cssDateien]) assert.doesNotMatch(lies(p), verboten, `${rel(p)}: Werkstatt-Spur`);
+test('Fremdcode (M10 E169): übernommene Dateien belegt, alles andere ohne Werkstatt-Spuren, kein Link', () => {
+  const { fremdcodeTabelle, WURZEL } = require('./hilfen_spec.js');
+  const fremd = lies(path.join(__dirname, '..', 'docs', 'FREMDCODE.md'));
+  assert.match(fremd, /Ideen von A\. Bodendiek/);
+  assert.match(fremd, /Erlaubnis \(14\.10\.2026\)/);
+  assert.doesNotMatch(fremd, /https?:\/\/[^\s)]*(andrebodendiek|enigma\.)/i, 'kein Link (L53)');
+  const tabelle = fremdcodeTabelle();
+  const gelistet = new Set(tabelle.map((z) => z.kryptos));
+  for (const z of tabelle) {
+    assert.ok(fs.existsSync(path.join(WURZEL, z.kryptos)), `${z.kryptos} fehlt`);
+    assert.match(z.quelle, /^(stationen|shared|public)\/[\w./-]+\.(html|js|css)$|^index\.html$/, z.quelle);
+    assert.equal(z.commit, '59004d9');
+    const src = lies(path.join(WURZEL, z.kryptos));
+    assert.match(src, /Herkunft: Krypto-Werkstatt \(Ideen von A\. Bodendiek\)/, `${z.kryptos}: Herkunfts-Kopf`);
+    if (/labor\/(?!station\.js)[a-z]+\.js$/.test(z.kryptos)) assert.match(src, /KRStation\.herkunft\(/, `${z.kryptos}: sichtbare Namensnennung`);
+  }
+  const SPUR = /\bKW\.[a-z]+\b|\bkw-[a-z]+|kwNarr|kwPlay|portal\.js|andrebodendiek|kryptologie-werkstatt/i;
+  const NAME_ERLAUBT = new Set([...gelistet, 'public/static/js/krypto/labor/station.js', 'public/datenschutz.html', 'public/labor.html']);
+  for (const p of [...htmlDateien, ...jsDateien, ...cssDateien]) {
+    const r = path.relative(WURZEL, p).split(path.sep).join('/');
+    assert.doesNotMatch(lies(p), SPUR, `${r}: Werkstatt-Spur`);
+    if (!NAME_ERLAUBT.has(r)) assert.doesNotMatch(lies(p), /Bodendiek/, `${r}: Namensnennung nur in belegten Dateien`);
+  }
 });
 
 test('Datenschutzseite nennt Funkraum, Werkstatt/Arena, Teams und Abzeichen mit Fristen (Plan M7 Task 148, E116)', () => {

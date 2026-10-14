@@ -463,7 +463,35 @@ function texte(wert) {
   return out.join(' ');
 }
 
+
+/**
+ * Tabelle „### Übernommene Dateien“ in docs/FREMDCODE.md (Plan M10 Task 220, E169) →
+ * [{ kryptos, quelle, commit }]; die Platzhalterzeile „| – |“ zählt nicht.
+ * Zeilenformat: | `public/…` | `stationen/….html` @ `59004d9` | Erlaubnis | Kryptos-Commit | Änderungen |
+ */
+function fremdcodeTabelle() {
+  const md = fs.readFileSync(path.join(WURZEL, 'docs', 'FREMDCODE.md'), 'utf8');
+  const start = md.indexOf('### Übernommene Dateien');
+  if (start < 0) throw new Error('FREMDCODE.md: Abschnitt „### Übernommene Dateien“ fehlt');
+  const rest = md.slice(start).split('\n').slice(1);
+  const aus = [];
+  let inTabelle = false;
+  for (const zeile of rest) {
+    if (/^#{1,3} /.test(zeile)) break;
+    if (!zeile.startsWith('|')) { if (inTabelle) break; continue; }
+    inTabelle = true;
+    const z = zeile.split('|').slice(1, -1).map((x) => x.trim());
+    if (/^Kryptos-Pfad/.test(z[0]) || /^-+$/.test(z[0].replace(/:/g, '')) || z[0] === '–') continue;
+    const kryptos = z[0].replace(/`/g, '');
+    const q = /^`?([^`@]+?)`?\s*@\s*`?([0-9a-f]+)`?$/.exec(z[1]);
+    if (!q) throw new Error(`FREMDCODE.md: Quelle unlesbar: ${z[1]}`);
+    aus.push({ kryptos, quelle: q[1].trim(), commit: q[2] });
+  }
+  return aus;
+}
+
 module.exports = {
+  fremdcodeTabelle,
   WURZEL, SPEC_DATEIEN, UMFANG, WELTEN, ROLLE, WERKZEUG, REITER, DS_FEST, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
   ZUORDNUNG_ALS_MATCH, SONDERFORM, LUECKE_OHNE_FELD, SCHAUBILD_TEXT, schaubildLoesung, CHOICE_OHNE_KENNUNG, CHOICE_FEST, KUER_LEVEL,
   technischeId, abschnittVon, specAufgaben, specLevels, specZeilen, archivfundTitel, zellen, tippsAus,

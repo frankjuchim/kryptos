@@ -282,3 +282,9 @@ Materialien: © Frank Juchim, für den Unterricht (endgültige Lizenz offen, Des
 Fraunces und JetBrains Mono (SIL OFL), Atkinson Hyperlegible (Lizenz vor der Selbst-Hostung prüfen); Office-Material
 nutzt Georgia, Calibri, Consolas. Abituraufgaben werden nur analysiert und nicht veröffentlicht; KRYPTOS-16 und der
 KRYPTOS-Hash sind eigens für diese Einheit entworfene Lernverfahren.
+
+**Krypto-Werkstatt:** Mehrere Werkzeuge des Kryptolabors (ab M10: Chiffrierscheibe, Skytale & Gitter und weitere) beruhen
+auf der Krypto-Werkstatt von André Bodendiek, die er der Lehrkraft am 14.10.2026 ausdrücklich zur Nutzung in Kryptos
+freigegeben hat (Code, Grafiken, Texte) – **Ideen von A. Bodendiek**. Übernommene Dateien, Herkunft und Anpassungen
+stehen je Datei in `docs/FREMDCODE.md`; die Werkzeuge nennen die Herkunft sichtbar, die Datenschutzseite unter „Quellen
+und Dank“.
