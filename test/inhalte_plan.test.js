@@ -131,3 +131,15 @@ test('Welt 3: Kür K2 nur bei Kurseinstellung kuer „frei“', async (t) => {
   assert.ok(!(await levels()).some((l) => l.id === 'W3-L5'), 'gesperrte Kür unsichtbar');
   await s.get('/api/levels/W3-L5').expect(404);
 });
+
+// Plan M8 Task 180: Kür K3 „Euklids Erbe“ (W4-L3) – sichtbar bei kuer: frei, unsichtbar bei kuer: gesperrt.
+test('Welt 4: Kür K3 nur bei Kurseinstellung kuer „frei“', async (t) => {
+  if (!(S.UMFANG[4] || []).includes('W4-L3')) return t.skip('W4-L3 noch nicht im UMFANG');
+  const { s, lk, kurs } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt4.json')] });
+  const levels = async () => (await s.get('/api/welten').expect(200)).body.welten.find((w) => w.nr === 4).levels;
+  const k3 = (await levels()).find((l) => l.id === 'W4-L3');
+  assert.ok(k3 && k3.kuer === true && k3.nr === 'K3' && k3.titel === 'Euklids Erbe', 'Kür sichtbar (Standard kuer frei)');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { kuer: 'gesperrt' } }).expect(200);
+  assert.ok(!(await levels()).some((l) => l.id === 'W4-L3'), 'gesperrte Kür unsichtbar');
+  await s.get('/api/levels/W4-L3').expect(404);
+});

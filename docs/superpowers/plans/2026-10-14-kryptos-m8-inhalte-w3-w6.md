@@ -777,9 +777,10 @@ Die Feld-Zuordnung der D6-Kette (welche Zelle a–h ist) legt Task 164 in der Sp
 
 **Erwartete Hinweise:** W4-L3-05 „Rechenergebnis nicht nachgerechnet“ (Zählaufgabe ohne Rechenfunktion) – in die Liste.
 
-- [ ] **Step 1–4** (`UMFANG[4]` += `'W4-L3'`; Kür bei `kuer: gesperrt` unsichtbar; Lösungsverrat-Test: Akte W4·K3
+- [x] **Step 1–4** (`UMFANG[4]` += `'W4-L3'`; Kür bei `kuer: gesperrt` unsichtbar; Lösungsverrat-Test: Akte W4·K3
   (Archivwissen 1, 2) und Akte W4·2 enthalten die neuen Werte nicht). **Step 5: Commit**
   `git commit -m "Welt 4: Kür K3 „Euklids Erbe“ (Werte nach D4–D6)"`.
+- [x] **Umsetzungsnotiz:** Werte nach D4–D6. Prüfwert-Gruppen: `erweiterterEuklid(40, 7)` mit `feld` ["schritte", i, "q"/"r"/"x"/"y"] (W4-L3-01/-02), `inverses` (d), `rsa.schluessel(13, 17, 5)` (φ), `modpow` für die Quadrier- und Produktketten (f = 48³, g = 48¹¹, h = 48⁴³ mod 77), Probe 20⁷ mod 77 als Konsistenz-Eintrag. W4-L3-01 Gleichungen als Liste (das „·“ der Spec-Zeile ist sonst mit dem Malpunkt verwechselbar). W4-L3-05 dreiteilig (a/b/c); erwarteter Hinweis „Rechenergebnis nicht nachgerechnet“ (Zählaufgabe). Test „Kür K3 nur bei kuer frei“ in `inhalte_plan`. Lösungsverrat: Akten W4·K3/W4·2 enthalten die neuen Werte nicht (Test grün).
 
 ### Task 181: Welt 4 – Boss „Der Schlüsseltausch“
 
