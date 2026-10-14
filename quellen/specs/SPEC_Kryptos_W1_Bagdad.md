@@ -277,7 +277,7 @@ Papier-Boss „Die Gewürzliste“ (60 min): Hausaufgabe, Puffer oder Vertretung
 | ID | Titel | Stufe | Niveau | Kategorie | Interaktion | Fallen | Inhalt | Lösung | Tipp 1 / Tipp 2 | Erklärung |
 |---|---|---|---|---|---|---|---|---|---|---|
 | W1-L3-01 | Die Ladung des Wesirs | ★ | kern | fremde-chiffre | `chiffre` | P4 | 🛡 Verschlüssele mit NOMEN-850 (ohne Blender): `der wesir bringt gold und seide` | `3918U ODKAQ 27165 3` ✔ nachgerechnet (39 · 18 · UODKAQ · 27 · 16 · 53) | Nur „bringt“ steht nicht im Codebuch. / b → U, r → O, i → D, n → K, g → A, t → Q. | Codewörter zuerst, der Rest Buchstabe für Buchstabe. |
-| W1-L3-02 | Post aus dem Palast | ★ | kern | fremde-chiffre | `chiffre` | P3 | 🔍 Entschlüssele mit NOMEN-850: `3947H OWTOQ HQ005 862DK 35` | `der kalif erwartet die karawane in bagdad` ✔ nachgerechnet (00 = Blender) | Zahlen immer paarweise lesen: 39 · 47 · … / `00` hat keine Bedeutung. | Beim Entschlüsseln: Ziffernpaare im Codebuch, Buchstaben mit dem umgekehrten Alphabet. |
+| W1-L3-02 | Post aus dem Palast | ★ | kern | fremde-chiffre | `chiffre` | P3 | 🔍 Entschlüssele mit NOMEN-850: `3947H OWTOQ HQ005 862DK 90` | `der kalif erwartet die karawane in basra` ✔ nachgerechnet (00 = Blender; Korrektur D15: *bagdad* ist der Epochenname) | Zahlen immer paarweise lesen: 39 · 47 · … / `00` hat keine Bedeutung. | Beim Entschlüsseln: Ziffernpaare im Codebuch, Buchstaben mit dem umgekehrten Alphabet. |
 | W1-L3-03 | Eine eilige Nachricht | ★★ | kern | fremde-chiffre | `chiffre` | P4 | 🔍 Entschlüssele: `39001 8EIDH BQKTS B90` | `der wesir flieht nach basra` ✔ nachgerechnet (39 · 00 · 18 · EIDHBQKTSB · 90) | Das Paar nach 39 ist 00. / „fliehtnach“: Wortgrenze selbst finden. | Blender und fehlende Wortgrenzen sind Verfahrensregeln, die man beim Zerlegen beachten muss (P4). |
 | W1-L3-04 | Code oder Chiffre? | ★★ | kern | einordnen | `choice` | P5 | Welche Einordnung des NOMEN-850 ist korrekt? (A) Transposition, weil Wörter umgestellt werden. (B) Der Buchstabenteil ist eine monoalphabetische Substitution; der Codebuchteil ersetzt ganze Wörter (Code) – insgesamt eine Substitution mit geheimem Codebuch als Teil des Schlüssels. (C) Polyalphabetisch, weil Zahlen und Buchstaben vorkommen. (D) Eine reine Codierung ohne Schlüssel. | (B) | Ändert sich die Reihenfolge? / Ist das Codebuch öffentlich? | Ein geheimes Codebuch ist Schlüssel, keine öffentliche Codierung (P5). |
 | W1-L3-05 | Al-Kindi gegen den Nomenklator | ★★ | kern | haeufigkeitsanalyse | `choice` (Mehrfachauswahl) | P6 | Welche Aussagen sind korrekt? (1) Weil „der“, „die“, „und“ als Zahlen erscheinen, fehlen viele e, d, r, n im Buchstabenteil – die Häufigkeiten weichen von der Tabelle ab. (2) Der Buchstabenteil lässt sich bei langen Texten trotzdem mit Häufigkeitsanalyse angreifen. (3) Häufige Codes (z. B. eine Zahl, die sehr oft vorkommt) verraten häufige Wörter. (4) Blender machen die Häufigkeitsanalyse unmöglich. | (1), (2), (3) | Wie oft müsste ein Blender vorkommen, um zu stören? / Auch Zahlen haben Häufigkeiten. | Der Nomenklator erschwert, verhindert aber nicht die Analyse (P6). |
@@ -566,7 +566,7 @@ was soll Eve dann zählen? Wende die 5-Schritte-Methode an und finde es heraus.
 |---|---|---|---|---|
 | 1 | ★ | kern | Einzel | **Schritt 1:** **Rechne** das Beispiel des Materials (`5862H OOHDS BQ90T J74`) **nach**. |
 | 2 | ★★ | kern | Einzel | **Schritt 2:** **Verschlüssele** „die seide liegt in basra“ und füge nach „liegt“ den Blender `00` ein. |
-| 3 | ★★ | kern | Partner | **Schritt 3:** 🔍 **Entschlüssele** `39470 0PSBD SGQ27 KTSB3 5`. **Beschreibe**, wie du Ziffern und Buchstaben zerlegt hast. |
+| 3 | ★★ | kern | Partner | **Schritt 3:** 🔍 **Entschlüssele** `39470 0PSBD SGQPD HUHKQ ORBHK` (Korrektur D15: früher „… nach bagdad“, Epochenname). **Beschreibe**, wie du Ziffern und Buchstaben zerlegt hast. |
 | 4 | ★★ | kern | Partner | **Schritt 4:** **Ordne** den Nomenklator **ein**: Transposition/Substitution? mono/poly? Code oder Codierung? |
 | 5 | ★★ | kern | Partner | **Schritt 5a:** **Erläutere**, wie sich das Codebuch auf eine Häufigkeitsanalyse auswirkt. Welche Buchstaben fehlen im Buchstabenteil besonders? |
 | 6 | ★★★ | kern | Partner | **Schritt 5b:** **Beurteile** den Nomenklator: Häufigkeitsanalyse, Known-Plaintext, Kerckhoffs-Prinzip, Schlüsselaustausch (Größe des Codebuchs), Blender. Formuliere ein Urteil. |
@@ -587,7 +587,7 @@ d) **Beurteilen** Sie die Sicherheit des Verfahrens unter Berücksichtigung des 
 - **Auftrag 1:** die 58 · karawane 62 · erreicht → e H, r O, r O, e H, i D, c S, h B, t Q = `HOOHDSBQ` · basra 90 ·
   am → `TJ` · morgen 74 ✔ nachgerechnet.
 - **Auftrag 2:** 58 · 53 · `IDHAQ` (liegt) · 00 · `DK` (in) · 90 → **5853I DHAQ0 0DK90** ✔ nachgerechnet.
-- **Auftrag 3:** 39 · 47 · 00 · `PSBDSGQ` · 27 · `KTSB` · 35 → **„der kalif schickt gold nach bagdad“** ✔ nachgerechnet.
+- **Auftrag 3:** 39 · 47 · 00 · `PSBDSGQ` · `PDHUHK` · `QORBHK` → **„der kalif schickt sieben truhen“** ✔ nachgerechnet.
   Zerlegung: Ziffern immer paarweise ab dem Beginn einer Ziffernfolge; jede Buchstabenfolge mit dem umgekehrten
   TUSCHE-Alphabet; 00 streichen; Wortgrenzen durch Lesen.
 - **Auftrag 4:** Keine Transposition (Reihenfolge bleibt). Buchstabenteil: monoalphabetische Substitution. Codeteil:
@@ -946,6 +946,6 @@ Beutelspacher-Tabelle), `…/scratchpad/w1_bagdad/wett.py`, `w1_teil1.py` … `w
 | Homophone Tabelle (35 Zahlen); seide / gelehrte / erreichen / minze duftet (D15) | 56 42 15 13 77 / 66 42 53 77 49 72 39 19 / 42 72 28 77 15 58 49 19 34 / 88 15 34 35 42 13 24 30 39 77 94 | pruefe_w1 |
 | ZAHLENCHIFFRE-29: basar m 4 / burg m 6 (D15); Gegenbeispiel mod 26 | 08 04 18 04 14 / 12 10 21 13; A→2, N→2 | pruefe_w1 |
 | SAFRAN-29: zimt (3,7), anis (2,9) (D15); koriander (5,2); 812; f) 14/28 → (8,3) (D15); Doppel (6,19); pfeffer e→22 | 27 05 17 09, 11 08 27 18; 28 19 05 18 07 14 22 27 05 | pruefe_w1 |
-| NOMEN-850: Beispiel / L3-01 / L3-02 / L3-03 / Akte A2 / A3 / Abi-Check a / L3-06 | 5862H OOHDS BQ90T J74 / 3918U ODKAQ 27165 3 / 3947H OWTOQ HQ005 862DK 35 / 39001 8EIDH BQKTS B90 / 5853I DHAQ0 0DK90 / 39470 0PSBD SGQ27 KTSB3 5 / 7400O HDQHQ 3918J DQ003 962KT SB90 / 5862D PQDK0 03981 RHUHO ETIIH KWLOC HK (14 Buchstaben) | pruefe_w1 |
+| NOMEN-850: Beispiel / L3-01 / L3-02 / L3-03 / Akte A2 / A3 / Abi-Check a / L3-06 | 5862H OOHDS BQ90T J74 / 3918U ODKAQ 27165 3 / 3947H OWTOQ HQ005 862DK 90 / 39001 8EIDH BQKTS B90 / 5853I DHAQ0 0DK90 / 39470 0PSBD SGQPD HUHKQ ORBHK / 7400O HDQHQ 3918J DQ003 962KT SB90 / 5862D PQDK0 03981 RHUHO ETIIH KWLOC HK (14 Buchstaben) | pruefe_w1 |
 | Spiegel-Kurier: basar t 4 / dinar t 9 / Involution | DEMEN / GBWJS / basar | pruefe_w1 |
 | Warm-up: OASE / 9⁻¹ / (3,1) b / YMDE k 12 / Skytale oasen u 2 / Caesar-Häufigkeit K → k 6 | OASEBCDF / 3 / E / mars / OEANSX / 6 | pruefe_w1 |

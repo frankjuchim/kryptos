@@ -339,7 +339,7 @@ SZJZP K`;
   const k4 = 'derkalifschickteinekarawanenachbasrasietraegtseidepfefferundpapierindernachtrastetsieaneineroaseeindiebverstecktsichhinterdenzeltenundwartetbisdiewaechterschlafendochderjungekurierbemerktihnundschlaegtalarm';
   assert.equal(K.substitution(c4, S('ZEDER'), 'ent'), GROSS(k4));
   assert.equal(K.substitution(k4, S('ZEDER')), GROSS(c4));
-  // NOMEN-850 (Buchstabenteil, TUSCHE): liegt / schickt nach / reitet mit nach / L3-02 3947H OWTOQ HQ005 862DK 35 / flieht nach
+  // NOMEN-850 (Buchstabenteil, TUSCHE): liegt / schickt nach / reitet mit nach / L3-02 3947H OWTOQ HQ005 862DK 90 / flieht nach
   const T = S('TUSCHE');
   assert.equal(K.substitution('liegt', T), 'IDHAQ');
   assert.equal(K.substitution('PSBDSGQ', T, 'ent') + K.substitution('KTSB', T, 'ent'), 'SCHICKTNACH');
@@ -819,7 +819,7 @@ test('grenzfaelle_skytale', () => {
 test('gartenzaun: SPEC W0 §12, W3 Akte W3·3', () => {
   assert.equal(K.gartenzaun('versorgung kommt spaet', 3), GROSS('VONMP ESRUG OMSAT RGKTE'));
   assert.equal(K.gartenzaun('pferde stehen bereit', 3), GROSS('PDEBI FRETH NEETE SER'));
-  assert.equal(K.gartenzaun('SSFDP ASFED AATCI SNRHI', 4, 'ent'), GROSS('spartasschiffesindda'));
+  assert.equal(K.gartenzaun('DINII HFIDE TECFS BRSEE', 4, 'ent'), GROSS('dieschiffesindbereit'));
   assert.equal(K.gartenzaun('die mauer haelt stand', 3), GROSS('DAHTN IMURA LSADE EET'));
   assert.equal(K.gartenzaun('BTNID NEWGO ESNUT RES', 2, 'ent'), GROSS('botensindunterwegs'));
   assert.equal(K.gartenzaun('HEMBE IFKMT EESEL OUR', 3, 'ent'), GROSS('hilfekommtuebersee'));

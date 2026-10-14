@@ -479,7 +479,7 @@ class Transposition(unittest.TestCase):
     def test_gartenzaun(self):
         self.assertEqual(K.gartenzaun('versorgung kommt spaet', 3), gross('VONMP ESRUG OMSAT RGKTE'))
         self.assertEqual(K.gartenzaun('pferde stehen bereit', 3), gross('PDEBI FRETH NEETE SER'))
-        self.assertEqual(K.gartenzaun('SSFDP ASFED AATCI SNRHI', 4, 'ent'), gross('spartasschiffesindda'))
+        self.assertEqual(K.gartenzaun('DINII HFIDE TECFS BRSEE', 4, 'ent'), gross('dieschiffesindbereit'))
         self.assertEqual(K.gartenzaun('die mauer haelt stand', 3), gross('DAHTN IMURA LSADE EET'))
         self.assertEqual(K.gartenzaun('BTNID NEWGO ESNUT RES', 2, 'ent'), gross('botensindunterwegs'))
         self.assertEqual(K.gartenzaun('HEMBE IFKMT EESEL OUR', 3, 'ent'), gross('hilfekommtuebersee'))

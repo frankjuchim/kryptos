@@ -25,7 +25,7 @@ class FremdeVerfahren(unittest.TestCase):
         n = V['nomenklator_850']
         self.assertEqual(n('die karawane erreicht basra am morgen'), '5862HOOHDSBQ90TJ74')
         self.assertEqual(n('der wesir bringt gold und seide'), '3918UODKAQ271653')
-        self.assertEqual(n('3947H OWTOQ HQ005 862DK 35', 'ent'), 'DERKALIFERWARTETDIEKARAWANEINBAGDAD')
+        self.assertEqual(n('3947H OWTOQ HQ005 862DK 90', 'ent'), 'DERKALIFERWARTETDIEKARAWANEINBASRA')
         self.assertEqual(n('39001 8EIDH BQKTS B90', 'ent'), 'DERWESIRFLIEHTNACHBASRA')
         self.assertEqual(n('5862D PQDK0 03981 RHUHO ETIIH KWLOC HK', 'ent'), 'DIEKARAWANEISTINDERNACHTUEBERFALLENWORDEN')
 

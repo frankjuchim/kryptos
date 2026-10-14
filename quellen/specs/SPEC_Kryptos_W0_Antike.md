@@ -921,7 +921,7 @@ Menschen ihre Botschaften vor fremden Augen geschützt haben. Am Ende kannst du 
 | 2 | ★ | kern | Einzel | **Verschlüssele** mit der Skytale, u = 3: `schickt mehr bogenschuetzen` |
 | 3 | ★★ | kern | Einzel | 🔍 Eve hat abgefangen: `DSDMI ESEPS RBNET PETLZ AIENU`. Die Skytale hat den Umfang u = 5. **Entschlüssele.** |
 | 4 | ★ | kern | Partner | **Verschlüssele** mit dem Gartenzaun, n = 3 Schienen: `pferde stehen bereit` |
-| 5 | ★★ | kern | Partner | **Entschlüssele** den Gartenzaun-Geheimtext mit n = 4 Schienen: `SSFDP ASFED AATCI SNRHI` (Tipp: Zeichne zuerst das Zickzack-Muster für 20 Zeichen und zähle die Plätze je Schiene.) |
+| 5 | ★★ | kern | Partner | **Entschlüssele** den Gartenzaun-Geheimtext mit n = 4 Schienen: `DINII HFIDE TECFS BRSEE` (Korrektur D15: früher *spartas schiffe sind da*, Epochenort) (Tipp: Zeichne zuerst das Zickzack-Muster für 20 Zeichen und zähle die Plätze je Schiene.) |
 | 6 | ★★★ | kern | Partner | **Schneide** die Schablone von Archivwissen 4 aus (Vorlage unten auf der Akte) und **verschlüssele** `rueckzug zum hafen` (16 Buchstaben). Kontrolle: Der Geheimtext beginnt mit Z. |
 | 7 | ★★★ | eA | Partner | Ein Schreiber schlägt die Schablone mit den Löchern (1,1), (1,4), (2,2), (3,3) vor. a) **Untersuche**, ob sie brauchbar ist. b) Die 16 Felder zerfallen in vier „Drehgruppen“ zu je 4 Feldern, die beim Drehen ineinander übergehen (z. B. die vier Ecken). **Begründe**, dass es genau 4⁴ = 256 brauchbare Schablonen gibt. c) **Beurteile** die Sicherheit der Fleißner-Schablone gegen einen Brute-Force-Angriff von Hand. |
 
@@ -954,7 +954,7 @@ gewinnen kann und welche nicht. [3 BE]
   eingetragen → Unsinn.
 - **Auftrag 4:** Schienen `pdebi` · `frethneet` · `eser` → **PDEBI FRETH NEETE SER** ✔ nachgerechnet.
 - **Auftrag 5:** Zickzack 1-2-3-4-3-2-1-… für 20 Zeichen: Schiene 1 hat 4 Plätze (Pos. 1, 7, 13, 19), Schiene 2 hat 7,
-  Schiene 3 hat 6, Schiene 4 hat 3. Aufteilung: `SSFD` · `PASFEDA` · `ATCISN` · `RHI` → **„spartas schiffe sind da“**
+  Schiene 3 hat 6, Schiene 4 hat 3. Aufteilung: `DINI` · `IHFIDET` · `ECFSBR` · `SEE` → **„die schiffe sind bereit“**
   ✔ nachgerechnet.
 - **Auftrag 6:** Stellung 1: (1,2) r, (2,1) u, (2,3) e, (4,4) c · Stellung 2: (1,3) k, (2,4) z, (3,3) u, (4,1) g ·
   Stellung 3: (1,1) z, (3,2) u, (3,4) m, (4,3) h · Stellung 4: (1,4) a, (2,2) f, (3,1) e, (4,2) n. Raster
@@ -1723,7 +1723,7 @@ Entschlüsselung wurde in beide Richtungen geprüft (Rundreise).
 | Archivfund Skytale u = 4 | `dieflottelaeuftbeineumondaus` ↔ DTTMI EBOEL ENFAI DLENA OUEUT FUS | w0_rechnungen |
 | Skytale AW (u = 4) / A2 (u = 3) / A3 (u = 5) / Abi-Check (u = 3) | DETFA RELSW TUHAA SERMS / SHHCR UHBEI OTCGZ KEETN NMSXE CX / derpassbeidentempelnistzu / LETYR HSKEA EINHM DRX | w0_rechnungen |
 | Skytale Lab 03 / 04, Boss 04, WU 03 | WTPIE ARNSH DSAEX LNX / nachschubkommtmorgenfrueh / feuerimlager / EOITL EBX | w0_rechnungen, w0_boss_wu |
-| Gartenzaun AW / A4 / A5 / Lab 05 / Lab 06 / Boss 09 / WU 04 | VONMP ESRUG OMSAT RGKTE / PDEBI FRETH NEETE SER / spartasschiffesindda (4/7/6/3 Plätze) / DAHTN IMURA LSADE EET / botensindunterwegs / hilfekommtuebersee (5/9/4) / SECLC TESHA H | w0_rechnungen, w0_boss_wu |
+| Gartenzaun AW / A4 / A5 / Lab 05 / Lab 06 / Boss 09 / WU 04 | VONMP ESRUG OMSAT RGKTE / PDEBI FRETH NEETE SER / dieschiffesindbereit (4/7/6/3 Plätze, D15) / DAHTN IMURA LSADE EET / botensindunterwegs / hilfekommtuebersee (5/9/4) / SECLC TESHA H | w0_rechnungen, w0_boss_wu |
 | Fleißner AW (Löcher (1,2),(2,1),(2,3),(4,4)) / A6 / Lab 07 (Löcher (1,3),(2,2),(3,1),(4,4)) | TBNMO TTWOE ANRRA E / ZRKAU FEZEU UMGNH C / DNAIL TSEHF TENHE E | w0_rechnungen |
 | Fleißner gültige Schablonen; ungültige Schablone A7 | 256 von 1820 Lochmengen; 8 von 16 Feldern | w0_teil3 |
 | Teiler 24 / 30 | {2,3,4,6,8,12} / {2,3,5,6,10,15} | w0_rechnungen, w0_teil3 |

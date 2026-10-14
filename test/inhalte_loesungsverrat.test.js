@@ -28,7 +28,8 @@
 //   K8 Klartext-Krippe: Ein Wort des Titels (≥ 5 Buchstaben, keine Fachwörter) deckt mindestens ein Viertel eines
 //      Klartexts ab; bei Knack-Teilen (verdeckter Schlüssel, Zuordnung ohne Schlüsselfrage) zählt jedes Wort aus Titel
 //      und Aufgabentext, das im Klartext steht („Kuriere kommen nie an“ bei „kurierkamniean…“). Außerdem gilt jedes Wort
-//      aus Plattform- und Epochentiteln (immer sichtbar) als Krippe für alle Klartexte (D15, zweiter Teil).
+//      aus Plattform- und Epochentiteln sowie Kurzname/Ort der Epochen (immer sichtbar, Stoppliste für „heute“ u. Ä.)
+//      als Krippe für alle Klartexte (D15, zweiter Teil).
 // Der sichtbare Teil einer Aufgabe ist das, was der Server vor dem Lösen schickt (ohne Lösung, Tipps, Erklärung;
 // verdeckte Schlüssel ohne Parameter, Hook oeffentlich der chiffre-Interaktion).
 const { test } = require('node:test');
@@ -611,12 +612,17 @@ test('Papier: keine Lösung einer Teilaufgabe (Papier-Boss, Probeklausur), Warm-
  * Epochentitel/-namen aller Welten sind für Lernende immer sichtbar – kein Wort daraus (≥ 5 Buchstaben, keine
  * Fachwörter) darf in einem Klartext (≥ 8 Zeichen) einer Lab-, Boss-, Archivfund- oder Papier-Aufgabe stehen.
  */
+/** Allgemeine Wörter und Abkürzungen aus den Epochen-Zeiträumen – keine Krippe */
+const KRIPPE_STOPP = new Set(['HEUTE', 'CHR', 'BIS', 'ENDGEGNER']);
 function krippenWoerter() {
   const { PLATTFORM, WELTEN: EPOCHEN } = require('../src/krypto/fach');
   const titel = [PLATTFORM.titel];
   for (const e of EPOCHEN) titel.push(e.titel);
   for (const w of S.WELTEN) { const s = S.seed(w); if (s) titel.push(s.titel); }
-  return [...new Set(titel.filter(Boolean).flatMap(woerterVon).filter((t) => t.length >= 5 && !FACHWOERTER.has(t)))];
+  const lang = titel.filter(Boolean).flatMap(woerterVon).filter((t) => t.length >= 5 && !FACHWOERTER.has(t));
+  // Kurznamen und Orte der Epochen (Zeitleiste, Kopfzeilen): „Bagdad“, „Sparta & Rom“ … – ab 3 Buchstaben
+  const orte = EPOCHEN.flatMap((e) => [e.name, e.epoche]).filter(Boolean).flatMap(woerterVon).filter((t) => t.length >= 3 && /^[A-Z]+$/.test(t) && !KRIPPE_STOPP.has(t));
+  return [...new Set([...lang, ...orte])];
 }
 
 function titelKrippen() {
@@ -630,8 +636,9 @@ function titelKrippen() {
   return [...new Set(out)];
 }
 
-test('K8: kein Wort aus Plattform- oder Epochentitel in einem Klartext (Lab, Boss, Archivfund, Papier)', () => {
-  assert.ok(krippenWoerter().includes('ZEITREISE'), 'Selbstprüfung: Plattformtitel erkannt');
+test('K8: kein Wort aus Plattform- oder Epochentitel, Epochen-Kurzname oder -Ort in einem Klartext (Lab, Boss, Archivfund, Papier)', () => {
+  const kw = krippenWoerter();
+  assert.ok(kw.includes('ZEITREISE') && kw.includes('BAGDAD') && kw.includes('ROM') && !kw.includes('HEUTE'), 'Selbstprüfung: Titel, Orte, Stoppliste');
   assert.deepEqual(titelKrippen(), []);
 });
 
