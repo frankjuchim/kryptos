@@ -576,9 +576,13 @@ test('K8: quadrat- bzw. alphabet-Block und verfahren derselben Aufgabe mit versc
 test('K4: Falle bzw. Fehlmuster-Falle passt nicht zur Kategorie → Hinweis', () => {
   erwarteHinweis(() => {}, /W9-L5-0[1-9].*passt nicht zur Kategorie/, { nicht: true });
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-01').fallen = ['P10']; }, /W9-L5-01.*Falle P10 passt nicht zur Kategorie entschluesseln/);
-  // Plan M8 (Spec W5-B-15): P9 (Schlüsselrollen fremder Verfahren) ist bei fremde-chiffre plausibel – kein Hinweis
-  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*Falle P9 passt nicht/, { nicht: true });
-  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').fallen = ['P9']; }, /W9-L5-08.*Falle P9 passt nicht/, { nicht: true });
+  // Review M8 Fund 5: P9 bei fremde-chiffre nur für die Aufgaben in FALLEN_AUSNAHMEN (Spec W5-B-15) – sonst Hinweis
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').loesung.fehlmuster[0].p = 'P9'; }, /W9-L5-08.*Falle P9 passt nicht/);
+  erwarteHinweis((w) => { aufgabe(w, 'W9-L5-08').fallen = ['P9']; }, /W9-L5-08.*Falle P9 passt nicht zur Kategorie fremde-chiffre/);
+  const w5 = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', 'welt5.json'), 'utf8'));
+  assert.deepEqual(w5.aufgaben.find((x) => x.id === 'W5-B-15').fallen, ['P9']);
+  const h5 = validiereWelt(w5, { datei: 'welt5.json' }).warnungen.map((f) => `${f.ort}: ${f.meldung}`);
+  assert.ok(!h5.some((x) => /W5-B-15.*passt nicht/.test(x)), 'W5-B-15: P9 laut Spec erlaubt (Ausnahme)');
   // … ein unplausibles Fehlmuster in einer anderen Kategorie meldet weiter einen Hinweis
   erwarteHinweis((w) => { const a = aufgabe(w, 'W9-L5-08'); a.kategorie = 'entschluesseln'; a.loesung.fehlmuster[0].p = 'P10'; }, /W9-L5-08.*fehlmuster.*Falle P10 passt nicht zur Kategorie entschluesseln/);
   erwarteHinweis((w) => { aufgabe(w, 'W9-L5-09').loesung._fehlmuster.wert[0].p = 'P9'; }, /W9-L5-09.*_fehlmuster.*Falle P9 passt nicht zur Kategorie substitution-mono/);

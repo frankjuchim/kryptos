@@ -125,7 +125,7 @@ src/
   wartung.js                   Wartungsjob (§7.4)
   krypto/                      ALLES Krypto-Spezifische des Servers
     index.js                   registriere(): Blöcke, Interaktionen, Normalisierungen, Validator-, Abzeichen-Hooks
-    fach.js                    WELTEN, LAB_KATEGORIEN(+Namen), FALLEN, FALLEN_PLAUSIBEL, RAENGE, TEAM_NAMEN, PLATTFORM, NIVEAU_KATEGORIEN, WELT_PLAN
+    fach.js                    WELTEN, LAB_KATEGORIEN(+Namen), FALLEN, FALLEN_PLAUSIBEL, FALLEN_AUSNAHMEN, RAENGE, TEAM_NAMEN, PLATTFORM, NIVEAU_KATEGORIEN, WELT_PLAN
     niveauUebersicht.js        öffentliche Niveau-Übersicht GET /api/niveaus (VERTRAG v1.2 §9, §6.10)
     bloecke.js                 Validierung + Lücken-Texte der neuen Blöcke (Delta §7)
     interaktionen/             chiffre.js, zuordnung.js, schaubild.js, bits.js, hashziel.js (Delta §8; hashziel Plan M8 E126)

@@ -129,8 +129,16 @@ const FALLEN_PLAUSIBEL = Object.freeze({
   protokoll: ['P3', 'P5', 'P7', 'P8', 'P9', 'P10'],
   struktogramm: ['P1', 'P2', 'P3', 'P4'],
   implementierung: ['P1', 'P2', 'P3', 'P4'],
-  'fremde-chiffre': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'], // P9: Schlüsselrollen fremder Verfahren (Spec W5-B-15, Plan M8 vorläufig)
+  'fremde-chiffre': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P10'],
   gesellschaft: ['P5', 'P9', 'P10']
+});
+
+/**
+ * Einzelne Aufgaben, bei denen die Welt-Spec eine sonst unplausible Falle ausdrücklich nennt (Review M8 Fund 5):
+ * id → { Falle: Spec-Zitat }. Die Kategorie-Liste oben bleibt dadurch wirksam.
+ */
+const FALLEN_AUSNAHMEN = Object.freeze({
+  'W5-B-15': { P9: 'SPEC W5 §5 W5-B-15 („Kurz-Signatur“), Erklärung: „Signieren erfordert den privaten Schlüssel der Absenderin, sonst fehlen Authentizität und Verbindlichkeit (P9).“' }
 });
 
 /** Ränge (Design §2.4): Anteil der Level-Punkte der freigeschalteten Welten, Schwellen wie im Kern. */
@@ -222,4 +230,4 @@ const WELT_PLAN = [
   ], boss: { titel: 'Generalprobe online', pool: { kern: 14, eA: 1 } } }
 ];
 
-module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, FALLEN_PLAUSIBEL, RAENGE, TEAM_NAMEN, NIVEAU_KATEGORIEN, WELT_PLAN };
+module.exports = { PLATTFORM, WELTEN, LAB_KATEGORIEN, LAB_KATEGORIE_NAMEN, FALLEN, FALLEN_PLAUSIBEL, FALLEN_AUSNAHMEN, RAENGE, TEAM_NAMEN, NIVEAU_KATEGORIEN, WELT_PLAN };

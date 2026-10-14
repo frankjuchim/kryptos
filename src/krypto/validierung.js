@@ -11,7 +11,7 @@ const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
 const { WERKZEUG_IDS, SCHLUESSEL_VERRAT, werkzeug: werkzeugEintrag, pruefeVoreinstellung } = require('./werkzeuge');
 const CHIFFRE = require('./interaktionen/chiffre');
 const N = require('./neuberechnung');
-const { FALLEN_PLAUSIBEL } = require('./fach');
+const { FALLEN_PLAUSIBEL, FALLEN_AUSNAHMEN } = require('./fach');
 
 const Krypto = require('../../public/static/js/shared/krypto.js');
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -133,8 +133,10 @@ function pruefeVerdeckt(a, fa, wa, data) {
  * fehlmuster, gaps _fehlmuster) müssen zur Kategorie passen (FALLEN_PLAUSIBEL) – sonst Hinweis.
  */
 function pruefeFallenPlausibel(a, wa) {
-  const liste = FALLEN_PLAUSIBEL[a.kategorie];
-  if (!liste) return;
+  const plausibel = FALLEN_PLAUSIBEL[a.kategorie];
+  if (!plausibel) return;
+  // Einzelausnahmen mit Spec-Zitat (Review M8 Fund 5)
+  const liste = [...plausibel, ...Object.keys(FALLEN_AUSNAHMEN[a.id] || {})];
   const melde = (ort, p, was) => wa(ort, `${was}Falle ${p} passt nicht zur Kategorie ${a.kategorie} (plausibel: ${liste.join(', ')}).`);
   if (Array.isArray(a.fallen)) for (const p of a.fallen) if (FALLEN_IDS.includes(p) && !liste.includes(p)) melde('fallen', p, '');
   const teile = F.teile(a);

@@ -198,7 +198,9 @@ Automatisch diagnostizierbar (§9): **P1, P2, P3, P4, P9**. P5–P8 und P10 werd
 **Plausibilität (Review M3 K4):** Je Kategorie (§4.2) gibt es eine Liste plausibler Fallen (`FALLEN_PLAUSIBEL` in
 `src/krypto/fach.js`, großzügig aus Design §3.3/§3.4 und den Welt-Specs abgeleitet; P10 nur bei Begründungs- und
 Beurteilungskategorien). Eine Falle in `fallen` oder als `p` einer erwarteten Fehlantwort (`fehlmuster`,
-`_fehlmuster`), die nicht in der Liste der Kategorie steht, meldet der Validator als **Hinweis**.
+`_fehlmuster`), die nicht in der Liste der Kategorie steht, meldet der Validator als **Hinweis**. Einzelne Aufgaben, deren
+Welt-Spec eine sonst unplausible Falle ausdrücklich nennt, stehen mit Spec-Zitat in `FALLEN_AUSNAHMEN` (`fach.js`; Stand
+Review M8: W5-B-15 mit P9 bei `fremde-chiffre`).
 
 ---
 
