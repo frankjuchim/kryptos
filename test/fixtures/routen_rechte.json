@@ -52,7 +52,7 @@
   {"methode": "GET", "pfad": "/api/lehrer/kurse/:kursId/auswertung", "bereich": "lehrkraft", "anonym": 401, "schueler": 401, "lehrkraft": 200, "admin": 200, "limit": null, "grund": "lesend, nur Lehrkraft-Sitzung, nur eigene Kurse"},
   {"methode": "GET", "pfad": "/api/lehrer/kurse/:kursId/export.csv", "bereich": "lehrkraft", "anonym": 401, "schueler": 401, "lehrkraft": 200, "admin": 200, "limit": null, "grund": "lesend, nur Lehrkraft-Sitzung, nur eigene Kurse"},
   {"methode": "GET", "pfad": "/api/lehrer/kurse/:kursId/teams", "bereich": "lehrkraft", "anonym": 401, "schueler": 401, "lehrkraft": 200, "admin": 200, "limit": null, "grund": "lesend, nur Lehrkraft-Sitzung, nur eigene Kurse"},
-  {"methode": "GET", "pfad": "/api/funk", "bereich": "schueler", "anonym": 401, "schueler": 200, "lehrkraft": 401, "admin": 401, "limit": "funk-6/min-schueler"},
+  {"methode": "GET", "pfad": "/api/funk", "bereich": "schueler", "anonym": 401, "schueler": 200, "lehrkraft": 401, "admin": 401, "limit": "funk-30/min-schueler"},
   {"methode": "GET", "pfad": "/api/funk/:id/stand", "bereich": "schueler", "anonym": 401, "schueler": 200, "lehrkraft": 401, "admin": 401, "limit": "funk-stand-60/min-schueler"},
   {"methode": "GET", "pfad": "/api/lehrer/kurse/:kursId/funk", "bereich": "lehrkraft", "anonym": 401, "schueler": 401, "lehrkraft": 200, "admin": 200, "limit": null, "grund": "lesend, nur Lehrkraft-Sitzung, nur eigene Kurse"},
   {"methode": "GET", "pfad": "/api/lehrer/qr.svg", "bereich": "lehrkraft", "anonym": 401, "schueler": 401, "lehrkraft": 400, "admin": 400, "limit": null, "grund": "lesend, nur Lehrkraft-Sitzung, nur eigene Kurse"},

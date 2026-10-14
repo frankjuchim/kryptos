@@ -1733,7 +1733,7 @@ Schüler, Lehrkraft, Admin) und Rate-Limit bzw. Begründung ohne Limit: `test/fi
 
 | Methode · Pfad | Request | Response | Limit / Fehler |
 |---|---|---|---|
-| `GET /api/funk` | – | `{ szenario: { id, typ, titel, status, phase } \| null, team: { id, nr, name } \| null }` (Kopfzeilen-Punkt, Funkraum-Seite) | 6/min |
+| `GET /api/funk` | – | `{ szenario: { id, typ, titel, status, phase } \| null, team: { id, nr, name } \| null }` (Kopfzeilen-Punkt, Funkraum-Seite) | 30/min (Kopfzeile ruft je Seitenaufruf ab; M9 Task 217, vorher 6/min) |
 | `GET /api/funk/:id/stand?seit=v` | `If-None-Match` | §12.4 (200/304) | 60/min; 403 kein Team |
 | `POST /api/funk/:id/nachrichten` | `{ an?: teamId, text, klartext?, fuerSchluessel? }` | `{ nachricht }` | 1/10 s je Team; 400 Whitelist; 409 Phase |
 | `POST /api/funk/:id/oeffentlich` | `{ wert }` (Schlüsseltausch: Zahl 1 ≤ wert < p → Kanal-Nachricht „A 17“; Mallory-Szenario: Bob veröffentlicht seine Schlüsselnummer) | `{ ok }` | 409 Phase (Plan M7 E95, E96) |

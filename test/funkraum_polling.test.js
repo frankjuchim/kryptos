@@ -78,13 +78,15 @@ test('Ohne Team 403; Team ohne Rolle sieht nur den Rahmen; fremdes Szenario 404;
   await F.stand(fremde[0], sz.id).expect(404);
 });
 
-test('Rate-Limits: Stand 60/min je Teilnahme, /api/funk 6/min, Lehrkraft 120/min – 429 mit Retry-After', async () => {
+test('Rate-Limits: Stand 60/min je Teilnahme, /api/funk 30/min, Lehrkraft 120/min – 429 mit Retry-After', async () => {
   const f = await F.kursMitTeams(3);
   const sz = await F.starte(f, 'botenlauf');
   for (let i = 0; i < 60; i++) await F.stand(f.teams[0].c, sz.id).expect(200);
   const r = await F.stand(f.teams[0].c, sz.id).expect(429);
   assert.ok(Number(r.headers['retry-after']) >= 1);
-  for (let i = 0; i < 6; i++) await f.teams[1].c.get('/api/funk').expect(200);
+  // /api/funk ruft die Kopfzeile bei jedem Seitenaufruf ab (Funkraum-Punkt) – Seitenwechsel dürfen den Funkraum nicht
+  // sperren (e2e M9 Task 217: 7 Seitenaufrufe in einer Minute ergaben „Der Funkraum ist gerade sehr gefragt“)
+  for (let i = 0; i < 30; i++) await f.teams[1].c.get('/api/funk').expect(200);
   await f.teams[1].c.get('/api/funk').expect(429);
   f.uhr.vor(60_000);
   await F.stand(f.teams[0].c, sz.id).expect(200);

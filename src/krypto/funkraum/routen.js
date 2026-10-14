@@ -51,7 +51,7 @@ function funkRouten(funk) {
       if (!limiter.take(key, h.now())) return zuViele(res, limiter, key, h.now());
       next();
     };
-    const funkLimit = new S.Limiter({ max: 6, windowMs: 60 * 1000 });
+    const funkLimit = new S.Limiter({ max: 30, windowMs: 60 * 1000 }); // Kopfzeile ruft je Seitenaufruf ab (M9 Task 217)
     const standLimit = new S.Limiter({ max: 60, windowMs: 60 * 1000 });
     const lkLimit = new S.Limiter({ max: 120, windowMs: 60 * 1000 });
     const proSchueler = (req) => 's:' + req.schueler.id;
