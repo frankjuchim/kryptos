@@ -1924,7 +1924,7 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
 ohne Fotos), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
-Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12. `E2E_NUR=11,12` (Komma-Liste; 12 setzt 11 voraus)
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13 → 14. `E2E_NUR=11,12` (Komma-Liste; 12–14 setzen 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -1974,6 +1974,41 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     Boss-Start bis zum Bestätigungsdialog (25 min, W6 30 min) und Abbrechen (kein Kampf). GK 12: Level 3.2/3.3 fehlen,
     Kür 3.K2/4.K3 erst nach „Kür: Frei“. 360 px ohne Querscrollen (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten
     W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Ohne Fotos.
+13. Lehrkraft-Bereich im Algo-Quest-Aufbau (Plan M9 Task 215, E161; `lehrkraft_bereich.js`, im selben App-Start nach
+    Nr. 12): Ole B. und Nia T. melden sich einmal an; Frau M.: Kopfzeile Kurse · Aufgaben · Materialien · Themen · Labor +
+    Portal-Link; Kurskopf mit Niveau-Chip und „Urkunden“; Kurs-Reiter Schüler · Beitritt & QR · Auswertung · Scoreboard ·
+    Einstellungen · Teams · Funkraum · Knack-Arena (je Überschrift, keine Fehlerbox); Schülerliste mit Mika R., Ole B.,
+    Nia T.; QR-Code (SVG, 200); Matrix und CSV (`text/csv`, Mika); Einstellungen mit sieben Welten, Niveau, Kür,
+    Werkzeugen, Beamer-Board an → Board-Link öffnet `/board/<schluessel>` ohne Anmeldung; Urkunden (Druckansicht ohne
+    Querscrollen); Vorschau Welt 3 → Level 3.2 mit eA → W3-L2-03 mit Lösung und Erklärung; Materialien Welt 0–6, Lösung W0
+    als PDF (200), Funkraum-Rollenkarte W3; `/themen#niveaus` mit sieben Welten; 360 px (Kurse, Auswertung, Einstellungen)
+    ohne Querscrollen, Touch-Ziele ≥ 44 px. Admin: Verwaltung vor Labor, Reiter Lehrkräfte & Anfragen · Inhalte ·
+    Warm-up-Import · Backup & Verbund · Wartung; Backup-JSON `app = kryptos`, `meta.app = kryptos`, ohne `sso_jti`,
+    `loeschungen`, Funkraum- und Arena-Tabellen; Wartung mit letztem Lauf. Ohne Fotos (Foto-Satz: Task 217).
+14. Öffentlich und Verbund-Wege (Plan M9 Task 216; `oeffentlich.js`, nach Nr. 13): ohne Anmeldung `/` („Anmelden über
+    InfoLabs“, Gastmodus, keine Cookies), `/themen`, `/themen#niveaus` frisch geladen (sieben Welten, eA, Sprungziel im
+    Blick), `/datenschutz` (Entwurf-Kasten, Platzhalter, Link auf `<Dev-Portal>/datenschutz`), 404-Seite im Designsystem,
+    `/robots.txt` `Disallow: /`; `/spiel` → Dev-Portal mit `ziel=/spiel`, „Abbrechen“ → `/?abgebrochen=1` mit Hinweis;
+    Mika: „Abmelden“ (lokal, `kr_s` gelöscht) und „Überall abmelden“ über `<Dev-Portal>/sso/abmelden?ruecksprung=…` zurück
+    auf `/`; Ida K. (nur GK 12): Dev-Portal schaltet Kryptos für `k:2` ab (Verbund `kurs-aendern {aktiv:false}`) → API 403,
+    `/spiel` → Seite „Kurs abgeschaltet“ (auch 360 px), danach wieder eingeschaltet und Ida wieder in Kryptos. 360 px ohne
+    Querscrollen; Kontraste hell/dunkel für `/`, `/themen`, `/datenschutz`, 404. Ohne Fotos.
+
+**Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
+CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C
+<scratch>/labs` und dort `npm ci` – labs selbst wird nie verändert); ohne `LABS_DIR` „übersprungen“, Exit 0. Portal
+(`src/server.js` der Kopie, `ERLAUBE_HTTP=1`, `TRUST_PROXY=0`) und Kryptos (`NODE_ENV=production`,
+`PLATTFORM_URL=http://localhost:<p>` – E149-Ausnahme, `PORTAL_PUBLIC_KEY` zur Startzeit des Tests von
+`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 →
+Admin trägt Kryptos ein (Ampel grün, Rücksprung `<kryptos>/sso/ende` bestätigt) → Lehrkraft „Frau M.“ fragt an, Freigabe
+und Freischaltung Kryptos, Kurs „Informatik LK 13“ → „Mika R.“ tritt mit Kurscode bei, „Weiter zu Kryptos“ → `/spiel`
+(Sitzung Mika, Kurs) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“) → `/lehrer` mit dem Kurs → Mika löst
+W0-L1-03 → Portal benennt den Kurs um (Kryptos zeigt den neuen Namen), „Lernstand auf Kryptos laden“ (Kennzahlen, kein
+persönlicher Code) → Mika aus dem Kurs entfernt → in `kryptos.db` keine Zeile mit Mikas `sub` oder Namen (außer dem
+Löschvermerk `loeschungen`), Verbund-Aufträge `kurs-aendern` und `loeschen` „erledigt“ → „Überall abmelden“ in Kryptos
+führt über `<portal>/sso/abmelden` und beendet die Portal-Sitzung (`/api/lehrkraft/ich` → 401). Keine Konsolen-/CSP-Fehler
+auf beiden Seiten. `--bilder <ordner>`: `portal_beitritt.png`, `portal_code.png`, `portal_weiter.png` (1280 × 800,
+Kurscode und persönlicher Code mit Playwright-`mask` unkenntlich).
 
 ---
 
@@ -2031,20 +2066,27 @@ bleibt, `/healthz`-Version, `vertrag_pruefen.js` Exit 0, außerhalb `DATA_DIR` w
 
 ### 16.3 CapRover
 
-- App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, `captain-definition` → `./Dockerfile`.
+Betriebsanleitung für die Lehrkraft: **README §6** (maßgeblich für die Schritte; hier die technischen Eckpunkte).
+
+- App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, Container-HTTP-Port 80, `captain-definition` →
+  `./Dockerfile`. `main` ist mit der App verbunden (jeder Push = Live-Build); Merge nur nach Freigabe der Lehrkraft als
+  Fast-Forward, danach `/healthz` mit der neuen Version prüfen (README §6).
 - **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL). Das Image legt `/app/data`
   mit Besitzer `node` an; ist das eingehängte Volume nicht für `node` beschreibbar, bricht der Start mit „Konfiguration:
   DATA_DIR /app/data ist nicht beschreibbar (…)“ ab (Schreibprobe vor der DB, §6.1, K45) – dann im Volume Besitzer bzw.
   Rechte korrigieren.
+- Umgebungsvariablen (README §6.2): Pflicht `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal
+  „Einzeilig kopieren“), `SESSION_SECRET` (≥ 32 zufällige Zeichen); optional `TRUST_PROXY` (Standard 1); aus dem Image
+  `NODE_ENV`, `PORT`, `DATA_DIR`, `TZ`, `AUTH_MODUS`, `PLATTFORM_ID`; nicht setzen `VERTRAG_VERSION`, `ADMIN_*`.
 - Startzeile im App-Log: `Konfiguration: {…}` (ID, URLs, Anzahl und Fingerabdrücke der Portal-Schlüssel – ohne Geheimnisse,
-  §6.1); der Fingerabdruck lässt sich mit dem des Portal-Schlüssels vergleichen. Prüfung ohne Start: `npm run konfig:pruefen`.
-- Umgebungsvariablen: `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal „Einzeilig kopieren“),
-  `SESSION_SECRET` (≥ 32 zufällige Zeichen), `TRUST_PROXY=1`; Rest aus dem Dockerfile.
+  §6.1); Abbruchmeldungen und Ursachen als Tabelle in README §6.3. Prüfung ohne Start: `npm run konfig:pruefen`.
 - Healthcheck `/healthz` → `{ "status": "ok", "version": "<package.json>" }`; Container-Healthcheck siehe Dockerfile.
-- Portal-Eintrag (Superadmin): Basis-URL eintragen → Ampel grün (Manifest + `/healthz`), Rücksprung
+- Portal-Eintrag (Superadmin, README §6.4): Basis-URL eintragen → Ampel grün (Manifest + `/healthz`), Rücksprung
   `https://kryptos.frankjuchim.de/sso/ende` bestätigen, Lehrkräfte freischalten, Kurs mit Kryptos anlegen, Ende-zu-Ende
-  nach INTEGRATION.md §6. Danach `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de`.
-- Datensicherung: Backup-Download (Superadmin) vor jedem Update; zusätzlich CapRover-Volume-Sicherung.
+  nach INTEGRATION §6 (lokal vorab geprüft mit `npm run e2e:portal`, §15). Danach
+  `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de`.
+- Datensicherung (README §6.5): Backup-Download (Superadmin) vor jedem Update; zusätzlich CapRover-Volume-Sicherung;
+  Migrationen nur vorwärts – ältere Version nur mit passender Datenbank.
 
 ### 16.4 Entwicklung ohne echtes Portal
 
@@ -2061,7 +2103,7 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
+`start`, `dev`, `test`, `validate`, `e2e`, `e2e:portal` (M9 Task 212), `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
 `lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
 `pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds` + `abdeckung`; die Material-Prüfungen brauchen Python-Pakete,
 LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese
@@ -2083,3 +2125,6 @@ dem ersten Live-Deploy.
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
 | T8 | Fremdcode „Krypto-Werkstatt“ | **erledigt in M6 ohne Fremdcode:** `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`), Rechnung über `Krypto.*`; aus der Werkstatt nichts übernommen (Lizenz ungeklärt, nur Bedienideen) – `docs/FREMDCODE.md` (Design O11) |
 | T9 | Mallory-Zusatzrolle im Schlüsseltausch (W4 §9.3, eA, optional) | **offen** (Plan M7 offene Entscheidung 4): vorläufig nur als Papierkarte; „Mallory im Netz“ (W5) zeigt den Angriff digital |
+| T10 | Erstes Live-Deploy (M9) | **offen – Freigabe der Lehrkraft** (Plan M9 F1–F12): CapRover-App mit Persistent Directory und Variablen (README §6), grüner CI-Job `docker` auf dem PR, Merge nach `main`, Portal-Eintrag, Ende-zu-Ende live |
+| T11 | Datenschutzseite | **offen – Angaben der Schule** in `[…]` (Plan M9 L49) |
+| T12 | Hinweis labs (nicht Kryptos): das Portal (`labs/src/server.js`) bricht mit `TRUST_PROXY=false` ab (`invalid IP address: false`); `0` funktioniert | nur Hinweis an die Lehrkraft (Plan M9 Task 212); labs wird aus diesem Repo nicht geändert |

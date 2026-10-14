@@ -329,7 +329,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Consumes: Cookie-Namen aus `src/security.js`/`src/verbund/sitzung.js`, Speicher-Schlüssel aus `public/static/js/**`
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   ```js
   test('pflichtangaben_mit_platzhaltern (E152)', () => {
     for (const s of ['[Name der Schule]', '[Anschrift]', '[Name, E-Mail]', '[Hoster, Standort in der EU]', 'Art. 6 Abs. 1 lit. e DSGVO']) assert.ok(html.includes(s), s);
@@ -341,10 +341,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('loeschfristen (E153): 24 Stunden, 30 Tage, 30 Tage/8 Stunden, Löschung durch das Portal', …);
   test('keine_echten_namen: keine Schulnamen/Personen außer Platzhaltern; Link #portal-datenschutz bleibt', …);
   ```
-- [ ] **Step 2: Run** `node --test test/datenschutz_seite.test.js` → FAIL.
-- [ ] **Step 3: Implement** Abschnitte (Reihenfolge wie labs): Entwurf-Kasten · Verantwortlich (Schule, DSB, Ansprechpartner Verbund) · Zweck · Welche Daten (bestehend) · Cookies · Speicher im Browser (vollständig laut Test) · Teams · Funkraum · Werkstatt/Arena · Abzeichen · Keine externen Dienste · Rechtsgrundlage `[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG …]` · Hosting `[Hoster, Standort in der EU]`, HTTPS · Speicherdauer und Löschung (E153, Sicherungskopien `[…]`) · Ihre Rechte (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch – über die Lehrkraft bzw. das Portal) · Beschwerde bei der Landesbeauftragten für den Datenschutz Niedersachsen. Ansprache: Seite richtet sich an Lernende und Eltern → wie labs neutral/gesiezt in Rechtsteilen, die bestehenden duzenden Absätze bleiben (Kryptos-Besonderheiten). Im Browser ansehen (360/1280 px, hell/dunkel), Read der Fotos.
-- [ ] **Step 4: Run** → PASS; `npm test` grün (u. a. `seiten.test.js`, Versionsgleichstand).
-- [ ] **Step 5: Commit** `git commit -m "Datenschutzseite: Pflichtangaben mit Platzhaltern der Schule, vollständige Cookie- und Speicherliste (M9 Task 210)"`
+- [x] **Step 2: Run** `node --test test/datenschutz_seite.test.js` → FAIL.
+- [x] **Step 3: Implement** Abschnitte (Reihenfolge wie labs): Entwurf-Kasten · Verantwortlich (Schule, DSB, Ansprechpartner Verbund) · Zweck · Welche Daten (bestehend) · Cookies · Speicher im Browser (vollständig laut Test) · Teams · Funkraum · Werkstatt/Arena · Abzeichen · Keine externen Dienste · Rechtsgrundlage `[Von der Schule festzulegen, z. B. Art. 6 Abs. 1 lit. e DSGVO i. V. m. § 31 NSchG …]` · Hosting `[Hoster, Standort in der EU]`, HTTPS · Speicherdauer und Löschung (E153, Sicherungskopien `[…]`) · Ihre Rechte (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch – über die Lehrkraft bzw. das Portal) · Beschwerde bei der Landesbeauftragten für den Datenschutz Niedersachsen. Ansprache: Seite richtet sich an Lernende und Eltern → wie labs neutral/gesiezt in Rechtsteilen, die bestehenden duzenden Absätze bleiben (Kryptos-Besonderheiten). Im Browser ansehen (360/1280 px, hell/dunkel), Read der Fotos.
+- [x] **Step 4: Run** → PASS; `npm test` grün (u. a. `seiten.test.js`, Versionsgleichstand).
+- [x] **Step 5: Commit** `git commit -m "Datenschutzseite: Pflichtangaben mit Platzhaltern der Schule, vollständige Cookie- und Speicherliste (M9 Task 210)"`
 
 ### Task 211: Begriffsprüfung `werkzeuge/materialien_pruefen.py`
 
@@ -371,14 +371,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `test/e2e/hilfen.js` (`chromiumPfad`, freie Ports, Fehler-Beobachtung, `keinQuerScrollen`)
 - Produces: `node test/e2e/portal.js [--bilder <ordner>]` mit `LABS_DIR=<pfad>`; ohne `LABS_DIR` Exit 0 mit „übersprungen“. Mit `--bilder`: `portal_beitritt.png`, `portal_code.png`, `portal_weiter.png` (1280 × 800, Kurscode und persönlicher Code per `mask`).
 
-- [ ] **Step 1: Portal-Kopie** (nicht im Repo):
+- [x] **Step 1: Portal-Kopie** (nicht im Repo):
   ```bash
   S=/tmp/claude-0/-home-user/87e7dbc0-e51b-5e05-93c8-31b751eb05b0/scratchpad/m9
   mkdir -p $S/labs && git -C /home/user/labs archive --format=tar HEAD | tar -x -C $S/labs
   git -C /home/user/labs rev-parse --short HEAD   # im Bericht nennen (erwartet 3f48c5c)
   (cd $S/labs && npm ci --no-audit --no-fund)     # schlägt das fehl: NODE_PATH=/home/user/kryptos/node_modules (express 5, better-sqlite3, helmet, qrcode) und im Bericht nennen
   ```
-- [ ] **Step 2: Skript schreiben, das ohne `LABS_DIR` übersprungen wird; mit `LABS_DIR` zuerst rot laufen** (Ablauf):
+- [x] **Step 2: Skript schreiben, das ohne `LABS_DIR` übersprungen wird; mit `LABS_DIR` zuerst rot laufen** (Ablauf):
   1. Portal starten: `node $LABS_DIR/src/server.js` mit `ADMIN_EMAIL=admin ADMIN_PASSWORD=admin1234 SESSION_SECRET=<32+> DATA_DIR=<temp> PORT=<frei> PORTAL_URL=http://localhost:<p> ERLAUBE_HTTP=1`; `/healthz` abwarten.
   2. `GET <portal>/sso/schluessel.pem` → Kryptos starten (E166): `NODE_ENV=production PORT=<frei> DATA_DIR=<temp> PLATTFORM_URL=http://localhost:<k> PORTAL_URL=http://localhost:<p> PORTAL_PUBLIC_KEY=<pem> SESSION_SECRET=<32+> SEED_DIR=seed`.
   3. `node scripts/vertrag_pruefen.js http://localhost:<k>` → Exit 0, „erfüllt Vertrag v1.2 … Anmeldung: portal“.
@@ -390,9 +390,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   9. Portal: Mika löschen → Auftrag „erledigt“; in Kryptos‘ DB keine Zeile mit Mikas `sub` (Suche über alle TEXT-Spalten wie `test/datenschutz.test.js`).
   10. Abmelden überall in Kryptos → landet auf dem Portal.
   Keine Browser-Fehler, keine CSP-Verstöße auf beiden Seiten; alle Prozesse und Temp-Ordner am Ende weg.
-- [ ] **Step 3: Implement** bis grün; Abweichungen des Portals vom erwarteten Ablauf (z. B. Texte der Knöpfe) aus labs `test/e2e/e2e.js` übernehmen, nie labs ändern. Ein echter Befund im Zusammenspiel → als Vertrags-/Integrationsvorschlag in `docs/VERTRAG_VORSCHLAEGE.md` (Teil G) und im Bericht, nicht still umgehen.
-- [ ] **Step 4: Run** `LABS_DIR=$S/labs npm run e2e:portal -- --bilder $S/portal_bilder` → „Ende-zu-Ende mit dem Portal: alles grün“; Fotos per Read ansehen (Codes unkenntlich); `npm run e2e:portal` ohne `LABS_DIR` → „übersprungen“, Exit 0; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Ende-zu-Ende mit dem Portal nach INTEGRATION §6 (lokale Kopie, optionaler Lauf e2e:portal) (M9 Task 212)"`
+  **Umgesetzt (14.10., labs `3f48c5c`, `npm ci` in der Kopie ohne Fehler):** Abweichungen vom Ablauf: 7. Die Lehrkraft hat im
+  Portal keinen „Weiter“-Knopf – sie startet auf Kryptos („Anmelden über InfoLabs“ → Portal → `/lehrer`); „Welt 0 freischalten“
+  entfällt (neue Kurse haben alle Welten frei). 9. Der Löschvermerk `loeschungen` (Kennung ohne Namen, TECHNIK §7.3) bleibt
+  bewusst. 10. „Überall abmelden“ führt über `<portal>/sso/abmelden` zurück zu Kryptos (`abmeldeZiel` des Portals);
+  geprüft wird, dass die Portal-Sitzung beendet ist. Portal braucht `TRUST_PROXY=0` (labs versteht `false` nicht).
+- [x] **Step 3: Implement** bis grün; Abweichungen des Portals vom erwarteten Ablauf (z. B. Texte der Knöpfe) aus labs `test/e2e/e2e.js` übernehmen, nie labs ändern. Ein echter Befund im Zusammenspiel → als Vertrags-/Integrationsvorschlag in `docs/VERTRAG_VORSCHLAEGE.md` (Teil G) und im Bericht, nicht still umgehen.
+- [x] **Step 4: Run** `LABS_DIR=$S/labs npm run e2e:portal -- --bilder $S/portal_bilder` → „Ende-zu-Ende mit dem Portal: alles grün“; Fotos per Read ansehen (Codes unkenntlich); `npm run e2e:portal` ohne `LABS_DIR` → „übersprungen“, Exit 0; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Ende-zu-Ende mit dem Portal nach INTEGRATION §6 (lokale Kopie, optionaler Lauf e2e:portal) (M9 Task 212)"`
 
 ### Task 213: Video-Bilder
 
@@ -434,7 +439,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: echter App-Start aus Szenario 11/12 (`echt`-Kontext, Kurseinstellungen aus 11/12), `lehrkraft.kursWaehlen`, `lehrkraft.kursId`, `H.keinQuerScrollen`, `H.ziele44`
 - Produces: `szenario13(ctx)`; ruft `H.foto` mit den Namen aus Task 217 (bis dahin ohne Wirkung, wenn `E2E_FOTOS=0`).
 
-- [ ] **Step 1: Szenario schreiben** (E161), Frau M. (1280 × 800):
+- [x] **Step 1: Szenario schreiben** (E161), Frau M. (1280 × 800):
   - Kopfzeile in genau dieser Reihenfolge: „Kurse“, „Aufgaben“, „Materialien“, „Themen“, „Labor“ (+ „Verwaltung“ nur beim Admin, vor „Labor“) und „⌂ Portal“.
   - **Kurse:** LK 13 und GK 12 mit Niveau-Chip; Kurskopf mit „Urkunden“.
   - Kurs-Reiter in Reihenfolge Schüler · Beitritt & QR · Auswertung · Scoreboard · Einstellungen · Teams · Funkraum · Knack-Arena; je Reiter: Überschrift sichtbar, keine Fehlermeldung. Schüler: Mika R., Ole B., Nia T. · Beitritt & QR: Hinweis auf das Portal und QR-Code (SVG lädt, 200) · Auswertung: Matrix mit Mika, CSV-Download (`text/csv`, Kopfzeile, Mika enthalten) · Scoreboard: Rangliste, Board-Link öffnet `/board/<schluessel>` ohne Anmeldung · Einstellungen: alle sieben Welten, Niveau, Kür, Werkzeuge · Teams/Funkraum/Knack-Arena: Leerzustand ohne Fehler.
@@ -444,10 +449,12 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   - **Themen:** `/themen#niveaus` mit sieben Welten.
   - Admin („Admin“ vom Dev-Portal): Verwaltung mit Reitern Lehrkräfte & Anfragen · Inhalte · Warm-up-Import · Backup & Verbund · Wartung; Backup-Download = JSON mit `meta.app = 'kryptos'` und ohne Funkraum-Inhalte/`sso_jti`; Wartung zeigt den letzten Lauf.
   - 360 px: Kurse, Auswertung, Einstellungen ohne Querscrollen; Touch-Ziele ≥ 44 px (`ziele44`).
-- [ ] **Step 2: Run** `E2E_NUR=11,12,13 npm run e2e` → erwartet rot bei jedem fehlenden Reiter/Fund; Funde beheben (Oberfläche: `version_setzen.js patch`).
-- [ ] **Step 3: Run** `E2E_NUR=11,12,13 npm run e2e` → grün.
-- [ ] **Step 4: Run** `npm test` grün; voller `npm run e2e` grün.
-- [ ] **Step 5: Commit** `git commit -m "e2e Szenario 13: Lehrkraft-Bereich vollständig im Algo-Quest-Aufbau (M9 Task 215)"`
+- [x] **Step 2: Run** `E2E_NUR=11,12,13 npm run e2e` → erwartet rot bei jedem fehlenden Reiter/Fund; Funde beheben (Oberfläche: `version_setzen.js patch`).
+  **Fund (behoben, 0.4.11):** Auswertung bei 360 px mit echten Seeds querscrollend (589 px) – die Spalte von
+  `.auswertung-teil` wuchs mit der Aufgabenstatistik (`scroll-x`); jetzt `grid-template-columns: minmax(0, 1fr)`.
+- [x] **Step 3: Run** `E2E_NUR=11,12,13 npm run e2e` → grün.
+- [x] **Step 4: Run** `npm test` grün; voller `npm run e2e` grün.
+- [x] **Step 5: Commit** `git commit -m "e2e Szenario 13: Lehrkraft-Bereich vollständig im Algo-Quest-Aufbau (M9 Task 215)"`
 
 ### Task 216: e2e Szenario 14 „Öffentlich und Verbund-Wege“
 
@@ -458,11 +465,11 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `szenario14(ctx)`
 
-- [ ] **Step 1: Szenario schreiben** (ohne Anmeldung, neuer Browser-Kontext): `/` zeigt „Anmelden über InfoLabs“ und Link zum Gastmodus, keine Cookies gesetzt; `/themen` und `/themen#niveaus` (sieben Welten, eA-Kennzeichnung, Sprungziel im Blick); `/datenschutz` (Entwurf-Kasten, Platzhalter sichtbar, Link „zentrale Datenschutzerklärung“ zeigt auf `<Dev-Portal>/datenschutz`); `/gibt-es-nicht` → 404-Seite im Designsystem; `/robots.txt` → `Disallow: /`; `/spiel` → Weiterleitung zum Dev-Portal mit `ziel=/spiel`; Dev-Portal „abgebrochen“ → `/?abgebrochen=1` mit Hinweis; Mika angemeldet → „Abmelden“ → „überall abmelden“ landet auf `<Dev-Portal>/sso/abmelden?ruecksprung=…`; gesperrter Kurs (Verbund `kurs-aendern {aktiv:false}` über das Dev-Portal-Knopf) → Seite „Kryptos ist für deinen Kurs abgeschaltet“, danach wieder entsperren. Alles bei 360 px ohne Querscrollen; Kontrastmessung hell/dunkel wie Szenario 9 für `/`, `/themen`, `/datenschutz`, 404.
-- [ ] **Step 2: Run** `E2E_NUR=11,12,13,14 npm run e2e` → rot bei Fund, beheben.
-- [ ] **Step 3: Run** → grün.
-- [ ] **Step 4: Run** `npm test`, voller `npm run e2e` grün.
-- [ ] **Step 5: Commit** `git commit -m "e2e Szenario 14: öffentliche Seiten, Datenschutz, Abmelden, gesperrter Kurs (M9 Task 216)"`
+- [x] **Step 1: Szenario schreiben** (ohne Anmeldung, neuer Browser-Kontext): `/` zeigt „Anmelden über InfoLabs“ und Link zum Gastmodus, keine Cookies gesetzt; `/themen` und `/themen#niveaus` (sieben Welten, eA-Kennzeichnung, Sprungziel im Blick); `/datenschutz` (Entwurf-Kasten, Platzhalter sichtbar, Link „zentrale Datenschutzerklärung“ zeigt auf `<Dev-Portal>/datenschutz`); `/gibt-es-nicht` → 404-Seite im Designsystem; `/robots.txt` → `Disallow: /`; `/spiel` → Weiterleitung zum Dev-Portal mit `ziel=/spiel`; Dev-Portal „abgebrochen“ → `/?abgebrochen=1` mit Hinweis; Mika angemeldet → „Abmelden“ → „überall abmelden“ landet auf `<Dev-Portal>/sso/abmelden?ruecksprung=…`; gesperrter Kurs (Verbund `kurs-aendern {aktiv:false}` über das Dev-Portal-Knopf) → Seite „Kryptos ist für deinen Kurs abgeschaltet“, danach wieder entsperren. Alles bei 360 px ohne Querscrollen; Kontrastmessung hell/dunkel wie Szenario 9 für `/`, `/themen`, `/datenschutz`, 404.
+- [x] **Step 2: Run** `E2E_NUR=11,12,13,14 npm run e2e` → rot bei Fund, beheben.
+- [x] **Step 3: Run** → grün.
+- [x] **Step 4: Run** `npm test`, voller `npm run e2e` grün.
+- [x] **Step 5: Commit** `git commit -m "e2e Szenario 14: öffentliche Seiten, Datenschutz, Abmelden, gesperrter Kurs (M9 Task 216)"`
 
 ### Task 217: Screenshots – Foto-Satz `kr-*` aus den echten Seeds
 
@@ -490,14 +497,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Consumes: Befehle und Variablen aus Tasks 205–217
 
-- [ ] **Step 1: Failing test** `test/readme.test.js`:
+- [x] **Step 1: Failing test** `test/readme.test.js`:
   ```js
   test('readme_betrieb: jede Umgebungsvariable aus ladeKonfig und dem Dockerfile steht in README §6', …); // Namen per Regex aus src/verbund/konfig.js (e.NAME) und Dockerfile (ENV)
   test('readme_befehle: jedes npm-Skript aus package.json steht im README', …);
   test('readme_portal_eintrag: Schritte „Plattformen“, „/sso/ende“, „freischalten“, „vertrag_pruefen.js https://kryptos.frankjuchim.de“, „Freigabe der Lehrkraft“', …);
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** README §6 „Betrieb“ (Vorbild Algo Quest F.1/H.7, gesiezt):
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** README §6 „Betrieb“ (Vorbild Algo Quest F.1/H.7, gesiezt):
   1. ⚠️-Kasten `main` = live; Merge nur nach Freigabe (Fast-Forward-Befehl wie Algo Quest, danach `/healthz` auf `1.0.0` prüfen).
   2. CapRover-App `kryptos`: HTTP-Port 80, HTTPS erzwingen, Persistent Directory `/app/data` (Label `kryptos-data`), `captain-definition`.
   3. Tabelle Umgebungsvariablen: Pflicht `PLATTFORM_URL=https://kryptos.frankjuchim.de`, `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` (Portal → Plattformen → Öffentlicher Schlüssel → „Einzeilig kopieren“), `SESSION_SECRET` (≥ 32 Zeichen, z. B. `openssl rand -hex 32`); aus dem Image `AUTH_MODUS=portal`, `PLATTFORM_ID=kryptos`, `PORT=80`, `DATA_DIR=/app/data`, `TZ`, `NODE_ENV`; optional `TRUST_PROXY` (Standard 1); **nicht** setzen: `VERTRAG_VERSION`, `ADMIN_*`.
@@ -506,8 +513,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   6. Update und Sicherung: Backup-Download (Admin → Verwaltung → Backup & Verbund) vor jedem Update, CapRover-Volume-Sicherung, Rücksprung auf eine ältere Version nur mit passender Datenbank (Migrationen nur vorwärts).
   7. Was die Schule ergänzen muss: Datenschutz-Platzhalter (Task 210).
   §4.1 „Stand der Plattform“ um M8/M9 ergänzen, Kopf-Stand auf 1.0.0-Kandidat (Datum), Prüfungen-Liste (`konfig:pruefen`, `e2e:portal`, `abdeckung`, Szenarien 1–14). TECHNIK §16.3 an README angleichen, §17 offene Punkte aktualisieren. Gesamtplan Teil A: M8 „erledigt (Tasks 164–204, Detailplan `2026-10-14-kryptos-m8-inhalte-w3-w6.md`)“, M9-Zeile mit Link und Stand.
-- [ ] **Step 4: Run** `node --test test/readme.test.js test/rechte.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "README: Betriebsanleitung CapRover, Konfiguration, Portal-Eintrag; TECHNIK und Gesamtplan nachgeführt (M9 Task 218)"`
+- [x] **Step 4: Run** `node --test test/readme.test.js test/rechte.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "README: Betriebsanleitung CapRover, Konfiguration, Portal-Eintrag; TECHNIK und Gesamtplan nachgeführt (M9 Task 218)"`
 
 ### Task 219: Version 1.0.0, Gesamtprüfung, Abschlussbericht
 
@@ -649,6 +656,7 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 49 | M9 E152, E153 | Datenschutzseite mit Platzhaltern `[…]` der Schule, Löschfristen | wie Task 210; Angaben liefert die Schule (F3) |
 | 50 | M9 E149, E154, E159 | Betrieb nur mit https (außer localhost); Foto-Satz; Version 1.0.0 = Release-Kandidat, Merge = erstes Deploy | wie Tasks 205, 217, 219 |
 | 51 | M9 Task 208 (Review) | Gastmodus-Limit 300 Anfragen je 10 min je IP (`src/routes/gast.js`): reicht das, wenn eine ganze Klasse hinter einer Schul-IP den Gastmodus öffnet (pro Aufgabe mehrere Aufrufe)? | unverändert = Algo-Quest-Wert (2.8.2, gleiche Stelle); Erhöhung nur nach Entscheidung der Lehrkraft |
+| 52 | M9 Task 212 (Portal-Lauf) | Hinweis zu labs: das Portal bricht mit `TRUST_PROXY=false` ab (`invalid IP address: false`, labs `src/server.js` reicht den Text an Express weiter); `0` funktioniert. In labs korrigieren? | nur Hinweis; labs wird aus Kryptos nicht geändert (TECHNIK §17 T12) |
 
 ---
 
