@@ -813,9 +813,10 @@ B-08 P2, B-09 P3, B-10 P9, B-14 P9, B-15 P8).
 **Stichproben:** 2⁴ mod 11 = 5, 2³ = 8, 8⁴ mod 11 = 4 = 5³ mod 11; −6 mod 31 = 25, 46 mod 31 = 15; 13 · 7 mod 17 = 6,
 16 · 6 mod 17 = 11; `1001 1001 ⊕ 1111 1100 = 0110 0101`, `0011 0110 ⊕ 0110 0101 = 0101 0011` (= „S“).
 
-- [ ] **Step 1: Failing test** – `UMFANG[4]` += `'W4-B'`; `TEILE_ERGAENZT['W4-B-15'] = ['gaps']`.
-- [ ] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 12/15; Mix 3/3/2).
-- [ ] **Step 5: Commit** `git commit -m "Welt 4: Boss „Der Schlüsseltausch“ (Pool 15, zwei eA-Aufgaben, vier fremde Verfahren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[4]` += `'W4-B'`; `TEILE_ERGAENZT['W4-B-15'] = ['gaps']`.
+- [x] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 12/15; Mix 3/3/2).
+- [x] **Step 5: Commit** `git commit -m "Welt 4: Boss „Der Schlüsseltausch“ (Pool 15, zwei eA-Aufgaben, vier fremde Verfahren)"`.
+- [x] **Umsetzungsnotiz:** Material der fremden Tauschverfahren (B-07, -08, -12, -15) als Block `hinweis` wörtlich aus der Spec, die Frage darunter mit Lücken. B-10 Schaubild mit vier Schritten (Schritt ③ „beide über das Internet zu Bob“ wie in W4-L2-06, weil die Spec nur ①, ②, ④ nennt); Lücke L1 akzeptiert den Sitzungsschlüssel K mit Inhaber Alice oder Bob. B-13 mit Konsistenz-Einträgen `schluesselanzahl(15)`/`(16)` (`art: spec`), B-06 ohne `pruefnachweis` (choice; Konsistenz 66/24 in der Erklärung). Probelauf (100 Ziehungen je Kurs): gA zieht nie B-12/-15, Mix immer 3/3/2. **Boss-Fallen vorläufig festgelegt** (offene Entscheidung 18; Spec nennt nur B-02 P7, B-03 P9, B-08 P2, B-09 P3, B-10 P9, B-14 P9, B-15 P8): B-01 P9, B-04 P5, B-05 P5, B-06 P7, B-07 P2, B-11 P10, B-12 P2, B-13 P7. Browser-Durchsicht (1280/360): Epoche, Archivfund, Level 4.1/4.2/K3, Schaubild, Tabellen, Klapplisten – keine Konsolenfehler, kein Querscrollen.
 
 ### Task 182: Welt 5 – Datei, Epochen-Daten, Archivfund und Level 5.1 „Fingerabdrücke“
 
