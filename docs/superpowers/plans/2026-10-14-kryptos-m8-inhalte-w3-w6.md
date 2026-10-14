@@ -915,8 +915,9 @@ Domains nur `*.example` (Spec). Der Client mischt `match`-Elemente (Kern-Regel),
 
 **Erwartete Hinweise:** keine.
 
-- [ ] **Step 1–4** (`UMFANG[5]` += `'W5-L3'`; `LUECKE_OHNE_FELD['W5-L3-05'] = ['4']`). **Step 5: Commit**
+- [x] **Step 1–4** (`UMFANG[5]` += `'W5-L3'`; `LUECKE_OHNE_FELD['W5-L3-05'] = ['4']`). **Step 5: Commit**
   `git commit -m "Welt 5: Level 5.3 „Mallory im Netz“"`.
+- [x] **Umsetzungsnotiz:** W5-L3-04 Schaubild mit drei Akteuren (Mallory `art: angreifer`), Schritte ①–⑥ wörtlich; W5-L3-05 drei Klapplisten mit den Namen der Aufgabe, Lücke [4] („weil …“) ohne Feld – Musterantwort in der Erklärung; neue Abgleich-Tabelle `LUECKE_OHNE_FELD` (Test: Felder = Spec-Lücken ohne die genannten); W5-L3-06/-07/-08 als `match` (Kategorien wörtlich, „eher dafür/dagegen“ nach E127). Kein Level-Video (E145), Werkzeug Signatur-Simulator Reiter `zertifikat`. Erwartete Hinweise: „Abdeckung fremde Chiffre“ (bis Task 185), „akte ↔ akten.json“.
 
 ### Task 185: Welt 5 – Boss „Das Siegel der Stadt“
 

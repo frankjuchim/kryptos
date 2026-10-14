@@ -135,6 +135,12 @@ function pruefeAufgabe(welt, w, spec) {
   if (spec.art === 'boss') for (const p of spec.fallen) assert.ok(fallen.has(p), `${o}: Falle ${p} aus der Erklärung (E53)`);
   else if (spec.art === 'lab') assert.deepEqual([...fallen].sort(), [...spec.fallen].sort(), `${o}: Fallen`);
   if (spec.interaktion || S.TEILE_ERGAENZT[spec.id]) assert.deepEqual(S.kindsSeed(a), S.kindsErwartet(spec.interaktion, spec.id), `${o}: Interaktionsarten zu „${spec.interaktion}“`);
+  // Plan M8 Task 184: Lücken [n] der Spec = Eingabefelder im Seed, außer den Lücken ohne Feld (LUECKE_OHNE_FELD)
+  if (S.LUECKE_OHNE_FELD[spec.id]) {
+    const spl = [...new Set([...String(spec.inhalt).matchAll(/\[(\d)\]/g)].map((m) => m[1]))];
+    const felder = S.teile(a).flatMap(({ interaktion: ia }) => (ia && ia.felder ? Object.keys(ia.felder) : []));
+    assert.equal(felder.length, spl.length - S.LUECKE_OHNE_FELD[spec.id].length, `${o}: Felder = Spec-Lücken ohne ${S.LUECKE_OHNE_FELD[spec.id]}`);
+  }
   // Plan M8 Task 179: Schaubild-Lücken wie in der Spec-Lösung (SCHAUBILD_TEXT)
   S.teile(a).forEach(({ interaktion: ia, loesung: lo }) => {
     if (!ia || ia.kind !== 'schaubild-ergaenzen') return;
