@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "karten": [
+    {"id":"WU-W3-01","welt":3,"kategorie":"bits-xor","titel":"Bits lesen","aufgabe":"Welches Zeichen hat die ASCII-Bitfolge `0100 1110`?","loesung":"64 + 8 + 4 + 2 = 78 → **N**","minuten":2},
+    {"id":"WU-W3-02","welt":3,"kategorie":"bits-xor","titel":"XOR im Kopf","aufgabe":"Berechne `1001 0110 ⊕ 0101 1010`.","loesung":"`1100 1100`","minuten":2},
+    {"id":"WU-W3-03","welt":3,"kategorie":"begriffe","titel":"Hin und zurück","aufgabe":"Warum entschlüsselt Bob mit derselben XOR-Operation und demselben Schlüssel?","loesung":"a ⊕ k ⊕ k = a, weil k ⊕ k = 0 und a ⊕ 0 = a (XOR ist selbstinvers).","minuten":2},
+    {"id":"WU-W3-04","welt":3,"kategorie":"sicherheit-beurteilen","titel":"Vier Gebote","aufgabe":"Nenne die vier Bedingungen an den Schlüssel eines One-Time-Pads.","loesung":"echt zufällig · so lang wie die Nachricht · nur einmal benutzt · geheim","minuten":2},
+    {"id":"WU-W3-05","welt":3,"kategorie":"sicherheit-beurteilen","titel":"Was bleibt übrig?","aufgabe":"Zwei Nachrichten wurden mit demselben Einmalschlüssel K verschlüsselt. Was erhält Eve aus C1 ⊕ C2?","loesung":"M1 ⊕ M2 – der Schlüssel fällt heraus; mit geratenen Wörtern lassen sich beide Texte rekonstruieren.","minuten":2},
+    {"id":"WU-W3-06","welt":3,"niveau":"eA","kategorie":"blockchiffre","titel":"S-Box","aufgabe":"KRYPTOS-16: Bestimme S(0110) und S⁻¹(1000).","loesung":"S(0110) = `1000`, S⁻¹(1000) = `0110`","minuten":2},
+    {"id":"WU-W3-07","welt":3,"niveau":"eA","kategorie":"transposition","titel":"Spiegeln","aufgabe":"Transponiere `1111 0000 0000 0000` (Zeile 1 = erste Vierergruppe).","loesung":"`1000 1000 1000 1000`","minuten":2},
+    {"id":"WU-W3-08","welt":3,"niveau":"eA","kategorie":"blockchiffre","titel":"Muster oder Rauschen?","aufgabe":"In welchem Betriebsmodus werden gleiche Klartextblöcke zu gleichen Geheimtextblöcken – und warum ist das ein Problem?","loesung":"ECB; Wiederholungen und Bildumrisse bleiben sichtbar. CBC verhindert das.","minuten":2},
+    {"id":"WU-W3-09","welt":3,"kategorie":"entschluesseln","titel":"Spirale W0","aufgabe":"Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `KDIHQ`.","loesung":"**hafen** (K − 3 = H …)","minuten":3},
+    {"id":"WU-W3-10","welt":3,"kategorie":"substitution-poly","titel":"Spirale W2","aufgabe":"Vigenère mit dem Quadrat der Anlage: Klartextbuchstabe n, Schlüsselbuchstabe F. Geheimtextbuchstabe?","loesung":"**S** (F = Verschiebung 5; n = 14 → 19 = S mit A = 1)","minuten":2},
+    {"id":"WU-W3-11","welt":3,"kategorie":"kasiski-friedman","titel":"Spirale W2","aufgabe":"Kasiski: Wiederholungen im Abstand 12, 18 und 30. Welche Schlüssellänge ist am wahrscheinlichsten?","loesung":"ggT = **6** (auch 2 oder 3 möglich)","minuten":2},
+    {"id":"WU-W3-12","welt":3,"kategorie":"fremde-chiffre","titel":"ADFGVX","aufgabe":"Quadrat ZEPPELIN18 (Akte W3·4): Welches Buchstabenpaar steht für die Ziffer 8, welches Zeichen für GV?","loesung":"8 = **DD**, GV = **T**","minuten":2}
+  ]
+}

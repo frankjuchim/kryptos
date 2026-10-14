@@ -37,9 +37,11 @@
   {"id": "W5-3-e6", "ort": "quellen/material/W5/akte_W5-3.json Auftrag 7 (Lösung)", "art": "akte", "verfahren": "dh.gemeinsam", "eingabe": [8, 4, 23], "erwartet": 2, "herkunft": "ergaenzt: Materialquelle"},
   {"id": "W5-3-e7", "ort": "quellen/material/W5/akte_W5-3.json Auftrag 7 (Lösung)", "art": "akte", "verfahren": "dh.gemeinsam", "eingabe": [11, 4, 23], "erwartet": 13, "herkunft": "ergaenzt: Materialquelle"},
   {"id": "W5-3-e8", "ort": "quellen/material/W5/akte_W5-3.json Auftrag 7 (Lösung)", "art": "akte", "verfahren": "modpow", "eingabe": [5, 54, 23], "erwartet": 9, "herkunft": "ergaenzt: Materialquelle"},
-  {"id": "WU-W5-e1", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-01 (Lösung)", "art": "warmup", "verfahren": "kryptosHash", "eingabe": ["ja"], "optionen": {"protokoll": true}, "erwartet": {"wert": 2, "schritte": [{"nachher": 10, "summe": 10}, {"nachher": 2, "summe": 31}]}, "herkunft": "ergaenzt: Materialquelle"},
+  {"id": "WU-W5-e1", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-01 (Lösung)", "art": "warmup", "verfahren": "kryptosHash", "eingabe": ["ja"], "optionen": {"protokoll": true}, "erwartet": 2, "herkunft": "ergaenzt: Materialquelle", "feld": "wert"},
+  {"id": "WU-W5-e1j", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-01 (Lösung)", "art": "warmup", "verfahren": "kryptosHash", "eingabe": ["ja"], "optionen": {"protokoll": true}, "erwartet": 10, "herkunft": "ergaenzt: Materialquelle", "feld": ["schritte", 0, "nachher"]},
   {"id": "WU-W5-e2", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-11 (Lösung)", "art": "warmup", "verfahren": "vigenere", "eingabe": ["e", "C"], "richtung": "ver", "erwartet": "G", "herkunft": "ergaenzt: Materialquelle"},
-  {"id": "WU-W5-e3", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-12 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [9], "erwartet": {"symmetrisch": 36, "asymmetrisch": 18}, "herkunft": "ergaenzt: Materialquelle"},
+  {"id": "WU-W5-e3s", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-12 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [9], "erwartet": 36, "herkunft": "ergaenzt: Materialquelle", "feld": "symmetrisch"},
+  {"id": "WU-W5-e3a", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-12 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [9], "erwartet": 18, "herkunft": "ergaenzt: Materialquelle", "feld": "asymmetrisch"},
   {"id": "W5-A-01-h1", "aufgabe": "W5-A-01", "ort": "seed/welten/welt5.json (SPEC W5 §0 Archivfund)", "art": "archivfund", "verfahren": "sha256", "eingabe": ["chronoskop-update-v7.zip"], "erwartet": "03a20cc0cc22e8e2968e321a68205a4afc7aa9ba5e2d80aecaf9aaba0134dae7", "herkunft": "Stellvertreter für den Dateiinhalt (SPEC W5 §0)"},
   {"id": "W5-A-01-h2", "aufgabe": "W5-A-01", "ort": "seed/welten/welt5.json (SPEC W5 §0 Archivfund)", "art": "archivfund", "verfahren": "sha256", "eingabe": ["chronoskop-update-v7.zip "], "erwartet": "03d0d35577d04206db84932bae7138627f2f3146cbb29110110bebc88f2ad39e", "herkunft": "Stellvertreter mit angehängtem Leerzeichen (SPEC W5 §0)"},
   {"id": "W5-L1-02-a", "aufgabe": "W5-L1-02", "gapsFeld": "a", "ort": "seed/welten/welt5.json (SPEC W5 §2 Level 5.1, W5-L1-02)", "art": "lab", "verfahren": "kryptosHash", "eingabe": ["tee"], "optionen": {"protokoll": true}, "feld": ["schritte", 0, "w"], "erwartet": 20, "herkunft": "KH(tee), Runde 1: w"},
@@ -80,12 +82,15 @@
   {"id": "W5-B-07-g1", "aufgabe": "W5-B-07", "gapsFeld": "g1", "ort": "seed/welten/welt5.json (SPEC W5 §5 Boss online, W5-B-07)", "art": "bosspool", "verfahren": "mod", "eingabe": [180, 13], "erwartet": 11, "herkunft": "PH(rabe) = 18 · 1 · 2 · 5 mod 13 (Rest nach jeder Multiplikation ändert das Ergebnis nicht)"},
   {"id": "W5-B-07-g2", "aufgabe": "W5-B-07", "gapsFeld": "g2", "ort": "seed/welten/welt5.json (SPEC W5 §5 Boss online, W5-B-07)", "art": "bosspool", "verfahren": "mod", "eingabe": [99, 13], "erwartet": 8, "herkunft": "PH(kai) = 11 · 1 · 9 mod 13"},
   {"id": "W5-B-13-kh-zwei", "aufgabe": "W5-B-13", "ort": "seed/welten/welt5.json (SPEC W5 §5 Boss online, W5-B-13)", "art": "bosspool", "verfahren": "kryptosHash", "eingabe": ["ueberweise zwei euro"], "feld": "wert", "erwartet": 18, "herkunft": "Konsistenz: KH(ueberweise zwei euro) = 18"},
-  {"id": "W5-B-13-kh-tausend", "aufgabe": "W5-B-13", "ort": "seed/welten/welt5.json (SPEC W5 §5 Boss online, W5-B-13)", "art": "bosspool", "verfahren": "kryptosHash", "eingabe": ["ueberweise tausend euro"], "feld": "wert", "erwartet": 18, "herkunft": "Konsistenz: KH(ueberweise tausend euro) = 18"}
+  {"id": "W5-B-13-kh-tausend", "aufgabe": "W5-B-13", "ort": "seed/welten/welt5.json (SPEC W5 §5 Boss online, W5-B-13)", "art": "bosspool", "verfahren": "kryptosHash", "eingabe": ["ueberweise tausend euro"], "feld": "wert", "erwartet": 18, "herkunft": "Konsistenz: KH(ueberweise tausend euro) = 18"},
+  {"id": "WU-W5-e4", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-03 (Lösung)", "art": "warmup", "verfahren": "pruefsumme", "eingabe": ["ab", "summe"], "erwartet": 3, "herkunft": "ergaenzt: Plan M8 Task 190"},
+  {"id": "WU-W5-e5", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-03 (Lösung)", "art": "warmup", "verfahren": "pruefsumme", "eingabe": ["ba", "summe"], "erwartet": 3, "herkunft": "ergaenzt: Plan M8 Task 190"},
+  {"id": "WU-W5-e6", "ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-09 (Lösung)", "art": "warmup", "verfahren": "modpow", "eingabe": [2, 8, 1000], "erwartet": 256, "herkunft": "ergaenzt: Plan M8 Task 190 (2⁸ mit Modul 1000 > 2⁸)"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W5/akte_W5-1.json Archivwissen 1", "werte": "SHA-256 von „heute“/„heutf“ und 134 verschiedene Bits (SHA-256 nicht in der Bibliothek)"},
   {"ort": "quellen/material/W5/akte_W5-1.json Auftrag 5", "werte": "Summen-Prüfsumme S und gewichtete Prüfsumme G (26, 17, 0)"},
   {"ort": "quellen/material/W5/boss_W5.json Aufgabe 1 a)–d)", "werte": "Hashfunktion FEDER (Blockwerte mod 37): geh zum tor → 30, kommt morgen → 16, Kollisionen"},
-  {"ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-03, -09", "werte": "Summen-Prüfsumme S, 2^8 + 1 = 257 (Arithmetik)"}
+  {"ort": "quellen/material/W5/warmup_W5.json Karte WU-W5-09", "werte": "2^8 + 1 = 257 (Arithmetik)"}
  ]
 }

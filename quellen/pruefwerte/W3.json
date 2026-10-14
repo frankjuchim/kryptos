@@ -175,7 +175,8 @@
   {"id": "W3-B-13-periode3", "aufgabe": "W3-B-13", "ort": "seed/welten/welt3.json (SPEC W3 §5 Boss online, W3-B-13)", "art": "bosspool", "verfahren": "rotiereBits", "eingabe": ["01010101", 2], "erwartet": "0101 0101", "herkunft": "Konsistenz: 0101 0101 um 2 Stellen rotiert = 0101 0101 (Periode ≤ 2)"},
   {"id": "W3-B-13-periode4", "aufgabe": "W3-B-13", "ort": "seed/welten/welt3.json (SPEC W3 §5 Boss online, W3-B-13)", "art": "bosspool", "verfahren": "rotiereBits", "eingabe": ["10101010", 2], "erwartet": "1010 1010", "herkunft": "Konsistenz: 1010 1010 um 2 Stellen rotiert = 1010 1010 (Periode ≤ 2)"},
   {"id": "W3-B-15-wort", "aufgabe": "W3-B-15", "gapsFeld": "wort", "ort": "seed/welten/welt3.json (SPEC W3 §5 Boss online, W3-B-15)", "art": "bosspool", "verfahren": "xor", "eingabe": [[10, 4, 17], "HEU"], "richtung": "ent", "erwartet": "BAD", "herkunft": "Known-Plaintext: Schlüsselbyte = Geheimtextbyte ⊕ Klartextbyte"},
-  {"id": "W3-B-15-klar", "aufgabe": "W3-B-15", "gapsFeld": "klar", "ort": "seed/welten/welt3.json (SPEC W3 §5 Boss online, W3-B-15)", "art": "bosspool", "verfahren": "xor", "eingabe": [[10, 4, 17, 22, 4, 5, 0, 4, 10, 6], "BAD"], "richtung": "ent", "erwartet": "HEUTEABEND", "herkunft": "Geheimtext ⊕ BAD (wiederholt)"}
+  {"id": "W3-B-15-klar", "aufgabe": "W3-B-15", "gapsFeld": "klar", "ort": "seed/welten/welt3.json (SPEC W3 §5 Boss online, W3-B-15)", "art": "bosspool", "verfahren": "xor", "eingabe": [[10, 4, 17, 22, 4, 5, 0, 4, 10, 6], "BAD"], "richtung": "ent", "erwartet": "HEUTEABEND", "herkunft": "Geheimtext ⊕ BAD (wiederholt)"},
+  {"id": "WU-W3-e10", "ort": "quellen/material/W3/warmup_W3.json Karte WU-W3-11 (Lösung)", "art": "warmup", "verfahren": "ggT", "eingabe": [6, 30], "erwartet": 6, "herkunft": "ergaenzt: Plan M8 Task 190 (ggT(12, 18, 30) = ggT(6, 30))"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W3/akte_W3-2.json Archivwissen 3", "werte": "Lawine im Mittel 16/43/48/49 % (Statistik über alle Blöcke)"},

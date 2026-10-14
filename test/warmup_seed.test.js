@@ -12,6 +12,8 @@ const H = require('./helpers');
 const material = (welt) => JSON.parse(fs.readFileSync(path.join(S.WURZEL, 'quellen', 'material', `W${welt}`, `warmup_W${welt}.json`), 'utf8'));
 /** Spec-Text ohne Prüfvermerk „✔ nachgerechnet“ (normalisiert verglichen) */
 const ohneVermerk = (t) => String(t).replace(/✔\s*nachgerechnet/g, '');
+/** Warm-up-Karten mit niveau eA: WU-W2-08 (M5, K39), W3 KRYPTOS-16/Transposition/Betriebsmodi aus dem eA-Level 3.2 (Plan M8 E136); alle übrigen kern */
+const EA_KARTEN = ['WU-W2-08', 'WU-W3-06', 'WU-W3-07', 'WU-W3-08'];
 
 for (const welt of S.WELTEN) {
   test(`Warm-up W${welt}: 12 Karten, ids, Titel/Kategorie/Minuten wie Materialquelle, Texte wie Spec §7`, (t) => {
@@ -36,6 +38,8 @@ for (const welt of S.WELTEN) {
       assert.ok(S.normalisiert(k.aufgabe).includes(S.normalisiert(s.inhalt)), `${k.id}: aufgabe enthält den Spec-Text`);
       assert.ok(S.normalisiert(k.loesung).includes(S.normalisiert(ohneVermerk(s.loesung))), `${k.id}: loesung enthält die Spec-Lösung`);
       assert.doesNotMatch(k.aufgabe + k.loesung, /nachgerechnet/, `${k.id}: ohne Prüfvermerk`);
+      assert.equal(k.niveau || 'kern', EA_KARTEN.includes(k.id) ? 'eA' : 'kern', `${k.id}: niveau (E136)`);
+      assert.doesNotMatch(k.aufgabe + k.loesung, /✔/, `${k.id}: ohne Prüfhaken`);
       // Kein Leck: die Lösung steht nicht schon auf der Vorderseite (nur Rechenergebnisse ≥ 3 Zeichen prüfbar)
       for (const m2 of String(k.loesung).matchAll(/`([A-Z ]{3,})`/g)) {
         assert.ok(!S.normalisiert(k.aufgabe).includes(S.normalisiert(m2[1])) || /KALIF|OASE/.test(m2[1]), `${k.id}: Lösung ${m2[1]} steht in der Aufgabe`);
@@ -55,4 +59,6 @@ test('Warm-up: Kern-Seed lädt alle vorhandenen Karten (12 je Welt) ohne Fehler'
   const u = svc.kata.meta();
   assert.deepEqual(u.welten.map((w) => [w.welt, w.anzahl]), da.map((n) => [n, 12]));
   assert.equal(svc.kata.liste({}).length, 12 * da.length);
+  // gA-Kurs: die eA-Karten (E136) werden nicht gezogen
+  assert.equal(svc.kata.liste({ gA: true }).length, 12 * da.length - EA_KARTEN.filter((id) => da.includes(Number(id[4]))).length);
 });

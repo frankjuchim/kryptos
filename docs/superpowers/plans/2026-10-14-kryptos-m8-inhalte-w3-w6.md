@@ -1114,11 +1114,12 @@ MTOJXQ → pinsel; BA ∘ CAD = DAECBD (E138, D7).
 Jede Rechenkarte hat einen Prüfwert-Eintrag `art: "warmup"` (vorhanden: W3 10, W4 19 Teilwerte, W5/W6 vorhanden – fehlende
 ergänzen, z. B. WU-W6-11 `ring("ZAHNRADX", 7)`).
 
-- [ ] **Step 1: Failing test** – `warmup_seed.test.js` für Welten 3–6 (12 Karten, ids, Titel/Kategorie/Minuten wie Materialquelle,
+- [x] **Step 1: Failing test** – `warmup_seed.test.js` für Welten 3–6 (12 Karten, ids, Titel/Kategorie/Minuten wie Materialquelle,
   Texte wie Spec §7, Lösung nicht in der Aufgabe, `niveau` nach E136) → FAIL.
-- [ ] **Step 2: Implement** (Karten übertragen; Markdown wie W0–W2: Geheimtext in Backticks, Bits in Vierergruppen).
-- [ ] **Step 3:** `node --test test/warmup_seed.test.js test/inhalte_videos.test.js`; `python3 -I werkzeuge/krypto/pruefwerte.py`; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Warm-up W3–W6: 48 Karten (drei eA-Karten in W3)"`.
+- [x] **Step 2: Implement** (Karten übertragen; Markdown wie W0–W2: Geheimtext in Backticks, Bits in Vierergruppen).
+- [x] **Step 3:** `node --test test/warmup_seed.test.js test/inhalte_videos.test.js`; `python3 -I werkzeuge/krypto/pruefwerte.py`; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Warm-up W3–W6: 48 Karten (drei eA-Karten in W3)"`.
+- [x] **Umsetzungsnotiz:** Karten wie W0–W2: Aufgabe und Lösung aus SPEC §7 (ohne Prüfhaken), Titel/Kategorie/Minuten aus der Materialquelle; Backticks für ZAHNRADX/ZXDARNHA, KERNREKE und die Bits von WU-W6-12. `UMFANG` um `WU-W3` … `WU-W6` ergänzt (Abgleich und Prüfwerte gegen die Karten); `warmup_seed.test.js` prüft jetzt `niveau` (eA: WU-W2-08 aus M5 und WU-W3-06/-07/-08, E136, sonst kern), keine Prüfhaken und dass der gA-Filter die eA-Karten auslässt. Prüfwerte: Einträge mit Objekt-Erwartung (`schluesselanzahl`, `kryptosHash`) in Felder geteilt, damit der Seed-Abgleich die Zahlen findet; ergänzt WU-W3-11 (ggT(6, 30)), WU-W5-03 (`pruefsumme` ab/ba = 3), WU-W5-09 (2⁸ = 256), WU-W6-07 (AB ∘ AB = AC), WU-W6-10 (`pendelFolge`), WU-W6-11 (`ring("ZAHNRADX", 7)`); `nicht_abbildbar` nur noch 2⁸ + 1 = 257 und der Zeitplan 4 · 2,25 = 9.
 
 ### Task 191: Generator-Wortlisten W3–W6 (E147)
 

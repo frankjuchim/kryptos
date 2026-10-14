@@ -31,7 +31,8 @@
   {"id": "WU-W6-e2", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-03 (Lösung)", "art": "warmup", "verfahren": "mod", "eingabe": [-4, 26], "erwartet": 22, "herkunft": "ergaenzt: Materialquelle"},
   {"id": "WU-W6-e3", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-03 (Lösung)", "art": "warmup", "verfahren": "buchstabe", "eingabe": [22, 1], "erwartet": "V", "herkunft": "ergaenzt: Materialquelle"},
   {"id": "WU-W6-e4", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-03 (Lösung)", "art": "warmup", "verfahren": "buchstabe", "eingabe": [0, 1], "erwartet": "Z", "herkunft": "ergaenzt: Materialquelle (Rest 0 → Z)"},
-  {"id": "WU-W6-e5", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-06 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [10], "erwartet": {"symmetrisch": 45, "asymmetrisch": 20}, "herkunft": "ergaenzt: Materialquelle"},
+  {"id": "WU-W6-e5s", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-06 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [10], "erwartet": 45, "herkunft": "ergaenzt: Materialquelle", "feld": "symmetrisch"},
+  {"id": "WU-W6-e5a", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-06 (Lösung)", "art": "warmup", "verfahren": "schluesselanzahl", "eingabe": [10], "erwartet": 20, "herkunft": "ergaenzt: Materialquelle", "feld": "asymmetrisch"},
   {"id": "WU-W6-e6", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-10 (Lösung)", "art": "warmup", "verfahren": "vigenere", "eingabe": ["AAAAAAAA", "KERNRE"], "richtung": "ver", "erwartet": "KERNREKE", "herkunft": "ergaenzt: Materialquelle (Pendel KERN = Vigenère KERNRE)"},
   {"id": "WU-W6-e7", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-12 (Lösung)", "art": "warmup", "verfahren": "xorBits", "eingabe": ["1011", "0110"], "erwartet": "1101", "herkunft": "ergaenzt: Materialquelle"},
   {"id": "WU-W6-e8", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-12 (Lösung)", "art": "warmup", "verfahren": "inverses", "eingabe": [3, 26], "erwartet": 9, "herkunft": "ergaenzt: Materialquelle"},
@@ -84,13 +85,16 @@
   {"id": "W6-B-12-treppe", "aufgabe": "W6-B-12", "ort": "seed/welten/welt6.json (SPEC W6 §5 Boss online, W6-B-12)", "art": "bosspool", "verfahren": "vigenere", "eingabe": ["leuchte", "BCD"], "richtung": "ver", "erwartet": "MGXDJWF", "herkunft": "Konsistenz: TREPPE = Vigenère BCD (Beispiel im Material)"},
   {"id": "W6-B-15-k1", "aufgabe": "W6-B-15", "ort": "quellen/specs/SPEC_Kryptos_W6_Zeitmaschine.md §5 (Boss – W6-B-15, Konsistenz Plan M8 Task 189)", "art": "spec", "verfahren": "vigenere", "eingabe": ["MAUESNF", "CAD"], "richtung": "ver", "erwartet": "OAXGS QH", "herkunft": "Prüfwort laterne: erst BA (MAUESNF), dann CAD"},
   {"id": "W6-B-15-k2", "aufgabe": "W6-B-15", "ort": "quellen/specs/SPEC_Kryptos_W6_Zeitmaschine.md §5 (Boss – W6-B-15, Konsistenz Plan M8 Task 189)", "art": "spec", "verfahren": "vigenere", "eingabe": ["laterne", "DAECBD"], "richtung": "ver", "erwartet": "OAXGS QH", "herkunft": "Prüfwort laterne: einmal DAECBD – derselbe Geheimtext"},
-  {"id": "W6-B-15-wort", "aufgabe": "W6-B-15", "gapsFeld": "wort", "ort": "seed/welten/welt6.json (SPEC W6 §5 Boss online, W6-B-15)", "art": "bosspool", "verfahren": "vigenere", "eingabe": ["bababa", "CAD"], "richtung": "ver", "erwartet": "DAECBD", "herkunft": "Schlüssel BA periodisch (BABABA) mit CAD verschoben = stellenweise Summe der Verschiebungen"}
+  {"id": "W6-B-15-wort", "aufgabe": "W6-B-15", "gapsFeld": "wort", "ort": "seed/welten/welt6.json (SPEC W6 §5 Boss online, W6-B-15)", "art": "bosspool", "verfahren": "vigenere", "eingabe": ["bababa", "CAD"], "richtung": "ver", "erwartet": "DAECBD", "herkunft": "Schlüssel BA periodisch (BABABA) mit CAD verschoben = stellenweise Summe der Verschiebungen"},
+  {"id": "WU-W6-e9", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-07 (Lösung)", "art": "warmup", "verfahren": "vigenere", "eingabe": ["ab", "AB"], "richtung": "ver", "erwartet": "AC", "herkunft": "ergaenzt: Plan M8 Task 190 (AB auf AB = Summe der Verschiebungen)"},
+  {"id": "WU-W6-e10", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-10 (Lösung)", "art": "warmup", "verfahren": "pendelFolge", "eingabe": ["KERN", 8], "erwartet": "KERNREKE", "herkunft": "ergaenzt: Plan M8 Task 190"},
+  {"id": "WU-W6-e11", "ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-11 (Lösung)", "art": "warmup", "verfahren": "ring", "eingabe": ["ZAHNRADX", 7], "richtung": "ver", "erwartet": "ZXDARNHA", "herkunft": "ergaenzt: Plan M8 Task 190 (Ring jetzt in der Bibliothek, E123)"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W6/akte_W6-1.json Auftrag 3 c), Auftrag 4 a)", "werte": "Spaltenlängen 3, 3, 3, 2 und 26⁴ = 456 976 (Arithmetik)"},
   {"ort": "quellen/material/W6/akte_W6-3.json Archivwissen 1, Auftrag 1", "werte": "Zeitplan (Minuten je BE, Rundung, Kumulation)"},
   {"ort": "quellen/material/W6/akte_W6-2.json Archivwissen 1, Aufträge 2–6, Abi-Check", "werte": "Stufe 1 UHRWERK (Ring mit Schritt t) und Gesamtverfahren: zeitreisebeendet, chronoskopkern, ZRWUL XDV"},
-  {"ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-01, -11", "werte": "Zeitplan 9 min; Ring t = 7 → ZXDARNHA"},
+  {"ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-01", "werte": "Zeitplan 4 · 2,25 = 9 min (Arithmetik)"},
   {"ort": "seed/welten/welt6.json W6-L3-01, W6-L3-02, W6-L3-03 (SPEC W6 §2 Level 6.3)", "werte": "Takt 270 min / 120 BE = 2,25 und 220 min / 100 BE = 2,2 min je BE; 30 · 2,25 = 67,5; 25 · 2,2 = 55; 4 bzw. 6 BE → 9 bzw. 13,5 min; 30 − 10 · 2,25 = 7,5 (Arithmetik mit Dezimalbrüchen, keine Bibliotheksfunktion; nachgerechnet mit Python fractions)"}
  ]
 }

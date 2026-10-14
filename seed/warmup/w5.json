@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "karten": [
+    {"id":"WU-W5-01","welt":5,"kategorie":"hash","titel":"Mini-Hash","aufgabe":"KRYPTOS-Hash (A = 1 … Z = 26, Start 0, h ← (3 · h + w) mod 29): Bestimme KH(„ja“).","loesung":"j: 10; a: 30 + 1 = 31 → **2**","minuten":2},
+    {"id":"WU-W5-02","welt":5,"kategorie":"signatur","titel":"Wer siegelt womit?","aufgabe":"Mit welchem Schlüssel erstellt Alice eine Signatur, mit welchem prüft Bob sie?","loesung":"erstellen: **privater Schlüssel von Alice**; prüfen: **öffentlicher Schlüssel von Alice**","minuten":1},
+    {"id":"WU-W5-03","welt":5,"kategorie":"hash","titel":"Vertauscht","aufgabe":"S(t) = (Σ wᵢ) mod 29. Berechne S(„ab“) und S(„ba“). Was folgt?","loesung":"beide **3** → die Summen-Prüfsumme erkennt Vertauschungen nicht (permutationsinvariant)","minuten":2},
+    {"id":"WU-W5-04","welt":5,"kategorie":"signatur","titel":"Drei Ziele","aufgabe":"Welche Schutzziele erreicht eine digitale Signatur, welches nicht?","loesung":"erreicht: **Integrität, Authentizität** (+ Verbindlichkeit); nicht: **Vertraulichkeit**","minuten":2},
+    {"id":"WU-W5-05","welt":5,"kategorie":"zertifikat","titel":"Was das Schloss sagt","aufgabe":"Was bestätigt das Zertifikat einer Website – und was nicht?","loesung":"bestätigt: öffentlicher Schlüssel gehört zur Domain (signiert von einer CA); **nicht**: dass die Seite ehrlich/harmlos ist","minuten":2},
+    {"id":"WU-W5-06","welt":5,"kategorie":"gesellschaft","titel":"So lange wie nötig","aufgabe":"Welcher DSGVO-Grundsatz verlangt, Daten zu löschen, wenn sie nicht mehr gebraucht werden?","loesung":"**Speicherbegrenzung**","minuten":1},
+    {"id":"WU-W5-07","welt":5,"kategorie":"protokoll","titel":"TLS halb und halb","aufgabe":"Was läuft bei HTTPS asymmetrisch, was symmetrisch?","loesung":"asymmetrisch: Zertifikatsprüfung (Signaturen) und Vereinbarung des Sitzungsschlüssels; symmetrisch: alle Nutzdaten","minuten":2},
+    {"id":"WU-W5-08","welt":5,"kategorie":"protokoll","titel":"Mallorys Trick","aufgabe":"Was schiebt Mallory beim Man-in-the-Middle-Angriff unter, und wem?","loesung":"ihren **eigenen öffentlichen Schlüssel**, den sie Alice als Bobs (und ggf. Bob als Alices) ausgibt","minuten":2},
+    {"id":"WU-W5-09","welt":5,"kategorie":"hash","titel":"Schubfach","aufgabe":"Ein Hash hat 8 Bit. Ab wie vielen verschiedenen Nachrichten ist eine Kollision sicher?","loesung":"2⁸ = 256 Werte → ab **257** Nachrichten","minuten":2},
+    {"id":"WU-W5-10","welt":5,"kategorie":"hybrid","titel":"Hybrid (W4)","aufgabe":"Womit verschlüsselt Alice beim Hybridverfahren den Sitzungsschlüssel für Bob?","loesung":"mit **Bobs öffentlichem Schlüssel**","minuten":1},
+    {"id":"WU-W5-11","welt":5,"kategorie":"substitution-poly","titel":"Vigenère-Rückblick (W2)","aufgabe":"Vigenère, Schlüsselbuchstabe C (Verschiebung 2, A = Verschiebung 0). Verschlüssele den Klartextbuchstaben e.","loesung":"e (5) + 2 → **G**","minuten":1},
+    {"id":"WU-W5-12","welt":5,"kategorie":"schluesselraum","titel":"Schlüsselanzahl (W4)","aufgabe":"Neun Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel symmetrisch, wie viele asymmetrisch?","loesung":"9 · 8/2 = **36**, 2 · 9 = **18**","minuten":2}
+  ]
+}
