@@ -847,11 +847,15 @@ Verfahren/Schlüssel und Erklärung; „Kerckhoffs: Eve kennt alle Verfahren –
 **Files:** Modify `seed/welten/welt3.json` (W3-L5 `werkzeug` += `{ "id": "enigma", "voreinstellung": { "reiter": ["maschine",
 "innenleben"] } }`), `test/inhalte_*.test.js` (Abgleich/Abdeckung falls nötig), `test/client_seiten.test.js`, `test/funkraum_botenlauf.test.js`.
 
-- [ ] **Step 1: Failing tests** – Level-Seite W3-L5 zeigt zwei Karten (Runden-Labor/Mini-Enigma und Enigma), Link
+- [x] **Step 1: Failing tests** – Level-Seite W3-L5 zeigt zwei Karten (Runden-Labor/Mini-Enigma und Enigma), Link
   `#/enigma?reiter=maschine,innenleben&level=W3-L5`; im Level-Kontext fehlt `vorfuehren`; Lehrkraft-Einstellungen listen alle
   16 Werkzeuge mit Chip; Botenlauf-Eve öffnet die Scheibe mit Herkunftszeile und ohne Reiter `alle` wie bisher.
-- [ ] **Step 2–4:** FAIL → Seed + Anpassungen → `npm run pruefen` grün (Validator 0 Fehler, Lösungsverrat-Tests, Abdeckung).
-- [ ] **Step 5: Commit** `M10: Level-Karte Enigma in Kür K2, Lehrkraft-Vorschau und Funkraum mit den neuen Werkzeugen geprüft (Task 235)`
+- [x] **Step 2–4:** FAIL → Seed + Anpassungen → `npm run pruefen` grün (Validator 0 Fehler, Lösungsverrat-Tests, Abdeckung).
+- [x] **Step 5: Commit** `M10: Level-Karte Enigma in Kür K2, Lehrkraft-Vorschau und Funkraum mit den neuen Werkzeugen geprüft (Task 235)`
+- Umsetzung: Seed W3-L5 mit zweiter Karte; Spec-Abgleich in `test/hilfen_spec.js` (K2: runden + enigma, Reiter maschine/innenleben);
+  Lehrkraft-Einstellungen zeigen den Chip „Zusatz“/„Kür“ je Werkzeug (`lehrer.js`); Funkraum-Test prüft die Herkunftszeile
+  der Scheibe. Lösungsverrat: W3-L5 fragt nach der Mini-Enigma (A–H, eigene Tabelle) – die Werkstatt-Enigma rechnet
+  nichts davon; „Vorführen“ (keine Fixpunkte) bleibt im Level ausgeblendet.
 
 ### Task 236: Objektbilder für Folien und Videos (E192)
 

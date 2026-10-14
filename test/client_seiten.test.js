@@ -873,3 +873,37 @@ test('Abzeichen: Server-Icons als Sprite (a-funk, a-knacker, a-unknackbar), unbe
   assert.doesNotMatch(k.text(k.eins(k.document, 'ul.abzeichen-raster')), /a-knacker|a-funk|a-gibtsnicht/, 'kein Kennungstext');
   assert.match(k.text(li[3]), /Artefakt: Vigenère-Tafel/);
 });
+
+test('Einstellungen (M10 Task 235): alle 16 Werkzeuge mit Chip „Zusatz“/„Kür“', async () => {
+  const alle = require('../src/krypto/werkzeuge.js').WERKZEUGE.map(({ id, titel, welt, gast, art }) => ({ id, titel, welt, gast, art }));
+  assert.equal(alle.length, 16);
+  const k = D.lade(LEHRER, { url: 'http://x.test/lehrer#/kurs/3/einstellungen', fetch: lehrerFetch({ 'GET /api/lehrer/werkzeuge': { status: 200, body: alle } }), vorher: seiteLehrer });
+  await k.ruhe();
+  const zeilen = k.alle(k.document, 'table.werkzeug-tabelle tbody tr');
+  assert.equal(zeilen.length, 16);
+  for (const w of alle) {
+    const zeile = zeilen.find((z) => z.querySelector(`select[name="werkzeug-${w.id}"]`));
+    assert.ok(zeile, w.id);
+    const chip = zeile.querySelector('.werkzeug-art');
+    if (w.art === 'kern') assert.equal(chip, null, w.id);
+    else assert.equal(k.text(chip), w.art === 'kuer' ? 'Kür' : 'Zusatz', w.id);
+  }
+});
+
+test('Level W3-L5 (M10 Task 235): zwei Werkzeug-Karten (Mini-Enigma, Enigma), im Level-Kontext ohne „Vorführen“', async () => {
+  const seed = require('../seed/welten/welt3.json').levels.find((l) => l.id === 'W3-L5');
+  assert.deepEqual(seed.werkzeug.map((w) => w.id), ['runden', 'enigma']);
+  const level = { welt: { nr: 3, titel: 'Maschinenzeitalter', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W3-L5', nr: 'K2', titel: seed.titel, niveau: 'kuer', rolle: 'kryptoanalyse', werkzeug: seed.werkzeug, akte: null, akteDatei: null, video: null, ide: null, intro: [], maxPunkte: 10 }, aufgaben: [], ideErledigt: false, vorher: null, nachher: null };
+  const f = { ...spielFetch([welt(3)]), 'GET /api/levels/W3-L5': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [{ id: 'runden', titel: 'Runden-Labor', welt: 3, frei: true, grund: null }, { id: 'enigma', titel: 'Enigma', welt: 3, frei: true, grund: null, art: 'kuer' }] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W3-L5', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.deepEqual(k.alle(haupt, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/runden?reiter=enigma&level=W3-L5', '/labor#/enigma?reiter=maschine,innenleben&level=W3-L5']);
+  const l = D.lade([...BASIS, 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/enigma?reiter=maschine,innenleben&level=W3-L5', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'eA', welten: [0, 1, 2, 3], werkzeuge: [{ id: 'enigma', titel: 'Enigma', welt: 3, frei: true, grund: null, art: 'kuer' }] } } } });
+  l.wert('globalThis.__oeffne = []; KRLabor.oeffne = (id, v, f2, u) => { __oeffne.push([id, v, u]); return { schliesse() {} }; };');
+  await l.ruhe();
+  const [id, v, u] = l.roh(l.wert('__oeffne')).at(-1);
+  assert.deepEqual([id, v, u.level], ['enigma', { reiter: ['maschine', 'innenleben'] }, 'W3-L5']);
+  assert.equal(l.wert('KRLabor').erlaubt('enigma.vorfuehren', u), false);
+  assert.deepEqual(l.roh(l.wert('KRLabor').reiterFuer('enigma', {}, u)), ['maschine', 'innenleben', 'glossar']);
+});

@@ -62,7 +62,7 @@ const WERKZEUG = {
   '1.1': ['haeufigkeit', 'substitution'], '1.2': ['haeufigkeit'], '1.3': ['substitution'],
   '2.1': ['vigenere', 'scheibe'], '2.2': ['vigenere'], '2.3': ['vigenere'], '2.4': ['haeufigkeit'], K1: ['vigenere'],
   // M8 E122: Level-Feld nur, wo die Spec das Werkzeug für das ganze Level nennt (Aufgaben-Einbettung als Block werkzeug)
-  '3.1': ['bitlupe'], '3.2': ['runden'], '3.3': [], '3.4': [], K2: ['runden'],
+  '3.1': ['bitlupe'], '3.2': ['runden'], '3.3': [], '3.4': [], K2: ['runden', 'enigma'], // M10 Task 235: Werkstatt-Enigma als zweite Karte
   '4.1': [], '4.2': [], K3: ['rsa'],
   '5.1': ['hash'], '5.2': ['signatur'], '5.3': ['signatur'],
   '6.1': [], '6.2': ['skytale', 'vigenere'], '6.3': []
@@ -74,7 +74,7 @@ const REITER = {
   '2.4': { haeufigkeit: ['bigramme', 'histogramm'] },
   // M8 „Werkzeuge je Level“ (E122)
   '3.2': { runden: ['runden', 'lawine', 'verfolgung', 'modi', 'fehler'] },
-  K2: { runden: ['enigma'] },
+  K2: { runden: ['enigma'], enigma: ['maschine', 'innenleben'] }, // M10 E180: ohne „Vorführen“ und Glossar
   K3: { rsa: ['euklid', 'rechenwerk'] },
   '5.1': { hash: ['lawine'] },
   '5.2': { signatur: ['signatur'] },

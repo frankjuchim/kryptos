@@ -338,7 +338,7 @@ const KRLehrer = (() => {
   };
 
   /**
-   * Einstellungs-Formular. kurs: { id, aktiv, einstellungen, boardSchluessel }; o.werkzeuge: [{ id, titel, welt }],
+   * Einstellungs-Formular. kurs: { id, aktiv, einstellungen, boardSchluessel }; o.werkzeuge: [{ id, titel, welt, art }],
    * o.welten: [{ nr, titel }]; o.nurLesen: alles gesperrt (Gast/abgeschaltet). o.speichern(einstellungen) → Kurs,
    * o.boardNeu() → { boardSchluessel }. Sendet nur geänderte Schlüssel (bei werkzeuge nur geänderte ids).
    */
@@ -411,7 +411,7 @@ const KRLehrer = (() => {
                     return h(
                       'tr',
                       null,
-                      h('th', { scope: 'row' }, h('label', { for: id }, w.titel)),
+                      h('th', { scope: 'row' }, h('label', { for: id }, w.titel), w.art === 'zusatz' || w.art === 'kuer' ? [' ', h('span', { class: `chip werkzeug-art art-${w.art}` }, w.art === 'kuer' ? 'Kür' : 'Zusatz')] : null),
                       h('td', null, KR.WELTEN_KURZ[w.welt] || `Welt ${w.welt}`),
                       h(
                         'td',

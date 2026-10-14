@@ -401,6 +401,8 @@ test('Botenlauf: Bob meldet Empfang, Eve knackt – Ergebnis, Ticker und Scheibe
   });
   await eve.ruhe();
   assert.ok(eve.eins(eve.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] [role=tab][data-reiter="alle"]'));
+  // M10 Task 235: die Werkstatt-Scheibe trägt auch im Funkraum die Herkunftszeile
+  assert.equal(eve.text(eve.eins(eve.document, 'div.funk-werkzeug[data-werkzeug="scheibe"] p.werkzeug-herkunft')), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
   assert.match(eve.text(eve.eins(eve.document, 'li.funk-nachricht[data-id="11"]')), /gesendet vor/);
   const kn = eve.eins(eve.document, 'form.funk-knacken[data-nachricht="11"]');
   eve.tippe(eve.eins(kn, 'input.funk-klartext'), 'haltet den pass');
