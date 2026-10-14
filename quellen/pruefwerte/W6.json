@@ -74,12 +74,15 @@
   {"id": "W6-L2-10-kern", "aufgabe": "W6-L2-10", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.2, W6-L2-10)", "art": "lab", "verfahren": "pruefsumme", "eingabe": ["kern", "summe", 26], "erwartet": 22, "herkunft": "Konsistenz: 11 + 5 + 18 + 14 = 48 ≡ 22 (V) mod 26 (Erklärung)"},
   {"id": "W6-L2-10-nerk", "aufgabe": "W6-L2-10", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.2, W6-L2-10)", "art": "lab", "verfahren": "pruefsumme", "eingabe": ["nerk", "summe", 26], "erwartet": 22, "herkunft": "Konsistenz: Vertauschung ändert die Summe nicht (Option B)"},
   {"id": "W6-L2-10-abendrot", "aufgabe": "W6-L2-10", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.2, W6-L2-10)", "art": "lab", "verfahren": "verfahren.anwenden", "eingabe": [{"typ": "uhrwerk", "t": 3, "pendel": "ZEIT"}, "abendrot"], "richtung": "ver", "erwartet": "ZRWUL XDV", "herkunft": "Konsistenz: Uhrwerk ohne Diffusion (Erklärung)"},
-  {"id": "W6-L2-10-abendrat", "aufgabe": "W6-L2-10", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.2, W6-L2-10)", "art": "lab", "verfahren": "verfahren.anwenden", "eingabe": [{"typ": "uhrwerk", "t": 3, "pendel": "ZEIT"}, "abendrat"], "richtung": "ver", "erwartet": "ZRIUL XDV", "herkunft": "Konsistenz: ein Klartextzeichen geändert → ein Geheimtextzeichen anders (Erklärung)"}
+  {"id": "W6-L2-10-abendrat", "aufgabe": "W6-L2-10", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.2, W6-L2-10)", "art": "lab", "verfahren": "verfahren.anwenden", "eingabe": [{"typ": "uhrwerk", "t": 3, "pendel": "ZEIT"}, "abendrat"], "richtung": "ver", "erwartet": "ZRIUL XDV", "herkunft": "Konsistenz: ein Klartextzeichen geändert → ein Geheimtextzeichen anders (Erklärung)"},
+  {"id": "W6-L3-08-sym4", "aufgabe": "W6-L3-08", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.3, W6-L3-08)", "art": "lab", "verfahren": "schluesselanzahl", "eingabe": [4], "feld": "symmetrisch", "erwartet": 6, "herkunft": "Konsistenz: n = 4, symmetrisch 4 · 3/2 = 6 (Option A)"},
+  {"id": "W6-L3-08-asym4", "aufgabe": "W6-L3-08", "ort": "seed/welten/welt6.json (SPEC W6 §2 Level 6.3, W6-L3-08)", "art": "lab", "verfahren": "schluesselanzahl", "eingabe": [4], "feld": "asymmetrisch", "erwartet": 8, "herkunft": "Konsistenz: n = 4, asymmetrisch 2 · 4 = 8 (Option A)"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W6/akte_W6-1.json Auftrag 3 c), Auftrag 4 a)", "werte": "Spaltenlängen 3, 3, 3, 2 und 26⁴ = 456 976 (Arithmetik)"},
   {"ort": "quellen/material/W6/akte_W6-3.json Archivwissen 1, Auftrag 1", "werte": "Zeitplan (Minuten je BE, Rundung, Kumulation)"},
   {"ort": "quellen/material/W6/akte_W6-2.json Archivwissen 1, Aufträge 2–6, Abi-Check", "werte": "Stufe 1 UHRWERK (Ring mit Schritt t) und Gesamtverfahren: zeitreisebeendet, chronoskopkern, ZRWUL XDV"},
-  {"ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-01, -11", "werte": "Zeitplan 9 min; Ring t = 7 → ZXDARNHA"}
+  {"ort": "quellen/material/W6/warmup_W6.json Karte WU-W6-01, -11", "werte": "Zeitplan 9 min; Ring t = 7 → ZXDARNHA"},
+  {"ort": "seed/welten/welt6.json W6-L3-01, W6-L3-02, W6-L3-03 (SPEC W6 §2 Level 6.3)", "werte": "Takt 270 min / 120 BE = 2,25 und 220 min / 100 BE = 2,2 min je BE; 30 · 2,25 = 67,5; 25 · 2,2 = 55; 4 bzw. 6 BE → 9 bzw. 13,5 min; 30 − 10 · 2,25 = 7,5 (Arithmetik mit Dezimalbrüchen, keine Bibliotheksfunktion; nachgerechnet mit Python fractions)"}
  ]
 }

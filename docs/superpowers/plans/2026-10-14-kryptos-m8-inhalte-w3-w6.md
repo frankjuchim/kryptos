@@ -1057,7 +1057,8 @@ Dezimalzahlen exakt (keine `toleranz` – die gilt nur im Generator G-W6-2); Kom
 
 **Erwartete Hinweise:** keine.
 
-- [ ] **Step 1–4** (`UMFANG[6]` += `'W6-L3'`). **Step 5: Commit** `git commit -m "Welt 6: Level 6.3 „Generalprobe“"`.
+- [x] **Step 1–4** (`UMFANG[6]` += `'W6-L3'`). **Step 5: Commit** `git commit -m "Welt 6: Level 6.3 „Generalprobe“"`.
+- [x] **Umsetzungsnotiz:** W6-L3-01 … -03: Zahlenfelder (`typ: zahl`, Lösungen „2,25“ usw., Komma und Punkt akzeptiert, ohne `toleranz`). Die Bibliothek hat keine Divisions-Funktion → die Werte stehen als Arithmetik in `nicht_abbildbar` von `W6.json` (nachgerechnet mit Python `fractions`: 9/4, 135/2, 11/5, 55, 9, 27/2, 15/2); kein `pruefnachweis` nötig (Kategorie `begriffe`). W6-L3-04/-05 `match` mit den Operatoren als Elementen (1–6) und den Definitionen (a)–(f) wörtlich als Kategorien; Aufgabentext „Ordne …“ ohne die Liste (die steht in den Karten). W6-L3-08 Konsistenz `schluesselanzahl(4)` = 6 / 8 (zwei Einträge). Hinweise: nur „akte ↔ akten.json“ (Task 199).
 
 ### Task 189: Welt 6 – Boss „Generalprobe online“
 
