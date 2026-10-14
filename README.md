@@ -8,12 +8,12 @@ und Zertifikaten – und werden dabei abwechselnd zu Alice (Kryptografie) und Ev
 Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbunds **InfoLabs**
 (https://labs.frankjuchim.de) · Anmeldung ausschließlich über das Portal.
 
-> **Stand (13.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
-> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M7** gebaut: die
-> Welten 0–2 sind spielbar, das Kryptolabor hat alle elf Werkzeuge, der Funkraum alle fünf Live-Szenarien, dazu
-> Chiffren-Werkstatt und Knack-Arena (Branch `feature/m0-kern`, Version 0.4.0, noch nicht live) – siehe „Stand der
-> Plattform“ (Abschnitt 4.1). Die Welten 3–6 folgen mit M8; bis dahin laufen sie mit den Papiermaterialien.
-
+> **Stand (14.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
+> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M9** gebaut
+> (Release-Kandidat 1.0.0 in Vorbereitung, Branch `feature/m0-kern`, noch nicht live): alle sieben Welten spielbar,
+> Kryptolabor mit elf Werkzeugen, Funkraum mit fünf Live-Szenarien, Chiffren-Werkstatt und Knack-Arena, Sicherheits- und
+> Docker-Prüfungen, Ende-zu-Ende mit dem Portal – siehe „Stand der Plattform“ (Abschnitt 4.1) und „Betrieb“ (Abschnitt 6).
+> Live geht Kryptos erst mit dem Merge nach `main` nach Freigabe der Lehrkraft.
 ---
 
 ## 1. Das Konzept
@@ -96,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M7)
+### 4.1 Stand der Plattform (M0–M9)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -110,7 +110,10 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
 | M7 Funkraum, Werkstatt, Arena | Teams (Tischgruppen mit festen Namen) im Lehrkraft-Tab „Teams“; Funkraum `/funkraum` mit Botenlauf, Wettknacken, Der doppelte Schlüssel, Schlüsseltausch vor Eves Augen, Mallory im Netz – Regie im Tab „Funkraum“, Beamer `/beamer/funkraum/<id>` mit QR-Code, eingebettete Labor-Werkzeuge; Nachrichten nur A–Z/0–9/Leerzeichen (≤ 160), Klartexte nur als HMAC, **Beenden löscht alle Inhalte** (auch aus dem WAL der Datenbank), 24 h nach Anlage ist alles weg; Chiffren-Werkstatt `/werkstatt` (Baukasten aus 1–4 Stufen, Live-Prüfung, Entwurf nur im Browser) und Knack-Arena `/werkstatt#/arena` (Angriffe per Klartext oder Schlüssel mit Grenzen, Beurteilung nur für Team und Lehrkraft, Beamer `/beamer/arena/<id>`); Abzeichen Funkraum-Veteran, Arena-Knacker, Unknackbar |
 
-Noch nicht da: Welten 3–6 (M8), Deploy (M9).
+| M8 Inhalte W3–W6 | Welten 3–6 (`seed/welten/welt3–6.json`: Archivfunde, Level mit Kür 3.K2 und 4.K3, Boss-Pools, neue Interaktionen `hash-ziel` und Uhrwerk), Warm-up W3–W6, Generatoren, Akten, Lösungen und Lehrkraft-PDFs W3–W6, Abdeckungsprüfung gegen §11 der Welt-Specs (`npm run abdeckung`) |
+| M9 Abschluss | strenge Startprüfung der Konfiguration (`npm run konfig:pruefen`, Startzeile ohne Geheimnisse), Docker-Image ohne Schlüssel (CI-Job `docker`), Sicherheits-Review als Tests (Kopfzeilen, Cookies hinter dem Proxy, Routen-Inventar mit Rechten und Rate-Limits, Lösungsverrat-Crawler), Datenschutzseite mit Platzhaltern der Schule, e2e-Szenarien 13/14, Ende-zu-Ende mit dem Portal (`npm run e2e:portal`), Betriebsanleitung (Abschnitt 6) |
+
+Noch offen: Freigabe der Lehrkraft und erstes Live-Deploy (Abschnitt 6), Angaben der Schule auf der Datenschutzseite.
 
 **Lokal starten** (Node ≥ 20):
 
@@ -133,18 +136,25 @@ Inhalte · Warm-up-Import · Backup & Verbund · Wartung. Kurse, Konten und Frei
 **Prüfungen:**
 
 ```
-npm test                       # Unit-, API- und Client-Tests (node:test), inkl. Docker-Abgleich ohne Daemon
+npm test                       # Unit-, API- und Client-Tests (node:test), inkl. Docker-Nachbau ohne Daemon und Sicherheits-Inventar
 npm run validate               # Inhalts-Validator für seed/welten/*.json und seed/gast/demo.json
-npm run pruefen                # test + validate + Prüfwerte (Python-Zwilling) + Seeds unabhängig nachrechnen
-npm run e2e                    # Playwright-Durchlauf (Chromium), Szenarien 1–11 (5 Funkraum, 6 Arena), Fotos nach docs/screenshots/
+npm run pruefen                # test + validate + Prüfwerte + Seeds unabhängig nachrechnen + Abdeckung
+npm run krypto:pruefwerte      # Rechenwerte aller Materialien gegen den Python-Zwilling
+npm run krypto:seeds           # Lösungen der Seeds unabhängig nachrechnen
+npm run abdeckung              # Abdeckung gegen §11 der Welt-Specs ([--welt N])
 npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
-npm run akten -- --pruefen     # ebenso loesungen, lehrkraft, workspaces; Erzeugen ohne --pruefen (braucht LibreOffice)
+npm run e2e                    # Playwright (Chromium), Szenarien 1–14, Fotos nach docs/screenshots/
+LABS_DIR=<labs-Kopie> npm run e2e:portal           # Ende-zu-Ende mit einer lokalen Kopie des Portals (INTEGRATION §6)
+npm run konfig:pruefen         # Konfiguration aus den Umgebungsvariablen prüfen, ohne Start (Abschnitt 6)
+npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, npm run workspaces; ohne --pruefen erzeugen (LibreOffice)
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)
+npm start                      # Server wie im Image (braucht die Umgebungsvariablen aus Abschnitt 6)
 node scripts/vertrag_pruefen.js http://localhost:3000   # Manifest gegen den Vertrag prüfen
 ```
 
 Die CI (`.github/workflows/pruefung.yml`) führt das in den Jobs `app`, `krypto`, `inhalte` (Java 21, LibreOffice,
-Python-Pakete aus `werkzeuge/material/requirements.txt`) und – bei Pull Requests nach `main` – `e2e` aus.
+Python-Pakete aus `werkzeuge/material/requirements.txt`), `docker` (Image bauen, mit frischem Volume starten,
+Vertragsprüfung, Neustart) und – bei Pull Requests nach `main` – `e2e` aus.
 
 ## 5. Verbund InfoLabs
 
@@ -177,9 +187,83 @@ Verzeichnis der Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` …) stehen 
 
 ## 6. Betrieb
 
-CapRover (`captain-definition` + `Dockerfile`, Port 80, Daten in `/app/data`), Konfiguration ausschließlich über
-Umgebungsvariablen (TECHNIK §6.1, §16). `main` wird ab M9 mit CapRover verbunden: Jeder Push auf `main` startet den
-Live-Build – deshalb nur Feature-Branches und Merge nach Freigabe.
+> ⚠️ **`main` ist direkt mit CapRover verbunden: Jeder Push auf `main` startet sofort den Live-Build.** Gearbeitet wird
+> nur auf Feature-Branches. Nach `main` kommt eine Version nur nach **Freigabe der Lehrkraft**, mit grüner Prüfung
+> (`npm run pruefen`, `npm run e2e`, CI einschließlich Job `docker`) – als Fast-Forward:
+> `git fetch origin main && git merge-base --is-ancestor origin/main HEAD && git push origin HEAD:main`.
+> Danach `https://kryptos.frankjuchim.de/healthz` aufrufen: `{"status":"ok","version":"…"}` muss die neue Version zeigen.
+
+### 6.1 CapRover-App
+
+- App `kryptos`, Domain `kryptos.frankjuchim.de`, **HTTPS erzwingen**, Container-HTTP-Port **80**; gebaut wird aus
+  `captain-definition` → `./Dockerfile` (Node 20, Benutzer `node`, ohne Tests, Werkzeuge und Quellen).
+- **Persistent Directory** `/app/data` (Label `kryptos-data`): enthält `kryptos.db` (+ WAL). Ist das Volume für den
+  Benutzer `node` nicht beschreibbar, bricht der Start mit „DATA_DIR /app/data ist nicht beschreibbar (…)“ ab.
+- Healthcheck: `/healthz` (auch als Container-Healthcheck im Dockerfile).
+
+### 6.2 Umgebungsvariablen
+
+| Variable | Wert | |
+|---|---|---|
+| `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` (ohne `/` am Ende) | **Pflicht** |
+| `PORTAL_URL` | `https://labs.frankjuchim.de` (ohne `/` am Ende) | **Pflicht** |
+| `PORTAL_PUBLIC_KEY` | öffentlicher Schlüssel des Portals: im Portal „Plattformen“ → Öffentlicher Schlüssel → „Einzeilig kopieren“ (oder Inhalt von `https://labs.frankjuchim.de/sso/schluessel.pem`); Anführungszeichen, Windows-Zeilenenden und `\n` werden toleriert, ein **privater** Schlüssel bricht ab | **Pflicht** |
+| `SESSION_SECRET` | mindestens 32 zufällige Zeichen, z. B. `openssl rand -hex 32` | **Pflicht** |
+| `TRUST_PROXY` | Standard `1` (CapRover-Proxy; nötig für `Secure`-Cookies) | optional |
+| `AUTH_MODUS` | `portal` (aus dem Image; einzig erlaubter Wert) | nicht ändern |
+| `PLATTFORM_ID` | `kryptos` (aus dem Image) | nicht ändern |
+| `PORT` | `80` (aus dem Image) | nicht ändern |
+| `DATA_DIR` | `/app/data` (aus dem Image) | nicht ändern |
+| `TZ` | `Europe/Berlin` (aus dem Image) | nicht ändern |
+| `NODE_ENV` | `production` (aus dem Image): dann nur `https://`-Adressen (außer `localhost`) | nicht ändern |
+| `SEED_DIR`, `WELT_DATEIEN` | nur Entwicklung | nicht setzen |
+
+**Nicht setzen:** `VERTRAG_VERSION` (Standard und einzig erlaubter Wert `1.2`), `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+(werden nicht gelesen – der Admin kommt vom Portal).
+
+### 6.3 Startprüfung
+
+Kryptos startet nur mit vollständiger, gültiger Konfiguration. Im CapRover-Log steht nach dem Start eine Zeile
+`Konfiguration: {…}` mit ID, Adressen, Anzahl und **Fingerabdruck** der Portal-Schlüssel (`sha256:…`) – nie das
+`SESSION_SECRET` oder der Schlüsseltext. Den Fingerabdruck mit dem Schlüssel des Portals vergleichen. Dieselbe Prüfung
+ohne Start: `npm run konfig:pruefen` (gleiche Variablen, Exit 0 „✔ Konfiguration in Ordnung“).
+
+| Meldung „Kryptos startet nicht. Konfiguration: …“ | Ursache |
+|---|---|
+| `PLATTFORM_URL fehlt.` (ebenso `PORTAL_URL`, `PORTAL_PUBLIC_KEY`) | Variable in CapRover nicht gesetzt |
+| `… muss im Betrieb mit https:// beginnen.` | `http://` statt `https://` |
+| `… ohne Schrägstrich am Ende angeben …` | Adresse endet mit `/` |
+| `PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel …` | privaten statt öffentlichen Schlüssel eingefügt |
+| `PORTAL_PUBLIC_KEY enthält einen unlesbaren Schlüssel.` / `… keinen Schlüssel …` | Schlüssel unvollständig kopiert |
+| `SESSION_SECRET fehlt oder ist kürzer als 32 Zeichen.` | Geheimnis zu kurz |
+| `VERTRAG_VERSION muss 1.2 sein …` | alte Einstellung – Variable löschen |
+| `Kryptos unterstützt nur AUTH_MODUS=portal …` | `AUTH_MODUS` geändert – Variable löschen |
+| `DATA_DIR /app/data ist nicht beschreibbar (…)` | Persistent Directory gehört nicht dem Benutzer `node` |
+
+### 6.4 Eintrag im Portal (Superadmin, INTEGRATION §6)
+
+1. Im Portal `https://labs.frankjuchim.de` als Superadmin unter **„Plattformen“** die Basis-URL
+   `https://kryptos.frankjuchim.de` eintragen → „Manifest abrufen und eintragen“ → Ampel grün (Manifest und `/healthz`).
+2. Den Vorschlag für die Rücksprung-Adresse **`https://kryptos.frankjuchim.de/sso/ende`** bestätigen (zeichengenau).
+3. Unter „Lehrkräfte“ die Lehrkräfte für Kryptos **freischalten**.
+4. Als Lehrkraft einen Kurs mit Kryptos anlegen; als Schülerin bzw. Schüler beitreten und „Weiter zu Kryptos“ – die
+   Zeitleiste erscheint; als Lehrkraft über „Anmelden über InfoLabs“ auf Kryptos → Kursübersicht.
+5. Kurs im Portal umbenennen → unter „Verbund-Aufträge“ steht der Auftrag auf „erledigt“, Kryptos zeigt den neuen Namen.
+6. Abschließend: `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de` → „erfüllt Vertrag v1.2 …“.
+
+### 6.5 Update und Sicherung
+
+- Vor jedem Update: **Backup** herunterladen (Admin → Verwaltung → „Backup & Verbund“ → „Backup (JSON)“; ohne
+  Funkraum-, Arena- und Anmelde-Daten) und zusätzlich das CapRover-Volume sichern.
+- Ein Update startet mit der vorhandenen Datenbank; Migrationen laufen nur vorwärts. Eine ältere Version nur mit einer
+  dazu passenden Datenbank (Backup) zurückspielen – eine neuere Datenbank lehnt sie ab.
+- Danach `/healthz` (Version) und die Startzeile im Log prüfen.
+
+### 6.6 Was die Schule ergänzen muss
+
+Die Datenschutzseite (`public/datenschutz.html`, `/datenschutz`) ist ein Entwurf: Angaben in [eckigen Klammern]
+(Schule, Anschrift, Schulleitung, Datenschutzbeauftragte bzw. -beauftragter, Rechtsgrundlage, Hoster,
+Sicherungskopien) liefert die Schule.
 
 ## 7. Weiterentwicklung
 

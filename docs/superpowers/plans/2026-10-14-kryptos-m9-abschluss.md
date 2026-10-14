@@ -497,14 +497,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Consumes: Befehle und Variablen aus Tasks 205–217
 
-- [ ] **Step 1: Failing test** `test/readme.test.js`:
+- [x] **Step 1: Failing test** `test/readme.test.js`:
   ```js
   test('readme_betrieb: jede Umgebungsvariable aus ladeKonfig und dem Dockerfile steht in README §6', …); // Namen per Regex aus src/verbund/konfig.js (e.NAME) und Dockerfile (ENV)
   test('readme_befehle: jedes npm-Skript aus package.json steht im README', …);
   test('readme_portal_eintrag: Schritte „Plattformen“, „/sso/ende“, „freischalten“, „vertrag_pruefen.js https://kryptos.frankjuchim.de“, „Freigabe der Lehrkraft“', …);
   ```
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement** README §6 „Betrieb“ (Vorbild Algo Quest F.1/H.7, gesiezt):
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement** README §6 „Betrieb“ (Vorbild Algo Quest F.1/H.7, gesiezt):
   1. ⚠️-Kasten `main` = live; Merge nur nach Freigabe (Fast-Forward-Befehl wie Algo Quest, danach `/healthz` auf `1.0.0` prüfen).
   2. CapRover-App `kryptos`: HTTP-Port 80, HTTPS erzwingen, Persistent Directory `/app/data` (Label `kryptos-data`), `captain-definition`.
   3. Tabelle Umgebungsvariablen: Pflicht `PLATTFORM_URL=https://kryptos.frankjuchim.de`, `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` (Portal → Plattformen → Öffentlicher Schlüssel → „Einzeilig kopieren“), `SESSION_SECRET` (≥ 32 Zeichen, z. B. `openssl rand -hex 32`); aus dem Image `AUTH_MODUS=portal`, `PLATTFORM_ID=kryptos`, `PORT=80`, `DATA_DIR=/app/data`, `TZ`, `NODE_ENV`; optional `TRUST_PROXY` (Standard 1); **nicht** setzen: `VERTRAG_VERSION`, `ADMIN_*`.
@@ -513,8 +513,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   6. Update und Sicherung: Backup-Download (Admin → Verwaltung → Backup & Verbund) vor jedem Update, CapRover-Volume-Sicherung, Rücksprung auf eine ältere Version nur mit passender Datenbank (Migrationen nur vorwärts).
   7. Was die Schule ergänzen muss: Datenschutz-Platzhalter (Task 210).
   §4.1 „Stand der Plattform“ um M8/M9 ergänzen, Kopf-Stand auf 1.0.0-Kandidat (Datum), Prüfungen-Liste (`konfig:pruefen`, `e2e:portal`, `abdeckung`, Szenarien 1–14). TECHNIK §16.3 an README angleichen, §17 offene Punkte aktualisieren. Gesamtplan Teil A: M8 „erledigt (Tasks 164–204, Detailplan `2026-10-14-kryptos-m8-inhalte-w3-w6.md`)“, M9-Zeile mit Link und Stand.
-- [ ] **Step 4: Run** `node --test test/readme.test.js test/rechte.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "README: Betriebsanleitung CapRover, Konfiguration, Portal-Eintrag; TECHNIK und Gesamtplan nachgeführt (M9 Task 218)"`
+- [x] **Step 4: Run** `node --test test/readme.test.js test/rechte.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "README: Betriebsanleitung CapRover, Konfiguration, Portal-Eintrag; TECHNIK und Gesamtplan nachgeführt (M9 Task 218)"`
 
 ### Task 219: Version 1.0.0, Gesamtprüfung, Abschlussbericht
 
@@ -656,6 +656,7 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 49 | M9 E152, E153 | Datenschutzseite mit Platzhaltern `[…]` der Schule, Löschfristen | wie Task 210; Angaben liefert die Schule (F3) |
 | 50 | M9 E149, E154, E159 | Betrieb nur mit https (außer localhost); Foto-Satz; Version 1.0.0 = Release-Kandidat, Merge = erstes Deploy | wie Tasks 205, 217, 219 |
 | 51 | M9 Task 208 (Review) | Gastmodus-Limit 300 Anfragen je 10 min je IP (`src/routes/gast.js`): reicht das, wenn eine ganze Klasse hinter einer Schul-IP den Gastmodus öffnet (pro Aufgabe mehrere Aufrufe)? | unverändert = Algo-Quest-Wert (2.8.2, gleiche Stelle); Erhöhung nur nach Entscheidung der Lehrkraft |
+| 52 | M9 Task 212 (Portal-Lauf) | Hinweis zu labs: das Portal bricht mit `TRUST_PROXY=false` ab (`invalid IP address: false`, labs `src/server.js` reicht den Text an Express weiter); `0` funktioniert. In labs korrigieren? | nur Hinweis; labs wird aus Kryptos nicht geändert (TECHNIK §17 T12) |
 
 ---
 

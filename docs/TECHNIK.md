@@ -2066,20 +2066,27 @@ bleibt, `/healthz`-Version, `vertrag_pruefen.js` Exit 0, außerhalb `DATA_DIR` w
 
 ### 16.3 CapRover
 
-- App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, `captain-definition` → `./Dockerfile`.
+Betriebsanleitung für die Lehrkraft: **README §6** (maßgeblich für die Schritte; hier die technischen Eckpunkte).
+
+- App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, Container-HTTP-Port 80, `captain-definition` →
+  `./Dockerfile`. `main` ist mit der App verbunden (jeder Push = Live-Build); Merge nur nach Freigabe der Lehrkraft als
+  Fast-Forward, danach `/healthz` mit der neuen Version prüfen (README §6).
 - **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL). Das Image legt `/app/data`
   mit Besitzer `node` an; ist das eingehängte Volume nicht für `node` beschreibbar, bricht der Start mit „Konfiguration:
   DATA_DIR /app/data ist nicht beschreibbar (…)“ ab (Schreibprobe vor der DB, §6.1, K45) – dann im Volume Besitzer bzw.
   Rechte korrigieren.
+- Umgebungsvariablen (README §6.2): Pflicht `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal
+  „Einzeilig kopieren“), `SESSION_SECRET` (≥ 32 zufällige Zeichen); optional `TRUST_PROXY` (Standard 1); aus dem Image
+  `NODE_ENV`, `PORT`, `DATA_DIR`, `TZ`, `AUTH_MODUS`, `PLATTFORM_ID`; nicht setzen `VERTRAG_VERSION`, `ADMIN_*`.
 - Startzeile im App-Log: `Konfiguration: {…}` (ID, URLs, Anzahl und Fingerabdrücke der Portal-Schlüssel – ohne Geheimnisse,
-  §6.1); der Fingerabdruck lässt sich mit dem des Portal-Schlüssels vergleichen. Prüfung ohne Start: `npm run konfig:pruefen`.
-- Umgebungsvariablen: `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal „Einzeilig kopieren“),
-  `SESSION_SECRET` (≥ 32 zufällige Zeichen), `TRUST_PROXY=1`; Rest aus dem Dockerfile.
+  §6.1); Abbruchmeldungen und Ursachen als Tabelle in README §6.3. Prüfung ohne Start: `npm run konfig:pruefen`.
 - Healthcheck `/healthz` → `{ "status": "ok", "version": "<package.json>" }`; Container-Healthcheck siehe Dockerfile.
-- Portal-Eintrag (Superadmin): Basis-URL eintragen → Ampel grün (Manifest + `/healthz`), Rücksprung
+- Portal-Eintrag (Superadmin, README §6.4): Basis-URL eintragen → Ampel grün (Manifest + `/healthz`), Rücksprung
   `https://kryptos.frankjuchim.de/sso/ende` bestätigen, Lehrkräfte freischalten, Kurs mit Kryptos anlegen, Ende-zu-Ende
-  nach INTEGRATION.md §6. Danach `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de`.
-- Datensicherung: Backup-Download (Superadmin) vor jedem Update; zusätzlich CapRover-Volume-Sicherung.
+  nach INTEGRATION §6 (lokal vorab geprüft mit `npm run e2e:portal`, §15). Danach
+  `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de`.
+- Datensicherung (README §6.5): Backup-Download (Superadmin) vor jedem Update; zusätzlich CapRover-Volume-Sicherung;
+  Migrationen nur vorwärts – ältere Version nur mit passender Datenbank.
 
 ### 16.4 Entwicklung ohne echtes Portal
 
@@ -2118,3 +2125,6 @@ dem ersten Live-Deploy.
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
 | T8 | Fremdcode „Krypto-Werkstatt“ | **erledigt in M6 ohne Fremdcode:** `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry (Zeitlupe/Einzelschritt, Tastatur, `prefers-reduced-motion`), Rechnung über `Krypto.*`; aus der Werkstatt nichts übernommen (Lizenz ungeklärt, nur Bedienideen) – `docs/FREMDCODE.md` (Design O11) |
 | T9 | Mallory-Zusatzrolle im Schlüsseltausch (W4 §9.3, eA, optional) | **offen** (Plan M7 offene Entscheidung 4): vorläufig nur als Papierkarte; „Mallory im Netz“ (W5) zeigt den Angriff digital |
+| T10 | Erstes Live-Deploy (M9) | **offen – Freigabe der Lehrkraft** (Plan M9 F1–F12): CapRover-App mit Persistent Directory und Variablen (README §6), grüner CI-Job `docker` auf dem PR, Merge nach `main`, Portal-Eintrag, Ende-zu-Ende live |
+| T11 | Datenschutzseite | **offen – Angaben der Schule** in `[…]` (Plan M9 L49) |
+| T12 | Hinweis labs (nicht Kryptos): das Portal (`labs/src/server.js`) bricht mit `TRUST_PROXY=false` ab (`invalid IP address: false`); `0` funktioniert | nur Hinweis an die Lehrkraft (Plan M9 Task 212); labs wird aus diesem Repo nicht geändert |
