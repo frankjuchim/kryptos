@@ -95,3 +95,16 @@ test('Welt 2: Kür K1 nur bei Kurseinstellung kuer „frei“', async (t) => {
   assert.ok(!(await levels()).some((l) => l.id === 'W2-L5'), 'gesperrte Kür unsichtbar');
   await s.get('/api/levels/W2-L5').expect(404);
 });
+
+// Plan M8 Task 173: Level 3.2 „Der Blockchiffre-Baukasten“ (eA) ist im gA-Kurs ausgeblendet, im eA-Kurs sichtbar.
+test('Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA) nur im eA-Kurs', async (t) => {
+  if (!(S.UMFANG[3] || []).includes('W3-L2')) return t.skip('W3-L2 noch nicht im UMFANG');
+  const { s, lk, kurs } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt3.json')] });
+  const levels = async () => (await s.get('/api/welten').expect(200)).body.welten.find((w) => w.nr === 3).levels.map((l) => l.id);
+  assert.ok((await levels()).includes('W3-L2'), 'eA-Kurs (Standard) sieht W3-L2');
+  await s.get('/api/levels/W3-L2').expect(200);
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.ok(!(await levels()).includes('W3-L2'), 'gA-Kurs sieht W3-L2 nicht');
+  await s.get('/api/levels/W3-L2').expect(404);
+  await s.get('/api/aufgaben/W3-L2-04').expect(404);
+});

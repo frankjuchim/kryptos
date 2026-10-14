@@ -551,8 +551,9 @@ SUED/TXRD/YORD.
 
 **Erwartete Hinweise:** keine (Level eA mit nur eA-Aufgaben).
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L2'` → FAIL; dazu `inhalte_plan`: W3-L2 im gA-Kurs unsichtbar.
-- [ ] **Step 2–4:** Implement, Prüfkette P1–P5, K1–K6. **Step 5: Commit** `git commit -m "Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA)"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L2'` → FAIL; dazu `inhalte_plan`: W3-L2 im gA-Kurs unsichtbar.
+- [x] **Step 2–4:** Implement, Prüfkette P1–P5, K1–K6. **Step 5: Commit** `git commit -m "Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA)"`.
+- [x] **Umsetzungsnotiz:** S-Box als Block `tabelle` mit drei Spalten (Eingang · S · S⁻¹, 16 Zeilen – auf dem Handy lesbar) in W3-L2-02, -04 und W3-B-07 (die übrigen KRYPTOS-16-Aufgaben brauchen keine S-Box). Spec-Klammern „(Eigener Zustand … Korrektur M8 D1/D2)“ sind Metatext und stehen nicht im Schülertext. W3-L2-03 zeigt den Zustand zusätzlich als Block `bits` (vier Zeilen). W3-L2-06 Zustände als Tabelle; Prüfwert-Gruppe `kryptos16.lawine` (`feld` [i, "anzahl"]). W3-L2-07 Options-ids 1–5 = P₁–P₅ (CHOICE_FEST); b) fragt „Wie viele Bits sind in P₃ falsch? (0, falls P₃ korrekt ist)“; Erklärung nach a)/b)/c) geordnet; `pruefnachweis` mit Konsistenz-Einträgen (`art: spec`: CBC-Verschlüsselung, CBC-Entschlüsselung mit gekipptem Bit 5 in C₂, ECB; `lab`: `bloeckeZuText` → „SEQp(GUT“). W3-L2-08 Optionen `korrekt`/`falsch`, Begründung als Muster in der Erklärung (E129). Test „W3-L2 nur im eA-Kurs“ in `inhalte_plan`.
 
 ### Task 174: Welt 3 – Level 3.3 „Die Chiffren-Werkstatt“ (eA)
 
