@@ -2048,7 +2048,8 @@ test('verfahren: Typen ring, uhrwerk, mini_enigma (Plan M8 E123, Spec-Vektoren W
   const A = (v, t, r = 'ver') => K.verfahren.anwenden(v, t, r);
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK'); // W6 §0.1
   assert.equal(A({ typ: 'uhrwerk', t: 5, pendel: 'UHR' }, 'TVZLTLEA', 'ent'), 'ZEITZONE'); // W6-L2-04
-  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zahnradwerk'), 'TUUHLDYHYEOYREBE'); // W6 §8 G-W6-1
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zahnradwerk'), 'TUUHLDYHYEOYREBE'); // früheres Beispiel G-W6-1 (W6 §8 vor M8 E147)
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'RITZEL' }, 'standuhr'), 'JVASHCET'); // W6 §8 G-W6-1 (M8 E147)
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'ZEIT' }, 'mondhell'), 'LHTHPPMI'); // W6-L2-03 (D3)
   assert.equal(A({ typ: 'ring', t: 5 }, 'ZEITMASC'), 'ZAICMEST'); // W6-L2-01
   assert.equal(A({ typ: 'ring', t: 7 }, 'ZAHNRADX'), 'ZXDARNHA'); // WU-W6-11

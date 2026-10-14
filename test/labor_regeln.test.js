@@ -139,7 +139,8 @@ test('Beispieltexte der Werkzeuge kommen nicht aus Seeds, Akten, Warm-up, Materi
   const quellen = QUELLEN();
   assert.ok(quellen.length > 40, 'Quellen gefunden');
   for (const d of quellen) sammle(JSON.parse(fs.readFileSync(d, 'utf8')), verboten);
-  for (const w of ['papyrus', 'kerze', 'licht', 'hafen']) assert.ok(verboten.has(w), `Selbstprüfung: „${w}“ wird erkannt`);
+  // „licht“ stand nur in der alten W3-Wortliste der Lehrerhinweise – ersetzt durch „windrose“ (Plan M8 Task 191)
+  for (const w of ['papyrus', 'kerze', 'windrose', 'hafen']) assert.ok(verboten.has(w), `Selbstprüfung: „${w}“ wird erkannt`);
   assert.ok(verboten.size > 1000, 'Wörter gesammelt');
   for (const f of werkzeugModule()) {
     const src = fs.readFileSync(path.join(DIR, f), 'utf8');

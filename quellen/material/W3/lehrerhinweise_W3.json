@@ -778,7 +778,7 @@
   {
    "t": "p",
    "klein": true,
-   "md": "Deterministisch per Seed, serverseitig geprüft, 1 Punkt, höchstens 30 je Tag. Wortliste (ohne Video-Wörter): BOJE, HAFEN, NORD, SUED, OST, WEST, ZUG, FUNK, KABEL, WOLKE, MORGEN, ABEND, LICHT, NEBEL, ANKER, TURM, BRIEF, KARTE, TELEX, SIGNAL."
+   "md": "Deterministisch per Seed, serverseitig geprüft, 1 Punkt, höchstens 30 je Tag. Wortlisten (Auszug; kein Wort aus Lab, Akten, Bossen, Warm-up oder Videos): RELAIS, SPULE, KURBEL, DAMPF, NADEL, QUARZ, VENTIL, MOTOR, KESSEL, DIODE; Klartexte der Spaltentransposition DAMPFKESSEL, KURBELWELLE, ZAHNSTANGE; Schlüsselwörter KOLBE, KANNE, TASSE; ADFGVX-Quadrate FUNKMAST7, RELAIS9 und fest ZEPPELIN18."
   },
   {
    "t": "tabelle",

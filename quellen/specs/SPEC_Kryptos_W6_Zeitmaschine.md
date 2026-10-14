@@ -656,16 +656,19 @@ Spirale: W0 (02, 03, 05), W1 (12 Inverses), W2 (07, 10), W3 (12 XOR), W4 (06), W
 ## §8 Trainingsplatz-Generatoren der Welt 6
 
 **G-W6-1 „Eves Uhrwerk“** (ver- und entschlüsseln)
-- Parameter: Ringschritt t ∈ {3, 5, 7}; Pendelwort aus {UHR, TAG, RAD, SAND, ZEIT, KERN, NACHT} (keine Videowörter);
-  Klartext aus einer Wortliste deutscher Wörter/Komposita mit 6–16 Buchstaben ohne Umlaute (z. B. „zahnradwerk“,
-  „sanduhr“, „zeitzone“, „uhrwerk“); Richtung ver/ent (Seed-gesteuert).
+- Parameter: Ringschritt t ∈ {3, 5, 7}; Pendelwort aus {RITZEL, UNRUH, ANKERRAD, KLINKE, LOT, HEMMUNG, SPINDEL, NOCKE}
+  (keine Videowörter); Klartext aus einer Wortliste deutscher Wörter/Komposita mit 6–16 Buchstaben ohne Umlaute (z. B.
+  „standuhr“, „pendeluhr“, „taschenuhr“, „kuckucksuhr“); Korrektur M8 E147: die früheren Pendelwörter UHR, TAG, RAD,
+  SAND, ZEIT, KERN, NACHT und die Klartexte „zahnradwerk“, „sanduhr“, „zeitzone“, „uhrwerk“ stehen in Lab, Akten oder
+  Warm-up und sind deshalb keine Generator-Wörter; Richtung ver/ent (Seed-gesteuert).
 - Aufgabentext: „Verschlüssele „<klartext>“ mit Eves Uhrwerk (t = <t>, Pendelwort <W>).“ bzw. „Entschlüssele
   <GEHEIMTEXT> (t = <t>, Pendelwort <W>).“
 - Lösung: `eve_enc`/`eve_dec` aus `shared/krypto.js` (Python-Zwilling: `eve.py`), Geheimtext in Fünfergruppen.
 - Prüfregel: Normalisierung `krypto`; beim Entschlüsseln werden angehängte X toleriert. Fallen-Diagnose: Eingabe =
   Ergebnis mit vertauschten Stufen → P3; Eingabe = Ergebnis mit Vigenère ohne Pendel (Wort zyklisch) → P4; Eingabe =
   Ergebnis mit inverser statt gleicher Lesereihenfolge → P3.
-- Beispiel: „zahnradwerk“, t = 3, UHR → Zwischentext ZNDAR WHAEX XRXXK X → TUUHL DYHYE OYREB E ✔ nachgerechnet.
+- Beispiel: „standuhr“, t = 3, RITZEL → Zwischentext SNHTD RAU, Pendelfolge RITZELEZ → JVASH CET ✔ nachgerechnet
+  (Korrektur M8 E147; früher „zahnradwerk“, UHR).
 
 **G-W6-2 „Zeitplan“**
 - Parameter: Niveau eA (2,25 min/BE) oder gA (2,2 min/BE); BE-Liste aus 7–10 Teilaufgaben mit 2–6 BE, Summe 30 (eA)
@@ -800,5 +803,5 @@ Skripte im Scratchpad `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525
 | Boss B-01, 06, 07, 08 | dachs → HEGLW; kerze → DELSE; ggT 6; 1100 1001 | level.py |
 | Boss B-09, 10, 12, 15 | GCPK → kanu; MTOJXQ → pinsel (falsch LEJOAH); leuchte → MGXDJWF = Vigenère BCD; BA ∘ CAD = DAECBD (*sternwarte*: beide Wege VTITO ZDRXG; Korrektur M8 D7 – CEEDDF war der Wert von W2-B-15) | level.py; M8: `shared/krypto.js` + Zwilling |
 | Warm-up 03, 07, 11, 12 | (5 − 9) mod 26 = 22 → V; AB ∘ AB = AC; ZAHNRADX (t = 7) → ZXDARNHA; 1011 ⊕ 0110 = 1101; 3 · 9 = 27 ≡ 1 | level.py |
-| G-W6-1 Beispiel | zahnradwerk (3, UHR) → ZNDAR WHAEX XRXXK X → TUUHL DYHYE OYREB E | eve.py |
+| G-W6-1 Beispiel | standuhr (3, RITZEL) → SNHTD RAU → JVASH CET (Korrektur M8 E147; früher zahnradwerk, UHR) | M8: `shared/krypto.js` + Zwilling |
 | Probeklausur | siehe `SPEC_Kryptos_Pruefungen.md` §9 | kette.py |

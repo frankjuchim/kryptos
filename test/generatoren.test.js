@@ -373,10 +373,11 @@ test('w5_kryptoshash: eigene Hash-Schleife, keine reservierten Wörter, Fehlmust
     if (a.loesung.z1) { mitZustaenden++; assert.equal(a.stufe, 2); assert.ok(a.loesung[`z${wort.length}`]); }
   }
   assert.ok(mitZustaenden > 0 && mitZustaenden < 300);
-  const m = grundpruefung('w5_kryptoshash').find((a) => /„mauer“/.test(a.inhalt[0].md));
-  assert.ok(m, 'mauer kommt vor');
-  assert.deepEqual(m.loesung._fehlmuster.h.map((f) => f.wert).sort(), ['1302', '21']);
-  assert.equal(m.loesung.h[0], '26');
+  // Plan M8 Task 191: WOERTER_W5 neu (mauer steht jetzt im Korpus); apfel: 1, 19, 63 → 5, 20, 72 → 14
+  const m = grundpruefung('w5_kryptoshash').find((a) => /„apfel“/.test(a.inhalt[0].md));
+  assert.ok(m, 'apfel kommt vor');
+  assert.deepEqual(m.loesung._fehlmuster.h.map((f) => f.wert).sort(), ['594', '9']);
+  assert.equal(m.loesung.h[0], '14');
 });
 
 test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau ergaenzung', () => {

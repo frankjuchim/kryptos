@@ -1146,10 +1146,11 @@ als Teil eines Korpus-Wortes), keine Umlaute/ß, Längen wie Spec, keine Dublett
 Seed-Worts derselben Aufgabe nötig (nur Video-/Paar-Ausschluss). Spec-§8-Beispiele (z. B. G-W6-1 „zahnradwerk“) durch
 ein Listenwort ersetzen und neu nachrechnen.
 
-- [ ] **Step 1: Failing test** – `inhalte_woerter.test.js` um die neuen Listen erweitern → FAIL (Listen fehlen).
-- [ ] **Step 2: Implement** – Listen eintragen; Wörter, die der Test meldet, ersetzen (nicht den Test lockern).
-- [ ] **Step 3:** Spec-§8-Beispiele neu rechnen (JS + Zwilling), Spec und Lehrerhinweise-Anhang angleichen; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Wortlisten der Generatoren W3–W6 ohne Korpus-Wörter (E147), Spec §8 angeglichen"`.
+- [x] **Step 1: Failing test** – `inhalte_woerter.test.js` um die neuen Listen erweitern → FAIL (Listen fehlen).
+- [x] **Step 2: Implement** – Listen eintragen; Wörter, die der Test meldet, ersetzen (nicht den Test lockern).
+- [x] **Step 3:** Spec-§8-Beispiele neu rechnen (JS + Zwilling), Spec und Lehrerhinweise-Anhang angleichen; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Wortlisten der Generatoren W3–W6 ohne Korpus-Wörter (E147), Spec §8 angeglichen"`.
+- [x] **Umsetzungsnotiz:** Listen in `woerter.js` (vom Test geprüft, Funde ersetzt): `WOERTER_W3` 58 Wörter (3–6; *lack* im Korpus), dazu getrennt `KLARTEXTE_W3` 23 (8–15, für die Spaltentransposition; *werkbank* im Korpus), `SPALTEN_W3` 16 (3–5 laut Spec §8, deshalb ohne BOLZEN/KESSEL; HEBEL, FEDER, ROLLE, WALZE, NABE im Korpus), `ADFGVX_W3` 6 (SENDER42, SCHALTER6 im Korpus; ZEPPELIN18 bleibt fest im Generator), `WOERTER_W5` 123 (3–7; das alte Achter-Set mauer … signal steht inzwischen ganz im W5-Seed), `KLARTEXTE_W6` 25 (*ziffernblatt* enthält ein Video-Wort, *sonnenuhr*/*mitternacht* im Korpus), `PENDEL_W6` 8 (GEWICHT, KETTE, FEDER, ACHSE im Korpus; ZAHNKRANZ zu lang). Zusätzlich ohne die Beispielwörter der Labor-Werkzeuge (*zange* hash, *hammer* rsa, *pflaume* vigenere). Der Test kennt neu `ziffern` (Quadrat-Schlüssel, geprüft wird der Buchstabenteil). Spec §8 angeglichen: W3 Auszug der neuen Listen + Regel, W5 „Ziel ≈ 300, vorläufig ≥ 120“, W6 Pendelwörter/Klartexte und Beispiel G-W6-1 **standuhr, t = 3, RITZEL → SNHTD RAU → JVASH CET** (JS, Zwilling, von Hand; Prüfwerte `W6-spec-v8/-v9`, §12-Zeile, Bibliothekstests JS/Python ergänzt – zahnradwerk bleibt dort als Bibliotheksvektor). Lehrerhinweise W3/W6 (JSON-Quellen) angeglichen; die docx folgen mit dem Neubau in Task 197. Folgeanpassungen: Test `w5_kryptoshash` nutzt *apfel* statt *mauer* (14; Fehlmuster 9 / 594), Selbstprüfung in `labor_regeln` *windrose* statt *licht* (stand nur in der alten W3-Liste).
 
 ### Task 192: Generatoren Welt 3 (6 neue)
 

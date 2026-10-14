@@ -1265,6 +1265,7 @@ class VerfahrenBaukasten(unittest.TestCase):
         self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK')
         self.assertEqual(an({'typ': 'uhrwerk', 't': 5, 'pendel': 'UHR'}, 'TVZLTLEA', 'ent'), 'ZEITZONE')
         self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zahnradwerk'), 'TUUHLDYHYEOYREBE')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'RITZEL'}, 'standuhr'), 'JVASHCET')  # W6 §8 G-W6-1 (M8 E147)
         self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'ZEIT'}, 'mondhell'), 'LHTHPPMI')
         self.assertEqual(an({'typ': 'ring', 't': 5}, 'ZEITMASC'), 'ZAICMEST')
         self.assertEqual(an({'typ': 'ring', 't': 7}, 'ZAHNRADX'), 'ZXDARNHA')

@@ -1,5 +1,5 @@
 'use strict';
-// Generator-Wortlisten W0–W2 (Plan M5 Task 90, E46 „Regel vor Beispiel“): kein Generator-Wort kommt in Lab, Akten,
+// Generator-Wortlisten W0–W6 (Plan M5 Task 90, Plan M8 Task 191, E46 „Regel vor Beispiel“): kein Generator-Wort kommt in Lab, Akten,
 // Bossen, Warm-up, Präsentationen, Funkraum-Material, Gast-Demo oder Videos vor. Wörter mit ≥ 4 Buchstaben dürfen in
 // keinem Wort des Korpus als Teilfolge stehen, Wörter mit 3 Buchstaben nicht als ganzes Wort. Dazu Mindestgrößen,
 // Längen, keine Doppelten, nur a–z (bzw. A–Z). Wird ein Wort durch spätere Inhalte verboten, schlägt der Test an.
@@ -66,7 +66,15 @@ const LISTEN = {
   KLARTEXTE_W2: { min: 20, laenge: [5, 12], klein: true },
   SCHLUESSEL_W2: { min: 8, laenge: [2, 5], klein: false, schluessel: true },
   KOINZIDENZ_W2: { min: 5, laenge: [6, 12], klein: false, doppelt: true, schluessel: true },
-  PLAYFAIR_W2: { min: 4, laenge: [4, 12], klein: false, schluessel: true }
+  PLAYFAIR_W2: { min: 4, laenge: [4, 12], klein: false, schluessel: true },
+  // Plan M8 Task 191 (E147): Welten 3–6
+  WOERTER_W3: { min: 50, laenge: [3, 6], klein: true },
+  KLARTEXTE_W3: { min: 15, laenge: [8, 15], klein: true },
+  SPALTEN_W3: { min: 12, laenge: [3, 5], klein: false, schluessel: true },
+  ADFGVX_W3: { min: 5, laenge: [5, 14], klein: false, ziffern: true, schluessel: true },
+  WOERTER_W5: { min: 120, laenge: [3, 7], klein: true },
+  KLARTEXTE_W6: { min: 20, laenge: [6, 16], klein: true },
+  PENDEL_W6: { min: 6, laenge: [3, 8], klein: false, schluessel: true }
 };
 
 test('Korpus für den Wortlisten-Abgleich ist vollständig (Seeds W0–W2, Warm-up, Material, Videos)', () => {
@@ -80,13 +88,14 @@ for (const [name, regel] of Object.entries(LISTEN)) {
     assert.ok(Array.isArray(liste) && Object.isFrozen(liste), `${name} fehlt oder ist nicht eingefroren`);
     assert.ok(liste.length >= regel.min, `${name}: ${liste.length} < ${regel.min} Wörter`);
     assert.equal(new Set(liste).size, liste.length, `${name}: doppelte Wörter`);
-    const re = new RegExp(`^${regel.klein ? '[a-z]' : '[A-Z]'}{${regel.laenge[0]},${regel.laenge[1]}}$`);
+    // ziffern: Quadrat-Schlüssel (ADFGVX, 6 × 6) aus Buchstaben und mindestens einer Ziffer am Ende; geprüft wird der Buchstabenteil
+    const re = regel.ziffern ? new RegExp(`^(?=.*\\d$)[A-Z0-9]{${regel.laenge[0]},${regel.laenge[1]}}$`) : new RegExp(`^${regel.klein ? '[a-z]' : '[A-Z]'}{${regel.laenge[0]},${regel.laenge[1]}}$`);
     const schl = regel.schluessel ? seedSchluessel() : new Set();
     const funde = [];
     for (const w of liste) {
       assert.match(w, re, `${name}: „${w}“`);
       if (regel.doppelt) assert.ok(new Set(w).size < w.length, `${name}: „${w}“ ohne doppelten Buchstaben`);
-      const k = w.toLowerCase();
+      const k = w.toLowerCase().replace(/[^a-z]/g, '');
       if (verboten(k)) funde.push(`${k} (Korpus)`);
       if (schl.has(k)) funde.push(`${k} (Seed-Schlüssel)`);
     }

@@ -761,7 +761,7 @@
    "zeilen": [
     [
      "G-W6-1 „Eves Uhrwerk“",
-     "Ringschritt t ∈ {3, 5, 7}; Pendelwort aus {UHR, TAG, RAD, SAND, ZEIT, KERN, NACHT}; Klartext aus deutschen Wörtern/Komposita (6–16 Buchstaben, ohne Umlaute); Richtung ver/ent (Seed-gesteuert). „Verschlüssele „<klartext>“ mit Eves Uhrwerk (t = <t>, Pendelwort <W>).“ bzw. „Entschlüssele <GEHEIMTEXT> …“. Beispiel: „zahnradwerk“, t = 3, UHR → Zwischentext `ZNDAR WHAEX XRXXK X` → `TUUHL DYHYE OYREB E`.",
+     "Ringschritt t ∈ {3, 5, 7}; Pendelwort aus {RITZEL, UNRUH, ANKERRAD, KLINKE, LOT, HEMMUNG, SPINDEL, NOCKE}; Klartext aus deutschen Wörtern/Komposita (6–16 Buchstaben, ohne Umlaute; keine Wörter aus Lab, Akten, Warm-up); Richtung ver/ent (Seed-gesteuert). „Verschlüssele „<klartext>“ mit Eves Uhrwerk (t = <t>, Pendelwort <W>).“ bzw. „Entschlüssele <GEHEIMTEXT> …“. Beispiel: „standuhr“, t = 3, RITZEL → Zwischentext `SNHTD RAU` → `JVASH CET`.",
      "`eve_enc`/`eve_dec` (shared/krypto.js), Fünfergruppen; Normalisierung `krypto`, angehängte X toleriert. Fallen-Diagnose: Stufen vertauscht → P3; Wort zyklisch statt Pendel → P4; inverse statt gleicher Lesereihenfolge → P3."
     ],
     [

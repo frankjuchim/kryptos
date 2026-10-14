@@ -1151,8 +1151,12 @@ Bit = ein falsches Zeichen“ auch für die verbesserte Fassung.
 | `adfgvx_stufe1` | Quadrat aus Schlüsselwort (Liste fester Wörter) oder fest ZEPPELIN18; 3–6 Zeichen A–Z/0–9; ver/ent | „Wende Stufe 1 von ADFGVX auf {T} an.“ | Buchstabenpaare | exakt; Diagnose: Zeile/Spalte vertauscht (P1/P4) |
 | `spaltentransposition` | Schlüsselwort 3–5 Buchstaben (auch mit doppelten Buchstaben), Text 8–15 Buchstaben, ver/ent, ohne Auffüllen | „Verschlüssele {T} mit der Spaltentransposition (Schlüsselwort {W}).“ | nach Tabelle B Stufe 4 | exakt; Diagnose: gleich lange Spalten angenommen (P4), Reihenfolge rückwärts |
 
-Wortliste der Generatoren (Auszug, ohne reservierte Video-Wörter): BOJE, HAFEN, NORD, SUED, OST, WEST, ZUG, FUNK,
-KABEL, WOLKE, MORGEN, ABEND, LICHT, NEBEL, ANKER, TURM, BRIEF, KARTE, TELEX, SIGNAL.
+Wortlisten der Generatoren (Auszug; `src/krypto/generatoren/woerter.js`): Wörter für ASCII und One-Time-Pad (3–6
+Buchstaben) RELAIS, SPULE, KURBEL, DAMPF, NADEL, QUARZ, VENTIL, MOTOR, KESSEL, DIODE, PUMPE, DYNAMO …; Klartexte der
+Spaltentransposition DAMPFKESSEL, KURBELWELLE, ZAHNSTANGE, VENTILATOR …; Schlüsselwörter KOLBE, KANNE, TASSE, DUESE …;
+ADFGVX-Quadrate FUNKMAST7, RELAIS9, ANTENNE5 … und fest ZEPPELIN18. Regel (Korrektur M8 E147): kein Wort aus Lab,
+Akten, Bossen, Warm-up, Präsentationen oder Videos, auch nicht als Teilwort (Test `inhalte_woerter`) – die früheren
+Beispiele BOJE, HAFEN, NORD … stehen in diesen Materialien.
 
 ---
 

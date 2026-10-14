@@ -77,10 +77,68 @@ const SATZBAUSTEINE_W1 = Object.freeze({
   ])
 });
 
-/**
- * Welt 5 (vorläufig; SPEC W5 §8 verlangt ≈ 300 Wörter) – ohne Video-Wörter und nie die Paare aus SPEC W5 §0a
- * (nebel, heute, morgen, ueberweise, zwei, tausend, euro).
- */
-const WOERTER_W5 = Object.freeze(['mauer', 'kabel', 'router', 'wolke', 'daten', 'paket', 'server', 'signal']);
+/** Welt 3 (SPEC W3 §8, Plan M8 E147 – die Spec-Beispiele BOJE, HAFEN, NORD … stehen im Korpus): Wörter für ASCII,
+ * One-Time-Pad und Doppel-Pad, 3–6 Buchstaben (Maschinenzeitalter: Werkstatt, Dampf, Elektrik). */
+const WOERTER_W3 = Object.freeze([
+  'relais', 'spule', 'roehre', 'kurbel', 'riemen', 'kolben', 'dampf', 'niete', 'gleis', 'nadel', 'quarz', 'skala',
+  'sirene', 'amboss', 'bolzen', 'depot', 'fracht', 'ventil', 'motor', 'kessel', 'ofen', 'kohle', 'leim',
+  'kabine', 'akku', 'diode', 'pumpe', 'tank', 'turbo', 'wagon', 'dynamo', 'prisma', 'zinn', 'ampere', 'volt', 'watt',
+  'ohm', 'hertz', 'buchse', 'sockel', 'spund', 'docht', 'saege', 'dorn', 'seil', 'ritze', 'bohrer',
+  'tiegel', 'trog', 'pinne', 'kufe', 'deckel', 'spaten', 'kipper', 'haspel', 'rad', 'gurt', 'lot'
+]);
 
-module.exports = { WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2, PLAYFAIR_W2, SATZBAUSTEINE_W1, WOERTER_W5 };
+/** Welt 3: Klartexte der Spaltentransposition, 8–15 Buchstaben. */
+const KLARTEXTE_W3 = Object.freeze([
+  'dampfkessel', 'kurbelwelle', 'zahnstange', 'ventilator', 'kolbenring', 'transformator', 'schaltpult',
+  'gluehbirne', 'drehbank', 'schmiedeofen', 'nietmaschine', 'walzwerk', 'hochofen', 'dampfhammer', 'kohlenlore',
+  'zahnradbahn', 'stellwerk', 'schaltkasten', 'feuerwehr', 'laufkran', 'presslufthammer', 'drahtseil',
+  'weichensteller'
+]);
+
+/** Welt 3: Schlüsselwörter der Spaltentransposition, 3–5 Buchstaben (auch mit doppelten Buchstaben), GROSS. */
+const SPALTEN_W3 = Object.freeze([
+  'KOLBE', 'DAMPF', 'MOTOR', 'NADEL', 'KANNE', 'TEER', 'ZINN', 'LEIM', 'OFEN', 'DUESE', 'ROST', 'SOCKE',
+  'TASSE', 'DORN', 'BOHRE', 'KUFE'
+]);
+
+/** Welt 3: Schlüssel der ADFGVX-Quadrate (6 × 6, Buchstaben und Ziffern); dazu fest ZEPPELIN18 aus der Spec (Generator). */
+const ADFGVX_W3 = Object.freeze([
+  'FUNKMAST7', 'RELAIS9', 'MORSETASTE3', 'ANTENNE5', 'KABELTROMMEL8', 'DREHSPULE4'
+]);
+
+/**
+ * Welt 5 (SPEC W5 §8): ≥ 120 Wörter mit 3–7 Buchstaben (Essen, Haushalt, Tiere; Spec-Ziel ≈ 300, Plan M8 offene
+ * Entscheidung 1) – ohne Video-Wörter und nie die Paare aus SPEC W5 §0a (nebel, heute, morgen, ueberweise, zwei,
+ * tausend, euro; alle im Korpus).
+ */
+const WOERTER_W5 = Object.freeze([
+  'apfel', 'birne', 'kirsche', 'banane', 'mango', 'kiwi', 'feige', 'quitte', 'beere', 'gurke', 'tomate',
+  'paprika', 'zwiebel', 'lauch', 'moehre', 'spinat', 'kohl', 'rettich', 'radies', 'erbse', 'bohne', 'linse', 'mais',
+  'nudel', 'brezel', 'kuchen', 'torte', 'keks', 'waffel', 'muesli', 'quark', 'joghurt', 'sahne', 'butter', 'kaese',
+  'milch', 'kakao', 'saft', 'limo', 'suppe', 'eintopf', 'pizza', 'pasta', 'wurst', 'speck', 'pfanne', 'topf',
+  'deckel', 'loeffel', 'messer', 'tasse', 'becher', 'schale', 'kanne', 'kessel', 'herd', 'ofen', 'spuele', 'schrank',
+  'stuhl', 'sofa', 'sessel', 'kissen', 'teppich', 'vorhang', 'fenster', 'besen', 'schwamm', 'seife', 'buerste',
+  'kamm', 'wanne', 'dusche', 'katze', 'maus', 'igel', 'fuchs', 'baer', 'reh', 'hirsch', 'otter', 'biber', 'amsel',
+  'meise', 'fink', 'spatz', 'gans', 'storch', 'kranich', 'frosch', 'kroete', 'molch', 'biene', 'wespe', 'hummel',
+  'ameise', 'kaefer', 'motte', 'libelle', 'grille', 'lachs', 'hecht', 'forelle', 'karpfen', 'aal', 'wal', 'robbe',
+  'pinguin', 'zebra', 'giraffe', 'loewe', 'panda', 'koala', 'lama', 'alpaka', 'pony', 'ziege', 'kuh', 'kalb',
+  'ferkel', 'huhn', 'hahn', 'kueken'
+]);
+
+/** Welt 6 (SPEC W6 §8, G-W6-1; Plan M8 E147 – zahnradwerk, sanduhr, uhrwerk, zeitzone stehen im Korpus): Klartexte 6–16. */
+const KLARTEXTE_W6 = Object.freeze([
+  'pendeluhr', 'kuckucksuhr', 'stundenglas', 'taschenuhr', 'wanduhr', 'wasseruhr', 'weckruf', 'spiralfeder',
+  'unruhwelle', 'standuhr', 'turmuhr', 'armbanduhr', 'stoppuhr', 'schlagwerk', 'minutenzeiger', 'glockenschlag',
+  'uhrmacher', 'kirchturmuhr', 'stundenzeiger', 'sekundenzeiger', 'zeitansage', 'morgengrauen', 'abendglocke',
+  'wecker', 'taktgeber'
+]);
+
+/** Welt 6: Pendelwörter (statt UHR, TAG, RAD, SAND, ZEIT, KERN, NACHT – alle im Korpus), GROSS. */
+const PENDEL_W6 = Object.freeze([
+  'RITZEL', 'UNRUH', 'ANKERRAD', 'KLINKE', 'LOT', 'HEMMUNG', 'SPINDEL', 'NOCKE'
+]);
+
+module.exports = {
+  WOERTER_ANTIKE, WOERTER_BAGDAD, SCHLUESSELWOERTER_W1, KLARTEXTE_W2, SCHLUESSEL_W2, KOINZIDENZ_W2, PLAYFAIR_W2, SATZBAUSTEINE_W1,
+  WOERTER_W3, KLARTEXTE_W3, SPALTEN_W3, ADFGVX_W3, WOERTER_W5, KLARTEXTE_W6, PENDEL_W6
+};
