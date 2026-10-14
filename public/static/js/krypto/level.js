@@ -105,6 +105,18 @@ const KRLevel = (() => {
     );
   }
 
+  /** Karte zur Chiffren-Werkstatt (Plan M8 E140): Level-Feld werkstatt { titel }, Link /werkstatt. */
+  function werkstattKarte(l) {
+    if (!l.werkstatt || typeof l.werkstatt.titel !== 'string') return null;
+    return h(
+      'section',
+      { class: 'karte werkstatt-karte', 'aria-labelledby': `werkstatt-${l.id}` },
+      h('h2', { id: `werkstatt-${l.id}` }, 'Chiffren-Werkstatt'),
+      h('p', null, 'Hier baust du dein eigenes Verfahren und trittst in der Knack-Arena an.'),
+      h('p', null, h('a', { class: 'knopf knopf-zweit', href: '/werkstatt' }, l.werkstatt.titel))
+    );
+  }
+
   /** Akte als PDF (K38, nur mit url) und Erklärvideo (Link nur mit url, sonst Hinweis ohne Link – E35, E51). */
   function medienKarte(l) {
     const akte = l.akteDatei && l.akteDatei.url ? l.akteDatei : null;
@@ -143,6 +155,7 @@ const KRLevel = (() => {
       h('section', { class: 'level-aufgaben', 'aria-labelledby': 'aufgaben-titel' }, h('h2', { id: 'aufgaben-titel' }, 'Aufgaben'), d.aufgaben.length ? aufgabenListe(d.aufgaben, d.niveau) : h('p', { class: 'leer-zustand' }, 'Für dein Niveau gibt es hier keine Aufgaben.')),
       werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei, l.id),
       ideKarte(l, d.ideErledigt),
+      werkstattKarte(l),
       medienKarte(l),
       h(
         'nav',

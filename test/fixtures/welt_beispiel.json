@@ -38,7 +38,7 @@
       "intro": [{ "t": "text", "md": "Puzzle, Bug-Hunt, Bäume, Reihungen, Raster und ADT-Simulation." }],
       "aufgaben": ["W9-L2-01", "W9-L2-02", "W9-L2-03", "W9-L2-04", "W9-L2-05", "W9-L2-06", "W9-L2-07", "W9-L2-08", "W9-L2-09", "W9-L2-10"]
     },
-    { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "aufgaben": ["W9-L3-01", "W9-L3-02", "W9-L3-03", "W9-L3-04", "W9-L3-05", "W9-L3-06"] },
+    { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "werkstatt": { "titel": "Zur Chiffren-Werkstatt" }, "aufgaben": ["W9-L3-01", "W9-L3-02", "W9-L3-03", "W9-L3-04", "W9-L3-05", "W9-L3-06"] },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
     { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09", "W9-L5-10", "W9-L5-11"] },
     { "id": "W9-L6", "nr": "9.6", "titel": "Bits und Schaubilder", "ds": [6], "niveau": "kern", "rolle": "kryptografie", "aufgaben": ["W9-L6-01", "W9-L6-02", "W9-L6-03", "W9-L6-04", "W9-L6-05", "W9-L6-06", "W9-L6-07"] }

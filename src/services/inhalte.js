@@ -1,6 +1,6 @@
 'use strict';
 // Inhalte: Seed-Upsert der Welt-Dateien, Katalog im Speicher, Ansichten ohne Lösung.
-// K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video),
+// K09: Kryptos-Felder (Welt: epoche, jahr, akzentHell, archivfund, kapitel; Level: rolle, kuer, werkzeug, akte, video, werkstatt),
 // werkzeug ab M6 als Liste [{ id, voreinstellung }] (Plan M6 E70),
 // Archivfund-Aufgaben (aktiv, 0 Punkte, ohne Level), Spalten aufgaben.niveau (effektiv) und aufgaben.archivfund.
 // M3 Task 33: oeffentlich/loesungsteil filtern interne Prüfdaten (fehlmuster, _fehlmuster) für alle Clients.
@@ -43,7 +43,9 @@ function levelFelder(l) {
     kuer: l.kuer === true,
     werkzeug: werkzeugListe(l.werkzeug),
     akte: typeof l.akte === 'string' ? l.akte : '',
-    video: l.video && typeof l.video === 'object' && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: String(l.video.titel || '') } : null
+    video: l.video && typeof l.video === 'object' && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: String(l.video.titel || '') } : null,
+    // M8 E140: Karte zur Chiffren-Werkstatt (Link /werkstatt nur für Schüler)
+    werkstatt: l.werkstatt && typeof l.werkstatt === 'object' && typeof l.werkstatt.titel === 'string' ? { titel: l.werkstatt.titel } : null
   };
 }
 
@@ -364,7 +366,7 @@ function createInhalte(ctx) {
       archivfund: w.archivfund ? { ...w.archivfund, aufgabe: kurzInfo(katalog.aufgaben.get(w.archivfund.aufgabe)) } : null,
       maxPunkte: w.maxPunkte,
       aufgabenAnzahl: w.aufgabenAnzahl,
-      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, gAAusgeblendet: !gALevelSichtbar(l), aufgaben: l.aufgaben.map((id) => ({ ...kurzInfo(katalog.aufgaben.get(id)), gAAusgeblendet: !gASichtbar(katalog.aufgaben.get(id)) })) })),
+      levels: w.levels.map((l) => ({ id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, video: l.video, werkstatt: l.werkstatt || null, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte: l.maxPunkte, gAAusgeblendet: !gALevelSichtbar(l), aufgaben: l.aufgaben.map((id) => ({ ...kurzInfo(katalog.aufgaben.get(id)), gAAusgeblendet: !gASichtbar(katalog.aufgaben.get(id)) })) })),
       boss: w.boss ? { id: w.boss.id, titel: w.boss.titel, gemischt: w.boss.gemischt, dauerMin: w.boss.dauerMin, anzahl: w.boss.anzahl, mix: w.boss.mix || null, pool: w.boss.pool.map((id) => kurzInfo(katalog.aufgaben.get(id))) } : null
     }));
   }

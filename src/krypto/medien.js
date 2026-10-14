@@ -1,6 +1,6 @@
 'use strict';
 // Kryptos: Akte (PDF) und Erklärvideo je Level für die Level-Seite (Plan M5 Task 98, K38, TECHNIK §13.1).
-// Dienst-Option `levelMedien(level) → { akteDatei: { titel, url } | null, video: { nr, titel, url } | null }`:
+// Dienst-Option `levelMedien(level) → { akteDatei: { titel, url } | null, video: { nr, titel, url } | null, werkstatt: { titel } | null }`:
 //  - akteDatei aus seed/akten.json (Zuordnung `level`), nur wenn die PDF ausgeliefert werden kann (/akten/…, nur nach Anmeldung)
 //  - video aus Level-Feld `video` ({ nr, titel }), url aus seed/videos.json – nur https-Adressen, sonst null (Videos sind
 //    bis zur Veröffentlichung nicht öffentlich, E51; die Seite verlinkt nur mit url, E35)
@@ -27,7 +27,9 @@ function createLevelMedien({ verzeichnis, pdfVorhanden = () => false, videos = n
   }
   return (l) => ({
     akteDatei: akteZu.has(l.id) ? { ...akteZu.get(l.id) } : null,
-    video: l.video && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: l.video.titel, url: videoUrl.get(l.video.nr) || null } : null
+    video: l.video && Number.isInteger(l.video.nr) ? { nr: l.video.nr, titel: l.video.titel, url: videoUrl.get(l.video.nr) || null } : null,
+    // Plan M8 E140: Karte zur Chiffren-Werkstatt (Level-Feld werkstatt)
+    werkstatt: l.werkstatt && typeof l.werkstatt.titel === 'string' ? { titel: l.werkstatt.titel } : null
   });
 }
 

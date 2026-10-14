@@ -2,7 +2,7 @@
 // Schüler-Seite: Weltkarte, Level, Aufgaben prüfen/Tipps/Aufdecken, IDE-Häkchen, Profil, Scoreboard.
 // K06: Archivfund je Welt (Delta §2: 0 Punkte, zählt für nichts, wird gespeichert), Welt-Felder auf der Weltkarte;
 // Fallen-Diagnose (optionen.diagnose, fallenAusErgebnis); Sichtbarkeit nach Niveau (optionen.sichtbar, TECHNIK §8).
-// K38: Level-Detail mit akteDatei und video { nr, titel, url } über optionen.levelMedien (Plan M5 Task 98).
+// K38: Level-Detail mit akteDatei und video { nr, titel, url } über optionen.levelMedien (Plan M5 Task 98), M8 E140 auch werkstatt.
 
 const V = require('../validate');
 const C = require('../content/checker');
@@ -118,11 +118,11 @@ function createLernen(ctx, { inhalte, kurse, stand }) {
     const ids = sichtbareAufgaben(l, einst);
     const maxPunkte = ids.reduce((x, id) => x + kat().aufgaben.get(id).punkte, 0);
     const ide = db.prepare('SELECT 1 FROM ide_erledigt WHERE schueler_id = ? AND level_id = ?').get(s.id, l.id);
-    const medien = ctx.optionen.levelMedien(l); // K38: akteDatei { titel, url } | null, video { nr, titel, url } | null
+    const medien = ctx.optionen.levelMedien(l); // K38: akteDatei { titel, url } | null, video { nr, titel, url } | null, werkstatt { titel } | null
     return {
       welt: { nr: w.nr, titel: w.titel, farbe: w.farbe },
       niveau: einst.niveau === 'gA' ? 'gA' : 'eA',
-      level: { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, akteDatei: medien.akteDatei, video: medien.video, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte },
+      level: { id: l.id, nr: l.nr, titel: l.titel, niveau: l.niveau, gemischt: l.gemischt, rolle: l.rolle, kuer: l.kuer, werkzeug: l.werkzeug, akte: l.akte, akteDatei: medien.akteDatei, video: medien.video, werkstatt: medien.werkstatt || null, ds: l.ds, ab: l.ab, ide: l.ide, intro: l.intro, maxPunkte },
       aufgaben: ids.map((id) => {
         const a = kat().aufgaben.get(id);
         const r = fm.get(id);

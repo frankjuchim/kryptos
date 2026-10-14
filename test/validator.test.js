@@ -305,6 +305,18 @@ test('bits-rechnen-Validator: KRYPTOS-16-Schritte (schritt, text) und Operanden 
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0'.repeat(72), '1'.repeat(72)]; }, /8–64 Bit/);
 });
 
+test('Level-Feld werkstatt (Plan M8 E140): Objekt mit titel ≤ 60, nicht im Gastmodus', () => {
+  const lv = (w, id) => w.levels.find((l) => l.id === id);
+  erwarteFehler((w) => { lv(w, 'W9-L3').werkstatt = true; }, /werkstatt muss ein Objekt mit titel/);
+  erwarteFehler((w) => { lv(w, 'W9-L3').werkstatt = { titel: '' }; }, /werkstatt muss ein Objekt mit titel/);
+  erwarteFehler((w) => { lv(w, 'W9-L3').werkstatt = { titel: 'x'.repeat(61) }; }, /werkstatt muss ein Objekt mit titel/);
+  erwarteFehler((w) => { lv(w, 'W9-L3').werkstatt = { titel: 'Zur Werkstatt', link: '/x' }; }, /werkstatt erlaubt nur titel/);
+  const g = basis();
+  g.welt = 8;
+  const fe = validiereWelt(g, { datei: 'demo.json' }).fehler.map((f) => `${f.ort}: ${f.meldung}`);
+  assert.ok(fe.some((x) => /werkstatt gibt es im Gastmodus nicht/.test(x)), fe.join('\n'));
+});
+
 test('gaps-Feld toleranz (K43, Plan M8 E139): Zahl ≥ 0, nur bei typ zahl', () => {
   const mitFeld = (feld) => (w) => {
     const a = w.aufgaben.find((x) => x.interaktion && x.interaktion.kind === 'gaps' && Object.values(x.interaktion.felder).some((f) => f.typ === 'zahl'));

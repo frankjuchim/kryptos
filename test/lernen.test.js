@@ -133,6 +133,14 @@ test('Welt-Freischaltung: gesperrte Welt → 403 für Level und Aufgaben', async
   assert.equal((await s.get('/api/aufgaben/W9-L1-01')).status, 403);
 });
 
+test('Level-Feld werkstatt (Plan M8 E140): Level-Detail und Lehrkraft-Vorschau liefern die Karte', async () => {
+  const { s, lk } = await H.szenario();
+  assert.deepEqual((await s.get('/api/levels/W9-L3').expect(200)).body.level.werkstatt, { titel: 'Zur Chiffren-Werkstatt' });
+  assert.equal((await s.get('/api/levels/W9-L1').expect(200)).body.level.werkstatt, null);
+  const vw = (await lk.get('/api/lehrer/vorschau').expect(200)).body.welten.find((w) => w.nr === 9);
+  assert.deepEqual(vw.levels.find((l) => l.id === 'W9-L3').werkstatt, { titel: 'Zur Chiffren-Werkstatt' });
+});
+
 test('IDE-Häkchen: nur Überblick, 0 Punkte', async () => {
   const { s } = await H.szenario();
   assert.equal((await s.post('/api/levels/W9-L1/ide').send({ erledigt: true })).body.erledigt, true);

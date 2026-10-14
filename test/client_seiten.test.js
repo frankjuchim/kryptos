@@ -140,6 +140,19 @@ test('Level: Archivwissen, Aufgabenliste mit Status, Werkzeug-Karte nur wenn fre
   assert.deepEqual(k.anfragen.find((a) => a.pfad === '/api/levels/W9-L1/ide').body, { erledigt: true });
   assert.equal(k.window.localStorage.getItem('kr_zuletzt'), '"W9-L1"');
 });
+test('Level: Karte zur Chiffren-Werkstatt (Plan M8 E140) mit Link /werkstatt', async () => {
+  const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L3', nr: '3', titel: 'Werkstatt', niveau: 'eA', rolle: 'kryptografie', werkzeug: [], akte: null, akteDatei: null, video: null, werkstatt: { titel: 'Zur Chiffren-Werkstatt' }, intro: [], maxPunkte: 0 }, aufgaben: [], ideErledigt: false, vorher: null, nachher: null };
+  const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L3': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [] } } };
+  const k = D.lade(SPIEL, { url: 'http://x.test/spiel#/level/W9-L3', fetch: f });
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  const karte = k.eins(haupt, 'section.werkstatt-karte');
+  assert.ok(karte);
+  assert.match(k.text(karte), /Hier baust du dein eigenes Verfahren und trittst in der Knack-Arena an\./);
+  const a = k.eins(karte, 'a[href="/werkstatt"]');
+  assert.ok(a);
+  assert.match(k.text(a), /Zur Chiffren-Werkstatt/);
+});
 test('Level: Video mit url als Link, ohne akteDatei kein PDF-Knopf', async () => {
   const level = { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, niveau: 'eA', level: { id: 'W9-L1', nr: '1', titel: 'Blöcke', niveau: 'kern', rolle: 'kryptografie', werkzeug: [], akte: null, akteDatei: null, video: { nr: 3, titel: 'Vigenère knacken', url: 'https://video.example/v3' }, intro: [], maxPunkte: 0 }, aufgaben: [], ideErledigt: false, vorher: null, nachher: null };
   const f = { ...spielFetch([welt(9)]), 'GET /api/levels/W9-L1': { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge: [] } } };
@@ -560,6 +573,14 @@ test('Vorschau: Niveau-Chips auch für Kern, Hinweis „im gA-Kurs ausgeblendet�
   assert.match(k.text(haupt), /im gA-Kurs ausgeblendet/);
   assert.ok(k.eins(haupt, 'a[href="#/vorschau/aufgabe/W9-L3-01"]'));
   assert.ok(k.alle(haupt, '.chip-niveau').some((c) => k.text(c) === 'K'), 'Kern-Chip in der Vorschau');
+  // Werkstatt-Karte (Plan M8 E140): in der Vorschau nur als Hinweis, ohne Link
+  const vw2 = structuredClone(vw);
+  vw2.welten[0].levels[0].werkstatt = { titel: 'Zur Chiffren-Werkstatt' };
+  const kw = D.lade(LEHRER, { url: 'http://x.test/lehrer#/vorschau/welt/9', fetch: lehrerFetch({ 'GET /api/lehrer/vorschau': { status: 200, body: vw2 } }), vorher: seiteLehrer });
+  await kw.ruhe();
+  const hw = kw.document.getElementById('haupt');
+  assert.match(kw.text(kw.eins(hw, '.vorschau-werkstatt')), /Zur Chiffren-Werkstatt/);
+  assert.equal(kw.alle(hw, 'a[href="/werkstatt"]').length, 0);
   const a = { id: 'W9-L1-01', titel: 'Lücke', stufe: 1, punkte: 10, kategorie: 'begriffe', niveau: 'kern', fallen: ['P3'], inhalt: [{ t: 'text', md: 'Antwort: [[g1]]' }], interaktion: { kind: 'gaps', felder: { g1: {} } } };
   const k2 = D.lade(LEHRER, { url: 'http://x.test/lehrer#/vorschau/aufgabe/W9-L1-01', fetch: lehrerFetch({ 'GET /api/lehrer/vorschau/W9-L1-01': { status: 200, body: { aufgabe: a, loesung: { g1: ['geheim'] }, muster: { g1: 'geheim' }, erklaerung: [{ t: 'text', md: 'Weil.' }], tipps: ['Denk nach.'], ort: { welt: { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C' }, level: { id: 'W9-L1', nr: '1', titel: 'Blöcke' }, boss: null, index: 0, anzahl: 2, vorher: null, nachher: 'W9-L1-02' } } } }), vorher: seiteLehrer });
   await k2.ruhe();

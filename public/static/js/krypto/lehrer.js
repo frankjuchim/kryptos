@@ -723,7 +723,9 @@ const KRLehrer = (() => {
                 l.rolle ? h('span', { class: 'chip chip-rolle rolle-' + l.rolle }, AQ.rolleText(l.rolle).replace(/^\S+\s/, '')) : null,
                 l.gAAusgeblendet && l.niveau !== 'eA' ? h('span', { class: 'klein text-2' }, 'im gA-Kurs ausgeblendet') : null
               ),
-              (l.aufgaben || []).length ? h('ol', { class: 'vorschau-aufgaben' }, l.aufgaben.map(aufgabeZeile)) : h('p', { class: 'text-2' }, 'Keine Aufgaben.')
+              (l.aufgaben || []).length ? h('ol', { class: 'vorschau-aufgaben' }, l.aufgaben.map(aufgabeZeile)) : h('p', { class: 'text-2' }, 'Keine Aufgaben.'),
+              // Plan M8 E140: Karte zur Chiffren-Werkstatt – in der Vorschau ohne Link (Werkstatt nur für Schülerinnen und Schüler)
+              l.werkstatt && l.werkstatt.titel ? h('p', { class: 'klein text-2 vorschau-werkstatt' }, `Karte auf der Level-Seite: „${l.werkstatt.titel}“ (führt Schülerinnen und Schüler in die Chiffren-Werkstatt)`) : null
             )
           ),
           w.boss

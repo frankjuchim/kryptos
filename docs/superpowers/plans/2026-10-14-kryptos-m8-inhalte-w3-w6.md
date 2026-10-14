@@ -426,11 +426,12 @@ Fixture + `antworten.js` (`W9-…` mit `ziel: 4`, `ungleich: ["hafen"]` – **ei
 IDE-Karte: Titel, Satz „Hier baust du dein eigenes Verfahren und trittst in der Knack-Arena an.“, Link `/werkstatt`),
 Version; Tests `test/lernen.test.js`, `test/client_seiten.test.js`, `test/validator.test.js`
 
-- [ ] **Step 1: Failing tests** – Fixture-Level `W9-L3` mit `werkstatt: { titel: 'Zur Chiffren-Werkstatt' }`: Level-Detail
+- [x] **Step 1: Failing tests** – Fixture-Level `W9-L3` mit `werkstatt: { titel: 'Zur Chiffren-Werkstatt' }`: Level-Detail
   liefert das Feld, Client rendert Link `href="/werkstatt"` (Schüler), Lehrkraft-Vorschau ohne Link; Validator: `werkstatt: true`
   → Fehler „Objekt mit titel“.
-- [ ] **Step 2–4:** FAIL → Implement → PASS; Version; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "Level-Feld werkstatt: Karte zur Chiffren-Werkstatt auf der Level-Seite"`.
+- [x] **Step 2–4:** FAIL → Implement → PASS; Version; `npm test`.
+- [x] **Step 5: Commit** `git commit -m "Level-Feld werkstatt: Karte zur Chiffren-Werkstatt auf der Level-Seite"`.
+- [x] **Umsetzungsnotiz:** Level-Detail reicht unbekannte Felder nicht durch → `levelMedien` (K38) liefert `werkstatt`, `levelFelder` und Lehrkraft-Vorschau in `inhalte.js` (K09) fortgeschrieben. Validator: „nur Welten 0–6“ als „nicht im Gastmodus (Welt 8)“ umgesetzt, weil die Fixture (Welt 9, W9-L3) das Feld tragen muss. Lehrkraft-Vorschau (`#/vorschau/welt/<n>`) zeigt einen Hinweis ohne Link. Im Browser (360/1280 px) geprüft.
 
 ### Task 170: Fremde Verfahren W3–W6 für den Prüfnachweis (E133)
 

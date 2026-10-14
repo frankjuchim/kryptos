@@ -356,7 +356,7 @@ function videoListe(opt) {
 const effektivesNiveau = (a, l) => (istObjekt(a) && a.niveau !== undefined ? a.niveau : l.niveau);
 
 /** Hook level: niveau, rolle, kuer, werkzeug, video, akte und die Niveau-Regeln Level ↔ Aufgabe. */
-function level(l, o, f, w, { aufgaben, opt }) {
+function level(l, o, f, w, { data, aufgaben, opt }) {
   const fl = (m) => f('level', o, m);
   const wl = (m) => w('level', o, m);
   if (l.niveau === undefined) fl('niveau fehlt (kern | eA | ergaenzung | kuer).');
@@ -394,6 +394,12 @@ function level(l, o, f, w, { aufgaben, opt }) {
       // Eintrag zählt auch mit url null (Videos sind bis zur Veröffentlichung nicht öffentlich, Plan M5 E51)
       if (liste && !liste.some((x) => istObjekt(x) && x.nr === v.nr)) wl(`video.nr ${v.nr} fehlt in seed/videos.json.`);
     }
+  }
+  // werkstatt (Plan M8 E140): Karte zur Chiffren-Werkstatt { titel } – nicht im Gastmodus (Welt 8, ohne Werkstatt)
+  if (l.werkstatt !== undefined) {
+    if (!istObjekt(l.werkstatt) || !istText(l.werkstatt.titel, 60) || !l.werkstatt.titel.trim()) fl('werkstatt muss ein Objekt mit titel (1–60 Zeichen) sein.');
+    else if (Object.keys(l.werkstatt).some((k) => k !== 'titel')) fl('werkstatt erlaubt nur titel.');
+    if ((data && data.welt === 8) || /^W8-/.test(typeof l.id === 'string' ? l.id : '')) fl('werkstatt gibt es im Gastmodus nicht.');
   }
   if (Array.isArray(l.intro) && l.intro.some((b) => istObjekt(b) && typeof b.md === 'string' && DIE_LERNENDEN.test(b.md))) wl(DUZEN);
   // Akte (ersetzt ab, Delta §3); Gast-Demo (Welt 8) und Fixture (Welt 9) haben keine Akten (Plan M5 E59)
