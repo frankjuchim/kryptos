@@ -10,12 +10,12 @@
  "bloecke": [
   {
    "t": "auftakt",
-   "md": "Das Chronoskop schweigt, auf dem Ziffernring steht `TAZLL ZZLYL VIHAV K`. Eve hat ihr eigenes Verfahren gebaut – und weil sie das Kerckhoffs-Prinzip kennt, hat sie die Beschreibung sogar im Archiv hinterlegt. Sie ist sicher: Wer den Schlüssel nicht kennt, kommt nie hinein. Dein Auftrag ist der eines Prüflings im Abitur: ein unbekanntes Verfahren **verstehen, anwenden, umkehren, einordnen und beurteilen** – in fünf Schritten. 🔍 Neben dem Gerät liegt Eves Zettel: „Ring 3 · Pendel UHR“."
+   "md": "Das Chronoskop schweigt, auf dem Ziffernring steht `BLJLF ASPPI VLIUI N`. Eve hat ihr eigenes Verfahren gebaut – und weil sie das Kerckhoffs-Prinzip kennt, hat sie die Beschreibung sogar im Archiv hinterlegt. Sie ist sicher: Wer den Schlüssel nicht kennt, kommt nie hinein. Dein Auftrag ist der eines Prüflings im Abitur: ein unbekanntes Verfahren **verstehen, anwenden, umkehren, einordnen und beurteilen** – in fünf Schritten. 🔍 Neben dem Gerät liegt Eves Zettel: „Ring 3 · Pendel UHR“."
   },
   {
    "t": "geheimtext",
    "label": "EVES ZEILE AUF DEM ZIFFERNRING DES CHRONOSKOPS",
-   "text": "TAZLLZZLYLVIHAVK",
+   "text": "BLJLFASPPIVLIUIN",
    "groesse": 14
   },
   {
@@ -272,7 +272,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "**Entschlüssele** Eves Zeile `TAZLL ZZLYL VIHAV K` mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage."
+     "md": "**Entschlüssele** Eves Zeile `BLJLF ASPPI VLIUI N` mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage."
     },
     {
      "t": "tabelle",
@@ -302,22 +302,22 @@
      "zeilen": [
       [
        "Geheimtext",
-       "T",
+       "B",
+       "L",
+       "J",
+       "L",
+       "F",
        "A",
-       "Z",
-       "L",
-       "L",
-       "Z",
-       "Z",
-       "L",
-       "Y",
-       "L",
-       "V",
+       "S",
+       "P",
+       "P",
        "I",
-       "H",
-       "A",
        "V",
-       "K"
+       "L",
+       "I",
+       "U",
+       "I",
+       "N"
       ],
       [
        "Pendelfolge",
@@ -387,22 +387,22 @@
      "zeilen": [
       [
        "Geheimtext",
-       "T",
+       "B",
+       "L",
+       "J",
+       "L",
+       "F",
        "A",
-       "Z",
-       "L",
-       "L",
-       "Z",
-       "Z",
-       "L",
-       "Y",
-       "L",
-       "V",
+       "S",
+       "P",
+       "P",
        "I",
-       "H",
-       "A",
        "V",
-       "K"
+       "L",
+       "I",
+       "U",
+       "I",
+       "N"
       ],
       [
        "Pendelfolge",
@@ -425,22 +425,22 @@
       ],
       [
        "Zwischentext",
-       "Z",
-       "T",
-       "I",
+       "H",
        "E",
-       "R",
        "S",
-       "I",
        "E",
-       "E",
-       "E",
-       "E",
-       "B",
-       "N",
+       "L",
        "T",
+       "B",
+       "I",
+       "V",
+       "B",
        "E",
-       "D"
+       "E",
+       "O",
+       "N",
+       "R",
+       "G"
       ]
      ]
     },
@@ -532,25 +532,25 @@
      "zeilen": [
       [
        "Block 1",
-       "Z",
-       "E",
-       "I",
-       "T",
-       "R",
-       "E",
-       "I",
-       "S"
-      ],
-      [
-       "Block 2",
+       "H",
        "E",
        "B",
        "E",
-       "E",
-       "N",
-       "D",
-       "E",
+       "L",
+       "I",
+       "S",
        "T"
+      ],
+      [
+       "Block 2",
+       "V",
+       "E",
+       "R",
+       "B",
+       "O",
+       "G",
+       "E",
+       "N"
       ]
      ]
     },
@@ -563,11 +563,11 @@
    "loesung": [
     {
      "t": "p",
-     "md": "Pendel `UHRHUHRHUHRHUHRH`. Zwischentext: T − U = Z, A − H = T, Z − R = I, L − H = E, L − U = R, Z − H = S, Z − R = I, L − H = E, Y − U = E, L − H = E, V − R = E, I − H = B, H − U = N, A − H = T, V − R = E, K − H = D → `ZTIERSIE EEEBNTED`."
+     "md": "Pendel `UHRHUHRHUHRHUHRH`. Zwischentext: B − U = H, L − H = E, J − R = S, L − H = E, F − U = L, A − H = T, S − R = B, P − H = I, P − U = V, I − H = B, V − R = E, L − H = E, I − U = O, U − H = N, I − R = R, N − H = G → `HESELTBI VBEEONRG`."
     },
     {
      "t": "p",
-     "md": "Ring zurück (t = 3, Zeichen j → Feld 3j mod 8): Block 1 und Block 2 Zeichen für Zeichen auf ihre Felder zurücklegen und Feld 0–7 lesen → Klartext **zeitreisebeendet**."
+     "md": "Ring zurück (t = 3, Zeichen j → Feld 3j mod 8): Block 1 und Block 2 Zeichen für Zeichen auf ihre Felder zurücklegen und Feld 0–7 lesen → Klartext **hebelistverbogen**."
     },
     {
      "t": "p",

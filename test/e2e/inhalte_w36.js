@@ -137,7 +137,7 @@ async function szenario12(ctx) {
   // --- Welt 6 ---
   await gehe(page, `${ctx.basis}/spiel#/archivfund/6`);
   await page.locator('#pruefen').waitFor();
-  await kaestchen(page, 'ZEITREISEBEENDET');
+  await kaestchen(page, 'HEBELISTVERBOGEN');
   await richtig(page, 'Archivfund – ohne Punkte');
 
   await aufgabe(page, ctx, 'W6-L2-04'); // chiffre uhrwerk

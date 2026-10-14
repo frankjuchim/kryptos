@@ -16,7 +16,7 @@
    "abschnitt": "Archivfund",
    "titel": "Eves Chiffre",
    "label": "CHRONOSKOP · ZIFFERNRING · VERRIEGELT",
-   "geheimtext": "TAZLLZZLYLVIHAVK",
+   "geheimtext": "BLJLFASPPIVLIUIN",
    "inhalt": [
     {
      "t": "p",
@@ -27,7 +27,7 @@
      "md": "**Was braucht ihr, um diese Zeile zu lesen?**"
     }
    ],
-   "notizen": "2 min. Story vorlesen: „Das Archiv ist still geworden. Das Chronoskop, das dich durch zweieinhalb Jahrtausende Geheimschriften getragen hat, rührt sich nicht mehr: Auf seinem Ziffernring leuchtet nur noch eine einzige Zeile. Eve hat die Zeitmaschine mit einer eigenen Chiffre verriegelt, ihrem ‚Uhrwerk‘.“ Impuls: „Was wisst ihr, was fehlt?“ Erwartet: Verfahren + Schlüssel. Kerckhoffs erinnern: Das Verfahren darf bekannt sein (Eves Beschreibung liegt im Archiv) – geheim ist nur der Schlüssel. Lösung (nicht verraten): zeitreisebeendet, t = 3, Pendelwort UHR."
+   "notizen": "2 min. Story vorlesen: „Das Archiv ist still geworden. Das Chronoskop, das dich durch zweieinhalb Jahrtausende Geheimschriften getragen hat, rührt sich nicht mehr: Auf seinem Ziffernring leuchtet nur noch eine einzige Zeile. Eve hat die Zeitmaschine mit einer eigenen Chiffre verriegelt, ihrem ‚Uhrwerk‘.“ Impuls: „Was wisst ihr, was fehlt?“ Erwartet: Verfahren + Schlüssel. Kerckhoffs erinnern: Das Verfahren darf bekannt sein (Eves Beschreibung liegt im Archiv) – geheim ist nur der Schlüssel. Lösung (nicht verraten): hebelistverbogen, t = 3, Pendelwort UHR."
   },
   {
    "layout": "zweispaltig",
@@ -864,7 +864,7 @@
      ]
     }
    ],
-   "notizen": "35 min. Material: Archivwissen 1 der Akte W6·2 (im Abitur-Stil), WK2, WK3, Ring-Schablone im Anhang. Langsame Lernende: Pendelzeile UHRHUHRH… vorgeben. Kontrollwerte: Auftrag 2 → zeitreisebeendet; Auftrag 3 → RAVFZ EKTUU AIXIR H. Häufigste Fehler: Zeichen j auf Feld j zurücklegen statt auf Feld (t · j) mod 8 (P3); Pendel mit doppelten Enden (P4)."
+   "notizen": "35 min. Material: Archivwissen 1 der Akte W6·2 (im Abitur-Stil), WK2, WK3, Ring-Schablone im Anhang. Langsame Lernende: Pendelzeile UHRHUHRH… vorgeben. Kontrollwerte: Auftrag 2 → hebelistverbogen; Auftrag 3 → RAVFZ EKTUU AIXIR H. Häufigste Fehler: Zeichen j auf Feld j zurücklegen statt auf Feld (t · j) mod 8 (P3); Pendel mit doppelten Enden (P4)."
   },
   {
    "layout": "merke",
@@ -892,7 +892,7 @@
      "md": "**5.**  Raster WK3 → **Urteil**"
     }
    ],
-   "notizen": "3 min. Sicherung am Ende von DS 17. Archivfund auflösen: ZTIERSIE EEEBNTED → Ring zurück → zeitreisebeendet. Das Chronoskop ist entriegelt."
+   "notizen": "3 min. Sicherung am Ende von DS 17. Archivfund auflösen: HESELTBI VBEEONRG → Ring zurück → hebelistverbogen. Das Chronoskop ist entriegelt."
   },
   {
    "layout": "zweispaltig",

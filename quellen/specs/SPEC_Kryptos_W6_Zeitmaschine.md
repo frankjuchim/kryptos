@@ -18,14 +18,14 @@
 ### 0.1 Archivfund „Eves Chiffre“ (Story-Text für Folie 2 und Lab, geduzt)
 
 Das Archiv ist still geworden. Das Chronoskop, das dich durch zweieinhalb Jahrtausende Geheimschriften getragen hat,
-rührt sich nicht mehr: Auf seinem Ziffernring leuchtet nur noch eine einzige Zeile – **TAZLL ZZLYL VIHAV K**. Eve hat
+rührt sich nicht mehr: Auf seinem Ziffernring leuchtet nur noch eine einzige Zeile – **BLJLF ASPPI VLIUI N**. Eve hat
 die Zeitmaschine mit einer eigenen Chiffre verriegelt, ihrem „Uhrwerk“. Neben dem Gerät liegt ein Zettel in ihrer
 Handschrift: „Ring 3 · Pendel UHR“, dazu die Skizze eines Rings mit acht Feldern. Eve hat kombiniert, was sie auf der
 Reise gesehen hat: eine Transposition wie in Sparta und eine polyalphabetische Stufe wie in Venedig. Ihr Verfahren
 steht in keinem Buch – genau wie das Verfahren in deiner Abiturprüfung. Lies ihre Beschreibung, rechne nach, kehre
 die Schritte um: Dann gibt das Chronoskop seinen Kern frei.
 
-Lösung (für die Lehrkraft): Klartext „zeitreisebeendet“ (Schlüssel t = 3, Pendelwort UHR) ✔ nachgerechnet.
+Lösung (für die Lehrkraft): Klartext „hebelistverbogen“ (Schlüssel t = 3, Pendelwort UHR) ✔ nachgerechnet (Korrektur D15: früher „zeitreise beendet“ – Krippe aus dem Plattformtitel).
 
 ### 0.2 Kompetenzen (KC 2017, Modul Kryptologie)
 
@@ -293,7 +293,7 @@ c) **Beurteilen** Sie die Sicherheit des Verfahrens WENDE. [3 BE]
 **Kopf:** Aktenzeichen AKTE W6·2 · Titel „Eves Chiffre“ · DS 17 · Niveau KERN (Auftrag 5: eA) · Datei
 `KR_W6_Akte2_Eves_Chiffre.docx` (+ `_LSG.docx`).
 
-**Auftakt (Story):** Das Chronoskop schweigt, auf dem Ziffernring steht TAZLL ZZLYL VIHAV K. Eve hat ihr eigenes
+**Auftakt (Story):** Das Chronoskop schweigt, auf dem Ziffernring steht BLJLF ASPPI VLIUI N. Eve hat ihr eigenes
 Verfahren gebaut – und weil sie das Kerckhoffs-Prinzip kennt, hat sie die Beschreibung sogar im Archiv hinterlegt.
 Sie ist sicher: Wer den Schlüssel nicht kennt, kommt nie hinein. Dein Auftrag ist der eines Prüflings im Abitur:
 ein unbekanntes Verfahren verstehen, anwenden, umkehren, einordnen und beurteilen – in fünf Schritten.
@@ -356,7 +356,7 @@ Verschlüssele Block 1 des Beispiels mit der Folge ZEITZEIT (Pendelwort nur wied
 die Stellen, an denen der Pendelbuchstabe Z verwendet wird, und gib an, um wie viele Stellen Z verschiebt.
 
 **Auftrag 2 ★★ · kern · Einzel- oder Partnerarbeit · 12 min – Schritt 3: Der Archivfund**
-Entschlüssele Eves Zeile TAZLL ZZLYL VIHAV K mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage:
+Entschlüssele Eves Zeile BLJLF ASPPI VLIUI N mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage:
 
 | Geheimtext | T | A | Z | L | L | Z | Z | L | Y | L | V | I | H | A | V | K |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -406,9 +406,9 @@ d) **Begründen** Sie, dass zweimaliges Anwenden von Stufe 1 mit demselben Rings
 
 - **A1** Z·E·I·T·Z·E·I·T über M T N I E A T R: M+Z = L, T+E = X, N+I = V, I+T = B, E+Z = D, A+E = E, T+I = B, R+T = K →
   LXVBDEBK ✔ (Beispiel: LXVBMESV, Abweichung ab Zeichen 5, P4). Z an Position 1 und 7 (und 13); Z verschiebt um 25 (M → L).
-- **A2** Pendel UHRHUHRHUHRHUHRH. Zwischentext: T−U = Z, A−H = T, Z−R = I, L−H = E, L−U = R, Z−H = S, Z−R = I, L−H = E,
-  Y−U = E, L−H = E, V−R = E, I−H = B, H−U = N, A−H = T, V−R = E, K−H = D → ZTIERSIE EEEBNTED. Ring zurück (t = 3, Zeichen
-  j → Feld 3j mod 8): Block 1 Felder 0–7 = Z E I T R E I S; Block 2 = E B E E N D E T → **zeitreisebeendet**
+- **A2** Pendel UHRHUHRHUHRHUHRH. Zwischentext: B−U = H, L−H = E, J−R = S, L−H = E, F−U = L, A−H = T, S−R = B, P−H = I,
+  P−U = V, I−H = B, V−R = E, L−H = E, I−U = O, U−H = N, I−R = R, N−H = G → HESELTBI VBEEONRG. Ring zurück (t = 3, Zeichen
+  j → Feld 3j mod 8): Block 1 Felder 0–7 = H E B E L I S T; Block 2 = V E R B O G E N → **hebelistverbogen**
   ✔ nachgerechnet. Typische Fehler: Pendel UHRUHR… (P4); Ring vor Stufe 2 zurück (P3); Zeichen j auf Feld j gelegt.
 - **A3** Blöcke ZEITMASC | HINEFREI; Ring t = 5 (0 5 2 7 4 1 6 3): ZAICMEST | HRNIFIEE; Pendel SANDNASANDNASAND;
   Geheimtext **RAVFZ EKTUU AIXIR H** ✔ nachgerechnet.
@@ -553,7 +553,7 @@ online“.
 | Nr | Layout | Titel | Inhalt (fertiger Text) | Sprechernotiz |
 |---|---|---|---|---|
 | 1 | Titel (Epoche) | Die Zeitmaschine | Welt 6 · Endgegner<br>„Die Story endet dort, wo die Prüfung beginnt.“ | Begrüßung, Rückblick in einem Satz pro Welt (Sparta, Bagdad, Venedig, Lochstreifen, Stanford, Netz). 1 min |
-| 2 | Archivfund | Eves Chiffre | Geheimtext auf dem Ziffernring: TAZLL ZZLYL VIHAV K<br>Frage: „Was braucht ihr, um diese Zeile zu lesen?“ | Erwartet: Verfahren + Schlüssel. Kerckhoffs erinnern: Verfahren ist bekannt (Eves Beschreibung liegt im Archiv). 2 min |
+| 2 | Archivfund | Eves Chiffre | Geheimtext auf dem Ziffernring: BLJLF ASPPI VLIUI N<br>Frage: „Was braucht ihr, um diese Zeile zu lesen?“ | Erwartet: Verfahren + Schlüssel. Kerckhoffs erinnern: Verfahren ist bekannt (Eves Beschreibung liegt im Archiv). 2 min |
 | 3 | Inhalt | Eves Zettel | „Ring 3 · Pendel UHR“<br>Skizze: Ring mit Feldern 0–7<br>Eve hat kombiniert: Transposition (Sparta) + polyalphabetisch (Venedig)<br>Das Verfahren steht in keinem Buch – wie im Abitur. | Impuls: „Welche Fragen stellt ihr an ein unbekanntes Verfahren?“ → Überleitung zur 5-Schritte-Methode. 1 min |
 | 4 | Verfahren Schritt für Schritt | Stufe 1: Der Ring | Block zu 8 Zeichen, Felder 0–7<br>Lesen ab Feld 0, dann t Felder weiter (im Kreis)<br>t = 3: 0 3 6 1 4 7 2 5<br>Beispiel MITTERNA → MTNIEATR | Am Ring mit dem Finger zeigen; „nach Feld 7 kommt Feld 0“ = mod 8. Falle P4: letzter Block mit X. 2 min |
 | 5 | Verfahren Schritt für Schritt | Stufe 2: Das Pendel | Pendelwort vor und zurück, Enden nicht doppelt:<br>UHR → U H R H U H R H …<br>Dann Vigenère mit dem Anlage-Quadrat<br>(Schlüsselbuchstabe A = Verschiebung 0) | Frage: „Ist das noch Vigenère?“ – Ja, mit dem Schlüssel UHRH (Periode 2L − 2). 2 min |
@@ -776,7 +776,7 @@ Skripte im Scratchpad `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525
 
 | Stelle | Wert | Skript |
 |---|---|---|
-| Archivfund / Akte W6·2 A2 | zeitreisebeendet (3, UHR) → Zwischentext ZTIERSIE EEEBNTED → TAZLL ZZLYL VIHAV K | eve.py, akten.py |
+| Archivfund / Akte W6·2 A2 | hebelistverbogen (3, UHR; D15) → Zwischentext HESELTBI VBEEONRG → BLJLF ASPPI VLIUI N | eve.py, akten.py |
 | Archivwissen 1 W6·2 | mitternachtsuhr (3, ZEIT) → MTNIEATR CSRHUXTH → LXVBM ESVKL ZLTBB A | eve.py |
 | Lesereihenfolgen | t = 1/3/5/7 wie Tabelle; t · t mod 8 = 1 | eve.py, akten.py |
 | W6-L2-01 | ZEITMASC, t = 5 → ZAICMEST | eve.py |

@@ -27,7 +27,8 @@
 //      Werte wieder an der genannten Stelle auftauchen (Inversen-Tabelle, Paarzahlen, Schlüsselanzahlen, Wertetabelle …).
 //   K8 Klartext-Krippe: Ein Wort des Titels (≥ 5 Buchstaben, keine Fachwörter) deckt mindestens ein Viertel eines
 //      Klartexts ab; bei Knack-Teilen (verdeckter Schlüssel, Zuordnung ohne Schlüsselfrage) zählt jedes Wort aus Titel
-//      und Aufgabentext, das im Klartext steht („Kuriere kommen nie an“ bei „kurierkamniean…“).
+//      und Aufgabentext, das im Klartext steht („Kuriere kommen nie an“ bei „kurierkamniean…“). Außerdem gilt jedes Wort
+//      aus Plattform- und Epochentiteln (immer sichtbar) als Krippe für alle Klartexte (D15, zweiter Teil).
 // Der sichtbare Teil einer Aufgabe ist das, was der Server vor dem Lösen schickt (ohne Lösung, Tipps, Erklärung;
 // verdeckte Schlüssel ohne Parameter, Hook oeffentlich der chiffre-Interaktion).
 const { test } = require('node:test');
@@ -603,6 +604,35 @@ test('K9: Tipps und Erklärungen stehen vor dem Abruf nirgends sichtbar (alle We
 
 test('Papier: keine Lösung einer Teilaufgabe (Papier-Boss, Probeklausur), Warm-up-Karte oder eines Akten-Auftrags in einem anderen Schülertext', () => {
   assert.deepEqual(papierFunde(), []);
+});
+
+/**
+ * K8 (Titel-Krippe, erweitert): Plattformtitel („Kryptos – Die Zeitreise der Geheimschriften“, auf jeder Seite) und
+ * Epochentitel/-namen aller Welten sind für Lernende immer sichtbar – kein Wort daraus (≥ 5 Buchstaben, keine
+ * Fachwörter) darf in einem Klartext (≥ 8 Zeichen) einer Lab-, Boss-, Archivfund- oder Papier-Aufgabe stehen.
+ */
+function krippenWoerter() {
+  const { PLATTFORM, WELTEN: EPOCHEN } = require('../src/krypto/fach');
+  const titel = [PLATTFORM.titel];
+  for (const e of EPOCHEN) titel.push(e.titel);
+  for (const w of S.WELTEN) { const s = S.seed(w); if (s) titel.push(s.titel); }
+  return [...new Set(titel.filter(Boolean).flatMap(woerterVon).filter((t) => t.length >= 5 && !FACHWOERTER.has(t)))];
+}
+
+function titelKrippen() {
+  const woerter = krippenWoerter();
+  const out = [];
+  const pruefe = (id, werte) => {
+    for (const x of werte) if (x.art === 'text' && x.n.length >= 8) for (const w of woerter) if (x.n.includes(w)) out.push(`${id}: „${w}“ (Plattform-/Epochentitel) in ${x.n}`);
+  };
+  for (const w of S.WELTEN) for (const a of S.seed(w).aufgaben || []) pruefe(a.id, loesungsWerte(a));
+  for (const p of papierPrueflinge()) pruefe(p.id, p.werte);
+  return [...new Set(out)];
+}
+
+test('K8: kein Wort aus Plattform- oder Epochentitel in einem Klartext (Lab, Boss, Archivfund, Papier)', () => {
+  assert.ok(krippenWoerter().includes('ZEITREISE'), 'Selbstprüfung: Plattformtitel erkannt');
+  assert.deepEqual(titelKrippen(), []);
 });
 
 test('K7: behobene Fälle mit zweistelligen Zahlen bleiben behoben', () => {

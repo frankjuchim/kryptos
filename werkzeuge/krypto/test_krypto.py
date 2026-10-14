@@ -1273,7 +1273,7 @@ class VerfahrenBaukasten(unittest.TestCase):
     def test_verfahren_ring_uhrwerk_mini_enigma(self):
         """Plan M8 E123 – dieselben Spec-Vektoren wie test/krypto.test.js."""
         an = lambda v, t, r='ver': K.verfahren_anwenden(v, t, r)  # noqa: E731
-        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK')
+        self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'hebelistverbogen'), 'BLJLFASPPIVLIUIN')
         self.assertEqual(an({'typ': 'uhrwerk', 't': 5, 'pendel': 'UHR'}, 'TVZLTLEA', 'ent'), 'ZEITZONE')
         self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'UHR'}, 'zahnradwerk'), 'TUUHLDYHYEOYREBE')
         self.assertEqual(an({'typ': 'uhrwerk', 't': 3, 'pendel': 'RITZEL'}, 'standuhr'), 'JVASHCET')  # W6 §8 G-W6-1 (M8 E147)
@@ -1365,7 +1365,7 @@ class BibliothekM6I(unittest.TestCase):
         with self.assertRaisesRegex(F, 'teilerfremd'):
             K.ring('ZEITMASC', 2)
         self.assertRaises(F, K.ring, 'ABC', 3, 'ent')
-        self.assertEqual(K.vigenere(K.ring('zeitreisebeendet', 3), 'UHRH'), 'TAZLLZZLYLVIHAVK')  # Prüfwert W6-2-e3
+        self.assertEqual(K.vigenere(K.ring('hebelistverbogen', 3), 'UHRH'), 'BLJLFASPPIVLIUIN')  # Prüfwert W6-2-e3
         self.assertEqual(K.pendel_folge('SAND'), 'SANDNA')
         self.assertEqual(K.pendel_folge('SAND', 10), 'SANDNASAND')
         self.assertEqual(K.pendel_folge('uhr'), 'UHRH')

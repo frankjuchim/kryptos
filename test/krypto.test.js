@@ -2061,7 +2061,7 @@ test('verfahren.varianten: Polybios Zeile/Spalte vertauscht (P4), Spaltentranspo
 
 test('verfahren: Typen ring, uhrwerk, mini_enigma (Plan M8 E123, Spec-Vektoren W3/W6)', () => {
   const A = (v, t, r = 'ver') => K.verfahren.anwenden(v, t, r);
-  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zeitreisebeendet'), 'TAZLLZZLYLVIHAVK'); // W6 §0.1
+  assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'hebelistverbogen'), 'BLJLFASPPIVLIUIN'); // W6 §0.1
   assert.equal(A({ typ: 'uhrwerk', t: 5, pendel: 'UHR' }, 'TVZLTLEA', 'ent'), 'ZEITZONE'); // W6-L2-04
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'UHR' }, 'zahnradwerk'), 'TUUHLDYHYEOYREBE'); // früheres Beispiel G-W6-1 (W6 §8 vor M8 E147)
   assert.equal(A({ typ: 'uhrwerk', t: 3, pendel: 'RITZEL' }, 'standuhr'), 'JVASHCET'); // W6 §8 G-W6-1 (M8 E147)
@@ -2194,7 +2194,7 @@ test('M6 Bibliothek I: Ring und Pendel (W6 §2, §9.1), Schlüsselstrom (W2 §9.
   assert.equal(K.ring('ZTSEMCIAHEXIXXNX', 3, 'ent'), 'ZEITMASCHINEXXXX');
   assert.throws(() => K.ring('ZEITMASC', 2), /teilerfremd/);
   assert.throws(() => K.ring('ABC', 3, 'ent'), K.KryptoFehler);
-  assert.equal(K.vigenere(K.ring('zeitreisebeendet', 3), 'UHRH'), 'TAZLLZZLYLVIHAVK'); // Prüfwert W6-2-e3
+  assert.equal(K.vigenere(K.ring('hebelistverbogen', 3), 'UHRH'), 'BLJLFASPPIVLIUIN'); // Prüfwert W6-2-e3
   assert.equal(K.pendelFolge('SAND'), 'SANDNA');
   assert.equal(K.pendelFolge('SAND', 10), 'SANDNASAND');
   assert.equal(K.pendelFolge('uhr'), 'UHRH');
