@@ -25,7 +25,9 @@ mit der „Krypto-Werkstatt“ unter `stationen/`).
 | Technik | statische Seiten mit eingebetteten Stilen und Skripten, externe Webschriften, Sie-Form, eigener Abspieler – für Kryptos ohnehin nicht verwendbar (CSP, Ansprache, Zählbasis A = 0) |
 | Inhalt | Stationen zu Caesar, Skytale, Pflügen, Freimaurer, Polybios, Playfair, Fleißner, Steganographie, Klopfzeichen, Enigma und ein Analyse-Labor |
 
-**Ergebnis: nichts übernommen; nur Bedienideen; Lizenz ungeklärt.** Kein Code, keine Grafik, kein Text und kein Link
+**Erlaubnis (14.10.2026):** Die Lehrkraft teilt mit, dass André Bodendiek ihr das Repo ausdrücklich zur Nutzung in Kryptos freigegeben hat (Code, Grafiken, Texte), mit Namensnennung „Ideen von A. Bodendiek“. Übernahmen ab jetzt nach „Was zu tun ist, falls eine Erlaubnis kommt“ (unten), je Datei eine Zeile in der Tabelle.
+
+**Ergebnis bis M9: nichts übernommen; nur Bedienideen.** Kein Code, keine Grafik, kein Text und kein Link
 auf die Werkstatt (weder auf den Fork noch auf eine öffentliche Seite). Der Test `test/seiten.test.js`
 („Fremdcode (M6 E66)“) sucht in allen Seiten, Skripten und Stilen nach Spuren.
 
