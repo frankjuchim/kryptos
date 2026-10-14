@@ -75,6 +75,7 @@ npm run krypto:vergleich -- --anzahl 2000                    # JS-Bibliothek ↔
 python3 -I werkzeuge/krypto/pruefwerte.py                     # Rechenwerte aller Materialien (Plan Task 18)
 npm run abdeckung                                             # Abdeckung gegen §11 der Welt-Specs ([--welt N])
 npm run konfig:pruefen                                        # Konfiguration §8 prüfen (ohne Geheimnisse auszugeben)
+LABS_DIR=<labs-Kopie> npm run e2e:portal                     # Ende-zu-Ende mit Portal-Kopie (INTEGRATION §6)
 npm run pruefen                                               # alles
 ```
 In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright install`); docx/pptx rendern mit
