@@ -38,7 +38,7 @@ const UMFANG = {
   0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B', 'WU-W0'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B', 'WU-W1'],
   2: ['W2-A', 'W2-L1', 'W2-L2', 'W2-L3', 'W2-L4', 'W2-L5', 'W2-B', 'WU-W2'],
   // Plan M8: die Inhalts-Tasks 172–190 tragen ihre Abschnitte ein
-  3: ['W3-A', 'W3-L1'], 4: [], 5: [], 6: []
+  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: [], 5: [], 6: []
 };
 /** Welten mit Spec (Abgleich-Tests laufen über alle) */
 const WELTEN = [0, 1, 2, 3, 4, 5, 6];
@@ -116,14 +116,19 @@ const TEILE_ERGAENZT = {
   // „gültig? [2] … [4]“ (ja/nein in den Lücken) als Klappliste gaps typ auswahl wie E130 (Festlegung Task 171)
   'W5-L2-05': ['gaps'],
   // Spec-Spalte „choice + gaps“, Teile aber a) d bestimmen (gaps), b) entscheiden (choice)
-  'W4-L2-07': ['gaps', 'choice']
+  'W4-L2-07': ['gaps', 'choice'],
+  // Spec-Spalte „chiffre + gaps“, Teile aber a) k bestimmen (gaps), b) Klartext (chiffre) – Plan M8 Task 174
+  'W3-L3-07': ['gaps', 'chiffre'],
+  // Boss W3 (Plan M8 Task 177): B-06 als gaps (die OST-Bits als Operand wären die Lösung von W3-L1-04 a), E128-Muster),
+  // B-12 „gaps“ der Spec als zwei Auswahlen P₁–P₅ (E131-Muster)
+  'W3-B-06': ['gaps'], 'W3-B-12': ['choice', 'choice']
 };
 
 /** M8 E127: Spec-„zuordnung“ als Kategorien-Zuordnung → Kern-match */
 const ZUORDNUNG_ALS_MATCH = ['W4-L2-03', 'W5-L3-08'];
 
 /** M8 E126: Sonderformen (Spec-Interaktion → Seed-Arten) */
-const SONDERFORM = { 'W5-L1-07': ['hash-ziel'] };
+const SONDERFORM = { 'W5-L1-07': ['hash-ziel'], 'W3-B-08': ['bits-rechnen'] }; // W3-B-08: K₃ über bits-rechnen schritt rundenschluessel (E124)
 
 /**
  * M8 E130: choice ohne Kennungen in der Spec – Options-ids a, b, … in Spec-Reihenfolge, die Lösung ist die Option mit
@@ -135,7 +140,7 @@ const CHOICE_OHNE_KENNUNG = {
 };
 
 /** M8 E131: choice-Lösungen, die die Spec nur in Worten nennt – Teil-Index → Options-ids (W3-L2-07: ids 1–5 = P₁–P₅) */
-const CHOICE_FEST = { 'W3-L2-07': { 0: ['2', '3'], 2: ['2'] } };
+const CHOICE_FEST = { 'W3-L2-07': { 0: ['2', '3'], 2: ['2'] }, 'W3-B-12': { 0: ['3', '4'], 1: ['4'] } };
 
 /* ---------- ids ---------- */
 

@@ -466,6 +466,9 @@ test('bits-rechnen kryptos16 mit schritt/text (Plan M8 E124) und 48 Bit nach Byt
   ({ k, c } = baue({ id: 'W9-X', titel: 'x', inhalt: [], interaktion: { kind: 'bits-rechnen', operation: 'xor', operanden: ['0'.repeat(48), '1'.repeat(48)] } }));
   assert.equal(k.alle(c.el, '.bits-eingabe button.bit').length, 48);
   assert.equal(k.alle(c.el, '.bits-eingabe .bit-byte').length, 6, 'je Byte ein nicht umbrechender Abschnitt');
+  // Durchsicht W3 (360 px): auch die Operandenzeilen brechen nur zwischen Bytes um (2 × 6 Abschnitte)
+  assert.equal(k.alle(c.el, '.bit-byte').length, 18, 'Operandenzeilen je Byte ein Abschnitt');
+  assert.equal(k.alle(c.el, '.bit-byte')[0].querySelectorAll('.bit').length, 8);
 });
 
 test('hash-ziel (W9-L6-07): Eingabefeld, Ziel-Hinweis, Feedback mit KRYPTOS-Hash der Eingabe (Plan M8 E126)', () => {

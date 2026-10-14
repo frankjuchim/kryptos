@@ -734,6 +734,7 @@ input.z-feld.loesung { border: 2px dotted var(--hinweis); background: var(--hinw
 /* mehr als 32 Bit (Plan M8 E125): Umbruch nur zwischen Bytes */
 .bits-eingabe.bits-lang { flex-wrap: wrap; row-gap: var(--a-2); }
 .bit-byte { display: inline-flex; flex-wrap: nowrap; gap: 3px var(--a-3); }
+.bits-werte > .bit-byte { gap: 0; }
 .bits-eingabe .bit {
   width: var(--ziel);
   min-width: var(--ziel);

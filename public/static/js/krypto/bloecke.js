@@ -358,6 +358,14 @@ const KRB = (() => {
 
   /* ---------- bits (Delta §7.4) ---------- */
 
+  /** Bit-Spannen je Byte in einen nicht umbrechenden Abschnitt (.bit-byte): schmale Bildschirme brechen nur zwischen Bytes um */
+  function jeByte(spannen, gruppe) {
+    if (!gruppe || spannen.length <= 8) return spannen;
+    const aus = [];
+    for (let i = 0; i < spannen.length; i += 8) aus.push(h('span', { class: 'bit-byte' }, spannen.slice(i, i + 8)));
+    return aus;
+  }
+
   function bits(b, ctx) {
     const gruppe = b.gruppe === 0 ? 0 : b.gruppe === 8 ? 8 : 4;
     const markiert = new Set((Array.isArray(b.markiert) ? b.markiert : []).filter((i) => Number.isInteger(i)));
@@ -398,11 +406,14 @@ const KRB = (() => {
           h(
             'span',
             { class: 'bits-werte', 'aria-hidden': 'true' },
-            [...folge].map((c, i) => {
-              const ende = gruppe && (i + 1) % gruppe === 0 && i < folge.length - 1;
-              const m = markiert.has(i);
-              return h('span', { class: 'bit' + (ende ? ' gruppe-ende' : '') + (m ? ' markiert' : ''), 'aria-current': m ? 'true' : null }, c);
-            })
+            jeByte(
+              [...folge].map((c, i) => {
+                const ende = gruppe && (i + 1) % gruppe === 0 && i < folge.length - 1;
+                const m = markiert.has(i);
+                return h('span', { class: 'bit' + (ende ? ' gruppe-ende' : '') + (m ? ' markiert' : ''), 'aria-current': m ? 'true' : null }, c);
+              }),
+              gruppe
+            )
           ),
           h('span', { class: 'sr' }, `${label}: ${gruppen.join(', ')}`)
         )

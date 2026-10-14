@@ -551,8 +551,9 @@ SUED/TXRD/YORD.
 
 **Erwartete Hinweise:** keine (Level eA mit nur eA-Aufgaben).
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L2'` → FAIL; dazu `inhalte_plan`: W3-L2 im gA-Kurs unsichtbar.
-- [ ] **Step 2–4:** Implement, Prüfkette P1–P5, K1–K6. **Step 5: Commit** `git commit -m "Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA)"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L2'` → FAIL; dazu `inhalte_plan`: W3-L2 im gA-Kurs unsichtbar.
+- [x] **Step 2–4:** Implement, Prüfkette P1–P5, K1–K6. **Step 5: Commit** `git commit -m "Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA)"`.
+- [x] **Umsetzungsnotiz:** S-Box als Block `tabelle` mit drei Spalten (Eingang · S · S⁻¹, 16 Zeilen – auf dem Handy lesbar) in W3-L2-02, -04 und W3-B-07 (die übrigen KRYPTOS-16-Aufgaben brauchen keine S-Box). Spec-Klammern „(Eigener Zustand … Korrektur M8 D1/D2)“ sind Metatext und stehen nicht im Schülertext. W3-L2-03 zeigt den Zustand zusätzlich als Block `bits` (vier Zeilen). W3-L2-06 Zustände als Tabelle; Prüfwert-Gruppe `kryptos16.lawine` (`feld` [i, "anzahl"]). W3-L2-07 Options-ids 1–5 = P₁–P₅ (CHOICE_FEST); b) fragt „Wie viele Bits sind in P₃ falsch? (0, falls P₃ korrekt ist)“; Erklärung nach a)/b)/c) geordnet; `pruefnachweis` mit Konsistenz-Einträgen (`art: spec`: CBC-Verschlüsselung, CBC-Entschlüsselung mit gekipptem Bit 5 in C₂, ECB; `lab`: `bloeckeZuText` → „SEQp(GUT“). W3-L2-08 Optionen `korrekt`/`falsch`, Begründung als Muster in der Erklärung (E129). Test „W3-L2 nur im eA-Kurs“ in `inhalte_plan`.
 
 ### Task 174: Welt 3 – Level 3.3 „Die Chiffren-Werkstatt“ (eA)
 
@@ -579,8 +580,9 @@ Arena-Text → k = 11, „der nachtzug faehrt heute puenktlich ab“.
 
 **Erwartete Hinweise:** W3-L3-07 b) „Knack-Formulierung“ entfällt (verdeckt). Level-Hinweis „akte“ ok.
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L3'` → FAIL; Level-Seite zeigt die Werkstatt-Karte (Test aus Task 169 mit echtem Seed).
-- [ ] **Step 2–4.** **Step 5: Commit** `git commit -m "Welt 3: Level 3.3 „Die Chiffren-Werkstatt“ (eA) mit Werkstatt-Karte"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L3'` → FAIL; Level-Seite zeigt die Werkstatt-Karte (Test aus Task 169 mit echtem Seed).
+- [x] **Step 2–4.** **Step 5: Commit** `git commit -m "Welt 3: Level 3.3 „Die Chiffren-Werkstatt“ (eA) mit Werkstatt-Karte"`.
+- [x] **Umsetzungsnotiz:** Intro mit Tabelle B als Block `tabelle` (Spalten Nr., Stufe, Schlüsselformat, Definition, Umkehrung – **ohne** Spalte „Einordnung“, die W3-L3-02 abfragt). W3-L3-04/-07 als `baukasten` (Stufen umkehrung + caesar; in -07 b) Platzhalter `$k`, `schluessel: { k: 11 }`, verdeckt – die API liefert dann nur `{ typ: "baukasten" }`). W3-L3-05: vorhandene Einträge `W3-lab-v1`–`v4` bleiben Konsistenz-Einträge, neue Gruppe `W3-L3-05-b` (`caesar("LUNA", 5)` = QZSF). W3-L3-07: Teile a) gaps, b) chiffre (Spec-Spalte „chiffre + gaps“ → `TEILE_ERGAENZT`). Test „Werkstatt-Karte mit echtem Seed“ in `inhalte_plan`. Erwarteter Hinweis: W3-L3-07 „Häufigkeitsanalyse braucht längere Texte – P6“ (34 Buchstaben, Spec-Text).
 
 ### Task 175: Welt 3 – Level 3.4 „Fremde Chiffre IV: ADFGVX“
 
@@ -609,7 +611,8 @@ BAUM → WOLKE5; HAND → MORGEN6 (JS + Zwilling).
 `verfahren.quadrat`) – dann den Vergleich in `validierung.js` für `adfgvx` auf `quadrat(schluessel, 6)` = `verfahren.quadrat`
 erweitern (kleiner Nachtrag, Test), sonst Hinweis beheben.
 
-- [ ] **Step 1–4** wie oben (`UMFANG[3]` += `'W3-L4'`). **Step 5: Commit** `git commit -m "Welt 3: Level 3.4 „Fremde Chiffre IV: ADFGVX“"`.
+- [x] **Step 1–4** wie oben (`UMFANG[3]` += `'W3-L4'`). **Step 5: Commit** `git commit -m "Welt 3: Level 3.4 „Fremde Chiffre IV: ADFGVX“"`.
+- [x] **Umsetzungsnotiz:** Quadrat ZEPPELIN18 als Block `quadrat` (`polybios`, 6, ADFGVX, `schluessel`) in W3-L4-01, -02, -04, -06 („Quadrat unten“ statt „oben“, weil der Block unter dem Text steht). Der befürchtete Hinweis „quadrat/verfahren mit verschiedenen Schlüsseln“ trat nicht auf (kein Nachtrag in `validierung.js`). Zwischentexte in Fünfergruppen (`AAGXF D`, `AXADD GADAG XD`, Validator-Regel Design §6). W3-L4-03: Matrix KARL mit dem Zwischentext zeilenweise gefüllt (`seed_pruefen` liest eine Matrix mit Schlüsselkopf zur Spaltentransposition `ver` spaltenweise nach – ein leeres Raster ist dort eine Abweichung; die Spec-Lösung zeigt dieselbe Matrix); W3-L4-04/-06 leere Raster (Entschlüsseln). W3-L4-05 a)–c) als drei `choice`-Teile; W3-L4-07 Urteil als Muster in der Erklärung (E129). Keine Werkzeuge, alle `chiffre` offen (Quadrat und Schlüsselwort genannt).
 
 ### Task 176: Welt 3 – Kür K2 „Die Enigma“
 
@@ -630,7 +633,8 @@ jede Zelle, wie die Porta-Tafel E41).
 **Erwartete Hinweise:** W3-L5-05 keiner (`schluesselraum` ohne Rechenfunktion → „Rechenergebnis nicht nachgerechnet“
 möglich, dann in die Liste der erwarteten Hinweise).
 
-- [ ] **Step 1–4** (`UMFANG[3]` += `'W3-L5'`; Kür bei `kuer: gesperrt` unsichtbar). **Step 5: Commit** `git commit -m "Welt 3: Kür K2 „Die Enigma“"`.
+- [x] **Step 1–4** (`UMFANG[3]` += `'W3-L5'`; Kür bei `kuer: gesperrt` unsichtbar). **Step 5: Commit** `git commit -m "Welt 3: Kür K2 „Die Enigma“"`.
+- [x] **Umsetzungsnotiz:** Stellungstafel (Block `tabelle` „Mini-Enigma: Tabelle je Stellung …“, aus `miniEnigma.tabelle`) und die Dreh-Regel stehen in W3-L5-01 und -02; Test in `inhalte_spec` vergleicht jede Zelle mit der Bibliothek und prüft W3-L5-04 (Positionen 2, 5, 6 ohne Fixpunkt-Kollision; `miniEnigma("chefhabach", "C")` = AFCCAGHHAF). W3-L5-01/-02 `schluesselVerdeckt: false` (Kryptoanalyse-Level, Stellung genannt). W3-L5-03 Begründung, W3-L5-05 Beurteilung als Muster in der Erklärung (E129). Test „Kür K2 nur bei kuer frei“ in `inhalte_plan`. Erwarteter Hinweis: W3-L5-05 „Rechenergebnis nicht nachgerechnet“ (Zählung 8!, 7 · 5 · 3 · 1, ohne Rechenfunktion).
 
 ### Task 177: Welt 3 – Boss „Der Fernschreiber“
 
@@ -663,9 +667,11 @@ Fallen nach E53/C17 aus der Erklärung (B-13 P7, B-14 P8).
 **Stichproben:** R = 82; `1011 0110 ⊕ 0110 1101 = 1101 1011`; tor → GF GA AF; D ⊕ OST → NEU; S/T → `1110 0111 1001 0010` /
 `1010 1100 1101 0110`; K₃ = `1100 0101 0011 1010`; TELEX-ROT TOR → `0001 0111 · 1100 1001 · 0101 1111`; BAD → HEUTEABEND.
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-B'`; `inhalte_plan`: Pool kern 10 / eA 5 = `WELT_PLAN`.
-- [ ] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 04/07/08/09/12; Mix 3/3/2; B-10 sendet nur `operation: "frei"`).
-- [ ] **Step 5: Commit** `git commit -m "Welt 3: Boss „Der Fernschreiber“ (Pool 15, fünf eA-Aufgaben, fünf fremde Chiffren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-B'`; `inhalte_plan`: Pool kern 10 / eA 5 = `WELT_PLAN`.
+- [x] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 04/07/08/09/12; Mix 3/3/2; B-10 sendet nur `operation: "frei"`).
+- [x] **Step 5: Commit** `git commit -m "Welt 3: Boss „Der Fernschreiber“ (Pool 15, fünf eA-Aufgaben, fünf fremde Chiffren)"`.
+- [x] **Umsetzungsnotiz:** Probelauf (100 Ziehungen je Kurs, Startwert fest): gA zieht nie B-04/-07/-08/-09/-12, eA alle 15; je 8 Aufgaben im Mix 3/3/2; W3-B-10 sendet nur `{ operation: "frei", text: "TOR", laenge: 24 }`. Abweichungen vom Tabellen-Entwurf (im Abgleich als Ausnahmen kodiert): **W3-B-06** als `gaps` (Bitfolge + Wort NEU, Prüfwert-Gruppe `xorBits`/`xor`) statt `bits-rechnen` – der Operand „OST in Bits“ wäre die Lösung von W3-L1-04 a) (Lösungsverrat-Test) und nähme dem Boss den Codierschritt (`TEILE_ERGAENZT`); **W3-B-08** `bits-rechnen` `schritt: "rundenschluessel"` (Spec-Spalte `gaps` → `SONDERFORM`); **W3-B-12** zwei `choice`-Teile mit Options-ids 1–5 = P₁–P₅ (`TEILE_ERGAENZT`, `CHOICE_FEST`); W3-B-13 b) Optionen `a`–`d` = die vier Schlüssel (CHOICE_OHNE_KENNUNG; der Abgleich liest jetzt `op.md` statt des nicht vorhandenen `op.text`). W3-B-07 a)/b) als Kettenzustände mit Rundenschlüssel 0 (im Text begründet), S-Box-Tafel im Inhalt. **Offene Frage:** Die Spec-Erklärungen nennen nur für B-13 (P7) und B-14 (P8) Fallen; nach E53 bleiben 13 Boss-Aufgaben ohne `fallen` → 13 Validator-Hinweise „Boss-Aufgabe ohne fallen“ (W0–W2 hatten P-Nummern in der Spec). **Vorläufig festgelegt** (Orchestrator 14.10.2026, Lehrkraft bestätigt später; offene Entscheidung 18): B-01 P1, B-02 P4, B-03 P10, B-04 P5, B-05 P4, B-06 P8, B-07 P4, B-08 P7, B-09 P4, B-10 P4, B-11 P5, B-12 P4, B-15 P4. **Durchsicht im Browser** (1280/360, eA- und gA-Kurs, je Level richtig/falsch, Kür, Boss-Start und Kampf): Level 3.4 zeigte „Schlüssel verdeckt“ (Kryptoanalyse-Level verdeckt automatisch) → `schluesselVerdeckt: false` in W3-L4-01/-02/-03/-04/-06 (Review Focus 4); Operandenzeilen der Bit-Tafeln brachen auf 360 px mitten in Vierergruppen um → Block `bits` gruppiert je Byte (`.bit-byte`, Test in `client_interaktionen`). Diagnose gesehen: W3-L2-03 P4 (Transposition fehlt), W3-L4-04 P3 (Reihenfolge); W3-L4-06 hat keine Diagnose-Variante (`adfgvx` kennt nur P3 `reihenfolge`, nicht P4 `fuellung` wie im Tabellenentwurf). gA-Kurs: 3.2 und 3.3 unsichtbar, Kür sichtbar; keine Konsolenfehler, kein Querscrollen.
+
 
 ---
 ### Task 178: Welt 4 – Datei, Epochen-Daten, Archivfund und Level 4.1 „Das Schlüsselproblem“
@@ -1396,6 +1402,9 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 | 13 | Funkraum W2 hat kein Szenario; Auftrag nannte „W2–W5“ | W3–W6 (inkl. Abi-Duell, Arena-LSG) als Lehrkraft-Downloads (E142) | – |
 | 14 | W3-L2-07 „choice + gaps“ (CBC-Fehlerfortpflanzung) | a) `choice` P₂, P₃ · b) `gaps` 1 · c) `choice` P₂ (E131) | andere Teilung nur mit Spec-Änderung |
 | 15 | `w4_inverses` ist laut Spec `kuer`; hat der Kern keine Kür-Sichtbarkeit für Generatoren, wird er `ergaenzung` | wie Task 193 | – |
+| 16 | Lösung W3-L1-04 a) (OST in ASCII-Bits) steht in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) | begründete Ausnahme im Lösungsverrat-Test (Task 172) | sonst Akte-Beispiel ändern (Spec-Korrektur) oder W3-L1-04 a) streichen |
+| 17 | W3-B-13 b): die vier Optionen (Schlüssel aus a) verraten die Anzahl 4 aus a) | wie Task 177 (keine erfundenen Distraktoren) | Distraktor-Schlüssel ergänzen (z. B. `0011 0011`, Periode 4) |
+| 18 | Boss-Fallen ohne P-Nummer in der Spec-Erklärung (W3: 13 Aufgaben; W4–W6 entsprechend) | vorläufig aus Kategorie, Spec §0.6 und den passenden Lab-Aufgaben abgeleitet (Tasks 177, 181, 185, 189; Listen in den Umsetzungsnotizen) | P-Nummern tauschen – reine Datenänderung |
 
 ---
 
