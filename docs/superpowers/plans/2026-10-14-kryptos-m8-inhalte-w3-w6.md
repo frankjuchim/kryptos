@@ -1211,11 +1211,12 @@ Generatoren, bleibt `w4_inverses` `ergaenzung` (Spec-Abweichung als Kommentar + 
 
 Pendelwörter und Klartexte aus Task 191 (`PENDEL_W6`, `KLARTEXTE_W6`); t ∈ {3, 5, 7}.
 
-- [ ] **Step 1: Failing tests** – `eves_uhrwerk`: 1000 Seeds, ver/ent invers, Zwilling-Abgleich (50 Seeds), drei Diagnose-Varianten
+- [x] **Step 1: Failing tests** – `eves_uhrwerk`: 1000 Seeds, ver/ent invers, Zwilling-Abgleich (50 Seeds), drei Diagnose-Varianten
   erkannt; `zeitplan`: Lösung ± 0,5 akzeptiert, ± 0,6 nicht; `fallen_mix`: die erzeugte Schülerlösung enthält genau die
   gewählte Falle (unabhängige Rechnung im Test).
-- [ ] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Trainingsplatz Welt 6: Eves Uhrwerk, Zeitplan (Toleranz), Fallen-Mix"`.
+- [x] **Step 2–3:** FAIL → Implement → PASS; `npm test`.
+- [x] **Step 4: Commit** `git commit -m "Trainingsplatz Welt 6: Eves Uhrwerk, Zeitplan (Toleranz), Fallen-Mix"`.
+- [x] **Umsetzungsnotiz:** Module `uhrwerk.js` (`eves_uhrwerk`, `schluesselVerdeckt: false`, Merktext des Verfahrens in der Aufgabe; ent mit Füll-X als Lösung und ohne X als Alternative), `zeitplan.js` (`toleranz: 0.5`, Lösung mit Komma; Rückstand „negativ: vor dem Plan“), `fallenmix.js` (`gaps` mit Klappliste der vier Fallen + Ergebnis; Basis Caesar ver P1/P2, ent P3, mod P2, Vigenère ver P1, ent P3, Schlüsselanzahl P7; Wörter aus WOERTER_ANTIKE, KLARTEXTE_W2/SCHLUESSEL_W2; Video-Zahlen ausgeschlossen). Abweichungen: **XOR-Bytes entfällt** im Fallen-Mix (keine der Fallen P1/P2/P3/P7 beschreibt einen XOR-Fehler); `fallen` der Fallen-Mix-Aufgaben leer, weil der Fallen-Chip über der Aufgabe sonst die Antwort zeigt (Browser-Durchsicht). Tests: 1000 Seeds Uhrwerk mit unabhängiger Ring-/Pendel-Rechnung, Diagnosen P3 (Stufen vertauscht, Ring Gegenrichtung) und P4 (Pendel), Füll-X toleriert, Zwilling 50 Seeds; Zeitplan ± 0,5 ja / ± 0,6 nein, alle drei Fragen; Fallen-Mix unabhängig nachgerechnet, nur Falle oder nur Ergebnis reicht nicht. Browser (1280/360): Trainingsplätze W3–W6, jeder Generator einmal angezeigt – keine Konsolenfehler, kein Querscrollen.
 
 ### Task 195: Bildpfade, Materialien Welt 3 bauen, `.DS_Store` entfernen
 

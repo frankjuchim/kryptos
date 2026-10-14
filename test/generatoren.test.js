@@ -400,9 +400,9 @@ test('w4_dh und w4_rsa_ver: Potenzen per Schleife, g ist Primitivwurzel, Niveau 
 });
 
 test('Alle Kryptos-Generatoren registriert (12 Pflicht nach Design §7.6 + DH/RSA + Ergänzungen W0–W2, Plan M5 Tasks 91/92; W3–W6 Plan M8 Tasks 192–194)', () => {
-  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['adfgvx_stufe1', 'affin', 'ascii_bits', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'kryptos16_teilschritt', 'mod_a1', 'otp', 'otp_doppelt', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'spaltentransposition', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_inverses', 'w4_modpotenz', 'w4_rsa_schluessel', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kollision', 'w5_kryptoshash', 'w5_pruefsumme', 'w5_schutzziele', 'w5_signatur', 'xor_bytes']);
-  // jede Welt 0–5 hat einen Trainingsplatz, Welt 6 (Zeitmaschine) keinen eigenen Generator
-  for (const w of [0, 1, 2, 3, 4, 5]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
+  assert.deepEqual(Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_')).sort(), ['adfgvx_stufe1', 'affin', 'ascii_bits', 'caesar_ent', 'caesar_paar', 'caesar_ver', 'friedman', 'haeufigkeit_caesar', 'invers_mod26', 'kasiski', 'koinzidenz', 'kryptos16_runde', 'kryptos16_teilschritt', 'mod_a1', 'otp', 'otp_doppelt', 'playfair', 'porta', 'schluesselwort_alphabet', 'skytale', 'spaltentransposition', 'substitution_ver_ent', 'teiltext', 'vigenere', 'vigenere_zeichen', 'w4_dh', 'w4_inverses', 'w4_modpotenz', 'w4_rsa_schluessel', 'w4_rsa_ver', 'w4_schluesselanzahl', 'w5_kollision', 'w5_kryptoshash', 'w5_pruefsumme', 'w5_schutzziele', 'w5_signatur', 'xor_bytes', 'eves_uhrwerk', 'zeitplan', 'fallen_mix'].sort());
+  // jede Welt 0–6 hat einen Trainingsplatz (Welt 6 seit Plan M8 Task 194)
+  for (const w of [0, 1, 2, 3, 4, 5, 6]) assert.ok(G.generatorenFuerWelt(w).length > 0, `Welt ${w}`);
 });
 
 test('Entschlüsselungs-Generatoren liefern Klartext klein (Design §6.2, Plan M5 E58)', () => {
@@ -1060,4 +1060,133 @@ test('Zwilling (bruecke.py) rechnet die Generatoren der Welten 4/5 nach (je 50 S
   lauf('w5_kollision', (a) => ({ f: 'kryptosHash', args: [a.loesung.beispiel] }), (a, r) => assert.equal(r.wert, a.interaktion.ziel));
   lauf('w5_pruefsumme', (a) => ({ f: 'pruefsumme', args: [/„([a-z]+)“ und/.exec(a.inhalt[0].md)[1], 'gewichtet'] }), (a, r) => assert.equal(String(r), a.loesung[0].ga[0]));
   lauf('w5_signatur', (a) => { const [, N, , s] = /\((\d+), 3\)\. Hashwert der empfangenen Nachricht: (\d+)\. Signatur s = (\d+)/.exec(a.inhalt[0].md).map(Number); return { f: 'modpow', args: [s, 3, N] }; }, (a, r) => assert.equal(String(r), a.loesung.x[0]));
+});
+
+/* ---------- Plan M8 Task 194: Trainingsplatz Welt 6 (SPEC W6 §8) ---------- */
+
+/** Eves Uhrwerk unabhängig: Ring (Block 8, X), Pendel-Vigenère (A = Verschiebung 0) */
+const ringZ = (t, s, ent = false) => { let x = t.toUpperCase(); while (x.length % 8) x += 'X'; let o = ''; for (let b = 0; b < x.length; b += 8) { const blk = x.slice(b, b + 8); const f = [...Array(8).keys()].map((j) => (j * s) % 8); if (!ent) o += f.map((i) => blk[i]).join(''); else { const r = Array(8); f.forEach((i, j) => { r[i] = blk[j]; }); o += r.join(''); } } return o; };
+const pendelZ = (w, n) => { const p = w.length === 1 ? w : w + [...w.slice(1, -1)].reverse().join(''); let o = ''; while (o.length < n) o += p; return o.slice(0, n); };
+const vigZ = (t, k, vz = 1) => [...t].map((c, i) => String.fromCharCode(65 + (((c.charCodeAt(0) - 65 + vz * (k.charCodeAt(i % k.length) - 65)) % 26) + 26) % 26)).join('');
+
+test('eves_uhrwerk: Ring + Pendel unabhängig, ver/ent invers, X am Ende toleriert, Diagnose P3/P4 (1000 Seeds)', () => {
+  const richtungen = new Set();
+  const diagnosen = new Set();
+  for (let seed = 1; seed <= 1000; seed++) {
+    const a = G.erzeuge('eves_uhrwerk', seed * 13 + 5);
+    const { t, pendel } = a.interaktion.verfahren;
+    assert.ok([3, 5, 7].includes(t) && W.PENDEL_W6.includes(pendel));
+    const klar = a.interaktion.richtung === 'ver' ? a.interaktion.eingabe : a.loesung.text.replace(/x+$/, '');
+    assert.ok(W.KLARTEXTE_W6.includes(klar), klar);
+    const z = ringZ(klar, t);
+    const geheim = vigZ(z, pendelZ(pendel, z.length));
+    richtungen.add(a.interaktion.richtung);
+    if (a.interaktion.richtung === 'ver') {
+      assert.equal(nurAZ(a.loesung.text), geheim);
+      if (seed <= 60) {
+        let pad = klar.toUpperCase();
+        while (pad.length % 8) pad += 'X';
+        const kandidaten = [
+          ['P3', ringZ(vigZ(pad, pendelZ(pendel, pad.length)), t)], // Stufen vertauscht
+          ['P3', vigZ(ringZ(pad, t, true), pendelZ(pendel, pad.length))], // Ring in der Gegenrichtung
+          ['P4', vigZ(z, pendel)] // Pendelwort zyklisch statt Pendel
+        ];
+        for (const [p, falsch] of kandidaten) if (falsch !== geheim) { const d = C.pruefeAufgabe(a, falsch, { diagnose: true }).diagnose; assert.equal(d[0].p, p, `${seed} ${p}`); diagnosen.add(p); }
+      }
+    } else {
+      assert.equal(nurAZ(a.interaktion.eingabe), geheim);
+      assert.equal(C.pruefeAufgabe(a, klar).ok, true, 'ohne Füll-X');
+      assert.equal(C.pruefeAufgabe(a, a.loesung.text).ok, true, 'mit Füll-X');
+    }
+  }
+  assert.deepEqual([...richtungen].sort(), ['ent', 'ver']);
+  assert.deepEqual([...diagnosen].sort(), ['P3', 'P4']);
+  grundpruefung('eves_uhrwerk');
+  if (PYTHON) {
+    const aufgaben = SEEDS500.slice(0, 50).map((s) => G.erzeuge('eves_uhrwerk', s));
+    const r = zwilling(aufgaben.map((a) => ({ f: 'verfahren.anwenden', args: [a.interaktion.verfahren, a.interaktion.eingabe, a.interaktion.richtung] })));
+    aufgaben.forEach((a, i) => assert.equal(nurAZ(r[i]), nurAZ(a.loesung.text)));
+  }
+});
+
+test('zeitplan: BE · Takt (eA 2,25 / gA 2,2), Summe 30 bzw. 25, Lösung ± 0,5 akzeptiert, ± 0,6 nicht', () => {
+  const fragen = new Set();
+  for (const a of grundpruefung('zeitplan')) {
+    const md = a.inhalt[0].md;
+    const eA = /eA/.test(md);
+    const takt = eA ? 2.25 : 2.2;
+    const be = [...md.matchAll(/\(([a-j])\) (\d) BE/g)].map((m) => Number(m[2]));
+    assert.ok(be.length >= 7 && be.length <= 10 && be.every((b) => b >= 2 && b <= 6));
+    assert.equal(be.reduce((s, b) => s + b, 0), eA ? 30 : 25);
+    const feld = a.interaktion.felder.min;
+    assert.equal(feld.toleranz, 0.5);
+    let soll;
+    let m;
+    if ((m = /Wie viele Minuten sind für Teilaufgabe \(([a-j])\)/.exec(md))) { soll = be['abcdefghij'.indexOf(m[1])] * takt; fragen.add('a'); }
+    else if ((m = /bis einschließlich Teilaufgabe \(([a-j])\)/.exec(md))) { soll = be.slice(0, 'abcdefghij'.indexOf(m[1]) + 1).reduce((s, b) => s + b, 0) * takt; fragen.add('b'); }
+    else { m = /Nach (\d+) Minuten sind Teilaufgaben mit (\d+) BE erledigt/.exec(md); soll = Number(m[1]) - Number(m[2]) * takt; fragen.add('c'); }
+    const zahl = Number(a.loesung.min[0].replace(',', '.'));
+    assert.ok(Math.abs(zahl - soll) < 1e-9, `${zahl} ≠ ${soll}`);
+    const pr = (x) => C.pruefeAufgabe(a, { min: String(x).replace('.', ',') }).ok;
+    assert.equal(pr(+(soll + 0.5).toFixed(2)), true);
+    assert.equal(pr(+(soll - 0.5).toFixed(2)), true);
+    assert.equal(pr(+(soll + 0.6).toFixed(2)), false);
+    assert.equal(pr(+(soll - 0.6).toFixed(2)), false);
+  }
+  assert.deepEqual([...fragen].sort(), ['a', 'b', 'c']);
+});
+
+test('fallen_mix: Schülerlösung enthält genau die gewählte Falle (unabhängig nachgerechnet), Falle und Ergebnis nötig', () => {
+  const gesehen = new Set();
+  for (const a of grundpruefung('fallen_mix', 120)) {
+    const md = a.inhalt.map((b) => b.md || '').join(' ');
+    const falle = a.loesung.falle[0].slice(0, 2);
+    gesehen.add(`${a.kategorie}:${falle}`);
+    assert.deepEqual(a.fallen, [], 'kein Fallen-Chip (die Falle ist die Antwort)');
+    let m;
+    if ((m = /Verschlüssele `([a-z]+)` mit Caesar, Verschiebung k = (\d+)\. Schülerlösung: `([A-Z ]+)`/.exec(md))) {
+      const [, w, k, s0] = m;
+      const s = nurAZ(s0);
+      const richtig = za(az(w).map((x) => x + Number(k)));
+      assert.equal(a.loesung.ergebnis[0], richtig);
+      if (falle === 'P1') assert.ok([za(az(w).map((x) => x + Number(k) + 1)), za(az(w).map((x) => x + Number(k) - 1))].includes(s));
+      else { assert.equal(falle, 'P2'); assert.equal(s, richtig.replace(/Z/g, 'A')); assert.ok(richtig.includes('Z')); }
+    } else if ((m = /Entschlüssele `([A-Z ]+)` mit Caesar, Verschiebung k = (\d+)\. Schülerlösung: `([a-z]+)`/.exec(md))) {
+      const [, g0, k, s] = m;
+      const g = nurAZ(g0);
+      assert.equal(falle, 'P3');
+      assert.equal(a.loesung.ergebnis[0], za(az(g).map((x) => x - Number(k))).toLowerCase());
+      assert.equal(s.toUpperCase(), za(az(g).map((x) => x + Number(k))));
+    } else if ((m = /Berechne \((\d+) − (\d+)\) mod 26\. Schülerlösung: (−?\d+)/.exec(md))) {
+      const [, x, y, s] = m;
+      assert.equal(falle, 'P2');
+      assert.equal(a.loesung.ergebnis[0], String((((Number(x) - Number(y)) % 26) + 26) % 26));
+      assert.equal(Number(s.replace('−', '-')), Number(x) - Number(y));
+    } else if ((m = /Vigenère, Schlüsselwort (\w+) .*?(Verschlüssele|Entschlüssele) `([\w ]+)`\. Schülerlösung: `([\w ]+)`/.exec(md))) {
+      const [, key, art, t, s] = m;
+      const vz = art === 'Verschlüssele' ? 1 : -1;
+      const ks = [...key].map((c) => c.charCodeAt(0) - 65);
+      const rechne = (txt, sh, v) => za(az(txt).map((x, i) => x + v * (ks[i % ks.length] + sh)));
+      assert.equal(nurAZ(a.loesung.ergebnis[0]), rechne(t, 0, vz));
+      if (falle === 'P1') assert.equal(nurAZ(s), rechne(t, 1, vz));
+      else { assert.equal(falle, 'P3'); assert.equal(nurAZ(s), rechne(t, 0, -vz)); }
+    } else {
+      m = /(\d+) Personen .*Schülerlösung: (\d+) Schlüssel/.exec(md);
+      assert.ok(m, md);
+      const n = Number(m[1]);
+      assert.equal(falle, 'P7');
+      assert.equal(Number(m[2]), n * (n - 1));
+      assert.equal(a.loesung.ergebnis[0], String((n * (n - 1)) / 2));
+    }
+    // nur Falle richtig oder nur Ergebnis richtig reicht nicht
+    const andere = a.interaktion.felder.falle.optionen.find((o) => o !== a.loesung.falle[0]);
+    assert.equal(C.pruefeAufgabe(a, { falle: andere, ergebnis: a.loesung.ergebnis[0] }).ok, false);
+    assert.equal(C.pruefeAufgabe(a, { falle: a.loesung.falle[0], ergebnis: 'zzz' }).ok, false);
+  }
+  for (const k of ['verschluesseln:P1', 'verschluesseln:P2', 'entschluesseln:P3', 'modulo:P2', 'substitution-poly:P1', 'substitution-poly:P3', 'schluesselraum:P7']) assert.ok(gesehen.has(k), k);
+});
+
+test('Trainingsplatz Welt 6: drei Generatoren (eves_uhrwerk, zeitplan, fallen_mix)', async () => {
+  const { s } = await H.szenario();
+  assert.deepEqual((await s.get('/api/training/6')).body.generatoren.map((g) => g.key), ['eves_uhrwerk', 'zeitplan', 'fallen_mix']);
 });

@@ -37,7 +37,11 @@ const MODULE = [
   require('./kollision'),
   require('./pruefsumme'),
   require('./signatur'),
-  require('./schutzziele')
+  require('./schutzziele'),
+  // Plan M8 Task 194 (Welt 6)
+  require('./uhrwerk'),
+  require('./zeitplan'),
+  require('./fallenmix')
 ];
 
 /** Alle Generatoren der Module in der Registry des Kerns eintragen (G = src/content/generators). */
