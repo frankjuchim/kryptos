@@ -1359,12 +1359,13 @@ Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessu
 
 **Files:** Modify `.github/workflows/pruefung.yml` (**K22**), `package.json` (**K30**), `docs/KERN_ABWEICHUNGEN.md`
 
-- [ ] **Step 1:** Job „Krypto“: Schritt „Fremde Verfahren W0–W6“ (Name), `seed_pruefen.py` über alle sieben Welten (unverändert,
+- [x] **Step 1:** Job „Krypto“: Schritt „Fremde Verfahren W0–W6“ (Name), `seed_pruefen.py` über alle sieben Welten (unverändert,
   Glob); Job „App“: `node scripts/abdeckung.js` (Task 200); Job „Inhalte“: `ide_pruefen.py` mit W3, `workspaces --pruefen`,
   `akten/loesungen/lehrkraft --pruefen` (neue Listen), Probe-Rendering zusätzlich `KR_W3_Akte2_…docx` (Pixelbild),
   Test „keine `/home/`-Pfade“ (Task 195) läuft in `material_pipeline.test.js`.
-- [ ] **Step 2:** `npm run pruefen` = test + validate + pruefwerte + seeds + **abdeckung**; lokal grün.
-- [ ] **Step 3: Commit** `git commit -m "CI: Abdeckung, Fremde Verfahren W0–W6, Material-Prüfungen für Welt 3 (K22, K30)"`.
+- [x] **Step 2:** `npm run pruefen` = test + validate + pruefwerte + seeds + **abdeckung**; lokal grün.
+- [x] **Step 3: Commit** `git commit -m "CI: Abdeckung, Fremde Verfahren W0–W6, Material-Prüfungen für Welt 3 (K22, K30)"`.
+- [x] **Umsetzungsnotiz:** Job `krypto`: Schritt „Fremde Verfahren W0–W6“ (das Skript deckt seit Task 170 alle Welten ab), Seeds-Schritt benennt die sieben Welten (Aufruf unverändert, Glob). Job `app`: `node scripts/abdeckung.js` seit Task 200. Job `inhalte`: IDE-Prüfstand und Workspaces erfassen W3 seit Task 196 über den Glob (`materialien/Welt*/…`), Schrittname ergänzt; die drei PDF-Prüfungen nutzen die neuen Listen aus Task 199; Render-Probe zusätzlich `KR_W3_Akte2_Blockchiffre_Baukasten.docx` (drei PNG, lokal mit eigenem Profil gerendert, 388 KB); der `/home/`-Pfad-Test steht in `material_pipeline.test.js` (Schrittname ergänzt). YAML geparst. `npm run pruefen` (test + validate + krypto:pruefwerte + krypto:seeds + abdeckung) lokal grün: 1122 Tests, 1112 Prüfwerte, 398 Lösungen, 0 Lücken. TECHNIK §16.1, K22/K30 fortgeschrieben.
 
 ### Task 204: Abschluss M8
 

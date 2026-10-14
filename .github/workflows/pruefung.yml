@@ -47,9 +47,9 @@ jobs:
         run: npm run krypto:vergleich -- --anzahl 2000
       - name: Prüfwerte der Materialien (Akten, Bosse, Klausuren, Videos) gegen den Zwilling
         run: python3 -I werkzeuge/krypto/pruefwerte.py
-      - name: Fremde Verfahren W0–W2 (Spec-Vektoren)
+      - name: Fremde Verfahren W0–W6 (Spec-Vektoren)
         run: python3 -I werkzeuge/krypto/test_fremde_verfahren.py
-      - name: Seeds unabhängig nachrechnen (Python-Zwilling, Delta §11)
+      - name: Seeds unabhängig nachrechnen (Python-Zwilling, Delta §11; ohne Argumente alle sieben Welten + Gast)
         run: |
           python3 -I werkzeuge/krypto/seed_pruefen.py --pruefwerte test/fixtures/pruefwerte test/fixtures/welt_beispiel.json
           python3 -I werkzeuge/krypto/pruefwerte.py --ordner test/fixtures/pruefwerte
@@ -85,7 +85,7 @@ jobs:
         run: |
           (cd werkzeuge/material && npm install --no-audit --no-fund)
           python3 -I werkzeuge/material/test_kontrast.py
-      - name: Online-IDE-Prüfstand (Gerüst kompiliert, LSG alle Tests grün, Testklassen identisch; Java 21)
+      - name: Online-IDE-Prüfstand W0 und W3 (Gerüst kompiliert, LSG alle Tests grün, Testklassen identisch; Java 21)
         run: python3 -I werkzeuge/ide-pruefung/ide_pruefen.py
       - name: Workspace-Dateien für online-ide.de aktuell
         run: python3 -I werkzeuge/workspaces_erzeugen.py --pruefen
@@ -95,14 +95,16 @@ jobs:
         run: python3 -I werkzeuge/loesungen_pdf.py --pruefen
       - name: Lehrkraft-PDFs und verzeichnis.json
         run: python3 -I werkzeuge/lehrkraft_pdf.py --pruefen
-      - name: LibreOffice rendert eine Akte und eine Präsentation (Probe der PDF-Pipeline)
+      - name: LibreOffice rendert Akten und eine Präsentation (Probe der PDF-Pipeline; W3·2 mit Pixelbild)
         run: |
           probe="$RUNNER_TEMP/pdf-probe"; mkdir -p "$probe"
           soffice -env:UserInstallation=file://$RUNNER_TEMP/lo-profil --headless --convert-to pdf --outdir "$probe" \
             materialien/Welt0_Antike/2_Akten/KR_W0_Akte1_Skytale_von_Sparta.docx \
-            materialien/Welt0_Antike/1_Praesentation/KR_W0_Praesentation_Kickoff.pptx
+            materialien/Welt0_Antike/1_Praesentation/KR_W0_Praesentation_Kickoff.pptx \
+            materialien/Welt3_Maschinenzeitalter/2_Akten/KR_W3_Akte2_Blockchiffre_Baukasten.docx
           test -s "$probe/KR_W0_Akte1_Skytale_von_Sparta.pdf" && test -s "$probe/KR_W0_Praesentation_Kickoff.pdf"
-      - name: Material-Pipeline als Node-Test (test/material_pipeline.test.js)
+          test -s "$probe/KR_W3_Akte2_Blockchiffre_Baukasten.pdf"
+      - name: Material-Pipeline als Node-Test (test/material_pipeline.test.js, u. a. keine /home/-Pfade in Materialquellen)
         run: node --test test/material_pipeline.test.js
       # folgen (TECHNIK §16.1): materialien_pruefen.py und video_folien.py --pruefen (M9)
 
