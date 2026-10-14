@@ -310,8 +310,10 @@ test('Funkraum-Regie: Szenario-Liste des Clients = SZENARIEN des Servers; Sparsc
   for (const typ of S.TYPEN) {
     const { titel, welt, ds, teamsMin, phasen } = S.SZENARIEN[typ];
     assert.deepEqual({ titel: C[typ].titel, welt: C[typ].welt, ds: C[typ].ds, teamsMin: C[typ].teamsMin, phasen: C[typ].phasen }, { titel, welt, ds, teamsMin, phasen: [...phasen] }, typ);
-    const teams = [1, 2, 3, 4, 5].map((nr) => ({ id: 10 + nr, nr }));
-    assert.deepEqual(k.roh(k.wert('KRLehrerFunk').vorschlag(typ, teams)), S.rollenVorschlag(typ, teams), typ);
+    for (let n = 2; n <= 12; n++) {
+      const teams = Array.from({ length: n }, (_, i) => ({ id: 11 + i, nr: i + 1 }));
+      assert.deepEqual(k.roh(k.wert('KRLehrerFunk').vorschlag(typ, teams)), S.rollenVorschlag(typ, teams), `${typ} ${n}`);
+    }
   }
   let gesendet = null;
   const k2 = D.lade(LEHRER, {

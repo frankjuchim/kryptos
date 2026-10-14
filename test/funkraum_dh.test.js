@@ -45,9 +45,9 @@ test('Schlüsseltausch: Modulo-Uhr nur mit Reiter „uhr“ (kein dlog, E98)', a
 });
 
 test('Schlüsseltausch: zwei Eve-Teams, Zeitbedarf, Grenzen der Eingaben, Meldungen nie bei Teams, Beenden löscht', async () => {
-  const f = await F.kursMitTeams(4); // 1↔2, 3 und 4 = Eve
+  const f = await F.kursMitTeams(4); // 1↔2, 3 und 4 = Eve (von der Lehrkraft so gesetzt; der Vorschlag nimmt 1 Eve, K9)
   const [alice, bob, eve1, eve2] = f.teams;
-  const sz = await F.starte(f, 'schluesseltausch');
+  const sz = await F.starte(f, 'schluesseltausch', { rollen: [{ teamId: alice.id, rolle: 'alice', partnerId: bob.id }, { teamId: bob.id, rolle: 'bob', partnerId: alice.id }, { teamId: eve1.id, rolle: 'eve' }, { teamId: eve2.id, rolle: 'eve' }] });
   const post = (t, pfad, body) => t.c.post(`/api/funk/${sz.id}/${pfad}`).send(body);
   await post(alice, 'oeffentlich', { wert: 'x' }).expect(400);
   await post(alice, 'oeffentlich', { wert: 10 }).expect(200);   // a = 3

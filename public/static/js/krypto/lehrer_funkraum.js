@@ -277,10 +277,13 @@ const KRLehrerFunk = (() => {
     if (k.rollen.alle) return t.map((x) => ({ teamId: x.id, rolle: k.rollen.alle, partnerId: null }));
     const n = t.length;
     if (!n) return [];
-    const paare = n - (n - 2 * Math.floor((n - 1) / 2));
+    // Sonderteams nach Welt-Spec (Review M7 K9, gleich szenarien.sonderAnzahl): W4 1 Eve bis 6 Teams, W5 2 Mallory ab 9
+    const sonder = typ === 'schluesseltausch' ? (n <= 6 ? 1 : 2) : typ === 'mallory' ? (n > 8 ? 2 : 1) : n - 2 * Math.floor((n - 1) / 2);
+    const rest = n - Math.min(n, sonder);
+    const paare = rest - (rest % 2);
     const out = [];
     for (let i = 0; i + 1 < paare; i += 2) out.push({ teamId: t[i].id, rolle: 'alice', partnerId: t[i + 1].id }, { teamId: t[i + 1].id, rolle: 'bob', partnerId: t[i].id });
-    for (let i = paare; i < n; i++) out.push({ teamId: t[i].id, rolle: k.rollen.sonder, partnerId: null });
+    for (let i = rest; i < n; i++) out.push({ teamId: t[i].id, rolle: k.rollen.sonder, partnerId: null });
     return out;
   }
 

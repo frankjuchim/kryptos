@@ -15,6 +15,24 @@ test('Rollenvorschlag (E107): Paare aus kleinen Nummern, Sonderrolle für die h�
   assert.equal(kurz(S.rollenVorschlag('wettknacken', t(2))), '100:knacker 101:knacker');
 });
 
+test('Review M7 K9: Rollenvorschlag nach Welt-Spec – W4 §9.3 1 Eve bis 6 Teams, W5 §9.3 2 Mallory erst ab mehr als 8 Teams', () => {
+  const t = (n) => Array.from({ length: n }, (_, i) => ({ id: 100 + i, nr: i + 1 }));
+  const zahl = (typ, n, rolle) => S.rollenVorschlag(typ, t(n)).filter((r) => r.rolle === rolle).length;
+  for (let n = 3; n <= 12; n++) {
+    assert.equal(zahl('schluesseltausch', n, 'eve'), n <= 6 ? 1 : 2, `Schlüsseltausch ${n}`);
+    assert.equal(zahl('mallory', n, 'mallory'), n > 8 ? 2 : 1, `Mallory ${n}`);
+    for (const typ of ['schluesseltausch', 'mallory']) {
+      const r = S.rollenVorschlag(typ, t(n));
+      assert.doesNotThrow(() => S.pruefeRollen(typ, r, t(n).map((x) => x.id)), `${typ} ${n} gültig`);
+      assert.ok(n - r.length <= 1, `${typ} ${n}: höchstens ein Team ohne Rolle`);
+    }
+  }
+  const kurz = (r) => r.map((x) => `${x.teamId}:${x.rolle}${x.partnerId ? '>' + x.partnerId : ''}`).join(' ');
+  // 4 Teams: ein Paar, Eve = höchste Nummer, Team 3 setzt aus (kein Dreier, E107 – die Lehrkraft kann es zum zweiten Eve-Team machen)
+  assert.equal(kurz(S.rollenVorschlag('schluesseltausch', t(4))), '100:alice>101 101:bob>100 103:eve');
+  assert.equal(kurz(S.rollenVorschlag('mallory', t(8))), '100:alice>101 101:bob>100 102:alice>103 103:bob>102 104:alice>105 105:bob>104 107:mallory');
+});
+
 test('Rollen prüfen: Paar nicht gegenseitig, drei Eve, zu wenige Teams, fremdes Team → 400', () => {
   const ids = [1, 2, 3, 4, 5];
   assert.throws(() => S.pruefeRollen('botenlauf', [{ teamId: 1, rolle: 'alice', partnerId: 2 }, { teamId: 2, rolle: 'bob', partnerId: 3 }, { teamId: 3, rolle: 'eve' }], ids), /Paar/);

@@ -40,8 +40,20 @@ function konfigVon(typ) {
 }
 
 /**
- * Vorschlag (E107): Teams nach `nr`; Wettknacken alle `knacker`; sonst Sonderrolle für die s = n − 2·⌊(n − 1)/2⌋ (1 oder
- * 2) Teams mit den höchsten Nummern, Paare Alice ↔ Bob aus den übrigen (1↔2, 3↔4, …).
+ * Zahl der Sonderteams (Eve/Mallory) bei n Teams nach den Welt-Specs (Review M7 K9): Schlüsseltausch W4 §9.3 „1 Team bei
+ * bis zu 6 Teams, 2 bei mehr“, Mallory W5 §9.3 „1 Team; bei mehr als 8 Teams 2“; sonst (Botenlauf W0 „1–2 Eve-Teams“,
+ * Doppelter Schlüssel) s = n − 2·⌊(n − 1)/2⌋ (E107: alle Teams spielen, ungerade Rest-Paare gibt es nicht).
+ */
+function sonderAnzahl(typ, n) {
+  if (typ === 'schluesseltausch') return n <= 6 ? 1 : 2;
+  if (typ === 'mallory') return n > 8 ? 2 : 1;
+  return n - 2 * Math.floor((n - 1) / 2);
+}
+
+/**
+ * Vorschlag (E107, K9): Teams nach `nr`; Wettknacken alle `knacker`; sonst Sonderrolle für die `sonderAnzahl` Teams mit
+ * den höchsten Nummern, Paare Alice ↔ Bob aus den übrigen (1↔2, 3↔4, …). Bleibt bei W4/W5 ein Team ohne Partner (kein
+ * Dreier, E107), spielt es im Vorschlag nicht mit – die Lehrkraft kann es vor dem Start z. B. zum zweiten Sonderteam machen.
  * @param {string} typ
  * @param {{ id: number, nr: number }[]} teams
  * @returns {{ teamId: number, rolle: string, partnerId: number|null }[]}
@@ -52,15 +64,16 @@ function rollenVorschlag(typ, teams) {
   if (k.rollen.alle) return t.map((x) => ({ teamId: x.id, rolle: k.rollen.alle, partnerId: null }));
   const n = t.length;
   if (!n) return [];
-  const s = n - 2 * Math.floor((n - 1) / 2);
-  const paare = n - s;
+  const s = Math.min(n, sonderAnzahl(typ, n));
+  const rest = n - s;
+  const paare = rest - (rest % 2);
   const [a, b] = k.rollen.paar;
   const out = [];
   for (let i = 0; i + 1 < paare; i += 2) {
     out.push({ teamId: t[i].id, rolle: a, partnerId: t[i + 1].id });
     out.push({ teamId: t[i + 1].id, rolle: b, partnerId: t[i].id });
   }
-  for (let i = paare; i < n; i++) out.push({ teamId: t[i].id, rolle: k.rollen.sonder, partnerId: null });
+  for (let i = rest; i < n; i++) out.push({ teamId: t[i].id, rolle: k.rollen.sonder, partnerId: null });
   return out;
 }
 
@@ -117,4 +130,4 @@ function pruefeRollen(typ, rollen, teamIds) {
   return liste;
 }
 
-module.exports = { SZENARIEN, TYPEN, ROLLEN_NAME, konfigVon, rollenVorschlag, pruefeRollen };
+module.exports = { SZENARIEN, TYPEN, ROLLEN_NAME, konfigVon, sonderAnzahl, rollenVorschlag, pruefeRollen };

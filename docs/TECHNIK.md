@@ -1488,8 +1488,11 @@ nachträglich (Review M7 W1); die Funkraum-Seite sperrt dann alle Eingaben. Jede
 Voraussetzung: Teams des Kurses angelegt (Lehrkraft, `teams`/`team_mitglieder`; Namen aus `TEAM_NAMEN` =
 „Team Skytale“, „Team Scheibe“, „Team Quadrat“, „Team Lochstreifen“, „Team Enigma“, „Team Schlüsselpaar“, „Team Siegel“,
 „Team Chronoskop“, „Team Tafel“, „Team Manuskript“, „Team Lochkarte“, „Team Kompass“). Beim Anlegen schlägt der Server
-eine Verteilung nach der Szenario-Konfiguration vor (z. B. Paare Alice/Bob + 1 Eve-Team, Eve = Team mit der höchsten
-Nummer); die Lehrkraft kann vor dem Start tauschen. Schüler ohne Team sehen „Du bist keinem Team zugeteilt“.
+eine Verteilung nach der Szenario-Konfiguration vor: Teams nach Nummer, Sonderrolle für die Teams mit den höchsten
+Nummern, Paare Alice ↔ Bob aus den übrigen. Zahl der Sonderteams (`szenarien.sonderAnzahl`, Review M7 K9 nach den
+Welt-Specs): Schlüsseltausch 1 Eve bei bis zu 6 Teams, sonst 2 (W4 §9.3); Mallory 1, bei mehr als 8 Teams 2 (W5 §9.3);
+Botenlauf und Doppelter Schlüssel 1 oder 2 (s = n − 2·⌊(n − 1)/2⌋, E107). Bleibt ein Team ohne Partner (kein Dreier),
+spielt es im Vorschlag nicht mit; die Lehrkraft kann vor dem Start tauschen (z. B. zweites Sonderteam). Schüler ohne Team sehen „Du bist keinem Team zugeteilt“.
 
 ### 12.3 Nachrichten und Whitelist
 

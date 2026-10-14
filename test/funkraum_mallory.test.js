@@ -68,7 +68,9 @@ test('Mallory: Datenleck je Rolle, Whitelist auf allen Wegen, Zertifikate nur in
   // Zufall: 1. Salz, dann je Alice-Team die Karten für Phase 1 und 2 (Alice 1: Karte 0, Alice 2: Karte 1)
   const f = await F.kursMitTeams(6, { zufallBytes: F.festerZufall(['00'.repeat(32), '00000000', '00000000', '00000001', '00000001']) }); // 1↔2, 3↔4, 5 und 6 = Mallory
   const [a1, b1, a2, b2, m1, m2] = f.teams;
-  const sz = await F.starte(f, 'mallory');
+  const paar = (x, y) => [{ teamId: x.id, rolle: 'alice', partnerId: y.id }, { teamId: y.id, rolle: 'bob', partnerId: x.id }];
+  // zwei Mallory-Teams setzt die Lehrkraft (der Vorschlag nimmt 2 erst ab 9 Teams, K9)
+  const sz = await F.starte(f, 'mallory', { rollen: [...paar(a1, b1), ...paar(a2, b2), { teamId: m1.id, rolle: 'mallory' }, { teamId: m2.id, rolle: 'mallory' }] });
   const post = (t, pfad, body) => t.c.post(`/api/funk/${sz.id}/${pfad}`).send(body);
   const ich = async (t) => (await F.stand(t.c, sz.id)).body.ich;
   assert.deepEqual([(await ich(b1)).etikett, (await ich(b2)).etikett], ['S23', 'S27']);
