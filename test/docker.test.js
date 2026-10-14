@@ -27,9 +27,10 @@ function ignoreRegeln() {
     .map((z) => {
       const ausnahme = z.startsWith('!');
       const roh = (ausnahme ? z.slice(1) : z).replace(/^\/+|\/+$/g, '');
+      // „**/“ trifft wie bei Docker auch null Ordner (z. B. „**/*.pem“ auch „neu.pem“ in der Wurzel)
       const re = roh
-        .split(/(\*\*|\*|\?)/)
-        .map((t) => (t === '**' ? '.*' : t === '*' ? '[^/]*' : t === '?' ? '[^/]' : t.replace(/[.+^${}()|[\]\\]/g, '\\$&')))
+        .split(/(\*\*\/|\*\*|\*|\?)/)
+        .map((t) => (t === '**/' ? '(?:.*/)?' : t === '**' ? '.*' : t === '*' ? '[^/]*' : t === '?' ? '[^/]' : t.replace(/[.+^${}()|[\]\\]/g, '\\$&')))
         .join('');
       return { roh, ausnahme, muster: new RegExp(`^${re}$`) };
     });
@@ -150,55 +151,75 @@ test('Image-Inhalt: Akten, Lehrkraft-Verzeichnis, Demo-PDFs und relative require
   for (const [, quelle] of inhalt) assert.doesNotMatch(quelle, /^(test|werkzeuge|quellen|prototyp|node_modules|data)\//, `gehört nicht ins Image: ${quelle}`);
 });
 
-test('Image-Nachbau: Validator und Server (production) laufen nur mit den Dateien aus dem Image', { timeout: 60000 }, async () => {
-  const inhalt = imageInhalt();
+/** Image-Inhalt in einen Arbeitsordner kopieren (node_modules als Verweis). Liefert den Ordner. */
+function baueNachbau() {
   const app = fs.mkdtempSync(path.join(os.tmpdir(), 'kryptos-image-'));
-  try {
-    for (const [imPfad, quelle] of inhalt) {
-      fs.mkdirSync(path.join(app, path.dirname(imPfad)), { recursive: true });
-      fs.copyFileSync(path.join(WURZEL, quelle), path.join(app, imPfad));
-    }
-    fs.symlinkSync(path.join(WURZEL, 'node_modules'), path.join(app, 'node_modules'), 'dir');
+  for (const [imPfad, quelle] of imageInhalt()) {
+    fs.mkdirSync(path.join(app, path.dirname(imPfad)), { recursive: true });
+    fs.copyFileSync(path.join(WURZEL, quelle), path.join(app, imPfad));
+  }
+  fs.symlinkSync(path.join(WURZEL, 'node_modules'), path.join(app, 'node_modules'), 'dir');
+  return app;
+}
 
+/** Umgebung wie im Dockerfile + CapRover-Variablen (Produktion). */
+function nachbauEnv({ port, daten, publicKey, secret }) {
+  return {
+    PATH: process.env.PATH,
+    NODE_ENV: 'production',
+    PORT: String(port),
+    DATA_DIR: daten,
+    TZ: 'Europe/Berlin',
+    AUTH_MODUS: 'portal',
+    PLATTFORM_ID: 'kryptos',
+    PORTAL_URL: 'https://portal.example',
+    PORTAL_PUBLIC_KEY: publicKey.export({ type: 'spki', format: 'pem' }),
+    PLATTFORM_URL: 'https://kryptos.example',
+    SESSION_SECRET: secret,
+    TRUST_PROXY: '1'
+  };
+}
+
+/** Server im Nachbau starten und auf /healthz warten. Liefert { basis, log(), stop() }. */
+async function starteNachbau(app, env) {
+  const kind = spawn(process.execPath, ['src/server.js'], { cwd: app, env, stdio: ['ignore', 'pipe', 'pipe'] });
+  let log = '';
+  kind.stdout.on('data', (d) => (log += d));
+  kind.stderr.on('data', (d) => (log += d));
+  const basis = `http://127.0.0.1:${env.PORT}`;
+  const stop = async () => {
+    if (kind.exitCode === null) kind.kill('SIGTERM');
+    await new Promise((r) => (kind.exitCode !== null ? r() : kind.once('exit', r)));
+  };
+  let bereit = false;
+  for (let i = 0; i < 150 && !bereit && kind.exitCode === null; i++) {
+    try {
+      bereit = (await fetch(basis + '/healthz')).ok;
+    } catch {
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
+  if (!bereit) {
+    await stop();
+    assert.fail(`Server im Image startet nicht:\n${log}`);
+  }
+  return { basis, log: () => log, stop };
+}
+
+const zufallsPort = () => 20000 + Math.floor(Math.random() * 20000);
+
+test('Image-Nachbau: Validator und Server (production) laufen nur mit den Dateien aus dem Image', { timeout: 60000 }, async () => {
+  const app = baueNachbau();
+  try {
     const v = spawnSync(process.execPath, ['scripts/validate.js'], { cwd: app, encoding: 'utf8' });
     assert.equal(v.status, 0, `Validator im Image:\n${v.stdout}\n${v.stderr}`);
 
     const { publicKey } = crypto.generateKeyPairSync('ed25519');
-    const port = 20000 + Math.floor(Math.random() * 20000);
     const daten = path.join(app, 'data');
     fs.mkdirSync(daten);
-    const kind = spawn(process.execPath, ['src/server.js'], {
-      cwd: app,
-      env: {
-        PATH: process.env.PATH,
-        NODE_ENV: 'production',
-        PORT: String(port),
-        DATA_DIR: daten,
-        TZ: 'Europe/Berlin',
-        AUTH_MODUS: 'portal',
-        PLATTFORM_ID: 'kryptos',
-        PORTAL_URL: 'https://portal.example',
-        PORTAL_PUBLIC_KEY: publicKey.export({ type: 'spki', format: 'pem' }),
-        PLATTFORM_URL: 'https://kryptos.example',
-        SESSION_SECRET: crypto.randomBytes(24).toString('hex'),
-        TRUST_PROXY: '1'
-      },
-      stdio: ['ignore', 'pipe', 'pipe']
-    });
-    let log = '';
-    kind.stdout.on('data', (d) => (log += d));
-    kind.stderr.on('data', (d) => (log += d));
-    const basis = `http://127.0.0.1:${port}`;
+    const server = await starteNachbau(app, nachbauEnv({ port: zufallsPort(), daten, publicKey, secret: crypto.randomBytes(24).toString('hex') }));
+    const basis = server.basis;
     try {
-      let bereit = false;
-      for (let i = 0; i < 100 && !bereit && kind.exitCode === null; i++) {
-        try {
-          bereit = (await fetch(basis + '/healthz')).ok;
-        } catch {
-          await new Promise((r) => setTimeout(r, 100));
-        }
-      }
-      assert.ok(bereit, `Server im Image startet nicht:\n${log}`);
       const themen = await (await fetch(basis + '/api/themen')).json();
       assert.deepEqual(themen.welten.map((w) => w.nr), SEED_WELTEN);
       for (const w of themen.welten.filter((x) => AKTEN_WELTEN.has(x.nr))) for (const l of w.levels) assert.ok(l.akte && l.akte.url, `Akte mit URL für ${l.id}`);
@@ -211,9 +232,157 @@ test('Image-Nachbau: Validator und Server (production) laufen nur mit den Dateie
       assert.equal(manifest.id, 'kryptos');
       assert.equal(manifest.umfang.welten, SEED_WELTEN.length);
     } finally {
-      kind.kill('SIGTERM');
-      await new Promise((r) => (kind.exitCode !== null ? r() : kind.once('exit', r)));
+      await server.stop();
     }
+  } finally {
+    fs.rmSync(app, { recursive: true, force: true });
+  }
+});
+
+// ── M9 Task 206: Build-Kontext ohne Geheimnisse, Dockerfile-Vorgaben, Neustart mit Daten, Vertragsprüfung ──
+
+/** Alle Dateien des Arbeitsbaums (relativ, mit `/`), ohne .git; Ordner außerhalb des Kontexts ohne Ausnahme darunter werden übersprungen. */
+function alleDateien(regeln = ignoreRegeln()) {
+  const ausnahmen = regeln.filter((r) => r.ausnahme).map((r) => r.roh);
+  const aus = [];
+  const lauf = (rel) => {
+    for (const e of fs.readdirSync(path.join(WURZEL, rel), { withFileTypes: true })) {
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (r === '.git') continue;
+      if (e.isDirectory()) {
+        if (!imKontext(r, regeln) && !ausnahmen.some((a) => a.startsWith(r + '/'))) continue;
+        lauf(r);
+      } else aus.push(r);
+    }
+  };
+  lauf('');
+  return aus;
+}
+const TEXT_ENDUNG = /\.(js|json|html|css|md|txt|svg|yml|yaml|sh|py|csv|pem|key|env)$|(^|\/)[^./]+$/;
+
+test('Build-Kontext: keine Schlüssel, Geheimnisse, Datenbanken', () => {
+  const regeln = ignoreRegeln();
+  const verboten = /\.(pem|key|p12|pfx|db|db-wal|db-shm|sqlite3?)$|(^|\/)\.env|(^|\/)data\//;
+  const kontext = alleDateien(regeln).filter((d) => imKontext(d, regeln));
+  assert.ok(kontext.length > 100, 'Build-Kontext gelesen');
+  assert.deepEqual(kontext.filter((d) => verboten.test(d)), []);
+  const mitSchluessel = kontext.filter((d) => TEXT_ENDUNG.test(d) && fs.statSync(path.join(WURZEL, d)).size < 2e6 && /-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(lies(d)));
+  assert.deepEqual(mitSchluessel, []);
+});
+
+test('.dockerignore schließt *.pem, *.key, *.db*, .env* und data*/ aus – auch wenn sie später angelegt werden', () => {
+  const regeln = ignoreRegeln();
+  for (const rel of ['neu.pem', 'src/neu.pem', 'public/static/x/portal-schluessel.pem', 'neu.key', 'src/geheim.key', 'zert.p12', 'src/zert.pfx',
+    'kryptos.db', 'src/kryptos.db', 'seed/kryptos.db-wal', 'kryptos.db-shm', 'data/kryptos.db', 'data-e2e/kryptos.db', 'data2/x.json',
+    '.env', '.env.local', 'src/.env', 'public/.env.production', 'test/devportal/devportal.pem']) {
+    assert.equal(imKontext(rel, regeln), false, `${rel} darf nie in den Build-Kontext`);
+  }
+  // Gegenprobe: normale Dateien bleiben drin
+  for (const rel of ['src/verbund/konfig.js', 'public/static/js/shared/krypto.js', 'seed/welten/welt0.json']) assert.equal(imKontext(rel, regeln), true, rel);
+});
+
+test('Dockerfile/captain-definition: Port 80, DATA_DIR=/app/data, VOLUME, USER node, HEALTHCHECK /healthz, NODE_ENV=production, AUTH_MODUS=portal, kein ENV mit SESSION_SECRET/PORTAL_PUBLIC_KEY', () => {
+  const df = lies('Dockerfile');
+  const cap = JSON.parse(lies('captain-definition'));
+  assert.equal(cap.schemaVersion, 2);
+  assert.equal(cap.dockerfilePath, './Dockerfile');
+  const letzteStufe = df.slice(df.lastIndexOf('\nFROM '));
+  const env = (letzteStufe.match(/^ENV[\s\S]*?[^\\]\n/m) || [''])[0];
+  for (const [k, v] of [['NODE_ENV', 'production'], ['PORT', '80'], ['DATA_DIR', '/app/data'], ['AUTH_MODUS', 'portal'], ['PLATTFORM_ID', 'kryptos'], ['TZ', 'Europe/Berlin']]) {
+    assert.match(env, new RegExp(`\\b${k}=${v.replace(/[/.]/g, '\\$&')}\\b`), `ENV ${k}=${v}`);
+  }
+  assert.doesNotMatch(df, /^\s*(ENV|ARG)\b[^\n]*(SESSION_SECRET|PORTAL_PUBLIC_KEY|PRIVATE)/m, 'keine Geheimnisse im Dockerfile');
+  assert.match(letzteStufe, /^EXPOSE 80$/m);
+  assert.match(letzteStufe, /^VOLUME \["\/app\/data"\]$/m);
+  assert.match(letzteStufe, /^USER node$/m);
+  assert.match(letzteStufe, /chown -R node:node \/app\/data/);
+  assert.match(letzteStufe, /^HEALTHCHECK[\s\S]*\/healthz/m);
+  assert.match(letzteStufe, /^CMD \["node", "src\/server\.js"\]$/m);
+  // USER node steht nach allen RUN-Anweisungen der Laufzeit-Stufe (sonst liefe etwas als root nach dem Wechsel)
+  assert.ok(letzteStufe.lastIndexOf('\nRUN ') < letzteStufe.indexOf('\nUSER node'), 'USER node nach den RUN-Anweisungen');
+});
+
+/** Pfade + Größen eines Baums (ohne node_modules-Verweis und ohne ausgelassene Ordner). */
+function baumStand(wurzel, ohne) {
+  const aus = [];
+  const lauf = (rel) => {
+    for (const e of fs.readdirSync(path.join(wurzel, rel), { withFileTypes: true })) {
+      const r = rel ? `${rel}/${e.name}` : e.name;
+      if (ohne.includes(r)) continue;
+      if (e.isDirectory()) lauf(r);
+      else aus.push(`${r}:${fs.lstatSync(path.join(wurzel, r)).size}`);
+    }
+  };
+  lauf('');
+  return aus.sort();
+}
+
+/** Schüler-Anmeldung über /sso/start → /sso/ende mit einem selbst signierten Portal-Token; liefert den Cookie-Kopf. */
+async function anmelden(basis, privateKey, { sub = 's:7', name = 'Mika R.', kurse = [{ id: 'k:1', name: 'LK 13 (eA)', rolle: 'mitglied' }] } = {}) {
+  const { signiere } = require('../src/jwt');
+  const cookies = (r) => (r.headers.getSetCookie ? r.headers.getSetCookie() : []).map((c) => c.split(';')[0]).filter((c) => !/=$/.test(c));
+  const r1 = await fetch(`${basis}/sso/start?ziel=${encodeURIComponent('/spiel')}`, { redirect: 'manual' });
+  assert.equal(r1.status, 302);
+  const ziel = new URL(r1.headers.get('location'));
+  const iat = Math.floor(Date.now() / 1000);
+  const token = signiere({ iss: 'https://portal.example', aud: 'kryptos', sub, rolle: 'schueler', name, kurse, iat, exp: iat + 90, jti: crypto.randomUUID(), v: 1 }, privateKey);
+  const q = new URLSearchParams({ token, state: ziel.searchParams.get('state'), ziel: ziel.searchParams.get('ziel') || '/spiel' });
+  const r2 = await fetch(`${basis}/sso/ende?${q}`, { redirect: 'manual', headers: { cookie: cookies(r1).join('; ') } });
+  assert.equal(r2.status, 302, `/sso/ende: ${r2.status}`);
+  const c = cookies(r2);
+  assert.ok(c.some((x) => x.startsWith('kr_s=')), 'Schüler-Cookie gesetzt');
+  return c.join('; ');
+}
+
+test('Image-Nachbau: zweiter Start auf demselben DATA_DIR behält den Lernstand; vertrag_pruefen.js → Exit 0', { timeout: 90000 }, async () => {
+  const app = baueNachbau();
+  try {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+    const daten = path.join(app, 'data');
+    fs.mkdirSync(daten);
+    const env = nachbauEnv({ port: zufallsPort(), daten, publicKey, secret: crypto.randomBytes(24).toString('hex') });
+    const vorher = baumStand(app, ['data', 'node_modules']);
+    const aufgabe = JSON.parse(lies('seed/welten/welt0.json')).aufgaben.find((a) => a.id === 'W0-L1-06');
+
+    // 1. Start: Konto über /sso/ende, Aufgabe lösen
+    let server = await starteNachbau(app, env);
+    let cookie;
+    try {
+      assert.match(server.log(), /Konfiguration: \{/, 'Startzeile');
+      cookie = await anmelden(server.basis, privateKey);
+      const r = await fetch(`${server.basis}/api/aufgaben/${aufgabe.id}/pruefen`, {
+        method: 'POST',
+        headers: { cookie, origin: server.basis, 'content-type': 'application/json' },
+        body: JSON.stringify({ antwort: aufgabe.loesung.text })
+      });
+      const b = await r.json();
+      assert.equal(r.status, 200, JSON.stringify(b));
+      assert.equal(b.ok, true, JSON.stringify(b));
+    } finally {
+      await server.stop();
+    }
+    assert.ok(fs.existsSync(path.join(daten, 'kryptos.db')), 'Datenbank in DATA_DIR');
+
+    // 2. Neustart auf demselben DATA_DIR (wie Update mit bestehendem Volume)
+    server = await starteNachbau(app, { ...env, PORT: String(zufallsPort()) });
+    try {
+      const h = await (await fetch(`${server.basis}/healthz`)).json();
+      assert.equal(h.version, JSON.parse(lies('package.json')).version);
+      const profil = await (await fetch(`${server.basis}/api/profil`, { headers: { cookie } })).json();
+      assert.ok(profil.punkte && profil.punkte.gesamt > 0 && profil.geloest === 1, `Lernstand nach dem Neustart: ${JSON.stringify(profil).slice(0, 300)}`);
+
+      // 3. Vertragsprüfung gegen den laufenden Nachbau
+      const vp = spawnSync(process.execPath, [path.join(WURZEL, 'scripts', 'vertrag_pruefen.js'), server.basis], { encoding: 'utf8', timeout: 30000 });
+      assert.equal(vp.status, 0, vp.stdout + vp.stderr);
+      assert.match(vp.stdout, /erfüllt Vertrag v1\.2 .* Anmeldung: portal/);
+      const log = server.log();
+      assert.ok(!log.includes(env.SESSION_SECRET) && !log.includes('BEGIN'), 'keine Geheimnisse im Log');
+    } finally {
+      await server.stop();
+    }
+
+    // 4. Der Server schreibt nur in DATA_DIR (Review Focus 4)
+    assert.deepEqual(baumStand(app, ['data', 'node_modules']), vorher);
   } finally {
     fs.rmSync(app, { recursive: true, force: true });
   }

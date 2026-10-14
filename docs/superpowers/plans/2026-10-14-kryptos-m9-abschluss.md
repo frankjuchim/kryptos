@@ -192,7 +192,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `konfigZusammenfassung` (Task 205) nur indirekt über die Startzeile.
 - Produces: CI-Job `docker` (Name „Docker-Image (Bau, Start, Vertrag)“), läuft bei jedem Push und PR.
 
-- [ ] **Step 1: Failing tests** in `test/docker.test.js`:
+- [x] **Step 1: Failing tests** in `test/docker.test.js`:
   ```js
   test('Build-Kontext: keine Schlüssel, Geheimnisse, Datenbanken', () => {
     const verboten = /\.(pem|key|p12|pfx|db|db-wal|db-shm|sqlite3?)$|(^|\/)\.env|(^|\/)data\//;
@@ -209,8 +209,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
     // 4. Nachbau-Baum (ohne DATA_DIR) vorher/nachher gleich (Pfade + Größen) → Server schreibt nur in DATA_DIR (Review Focus 4)
   });
   ```
-- [ ] **Step 2: Run** `node --test test/docker.test.js` → FAIL (`.dockerignore` ohne `*.pem` usw.; neuer Ablauf fehlt).
-- [ ] **Step 3: Implement** `.dockerignore` um `*.pem`, `*.key`, `*.p12`, `*.db`, `*.db-*`, `data*/` ergänzen (Kommentar mit Verweis auf den Test); Testhilfen für Anmeldung im Nachbau aus `test/helpers.js` (Testschlüssel) wiederverwenden. CI-Job `docker` (ubuntu-latest, kein Node-Cache nötig):
+- [x] **Step 2: Run** `node --test test/docker.test.js` → FAIL (`.dockerignore` ohne `*.pem` usw.; neuer Ablauf fehlt).
+- [x] **Step 3: Implement** `.dockerignore` um `*.pem`, `*.key`, `*.p12`, `*.db`, `*.db-*`, `data*/` ergänzen (Kommentar mit Verweis auf den Test); Testhilfen für Anmeldung im Nachbau aus `test/helpers.js` (Testschlüssel) wiederverwenden. CI-Job `docker` (ubuntu-latest, kein Node-Cache nötig):
   1. `docker build -t kryptos:ci .`
   2. Testschlüssel: `node -e` erzeugt Ed25519-Paar, öffentlicher Teil einzeilig in `$GITHUB_ENV`.
   3. `docker volume create kryptos-ci` → `docker run -d -p 8080:80 -v kryptos-ci:/app/data -e PLATTFORM_URL=http://localhost:8080 -e PORTAL_URL=http://localhost:3100 -e PORTAL_PUBLIC_KEY -e SESSION_SECRET=$(openssl rand -hex 32) kryptos:ci` (frisches benanntes Volume = Review Focus 1; `localhost` = E149-Ausnahme).
@@ -219,8 +219,8 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   6. `docker run --rm --entrypoint sh kryptos:ci -c 'test ! -e /app/test && test ! -e /app/werkzeuge && test ! -e /app/quellen && test "$(id -un)" = node && ! grep -rlE "PRIVATE KEY" /app --exclude-dir=node_modules'`.
   7. Image-Größe ausgeben (`docker image inspect --format '{{.Size}}'`), Abbruch über 600 MB.
   TECHNIK §16.1 (Job `docker`), §16.2 (`.dockerignore`), §16.3 (Volume, Startzeile) nachtragen.
-- [ ] **Step 4: Run** `node --test test/docker.test.js` → PASS; `npm test` grün; Workflow-Datei mit `python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/pruefung.yml'))"` lesbar (falls `yaml` fehlt: `node -e` mit einfachem Einrückungs-Check überspringen und im Bericht nennen). Der Job selbst läuft erst auf GitHub (E148) – im Bericht als „ungeprüft bis zum ersten PR-Lauf“ markieren.
-- [ ] **Step 5: Commit** `git commit -m "Docker: keine Schlüssel im Kontext, Neustart mit Daten, Vertragsprüfung am Nachbau, CI-Job docker (M9 Task 206)"`
+- [x] **Step 4: Run** `node --test test/docker.test.js` → PASS; `npm test` grün; Workflow-Datei mit `python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/pruefung.yml'))"` lesbar (falls `yaml` fehlt: `node -e` mit einfachem Einrückungs-Check überspringen und im Bericht nennen). Der Job selbst läuft erst auf GitHub (E148) – im Bericht als „ungeprüft bis zum ersten PR-Lauf“ markieren.
+- [x] **Step 5: Commit** `git commit -m "Docker: keine Schlüssel im Kontext, Neustart mit Daten, Vertragsprüfung am Nachbau, CI-Job docker (M9 Task 206)"`
 
 ### Task 207: Sicherheits-Review I – Header, Cookies, Proxy, Host-Kopf
 

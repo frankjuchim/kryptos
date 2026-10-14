@@ -1980,6 +1980,7 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 | `app` | Node 20, `npm ci`, `npm test`, `npm run validate`, `node scripts/abdeckung.js` (umgesetzt M8 Task 200: Quelle sind die Abdeckungsmatrizen §11 der sieben Welt-Specs + Seeds + `seed/akten.json` + `seed/warmup/` + Generator-Registry; Regeln kc, fremd, fallen, gesamt, plan, warmup; bewusste Lücken als `AUSNAHMEN` mit Spec-Zitat; `--welt <N>`, `--json`, `--seed`, `--specs`, `--selbsttest`; auch in `npm run pruefen`) |
 | `krypto` | Node 20 + Python 3.12: `node --test test/fach.test.js`, `python3 -I werkzeuge/krypto/test_krypto.py`, `npm run krypto:vergleich -- --anzahl 2000`, `python3 -I werkzeuge/krypto/pruefwerte.py`, `python3 -I werkzeuge/krypto/test_fremde_verfahren.py` (Schritt „Fremde Verfahren W0–W6“), `python3 -I werkzeuge/krypto/seed_pruefen.py` (Fixture mit `--pruefwerte test/fixtures/pruefwerte`; ohne Argumente: echte Seeds aller sieben Welten + Gast) |
 | `inhalte` | Node 20 + Python 3.12 + Java 21 (Temurin) + `pip install -r werkzeuge/material/requirements.txt python-pptx pypdf brotli` + LibreOffice (Writer, Impress), Carlito, Cairo: `py_compile` der Werkzeuge, `schriften_pruefen.py`, `test_kontrast.py`, `ide_pruefen.py`, `workspaces_erzeugen.py --pruefen`, `akten_pdf.py --pruefen`, `loesungen_pdf.py --pruefen`, `lehrkraft_pdf.py --pruefen`, Render-Probe `soffice` (Akte W0·1 + Kickoff-Präsentation, ab M8 Task 203 auch Akte W3·2 mit Pixelbild), `node --test test/material_pipeline.test.js` (u. a. keine `/home/`-Pfade in Materialquellen) (umgesetzt M5 Task 102; `ide_pruefen.py`/`workspaces --pruefen` decken seit M8 Task 196 auch Welt 3 ab); folgen: `materialien_pruefen.py`, `video_folien.py --pruefen` (M9) |
+| `docker` | „Docker-Image (Bau, Start, Vertrag)“, bei jedem Push und PR (M9 Task 206, E148 – die Agenten-Umgebung hat keinen Docker-Daemon, lokal prüft `test/docker.test.js` einen Nachbau): `docker build`, Testschlüssel (Ed25519, einzeilig) und `SESSION_SECRET` nur für den Lauf, Start mit **frischem benanntem Volume** `kryptos-ci:/app/data` (wie das CapRover-Persistent-Directory; `PLATTFORM_URL=http://localhost:8080` = E149-Ausnahme), `/healthz` ≤ 60 s mit Version aus `package.json`, `node scripts/vertrag_pruefen.js http://localhost:8080`, `docker restart` + `/healthz`, `docker logs` enthält `Konfiguration:` und weder `BEGIN` noch das Secret, Image ohne `/app/test`, `/app/werkzeuge`, `/app/quellen` und ohne `PRIVATE KEY-----`, Benutzer `node`, Größe ≤ 600 MB. Ungeprüft bis zum ersten Lauf auf GitHub; grüner Lauf auf dem PR ist Voraussetzung der Freigabe (F2) |
 | `e2e` | nur `workflow_dispatch` und Pull Requests nach `main`: Playwright mit Chromium (`npx playwright-core install --with-deps chromium` in CI), `npm run e2e`, Artefakt: `docs/screenshots` (umgesetzt M4 Task 66) |
 
 `main` ist mit CapRover verbunden (jeder Push = Live-Build) → nur Feature-Branches, Merge nach `main` nur nach
@@ -2015,12 +2016,22 @@ CMD ["node", "src/server.js"]
 `.dockerignore`: `.git`, `node_modules`, `data`, `test`, `werkzeuge`, `quellen`, `docs/*` außer den zwei Formatdateien,
 `docs/screenshots`, `materialien/*` außer `!materialien/Akten_PDF`, `!materialien/Loesungen_Portal`,
 `!materialien/Lehrkraft_PDF`, `scripts/*` außer `validate.js`/`vertrag_pruefen.js`, `*.log`, `.DS_Store`, `__pycache__`,
-`.env*`. Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name). `test/docker.test.js` prüft beides gegen den Dateibaum und startet einen Nachbau des Image-Inhalts (M5 Task 103).
+`.env*`; am Ende (damit keine Ausnahme sie wieder einschließt, M9 Task 206) überall im Baum `**/*.pem`, `**/*.key`, `**/*.p12`,
+`**/*.pfx`, `**/*.db`, `**/*.db-*`, `**/*.sqlite`, `**/*.sqlite3`, `**/.env*` und `data*` – auch für Dateien, die erst später
+angelegt werden. `test/docker.test.js` prüft den Build-Kontext auf Schlüssel/Geheimnisse/Datenbanken (auch Text mit
+`-----BEGIN … PRIVATE KEY-----`), die Dockerfile-Vorgaben (ENV, `EXPOSE 80`, `VOLUME`, `USER node` nach allen `RUN`,
+`HEALTHCHECK`, keine Geheimnisse in `ENV`/`ARG`) und startet den Nachbau zweimal auf demselben `DATA_DIR` (Lernstand
+bleibt, `/healthz`-Version, `vertrag_pruefen.js` Exit 0, außerhalb `DATA_DIR` wird nichts geschrieben). Der Server findet die Akten unter `/app/akten` (Option `arbeitsblaetterDir`, Kern-Name). `test/docker.test.js` prüft beides gegen den Dateibaum und startet einen Nachbau des Image-Inhalts (M5 Task 103).
 
 ### 16.3 CapRover
 
 - App `kryptos`, Domain `kryptos.frankjuchim.de`, HTTPS erzwingen, `captain-definition` → `./Dockerfile`.
-- **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL).
+- **Persistent Directory** `/app/data` (Label `kryptos-data`) – enthält `kryptos.db` (+ WAL). Das Image legt `/app/data`
+  mit Besitzer `node` an; ist das eingehängte Volume nicht für `node` beschreibbar, bricht der Start mit „Konfiguration:
+  DATA_DIR /app/data ist nicht beschreibbar (…)“ ab (Schreibprobe vor der DB, §6.1, K45) – dann im Volume Besitzer bzw.
+  Rechte korrigieren.
+- Startzeile im App-Log: `Konfiguration: {…}` (ID, URLs, Anzahl und Fingerabdrücke der Portal-Schlüssel – ohne Geheimnisse,
+  §6.1); der Fingerabdruck lässt sich mit dem des Portal-Schlüssels vergleichen. Prüfung ohne Start: `npm run konfig:pruefen`.
 - Umgebungsvariablen: `PLATTFORM_URL`, `PORTAL_URL`, `PORTAL_PUBLIC_KEY` (einzeilig aus dem Portal „Einzeilig kopieren“),
   `SESSION_SECRET` (≥ 32 zufällige Zeichen), `TRUST_PROXY=1`; Rest aus dem Dockerfile.
 - Healthcheck `/healthz` → `{ "status": "ok", "version": "<package.json>" }`; Container-Healthcheck siehe Dockerfile.
