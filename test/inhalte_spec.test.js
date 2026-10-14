@@ -139,7 +139,7 @@ function pruefeAufgabe(welt, w, spec) {
     if (!ia || ia.kind !== 'choice') return;
     if (S.CHOICE_OHNE_KENNUNG[spec.id]) {
       // M8 E130: Optionen ohne Kennung – die richtigen Optionen tragen die Lösungstexte
-      const texte = (ia.optionen || []).filter((op) => ((lo && lo.richtig) || []).includes(op.id)).map((op) => S.normalisiert(op.text)).sort();
+      const texte = (ia.optionen || []).filter((op) => ((lo && lo.richtig) || []).includes(op.id)).map((op) => S.normalisiert(op.md ?? op.text)).sort();
       assert.deepEqual(texte, (S.choiceText(spec, i) || []).map(S.normalisiert).sort(), `${o}: choice-Lösung über den Optionstext (E130)`);
       return;
     }

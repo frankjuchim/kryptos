@@ -667,9 +667,11 @@ Fallen nach E53/C17 aus der Erklärung (B-13 P7, B-14 P8).
 **Stichproben:** R = 82; `1011 0110 ⊕ 0110 1101 = 1101 1011`; tor → GF GA AF; D ⊕ OST → NEU; S/T → `1110 0111 1001 0010` /
 `1010 1100 1101 0110`; K₃ = `1100 0101 0011 1010`; TELEX-ROT TOR → `0001 0111 · 1100 1001 · 0101 1111`; BAD → HEUTEABEND.
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-B'`; `inhalte_plan`: Pool kern 10 / eA 5 = `WELT_PLAN`.
-- [ ] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 04/07/08/09/12; Mix 3/3/2; B-10 sendet nur `operation: "frei"`).
-- [ ] **Step 5: Commit** `git commit -m "Welt 3: Boss „Der Fernschreiber“ (Pool 15, fünf eA-Aufgaben, fünf fremde Chiffren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-B'`; `inhalte_plan`: Pool kern 10 / eA 5 = `WELT_PLAN`.
+- [x] **Step 2–4** (Probelauf 100 Ziehungen: gA nie 04/07/08/09/12; Mix 3/3/2; B-10 sendet nur `operation: "frei"`).
+- [x] **Step 5: Commit** `git commit -m "Welt 3: Boss „Der Fernschreiber“ (Pool 15, fünf eA-Aufgaben, fünf fremde Chiffren)"`.
+- [x] **Umsetzungsnotiz:** Probelauf (100 Ziehungen je Kurs, Startwert fest): gA zieht nie B-04/-07/-08/-09/-12, eA alle 15; je 8 Aufgaben im Mix 3/3/2; W3-B-10 sendet nur `{ operation: "frei", text: "TOR", laenge: 24 }`. Abweichungen vom Tabellen-Entwurf (im Abgleich als Ausnahmen kodiert): **W3-B-06** als `gaps` (Bitfolge + Wort NEU, Prüfwert-Gruppe `xorBits`/`xor`) statt `bits-rechnen` – der Operand „OST in Bits“ wäre die Lösung von W3-L1-04 a) (Lösungsverrat-Test) und nähme dem Boss den Codierschritt (`TEILE_ERGAENZT`); **W3-B-08** `bits-rechnen` `schritt: "rundenschluessel"` (Spec-Spalte `gaps` → `SONDERFORM`); **W3-B-12** zwei `choice`-Teile mit Options-ids 1–5 = P₁–P₅ (`TEILE_ERGAENZT`, `CHOICE_FEST`); W3-B-13 b) Optionen `a`–`d` = die vier Schlüssel (CHOICE_OHNE_KENNUNG; der Abgleich liest jetzt `op.md` statt des nicht vorhandenen `op.text`). W3-B-07 a)/b) als Kettenzustände mit Rundenschlüssel 0 (im Text begründet), S-Box-Tafel im Inhalt. **Offene Frage:** Die Spec-Erklärungen nennen nur für B-13 (P7) und B-14 (P8) Fallen; nach E53 bleiben 13 Boss-Aufgaben ohne `fallen` → 13 Validator-Hinweise „Boss-Aufgabe ohne fallen“ (W0–W2 hatten P-Nummern in der Spec). Vorschlag (nicht umgesetzt): B-01 P1, B-02 P4, B-03 P10, B-04 P5, B-05 P4, B-06 P8, B-07 P4, B-08 P7, B-09 P4, B-10 P4, B-11 P5, B-12 P4, B-15 P4.
+
 
 ---
 ### Task 178: Welt 4 – Datei, Epochen-Daten, Archivfund und Level 4.1 „Das Schlüsselproblem“
