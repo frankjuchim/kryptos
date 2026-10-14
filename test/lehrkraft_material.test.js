@@ -128,22 +128,26 @@ test('echtes verzeichnis.json: Pfade vorhanden, Lösungen/EH/Klausuren nie unter
     assert.ok(fs.existsSync(path.join(ECHT, p)), `fehlt: ${p} (python3 werkzeuge/lehrkraft_pdf.py)`);
     if (LOESUNGSARTIG.test(p)) assert.ok(!p.startsWith('Akten_PDF/'), `Lösung im Schülerbereich: ${p}`);
   }
-  // W0–W2 vollständig: jede Akte mit Lösung, Boss mit EH, Warm-up mit Lösungen, Präsentationen und Lehrerhinweise
-  for (const nr of [0, 1, 2]) {
+  // W0–W6 vollständig (W3–W6 seit Plan M8 Task 199): jede Akte mit Lösung, Boss bzw. Probeklausur mit EH, Warm-up mit
+  // Lösungen, Präsentationen und Lehrerhinweise
+  for (const nr of [0, 1, 2, 3, 4, 5, 6]) {
     const w = v.welten.find((x) => x.welt === nr);
     const arten = w.eintraege.map((e) => e.art);
-    for (const a of ['praesentation', 'lehrerhinweise', 'akte', 'boss', 'warmup']) assert.ok(arten.includes(a), `Welt ${nr} ohne ${a}`);
+    for (const a of ['praesentation', 'lehrerhinweise', 'akte', nr === 6 ? 'probeklausur' : 'boss', 'warmup']) assert.ok(arten.includes(a), `Welt ${nr} ohne ${a}`);
     for (const e of w.eintraege.filter((x) => x.art === 'akte')) {
       assert.deepEqual(e.dateien.map((d) => d.label), ['Akte', 'Lösung'], e.titel);
     }
   }
   // Funkraum-Rollenkarten (Regie-Teile) nur für Lehrkräfte (E49 geändert): W0/W1 unter Lehrkraft_PDF, nie unter Akten_PDF
   for (const p of pfade) assert.ok(!(p.startsWith('Akten_PDF/') && /funkraum/i.test(p)), `Funkraum im Schülerbereich: ${p}`);
-  for (const nr of [0, 1]) {
+  // Plan M8 E142: Funkraum W3 (Der doppelte Schlüssel, Knack-Arena + LSG), W4, W5, W6 (Abi-Duell); W2 hat kein Szenario
+  for (const [nr, anzahl] of [[0, 1], [1, 1], [2, 0], [3, 2], [4, 1], [5, 1], [6, 1]]) {
     const funk = v.welten.find((x) => x.welt === nr).eintraege.filter((e) => e.art === 'funkraum');
-    assert.equal(funk.length, 1, `Welt ${nr}: Funkraum-Rollenkarten`);
-    assert.match(funk[0].dateien[0].pfad, /^Lehrkraft_PDF\/Welt_\d_\w+\/KR_W\d_Funkraum_\w+\.pdf$/);
+    assert.equal(funk.length, anzahl, `Welt ${nr}: Funkraum-Rollenkarten`);
+    for (const f of funk) assert.match(f.dateien[0].pfad, /^Lehrkraft_PDF\/Welt_\d_\w+\/KR_W\d_Funkraum_[\w-]+\.pdf$/);
   }
+  const arena = v.welten.find((x) => x.welt === 3).eintraege.find((e) => e.art === 'funkraum' && /Arena/.test(e.titel));
+  assert.deepEqual(arena.dateien.map((d) => d.label), ['Rollenkarten', 'Lösungen'], 'Knack-Arena mit LSG');
   assert.equal(v.welten.find((x) => x.welt === 0).eintraege[0].titel, 'Kickoff-Präsentation (Start der Einheit)', 'Kickoff zuerst');
   const w6 = v.welten.find((x) => x.welt === 6);
   assert.equal(w6.eintraege.filter((e) => e.art === 'klausur').length, 4, 'Klausur und Nachschreibklausur je eA/gA');

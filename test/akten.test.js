@@ -9,7 +9,8 @@ const { spawnSync } = require('node:child_process');
 const WURZEL = path.join(__dirname, '..');
 const MAT = path.join(WURZEL, 'materialien');
 const AKTEN = JSON.parse(fs.readFileSync(path.join(WURZEL, 'seed', 'akten.json'), 'utf8'));
-const VERBOTEN = /_LSG|_EH|Klausur|Loesung|Erwartungshorizont/i;
+// Probeklausur W6 (Schülerfassung) ist erlaubt (Papier-Boss der Welt 6), Klausur/Nachschreibklausur nie
+const VERBOTEN = /_LSG|_EH|(^|[/_])Klausur|Nachschreib|Loesung|Erwartungshorizont/i;
 
 function seed(welt) {
   const p = path.join(WURZEL, 'seed', 'welten', `welt${welt}.json`);
@@ -51,8 +52,8 @@ test('Funkraum-Rollenkarten (Regie-Teile) nie im Schülerbereich: nicht in akten
   assert.deepEqual(alle.filter((p) => /funkraum/i.test(p)), []);
 });
 
-test('akten.json ↔ Seeds W0–W2: jede Akte verweist auf vorhandene Level, jedes Level hat genau eine Akte', () => {
-  for (const welt of [0, 1, 2]) {
+test('akten.json ↔ Seeds W0–W6: jede Akte verweist auf vorhandene Level, jedes Level hat genau eine Akte', () => {
+  for (const welt of [0, 1, 2, 3, 4, 5, 6]) {
     const s = seed(welt);
     assert.ok(s, `seed/welten/welt${welt}.json fehlt`);
     const w = AKTEN.welten.find((x) => x.welt === welt);
@@ -68,6 +69,16 @@ test('akten.json ↔ Seeds W0–W2: jede Akte verweist auf vorhandene Level, jed
       assert.deepEqual(a.ds, l.ds || [], `${l.id}: DS`);
     }
   }
+});
+
+test('Welten 3–6 (Plan M8 Task 199): Papier-Bosse W3–W5, Probeklausur W6 eA/gA (Schülerfassung), Warm-up; Kür K2/K3, eA-Akten', () => {
+  const welt = (n) => AKTEN.welten.find((x) => x.welt === n);
+  for (const n of [3, 4, 5]) assert.deepEqual(welt(n).weitere.map((x) => x.art), ['boss', 'warmup'], `Welt ${n}`);
+  assert.deepEqual(welt(6).weitere.map((x) => x.art), ['probeklausur', 'probeklausur', 'warmup']);
+  assert.deepEqual(welt(6).weitere.filter((x) => x.art === 'probeklausur').map((x) => x.datei), ['KR_W6_Probeklausur_eA.pdf', 'KR_W6_Probeklausur_gA.pdf']);
+  assert.equal(welt(3).akten.find((a) => a.nr === 'K2').niveau, 'kuer');
+  assert.equal(welt(4).akten.find((a) => a.nr === 'K3').niveau, 'kuer');
+  assert.deepEqual(welt(3).akten.filter((a) => a.niveau === 'eA').map((a) => a.nr), ['2', '3']);
 });
 
 test('Kür-Akte K1 und eA-Akte W2·3 (Plan Task 95)', () => {
@@ -107,7 +118,7 @@ test('akten_pdf.py --pruefen: Funkraum-Eintrag im Schülerverzeichnis ist ein Fe
 test('Validator: keine Hinweise „akte ↔ akten.json“ für die echten Seeds', () => {
   require('../src/krypto').registriere();
   const { validiereDateien } = require('../src/content/validator');
-  const dateien = [0, 1, 2].map((w) => path.join(WURZEL, 'seed', 'welten', `welt${w}.json`));
+  const dateien = [0, 1, 2, 3, 4, 5, 6].map((w) => path.join(WURZEL, 'seed', 'welten', `welt${w}.json`));
   const hinweise = validiereDateien(dateien).flatMap((e) => e.warnungen).filter((w) => /akten\.json/.test(w.meldung));
   assert.deepEqual(hinweise, []);
 });

@@ -29,7 +29,8 @@ MAT = REPO / "materialien"
 ZIEL = MAT / "Akten_PDF"
 
 LOESUNGSTEIL = "Lösungen der Warm-up-Karten"
-VERBOTENE_NAMEN = re.compile(r"_LSG|_EH\b|_EH\.|Klausur|Loesung|Erwartungshorizont", re.I)
+# Probeklausur W6 (Schülerfassung = Papier-Boss der Welt 6) ist erlaubt, Klausur/Nachschreibklausur nie (Plan M8 Task 199)
+VERBOTENE_NAMEN = re.compile(r"_LSG|_EH\b|_EH\.|(^|[/_])Klausur|Nachschreib|Loesung|Erwartungshorizont", re.I)
 # Regie-Material nur für Lehrkräfte (Funkraum-Rollenkarten mit erwarteter Auswertung, Hinweis- und Befehlskarten)
 NUR_LEHRKRAFT = re.compile(r"funkraum", re.I)
 # Stempel der Lösungsfassungen (kr_docx.py): Kopfband, Lösungskästen, Erwartungshorizont, Warm-up-Rückseite

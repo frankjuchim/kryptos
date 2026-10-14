@@ -144,7 +144,8 @@ test('Image-Inhalt: Akten, Lehrkraft-Verzeichnis, Demo-PDFs und relative require
     assert.ok(hat(p), `${p} fehlt im Image`);
   }
   // Schülerbereich ohne Lösungen
-  for (const [p] of inhalt) if (p.startsWith('akten/')) assert.doesNotMatch(p, /_LSG|_EH|Klausur|Funkraum/i, `nur Lehrkraft: ${p}`);
+  // (Probeklausur W6 = Papier-Boss der Welt 6, Schülerfassung – erlaubt, Plan M8 Task 199; Klausur/Nachschreibklausur nie)
+  for (const [p] of inhalt) if (p.startsWith('akten/')) assert.doesNotMatch(p, /_LSG|_EH|(^|[/_])Klausur|Nachschreib|Funkraum/i, `nur Lehrkraft: ${p}`);
   // nichts aus test/, werkzeuge/, quellen/
   for (const [, quelle] of inhalt) assert.doesNotMatch(quelle, /^(test|werkzeuge|quellen|prototyp|node_modules|data)\//, `gehört nicht ins Image: ${quelle}`);
 });

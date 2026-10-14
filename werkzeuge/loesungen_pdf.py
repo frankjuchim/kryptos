@@ -2,9 +2,9 @@
 """Erzeugt alle Lösungen (docx) als PDF in zwei Sortierungen – NUR für die Lehrkraft, nicht für Schüler:
 
   materialien/Loesungen_Portal/<Welt_n_Name>/   je Welt die Lösungsfassungen, gleichnamig zur docx (…_LSG.pdf, …_EH.pdf):
-                                                zu jeder Akte, jedem Papier-Boss, den Warm-up-Karten aus seed/akten.json
-                                                (W0–W2), zu den Funkraum-Rollenkarten aus FUNKRAUM (nur Lehrkraft) sowie die vorhandenen Lösungen W4–W6
-                                                (5_Loesungen: Akten, Bosse) und die Erwartungshorizonte der Klausuren W6
+                                                zu jeder Akte, jedem Papier-Boss bzw. jeder Probeklausur, den Warm-up-Karten
+                                                aus seed/akten.json (W0–W6), zu den Funkraum-Rollenkarten aus FUNKRAUM (nur
+                                                Lehrkraft) und die Erwartungshorizonte der Klausuren W6
   materialien/Loesungen_Akten/                  dieselben PDFs nach Art: 01_Akten, 02_Bosse_und_Probeklausuren, 03_Klausuren,
                                                 04_Warm-up-Karten, 05_Funkraum
 
@@ -30,8 +30,8 @@ NACH_ART = "Loesungen_Akten"
 ART_ORDNER = {"akte": "01_Akten", "boss": "02_Bosse_und_Probeklausuren", "probeklausur": "02_Bosse_und_Probeklausuren",
               "klausur": "03_Klausuren", "warmup": "04_Warm-up-Karten", "funkraum": "05_Funkraum"}
 
-# Welten mit vorhandenem Lehrkraftmaterial, deren Schüler-Akten noch nicht in seed/akten.json stehen (E49; W3 folgt in M8)
-WEITERE_WELTEN = {4: "Welt_4_Schluesselproblem", 5: "Welt_5_Netz", 6: "Welt_6_Zeitmaschine"}
+# Welten mit Lehrkraftmaterial, deren Schüler-Akten noch nicht in seed/akten.json stehen (E49) – seit Plan M8 Task 199 keine
+WEITERE_WELTEN = {}
 
 # Funkraum-Rollenkarten W0/W1: enthalten Regie-Teile (erwartete Auswertung, Hinweis- und Befehlskarten) und sind deshalb
 # NUR Lehrkraft-Material (nicht in seed/akten.json; Plan M5 E49 geändert). (Welt, Quelle relativ zu materialien/, Titel);
@@ -39,12 +39,17 @@ WEITERE_WELTEN = {4: "Welt_4_Schluesselproblem", 5: "Welt_5_Netz", 6: "Welt_6_Ze
 FUNKRAUM = [
     (0, "Werkzeuge/Funkraum/KR_W0_Funkraum_Botenlauf.docx", "Funkraum „Botenlauf“: Rollenkarten"),
     (1, "Werkzeuge/Funkraum/KR_W1_Funkraum_Wettknacken.docx", "Funkraum „Wettknacken“: Rollenkarten"),
+    # Plan M8 E142: W3–W6 (W2 hat kein Szenario)
+    (3, "Werkzeuge/Funkraum/KR_W3_Funkraum_Der_doppelte_Schluessel.docx", "Funkraum „Der doppelte Schlüssel“: Rollenkarten"),
+    (3, "Werkzeuge/Funkraum/KR_W3_Funkraum_Knack-Arena.docx", "Knack-Arena: Rollenkarten"),
+    (4, "Werkzeuge/Funkraum/KR_W4_Funkraum_Schluesseltausch.docx", "Funkraum „Schlüsseltausch“: Rollenkarten"),
+    (5, "Werkzeuge/Funkraum/KR_W5_Funkraum_Mallory_im_Netz.docx", "Funkraum „Mallory im Netz“: Rollenkarten"),
+    (6, "Werkzeuge/Funkraum/KR_W6_Funkraum_Abi-Duell.docx", "Abi-Duell: Rollenkarten"),
 ]
 
-# Erwartungshorizonte der Klausuren W6 (Aufgabenblätter: lehrkraft_pdf.KLAUSUREN)
+# Erwartungshorizonte der Klausuren W6 (Aufgabenblätter: lehrkraft_pdf.KLAUSUREN); die Probeklausuren stehen seit Plan M8
+# Task 199 als Papier-Boss der Welt 6 in seed/akten.json (Schülerfassung + EH über loesung_von)
 KLAUSUREN = [
-    ("Welt6_Zeitmaschine/5_Loesungen/KR_W6_Probeklausur_eA_EH.docx", "probeklausur"),
-    ("Welt6_Zeitmaschine/5_Loesungen/KR_W6_Probeklausur_gA_EH.docx", "probeklausur"),
     ("Welt6_Zeitmaschine/5_Loesungen/KR_W6_Klausur_eA_EH.docx", "klausur"),
     ("Welt6_Zeitmaschine/5_Loesungen/KR_W6_Klausur_gA_EH.docx", "klausur"),
     ("Welt6_Zeitmaschine/5_Loesungen/KR_W6_Nachschreibklausur_eA_EH.docx", "klausur"),
@@ -119,7 +124,7 @@ def eintraege():
             if rel not in klausuren:
                 neu(rel, art_aus_name(p.name), nr, ordner)
     for q, art in KLAUSUREN:
-        neu(q, art, 6, WEITERE_WELTEN[6])
+        neu(q, art, 6, ordner_von[6])
     return erg
 
 

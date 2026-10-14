@@ -504,6 +504,141 @@
        "pfad": "Lehrkraft_PDF/Welt_3_Maschinenzeitalter/KR_W3_Lehrerhinweise.pdf"
       }
      ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W3·1 – Vernams Lochstreifen",
+     "ds": [
+      9
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Akte1_Vernams_Lochstreifen.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Akte1_Vernams_Lochstreifen_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W3·2 – Der Blockchiffre-Baukasten",
+     "ds": [
+      10
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Akte2_Blockchiffre_Baukasten.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Akte2_Blockchiffre_Baukasten_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W3·3 – Die Chiffren-Werkstatt",
+     "ds": [
+      11
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Akte3_Chiffren_Werkstatt.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Akte3_Chiffren_Werkstatt_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W3·4 – Fremde Chiffre IV: ADFGVX",
+     "ds": [
+      11
+     ],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Akte4_ADFGVX.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Akte4_ADFGVX_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "akte",
+     "titel": "Akte W3·K2 – Kür: Die Enigma",
+     "ds": [],
+     "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_AkteK2_Enigma.pdf"
+      },
+      {
+       "label": "Lösung",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_AkteK2_Enigma_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "boss",
+     "titel": "Papier-Boss: Die Rundenmaschine",
+     "dateien": [
+      {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Boss3_Rundenmaschine.pdf"
+      },
+      {
+       "label": "Erwartungshorizont",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Boss3_Rundenmaschine_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 3",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_3_Maschinenzeitalter/KR_W3_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Funkraum „Der doppelte Schlüssel“: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Lehrkraft_PDF/Welt_3_Maschinenzeitalter/KR_W3_Funkraum_Der_doppelte_Schluessel.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Knack-Arena: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Lehrkraft_PDF/Welt_3_Maschinenzeitalter/KR_W3_Funkraum_Knack-Arena.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_3_Maschinenzeitalter/KR_W3_Funkraum_Knack-Arena_LSG.pdf"
+      }
+     ]
     }
    ]
   },
@@ -534,7 +669,14 @@
     {
      "art": "akte",
      "titel": "Akte W4·1 – Das Schlüsselproblem",
+     "ds": [
+      12
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_4_Schluesselproblem/KR_W4_Akte1_Schluesselproblem.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Akte1_Schluesselproblem_LSG.pdf"
@@ -544,7 +686,14 @@
     {
      "art": "akte",
      "titel": "Akte W4·2 – RSA und das hybride Prinzip",
+     "ds": [
+      13
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_4_Schluesselproblem/KR_W4_Akte2_RSA_und_Hybrid.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Akte2_RSA_und_Hybrid_LSG.pdf"
@@ -554,7 +703,12 @@
     {
      "art": "akte",
      "titel": "Akte W4·K3 – Euklids Erbe",
+     "ds": [],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_4_Schluesselproblem/KR_W4_AkteK3_Euklids_Erbe.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_AkteK3_Euklids_Erbe_LSG.pdf"
@@ -566,8 +720,36 @@
      "titel": "Papier-Boss: Das Kurierbüro",
      "dateien": [
       {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_4_Schluesselproblem/KR_W4_Boss4_Kurierbuero.pdf"
+      },
+      {
        "label": "Erwartungshorizont",
        "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Boss4_Kurierbuero_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 4",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_4_Schluesselproblem/KR_W4_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_4_Schluesselproblem/KR_W4_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Funkraum „Schlüsseltausch“: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Lehrkraft_PDF/Welt_4_Schluesselproblem/KR_W4_Funkraum_Schluesseltausch.pdf"
       }
      ]
     }
@@ -600,7 +782,14 @@
     {
      "art": "akte",
      "titel": "Akte W5·1 – Fingerabdrücke",
+     "ds": [
+      14
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_5_Netz/KR_W5_Akte1_Fingerabdruecke.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte1_Fingerabdruecke_LSG.pdf"
@@ -610,7 +799,14 @@
     {
      "art": "akte",
      "titel": "Akte W5·2 – Das Siegel",
+     "ds": [
+      15
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_5_Netz/KR_W5_Akte2_Das_Siegel.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte2_Das_Siegel_LSG.pdf"
@@ -620,7 +816,14 @@
     {
      "art": "akte",
      "titel": "Akte W5·3 – Mallory im Netz",
+     "ds": [
+      16
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_5_Netz/KR_W5_Akte3_Mallory_im_Netz.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Akte3_Mallory_im_Netz_LSG.pdf"
@@ -632,8 +835,36 @@
      "titel": "Papier-Boss: Der Messenger",
      "dateien": [
       {
+       "label": "Papier-Boss",
+       "pfad": "Akten_PDF/Welt_5_Netz/KR_W5_Boss5_Messenger.pdf"
+      },
+      {
        "label": "Erwartungshorizont",
        "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Boss5_Messenger_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 5",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_5_Netz/KR_W5_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_5_Netz/KR_W5_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Funkraum „Mallory im Netz“: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Lehrkraft_PDF/Welt_5_Netz/KR_W5_Funkraum_Mallory_im_Netz.pdf"
       }
      ]
     }
@@ -666,7 +897,14 @@
     {
      "art": "akte",
      "titel": "Akte W6·1 – Fallenjagd",
+     "ds": [
+      17
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Akte1_Fallenjagd.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte1_Fallenjagd_LSG.pdf"
@@ -676,7 +914,14 @@
     {
      "art": "akte",
      "titel": "Akte W6·2 – Eves Chiffre",
+     "ds": [
+      17
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Akte2_Eves_Chiffre.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte2_Eves_Chiffre_LSG.pdf"
@@ -686,7 +931,15 @@
     {
      "art": "akte",
      "titel": "Akte W6·3 – Generalprobe",
+     "ds": [
+      17,
+      18
+     ],
      "dateien": [
+      {
+       "label": "Akte",
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Akte3_Generalprobe.pdf"
+      },
       {
        "label": "Lösung",
        "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Akte3_Generalprobe_LSG.pdf"
@@ -695,11 +948,11 @@
     },
     {
      "art": "probeklausur",
-     "titel": "Probeklausur (eA)",
+     "titel": "Probeklausur KETTENSCHRIFT (eA)",
      "dateien": [
       {
        "label": "Probeklausur",
-       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_eA.pdf"
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_eA.pdf"
       },
       {
        "label": "Erwartungshorizont",
@@ -709,11 +962,11 @@
     },
     {
      "art": "probeklausur",
-     "titel": "Probeklausur (gA)",
+     "titel": "Probeklausur KETTENSCHRIFT (gA)",
      "dateien": [
       {
        "label": "Probeklausur",
-       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_gA.pdf"
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Probeklausur_gA.pdf"
       },
       {
        "label": "Erwartungshorizont",
@@ -774,6 +1027,30 @@
       {
        "label": "Erwartungshorizont",
        "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Nachschreibklausur_gA_EH.pdf"
+      }
+     ]
+    },
+    {
+     "art": "warmup",
+     "titel": "Warm-up-Karten Welt 6",
+     "dateien": [
+      {
+       "label": "Karten (ohne Lösungen)",
+       "pfad": "Akten_PDF/Welt_6_Zeitmaschine/KR_W6_Warmup.pdf"
+      },
+      {
+       "label": "Lösungen",
+       "pfad": "Loesungen_Portal/Welt_6_Zeitmaschine/KR_W6_Warmup_LSG.pdf"
+      }
+     ]
+    },
+    {
+     "art": "funkraum",
+     "titel": "Abi-Duell: Rollenkarten",
+     "dateien": [
+      {
+       "label": "Rollenkarten",
+       "pfad": "Lehrkraft_PDF/Welt_6_Zeitmaschine/KR_W6_Funkraum_Abi-Duell.pdf"
       }
      ]
     }

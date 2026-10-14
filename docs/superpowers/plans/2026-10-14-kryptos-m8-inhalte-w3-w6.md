@@ -1292,13 +1292,14 @@ Probeklausur W6 (Schülerfassung, Block-2-Format), Warm-up W3–W6), `werkzeuge/
 enthalten), `werkzeuge/lehrkraft_pdf.py`; erzeugt `materialien/Akten_PDF/**`, `Loesungen_Portal/**`, `Loesungen_Akten/**`,
 `Lehrkraft_PDF/**` + `verzeichnis.json`; Tests `test/akten.test.js`, `test/lehrkraft_material.test.js`, `test/themen.test.js`
 
-- [ ] **Step 1: Failing test** – Validator: jedes `level.akte` W3–W6 hat einen Eintrag in `akten.json` (bisher Hinweis); Themenseite
+- [x] **Step 1: Failing test** – Validator: jedes `level.akte` W3–W6 hat einen Eintrag in `akten.json` (bisher Hinweis); Themenseite
   zeigt Akten W3–W6 nur nach Anmeldung; Funkraum-Dateien W3–W6 nur im Lehrkraft-Verzeichnis (`art: funkraum`), nie in
   `akten.json` (E142); Klausuren und EH nie in `Akten_PDF`.
-- [ ] **Step 2: Implement** – Einträge, Skript-Listen; `npm run akten && npm run loesungen && npm run lehrkraft`.
-- [ ] **Step 3:** `--pruefen` aller drei Skripte → aktuell; PDFs stichprobenartig ansehen (Schülerfassung ohne `_LSG`-Teile,
+- [x] **Step 2: Implement** – Einträge, Skript-Listen; `npm run akten && npm run loesungen && npm run lehrkraft`.
+- [x] **Step 3:** `--pruefen` aller drei Skripte → aktuell; PDFs stichprobenartig ansehen (Schülerfassung ohne `_LSG`-Teile,
   ohne Regieteil); `npm test`.
-- [ ] **Step 4: Commit** `git commit -m "Akten W3–W6 im Verzeichnis, PDFs erzeugt, Funkraumkarten W3–W6 als Lehrkraft-Download"`.
+- [x] **Step 4: Commit** `git commit -m "Akten W3–W6 im Verzeichnis, PDFs erzeugt, Funkraumkarten W3–W6 als Lehrkraft-Download"`.
+- [x] **Umsetzungsnotiz:** Tests zuerst rot: `akten.test.js` (Seeds W0–W6 ↔ Akten, Validator ohne „akte ↔ akten.json“ für alle sieben Seeds, neuer Test W3–W6: Papier-Bosse W3–W5, Probeklausur W6 eA/gA, Warm-up, Kür K2/K3, eA-Akten W3·2/·3), `lehrkraft_material.test.js` (alle Welten vollständig, Funkraum W3 ×2 mit Knack-Arena-LSG, W4–W6 ×1, W2 keins), `themen.test.js` (sieben Welten mit Akten-URLs, Boss W6 30 min, `weitere`). `seed/akten.json`: Welten 3–6 (16 Akten, `weitere` Boss bzw. Probeklausur eA/gA und Warm-up). Die Probeklausur ist als Schülerfassung im Schülerbereich erlaubt (Papier-Boss W6, Plan): Muster gegen Klausuren in `akten_pdf.py`, `akten.test.js` und `docker.test.js` auf `(^|[/_])Klausur|Nachschreib` geändert. `loesungen_pdf.py`: `FUNKRAUM` += W3 „Der doppelte Schlüssel“, W3 Knack-Arena (+ `_LSG`), W4, W5, W6 Abi-Duell (W1 `_LSG` war schon dabei); `WEITERE_WELTEN` leer; Probeklausur-EH kommen jetzt über `akten.json`. `lehrkraft_pdf.py`: Klausuren W6 unabhängig vom Akten-Zweig, Probeklausuren nicht mehr doppelt. Alle PDFs neu erzeugt (Materialien seit Task 197 neu gebaut): `akten` 48, `loesungen` 94, `lehrkraft` 122 Downloads; `--pruefen` aller drei Skripte 0 Probleme (Akten ohne Lösungsstempel). Stichproben: Akte W3·K2, Probeklausur W6 eA (Schülerfassung ohne EH), Warm-up W6 (ohne Rückseite), Abi-Duell (nur Lehrkraft). `npm test` und e2e grün.
 
 ### Task 200: `scripts/abdeckung.js` – Abdeckungsprüfung aus den Spec-Matrizen §11 (E141)
 

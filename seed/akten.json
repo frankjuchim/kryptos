@@ -1,5 +1,5 @@
 {
-  "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, Demo-PDFs siehe demo_materialien.json; vorläufig festgelegt, Plan M5 offene Entscheidung 3). Quelle der PDFs in materialien/Akten_PDF (python3 werkzeuge/akten_pdf.py) und der Verweise auf der Themenseite. 'nr' = Aktennummer innerhalb der Welt (Kür „K1“), 'level' = Level-ids der Seeds (Validator prüft level.akte ↔ akten.json). 'weitere'.art: boss | probeklausur | warmup. Funkraum-Rollenkarten enthalten Regie-Teile und stehen nur im Lehrkraft-Verzeichnis (werkzeuge/lehrkraft_pdf.py, Plan M5 E49 geändert). Nie Lösungen, Erwartungshorizonte, Klausuren.",
+  "_hinweis": "Verzeichnis der Schülermaterialien (nur nach Anmeldung, Demo-PDFs siehe demo_materialien.json; vorläufig festgelegt, Plan M5 offene Entscheidung 3). Quelle der PDFs in materialien/Akten_PDF (python3 werkzeuge/akten_pdf.py) und der Verweise auf der Themenseite. 'nr' = Aktennummer innerhalb der Welt (Kür „K1“, „K2“, „K3“), 'level' = Level-ids der Seeds (Validator prüft level.akte ↔ akten.json). 'weitere'.art: boss | probeklausur | warmup. Funkraum-Rollenkarten enthalten Regie-Teile und stehen nur im Lehrkraft-Verzeichnis (werkzeuge/lehrkraft_pdf.py, Plan M5 E49 geändert). Nie Lösungen, Erwartungshorizonte, Klausuren.",
   "werkzeugkarten": [
     {
       "nr": 1,
@@ -256,6 +256,271 @@
           "titel": "Warm-up-Karten Welt 2",
           "quelle": "Werkzeuge/Warm-up-Karten/KR_W2_Warmup.docx",
           "datei": "KR_W2_Warmup.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 3,
+      "ordner": "Welt_3_Maschinenzeitalter",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Vernams Lochstreifen",
+          "ds": [
+            9
+          ],
+          "niveau": "kern",
+          "level": [
+            "W3-L1"
+          ],
+          "quelle": "Welt3_Maschinenzeitalter/2_Akten/KR_W3_Akte1_Vernams_Lochstreifen.docx",
+          "datei": "KR_W3_Akte1_Vernams_Lochstreifen.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Der Blockchiffre-Baukasten",
+          "ds": [
+            10
+          ],
+          "niveau": "eA",
+          "level": [
+            "W3-L2"
+          ],
+          "quelle": "Welt3_Maschinenzeitalter/2_Akten/KR_W3_Akte2_Blockchiffre_Baukasten.docx",
+          "datei": "KR_W3_Akte2_Blockchiffre_Baukasten.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Die Chiffren-Werkstatt",
+          "ds": [
+            11
+          ],
+          "niveau": "eA",
+          "level": [
+            "W3-L3"
+          ],
+          "quelle": "Welt3_Maschinenzeitalter/2_Akten/KR_W3_Akte3_Chiffren_Werkstatt.docx",
+          "datei": "KR_W3_Akte3_Chiffren_Werkstatt.pdf"
+        },
+        {
+          "nr": "4",
+          "titel": "Fremde Chiffre IV: ADFGVX",
+          "ds": [
+            11
+          ],
+          "niveau": "kern",
+          "level": [
+            "W3-L4"
+          ],
+          "quelle": "Welt3_Maschinenzeitalter/2_Akten/KR_W3_Akte4_ADFGVX.docx",
+          "datei": "KR_W3_Akte4_ADFGVX.pdf"
+        },
+        {
+          "nr": "K2",
+          "titel": "Kür: Die Enigma",
+          "ds": [],
+          "niveau": "kuer",
+          "level": [
+            "W3-L5"
+          ],
+          "quelle": "Welt3_Maschinenzeitalter/2_Akten/KR_W3_AkteK2_Enigma.docx",
+          "datei": "KR_W3_AkteK2_Enigma.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Die Rundenmaschine",
+          "quelle": "Welt3_Maschinenzeitalter/4_Boss/KR_W3_Boss3_Rundenmaschine.docx",
+          "datei": "KR_W3_Boss3_Rundenmaschine.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 3",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W3_Warmup.docx",
+          "datei": "KR_W3_Warmup.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 4,
+      "ordner": "Welt_4_Schluesselproblem",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Das Schlüsselproblem",
+          "ds": [
+            12
+          ],
+          "niveau": "kern",
+          "level": [
+            "W4-L1"
+          ],
+          "quelle": "Welt4_Schluesselproblem/2_Akten/KR_W4_Akte1_Schluesselproblem.docx",
+          "datei": "KR_W4_Akte1_Schluesselproblem.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "RSA und das hybride Prinzip",
+          "ds": [
+            13
+          ],
+          "niveau": "kern",
+          "level": [
+            "W4-L2"
+          ],
+          "quelle": "Welt4_Schluesselproblem/2_Akten/KR_W4_Akte2_RSA_und_Hybrid.docx",
+          "datei": "KR_W4_Akte2_RSA_und_Hybrid.pdf"
+        },
+        {
+          "nr": "K3",
+          "titel": "Euklids Erbe",
+          "ds": [],
+          "niveau": "kuer",
+          "level": [
+            "W4-L3"
+          ],
+          "quelle": "Welt4_Schluesselproblem/2_Akten/KR_W4_AkteK3_Euklids_Erbe.docx",
+          "datei": "KR_W4_AkteK3_Euklids_Erbe.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Das Kurierbüro",
+          "quelle": "Welt4_Schluesselproblem/4_Boss/KR_W4_Boss4_Kurierbuero.docx",
+          "datei": "KR_W4_Boss4_Kurierbuero.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 4",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W4_Warmup.docx",
+          "datei": "KR_W4_Warmup.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 5,
+      "ordner": "Welt_5_Netz",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Fingerabdrücke",
+          "ds": [
+            14
+          ],
+          "niveau": "kern",
+          "level": [
+            "W5-L1"
+          ],
+          "quelle": "Welt5_Netz/2_Akten/KR_W5_Akte1_Fingerabdruecke.docx",
+          "datei": "KR_W5_Akte1_Fingerabdruecke.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Das Siegel",
+          "ds": [
+            15
+          ],
+          "niveau": "kern",
+          "level": [
+            "W5-L2"
+          ],
+          "quelle": "Welt5_Netz/2_Akten/KR_W5_Akte2_Das_Siegel.docx",
+          "datei": "KR_W5_Akte2_Das_Siegel.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Mallory im Netz",
+          "ds": [
+            16
+          ],
+          "niveau": "kern",
+          "level": [
+            "W5-L3"
+          ],
+          "quelle": "Welt5_Netz/2_Akten/KR_W5_Akte3_Mallory_im_Netz.docx",
+          "datei": "KR_W5_Akte3_Mallory_im_Netz.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "boss",
+          "titel": "Papier-Boss: Der Messenger",
+          "quelle": "Welt5_Netz/4_Boss/KR_W5_Boss5_Messenger.docx",
+          "datei": "KR_W5_Boss5_Messenger.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 5",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W5_Warmup.docx",
+          "datei": "KR_W5_Warmup.pdf"
+        }
+      ]
+    },
+    {
+      "welt": 6,
+      "ordner": "Welt_6_Zeitmaschine",
+      "akten": [
+        {
+          "nr": "1",
+          "titel": "Fallenjagd",
+          "ds": [
+            17
+          ],
+          "niveau": "kern",
+          "level": [
+            "W6-L1"
+          ],
+          "quelle": "Welt6_Zeitmaschine/2_Akten/KR_W6_Akte1_Fallenjagd.docx",
+          "datei": "KR_W6_Akte1_Fallenjagd.pdf"
+        },
+        {
+          "nr": "2",
+          "titel": "Eves Chiffre",
+          "ds": [
+            17
+          ],
+          "niveau": "kern",
+          "level": [
+            "W6-L2"
+          ],
+          "quelle": "Welt6_Zeitmaschine/2_Akten/KR_W6_Akte2_Eves_Chiffre.docx",
+          "datei": "KR_W6_Akte2_Eves_Chiffre.pdf"
+        },
+        {
+          "nr": "3",
+          "titel": "Generalprobe",
+          "ds": [
+            17,
+            18
+          ],
+          "niveau": "kern",
+          "level": [
+            "W6-L3"
+          ],
+          "quelle": "Welt6_Zeitmaschine/2_Akten/KR_W6_Akte3_Generalprobe.docx",
+          "datei": "KR_W6_Akte3_Generalprobe.pdf"
+        }
+      ],
+      "weitere": [
+        {
+          "art": "probeklausur",
+          "titel": "Probeklausur KETTENSCHRIFT (eA)",
+          "quelle": "Welt6_Zeitmaschine/4_Boss/KR_W6_Probeklausur_eA.docx",
+          "datei": "KR_W6_Probeklausur_eA.pdf"
+        },
+        {
+          "art": "probeklausur",
+          "titel": "Probeklausur KETTENSCHRIFT (gA)",
+          "quelle": "Welt6_Zeitmaschine/4_Boss/KR_W6_Probeklausur_gA.docx",
+          "datei": "KR_W6_Probeklausur_gA.pdf"
+        },
+        {
+          "art": "warmup",
+          "titel": "Warm-up-Karten Welt 6",
+          "quelle": "Werkzeuge/Warm-up-Karten/KR_W6_Warmup.docx",
+          "datei": "KR_W6_Warmup.pdf"
         }
       ]
     }

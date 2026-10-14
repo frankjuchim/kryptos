@@ -169,27 +169,24 @@ test('demo_materialien.json: _LSG, _EH und Klausuren werden nie öffentlich (Pla
   await request(app).get(`/akten/${erlaubt}`).expect(200);
 });
 
-test('Themenübersicht mit den echten Seeds: drei Welten, je Level Akte mit URL, Boss 8 Aufgaben/25 min, Trainingsplatz, Warm-up 12 (Plan M5 Task 100)', async () => {
+test('Themenübersicht mit den echten Seeds: sieben Welten, je Level Akte mit URL, Boss 8 Aufgaben/25 min (W6 30), Trainingsplatz, Warm-up 12 (Plan M5 Task 100, M8 Task 199)', async () => {
   const app = H.makeApp({ seedDir: path.join(__dirname, '..', 'seed'), weltDateien: [] });
   const d = (await request(app).get('/api/themen').expect(200)).body;
-  // Plan M8: W3–W6 kommen Task für Task dazu (Akten Task 199, Warm-up Task 190, Generatoren Tasks 192–194) – die
-  // vollständige Prüfung gilt für W0–W2, für die übrigen Welten mit Seed nur, dass sie erscheinen
-  const mitSeed = fs.readdirSync(path.join(__dirname, '..', 'seed', 'welten')).map((x) => /^welt(\d)\.json$/.exec(x)).filter(Boolean).map((m) => Number(m[1])).sort((a, b) => a - b);
-  assert.deepEqual(d.welten.map((w) => w.nr), mitSeed);
-  const fertig = d.welten.filter((w) => w.nr <= 2);
-  assert.deepEqual(fertig.map((w) => w.boss.titel), ['Der Bote des Feldherrn', 'Der Kalif und der Kurier', 'Die Venezianische Depesche']);
+  assert.deepEqual(d.welten.map((w) => w.nr), [0, 1, 2, 3, 4, 5, 6]);
+  const fertig = d.welten;
+  assert.deepEqual(fertig.map((w) => w.boss.titel), ['Der Bote des Feldherrn', 'Der Kalif und der Kurier', 'Die Venezianische Depesche', 'Der Fernschreiber', 'Der Schlüsseltausch', 'Das Siegel der Stadt', 'Generalprobe online']);
   for (const w of fertig) {
-    assert.deepEqual([w.boss.anzahl, w.boss.dauerMin], [8, 25], `Welt ${w.nr}: Boss`);
+    assert.deepEqual([w.boss.anzahl, w.boss.dauerMin], [8, w.nr === 6 ? 30 : 25], `Welt ${w.nr}: Boss`);
     assert.equal(w.warmup, 12, `Welt ${w.nr}: Warm-up`);
-    assert.ok(w.training.length >= 5, `Welt ${w.nr}: Trainingsplatz`);
-    assert.deepEqual(w.weitere.map((x) => x.art), ['boss', 'warmup']);
+    assert.ok(w.training.length >= 3, `Welt ${w.nr}: Trainingsplatz`);
+    assert.deepEqual(w.weitere.map((x) => x.art), w.nr === 6 ? ['probeklausur', 'probeklausur', 'warmup'] : ['boss', 'warmup'], `Welt ${w.nr}: weitere`);
     for (const l of w.levels) {
       assert.ok(l.akte && l.akte.url, `${l.id}: Akte`);
       assert.match(l.akte.url, new RegExp(`^/akten/Welt_${w.nr}_\\w+/KR_W${w.nr}_Akte`));
-      assert.ok(l.akte.titel.startsWith(`Akte W${w.nr}·${l.nr === 'K1' ? 'K1' : l.nr.split('.')[1]} – `), l.akte.titel);
+      assert.ok(l.akte.titel.startsWith(`Akte W${w.nr}·${/^K\d$/.test(l.nr) ? l.nr : l.nr.split('.')[1]} – `), l.akte.titel);
     }
   }
-  assert.deepEqual(fertig.map((w) => w.levels.length), [4, 3, 5]);
+  assert.deepEqual(fertig.map((w) => w.levels.length), [4, 3, 5, 5, 3, 3, 3]);
   assert.equal(d.werkzeugkarten.length, 7);
   assert.ok(d.werkzeugkarten.every((x) => x.url && x.url.startsWith('/akten/00_Werkzeugkarten/')));
   const text = JSON.stringify(d);

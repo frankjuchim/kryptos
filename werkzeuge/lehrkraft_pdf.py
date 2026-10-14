@@ -3,16 +3,16 @@
 
   Lehrkraft_PDF/00_Allgemein/        Gesamtübersicht DS 1–18
   Lehrkraft_PDF/Welt_<n>_<Name>/     Präsentationen (pptx → PDF, Kickoff zuerst), Lehrerhinweise der Welt,
-                                     Funkraum-Rollenkarten W0/W1 (Regie-Teile, nie im Schülerbereich; Plan M5 E49 geändert),
-                                     in Welt 6 zusätzlich Klausur, Nachschreibklausur und Probeklausur je eA/gA (Aufgaben)
+                                     Funkraum-Rollenkarten W0, W1, W3–W6 (Regie-Teile, nie im Schülerbereich; E49, M8 E142),
+                                     in Welt 6 zusätzlich Klausur und Nachschreibklausur je eA/gA (Aufgaben)
   Lehrkraft_PDF/verzeichnis.json     Verzeichnis für das Lab: je Welt alle Materialien mit Schülerfassung
                                      (Akten_PDF, Schülerbereich) und Lehrkraft-Dateien (Lösungen aus Loesungen_Portal,
                                      Präsentationen, Lehrerhinweise, Klausuren)
 
 Übernommen aus Algo Quest 2.8.2 (werkzeuge/lehrkraft_pdf.py, TECHNIK §14.3) und auf Kryptos umgestellt (seed/akten.json,
 Präfix Akten_PDF/, Arten praesentation | lehrerhinweise | akte | boss | warmup | funkraum | klausur | probeklausur | werkzeug).
-Die Lösungs-PDFs erzeugt loesungen_pdf.py (Loesungen_Portal); hier werden sie nur verzeichnet. Für W4–W6 stehen die
-Schüler-Akten noch nicht in seed/akten.json (M8): ihre Einträge haben nur die Lehrkraft-Datei (E49).
+Die Lösungs-PDFs erzeugt loesungen_pdf.py (Loesungen_Portal); hier werden sie nur verzeichnet. Seit Plan M8 Task 199 stehen
+alle Welten 0–6 in seed/akten.json; der Zweig ohne Schüler-Akten (nur Lehrkraft-Datei, E49) greift nur noch für neue Welten.
 Lehrkraft_PDF und Loesungen_Portal kommen ins Docker-Image; der Server liefert sie ausschließlich an angemeldete
 Lehrkräfte aus und nur Dateien, die in verzeichnis.json stehen.
 
@@ -40,9 +40,8 @@ PORTAL = L.PORTAL
 
 ORDNER = {0: "Welt_0_Antike", 1: "Welt_1_Bagdad", 2: "Welt_2_Renaissance", 3: "Welt_3_Maschinenzeitalter",
           4: "Welt_4_Schluesselproblem", 5: "Welt_5_Netz", 6: "Welt_6_Zeitmaschine"}
-KLAUSUREN = [  # (Quelle, Art, Titel) – Aufgabenblätter; Erwartungshorizonte in loesungen_pdf.KLAUSUREN (gleicher Stamm + _EH)
-    ("Welt6_Zeitmaschine/4_Boss/KR_W6_Probeklausur_eA.docx", "probeklausur", "Probeklausur (eA)"),
-    ("Welt6_Zeitmaschine/4_Boss/KR_W6_Probeklausur_gA.docx", "probeklausur", "Probeklausur (gA)"),
+KLAUSUREN = [  # (Quelle, Art, Titel) – Aufgabenblätter; Erwartungshorizonte in loesungen_pdf.KLAUSUREN (gleicher Stamm + _EH).
+    # Probeklausuren: seit Plan M8 Task 199 in seed/akten.json (Schülerfassung im Schülerbereich, EH nur Lehrkraft)
     ("Welt6_Zeitmaschine/4_Boss/KR_W6_Klausur_eA.docx", "klausur", "Klausur (eA)"),
     ("Welt6_Zeitmaschine/4_Boss/KR_W6_Klausur_gA.docx", "klausur", "Klausur (gA)"),
     ("Welt6_Zeitmaschine/4_Boss/KR_W6_Nachschreibklausur_eA.docx", "klausur", "Nachschreibklausur (eA)"),
@@ -146,13 +145,13 @@ def plan():
                 else:
                     eintraege.append({"art": art, "titel": f"Papier-Boss: {titel_map.get(stamm, (stamm,))[0]}",
                                       "dateien": [datei("Erwartungshorizont", zs[0])]})
-            if nr == 6:
-                for q, art, titel in KLAUSUREN:
-                    ziel = f"Lehrkraft_PDF/{o}/{Path(q).stem}.pdf"
-                    render.append((q, ziel))
-                    eh = f"{PORTAL}/{o}/{Path(q).stem}_EH.pdf"
-                    eintraege.append({"art": art, "titel": titel, "dateien": [
-                        datei("Probeklausur" if art == "probeklausur" else "Klausur", ziel), datei("Erwartungshorizont", eh)]})
+        if nr == 6:
+            for q, art, titel in KLAUSUREN:
+                ziel = f"Lehrkraft_PDF/{o}/{Path(q).stem}.pdf"
+                render.append((q, ziel))
+                eh = f"{PORTAL}/{o}/{Path(q).stem}_EH.pdf"
+                eintraege.append({"art": art, "titel": titel, "dateien": [
+                    datei("Probeklausur" if art == "probeklausur" else "Klausur", ziel), datei("Erwartungshorizont", eh)]})
         if not eintraege:
             continue
         eintraege.sort(key=lambda e: RANG[e["art"]])
