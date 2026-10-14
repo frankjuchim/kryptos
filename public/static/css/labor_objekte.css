@@ -760,3 +760,56 @@
 .enigma-glossar dt { font-weight: 700; }
 .enigma-glossar dd { margin: 0; }
 @media (max-width: 600px) { .enigma-glossar { grid-template-columns: minmax(0, 1fr); } .enigma-glossar dd { margin-bottom: var(--a-2); } }
+
+/* ======================================================================
+   Angreifer-Labor (Plan M10 Task 234; stationen/analyse.html)
+   Verfahren-Chips, Vorhersage-Kasten (gestrichelt), verdecktes Histogramm, Schlüsselraum-Balken, Trainer, Urteil.
+   ====================================================================== */
+.analyse-einleitung { margin: 0 0 var(--a-3); max-width: var(--lesebreite); }
+.analyse-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .analyse-objekt { grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr); } }
+.analyse-buehne, .analyse-bedienung { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.analyse-bedienung { padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.analyse-feldtitel { margin: 0; font: 700 .75rem var(--f-text); letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); }
+.analyse-verfahren, .analyse-texte { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.analyse-verfahren [aria-pressed="true"], .analyse-texte [aria-pressed="true"] { border-color: var(--hinweis); background: var(--hinweis-flaeche); font-weight: 700; }
+.analyse-vorhersage-kasten { display: grid; gap: var(--a-2); padding: var(--a-3); border: 1.5px dashed var(--messing); border-radius: var(--r-karte); background: color-mix(in srgb, var(--messing) 8%, transparent); }
+.analyse-frage-titel { margin: 0; font-weight: 700; }
+.analyse-vorhersage, .analyse-urteil { display: grid; gap: var(--a-2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); }
+.analyse-vorhersage button, .analyse-urteil button { display: grid; gap: 2px; min-height: var(--ziel); padding: var(--a-2) var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); color: var(--text); text-align: left; font: inherit; cursor: pointer; touch-action: manipulation; }
+.analyse-urteil small { color: var(--text-2); }
+.analyse-vorhersage button[aria-pressed="true"] { border-color: var(--hinweis); background: var(--hinweis-flaeche); font-weight: 700; }
+.analyse-vorhersage button.richtig, .analyse-urteil button.richtig { border-color: var(--ok); background: var(--ok-flaeche); }
+.analyse-urteil button.analyse-daneben { border-color: var(--fehler); background: var(--fehler-flaeche); }
+.analyse-vorhersage button:disabled, .analyse-urteil button:disabled { cursor: default; }
+.analyse-rueckmeldung { margin: 0; }
+.analyse-rueckmeldung:empty { display: none; }
+.analyse-stimmt { color: var(--ok); font-weight: 700; }
+.analyse-histogramme { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+.analyse-geheim-histogramm { position: relative; min-width: 0; }
+.analyse-geheim-histogramm.verdeckt > :not(.analyse-verdeckt-text) { filter: blur(7px); opacity: .5; pointer-events: none; user-select: none; }
+.analyse-verdeckt-text { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; font-weight: 700; color: var(--text-2); }
+.analyse-geheimtext { margin: 0; padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); background: var(--mat-gehaeuse); color: var(--mat-lampe-an); font: 700 1rem/1.8 var(--f-mono); overflow-wrap: anywhere; }
+.analyse-merke { margin: 0; }
+.analyse-eigen .labor-eingabe { width: 100%; }
+.analyse-textinfo { margin: 0; }
+.analyse-raum { display: grid; gap: var(--a-3); }
+.analyse-raum-zeile { display: grid; gap: 4px; padding: var(--a-2) var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--karte); }
+.analyse-raum-name { font-weight: 700; }
+.analyse-balken { display: block; height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--text) 10%, transparent); overflow: hidden; }
+.analyse-balken-fuellung { display: block; height: 100%; width: calc(var(--balken, .1) * 100%); border-radius: 6px; background: linear-gradient(90deg, var(--mat-ziel), var(--mat-lampe-an)); }
+.analyse-raum-zahl { font-family: var(--f-mono); }
+.analyse-pointe { margin: 0; padding: var(--a-3); border-left: 4px solid var(--messing); background: color-mix(in srgb, var(--messing) 10%, transparent); font-weight: 600; }
+.analyse-leistung { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.analyse-laenge { width: 100%; min-height: var(--ziel); }
+.analyse-frage { margin: 0; font-size: 1.15rem; }
+.analyse-antwort { display: flex; flex-wrap: wrap; gap: var(--a-2); align-items: center; }
+.analyse-antwort input { width: 6rem; min-height: var(--ziel); font: 700 1.2rem var(--f-mono); text-transform: uppercase; }
+.analyse-weg { margin: 0; }
+.analyse-weg:empty { display: none; }
+.analyse-serie { margin: 0; font-weight: 700; }
+.analyse-art { min-height: var(--ziel); }
+.analyse-aufloesung { display: grid; gap: var(--a-1); }
+.analyse-aufloesung p { margin: 0; }
+.analyse-kerckhoffs { margin: 0; justify-self: start; padding: 2px 10px; border-radius: var(--r-chip); background: var(--hinweis-flaeche); color: var(--hinweis); font-size: .9rem; }
+.analyse-vorgehen { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }

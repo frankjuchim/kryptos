@@ -820,7 +820,7 @@ logarithmischen Balken (`log10`), Formel, Rechenleistung (Schulrechner 10⁶, PC
 Geheimtext (zufälliges Verfahren aus den erlaubten), zwei Histogramme, Urteil in vier Gruppen, danach Auflösung mit
 Verfahren/Schlüssel und Erklärung; „Kerckhoffs: Eve kennt alle Verfahren – nur nicht den Schlüssel.“
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Vergleich: erst Vorhersage, dann Ansehen; Histogramm = Krypto.haeufigkeiten', () => {
     const w = oeffne('analyse');
@@ -837,7 +837,10 @@ Verfahren/Schlüssel und Erklärung; „Kerckhoffs: Eve kennt alle Verfahren –
   test('Schlüsselraum: Balken und Dauer aus der Bibliothek', () => { /* substitution, PC → Text '≈ 1,3 · 10¹⁰ Jahre' */ });
   test('Trainer und Blick: deterministisch mit zufall, Rückmeldung, keine Speicherung', () => {});
   ```
-- [ ] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Angreifer-Labor“ (Vorhersage, Schlüsselraum, Trainer, Angreifer-Blick) nach der Krypto-Werkstatt (Task 234)`
+- [x] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Angreifer-Labor“ (Vorhersage, Schlüsselraum, Trainer, Angreifer-Blick) nach der Krypto-Werkstatt (Task 234)`
+- Umsetzung: Enigma als Verfahren im Vergleich (ab Welt 3) und im Schlüsselraum; der Angreifer-Blick zieht aus Skytale,
+  Pflügen, Caesar, Zuordnung (+ Playfair/Vigenère ab Welt 2). AES-128 der Werkstatt entfällt (kein Schlüsselraum in der
+  Bibliothek); dafür affine Chiffre und Fleißner 6 × 6. Trainer: Caesar, Skytale-Stelle, Polybios-Paar, Pflügen-Anfang, T/S.
 
 ### Task 235: Einbettung – Level-Karte W3-L5, Lehrkraft-Vorschau, Funkraum-Prüfung (E180, E190)
 
