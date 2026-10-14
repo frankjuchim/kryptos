@@ -117,3 +117,17 @@ test('Welt 3: Level 3.3 mit Werkstatt-Karte (echter Seed)', async (t) => {
   assert.deepEqual(l.werkstatt, { titel: 'Zur Chiffren-Werkstatt' });
   assert.equal((await s.get('/api/levels/W3-L1').expect(200)).body.level.werkstatt, null);
 });
+
+// Plan M8 Task 176: Kür K2 „Die Enigma“ (W3-L5) – sichtbar bei kuer: frei (auch im gA-Kurs), unsichtbar bei kuer: gesperrt.
+test('Welt 3: Kür K2 nur bei Kurseinstellung kuer „frei“', async (t) => {
+  if (!(S.UMFANG[3] || []).includes('W3-L5')) return t.skip('W3-L5 noch nicht im UMFANG');
+  const { s, lk, kurs } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt3.json')] });
+  const levels = async () => (await s.get('/api/welten').expect(200)).body.welten.find((w) => w.nr === 3).levels;
+  const k2 = (await levels()).find((l) => l.id === 'W3-L5');
+  assert.ok(k2 && k2.kuer === true && k2.nr === 'K2' && k2.titel === 'Die Enigma', 'Kür sichtbar (Standard kuer frei)');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { niveau: 'gA' } }).expect(200);
+  assert.ok((await levels()).some((l) => l.id === 'W3-L5'), 'Kür auch im gA-Kurs');
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { kuer: 'gesperrt' } }).expect(200);
+  assert.ok(!(await levels()).some((l) => l.id === 'W3-L5'), 'gesperrte Kür unsichtbar');
+  await s.get('/api/levels/W3-L5').expect(404);
+});

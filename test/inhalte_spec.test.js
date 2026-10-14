@@ -269,3 +269,27 @@ test('Porta-Tafeln in den Seeds stimmen Zelle für Zelle mit Krypto.porta übere
   }
   if (S.UMFANG[2].includes('W2-L1')) assert.ok(tafeln >= 1, 'W2-L1-06 hat eine Porta-Tafel');
 });
+
+// Plan M8 Task 176: Mini-Enigma-Tafeln (Block tabelle „Mini-Enigma: Tabelle je Stellung …“) – jede Zelle =
+// Krypto.miniEnigma.tabelle; W3-L5-04: die Positionen ohne Fixpunkt-Kollision und der „tatsächliche“ Klartext der Spec.
+test('Mini-Enigma: Stellungstafeln und Positionen von BACH (W3-L5-04) stimmen mit der Bibliothek', (t) => {
+  const Krypto = require('../public/static/js/shared/krypto.js');
+  const w = S.seed(3);
+  if (!w || !(S.UMFANG[3] || []).includes('W3-L5')) return t.skip('W3-L5 noch nicht im UMFANG');
+  let tafeln = 0;
+  for (const a of w.aufgaben) {
+    for (const b of a.inhalt || []) {
+      if (b.t !== 'tabelle' || !/^Mini-Enigma/.test(b.titel || '')) continue;
+      assert.deepEqual(b.kopf, ['Stellung', ...'ABCDEFGH'], `${a.id}: Kopf`);
+      assert.deepEqual(b.zeilen, [...'ABCDEFGH'].map((st) => [st, ...Krypto.miniEnigma.tabelle(st)]), `${a.id}: Zellen`);
+      tafeln++;
+    }
+  }
+  assert.ok(tafeln >= 2, 'Tafeln in W3-L5-01 und -02');
+  const g = 'AFCCAGHHAF';
+  const moeglich = [];
+  for (let p = 0; p + 4 <= g.length; p++) if (![...'BACH'].some((c, i) => g[p + i] === c)) moeglich.push(String(p));
+  const lo = w.aufgaben.find((a) => a.id === 'W3-L5-04').loesung;
+  assert.deepEqual([lo.p1[0], lo.p2[0], lo.p3[0]], moeglich);
+  assert.equal(Krypto.miniEnigma('chefhabach', 'C'), g, 'Spec: tatsächlich p = 6 (Klartext chefhabach, Start C)');
+});

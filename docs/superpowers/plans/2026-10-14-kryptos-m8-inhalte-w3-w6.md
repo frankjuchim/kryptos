@@ -633,7 +633,8 @@ jede Zelle, wie die Porta-Tafel E41).
 **Erwartete Hinweise:** W3-L5-05 keiner (`schluesselraum` ohne Rechenfunktion → „Rechenergebnis nicht nachgerechnet“
 möglich, dann in die Liste der erwarteten Hinweise).
 
-- [ ] **Step 1–4** (`UMFANG[3]` += `'W3-L5'`; Kür bei `kuer: gesperrt` unsichtbar). **Step 5: Commit** `git commit -m "Welt 3: Kür K2 „Die Enigma“"`.
+- [x] **Step 1–4** (`UMFANG[3]` += `'W3-L5'`; Kür bei `kuer: gesperrt` unsichtbar). **Step 5: Commit** `git commit -m "Welt 3: Kür K2 „Die Enigma“"`.
+- [x] **Umsetzungsnotiz:** Stellungstafel (Block `tabelle` „Mini-Enigma: Tabelle je Stellung …“, aus `miniEnigma.tabelle`) und die Dreh-Regel stehen in W3-L5-01 und -02; Test in `inhalte_spec` vergleicht jede Zelle mit der Bibliothek und prüft W3-L5-04 (Positionen 2, 5, 6 ohne Fixpunkt-Kollision; `miniEnigma("chefhabach", "C")` = AFCCAGHHAF). W3-L5-01/-02 `schluesselVerdeckt: false` (Kryptoanalyse-Level, Stellung genannt). W3-L5-03 Begründung, W3-L5-05 Beurteilung als Muster in der Erklärung (E129). Test „Kür K2 nur bei kuer frei“ in `inhalte_plan`. Erwarteter Hinweis: W3-L5-05 „Rechenergebnis nicht nachgerechnet“ (Zählung 8!, 7 · 5 · 3 · 1, ohne Rechenfunktion).
 
 ### Task 177: Welt 3 – Boss „Der Fernschreiber“
 
