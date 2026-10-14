@@ -1924,7 +1924,7 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
 ohne Fotos), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
-Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13. `E2E_NUR=11,12` (Komma-Liste; 12 und 13 setzen 11 voraus)
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13 → 14. `E2E_NUR=11,12` (Komma-Liste; 12–14 setzen 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -1985,6 +1985,14 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     ohne Querscrollen, Touch-Ziele ≥ 44 px. Admin: Verwaltung vor Labor, Reiter Lehrkräfte & Anfragen · Inhalte ·
     Warm-up-Import · Backup & Verbund · Wartung; Backup-JSON `app = kryptos`, `meta.app = kryptos`, ohne `sso_jti`,
     `loeschungen`, Funkraum- und Arena-Tabellen; Wartung mit letztem Lauf. Ohne Fotos (Foto-Satz: Task 217).
+14. Öffentlich und Verbund-Wege (Plan M9 Task 216; `oeffentlich.js`, nach Nr. 13): ohne Anmeldung `/` („Anmelden über
+    InfoLabs“, Gastmodus, keine Cookies), `/themen`, `/themen#niveaus` frisch geladen (sieben Welten, eA, Sprungziel im
+    Blick), `/datenschutz` (Entwurf-Kasten, Platzhalter, Link auf `<Dev-Portal>/datenschutz`), 404-Seite im Designsystem,
+    `/robots.txt` `Disallow: /`; `/spiel` → Dev-Portal mit `ziel=/spiel`, „Abbrechen“ → `/?abgebrochen=1` mit Hinweis;
+    Mika: „Abmelden“ (lokal, `kr_s` gelöscht) und „Überall abmelden“ über `<Dev-Portal>/sso/abmelden?ruecksprung=…` zurück
+    auf `/`; Ida K. (nur GK 12): Dev-Portal schaltet Kryptos für `k:2` ab (Verbund `kurs-aendern {aktiv:false}`) → API 403,
+    `/spiel` → Seite „Kurs abgeschaltet“ (auch 360 px), danach wieder eingeschaltet und Ida wieder in Kryptos. 360 px ohne
+    Querscrollen; Kontraste hell/dunkel für `/`, `/themen`, `/datenschutz`, 404. Ohne Fotos.
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C

@@ -465,11 +465,11 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 **Interfaces:**
 - Produces: `szenario14(ctx)`
 
-- [ ] **Step 1: Szenario schreiben** (ohne Anmeldung, neuer Browser-Kontext): `/` zeigt „Anmelden über InfoLabs“ und Link zum Gastmodus, keine Cookies gesetzt; `/themen` und `/themen#niveaus` (sieben Welten, eA-Kennzeichnung, Sprungziel im Blick); `/datenschutz` (Entwurf-Kasten, Platzhalter sichtbar, Link „zentrale Datenschutzerklärung“ zeigt auf `<Dev-Portal>/datenschutz`); `/gibt-es-nicht` → 404-Seite im Designsystem; `/robots.txt` → `Disallow: /`; `/spiel` → Weiterleitung zum Dev-Portal mit `ziel=/spiel`; Dev-Portal „abgebrochen“ → `/?abgebrochen=1` mit Hinweis; Mika angemeldet → „Abmelden“ → „überall abmelden“ landet auf `<Dev-Portal>/sso/abmelden?ruecksprung=…`; gesperrter Kurs (Verbund `kurs-aendern {aktiv:false}` über das Dev-Portal-Knopf) → Seite „Kryptos ist für deinen Kurs abgeschaltet“, danach wieder entsperren. Alles bei 360 px ohne Querscrollen; Kontrastmessung hell/dunkel wie Szenario 9 für `/`, `/themen`, `/datenschutz`, 404.
-- [ ] **Step 2: Run** `E2E_NUR=11,12,13,14 npm run e2e` → rot bei Fund, beheben.
-- [ ] **Step 3: Run** → grün.
-- [ ] **Step 4: Run** `npm test`, voller `npm run e2e` grün.
-- [ ] **Step 5: Commit** `git commit -m "e2e Szenario 14: öffentliche Seiten, Datenschutz, Abmelden, gesperrter Kurs (M9 Task 216)"`
+- [x] **Step 1: Szenario schreiben** (ohne Anmeldung, neuer Browser-Kontext): `/` zeigt „Anmelden über InfoLabs“ und Link zum Gastmodus, keine Cookies gesetzt; `/themen` und `/themen#niveaus` (sieben Welten, eA-Kennzeichnung, Sprungziel im Blick); `/datenschutz` (Entwurf-Kasten, Platzhalter sichtbar, Link „zentrale Datenschutzerklärung“ zeigt auf `<Dev-Portal>/datenschutz`); `/gibt-es-nicht` → 404-Seite im Designsystem; `/robots.txt` → `Disallow: /`; `/spiel` → Weiterleitung zum Dev-Portal mit `ziel=/spiel`; Dev-Portal „abgebrochen“ → `/?abgebrochen=1` mit Hinweis; Mika angemeldet → „Abmelden“ → „überall abmelden“ landet auf `<Dev-Portal>/sso/abmelden?ruecksprung=…`; gesperrter Kurs (Verbund `kurs-aendern {aktiv:false}` über das Dev-Portal-Knopf) → Seite „Kryptos ist für deinen Kurs abgeschaltet“, danach wieder entsperren. Alles bei 360 px ohne Querscrollen; Kontrastmessung hell/dunkel wie Szenario 9 für `/`, `/themen`, `/datenschutz`, 404.
+- [x] **Step 2: Run** `E2E_NUR=11,12,13,14 npm run e2e` → rot bei Fund, beheben.
+- [x] **Step 3: Run** → grün.
+- [x] **Step 4: Run** `npm test`, voller `npm run e2e` grün.
+- [x] **Step 5: Commit** `git commit -m "e2e Szenario 14: öffentliche Seiten, Datenschutz, Abmelden, gesperrter Kurs (M9 Task 216)"`
 
 ### Task 217: Screenshots – Foto-Satz `kr-*` aus den echten Seeds
 

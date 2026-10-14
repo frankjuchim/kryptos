@@ -6,7 +6,8 @@
  * 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 (4 Kryptolabor aus M6 Task 128, 5 Funkraum und 6 Knack-Arena aus M7
  * Tasks 160/161 – alle drei ohne Fotos (E88, E118); 10 Fehlerzustände und die Kontrastmessung in 9 aus dem Review M4). Danach Szenario 11 „Welten 0–2 spielbar“ (M5 Task 101) mit einem
  * zweiten App-Start auf den echten Seeds (seed/, ohne WELT_DATEIEN), ohne Fotos; im selben App-Start Szenario 12
- * „Welten 3–6 spielbar“ (Plan M8 Task 202; setzt die Kurseinstellungen aus 11 voraus).
+ * „Welten 3–6 spielbar“ (Plan M8 Task 202; setzt die Kurseinstellungen aus 11 voraus), danach Szenario 13 „Lehrkraft-
+ * Bereich im Algo-Quest-Aufbau“ und Szenario 14 „Öffentlich und Verbund-Wege“ (Plan M9 Tasks 215, 216).
  * E2E_NUR=11 (o. Ä., Komma-Liste) führt nur die genannten Szenarien aus – zum Entwickeln; Fotos dann aus.
  * Fotos nach docs/screenshots/m4-*.png (E2E_FOTOS=0 schaltet aus).
  *
@@ -25,6 +26,7 @@ const labor = require('./labor');
 const funkraum = require('./funkraum');
 const arena = require('./arena');
 const lehrkraftBereich = require('./lehrkraft_bereich');
+const oeffentlich = require('./oeffentlich');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
@@ -43,7 +45,8 @@ const SZENARIEN = [
 const SZENARIEN_ECHT = [
   ['11 Welten 0–2 mit den echten Seeds', inhalte.szenario11],
   ['12 Welten 3–6 spielbar', inhalteW36.szenario12],
-  ['13 Lehrkraft-Bereich im Algo-Quest-Aufbau', lehrkraftBereich.szenario13]
+  ['13 Lehrkraft-Bereich im Algo-Quest-Aufbau', lehrkraftBereich.szenario13],
+  ['14 Öffentlich und Verbund-Wege', oeffentlich.szenario14]
 ];
 
 const NUR = (process.env.E2E_NUR || '').split(',').map((x) => x.trim()).filter(Boolean);
