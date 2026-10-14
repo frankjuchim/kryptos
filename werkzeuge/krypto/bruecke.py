@@ -81,6 +81,8 @@ ZUORDNUNG = {
     'pfluegen': (K.pfluegen, 3), 'pfluegenReihenfolge': (K.pfluegen_reihenfolge, None), 'morse': (K.morse, None),
     'freimaurer': (K.freimaurer, None), 'freimaurerBuchstabe': (K.freimaurer_buchstabe, None),
     'nullchiffre': (K.nullchiffre, None), 'punktmethode': (K.punktmethode, None), 'punkteSetzen': (K.punkte_setzen, None),
+    # M10 (Plan Task 222)
+    'enigma': (K.enigma, None), 'enigmaSchritt': (K.enigma_schritt, None),
 }
 
 

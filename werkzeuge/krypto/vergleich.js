@@ -734,6 +734,15 @@ const FAELLE = {
     fest: [['der rote Kahn', 'rot'], ['der rote Kahn', 'rotz'], ['', 'a'], ['abc', ''], ['abc', 3]],
     zufall: () => [textOderDeutsch(200), zufall() < 0.5 ? buchstaben(0, 8) : deutsch(3)],
   },
+  // ── M10 Bibliothek VI (Plan M10 Task 222) ──
+  enigma: {
+    fest: [['aaaaa', {}], ['aaaaa', { grund: 'ADU' }], ['hallowelt', { walzen: ['II', 'IV', 'V'], ringe: 'BUL', grund: 'BLA', stecker: 'AV BS CG DL FU HZ IN KM OW RX' }], ['a', { walzen: ['I', 'I', 'III'] }], ['a', { stecker: 'AB AC' }], ['a', { stecker: 'AA' }], ['a', { stecker: 'ABC' }], ['a', { ukw: 'A' }], ['a', { grund: 'AA' }], ['a', { ringe: 'A1A' }], ['a', null], ['a', { walzen: ['I', 'II'] }], ['a', { stecker: 'ab cd ef gh ij kl mn op qr st uv wx yz' }], ['a', { stecker: 'ab cd ef gh ij kl mn op qr st uv wx yz AB' }], ['', {}], ['a', { stecker: 5 }]],
+    zufall: () => [textOderDeutsch(120), enigmaEinstellung()],
+  },
+  enigmaSchritt: {
+    fest: [[{}, 'ADU', 'A'], [{}, 'ADV', 'A'], [{}, 'AEW', 'A'], [{}, 'AAA', 'AB'], [{}, 'AA', 'A'], [{}, 'aaa', 'b'], [{ stecker: 'AV BS' }, 'QEV', 'v']],
+    zufall: () => [enigmaEinstellung(), selten() ? wahl(['AA', 'A1A', '']) : buchstaben(3, 3), selten() ? wahl(['', 'AB', '1', 'ä']) : wahl([...GROSS, ...GROSS.toLowerCase()])],
+  },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).
@@ -743,6 +752,21 @@ const PROJEKTION = {
   'baukasten.pruefe': (r) => ({ ok: r.ok, hinweise: r.ok ? [...new Set(r.hinweise.map((h) => String(h.p)))].sort() : [] }),
   verschiebungSchaetzen: (r) => ({ k: r.k, buchstabe: r.buchstabe, werte: r.werte, kandidaten: r.kandidaten.map((c) => ({ k: c.k, wert: c.wert })) }),
 };
+
+function enigmaEinstellung() {
+  const namen = ['I', 'II', 'III', 'IV', 'V'];
+  const walzen = [];
+  while (walzen.length < 3) { const w = wahl(namen); if (!walzen.includes(w) || selten(0.03)) walzen.push(w); }
+  const frei = [...GROSS];
+  const paare = [];
+  for (let i = ganz(0, 13); i > 0; i--) {
+    const a = frei.splice(ganz(0, frei.length - 1), 1)[0];
+    const b = frei.splice(ganz(0, frei.length - 1), 1)[0];
+    paare.push(a + b);
+  }
+  if (selten(0.05)) paare.push(wahl(['AA', 'ABC', paare[0] || 'QQ']));
+  return { walzen, ukw: selten(0.03) ? 'A' : wahl(['B', 'C']), ringe: buchstaben(3, 3), grund: selten(0.03) ? 'AB' : buchstaben(3, 3), stecker: paare.join(' ') };
+}
 
 // ───────────────────────────── Ausführen ─────────────────────────────
 function jsAufruf(name, args) {

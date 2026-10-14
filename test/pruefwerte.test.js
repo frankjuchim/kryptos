@@ -84,11 +84,11 @@ test('Prüfwerte: gemeldete Abweichung bzw. Überschneidung wird gesondert ausge
 test('Prüfwerte: Formatfehler (Ort fehlt, unbekanntes Verfahren) → Exit-Code 1', { skip: ohnePython }, () => {
   const ohneOrt = { ...RICHTIG, id: 'T-10' };
   delete ohneOrt.ort;
-  const fremd = { ...RICHTIG, id: 'T-11', verfahren: 'enigma' };
+  const fremd = { ...RICHTIG, id: 'T-11', verfahren: 'zauberwuerfel' }; // seit M10 Task 222 gibt es enigma in der Bibliothek
   const r = pruefe(fixture({ 'W0.json': [ohneOrt, fremd] }));
   assert.equal(r.status, 1, r.stdout + r.stderr);
   assert.match(r.stdout, /T-10 ohne Feld „ort“/);
-  assert.match(r.stdout, /Verfahren enigma gibt es in der Bibliothek nicht/);
+  assert.match(r.stdout, /Verfahren zauberwuerfel gibt es in der Bibliothek nicht/);
 });
 
 test('Prüfwerte: die Materialien (quellen/pruefwerte) stimmen mit dem Zwilling überein', { skip: ohnePython }, () => {

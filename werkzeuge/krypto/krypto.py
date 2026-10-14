@@ -47,7 +47,7 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | kryptosHash.ausgleichen         | kryptos_hash_ausgleichen        |                                 |                             |
 | pfluegen, pfluegenReihenfolge (M10) | pfluegen, pfluegen_reihenfolge | MORSE, morse (M10)            | MORSE, morse                |
 | freimaurer, freimaurerBuchstabe | freimaurer, freimaurer_buchstabe | nullchiffre, punktmethode     | nullchiffre, punktmethode   |
-| punkteSetzen (M10)              | punkte_setzen                   |                                 |                             |
+| punkteSetzen (M10)              | punkte_setzen                   | ENIGMA, enigma, enigmaSchritt (M10) | ENIGMA, enigma, enigma_schritt |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -1513,6 +1513,118 @@ def mini_enigma_weg(buchstabe, stellung='A', *, walze=_ME_WALZE, reflektor=_ME_R
     weg.append((weg[-1] - s) % 8)               # − s
     stationen = [_ME[i] for i in weg]
     return {'eingang': _ME[x], 'stationen': stationen, 'ausgang': stationen[-1]}
+
+
+# ───────────────────────────── Enigma I (Plan M10 Task 222, E187) ─────────────────────────────
+
+ENIGMA = {
+    'WALZEN': {
+        'I': {'verdrahtung': 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', 'kerbe': 'Q'},
+        'II': {'verdrahtung': 'AJDKSIRUXBLHWTMCQGZNPYFVOE', 'kerbe': 'E'},
+        'III': {'verdrahtung': 'BDFHJLCPRTXVZNYEIWGAKMUSQO', 'kerbe': 'V'},
+        'IV': {'verdrahtung': 'ESOVPZJAYQUIRHXLNFTGKDCMWB', 'kerbe': 'J'},
+        'V': {'verdrahtung': 'VZBRGITYUPSDNHLXAWMJQOFECK', 'kerbe': 'Z'},
+    },
+    'UKW': {'B': 'YRUHQSLDPXNGOKMIEBFZCWVJAT', 'C': 'FVPJIAOYEDRZXWGCTKUQSBNMHL'},
+}
+# Verdrahtung als Zahlenlisten hin und zurück (eigene Darstellung des Zwillings)
+_WALZE_HIN = {n: [ALPHABET.index(c) for c in w['verdrahtung']] for n, w in ENIGMA['WALZEN'].items()}
+_WALZE_RUECK = {n: [h.index(i) for i in range(26)] for n, h in _WALZE_HIN.items()}
+
+
+def _enigma_drei(wert_, name):
+    if not isinstance(wert_, str) or len(wert_) != 3 or any(c.upper() not in ALPHABET for c in wert_):
+        raise KryptoFehler(f'{name}: drei Buchstaben A–Z.')
+    return [ALPHABET.index(c.upper()) for c in wert_]
+
+
+def _enigma_einstellung(e):
+    if not isinstance(e, dict):
+        raise KryptoFehler('Die Einstellung fehlt.')
+    walzen = e.get('walzen', ['I', 'II', 'III'])
+    if not isinstance(walzen, list) or len(walzen) != 3 or any(not isinstance(w, str) or w not in _WALZE_HIN for w in walzen):
+        raise KryptoFehler('Drei Walzen aus I–V.')
+    if len(set(walzen)) != 3:
+        raise KryptoFehler('Die Walzen müssen verschieden sein.')
+    ukw = e.get('ukw', 'B')
+    if ukw not in ('B', 'C'):
+        raise KryptoFehler('Umkehrwalze B oder C.')
+    ringe = _enigma_drei(e.get('ringe', 'AAA'), 'Ringstellung')
+    grund = _enigma_drei(e.get('grund', 'AAA'), 'Grundstellung')
+    stecker = e.get('stecker', '')
+    if stecker is None:
+        stecker = ''
+    if not isinstance(stecker, str):
+        raise KryptoFehler('Stecker als Text.')
+    brett = list(range(26))
+    paare = stecker.upper().split()
+    if len(paare) > 13:
+        raise KryptoFehler('Höchstens 13 Stecker.')
+    for paar in paare:
+        if len(paar) != 2 or any(c not in ALPHABET for c in paar) or paar[0] == paar[1]:
+            raise KryptoFehler(f'Stecker {paar} ungültig.')
+        a, b = ALPHABET.index(paar[0]), ALPHABET.index(paar[1])
+        if brett[a] != a or brett[b] != b:
+            raise KryptoFehler(f'Stecker {paar}: Buchstabe doppelt belegt.')
+        brett[a], brett[b] = b, a
+    return {'walzen': list(walzen), 'ukw': [ALPHABET.index(c) for c in ENIGMA['UKW'][ukw]], 'ringe': ringe,
+            'grund': grund, 'brett': brett}
+
+
+def _enigma_druck(einst, pos, x):
+    """pos: Liste [links, mitte, rechts] (Zahlen, vor dem Drehen); x: Tastenzahl → (neue pos, bewegt, doppel, weg)."""
+    kerbe = [ALPHABET.index(ENIGMA['WALZEN'][w]['kerbe']) for w in einst['walzen']]
+    doppel = pos[1] == kerbe[1]
+    mitte = doppel or pos[2] == kerbe[2]
+    bewegt = [doppel, mitte, True]
+    neu = [(p + 1) % 26 if b else p for p, b in zip(pos, bewegt)]
+    L = lambda i: ALPHABET[i]  # noqa: E731
+    weg = {'taste': L(x)}
+    c = einst['brett'][x]
+    weg['stecker_ein'] = L(c)
+    vor = []
+    for i in (2, 1, 0):
+        d = neu[i] - einst['ringe'][i]
+        k = (c + d) % 26
+        a = (_WALZE_HIN[einst['walzen'][i]][k] - d) % 26
+        vor.append({'walze': einst['walzen'][i], 'ein': L(c), 'kontakt': L(k), 'aus': L(a)})
+        c = a
+    weg['vor'] = vor
+    weg['ukw_ein'] = L(c)
+    c = einst['ukw'][c]
+    weg['ukw_aus'] = L(c)
+    zurueck = []
+    for i in (0, 1, 2):
+        d = neu[i] - einst['ringe'][i]
+        k = (c + d) % 26
+        a = (_WALZE_RUECK[einst['walzen'][i]][k] - d) % 26
+        zurueck.append({'walze': einst['walzen'][i], 'ein': L(c), 'kontakt': L(k), 'aus': L(a)})
+        c = a
+    weg['zurueck'] = zurueck
+    weg['stecker_aus'] = L(einst['brett'][c])
+    weg['lampe'] = weg['stecker_aus']
+    return neu, bewegt, doppel, weg
+
+
+def enigma(text, einstellung):
+    einst = _enigma_einstellung(einstellung)
+    pos = list(einst['grund'])
+    ergebnis = ''
+    for c in nur_buchstaben(text):
+        pos, _, _, weg = _enigma_druck(einst, pos, ALPHABET.index(c))
+        ergebnis += weg['lampe']
+    return ergebnis
+
+
+def enigma_schritt(einstellung, stellung, buchstabe):
+    einst = _enigma_einstellung(einstellung)
+    pos = _enigma_drei(stellung, 'Stellung')
+    b = nur_buchstaben(_text(buchstabe, 'Buchstabe'))
+    if len(b) != 1:
+        raise KryptoFehler('Genau ein Buchstabe.')
+    neu, bewegt, doppel, weg = _enigma_druck(einst, pos, ALPHABET.index(b))
+    return {'stellung_vorher': ''.join(ALPHABET[p] for p in pos), 'stellung': ''.join(ALPHABET[p] for p in neu),
+            'bewegt': bewegt, 'doppelschritt': doppel, 'weg': weg}
 
 
 # ───────────────────────────── KRYPTOS-Hash (SPEC W5 §0a) ─────────────────────────────

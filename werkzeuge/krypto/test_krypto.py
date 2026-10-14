@@ -1578,5 +1578,41 @@ class BibliothekM10V(unittest.TestCase):
         self.assertRaises(F, K.punktmethode, 'abc', [3])
 
 
+class BibliothekM10VI(unittest.TestCase):
+    """Plan M10 Task 222 (E187) – Enigma I, dieselben Fälle wie test/krypto.test.js."""
+
+    def E(self, **o):
+        e = {'walzen': ['I', 'II', 'III'], 'ukw': 'B', 'ringe': 'AAA', 'grund': 'AAA', 'stecker': ''}
+        e.update(o)
+        return e
+
+    def test_vektoren(self):
+        self.assertEqual(K.enigma('aaaaa', self.E()), 'BDZGO')
+        self.assertEqual(K.enigma('BDZGO', self.E()), 'AAAAA')
+        self.assertEqual(K.enigma('aaaaa', self.E(grund='ADU')), 'EQIBM')
+        self.assertEqual(K.enigma('aaaaa', self.E(ukw='C')), 'PJBUZ')
+        zehn = self.E(walzen=['II', 'IV', 'V'], ringe='BUL', grund='BLA', stecker='AV BS CG DL FU HZ IN KM OW RX')
+        self.assertEqual(K.enigma('hallowelt', zehn), 'UGZXPQJVY')
+        self.assertEqual(K.enigma('KFLEIYRIDD', {'walzen': ['IV', 'V', 'I'], 'ukw': 'C', 'ringe': 'DEF', 'grund': 'QEV', 'stecker': ''}), 'A' * 10)
+
+    def test_doppelschritt(self):
+        e = self.E(grund='ADU')
+        s1 = K.enigma_schritt(e, 'ADU', 'A')
+        self.assertEqual((s1['stellung'], s1['weg']['lampe']), ('ADV', 'E'))
+        s2 = K.enigma_schritt(e, 'ADV', 'A')
+        self.assertEqual((s2['stellung'], s2['bewegt'], s2['doppelschritt']), ('AEW', [False, True, True], False))
+        s3 = K.enigma_schritt(e, 'AEW', 'A')
+        self.assertEqual((s3['stellung'], s3['doppelschritt']), ('BFX', True))
+        for b in K.ALPHABET:
+            self.assertNotEqual(K.enigma_schritt(e, 'AAA', b)['weg']['lampe'], b)
+
+    def test_fehler(self):
+        with self.assertRaisesRegex(F, 'verschieden'):
+            K.enigma('a', self.E(walzen=['I', 'I', 'III']))
+        with self.assertRaisesRegex(F, 'Stecker'):
+            K.enigma('a', self.E(stecker='AB AC'))
+        self.assertRaises(F, K.enigma, 'a', self.E(ukw='A'))
+
+
 if __name__ == '__main__':
     unittest.main()

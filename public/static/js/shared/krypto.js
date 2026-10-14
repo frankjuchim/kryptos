@@ -1571,6 +1571,115 @@
     return { eingang: ME[x], stationen, ausgang: stationen[6] };
   };
 
+  // ───────────────────────────── Enigma I (Plan M10 Task 222, E187) ─────────────────────────────
+
+  const ENIGMA = Object.freeze({
+    WALZEN: Object.freeze({
+      I: Object.freeze({ verdrahtung: 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', kerbe: 'Q' }),
+      II: Object.freeze({ verdrahtung: 'AJDKSIRUXBLHWTMCQGZNPYFVOE', kerbe: 'E' }),
+      III: Object.freeze({ verdrahtung: 'BDFHJLCPRTXVZNYEIWGAKMUSQO', kerbe: 'V' }),
+      IV: Object.freeze({ verdrahtung: 'ESOVPZJAYQUIRHXLNFTGKDCMWB', kerbe: 'J' }),
+      V: Object.freeze({ verdrahtung: 'VZBRGITYUPSDNHLXAWMJQOFECK', kerbe: 'Z' }),
+    }),
+    UKW: Object.freeze({ B: 'YRUHQSLDPXNGOKMIEBFZCWVJAT', C: 'FVPJIAOYEDRZXWGCTKUQSBNMHL' }),
+  });
+
+  function enigmaDrei(wert, name) {
+    if (typeof wert !== 'string' || !/^[A-Za-z]{3}$/.test(wert)) throw new KryptoFehler(`${name} besteht aus drei Buchstaben A–Z.`);
+    return wert.toUpperCase();
+  }
+
+  /** Einstellung prüfen und vervollständigen → { walzen, ukw, ringe, grund, steckerbrett (Abbildung je Buchstabe) } */
+  function enigmaEinstellung(e) {
+    if (e === null || typeof e !== 'object' || Array.isArray(e)) throw new KryptoFehler('Die Einstellung der Enigma fehlt.');
+    const walzen = e.walzen === undefined ? ['I', 'II', 'III'] : e.walzen;
+    if (!Array.isArray(walzen) || walzen.length !== 3 || !walzen.every((w) => typeof w === 'string' && Object.prototype.hasOwnProperty.call(ENIGMA.WALZEN, w))) {
+      throw new KryptoFehler('Es werden drei Walzen aus I, II, III, IV und V eingesetzt.');
+    }
+    if (new Set(walzen).size !== 3) throw new KryptoFehler('Die drei Walzen müssen verschieden sein.');
+    const ukw = e.ukw === undefined ? 'B' : e.ukw;
+    if (ukw !== 'B' && ukw !== 'C') throw new KryptoFehler('Die Umkehrwalze ist B oder C.');
+    const ringe = enigmaDrei(e.ringe === undefined ? 'AAA' : e.ringe, 'Die Ringstellung');
+    const grund = enigmaDrei(e.grund === undefined ? 'AAA' : e.grund, 'Die Grundstellung');
+    const stecker = e.stecker === undefined || e.stecker === null ? '' : e.stecker;
+    if (typeof stecker !== 'string') throw new KryptoFehler('Das Steckerbrett wird als Paare wie „AV BS“ angegeben.');
+    const brett = {};
+    for (const c of ALPHABET) brett[c] = c;
+    const paare = stecker.trim() ? stecker.trim().toUpperCase().split(/\s+/) : [];
+    if (paare.length > 13) throw new KryptoFehler('Das Steckerbrett hat höchstens 13 Stecker.');
+    for (const p of paare) {
+      if (!/^[A-Z]{2}$/.test(p) || p[0] === p[1]) throw new KryptoFehler(`Stecker „${p}“: ein Kabel verbindet zwei verschiedene Buchstaben.`);
+      if (brett[p[0]] !== p[0] || brett[p[1]] !== p[1]) throw new KryptoFehler(`Stecker „${p}“: jeder Buchstabe hat höchstens ein Kabel.`);
+      brett[p[0]] = p[1];
+      brett[p[1]] = p[0];
+    }
+    return { walzen: [...walzen], ukw, ringe, grund, brett };
+  }
+
+  /** ein Walzendurchgang: ein (fester Kontakt) → kontakt (an der Walze, nach Stellung − Ring) → aus */
+  function enigmaWalze(name, ein, stellung, ring, zurueck) {
+    const v = ENIGMA.WALZEN[name].verdrahtung;
+    const versatz = ALPHABET.indexOf(stellung) - ALPHABET.indexOf(ring);
+    const kontakt = ALPHABET[mod(ALPHABET.indexOf(ein) + versatz, 26)];
+    const innen = zurueck ? ALPHABET[v.indexOf(kontakt)] : v[ALPHABET.indexOf(kontakt)];
+    return { walze: name, ein, kontakt, aus: ALPHABET[mod(ALPHABET.indexOf(innen) - versatz, 26)] };
+  }
+
+  function enigmaTaste(einst, stellung, buchstabe) {
+    const [l, m, r] = [...stellung].map((c) => ALPHABET.indexOf(c));
+    const kerbe = (i) => ALPHABET.indexOf(ENIGMA.WALZEN[einst.walzen[i]].kerbe);
+    const doppelschritt = m === kerbe(1);
+    const bewegt = [doppelschritt, doppelschritt || r === kerbe(2), true];
+    const neu = [l, m, r].map((x, i) => ALPHABET[(x + (bewegt[i] ? 1 : 0)) % 26]).join('');
+    const steckerEin = einst.brett[buchstabe];
+    const vor = [];
+    let c = steckerEin;
+    for (const i of [2, 1, 0]) {
+      const d = enigmaWalze(einst.walzen[i], c, neu[i], einst.ringe[i], false);
+      vor.push(d);
+      c = d.aus;
+    }
+    const ukwEin = c;
+    const ukwAus = ENIGMA.UKW[einst.ukw][ALPHABET.indexOf(ukwEin)];
+    const zurueck = [];
+    c = ukwAus;
+    for (const i of [0, 1, 2]) {
+      const d = enigmaWalze(einst.walzen[i], c, neu[i], einst.ringe[i], true);
+      zurueck.push(d);
+      c = d.aus;
+    }
+    const steckerAus = einst.brett[c];
+    return {
+      stellungVorher: stellung,
+      stellung: neu,
+      bewegt,
+      doppelschritt,
+      weg: { taste: buchstabe, steckerEin, vor, ukwEin, ukwAus, zurueck, steckerAus, lampe: steckerAus },
+    };
+  }
+
+  /** Enigma I (symmetrisch): vor jedem Buchstaben drehen die Walzen (mit Doppelschritt), dann Stromweg */
+  function enigma(text, einstellung) {
+    const einst = enigmaEinstellung(einstellung);
+    let stellung = einst.grund;
+    let aus = '';
+    for (const b of nurBuchstaben(pruefeText(text))) {
+      const s = enigmaTaste(einst, stellung, b);
+      aus += s.weg.lampe;
+      stellung = s.stellung;
+    }
+    return aus;
+  }
+
+  /** ein Tastendruck in der Stellung `stellung` (drei Buchstaben, vor dem Drehen) mit vollständigem Stromweg */
+  function enigmaSchritt(einstellung, stellung, buchstabe) {
+    const einst = enigmaEinstellung(einstellung);
+    const st = enigmaDrei(stellung, 'Die Stellung');
+    const b = nurBuchstaben(pruefeText(buchstabe, 'Der Buchstabe'));
+    if (b.length !== 1) throw new KryptoFehler('Gedrückt wird genau ein Buchstabe A–Z.');
+    return enigmaTaste(einst, st, b);
+  }
+
   // ───────────────────────────── KRYPTOS-Hash (SPEC W5 §0a) ─────────────────────────────
 
   /** KH: normalisieren (nur Buchstaben), A = 1 … Z = 26, h = 0, je Buchstabe h ← (3h + w) mod 29 */
@@ -2909,6 +3018,9 @@
     kryptos16,
     rm16,
     miniEnigma,
+    ENIGMA,
+    enigma,
+    enigmaSchritt,
     kryptosHash,
     pruefsumme,
     sha256,

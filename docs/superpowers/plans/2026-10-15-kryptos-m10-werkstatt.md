@@ -370,7 +370,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   zurueck: [{ walze, ein, kontakt, aus }] (links → rechts), steckerAus, lampe } }` (Buchstaben GROSS; `kontakt` = Buchstabe
   am Walzenkontakt nach Ring-/Stellungsversatz) · `enigma_schritt`
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('enigma: Standardvektoren (E187)', () => {
     const E = (o = {}) => ({ walzen: ['I', 'II', 'III'], ukw: 'B', ringe: 'AAA', grund: 'AAA', stecker: '', ...o });
@@ -396,8 +396,8 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   ```
   (Vektoren 1–5: Python-Probe im Scratchpad `m10/enigma_probe.py` und Werkstatt-`crypto.js` stimmen überein; der sechste ist
   die Umkehrung des Python-Werts.) Python-Fälle gleich; `vergleich.js` Typ `enigma` (zufällige Walzen/UKW/Ringe/Grund/0–13 Kabel).
-- [ ] **Step 2:** FAIL. **Step 3:** Implementieren (JS + unabhängig Python + Brücke + Vergleich, TECHNIK §5.2 „Enigma I“).
-- [ ] **Step 4:** grün, `krypto:vergleich --anzahl 500` 0 Abweichungen. **Step 5: Commit** `M10: Bibliothek VI – Enigma I mit Doppelschritt und Stromweg (Task 222)`
+- [x] **Step 2:** FAIL. **Step 3:** Implementieren (JS + unabhängig Python + Brücke + Vergleich, TECHNIK §5.2 „Enigma I“).
+- [x] **Step 4:** grün, `krypto:vergleich --anzahl 500` 0 Abweichungen. **Step 5: Commit** `M10: Bibliothek VI – Enigma I mit Doppelschritt und Stromweg (Task 222)`
 
 ### Task 223: Bibliothek VII – Playfair-Schritte, Schlüsselraum, Suchdauer (E188)
 

@@ -2391,3 +2391,64 @@ test('nullchiffre und punktmethode (Plan M10 Task 221)', () => {
   assert.deepEqual(K.punkteSetzen('der rote Kahn', 'rotz'), { markiert: [2, 4, 5], vollstaendig: false, fehlt: 1 });
   assert.throws(() => K.punktmethode('abc', [3]), K.KryptoFehler);
 });
+
+// ── M10 Bibliothek VI (Plan M10 Task 222, E187): Enigma I; Vektoren 1–5 aus zwei unabhängigen Umsetzungen
+// (Python-Probe im Scratchpad und Werkstatt-crypto.js), der sechste ist die Umkehrung des Python-Werts ──
+test('enigma: Standardvektoren (Plan M10 E187)', () => {
+  const E = (o = {}) => ({ walzen: ['I', 'II', 'III'], ukw: 'B', ringe: 'AAA', grund: 'AAA', stecker: '', ...o });
+  assert.equal(K.enigma('aaaaa', E()), 'BDZGO');
+  assert.equal(K.enigma('BDZGO', E()), 'AAAAA');
+  assert.equal(K.enigma('aaaaa', E({ grund: 'ADU' })), 'EQIBM');
+  assert.equal(K.enigma('aaaaa', E({ ukw: 'C' })), 'PJBUZ');
+  const zehn = E({ walzen: ['II', 'IV', 'V'], ringe: 'BUL', grund: 'BLA', stecker: 'AV BS CG DL FU HZ IN KM OW RX' });
+  assert.equal(K.enigma('hallowelt', zehn), 'UGZXPQJVY');
+  assert.equal(K.enigma('UGZXPQJVY', zehn), 'HALLOWELT');
+  assert.equal(K.enigma('KFLEIYRIDD', { walzen: ['IV', 'V', 'I'], ukw: 'C', ringe: 'DEF', grund: 'QEV', stecker: '' }), 'AAAAAAAAAA');
+  assert.equal(K.ENIGMA.WALZEN.I.kerbe, 'Q');
+  assert.equal(K.ENIGMA.UKW.B, 'YRUHQSLDPXNGOKMIEBFZCWVJAT');
+  assert.equal(Object.isFrozen(K.ENIGMA.WALZEN.I), true);
+});
+
+test('enigmaSchritt: Doppelschritt ADU → ADV → AEW → BFX (Plan M10 E187)', () => {
+  const e = { walzen: ['I', 'II', 'III'], ukw: 'B', ringe: 'AAA', grund: 'ADU', stecker: '' };
+  const s1 = K.enigmaSchritt(e, 'ADU', 'A');
+  assert.equal(s1.stellung, 'ADV');
+  assert.equal(s1.stellungVorher, 'ADU');
+  assert.equal(s1.weg.lampe, 'E');
+  const s2 = K.enigmaSchritt(e, 'ADV', 'A');
+  assert.equal(s2.stellung, 'AEW');
+  assert.deepEqual(s2.bewegt, [false, true, true]);
+  assert.equal(s2.doppelschritt, false);
+  const s3 = K.enigmaSchritt(e, 'AEW', 'A');
+  assert.equal(s3.stellung, 'BFX');
+  assert.equal(s3.doppelschritt, true);
+  assert.deepEqual(s3.bewegt, [true, true, true]);
+  for (const b of K.ALPHABET) assert.notEqual(K.enigmaSchritt(e, 'AAA', b).weg.lampe, b, 'kein Fixpunkt');
+  // Stromweg: Stationen hängen lückenlos aneinander
+  const w = K.enigmaSchritt({ ...e, stecker: 'AV BS' }, 'AAA', 'a').weg;
+  assert.equal(w.taste, 'A');
+  assert.equal(w.steckerEin, 'V');
+  assert.deepEqual(w.vor.map((x) => x.walze), ['III', 'II', 'I']);
+  assert.deepEqual(w.zurueck.map((x) => x.walze), ['I', 'II', 'III']);
+  assert.equal(w.vor[0].ein, w.steckerEin);
+  assert.equal(w.vor[1].ein, w.vor[0].aus);
+  assert.equal(w.ukwEin, w.vor[2].aus);
+  assert.equal(w.ukwAus, K.ENIGMA.UKW.B[K.ALPHABET.indexOf(w.ukwEin)]);
+  assert.equal(w.zurueck[0].ein, w.ukwAus);
+  assert.equal(w.lampe, w.steckerAus);
+  assert.equal(w.lampe, K.enigma('a', { ...e, grund: 'AAA', stecker: 'AV BS' }));
+});
+
+test('enigma: Fehler (Plan M10 E187)', () => {
+  const E = (o = {}) => ({ walzen: ['I', 'II', 'III'], ukw: 'B', ringe: 'AAA', grund: 'AAA', stecker: '', ...o });
+  assert.throws(() => K.enigma('a', E({ walzen: ['I', 'I', 'III'] })), /verschieden/);
+  assert.throws(() => K.enigma('a', E({ stecker: 'AB AC' })), /Stecker/);
+  assert.throws(() => K.enigma('a', E({ stecker: 'AA' })), /Stecker/);
+  assert.throws(() => K.enigma('a', E({ stecker: 'ABC' })), /Stecker/);
+  assert.throws(() => K.enigma('a', E({ walzen: ['I', 'II', 'VI'] })), K.KryptoFehler);
+  assert.throws(() => K.enigma('a', E({ ukw: 'A' })), K.KryptoFehler);
+  assert.throws(() => K.enigma('a', E({ grund: 'AA' })), K.KryptoFehler);
+  assert.throws(() => K.enigma('a', E({ ringe: 'A1A' })), K.KryptoFehler);
+  assert.throws(() => K.enigmaSchritt(E(), 'AAA', 'AB'), K.KryptoFehler);
+  assert.equal(K.enigma('', E()), '');
+});
