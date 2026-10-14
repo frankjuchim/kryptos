@@ -795,7 +795,7 @@
     [
      "**Schutzziele** (`w5_schutzziele`)",
      "kern",
-     "24 Szenario-Bausteine × 4 Schutzziele (vorläufig 3 Bausteine mit fester Lösung aus Akte W5·2 Auftrag 4: nur verschlüsseln, nur signieren, beides)",
+     "24 Szenario-Bausteine × 4 Schutzziele (vorläufig 3 Bausteine mit fester Lösung aus Akte W5·2 Auftrag 4: nur verschlüsseln, nur signieren, beides); Optionen: die vier Schutzziele und „Verfügbarkeit“ als Distraktor (nie richtig, damit nicht alle Optionen richtig sein können)",
      "„Welche Schutzziele werden im folgenden Szenario erreicht? {szenario}“",
      "Mengenvergleich; fehlende Vertraulichkeit bei Signatur → Hinweis P9"
     ]

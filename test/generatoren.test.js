@@ -1037,13 +1037,14 @@ test('w5_signatur (Ergänzung): s³ mod N, Urteil gültig/ungültig, kein Fixpun
   assert.equal(G.GENERATOREN.w5_signatur.niveau, 'ergaenzung');
 });
 
-test('w5_schutzziele: Bausteine mit fester Lösung (Akte W5·2 Auftrag 4), alle erreichbar, Mehrfachauswahl der vier Schutzziele', () => {
+test('w5_schutzziele: Bausteine mit fester Lösung (Akte W5·2 Auftrag 4), alle erreichbar, Mehrfachauswahl der vier Schutzziele + Distraktor Verfügbarkeit (nie richtig)', () => {
   const SOLL = { 'nur verschlüsseln': ['Vertraulichkeit'], 'nur signieren': ['Integrität', 'Authentizität', 'Verbindlichkeit'], 'signieren und verschlüsseln': ['Vertraulichkeit', 'Integrität', 'Authentizität', 'Verbindlichkeit'] };
   const gesehen = new Set();
   for (const a of grundpruefung('w5_schutzziele')) {
     assert.equal(a.interaktion.kind, 'choice');
     assert.equal(a.interaktion.mehrfach, true);
-    assert.deepEqual(a.interaktion.optionen.map((o) => o.md).sort(), ['Authentizität', 'Integrität', 'Verbindlichkeit', 'Vertraulichkeit']);
+    assert.deepEqual(a.interaktion.optionen.map((o) => o.md).sort(), ['Authentizität', 'Integrität', 'Verbindlichkeit', 'Verfügbarkeit', 'Vertraulichkeit']);
+    assert.ok(a.loesung.richtig.length < a.interaktion.optionen.length, 'nie alle Optionen richtig (Lösungsverrat K6)');
     const baustein = Object.keys(SOLL).find((b) => a.titel.endsWith(b));
     assert.ok(baustein, a.titel);
     gesehen.add(baustein);
