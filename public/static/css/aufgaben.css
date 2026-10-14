@@ -194,9 +194,9 @@
 }
 span.luecke { min-height: 0; border-style: dashed; }
 select.luecke { padding-right: 1.6em; }
-.luecke.ok { border-color: var(--ok); border-width: 2.5px; }
-.luecke.falsch { border-color: var(--fehler); border-width: 2.5px; border-style: dashed; }
-.luecke.loesung { border-color: var(--hinweis); border-width: 2.5px; }
+:is(input, select).luecke.ok { border-color: var(--ok); border-width: 2.5px; }
+:is(input, select).luecke.falsch { border-color: var(--fehler); border-width: 2.5px; border-style: dashed; }
+:is(input, select).luecke.loesung { border-color: var(--hinweis); border-width: 2.5px; }
 .luecke:disabled { opacity: 1; color: var(--text); -webkit-text-fill-color: var(--text); }
 
 /* ---------- Code (Java) ---------- */
@@ -556,9 +556,9 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 /* Review M4 K8: Ergebnis Klartext klein (Design §6.2), Geheimtext bleibt GROSS */
 .kaestchen.klar, .chiffre-zeile.klar { text-transform: lowercase; }
 .kaestchen:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
-.kaestchen.ok, .chiffre-zeile.ok { border: 3px solid var(--ok); background: var(--ok-flaeche); }
-.kaestchen.falsch, .chiffre-zeile.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
-.kaestchen.loesung, .chiffre-zeile.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+input.kaestchen.ok, input.chiffre-zeile.ok { border: 3px solid var(--ok); background: var(--ok-flaeche); }
+input.kaestchen.falsch, input.chiffre-zeile.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+input.kaestchen.loesung, input.chiffre-zeile.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
 .kaestchen:disabled { opacity: 1; cursor: default; }
 .kaestchen-zelle:has(.kaestchen.ok)::after, .kaestchen-zelle:has(.kaestchen.falsch)::after {
   position: absolute;
@@ -671,7 +671,7 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 }
 .z-eintrag.ok { border: 2.5px solid var(--ok); }
 .z-eintrag.falsch { border: 2.5px dashed var(--fehler); }
-.z-feld.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+input.z-feld.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
 .z-marke { position: absolute; top: -.6em; right: -.4em; font-size: .75rem; font-weight: 700; line-height: 1; background: var(--karte); border-radius: var(--r-chip); }
 .z-marke:empty { display: none; }
 .z-eintrag.ok .z-marke { color: var(--ok); border: 1.5px solid var(--ok); padding: 1px 3px; }
@@ -764,9 +764,9 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 .hashziel input.hashziel-eingabe.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
 .hashziel input.hashziel-eingabe.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
 .bits-text { width: 6ch; min-height: var(--ziel); font-family: var(--f-mono); font-size: 1.2rem; text-align: center; }
-.bits-text.ok { border: 3px solid var(--ok); }
-.bits-text.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
-.bits-text.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
+input.bits-text.ok { border: 3px solid var(--ok); }
+input.bits-text.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+input.bits-text.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
 @media (max-width: 600px) {
   .bits-rechnen .bits { grid-template-columns: max-content minmax(0, 1fr); }
   .bits-eingabe { flex-wrap: wrap; row-gap: var(--a-2); }

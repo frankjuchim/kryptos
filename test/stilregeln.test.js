@@ -76,3 +76,58 @@ test('Labor-Werkzeuge setzen per CSSOM nur Custom Properties; Farbwerte nur als 
     for (const v of farben) assert.ok(f === 'modulo.js' && v === '--mischung', `${f}: Farbwert per CSSOM nur --mischung im Farbmischer (${v})`);
   }
 });
+
+// Spezifität (a, b, c) eines einfachen Selektors; :not/:is/:has zählen ihr stärkstes Argument, :where zählt nicht
+function spezifitaet(sel) {
+  let a = 0, b = 0, c = 0;
+  let s = sel;
+  const klammer = /:(not|is|has|where)\(((?:[^()]|\([^()]*\))*)\)/;
+  let m;
+  while ((m = s.match(klammer))) {
+    if (m[1] !== 'where') {
+      const best = m[2].split(',').map((x) => spezifitaet(x.trim())).sort((x, y) => y[0] - x[0] || y[1] - x[1] || y[2] - x[2])[0];
+      a += best[0]; b += best[1]; c += best[2];
+    }
+    s = s.replace(m[0], ' ');
+  }
+  s = s.replace(/\[[^\]]*\]/g, () => { b++; return ' '; });
+  s = s.replace(/::[\w-]+/g, () => { c++; return ' '; });
+  s = s.replace(/#[\w-]+/g, () => { a++; return ' '; });
+  s = s.replace(/\.[\w-]+/g, () => { b++; return ' '; });
+  s = s.replace(/:[\w-]+/g, () => { b++; return ' '; });
+  for (const t of s.split(/[\s>+~]+/)) if (/^[a-z][\w-]*$/i.test(t)) c++;
+  return [a, b, c];
+}
+const groesser = (x, y) => x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+
+test('Zustandsrahmen (ok/falsch/loesung) an Eingabefeldern schlagen die Eingabe-Grundregel aus basis.css (bits-text, hash-ziel …)', () => {
+  assert.deepEqual(spezifitaet('input:not([type="checkbox"]):not([type="radio"])'), [0, 2, 1]);
+  assert.deepEqual(spezifitaet('.hashziel input.hashziel-eingabe.ok'), [0, 3, 1]);
+  const basis = lies(path.join(CSS, 'basis.css')).replace(/\/\*[\s\S]*?\*\//g, '');
+  const grund = [...basis.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter((m) => /border\s*:/.test(m[2]))
+    .flatMap((m) => m[1].split(',').map((s) => s.trim())).filter((s) => /^input\b/.test(s));
+  assert.ok(grund.length, 'Eingabe-Grundregel in basis.css nicht gefunden');
+  const schwelle = grund.map(spezifitaet).sort(groesser).pop();
+  // Klassen, die Eingabefelder tragen (h('input', { class: … }) und Lücken-Felder der gaps)
+  const klassen = new Set(['luecke']);
+  for (const p of alle(path.join(PUB, 'static', 'js'), '.js')) {
+    for (const m of lies(p).matchAll(/h\('input',\s*\{\s*class:\s*'([\w\s-]+)'/g)) for (const k of m[1].split(/\s+/)) klassen.add(k);
+  }
+  assert.ok(klassen.has('bits-text') && klassen.has('kaestchen'));
+  const verstoesse = [];
+  for (const p of alle(CSS, '.css')) {
+    if (path.basename(p) === 'basis.css') continue;
+    const css = lies(p).replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/(^|;)\s*(border|background)[\w-]*\s*:/.test(m[2])) continue;
+      for (const s of m[1].split(',').map((x) => x.trim())) {
+        const letzter = s.split(/[\s>+~]+/).pop();
+        if (!/\.(ok|falsch|loesung)\b/.test(letzter)) continue;
+        if (/^(span|select|div|td|button|label)\b/.test(letzter)) continue;
+        const k = [...letzter.matchAll(/\.([\w-]+)/g)].map((x) => x[1]).find((x) => klassen.has(x));
+        if (k && groesser(spezifitaet(s), schwelle) < 0) verstoesse.push(`${path.basename(p)}: ${s}`);
+      }
+    }
+  }
+  assert.deepEqual(verstoesse, [], 'zu schwach gegen basis.css input:not(…) – Zustandsrahmen bleibt unsichtbar');
+});
