@@ -909,6 +909,14 @@ Mehrfeldrige `gaps` belegt eine **Prüfwert-Gruppe** (Einträge mit `aufgabe` + 
 Eintrag bleibt ein normaler Prüfwert, den `pruefwerte.py` nachrechnet. `chiffre` mit `ausgabe` `paare`/`hex` rechnet
 `seed_pruefen.py` wie `buchstaben` nach (wie `interaktionen/chiffre.js`).
 
+**Kein Lösungsverrat (Test, Stand Korrektur D15):** `test/inhalte_loesungsverrat.test.js` prüft ohne Ausnahmeliste, dass
+keine Lösung vor dem Lösen sichtbar ist – weder in einem anderen Schülertext derselben Welt (Aufgaben, Intros, Archivfund,
+Boss-Kopf, Akten in der Schülerfassung, Werkzeugkarten außer der Abitur-Anlage WK1, Warm-up) noch im sichtbaren Teil der
+eigenen Aufgabe (Titel, Inhalt, andere Teilaufgaben, Optionen, Platzhalter; verdeckte Schlüssel wie der Server). Für
+Inhalte heißt das: **Lab und Boss bekommen eigene Werte**, nie das Beispiel der Akte; Titel und Story nennen keine
+Klartextwörter; Optionen verraten keine Anzahl und sind nie alle richtig; eine Teilaufgabe nennt nie das Ergebnis einer
+anderen; Tipps wiederholen keinen sichtbaren Text. Fundklassen K1–K9 stehen im Kopf der Testdatei.
+
 **Abdeckung (Stand M8):** `node scripts/abdeckung.js` prüft dateiübergreifend gegen die Abdeckungsmatrizen §11 der
 Welt-Specs (KC-Zeile → Level-Aufgabe, Akte, Boss; fremde Chiffren in Lab und Boss; Fallen-Abdeckung; alle Kategorien und
 Interaktionen; `WELT_PLAN`; Warm-up und Generatoren) – Exit 1 bei Lücke, bewusste Lücken mit Spec-Zitat im Skript.

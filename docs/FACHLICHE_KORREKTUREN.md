@@ -93,8 +93,8 @@ Grundsatz wie Teil C (kein Lösungsverrat innerhalb einer Welt). Vorprüfung vor
 Lösungsverrat): Die Lab-Aufgaben bekommen eigene Werte; Akten, Folien und Stundenverlauf bleiben unverändert. Alle neuen
 Werte sind mit `shared/krypto.js` und dem Python-Zwilling (`bruecke.py`) nachgerechnet und stehen in
 `quellen/pruefwerte/W3.json`, `W4.json`, `W6.json` (Einträge `W3-spec-v2` ff., `W4-spec-v1` ff., `W4-lab-v3`,
-`W6-spec-v1` ff.). Ausnahme: W6-L2-01 fragt die Lesereihenfolge 0 5 2 7 4 1 6 3 (t = 5) ab, die die Akte W6·2 als
-Archivwissen-Tabelle zeigt – Nachschlagen im Archivwissen ist gewollt (Plan M8 E137, Ausnahmeliste im Lösungsverrat-Test).
+`W6-spec-v1` ff.). Die frühere Ausnahme W6-L2-01 (Lesereihenfolge t = 5 als Archivwissen-Tabelle in Akte W6·2) ist mit
+D15 aufgehoben: Die Akte zeigt nur noch t = 1 und t = 3.
 
 | # | Was | Warum | Wo |
 |---|---|---|---|
@@ -110,10 +110,54 @@ Archivwissen-Tabelle zeigt – Nachschlagen im Archivwissen ist gewollt (Plan M8
 
 | # | Was | Warum | Wo |
 |---|---|---|---|
-| D8 | Lösungsverrat-Ausnahme W3-L1-04 a): „OST“ in ASCII-Bits steht in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) | Akte und Aufgabe nutzen dasselbe Spec-Beispiel; Ausnahme begründet (Plan M8 offene Entscheidung 16) | `test/inhalte_loesungsverrat.test.js` (Ausnahmeliste) |
+| D8 | *(aufgehoben durch D15 – W3-L1-04 nutzt das Wort EIS)* Lösungsverrat-Ausnahme W3-L1-04 a): „OST“ in ASCII-Bits steht in Akte W3·2 als Auffüll-Beispiel (SPEC W3 §0a.7) | Akte und Aufgabe nutzen dasselbe Spec-Beispiel; Ausnahme begründet (Plan M8 offene Entscheidung 16) | `test/inhalte_loesungsverrat.test.js` (Ausnahmeliste) |
 | D9 | W3-B-06 als `gaps` (Bitfolge + Wort NEU) statt `bits-rechnen` | der Operand „OST in Bits“ wäre die Lösung von W3-L1-04 a) und nähme dem Boss den Codierschritt | Seed W3-B-06; Prüfwerte W3 (Plan M8 Task 177) |
 | D10 | W6-B-15 Erklärung ohne die Spec-Lösung „*sternwarte*: beide Wege VTITO ZDRXG“ (Video 07) und ohne „bewusst andere Schlüssel als W2-B-15“ | Video-Beispiele kommen in keinem anderen Material vor; Aufgaben verweisen nicht auf andere Aufgaben (Validator) | Seed W6-B-15; Prüfwerte W6 (*laterne*, Plan M8 Task 189) |
 | D11 | Generator-Wortlisten W3–W6 ohne Wörter aus Lab, Akten, Bossen, Warm-up, Präsentationen, Videos (auch als Teilwort); Spec-§8-Beispiele angeglichen; G-W6-1-Beispiel *standuhr*, t = 3, RITZEL → SNHTD RAU → JVASH CET (früher *zahnradwerk*, UHR) | die alten Spec-Beispiele (BOJE, HAFEN, NORD …, UHR, ZEIT, SAND, *zahnradwerk*, *zeitzone* …) stehen in den Materialien (Plan M8 E147) | SPEC W3/W5/W6 §8, §12; `src/krypto/generatoren/woerter.js`; Lehrerhinweise W3/W6 |
 | D12 | Lehrerhinweise W6, Boss-Tabelle B-15: BA/CAD → DAECBD statt AB/CDE → CEEDDF | dieselbe Verwechslung wie D7, hier im Lehrkraft-Material | `quellen/material/W6/lehrerhinweise_W6.json` (Plan M8 Task 198) |
 | D13 | Lehrerhinweise W0–W2, W4–W6: Generator-Anhänge mit Beispielen aus den aktuellen Wortlisten (W0 70, W1 70 Wörter; W2 aus `KLARTEXTE_W2` usw.), W4 RSA mit e < φ, W5 Wortliste vorläufig 123, Schutzziele vorläufig 3 Bausteine, W6 Fallen-Mix ohne XOR | Anhänge nannten Wörter, die nicht (mehr) in den Listen stehen | `quellen/material/W*/lehrerhinweise_W*.json` (Plan M8 Task 198) |
 | D14 | Hash-ziel-Rückmeldung (W5-L1-07): nach einer richtigen eigenen Kollision bleibt die Eingabe mit ihrem KH-Wert stehen | der Client überschrieb sie mit dem Lösungsbeispiel „haffk“ (gefunden in e2e Szenario 12) | `public/static/js/krypto/interaktionen.js` (Plan M8 Task 202) |
+
+**D15 – Kein Lösungsverrat (Entscheidung der Lehrkraft vom 14.10.2026: „Es ist nicht gewollt, dass Lösungen durch vorherige
+Teilaufgaben, Aufgabentexte oder ähnliches verraten werden.“ – alle bisher hingenommenen Fälle und alle weiteren):**
+`test/inhalte_loesungsverrat.test.js` ohne Ausnahmeliste, Fundklassen K1–K9 (Lösungswörter ab 4 Zeichen, Bitfolgen ab
+8 Bit, Dezimal-/Ergebniszahlen, eigener Aufgabentext und andere Teilaufgaben, beschriftete Zahlen, Optionen, Wächter für
+Einzelfälle, Klartext-Krippen in Titel und Knack-Aufgaben, Tipps/Erklärungen vorher sichtbar), dazu Stichproben aller
+Generatoren. Alle neuen Werte sind mit `shared/krypto.js` und dem Python-Zwilling nachgerechnet (`quellen/pruefwerte`,
+`seed_pruefen.py`); die Welt-Specs nennen bei jeder Zeile „Korrektur D15“. Nachschlagen in der Abitur-Anlage (WK1 mit
+Lernhilfe) gilt nicht als Verrat.
+
+| Aufgabe | Verrat | Korrektur |
+|---|---|---|
+| W0-L1-04, W0-L2-02, W0-L2-04 | Titel nannte Klartextwörter (*Nachschub*, *Die Wache* = Klartext, *Kurier*) | neue Titel |
+| W0-L2-08, W0-B-14 | k₁ + k₂ = 26: Endergebnis = Klartext im Aufgabentext | k = 15 + 16 → `KJQIEZL`, k = 5; k = 8 + 21 → `WULEXQ`, Optionen ohne „Verschiebung um 0“ |
+| W0-L4-07 | Option A nannte `31` (Lösung von a); Tipp 2 = Intro-Satz | Option ohne Wert, Tipp umformuliert |
+| W0-L2-07, W2-L2-02, W3-L2-03, W3-L3-02, W3-L5-03, W4-L1-04, W5-L2-06, W6-L1-08, W1-L3-06 | Tipp stand wörtlich in einer Akte, einer anderen Aufgabe, den Fallen-Texten oder im eigenen Text | Tipps umformuliert |
+| W1-A-01 (+ Akte W1·1, Folie) | Randnotiz/Tipp nannten Klartextwörter (*Zeichen zählen … Schlüssel*) | „Wer die Häufigkeiten kennt, liest jedes Blatt.“ |
+| W1-L1-07, W1-L3-02, W1-L3-03 | Titel nannte Klartextwörter | neue Titel |
+| W1-L2-02, W1-B-07 (+ Akte W1·2, Folie) | 7⁻¹ = 15 ist das Akte-/Merkkasten-Beispiel; Akte und Folie zeigten alle Inversen mod 26; 9⁻¹ = 3 steht als Hinweis | Inverse von 19, 17, 25 bzw. 23; Tabelle der Inversen entfernt |
+| W1-L2-05 | 12 Faktoren, 312 Schlüssel stehen im Merkkasten und in Akte W1·2 | Transfer: Alphabet mit 30 Zeichen → 8, 240, 30 |
+| W1-L3-06 | Codes standen im Codebuch (Merkkasten, Aufgabe, W1-B-14) | neue Ausgabe NOMEN-851 mit geheimem Codebuch: 46, 13, 70, 25 |
+| W1-B-09 | Klartext *wesir* ist ein Codebuch-Wort | `CDIGV` → *harfe* |
+| W2-L2-01, W2-L3-03, W2-L3-05, W2-L3-07 | Akte W2·2/W2·3 rechnet dasselbe Beispiel vor (VCVIZ …, *otto*, n = 1001/I = 0,0475, ANANAS) | `DWETZ CVIJX NEPOQ` → WZINO; *kokon* → NRNRQ; n = 801, I = 0,0443 → k ≈ 6; PAPAGEI |
+| W2-L5-05 | Text nannte 18, 48, 66 = Lösungen von W2-L5-01 … -03 | k = 4, Paarzahlen selbst bestimmen → 0,045 |
+| W3-A-01 (+ Akte W3·1, Intro 3.3, W3-L3-02) | Akte nannte das Archivfund-Wort FUNK; FUNK als Beispiel/Schlüssel | Auftakt ohne Wort; Beispiel „HELM“ mit AB → `09 07 0D 0F` |
+| W3-L1-01, W3-L1-02, W3-B-01, W3-B-02 | Bits von O, S, T, R, `1110 1001`, `1101 1011` stehen in Aufgaben/Akten | Zeichen D, G, L bzw. P; eigene Operanden |
+| W3-L1-04 | OST mit diesem Schlüssel ist Abi-Check der Akte W3·1, OST in Bits Auffüll-Beispiel der Akte W3·2 (bisher Ausnahme D8) | Wort EIS, Schlüssel `0110 1001 · 1100 0011 · 0011 1100` |
+| W3-L2-07 | Akte W3·2 Auftrag 7 nennt das Ergebnis für C₂ | Bit 5 in C₃: P₃, P₄; 1 Bit; ECB P₃ |
+| W3-L5-01, W3-L5-02 | *bach* ↔ HHAF stehen in Akte W3·K2, W3-L5-02/-04 | *fade* → CHEA; HHEA → *bade* |
+| W3-B-13 | vier Optionen = die vier Schlüssel aus a) | fünfte Option `0011 0011` (Periode 4) |
+| WU-W3-06 | S⁻¹(1000) = Eingabe des ersten Teils | S⁻¹(1001) = `0011` |
+| W4-A-01 (+ Akte W4·1, Folie) | Titel und Zettel/Story nannten den Klartext (*Schlüssel verloren*, *Kurier kam nie an*) | Titel „Das Fernschreiben der Bank“, Story ohne Inhalt |
+| W4-L1-04, W4-B-02 | n = 3, 5, 30 bzw. 7 Personen stehen mit Ergebnis in Akte W4·1 | n = 11, 13, 20, 50; zwölf Personen |
+| W4-L1-06 | 3ˣ mod 17 rechnen die Akten W4·1/W4·K3 vor; Ziel 12 stand in der vorgegebenen Hälfte | 6ˣ mod 17, Ziel 14 in der eigenen Hälfte (x = 7) |
+| W4-L1-08 b) | B und M standen im Text (bisher hingenommen) | zweite Übertragung nur mit C₁, C₂, C₃ |
+| W4-L2-04 | „(prüfe d = 29)“; (65, 5)/(65, 29) steht in W4-L2-05 (bisher hingenommen) | p = 3, q = 17, e = 5 → 51, 32, 13 |
+| W4-L3-03 (K3-03) | Zwischenzeile „192 = 38 · 5 + 2“ nannte φ; Akte W4·K3 Auftrag mit φ = 192 (bisher hingenommen) | p = 7, q = 23, e = 7 → 132, 19, ohne Zwischenzeilen |
+| W4-L3-05 (K3-05) | 43 = 32 + 8 + 2 + 1 steht in K3-06 und Akte W4·2 | d = 53 = 32 + 16 + 4 + 1 |
+| W5-L1-06 | Szenario samt Werten ist Auftrag 6 der Akte W5·1 | Ida/Nia, Salze gy/mw, Passwort *regen* → 18, 3 |
+| W5-L2-05 | *nebel*/KH 9/s = 4 rechnet Akte W5·2 vor; „KH = 15“ = Ergebnis von b) | *bucht*, s = 8 (KH selbst bestimmen → 17); b) ohne KH des Originals |
+| `w5_schutzziele` | bei „beides“ waren alle Optionen richtig | fünfte Option „Verfügbarkeit“ (nie richtig) |
+| W6-L2-01 (+ Akte W6·2, Folie) | Akte/Folie zeigten die Lesereihenfolgen aller t (bisher Ausnahme) | Akte und Folie nur t = 1 und 3, t = 5/7 „selbst bestimmen“ |
+| W6-L3-01 … -03 | Takt 2,25/2,2, 67,5/55 min und 13,5 min stehen im Merkkasten, in Akte W6·3, auf WK5 | Block 1 und Teilaufgaben: 135, 27; 110, 33; 8 BE → 18 |
+

@@ -310,7 +310,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('boss_nur_im_kampf: Boss-Aufgaben erscheinen erst nach /boss/:welt/start und nur die gezogenen; nach Ende nur mit Auswertung', …);
   test('akten_und_dateien: /akten/* und /api/themen nennen nie _LSG, _EH, Klausur, Loesungen_Portal, Lehrkraft_PDF', …);
   ```
-  Ausnahmen nur aus `test/inhalte_loesungsverrat.test.js` übernehmen (W6-L2-01, W3-L1-04 a – gleiche Begründung, Test prüft, dass jede Ausnahme gebraucht wird).
+  (überholt durch D15: keine Ausnahmen mehr) Ausnahmen nur aus `test/inhalte_loesungsverrat.test.js` übernehmen (W6-L2-01, W3-L1-04 a – gleiche Begründung, Test prüft, dass jede Ausnahme gebraucht wird).
   **Umgesetzt (Abweichung, Festlegung Orchestrator 14.10.):** keine Ausnahmeliste. Der Crawler prüft nur die API-Ebene: ein
   Geheimnis, das zugleich in einem sichtbaren Seed-Text steht (andere Aufgabe, Intro, Kapitel, Fallen-Text) oder im sichtbaren
   Text derselben Aufgabe (z. B. Verschiebung 0: Lösung = Klartext), gilt als inhaltlicher Fund – er wird als Diagnose gemeldet,
@@ -590,18 +590,18 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 5 | M5-9 | Diagnose „Rest ab letztem Buchstaben“ ohne P-Nummer in der Spec | P4 |
 | 6 | M5-12 | Homophone Einordnung W1-L2-08 | wie Spec (1, 2, 5), Erklärung nennt beide Sichtweisen (Kenntnis) |
 | 7 | M5-4 | Video-Wort *nachtwache* noch in Akte W2·1, Folie 9, Papier-Boss W2 | unverändert (Seeds frei davon) |
-| 8 | M8-2, M8-16 | Lösungsverrat-Ausnahmen W6-L2-01 (Ring t = 5 im Archivwissen) und W3-L1-04 a) (OST-Bits in Akte W3·2) | begründete Ausnahmen im Test |
+| 8 | M8-2, M8-16 | Lösungsverrat-Ausnahmen W6-L2-01 (Ring t = 5 im Archivwissen) und W3-L1-04 a) (OST-Bits in Akte W3·2) | **entschieden (Lehrkraft 14.10.2026): kein Verrat – umgesetzt** (D15, `docs/FACHLICHE_KORREKTUREN.md`) |
 | 9 | M8-3 | Archivfund W5 ohne Spec-Interaktion | `gaps` (2 gemeinsame Zeichen) + `choice` (drei Befunde und Verneinungen) |
 | 10 | M8-4 | W6-L2-10 „kern (D: eA)“ | Aufgabe `kern`, Option D bleibt (falsche Aussage), Erklärung „(eA-Ausblick)“ |
 | 11 | M8-7 | Spec-Korrekturen D1–D14 (neue Werte gegen Lösungsverrat u. a.) | übernommen, `docs/FACHLICHE_KORREKTUREN.md` Teil D |
 | 12 | M5-6, M8-8 | Niveau von Warm-up-Karten | WU-W2-08 und WU-W3-06…08 `eA`; Ergänzungs-Karten W4 `kern` |
 | 13 | M8-14 | W3-L2-07 CBC-Fehlerfortpflanzung | a) `choice` P₂, P₃ · b) `gaps` 1 · c) `choice` P₂ |
 | 14 | M8-15 | `w4_inverses` laut Spec `kuer` | `ergaenzung` |
-| 15 | M8-17 | W3-B-13 b) verrät die Anzahl aus a) | keine erfundenen Distraktoren |
+| 15 | M8-17 | W3-B-13 b) verrät die Anzahl aus a) | **entschieden (Lehrkraft 14.10.2026): kein Verrat – umgesetzt** (D15, `docs/FACHLICHE_KORREKTUREN.md`) |
 | 16 | M8-18 | Boss-Fallen ohne P-Nummer in der Spec | aus Kategorie, Spec §0.6 und Lab-Aufgaben abgeleitet |
 | 17 | M8-19 | P9 bei `fremde-chiffre` | nur W5-B-15 (Spec-Zitat) |
 | 18 | M8-20 | `w5_schutzziele`: Spec nennt 24 Bausteine ohne Lösungen | nur 3 Bausteine mit Spec-Lösung – **bitte 24 Bausteine mit Lösungen liefern** |
-| 19 | M8-21 | Antwort steht in der Aufgabe: W4-L3-03 (192 = φ(N)), W4-L2-04 („prüfe d = 29“), W4-L1-08 b) (B im Text) | unverändert wie Spec |
+| 19 | M8-21 | Antwort steht in der Aufgabe: W4-L3-03 (192 = φ(N)), W4-L2-04 („prüfe d = 29“), W4-L1-08 b) (B im Text) | **entschieden (Lehrkraft 14.10.2026): kein Verrat – umgesetzt** (D15, `docs/FACHLICHE_KORREKTUREN.md`) |
 | 20 | M3-4, M3-5 | Diagnose-Texte der Chips (wörtlich im Lab) gegenlesen; Code `transposition` | wie umgesetzt (Kenntnis, Bitte um Durchsicht) |
 | 21 | M6-5 | W2 §9.1 Testfall 4: Volltext „JUKVM XTXQW …“ fehlt | ausgelassen – **bitte nachliefern** |
 
