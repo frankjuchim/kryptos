@@ -707,8 +707,8 @@
      "W0-B-14",
      "★★★",
      "sicherheit-beurteilen",
-     "Ein Tribun verschlüsselt „tribun“ zuerst mit k = 8, dann mit k = 18 (Caesar). a) **Geben** Sie den resultierenden Geheimtext **an**. b) **Entscheiden** Sie: Die doppelte Verschlüsselung (A) erhöht den Schlüsselraum auf 26 · 26 (B) entspricht einer Caesar-Verschiebung um 0 und ist damit wertlos (C) entspricht einer Verschiebung um 10",
-     "a) `TRIBUN`; b) (B) – (8 + 18) mod 26 = 0 (P7, P8)",
+     "Ein Tribun verschlüsselt „tribun“ zuerst mit k = 8, dann mit k = 21 (Caesar). a) **Geben** Sie den resultierenden Geheimtext **an**. b) **Entscheiden** Sie: Die doppelte Verschlüsselung (A) erhöht den Schlüsselraum auf 26 · 26 (B) entspricht einer einzigen Caesar-Verschiebung und bringt keine zusätzliche Sicherheit (C) ist sicherer, weil Eve zwei Schlüssel finden muss",
+     "a) `WULEXQ`; b) (B) – (8 + 21) mod 26 = 3 (P8)",
      "P7, P8"
     ],
     [
