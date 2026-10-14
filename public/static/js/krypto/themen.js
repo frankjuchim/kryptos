@@ -297,7 +297,7 @@ const KRThemen = (() => {
     const sitzung = await AQ.api('GET', '/api/sitzung').catch(() => ({}));
     const rolle = sitzung && ['schueler', 'lehrkraft', 'superadmin'].includes(sitzung.rolle) ? sitzung.rolle : null;
     angemeldet = !!rolle;
-    KRKopf.baue({ rolle, aktiv: rolle ? null : 'themen', sitzung: sitzung || {} });
+    KRKopf.baue({ rolle, aktiv: rolle === 'schueler' ? null : 'themen', sitzung: sitzung || {} }); // Lehrkraft: „Themen“ in der Hauptnavigation
     const laden = document.querySelector('#haupt > .laden');
     if (laden) laden.remove();
     niveauZiel();

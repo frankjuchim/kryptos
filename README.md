@@ -125,6 +125,11 @@ Funkraum mit drei Teams), „Frau M.“ (Lehrkraft) und „Admin“ an.
 Der Signaturschlüssel des Dev-Portals entsteht beim Start in `./data`; für die Live-Konfiguration siehe Abschnitt 5.
 Mit der Beispielwelt der Tests: `WELT_DATEIEN=test/fixtures/welt_beispiel.json npm run dev`.
 
+**Bereich für Lehrkräfte** (`/lehrer`): gleich aufgebaut wie in Algo Quest – Kopfzeile Kurse · Aufgaben · Materialien ·
+Themen · Verwaltung (Admin) · Labor, Kurs-Reiter Schüler · Beitritt & QR · Auswertung · Scoreboard · Einstellungen (danach
+die Kryptos-Reiter Teams · Funkraum · Knack-Arena), Urkunden als Knopf im Kurskopf, Verwaltung mit Lehrkräfte & Anfragen ·
+Inhalte · Warm-up-Import · Backup & Verbund · Wartung. Kurse, Konten und Freischaltungen verwaltet das Portal.
+
 **Prüfungen:**
 
 ```

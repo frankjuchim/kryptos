@@ -516,7 +516,7 @@ test('Lehrkraft: Schülerliste ohne Codes, inaktive gekennzeichnet; Tabs per Pfe
   assert.equal(tabs.find((t) => t.getAttribute('aria-selected') === 'true').getAttribute('data-tab'), 'schueler');
   k.taste(tabs[0], 'ArrowRight');
   await k.ruhe();
-  assert.equal(k.window.location.hash, '#/kurs/3/einstellungen');
+  assert.equal(k.window.location.hash, '#/kurs/3/beitritt', 'nächster Reiter wie in den anderen Labs: Beitritt & QR');
 });
 test('Einstellungen: Niveau gA und Werkzeug-Freigabe senden nur Geänderte; gesperrter Kurs nur lesbar', async () => {
   const f = lehrerFetch({ 'PATCH /api/lehrer/kurse/3': (body) => ({ status: 200, body: { ...KURS, einstellungen: { ...KURS.einstellungen, ...body.einstellungen } } }) });

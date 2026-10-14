@@ -117,7 +117,7 @@ test('Stand-Abfragen schreiben nichts; Regie und Beamer haben getrennte ETags; A
   assert.deepEqual(f.db.prepare('SELECT version, konfig FROM funk_szenarien WHERE id = ?').get(sz.id), vorher);
 });
 
-test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, ziel funkraum|werkstatt', async () => {
+test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, ziel funkraum|werkstatt|start', async () => {
   const f = await F.kursMitTeams(2);
   const r = await f.lk.get('/api/lehrer/qr.svg?ziel=funkraum').expect(200);
   assert.match(r.headers['content-type'], /^image\/svg\+xml/);
@@ -126,6 +126,8 @@ test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, 
   assert.match(svg, /^<svg/);
   assert.doesNotMatch(svg, /<script/i);
   await f.lk.get('/api/lehrer/qr.svg?ziel=werkstatt').expect(200);
+  // Reiter „Beitritt & QR“ (Aufbau wie Algo Quest): QR-Code zur Startseite von Kryptos
+  await f.lk.get('/api/lehrer/qr.svg?ziel=start').expect(200);
   await f.lk.get('/api/lehrer/qr.svg?ziel=x').expect(400);
   await f.lk.get('/api/lehrer/qr.svg').expect(400);
   await f.teams[0].c.get('/api/lehrer/qr.svg?ziel=funkraum').expect(401);
@@ -134,6 +136,8 @@ test('QR-Code für den Beamer (Task 155, E114): nur Lehrkraft, SVG ohne Skript, 
   const g = await F.kursMitTeams(2, { extra: { plattformUrl: 'http://kryptos.test' } });
   const r2 = await g.lk.get('/api/lehrer/qr.svg?ziel=funkraum').expect(200);
   assert.equal(r2.text || r2.body.toString(), erwartet, 'QR-Code auf PLATTFORM_URL + /funkraum');
+  const r3 = await g.lk.get('/api/lehrer/qr.svg?ziel=start').expect(200);
+  assert.equal(r3.text || r3.body.toString(), await QR.toString('http://kryptos.test/', { type: 'svg', margin: 1 }), 'QR-Code auf PLATTFORM_URL + /');
 });
 
 /* ---------- Review M7 W2/K3: Vollstand bei Phasenwechsel und bei anderem Team/anderer Rolle ---------- */

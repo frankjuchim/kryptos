@@ -93,13 +93,15 @@ function funkRouten(funk) {
     api.post('/lehrer/funk/:id/zertifikat', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'zertifikat', req.body)));
     api.post('/lehrer/funk/:id/station', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'station', req.body)));
     api.post('/lehrer/funk/:id/sonderkarte', lehrkraft, (req, res) => res.json(funk.regieAktion(req.lk, req.params.id, 'sonderkarte', req.body)));
-    // QR-Code zum Funkraum bzw. zur Werkstatt für den Beamer (Task 155, E114): PLATTFORM_URL + /<ziel>, sonst die Adresse
-    // der Anfrage; SVG ohne Skript, nicht zwischengespeichert
+    // QR-Code zum Funkraum bzw. zur Werkstatt für den Beamer (Task 155, E114) und zur Startseite (Reiter „Beitritt & QR“
+    // der Lehrkraft-Seite): PLATTFORM_URL + /<ziel> bzw. + /, sonst die Adresse der Anfrage; SVG ohne Skript, nicht
+    // zwischengespeichert
+    const QR_ZIELE = { funkraum: '/funkraum', werkstatt: '/werkstatt', start: '/' };
     api.get('/lehrer/qr.svg', lehrkraft, async (req, res) => {
       const ziel = req.query.ziel;
-      if (!['funkraum', 'werkstatt'].includes(ziel)) return res.status(400).json({ error: 'ziel muss funkraum oder werkstatt sein.' });
+      if (typeof ziel !== 'string' || !Object.hasOwn(QR_ZIELE, ziel)) return res.status(400).json({ error: 'ziel muss funkraum, werkstatt oder start sein.' });
       const basis = (h.konfig && h.konfig.plattformUrl) || `${req.protocol}://${req.get('host')}`;
-      const svg = await QR.toString(`${basis.replace(/\/$/, '')}/${ziel}`, { type: 'svg', margin: 1 });
+      const svg = await QR.toString(`${basis.replace(/\/$/, '')}${QR_ZIELE[ziel]}`, { type: 'svg', margin: 1 });
       res.set('Cache-Control', 'no-store');
       res.type('image/svg+xml').send(svg);
     });
