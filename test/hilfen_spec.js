@@ -38,7 +38,7 @@ const UMFANG = {
   0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B', 'WU-W0'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B', 'WU-W1'],
   2: ['W2-A', 'W2-L1', 'W2-L2', 'W2-L3', 'W2-L4', 'W2-L5', 'W2-B', 'WU-W2'],
   // Plan M8: die Inhalts-Tasks 172–190 tragen ihre Abschnitte ein
-  3: ['W3-A', 'W3-L1', 'W3-L2'], 4: [], 5: [], 6: []
+  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3'], 4: [], 5: [], 6: []
 };
 /** Welten mit Spec (Abgleich-Tests laufen über alle) */
 const WELTEN = [0, 1, 2, 3, 4, 5, 6];
@@ -116,7 +116,9 @@ const TEILE_ERGAENZT = {
   // „gültig? [2] … [4]“ (ja/nein in den Lücken) als Klappliste gaps typ auswahl wie E130 (Festlegung Task 171)
   'W5-L2-05': ['gaps'],
   // Spec-Spalte „choice + gaps“, Teile aber a) d bestimmen (gaps), b) entscheiden (choice)
-  'W4-L2-07': ['gaps', 'choice']
+  'W4-L2-07': ['gaps', 'choice'],
+  // Spec-Spalte „chiffre + gaps“, Teile aber a) k bestimmen (gaps), b) Klartext (chiffre) – Plan M8 Task 174
+  'W3-L3-07': ['gaps', 'chiffre']
 };
 
 /** M8 E127: Spec-„zuordnung“ als Kategorien-Zuordnung → Kern-match */

@@ -108,3 +108,12 @@ test('Welt 3: Level 3.2 „Der Blockchiffre-Baukasten“ (eA) nur im eA-Kurs', a
   await s.get('/api/levels/W3-L2').expect(404);
   await s.get('/api/aufgaben/W3-L2-04').expect(404);
 });
+
+// Plan M8 Task 174: Level 3.3 „Die Chiffren-Werkstatt“ (eA) trägt die Karte zur Chiffren-Werkstatt (E140) und die IDE-Karte.
+test('Welt 3: Level 3.3 mit Werkstatt-Karte (echter Seed)', async (t) => {
+  if (!(S.UMFANG[3] || []).includes('W3-L3')) return t.skip('W3-L3 noch nicht im UMFANG');
+  const { s } = await H.szenario({ weltDateien: [path.join(S.WURZEL, 'seed', 'welten', 'welt3.json')] });
+  const l = (await s.get('/api/levels/W3-L3').expect(200)).body.level;
+  assert.deepEqual(l.werkstatt, { titel: 'Zur Chiffren-Werkstatt' });
+  assert.equal((await s.get('/api/levels/W3-L1').expect(200)).body.level.werkstatt, null);
+});

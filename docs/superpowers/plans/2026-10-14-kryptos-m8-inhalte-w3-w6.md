@@ -580,8 +580,9 @@ Arena-Text → k = 11, „der nachtzug faehrt heute puenktlich ab“.
 
 **Erwartete Hinweise:** W3-L3-07 b) „Knack-Formulierung“ entfällt (verdeckt). Level-Hinweis „akte“ ok.
 
-- [ ] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L3'` → FAIL; Level-Seite zeigt die Werkstatt-Karte (Test aus Task 169 mit echtem Seed).
-- [ ] **Step 2–4.** **Step 5: Commit** `git commit -m "Welt 3: Level 3.3 „Die Chiffren-Werkstatt“ (eA) mit Werkstatt-Karte"`.
+- [x] **Step 1: Failing test** – `UMFANG[3]` += `'W3-L3'` → FAIL; Level-Seite zeigt die Werkstatt-Karte (Test aus Task 169 mit echtem Seed).
+- [x] **Step 2–4.** **Step 5: Commit** `git commit -m "Welt 3: Level 3.3 „Die Chiffren-Werkstatt“ (eA) mit Werkstatt-Karte"`.
+- [x] **Umsetzungsnotiz:** Intro mit Tabelle B als Block `tabelle` (Spalten Nr., Stufe, Schlüsselformat, Definition, Umkehrung – **ohne** Spalte „Einordnung“, die W3-L3-02 abfragt). W3-L3-04/-07 als `baukasten` (Stufen umkehrung + caesar; in -07 b) Platzhalter `$k`, `schluessel: { k: 11 }`, verdeckt – die API liefert dann nur `{ typ: "baukasten" }`). W3-L3-05: vorhandene Einträge `W3-lab-v1`–`v4` bleiben Konsistenz-Einträge, neue Gruppe `W3-L3-05-b` (`caesar("LUNA", 5)` = QZSF). W3-L3-07: Teile a) gaps, b) chiffre (Spec-Spalte „chiffre + gaps“ → `TEILE_ERGAENZT`). Test „Werkstatt-Karte mit echtem Seed“ in `inhalte_plan`. Erwarteter Hinweis: W3-L3-07 „Häufigkeitsanalyse braucht längere Texte – P6“ (34 Buchstaben, Spec-Text).
 
 ### Task 175: Welt 3 – Level 3.4 „Fremde Chiffre IV: ADFGVX“
 
