@@ -860,11 +860,12 @@ qxsonne 13, kzsonne 11, sonne 0; S(regal) = S(lager) = 14, G(regal) = 26, G(lage
 **Erwartete Hinweise:** keine außer „boss fehlt“ (bis Task 185). Reservierte §0a-Paare und Video-06-Wörter (Mühlrad-Hash:
 MOND, LINKS, RECHTS, KAUF/KAUE, ET) kommen nicht vor (K1).
 
-- [ ] **Step 1: Failing test** – `UMFANG[5] = ['W5-A', 'W5-L1']`; `SONDERFORM['W5-L1-07'] = ['hash-ziel']`;
+- [x] **Step 1: Failing test** – `UMFANG[5] = ['W5-A', 'W5-L1']`; `SONDERFORM['W5-L1-07'] = ['hash-ziel']`;
   `TEILE_ERGAENZT['W5-A-01'] = ['gaps', 'choice']` → FAIL.
-- [ ] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 5). **Step 4: Kontrollfragen K1–K6** (K4: `hash-ziel`-Feedback
+- [x] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 5). **Step 4: Kontrollfragen K1–K6** (K4: `hash-ziel`-Feedback
   zeigt nur den KH-Wert der Eingabe).
-- [ ] **Step 5: Commit** `git commit -m "Welt 5: Epochen-Daten, Archivfund „Die gefälschte Website“, Level 5.1"`.
+- [x] **Step 5: Commit** `git commit -m "Welt 5: Epochen-Daten, Archivfund „Die gefälschte Website“, Level 5.1"`.
+- [x] **Umsetzungsnotiz:** Seed mit `w5/bau_welt5.js`. Archivfund b) mit sechs Optionen (b1–b3 = Spec-Befunde in Kurzform – Befund (1) ohne „ersten zwei Zeichen“, sonst stünde die Lösung von a) im Optionstext –, v1–v3 = Verneinungen), `CHOICE_FEST['W5-A-01']`; a) mit Konsistenz-Einträgen `sha256` beider Stellvertreter-Texte (volle Hashwerte stehen in der Material-Tabelle). Prüfwert-Gruppen über `kryptosHash(…, { protokoll: true })` mit `feld` ["schritte", i, "w"/"summe"/"nachher"], `pruefsumme`, KH-Werte. W5-L1-07 `hash-ziel` (ziel 4, ungleich hafen, Beispiel haffk) mit Block `werkzeug` `hash` Reiter `kollision`. W5-L1-07/-08 ohne `pruefnachweis` (Neuberechnung bzw. choice; Konsistenz-Einträge hafen/eis/heute/morgen bleiben). Erwartete Hinweise: „Abdeckung fremde Chiffre“ (bis Task 185), „akte ↔ akten.json“ (Task 199).
 
 ### Task 183: Welt 5 – Level 5.2 „Das Siegel“
 
