@@ -22,7 +22,7 @@ function grundpruefung(key, anzahl = 60) {
     assert.equal(C.pruefeAufgabe(a, C.musterantwortAufgabe(a)).ok, true, `${key}/${seed}`);
     aufgaben.push({ ...a, id: `W7-L1-${String(aufgaben.length + 1).padStart(2, '0')}` });
   }
-  const v = validiereWelt({ version: 2, welt: 7, titel: 'Gen', farbe: '#123456', levels: [{ id: 'W7-L1', titel: 'x', niveau: 'kern', rolle: 'kryptografie', aufgaben: aufgaben.map((a) => a.id) }], aufgaben }, { datei: key });
+  const v = validiereWelt({ version: 2, welt: 7, titel: 'Gen', farbe: '#123456', levels: [{ id: 'W7-L1', titel: 'x', niveau: G.GENERATOREN[key].niveau, ...(G.GENERATOREN[key].niveau === 'kuer' ? { kuer: true } : {}), rolle: 'kryptografie', aufgaben: aufgaben.map((a) => a.id) }], aufgaben }, { datei: key });
   assert.deepEqual(v.fehler, [], key);
   const alle = SEEDS.map((s) => G.erzeuge(key, s));
   for (const a of alle) assert.equal(videoKollision(a), null, `${key}: ${a.id}`);
@@ -110,6 +110,19 @@ test('Rahmen: Registry, Dopplung, Filter nach Welt und Sichtbarkeit, Algo-Quest-
   assert.equal(G.erzeuge('test_eins', 5).id, 'T-test_eins-5');
   assert.throws(() => G.erzeuge('gibtsnicht', 1), /Unbekannter Generator/);
   grundpruefung('test_eins', 5);
+});
+
+test('erzeuge setzt das Niveau des Generators (Niveau-Chip im Trainingsplatz, Review M8 Fund 6)', async () => {
+  assert.equal(G.erzeuge('test_ea', 3).niveau, 'eA');
+  assert.equal(G.erzeuge('test_eins', 3).niveau, 'kern');
+  for (const [key, g] of Object.entries(G.GENERATOREN)) assert.equal(G.erzeuge(key, 11).niveau, g.niveau, key);
+  for (const key of ['kryptos16_runde', 'kryptos16_teilschritt', 'w4_rsa_ver', 'w4_inverses', 'w5_signatur', 'koinzidenz', 'friedman']) {
+    assert.notEqual(G.GENERATOREN[key].niveau, 'kern', `${key} ist kein Kern-Generator`);
+  }
+  let seed = 1;
+  const { s } = await H.szenario({ trainingSeed: () => seed++ });
+  const t = (await s.post('/api/training/9/neu').send({ generator: 'test_ea' })).body;
+  assert.equal(t.aufgabe.niveau, 'eA', 'Trainingsaufgabe trägt das Niveau');
 });
 
 test('Trainingsplatz-API: 1 Punkt je Aufgabe, max. 30 pro Tag; eA-Generator nur im eA-Kurs', async () => {
@@ -263,7 +276,7 @@ test('kasiski: Teilertabelle liefert k an erster Stelle; ohne Störabstand ist g
 test('Generatoren: Fallen und Fehlmuster-Fallen passen zur Kategorie (kein Plausibilitäts-Hinweis, Review M3 K4)', () => {
   for (const key of Object.keys(G.GENERATOREN).filter((k) => !k.startsWith('test_'))) {
     const aufgaben = SEEDS.slice(0, 40).map((seed, i) => ({ ...G.erzeuge(key, seed), id: `W7-L1-${String(i + 1).padStart(2, '0')}` }));
-    const v = validiereWelt({ version: 2, welt: 7, titel: 'Gen', farbe: '#123456', levels: [{ id: 'W7-L1', titel: 'x', niveau: 'kern', rolle: 'kryptografie', aufgaben: aufgaben.map((a) => a.id) }], aufgaben }, { datei: key });
+    const v = validiereWelt({ version: 2, welt: 7, titel: 'Gen', farbe: '#123456', levels: [{ id: 'W7-L1', titel: 'x', niveau: G.GENERATOREN[key].niveau, ...(G.GENERATOREN[key].niveau === 'kuer' ? { kuer: true } : {}), rolle: 'kryptografie', aufgaben: aufgaben.map((a) => a.id) }], aufgaben }, { datei: key });
     assert.deepEqual(v.warnungen.filter((w) => /passt nicht zur Kategorie/.test(w.meldung)).map((w) => w.meldung), [], key);
   }
   assert.ok(G.erzeuge('koinzidenz', 1).fallen.includes('P4'), 'koinzidenz: Paare doppelt gezählt = Verfahrensregel P4');

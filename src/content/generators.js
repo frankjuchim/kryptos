@@ -70,12 +70,12 @@ function generatorenFuerWelt(welt, { sichtbar } = {}) {
     .filter((g) => (typeof sichtbar === 'function' ? sichtbar(g) !== false : true));
 }
 
-/** Aufgabe erzeugen (deterministisch). Punkte: immer 1 (Trainingsplatz). */
+/** Aufgabe erzeugen (deterministisch). Punkte: immer 1 (Trainingsplatz). niveau = Niveau des Generators (Kryptos K44). */
 function erzeuge(key, seed) {
   const g = GENERATOREN[key];
   if (!g) throw new Error(`Unbekannter Generator „${key}“.`);
   const s = seed >>> 0;
-  return { id: `T-${key}-${s}`, stufe: 1, punkte: 1, tipps: [], ...g.make(zufall(s)) };
+  return { id: `T-${key}-${s}`, stufe: 1, punkte: 1, tipps: [], niveau: g.niveau, ...g.make(zufall(s)) };
 }
 
 module.exports = { GENERATOREN, NIVEAUS, registriereGenerator, generatorenFuerWelt, erzeuge, mulberry32, zufall };
