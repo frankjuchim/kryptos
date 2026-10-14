@@ -888,8 +888,9 @@ MOND, LINKS, RECHTS, KAUF/KAUE, ET) kommen nicht vor (K1).
 
 **Erwartete Hinweise:** keine.
 
-- [ ] **Step 1–4** (`UMFANG[5]` += `'W5-L2'`; `TEILE_ERGAENZT['W5-L2-05'] = ['gaps']`). **Step 5: Commit**
+- [x] **Step 1–4** (`UMFANG[5]` += `'W5-L2'`; `TEILE_ERGAENZT['W5-L2-05'] = ['gaps']`). **Step 5: Commit**
   `git commit -m "Welt 5: Level 5.2 „Das Siegel“"`.
+- [x] **Umsetzungsnotiz:** W5-L2-02 `order` mit zwei Reihenfolgen (d ↔ e); W5-L2-04 Schaubild mit sechs Schritten wörtlich, `l1`/`l4` `typ: auswahl` (Hashfunktion · verschlüsseln · vergleichen aus der Spec-Liste), `l2`/`l3` Schlüssel (`arten` öffentlich/privat); W5-L2-05 ein `gaps` mit Zahlen und ja/nein-Klapplisten, Prüfwert-Gruppe `modpow(4, 3, 55)`/`modpow(5, 3, 55)`, Konsistenz KH(nebel/kisteliegtimhafen/kisteliegtimhaus) und Signaturen 9²⁷ bzw. 15²⁷ mod 55 (`art: spec`); W5-L2-06 vier Klapplisten mit den Schlüsseln der Spec-Klappliste; W5-L2-07 ohne `pruefnachweis`, Konsistenz KH = 18 für beide Überweisungstexte. Lösungsverrat-Test: auch Klapplisten im Schaubild (`schaubild-ergaenzen`, `typ: auswahl`) zählen nicht.
 
 ### Task 184: Welt 5 – Level 5.3 „Mallory im Netz“
 

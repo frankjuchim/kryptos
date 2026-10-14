@@ -59,10 +59,10 @@ function stuecke(wert, { ohne = [] } = {}) {
 /** Lösungen einer Aufgabe: normalisierte Zeichenketten (≥ 6 Zeichen, ≥ 3 verschiedene; nur 0/1: ≥ 16 Zeichen) */
 function loesungen(a) {
   const roh = [];
-  // Klapplisten (gaps typ auswahl): die Lösung steht ohnehin als Option im Client – Begriffe, kein Lösungstext (Plan M8 Task 178)
+  // Klapplisten (gaps bzw. schaubild-ergaenzen typ auswahl): die Lösung steht ohnehin als Option im Client – Begriffe, kein Lösungstext (Plan M8 Task 178)
   const auswahl = new Set();
   for (const ia of [].concat(a.interaktion || [])) {
-    if (ia && ia.kind === 'gaps' && ia.felder) for (const [id, f] of Object.entries(ia.felder)) if (f && f.typ === 'auswahl') auswahl.add(id);
+    if (ia && (ia.kind === 'gaps' || ia.kind === 'schaubild-ergaenzen') && ia.felder) for (const [id, f] of Object.entries(ia.felder)) if (f && f.typ === 'auswahl') auswahl.add(id);
   }
   const teile = [].concat(a.interaktion || []);
   for (const [i, lo] of [].concat(a.loesung || []).entries()) {
