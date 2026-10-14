@@ -405,12 +405,26 @@ function kennungen(stueck) {
   const jn = /^(ja|nein|korrekt|falsch)\b/i.exec(s); // M8: Einzelaussage „korrekt. Begründung: …“ (W3-L2-08)
   if (jn) return [jn[1].toLowerCase()];
   const kopf = s.split(/\s[–—-]\s|;/)[0];
-  let r = [...kopf.matchAll(/\(([A-F]|\d)\)/g)].map((x) => x[1].toLowerCase());
+  let r = [...kopf.matchAll(/\(([A-H]|\d)\)/g)].map((x) => x[1].toLowerCase());
   if (!r.length) {
-    const m = /^([A-F](?:\s*,\s*[A-F])*)\b/.exec(kopf);
+    const m = /^([A-H](?:\s*,\s*[A-H])*)\b/.exec(kopf);
     if (m) r = m[1].split(/\s*,\s*/).map((x) => x.toLowerCase());
   }
   return r.length ? r : null;
+}
+
+/**
+ * Options-Kennungen einer Spec-Aufgabenstellung (Review M8 Fund 3): „(A) … (G)“, „A) … B)“ oder „(1) … (4)“ – die längste
+ * Folge; leer, wenn keine Kennungen stehen.
+ */
+function optionsKennungen(text) {
+  const t = String(text ?? '');
+  let best = [];
+  for (const re of [/\(([A-H])\)\s/g, /(?:^|\s)([A-H])\)\s/g, /\((\d)\)\s/g]) {
+    const l = [...t.matchAll(re)].map((m) => m[1]);
+    if (l.length > best.length) best = l;
+  }
+  return best;
 }
 
 /** Lösungstexte des choice-Teils teil einer Aufgabe ohne Kennungen (E130, Tabelle CHOICE_OHNE_KENNUNG) oder null */
@@ -453,6 +467,6 @@ module.exports = {
   WURZEL, SPEC_DATEIEN, UMFANG, WELTEN, ROLLE, WERKZEUG, REITER, DS_FEST, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
   ZUORDNUNG_ALS_MATCH, SONDERFORM, LUECKE_OHNE_FELD, SCHAUBILD_TEXT, schaubildLoesung, CHOICE_OHNE_KENNUNG, CHOICE_FEST, KUER_LEVEL,
   technischeId, abschnittVon, specAufgaben, specLevels, specZeilen, archivfundTitel, zellen, tippsAus,
-  kindsErwartet, kindsSeed, teile, choiceLoesung, choiceText, loesungsTeile, kennungen,
+  kindsErwartet, kindsSeed, teile, choiceLoesung, choiceText, loesungsTeile, kennungen, optionsKennungen,
   seed, warmup, normalisiert, texte
 };

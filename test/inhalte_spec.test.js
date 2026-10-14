@@ -153,6 +153,16 @@ function pruefeAufgabe(welt, w, spec) {
       assert.ok(ist.length && ist.every((x) => x.art === e.art && (!e.inhaber || x.inhaber === e.inhaber)), `${o}: Lücke ${f} = ${JSON.stringify(e)}`);
     }
   });
+  // Review M8 Fund 3: Optionsanzahl wie in der Spec (eine choice-Interaktion, einteilige Lösung); keine Kennung „(G)“ in
+  // einem Optionstext (Folge eines Parsers, der nur A–F kannte)
+  const chTeile = S.teile(a).filter(({ interaktion: ia }) => ia && ia.kind === 'choice');
+  for (const { interaktion: ia } of chTeile) {
+    for (const op of ia.optionen || []) assert.doesNotMatch(String(op.md ?? op.text), /(^|\s)\(?[A-H]\)\s/, `${o}: Option ${op.id} enthält eine weitere Kennung`);
+  }
+  if (chTeile.length === 1 && !S.loesungsTeile(String(spec.loesung))) {
+    const k = S.optionsKennungen(spec.inhalt);
+    if (k.length >= 2) assert.equal(chTeile[0].interaktion.optionen.length, k.length, `${o}: Optionsanzahl wie in der Spec (${k.join('')})`);
+  }
   S.teile(a).forEach(({ interaktion: ia, loesung: lo }, i) => {
     if (!ia || ia.kind !== 'choice') return;
     if (S.CHOICE_OHNE_KENNUNG[spec.id]) {
