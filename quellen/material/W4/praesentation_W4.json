@@ -15,7 +15,7 @@
   {
    "layout": "archivfund",
    "abschnitt": "DS 12 · Das Schlüsselproblem",
-   "titel": "Der Brief mit dem verlorenen Schlüssel",
+   "titel": "Das Fernschreiben der Bank",
    "label": "FERNSCHREIBEN · NOTVERFAHREN – NUR VERSCHIEBUNG",
    "geheimtext": "TDARN ATJVW RNJWB LQUDN BBNUE NAUXA NW",
    "groesse": 30,
@@ -30,7 +30,7 @@
      "md": "Nummerierung A = 1 … Z = 26 · Chiffrierscheibe bereitlegen"
     }
    ],
-   "notizen": "10 min. Archivfund-Text vorlesen: „Das Chronoskop setzt euch in einem Rechnerraum der Stanford University ab. Es ist 1976 … Auf einem Schreibtisch liegt ein Fernschreiben einer Bank an ihre Filiale. Darüber klebt ein Zettel: ‚Notverfahren – nur Verschiebung, weil der neue Schlüssel nicht angekommen ist.‘ … Zwei Forscher an dieser Universität behaupten, man könne einen gemeinsamen Schlüssel vereinbaren, während Eve jedes Wort mithört. Knackt zuerst das Fernschreiben – und findet dann heraus, wie das gehen soll.“\nPA mit Chiffrierscheibe. Tipp für Langsame: häufigster Buchstabe N (6×) → e? (N = 14, e = 5 → k = 9). Probe: aus T (20) wird mit −9 k (11).\nErwartet: „kurier kam nie an, schlüssel verloren“ (kurierkamnieanschluesselverloren).\nImpuls: „Warum ‚Notverfahren‘? Was wäre gewesen, wenn der Kurier angekommen wäre – und wenn Eve ihn abgefangen hätte?“\nÜberleitung: Problemfrage an die Tafel – Wie vereinbaren Alice und Bob einen Schlüssel, ohne sich zu treffen?"
+   "notizen": "10 min. Archivfund-Text vorlesen: „Das Chronoskop setzt euch in einem Rechnerraum der Stanford University ab. Es ist 1976 … Auf einem Schreibtisch liegt ein Fernschreiben einer Bank an ihre Filiale. Darüber klebt ein Zettel: ‚Notverfahren – nur Verschiebung.‘ … Zwei Forscher an dieser Universität behaupten, man könne einen gemeinsamen Schlüssel vereinbaren, während Eve jedes Wort mithört. Knackt zuerst das Fernschreiben – und findet dann heraus, wie das gehen soll.“\nPA mit Chiffrierscheibe. Tipp für Langsame: häufigster Buchstabe N (6×) → e? (N = 14, e = 5 → k = 9). Probe: aus T (20) wird mit −9 k (11).\nErwartet: „kurier kam nie an, schlüssel verloren“ (kurierkamnieanschluesselverloren).\nImpuls: „Warum ‚Notverfahren‘? Was wäre gewesen, wenn der Kurier angekommen wäre – und wenn Eve ihn abgefangen hätte?“\nÜberleitung: Problemfrage an die Tafel – Wie vereinbaren Alice und Bob einen Schlüssel, ohne sich zu treffen?"
   },
   {
    "layout": "auftrag",

@@ -67,7 +67,7 @@ test('Spec-Parser W3–W6 (Plan M8 Task 171): Zeilenzahlen, ids (E120), Niveau-/
   assert.equal(S.specLevels(3)[4].titel, 'Die Enigma', 'Titel ohne „(vereinfacht)“');
   assert.deepEqual(S.specLevels(6).map((l) => l.ds), [[17], [17], [17, 18]], 'DS_FEST (E146)');
   assert.deepEqual([3, 4, 5, 6].map((w) => S.specAufgaben(w).find((a) => a.art === 'archivfund').titel),
-    ['Der Lochstreifen von 1917', 'Der Brief mit dem verlorenen Schlüssel', 'Die gefälschte Website', 'Eves Chiffre']);
+    ['Der Lochstreifen von 1917', 'Das Fernschreiben der Bank', 'Die gefälschte Website', 'Eves Chiffre']);
   assert.ok(S.specLevels(6)[0].merkkasten.startsWith('Im Abitur gehen Punkte selten verloren'), 'Merkkasten als eingerückter Fließtext (W6)');
   assert.deepEqual(S.tippsAus('T1: 8 · 7 = 56. T2: Der letzte Rest.'), ['8 · 7 = 56.', 'Der letzte Rest.']);
   assert.deepEqual(S.tippsAus('1: Lesereihenfolge 0, 3. / 2: A bedeutet 0.'), ['Lesereihenfolge 0, 3.', 'A bedeutet 0.']);
