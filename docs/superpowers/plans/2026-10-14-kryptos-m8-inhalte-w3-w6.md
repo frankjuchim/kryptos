@@ -444,11 +444,12 @@ Version; Tests `test/lernen.test.js`, `test/client_seiten.test.js`, `test/valida
 | `spiegelpaar` | W6-B-10 | Stufe 1 Wert → 27 − Wert, Stufe 2 Caesar + 2; `ent` umgekehrt |
 | `produkt_hash_13` | W5-B-07/-08 | Produkt der Buchstabenwerte mod 13 (nach jeder Multiplikation) – nur Konsistenztest (Zahlenausgabe, gaps) |
 
-- [ ] **Step 1: Failing test** – `telex_rot_k43('TOR') = '000101111100100101011111'`; `multiplikationsrad('GCPK', 'ent') = 'KANU'`;
+- [x] **Step 1: Failing test** – `telex_rot_k43('TOR') = '000101111100100101011111'`; `multiplikationsrad('GCPK', 'ent') = 'KANU'`;
   `multiplikationsrad('kanu') = 'GCPK'`; `spiegelpaar('MTOJXQ', 'ent') = 'PINSEL'`; `produkt_hash_13('rabe') = 11`, `('kai') = 8`,
   `('bear') = 11`, `('mut') = 0`.
-- [ ] **Step 2–4:** FAIL → Implement (Funktionen mit Parametern, `VERFAHREN` über `_mit`) → PASS; `node --test test/seed_pruefen.test.js`.
-- [ ] **Step 5: Commit** `git commit -m "Fremde Verfahren W3–W6 für den Prüfnachweis: TELEX-ROT, Multiplikationsrad, Spiegelpaar, Produkt-Hash"`.
+- [x] **Step 2–4:** FAIL → Implement (Funktionen mit Parametern, `VERFAHREN` über `_mit`) → PASS; `node --test test/seed_pruefen.test.js`.
+- [x] **Step 5: Commit** `git commit -m "Fremde Verfahren W3–W6 für den Prüfnachweis: TELEX-ROT, Multiplikationsrad, Spiegelpaar, Produkt-Hash"`.
+- [x] **Umsetzungsnotiz:** `telex_rot(text, k)` parametrisiert, `telex_rot_k43` über `_mit`; `ent` nimmt eine Bitfolge und liefert den Text (XOR selbstinvers). `produkt_hash_13` liefert eine Zahl und steht deshalb nicht in `VERFAHREN` (nur Konsistenztest). Zusätzliche Vektoren: Periode 8 von TELEX-ROT, Rest 0 → Z beim Multiplikationsrad, *pinsel* → MTOJXQ, PH(zoo) = 0.
 
 ### Task 171: Abgleich-Helfer und Abgleich-Tests für W3–W6
 

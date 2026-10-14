@@ -158,6 +158,73 @@ def depesche(text, schluessel, richtung='ver'):
                    for i, c in enumerate(buchstaben(text)))
 
 
+# ───────────── Welt 3: TELEX-ROT (SPEC W3 §5, W3-B-10 … -13) ─────────────
+
+def telex_rot(text, k, richtung='ver'):
+    """TELEX-ROT: jedes Zeichen als 8-Bit-ASCII-Wert ⊕ Schlüsselbyte; erstes Schlüsselbyte k, danach das vorige um 1
+    zyklisch nach links rotiert (Periode höchstens 8). `ver`: Text → Bitfolge (ohne Leerraum); `ent`: Bitfolge → Text
+    (dieselbe XOR-Verknüpfung, XOR ist selbstinvers)."""
+    _richtung(richtung)
+    kb = re.sub(r'\s', '', str(k))
+    if not re.fullmatch(r'[01]{8}', kb):
+        raise ValueError('Das Schlüsselbyte hat 8 Bit.')
+    schl = int(kb, 2)
+    if richtung == 'ver':
+        werte = [ord(c) for c in str(text)]
+        if any(w < 32 or w > 126 for w in werte):
+            raise ValueError('Nur ASCII-Zeichen 32–126.')
+    else:
+        b = re.sub(r'[\s_|.·]', '', str(text))
+        if not re.fullmatch(r'(?:[01]{8})*', b):
+            raise ValueError('Der Geheimtext besteht aus ganzen Bytes.')
+        werte = [int(b[i:i + 8], 2) for i in range(0, len(b), 8)]
+    aus = []
+    for w in werte:
+        aus.append(w ^ schl)
+        schl = ((schl << 1) | (schl >> 7)) & 0xFF
+    if richtung == 'ver':
+        return ''.join(format(x, '08b') for x in aus)
+    return ''.join(chr(x) for x in aus)
+
+
+# ───────────── Welt 6: MULTIPLIKATIONSRAD, SPIEGELPAAR (SPEC W6 §5, W6-B-09/-10) ─────────────
+
+def _wert(c):
+    return ALPHABET.index(c) + 1      # A = 1 … Z = 26
+
+
+def _buchstabe(w):
+    return ALPHABET[(w - 1) % 26]     # Rest 0 → Z (26)
+
+
+def multiplikationsrad(text, richtung='ver'):
+    """MULTIPLIKATIONSRAD (A = 1 … Z = 26): Geheimwert = (Wert · 3) mod 26, Rest 0 → 26; `ent`: Geheimwert · 9
+    (9 = 3⁻¹ mod 26), Rest 0 → 26."""
+    _richtung(richtung)
+    f = 3 if richtung == 'ver' else 9
+    return ''.join(_buchstabe(_wert(c) * f % 26) for c in buchstaben(text))
+
+
+def spiegelpaar(text, richtung='ver'):
+    """SPIEGELPAAR (A = 1 … Z = 26): Stufe 1 Spiegelung Wert → 27 − Wert, Stufe 2 Caesar + 2; `ent`: erst − 2, dann
+    spiegeln."""
+    _richtung(richtung)
+    t = buchstaben(text)
+    if richtung == 'ver':
+        return _schiebe(''.join(_buchstabe(27 - _wert(c)) for c in t), 2)
+    return ''.join(_buchstabe(27 - _wert(c)) for c in _schiebe(t, -2))
+
+
+# ───────────── Welt 5: Produkt-Hash (SPEC W5 §5, W5-B-07/-08) – nur Konsistenztest (Zahl, gaps) ─────────────
+
+def produkt_hash_13(text):
+    """Produkt-Hash PH(t): Produkt der Buchstabenwerte (A = 1 … Z = 26) mod 13, nach jeder Multiplikation mod 13."""
+    h = 1
+    for c in buchstaben(text):
+        h = h * _wert(c) % 13
+    return h
+
+
 def _mit(fn, **parameter):
     """Bindet Parameter, sodass der Aufruf `VERFAHREN[name](eingabe, richtung)` bleibt (functools.partial ginge nicht:
     die Richtung steht positionell hinter den Parametern)."""
@@ -177,4 +244,8 @@ VERFAHREN = {
     'nomenklator_850': nomenklator,
     'homophon_kalif': homophon,
     'depesche_rose': _mit(depesche, schluessel='ROSE'),
+    # Plan M8 E133
+    'telex_rot_k43': _mit(telex_rot, k='01000011'),
+    'multiplikationsrad': multiplikationsrad,
+    'spiegelpaar': spiegelpaar,
 }
