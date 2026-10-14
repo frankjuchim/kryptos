@@ -995,10 +995,11 @@ bzw. ANK (A = 1); zwei → EBJN; windrose → SZFFKEWD; 3 1 4 2 invers 2 4 1 3, 
 **Erwartete Hinweise:** W6-L1-02/-09 möglich „Rechenergebnis nicht nachgerechnet“ (Begriffs-/Zählaufgabe) – in die Liste;
 „boss fehlt“ bis Task 189.
 
-- [ ] **Step 1: Failing test** – `UMFANG[6] = ['W6-A', 'W6-L1']` → FAIL.
-- [ ] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 6). **Step 4: Kontrollfragen K1–K6** (K4: keine
+- [x] **Step 1: Failing test** – `UMFANG[6] = ['W6-A', 'W6-L1']` → FAIL.
+- [x] **Step 2: Implement.** **Step 3: Prüfkette P1–P5** (`<N>` = 6). **Step 4: Kontrollfragen K1–K6** (K4: keine
   Schülerlösung zeigt die richtige Zeile markiert; `lines` mischt nicht – Zeilennummern sind Aufgabeninhalt).
-- [ ] **Step 5: Commit** `git commit -m "Welt 6: Epochen-Daten, Archivfund „Eves Chiffre“, Level 6.1 „Fallenjagd“"`.
+- [x] **Step 5: Commit** `git commit -m "Welt 6: Epochen-Daten, Archivfund „Eves Chiffre“, Level 6.1 „Fallenjagd“"`.
+- [x] **Umsetzungsnotiz:** Archivfund: §0.1 wörtlich (`hinweis`), Stufe 1/2 aus Akte W6·2 Archivwissen 1 wörtlich (ohne Beispiel), Zettel „Ring 3 · Pendel UHR“; Prüfwerte Ring (Zwischentext ZTIERSIE EEEBNTED) und Pendel-Vigenère (`archivfund`, Ort ohne id). `kapitel.md` nur aus F26 (Klausur, Abitur, K4 vorsichtig: „soll … widerstanden haben“). 6.1: Schülerlösungen als Block `code` (`nummern: true`, Zeilen ohne „(n)“) + `lines`, Frage als Text nach dem Block; W6-L1-11 `anzahl` 2 (Zeilen 2, 6). W6-L1-05: Blocktransposition 3 1 4 2 = Spaltentransposition einer Zeile mit Schlüssel BDAC → Prüfwert-Gruppe `spaltenReihenfolge("BDAC")` = 2 4 1 3 (Umkehrpermutation), `spaltentransposition("NZKI", "BDAC", ent)` = zink, Konsistenz BERG → RBGE, falsch KNIZ. W6-L1-09 a) akzeptiert 17576 und 17.576 (Leerzeichen tilgt der Kern), Prüfwert `modpow(26, 3, 10⁶)`. Konsistenzwerte (affin A = 0 → XKH, EBJN → zwei, ESORDNIW/PPNWYOLL/windrose, SNWDOEINNN → sonnenwind, Caesar 7 + 11 = 18) als Einträge mit `aufgabe` ohne Feld. Hinweise: nur „akte ↔ akten.json“ (Akten-Verzeichnis W6 erst Task 199); W6-L1-02/-09 haben `pruefnachweis`, daher kein Rechen-Hinweis.
 
 ### Task 187: Welt 6 – Level 6.2 „Eves Chiffre“
 
