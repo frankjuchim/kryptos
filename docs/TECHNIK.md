@@ -1975,6 +1975,22 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     Kür 3.K2/4.K3 erst nach „Kür: Frei“. 360 px ohne Querscrollen (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten
     W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Ohne Fotos.
 
+**Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
+CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C
+<scratch>/labs` und dort `npm ci` – labs selbst wird nie verändert); ohne `LABS_DIR` „übersprungen“, Exit 0. Portal
+(`src/server.js` der Kopie, `ERLAUBE_HTTP=1`, `TRUST_PROXY=0`) und Kryptos (`NODE_ENV=production`,
+`PLATTFORM_URL=http://localhost:<p>` – E149-Ausnahme, `PORTAL_PUBLIC_KEY` zur Startzeit des Tests von
+`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 →
+Admin trägt Kryptos ein (Ampel grün, Rücksprung `<kryptos>/sso/ende` bestätigt) → Lehrkraft „Frau M.“ fragt an, Freigabe
+und Freischaltung Kryptos, Kurs „Informatik LK 13“ → „Mika R.“ tritt mit Kurscode bei, „Weiter zu Kryptos“ → `/spiel`
+(Sitzung Mika, Kurs) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“) → `/lehrer` mit dem Kurs → Mika löst
+W0-L1-03 → Portal benennt den Kurs um (Kryptos zeigt den neuen Namen), „Lernstand auf Kryptos laden“ (Kennzahlen, kein
+persönlicher Code) → Mika aus dem Kurs entfernt → in `kryptos.db` keine Zeile mit Mikas `sub` oder Namen (außer dem
+Löschvermerk `loeschungen`), Verbund-Aufträge `kurs-aendern` und `loeschen` „erledigt“ → „Überall abmelden“ in Kryptos
+führt über `<portal>/sso/abmelden` und beendet die Portal-Sitzung (`/api/lehrkraft/ich` → 401). Keine Konsolen-/CSP-Fehler
+auf beiden Seiten. `--bilder <ordner>`: `portal_beitritt.png`, `portal_code.png`, `portal_weiter.png` (1280 × 800,
+Kurscode und persönlicher Code mit Playwright-`mask` unkenntlich).
+
 ---
 
 ## 16. CI und Deployment
@@ -2061,7 +2077,7 @@ zeichengenau `PLATTFORM_URL/sso/ende`, sonst Fehlerseite.
 
 ### 16.5 `package.json` (Skripte)
 
-`start`, `dev`, `test`, `validate`, `e2e`, `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
+`start`, `dev`, `test`, `validate`, `e2e`, `e2e:portal` (M9 Task 212), `krypto:vergleich`, `krypto:pruefwerte`, `krypto:seeds`, `abdeckung`, `konfig:pruefen` (M9 Task 205), `akten`, `loesungen`,
 `lehrkraft`, `workspaces` (je `python3 -I werkzeuge/…`, mit `-- --pruefen` nur prüfen), `ide:pruefen` (Online-IDE-Prüfstand),
 `pruefen` (= test + validate + `krypto:pruefwerte` + `krypto:seeds` + `abdeckung`; die Material-Prüfungen brauchen Python-Pakete,
 LibreOffice und Java und laufen im CI-Job `inhalte` bzw. über `test/material_pipeline.test.js`, das ohne diese

@@ -371,14 +371,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `test/e2e/hilfen.js` (`chromiumPfad`, freie Ports, Fehler-Beobachtung, `keinQuerScrollen`)
 - Produces: `node test/e2e/portal.js [--bilder <ordner>]` mit `LABS_DIR=<pfad>`; ohne `LABS_DIR` Exit 0 mit „übersprungen“. Mit `--bilder`: `portal_beitritt.png`, `portal_code.png`, `portal_weiter.png` (1280 × 800, Kurscode und persönlicher Code per `mask`).
 
-- [ ] **Step 1: Portal-Kopie** (nicht im Repo):
+- [x] **Step 1: Portal-Kopie** (nicht im Repo):
   ```bash
   S=/tmp/claude-0/-home-user/87e7dbc0-e51b-5e05-93c8-31b751eb05b0/scratchpad/m9
   mkdir -p $S/labs && git -C /home/user/labs archive --format=tar HEAD | tar -x -C $S/labs
   git -C /home/user/labs rev-parse --short HEAD   # im Bericht nennen (erwartet 3f48c5c)
   (cd $S/labs && npm ci --no-audit --no-fund)     # schlägt das fehl: NODE_PATH=/home/user/kryptos/node_modules (express 5, better-sqlite3, helmet, qrcode) und im Bericht nennen
   ```
-- [ ] **Step 2: Skript schreiben, das ohne `LABS_DIR` übersprungen wird; mit `LABS_DIR` zuerst rot laufen** (Ablauf):
+- [x] **Step 2: Skript schreiben, das ohne `LABS_DIR` übersprungen wird; mit `LABS_DIR` zuerst rot laufen** (Ablauf):
   1. Portal starten: `node $LABS_DIR/src/server.js` mit `ADMIN_EMAIL=admin ADMIN_PASSWORD=admin1234 SESSION_SECRET=<32+> DATA_DIR=<temp> PORT=<frei> PORTAL_URL=http://localhost:<p> ERLAUBE_HTTP=1`; `/healthz` abwarten.
   2. `GET <portal>/sso/schluessel.pem` → Kryptos starten (E166): `NODE_ENV=production PORT=<frei> DATA_DIR=<temp> PLATTFORM_URL=http://localhost:<k> PORTAL_URL=http://localhost:<p> PORTAL_PUBLIC_KEY=<pem> SESSION_SECRET=<32+> SEED_DIR=seed`.
   3. `node scripts/vertrag_pruefen.js http://localhost:<k>` → Exit 0, „erfüllt Vertrag v1.2 … Anmeldung: portal“.
@@ -390,9 +390,14 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   9. Portal: Mika löschen → Auftrag „erledigt“; in Kryptos‘ DB keine Zeile mit Mikas `sub` (Suche über alle TEXT-Spalten wie `test/datenschutz.test.js`).
   10. Abmelden überall in Kryptos → landet auf dem Portal.
   Keine Browser-Fehler, keine CSP-Verstöße auf beiden Seiten; alle Prozesse und Temp-Ordner am Ende weg.
-- [ ] **Step 3: Implement** bis grün; Abweichungen des Portals vom erwarteten Ablauf (z. B. Texte der Knöpfe) aus labs `test/e2e/e2e.js` übernehmen, nie labs ändern. Ein echter Befund im Zusammenspiel → als Vertrags-/Integrationsvorschlag in `docs/VERTRAG_VORSCHLAEGE.md` (Teil G) und im Bericht, nicht still umgehen.
-- [ ] **Step 4: Run** `LABS_DIR=$S/labs npm run e2e:portal -- --bilder $S/portal_bilder` → „Ende-zu-Ende mit dem Portal: alles grün“; Fotos per Read ansehen (Codes unkenntlich); `npm run e2e:portal` ohne `LABS_DIR` → „übersprungen“, Exit 0; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Ende-zu-Ende mit dem Portal nach INTEGRATION §6 (lokale Kopie, optionaler Lauf e2e:portal) (M9 Task 212)"`
+  **Umgesetzt (14.10., labs `3f48c5c`, `npm ci` in der Kopie ohne Fehler):** Abweichungen vom Ablauf: 7. Die Lehrkraft hat im
+  Portal keinen „Weiter“-Knopf – sie startet auf Kryptos („Anmelden über InfoLabs“ → Portal → `/lehrer`); „Welt 0 freischalten“
+  entfällt (neue Kurse haben alle Welten frei). 9. Der Löschvermerk `loeschungen` (Kennung ohne Namen, TECHNIK §7.3) bleibt
+  bewusst. 10. „Überall abmelden“ führt über `<portal>/sso/abmelden` zurück zu Kryptos (`abmeldeZiel` des Portals);
+  geprüft wird, dass die Portal-Sitzung beendet ist. Portal braucht `TRUST_PROXY=0` (labs versteht `false` nicht).
+- [x] **Step 3: Implement** bis grün; Abweichungen des Portals vom erwarteten Ablauf (z. B. Texte der Knöpfe) aus labs `test/e2e/e2e.js` übernehmen, nie labs ändern. Ein echter Befund im Zusammenspiel → als Vertrags-/Integrationsvorschlag in `docs/VERTRAG_VORSCHLAEGE.md` (Teil G) und im Bericht, nicht still umgehen.
+- [x] **Step 4: Run** `LABS_DIR=$S/labs npm run e2e:portal -- --bilder $S/portal_bilder` → „Ende-zu-Ende mit dem Portal: alles grün“; Fotos per Read ansehen (Codes unkenntlich); `npm run e2e:portal` ohne `LABS_DIR` → „übersprungen“, Exit 0; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Ende-zu-Ende mit dem Portal nach INTEGRATION §6 (lokale Kopie, optionaler Lauf e2e:portal) (M9 Task 212)"`
 
 ### Task 213: Video-Bilder
 

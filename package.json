@@ -13,6 +13,7 @@
     "krypto:pruefwerte": "python3 -I werkzeuge/krypto/pruefwerte.py",
     "krypto:seeds": "python3 -I werkzeuge/krypto/seed_pruefen.py",
     "e2e": "node test/e2e/e2e.js",
+    "e2e:portal": "node test/e2e/portal.js",
     "akten": "python3 -I werkzeuge/akten_pdf.py",
     "loesungen": "python3 -I werkzeuge/loesungen_pdf.py",
     "lehrkraft": "python3 -I werkzeuge/lehrkraft_pdf.py",

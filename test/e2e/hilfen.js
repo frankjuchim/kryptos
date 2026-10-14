@@ -270,4 +270,4 @@ async function gehe(page, url) {
   await page.waitForLoadState('networkidle');
 }
 
-module.exports = { chromiumPfad, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };
+module.exports = { chromiumPfad, freiePorts, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };
