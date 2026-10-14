@@ -468,6 +468,33 @@ test('bits-rechnen kryptos16 mit schritt/text (Plan M8 E124) und 48 Bit nach Byt
   assert.equal(k.alle(c.el, '.bits-eingabe .bit-byte').length, 6, 'je Byte ein nicht umbrechender Abschnitt');
 });
 
+test('hash-ziel (W9-L6-07): Eingabefeld, Ziel-Hinweis, Feedback mit KRYPTOS-Hash der Eingabe (Plan M8 E126)', () => {
+  const { k, c } = baue(oeffentlich('W9-L6-07'));
+  const feld = k.eins(c.el, 'input.hashziel-eingabe');
+  assert.ok(feld);
+  assert.match(k.text(c.el), /Ziel: KRYPTOS-Hash 4/);
+  assert.equal(c.leer(), true);
+  k.tippe(feld, 'tee');
+  assert.equal(c.antwort(), 'tee');
+  let s = server('hashziel', 'W9-L6-07', c.antwort());
+  assert.equal(s.r.ok, false);
+  c.feedback({ ok: false, teile: [s.r] });
+  assert.equal(k.text(k.eins(c.el, '.hashziel-wert')), 'Dein Text hat den KRYPTOS-Hash 26.');
+  assert.ok(feld.classList.contains('falsch'));
+  feld.value = '';
+  k.tippe(feld, 'haffk');
+  assert.equal(c.antwort(), 'haffk');
+  assert.equal(k.text(k.eins(c.el, '.hashziel-wert')), '', 'Eingabe ändert sich → Rückmeldung weg');
+  s = server('hashziel', 'W9-L6-07', c.antwort());
+  assert.equal(s.r.ok, true);
+  c.loesung({ beispiel: 'zoo' });
+  assert.equal(feld.value, 'zoo');
+  c.sperren(true);
+  assert.equal(feld.disabled, true);
+  c.setze('eis');
+  assert.equal(feld.value, 'eis');
+});
+
 test('bits-rechnen lawine: nur das gekippte Bit des Blocks ist markiert', () => {
   const { k, c } = baue(oeffentlich('W9-L3-04'));
   const zeilen = k.alle(c.el, '.bits-zeile');

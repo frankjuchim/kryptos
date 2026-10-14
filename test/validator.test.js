@@ -305,6 +305,17 @@ test('bits-rechnen-Validator: KRYPTOS-16-Schritte (schritt, text) und Operanden 
   erwarteFehler((w) => { aufgabe(w, 'W9-L6-01').interaktion.operanden = ['0'.repeat(72), '1'.repeat(72)]; }, /8–64 Bit/);
 });
 
+test('hash-ziel-Validator: Ziel, ungleich/praefix, Musterantwort nachgerechnet (Plan M8 E126)', () => {
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').loesung.beispiel = 'tee'; }, /Neuberechnung ergibt KH\(tee\) = 26 statt 4/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').loesung.beispiel = 'eis'; }, /beispiel darf nicht in ungleich stehen/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').interaktion.ziel = 29; }, /ziel muss eine ganze Zahl 0–28/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').interaktion.verfahren = 'sha256'; }, /verfahren muss kryptosHash/);
+  erwarteFehler((w) => { aufgabe(w, 'W9-L6-07').interaktion.ungleich = ['Eis']; }, /ungleich muss eine Liste von Wörtern aus a–z/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L6-07').interaktion.ungleich; }, /ungleich \(Kollision\) oder praefix/);
+  erwarteFehler((w) => { Object.assign(aufgabe(w, 'W9-L6-07').interaktion, { ziel: 20, praefix: 'ab' }); aufgabe(w, 'W9-L6-07').loesung.beispiel = 'zoot'; }, /beispiel beginnt nicht mit praefix|Neuberechnung/);
+  erwarteFehler((w) => { delete aufgabe(w, 'W9-L6-07').loesung.beispiel; }, /beispiel \(Musterantwort/);
+});
+
 /* ---------- Task 30: Welt- und Level-Felder (Delta §2, §3), Negativ-Fixtures (Delta §13, E15) ---------- */
 
 const FEHLER_DIR = path.join(__dirname, 'fixtures', 'fehler');

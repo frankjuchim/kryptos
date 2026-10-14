@@ -11,7 +11,7 @@ test('Delta §13: jeder Block, jede Interaktion und jeder Modus kommt vor', () =
   const typen = new Set(bloecke.map((b) => b.t));
   for (const t of ['text', 'hinweis', 'code', 'struktogramm', 'tabelle', 'reihung', 'raster', 'alphabet', 'haeufigkeit', 'quadrat', 'bits', 'schaubild', 'matrix', 'werkzeug']) assert.ok(typen.has(t), t);
   const arten = new Set(teile.map(F.artVon));
-  for (const a of ['gaps', 'choice', 'order', 'lines', 'match', 'grid', 'array:klick', 'chiffre', 'zuordnung', 'schaubild-ergaenzen', 'bits-rechnen']) assert.ok(arten.has(a), a);
+  for (const a of ['gaps', 'choice', 'order', 'lines', 'match', 'grid', 'array:klick', 'chiffre', 'zuordnung', 'schaubild-ergaenzen', 'bits-rechnen', 'hash-ziel']) assert.ok(arten.has(a), a);
   const q = bloecke.filter((b) => b.t === 'quadrat');
   assert.ok(q.some((b) => b.art === 'vigenere' && b.ausschnitt) && q.some((b) => b.art === 'playfair') && q.some((b) => b.art === 'polybios' && b.groesse === 6) && q.some((b) => b.art === 'frei' && JSON.stringify(b.zellen).includes('[[')));
   const al = bloecke.filter((b) => b.t === 'alphabet');

@@ -41,7 +41,7 @@
     { "id": "W9-L3", "nr": "9.3", "titel": "Analyse für Fortgeschrittene", "ds": [3], "niveau": "eA", "rolle": "kryptoanalyse", "akte": "Akte W9·3 – Analyse", "werkzeug": "haeufigkeit", "aufgaben": ["W9-L3-01", "W9-L3-02", "W9-L3-03", "W9-L3-04", "W9-L3-05", "W9-L3-06"] },
     { "id": "W9-L4", "nr": "K1", "titel": "Kür: Quadrate und Schablonen", "ds": [4], "niveau": "kuer", "kuer": true, "rolle": "kryptografie", "aufgaben": ["W9-L4-01"] },
     { "id": "W9-L5", "nr": "9.5", "titel": "Werkbank der Verfahren", "ds": [5], "niveau": "kern", "rolle": "kryptografie", "akte": "Akte W9·5 – Werkbank", "werkzeug": ["scheibe", "vigenere"], "aufgaben": ["W9-L5-01", "W9-L5-02", "W9-L5-03", "W9-L5-04", "W9-L5-05", "W9-L5-06", "W9-L5-07", "W9-L5-08", "W9-L5-09", "W9-L5-10", "W9-L5-11"] },
-    { "id": "W9-L6", "nr": "9.6", "titel": "Bits und Schaubilder", "ds": [6], "niveau": "kern", "rolle": "kryptografie", "aufgaben": ["W9-L6-01", "W9-L6-02", "W9-L6-03", "W9-L6-04", "W9-L6-05", "W9-L6-06"] }
+    { "id": "W9-L6", "nr": "9.6", "titel": "Bits und Schaubilder", "ds": [6], "niveau": "kern", "rolle": "kryptografie", "aufgaben": ["W9-L6-01", "W9-L6-02", "W9-L6-03", "W9-L6-04", "W9-L6-05", "W9-L6-06", "W9-L6-07"] }
   ],
   "boss": {
     "id": "W9-BOSS",
@@ -497,6 +497,11 @@
       "interaktion": { "kind": "schaubild-ergaenzen", "block": 1, "felder": { "z1": { "typ": "auswahl", "optionen": ["Zertifikat", "Hashwert", "Signatur"] }, "z2": { "typ": "text", "norm": "krypto" } } },
       "loesung": { "z1": ["Zertifikat"], "z2": ["Mallory"] },
       "erklaerung": [ { "t": "text", "md": "Das Zertifikat bestätigt die Zuordnung Schlüssel ↔ Identität." } ] },
+    { "id": "W9-L6-07", "titel": "Die Kollision der Testwelt", "stufe": 3, "kategorie": "hash", "fallen": ["P2"],
+      "inhalt": [ { "t": "text", "md": "KRYPTOS-Hash: h ← (3h + w) mod 29, A = 1. KH(„eis“) = 4. Gib eine **andere** Nachricht (nur Buchstaben a–z) mit KH = 4 ein." } ],
+      "interaktion": { "kind": "hash-ziel", "verfahren": "kryptosHash", "ziel": 4, "ungleich": ["eis"] },
+      "loesung": { "beispiel": "zoo" },
+      "erklaerung": [ { "t": "text", "md": "Zum Beispiel *zoo*: 26 → 3 · 26 + 15 = 93 mod 29 = 6 → 3 · 6 + 15 = 33 mod 29 = 4." } ] },
     {
       "id": "W9-B-01",
       "titel": "Ganzzahlige Division",

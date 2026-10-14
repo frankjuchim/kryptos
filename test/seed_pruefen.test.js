@@ -19,6 +19,7 @@ test('seed_pruefen.py: Fixture ohne Abweichung, manipulierte Lösung mit Exit-Co
   w.aufgaben.find((a) => a.id === 'W9-L3-06').loesung.bits = '1101011000100011';
   w.aufgaben.find((a) => a.id === 'W9-L6-01').interaktion = { kind: 'bits-rechnen', operation: 'kryptos16', schluessel: '0011 1010 1100 0101', runden: 3, schritt: 'rundenschluessel' };
   w.aufgaben.find((a) => a.id === 'W9-L6-01').loesung = { bits: '0011101011000101' };
+  w.aufgaben.find((a) => a.id === 'W9-L6-07').loesung.beispiel = 'tee'; // Plan M8 Task 167: hash-ziel
   const d = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kr-seed-')), 'w.json'); fs.writeFileSync(d, JSON.stringify(w));
   r = spawnSync('python3', ['-I', SKRIPT, '--pruefwerte', PRUEFWERTE, d], { encoding: 'utf8' });
   assert.equal(r.status, 1);
@@ -27,6 +28,7 @@ test('seed_pruefen.py: Fixture ohne Abweichung, manipulierte Lösung mit Exit-Co
   assert.match(r.stdout, /W9-L3-05 › .*erwartet 0110111101110110/);
   assert.match(r.stdout, /W9-L3-06 › .*erwartet 1011010000111001/);
   assert.match(r.stdout, /W9-L6-01 › .*erwartet 1100010100111010/);
+  assert.match(r.stdout, /W9-L6-07 › .*erwartet 4 gefunden 26/);
 });
 
 test('seed_pruefen.py: gaps mit pruefnachweis (Prüfwert) und Lücke im bits-Block (pruefe xor) – Review M3 W3', { skip: py.status !== 0 && 'python3 fehlt' }, () => {

@@ -758,6 +758,11 @@ figure.stellung figcaption { font-size: .85rem; font-weight: 700; }
 .bits-lawine .bit.lawine { font-family: var(--f-text); font-size: .85rem; font-weight: 400; }
 .bits-lawine .bit.lawine[aria-pressed="true"] { font-weight: 700; border: 3px solid var(--tinte); background: var(--papier-2); }
 .bits-lawine .bit.lawine[aria-pressed="true"]::before { content: "Δ"; display: block; font-size: .7rem; line-height: 1; }
+.hashziel-feld { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2) var(--a-3); }
+.hashziel-eingabe { flex: 1 1 12rem; max-width: 100%; min-height: var(--ziel); font-family: var(--f-mono); font-size: 1.1rem; }
+.hashziel input.hashziel-eingabe.ok { border: 3px solid var(--ok); }
+.hashziel input.hashziel-eingabe.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }
+.hashziel input.hashziel-eingabe.loesung { border: 2px dotted var(--hinweis); background: var(--hinweis-flaeche); }
 .bits-text { width: 6ch; min-height: var(--ziel); font-family: var(--f-mono); font-size: 1.2rem; text-align: center; }
 .bits-text.ok { border: 3px solid var(--ok); }
 .bits-text.falsch { border: 3px dashed var(--fehler); background: var(--fehler-flaeche); }

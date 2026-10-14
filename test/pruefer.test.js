@@ -285,6 +285,33 @@ test('bits-rechnen kryptos16 mit schritt und text (Plan M8 E124, Spec-Werte W3)'
   assert.deepEqual(dg(k16({ schluessel: '0011 1010 1100 0101', runden: 2, schritt: 'rundenschluessel' }, '1010110001010011'), '0101 0011 1010 1100'), [['P3', 'richtung']]);
 });
 
+test('hash-ziel: Kollision und Urbild zum KRYPTOS-Hash (Plan M8 E126, Werte W5-L1-07)', () => {
+  const hz = (ia, beispiel) => ({ id: 'W9-X', interaktion: { kind: 'hash-ziel', verfahren: 'kryptosHash', ...ia }, loesung: { beispiel } });
+  const kol = hz({ ziel: 4, ungleich: ['hafen'] }, 'haffk');
+  assert.equal(C.pruefeAufgabe(kol, 'haffk').ok, true);
+  assert.equal(C.pruefeAufgabe(kol, 'eis').ok, true);
+  assert.equal(C.pruefeAufgabe(kol, 'Zoo!').ok, true);
+  const h = C.pruefeAufgabe(kol, 'hafen', { diagnose: true });
+  assert.equal(h.ok, false);
+  assert.equal(h.teile[0].wert, 4);
+  assert.deepEqual(h.diagnose.map((d) => [d.p, d.code]), [[null, 'ausgangsnachricht']]);
+  const t = C.pruefeAufgabe(kol, 'tee', { diagnose: true });
+  assert.equal(t.ok, false);
+  assert.equal(t.teile[0].wert, 26);
+  assert.equal(t.diagnose, undefined, 'falscher Hash: kein Hinweis');
+  const ur = hz({ ziel: 20, praefix: 'ab' }, 'abe');
+  assert.equal(C.pruefeAufgabe(ur, 'abe').ok, true);
+  assert.equal(C.pruefeAufgabe(ur, 't').ok, false, 't hat KH 20, beginnt aber nicht mit ab');
+  assert.deepEqual(C.pruefeAufgabe(ur, 't', { diagnose: true }).diagnose.map((d) => d.code), ['praefix']);
+  // leer, zu lang, kein Text
+  assert.equal(C.pruefeAufgabe(kol, ' 1 ').leer, true);
+  assert.throws(() => C.pruefeAufgabe(kol, 'a'.repeat(61)), (e) => e.status === 400);
+  assert.throws(() => C.pruefeAufgabe(kol, 42), (e) => e.status === 400);
+  assert.equal(C.pruefeAufgabe(kol, { text: 'haffk' }).ok, true);
+  // Boss erlaubt (Vertrag); der Boss-Dienst gibt nur ok/punkte weiter (kein wert)
+  assert.equal(require('../src/krypto/interaktionen/hashziel').vertrag.boss.erlaubt, true);
+});
+
 test('bits-rechnen: ? = leere Bit-Stelle bleibt positionsgenau erhalten (Option A, Delta §8.4)', () => {
   const V = require('../src/krypto/interaktionen/bits').vertrag;
   const a = A['W9-L6-01']; // Lösung 00100001

@@ -130,6 +130,9 @@ DIAGNOSE.push(
   { aufgabe: 'W9-L3-05', antwort: '0100 1000 1010 0100', erwartet: [['P3', 'richtung']] },
   { aufgabe: 'W9-L3-06', antwort: '1101 0110 0010 0011', erwartet: [['P3', 'richtung']] }
 );
+// Plan M8 Task 167: Interaktion hash-ziel (Kollision)
+Object.assign(RICHTIG, { 'W9-L6-07': 'haffk' });
+Object.assign(FALSCH, { 'W9-L6-07': 'eis' });
 // Review M3 W1: Knack-Aufgabe im Kryptoanalyse-Level (Schlüssel verdeckt)
 Object.assign(RICHTIG, { 'W9-L2-10': 'wolke nzieh enauf' });
 Object.assign(FALSCH, { 'W9-L2-10': 'WOLKENZIEHENAUX' });

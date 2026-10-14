@@ -13,6 +13,7 @@ JS-Bibliothek, die der Validator (`npm run validate`) benutzt. Geprüft werden:
 - `bits-rechnen`: `xor`, `ascii` (`zu-bits`/`zu-text`), `kryptos16` (ver/ent; mit `schritt` Kettenzustand oder Einzelschritt,
   Startblock aus `text` oder `block`, Plan M8 E124), `lawine` (Positionen ab 0 nach der
   letzten Runde, gekipptes Bit `kippe` ab 0).
+- `hash-ziel` (Plan M8 E126): KH(`loesung.beispiel`) = `ziel`, Beispiel nicht in `ungleich`, beginnt mit `praefix`.
 - Blöcke `quadrat` (Schlüssel ↔ Zellen), `bits` mit `pruefe: xor` (auch eine Lücke [[id]] in einer Datenzeile: XOR
   der übrigen Zeilen = Lösung des gaps-Felds), `matrix` (Fleißner-Schablone; Spaltenkopf mit `reihenfolge` –
   Plausibilität und, wenn die Aufgabe eine Spaltentransposition mit demselben Schlüssel enthält, spaltenweise gelesen
@@ -343,6 +344,20 @@ class Pruefung:
                 self.nachweis(datei, a, ort, ia.get('eingabe', ia.get('text', ia.get('bits', ''))), ia.get('richtung', 'ver'),
                               gefunden, als_bits='bits' in lo)
 
+    def hash_ziel(self, datei, a, ia, lo, ort):
+        """hash-ziel (Plan M8 E126): KH(beispiel) = ziel, beispiel nicht in ungleich, beginnt mit praefix."""
+        if not isinstance(lo, dict) or 'beispiel' not in lo:
+            return
+        aid = a.get('id')
+        bsp = K.nur_buchstaben(str(lo['beispiel']))
+        ok, erg = self.rechne(datei, aid, ort + '.beispiel', lambda: K.kryptos_hash(bsp)['wert'])
+        if ok:
+            self.vergleiche(datei, aid, ort + '.beispiel (KH)', ia.get('ziel'), erg)
+        ungleich = [K.nur_buchstaben(str(x)) for x in ia.get('ungleich', []) or []]
+        self.vergleiche(datei, aid, ort + '.beispiel (≠ ungleich)', 'nicht in ungleich', 'in ungleich' if bsp in ungleich else 'nicht in ungleich')
+        praefix = K.nur_buchstaben(str(ia.get('praefix', '')))
+        self.vergleiche(datei, aid, ort + '.beispiel (praefix)', praefix, bsp[:len(praefix)])
+
     # ───────────── Blöcke ─────────────
 
     def quadrat(self, datei, aid, b, ort):
@@ -474,6 +489,8 @@ class Pruefung:
                     self.zuordnung(name, a, ia, lo, ort)
                 elif art == 'bits-rechnen':
                     self.bits_rechnen(name, a, ia, lo, ort)
+                elif art == 'hash-ziel':
+                    self.hash_ziel(name, a, ia, lo, ort)
                 elif art == 'gaps':
                     self.gaps(name, a, ia, lo, ort)
 

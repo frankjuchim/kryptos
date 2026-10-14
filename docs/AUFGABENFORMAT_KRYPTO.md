@@ -24,7 +24,7 @@ Inhalt: §1 Überblick · §2 Datei- und Welt-Felder · §3 Level-Felder · §4 
 | Aufgabe | `niveau` (optional, erbt vom Level; Pflicht bei Boss-Aufgaben), `kategorie` aus der Krypto-Liste (§4.2), Fallen P1–P10 der Kryptologie (§4.3), `pruefnachweis`, Archivfund-Aufgaben `W<n>-A-<nn>` (0 Punkte) |
 | Normalisierung | `norm: "krypto"` und `norm: "bits"` für `gaps`-Textfelder (§5) |
 | Blöcke | `alphabet`, `haeufigkeit`, `quadrat`, `bits`, `schaubild`, `matrix`, `werkzeug` (§7) |
-| Interaktionen | `chiffre`, `zuordnung`, `schaubild-ergaenzen`, `bits-rechnen` (§8) |
+| Interaktionen | `chiffre`, `zuordnung`, `schaubild-ergaenzen`, `bits-rechnen`, `hash-ziel` (§8) |
 | Prüfer | automatische **Fallen-Diagnose** (`diagnose` in der Prüfantwort, §9) |
 | Validator | Niveau-/Rollen-/Kür-Regeln, Kontraste der Weltfarben, **Neuberechnung jeder Lösung** von `chiffre`, `zuordnung`, `bits-rechnen` und der Blöcke `bits`/`quadrat`/`matrix` über `shared/krypto.js` (§11) |
 
@@ -733,6 +733,39 @@ Kettenzustände nur mit `richtung: ver`, genau eins von `block`/`text` (außer `
 Buchstaben A–Z. `frei`: keine Neuberechnung,
 `pruefnachweis` Pflicht. **Schrittprüfung:** nein. **Boss:** erlaubt, kein Feedback.
 
+### 8.5 `hash-ziel` – Nachricht zu vorgegebenem KRYPTOS-Hash (Plan M8 E126)
+
+Für Kollisionen und Urbilder des KRYPTOS-Hash (SPEC W5 §0a, Lab W5-L1-07, Generator `w5_kollision`): Die Antwort ist
+**frei** – jede Nachricht, die die Bedingungen erfüllt, ist richtig. Der Prüfer rechnet den Hash der Eingabe.
+
+**Schema**
+
+| Feld | Typ | Pflicht | Bedeutung |
+|---|---|---|---|
+| `kind` | `"hash-ziel"` | **ja** | |
+| `verfahren` | `"kryptosHash"` | **ja** | KRYPTOS-Hash h ← (3h + w) mod 29, A = 1 |
+| `ziel` | Ganzzahl 0–28 | **ja** | gesuchter Hashwert |
+| `ungleich` | Liste von Wörtern (a–z) | eins von beiden | Kollision: die Eingabe darf keines dieser Wörter sein (Ausgangsnachricht) |
+| `praefix` | Wort (a–z, 1–20) | eins von beiden | Urbild: die Eingabe beginnt mit diesem Anfang |
+
+**Lösung:** `{ "beispiel": "haffk" }` – eine Musterantwort (Lehrkraft-Vorschau, „Lösung zeigen“), die der Validator
+nachrechnet; sie ist nicht die einzige richtige Antwort.
+
+**Antwort Client → Server:** Text (`"haffk"`) oder `{ "text": "haffk" }`. **Prüfregeln:** `bereinige` → `nurBuchstaben`
+(Umlaute aufgelöst), höchstens 60 Buchstaben (roh höchstens 200 Zeichen), sonst 400; `istLeer`: keine Buchstaben.
+Richtig ⇔ mindestens ein Buchstabe, `kryptosHash(Eingabe) = ziel`, Eingabe nicht in `ungleich`, Eingabe beginnt mit
+`praefix`. Feedback `wert` = KH der Eingabe (verrät keine Lösung; der Boss-Dienst gibt kein Feedback weiter). Hinweise
+**ohne Fallen-Nummer** (`p: null`, keine Zählung): Eingabe ∈ `ungleich` → `ausgangsnachricht` „Das ist die
+Ausgangsnachricht – gesucht ist eine andere Nachricht mit demselben Hash.“; Anfang fehlt → `praefix` „Die Nachricht
+beginnt nicht mit dem vorgegebenen Anfang.“
+
+**Validator:** `verfahren` = `kryptosHash`, `ziel` 0–28, `ungleich` (nicht leere Liste aus a–z) oder `praefix` (a–z),
+keine fremden Felder, `beispiel` aus a–z erfüllt alle Bedingungen (**Neuberechnung**). `seed_pruefen.py` rechnet
+dasselbe mit dem Zwilling nach. **Musterantwort:** `beispiel`. **Schrittprüfung:** nein. **Boss:** erlaubt, kein Feedback.
+
+**Darstellung:** Hinweiszeile „Ziel: KRYPTOS-Hash 4“ (bei `praefix` mit „Anfang „ab““), ein Eingabefeld; nach dem
+Prüfen „Dein Text hat den KRYPTOS-Hash 26.“
+
 ---
 
 ## 9. Fallen-Diagnose (Prüfer)
@@ -860,7 +893,7 @@ der Lösung nach dem Lösen/Aufdecken, der Lehrkraft-Vorschau, dem Gastmodus und
 
 Ausgabe und Optionen wie im Kern (`--json`, `--ohne-hinweise`, Exit-Code 1 bei Fehlern). Zusätzlich vergleicht
 `werkzeuge/krypto/seed_pruefen.py` **unabhängig in Python** jede Lösung von `chiffre`, `zuordnung`, `bits-rechnen`,
-`quadrat`, `bits` (auch mit einer Lücke) und `matrix` sowie alle `frei`- und `gaps`-Aufgaben mit `pruefnachweis` (Design
+`hash-ziel` (Musterantwort), `quadrat`, `bits` (auch mit einer Lücke) und `matrix` sowie alle `frei`- und `gaps`-Aufgaben mit `pruefnachweis` (Design
 §13.1, doppelte Prüfung); `--pruefwerte <ordner>` wählt die Prüfwert-Dateien (Fixture: `test/fixtures/pruefwerte`).
 Mehrfeldrige `gaps` belegt eine **Prüfwert-Gruppe** (Einträge mit `aufgabe` + `gapsFeld` bzw. `gapsFelder`, §4.1); jeder
 Eintrag bleibt ein normaler Prüfwert, den `pruefwerte.py` nachrechnet. `chiffre` mit `ausgabe` `paare`/`hex` rechnet
@@ -907,7 +940,7 @@ jeder Block mit Test). Sie muss enthalten:
 | Welt | alle Welt-Felder (§2) inkl. `archivfund` (`W9-A-01`, `chiffre`) und `kapitel` |
 | Level | `W9-L1` `kern`/`kryptografie` mit `werkzeug` und `akte`; `W9-L2` `kern`/`kryptoanalyse`; `W9-L3` **`eA`**; `W9-L4` **`kuer`** mit `kuer: true`; ein Level mit einer `ergaenzung`-Aufgabe und einer `eA`-Aufgabe in einem `kern`-Level |
 | Blöcke | jeder Kern-Block, der in Kryptos genutzt wird (`text`, `hinweis`, `code`, `struktogramm`, `tabelle`, `reihung`, `raster`), dazu **jeder neue Block** mit allen Varianten: `alphabet` (basis 1 und 0, mit Lücken), `haeufigkeit` (`text`/`werte`, mit Referenz), `quadrat` (`vigenere`+`ausschnitt`, `playfair`, `polybios` 6×6 ADFGVX, `frei` mit Lücke), `bits` (mit `pruefe: xor` und mit Lücke), `schaubild` (4 Akteure inkl. Angreifer und CA), `matrix` (Spaltentransposition mit `reihenfolge: true` und unvollständiger Zeile; Fleißner mit `zeige: stellungen`), `werkzeug` |
-| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`, Knack-Aufgabe `W9-L2-10` im Kryptoanalyse-Level mit automatisch verdecktem Schlüssel), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `bits-rechnen` (`xor`, `ascii` beide Richtungen, `kryptos16`, `kryptos16` mit `schritt: nach-sbox` und `text` – `W9-L3-05` – und `schritt: sbox-inv` – `W9-L3-06` –, `lawine`) |
+| Interaktionen | jede Kern-Interaktion, die Kryptos nutzt (`gaps` mit `norm: krypto` und `norm: bits`, `choice`, `order`, `lines`, `match`, `grid`, `array:klick`, mehrteilig, Bug-Hunt gestuft) und **jede neue** in allen Modi: `chiffre` (caesar `ent` mit Schrittprüfung, vigenere `ver` mit Hilfszeilen, affin mit `ausgabe: zahlen` basis 1, playfair mit `alternativen`, spaltentransposition, baukasten zweistufig, `frei` mit `fehlmuster` und `pruefnachweis`, Knack-Aufgabe `W9-L2-10` im Kryptoanalyse-Level mit automatisch verdecktem Schlüssel), `zuordnung` (`klartext`/`zuordnung`, `anteil`/`buchstaben`, mit `vorgabe`), `schaubild-ergaenzen` (`schluessel`, `auswahl`, `text`), `hash-ziel` (`W9-L6-07`, Kollision), `bits-rechnen` (`xor`, `ascii` beide Richtungen, `kryptos16`, `kryptos16` mit `schritt: nach-sbox` und `text` – `W9-L3-05` – und `schritt: sbox-inv` – `W9-L3-06` –, `lawine`) |
 | Diagnose | je Zeile der Tabellen §9.2–§9.5 eine Aufgabe, an der `test/pruefer.test.js` die Fehlantwort einspeist und die P-Nummer erwartet (Antworten in `test/fixtures/antworten.js`: richtige, falsche, Fehlmuster je Aufgabe) |
 | Boss | `W9-BOSS`, Pool 6 Aufgaben (3 `kern`, 3 `eA`, davon 3 `fremde-chiffre`), `anzahl` 3, `mix` 1/1/1, `dauerMin` 25 – damit sind gA- und eA-Ziehung testbar |
 | Negativ-Fixtures | `test/fixtures/fehler/*.json`: je Validator-Fehler aus §11 eine kleine **Änderungsdatei** `{ "beschreibung", "erwartet" (RegExp-Quelle), "alsWelt"?, "aenderungen": [{ "pfad", "wert" \| "loeschen" \| "anhaengen" }] }`, die die Fixture verändert (falsche Neuberechnung, Kontrast, Boss mit Werkzeug, kuer-Inkonsistenz …); `pfad` mit Punkten, `liste#ID` wählt nach `id`, Zahl = Index; `alsWelt` schreibt `W9-`/`W9·` auf die Welt um (Pflichtfelder der Inhaltswelten 0–6). `test/validator.test.js` prüft je Datei den erwarteten Fehler |
@@ -934,6 +967,7 @@ lokal (Kern-Mechanik).
 | zuordnung | `{ "zuordnung": { "T": "E", … } }` | `anteil`, ggf. `buchstaben`, `diagnose` |
 | schaubild-ergaenzen | `{ "s1": { "art": "privat", "inhaber": "A" }, "l2": "Hashwert" }` | `felder`, `diagnose` |
 | bits-rechnen | `"0010 0001"` · `{ "bits": "…" }` · `"K"` · `[0, 3, 9]` | `bits: [bool…]`, `diagnose` |
+| hash-ziel | `"haffk"` · `{ "text": "haffk" }` | `wert` (KH der Eingabe, in `teile[i]`), `diagnose` (Hinweise ohne P-Nummer) |
 
 Mehrteilige Aufgaben: Array der Teilantworten (Kern). Bei mehrteiligen Aufgaben stehen `zeichen`/`bits`/`anteil`/
 `diagnose` in `teile[i]`; bei einteiligen zusätzlich auf oberster Ebene (wie `felder`/`elemente` im Kern).

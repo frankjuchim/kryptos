@@ -1126,7 +1126,57 @@ const KRI = (() => {
     return self;
   }
 
+  /* ================= hash-ziel (Delta §8.5, Plan M8 E126) ================= */
+
+  /** Nachricht zu vorgegebenem KRYPTOS-Hash: Eingabefeld; Rückmeldung zeigt KH der eigenen Eingabe (vom Server). */
+  function teilHashZiel(ia, kontext) {
+    let gesperrt = false;
+    const box = h('div', { class: 'hashziel' });
+    const ziel = Number.isInteger(ia.ziel) ? ia.ziel : '?';
+    const praefix = typeof ia.praefix === 'string' && ia.praefix ? ia.praefix : null;
+    box.appendChild(h('p', { class: 'bits-hinweis' }, `Ziel: KRYPTOS-Hash ${ziel}`, praefix ? `, Anfang „${praefix}“` : ''));
+    const feld = h('input', { class: 'hashziel-eingabe', type: 'text', maxlength: '60', 'aria-label': 'Deine Nachricht (nur Buchstaben a–z)', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'off', spellcheck: 'false' });
+    const wert = h('p', { class: 'hashziel-wert', 'aria-live': 'polite' });
+    feld.addEventListener('input', () => {
+      if (gesperrt) return;
+      feld.classList.remove('ok', 'falsch', 'loesung');
+      feld.removeAttribute('aria-invalid');
+      wert.textContent = '';
+      kontext.geaendert();
+    });
+    box.appendChild(h('label', { class: 'hashziel-feld' }, h('span', { class: 'bits-label' }, 'Nachricht'), feld));
+    box.appendChild(wert);
+    return {
+      kind: 'hash-ziel',
+      ui: box,
+      antwort: () => feld.value,
+      leer: () => Krypto.nurBuchstaben(String(feld.value || '')) === '',
+      setze(a) {
+        if (a === null || a === undefined) return;
+        feld.value = String(istObjekt(a) ? a.text ?? '' : a);
+      },
+      feedback(r) {
+        if (!r) return;
+        feld.classList.toggle('ok', !!r.ok);
+        feld.classList.toggle('falsch', !r.ok);
+        feld.setAttribute('aria-invalid', r.ok ? 'false' : 'true');
+        wert.textContent = Number.isInteger(r.wert) ? `Dein Text hat den KRYPTOS-Hash ${r.wert}.` : '';
+      },
+      loesung(lo, muster) {
+        feld.value = istObjekt(lo) && typeof lo.beispiel === 'string' ? lo.beispiel : String(muster ?? '');
+        feld.classList.remove('ok', 'falsch');
+        feld.classList.add('loesung');
+        wert.textContent = '';
+      },
+      sperren(an) {
+        gesperrt = !!an;
+        feld.disabled = gesperrt;
+      }
+    };
+  }
+
   AQI.registriere('chiffre', teilChiffre);
+  AQI.registriere('hash-ziel', teilHashZiel);
   AQI.registriere('zuordnung', teilZuordnung);
   AQI.registriere('schaubild-ergaenzen', teilSchaubild);
   AQI.registriere('bits-rechnen', teilBits);

@@ -399,11 +399,12 @@ Fixture + `antworten.js` (`W9-…` mit `ziel: 4`, `ungleich: ["hafen"]` – **ei
 `{ wert }` nur außerhalb des Bosses; `muster` = `beispiel`; Validator: `ziel` 0–28, `beispiel` erfüllt alle Bedingungen
 (Neuberechnung), `ungleich`/`praefix` nur a–z; Schrittprüfung nein.
 
-- [ ] **Step 1: Failing tests** – `kryptosHash('haffk') = 4` → richtig; `'hafen'` (in `ungleich`) → falsch; `'eis'` → richtig;
+- [x] **Step 1: Failing tests** – `kryptosHash('haffk') = 4` → richtig; `'hafen'` (in `ungleich`) → falsch; `'eis'` → richtig;
   `'zoo'` → richtig; `'tee'` → falsch mit `wert: 26`; Präfix-Variante `praefix: 'ab', ziel: 20` → `'abe'` richtig, `'t'` falsch;
   Validator: `beispiel` mit falschem Hash → Fehler; Boss-Antwort ohne Feedback.
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Version; `npm test`.
-- [ ] **Step 5: Commit** `git commit -m "Interaktion hash-ziel: Nachricht zu vorgegebenem KRYPTOS-Hash (Kollision, Urbild)"`.
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; Version; `npm test`.
+- [x] **Step 5: Commit** `git commit -m "Interaktion hash-ziel: Nachricht zu vorgegebenem KRYPTOS-Hash (Kollision, Urbild)"`.
+- [x] **Umsetzungsnotiz:** Fixture `W9-L6-07` mit eigenem Wort (KH(„eis“) = 4, `ungleich: ["eis"]`, Beispiel *zoo*); die Plan-Werte (hafen/haffk, Präfix ab → abe) stehen als Inline-Aufgaben in `test/pruefer.test.js`. Hinweise ohne P-Nummer als `diagnose` mit `p: null` (`ausgangsnachricht`, zusätzlich `praefix`), keine Zählung. `wert` steht in `teile[0]` (die Dienste geben `teile` weiter) – keine Kern-Änderung an `FELDER_OBEN` nötig; der Boss-Dienst gibt ohnehin nur ok/punkte weiter. Validator verlangt `ungleich` oder `praefix`. Im Browser (360/1280 px) geprüft; Rahmen ok/falsch mit höherer Spezifität (basis.css setzt Eingabefelder mit `input:not(…)`).
 
 ### Task 168: gaps-Feld `toleranz` (E139, K43)
 

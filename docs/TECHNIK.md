@@ -273,6 +273,9 @@ einteiligen Aufgaben stehen `felder`, `elemente`, `zeichen`, `bits`, `anteil`, `
 Ergebnis. Für **Kern**-Arten liefert `format.registriereDiagnose(art, fn(ia, lo, antwort, ergebnis) → Diagnose[])` eine
 Zusatzdiagnose (z. B. `gaps`, Delta §9.6).
 Blöcke (Server): `registriereBlock('quadrat', { texte, validiere(b, fe, w) })`.
+`hash-ziel` (Plan M8 E126, Delta §8.5): `interaktionen/hashziel.js` – Kollision (`ungleich`) bzw. Urbild (`praefix`) zum
+KRYPTOS-Hash; richtig ⇔ KH(Eingabe) = `ziel`; Prüfantwort mit `wert` (KH der Eingabe) in `teile[i]`, Hinweise ohne
+P-Nummer (`p: null`); Client `teilHashZiel` in `krypto/interaktionen.js`.
 `bits-rechnen` (Plan M8 E124, E125): `kryptos16` mit `schritt` (Kettenzustand `nach-xor`/`nach-sbox`/`nach-transposition`
 der Runde `runden` bzw. Einzelschritt `sbox`/`sbox-inv`/`transposition`/`rundenschluessel`) und `text` (2 Zeichen, ASCII)
 statt `block`; die Neuberechnung steht in `interaktionen/bits.js` (`erwartet`), die Diagnose in `diagnose.js`
