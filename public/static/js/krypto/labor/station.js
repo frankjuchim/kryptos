@@ -126,7 +126,7 @@ const KRStation = (() => {
   }
 
   /**
-   * Zwei Nachrichtenbänder (output.labor-ausgabe): gruppe[i] = true → GROSS in Fünfergruppen (Geheimtext, Klasse „geheim“),
+   * Zwei Nachrichtenbänder (output.station-band, nicht .labor-ausgabe – die bleibt dem gerechneten Ergebnis): gruppe[i] = true → GROSS in Fünfergruppen (Geheimtext, Klasse „geheim“),
    * sonst klein (Klartext, Klasse „klar“). Knöpfe ⌫ Zurück, ✕ Neue Nachricht, Kopieren (unteres Band, ohne Leerzeichen).
    * → { element, push(ein, aus), pop(), leeren(), setze(eintraege), text(i), letztes(i), eintraege, beschrifte(oben, unten, gruppe) }
    */
@@ -137,7 +137,7 @@ const KRStation = (() => {
     const ausgaben = [0, 1].map((i) => {
       const id = KRLaborBau.neueId('station-band');
       titel[i].setAttribute('id', `${id}-t`);
-      return h('output', { class: `labor-ausgabe station-band ${art[i] ? 'geheim' : 'klar'}`, id, 'aria-labelledby': `${id}-t`, 'aria-live': 'off' });
+      return h('output', { class: `station-band ${art[i] ? 'geheim' : 'klar'}`, id, 'aria-labelledby': `${id}-t`, 'aria-live': 'off' });
     });
     const ansage = KRLaborBau.ansager();
     const zurueck = h('button', { type: 'button', class: 'knopf knopf-leise station-zurueck' }, '⌫ Zurück');

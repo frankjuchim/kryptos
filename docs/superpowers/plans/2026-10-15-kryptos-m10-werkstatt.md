@@ -571,7 +571,7 @@ stempeln, entlang lesen; „Mehr ausprobieren“: Raster (bestehende Tabelle `ta
 Breite k 2 … 12 per Ziehen am Rand (`KRStation.greifen`) oder Zahlregler, Stempel, „Pflügen“-Animation entlang
 `Krypto.pfluegenReihenfolge` (Pfeilspur), Ausgabe `Krypto.pfluegen`, „Alle Zeilenlängen ausprobieren“ über `KRLabor.alleSchluessel`.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Skytale: Stabwahl, Stempeln, Abwickeln = Krypto.skytale', () => {
     const w = oeffne('skytale');
@@ -579,7 +579,7 @@ Breite k 2 … 12 per Ziehen am Rand (`KRStation.greifen`) oder Zahlregler, Stem
     for (const b of 'feuerholz') w.k.klick(w.k.eins(w.flaeche, `button.station-stempel[data-buchstabe="${b.toUpperCase()}"]`));
     w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
     assert.equal(w.zustand().ausgabe, K.skytale('feuerholz', 4));
-    assert.equal(w.k.alle(w.flaeche, '.stab-streifen .stab-runde').length, 4);
+    assert.equal(w.k.alle(w.flaeche, '.stab-streifen .stab-runde').length, 3); // korrigiert (Task 227): eine Runde je Windung = ⌈9/4⌉
   });
   test('Skytale: Raster-Tabelle, Hinweis Länge, alle Stäbe bleiben (bisherige Tests unverändert)', () => { /* bestehende Tests */ });
   test('Pflügen: Breite, Reihenfolge, Ausgabe', () => {
@@ -591,7 +591,11 @@ Breite k 2 … 12 per Ziehen am Rand (`KRStation.greifen`) oder Zahlregler, Stem
   });
   test('Skytale/Pflügen: ruhig, nachspiel_sperrt_handgriffe', () => { /* wie Task 226 */ });
   ```
-- [ ] **Step 2–4** wie gehabt (FAIL → Port → grün, Browser-Sicht). **Step 5: Commit** `M10: Skytale nach der Krypto-Werkstatt (Stab, Stempel, Abwickeln) und Reiter Pflügen als Zusatz (Task 227)`
+- [x] **Step 2–4** wie gehabt (FAIL → Port → grün, Browser-Sicht). **Step 5: Commit** `M10: Skytale nach der Krypto-Werkstatt (Stab, Stempel, Abwickeln) und Reiter Pflügen als Zusatz (Task 227)`
+- Umsetzung: Plan-Test korrigiert – „Runde 1 …“ zählt die Windungen (Spalten des Rasters), bei 9 Buchstaben und u = 4 also 3.
+  Ohne Voreinstellung steht das Beispiel auf dem Stab; der erste Stempel beginnt eine eigene Nachricht (der M6-Test zur
+  Nachspiel-Ansage erwartet einen Text). Stab bleibt während einer Nachricht wählbar (M6-Tests), anders als in der Werkstatt.
+  Textfeld, Ergebnis und Nachspiel bleiben sichtbar unter der Station (e2e Szenario 4 füllt das Textfeld).
 
 ### Task 228: Skytale & Gitter II – Karton-Schablone, Größe 6 × 6 (E182)
 

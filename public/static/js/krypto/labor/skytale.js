@@ -1,4 +1,6 @@
-/* Kryptos – Labor-Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112): Skytale (Stab, Raster, alle Stäbe),
+/* Kryptos – Labor-Werkzeug „Skytale & Gitter“ (W0 §9.1, Plan M6 Task 112, Plan M10 Tasks 227/228)
+   Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), stationen/skytale.html, stationen/pfluegen.html @59004d9 – docs/FREMDCODE.md
+   M10: Holzstab mit Band (Stabwahl, Stempel, Abwickeln, Aufwickeln und Lesen) und Reiter „Pflügen · Zusatz“ nach der Werkstatt;: Skytale (Stab, Raster, alle Stäbe),
    Gartenzaun (Zickzack, Schienen), Fleißner-Schablone (Löcher stanzen, Drehgruppen, drehen), ab Welt 6 der Ring
    (W6 §9.1, Task 113: Lesereihenfolge, nie gelesene Felder, keine Schlüsselsuche). Stab, Zaun und Schablone
    sind die Objekte; darunter steht das Raster als echte Tabelle. Rechnet nur über Krypto.*; speichert nichts. */
@@ -6,8 +8,9 @@
 (() => {
   const { h, s } = AQ;
   const B = KRLaborBau;
+  const S = KRStation;
   const BEISPIEL = { text: 'wachwechsel am suedturm', schablone: [[1, 1], [1, 3], [2, 4], [3, 2]] };
-  const REITER_TITEL = { skytale: 'Skytale', gartenzaun: 'Gartenzaun', fleissner: 'Fleißner-Schablone', ring: 'Ring' };
+  const REITER_TITEL = { skytale: 'Skytale', gartenzaun: 'Gartenzaun', fleissner: 'Fleißner-Schablone', pfluegen: 'Pflügen · Zusatz', ring: 'Ring' };
   const SYMBOL = ['●', '▲', '■', '◆'];
   const GROESSE = 4;
   const MAX_TEXT = 120;
@@ -39,6 +42,7 @@
     const z = {
       richtung: v.richtung === 'ent' ? 'ent' : 'ver',
       text: typeof v.text === 'string' ? v.text.slice(0, MAX_TEXT) : BEISPIEL.text,
+      k: ganz(v.k, 2, 12, 5),
       umfang: ganz(v.umfang, 2, 10, 3),
       zeilen: ganz(v.zeilen, 2, 8, 3),
       schablone: lochListe(v.schablone) || BEISPIEL.schablone.map((l) => l.slice()),
@@ -48,6 +52,8 @@
       ausgabe: ''
     };
     if (z.t > z.block - 1) z.t = 3;
+    // M10 Task 227: Ohne Voreinstellung steht das Beispiel da; der erste Stempel beginnt eine eigene Nachricht
+    let beispiel = typeof v.text !== 'string';
     let teil = null; // { schliesse(), zustand() } des aktiven Reiters
     const timer = new Set();
 
@@ -59,7 +65,7 @@
     /** Eingabe + Richtung + normalisierte Anzeige; beiAenderung() nach jeder Änderung. */
     function kopf(beiAenderung) {
       const norm = h('p', { class: 'labor-normal text-2' });
-      const feld = B.textfeld({ beschriftung: 'Text (bis 120 Zeichen)', max: MAX_TEXT, wert: z.text, art: z.richtung === 'ver' ? 'klartext' : 'geheimtext', beiEingabe: (t) => { z.text = t; zeigeNorm(); beiAenderung(); } });
+      const feld = B.textfeld({ beschriftung: 'Text (bis 120 Zeichen)', max: MAX_TEXT, wert: z.text, art: z.richtung === 'ver' ? 'klartext' : 'geheimtext', beiEingabe: (t) => { z.text = t; beispiel = false; zeigeNorm(); beiAenderung(); } });
       const ri = B.richtung({ wert: z.richtung, beiWechsel: (x) => { z.richtung = x; zeigeNorm(); beiAenderung(); } });
       function zeigeNorm() {
         const n = Krypto.nurBuchstaben(z.text);
@@ -68,6 +74,10 @@
       zeigeNorm();
       return {
         element: h('div', { class: 'labor-kopf' }, feld.element, norm, ri.element),
+        setze(t) {
+          feld.setze(t);
+          zeigeNorm();
+        },
         sperre(an) {
           feld.sperre(an);
           ri.sperre(an);
@@ -94,76 +104,372 @@
       aus.setze(!wert ? '' : z.richtung === 'ver' ? Krypto.gruppieren(wert) : Krypto.klein(wert));
     }
 
-    /* ---------- Skytale ---------- */
+    /* ---------- Skytale: Holzstab mit Band nach der Krypto-Werkstatt (Plan M10 Task 227) ---------- */
+
+    // Geometrie des Stabs (Seitenansicht, viewBox-Breite 1000; nach stationen/skytale.html) – nur Darstellung
+    const STAB = { breite: 1000, cy: 192, winkel: (58 * Math.PI) / 180, links: 62, rechts: 950, rx: 26, schrift: 22, maxWindungen: 12 };
+    STAB.anfang = STAB.links + 78;
+    const stabRadius = (u) => 78 + 7 * u;
+    const mische = (a, b, t) => a + (b - a) * t;
+    const bogen = (a, m, b, t) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * m + t * t * b;
+    /** Lage eines Buchstabens (x, y, Maßstab sx/sy, Deckkraft o) als transform/opacity setzen */
+    function lege(el, p) {
+      el.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) scale(${p.sx.toFixed(3)} ${p.sy.toFixed(3)})`);
+      el.setAttribute('opacity', p.o.toFixed(2));
+    }
+    function zwischen(a, b, t) {
+      const m = { x: a.x, y: Math.min(a.y, b.y) - 20 };
+      return { x: bogen(a.x, m.x, b.x, t), y: bogen(a.y, m.y, b.y, t), sx: mische(a.sx, b.sx, t), sy: mische(a.sy, b.sy, t), o: mische(a.o, b.o, t) };
+    }
 
     function baueSkytale() {
       let ns = null;
       let alle = null;
-      const k = kopf(zeichne);
-      const umfang = B.zahl({ beschriftung: 'Umfang u (Zeilen)', min: 2, max: 10, wert: z.umfang, beiWechsel: (u) => { z.umfang = u; zeichne(); } });
+      let lauf = 0; // laufende Animation (wird bei jeder Änderung neu gezählt)
+      // Phase der Nachricht am Objekt: ver 'stab' (auf dem Stab) | 'band' (abgewickelt); ent 'lose' | 'gelesen'
+      let phase = z.richtung === 'ver' ? 'stab' : 'lose';
+      let gesperrt = false;
+      const anleitung = S.anleitung(null, []);
+      const erklaerung = S.erklaerung(null);
+      const k = kopf(() => {
+        phase = z.richtung === 'ver' ? 'stab' : 'lose';
+        zeichne();
+      });
+      const umfang = B.zahl({ beschriftung: 'Umfang u (Zeilen)', min: 2, max: 10, wert: z.umfang, beiWechsel: (u) => setzeU(u) });
       const duenner = h('button', { type: 'button', class: 'knopf knopf-leise skytale-stab-minus' }, '◀ Stab dünner');
       const dicker = h('button', { type: 'button', class: 'knopf knopf-leise skytale-stab-plus' }, 'Stab dicker ▶');
-      duenner.addEventListener('click', () => { umfang.setze(z.umfang - 1); z.umfang = umfang.wert(); zeichne(); });
-      dicker.addEventListener('click', () => { umfang.setze(z.umfang + 1); z.umfang = umfang.wert(); zeichne(); });
+      duenner.addEventListener('click', () => setzeU(z.umfang - 1));
+      dicker.addEventListener('click', () => setzeU(z.umfang + 1));
+      // Stabwahl als Reihe von Stab-Querschnitten (HTML-Knöpfe, E197)
+      const wahlKnoepfe = [2, 3, 4, 5, 6, 7, 8, 9, 10].map((u) => {
+        const r = 6 + 1.6 * u;
+        const b = h(
+          'button',
+          { type: 'button', class: 'stab-wahl-knopf', 'data-u': String(u), 'aria-label': `Stab mit Umfang ${u}`, 'aria-pressed': 'false' },
+          s('svg', { class: 'stab-querschnitt', viewBox: '0 0 44 44', 'aria-hidden': 'true', focusable: 'false' }, s('circle', { class: 'stab-stirn', cx: 22, cy: 22, r }), s('circle', { class: 'stab-jahresring', cx: 22, cy: 22, r: r * 0.5 })),
+          h('span', { class: 'stab-wahl-zahl' }, String(u))
+        );
+        b.addEventListener('click', () => setzeU(u));
+        return b;
+      });
+      const wahl = h('div', { class: 'stab-wahl', role: 'group', 'aria-label': 'Stab wählen (Umfang u = Buchstaben pro Runde)' }, h('span', { class: 'stab-wahl-titel' }, 'Stab wählen:'), wahlKnoepfe);
+      const svg = s('svg', { class: 'stab-objekt', role: 'img', viewBox: '0 0 1000 440' });
+      const stempelTitel = h('span', { class: 'stab-feldtitel' }, 'Stempel: auf den Stab');
+      const stempel = S.stempel(null, (b, knopf) => stempeln(b, knopf), { beschriftung: 'Stempelkasten' });
+      const baender = S.baender({ beiAenderung: () => {} });
+      const abwickeln = h('button', { type: 'button', class: 'knopf knopf-zweit stab-abwickeln' }, 'Band abwickeln');
+      abwickeln.addEventListener('click', () => (z.richtung === 'ver' ? wickleAb() : wickleAufUndLies()));
       const rasterOrt = h('div', { class: 'skytale-raster-ort' });
       const meldung = h('div', { class: 'skytale-meldung' });
       const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
       const pruef = h('div', { class: 'skytale-pruefung' });
       const info = h('p', { class: 'labor-hinweis hinweis-info skytale-info', role: 'note' });
       const nsOrt = h('div');
-      const stabOrt = h('div', { class: 'skytale-stab-ort' });
       const alleOrt = h('div');
-      const stabDetails = B.details('Stab-Ansicht', stabOrt, { klasse: 'stab-ansicht' });
-      const alleDetails = B.details('Alle Stäbe ausprobieren', [h('p', { class: 'text-2' }, 'Der abgefangene Geheimtext wird mit u = 2 … 10 entschlüsselt. Welche Zeile ist lesbar? Das entscheidest du.'), alleOrt], { klasse: 'alle-staebe' });
-      r.flaeche.append(k.element, h('div', { class: 'labor-steuer' }, umfang.element, h('div', { class: 'skytale-stab-knoepfe' }, duenner, dicker)), rasterOrt, meldung, aus.element, pruef, info, nsOrt, stabDetails, alleDetails);
+      const alleDetails = B.details('Alle Stäbe ausprobieren', [h('p', { class: 'text-2' }, 'Eve wickelt den abgefangenen Geheimtext um Stäbe mit u = 2 … 10. Welche Zeile ist lesbar? Das entscheidest du.'), alleOrt], { klasse: 'alle-staebe' });
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Raster, alle Stäbe', h('p', { class: 'text-2' }, 'Auf Papier: Tabelle mit u Zeilen – zeilenweise schreiben, spaltenweise lesen. Jede Spalte ist eine Runde um den Stab.'), rasterOrt, alleDetails);
+      const hintergrund = S.hintergrund(null, [
+        { titel: 'Schlüsselraum', zeilen: [['Schlüssel', 'Umfang u (Buchstaben pro Runde)'], ['Auf Papier', 'Tabelle mit u Zeilen, spaltenweise lesen'], ['Möglichkeiten', 'sehr wenige: bei n Buchstaben höchstens n − 2 Umfänge'], ['Art', 'Transposition']] },
+        { titel: 'Warum unsicher?', text: 'Die Buchstaben bleiben gleich, nur ihre Plätze ändern sich. Eve probiert einfach verschieden dicke Stäbe aus.' },
+        { titel: 'Geschichte', text: 'Schon die Spartaner sollen so Befehle verschickt haben: Ein Lederband wurde um einen Stab gewickelt und beschrieben.' }
+      ]);
+      const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, wahl, h('div', { class: 'stab-bild' }, svg), erklaerung.element);
+      const bedienung = h(
+        'div',
+        { class: 'stab-bedienung' },
+        stempelTitel,
+        stempel.element,
+        baender.element,
+        h('div', { class: 'knopf-reihe' }, abwickeln)
+      );
+      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, h('div', { class: 'labor-steuer' }, umfang.element, h('div', { class: 'skytale-stab-knoepfe' }, duenner, dicker)), meldung, aus.element, pruef, info, nsOrt);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      KRStation.herkunft(r.flaeche);
+
+      function setzeU(u) {
+        if (gesperrt) return;
+        const neu = Math.max(2, Math.min(10, u));
+        umfang.setze(neu);
+        if (neu === z.umfang) return;
+        z.umfang = neu;
+        phase = z.richtung === 'ver' ? 'stab' : 'lose';
+        zeichne();
+        erklaerung.sage('Stab gewählt', `Um diesen Stab passen ${neu} Buchstaben pro Runde.`);
+      }
+
+      function stempeln(b) {
+        if (gesperrt) return;
+        if (Krypto.nurBuchstaben(z.text).length >= MAX_TEXT) return;
+        const neu = phase === 'band' || phase === 'gelesen' || beispiel;
+        beispiel = false;
+        if (neu) z.text = '';
+        z.text = `${z.text}${z.richtung === 'ver' ? Krypto.klein(b) : b}`;
+        phase = z.richtung === 'ver' ? 'stab' : 'lose';
+        k.setze(z.text);
+        zeichne();
+        const n = Krypto.nurBuchstaben(z.text).length;
+        const u = z.umfang;
+        if (z.richtung === 'ver') erklaerung.sage(`Buchstabe ${n}`, 'Jeder Buchstabe landet auf einer anderen Runde. Das leuchtende Feld kommt als Nächstes.');
+        else erklaerung.sage(`${n} Buchstaben`, Krypto.mod(n, u) ? `Für volle Runden fehlen noch ${u - Krypto.mod(n, u)}.` : `Das ergibt ${n / u} volle Runden. Stempel weiter oder wickle auf.`);
+      }
 
       function sperre(an) {
+        gesperrt = an;
         k.sperre(an);
         umfang.sperre(an);
         duenner.disabled = an || z.umfang <= 2;
         dicker.disabled = an || z.umfang >= 10;
+        stempel.setze(!an);
+        abwickeln.disabled = an;
+        for (const b of wahlKnoepfe) b.disabled = an;
+        S.sperre(r.flaeche, an);
       }
 
-      function zeichne() {
-        if (ns) ns.schliesse();
-        if (alle) alle.schliesse();
-        ns = null;
-        alle = null;
-        for (const el of [rasterOrt, meldung, pruef, nsOrt, alleOrt]) AQ.clear(el);
-        sperre(false);
+      /* ----- Stab zeichnen ----- */
+      let bild = null; // { buchstaben: [{ el, stab, streifen }], windungen: [g], runden: [g] }
+      function zeichneStab(sichtbarBis = null) {
+        lauf += 1;
+        AQ.clear(svg);
         const u = z.umfang;
-        const ein = Krypto.nurBuchstaben(z.text);
         const ver = z.richtung === 'ver';
-        const erg = versuche(() => Krypto.skytale(z.text, u, z.richtung));
-        let raster = null;
-        if (erg.fehler) {
-          setzeAusgabe(aus, '');
-          const passt = !ver && ein.length > 0 && /Vielfaches/.test(erg.fehler);
-          meldung.appendChild(B.hinweis('warnung', passt ? `Länge ${ein.length} passt nicht zu u = ${u} – ${erg.fehler}` : erg.fehler));
-        } else if (ein.length) {
-          setzeAusgabe(aus, erg.wert);
-          raster = Krypto.skytaleRaster(ver ? z.text : erg.wert, u, { fuellzeichen: ver ? 'X' : null });
-        } else setzeAusgabe(aus, '');
-        const spalten = raster && raster.length ? raster[0].length : 0;
-        const gesamt = raster ? raster.length * spalten : 0;
-        info.textContent = `Entschlüsseln mit u entspricht Verschlüsseln mit s = n : u.${raster ? ` Hier: s = ${gesamt} : ${u} = ${spalten}.` : ''}`;
-        const zellen = [];
-        if (raster) {
-          rasterOrt.appendChild(rasterTabelle(raster, ein.length, ver, zellen));
-          pruef.appendChild(pruefZeile(ein, Krypto.nurBuchstaben(erg.wert)));
-          ns = KRLabor.nachspiel(nsOrt, { titel: ver ? 'Schreiben und Lesen' : 'Geheimtext einschreiben und lesen', start: -1, schritte: skytaleSchritte(raster, ver), zeige: (st) => zeigeSchritt(zellen, st.daten), beiLauf: sperre });
+        const roh = Krypto.nurBuchstaben(z.text);
+        // ver: auf dem Stab bis zum Abwickeln (Zeilenlänge mindestens 4 wie in der Werkstatt), danach aufgefüllt
+        const fertig = ver ? phase === 'band' : phase === 'gelesen';
+        let zeichen = roh;
+        let fuellAb = roh.length;
+        if (ver && fertig) {
+          const r2 = versuche(() => Krypto.skytaleRaster(roh, u));
+          if (r2.wert) zeichen = r2.wert.join('');
         }
-        stab(raster, erg.wert);
-        // alle Stäbe: abgefangener Geheimtext (Entschlüsseln: Eingabe, Verschlüsseln: eigene Ausgabe)
-        const geheim = ver ? (erg.wert || '') : ein;
-        if (geheim) {
-          alle = KRLabor.alleSchluessel(alleOrt, {
-            titel: 'Alle Stäbe u = 2 … 10',
-            schluessel: [2, 3, 4, 5, 6, 7, 8, 9, 10],
-            beschriftung: (x) => `u = ${x}`,
-            probiere: (x) => Krypto.skytale(geheim, x, 'ent', { fuellzeichen: null }),
-            zeichen: 20,
-            eingabe: geheim
+        const n = zeichen.length;
+        const L = ver ? (fertig ? Math.max(1, Math.ceil(n / u)) : Math.max(4, Math.ceil(roh.length / u))) : Math.max(1, Math.ceil(n / u));
+        const W = Math.min(STAB.maxWindungen, Math.max(4, L));
+        const BW = (STAB.rechts - 34 - STAB.anfang) / (W + 1.3);
+        const R = stabRadius(u);
+        const { cy, winkel: A } = STAB;
+        const defs = s('defs');
+        const holzId = B.neueId('stab-holz');
+        const stirnId = B.neueId('stab-stirn');
+        const schattenId = B.neueId('stab-schatten');
+        const schattierungId = B.neueId('stab-band-schatten');
+        defs.append(
+          s('linearGradient', { id: holzId, x1: 0, y1: 0, x2: 0, y2: 1 }, ...[[0, 'dunkel'], [0.12, 'tief'], [0.3, 'mitte'], [0.4, 'hell'], [0.55, 'mitte'], [0.82, 'tief'], [1, 'dunkel']].map(([o, c]) => s('stop', { offset: o, class: `stab-holz-${c}` }))),
+          s('radialGradient', { id: stirnId, cx: 0.45, cy: 0.45, r: 0.6 }, s('stop', { offset: 0, class: 'stab-holz-hell' }), s('stop', { offset: 0.7, class: 'stab-holz-mitte' }), s('stop', { offset: 1, class: 'stab-holz-tief' })),
+          s('linearGradient', { id: schattierungId, gradientUnits: 'userSpaceOnUse', x1: 0, y1: cy - R, x2: 0, y2: cy + R }, ...[[0, 'dunkel', 0.5], [0.16, 'dunkel', 0.15], [0.3, 'licht', 0.25], [0.42, 'licht', 0], [0.7, 'dunkel', 0.08], [0.86, 'dunkel', 0.26], [1, 'dunkel', 0.55]].map(([o, c, a]) => s('stop', { offset: o, class: `stab-schatten-${c}`, 'stop-opacity': a }))),
+          s('filter', { id: schattenId, x: '-10%', y: '-20%', width: '120%', height: '150%' }, s('feDropShadow', { class: 'stab-schlagschatten', dx: 0, dy: 8, stdDeviation: 8 }))
+        );
+        svg.appendChild(defs);
+        // Holzstab
+        const { links: XL, rechts: XR, anfang: XB, rx: RX } = STAB;
+        const holz = s('g', { filter: `url(#${schattenId})` },
+          s('path', { class: 'stab-holzkoerper', d: `M ${XL} ${cy - R} L ${XR} ${cy - R} A ${RX} ${R} 0 0 1 ${XR} ${cy + R} L ${XL} ${cy + R} Z`, fill: `url(#${holzId})` })
+        );
+        const maser = s('g', { class: 'stab-maser' });
+        for (let i = 0; i < 15; i++) {
+          const f = -1.35 + i * (2.7 / 14);
+          const y0 = cy + R * Math.sin(f);
+          const amp = 2 + Krypto.mod(i * 37, 5);
+          const ph = Krypto.mod(i * 53, 100);
+          let d = '';
+          for (let x = XL; x <= XR + 4; x += 14) d += `${x === XL ? 'M' : 'L'} ${x} ${(y0 + amp * Math.sin((x + ph * 7) / (60 + Krypto.mod(i, 4) * 25)) * Math.cos(f)).toFixed(1)} `;
+          maser.appendChild(s('path', { d, class: Krypto.mod(i, 3) === 0 ? 'stark' : null }));
+        }
+        holz.append(maser, s('ellipse', { class: 'stab-stirnflaeche', cx: XL, cy, rx: RX, ry: R, fill: `url(#${stirnId})` }));
+        for (let i = 1; i < 6; i++) holz.appendChild(s('ellipse', { class: 'stab-ring', cx: XL + 1, cy: cy + 2, rx: (RX * i) / 6, ry: (R * i) / 6 }));
+        svg.appendChild(holz);
+        // Windungen des Bands (Seitenansicht schräg)
+        function windung(c) {
+          const l = [];
+          const rr = [];
+          for (let i = 0; i <= 24; i++) {
+            const f = -Math.PI / 2 + (i * Math.PI) / 24;
+            const t = (f + A) / (2 * A);
+            const x = XB + c * BW + t * BW;
+            const y = cy + R * Math.sin(f);
+            l.push(`${x.toFixed(1)} ${y.toFixed(1)}`);
+            rr.push(`${(x + BW).toFixed(1)} ${y.toFixed(1)}`);
+          }
+          return `M ${l.join(' L ')} L ${rr.reverse().join(' L ')} Z`;
+        }
+        const windungen = [];
+        for (let c = 0; c < W; c++) {
+          const d = windung(c);
+          const deckkraft = ver ? (fertig ? 0 : c >= L ? 0.5 : 1) : fertig && c < L ? 1 : 0;
+          const g = s('g', { class: 'stab-windung', opacity: deckkraft }, s('path', { class: 'stab-band', d }), s('path', { class: 'stab-band-schatten', d, fill: `url(#${schattierungId})` }));
+          windungen.push(g);
+          svg.appendChild(g);
+        }
+        // Klammer am Bandanfang, Marke „Zeilenende“
+        svg.appendChild(s('g', { class: 'stab-klammer', transform: `translate(${XB + BW * 0.35} ${cy}) scale(.8)` }, s('rect', { x: -16, y: -40, width: 32, height: 80, rx: 8 }), s('rect', { class: 'innen', x: -9, y: -30, width: 18, height: 60, rx: 5 })));
+        if (ver && !fertig) {
+          const x = XB + Math.min(L, W) * BW + BW * 0.5;
+          svg.append(s('line', { class: 'stab-zeilenende', x1: x, y1: cy - R - 8, x2: x, y2: cy + R + 8 }), s('text', { class: 'stab-zeilenende-text', x, y: cy - R - 14 }, 'Zeilenende'));
+        }
+        // Streifen (abgewickeltes bzw. loses Band) darunter
+        const zellen = ver ? (fertig ? n : u * L) : Math.min(Math.max(n + 1, u), u * STAB.maxWindungen * 2);
+        // schmale Bildschirme (Werkstatt: eigene Anordnung): weniger Felder je Streifenzeile, dafür größer
+        const pixel = svg.getBoundingClientRect().width;
+        const schmal = pixel > 0 && pixel < 640;
+        svg.classList.toggle('schmal', schmal);
+        const proZeileMax = schmal ? 10 : 28;
+        const proZeile = Math.max(u, proZeileMax - Krypto.mod(proZeileMax, u)); // ganze Runden je Streifenzeile
+        const sichtbar = Math.min(proZeile, Math.max(zellen, 1));
+        const sw = Math.min(schmal ? 96 : 44, 920 / sichtbar);
+        const ch = schmal ? 84 : 42;
+        const x0 = (STAB.breite - sichtbar * sw) / 2;
+        const oben = cy + stabRadius(10) + 64;
+        const streifenPos = (i) => {
+          const zeile = Math.floor(i / proZeile);
+          const spalte = i - zeile * proZeile;
+          const m = Math.min(schmal ? 2.4 : 1, sw / 40);
+          return { x: x0 + spalte * sw + sw / 2, y: oben + zeile * (ch + 30) + ch / 2, sx: m, sy: m, o: 1 };
+        };
+        const zeilenStreifen = Math.ceil(Math.max(zellen, 1) / proZeile);
+        const streifen = s('g', { class: 'stab-streifen' }, s('text', { class: 'stab-streifen-titel', x: x0, y: oben - 14 }, ver ? 'Abgewickeltes Band (Geheimtext)' : 'Loses Band (Geheimtext stempeln)'));
+        const runden = [];
+        const anzahlRunden = Math.ceil(zellen / u);
+        for (let c = 0; c < anzahlRunden; c++) {
+          const p = streifenPos(c * u);
+          const x = p.x - sw / 2;
+          const y = p.y - ch / 2;
+          const cnt = Math.min(u, zellen - c * u);
+          const da = ver ? fertig : !fertig && c * u < n;
+          const g = s('g', { class: 'stab-runde', 'data-runde': String(c + 1) }, s('rect', { class: 'stab-runde-leer', x, y, width: cnt * sw, height: ch, rx: 3 }));
+          const voll = s('g', { class: 'stab-runde-band', opacity: da ? 1 : 0 }, s('rect', { class: 'stab-runde-grund', x, y, width: cnt * sw, height: ch, rx: 3 }));
+          for (let q = 1; q < cnt; q++) voll.appendChild(s('line', { class: 'stab-runde-zelle', x1: x + q * sw, y1: y + 3, x2: x + q * sw, y2: y + ch - 3 }));
+          g.append(voll, s('text', { class: 'stab-runde-text', x: x + (cnt * sw) / 2, y: y + ch + (schmal ? 30 : 17) }, cnt * sw >= 80 ? `Runde ${c + 1}` : String(c + 1)));
+          runden.push({ g, voll });
+          streifen.appendChild(g);
+        }
+        svg.appendChild(streifen);
+        svg.setAttribute('viewBox', `0 0 ${STAB.breite} ${Math.round(oben + zeilenStreifen * (ch + 30) + 8)}`);
+        // Buchstaben
+        const stabPos = (rz, c) => {
+          const f = -A + ((rz + 0.5) * 2 * A) / u;
+          const t = (rz + 0.5) / u;
+          const cf = Math.cos(f);
+          const fs = Math.min(30, BW * 0.6, ((2 * A) / u) * R * 0.8);
+          return { x: XB + (c + 0.5) * BW + t * BW, y: cy + R * Math.sin(f), sx: fs / STAB.schrift, sy: (fs / STAB.schrift) * (0.35 + 0.65 * cf), o: 0.75 + 0.25 * cf };
+        };
+        const buchstaben = [];
+        for (let i = 0; i < n; i++) {
+          let rz;
+          let c;
+          let si;
+          if (ver) {
+            rz = Math.floor(i / L);
+            c = i - rz * L;
+            si = c * u + rz;
+          } else {
+            c = Math.floor(i / u);
+            rz = i - c * u;
+            si = i;
+          }
+          const fuell = ver && fertig && i >= fuellAb;
+          const el = s('text', { class: `stab-buchstabe${fuell ? ' fuell' : ''}`, 'font-size': STAB.schrift }, zeichen[i]);
+          const stab = c < W ? stabPos(rz, c) : null;
+          const ziel = streifenPos(si);
+          const aufDemStab = (ver ? !fertig : fertig) && stab;
+          lege(el, aufDemStab ? stab : ziel);
+          if (sichtbarBis !== null && i > sichtbarBis) el.setAttribute('opacity', '0');
+          buchstaben.push({ el, stab: stab || ziel, streifen: ziel, r: rz, c, i });
+          svg.appendChild(el);
+        }
+        // nächstes Feld
+        if (ver && !fertig && roh.length < u * L && roh.length < MAX_TEXT) {
+          const rz = Math.floor(roh.length / L);
+          const c = roh.length - rz * L;
+          if (c < W) {
+            const p = stabPos(rz, c);
+            svg.appendChild(s('rect', { class: 'stab-naechst', x: p.x - BW * 0.36, y: p.y - p.sy * STAB.schrift * 0.75, width: BW * 0.72, height: p.sy * STAB.schrift * 1.5, rx: 4 }));
+          }
+        }
+        if (L > W) svg.appendChild(s('text', { class: 'stab-mehr', x: XR - 10, y: cy + R + 26 }, `… ${L - W} weitere Runden (siehe Raster)`));
+        svg.setAttribute('aria-label', `Holzstab mit Umfang ${u}: ${roh.length ? (ver ? (fertig ? `Band abgewickelt, Geheimtext ${Krypto.gruppieren(zeichen)}` : `${roh.length} Buchstaben entlang des Stabs`) : fertig ? 'Band aufgewickelt, entlang des Stabs gelesen' : `loses Band mit ${n} Buchstaben`) : 'noch leer'}`);
+        bild = { buchstaben, windungen, runden, L, u };
+        // Anleitung, Bänder, Knopf
+        anleitung.texte(ver ? ['Stab wählen', 'Buchstaben stempeln', 'Band abwickeln'] : ['Stab wählen', 'Geheimtext stempeln', 'Aufwickeln und lesen']);
+        anleitung.setze(fertig ? 2 : roh.length ? 1 : 0);
+        abwickeln.textContent = ver ? 'Band abwickeln' : 'Aufwickeln und lesen';
+        stempelTitel.textContent = ver ? 'Stempel: auf den Stab' : 'Stempel: auf das lose Band';
+        for (const b of wahlKnoepfe) b.setAttribute('aria-pressed', String(Number(b.dataset.u) === u));
+        baender.beschrifte(ver ? 'Klartext' : 'Geheimtext', ver ? 'Geheimtext' : 'Klartext', ver ? [false, true] : [true, false]);
+        const ergebnis = fertig ? (ver ? z.ausgabe || '' : Krypto.klein(z.ausgabe || '')) : '';
+        const oben2 = ver ? Krypto.klein(roh) : roh;
+        const laenge = Math.max(oben2.length, ergebnis.length);
+        baender.setze(Array.from({ length: laenge }, (_, i) => [oben2[i] || '', ergebnis[i] || '']));
+      }
+
+      /** Band abwickeln: Runde für Runde fliegen die Buchstaben vom Stab auf den Streifen (bei ruhig sofort). */
+      function wickleAb() {
+        if (gesperrt) return;
+        const roh = Krypto.nurBuchstaben(z.text);
+        if (!roh.length) {
+          erklaerung.sage('Noch leer', 'Stempel zuerst deine Nachricht auf den Stab.');
+          return;
+        }
+        if (phase === 'band') return;
+        const alt = bild;
+        phase = 'band';
+        zeichneStab();
+        const neu = bild;
+        const meinLauf = lauf;
+        const fehlt = neu.u * neu.L - roh.length;
+        erklaerung.sage('Band abwickeln', `${fehlt ? `${fehlt} leere Feld${fehlt > 1 ? 'er bekommen' : ' bekommt'} ein X, damit jede Runde gleich viele Buchstaben hat. ` : ''}Runde für Runde liegen die ${neu.u} Buchstaben einer Runde nun nebeneinander.`);
+        if (AQ.ruhig()) return;
+        // Ausgangslage: alle Buchstaben auf dem Stab (alte Lage), Bänder der Runden noch leer
+        const vorher = neu.buchstaben.map((b) => (alt && alt.buchstaben[b.i] && b.i < Krypto.nurBuchstaben(z.text).length ? alt.buchstaben[b.i].stab : b.stab));
+        neu.buchstaben.forEach((b, i) => lege(b.el, vorher[i]));
+        neu.runden.forEach((x) => x.voll.setAttribute('opacity', '0'));
+        neu.windungen.forEach((w, c) => w.setAttribute('opacity', c < neu.L ? '1' : '0'));
+        let kette = Promise.resolve();
+        for (let c = 0; c < neu.L; c++) {
+          kette = kette.then(() => {
+            if (meinLauf !== lauf) return null;
+            const spalte = neu.buchstaben.filter((b) => b.c === c);
+            return S.bewegung(700, (e) => {
+              if (meinLauf !== lauf) return;
+              neu.windungen[c] && neu.windungen[c].setAttribute('opacity', String(Math.max(0, 1 - e * 1.4)));
+              if (neu.runden[c]) neu.runden[c].voll.setAttribute('opacity', String(Math.min(1, e * 1.6)));
+              spalte.forEach((b) => lege(b.el, zwischen(vorher[b.i], b.streifen, e)));
+            });
+          });
+        }
+      }
+
+      /** Entschlüsseln: loses Band aufwickeln, dann Zeile für Zeile entlang des Stabs lesen. */
+      function wickleAufUndLies() {
+        if (gesperrt) return;
+        const roh = Krypto.nurBuchstaben(z.text);
+        const u = z.umfang;
+        if (!roh.length) {
+          erklaerung.sage('Hinweis', 'Stempel zuerst den Geheimtext auf das lose Band.');
+          return;
+        }
+        if (Krypto.mod(roh.length, u)) {
+          erklaerung.sage('Band passt nicht', `${roh.length} Buchstaben ergeben keine vollen Runden mit je ${u}. Es fehlen Buchstaben oder der Stab passt nicht.`);
+          return;
+        }
+        if (phase === 'gelesen') return;
+        phase = 'gelesen';
+        zeichneStab();
+        const neu = bild;
+        const meinLauf = lauf;
+        erklaerung.sage('Aufgewickelt und gelesen', `Das Band liegt auf dem Stab. Entlang des Stabs gelesen: ${Krypto.klein(z.ausgabe || '')}.`);
+        if (AQ.ruhig()) return;
+        neu.buchstaben.forEach((b) => lege(b.el, b.streifen));
+        neu.windungen.forEach((w) => w.setAttribute('opacity', '0'));
+        let kette = Promise.resolve();
+        for (let c = 0; c < neu.L; c++) {
+          kette = kette.then(() => {
+            if (meinLauf !== lauf) return null;
+            const spalte = neu.buchstaben.filter((b) => b.c === c);
+            return S.bewegung(600, (e) => {
+              if (meinLauf !== lauf) return;
+              if (neu.windungen[c]) neu.windungen[c].setAttribute('opacity', String(Math.min(1, e * 1.4)));
+              if (neu.runden[c]) neu.runden[c].voll.setAttribute('opacity', String(Math.max(0, 1 - e * 1.4)));
+              spalte.forEach((b) => lege(b.el, zwischen(b.streifen, b.stab, e)));
+            });
           });
         }
       }
@@ -226,44 +532,323 @@
         }
       }
 
-      /** Stab-Ansicht: Streifen um den Stab (u Windungen sichtbar als Zeilen), Abwickeln zeigt den Geheimtext. */
-      function stab(raster, ergebnis) {
-        AQ.clear(stabOrt);
-        if (!raster) {
-          stabOrt.appendChild(h('p', { class: 'text-2' }, 'Erst einen passenden Text eingeben.'));
-          return;
+      function zeichne() {
+        if (ns) ns.schliesse();
+        if (alle) alle.schliesse();
+        ns = null;
+        alle = null;
+        for (const el of [rasterOrt, meldung, pruef, nsOrt, alleOrt]) AQ.clear(el);
+        sperre(false);
+        const u = z.umfang;
+        const ein = Krypto.nurBuchstaben(z.text);
+        const ver = z.richtung === 'ver';
+        const erg = versuche(() => Krypto.skytale(z.text, u, z.richtung));
+        let raster = null;
+        if (erg.fehler) {
+          setzeAusgabe(aus, '');
+          const passt = !ver && ein.length > 0 && /Vielfaches/.test(erg.fehler);
+          meldung.appendChild(B.hinweis('warnung', passt ? `Länge ${ein.length} passt nicht zu u = ${u} – ${erg.fehler}` : erg.fehler));
+        } else if (ein.length) {
+          setzeAusgabe(aus, erg.wert);
+          raster = Krypto.skytaleRaster(ver ? z.text : erg.wert, u, { fuellzeichen: ver ? 'X' : null });
+        } else setzeAusgabe(aus, '');
+        const spalten = raster && raster.length ? raster[0].length : 0;
+        const gesamt = raster ? raster.length * spalten : 0;
+        info.textContent = `Entschlüsseln mit u entspricht Verschlüsseln mit s = n : u.${raster ? ` Hier: s = ${gesamt} : ${u} = ${spalten}.` : ''}`;
+        const zellen = [];
+        if (raster) {
+          rasterOrt.appendChild(rasterTabelle(raster, ein.length, ver, zellen));
+          pruef.appendChild(pruefZeile(ein, Krypto.nurBuchstaben(erg.wert)));
+          ns = KRLabor.nachspiel(nsOrt, {
+            titel: ver ? 'Schreiben und Lesen' : 'Geheimtext einschreiben und lesen',
+            start: -1,
+            schritte: skytaleSchritte(raster, ver),
+            zeige: (st) => {
+              zeigeSchritt(zellen, st.daten);
+              // auch am Stab: Buchstaben erscheinen in der Schreibreihenfolge
+              if (ver && st.daten.phase === 'schreiben' && phase === 'stab') zeichneStab(st.daten.bis);
+            },
+            beiLauf: sperre
+          });
         }
-        const sp = raster[0].length;
-        const bandText = Krypto.gruppieren(Krypto.nurBuchstaben(z.richtung === 'ver' ? ergebnis : z.text));
-        const breite = Math.max(220, 40 + sp * 26, 40 + bandText.length * 10);
-        const zeilenH = 26;
-        const hoehe = raster.length * zeilenH + 40;
-        const gewickelt = s('g', { class: 'stab-gewickelt' },
-          s('rect', { class: 'stab-holz', x: 10, y: 10, width: breite - 20, height: hoehe - 20, rx: 14 }),
-          raster.map((zeile, i) => s('g', null,
-            s('rect', { class: 'stab-streifen', x: 18, y: 20 + i * zeilenH, width: breite - 36, height: zeilenH - 4, rx: 3 }),
-            [...zeile].map((b, j) => s('text', { class: 'stab-zeichen', x: 34 + j * 26, y: 20 + i * zeilenH + 12, 'dominant-baseline': 'central', 'text-anchor': 'middle' }, Krypto.klein(b)))
-          ))
-        );
-        const bandG = s('g', { class: 'stab-band' },
-          s('rect', { class: 'stab-streifen', x: 10, y: hoehe / 2 - 14, width: breite - 20, height: 28, rx: 3 }),
-          s('text', { class: 'stab-zeichen', x: breite / 2, y: hoehe / 2, 'dominant-baseline': 'central', 'text-anchor': 'middle' }, bandText)
-        );
-        const svg = s('svg', { class: 'skytale-stab', viewBox: `0 0 ${breite} ${hoehe}`, width: breite, height: hoehe, role: 'img', 'aria-label': `Stab mit Umfang ${raster.length}: Der Streifen trägt zeilenweise den Klartext; abgewickelt zeigt er den Geheimtext ${bandText}.` }, gewickelt, bandG);
-        const knopf = h('button', { type: 'button', class: 'knopf knopf-zweit stab-abwickeln', 'aria-pressed': 'false' }, 'Streifen abwickeln');
-        knopf.addEventListener('click', () => {
-          const an = knopf.getAttribute('aria-pressed') !== 'true';
-          knopf.setAttribute('aria-pressed', String(an));
-          knopf.textContent = an ? 'Streifen aufwickeln' : 'Streifen abwickeln';
-          svg.classList.toggle('animiert', !ruhig);
-          svg.classList.toggle('abgewickelt', an);
-        });
-        stabOrt.append(h('div', { class: 'scroll-x' }, svg), knopf);
+        zeichneStab();
+        // alle Stäbe: abgefangener Geheimtext (Entschlüsseln: Eingabe, Verschlüsseln: eigene Ausgabe)
+        const geheim = ver ? (erg.wert || '') : ein;
+        if (geheim) {
+          alle = KRLabor.alleSchluessel(alleOrt, {
+            titel: 'Alle Stäbe u = 2 … 10',
+            schluessel: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+            beschriftung: (x) => `u = ${x}`,
+            probiere: (x) => Krypto.skytale(geheim, x, 'ent', { fuellzeichen: null }),
+            zeichen: 20,
+            eingabe: geheim
+          });
+        }
       }
 
       zeichne();
       return {
         schliesse() {
+          lauf += 1;
+          if (ns) ns.schliesse();
+          if (alle) alle.schliesse();
+        }
+      };
+    }
+
+    /* ---------- Pflügen · Zusatz (Plan M10 Task 227, nach stationen/pfluegen.html) ---------- */
+
+    function bauePfluegen() {
+      let ns = null;
+      let alle = null;
+      let lauf = 0;
+      let gepfluegt = false; // Pflugweg ganz gegangen (Bänder zeigen das Ergebnis)
+      let gesperrt = false;
+      const anleitung = S.anleitung(null, []);
+      const erklaerung = S.erklaerung(null);
+      const k = kopf(() => {
+        gepfluegt = false;
+        zeichne();
+      });
+      const breite = B.zahl({ beschriftung: 'Zeilenlänge k (Spalten der Tabelle)', min: 2, max: 12, wert: z.k, beiWechsel: (x) => setzeK(x) });
+      const stempelTitel = h('span', { class: 'stab-feldtitel' }, 'Stempel: in die Tabelle');
+      const stempel = S.stempel(null, (b) => stempeln(b), { beschriftung: 'Stempelkasten' });
+      const baender = S.baender({ beiAenderung: () => {} });
+      const pfluegenKnopf = h('button', { type: 'button', class: 'knopf knopf-zweit pflug-pfluegen' }, 'Pflügen');
+      pfluegenKnopf.addEventListener('click', () => pfluege());
+      const rand = h('button', { type: 'button', class: 'pflug-rand', 'aria-label': 'Tabellenbreite k ändern: ziehen oder Pfeiltasten', title: 'Am Rand ziehen' }, h('span', { class: 'pflug-rand-griff', 'aria-hidden': 'true' }, '⋮'));
+      const papier = h('div', { class: 'pflug-papier' });
+      const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
+      const meldung = h('div', { class: 'pflug-meldung' });
+      const pruef = h('div');
+      const nsOrt = h('div');
+      const alleOrt = h('div');
+      const alleDetails = B.details('Alle Zeilenlängen ausprobieren', [h('p', { class: 'text-2' }, 'Eve trägt den Geheimtext für k = 2 … 12 rückwärts entlang des Pflugwegs ein und liest zeilenweise. Welche Zeile ist lesbar? Das entscheidest du.'), alleOrt], { klasse: 'pflug-alle' });
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Angriff: alle Zeilenlängen', alleDetails);
+      const hintergrund = S.hintergrund(null, [
+        { titel: 'Schlüsselraum', zeilen: [['Schlüssel', 'Zeilenlänge k (und der Pflugweg)'], ['Möglichkeiten', 'wenige – nur Teiler der Textlänge passen'], ['Art', 'Transposition']] },
+        { titel: 'Warum unsicher?', text: 'Die Buchstaben bleiben erhalten, nur ihre Plätze ändern sich. Eve probiert einfach alle Zeilenlängen aus.' },
+        { titel: 'Zusatz', text: 'Das Pflügen steht nicht im Kerncurriculum. Es zeigt wie Skytale und Gartenzaun: Bei einer Transposition tauschen die Buchstaben nur ihre Plätze.' }
+      ]);
+      const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, h('div', { class: 'pflug-bild scroll-x' }, h('p', { class: 'pflug-titel' }, 'Karopapier'), h('div', { class: 'pflug-tisch' }, papier, rand)), erklaerung.element);
+      const bedienung = h('div', { class: 'stab-bedienung' }, stempelTitel, stempel.element, baender.element, h('div', { class: 'knopf-reihe' }, pfluegenKnopf));
+      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, h('div', { class: 'labor-steuer' }, breite.element), meldung, aus.element, pruef, nsOrt);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      KRStation.herkunft(r.flaeche);
+
+      function setzeK(x) {
+        if (gesperrt) return;
+        const neu = Math.max(2, Math.min(12, x));
+        breite.setze(neu);
+        if (neu === z.k) return;
+        z.k = neu;
+        gepfluegt = false;
+        zeichne();
+        erklaerung.sage('Zeilenlänge', `Die Tabelle hat jetzt ${neu} Spalten.`);
+      }
+      // Rand ziehen (Zeiger) oder Pfeiltasten
+      rand.addEventListener('keydown', (e) => {
+        const d = { ArrowLeft: -1, ArrowRight: 1, ArrowDown: -1, ArrowUp: 1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        setzeK(z.k + d);
+      });
+      let zug = null;
+      rand.addEventListener('pointerdown', (e) => {
+        if (gesperrt) return;
+        const zelle = papier.querySelector('td');
+        const b = zelle ? zelle.getBoundingClientRect().width : 0;
+        zug = { x: e.clientX, k: z.k, b: b > 0 ? b : 45 };
+        if (rand.setPointerCapture) rand.setPointerCapture(e.pointerId);
+      });
+      rand.addEventListener('pointermove', (e) => {
+        if (!zug) return;
+        setzeK(zug.k + Math.round((e.clientX - zug.x) / zug.b));
+      });
+      const los = () => {
+        zug = null;
+      };
+      rand.addEventListener('pointerup', los);
+      rand.addEventListener('pointercancel', los);
+
+      function stempeln(b) {
+        if (gesperrt || Krypto.nurBuchstaben(z.text).length >= MAX_TEXT) return;
+        if (gepfluegt || beispiel) z.text = '';
+        beispiel = false;
+        z.text = `${z.text}${z.richtung === 'ver' ? Krypto.klein(b) : b}`;
+        gepfluegt = false;
+        k.setze(z.text);
+        zeichne();
+        const n = Krypto.nurBuchstaben(z.text).length;
+        erklaerung.sage(`Zeile ${Math.floor((n - 1) / z.k) + 1}`, z.richtung === 'ver' ? 'Zeile für Zeile von links nach rechts – wie beim Schreiben.' : 'Der Geheimtext wird entlang des Pflugwegs eingetragen.');
+      }
+
+      function sperre(an) {
+        gesperrt = an;
+        k.sperre(an);
+        breite.sperre(an);
+        stempel.setze(!an);
+        pfluegenKnopf.disabled = an;
+        rand.disabled = an;
+        S.sperre(r.flaeche, an);
+      }
+
+      let zellen = []; // { td, z, s, nr }
+      function tabelle(raster, nummern, n, ver) {
+        const kk = z.k;
+        const pfeile = [];
+        for (let sp = 0; sp < kk; sp++) {
+          const vonRechts = kk - 1 - sp;
+          pfeile.push(h('th', { scope: 'col', class: 'pflug-pfeil', 'aria-label': `Spalte ${sp + 1}: ${Krypto.mod(vonRechts, 2) === 0 ? 'von unten nach oben' : 'von oben nach unten'}` }, Krypto.mod(vonRechts, 2) === 0 ? '↑' : '↓'));
+        }
+        zellen = [];
+        const zeilen = raster.map((zeile, zi) =>
+          h(
+            'tr',
+            null,
+            h('th', { scope: 'row' }, `Z${zi + 1}`),
+            [...zeile].map((b, sp) => {
+              const nr = nummern[zi][sp];
+              const fuell = ver && zi * kk + sp >= n;
+              const td = h('td', { class: fuell ? 'fuell' : null, 'data-lesen': String(nr), title: fuell ? 'Füllzeichen' : null }, h('span', { class: 'pflug-zeichen' }, b ? Krypto.klein(b) : ''), h('span', { class: 'pflug-nr', 'aria-hidden': 'true' }, ''));
+              zellen.push({ td, z: zi, s: sp, nr });
+              return td;
+            })
+          )
+        );
+        return h(
+          'table',
+          { class: 'pflug-tabelle' },
+          h('caption', { class: 'sr' }, `Tabelle mit ${kk} Spalten: zeilenweise schreiben, dann von rechts spaltenweise pflügen (rechts von unten nach oben, dann abwechselnd)`),
+          h('thead', null, h('tr', null, h('td', { class: 'ecke' }), Array.from({ length: kk }, (_, i) => h('th', { scope: 'col' }, String(i + 1)))), h('tr', { class: 'pflug-weg' }, h('td', { class: 'ecke' }), pfeile)),
+          h('tbody', null, zeilen)
+        );
+      }
+      /** Zellen bis zur Lesenummer bis als gepflügt markieren (Nummer sichtbar) */
+      function markiere(bis) {
+        for (const c of zellen) {
+          const an = c.nr <= bis;
+          c.td.classList.toggle('gepfluegt', an);
+          c.td.lastChild.textContent = an ? String(c.nr) : '';
+        }
+      }
+
+      function zeichne() {
+        lauf += 1;
+        if (ns) ns.schliesse();
+        if (alle) alle.schliesse();
+        ns = null;
+        alle = null;
+        for (const el of [papier, meldung, pruef, nsOrt, alleOrt]) AQ.clear(el);
+        sperre(false);
+        const kk = z.k;
+        const ver = z.richtung === 'ver';
+        const ein = Krypto.nurBuchstaben(z.text);
+        const erg = versuche(() => Krypto.pfluegen(z.text, kk, z.richtung));
+        if (erg.fehler) {
+          setzeAusgabe(aus, '');
+          meldung.appendChild(B.hinweis('warnung', ein.length ? `Länge ${ein.length} passt nicht zu k = ${kk} – ${erg.fehler}` : erg.fehler));
+        } else setzeAusgabe(aus, ein.length ? erg.wert : '');
+        // Tabelle: ver – Klartext zeilenweise (aufgefüllt); ent – Geheimtext entlang des Pflugwegs eingetragen
+        const zeilenZahl = Math.max(1, Math.ceil(Math.max(ein.length, 1) / kk));
+        const nummern = Krypto.pfluegenReihenfolge(zeilenZahl, kk);
+        let raster;
+        if (ver) {
+          const gefuellt = ein.length && !erg.fehler ? Krypto.pfluegen(erg.wert, kk, 'ent') : '';
+          raster = Array.from({ length: zeilenZahl }, (_, zi) => Array.from({ length: kk }, (_, sp) => (gefuellt ? gefuellt[zi * kk + sp] : ein[zi * kk + sp] || '')).join('|'));
+        } else {
+          raster = Array.from({ length: zeilenZahl }, (_, zi) => Array.from({ length: kk }, (_, sp) => ein[nummern[zi][sp] - 1] || '').join('|'));
+        }
+        raster = raster.map((x) => x.split('|'));
+        papier.appendChild(tabelle(raster, nummern, ein.length, ver));
+        markiere(ver ? (gepfluegt ? Infinity : 0) : ein.length);
+        if (ein.length && !erg.fehler) {
+          pruef.appendChild(pruefZeile(ein, Krypto.nurBuchstaben(erg.wert)));
+          const schritte = [];
+          for (let j = 0; j < kk; j++) {
+            const spalte = kk - 1 - j;
+            const nrs = zellen.filter((c) => c.s === spalte).sort((a, b) => a.nr - b.nr);
+            const folge = nrs.map((c) => raster[c.z][c.s]).join('');
+            schritte.push({ text: `Spalte ${spalte + 1} ${Krypto.mod(j, 2) === 0 ? 'von unten nach oben' : 'von oben nach unten'}: ${ver ? folge : Krypto.klein(folge)}`, daten: { bis: nrs[nrs.length - 1].nr } });
+          }
+          ns = KRLabor.nachspiel(nsOrt, { titel: ver ? 'Spalte für Spalte pflügen' : 'Entlang des Pflugwegs eintragen', start: -1, schritte, beiLauf: sperre, zeige: (st) => markiere(st.daten.bis) });
+        }
+        // Bänder und Anleitung
+        anleitung.texte(ver ? ['Tabellenbreite ziehen', 'Buchstaben stempeln', 'Pflügen'] : ['Tabellenbreite ziehen', 'Geheimtext stempeln', 'Zeilenweise lesen']);
+        anleitung.setze(gepfluegt ? 2 : ein.length ? 1 : 0);
+        stempelTitel.textContent = ver ? 'Stempel: in die Tabelle' : 'Stempel: entlang des Pflugwegs';
+        pfluegenKnopf.textContent = ver ? 'Pflügen' : 'Zeilenweise lesen';
+        baender.beschrifte(ver ? 'Klartext' : 'Geheimtext', ver ? 'Geheimtext' : 'Klartext', ver ? [false, true] : [true, false]);
+        zeigeBaender(gepfluegt ? Infinity : 0);
+        // alle Zeilenlängen (abgefangener Geheimtext)
+        const geheim = ver ? (erg.wert || '') : ein;
+        if (geheim) {
+          alle = KRLabor.alleSchluessel(alleOrt, {
+            titel: 'Alle Zeilenlängen k = 2 … 12',
+            schluessel: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            beschriftung: (x) => `k = ${x}`,
+            probiere: (x) => Krypto.pfluegen(geheim, x, 'ent'),
+            zeichen: 20,
+            eingabe: geheim
+          });
+        }
+      }
+      /** Bänder: oben die Eingabe, unten das Ergebnis bis zur Lesenummer bis */
+      function zeigeBaender(bis) {
+        const ein = Krypto.nurBuchstaben(z.text);
+        const ver = z.richtung === 'ver';
+        const oben = ver ? Krypto.klein(ein) : ein;
+        const ergebnis = z.ausgabe ? (ver ? z.ausgabe : Krypto.klein(z.ausgabe)) : '';
+        const unten = ergebnis.slice(0, Math.min(ergebnis.length, bis));
+        baender.setze(Array.from({ length: Math.max(oben.length, unten.length) }, (_, i) => [oben[i] || '', unten[i] || '']));
+      }
+
+      /** Pflügen (ver) bzw. zeilenweise lesen (ent): Spalte für Spalte bzw. Zeile für Zeile, bei ruhig sofort fertig. */
+      function pfluege() {
+        if (gesperrt) return;
+        const ein = Krypto.nurBuchstaben(z.text);
+        if (!ein.length) {
+          erklaerung.sage('Noch leer', z.richtung === 'ver' ? 'Stempel zuerst deine Nachricht in die Tabelle.' : 'Stempel zuerst den Geheimtext entlang des Pflugwegs.');
+          return;
+        }
+        if (!z.ausgabe) {
+          erklaerung.sage('Tabelle passt nicht', `${ein.length} Buchstaben füllen keine Tabelle mit ${z.k} Spalten.`);
+          return;
+        }
+        gepfluegt = true;
+        const ver = z.richtung === 'ver';
+        const gesamt = z.ausgabe.length;
+        const hoehe = gesamt / z.k;
+        anleitung.setze(2);
+        erklaerung.sage(ver ? 'Pflügen' : 'Lesen', ver ? `Rechts beginnen: letzte Spalte von unten nach oben, dann abwechselnd. Geheimtext: ${Krypto.gruppieren(z.ausgabe)}.` : `Zeile für Zeile gelesen: ${Krypto.klein(z.ausgabe)}.`);
+        if (AQ.ruhig()) {
+          markiere(Infinity);
+          zeigeBaender(Infinity);
+          return;
+        }
+        lauf += 1;
+        const meinLauf = lauf;
+        const schritte = ver ? z.k : hoehe;
+        const je = ver ? hoehe : z.k;
+        let kette = Promise.resolve();
+        for (let i = 0; i < schritte; i++) {
+          kette = kette.then(() =>
+            meinLauf !== lauf
+              ? null
+              : S.bewegung(450, (e) => {
+                  if (meinLauf !== lauf) return;
+                  const bis = i * je + Math.round(e * je);
+                  if (ver) markiere(bis);
+                  zeigeBaender(bis);
+                })
+          );
+        }
+      }
+
+      zeichne();
+      return {
+        schliesse() {
+          lauf += 1;
           if (ns) ns.schliesse();
           if (alle) alle.schliesse();
         }
@@ -653,6 +1238,7 @@
       if (id === 'gartenzaun') teil = baueZaun();
       else if (id === 'fleissner') teil = baueFleissner();
       else if (id === 'ring') teil = baueRing();
+      else if (id === 'pfluegen') teil = bauePfluegen();
       else teil = baueSkytale();
     }
     baue(r.aktiv());
@@ -665,7 +1251,7 @@
       },
       zustand() {
         const gueltig = Krypto.schablonePruefen(GROESSE, z.schablone).ok;
-        return { reiter: r.aktiv(), richtung: z.richtung, text: z.text, umfang: z.umfang, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, block: z.block, t: z.t, gueltig, ausgabe: z.ausgabe };
+        return { reiter: r.aktiv(), richtung: z.richtung, text: z.text, eingabe: Krypto.nurBuchstaben(z.text), umfang: z.umfang, k: z.k, zeilen: z.zeilen, schablone: z.schablone.map((l) => l.slice()), stellung: z.stellung, block: z.block, t: z.t, gueltig, ausgabe: z.ausgabe };
       }
     };
   }

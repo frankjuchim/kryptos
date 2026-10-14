@@ -134,3 +134,115 @@ test('Ring: Lehrkraft sieht den Reiter, Textalternative, Nachspiel Sprung für S
   assert.equal(w.k.alle(w.flaeche, 'svg.skytale-ring g.feld').length, 12);
   assert.equal(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1].getAttribute('aria-valuemax'), '11');
 });
+
+/* ---------- M10 Task 227: Holzstab mit Band nach der Krypto-Werkstatt, Reiter „Pflügen · Zusatz“ ---------- */
+const stempeln = (w, text) => {
+  for (const b of text) w.k.klick(w.k.eins(w.flaeche, `button.station-stempel[data-buchstabe="${b.toUpperCase()}"]`));
+};
+
+test('Skytale: Stabwahl, Stempeln, Abwickeln = Krypto.skytale', async () => {
+  const w = oeffne('skytale');
+  assert.ok(w.zustand().text.length > 0, 'ohne Voreinstellung steht das Beispiel da – der erste Stempel beginnt eine eigene Nachricht');
+  const wahl = w.k.alle(w.flaeche, '.stab-wahl button[data-u]');
+  assert.deepEqual(wahl.map((b) => b.dataset.u), ['2', '3', '4', '5', '6', '7', '8', '9', '10']);
+  w.k.klick(w.k.eins(w.flaeche, '.stab-wahl button[data-u="4"]'));
+  assert.equal(w.k.eins(w.flaeche, '.stab-wahl button[data-u="4"]').getAttribute('aria-pressed'), 'true');
+  assert.equal(w.zustand().umfang, 4);
+  stempeln(w, 'feuerholz');
+  assert.equal(w.k.alle(w.flaeche, 'svg.stab-objekt text.stab-buchstabe').length, 9, 'neun Buchstaben auf dem Stab');
+  assert.equal(w.ohneLeer('.station-baender output.klar'), 'feuerholz');
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), '', 'der Geheimtext entsteht erst beim Abwickeln');
+  w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
+  await w.k.ruhe();
+  assert.equal(w.zustand().ausgabe, K.skytale('feuerholz', 4));
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), K.skytale('feuerholz', 4));
+  // Plan-Korrektur: je Windung (Spalte des Rasters) eine Runde – 9 Buchstaben bei u = 4 → ⌈9/4⌉ = 3 Runden
+  assert.equal(w.k.alle(w.flaeche, '.stab-streifen .stab-runde').length, 3);
+  assert.equal(w.k.alle(w.flaeche, 'svg.stab-objekt text.stab-buchstabe.fuell').length, 3, 'drei Füllzeichen X');
+  assert.match(w.text('.stab-streifen'), /Runde 1/);
+});
+
+test('Skytale: Entschlüsseln – Geheimtext stempeln, aufwickeln und entlang des Stabs lesen', async () => {
+  const w = oeffne('skytale', { voreinstellung: { richtung: 'ent', umfang: 3 } });
+  const geheim = K.skytale('wir halten den pass', 3);
+  stempeln(w, geheim);
+  w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
+  await w.k.ruhe();
+  assert.equal(w.ohneLeer('.station-baender output.klar'), K.klein(K.skytale(geheim, 3, 'ent')));
+  const v = oeffne('skytale', { voreinstellung: { richtung: 'ent', umfang: 4 } });
+  stempeln(v, 'ABCDE');
+  v.k.klick(v.k.eins(v.flaeche, 'button.stab-abwickeln'));
+  assert.match(v.text('.station-erklaerung-text'), /passt nicht/);
+});
+
+test('Skytale: Text eintippen schreibt dieselbe Nachricht; Stab immer sichtbar, Herkunft, Hintergrund', () => {
+  const w = oeffne('skytale', { voreinstellung: { text: '' } });
+  w.k.tippe(w.k.eins(w.flaeche, 'textarea.labor-eingabe'), 'abc');
+  assert.equal(w.ohneLeer('.station-baender output.klar'), 'abc');
+  assert.equal(w.k.alle(w.flaeche, 'svg.stab-objekt text.stab-buchstabe').length, 3);
+  assert.equal(w.k.eins(w.flaeche, 'svg.stab-objekt').getAttribute('role'), 'img');
+  assert.match(w.k.eins(w.flaeche, 'svg.stab-objekt').getAttribute('aria-label'), /Umfang 3/);
+  assert.equal(w.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
+  assert.match(w.text('details.station-hintergrund'), /Umfang u/);
+});
+
+test('Skytale: ruhig ohne animate, nachspiel_sperrt_handgriffe', async () => {
+  const w = oeffne('skytale', { ruhig: true });
+  stempeln(w, 'ruhe');
+  w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
+  await w.k.ruhe();
+  assert.equal(w.k.animiert.length, 0);
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), K.skytale('ruhe', 3));
+  const v = oeffne('skytale', { voreinstellung: { text: 'wir halten den pass', umfang: 3 } });
+  v.k.klick(v.k.eins(v.flaeche, '.nachspiel .nachspiel-abspielen'));
+  assert.ok(v.k.alle(v.flaeche, 'button.station-stempel').every((b) => b.disabled), 'Stempel gesperrt');
+  assert.match(v.text('.station-sperrhinweis'), /Während des Nachspielens/);
+  await v.k.ruhe();
+  assert.ok(v.k.alle(v.flaeche, 'button.station-stempel').every((b) => !b.disabled));
+  assert.equal(v.zustand().text, 'wir halten den pass', 'Nachricht unverändert');
+});
+
+test('Pflügen: Breite, Reihenfolge, Ausgabe', async () => {
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['pfluegen'], text: 'wintersonne', k: 4 } });
+  assert.equal(w.zustand().ausgabe, 'XOTNSENRIWEN');
+  const nr = w.k.alle(w.flaeche, 'table.pflug-tabelle td[data-lesen]').map((z) => Number(z.dataset.lesen));
+  assert.deepEqual(nr, K.pfluegenReihenfolge(3, 4).flat());
+  assert.match(w.text('[role="tab"][data-reiter="pfluegen"]'), /Pflügen · Zusatz/);
+  assert.equal(w.k.alle(w.flaeche, 'table.pflug-tabelle td.fuell').length, 1, 'ein Füllzeichen X');
+  // Pflügen: Geheimtext-Band entsteht Spalte für Spalte
+  w.k.klick(w.k.eins(w.flaeche, 'button.pflug-pfluegen'));
+  await w.k.ruhe();
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), 'XOTNSENRIWEN');
+  assert.equal(w.k.alle(w.flaeche, 'table.pflug-tabelle td.gepfluegt').length, 12);
+  // Breite per Tastatur am Rand und per Zahlregler
+  w.k.taste(w.k.eins(w.flaeche, 'button.pflug-rand'), 'ArrowLeft');
+  assert.equal(w.zustand().k, 3);
+  assert.equal(w.zustand().ausgabe, K.pfluegen('wintersonne', 3));
+  // Ziehen am Rand: zwei Spaltenbreiten nach rechts
+  const rand = w.k.eins(w.flaeche, 'button.pflug-rand');
+  w.k.zeiger(rand, 'pointerdown', { clientX: 100 });
+  w.k.zeiger(rand, 'pointermove', { clientX: 190 });
+  w.k.zeiger(rand, 'pointerup', { clientX: 190 });
+  assert.equal(w.zustand().k, 5);
+});
+
+test('Pflügen: stempeln, entschlüsseln, alle Zeilenlängen, ruhig, Sperre im Nachspiel', async () => {
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['pfluegen'], k: 4 }, ruhig: true });
+  stempeln(w, 'laterne');
+  assert.equal(w.zustand().ausgabe, K.pfluegen('laterne', 4));
+  w.k.klick(w.k.eins(w.flaeche, 'button.pflug-pfluegen'));
+  await w.k.ruhe();
+  assert.equal(w.k.animiert.length, 0);
+  const e = oeffne('skytale', { voreinstellung: { reiter: ['pfluegen'], richtung: 'ent', text: 'XOTNSENRIWEN', k: 4 } });
+  assert.equal(e.zustand().ausgabe, K.pfluegen('XOTNSENRIWEN', 4, 'ent'));
+  e.k.klick(e.k.eins(e.flaeche, 'details.pflug-alle > summary'));
+  const zeilen = e.k.alle(e.flaeche, '.alle-schluessel tr[data-schluessel]');
+  assert.deepEqual(zeilen.map((z) => z.dataset.schluessel), ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
+  assert.match(e.k.text(zeilen[3]), /passt nicht/, 'k = 5 passt nicht zu 12 Buchstaben');
+  const n = oeffne('skytale', { voreinstellung: { reiter: ['pfluegen'], text: 'wintersonne', k: 4 } });
+  n.k.klick(n.k.eins(n.flaeche, '.nachspiel .nachspiel-abspielen'));
+  assert.ok(n.k.alle(n.flaeche, 'button.station-stempel').every((b) => b.disabled));
+  await n.k.ruhe();
+  assert.equal(n.zustand().text, 'wintersonne');
+  assert.equal(n.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
+});

@@ -270,7 +270,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .labor-kopf { display: grid; gap: var(--a-2); min-width: 0; }
 .labor-normal { margin: 0; font-family: var(--f-mono); font-size: .9rem; overflow-wrap: anywhere; }
 .skytale-stab-knoepfe { display: flex; flex-wrap: wrap; gap: var(--a-2); }
-.skytale-stab-knoepfe .knopf, .stab-abwickeln { border: 1.5px solid var(--linie); }
+.skytale-stab-knoepfe .knopf { border: 1.5px solid var(--linie); }
 .skytale-raster, .zaun { font-family: var(--f-mono); font-variant-ligatures: none; background: var(--karte); }
 .skytale-raster td, .zaun td { min-width: 2em; height: 2.2em; font-size: 1.1rem; }
 .skytale-raster thead th, .zaun thead th { font-family: var(--f-text); font-size: .8rem; color: var(--text-2); background: var(--papier-2); }
@@ -289,15 +289,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .skytale-zeilen-hinweis.anders { background: var(--fehler-flaeche); }
 .skytale-info { font-size: .95rem; }
 .skytale-meldung:empty, .skytale-raster-ort:empty { display: none; }
-.skytale-stab { display: block; max-width: none; }
-.stab-holz { fill: var(--messing-hell); stroke: var(--messing-dunkel); stroke-width: 2; }
-.stab-streifen { fill: var(--karte); stroke: var(--linie); }
-.stab-zeichen { font-family: var(--f-mono); font-size: 15px; fill: var(--text); }
-.stab-band .stab-zeichen { font-size: 14px; }
-.skytale-stab .stab-band { opacity: 0; }
-.skytale-stab.abgewickelt .stab-band { opacity: 1; }
-.skytale-stab.abgewickelt .stab-gewickelt { opacity: 0; }
-.skytale-stab.animiert .stab-band, .skytale-stab.animiert .stab-gewickelt { transition: opacity .6s ease; }
+/* M10 Task 227: Holzstab, Band und Streifen nach der Krypto-Werkstatt in labor_objekte.css (stab-*) */
 
 /* Gartenzaun: Schienen mit Muster und Beschriftung (nicht nur Farbe) */
 .zaun td.zaun-leer { background: var(--papier); }
@@ -344,7 +336,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 .schablone-stellung { margin: 0; font-weight: 700; }
 .schablone-pruefung { display: grid; gap: var(--a-2); }
 .schablone-legende { margin: 0; font-size: .9rem; }
-@media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .fleissner-schablone tbody { animation: none; } .skytale-stab.animiert * { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .schablone-flaeche.dreht .fleissner-schablone tbody { animation: none; } }
 :root[data-bewegung="aus"] .schablone-flaeche.dreht .fleissner-schablone tbody { animation: none; }
 
 /* Ring (W6 §9.1, Plan M6 Task 113): nie gelesene Felder rot UND durchgestrichen UND im Text genannt */

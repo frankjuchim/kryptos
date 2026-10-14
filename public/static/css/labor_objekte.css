@@ -227,3 +227,82 @@
 .scheibe-sperre p { margin: 0; }
 @media (prefers-reduced-motion: reduce) { .scheibe-innen.animiert, .scheibe-fenster.animiert, .scheibe-segment { transition: none; } }
 :root[data-bewegung="aus"] .scheibe-innen.animiert, :root[data-bewegung="aus"] .scheibe-fenster.animiert { transition: none; }
+
+/* ======================================================================
+   Skytale: Holzstab mit Band (Plan M10 Task 227; stationen/skytale.html) und Pflügen (stationen/pfluegen.html)
+   ====================================================================== */
+.stab-station { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .stab-station { grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 1fr); } }
+.stab-buehne, .stab-bedienung, .stab-textteil { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.stab-textteil { padding-top: var(--a-3); border-top: 1px solid var(--linie); }
+.stab-feldtitel { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+.stab-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); }
+.stab-wahl-titel { font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin-right: var(--a-1); }
+.stab-wahl-knopf { display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 2px; min-width: var(--ziel); min-height: var(--ziel); padding: 2px 6px 2px 2px; border: 1.5px solid transparent; border-radius: var(--r-chip); background: transparent; color: var(--text-2); font: 700 .85rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
+.stab-wahl-knopf:hover { border-color: var(--linie); }
+.stab-wahl-knopf[aria-pressed="true"] { border-color: var(--akzent); color: var(--text); background: var(--karte); }
+.stab-wahl-knopf:disabled { opacity: .45; cursor: default; }
+.stab-wahl-knopf:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.stab-querschnitt { width: 38px; height: 38px; }
+.stab-stirn { fill: var(--mat-holz-hell); stroke: var(--mat-holz-dunkel); stroke-width: 1.5; }
+.stab-jahresring { fill: none; stroke: var(--mat-holz); stroke-width: 1; }
+.stab-wahl-knopf[aria-pressed="true"] .stab-stirn { stroke: var(--akzent); stroke-width: 3; }
+.stab-bild { border-radius: var(--r-karte); background: var(--mat-gehaeuse); padding: var(--a-2); }
+.stab-objekt { display: block; width: 100%; height: auto; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+.stab-holz-dunkel { stop-color: var(--mat-holz-dunkel); }
+.stab-holz-tief { stop-color: var(--mat-holz); }
+.stab-holz-mitte { stop-color: var(--mat-messing); }
+.stab-holz-hell { stop-color: var(--mat-holz-hell); }
+.stab-schatten-dunkel { stop-color: var(--nacht); }
+.stab-schatten-licht { stop-color: var(--auf-tinte); }
+.stab-schlagschatten { flood-color: var(--nacht); flood-opacity: .45; }
+.stab-maser path { fill: none; stroke: var(--mat-holz-dunkel); stroke-width: .9; stroke-linecap: round; opacity: .38; }
+.stab-maser path.stark { stroke-width: 1.6; }
+.stab-stirnflaeche { stroke: var(--mat-holz); stroke-width: 2; }
+.stab-ring { fill: none; stroke: var(--mat-holz); stroke-width: 1; opacity: .55; }
+.stab-band { fill: var(--mat-band); stroke: var(--mat-karton); stroke-width: 1.3; }
+.stab-band-schatten { pointer-events: none; }
+.stab-klammer rect { fill: var(--mat-messing); stroke: var(--mat-holz-dunkel); stroke-width: 2; }
+.stab-klammer rect.innen { fill: var(--mat-holz-dunkel); opacity: .5; }
+.stab-zeilenende { stroke: var(--mat-lampe-an); stroke-width: 4; stroke-dasharray: 2 5; stroke-linecap: round; }
+.stab-zeilenende-text, .stab-mehr { font: 600 13px var(--f-text); fill: var(--mat-lampe-an); text-anchor: middle; }
+.stab-mehr { text-anchor: end; }
+.stab-buchstabe { font-family: var(--f-mono); font-weight: 700; fill: var(--mat-band-tinte); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.stab-buchstabe.fuell { font-style: italic; fill: var(--mat-holz-dunkel); }
+.stab-naechst { fill: none; stroke: var(--mat-lampe-an); stroke-width: 3.5; animation: station-blinken 1.1s ease-in-out infinite; pointer-events: none; }
+@keyframes station-blinken { 50% { opacity: .35; } }
+.stab-streifen-titel { font: 700 13px var(--f-text); letter-spacing: .08em; text-transform: uppercase; fill: var(--mat-gehaeuse-tinte); }
+.stab-runde-leer { fill: none; stroke: var(--mat-gehaeuse-tinte); stroke-opacity: .35; stroke-width: 1.5; stroke-dasharray: 6 5; }
+.stab-runde-grund { fill: var(--mat-band); stroke: var(--mat-karton); stroke-width: 1.3; }
+.stab-runde-zelle { stroke: var(--mat-band-tinte); stroke-opacity: .16; stroke-width: 1; }
+.stab-runde-text { font: 600 12px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; }
+.stab-objekt.schmal .stab-streifen-titel, .stab-objekt.schmal .stab-runde-text, .stab-objekt.schmal .stab-zeilenende-text, .stab-objekt.schmal .stab-mehr { font-size: 28px; }
+
+/* Pflügen: Karopapier mit Tabelle, Rand zum Ziehen, Pflugweg */
+.pflug-bild { padding: var(--a-3); border-radius: var(--r-karte); background: var(--mat-gehaeuse); }
+.pflug-titel { margin: 0 0 var(--a-2); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mat-gehaeuse-tinte); }
+.pflug-tisch { display: inline-flex; align-items: stretch; gap: 0; }
+.pflug-papier {
+  padding: var(--a-3);
+  border-radius: 4px 0 0 4px;
+  background-color: var(--mat-band);
+  background-image: linear-gradient(color-mix(in srgb, var(--hinweis) 22%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--hinweis) 22%, transparent) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.pflug-tabelle { border-collapse: collapse; font-family: var(--f-mono); color: var(--mat-band-tinte); }
+.pflug-tabelle caption { text-align: left; }
+.pflug-tabelle thead th { font: 700 .85rem var(--f-text); color: var(--mat-band-tinte); padding: 2px 0; min-width: 2.8rem; text-align: center; }
+.pflug-tabelle tbody th { font: 700 .8rem var(--f-text); color: var(--mat-band-tinte); padding-right: var(--a-2); text-align: right; }
+.pflug-weg .pflug-pfeil { font-size: 1.2rem; color: var(--mat-holz-dunkel); }
+.pflug-tabelle td { position: relative; width: 2.8rem; height: 2.8rem; border: 1.4px dashed color-mix(in srgb, var(--mat-band-tinte) 45%, transparent); text-align: center; font-size: 1.25rem; font-weight: 700; }
+.pflug-tabelle td.ecke { border: 0; }
+.pflug-tabelle td.fuell .pflug-zeichen { font-style: italic; color: var(--mat-holz-dunkel); }
+.pflug-tabelle td.fuell { background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--mat-holz) 22%, transparent) 6px 8px); }
+.pflug-tabelle td.gepfluegt { background-color: color-mix(in srgb, var(--mat-lampe-an) 28%, transparent); border-style: solid; }
+.pflug-nr { position: absolute; right: 3px; bottom: 1px; font: 700 .65rem var(--f-text); color: var(--mat-holz-dunkel); }
+.pflug-rand { min-width: var(--ziel); border: 0; border-radius: 0 var(--r-knopf) var(--r-knopf) 0; background: var(--mat-lampe-an); color: var(--mat-band-tinte); font-size: 1.4rem; font-weight: 700; cursor: ew-resize; touch-action: none; }
+.pflug-rand:disabled { opacity: .45; cursor: default; }
+.pflug-rand:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.pflug-meldung:empty { display: none; }
+@media (prefers-reduced-motion: reduce) { .stab-naechst { animation: none; } }
+:root[data-bewegung="aus"] .stab-naechst { animation: none; }
