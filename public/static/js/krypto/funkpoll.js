@@ -98,7 +98,8 @@ const KRPoll = (() => {
       }
       if (res.status === 401 && daten && daten.anmelden) {
         stopp();
-        location.href = '/sso/start?ziel=' + encodeURIComponent(location.pathname + location.hash);
+        if (typeof AQ !== 'undefined' && typeof AQ.zurAnmeldung === 'function') AQ.zurAnmeldung(); // räumt vorher auf (K5)
+        else location.href = '/sso/start?ziel=' + encodeURIComponent(location.pathname + location.hash);
         return;
       }
       if (res.status === 403 || res.status === 404) {

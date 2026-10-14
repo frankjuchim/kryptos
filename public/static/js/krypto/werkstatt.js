@@ -46,22 +46,39 @@ const KRWerkstatt = (() => {
 
   /* ---------- Entwurf (E105) ---------- */
   const entwurfName = () => (info.teilnahme !== null && info.teilnahme !== undefined ? PRAEFIX + info.teilnahme : null);
+  /** Arena, für die gerade entworfen wird (nur in der Werkstatt-Phase), sonst null (Werkstatt ohne Arena, Level 3.3) */
+  const entwurfArena = () => (info.arena && info.arena.status === 'werkstatt' ? info.arena.id : null);
+  /** Entwurf veraltet (Review M7 K5): gehört zu einer Arena, die nicht mehr in der Werkstatt ist – oder (alter Entwurf
+      ohne Arena-Angabe) die Arena des Kurses greift schon an bzw. wird beurteilt */
+  function entwurfVeraltet(d) {
+    if (d.arena !== undefined && d.arena !== null) return !(info.arena && info.arena.id === d.arena && info.arena.status === 'werkstatt');
+    return d.arena === undefined && !!info.arena && ['angriff', 'beurteilung'].includes(info.arena.status);
+  }
   function entwurfLaden() {
     const n = entwurfName();
     if (!n) return null;
     try {
       const roh = localStorage.getItem(n);
       const d = roh ? JSON.parse(roh) : null;
-      return d && typeof d === 'object' && !Array.isArray(d) ? d : null;
+      if (!d || typeof d !== 'object' || Array.isArray(d)) return null;
+      if (entwurfVeraltet(d)) {
+        localStorage.removeItem(n);
+        return null;
+      }
+      return d;
     } catch {
       return null;
     }
+  }
+  /** beim Phasenwechsel: veralteten Entwurf entfernen (die Eingaben auf der Seite bleiben) */
+  function entwurfAufraeumen() {
+    entwurfLaden();
   }
   function entwurfSpeichern(z) {
     const n = entwurfName();
     if (!n) return;
     try {
-      localStorage.setItem(n, JSON.stringify({ verfahren: z.verfahren, schluessel: z.schluessel, klartext: z.klartext, beschreibung: z.beschreibung }));
+      localStorage.setItem(n, JSON.stringify({ arena: entwurfArena(), verfahren: z.verfahren, schluessel: z.schluessel, klartext: z.klartext, beschreibung: z.beschreibung }));
     } catch {
       /* ohne Speicher läuft alles weiter */
     }
@@ -473,6 +490,9 @@ const KRWerkstatt = (() => {
       const body = { verfahren: z.verfahren, schluessel: z.schluessel, klartext: z.klartext, beschreibung: z.beschreibung.trim() };
       const r = await AQ.api('POST', `/api/arena/${enc(info.arena.id)}/chiffre`, body);
       info.eigene = { ...(info.eigene || {}), verfahren: z.verfahren, geheimtext: r.geheimtext, beschreibung: body.beschreibung };
+      // eingereicht: Klartext und Schlüssel nicht länger im Browser lassen (Review M7 K5); erst eine neue Änderung legt
+      // wieder einen Entwurf an
+      entwurfLoeschen();
       AQ.mount(felder.meldung, h('div', { class: 'rueckmeldung ok', role: 'status' }, h('p', null, 'Eingereicht – ihr könnt bis zum Start der Angriffsphase noch ändern.')));
       eigeneZeigen();
     } catch (e) {
@@ -515,6 +535,7 @@ const KRWerkstatt = (() => {
     } catch {
       return;
     }
+    entwurfAufraeumen();
     phaseZeigen();
     eigeneZeigen();
     einreichenPruefen();

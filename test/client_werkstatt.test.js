@@ -357,7 +357,8 @@ test('Arena: Abzeichen-Toast nur für neu erhaltene Abzeichen (/api/profil liste
 });
 
 test('Arena direkt geöffnet (#/arena) mit Entwurf im Browser: kein Fehler, zurück im Baukasten steht der Entwurf', async () => {
-  const entwurf = JSON.stringify({ verfahren: { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$s1' } }, { typ: 'spaltentransposition', param: { schluessel: '$s1' } }] }, schluessel: { s1: 'LATERNE' }, klartext: TEXT1, beschreibung: 'Zwei Stufen.' });
+  // Entwurf ohne Arena-Bezug (Werkstatt ohne Arena, Level 3.3) – Entwürfe einer Arena verfallen beim Angriff (K5)
+  const entwurf = JSON.stringify({ arena: null, verfahren: { version: 1, name: 'FUNKGITTER', stufen: [{ typ: 'vigenere', param: { schluessel: '$s1' } }, { typ: 'spaltentransposition', param: { schluessel: '$s1' } }] }, schluessel: { s1: 'LATERNE' }, klartext: TEXT1, beschreibung: 'Zwei Stufen.' });
   const k = D.lade(ARENA_SEITE, {
     url: 'http://x.test/werkstatt#/arena',
     zeitraffer: 10,
@@ -378,4 +379,53 @@ test('Arena direkt geöffnet (#/arena) mit Entwurf im Browser: kein Fehler, zur�
   assert.equal(k.eins(k.document, 'textarea.werkstatt-klartext').value, TEXT1);
   assert.equal(k.eins(k.document, 'textarea.werkstatt-beschreibung').value, 'Zwei Stufen.');
   assert.equal(k.eins(k.document, 'li.stufe[data-nr="1"] input.stufe-param').value, 'LATERNE');
+});
+
+/* ---------- Review M7 K5: Entwurf nicht länger als nötig im Browser ---------- */
+
+test('K5: Entwurf nach erfolgreichem Einreichen gelöscht; trägt die Arena-id und verschwindet, sobald die Arena nicht mehr in der Werkstatt ist', async () => {
+  let status = 'werkstatt';
+  const k = lade({ 'GET /api/arena': () => ARENA(status), 'POST /api/arena/4/chiffre': { status: 200, body: { ok: true, geheimtext: 'MRESE IEAUI SIRUT' } } });
+  await k.ruhe();
+  k.wert('KRWerkstatt').setzeStufen(FUNKGITTER);
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-klartext'), TEXT1);
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-beschreibung'), 'Vigenère und Spalten mit demselben Wort.');
+  await k.ruhe();
+  const roh = k.window.localStorage.getItem('kr-werkstatt:12');
+  assert.equal(JSON.parse(roh).arena, 4, 'Entwurf gehört zur Arena 4');
+  k.klick(knopf(k));
+  await k.ruhe();
+  assert.equal(k.window.localStorage.getItem('kr-werkstatt:12'), null, 'nach dem Einreichen gelöscht');
+  // erneut geändert → wieder ein Entwurf; Phasenwechsel → gelöscht
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-beschreibung'), ' Neu.');
+  await k.ruhe();
+  assert.ok(k.window.localStorage.getItem('kr-werkstatt:12'));
+  status = 'angriff';
+  await k.wert('KRWerkstatt').aktualisiereArena();
+  await k.ruhe();
+  assert.equal(k.window.localStorage.getItem('kr-werkstatt:12'), null, 'Arena in der Angriffsphase → Entwurf weg');
+  // Seitenstart: Entwurf einer Arena, die nicht mehr in der Werkstatt ist, wird nicht geladen, sondern gelöscht
+  const k2 = lade({ 'GET /api/arena': ARENA('beurteilung') }, { vorher: (x) => x.window.localStorage.setItem('kr-werkstatt:12', roh) });
+  await k2.ruhe();
+  assert.equal(k2.window.localStorage.getItem('kr-werkstatt:12'), null);
+  assert.equal(k2.eins(k2.document, 'textarea.werkstatt-klartext').value, '');
+  // ohne Arena (Level 3.3) bleibt ein Entwurf ohne Arena-Bezug erhalten
+  const ohne = JSON.stringify({ ...JSON.parse(roh), arena: null });
+  const k3 = lade({ 'GET /api/arena': { status: 200, body: { arena: null, team: TEAM, eigene: null, teilnahme: 12 } } }, { vorher: (x) => x.window.localStorage.setItem('kr-werkstatt:12', ohne) });
+  await k3.ruhe();
+  assert.equal(k3.eins(k3.document, 'textarea.werkstatt-klartext').value, TEXT1);
+  k.wert('KRWerkstatt')._stopp();
+  k2.wert('KRWerkstatt')._stopp();
+  k3.wert('KRWerkstatt')._stopp();
+});
+
+test('K5: 401 mit Umleitung zum Portal löscht alle Werkstatt-Entwürfe (geteilte Tablets), sonst nichts', async () => {
+  const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/kopfzeile.js'], { url: 'http://x.test/werkstatt#/', fetch: { 'GET /api/test': { status: 401, body: { error: 'Bitte melde dich an.', anmelden: true } } } });
+  k.window.localStorage.setItem('kr-werkstatt:12', '{"klartext":"geheim"}');
+  k.window.localStorage.setItem('kr-thema', 'dunkel');
+  k.wert('AQ').api('GET', '/api/test');
+  await k.ruhe();
+  assert.match(k.window.location.href, /\/sso\/start\?ziel=/);
+  assert.equal(k.window.localStorage.getItem('kr-werkstatt:12'), null);
+  assert.equal(k.window.localStorage.getItem('kr-thema'), 'dunkel');
 });

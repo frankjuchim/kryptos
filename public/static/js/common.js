@@ -75,8 +75,7 @@ const AQ = (() => {
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('application/json')) data = await res.json();
     if (res.status === 401 && data && data.anmelden) {
-      // Kryptos: keine eigene Anmeldung – still über das Portal neu anmelden (TECHNIK §6.4); Hash bleibt im ziel erhalten
-      location.href = '/sso/start?ziel=' + encodeURIComponent(location.pathname + location.hash);
+      zurAnmeldung();
       return new Promise(() => {}); // Seite wechselt; keine Fehlermeldung anzeigen
     }
     if (!res.ok) {
@@ -90,6 +89,24 @@ const AQ = (() => {
       throw err;
     }
     return data;
+  }
+
+  /* Vor der stillen Neuanmeldung (401): registrierte Aufräum-Funktionen, z. B. Werkstatt-Entwürfe auf geteilten Tablets
+     löschen (Kryptos, Review M7 K5); Fehler einer Funktion halten die Umleitung nicht auf. */
+  const vorAnmeldungListe = [];
+  function vorAnmeldung(fn) {
+    if (typeof fn === 'function' && !vorAnmeldungListe.includes(fn)) vorAnmeldungListe.push(fn);
+  }
+  /** Kryptos: keine eigene Anmeldung – still über das Portal neu anmelden (TECHNIK §6.4); Hash bleibt im ziel erhalten */
+  function zurAnmeldung() {
+    for (const fn of vorAnmeldungListe) {
+      try {
+        fn();
+      } catch {
+        /* weiter */
+      }
+    }
+    location.href = '/sso/start?ziel=' + encodeURIComponent(location.pathname + location.hash);
   }
 
   let toastTimer;
@@ -312,5 +329,5 @@ const AQ = (() => {
     return { kryptografie: '🛡 Kryptografie', kryptoanalyse: '🔍 Kryptoanalyse' }[rolle] || '';
   }
 
-  return { SVG_NS, h, s, clear, mount, api, toast, fmtDatum, progress, prozent, sterne, bestaetigen, download, readFile, mische, speichere, lade, effekt, ruhig, einstellung, niveau, NIVEAU_TEXT, rolleText };
+  return { SVG_NS, h, s, clear, mount, api, vorAnmeldung, zurAnmeldung, toast, fmtDatum, progress, prozent, sterne, bestaetigen, download, readFile, mische, speichere, lade, effekt, ruhig, einstellung, niveau, NIVEAU_TEXT, rolleText };
 })();

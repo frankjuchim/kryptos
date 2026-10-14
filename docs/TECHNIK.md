@@ -1136,7 +1136,10 @@ werkstatt ──(Lehrkraft: Angriff starten)──► angriff ──(Lehrkraft o
 Beim Übergang `angriff → beurteilung` werden die Abzeichen vergeben (§9.6). Die Werkstatt ohne Arena (Level 3.3) arbeitet
 rein im Browser: Entwürfe liegen nur lokal (`localStorage` unter `kr-werkstatt:<teilnahme>`, try/catch), Prüfung über
 `shared/krypto.js`; serverseitig gespeichert wird erst die Einreichung in eine Arena. „Abmelden“/„Überall abmelden“ im
-Kopfzeilen-Menü und „Entwurf verwerfen“ löschen die Entwürfe (geteilte Tablets, Plan M7 E105).
+Kopfzeilen-Menü und „Entwurf verwerfen“ löschen die Entwürfe (geteilte Tablets, Plan M7 E105). Zusätzlich (Review M7 K5):
+nach erfolgreichem Einreichen (erst eine neue Änderung legt wieder einen Entwurf an); ein Entwurf trägt die Arena-id
+(`arena`, nur in der Werkstatt-Phase, sonst `null`) und wird gelöscht, sobald diese Arena nicht mehr in der Werkstatt ist
+(Seitenstart und Phasen-Abfrage alle 15 s); bei jeder stillen Neuanmeldung nach 401 (`AQ.vorAnmeldung`, K27).
 
 ### 9.2 Baukasten-Format (Verfahren öffentlich, Schlüssel geheim – Kerckhoffs)
 

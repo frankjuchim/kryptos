@@ -98,6 +98,9 @@ const KRKopf = (() => {
     }
   }
 
+  // auch bei der stillen Neuanmeldung nach 401 (Sitzung abgelaufen, anderes Konto auf dem Tablet, Review M7 K5)
+  if (typeof AQ !== 'undefined' && typeof AQ.vorAnmeldung === 'function') AQ.vorAnmeldung(entwuerfeLoeschen);
+
   async function abmelden(ueberall) {
     entwuerfeLoeschen();
     try {
