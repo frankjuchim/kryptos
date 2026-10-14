@@ -648,6 +648,7 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 48 | VV-2, VV-3, VV-4 | Portal führt Kursniveau (v1.3?); Portal-Link als MUSS; `lab-kern` nach 1.0 | nicht eingereicht; Vorschläge V1–V8 bleiben Vorschläge (F12) |
 | 49 | M9 E152, E153 | Datenschutzseite mit Platzhaltern `[…]` der Schule, Löschfristen | wie Task 210; Angaben liefert die Schule (F3) |
 | 50 | M9 E149, E154, E159 | Betrieb nur mit https (außer localhost); Foto-Satz; Version 1.0.0 = Release-Kandidat, Merge = erstes Deploy | wie Tasks 205, 217, 219 |
+| 51 | M9 Task 208 (Review) | Gastmodus-Limit 300 Anfragen je 10 min je IP (`src/routes/gast.js`): reicht das, wenn eine ganze Klasse hinter einer Schul-IP den Gastmodus öffnet (pro Aufgabe mehrere Aufrufe)? | unverändert = Algo-Quest-Wert (2.8.2, gleiche Stelle); Erhöhung nur nach Entscheidung der Lehrkraft |
 
 ---
 
