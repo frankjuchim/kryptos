@@ -1351,8 +1351,9 @@ W6 `chiffre` `uhrwerk` (W6-L2-04), `lines` mit zwei Zeilen (W6-L1-11), Werkzeug 
 je Welt einen Boss starten und abbrechen (Zeitanzeige 25/30 min). gA-Kurs: Level 3.2/3.3 unsichtbar, Kür nur nach
 Freischaltung. 360 px ohne Querscrollen auf jeder besuchten Seite; Kontrastmessung wie Szenario 9.
 
-- [ ] **Step 1:** Szenario schreiben (Selektoren über Rollen/Labels wie Szenario 11). **Step 2:** `npm run e2e` (Chromium unter
+- [x] **Step 1:** Szenario schreiben (Selektoren über Rollen/Labels wie Szenario 11). **Step 2:** `npm run e2e` (Chromium unter
   `/opt/pw-browsers`) → alle Szenarien grün. **Step 3: Commit** `git commit -m "e2e Szenario 12: Welten 3–6 spielbar (neue Interaktionen, Werkstatt-Karte, Uhrwerk)"`.
+- [x] **Umsetzungsnotiz:** `test/e2e/inhalte_w36.js` läuft im zweiten App-Start (echte Seeds) direkt nach Szenario 11 und nutzt dessen Kurse und Hilfen (`kursId`, `einstellen`, `kursWaehlen`, `kaestchen` jetzt aus `inhalte.js` exportiert). Ablauf wie oben; „Boss starten und abbrechen“ = „Kampf beginnen“ → Bestätigungsdialog mit „Du hast 25 Minuten …“ (W6 30) → „Abbrechen“, damit kein Boss-Versuch verbraucht wird; die Boss-Karte nennt „8 Aufgaben, 25 Minuten“. Ring-Modus: Werkzeug-Karte 6.2 → `/labor#/skytale?reiter=ring&level=W6-L2`, `KRLabor.aktiv().zustand().reiter === 'ring'`. **Gefundener Fehler:** Nach einer richtigen eigenen Kollision (W5-L1-07 „eis“) überschrieb der Client die Eingabe mit dem Lösungsbeispiel „haffk“ und löschte den KH-Wert (`loesung()` nach dem Lösen). Test in `client_interaktionen.test.js` zuerst rot, dann `teilHashZiel` merkt sich die bestätigte Eingabe; das Beispiel erscheint nur noch bei „Lösung zeigen“ (Version 0.4.10; TECHNIK §4, AUFGABENFORMAT §8.5). Die Erklärung von W5-L1-07 nennt „haffk“ weiterhin (gewollt, nach dem Lösen). 360 px (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten W3–W6) und Kontraste hell/dunkel ohne Verstoß. `npm run e2e`: alle 13 Szenarien grün (Szenario 12: 29 s); Fotos danach zurückgesetzt. TECHNIK §15 Nr. 12.
 
 ### Task 203: CI und Skripte
 

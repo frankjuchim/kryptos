@@ -1131,6 +1131,7 @@ const KRI = (() => {
   /** Nachricht zu vorgegebenem KRYPTOS-Hash: Eingabefeld; Rückmeldung zeigt KH der eigenen Eingabe (vom Server). */
   function teilHashZiel(ia, kontext) {
     let gesperrt = false;
+    let richtig = false; // eigene Eingabe vom Server als richtig bestätigt (Plan M8 Task 202)
     const box = h('div', { class: 'hashziel' });
     const ziel = Number.isInteger(ia.ziel) ? ia.ziel : '?';
     const praefix = typeof ia.praefix === 'string' && ia.praefix ? ia.praefix : null;
@@ -1139,6 +1140,7 @@ const KRI = (() => {
     const wert = h('p', { class: 'hashziel-wert', 'aria-live': 'polite' });
     feld.addEventListener('input', () => {
       if (gesperrt) return;
+      richtig = false;
       feld.classList.remove('ok', 'falsch', 'loesung');
       feld.removeAttribute('aria-invalid');
       wert.textContent = '';
@@ -1157,12 +1159,15 @@ const KRI = (() => {
       },
       feedback(r) {
         if (!r) return;
+        richtig = !!r.ok;
         feld.classList.toggle('ok', !!r.ok);
         feld.classList.toggle('falsch', !r.ok);
         feld.setAttribute('aria-invalid', r.ok ? 'false' : 'true');
         wert.textContent = Number.isInteger(r.wert) ? `Dein Text hat den KRYPTOS-Hash ${r.wert}.` : '';
       },
       loesung(lo, muster) {
+        // Eine richtige eigene Kollision bleibt mit ihrem KH-Wert stehen; das Beispiel zeigt nur „Lösung zeigen“.
+        if (richtig) return;
         feld.value = istObjekt(lo) && typeof lo.beispiel === 'string' ? lo.beispiel : String(muster ?? '');
         feld.classList.remove('ok', 'falsch');
         feld.classList.add('loesung');

@@ -752,7 +752,8 @@ Für Kollisionen und Urbilder des KRYPTOS-Hash (SPEC W5 §0a, Lab W5-L1-07, Gene
 | `praefix` | Wort (a–z, 1–20) | eins von beiden | Urbild: die Eingabe beginnt mit diesem Anfang |
 
 **Lösung:** `{ "beispiel": "haffk" }` – eine Musterantwort (Lehrkraft-Vorschau, „Lösung zeigen“), die der Validator
-nachrechnet; sie ist nicht die einzige richtige Antwort.
+nachrechnet; sie ist nicht die einzige richtige Antwort. Nach einer richtigen eigenen Eingabe zeigt der Client weiter diese
+Eingabe mit ihrem KH-Wert (nicht das Beispiel).
 
 **Antwort Client → Server:** Text (`"haffk"`) oder `{ "text": "haffk" }`. **Prüfregeln:** `bereinige` → `nurBuchstaben`
 (Umlaute aufgelöst), höchstens 60 Buchstaben (roh höchstens 200 Zeichen), sonst 400; `istLeer`: keine Buchstaben.

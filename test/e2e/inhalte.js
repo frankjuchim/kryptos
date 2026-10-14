@@ -197,4 +197,4 @@ async function szenario11(ctx) {
   await klein.kontext.close();
 }
 
-module.exports = { szenario11 };
+module.exports = { szenario11, kursId, einstellen, kursWaehlen, kaestchen };

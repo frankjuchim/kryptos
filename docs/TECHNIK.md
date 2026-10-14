@@ -275,7 +275,8 @@ Zusatzdiagnose (z. B. `gaps`, Delta §9.6).
 Blöcke (Server): `registriereBlock('quadrat', { texte, validiere(b, fe, w) })`.
 `hash-ziel` (Plan M8 E126, Delta §8.5): `interaktionen/hashziel.js` – Kollision (`ungleich`) bzw. Urbild (`praefix`) zum
 KRYPTOS-Hash; richtig ⇔ KH(Eingabe) = `ziel`; Prüfantwort mit `wert` (KH der Eingabe) in `teile[i]`, Hinweise ohne
-P-Nummer (`p: null`); Client `teilHashZiel` in `krypto/interaktionen.js`.
+P-Nummer (`p: null`); Client `teilHashZiel` in `krypto/interaktionen.js` (nach einer richtigen eigenen Eingabe bleibt diese
+mit ihrem KH-Wert stehen – das `beispiel` füllt das Feld nur bei „Lösung zeigen“, Plan M8 Task 202).
 `bits-rechnen` (Plan M8 E124, E125): `kryptos16` mit `schritt` (Kettenzustand `nach-xor`/`nach-sbox`/`nach-transposition`
 der Runde `runden` bzw. Einzelschritt `sbox`/`sbox-inv`/`transposition`/`rundenschluessel`) und `text` (2 Zeichen, ASCII)
 statt `block`; die Neuberechnung steht in `interaktionen/bits.js` (`erwartet`), die Diagnose in `diagnose.js`
@@ -1900,8 +1901,8 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 `keinQuerScrollen`, `ziele44`, `kontraste`, Fotos), `schueler.js` (Nr. 1, 2,
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
-ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
-Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11. `E2E_NUR=11` (Komma-Liste)
+ohne Fotos), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12. `E2E_NUR=11,12` (Komma-Liste; 12 setzt 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -1942,6 +1943,15 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     `application/pdf`), QR-Ziel `/level/0.4` → Level-Seite, Boss W0 (8 Aufgaben, eine Antwort, Auswertung mit Lösung);
     im GK 12 fehlen Level 2.3 und – bis „Kür: Frei“ – K1; 360 px ohne Querscrollen (Zeitleiste, Epoche, Level, Aufgabe,
     Archivfund, Boss-Start, Themen).
+12. Welten 3–6 spielbar (Plan M8 Task 202, umgesetzt): Frau M. schaltet alle sieben Welten frei (LK 13 eA; GK 12 gA, Kür
+    gesperrt); Mika R. löst die Archivfunde W3–W6 (ohne Punkte) und je neue Interaktion eine Aufgabe – W3-L2-03
+    `bits-rechnen` mit `schritt` (Transposition), W3-L4-01 ADFGVX (`chiffre` + Block `quadrat`), Werkstatt-Karte 3.3 →
+    `/werkstatt`; W4-L2-06 `schaubild-ergaenzen`, W4-L2-03 `match` mit Kategorien; W5-L1-07 `hash-ziel` (erst „tee“ falsch:
+    nur der KH-Wert, kein Lösungsbeispiel; dann „eis“ richtig – die eigene Kollision bleibt mit KH 4 stehen); W6-L2-04
+    `chiffre` `uhrwerk`, W6-L1-11 `lines` mit zwei Zeilen, Skytale im Reiter „Ring“ über die Werkzeug-Karte 6.2; je Welt
+    Boss-Start bis zum Bestätigungsdialog (25 min, W6 30 min) und Abbrechen (kein Kampf). GK 12: Level 3.2/3.3 fehlen,
+    Kür 3.K2/4.K3 erst nach „Kür: Frei“. 360 px ohne Querscrollen (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten
+    W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Ohne Fotos.
 
 ---
 

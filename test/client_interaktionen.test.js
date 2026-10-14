@@ -498,6 +498,21 @@ test('hash-ziel (W9-L6-07): Eingabefeld, Ziel-Hinweis, Feedback mit KRYPTOS-Hash
   assert.equal(feld.value, 'eis');
 });
 
+test('hash-ziel: nach richtiger eigener Kollision bleibt die Eingabe mit ihrem KH-Wert stehen; das Lösungsbeispiel nur bei „Lösung zeigen“ (Plan M8 Task 202)', () => {
+  const { k, c } = baue(oeffentlich('W9-L6-07'));
+  const feld = k.eins(c.el, 'input.hashziel-eingabe');
+  k.tippe(feld, 'zoo');
+  const s = server('hashziel', 'W9-L6-07', c.antwort());
+  assert.equal(s.r.ok, true);
+  c.feedback({ ok: true, teile: [s.r] });
+  c.loesung({ beispiel: 'haffk' }); // Server liefert nach dem Lösen die Lösung mit
+  c.sperren(true);
+  assert.equal(feld.value, 'zoo', 'eigene Kollision bleibt stehen');
+  assert.ok(feld.classList.contains('ok'));
+  assert.equal(k.text(k.eins(c.el, '.hashziel-wert')), 'Dein Text hat den KRYPTOS-Hash 4.');
+  assert.doesNotMatch(k.text(c.el), /haffk/, 'Lösungsbeispiel erscheint nicht');
+});
+
 test('bits-rechnen lawine: nur das gekippte Bit des Blocks ist markiert', () => {
   const { k, c } = baue(oeffentlich('W9-L3-04'));
   const zeilen = k.alle(c.el, '.bits-zeile');
