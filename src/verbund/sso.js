@@ -87,6 +87,8 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
 
   r.get('/start', (req, res) => {
     res.set('Cache-Control', 'no-store');
+    // Die Weiterleitung zum Portal trägt state und ziel in der URL – kein Referrer (wie /sso/ende; M9 Task 207)
+    res.set('Referrer-Policy', 'no-referrer');
     const key = 'ip:' + req.ip;
     if (!startLimit.take(key)) {
       res.set('Retry-After', String(startLimit.retryAfterSec(key)));

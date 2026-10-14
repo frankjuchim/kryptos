@@ -263,12 +263,13 @@ function createApp(opts) {
 
   /* ---------- API ---------- */
   const api = express.Router();
-  api.use(S.sameOriginCheck);
-  api.use(express.json({ limit: '30mb' }));
+  // K46: no-store vor der Herkunftsprüfung – auch die 403/415-Antworten von sameOriginCheck werden nie zwischengespeichert
   api.use((req, res, next) => {
     res.set('Cache-Control', 'no-store');
     next();
   });
+  api.use(S.sameOriginCheck);
+  api.use(express.json({ limit: '30mb' }));
 
   // Sitzung: GET /api/sitzung, Kurswahl, Abmelden (TECHNIK §6.4, §13.1)
   sitzung.routen(api, { svc, konfig, version: VERSION });

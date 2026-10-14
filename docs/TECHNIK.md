@@ -588,7 +588,8 @@ Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
 4. `ziel` übernehmen, wenn `typeof === 'string'`, Länge ≤ 300 und `^\/(?![\/\\])` (genau ein führender `/`, kein `//`,
    kein `\`), sonst `/`.
 5. `302` auf `PORTAL_URL/sso/autorisieren?plattform=<PLATTFORM_ID>&ruecksprung=<PLATTFORM_URL>/sso/ende&state=<state>&ziel=<ziel>`
-   (Parameter mit `URLSearchParams` kodiert).
+   (Parameter mit `URLSearchParams` kodiert), mit `Cache-Control: no-store` und `Referrer-Policy: no-referrer` (wie
+   `/sso/ende`; M9 Task 207, `test/sicherheit.test.js`).
 
 ### 6.3 `GET /sso/ende?token=…&state=…&ziel=…` bzw. `?fehler=…&state=…`
 

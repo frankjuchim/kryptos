@@ -232,7 +232,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: `test/helpers.js` (`makeApp`, `sso`), `trustProxy: 1`
 - Produces: Konstante `SEITEN` in `test/sicherheit.test.js` = alle HTML-Pfade (öffentlich + mit Wächter), von Task 208 wiederverwendet (Export über `module.exports` nicht nötig – Task 208 ergänzt dieselbe Datei).
 
-- [ ] **Step 1: Failing tests** (`test/sicherheit.test.js`, Fixture-App):
+- [x] **Step 1: Failing tests** (`test/sicherheit.test.js`, Fixture-App):
   ```js
   const SEITEN_OEFFENTLICH = ['/', '/gast', '/themen', '/datenschutz', '/robots.txt', '/gibt-es-nicht', '/fehler/keine-berechtigung.html'];
   const SEITEN_SCHUELER = ['/spiel', '/labor', '/funkraum', '/werkstatt'];
@@ -255,10 +255,10 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   test('host_kopf_wirkungslos (Review Focus 5): /sso/start mit Host: boese.example → ruecksprung bleibt https://kryptos.test/sso/ende; Abmelden-weiter bleibt Portal-URL', …);
   test('statische Dateien: kein Verzeichnislisting, keine Quelltext-Dateien außerhalb public (/static/../src/app.js → 404)', …);
   ```
-- [ ] **Step 2: Run** `node --test test/sicherheit.test.js` → erwartete Ausgabe: rot nur dort, wo ein Fund vorliegt (bei durchgehend Grün: den Test durch eine absichtlich entfernte Kopfzeile in einer Scratch-Kopie einmal rot sehen und im Bericht belegen).
-- [ ] **Step 3: Implement** nur die Korrekturen der Funde (je Fund im Commit-Text nennen; Kern-Änderungen mit K-Nummer).
-- [ ] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
-- [ ] **Step 5: Commit** `git commit -m "Sicherheit: Kopfzeilen aller Seiten, Cookies hinter dem Proxy, Host-Kopf (M9 Task 207)"`
+- [x] **Step 2: Run** `node --test test/sicherheit.test.js` → erwartete Ausgabe: rot nur dort, wo ein Fund vorliegt (bei durchgehend Grün: den Test durch eine absichtlich entfernte Kopfzeile in einer Scratch-Kopie einmal rot sehen und im Bericht belegen).
+- [x] **Step 3: Implement** nur die Korrekturen der Funde (je Fund im Commit-Text nennen; Kern-Änderungen mit K-Nummer).
+- [x] **Step 4: Run** `node --test test/sicherheit.test.js` → PASS; `npm test` grün.
+- [x] **Step 5: Commit** `git commit -m "Sicherheit: Kopfzeilen aller Seiten, Cookies hinter dem Proxy, Host-Kopf (M9 Task 207)"`
 
 ### Task 208: Sicherheits-Review II – Routen-Inventar mit Rechten und Rate-Limits
 
