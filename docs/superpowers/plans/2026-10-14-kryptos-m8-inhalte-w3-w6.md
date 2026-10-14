@@ -1256,17 +1256,18 @@ Create `materialien/Online-IDE/KR_Welt3_Maschinenzeitalter_Workspaces.json`, `Le
 **Files:** `materialien/Welt4_Schluesselproblem/**`, `Welt5_Netz/**`, `Welt6_Zeitmaschine/**` (inkl. Probeklausuren/Klausuren),
 `materialien/Werkzeuge/**` (WK1–WK6, Anlage, Warm-up-Karten W0–W6, Funkraum), `materialien/00_Lehrerhinweise/**`
 
-- [ ] **Step 1: Textgleichheit sichern** – Probebau ins Scratchpad (`bauen.py --aus <scratch>`), Vergleich mit
+- [x] **Step 1: Textgleichheit sichern** – Probebau ins Scratchpad (`bauen.py --aus <scratch>`), Vergleich mit
   `scratchpad/m8plan/textdiff.py` (Absätze, Tabellenzellen, Folientexte) gegen die vorhandenen Dateien: **0 Textänderungen**
   außer den gewollten (Lehrerhinweise W4 Anhang B nach Task 164, Spec-§8-Beispiele nach Task 191). Jede andere Abweichung
   stoppt die Task (Quelle und Datei auseinandergelaufen → Lehrkraft fragen).
-- [ ] **Step 2: Neubau** in `materialien/` (gleiche Dateinamen); `kr_kontrast.py` je Datei → 0 Verstöße (vorher u. a. W5 Akte 3
+- [x] **Step 2: Neubau** in `materialien/` (gleiche Dateinamen); `kr_kontrast.py` je Datei → 0 Verstöße (vorher u. a. W5 Akte 3
   32, W6 Akte 2 23, W4 Akte 1 18, Gesamtübersicht 12).
-- [ ] **Step 3: Sichtprüfung** – je Welt Akte 1, Boss, Präsentation und eine Klausur mit `soffice` nach PDF, ansehen
+- [x] **Step 3: Sichtprüfung** – je Welt Akte 1, Boss, Präsentation und eine Klausur mit `soffice` nach PDF, ansehen
   (Seitenumbrüche, Sonderzeichen ← ≤ ≠ ⊕, Bilder).
-- [ ] **Step 4:** `python3 -I werkzeuge/material/test_kontrast.py`, `node --test test/material_pipeline.test.js`; Video-Folien
+- [x] **Step 4:** `python3 -I werkzeuge/material/test_kontrast.py`, `node --test test/material_pipeline.test.js`; Video-Folien
   bleiben (M9).
-- [ ] **Step 5: Commit** `git commit -m "Material W4–W6, Werkzeugkarten, Lehrerhinweise, Prüfungen neu gebaut (Kontrastregel, Text unverändert)"`.
+- [x] **Step 5: Commit** `git commit -m "Material W4–W6, Werkzeugkarten, Lehrerhinweise, Prüfungen neu gebaut (Kontrastregel, Text unverändert)"`.
+- [x] **Umsetzungsnotiz:** 49 Quellen (Warm-up, Funkraum, Arena und Lehrerhinweise W0–W6; Akten, Bosse und Präsentationen W4–W6; Werkzeugkarten, Gesamtübersicht, sechs Prüfungen), Videos ausgenommen. Probebau ins Scratchpad, `textdiff.py` gegen alle 75 vorhandenen Dateien: 73 ohne Textänderung, 2 gewollt (Lehrerhinweise W3 und W6, Wortlisten/Beispiel G-W6-1 nach Task 191; Anhang B W4 war schon aktuell). Dann Neubau in `materialien/` mit derselben Quellliste: 75 Dateien, `kr_kontrast.py` 0 Verstöße, `test_kontrast.py` OK. Sichtprüfung (eigenes soffice-Profil): Akte W4·1, Akte W6·2 (Ring-Bild, Tabellen), Boss W4/W5, Präsentation W5, Klausur W6 eA, WK1, Gesamtübersicht. Die abgeleiteten PDFs (Akten_PDF, Loesungen_*, Lehrkraft_PDF) werden in Task 199 neu erzeugt.
 
 ### Task 198: Lehrerhinweise – Boss-Tabellen mit Fallen-Spalte (W0–W6)
 
