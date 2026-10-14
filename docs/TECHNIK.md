@@ -1924,7 +1924,7 @@ Screenshots nach `docs/screenshots/m4-*.png` – höchstens 30, zusammen ≤ 5 M
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
 ohne Fotos), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, ohne Fotos), `labor.js` (Nr. 4, M6 Task 128, ohne Fotos – E88), `funkraum.js` (Nr. 5, M7 Task 160), `arena.js` (Nr. 6, M7 Task 161) – beide ohne Fotos (E118);
-Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12. `E2E_NUR=11,12` (Komma-Liste; 12 setzt 11 voraus)
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13. `E2E_NUR=11,12` (Komma-Liste; 12 und 13 setzen 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -1974,6 +1974,17 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     Boss-Start bis zum Bestätigungsdialog (25 min, W6 30 min) und Abbrechen (kein Kampf). GK 12: Level 3.2/3.3 fehlen,
     Kür 3.K2/4.K3 erst nach „Kür: Frei“. 360 px ohne Querscrollen (Mika: eA-Seiten, Werkstatt, Labor; Ida K.: 15 Seiten
     W3–W6) und Kontrastmessung hell/dunkel wie Nr. 9 (auch `hash-ziel` mit Rückmeldung). Ohne Fotos.
+13. Lehrkraft-Bereich im Algo-Quest-Aufbau (Plan M9 Task 215, E161; `lehrkraft_bereich.js`, im selben App-Start nach
+    Nr. 12): Ole B. und Nia T. melden sich einmal an; Frau M.: Kopfzeile Kurse · Aufgaben · Materialien · Themen · Labor +
+    Portal-Link; Kurskopf mit Niveau-Chip und „Urkunden“; Kurs-Reiter Schüler · Beitritt & QR · Auswertung · Scoreboard ·
+    Einstellungen · Teams · Funkraum · Knack-Arena (je Überschrift, keine Fehlerbox); Schülerliste mit Mika R., Ole B.,
+    Nia T.; QR-Code (SVG, 200); Matrix und CSV (`text/csv`, Mika); Einstellungen mit sieben Welten, Niveau, Kür,
+    Werkzeugen, Beamer-Board an → Board-Link öffnet `/board/<schluessel>` ohne Anmeldung; Urkunden (Druckansicht ohne
+    Querscrollen); Vorschau Welt 3 → Level 3.2 mit eA → W3-L2-03 mit Lösung und Erklärung; Materialien Welt 0–6, Lösung W0
+    als PDF (200), Funkraum-Rollenkarte W3; `/themen#niveaus` mit sieben Welten; 360 px (Kurse, Auswertung, Einstellungen)
+    ohne Querscrollen, Touch-Ziele ≥ 44 px. Admin: Verwaltung vor Labor, Reiter Lehrkräfte & Anfragen · Inhalte ·
+    Warm-up-Import · Backup & Verbund · Wartung; Backup-JSON `app = kryptos`, `meta.app = kryptos`, ohne `sso_jti`,
+    `loeschungen`, Funkraum- und Arena-Tabellen; Wartung mit letztem Lauf. Ohne Fotos (Foto-Satz: Task 217).
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C

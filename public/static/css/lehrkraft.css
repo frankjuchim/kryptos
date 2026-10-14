@@ -38,7 +38,7 @@ a.kurs-link { display: inline-flex; align-items: center; min-height: var(--ziel)
 }
 
 /* ---------- Auswertung (Task 63) ---------- */
-.auswertung-teil { display: grid; gap: var(--a-3); min-width: 0; }
+.auswertung-teil { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-3); min-width: 0; } /* Spalte nie breiter als der Kasten: sonst zieht die Aufgabenstatistik (scroll-x) die Seite bei 360 px auf (M9 Task 215) */
 .auswertung-teil h2 { margin: 0; }
 .matrix-block { display: grid; gap: var(--a-2); min-width: 0; }
 .matrix-lehrkraft { border-collapse: separate; border-spacing: 2px; }

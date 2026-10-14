@@ -439,7 +439,7 @@ Nummern setzen die M8-Liste (E120–E147) fort.
 - Consumes: echter App-Start aus Szenario 11/12 (`echt`-Kontext, Kurseinstellungen aus 11/12), `lehrkraft.kursWaehlen`, `lehrkraft.kursId`, `H.keinQuerScrollen`, `H.ziele44`
 - Produces: `szenario13(ctx)`; ruft `H.foto` mit den Namen aus Task 217 (bis dahin ohne Wirkung, wenn `E2E_FOTOS=0`).
 
-- [ ] **Step 1: Szenario schreiben** (E161), Frau M. (1280 × 800):
+- [x] **Step 1: Szenario schreiben** (E161), Frau M. (1280 × 800):
   - Kopfzeile in genau dieser Reihenfolge: „Kurse“, „Aufgaben“, „Materialien“, „Themen“, „Labor“ (+ „Verwaltung“ nur beim Admin, vor „Labor“) und „⌂ Portal“.
   - **Kurse:** LK 13 und GK 12 mit Niveau-Chip; Kurskopf mit „Urkunden“.
   - Kurs-Reiter in Reihenfolge Schüler · Beitritt & QR · Auswertung · Scoreboard · Einstellungen · Teams · Funkraum · Knack-Arena; je Reiter: Überschrift sichtbar, keine Fehlermeldung. Schüler: Mika R., Ole B., Nia T. · Beitritt & QR: Hinweis auf das Portal und QR-Code (SVG lädt, 200) · Auswertung: Matrix mit Mika, CSV-Download (`text/csv`, Kopfzeile, Mika enthalten) · Scoreboard: Rangliste, Board-Link öffnet `/board/<schluessel>` ohne Anmeldung · Einstellungen: alle sieben Welten, Niveau, Kür, Werkzeuge · Teams/Funkraum/Knack-Arena: Leerzustand ohne Fehler.
@@ -449,10 +449,12 @@ Nummern setzen die M8-Liste (E120–E147) fort.
   - **Themen:** `/themen#niveaus` mit sieben Welten.
   - Admin („Admin“ vom Dev-Portal): Verwaltung mit Reitern Lehrkräfte & Anfragen · Inhalte · Warm-up-Import · Backup & Verbund · Wartung; Backup-Download = JSON mit `meta.app = 'kryptos'` und ohne Funkraum-Inhalte/`sso_jti`; Wartung zeigt den letzten Lauf.
   - 360 px: Kurse, Auswertung, Einstellungen ohne Querscrollen; Touch-Ziele ≥ 44 px (`ziele44`).
-- [ ] **Step 2: Run** `E2E_NUR=11,12,13 npm run e2e` → erwartet rot bei jedem fehlenden Reiter/Fund; Funde beheben (Oberfläche: `version_setzen.js patch`).
-- [ ] **Step 3: Run** `E2E_NUR=11,12,13 npm run e2e` → grün.
-- [ ] **Step 4: Run** `npm test` grün; voller `npm run e2e` grün.
-- [ ] **Step 5: Commit** `git commit -m "e2e Szenario 13: Lehrkraft-Bereich vollständig im Algo-Quest-Aufbau (M9 Task 215)"`
+- [x] **Step 2: Run** `E2E_NUR=11,12,13 npm run e2e` → erwartet rot bei jedem fehlenden Reiter/Fund; Funde beheben (Oberfläche: `version_setzen.js patch`).
+  **Fund (behoben, 0.4.11):** Auswertung bei 360 px mit echten Seeds querscrollend (589 px) – die Spalte von
+  `.auswertung-teil` wuchs mit der Aufgabenstatistik (`scroll-x`); jetzt `grid-template-columns: minmax(0, 1fr)`.
+- [x] **Step 3: Run** `E2E_NUR=11,12,13 npm run e2e` → grün.
+- [x] **Step 4: Run** `npm test` grün; voller `npm run e2e` grün.
+- [x] **Step 5: Commit** `git commit -m "e2e Szenario 13: Lehrkraft-Bereich vollständig im Algo-Quest-Aufbau (M9 Task 215)"`
 
 ### Task 216: e2e Szenario 14 „Öffentlich und Verbund-Wege“
 

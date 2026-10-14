@@ -24,6 +24,7 @@ const inhalteW36 = require('./inhalte_w36');
 const labor = require('./labor');
 const funkraum = require('./funkraum');
 const arena = require('./arena');
+const lehrkraftBereich = require('./lehrkraft_bereich');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
@@ -41,7 +42,8 @@ const SZENARIEN = [
 /** Szenarien auf den echten Seeds (zweiter App-Start). */
 const SZENARIEN_ECHT = [
   ['11 Welten 0–2 mit den echten Seeds', inhalte.szenario11],
-  ['12 Welten 3–6 spielbar', inhalteW36.szenario12]
+  ['12 Welten 3–6 spielbar', inhalteW36.szenario12],
+  ['13 Lehrkraft-Bereich im Algo-Quest-Aufbau', lehrkraftBereich.szenario13]
 ];
 
 const NUR = (process.env.E2E_NUR || '').split(',').map((x) => x.trim()).filter(Boolean);
