@@ -4,12 +4,15 @@
 // M6 (E73): je Werkzeug die Reiter-ids (Reihenfolge = Anzeige) und die Voreinstellungs-Schlüssel reiter, richtung,
 // modus, variante, stellung, a, t; feste Wertelisten für richtung/modus/variante (WERTE). M7 Task 153: Bit-Lupe
 // zusätzlich schluesselart (text|hex|bits), c1, c2 (Hex, Doppelnutzung).
+// M10 (E177, E178, E194): fünf Werkzeuge nach der Krypto-Werkstatt (docs/FREMDCODE.md), Feld art
+// (kern | zusatz | kuer – Chip im Labor-Raster), Skytale mit Reiter Pflügen und Größe der Fleißner-Schablone.
 
-const eintrag = (id, titel, welt, voreinstellung, reiter, gast = false) =>
-  Object.freeze({ id, titel, welt, voreinstellung: Object.freeze(voreinstellung), reiter: Object.freeze(reiter), gast });
+const ARTEN = Object.freeze(['kern', 'zusatz', 'kuer']);
+const eintrag = (id, titel, welt, voreinstellung, reiter, gast = false, art = 'kern') =>
+  Object.freeze({ id, titel, welt, voreinstellung: Object.freeze(voreinstellung), reiter: Object.freeze(reiter), gast, art });
 
 const WERKZEUGE = Object.freeze([
-  eintrag('skytale', 'Skytale & Gitter', 0, ['text', 'umfang', 'zeilen', 'schablone', 't', 'richtung', 'reiter'], ['skytale', 'gartenzaun', 'fleissner', 'ring']),
+  eintrag('skytale', 'Skytale & Gitter', 0, ['text', 'umfang', 'zeilen', 'schablone', 't', 'richtung', 'reiter', 'groesse', 'k'], ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring']),
   eintrag('scheibe', 'Chiffrierscheibe', 0, ['text', 'k', 'basis', 'richtung', 'reiter'], ['scheibe', 'text', 'alle'], true),
   eintrag('haeufigkeit', 'Häufigkeits-Analysator', 1, ['text', 'ansicht', 'teiltexte', 'reiter'], ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen']),
   eintrag('substitution', 'Substitutions-Werkbank', 1, ['text', 'vorgabe'], []),
@@ -19,7 +22,13 @@ const WERKZEUGE = Object.freeze([
   eintrag('modulo', 'Modulo-Uhr & Farbmischer', 4, ['modul', 'p', 'g', 'a', 'reiter'], ['uhr', 'tabelle', 'inverses', 'farbmischer']),
   eintrag('rsa', 'RSA-Rechenwerk', 4, ['p', 'q', 'e', 'reiter'], ['rechenwerk', 'euklid', 'text']),
   eintrag('hash', 'Hash-Labor', 5, ['text', 'reiter'], ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme']),
-  eintrag('signatur', 'Signatur- & Zertifikats-Simulator', 5, ['szene', 'reiter'], ['signatur', 'zertifikat', 'mitm'])
+  eintrag('signatur', 'Signatur- & Zertifikats-Simulator', 5, ['szene', 'reiter'], ['signatur', 'zertifikat', 'mitm']),
+  // M10: Werkstatt-Stationen
+  eintrag('quadrat', 'Polybios & Playfair', 0, ['text', 'schluesselwort', 'richtung', 'reiter'], ['polybios', 'playfair']),
+  eintrag('signale', 'Codes & Signale', 0, ['text', 'richtung', 'reiter'], ['morse', 'klopfcode', 'freimaurer'], false, 'zusatz'),
+  eintrag('verstecke', 'Versteckte Botschaften', 0, ['text', 'stelle', 'reiter'], ['nullchiffre', 'punkte'], false, 'zusatz'),
+  eintrag('enigma', 'Enigma', 3, ['einstellung', 'ukw', 'reiter'], ['maschine', 'innenleben', 'vorfuehren', 'glossar'], false, 'kuer'),
+  eintrag('analyse', 'Angreifer-Labor', 1, ['reiter'], ['vergleich', 'schluesselraum', 'trainer', 'blick'])
 ]);
 
 /** Feste Wertelisten einzelner Voreinstellungs-Schlüssel je Werkzeug (Validator, E73). */
@@ -28,11 +37,15 @@ const WERTE = Object.freeze({
   modus: Object.freeze({ vigenere: Object.freeze(['vigenere', 'autokey', 'porta', 'pendel', 'frei']), bitlupe: Object.freeze(['otp', 'wiederholung']) }),
   variante: Object.freeze({ runden: Object.freeze(['kryptos16', 'ohneSBox', 'rm16']) }),
   // M7 Task 153: Schreibweise des Bit-Lupe-Schlüssels (Funkraum „Der doppelte Schlüssel“: Hex)
-  schluesselart: Object.freeze({ bitlupe: Object.freeze(['text', 'hex', 'bits']) })
+  schluesselart: Object.freeze({ bitlupe: Object.freeze(['text', 'hex', 'bits']) }),
+  // M10 E194: Größe der Fleißner-Schablone (4 × 4 Standard, 6 × 6 Zusatz), Umkehrwalze, Leseregel der Nullchiffre
+  groesse: Object.freeze({ skytale: Object.freeze([4, 6]) }),
+  ukw: Object.freeze({ enigma: Object.freeze(['B', 'C']) }),
+  stelle: Object.freeze({ verstecke: Object.freeze([1, 2, 3]) })
 });
 
 /** Voreinstellungs-Schlüssel, die in Kryptoanalyse-Leveln den Schlüssel verraten (Delta §7.7, E73). */
-const SCHLUESSEL_VERRAT = Object.freeze(['schluessel', 'k', 'vorgabe', 't']);
+const SCHLUESSEL_VERRAT = Object.freeze(['schluessel', 'k', 'vorgabe', 't', 'einstellung', 'schluesselwort']);
 
 const WERKZEUG_IDS = Object.freeze(WERKZEUGE.map((w) => w.id));
 const NACH_ID = new Map(WERKZEUGE.map((w) => [w.id, w]));
@@ -61,10 +74,10 @@ function pruefeVoreinstellung(wz, v, fe) {
   if (Object.hasOwn(v, 'richtung') && wz.voreinstellung.includes('richtung') && !WERTE.richtung.includes(v.richtung)) {
     fe(`voreinstellung: richtung muss ${WERTE.richtung.join(' oder ')} sein.`);
   }
-  for (const k of ['modus', 'variante', 'schluesselart']) {
+  for (const k of ['modus', 'variante', 'schluesselart', 'groesse', 'ukw', 'stelle']) {
     const liste = WERTE[k][wz.id];
     if (liste && Object.hasOwn(v, k) && !liste.includes(v[k])) fe(`voreinstellung: ${k} muss ${liste.join(' | ')} sein.`);
   }
 }
 
-module.exports = { WERKZEUGE, WERKZEUG_IDS, WERTE, SCHLUESSEL_VERRAT, werkzeug, pruefeVoreinstellung };
+module.exports = { WERKZEUGE, WERKZEUG_IDS, ARTEN, WERTE, SCHLUESSEL_VERRAT, werkzeug, pruefeVoreinstellung };

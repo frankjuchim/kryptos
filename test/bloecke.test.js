@@ -65,7 +65,7 @@ test('matrix: Spaltentransposition und Fleißner (Neuberechnung der Schablone, L
 
 test('werkzeug und haeufigkeit', () => {
   assert.equal(meld([{ t: 'werkzeug', id: 'haeufigkeit', voreinstellung: { text: 'ABC', ansicht: 'absteigend' } }]).f, '');
-  assert.match(meld([{ t: 'werkzeug', id: 'enigma' }]).f, /Werkzeug „enigma“ ist unbekannt/);
+  assert.match(meld([{ t: 'werkzeug', id: 'zauberwuerfel' }]).f, /Werkzeug „zauberwuerfel“ ist unbekannt/); // seit M10 gibt es „enigma“
   assert.match(meld([{ t: 'werkzeug', id: 'scheibe', voreinstellung: { schluessel: 'X' } }]).f, /voreinstellung/);
   assert.match(meld([{ t: 'haeufigkeit', quelle: 'text', text: '1234 !' }]).f, /Buchstaben/);
   assert.match(meld([{ t: 'haeufigkeit', quelle: 'text', text: 'TCHTA TBTCG' }]).w, /P6/);

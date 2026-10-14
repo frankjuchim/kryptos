@@ -13,7 +13,7 @@ const KRLabor = (() => {
   // = src/krypto/werkzeuge.js ohne Voreinstellungs-Schlüssel (Test labor.test.js); reiter: Reihenfolge = Anzeige (M6 E73)
   const WERKZEUGE = Object.freeze(
     [
-      { id: 'skytale', titel: 'Skytale & Gitter', welt: 0, reiter: ['skytale', 'gartenzaun', 'fleissner', 'ring'] },
+      { id: 'skytale', titel: 'Skytale & Gitter', welt: 0, reiter: ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring'] },
       { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, reiter: ['scheibe', 'text', 'alle'] },
       { id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1, reiter: ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen'] },
       { id: 'substitution', titel: 'Substitutions-Werkbank', welt: 1, reiter: [] },
@@ -23,8 +23,14 @@ const KRLabor = (() => {
       { id: 'modulo', titel: 'Modulo-Uhr & Farbmischer', welt: 4, reiter: ['uhr', 'tabelle', 'inverses', 'farbmischer'] },
       { id: 'rsa', titel: 'RSA-Rechenwerk', welt: 4, reiter: ['rechenwerk', 'euklid', 'text'] },
       { id: 'hash', titel: 'Hash-Labor', welt: 5, reiter: ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme'] },
-      { id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, reiter: ['signatur', 'zertifikat', 'mitm'] }
-    ].map((w) => Object.freeze({ ...w, reiter: Object.freeze(w.reiter) }))
+      { id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, reiter: ['signatur', 'zertifikat', 'mitm'] },
+      // M10 (E177, E178): Werkstatt-Stationen (docs/FREMDCODE.md); art: kern | zusatz | kuer
+      { id: 'quadrat', titel: 'Polybios & Playfair', welt: 0, reiter: ['polybios', 'playfair'] },
+      { id: 'signale', titel: 'Codes & Signale', welt: 0, reiter: ['morse', 'klopfcode', 'freimaurer'], art: 'zusatz' },
+      { id: 'verstecke', titel: 'Versteckte Botschaften', welt: 0, reiter: ['nullchiffre', 'punkte'], art: 'zusatz' },
+      { id: 'enigma', titel: 'Enigma', welt: 3, reiter: ['maschine', 'innenleben', 'vorfuehren', 'glossar'], art: 'kuer' },
+      { id: 'analyse', titel: 'Angreifer-Labor', welt: 1, reiter: ['vergleich', 'schluesselraum', 'trainer', 'blick'] }
+    ].map((w) => Object.freeze({ ...w, reiter: Object.freeze(w.reiter), art: w.art || 'kern' }))
   );
   const NACH_ID = new Map(WERKZEUGE.map((w) => [w.id, w]));
   const MODULE = new Map();
@@ -106,7 +112,15 @@ const KRLabor = (() => {
     'vigenere.modus.frei': Object.freeze({ welt: 6 }),
     // Orchestrator (M6): Die MitM-Szene zeigt den Ablauf von W5-L3-04 (Lösung) – im Level-Kontext W5-L3 (Welt 5 Level 5.3)
     // ausgeblendet, im freien Labor vorläufig erst mit freigeschalteter Welt 6 (Lehrkräfte sehen sie immer)
-    'signatur.mitm': Object.freeze({ welt: 6, nichtImLevel: Object.freeze(['W5-L3']) })
+    'signatur.mitm': Object.freeze({ welt: 6, nichtImLevel: Object.freeze(['W5-L3']) }),
+    // M10 E180: Playfair rechnet W2-L4 vor, der Schlüsselraum W1-L1-04 (26! bei 10⁹/s) – erst ab Welt 2; Optionen der
+    // Angreifer-Reiter nach Welt; die Vorführung „keine Fixpunkte“ beantwortet W3-K2-03 – nicht im Level-Kontext W3-L5
+    'quadrat.playfair': Object.freeze({ welt: 2 }),
+    'analyse.schluesselraum': Object.freeze({ welt: 2 }),
+    'analyse.verfahren.playfair': Object.freeze({ welt: 2 }),
+    'analyse.verfahren.vigenere': Object.freeze({ welt: 2 }),
+    'analyse.verfahren.enigma': Object.freeze({ welt: 3 }),
+    'enigma.vorfuehren': Object.freeze({ nichtImLevel: Object.freeze(['W3-L5']) })
   });
   /** Ist der Reiter/Modus „<id>.<reiter>“ in dieser Umgebung sichtbar? Lehrkraft oder fehlende Angaben → ja;
       umgebung.level (Level-id der Aufgabe) sperrt Reiter mit nichtImLevel. */

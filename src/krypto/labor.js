@@ -19,13 +19,13 @@ function createLabor({ db, svc, now }) {
     const einst = svc.kurse.einstellungen(svc.kurse.kursRow(s.kurs_id).einstellungen);
     // gesperrt bis Frist + Kulanz (in der Kulanz nimmt der Boss noch Antworten an – M6 Task 127)
     const boss = !!laufenderBoss.get(s.id, new Date(now() - BOSS_KULANZ_MS).toISOString());
-    const werkzeuge = WERKZEUGE.map(({ id, titel, welt }) => {
+    const werkzeuge = WERKZEUGE.map(({ id, titel, welt, art }) => {
       const einstellung = einst.werkzeuge[id]; // 'frei' | 'gesperrt' | undefined (= auto)
       let grund = null;
       if (boss) grund = 'boss';
       else if (einstellung === 'gesperrt') grund = 'lehrkraft';
       else if (einstellung !== 'frei' && !svc.stand.istFrei(einst, welt)) grund = 'welt';
-      return { id, titel, welt, frei: grund === null, grund };
+      return { id, titel, welt, art, frei: grund === null, grund };
     });
     // M6 E71: freigeschaltete Welten (aufsteigend) und Niveau des Kurses für die Reiter-Regeln im Client
     const welten = [...new Set((Array.isArray(einst.welten) ? einst.welten : []).filter((nr) => Number.isInteger(nr) && svc.stand.istFrei(einst, nr)))].sort((a, b) => a - b);

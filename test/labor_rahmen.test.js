@@ -223,3 +223,31 @@ test('BEREIT = vorhandene Werkzeug-Module (labor/<id>.js)', () => {
   const dateien = new Set(fs.readdirSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor')).map((d) => d.replace(/\.js$/, '')));
   for (const w of k.roh(L.WERKZEUGE)) assert.equal(L.bereit(w.id), dateien.has(w.id), w.id);
 });
+
+test('Reiter-Regeln M10 (E180): Schlüsselraum und Playfair ab Welt 2, Enigma-Vorführung nicht im Level W3-L5', () => {
+  const k = lade();
+  const L = k.wert('KRLabor');
+  const u = { rolle: 'schueler', welten: [0, 1], niveau: 'gA' };
+  assert.equal(L.erlaubt('analyse.schluesselraum', u), false);
+  assert.equal(L.erlaubt('analyse.schluesselraum', { ...u, welten: [0, 1, 2] }), true);
+  assert.equal(L.erlaubt('quadrat.playfair', u), false);
+  assert.equal(L.erlaubt('quadrat.playfair', { ...u, welten: [0, 1, 2] }), true);
+  for (const v of ['playfair', 'vigenere']) assert.equal(L.erlaubt(`analyse.verfahren.${v}`, u), false, v);
+  assert.equal(L.erlaubt('analyse.verfahren.enigma', { ...u, welten: [0, 1, 2] }), false);
+  assert.equal(L.erlaubt('analyse.verfahren.enigma', { ...u, welten: [3] }), true);
+  assert.equal(L.erlaubt('enigma.vorfuehren', { ...u, welten: [3], level: 'W3-L5' }), false);
+  assert.equal(L.erlaubt('enigma.vorfuehren', { ...u, welten: [3] }), true);
+  assert.equal(L.erlaubt('enigma.vorfuehren', { rolle: 'lehrkraft', level: 'W3-L5' }), true);
+  assert.deepEqual(k.roh(L.reiterFuer('quadrat', {}, u)), ['polybios']);
+  assert.deepEqual(k.roh(L.reiterFuer('analyse', {}, u)), ['vergleich', 'trainer', 'blick']);
+  for (const id of ['quadrat', 'signale', 'verstecke', 'enigma', 'analyse']) assert.ok(L.werkzeug(id), id);
+});
+
+test('Labor-Rahmen M10: noch nicht gebaute neue Werkzeuge zeigen „noch in Arbeit“, im Boss-Kampf laden sie nichts', () => {
+  const k = lade();
+  const L = k.wert('KRLabor');
+  const f = k.document.createElement('div');
+  L.oeffne('enigma', {}, f, { modus: 'labor', gesperrt: 'boss' });
+  assert.match(k.text(f), /Boss-Kampfs ist das Labor geschlossen/);
+  assert.equal(k.skripte.filter((x) => x.includes('/labor/enigma')).length, 0);
+});

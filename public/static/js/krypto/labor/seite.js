@@ -5,12 +5,18 @@
    #/<id>?reiter=a,b (Level-Karten) wird zur Voreinstellung { reiter } – nur Reiter des Werkzeugs (M6 Task 125);
    &level=W5-L3 setzt den Level-Kontext der Reiter-Regeln (nichtImLevel, Review M6).
    Review M6: /api/labor vor jedem Raster/Werkzeug frisch; bei Rückkehr in den Tab neu gefragt (KRLabor.wache) und ein
-   offenes Werkzeug bei laufendem Kampf geschlossen (KRLabor.sperreAlle). */
+   offenes Werkzeug bei laufendem Kampf geschlossen (KRLabor.sperreAlle).
+   M10 (E178, E193): Chips „Zusatz“/„Kür“ im Raster (Feld art) und unter dem Raster die Karte „Vier Arten, eine Nachricht
+   zu schützen“ – Herkunft: Krypto-Werkstatt (Ideen von A. Bodendiek), index.html @59004d9 – docs/FREMDCODE.md;
+   eigenes Beispielwort, alle Rechnungen über Krypto.*. */
 'use strict';
 
 const KRLaborSeite = (() => {
   const { h } = AQ;
   const GRUND = KRLabor.GRUND; // Texte der Sperrgründe (registry.js)
+  // Karte „Vier Arten“ (E193): eigenes Wort, in keinem Material; der Brief versteckt es (je Wort der erste Buchstabe)
+  const BEISPIEL = { wort: 'tulpe', k: 3, umfang: 2, brief: 'Tagsüber unterhalten lustige Papageien Elefanten' };
+  const ART_CHIP = { zusatz: 'Zusatz', kuer: 'Kür' };
   let daten = null; // { rolle, boss, niveau, welten, werkzeuge: [{ id, titel, welt, frei, grund }] }
   let offen = null;
 
@@ -27,17 +33,56 @@ const KRLaborSeite = (() => {
     return { rolle: sitzung.rolle, boss: false, werkzeuge: (Array.isArray(liste) ? liste : []).map((w) => ({ ...w, frei: true, grund: null })) };
   }
 
+  /** Chip „Zusatz“ (nicht im KC) bzw. „Kür“ (Vertiefung) – E178 */
+  function artChip(w) {
+    return ART_CHIP[w.art] ? h('span', { class: `chip werkzeug-art art-${w.art}` }, ART_CHIP[w.art]) : null;
+  }
+
   function karte(w) {
     if (w.frei) {
-      return h('a', { class: 'werkzeug-karte', href: `#/${w.id}`, 'data-epoche': String(w.welt) }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w.titel), h('span', { class: 'werkzeug-ort' }, 'Öffnen'));
+      return h('a', { class: 'werkzeug-karte', href: `#/${w.id}`, 'data-epoche': String(w.welt) }, h('span', { class: 'werkzeug-kopf' }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w.titel), artChip(w)), h('span', { class: 'werkzeug-ort' }, 'Öffnen'));
     }
     return h(
       'div',
       { class: 'werkzeug-karte gesperrt', 'data-epoche': String(w.welt) },
-      KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }),
-      h('b', { class: 'werkzeug-name' }, w.titel),
+      h('span', { class: 'werkzeug-kopf' }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w.titel), artChip(w)),
       h('p', { class: 'werkzeug-grund' }, GRUND[w.grund] || GRUND.lehrkraft)
     );
+  }
+
+  /** Karte „Vier Arten, eine Nachricht zu schützen“ (Werkstatt-Startseite, E193) – null ohne Bibliothek */
+  function vierArten() {
+    if (typeof Krypto === 'undefined') return null;
+    const B = BEISPIEL;
+    const klar = Krypto.klein(Krypto.nurBuchstaben(B.wort));
+    const arten = [
+      { art: 'Substitution', titel: 'Buchstaben ersetzen', vorher: klar, nachher: Krypto.caesar(B.wort, B.k), text: 'Jeder Buchstabe wird durch einen anderen ersetzt, die Reihenfolge bleibt. Beispiele: Caesar, Freimaurer, Polybios, Playfair, Enigma.' },
+      { art: 'Transposition', titel: 'Reihenfolge vertauschen', vorher: klar, nachher: Krypto.skytale(B.wort, B.umfang, 'ver', { fuellzeichen: null }), text: 'Die Buchstaben bleiben dieselben, nur ihre Plätze ändern sich. Beispiele: Skytale, Pflügen, Fleißner-Schablone.' },
+      { art: 'Codierung', titel: 'Anders darstellen', vorher: klar, nachher: Krypto.morse(B.wort), text: 'Zeichen werden nach einer öffentlichen Tabelle übersetzt, zum Beispiel in Morsezeichen. Es gibt keinen Schlüssel: Wer die Tabelle kennt, liest mit.' },
+      { art: 'Steganographie', titel: 'Existenz verbergen', vorher: B.brief, nachher: Krypto.klein(Krypto.nullchiffre(B.brief)), text: 'Die Nachricht wird versteckt, sodass niemand merkt, dass es sie gibt. Wird sie entdeckt, ist sie ohne Verschlüsselung sofort lesbar.' }
+    ];
+    const karte = h(
+      'section',
+      { class: 'labor-vier-arten', 'aria-labelledby': 'labor-vier-titel' },
+      h('h2', { id: 'labor-vier-titel' }, 'Vier Arten, eine Nachricht zu schützen'),
+      h('p', { class: 'text-2' }, 'Dieselbe Nachricht, viermal anders behandelt.'),
+      h(
+        'div',
+        { class: 'labor-vier-raster' },
+        arten.map((a) =>
+          h(
+            'div',
+            { class: 'labor-vier-art' },
+            h('p', { class: 'labor-vier-name' }, a.art),
+            h('h3', null, a.titel),
+            h('p', { class: 'labor-vier-demo' }, h('span', { class: 'labor-vier-vorher' }, a.vorher), h('span', { class: 'labor-vier-pfeil', 'aria-hidden': 'true' }, ' → '), h('span', { class: 'sr' }, ' wird zu '), h('span', { class: 'labor-vier-nachher' }, a.nachher)),
+            h('p', { class: 'labor-vier-text' }, a.text)
+          )
+        )
+      )
+    );
+    if (typeof KRStation !== 'undefined') KRStation.herkunft(karte);
+    return karte;
   }
 
   function raster(haupt, sitzung) {
@@ -60,6 +105,7 @@ const KRLaborSeite = (() => {
             h('div', { class: 'labor-raster' }, daten.werkzeuge.filter((w) => w.welt === nr).map(karte))
           )
         ),
+        vierArten(),
         h('p', null, h('a', { class: 'knopf knopf-zweit', href: weg.href }, weg.text))
       )
     );
@@ -174,5 +220,5 @@ const KRLaborSeite = (() => {
     }
   }
   document.addEventListener('DOMContentLoaded', start);
-  return { start };
+  return { start, BEISPIEL };
 })();

@@ -26,6 +26,10 @@ a.werkzeug-karte:hover { border-color: var(--akzent); }
 .werkzeug-karte.gesperrt .werkzeug-symbol { color: var(--text-2); }
 .werkzeug-karte.gesperrt::before { content: "gesperrt"; font-size: .78rem; font-weight: 700; color: var(--text-2); }
 .werkzeug-grund { margin: 0; font-size: .9rem; color: var(--text-2); }
+/* M10 E178: Chip „Zusatz“ (nicht im KC) und „Kür“ – Rand + Text in der Niveau-Farbe */
+.werkzeug-art { padding: 1px var(--a-2); border: 1.5px solid currentColor; border-radius: var(--r-chip); font-size: .78rem; font-weight: 700; background: var(--karte); }
+.werkzeug-art.art-zusatz { color: var(--niveau-ergaenzung); }
+.werkzeug-art.art-kuer { color: var(--niveau-kuer); }
 
 /* ---------- Werkzeug-Dialog ---------- */
 dialog.werkzeug-dialog {

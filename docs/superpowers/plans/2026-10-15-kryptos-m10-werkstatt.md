@@ -502,7 +502,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
 - `REITER_REGELN` nach E180 (Schlüssel exakt: `quadrat.playfair`, `analyse.schluesselraum`, `analyse.verfahren.playfair`,
   `analyse.verfahren.vigenere`, `analyse.verfahren.enigma`, `enigma.vorfuehren`).
 
-- [ ] **Step 1: Failing tests** – `labor.test.js`: Listen Server = Client inkl. `art`; `/api/labor` enthält die fünf ids mit `grund: 'welt'`
+- [x] **Step 1: Failing tests** – `labor.test.js`: Listen Server = Client inkl. `art`; `/api/labor` enthält die fünf ids mit `grund: 'welt'`
   bei nur Welt 0 für `enigma`/`analyse`; Validator akzeptiert `{ id: 'enigma', voreinstellung: { reiter: ['maschine'] } }`
   und lehnt `{ id: 'skytale', voreinstellung: { groesse: 5 } }` ab. `labor_rahmen.test.js`:
   ```js
@@ -518,8 +518,8 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   ```
   Seiten-Test: Raster zeigt bei `signale` Chip „Zusatz“, bei `enigma` „Kür“; Karte `section.labor-vier-arten` mit vier Beispielen,
   deren Geheimtexte `Krypto.caesar`/`Krypto.skytale`/`Krypto.morse`/`Krypto.nullchiffre`-Ergebnisse sind, und Herkunftszeile.
-- [ ] **Step 2:** FAIL. **Step 3:** Implementieren; noch nicht gebaute Module zeigen „noch in Arbeit“ (BEREIT unverändert).
-- [ ] **Step 4:** `npm test`, `npm run validate` grün. **Step 5: Commit** `M10: Registry – fünf neue Werkzeuge, Feld art, Reiter-Regeln gegen Lösungsverrat, Karte „Vier Arten“ (Task 225)`
+- [x] **Step 2:** FAIL. **Step 3:** Implementieren; noch nicht gebaute Module zeigen „noch in Arbeit“ (BEREIT unverändert).
+- [x] **Step 4:** `npm test`, `npm run validate` grün. **Step 5: Commit** `M10: Registry – fünf neue Werkzeuge, Feld art, Reiter-Regeln gegen Lösungsverrat, Karte „Vier Arten“ (Task 225)`
 
 ### Task 226: Chiffrierscheibe nach der Werkstatt (Reiter `scheibe`, Gast)
 

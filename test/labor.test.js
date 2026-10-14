@@ -16,7 +16,7 @@ test('Einstellung werkzeuge: zusammenführen, auto entfernt, Validierung (400)',
 test('GET /api/lehrer/werkzeuge = Server-Registry (TECHNIK §10.2)', async () => {
   const { lk } = await H.szenario();
   const r = await lk.get('/api/lehrer/werkzeuge').expect(200);
-  assert.deepEqual(r.body, WERKZEUGE.map(({ id, titel, welt, gast }) => ({ id, titel, welt, gast })));
+  assert.deepEqual(r.body, WERKZEUGE.map(({ id, titel, welt, gast, art }) => ({ id, titel, welt, gast, art })));
 });
 test('GET /api/labor: auto nach Welt-Freischaltung, Lehrkraft-Sperre, Boss sperrt alles', async () => {
   const { s, lk, kurs } = await H.szenario();
@@ -51,7 +51,7 @@ test('Board-Schlüssel neu vergeben: alter Schlüssel ungültig', async () => {
 test('Registry Server = Client (TECHNIK §10.2)', () => {
   const D = require('./dom_attrappe');
   const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
-  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter }) => ({ id, titel, welt, reiter: [...reiter] })));
+  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter, art }) => ({ id, titel, welt, reiter: [...reiter], art })));
 });
 
 /* ---------- M6 Task 109: Reiter, Welten/Niveau, Level-Feld werkzeug mit Voreinstellung ---------- */
@@ -66,7 +66,7 @@ test('Registry M6: Reiter je Werkzeug und Voreinstellungs-Schlüssel (E73)', () 
   assert.deepEqual([...require('../src/krypto/werkzeuge').WERTE.schluesselart.bitlupe], ['text', 'hex', 'bits']);
   const D = require('./dom_attrappe');
   const k = D.lade(['common.js', 'krypto/oberflaeche.js', 'krypto/labor/registry.js']);
-  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter }) => ({ id, titel, welt, reiter: [...reiter] })));
+  assert.deepEqual(k.roh(k.wert('KRLabor.WERKZEUGE')), WERKZEUGE.map(({ id, titel, welt, reiter, art }) => ({ id, titel, welt, reiter: [...reiter], art })));
 });
 test('GET /api/labor: Welten und Niveau für die Reiter-Regeln (E71)', async () => {
   const { s, lk, kurs } = await H.szenario();
@@ -80,4 +80,52 @@ test('Level-Feld werkzeug mit Voreinstellung: /api/levels liefert Objekte (E70)'
   const r = await s.get('/api/levels/W9-L1').expect(200);
   assert.ok(r.body.level.werkzeug.length > 0);
   assert.ok(r.body.level.werkzeug.every((w) => typeof w.id === 'string' && typeof w.voreinstellung === 'object'));
+});
+
+/* ---------- M10 Task 225: fünf neue Werkzeuge, Feld art, Reiter-Regeln, Voreinstellungen (E177–E180, E194) ---------- */
+test('Registry M10: fünf neue Werkzeuge, art, Skytale mit Pflügen, Wertelisten (E177, E178, E194)', () => {
+  const { werkzeug, WERTE, SCHLUESSEL_VERRAT, pruefeVoreinstellung } = require('../src/krypto/werkzeuge');
+  assert.deepEqual(WERKZEUGE.map((w) => w.id), ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur', 'quadrat', 'signale', 'verstecke', 'enigma', 'analyse']);
+  assert.deepEqual(werkzeug('skytale').reiter, ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring']);
+  for (const k of ['groesse', 'k']) assert.ok(werkzeug('skytale').voreinstellung.includes(k), k);
+  const soll = {
+    quadrat: ['Polybios & Playfair', 0, ['polybios', 'playfair'], 'kern', ['text', 'schluesselwort', 'richtung', 'reiter']],
+    signale: ['Codes & Signale', 0, ['morse', 'klopfcode', 'freimaurer'], 'zusatz', ['text', 'richtung', 'reiter']],
+    verstecke: ['Versteckte Botschaften', 0, ['nullchiffre', 'punkte'], 'zusatz', ['text', 'stelle', 'reiter']],
+    enigma: ['Enigma', 3, ['maschine', 'innenleben', 'vorfuehren', 'glossar'], 'kuer', ['einstellung', 'ukw', 'reiter']],
+    analyse: ['Angreifer-Labor', 1, ['vergleich', 'schluesselraum', 'trainer', 'blick'], 'kern', ['reiter']]
+  };
+  for (const [id, [titel, welt, reiter, art, vor]] of Object.entries(soll)) {
+    const w = werkzeug(id);
+    assert.deepEqual([w.titel, w.welt, [...w.reiter], w.art, [...w.voreinstellung], w.gast], [titel, welt, reiter, art, vor, false], id);
+  }
+  for (const w of WERKZEUGE) if (!soll[w.id]) assert.equal(w.art, 'kern', w.id);
+  assert.deepEqual([...WERTE.groesse.skytale], [4, 6]);
+  assert.deepEqual([...WERTE.ukw.enigma], ['B', 'C']);
+  assert.deepEqual([...WERTE.stelle.verstecke], [1, 2, 3]);
+  for (const k of ['einstellung', 'schluesselwort']) assert.ok(SCHLUESSEL_VERRAT.includes(k), k);
+  const fehler = (id, v) => { const f = []; pruefeVoreinstellung(werkzeug(id), v, (m) => f.push(m)); return f; };
+  assert.deepEqual(fehler('enigma', { reiter: ['maschine'] }), []);
+  assert.deepEqual(fehler('skytale', { reiter: ['pfluegen'], groesse: 6, k: 4 }), []);
+  assert.equal(fehler('skytale', { groesse: 5 }).length, 1);
+  assert.equal(fehler('enigma', { ukw: 'A' }).length, 1);
+  assert.equal(fehler('verstecke', { stelle: 4 }).length, 1);
+  assert.equal(fehler('quadrat', { reiter: ['schachbrett'] }).length, 1);
+});
+test('GET /api/labor: neue Werkzeuge mit art; nur Welt 0 → Enigma und Angreifer-Labor gesperrt (welt)', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { welten: [0] } }).expect(200);
+  const r = await s.get('/api/labor').expect(200);
+  const nach = Object.fromEntries(r.body.werkzeuge.map((w) => [w.id, w]));
+  for (const id of ['quadrat', 'signale', 'verstecke']) assert.deepEqual([nach[id].frei, nach[id].grund], [true, null], id);
+  for (const id of ['enigma', 'analyse']) assert.deepEqual([nach[id].frei, nach[id].grund], [false, 'welt'], id);
+  assert.deepEqual([nach.signale.art, nach.enigma.art, nach.quadrat.art], ['zusatz', 'kuer', 'kern']);
+});
+test('boss_sperrt_neue_werkzeuge: im laufenden Kampf sind alle fünf neuen Werkzeuge gesperrt (Review Focus 1)', async () => {
+  const { s, lk, kurs } = await H.szenario();
+  await lk.patch(`/api/lehrer/kurse/${kurs.id}`).send({ einstellungen: { welten: [0, 1, 2, 3, 9], boss: 'offen' } }).expect(200);
+  await s.post('/api/boss/9/start').send({}).expect(201);
+  const r = await s.get('/api/labor').expect(200);
+  const nach = Object.fromEntries(r.body.werkzeuge.map((w) => [w.id, w]));
+  for (const id of ['quadrat', 'signale', 'verstecke', 'enigma', 'analyse']) assert.deepEqual([nach[id].frei, nach[id].grund], [false, 'boss'], id);
 });

@@ -765,3 +765,13 @@ test('Fehler: match-Lösung im Muster i → i-te Kategorie (Seed-Reihenfolge ode
     a.loesung = { 1: 'a', 2: 'b', 3: 'c' };
   }, /W9-L1-06.*Kategorie-Reihenfolge verrät die Zuordnung/);
 });
+
+test('M10 Task 225: Block werkzeug mit den neuen ids und Wertelisten (E194)', () => {
+  const fehler = (b) => validiereBlock({ t: 'werkzeug', ...b });
+  assert.deepEqual(fehler({ id: 'enigma', voreinstellung: { reiter: ['maschine'] } }), []);
+  assert.deepEqual(fehler({ id: 'skytale', voreinstellung: { reiter: ['pfluegen'], k: 4 } }), []);
+  assert.match(fehler({ id: 'skytale', voreinstellung: { groesse: 5 } }).join(), /groesse/);
+  assert.match(fehler({ id: 'enigma', voreinstellung: { ukw: 'D' } }).join(), /ukw/);
+  assert.match(fehler({ id: 'verstecke', voreinstellung: { stelle: 0 } }).join(), /stelle/);
+  for (const id of ['quadrat', 'signale', 'verstecke', 'enigma', 'analyse']) assert.deepEqual(fehler({ id }), [], id);
+});

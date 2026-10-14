@@ -154,8 +154,10 @@ test('Beispieltexte der Werkzeuge kommen nicht aus Seeds, Akten, Warm-up, Materi
   // „licht“ stand nur in der alten W3-Wortliste der Lehrerhinweise – ersetzt durch „windrose“ (Plan M8 Task 191)
   for (const w of ['papyrus', 'kerze', 'windrose', 'hafen']) assert.ok(verboten.has(w), `Selbstprüfung: „${w}“ wird erkannt`);
   assert.ok(verboten.size > 1000, 'Wörter gesammelt');
-  for (const f of werkzeugModule()) {
+  // M10 E193: auch die Labor-Übersicht (Karte „Vier Arten“) hat ein eigenes Beispiel
+  for (const f of [...werkzeugModule(), 'seite.js']) {
     const src = fs.readFileSync(path.join(DIR, f), 'utf8');
+    if (f === 'seite.js') assert.match(src, /BEISPIEL\s*=\s*\{/, 'seite.js: Beispiel in BEISPIEL');
     const beispiele = [...src.matchAll(/BEISPIEL\w*\s*=\s*(\{[\s\S]*?\});/g)].map((m) => m[1]);
     assert.ok(beispiele.length <= 1, `${f}: Beispieltexte in genau einer Konstante BEISPIEL`);
     for (const b of beispiele) {
@@ -185,7 +187,8 @@ test('Eigene Formulierungen: keine Sätze aus der Krypto-Werkstatt (Review M6, d
 
 test('Schülergerechte Texte: kein „Spec“ in sichtbaren Werkzeug-Texten (Review M6)', () => {
   const { oeffne } = require('./hilfen_labor');
-  for (const w of require('../src/krypto/werkzeuge.js').WERKZEUGE) {
+  // Plan M10: Werkzeuge, deren Modul noch nicht gebaut ist (KRLabor.BEREIT), zeigen „noch in Arbeit“
+  for (const w of require('../src/krypto/werkzeuge.js').WERKZEUGE.filter((x) => fs.existsSync(path.join(DIR, `${x.id}.js`)))) {
     for (const r of w.reiter.length ? w.reiter : [null]) {
       const x = oeffne(w.id, { voreinstellung: r ? { reiter: [r] } : {}, umgebung: { zufall: () => 0.5 } });
       const text = x.k.text(x.flaeche) + ' ' + x.k.alle(x.flaeche, '[aria-label], [title]').map((e) => `${e.getAttribute('aria-label') || ''} ${e.getAttribute('title') || ''}`).join(' ');

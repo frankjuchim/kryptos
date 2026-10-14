@@ -57,7 +57,7 @@ function lehrerRoutes(api, h) {
   r.post('/kurse/:kursId/board-schluessel', (req, res) => res.json(svc.kurse.boardSchluesselNeu(req.lk, kid(req))));
 
   /** Labor-Werkzeuge für die Freigaben je Kurs (TECHNIK §10.2/§10.3), Reihenfolge der Server-Registry. */
-  r.get('/werkzeuge', (req, res) => res.json(WERKZEUGE.map(({ id, titel, welt, gast }) => ({ id, titel, welt, gast }))));
+  r.get('/werkzeuge', (req, res) => res.json(WERKZEUGE.map(({ id, titel, welt, gast, art }) => ({ id, titel, welt, gast, art }))));
 
   r.get('/kurse/:kursId/schueler', (req, res) => res.json(svc.auswertung.schuelerListe(req.lk, kid(req))));
 

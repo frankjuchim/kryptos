@@ -164,3 +164,16 @@
   .station-stempel { transition: none; }
 }
 :root[data-bewegung="aus"] .station-stempel.gedrueckt, :root[data-bewegung="aus"] .station-zeichen.neu { animation: none; }
+
+/* ---------- Labor-Seite: Karte „Vier Arten, eine Nachricht zu schützen“ (E193, Werkstatt-Startseite) ---------- */
+.labor-vier-arten { display: grid; gap: var(--a-3); padding: var(--a-4); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.labor-vier-arten h2 { margin: 0; }
+.labor-vier-arten > p { margin: 0; }
+.labor-vier-raster { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--a-3); }
+.labor-vier-art { display: grid; gap: var(--a-1); align-content: start; padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-knopf); background: var(--papier); }
+.labor-vier-art h3 { margin: 0; font-size: 1.05rem; }
+.labor-vier-name { margin: 0; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+.labor-vier-demo { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--a-1); margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.labor-vier-vorher { color: var(--text-2); }
+.labor-vier-nachher { font-weight: 700; color: var(--text); }
+.labor-vier-text { margin: 0; font-size: .92rem; }
