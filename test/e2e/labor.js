@@ -13,6 +13,8 @@ const { kursWaehlen } = require('./lehrkraft');
 
 // alle Werkzeuge außer der in 7a gesperrten Chiffrierscheibe
 const IDS = ['skytale', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur'];
+// Plan M10 Task 225: fünf neue Werkzeuge in der Registry (Module folgen in den Tasks 229–234; Prüfung in Szenario 15)
+const NEU = ['quadrat', 'signale', 'verstecke', 'enigma', 'analyse'];
 const zustand = (p) => p.evaluate(() => JSON.parse(JSON.stringify(KRLabor.aktiv().zustand())));
 const flaeche = (p) => p.locator('.werkzeug-flaeche');
 
@@ -104,7 +106,7 @@ async function szenario4(ctx) {
   await kursWaehlen(page, 'LK 13 (eA)');
   await gehe(page, `${ctx.basis}/labor`);
   await page.locator('section.labor-epoche').first().waitFor();
-  assert.equal(await page.locator('a.werkzeug-karte').count(), IDS.length, 'zehn freigegebene Werkzeuge');
+  assert.equal(await page.locator('a.werkzeug-karte').count(), IDS.length + NEU.length, 'fünfzehn freigegebene Werkzeuge (zehn aus M6, fünf aus M10)');
   await page.locator('.werkzeug-karte.gesperrt', { hasText: 'Chiffrierscheibe' }).getByText('Deine Lehrkraft schaltet dieses Werkzeug später frei.').waitFor();
   await gehe(page, `${ctx.basis}/labor#/scheibe`);
   await page.locator('.labor').getByText('Deine Lehrkraft schaltet dieses Werkzeug später frei.').waitFor();
