@@ -38,7 +38,7 @@ const UMFANG = {
   0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B', 'WU-W0'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B', 'WU-W1'],
   2: ['W2-A', 'W2-L1', 'W2-L2', 'W2-L3', 'W2-L4', 'W2-L5', 'W2-B', 'WU-W2'],
   // Plan M8: die Inhalts-Tasks 172–190 tragen ihre Abschnitte ein
-  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1', 'W4-L2', 'W4-L3', 'W4-B'], 5: ['W5-A', 'W5-L1', 'W5-L2', 'W5-L3'], 6: []
+  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1', 'W4-L2', 'W4-L3', 'W4-B'], 5: ['W5-A', 'W5-L1', 'W5-L2', 'W5-L3', 'W5-B'], 6: []
 };
 /** Welten mit Spec (Abgleich-Tests laufen über alle) */
 const WELTEN = [0, 1, 2, 3, 4, 5, 6];

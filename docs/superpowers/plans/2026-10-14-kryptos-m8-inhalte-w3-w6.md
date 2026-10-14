@@ -948,9 +948,10 @@ nur 07 mit Rechnung). Fallen aus der Erklärung (B-02 P9, B-04 P10, B-09 P9, B-1
 
 **Stichproben:** KH(eis) 5, 24, 4; PH(rabe) 11 (5, 5, 10, 11), PH(kai) 8, PH(bear) 11.
 
-- [ ] **Step 1: Failing test** – `UMFANG[5]` += `'W5-B'`.
-- [ ] **Step 2–4** (Probelauf 100 Ziehungen: gA nie B-15; Mix 3/3/2).
-- [ ] **Step 5: Commit** `git commit -m "Welt 5: Boss „Das Siegel der Stadt“ (Pool 15, eine eA-Aufgabe, vier fremde Verfahren)"`.
+- [x] **Step 1: Failing test** – `UMFANG[5]` += `'W5-B'`.
+- [x] **Step 2–4** (Probelauf 100 Ziehungen: gA nie B-15; Mix 3/3/2).
+- [x] **Step 5: Commit** `git commit -m "Welt 5: Boss „Das Siegel der Stadt“ (Pool 15, eine eA-Aufgabe, vier fremde Verfahren)"`.
+- [x] **Umsetzungsnotiz:** Material der fremden Verfahren (Produkt-Hash, Tausch-Siegel, Kurz-Signatur) als Block `hinweis`; W5-B-08 wiederholt das Produkt-Hash-Material statt „wie in W5-B-07“ (Aufgaben sind frei anwählbar). W5-B-07 mit Prüfwert-Gruppe `mod(18 · 1 · 2 · 5, 13)` bzw. `mod(11 · 1 · 9, 13)` (dasselbe Ergebnis wie mit Reduktion nach jeder Multiplikation; `produkt_hash_13` bleibt der Konsistenztest in `fremde_verfahren`). W5-B-09 Schaubild mit drei Schritten, nummeriert 1–3 (Validator verlangt lückenlose Nummern ab 1; der Text nennt „Schritte ④–⑥ des Signatur-Schaubilds“), Auswahl Hashfunktion/vergleichen/verschlüsseln wie W5-L2-04. Probelauf (100 Ziehungen je Kurs): gA nie B-15, Mix immer 3/3/2. Erwarteter Hinweis: W5-B-15 „Falle P9 passt nicht zur Kategorie fremde-chiffre“ – die Spec-Erklärung nennt P9 (Schlüsselrollen der Kurz-Signatur), die Plausibilitätsliste nicht; Liste unverändert gelassen (Lehrkraft-Frage). **Boss-Fallen vorläufig festgelegt** (offene Entscheidung 18; Spec: B-01 P9, B-02 P9, B-04 P10, B-09 P9, B-15 P9): B-03 P9, B-05 P10, B-06 P2, B-07 P2, B-08 P5, B-10 P3, B-11 P9, B-12 P10, B-13 P9, B-14 P9. Browser-Durchsicht (1280/360): Epoche, Archivfund, Level, Schaubilder, hash-ziel richtig/falsch, Boss-Start – keine Konsolenfehler, kein Querscrollen.
 
 ### Task 186: Welt 6 – Datei, Epochen-Daten, Archivfund und Level 6.1 „Fallenjagd“
 
