@@ -414,7 +414,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
 - `suchdauer(log10Anzahl, proSekunde) → { sekundenLog10, text }`; `text` deutsch gerundet: „< 1 Sekunde“, „≈ 3 Minuten“,
   „≈ 1,3 · 10¹⁰ Jahre“ (Jahr = 3,2 · 10⁷ s wie W1-L1-04, Komma, hochgestellte Exponenten)
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('playfairSchritte', () => {
     const s = K.playfairSchritte('wintersonne', 'KRYPTOLOGIE');
@@ -438,9 +438,9 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   });
   ```
   (Erwartungswerte: 26!, 25!, 60 · 17 576 · 150 738 274 937 250 – Python `math.factorial`/`math.comb` im Zwilling.)
-- [ ] **Step 2:** FAIL. **Step 3:** Implementieren (JS mit `BigInt` nur in `krypto.js`; Python mit `int`), Vergleich `schluesselraum`
+- [x] **Step 2:** FAIL. **Step 3:** Implementieren (JS mit `BigInt` nur in `krypto.js`; Python mit `int`), Vergleich `schluesselraum`
   (alle Verfahren, zufällige Parameter) und `suchdauer`. **Step 4:** grün, Vergleich 0 Abweichungen.
-- [ ] **Step 5: Commit** `M10: Bibliothek VII – Playfair-Schritte, Schlüsselraum, Suchdauer (Task 223)`
+- [x] **Step 5: Commit** `M10: Bibliothek VII – Playfair-Schritte, Schlüsselraum, Suchdauer (Task 223)`
 
 ### Task 224: Labor-Rahmen III – `KRStation`, Material-Tokens, `labor_objekte.css` (E170, E172–E174, E186, E196, E197)
 

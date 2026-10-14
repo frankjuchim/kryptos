@@ -4,6 +4,7 @@ Aufruf: python3 -I werkzeuge/krypto/test_krypto.py
 Nicht übernommen (nur Laufzeit, in JS geprüft): exakter Lawinen-Mittelwert über 65 536 × 16 Blöcke und die
 Vollständigkeits-Zählung (§0a.8); die Bijektivität über alle 65 536 Blöcke ist enthalten.
 """
+import math
 import os
 import random
 import sys
@@ -1612,6 +1613,30 @@ class BibliothekM10VI(unittest.TestCase):
         with self.assertRaisesRegex(F, 'Stecker'):
             K.enigma('a', self.E(stecker='AB AC'))
         self.assertRaises(F, K.enigma, 'a', self.E(ukw='A'))
+
+
+class BibliothekM10VII(unittest.TestCase):
+    """Plan M10 Task 223 (E188) – dieselben Fälle wie test/krypto.test.js."""
+
+    def test_playfair_schritte(self):
+        s = K.playfair_schritte('wintersonne', 'KRYPTOLOGIE')
+        self.assertEqual(''.join(x['ergebnis'] for x in s), K.playfair('wintersonne', 'KRYPTOLOGIE'))
+        self.assertEqual([x['paar'] for x in s], K.playfair_paare('wintersonne'))
+        self.assertEqual([[x['paar'], x['regel'], x['felder']] for x in K.playfair_schritte('wiktko', 'KRYPTOLOGIE')],
+                         [['WI', 'rechteck', [[5, 3], [2, 4]]], ['KT', 'zeile', [[1, 1], [1, 5]]], ['KO', 'spalte', [[1, 1], [2, 1]]]])
+        self.assertEqual(K.playfair_schritte('kt', 'KRYPTOLOGIE')[0]['ziele'], [[1, 2], [1, 1]])
+
+    def test_schluesselraum_suchdauer(self):
+        self.assertEqual(K.schluesselraum('substitution')['anzahl'], '403291461126605635584000000')
+        self.assertEqual(K.schluesselraum('playfair')['anzahl'], '15511210043330985984000000')
+        self.assertEqual(K.schluesselraum('affin')['anzahl'], '312')
+        self.assertEqual(K.schluesselraum('enigma', {'kabel': 10})['anzahl'], '158962555217826360000')
+        self.assertEqual(K.schluesselraum('fleissner', {'groesse': 4})['anzahl'], '256')
+        self.assertEqual(K.schluesselraum('vigenere', {'laenge': 5})['formel'], '26⁵')
+        self.assertRaises(F, K.schluesselraum, 'rot13')
+        self.assertEqual(K.suchdauer(K.schluesselraum('substitution')['log10'], 1e9)['text'], '≈ 1,3 · 10¹⁰ Jahre')
+        self.assertEqual(K.suchdauer(math.log10(26), 1e6)['text'], '< 1 Sekunde')
+        self.assertEqual(K.suchdauer(math.log10(180), 1)['text'], '≈ 3 Minuten')
 
 
 if __name__ == '__main__':

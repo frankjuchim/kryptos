@@ -2452,3 +2452,42 @@ test('enigma: Fehler (Plan M10 E187)', () => {
   assert.throws(() => K.enigmaSchritt(E(), 'AAA', 'AB'), K.KryptoFehler);
   assert.equal(K.enigma('', E()), '');
 });
+
+// ── M10 Bibliothek VII (Plan M10 Task 223, E188): Playfair-Schritte, Schlüsselraum, Suchdauer; Erwartungswerte
+// 26!, 25!, 60 · 26³ · 150 738 274 937 250 (Python math.factorial/math.comb im Zwilling) ──
+test('playfairSchritte (Plan M10 Task 223)', () => {
+  const s = K.playfairSchritte('wintersonne', 'KRYPTOLOGIE');
+  assert.equal(s.map((x) => x.ergebnis).join(''), K.playfair('wintersonne', 'KRYPTOLOGIE'));
+  assert.deepEqual(s.map((x) => x.paar), K.playfairPaare('wintersonne')); // WI NT ER SO NX NE
+  assert.ok(s.every((x) => ['rechteck', 'zeile', 'spalte'].includes(x.regel)));
+  // Quadrat KRYPT/OLGIE/ABCDF/HMNQS/UVWXZ: WI = Rechteck, KT = gleiche Zeile, KO = gleiche Spalte
+  assert.deepEqual(K.playfairSchritte('wiktko', 'KRYPTOLOGIE').map((x) => [x.paar, x.regel, x.felder]), [
+    ['WI', 'rechteck', [[5, 3], [2, 4]]], ['KT', 'zeile', [[1, 1], [1, 5]]], ['KO', 'spalte', [[1, 1], [2, 1]]]]);
+  assert.deepEqual(K.playfairSchritte('kt', 'KRYPTOLOGIE')[0].ziele, [[1, 2], [1, 1]]); // je eins nach rechts, zyklisch
+  const g = K.playfair('wintersonne', 'KRYPTOLOGIE');
+  assert.equal(K.playfairSchritte(g, 'KRYPTOLOGIE', 'ent').map((x) => x.ergebnis).join(''), K.playfair(g, 'KRYPTOLOGIE', 'ent'));
+});
+
+test('schluesselraum und suchdauer (Plan M10 E188)', () => {
+  assert.equal(K.schluesselraum('substitution').anzahl, '403291461126605635584000000');
+  assert.equal(K.schluesselraum('playfair').anzahl, '15511210043330985984000000');
+  assert.equal(K.schluesselraum('affin').anzahl, '312');
+  assert.equal(K.schluesselraum('caesar').anzahl, '26');
+  assert.equal(K.schluesselraum('enigma', { kabel: 10 }).anzahl, '158962555217826360000');
+  assert.equal(K.schluesselraum('enigma').anzahl, '158962555217826360000');
+  assert.equal(K.schluesselraum('enigma', { kabel: 0 }).anzahl, String(60 * 17576));
+  assert.equal(K.schluesselraum('fleissner', { groesse: 4 }).anzahl, '256');
+  assert.equal(K.schluesselraum('skytale', { n: 20 }).anzahl, '18');
+  assert.equal(K.schluesselraum('vigenere', { laenge: 5 }).anzahl, '11881376');
+  assert.equal(K.schluesselraum('vigenere', { laenge: 5 }).formel, '26⁵');
+  assert.equal(K.schluesselraum('kryptos16').anzahl, '65536');
+  assert.ok(Math.abs(K.schluesselraum('substitution').log10 - 26.6056) < 1e-3);
+  assert.throws(() => K.schluesselraum('rot13'), K.KryptoFehler);
+  assert.throws(() => K.schluesselraum('enigma', { kabel: 14 }), K.KryptoFehler);
+  assert.equal(K.suchdauer(K.schluesselraum('substitution').log10, 1e9).text, '≈ 1,3 · 10¹⁰ Jahre');
+  assert.equal(K.suchdauer(Math.log10(26), 1e6).text, '< 1 Sekunde');
+  assert.equal(K.suchdauer(Math.log10(180), 1).text, '≈ 3 Minuten');
+  assert.equal(K.suchdauer(Math.log10(1), 1).text, '≈ 1 Sekunde');
+  assert.ok(Math.abs(K.suchdauer(12, 1e9).sekundenLog10 - 3) < 1e-12);
+  assert.throws(() => K.suchdauer(3, 0), K.KryptoFehler);
+});

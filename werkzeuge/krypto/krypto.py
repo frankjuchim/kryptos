@@ -48,6 +48,7 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | pfluegen, pfluegenReihenfolge (M10) | pfluegen, pfluegen_reihenfolge | MORSE, morse (M10)            | MORSE, morse                |
 | freimaurer, freimaurerBuchstabe | freimaurer, freimaurer_buchstabe | nullchiffre, punktmethode     | nullchiffre, punktmethode   |
 | punkteSetzen (M10)              | punkte_setzen                   | ENIGMA, enigma, enigmaSchritt (M10) | ENIGMA, enigma, enigma_schritt |
+| playfairSchritte (M10)          | playfair_schritte               | schluesselraum, suchdauer (M10) | schluesselraum, suchdauer   |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -441,6 +442,31 @@ def playfair(text, schluessel, richtung='ver', *, fuellzeichen='X', fuellzeichen
         else:
             aus.append(q[za][sb] + q[zb][sa])
     return ''.join(aus)
+
+
+def playfair_schritte(text, schluessel, richtung='ver', *, fuellzeichen='X', fuellzeichen_x='Q', ij='I'):
+    """Plan M10 Task 223: je Paar Regel, Felder und Ziele (ab 1), unabhängig von playfair() gerechnet."""
+    playfair(text, schluessel, richtung, fuellzeichen=fuellzeichen, fuellzeichen_x=fuellzeichen_x, ij=ij)  # prüft
+    q = quadrat(schluessel, ij=ij)
+    pos = _koordinaten(q)
+    if richtung == 'ver':
+        paare = playfair_paare(text, fuellzeichen=fuellzeichen, fuellzeichen_x=fuellzeichen_x, ij=ij)
+    else:
+        t = _ij_text(text, ij)
+        paare = [t[i:i + 2] for i in range(0, len(t), 2)]
+    d = 1 if richtung == 'ver' else -1
+    schritte = []
+    for paar in paare:
+        (za, sa), (zb, sb) = pos[paar[0]], pos[paar[1]]
+        if za == zb:
+            regel, ziele = 'zeile', [(za, (sa + d) % 5), (zb, (sb + d) % 5)]
+        elif sa == sb:
+            regel, ziele = 'spalte', [((za + d) % 5, sa), ((zb + d) % 5, sb)]
+        else:
+            regel, ziele = 'rechteck', [(za, sb), (zb, sa)]
+        schritte.append({'paar': paar, 'regel': regel, 'ergebnis': ''.join(q[z][sp] for z, sp in ziele),
+                         'felder': [[za + 1, sa + 1], [zb + 1, sb + 1]], 'ziele': [[z + 1, sp + 1] for z, sp in ziele]})
+    return schritte
 
 
 def kreuzquadrat(text, oben, unten, richtung='ver', *, fuellzeichen='X'):
@@ -2184,6 +2210,83 @@ def dh_dlog_klein(g, a_oeffentlich, p):
         if wert_ == ziel:
             return x
     return None
+
+
+_HOCH = str.maketrans('0123456789-', '⁰¹²³⁴⁵⁶⁷⁸⁹⁻')
+
+
+def _bereich(x, name, lo, hi):
+    x = _ganz(x, name)
+    if not lo <= x <= hi:
+        raise KryptoFehler(f'{name} muss zwischen {lo} und {hi} liegen.')
+    return x
+
+
+def schluesselraum(verfahren, p=None):
+    """Plan M10 Task 223 (E188): {'anzahl': Dezimalziffern, 'log10', 'formel'}."""
+    p = p or {}
+    if not isinstance(p, dict):
+        raise KryptoFehler('Parameter als Objekt.')
+    if verfahren == 'caesar':
+        anzahl, formel = 26, '26'
+    elif verfahren == 'affin':
+        anzahl, formel = 12 * 26, '12 · 26'
+    elif verfahren == 'substitution':
+        anzahl, formel = math.factorial(26), '26!'
+    elif verfahren == 'playfair':
+        anzahl, formel = math.factorial(25), '25!'
+    elif verfahren in ('skytale', 'pfluegen'):
+        anzahl, formel = _bereich(p.get('n'), 'Textlänge', 3, 1000000) - 2, 'n − 2'
+    elif verfahren in ('vigenere', 'otp'):
+        laenge = _bereich(p.get('laenge'), 'Schlüssellänge', 1, 1000)
+        anzahl, formel = 26 ** laenge, '26' + str(laenge).translate(_HOCH)
+    elif verfahren == 'fleissner':
+        g = _schablonen_groesse(p.get('groesse'))
+        anzahl, formel = 4 ** (g * g // 4), '4' + str(g * g // 4).translate(_HOCH)
+    elif verfahren == 'enigma':
+        k = _bereich(p.get('kabel', 10), 'Kabel', 0, 13)
+        # 2k Buchstaben auswählen, dann in Paare legen: (2k − 1)!! Möglichkeiten
+        paarungen = 1
+        for ungerade in range(1, 2 * k, 2):
+            paarungen *= ungerade
+        stecker = math.comb(26, 2 * k) * paarungen
+        anzahl, formel = 5 * 4 * 3 * 26 ** 3 * stecker, f'5 · 4 · 3 · 26³ · {stecker}'
+    elif verfahren == 'kryptos16':
+        anzahl, formel = 2 ** 16, '2¹⁶'
+    else:
+        raise KryptoFehler(f'Kein Schlüsselraum für {verfahren}.')
+    return {'anzahl': str(anzahl), 'log10': math.log10(anzahl), 'formel': formel}
+
+
+def suchdauer(log10_anzahl, pro_sekunde):
+    if isinstance(log10_anzahl, bool) or not isinstance(log10_anzahl, (int, float)) or not math.isfinite(log10_anzahl):
+        raise KryptoFehler('log10 der Anzahl muss eine Zahl sein.')
+    if isinstance(pro_sekunde, bool) or not isinstance(pro_sekunde, (int, float)) or not math.isfinite(pro_sekunde) \
+            or pro_sekunde <= 0:
+        raise KryptoFehler('Die Rechenleistung muss positiv sein.')
+    sl = log10_anzahl - math.log10(pro_sekunde)
+
+    def runde(x):
+        return math.floor(x + 0.5)
+
+    def etwa(n, eins, mehr):
+        return f'≈ {n} {eins if n == 1 else mehr}'
+
+    einheiten = [(60, 1, 'Sekunde', 'Sekunden'), (3600, 60, 'Minute', 'Minuten'), (86400, 3600, 'Stunde', 'Stunden'),
+                 (3.2e7, 86400, 'Tag', 'Tage')]
+    if sl < 0:
+        return {'sekunden_log10': sl, 'text': '< 1 Sekunde'}
+    for grenze, teiler, eins, mehr in einheiten:
+        if sl < math.log10(grenze):
+            return {'sekunden_log10': sl, 'text': etwa(runde(10 ** sl / teiler), eins, mehr)}
+    jl = sl - math.log10(3.2e7)
+    if jl < 3:
+        return {'sekunden_log10': sl, 'text': etwa(runde(10 ** jl), 'Jahr', 'Jahre')}
+    e = math.floor(jl)
+    m = runde(10 ** (jl - e) * 10) / 10
+    if m >= 10:
+        m, e = 1.0, e + 1
+    return {'sekunden_log10': sl, 'text': f'≈ {m:.1f}'.replace('.', ',') + ' · 10' + str(e).translate(_HOCH) + ' Jahre'}
 
 
 def schluesselanzahl(n):

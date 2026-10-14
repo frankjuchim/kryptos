@@ -83,6 +83,9 @@ ZUORDNUNG = {
     'nullchiffre': (K.nullchiffre, None), 'punktmethode': (K.punktmethode, None), 'punkteSetzen': (K.punkte_setzen, None),
     # M10 (Plan Task 222)
     'enigma': (K.enigma, None), 'enigmaSchritt': (K.enigma_schritt, None),
+    # M10 (Plan Task 223)
+    'playfairSchritte': (K.playfair_schritte, 3), 'schluesselraum': (K.schluesselraum, None),
+    'suchdauer': (K.suchdauer, None),
 }
 
 

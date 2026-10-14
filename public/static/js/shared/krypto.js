@@ -419,6 +419,32 @@
     return playfairRechne(q, paare, richtung);
   }
 
+  /**
+   * Playfair Schritt für Schritt (Plan M10 Task 223): je Paar { paar, regel: 'rechteck' | 'zeile' | 'spalte', ergebnis,
+   * felder, ziele } mit Feldern [Zeile, Spalte] ab 1; die Ergebnisse verkettet = playfair(…).
+   */
+  function playfairSchritte(text, schluessel, richtung = 'ver', optionen = {}) {
+    const gesamt = playfair(text, schluessel, richtung, optionen); // prüft alles und rechnet
+    const opt = optionen || {};
+    const ij = opt.ij === undefined ? 'I' : opt.ij;
+    const q = quadrat(schluessel, { groesse: 5, ij });
+    const pos = positionen(q);
+    let paare;
+    if (richtung === 'ver') paare = playfairPaare(text, opt);
+    else {
+      const t = quadratText(text, 5, ij);
+      paare = [];
+      for (let i = 0; i < t.length; i += 2) paare.push(t.slice(i, i + 2));
+    }
+    return paare.map((paar, i) => {
+      const ergebnis = gesamt.slice(2 * i, 2 * i + 2);
+      const [a, b] = [pos.get(paar[0]), pos.get(paar[1])];
+      const regel = a[0] === b[0] ? 'zeile' : a[1] === b[1] ? 'spalte' : 'rechteck';
+      const ab1 = ([z, sp]) => [z + 1, sp + 1];
+      return { paar, regel, ergebnis, felder: [ab1(a), ab1(b)], ziele: [ab1(pos.get(ergebnis[0])), ab1(pos.get(ergebnis[1]))] };
+    });
+  }
+
   /** Playfair-Regeln auf fertige Paare anwenden (gleiche Buchstaben werden wie „gleiche Zeile“ behandelt) */
   function playfairRechne(q, paare, richtung) {
     const pos = positionen(q);
@@ -2370,6 +2396,115 @@
     return { symmetrisch: (n * (n - 1)) / 2, asymmetrisch: 2 * n };
   }
 
+  // ─────────────── Schlüsselraum und Suchdauer (Plan M10 Task 223, E188) ───────────────
+
+  const HOCH = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  /** Exponent hochgestellt: 16 → ¹⁶ */
+  function hochgestellt(n) {
+    return String(n).replace('-', '⁻').replace(/[0-9]/g, (z) => HOCH[Number(z)]);
+  }
+
+  function fakultaet(n) {
+    let f = 1n;
+    for (let i = 2n; i <= BigInt(n); i++) f *= i;
+    return f;
+  }
+
+  /** log10 einer großen positiven Ganzzahl (aus den Dezimalziffern) */
+  function log10Gross(zahl) {
+    const z = zahl.toString();
+    const vorne = Number(z.slice(0, 17));
+    return Math.log10(vorne) + (z.length - Math.min(17, z.length));
+  }
+
+  function pruefeBereich(x, name, min, max) {
+    pruefeGanzzahl(x, name);
+    if (x < min || x > max) throw new KryptoFehler(`${name} muss zwischen ${min} und ${max} liegen.`);
+    return x;
+  }
+
+  /**
+   * Zahl der Schlüssel eines Verfahrens → { anzahl (Dezimalziffern), log10, formel }. Parameter: skytale/pfluegen
+   * { n } (Textlänge, Umfänge bzw. Zeilenlängen 2 … n − 1), vigenere/otp { laenge }, fleissner { groesse },
+   * enigma { kabel = 10 } (Walzenlage 5 · 4 · 3, Grundstellung 26³, Steckerbrett; ohne Ringe).
+   */
+  function schluesselraum(verfahren, p = {}) {
+    const o = p || {};
+    let anzahl;
+    let formel;
+    switch (verfahren) {
+      case 'caesar': anzahl = 26n; formel = '26'; break;
+      case 'affin': anzahl = 312n; formel = '12 · 26'; break;
+      case 'substitution': anzahl = fakultaet(26); formel = '26!'; break;
+      case 'playfair': anzahl = fakultaet(25); formel = '25!'; break;
+      case 'skytale':
+      case 'pfluegen': {
+        const n = pruefeBereich(o.n, 'Die Textlänge n', 3, 1000000);
+        anzahl = BigInt(n - 2);
+        formel = 'n − 2';
+        break;
+      }
+      case 'vigenere':
+      case 'otp': {
+        const L = pruefeBereich(o.laenge, 'Die Schlüssellänge', 1, 1000);
+        anzahl = 26n ** BigInt(L);
+        formel = '26' + hochgestellt(L);
+        break;
+      }
+      case 'fleissner': {
+        const g = pruefeSchablonenGroesse(o.groesse);
+        anzahl = 4n ** BigInt((g * g) / 4);
+        formel = '4' + hochgestellt((g * g) / 4);
+        break;
+      }
+      case 'enigma': {
+        const k = pruefeBereich(o.kabel === undefined ? 10 : o.kabel, 'Die Zahl der Kabel', 0, 13);
+        // Steckerbrett: 2k Buchstaben aus 26 in Paare legen = 26! / ((26 − 2k)! · k! · 2^k)
+        const stecker = fakultaet(26) / (fakultaet(26 - 2 * k) * fakultaet(k) * 2n ** BigInt(k));
+        anzahl = 60n * 17576n * stecker;
+        formel = `5 · 4 · 3 · 26³ · ${stecker}`;
+        break;
+      }
+      case 'kryptos16': anzahl = 65536n; formel = '2¹⁶'; break;
+      default:
+        throw new KryptoFehler(`Für „${verfahren}“ kennt die Bibliothek keinen Schlüsselraum.`);
+    }
+    return { anzahl: anzahl.toString(), log10: log10Gross(anzahl), formel };
+  }
+
+  const SEKUNDEN_JE_JAHR = 3.2e7; // wie W1-L1-04
+
+  /** Dauer, alle 10^log10Anzahl Schlüssel bei proSekunde Versuchen je Sekunde durchzuprobieren → { sekundenLog10, text } */
+  function suchdauer(log10Anzahl, proSekunde) {
+    if (typeof log10Anzahl !== 'number' || !Number.isFinite(log10Anzahl)) throw new KryptoFehler('log10 der Anzahl muss eine Zahl sein.');
+    if (typeof proSekunde !== 'number' || !Number.isFinite(proSekunde) || proSekunde <= 0) {
+      throw new KryptoFehler('Die Rechenleistung muss eine positive Zahl sein.');
+    }
+    const sl = log10Anzahl - Math.log10(proSekunde);
+    const ganz = (x) => Math.floor(x + 0.5);
+    const mit = (n, eins, mehr) => `≈ ${n} ${n === 1 ? eins : mehr}`;
+    let text;
+    if (sl < 0) text = '< 1 Sekunde';
+    else if (sl < Math.log10(60)) text = mit(ganz(10 ** sl), 'Sekunde', 'Sekunden');
+    else if (sl < Math.log10(3600)) text = mit(ganz(10 ** sl / 60), 'Minute', 'Minuten');
+    else if (sl < Math.log10(86400)) text = mit(ganz(10 ** sl / 3600), 'Stunde', 'Stunden');
+    else if (sl < Math.log10(SEKUNDEN_JE_JAHR)) text = mit(ganz(10 ** sl / 86400), 'Tag', 'Tage');
+    else {
+      const jl = sl - Math.log10(SEKUNDEN_JE_JAHR);
+      if (jl < 3) text = mit(ganz(10 ** jl), 'Jahr', 'Jahre');
+      else {
+        let e = Math.floor(jl);
+        let m = ganz(10 ** (jl - e) * 10) / 10;
+        if (m >= 10) {
+          m = 1;
+          e += 1;
+        }
+        text = `≈ ${m.toFixed(1).replace('.', ',')} · 10${hochgestellt(e)} Jahre`;
+      }
+    }
+    return { sekundenLog10: sl, text };
+  }
+
   function ggTOeffentlich(a, b) {
     pruefeGanzzahl(a, 'a');
     pruefeGanzzahl(b, 'b');
@@ -2969,6 +3104,7 @@
     quadrat,
     playfairPaare,
     playfair,
+    playfairSchritte,
     kreuzquadrat,
     zweiQuadratZahl,
     polybios,
@@ -3057,6 +3193,8 @@
     rsa,
     dh,
     schluesselanzahl,
+    schluesselraum,
+    suchdauer,
     // Verfahrens-Objekt und Baukasten
     verfahren,
     baukasten,

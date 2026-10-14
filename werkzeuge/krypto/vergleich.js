@@ -743,6 +743,29 @@ const FAELLE = {
     fest: [[{}, 'ADU', 'A'], [{}, 'ADV', 'A'], [{}, 'AEW', 'A'], [{}, 'AAA', 'AB'], [{}, 'AA', 'A'], [{}, 'aaa', 'b'], [{ stecker: 'AV BS' }, 'QEV', 'v']],
     zufall: () => [enigmaEinstellung(), selten() ? wahl(['AA', 'A1A', '']) : buchstaben(3, 3), selten() ? wahl(['', 'AB', '1', 'ä']) : wahl([...GROSS, ...GROSS.toLowerCase()])],
   },
+  // ── M10 Bibliothek VII (Plan M10 Task 223) ──
+  playfairSchritte: {
+    fest: [['wintersonne', 'KRYPTOLOGIE'], ['wiktko', 'KRYPTOLOGIE'], ['kt', 'KRYPTOLOGIE'], ['XGSYLTHEQWSG', 'KRYPTOLOGIE', 'ent'], ['ABC', 'K', 'ent'], ['AA', 'K', 'ent'], ['', 'K'], ['abc', 'K', 'quer'], ['jagd', 'kryptologie', 'ver', { ij: 'J' }]],
+    zufall: () => {
+      const r = richtung();
+      const k = schluesselwort();
+      let t = textOderDeutsch(100);
+      if (r === 'ent' && zufall() < 0.9) { try { t = K.playfair(t, k); } catch { /* ungültig */ } }
+      return [t, k, r, ...(zufall() < 0.2 ? [{ ij: wahl(['I', 'J']) }] : [])];
+    },
+  },
+  schluesselraum: {
+    fest: [['caesar'], ['affin'], ['substitution'], ['playfair'], ['kryptos16'], ['skytale', { n: 20 }], ['pfluegen', { n: 3 }], ['skytale', { n: 2 }], ['skytale'], ['vigenere', { laenge: 5 }], ['otp', { laenge: 1000 }], ['otp', { laenge: 0 }], ['fleissner', { groesse: 4 }], ['fleissner', { groesse: 10 }], ['fleissner', { groesse: 5 }], ['enigma'], ['enigma', { kabel: 0 }], ['enigma', { kabel: 13 }], ['enigma', { kabel: 14 }], ['enigma', { kabel: 1.5 }], ['rot13'], ['caesar', null]],
+    zufall: () => {
+      const v = wahl(['caesar', 'affin', 'substitution', 'playfair', 'kryptos16', 'skytale', 'pfluegen', 'vigenere', 'otp', 'fleissner', 'enigma']);
+      const p = { skytale: { n: ganz(1, 500) }, pfluegen: { n: ganz(1, 500) }, vigenere: { laenge: ganz(0, 60) }, otp: { laenge: ganz(1, 300) }, fleissner: { groesse: ganz(1, 11) }, enigma: { kabel: ganz(-1, 14) } }[v];
+      return p ? [v, p] : [v];
+    },
+  },
+  suchdauer: {
+    fest: [[26.6056, 1e9], [Math.log10(26), 1e6], [Math.log10(180), 1], [0, 1], [3, 0], [3, -1], [null, 1], [1.7781512503836436, 1], [Math.log10(59.6), 1], [300, 1], [9.97, 1], [17.6, 1e9]],
+    zufall: () => [zufall() < 0.1 ? wahl([0, -1, 1e3]) : zufall() * 40 - 2, wahl([1, 1e3, 1e6, 1e9, 1e12, 1e15])],
+  },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).
