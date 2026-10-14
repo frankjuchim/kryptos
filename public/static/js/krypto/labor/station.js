@@ -450,6 +450,54 @@ const KRStation = (() => {
     }
   }
 
+
+  /** „So funktioniert's“ (Werkstatt-Panel): section.station-so-gehts mit nummerierten Schritten. → section */
+  function soGehts(ziel, schritte, { titel = 'So funktioniert’s' } = {}) {
+    const element = h('section', { class: 'station-so-gehts' }, h('h3', null, String(titel)), h('ol', null, (Array.isArray(schritte) ? schritte : []).map((t) => h('li', null, String(t)))));
+    if (ziel) ziel.appendChild(element);
+    return element;
+  }
+
+  /**
+   * Knopf „▶ Nachspielen“ / „■ Nachspiel beenden“ (eine Bedienung für alle Werkstatt-Werkzeuge): öffnet KRLabor.nachspiel
+   * mit der zuletzt gesetzten Konfiguration ({ titel, schritte, zeige }) in ort, sperrt dabei die Handgriffe (sperre(true))
+   * und stellt beim Beenden über beiEnde() den Stand wieder her. → { element, setze(konfig | null), schliesse(), offen() }
+   */
+  function nachspielKnopf(ort, { sperre, beiEnde, leer = 'Erzeuge zuerst eine Nachricht. Danach kannst du sie hier in Ruhe nachspielen.', beiLeer } = {}) {
+    const start = h('button', { type: 'button', class: 'knopf knopf-zweit station-nachspielen' }, '▶ Nachspielen');
+    const stop = h('button', { type: 'button', class: 'knopf knopf-leise station-nachspiel-ende', hidden: true }, '■ Nachspiel beenden');
+    let konfig = null;
+    let ns = null;
+    function schliesse() {
+      if (!ns) return;
+      ns.schliesse();
+      ns = null;
+      start.hidden = false;
+      stop.hidden = true;
+      if (typeof sperre === 'function') sperre(false);
+      if (typeof beiEnde === 'function') beiEnde();
+    }
+    start.addEventListener('click', () => {
+      if (!konfig) {
+        if (typeof beiLeer === 'function') beiLeer(leer);
+        return;
+      }
+      if (typeof sperre === 'function') sperre(true);
+      ns = KRLabor.nachspiel(ort, { ...konfig });
+      start.hidden = true;
+      stop.hidden = false;
+    });
+    stop.addEventListener('click', schliesse);
+    return {
+      element: h('div', { class: 'knopf-reihe station-nachspiel-knoepfe' }, start, stop),
+      setze(k) {
+        konfig = k || null;
+      },
+      schliesse,
+      offen: () => !!ns
+    };
+  }
+
   /** Namensnennung am Ende der Werkzeugfläche (Erlaubnis 14.10.2026, docs/FREMDCODE.md) */
   function herkunft(ziel) {
     const p = h('p', { class: 'werkzeug-herkunft' }, 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
@@ -457,5 +505,5 @@ const KRStation = (() => {
     return p;
   }
 
-  return { bewegung, flug, stempel, baender, anleitung, erklaerung, mehr, hintergrund, tippen, greifen, ton, tonSchalter, funken, sperre, herkunft, weich };
+  return { bewegung, flug, stempel, baender, anleitung, erklaerung, mehr, hintergrund, soGehts, nachspielKnopf, tippen, greifen, ton, tonSchalter, funken, sperre, herkunft, weich };
 })();

@@ -59,18 +59,19 @@ dialog.werkzeug-dialog {
 .labor-epoche { display: grid; gap: var(--a-3); }
 .labor-epoche h2 { margin: 0; padding-bottom: var(--a-1); border-bottom: 3px solid var(--akzent); }
 .labor-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--a-3); }
-.labor-vollseite { display: grid; grid-template-rows: auto 1fr auto; min-height: calc(100vh - 120px); }
+.labor-vollseite { display: grid; align-content: start; min-height: calc(100vh - 120px); }
 .labor-vollseite .werkzeug-flaeche { padding: var(--a-5) max(var(--a-4), calc((100% - var(--inhalt)) / 2)); }
+/* Brotkrümel „‹ Zum Labor / Werkzeug“ am Seitenanfang (Plan M10, Sichtung: vorher klebende Leiste unten) */
 .labor-steuerleiste {
-  position: sticky;
-  bottom: 0;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--a-2);
-  padding: var(--a-3) var(--a-4) calc(var(--a-3) + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid var(--linie);
+  padding: var(--a-1) max(var(--a-4), calc((100% - var(--inhalt)) / 2));
+  border-bottom: 1px solid var(--linie);
   background: var(--karte);
 }
+.labor-brotkruemel-titel { color: var(--text-2); font-size: .9rem; }
 
 /* ======================================================================
    Labor-Rahmen II (Plan M6 Task 110): Reiter, Bausteine, Nachspiel, Alle Schlüssel

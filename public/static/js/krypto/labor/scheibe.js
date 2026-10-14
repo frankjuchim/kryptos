@@ -318,7 +318,8 @@
       const buehne = h('div', { class: 'scheibe-buehne' }, anleitung.element, scheibe, erklaerung.element);
       const rechts = h('div', { class: 'scheibe-bedienung' }, richtungWahl.element, steuer, sperrHinweis, baender.element, tippen, h('div', { class: 'knopf-reihe' }, nachspielKnopf, nachspielEnde), nachspielOrt, mehr);
       const unten = h('div', { class: 'scheibe-unten' }, leiste, h('div', { class: 'scheibe-formelteil' }, basisWahl, formel, hinweisOrt));
-      r.flaeche.append(h('div', { class: 'scheibe-objekt' }, buehne, rechts, unten), hintergrund);
+      const soGehts = S.soGehts(null, ['Innere Scheibe drehen: Der Schlüsselbuchstabe steht unter dem äußeren a.', 'Klartextbuchstaben außen suchen, direkt darunter innen ablesen.', 'Entschlüsseln: innen suchen, außen ablesen.']);
+      r.flaeche.append(h('div', { class: 'scheibe-objekt' }, buehne, rechts, unten), soGehts, hintergrund);
 
       const titel = () => (richtung === 'ver' ? ['Klartext', 'Geheimtext', [false, true]] : ['Geheimtext', 'Klartext', [true, false]]);
       const schritte = () =>

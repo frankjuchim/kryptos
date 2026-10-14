@@ -162,10 +162,11 @@ const KRLaborSeite = (() => {
       h(
         'section',
         { class: 'labor-vollseite', 'data-epoche': String(w.welt), 'aria-labelledby': 'werkzeug-titel' },
+        // M10: „Zum Labor“ als Brotkrümel am Seitenanfang (vorher klebende Leiste am unteren Rand mitten im Inhalt)
+        h('nav', { class: 'labor-steuerleiste labor-brotkruemel', 'aria-label': 'Brotkrümel' }, h('a', { class: 'knopf knopf-leise', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Labor'), h('span', { class: 'labor-brotkruemel-titel', 'aria-hidden': 'true' }, `/ ${w.titel}`)),
         h('div', { class: 'werkzeug-kopfband' }, KR.symbol('icons', 'i-labor'), h('h1', { id: 'werkzeug-titel' }, w.titel), h('span', { class: 'werkzeug-epoche' }, KR.WELTEN_KURZ[w.welt] || '')),
         lehrkraft ? h('p', { class: 'labor-lehrkraft-hinweis text-2', role: 'note' }, 'Für Schülerinnen und Schüler gelten Reiter-Regeln (Welt, Niveau).') : null,
-        flaeche,
-        h('div', { class: 'labor-steuerleiste' }, h('a', { class: 'knopf knopf-zweit', href: '#/' }, KR.symbol('icons', 'i-pfeil-l'), 'Zum Labor'))
+        flaeche
       )
     );
     offen = KRLabor.oeffne(id, voreinstellung, flaeche, umgebung);

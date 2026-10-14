@@ -21,6 +21,8 @@ const flaeche = (p) => p.locator('.werkzeug-flaeche');
 /** je Werkzeug: Bedienung im Browser → [ist, soll] mit soll aus Krypto (Node) */
 const RECHNUNG = {
   skytale: async (p) => {
+    // M10: eine Bedienung – das Textfeld liegt im aufklappbaren Bereich „Text eintippen“
+    await flaeche(p).locator('details.stab-tippen > summary').click();
     await flaeche(p).locator('textarea.labor-eingabe').fill('wir halten den pass');
     const z = await zustand(p);
     return [z.ausgabe, K.skytale('wir halten den pass', z.umfang)];
@@ -151,7 +153,9 @@ async function szenario4(ctx) {
 
   // Nachspiel per Tastatur (Skytale): Leiste fokussieren, → einen Schritt weiter
   await oeffne(page, ctx, 'skytale');
+  await flaeche(page).locator('details.stab-tippen > summary').click();
   await flaeche(page).locator('textarea.labor-eingabe').fill('wir halten den pass');
+  await flaeche(page).locator('button.station-nachspielen').click(); // M10: Nachspielen öffnet die Leiste
   const leiste = flaeche(page).locator('.nachspiel').first();
   await leiste.locator('.nachspiel-vor').focus();
   const vorher = await leiste.locator('.nachspiel-zaehler').textContent();

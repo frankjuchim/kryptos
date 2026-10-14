@@ -142,6 +142,13 @@
 .station-kv dt { color: var(--text-2); }
 .station-kv dd { margin: 0; font-weight: 700; }
 
+/* ---------- „So funktioniert's“ ---------- */
+.station-so-gehts { padding: var(--a-3) var(--a-4); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
+.station-so-gehts h3 { margin: 0 0 var(--a-2); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
+.station-so-gehts ol { margin: 0; padding-left: 1.4em; display: grid; gap: var(--a-1); }
+.station-so-gehts li::marker { font-weight: 700; color: var(--text); }
+.station-nachspiel-knoepfe:empty { display: none; }
+
 /* ---------- Fliegende Buchstaben, Greifen, Sperre, Ton, Herkunft ---------- */
 .station-flug {
   position: fixed;

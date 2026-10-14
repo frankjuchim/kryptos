@@ -76,7 +76,12 @@
       }
       zeigeNorm();
       return {
-        element: h('div', { class: 'labor-kopf' }, feld.element, norm, ri.element),
+        // Gartenzaun und Ring: Feld, Normalisierung und Richtung zusammen; Werkstatt-Reiter verteilen die Teile (M10)
+        get element() {
+          return h('div', { class: 'labor-kopf' }, feld.element, norm, ri.element);
+        },
+        text: () => h('div', { class: 'labor-kopf' }, feld.element, norm),
+        richtung: () => ri.element,
         setze(t) {
           feld.setze(t);
           zeigeNorm();
@@ -126,7 +131,6 @@
     }
 
     function baueSkytale() {
-      let ns = null;
       let alle = null;
       let lauf = 0; // laufende Animation (wird bei jeder Änderung neu gezählt)
       // Phase der Nachricht am Objekt: ver 'stab' (auf dem Stab) | 'band' (abgewickelt); ent 'lose' | 'gelesen'
@@ -138,11 +142,7 @@
         phase = z.richtung === 'ver' ? 'stab' : 'lose';
         zeichne();
       });
-      const umfang = B.zahl({ beschriftung: 'Umfang u (Zeilen)', min: 2, max: 10, wert: z.umfang, beiWechsel: (u) => setzeU(u) });
-      const duenner = h('button', { type: 'button', class: 'knopf knopf-leise skytale-stab-minus' }, '◀ Stab dünner');
-      const dicker = h('button', { type: 'button', class: 'knopf knopf-leise skytale-stab-plus' }, 'Stab dicker ▶');
-      duenner.addEventListener('click', () => setzeU(z.umfang - 1));
-      dicker.addEventListener('click', () => setzeU(z.umfang + 1));
+      const umfang = B.zahl({ beschriftung: 'Schlüssel: Umfang u (Buchstaben pro Runde)', min: 2, max: 10, wert: z.umfang, beiWechsel: (u) => setzeU(u), minusLabel: 'Stab dünner (u − 1)', plusLabel: 'Stab dicker (u + 1)' });
       // Stabwahl als Reihe von Stab-Querschnitten (HTML-Knöpfe, E197)
       const wahlKnoepfe = [2, 3, 4, 5, 6, 7, 8, 9, 10].map((u) => {
         const r = 6 + 1.6 * u;
@@ -167,26 +167,34 @@
       const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
       const pruef = h('div', { class: 'skytale-pruefung' });
       const info = h('p', { class: 'labor-hinweis hinweis-info skytale-info', role: 'note' });
-      const nsOrt = h('div');
+      const nsOrt = h('div', { class: 'station-nachspiel-ort' });
+      const nk = S.nachspielKnopf(nsOrt, { sperre: (an) => sperre(an), beiEnde: () => zeichneStab(), beiLeer: (t) => erklaerung.sage('Nachspielen', t) });
       const alleOrt = h('div');
       const alleDetails = B.details('Alle Stäbe ausprobieren', [h('p', { class: 'text-2' }, 'Eve wickelt den abgefangenen Geheimtext um Stäbe mit u = 2 … 10. Welche Zeile ist lesbar? Das entscheidest du.'), alleOrt], { klasse: 'alle-staebe' });
-      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Raster, alle Stäbe', h('p', { class: 'text-2' }, 'Auf Papier: Tabelle mit u Zeilen – zeilenweise schreiben, spaltenweise lesen. Jede Spalte ist eine Runde um den Stab.'), rasterOrt, alleDetails);
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Raster, Probe, alle Stäbe', h('p', { class: 'text-2' }, 'Auf Papier: Tabelle mit u Zeilen – zeilenweise schreiben, spaltenweise lesen. Jede Spalte ist eine Runde um den Stab.'), rasterOrt, pruef, info, alleDetails);
+      const soGehts = S.soGehts(null, ['Das Band liegt lückenlos um den Stab. Eine Runde fasst u Buchstaben.', 'Den Klartext zeilenweise entlang des Stabs schreiben, Lücken am Ende mit X füllen.', 'Abgewickelt stehen die Buchstaben einer Runde nebeneinander. Entschlüsseln: auf einen gleich dicken Stab wickeln und entlang lesen.']);
       const hintergrund = S.hintergrund(null, [
         { titel: 'Schlüsselraum', zeilen: [['Schlüssel', 'Umfang u (Buchstaben pro Runde)'], ['Auf Papier', 'Tabelle mit u Zeilen, spaltenweise lesen'], ['Möglichkeiten', 'sehr wenige: bei n Buchstaben höchstens n − 2 Umfänge'], ['Art', 'Transposition']] },
         { titel: 'Warum unsicher?', text: 'Die Buchstaben bleiben gleich, nur ihre Plätze ändern sich. Eve probiert einfach verschieden dicke Stäbe aus.' },
         { titel: 'Geschichte', text: 'Schon die Spartaner sollen so Befehle verschickt haben: Ein Lederband wurde um einen Stab gewickelt und beschrieben.' }
       ]);
       const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, wahl, h('div', { class: 'stab-bild' }, svg), erklaerung.element);
+      // eine Bedienung wie in der Werkstatt: Richtung, Schlüssel, Stempel, Bänder, Aktionen, Nachspielen, Text eintippen
+      const tippen = B.details('Text eintippen (für längere Nachrichten)', k.text(), { klasse: 'stab-tippen' });
       const bedienung = h(
         'div',
         { class: 'stab-bedienung' },
+        k.richtung(),
+        umfang.element,
+        meldung,
         stempelTitel,
         stempel.element,
         baender.element,
-        h('div', { class: 'knopf-reihe' }, abwickeln)
+        h('div', { class: 'knopf-reihe' }, abwickeln, nk.element),
+        nsOrt,
+        tippen
       );
-      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, h('div', { class: 'labor-steuer' }, umfang.element, h('div', { class: 'skytale-stab-knoepfe' }, duenner, dicker)), meldung, aus.element, pruef, info, nsOrt);
-      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), soGehts, mehr, hintergrund);
       KRStation.herkunft(r.flaeche);
 
       function setzeU(u) {
@@ -220,8 +228,6 @@
         gesperrt = an;
         k.sperre(an);
         umfang.sperre(an);
-        duenner.disabled = an || z.umfang <= 2;
-        dicker.disabled = an || z.umfang >= 10;
         stempel.setze(!an);
         abwickeln.disabled = an;
         for (const b of wahlKnoepfe) b.disabled = an;
@@ -536,9 +542,9 @@
       }
 
       function zeichne() {
-        if (ns) ns.schliesse();
+        nk.schliesse();
+        nk.setze(null);
         if (alle) alle.schliesse();
-        ns = null;
         alle = null;
         for (const el of [rasterOrt, meldung, pruef, nsOrt, alleOrt]) AQ.clear(el);
         sperre(false);
@@ -562,7 +568,7 @@
         if (raster) {
           rasterOrt.appendChild(rasterTabelle(raster, ein.length, ver, zellen));
           pruef.appendChild(pruefZeile(ein, Krypto.nurBuchstaben(erg.wert)));
-          ns = KRLabor.nachspiel(nsOrt, {
+          nk.setze({
             titel: ver ? 'Schreiben und Lesen' : 'Geheimtext einschreiben und lesen',
             start: -1,
             schritte: skytaleSchritte(raster, ver),
@@ -570,8 +576,7 @@
               zeigeSchritt(zellen, st.daten);
               // auch am Stab: Buchstaben erscheinen in der Schreibreihenfolge
               if (ver && st.daten.phase === 'schreiben' && phase === 'stab') zeichneStab(st.daten.bis);
-            },
-            beiLauf: sperre
+            }
           });
         }
         zeichneStab();
@@ -594,7 +599,7 @@
       return {
         schliesse() {
           lauf += 1;
-          if (ns) ns.schliesse();
+          nk.schliesse();
           if (alle) alle.schliesse();
         }
       };
@@ -603,7 +608,6 @@
     /* ---------- Pflügen · Zusatz (Plan M10 Task 227, nach stationen/pfluegen.html) ---------- */
 
     function bauePfluegen() {
-      let ns = null;
       let alle = null;
       let lauf = 0;
       let gepfluegt = false; // Pflugweg ganz gegangen (Bänder zeigen das Ergebnis)
@@ -614,7 +618,7 @@
         gepfluegt = false;
         zeichne();
       });
-      const breite = B.zahl({ beschriftung: 'Zeilenlänge k (Spalten der Tabelle)', min: 2, max: 12, wert: z.k, beiWechsel: (x) => setzeK(x) });
+      const breite = B.zahl({ beschriftung: 'Schlüssel: Zeilenlänge k (Spalten der Tabelle)', min: 2, max: 12, wert: z.k, beiWechsel: (x) => setzeK(x) });
       const stempelTitel = h('span', { class: 'stab-feldtitel' }, 'Stempel: in die Tabelle');
       const stempel = S.stempel(null, (b) => stempeln(b), { beschriftung: 'Stempelkasten' });
       const baender = S.baender({ beiAenderung: () => {} });
@@ -625,19 +629,21 @@
       const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
       const meldung = h('div', { class: 'pflug-meldung' });
       const pruef = h('div');
-      const nsOrt = h('div');
+      const nsOrt = h('div', { class: 'station-nachspiel-ort' });
+      const nk = S.nachspielKnopf(nsOrt, { sperre: (an) => sperre(an), beiEnde: () => markiere(z.richtung === 'ver' ? (gepfluegt ? Infinity : 0) : Infinity), beiLeer: (t) => erklaerung.sage('Nachspielen', t) });
       const alleOrt = h('div');
       const alleDetails = B.details('Alle Zeilenlängen ausprobieren', [h('p', { class: 'text-2' }, 'Eve trägt den Geheimtext für k = 2 … 12 rückwärts entlang des Pflugwegs ein und liest zeilenweise. Welche Zeile ist lesbar? Das entscheidest du.'), alleOrt], { klasse: 'pflug-alle' });
-      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Angriff: alle Zeilenlängen', alleDetails);
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'Probe, Angriff: alle Zeilenlängen', pruef, alleDetails);
+      const soGehts = S.soGehts(null, ['Klartext zeilenweise in Zeilen der Länge k schreiben, die letzte Zeile mit X auffüllen.', 'Rechts beginnen: letzte Spalte von unten nach oben, die nächste von oben nach unten, immer abwechselnd.', 'Entschlüsseln: den Geheimtext auf demselben Weg eintragen und zeilenweise lesen.']);
       const hintergrund = S.hintergrund(null, [
         { titel: 'Schlüsselraum', zeilen: [['Schlüssel', 'Zeilenlänge k (und der Pflugweg)'], ['Möglichkeiten', 'wenige – nur Teiler der Textlänge passen'], ['Art', 'Transposition']] },
         { titel: 'Warum unsicher?', text: 'Die Buchstaben bleiben erhalten, nur ihre Plätze ändern sich. Eve probiert einfach alle Zeilenlängen aus.' },
         { titel: 'Zusatz', text: 'Das Pflügen steht nicht im Kerncurriculum. Es zeigt wie Skytale und Gartenzaun: Bei einer Transposition tauschen die Buchstaben nur ihre Plätze.' }
       ]);
       const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, h('div', { class: 'pflug-bild scroll-x' }, h('p', { class: 'pflug-titel' }, 'Karopapier'), h('div', { class: 'pflug-tisch' }, papier, rand)), erklaerung.element);
-      const bedienung = h('div', { class: 'stab-bedienung' }, stempelTitel, stempel.element, baender.element, h('div', { class: 'knopf-reihe' }, pfluegenKnopf));
-      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, h('div', { class: 'labor-steuer' }, breite.element), meldung, aus.element, pruef, nsOrt);
-      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      const tippen = B.details('Text eintippen (für längere Nachrichten)', k.text(), { klasse: 'stab-tippen' });
+      const bedienung = h('div', { class: 'stab-bedienung' }, k.richtung(), breite.element, meldung, stempelTitel, stempel.element, baender.element, h('div', { class: 'knopf-reihe' }, pfluegenKnopf, nk.element), nsOrt, tippen);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), soGehts, mehr, hintergrund);
       KRStation.herkunft(r.flaeche);
 
       function setzeK(x) {
@@ -739,9 +745,9 @@
 
       function zeichne() {
         lauf += 1;
-        if (ns) ns.schliesse();
+        nk.schliesse();
+        nk.setze(null);
         if (alle) alle.schliesse();
-        ns = null;
         alle = null;
         for (const el of [papier, meldung, pruef, nsOrt, alleOrt]) AQ.clear(el);
         sperre(false);
@@ -775,7 +781,7 @@
             const folge = nrs.map((c) => raster[c.z][c.s]).join('');
             schritte.push({ text: `Spalte ${spalte + 1} ${Krypto.mod(j, 2) === 0 ? 'von unten nach oben' : 'von oben nach unten'}: ${ver ? folge : Krypto.klein(folge)}`, daten: { bis: nrs[nrs.length - 1].nr } });
           }
-          ns = KRLabor.nachspiel(nsOrt, { titel: ver ? 'Spalte für Spalte pflügen' : 'Entlang des Pflugwegs eintragen', start: -1, schritte, beiLauf: sperre, zeige: (st) => markiere(st.daten.bis) });
+          nk.setze({ titel: ver ? 'Spalte für Spalte pflügen' : 'Entlang des Pflugwegs eintragen', start: -1, schritte, zeige: (st) => markiere(st.daten.bis) });
         }
         // Bänder und Anleitung
         anleitung.texte(ver ? ['Tabellenbreite ziehen', 'Buchstaben stempeln', 'Pflügen'] : ['Tabellenbreite ziehen', 'Geheimtext stempeln', 'Zeilenweise lesen']);
@@ -854,7 +860,7 @@
       return {
         schliesse() {
           lauf += 1;
-          if (ns) ns.schliesse();
+          nk.schliesse();
           if (alle) alle.schliesse();
         }
       };
@@ -948,7 +954,6 @@
     /* ---------- Fleißner-Schablone als Karton (Plan M6 Task 112, Plan M10 Task 228 nach stationen/schablone.html) ---------- */
 
     function baueFleissner() {
-      let ns = null;
       let meldung = '';
       let lochungAnsicht = false; // „Lochung ändern“: Lage-Ziffern und doppelt freie Felder
       let abgehoben = false; // Karton abgehoben: das ganze Raster ist zu sehen
@@ -1017,17 +1022,27 @@
       const baender = S.baender({ beiAenderung: () => {} });
       const aus = B.ausgabe({ beschriftung: 'Ergebnis (zeilenweise)', art: 'frei' });
       const pruef = h('div');
-      const nsOrt = h('div');
-      const mehr = S.mehr(null, 'Mehr ausprobieren', 'eigene Lochung, Größe', h('p', { class: 'text-2' }, 'Tippe Felder am Karton an: Loch stanzen oder zukleben. Mit „Lochung ändern“ zeigen Ziffern, in welcher Lage das Feld darunter frei ist; rot und „doppelt“ = in zwei Lagen frei.'), lochungKnopf, groesseWahl);
+      const nsOrt = h('div', { class: 'station-nachspiel-ort' });
+      const nk = S.nachspielKnopf(nsOrt, {
+        sperre: (an) => sperre(an),
+        beiEnde: () => {
+          aktuell = null;
+          zeigeRaster();
+        },
+        beiLeer: (x) => erklaerung.sage('Nachspielen', x)
+      });
+      const mehr = S.mehr(null, 'Mehr ausprobieren', 'eigene Lochung, Größe, Probe', h('p', { class: 'text-2' }, 'Tippe Felder am Karton an: Loch stanzen oder zukleben. Mit „Lochung ändern“ zeigen Ziffern, in welcher Lage das Feld darunter frei ist; rot und „doppelt“ = in zwei Lagen frei.'), lochungKnopf, groesseWahl, legende, pruef);
+      const soGehts = S.soGehts(null, ['Schablone mit „OBEN“ nach oben auflegen und in die Löcher zeilenweise schreiben.', 'Um 90° im Uhrzeigersinn drehen und weiterschreiben – vier Lagen, der Rest wird mit X gefüllt.', 'Abheben und das Raster zeilenweise lesen. Entschlüsseln: auflegen, ablesen, drehen.']);
       const hintergrund = S.hintergrund(null, [
         { titel: 'Schlüssel', zeilen: [['Schlüssel', `die Lochschablone (${anzahlLoecher} Löcher)`], ['Dazu', 'Startlage und Drehrichtung'], ['Anzahl Schablonen', `4^${anzahlLoecher} = ${Krypto.schluesselraum('fleissner', { groesse: g }).anzahl}`], ['Art', 'Transposition']] },
         { titel: 'Schwäche', text: 'Die Buchstaben ändern sich nicht. Wer die Schablone nachbaut, liest alles. Ein Computer probiert alle Schablonen schnell durch.' },
         { titel: 'Geschichte', text: 'Eduard Fleißner von Wostrowitz soll die Drehschablone 1881 beschrieben haben.' }
       ]);
-      const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, h('div', { class: 'schablone-bereich' }, flaeche, h('div', { class: 'schablone-seite' }, stellungText, h('div', { class: 'knopf-reihe' }, drehen, abheben), legende, pruefung)), erklaerung.element);
-      const bedienung = h('div', { class: 'stab-bedienung' }, stempelTitel, stempel.element, baender.element);
-      const textTeil = h('div', { class: 'stab-textteil' }, h('p', { class: 'stab-feldtitel' }, 'Oder Text eintippen und rechnen lassen'), k.element, aus.element, pruef, nsOrt);
-      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), textTeil, mehr, hintergrund);
+      const buehne = h('div', { class: 'stab-buehne' }, anleitung.element, h('div', { class: 'schablone-bereich' }, flaeche), stellungText, pruefung, erklaerung.element);
+      const schluessel = h('div', { class: 'karton-schluessel' }, h('span', { class: 'stab-feldtitel' }, 'Schlüssel: die Schablone'), h('p', { class: 'text-2' }, '„OBEN“ liegt oben, gedreht wird im Uhrzeigersinn.'));
+      const tippen = B.details('Text eintippen (für längere Nachrichten)', k.text(), { klasse: 'stab-tippen' });
+      const bedienung = h('div', { class: 'stab-bedienung' }, k.richtung(), schluessel, stempelTitel, stempel.element, baender.element, h('div', { class: 'knopf-reihe' }, drehen, abheben, nk.element), nsOrt, tippen);
+      r.flaeche.append(h('div', { class: 'stab-station' }, buehne, bedienung), soGehts, mehr, hintergrund);
       KRStation.herkunft(r.flaeche);
       let aktuell = null; // Loch im Nachspiel
 
@@ -1211,8 +1226,8 @@
       }
 
       function zeichne() {
-        if (ns) ns.schliesse();
-        ns = null;
+        nk.schliesse();
+        nk.setze(null);
         aktuell = null;
         AQ.clear(pruef);
         AQ.clear(nsOrt);
@@ -1253,11 +1268,10 @@
               schritte.push({ text: `Lage ${st + 1}, Loch (${zz},${ss}): ${Krypto.klein(b)}`, daten: { stellung: st + 1, loch: [zz, ss] } });
             });
           });
-          ns = KRLabor.nachspiel(nsOrt, {
+          nk.setze({
             titel: 'Lage für Lage, Loch für Loch',
             start: -1,
             schritte,
-            beiLauf: sperre,
             zeige(st, i, o) {
               const wechsel = st.daten.stellung !== z.stellung;
               z.stellung = st.daten.stellung;
@@ -1279,7 +1293,7 @@
       zeichne();
       erklaerung.sage('Bereit', `Die Schablone liegt in Lage 1 auf dem Raster. Stempel deine Nachricht in die Löcher – nach ${anzahlLoecher} Buchstaben dreht sie weiter.`);
       return {
-        schliesse: () => ns && ns.schliesse(),
+        schliesse: () => nk.schliesse(),
         gueltig: () => gueltig
       };
     }
