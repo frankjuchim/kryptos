@@ -74,6 +74,7 @@ npm install · npm test · npm run validate · npm run dev (mit Dev-Portal, test
 npm run krypto:vergleich -- --anzahl 2000                    # JS-Bibliothek ↔ Python-Zwilling
 python3 -I werkzeuge/krypto/pruefwerte.py                     # Rechenwerte aller Materialien (Plan Task 18)
 npm run abdeckung                                             # Abdeckung gegen §11 der Welt-Specs ([--welt N])
+npm run konfig:pruefen                                        # Konfiguration §8 prüfen (ohne Geheimnisse auszugeben)
 npm run pruefen                                               # alles
 ```
 In der Cloud-Umgebung: Chromium unter `/opt/pw-browsers` (kein `playwright install`); docx/pptx rendern mit
