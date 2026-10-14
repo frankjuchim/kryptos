@@ -98,7 +98,7 @@ test('Backup/Restore (JSON): Kennung kryptos/1, Tabellenliste ohne flüchtige Ta
   assert.equal(backup.app, 'kryptos');
   assert.equal(backup.format, 1);
   assert.deepEqual(Object.keys(backup.tables), TABLES);
-  for (const t of ['sso_jti', 'funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse']) assert.ok(!(t in backup.tables), t);
+  for (const t of ['sso_jti', 'funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse', 'arena', 'arena_chiffren', 'arena_versuche']) assert.ok(!(t in backup.tables), t);
   assert.equal(backup.tables.schueler.length, 1);
   assert.equal(backup.tables.konten.length, 3);
   // Daten verändern, dann wiederherstellen

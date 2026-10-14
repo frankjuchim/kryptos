@@ -236,10 +236,10 @@ function createArena({ db, svc, teams, now, zufallBytes, log = () => {} }) {
     return regieAnsicht(neu);
   }
 
-  /** DELETE /api/lehrer/arena/:id – jederzeit (Kaskade: Chiffren, Beurteilungen, Versuche) */
+  /** DELETE /api/lehrer/arena/:id – jederzeit, auch im gesperrten Kurs (Datensparsamkeit, Review M7 K1; Kaskade:
+      Chiffren, Beurteilungen, Versuche) */
   function loesche(lk, id) {
-    const { a, kurs } = ladeLk(lk, id);
-    if (!kurs.aktiv) throw new V.ForbiddenError(GESPERRT);
+    const { a } = ladeLk(lk, id);
     sql.loesche.run(a.id);
     walLeeren(db); // Beschreibungen, Beurteilungen, Geheimtexte auch nicht im WAL (Plan M7 Task 160)
     return { ok: true };

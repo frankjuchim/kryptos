@@ -4,7 +4,9 @@
 // Fehler) bleibt im Speicher für GET /api/admin/wartung.
 //   1. Funkraum: Szenarien nach `endet_spaetestens` (24 h nach Anlage) löschen (Kaskade: Rollen, Nachrichten, Ereignisse)
 //   2. Arena: abgelaufene Angriffsphasen (`angriff_bis`) beenden – Rückfall, sonst beim nächsten Zugriff (Plan M7 E102);
-//      geschlossene Arenen 30 Tage nach `geschlossen_at` löschen (Kaskade: Chiffren, Beurteilungen, Versuche)
+//      offene Arenen 30 Tage nach `created_at` schließen (`geschlossen_at` = jetzt, Review M7 W5 – sonst blieben
+//      Freitexte einer vergessenen Arena unbegrenzt); geschlossene Arenen 30 Tage nach `geschlossen_at` löschen
+//      (Kaskade: Chiffren, Beurteilungen, Versuche)
 //   3. sso_jti: Einträge mit exp < jetzt − 60 s
 //   4. Boss: laufende Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion boss.raeumeAuf je Teilnahme)
 //   5. Löschvermerke (loeschungen) 400 Tage nach der Löschung entfernen
@@ -35,7 +37,7 @@ function createWartung({ db, svc, now = () => Date.now(), log = () => {}, arenaF
   function lauf() {
     const t = now();
     const iso = (ms) => new Date(ms).toISOString();
-    const anzahlen = { funkraum: 0, arenaFrist: 0, arena: 0, jti: 0, boss: 0, loeschungen: 0 };
+    const anzahlen = { funkraum: 0, arenaFrist: 0, arenaOffen: 0, arena: 0, jti: 0, boss: 0, loeschungen: 0 };
     const fehler = [];
     const schritt = (name, fn) => {
       try {
@@ -47,6 +49,7 @@ function createWartung({ db, svc, now = () => Date.now(), log = () => {}, arenaF
 
     schritt('funkraum', () => db.prepare('DELETE FROM funk_szenarien WHERE endet_spaetestens < ?').run(iso(t)).changes);
     schritt('arenaFrist', () => arenaFrist());
+    schritt('arenaOffen', () => db.prepare("UPDATE arena SET status = 'geschlossen', geschlossen_at = ? WHERE status != 'geschlossen' AND created_at < ?").run(iso(t), iso(t - ARENA_FRIST_MS)).changes);
     schritt('arena', () => db.prepare("DELETE FROM arena WHERE status = 'geschlossen' AND geschlossen_at IS NOT NULL AND geschlossen_at < ?").run(iso(t - ARENA_FRIST_MS)).changes);
     schritt('jti', () => db.prepare('DELETE FROM sso_jti WHERE exp < ?').run(Math.floor(t / 1000) - 60).changes);
     schritt('boss', () => {

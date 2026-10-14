@@ -212,8 +212,14 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     // Typ-Vorbedingung (Wettknacken: Seed-Text vorhanden, Task 138)
     const typMod = TYP_MODULE[typ];
     if (typeof typMod.pruefeAnlegen === 'function') typMod.pruefeAnlegen({ quelle, log, krypto: Krypto }, optionen, liste);
+    let abgelaufenWeg = false;
     const id = db.transaction(() => {
-      if (sql.szKurs.get(kurs.id)) throw new V.ConflictError('In diesem Kurs gibt es schon ein Funkraum-Szenario.');
+      const alt = sql.szKurs.get(kurs.id);
+      // abgelaufen (24 h), aber der Wartungsjob lief noch nicht: vorher löschen statt 409 (Review M7 K2)
+      if (alt && Date.parse(alt.endet_spaetestens) <= now()) {
+        db.prepare('DELETE FROM funk_szenarien WHERE id = ?').run(alt.id);
+        abgelaufenWeg = true;
+      } else if (alt) throw new V.ConflictError('In diesem Kurs gibt es schon ein Funkraum-Szenario.');
       const jetzt = now();
       const konfig = { salz: T.neuesSalz(zufallBytes), optionen };
       const szId = Number(sql.neu.run(kurs.id, typ, k.phasen[0], JSON.stringify(konfig), iso(jetzt + FRIST_MS), iso(jetzt)).lastInsertRowid);
@@ -221,6 +227,7 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
       ereignis(szId, 'status', { status: 'vorbereitung' }, 1);
       return szId;
     })();
+    if (abgelaufenWeg) walLeeren(db);
     return regieAnsicht(id);
   }
 
@@ -258,15 +265,17 @@ function createFunkraum({ db, svc, teams, now, zufallBytes, log = () => {}, quel
     const { sz, kurs } = ladeLk(lk, id);
     const aktion = body && typeof body === 'object' ? body.aktion : undefined;
     if (!AKTIONEN.includes(aktion)) throw new V.ValidationError('Unbekannte Aktion.');
-    if (!kurs.aktiv) throw new V.ForbiddenError(GESPERRT);
     const k = Sz.SZENARIEN[sz.typ];
     const typ = TYP_MODULE[sz.typ];
     const nein = () => new V.ConflictError(`Das geht im Zustand ‚${STATUS_NAME[sz.status] || sz.status}‘ nicht.`);
-    if (!VON[aktion].includes(sz.status)) throw nein();
+    // Löschende Aktionen auch im gesperrten Kurs (Datensparsamkeit, Review M7 K1)
     if (aktion === 'schliessen' || aktion === 'abbrechen') {
+      if (!VON[aktion].includes(sz.status)) throw nein();
       L.loesche(db, sz.id);
       return { geschlossen: true };
     }
+    if (!kurs.aktiv) throw new V.ForbiddenError(GESPERRT);
+    if (!VON[aktion].includes(sz.status)) throw nein();
     if (aktion === 'beenden') {
       beendeIntern(sz.id, iso());
       return regieAnsicht(sz.id);

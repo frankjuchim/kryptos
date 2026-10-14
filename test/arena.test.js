@@ -49,7 +49,7 @@ test('Frist angriff_bis: beim nächsten Zugriff beurteilung (E102), auch über d
   assert.equal(g.db.prepare('SELECT status FROM arena').get().status, 'beurteilung');
 });
 
-test('Rechte: Schüler ohne Team sieht team null; fremde Lehrkraft 404; gesperrter Kurs 403 (schreibend); Löschen löscht alles', async () => {
+test('Rechte: Schüler ohne Team sieht team null; fremde Lehrkraft 404; gesperrter Kurs 403 (schreibend, Löschen erlaubt); Löschen löscht alles', async () => {
   const H = require('./helpers');
   const f = await F.kursMitTeams(2);
   const a = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/arena`).send({}).expect(200)).body;
@@ -60,8 +60,8 @@ test('Rechte: Schüler ohne Team sieht team null; fremde Lehrkraft 404; gesperrt
   await fremd.delete(`/api/lehrer/arena/${a.id}`).expect(404);
   einreichenRoh(f, a.id, f.teams[0].id);
   f.db.prepare('UPDATE kurse SET aktiv = 0').run();
-  await f.lk.delete(`/api/lehrer/arena/${a.id}`).expect(403);
-  f.db.prepare('UPDATE kurse SET aktiv = 1').run();
+  await f.lk.post(`/api/lehrer/arena/${a.id}/phase`).send({ phase: 'angriff' }).expect(403);
+  // Review M7 K1: Löschen ist auch im gesperrten Kurs erlaubt (Datensparsamkeit)
   await f.lk.delete(`/api/lehrer/arena/${a.id}`).expect(200);
   for (const t of ['arena', 'arena_chiffren', 'arena_versuche']) assert.equal(f.db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get().n, 0, t);
 });
@@ -107,4 +107,18 @@ test('GET /api/arena nennt die eigene Teilnahme (Schlüssel des Werkstatt-Entwur
   const ohne = (await f.teams[0].c.get('/api/arena').expect(200)).body;
   assert.equal(ohne.arena, null);
   assert.equal(ohne.teilnahme, f.teams[0].c.id);
+});
+
+test('Review M7 K8: Arenen nie im Backup; Rücksicherung holt eine gelöschte Arena nicht zurück, alte Backups mit Arena-Tabellen werden ohne sie übernommen', async () => {
+  const H = require('./helpers');
+  const f = await F.kursMitTeams(2);
+  const a = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/arena`).send({}).expect(200)).body;
+  einreichenRoh(f, a.id, f.teams[0].id);
+  const daten = f.app.locals.services.daten;
+  const backup = daten.exportieren();
+  for (const t of ['arena', 'arena_chiffren', 'arena_versuche']) assert.ok(!(t in backup.tables), t);
+  await f.lk.delete(`/api/lehrer/arena/${a.id}`).expect(200);
+  const altesFormat = { ...backup, tables: { ...backup.tables, arena: [{ id: a.id, kurs_id: f.kurs.id, status: 'werkstatt', salz: 's', created_at: '2026-10-01T08:00:00.000Z' }], arena_chiffren: [], arena_versuche: [] } };
+  daten.wiederherstellen(altesFormat);
+  assert.equal(H.zaehle(f.app, 'arena'), 0, 'gelöschte Arena kehrt nicht zurück');
 });

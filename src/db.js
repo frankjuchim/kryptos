@@ -334,8 +334,7 @@ const SCHEMA_VERSION = MIGRATIONEN.length;
 
 /**
  * Tabellen in Abhängigkeitsreihenfolge (Backup/Restore, TECHNIK §7.1) – ohne sso_jti, ohne loeschungen (Löschvermerke
- * bleiben bei einer Rücksicherung stehen) und ohne die flüchtigen Funkraum-Tabellen funk_szenarien/_rollen/_nachrichten/
- * _ereignisse (nie in Backups).
+ * bleiben bei einer Rücksicherung stehen) und ohne die flüchtigen Tabellen aus NIE_IM_BACKUP (Funkraum, Arena).
  */
 const TABLES = [
   'meta',
@@ -357,11 +356,13 @@ const TABLES = [
   'leitner',
   'teams',
   'team_mitglieder',
-  'funk_teilnahmen',
-  'arena',
-  'arena_chiffren',
-  'arena_versuche'
+  'funk_teilnahmen'
 ];
+
+/** Flüchtige Unterrichtsdaten, nie im Backup (Review M7 K8): Funkraum-Szenarien (§12.7) und Knack-Arenen samt Chiffren,
+    Beurteilungen und Versuchen – eine von der Lehrkraft gelöschte Arena kehrte sonst mit einer Rücksicherung zurück.
+    Ältere Backups mit diesen Tabellen werden beim Einspielen ohne sie übernommen. */
+const NIE_IM_BACKUP = Object.freeze(['funk_szenarien', 'funk_rollen', 'funk_nachrichten', 'funk_ereignisse', 'arena', 'arena_chiffren', 'arena_versuche']);
 
 function setMeta(db, key, value) {
   db.prepare('INSERT INTO meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run(key, String(value));
@@ -410,4 +411,4 @@ function openDatabase(dbFile, { log = () => {} } = {}) {
   return db;
 }
 
-module.exports = { openDatabase, MIGRATIONEN, SCHEMA_VERSION, APP_KENNUNG, TABLES, setMeta, getMeta };
+module.exports = { openDatabase, MIGRATIONEN, SCHEMA_VERSION, APP_KENNUNG, TABLES, NIE_IM_BACKUP, setMeta, getMeta };

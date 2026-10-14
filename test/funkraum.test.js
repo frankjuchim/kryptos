@@ -78,9 +78,10 @@ test('Kurs gesperrt (Verbund): laufendes Szenario wird über den Funkraum-Dienst
   assert.deepEqual(Object.keys(JSON.parse(zeile.konfig)), ['auswertung']);
   assert.deepEqual(Object.keys(JSON.parse(zeile.konfig).auswertung), ['zeilen', 'je'], 'typ-spezifische Auswertung des Botenlaufs (Task 137)');
   assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM funk_teilnahmen WHERE typ = 'botenlauf'").get().n, 3);
-  // Regie liest weiter (gesperrter Kurs: nur lesend), Status-Aktionen → 403
+  // Regie liest weiter (gesperrter Kurs: nur lesend), Status-Aktionen → 403; Schließen (löschen) bleibt erlaubt (Review M7 K1)
   assert.equal((await f.lk.get(`/api/lehrer/kurse/${f.kurs.id}/funk`).expect(200)).body.szenario.status, 'auswertung');
-  await F.aktion(f, sz.id, 'schliessen').expect(403);
+  await F.aktion(f, sz.id, 'pausieren').expect(403);
+  await F.aktion(f, sz.id, 'schliessen').expect(200);
 });
 
 test('Optionen je Typ: unbekannte Option oder fremdes Team → 400; Regie-Ansicht ohne Salz', async () => {

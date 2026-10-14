@@ -145,7 +145,7 @@ const KRLehrerArena = (() => {
       }
       if (a.status === 'angriff') knoepfe.push(phaseKnopf(a, 'beurteilung', 'Angriffsphase beenden', 'knopf-primaer arena-beenden', ['Angriffsphase beenden?', 'Danach sind keine Angriffe mehr möglich; ungeknackte Chiffren erhalten „Unknackbar“.', 'Beenden']));
       if (a.status === 'beurteilung') knoepfe.push(phaseKnopf(a, 'geschlossen', 'Arena schließen', 'knopf-zweit arena-schliessen', ['Arena schließen?', 'Die Teams können danach nur noch lesen. Die Arena wird 30 Tage nach dem Schließen gelöscht.', 'Schließen']));
-      const loeschen = h('button', { type: 'button', class: 'knopf knopf-gefahr arena-loeschen', disabled: nurLesen }, 'Arena löschen');
+      const loeschen = h('button', { type: 'button', class: 'knopf knopf-gefahr arena-loeschen' }, 'Arena löschen'); // auch im gesperrten Kurs (Review M7 K1)
       loeschen.addEventListener('click', async () => {
         if (!(await AQ.bestaetigen('Arena löschen?', 'Alle Chiffren, Beurteilungen und Versuche werden gelöscht.', { ok: 'Löschen', gefahr: true }))) return;
         stoppePoll();

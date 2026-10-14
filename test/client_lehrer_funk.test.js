@@ -434,3 +434,27 @@ test('Arena-Tab: Versuche-Matrix, Beurteilungen gesammelt, Beenden/Schließen/L�
   await k.ruhe();
   assert.deepEqual(k.roh(aufrufe.at(-1)), ['loeschen']);
 });
+
+test('Review M7 K1: gesperrter Kurs – Arena löschen und Funkraum schließen bleiben bedienbar, alles andere gesperrt', async () => {
+  const gesperrt = { ...KURS, aktiv: false };
+  const a = ladeArenaTab(REGIE('geschlossen'), { ...REGIE('geschlossen'), chiffren: [] }, { ...GRUND(gesperrt) });
+  await a.ruhe();
+  assert.equal(a.eins(a.document, 'button.arena-loeschen').disabled, false);
+  const neu = a.eins(a.document, 'button.arena-anlegen');
+  assert.ok(!neu || neu.disabled, 'Neue Arena anlegen bleibt gesperrt');
+
+  const AUS = { id: 7, typ: 'botenlauf', titel: 'Botenlauf', version: 9, status: 'auswertung', phase: 'aufloesung', phasen: [], rollen: [], teams: [], nachrichten: [], ereignisse: [], anzeigen: {}, optionen: {}, stumm: {}, auswertung: { zeilen: [], je: {} } };
+  const k = D.lade(LEHRER, {
+    url: 'http://x.test/lehrer#/kurs/5/funkraum',
+    vorher: seiteLehrer,
+    fetch: {
+      ...GRUND(gesperrt),
+      'GET /api/lehrer/kurse/5/teams': { status: 200, body: DREI },
+      'GET /api/lehrer/kurse/5/funk': { status: 200, body: { szenario: { id: 7, typ: 'botenlauf', status: 'auswertung', phase: 'aufloesung' } } },
+      'GET /api/lehrer/funk/7/stand': { status: 200, headers: { etag: '"7-9"' }, body: AUS }
+    }
+  });
+  await k.ruhe();
+  assert.equal(k.eins(k.document, 'button[data-aktion="schliessen"]').disabled, false);
+  k.wert('KRPoll'); // geladen
+});

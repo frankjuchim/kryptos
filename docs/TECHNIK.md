@@ -1004,9 +1004,12 @@ CREATE INDEX idx_arena_v ON arena_versuche(chiffre_id, team_id, zeit);
 
 Backup-Tabellenliste (`TABLES`) in Abhängigkeitsreihenfolge: `meta, konten, kurse, kurs_lehrkraefte, schueler, welten,
 aufgaben, fortschritt, fallen_zaehler, falsche_antworten, ide_erledigt, abzeichen, erfolge, training, boss_versuche,
-katas, leitner, teams, team_mitglieder, funk_teilnahmen, arena, arena_chiffren, arena_versuche` – **ohne** `sso_jti`,
-**ohne** `loeschungen` (bleiben bei einer Rücksicherung stehen) und **ohne** `funk_szenarien/_rollen/_nachrichten/_ereignisse`
-(flüchtig, nie in Backups). **Rücksicherung:** Nach dem Einspielen werden alle Konten/Kurse mit Löschvermerk samt
+katas, leitner, teams, team_mitglieder, funk_teilnahmen` – **ohne** `sso_jti`, **ohne** `loeschungen` (bleiben bei einer
+Rücksicherung stehen) und **ohne** die flüchtigen Unterrichtsdaten `NIE_IM_BACKUP` = `funk_szenarien/_rollen/_nachrichten/
+_ereignisse` und `arena`, `arena_chiffren`, `arena_versuche` (Review M7 K8, Datensparsamkeit: eine von der Lehrkraft
+gelöschte Arena kehrte sonst mit einer Rücksicherung zurück – samt Beschreibungen und Beurteilungen; ein Löschvermerk je
+Arena wäre mehr gespeicherte Daten für flüchtige Inhalte). Ältere Backups (bis 0.4.0) mit Arena-Tabellen werden ohne diese
+Tabellen eingespielt; die Rücksicherung leert die Arenen des Bestands über die Kaskade von `kurse`/`teams`. **Rücksicherung:** Nach dem Einspielen werden alle Konten/Kurse mit Löschvermerk samt
 abhängigen Zeilen wieder entfernt (`loeschen.nachSub`/`nachKurs` ohne neuen Vermerk) und `konten.session_gen` aller Konten
 um 1 erhöht (alle Sitzungen enden); `counts` = Zeilen je Tabelle nach dem Filtern. Backup-Kennung
 `{ "app": "kryptos", "format": 1 }`.
@@ -1041,9 +1044,9 @@ Fremdschlüssel-Kaskade statt JSON-Bearbeitung). Die Einstellungen stehen wie im
 | Verbund `loeschen {sub}` | Konto, alle Teilnahmen, damit Lernstand (fortschritt, fallen_zaehler, ide_erledigt, abzeichen, erfolge, training, boss_versuche, leitner), Teammitgliedschaften, **eigene Funkraum-Nachrichten** (`von_schueler_id`), **eigene Arena-Versuche**, `kurs_lehrkraefte`; danach: Teams ohne Mitglieder samt deren Funkraum-Rollen und **Arena-Chiffren** | `DELETE FROM schueler WHERE sub=?` (Kaskade), `DELETE FROM kurs_lehrkraefte …`, `DELETE FROM konten …`, Aufräumen leerer Teams – eine Transaktion. Team-Inhalte (Chiffre, Beurteilung) eines Teams mit verbleibenden Mitgliedern bleiben als Team-Ergebnis bis zum Ende der Arena; sie enthalten keinen Personenbezug (kein Autor gespeichert) |
 | Verbund `loeschen {kurs}` | Kurs und alles darunter (Teilnahmen + Lernstand, Teams, Funkraum, Arena, falsche_antworten, erfolge, kurs_lehrkraefte); Konten bleiben (Portal löscht kurslose Schüler separat) | `DELETE FROM kurse WHERE kurs_id=?` (Kaskade) |
 | Funkraum „Beenden“ (Lehrkraft) | **alle Nachrichteninhalte, Klartext-Hashes, Rollen-Zustände (Schlüssel, Zuordnungen)**; übrig bleibt bis zum Schließen nur die anonyme Auswertung (Zähler je Team, Ereignis-Codes) | §12.7 |
-| Funkraum „Schließen“ bzw. 24 h nach Anlage | das ganze Szenario | Wartungsjob/Route |
+| Funkraum „Schließen“/„Abbrechen“ (auch im gesperrten Kurs, Review M7 K1) bzw. 24 h nach Anlage | das ganze Szenario | Wartungsjob/Route; „anlegen“ löscht ein abgelaufenes Szenario des Kurses vorher, falls der Wartungsjob noch nicht lief (Review M7 K2) |
 | Kurs gesperrt (`aktiv:false`) | Funkraum-Szenario in `vorbereitung` wird **gelöscht** (wie „abbrechen“, keine Teilnahme); `laeuft`/`pausiert` wird **beendet mit Auswertung**; offene Arena des Kurses gelöscht (Plan M7 E111) | `kursInhalteBeenden(db, kurs, jetzt, { szenarioBeenden })` – Callback des Funkraum-Dienstes, ohne Callback generische Auswertung (`src/krypto/funkraum/loeschen.js`); Arena wie „Arena löschen“ |
-| Arena „Löschen“ (Lehrkraft) bzw. **30 Tage** nach `geschlossen_at` | Arena mit Chiffren, Beurteilungen, Versuchen | Route/Wartungsjob |
+| Arena „Löschen“ (Lehrkraft, auch im gesperrten Kurs) bzw. **30 Tage** nach `geschlossen_at`; eine offene Arena wird **30 Tage nach `created_at`** automatisch geschlossen (Review M7 W5) | Arena mit Chiffren, Beurteilungen, Versuchen | Route/Wartungsjob |
 | Teilnahme inaktiv | nichts (Lernstand bleibt bis Löschung, VERTRAG §5) | – |
 | jede Verbund-Löschung (`sub` bzw. `kurs`) | – (zusätzlich **Löschvermerk** in `loeschungen`: nur Kennung + Zeit, kein Name) | Backup/Restore filtert vermerkte Konten/Kurse heraus (§7.1); Vermerke nach **400 Tagen** gelöscht (Wartungsjob) |
 | `sso_jti` | Einträge mit `exp` < jetzt − 60 s | Wartungsjob |
@@ -1064,7 +1067,9 @@ Läuft beim Start und danach **stündlich** (`setInterval(…).unref()`), jede A
 Speicher für `/api/admin/wartung` (Zeitpunkt, Anzahlen, Fehler):
 
 1. Funkraum: `DELETE FROM funk_szenarien WHERE endet_spaetestens < jetzt` (Kaskade).
-2. Arena: `DELETE FROM arena WHERE status = 'geschlossen' AND geschlossen_at < jetzt − 30 Tage`.
+2. Arena: offene Arenen (`status ≠ 'geschlossen'`) mit `created_at < jetzt − 30 Tage` schließen (`geschlossen_at = jetzt`,
+   Bericht `anzahlen.arenaOffen`, Review M7 W5 – ohne Abzeichen-Vergabe), danach
+   `DELETE FROM arena WHERE status = 'geschlossen' AND geschlossen_at < jetzt − 30 Tage`.
 3. `DELETE FROM sso_jti WHERE exp < jetztSek − 60`.
 4. Laufende Boss-Kämpfe mit abgelaufener Frist auswerten (Kern-Funktion `boss.raeumeAuf` für alle betroffenen Teilnahmen).
 5. Löschvermerke: `DELETE FROM loeschungen WHERE zeit < jetzt − 400 Tage` (Bericht `anzahlen.loeschungen`).
@@ -1125,6 +1130,7 @@ werkstatt ──(Lehrkraft: Angriff starten)──► angriff ──(Lehrkraft o
    │ Teams entwerfen (Baukasten), prüfen,     │ alle Verfahren + Geheimtexte          │ Rückblick: wer was geknackt      │ nur lesen; Löschung
    │ reichen 1 Chiffre je Team ein (änderbar) │ sichtbar; Angriffe; keine Einreichung │ hat, P7/P8-Hinweise; Teams       │ durch Lehrkraft oder
    │ andere Chiffren unsichtbar               │                                       │ schreiben ihre Beurteilung       │ nach 30 Tagen
+   (jede offene Phase endet spätestens 30 Tage nach der Anlage automatisch in „geschlossen“, Wartungsjob, Review M7 W5)
 ```
 
 Beim Übergang `angriff → beurteilung` werden die Abzeichen vergeben (§9.6). Die Werkstatt ohne Arena (Level 3.3) arbeitet

@@ -3,7 +3,7 @@
 // K25: ctx.optionen = Erweiterungs-Hooks der Dienste (TECHNIK §4.2); ohne src/krypto gelten die Standardwerte.
 
 const V = require('../validate');
-const { TABLES, SCHEMA_VERSION, APP_KENNUNG, setMeta } = require('../db');
+const { TABLES, NIE_IM_BACKUP, SCHEMA_VERSION, APP_KENNUNG, setMeta } = require('../db');
 const { createInhalte } = require('./inhalte');
 const { createKonten } = require('./konten');
 const { createKurse } = require('./kurse');
@@ -68,7 +68,8 @@ function createDaten(ctx, { inhalte }) {
       throw new V.ValidationError('Ungültige Backup-Datei (erwartet: Kryptos-Backup, Format 1).');
     }
     const columns = {};
-    for (const k of Object.keys(data.tables)) if (!TABLES.includes(k)) throw new V.ValidationError(`Backup: unbekannte Tabelle ${k}.`);
+    // flüchtige Tabellen älterer Backups (Arena bis 0.4.0) werden übergangen, nie eingespielt (Review M7 K8)
+    for (const k of Object.keys(data.tables)) if (!TABLES.includes(k) && !NIE_IM_BACKUP.includes(k)) throw new V.ValidationError(`Backup: unbekannte Tabelle ${k}.`);
     for (const t of TABLES) {
       columns[t] = new Set(db.prepare(`PRAGMA table_info(${t})`).all().map((c) => c.name));
       const rows = data.tables[t];

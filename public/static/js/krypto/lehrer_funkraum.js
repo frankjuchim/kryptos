@@ -494,7 +494,9 @@ const KRLehrerFunk = (() => {
     }
 
     function aktionKnopf(sz, aktion, text, art = 'knopf-zweit', frage = null) {
-      const b = h('button', { type: 'button', class: `knopf ${art} aktion`, 'data-aktion': aktion, disabled: nurLesen }, text);
+      // Schließen/Abbrechen löschen nur – auch im gesperrten Kurs erlaubt (Review M7 K1)
+      const loeschend = aktion === 'schliessen' || aktion === 'abbrechen';
+      const b = h('button', { type: 'button', class: `knopf ${art} aktion`, 'data-aktion': aktion, disabled: nurLesen && !loeschend }, text);
       b.addEventListener('click', async () => {
         if (frage && !(await AQ.bestaetigen(frage[0], frage[1], { ok: frage[2] || text, gefahr: true }))) return;
         ausfuehren(() => api('POST', `/api/lehrer/funk/${enc(sz.id)}/status`, { aktion }));

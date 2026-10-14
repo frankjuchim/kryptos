@@ -22,7 +22,7 @@ test('Löschung nach sub mitten im Botenlauf: eigene Nachrichten weg, leeres Tea
   assert.deepEqual(F.fundstellen(f.db, 'OHSAL'), []);
 });
 
-test('Kurs gesperrt mitten im Szenario: beendet mit Auswertung, Schüler 403, Lehrkraft nur lesend; entsperrt → Schließen möglich', async () => {
+test('Kurs gesperrt mitten im Szenario: beendet mit Auswertung, Schüler 403, Lehrkraft nur lesend, Schließen erlaubt', async () => {
   const f = await F.kursMitTeams(3);
   const sz = await F.starte(f, 'botenlauf');
   await f.teams[0].c.post(`/api/funk/${sz.id}/nachrichten`).send({ text: 'OHSAL', klartext: 'haltet' }).expect(200);
@@ -32,9 +32,10 @@ test('Kurs gesperrt mitten im Szenario: beendet mit Auswertung, Schüler 403, Le
   assert.equal(JSON.parse(zeile.konfig).auswertung.zeilen.length, 1, 'Typ-Auswertung (Botenlauf), nicht generisch');
   await F.stand(f.teams[0].c, sz.id).expect(403);
   await F.regie(f, sz.id).expect(200);
-  await F.aktion(f, sz.id, 'schliessen').expect(403);
-  await sperren(f.app, f.kurs.kurs, true).expect(200);
+  await F.aktion(f, sz.id, 'pausieren').expect(403);
+  // Review M7 K1: Schließen (löschen) bleibt auch im gesperrten Kurs möglich
   await F.aktion(f, sz.id, 'schliessen').expect(200);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM funk_szenarien').get().n, 0);
 });
 
 test('Jeder Typ: Beenden lässt keine Geheimnisse zurück (Salz, Schlüsselblock, Lösung, Etiketten, Karten, Meldungen)', async () => {
@@ -127,4 +128,25 @@ test('Szenario ohne verbleibende Rolle: Regie und Beamer lesbar, Beenden mit lee
   assert.equal(f.db.prepare('SELECT status FROM funk_szenarien').get().status, 'auswertung');
   await F.aktion(f, sz.id, 'schliessen').expect(200);
   assert.equal(H.zaehle(f.app, 'funk_szenarien', '1 = 1'), 0);
+});
+
+test('Review M7 K1: Abbrechen in vorbereitung auch im gesperrten Kurs', async () => {
+  const f = await F.kursMitTeams(3);
+  const sz = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/funk`).send({ typ: 'botenlauf' }).expect(200)).body;
+  f.db.prepare('UPDATE kurse SET aktiv = 0 WHERE id = ?').run(f.kurs.id);
+  await F.aktion(f, sz.id, 'starten').expect(403);
+  await F.aktion(f, sz.id, 'abbrechen').expect(200);
+  assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM funk_szenarien').get().n, 0);
+});
+
+test('Review M7 K2: abgelaufenes Szenario (24 h, Wartung noch nicht gelaufen) blockiert kein neues – es wird vorher gelöscht', async () => {
+  const f = await F.kursMitTeams(3);
+  const alt = await F.starte(f, 'botenlauf');
+  await f.teams[0].c.post(`/api/funk/${alt.id}/nachrichten`).send({ text: 'OHSAL', klartext: 'haltet' }).expect(200);
+  f.uhr.vor(24 * 3600e3 + 1000);
+  assert.equal((await f.lk.get(`/api/lehrer/kurse/${f.kurs.id}/funk`).expect(200)).body.szenario, null);
+  const neu = (await f.lk.post(`/api/lehrer/kurse/${f.kurs.id}/funk`).send({ typ: 'botenlauf' }).expect(200)).body;
+  assert.notEqual(neu.id, alt.id);
+  assert.deepEqual(f.db.prepare('SELECT id FROM funk_szenarien').all().map((r) => r.id), [neu.id]);
+  assert.deepEqual(F.fundstellen(f.db, 'OHSAL'), []);
 });

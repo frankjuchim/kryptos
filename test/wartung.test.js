@@ -40,7 +40,7 @@ test('Wartung: Funkraum-Szenario nach 24 h gelöscht (mit Nachrichten), vorher n
   assert.deepEqual(b.fehler, []);
 });
 
-test('Wartung: geschlossene Arena nach 30 Tagen gelöscht (mit Chiffren und Versuchen), offene nie', () => {
+test('Wartung: geschlossene Arena nach 30 Tagen gelöscht (mit Chiffren und Versuchen), offene nicht gelöscht', () => {
   const { uhr, app, db, iso, k, t, team } = aufbau();
   const zu = Number(db.prepare("INSERT INTO arena (kurs_id, status, salz, created_at, geschlossen_at) VALUES (?, 'geschlossen', 's', ?, ?)").run(k.id, iso(uhr()), iso(uhr())).lastInsertRowid);
   const ch = Number(
@@ -133,5 +133,28 @@ test('Wartungsbericht nur für den Superadmin: GET /api/admin/wartung', async ()
   app.locals.wartung.lauf();
   const r = await admin.get('/api/admin/wartung').expect(200);
   assert.ok(r.body.bericht.zeit);
-  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'arenaFrist', 'boss', 'funkraum', 'jti', 'loeschungen']);
+  assert.deepEqual(Object.keys(r.body.bericht.anzahlen).sort(), ['arena', 'arenaFrist', 'arenaOffen', 'boss', 'funkraum', 'jti', 'loeschungen']);
+});
+
+test('Review M7 W5: offene Arena wird 30 Tage nach Anlage geschlossen, nach weiteren 30 Tagen gelöscht', () => {
+  const { uhr, app, db, iso, k, t, team } = aufbau();
+  const a = Number(db.prepare("INSERT INTO arena (kurs_id, status, salz, created_at) VALUES (?, 'beurteilung', 's', ?)").run(k.id, iso(uhr())).lastInsertRowid);
+  db.prepare("INSERT INTO arena_chiffren (arena_id, team_id, verfahren, beschreibung, geheimtext, klartext_hash, klartext_laenge, beurteilung, eingereicht_at) VALUES (?, ?, '{}', 'B', 'ABC', 'h', 3, 'FREITEXT', ?)").run(a, team, iso(uhr()));
+  const w = createWartung({ db, svc: app.locals.services, now: uhr });
+  uhr.vor(29 * TAG);
+  assert.equal(w.lauf().anzahlen.arenaOffen, 0);
+  assert.equal(db.prepare('SELECT status FROM arena WHERE id = ?').get(a).status, 'beurteilung');
+  uhr.vor(TAG + STUNDE);
+  const b = w.lauf();
+  assert.equal(b.anzahlen.arenaOffen, 1);
+  const z = db.prepare('SELECT status, geschlossen_at FROM arena WHERE id = ?').get(a);
+  assert.deepEqual(z, { status: 'geschlossen', geschlossen_at: iso(uhr()) });
+  uhr.vor(29 * TAG);
+  w.lauf();
+  assert.equal(H.zaehle(app, 'arena'), 1, '29 Tage nach dem Schließen noch da');
+  uhr.vor(2 * TAG);
+  assert.equal(w.lauf().anzahlen.arena, 1);
+  assert.equal(H.zaehle(app, 'arena'), 0);
+  assert.equal(H.zaehle(app, 'arena_chiffren'), 0, 'Freitext gelöscht');
+  void t;
 });
