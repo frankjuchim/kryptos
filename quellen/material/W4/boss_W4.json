@@ -9,24 +9,24 @@
   "hilfsmittel": "Abitur-Anlage; kein Taschenrechner",
   "info": [["Name", ""]],
   "rahmen_kopf": "AUSGANGSLAGE",
-  "rahmen": "Das Kurierbüro „Eilbote“ hat **sechs Filialen**. Bisher besitzt jedes Paar von Filialen einen eigenen geheimen Schlüssel für ein symmetrisches Verfahren; neue Schlüssel bringt monatlich ein Kurier. Das Büro plant, auf **neun Filialen** zu wachsen, und lässt seine Kommunikation überprüfen.",
+  "rahmen": "Das Kurierbüro „Eilbote“ hat **24 Filialen**. Bisher besitzt jedes Paar von Filialen einen eigenen geheimen Schlüssel für ein symmetrisches Verfahren; neue Schlüssel bringt monatlich ein Kurier. Das Büro plant, auf **32 Filialen** zu wachsen, und lässt seine Kommunikation überprüfen.",
   "hinweise": [
     {"t": "hinweis", "md": "Alle Rechnungen sind ohne Taschenrechner lösbar. `mod` liefert den kleinsten nicht negativen Rest. Geben Sie Rechenwege vollständig an."}
   ],
   "aufgaben": [
     {"nr": "1", "titel": "Schlüssel für das Kurierbüro",
      "teile": [
-      {"bez": "a)", "text": "„Bei sechs Filialen benötigt das Büro symmetrisch 15 Schlüssel, asymmetrisch dagegen nur 12.“ **Erläutern Sie** die Richtigkeit dieser Aussage.", "be": 3,
+      {"bez": "a)", "text": "„Bei 24 Filialen benötigt das Büro symmetrisch 276 Schlüssel, asymmetrisch dagegen nur 48.“ **Erläutern Sie** die Richtigkeit dieser Aussage.", "be": 3,
        "erwartung": [
-        {"punkt": "symmetrisch: je Paar ein Schlüssel, 6 · 5/2 = 15", "afb": "II", "be": 1},
-        {"punkt": "asymmetrisch: je Filiale ein Schlüsselpaar, 2 · 6 = 12", "afb": "II", "be": 1},
+        {"punkt": "symmetrisch: je Paar ein Schlüssel, 24 · 23/2 = 276", "afb": "II", "be": 1},
+        {"punkt": "asymmetrisch: je Filiale ein Schlüsselpaar, 2 · 24 = 48", "afb": "II", "be": 1},
         {"punkt": "Deutung: Aussage korrekt, ein Schlüsselpaar zählt als zwei Schlüssel", "afb": "II", "be": 1}],
-       "fehler": "30 statt 15 (Halbierung vergessen, P7); „6 Schlüssel, weil jede Filiale einen hat“ (Paar als ein Schlüssel, P7)."},
-      {"bez": "b)", "text": "**Bestimmen Sie** für neun Filialen die Anzahl benötigter Schlüssel bei symmetrischer und bei asymmetrischer Verschlüsselung sowie jeweils die Anzahl der Schlüssel, die gegenüber sechs Filialen neu erzeugt werden müssen.", "be": 2,
+       "fehler": "552 statt 276 (Halbierung vergessen, P7); „24 Schlüssel, weil jede Filiale einen hat“ (Paar als ein Schlüssel, P7)."},
+      {"bez": "b)", "text": "**Bestimmen Sie** für 32 Filialen die Anzahl benötigter Schlüssel bei symmetrischer und bei asymmetrischer Verschlüsselung sowie jeweils die Anzahl der Schlüssel, die gegenüber 24 Filialen neu erzeugt werden müssen.", "be": 2,
        "erwartung": [
-        {"punkt": "symmetrisch 9 · 8/2 = **36**, davon **21** neu", "afb": "I", "be": 1},
-        {"punkt": "asymmetrisch 2 · 9 = **18**, davon **6** neu", "afb": "I", "be": 1}],
-       "alternativen": "Zuwachs auch als Differenz begründet (symmetrisch kommen 3 · 6 + 3 = 21 Verbindungen hinzu).",
+        {"punkt": "symmetrisch 32 · 31/2 = **496**, davon **220** neu", "afb": "I", "be": 1},
+        {"punkt": "asymmetrisch 2 · 32 = **64**, davon **16** neu", "afb": "I", "be": 1}],
+       "alternativen": "Zuwachs auch als Differenz begründet (symmetrisch kommen 8 · 24 + 28 = 220 Verbindungen hinzu).",
        "fehler": "n(n − 1) statt n(n − 1)/2 (P7)."},
       {"bez": "c)", "text": "**Beschreiben Sie** das Prinzip der asymmetrischen Verschlüsselung am Beispiel einer vertraulichen Nachricht von Filiale X an Filiale Y.", "be": 3,
        "erwartung": [

@@ -110,7 +110,7 @@
     },
     {
      "t": "p",
-     "md": "•  **Verschlüsseln:** oben suchen, unten ablesen – `tigris` → `RDBPDQ`"
+     "md": "•  **Verschlüsseln:** oben suchen, unten ablesen – `salbei` → `QYGAID`"
     },
     {
      "t": "p",
@@ -495,21 +495,21 @@
   {
    "layout": "archivfund",
    "abschnitt": "DS 4 · Al-Kindis Handschrift",
-   "titel": "Al-Kindis Manuskript – gelöst",
+   "titel": "Al-Kindis Manuskript – der Weg",
    "label": "GLEICHER SCHLÜSSEL WIE IM WETTKNACKEN",
    "geheimtext": "ZPUCGURDUZUDYCUIQIRRQSDIRUNORUINYCGQUNNUG",
    "groesse": 24,
    "inhalt": [
     {
      "t": "p",
-     "md": "**zaehle die zeichen und du findest den schluessel**"
+     "md": "Häufigstes Zeichen `U` (9 ×) ≙ e – damit beginnt die Zuordnung."
     },
     {
      "t": "p",
-     "md": "Häufigstes Zeichen `U` (9 ×) ≙ e · Schlüsselwort **PAPYRUS**"
+     "md": "Klartext und Schlüsselwort: ==gemeinsam an der Tafel== rekonstruieren."
     }
    ],
-   "notizen": "3 min. Mit der Zuordnung aus dem Wettknacken liest der Kurs den Archivfund mühelos (Schlüsselwort PAPYRUS, Alphabet PAYRUSBCDEFGHIJKLMNOQTVWXZ). Merksatz Häufigkeitsanalyse festhalten. Hausaufgabe: Akte W1·1 Auftrag 4 (Knacken auf Papier) + Abi-Check, Video 📼 02. Ausblick: „Wie schützt sich Alice?“"
+   "notizen": "3 min. Mit der Zuordnung aus dem Wettknacken liest der Kurs den Archivfund mühelos (Schlüsselwort PAPYRUS, Alphabet PAYRUSBCDEFGHIJKLMNOQTVWXZ). Merksatz Häufigkeitsanalyse festhalten. Hausaufgabe: Akte W1·1 Auftrag 4 (Knacken auf Papier) + Abi-Check, Video 📼 02. Ausblick: „Wie schützt sich Alice?“\nKorrektur D15: Die Folie zeigt die Lösung nicht (der Archivfund ist Lab-Aufgabe W1-A-01). Lösung zum Vergleich: zaehle die zeichen und du findest den schluessel."
   },
   {
    "layout": "titel",
@@ -817,7 +817,7 @@
      "md": "**4**   Gegenbeispiel m = 2; alle Buchstaben, die mit m = 13 zu A werden"
     }
    ],
-   "notizen": "10 min Partnerarbeit, ohne Taschenrechner. Schnelle: Auftrag 5 (Known-Plaintext: e → Y, n → T ergibt (11, 6)). Lösungen: 1 GOREJ WFF · 2 21, 3, 19, 23 · 3 tigris · 4 z. B. b und o → C; m = 13: a, c, e, g, i, k, m, o, q, s, u, w, y → A. Typische Fehler: A = 1 gerechnet (P1), m statt m⁻¹ (P3), negative Reste (P2)."
+   "notizen": "10 min Partnerarbeit, ohne Taschenrechner. Schnelle: Auftrag 5 (Known-Plaintext: e → Y, n → T ergibt (11, 6)). Lösungen: 1 GOREJ WFF · 2 21, 19, 23, 25 · 3 tigris · 4 z. B. b und o → C; m = 13: a, c, e, g, i, k, m, o, q, s, u, w, y → A. Typische Fehler: A = 1 gerechnet (P1), m statt m⁻¹ (P3), negative Reste (P2)."
   },
   {
    "layout": "merke",

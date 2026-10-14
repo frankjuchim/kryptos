@@ -1,17 +1,17 @@
 {
   "version": 1,
   "karten": [
-    {"id":"WU-W4-01","welt":4,"kategorie":"schluesselraum","titel":"Sechs am Tisch","aufgabe":"Sechs Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch?","loesung":"symmetrisch 6 · 5/2 = **15**, asymmetrisch 2 · 6 = **12**","minuten":2},
-    {"id":"WU-W4-02","welt":4,"kategorie":"bits-xor","titel":"XOR-Auffrischung (W3)","aufgabe":"Berechne `1011 0110` ⊕ `0110 0011`.","loesung":"`1101 0101`","minuten":2},
+    {"id":"WU-W4-01","welt":4,"kategorie":"schluesselraum","titel":"Vierzehn am Tisch","aufgabe":"Vierzehn Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch?","loesung":"symmetrisch 14 · 13/2 = **91**, asymmetrisch 2 · 14 = **28**","minuten":2},
+    {"id":"WU-W4-02","welt":4,"kategorie":"bits-xor","titel":"XOR-Auffrischung (W3)","aufgabe":"Berechne `1110 0010` ⊕ `0100 1011`.","loesung":"`1010 1001`","minuten":2},
     {"id":"WU-W4-03","welt":4,"kategorie":"modulo","titel":"Caesar über Z hinaus (W0)","aufgabe":"Nummerierung A = 1 … Z = 26. Verschlüssele den Buchstaben w mit Verschiebung k = 7.","loesung":"w = 23; ((23 + 7 − 1) mod 26) + 1 = 3 + 1 = 4 → **D**","minuten":2},
     {"id":"WU-W4-04","welt":4,"kategorie":"begriffe","titel":"Wer darf was wissen?","aufgabe":"Ordne zu „alle dürfen ihn kennen“ / „nur der Besitzer“: öffentlicher Schlüssel, privater Schlüssel, symmetrischer Schlüssel zwischen Alice und Bob.","loesung":"öffentlich: alle · privat: nur Besitzer · symmetrisch: nur Alice **und** Bob (beide Besitzer)","minuten":2},
-    {"id":"WU-W4-05","welt":4,"kategorie":"modulo","titel":"Potenz modulo","aufgabe":"Berechne 3⁴ mod 7 ohne Taschenrechner.","loesung":"3² = 9 mod 7 = 2; 2² = **4** (bzw. 81 = 11 · 7 + 4)","minuten":2},
-    {"id":"WU-W4-06","welt":4,"kategorie":"schluesselaustausch","titel":"DH im Kleinformat","aufgabe":"p = 7, g = 3, a = 2, b = 4. Bestimme A, B und K.","loesung":"A = 9 mod 7 = **2**, B = 81 mod 7 = **4**, K = 4² mod 7 = **2** = 2⁴ mod 7","minuten":3},
+    {"id":"WU-W4-05","welt":4,"kategorie":"modulo","titel":"Potenz modulo","aufgabe":"Berechne 2⁵ mod 9 ohne Taschenrechner.","loesung":"2³ = 8; 8 · 4 = 32 = 3 · 9 + 5 → **5**","minuten":2},
+    {"id":"WU-W4-06","welt":4,"kategorie":"schluesselaustausch","titel":"DH im Kleinformat","aufgabe":"p = 31, g = 3, a = 2, b = 3. Bestimme A, B und K.","loesung":"A = 3² = **9**, B = 3³ = **27**, K = 27² mod 31 = 729 mod 31 = **16** = 9³ mod 31","minuten":3},
     {"id":"WU-W4-07","welt":4,"kategorie":"hybrid","titel":"Hybrid in einem Satz","aufgabe":"Was wird beim Hybridverfahren womit verschlüsselt?","loesung":"Nachricht **symmetrisch** mit dem Sitzungsschlüssel, Sitzungsschlüssel **asymmetrisch** mit dem öffentlichen Schlüssel des Empfängers.","minuten":2},
     {"id":"WU-W4-08","welt":4,"kategorie":"modulo","titel":"Primitivwurzel?","aufgabe":"Ist 2 eine Primitivwurzel modulo 7? Und 3?","loesung":"2: 2, 4, 1 → nur 3 Reste → **nein**; 3: 3, 2, 6, 4, 5, 1 → alle 6 Reste → **ja**","minuten":3},
-    {"id":"WU-W4-09","welt":4,"kategorie":"modulo","titel":"Inverses (W1)","aufgabe":"Bestimme das multiplikative Inverse von 3 modulo 26.","loesung":"3 · 9 = 27 = 26 + 1 → **9**","minuten":2},
+    {"id":"WU-W4-09","welt":4,"kategorie":"modulo","titel":"Inverses (W1)","aufgabe":"Bestimme das multiplikative Inverse von 3 modulo 20.","loesung":"3 · 7 = 21 = 20 + 1 → **7**","minuten":2},
     {"id":"WU-W4-10","welt":4,"kategorie":"asymmetrisch","titel":"RSA-Miniatur","aufgabe":"Öffentlicher Schlüssel (N, e) = (15, 3). Verschlüssele die Klarzahl m = 2.","loesung":"c = 2³ mod 15 = **8**","minuten":1},
     {"id":"WU-W4-11","welt":4,"kategorie":"hybrid","titel":"Laptop im Zug","aufgabe":"Ein Laptop soll bei Diebstahl unlesbar sein. Symmetrisch oder asymmetrisch? Begründe kurz.","loesung":"**symmetrisch**: große Datenmenge, nur eine Person, kein Schlüssel muss verteilt werden – symmetrisch ist viel schneller.","minuten":2},
-    {"id":"WU-W4-12","welt":4,"kategorie":"schluesselraum","titel":"Falle P7","aufgabe":"„Zehn Teilnehmende brauchen symmetrisch 90 und asymmetrisch 10 Schlüssel.“ Finde beide Fehler.","loesung":"symmetrisch **45** (Halbierung vergessen), asymmetrisch **20** (10 Schlüsselpaare)","minuten":2}
+    {"id":"WU-W4-12","welt":4,"kategorie":"schluesselraum","titel":"Falle P7","aufgabe":"„22 Teilnehmende brauchen symmetrisch 462 und asymmetrisch 22 Schlüssel.“ Finde beide Fehler.","loesung":"symmetrisch **231** (Halbierung vergessen), asymmetrisch **44** (22 Schlüsselpaare)","minuten":2}
   ]
 }

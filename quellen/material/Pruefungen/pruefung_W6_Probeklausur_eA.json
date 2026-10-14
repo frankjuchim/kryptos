@@ -302,7 +302,7 @@
      "be": 4,
      "erwartung": [
       {
-       "punkt": "(1) **falsch**: Stufe 2 verknüpft jedes Zeichen mit dem vorherigen Geheimtextzeichen, das Ergebnis hängt also von der Reihenfolge der Zeichen ab; vertauscht man die Stufen, wird in einer anderen Reihenfolge verkettet. Gegenbeispiel Abbildung 1: Stufe 2 zuerst ergibt `EFANVKPXJO`, nach Blockrotation `FANEK PXVOJ` statt `DYLNC HPXCO` (bereits das erste Zeichen F ≠ D genügt als Gegenbeispiel)",
+       "punkt": "(1) **falsch**: Stufe 2 verknüpft jedes Zeichen mit dem vorherigen Geheimtextzeichen, das Ergebnis hängt also von der Reihenfolge der Zeichen ab; vertauscht man die Stufen, wird in einer anderen Reihenfolge verkettet. Gegenbeispiel Abbildung 1: Stufe 2 zuerst ergibt `EFANVKPXJO`, nach Blockrotation `FANEK PXVOJ` statt DYLNC HPXCO (Abbildung 1) (bereits das erste Zeichen F ≠ D genügt als Gegenbeispiel)",
        "afb": "II",
        "be": 2
       },

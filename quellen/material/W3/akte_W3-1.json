@@ -304,7 +304,7 @@
      "t": "liste",
      "buchstaben": true,
      "items": [
-      "**Bestimme** mit der ASCII-Tabelle der Anlage und den Stellenwerten 128, 64, …, 1 die ASCII-Werte und Bits von B, O, J, E. Kontrolliere danach mit Archivwissen 1.",
+      "**Bestimme** mit der ASCII-Tabelle der Anlage und den Stellenwerten 128, 64, …, 1 die ASCII-Werte und Bits der Zeichen Q, Y, 4 und 7.",
       "**Bestimme** umgekehrt das Zeichen zu `0101 0111` und zu `0100 1000`."
      ]
     },
@@ -314,10 +314,10 @@
      "kopfspalte": true,
      "kopf": [
       "Zeichen",
-      "B",
-      "O",
-      "J",
-      "E",
+      "Q",
+      "Y",
+      "4",
+      "7",
       "?",
       "?"
      ],
@@ -358,29 +358,29 @@
      "kopfspalte": true,
      "kopf": [
       "Zeichen",
-      "B",
-      "O",
-      "J",
-      "E",
+      "Q",
+      "Y",
+      "4",
+      "7",
       "**W**",
       "**H**"
      ],
      "zeilen": [
       [
        "ASCII",
-       "66",
-       "79",
-       "74",
-       "69",
+       "81",
+       "89",
+       "52",
+       "55",
        "87",
        "72"
       ],
       [
        "Bits",
-       "0100 0010",
-       "0100 1111",
-       "0100 1010",
-       "0100 0101",
+       "0101 0001",
+       "0101 1001",
+       "0011 0100",
+       "0011 0111",
        "0101 0111",
        "0100 1000"
       ]
@@ -400,7 +400,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "B 66 `0100 0010`, O 79 `0100 1111`, J 74 `0100 1010`, E 69 `0100 0101`; `0101 0111` = 64 + 16 + 4 + 2 + 1 = 87 = **W**, `0100 1000` = 64 + 8 = 72 = **H**."
+     "md": "Q 81 `0101 0001`, Y 89 `0101 1001`, „4“ 52 `0011 0100`, „7“ 55 `0011 0111` (Ziffern sind Zeichen: „4“ ≠ 4, P1); `0101 0111` = 64 + 16 + 4 + 2 + 1 = 87 = **W**, `0100 1000` = 64 + 8 = 72 = **H**."
     },
     {
      "t": "p",
@@ -619,11 +619,11 @@
         },
         {
          "label": "⊕",
-         "bits": "0110 0110"
+         "bits": "0001 1011"
         },
         {
          "label": "=",
-         "bits": "1010 1100",
+         "bits": "1101 0001",
          "strich": true,
          "leer": true
         }
@@ -661,7 +661,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "`1100 1010 ⊕ 0110 0110 = 1010 1100`; `1100 1010 ⊕ 1100 1010 = 0000 0000`, weil **a ⊕ a = 0** gilt – jedes Bit trifft auf ein gleiches Bit."
+     "md": "`1100 1010 ⊕ 0001 1011 = 1101 0001`; `1100 1010 ⊕ 1100 1010 = 0000 0000`, weil **a ⊕ a = 0** gilt – jedes Bit trifft auf ein gleiches Bit."
     }
    ]
   },
@@ -716,7 +716,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "Alice verschlüsselt BOJE mit dem Einmalschlüssel `0110 1001 · 1111 0000 · 0011 0011 · 1010 0101`."
+     "md": "Alice verschlüsselt BOJE mit dem Einmalschlüssel `1110 0111 · 0011 1001 · 1001 0011 · 0101 1100`. Die Bits von B, O, J, E stehen in Archivwissen 1."
     },
     {
      "t": "liste",
@@ -740,17 +740,17 @@
      "zeilen": [
       [
        "Klartext M",
-       "",
-       "",
-       "",
-       ""
+       "0100 0010",
+       "0100 1111",
+       "0100 1010",
+       "0100 0101"
       ],
       [
        "Schlüssel K",
-       "0110 1001",
-       "1111 0000",
-       "0011 0011",
-       "1010 0101"
+       "1110 0111",
+       "0011 1001",
+       "1001 0011",
+       "0101 1100"
       ],
       [
        "C = M ⊕ K",
@@ -790,17 +790,17 @@
       ],
       [
        "Schlüssel K",
-       "0110 1001",
-       "1111 0000",
-       "0011 0011",
-       "1010 0101"
+       "1110 0111",
+       "0011 1001",
+       "1001 0011",
+       "0101 1100"
       ],
       [
        "C = M ⊕ K",
-       "**0010 1011**",
-       "**1011 1111**",
-       "**0111 1001**",
-       "**1110 0000**"
+       "**1010 0101**",
+       "**0111 0110**",
+       "**1101 1001**",
+       "**0001 1001**"
       ]
      ],
      "breiten": [
@@ -821,11 +821,11 @@
    "loesung": [
     {
      "t": "p",
-     "md": "a) Geheimtext `0010 1011 · 1011 1111 · 0111 1001 · 1110 0000`."
+     "md": "a) Geheimtext `1010 0101 · 0111 0110 · 1101 1001 · 0001 1001`."
     },
     {
      "t": "p",
-     "md": "b) z. B. 1. Zeichen: `0010 1011 ⊕ 0110 1001 = 0100 0010` = 66 = **B** – XOR mit demselben Schlüsselbyte macht die Verschlüsselung rückgängig."
+     "md": "b) z. B. 1. Zeichen: `1010 0101 ⊕ 1110 0111 = 0100 0010` = 66 = **B** – XOR mit demselben Schlüsselbyte macht die Verschlüsselung rückgängig."
     }
    ],
    "fallen": [
@@ -1363,12 +1363,12 @@
    "teile": [
     {
      "bez": "a)",
-     "text": "**Bestimmen** Sie die Bitfolge des Geheimtextes, der entsteht, wenn das Wort OST (ASCII) mit dem Schlüssel `1010 0110 0101 1100 1111 0000` durch XOR verschlüsselt wird.",
+     "text": "**Bestimmen** Sie die Bitfolge des Geheimtextes, der entsteht, wenn das Wort HUT (ASCII) mit dem Schlüssel `1010 0110 0101 1100 1111 0000` durch XOR verschlüsselt wird.",
      "be": 3,
      "loesung": [
       {
        "t": "p",
-       "md": "O, S, T = `0100 1111 0101 0011 0101 0100`; Geheimtext **`1110 1001 0000 1111 1010 0100`**. [ASCII korrekt 1, XOR korrekt 2]"
+       "md": "H, U, T = `0100 1000 0101 0101 0101 0100`; Geheimtext **`1110 1110 0000 1001 1010 0100`**. [ASCII korrekt 1, XOR korrekt 2]"
       }
      ],
      "fallen": [

@@ -144,7 +144,7 @@ Mix: ★ 4 (01, 02, 03, 07) · ★★ 6 (04, 05, 06, 08, 09, 10) · ★★★ 2 
 | W6-L2-04 | Eve rückwärts | ★★ | kern | entschluesseln | chiffre | P3 | Entschlüssele TVZLT LEA (t = 5, Pendelwort UHR). | Pendel UHRHUHRH → Zwischentext ZOIEZENT → Ring zurück → **zeitzone** ✔ nachgerechnet | 1: Zuerst Stufe 2 rückwärts: Schlüsselbuchstabe abziehen. / 2: Zwischentext-Zeichen j gehört auf Feld (5 · j) mod 8. | Umgekehrte Reihenfolge, jede Stufe invertiert. Beim Ring wird jedes Zeichen auf das Feld zurückgelegt, von dem es gelesen wurde (P3). |
 | W6-L2-05 | Eves Stufen einordnen | ★★ | kern | einordnen | choice (Mehrfachauswahl) | P5 | Welche Aussagen über Eves Uhrwerk sind korrekt?<br>A) Stufe 1 ist eine Transposition.<br>B) Stufe 2 ist monoalphabetisch, weil jedes Zeichen nur einmal verschoben wird.<br>C) Stufe 2 ist polyalphabetisch, weil derselbe Buchstabe je nach Schlüsselbuchstabe verschieden ersetzt wird.<br>D) Das Uhrwerk ist ein symmetrisches Verfahren. | **A, C, D** | 1: Kriterium mono/poly: gleicher Buchstabe → immer gleicher Ersatz? / 2: Ver- und Entschlüsseln nutzen denselben Schlüssel (t, Wort). | B verwechselt „einmal verschoben“ mit „immer gleich ersetzt“ (P5). |
 | W6-L2-06 | Eves Schwächen | ★★★ | kern | sicherheit-beurteilen | choice (Mehrfachauswahl) | P7, P8 | Welche Aussagen sind korrekt?<br>A) Das Pendel mit ZEIT ergibt dieselbe Verschlüsselung wie Vigenère mit dem Schlüsselwort ZEITIE.<br>B) Stufe 1 hat nur 4 Schlüssel, und t = 1 lässt den Text unverändert.<br>C) Das Pendelwort EVE ist so stark wie ein Vigenère-Schlüssel der Länge 4.<br>D) Vertauscht man die Stufen, ändert sich der Geheimtext nicht.<br>E) Wendet man Stufe 1 zweimal mit demselben t an, erhält man wieder den Ausgangstext. | **A, B, E** ✔ nachgerechnet (C: Pendel EVE = E V E V … = Vigenère EV, Periode 2; D: mondhell → LHTHP PMI, vertauscht LWKSP PVI; E: t · t mod 8 = 1 für t = 1, 3, 5, 7) | 1: Schreibe das Pendel EVE aus. / 2: Rechne für D das Beispiel aus Aufgabe 03 in anderer Reihenfolge. | Das Pendel ist ein Vigenère mit Periode 2L − 2; symmetrische Wörter verkürzen die Periode. Der Ring hat einen winzigen Schlüsselraum, und jede Ringstufe ist ihre eigene Umkehrung (P7, P8). |
-| W6-L2-07 | Schlüssel zählen | ★ | kern | schluesselraum | gaps | P7 | Sechs Chronistinnen und Chronisten wollen paarweise verschlüsselt kommunizieren. Symmetrisch: __ Schlüssel; asymmetrisch: __ Schlüssel. Bei 10 Personen: __ bzw. __. | **15; 12; 45; 20** ✔ nachgerechnet | 1: symmetrisch n(n − 1)/2. / 2: asymmetrisch 2n. | Ab n = 6 braucht das asymmetrische Verfahren weniger Schlüssel; bei n = 5 sind es gleich viele (10). |
+| W6-L2-07 | Schlüssel zählen | ★ | kern | schluesselraum | gaps | P7 | 23 Chronistinnen und Chronisten wollen paarweise verschlüsselt kommunizieren. Symmetrisch: __ Schlüssel; asymmetrisch: __ Schlüssel. Bei 33 Personen: __ bzw. __. | **253; 46; 528; 66** ✔ nachgerechnet (Korrektur D15: n = 6 und 10 stehen in Akte W4·1, Archivwissen 1) | 1: symmetrisch n(n − 1)/2. / 2: asymmetrisch 2n. | Ab n = 6 braucht das asymmetrische Verfahren weniger Schlüssel; bei n = 5 sind es gleich viele (10). |
 | W6-L2-08 | Das hybride Paket | ★★ | kern | hybrid | order | P9 | Bring den Versand einer großen Datei von Alice an Bob mit einem Hybridverfahren in die richtige Reihenfolge:<br>• Alice erzeugt einen zufälligen Sitzungsschlüssel.<br>• Alice verschlüsselt die Datei symmetrisch mit dem Sitzungsschlüssel.<br>• Alice verschlüsselt den Sitzungsschlüssel mit Bobs öffentlichem Schlüssel.<br>• Alice sendet beides an Bob.<br>• Bob entschlüsselt den Sitzungsschlüssel mit seinem privaten Schlüssel.<br>• Bob entschlüsselt die Datei mit dem Sitzungsschlüssel. | Reihenfolge wie angegeben (1–6); die Schritte 2 und 3 dürfen vertauscht sein | 1: Bob braucht zuerst den Sitzungsschlüssel. / 2: Welcher Schlüssel kann nur von Bob benutzt werden? | Hybrid = schnell (symmetrisch für die Daten) + ohne geheimen Kanal (asymmetrisch für den Sitzungsschlüssel). |
 | W6-L2-09 | Das Siegel ergänzen | ★★ | kern | signatur | schaubild-ergaenzen | P9 | Schaubild: (1) Alice: h ← Hash(Nachricht) · (2) Alice: sig ← h verschlüsselt mit [Lücke A] · (3) Alice → Bob: Nachricht + sig · (4) Bob: h' ← sig entschlüsselt mit [Lücke B] · (5) Bob: h'' ← Hash(empfangene Nachricht) · (6) Bob: [Lücke C]. Fülle A, B, C. | A: **privater Schlüssel von Alice**; B: **öffentlicher Schlüssel von Alice**; C: **h' mit h'' vergleichen** | 1: Nur Alice darf signieren können. / 2: Alle sollen prüfen können. | Integrität und Authentizität entstehen aus Hashvergleich und Schlüsselpaar des Absenders (P9). |
 | W6-L2-10 | Fingerabdruck und Lawine | ★★★ | kern (D: eA) | hash | choice (Mehrfachauswahl) | P6, P8 | Eve schützt ihre Nachrichten zusätzlich mit einer Prüfsumme: Summe der Buchstabenwerte mod 26 (Rest 0 → Z). Welche Aussagen sind korrekt?<br>A) Die Prüfsumme erkennt, wenn zwei Buchstaben vertauscht werden.<br>B) „kern“ und „nerk“ haben dieselbe Prüfsumme V.<br>C) Ändert man beim Uhrwerk einen Klartextbuchstaben, ändert sich genau ein Geheimtextbuchstabe – das Uhrwerk hat keine Diffusion.<br>D) (eA) Mehr Blöcke oder ein zweites Uhrwerk mit anderem Schlüssel erzeugen Diffusion. | **B, C** ✔ nachgerechnet (kern: 11 + 5 + 18 + 14 = 48 → 22 = V; abendrot → ZRWUL XDV, abendrat → ZRIUL XDV) | 1: Ändert die Summe sich beim Vertauschen? / 2: Wohin wandert ein einzelner Buchstabe durch Ring und Pendel? | Summen-Prüfsummen sind reihenfolgeblind (Kollisionen). Transposition und Vigenère wirken zeichenweise – Diffusion braucht Bausteine, die mehrere Zeichen bzw. Bits mischen (P8). |
@@ -170,7 +170,7 @@ Mix: ★ 3 (01, 02, 07) · ★★ 5 (03, 04, 05, 08, 09) · ★★★ 2 (06, 10)
 |---|---|---|---|---|---|---|---|---|---|---|
 | W6-L3-01 | Der eA-Takt | ★ | kern | begriffe | gaps | P10 | Das eA-Abitur dauert 270 min und umfasst 120 BE (Block 1: 60 BE, Block 2: 2 × 30 BE). Wie viele Minuten entsprechen Block 1? __ min. Wie viele Minuten eine Teilaufgabe mit 12 BE? __ min. | **135**; **27** ✔ nachgerechnet (Korrektur D15: Takt 2,25 und 67,5 min stehen im Merkkasten, in Akte W6·3 und auf WK5) | 1: Block 1 hat die Hälfte der BE. / 2: 12 BE sind ein Zehntel von 120 BE. | Mit dem Takt planst du jede Teilaufgabe: BE · 2,25 min. |
 | W6-L3-02 | Der gA-Takt | ★ | kern | begriffe | gaps | P10 | Das gA-Abitur dauert 220 min für 100 BE (50 + 25 + 25). Block 1 (50 BE): __ min; eine Teilaufgabe mit 15 BE: __ min. | **110**; **33** ✔ nachgerechnet (Korrektur D15: Takt 2,2 und 55 min stehen im Merkkasten und in Akte W6·3) | 1: Block 1 hat die Hälfte der BE. / 2: Rechne erst die Minuten für 5 BE aus. | Der gA-Takt ist fast gleich – die Aufgaben sind stärker vorstrukturiert, nicht kürzer pro BE. |
-| W6-L3-03 | Hinter dem Plan? | ★★ | kern | begriffe | gaps | P10 | eA-Takt 2,25 min/BE. Eine Teilaufgabe mit 4 BE sollte etwa __ min dauern, eine mit 8 BE etwa __ min. Du hast nach 30 min Teilaufgaben im Umfang von 10 BE erledigt. Du liegst __ min hinter dem Plan. | **9**; **18**; **7,5** ✔ nachgerechnet (Korrektur D15: 6 BE → 13,5 min steht in Akte W6·3) | 1: 10 BE · 2,25 = 22,5 min. / 2: 30 − 22,5. | Wer früh merkt, dass er hinter dem Plan liegt, kann umsteuern: erst die Teilaufgaben mit sicheren BE, dann die offenen. |
+| W6-L3-03 | Hinter dem Plan? | ★★ | kern | begriffe | gaps | P10 | eA-Takt 2,25 min/BE. Eine Teilaufgabe mit 16 BE sollte etwa __ min dauern, eine mit 8 BE etwa __ min. Du hast nach 30 min Teilaufgaben im Umfang von 10 BE erledigt. Du liegst __ min hinter dem Plan. | **36**; **18**; **7,5** ✔ nachgerechnet (Korrektur D15: 6 BE → 13,5 min und 4 BE → 9 min standen in Akte W6·3 bzw. auf Folie und Warm-up-Karte) | 1: 10 BE · 2,25 = 22,5 min. / 2: 30 − 22,5. | Wer früh merkt, dass er hinter dem Plan liegt, kann umsteuern: erst die Teilaufgaben mit sicheren BE, dann die offenen. |
 | W6-L3-04 | Operatoren-Paare | ★ | kern | begriffe | match | P10 | Ordne zu: nennen · beschreiben · erläutern · begründen · beurteilen · bestimmen ↔ (a) ohne Erläuterungen aufzählen · (b) Sachverhalt in eigenen Worten mit Fachsprache wiedergeben · (c) durch zusätzliche Informationen (Beispiel) verständlich machen · (d) auf Gesetzmäßigkeiten bzw. kausale Zusammenhänge zurückführen · (e) selbstständiges Urteil mit Fachwissen formulieren und begründen · (f) Lösungsweg darstellen und Ergebnis formulieren | nennen–a · beschreiben–b · erläutern–c · begründen–d · beurteilen–e · bestimmen–f | 1: Definitionen stehen auf WK5. / 2: „bestimmen“ verlangt immer einen Rechenweg. | Die Definitionen sind die der KC-Operatorenliste; sie entscheiden über die BE (P10). |
 | W6-L3-05 | Was will der Operator? | ★★ | kern | begriffe | match | P10 | Ordne die Krypto-Aufgaben der erwarteten Leistung zu: „Wenden Sie … an“ · „Vergleichen Sie …“ · „Entwickeln Sie einen Angriff …“ · „Ergänzen Sie das Schaubild …“ · „Analysieren Sie die Auswirkung eines Übertragungsfehlers …“ · „Erörtern Sie …“ ↔ (a) Verfahren mit den gegebenen Werten durchführen · (b) Gemeinsamkeiten und Unterschiede nach Kriterien darstellen · (c) eine Vorgehensweise selbstständig planen · (d) eine Vorlage nach Vorgaben anpassen · (e) Eigenschaften unter einer Fragestellung herausarbeiten · (f) Argumente gegenüberstellen und abwägen | anwenden–a · vergleichen–b · entwickeln–c · ergänzen–d · analysieren–e · erörtern–f | 1: „entwickeln“ = selbst planen. / 2: „erörtern“ endet mit einer Abwägung. | Gleiche Inhalte, andere Operatoren – andere Leistung (P10). |
 | W6-L3-06 | Entscheiden I | ★★ | kern | substitution-poly | choice | P7, P10 | „Entscheiden Sie begründet, ob die Aussage korrekt ist: Ein Vigenère-Schlüsselwort aus lauter A (z. B. AAAA) lässt den Klartext unverändert.“ Welche Antwort erhält volle BE?<br>A) „Korrekt.“<br>B) „Korrekt, denn der Schlüsselbuchstabe A bedeutet im Vigenère-Quadrat die Verschiebung 0; jeder Buchstabe bleibt erhalten, z. B. e + A = E. AAAA ist ein schwacher Schlüssel.“<br>C) „Falsch, denn A hat den Wert 1.“<br>D) „Korrekt, weil Vigenère polyalphabetisch ist.“ | **B** | 1: Entscheidung + fachliche Begründung + Beleg. / 2: Welche Zeile des Quadrats gehört zu A? | A ohne Begründung = 0 BE; C verwechselt Buchstabenwert und Verschiebung (P1); D begründet nicht (P10). |
@@ -235,8 +235,8 @@ der vier Spalten an.
 
 **Auftrag 4 ★★ · kern · Einzelarbeit · 8 min – Zählen, kombinieren, analysieren (P6, P7, P8)**
 a) Bestimme die Anzahl der Vigenère-Schlüsselwörter der Länge 4.
-b) Bestimme für 10 Personen die Schlüsselanzahl symmetrisch und asymmetrisch.
-c) Ein Text wird mit Vigenère zuerst mit AB, dann mit BA verschlüsselt. Untersuche, welchem einfachen Verfahren das
+b) Bestimme für 28 Personen die Schlüsselanzahl symmetrisch und asymmetrisch. (Korrektur D15: n = 10 steht in Akte W4·1.)
+c) Ein Text wird mit Vigenère zuerst mit AB, dann mit AC verschlüsselt (D15: AB/BA beantwortet Abi-Check W6·3 a). Untersuche, welchem einfachen Verfahren das
 entspricht.
 d) Die Schlüssellänge eines Vigenère-Geheimtextes ist 3. Beschreibe, wie man eine Häufigkeitsanalyse durchführt.
 
@@ -272,8 +272,8 @@ c) **Beurteilen** Sie die Sicherheit des Verfahrens WENDE. [3 BE]
   schlüssellos und involutorisch (zweimal = Klartext). b) Falsch: Morse ist eine Codierung – die Zuordnung ist
   öffentlich, es gibt keinen geheimen Schlüssel (P5). c) 11 = 2 · 4 + 3 → 3 Zeilen, letzte Zeile hat 3 Zeichen →
   Spaltenlängen **3, 3, 3, 2** (P4).
-- **A4** a) 26⁴ = **456 976**. b) symmetrisch 10 · 9 / 2 = **45**, asymmetrisch **20**. c) Schlüssel addieren sich
-  stellenweise: A + B = B, B + A = B → Vigenère mit BB = **Caesar mit Verschiebung 1** (P8) ✔ nachgerechnet. d) Text in
+- **A4** a) 26⁴ = **456 976**. b) symmetrisch 28 · 27 / 2 = **378**, asymmetrisch **56**. c) Schlüssel addieren sich
+  stellenweise: A + A = A, B + C = D → **Vigenère mit AD** (P8) ✔ nachgerechnet. d) Text in
   3 Teiltexte zerlegen (Zeichen 1, 4, 7, … / 2, 5, 8, … / 3, 6, 9, …); in jedem Teiltext ist eine Caesar-Verschiebung
   wirksam → häufigsten Buchstaben bestimmen, mit E gleichsetzen, Verschiebung ablesen; Voraussetzung: genügend langer
   deutscher Text (P6).
@@ -351,9 +351,9 @@ Geheimtext: LXVBM ESVKL ZLTBB A ✔ nachgerechnet
   dürfen nur nicht findbar sein.
 - *Diffusion:* Eine kleine Änderung im Klartext soll viele Zeichen/Bits des Geheimtextes ändern.
 
-**Auftrag 1 ★ · kern · Einzelarbeit · 5 min – Schritt 1: Nachrechnen**
-Rechne im Beispiel die ersten acht Geheimtextzeichen nach. Markiere die Stellen, an denen der Pendelbuchstabe Z
-verwendet wird, und gib an, um wie viele Stellen Z verschiebt.
+**Auftrag 1 ★ · kern · Einzelarbeit · 5 min – Schritt 1: Nachrechnen – mit Falle** (Korrektur D15: früher das vorgerechnete Beispiel)
+Verschlüssele Block 1 des Beispiels mit der Folge ZEITZEIT (Pendelwort nur wiederholt) und vergleiche mit dem Beispiel. Markiere
+die Stellen, an denen der Pendelbuchstabe Z verwendet wird, und gib an, um wie viele Stellen Z verschiebt.
 
 **Auftrag 2 ★★ · kern · Einzel- oder Partnerarbeit · 12 min – Schritt 3: Der Archivfund**
 Entschlüssele Eves Zeile TAZLL ZZLYL VIHAV K mit t = 3 und dem Pendelwort UHR. Nutze die Vorlage:
@@ -391,7 +391,7 @@ c) Ergänze: Alice signiert, indem sie den Hashwert mit ______ verschlüsselt; B
 d) „abendrot“ und „abendrat“ (t = 3, ZEIT) ergeben ZRWUL XDV und ZRIUL XDV. Erläutere daran den Begriff Diffusion.
 
 **Abi-Check (gesiezt)** – Material: Archivwissen 1
-a) Ein Geheimtext lautet GFWJR JVCSS BIVZO K (t = 7, Pendelwort EVE).
+a) Ein Geheimtext lautet WIYDI WPVHS BZDIM H (t = 7, Pendelwort EVE; Korrektur D15: chronoskopkern ist der Boss-Preis).
 **Bestimmen** Sie den Klartext. [4 BE]
 b) **Erläutern** Sie, an welcher Stelle das Verfahren das Prinzip der Transposition und an welcher es das Prinzip der
 polyalphabetischen Substitution nutzt. [2 BE]
@@ -404,8 +404,8 @@ d) **Begründen** Sie, dass zweimaliges Anwenden von Stufe 1 mit demselben Rings
 
 **Lösungsteil (`_LSG`)**
 
-- **A1** Z·E·I·T·I·E·Z·E über M T N I E A T R: M+Z = L, T+E = X, N+I = V, I+T = B, E+I = M, A+E = E, T+Z = S, R+E = V →
-  LXVBMESV ✔. Z steht an Position 1 und 7 (und 13); Z verschiebt um 25 Stellen, d. h. eine Stelle zurück (M → L).
+- **A1** Z·E·I·T·Z·E·I·T über M T N I E A T R: M+Z = L, T+E = X, N+I = V, I+T = B, E+Z = D, A+E = E, T+I = B, R+T = K →
+  LXVBDEBK ✔ (Beispiel: LXVBMESV, Abweichung ab Zeichen 5, P4). Z an Position 1 und 7 (und 13); Z verschiebt um 25 (M → L).
 - **A2** Pendel UHRHUHRHUHRHUHRH. Zwischentext: T−U = Z, A−H = T, Z−R = I, L−H = E, L−U = R, Z−H = S, Z−R = I, L−H = E,
   Y−U = E, L−H = E, V−R = E, I−H = B, H−U = N, A−H = T, V−R = E, K−H = D → ZTIERSIE EEEBNTED. Ring zurück (t = 3, Zeichen
   j → Feld 3j mod 8): Block 1 Felder 0–7 = Z E I T R E I S; Block 2 = E B E E N D E T → **zeitreisebeendet**
@@ -433,8 +433,8 @@ d) **Begründen** Sie, dass zweimaliges Anwenden von Stufe 1 mit demselben Rings
   langsam. c) Alices privatem Schlüssel; Alices öffentlichem Schlüssel; Hashvergleich. d) Eine Änderung im Klartext
   ändert nur ein Geheimtextzeichen (W → I an Position 3) – keine Diffusion; ein sicheres Verfahren würde viele
   Zeichen verändern.
-- **Abi-Check** a) Pendel EVEV…; Stufe 2 zurück: CKSONORH OXXNREKP (2 BE); Ring t = 7 zurück (Zeichen j → Feld 7j
-  mod 8): CHRONOSK | OPKERNXX → **chronoskopkern** (Füllzeichen XX) (2 BE) ✔ nachgerechnet. b) Transposition in Stufe 1
+- **Abi-Check** a) Pendel EVEV…; Stufe 2 zurück: SNUIEBLA DXXEZNIM (2 BE); Ring t = 7 zurück (Zeichen j → Feld 7j
+  mod 8): SALBEIUN | DMINZEXX → **salbeiundminze** (Füllzeichen XX) (2 BE) ✔ nachgerechnet. b) Transposition in Stufe 1
   (Umordnung im Ring), polyalphabetische Substitution in Stufe 2 (Pendelfolge mit wechselnden Verschiebungen) (je 1).
   c) **Falsch** (1): Das Pendel EVE ergibt E V E V …, also nur zwei verschiedene, sich abwechselnde Verschiebungen –
   wie Vigenère mit EV (Periode 2) (1); ein Wort aus drei verschiedenen Buchstaben, z. B. UHR, ergibt U H R H … mit
@@ -457,8 +457,8 @@ Zeit, mit dem richtigen Operator, mit einer Begründung, die jede Korrektorin ab
 |---|---|---|
 | Gesamtzeit Abitur / BE | 270 min / 120 BE | 220 min / 100 BE |
 | Minuten je BE | 2,25 | 2,2 |
-| Krypto-Aufgabe Block 2 | 30 BE ≈ 67,5 min | 25 BE ≈ 55 min |
-| Teilaufgabe 2 / 3 / 4 / 5 / 6 BE | 4,5 / 6,75 / 9 / 11,25 / 13,5 min | 4,4 / 6,6 / 8,8 / 11 / 13,2 min |
+| Krypto-Aufgabe Block 2 | 30 BE | 25 BE (Korrektur D15: ohne Minuten – Lösung von Auftrag 1) |
+| Minuten für eine Teilaufgabe | BE · 2,25 | BE · 2,2 (Korrektur D15: keine Wertetabelle – sie enthielt die Lösung von Auftrag 1) |
 
 Vorgehen: 1. Aufgabe überfliegen (3 min). 2. Material markieren, Beispiel nachrechnen (5 min). 3. Teilaufgaben nach BE
 takten, sichere Teile zuerst. 4. Bei Rückstand: Stichpunkte statt Prosa, später ergänzen. 5. 5 min Kontrolle
@@ -636,18 +636,18 @@ Erwartungshorizont mit Kernpunkten · AFB · BE, Alternativen, typischen Fehlern
 
 | ID | Titel | Aufgabe (Vorderseite) | Lösung (Rückseite) | Min | Kategorie |
 |---|---|---|---|---|---|
-| WU-W6-01 | Der Takt | Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 4 BE? (270 min, 120 BE) | 4 · 2,25 = **9 min** | 1 | begriffe |
+| WU-W6-01 | Der Takt | Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 7 BE? (270 min, 120 BE) | 7 · 2,25 = **15,75 min** | 1 | begriffe |
 | WU-W6-02 | Wert oder Position? | Wert von K nach der Anlage? Position von K in „KRYPTA“ (EH, ab 0)? | **11**; **0** | 1 | begriffe |
 | WU-W6-03 | Rest-Check | (5 − 9) mod 26 = ? Welcher Buchstabe (A = 1)? Und welcher Buchstabe entspricht dem Rest 0? | **22 → V**; Rest 0 → **Z** ✔ nachgerechnet | 2 | modulo |
 | WU-W6-04 | Wer zuerst? | Ein Verfahren: Stufe 1 Vigenère mit OHR, Stufe 2 Text rückwärts. In welcher Reihenfolge entschlüsselst du? | Erst rückwärts lesen (Stufe 2 zurück), dann Vigenère zurück (P3) | 1 | entschluesseln |
 | WU-W6-05 | Code oder Chiffre? | Ist der Morsecode eine Verschlüsselung? Begründe in einem Satz. | Nein – Codierung: öffentliche Zuordnung, kein geheimer Schlüssel (P5) | 1 | begriffe |
-| WU-W6-06 | Schlüssel zählen | 10 Personen, paarweise: symmetrisch / asymmetrisch? | **45 / 20** ✔ nachgerechnet | 2 | schluesselraum |
+| WU-W6-06 | Schlüssel zählen | 21 Personen, paarweise: symmetrisch / asymmetrisch? | **210 / 42** ✔ nachgerechnet | 2 | schluesselraum |
 | WU-W6-07 | Doppel-Vigenère | Vigenère erst mit AB, dann noch einmal mit AB. Welches Schlüsselwort ergibt dasselbe in einem Schritt? | **AC** (A + A = A, B + B = C) ✔ nachgerechnet | 2 | substitution-poly |
 | WU-W6-08 | Siegel-Check | Womit signiert Alice, womit prüft Bob? | Alices privater Schlüssel; Alices öffentlicher Schlüssel + Hashvergleich (P9) | 1 | signatur |
 | WU-W6-09 | Operator-Blitz | „Erläutern Sie …“ – was fehlt, wenn du nur einen Fachbegriff hinschreibst? | Die Veranschaulichung: zusätzliche Information, am besten ein Beispiel (P10) | 1 | begriffe |
 | WU-W6-10 | Pendel | Schreibe das Pendel zu KERN für 8 Zeichen. Periode? | **KERNREKE**; Periode **6** ✔ nachgerechnet | 2 | substitution-poly |
 | WU-W6-11 | Ring | Ring t = 7: Lies den Block ZAHNRADX (Felder 0–7) aus. | **ZXDARNHA** ✔ nachgerechnet | 2 | transposition |
-| WU-W6-12 | Bit-Blitz | 1011 ⊕ 0110 = ? Und: Welche Zahl ist das Inverse von 3 mod 26? | **1101**; **9** (3 · 9 = 27 ≡ 1) ✔ nachgerechnet | 2 | bits-xor |
+| WU-W6-12 | Bit-Blitz | 1011 ⊕ 0110 = ? Und: Welche Zahl ist das Inverse von 4 mod 7? | **1101**; **2** (4 · 2 = 8 ≡ 1) ✔ nachgerechnet | 2 | bits-xor |
 
 Spirale: W0 (02, 03, 05), W1 (12 Inverses), W2 (07, 10), W3 (12 XOR), W4 (06), W5 (08), W6 (01, 04, 09, 11).
 
@@ -784,12 +784,12 @@ Skripte im Scratchpad `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525
 | W6-L2-03 | mondhell (3, ZEIT) → MDLOHLNE → LHTHP PMI; vertauscht LWKSP PVI (Korrektur M8 D3; abendrot → ANOBDTER → ZRWUL XDV, vertauscht ZGNFL XMV bleibt Beispiel der Akte W6·2) | eve.py, akten.py; M8: `shared/krypto.js` + Zwilling |
 | W6-L2-04 | TVZLT LEA (5, UHR) → ZOIEZENT → zeitzone | eve.py |
 | W6-L2-06 | Pendel ZEIT = Vigenère ZEITIE; EVE = EV (Periode 2) | eve.py |
-| W6-L2-07 | n = 6: 15/12; n = 10: 45/20 | modern.py |
+| W6-L2-07 | n = 23: 253/46; n = 33: 528/66 (D15) | modern.py |
 | W6-L2-10 | kern/nerk → V (48); abendrat → ZRIUL XDV (1 Zeichen verschieden) | level.py |
 | Akte W6·2 A3 | zeitmaschinefrei (5, SAND) → ZAICMEST HRNIFIEE → RAVFZ EKTUU AIXIR H | eve.py |
 | Akte W6·2 A4e | 6. Zeichen +1 → zeitreiTebeendet; Zeichen verloren → ZTIERSURRORAGOT | level.py |
 | Akte W6·2 A5 | Blocklänge 9, t = 3: 0 3 6 0 3 6 0 3 6; erlaubt t ∈ {1, 2, 4, 5, 7, 8} | akten.py |
-| Akte W6·2 Abi-Check | GFWJR JVCSS BIVZO K (7, EVE) → CKSONORH OXXNREKP → chronoskopkern(XX) | akten.py |
+| Akte W6·2 Abi-Check | WIYDI WPVHS BZDIM H (7, EVE) → SNUIEBLA DXXEZNIM → salbeiundminze(XX) (D15) | akten.py |
 | W6-L1-01 | hut (A = 0, 3x + 2) → XKH; mit A = 1 → ANK | level.py |
 | W6-L1-03 | zwei, k = 5 → EBJN; E − 5 = 0 → Z | level.py |
 | W6-L1-04 | windrose: rückwärts ESORDNIW → Vigenère OHR → SZFFKEWD; falsche Reihenfolge → PPNWYOLL | fix-Prüfung in pruef_alle.py |
@@ -797,7 +797,7 @@ Skripte im Scratchpad `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525
 | W6-L1-06 | sonnenwind, 3 Spalten → SNWDOEINNN; Längen 4/3/3; falsch 4/4/2 → sonnenwidn | level.py |
 | W6-L1-09 | 26³ = 17 576; n = 8: 28/16 | level.py |
 | W6-L1-10 | Caesar 7 + 11 = Caesar 18 | level.py |
-| Akte W6·1 | R = 18; ARCHIV[2] = C; (4 − 11) mod 26 = 19 → S; 13 + 13 → Z; GRAUPEL: hagel → AHEGL → EPWKT, falsch LWSSL; 26⁴ = 456 976; AB + BA = Caesar 1; WENDE: fernrohr (k = 6) → XNUXT XKL, vertauscht gleich | akten.py |
+| Akte W6·1 | R = 18; ARCHIV[2] = C; (4 − 11) mod 26 = 19 → S; 13 + 13 → Z; GRAUPEL: hagel → AHEGL → EPWKT, falsch LWSSL; 26⁴ = 456 976; 28 Personen 378/56, AB + AC = AD (D15); WENDE: fernrohr (k = 6) → XNUXT XKL, vertauscht gleich | akten.py |
 | Akte W6·3 | Zeitpläne eA 67,5 / gA 55 min; 20 Teilnehmende: 190; Caesar 13 ∘ 13 = Identität | akten.py, noten.py |
 | W6-L3-01 … -03 | 135; 27; 110; 33; 9; 18; 7,5 | noten.py |
 | Boss B-01, 06, 07, 08 | dachs → HEGLW; kerze → DELSE; ggT 6; 1100 1001 | level.py |

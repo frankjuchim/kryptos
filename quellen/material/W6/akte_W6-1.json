@@ -345,8 +345,8 @@
      "buchstaben": true,
      "items": [
       "**Bestimme** die Anzahl der Vigenère-Schlüsselwörter der Länge 4.",
-      "**Bestimme** für 10 Personen die Schlüsselanzahl symmetrisch und asymmetrisch.",
-      "Ein Text wird mit Vigenère zuerst mit AB, dann mit BA verschlüsselt. **Untersuche**, welchem einfachen Verfahren das entspricht.",
+      "**Bestimme** für 28 Personen die Schlüsselanzahl symmetrisch und asymmetrisch.",
+      "Ein Text wird mit Vigenère zuerst mit AB, dann mit AC verschlüsselt. **Untersuche**, welchem einfachen Verfahren das entspricht.",
       "Die Schlüssellänge eines Vigenère-Geheimtextes ist 3. **Beschreibe**, wie man eine Häufigkeitsanalyse durchführt."
      ]
     },
@@ -363,11 +363,11 @@
     },
     {
      "t": "p",
-     "md": "b) symmetrisch 10 · 9 / 2 = **45**, asymmetrisch 2 · 10 = **20**."
+     "md": "b) symmetrisch 28 · 27 / 2 = **378**, asymmetrisch 2 · 28 = **56**."
     },
     {
      "t": "p",
-     "md": "c) Die Schlüssel addieren sich stellenweise: A + B = B, B + A = B → Vigenère mit BB = **Caesar mit Verschiebung 1** (P8)."
+     "md": "c) Die Schlüssel addieren sich stellenweise: A + A = A, B + C = D → **Vigenère mit dem Schlüsselwort AD** (Verschiebungen 0 und 3; kein Gewinn an Sicherheit, P8)."
     },
     {
      "t": "p",
@@ -461,7 +461,7 @@
      "loesung": [
       {
        "t": "p",
-       "md": "**Falsch** (1): Caesar ersetzt jeden Buchstaben unabhängig von seiner Position; das Umdrehen ändert nur die Positionen – beide Stufen sind vertauschbar; *fernrohr* ergibt in beiden Reihenfolgen `XNUXTXKL` (1)."
+       "md": "**Falsch** (1): Caesar ersetzt jeden Buchstaben unabhängig von seiner Position; das Umdrehen ändert nur die Positionen – beide Stufen sind vertauschbar; *fernrohr* ergibt in beiden Reihenfolgen denselben Geheimtext wie in a) (1)."
       }
      ],
      "fallen": [

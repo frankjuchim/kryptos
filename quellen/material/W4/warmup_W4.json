@@ -7,19 +7,19 @@
  "karten": [
   {
    "id": "WU-W4-01",
-   "titel": "Sechs am Tisch",
+   "titel": "Vierzehn am Tisch",
    "minuten": 2,
    "kategorie": "schluesselraum",
    "aufgabe": [
     {
      "t": "p",
-     "md": "Sechs Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man **symmetrisch**, wie viele **asymmetrisch**?"
+     "md": "Vierzehn Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man **symmetrisch**, wie viele **asymmetrisch**?"
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "symmetrisch 6 · 5/2 = **15**, asymmetrisch 2 · 6 = **12**."
+     "md": "symmetrisch 14 · 13/2 = **91**, asymmetrisch 2 · 14 = **28**."
     }
    ]
   },
@@ -34,15 +34,15 @@
      "zeilen": [
       {
        "label": "",
-       "bits": "1011 0110"
+       "bits": "1110 0010"
       },
       {
        "label": "⊕",
-       "bits": "0110 0011"
+       "bits": "0100 1011"
       },
       {
        "label": "=",
-       "bits": "1101 0101",
+       "bits": "1010 1001",
        "strich": true,
        "leer": true
       }
@@ -52,7 +52,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "`1101 0101`"
+     "md": "`1010 1001`"
     }
    ]
   },
@@ -100,13 +100,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "Berechne **3^4^ mod 7** ohne Taschenrechner."
+     "md": "Berechne **2^5^ mod 9** ohne Taschenrechner."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "3² = 9 mod 7 = 2; 2² = **4** (bzw. 81 = 11 · 7 + 4)."
+     "md": "2³ = 8; 8 · 4 = 32 = 3 · 9 + 5 → **5**."
     }
    ]
   },
@@ -118,13 +118,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "p = 7, g = 3, a = 2, b = 4. Bestimme A, B und K."
+     "md": "p = 31, g = 3, a = 2, b = 3. Bestimme A, B und K."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "A = 9 mod 7 = **2**, B = 81 mod 7 = **4**, K = 4² mod 7 = **2** = 2^4^ mod 7."
+     "md": "A = 3² = **9**, B = 3³ = **27**, K = 27² mod 31 = 729 mod 31 = **16** = 9³ mod 31."
     }
    ]
   },
@@ -172,13 +172,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "Bestimme das multiplikative Inverse von **3 modulo 26**."
+     "md": "Bestimme das multiplikative Inverse von **3 modulo 20**."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "3 · 9 = 27 = 26 + 1 → **9**."
+     "md": "3 · 7 = 21 = 20 + 1 → **7**."
     }
    ]
   },
@@ -226,13 +226,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "„Zehn Teilnehmende brauchen symmetrisch 90 und asymmetrisch 10 Schlüssel.“ Finde **beide** Fehler."
+     "md": "„22 Teilnehmende brauchen symmetrisch 462 und asymmetrisch 22 Schlüssel.“ Finde **beide** Fehler."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "symmetrisch **45** (Halbierung vergessen), asymmetrisch **20** (10 Schlüsselpaare)."
+     "md": "symmetrisch **231** (Halbierung vergessen), asymmetrisch **44** (22 Schlüsselpaare)."
     }
    ]
   }

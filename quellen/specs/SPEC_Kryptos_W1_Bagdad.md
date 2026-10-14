@@ -357,7 +357,7 @@ die ohne Ausprobieren auskommt. Heute wirst du zu Eve – mit Al-Kindis Werkzeug
 | Nr. | Stufe | Niveau | Sozialform | Auftrag |
 |---|---|---|---|---|
 | 1 | ★ | kern | Einzel | **Bilde** das Geheimtextalphabet zum Schlüsselwort `SCHERAZADE` und **verschlüssele** `tausend und eine nacht`. |
-| 2 | ★ | kern | Einzel | **Entschlüssele** mit demselben Alphabet: `VRPBO` |
+| 2 | ★ | kern | Einzel | **Entschlüssele** mit demselben Alphabet: `DBOQR` (Korrektur D15: früher `VRPBO` → *wesir*, ein Codebuch-Wort aus Akte W1·3 und Level 1.3) |
 | 3 | ★★ | kern | Partner | **Vergleiche** die Schlüsselwörter KALIF und SCHERAZADE: Zähle die Fixpunkte und **beurteile**, welches Schlüsselwort besser ist. **Nenne** eine Regel für gute Schlüsselwörter. |
 | 4 | ★★★ | kern | Partner | 🔍 **Knacke** den abgefangenen Bericht (monoalphabetische Substitution, 206 Buchstaben; Häufigkeiten unten). Gehe nach den Schritten vor: (a) häufigster Buchstabe ≙ e; (b) das häufigste Bigramm, das mit dem e-Zeichen beginnt, ≙ „er“; (c) das zweithäufigste Bigramm ≙ „ch“, die Dreiergruppe davor mit „s“ ≙ „sch“; (d) die dreimal vorkommende Dreiergruppe `TLR` ≙ „und“; (e) Rest durch Lesen ergänzen. Notiere die Zuordnung in einer Tabelle. |
 | 5 | ★★ | kern | Partner | **Begründe**, warum die monoalphabetische Substitution trotz 26! Schlüsseln unsicher ist, und **vergleiche** mit Caesar (Schlüsselraum, Angriff). |
@@ -392,7 +392,7 @@ d) Ein Schreiber benutzt das Schlüsselwort KALIF. **Beurteilen** Sie diese Wahl
 
 - **Auftrag 1:** `SCHERAZDBFGIJKLMNOPQTUVWXY`; `tausend und eine nacht` → **QSTPR KETKE RBKRK SHDQ** ✔ nachgerechnet.
   *P4:* doppeltes A/E nicht gestrichen.
-- **Auftrag 2:** **wesir** ✔ nachgerechnet.
+- **Auftrag 2:** **hirte** ✔ nachgerechnet (Korrektur D15).
 - **Auftrag 3:** KALIF: 14 Fixpunkte (m–z), darunter n, r, s, t → große Textteile bleiben lesbar. SCHERAZADE: 0
   Fixpunkte ✔ nachgerechnet. Besser: SCHERAZADE. Regel: Schlüsselwort lang, mit Buchstaben aus dem hinteren Alphabet
   (oder Schlüsselsatz), danach Alphabet prüfen (P7).
@@ -494,11 +494,11 @@ und prüfst, ob die Gegenmittel Eve wirklich aufhalten.
 | Nr. | Stufe | Niveau | Sozialform | Auftrag |
 |---|---|---|---|---|
 | 1 | ★ | kern | Einzel | Nummerierung: A = 0 … Z = 25. **Verschlüssele** `minarett` mit (m, t) = (11, 4). |
-| 2 | ★★ | kern | Partner | **Bestimme** ohne Taschenrechner die inversen Schlüssel zu m = 5, 9, 11, 17 mod 26 (Weg mit den Zahlen 27, 53, 79, … notieren). |
+| 2 | ★★ | kern | Partner | **Bestimme** ohne Taschenrechner die inversen Schlüssel zu m = 5, 11, 17, 25 mod 26 (Weg mit den Zahlen 27, 53, 79, … notieren). (Korrektur D15: früher auch m = 9 – 9⁻¹ = 3 steht auf der Rückseite von WU-W1-05) |
 | 3 | ★★ | kern | Einzel | Nummerierung: A = 0 … Z = 25. **Entschlüssele** `RWEZW I` mit (m, t) = (9, 2). |
 | 4 | ★★ | kern | Partner | **Zeige** an einem selbst gewählten Gegenbeispiel, dass m = 2 kein brauchbarer Schlüssel ist, und **gib** alle Buchstaben **an**, die mit m = 13, t = 0 zu A werden. |
 | 5 | ★★★ | kern | Partner | 🔍 Ein langer affin verschlüsselter Text (A = 0) hat die häufigsten Buchstaben Y und T. **Bestimme** den Schlüssel unter der Annahme e → Y, n → T. (Hinweis: 9⁻¹ mod 26 = 3.) **Prüfe** dein Ergebnis an e. |
-| 6 | ★ | kern | Einzel | Kalifenschrift: a) **Verschlüssele** `gelehrte`. b) **Entschlüssele** `17 42 56 15 72 77 92 53 39`. |
+| 6 | ★ | kern | Einzel | Kalifenschrift: a) **Verschlüssele** `gelehrte`. b) **Entschlüssele** `88 15 34 35 42 13 24 30 39 77 94`. (Korrektur D15: früher *wesir eilt* – *wesir* ist ein Codebuch-Wort) |
 | 7 | ★★★ | eA | Partner | Ein Schreiber verschlüsselt `karawane` erst affin mit (3, 5), dann das Ergebnis affin mit (7, 2). a) **Bestimme** den Geheimtext. b) **Zeige**, dass dasselbe Ergebnis mit einem einzigen Schlüssel (m, t) entsteht, und **gib** ihn **an**. c) **Beurteile** die Doppelverschlüsselung. |
 
 **Abi-Check** (Material im Abitur-Stil)
@@ -509,7 +509,7 @@ und prüfst, ob die Gegenmittel Eve wirklich aufhalten.
 > 9 ↔ 13.
 
 a) **Bestimmen** Sie den Geheimtext zum Klartext „basar“ mit m = 4. [2 BE]
-b) **Bestimmen** Sie den Klartext zum Geheimtext `20 03 26 24` für m = 6. [3 BE]
+b) **Bestimmen** Sie den Klartext zum Geheimtext `12 10 21 13` für m = 6. [3 BE] (Korrektur D15: früher *mond* – Eingabewort von WU-W1-03)
 c) **Begründen** Sie, dass bei ZAHLENCHIFFRE-29 jeder Schlüssel m ∈ {1, …, 28} eine eindeutige Entschlüsselung
 erlaubt, und **zeigen** Sie an einem Gegenbeispiel, dass dies bei der Variante c = (p · m) mod 26 (A = 1 … Z = 26)
 nicht für jedes m gilt. [4 BE]
@@ -521,7 +521,7 @@ d) **Beurteilen** Sie die Sicherheit von ZAHLENCHIFFRE-29. [3 BE]
 
 - **Auftrag 1:** m = 12, i = 8, n = 13, a = 0, r = 17, e = 4, t = 19, t = 19 → (11p + 4) mod 26 = 6, 14, 17, 4, 9, 22,
   5, 5 → **GOREJ WFF** ✔ nachgerechnet. *P1:* mit A = 1 gerechnet → anderer Text.
-- **Auftrag 2:** 5 · 21 = 105 → 21; 9 · 3 = 27 → 3; 11 · 19 = 209 → 19; 17 · 23 = 391 = 15 · 26 + 1 → 23 ✔ nachgerechnet.
+- **Auftrag 2:** 5 · 21 = 105 → 21; 11 · 19 = 209 → 19; 17 · 23 = 391 = 15 · 26 + 1 → 23; 25 · 25 = 625 = 24 · 26 + 1 → 25 ✔ nachgerechnet (D15).
 - **Auftrag 3:** m⁻¹ = 3. R = 17: 3 · (17 − 2) = 45 mod 26 = 19 → t; W = 22: 3 · 20 = 60 mod 26 = 8 → i; E = 4:
   3 · 2 = 6 → g; Z = 25: 3 · 23 = 69 mod 26 = 17 → r; W → i; I = 8: 3 · 6 = 18 → s → **tigris** ✔ nachgerechnet. *P3:*
   mit m statt m⁻¹ multipliziert; erst multipliziert, dann t abgezogen.
@@ -529,14 +529,14 @@ d) **Beurteilen** Sie die Sicherheit von ZAHLENCHIFFRE-29. [3 BE]
   mit gerader Nummer werden zu A: a, c, e, g, i, k, m, o, q, s, u, w, y (die ungeraden zu N) ✔ nachgerechnet.
 - **Auftrag 5:** e = 4 → Y = 24: 4m + t ≡ 24; n = 13 → T = 19: 13m + t ≡ 19. Differenz: 9m ≡ −5 ≡ 21 → m = 3 · 21 =
   63 mod 26 = 11; t = 24 − 44 = −20 ≡ 6 → **(11, 6)**. Probe e: 11 · 4 + 6 = 50 mod 26 = 24 = Y ✔ nachgerechnet.
-- **Auftrag 6:** a) **66 42 53 77 49 72 39 19** ✔; b) **„wesir eilt“** ✔ nachgerechnet.
+- **Auftrag 6:** a) **66 42 53 77 49 72 39 19** ✔; b) **„minze duftet“** ✔ nachgerechnet (D15).
 - **Auftrag 7 (eA):** a) (3, 5): `karawane` → Zwischentext; dann (7, 2) → **NLELF LYR** ✔ nachgerechnet.
   b) c = 7 · (3p + 5) + 2 = 21p + 37 ≡ 21p + 11 → (m, t) = (21, 11); Verschlüsselung mit (21, 11) ergibt ebenfalls
   NLELFLYR ✔ nachgerechnet. c) Kein Sicherheitsgewinn: Das Ergebnis ist eine gewöhnliche affine Chiffre, der
   Schlüsselraum bleibt 312, Häufigkeitsanalyse wirkt unverändert (P8).
 - **Abi-Check:** a) b = 2 → 8, a = 1 → 4, s = 19 → 76 mod 29 = 18, a → 4, r = 18 → 72 mod 29 = 14: **08 04 18 04 14**
   ✔ nachgerechnet [2]. b) d = 5: 20 · 5 = 100 mod 29 = 13 → m; 3 · 5 = 15 → o; 26 · 5 = 130 mod 29 = 14 → n;
-  24 · 5 = 120 mod 29 = 4 → d → **mond** ✔ nachgerechnet [3]. c) 29 ist eine Primzahl, also ggT(m, 29) = 1 für jedes
+  13 · 5 = 65 mod 29 = 7 → g → **burg** ✔ nachgerechnet [3] (D15). c) 29 ist eine Primzahl, also ggT(m, 29) = 1 für jedes
   m ∈ {1, …, 28}; damit gibt es zu jedem m ein Inverses d, und aus c lässt sich p eindeutig berechnen (verschiedene p
   ergeben verschiedene c). Gegenbeispiel mod 26, m = 2: A (1) → 2, N (14) → 28 mod 26 = 2 – gleiche Geheimzahl ✔
   nachgerechnet [4: Begründung 2, Gegenbeispiel 2]. d) Monoalphabetisch: gleiche Buchstaben → gleiche Zahlen →
@@ -708,7 +708,7 @@ Dateien `KR_W1_Boss1_Gewuerzliste.docx`, `KR_W1_Boss1_Gewuerzliste_EH.docx`. 24 
 
 **Aufgaben**
 
-a) **Bestimmen** Sie den Geheimtext zum Klartext „anis“ mit dem Schlüssel (3, 7). [3 BE]
+a) **Bestimmen** Sie den Geheimtext zum Klartext „anis“ mit dem Schlüssel (2, 9). [3 BE] (Korrektur D15: nicht der Schlüssel des Beispiels – i → 05 stand dort schon)
 b) **Bestimmen** Sie den Klartext zum Geheimtext `28 19 05 18 07 14 22 27 05`, der mit dem Schlüssel (5, 2) erzeugt
 wurde. [4 BE]
 c) **Entscheiden** Sie begründet, ob SAFRAN-29 ein Transpositions- oder ein Substitutionsverfahren ist und ob es
@@ -718,9 +718,9 @@ d) **Begründen** Sie, dass bei SAFRAN-29 jeder Faktor m ∈ {1, …, 28} eine e
 m = 2 nicht gilt. [4 BE]
 e) **Bestimmen** Sie die Anzahl der Schlüssel von SAFRAN-29 und **beurteilen** Sie die Sicherheit gegenüber einem
 Brute-Force-Angriff. [3 BE]
-f) Die Konkurrenz hat viele lange Bestelllisten abgefangen. Die häufigste Zahl ist 22, die zweithäufigste 20.
-**Erläutern** Sie, wie man daraus den Schlüssel gewinnen kann, und **bestimmen** Sie ihn unter der Annahme, dass 22
-für E und 20 für N steht. [5 BE]
+f) Die Konkurrenz hat viele lange Bestelllisten abgefangen. Die häufigste Zahl ist 14, die zweithäufigste 28.
+**Erläutern** Sie, wie man daraus den Schlüssel gewinnen kann, und **bestimmen** Sie ihn unter der Annahme, dass 14
+für E und 28 für N steht. [5 BE] (Korrektur D15: früher 22/20 → (3, 7), der Schlüssel des Beispiels und von a))
 g) **Entscheiden** Sie begründet, ob die folgende Aussage korrekt ist: „Wendet man SAFRAN-29 zweimal hintereinander mit
 den Schlüsseln (m₁, t₁) und (m₂, t₂) an (die zweite Anwendung auf die Zahlen der ersten), wird das Verfahren deutlich
 sicherer.“ [3 BE]
@@ -729,20 +729,20 @@ sicherer.“ [3 BE]
 
 | Teil | Kernpunkte | AFB | BE |
 |---|---|---|---|
-| a) | a = 1 → 10; n = 14 → 49 mod 29 = 20; i = 9 → 34 mod 29 = 5; s = 19 → 64 mod 29 = 6 → **10 20 05 06** ✔ nachgerechnet. 1 BE Nummern, 1 BE Rechnung, 1 BE Rest/zweistellig. | I | 3 |
+| a) | a = 1 → 11; n = 14 → 37 mod 29 = 8; i = 9 → 27; s = 19 → 47 mod 29 = 18 → **11 08 27 18** ✔ nachgerechnet. 1 BE Nummern, 1 BE Rechnung, 1 BE Rest/zweistellig. | I | 3 |
 | b) | d = 6 (5 · 6 = 30 ≡ 1). 28 → 6 · 26 = 156 mod 29 = 11 → k; 19 → 6 · 17 = 102 mod 29 = 15 → o; 05 → 6 · 3 = 18 → r; 18 → 96 mod 29 = 9 → i; 07 → 30 mod 29 = 1 → a; 14 → 72 mod 29 = 14 → n; 22 → 120 mod 29 = 4 → d; 27 → 150 mod 29 = 5 → e; 05 → r → **„koriander“** ✔ nachgerechnet. 1 BE d bestimmen, 2 BE Rechnungen, 1 BE Klartext. | I–II (2/2) | 4 |
 | c) | Substitution (Buchstaben werden durch Zahlen ersetzt, Reihenfolge bleibt); monoalphabetisch, weil derselbe Buchstabe bei festem Schlüssel immer dieselbe Zahl ergibt (z. B. e in „pfeffer“ immer 22 ✔ nachgerechnet). | I | 2 |
 | d) | 29 ist eine Primzahl → ggT(m, 29) = 1 für alle m ∈ {1, …, 28} → Inverses existiert, p ↦ c ist umkehrbar (verschiedene p liefern verschiedene c). Gegenbeispiel mod 26, m = 2: A (1) → 2, N (14) → 28 mod 26 = 2 → gleiche Zahl, nicht eindeutig ✔ nachgerechnet. | II–III (2/2) | 4 |
 | e) | 28 · 29 = **812** Schlüssel ✔ nachgerechnet (schwach: (1, 0) lässt die Nummern unverändert, m = 1 ist reine Verschiebung). Mit Rechner sofort durchprobiert, von Hand mühsam, aber unnötig (siehe f). Urteil: unsicher. | II | 3 |
-| f) | Monoalphabetisch → Häufigkeiten bleiben erhalten; häufigste Zahl ≙ e, zweithäufigste ≙ n. Gleichungen: 5m + t ≡ 22, 14m + t ≡ 20 (mod 29) → 9m ≡ −2 ≡ 27 → m = 13 · 27 = 351 mod 29 = 3 (mit 9⁻¹ = 13 aus der Tabelle); t = 22 − 15 = 7 → **(3, 7)** ✔ nachgerechnet. Probe: n → 3 · 14 + 7 = 49 mod 29 = 20 ✔. Voraussetzung: lange Texte, Sprache bekannt. | II–III (2/3) | 5 |
+| f) | Monoalphabetisch → Häufigkeiten bleiben erhalten; häufigste Zahl ≙ e, zweithäufigste ≙ n. Gleichungen: 5m + t ≡ 14, 14m + t ≡ 28 (mod 29) → 9m ≡ 14 → m = 13 · 14 = 182 mod 29 = 8 (mit 9⁻¹ = 13 aus der Tabelle); t = 14 − 40 = −26 ≡ 3 → **(8, 3)** ✔ nachgerechnet. Probe: n → 8 · 14 + 3 = 115 mod 29 = 28 ✔. Voraussetzung: lange Texte, Sprache bekannt. | II–III (2/3) | 5 |
 | g) | Falsch. c₂ = m₂ · (m₁ · p + t₁) + t₂ = (m₂m₁) · p + (m₂t₁ + t₂) mod 29 – wieder SAFRAN-29 mit dem Schlüssel (m₁m₂ mod 29, (m₂t₁ + t₂) mod 29); z. B. (3, 7) dann (2, 5) = (6, 19) ✔ nachgerechnet. Schlüsselraum bleibt 812, Häufigkeitsanalyse wirkt unverändert. | II | 3 |
 
 AFB-Verteilung: I = 7 BE (a 3, b 2, c 2), II = 12 BE (b 2, d 2, e 3, f 2, g 3), III = 5 BE (d 2, f 3) → 29 % / 50 % / 21 %.
 **Typische Fehler:** a/b mit A = 0 gerechnet (P1); b) mit m statt d multipliziert oder erst multipliziert, dann t
 abgezogen (P3); negativer Wert c − t ohne + 29 (P2); c) „polyalphabetisch, weil Zahlen“ (P5); d) nur „29 ist prim“
 ohne Folgerung, Gegenbeispiel ohne konkrete Buchstaben (P10); e) 28 · 28 oder 26! (P7); f) Gleichungssystem mit A = 0
-(P1); g) „doppelt so viele Schlüssel“ (P8). Alternative in f): Probieren von m mit der Bedingung 9m ≡ 27 (m = 3
-sofort sichtbar, da 9 · 3 = 27) – volle Punktzahl.
+(P1), negativer Rest −26 nicht in 3 umgewandelt (P2); g) „doppelt so viele Schlüssel“ (P8). Alternative in f): Probieren von m mit der Bedingung 9m ≡ 14 (m = 8:
+9 · 8 = 72 = 2 · 29 + 14) – volle Punktzahl.
 
 ---
 
@@ -934,7 +934,7 @@ Beutelspacher-Tabelle), `…/scratchpad/w1_bagdad/wett.py`, `w1_teil1.py` … `w
 | Beutelspacher-Tabelle: Summe / Σp² / Top 5 / Top 7 / Top 10 | 100,00 % / 0,0762 / 49,0 % / 61,66 % / 75,85 % | pruefe_w1 |
 | 26! / Brute-Force-Dauer bei 10⁹/s | 403 291 461 126 605 635 584 000 000 ≈ 4,03 · 10²⁶ / ≈ 1,28 · 10¹⁰ Jahre | pruefe_w1 |
 | Schlüsselwort-Alphabete KALIF / SCHERAZADE / ZEDER / PAPYRUS / SULTAN / YASMIN / WUESTENWIND / TUSCHE / OASE / DSCHINN / KADI / SMARAGD / SEXTANT; Fixpunkte | KALIFBCDEGHJMNOPQRSTUVWXYZ (14) / SCHERAZDBFGIJKLMNOPQTUVWXY (0) / ZEDRABCFGHIJKLMNOPQSTUVWXY (0) / PAYRUSBCDEFGHIJKLMNOQTVWXZ (1) / SULTANBCDEFGHIJKMOPQRVWXYZ (5) / YASMINBCDEFGHJKLOPQRTUVWXZ (1) / WUESTNIDABCFGHJKLMOPQRVXYZ (3) / TUSCHEABDFGIJKLMNOPQRVWXYZ (5) / OASEBCDF… | pruefe_w1 |
-| Substitution: der kalif schlaeft (KALIF) / tausend und eine nacht, VRPBO (SCHERAZADE) / harun (SULTAN; Lab seit der M5-Inhaltsprüfung DSCHINN) / RDBPDQ (YASMIN) / kurier (WUESTENWIND; Boss seit der M5-Inhaltsprüfung SEXTANT) / mond (KALIF; Lab: rubin mit KADI) | IFRHK JEBSL DJKFB T / QSTPR KETKE RBKRK SHDQ, wesir / CSORI (BDQUL) / tigris / CQMATM (GRODAO) / MONI (RUAGN); KADI: 15 Fixpunkte (L–Z) | pruefe_w1 |
+| Substitution: der kalif schlaeft (KALIF) / tausend und eine nacht, DBOQR → hirte (SCHERAZADE, D15) / harun (SULTAN; Lab seit der M5-Inhaltsprüfung DSCHINN) / RDBPDQ (YASMIN; Folie: salbei → QYGAID, D15) / kurier (WUESTENWIND; Boss seit der M5-Inhaltsprüfung SEXTANT) / mond (KALIF; Lab: rubin mit KADI) | IFRHK JEBSL DJKFB T / QSTPR KETKE RBKRK SHDQ, wesir / CSORI (BDQUL) / tigris / CQMATM (GRODAO) / MONI (RUAGN); KADI: 15 Fixpunkte (L–Z) | pruefe_w1 |
 | Archivfund W1 (PAPYRUS) | ZPUCG URDUZ UDYCU IQIRR QSDIR UNORU INYCG QUNNU G ↔ zaehlediezeichenunddufindestdenschluessel | pruefe_w1 |
 | Wettknacken: Länge, Ränge, Bigramme, IC, Geheimtextblock | 486; E94 N52 I42 S37 R36; U94 I52 D42 N37 M36; EN21 ER20 ND20 CH17; 0,0844; Block zeichengenau | pruefe_w1 |
 | Akte W1·1 A4 (ZEDER, 206): Geheimtext, Häufigkeiten, Bigramme | Block zeichengenau; A36 Z19 P18 G17 L17 …; AP11 DF8 SA7 GA6 LR6 | pruefe_w1 |
@@ -943,9 +943,9 @@ Beutelspacher-Tabelle), `…/scratchpad/w1_bagdad/wett.py`, `w1_teil1.py` … `w
 | Inverse mod 26 / mod 29; m = 2, m = 13 | Tabellen Festlegung 3; ACEGI… / ANAN… | pruefe_w1 |
 | Known-Plaintext (3,10) · (11,6) · (7,11) | e→W, n→X · e→Y, n→T · e→N, n→Y | pruefe_w1 |
 | Doppelt affin (3,5)∘(7,2) auf karawane | NLELFLYR = (21,11) | pruefe_w1 |
-| Homophone Tabelle (35 Zahlen); seide / gelehrte / erreichen / wesir eilt | 56 42 15 13 77 / 66 42 53 77 49 72 39 19 / 42 72 28 77 15 58 49 19 34 / 17 42 56 15 72 77 92 53 39 | pruefe_w1 |
-| ZAHLENCHIFFRE-29: basar m 4 / mond m 6; Gegenbeispiel mod 26 | 08 04 18 04 14 / 20 03 26 24; A→2, N→2 | pruefe_w1 |
-| SAFRAN-29: zimt, anis (3,7); koriander (5,2); 812; f) (3,7); Doppel (6,19); pfeffer e→22 | 27 05 17 09, 10 20 05 06; 28 19 05 18 07 14 22 27 05 | pruefe_w1 |
+| Homophone Tabelle (35 Zahlen); seide / gelehrte / erreichen / minze duftet (D15) | 56 42 15 13 77 / 66 42 53 77 49 72 39 19 / 42 72 28 77 15 58 49 19 34 / 88 15 34 35 42 13 24 30 39 77 94 | pruefe_w1 |
+| ZAHLENCHIFFRE-29: basar m 4 / burg m 6 (D15); Gegenbeispiel mod 26 | 08 04 18 04 14 / 12 10 21 13; A→2, N→2 | pruefe_w1 |
+| SAFRAN-29: zimt (3,7), anis (2,9) (D15); koriander (5,2); 812; f) 14/28 → (8,3) (D15); Doppel (6,19); pfeffer e→22 | 27 05 17 09, 11 08 27 18; 28 19 05 18 07 14 22 27 05 | pruefe_w1 |
 | NOMEN-850: Beispiel / L3-01 / L3-02 / L3-03 / Akte A2 / A3 / Abi-Check a / L3-06 | 5862H OOHDS BQ90T J74 / 3918U ODKAQ 27165 3 / 3947H OWTOQ HQ005 862DK 35 / 39001 8EIDH BQKTS B90 / 5853I DHAQ0 0DK90 / 39470 0PSBD SGQ27 KTSB3 5 / 7400O HDQHQ 3918J DQ003 962KT SB90 / 5862D PQDK0 03981 RHUHO ETIIH KWLOC HK (14 Buchstaben) | pruefe_w1 |
 | Spiegel-Kurier: basar t 4 / dinar t 9 / Involution | DEMEN / GBWJS / basar | pruefe_w1 |
 | Warm-up: OASE / 9⁻¹ / (3,1) b / YMDE k 12 / Skytale oasen u 2 / Caesar-Häufigkeit K → k 6 | OASEBCDF / 3 / E / mars / OEANSX / 6 | pruefe_w1 |

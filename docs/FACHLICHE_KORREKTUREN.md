@@ -165,3 +165,37 @@ Lernhilfe) gilt nicht als Verrat.
 | W2-L4-07 Option E | nannte die Lösung von Akte W2·4 Auftrag 6 a) (*seidenballen* → TBIAN EDNOQ NE) | *ananas* → EOEOD R |
 | Akte W4·1 Archivwissen 1 | Tabellenspalte n = 30 (435/60) beantwortete Auftrag 1 c) | Spalte n = 7 (21/14, steht schon im Abi-Check) |
 | Akte W6·2 Auftrag 4 c) | ZEIT → ZEITIEZEITIE ist das Beispiel der Verfahrensbeschreibung | MOND → MONDNOMONDNO |
+
+**D15, zweiter Teil – Schülerfassungen der Papier-Materialien** (Papier-Bosse W0–W5, Probeklausuren eA/gA,
+Warm-up-Karten, Aufträge und Abi-Checks der Akten; Folien nur, wo sie die Lösung einer Lab-, Boss- oder
+Warm-up-Aufgabe mit denselben Werten zeigen). Der Test prüft jetzt auch diese Prüflinge: Lösungswerte aus
+Erwartungshorizont, Lösungskasten und Kartenrückseite (Bits, fette Zahlen, Geheimtext GROSS, Klartext klein; ohne
+Eingaben links vom Pfeil, betonte Bewertungswörter und die Konstanten I_D/I_Z) dürfen in keinem anderen Schülertext
+ihrer Welt stehen (Probeklausur: aller Welten), Akten je Block, Prüfungen je Teilaufgabe; Folien und Papier sind
+Fundstellen für die Lab-Aufgaben. Neue Wächter (K7): Akte W6·3 ohne Minutentabelle, Schlüsselanzahl-Karten ohne
+Personenzahl aus Akte W4·1, keine zwei Warm-up-Karten derselben Kategorie mit denselben Zahlen. Fachlich zwingende
+Gleichheiten (25⁻¹ = 25, Nachschlagen in WK1) bleiben; Spec-Zeilen der Warm-up-Karten tragen keinen Vermerk (die
+Lösungsspalte wird wörtlich gegen den Seed geprüft) – die Korrektur steht nur hier.
+
+| Material / Aufgabe | Verrat | Korrektur |
+|---|---|---|
+| Folie W0 „Die Lösung“ (F3), Folie W1 „Al-Kindis Manuskript – gelöst“ | zeigten die Lösung der Archivfund-Aufgaben W0-A-01 und W1-A-01 | Folien „Der Weg …“ ohne Klartext, Lösung nur in der Sprechernotiz |
+| Folie W0 Falle P4, Folie W1 „Monoalphabetische Substitution“ | Beispiele = W0-L1-03 (`wir halten den pass`) bzw. W1-L1-03 (`tigris` → RDBPDQ) | `wir kommen am abend` → WMBIE ERNNK ADOMX MAX; `salbei` → QYGAID |
+| Folie W3 Titel | Oberzeile „FUNK & FERNSCHREIBER“ nannte das Archivfund-Wort | „MASCHINEN & FERNSCHREIBER“ |
+| Akte W0·4 Auftrag 5 | *signal* steckt in „Fackelsignale“ (Auftakt, Kapitel) | `45 35 55 12 12 51` → `uozttv` → *flagge* |
+| Akte W1·1 Auftrag 2 | *wesir* ist Codebuch-Wort (Akte W1·3, Level 1.3); Titel „Ein Titel am Hof“ | `DBOQR` → *hirte*, Titel „Ein Wort zurück“ |
+| Akte W1·2 Auftrag 2, Auftrag 6 b), Abi-Check b) | 9⁻¹ = 3 steht auf WU-W1-05; *wesir eilt*; *mond* ist Eingabe von WU-W1-03 | m = 5, 11, 17, 25; *minze duftet*; `12 10 21 13` → *burg* |
+| Papier-Boss W1 a), f) | a) mit dem Beispielschlüssel (3, 7), i → 05 stand dort; f) ergab wieder (3, 7) | a) (2, 9) → 11 08 27 18; f) 14/28 → (8, 3) |
+| Akte W2·2 Auftrag 4, Akte W2·K1 Auftrag 3 | Lösung nannte 0,096 (Level 2.3) bzw. Ergebnis 0,048 = Datenwert in W2-L3-06 | Verweis ohne Wert; Ergebnis 0,0484 |
+| Akte W2·3 Abi-Check c) | n = 1001 (Zähler 38,038) rechnet Archivwissen 4 vor | n = 851, I = 0,0426 → 32,338 / 3,948 → k ≈ 8 |
+| Papier-Boss W2 h) | 25! ≈ 1,55 · 10²⁵ steht in Akte W2·4 | als Hinweis vorgegeben |
+| Akte W3·1 Auftrag 1, 2, 3, Abi-Check a) | B, O, J, E stehen in Archivwissen 1 („Kontrolliere“); A2-Ergebnis 1010 1100 im Papier-Boss W3; A3-Byte 0010 1011 in W3-L2-05; O ⊕ 1010 0110 = Archivwissen 2 | Zeichen Q, Y, 4, 7; `1100 1010 ⊕ 0001 1011`; Schlüssel `1110 0111 · 0011 1001 · 1001 0011 · 0101 1100` (M-Zeile vorgegeben); Wort HUT → `1110 1110 0000 1001 1010 0100` |
+| Akte W3·2 Auftrag 3 | Beispiel-Schlüssel `0111 0111 0111 0111` = Abi-Check d) | `1001 1001 1001 1001` |
+| WU-W3-06, WU-W3-09, WU-W3-11 | S(0110) = Lösung W3-L2-02; *hafen* auf den Funkraum-Folien; Abstände 12, 18, 30 = WU-W2-07 | S(0100) = 0111; `ODQCH` → *lanze*; 16, 24, 40 → 8 |
+| Akte W4·K3 Auftrag 3 | potenzMod(37, 43, 77) samt Quadrierkette und Ergebnis 9 in Akte W4·2 | potenzMod(18, 43, 77) → 46, Probe mit (77, 7) |
+| Papier-Boss W4 a), b) | 6 → 15/12 (WU-W4-01, W6-L2-07, Akte W4·1), 9 → 36/18 (WU-W5-12, W6-B-04) | 24 → 276/48; 32 → 496/64, neu 220/16 |
+| WU-W4-01, -02, -05, -06, -09, -12, WU-W5-12, WU-W6-06, -12 | n = 6/10 in Akte W4·1; Umkehrung von W3-L1-02; 3⁴ mod 7 und DH p = 7, g = 3 auf WU-W4-06/-08; 3⁻¹ mod 26 auf drei Karten; n = 9 im Papier-Boss | 14 → 91/28; `1110 0010 ⊕ 0100 1011`; 2⁵ mod 9 = 5; p = 31, g = 3 → 9, 27, 16; 3⁻¹ mod 20 = 7; 22 → 231/44; 17 → 136/34; 21 → 210/42; 4⁻¹ mod 7 = 2 |
+| W5-L1-08, W5-L2-07, W5-B-13 (+ Generator `w5_kollision`) | heute/morgen bzw. „ueberweise zwei/tausend euro“ samt Lösung auf den Folien 8 und 19 | strand/falke (21); sende elf/fuenfhundert boten (10); liefere neun/neunhundert kisten (6); Zielwerte 21, 10, 6 reserviert |
+| W6-L3-03, WU-W6-01, Akte W6·3 Archivwissen 1 | 4 BE → 9 min (Tabelle, Folie, Karte); Tabelle beantwortete Auftrag 1 | 16 BE → 36 min; 7 BE → 15,75 min; Tabelle nur Takt und „BE · 2,25“ |
+| W6-L2-07, Akte W6·1 Auftrag 4 b), c) | n = 6/10 in Akte W4·1; AB/BA beantwortet Abi-Check W6·3 a) | 23 → 253/46, 33 → 528/66; 28 → 378/56; AB dann AC → AD |
+| Akte W6·1 Abi-Check b), Akte W6·2 Auftrag 1, 2, Abi-Check a), Probeklausur eA g) | Lösungen zitierten Eingaben anderer Teile; Auftrag 1 rechnete das vorgerechnete Beispiel nach; *chronoskopkern* ist der Boss-Preis | Formulierungen ohne fremde Werte; Auftrag 1 mit `ZEITZEIT` → LXVBDEBK (P4); `WIYDI WPVHS BZDIM H` → *salbeiundminze* |

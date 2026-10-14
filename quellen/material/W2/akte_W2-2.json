@@ -379,7 +379,7 @@
     },
     {
      "t": "p",
-     "md": "b) 10 teilt nur 4 der 9 Abstände (z. B. nicht 65, 85, 125); außerdem wäre jede Länge-10-Verschlüsselung mit einem „verdoppelten“ 5er-Schlüssel denkbar – man nimmt den kleinsten Teiler, der alle echten Abstände teilt. Kontrolle über Teiltexte (Akte W2·3: mittlerer Koinzidenzindex bei k = 5 ≈ 0,096)."
+     "md": "b) 10 teilt nur 4 der 9 Abstände (z. B. nicht 65, 85, 125); außerdem wäre jede Länge-10-Verschlüsselung mit einem „verdoppelten“ 5er-Schlüssel denkbar – man nimmt den kleinsten Teiler, der alle echten Abstände teilt. Kontrolle über die Koinzidenzindizes der Teiltexte (Akte W2·3)."
     }
    ],
    "fallen": [

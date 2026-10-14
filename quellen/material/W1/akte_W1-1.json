@@ -269,13 +269,13 @@
    "t": "auftrag",
    "nr": 2,
    "stufe": 1,
-   "titel": "Ein Titel am Hof",
+   "titel": "Ein Wort zurück",
    "sozialform": "Einzelarbeit",
    "niveau": "kern",
    "inhalt": [
     {
      "t": "p",
-     "md": "**Entschlüssele** mit demselben Alphabet: `VRPBO`"
+     "md": "**Entschlüssele** mit demselben Alphabet: `DBOQR`"
     },
     {
      "t": "schreiblinien",
@@ -286,7 +286,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "**wesir** (V → w, R → e, P → s, B → i, O → r)."
+     "md": "**hirte** (D → h, B → i, O → r, Q → t, R → e)."
     },
     {
      "t": "p",

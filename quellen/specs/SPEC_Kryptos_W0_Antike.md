@@ -1319,7 +1319,7 @@ fremde Verfahren in den Griff bekommst.
 | 2 | ★ | kern | Einzel | Übung Polybios (Standardquadrat): a) **Verschlüssele** `legion`. b) **Entschlüssele** `33 15 43 44 34 42`. |
 | 3 | ★ | kern | Einzel | Übung Atbash: **Verschlüssele** `mauer` und **entschlüssele** das Ergebnis wieder. |
 | 4 | ★★ | kern | Partner | **Schritt 2:** **Verschlüssele** mit der Fackelchiffre (Schlüsselwort ATHEN): `hilfe` |
-| 5 | ★★ | kern | Partner | **Schritt 3:** 🔍 **Entschlüssele** (Schlüsselwort ATHEN): `13 43 12 34 55 35`. Notiere, in welcher Reihenfolge du die Stufen umkehrst. |
+| 5 | ★★ | kern | Partner | **Schritt 3:** 🔍 **Entschlüssele** (Schlüsselwort ATHEN): `45 35 55 12 12 51`. Notiere, in welcher Reihenfolge du die Stufen umkehrst. (Korrektur D15: früher *signal* – „Fackelsignale“ steht im Auftakt) |
 | 6 | ★★ | kern | Partner | **Schritt 4:** **Ordne** jede Stufe und das Gesamtverfahren **ein** (Transposition/Substitution, mono/poly). |
 | 7 | ★★★ | kern | Partner | **Schritt 5:** **Beurteile** die Fackelchiffre. Gehe ein auf: (a) Beitrag von Stufe 1 zur Sicherheit, (b) Häufigkeitsanalyse, (c) die Ziffernpaare beim Entschlüsseln von `31 24 51 35 35 51` und `31 55 24 53 44` (Was fällt am Anfang auf?), (d) Schlüsselraum. Formuliere ein Urteil. |
 
@@ -1342,8 +1342,8 @@ Reihenfolge aus, entsteht derselbe Geheimtext.“ [2 BE]
 - **Auftrag 2:** a) **31 15 22 24 34 33** ✔; b) **nestor** ✔ nachgerechnet.
 - **Auftrag 3:** **NZFVI**, zurück: `mauer` ✔ nachgerechnet (Atbash ist involutorisch).
 - **Auftrag 4:** Atbash `hilfe` → `srouv` → **44 43 35 45 51** ✔ nachgerechnet.
-- **Auftrag 5:** Reihenfolge umkehren: erst Stufe 2 zurück (Ziffernpaare → Buchstaben im ATHEN-Quadrat): `hrtmzo`,
-  dann Stufe 1 zurück (Atbash): **signal** ✔ nachgerechnet. *P3:* Wer zuerst „Atbash“ auf die Ziffern anwenden will,
+- **Auftrag 5:** Reihenfolge umkehren: erst Stufe 2 zurück (Ziffernpaare → Buchstaben im ATHEN-Quadrat): `uozttv`,
+  dann Stufe 1 zurück (Atbash): **flagge** ✔ nachgerechnet (Korrektur D15). *P3:* Wer zuerst „Atbash“ auf die Ziffern anwenden will,
   scheitert.
 - **Auftrag 6:** Stufe 1: monoalphabetische Substitution (ohne Schlüssel). Stufe 2: monoalphabetische Substitution
   (Buchstabe → Ziffernpaar). Gesamt: monoalphabetische Substitution – jeder Klartextbuchstabe wird immer durch dasselbe
@@ -1396,7 +1396,7 @@ können muss, ohne die Welt-Präsentation anzufassen. Layout: Designsystem §9 m
 |---|---|---|---|---|
 | F1 | Titel (Epoche) | Die Antike | Mono: „−405 · SPARTA – −52 · ROM“ · Untertitel „Welt 0 · Transposition und Substitution“ | 30 s. Zeitsprung-Animation des Chronoskops. |
 | F2 | Archivfund | Die Botschaft am Stab | Dokument: `DTTMI EBOEL ENFAI DLENA OUEUT FUS` · „Der Stab des Boten: genau 4 Zeilen.“ · Frage: „Was soll die Flotte tun?“ | 8 min. Papierstreifen um Stift wickeln lassen; Archivfund-Text (§0.1) vorlesen. Erwartung: Erst Verwirrung, dann „spaltenweise in 4 Zeilen schreiben“. |
-| F3 | Verfahren Schritt für Schritt | Die Lösung | Raster 4 × 7: `dieflot / telaeuf / tbeineu / mondaus` · „die flotte laeuft bei neumond aus“ | 2 min. Begriffe am Fund: Klartext, Geheimtext, Schlüssel (= Umfang 4). Plutarch-Überlieferung vorsichtig („gilt als“). |
+| F3 | Verfahren Schritt für Schritt | Der Weg | Raster 4 × 7 mit Spalte 1 (`D T T M`), Rest leer · „Klartext: Zeile für Zeile lesen – gemeinsam an der Tafel“ (Korrektur D15: die Lösung `dieflot / telaeuf / tbeineu / mondaus` → „die flotte laeuft bei neumond aus“ steht nur in der Sprechernotiz, der Archivfund ist Lab-Aufgabe W0-A-01) | 2 min. Begriffe am Fund: Klartext, Geheimtext, Schlüssel (= Umfang 4). Plutarch-Überlieferung vorsichtig („gilt als“). |
 | F4 | Inhalt | Die Sprache der Kryptologie | Klartext → [Verfahren + Schlüssel] → Geheimtext → [Verfahren + Schlüssel] → Klartext · ver-/entschlüsseln (chiffrieren/dechiffrieren) | 3 min. Fachbegriffe zählen im Abitur – die Story nicht. |
 | F5 | Zwei Spalten | Kryptologie = Kryptografie + Kryptoanalyse | 🛡 Entwurf und Anwendung · 🔍 Brechen ohne Schlüssel („knacken“) | 2 min. Rolle der Stunde: 🛡. |
 | F6 | Zwei Spalten | Codierung ≠ Verschlüsselung | links: Morsecode, ASCII, QR-Code – öffentliche Vorschrift · rechts: Skytale, Caesar – geheimer Schlüssel | 4 min Murmelrunde: „Ist Morsecode geheim?“ Erwartung: nein, steht im Lexikon. Falle P5. |
@@ -1740,7 +1740,7 @@ Entschlüsselung wurde in beide Richtungen geprüft (Rundreise).
 | Polybios Standard: rom / troia / legion / nestor / olympia / forum | 42 34 32 / 44 42 34 24 11 / 31 15 22 24 34 33 / 33 15 43 44 34 42 / 34 31 54 32 35 24 11 / 21 34 42 45 32 | w0_teil2 |
 | Polybios KORINTH sieg; Quadrate ATHEN, KORINTH, THEBEN (Abi-Check Akte W0·4 seit der M5-Inhaltsprüfung; das KORINTH-Quadrat ist die Lösung von W0-L4-05) | 44 14 32 34; Zeilen wie angegeben | w0_teil2 |
 | Atbash caesar / legion / mauer / mond | XZVHZI / OVTRLM / NZFVI / NLMW | w0_teil2, w0_boss_wu |
-| Fackelchiffre ATHEN: feuer / hilfe / signal / quelle / rauch; KORINTH perser | 45 51 24 51 31 / 44 43 35 45 51 / 13 43 12 34 55 35 / 31 24 51 35 35 51 / 31 55 24 53 44; THEBEN perser 32 51 31 12 51 31 | w0_teil2, w0_teil3 |
+| Fackelchiffre ATHEN: feuer / hilfe / flagge (D15) / quelle / rauch; KORINTH perser | 45 51 24 51 31 / 44 43 35 45 51 / 45 35 55 12 12 51 / 31 24 51 35 35 51 / 31 55 24 53 44; THEBEN perser 32 51 31 12 51 31 | w0_teil2, w0_teil3 |
 | Mosaik: Beispiel (4,2) / a (3,5) / b (5,10) / f vertauscht / Schlüsselzahl | DURZT FKZQP GZVWN G / IXZHM JJAZY WAWFC / fliehtzumhafen / …WAWFX / 7 · 26 = 182 | mosaik |
 | Spiegelbote rom siegt k 1 / wir kommen k 2 / LKFVE … k 3; Wechselschritt essen / eee | TNPSUHFJ / MTKYG OOQZZ ZP / schiffebrennen / HXVJQ / HJH | w0_boss_wu |
 | Online-IDE Gerüst / LSG | kompiliert, Hauptprogramm ok, 1/23 grün / kompiliert, Hauptprogramm ok, 23/23 grün, Testklassen identisch | ide_pruefen.py |

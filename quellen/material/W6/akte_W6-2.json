@@ -236,12 +236,12 @@
    "t": "auftrag",
    "nr": 1,
    "stufe": 1,
-   "titel": "Schritt 1: Nachrechnen",
+   "titel": "Schritt 1: Nachrechnen – mit Falle",
    "sozialform": "Einzelarbeit · 5 min",
    "inhalt": [
     {
      "t": "p",
-     "md": "**Rechne** im Beispiel (Archivwissen 1) die ersten acht Geheimtextzeichen **nach**. Markiere die Stellen, an denen der Pendelbuchstabe Z verwendet wird, und gib an, um wie viele Stellen Z verschiebt."
+     "md": "**Verschlüssele** Block 1 des Beispiels (Archivwissen 1, Zwischentext nach dem Ring) mit der Folge `ZEITZEIT` – das Pendelwort einfach wiederholt – und **vergleiche** mit dem Geheimtext des Beispiels. Markiere im Beispiel die Stellen, an denen der Pendelbuchstabe Z verwendet wird, und gib an, um wie viele Stellen Z verschiebt."
     },
     {
      "t": "schreiblinien",
@@ -252,7 +252,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "Z · E · I · T · I · E · Z · E über `M T N I E A T R`: M + Z = L, T + E = X, N + I = V, I + T = B, E + I = M, A + E = E, T + Z = S, R + E = V → `LXVBMESV`."
+     "md": "Mit `ZEITZEIT`: M + Z = L, T + E = X, N + I = V, I + T = B, E + Z = D, A + E = E, T + I = B, R + T = K → `LXVBDEBK`. Ab dem fünften Zeichen weicht das Ergebnis vom Beispiel ab, weil das Pendel nach ZEIT rückwärts schwingt (Z E I T **I E Z E**) – wer das Wort nur wiederholt, tappt in Falle P4."
     },
     {
      "t": "p",
@@ -567,7 +567,7 @@
     },
     {
      "t": "p",
-     "md": "Ring zurück (t = 3, Zeichen j → Feld 3j mod 8): Block 1 Felder 0–7 = `Z E I T R E I S`; Block 2 = `E B E E N D E T` → Klartext **zeitreisebeendet**."
+     "md": "Ring zurück (t = 3, Zeichen j → Feld 3j mod 8): Block 1 und Block 2 Zeichen für Zeichen auf ihre Felder zurücklegen und Feld 0–7 lesen → Klartext **zeitreisebeendet**."
     },
     {
      "t": "p",
@@ -963,7 +963,7 @@
    "teile": [
     {
      "bez": "a)",
-     "text": "Ein Geheimtext lautet `GFWJR JVCSS BIVZO K` (t = 7, Pendelwort EVE). **Bestimmen** Sie den Klartext.",
+     "text": "Ein Geheimtext lautet `WIYDI WPVHS BZDIM H` (t = 7, Pendelwort EVE). **Bestimmen** Sie den Klartext.",
      "be": 4,
      "material": [
       {
@@ -975,7 +975,7 @@
      "loesung": [
       {
        "t": "p",
-       "md": "Pendel `EVEV…`; Stufe 2 zurück: `CKSONORH OXXNREKP` (2); Ring t = 7 zurück (Zeichen j → Feld 7j mod 8): `CHRONOSK | OPKERNXX` → **chronoskopkern** (Füllzeichen XX) (2)."
+       "md": "Pendel `EVEV…`; Stufe 2 zurück: `SNUIEBLA DXXEZNIM` (2); Ring t = 7 zurück (Zeichen j → Feld 7j mod 8): `SALBEIUN | DMINZEXX` → **salbeiundminze** (Füllzeichen XX) (2)."
       }
      ],
      "fallen": [

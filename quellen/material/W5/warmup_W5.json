@@ -266,7 +266,7 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "Neun Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch?"
+     "md": "17 Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch?"
     },
     {
      "t": "p",
@@ -277,7 +277,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "Symmetrisch 9 · 8 / 2 = **36**, asymmetrisch 2 · 9 = **18** (9 Schlüsselpaare)."
+     "md": "Symmetrisch 17 · 16 / 2 = **136**, asymmetrisch 2 · 17 = **34** (17 Schlüsselpaare)."
     }
    ]
   }

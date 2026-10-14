@@ -974,7 +974,7 @@ test('w4_inverses (Kür): a · a⁻¹ ≡ 1 mod m, kleinster positiver Rest; neg
 });
 
 test('w5_kollision: Musterlösung erfüllt hash-ziel, Ziel nie KH eines reservierten Paars, Varianten A (andere Nachricht) und B (Präfix)', () => {
-  const RESERVIERT = new Set([22, 18, 8, 0]); // heute/morgen, ueberweise…, treffen…, sonne/geheim (SPEC W5 §0a)
+  const RESERVIERT = new Set([22, 18, 8, 0, 21, 10, 6]); // heute/morgen, ueberweise…, treffen…, sonne/geheim (SPEC W5 §0a); Lab-Paare D15
   const varianten = new Set();
   for (let seed = 1; seed <= 1000; seed++) {
     const a = G.erzeuge('w5_kollision', seed * 7 + 1);

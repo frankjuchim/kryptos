@@ -27,11 +27,11 @@
          "zeilen": [["m", "2", "3", "4", "5", "7", "8", "9", "12"], ["d", "15", "10", "22", "6", "25", "11", "13", "17"]]}
       ]}],
      "teile": [
-      {"bez": "a)", "text": "**Bestimmen Sie** den Geheimtext zum Klartext „anis“ mit dem Schlüssel (3, 7).", "be": 3,
+      {"bez": "a)", "text": "**Bestimmen Sie** den Geheimtext zum Klartext „anis“ mit dem Schlüssel (2, 9).", "be": 3,
        "erwartung": [
         {"punkt": "Nummern a = 1, n = 14, i = 9, s = 19 (Anlage, A = 1)", "afb": "I", "be": 1},
-        {"punkt": "Rechnung 3 · p + 7: 10, 49, 34, 64", "afb": "I", "be": 1},
-        {"punkt": "Rest mod 29, zweistellig: **10 20 05 06**", "afb": "I", "be": 1}],
+        {"punkt": "Rechnung 2 · p + 9: 11, 37, 27, 47", "afb": "I", "be": 1},
+        {"punkt": "Rest mod 29, zweistellig: **11 08 27 18**", "afb": "I", "be": 1}],
        "fehler": "mit A = 0 gerechnet (P1); Rest nicht zweistellig geschrieben (05 statt 5)."},
       {"bez": "b)", "text": "**Bestimmen Sie** den Klartext zum Geheimtext `28 19 05 18 07 14 22 27 05`, der mit dem Schlüssel (5, 2) erzeugt wurde.", "be": 4,
        "erwartung": [
@@ -54,13 +54,13 @@
         {"punkt": "28 · 29 = **812** Schlüssel (schwach: (1, 0) lässt die Nummern unverändert, m = 1 ist reine Verschiebung)", "afb": "II", "be": 1},
         {"punkt": "Mit Rechner sofort durchprobiert, von Hand mühsam, aber unnötig (siehe f); Urteil: unsicher", "afb": "II", "be": 2}],
        "fehler": "28 · 28 oder 26! (P7)."},
-      {"bez": "f)", "text": "Die Konkurrenz hat viele lange Bestelllisten abgefangen. Die häufigste Zahl ist 22, die zweithäufigste 20. **Erläutern Sie**, wie man daraus den Schlüssel gewinnen kann, und **bestimmen Sie** ihn unter der Annahme, dass 22 für E und 20 für N steht.", "be": 5,
+      {"bez": "f)", "text": "Die Konkurrenz hat viele lange Bestelllisten abgefangen. Die häufigste Zahl ist 14, die zweithäufigste 28. **Erläutern Sie**, wie man daraus den Schlüssel gewinnen kann, und **bestimmen Sie** ihn unter der Annahme, dass 14 für E und 28 für N steht.", "be": 5,
        "erwartung": [
         {"punkt": "Monoalphabetisch → Häufigkeiten bleiben erhalten; häufigste Zahl ≙ e, zweithäufigste ≙ n; Voraussetzung: lange Texte, Sprache bekannt", "afb": "II", "be": 2},
-        {"punkt": "Gleichungen 5m + t ≡ 22, 14m + t ≡ 20 (mod 29) → 9m ≡ −2 ≡ 27 → m = 13 · 27 = 351 mod 29 = 3 (9^−1^ = 13 aus der Tabelle); t = 22 − 15 = 7 → **(3, 7)**", "afb": "III", "be": 2},
-        {"punkt": "Probe: n → 3 · 14 + 7 = 49 mod 29 = 20 ✔", "afb": "III", "be": 1}],
-       "alternativen": "Probieren von m mit der Bedingung 9m ≡ 27 (m = 3 sofort sichtbar, da 9 · 3 = 27) – volle Punktzahl.",
-       "fehler": "Gleichungssystem mit A = 0 aufgestellt (P1); negativer Rest −2 nicht in 27 umgewandelt (P2); nur „Häufigkeitsanalyse“ ohne Vorgehen (P10)."},
+        {"punkt": "Gleichungen 5m + t ≡ 14, 14m + t ≡ 28 (mod 29) → 9m ≡ 14 → m = 13 · 14 = 182 mod 29 = 8 (9^−1^ = 13 aus der Tabelle); t = 14 − 40 = −26 ≡ 3 → **(8, 3)**", "afb": "III", "be": 2},
+        {"punkt": "Probe: n → 8 · 14 + 3 = 115 mod 29 = 28 ✔", "afb": "III", "be": 1}],
+       "alternativen": "Probieren von m mit der Bedingung 9m ≡ 14 (m = 8: 9 · 8 = 72 = 2 · 29 + 14) – volle Punktzahl.",
+       "fehler": "Gleichungssystem mit A = 0 aufgestellt (P1); negativer Rest −26 nicht in 3 umgewandelt (P2); nur „Häufigkeitsanalyse“ ohne Vorgehen (P10)."},
       {"bez": "g)", "text": "**Entscheiden Sie begründet**, ob die folgende Aussage korrekt ist: „Wendet man SAFRAN-29 zweimal hintereinander mit den Schlüsseln (m~1~, t~1~) und (m~2~, t~2~) an (die zweite Anwendung auf die Zahlen der ersten), wird das Verfahren deutlich sicherer.“", "be": 3,
        "erwartung": [
         {"punkt": "Falsch: c~2~ = m~2~ · (m~1~ · p + t~1~) + t~2~ = (m~2~m~1~) · p + (m~2~t~1~ + t~2~) mod 29 – wieder SAFRAN-29 mit dem Schlüssel (m~1~m~2~ mod 29, (m~2~t~1~ + t~2~) mod 29); z. B. (3, 7) dann (2, 5) = (6, 19)", "afb": "II", "be": 2},

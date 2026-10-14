@@ -1,13 +1,14 @@
 'use strict';
 // Generator Welt 5 (SPEC W5 §8 w5_kollision, Interaktion hash-ziel E126): Variante A – zu einem Wort eine andere Nachricht
 // mit demselben KRYPTOS-Hash (Regel: vorletzter Buchstabe + 1, letzter − 3); Variante B – Nachricht mit Präfix und
-// vorgegebenem Hash. Zielwerte der reservierten Paare aus SPEC W5 §0a (22, 18, 8, 0) kommen nie vor.
+// vorgegebenem Hash. Zielwerte der reservierten Paare aus SPEC W5 §0a (22, 18, 8, 0) und der Lab-Paare aus Korrektur D15
+// (21 strand/falke W5-L1-08, 10 W5-L2-07, 6 W5-B-13) kommen nie vor.
 
 const K = require('../../../public/static/js/shared/krypto');
 const { WOERTER_W5 } = require('./woerter');
 
 const txt = (md) => ({ t: 'text', md });
-const RESERVIERT = new Set([22, 18, 8, 0]);
+const RESERVIERT = new Set([22, 18, 8, 0, 21, 10, 6]);
 const kh = (t) => K.kryptosHash(t).wert;
 const ABC = 'abcdefghijklmnopqrstuvwxyz';
 const NUM = 'A = 1 … Z = 26, Start h = 0, je Buchstabe h ← (3 · h + w) mod 29';

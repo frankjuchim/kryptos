@@ -12,6 +12,6 @@
     {"id":"WU-W5-09","welt":5,"kategorie":"hash","titel":"Schubfach","aufgabe":"Ein Hash hat 8 Bit. Ab wie vielen verschiedenen Nachrichten ist eine Kollision sicher?","loesung":"2⁸ = 256 Werte → ab **257** Nachrichten","minuten":2},
     {"id":"WU-W5-10","welt":5,"kategorie":"hybrid","titel":"Hybrid (W4)","aufgabe":"Womit verschlüsselt Alice beim Hybridverfahren den Sitzungsschlüssel für Bob?","loesung":"mit **Bobs öffentlichem Schlüssel**","minuten":1},
     {"id":"WU-W5-11","welt":5,"kategorie":"substitution-poly","titel":"Vigenère-Rückblick (W2)","aufgabe":"Vigenère, Schlüsselbuchstabe C (Verschiebung 2, A = Verschiebung 0). Verschlüssele den Klartextbuchstaben e.","loesung":"e (5) + 2 → **G**","minuten":1},
-    {"id":"WU-W5-12","welt":5,"kategorie":"schluesselraum","titel":"Schlüsselanzahl (W4)","aufgabe":"Neun Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel symmetrisch, wie viele asymmetrisch?","loesung":"9 · 8/2 = **36**, 2 · 9 = **18**","minuten":2}
+    {"id":"WU-W5-12","welt":5,"kategorie":"schluesselraum","titel":"Schlüsselanzahl (W4)","aufgabe":"17 Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel symmetrisch, wie viele asymmetrisch?","loesung":"17 · 16/2 = **136**, 2 · 17 = **34**","minuten":2}
   ]
 }

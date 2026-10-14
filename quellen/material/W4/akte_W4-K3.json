@@ -460,7 +460,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "Führe das Struktogramm `potenzMod(37, 43, 77)` in einer **Tracetabelle** aus (Startzeile, dann je Schleifendurchlauf nach `exp ← exp / 2`) und vergleiche mit Akte W4·2."
+     "md": "Führe das Struktogramm `potenzMod(18, 43, 77)` in einer **Tracetabelle** aus (Startzeile, dann je Schleifendurchlauf nach `exp ← exp / 2`). **Prüfe** das Ergebnis m, indem du m mit dem öffentlichen Schlüssel (77, 7) wieder verschlüsselst."
     },
     {
      "t": "tabelle",
@@ -475,7 +475,7 @@
      "zeilen": [
       [
        "43",
-       "37",
+       "18",
        "1"
       ],
       [
@@ -528,38 +528,38 @@
      "zeilen": [
       [
        "43",
-       "37",
+       "18",
        "1"
       ],
       [
        "21",
-       "60",
-       "37"
+       "16",
+       "18"
       ],
       [
        "10",
-       "58",
-       "64"
+       "25",
+       "57"
       ],
       [
        "5",
-       "53",
-       "64"
+       "9",
+       "57"
       ],
       [
        "2",
-       "37",
-       "4"
+       "4",
+       "51"
       ],
       [
        "1",
-       "60",
-       "4"
+       "16",
+       "51"
       ],
       [
        "0",
-       "58",
-       "**9**"
+       "25",
+       "**46**"
       ]
      ],
      "breiten": [
@@ -572,7 +572,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "Ergebnis **9** – gleich wie in Akte W4·2 (37 → 9 mit dem privaten Schlüssel (77, 43)). Die Werte von b sind genau die Quadrierkette 37, 60, 58, 53, 37, 60; ergebnis wird nur bei ungeradem exp (43, 21, 5, 1 → Zweierpotenzen 1, 2, 8, 32) multipliziert."
+     "md": "Ergebnis **46**; Probe: 46⁷ mod 77 = 18 ✔. Die Werte von b sind die Quadrierkette 18, 16, 25, 9, 4, 16, 25; ergebnis wird nur bei ungeradem exp (43, 21, 5, 1 → Zweierpotenzen 1, 2, 8, 32) multipliziert."
     }
    ],
    "fallen": [

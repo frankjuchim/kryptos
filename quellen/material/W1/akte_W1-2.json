@@ -469,7 +469,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "**Bestimme** ohne Taschenrechner die inversen Schlüssel zu m = 5, 9, 11, 17 mod 26. Notiere den Weg mit den Zahlen 27, 53, 79, …"
+     "md": "**Bestimme** ohne Taschenrechner die inversen Schlüssel zu m = 5, 11, 17, 25 mod 26. Notiere den Weg mit den Zahlen 27, 53, 79, …"
     },
     {
      "t": "tabelle",
@@ -493,17 +493,17 @@
        ""
       ],
       [
-       "9",
-       "",
-       ""
-      ],
-      [
        "11",
        "",
        ""
       ],
       [
        "17",
+       "",
+       ""
+      ],
+      [
+       "25",
        "",
        ""
       ]
@@ -532,11 +532,6 @@
        "**21**"
       ],
       [
-       "9",
-       "9 · 3 = 27 = 26 + 1",
-       "**3**"
-      ],
-      [
        "11",
        "11 · 19 = 209 = 8 · 26 + 1",
        "**19**"
@@ -545,6 +540,11 @@
        "17",
        "17 · 23 = 391 = 15 · 26 + 1",
        "**23**"
+      ],
+      [
+       "25",
+       "25 · 25 = 625 = 24 · 26 + 1 (25 ≡ −1, (−1) · (−1) = 1)",
+       "**25**"
       ]
      ]
     }
@@ -796,7 +796,7 @@
      "buchstaben": true,
      "items": [
       "**Verschlüssele** `gelehrte`.",
-      "**Entschlüssele** `17 42 56 15 72 77 92 53 39`."
+      "**Entschlüssele** `88 15 34 35 42 13 24 30 39 77 94`."
      ]
     },
     {
@@ -812,7 +812,7 @@
     },
     {
      "t": "p",
-     "md": "b) **wesir eilt**."
+     "md": "b) **minze duftet**."
     }
    ],
    "fallen": [
@@ -901,12 +901,12 @@
     },
     {
      "bez": "b)",
-     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `20 03 26 24` für m = 6.",
+     "text": "**Bestimmen Sie** den Klartext zum Geheimtext `12 10 21 13` für m = 6.",
      "be": 3,
      "loesung": [
       {
        "t": "p",
-       "md": "d = 5 (6 · 5 = 30 ≡ 1): 20 · 5 = 100 mod 29 = 13 → m; 3 · 5 = 15 → o; 26 · 5 = 130 mod 29 = 14 → n; 24 · 5 = 120 mod 29 = 4 → d → **mond** [3]"
+       "md": "d = 5 (6 · 5 = 30 ≡ 1): 12 · 5 = 60 mod 29 = 2 → b; 10 · 5 = 50 mod 29 = 21 → u; 21 · 5 = 105 mod 29 = 18 → r; 13 · 5 = 65 mod 29 = 7 → g → **burg** [3]"
       }
      ],
      "fallen": [

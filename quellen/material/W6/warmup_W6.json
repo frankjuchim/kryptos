@@ -2,8 +2,8 @@
  "typ": "warmup", "welt": 6, "kennung": "WARM-UP W6", "titel": "Fallen-Schnelltest und Uhrwerk", "datei": "KR_W6_Warmup",
  "karten": [
   {"id": "WU-W6-01", "titel": "Der Takt", "minuten": 1, "kategorie": "begriffe",
-   "aufgabe": [{"t": "p", "md": "Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 4 BE? (270 min, 120 BE)"}],
-   "loesung": [{"t": "p", "md": "270 : 120 = 2,25 min je BE; 4 · 2,25 = **9 min**."}]},
+   "aufgabe": [{"t": "p", "md": "Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 7 BE? (270 min, 120 BE)"}],
+   "loesung": [{"t": "p", "md": "270 : 120 = 2,25 min je BE; 7 · 2,25 = **15,75 min**."}]},
   {"id": "WU-W6-02", "titel": "Wert oder Position?", "minuten": 1, "kategorie": "begriffe",
    "aufgabe": [{"t": "p", "md": "Welchen Wert hat K nach der Anlage? Welche Position hat K in „KRYPTA“ (EH, ab 0)?"}],
    "loesung": [{"t": "p", "md": "Wert **11**; Position **0** (P1)."}]},
@@ -17,8 +17,8 @@
    "aufgabe": [{"t": "p", "md": "Ist der Morsecode eine Verschlüsselung? Begründe in einem Satz."}],
    "loesung": [{"t": "p", "md": "**Nein** – Codierung: öffentliche Zuordnung, kein geheimer Schlüssel (P5)."}]},
   {"id": "WU-W6-06", "titel": "Schlüssel zählen", "minuten": 2, "kategorie": "schluesselraum",
-   "aufgabe": [{"t": "p", "md": "10 Personen kommunizieren paarweise verschlüsselt: Wie viele Schlüssel symmetrisch, wie viele asymmetrisch?"}],
-   "loesung": [{"t": "p", "md": "10 · 9 / 2 = **45** / 2 · 10 = **20** (P7)."}]},
+   "aufgabe": [{"t": "p", "md": "21 Personen kommunizieren paarweise verschlüsselt: Wie viele Schlüssel symmetrisch, wie viele asymmetrisch?"}],
+   "loesung": [{"t": "p", "md": "21 · 20 / 2 = **210** / 2 · 21 = **42** (P7)."}]},
   {"id": "WU-W6-07", "titel": "Doppel-Vigenère", "minuten": 2, "kategorie": "substitution-poly",
    "aufgabe": [{"t": "p", "md": "Vigenère erst mit AB, dann noch einmal mit AB. Welches Schlüsselwort ergibt dasselbe in einem Schritt?"}],
    "loesung": [{"t": "p", "md": "**AC** (A + A = A, B + B = C) (P8)."}]},
@@ -35,7 +35,7 @@
    "aufgabe": [{"t": "p", "md": "Ring t = 7: Lies den Block `ZAHNRADX` (Felder 0–7) aus."}],
    "loesung": [{"t": "p", "md": "Felder 0 7 6 5 4 3 2 1 → `ZXDARNHA`."}]},
   {"id": "WU-W6-12", "titel": "Bit-Blitz", "minuten": 2, "kategorie": "bits-xor",
-   "aufgabe": [{"t": "p", "md": "`1011 ⊕ 0110` = ? Und: Welche Zahl ist das Inverse von 3 mod 26?"}],
-   "loesung": [{"t": "p", "md": "`1101`; **9** (3 · 9 = 27 ≡ 1)."}]}
+   "aufgabe": [{"t": "p", "md": "`1011 ⊕ 0110` = ? Und: Welche Zahl ist das Inverse von 4 mod 7?"}],
+   "loesung": [{"t": "p", "md": "`1101`; **2** (4 · 2 = 8 ≡ 1)."}]}
  ]
 }

@@ -53,7 +53,7 @@
      "zeilen": [
       [
        "WU-W4-02",
-       "XOR (W3): `1011 0110` ⊕ `0110 0011` = ?"
+       "XOR (W3): `1110 0010` ⊕ `0100 1011` = ?"
       ],
       [
        "WU-W4-03",
@@ -61,13 +61,13 @@
       ],
       [
        "WU-W4-09",
-       "Inverses (W1): 3 · ? mod 26 = 1"
+       "Inverses (W1): 3 · ? mod 20 = 1"
       ]
      ],
      "schrift_folie": 20
     }
    ],
-   "notizen": "10 min, davon 3 min Besprechung. Lösungen: WU-W4-02 → 1101 0101; WU-W4-03 → w = 23, ((23 + 7 − 1) mod 26) + 1 = 4 → D; WU-W4-09 → 9 (3 · 9 = 27 = 26 + 1).\nFalle P2 betonen: mod = kleinster nicht negativer Rest, Überlauf über Z. Das Inverse brauchen wir heute für Eves Angriffe auf fremde Tauschverfahren."
+   "notizen": "10 min, davon 3 min Besprechung. Lösungen: WU-W4-02 → 1010 1001; WU-W4-03 → w = 23, ((23 + 7 − 1) mod 26) + 1 = 4 → D; WU-W4-09 → 7 (3 · 7 = 21 = 20 + 1).\nFalle P2 betonen: mod = kleinster nicht negativer Rest, Überlauf über Z. Das Inverse brauchen wir heute für Eves Angriffe auf fremde Tauschverfahren."
   },
   {
    "layout": "abschnitt",
@@ -818,21 +818,21 @@
      "zeilen": [
       [
        "WU-W4-01",
-       "Sechs Personen: Schlüssel symmetrisch? asymmetrisch?"
+       "Vierzehn Personen: Schlüssel symmetrisch? asymmetrisch?"
       ],
       [
        "WU-W4-06",
-       "DH im Kleinformat: p = 7, g = 3, a = 2, b = 4 → A, B, K"
+       "DH im Kleinformat: p = 31, g = 3, a = 2, b = 3 → A, B, K"
       ],
       [
        "WU-W4-12",
-       "Falle P7: „Zehn Teilnehmende: 90 bzw. 10 Schlüssel“"
+       "Falle P7: „22 Teilnehmende: 462 bzw. 22 Schlüssel“"
       ]
      ],
      "schrift_folie": 20
     }
    ],
-   "notizen": "10 min (Folie in der Spezifikation als „Folie 3 analog“ vorgesehen). Lösungen: WU-W4-01 → 15 / 12; WU-W4-06 → A = 2, B = 4, K = 2; WU-W4-12 → symmetrisch 45 (Halbierung vergessen), asymmetrisch 20 (10 Schlüsselpaare)."
+   "notizen": "10 min (Folie in der Spezifikation als „Folie 3 analog“ vorgesehen). Lösungen: WU-W4-01 → 91 / 28; WU-W4-06 → A = 9, B = 27, K = 16; WU-W4-12 → symmetrisch 231 (Halbierung vergessen), asymmetrisch 44 (22 Schlüsselpaare)."
   },
   {
    "layout": "inhalt",

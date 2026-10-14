@@ -1,17 +1,17 @@
 {
   "version": 1,
   "karten": [
-    {"id":"WU-W6-01","welt":6,"kategorie":"begriffe","titel":"Der Takt","aufgabe":"Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 4 BE? (270 min, 120 BE)","loesung":"4 · 2,25 = **9 min**","minuten":1},
+    {"id":"WU-W6-01","welt":6,"kategorie":"begriffe","titel":"Der Takt","aufgabe":"Wie viele Minuten hast du im eA-Abitur für eine Teilaufgabe mit 7 BE? (270 min, 120 BE)","loesung":"7 · 2,25 = **15,75 min**","minuten":1},
     {"id":"WU-W6-02","welt":6,"kategorie":"begriffe","titel":"Wert oder Position?","aufgabe":"Wert von K nach der Anlage? Position von K in „KRYPTA“ (EH, ab 0)?","loesung":"**11**; **0**","minuten":1},
     {"id":"WU-W6-03","welt":6,"kategorie":"modulo","titel":"Rest-Check","aufgabe":"(5 − 9) mod 26 = ? Welcher Buchstabe (A = 1)? Und welcher Buchstabe entspricht dem Rest 0?","loesung":"**22 → V**; Rest 0 → **Z**","minuten":2},
     {"id":"WU-W6-04","welt":6,"kategorie":"entschluesseln","titel":"Wer zuerst?","aufgabe":"Ein Verfahren: Stufe 1 Vigenère mit OHR, Stufe 2 Text rückwärts. In welcher Reihenfolge entschlüsselst du?","loesung":"Erst rückwärts lesen (Stufe 2 zurück), dann Vigenère zurück (P3)","minuten":1},
     {"id":"WU-W6-05","welt":6,"kategorie":"begriffe","titel":"Code oder Chiffre?","aufgabe":"Ist der Morsecode eine Verschlüsselung? Begründe in einem Satz.","loesung":"Nein – Codierung: öffentliche Zuordnung, kein geheimer Schlüssel (P5)","minuten":1},
-    {"id":"WU-W6-06","welt":6,"kategorie":"schluesselraum","titel":"Schlüssel zählen","aufgabe":"10 Personen, paarweise: symmetrisch / asymmetrisch?","loesung":"**45 / 20**","minuten":2},
+    {"id":"WU-W6-06","welt":6,"kategorie":"schluesselraum","titel":"Schlüssel zählen","aufgabe":"21 Personen, paarweise: symmetrisch / asymmetrisch?","loesung":"**210 / 42**","minuten":2},
     {"id":"WU-W6-07","welt":6,"kategorie":"substitution-poly","titel":"Doppel-Vigenère","aufgabe":"Vigenère erst mit AB, dann noch einmal mit AB. Welches Schlüsselwort ergibt dasselbe in einem Schritt?","loesung":"**AC** (A + A = A, B + B = C)","minuten":2},
     {"id":"WU-W6-08","welt":6,"kategorie":"signatur","titel":"Siegel-Check","aufgabe":"Womit signiert Alice, womit prüft Bob?","loesung":"Alices privater Schlüssel; Alices öffentlicher Schlüssel + Hashvergleich (P9)","minuten":1},
     {"id":"WU-W6-09","welt":6,"kategorie":"begriffe","titel":"Operator-Blitz","aufgabe":"„Erläutern Sie …“ – was fehlt, wenn du nur einen Fachbegriff hinschreibst?","loesung":"Die Veranschaulichung: zusätzliche Information, am besten ein Beispiel (P10)","minuten":1},
     {"id":"WU-W6-10","welt":6,"kategorie":"substitution-poly","titel":"Pendel","aufgabe":"Schreibe das Pendel zu KERN für 8 Zeichen. Periode?","loesung":"`KERNREKE`; Periode **6**","minuten":2},
     {"id":"WU-W6-11","welt":6,"kategorie":"transposition","titel":"Ring","aufgabe":"Ring t = 7: Lies den Block `ZAHNRADX` (Felder 0–7) aus.","loesung":"`ZXDARNHA`","minuten":2},
-    {"id":"WU-W6-12","welt":6,"kategorie":"bits-xor","titel":"Bit-Blitz","aufgabe":"`1011` ⊕ `0110` = ? Und: Welche Zahl ist das Inverse von 3 mod 26?","loesung":"`1101`; **9** (3 · 9 = 27 ≡ 1)","minuten":2}
+    {"id":"WU-W6-12","welt":6,"kategorie":"bits-xor","titel":"Bit-Blitz","aufgabe":"`1011` ⊕ `0110` = ? Und: Welche Zahl ist das Inverse von 4 mod 7?","loesung":"`1101`; **2** (4 · 2 = 8 ≡ 1)","minuten":2}
   ]
 }

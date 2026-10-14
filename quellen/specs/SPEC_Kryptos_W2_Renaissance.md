@@ -726,7 +726,7 @@ d) **Entscheiden Sie begründet**, ob der Kasiski-Test bei einem Geheimtext von 
 - **Auftrag 4:** (a) 37 ist eine Primzahl, kein Vielfaches von 5 → Zufallstreffer; aussortieren und begründen, nicht den
   ggT aller Abstände (dann 1) bilden (P6). (b) 10 teilt nur 4 der 9 Abstände (z. B. nicht 65, 85, 125); außerdem wäre jede
   Länge-10-Verschlüsselung mit einem „verdoppelten“ 5er-Schlüssel denkbar – man nimmt den kleinsten Teiler, der alle
-  echten Abstände teilt. Kontrolle über Teiltexte (Akte W2·3: mittlerer Koinzidenzindex bei k = 5 ≈ 0,096).
+  echten Abstände teilt. Kontrolle über die Koinzidenzindizes der Teiltexte (Akte W2·3; Korrektur D15: ohne den Wert aus Level 2.3).
 - **Auftrag 5:** (a) T₁: A (1) → ((1 − 5) mod 26) + 1 = 23 → **W**; T₂: E → **A**; T₃: G (7) → **C**; T₄: L (12) → **H**;
   T₅: W (23) → **S**; Schlüsselwort **WACHS** ✔ nachgerechnet. (b) T₃: Verschiebung 2; P (16) − 2 = 14 → n, der
   zweithäufigste deutsche Buchstabe – passt. (Ebenso T₁: J (10) − 22 → n.) (c) ZIGNS HEGYW WUUCW →
@@ -826,7 +826,7 @@ Was liefert die Friedman-Formel für I = 0,076 und für I = 0,038 (jeweils n = 4
 
 a) **Berechnen Sie** den Koinzidenzindex des Wortes KANALBANK. [2 BE]
 b) **Erläutern Sie**, warum eine Caesar-Verschlüsselung den Koinzidenzindex eines Textes nicht verändert. [2 BE]
-c) Ein Vigenère-Geheimtext hat n = 1001 Zeichen und den Koinzidenzindex I = 0,0418. **Bestimmen Sie** mithilfe der
+c) Ein Vigenère-Geheimtext hat n = 851 Zeichen und den Koinzidenzindex I = 0,0426 (Korrektur D15: n = 1001 rechnet die Rechenvorlage in Archivwissen 4 vor). **Bestimmen Sie** mithilfe der
 Friedman-Formel (I_D = 0,076, I_Z = 0,038) eine Schätzung der Schlüssellänge. [3 BE]
 d) **Beurteilen Sie** die Aussage: „Der Friedman-Test liefert die Schlüssellänge exakt.“ [3 BE]
 
@@ -852,8 +852,8 @@ d) **Beurteilen Sie** die Aussage: „Der Friedman-Test liefert die Schlüssell�
   (wie beim One-Time-Pad, Welt 3) ✔ nachgerechnet.
 - **Abi-Check a)** K 2, A 3, N 2, L 1, B 1; n = 9: (2 + 6 + 2)/72 = 10/72 ≈ 0,139 ✔ nachgerechnet [2 BE].
   **b)** Caesar ersetzt jeden Buchstaben immer durch denselben anderen; die Anzahlen nᵢ werden nur anderen Buchstaben
-  zugeordnet, die Summe Σ nᵢ(nᵢ − 1) und n bleiben gleich [2 BE]. **c)** Zähler 0,038 · 1001 = 38,038; (n − 1) · I =
-  1000 · 0,0418 = 41,8; Nenner 41,8 − 38,038 + 0,076 = 3,838; k ≈ 38,038 : 3,838 ≈ 9,9 ≈ **10** ✔ nachgerechnet
+  zugeordnet, die Summe Σ nᵢ(nᵢ − 1) und n bleiben gleich [2 BE]. **c)** Zähler 0,038 · 851 = 32,338; (n − 1) · I =
+  850 · 0,0426 = 36,21; Nenner 36,21 − 32,338 + 0,076 = 3,948; k ≈ 32,338 : 3,948 ≈ 8,2 ≈ **8** ✔ nachgerechnet (D15)
   [3 BE: Einsetzen 1, Zwischenwerte 1, Ergebnis gerundet 1]. **d)** Falsch: Die Formel verwendet Durchschnittswerte
   (I_D, I_Z), der tatsächliche Text weicht ab; bei kurzen Texten große Streuung (Beispiel: Eves Brief 4,15 statt 5);
   Ergebnis ist keine ganze Zahl → nur Schätzung, Bestätigung durch Kasiski/Teiltexte nötig [3 BE inkl. Urteil, P10].
@@ -1187,7 +1187,7 @@ g) **Untersuchen Sie**, welche Auswirkungen es auf die Entschlüsselung hat, wen
 Geheimtextbuchstabe verfälscht wird bzw. (2) ein Geheimtextbuchstabe verloren geht. [3 BE]
 
 h) **Beurteilen Sie** die Sicherheit des Verfahrens Zwei-Quadrat. Berücksichtigen Sie dabei auch die Größe des
-Schlüsselraums. [3 BE]
+Schlüsselraums (Hinweis: 25! ≈ 1,55 · 10²⁵). [3 BE] (Korrektur D15: Der Wert steht in Akte W2·4 und wird jetzt vorgegeben.)
 
 Summe: 24 BE.
 
@@ -1441,7 +1441,7 @@ als Hausaufgabe; Kreuzquadrat und Boss online als Hausaufgabe; Papier-Boss entf�
 | Teiltext-Aufgaben | VCVIZ TSWLE UKXMY → VISEX/CZWUM/VTLKY (Archivwissen); OIZRN SLZLE UMJMJ → ORLEJ/INZUM/ZSLMJ (kahnfahrtamufer/EIS, Auftrag 1); DWETZ CVIJX NEPOQ → WZINO (Lab); YLYTX EBYWU TPRP → T₂ LXYTP; Spalte mit X ↦ e → T | t09, t10, t99 |
 | Kasiski-Zahlen | ggT(42, 63, 105, 84) = 21; ggT(28, 42, 70) = 14; ggT(18, 27, 45) = 9; ggT(21, 35, 56) = 7; Teilertabelle 40, 65, 85, 125, 15 | t09, t99 |
 | Koinzidenzindex | ANANAS 8/30; TERRASSE 6/56 = 3/28 (Lab W2-L23-01); SERENISSIMA 10/110; GONDEL 0 (Akte W2·3, bis zur M5-Inhaltsprüfung LAGUNE = Archivfund-Schlüssel); KANALBANK 10/72; BALLADE 2/21; ABBA/ANNA/OTTO/RWWR 4/12; AOPD 0; Zähltabelle 30/380 | t06, t09, t99 |
-| Friedman | (1001; 0,0475) → 3,99; (501; 0,0456) → 4,96; (1001; 0,057) → 2,00; (1001; 0,0418) → 9,91; (601; 0,0507) → 2,98; (400; 0,076) → 1; (400; 0,038) → 400; Generator 14 Kombinationen | t06, t09, t99 |
+| Friedman | (1001; 0,0475) → 3,99; (501; 0,0456) → 4,96; (1001; 0,057) → 2,00; (851; 0,0426) → 8,19 (Abi-Check W2·3 c, D15); (601; 0,0507) → 2,98; (400; 0,076) → 1; (400; 0,038) → 400; Generator 14 Kombinationen | t06, t09, t99 |
 | Kür K1 | 66/18/48; erwartetes I = 0,0484 → k ≈ 2,99 (ungerundet 3,00) zurück; Näherung 5 vs. 4,96 | t09, t99 |
 | P04 | I = 410/9900 ≈ 0,0414; k ≈ 10,1 bzw. 11,6; doppeltes I → 0,85; Teiltext-IC ≈ 0,071 | t01, t99 |
 | Playfair RIALTO | Quadrat; dasschiffsegeltmorgen → CLQYQ DGAHV KNBMD TEUFO MBQV; wasserweg → XIQYU DIVBM; HLIRO UUQTB AY → kartenspiel(x); GAURO TEOFH RDDHO UEZTF → hinterdemglockenturm; ballett/kaffee/ballon/gewitter-Vorbereitung; jagd → ALKB; OD/BG/RS/HU/WI; Lab GK → HM, LY → DL, PE → UB; Quadrat GALEERE (G A L E R / B C D F H / I K M N O / P Q S T U / V W X Y Z) | t07, t99 |

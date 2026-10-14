@@ -8,7 +8,7 @@
    "layout": "titel",
    "abschnitt": "DS 9 · Vernam",
    "titel": "Das Maschinenzeitalter",
-   "oberzeile": "WELT 3 · 1917 – 1977 · FUNK & FERNSCHREIBER",
+   "oberzeile": "WELT 3 · 1917 – 1977 · MASCHINEN & FERNSCHREIBER",
    "untertitel": "Welt 3 · Wenn Maschinen verschlüsseln",
    "notizen": "1 min. Begrüßung, Zeitsprung ins Jahr 1917.\nImpuls: „Was ändert sich, wenn nicht mehr Menschen, sondern Maschinen verschlüsseln?“\nErwartete Antworten: schneller; Bits statt Buchstaben; viel mehr Nachrichten; Funk kann jeder abhören – also muss die Verschlüsselung besser werden.\nÜberleitung: „Das Chronoskop hält in einer Fernschreibstelle …“"
   },
@@ -325,11 +325,11 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "1.  ASCII-Werte und Bits von B, O, J, E"
+     "md": "1.  ASCII-Werte und Bits von Q, Y, 4, 7"
     },
     {
      "t": "p",
-     "md": "2.  XOR üben: `1100 1010 ⊕ 0110 0110`"
+     "md": "2.  XOR üben: `1100 1010 ⊕ 0001 1011`"
     },
     {
      "t": "p",
@@ -340,7 +340,7 @@
      "md": "Kontrolle mit der **Bit-Lupe** erst danach!"
     }
    ],
-   "notizen": "12 min. Lösungen: A1 B 0100 0010, O 0100 1111, J 0100 1010, E 0100 0101; W, H. A2 1010 1100 und 0000 0000 (a ⊕ a = 0). A3 Geheimtext 0010 1011 · 1011 1111 · 0111 1001 · 1110 0000.\nSchnelle: Auftrag 6 (Sparversion).\nTypischer Fehler: A = 1 statt 65 (P1)."
+   "notizen": "12 min. Lösungen: A1 Q 0101 0001, Y 0101 1001, „4“ 0011 0100, „7“ 0011 0111; W, H. A2 1101 0001 und 0000 0000 (a ⊕ a = 0). A3 Geheimtext 1010 0101 · 0111 0110 · 1101 1001 · 0001 1001.\nSchnelle: Auftrag 6 (Sparversion).\nTypischer Fehler: A = 1 statt 65 (P1)."
   },
   {
    "layout": "zweispaltig",

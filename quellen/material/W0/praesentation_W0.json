@@ -33,7 +33,7 @@
   {
    "layout": "inhalt",
    "abschnitt": "DS 1 · Skytale",
-   "titel": "Die Lösung: 4 Zeilen, 7 Spalten",
+   "titel": "Der Weg: 4 Zeilen, 7 Spalten",
    "inhalt": [
     {
      "t": "p",
@@ -57,42 +57,42 @@
       [
        "Zeile 1",
        "d",
-       "i",
-       "e",
-       "f",
-       "l",
-       "o",
-       "t"
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
       ],
       [
        "Zeile 2",
        "t",
-       "e",
-       "l",
-       "a",
-       "e",
-       "u",
-       "f"
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
       ],
       [
        "Zeile 3",
        "t",
-       "b",
-       "e",
-       "i",
-       "n",
-       "e",
-       "u"
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
       ],
       [
        "Zeile 4",
        "m",
-       "o",
-       "n",
-       "d",
-       "a",
-       "u",
-       "s"
+       "",
+       "",
+       "",
+       "",
+       "",
+       ""
       ]
      ],
      "breiten": [
@@ -127,11 +127,11 @@
     },
     {
      "t": "p",
-     "md": "Klartext: ==die flotte laeuft bei neumond aus==",
+     "md": "Klartext: Zeile für Zeile lesen – ==gemeinsam an der Tafel==",
      "zentriert": true
     }
    ],
-   "notizen": "F3 · 2 min. Spalte 1 von oben nach unten = D, T, T, M – die ersten vier Geheimtextbuchstaben.\nBegriffe am Fund benennen: Klartext (die flotte …), Geheimtext (DTTMI …), Schlüssel = Umfang des Stabes = 4 Zeilen.\nHistorische Vorsicht: Die Skytale ist durch Plutarch (Lysander-Biografie, um 100 n. Chr.) und frühere Erwähnungen überliefert; ob sie tatsächlich der Geheimhaltung diente, ist in der Forschung umstritten – „gilt als“, „wird überliefert“."
+   "notizen": "F3 · 2 min. Spalte 1 von oben nach unten = D, T, T, M – die ersten vier Geheimtextbuchstaben; die übrigen Spalten füllen die Teams an der Tafel (die Folie zeigt die Lösung nicht – der Archivfund ist auch Lab-Aufgabe W0-A-01, Korrektur D15).\nLösung zum Vergleich: dieflot / telaeuf / tbeineu / mondaus → „die flotte laeuft bei neumond aus“.\nBegriffe am Fund benennen: Klartext, Geheimtext (DTTMI …), Schlüssel = Umfang des Stabes = 4 Zeilen.\nHistorische Vorsicht: Die Skytale ist durch Plutarch (Lysander-Biografie, um 100 n. Chr.) und frühere Erwähnungen überliefert; ob sie tatsächlich der Geheimhaltung diente, ist in der Forschung umstritten – „gilt als“, „wird überliefert“."
   },
   {
    "layout": "inhalt",
@@ -578,11 +578,11 @@
    "falsch": [
     {
      "t": "p",
-     "md": "`wir halten den pass`, u = 3 (16 Buchstaben)"
+     "md": "`wir kommen am abend`, u = 3 (16 Buchstaben)"
     },
     {
      "t": "geheimtext",
-     "text": "wirhal / tenden / pass",
+     "text": "wirkom / menama / bend",
      "gruppen": 0,
      "groesse": 18
     },
@@ -599,17 +599,17 @@
     },
     {
      "t": "geheimtext",
-     "text": "wirhal / tenden / passxx",
+     "text": "wirkom / menama / bendxx",
      "gruppen": 0,
      "groesse": 18
     },
     {
      "t": "geheimtext",
-     "text": "WTPIE ARNSH DSAEX LNX",
+     "text": "WMBIE ERNNK ADOMX MAX",
      "groesse": 18
     }
    ],
-   "notizen": "Folie zum Herumgehen während der Übungsphase (Akte W0·1). Beispiel = Lab-Aufgabe W0-L1-03. Beim Gartenzaun gibt es kein Füllzeichen."
+   "notizen": "Folie zum Herumgehen während der Übungsphase (Akte W0·1). Eigenes Beispiel (nicht die Lab-Aufgabe W0-L1-03, Korrektur D15). Beim Gartenzaun gibt es kein Füllzeichen."
   },
   {
    "layout": "abschnitt",

@@ -476,7 +476,7 @@
     },
     {
      "t": "p",
-     "md": "b) Genau die Schlüssel aus **vier gleichen Vierergruppen** (z. B. `0111 0111 0111 0111`): Die Rotation ändert sie nicht. Für eine Vierergruppe gibt es 2^4^ = **16** Möglichkeiten → 16 schwache Schlüssel; bei K = `0000 …` wirkt der Schlüssel gar nicht (P7)."
+     "md": "b) Genau die Schlüssel aus **vier gleichen Vierergruppen** (z. B. `1001 1001 1001 1001`): Die Rotation ändert sie nicht. Für eine Vierergruppe gibt es 2^4^ = **16** Möglichkeiten → 16 schwache Schlüssel; bei K = `0000 …` wirkt der Schlüssel gar nicht (P7)."
     }
    ],
    "fallen": [

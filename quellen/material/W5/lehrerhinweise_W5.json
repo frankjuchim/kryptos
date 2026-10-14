@@ -457,7 +457,7 @@
   },
   {
    "t": "p",
-   "md": "**Reservierte Beispielpaare** (in Welt 5 verwendet, Welt 6 wählt andere): nebel/nebfi 9 · anker/tor 11 · heute/morgen 22 · hafen/haffk/eis/zoo/bear 4 · post/potq 6 · ueberweisezweieuro/ueberweisetausendeuro 18 · treffenumfuenfuhr/treffenumzehnuhr 8 · sonne/geheim 0. Testfälle: „“ → 0, „a“ → 1, „Überweise 2 Euro“ → „ueberweiseeuro“ → 1 (Ziffern entfallen – Zahlen in Aufgaben immer als Wort).",
+   "md": "**Reservierte Beispielpaare** (in Welt 5 verwendet, Welt 6 wählt andere): nebel/nebfi 9 · anker/tor 11 · heute/morgen 22 (nur Folie 8) · strand/falke 21 (W5-L1-08, Korrektur D15) · hafen/haffk/eis/zoo/bear 4 · post/potq 6 · ueberweisezweieuro/ueberweisetausendeuro 18 (nur Folie 19) · sendeelfboten/sendefuenfhundertboten 10 (W5-L2-07) · liefereneunkisten/liefereneunhundertkisten 6 (W5-B-13) · treffenumfuenfuhr/treffenumzehnuhr 8 · sonne/geheim 0. Testfälle: „“ → 0, „a“ → 1, „Überweise 2 Euro“ → „ueberweiseeuro“ → 1 (Ziffern entfallen – Zahlen in Aufgaben immer als Wort).",
    "klein": true
   },
   {
@@ -721,7 +721,7 @@
     ],
     [
      "**W5-B-13**\n★★★ · kern\n*signatur · gaps*",
-     "Alice signiert „ueberweise zwei euro“ mit dem KRYPTOS-Hash. Mallory ersetzt die Nachricht durch „ueberweise tausend euro“ (KH 18) und lässt die Signatur unverändert. Bobs Prüfung ergibt [1] (gültig/ungültig). Ausgenutzt wird die fehlende [2] (Einwegeigenschaft/Kollisionsresistenz/Vertraulichkeit). Mallory benötigt Alices privaten Schlüssel: [3] (ja/nein).",
+     "Alice signiert „liefere neun kisten“ mit dem KRYPTOS-Hash. Mallory ersetzt die Nachricht durch „liefere neunhundert kisten“ (KH 6) und lässt die Signatur unverändert. Bobs Prüfung ergibt [1] (gültig/ungültig). Ausgenutzt wird die fehlende [2] (Einwegeigenschaft/Kollisionsresistenz/Vertraulichkeit). Mallory benötigt Alices privaten Schlüssel: [3] (ja/nein).",
      "**[1] gültig · [2] Kollisionsresistenz · [3] nein**",
      "Die alte Signatur passt zum unveränderten Hashwert; Signaturen sind nur so sicher wie die Hashfunktion.",
      "P9"

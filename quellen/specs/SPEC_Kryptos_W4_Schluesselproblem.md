@@ -565,8 +565,8 @@ potenzMod(basis: Ganzzahl, exp: Ganzzahl, n: Ganzzahl): Ganzzahl
 **Aufträge**
 - **Auftrag 1 ★★ · kuer · EA:** Bestimme mit der Tabelle d für φ = 192, e = 5 (p = 13, q = 17).
 - **Auftrag 2 ★★ · kuer · EA:** Bestimme mit der Tabelle d für φ = 96, e = 7 (p = 7, q = 17) und mache die Probe.
-- **Auftrag 3 ★★★ · kuer · PA:** Führe das Struktogramm `potenzMod(37, 43, 77)` in einer Tracetabelle (Spalten:
-  exp, b, ergebnis) aus und vergleiche mit Akte W4·2.
+- **Auftrag 3 ★★★ · kuer · PA:** Führe das Struktogramm `potenzMod(18, 43, 77)` in einer Tracetabelle (Spalten:
+  exp, b, ergebnis) aus und prüfe das Ergebnis mit (77, 7). (Korrektur D15: früher c = 37 – Quadrierkette und Ergebnis 9 stehen in Akte W4·2.)
 
 **Abi-Check (Kür, gesiezt):** **Begründen** Sie, warum ein RSA-Schlüssel mit e = 6 bei φ(N) = 60 nicht erzeugt werden
 kann. [2 BE]
@@ -582,15 +582,15 @@ kann. [2 BE]
 
   | exp | b | ergebnis |
   |---|---|---|
-  | 43 | 37 | 1 |
-  | 21 | 60 | 37 |
-  | 10 | 58 | 64 |
-  | 5 | 53 | 64 |
-  | 2 | 37 | 4 |
-  | 1 | 60 | 4 |
-  | 0 | 58 | 9 |
+  | 43 | 18 | 1 |
+  | 21 | 16 | 18 |
+  | 10 | 25 | 57 |
+  | 5 | 9 | 57 |
+  | 2 | 4 | 51 |
+  | 1 | 16 | 51 |
+  | 0 | 25 | 46 |
 
-  Ergebnis **9** ✔ nachgerechnet (gleich wie Akte W4·2).
+  Ergebnis **46** ✔ nachgerechnet; Probe 46⁷ mod 77 = 18 ✔ (D15).
 - **Abi-Check:** ggT(6, 60) = 6 ≠ 1 (1); 6 · d mod 60 ist immer ein Vielfaches von 6 und kann nie 1 sein, also existiert
   kein d (1).
 
@@ -667,15 +667,15 @@ Datei `KR_W4_Boss4_Kurierbuero.docx` / `_EH.docx` · ≈ 24 BE · 60 min · ohne
 
 **Aufgabentext**
 
-Das Kurierbüro „Eilbote“ hat sechs Filialen. Bisher besitzt jedes Paar von Filialen einen eigenen geheimen Schlüssel
-für ein symmetrisches Verfahren; neue Schlüssel bringt monatlich ein Kurier. Das Büro plant, auf neun Filialen zu
+Das Kurierbüro „Eilbote“ hat 24 Filialen (Korrektur D15: früher sechs/neun – 15/12 und 36/18 sind Lösungen von WU-W4-01, WU-W5-12, W6-L2-07 und W6-B-04). Bisher besitzt jedes Paar von Filialen einen eigenen geheimen Schlüssel
+für ein symmetrisches Verfahren; neue Schlüssel bringt monatlich ein Kurier. Das Büro plant, auf 32 Filialen zu
 wachsen, und lässt seine Kommunikation überprüfen.
 
-a) „Bei sechs Filialen benötigt das Büro symmetrisch 15 Schlüssel, asymmetrisch dagegen nur 12.“
+a) „Bei 24 Filialen benötigt das Büro symmetrisch 276 Schlüssel, asymmetrisch dagegen nur 48.“
 **Erläutern** Sie die Richtigkeit dieser Aussage. [3 BE]
 
-b) **Bestimmen** Sie für neun Filialen die Anzahl benötigter Schlüssel bei symmetrischer und bei asymmetrischer
-Verschlüsselung sowie jeweils die Anzahl der Schlüssel, die gegenüber sechs Filialen neu erzeugt werden müssen. [2 BE]
+b) **Bestimmen** Sie für 32 Filialen die Anzahl benötigter Schlüssel bei symmetrischer und bei asymmetrischer
+Verschlüsselung sowie jeweils die Anzahl der Schlüssel, die gegenüber 24 Filialen neu erzeugt werden müssen. [2 BE]
 
 c) **Beschreiben** Sie das Prinzip der asymmetrischen Verschlüsselung am Beispiel einer vertraulichen Nachricht von
 Filiale X an Filiale Y. [3 BE]
@@ -724,8 +724,8 @@ Hinweis: Es gilt (8 · 11) mod 29 = 1. `mod` liefert den kleinsten nicht negativ
 
 | TA | Kernpunkte | AFB | BE |
 |---|---|---|---|
-| a) | symmetrisch: je Paar ein Schlüssel, 6 · 5/2 = 15 (1); asymmetrisch: je Filiale ein Schlüsselpaar, 2 · 6 = 12 (1); Deutung: Aussage korrekt, Schlüsselpaar zählt als zwei Schlüssel (1) ✔ | II | 3 |
-| b) | symmetrisch 9 · 8/2 = 36, davon 21 neu; asymmetrisch 18, davon 6 neu (je 1 BE für sym./asym. vollständig) ✔ | I | 2 |
+| a) | symmetrisch: je Paar ein Schlüssel, 24 · 23/2 = 276 (1); asymmetrisch: je Filiale ein Schlüsselpaar, 2 · 24 = 48 (1); Deutung: Aussage korrekt, Schlüsselpaar zählt als zwei Schlüssel (1) ✔ | II | 3 |
+| b) | symmetrisch 32 · 31/2 = 496, davon 220 neu; asymmetrisch 64, davon 16 neu (je 1 BE für sym./asym. vollständig) ✔ | I | 2 |
 | c) | Y besitzt Schlüsselpaar aus öffentlichem und privatem Schlüssel (1); X verschlüsselt mit dem öffentlichen Schlüssel von Y (1); nur Y kann mit seinem privaten Schlüssel entschlüsseln, der private Schlüssel wird nie übertragen (1) | I | 3 |
 | d) | A = 8 · 9 mod 29 = 72 mod 29 = 14 (1); B = 8 · 13 mod 29 = 104 mod 29 = 17 (1); K = 17 · 9 mod 29 = 153 mod 29 = 8 = 14 · 13 mod 29 = 182 mod 29 (1) ✔ | II | 3 |
 | e) | Multiplikation mit dem Inversen 11 macht den Schritt rückgängig (1): a = (A · 11) mod 29 = 154 mod 29 = 9 (1); K = (B · a) mod 29 = 8 (1) ✔. Alternativ b = 17 · 11 mod 29 = 187 mod 29 = 13 und K = A · b | III | 3 |
@@ -753,18 +753,18 @@ Datei `seed/warmup/welt4.json` + `KR_W4_Warmup.docx` (mit/ohne Lösungsteil). Sp
 
 | ID | Titel | Aufgabe (Vorderseite) | Lösung (Rückseite) | Min. | Kategorie |
 |---|---|---|---|---|---|
-| WU-W4-01 | Sechs am Tisch | Sechs Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch? | symmetrisch 6 · 5/2 = **15**, asymmetrisch 2 · 6 = **12** ✔ | 2 | schluesselraum |
-| WU-W4-02 | XOR-Auffrischung (W3) | Berechne `1011 0110` ⊕ `0110 0011`. | `1101 0101` ✔ | 2 | bits-xor |
+| WU-W4-01 | Vierzehn am Tisch | Vierzehn Personen kommunizieren paarweise vertraulich. Wie viele Schlüssel braucht man symmetrisch, wie viele asymmetrisch? | symmetrisch 14 · 13/2 = **91**, asymmetrisch 2 · 14 = **28** ✔ | 2 | schluesselraum |
+| WU-W4-02 | XOR-Auffrischung (W3) | Berechne `1110 0010` ⊕ `0100 1011`. | `1010 1001` ✔ | 2 | bits-xor |
 | WU-W4-03 | Caesar über Z hinaus (W0) | Nummerierung A = 1 … Z = 26. Verschlüssele den Buchstaben w mit Verschiebung k = 7. | w = 23; ((23 + 7 − 1) mod 26) + 1 = 3 + 1 = 4 → **D** ✔ | 2 | modulo |
 | WU-W4-04 | Wer darf was wissen? | Ordne zu „alle dürfen ihn kennen“ / „nur der Besitzer“: öffentlicher Schlüssel, privater Schlüssel, symmetrischer Schlüssel zwischen Alice und Bob. | öffentlich: alle · privat: nur Besitzer · symmetrisch: nur Alice **und** Bob (beide Besitzer) | 2 | begriffe |
-| WU-W4-05 | Potenz modulo | Berechne 3⁴ mod 7 ohne Taschenrechner. | 3² = 9 mod 7 = 2; 2² = **4** (bzw. 81 = 11 · 7 + 4) ✔ | 2 | modulo |
-| WU-W4-06 | DH im Kleinformat | p = 7, g = 3, a = 2, b = 4. Bestimme A, B und K. | A = 9 mod 7 = **2**, B = 81 mod 7 = **4**, K = 4² mod 7 = **2** = 2⁴ mod 7 ✔ | 3 | schluesselaustausch |
+| WU-W4-05 | Potenz modulo | Berechne 2⁵ mod 9 ohne Taschenrechner. | 2³ = 8; 8 · 4 = 32 = 3 · 9 + 5 → **5** ✔ | 2 | modulo |
+| WU-W4-06 | DH im Kleinformat | p = 31, g = 3, a = 2, b = 3. Bestimme A, B und K. | A = 3² = **9**, B = 3³ = **27**, K = 27² mod 31 = 729 mod 31 = **16** = 9³ mod 31 ✔ | 3 | schluesselaustausch |
 | WU-W4-07 | Hybrid in einem Satz | Was wird beim Hybridverfahren womit verschlüsselt? | Nachricht **symmetrisch** mit dem Sitzungsschlüssel, Sitzungsschlüssel **asymmetrisch** mit dem öffentlichen Schlüssel des Empfängers. | 2 | hybrid |
 | WU-W4-08 | Primitivwurzel? | Ist 2 eine Primitivwurzel modulo 7? Und 3? | 2: 2, 4, 1 → nur 3 Reste → **nein**; 3: 3, 2, 6, 4, 5, 1 → alle 6 Reste → **ja** ✔ | 3 | modulo |
-| WU-W4-09 | Inverses (W1) | Bestimme das multiplikative Inverse von 3 modulo 26. | 3 · 9 = 27 = 26 + 1 → **9** ✔ | 2 | modulo |
+| WU-W4-09 | Inverses (W1) | Bestimme das multiplikative Inverse von 3 modulo 20. | 3 · 7 = 21 = 20 + 1 → **7** ✔ | 2 | modulo |
 | WU-W4-10 | RSA-Miniatur | Öffentlicher Schlüssel (N, e) = (15, 3). Verschlüssele die Klarzahl m = 2. | c = 2³ mod 15 = **8** ✔ | 1 | asymmetrisch |
 | WU-W4-11 | Laptop im Zug | Ein Laptop soll bei Diebstahl unlesbar sein. Symmetrisch oder asymmetrisch? Begründe kurz. | **symmetrisch**: große Datenmenge, nur eine Person, kein Schlüssel muss verteilt werden – symmetrisch ist viel schneller. | 2 | hybrid |
-| WU-W4-12 | Falle P7 | „Zehn Teilnehmende brauchen symmetrisch 90 und asymmetrisch 10 Schlüssel.“ Finde beide Fehler. | symmetrisch **45** (Halbierung vergessen), asymmetrisch **20** (10 Schlüsselpaare) ✔ | 2 | schluesselraum |
+| WU-W4-12 | Falle P7 | „22 Teilnehmende brauchen symmetrisch 462 und asymmetrisch 22 Schlüssel.“ Finde beide Fehler. | symmetrisch **231** (Halbierung vergessen), asymmetrisch **44** (22 Schlüsselpaare) ✔ | 2 | schluesselraum |
 
 ---
 
@@ -997,7 +997,7 @@ Caesar A = 1, Ordnung/Primitivwurzel, Euklid-Tabelle, Quadrierkette), `w4_pruef.
 | RSA (51, 3)/(51, 11): 4 → 13 → 4 | 13² → 16, 13⁴ → 1 | w4_rsa.py |
 | Toy-Hybrid: 5⁷ mod 77, 47⁴³ mod 77, Caesar 5 von `abholungmorgen` | 47; 5; `FGMTQ ZSLRT WLJS`; (K = 12 verworfen: Fixpunkt) | w4_rsa.py |
 | Euklid-Tabellen (60, 7), (192, 5), (96, 7), (48, 5) | d = 43, 77, 55, 29 | w4_rsa.py |
-| Quadrierketten 3¹³ mod 17, Trace potenzMod(37, 43, 77) | 12; Trace §3 Akte K3 | w4_rsa.py, pruef_w4.py |
+| Quadrierketten 3¹³ mod 17, Trace potenzMod(18, 43, 77) (D15) | 12; 46 (Trace §3 Akte K3) | w4_rsa.py, pruef_w4.py |
 | Korrektur M8 (D4–D6): Euklid (40, 7), 5¹³ mod 23, Quadrierkette 48⁴³ mod 77 (Kür K3-01, -02, -04, -06) | a 5, b 5, c 1, d 2, e 1; Tabelle (0, 1), (1, −2), (−2, 3), (3, −17), d = 23; 2, 4, 16 → 21; Kette 48, 71, 36, 64, 15, 71, Produkt 20, 48, 20 (20⁷ mod 77 = 48) | `shared/krypto.js` + Zwilling (`bruecke.py`), `quellen/pruefwerte/W4.json` |
 | Boss: Potenz-Tausch (11, 2, 4, 3), Plus-Tausch (31, 12, A = 6, B = 21), Mal-Tausch (17, 5, A = 13, B = 16) | K = 4; a = 25, K = 15; a = 6, K = 11 | pruef_w4.py |
 | Papier-Boss Bote-Tausch (29, 8, 9, 13), Beispiel (2, 3), Inverses 8⁻¹ mod 29 | A = 14, B = 17, K = 8; Beispiel 16/24/19; 11 | pruef_w4.py |

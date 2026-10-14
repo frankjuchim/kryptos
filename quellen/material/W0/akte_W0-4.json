@@ -402,7 +402,7 @@
    "inhalt": [
     {
      "t": "p",
-     "md": "🔍 **Entschlüssele** (Schlüsselwort ATHEN): `13 43 12 34 55 35`. Notiere, in welcher Reihenfolge du die Stufen umkehrst."
+     "md": "🔍 **Entschlüssele** (Schlüsselwort ATHEN): `45 35 55 12 12 51`. Notiere, in welcher Reihenfolge du die Stufen umkehrst."
     },
     {
      "t": "schreiblinien",
@@ -413,7 +413,7 @@
    "loesung": [
     {
      "t": "p",
-     "md": "Reihenfolge umkehren: erst Stufe 2 zurück (Ziffernpaare → Buchstaben im ATHEN-Quadrat): `hrtmzo`, dann Stufe 1 zurück (Atbash): **signal**."
+     "md": "Reihenfolge umkehren: erst Stufe 2 zurück (Ziffernpaare → Buchstaben im ATHEN-Quadrat): `uozttv`, dann Stufe 1 zurück (Atbash): **flagge**."
     },
     {
      "t": "p",

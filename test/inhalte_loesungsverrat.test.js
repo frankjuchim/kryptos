@@ -3,8 +3,11 @@
 // 14.10.2026: „Es ist nicht gewollt, dass Lösungen durch vorherige Teilaufgaben, Aufgabentexte oder ähnliches verraten
 // werden.“ – keine Ausnahmen). Aufgaben sind frei anwählbar, also verrät jede andere Stelle die Antwort.
 //
-// Prüflinge: Lab-, Boss- und Archivfund-Aufgaben der Welten 0–6, die Gast-Demo (Welt 8) und Stichproben aller
-// Trainingsplatz-Generatoren. Fundklassen:
+// Prüflinge: Lab-, Boss- und Archivfund-Aufgaben der Welten 0–6, die Gast-Demo (Welt 8), Stichproben aller
+// Trainingsplatz-Generatoren und (D15, zweiter Teil) die Schülerfassungen der Papier-Materialien: Teilaufgaben der
+// Papier-Bosse und Probeklausuren, Warm-up-Karten, Aufträge und Abi-Checks der Akten (Lösungswerte aus Erwartung,
+// Lösungskasten, Kartenrückseite). Fundstellen sind zusätzlich Papier-Bosse, Probeklausuren (in jeder Welt), Akten je
+// Block und – nur für Lab-, Boss- und Warm-up-Lösungen – die Folien ohne Sprechernotizen. Fundklassen:
 //   K1 Lösungstext (≥ 4 Zeichen A–Z/0–9 nach Normalisierung; 4–5 Zeichen als ganzes Wort, ab 6 Zeichen auch als Teil,
 //      z. B. in Fünfergruppen) in einem anderen Schülertext derselben Welt – andere Aufgabe (sichtbarer Teil), Level-Intro,
 //      Archivfund/Kapitel, Boss-Kopf, Akte (Schülerfassung), Werkzeugkarte, Warm-up-Karte (auch Lösungsseite).
@@ -56,6 +59,8 @@ function rohtexte(wert, { ohne = [] } = {}) {
     }
     if (!x || typeof x !== 'object') return;
     if (x.nur_loesung === true) return;
+    // Häufigkeitsdiagramm: der Text erscheint nur als Balken (Zählung), nie lesbar
+    if (x.t === 'haeufigkeit' && typeof x.text === 'string') return lauf({ ...x, text: undefined, t: undefined });
     // Alphabet-/Quadratzeile mit „leer“: in der Schülerfassung leer gedruckt (kr_docx.py), Werte nur in der Lösung
     if (x.leer === true) return;
     if (x.t === 'quadrat' && (x.art === 'playfair' || x.art === 'polybios') && typeof x.schluessel === 'string' && !Array.isArray(x.zellen)) {
@@ -198,20 +203,174 @@ function schuelertexte(welt) {
   }
   if (welt === 8) return liste;
   const wu = S.warmup(welt);
-  for (const k of (wu && wu.karten) || []) liste.push(stelle(`${k.id} Warm-up`, rohtexte([k.titel, k.aufgabe, k.loesung])));
-  const ordner = path.join(S.WURZEL, 'quellen', 'material', `W${welt}`);
-  if (fs.existsSync(ordner)) {
-    for (const d of fs.readdirSync(ordner).filter((x) => /^akte_.*\.json$/.test(x)).sort()) {
-      liste.push(stelle(`Akte ${d}`, rohtexte(json(path.join(ordner, d)).bloecke, { ohne: ['loesung'] })));
-    }
-  }
+  for (const k of (wu && wu.karten) || []) liste.push(stelle(`${k.id} Warm-up`, rohtexte([k.titel, k.aufgabe, k.loesung]), { karte: k.id }));
+  liste.push(...papierTexte(welt));
   // Werkzeugkarten außer WK1 (Abitur-Anlage mit Lernhilfe: Nachschlagewerk wie Alphabet, ASCII-Tabelle und
   // Vigenère-Quadrat – Nachschlagen dort ist eine Arbeitstechnik, kein Verrat)
-  const wk = path.join(S.WURZEL, 'quellen', 'material', 'Werkzeugkarten');
+  const wk = path.join(MAT, 'Werkzeugkarten');
   for (const d of fs.readdirSync(wk).filter((x) => /^werkzeugkarte_.*\.json$/.test(x) && !/_WK1_/.test(x)).sort()) {
     liste.push(stelle(`Werkzeugkarte ${d}`, rohtexte(json(path.join(wk, d)).bloecke, { ohne: ['loesung'] })));
   }
   return liste;
+}
+
+/* ---------- Papier-Materialien (Schülerfassungen): Akten je Block, Papier-Bosse, Probeklausuren, Folien ---------- */
+
+const MAT = path.join(S.WURZEL, 'quellen', 'material');
+/** Felder der Lösungs-/EH-Fassung (nie in der Schülerfassung, kr_docx.py) */
+const NUR_LSG = ['loesung', 'erwartung', 'alternativen', 'fehler', 'notenschluessel', 'notizen'];
+const quellDateien = (ordner, muster) => (fs.existsSync(ordner) ? fs.readdirSync(ordner).filter((x) => muster.test(x)).sort() : []);
+
+/** Papier-Prüfungen, die Lernende vor dem Lösen sehen: Papier-Bosse W0–W5 (ihre Welt) und die Probeklausuren (Welt 6, Stoff aller Welten) */
+function papierPruefungen() {
+  const out = [];
+  for (const w of S.WELTEN) for (const d of quellDateien(path.join(MAT, `W${w}`), /^boss_W\d\.json$/)) out.push({ datei: d, welt: w, q: json(path.join(MAT, `W${w}`, d)) });
+  for (const d of quellDateien(path.join(MAT, 'Pruefungen'), /Probeklausur.*\.json$/)) out.push({ datei: d, welt: 6, alle: true, q: json(path.join(MAT, 'Pruefungen', d)) });
+  return out;
+}
+
+/** Fundstellen einer Papier-Prüfung: Kopf, je Aufgabe das Material, je Teil Text und Material (Schülerfassung) */
+function pruefungsStellen({ datei, q }) {
+  const ohne = { ohne: NUR_LSG };
+  const liste = [stelle(`Papier ${datei} Kopf`, rohtexte({ titel: q.titel, rahmen: q.rahmen, hinweise: q.hinweise, info: q.info }, ohne), { doc: datei })];
+  for (const a of q.aufgaben || []) {
+    liste.push(stelle(`Papier ${datei} Aufgabe ${a.nr || ''} Material`, rohtexte({ titel: a.titel, material: a.material }, ohne), { doc: datei }));
+    for (const t of a.teile || []) liste.push(stelle(`Papier ${datei} ${a.nr || ''}${t.bez}`, rohtexte({ text: t.text, material: t.material }, ohne), { doc: datei, teil: `${a.nr || ''}${t.bez}` }));
+  }
+  return liste;
+}
+
+/** Fundstellen einer Akte: je Block der Schülerfassung (Abi-Check je Teil) */
+function aktenStellen(welt, d) {
+  const akte = json(path.join(MAT, `W${welt}`, d));
+  const liste = [];
+  akte.bloecke.forEach((b, i) => {
+    const name = `Akte ${d} #${i} ${b.t}${b.nr ? ' ' + b.nr : ''}`;
+    if (b.t === 'abicheck') {
+      liste.push(stelle(`${name} Material`, rohtexte({ titel: b.titel, material: b.material }, { ohne: NUR_LSG }), { doc: d }));
+      (b.teile || []).forEach((t) => liste.push(stelle(`${name} ${t.bez}`, rohtexte(t, { ohne: NUR_LSG }), { doc: d, block: `${i}${t.bez}` })));
+    } else liste.push(stelle(name, rohtexte(b, { ohne: NUR_LSG }), { doc: d, block: String(i) }));
+  });
+  return liste;
+}
+
+/** Folien der Präsentationen einer Welt (ohne Sprechernotizen); nur Fundstelle für Lab-, Boss- und Warm-up-Lösungen */
+function folienStellen(welt) {
+  const liste = [];
+  for (const d of quellDateien(path.join(MAT, `W${welt}`), /^praesentation_.*\.json$/)) {
+    json(path.join(MAT, `W${welt}`, d)).folien.forEach((f, i) => liste.push(stelle(`Folie ${d} #${i + 1}`, rohtexte(f, { ohne: NUR_LSG }), { folie: true })));
+  }
+  return liste;
+}
+
+/** Papier-Schülertexte einer Welt: Akten, Papier-Boss, Probeklausuren (in jeder Welt), Folien */
+function papierTexte(welt) {
+  const liste = [];
+  for (const d of quellDateien(path.join(MAT, `W${welt}`), /^akte_.*\.json$/)) liste.push(...aktenStellen(welt, d));
+  for (const p of papierPruefungen()) if (p.welt === welt || p.alle) liste.push(...pruefungsStellen(p));
+  liste.push(...folienStellen(welt));
+  return liste;
+}
+
+/** Bewertungs-, Fach- und Füllwörter, die in Lösungen fett/kursiv betont werden (auch am Anfang einer Wendung) – kein Klar- oder Geheimtext */
+const BEWERTUNG = new Set(['nicht', 'dann', 'alle', 'beide', 'beiden', 'einem', 'viele', 'anderen', 'denselben', 'rechts', 'oberen', 'unteren',
+  'hinteren', 'nein', 'falsch', 'falschen', 'korrekt', 'richtig', 'gültig', 'ungültig', 'sicher', 'unsicher', 'prüfen', 'finden', 'existieren',
+  'paarweise', 'effektiven', 'teilerfremd', 'symmetrisch', 'asymmetrisch', 'monoalphabetisch', 'polyalphabetisch', 'permutationsinvariant',
+  'öffentlichen', 'privaten', 'nur', 'ihrem', 'mit', 'ein', 'eine', 'kein', 'genau', 'immer'].map(N));
+/** Feste Konstanten (Design §6: I_D, I_Z) – überall gegeben, kein Ergebnis */
+const KONSTANTEN = new Set(['0,076', '0,038']);
+const MARKE = /\*\*([^*]+?)\*\*|(?<![*\w])\*([^*\s][^*]*?)\*(?![*\w])|`([^`]+)`|==([^=]+)==/g;
+/**
+ * Lösungswerte aus einem Lösungstext (Erwartungshorizont, Lösungskasten, Kartenrückseite): Bitfolgen (≥ 8 Bit), Zahlen
+ * als Ergebnis (fett oder nach ≈; ≥ 3 Ziffern oder mit Komma – Zwischenrechnungen wie 13² = 169 zählen nicht), markierte Geheimtexte (GROSS) und Klartexte
+ * (klein, ein Wort) sowie ganze Zellen in GROSS.
+ */
+function werteAusLoesung(roh) {
+  const out = [];
+  const neu = (x) => { if (zaehlt(x) && !KONSTANTEN.has(x.n) && !out.some((o) => o.art === x.art && o.n === x.n)) out.push(x); };
+  for (const t of roh) {
+    const s = String(t);
+    for (const b of bitsVon(s)) if (/0/.test(b) && /1/.test(b)) neu({ art: 'bits', n: b });
+    // Zahlen ohne führende Null (0100 ist eine Bitgruppe)
+    for (const m of s.matchAll(new RegExp(`(?:≈\\s*\\**\\s*|\\*\\*)((?:0|[1-9]\\d*)(?:,\\d+)?)(?![\\d${HOCH}]|[,.]\\d)`, 'g'))) neu({ art: 'zahl', n: m[1] });
+    for (const m of s.matchAll(MARKE)) {
+      const v = (m[1] ?? m[2] ?? m[3] ?? m[4]).trim().replace(/^[„“"»]+|[“"«]+$/g, '').trim();
+      // „`ZIGNS HEGYW` → *diegaleere*“: links vom Pfeil steht die Eingabe
+      if (/^\s*→/.test(s.slice(m.index + m[0].length))) continue;
+      if (/^[01\s]+$/.test(v)) continue;
+      // Zahl, Geheimtext (GROSS) oder Klartext (klein, Design §6) – außer betonten Bewertungs- und Fachwörtern
+      if (/^(?:0|[1-9]\d*)(,\d+)?$/.test(v)) neu({ art: 'zahl', n: v });
+      else if (/^[A-ZÄÖÜ]+(?:\s[A-ZÄÖÜ]+)*$/.test(v)) neu({ art: 'text', n: N(v) });
+      else if (/^[a-zäöüß]+(?: [a-zäöüß]+)*$/.test(v) && !BEWERTUNG.has(N(v)) && !BEWERTUNG.has(N(v.split(' ')[0]))) neu({ art: 'text', n: N(v) });
+    }
+    if (/^\s*[A-Z]{4,}(?:\s[A-Z]+)*\s*$/.test(s)) neu({ art: 'text', n: N(s) });
+  }
+  return out;
+}
+
+/** Steht der Wert x schon im eigenen Text (dann ist er gegeben, keine Lösung)? – großzügig: auch als Teilstück */
+function gegeben(x, eigen) {
+  if (x.art === 'bits') return eigen.bits.some((b) => b.includes(x.n));
+  if (x.art === 'zahl') return eigen.zahlen.some((l) => l.includes(x.n));
+  return eigen.stuecke.some((t) => t.includes(x.n));
+}
+
+/**
+ * Prüflinge aus Papier-Materialien: Teilaufgaben der Papier-Bosse und Probeklausuren, Warm-up-Karten, Aufträge und
+ * Abi-Check-Teile der Akten – je { id, welt, alle, werte, ich (eigene Fundstellen), folien (Folien zählen) }.
+ */
+function papierPrueflinge() {
+  const out = [];
+  const neu = (p, eigenRoh, loesungRoh) => {
+    const eigen = stelle('', eigenRoh);
+    out.push({ ...p, werte: werteAusLoesung(loesungRoh).filter((x) => !gegeben(x, eigen)) });
+  };
+  for (const pr of papierPruefungen()) {
+    const kopf = rohtexte({ titel: pr.q.titel, rahmen: pr.q.rahmen, hinweise: pr.q.hinweise }, { ohne: NUR_LSG });
+    for (const a of pr.q.aufgaben || []) {
+      for (const t of a.teile || []) {
+        const teil = `${a.nr || ''}${t.bez}`;
+        neu({ id: `${pr.datei} ${teil}`, welt: pr.welt, alle: pr.alle, folien: !pr.alle, ich: (s) => s.doc === pr.datei && s.teil === teil },
+          [...kopf, ...rohtexte({ text: t.text, material: t.material }, { ohne: NUR_LSG })], rohtexte(t.erwartung || []));
+      }
+    }
+  }
+  for (const w of S.WELTEN) {
+    for (const d of quellDateien(path.join(MAT, `W${w}`), /^warmup_W\d\.json$/)) {
+      for (const k of json(path.join(MAT, `W${w}`, d)).karten) {
+        neu({ id: k.id, welt: w, folien: true, ich: (s) => s.karte === k.id }, rohtexte([k.titel, k.aufgabe]), rohtexte(k.loesung));
+      }
+    }
+    for (const d of quellDateien(path.join(MAT, `W${w}`), /^akte_.*\.json$/)) {
+      json(path.join(MAT, `W${w}`, d)).bloecke.forEach((b, i) => {
+        if (b.t === 'auftrag' && b.loesung) {
+          neu({ id: `${d} Auftrag ${b.nr}`, welt: w, ich: (s) => s.doc === d && s.block === String(i) }, rohtexte(b, { ohne: NUR_LSG }), rohtexte(b.loesung));
+        }
+        if (b.t === 'abicheck') {
+          for (const t of b.teile || []) {
+            neu({ id: `${d} Abi-Check ${t.bez}`, welt: w, ich: (s) => s.doc === d && s.block === `${i}${t.bez}` },
+              rohtexte({ material: b.material, teil: t }, { ohne: NUR_LSG }), rohtexte(t.loesung || []));
+          }
+        }
+      });
+    }
+  }
+  return out;
+}
+
+/** Funde der Papier-Prüflinge (K1–K3 wie oben): Lösung in einem anderen Schülertext ihrer Welt (Probeklausur: aller Welten) */
+function papierFunde() {
+  const texte = {};
+  for (const w of S.WELTEN) texte[w] = schuelertexte(w);
+  const out = [];
+  for (const p of papierPrueflinge()) {
+    const stellen = p.alle ? [...new Map(S.WELTEN.flatMap((w) => texte[w]).map((s) => [s.quelle, s])).values()] : texte[p.welt];
+    for (const s of stellen) {
+      if (p.ich(s) || (s.folie && !p.folien)) continue;
+      for (const x of p.werte) if (steht(x, s)) out.push(`${p.id}: „${x.n}“ in ${s.quelle}`);
+    }
+  }
+  return [...new Set(out)];
 }
 
 /** Nummerierung und ASCII-Konstanten aus einem Text entfernen (A = 1 … Z = 26, a = 1 … z = 26, A = 65) */
@@ -380,6 +539,35 @@ const BEHOBEN = [
     const ziel = /mod 17 = (\d+)\./.exec(a.inhalt[0].md)[1];
     return a.inhalt[1].zeilen.filter((z) => !String(z[1]).startsWith('[[') && z[1] === ziel).map((z) => `x = ${z[0]}`);
   } },
+  { fall: 'Akte W6·3 Archivwissen 1: keine Minuten je Teilaufgabe oder je Krypto-Aufgabe (Lösung von Auftrag 1, W6-L3-03, WU-W6-01)', pruefe: () => {
+    const akte = json(path.join(MAT, 'W6', 'akte_W6-3.json'));
+    const tab = akte.bloecke.find((b) => b.t === 'archivwissen' && b.nr === 1).inhalt.find((x) => x.t === 'tabelle');
+    return rohtexte(tab).filter((t) => /\d\s*min\b/.test(t) && !/^(270|220) min/.test(t.trim()));
+  } },
+  { fall: 'Warm-up: Schlüsselanzahl-Karten nennen keine Personenzahl aus der Tabelle in Akte W4·1 (Archivwissen 1)', pruefe: () => {
+    const akte = json(path.join(MAT, 'W4', 'akte_W4-1.json'));
+    const tab = akte.bloecke.find((b) => b.t === 'archivwissen' && b.nr === 1).inhalt.find((x) => x.t === 'tabelle');
+    const n = new Set(tab.kopf.slice(1).map(String));
+    const zahlwort = { zwei: '2', drei: '3', vier: '4', fuenf: '5', sechs: '6', sieben: '7', acht: '8', neun: '9', zehn: '10' };
+    const out = [];
+    for (const w of S.WELTEN) for (const k of (S.warmup(w) || { karten: [] }).karten.filter((x) => x.kategorie === 'schluesselraum')) {
+      const m = /(\d+|\p{L}+) (Personen|Teilnehmende)/u.exec(k.aufgabe);
+      const wert = m && (zahlwort[N(m[1]).toLowerCase()] || m[1]);
+      if (wert && n.has(wert)) out.push(`${k.id}: n = ${wert}`);
+    }
+    return out;
+  } },
+  { fall: 'Warm-up: keine zwei Karten derselben Kategorie mit denselben Zahlen in der Aufgabe (Rückseite der einen = Lösung der anderen)', pruefe: () => {
+    const gesehen = new Map();
+    const out = [];
+    for (const w of S.WELTEN) for (const k of (S.warmup(w) || { karten: [] }).karten) {
+      const z = zahlenVon(k.aufgabe).filter((x) => x.length >= 2);
+      if (z.length < 2) continue;
+      const schl = `${k.kategorie}|${[...z].sort().join(',')}`;
+      if (gesehen.has(schl)) out.push(`${gesehen.get(schl)} = ${k.id}`); else gesehen.set(schl, k.id);
+    }
+    return out;
+  } },
   { fall: 'W6-L3-01, -02: Minutenwerte stehen nicht im Merkkasten 6.3 oder in Akte W6·3', pruefe: () => {
     const texte = [...quelleText(6, 'W6-L3 Intro'), ...quelleText(6, 'Akte akte_W6-3')].join(' ');
     const alsMinuten = (n) => new RegExp(`(?<![\\d,])${n.replace(',', ',')}\\s*(min|Minuten)|≈\\s*${n}(?![\\d,])`).test(texte);
@@ -397,7 +585,7 @@ for (const welt of [...S.WELTEN, 8]) {
 test('K9: Tipps und Erklärungen stehen vor dem Abruf nirgends sichtbar (alle Welten, Gast, Fallen-Texte)', () => {
   const { FALLEN } = require('../src/krypto/fach');
   const welten = [...S.WELTEN, 8];
-  const quellen = welten.flatMap((w) => schuelertexte(w));
+  const quellen = welten.flatMap((w) => schuelertexte(w)).filter((q) => !q.folie);
   quellen.push(stelle('Fallen-Texte (fach.js)', rohtexte(FALLEN)));
   const f = [];
   for (const welt of welten) {
@@ -411,6 +599,10 @@ test('K9: Tipps und Erklärungen stehen vor dem Abruf nirgends sichtbar (alle We
     }
   }
   assert.deepEqual([...new Set(f)], []);
+});
+
+test('Papier: keine Lösung einer Teilaufgabe (Papier-Boss, Probeklausur), Warm-up-Karte oder eines Akten-Auftrags in einem anderen Schülertext', () => {
+  assert.deepEqual(papierFunde(), []);
 });
 
 test('K7: behobene Fälle mit zweistelligen Zahlen bleiben behoben', () => {
@@ -489,6 +681,15 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet, Quadrat, Bits, Wört
   assert.equal(eigeneFunde(a6).length, 1);
   const a7 = { id: 'X', inhalt: [], interaktion: { kind: 'choice', mehrfach: true, optionen: [{ id: 'a', md: 'x' }, { id: 'b', md: 'y' }] }, loesung: { richtig: ['a', 'b'] } };
   assert.equal(eigeneFunde(a7).length, 1);
+  // Papier: Lösungswerte aus Erwartung/Lösungskasten – Geheimtext fett, Klartext kursiv, Bits, fette Zahlen; keine
+  // Eingaben links vom Pfeil, keine betonten Bewertungswörter, keine Zwischenrechnungen
+  const pw = (t) => werteAusLoesung([t]).map((x) => x.n);
+  assert.deepEqual(pw('Geheimtext **SGPWV OOTOD**. Klartext *ankerplatz*.'), ['SGPWVOOTOD', 'ANKERPLATZ']);
+  assert.deepEqual(pw('`ZIGNS HEGYW` → *diegaleere*'), ['DIEGALEERE']);
+  assert.deepEqual(pw('**falsch**: 13² = 169, also **nicht** gültig'), []);
+  assert.deepEqual(pw('C = `1010 0101 · 0111 0110`, Summe **812**, I ≈ 0,0484'), ['1010010101110110', '812', '0,0484']);
+  assert.deepEqual(pw('**„flieht zum hafen“** (+ X)'), ['FLIEHTZUMHAFEN']);
+  assert.deepEqual(pw('I~Z~ = 0,038 und **0,076**'), [], 'Konstanten I_D, I_Z');
 });
 
-module.exports = { funde, loesungen, loesungsWerte, stuecke, eigeneFunde, schuelertexte, beschrifteteZahlen };
+module.exports = { funde, papierFunde, papierPrueflinge, werteAusLoesung, loesungen, loesungsWerte, stuecke, eigeneFunde, schuelertexte, beschrifteteZahlen };

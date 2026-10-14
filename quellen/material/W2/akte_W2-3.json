@@ -644,12 +644,12 @@
     },
     {
      "bez": "c)",
-     "text": "Ein Vigenère-Geheimtext hat n = 1001 Zeichen und den Koinzidenzindex I = 0,0418. **Bestimmen Sie** mithilfe der Friedman-Formel (I~D~ = 0,076, I~Z~ = 0,038) eine Schätzung der Schlüssellänge.",
+     "text": "Ein Vigenère-Geheimtext hat n = 851 Zeichen und den Koinzidenzindex I = 0,0426. **Bestimmen Sie** mithilfe der Friedman-Formel (I~D~ = 0,076, I~Z~ = 0,038) eine Schätzung der Schlüssellänge.",
      "be": 3,
      "loesung": [
       {
        "t": "p",
-       "md": "Zähler 0,038 · 1001 = 38,038; (n − 1) · I = 1000 · 0,0418 = 41,8; Nenner 41,8 − 38,038 + 0,076 = 3,838; k ≈ 38,038 : 3,838 ≈ 9,9 ≈ **10** [3 BE: Einsetzen 1, Zwischenwerte 1, Ergebnis gerundet 1]."
+       "md": "Zähler 0,038 · 851 = 32,338; (n − 1) · I = 850 · 0,0426 = 36,21; Nenner 36,21 − 32,338 + 0,076 = 3,948; k ≈ 32,338 : 3,948 ≈ 8,2 ≈ **8** [3 BE: Einsetzen 1, Zwischenwerte 1, Ergebnis gerundet 1]."
       }
      ]
     },

@@ -470,7 +470,7 @@
     },
     {
      "bez": "h)",
-     "text": "**Beurteilen Sie** die Sicherheit des Verfahrens Zwei-Quadrat. Berücksichtigen Sie dabei auch die Größe des Schlüsselraums.",
+     "text": "**Beurteilen Sie** die Sicherheit des Verfahrens Zwei-Quadrat. Berücksichtigen Sie dabei auch die Größe des Schlüsselraums (Hinweis: 25! ≈ 1,55 · 10²⁵).",
      "be": 3,
      "erwartung": [
       {

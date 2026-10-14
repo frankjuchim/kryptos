@@ -122,13 +122,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "KRYPTOS-16: Bestimme S(0110) und S⁻¹(1001) mit dem S-Box-Handout."
+     "md": "KRYPTOS-16: Bestimme S(0100) und S⁻¹(1001) mit dem S-Box-Handout."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "S(0110) = `1000`, S⁻¹(1001) = `0011`"
+     "md": "S(0100) = `0111`, S⁻¹(1001) = `0011`"
     }
    ]
   },
@@ -187,13 +187,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `KDIHQ`."
+     "md": "Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `ODQCH`."
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "**hafen** (K − 3 = H …)"
+     "md": "**lanze** (O − 3 = L …)"
     }
    ]
   },
@@ -223,13 +223,13 @@
    "aufgabe": [
     {
      "t": "p",
-     "md": "Kasiski: Wiederholungen im Abstand 12, 18 und 30. Welche Schlüssellänge ist am wahrscheinlichsten?"
+     "md": "Kasiski: Wiederholungen im Abstand 16, 24 und 40. Welche Schlüssellänge ist am wahrscheinlichsten?"
     }
    ],
    "loesung": [
     {
      "t": "p",
-     "md": "ggT = **6** (auch 2 oder 3 möglich)"
+     "md": "ggT = **8** (auch 2 oder 4 möglich)"
     }
    ]
   },

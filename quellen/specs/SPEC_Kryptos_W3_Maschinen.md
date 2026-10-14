@@ -555,14 +555,14 @@ Stück der anderen Nachricht erscheint (**Crib-Dragging**). Byte `0000 0000` in 
 beide Klartextzeichen gleich. Genau so wurden ab den 1940er-Jahren Nachrichten entschlüsselt, deren Einmalschlüssel
 mehrfach benutzt worden waren (bekannt unter dem Namen Venona).
 
-**Auftrag 1 ★ (kern, EA)** Bestimme ASCII-Werte und Bits von B, O, J, E (Tabelle in Archivwissen 1 abdecken) und
+**Auftrag 1 ★ (kern, EA)** Bestimme ASCII-Werte und Bits von Q, Y, 4, 7 (Korrektur D15: früher B, O, J, E – die stehen in Archivwissen 1) und
 umgekehrt das Zeichen zu `0101 0111` und zu `0100 1000`.
 
-**Auftrag 2 ★ (kern, EA)** Berechne `1100 1010 ⊕ 0110 0110` und `1100 1010 ⊕ 1100 1010`. **Begründe** mit einer der
+**Auftrag 2 ★ (kern, EA)** Berechne `1100 1010 ⊕ 0001 1011` (Korrektur D15) und `1100 1010 ⊕ 1100 1010`. **Begründe** mit einer der
 Regeln aus Archivwissen 2, dass das zweite Ergebnis vorhersehbar war.
 
 **Auftrag 3 ★★ (kern, PA)** Alice verschlüsselt BOJE mit dem Einmalschlüssel
-`0110 1001 · 1111 0000 · 0011 0011 · 1010 0101`. a) **Bestimme** den Geheimtext. b) Bob entschlüsselt – zeige an
+`1110 0111 · 0011 1001 · 1001 0011 · 0101 1100` (Korrektur D15; die Bits von BOJE stehen in Archivwissen 1). a) **Bestimme** den Geheimtext. b) Bob entschlüsselt – zeige an
 einem Zeichen, dass er wieder BOJE erhält.
 
 **Auftrag 4 ★★ (kern, PA) „HALT oder LAUF?“** Eve fängt den OTP-Geheimtext `0001 1110 · 1101 1010 · 0110 0111 · 1001 0001`
@@ -580,7 +580,7 @@ demselben Byte k = `0010 0001`. a) Verschlüssele EBBE (als Bits). b) **Entschei
 mono- oder polyalphabetisch ist, und **erläutere** einen Angriff.
 
 **Abi-Check (gesiezt)**
-a) **Bestimmen** Sie die Bitfolge des Geheimtextes, der entsteht, wenn das Wort OST (ASCII) mit dem Schlüssel
+a) **Bestimmen** Sie die Bitfolge des Geheimtextes, der entsteht, wenn das Wort HUT (ASCII; Korrektur D15: früher OST – O ⊕ `1010 0110` rechnet Archivwissen 2 vor) mit dem Schlüssel
 `1010 0110 0101 1100 1111 0000` durch XOR verschlüsselt wird. [3 BE]
 b) **Erläutern** Sie, unter welchen Bedingungen an den Schlüssel die XOR-Verschlüsselung perfekt sicher ist. [3 BE]
 c) „Wird derselbe Einmalschlüssel für zwei Nachrichten verwendet, kann ein Angreifer Informationen über die Klartexte
@@ -593,11 +593,11 @@ wird, mit einer Häufigkeitsanalyse angreifbar ist. [2 BE]
 
 **Lösungsteil (`_LSG`)**
 
-- **A1:** B 66 `0100 0010`, O 79 `0100 1111`, J 74 `0100 1010`, E 69 `0100 0101`; `0101 0111` = 87 = **W**,
+- **A1:** Q 81 `0101 0001`, Y 89 `0101 1001`, „4“ 52 `0011 0100`, „7“ 55 `0011 0111`; `0101 0111` = 87 = **W**,
   `0100 1000` = 72 = **H** ✔. Typischer Fehler: A = 1 statt 65 (P1).
-- **A2:** `1100 1010 ⊕ 0110 0110 = 1010 1100`; `1100 1010 ⊕ 1100 1010 = 0000 0000`, weil a ⊕ a = 0 (jedes Bit trifft
+- **A2:** `1100 1010 ⊕ 0001 1011 = 1101 0001`; `1100 1010 ⊕ 1100 1010 = 0000 0000`, weil a ⊕ a = 0 (jedes Bit trifft
   auf ein gleiches Bit) ✔.
-- **A3:** a) `0010 1011 · 1011 1111 · 0111 1001 · 1110 0000` ✔ b) z. B. 1. Zeichen: `0010 1011 ⊕ 0110 1001 =
+- **A3:** a) `1010 0101 · 0111 0110 · 1101 1001 · 0001 1001` ✔ b) z. B. 1. Zeichen: `1010 0101 ⊕ 1110 0111 =
   0100 0010` = 66 = B ✔.
 - **A4:** a) K_HALT = C ⊕ HALT = `0101 0110 · 1001 1011 · 0010 1011 · 1100 0101`, K_LAUF = C ⊕ LAUF =
   `0101 0010 · 1001 1011 · 0011 0010 · 1101 0111` ✔ b) Beide Schlüssel sind gleich wahrscheinlich (zufällig), also
@@ -611,7 +611,7 @@ wird, mit einer Häufigkeitsanalyse angreifbar ist. [2 BE]
 - **A6:** a) EBBE → `0110 0100 · 0110 0011 · 0110 0011 · 0110 0100` ✔ (als Zeichen „dccd“). b) Monoalphabetisch:
   Gleiche Klartextzeichen (B, B) ergeben gleiche Geheimtextbytes. Angriff: Häufigkeitsanalyse der Bytes (häufigstes
   Byte ≙ E bzw. Leerzeichen) oder Brute Force über nur 256 Schlüssel (P5, P7).
-- **Abi-Check:** a) `1110 1001 0000 1111 1010 0100` ✔ – Kernpunkte: ASCII korrekt (1), XOR korrekt (2). b) zufällig,
+- **Abi-Check:** a) HUT = `0100 1000 0101 0101 0101 0100` → `1110 1110 0000 1001 1010 0100` ✔ – Kernpunkte: ASCII korrekt (1), XOR korrekt (2). b) zufällig,
   mindestens so lang wie die Nachricht, nur einmal verwendet, geheim; dann passt jeder Klartext gleicher Länge
   (je Bedingung 0,5 + Erläuterung 1). c) korrekt: C1 ⊕ C2 = M1 ⊕ M2, der Schlüssel fällt heraus; aus Nullbytes
   erkennt man gleiche Zeichen, mit vermuteten Wörtern lassen sich Teile beider Klartexte gewinnen (Entscheidung 1,
@@ -950,7 +950,7 @@ zurück zu x; also ist jede Stellungstabelle eine Vertauschung von Paaren (Invol
 | 2 | Archivfund | Der Lochstreifen von 1917 | Dokument mit zwei Streifen (Tabelle §0.1, Geheimtext- und Schlüsselstreifen, Loch = 1). Frage: „Welche Regel macht aus Geheimtext und Schlüssel wieder die Nachricht?“ | 8 min. Archivfund-Text vorlesen. Paare vergleichen Spalten. Erwartet: „gleich → 0, verschieden → 1“. Mit Anlage-ASCII → FUNK. Nicht verraten, dass es XOR heißt – erst auf Folie 4. |
 | 3 | Inhalt | Zeichen als Bits | 8 Bit = 1 Byte, Stellenwerte 128 … 1 · ASCII (Anlage): A = 65, Z = 90, Leerzeichen = 32 · B = 66 = 64 + 2 = `0100 0010` · Vierergruppen, höchstwertiges Bit links · Falle P1: A = 65 ≠ A = 1 ≠ A = 0 | 4 min. Wiederholung Sek I. Erwartete Schwierigkeit: Umrechnung dezimal → dual; Trick „Großbuchstaben beginnen mit 010“. |
 | 4 | Verfahren Schritt für Schritt | XOR – exklusives Oder | Wahrheitstafel 0⊕0=0, 0⊕1=1, 1⊕0=1, 1⊕1=0 · Beispiel `0100 1111 ⊕ 1010 0110 = 1110 1001` · Regeln: a ⊕ 0 = a, a ⊕ a = 0 · **a ⊕ k ⊕ k = a** | 4 min. Rückbezug Archivfund: Die Regel des Kurses heißt XOR. Frage: „Warum braucht Bob keine eigene Entschlüsselungsoperation?“ → selbstinvers. |
-| 5 | Auftrag | Akte W3·1, Aufträge 1–3 | Einzelarbeit → Partnerarbeit · 12 min · ASCII, XOR, BOJE verschlüsseln · Kontrolle mit der Bit-Lupe erst danach | 12 min. Lösungen: A3 `0010 1011 · 1011 1111 · 0111 1001 · 1110 0000`. Schnelle: Auftrag 6. |
+| 5 | Auftrag | Akte W3·1, Aufträge 1–3 | Einzelarbeit → Partnerarbeit · 12 min · ASCII, XOR, BOJE verschlüsseln · Kontrolle mit der Bit-Lupe erst danach | 12 min. Lösungen: A3 `1010 0101 · 0111 0110 · 1101 1001 · 0001 1001` (D15). Schnelle: Auftrag 6. |
 | 6 | Inhalt | Vernam 1917 und das One-Time-Pad | C = M ⊕ K, M = C ⊕ K · Schlüssel: 1. echt zufällig 2. so lang wie die Nachricht 3. nur einmal benutzt 4. geheim · Vernam nutzte 5-Bit-Fernschreibcode, wir ASCII | 3 min. Historie vorsichtig: Vernam 1917 (AT&T), Zufalls- und Einmalforderung wird Mauborgne zugeschrieben. |
 | 7 | Merke | Perfekte Sicherheit | Zu einem OTP-Geheimtext passt jeder Klartext gleicher Länge – mit genau einem Schlüssel. Eve lernt nur die Länge. Shannon bewies das 1949. | 2 min. Abgrenzung: „perfekt“ heißt nicht „praktisch“ – Schlüsselproblem folgt. |
 | 8 | Auftrag | HALT oder LAUF? | Geheimtext `0001 1110 · 1101 1010 · 0110 0111 · 1001 0001` · Bestimmt einen Schlüssel für HALT und einen für LAUF · Partnerarbeit · 6 min | 6 min. Lösung siehe Akte A4. Pointe: Beide Schlüssel sind gleich wahrscheinlich → keine Entscheidung möglich. |
@@ -1128,12 +1128,12 @@ Bit = ein falsches Zeichen“ auch für die verbesserte Fassung.
 | WU-W3-03 | Hin und zurück | Warum entschlüsselt Bob mit derselben XOR-Operation und demselben Schlüssel? | a ⊕ k ⊕ k = a, weil k ⊕ k = 0 und a ⊕ 0 = a (XOR ist selbstinvers). | 2 | begriffe |
 | WU-W3-04 | Vier Gebote | Nenne die vier Bedingungen an den Schlüssel eines One-Time-Pads. | echt zufällig · so lang wie die Nachricht · nur einmal benutzt · geheim | 2 | sicherheit-beurteilen |
 | WU-W3-05 | Was bleibt übrig? | Zwei Nachrichten wurden mit demselben Einmalschlüssel K verschlüsselt. Was erhält Eve aus C1 ⊕ C2? | M1 ⊕ M2 – der Schlüssel fällt heraus; mit geratenen Wörtern lassen sich beide Texte rekonstruieren. | 2 | sicherheit-beurteilen |
-| WU-W3-06 | S-Box | KRYPTOS-16: Bestimme S(0110) und S⁻¹(1001). | S(0110) = `1000`, S⁻¹(1001) = `0011` ✔ | 2 | blockchiffre |
+| WU-W3-06 | S-Box | KRYPTOS-16: Bestimme S(0100) und S⁻¹(1001). | S(0100) = `0111`, S⁻¹(1001) = `0011` ✔ | 2 | blockchiffre |
 | WU-W3-07 | Spiegeln | Transponiere `1111 0000 0000 0000` (Zeile 1 = erste Vierergruppe). | `1000 1000 1000 1000` ✔ | 2 | transposition |
 | WU-W3-08 | Muster oder Rauschen? | In welchem Betriebsmodus werden gleiche Klartextblöcke zu gleichen Geheimtextblöcken – und warum ist das ein Problem? | ECB; Wiederholungen und Bildumrisse bleiben sichtbar. CBC verhindert das. | 2 | blockchiffre |
-| WU-W3-09 | Spirale W0 | Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `KDIHQ`. | **hafen** ✔ (K − 3 = H …) | 3 | entschluesseln |
+| WU-W3-09 | Spirale W0 | Caesar, Verschiebung 3 (Nummerierung A = 1 … Z = 26). Entschlüssele `ODQCH`. | **lanze** ✔ (O − 3 = L …) | 3 | entschluesseln |
 | WU-W3-10 | Spirale W2 | Vigenère mit dem Quadrat der Anlage: Klartextbuchstabe n, Schlüsselbuchstabe F. Geheimtextbuchstabe? | **S** ✔ (F = Verschiebung 5; n = 14 → 19 = S mit A = 1) | 2 | substitution-poly |
-| WU-W3-11 | Spirale W2 | Kasiski: Wiederholungen im Abstand 12, 18 und 30. Welche Schlüssellänge ist am wahrscheinlichsten? | ggT = **6** (auch 2 oder 3 möglich) ✔ | 2 | kasiski-friedman |
+| WU-W3-11 | Spirale W2 | Kasiski: Wiederholungen im Abstand 16, 24 und 40. Welche Schlüssellänge ist am wahrscheinlichsten? | ggT = **8** (auch 2 oder 4 möglich) ✔ | 2 | kasiski-friedman |
 | WU-W3-12 | ADFGVX | Quadrat ZEPPELIN18 (Akte W3·4): Welches Buchstabenpaar steht für die Ziffer 8, welches Zeichen für GV? | 8 = **DD**, GV = **T** ✔ | 2 | fremde-chiffre |
 
 ---
