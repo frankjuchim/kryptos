@@ -693,6 +693,47 @@ const FAELLE = {
   },
   'rsa.signieren': { fest: [[15, 27, 55], [2, 11, 51], [55, 27, 55], [-1, 3, 55], [0, 3, 1], [3, -1, 55], [3, 3, 2]], zufall: () => { const n = ganz(selten() ? 0 : 2, 5000); return [ganz(selten() ? -2 : 0, selten() ? n + 2 : Math.max(0, n - 1)), ganz(selten() ? -1 : 0, 500), n]; } },
   'rsa.pruefen': { fest: [[5, 3, 55], [8, 3, 55], [55, 3, 55], [-1, 3, 55]], zufall: () => { const n = ganz(selten() ? 0 : 2, 5000); return [ganz(selten() ? -2 : 0, selten() ? n + 2 : Math.max(0, n - 1)), ganz(selten() ? -1 : 0, 500), n]; } },
+  // ── M10 Bibliothek V (Plan M10 Task 221) ──
+  pfluegen: {
+    fest: [['wintersonne', 4], ['XOTNSENRIWEN', 4, 'ent'], ['', 3], ['', 3, 'ent'], ['abcde', 4, 'ent'], ['abc', 1], ['abc', 13], ['abc', 12], ['abc', 2.5], ['abcd', 3, 'ver', { fuellzeichen: 'Q' }], ['abc', 3, 'ver', { fuellzeichen: '1' }], ['abc', 3, 'ver', { fuellzeichen: null }], ['abc', 3, 'quer']],
+    zufall: () => {
+      const k = selten() ? wahl([0, 1, 13, 2.5]) : ganz(2, 12);
+      const r = richtung();
+      let t = zufall() < 0.5 ? textOderDeutsch(120) : buchstaben(0, 40);
+      if (r === 'ent' && zufall() < 0.8) { try { t = K.pfluegen(t, k); } catch { /* ungültig */ } }
+      return [t, k, r, ...(zufall() < 0.3 ? [{ fuellzeichen: fuell() }] : [])];
+    },
+  },
+  pfluegenReihenfolge: {
+    fest: [[3, 4], [0, 4], [1, 2], [5, 12], [3, 1], [3, 13], [-1, 3], [2.5, 3]],
+    zufall: () => [selten() ? wahl([-1, 1.5]) : ganz(0, 12), selten() ? wahl([1, 13, 2.5]) : ganz(2, 12)],
+  },
+  morse: {
+    fest: [['so'], ['ab c'], ['··· / ––– // ···', 'ent'], ['... / --- / ...', 'ent'], ['7'], [''], ['', 'ent'], ['·–·–·–·–·', 'ent'], ['x / y', 'ent'], ['ä ß 0', 'ver'], ['abc', 'quer'], ['////', 'ent']],
+    zufall: () => {
+      const r = richtung();
+      let t = textOderDeutsch(80);
+      if (r === 'ent') t = zufall() < 0.8 ? K.morse(t) : text(30, '·–.- /');
+      return [t, r];
+    },
+  },
+  freimaurer: { fest: [['aJsZ'], [''], ['Grüße 1'], [3]], zufall: () => [textOderDeutsch(60)] },
+  freimaurerBuchstabe: {
+    fest: [[{ figur: 'gitter', feld: 5, punkt: true }], [{ figur: 'kreuz', feld: 2, punkt: false }], [{ figur: 'kreuz', feld: 5, punkt: false }], [{ figur: 'gitter', feld: 0, punkt: false }], [{ figur: 'stern', feld: 1, punkt: false }], [{ figur: 'gitter', feld: 1, punkt: 1 }], [{ figur: 'gitter', feld: 1.5, punkt: true }], [null]],
+    zufall: () => [{ figur: selten() ? 'stern' : wahl(['gitter', 'kreuz']), feld: selten() ? wahl([0, 10, 1.5]) : ganz(1, 9), punkt: selten() ? wahl([0, 'ja', null]) : zufall() < 0.5 }],
+  },
+  nullchiffre: {
+    fest: [['Blaue Katzen singen'], ['Am Ufer ruht ein Boot', 2], ['Am Ufer ruht ein Boot', 3], ['Übermorgen öffnet das Tor', 2], [''], ['abc', 0], ['abc', 1.5], ['ab-cd e1f', 1], ['é è ç', 1]],
+    zufall: () => [textOderDeutsch(200), ...(zufall() < 0.8 ? [selten() ? wahl([0, -1, 1.5]) : ganz(1, 4)] : [])],
+  },
+  punktmethode: {
+    fest: [['der rote Kahn', [2, 4, 5]], ['der rote Kahn', [5, 2, 4, 4]], ['abc', [3]], ['abc', [-1]], ['abc', [1.5]], ['abc', []], ['abc', 'a'], ['', []]],
+    zufall: () => { const t = textOderDeutsch(100); const n = K.nurBuchstaben(t).length; return [t, Array.from({ length: ganz(0, 10) }, () => (selten(0.05) ? wahl([-1, n, 1.5]) : ganz(0, Math.max(0, n - 1))))]; },
+  },
+  punkteSetzen: {
+    fest: [['der rote Kahn', 'rot'], ['der rote Kahn', 'rotz'], ['', 'a'], ['abc', ''], ['abc', 3]],
+    zufall: () => [textOderDeutsch(200), zufall() < 0.5 ? buchstaben(0, 8) : deutsch(3)],
+  },
 };
 
 // Vergleich nur über die fachlich festgelegten Teile (TECHNIK §5.2); Rest ist Darstellung (Meldungstexte).

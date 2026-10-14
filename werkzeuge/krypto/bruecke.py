@@ -77,6 +77,10 @@ ZUORDNUNG = {
     'verfahren.varianten': (K.verfahren_varianten, 3),
     'baukasten.pruefe': (K.baukasten_pruefe, 2), 'baukasten.verschluesseln': (K.baukasten_verschluesseln, 3),
     'baukasten.entschluesseln': (K.baukasten_entschluesseln, None),
+    # M10 (Plan Task 221)
+    'pfluegen': (K.pfluegen, 3), 'pfluegenReihenfolge': (K.pfluegen_reihenfolge, None), 'morse': (K.morse, None),
+    'freimaurer': (K.freimaurer, None), 'freimaurerBuchstabe': (K.freimaurer_buchstabe, None),
+    'nullchiffre': (K.nullchiffre, None), 'punktmethode': (K.punktmethode, None), 'punkteSetzen': (K.punkte_setzen, None),
 }
 
 

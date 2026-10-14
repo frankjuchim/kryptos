@@ -1530,5 +1530,53 @@ class BibliothekM6IV(unittest.TestCase):
         self.assertRaises(F, K.sha256, 42)
 
 
+class BibliothekM10V(unittest.TestCase):
+    """Plan M10 Task 221 (E181, E184, E185) – dieselben Fälle wie test/krypto.test.js."""
+
+    def test_pfluegen(self):
+        self.assertEqual(K.pfluegen('wintersonne', 4), 'XOTNSENRIWEN')
+        self.assertEqual(K.pfluegen('XOTNSENRIWEN', 4, 'ent'), 'WINTERSONNEX')
+        self.assertEqual(K.pfluegen('laterne', 2), 'XNEALTRE')
+        self.assertEqual(K.pfluegen('kompass', 5), 'XAPXXMOSSK')
+        self.assertEqual(K.pfluegen('abcd', 3, 'ver', fuellzeichen='Q'), 'QCBQDA')
+        self.assertEqual(K.pfluegen_reihenfolge(3, 4), [[10, 9, 4, 3], [11, 8, 5, 2], [12, 7, 6, 1]])
+        with self.assertRaisesRegex(F, 'Vielfaches'):
+            K.pfluegen('ABCDE', 4, 'ent')
+        self.assertRaises(F, K.pfluegen, 'abc', 1)
+        self.assertRaises(F, K.pfluegen, 'abc', 13)
+        self.assertEqual(K.pfluegen('', 3), '')
+
+    def test_morse(self):
+        self.assertEqual(K.morse('so'), '··· / –––')
+        self.assertEqual(K.morse('ab c'), '·– / –··· // –·–·')
+        self.assertEqual(K.morse('··· / ––– // ···', 'ent'), 'SOS')
+        self.assertEqual(K.morse('... / --- / ...', 'ent'), 'SOS')
+        self.assertEqual(K.morse('7'), '––···')
+        self.assertEqual(K.MORSE['0'], '–––––')
+        self.assertRaises(F, K.morse, '·–·–·–·–·', 'ent')
+        self.assertEqual(K.morse(''), '')
+
+    def test_freimaurer(self):
+        self.assertEqual([[g['figur'], g['feld'], g['punkt']] for g in K.freimaurer('aJsZ')],
+                         [['gitter', 1, False], ['gitter', 1, True], ['kreuz', 1, False], ['kreuz', 4, True]])
+        self.assertEqual(K.freimaurer_buchstabe({'figur': 'gitter', 'feld': 5, 'punkt': True}), 'N')
+        self.assertEqual(K.freimaurer_buchstabe({'figur': 'kreuz', 'feld': 2, 'punkt': False}), 'T')
+        for b in K.ALPHABET:
+            self.assertEqual(K.freimaurer_buchstabe(K.freimaurer(b)[0]), b)
+        self.assertRaises(F, K.freimaurer_buchstabe, {'figur': 'kreuz', 'feld': 5, 'punkt': False})
+
+    def test_nullchiffre_punktmethode(self):
+        self.assertEqual(K.nullchiffre('Blaue Katzen singen'), 'BKS')
+        self.assertEqual(K.nullchiffre('Am Ufer ruht ein Boot', 2), 'MFUIO')
+        self.assertEqual(K.nullchiffre('Am Ufer ruht ein Boot', 3), 'EHNO')
+        self.assertEqual(K.nullchiffre('Übermorgen öffnet das Tor', 2), 'EEAO')
+        self.assertRaises(F, K.nullchiffre, 'abc', 0)
+        self.assertEqual(K.punkte_setzen('der rote Kahn', 'rot'), {'markiert': [2, 4, 5], 'vollstaendig': True, 'fehlt': 0})
+        self.assertEqual(K.punktmethode('der rote Kahn', [2, 4, 5]), 'ROT')
+        self.assertEqual(K.punktmethode('der rote Kahn', [5, 2, 4, 4]), 'ROT')
+        self.assertEqual(K.punkte_setzen('der rote Kahn', 'rotz'), {'markiert': [2, 4, 5], 'vollstaendig': False, 'fehlt': 1})
+        self.assertRaises(F, K.punktmethode, 'abc', [3])
+
+
 if __name__ == '__main__':
     unittest.main()

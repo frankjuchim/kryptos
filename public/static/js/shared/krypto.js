@@ -612,6 +612,54 @@
     return aus.join('');
   }
 
+  /** Pflügen (Plan M10 E181, Festlegung nach der Krypto-Werkstatt): k 2–12 */
+  function pruefePflugBreite(k) {
+    pruefeGanzzahl(k, 'Die Zeilenlänge k');
+    if (k < 2 || k > 12) throw new KryptoFehler('Die Zeilenlänge k muss zwischen 2 und 12 liegen.');
+    return k;
+  }
+
+  /**
+   * Lesenummer (ab 1) je Zelle eines Pflug-Rasters mit `zeilen` Zeilen und k Spalten: Auslesen spaltenweise von
+   * rechts, die letzte Spalte von unten nach oben, dann abwechselnd (Plan M10 E181).
+   */
+  function pfluegenReihenfolge(zeilen, k) {
+    pruefeGanzzahl(zeilen, 'Die Anzahl der Zeilen');
+    if (zeilen < 0) throw new KryptoFehler('Die Anzahl der Zeilen darf nicht negativ sein.');
+    pruefePflugBreite(k);
+    const nr = Array.from({ length: zeilen }, () => new Array(k).fill(0));
+    let n = 1;
+    for (let s = k - 1, j = 0; s >= 0; s--, j++) {
+      for (let i = 0; i < zeilen; i++) nr[j % 2 === 0 ? zeilen - 1 - i : i][s] = n++;
+    }
+    return nr;
+  }
+
+  /**
+   * Pflügen: Text in Zeilen der Länge k schreiben (letzte Zeile mit dem Füllzeichen auffüllen), Auslesen nach
+   * pfluegenReihenfolge. ent: Länge muss ein Vielfaches von k sein; Füllzeichen bleiben stehen.
+   */
+  function pfluegen(text, k, richtung = 'ver', { fuellzeichen = 'X' } = {}) {
+    pruefePflugBreite(k);
+    pruefeRichtung(richtung);
+    const f = pruefeFuellzeichen(fuellzeichen, 'Das Füllzeichen', null);
+    let t = nurBuchstaben(pruefeText(text));
+    if (richtung === 'ent' && t.length % k) {
+      throw new KryptoFehler('Die Länge des Geheimtextes muss ein Vielfaches von k sein.');
+    }
+    if (richtung === 'ver' && t.length % k) t += f.repeat(k - (t.length % k));
+    const zeilen = t.length / k;
+    const nr = pfluegenReihenfolge(zeilen, k);
+    const aus = new Array(t.length);
+    for (let z = 0; z < zeilen; z++) {
+      for (let s = 0; s < k; s++) {
+        if (richtung === 'ver') aus[nr[z][s] - 1] = t[z * k + s];
+        else aus[z * k + s] = t[nr[z][s] - 1];
+      }
+    }
+    return aus.join('');
+  }
+
   function drehe(feld, groesse, drehung) {
     const [z, s] = feld;
     return drehung === 'rechts' ? [s, groesse + 1 - z] : [groesse + 1 - s, z];
@@ -880,6 +928,122 @@
       }
     }
     return aus;
+  }
+
+  // ───────────────────── Codes und Steganographie (Plan M10 Task 221) ─────────────────────
+
+  /** Morse-Tafel A–Z, 0–9 (international); Punkt „·“ (U+00B7), Strich „–“ (U+2013) – Plan M10 E185 */
+  const MORSE = Object.freeze({
+    A: '·–', B: '–···', C: '–·–·', D: '–··', E: '·', F: '··–·', G: '––·', H: '····', I: '··', J: '·–––', K: '–·–',
+    L: '·–··', M: '––', N: '–·', O: '–––', P: '·––·', Q: '––·–', R: '·–·', S: '···', T: '–', U: '··–', V: '···–',
+    W: '·––', X: '–··–', Y: '–·––', Z: '––··', 0: '–––––', 1: '·––––', 2: '··–––', 3: '···––', 4: '····–',
+    5: '·····', 6: '–····', 7: '––···', 8: '–––··', 9: '––––·',
+  });
+
+  /**
+   * Morse: ver → Buchstaben durch „ / “, Wörter durch „ // “ getrennt; ent → GROSS ohne Leerzeichen (ASCII „.“ und
+   * „-“ werden wie „·“ und „–“ gelesen); unbekannte Zeichenfolge → KryptoFehler.
+   */
+  function morse(text, richtung = 'ver') {
+    pruefeText(text);
+    pruefeRichtung(richtung);
+    if (richtung === 'ver') {
+      return text
+        .split(/\s+/)
+        .map((w) => normalisieren(w))
+        .filter((w) => w.length)
+        .map((w) => [...w].map((c) => MORSE[c]).join(' / '))
+        .join(' // ');
+    }
+    const rueck = new Map(Object.entries(MORSE).map(([b, m]) => [m, b]));
+    let aus = '';
+    for (const teil of text.replace(/\./g, '·').replace(/-/g, '–').split('/')) {
+      const zeichen = teil.replace(/\s+/g, '');
+      if (!zeichen) continue;
+      if (!rueck.has(zeichen)) throw new KryptoFehler(`„${zeichen}“ ist kein Morsezeichen der Tafel.`);
+      aus += rueck.get(zeichen);
+    }
+    return aus;
+  }
+
+  /**
+   * Freimaurer-Alphabet (Plan M10 E184): A–I Gitter zeilenweise (Feld 1–9, A oben links), J–R Gitter mit Punkt,
+   * S–V Kreuz (Feld 1 oben, 2 links, 3 rechts, 4 unten), W–Z Kreuz mit Punkt.
+   */
+  function freimaurer(text) {
+    return [...nurBuchstaben(pruefeText(text))].map((b) => {
+      const i = ALPHABET.indexOf(b);
+      if (i < 18) return { buchstabe: b, figur: 'gitter', feld: (i % 9) + 1, punkt: i >= 9 };
+      return { buchstabe: b, figur: 'kreuz', feld: ((i - 18) % 4) + 1, punkt: i >= 22 };
+    });
+  }
+
+  function freimaurerBuchstabe(symbol) {
+    const { figur, feld, punkt } = symbol || {};
+    if (typeof punkt !== 'boolean') throw new KryptoFehler('Der Punkt muss wahr oder falsch sein.');
+    if (figur === 'gitter') {
+      if (!Number.isInteger(feld) || feld < 1 || feld > 9) throw new KryptoFehler('Im Gitter gibt es die Felder 1 bis 9.');
+      return ALPHABET[(punkt ? 9 : 0) + feld - 1];
+    }
+    if (figur === 'kreuz') {
+      if (!Number.isInteger(feld) || feld < 1 || feld > 4) throw new KryptoFehler('Im Kreuz gibt es die Felder 1 bis 4.');
+      return ALPHABET[(punkt ? 22 : 18) + feld - 1];
+    }
+    throw new KryptoFehler('Die Figur muss „gitter“ oder „kreuz“ sein.');
+  }
+
+  /** Wörter eines Trägertexts: größte Folgen von Zeichen, die als Buchstaben zählen (nach NFC), normalisiert */
+  function woerter(text) {
+    const aus = [];
+    let wort = '';
+    for (const c of pruefeText(text).normalize('NFC')) {
+      const b = nurBuchstaben(c);
+      if (b) wort += b;
+      else if (wort) {
+        aus.push(wort);
+        wort = '';
+      }
+    }
+    if (wort) aus.push(wort);
+    return aus;
+  }
+
+  /** Nullchiffre: aus jedem Wort der stelle-te Buchstabe (ab 1); kürzere Wörter werden übersprungen */
+  function nullchiffre(text, stelle = 1) {
+    pruefeGanzzahl(stelle, 'Die Stelle');
+    if (stelle < 1) throw new KryptoFehler('Die Stelle zählt ab 1.');
+    return woerter(text)
+      .filter((w) => w.length >= stelle)
+      .map((w) => w[stelle - 1])
+      .join('');
+  }
+
+  /** Punktmethode: Buchstaben des Trägertexts (nurBuchstaben, Positionen ab 0) an den markierten Stellen, aufsteigend */
+  function punktmethode(text, markiert) {
+    const t = nurBuchstaben(pruefeText(text));
+    if (!Array.isArray(markiert)) throw new KryptoFehler('Die Markierungen müssen eine Liste von Positionen sein.');
+    for (const p of markiert) {
+      if (!Number.isInteger(p) || p < 0 || p >= t.length) {
+        throw new KryptoFehler(`Die Position ${p} liegt nicht im Text (0 bis ${t.length - 1}).`);
+      }
+    }
+    return [...new Set(markiert)].sort((a, b) => a - b).map((p) => t[p]).join('');
+  }
+
+  /** Punkte setzen: jede Nachrichten-Stelle gierig auf den nächsten passenden Buchstaben des Trägertexts */
+  function punkteSetzen(text, nachricht) {
+    const t = nurBuchstaben(pruefeText(text));
+    const n = nurBuchstaben(pruefeText(nachricht, 'Nachricht'));
+    const markiert = [];
+    let pos = 0;
+    for (const c of n) {
+      const i = t.indexOf(c, pos);
+      if (i < 0) break;
+      markiert.push(i);
+      pos = i + 1;
+    }
+    const fehlt = n.length - markiert.length;
+    return { markiert, vollstaendig: fehlt === 0, fehlt };
   }
 
   // ───────────────────────────── Bits, ASCII, XOR ─────────────────────────────
@@ -2715,6 +2879,16 @@
     fleissnerDrehgruppen,
     ringFolge,
     ring,
+    pfluegen,
+    pfluegenReihenfolge,
+    // Codes und Steganographie (Plan M10)
+    MORSE,
+    morse,
+    freimaurer,
+    freimaurerBuchstabe,
+    nullchiffre,
+    punktmethode,
+    punkteSetzen,
     // Bits, ASCII, XOR
     ascii,
     zeichenAusAscii,

@@ -45,6 +45,9 @@ Zuordnung JS (shared/krypto.js) ↔ Python (dieses Modul); Optionsobjekte der JS
 | rsa.signieren / .pruefen        | rsa_signieren, rsa_pruefen      | pruefsumme, sha256, hashZahl    | pruefsumme, sha256 (hashlib), hash_zahl |
 | rsa.eKandidaten (Review M6)     | rsa_e_kandidaten                |                                 |                                         |
 | kryptosHash.ausgleichen         | kryptos_hash_ausgleichen        |                                 |                             |
+| pfluegen, pfluegenReihenfolge (M10) | pfluegen, pfluegen_reihenfolge | MORSE, morse (M10)            | MORSE, morse                |
+| freimaurer, freimaurerBuchstabe | freimaurer, freimaurer_buchstabe | nullchiffre, punktmethode     | nullchiffre, punktmethode   |
+| punkteSetzen (M10)              | punkte_setzen                   |                                 |                             |
 | ggT, erweiterterEuklid          | ggt, erweiterter_euklid         | verschiebungSchaetzen, chiQuadrat | verschiebung_schaetzen, chi_quadrat |
 | inverses, modpow, istPrim       | inverses, modpow, ist_prim      | rsa.schluessel / .ver… / .ent…  | rsa_schluessel, rsa_verschluesseln, rsa_entschluesseln |
 | dh.oeffentlich/.gemeinsam       | dh_oeffentlich, dh_gemeinsam    | dh.dlogKlein, schluesselanzahl  | dh_dlog_klein, schluesselanzahl |
@@ -608,6 +611,56 @@ def _drehe(z, s, n, drehung):
     return (s, n + 1 - z) if drehung == 'rechts' else (n + 1 - s, z)
 
 
+def _pflug_k(k):
+    k = _ganz(k, 'Zeilenlänge k')
+    if not 2 <= k <= 12:
+        raise KryptoFehler('Die Zeilenlänge k muss zwischen 2 und 12 liegen.')
+    return k
+
+
+def _pflug_weg(zeilen, k):
+    """Zellen (z, s) in Lesereihenfolge: Spalten von rechts, ganz rechts von unten nach oben, dann abwechselnd."""
+    weg = []
+    hoch = True
+    for s in reversed(range(k)):
+        reihe = reversed(range(zeilen)) if hoch else range(zeilen)
+        weg.extend((z, s) for z in reihe)
+        hoch = not hoch
+    return weg
+
+
+def pfluegen_reihenfolge(zeilen, k):
+    zeilen = _ganz(zeilen, 'Anzahl der Zeilen')
+    if zeilen < 0:
+        raise KryptoFehler('Die Anzahl der Zeilen darf nicht negativ sein.')
+    k = _pflug_k(k)
+    tabelle = [[0] * k for _ in range(zeilen)]
+    for nummer, (z, s) in enumerate(_pflug_weg(zeilen, k), start=1):
+        tabelle[z][s] = nummer
+    return tabelle
+
+
+def pfluegen(text, k, richtung='ver', *, fuellzeichen='X'):
+    """Pflügen (Plan M10 E181): Zeilen der Länge k, auffüllen, auslesen nach _pflug_weg."""
+    k = _pflug_k(k)
+    _richtung(richtung)
+    if not isinstance(fuellzeichen, str) or len(fuellzeichen) != 1 or fuellzeichen.upper() not in ALPHABET:
+        raise KryptoFehler('Das Füllzeichen muss ein Buchstabe sein.')
+    t = nur_buchstaben(text)
+    if richtung == 'ent':
+        if len(t) % k:
+            raise KryptoFehler('Die Länge des Geheimtextes muss ein Vielfaches von k sein.')
+        zeilen = len(t) // k
+        raster = [[''] * k for _ in range(zeilen)]
+        for c, (z, s) in zip(t, _pflug_weg(zeilen, k)):
+            raster[z][s] = c
+        return ''.join(''.join(r) for r in raster)
+    while len(t) % k:
+        t += fuellzeichen.upper()
+    raster = [t[i:i + k] for i in range(0, len(t), k)]
+    return ''.join(raster[z][s] for z, s in _pflug_weg(len(raster), k))
+
+
 def schablone_pruefen(groesse, schablone):
     fehler = []
     if not _ist_ganz(groesse) or _ganz(groesse) < 2 or _ganz(groesse) % 2:
@@ -853,6 +906,113 @@ def ring(text, t, richtung='ver', *, block=8, fuellzeichen='X'):
                 felder[t * j % n] = c  # Zeichen j wurde von Feld t · j mod n gelesen
             aus.extend(felder[k] for k in range(n))
     return ''.join(aus)
+
+
+# ───────────────────── Codes und Steganographie (Plan M10 Task 221) ─────────────────────
+
+_PUNKT, _STRICH = '\u00b7', '\u2013'
+# international; als Folge aus k(urz)/l(ang) notiert und unten in · und – übersetzt
+_MORSE_KL = ('A kl B lkkk C lklk D lkk E k F kklk G llk H kkkk I kk J klll K lkl L klkk M ll N lk O lll P kllk '
+             'Q llkl R klk S kkk T l U kkl V kkkl W kll X lkkl Y lkll Z llkk 0 lllll 1 kllll 2 kklll 3 kkkll '
+             '4 kkkkl 5 kkkkk 6 lkkkk 7 llkkk 8 lllkk 9 llllk').split()
+MORSE = {_MORSE_KL[i]: _MORSE_KL[i + 1].replace('k', _PUNKT).replace('l', _STRICH) for i in range(0, len(_MORSE_KL), 2)}
+
+
+def morse(text, richtung='ver'):
+    _text(text)
+    _richtung(richtung)
+    if richtung == 'ver':
+        woerter_ = [normalisieren(w) for w in text.split()]
+        return ' // '.join(' / '.join(MORSE[c] for c in w) for w in woerter_ if w)
+    zurueck = {v: b for b, v in MORSE.items()}
+    t = text.replace('.', _PUNKT).replace('-', _STRICH)
+    ergebnis = []
+    for teil in t.split('/'):
+        z = _ohne_leerraum(teil)
+        if not z:
+            continue
+        if z not in zurueck:
+            raise KryptoFehler(f'„{z}“ ist kein Morsezeichen.')
+        ergebnis.append(zurueck[z])
+    return ''.join(ergebnis)
+
+
+_FREIMAURER = {}
+for _i, _b in enumerate('ABCDEFGHI'):
+    _FREIMAURER[_b] = ('gitter', _i + 1, False)
+for _i, _b in enumerate('JKLMNOPQR'):
+    _FREIMAURER[_b] = ('gitter', _i + 1, True)
+for _i, _b in enumerate('STUV'):
+    _FREIMAURER[_b] = ('kreuz', _i + 1, False)
+for _i, _b in enumerate('WXYZ'):
+    _FREIMAURER[_b] = ('kreuz', _i + 1, True)
+_FREIMAURER_ZURUECK = {v: b for b, v in _FREIMAURER.items()}
+
+
+def freimaurer(text):
+    return [{'buchstabe': b, 'figur': _FREIMAURER[b][0], 'feld': _FREIMAURER[b][1], 'punkt': _FREIMAURER[b][2]}
+            for b in nur_buchstaben(text)]
+
+
+def freimaurer_buchstabe(symbol):
+    if not isinstance(symbol, dict):
+        raise KryptoFehler('Das Symbol fehlt.')
+    figur, feld, punkt = symbol.get('figur'), symbol.get('feld'), symbol.get('punkt')
+    if not isinstance(punkt, bool):
+        raise KryptoFehler('Der Punkt muss wahr oder falsch sein.')
+    if figur not in ('gitter', 'kreuz'):
+        raise KryptoFehler('Unbekannte Figur.')
+    if isinstance(feld, bool) or not isinstance(feld, int):
+        raise KryptoFehler('Das Feld muss eine ganze Zahl sein.')
+    schluessel = (figur, feld, punkt)
+    if schluessel not in _FREIMAURER_ZURUECK:
+        raise KryptoFehler('Dieses Feld gibt es in der Figur nicht.')
+    return _FREIMAURER_ZURUECK[schluessel]
+
+
+def _traeger_woerter(text):
+    woerter_ = [[]]
+    for c in unicodedata.normalize('NFC', _text(text)):
+        b = nur_buchstaben(c)
+        if b:
+            woerter_[-1].append(b)
+        elif woerter_[-1]:
+            woerter_.append([])
+    return [''.join(w) for w in woerter_ if w]
+
+
+def nullchiffre(text, stelle=1):
+    stelle = _ganz(stelle, 'Stelle')
+    if stelle < 1:
+        raise KryptoFehler('Die Stelle zählt ab 1.')
+    return ''.join(w[stelle - 1] for w in _traeger_woerter(text) if len(w) >= stelle)
+
+
+def punktmethode(text, markiert):
+    t = nur_buchstaben(text)
+    if not isinstance(markiert, list):
+        raise KryptoFehler('Die Markierungen müssen eine Liste sein.')
+    positionen = set()
+    for p in markiert:
+        if isinstance(p, bool) or not isinstance(p, (int, float)) or not _ist_ganz(p) or not 0 <= p < len(t):
+            raise KryptoFehler('Eine Position liegt nicht im Text.')
+        positionen.add(int(p))
+    return ''.join(t[p] for p in sorted(positionen))
+
+
+def punkte_setzen(text, nachricht):
+    t = nur_buchstaben(text)
+    n = nur_buchstaben(_text(nachricht, 'Nachricht'))
+    markiert = []
+    start = 0
+    for c in n:
+        treffer = next((i for i in range(start, len(t)) if t[i] == c), None)
+        if treffer is None:
+            break
+        markiert.append(treffer)
+        start = treffer + 1
+    fehlt = len(n) - len(markiert)
+    return {'markiert': markiert, 'vollstaendig': fehlt == 0, 'fehlt': fehlt}
 
 
 # ───────────────────────────── Bits, ASCII, XOR ─────────────────────────────

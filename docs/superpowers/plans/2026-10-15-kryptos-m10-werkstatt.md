@@ -315,7 +315,7 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
 - `punktmethode(text, markiert: number[]) → string` (Buchstaben des Trägertexts an den Positionen, ab 0, aufsteigend) und
   `punkteSetzen(text, nachricht) → { markiert, vollstaendig, fehlt }` (gierig von links) · `punktmethode`, `punkte_setzen`
 
-- [ ] **Step 1: Failing tests** (`test/krypto.test.js`, Werte im Scratchpad mit der Werkstatt-`crypto.js` gerechnet):
+- [x] **Step 1: Failing tests** (`test/krypto.test.js`, Werte im Scratchpad mit der Werkstatt-`crypto.js` gerechnet):
   ```js
   test('pfluegen (E181)', () => {
     assert.equal(K.pfluegen('wintersonne', 4), 'XOTNSENRIWEN');
@@ -346,13 +346,13 @@ nachgeladen von `KRLabor.lade` nach `bausteine.js`. Signaturen (alle Elemente ü
   ```
   Python: dieselben Fälle in `test_krypto.py`; `vergleich.js` neue Typen `pfluegen`, `morse`, `freimaurer`, `nullchiffre`,
   `punktmethode` (Zufallstexte, k 2–12, Stelle 1–3).
-- [ ] **Step 2:** `node --test test/krypto.test.js` und `python3 -I werkzeuge/krypto/test_krypto.py` → FAIL.
-- [ ] **Step 3: Implement** in `krypto.js` (Export-Block Abschnitte „Transposition“ bzw. neuer Abschnitt „Codes und Steganographie“)
+- [x] **Step 2:** `node --test test/krypto.test.js` und `python3 -I werkzeuge/krypto/test_krypto.py` → FAIL.
+- [x] **Step 3: Implement** in `krypto.js` (Export-Block Abschnitte „Transposition“ bzw. neuer Abschnitt „Codes und Steganographie“)
   und unabhängig in `krypto.py`; Zuordnung in `bruecke.py` (`'pfluegen': (K.pfluegen, 3)`, …); TECHNIK §5.2 Einträge mit
   „Festlegung nach Krypto-Werkstatt (E181/E184/E185)“. **Keine** Werkstatt-Codezeilen in `krypto.js` (eigene Umsetzung,
   die Bibliothek ist Kryptos-Kern – kein FREMDCODE-Eintrag nötig; die Festlegungen sind Ideen).
-- [ ] **Step 4:** Tests grün; `npm run krypto:vergleich -- --anzahl 500` → 0 Abweichungen; `npm test`.
-- [ ] **Step 5: Commit** `M10: Bibliothek V – Pflügen, Morse, Freimaurer, Nullchiffre, Punktmethode mit Zwilling (Task 221)`
+- [x] **Step 4:** Tests grün; `npm run krypto:vergleich -- --anzahl 500` → 0 Abweichungen; `npm test`.
+- [x] **Step 5: Commit** `M10: Bibliothek V – Pflügen, Morse, Freimaurer, Nullchiffre, Punktmethode mit Zwilling (Task 221)`
 
 ### Task 222: Bibliothek VI – Enigma I (E187)
 

@@ -2337,3 +2337,57 @@ test('M6 Bibliothek IV: SHA-256 nach FIPS 180-4 (448-Bit-Nachricht, Padding-Gren
   assert.throws(() => K.sha256('\ud800'), K.KryptoFehler, 'einzelnes Ersatzzeichen');
   assert.throws(() => K.sha256(42), K.KryptoFehler);
 });
+
+// ── M10 Bibliothek V (Plan M10 Task 221): Festlegungen nach der Krypto-Werkstatt (E181, E184, E185); Werte im
+// Scratchpad mit der Werkstatt-crypto.js gerechnet und von Hand nachgeprüft ──
+test('pfluegen (Plan M10 E181)', () => {
+  assert.equal(K.pfluegen('wintersonne', 4), 'XOTNSENRIWEN');
+  assert.equal(K.pfluegen('XOTNSENRIWEN', 4, 'ent'), 'WINTERSONNEX');
+  assert.equal(K.pfluegen('laterne', 2), 'XNEALTRE');
+  assert.equal(K.pfluegen('kompass', 5), 'XAPXXMOSSK');
+  assert.deepEqual(K.pfluegenReihenfolge(3, 4), [[10, 9, 4, 3], [11, 8, 5, 2], [12, 7, 6, 1]]);
+  assert.throws(() => K.pfluegen('ABCDE', 4, 'ent'), /Vielfaches/);
+  assert.throws(() => K.pfluegen('abc', 1), K.KryptoFehler);
+  assert.throws(() => K.pfluegen('abc', 13), K.KryptoFehler);
+  assert.equal(K.pfluegen('', 3), '');
+  assert.equal(K.pfluegen('abcd', 3, 'ver', { fuellzeichen: 'Q' }), 'QCBQDA');
+  for (const [t, k] of [['geheimnis im turm', 3], ['abc', 7], ['nachricht', 12]]) {
+    assert.equal(K.pfluegen(K.pfluegen(t, k), k, 'ent').slice(0, K.nurBuchstaben(t).length), K.nurBuchstaben(t), `${t}/${k}`);
+  }
+});
+
+test('morse (Plan M10 E185)', () => {
+  assert.equal(K.morse('so'), '··· / –––');
+  assert.equal(K.morse('ab c'), '·– / –··· // –·–·');
+  assert.equal(K.morse('··· / ––– // ···', 'ent'), 'SOS');
+  assert.equal(K.morse('7'), '––···');
+  assert.equal(K.MORSE.E, '·');
+  assert.equal(K.MORSE['0'], '–––––');
+  assert.equal(Object.isFrozen(K.MORSE), true);
+  assert.equal(K.morse('... / --- / ...', 'ent'), 'SOS'); // ASCII-Punkt und -Strich werden akzeptiert
+  assert.throws(() => K.morse('·–·–·–·–·', 'ent'), K.KryptoFehler);
+  assert.equal(K.morse(''), '');
+});
+
+test('freimaurer (Plan M10 E184)', () => {
+  assert.deepEqual(K.freimaurer('aJsZ').map((g) => [g.figur, g.feld, g.punkt]), [['gitter', 1, false], ['gitter', 1, true], ['kreuz', 1, false], ['kreuz', 4, true]]);
+  assert.equal(K.freimaurerBuchstabe({ figur: 'gitter', feld: 5, punkt: true }), 'N');
+  assert.equal(K.freimaurerBuchstabe({ figur: 'kreuz', feld: 2, punkt: false }), 'T');
+  for (const b of K.ALPHABET) assert.equal(K.freimaurerBuchstabe(K.freimaurer(b)[0]), b);
+  assert.equal(K.freimaurer('ä')[0].buchstabe, 'A');
+  assert.throws(() => K.freimaurerBuchstabe({ figur: 'kreuz', feld: 5, punkt: false }), K.KryptoFehler);
+  assert.throws(() => K.freimaurerBuchstabe({ figur: 'stern', feld: 1, punkt: false }), K.KryptoFehler);
+});
+
+test('nullchiffre und punktmethode (Plan M10 Task 221)', () => {
+  assert.equal(K.nullchiffre('Blaue Katzen singen'), 'BKS');
+  assert.equal(K.nullchiffre('Am Ufer ruht ein Boot', 2), 'MFUIO');
+  assert.equal(K.nullchiffre('Am Ufer ruht ein Boot', 3), 'EHNO');
+  assert.equal(K.nullchiffre('Übermorgen öffnet das Tor', 2), 'EEAO');
+  assert.throws(() => K.nullchiffre('abc', 0), K.KryptoFehler);
+  assert.deepEqual(K.punkteSetzen('der rote Kahn', 'rot'), { markiert: [2, 4, 5], vollstaendig: true, fehlt: 0 });
+  assert.equal(K.punktmethode('der rote Kahn', [2, 4, 5]), 'ROT');
+  assert.equal(K.punktmethode('der rote Kahn', [5, 2, 4, 4]), 'ROT');
+  assert.deepEqual(K.punkteSetzen('der rote Kahn', 'rotz'), { markiert: [2, 4, 5], vollstaendig: false, fehlt: 1 });
+  assert.throws(() => K.punktmethode('abc', [3]), K.KryptoFehler);
+});
