@@ -203,3 +203,24 @@ test('video_folien.py --pruefen: acht Videos ohne Befund', { skip: ohnePptx, tim
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.match(r.stdout, /8 Videos, 0 Befunde/);
 });
+
+// Plan M10 Task 236 (E192): Objektbilder der Werkstatt-Werkzeuge für Folien und Videos – Herkunft je Bild
+test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkzeug), 1600 × 900, ≤ 400 KB', () => {
+  const fs = require('node:fs');
+  const ordner = path.join(WURZEL, 'materialien', 'Bilder', 'Labor');
+  const quellen = JSON.parse(fs.readFileSync(path.join(ordner, 'quellen.json'), 'utf8'));
+  const pngs = fs.readdirSync(ordner).filter((f) => f.endsWith('.png')).sort();
+  const SOLL = ['brief', 'enigma', 'freimaurer', 'playfair', 'polybios', 'schablone', 'scheibe', 'skytale', 'stromweg', 'trommel'].map((n) => `${n}.png`);
+  assert.deepEqual(pngs, SOLL);
+  const bekannt = require('../src/krypto/werkzeuge.js').WERKZEUGE.map((w) => w.id);
+  for (const f of pngs) {
+    const q = quellen.bilder[f];
+    assert.ok(q, `${f}: Eintrag in quellen.json`);
+    assert.equal(q.herkunft, 'Ideen von A. Bodendiek (Krypto-Werkstatt)', f);
+    assert.ok(bekannt.includes(q.werkzeug), `${f}: Werkzeug ${q.werkzeug}`);
+    const buf = fs.readFileSync(path.join(ordner, f));
+    assert.ok(buf.length <= 400 * 1024, `${f}: ${buf.length} Bytes`);
+    assert.deepEqual([buf.readUInt32BE(16), buf.readUInt32BE(20)], [1600, 900], `${f}: Größe`);
+  }
+  assert.deepEqual(Object.keys(quellen.bilder).sort(), pngs, 'keine Einträge ohne Bild');
+});

@@ -21,7 +21,8 @@
     "ide:pruefen": "python3 -I werkzeuge/ide-pruefung/ide_pruefen.py",
     "abdeckung": "node scripts/abdeckung.js",
     "konfig:pruefen": "node src/verbund/konfig_pruefen.js",
-    "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds && npm run abdeckung"
+    "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds && npm run abdeckung",
+    "labor:bilder": "node werkzeuge/material/labor_bilder.js"
   },
   "engines": {
     "node": ">=20"

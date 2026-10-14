@@ -148,6 +148,7 @@ LABS_DIR=<labs-Kopie> npm run e2e:portal           # Ende-zu-Ende mit einer loka
 npm run konfig:pruefen         # Konfiguration aus den Umgebungsvariablen prüfen, ohne Start (Abschnitt 6)
 npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, npm run workspaces; ohne --pruefen erzeugen (LibreOffice)
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)
+npm run labor:bilder           # Objektbilder der Werkstatt-Werkzeuge nach materialien/Bilder/Labor/ (Folien, Videos; M10 E192)
 npm start                      # Server wie im Image (braucht die Umgebungsvariablen aus Abschnitt 6)
 node scripts/vertrag_pruefen.js http://localhost:3000   # Manifest gegen den Vertrag prüfen
 ```

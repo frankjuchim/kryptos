@@ -1,0 +1,55 @@
+{
+  "hinweis": "Objektbilder der Labor-Werkzeuge (Plan M10 Task 236, E192); erzeugt mit werkzeuge/material/labor_bilder.js",
+  "bilder": {
+    "scheibe.png": {
+      "werkzeug": "scheibe",
+      "reiter": "scheibe",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "skytale.png": {
+      "werkzeug": "skytale",
+      "reiter": "skytale",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "schablone.png": {
+      "werkzeug": "skytale",
+      "reiter": "fleissner",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "polybios.png": {
+      "werkzeug": "quadrat",
+      "reiter": "polybios",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "playfair.png": {
+      "werkzeug": "quadrat",
+      "reiter": "playfair",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "trommel.png": {
+      "werkzeug": "signale",
+      "reiter": "morse",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "freimaurer.png": {
+      "werkzeug": "signale",
+      "reiter": "freimaurer",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "brief.png": {
+      "werkzeug": "verstecke",
+      "reiter": "nullchiffre",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "enigma.png": {
+      "werkzeug": "enigma",
+      "reiter": "maschine",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    },
+    "stromweg.png": {
+      "werkzeug": "enigma",
+      "reiter": "innenleben",
+      "herkunft": "Ideen von A. Bodendiek (Krypto-Werkstatt)"
+    }
+  }
+}

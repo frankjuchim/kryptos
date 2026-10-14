@@ -863,11 +863,14 @@ Verfahren/Schlüssel und Erklärung; „Kerckhoffs: Eve kennt alle Verfahren –
 trommel,freimaurer,brief,enigma,stromweg}.png`, `materialien/Bilder/Labor/quellen.json`; Modify `test/material_pipeline.test.js`,
 `package.json` (Skript `labor:bilder`).
 
-- [ ] **Step 1: Failing test** – `material_pipeline.test.js`: jede PNG in `materialien/Bilder/Labor/` hat einen Eintrag in
+- [x] **Step 1: Failing test** – `material_pipeline.test.js`: jede PNG in `materialien/Bilder/Labor/` hat einen Eintrag in
   `quellen.json` mit `herkunft: "Ideen von A. Bodendiek (Krypto-Werkstatt)"` und `werkzeug`; Bild ≤ 400 KB, 1600 × 900.
-- [ ] **Step 2–4:** Skript (Playwright wie `video_bilder.js`: Dev-Portal, Lehrkraft-Konto „Frau M.“, `/labor#/<id>`, hell,
+- [x] **Step 2–4:** Skript (Playwright wie `video_bilder.js`: Dev-Portal, Lehrkraft-Konto „Frau M.“, `/labor#/<id>`, hell,
   `deviceScaleFactor 1`, Ausschnitt der Werkzeugfläche ohne Kopfzeile, Herkunftszeile im Bild); Bilder ansehen.
-- [ ] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge für Folien und Videos (Einbau nach Entscheidung L58) (Task 236)`
+- [x] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge für Folien und Videos (Einbau nach Entscheidung L58) (Task 236)`
+- Umsetzung: Ausschnitt = Bühne des Werkzeugs (Objekt, Kurzanleitung, Erklärung) mit deviceScaleFactor 2 aufgenommen, auf eine
+  1600 × 900-Leinwand (hell, `object-fit: contain`) gesetzt, Herkunftszeile unten rechts; Wörter der Handgriffe (mango, zebra,
+  birne, kiwis, balkon, pinie …) stehen in keinem Material. `npm run labor:bilder` (README §4).
 
 ### Task 239: Werkzeug-Karte in Level 0.4 (Polybios) und 2.4 (Playfair) – Aufgaben ohne Lösungsverrat (L55 entschieden)
 
