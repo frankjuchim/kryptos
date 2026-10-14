@@ -540,7 +540,8 @@ const KRFunkSzenen = (() => {
     for (const [g, k] of Object.entries(z || {})) if (/^[A-Za-z]$/.test(g) && typeof k === 'string' && /^[A-Za-z]$/.test(k)) out[g.toUpperCase()] = k.toLowerCase();
     return out;
   }
-  const prozentKomma = (x) => `${(Math.round((Number(x) || 0) * 1000) / 10).toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 1 })} %`;
+  /** Anteil in 10-%-Stufen (Server, Review M7 W3): „mindestens 40 %“, bei 1 „100 %“ */
+  const anteilText = (x) => (Number(x) >= 1 ? '100 %' : `mindestens ${Math.round((Number(x) || 0) * 100)} %`);
 
   registriere('wettknacken', (ctx) => {
     const st = ctx.stand();
@@ -554,7 +555,7 @@ const KRFunkSzenen = (() => {
     let anteil = st.ich && typeof st.ich.anteil === 'number' ? st.ich.anteil : 0;
     let warFertig = !!(st.ich && st.ich.fertig);
     function zeigeAnteil() {
-      anteilEl.textContent = `Euer Anteil: ${prozentKomma(anteil)}`;
+      anteilEl.textContent = `Euer Anteil: ${anteilText(anteil)} (in Zehnerstufen)`;
       const pct = Math.round(anteil * 100);
       balken.setAttribute('aria-valuenow', String(pct));
       balkenWert.style.setProperty('--wert', `${pct}%`);

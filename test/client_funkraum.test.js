@@ -298,7 +298,7 @@ test('Wettknacken: Werkbank-Haken sendet die Zuordnung, Anteil erscheint mit Kom
       'GET /api/funk/8/stand': { status: 200, body: stand(2, { id: 8, typ: 'wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'knacker', anteil: 0 }, anzeigen: { geheimtext: 'DHCPQ NRUMV UDNCU', laenge: 15, hinweise: ['U ≙ e'] }, werkzeuge: [{ id: 'haeufigkeit', voreinstellung: { text: 'DHCPQ NRUMV UDNCU', reiter: ['histogramm', 'bigramme'] } }, { id: 'substitution', voreinstellung: { text: 'DHCPQ NRUMV UDNCU' } }] }) },
       'PUT /api/funk/8/zuordnung': (b) => {
         puts.push(b);
-        return puts.length === 1 ? { status: 200, body: { anteil: 0.193 } } : { status: 429, body: { error: 'Höchstens eine Zuordnung je Team in 2 Sekunden.' } };
+        return puts.length === 1 ? { status: 200, body: { anteil: 0.1, fertig: false } } : { status: 429, body: { error: 'Höchstens eine Zuordnung je Team in 2 Sekunden.' } };
       }
     }
   });
@@ -316,8 +316,9 @@ test('Wettknacken: Werkbank-Haken sendet die Zuordnung, Anteil erscheint mit Kom
   umgebung.substitution.beiAenderung({ U: 'e', Y: '' }); // die Werkbank ruft das entprellt auf (M6 Task 115); leere Felder fallen weg
   await k.ruhe();
   assert.deepEqual(k.roh(puts), [{ zuordnung: { U: 'e' } }]);
-  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /19,3 %/);
-  assert.equal(k.eins(k.document, '.funk-anteil-balken').getAttribute('aria-valuenow'), '19');
+  // Review M7 W3: der Server meldet nur 10-%-Stufen – die Seite sagt „mindestens“
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /mindestens 10 %/);
+  assert.equal(k.eins(k.document, '.funk-anteil-balken').getAttribute('aria-valuenow'), '10');
   assert.ok(k.eins(k.document, 'div.funk-werkzeug[data-werkzeug="haeufigkeit"] [role=tab][data-reiter="bigramme"]'));
   assert.ok(k.eins(k.document, '.funk-werkzeug[data-werkzeug="substitution"]'));
   assert.match(k.text(k.eins(k.document, 'ul.funk-hinweise')), /U ≙ e/);
@@ -325,7 +326,7 @@ test('Wettknacken: Werkbank-Haken sendet die Zuordnung, Anteil erscheint mit Kom
   // 429 still: keine Fehlermeldung, Anteil bleibt
   umgebung.substitution.beiAenderung({ U: 'e', Y: 'c' });
   await k.ruhe();
-  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /19,3 %/);
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /mindestens 10 %/);
   assert.equal(k.alle(k.document, '.funk-wett .fehler').length, 0);
   k.wert('KRFunkraum').stopp();
 });
@@ -337,12 +338,12 @@ test('Wettknacken: fertig zeigt „Geschafft! Platz 1“', async () => {
     fetch: {
       'GET /api/sitzung': SITZUNG,
       'GET /api/funk': funk({ id: 8, typ: 'wettknacken', status: 'laeuft', phase: 'knacken' }),
-      'GET /api/funk/8/stand': { status: 200, body: stand(9, { id: 8, typ: 'wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'knacker', anteil: 0.97, fertig: true, platz: 1 }, anzeigen: { geheimtext: 'DHCPQ', laenge: 5, hinweise: [] }, werkzeuge: [] }) }
+      'GET /api/funk/8/stand': { status: 200, body: stand(9, { id: 8, typ: 'wettknacken', phase: 'knacken', phasen: ['knacken', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'knacker', anteil: 0.9, fertig: true, platz: 1 }, anzeigen: { geheimtext: 'DHCPQ', laenge: 5, hinweise: [] }, werkzeuge: [] }) }
     }
   });
   await k.ruhe();
   assert.match(k.text(k.eins(k.document, '.funk-fertig')), /Geschafft! Platz 1/);
-  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /97 %/);
+  assert.match(k.text(k.eins(k.document, 'p.funk-anteil')), /mindestens 90 %/);
   assert.equal(k.alle(k.document, '.funken').length, 0, 'reduzierte Bewegung: keine Funken');
   k.wert('KRFunkraum').stopp();
 });

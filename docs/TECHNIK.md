@@ -1605,8 +1605,10 @@ Szenario-Regeln im Detail:
   geknackt“; Merksatz Schlüsselraum 26/Kerckhoffs.
 - **Wettknacken (W1 §9.2/§9.3, Plan M7 E97):** Text aus `seed/funkraum/wettknacken.json` (`{ id, geheimtext, loesung: {
   zuordnung }, laenge }`, ≥ 400 Buchstaben, nicht aus Lab/Akten). Teams arbeiten mit der eingebetteten
-  Substitutions-Werkbank; der Server speichert die Zuordnung je Team und meldet nur den **Anteil = richtig entschlüsselte
-  Positionen / Textlänge** (Zuordnung Geheim → Klar, Groß/Klein egal). **Fertig ≥ 0,95** → Ereignis `fertig { team, platz }`
+  Substitutions-Werkbank; der Server speichert die Zuordnung je Team und berechnet den **Anteil = richtig entschlüsselte
+  Positionen / Textlänge** (Zuordnung Geheim → Klar, Groß/Klein egal). Teams erhalten ihn nur **gestuft**: abgerundet auf
+  10 % (`stufe`), 1 nur bei vollständig richtig, dazu `fertig` – der genaue Wert (und das Ereignis `fortschritt` mit
+  Prozent) nur für Regie und Beamer; sonst wäre jede Zuordnung ein Orakel (ein Buchstabe je Anfrage, Review M7 W3). **Fertig ≥ 0,95** → Ereignis `fertig { team, platz }`
   einmal je Team; Hinweise 1–3 als `POST /api/lehrer/funk/:id/hinweis { nr }` (Texte aus dem Seed, Ereignis `hinweis`);
   Verlauf je Team in `funk_rollen.zustand.verlauf` (höchstens ein Punkt je 30 s, ≤ 60 Punkte) für die Kurven. Klartext nur
   in Regie/Beamer ab `aufloesung`.

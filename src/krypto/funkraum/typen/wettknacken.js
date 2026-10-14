@@ -93,6 +93,14 @@ function pruefeZuordnung(z) {
   return out;
 }
 
+/** Anteil für Teams (Review M7 W3): abgerundet auf 10-%-Stufen, 1 nur bei vollständig richtig – sonst wäre jede
+    Zuordnung ein Orakel (ein Buchstabe je Anfrage, Anteil auf 0,1 % genau). Genaue Werte nur Regie/Beamer. */
+function stufe(anteil) {
+  const a = Number(anteil) || 0;
+  if (a >= 1) return 1;
+  return Math.floor(Math.round(a * 1000) / 100) / 10;
+}
+
 const knackerTeams = (ctx) => ctx.rollen().filter((r) => r.rolle === 'knacker');
 
 function fortschritt(ctx) {
@@ -111,6 +119,7 @@ module.exports = {
   typ: 'wettknacken',
   texte,
   anteilVon,
+  stufe,
   /** beim Anlegen: ohne gültigen Text nicht anlegbar (400) */
   pruefeAnlegen(ctx, optionen) {
     if (!textVon(ctx, optionen.textId)) throw new V.ValidationError(FEHLT);
@@ -127,12 +136,11 @@ module.exports = {
   /** eigene Werte: Anteil, fertig, Platz – nie fremde */
   ich(ctx, sz, rolle) {
     const z = JSON.parse(rolle.zustand || '{}');
-    return { anteil: z.anteil || 0, fertig: !!z.fertig, platz: z.platz || null };
+    return { anteil: stufe(z.anteil || 0), fertig: !!z.fertig, platz: z.platz || null };
   },
-  /** Fortschritt anderer Teams sehen nur Beamer und Regie */
+  /** Fortschritt (genaue Prozent) sehen nur Beamer und Regie – Teams kennen ihren Anteil nur gestuft aus `ich` (W3) */
   ereignisSicht(ctx, sz, e, betrachter) {
-    if (betrachter.art !== 'team' || e.code !== 'fortschritt') return true;
-    return JSON.parse(e.daten || '{}').team === betrachter.teamId;
+    return betrachter.art !== 'team' || e.code !== 'fortschritt';
   },
   anzeigen(ctx, sz, sicht) {
     if (sz.status === 'auswertung') return {};
@@ -174,7 +182,7 @@ module.exports = {
         ctx.ereignis('fertig', { team: betrachter.teamId, platz: neu.platz }, v);
       }
       ctx.setzeZustand(betrachter.teamId, neu);
-      return { anteil };
+      return { anteil: stufe(anteil), fertig: !!neu.fertig };
     }
   },
   regie: {
