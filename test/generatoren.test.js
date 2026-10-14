@@ -1186,6 +1186,19 @@ test('fallen_mix: Schülerlösung enthält genau die gewählte Falle (unabhängi
   for (const k of ['verschluesseln:P1', 'verschluesseln:P2', 'entschluesseln:P3', 'modulo:P2', 'substitution-poly:P1', 'substitution-poly:P3', 'schluesselraum:P7']) assert.ok(gesehen.has(k), k);
 });
 
+test('fallen_mix (Review M8 Fund 2): die Schülerlösung ist in keinem Fall zugleich das richtige Ergebnis (5000 Seeds)', () => {
+  const norm = (x) => String(x).replace(/−/g, '-').replace(/[^A-Za-z0-9-]/g, '').toUpperCase();
+  const falsch = [];
+  for (let seed = 1; seed <= 5000; seed++) {
+    const a = G.erzeuge('fallen_mix', seed);
+    const md = a.inhalt.map((b) => b.md || '').join(' ');
+    const m = /Schülerlösung: (?:`([^`]+)`|(−?\d+))/.exec(md);
+    assert.ok(m, md);
+    if (norm(m[1] ?? m[2]) === norm(a.loesung.ergebnis[0])) falsch.push(`${seed}: ${md.slice(0, 120)}`);
+  }
+  assert.deepEqual(falsch, []);
+});
+
 test('Trainingsplatz Welt 6: drei Generatoren (eves_uhrwerk, zeitplan, fallen_mix)', async () => {
   const { s } = await H.szenario();
   assert.deepEqual((await s.get('/api/training/6')).body.generatoren.map((g) => g.key), ['eves_uhrwerk', 'zeitplan', 'fallen_mix']);

@@ -41,7 +41,10 @@ function fallenMix(z) {
   if (art.startsWith('caesar')) {
     const wort = z.pick(WOERTER_ANTIKE.filter((w) => w.length >= 4 && w.length <= 8));
     if (art === 'caesar_p3') {
-      const k = z.int(3, 23);
+      // k = 13: Ver- und Entschlüsseln sind gleich – die „falsche“ Schülerlösung wäre richtig (Review M8 Fund 2)
+      let k;
+      do k = z.int(3, 23);
+      while (k === 13);
       const geheim = K.caesar(wort, k);
       const schueler = K.caesar(geheim, k).toLowerCase();
       return aufgabe({ kategorie: 'entschluesseln', falle: 'P3', text: `Nummerierung: A = 1 … Z = 26. Entschlüssele \`${K.gruppieren(geheim, 5)}\` mit Caesar, Verschiebung k = ${k}. Schülerlösung: \`${schueler}\``, ergebnis: wort, erklaerung: `Richtig: **${wort}**.` });
@@ -72,7 +75,8 @@ function fallenMix(z) {
   }
   if (art.startsWith('vig')) {
     const klar = z.pick(KLARTEXTE_W2.filter((w) => w.length <= 10));
-    const schl = z.pick(SCHLUESSEL_W2);
+    // Schlüssel nur aus A/N (Verschiebung 0/13): Richtung egal – für P3 ungeeignet (Review M8 Fund 2)
+    const schl = z.pick(SCHLUESSEL_W2.filter((w) => !/^[AN]+$/.test(w)));
     if (art === 'vig_p1') {
       const richtig = K.vigenere(klar, schl);
       const schueler = K.vigenere(klar, K.caesar(schl, 1));
