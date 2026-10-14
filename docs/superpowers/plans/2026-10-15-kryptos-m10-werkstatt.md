@@ -3,7 +3,7 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or
 > superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 > Nummerierung setzt den Gesamtplan `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` und die Detailpläne M3–M9
-> fort (Tasks **220–238**, Entscheidungen **E167–E199**, Lehrkraft-Fragen **L53–L59**, nächste Kern-Abweichung **K48**).
+> fort (Tasks **220–240**, Entscheidungen **E167–E199**, Lehrkraft-Fragen **L53–L59**, nächste Kern-Abweichung **K48**).
 >
 > **Status: geplant** (15.10.2026). Ausgangsstand: Branch `feature/werkstatt-uebernahme` = live `main` `22b4081`
 > (Version 1.0.0) + `08de5fe` (Erlaubnis in `docs/FREMDCODE.md`). **Achtung:** Auf diesem Stand ist genau ein Test rot –
@@ -829,6 +829,55 @@ trommel,freimaurer,brief,enigma,stromweg}.png`, `materialien/Bilder/Labor/quelle
   `deviceScaleFactor 1`, Ausschnitt der Werkzeugfläche ohne Kopfzeile, Herkunftszeile im Bild); Bilder ansehen.
 - [ ] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge für Folien und Videos (Einbau nach Entscheidung L58) (Task 236)`
 
+### Task 239: Werkzeug-Karte in Level 0.4 (Polybios) und 2.4 (Playfair) – Aufgaben ohne Lösungsverrat (L55 entschieden)
+
+Entscheidung der Lehrkraft (15.10.2026): „Kann man die Aufgabe so abändern, sodass das Tool genutzt werden kann?“ → Ja.
+
+**Files:** Modify `seed/welten/welt0.json` (W0-L4: `werkzeug` += `{ "id": "quadrat", "voreinstellung": { "reiter": ["polybios"] } }`),
+`seed/welten/welt2.json` (W2-L4: `werkzeug` += `{ "id": "quadrat", "voreinstellung": { "reiter": ["playfair"] } }` neben
+`haeufigkeit`), betroffene Aufgaben W0-L4-01/-02/-05 und W2-L4-01/-02/-04/-05 (nach Prüfung, s. u.), `quellen/specs/SPEC_Kryptos_W0_Antike.md`
+und `SPEC_Kryptos_W2_Renaissance.md` (Level-Tabelle „Werkzeug“, geänderte Aufgaben), `docs/FACHLICHE_KORREKTUREN.md` (neuer
+D-Eintrag), `quellen/pruefwerte/W0.json`/`W2.json`, `public/static/js/krypto/labor/registry.js` (`REITER_REGELN` je Level,
+falls Variante B), Materialien/Lehrerhinweise W0/W2 (Quell-JSON + `bauen.py` mit Quellliste), Abgleich-Tests
+(`test/hilfen_spec.js` `WERKZEUG`), `test/inhalte_loesungsverrat.test.js`.
+
+**Vorgehen:**
+1. Für jede Aufgabe der beiden Level prüfen, ob `quadrat` (mit der Level-Voreinstellung) die Lösung direkt ausgibt
+   (Lösungsverrat-Test **ohne** Ausnahmen um die neue Karte erweitern: Werkzeug-Ausgaben der Level-Voreinstellung dürfen
+   keine Lösung enthalten → rot für die heutigen Verschlüsselungs-/Entschlüsselungsaufgaben).
+2. Verratende Aufgaben umbauen, sodass das Werkzeug zum **Erkunden/Prüfen eigener Beispiele** dient und die Aufgabe etwas
+   verlangt, was das Werkzeug nicht ausgibt: Begründung, Umkehrung (z. B. Schlüsselwort aus einem gegebenen Quadrat bzw.
+   Klartext-/Geheimtextpaaren rekonstruieren), Regel an einer Stelle anwenden, die das Werkzeug nicht zeigt (z. B. Paar mit
+   doppeltem Buchstaben, I/J, Füll-X), Fehler in einer gegebenen Verschlüsselung finden; **oder** (Variante B) je Level
+   `REITER_REGELN`/Voreinstellung so, dass nur nicht verratende Funktionen sichtbar sind (z. B. Playfair nur mit eigenem
+   Schlüsselwort ≠ Aufgabenschlüssel, Übung „Regel finden“). Bevorzugt: Aufgaben umbauen, Lerninhalt und Fallen-Nummern bleiben.
+3. Alle neuen Werte doppelt nachrechnen (`Krypto.*` + Python-Zwilling, Prüfwerte `quellen/pruefwerte/`), Validator 0 Fehler,
+   `seed_pruefen.py`/`pruefwerte.py` 0 Abweichungen, keine Video-Beispiele.
+4. Spec-Tabellen und D-Eintrag in `FACHLICHE_KORREKTUREN.md`; Akten/Lösungen/Lehrerhinweise W0 und W2 nachziehen
+   (Quell-JSON, `bauen.py <dateien>`, PDFs rendern und ansehen, `npm run akten`/`loesungen`/`lehrkraft`).
+
+- [ ] **Step 1: Failing tests** – Abgleich-Test: W0-L4/W2-L4 haben die Karte `quadrat`; Lösungsverrat-Test: Werkzeug-Ausgaben
+  der Level-Voreinstellungen ⊄ Lösungen (rot, solange die alten Aufgaben bleiben).
+- [ ] **Step 2:** FAIL. **Step 3:** Aufgaben/Spec/Seed/Prüfwerte/Material ändern. **Step 4:** `npm run pruefen` grün, Level-Seiten
+  im Browser ansehen (Karte, Link `#/quadrat?reiter=…&level=…`).
+- [ ] **Step 5: Commit** `M10: Werkzeug-Karte „Polybios & Playfair“ in Level 0.4 und 2.4, Aufgaben ohne Lösungsverrat umgebaut (L55, Task 239)`
+
+### Task 240: Objektbilder in Folien W0, W2, W3-Kür und Videos 00/01 (L58 entschieden)
+
+Entscheidung der Lehrkraft (15.10.2026): Objektbilder (Task 236) auch in die Folien einbauen.
+
+**Files:** Modify Quell-JSON der Präsentationen W0 (Skytale, Scheibe, Fleißner, Codierung ≠ Verschlüsselung), W2 (Playfair),
+W3 Kür (Enigma) unter `quellen/material/`, `materialien/Videos/00_Kryptos_Zeitreise/video.json` und
+`materialien/Videos/01_Caesar_und_Modulo/video.json`; neu gebaute `materialien/Welt*/1_Praesentation/*.pptx`,
+`materialien/Lehrkraft_PDF/…` (`npm run lehrkraft`), Video-Folien (`video_folien.py`); `test/material_pipeline.test.js`.
+
+- [ ] **Step 1: Failing test** – jede Folie mit einem Bild aus `materialien/Bilder/Labor/` trägt die Namensnennung
+  „Ideen von A. Bodendiek“ (Bildunterschrift/Quellenzeile); die Bilder stammen nur aus `quellen.json`.
+- [ ] **Step 2:** FAIL. **Step 3:** Quell-JSON ändern, `python3 werkzeuge/material/bauen.py <Quellliste>` (nie ohne Argumente),
+  `video_folien.py 00_Kryptos_Zeitreise 01_Caesar_und_Modulo`, PDFs rendern, `npm run lehrkraft`.
+- [ ] **Step 4:** Stichproben ansehen (je Präsentation die Folien mit Bild, hell, Lesbarkeit der Namensnennung), `npm run pruefen` grün.
+- [ ] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge in Folien W0/W2/W3-Kür und Videos 00/01 (L58, Task 240)`
+
 ### Task 237: e2e Szenario 15 „Werkstatt-Werkzeuge“ und Fotos (E191, Review Focus 2–4)
 
 **Files:** Create `test/e2e/werkstatt.js`; Modify `test/e2e/e2e.js` (Szenario `15 Werkstatt-Werkzeuge` nach 14),
@@ -862,23 +911,26 @@ Gesamtplan Teil A (M10 „erledigt“); Plan M9 L32/L33 „entschieden 14.10.202
 
 ## Reihenfolge und Abhängigkeiten
 
-220 → (221, 222, 223 parallel möglich) → 224 → 225 → 226 → 227 → 228 → 229 → 230 → 231 → 232 → 233 → 234 → 235 → 236 → 237 → 238.
+220 → (221, 222, 223 parallel möglich) → 224 → 225 → 226 → 227 → 228 → 229 → 230 → 231 → 232 → 233 → 234 → 235 → 236 → 239 → 240 → 237 → 238
+(239 braucht das Werkzeug `quadrat` aus 229 und die Reiter-Regeln aus 225; 240 braucht die Bilder aus 236; 237/238 prüfen
+und dokumentieren danach alles zusammen).
 226–234 hängen nur von 224/225 und ihrer Bibliotheks-Task ab (229 ← 223, 230/231 ← 221, 232/233 ← 222, 234 ← 221 + 223) und
 könnten nach 225 in beliebiger Reihenfolge laufen; sie ändern aber dieselben Dateien (`registry.js` `BEREIT`,
 `labor_objekte.css`, `FREMDCODE.md`, Version) – daher **nacheinander**.
 
 ## Offene Entscheidungen der Lehrkraft (L53–L59)
 
-Vorläufig = umgesetzt, bis eine andere Antwort kommt (dann eigene Task).
+Vorläufig = umgesetzt, bis eine andere Antwort kommt (dann eigene Task). **Antwort der Lehrkraft (15.10.2026):** alle
+vorläufigen Festlegungen bestätigt, außer L55 und L58 (entschieden, neue Tasks 239 und 240).
 
 | L | Frage | vorläufig |
 |---|---|---|
 | 53 | Soll die Infoseite (Datenschutz „Quellen und Dank“) auf die Krypto-Werkstatt **verlinken** (z. B. die öffentliche Seite von A. Bodendiek), oder genügt der Name? | nur Name, kein Link |
 | 54 | Zusatz-Werkzeuge „Codes & Signale“ und „Versteckte Botschaften“ (und Pflügen, Fleißner 6 × 6): automatisch mit Welt 0 frei oder standardmäßig gesperrt, bis die Lehrkraft sie freigibt? | automatisch frei mit Welt 0 |
-| 55 | Level 0.4 (Polybios) und 2.4 (Playfair): Spec sagt „kein Labor-Werkzeug“ – sollen die Level trotzdem eine Karte „Im Kryptolabor ausprobieren“ bekommen? (Das Werkzeug rechnet die Aufgaben vor.) | keine Karte; Werkzeuge nur im freien Labor |
+| 55 | Level 0.4 (Polybios) und 2.4 (Playfair): Spec sagt „kein Labor-Werkzeug“ – sollen die Level trotzdem eine Karte „Im Kryptolabor ausprobieren“ bekommen? (Das Werkzeug rechnet die Aufgaben vor.) | **entschieden 15.10.2026:** Ja – Level 0.4 und 2.4 bekommen die Werkzeug-Karte; die Aufgaben werden so umgebaut, dass das Werkzeug sinnvoll mitbenutzt wird, ohne die Lösung vorzurechnen → **Task 239** |
 | 56 | Vorhersage-Trainer und Angreifer-Blick: im Labor ohne Punkte (Rückmeldung im Browser) – oder lieber als Trainingsplatz-Generatoren mit Punkten (serverseitig)? | im Labor, ohne Punkte, ohne Speicherung |
 | 57 | Ton (Trommel, Klopfen) als Schalter, Standard aus – einverstanden? | ja, Standard aus |
-| 58 | Objektbilder (Task 236) in Folien W0/W2/W3-Kür und in Video 00/01 einbauen (Material neu bauen, Namensnennung auf der Folie)? | nein, Bilder liegen bereit |
+| 58 | Objektbilder (Task 236) in Folien W0/W2/W3-Kür und in Video 00/01 einbauen (Material neu bauen, Namensnennung auf der Folie)? | **entschieden 15.10.2026:** Ja – Folien W0, W2, W3-Kür und Videos 00/01 → **Task 240** |
 | 59 | Schlüsselraum-Reiter erst ab Welt 2 (weil er W1-L1-04 vorrechnet) und Enigma-Vorführung „keine Fixpunkte“ nicht im Kür-Level – passt das? | ja, wie E180 |
 
 ## Selbstprüfung (Auftrag → Tasks)
