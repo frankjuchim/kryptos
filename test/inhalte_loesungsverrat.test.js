@@ -64,8 +64,11 @@ function loesungen(a) {
   for (const ia of [].concat(a.interaktion || [])) {
     if (ia && ia.kind === 'gaps' && ia.felder) for (const [id, f] of Object.entries(ia.felder)) if (f && f.typ === 'auswahl') auswahl.add(id);
   }
-  for (const lo of [].concat(a.loesung || [])) {
+  const teile = [].concat(a.interaktion || []);
+  for (const [i, lo] of [].concat(a.loesung || []).entries()) {
     if (!lo || typeof lo !== 'object') continue;
+    // match: Lösung = ids der Kategorien (Begriffe, im Client sichtbar) – kein Lösungstext (Plan M8 Task 179)
+    if (teile[i] && teile[i].kind === 'match') continue;
     const luecken = [];
     for (const [k, v] of Object.entries(lo)) {
       if (k.startsWith('_') || k === 'richtig' || k === 'zuordnung' || k === 'reihenfolge' || auswahl.has(k)) continue;
@@ -140,6 +143,7 @@ test('Lösungsverrat-Prüfung erkennt die Muster (Alphabet in Alphabet-Block, Qu
   assert.deepEqual(stuecke({ t: 'p', md: 'Lösung', nur_loesung: true }), []);
   assert.deepEqual(loesungen({ loesung: { text: 'XXXXXX' } }), [], 'zu wenig verschiedene Zeichen');
   assert.deepEqual(loesungen({ interaktion: { kind: 'gaps', felder: { g: { typ: 'auswahl', optionen: ['öffentlichen', 'privaten'] } } }, loesung: { g: ['öffentlichen'] } }), [], 'Klappliste (Plan M8 Task 178)');
+  assert.deepEqual(loesungen({ interaktion: { kind: 'match' }, loesung: { e1: 'hybrid' } }), [], 'match-Kategorien (Plan M8 Task 179)');
   // Plan M8 Task 171: Bitlösungen ab 16 Bit, gefunden in einem bits-Block
   assert.deepEqual(loesungen({ loesung: { bits: '0110101011010100' } }), ['0110101011010100']);
   assert.deepEqual(loesungen({ loesung: { bits: '01101010' } }), [], 'kürzere Bitfolgen zählen nicht');

@@ -135,6 +135,16 @@ function pruefeAufgabe(welt, w, spec) {
   if (spec.art === 'boss') for (const p of spec.fallen) assert.ok(fallen.has(p), `${o}: Falle ${p} aus der Erklärung (E53)`);
   else if (spec.art === 'lab') assert.deepEqual([...fallen].sort(), [...spec.fallen].sort(), `${o}: Fallen`);
   if (spec.interaktion || S.TEILE_ERGAENZT[spec.id]) assert.deepEqual(S.kindsSeed(a), S.kindsErwartet(spec.interaktion, spec.id), `${o}: Interaktionsarten zu „${spec.interaktion}“`);
+  // Plan M8 Task 179: Schaubild-Lücken wie in der Spec-Lösung (SCHAUBILD_TEXT)
+  S.teile(a).forEach(({ interaktion: ia, loesung: lo }) => {
+    if (!ia || ia.kind !== 'schaubild-ergaenzen') return;
+    const soll = S.schaubildLoesung(spec.loesung);
+    assert.ok(soll, `${o}: Schaubild-Lösung der Spec nicht lesbar`);
+    for (const [f, e] of Object.entries(soll)) {
+      const ist = (lo && lo[f]) || [];
+      assert.ok(ist.length && ist.every((x) => x.art === e.art && (!e.inhaber || x.inhaber === e.inhaber)), `${o}: Lücke ${f} = ${JSON.stringify(e)}`);
+    }
+  });
   S.teile(a).forEach(({ interaktion: ia, loesung: lo }, i) => {
     if (!ia || ia.kind !== 'choice') return;
     if (S.CHOICE_OHNE_KENNUNG[spec.id]) {

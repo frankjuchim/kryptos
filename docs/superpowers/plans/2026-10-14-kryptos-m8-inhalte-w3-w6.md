@@ -748,8 +748,9 @@ in 04 und 05 (Spec: „Ergebnisfelder der Aufgabe bleiben leer“ – das Rechen
 
 **Erwartete Hinweise:** keine.
 
-- [ ] **Step 1–4** wie Task 178 (`UMFANG[4]` += `'W4-L2'`; `SCHAUBILD_TEXT`: „öffentlicher Schlüssel von Bob“ → `{oeffentlich, B}`,
+- [x] **Step 1–4** wie Task 178 (`UMFANG[4]` += `'W4-L2'`; `SCHAUBILD_TEXT`: „öffentlicher Schlüssel von Bob“ → `{oeffentlich, B}`,
   „Sitzungsschlüssel K“ → `sitzung`). **Step 5: Commit** `git commit -m "Welt 4: Level 4.2 „RSA und das hybride Prinzip“"`.
+- [x] **Umsetzungsnotiz:** W4-L2-01 `order` mit zwei akzeptierten Reihenfolgen (b ↔ c); W4-L2-02 Optionen aus „Optionen: … · …“ (ids a–d, Lösung über den Text); W4-L2-03 `match` mit Kategorien sym/asym/hybrid; W4-L2-04/-05 mit Block `werkzeug` `rsa` `{ reiter: ["rechenwerk"] }`, Prüfwert-Gruppen `rsa.schluessel` bzw. `modpow`, die vorgegebene Rechenvorlage (c² … c¹⁶ für c = 48) als Konsistenz-Einträge; W4-L2-06 Schaubild mit fünf Schritten wörtlich, Lücke 3 akzeptiert den Sitzungsschlüssel K mit Inhaber Alice oder Bob. Abgleich neu: `SCHAUBILD_TEXT`/`schaubildLoesung` in `hilfen_spec.js` prüft die Schaubild-Lücken gegen die Spec-Lösung. Lösungsverrat-Test: `match`-Lösungen (Kategorie-ids wie `hybrid`) zählen nicht. Optionstexte ohne angehängtes „·“ der Spec-Aufzählung.
 
 ### Task 180: Welt 4 – Kür K3 „Euklids Erbe“
 

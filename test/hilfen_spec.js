@@ -38,7 +38,7 @@ const UMFANG = {
   0: ['W0-A', 'W0-L1', 'W0-L2', 'W0-L3', 'W0-L4', 'W0-B', 'WU-W0'], 1: ['W1-A', 'W1-L1', 'W1-L2', 'W1-L3', 'W1-B', 'WU-W1'],
   2: ['W2-A', 'W2-L1', 'W2-L2', 'W2-L3', 'W2-L4', 'W2-L5', 'W2-B', 'WU-W2'],
   // Plan M8: die Inhalts-Tasks 172–190 tragen ihre Abschnitte ein
-  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1'], 5: [], 6: []
+  3: ['W3-A', 'W3-L1', 'W3-L2', 'W3-L3', 'W3-L4', 'W3-L5', 'W3-B'], 4: ['W4-A', 'W4-L1', 'W4-L2'], 5: [], 6: []
 };
 /** Welten mit Spec (Abgleich-Tests laufen über alle) */
 const WELTEN = [0, 1, 2, 3, 4, 5, 6];
@@ -126,6 +126,25 @@ const TEILE_ERGAENZT = {
 
 /** M8 E127: Spec-„zuordnung“ als Kategorien-Zuordnung → Kern-match */
 const ZUORDNUNG_ALS_MATCH = ['W4-L2-03', 'W5-L3-08'];
+
+/**
+ * Plan M8 Task 179: Schaubild-Lücken der Spec („Lücke 1: öffentlicher Schlüssel von Bob“, „L1 Sitzungsschlüssel K“)
+ * → erwartete Seed-Antwort { art, inhaber? } (inhaber fehlt: jeder Inhaber erlaubt, z. B. gemeinsamer Sitzungsschlüssel).
+ */
+const SCHAUBILD_TEXT = {
+  'öffentlicher schlüssel von bob': { art: 'oeffentlich', inhaber: 'B' }, 'privater schlüssel von bob': { art: 'privat', inhaber: 'B' },
+  'öffentlicher schlüssel von alice': { art: 'oeffentlich', inhaber: 'A' }, 'privater schlüssel von alice': { art: 'privat', inhaber: 'A' },
+  'sitzungsschlüssel k': { art: 'sitzung' }
+};
+/** Spec-Lösung eines Schaubilds → { l1: { art, inhaber? }, … } (Nummern der Lücken) oder null */
+function schaubildLoesung(text) {
+  const out = {};
+  for (const m of String(text || '').replace(/\*\*/g, '').matchAll(/(?:Lücke |L)(\d):?\s*([^·;]+)/g)) {
+    const e = SCHAUBILD_TEXT[m[2].trim().toLowerCase()];
+    if (e) out[`l${m[1]}`] = e;
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 /** M8 E126: Sonderformen (Spec-Interaktion → Seed-Arten) */
 const SONDERFORM = { 'W5-L1-07': ['hash-ziel'], 'W3-B-08': ['bits-rechnen'] }; // W3-B-08: K₃ über bits-rechnen schritt rundenschluessel (E124)
@@ -420,7 +439,7 @@ function texte(wert) {
 
 module.exports = {
   WURZEL, SPEC_DATEIEN, UMFANG, WELTEN, ROLLE, WERKZEUG, REITER, DS_FEST, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
-  ZUORDNUNG_ALS_MATCH, SONDERFORM, CHOICE_OHNE_KENNUNG, CHOICE_FEST, KUER_LEVEL,
+  ZUORDNUNG_ALS_MATCH, SONDERFORM, SCHAUBILD_TEXT, schaubildLoesung, CHOICE_OHNE_KENNUNG, CHOICE_FEST, KUER_LEVEL,
   technischeId, abschnittVon, specAufgaben, specLevels, specZeilen, archivfundTitel, zellen, tippsAus,
   kindsErwartet, kindsSeed, teile, choiceLoesung, choiceText, loesungsTeile, kennungen,
   seed, warmup, normalisiert, texte
