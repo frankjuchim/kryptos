@@ -156,10 +156,64 @@ function pruefeFallenPlausibel(a, wa) {
   });
 }
 
+/* ---------- Lösungsverrat über Reihenfolge und ids (Review M8 Fund 1) ---------- */
+// Der Client mischt order-Teile und match-Elemente bei jedem Anzeigen; die Payload (inhalte.oeffentlich) enthält aber
+// Seed-Reihenfolge und ids. Stehen sie schon in Lösungsreihenfolge (oder fast: mehr als die Hälfte der Nachbarpaare der
+// Lösung sind auch Nachbarn), verrät der Server die Antwort.
+const sortiereIds = (ids) => [...ids].sort((x, y) => String(x).localeCompare(String(y), 'de', { numeric: true }));
+/** Zahl der Nachbarpaare der Lösung r, die auch in der Ordnung ord direkt aufeinander folgen */
+function nachfolgePaare(r, ord) {
+  let n = 0;
+  for (let i = 0; i + 1 < r.length; i++) if (ord.indexOf(r[i]) >= 0 && ord.indexOf(r[i + 1]) === ord.indexOf(r[i]) + 1) n++;
+  return n;
+}
+/** Treffer „i-tes Element → i-te Kategorie“ */
+function positionsTreffer(lo, elemente, kategorien) {
+  let n = 0;
+  for (let i = 0; i < Math.min(elemente.length, kategorien.length); i++) if (lo[elemente[i]] === kategorien[i]) n++;
+  return n;
+}
+function pruefeReihenfolgeVerrat(a, fa) {
+  F.teile(a).forEach(({ interaktion: ia, loesung: lo }, i, alle) => {
+    if (!istObjekt(ia) || !istObjekt(lo)) return;
+    const ort = alle.length > 1 ? `interaktion[${i}]` : 'interaktion';
+    if (ia.kind === 'order' && Array.isArray(ia.teile) && Array.isArray(lo.reihenfolgen)) {
+      const seed = ia.teile.filter(istObjekt).map((t) => t.id);
+      const sortiert = sortiereIds(seed);
+      for (const r of lo.reihenfolgen) {
+        if (!Array.isArray(r) || r.length < 3) continue;
+        const grenze = (r.length - 1) / 2;
+        if (nachfolgePaare(r, seed) > grenze) {
+          fa(ort, 'order: teile stehen in Lösungsreihenfolge (oder fast) – die Payload verrät die Antwort; Seed-Reihenfolge mischen.');
+          return;
+        }
+        if (nachfolgePaare(r, sortiert) > grenze) {
+          fa(ort, 'order: ids folgen alphabetisch der Lösungsreihenfolge – die Payload verrät die Antwort; ids neu vergeben (wie W0-L3-03).');
+          return;
+        }
+      }
+    }
+    if (ia.kind === 'match' && Array.isArray(ia.elemente) && Array.isArray(ia.kategorien)) {
+      const e = ia.elemente.filter(istObjekt).map((x) => x.id);
+      const k = ia.kategorien.filter(istObjekt).map((x) => x.id);
+      // nur bei Zuordnung 1:1 (höchstens so viele Elemente wie Kategorien, mindestens drei)
+      if (e.length < 3 || k.length < 3 || e.length > k.length) return;
+      const n = e.length;
+      for (const [ee, kk] of [[e, k], [sortiereIds(e), sortiereIds(k)], [e, sortiereIds(k)], [sortiereIds(e), k]]) {
+        if (positionsTreffer(lo, ee, kk) > n / 2) {
+          fa(ort, 'match: Kategorie-Reihenfolge verrät die Zuordnung (i-tes Element → i-te Kategorie nach Seed-Reihenfolge oder ids) – Kategorien mischen bzw. ids neu vergeben.');
+          return;
+        }
+      }
+    }
+  });
+}
+
 /** Hook aufgabe: Archivfund, pruefnachweis, _fehlmuster, verdeckter Schlüssel, Fallen-Plausibilität, Inhalts-Hinweise. */
 function aufgabe(a, fa, wa, { data } = {}) {
   const id = typeof a.id === 'string' ? a.id : '';
   pruefeVerdeckt(a, fa, wa, data);
+  pruefeReihenfolgeVerrat(a, fa);
   pruefeFallenPlausibel(a, wa);
   // Archivfund (Delta §2, §4.1): 0 Punkte, niveau kern
   if (ARCHIVFUND.test(id)) {

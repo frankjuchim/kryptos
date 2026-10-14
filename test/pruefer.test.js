@@ -69,19 +69,19 @@ test('choice: Menge exakt (einfach und mehrfach)', () => {
 
 test('order: richtige Folge, Distraktor, erste falsche Position, mehrere Lösungen, Schrittprüfung', () => {
   const a = A['W9-L2-01'];
-  let r = C.pruefeAufgabe(a, ['a', 'b', 'x', 'c']);
+  let r = C.pruefeAufgabe(a, ['m', 'f', 'k', 'w']);
   assert.equal(r.ok, false);
   assert.equal(r.ersteFalschePosition, 2);
-  r = C.pruefeAufgabe(a, ['a', 'b', 'c', 'd']);
+  r = C.pruefeAufgabe(a, ['m', 'f', 'w', 'z']);
   assert.equal(r.ersteFalschePosition, 4, 'zu kurz');
-  r = C.pruefeAufgabe(a, ['a', 'b'], { teilweise: true });
+  r = C.pruefeAufgabe(a, ['m', 'f'], { teilweise: true });
   assert.deepEqual([r.ok, r.vollstaendig], [true, false]);
-  r = C.pruefeAufgabe(a, ['b'], { teilweise: true });
+  r = C.pruefeAufgabe(a, ['f'], { teilweise: true });
   assert.deepEqual([r.ok, r.ersteFalschePosition], [false, 0]);
-  r = C.pruefeAufgabe(a, ['a', 'b', 'c', 'd', 'e'], { teilweise: true });
+  r = C.pruefeAufgabe(a, ['m', 'f', 'w', 'z', 'r'], { teilweise: true });
   assert.deepEqual([r.ok, r.vollstaendig], [true, true]);
-  const zwei = { ...a, loesung: { reihenfolgen: [['a', 'b', 'c', 'd', 'e'], ['b', 'a', 'c', 'd', 'e']] } };
-  assert.equal(C.pruefeAufgabe(zwei, ['b', 'a', 'c', 'd', 'e']).ok, true, 'zweite Reihenfolge');
+  const zwei = { ...a, loesung: { reihenfolgen: [['m', 'f', 'w', 'z', 'r'], ['f', 'm', 'w', 'z', 'r']] } };
+  assert.equal(C.pruefeAufgabe(zwei, ['f', 'm', 'w', 'z', 'r']).ok, true, 'zweite Reihenfolge');
 });
 
 test('lines (Bug-Hunt) + gaps als mehrteilige Aufgabe: alle Teile müssen stimmen', () => {

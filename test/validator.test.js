@@ -717,3 +717,47 @@ test('M6: werkzeug-Voreinstellung reiter/richtung/modus geprüft, Level-Objekte,
   assert.match(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine', 'schritte'] } }).join(), /Reiter einschränken/);
   assert.doesNotMatch(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine'] } }).join(), /Reiter einschränken/);
 });
+
+// Review M8 Fund 1: Der Client mischt order-Teile und match-Elemente, die Payload (inhalte.oeffentlich) enthält aber Seed-
+// Reihenfolge und ids – stehen sie schon in Lösungsreihenfolge, verrät die Antwort der Server. → Validator-Fehler.
+test('Fehler: order-Teile in Lösungsreihenfolge (Seed-Reihenfolge oder alphabetische ids)', () => {
+  assert.deepEqual(fehlerVon(basis()).filter((f) => /Lösungsreihenfolge|Kategorie-Reihenfolge/.test(f)), []);
+  // Seed-Reihenfolge = Lösung (ids neutral)
+  erwarteFehler((w) => {
+    const ia = aufgabe(w, 'W9-L2-01').interaktion;
+    const lo = aufgabe(w, 'W9-L2-01').loesung.reihenfolgen[0];
+    ia.teile.sort((x, y) => (lo.indexOf(x.id) + 1 || 99) - (lo.indexOf(y.id) + 1 || 99));
+  }, /W9-L2-01.*teile stehen in Lösungsreihenfolge/);
+  // ids alphabetisch = Lösung, Seed-Reihenfolge gemischt
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L2-01');
+    const neu = {};
+    a.loesung.reihenfolgen[0].forEach((id, i) => { neu[id] = String.fromCharCode(97 + i); });
+    a.interaktion.teile.forEach((t) => { t.id = neu[t.id] || 'z'; });
+    a.loesung.reihenfolgen = a.loesung.reihenfolgen.map((r) => r.map((id) => neu[id]));
+  }, /W9-L2-01.*ids folgen alphabetisch der Lösungsreihenfolge/);
+  // fast in Reihenfolge (ein Element vorgezogen, wie e, a, b, c, d) zählt auch
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L2-01');
+    const r = a.loesung.reihenfolgen[0];
+    const t = a.interaktion.teile;
+    const ordnung = [...r.slice(1), r[0]];
+    t.sort((x, y) => (ordnung.indexOf(x.id) + 1 || 99) - (ordnung.indexOf(y.id) + 1 || 99));
+  }, /W9-L2-01.*teile stehen in Lösungsreihenfolge/);
+});
+
+test('Fehler: match-Lösung im Muster i → i-te Kategorie (Seed-Reihenfolge oder ids)', () => {
+  // Kategorien in der Reihenfolge der Elemente
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L1-06');
+    const ord = a.interaktion.elemente.map((e) => a.loesung[e.id]);
+    a.interaktion.kategorien.sort((x, y) => ord.indexOf(x.id) - ord.indexOf(y.id));
+  }, /W9-L1-06.*Kategorie-Reihenfolge verrät die Zuordnung/);
+  // 1 → a, 2 → b, 3 → c über die ids (Arrays gemischt)
+  erwarteFehler((w) => {
+    const a = aufgabe(w, 'W9-L1-06');
+    a.interaktion.elemente = [{ id: '2', md: 'B' }, { id: '3', md: 'C' }, { id: '1', md: 'A' }];
+    a.interaktion.kategorien = [{ id: 'c', md: 'z' }, { id: 'a', md: 'x' }, { id: 'b', md: 'y' }];
+    a.loesung = { 1: 'a', 2: 'b', 3: 'c' };
+  }, /W9-L1-06.*Kategorie-Reihenfolge verrät die Zuordnung/);
+});

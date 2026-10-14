@@ -303,22 +303,22 @@
         "teile": [
           {
             "id": "a",
-            "md": "Bo empfängt m und s."
-          },
-          {
-            "id": "b",
-            "md": "Bo bildet selbst den Hashwert h(m)."
-          },
-          {
-            "id": "c",
             "md": "Bo entschlüsselt s mit Adas öffentlichem Schlüssel."
           },
           {
-            "id": "d",
+            "id": "b",
+            "md": "Bo empfängt m und s."
+          },
+          {
+            "id": "c",
             "md": "Bo vergleicht die beiden Hashwerte."
           },
           {
-            "id": "x",
+            "id": "d",
+            "md": "Bo bildet selbst den Hashwert h(m)."
+          },
+          {
+            "id": "e",
             "md": "Bo entschlüsselt s mit seinem privaten Schlüssel."
           }
         ]
@@ -326,16 +326,16 @@
       "loesung": {
         "reihenfolgen": [
           [
-            "a",
             "b",
-            "c",
-            "d"
+            "d",
+            "a",
+            "c"
           ],
           [
-            "a",
-            "c",
             "b",
-            "d"
+            "a",
+            "d",
+            "c"
           ]
         ]
       },

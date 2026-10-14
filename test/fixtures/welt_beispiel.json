@@ -204,9 +204,9 @@
           { "id": "e3", "md": "Knoten **6**" }
         ],
         "kategorien": [
-          { "id": "w", "md": "Wurzel" },
           { "id": "b", "md": "Blatt" },
-          { "id": "i", "md": "innerer Knoten" }
+          { "id": "i", "md": "innerer Knoten" },
+          { "id": "w", "md": "Wurzel" }
         ]
       },
       "loesung": { "e1": "w", "e2": "b", "e3": "i" },
@@ -222,15 +222,15 @@
       "interaktion": {
         "kind": "order",
         "teile": [
-          { "id": "a", "code": "int m = r[0];" },
-          { "id": "b", "code": "for (int i = 1; i < r.length; i++) {" },
-          { "id": "c", "code": "    if (r[i] > m) m = r[i];" },
-          { "id": "d", "code": "}" },
-          { "id": "e", "code": "return m;" },
-          { "id": "x", "code": "return r[0];" }
+          { "id": "f", "code": "for (int i = 1; i < r.length; i++) {" },
+          { "id": "k", "code": "return r[0];" },
+          { "id": "m", "code": "int m = r[0];" },
+          { "id": "r", "code": "return m;" },
+          { "id": "w", "code": "    if (r[i] > m) m = r[i];" },
+          { "id": "z", "code": "}" }
         ]
       },
-      "loesung": { "reihenfolgen": [["a", "b", "c", "d", "e"]] },
+      "loesung": { "reihenfolgen": [["m", "f", "w", "z", "r"]] },
       "erklaerung": [{ "t": "text", "md": "Start mit dem ersten Element, dann alle weiteren vergleichen. `return r[0];` ist ein Distraktor." }]
     },
     {
