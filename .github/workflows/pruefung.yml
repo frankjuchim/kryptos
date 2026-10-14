@@ -23,7 +23,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run validate
-      # folgt: node scripts/abdeckung.js (Abdeckungsprüfung, TECHNIK §16.1) – das Skript existiert noch nicht.
+      - name: Abdeckung aus den Spec-Matrizen §11 (Lab, Akten, Boss, Fallen, Warm-up, Generatoren; TECHNIK §16.1)
+        run: node scripts/abdeckung.js
 
   krypto:
     name: Krypto (Bibliothek und Python-Zwilling)

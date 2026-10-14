@@ -1317,14 +1317,15 @@ enthalten), `werkzeuge/lehrkraft_pdf.py`; erzeugt `materialien/Akten_PDF/**`, `L
 6. 12 Warm-up-Karten je Welt; ≥ 1 Generator je Welt (`welten`).
 Ausgabe: Tabelle „Welt · Regel · Lücke“; Exit 1 bei Lücke; `--welt <N>` für die Prüfkette P6; `--json` für den Test.
 
-- [ ] **Step 1: Failing test** – `abdeckung.test.js`: Fixture mit absichtlicher Lücke (Welt ohne Boss-Aufgabe zu einer KC-Zeile)
+- [x] **Step 1: Failing test** – `abdeckung.test.js`: Fixture mit absichtlicher Lücke (Welt ohne Boss-Aufgabe zu einer KC-Zeile)
   → Exit 1 mit genau dieser Lücke; echte Seeds → Exit 0 (läuft erst nach Task 189 grün; vorher `skip` mit Begründung
   ist nicht erlaubt – die Task folgt nach 189).
-- [ ] **Step 2: Implement** (Matrix-Parser in `scripts/abdeckung.js`, Spec-Helfer aus `test/hilfen_spec.js` nicht importieren –
+- [x] **Step 2: Implement** (Matrix-Parser in `scripts/abdeckung.js`, Spec-Helfer aus `test/hilfen_spec.js` nicht importieren –
   Skript gehört zum Produkt, eigene kleine Parser mit Selbsttest).
-- [ ] **Step 3:** `node scripts/abdeckung.js` → 0 Lücken; Lücken, die die Spec bewusst lässt, stehen als Ausnahme mit Spec-Zitat
+- [x] **Step 3:** `node scripts/abdeckung.js` → 0 Lücken; Lücken, die die Spec bewusst lässt, stehen als Ausnahme mit Spec-Zitat
   im Skript; `npm test`; `npm run pruefen`.
-- [ ] **Step 4: Commit** `git commit -m "scripts/abdeckung.js: Abdeckung aus den Spec-Matrizen §11 (Lab, Akten, Boss, Fallen, Warm-up, Generatoren), in CI"`.
+- [x] **Step 4: Commit** `git commit -m "scripts/abdeckung.js: Abdeckung aus den Spec-Matrizen §11 (Lab, Akten, Boss, Fallen, Warm-up, Generatoren), in CI"`.
+- [x] **Umsetzungsnotiz:** Test `abdeckung.test.js` zuerst rot (Skript fehlte): Selbsttest der Parser, echte Seeds → Exit 0 ohne Lücke, Fixture (Seed-Kopie, W0-B-07 aus dem Pool) → Exit 1 mit genau der Lücke „modulares Rechnen … Boss“ (Regel `kc`). Eigene kleine Parser (`technischeId` mit Kür-Level W2 → L5, W3 → L5, W4 → L3; `idsAusZelle` für „– 08“, „… -07“, „, 06“, „B01“, „B-03“, „W0-AF“; `aktenAusZelle` für „W3·4“ und „Kür-Akte K2“), Zellen „– …“ zählen nicht. Regel `fallen` gilt nur, wo die Spec unter §11 eine Zeile „Fallen-Abdeckung“ hat (nur W3). Kryptos-Interaktionen = alle über `registriereInteraktion` hinzugekommenen Arten. Erster Lauf: eine Lücke – W5 hat im Lab keine Aufgabe der Kategorie `fremde-chiffre`; die Spec lässt das bewusst (SPEC W5 §2: Kategorien hash/signatur/zertifikat/protokoll/gesellschaft; fremde Prüfverfahren in Akte W5·2 A6 und im Boss) → `AUSNAHMEN` mit Spec-Zitat. Danach 0 Lücken; `npm run pruefen` (jetzt mit `abdeckung`) grün, 1120 Tests. CI Job `app` mit eigenem Schritt; TECHNIK §16.1 und Design §1 verweisen auf die §11-Matrizen statt `LAB_LEVELS.md`; K22/K30 fortgeschrieben.
 
 ### Task 201: Niveau-Übersicht, Manifest und Themenseite mit sieben Welten
 

@@ -82,8 +82,8 @@ Lehrkräfte des Verbunds InfoLabs; YouTube-Publikum (Videos).
 **Erfolgskriterien:**
 
 1. Jede KC-Kompetenz (0.2) ist in mindestens einem Level, einem Arbeitsblatt und einem Boss abgedeckt
-   (Abdeckungsmatrix `quellen/specs/LAB_LEVELS.md`, wird in Meilenstein M5 aus den Welt-Specs angelegt und von `scripts/abdeckung.js` in CI geprüft;
-   bis dahin gilt die KC-Zuordnung in §0 und in den Welt-Specs).
+   (Abdeckungsmatrizen §11 der Welt-Specs `quellen/specs/SPEC_Kryptos_W<n>_*.md`, von `scripts/abdeckung.js` in CI und in
+   `npm run pruefen` gegen Seeds, `seed/akten.json` und Boss-Pools geprüft – Plan M8 E141; eine eigene `LAB_LEVELS.md` gibt es nicht).
 2. Das Abitur-Grundmuster „fremde Chiffre: anwenden → einordnen → beurteilen“ wird **mindestens 7-mal** trainiert
    (je Welt ein Level „Fremde Chiffre“ bzw. Boss-Anteil) – nicht erst am Ende.
 3. Alle Rechnungen in Materialien, Lab und Videos sind **doppelt programmatisch geprüft** (JS + Python, §13).
