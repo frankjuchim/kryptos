@@ -445,3 +445,133 @@
 .quadrat-bild-b { font-weight: 700; color: var(--hinweis); }
 @media (prefers-reduced-motion: reduce) { .quadrat-feld.aufbau { animation: none; } .quadrat-feld, .quadrat-kopf, .quadrat-flamme, .quadrat-regel { transition: none; } }
 :root[data-bewegung="aus"] .quadrat-feld.aufbau { animation: none; }
+
+/* ======================================================================
+   Codes & Signale (Plan M10 Task 230; stationen/klopfzeichen.html, stationen/freimaurer.html)
+   Trommel (Holz, Messingreif, Fell, Schnüre, Schlägel), Morsetafel, Zellenwand mit Rohr, Klopftafel, Freimaurer-Schlüsselbild.
+   ====================================================================== */
+.signale-objekt { display: grid; gap: var(--a-4); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1000px) { .signale-objekt { grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 1fr); } }
+.signale-buehne, .signale-bedienung { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
+.signale-tisch { display: grid; gap: var(--a-3); grid-template-columns: minmax(0, 1fr); padding: var(--a-3); border-radius: var(--r-karte); background: var(--mat-gehaeuse); color: var(--mat-gehaeuse-tinte); }
+@media (min-width: 700px) { .signale-tisch { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } .signale-tisch.signale-tisch-bild { grid-template-columns: minmax(19rem, 1fr) minmax(8rem, 13rem); } }
+.signale-trommel-teil, .signale-tafel-teil, .signale-leiste-teil { display: grid; gap: var(--a-2); align-content: start; min-width: 0; }
+.signale-leiste-teil { grid-column: 1 / -1; }
+.signale-leiste-teil[hidden] { display: none; }
+.signale-teiltitel { margin: 0; font: 700 .78rem var(--f-text); letter-spacing: .1em; text-transform: uppercase; color: inherit; opacity: .85; }
+.signale-bedienung .signale-teiltitel, .station-mehr .signale-teiltitel { color: var(--text); opacity: 1; }
+.signale-puffer { margin: 0; min-height: 1.6em; font: 700 1.2rem var(--f-mono); color: var(--mat-lampe-an); }
+.signale-tafel-teil .station-ton { justify-self: start; color: var(--mat-gehaeuse-tinte); }
+.signale-legende { margin: 0; font-size: .9rem; color: var(--mat-gehaeuse-tinte); }
+.signale-legende-rand { color: var(--mat-lampe-an); }
+.signale-legende-fell { color: var(--mat-ziel); }
+
+/* Trommel */
+.signale-trommel { position: relative; width: 100%; max-width: 30rem; margin: 0 auto; }
+.signale-trommel-bild { display: block; width: 100%; height: auto; }
+.signale-holz-1 { stop-color: var(--mat-holz-dunkel); }
+.signale-holz-2 { stop-color: var(--mat-holz); }
+.signale-holz-3 { stop-color: var(--mat-holz-hell); }
+.signale-fell-1 { stop-color: var(--mat-band); }
+.signale-fell-2 { stop-color: var(--mat-fell); }
+.signale-reif-1 { stop-color: var(--mat-holz-hell); }
+.signale-reif-2 { stop-color: var(--mat-messing); }
+.signale-reif-3 { stop-color: var(--mat-holz-dunkel); }
+.signale-schatten { fill: var(--nacht); opacity: .45; }
+.signale-schnur { fill: none; stroke: var(--mat-band); stroke-width: 3; stroke-linejoin: round; }
+.signale-schnur-schatten { fill: none; stroke: var(--mat-holz-dunkel); stroke-width: 5; stroke-linejoin: round; opacity: .5; }
+.signale-fuss { fill: none; stroke-width: 9; }
+.signale-reif { stroke: var(--mat-holz-dunkel); stroke-width: 1.5; }
+.signale-fell { stroke: var(--mat-holz); stroke-width: 1.5; }
+.signale-trommel-text { font: 600 15px var(--f-text); letter-spacing: .12em; fill: var(--mat-gehaeuse-tinte); }
+.signale-zeiger { fill: none; stroke: var(--mat-lampe-an); stroke-width: 2; stroke-dasharray: 4 4; }
+.signale-stock { stroke: var(--mat-holz-hell); stroke-width: 11; stroke-linecap: round; }
+.signale-stock-spitze { fill: var(--mat-band); stroke: var(--mat-holz); stroke-width: 2; }
+.signale-fell-gruppe, .signale-rand-gruppe { transform-box: fill-box; transform-origin: center; }
+.signale-fell-gruppe.schwingt { animation: signale-schwingen .5s ease-out; }
+.signale-rand-gruppe.schwingt { animation: signale-blitz .3s ease-out; }
+@keyframes signale-schwingen { 25% { transform: scale(1.02, .95); } 60% { transform: scale(.99, 1.02); } }
+@keyframes signale-blitz { 40% { filter: brightness(1.35); } }
+.signale-trommel-rand, .signale-trommel-fell { position: absolute; border: 0; border-radius: 50%; background: transparent; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.signale-trommel-rand { left: 12%; top: 47%; width: 76%; height: 22%; border-radius: 0 0 50% 50% / 0 0 40% 40%; }
+.signale-trommel-fell { left: 17%; top: 23%; width: 66%; height: 24%; }
+.signale-trommel-rand:focus-visible, .signale-trommel-fell:focus-visible, .signale-rohr:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.signale-trommel-rand:disabled, .signale-trommel-fell:disabled, .signale-rohr:disabled { cursor: default; }
+
+/* Morsetafel */
+.signale-tafel { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.2rem, 1fr)); gap: 4px; }
+.signale-tafel button { display: flex; align-items: center; gap: .3rem; min-width: 0; overflow: hidden; min-height: var(--ziel); padding: 2px 5px; border: 1px solid color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, transparent); border-radius: 8px; background: transparent; color: var(--mat-gehaeuse-tinte); font: 700 1.05rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
+.signale-tafel button:hover { border-color: var(--mat-lampe-an); }
+.signale-tafel button:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; }
+.signale-tafel button.ziel, .signale-tafel button.an { border-color: var(--mat-lampe-an); background: color-mix(in srgb, var(--mat-lampe-an) 20%, transparent); }
+.signale-tafel button.kandidat { border-color: var(--mat-ziel); }
+.signale-code { display: inline-flex; align-items: center; gap: 2px; }
+.signale-punkt { flex: none; width: 5px; height: 5px; border-radius: 50%; background: var(--mat-lampe-an); }
+.signale-strich { flex: none; width: 10px; height: 4px; border-radius: 3px; background: var(--mat-ziel); }
+.signale-code .jetzt { outline: 2px solid var(--mat-gehaeuse-tinte); outline-offset: 2px; }
+
+/* Zellenwand mit Rohr */
+.signale-wand-teil { position: relative; }
+.signale-wand { display: block; width: 100%; height: auto; border-radius: 12px; }
+.signale-fuge { fill: var(--mat-holz-dunkel); }
+.signale-stein { fill: var(--mat-holz); }
+.signale-stein-2 { fill: color-mix(in srgb, var(--mat-holz) 80%, var(--mat-holz-dunkel)); }
+.signale-rohr-1 { stop-color: var(--mat-gehaeuse); }
+.signale-rohr-2 { stop-color: var(--mat-gehaeuse-tinte); }
+.signale-schelle { fill: var(--mat-gehaeuse); }
+.signale-wand-schlag { fill: var(--mat-lampe-an); }
+.signale-wand-text { font: 700 18px var(--f-text); fill: var(--mat-band); }
+.signale-rohr { position: absolute; left: 0; top: 58%; width: 100%; height: 17%; border: 0; border-radius: 8px; background: transparent; cursor: pointer; touch-action: manipulation; }
+.signale-quadrat { border-collapse: collapse; font-family: var(--f-mono); color: var(--mat-gehaeuse-tinte); }
+.signale-quadrat th { padding: 2px 6px; background: transparent; border: 0; font: 700 .85rem var(--f-text); color: var(--mat-lampe-an); }
+.signale-quadrat td { padding: 1px; }
+.signale-quadrat button { width: var(--ziel); height: var(--ziel); border: 1px solid color-mix(in srgb, var(--mat-gehaeuse-tinte) 25%, transparent); border-radius: 6px; background: transparent; color: var(--mat-gehaeuse-tinte); font: 700 1rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
+.signale-quadrat button[data-buchstabe="I"] { font-size: .8rem; }
+.signale-quadrat button.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); }
+.signale-quadrat button.zeile { border-color: var(--mat-lampe-an); }
+.signale-quadrat button:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; }
+
+/* Freimaurer */
+.signale-papier { padding: var(--a-3); border-radius: 12px; background: var(--mat-band); color: var(--mat-band-tinte); }
+.signale-schluesselbild { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--a-4) var(--a-3); justify-items: center; }
+.signale-figur { display: grid; justify-items: center; gap: var(--a-2); }
+.signale-figur-titel { margin: 0; font: 700 .72rem var(--f-text); letter-spacing: .1em; text-transform: uppercase; }
+.signale-figur-gitter { display: grid; grid-template-columns: repeat(3, var(--ziel)); grid-template-rows: repeat(3, var(--ziel)); }
+.signale-figur-feld { position: relative; display: grid; place-items: center; min-width: var(--ziel); min-height: var(--ziel); padding: 0; border: 0; background: transparent; color: var(--mat-band-tinte); font: 700 1.15rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
+.signale-figur-gitter .signale-figur-feld { border-color: var(--mat-band-tinte); border-style: solid; border-width: 0; }
+.signale-figur-gitter .feld-1, .signale-figur-gitter .feld-2, .signale-figur-gitter .feld-4, .signale-figur-gitter .feld-5 { border-right-width: 3px; border-bottom-width: 3px; }
+.signale-figur-gitter .feld-3, .signale-figur-gitter .feld-6 { border-bottom-width: 3px; }
+.signale-figur-gitter .feld-7, .signale-figur-gitter .feld-8 { border-right-width: 3px; }
+.signale-figur-kreuz { position: relative; display: grid; grid-template-areas: ". o ." "l . r" ". u ."; grid-template-columns: repeat(3, var(--ziel)); grid-template-rows: repeat(3, var(--ziel)); background: linear-gradient(45deg, transparent calc(50% - 1.5px), var(--mat-band-tinte) calc(50% - 1.5px), var(--mat-band-tinte) calc(50% + 1.5px), transparent calc(50% + 1.5px)), linear-gradient(-45deg, transparent calc(50% - 1.5px), var(--mat-band-tinte) calc(50% - 1.5px), var(--mat-band-tinte) calc(50% + 1.5px), transparent calc(50% + 1.5px)); }
+.signale-figur-kreuz .feld-1 { grid-area: o; }
+.signale-figur-kreuz .feld-2 { grid-area: l; }
+.signale-figur-kreuz .feld-3 { grid-area: r; }
+.signale-figur-kreuz .feld-4 { grid-area: u; }
+.signale-figur-punkt { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: .9rem; }
+.signale-figur-feld:hover { background-color: color-mix(in srgb, var(--mat-lampe-an) 25%, transparent); }
+.signale-figur-feld.an { background-color: var(--mat-lampe-an); }
+.signale-figur-feld:focus-visible { outline: 3px solid var(--fokus); outline-offset: -3px; }
+.signale-symbolpanel { display: grid; justify-items: center; align-content: start; gap: var(--a-2); }
+.signale-symbolpanel .signale-teiltitel { justify-self: start; }
+.signale-gross { min-height: 6rem; display: grid; place-items: center; }
+.signale-gross-text { margin: 0; text-align: center; color: var(--mat-gehaeuse-tinte); opacity: .85; }
+.signale-symbol { width: 1.6rem; height: 1.6rem; fill: currentColor; }
+.signale-symbol path { fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.signale-symbol-gross { width: 6rem; height: 6rem; color: var(--mat-lampe-an); }
+.signale-symbolleiste { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--ziel), 1fr)); gap: 4px; }
+.signale-symbolleiste button { min-height: var(--ziel); border: 1px solid color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, transparent); border-radius: 8px; background: transparent; color: var(--mat-gehaeuse-tinte); cursor: pointer; touch-action: manipulation; }
+.signale-symbolleiste button:hover { border-color: var(--mat-lampe-an); }
+.signale-symbolleiste button:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; }
+.signale-band-symbol .signale-symbol { width: 1.3rem; height: 1.3rem; }
+.signale-uebung { display: grid; gap: var(--a-2); justify-items: start; }
+.signale-uebung-symbole { display: flex; flex-wrap: wrap; gap: var(--a-1) var(--a-4); padding: var(--a-2) var(--a-3); border-radius: var(--r-knopf); background: var(--mat-gehaeuse); color: var(--mat-gehaeuse-tinte); }
+.signale-wort { display: inline-flex; gap: 2px; }
+.signale-uebung .labor-feld, .signale-uebung > div { justify-self: stretch; }
+.signale-uebung-ergebnis { margin: 0; font-weight: 700; color: var(--fehler); }
+.signale-uebung-ergebnis.signale-stimmt { color: var(--ok); }
+.signale-uebung-ergebnis:empty { display: none; }
+.signale-zaehlung { display: grid; gap: var(--a-2); }
+.signale-zaehl-liste { display: flex; flex-wrap: wrap; gap: var(--a-2); }
+.signale-zaehl { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border: 1px solid var(--linie); border-radius: var(--r-chip); font-family: var(--f-mono); }
+@media (prefers-reduced-motion: reduce) { .signale-fell-gruppe.schwingt, .signale-rand-gruppe.schwingt { animation: none; } }
+:root[data-bewegung="aus"] .signale-fell-gruppe.schwingt, :root[data-bewegung="aus"] .signale-rand-gruppe.schwingt { animation: none; }

@@ -682,7 +682,7 @@ Symbol in der Leiste wählen → Feld leuchtet → Buchstabe; „Mehr ausprobier
 Rückmeldung „stimmt“/„noch nicht“ nur für diese eigene Übung), „Symbole zählen“ (Häufigkeit über `Krypto.haeufigkeiten` des
 Klartexts, Hinweis P6). Hintergrund: Codierung ≠ Verschlüsselung (öffentliche Tafel), Geschichte vorsichtig formuliert.
 
-- [ ] **Step 1: Failing tests**:
+- [x] **Step 1: Failing tests**:
   ```js
   test('Morse: Tafel antippen und trommeln = Krypto.morse', () => {
     const w = oeffne('signale');
@@ -701,7 +701,10 @@ Klartexts, Hinweis P6). Hintergrund: Codierung ≠ Verschlüsselung (öffentlich
   });
   test('signale: Zusatz-Chip, ruhig, Ton aus, Herkunft', () => {});
   ```
-- [ ] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Codes & Signale“ (Morse-Trommel, Klopfcode, Freimaurer) nach der Krypto-Werkstatt (Task 230)`
+- [x] **Step 2–4.** **Step 5: Commit** `M10: Werkzeug „Codes & Signale“ (Morse-Trommel, Klopfcode, Freimaurer) nach der Krypto-Werkstatt (Task 230)`
+- Umsetzung: Rand/Fell als HTML-Knöpfe über dem Trommelbild (Rand = vorderer Reif und Körper, damit das Touch-Ziel ≥ 44 px
+  bleibt); zweimal „Pause“ = Wortlücke; Klopfcode: Wand mit Rohr (`button.signale-rohr`), „Kurze Pause“ nur beim Empfangen,
+  Klopftafel `.signale-quadrat`; Freimaurer-Band zeigt SVG-Symbole; Übungsnachricht aus `BEISPIEL.uebung`.
 
 ### Task 231: Werkzeug „Versteckte Botschaften“ (`verstecke`, Zusatz) (E183)
 
