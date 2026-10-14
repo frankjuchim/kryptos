@@ -3,7 +3,7 @@
  * e2e – Szenario 11 „Welten 0–2 spielbar“ mit den echten Seeds (M5 Task 101, TECHNIK §15). Eigener App-Start mit
  * SEED_DIR=seed ohne WELT_DATEIEN (hilfen.starte({ echt: true })). Ablauf:
  *  1. Frau M. öffnet die Welten 0–2 im LK 13 (eA) mit Boss „Offen“, im GK 12: Niveau gA, Kür gesperrt.
- *  2. Mika R. (LK 13): Zeitleiste – Antike, Bagdad, Renaissance offen, Epochen 3–6 „noch verschlüsselt“; Archivfund W0
+ *  2. Mika R. (LK 13): Zeitleiste – Antike, Bagdad, Renaissance offen, Epochen 3–6 „noch verschlüsselt“ (ohne Seed oder im Kurs nicht freigegeben); Archivfund W0
  *     (0 Punkte), W0-L1-03 (+10 Punkte), W0-L2-02 mit falscher Richtung → Fallen-Chip P3; Level-Seite 0.1 mit „Akte als
  *     PDF“ (200, application/pdf); QR-Ziel /level/0.4 → Level-Seite; Boss W0: Start, eine Antwort, Abgabe, Auswertung mit Lösung.
  *  3. Mika im GK 12 (gA): Level 2.3 (eA) fehlt, Kür K1 erst nach „Kür: Frei“ durch Frau M.
@@ -12,6 +12,11 @@
 const assert = require('node:assert/strict');
 const { anmelden, gehe, keinQuerScrollen } = require('./hilfen');
 const { neueSeite, aufgabe } = require('./schueler');
+const fs = require('node:fs');
+const path = require('node:path');
+
+/** Welten mit Seed (Plan M8: W3–W6 kommen Task für Task dazu) – die Einstellungen bieten genau diese an. */
+const SEED_WELTEN = fs.readdirSync(path.join(__dirname, '..', '..', 'seed', 'welten')).map((d) => /^welt(\d)\.json$/.exec(d)).filter(Boolean).map((m) => Number(m[1])).sort((a, b) => a - b);
 
 /** Kurs in der Kursliste der Lehrkraft öffnen; liefert die lokale id. */
 async function kursId(page, ctx, name) {
@@ -30,7 +35,7 @@ async function einstellen(page, ctx, kurs, { welten, boss, niveau, kuer }) {
   if (welten) {
     const boxen = page.locator('input[name="welt"]');
     const werte = await boxen.evaluateAll((l) => l.map((x) => Number(x.value)));
-    assert.deepEqual(werte, [0, 1, 2], 'Einstellungen bieten genau die Welten 0–2 aus dem Katalog');
+    assert.deepEqual(werte, SEED_WELTEN, 'Einstellungen bieten genau die Welten mit Seed aus dem Katalog');
     for (const w of werte) {
       const box = page.locator(`input[name="welt"][value="${w}"]`);
       if (welten.includes(w)) await box.check();
@@ -90,6 +95,7 @@ async function szenario11(ctx) {
     await tor.waitFor();
     assert.match(await tor.getAttribute('aria-label'), new RegExp(name), `Tor ${nr} offen (${name})`);
   }
+  // Epochen 3–6: ohne Seed bzw. im Kurs nicht freigegeben – beides „noch verschlüsselt“
   const zu = page.locator('.tor.gesperrt');
   assert.equal(await zu.count(), 4, 'Epochen 3–6 gesperrt');
   for (let i = 0; i < 4; i++) assert.match(await zu.nth(i).innerText(), /noch verschlüsselt/);
