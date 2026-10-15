@@ -8,10 +8,10 @@ und Zertifikaten – und werden dabei abwechselnd zu Alice (Kryptografie) und Ev
 Ziel-Adresse: **https://kryptos.frankjuchim.de** · Mitglied des Plattform-Verbunds **InfoLabs**
 (https://labs.frankjuchim.de) · Anmeldung ausschließlich über das Portal.
 
-> **Stand (14.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
-> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M9** gebaut
-> (Release-Kandidat 1.0.0 in Vorbereitung, Branch `feature/m0-kern`, noch nicht live): alle sieben Welten spielbar,
-> Kryptolabor mit elf Werkzeugen, Funkraum mit fünf Live-Szenarien, Chiffren-Werkstatt und Knack-Arena, Sicherheits- und
+> **Stand (15.10.2026):** Spezifikation, Unterrichtsmaterial, Erklärvideo-Drehbücher und Design-Prototyp sind fertig
+> und geprüft. Die Plattform ist nach `docs/superpowers/plans/2026-10-12-kryptos-plattform.md` bis **M10** gebaut
+> (1.0.0 aus M9; Version **1.1.0** mit den Werkstatt-Werkzeugen auf dem Branch `feature/werkstatt-uebernahme`): alle sieben Welten spielbar,
+> Kryptolabor mit 16 Werkzeugen (seit 1.1.0 nach der Krypto-Werkstatt, Ideen von A. Bodendiek), Funkraum mit fünf Live-Szenarien, Chiffren-Werkstatt und Knack-Arena, Sicherheits- und
 > Docker-Prüfungen, Ende-zu-Ende mit dem Portal – siehe „Stand der Plattform“ (Abschnitt 4.1) und „Betrieb“ (Abschnitt 6).
 > Live geht Kryptos erst mit dem Merge nach `main` nach Freigabe der Lehrkraft.
 ---
@@ -96,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M9)
+### 4.1 Stand der Plattform (M0–M10, Version 1.1.0)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -112,6 +112,7 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
 | M8 Inhalte W3–W6 | Welten 3–6 (`seed/welten/welt3–6.json`: Archivfunde, Level mit Kür 3.K2 und 4.K3, Boss-Pools, neue Interaktionen `hash-ziel` und Uhrwerk), Warm-up W3–W6, Generatoren, Akten, Lösungen und Lehrkraft-PDFs W3–W6, Abdeckungsprüfung gegen §11 der Welt-Specs (`npm run abdeckung`) |
 | M9 Abschluss | strenge Startprüfung der Konfiguration (`npm run konfig:pruefen`, Startzeile ohne Geheimnisse), Docker-Image ohne Schlüssel (CI-Job `docker`), Sicherheits-Review als Tests (Kopfzeilen, Cookies hinter dem Proxy, Routen-Inventar mit Rechten und Rate-Limits, Lösungsverrat-Crawler), Datenschutzseite mit Platzhaltern der Schule, e2e-Szenarien 13/14, Ende-zu-Ende mit dem Portal (`npm run e2e:portal`), Betriebsanleitung (Abschnitt 6) |
+| M10 Werkstatt-Werkzeuge (1.1.0) | Kryptolabor nach der Krypto-Werkstatt (Ideen von A. Bodendiek): Chiffrierscheibe und Skytale als Objekte (am Objekt schreiben, Stempelkasten, Bänder, Abwickeln; Reiter Pflügen, Fleißner-Karton auch 6 × 6) und fünf neue Werkzeuge – Polybios & Playfair, Codes & Signale (Morse-Trommel, Klopfcode, Freimaurer; Zusatz), Versteckte Botschaften (Nullchiffre, Punktmethode; Zusatz), Enigma (Maschine, Innenleben, Vorführen, Glossar; Kür) und Angreifer-Labor (Vorhersage, Schlüsselraum, Trainer, Angreifer-Blick); Reiter-Regeln gegen Lösungsverrat (u. a. Playfair und Schlüsselraum ab Welt 2, Schlüsselwort in Level 0.4/2.4 fest, Vorführen nicht in Kür 3.K2); Level-Karten 0.4, 2.4 und Kür 3.K2 (Runden-Labor mit Mini-Enigma **und** Enigma mit „Maschine“/„Innenleben“); Objektbilder in Folien W0/W2/W3-Kür und den Videos 00/01; e2e-Szenario 15 mit Touch, 360 px, Kontrast und reduzierter Bewegung |
 
 Noch offen: Freigabe der Lehrkraft und erstes Live-Deploy (Abschnitt 6), Angaben der Schule auf der Datenschutzseite.
 
@@ -143,7 +144,7 @@ npm run krypto:pruefwerte      # Rechenwerte aller Materialien gegen den Python-
 npm run krypto:seeds           # Lösungen der Seeds unabhängig nachrechnen
 npm run abdeckung              # Abdeckung gegen §11 der Welt-Specs ([--welt N])
 npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
-npm run e2e                    # Playwright (Chromium), Szenarien 1–14, Fotos nach docs/screenshots/
+npm run e2e                    # Playwright (Chromium), Szenarien 1–15, Fotos kr-01…36 nach docs/screenshots/
 LABS_DIR=<labs-Kopie> npm run e2e:portal           # Ende-zu-Ende mit einer lokalen Kopie des Portals (INTEGRATION §6)
 npm run konfig:pruefen         # Konfiguration aus den Umgebungsvariablen prüfen, ohne Start (Abschnitt 6)
 npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, npm run workspaces; ohne --pruefen erzeugen (LibreOffice)
@@ -284,7 +285,7 @@ Fraunces und JetBrains Mono (SIL OFL), Atkinson Hyperlegible (Lizenz vor der Sel
 nutzt Georgia, Calibri, Consolas. Abituraufgaben werden nur analysiert und nicht veröffentlicht; KRYPTOS-16 und der
 KRYPTOS-Hash sind eigens für diese Einheit entworfene Lernverfahren.
 
-**Krypto-Werkstatt:** Mehrere Werkzeuge des Kryptolabors (ab M10: Chiffrierscheibe, Skytale & Gitter und weitere) beruhen
+**Krypto-Werkstatt:** Sieben Werkzeuge des Kryptolabors (seit M10, Version 1.1.0: Chiffrierscheibe, Skytale & Gitter, Polybios & Playfair, Codes & Signale, Versteckte Botschaften, Enigma, Angreifer-Labor) beruhen
 auf der Krypto-Werkstatt von André Bodendiek, die er der Lehrkraft am 14.10.2026 ausdrücklich zur Nutzung in Kryptos
 freigegeben hat (Code, Grafiken, Texte) – **Ideen von A. Bodendiek**. Übernommene Dateien, Herkunft und Anpassungen
 stehen je Datei in `docs/FREMDCODE.md`; die Werkzeuge nennen die Herkunft sichtbar, die Datenschutzseite unter „Quellen

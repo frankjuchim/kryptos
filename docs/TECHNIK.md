@@ -177,6 +177,8 @@ public/
                     labor/ registry.js seite.js (M4)  bausteine.js (KRLaborBau, M6)  skytale.js scheibe.js
                            haeufigkeit.js substitution.js vigenere.js bitlupe.js runden.js modulo.js rsa.js hash.js
                            signatur.js (M6 erledigt: elf Werkzeuge, nachgeladen über KRLabor.lade)
+                           station.js (KRStation, M10)  quadrat.js signale.js verstecke.js enigma.js analyse.js
+                           (M10 erledigt: 16 Werkzeuge, Werkstatt-Stationen – docs/FREMDCODE.md)
                     funkraum.js (KRFunkraum) beamer.js (KRBeamer) werkstatt.js (KRWerkstatt) arena.js (KRArena)
                     lehrer_funkraum.js (KRLehrerFunk: Tabs Teams, Funkraum) lehrer_arena.js (KRLehrerArena)
                     funkpoll.js (KRPoll) funknetz.js (KRNetz) funkraum_szenen.js (KRFunkSzenen) (M7 erledigt)
@@ -1339,27 +1341,59 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   Level-Kontext W5-L3** (die Szene zeigt den Ablauf von W5-L3-04; Orchestrator, vorläufig). `KRLabor.oeffne` mit
   `umgebung.gesperrt` zeigt nur den Grund (`KRLabor.GRUND`) und lädt kein Modul (zweite Sicherung der Boss-Sperre).
   Nur Werkzeuge in `BEREIT` werden nachgeladen (sonst „noch in Arbeit“ ohne Skript-Anforderung).
+- **Werkstatt-Werkzeuge (Plan M10, Kryptos 1.1.0):** Nach den Stationen der Krypto-Werkstatt (Ideen von A. Bodendiek,
+  Nachweis je Datei in `docs/FREMDCODE.md`) kamen fünf Werkzeuge dazu – `quadrat` (Polybios & Playfair), `signale` (Codes
+  & Signale), `verstecke` (Versteckte Botschaften), `enigma` (Enigma), `analyse` (Angreifer-Labor) – und Skytale (Reiter
+  `pfluegen`, Fleißner 4 × 4/6 × 6) und Chiffrierscheibe wurden als Objekte neu gestaltet; `BEREIT` enthält alle 16
+  Werkzeuge. Feld `art` der Registry (`kern` | `zusatz` | `kuer`): im Raster Chip „Zusatz“ (nicht im KC: `signale`,
+  `verstecke`) bzw. „Kür“ (`enigma`), ebenso in der Werkzeug-Tabelle der Lehrkraft-Einstellungen. Jedes Werkstatt-Werkzeug
+  zeigt unten die Herkunftszeile „Ideen von A. Bodendiek (Krypto-Werkstatt)“ (`KRStation.herkunft`, Test
+  `fremdcode.test.js`), auch im Funkraum und im Gastmodus.
+  **`KRStation`** (`labor/station.js`, gemeinsamer Rahmen der Objekt-Werkzeuge, rechnet nichts): `bewegung` (ms, schritt)
+  (Easing `weich`, bei `AQ.ruhig()` sofort Endzustand), `flug` (fliegender Buchstabe, Ziel ist vorher schon beschrieben –
+  schnelle Eingaben gehen nie verloren), `stempel` (Stempelkasten A–Z), `baender` (Klartext-/Geheimtext-Band, auch
+  `gruppen`, `woerter`), `anleitung` (Kurzanleitung ①②③ mit Häkchen), `erklaerung` (Erklärfeld), `mehr` („Mehr
+  ausprobieren“), `hintergrund` (Schlüsselraum, „Warum unsicher?“), `soGehts` („So funktioniert’s“), `nachspielKnopf`
+  (Nachspielen über `KRLabor.nachspiel`, Handgriffe gesperrt), `sperre`, `tippen` (Antippen ohne Wischen: eine Bewegung
+  über 12 px löst nichts aus), `greifen` (Ziehen ohne Scrollen), `ton`/`tonSchalter` (Ton als Schalter, Standard aus),
+  `funken`, `ungefaehr` (große Zahlen als „≈ 4,0 · 10²⁶“), `herkunft`. CSS der Objekte in `labor_objekte.css` (§11.3).
+  **Alle Reiter-Regeln** (`REITER_REGELN`, Lehrkraft sieht immer alles): `haeufigkeit.teiltexte` Welt 2 ·
+  `haeufigkeit.kennzahlen` Welt 2 + eA · `vigenere.koinzidenz` eA · `skytale.ring` Welt 6 · `vigenere.modus.pendel` und
+  `vigenere.modus.frei` Welt 6 · `signatur.mitm` Welt 6, nie im Level W5-L3 · `quadrat.playfair` Welt 2 (rechnet sonst
+  W2-L4 vor) · `analyse.schluesselraum` Welt 2 (rechnet sonst W1-L1-04 vor) · `analyse.verfahren.playfair` und
+  `analyse.verfahren.vigenere` Welt 2 · `analyse.verfahren.enigma` Welt 3 · `enigma.vorfuehren` nie im Level W3-L5
+  (beantwortet W3-K2-03) · `quadrat.schluesselwort` nie in den Levels W0-L4/W2-L4 (Task 239: dort bleibt das Quadrat fest,
+  sonst rechnete das Werkzeug die Schlüsselwort-Aufgaben vor).
+  **Level-Karten (Task 235, 239):** Level 0.4 `quadrat` [`polybios`], Level 2.4 zusätzlich `quadrat` [`playfair`], Kür 3.K2
+  (W3-L5, SPEC W3 §K2) Runden-Labor [`enigma`] (Mini-Enigma) **und** Enigma [`maschine`, `innenleben`] – „Vorführen“ ist dort
+  ausgeblendet. Lösungsverrat-Test K10 (`inhalte_loesungsverrat.test.js`): Werkzeug mit Level-Voreinstellung, angewandt
+  auf die Eingaben der Aufgaben, ergibt keine Lösung.
 
 ### 10.2 Registry
 
-| id | Titel | Welt | Reiter (Reihenfolge = Anzeige) | Voreinstellungs-Schlüssel (M6 neu **fett**) | Gast |
-|---|---|---|---|---|---|
-| `skytale` | Skytale & Gitter | 0 | `skytale`, `gartenzaun`, `fleissner`, `ring` | `text`, `umfang`, `zeilen`, `schablone`, **`t`**, **`richtung`**, **`reiter`** | – |
-| `scheibe` | Chiffrierscheibe | 0 | `scheibe`, `text`, `alle` | `text`, `k`, `basis`, **`richtung`**, **`reiter`** | ✓ |
-| `haeufigkeit` | Häufigkeits-Analysator | 1 | `histogramm`, `bigramme`, `teiltexte`, `kennzahlen` | `text`, `ansicht`, `teiltexte`, **`reiter`** | – |
-| `substitution` | Substitutions-Werkbank | 1 | – | `text`, `vorgabe` | – |
-| `vigenere` | Vigenère-Werkbank | 2 | `quadrat`, `verschluesseln`, `kasiski`, `teiltexte`, `koinzidenz`, `verschiebung`, `korrektur` | `text`, `schluessellaenge`, **`modus`** (`vigenere`\|`autokey`\|`porta`\|`pendel`\|`frei`), **`richtung`**, **`reiter`** | – |
-| `bitlupe` | Bit-Lupe | 3 | `zeichen`, `xor`, `doppelnutzung` | `text`, `bits`, `schluessel`, **`modus`** (`otp`\|`wiederholung`), **`reiter`** | – |
-| `runden` | Runden-Labor | 3 | `runden`, `lawine`, `verfolgung`, `modi`, `fehler`, `enigma` | `block`, `schluessel`, `runden`, **`variante`** (`kryptos16`\|`ohneSBox`\|`rm16`), **`stellung`**, **`reiter`** | – |
-| `modulo` | Modulo-Uhr & Farbmischer | 4 | `uhr`, `tabelle`, `inverses`, `farbmischer` | `modul`, `p`, `g`, **`a`**, **`reiter`** | – |
-| `rsa` | RSA-Rechenwerk | 4 | `rechenwerk`, `euklid`, `text` | `p`, `q`, `e`, **`reiter`** | – |
-| `hash` | Hash-Labor | 5 | `schritte`, `lawine`, `kollision`, `baukasten`, `passwort`, `pruefsumme` | `text`, **`reiter`** | – |
-| `signatur` | Signatur- & Zertifikats-Simulator | 5 | `signatur`, `zertifikat`, `mitm` | `szene`, **`reiter`** | – |
+| id | Titel | Welt | Art | Reiter (Reihenfolge = Anzeige) | Voreinstellungs-Schlüssel | Gast |
+|---|---|---|---|---|---|---|
+| `skytale` | Skytale & Gitter | 0 | kern | `skytale`, `gartenzaun`, `fleissner`, `pfluegen`, `ring` | `text`, `umfang`, `zeilen`, `schablone`, `t`, `richtung`, `reiter`, **`groesse`** (4\|6), **`k`** (Pflügen) | – |
+| `scheibe` | Chiffrierscheibe | 0 | kern | `scheibe`, `text`, `alle` | `text`, `k`, `basis`, `richtung`, `reiter` | ✓ |
+| `haeufigkeit` | Häufigkeits-Analysator | 1 | kern | `histogramm`, `bigramme`, `teiltexte`, `kennzahlen` | `text`, `ansicht`, `teiltexte`, `reiter` | – |
+| `substitution` | Substitutions-Werkbank | 1 | kern | – | `text`, `vorgabe` | – |
+| `vigenere` | Vigenère-Werkbank | 2 | kern | `quadrat`, `verschluesseln`, `kasiski`, `teiltexte`, `koinzidenz`, `verschiebung`, `korrektur` | `text`, `schluessellaenge`, `modus` (`vigenere`\|`autokey`\|`porta`\|`pendel`\|`frei`), `richtung`, `reiter` | – |
+| `bitlupe` | Bit-Lupe | 3 | kern | `zeichen`, `xor`, `doppelnutzung` | `text`, `bits`, `schluessel`, `modus` (`otp`\|`wiederholung`), `reiter`, `schluesselart`, `c1`, `c2` | – |
+| `runden` | Runden-Labor | 3 | kern | `runden`, `lawine`, `verfolgung`, `modi`, `fehler`, `enigma` | `block`, `schluessel`, `runden`, `variante` (`kryptos16`\|`ohneSBox`\|`rm16`), `stellung`, `reiter` | – |
+| `modulo` | Modulo-Uhr & Farbmischer | 4 | kern | `uhr`, `tabelle`, `inverses`, `farbmischer` | `modul`, `p`, `g`, `a`, `reiter` | – |
+| `rsa` | RSA-Rechenwerk | 4 | kern | `rechenwerk`, `euklid`, `text` | `p`, `q`, `e`, `reiter` | – |
+| `hash` | Hash-Labor | 5 | kern | `schritte`, `lawine`, `kollision`, `baukasten`, `passwort`, `pruefsumme` | `text`, `reiter` | – |
+| `signatur` | Signatur- & Zertifikats-Simulator | 5 | kern | `signatur`, `zertifikat`, `mitm` | `szene`, `reiter` | – |
+| `quadrat` | Polybios & Playfair | 0 | kern | `polybios`, `playfair` | **`text`, `schluesselwort`, `richtung`, `reiter`** | – |
+| `signale` | Codes & Signale | 0 | zusatz | `morse`, `klopfcode`, `freimaurer` | **`text`, `richtung`, `reiter`** | – |
+| `verstecke` | Versteckte Botschaften | 0 | zusatz | `nullchiffre`, `punkte` | **`text`, `stelle`** (1\|2\|3), **`reiter`** | – |
+| `enigma` | Enigma | 3 | kuer | `maschine`, `innenleben`, `vorfuehren`, `glossar` | **`einstellung`, `ukw`** (B\|C), **`reiter`** | – |
+| `analyse` | Angreifer-Labor | 1 | kern | `vergleich`, `schluesselraum`, `trainer`, `blick` | **`reiter`** | – |
 
-`richtung` ist `ver` oder `ent`; `reiter` ist eine nicht leere Liste ohne Dopplung aus den Reitern des Werkzeugs
-(Plan M6 E73, Prüfung in `pruefeVoreinstellung`). Server-Registry `src/krypto/werkzeuge.js` (id, titel, welt, erlaubte Voreinstellungen, reiter, gast) ist die Quelle für
-Validator, `GET /api/labor` und Lehrkraft-Einstellungen; der Client hat dieselben Einträge (id, titel, welt, reiter) in
-`labor/registry.js` (Test vergleicht beide Listen).
+M10 neu **fett**. `richtung` ist `ver` oder `ent`; `reiter` ist eine nicht leere Liste ohne Dopplung aus den Reitern des Werkzeugs
+(Plan M6 E73, Prüfung in `pruefeVoreinstellung`). Server-Registry `src/krypto/werkzeuge.js` (id, titel, welt, erlaubte Voreinstellungen, reiter, gast, art) ist die Quelle für
+Validator, `GET /api/labor` und Lehrkraft-Einstellungen; der Client hat dieselben Einträge (id, titel, welt, reiter, art) in
+`labor/registry.js` (Test vergleicht beide Listen; `readme.test.js` vergleicht diese Tabelle mit der Server-Registry).
 
 ### 10.3 Freigabe je Kurs und Sperre im Boss
 
@@ -1426,7 +1460,8 @@ Stand nach M7 (globale Namen in Klammern; jede Datei legt genau einen an – Wer
 | `krypto/diagnose_chips.js` (`KRDiag`) | Fallen-Chip „P3 Umkehrung falsch“ + Text, Link auf `/themen#fallen-P3`, höchstens zwei, gleiche Diagnosen nur einmal; `KRDiag.anzeige` für `AQA.ansicht` |
 | `krypto/labor/registry.js` (`KRLabor`) | Werkzeugliste mit Reitern (= Server), `registriere`, `hat`, `bereit`, `lade` (Nachladen, E72), `REITER_REGELN`/`erlaubt`/`reiterFuer`, `GRUND`, `oeffne` (Sperre über `umgebung.gesperrt`), `aktiv`, `dialog` (Fokusfalle, Esc, Fokus-Rückkehr), `nachspiel`, `alleSchluessel` (§10.1) |
 | `krypto/labor/bausteine.js` (`KRLaborBau`) | Bausteine der Werkzeuge: `reiter`, `textfeld` (Live-Normalisierung, Längenanzeige), `zahl` (Spinbutton), `richtung`, `ausgabe` (Kopieren ohne Gruppen-Leerzeichen), `hinweis` (info/warnung/falle), `tabelle`, `details` („Mehr ausprobieren“), `neueId`; einmal nachgeladen bzw. auf `/labor` statisch |
-| `krypto/labor/<id>.js` (kein globaler Name) | die elf Werkzeuge (§10.2), je eine IIFE mit `KRLabor.registriere` |
+| `krypto/labor/station.js` (`KRStation`) | (M10) Rahmen der Objekt-Werkzeuge nach der Krypto-Werkstatt: Bewegung, Flug, Stempelkasten, Bänder, Kurzanleitung, Erklärfeld, Nachspiel-Knopf, Antippen ohne Wischen, Ton, Herkunftszeile (§10.1) |
+| `krypto/labor/<id>.js` (kein globaler Name) | die 16 Werkzeuge (§10.2; elf aus M6, fünf aus M10), je eine IIFE mit `KRLabor.registriere` |
 | `krypto/funkpoll.js` (`KRPoll`) | gemeinsamer Poller: `starte({ url(seit), intervall, mischen, sofort, beiDaten, beiZustand })` → `{ stopp(), jetzt(), version(), stand() }`; `If-None-Match`, 304 ohne Arbeit, Rückfall 2 → 4 → 8 → 15 s (auch 429/5xx), Pause bei `document.hidden`, nach `auswertung` 15 s, 403/404 → `ende` |
 | `krypto/funknetz.js` (`KRNetz`) | Netz-Grafik (SVG, Tablet und Beamer, Zustände mit Symbol, „fliegt“ nur ohne `AQ.ruhig()`, Geheimtext-Vorschau am Beamer) mit Tabellen-Alternative; `ereignisText` (Ticker-Texte), `ticker` (gedrosselt, höchstens eine Ansage je 5 s), `ROLLE`, `PHASE`, `STATUS`, `dauer` |
 | `krypto/funkraum_szenen.js` (`KRFunkSzenen`) | Rollenkarten und Szenen je Typ (`registriere`, `zeige`, `aktualisiere(stand)` mit keyed Listen `abgleich`), Senden-Formular mit sichtbarer Umlaut-Ersetzung, Posteingang, Prüf-Formulare, eingebettete Werkzeuge (`einbettung`, E98) |
@@ -1446,6 +1481,7 @@ Alle Seiten: `<html lang="de" data-epoche="…" data-theme="hell|dunkel|auto">`,
 | `komponenten.css` | Kopfzeile, Epochen-Tor, Akte-Karte, Archivwissen, Chips, Siegel, Knöpfe, Dialog, Toast, Fortschrittsring |
 | `aufgaben.css` | Kern-Blöcke/Interaktionen + neue (Geheimtext-Zeile, Alphabetleiste, Quadrat, Bits, Schaubild, Matrix, Chiffre-Kästchen, Werkbank) |
 | `labor.css`, `funkraum.css`, `lehrkraft.css`, `druck.css` | bereichsspezifisch; `druck.css` mit `@media print` (Urkunde, Werkzeugkarten-Vorschau) |
+| `labor_objekte.css` | (M10) Objekte der Werkstatt-Werkzeuge: Stempelkasten und Bänder (`station-*`), Scheibe, Stab, Pflügen, Karton, Quadrat, Signale, Verstecke, Enigma, Angreifer-Labor – je Werkzeug ein eigenes Präfix (`scheibe-`, `stab-`, `pflug-`, `karton-`, `quadrat-`, `signale-`, `verstecke-`, `enigma-`, `analyse-`); Farben nur über die Material-Tokens `--mat-*` (DESIGNSYSTEM §2.4) und die Grund-Tokens, einzige Ausnahme `rgba(11, 20, 38, …)` für Schatten (Test `labor_css.test.js`); Touch-Ziele über `--ziel`, breite Objekte bei 360 px in `scroll-x`-Rahmen |
 
 Regeln: Farben nur über Tokens; Texturen als SVG-Muster mit ≤ 6 % Deckkraft nur im Rahmen; Hervorhebung nie nur über
 Farbe; dynamische Werte per CSSOM (`el.style.setProperty('--wert', …)`, CSP-konform) oder SVG-Attribute – **nie**
@@ -1928,7 +1964,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `docker.test.js` | neu (M5) | Docker ohne Daemon: COPY-Quellen und `.dockerignore`-Ausnahmen gegen den Dateibaum, Image-Inhalt (Akten laut `seed/akten.json`, Lehrkraft-Verzeichnis, Demo-PDFs, relative `require()`, keine Lösung unter `/app/akten`), Image-Nachbau im Temp-Ordner: `scripts/validate.js` und `src/server.js` mit `NODE_ENV=production` (`/healthz`, `/api/themen` mit Akten-URLs, Demo-PDFs 200, andere Akte 401, Manifest) |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
-Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-30-…png` aus den echten Seeds – genau die Namen aus `FOTO_LISTE`
+Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-36-…png` aus den echten Seeds – genau die Namen aus `FOTO_LISTE`
 (`hilfen.js`), zusammen ≤ 5 MB, `foto()` wartet Toasts und endliche Übergänge ab, `E2E_FOTOS=0` schaltet aus (M9 Task 217) –, Viewports
 1280×800, 768×1024, 360×740, Beamer 1920×1080). Aufteilung (M4): `hilfen.js` (Start von Dev-Portal + App mit
 `SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung – ausgenommen nur erwartete Status 400–429 von `/api/…` –,
@@ -1936,8 +1972,9 @@ Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-30-…png` aus den echten Seed
 3), `lehrkraft.js` (Nr. 7a/7b), `gast.js` (Nr. 8, Demo `test/e2e/seed/gast/demo.json`), `geraete.js` (Nr. 9),
 `fehler.js` (Nr. 10), `inhalte.js` (Nr. 11, M5: zweiter App-Start mit `SEED_DIR=seed` ohne `WELT_DATEIEN`, `starte({ echt: true })`,
 Fotos kr-02…05, 10–12), `inhalte_w36.js` (Nr. 12, Plan M8 Task 202, im selben App-Start nach Nr. 11, Fotos kr-06…09, 29, 30), `labor.js` (Nr. 4, M6 Task 128, Fotos kr-13…15), `funkraum.js` (Nr. 5, M7 Task 160, kr-16…18), `arena.js` (Nr. 6, M7 Task 161, kr-19, 20);
-`lehrkraft_bereich.js` (Nr. 13, kr-21…25), `oeffentlich.js` (Nr. 14, kr-01, 26, 27), `gast.js` (Nr. 8, kr-28); Nr. 1–3, 7, 9, 10 ohne Fotos;
-Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13 → 14. `E2E_NUR=11,12` (Komma-Liste; 12–14 setzen 11 voraus)
+`lehrkraft_bereich.js` (Nr. 13, kr-21…25), `oeffentlich.js` (Nr. 14, kr-01, 26, 27), `werkstatt.js` (Nr. 15, M10 Task 237,
+kr-31…36), `gast.js` (Nr. 8, kr-28); Nr. 1–3, 7, 9, 10 ohne Fotos;
+Reihenfolge 1 → 2 → 7a → 3 → 4 → 5 → 6 → 7b → 8 → 10 → 9 → 11 → 12 → 13 → 14 → 15. `E2E_NUR=11,12` (Komma-Liste; 12–14 setzen 11 voraus)
 führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
 
 1. Start → „Anmelden über InfoLabs“ → Dev-Portal (Schüler) → Zeitleiste; Epochen-Tor öffnet Epoche; reduzierte Bewegung.
@@ -2006,6 +2043,18 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     auf `/`; Ida K. (nur GK 12): Dev-Portal schaltet Kryptos für `k:2` ab (Verbund `kurs-aendern {aktiv:false}`) → API 403,
     `/spiel` → Seite „Kurs abgeschaltet“ (auch 360 px), danach wieder eingeschaltet und Ida wieder in Kryptos. 360 px ohne
     Querscrollen; Kontraste hell/dunkel für `/`, `/themen`, `/datenschutz`, 404. Fotos kr-01, 26, 27.
+15. Werkstatt-Werkzeuge (Plan M10 Task 237, E191; `werkstatt.js`, nach Nr. 14): Frau M. setzt den LK 13 auf die Welten
+    0–1 – Mika sieht im Quadrat kein Playfair und im Angreifer-Labor keinen Schlüsselraum, Frau M. sieht beide; danach
+    Welten 0–3. Mika (Touch-Gerät, `hasTouch`) öffnet über das Raster Skytale-Stab, Playfair, Morse-Trommel,
+    Nullchiffre-Brief, Enigma und Angreifer-Labor, bedient sie am Objekt und vergleicht das Ergebnis mit `Krypto`
+    (Herkunftszeile sichtbar). Wischen per CDP-Touch über den Stempelkasten stempelt nicht, Antippen schon; Nachspiel im
+    Einzelschritt sperrt die Stempel. 360 px in **allen** Reitern von Scheibe, Skytale, Quadrat, Signale, Verstecke, Enigma,
+    Angreifer-Labor: kein Querscrollen, Touch-Ziele ≥ 44 px (Wörter im Fließtext mit `data-ziel-inline` ausgenommen, WCAG
+    2.5.8), Kontraste hell und dunkel (Inhalt geschlossener `<details>` zählt nicht). Reduzierte Bewegung: nach den
+    Handgriffen keine laufende Animation (`document.getAnimations()`). Gast: `/gast#/labor/scheibe` mit Herkunftszeile.
+    Nia T. startet Boss 0 → `/labor#/enigma` zeigt „Während eines Boss-Kampfs ist das Labor geschlossen.“ Fotos
+    kr-31 `labor-skytale-stab`, kr-32 `labor-quadrat-playfair`, kr-33 `labor-signale-morse`, kr-34 `labor-verstecke-brief`,
+    kr-35 `labor-enigma`, kr-36 `labor-analyse`.
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C
@@ -2136,7 +2185,7 @@ dem ersten Live-Deploy.
 | T5 | ~~Lizenz der Atkinson-Hyperlegible-Fassung~~ – **erledigt**: OFL-1.1-Fassung aus `@fontsource/atkinson-hyperlegible` 5.3.0 („Copyright 2020 Braille Institute of America, Inc.“, M4 Task 43) | – |
 | T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
-| T8 | Fremdcode „Krypto-Werkstatt“ | M6 ohne Fremdcode: `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry, Rechnung über `Krypto.*`. **Erlaubnis 14.10.2026, Übernahme M10** (Plan M10 E167–E169): Portierung der Stationen in Labor-Module mit Herkunfts-Kopf und sichtbarer Namensnennung „Ideen von A. Bodendiek“, je Datei in `docs/FREMDCODE.md` (Design O11); Rechnungen weiter nur über `Krypto.*` |
+| T8 | Fremdcode „Krypto-Werkstatt“ | M6 ohne Fremdcode: `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry, Rechnung über `Krypto.*`. **Erlaubnis 14.10.2026, Übernahme M10 – erledigt (Kryptos 1.1.0)** (Plan M10 E167–E169): fünf neue Werkzeuge und zwei neu gestaltete (§10.1), Herkunfts-Kopf in jeder übernommenen Datei, sichtbare Namensnennung „Ideen von A. Bodendiek“ im Werkzeug, auf der Datenschutzseite und im README, je Datei mit Quelle und Kryptos-Commit in `docs/FREMDCODE.md` (Design O11, Test `fremdcode.test.js`); Rechnungen weiter nur über `Krypto.*` |
 | T9 | Mallory-Zusatzrolle im Schlüsseltausch (W4 §9.3, eA, optional) | **offen** (Plan M7 offene Entscheidung 4): vorläufig nur als Papierkarte; „Mallory im Netz“ (W5) zeigt den Angriff digital |
 | T10 | Erstes Live-Deploy (M9) | **offen – Freigabe der Lehrkraft** (Plan M9 F1–F12): CapRover-App mit Persistent Directory und Variablen (README §6), grüner CI-Job `docker` auf dem PR, Merge nach `main`, Portal-Eintrag, Ende-zu-Ende live |
 | T11 | Datenschutzseite | **offen – Angaben der Schule** in `[…]` (Plan M9 L49) |

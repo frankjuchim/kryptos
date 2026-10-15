@@ -111,6 +111,32 @@ bitte dort oder hier eintragen:
 | 51 (Gastmodus-Limit) | |
 | 52 (labs `TRUST_PROXY=false`) | |
 
+## Nachtrag 1.1.0 (15.10.2026) – Werkstatt-Werkzeuge im Kryptolabor (M10)
+
+Branch `feature/werkstatt-uebernahme`, Detailplan `docs/superpowers/plans/2026-10-15-kryptos-m10-werkstatt.md`
+(Tasks 220–240, E167–E199, L53–L59). Grundlage: Erlaubnis von A. Bodendiek (14.10.2026), Namensnennung „Ideen von
+A. Bodendiek“ in jedem übernommenen Werkzeug, auf der Datenschutzseite und in README §8; Nachweis je Datei mit Quelle und
+Kryptos-Commit in `docs/FREMDCODE.md`.
+
+| Bereich | Änderung |
+|---|---|
+| Kryptolabor | 16 Werkzeuge (11 + 5): neu Polybios & Playfair, Codes & Signale (Zusatz), Versteckte Botschaften (Zusatz), Enigma (Kür), Angreifer-Labor; Chiffrierscheibe und Skytale als Objekte (Reiter Pflügen, Fleißner 6 × 6); Rahmen `KRStation`, Material-Tokens `--mat-*`, `labor_objekte.css` |
+| Bibliothek | Pflügen, Morse, Freimaurer, Nullchiffre, Punktmethode, Enigma I mit Doppelschritt und Stromweg, Playfair-Schritte, Schlüsselraum, Suchdauer – je mit Python-Zwilling |
+| Lösungsverrat | Reiter-Regeln (Playfair, Schlüsselraum ab Welt 2; Schlüsselwort in Level 0.4/2.4 fest; Vorführen nicht in Kür 3.K2), Test K10 |
+| Inhalte | Level-Karten 0.4 (Polybios), 2.4 (+ Playfair), Kür 3.K2 (Runden-Labor mit Mini-Enigma und Enigma „Maschine“/„Innenleben“, SPEC W3 §K2); Aufgaben W0-L4/W2-L4 angepasst (D16) |
+| Material | Objektbilder `materialien/Bilder/Labor/` (`npm run labor:bilder`) in den Folien W0, W2, W3-Kür und den Videos 00/01 |
+| e2e | Szenario 15 „Werkstatt-Werkzeuge“ (Touch, 360 px in allen Reitern, Kontraste hell/dunkel, reduzierte Bewegung, Boss-Sperre), Foto-Satz `kr-01…36` (≈ 4 MB) |
+
+| Prüfung (Task 238) | Ergebnis |
+|---|---|
+| `npm run pruefen` | 1276 Tests, 0 Fehler · Prüfwerte 1134 Werte, 0 Abweichungen (3 bekannte Überschneidungen) · Seeds 399 Lösungen, 0 Abweichungen · Abdeckung 0 Lücken |
+| `npm run krypto:vergleich -- --anzahl 2000` | 141 Funktionen, 283 000 Fälle, 0 Abweichungen |
+| `npm run e2e` | Szenarien 1–15 grün, 36 Fotos |
+| Abschluss-Review (Review Focus 1–5, CSP, Rechenregel, Namensnennung, du-Form) | Funde in Task 237 behoben (Touch-Ziele Enigma/Signale, dunkle Tabellenköpfe beim Pflügen, Kontrast im Stromweg, verdecktes Diagramm `inert`), sonst ohne Befund |
+
+Nicht geprüft: `npm run e2e:portal` (keine Änderung an SSO/Verbund in M10). Live geht 1.1.0 erst mit dem Merge nach
+`main` nach Freigabe der Lehrkraft.
+
 ## 8. Vorschlag für `CLAUDE.md`
 
 Die Befehle `abdeckung`, `konfig:pruefen` und `e2e:portal` stehen bereits im Befehlsblock. Vorschlag zusätzlich:

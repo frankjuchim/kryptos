@@ -92,6 +92,31 @@ bleiben):
 | `--ok` | `#7BC67E` | `--fokus` | `#8FB4EA` |
 | `--messing-dunkel` | `#D9A441` | `--akzent` | `var(--akzent-hell)` |
 
+### 2.4 Material-Tokens der Labor-Objekte (M10, `labor_objekte.css`)
+
+Die Werkstatt-Werkzeuge (TECHNIK §10.1) zeichnen greifbare Objekte – Holzstab, Papierband, Karton, Trommelfell,
+Maschinengehäuse. Ihre Farben kommen nur aus den `--mat-*`-Tokens (in `:root` und in beiden Dunkelblöcken, dunkel jeweils
+etwas gedämpft), nie aus festen Werten im Modul (Test `labor_css.test.js`; einzige Ausnahme `rgba(11, 20, 38, …)` für
+Schatten). Kontraste prüft `designsystem.test.js`: Tinte auf Band, Karton, Gehäuse, Holz-hell und Fell ≥ 4,5 : 1; Lampe,
+Ziel und Kabel auf dem Gehäuse ≥ 3 : 1 (Grafik, WCAG 1.4.11).
+
+| Token | hell | dunkel | Verwendung |
+|---|---|---|---|
+| `--mat-holz` | `#8F6534` | `#7A5229` | Holzteile: Trommel, Walzenkasten, Quadrat-Kopf, Scheibenpapier |
+| `--mat-holz-hell` | `#E3C28C` | `#D9B47A` | Stab-Stirnseite und helle Maserung, Trommelstock, Schablonen-Rand |
+| `--mat-holz-dunkel` | `#5B3A1E` | `#4A2F17` | dunkle Maserung, Füllzeichen, Pflug-Pfeile und -Nummern |
+| `--mat-messing` | `#B07D2B` | `#C9963F` | Beschläge, Naben, Scheibenrand, Enigma-Gehäuse |
+| `--mat-band` | `#EFE6CF` | `#E4D9BE` | Papierband, Karopapier, Enigma-Tasten und -Walzenrad |
+| `--mat-band-tinte` | `#2B2317` | `#2B2317` | Schrift auf Band und Fell |
+| `--mat-karton` | `#D9C7A0` | `#CDB98F` | Fleißner-Schablone, Felder des Quadrats, Band am Stab |
+| `--mat-karton-tinte` | `#2B2317` | `#2B2317` | Schrift auf Karton |
+| `--mat-fell` | `#EADBB8` | `#DCCBA4` | Trommelfell |
+| `--mat-gehaeuse` | `#22211E` | `#151513` | dunkle Bühnen (Stab, Signale, Enigma-Gehäuse) |
+| `--mat-gehaeuse-tinte` | `#ECE6D8` | `#ECE6D8` | Schrift auf dem Gehäuse |
+| `--mat-lampe-an` | `#FFC94A` | `#FFD566` | leuchtende Lampe, Hinweg des Stroms, gesteckte Buchse, gepflügte Zellen |
+| `--mat-ziel` | `#2BB3A3` | `#3CCFBD` | Ziel einer Regel (Playfair), Rückweg des Stroms, Säulen im Angreifer-Labor |
+| `--mat-kabel-N` (1–10) | zehn Kabelfarben | gleich | Steckerbrett-Kabel der Enigma (Paar *n* = Farbe *n*) |
+
 ## 3. Typografie
 
 | Rolle | Plattform (selbst gehostet, OFL) | Office-Materialien | Größen (Plattform / Akte / Folie) |
@@ -186,6 +211,13 @@ nie nur über Farbe.
 
 Dauer 150–250 ms (Mikro), 400–600 ms (Übergänge zwischen Epochen: kurzer „Zeitsprung“ – Ziffernring dreht, Rahmen
 wechselt Akzentfarbe). Alles abschaltbar über `prefers-reduced-motion` und eine Einstellung im Profil.
+
+**Labor-Objekte (M10):** Bewegung nur über `KRStation.bewegung` (rAF, Easing quadratisch ein/aus) und `KRStation.flug`
+(ein Buchstabe fliegt etwa 380 ms vom Stempel bzw. Objekt in das Band; das Ziel ist vorher schon beschrieben, schnelle
+Eingaben gehen nie verloren). Abwickeln, Pflügen, Walzen und Stromweg laufen Schritt für Schritt (etwa 0,7 s je Runde),
+Stempel federn 0,28 s. Bei `prefers-reduced-motion` oder „Bewegung aus“ im Profil (`AQ.ruhig()`) gibt es keine Bewegung:
+sofort der Endzustand, Nachspielen nur im Einzelschritt (e2e Nr. 15 prüft `document.getAnimations()`). Ton ist ein
+eigener Schalter, Standard aus.
 
 ## 7. Barrierefreiheit (WCAG 2.1 AA)
 

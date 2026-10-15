@@ -646,8 +646,8 @@ Herkunft: `M5-3` = Plan M5, offene Entscheidung 3; `VV` = `docs/VERTRAG_VORSCHLA
 | 29 | M6-6 | MitM-Szene im Signatur-Simulator | eigene Werte; Reiter im Level W5-L3 aus, frei ab Welt 6 |
 | 30 | M6-4 | Level 2.4: Häufigkeits-Analysator mit Bigrammen und Histogramm | beide |
 | 31 | M6-8, M6-9, M6-10 | SHA-256 eigene Umsetzung; Signatur 8 Hex mod N; Bit-Lupe ohne Codenummer für Nicht-Anlagezeichen | ja (Kenntnis) |
-| 32 | M6-2 | Steganographie/Codierung als Ergänzungs-Werkzeug | nein |
-| 33 | M4-7, M6-1, O11 | Krypto-Werkstatt (A. Bodendiek): Erlaubnis einholen? | nichts übernommen, kein Link |
+| 32 | M6-2 | Steganographie/Codierung als Ergänzungs-Werkzeug | nein – **entschieden 14.10.2026 – M10:** ja, als Zusatz-Werkzeuge „Codes & Signale“ und „Versteckte Botschaften“ (Plan M10, Kryptos 1.1.0) |
+| 33 | M4-7, M6-1, O11 | Krypto-Werkstatt (A. Bodendiek): Erlaubnis einholen? | nichts übernommen, kein Link – **entschieden 14.10.2026 – M10:** Erlaubnis erteilt, Übernahme mit Namensnennung „Ideen von A. Bodendiek“ (`docs/FREMDCODE.md`, Kryptos 1.1.0) |
 | 34 | M4-6, M6-7, M7-12 | Screenshots im Repo, Fotogrenze | Satz `kr-01…30`, ≤ 5 MB, echte Seeds (E154) |
 | 35 | M4-8, M5-10 | Kontrastregel auch für Material | umgesetzt (alle Akten, Folien, Videos 00–07 nach M9) |
 | 36 | M5-3 | Akten öffentlich oder nur nach Anmeldung | nur nach Anmeldung, ohne Anmeldung nur Demo-PDFs |

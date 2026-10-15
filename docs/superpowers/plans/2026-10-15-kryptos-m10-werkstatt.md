@@ -955,11 +955,11 @@ W3 Kür (Enigma) unter `quellen/material/`, `materialien/Videos/00_Kryptos_Zeitr
 Gesamtplan Teil A (M10 „erledigt“); Plan M9 L32/L33 „entschieden 14.10.2026 – M10“; `docs/ABSCHLUSS_1.0.md` Nachtrag
 „1.1.0“; `package.json` + alle `?v=` → `1.1.0` (`node werkzeuge/version_setzen.js 1.1.0`).
 
-- [ ] **Step 1:** Doku-Tests (`readme.test.js`, Registry-Tabelle in TECHNIK = Server-Registry, falls vorhanden) rot → Doku → grün.
-- [ ] **Step 2:** `npm run pruefen` grün; `npm run e2e` grün; `npm run krypto:vergleich -- --anzahl 2000` 0 Abweichungen.
-- [ ] **Step 3:** Abschließendes Review mit `superpowers:requesting-code-review` über den ganzen Branch (Schwerpunkte: Review
+- [x] **Step 1:** Doku-Tests (`readme.test.js`, Registry-Tabelle in TECHNIK = Server-Registry, falls vorhanden) rot → Doku → grün.
+- [x] **Step 2:** `npm run pruefen` grün; `npm run e2e` grün; `npm run krypto:vergleich -- --anzahl 2000` 0 Abweichungen.
+- [x] **Step 3:** Abschließendes Review mit `superpowers:requesting-code-review` über den ganzen Branch (Schwerpunkte: Review
   Focus 1–5, CSP, Rechenregel, Namensnennung, Texte du-Form); Funde als Tasks 238a … im selben Branch beheben.
-- [ ] **Step 4: Commit** `Kryptos 1.1.0: Werkstatt-Werkzeuge im Kryptolabor – Doku, Fremdcode-Nachweis, Gesamtprüfung (M10 Task 238)`
+- [x] **Step 4: Commit** `Kryptos 1.1.0: Werkstatt-Werkzeuge im Kryptolabor – Doku, Fremdcode-Nachweis, Gesamtprüfung (M10 Task 238)`
 
 ---
 
