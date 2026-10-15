@@ -1638,6 +1638,19 @@ class BibliothekM10VII(unittest.TestCase):
         self.assertEqual(K.suchdauer(math.log10(26), 1e6)['text'], '< 1 Sekunde')
         self.assertEqual(K.suchdauer(math.log10(180), 1)['text'], '≈ 3 Minuten')
 
+    def test_suchdauer_einheitsgrenzen(self):
+        # M10-Review Fund 6: ab 95 % der nächsten Einheit umschalten
+        t = lambda sek: K.suchdauer(math.log10(sek), 1)['text']
+        self.assertEqual(t(59.6), '≈ 1 Minute')
+        self.assertEqual(t(56), '≈ 56 Sekunden')
+        self.assertEqual(t(3599), '≈ 1 Stunde')
+        self.assertEqual(t(86000), '≈ 1 Tag')
+        self.assertEqual(t(22 * 3600), '≈ 22 Stunden')
+        self.assertEqual(t(3.1e7), '≈ 1 Jahr')
+        self.assertEqual(t(29e6), '≈ 336 Tage')
+        self.assertEqual(t(3.2e7 * 999.7), '≈ 1,0 · 10³ Jahre')
+        self.assertEqual(t(3.2e7 * 998), '≈ 998 Jahre')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -336,3 +336,11 @@ test('Skytale (M10-Review Fund 2): beim Stempeln liegt jeder Buchstabe auf dem S
     assert.deepEqual(lage().filter((z) => z.length), soll, `nach „${text}“`);
   }
 });
+
+test('Stabwahl (M10-Review Fund 6): auch der dickste Querschnitt bleibt mit Rand im Feld und berührt die Ziffer nicht', () => {
+  const w = oeffne('skytale');
+  const radien = w.k.alle(w.flaeche, '.stab-wahl-knopf circle.stab-stirn').map((c) => Number(c.getAttribute('r')));
+  assert.equal(radien.length, 9);
+  for (let i = 1; i < radien.length; i++) assert.ok(radien[i] > radien[i - 1], 'dicker je Umfang');
+  assert.ok(Math.max(...radien) + 1.5 <= 20, `größter Radius ${Math.max(...radien)} + Rand im 44er-Feld mit Abstand`);
+});

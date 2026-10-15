@@ -145,7 +145,7 @@
       const umfang = B.zahl({ beschriftung: 'Schlüssel: Umfang u (Buchstaben pro Runde)', min: 2, max: 10, wert: z.umfang, beiWechsel: (u) => setzeU(u), minusLabel: 'Stab dünner (u − 1)', plusLabel: 'Stab dicker (u + 1)' });
       // Stabwahl als Reihe von Stab-Querschnitten (HTML-Knöpfe, E197)
       const wahlKnoepfe = [2, 3, 4, 5, 6, 7, 8, 9, 10].map((u) => {
-        const r = 6 + 1.6 * u;
+        const r = 5 + 1.35 * u; // u = 10: 18,5 – mit Rand im 44er-Feld, Abstand zur Ziffer (M10-Review Fund 6)
         const b = h(
           'button',
           { type: 'button', class: 'stab-wahl-knopf', 'data-u': String(u), 'aria-label': `Stab mit Umfang ${u}`, 'aria-pressed': 'false' },

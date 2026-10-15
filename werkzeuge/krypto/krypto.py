@@ -2272,16 +2272,20 @@ def suchdauer(log10_anzahl, pro_sekunde):
     def etwa(n, eins, mehr):
         return f'≈ {n} {eins if n == 1 else mehr}'
 
-    einheiten = [(60, 1, 'Sekunde', 'Sekunden'), (3600, 60, 'Minute', 'Minuten'), (86400, 3600, 'Stunde', 'Stunden'),
-                 (3.2e7, 86400, 'Tag', 'Tage')]
+    # M10-Review Fund 6: ab 95 % der nächsten Einheit umschalten (59,6 s → „≈ 1 Minute“)
+    um = 0.95
+    einheiten = [(1, 'Sekunde', 'Sekunden'), (60, 'Minute', 'Minuten'), (3600, 'Stunde', 'Stunden'), (86400, 'Tag', 'Tage')]
     if sl < 0:
         return {'sekunden_log10': sl, 'text': '< 1 Sekunde'}
-    for grenze, teiler, eins, mehr in einheiten:
-        if sl < math.log10(grenze):
-            return {'sekunden_log10': sl, 'text': etwa(runde(10 ** sl / teiler), eins, mehr)}
+    if sl < math.log10(um * 3.2e7):
+        u = 0
+        while u + 1 < len(einheiten) and sl >= math.log10(um * einheiten[u + 1][0]):
+            u += 1
+        teiler, eins, mehr = einheiten[u]
+        return {'sekunden_log10': sl, 'text': etwa(max(1, runde(10 ** sl / teiler)), eins, mehr)}
     jl = sl - math.log10(3.2e7)
-    if jl < 3:
-        return {'sekunden_log10': sl, 'text': etwa(runde(10 ** jl), 'Jahr', 'Jahre')}
+    if jl < math.log10(999.5):
+        return {'sekunden_log10': sl, 'text': etwa(max(1, runde(10 ** jl)), 'Jahr', 'Jahre')}
     e = math.floor(jl)
     m = runde(10 ** (jl - e) * 10) / 10
     if m >= 10:

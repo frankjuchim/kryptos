@@ -246,7 +246,7 @@
 .stab-feldtitel { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
 .stab-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); }
 .stab-wahl-titel { font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin-right: var(--a-1); }
-.stab-wahl-knopf { display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 2px; min-width: var(--ziel); min-height: var(--ziel); padding: 2px 6px 2px 2px; border: 1.5px solid transparent; border-radius: var(--r-chip); background: transparent; color: var(--text-2); font: 700 .85rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
+.stab-wahl-knopf { display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 4px; min-width: var(--ziel); min-height: var(--ziel); padding: 2px 6px 2px 2px; border: 1.5px solid transparent; border-radius: var(--r-chip); background: transparent; color: var(--text-2); font: 700 .85rem var(--f-mono); cursor: pointer; touch-action: manipulation; }
 .stab-wahl-knopf:hover { border-color: var(--linie); }
 .stab-wahl-knopf[aria-pressed="true"] { border-color: var(--akzent); color: var(--text); background: var(--karte); }
 .stab-wahl-knopf:disabled { opacity: .45; cursor: default; }
@@ -382,6 +382,8 @@
 .quadrat-feld.kw { background: color-mix(in srgb, var(--mat-lampe-an) 30%, var(--mat-band)); }
 .quadrat-feld.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); }
 .quadrat-feld.ziel { background: var(--mat-ziel); color: var(--mat-band-tinte); }
+/* M10-Review Fund 6: Quelle und Ziel zugleich (gleiche Zeile/Spalte) – beide Farben, diagonal geteilt */
+.quadrat-feld.an.ziel { background: linear-gradient(135deg, var(--mat-lampe-an) 0 50%, var(--mat-ziel) 50% 100%); }
 .quadrat-feld.quadrat-falsch { background: var(--fehler-flaeche); color: var(--fehler); border-color: var(--fehler); }
 .quadrat-feld[data-nr]::after { content: attr(data-nr); position: absolute; top: 2px; right: 4px; font: 700 .7rem var(--f-text); }
 .quadrat-feld:focus-visible, .quadrat-kopf:focus-visible { outline: 3px solid var(--fokus); outline-offset: 1px; z-index: 1; }

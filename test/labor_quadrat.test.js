@@ -245,3 +245,15 @@ test('Level-Kontext: Hinweis ohne Verweis auf das freie Kryptolabor', () => {
   const p = oeffne('quadrat', { voreinstellung: { reiter: ['polybios'] }, umgebung: { level: 'W0-L4' } });
   assert.doesNotMatch(p.text('.quadrat-bedienung'), /freien Kryptolabor/);
 });
+
+test('Playfair „Gleiche Zeile“ (M10-Review Fund 6): Feld zugleich Quelle und Ziel zeigt beide Markierungen', () => {
+  const w = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'] } }); // LEUCHTFEUER: L E U C H in Zeile 1
+  tippe(w, 'le');
+  const e = feld(w, 'E');
+  assert.ok(e.classList.contains('an') && e.classList.contains('ziel'), 'E ist Quelle (2. Buchstabe) und Ziel (von L)');
+  const css = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public', 'static', 'css', 'labor_objekte.css'), 'utf8');
+  const regel = /\.quadrat-feld\.an\.ziel\s*\{([^}]*)\}/.exec(css);
+  assert.ok(regel, 'eigene Regel für .an.ziel');
+  assert.match(regel[1], /--mat-lampe-an/);
+  assert.match(regel[1], /--mat-ziel/);
+});

@@ -2491,3 +2491,16 @@ test('schluesselraum und suchdauer (Plan M10 E188)', () => {
   assert.ok(Math.abs(K.suchdauer(12, 1e9).sekundenLog10 - 3) < 1e-12);
   assert.throws(() => K.suchdauer(3, 0), K.KryptoFehler);
 });
+
+test('suchdauer an Einheitsgrenzen (M10-Review Fund 6): ab 95 % der nächsten Einheit wird umgeschaltet', () => {
+  const t = (sek) => K.suchdauer(Math.log10(sek), 1).text;
+  assert.equal(t(59.6), '≈ 1 Minute');
+  assert.equal(t(56), '≈ 56 Sekunden');
+  assert.equal(t(3599), '≈ 1 Stunde');
+  assert.equal(t(86000), '≈ 1 Tag');
+  assert.equal(t(22 * 3600), '≈ 22 Stunden');
+  assert.equal(t(3.1e7), '≈ 1 Jahr');
+  assert.equal(t(29e6), '≈ 336 Tage');
+  assert.equal(t(3.2e7 * 999.7), '≈ 1,0 · 10³ Jahre');
+  assert.equal(t(3.2e7 * 998), '≈ 998 Jahre');
+});

@@ -2483,15 +2483,18 @@
     const sl = log10Anzahl - Math.log10(proSekunde);
     const ganz = (x) => Math.floor(x + 0.5);
     const mit = (n, eins, mehr) => `≈ ${n} ${n === 1 ? eins : mehr}`;
+    // M10-Review Fund 6: ab 95 % der nächsten Einheit wird umgeschaltet (59,6 s → „≈ 1 Minute“, nicht „≈ 60 Sekunden“)
+    const UM = 0.95;
+    const EINHEITEN = [[1, 'Sekunde', 'Sekunden'], [60, 'Minute', 'Minuten'], [3600, 'Stunde', 'Stunden'], [86400, 'Tag', 'Tage']];
     let text;
     if (sl < 0) text = '< 1 Sekunde';
-    else if (sl < Math.log10(60)) text = mit(ganz(10 ** sl), 'Sekunde', 'Sekunden');
-    else if (sl < Math.log10(3600)) text = mit(ganz(10 ** sl / 60), 'Minute', 'Minuten');
-    else if (sl < Math.log10(86400)) text = mit(ganz(10 ** sl / 3600), 'Stunde', 'Stunden');
-    else if (sl < Math.log10(SEKUNDEN_JE_JAHR)) text = mit(ganz(10 ** sl / 86400), 'Tag', 'Tage');
-    else {
+    else if (sl < Math.log10(UM * SEKUNDEN_JE_JAHR)) {
+      let u = 0;
+      while (u + 1 < EINHEITEN.length && sl >= Math.log10(UM * EINHEITEN[u + 1][0])) u += 1;
+      text = mit(Math.max(1, ganz(10 ** sl / EINHEITEN[u][0])), EINHEITEN[u][1], EINHEITEN[u][2]);
+    } else {
       const jl = sl - Math.log10(SEKUNDEN_JE_JAHR);
-      if (jl < 3) text = mit(ganz(10 ** jl), 'Jahr', 'Jahre');
+      if (jl < Math.log10(999.5)) text = mit(Math.max(1, ganz(10 ** jl)), 'Jahr', 'Jahre');
       else {
         let e = Math.floor(jl);
         let m = ganz(10 ** (jl - e) * 10) / 10;
