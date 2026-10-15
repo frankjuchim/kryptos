@@ -291,6 +291,25 @@ function specAufgaben(welt) {
   return liste;
 }
 
+/**
+ * M11 (Tasks 249/250): Tabelle „Werkzeug-Panels in den Aufgaben“ am Ende der Welt-Spec →
+ * [{ aufgabe, titel, reiter: [...], gefuehrt }] (W0 enthält auch die Gast-Zeile W8-L1-01)
+ */
+function WERKZEUG_AUFGABE(welt) {
+  const zeilen = specZeilen(welt);
+  const start = zeilen.findIndex((z) => /^### Werkzeug-Panels in den Aufgaben/.test(z));
+  if (start < 0) return [];
+  const out = [];
+  for (const z of zeilen.slice(start + 1)) {
+    if (/^#{1,3} /.test(z)) break;
+    const m = /^\|\s*(W\d-(?:A|L\d{1,2})-\d{2})\s*\|/.exec(z);
+    if (!m) continue;
+    const c = zellen(z);
+    out.push({ aufgabe: c[0], titel: c[1], reiter: c[2] === '–' ? [] : c[2].split(',').map((x) => x.trim()), gefuehrt: c[3] === 'geführt' });
+  }
+  return out;
+}
+
 /** DS je Level aus der Tabelle §0.3 („| DS | Thema | Level | …“) */
 function dsTabelle(welt) {
   const ds = {};
@@ -493,7 +512,7 @@ function fremdcodeTabelle() {
 
 module.exports = {
   fremdcodeTabelle,
-  WURZEL, SPEC_DATEIEN, UMFANG, WELTEN, ROLLE, WERKZEUG, REITER, DS_FEST, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
+  WURZEL, SPEC_DATEIEN, UMFANG, WELTEN, ROLLE, WERKZEUG, WERKZEUG_AUFGABE, REITER, DS_FEST, GRID, TEIL_OHNE_EINGABE, TEILE_ERGAENZT,
   ZUORDNUNG_ALS_MATCH, SONDERFORM, LUECKE_OHNE_FELD, SCHAUBILD_TEXT, schaubildLoesung, CHOICE_OHNE_KENNUNG, CHOICE_FEST, KUER_LEVEL,
   technischeId, abschnittVon, specAufgaben, specLevels, specZeilen, archivfundTitel, zellen, tippsAus,
   kindsErwartet, kindsSeed, teile, choiceLoesung, choiceText, loesungsTeile, kennungen, optionsKennungen,

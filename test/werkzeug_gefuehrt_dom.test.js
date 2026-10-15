@@ -102,6 +102,11 @@ function pruefeFall(wr, { p, z }, { allesFuer = 2 } = {}) {
   const v0 = verrat(w, p);
   assert.equal(v0.verrat, false, `${ctx}: Lösung ${v0.wert} im DOM (ohne Einträge)`);
   if (!gefuehrt) return;
+  return durchlaufe(w, p, ctx, allesFuer);
+}
+
+/** alle Schritte eines geführten Werkzeugs: ohne Lösung, ohne Orakel (die ersten allesFuer Schritte mit allen Werten) */
+function durchlaufe(w, p, ctx, allesFuer = 2) {
   const n = anzahl(w);
   for (let i = 0; i < n; i++) {
     BED.gehe(w, i);
@@ -397,3 +402,38 @@ test('weitertippen_in_zahlenfeldern', () => {
   assert.ok(!hat(r, 'section.gefuehrt'), 'p = 3, q = 19: frei');
   assert.equal(r.zustand().q, 19);
 });
+
+/* ---------- Panels in den Aufgaben (Tasks 249/250, E219): Block-Voreinstellung + Level-Umgebung ---------- */
+
+const fs = require('node:fs');
+const path = require('node:path');
+function panels(welten) {
+  const out = [];
+  for (const w of welten) {
+    const datei = w === 8 ? path.join(__dirname, '..', 'seed', 'gast', 'demo.json') : path.join(__dirname, '..', 'seed', 'welten', `welt${w}.json`);
+    for (const a of JSON.parse(fs.readFileSync(datei, 'utf8')).aufgaben) for (const b of a.inhalt || []) if (b.t === 'werkzeug') out.push({ a, b });
+  }
+  return out;
+}
+const PRUEF = new Map(P.prueflinge().map((p) => [p.id, p]));
+function pruefePanels(welten) {
+  const liste = panels(welten);
+  assert.ok(liste.length > 0, 'Panels vorhanden');
+  for (const { a, b } of liste) {
+    const level = /^(W\d-L\d{1,2})-/.exec(a.id);
+    const umgebung = { ...S, welten: [0, 1, 2, 3, 4, 5, 6], niveau: 'eA', aufgabe: a.id, ...(level ? { level: level[1] } : {}), ...(b.gefuehrt ? { gefuehrt: { aufgabe: a.id } } : {}), ...(a.id.startsWith('W8-') ? { modus: 'gast', rolle: null } : {}) };
+    const w = oeffne(b.id, { voreinstellung: b.voreinstellung || {}, umgebung, ruhig: true });
+    const p = PRUEF.get(a.id);
+    const ctx = `${a.id} ${b.id}`;
+    const reiter = (b.voreinstellung && b.voreinstellung.reiter) || [];
+    const erster = reiter[0] ? `${b.id}.${reiter[0]}` : null;
+    if (b.gefuehrt && erster && M.GEFUEHRT.includes(erster)) assert.ok(hat(w, 'section.gefuehrt'), `${ctx}: startet geführt`);
+    if (!p) continue;
+    if (P.AUSNAHMEN.some((x) => x.aufgabe === a.id && x.wr === erster)) continue; // L60: Liste erlaubt
+    const v = verrat(w, p);
+    assert.equal(v.verrat, false, `${ctx}: Lösung ${v.wert} im Panel`);
+    if (hat(w, 'section.gefuehrt')) durchlaufe(w, p, ctx, 1);
+  }
+}
+test('k12_panels_welt_0_2', () => pruefePanels([0, 1, 2, 8]));
+test('k12_panels_welt_3_6', () => pruefePanels([3, 4, 5, 6]));

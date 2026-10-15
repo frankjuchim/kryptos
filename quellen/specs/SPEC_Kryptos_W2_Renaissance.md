@@ -1450,3 +1450,30 @@ als Hausaufgabe; Kreuzquadrat und Boss online als Hausaufgabe; Papier-Boss entf�
 | Depeschen-Chiffre | gefahramkanal/ROSE → XSXEZ GTRDQ HGF (Schlüsselstrom ROSESPTFTQUGU); Material-Beispiel DOGE → DOGE EPHF FQIG GRJH; Periode teilt 26 · L (ROSE: 104; AJS: 26 – „spätestens nach 26 · L“); AAAA → AAAABBBBCC…; Kompensation ergibt Vigenère | t09, t99 |
 | Mehrfach-Vigenère | AB dann CDE = CEEDDF (seidenstoffeundglasperlen → UIMGH SUXSI IJWRH JOFUT IUOJP) | t99 |
 | Warm-up | rom → URP; ((24 + 5 − 1) mod 26) + 1 = 3; bote/LUNA → MIGE; ebbe/BBCC → FCDG; QWERTZUIOPAS → QRUP/WTIA/EZOS; kaffee → KA FX FE EX | t09, t99 |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W2-A-01 | Vigenère-Werkbank | kasiski, teiltexte, koinzidenz | geführt |
+| W2-L1-02 | Vigenère-Werkbank | verschluesseln, quadrat | geführt |
+| W2-L1-04 | Vigenère-Werkbank | verschluesseln, quadrat | geführt |
+| W2-L1-05 | Vigenère-Werkbank | verschluesseln, quadrat | geführt |
+| W2-L1-06 | Vigenère-Werkbank | verschluesseln, quadrat | geführt |
+| W2-L1-07 | Vigenère-Werkbank | verschluesseln | frei |
+| W2-L1-08 | Vigenère-Werkbank | verschluesseln, quadrat | geführt |
+| W2-L2-01 | Vigenère-Werkbank | teiltexte | geführt |
+| W2-L2-06 | Häufigkeits-Analysator | histogramm | frei |
+| W2-L2-07 | Vigenère-Werkbank | kasiski, teiltexte, koinzidenz | geführt |
+| W2-L3-01 | Häufigkeits-Analysator | kennzahlen | geführt |
+| W2-L3-04 | Häufigkeits-Analysator | kennzahlen | frei |
+| W2-L3-07 | Häufigkeits-Analysator | kennzahlen | frei |
+| W2-L4-01 | Polybios & Playfair | playfair | frei |
+| W2-L4-02 | Polybios & Playfair | playfair | frei |
+| W2-L4-03 | Polybios & Playfair | playfair | frei |
+| W2-L4-04 | Polybios & Playfair | playfair | frei |
+| W2-L4-05 | Polybios & Playfair | playfair | frei |

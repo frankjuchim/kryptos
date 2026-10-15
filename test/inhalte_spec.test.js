@@ -323,3 +323,29 @@ test('Mini-Enigma: Stellungstafeln und Positionen von BACH (W3-L5-04) stimmen mi
   assert.deepEqual([lo.p1[0], lo.p2[0], lo.p3[0]], moeglich);
   assert.equal(Krypto.miniEnigma('chefhabach', 'C'), g, 'Spec: tatsächlich p = 6 (Klartext chefhabach, Start C)');
 });
+
+/* ---------- M11 (Tasks 249/250, E219): Werkzeug-Panels Spec ↔ Seed ---------- */
+
+const TITEL_PANEL = { scheibe: 'Chiffrierscheibe', skytale: 'Skytale & Gitter', signale: 'Codes & Signale', quadrat: 'Polybios & Playfair', substitution: 'Substitutions-Werkbank', vigenere: 'Vigenère-Werkbank', haeufigkeit: 'Häufigkeits-Analysator', bitlupe: 'Bit-Lupe', runden: 'Runden-Labor', enigma: 'Enigma', modulo: 'Modulo-Uhr & Farbmischer', rsa: 'RSA-Rechenwerk', hash: 'Hash-Labor', signatur: 'Signatur- & Zertifikats-Simulator' };
+// Zahl der Panels je Welt laut Inventar (Plan M11: W0 19, W1 2, W2 18, Gast 1; W3 16, W4 14, W5 9, W6 7)
+const PANELS = { 0: 19, 1: 2, 2: 18, 8: 1, 3: 16, 4: 14, 5: 9, 6: 7 };
+const PANEL_WELTEN = [0, 1, 2, 8]; // Task 250: + 3, 4, 5, 6
+const gastSeed = () => JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'seed', 'gast', 'demo.json'), 'utf8'));
+for (const w of PANEL_WELTEN) {
+  test(`werkzeug_panels_welt_${w} (Spec ↔ Seed)`, () => {
+    const spec = (w === 8 ? S.WERKZEUG_AUFGABE(0).filter((x) => x.aufgabe.startsWith('W8-')) : S.WERKZEUG_AUFGABE(w).filter((x) => !x.aufgabe.startsWith('W8-')));
+    const seed = w === 8 ? gastSeed() : S.seed(w);
+    const bloecke = seed.aufgaben.flatMap((a) => (a.inhalt || []).filter((b) => b.t === 'werkzeug').map((b) => ({ a, b })));
+    assert.equal(spec.length, PANELS[w], `Welt ${w}: Zeilen der Spec-Tabelle`);
+    assert.equal(bloecke.length, PANELS[w], `Welt ${w}: Werkzeug-Blöcke im Seed`);
+    for (const z of spec) {
+      const x = bloecke.find((y) => y.a.id === z.aufgabe);
+      assert.ok(x, `${z.aufgabe}: Block fehlt`);
+      assert.equal(x.a.inhalt.at(-1), x.b, `${z.aufgabe}: Panel als letzter inhalt-Block (E219)`);
+      assert.equal(TITEL_PANEL[x.b.id], z.titel, `${z.aufgabe}: Werkzeug`);
+      assert.deepEqual((x.b.voreinstellung && x.b.voreinstellung.reiter) || [], z.reiter, `${z.aufgabe}: Reiter`);
+      assert.equal(x.b.gefuehrt === true, z.gefuehrt, `${z.aufgabe}: geführt`);
+      assert.ok(typeof x.b.hinweis === 'string' && x.b.hinweis.length <= 160 && !/\b(Sie|Ihr|Ihre)\b/.test(x.b.hinweis), `${z.aufgabe}: hinweis (du-Form, ≤ 160)`);
+    }
+  });
+}

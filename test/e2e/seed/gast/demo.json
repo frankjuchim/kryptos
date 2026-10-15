@@ -43,7 +43,17 @@
         },
         {
           "t": "werkzeug",
-          "id": "scheibe"
+          "id": "scheibe",
+          "voreinstellung": {
+            "reiter": [
+              "scheibe"
+            ],
+            "text": "UVYKS PJOA",
+            "k": 7,
+            "richtung": "ent"
+          },
+          "gefuehrt": true,
+          "hinweis": "Stell die Scheibe ein und lies Buchstabe für Buchstabe ab – jeden Buchstaben trägst du selbst ein."
         }
       ],
       "interaktion": {

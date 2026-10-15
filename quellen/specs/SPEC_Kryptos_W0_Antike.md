@@ -1745,3 +1745,32 @@ Entschlüsselung wurde in beide Richtungen geprüft (Rundreise).
 | Spiegelbote rom siegt k 1 / wir kommen k 2 / LKFVE … k 3; Wechselschritt essen / eee | TNPSUHFJ / MTKYG OOQZZ ZP / schiffebrennen / HXVJQ / HJH | w0_boss_wu |
 | Online-IDE Gerüst / LSG | kompiliert, Hauptprogramm ok, 1/23 grün / kompiliert, Hauptprogramm ok, 23/23 grün, Testklassen identisch | ide_pruefen.py |
 | Hauptprogramm-Ausgabe LSG | KPLSL NPVUG PLOAU HJOUV YKLU; k = 7 geraten (L und U je 4 ×, L früher); bruteForce(ZUDBZ DRZQ)[25] = avecaesar | w0_rechnungen |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`). Die Zeile W8 gilt für den Gastmodus (`seed/gast/demo.json`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W0-A-01 | Skytale & Gitter | skytale | geführt |
+| W0-L1-02 | Codes & Signale | morse | frei |
+| W0-L1-03 | Skytale & Gitter | skytale | geführt |
+| W0-L1-04 | Skytale & Gitter | skytale | geführt |
+| W0-L1-05 | Skytale & Gitter | gartenzaun | geführt |
+| W0-L1-06 | Skytale & Gitter | gartenzaun | geführt |
+| W0-L1-07 | Skytale & Gitter | fleissner | geführt |
+| W0-L1-08 | Skytale & Gitter | skytale | frei |
+| W0-L2-01 | Chiffrierscheibe | scheibe | geführt |
+| W0-L2-02 | Chiffrierscheibe | scheibe | geführt |
+| W0-L2-03 | Chiffrierscheibe | scheibe | geführt |
+| W0-L2-04 | Chiffrierscheibe | alle, scheibe | geführt |
+| W0-L2-05 | Chiffrierscheibe | scheibe | geführt |
+| W0-L2-08 | Chiffrierscheibe | scheibe | geführt |
+| W0-L3-05 | Chiffrierscheibe | scheibe | geführt |
+| W0-L4-01 | Polybios & Playfair | polybios | frei |
+| W0-L4-02 | Polybios & Playfair | polybios | frei |
+| W0-L4-05 | Polybios & Playfair | polybios | frei |
+| W0-L4-07 | Polybios & Playfair | polybios | frei |
+| W8-L1-01 | Chiffrierscheibe | scheibe | geführt |

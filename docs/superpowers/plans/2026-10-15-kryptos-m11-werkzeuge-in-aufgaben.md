@@ -752,12 +752,12 @@ Inventar; A-Aufgaben ohne `gefuehrt`; W0-L2-04 nach E204); Specs W0–W2 (Spalte
 geführt“); `test/hilfen_spec.js` (`WERKZEUG_AUFGABE`), `test/inhalte_spec.test.js`, `test/werkzeug_gefuehrt_dom.test.js`
 (`k12_panels_welt_0_2`).
 
-- [ ] **Step 1: Failing tests:** Abgleich Spec ↔ Seed (W0 19, W1 2, W2 18, Gast 1 Panels – nach 241 ggf. korrigiert);
+- [x] **Step 1: Failing tests:** Abgleich Spec ↔ Seed (W0 19, W1 2, W2 18, Gast 1 Panels – nach 241 ggf. korrigiert);
   `k12_panels_welt_0_2` (jedes Panel mit Block-Voreinstellung und Level-Umgebung: geführt ohne Lösung, ohne Orakel; A-Panels
   frei ohne Lösung); Validator 0 Fehler.
-- [ ] **Step 2:** FAIL. **Step 3:** Seeds, Specs; `hinweis`-Texte (du-Form, ≤ 160 Zeichen, kein Lösungsweg).
-- [ ] **Step 4:** `npm run pruefen` grün; Browser W0-L1-04, W0-L2-02, W0-L2-04, W2-L1-02, W2-L4-04, Gast-Demo.
-- [ ] **Step 5: Commit** `M11: Werkzeug-Panels in den Aufgaben der Welten 0–2 und im Gastmodus (Task 249)`
+- [x] **Step 2:** FAIL. **Step 3:** Seeds, Specs; `hinweis`-Texte (du-Form, ≤ 160 Zeichen, kein Lösungsweg).
+- [x] **Step 4:** `npm run pruefen` grün; Browser W0-L1-04, W0-L2-02, W0-L2-04, W2-L1-02, W2-L4-04, Gast-Demo.
+- [x] **Step 5: Commit** `M11: Werkzeug-Panels in den Aufgaben der Welten 0–2 und im Gastmodus (Task 249)`
 
 ### Task 250: Panels in den Aufgaben W3–W6
 

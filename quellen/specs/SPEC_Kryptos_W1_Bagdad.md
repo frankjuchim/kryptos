@@ -949,3 +949,14 @@ Beutelspacher-Tabelle), `…/scratchpad/w1_bagdad/wett.py`, `w1_teil1.py` … `w
 | NOMEN-850: Beispiel / L3-01 / L3-02 / L3-03 / Akte A2 / A3 / Abi-Check a / L3-06 | 5862H OOHDS BQ90T J74 / 3918U ODKAQ 27165 3 / 3947H OWTOQ HQ005 862DK 90 / 39001 8EIDH BQKTS B90 / 5853I DHAQ0 0DK90 / 39470 0PSBD SGQPD HUHKQ ORBHK / 7400O HDQHQ 3918J DQ003 962KT SB90 / 5862D PQDK0 03981 RHUHO ETIIH KWLOC HK (14 Buchstaben) | pruefe_w1 |
 | Spiegel-Kurier: basar t 4 / dinar t 9 / Involution | DEMEN / GBWJS / basar | pruefe_w1 |
 | Warm-up: OASE / 9⁻¹ / (3,1) b / YMDE k 12 / Skytale oasen u 2 / Caesar-Häufigkeit K → k 6 | OASEBCDF / 3 / E / mars / OEANSX / 6 | pruefe_w1 |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W1-A-01 | Substitutions-Werkbank | – | frei |
+| W1-L1-07 | Substitutions-Werkbank | – | frei |
