@@ -28,19 +28,24 @@
   const norm = (t) => Krypto.normalisieren(String(t ?? '')).slice(0, MAX_TEXT);
   const bits = (t) => String(t ?? '').replace(/[^01]/g, '');
 
-  /** Text-Signaturen eines Texts: Fenster (≥ 5) bzw. ganzes Token, dazu jedes Wort unter 5 Zeichen als Token */
+  /**
+   * Formen eines Texts, mit denen ein Werkzeug rechnen kann: normalisiert (A–Z, 0–9) und nur Buchstaben – die meisten
+   * Werkzeuge rechnen mit Krypto.nurBuchstaben, eingestreute Ziffern dürfen den Erkenner nicht umgehen (Review-Fund 1).
+   */
+  const formen = (roh) => [...new Set([norm(roh), Krypto.nurBuchstaben(norm(roh))])].filter(Boolean);
+
+  /** Text-Signaturen eines Texts (je Form): Fenster bzw. ganzes Token, dazu jedes kurze Wort als Token */
   function textSignaturen(roh) {
     const out = new Set();
-    const n = norm(roh);
-    if (!n) return out;
-    if (n.length < FENSTER) out.add(`t:${n}`);
-    else {
-      for (let i = 0; i + FENSTER <= n.length; i++) out.add(`t:${n.slice(i, i + FENSTER)}`);
-      out.add(`g:${n}`); // ganzer Text (Klartexte allein: kein Fehlalarm bei einzelnen Wörtern)
+    for (const n of formen(roh)) {
+      if (n.length < FENSTER) out.add(`t:${n}`);
+      else {
+        for (let i = 0; i + FENSTER <= n.length; i++) out.add(`t:${n.slice(i, i + FENSTER)}`);
+        out.add(`g:${n}`); // ganzer Text (Klartexte allein: kein Fehlalarm bei einzelnen Wörtern)
+      }
     }
     for (const w of String(roh ?? '').split(/[^0-9A-Za-zÄÖÜäöüß]+/)) {
-      const x = norm(w);
-      if (x.length >= 2 && x.length < FENSTER) out.add(`t:${x}`);
+      for (const x of formen(w)) if (x.length >= 2 && x.length < FENSTER) out.add(`t:${x}`);
     }
     return out;
   }

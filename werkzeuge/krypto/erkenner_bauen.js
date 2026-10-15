@@ -42,7 +42,11 @@ const HAND = Object.freeze([
   { aufgabe: 'W0-L2-05', wr: 'scheibe.alle', eingaben: { texte: ['FCA'] }, grund: 'Liste zeigt die Verschiebung v = 12 zum Wort rom' },
   { aufgabe: 'W3-L2-07', wr: 'runden.fehler', eingaben: { texte: ['SEHR GUT'], bits: ['1010001101101101', '0001100100010111'] }, grund: 'Anzahl betroffener Blöcke einstellig' },
   { aufgabe: 'W3-L2-07', wr: 'runden.modi', eingaben: { texte: ['SEHR GUT'], bits: ['1010001101101101', '0001100100010111'] }, grund: 'Anzahl betroffener Blöcke einstellig' },
-  { aufgabe: 'W4-L3-05', wr: 'rsa.rechenwerk', eingaben: { zahlen: [53] }, grund: 'Zweierpotenzen des Exponenten (Rechenvorlage)' }
+  { aufgabe: 'W4-L3-05', wr: 'rsa.rechenwerk', eingaben: { zahlen: [53] }, grund: 'Zweierpotenzen des Exponenten (Rechenvorlage)' },
+  // Review-Fund 1: KH-Werte sind zweistellig ohne Beschriftung – Salz + Passwort bzw. Passwort allein (nur ganzer Text)
+  { aufgabe: 'W5-L1-06', wr: 'hash.schritte', eingaben: { texte: ['MWREGEN'] }, klar: true, grund: 'KH(mw + regen) = 18 beantwortet a)' },
+  { aufgabe: 'W5-L1-06', wr: 'hash.schritte', eingaben: { texte: ['REGEN'] }, klar: true, grund: 'KH(regen) = 3 beantwortet b)' },
+  { aufgabe: 'W5-L1-06', wr: 'hash.passwort', eingaben: { texte: ['MWREGEN'] }, klar: true, grund: 'KH(mw + regen) = 18 beantwortet a)' }
 ]);
 
 /** Reiter, deren Ausgabe als Zwischentext in eine zweite Stufe geht (E224 (8): zwei Stufen verkettet) */
@@ -80,6 +84,8 @@ function normalisiere(wr, e) {
  * den Angaben oder wenigstens ein eingegebener Text (Schlüssel dazu ausprobiert). Zufallstreffer ganz ohne Angaben
  * (z. B. Ringschritt t = 1 ergibt 0 1 2 …) zählen nicht.
  */
+/** Klartexte und je zwei hintereinander (Salz + Passwort): auch zusammengesetzt nur als ganzer Text erkennen */
+const klartexteMitPaaren = (k) => [...k, ...k.flatMap((a) => k.filter((b) => b !== a && a.length <= 12 && b.length <= 12).map((b) => a + b))];
 const nutztAngaben = (z) => z.ausAngaben || (z.eingaben.texte || []).length > 0;
 
 /** Signaturen, die für einen Verrat-Zustand eingetragen werden (E211, E212); klartexte: Klartexte (klein) der Angaben */
@@ -194,7 +200,7 @@ function bauen({ bericht = false } = {}) {
           nichtAbdeckbar.push({ aufgabe: p.id, wr, bedienung: z.bedienung });
           continue;
         }
-        trage(wr, eintragSignaturen(wr, z, A.klartexte), p.quelle);
+        trage(wr, eintragSignaturen(wr, z, klartexteMitPaaren(A.klartexte)), p.quelle);
         (mitVerrat[p.quelle] = mitVerrat[p.quelle] || new Set()).add(p.id);
       }
     }
@@ -211,7 +217,7 @@ function bauen({ bericht = false } = {}) {
       }
     }
   }
-  for (const x of HAND) trage(x.wr, eintragSignaturen(x.wr, { eingaben: { texte: [], schluessel: [], zahlen: [], bits: [], bitpaare: [], ...x.eingaben }, ausAngaben: true }), 'hand');
+  for (const x of HAND) trage(x.wr, eintragSignaturen(x.wr, { eingaben: { texte: [], schluessel: [], zahlen: [], bits: [], bitpaare: [], ...x.eingaben }, ausAngaben: true }, x.klar ? x.eingaben.texte : []), 'hand');
   // D17: Quadrat-Schlüsselwörter (Polybios und Playfair bauen diese Quadrate nur geführt auf)
   for (const w of d17Woerter()) for (const wr of ['quadrat.polybios', 'quadrat.playfair']) trage(wr, [`s:${quadratSchluessel(w)}`], 'd17');
   // jede Werkzeug-id bekommt eine Datei (auch leer) – das Labor lädt sie ohne 404 nach (labor/registry.js lade)

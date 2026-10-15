@@ -4,10 +4,13 @@ KRErkenner.daten('hash', {
   "baukasten": [
     '5cfafeea','6cde7e87','6f716f36','9a65a92f','abac673b','e5fd59a2'
   ],
+  "passwort": [
+    '8e03c3f6'
+  ],
   "pruefsumme": [
     '05565ea4','cf31212b'
   ],
   "schritte": [
-    '264d8fdb','2ac2ba45','6194c61c','ad19700b'
+    '264d8fdb','2ac2ba45','6194c61c','8e03c3f6','ad19700b','d67b902d'
   ]
 });

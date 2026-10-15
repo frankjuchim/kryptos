@@ -614,7 +614,10 @@ function khProtokoll(t) {
   return [Z(p.wert, 'h'), FOLGE(s.map((x) => x.nachher)), FOLGE(s.flatMap((x) => [x.summe, x.nachher])), FOLGE(s.map((x) => x.summe)), FOLGE(s.flatMap((x) => [x.w, x.nachher])), FOLGE(s.flatMap((x) => [x.w, x.summe, x.nachher])), FOLGE(s.flatMap((x) => [x.vorher, x.w, x.summe, x.nachher]))];
 }
 function* schritteZ(A) {
-  for (const t of buchstabenTexte(A)) yield zust('angaben', 'KH Schritt für Schritt', { texte: [t] }, true, khProtokoll(t));
+  const tx = buchstabenTexte(A);
+  for (const t of tx) yield zust('angaben', 'KH Schritt für Schritt', { texte: [t] }, true, khProtokoll(t));
+  // Review-Fund 1 (W5-L1-06): Salz + Passwort als ein Text eingetippt
+  for (const s of tx) for (const p of tx) if (s !== p && s.length <= 12 && p.length <= 12) yield zust('angaben', `KH ${s} + ${p}`, { texte: [s + p] }, true, khProtokoll(s + p));
 }
 function* kollisionZ(A) {
   for (const t of buchstabenTexte(A)) yield zust('angaben', 'Schubfach', { texte: [t] }, true, [Z(versuche(() => Krypto.kryptosHash(t)), 'h')]);
