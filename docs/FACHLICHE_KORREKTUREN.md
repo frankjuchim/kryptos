@@ -235,3 +235,27 @@ K10 prüft jetzt auch den freien Kontext. Werte mit `shared/krypto.js` und dem P
 | W2-L4-05 | Entschlüssele HLIRO UUQTB AY → *kartenspiel* | Fehlersuche: notiert `ka rt en ns ie lx` – Paar 4 falsch, richtig SP (nach rechts statt links, P3) |
 | W0-L4-05 a), W2-L4-01, W2-L4-03 | Quadrat aufbauen bzw. Paare zuordnen | Teilschritt bleibt (Quadrat im Aufgabenblock, Werkzeug im Level mit festem eigenen Wort); KORINTH, GALEERE, RIALTO im Labor gesperrt |
 | Hinweis im Werkzeug | „Eigene Quadrate baust du im freien Kryptolabor.“ | gestrichen |
+
+**Nachtrag zu D17 (M11):** Die Sperrliste und `npm run labor:sperre` entfallen. Gleichwertige Schlüsselwörter erkennt
+jetzt der Erkenner des Kryptolabors (D18); mit einem Aufgaben-Quadrat baut „Polybios & Playfair“ das Quadrat geführt auf.
+
+## E. Werkzeuge in den Aufgaben (M11, 15.10.2026)
+
+**D18 – Werkzeuge in den Aufgaben (M11):** Auftrag der Lehrkraft (E200): „Es wäre schon gut, wenn die interaktiven Tools
+auch bei den Aufgaben zu z.B. Skytale zur Verfügung ständen und nicht nur in dem Kryptolabor. Gleiches gilt natürlich für
+die anderen WebTools.“ Entscheidung L62 (E202): „Geführter Modus“ – das Werkzeug zeigt die Mechanik mit den Aufgabenwerten,
+aber ohne fertiges Ergebnis; Rückmeldung erst nach dem Lösen; mit eigenen Werten rechnet es frei. Erkennt ein Werkzeug
+Aufgabenwerte (auch im freien Labor), wechselt es in den geführten Modus bzw. zeigt „nicht verfügbar“. Wo ein Werkzeug
+die Antwort trotzdem ausgäbe (Katalog ohne Eingabe, Simulator mit festem Ablauf), ist die Aufgabe umgebaut. Neue Werte
+doppelt nachgerechnet: `shared/krypto.js` und Python-Zwilling (`W1-L1-04-b-v2`: `suchdauer`), 26 · 25 · 24 = 15 600 im
+JS-Test und mit `math.perm(26, 3)` (Prüfwerte W6, `nicht_abbildbar`).
+
+| Aufgabe | Verrat durch das Werkzeug | Korrektur |
+|---|---|---|
+| W1-L1-04 b) | Angreifer-Labor „Schlüsselraum“ rechnet 26! bei 10⁹ /s vor: ≈ 1,3 · 10¹⁰ Jahre | Rechenzentrum mit **10¹²** Alphabeten pro Sekunde → ≈ 1,3 · 10⁷ Jahre, e = **7** (das Werkzeug bietet nur 10⁶/10⁹/10¹⁵); Tipp 2 angepasst; a) bleibt (Merkwissen) |
+| W6-L1-09 a) | „Schlüsselraum“ rechnet Vigenère Länge 3: 26³ = 17 576 | Schlüsselwörter der Länge 3 aus drei **verschiedenen** Buchstaben → 26 · 25 · 24 = **15 600**; Schülerlösung 26 · 3 = 78 und b) bleiben |
+| W5-L2-04 | Signatur-Simulator zeigt „Alice signiert mit ihrem privaten Schlüssel …“ = Lücken L2, L3 | Rollen getauscht (L61): **Bob** signiert, Alice prüft – L2 privater, L3 öffentlicher Schlüssel **von Bob** |
+| W5-L3-04 | Szene „Man-in-the-Middle“ zeigt Bobs Schlüssel und Alices Verschlüsselung = Lücken L1–L4 | Rollen getauscht (L61): **Bob** fragt Alices öffentlichen Schlüssel an – L4 öffentlicher Schlüssel **von Alice** |
+| W6-L2-09 | wie W5-L2-04 | Rollen getauscht (L61): **Bob** signiert – Lücke A privater, B öffentlicher Schlüssel **von Bob**; Auswahl „h'' an Bob senden“ |
+| W0-L2-04 | „Alle Verschiebungen“ zeigt den Klartext | **Ausnahme L60:** erlaubt – das Erkennen des deutschen Klartexts unter 25 Zeilen ist die Lernleistung; Panel mit `scheibe` (geführt) und `alle` (frei); einziger Eintrag in `AUSNAHMEN` (K11/K12) |
+| W4-L2-07 (Fund beim Bau) | Rechenwerk warnte „schwacher Schlüssel (d = e)“ = Antwort b) | kein Umbau: Handeintrag des Erkenners (geführter Modus, Warnungen erst nach der Freigabe) |

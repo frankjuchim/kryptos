@@ -667,7 +667,7 @@
      "md": "asymmetrisch: 2 · 8 = **16**"
     }
    ],
-   "notizen": "1 min. Aus Lab W6-L1-09. Bei n(n − 1) wird jedes Paar doppelt gezählt (A–B und B–A). Vergleich: Ab n = 6 braucht asymmetrisch weniger Schlüssel, bei n = 5 gleich viele (10). Schwache Schlüssel: k = 0, „AAAA“, Ringschritt t = 1.",
+   "notizen": "1 min. Lab W6-L1-09 fragt seit Korrektur D18 nach Schlüsselwörtern aus drei verschiedenen Buchstaben (26 · 25 · 24 = 15 600) – hier nicht vorrechnen. Bei n(n − 1) wird jedes Paar doppelt gezählt (A–B und B–A). Vergleich: Ab n = 6 braucht asymmetrisch weniger Schlüssel, bei n = 5 gleich viele (10). Schwache Schlüssel: k = 0, „AAAA“, Ringschritt t = 1.",
    "schrift": 20
   },
   {

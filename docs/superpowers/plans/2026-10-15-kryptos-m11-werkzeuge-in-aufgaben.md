@@ -700,13 +700,13 @@ den alten Werten (`grep -rn "10¹⁰\|1,3 · 10\|17 576\|17576" quellen/material
 `grep -rln "W5-L2-04\|W5-L3-04\|W6-L2-09" quellen/material`) + `bauen.py <dateien>`; `test/werkzeug_verrat.test.js`
 (`UMBAU_OFFEN = []`).
 
-- [ ] **Step 1: Failing tests:** `k11_nicht_abdeckbar` mit leerer Liste; Spec-Abgleich (e = 7, 15 600, Inhaber getauscht);
+- [x] **Step 1: Failing tests:** `k11_nicht_abdeckbar` mit leerer Liste; Spec-Abgleich (e = 7, 15 600, Inhaber getauscht);
   Prüfwerte `W1-L1-04-b-v2` (26! : 10¹² : 3,2 · 10⁷ ≈ 1,26 · 10⁷), `W6-L1-09-a-v2` (15 600); `schaubild_rollen_getauscht`
   (Simulator zeigt nur „Alice signiert“ bzw. „Alice fragt Bobs Schlüssel“; Lösungen nennen beim privaten Signaturschlüssel
   Inhaber `B`).
-- [ ] **Step 2:** FAIL. **Step 3:** Seeds, Specs, Prüfwerte (Zwilling), D18, Material.
-- [ ] **Step 4:** `npm run pruefen` grün, `pruefwerte.py`/`seed_pruefen.py` 0 Abweichungen, PDFs ansehen.
-- [ ] **Step 5: Commit** `M11: Aufgaben ohne Werkzeug-Verrat umgebaut, Brute-Force-Liste W0-L2-04 als begründete Ausnahme (D18, Task 246)`
+- [x] **Step 2:** FAIL. **Step 3:** Seeds, Specs, Prüfwerte (Zwilling), D18, Material.
+- [x] **Step 4:** `npm run pruefen` grün, `pruefwerte.py`/`seed_pruefen.py` 0 Abweichungen, PDFs ansehen.
+- [x] **Step 5: Commit** `M11: Aufgaben ohne Werkzeug-Verrat umgebaut, Brute-Force-Liste W0-L2-04 als begründete Ausnahme (D18, Task 246)`
 
 ### Task 247: Aufgaben-Panel `KRPanel` mit Freigabe (E214–E218, E221, Review Focus 4, 5)
 

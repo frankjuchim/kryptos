@@ -105,7 +105,8 @@
   {"id": "W1-d15-10", "ort": "quellen/material/W1/boss_W1.json Aufgabe 1 f) (Erwartung)", "art": "boss", "verfahren": "mod", "eingabe": [115, 29], "erwartet": 28, "herkunft": "Korrektur D15: n → 8 · 14 + 3"},
   {"id": "W1-d15-11", "ort": "quellen/material/W1/akte_W1-1.json Auftrag 2 (Lösung)", "art": "akte", "verfahren": "substitution", "eingabe": ["hirte", "SCHERAZDBFGIJKLMNOPQTUVWXY"], "richtung": "ver", "erwartet": "DBOQR", "herkunft": "Korrektur D15"},
   {"id": "W1-d15-12", "ort": "quellen/material/W1/akte_W1-3.json Auftrag 3 (Lösung)", "art": "akte", "verfahren": "substitution", "eingabe": ["PDHUHKQORBHK", "TUSCHEABDFGIJKLMNOPQRVWXYZ"], "richtung": "ent", "erwartet": "siebentruhen", "herkunft": "Korrektur D15: der kalif schickt sieben truhen"},
-  {"id": "W1-d15-13", "ort": "seed/welten/welt1.json W1-L3-02", "art": "lab", "verfahren": "substitution", "eingabe": ["DK", "TUSCHEABDFGIJKLMNOPQRVWXYZ"], "richtung": "ent", "erwartet": "in", "herkunft": "Korrektur D15: … karawane in basra (90 = basra)"}
+  {"id": "W1-d15-13", "ort": "seed/welten/welt1.json W1-L3-02", "art": "lab", "verfahren": "substitution", "eingabe": ["DK", "TUSCHEABDFGIJKLMNOPQRVWXYZ"], "richtung": "ent", "erwartet": "in", "herkunft": "Korrektur D15: … karawane in basra (90 = basra)"},
+  {"id": "W1-L1-04-b-v2", "aufgabe": "W1-L1-04", "ort": "seed/welten/welt1.json (SPEC W1 §2 Level 1.1, W1-L1-04 b), Korrektur D18)", "art": "lab", "verfahren": "suchdauer", "eingabe": [26.605619026805893, 1000000000000], "feld": "text", "erwartet": "≈ 1,3 · 10⁷ Jahre", "herkunft": "Korrektur D18: 26! (log10 = 26,6056) bei 10¹² /s, 1 Jahr ≈ 3,2 · 10⁷ s → ≈ 1,26 · 10⁷ Jahre, e = 7"}
  ],
  "nicht_abbildbar": [
   {"ort": "quellen/material/W1/akte_W1-1.json Auftrag 3 / Abi-Check d)", "werte": "Fixpunkte zählen (14 bei KALIF)"},

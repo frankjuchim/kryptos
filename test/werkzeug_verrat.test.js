@@ -15,8 +15,8 @@ const Krypto = require('../public/static/js/shared/krypto.js');
 const DATEN = path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'erkenner');
 for (const d of fs.readdirSync(DATEN).filter((f) => f.endsWith('.js'))) new Function('KRErkenner', fs.readFileSync(path.join(DATEN, d), 'utf8'))(E);
 const S = { rolle: 'schueler' };
-// Katalog-Zustände mit Verrat, die erst ein Umbau behebt (Task 246 leert die Liste)
-const UMBAU_OFFEN = ['W1-L1-04', 'W6-L1-09'];
+// Katalog-Zustände mit Verrat, die erst ein Umbau behebt – nach Task 246 (D18) leer
+const UMBAU_OFFEN = [];
 
 let lauf = null;
 /** einmal alle Prüflinge × Modelle × Zustände durchspielen */
@@ -93,4 +93,37 @@ test('k11_boss_nur_als_kennung', () => {
     }
   }
   assert.deepEqual(funde, []);
+});
+
+test('schaubild_rollen_getauscht (E205, D18)', () => {
+  // Der Simulator zeigt nur „Alice signiert, Bob prüft“ bzw. „Bob sendet seinen Schlüssel, Alice verschlüsselt“ –
+  // die Schaubild-Aufgaben laufen mit getauschten Rollen, die Lösungen nennen den jeweils anderen Inhaber.
+  const welt = (n) => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', `welt${n}.json`), 'utf8')).aufgaben;
+  const a = (n, id) => welt(n).find((x) => x.id === id);
+  const sig = a(5, 'W5-L2-04');
+  assert.deepEqual(sig.loesung.l2, [{ art: 'privat', inhaber: 'B' }]);
+  assert.deepEqual(sig.loesung.l3, [{ art: 'oeffentlich', inhaber: 'B' }]);
+  assert.equal(sig.inhalt[1].schritte[0].von, 'B', 'Bob signiert');
+  const siegel = a(6, 'W6-L2-09');
+  assert.deepEqual(siegel.loesung.la, [{ art: 'privat', inhaber: 'B' }]);
+  assert.deepEqual(siegel.loesung.lb, [{ art: 'oeffentlich', inhaber: 'B' }]);
+  const mitm = a(5, 'W5-L3-04');
+  assert.equal(mitm.inhalt[1].schritte[0].von, 'A', 'Alice sendet ihren öffentlichen Schlüssel');
+  assert.deepEqual(mitm.loesung.l4, [{ art: 'oeffentlich', inhaber: 'A' }]);
+  assert.match(mitm.inhalt[0].md, /Bob fragt Alices öffentlichen Schlüssel an/);
+  const src = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'signatur.js'), 'utf8');
+  assert.match(src, /Alice signiert mit ihrem privaten Schlüssel/);
+  assert.match(src, /Bob sendet seinen öffentlichen Schlüssel/);
+});
+
+test('umbau_werte (D18): W1-L1-04 b) 10¹² /s → e = 7, W6-L1-09 a) 26 · 25 · 24 = 15 600', () => {
+  const welt = (n) => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', `welt${n}.json`), 'utf8')).aufgaben;
+  const w1 = welt(1).find((x) => x.id === 'W1-L1-04');
+  assert.match(w1.interaktion[1].frage, /10¹² Alphabete pro Sekunde/);
+  assert.deepEqual(w1.loesung[1], { e: ['7'] });
+  assert.equal(Krypto.suchdauer(Krypto.schluesselraum('substitution').log10, 1e12).text, '≈ 1,3 · 10⁷ Jahre');
+  const w6 = welt(6).find((x) => x.id === 'W6-L1-09');
+  assert.match(w6.inhalt[0].md, /drei verschiedenen Buchstaben/);
+  assert.deepEqual(w6.loesung.a, ['15600', '15.600']);
+  assert.equal(26 * 25 * 24, 15600);
 });
