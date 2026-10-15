@@ -222,3 +222,54 @@ test('gast_panel_scheibe', () => {
   const v = bau([{ t: 'werkzeug', id: 'vigenere' }], { modus: 'gast', werkzeugFrei: (id) => id === 'scheibe' }, []);
   assert.equal(schalter(v.k, v.el).disabled, true, 'andere Werkzeuge im Gastmodus gesperrt');
 });
+
+/* ---------- Level-Karten „Hier ausprobieren“ (Task 248, E222) ---------- */
+
+const RUNDEN = ['krypto/labor/runden.js', 'krypto/labor/signatur.js', 'krypto/labor/enigma.js'];
+function levelSeite(levelId, werkzeug, werkzeuge, welten = [0, 1, 2, 3, 4, 5, 6]) {
+  const level = { level: { id: levelId, nr: '1', titel: 'Probe', niveau: 'kern', rolle: 'kryptografie', werkzeug, intro: [], aufgaben: [] }, welt: { nr: Number(levelId[1]), titel: 'Probe' }, aufgaben: [] };
+  const f = { ...seite(OFFEN), [`GET /api/levels/${levelId}`]: { status: 200, body: level }, 'GET /api/labor': { status: 200, body: { boss: false, niveau: 'eA', welten, werkzeuge } } };
+  return D.lade([...SPIEL, ...RUNDEN], { url: `http://x.test/spiel#/level/${levelId}`, fetch: f });
+}
+
+test('level_karte_hier_ausprobieren', async () => {
+  const k = levelSeite('W0-L1', [{ id: 'scheibe', voreinstellung: { reiter: ['scheibe'] } }], [{ id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, frei: true, grund: null }]);
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  assert.deepEqual(k.alle(haupt, 'a.werkzeug-link').map((a) => a.getAttribute('href')), ['/labor#/scheibe?reiter=scheibe&level=W0-L1'], 'Link unverändert');
+  const s = k.eins(haupt, 'button.werkzeug-schalter');
+  assert.match(k.text(s), /Hier ausprobieren/);
+  k.klick(s);
+  await k.ruhe();
+  assert.ok(k.eins(haupt, '.scheibe-drehknopf'), 'Werkzeug direkt auf der Level-Seite, frei');
+  assert.equal(k.alle(haupt, 'section.gefuehrt').length, 0);
+});
+
+test('level_karte_reiter_regeln', async () => {
+  const k = levelSeite('W5-L3', [{ id: 'signatur' }], [{ id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, frei: true, grund: null }]);
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  k.klick(k.eins(haupt, 'button.werkzeug-schalter'));
+  await k.ruhe();
+  assert.ok(k.alle(haupt, '[role="tab"]').length >= 1);
+  assert.ok(!k.alle(haupt, '[role="tab"]').some((t) => t.dataset.reiter === 'mitm'), 'W5-L3 ohne MitM');
+  const e = levelSeite('W3-L5', [{ id: 'enigma' }], [{ id: 'enigma', titel: 'Enigma', welt: 3, frei: true, grund: null, art: 'kuer' }]);
+  await e.ruhe();
+  const he = e.document.getElementById('haupt');
+  e.klick(e.eins(he, 'button.werkzeug-schalter'));
+  await e.ruhe();
+  assert.ok(!e.alle(he, '[role="tab"]').some((t) => t.dataset.reiter === 'vorfuehren'), 'W3-L5 ohne Vorführen');
+});
+
+test('level_karte_erkenner', async () => {
+  const k = levelSeite('W3-L5', [{ id: 'runden', voreinstellung: { reiter: ['enigma'] } }], [{ id: 'runden', titel: 'Runden-Labor', welt: 3, frei: true, grund: null }]);
+  await k.ruhe();
+  const haupt = k.document.getElementById('haupt');
+  k.klick(k.eins(haupt, 'button.werkzeug-schalter'));
+  await k.ruhe();
+  const feld = k.eins(haupt, '.werkzeug-panel-flaeche textarea');
+  feld.focus();
+  k.tippe(feld, 'fade');
+  assert.ok(k.eins(haupt, 'section.gefuehrt'), 'Mini-Enigma mit fade → geführt');
+  assert.equal(k.alle(haupt, '.lampe.leuchtet').length, 0, 'keine Lampe');
+});

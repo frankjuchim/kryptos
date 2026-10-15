@@ -190,7 +190,7 @@ const KRSpiel = (() => {
     const [d, lab] = await Promise.all([api('GET', `/api/levels/${enc(id)}`), labor()]);
     if (!r.gueltig()) return;
     epoche(await weltVon(d.welt));
-    seite(d.level.titel, KRLevel.ansicht(d, { werkzeugFrei: lab.werkzeugFrei, werkzeuge: lab.werkzeuge }));
+    seite(d.level.titel, KRLevel.ansicht(d, { werkzeugFrei: lab.werkzeugFrei, werkzeuge: lab.werkzeuge, laborUmgebung: lab.laborUmgebung, laborFrisch }));
   }
 
   async function aufgabeRoute(id, r) {

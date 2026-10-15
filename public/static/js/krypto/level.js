@@ -54,7 +54,7 @@ const KRLevel = (() => {
   }
 
   // Level-Feld werkzeug: Liste von { id, voreinstellung } (M6 E70; Strings aus älteren Antworten werden ebenfalls gelesen)
-  function werkzeugKarten(liste, werkzeuge, werkzeugFrei, levelId) {
+  function werkzeugKarten(liste, werkzeuge, werkzeugFrei, levelId, labor = {}) {
     const eintraege = (Array.isArray(liste) ? liste : [])
       .map((e) => (e && typeof e === 'object' ? { id: e.id, voreinstellung: e.voreinstellung } : { id: e }))
       .filter((e) => typeof e.id === 'string');
@@ -77,7 +77,12 @@ const KRLevel = (() => {
         { class: 'labor-raster' },
         frei.map((e) => {
           const w = (werkzeuge || []).find((x) => x.id === e.id);
-          return h('a', { class: 'werkzeug-karte werkzeug-link', href: link(e) }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w ? w.titel : e.id), h('span', { class: 'werkzeug-ort' }, 'Im Labor öffnen'));
+          const karte = h('a', { class: 'werkzeug-karte werkzeug-link', href: link(e) }, KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }), h('b', { class: 'werkzeug-name' }, w ? w.titel : e.id), h('span', { class: 'werkzeug-ort' }, 'Im Labor öffnen'));
+          // M11 (E222): dasselbe Werkzeug direkt auf der Level-Seite (frei, Erkenner aktiv, Reiter-Regeln mit Level-Kontext)
+          if (typeof KRPanel === 'undefined') return karte;
+          const umgebung = { modus: 'lab', ...(labor.laborUmgebung || {}), ...(level ? { level } : {}) };
+          const panel = KRPanel.panel({ id: e.id, voreinstellung: e.voreinstellung }, { modus: 'lab', werkzeugFrei, laborUmgebung: umgebung, laborFrisch: typeof labor.laborFrisch === 'function' ? (wid) => labor.laborFrisch(wid, level ? { level } : {}) : undefined }, { schalter: 'Hier ausprobieren', ohneLink: true });
+          return h('div', { class: 'werkzeug-karte-mit-panel' }, karte, panel);
         })
       )
     );
@@ -134,7 +139,7 @@ const KRLevel = (() => {
   }
 
   /** Level-Ansicht: d = GET /api/levels/:id; werkzeugFrei(id), werkzeuge = Liste aus GET /api/labor. */
-  function ansicht(d, { werkzeugFrei = () => false, werkzeuge = [] } = {}) {
+  function ansicht(d, { werkzeugFrei = () => false, werkzeuge = [], laborUmgebung = null, laborFrisch = null } = {}) {
     const l = d.level;
     AQ.speichere('kr_zuletzt', l.id);
     const zeichen = KREpoche.aktenzeichen(l);
@@ -153,7 +158,7 @@ const KRLevel = (() => {
         ? h('section', { class: 'archivwissen', 'aria-labelledby': 'archivwissen-titel' }, h('h2', { id: 'archivwissen-titel' }, KR.ornament(d.welt.nr, { klasse: 'ornament-initial' }), 'Archivwissen'), AQR.bloecke(l.intro, null))
         : null,
       h('section', { class: 'level-aufgaben', 'aria-labelledby': 'aufgaben-titel' }, h('h2', { id: 'aufgaben-titel' }, 'Aufgaben'), d.aufgaben.length ? aufgabenListe(d.aufgaben, d.niveau) : h('p', { class: 'leer-zustand' }, 'Für dein Niveau gibt es hier keine Aufgaben.')),
-      werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei, l.id),
+      werkzeugKarten(l.werkzeug, werkzeuge, werkzeugFrei, l.id, { laborUmgebung, laborFrisch }),
       ideKarte(l, d.ideErledigt),
       werkstattKarte(l),
       medienKarte(l),

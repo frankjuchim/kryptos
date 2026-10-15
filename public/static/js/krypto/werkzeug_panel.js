@@ -41,9 +41,10 @@ const KRPanel = (() => {
 
   /**
    * Panel für einen Block { id, titel?, voreinstellung?, gefuehrt?, hinweis? } im ctx der Aufgabe (modus, aufgabeId,
-   * laborUmgebung, laborFrisch, werkzeugFrei). Im Boss-Kampf null.
+   * laborUmgebung, laborFrisch, werkzeugFrei). Im Boss-Kampf null. o = { schalter: Text des Schalters (Level-Karte:
+   * „Hier ausprobieren“), ohneLink: true (die Karte verlinkt das Labor schon) }.
    */
-  function panel(b, ctx = {}) {
+  function panel(b, ctx = {}, o = {}) {
     if (ctx.modus === 'boss') return null;
     const w = typeof KRLabor !== 'undefined' ? KRLabor.werkzeug(b.id) : null;
     const name = w ? w.titel : String(b.id ?? 'Werkzeug');
@@ -62,13 +63,13 @@ const KRPanel = (() => {
       'button',
       { type: 'button', id: sId, class: 'werkzeug-schalter', 'aria-expanded': 'false', 'aria-controls': fId, disabled: !frei },
       KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }),
-      h('span', { class: 'werkzeug-schalter-text' }, `Werkzeug: ${name}`),
+      h('span', { class: 'werkzeug-schalter-text' }, typeof o.schalter === 'string' && o.schalter ? o.schalter : `Werkzeug: ${name}`),
       chips,
       h('span', { class: 'werkzeug-pfeil', 'aria-hidden': 'true' }, '▾')
     );
     const flaeche = h('div', { class: 'werkzeug-panel-inhalt' });
     const link = h('a', { class: 'knopf knopf-leise werkzeug-labor-link', href: laborLink(b.id, b.voreinstellung, extra) }, 'Im Labor öffnen');
-    const fuss = h('div', { class: 'werkzeug-panel-fuss' }, typeof b.hinweis === 'string' && b.hinweis ? h('p', { class: 'werkzeug-hinweis text-2' }, b.hinweis) : null, link);
+    const fuss = h('div', { class: 'werkzeug-panel-fuss' }, typeof b.hinweis === 'string' && b.hinweis ? h('p', { class: 'werkzeug-hinweis text-2' }, b.hinweis) : null, o.ohneLink ? null : link);
     const zu = h('button', { type: 'button', class: 'knopf knopf-leise werkzeug-zuklappen', 'aria-label': `Werkzeug ${name} schließen` }, KR.symbol('icons', 'i-schliessen'), h('span', { class: 'lang' }, 'Schließen'));
     const bereich = h(
       'section',

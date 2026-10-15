@@ -738,11 +738,11 @@ den alten Werten (`grep -rn "10¹⁰\|1,3 · 10\|17 576\|17576" quellen/material
 
 **Files:** Modify `krypto/level.js`, `labor.css`, `test/client_seiten.test.js`.
 
-- [ ] **Step 1: Failing tests:** `level_karte_hier_ausprobieren` (W0-L1: Panel frei, Link unverändert),
+- [x] **Step 1: Failing tests:** `level_karte_hier_ausprobieren` (W0-L1: Panel frei, Link unverändert),
   `level_karte_reiter_regeln` (W5-L3 ohne `mitm`, W3-L5 ohne `vorfuehren`), `level_karte_erkenner` (W3-L5 Mini-Enigma mit
   `fade` → geführt, keine Lampe).
-- [ ] **Step 2–4:** FAIL → Umsetzung → `npm run pruefen` grün; Level W0-L1, W3-L5, W4-L3 im Browser.
-- [ ] **Step 5: Commit** `M11: Level-Karten öffnen das Werkzeug auch direkt auf der Level-Seite (Task 248)`
+- [x] **Step 2–4:** FAIL → Umsetzung → `npm run pruefen` grün; Level W0-L1, W3-L5, W4-L3 im Browser.
+- [x] **Step 5: Commit** `M11: Level-Karten öffnen das Werkzeug auch direkt auf der Level-Seite (Task 248)`
 
 ### Task 249: Panels in den Aufgaben W0–W2 und Gast (E217, E219, E223)
 
