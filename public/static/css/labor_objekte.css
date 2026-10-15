@@ -616,6 +616,7 @@
 .verstecke-zeitung { position: relative; padding: var(--a-4); border-radius: 3px; background: var(--mat-band); color: var(--mat-band-tinte); box-shadow: 0 10px 24px rgba(11, 20, 38, .35); overflow: hidden; }
 .verstecke-zeitung-kopf { margin: 0 0 var(--a-2); padding-bottom: var(--a-2); border-bottom: 3px double var(--mat-band-tinte); font: 700 1.3rem var(--f-ueberschrift); }
 .verstecke-zeitung-text, .verstecke-lupe-inhalt { margin: 0; font: 1.05rem/2 var(--f-text); hyphens: none; }
+.verstecke-wort { white-space: nowrap; } /* M10-Review Fund 4: Umbruch nur zwischen Wörtern */
 .verstecke-zeichen { position: relative; display: inline; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; line-height: inherit; letter-spacing: inherit; box-shadow: none; background: transparent; color: inherit; font: inherit; cursor: default; }
 .verstecke-zeitung.finden .verstecke-zeitung-text .verstecke-zeichen { cursor: pointer; touch-action: manipulation; }
 .verstecke-zeichen.punkt::after { content: ""; position: absolute; left: 50%; bottom: .05em; width: 3px; height: 3px; border-radius: 50%; background: var(--mat-band-tinte); opacity: var(--punkt-deckkraft, .35); transform: translateX(-50%); }

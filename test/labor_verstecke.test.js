@@ -126,3 +126,17 @@ test('verstecke: keine Vornamen in BEISPIEL, ruhig (Lupe ohne Animation), Herkun
   const L = w.k.wert('KRLabor');
   assert.equal(w.k.roh(L.WERKZEUGE.find((x) => x.id === 'verstecke')).art, 'zusatz');
 });
+
+test('Punktmethode (M10-Review Fund 4): Zeitungstext bricht nur zwischen Wörtern um – Buchstaben je Wort in einer Gruppe', () => {
+  const w = oeffne('verstecke', { voreinstellung: { reiter: ['punkte'] } });
+  for (const sel of ['.verstecke-zeitung-text', '.verstecke-lupe-inhalt']) {
+    const ziel = w.k.eins(w.flaeche, sel);
+    const kinder = [...ziel.childNodes];
+    assert.ok(kinder.length > 5, `${sel}: Inhalt`);
+    for (const k of kinder) {
+      if (k.nodeType === 3) assert.match(k.textContent, /^\s+$/, `${sel}: zwischen den Wörtern nur Leerraum`);
+      else assert.ok(k.classList.contains('verstecke-wort'), `${sel}: Wortgruppe statt einzelner Buchstabe`);
+    }
+    for (const g of w.k.alle(ziel, '.verstecke-wort')) assert.doesNotMatch(g.textContent, /\s/, 'kein Leerraum in einer Wortgruppe');
+  }
+});

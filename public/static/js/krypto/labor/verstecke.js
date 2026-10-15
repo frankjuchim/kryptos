@@ -364,12 +364,24 @@
       const markiert = () => (z.richtung === 'ver' ? (z.nachricht ? Krypto.punkteSetzen(zeitung, z.nachricht).markiert : []) : vorgabe);
       // Zeitung aufbauen: Zeichen mit ihren Positionen in nurBuchstaben (Umlaute zählen doppelt: ä → AE)
       let pos = 0;
+      // M10-Review Fund 4: Zeichen eines Worts (auch Satzzeichen) in einer nicht umbrechenden Gruppe – der Text bricht nur
+      // an Leerzeichen um, nie mitten im Wort
       function zeichneText(ziel, mitKnoepfen) {
         let p = 0;
+        let wort = null;
         for (const c of zeitung) {
+          if (/\s/.test(c)) {
+            wort = null;
+            ziel.appendChild(document.createTextNode(c));
+            continue;
+          }
+          if (!wort) {
+            wort = h('span', { class: 'verstecke-wort' });
+            ziel.appendChild(wort);
+          }
           const n = Krypto.nurBuchstaben(c).length;
           if (!n) {
-            ziel.appendChild(document.createTextNode(c));
+            wort.appendChild(document.createTextNode(c));
             continue;
           }
           const liste = [];
@@ -379,8 +391,8 @@
             const el = h('button', { type: 'button', class: 'verstecke-zeichen', 'data-pos': String(liste[0]), tabindex: '-1' }, c);
             el.addEventListener('click', () => antippen(liste, el));
             zeichen.push({ el, pos: liste });
-            ziel.appendChild(el);
-          } else ziel.appendChild(h('span', { class: 'verstecke-zeichen', 'data-pos': String(liste[0]) }, c));
+            wort.appendChild(el);
+          } else wort.appendChild(h('span', { class: 'verstecke-zeichen', 'data-pos': String(liste[0]) }, c));
         }
         return p;
       }
