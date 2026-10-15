@@ -271,14 +271,33 @@ test('T8 state fehlt / ≠ Cookie / ohne Cookie → 401 state; state-Cookie ist 
   assert.doesNotMatch(r3.text, /egal-aber/);
 });
 
+/** Rollenneutraler Text bei fehler=keine_berechtigung (INTEGRATION.md §3.2, ab Vertrag v1.3) – wörtlich. */
+const KEIN_ZUGANG = [
+  'Kein Zugang.',
+  'Diese Plattform ist für dieses Konto noch nicht freigeschaltet.',
+  'Schülerinnen und Schüler: Die Lehrkraft muss die Plattform im Portal für den Kurs freischalten.',
+  'Lehrkräfte: Die Freischaltung der Plattform erteilt die Administration im Portal; danach die Plattform beim Kurs ankreuzen.'
+];
+/** Text der Hauptkarte (h1 und Absätze) ohne Tags, Leerraum zusammengefasst. */
+const kartenTexte = (html) =>
+  [...(/<main[\s\S]*<\/main>/.exec(html) || [''])[0].matchAll(/<(h1|p)\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+
 test('T9 fehler=keine_berechtigung → 403 Seite, keine Sitzung; abgebrochen → 302 /?abgebrochen=1; anderer → 401 portal', async () => {
   const app = H.makeApp();
   const { r } = await ende(app, { fehler: 'keine_berechtigung' });
   assert.equal(r.status, 403);
-  assert.match(r.text, /nicht freigeschaltet/);
+  assert.equal(r.headers['x-kryptos-grund'], 'keine_berechtigung');
+  // v1.3: genau der rollenneutrale Text (die Plattform weiß hier nicht, wer anfragt), danach nur die Knöpfe
+  const texte = kartenTexte(r.text);
+  assert.deepEqual(texte.slice(0, 4), KEIN_ZUGANG);
+  assert.deepEqual(texte.slice(4), ['⌂ Zum Portal Gastmodus']);
+  assert.doesNotMatch(r.text, /\b(deine?|Ihr|Ihre)\b/, 'keine persönliche Anrede');
+  // Link zurück zum Portal = PORTAL_URL (kein Umweg), Gastmodus bleibt
+  assert.match(r.text, /<a class="knopf knopf-primaer" href="https:\/\/portal\.test\/">⌂ Zum Portal<\/a>/);
+  assert.doesNotMatch(r.text, /href="\/sso\/portal"/);
   assert.match(r.text, /href="\/gast"/);
-  assert.match(r.text, /href="\/sso\/portal"/);
   assert.equal(r.headers['referrer-policy'], 'no-referrer');
+  assert.match(r.headers['cache-control'], /no-store/);
   assert.deepEqual(sitzungsCookies(r), []);
   const { r: ab } = await ende(app, { fehler: 'abgebrochen' });
   assert.equal(ab.status, 302);

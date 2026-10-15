@@ -7,6 +7,7 @@
 // Tokens und URLs dieser Routen werden nie geloggt.
 
 const crypto = require('node:crypto');
+const fs = require('node:fs');
 const path = require('node:path');
 const express = require('express');
 const S = require('../security');
@@ -17,6 +18,17 @@ const MAX_DAUER_SEK = 120;
 const FEHLER_DIR = path.join(__dirname, '..', '..', 'public', 'fehler');
 const ROLLE_ZU_PRAEFIX = { schueler: 's', lehrkraft: 'l', superadmin: 'a' };
 const MAX_KURSE = 1000;
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/**
+ * Seite „Kein Zugang“ (fehler=keine_berechtigung, INTEGRATION §3.2 ab v1.3): statische Datei mit dem rollenneutralen
+ * Text; die Links „⌂ Zum Portal“ zeigen hier direkt auf PORTAL_URL (die Datei selbst verweist auf /sso/portal, weil
+ * sie PORTAL_URL nicht kennt). Kein reflektierter Inhalt aus der Anfrage.
+ */
+function keinZugangSeite(portalUrl) {
+  const html = fs.readFileSync(path.join(FEHLER_DIR, 'keine-berechtigung.html'), 'utf8');
+  return html.split('href="/sso/portal"').join(`href="${esc(portalUrl + '/')}"`);
+}
 
 /** ziel nur als relativer Pfad mit genau einem führenden „/“ (kein //host, kein /\host, keine Steuerzeichen), ≤ 300 Zeichen. */
 function sicheresZiel(z) {
@@ -139,7 +151,10 @@ function createSsoRouter({ db, svc, konfig, sitzung, secret, now }) {
 
     // 2. Ablehnung durch das Portal
     if (q.fehler !== undefined) {
-      if (q.fehler === 'keine_berechtigung') return fehlerSeite(403, 'keine-berechtigung.html', 'keine_berechtigung');
+      if (q.fehler === 'keine_berechtigung') {
+        res.set('X-Kryptos-Grund', 'keine_berechtigung');
+        return res.status(403).type('html').send(keinZugangSeite(konfig.portalUrl));
+      }
       if (q.fehler === 'abgebrochen') return res.redirect(302, '/?abgebrochen=1');
       return fehlerSeite(401, 'anmeldung-fehlgeschlagen.html', 'portal');
     }

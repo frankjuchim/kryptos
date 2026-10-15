@@ -618,7 +618,7 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | Schritt | Prüfung | Fehlerantwort |
 |---|---|---|
 | 1 | State-Cookie lesen (`S.verify`) und **sofort löschen**; fehlt er oder `S.safeEqual(cookie.st, query.state)` falsch. Ist das mitgeschickte Token gültig signiert (`jwt.pruefe` ok), wird seine `jti` trotzdem verbraucht (Schritt 4) – ein Token ist genau einmal verwendbar | `401`, Seite `fehler/anmeldung-fehlgeschlagen.html`, Kopf `X-Kryptos-Grund: state` |
-| 2 | `fehler=keine_berechtigung` | `403`, Seite `fehler/keine-berechtigung.html` („Kein Zugang – deine Lehrkraft hat Kryptos für deinen Kurs nicht freigeschaltet“, Links: Portal, Gastmodus) |
+| 2 | `fehler=keine_berechtigung` | `403`, Seite `fehler/keine-berechtigung.html` mit dem **rollenneutralen Text** aus INTEGRATION §3.2 (v1.3, wörtlich: „Kein Zugang. Diese Plattform ist für dieses Konto noch nicht freigeschaltet. Schülerinnen und Schüler: Die Lehrkraft muss die Plattform im Portal für den Kurs freischalten. Lehrkräfte: Die Freischaltung der Plattform erteilt die Administration im Portal; danach die Plattform beim Kurs ankreuzen.“ – die Plattform weiß hier nicht, wer anfragt); Links „⌂ Zum Portal“ direkt auf `PORTAL_URL/` (beim Ausliefern eingesetzt) und Gastmodus; keine Sitzung gesetzt oder geändert |
 | 2 | `fehler=abgebrochen` | `302` auf `/?abgebrochen=1` (Startseite zeigt Hinweis + Gastmodus) |
 | 2 | anderer `fehler` | `401` wie Schritt 1, Grund `portal` |
 | 3 | `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL, aud: PLATTFORM_ID, maxDauerSek: 120, jetztSek })` | `401`, Grund = `p.grund` (`format`, `alg`, `signatur`, `version`, `iss`, `aud`, `zeit`, `dauer`, `abgelaufen`, `jti`) |
@@ -638,7 +638,8 @@ Fehlerantworten bleiben **unter der `/sso/ende`-URL mit Status 401/403** (INTEGR
 wegen `Cache-Control: no-store` nicht gespeichert und gibt wegen `Referrer-Policy: no-referrer` keine URL weiter.
 Der Kopf `X-Kryptos-Grund` enthält nur die Grundkennung (für Tests und Fehlersuche), nie Token-Inhalte. Die drei
 Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform); ihr Link „⌂ Zum Portal“ zeigt auf `GET /sso/portal`
-(302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt. Weitere Grundkennungen: `keine_berechtigung`
+(302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt – Ausnahme `keine-berechtigung.html`: `/sso/ende`
+setzt dort beim Ausliefern `PORTAL_URL/` direkt ein (HTML-maskiert, Wert aus der Konfiguration, nie aus der Anfrage). Weitere Grundkennungen: `keine_berechtigung`
 (Schritt 2), `kurs-gesperrt` (Schritt 7). Ohne vollständige Portal-Konfiguration antworten `/sso/start` und `/sso/ende`
 mit 503 (nur im Testmodus möglich).
 
@@ -845,7 +846,7 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | T6 | falsches `iss` | 401, `iss` |
 | T7 | wiederverwendet (zweites Mal, auch nach App-Neustart mit derselben DB) | 401, `wiederverwendet` |
 | T8 | state fehlt bzw. ≠ Cookie | 401, `state` |
-| T9 | `fehler=keine_berechtigung` / `fehler=abgebrochen` | 403-Seite bzw. 302 `/?abgebrochen=1`, **keine** Sitzung |
+| T9 | `fehler=keine_berechtigung` / `fehler=abgebrochen` | 403-Seite (v1.3: rollenneutraler Text wörtlich, Link auf `PORTAL_URL/`) bzw. 302 `/?abgebrochen=1`, **keine** Sitzung |
 | T10 | `ziel=//boese.example` (und `/\boese`, `https://…`) | Weiterleitung auf `/` bzw. Startseite der Rolle |
 | T11 | Verbund-API ohne Token / falsches `aud` / falscher `zweck` / `exp − iat > 60 s` / wiederverwendet / `sub ≠ portal` | 401 |
 | T12 | `loeschen` zweimal mit derselben `sub` | beide 200, zweites Mal `geloescht: 0` |
