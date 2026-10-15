@@ -39,3 +39,19 @@ test('schweben_bei_ruhig_kein_element', () => {
   k.wert('AQ').effekt.schweben(el, '+20');
   assert.equal(k.alle(k.document.body, '.schweben').length, 0);
 });
+
+// Review-Fund 7: AQ.effekt.funken (Profil, Boss-Sieg, Werkstatt-Werkzeuge über KRStation.funken) – Regel in komponenten.css
+const KOMP = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'css', 'komponenten.css'), 'utf8');
+test('funken_haben_kryptos_regel', () => {
+  const box = regel('.funken', KOMP);
+  assert.ok(box, '.funken in komponenten.css');
+  assert.match(box, /position:\s*fixed/);
+  assert.match(box, /pointer-events:\s*none/);
+  const f = regel('.funke', KOMP);
+  assert.ok(f && /width:\s*\d+px/.test(f) && /opacity:\s*0/.test(f) && !/animation/.test(f), '.funke: Größe, ohne Animation unsichtbar');
+  assert.ok(regel('.funke.stern', KOMP), 'Sternform');
+  assert.match(KOMP, /:root:not\(\[data-bewegung="aus"\]\) \.funke \{ animation-name: kr-funke;/);
+  const a = KOMP.lastIndexOf('@media (prefers-reduced-motion: no-preference)', KOMP.indexOf('.funke { animation-name'));
+  assert.ok(a >= 0 && KOMP.indexOf('.funke { animation-name') - a < 300, 'Animation im Bewegungsblock');
+  assert.match(KOMP, /@keyframes kr-funke/);
+});

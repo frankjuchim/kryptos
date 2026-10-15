@@ -881,3 +881,16 @@ a.gast-karte:hover { border-color: var(--akzent); }
 .gast-karte-titel { font-family: var(--f-ueberschrift); font-size: 1.2rem; font-weight: 600; }
 .gast-tabs { margin-block: var(--a-3); }
 .gast-hinweis { margin-block: var(--a-3); }
+
+/* ---------- Funken (AQ.effekt.funken: Profil, Boss-Sieg, Werkstatt-Werkzeuge) – an body angehängt, ohne Animation unsichtbar ---------- */
+.funken { position: fixed; z-index: 30; width: 0; height: 0; pointer-events: none; }
+.funke { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 2px; opacity: 0; }
+.funke.stern { width: 12px; height: 12px; border-radius: 0; clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%); }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-bewegung="aus"]) .funke { animation-name: kr-funke; animation-timing-function: cubic-bezier(.15, .7, .3, 1); animation-fill-mode: forwards; }
+}
+@keyframes kr-funke {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) + 60px)) rotate(var(--dreh)) scale(.6); }
+}

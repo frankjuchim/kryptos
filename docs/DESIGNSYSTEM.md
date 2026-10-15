@@ -223,7 +223,8 @@ eigener Schalter, Standard aus.
 
 **Punkte schweben (Nachtrag M11):** Beim Lösen steigt „+n“ in `--messing-dunkel` (Überschriftenschrift) 1,4 s über der
 Rückmeldung auf (`.schweben`, Animation `kr-schweben`); ohne Bewegung erscheint nichts (`AQ.ruhig()`, Regel ohne Animation
-unsichtbar).
+unsichtbar). **Funken** (`AQ.effekt.funken`, Profil, Boss-Sieg, `KRStation.funken`) fliegen etwa 1 s in den Messingfarben
+auseinander (`.funke`, `kr-funke`, Regeln in `komponenten.css`); ohne Bewegung gibt es keine.
 
 ## 7. Barrierefreiheit (WCAG 2.1 AA)
 

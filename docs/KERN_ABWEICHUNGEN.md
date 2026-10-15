@@ -116,7 +116,8 @@ Lehrkraft-Downloads ohne `verzeichnis.json`). `.gitkeep` landet im Image, wird a
   nur in der entfernten `style.css`, der Text „+20“ erschien deshalb 1,6 s ungestylt unten links. `common.js` bleibt
   unverändert (kein Kern-Diff); die Kryptos-Regel steht in `public/static/css/aufgaben.css` (fixiert, ohne Klicks, ohne
   Animation unsichtbar, Animation `kr-schweben` nur ohne reduzierte Bewegung/„Bewegung aus“; Test `effekte_css.test.js`).
-  `AQ.effekt.funken` erzeugt Spans ohne Größe (ohne Regel unsichtbar, keine Störung) und bleibt ungestylt.
+  Ebenso `AQ.effekt.funken` (Review-Fund 7): Regeln `.funken`, `.funke`, `.funke.stern` und Animation `kr-funke` in
+  `komponenten.css` nach dem Vorbild von Algo Quest, ohne Bewegung unsichtbar (Test `effekte_css.test.js`).
 - **Inhalte (Task 1):** `seed/` ohne Algo-Quest-Inhalte (leere Platzhalter).
 
 ## Werkzeuge aus Algo Quest (Art A, außerhalb der App)
