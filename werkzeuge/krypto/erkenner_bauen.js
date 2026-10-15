@@ -95,7 +95,9 @@ function eintragSignaturen(wr, z, klartexte = []) {
   const nurText = (texte) => texte.flatMap((t) => {
     const n = Krypto.normalisieren(t);
     // Klartext allein: nur als ganzer Text (sonst schlügen deutsche Wörter in eigenen Texten an)
-    return klar.has(n) && n.length >= E.FENSTER ? [`g:${n}`] : E.signaturen(wr, { texte: [t] }).filter((s) => s.startsWith('t:'));
+    if (klar.has(n) && n.length >= E.FENSTER) return [`g:${n}`];
+    // Viererfenster (v:, Chiffrierscheibe) nur aus Texten ab 5 Zeichen – kurze Wörter bleiben ganze Tokens
+    return E.signaturen(wr, { texte: [t] }).filter((s) => s.startsWith('t:') || (s.startsWith('v:') && E.FORM(t).length >= E.FENSTER));
   });
   if (z.ausAngaben) {
     const alle = E.signaturen(wr, e);
@@ -104,7 +106,7 @@ function eintragSignaturen(wr, z, klartexte = []) {
     const hatBits = (e.bits || []).length > 0;
     return alle.filter((s) => {
       if (s.startsWith('z:')) return s === `z:${[...new Set(e.zahlen)].sort((a, b) => a - b).join(',')}`; // ganze Zahlenmenge (eine Zahl: ab 10)
-      if (hatText && (hatSchluessel || hatBits)) return s.startsWith('t:') && s.includes('|');
+      if (hatText && (hatSchluessel || hatBits)) return (s.startsWith('t:') || (s.startsWith('v:') && (e.texte || []).every((t) => E.FORM(t).length >= E.FENSTER))) && s.includes('|');
       if (hatText) return false; // Text allein: unten (nurText)
       if (hatSchluessel) return s.startsWith('s:');
       // mehrere Bitfolgen (Block + Schlüssel): nur Paare – eine einzelne Folge (z. B. „OK“) allein ist kein Verrat

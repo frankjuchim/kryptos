@@ -138,9 +138,10 @@ test('haeppchen_schalten_in_gefuehrt', () => {
   const U = { rolle: 'schueler' };
   let gestartet = 0;
   const o = { gefuehrt: () => { gestartet += 1; } };
-  assert.equal(B.erkenne(null, 'scheibe.scheibe', { texte: ['IMOT'], schluessel: ['k=12'] }, U, v, o), 'frei');
-  // „Neue Nachricht“, dann Q
-  assert.equal(B.erkenne(null, 'scheibe.scheibe', { texte: ['Q'], schluessel: ['k=12'] }, U, v, o), 'gefuehrt');
+  // Scheibe: Viererfenster (Review-Fund 3) – drei Zeichen sind noch frei
+  assert.equal(B.erkenne(null, 'scheibe.scheibe', { texte: ['IMO'], schluessel: ['k=12'] }, U, v, o), 'frei');
+  // „Neue Nachricht“, dann TQ
+  assert.equal(B.erkenne(null, 'scheibe.scheibe', { texte: ['TQ'], schluessel: ['k=12'] }, U, v, o), 'gefuehrt');
   assert.equal(gestartet, 1);
   // ohne geführten Modus: neutraler Hinweis
   const ort = k.document.createElement('div');

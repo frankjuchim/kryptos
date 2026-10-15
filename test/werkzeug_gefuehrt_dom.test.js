@@ -223,13 +223,13 @@ test('eigene_werte_frei', () => {
 });
 
 test('haeppchen_schalten_in_gefuehrt_modul', () => {
-  // Scheibe k = 12: IMOT stempeln, „Neue Nachricht“, Q stempeln → geführt, kein „wache“
+  // Scheibe k = 12: IMO stempeln, „Neue Nachricht“, TQ stempeln → geführt, kein „wache“ (Viererfenster, Review-Fund 3)
   const w = geoeffnet('scheibe', { reiter: ['scheibe'], k: 12, richtung: 'ent' });
   const stempel = (b) => w.k.klick(w.k.eins(w.flaeche, `.scheibe-segment-innen[data-buchstabe="${b}"]`));
-  for (const b of 'IMOT') stempel(b);
+  for (const b of 'IMO') stempel(b);
   assert.ok(!hat(w, 'section.gefuehrt'));
   w.k.klick(w.k.eins(w.flaeche, '.station-neu'));
-  stempel('Q');
+  for (const b of 'TQ') stempel(b);
   assert.ok(hat(w, 'section.gefuehrt'), 'Häppchen schalten in den geführten Modus');
   assert.ok(!K.normalisieren(w.k.text(w.flaeche)).includes('WACHE'));
 });

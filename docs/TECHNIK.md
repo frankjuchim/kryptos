@@ -1515,8 +1515,19 @@ Tippen, Reiterwechsel). Lehrkräfte werden nie erkannt. Der Validator verlangt `
 Voreinstellung der Erkenner erkennt (`pruefeBlock`, Server-Nachbau `src/krypto/werkzeug_erkenner.js`).
 **Ausnahme L60 (E204, D18):** W0-L2-04 – die Liste aller Verschiebungen (`scheibe.alle`) mit dem Geheimtext der Aufgabe
 ist erlaubt; das Erkennen des Klartexts ist die Lernleistung (Ausnahme in `AUSNAHMEN`, Validator und Test K11).
+**Abwandlungen (Review nach M11, Test K11b `werkzeug_verrat_abwandlungen.test.js`):** Jeder Text wird in zwei Formen
+geprüft – normalisiert (A–Z, 0–9) und als reine Buchstabenform (`Krypto.nurBuchstaben`, so rechnen die Werkzeuge):
+eingestreute Ziffern, Satz- und Leerzeichen sowie Groß/Klein umgehen den Erkenner nicht. Für die Chiffrierscheibe gibt es
+zusätzlich Viererfenster (`v:`; vier Zeichen eines Caesar-Geheimtexts verraten schon k), eingetragen nur aus Texten ab
+fünf Zeichen. **Neuladen:** Nach jeder Eingabe legt der Verlauf in `sessionStorage` (`kr-erkenner`, nur dieser Tab,
+`KRErkennerSpeicher` in `krypto/erkenner_speicher.js`, außerhalb der Labor-Module) die Fortsetzungen ab, die das Ende der
+Eingabe (Fenster − 1 bzw. − 2 Zeichen) zu einem erkannten Fenster ergänzen würden – Zeichen aus den Aufgabendaten, nie
+die Eingaben. Beginnt die nächste Eingabe nach dem Neuladen damit, gilt sie als erkannt; „Eigene Werte“ leert auch den
+Speicher.
 **Grenzen:** Wie oben – mit Entwicklerwerkzeugen lässt sich rechnen lassen; der Erkenner kennt nur Werte aus Seeds und
 Material (eigene Zahlen der Lehrkraft im Unterricht nicht); leicht abgewandelte Werte (andere Zahlenpaare) rechnen frei.
+Häppchen aus einzelnen Zeichen mit einem Neuladen nach jedem Zeichen (bzw. bei Fenster 5 aus höchstens zwei Zeichen)
+bleiben unerkannt; ein anderer Tab beginnt ohne Verlauf. Kürzere Stücke als ein Fenster zeigen nur Bruchstücke.
 
 **Funkraum (Plan M7 E98):** Szenario-Werkzeuge erscheinen **nur eingebettet im Funkraum** – der Stand liefert je Rolle
 `werkzeuge: [{ id, voreinstellung }]` (Reiter eingeschränkt), die Seite öffnet sie über `KRLabor.oeffne` mit

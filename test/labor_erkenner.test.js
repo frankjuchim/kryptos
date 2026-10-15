@@ -23,6 +23,8 @@ test('signaturen_text_fenster', () => {
   assert.ok(!s.includes('t:NUMRABOUCK'));
   const p = E.signaturen('scheibe.text', { texte: ['imotq'], schluessel: ['k=12'] });
   assert.ok(p.includes('t:IMOTQ|s:K=12'), 'Schlüssel normalisiert (GROSS)');
+  assert.ok(p.includes('v:IMOT|s:K=12') && p.includes('v:MOTQ|s:K=12'), 'Chiffrierscheibe: zusätzlich Viererfenster (Review-Fund 3)');
+  assert.ok(!s.some((x) => x.startsWith('v:')), 'andere Werkzeuge: keine Viererfenster');
 });
 
 test('kurze_angabe_nur_als_token', () => {
@@ -57,12 +59,12 @@ test('lehrkraft_nie_erkannt', () => {
 
 test('verlauf_ueber_neue_nachricht', () => {
   const v = E.verlauf();
-  v.merke({ texte: ['IMOT'], schluessel: ['k=12'] });
-  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['IMOT'], schluessel: ['k=12'] }, S, v), false, 'noch kein ganzes Fenster');
-  v.merke({ texte: ['Q'], schluessel: ['k=12'] }); // „Neue Nachricht“, dann Q
-  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['Q'], schluessel: ['k=12'] }, S, v), true);
+  v.merke({ texte: ['IMO'], schluessel: ['k=12'] });
+  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['IMO'], schluessel: ['k=12'] }, S, v), false, 'noch kein ganzes Fenster');
+  v.merke({ texte: ['TQ'], schluessel: ['k=12'] }); // „Neue Nachricht“, dann TQ
+  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['TQ'], schluessel: ['k=12'] }, S, v), true);
   v.leeren();
-  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['Q'], schluessel: ['k=12'] }, S, v), false, 'Eigene Werte leeren den Verlauf');
+  assert.equal(E.erkannt('scheibe.scheibe', { texte: ['TQ'], schluessel: ['k=12'] }, S, v), false, 'Eigene Werte leeren den Verlauf');
 });
 
 test('daten_nur_kennungen', () => {

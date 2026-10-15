@@ -77,3 +77,69 @@ test('review_fund1_beispiele: eingestreute Ziffern umgehen den Erkenner nicht', 
   ];
   for (const [wr, e, id] of faelle) assert.ok(E.erkannt(wr, e, S), `${id} ${wr} ${e.texte[0]}`);
 });
+
+/* ---------- Review-Fund 3: Häppchen und Teilstücke (auch über ein Neuladen) ---------- */
+
+/** Geheimtexte (nicht Klartexte), die allein – ohne Schlüssel – schon Verrat sind */
+function textAllein() {
+  return verrat().filter(({ p, e }) => !(e.schluessel || []).length && !(e.bits || []).length && !(e.zahlen || []).length && e.texte.every((t) => !P.angaben(p).klartexte.includes(E.FORM(t)) && /^[A-Z]+$/.test(E.FORM(t))));
+}
+
+test('k11b_teilstueck_wird_erkannt (Scheibe ab 4 Zeichen, W4-A-01: TDAR in „Alle Verschiebungen“; sonst ab 5)', () => {
+  assert.ok(E.erkannt('scheibe.alle', { texte: ['TDAR'] }, S), 'TDAR');
+  assert.equal(E.fensterFuer('scheibe.alle'), 4);
+  assert.equal(E.fensterFuer('skytale.skytale'), 5);
+  const fehlt = [];
+  for (const { p, wr, e } of textAllein()) {
+    const t = E.FORM(e.texte[0]);
+    const f = E.fensterFuer(wr);
+    for (let i = 0; i + f <= t.length; i += 3) if (!E.erkannt(wr, { texte: [t.slice(i, i + f)] }, S)) fehlt.push(`${p.id} ${wr} ${t.slice(i, i + f)}`);
+  }
+  assert.deepEqual(fehlt.slice(0, 15), [], `${fehlt.length} Teilstücke unerkannt`);
+});
+
+test('k11b_haeppchen_zu_zweit_im_verlauf', () => {
+  const fehlt = [];
+  for (const { p, wr, e } of verrat()) {
+    if (e.texte.length !== 1 || !/^[A-Z]{6,}$/.test(E.FORM(e.texte[0]))) continue;
+    const t = E.FORM(e.texte[0]);
+    const v = E.verlauf();
+    let erkannt = false;
+    for (let i = 0; i < t.length && !erkannt; i += 2) {
+      const stueck = { ...e, texte: [t.slice(i, i + 2)] };
+      v.merke(stueck); // wie KRLaborBau.erkenne: erst merken, dann erkennen
+      erkannt = E.erkannt(wr, stueck, S, v);
+    }
+    if (!erkannt) fehlt.push(`${p.id} ${wr}`);
+  }
+  assert.deepEqual(fehlt.slice(0, 15), [], `${fehlt.length} Häppchen-Folgen unerkannt`);
+});
+
+test('k11b_haeppchen_mit_neuladen (Speicher je Tab, nur Fortsetzungen aus den Aufgabendaten)', () => {
+  const ablage = new Map();
+  const speicher = { lade: (id) => ablage.get(id) || null, speichere: (id, x) => ablage.set(id, JSON.parse(JSON.stringify(x))) };
+  // W4-A-01: je zwei bzw. drei Zeichen, dazwischen „neu laden“ (neuer Verlauf mit demselben Speicher)
+  for (const n of [2, 3]) {
+    ablage.clear();
+    const t = 'TDARNATJVWRNJWBL';
+    let erkannt = false;
+    for (let i = 0; i < t.length && !erkannt; i += n) {
+      const v = E.verlauf({ speicher });
+      const stueck = { texte: [t.slice(i, i + n)] };
+      v.merke(stueck);
+      erkannt = E.erkannt('scheibe.alle', stueck, S, v); // sichert dabei die Fortsetzungen
+    }
+    assert.ok(erkannt, `Häppchen zu ${n} mit Neuladen`);
+    // gespeichert sind nur Fortsetzungen (1–2 Zeichen der Aufgabendaten) je Reiter, nie die Eingabe selbst
+    for (const x of ablage.values()) for (const [r, liste] of Object.entries(x)) {
+      assert.equal(typeof r, 'string');
+      for (const f of liste) assert.match(f, /^[A-Z0-9]{1,2}$/);
+    }
+  }
+  // eigener Text: nichts gespeichert, nichts erkannt
+  ablage.clear();
+  const v = E.verlauf({ speicher });
+  v.merke({ texte: ['WALD'] });
+  assert.equal(E.erkannt('scheibe.alle', { texte: ['WALD'] }, S, v), false);
+  assert.ok([...ablage.values()].every((x) => Object.values(x).every((l) => !l.length)), 'eigener Text: keine Fortsetzung gespeichert');
+});

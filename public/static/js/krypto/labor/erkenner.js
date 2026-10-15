@@ -21,6 +21,11 @@
   'use strict';
 
   const FENSTER = 5;
+  // Review-Fund 3: Bei Verschiebungen (Chiffrierscheibe) verraten schon vier Zeichen eines Geheimtexts den Schlüssel –
+  // dort zusätzlich Viererfenster (Signatur v:, nur aus Texten ab 5 Zeichen eingetragen, damit kurze Wörter wie BOTE
+  // nicht in jedem längeren Wort anschlagen). Überall sonst bleibt es bei 5.
+  const KURZ = 4;
+  const fensterFuer = (wr) => (/^scheibe\./.test(String(wr || '')) ? KURZ : FENSTER);
   const MAX_TEXT = 600; // Zeichen je Text bzw. Verlaufsstrom
   const MAX_ZAHLEN = 8; // Teilmengen nur der ersten 8 Zahlen
   const PRAEFIX = 'KR-E1|';
@@ -33,9 +38,13 @@
    * Werkzeuge rechnen mit Krypto.nurBuchstaben, eingestreute Ziffern dürfen den Erkenner nicht umgehen (Review-Fund 1).
    */
   const formen = (roh) => [...new Set([norm(roh), Krypto.nurBuchstaben(norm(roh))])].filter(Boolean);
+  /** Buchstabenform (so rechnen die meisten Werkzeuge) */
+  const FORM = (roh) => Krypto.nurBuchstaben(norm(roh));
+  const ZEICHEN = [...Krypto.ALPHABET, ...'0123456789'];
+  const PAARE = ZEICHEN.flatMap((a) => ZEICHEN.map((b) => a + b));
 
   /** Text-Signaturen eines Texts (je Form): Fenster bzw. ganzes Token, dazu jedes kurze Wort als Token */
-  function textSignaturen(roh) {
+  function textSignaturen(roh, fenster = FENSTER) {
     const out = new Set();
     for (const n of formen(roh)) {
       if (n.length < FENSTER) out.add(`t:${n}`);
@@ -43,6 +52,7 @@
         for (let i = 0; i + FENSTER <= n.length; i++) out.add(`t:${n.slice(i, i + FENSTER)}`);
         out.add(`g:${n}`); // ganzer Text (Klartexte allein: kein Fehlalarm bei einzelnen Wörtern)
       }
+      if (fenster < FENSTER) for (let i = 0; i + fenster <= n.length; i++) out.add(`v:${n.slice(i, i + fenster)}`);
     }
     for (const w of String(roh ?? '').split(/[^0-9A-Za-zÄÖÜäöüß]+/)) {
       for (const x of formen(w)) if (x.length >= 2 && x.length < FENSTER) out.add(`t:${x}`);
@@ -69,7 +79,7 @@
     const e = eingaben || {};
     const out = new Set();
     const texte = new Set();
-    for (const t of e.texte || []) for (const s of textSignaturen(t)) texte.add(s);
+    for (const t of e.texte || []) for (const s of textSignaturen(t, fensterFuer(wr))) texte.add(s);
     const schluessel = [...new Set((e.schluessel || []).map((s) => String(s).toUpperCase().replace(/[^A-Z0-9=,;]/g, '')).filter(Boolean))];
     const folgen = [...new Set((e.bits || []).map(bits).filter((b) => b.length >= 8))];
     for (const t of texte) out.add(t);
@@ -120,12 +130,21 @@
   /**
    * Verlauf seit dem Öffnen (E213): merkt Texte (ganz und als fortlaufender Strom – häppchenweise Eingaben, „Neue
    * Nachricht“) und Schlüssel. mit(eingaben) ergänzt aktuelle Eingaben um den Verlauf.
+   * Review-Fund 3 (Neuladen): o.speicher = { lade(id), speichere(id, daten) } (auf den Seiten KRErkennerSpeicher,
+   * sessionStorage je Tab). Gespeichert werden nie Eingaben, nur Fortsetzungen aus den Aufgabendaten: Zeichen, die das
+   * Ende des Stroms (2–3 Zeichen) zu einem erkannten Fenster ergänzen würden. Beginnt die nächste Eingabe (nach dem
+   * Neuladen) damit, gilt sie als erkannt.
    */
-  function verlauf() {
+  function verlauf(o = {}) {
+    const speicher = o.speicher || (typeof KRErkennerSpeicher !== 'undefined' ? KRErkennerSpeicher : null);
     const texte = [];
     const schluessel = new Set();
     let strom = '';
     let letzter = '';
+    let id = null;
+    let gespeichert = {}; // reiter → [Fortsetzung …] (aus einem früheren Aufruf dieses Tabs)
+    let neu = {}; // reiter → Set(Fortsetzung) dieses Aufrufs
+    let zuletzt = '';
     function merke(e) {
       for (const roh of (e && e.texte) || []) {
         const t = norm(roh);
@@ -141,8 +160,51 @@
       }
       for (const s of (e && e.schluessel) || []) if (schluessel.size < 60) schluessel.add(String(s));
     }
+    /** Werkzeug-id binden (erster Erkennungsaufruf) und Fortsetzungen eines früheren Aufrufs laden */
+    function binde(neueId) {
+      if (id) return;
+      id = neueId;
+      try {
+        const x = speicher ? speicher.lade(id) : null;
+        gespeichert = x && typeof x === 'object' ? x : {};
+      } catch {
+        gespeichert = {};
+      }
+    }
+    /** Beginnt eine aktuelle Eingabe mit einer gespeicherten Fortsetzung dieses Reiters? */
+    function fortgesetzt(reiter, e) {
+      const liste = Array.isArray(gespeichert[reiter]) ? gespeichert[reiter] : [];
+      if (!liste.length) return false;
+      const anfaenge = [...((e && e.texte) || []), strom].map(FORM).filter(Boolean);
+      return liste.some((f) => typeof f === 'string' && f && anfaenge.some((a) => a.startsWith(f)));
+    }
+    /** Fortsetzungen des Stromendes gegen die Daten des Reiters bestimmen und speichern */
+    function sichere(reiter, tab, schl, fenster = FENSTER) {
+      if (!speicher || !id) return;
+      const ende = FORM(strom).slice(-(fenster - 1));
+      const merkmal = `${reiter}|${ende}|${schl.join(',')}`;
+      if (merkmal === zuletzt) return;
+      zuletzt = merkmal;
+      const art = fenster < FENSTER ? 'v' : 't';
+      const treffer = (n, f) => tab.has(kennung(`${art}:${n}${f}`)) || schl.some((s) => tab.has(kennung(`${art}:${n}${f}|s:${s}`)));
+      const set = new Set();
+      // Ende aus fenster − 1 Zeichen + 1 Zeichen bzw. fenster − 2 Zeichen + 2 Zeichen
+      if (ende.length >= fenster - 1) for (const f of ZEICHEN) if (treffer(ende.slice(-(fenster - 1)), f)) set.add(f);
+      if (ende.length >= fenster - 2) for (const f of PAARE) if (treffer(ende.slice(-(fenster - 2)), f)) set.add(f);
+      neu[reiter] = set;
+      const daten = {};
+      for (const [r, s] of Object.entries(neu)) daten[r] = [...s].slice(0, 400);
+      try {
+        speicher.speichere(id, daten);
+      } catch {
+        /* Speicher voll oder gesperrt: dann nur ohne Neuladen-Schutz */
+      }
+    }
     return {
       merke,
+      binde,
+      fortgesetzt,
+      sichere,
       mit(e) {
         const x = e || {};
         return { ...x, texte: [...(x.texte || []), ...texte, ...(strom ? [strom] : [])], schluessel: [...new Set([...(x.schluessel || []), ...schluessel])] };
@@ -152,6 +214,14 @@
         schluessel.clear();
         strom = '';
         letzter = '';
+        gespeichert = {};
+        neu = {};
+        zuletzt = '';
+        try {
+          if (speicher && id) speicher.speichere(id, {});
+        } catch {
+          /* egal */
+        }
       },
       get strom() {
         return strom;
@@ -167,9 +237,16 @@
     const tab = m && m.get(reiter);
     if (!tab || !tab.size) return false;
     const e = v && typeof v.mit === 'function' ? v.mit(eingaben) : eingaben;
-    for (const s of signaturen(wr, e)) if (tab.has(kennung(s))) return true;
-    return false;
+    let treffer = false;
+    if (v && typeof v.binde === 'function') {
+      v.binde(id);
+      treffer = v.fortgesetzt(reiter, eingaben);
+    }
+    if (!treffer) for (const s of signaturen(wr, e)) if (tab.has(kennung(s))) { treffer = true; break; }
+    // Fortsetzungen immer sichern – auch nach einem Treffer geht es nach dem Neuladen weiter
+    if (v && typeof v.sichere === 'function') v.sichere(reiter, tab, [...new Set((e.schluessel || []).map((s) => String(s).toUpperCase().replace(/[^A-Z0-9=,;]/g, '')).filter(Boolean))], fensterFuer(wr));
+    return treffer;
   }
 
-  return { FENSTER, signaturen, textSignaturen, zahlSignaturen, kennung, daten, hatDaten, verlauf, erkannt, teile };
+  return { FENSTER, KURZ, fensterFuer, FORM, signaturen, textSignaturen, zahlSignaturen, kennung, daten, hatDaten, verlauf, erkannt, teile };
 });
