@@ -594,6 +594,12 @@ Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
 
 ### 6.2 `GET /sso/start?ziel=<pfad>`
 
+**Ab Vertrag v1.3 (§5, INTEGRATION §3.1):** Das Portal verlinkt Kryptos immer über `/sso/start` (Manifest
+`urls.ssoStart`). Der Pfad braucht keine Anmeldung und startet den SSO-Ablauf **immer neu** – auch mit bestehender
+Sitzung (kein „schon angemeldet → weiter auf `ziel`“). Die Antwort setzt oder löscht keine Sitzung; die bestehende gilt
+weiter, bis `/sso/ende` ein neues Token vollständig geprüft hat (§6.3). So kennt Kryptos nach jedem Wechsel aus dem
+Portal die aktuellen Kurse (Test `test/sso.test.js`, „v1.3 …“).
+
 1. Rate-Limit 300 Anfragen/10 min je IP (Schulnetz = eine IP), sonst 429-Seite.
 2. `state = crypto.randomBytes(16).toString('base64url')` (22 Zeichen, erfüllt „≥ 22 aus A–Z a–z 0–9 - _“).
 3. Cookie **`kr_sso_state`** = `S.sign({ st: state, exp })`, Attribute `HttpOnly; SameSite=Lax; Secure` (wenn
@@ -622,6 +628,10 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 7 | Schüler ohne aktive Teilnahme in einem aktiven Kurs | `403`, Seite `fehler/kurs-gesperrt.html` (keine Sitzung) |
 | 8 | Sitzung setzen (§6.4), das jeweils **andere** Sitzungs-Cookie löschen (geteilte Tablets) | – |
 | 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`). Ein `ziel`, das nicht zur Rolle passt, wird verworfen (→ Startseite der Rolle): Schüler nicht `/lehrer…`, `/beamer…`; Lehrkraft/Superadmin nicht `/spiel…`, `/funkraum…`, `/werkstatt…` (`/labor` ist für beide, §11.1) – sonst Weiterleitungsschleife über das SSO | – |
+
+**Bestehende Sitzung (v1.3):** Erst Schritt 8 setzt bzw. ersetzt eine Sitzung. Bei jedem Fehler in den Schritten 1–7
+(state, Signatur, `aud`, `iss`, Zeiten, wiederverwendet, Inhalt, `fehler=…`, Kurs gesperrt) setzt oder löscht die Antwort
+kein Sitzungs-Cookie (`kr_s`, `kr_l`) – eine bestehende Sitzung bleibt unverändert.
 
 Fehlerantworten bleiben **unter der `/sso/ende`-URL mit Status 401/403** (INTEGRATION.md §5 verlangt für T2–T8 ausdrücklich
 `401`, VERTRAG §5 „Fehlerseite statt Weiterleitung“); das Token ist dort schon verbraucht oder ungültig, die Seite wird
@@ -693,6 +703,14 @@ Ablauf in `/sso/ende` (Schritt 6), alles in einer Transaktion:
    **Superadmin:** keine `kurs_lehrkraefte`-Zeilen (vorhandene werden entfernt) – er sieht ohnehin alle Kurse und soll in
    Lehrkraft-Listen (Spalte „Lehrkraft“ der Kursliste, nur Konten mit `rolle = 'lehrkraft'`) nicht erscheinen.
 5. Gleichnamige Schüler in einem Kurs sind erlaubt (Portal sichert Eindeutigkeit); Anzeige im Kurs nutzt `name`.
+
+**Entfernte Mitgliedschaft (VERTRAG §5, v1.3 ausdrücklich):** Fehlt ein Kurs im neuen Token, wird die Teilnahme nur
+**inaktiv** (`schueler.aktiv = 0`), nichts wird gelöscht. Folgen: kein Zugang mehr zu diesem Kurs (Sitzung, Kurswahl
+→ 404), nicht im Scoreboard, auf dem Beamer-Board und in „Erfolge“; in der Teamverwaltung erscheint die Teilnahme weder
+im Team noch unter „ohne Team“ – die Zeile in `team_mitglieder` **bleibt gespeichert** (ruhende Zuordnung), Funkraum
+und Arena zählen nur Teams mit aktiven Mitgliedern; Lernstand, Punkte, Rang und Abzeichen bleiben bis zur Löschung
+durch das Portal (§7.3) erhalten. Die Lehrkraft sieht die Teilnahme in Schülerliste, Auswertung und Urkunden als
+inaktiv gekennzeichnet. Steht der Kurs wieder im Token, wird **dieselbe** Teilnahme reaktiviert – samt Team-Zuordnung.
 
 ### 6.7 Verbund-API (Portal → Plattform)
 
@@ -836,6 +854,10 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | Zusatz | Kursabgleich: zweites Token ohne Kurs A → Teilnahme A inaktiv, Lernstand bleibt; Kurs B neu | wie beschrieben |
 | Zusatz | `/sso/start`: state-Format, Cookie-Attribute, Weiterleitungs-URL zeichengenau | – |
 | Zusatz | Abmelden/Überall abmelden | Cookies gelöscht, `weiter`-URL |
+| v1.3 | `/sso/start` mit bestehender Sitzung (Schüler, Lehrkraft) | 302 zum Portal (nicht direkt auf `ziel`), keine Sitzungs-Cookies in der Antwort |
+| v1.3 | bestehende Sitzung, danach Rücksprung mit ungültigem Token (Signatur, `aud`, `iss`, Dauer, Format, wiederverwendet, state, Inhalt) bzw. `fehler=…` | 401/403, kein `kr_s`/`kr_l` in der Antwort, alte Sitzung gilt weiter |
+| v1.3 | Schüler tritt im Portal einem zweiten Kurs bei, erneut `/sso/start` | Plattform kennt beide Kurse (Sitzung, Kurswahl) |
+| v1.3 | Kursabgleich entfernt eine Mitgliedschaft | Teilnahme inaktiv, Team-Zuordnung ruht, Lernstand und Abzeichen bleiben; Wiederbeitritt reaktiviert |
 | Zusatz | `loeschen {kurs}` entfernt Kurs, Teilnahmen, Teams, Funkraum, Arena; `{sub}` entfernt Konto, Teilnahmen, Lernstand, Teammitgliedschaft, eigene Funkraum-Nachrichten und Arena-Versuche (§7.3) | Zählungen in allen Tabellen |
 | Zusatz | Kursübersicht: Format, keine Freitexte/Teamnamen; 404 unbekannt; `anteil` über die sichtbaren Level-Aufgaben der freigeschalteten Welten (Sichtbarkeit nach Niveau ab M3, `src/krypto/niveau.js`); kein Feld `niveau` | – |
 | Zusatz | state falsch mit gültigem Token → 401 `state`, `jti` verbraucht; 500 in `/sso/*` loggt nur die Meldung (nie Token/URL/Stack) | – |
