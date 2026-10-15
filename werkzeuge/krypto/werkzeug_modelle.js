@@ -821,7 +821,7 @@ const GEFUEHRT = Object.freeze([
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
   'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
   'bitlupe.xor', 'bitlupe.doppelnutzung',
-  'runden.runden', 'runden.lawine', 'runden.modi', 'runden.fehler', 'runden.enigma',
+  'runden.runden', 'runden.lawine', 'runden.enigma',
   'modulo.uhr', 'modulo.tabelle', 'modulo.inverses', 'modulo.farbmischer',
   'rsa.rechenwerk', 'rsa.euklid', 'rsa.text',
   'hash.schritte', 'hash.pruefsumme', 'hash.passwort'

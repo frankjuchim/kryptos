@@ -11,6 +11,7 @@
   const BEISPIEL = {
     block: 'OK',
     schluessel: 'A36D',
+    lawineSchluessel: '2B7E',
     modiSchluessel: '2B7E',
     iv: '1917',
     fehlertext: 'Lachs im Teich',
@@ -177,6 +178,8 @@
     let variante = VARIANTEN.some((x) => x.id === v.variante) ? v.variante : 'kryptos16';
     let blockEingabe = typeof v.block === 'string' ? v.block.slice(0, 16) : BEISPIEL.block;
     let schluesselEingabe = typeof v.schluessel === 'string' ? v.schluessel.slice(0, 20) : BEISPIEL.schluessel;
+    // M11: ohne eigene Eingaben zeigt die Lawine ein eigenes Beispiel – „OK“ mit A36D ist die Aufgabe W3-L2-06 (Erkenner)
+    let eigeneEingaben = typeof v.block === 'string' || typeof v.schluessel === 'string';
     let runden = Number.isInteger(v.runden) && v.runden >= 1 && v.runden <= 4 ? v.runden : variante === 'rm16' ? 3 : 4;
     let block = null;
     let schluessel = null;
@@ -199,7 +202,7 @@
     let betroffen = { ecb: [], cbc: [] };
     const startStellung = typeof v.stellung === 'string' && ME.includes(v.stellung.toUpperCase()) ? v.stellung.toUpperCase() : 'A';
     let stellung0 = Krypto.wert(startStellung, 0); // Stellung A … H → 0 … 7
-    let enigmaText = '';
+    let enigmaText = typeof v.text === 'string' ? Krypto.nurBuchstaben(v.text).slice(0, 40) : '';
     let enigmaAusgabe = '';
     let verdrahtung = 'spec';
     let eigene = { ...SPEC_VERDRAHTUNG };
@@ -236,13 +239,257 @@
       return fehler;
     }
 
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let sofort = !!fuehrung; // Panel (gefuehrt: true): der erste rechnende Aufbau startet geführt
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
+
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus bzw. „nicht verfügbar“; true = nichts ausgeben */
+    function erkenne(id, eingaben, werte) {
+      if (sofort && mitGefuehrt && HOOKS[id]) {
+        sofort = false;
+        starteGefuehrt(id, werte);
+        return true;
+      }
+      return B.erkenne(r.flaeche, `runden.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
+    }
+    /** 16-Bit-Block und -Schlüssel als Erkenner-Eingaben (Bitfolgen und Bytepaare) */
+    const blockEingaben = (b, k) => {
+      const x = bits16(b);
+      const y = bits16(k);
+      return { bits: [x, y], bitpaare: [[x.slice(0, 8), y.slice(0, 8)], [x.slice(8), y.slice(8)]] };
+    };
+
+    /* ---------- Geführter Modus (M11 Task 245, E208): Teilschritte mit markiertem Eingang, Mini-Enigma Stufe für Stufe ---------- */
+    const gruppen = (bits) => [0, 4, 8, 12].map((i) => bits.slice(i, i + 4));
+    /** werte = { block, schluessel, runden, variante } – Lauf A Runde für Runde (auch Lawine) */
+    function rundenHook(container, werte) {
+      const R = Number.isInteger(werte.runden) && werte.runden >= 1 && werte.runden <= 4 ? werte.runden : 4;
+      const vari = VARIANTEN.some((x) => x.id === werte.variante) ? werte.variante : 'kryptos16';
+      const mitMitte = vari !== 'ohneSBox';
+      // Zeilen des Rasters: Eingang, je Runde K, ⊕, (Mitte), Transposition
+      const zeilen = [{ titel: 'Klartextblock', fest: bits16(werte.block) }];
+      const schritte = [];
+      const ziele = []; // je Schritt: { zeile, spalte (null = ganze Zeile), eingang: [[z, s] …] }
+      let zustand = 0; // Zeile des aktuellen Zustands
+      let kVorher = null;
+      for (let rd = 1; rd <= R; rd++) {
+        const kZeile = zeilen.length;
+        zeilen.push({ titel: `K${rd}`, fest: rd === 1 ? bits16(werte.schluessel) : null });
+        if (rd > 1) {
+          schritte.push({ text: `Runde ${rd}: K${rd} = K${rd - 1} um 4 Bit nach links rotiert (Vierergruppen rücken eine Stelle nach links)`, feld: { beschriftung: `K${rd} (16 Bit)`, art: 'bits' } });
+          ziele.push({ zeile: kZeile, eingang: [0, 1, 2, 3].map((x) => [kVorher, x]) });
+        }
+        const xZeile = zeilen.length;
+        zeilen.push({ titel: `nach ⊕ K${rd}`, fest: null });
+        schritte.push({ text: `Runde ${rd}: Zustand ⊕ K${rd} (Bit für Bit)`, feld: { beschriftung: `nach ⊕ K${rd} (16 Bit)`, art: 'bits' } });
+        ziele.push({ zeile: xZeile, eingang: [0, 1, 2, 3].flatMap((x) => [[zustand, x], [kZeile, x]]) });
+        let tEingang = xZeile;
+        if (mitMitte) {
+          const mZeile = zeilen.length;
+          zeilen.push({ titel: vari === 'rm16' ? `Runde ${rd}: rotiert` : `Runde ${rd}: S-Box`, fest: null });
+          for (let zz = 1; zz <= 4; zz++) {
+            schritte.push({
+              text: vari === 'rm16' ? `Runde ${rd}: Zeile ${zz} um ${zz - 1} ${zz - 1 === 1 ? 'Stelle' : 'Stellen'} nach links rotieren` : `Runde ${rd}: Zeile ${zz} (Vierergruppe ${zz}) mit der S-Box ersetzen`,
+              feld: { beschriftung: `Zeile ${zz} (4 Bit)`, art: 'bits' }
+            });
+            ziele.push({ zeile: mZeile, spalte: zz - 1, eingang: [[xZeile, zz - 1]] });
+          }
+          tEingang = mZeile;
+        }
+        const tZeile = zeilen.length;
+        zeilen.push({ titel: `nach Runde ${rd}`, fest: null });
+        schritte.push({ text: `Runde ${rd}: Transposition – Zeile z wird Spalte z`, feld: { beschriftung: `nach Runde ${rd} (16 Bit)`, art: 'bits' } });
+        ziele.push({ zeile: tZeile, eingang: [0, 1, 2, 3].map((x) => [tEingang, x]) });
+        zustand = tZeile;
+        kVorher = kZeile;
+      }
+      if (vari === 'kryptos16') {
+        KRGefuehrt.raster(container, {
+          zeilen: 2,
+          spalten: 16,
+          caption: 'S-Box (W3 §0a.4)',
+          zeilenKopf: (z) => (z === 0 ? 'Eingang' : 'S'),
+          spaltenKopf: (j) => Krypto.hex([j]).slice(1),
+          inhalt: (z, j) => (z === 0 ? Krypto.byteZuBits(j, 4) : Krypto.byteZuBits(Krypto.kryptos16.SBOX[j], 4))
+        });
+      }
+      const tab = KRGefuehrt.raster(container, {
+        zeilen: zeilen.length,
+        spalten: 4,
+        caption: `${vari === 'rm16' ? 'RM-16' : vari === 'ohneSBox' ? 'KRYPTOS-16 ohne S-Box' : 'KRYPTOS-16'}, ${R} ${R === 1 ? 'Runde' : 'Runden'}: Zeilen der Bitmatrix`,
+        zeilenKopf: (z) => zeilen[z].titel,
+        spaltenKopf: (j) => `Zeile ${j + 1}`,
+        inhalt: (z, j) => (zeilen[z].fest ? gruppen(zeilen[z].fest)[j] : null)
+      });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.forEach((x, j) => {
+            if (!x) return;
+            const b = KRGefuehrt.norm('bits', x);
+            const zl = ziele[j];
+            if (Number.isInteger(zl.spalte)) tab.eintrag(zl.zeile, zl.spalte, b);
+            else gruppen(b).forEach((g, sp) => g && tab.eintrag(zl.zeile, sp, g));
+          });
+          tab.markiere(ziele[i].eingang);
+        },
+        korrekt() {
+          const p0 = protokoll(werte.block, werte.schluessel, R, vari);
+          const aus = [];
+          for (const rd of p0.runden) {
+            if (rd.runde > 1) aus.push(bits16(rd.schluessel));
+            aus.push(bits16(rd.nachXor));
+            if (mitMitte) aus.push(...gruppen(bits16(rd.mitte)));
+            aus.push(bits16(rd.nachTransposition));
+          }
+          return aus;
+        }
+      };
+    }
+    const STATIONEN = ['+ s: zur Walze', 'W: durch die Walze', '− s: zum Reflektor', 'R: Reflektor', '+ s: zurück zur Walze', 'W⁻¹: Walze rückwärts', '− s: zur Lampe'];
+    /** werte = { text (A–H), stellung0 } – Standard-Verdrahtung, Stufe für Stufe; Lampe erst nach der Freigabe */
+    function enigmaHook(container, werte) {
+      const t = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, 40);
+      const s0 = Number.isInteger(werte.stellung0) ? werte.stellung0 : 0;
+      const stellungen = t.map((_, i) => Krypto.buchstabe(Krypto.mod(s0 + i, 8), 0));
+      const verdr = KRGefuehrt.raster(container, {
+        zeilen: 3,
+        spalten: 8,
+        caption: 'Standard-Verdrahtung (W3 K2): Walze W und Reflektor R',
+        zeilenKopf: (z) => ['Buchstabe', 'Walze W', 'Reflektor R'][z],
+        spaltenKopf: (j) => ME[j],
+        inhalt: (z, j) => [ME[j], SPEC_VERDRAHTUNG.walze[j], SPEC_VERDRAHTUNG.reflektor[j]][z]
+      });
+      const weg = KRGefuehrt.raster(container, {
+        zeilen: t.length,
+        spalten: 7,
+        caption: 'Stromweg: je Buchstabe sieben Stationen',
+        zeilenKopf: (i) => `${t[i]} (Stellung ${stellungen[i]})`,
+        spaltenKopf: (j) => String(j + 1)
+      });
+      const lampen = ME.map((b) => h('span', { class: 'lampe', 'data-lampe': b }, b));
+      container.appendChild(h('div', { class: 'enigma-lampen', 'aria-hidden': 'true' }, lampen));
+      let frei = null;
+      let jetzt = 0; // Buchstabe des aktuellen Schritts
+      const lampe = () => {
+        for (const l of lampen) l.classList.toggle('leuchtet', !!frei && l.dataset.lampe === frei[7 * jetzt + 6]);
+      };
+      const schritte = [];
+      t.forEach((b, i) => STATIONEN.forEach((st, j) => schritte.push({ text: `Buchstabe ${i + 1} (${b}, Stellung ${stellungen[i]}, s = ${Krypto.wert(stellungen[i], 0)}): Station ${j + 1} ${st}`, feld: { beschriftung: `Station ${j + 1}`, art: 'buchstabe' } })));
+      return {
+        schritte,
+        markiere(i, e) {
+          weg.leeren();
+          e.forEach((x, j) => {
+            const { q, r: rest } = Krypto.teileMitRest(j, 7);
+            if (x) weg.eintrag(q, rest, x);
+          });
+          const { q: n, r: j } = Krypto.teileMitRest(i, 7);
+          const ein = j === 0 ? t[n] : Krypto.nurBuchstaben(e[i - 1] || '');
+          const spalte = /^[A-H]$/.test(ein) ? Krypto.wert(ein, 0) : -1;
+          const marken = [];
+          if (spalte >= 0) {
+            if (j === 1) marken.push([1, spalte]);
+            else if (j === 3) marken.push([2, spalte]);
+            else if (j === 5) ME.forEach((_, x) => SPEC_VERDRAHTUNG.walze[x] === ein && marken.push([1, x]));
+            else marken.push([0, spalte]);
+          }
+          verdr.markiere(marken);
+          jetzt = n;
+          lampe();
+        },
+        korrekt: () => t.flatMap((b, i) => Krypto.miniEnigma.weg(b, stellungen[i]).stationen),
+        nachFreigabe(richtig) {
+          frei = richtig;
+          lampe();
+        }
+      };
+    }
+    const HOOKS = { runden: rundenHook, lawine: rundenHook, enigma: enigmaHook };
+    // Angaben bleiben im geführten Modus änderbar: Name → Feld im freien Modus
+    const FELD = { block: 'input.runden-block', schluessel: 'input.runden-schluessel' };
+    let fokusAngabe = null;
+    function fokusName() {
+      const a = typeof document !== 'undefined' ? document.activeElement : null;
+      if (!a || !wurzel.contains(a)) return null;
+      if (a.dataset && a.dataset.name) return a.dataset.name;
+      const eintrag = Object.entries(FELD).find(([, sel]) => a.matches && a.matches(sel));
+      return eintrag ? eintrag[0] : null;
+    }
+    const fokusEnde = (f) => {
+      if (!f) return;
+      f.focus();
+      const n = String(f.value).length;
+      if (typeof f.setSelectionRange === 'function') f.setSelectionRange(n, n);
+    };
+    function starteGefuehrt(id, werte) {
+      const aktiv = typeof document !== 'undefined' ? document.activeElement : null;
+      const fokusFeld = fokusAngabe || fokusName();
+      const textFokus = !fokusFeld && !!aktiv && wurzel.contains(aktiv);
+      fokusAngabe = null;
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        felder: id === 'enigma'
+          ? null
+          : {
+              felder: [{ name: 'block', beschriftung: 'Klartextblock (2 Zeichen oder 4 Hex)', wert: blockEingabe, max: 20 }, { name: 'schluessel', beschriftung: 'Schlüssel K (4 Hex)', wert: schluesselEingabe, max: 20 }],
+              fokus: fokusFeld,
+              beiAenderung: (w, name) => {
+                blockEingabe = String(w.block || '').slice(0, 20);
+                schluesselEingabe = String(w.schluessel || '').slice(0, 20);
+                eigeneEingaben = true;
+                fokusAngabe = name;
+                baue(id);
+                if (!gefuehrt) {
+                  fokusAngabe = null;
+                  fokusEnde(r.flaeche.querySelector(FELD[name]));
+                }
+              }
+            },
+        text: id === 'enigma'
+          ? {
+              beschriftung: 'Text (nur A–H, bis 40 Zeichen)',
+              max: 40,
+              wert: werte.text,
+              art: 'klartext',
+              fokus: textFokus,
+              beiAenderung: (t) => {
+                enigmaText = t;
+                baue(id);
+                B.fokusAmEnde(r.flaeche);
+              }
+            }
+          : null,
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: id === 'enigma' ? 'Mini-Enigma' : 'Runden-Labor',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          if (id === 'enigma') enigmaText = '';
+          else {
+            blockEingabe = '';
+            schluesselEingabe = '';
+          }
+          baue(id);
+        }
+      });
     }
 
     /** Gemeinsame Steuerung (Block, Schlüssel, Runden, Variante); beiAenderung baut nur den Inhalt neu. */
-    function steuerung(beiAenderung) {
+    function steuerung(beiAenderung, id) {
       const feld = (klasse, titel, wert, setze) => {
         const id = B.neueId(klasse);
         const f = h('input', { type: 'text', id, class: klasse, autocomplete: 'off', spellcheck: 'false', autocapitalize: 'characters' });
@@ -253,8 +500,18 @@
         });
         return { element: h('div', { class: 'labor-textfeld runden-feld' }, h('label', { for: id }, titel), f), f };
       };
-      const fb = feld('runden-block', 'Klartextblock (2 Zeichen oder 4 Hex)', blockEingabe, (x) => (blockEingabe = x));
-      const fk = feld('runden-schluessel', 'Schlüssel K (4 Hex)', schluesselEingabe, (x) => (schluesselEingabe = x));
+      if (!eigeneEingaben) {
+        blockEingabe = BEISPIEL.block;
+        schluesselEingabe = id === 'lawine' ? BEISPIEL.lawineSchluessel : BEISPIEL.schluessel;
+      }
+      const fb = feld('runden-block', 'Klartextblock (2 Zeichen oder 4 Hex)', blockEingabe, (x) => {
+        blockEingabe = x;
+        eigeneEingaben = true;
+      });
+      const fk = feld('runden-schluessel', 'Schlüssel K (4 Hex)', schluesselEingabe, (x) => {
+        schluesselEingabe = x;
+        eigeneEingaben = true;
+      });
       const zahl = B.zahl({ beschriftung: 'Runden R', min: 1, max: 4, wert: runden, beiWechsel: (n) => { runden = n; aktualisiere(); } });
       const wahl = radiogruppe(VARIANTEN, variante, 'variante', 'Variante', 'runden-variante', (x) => {
         variante = x;
@@ -269,6 +526,7 @@
       const element = h('div', { class: 'runden-steuerung' }, h('div', { class: 'labor-steuer' }, fb.element, fk.element, zahl.element), wahl.element, hinweisOrt, ergebnis);
       function aktualisiere() {
         const fehler = rechne();
+        if (p && id && erkenne(id, blockEingaben(block, schluessel), { block, schluessel, runden, variante })) return;
         AQ.clear(hinweisOrt);
         for (const f of fehler) hinweisOrt.appendChild(B.hinweis('warnung', f));
         if (variante === 'rm16' && p) hinweisOrt.appendChild(B.hinweis('info', 'RM-16: Zeilenrotation statt S-Box – Zeile z wird um z − 1 Stellen nach links rotiert (W3 §6).'));
@@ -297,7 +555,7 @@
       schalter.checked = schrittweise;
       const st = steuerung(() => {
         zeigeNachspiel();
-      });
+      }, 'runden');
       schalter.addEventListener('change', () => {
         schrittweise = schalter.checked;
         zeigeNachspiel();
@@ -373,7 +631,7 @@
         gekippt.schluessel.clear();
         zeige();
       });
-      const st = steuerung(() => zeige());
+      const st = steuerung(() => zeige(), 'lawine');
       r.flaeche.append(st.element, h('p', { class: 'text-2' }, 'Tippe ein Bit des Klartextblocks oder des Schlüssels an – es kippt. Lauf B rechnet mit den gekippten Bits.'), eingabe, zurueck, zaehlerOrt, laeufe);
       function zeige() {
         AQ.clear(eingabe);
@@ -583,6 +841,7 @@
           kacheln = null;
           return;
         }
+        if (erkenne('modi', { bits: [bits16(k), bits16(iv)] }, null)) return;
         const klar = Krypto.kryptos16.kacheln(pixel);
         const ecb = Krypto.kryptos16.modus(klar, k, 'ECB');
         const cbc = Krypto.kryptos16.modus(klar, k, 'CBC', iv);
@@ -643,6 +902,7 @@
         }
         const k = leseHex4(BEISPIEL.modiSchluessel);
         const iv = leseHex4(BEISPIEL.iv);
+        if (erkenne('fehler', { texte: [fehlerText], bits: [bits16(k), bits16(iv)] }, null)) return;
         if (!fehlerBits) {
           const zuBits = (l) => l.map(bits16).join('');
           fehlerBits = { ecb: zuBits(Krypto.kryptos16.modus(klar, k, 'ECB')), cbc: zuBits(Krypto.kryptos16.modus(klar, k, 'CBC', iv)) };
@@ -833,6 +1093,7 @@
           zeigeWeg(-1, []);
         } else {
           const s0 = Krypto.buchstabe(stellung0, 0);
+          if (verdrahtung === 'spec' && t && erkenne('enigma', { texte: [t], schluessel: [`st=${s0}`] }, { text: t, stellung0 })) return;
           enigmaAusgabe = Krypto.miniEnigma(t, s0, 'ver', opt);
           aus.setze(enigmaAusgabe);
           const liste = [...t].map((b, i) => {

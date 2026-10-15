@@ -51,16 +51,18 @@ test('Schritt für Schritt: Nachspiel deckt Matrizen einzeln auf', () => {
 });
 
 test('Lawine: Bit 1 kippen → Zähler = Krypto.kryptos16.lawine', () => {
+  // M11: eigenes Lawinen-Beispiel „OK“ mit K = 2B7E – „OK“/„OJ“ mit A36D ist die Aufgabe W3-L2-06
   const w = oeffne('runden', { voreinstellung: { reiter: ['lawine'] } });
+  assert.equal(w.zustand().schluessel, '2B7E');
   w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.gitter-bit[data-bit="1"]'));
-  assert.deepEqual(w.zustand().zaehler, K.kryptos16.lawine(0x4f4b, 0xa36d, 1).map((r) => r.anzahl));
-  assert.equal(w.k.alle(w.flaeche, '.lauf-b table.bitmatrix').at(-1).querySelectorAll('.anders').length, 12);
+  assert.deepEqual(w.zustand().zaehler, K.kryptos16.lawine(0x4f4b, 0x2b7e, 1).map((r) => r.anzahl));
+  assert.equal(w.k.alle(w.flaeche, '.lauf-b table.bitmatrix').at(-1).querySelectorAll('.anders').length, K.kryptos16.lawine(0x4f4b, 0x2b7e, 1).at(-1).anzahl);
   // zurückkippen → 0; Schlüsselbit kippen wirkt ebenfalls
   w.k.klick(w.k.eins(w.flaeche, '.lawine-klartext button.gitter-bit[data-bit="1"]'));
   assert.deepEqual(w.zustand().zaehler, [0, 0, 0, 0]);
   w.k.klick(w.k.eins(w.flaeche, '.lawine-schluessel button.gitter-bit[data-bit="16"]'));
-  const a = K.kryptos16.verschluesseln(0x4f4b, 0xa36d, { protokoll: true }).runden;
-  const b = K.kryptos16.verschluesseln(0x4f4b, 0xa36c, { protokoll: true }).runden;
+  const a = K.kryptos16.verschluesseln(0x4f4b, 0x2b7e, { protokoll: true }).runden;
+  const b = K.kryptos16.verschluesseln(0x4f4b, 0x2b7f, { protokoll: true }).runden;
   assert.deepEqual(w.zustand().zaehler, a.map((r, i) => [...K.xorBits(K.byteZuBits(r.nachTransposition, 16), K.byteZuBits(b[i].nachTransposition, 16))].filter((c) => c === '1').length));
   assert.match(w.text('table.lawine-zaehler'), /Runde 4/);
 });
@@ -115,11 +117,12 @@ test('Mini-Enigma: BACH → HHAF, CHEF ab E → EGBC, Walze dreht, Stromweg und 
   assert.equal(w.zustand().enigmaAusgabe, 'HHAF');
   assert.equal(w.zustand().stellung, 'E');
   assert.equal(w.k.text(w.k.eins(w.flaeche, 'table.enigma-stellungen tr[data-stellung="A"]')).replace(/[^A-H]/g, '').slice(1), K.miniEnigma.tabelle('A'));
-  const e = oeffne('runden', { voreinstellung: { reiter: ['enigma'], stellung: 'E' } });
-  e.k.tippe(e.k.eins(e.flaeche, 'textarea.labor-eingabe'), 'chef');
-  assert.equal(e.zustand().enigmaAusgabe, 'EGBC');
+  // M11: eigenes Wort ab C – „chef“ ab E ist die Akte W3·K2 (der Erkenner schaltet dort in den geführten Modus)
+  const e = oeffne('runden', { voreinstellung: { reiter: ['enigma'], stellung: 'C' } });
+  e.k.tippe(e.k.eins(e.flaeche, 'textarea.labor-eingabe'), 'cafe');
+  assert.equal(e.zustand().enigmaAusgabe, K.miniEnigma('CAFE', 'C'));
   e.k.taste(e.k.eins(e.flaeche, '.nachspiel'), 'Home');
-  assert.deepEqual(e.k.alle(e.flaeche, 'svg.stromweg [data-station]').map((x) => x.textContent), e.k.roh(K.miniEnigma.weg('C', 'E')).stationen);
+  assert.deepEqual(e.k.alle(e.flaeche, 'svg.stromweg [data-station]').map((x) => x.textContent), e.k.roh(K.miniEnigma.weg('C', 'C')).stationen);
 });
 
 test('Mini-Enigma: eigene Verdrahtung wird von der Bibliothek geprüft', () => {

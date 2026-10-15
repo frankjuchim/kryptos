@@ -4,7 +4,8 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 
-const WERKSTATT = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/bloecke.js', 'krypto/kopfzeile.js', 'krypto/werkstatt.js'];
+// M11 (Task 245): Erkenner mit den Baukasten-Daten wie in werkstatt.html
+const WERKSTATT = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'krypto/labor/erkenner.js', 'krypto/labor/erkenner/baukasten.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/bloecke.js', 'krypto/kopfzeile.js', 'krypto/werkstatt.js'];
 const SITZUNG = { status: 200, body: { rolle: 'schueler', name: 'Mika R.', kurs: { id: 'k:1', name: 'LK 13 (eA)', niveau: 'eA' }, kurse: [] } };
 const TEAM = { id: 1, nr: 1, name: 'Team Skytale' };
 const ARENA = (status = 'werkstatt', extra = {}) => ({ status: 200, body: { arena: { id: 4, status, angriffBis: null }, team: TEAM, eigene: null, teilnahme: 12, ...extra } });
@@ -428,4 +429,50 @@ test('K5: 401 mit Umleitung zum Portal löscht alle Werkstatt-Entwürfe (geteilt
   assert.match(k.window.location.href, /\/sso\/start\?ziel=/);
   assert.equal(k.window.localStorage.getItem('kr-werkstatt:12'), null);
   assert.equal(k.window.localStorage.getItem('kr-thema'), 'dunkel');
+});
+
+test('baukasten_probelauf_mit_aufgabenwerten_nicht_verfuegbar (M11, E209)', async () => {
+  // W3-L3-04: Umkehrung + Caesar 3 mit „boje“ – der Probelauf zeigt keinen Geheimtext, sondern den neutralen Hinweis
+  const k = lade({ 'GET /api/arena': ARENA() });
+  await k.ruhe();
+  const w = k.wert('KRWerkstatt');
+  w.setzeStufen([{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }]);
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-klartext'), 'boje');
+  await k.ruhe();
+  assert.equal(k.text(k.eins(k.document, 'output.werkstatt-geheimtext')), '–');
+  assert.equal(k.eins(k.document, 'p.werkstatt-nicht-verfuegbar').hidden, false);
+  assert.match(k.text(k.eins(k.document, 'p.werkstatt-nicht-verfuegbar')), /Probier eigene Werte aus/);
+  assert.doesNotMatch(k.text(k.document.body), /HMRE|hmre/i, 'kein Geheimtext von boje');
+  assert.equal(k.eins(k.document, 'details.werkstatt-zwischen').hidden, true);
+  // eigene Werte (neuer Seitenaufruf – der Verlauf seit dem Öffnen zählt mit, E213): frei
+  const f = lade({ 'GET /api/arena': ARENA() });
+  await f.ruhe();
+  f.wert('KRWerkstatt').setzeStufen([{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }]);
+  f.tippe(f.eins(f.document, 'textarea.werkstatt-klartext'), 'kahn');
+  await f.ruhe();
+  assert.equal(f.eins(f.document, 'p.werkstatt-nicht-verfuegbar').hidden, true);
+  assert.notEqual(f.text(f.eins(f.document, 'output.werkstatt-geheimtext')), '–');
+});
+
+test('einreichen_unberuehrt (M11): erkannte Werte sperren nur den Probelauf, nicht das Einreichen', async () => {
+  const gesendet = [];
+  const k = lade({
+    'GET /api/arena': ARENA(),
+    'POST /api/arena/4/chiffre': (b) => {
+      gesendet.push(b);
+      return { status: 200, body: { ok: true, geheimtext: 'XYZ' } };
+    }
+  });
+  await k.ruhe();
+  const w = k.wert('KRWerkstatt');
+  w.setzeStufen([{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }]);
+  // ein langer eigener Text, der mit „boje“ beginnt (Verlauf erkennt das Fenster)
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-klartext'), `boje ${TEXT1}`);
+  k.tippe(k.eins(k.document, 'textarea.werkstatt-beschreibung'), 'Umkehrung, dann Caesar.');
+  await k.ruhe();
+  assert.equal(knopf(k).disabled, false, 'Einreichen bleibt möglich');
+  k.klick(knopf(k));
+  await k.ruhe();
+  assert.equal(gesendet.length, 1);
+  assert.equal(gesendet[0].klartext, `boje ${TEXT1}`);
 });

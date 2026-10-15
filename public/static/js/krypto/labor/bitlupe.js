@@ -115,9 +115,127 @@
     const wurzel = h('div', { class: 'labor-werkzeug bitlupe-werkzeug' }, vorHinweise.map((t) => B.hinweis('warnung', t)), r.element);
     container.appendChild(wurzel);
 
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
+
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus; true = nichts ausgeben */
+    let sofort = !!fuehrung; // Panel (gefuehrt: true): der erste rechnende Aufbau startet geführt
+    function erkenne(id, eingaben, werte) {
+      if (sofort && mitGefuehrt && HOOKS[id]) {
+        sofort = false;
+        starteGefuehrt(id, werte);
+        return true;
+      }
+      return B.erkenne(r.flaeche, `bitlupe.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
+    }
+    /** ausgerichtete Bytepaare (Schlüssel wiederholt) als Bitfolgen für den Erkenner */
+    const bytepaare = (a, b) => a.map((x, i) => [Krypto.byteZuBits(x), Krypto.byteZuBits(b[Krypto.mod(i, b.length)])]);
+
+    /* ---------- Geführter Modus (M11 Task 245, E208): Byte für Byte, das aktuelle Bitpaar markiert ---------- */
+    /** werte = { links: Bytes, rechts: Bytes (gleich lang), titel: [oben, unten], ergebnis } */
+    function xorHook(container, werte) {
+      const a = Array.isArray(werte.links) ? werte.links.slice(0, MAX) : [];
+      const b = Array.isArray(werte.rechts) ? werte.rechts.slice(0, a.length) : [];
+      const [oben, unten] = werte.titel || ['Text', 'Schlüssel'];
+      const erg = werte.ergebnis || 'Ergebnis';
+      const tab = KRGefuehrt.raster(container, {
+        zeilen: 3,
+        spalten: a.length,
+        caption: `Byte für Byte: ${oben} ⊕ ${unten} (gleich → 0, verschieden → 1)`,
+        zeilenKopf: (z) => [oben, unten, erg][z],
+        spaltenKopf: (j) => `Byte ${j + 1}`,
+        inhalt: (z, j) => (z === 0 ? vierer(Krypto.byteZuBits(a[j])) : z === 1 ? vierer(Krypto.byteZuBits(b[j])) : null)
+      });
+      return {
+        schritte: a.map((_, j) => ({ text: `Byte ${j + 1}: Bit für Bit ${oben} ⊕ ${unten}`, feld: { beschriftung: `${erg} Byte ${j + 1} (8 Bit)`, art: 'bits' } })),
+        markiere(i, e) {
+          tab.markiere([[0, i], [1, i]]);
+          tab.leeren();
+          e.forEach((x, j) => x && tab.eintrag(2, j, vierer(KRGefuehrt.norm('bits', x))));
+        },
+        korrekt: () => a.map((x, j) => Krypto.xorBits(Krypto.byteZuBits(x), Krypto.byteZuBits(b[j])))
+      };
+    }
+    const HOOKS = { xor: xorHook, doppelnutzung: xorHook };
+    // Angaben bleiben im geführten Modus änderbar: Name → Feld im freien Modus
+    const FELD = { schluessel: 'input.xor-schluessel', c1: 'input.doppel-c1', c2: 'input.doppel-c2' };
+    let fokusAngabe = null;
+    function fokusName() {
+      const a = typeof document !== 'undefined' ? document.activeElement : null;
+      if (!a || !wurzel.contains(a)) return null;
+      if (a.dataset && a.dataset.name) return a.dataset.name;
+      const eintrag = Object.entries(FELD).find(([, sel]) => a.matches && a.matches(sel));
+      return eintrag ? eintrag[0] : null;
+    }
+    function starteGefuehrt(id, werte) {
+      const fokusFeld = fokusAngabe || fokusName();
+      fokusAngabe = null;
+      const fokus = !fokusFeld && typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      z = { bytes: [], ergebnisHex: '', cribErgebnis: '', statistik: null };
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Bit-Lupe',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          if (id === 'xor') {
+            text = '';
+            schluessel = '';
+          } else {
+            c1 = '';
+            c2 = '';
+          }
+          baue(id);
+        },
+        felder: {
+          felder: id === 'xor' ? [{ name: 'schluessel', beschriftung: 'Schlüssel', wert: schluessel, max: 300 }] : [{ name: 'c1', beschriftung: 'Geheimtext C1 (Hex)', wert: c1, max: 3 * MAX }, { name: 'c2', beschriftung: 'Geheimtext C2 (Hex)', wert: c2, max: 3 * MAX }],
+          fokus: fokusFeld,
+          beiAenderung: (w, name) => {
+            if (id === 'xor') schluessel = String(w.schluessel || '').slice(0, 300);
+            else {
+              c1 = String(w.c1 || '');
+              c2 = String(w.c2 || '');
+            }
+            fokusAngabe = name;
+            baue(id);
+            if (!gefuehrt) {
+              fokusAngabe = null;
+              B.fokusAmEnde(r.flaeche); // Text
+              const f = r.flaeche.querySelector(FELD[name]);
+              if (f) {
+                f.focus();
+                const n = String(f.value).length;
+                if (typeof f.setSelectionRange === 'function') f.setSelectionRange(n, n);
+              }
+            }
+          }
+        },
+        text: id === 'xor'
+          ? {
+              beschriftung: `Text (bis ${MAX} Zeichen)`,
+              wert: text,
+              fokus,
+              beiAenderung: (t) => {
+                text = t;
+                baue(id);
+                B.fokusAmEnde(r.flaeche);
+              }
+            }
+          : null
+      });
     }
 
     /* ======================= Zeichen ↔ Bits ======================= */
@@ -384,8 +502,9 @@
           zeigeBits();
           return;
         }
-        if (modus === 'wiederholung') hinweisOrt.appendChild(B.hinweis('info', 'Der Schlüssel wird wiederholt – das ist kein One-Time-Pad.'));
         const strom = textBytes.map((_, i) => sBytes[Krypto.mod(i, sBytes.length)]);
+        if (erkenne('xor', { bitpaare: bytepaare(textBytes, sBytes) }, { links: textBytes, rechts: strom, titel: ['Text', 'Schlüssel'] })) return;
+        if (modus === 'wiederholung') hinweisOrt.appendChild(B.hinweis('info', 'Der Schlüssel wird wiederholt – das ist kein One-Time-Pad.'));
         const t = bitsVon(textBytes);
         const s = bitsVon(strom);
         const e = Krypto.xorBits(t, s);
@@ -480,6 +599,7 @@
           return;
         }
         const n = Math.min(b1.length, b2.length, MAX);
+        if (n && erkenne('doppelnutzung', { bitpaare: bytepaare(b1.slice(0, n), b2.slice(0, n)) }, { links: b1.slice(0, n), rechts: b2.slice(0, n), titel: ['C1', 'C2'], ergebnis: 'C1 ⊕ C2' })) return;
         if (b1.length !== b2.length) hinweisOrt.appendChild(B.hinweis('info', `C1 und C2 sind verschieden lang – verglichen werden die ersten ${n} Bytes.`));
         const ergebnisHex = n ? Krypto.xor(b1.slice(0, n), b2.slice(0, n)) : '';
         const bytes = n ? Krypto.vonHex(ergebnisHex) : [];

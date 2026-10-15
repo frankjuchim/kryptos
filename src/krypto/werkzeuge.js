@@ -16,12 +16,12 @@ const WERKZEUGE = Object.freeze([
   eintrag('scheibe', 'Chiffrierscheibe', 0, ['text', 'k', 'basis', 'richtung', 'reiter'], ['scheibe', 'text', 'alle'], true),
   eintrag('haeufigkeit', 'Häufigkeits-Analysator', 1, ['text', 'ansicht', 'teiltexte', 'reiter'], ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen']),
   eintrag('substitution', 'Substitutions-Werkbank', 1, ['text', 'vorgabe'], []),
-  eintrag('vigenere', 'Vigenère-Werkbank', 2, ['text', 'schluessellaenge', 'modus', 'richtung', 'reiter'], ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur']),
+  eintrag('vigenere', 'Vigenère-Werkbank', 2, ['text', 'schluessel', 'schluessellaenge', 'modus', 'richtung', 'reiter'], ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur']),
   eintrag('bitlupe', 'Bit-Lupe', 3, ['text', 'bits', 'schluessel', 'modus', 'reiter', 'schluesselart', 'c1', 'c2'], ['zeichen', 'xor', 'doppelnutzung']),
-  eintrag('runden', 'Runden-Labor', 3, ['block', 'schluessel', 'runden', 'variante', 'stellung', 'reiter'], ['runden', 'lawine', 'verfolgung', 'modi', 'fehler', 'enigma']),
-  eintrag('modulo', 'Modulo-Uhr & Farbmischer', 4, ['modul', 'p', 'g', 'a', 'reiter'], ['uhr', 'tabelle', 'inverses', 'farbmischer']),
-  eintrag('rsa', 'RSA-Rechenwerk', 4, ['p', 'q', 'e', 'reiter'], ['rechenwerk', 'euklid', 'text']),
-  eintrag('hash', 'Hash-Labor', 5, ['text', 'reiter'], ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme']),
+  eintrag('runden', 'Runden-Labor', 3, ['block', 'schluessel', 'runden', 'variante', 'stellung', 'text', 'reiter'], ['runden', 'lawine', 'verfolgung', 'modi', 'fehler', 'enigma']),
+  eintrag('modulo', 'Modulo-Uhr & Farbmischer', 4, ['modul', 'p', 'g', 'a', 'b', 'op', 'alice', 'bob', 'reiter'], ['uhr', 'tabelle', 'inverses', 'farbmischer']),
+  eintrag('rsa', 'RSA-Rechenwerk', 4, ['p', 'q', 'e', 'm', 'richtung', 'text', 'reiter'], ['rechenwerk', 'euklid', 'text']),
+  eintrag('hash', 'Hash-Labor', 5, ['text', 'text2', 'reiter'], ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme']),
   eintrag('signatur', 'Signatur- & Zertifikats-Simulator', 5, ['szene', 'reiter'], ['signatur', 'zertifikat', 'mitm']),
   // M10: Werkstatt-Stationen
   eintrag('quadrat', 'Polybios & Playfair', 0, ['text', 'schluesselwort', 'richtung', 'reiter'], ['polybios', 'playfair']),
@@ -36,6 +36,8 @@ const WERTE = Object.freeze({
   richtung: Object.freeze(['ver', 'ent']),
   modus: Object.freeze({ vigenere: Object.freeze(['vigenere', 'autokey', 'porta', 'pendel', 'frei']), bitlupe: Object.freeze(['otp', 'wiederholung']) }),
   variante: Object.freeze({ runden: Object.freeze(['kryptos16', 'ohneSBox', 'rm16']) }),
+  // M11 (Task 245): Rechenart der Modulo-Uhr
+  op: Object.freeze({ modulo: Object.freeze(['plus', 'mal', 'hoch']) }),
   // M7 Task 153: Schreibweise des Bit-Lupe-Schlüssels (Funkraum „Der doppelte Schlüssel“: Hex)
   schluesselart: Object.freeze({ bitlupe: Object.freeze(['text', 'hex', 'bits']) }),
   // M10 E194: Größe der Fleißner-Schablone (4 × 4 Standard, 6 × 6 Zusatz), Umkehrwalze, Leseregel der Nullchiffre

@@ -54,6 +54,7 @@
     const verfahren = VERFAHREN.filter((x) => !x.regel || KRLabor.erlaubt(x.regel, umgebung));
     const z = { verfahren: 'skytale', text: 0, eigen: '', vorhersage: null, gezeigt: false, leistung: 9, laenge: 30, serie: 0, beste: 0, aufgabe: null, status: null, fall: null, urteil: null };
     let teil = null;
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null; // M11: Aufgabenwerte → nicht verfügbar (E209)
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     const wurzel = h('div', { class: 'labor-werkzeug analyse-werkzeug' }, h('p', { class: 'analyse-einleitung text-2' }, 'Hier untersuchst du Verfahren wie ein Angreifer: Was verrät die Häufigkeit der Buchstaben? Wie viele Schlüssel gibt es? Und kannst du vorhersagen, was ein Verfahren tut, bevor das Werkzeug es zeigt?'), r.element);
@@ -97,7 +98,8 @@
       function zeige() {
         const x = aktuell();
         const kt = klartext();
-        const gt = kt ? x.f(kt) : '';
+        const gesperrt = !!z.eigen && B.erkenne(r.flaeche, 'analyse.vergleich', { texte: [z.eigen] }, umgebung, erkVerlauf) !== 'frei';
+        const gt = kt && !gesperrt ? x.f(kt) : '';
         z.geheimtext = gt;
         for (const k of chips.querySelectorAll('button')) k.setAttribute('aria-pressed', String(k.dataset.verfahren === x.id));
         for (const k of textChips.querySelectorAll('button')) k.setAttribute('aria-pressed', String(!z.eigen && Number(k.dataset.text) === z.text));

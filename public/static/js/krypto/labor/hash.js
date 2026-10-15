@@ -80,9 +80,165 @@
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     container.appendChild(h('div', { class: 'labor-werkzeug hash-werkzeug' }, r.element));
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let sofort = !!fuehrung; // Panel (gefuehrt: true): der erste rechnende Aufbau startet geführt
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus bzw. „nicht verfügbar“; true = nichts ausgeben */
+    function erkenne(id, eingaben, werte) {
+      if (sofort && mitGefuehrt && HOOKS[id]) {
+        sofort = false;
+        starteGefuehrt(id, werte);
+        return true;
+      }
+      return B.erkenne(r.flaeche, `hash.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
+    }
+
+    /* ---------- Geführter Modus (M11 Task 245, E208): Rundentabelle, Summenzeilen, Salz + Passwort ---------- */
+    const zf = (beschriftung) => ({ beschriftung, art: 'zahl' });
+    const oder = (x) => (x === '' || x === undefined || x === null ? '…' : String(x).trim());
+    /** werte = { text } – je Buchstabe 3 · h + w, dann mod 29 */
+    function schritteHook(container, werte) {
+      const n = normal(werte.text || '');
+      const b = [...n].slice(0, 60);
+      const w = b.length ? Krypto.zahlen(b.join('')) : [];
+      const tab = KRGefuehrt.raster(container, {
+        zeilen: b.length,
+        spalten: 4,
+        caption: `Rundentabelle KRYPTOS-Hash für „${n}“: h ← (3 · h + w) mod 29, Start h = 0`,
+        zeilenKopf: (i) => b[i],
+        spaltenKopf: (j) => ['w', 'h vorher', '3 · h + w', 'h neu'][j],
+        inhalt: (i, j) => (j === 0 ? String(w[i]) : j === 1 && i === 0 ? '0' : null)
+      });
+      const schritte = [];
+      b.forEach((x, i) => {
+        schritte.push({ text: (e) => `Runde ${i + 1}: ${x} (w = ${w[i]}): 3 · ${i === 0 ? 0 : oder(e[2 * i - 1])} + ${w[i]}`, feld: zf('3 · h + w') });
+        schritte.push({ text: (e) => `Runde ${i + 1}: h neu = ${oder(e[2 * i])} mod 29`, feld: zf('h neu') });
+      });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.forEach((x, j) => {
+            if (!x) return;
+            const { q: zl, r: sp } = Krypto.teileMitRest(j, 2);
+            tab.eintrag(zl, sp + 2, x);
+            if (sp === 1 && zl + 1 < b.length) tab.eintrag(zl + 1, 1, x);
+          });
+          const { q: zl, r: sp } = Krypto.teileMitRest(i, 2);
+          tab.markiere(sp === 0 ? [[zl, 0], [zl, 1]] : [[zl, 2]]);
+        },
+        korrekt: () => Krypto.kryptosHash(n, { protokoll: true }).schritte.flatMap((s) => [String(s.summe), String(s.nachher)])
+      };
+    }
+    /** werte = { texte: [t1, t2] } – Summe, S, gewichtete Summe, G je Text */
+    function pruefsummeHook(container, werte) {
+      const texte = (werte.texte || []).map((t) => normal(t).slice(0, 30)).filter(Boolean);
+      const schritte = [];
+      texte.forEach((t, k) => {
+        const w = Krypto.zahlen(t);
+        KRGefuehrt.raster(container, { zeilen: 2, spalten: t.length, caption: `Text ${k + 1}: „${t}“ (Position i ab 1, A = 1 … Z = 26)`, zeilenKopf: (z) => ['i', 'wᵢ'][z], spaltenKopf: (j) => t[j], inhalt: (z, j) => String(z === 0 ? j + 1 : w[j]) });
+        const basis = schritte.length;
+        schritte.push({ text: `Text ${k + 1}: Summe aller wᵢ`, feld: zf('Summe') });
+        schritte.push({ text: (e) => `Text ${k + 1}: S = ${oder(e[basis])} mod 29`, feld: zf('S') });
+        schritte.push({ text: `Text ${k + 1}: gewichtete Summe Σ i · wᵢ`, feld: zf('Σ i · wᵢ') });
+        schritte.push({ text: (e) => `Text ${k + 1}: G = ${oder(e[basis + 2])} mod 29`, feld: zf('G') });
+      });
+      const band = KRGefuehrt.band(container, 'Deine Summenzeilen');
+      return {
+        schritte,
+        markiere(i, e) {
+          band.setze(e);
+        },
+        korrekt() {
+          const aus = [];
+          for (const t of texte) {
+            const w = Krypto.zahlen(t);
+            let summe = 0;
+            let gewichtet = 0;
+            w.forEach((x, j) => {
+              summe += x;
+              gewichtet += (j + 1) * x;
+            });
+            aus.push(String(summe), String(Krypto.pruefsumme(t, 'summe')), String(gewichtet), String(Krypto.pruefsumme(t, 'gewichtet')));
+          }
+          return aus;
+        }
+      };
+    }
+    const HOOKS = { schritte: schritteHook, passwort: schritteHook, pruefsumme: pruefsummeHook };
+    // Prüfsummen: beide Texte bleiben im geführten Modus änderbar
+    const FELD = { a: 'input.pruef-a', b: 'input.pruef-b' };
+    let fokusAngabe = null;
+    function fokusName() {
+      const a = typeof document !== 'undefined' ? document.activeElement : null;
+      if (!a || !r.flaeche.contains(a)) return null;
+      if (a.dataset && a.dataset.name) return a.dataset.name;
+      const eintrag = Object.entries(FELD).find(([, sel]) => a.matches && a.matches(sel));
+      return eintrag ? eintrag[0] : null;
+    }
+    function starteGefuehrt(id, werte) {
+      const fokusFeld = fokusAngabe || fokusName();
+      fokusAngabe = null;
+      const fokus = !fokusFeld && typeof document !== 'undefined' && document.activeElement && r.flaeche.contains(document.activeElement);
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Hash-Labor',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          if (id === 'schritte') schritt.text = '';
+          else if (id === 'pruefsumme') Object.assign(pruef, { a: '', b: '' });
+          else if (pw.konten) for (const k of pw.konten) k.passwort = '';
+          baue(id);
+        },
+        felder: id === 'pruefsumme'
+          ? {
+              felder: [{ name: 'a', beschriftung: 'Text 1 (bis 30 Zeichen)', wert: pruef.a, max: 30 }, { name: 'b', beschriftung: 'Text 2 (bis 30 Zeichen)', wert: pruef.b, max: 30 }],
+              fokus: fokusFeld,
+              beiAenderung: (w, name) => {
+                pruef.a = String(w.a || '');
+                pruef.b = String(w.b || '');
+                fokusAngabe = name;
+                baue(id);
+                if (!gefuehrt) {
+                  fokusAngabe = null;
+                  const f = r.flaeche.querySelector(FELD[name]);
+                  if (f) {
+                    f.focus();
+                    const n = String(f.value).length;
+                    if (typeof f.setSelectionRange === 'function') f.setSelectionRange(n, n);
+                  }
+                }
+              }
+            }
+          : null,
+        text: id === 'schritte'
+          ? {
+              beschriftung: 'Text (bis 60 Zeichen)',
+              max: 60,
+              wert: schritt.text,
+              fokus,
+              beiAenderung: (t) => {
+                schritt.text = t;
+                baue(id);
+                B.fokusAmEnde(r.flaeche);
+              }
+            }
+          : null
+      });
     }
 
     /* ======================= Schritt für Schritt ======================= */
@@ -99,6 +255,7 @@
         AQ.clear(ort);
         AQ.clear(nsOrt);
         const n = normal(schritt.text);
+        if (n && erkenne('schritte', { texte: [schritt.text] }, { text: schritt.text })) return;
         norm.textContent = `normalisiert: ${n || '(leer)'}`;
         const kh = Krypto.kryptosHash(schritt.text, { protokoll: true });
         z.wert = kh.wert;
@@ -271,6 +428,11 @@
         z.baukasten = { wort: null, beitrag: null };
         bau.aus = null;
         knopf.disabled = true;
+        if (w && erkenne('baukasten', { texte: [w] }, null)) {
+          anzeige.textContent = '';
+          beitrag.textContent = '';
+          return;
+        }
         if (w.length < 2) {
           anzeige.textContent = 'Das Wort braucht mindestens zwei Buchstaben.';
           beitrag.textContent = '';
@@ -351,6 +513,11 @@
         return pw.verfahren === 'kh' ? Krypto.kryptosHash(eingabe).wert : Krypto.sha256(eingabe).slice(0, 16);
       };
       function rechne() {
+        for (const k of pw.konten) {
+          if (!k.passwort) continue;
+          const t = (pw.ohneSalz ? '' : k.salz) + k.passwort;
+          if (pw.verfahren === 'kh' && erkenne('passwort', { texte: [t], schluessel: pw.ohneSalz ? [] : [k.salz] }, { text: t })) return;
+        }
         AQ.clear(tabelleOrt);
         z.konten = pw.konten.map((k) => ({ name: k.name, salz: k.salz, wert: gespeichert(k, k.passwort) }));
         const werte = z.konten.map((k) => k.wert);
@@ -378,7 +545,7 @@
     }
 
     /* ======================= Prüfsummen ======================= */
-    const pruef = { a: BEISPIEL.pruefA, b: BEISPIEL.pruefB };
+    const pruef = { a: vText ?? BEISPIEL.pruefA, b: typeof v.text2 === 'string' && v.text2.length <= 30 ? v.text2 : BEISPIEL.pruefB };
     function bauePruefsumme() {
       const fa = feld('pruef-a', 'Text 1 (bis 30 Zeichen)', pruef.a, 30, (t) => { pruef.a = t; rechne(); });
       const fb = feld('pruef-b', 'Text 2 (bis 30 Zeichen)', pruef.b, 30, (t) => { pruef.b = t; rechne(); });
@@ -391,6 +558,7 @@
         g
       );
       function rechne() {
+        if (erkenne('pruefsumme', { texte: [pruef.a, pruef.b] }, { texte: [pruef.a, pruef.b] })) return;
         const S = [Krypto.pruefsumme(pruef.a, 'summe'), Krypto.pruefsumme(pruef.b, 'summe')];
         const G = [Krypto.pruefsumme(pruef.a, 'gewichtet'), Krypto.pruefsumme(pruef.b, 'gewichtet')];
         z.pruefsummen = { S, G };

@@ -15,6 +15,7 @@ const { oeffne, Krypto: K } = require('./hilfen_labor');
 
 const S = { rolle: 'schueler' };
 const TEIL_1 = ['scheibe', 'skytale', 'quadrat', 'vigenere', 'haeufigkeit'];
+const TEIL_2 = ['bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'analyse'];
 const MAX_JE_REITER = 25; // Fälle je Reiter (verschiedene Eingaben; Laufzeit)
 
 /** Verrat-Zustände je Reiter (einmal) */
@@ -47,7 +48,8 @@ function alleTexte(el) {
   if (el.nodeType === 3) return [el.textContent];
   if (el.nodeType !== 1) return [];
   const eigene = el.getAttributeNames().map((n) => el.getAttribute(n));
-  if (typeof el.value === 'string' && el.localName === 'input') eigene.push(el.value);
+  // Werte der Eingabefelder; die änderbaren Angaben im geführten Abschnitt sind die eigenen Eingaben (kein Ergebnis)
+  if (typeof el.value === 'string' && el.localName === 'input' && !el.classList.contains('gefuehrt-angabe')) eigene.push(el.value);
   return [...eigene, ...el.childNodes.flatMap(alleTexte)];
 }
 /** DOM ohne Einträge und ohne Texte anderer Schritte (Kein-Orakel-Vergleich) */
@@ -75,7 +77,10 @@ function verrat(w, p) {
   const texte = alleTexte(w.flaeche);
   const ganz = texte.join(' ');
   const zahlen = ohnePositionen(w.flaeche).join(' ').split(/[^\d,]+/).filter((x) => /\d/.test(x));
-  const ausgaben = [{ art: 'text', wert: ganz }, { art: 'bits', wert: ganz }, ...zahlen.map((x) => ({ art: 'zahl', wert: x.replace(/^,|,$/g, '') }))];
+  // Bits nur aus Läufen von Vierergruppen (so zeigen die Werkzeuge Bits): einzelne Ziffern aus „Byte 1“, „Schritt 1
+  // von 1“ würden sonst mit benachbarten Bitgruppen zu Scheintreffern verschmelzen
+  const bitLaeufe = (ganz.match(/[01]{4}(?: ?[01]{4})*/g) || []).map((b) => ({ art: 'bits', wert: b }));
+  const ausgaben = [{ art: 'text', wert: ganz }, ...bitLaeufe, ...zahlen.map((x) => ({ art: 'zahl', wert: x.replace(/^,|,$/g, '') }))];
   return P.istVerrat(ausgaben, p);
 }
 
@@ -119,7 +124,7 @@ function pruefeFall(wr, { p, z }, { allesFuer = 2 } = {}) {
   return w;
 }
 
-for (const id of TEIL_1) {
+for (const id of [...TEIL_1, ...TEIL_2]) {
   test(`k12_${id}_gefuehrt_ohne_loesung_kein_orakel`, () => {
     const f = alleFaelle();
     let n = 0;
@@ -266,4 +271,129 @@ test('weitertippen_nach_umschalten', () => {
     assert.equal(K.nurBuchstaben(tf.value), K.nurBuchstaben(text), `${wr}: ganzer Text im Feld`);
     if (n) assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), new RegExp(`von ${n}\\b`), `${wr}: alle Schritte`);
   }
+});
+
+/* ---------- Teil 2 (Task 245): Beispiele aus dem Plan ---------- */
+
+const panel = (id, v, aufgabe) => oeffne(id, { voreinstellung: v, umgebung: { ...S, gefuehrt: { aufgabe } }, ruhig: true });
+const freigabe = (w, aufgabe) => w.k.wert('KRGefuehrt').freigeben(aufgabe);
+
+test('k12_beispiel_rsa_w4_l2_04', () => {
+  // p = 3, q = 17, e = 5 (W4-L2-04): Schritte N, φ, d leer – kein N = 51, φ = 32, d = 13
+  const w = geoeffnet('rsa', { reiter: ['rechenwerk'], p: 3, q: 17, e: 5, m: 2 });
+  assert.ok(hat(w, 'section.gefuehrt'), 'p, q, e der Aufgabe werden erkannt');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /Schritt 1 von \d+: N = 3 · 17/);
+  const zellen = w.k.alle(w.flaeche, '.gefuehrt-mechanik .gefuehrt-eintrag').map((e) => w.k.text(e));
+  assert.ok(zellen.every((x) => x === ''), 'alle Ergebnisfelder leer');
+  const mechanik = `${w.k.text(w.k.eins(w.flaeche, '.gefuehrt-mechanik'))} ${w.k.text(w.k.eins(w.flaeche, '.gefuehrt-schritte'))}`;
+  assert.ok(!/\b(51|32|13)\b/.test(mechanik), 'weder N noch φ noch d in Mechanik und Schritten (die Auswahl p, q listet alle Primzahlen)');
+});
+
+test('k12_beispiel_bitlupe_w3_l1_02', () => {
+  const w = geoeffnet('bitlupe', { reiter: ['xor'], text: K.bitsZuText('01100011'), schluessel: '11010101', schluesselart: 'bits', modus: 'otp' });
+  assert.ok(hat(w, 'section.gefuehrt'));
+  assert.equal(markiert(w).length, 2, 'das Bitpaar (Text- und Schlüsselbyte) ist markiert');
+  assert.ok(!K.normBits(w.k.text(w.flaeche)).includes('10110110'), 'kein Ergebnis 1011 0110');
+});
+
+test('k12_beispiel_mini_enigma_w3_l5_01', () => {
+  // FADE in Stellung A: Stufe für Stufe; keine Lampe vor der Freigabe, danach die richtige
+  const w = panel('runden', { reiter: ['enigma'], stellung: 'A', text: 'FADE' }, 'W3-L5-01');
+  assert.ok(hat(w, 'section.gefuehrt'));
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /von 28: Buchstabe 1 \(F, Stellung A, s = 0\): Station 1/);
+  assert.equal(w.k.alle(w.flaeche, '.lampe.leuchtet').length, 0, 'keine Lampe vor der Freigabe');
+  assert.ok(!K.normalisieren(w.k.text(w.flaeche)).includes('CHEA'));
+  // Hervorhebung nur der Eingabeseite: Station 1 markiert den Eingangsbuchstaben F in der Buchstabenzeile
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.equal(w.k.text(m[0]).replace(/[^A-H]/g, ''), 'F');
+  freigabe(w, 'W3-L5-01');
+  assert.equal(w.k.alle(w.flaeche, '.lampe.leuchtet').length, 1, 'nach der Freigabe leuchtet die Lampe des Buchstabens');
+});
+
+test('k12_beispiel_hash_w5_l1_02', () => {
+  // TEE: Rundentabelle, h vorher aus den Einträgen
+  const w = geoeffnet('hash', { reiter: ['schritte'], text: 'tee' });
+  assert.ok(hat(w, 'section.gefuehrt'));
+  BED.trage(w, 0, '20');
+  BED.trage(w, 1, '20');
+  BED.gehe(w, 2);
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /3 · 20 \+ 5/, 'h vorher kommt aus dem Eintrag');
+});
+
+test('k12_beispiel_keine_warnung_vor_freigabe_w4_l3_07', () => {
+  // RSA-Warnungen wären selbst Antworten: W4-L2-07 (p = 5, q = 13, e = 7 – „schwacher Schlüssel, d = e“ beantwortet b)
+  // → geführt, keine Warnungsliste vor der Freigabe
+  const x = geoeffnet('rsa', { reiter: ['rechenwerk'], p: 5, q: 13, e: 7, m: 2 });
+  assert.ok(hat(x, 'section.gefuehrt'));
+  assert.equal(x.k.alle(x.flaeche, 'ul.rsa-warnungen li').length, 0);
+  assert.doesNotMatch(x.k.text(x.flaeche), /schwacher Schlüssel|Fixpunkt|teilerfremd/);
+  // W4-L3-07 (e = 6 zu φ = 60): e lässt sich nur aus Krypto.rsa.eKandidaten wählen – keine Warnung „nicht teilerfremd“
+  const w = geoeffnet('rsa', { reiter: ['rechenwerk'], p: 7, q: 11 });
+  assert.ok(!w.k.alle(w.flaeche, 'select.rsa-e option').some((o) => o.value === '6'));
+  assert.doesNotMatch(w.k.text(w.flaeche), /teilerfremd/);
+});
+
+test('nicht_verfuegbar_hinweis', () => {
+  const nv = (w) => hat(w, '.labor-nicht-verfuegbar') && !hat(w, 'section.gefuehrt');
+  const h = geoeffnet('hash', { reiter: ['baukasten'], text: 'hafen' });
+  assert.ok(nv(h), 'hash.baukasten mit hafen');
+  assert.doesNotMatch(w0(h), /KH\(hafen\)/);
+  const s = geoeffnet('scheibe', { reiter: ['alle'], text: 'IMOTQ' });
+  assert.ok(nv(s), 'scheibe.alle mit IMOTQ');
+  // eigene Werte: frei
+  const f = geoeffnet('hash', { reiter: ['baukasten'], text: 'zange' });
+  assert.ok(!hat(f, '.labor-nicht-verfuegbar'));
+});
+function w0(w) {
+  return w.k.text(w.flaeche);
+}
+
+test('schubfach_beispiel_ohne_ziel_treffer', () => {
+  // Die Kollisionssuche ist frei (kein Lösungsbezug); ihr Beispielwort und die Beispiele der Prüfsummen treffen keine
+  // Hash-Zielwerte einer Aufgabe
+  for (const p of P.prueflinge()) {
+    for (const t of ['kamin', 'segel', 'segem', 'zange', 'eimer', 'reime']) {
+      const v = P.istVerrat([{ art: 'text', wert: t }, { art: 'zahl', wert: String(K.kryptosHash(t).wert) }], p);
+      assert.equal(v.verrat, false, `${p.id}: Beispiel ${t} trifft ${v.wert}`);
+    }
+  }
+});
+
+test('weitertippen_in_zahlenfeldern', () => {
+  // Browser-Befund (Task 245): Mehrere Felder (Modulo, Runden, Prüfsummen) – die Erkennung schlägt oft schon vor dem
+  // letzten Feld an. Die Angaben bleiben im geführten Abschnitt änderbar, der Fokus bleibt im Feld.
+  const doc = (w) => w.flaeche.ownerDocument;
+  const tippeFeld = (w, sel, text) => {
+    const f = w.k.alle(w.flaeche, sel)[0];
+    assert.ok(f, `Feld ${sel}`);
+    f.value = '';
+    f.focus();
+    w.k.tippe(f, text); // mit maxlength Zeichen für Zeichen, folgt dem Fokus wie der Browser
+    const akt = doc(w).activeElement;
+    assert.ok(akt && akt.localName === 'input', `Fokus bleibt in einem Eingabefeld (${sel})`);
+  };
+  // Farbmischer W4-L1-05 (p = 13, g = 2, a = 2, b = 8): Felder der Reihe nach, im geführten Modus über data-name
+  const w = geoeffnet('modulo', { reiter: ['farbmischer'], p: 37, g: 2, alice: 5, bob: 9 });
+  for (const [k, v] of [['p', '13'], ['g', '2'], ['a', '2'], ['b', '8']]) tippeFeld(w, hat(w, 'section.gefuehrt') ? `input.gefuehrt-angabe[data-name="${k}"]` : `input.dh-${k}`, v);
+  assert.ok(hat(w, 'section.gefuehrt'));
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /A = 2\^2 mod 13/);
+  assert.deepEqual(w.k.alle(w.flaeche, 'input.gefuehrt-angabe').map((f) => f.value), ['13', '2', '2', '8']);
+  // Prüfsummen W5-L1-05 (regal/lager)
+  const h = geoeffnet('hash', { reiter: ['pruefsumme'], text: 'palme' });
+  tippeFeld(h, 'input.pruef-a', 'regal');
+  tippeFeld(h, hat(h, 'section.gefuehrt') ? 'input.gefuehrt-angabe[data-name="b"]' : 'input.pruef-b', 'lager');
+  assert.ok(hat(h, 'section.gefuehrt'));
+  assert.deepEqual(h.k.alle(h.flaeche, 'input.gefuehrt-angabe').map((f) => f.value), ['regal', 'lager']);
+  // RSA: Auswahl p, q (W4-L2-04) – e bleibt wählbar
+  const r = geoeffnet('rsa', { reiter: ['rechenwerk'] });
+  r.k.waehle(r.k.eins(r.flaeche, 'select.rsa-p'), '3');
+  r.k.waehle(hat(r, 'section.gefuehrt') ? r.k.eins(r.flaeche, 'select.gefuehrt-angabe[data-name="q"]') : r.k.eins(r.flaeche, 'select.rsa-q'), '17');
+  assert.ok(hat(r, 'section.gefuehrt'));
+  r.k.waehle(r.k.eins(r.flaeche, 'select.gefuehrt-angabe[data-name="e"]'), '5');
+  assert.match(r.k.text(r.k.eins(r.flaeche, '.gefuehrt-mechanik')), /e = 5/);
+  // eigene Werte im geführten Abschnitt → wieder frei
+  r.k.waehle(r.k.eins(r.flaeche, 'select.gefuehrt-angabe[data-name="q"]'), '19');
+  assert.ok(!hat(r, 'section.gefuehrt'), 'p = 3, q = 19: frei');
+  assert.equal(r.zustand().q, 19);
 });

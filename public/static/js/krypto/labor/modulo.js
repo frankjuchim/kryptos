@@ -137,13 +137,215 @@
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     const wurzel = h('div', { class: 'labor-werkzeug modulo-werkzeug' }, r.element);
     container.appendChild(wurzel);
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let sofort = !!fuehrung; // Panel (gefuehrt: true): der erste rechnende Aufbau startet geführt
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus; true = nichts ausgeben */
+    function erkenne(id, zahlen, werte) {
+      if (sofort && mitGefuehrt && HOOKS[id]) {
+        sofort = false;
+        starteGefuehrt(id, werte);
+        return true;
+      }
+      return B.erkenne(r.flaeche, `modulo.${id}`, { zahlen }, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
+    }
+
+    /* ---------- Geführter Modus (M11 Task 245, E208): Produktketten und Schrittzeilen aus den Einträgen ---------- */
+    const zahlFeldG = (beschriftung) => ({ beschriftung, art: 'zahl' });
+    const oder = (x) => (x === '' || x === undefined || x === null ? '…' : String(x).trim());
+    /** werte = { m, a, b, op } */
+    function uhrHook(container, werte) {
+      const { m, a, b } = werte;
+      if (werte.op === 'plus' || werte.op === 'mal') {
+        const zeichen = werte.op === 'plus' ? '+' : '·';
+        const tab = KRGefuehrt.raster(container, { zeilen: 1, spalten: 3, caption: `${a} ${zeichen} ${b} mod ${m}: Wert = q · ${m} + Rest`, zeilenKopf: () => `${a} ${zeichen} ${b}`, spaltenKopf: (j) => ['Wert', 'q', 'Rest'][j] });
+        return {
+          schritte: [
+            { text: `Rechne ${a} ${zeichen} ${b}.`, feld: zahlFeldG('Wert') },
+            { text: (e) => `Wie oft passt ${m} ganz in ${oder(e[0])}? (q)`, feld: zahlFeldG('q') },
+            { text: (e) => `Rest: ${oder(e[0])} − ${oder(e[1])} · ${m}`, feld: zahlFeldG('Rest') }
+          ],
+          markiere(i, e) {
+            tab.leeren();
+            e.forEach((x, j) => x && tab.eintrag(0, j, x));
+            tab.kopfMarke([], [i]);
+          },
+          korrekt() {
+            const wert = werte.op === 'plus' ? a + b : a * b;
+            const { q, r: rest } = Krypto.teileMitRest(wert, m);
+            return [String(wert), String(q), String(rest)];
+          }
+        };
+      }
+      const n = Math.max(1, Math.min(30, b));
+      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 2, caption: `Potenzkette ${a}ˣ mod ${m}: Produkt mit der Basis, dann den Rest`, zeilenKopf: (x) => `${a}${hochgestellt(x + 1)}`, spaltenKopf: (j) => ['Produkt', `mod ${m}`][j], inhalt: (x, j) => (x === 0 && j === 0 ? String(a) : null) });
+      const schritte = [];
+      const ziel = [];
+      for (let x = 1; x <= n; x++) {
+        if (x > 1) {
+          const vor = schritte.length - 1;
+          schritte.push({ text: (e) => `${a}${hochgestellt(x)}: ${oder(e[vor])} · ${a} (Rest von ${a}${hochgestellt(x - 1)} mal Basis)`, feld: zahlFeldG('Produkt') });
+          ziel.push([x - 1, 0]);
+        }
+        const pr = schritte.length - 1;
+        schritte.push({ text: (e) => `${a}${hochgestellt(x)} mod ${m}: Rest von ${x === 1 ? a : oder(e[pr])} bei Division durch ${m}`, feld: zahlFeldG('Rest') });
+        ziel.push([x - 1, 1]);
+      }
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.forEach((x, j) => x && tab.eintrag(ziel[j][0], ziel[j][1], x));
+          const [zl, sp] = ziel[i];
+          tab.markiere(sp === 1 ? [[zl, 0]] : [[zl - 1, 1]]);
+        },
+        korrekt() {
+          const aus = [];
+          for (let x = 1; x <= n; x++) {
+            if (x > 1) aus.push(String(Krypto.modpow(a, x - 1, m) * a));
+            aus.push(String(Krypto.modpow(a, x, m)));
+          }
+          return aus;
+        }
+      };
+    }
+    /** werte = { m, g } */
+    function tabelleHook(container, werte) {
+      const { m, g } = werte;
+      const tab = KRGefuehrt.raster(container, { zeilen: m - 1, spalten: 1, caption: `${g}ˣ mod ${m}: jede Zeile = vorige Zeile · ${g} mod ${m}`, zeilenKopf: (x) => `x = ${x + 1}`, spaltenKopf: () => `${g}ˣ mod ${m}` });
+      const schritte = [];
+      for (let x = 1; x < m; x++) schritte.push({ text: x === 1 ? `x = 1: ${g}¹ mod ${m}` : (e) => `x = ${x}: ${oder(e[x - 2])} · ${g} mod ${m}`, feld: zahlFeldG(`${g}^${x} mod ${m}`) });
+      schritte.push({ text: `Ordnung von ${g}: das kleinste x mit ${g}ˣ mod ${m} = 1 (– wenn es keins gibt)`, feld: zahlFeldG('Ordnung') });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.slice(0, m - 1).forEach((x, j) => x && tab.eintrag(j, 0, x));
+          tab.markiere(i >= 1 && i < m - 1 ? [[i - 1, 0]] : []);
+        },
+        korrekt() {
+          const aus = [];
+          for (let x = 1; x < m; x++) aus.push(String(Krypto.modpow(g, x, m)));
+          const ord = Krypto.ordnung(g, m);
+          aus.push(ord === null ? '–' : String(ord));
+          return aus;
+        }
+      };
+    }
+    /** werte = { a, m } */
+    function inversesHook(container, werte) {
+      const { a, m } = werte;
+      const tab = KRGefuehrt.raster(container, { zeilen: m - 1, spalten: 1, caption: `${a} · x mod ${m} – gesucht ist die Zeile mit Rest 1`, zeilenKopf: (x) => `x = ${x + 1}`, spaltenKopf: () => `${a} · x mod ${m}` });
+      const schritte = [];
+      for (let x = 1; x < m; x++) schritte.push({ text: `x = ${x}: ${a} · ${x} mod ${m}`, feld: zahlFeldG('Rest') });
+      schritte.push({ text: `Inverses von ${a} modulo ${m} (– wenn es keins gibt)`, feld: zahlFeldG(`${a}⁻¹ mod ${m}`) });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.slice(0, m - 1).forEach((x, j) => x && tab.eintrag(j, 0, x));
+          tab.kopfMarke(i < m - 1 ? [i] : [], []);
+        },
+        korrekt() {
+          const aus = [];
+          for (let x = 1; x < m; x++) aus.push(String(Krypto.mod(a * x, m)));
+          const inv = Krypto.inverses(a, m);
+          aus.push(inv === null || inv === undefined ? '–' : String(inv));
+          return aus;
+        }
+      };
+    }
+    /** werte = { p, g, a, b } – Farbmischer „Mit Zahlen“ als vier Schrittzeilen */
+    function farbmischerHook(container, werte) {
+      const { p, g, a, b } = werte;
+      const tab = KRGefuehrt.raster(container, { zeilen: 4, spalten: 1, caption: `Schlüsseltausch mit p = ${p}, g = ${g}`, zeilenKopf: (z) => ['A (Alice, öffentlich)', 'B (Bob, öffentlich)', 'K bei Alice', 'K bei Bob'][z], spaltenKopf: () => 'Wert' });
+      return {
+        schritte: [
+          { text: `Alice: A = ${g}^${a} mod ${p}`, feld: zahlFeldG('A') },
+          { text: `Bob: B = ${g}^${b} mod ${p}`, feld: zahlFeldG('B') },
+          { text: (e) => `Alice: K = B^a mod p = ${oder(e[1])}^${a} mod ${p}`, feld: zahlFeldG('K (Alice)') },
+          { text: (e) => `Bob: K = A^b mod p = ${oder(e[0])}^${b} mod ${p}`, feld: zahlFeldG('K (Bob)') }
+        ],
+        markiere(i, e) {
+          tab.leeren();
+          e.forEach((x, j) => x && tab.eintrag(j, 0, x));
+          tab.kopfMarke([i], []);
+        },
+        korrekt() {
+          const A = Krypto.dh.oeffentlich(g, a, p);
+          const Bz = Krypto.dh.oeffentlich(g, b, p);
+          return [A, Bz, Krypto.dh.gemeinsam(Bz, a, p), Krypto.dh.gemeinsam(A, b, p)].map(String);
+        }
+      };
+    }
+    const HOOKS = { uhr: uhrHook, tabelle: tabelleHook, inverses: inversesHook, farbmischer: farbmischerHook };
+    // Angaben bleiben im geführten Modus änderbar (Weitertippen nach dem Umschalten): Name → Feldklasse im freien Modus
+    const FELDKLASSE = { uhr: { m: 'uhr-m', a: 'uhr-a', b: 'uhr-b' }, tabelle: { m: 'tab-m', g: 'tab-g' }, inverses: { a: 'inv-a', m: 'inv-m' }, farbmischer: { p: 'dh-p', g: 'dh-g', a: 'dh-a', b: 'dh-b' } };
+    const BESCHRIFTUNG = { m: 'Modul m', a: 'a', b: 'k', g: 'Basis g', p: 'Primzahl p' };
+    const ZUSTAND = () => ({ uhr, tabelle: tab, inverses: inv, farbmischer: dh });
+    let fokusAngabe = null; // Name des Felds, das nach dem Neuaufbau den Fokus bekommt
+    function fokusName(id) {
+      const a = typeof document !== 'undefined' ? document.activeElement : null;
+      if (!a || !wurzel.contains(a)) return null;
+      if (a.dataset && a.dataset.name) return a.dataset.name;
+      const eintrag = Object.entries(FELDKLASSE[id] || {}).find(([, k]) => a.classList.contains(k));
+      return eintrag ? eintrag[0] : null;
+    }
+    function felderVon(id, werte) {
+      return Object.keys(FELDKLASSE[id]).map((name) => ({ name, beschriftung: id === 'farbmischer' && name === 'a' ? 'Alices Geheimzahl a' : id === 'farbmischer' && name === 'b' ? 'Bobs Geheimzahl b' : id === 'uhr' && name === 'b' ? (werte.op === 'hoch' ? 'Exponent x' : werte.op === 'mal' ? 'b' : 'k') : BESCHRIFTUNG[name], wert: werte[name], art: 'zahl' }));
+    }
+    function starteGefuehrt(id, werte) {
+      const fokus = fokusAngabe || fokusName(id);
+      fokusAngabe = null;
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Modulo-Uhr & Farbmischer',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          if (id === 'uhr') Object.assign(uhr, { m: BEISPIEL.m, a: BEISPIEL.a, b: BEISPIEL.b });
+          else if (id === 'tabelle') Object.assign(tab, { m: BEISPIEL.tabelleM, g: BEISPIEL.tabelleG });
+          else if (id === 'inverses') Object.assign(inv, { m: BEISPIEL.m, a: BEISPIEL.invA });
+          else Object.assign(dh, { p: BEISPIEL.p, g: BEISPIEL.g, a: BEISPIEL.alice, b: BEISPIEL.bob });
+          baue(id);
+        },
+        felder: {
+          felder: felderVon(id, werte),
+          fokus,
+          beiAenderung: (w, name) => {
+            const ziel = ZUSTAND()[id];
+            for (const [k, x] of Object.entries(w)) ziel[k] = zahlVon(x);
+            fokusAngabe = name;
+            baue(id);
+            if (!gefuehrt) {
+              fokusAngabe = null;
+              const f = r.flaeche.querySelector(`input.${FELDKLASSE[id][name]}`);
+              if (f) {
+                f.focus();
+                const n = String(f.value).length;
+                if (typeof f.setSelectionRange === 'function') f.setSelectionRange(n, n);
+              }
+            }
+          }
+        }
+      });
     }
 
     /* ======================= Modulo-Uhr ======================= */
-    const uhr = { m: vZahl(v.modul) || BEISPIEL.m, a: vZahl(v.a) ?? BEISPIEL.a, b: BEISPIEL.b, op: 'plus', beschriftung: 'zahlen', winkel: 0 };
+    const uhr = { m: vZahl(v.modul) || BEISPIEL.m, a: vZahl(v.a) ?? BEISPIEL.a, b: vZahl(v.b) ?? BEISPIEL.b, op: OPS.some((x) => x.id === v.op) ? v.op : 'plus', beschriftung: 'zahlen', winkel: 0 };
     function baueUhr() {
       const hinweisOrt = h('div', { class: 'modulo-hinweis' });
       const fm = zahlFeld('uhr-m', 'Modul m (2 … 30 auf der Uhr)', uhr.m, (t) => { uhr.m = zahlVon(t); rechne(); });
@@ -210,6 +412,7 @@
           AQ.clear(uhrOrt);
           return;
         }
+        if ((uhr.op !== 'hoch' || (b >= 1 && b <= 30)) && erkenne('uhr', [a, b, m], { m, a, b, op: uhr.op })) return;
         const buchstabe = (r0) => (uhr.beschriftung === 'buchstaben' && m === 26 ? ` (${Krypto.buchstabe(Krypto.mod(r0 - 1, 26), 0)})` : '');
         let ziel;
         let start = Krypto.mod(a, m);
@@ -298,6 +501,7 @@
           z.primitiv = null;
           return;
         }
+        if (erkenne('tabelle', [g, m], { m, g })) return;
         const potenzen = [];
         for (let x = 1; x < m; x++) potenzen.push(Krypto.modpow(g, x, m));
         const ord = Krypto.ordnung(g, m);
@@ -343,6 +547,7 @@
           hinweisOrt.appendChild(B.hinweis('warnung', 'Zahl a ab 1, Modul m von 2 bis 1000.'));
           return;
         }
+        if (erkenne('inverses', [a, m], { a, m })) return;
         const ggt = Krypto.ggT(a, m);
         const x0 = Krypto.inverses(a, m);
         z.inverses = x0;
@@ -360,7 +565,7 @@
     }
 
     /* ======================= Farbmischer ======================= */
-    const dh = { mitZahlen: false, p: vZahl(v.p) || BEISPIEL.p, g: vZahl(v.g) || BEISPIEL.g, a: BEISPIEL.alice, b: BEISPIEL.bob, schritt: 0 };
+    const dh = { mitZahlen: vZahl(v.alice) !== null || vZahl(v.bob) !== null, p: vZahl(v.p) || BEISPIEL.p, g: vZahl(v.g) || BEISPIEL.g, a: vZahl(v.alice) ?? BEISPIEL.alice, b: vZahl(v.bob) ?? BEISPIEL.bob, schritt: 0 };
     /** Topffarben aus den Tokens lesen (Darstellung) – null, wenn der Browser sie nicht liefert. */
     function basisFarben(proben) {
       if (typeof getComputedStyle !== 'function') return null;
@@ -510,6 +715,7 @@
           AQ.clear(buehne);
           return;
         }
+        if (erkenne('farbmischer', [p, g, a, b], { p, g, a, b })) return;
         const A = Krypto.dh.oeffentlich(g, a, p);
         const Bz = Krypto.dh.oeffentlich(g, b, p);
         const w = { A, B: Bz, K: Krypto.dh.gemeinsam(Bz, a, p) };

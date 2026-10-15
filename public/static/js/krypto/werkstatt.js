@@ -43,6 +43,9 @@ const KRWerkstatt = (() => {
   let geaendert = false;
   let arenaTimer = null;
   let ansichtArena = null;
+  // M11 (E209, Task 245): Probelauf mit erkannten Aufgabenwerten nicht verfügbar; Einreichen bleibt unberührt
+  const NICHT_VERFUEGBAR = 'Mit diesen Werten gibt es hier keinen Schritt-für-Schritt-Modus. Probier eigene Werte aus.';
+  const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
 
   /* ---------- Entwurf (E105) ---------- */
   const entwurfName = () => (info.teilnahme !== null && info.teilnahme !== undefined ? PRAEFIX + info.teilnahme : null);
@@ -413,6 +416,29 @@ const KRWerkstatt = (() => {
     return l && l.typ === 'xor' ? (String(roh).match(/../g) || []).join(' ') : Krypto.gruppieren(roh, 5);
   };
 
+  /** Schlüsselangaben der Stufen wie in den Erkenner-Daten (k=…, n=…, Wort, spalten=…) */
+  function erkennerSchluessel(z) {
+    const aus = [];
+    for (const st of z.verfahren.stufen) {
+      for (const [p, w] of Object.entries(st.param || {})) {
+        const wert = typeof w === 'string' && w.startsWith('$') ? z.schluessel[w.slice(1)] : w;
+        if (wert === undefined || wert === null || wert === '') continue;
+        if (st.typ === 'caesar') aus.push(`k=${wert}`);
+        else if (st.typ === 'gartenzaun') aus.push(`n=${wert}`);
+        else if (st.typ === 'spaltentransposition' && /^[\d\s]+$/.test(String(wert))) aus.push(`spalten=${String(wert).trim().split(/\s+/).length}`);
+        else aus.push(String(wert));
+      }
+    }
+    return aus;
+  }
+  /** Probelauf mit Aufgabenwerten? (Lehrkraft: nie) */
+  function probeGesperrt(z, text) {
+    if (typeof KRErkenner === 'undefined') return false;
+    const eingaben = { texte: [text], schluessel: erkennerSchluessel(z) };
+    if (erkVerlauf) erkVerlauf.merke(eingaben);
+    return KRErkenner.erkannt('baukasten', eingaben, { rolle }, erkVerlauf);
+  }
+
   function pruefe() {
     clearTimeout(timer);
     timer = null;
@@ -428,7 +454,8 @@ const KRWerkstatt = (() => {
     }
     let geheim = '';
     let zwischen = [];
-    if (p.ok && mitText) {
+    const gesperrt = p.ok && mitText && probeGesperrt(z, text);
+    if (p.ok && mitText && !gesperrt) {
       try {
         const v = B.verschluesseln(z.verfahren, z.schluessel, text, { protokoll: true });
         geheim = v.geheimtext;
@@ -447,6 +474,7 @@ const KRWerkstatt = (() => {
     felder.rueck.classList.toggle('ok', p.ok);
     felder.rueck.hidden = !p.ok;
     felder.geheim.textContent = ergebnis.geheim || '–';
+    felder.nichtVerfuegbar.hidden = !gesperrt;
     AQ.mount(felder.zwischen, zwischen.map((s, i) => h('li', null, h('span', { class: 'zwischen-stufe' }, `Stufe ${i + 1} · ${s.kuerzel}: `), h('code', null, i === zwischen.length - 1 ? ergebnis.geheim : s.typ === 'xor' ? darstellung({ stufen: [s] }, s.ergebnis) : Krypto.gruppieren(s.ergebnis, 5)))));
     felder.zwischenBereich.hidden = !zwischen.length;
     laengeZeigen();
@@ -572,6 +600,7 @@ const KRWerkstatt = (() => {
     f.hinweiseBereich = h('div', { class: 'werkstatt-hinweise-bereich' }, h('h3', null, 'Werkstatt-Hinweise'), h('p', { class: 'text-2 klein' }, 'Hinweise blockieren nicht – sie zeigen typische Schwächen.'), f.hinweise);
     f.rueck = h('p', { class: 'werkstatt-rueck', 'aria-live': 'polite' });
     f.geheim = h('output', { class: 'werkstatt-geheimtext', for: 'werkstatt-klartext', 'aria-label': 'Geheimtext' });
+    f.nichtVerfuegbar = h('p', { class: 'labor-nicht-verfuegbar werkstatt-nicht-verfuegbar text-2', role: 'status', hidden: true }, NICHT_VERFUEGBAR);
     f.zwischen = h('ol', { class: 'werkstatt-zwischen-liste' });
     f.zwischenBereich = h('details', { class: 'werkstatt-zwischen' }, h('summary', null, 'Zwischenergebnisse je Stufe'), f.zwischen);
     f.checkliste = h('ul', { class: 'werkstatt-checkliste', 'aria-label': 'Bedingungen fürs Einreichen' });
@@ -607,7 +636,7 @@ const KRWerkstatt = (() => {
       h('h2', { id: 'werkstatt-pruef-titel' }, 'Prüfung'),
       f.rueck,
       f.fehlerBereich,
-      h('div', { class: 'werkstatt-ausgabe' }, h('h3', null, 'Geheimtext'), f.geheim, f.zwischenBereich),
+      h('div', { class: 'werkstatt-ausgabe' }, h('h3', null, 'Geheimtext'), f.geheim, f.nichtVerfuegbar, f.zwischenBereich),
       f.hinweiseBereich,
       h('h3', null, 'Einreichen'),
       f.checkliste,

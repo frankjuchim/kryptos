@@ -29,6 +29,7 @@ const KOPF = '/* Kryptos – Erkenner-Daten (erzeugt: npm run labor:erkenner –
  */
 const HAND = Object.freeze([
   { aufgabe: 'W4-L3-07', wr: 'rsa.rechenwerk', eingaben: { zahlen: [6, 7, 11] }, grund: 'Warnung „e nicht teilerfremd“ beantwortet die Auswahl' },
+  { aufgabe: 'W4-L2-07', wr: 'rsa.rechenwerk', eingaben: { zahlen: [5, 7, 13] }, grund: 'Warnung „schwacher Schlüssel (d = e)“ beantwortet b)' },
   { aufgabe: 'W6-L1-03', wr: 'scheibe.text', eingaben: { texte: ['EBJN'], schluessel: ['k=5'] }, grund: 'richtige Zeile der Fehlersuche' },
   { aufgabe: 'W6-L1-03', wr: 'scheibe.scheibe', eingaben: { texte: ['EBJN'], schluessel: ['k=5'] }, grund: 'richtige Zeile der Fehlersuche' },
   { aufgabe: 'W6-L1-04', wr: 'vigenere.verschluesseln', eingaben: { texte: ['SZFFKEWD', 'DWEKFFZS'], schluessel: ['OHR'] }, grund: 'richtige Zeile der Fehlersuche' },
@@ -100,7 +101,8 @@ function eintragSignaturen(wr, z, klartexte = []) {
       if (hatText && (hatSchluessel || hatBits)) return s.startsWith('t:') && s.includes('|');
       if (hatText) return false; // Text allein: unten (nurText)
       if (hatSchluessel) return s.startsWith('s:');
-      if (hatBits) return s.startsWith('b:');
+      // mehrere Bitfolgen (Block + Schlüssel): nur Paare – eine einzelne Folge (z. B. „OK“) allein ist kein Verrat
+      if (hatBits) return s.startsWith('b:') && ((e.bits || []).length < 2 || s.includes('|'));
       return true;
     }).concat((e.texte || []).length && !(e.schluessel || []).length && !(e.bits || []).length ? nurText(e.texte) : []);
   }

@@ -7,8 +7,9 @@
 (() => {
   const { h } = AQ;
   const B = KRLaborBau;
-  // eigene Beispielwerte (in keinem Material): p = 11, q = 17, e = 3, Klarzahl 20, Wort „hammer“
-  const BEISPIEL = { p: 11, q: 17, e: 3, m: 20, text: 'hammer' };
+  // eigene Beispielwerte (in keinem Material): p = 13, q = 19, e = 5, Klarzahl 20, Wort „hammer“ – M11: 11/17/3 traf
+  // als Zahlenmenge {3, 17} die Angaben von W4-L2-04 (Erkenner)
+  const BEISPIEL = { p: 13, q: 19, e: 5, m: 20, text: 'hammer' };
   const REITER_TITEL = { rechenwerk: 'Rechenwerk', euklid: 'Euklid-Tabelle (Kür)', text: 'Text als Zahlen' };
   const MAX_PRIM = 47;
   const HOCH = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
@@ -33,7 +34,7 @@
     const v = voreinstellung || {};
     const reiterListe = KRLabor.reiterFuer('rsa', v, umgebung);
     const prim = (x) => (Number.isInteger(x) && PRIMZAHLEN.includes(x) ? x : null);
-    const st = { p: prim(v.p) ?? BEISPIEL.p, q: prim(v.q) ?? BEISPIEL.q, e: Number.isInteger(v.e) ? v.e : BEISPIEL.e, richtung: 'ver', eingabe: BEISPIEL.m, text: '' };
+    const st = { p: prim(v.p) ?? BEISPIEL.p, q: prim(v.q) ?? BEISPIEL.q, e: Number.isInteger(v.e) ? v.e : BEISPIEL.e, richtung: v.richtung === 'ent' ? 'ent' : 'ver', eingabe: Number.isInteger(v.m) && v.m >= 0 ? v.m : BEISPIEL.m, text: typeof v.text === 'string' ? v.text.slice(0, 40) : '' };
     const z = { p: null, q: null, e: null, N: null, phi: null, d: null, warnungen: [], m: null, c: null, kette: [], eve: null, euklid: null };
     let nachspiel = null;
 
@@ -41,9 +42,283 @@
     const wurzel = h('div', { class: 'labor-werkzeug rsa-werkzeug' }, r.element);
     container.appendChild(wurzel);
 
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let sofort = !!fuehrung; // Panel (gefuehrt: true): der erste rechnende Aufbau startet geführt
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus; true = nichts ausgeben */
+    function erkenne(id, eingaben, werte) {
+      if (sofort && mitGefuehrt && HOOKS[id]) {
+        sofort = false;
+        starteGefuehrt(id, werte);
+        return true;
+      }
+      return B.erkenne(r.flaeche, `rsa.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
+    }
+
+    /* ---------- Geführter Modus (M11 Task 245, E208): N, φ, Euklid-Zeilen, Quadrier-/Produktkette aus Einträgen ---------- */
+    const zf = (beschriftung) => ({ beschriftung, art: 'zahl' });
+    const oder = (x) => (x === '' || x === undefined || x === null ? '…' : String(x).trim());
+    const ganz = (x) => (/^-?\d{1,9}$/.test(String(x ?? '').replace(/\s+/g, '').replace('−', '-')) ? Number(String(x).replace(/\s+/g, '').replace('−', '-')) : null);
+    /** Rest-Exponenten x, ⌊x/2⌋, ⌊x/4⌋ … (L Zeilen) über Krypto.teileMitRest */
+    function restExponenten(x, L) {
+      const aus = [];
+      let r0 = x;
+      for (let j = 0; j < L; j++) {
+        aus.push(r0);
+        r0 = r0 === null ? null : Krypto.teileMitRest(r0, 2).q;
+      }
+      return aus;
+    }
+    /** Anzahl der Halbierungen bis 0 (Stellen der Dualzahl) */
+    function stellen(x) {
+      let n = 0;
+      for (let r0 = x; r0 > 0; r0 = Krypto.teileMitRest(r0, 2).q) n += 1;
+      return Math.max(1, n);
+    }
+    const ungerade = (x) => x !== null && Krypto.mod(x, 2) === 1;
+    /** werte = { p, q, e, richtung, x } */
+    function rechenwerkHook(container, werte) {
+      const { p, q, e, x } = werte;
+      const ver = werte.richtung !== 'ent';
+      const schl = Krypto.rsa.schluessel(p, q, e);
+      const N = schl.N;
+      const phi = schl.phi;
+      const L = ver ? stellen(e) : stellen(phi - 1);
+      const expVon = (ein) => (ver ? e : ganz(ein[2]));
+      const kopf = KRGefuehrt.raster(container, { zeilen: 3, spalten: 1, caption: `Schlüssel aus p = ${p}, q = ${q}, e = ${e}`, zeilenKopf: (z) => ['N = p · q', 'φ(N) = (p − 1) · (q − 1)', 'd mit e · d mod φ = 1'][z], spaltenKopf: () => 'Wert' });
+      const kette = KRGefuehrt.raster(container, {
+        zeilen: L,
+        spalten: 3,
+        caption: `${ver ? 'Verschlüsseln' : 'Entschlüsseln'}: ${x}^${ver ? e : 'd'} mod N – Exponent halbieren, Basis quadrieren`,
+        zeilenKopf: (j) => `Zeile ${j + 1}`,
+        spaltenKopf: (j) => ['Rest-Exponent', 'Wert mod N', 'Zwischenergebnis'][j],
+        inhalt: (j, sp) => (sp === 0 && ver ? String(restExponenten(e, L)[j]) : sp === 1 && j === 0 ? String(x) : null)
+      });
+      const schritte = [
+        { text: `N = ${p} · ${q}`, feld: zf('N') },
+        { text: `φ(N) = ${p - 1} · ${q - 1}`, feld: zf('φ(N)') },
+        { text: (ein) => `d: ${e} · d mod ${oder(ein[1])} = 1 (erweiterter Euklid)`, feld: zf('d') }
+      ];
+      const ziel = [[0, 0], [1, 0], [2, 0]];
+      const wertIdx = []; // Schrittnummer des Werts je Zeile
+      const zwIdx = [];
+      for (let j = 0; j < L; j++) {
+        if (j > 0) {
+          const vor = wertIdx[j - 1];
+          wertIdx.push(schritte.length);
+          schritte.push({ text: (ein) => `Zeile ${j + 1}: Wert = ${j === 1 ? x : oder(ein[vor])}² mod ${oder(ein[0])}`, feld: zf(`Wert Zeile ${j + 1}`) });
+          ziel.push([3, j, 1]);
+        } else wertIdx.push(null);
+        const vorZw = j > 0 ? zwIdx[j - 1] : null;
+        const wIdx = wertIdx[j];
+        zwIdx.push(schritte.length);
+        schritte.push({
+          text: (ein) => {
+            const r0 = restExponenten(expVon(ein), L)[j];
+            const z0 = j === 0 ? '1' : oder(ein[vorZw]);
+            if (r0 === null) return `Zeile ${j + 1}: Zwischenergebnis (trage zuerst d ein)`;
+            const w = j === 0 ? x : oder(ein[wIdx]);
+            return ungerade(r0) ? `Zeile ${j + 1}: Rest-Exponent ${r0} ungerade → ${z0} · ${w} mod ${oder(ein[0])}` : `Zeile ${j + 1}: Rest-Exponent ${r0} gerade → Zwischenergebnis bleibt ${z0}`;
+          },
+          feld: zf(`Zwischenergebnis Zeile ${j + 1}`)
+        });
+        ziel.push([3, j, 2]);
+      }
+      return {
+        schritte,
+        markiere(i, ein) {
+          kopf.leeren();
+          kette.leeren();
+          ein.forEach((w, j) => {
+            if (!w) return;
+            const zl = ziel[j];
+            if (zl[0] === 3) kette.eintrag(zl[1], zl[2], w);
+            else kopf.eintrag(zl[0], 0, w);
+          });
+          if (!ver) restExponenten(ganz(ein[2]), L).forEach((r0, j) => kette.eintrag(j, 0, r0 === null ? '' : String(r0)));
+          const zl = ziel[i];
+          kopf.markiere([]);
+          kette.markiere(zl[0] === 3 ? (zl[2] === 1 ? [[zl[1] - 1, 1]] : [[zl[1], 0], [zl[1], 1]]) : []);
+        },
+        korrekt() {
+          const ex = ver ? e : schl.d;
+          const aus = [String(N), String(phi), String(schl.d)];
+          const rest = restExponenten(ex, L);
+          let w = Krypto.mod(x, N);
+          let zw = 1;
+          for (let j = 0; j < L; j++) {
+            if (j > 0) {
+              w = Krypto.mod(w * w, N);
+              aus.push(String(w));
+            }
+            if (ungerade(rest[j])) zw = Krypto.mod(zw * w, N);
+            aus.push(String(zw));
+          }
+          return aus;
+        }
+      };
+    }
+    /** werte = { phi, e } – erst abwärts (q, r), dann rückwärts (x, y), dann d */
+    function euklidHook(container, werte) {
+      const { phi, e } = werte;
+      const eu = Krypto.erweiterterEuklid(phi, e);
+      const n = eu.schritte.length;
+      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 6, caption: `Erweiterter Euklid für a = φ = ${phi}, b = e = ${e}`, zeilenKopf: (i) => `Zeile ${i + 1}`, spaltenKopf: (j) => ['a', 'b', 'q', 'r', 'x', 'y'][j], inhalt: (i, j) => (i === 0 && j === 0 ? String(phi) : i === 0 && j === 1 ? String(e) : null) });
+      const schritte = [];
+      const ziel = [];
+      const qIdx = [];
+      const rIdx = [];
+      const ab = (i, ein) => (i === 0 ? [phi, e] : [i === 1 ? e : oder(ein[rIdx[i - 2]]), oder(ein[rIdx[i - 1]])]);
+      for (let i = 0; i < n - 1; i++) {
+        qIdx.push(schritte.length);
+        schritte.push({ text: (ein) => `Abwärts, Zeile ${i + 1}: Wie oft passt b = ${ab(i, ein)[1]} in a = ${ab(i, ein)[0]}? (q)`, feld: zf('q') });
+        ziel.push([i, 2]);
+        rIdx.push(schritte.length);
+        schritte.push({ text: (ein) => `Abwärts, Zeile ${i + 1}: Rest r = ${ab(i, ein)[0]} − ${oder(ein[qIdx[i]])} · ${ab(i, ein)[1]}`, feld: zf('r') });
+        ziel.push([i, 3]);
+      }
+      const xIdx = [];
+      const yIdx = [];
+      for (let i = n - 1; i >= 0; i--) {
+        xIdx[i] = schritte.length;
+        schritte.push({ text: i === n - 1 ? `Rückwärts, Zeile ${i + 1} (b = 0): Start x` : (ein) => `Rückwärts, Zeile ${i + 1}: x = y von unten = ${oder(ein[yIdx[i + 1]])}`, feld: zf('x') });
+        ziel.push([i, 4]);
+        yIdx[i] = schritte.length;
+        schritte.push({ text: i === n - 1 ? `Rückwärts, Zeile ${i + 1} (b = 0): Start y` : (ein) => `Rückwärts, Zeile ${i + 1}: y = x − q · y von unten = ${oder(ein[xIdx[i + 1]])} − ${oder(ein[qIdx[i]])} · ${oder(ein[yIdx[i + 1]])}`, feld: zf('y') });
+        ziel.push([i, 5]);
+      }
+      schritte.push({ text: (ein) => `d = y mod φ = ${oder(ein[yIdx[0]])} mod ${phi}`, feld: zf('d') });
+      ziel.push(null);
+      return {
+        schritte,
+        markiere(i, ein) {
+          tab.leeren();
+          ein.forEach((w, j) => w && ziel[j] && tab.eintrag(ziel[j][0], ziel[j][1], w));
+          // a, b der Zeilen ab 2 aus den Einträgen (b und r der Zeile darüber)
+          for (let z = 1; z < n; z++) {
+            const [a0, b0] = ab(z, ein);
+            tab.eintrag(z, 0, a0 === '…' ? '' : a0);
+            tab.eintrag(z, 1, b0 === '…' ? '' : b0);
+          }
+          const zl = ziel[i];
+          tab.markiere(zl ? (zl[1] <= 3 ? [[zl[0], 0], [zl[0], 1]] : [[Math.min(n - 1, zl[0] + 1), 4], [Math.min(n - 1, zl[0] + 1), 5]]) : [[0, 5]]);
+        },
+        korrekt() {
+          const aus = [];
+          for (let i = 0; i < n - 1; i++) aus.push(String(eu.schritte[i].q), String(eu.schritte[i].r));
+          for (let i = n - 1; i >= 0; i--) aus.push(String(eu.schritte[i].x), String(eu.schritte[i].y));
+          aus.push(String(Krypto.mod(eu.y, phi)));
+          return aus;
+        }
+      };
+    }
+    /** werte = { text, p, q, e } – Buchstabe für Buchstabe: Klarzahl (A = 1), dann c = mᵉ mod N */
+    function textHook(container, werte) {
+      const { p, q, e } = werte;
+      const b = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, 40);
+      const tab = KRGefuehrt.raster(container, { zeilen: 2, spalten: b.length, caption: `Buchstabe für Buchstabe: c = m${hochgestellt(e)} mod N (N = ${p} · ${q})`, zeilenKopf: (z) => ['Klarzahl m', 'Geheimzahl c'][z], spaltenKopf: (j) => Krypto.klein(b[j]) });
+      const schritte = [{ text: `N = ${p} · ${q}`, feld: zf('N') }];
+      b.forEach((x, j) => {
+        schritte.push({ text: `${Krypto.klein(x)}: Klarzahl m (A = 1 … Z = 26)`, feld: zf('m') });
+        schritte.push({ text: (ein) => `${Krypto.klein(x)}: c = ${oder(ein[1 + 2 * j])}${hochgestellt(e)} mod ${oder(ein[0])}`, feld: zf('c') });
+      });
+      return {
+        schritte,
+        markiere(i, ein) {
+          tab.leeren();
+          ein.forEach((w, j) => {
+            if (!w || j === 0) return;
+            const { q: sp, r: zl } = Krypto.teileMitRest(j - 1, 2);
+            tab.eintrag(zl, sp, w);
+          });
+          tab.kopfMarke([], i >= 1 ? [Krypto.teileMitRest(i - 1, 2).q] : []);
+        },
+        korrekt() {
+          const N = Krypto.rsa.schluessel(p, q, e).N;
+          const aus = [String(N)];
+          for (const m of Krypto.zahlen(b.join(''))) aus.push(String(m), String(Krypto.rsa.verschluesseln(m, e, N)));
+          return aus;
+        }
+      };
+    }
+    const HOOKS = { rechenwerk: rechenwerkHook, euklid: euklidHook, text: textHook };
+    // Angaben bleiben im geführten Modus änderbar: Name → Feld im freien Modus
+    const FELD = { p: 'select.rsa-p', q: 'select.rsa-q', e: 'select.rsa-e', m: 'input.rsa-m' };
+    let fokusAngabe = null;
+    function fokusName() {
+      const a = typeof document !== 'undefined' ? document.activeElement : null;
+      if (!a || !r.flaeche.contains(a)) return null;
+      if (a.dataset && a.dataset.name) return a.dataset.name;
+      const eintrag = Object.entries(FELD).find(([, sel]) => a.matches && a.matches(sel));
+      return eintrag ? eintrag[0] : null;
+    }
+    function felderVon(id) {
+      const liste = st.p !== st.q ? Krypto.rsa.eKandidaten(st.p, st.q) : [];
+      const f = [
+        { name: 'p', beschriftung: 'Primzahl p', wert: st.p, optionen: PRIMZAHLEN },
+        { name: 'q', beschriftung: 'Primzahl q', wert: st.q, optionen: PRIMZAHLEN },
+        { name: 'e', beschriftung: 'öffentlicher Exponent e', wert: st.e, optionen: liste }
+      ];
+      if (id === 'rechenwerk') f.push({ name: 'm', beschriftung: st.richtung === 'ver' ? 'Klarzahl m' : 'Geheimzahl c', wert: st.eingabe ?? '', art: 'zahl' });
+      return f;
+    }
+    function starteGefuehrt(id, werte) {
+      const fokus = typeof document !== 'undefined' && document.activeElement && r.flaeche.contains(document.activeElement);
+      const fokusFeld = fokusAngabe || fokusName();
+      fokusAngabe = null;
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'RSA-Rechenwerk',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          Object.assign(st, { p: BEISPIEL.p, q: BEISPIEL.q, e: BEISPIEL.e, eingabe: BEISPIEL.m, text: '' });
+          baue(id);
+        },
+        felder: {
+          felder: felderVon(id),
+          fokus: fokusFeld === 'text' ? null : fokusFeld,
+          beiAenderung: (w, name) => {
+            st.p = Number(w.p);
+            st.q = Number(w.q);
+            if (w.e !== undefined && w.e !== '') st.e = Number(w.e);
+            if (w.m !== undefined) st.eingabe = zahlVon(w.m);
+            fokusAngabe = name;
+            baue(id);
+            if (!gefuehrt) {
+              fokusAngabe = null;
+              const f = r.flaeche.querySelector(FELD[name]);
+              if (f) f.focus();
+            }
+          }
+        },
+        text: id === 'text'
+          ? {
+              beschriftung: 'Text (A = 1 … Z = 26, buchstabenweise)',
+              wert: werte.text || '',
+              art: 'klartext',
+              fokus: fokus && !fokusFeld,
+              beiAenderung: (t) => {
+                st.text = t;
+                baue(id);
+                B.fokusAmEnde(r.flaeche);
+              }
+            }
+          : null
+      });
     }
 
     /** Schlüssel aus st berechnen → { ok, grund } und z füllen. */
@@ -153,6 +428,8 @@
           return;
         }
         const { p, q, N, phi, e, d } = z;
+        // Erkenner: Schlüsselwerte p, q, e (die Klarzahl ist freie Eingabe – wie im Modell, E226)
+        if (erkenne('rechenwerk', { zahlen: [p, q, e] }, { p, q, e, richtung: st.richtung, x: st.eingabe === null || st.eingabe >= N ? 2 : st.eingabe })) return;
         schl.append(
           h('p', { class: 'rsa-zeile' }, `N = p · q = ${p} · ${q} = ${N}`),
           h('p', { class: 'rsa-zeile' }, `φ(N) = (p − 1) · (q − 1) = ${p - 1} · ${q - 1} = ${phi}`),
@@ -269,6 +546,7 @@
           return;
         }
         const { phi, e } = z;
+        if (erkenne('euklid', { zahlen: [z.p, z.q, e, phi] }, { phi, e })) return;
         const eu = Krypto.erweiterterEuklid(phi, e);
         const d = Krypto.mod(eu.y, phi);
         z.euklid = { schritte: eu.schritte, ggt: eu.ggt, x: eu.x, y: eu.y, d };
@@ -337,6 +615,7 @@
         }
         const buchstaben = [...Krypto.nurBuchstaben(st.text)];
         if (!buchstaben.length) return;
+        if (erkenne('text', { texte: [st.text], zahlen: [z.p, z.q, z.e] }, { text: st.text, p: z.p, q: z.q, e: z.e })) return;
         const klar = Krypto.zahlen(st.text);
         const geheim = klar.map((m) => Krypto.rsa.verschluesseln(m, z.e, z.N));
         const anzahl = new Map();

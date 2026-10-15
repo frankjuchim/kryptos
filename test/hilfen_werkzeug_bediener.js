@@ -15,6 +15,17 @@ const wort = (z) => (z.eingaben.schluessel || []).find((x) => !x.includes('='));
 const richtungVon = (z) => (/\bent\b/.test(z.bedienung) ? 'ent' : 'ver');
 const text0 = (z) => (z.eingaben.texte || [])[0] || '';
 
+const hexVon = (bits) => K.hex(bits.match(/.{8}/g).map((b) => K.bitsZuByte(b)));
+/** Runden-Labor: Block (und Schlüssel) als 4 Hex, Variante aus der Bedienung */
+function rundenVor(reiter, z) {
+  const [b, k] = z.eingaben.bits || [];
+  if (!b || b.length !== 16) return null;
+  const variante = /RM-16/.test(z.bedienung) ? 'rm16' : /ohne S-Box/.test(z.bedienung) ? 'ohneSBox' : 'kryptos16';
+  return { v: { reiter: [reiter], block: hexVon(b), ...(k ? { schluessel: hexVon(k) } : {}), variante, runden: variante === 'rm16' ? 3 : 4 } };
+}
+/** RSA-Rechenwerk: p, q aus der Auswahl (3 … 47, verschieden), e unter den Kandidaten */
+const rsaMoeglich = (p, q, e) => p !== q && [p, q].every((x) => x >= 3 && x <= 47 && K.istPrim(x)) && K.rsa.eKandidaten(p, q).includes(e);
+
 /** Voreinstellung je Reiter aus einem Modell-Zustand; danach optional nach(w) für Eingaben ohne Voreinstellung */
 const VOR = {
   'scheibe.scheibe': (z) => ({ v: { reiter: ['scheibe'], k: zahlP(z, 'k'), richtung: richtungVon(z) }, nach: (w) => { const f = w.k.alle(w.flaeche, '.scheibe-tippen textarea')[0]; if (f) w.k.tippe(f, K.klein(text0(z))); } }),
@@ -53,6 +64,51 @@ const VOR = {
   'haeufigkeit.teiltexte': (z) => ({ v: { reiter: ['teiltexte'], text: text0(z), teiltexte: zahlP(z, 'k') } }),
   'runden.enigma': (z) => ({ v: { reiter: ['enigma'], stellung: param(z, 'st') }, nach: (w) => { const f = w.k.alle(w.flaeche, '.labor-textfeld textarea')[0]; if (f) w.k.tippe(f, K.klein(text0(z))); } }),
   'hash.schritte': (z) => ({ v: { reiter: ['schritte'], text: K.klein(text0(z)) } }),
+  'bitlupe.doppelnutzung': (z) => {
+    const p = z.eingaben.bitpaare || [];
+    if (!p.length || p.length > 24) return null;
+    return { v: { reiter: ['doppelnutzung'], c1: hexVon(p.map((x) => x[0]).join('')), c2: hexVon(p.map((x) => x[1]).join('')) } };
+  },
+  'runden.runden': (z) => rundenVor('runden', z),
+  'runden.lawine': (z) => rundenVor('lawine', z),
+  'modulo.uhr': (z) => {
+    const [a, b, m] = z.eingaben.zahlen;
+    if (m < 2 || m > 1000 || a > 1000) return null;
+    return { v: { reiter: ['uhr'], modul: m, a, b, op: b >= 1 && b <= 30 ? 'hoch' : 'plus' } };
+  },
+  'modulo.tabelle': (z) => {
+    const [g, m] = z.eingaben.zahlen;
+    if (m < 2 || m > 1000 || g < 1 || g >= m) return null;
+    return { v: { reiter: ['tabelle'], modul: m, g } };
+  },
+  'modulo.inverses': (z) => {
+    const [a, m] = z.eingaben.zahlen;
+    if (m < 2 || m > 1000 || a < 1) return null;
+    return { v: { reiter: ['inverses'], a, modul: m } };
+  },
+  'modulo.farbmischer': (z) => {
+    const [p, g, a, b] = z.eingaben.zahlen;
+    if (p > 101 || a > p - 2 || b > p - 2 || a < 1 || b < 1) return null;
+    return { v: { reiter: ['farbmischer'], p, g, alice: a, bob: b } };
+  },
+  'rsa.rechenwerk': (z) => {
+    const [p, q, e] = z.eingaben.zahlen;
+    if (!rsaMoeglich(p, q, e)) return null;
+    return { v: { reiter: ['rechenwerk'], p, q, e } };
+  },
+  'rsa.euklid': (z) => {
+    const [phi, e] = z.eingaben.zahlen;
+    for (let p = 3; p <= 47; p++) for (let q = 3; q <= 47; q++) if ((p - 1) * (q - 1) === phi && rsaMoeglich(p, q, e)) return { v: { reiter: ['euklid'], p, q, e } };
+    return null;
+  },
+  'rsa.text': (z) => {
+    const [p, q, e] = z.eingaben.zahlen;
+    if (!rsaMoeglich(p, q, e) || p * q <= 26) return null;
+    return { v: { reiter: ['text'], p, q, e, text: K.klein(text0(z)) } };
+  },
+  'hash.pruefsumme': (z) => (text0(z).length <= 30 ? { v: { reiter: ['pruefsumme'], text: K.klein(text0(z)) } } : null),
+  'hash.baukasten': (z) => ({ v: { reiter: ['baukasten'], text: K.klein(text0(z)) } }),
+  'analyse.vergleich': (z) => ({ v: { reiter: ['vergleich'] }, nach: (w) => w.k.tippe(w.k.alle(w.flaeche, '.analyse-eigen textarea')[0], K.klein(text0(z))) }),
   'bitlupe.xor': (z) => {
     const [a, b] = [z.eingaben.bitpaare.map((p) => p[0]).join(''), z.eingaben.bitpaare.map((p) => p[1]).join('')];
     return { v: { reiter: ['xor'], text: K.bitsZuText(a), schluessel: b, schluesselart: 'bits', modus: z.bedienung.includes('otp') ? 'otp' : 'wiederholung' } };

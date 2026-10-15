@@ -31,8 +31,9 @@ const KRGefuehrt = (() => {
 
   /**
    * Geführten Modus in ziel starten. hook = gefuehrt-Funktion des Werkzeugs; o = { werte, umgebung, aufgabe,
-   * beiEigeneWerte, titel, text: { beschriftung, wert, art, beiAenderung(t), fokus } } – text: der Text bleibt änderbar,
-   * das Werkzeug startet dann neu. → { element, eintraege(), index(), gehe(i), schliesse(), freigegeben() }
+   * beiEigeneWerte, titel, text: { beschriftung, wert, art, beiAenderung(t), fokus }, felder: { felder: [{ name,
+   * beschriftung, wert, art, optionen }], beiAenderung(werte, name), fokus } } – text und felder: die Angaben bleiben
+   * änderbar, das Werkzeug startet dann neu. → { element, eintraege(), index(), gehe(i), schliesse(), freigegeben() }
    */
   function starte(ziel, hook, o = {}) {
     const umgebung = o.umgebung || {};
@@ -70,12 +71,34 @@ const KRGefuehrt = (() => {
     const textfeld = o.text && typeof o.text.beiAenderung === 'function'
       ? KRLaborBau.textfeld({ beschriftung: o.text.beschriftung || 'Text', max: o.text.max || 300, wert: o.text.wert || '', art: o.text.art || 'frei', zeilen: 2, beiEingabe: (t) => o.text.beiAenderung(t) })
       : null;
+    // Weitere Angaben (Zahlen, Schlüssel) bleiben ebenso änderbar: o.felder = { felder: [{ name, beschriftung, wert, art,
+    // optionen }], beiAenderung(werte), fokus } – das Werkzeug startet mit den neuen Werten neu
+    const angaben = o.felder && Array.isArray(o.felder.felder) && typeof o.felder.beiAenderung === 'function' ? o.felder : null;
+    const angabenFelder = [];
+    const angabenElement = angaben
+      ? h(
+          'div',
+          { class: 'labor-steuer gefuehrt-angaben' },
+          angaben.felder.map((f) => {
+            const id = KRLaborBau.neueId('gefuehrt-angabe');
+            const el = Array.isArray(f.optionen)
+              ? h('select', { id, class: 'gefuehrt-angabe', 'data-name': f.name }, f.optionen.map((x) => h('option', { value: String(x) }, String(x))))
+              : h('input', { type: 'text', id, class: `gefuehrt-angabe${f.art === 'zahl' ? ' zahl-eingabe' : ''}`, 'data-name': f.name, inputmode: f.art === 'zahl' ? 'numeric' : 'text', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'off', maxlength: String(f.max || 40) });
+            el.value = String(f.wert ?? '');
+            angabenFelder.push(el);
+            const melde = () => angaben.beiAenderung(Object.fromEntries(angabenFelder.map((x) => [x.dataset.name, x.value])), f.name);
+            el.addEventListener(Array.isArray(f.optionen) ? 'change' : 'input', melde);
+            return h('div', { class: 'labor-textfeld gefuehrt-angabe-feld' }, h('label', { for: id }, f.beschriftung || f.name), el);
+          })
+        )
+      : null;
     const element = h(
       'section',
       { class: 'gefuehrt', 'data-modus': 'gefuehrt', 'aria-label': o.titel ? `Schritt für Schritt: ${o.titel}` : 'Schritt für Schritt' },
       h('div', { class: 'gefuehrt-kopf' }, h('h3', { class: 'gefuehrt-titel' }, 'Schritt für Schritt'), eigene),
       hinweis,
       textfeld ? textfeld.element : null,
+      angabenElement,
       mechanik,
       zaehler,
       h('div', { class: 'gefuehrt-eingabe' }, beschriftung, feld),
@@ -180,6 +203,12 @@ const KRGefuehrt = (() => {
     LAUF.add(inst);
     zeige();
     if (vorschau || (aufgabe && FREI.has(aufgabe))) freigeben();
+    const fokusAngabe = angaben && angaben.fokus ? angabenFelder.find((x) => x.dataset.name === angaben.fokus) : null;
+    if (fokusAngabe) {
+      fokusAngabe.focus();
+      const n = String(fokusAngabe.value).length;
+      if (typeof fokusAngabe.setSelectionRange === 'function') fokusAngabe.setSelectionRange(n, n);
+    }
     if (textfeld && o.text.fokus) {
       textfeld.feld.focus();
       const n = String(textfeld.feld.value).length;

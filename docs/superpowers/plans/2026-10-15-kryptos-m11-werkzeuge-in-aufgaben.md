@@ -681,15 +681,15 @@ test('tastatur_schritte', () => { /* ←/→ wechseln den Schritt, Fokus bleibt 
 Aufgabenwerten; `kollision` frei), `public/static/js/krypto/werkstatt.js` + `public/werkstatt.html` (Probelauf mit erkannten
 Werten nicht verfügbar, Einreichen unberührt), `test/werkzeug_gefuehrt_dom.test.js`, `test/client_werkstatt.test.js`.
 
-- [ ] **Step 1: Failing tests:** `k12_<id>_gefuehrt_ohne_loesung`, `k12_<id>_kein_orakel` wie 244 (z. B. W4-L2-04: p, q, e
+- [x] **Step 1: Failing tests:** `k12_<id>_gefuehrt_ohne_loesung`, `k12_<id>_kein_orakel` wie 244 (z. B. W4-L2-04: p, q, e
   → Schritte N, φ, Euklid-Zeilen leer, kein `13`; W3-L1-02: Bitpaare markiert, keine `1011 0110`; W3-L5-01: Mini-Enigma Stufe für
   Stufe, keine Lampe vor der Freigabe; W5-L1-02: Rundentabelle, h aus Einträgen; W4-L3-07: keine Warnung vor der Freigabe);
   `hervorhebung_nur_eingabeseite` (Mini-Enigma: nur Eingangsbuchstabe der aktuellen Stufe); `nicht_verfuegbar_hinweis`
   (`hash.baukasten` mit `hafen`, `scheibe.alle` mit `IMOTQ`, Baukasten-Probelauf mit `boje`/Umkehrung + Caesar 3);
   `schubfach_beispiel_ohne_ziel_treffer`; `einreichen_unberuehrt`.
-- [ ] **Step 2:** FAIL. **Step 3:** Hooks, Hinweise, Baukasten. **Step 4:** `npm run pruefen` grün; Browser `/labor#/rsa`,
+- [x] **Step 2:** FAIL. **Step 3:** Hooks, Hinweise, Baukasten. **Step 4:** `npm run pruefen` grün; Browser `/labor#/rsa`,
   `#/modulo`, `#/bitlupe`, `#/runden`, `#/hash`, `/werkstatt`.
-- [ ] **Step 5: Commit** `M11: Geführter Modus in Bit-Lupe, Runden-Labor, Modulo-Uhr, RSA und Hash; Baukasten ohne Aufgabenwerte (Task 245)`
+- [x] **Step 5: Commit** `M11: Geführter Modus in Bit-Lupe, Runden-Labor, Modulo-Uhr, RSA und Hash; Baukasten ohne Aufgabenwerte (Task 245)`
 
 ### Task 246: Umbauten W1-L1-04, W6-L1-09, W5-L2-04, W5-L3-04, W6-L2-09; Ausnahme W0-L2-04 (E204, E205, E227)
 

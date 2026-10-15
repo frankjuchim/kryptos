@@ -52,11 +52,12 @@ test('Passwort & Salz: Salz aus umgebung.zufall, ohne Salz gleiche Werte, Login'
   assert.match(w.text('.login-ergebnis'), /Anmeldung erfolgreich/);
   assert.match(w.text('.passwort-warnung'), /Argon2\/bcrypt/);
 });
-test('Prüfsummen: regal/lager – S gleich (14), G verschieden (26/0)', () => {
+test('Prüfsummen: palme/lampe – S gleich (18), G verschieden (15/26)', () => {
+  // M11: eigene Wörter – regal/lager sind die Angaben von W5-L1-05 (das Werkzeug schaltet dort in den geführten Modus)
   const w = oeffne('hash', { voreinstellung: { reiter: ['pruefsumme'] } });
-  w.k.tippe(w.k.eins(w.flaeche, 'input.pruef-a'), 'regal');
-  w.k.tippe(w.k.eins(w.flaeche, 'input.pruef-b'), 'lager');
-  assert.deepEqual(w.zustand().pruefsummen, { S: [14, 14], G: [26, 0] });
+  w.k.tippe(w.k.eins(w.flaeche, 'input.pruef-a'), 'palme');
+  w.k.tippe(w.k.eins(w.flaeche, 'input.pruef-b'), 'lampe');
+  assert.deepEqual(w.zustand().pruefsummen, { S: [18, 18], G: [15, 26] });
   assert.match(w.text('.pruef-s'), /gleich/);
   assert.match(w.text('.pruef-g'), /verschieden/);
 });

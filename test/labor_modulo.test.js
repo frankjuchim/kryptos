@@ -69,11 +69,12 @@ test('Farbmischer: Töpfe mit Muster und Namen (Farbe nie einziges Signal), Misc
 });
 
 test('Modulo: reduzierte Bewegung – Zeiger ohne Animation', () => {
+  // M11: k = 6 (mit a = 23 und k = 5 erkennt der Erkenner Angaben von W4-L3-04)
   const w = oeffne('modulo', { ruhig: true });
-  w.k.tippe(w.k.eins(w.flaeche, 'input.uhr-b'), '5');
+  w.k.tippe(w.k.eins(w.flaeche, 'input.uhr-b'), '6');
   assert.equal(w.k.eins(w.flaeche, 'line.zeiger').classList.contains('animiert'), false);
   const b = oeffne('modulo');
-  b.k.tippe(b.k.eins(b.flaeche, 'input.uhr-b'), '5');
+  b.k.tippe(b.k.eins(b.flaeche, 'input.uhr-b'), '6');
   assert.equal(b.k.eins(b.flaeche, 'line.zeiger').classList.contains('animiert'), true);
 });
 
