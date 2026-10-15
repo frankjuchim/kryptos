@@ -8,6 +8,8 @@
  *   → /spiel; Lehrkraft meldet sich auf Kryptos über das Portal an → /lehrer; Mika löst W0-L1-03; Portal benennt den Kurs
  *   um (Verbund kurs-aendern), lädt den Lernstand (Kennzahlen ohne Codes), entfernt Mika (Verbund loeschen → in Kryptos
  *   keine Zeile mehr); „Überall abmelden“ in Kryptos beendet auch die Portal-Sitzung.
+ * Vertrag v1.3 (§5): „Weiter zu Kryptos“ zeigt auf /sso/start; Ida (schon auf Kryptos angemeldet) tritt im Portal einem
+ *   zweiten Kurs bei, „Weiter zu Kryptos“ holt ein frisches Token → Kryptos kennt beide Kurse.
  * Kryptos läuft mit NODE_ENV=production und http://localhost (E149-Ausnahme); PORTAL_PUBLIC_KEY wird zur Startzeit des
  * Tests vom Portal geholt (nur hier, nie im Server). Nicht in CI (labs ist privat). labs wird nie verändert.
  *
@@ -194,6 +196,8 @@ async function main() {
     await mika.waitForURL(/\/schueler$/);
     const weiter = mika.locator('a.weiter:has-text("Kryptos")');
     await weiter.waitFor();
+    // v1.3 §5/§7: das Portal verlinkt Kryptos über den SSO-Einstieg (urls.ssoStart)
+    assert.equal(await weiter.getAttribute('href'), basis + '/sso/start', '„Weiter zu Kryptos“ über /sso/start');
     if (BILDER) await mika.screenshot({ path: path.join(BILDER, 'portal_weiter.png') });
     await weiter.click();
     await mika.waitForURL((u) => u.toString().startsWith(basis + '/spiel'));
@@ -219,6 +223,37 @@ async function main() {
       return r.json();
     }, { id: aufgabe.id, antwort: aufgabe.loesung.text });
     assert.equal(geloest.ok, true, JSON.stringify(geloest));
+
+    /* 7b. Vertrag v1.3: Ida ist auf Kryptos angemeldet, tritt im Portal einem zweiten Kurs bei und wechselt erneut
+          über „Weiter zu Kryptos“ (/sso/start mit bestehender Sitzung) → Kryptos kennt beide Kurse */
+    const ida = await seite('Ida K.');
+    await ida.goto(`${portalUrl}/?kurs=${kurscode}`);
+    await ida.waitForSelector('#kurs-info:has-text("Informatik LK 13")');
+    await ida.fill('#b-name', 'Ida K.');
+    await ida.click('#form-beitreten button[type="submit"]');
+    await ida.waitForSelector('#code-box:not([hidden])');
+    await ida.check('#code-ok');
+    await ida.click('#code-weiter');
+    await ida.waitForURL(/\/schueler$/);
+    await ida.locator('a.weiter:has-text("Kryptos")').first().click();
+    await ida.waitForURL((u) => u.toString().startsWith(basis + '/spiel'));
+    const kurseVon = async () => (await ida.evaluate(async () => (await fetch('/api/sitzung')).json())).kurse.filter((k) => k.aktiv).map((k) => k.name).sort();
+    assert.deepEqual(await kurseVon(), ['Informatik LK 13']);
+    await lk.goto(portalUrl + '/lehrkraft');
+    await lk.fill('#k-name', 'AG Kryptologie');
+    await lk.click('#form-neu button[type="submit"]');
+    await lk.waitForURL(/#\/kurs\/\d+/);
+    const kurscode2 = (await lk.textContent('.kurskopf .code-gross')).trim();
+    await ida.goto(portalUrl + '/schueler');
+    await ida.fill('#d-kurscode', kurscode2);
+    await ida.click('#form-dazu button[type="submit"]');
+    await ida.waitForSelector('text=Du bist jetzt im Kurs');
+    const weiterIda = ida.locator('a.weiter:has-text("Kryptos")');
+    await weiterIda.nth(1).waitFor();
+    assert.equal(await weiterIda.first().getAttribute('href'), basis + '/sso/start');
+    await weiterIda.first().click();
+    await ida.waitForURL((u) => u.toString().startsWith(basis + '/spiel'));
+    assert.deepEqual(await kurseVon(), ['AG Kryptologie', 'Informatik LK 13'], 'Kryptos kennt nach dem Wechsel beide Kurse');
 
     /* 8. Portal: Kurs umbenennen → Verbund kurs-aendern; Lernstand laden (Kennzahlen, keine Codes) */
     await lk.goto(portalKursUrl);

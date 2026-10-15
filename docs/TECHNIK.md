@@ -2120,10 +2120,13 @@ CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs
 <scratch>/labs` und dort `npm ci` – labs selbst wird nie verändert); ohne `LABS_DIR` „übersprungen“, Exit 0. Portal
 (`src/server.js` der Kopie, `ERLAUBE_HTTP=1`, `TRUST_PROXY=0`) und Kryptos (`NODE_ENV=production`,
 `PLATTFORM_URL=http://localhost:<p>` – E149-Ausnahme, `PORTAL_PUBLIC_KEY` zur Startzeit des Tests von
-`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 →
+`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 (ohne Hinweis „⚠“) →
 Admin trägt Kryptos ein (Ampel grün, Rücksprung `<kryptos>/sso/ende` bestätigt) → Lehrkraft „Frau M.“ fragt an, Freigabe
 und Freischaltung Kryptos, Kurs „Informatik LK 13“ → „Mika R.“ tritt mit Kurscode bei, „Weiter zu Kryptos“ → `/spiel`
-(Sitzung Mika, Kurs) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“) → `/lehrer` mit dem Kurs → Mika löst
+(Sitzung Mika, Kurs; v1.3: Link `href` = `<kryptos>/sso/start`) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“)
+→ `/lehrer` mit dem Kurs → **v1.3:** „Ida K.“ tritt bei, wechselt zu Kryptos, tritt im Portal dem zweiten Kurs „AG
+Kryptologie“ bei und wechselt mit bestehender Kryptos-Sitzung erneut über „Weiter zu Kryptos“ → `/api/sitzung` nennt
+beide Kurse → Mika löst
 W0-L1-03 → Portal benennt den Kurs um (Kryptos zeigt den neuen Namen), „Lernstand auf Kryptos laden“ (Kennzahlen, kein
 persönlicher Code) → Mika aus dem Kurs entfernt → in `kryptos.db` keine Zeile mit Mikas `sub` oder Namen (außer dem
 Löschvermerk `loeschungen`), Verbund-Aufträge `kurs-aendern` und `loeschen` „erledigt“ → „Überall abmelden“ in Kryptos
