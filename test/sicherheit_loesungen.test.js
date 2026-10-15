@@ -194,6 +194,65 @@ test('nach_tipp_nur_dieser_tipp: POST tipp liefert genau den nächsten Tipp, GET
   }
 });
 
+/* Vertrag v1.3 §9: Prüfantworten enthalten keine Lösungsdaten. Falsche Antwort = Musterantwort mit einem veränderten
+   Blatt (bzw. alle Blätter verändert, bzw. Listen umgekehrt) – die erste Variante, die die API mit 200 und ok: false
+   annimmt. */
+const C = require('../src/content/checker');
+const abbilden = (x, f) =>
+  Array.isArray(x) ? x.map((y) => abbilden(y, f)) : x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, abbilden(v, f)])) : f(x);
+function erstesBlatt(x, f) {
+  let fertig = false;
+  const lauf = (y) => {
+    if (fertig) return y;
+    if (Array.isArray(y)) return y.map(lauf);
+    if (y && typeof y === 'object') return Object.fromEntries(Object.entries(y).map(([k, v]) => [k, lauf(v)]));
+    fertig = true;
+    return f(y);
+  };
+  return lauf(x);
+}
+const umkehren = (x) => (Array.isArray(x) ? [...x].reverse().map(umkehren) : x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, umkehren(v)])) : x);
+const veraendern = (y) => (typeof y === 'string' ? (y[0] === 'Q' ? 'R' : 'Q') + y.slice(1) : typeof y === 'number' ? y + 1 : typeof y === 'boolean' ? !y : y);
+const falscheAntworten = (a) => {
+  const m = C.musterantwortAufgabe(a);
+  return [erstesBlatt(m, veraendern), abbilden(m, veraendern), umkehren(m)];
+};
+
+test('v1.3 §9 pruefantwort_falsch: POST pruefen mit falscher Antwort liefert keine Lösung, Erklärung oder Tipp (alle Welten)', { timeout: 180000 }, async () => {
+  const { app, k } = await mika();
+  const LOESUNGSFELDER = ['loesung', 'erklaerung', 'muster', 'musterantwort', 'tipps', 'pruefnachweis'];
+  const antworten = [];
+  let s;
+  let n = 0;
+  let geprueft = 0;
+  for (const w of WELTEN) {
+    const sw = seed(w);
+    for (const a of sw.aufgaben) {
+      if ((sw.boss && sw.boss.pool.includes(a.id)) || /-A-\d+$/.test(a.id)) continue;
+      if (n++ % 20 === 0) s = await H.schuelerClient(app, k, `Mika ${n}`); // Rate-Limit je Schüler
+      for (const antwort of falscheAntworten(a)) {
+        const r = await s.post(`/api/aufgaben/${a.id}/pruefen`).send({ antwort });
+        assert.notEqual(r.status, 429, 'Rate-Limit');
+        if (r.status !== 200 || r.body.ok !== false) continue;
+        geprueft++;
+        for (const f of LOESUNGSFELDER) assert.equal(r.body[f], undefined, `${a.id}: Feld ${f} in der Prüfantwort`);
+        assert.ok(Array.isArray(r.body.zustand.tipps) && r.body.zustand.tipps.length === 0, `${a.id}: keine Tipps ohne Anfrage`);
+        // Was die gesendete Antwort selbst enthält, ist kein Verrat (Teil-Feedback darf sich darauf beziehen)
+        antworten.push([`${a.id} ${N(JSON.stringify(antwort))}`, r.body]);
+        break;
+      }
+    }
+  }
+  assert.ok(geprueft >= 180, `Aufgaben mit falscher Antwort geprüft: ${geprueft}`);
+  const gesendet = (pfad) => pfad.slice(pfad.indexOf(' ') + 1);
+  const treffer = suche(antworten, GEHEIM.filter((g) => g.art !== 'boss'), OEFFENTLICH, { erlaubt: (pfad, g) => gesendet(pfad).includes(g.text) });
+  const api = treffer.filter((x) => !x.inhaltlich);
+  assert.deepEqual(api, [], JSON.stringify(api.slice(0, 5)));
+  // Selbsttest: eine Prüfantwort mit Lösung würde gefunden
+  const g = GEHEIM.find((x) => x.art === 'loesung' && !x.eigen && !OEFFENTLICH.includes(x.text));
+  assert.equal(suche([['probe', { ok: false, text: g.text }]], [g], OEFFENTLICH).length, 1);
+});
+
 test('boss_nur_im_kampf: Boss-Aufgaben erscheinen erst nach /boss/:welt/start und nur die gezogenen; nach Ende nur mit Auswertung', { timeout: 60000 }, async () => {
   const { s } = await mika();
   for (const w of WELTEN) {

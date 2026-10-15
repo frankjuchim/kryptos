@@ -803,11 +803,34 @@ Lösungsdaten (Test).
 
 ### 6.10 Vertragsstand
 
-Verbindlich ist **labs `VERTRAG.md` v1.2** (Commit `3f48c5c`; Entscheidung der Lehrkraft vom 12.10.2026). Er überstimmt
-den früheren Kryptos-Entwurf „v1.2“ (jetzt Archiv in `docs/VERTRAG_VORSCHLAEGE.md`). Kryptos erfüllt v1.2 ohne
-MUSS-Abweichung:
+Verbindlich ist **labs `VERTRAG.md` v1.3** (Nebenversion, Commit `2b8803b`; v1.2 seit der Entscheidung der Lehrkraft vom
+12.10.2026, v1.3 seit Kryptos 1.1.2). Er überstimmt den früheren Kryptos-Entwurf „v1.2“ (jetzt Archiv in
+`docs/VERTRAG_VORSCHLAEGE.md`). Kryptos erfüllt v1.3 ohne MUSS-Abweichung:
 
-- **Manifest (§7):** `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
+- **Neu in v1.3 (§14):** Einstieg aus dem Portal über `/sso/start`, der immer neu startet; bestehende Sitzung erst nach
+  geprüftem Token ersetzt, bei Fehlern unverändert; Mitgliedschaften, die im Token fehlen, ruhen (§6.2, §6.3, §6.6).
+  `kurs-aendern` legt unbekannte Kurse an und antwortet 200 (§6.7). Rollenneutrale Seite bei `keine_berechtigung`
+  (§6.3). Manifest `vertrag: "1.3"`, `urls.ssoStart`, Fähigkeiten nur aus der Liste in §7 (§6.9). `vertrag_pruefen.js`
+  mit `pruefeSsoStart` (byte-gleich aus labs). §13.2 (eigene Codebasis zulässig) betrifft Kryptos nicht – es ist eine
+  Kopie von Algo Quest mit Naht-Regel (§3).
+- **Sicherheit (§9, Sandbox-Regel ab v1.3):** Kryptos führt **keinen Code und keine Abfragen** von Schülerinnen und
+  Schülern aus – die Regel „isoliert von der Plattform-Datenbank (eigener Prozess/Worker, flüchtige oder schreibgeschützte
+  Übungsdaten, Zeit- und Größenlimits)“ greift deshalb nicht, ein Umbau ist nicht nötig. Belege (Stand 1.1.2): Java-Code
+  schreiben die Lernenden in der **externen Online-IDE** (online-ide.de, Import-Dateien), Kryptos speichert davon nur
+  den Haken „erledigt“; alle Antworten im Lab, im Boss, im Trainingsplatz und im Gastmodus sind Daten (Text, Zahlen,
+  Auswahl), die `src/content/checker.js` bzw. die registrierten Interaktionen mit festen Regeln vergleichen; das
+  Kryptolabor rechnet nur im Browser über `Krypto.*` (kein Server, keine Speicherung, §10); der Funkraum nimmt nur
+  Whitelist-Text `^[A-Z0-9 ]{1,160}$`, Zahlen und Auswahl aus festen Listen an (§12.3); Werkstatt/Arena speichern
+  Baukasten-Bausteine aus festen Listen (§9.2), die `baukasten.pruefe` interpretiert – kein ausführbarer Code. In
+  `src/` und `public/static/js/` gibt es kein `eval`, kein `new Function`, kein `vm`, `child_process`,
+  `worker_threads` oder `Worker`; einziges `db.exec` sind die festen Migrationen in `src/db.js`; alle übrigen
+  SQL-Anweisungen sind vorbereitet und parametrisiert (Wächter-Test `test/sicherheit.test.js` „v1.3 §9 kein_fremdcode“).
+  **Prüfantworten ohne Lösungsdaten:** `POST /api/aufgaben/:id/pruefen` liefert bei falscher Antwort nur `ok`,
+  Zustand, Teil-Feedback (Wahrheitswerte je Feld/Zeichen/Bit, Anteil) und die Fallen-Diagnose – Lösung und Erklärung
+  erst nach dem Lösen bzw. Aufdecken (`inhalte.loesungsteil`). Test `test/sicherheit_loesungen.test.js`
+  „pruefantwort_falsch“: falsche Antworten zu allen Level-Aufgaben W0–W6 (≥ 180 geprüft), keine Lösung, Erklärung oder
+  Tipp in der Antwort (mit Selbsttest). Die Fähigkeit `sql-konsole` meldet Kryptos nicht.
+- **Manifest (§7):** `vertrag: "1.3"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
   Niveaus. `scripts/vertrag_pruefen.js` (byte-gleich aus labs) prüft beide Felder.
 - **Niveau-Übersicht (§9 MUSS, ohne Anmeldung):** Abschnitt `#niveaus` auf `/themen` (bis M4 schlicht, Skript
   `public/static/js/krypto/themen.js`, M4 Task 61) mit den Daten aus `GET /api/niveaus` (öffentlich, `src/krypto/niveauUebersicht.js`):
@@ -830,9 +853,10 @@ Der Vertrag lässt offen, ob freiwillige Inhalte (Ergänzung, Kür) in `anteil` 
 vertragsnähere Lesart (alle sichtbaren Level-Aufgaben). Die fachlich gewünschte Regel „nur Kern/eA“ (Design §3.2), das
 Feld `niveau` in der Kursübersicht, ein Verzeichnis der Fähigkeiten, Regeln für ausgetauschte Inhalte und die
 Präzisierung „Oberfläche“ stehen als **mögliche Vorschläge V1–V8** in `docs/VERTRAG_VORSCHLAEGE.md` und gelten erst nach
-Aufnahme in den Vertrag. SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes Designsystem statt
-Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit Naht-Regel). Die
-Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste).
+Aufnahme in den Vertrag (v1.3 hat eine Liste bekannter Fähigkeiten aufgenommen, aber ohne `labor`, `funkraum`, `arena`,
+`niveau` – V3 bleibt dafür offen). SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes Designsystem
+statt Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit Naht-Regel).
+Fähigkeiten nur aus der Liste in §7 (v1.3, §6.9).
 
 ### 6.11 Superadmin und Gastmodus
 
