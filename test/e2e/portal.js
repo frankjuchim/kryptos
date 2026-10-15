@@ -257,8 +257,15 @@ async function main() {
 
     /* 8. Portal: Kurs umbenennen → Verbund kurs-aendern; Lernstand laden (Kennzahlen, keine Codes) */
     await lk.goto(portalKursUrl);
+    // lk steht noch auf der AG (#/kurs/2): goto auf #/kurs/1 ist nur ein Hash-Wechsel, die Seite baut das Formular danach neu –
+    // erst ausfüllen, wenn das Formular des LK 13 steht (sonst landet der neue Name im alten Formular)
+    await lk.waitForFunction(() => {
+      const f = document.querySelector('input[aria-label="Kursname"]');
+      return !!f && f.value === 'Informatik LK 13';
+    });
     const nameForm = lk.locator('form:has(input[aria-label="Kursname"])');
     await nameForm.locator('input').fill('Informatik LK 13 (Kryptologie)');
+    assert.equal(await nameForm.locator('input').inputValue(), 'Informatik LK 13 (Kryptologie)', 'neuer Kursname im Feld');
     await nameForm.locator('button').click();
     await lk.waitForSelector('text=Kurs umbenannt.');
     let umbenannt = false;

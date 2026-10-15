@@ -536,6 +536,10 @@
    "md": "Phase 1 ohne Zertifikate (9 min): Mallory sitzt zwischen allen Paaren, tauscht Schlüsselnummern und ändert Aufträge unbemerkt. Phase 2 (9 min): Trent (Lehrkraft) stellt Zertifikate aus, Alice nutzt nur grün geprüfte Schlüssel – Mallory fällt auf. Auswertung (7 min, Folie 24). Vollständiger Ablauf, Papier-Alternative, Rollen-, Auftrags-, Zahlen- und Zertifikatskarten: **`Werkzeuge/Funkraum/KR_W5_Funkraum_Mallory_im_Netz`**."
   },
   {
+   "t": "p",
+   "md": "**Werkzeuge in den Aufgaben (Version 1.2.0):** In 9 Aufgaben dieser Welt klappt das passende Werkzeug direkt in der Aufgabe auf (Panel; ab 1100 px Bildschirmbreite als Seitenleiste neben dem Antwortfeld, sonst unter der Aufgabe; „Im Labor öffnen“ als Zweitlink; im Boss nie). 5.1: Hash-Labor geführt (L1-02, L1-04, L1-05, L1-06), Hash-Labor frei (L1-07) · 5.2: Signatur- & Zertifikats-Simulator frei (L2-04), Hash-Labor geführt (L2-05) · 5.3: Signatur- & Zertifikats-Simulator frei (L3-05, L3-07). **Geführt** heißt: Das Werkzeug zeigt die Werte der Aufgabe und markiert nur den aktuellen Schritt; die Lernenden lesen bzw. rechnen jeden Schritt selbst und tragen ihn ein. Rückmeldung (✓/✗ je Schritt) gibt es erst, wenn die Aufgabe gelöst oder die Lösung angesehen ist – vorher bewertet das Werkzeug nichts. **Frei** heißt: Ausprobieren mit eigenen Werten. Auch im freien Labor und auf den Level-Karten („Hier ausprobieren“) wechselt ein Werkzeug bei Werten aus Aufgaben, Akten, Bossen oder Warm-up in den geführten Modus. In der Lehrkraft-Vorschau sind die richtigen Schritte sofort sichtbar."
+  },
+  {
    "t": "h",
    "md": "11 · Abdeckungsmatrix"
   },

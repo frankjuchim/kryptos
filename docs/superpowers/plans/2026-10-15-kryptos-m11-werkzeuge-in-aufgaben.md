@@ -795,11 +795,11 @@ Ausnahme L60, Grenzen), §15 (Szenario 16, K11/K12); Design-Spec §7.3; `README.
 Rückmeldung nach dem Lösen) + `bauen.py <Quellliste>` + `npm run lehrkraft`; Gesamtplan (M11 „erledigt“); `package.json` + alle
 `?v=` → `1.2.0`.
 
-- [ ] **Step 1:** Doku-Tests (`readme.test.js`, Registry-Tabelle) rot → Doku → grün.
-- [ ] **Step 2:** `npm run pruefen`, `npm run e2e`, `npm run krypto:vergleich -- --anzahl 2000` grün; Lehrerhinweis-PDFs ansehen.
-- [ ] **Step 3:** Review mit `superpowers:requesting-code-review` über alle M11-Commits (Review Focus 1–5, D15/K12, Boss-Sperre,
+- [x] **Step 1:** Doku-Tests (`readme.test.js`, Registry-Tabelle) rot → Doku → grün.
+- [x] **Step 2:** `npm run pruefen`, `npm run e2e`, `npm run krypto:vergleich -- --anzahl 2000` grün; Lehrerhinweis-PDFs ansehen.
+- [x] **Step 3:** Review mit `superpowers:requesting-code-review` über alle M11-Commits (Review Focus 1–5, D15/K12, Boss-Sperre,
   CSP, a11y); Funde als Tasks 252a … beheben.
-- [ ] **Step 4: Commit** `Kryptos 1.2.0: Werkzeuge in den Aufgaben – Panels, geführter Modus, Erkenner, Doku (M11 Task 252)`
+- [x] **Step 4: Commit** `Kryptos 1.2.0: Werkzeuge in den Aufgaben – Panels, geführter Modus, Erkenner, Doku (M11 Task 252)`
 
 ---
 

@@ -442,6 +442,17 @@ Die Lehrkraft kann Werkzeuge je Kurs **freigeben/sperren** (z. B. Substitutions-
 **Bossen sind keine Werkzeuge verfügbar** (wie im Abitur: kein Rechner). Werkzeuge enthalten keine Lab-Lösungen;
 Aufgaben, die man mit einem Werkzeug „wegklicken“ könnte, fragen nach Begründung, Einordnung oder Rechenweg.
 
+**Werkzeuge in den Aufgaben (M11, Version 1.2.0).** Das passende Werkzeug klappt direkt in der Aufgabe als **Panel** auf
+(auf breiten Bildschirmen als Seitenleiste neben dem Antwortfeld, auf Tablet und Smartphone unter der Aufgabe; auf den
+Level-Seiten „Hier ausprobieren“) – mit den Werten und Reitern der Aufgabe, „Im Labor öffnen“ bleibt als Zweitlink. Das
+Werkzeug hilft beim Verstehen und Ausprobieren, gibt aber nie direkt die Antwort aus: Rechenaufgaben öffnen es
+**geführt** – die Mechanik zeigt die Aufgabenwerte und markiert den aktuellen Schritt, die Lernenden lesen bzw. rechnen
+jeden Schritt selbst und tragen ihn ein; **Rückmeldung erst nach dem Lösen** (oder nach „Lösung zeigen“), vorher kein
+Orakel. Im freien Labor erkennt das Werkzeug Aufgabenwerte und wechselt ebenfalls in den geführten Modus; mit eigenen
+Werten rechnet es frei. Einzige Ausnahme: In W0-L2-04 darf die Chiffrierscheibe alle 25 Verschiebungen auflisten – das
+Erkennen des Klartexts ist dort die Lernleistung (Entscheidung L60). Aufgaben, die selbst der geführte Modus beantworten
+würde, wurden umgebaut (D18).
+
 ### 7.4 Der Funkraum (Live-Szenarien im Kurs)
 
 Die Lehrkraft startet ein **Szenario**; Teams (Tischgruppen) erhalten Rollen auf ihren Tablets, der Beamer zeigt das

@@ -40,7 +40,7 @@ const KRSpiel = (() => {
             welten: weltenFrei,
             werkzeuge: liste,
             werkzeugFrei: (id) => liste.some((w) => w.id === id && w.frei),
-            // Umgebung für Werkzeug-Dialoge in Aufgaben: Reiter-Regeln des aktiven Kurses (M6 E71, Task 125)
+            // Umgebung für Werkzeug-Panels in Aufgaben: Reiter-Regeln des aktiven Kurses (M6 E71, Task 125)
             laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau, welten: weltenFrei, ...(r && r.boss ? { gesperrt: 'boss' } : {}) }
           };
         })
@@ -49,7 +49,7 @@ const KRSpiel = (() => {
     return laborAnfrage;
   }
 
-  /** Umgebung für einen Werkzeug-Dialog, frisch aus /api/labor (Review M6: Kampf in einem anderen Tab); gesperrt, wenn
+  /** Umgebung für ein Werkzeug-Panel, frisch aus /api/labor (Review M6: Kampf in einem anderen Tab); gesperrt, wenn
       ein Kampf läuft oder das Werkzeug inzwischen nicht mehr frei ist. extra (z. B. { level }) wird angehängt. */
   async function laborFrisch(id, extra = {}) {
     const l = await labor({ neu: true });
@@ -819,7 +819,7 @@ const KRSpiel = (() => {
     }
     KRKopf.baue({ rolle: 'schueler', aktiv: 'zeitleiste', sitzung, scoreboard });
     window.addEventListener('hashchange', navigiere);
-    // Rückkehr in den Tab: Kampf in einem anderen Tab begonnen → offene Werkzeug-Dialoge schließen (Review M6)
+    // Rückkehr in den Tab: Kampf in einem anderen Tab begonnen → offene Werkzeug-Panels schließen (Review M6)
     KRLabor.wache(async () => {
       if ((await labor({ neu: true })).boss) KRLabor.sperreAlle('boss');
     });

@@ -402,6 +402,10 @@
    ]
   },
   {
+   "t": "p",
+   "md": "**Werkzeuge in den Aufgaben (Version 1.2.0):** In 7 Aufgaben dieser Welt klappt das passende Werkzeug direkt in der Aufgabe auf (Panel; ab 1100 px Bildschirmbreite als Seitenleiste neben dem Antwortfeld, sonst unter der Aufgabe; „Im Labor öffnen“ als Zweitlink; im Boss nie). Archivfund: Skytale & Gitter geführt (A-01) · 6.1: Chiffrierscheibe geführt (L1-03), Vigenère-Werkbank geführt (L1-04) · 6.2: Skytale & Gitter geführt (L2-01, L2-03, L2-04), Vigenère-Werkbank geführt (L2-02). **Geführt** heißt: Das Werkzeug zeigt die Werte der Aufgabe und markiert nur den aktuellen Schritt; die Lernenden lesen bzw. rechnen jeden Schritt selbst und tragen ihn ein. Rückmeldung (✓/✗ je Schritt) gibt es erst, wenn die Aufgabe gelöst oder die Lösung angesehen ist – vorher bewertet das Werkzeug nichts. **Frei** heißt: Ausprobieren mit eigenen Werten. Auch im freien Labor und auf den Level-Karten („Hier ausprobieren“) wechselt ein Werkzeug bei Werten aus Aufgaben, Akten, Bossen oder Warm-up in den geführten Modus. In der Lehrkraft-Vorschau sind die richtigen Schritte sofort sichtbar."
+  },
+  {
    "t": "h",
    "md": "9 Materialübersicht Welt 6"
   },

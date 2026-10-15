@@ -392,6 +392,10 @@
    "md": "**Online-IDE „Chiffren-Werkstatt“ (eA):** Gerüst `3_Online-IDE/KR_W3_ChiffrenWerkstatt_Geruest.txt` (Hilfe, Bausteine Basis/Erweiterung/Experte, `MeineChiffre`, Tests `L33BausteineTest` 13 und `L33MeineChiffreTest` 6), Musterlösung `5_Loesungen/KR_W3_ChiffrenWerkstatt_LSG.txt` (FUNKGITTER, 19/19 Tests grün mit javac geprüft). *Offen:* Probelauf in der echten Online-IDE (`static final`-Konstanten, `char`-Vergleich mit `<`, Zeichenliterale)."
   },
   {
+   "t": "p",
+   "md": "**Werkzeuge in den Aufgaben (Version 1.2.0):** In 16 Aufgaben dieser Welt klappt das passende Werkzeug direkt in der Aufgabe auf (Panel; ab 1100 px Bildschirmbreite als Seitenleiste neben dem Antwortfeld, sonst unter der Aufgabe; „Im Labor öffnen“ als Zweitlink; im Boss nie). Archivfund: Bit-Lupe geführt (A-01) · 3.1: Bit-Lupe geführt (L1-02, L1-04, L1-05, L1-06, L1-07) · 3.2: Runden-Labor geführt (L2-03, L2-04, L2-05, L2-06), Runden-Labor frei (L2-07) · 3.3: Vigenère-Werkbank geführt (L3-05), Chiffrierscheibe geführt (L3-07) · 3.K2: Runden-Labor geführt (L5-01, L5-02), Enigma frei (L5-03). **Geführt** heißt: Das Werkzeug zeigt die Werte der Aufgabe und markiert nur den aktuellen Schritt; die Lernenden lesen bzw. rechnen jeden Schritt selbst und tragen ihn ein. Rückmeldung (✓/✗ je Schritt) gibt es erst, wenn die Aufgabe gelöst oder die Lösung angesehen ist – vorher bewertet das Werkzeug nichts. **Frei** heißt: Ausprobieren mit eigenen Werten. Auch im freien Labor und auf den Level-Karten („Hier ausprobieren“) wechselt ein Werkzeug bei Werten aus Aufgaben, Akten, Bossen oder Warm-up in den geführten Modus. In der Lehrkraft-Vorschau sind die richtigen Schritte sofort sichtbar."
+  },
+  {
    "t": "h",
    "md": "Bezug zum Abitur (trainierte Formate)"
   },

@@ -96,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M10, Version 1.1.0)
+### 4.1 Stand der Plattform (M0–M11, Version 1.2.0)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -113,6 +113,7 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 | M8 Inhalte W3–W6 | Welten 3–6 (`seed/welten/welt3–6.json`: Archivfunde, Level mit Kür 3.K2 und 4.K3, Boss-Pools, neue Interaktionen `hash-ziel` und Uhrwerk), Warm-up W3–W6, Generatoren, Akten, Lösungen und Lehrkraft-PDFs W3–W6, Abdeckungsprüfung gegen §11 der Welt-Specs (`npm run abdeckung`) |
 | M9 Abschluss | strenge Startprüfung der Konfiguration (`npm run konfig:pruefen`, Startzeile ohne Geheimnisse), Docker-Image ohne Schlüssel (CI-Job `docker`), Sicherheits-Review als Tests (Kopfzeilen, Cookies hinter dem Proxy, Routen-Inventar mit Rechten und Rate-Limits, Lösungsverrat-Crawler), Datenschutzseite mit Platzhaltern der Schule, e2e-Szenarien 13/14, Ende-zu-Ende mit dem Portal (`npm run e2e:portal`), Betriebsanleitung (Abschnitt 6) |
 | M10 Werkstatt-Werkzeuge (1.1.0) | Kryptolabor nach der Krypto-Werkstatt (Ideen von A. Bodendiek): Chiffrierscheibe und Skytale als Objekte (am Objekt schreiben, Stempelkasten, Bänder, Abwickeln; Reiter Pflügen, Fleißner-Karton auch 6 × 6) und fünf neue Werkzeuge – Polybios & Playfair, Codes & Signale (Morse-Trommel, Klopfcode, Freimaurer; Zusatz), Versteckte Botschaften (Nullchiffre, Punktmethode; Zusatz), Enigma (Maschine, Innenleben, Vorführen, Glossar; Kür) und Angreifer-Labor (Vorhersage, Schlüsselraum, Trainer, Angreifer-Blick); Reiter-Regeln gegen Lösungsverrat (u. a. Playfair und Schlüsselraum ab Welt 2, Schlüsselwort in Level 0.4/2.4 fest, Vorführen nicht in Kür 3.K2); Level-Karten 0.4, 2.4 und Kür 3.K2 (Runden-Labor mit Mini-Enigma **und** Enigma mit „Maschine“/„Innenleben“); Objektbilder in Folien W0/W2/W3-Kür und den Videos 00/01; e2e-Szenario 15 mit Touch, 360 px, Kontrast und reduzierter Bewegung |
+| M11 Werkzeuge in den Aufgaben (1.2.0) | Labor-Werkzeuge als aufklappbares Panel direkt in 85 Aufgaben (W0–W6) und der Gast-Demo sowie auf den Level-Karten („Hier ausprobieren“): gleiche Module, Voreinstellung und Reiter je Aufgabe, erst beim Aufklappen geladen, ab 1100 px als Seitenleiste neben dem Antwortfeld, „Im Labor öffnen“ als Zweitlink, im Boss kein Werkzeug; **geführter Modus** für Rechenaufgaben – die Mechanik zeigt die Aufgabenwerte, die Lernenden tragen jeden Schritt selbst ein, Rückmeldung erst nach dem Lösen (kein Orakel); im freien Labor schaltet ein Erkenner bei Aufgabenwerten in den geführten Modus (`npm run labor:erkenner`); Umbauten nach dem Inventar (D18), Ausnahme W0-L2-04 (Liste aller Verschiebungen), Tests K11/K12, e2e-Szenario 16 |
 
 Noch offen: Freigabe der Lehrkraft und erstes Live-Deploy (Abschnitt 6), Angaben der Schule auf der Datenschutzseite.
 
@@ -144,7 +145,7 @@ npm run krypto:pruefwerte      # Rechenwerte aller Materialien gegen den Python-
 npm run krypto:seeds           # Lösungen der Seeds unabhängig nachrechnen
 npm run abdeckung              # Abdeckung gegen §11 der Welt-Specs ([--welt N])
 npm run krypto:vergleich -- --anzahl 2000          # Bibliothek JS ↔ Python
-npm run e2e                    # Playwright (Chromium), Szenarien 1–15, Fotos kr-01…36 nach docs/screenshots/
+npm run e2e                    # Playwright (Chromium), Szenarien 1–16, Fotos kr-01…39 nach docs/screenshots/
 LABS_DIR=<labs-Kopie> npm run e2e:portal           # Ende-zu-Ende mit einer lokalen Kopie des Portals (INTEGRATION §6)
 npm run konfig:pruefen         # Konfiguration aus den Umgebungsvariablen prüfen, ohne Start (Abschnitt 6)
 npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, npm run workspaces; ohne --pruefen erzeugen (LibreOffice)

@@ -128,3 +128,38 @@ test('doku_testdateien (M10-Review Fund 7): jede in TECHNIK genannte Testdatei *
   const fehlt = [...genannt].filter((f) => !da.has(f));
   assert.deepEqual(fehlt, [], 'in TECHNIK genannt, aber nicht vorhanden');
 });
+
+// ---- M11 Task 252: Doku zu den Werkzeugen in den Aufgaben (TECHNIK §10/§15, Design §7.3, README §4.1, Gesamtplan) ----
+test('doku_m11_registry: TECHNIK §10.2 nennt jeden Voreinstellungs-Schlüssel der Server-Registry', () => {
+  const { WERKZEUGE } = require('../src/krypto/werkzeuge');
+  const zeilen = abschnitt(TECHNIK, '### 10.2 Registry', '### 10.3').split('\n').filter((z) => /^\| `[a-z]+` \|/.test(z));
+  for (const w of WERKZEUGE) {
+    const spalten = zeilen.find((x) => x.startsWith(`| \`${w.id}\` |`)).split(/(?<!\\)\|/).map((s) => s.trim());
+    const genannt = new Set([...spalten[6].matchAll(/`([a-z0-9]+)`/g)].map((m) => m[1]));
+    for (const k of w.voreinstellung) assert.ok(genannt.has(k), `${w.id}: Voreinstellung ${k} fehlt in TECHNIK §10.2`);
+  }
+});
+
+test('doku_m11_technik: §10.1 Panel und Level-Karten, §10.3 geführter Modus/Erkenner/L60/Grenzen, §15 K11/K12, kein labor:sperre', () => {
+  const t101 = abschnitt(TECHNIK, '### 10.1 Seitenstruktur', '### 10.2');
+  for (const s of ['`KRPanel`', 'panel(', 'schliesseAlle(', 'freigeben(', 'offen(', 'Hier ausprobieren', 'Im Labor öffnen', 'Seitenleiste', '1100 px']) assert.ok(t101.includes(s), `§10.1: ${s}`);
+  assert.ok(!/KRLabor\.dialog/.test(t101), '§10.1: kein Werkzeug-Dialog mehr');
+  const t103 = abschnitt(TECHNIK, '### 10.3', '## 11.');
+  for (const s of ['`KRGefuehrt`', '`KRErkenner`', 'geführt', 'Freigabe', 'Kein Orakel', 'npm run labor:erkenner', 'Probier eigene Werte aus', 'L60', 'W0-L2-04', 'Grenzen']) assert.ok(t103.includes(s), `§10.3: ${s}`);
+  const t15 = abschnitt(TECHNIK, '## 15. Tests', '## 16.');
+  for (const s of ['werkzeug_verrat.test.js', 'werkzeug_gefuehrt_dom.test.js', 'K11', 'K12']) assert.ok(t15.includes(s), `§15: ${s}`);
+  assert.ok(!TECHNIK.includes('npm run labor:sperre'), 'TECHNIK: labor:sperre entfällt (E211)');
+});
+
+test('doku_m11_readme_design_plan: README §4.1 bis M11/1.2.0, Design §7.3 mit Panel und geführtem Modus, Gesamtplan M11 erledigt', () => {
+  const s41 = abschnitt(README, '### 4.1', '\n## 5.');
+  assert.match(s41, /M0–M11, Version 1\.2\.0/);
+  assert.match(s41, /\| M11 Werkzeuge in den Aufgaben \(1\.2\.0\) \|/);
+  assert.ok(!README.includes('labor:sperre'), 'README: kein labor:sperre');
+  assert.match(s41, /Szenarien 1–16, Fotos kr-01…39/);
+  const DESIGN = lies('docs/superpowers/specs/2026-10-12-kryptos-design.md');
+  const d73 = abschnitt(DESIGN, '### 7.3', '### 7.4');
+  for (const s of ['Panel', 'geführt', 'Rückmeldung erst', 'W0-L2-04']) assert.ok(d73.includes(s), `Design §7.3: ${s}`);
+  const plan = lies('docs/superpowers/plans/2026-10-12-kryptos-plattform.md');
+  assert.match(plan.split('\n').find((z) => z.startsWith('| **M11** |')), /\*\*erledigt .*Version 1\.2\.0\*\*/);
+});
