@@ -247,12 +247,12 @@ die anderen WebTools.“ Entscheidung L62 (E202): „Geführter Modus“ – das
 aber ohne fertiges Ergebnis; Rückmeldung erst nach dem Lösen; mit eigenen Werten rechnet es frei. Erkennt ein Werkzeug
 Aufgabenwerte (auch im freien Labor), wechselt es in den geführten Modus bzw. zeigt „nicht verfügbar“. Wo ein Werkzeug
 die Antwort trotzdem ausgäbe (Katalog ohne Eingabe, Simulator mit festem Ablauf), ist die Aufgabe umgebaut. Neue Werte
-doppelt nachgerechnet: `shared/krypto.js` und Python-Zwilling (`W1-L1-04-b-v2`: `suchdauer`), 26 · 25 · 24 = 15 600 im
+doppelt nachgerechnet: W1-L1-04 b) im JS-Test `umbau_werte` (`Krypto.schluesselraum`) und mit Python `math.factorial(26) / 3.2e7` (Prüfwerte W1, `nicht_abbildbar`), 26 · 25 · 24 = 15 600 im
 JS-Test und mit `math.perm(26, 3)` (Prüfwerte W6, `nicht_abbildbar`).
 
 | Aufgabe | Verrat durch das Werkzeug | Korrektur |
 |---|---|---|
-| W1-L1-04 b) | Angreifer-Labor „Schlüsselraum“ rechnet 26! bei 10⁹ /s vor: ≈ 1,3 · 10¹⁰ Jahre | Rechenzentrum mit **10¹²** Alphabeten pro Sekunde → ≈ 1,3 · 10⁷ Jahre, e = **7** (das Werkzeug bietet nur 10⁶/10⁹/10¹⁵); Tipp 2 angepasst; a) bleibt (Merkwissen) |
+| W1-L1-04 b) | Angreifer-Labor „Schlüsselraum“ rechnet 26! bei 10⁹ /s vor: ≈ 1,3 · 10¹⁰ Jahre; auch die erste Korrektur (10¹² /s → ≈ 1,3 · 10⁷ Jahre) folgte per Exponentenverschiebung aus den Anzeigen zu 10⁹ und 10¹⁵ /s (Review nach M11) | **umgekehrt gefragt:** Wie viele Alphabete pro Sekunde müsste ein Rechenzentrum prüfen, um alle in einem Jahr zu schaffen? → 26! : 3,2 · 10⁷ ≈ 1,3 · 10¹⁹ /s, e = **19** (das Werkzeug zeigt nur Dauern zu festen Leistungen); Tipp 2 angepasst; a) bleibt (Merkwissen) |
 | W6-L1-09 a) | „Schlüsselraum“ rechnet Vigenère Länge 3: 26³ = 17 576 | Schlüsselwörter der Länge 3 aus drei **verschiedenen** Buchstaben → 26 · 25 · 24 = **15 600**; Schülerlösung 26 · 3 = 78 und b) bleiben |
 | W5-L2-04 | Signatur-Simulator zeigt „Alice signiert mit ihrem privaten Schlüssel …“ = Lücken L2, L3 | Rollen getauscht (L61): **Bob** signiert, Alice prüft – L2 privater, L3 öffentlicher Schlüssel **von Bob** |
 | W5-L3-04 | Szene „Man-in-the-Middle“ zeigt Bobs Schlüssel und Alices Verschlüsselung = Lücken L1–L4 | Rollen getauscht (L61): **Bob** fragt Alices öffentlichen Schlüssel an – L4 öffentlicher Schlüssel **von Alice** |

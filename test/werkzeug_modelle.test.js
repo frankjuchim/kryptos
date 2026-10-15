@@ -118,3 +118,17 @@ test('zeichen_bits_ausgerichtet (Nachtrag M11)', () => {
   assert.equal(P.istVerrat([{ art: 'bits', wert: '1010001010100100101010011', ausgerichtet: true }], pr('W3-L1-04')).verrat, false, 'um ein Bit verschoben');
   assert.equal(P.istVerrat([{ art: 'bits', wert: '1010001010100100101010011' }], pr('W3-L1-04')).verrat, true, 'ohne Ausrichtung zählt jede Stelle');
 });
+
+test('w1_l1_04_b_nicht_aus_werkzeuganzeigen (Review-Fund 9)', () => {
+  const seed = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'seed', 'welten', 'welt1.json'), 'utf8'));
+  const a = seed.aufgaben.find((x) => x.id === 'W1-L1-04');
+  const b = a.interaktion[1];
+  // gefragt ist die nötige Rechenleistung für ein Jahr – das Werkzeug zeigt nur Dauern zu festen Leistungen
+  assert.match(b.frage, /pro Sekunde/);
+  assert.match(b.frage, /in einem Jahr/);
+  assert.deepEqual(a.loesung[1].e, ['19']);
+  const raum = K.suchdauer(26.605619026805893, 1.3e19);
+  assert.equal(raum.text, '≈ 1 Jahr', '1,3 · 10¹⁹ /s → etwa ein Jahr');
+  const p = pr('W1-L1-04');
+  for (const z of M.MODELLE['analyse.schluesselraum'].zustaende(P.angaben(p))) assert.equal(P.istVerrat(z.ausgaben, p).verrat, false, z.bedienung);
+});

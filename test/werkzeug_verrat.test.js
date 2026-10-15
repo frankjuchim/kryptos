@@ -116,12 +116,16 @@ test('schaubild_rollen_getauscht (E205, D18)', () => {
   assert.match(src, /Bob sendet seinen öffentlichen Schlüssel/);
 });
 
-test('umbau_werte (D18): W1-L1-04 b) 10¹² /s → e = 7, W6-L1-09 a) 26 · 25 · 24 = 15 600', () => {
+test('umbau_werte (D18): W1-L1-04 b) Leistung für ein Jahr → e = 19, W6-L1-09 a) 26 · 25 · 24 = 15 600', () => {
   const welt = (n) => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', `welt${n}.json`), 'utf8')).aufgaben;
   const w1 = welt(1).find((x) => x.id === 'W1-L1-04');
-  assert.match(w1.interaktion[1].frage, /10¹² Alphabete pro Sekunde/);
-  assert.deepEqual(w1.loesung[1], { e: ['7'] });
-  assert.equal(Krypto.suchdauer(Krypto.schluesselraum('substitution').log10, 1e12).text, '≈ 1,3 · 10⁷ Jahre');
+  // Review nach M11: umgekehrt gefragt – 26! : 3,2 · 10⁷ s ≈ 1,26 · 10¹⁹ /s
+  assert.match(w1.interaktion[1].frage, /in einem Jahr/);
+  assert.deepEqual(w1.loesung[1], { e: ['19'] });
+  const log = Krypto.schluesselraum('substitution').log10 - Math.log10(3.2e7);
+  assert.equal(Math.floor(log), 19);
+  assert.equal(Math.round(10 ** (log - 19) * 10) / 10, 1.3);
+  assert.equal(Krypto.suchdauer(Krypto.schluesselraum('substitution').log10, 1.3e19).text, '≈ 1 Jahr');
   const w6 = welt(6).find((x) => x.id === 'W6-L1-09');
   assert.match(w6.inhalt[0].md, /drei verschiedenen Buchstaben/);
   assert.deepEqual(w6.loesung.a, ['15600', '15.600']);
