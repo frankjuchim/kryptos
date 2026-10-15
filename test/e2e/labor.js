@@ -1,8 +1,8 @@
 'use strict';
 /*
  * e2e – Kryptolabor (TECHNIK §15 Nr. 4, Plan M6 Task 128): jedes freigegebene Werkzeug öffnen, eine Rechnung, Ergebnis
- * gegen Krypto (Node); gesperrtes Werkzeug (Chiffrierscheibe aus 7a) wird nicht geladen; Nachspiel per Tastatur; Dialog
- * aus einer Aufgabe mit Rückkehr des Fokus; 360 px ohne Querscrollen, Touch-Ziele in allen Werkzeugen und Reitern; reduzierte
+ * gegen Krypto (Node); gesperrtes Werkzeug (Chiffrierscheibe aus 7a) wird nicht geladen; Nachspiel per Tastatur; Panel
+ * in einer Aufgabe (M11) mit Rückkehr des Fokus; 360 px ohne Querscrollen, Touch-Ziele in allen Werkzeugen und Reitern; reduzierte
  * Bewegung.
  * Fotos labor-scheibe, labor-haeufigkeit, labor-runden (Plan M9 Task 217; Scheibe dafür kurz frei). Stellt die Werkzeug-Einstellungen von 7a am Ende wieder her (Scheibe bleibt gesperrt).
  */
@@ -21,11 +21,12 @@ const flaeche = (p) => p.locator('.werkzeug-flaeche');
 /** je Werkzeug: Bedienung im Browser → [ist, soll] mit soll aus Krypto (Node) */
 const RECHNUNG = {
   skytale: async (p) => {
-    // M10: eine Bedienung – das Textfeld liegt im aufklappbaren Bereich „Text eintippen“
+    // M10: eine Bedienung – das Textfeld liegt im aufklappbaren Bereich „Text eintippen“; eigener Text (M11: der
+    // Klartext von W0-L1-03 startet über den Erkenner den geführten Modus)
     await flaeche(p).locator('details.stab-tippen > summary').click();
-    await flaeche(p).locator('textarea.labor-eingabe').fill('wir halten den pass');
+    await flaeche(p).locator('textarea.labor-eingabe').fill('wir rudern zum hafen');
     const z = await zustand(p);
-    return [z.ausgabe, K.skytale('wir halten den pass', z.umfang)];
+    return [z.ausgabe, K.skytale('wir rudern zum hafen', z.umfang)];
   },
   haeufigkeit: async (p) => {
     const text = 'Die Lupe zaehlt jeden Buchstaben';
@@ -154,7 +155,7 @@ async function szenario4(ctx) {
   // Nachspiel per Tastatur (Skytale): Leiste fokussieren, → einen Schritt weiter
   await oeffne(page, ctx, 'skytale');
   await flaeche(page).locator('details.stab-tippen > summary').click();
-  await flaeche(page).locator('textarea.labor-eingabe').fill('wir halten den pass');
+  await flaeche(page).locator('textarea.labor-eingabe').fill('wir rudern zum hafen');
   await flaeche(page).locator('button.station-nachspielen').click(); // M10: Nachspielen öffnet die Leiste
   const leiste = flaeche(page).locator('.nachspiel').first();
   await leiste.locator('.nachspiel-vor').focus();
@@ -163,14 +164,15 @@ async function szenario4(ctx) {
   await page.keyboard.press('ArrowRight');
   assert.match(await leiste.locator('.nachspiel-zaehler').textContent(), new RegExp(`Schritt ${nr + 1} von`));
 
-  // Dialog aus der Aufgabe W9-L3-01 (Häufigkeits-Analysator mit Voreinstellung), Esc → Fokus zurück
+  // Panel in der Aufgabe W9-L3-01 (Häufigkeits-Analysator mit Voreinstellung; M11 Task 247 statt Dialog): Schließen →
+  // Fokus zurück auf dem Schalter
   await gehe(page, `${ctx.basis}/spiel#/aufgabe/W9-L3-01`);
-  await page.locator('button.werkzeug-oeffnen').click();
-  await page.locator('dialog.werkzeug-dialog table.haeufigkeit-tabelle').first().waitFor({ state: 'attached' });
-  assert.equal(await page.locator('dialog.werkzeug-dialog textarea.labor-eingabe').inputValue(), 'IMQRH AGTZF', 'Voreinstellung aus der Aufgabe');
-  await page.keyboard.press('Escape');
-  assert.equal(await page.locator('dialog.werkzeug-dialog').count(), 0);
-  assert.equal(await page.evaluate(() => !!document.activeElement && document.activeElement.classList.contains('werkzeug-oeffnen')), true, 'Fokus zurück auf dem Knopf');
+  await page.locator('button.werkzeug-schalter').click();
+  await page.locator('.werkzeug-panel-flaeche table.haeufigkeit-tabelle').first().waitFor({ state: 'attached' });
+  assert.equal(await page.locator('.werkzeug-panel-flaeche textarea.labor-eingabe').inputValue(), 'IMQRH AGTZF', 'Voreinstellung aus der Aufgabe');
+  await page.locator('.werkzeug-panel-flaeche button.werkzeug-zuklappen').click();
+  assert.equal(await page.locator('.werkzeug-panel-flaeche').isHidden(), true);
+  assert.equal(await page.evaluate(() => !!document.activeElement && document.activeElement.classList.contains('werkzeug-schalter')), true, 'Fokus zurück auf dem Schalter');
 
   // 360 px: kein Querscrollen und Touch-Ziele ≥ 44 px in allen Werkzeugen und allen sichtbaren Reitern (Review M6)
   await page.setViewportSize({ width: 360, height: 740 });

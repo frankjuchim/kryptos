@@ -85,11 +85,12 @@ test('doku_station: TECHNIK §10.1 beschreibt KRStation mit allen Bausteinen und
   assert.ok(abschnitt(TECHNIK, '### 11.3', '### 11.4').includes('labor_objekte.css'), '§11.3 labor_objekte.css');
 });
 
-test('doku_e2e: TECHNIK §15 nennt Szenario 15 und den Foto-Satz mit der Länge von FOTO_LISTE', () => {
+test('doku_e2e: TECHNIK §15 nennt Szenario 15, 16 und den Foto-Satz mit der Länge von FOTO_LISTE', () => {
   const { FOTO_LISTE } = require('./e2e/hilfen');
   const t15 = abschnitt(TECHNIK, '## 15. Tests', '## 16.');
   assert.match(t15, /Nr\. 15/);
   assert.match(t15, /^15\. Werkstatt-Werkzeuge/m);
+  assert.match(t15, /^16\. Werkzeuge in den Aufgaben/m, 'Szenario 16 (M11 Task 251)');
   assert.ok(t15.includes(`kr-${String(FOTO_LISTE.length).padStart(2, '0')}-`), `Foto-Satz bis kr-${FOTO_LISTE.length}`);
   for (const n of FOTO_LISTE.slice(30)) assert.ok(t15.includes(n), `Foto ${n} in §15`);
 });

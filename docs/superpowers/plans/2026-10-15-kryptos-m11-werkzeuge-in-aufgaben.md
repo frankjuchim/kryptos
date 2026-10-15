@@ -774,7 +774,7 @@ W4-L1-06, W4-L2-04, W4-L2-05, W5-L1-07 bekommen Aufgabenwerte, `gefuehrt` und `h
 **Files:** Create `test/e2e/aufgaben_werkzeuge.js`; Modify `test/e2e/e2e.js` (`['16 Werkzeuge in den Aufgaben', …]`),
 `test/e2e/hilfen.js` (`FOTO_LISTE`), `docs/screenshots/kr-37…39`.
 
-- [ ] **Step 1: Szenario** (zuerst rot), Schüler Mika R. (Welten 0–6, echte Seeds): W0-L1-04 – Panel eingeklappt, keine
+- [x] **Step 1: Szenario** (zuerst rot), Schüler Mika R. (Welten 0–6, echte Seeds): W0-L1-04 – Panel eingeklappt, keine
   Anfrage an `labor/skytale.js` vor dem Klick; aufklappen → geführt, Raster leer, Zielzelle markiert, Einträge füllen das Raster,
   kein Klartext im DOM (`document.body.innerText` und Attribute), Foto kr-37; für Schritt 1 alle Buchstaben eintragen → DOM
   unverändert (Orakel). Aufgabe richtig lösen → Vergleich ✓/✗ erscheint, Foto kr-39; nächste Aufgabe ohne Vergleich.
@@ -783,9 +783,9 @@ W4-L1-06, W4-L2-04, W4-L2-05, W5-L1-07 bekommen Aufgabenwerte, `gefuehrt` und `h
   Boss → Panel geschlossen mit Grund. `/labor#/scheibe` mit `IMOTQ`, k = 12 häppchenweise → „Schritt für Schritt“, kein
   `wache`; eigener Text → frei. `/werkstatt` Probelauf mit `boje` → Hinweis. Lehrkraft-Vorschau W4-L2-04: Schritte mit richtigen
   Werten. Gast: Demo 1 geführt. Keine Konsolen-/CSP-Fehler.
-- [ ] **Step 2:** `E2E_NUR=16 npm run e2e` → FAIL, dann grün; voller Lauf `npm run e2e` (16 Szenarien), Fotos ≤ 5 MB, neue Fotos
+- [x] **Step 2:** `E2E_NUR=16 npm run e2e` → FAIL, dann grün; voller Lauf `npm run e2e` (16 Szenarien), Fotos ≤ 5 MB, neue Fotos
   per Read ansehen.
-- [ ] **Step 3: Commit** `M11: e2e Szenario 16 „Werkzeuge in den Aufgaben“ – geführter Modus, kein Orakel, Seitenleiste, Fotos kr-37…39 (Task 251)`
+- [x] **Step 3: Commit** `M11: e2e Szenario 16 „Werkzeuge in den Aufgaben“ – geführter Modus, kein Orakel, Seitenleiste, Fotos kr-37…39 (Task 251)`
 
 ### Task 252: Abschluss M11 – Doku, Lehrerhinweise, Version 1.2.0, Review (E229)
 

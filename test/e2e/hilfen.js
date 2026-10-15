@@ -142,7 +142,8 @@ const FOTO_LISTE = [
   'labor-haeufigkeit', 'labor-runden', 'funkraum-team', 'funkraum-beamer', 'lehrkraft-funkraum-regie',
   'werkstatt-baukasten', 'arena-beamer', 'lehrkraft-kurse', 'lehrkraft-auswertung', 'lehrkraft-einstellungen',
   'lehrkraft-materialien', 'verwaltung', 'themen-niveaus', 'datenschutz', 'gast-aufgabe', '360-aufgabe-w3', 'dunkel-zeitleiste',
-  'labor-skytale-stab', 'labor-quadrat-playfair', 'labor-signale-morse', 'labor-verstecke-brief', 'labor-enigma', 'labor-analyse'
+  'labor-skytale-stab', 'labor-quadrat-playfair', 'labor-signale-morse', 'labor-verstecke-brief', 'labor-enigma', 'labor-analyse',
+  'aufgabe-panel-gefuehrt', 'aufgabe-panel-seitenleiste', 'aufgabe-panel-vergleich'
 ];
 const fotoDatei = (name) => `kr-${String(FOTO_LISTE.indexOf(name) + 1).padStart(2, '0')}-${name}.png`;
 

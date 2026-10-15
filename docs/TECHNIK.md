@@ -2023,7 +2023,7 @@ Aufrufe über `npm run akten|loesungen|lehrkraft|workspaces` (mit `-- --pruefen`
 | `docker.test.js` | neu (M5) | Docker ohne Daemon: COPY-Quellen und `.dockerignore`-Ausnahmen gegen den Dateibaum, Image-Inhalt (Akten laut `seed/akten.json`, Lehrkraft-Verzeichnis, Demo-PDFs, relative `require()`, keine Lösung unter `/app/akten`), Image-Nachbau im Temp-Ordner: `scripts/validate.js` und `src/server.js` mit `NODE_ENV=production` (`/healthz`, `/api/themen` mit Akten-URLs, Demo-PDFs 200, andere Akte 401, Manifest) |
 
 **e2e** (`test/e2e/e2e.js`, Playwright mit Chromium aus `/opt/pw-browsers`, App + Entwicklungs-Portal auf freien Ports,
-Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-36-…png` aus den echten Seeds – genau die Namen aus `FOTO_LISTE`
+Foto-Satz `docs/screenshots/kr-01-…png` bis `kr-39-…png` aus den echten Seeds – genau die Namen aus `FOTO_LISTE`
 (`hilfen.js`), zusammen ≤ 5 MB, `foto()` wartet Toasts und endliche Übergänge ab, `E2E_FOTOS=0` schaltet aus (M9 Task 217) –, Viewports
 1280×800, 768×1024, 360×740, Beamer 1920×1080). Aufteilung (M4): `hilfen.js` (Start von Dev-Portal + App mit
 `SEED_DIR=test/e2e/seed`, Anmeldung, Fehler-Beobachtung – ausgenommen nur erwartete Status 400–429 von `/api/…` –,
@@ -2114,6 +2114,19 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     Nia T. startet Boss 0 → `/labor#/enigma` zeigt „Während eines Boss-Kampfs ist das Labor geschlossen.“ Fotos
     kr-31 `labor-skytale-stab`, kr-32 `labor-quadrat-playfair`, kr-33 `labor-signale-morse`, kr-34 `labor-verstecke-brief`,
     kr-35 `labor-enigma`, kr-36 `labor-analyse`.
+16. Werkzeuge in den Aufgaben (Plan M11 Task 251, E228; `aufgaben_werkzeuge.js`, nach Nr. 15): Frau M. schaltet im LK 13
+    alle Welten frei. Mika: W0-L1-04 – Panel eingeklappt, `labor/skytale.js` erst beim Aufklappen geladen; geführt, Raster
+    leer, genau die Zielzelle markiert, kein Klartext im DOM (Text, Attribute, Feldwerte); Schritt 1 mit allen 26 Buchstaben
+    → Klassen, Status, Vergleich, Fazit, Hinweis unverändert (kein Orakel), Einträge füllen das Raster; Enter im Panel prüft
+    nicht; richtig gelöst → Vergleich ✓/✗; W0-L1-05 danach ohne Vergleich. W4-L2-04 bei 1280 px: Seitenleiste (`fixed`)
+    rechts neben dem Antwortfeld. W0-L2-04: Liste aller Verschiebungen erlaubt (L60). 360 px mit offenem Panel (W0-L2-02,
+    Schalter per Enter): kein Querscrollen, Touch-Ziele ≥ 44 px, Antwortfeld und „Prüfen“ erreichbar und nicht verdeckt
+    (`elementFromPoint`), → wechselt den Schritt, reduzierte Bewegung ohne laufende Animation im Panel. Freies Labor:
+    `/labor#/scheibe` mit IMOTQ, k = 12 häppchenweise → „Schritt für Schritt“, kein „wache“; eigener Text → frei.
+    `/werkstatt`: Probelauf mit „boje“ (Umkehrung + Caesar 3) → neutraler Hinweis, kein Geheimtext. Ole B.: zweiter Tab
+    startet Boss 0 → das offene Panel im ersten Tab zeigt „Während eines Boss-Kampfs ist das Labor geschlossen.“
+    Lehrkraft-Vorschau W4-L2-04: Schritte mit den richtigen Werten (N = 51, d = 13). Gast: Demo-Aufgabe 1 geführt, ohne
+    Vergleich. Fotos kr-37 `aufgabe-panel-gefuehrt`, kr-38 `aufgabe-panel-seitenleiste`, kr-39 `aufgabe-panel-vergleich`.
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C
