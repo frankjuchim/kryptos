@@ -4,7 +4,7 @@
    (KRLabor.oeffne, Freigaben vorher frisch über ctx.laborFrisch). Mit gefuehrt: true startet es geführt mit den Werten
    der Voreinstellung (umgebung.gefuehrt = { aufgabe }); verglichen wird erst nach der Freigabe (KRPanel.freigeben →
    KRGefuehrt.freigeben, auch vor dem Laden gemerkt). Höchstens ein offenes Werkzeug je Seite; schliesseAlle beim
-   Seitenwechsel. Tasten bleiben im Panel. Texte nur als Textknoten, Lernende geduzt. Speichert nichts. */
+   Seitenwechsel. Tasten bleiben im Panel, Esc klappt es zu. Texte nur als Textknoten, Lernende geduzt. Speichert nichts. */
 'use strict';
 
 const KRPanel = (() => {
@@ -87,7 +87,15 @@ const KRPanel = (() => {
       bereich
     );
     // Tasten bleiben im Werkzeug (z. B. Enter löst nie das Prüfen der Aufgabe aus)
-    bereich.addEventListener('keydown', (e) => e.stopPropagation());
+    // Esc klappt das Panel zu (Nachtrag M11), außer ein Werkzeug hat die Taste schon selbst verbraucht
+    bereich.addEventListener('keydown', (e) => {
+      e.stopPropagation();
+      if (e.key === 'Escape' && !e.defaultPrevented) {
+        e.preventDefault();
+        eintrag.schliesse();
+        schalter.focus();
+      }
+    });
     bereich.addEventListener('keyup', (e) => e.stopPropagation());
 
     let steuer = null;

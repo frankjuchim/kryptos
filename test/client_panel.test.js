@@ -102,6 +102,21 @@ test('tasten_bleiben_im_panel', () => {
   assert.equal(nach, 0, 'Tasten verlassen das Panel nicht (kein „Prüfen“ der Aufgabe)');
 });
 
+test('esc_schliesst_panel (Nachtrag M11)', () => {
+  const { k, el } = bau([IMOTQ]);
+  let nach = 0;
+  el.addEventListener('keydown', () => nach++);
+  const s = schalter(k, el);
+  k.klick(s);
+  assert.equal(s.getAttribute('aria-expanded'), 'true');
+  k.taste(k.eins(el, 'input.gefuehrt-eintrag-feld'), 'Escape');
+  assert.equal(s.getAttribute('aria-expanded'), 'false', 'Esc klappt das Panel zu');
+  assert.equal(k.eins(el, 'section.werkzeug-panel-flaeche').hidden, true);
+  assert.equal(k.document.activeElement, s, 'Fokus zurück auf dem Schalter');
+  assert.equal(nach, 0, 'Esc verlässt das Panel nicht');
+  assert.equal(k.wert('KRPanel').offen(), 0);
+});
+
 test('vorschau_sofort_freigegeben', () => {
   const { k, el } = bau([IMOTQ], { modus: 'vorschau', laborUmgebung: { modus: 'vorschau', rolle: 'lehrkraft' } });
   k.klick(schalter(k, el));

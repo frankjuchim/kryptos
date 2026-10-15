@@ -1362,7 +1362,7 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   (`titel`), Werkzeug und Fuß (`hinweis` des Blocks, Zweitlink „Im Labor öffnen“ mit `?reiter=…&level=…`). Das Modul lädt
   erst beim ersten Aufklappen (`KRLabor.oeffne`, Freigaben vorher frisch über `ctx.laborFrisch`); höchstens ein offenes
   Panel je Seite, `schliesseAlle()` beim Seitenwechsel (Einträge gehen verloren, nichts wird gespeichert); Tasten bleiben im
-  Panel (Enter prüft nie die Aufgabe). Ab 1100 px Breite steht die Fläche als **Seitenleiste** rechts (`position: fixed`,
+  Panel (Enter prüft nie die Aufgabe); Esc klappt es zu, der Fokus kehrt auf den Schalter zurück. Ab 1100 px Breite steht die Fläche als **Seitenleiste** rechts (`position: fixed`,
   `#haupt` und Fuß rücken nach links, Antwortfeld bleibt sichtbar), darunter im Fluss unter dem Block. Im Boss-Kampf
   (`ctx.modus === 'boss'`) entsteht kein Panel. Level-Karten (Level-Feld `werkzeug`, `level.js`) bekommen dasselbe Panel
   mit dem Schalter „Hier ausprobieren“ ohne Zweitlink (die Karte verlinkt das Labor schon). Validator: Block `werkzeug` ist

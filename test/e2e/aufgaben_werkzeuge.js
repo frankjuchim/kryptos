@@ -140,6 +140,11 @@ async function szenario16(ctx) {
   await aufklappen(page, { gefuehrt: false });
   await page.locator('.werkzeug-panel-flaeche table.alle-tabelle tbody tr').first().waitFor();
   assert.equal(await page.locator('.werkzeug-panel-flaeche table.alle-tabelle tbody tr').count(), 26, 'W0-L2-04: alle Verschiebungen k = 0 … 25');
+  // Esc klappt das Panel zu, Fokus zurück auf dem Schalter
+  await page.locator('.werkzeug-panel-flaeche button.werkzeug-zuklappen').focus();
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('button.werkzeug-schalter').getAttribute('aria-expanded'), 'false', 'Esc schließt das Panel');
+  assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.classList.contains('werkzeug-schalter')), true, 'Fokus auf dem Schalter');
 
   // 3) 360 px, Tastatur, reduzierte Bewegung
   await page.setViewportSize({ width: 360, height: 740 });
