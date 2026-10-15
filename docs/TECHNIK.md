@@ -1496,7 +1496,10 @@ die Lernenden lesen bzw. rechnen jeden Schritt selbst und tragen ihn ein, Folges
 `korrekt()` wird nicht aufgerufen, Warnungen, die selbst die Antwort sind (RSA „e nicht teilerfremd“, Enigma-Lampe), erst
 danach. Freigabe = Aufgabe gelöst oder Lösung angesehen (`KRPanel.freigeben(aufgabeId)` → `KRGefuehrt.freigeben`, auch
 beim Laden einer schon gelösten Aufgabe); dann Spalte „✓ richtig“/„✗ richtig wäre: …“ und ein Fazit. Lehrkraft-Vorschau:
-sofort freigegeben (Hinweis „Vorschau für Lehrkräfte …“). Im freien Labor gibt es keine Freigabe. „Eigene Werte“ verlässt
+sofort freigegeben **Keine Struktur-Hinweise (Review-Fund 8):** Die Form der Mechanik
+verrät keine Lücke – die geführte Euklid-Tabelle hat immer 8 Zeilen (mehr nur bei längeren Rechnungen), wo b = 0 wird, folgt
+aus den eigenen Einträgen; Kasiski fragt immer nach drei Folgen; im Hash-Labor trägt man auch w (A = 1 … Z = 26) selbst ein.
+Nicht gebrauchte Schritte haben den richtigen Wert „leer“ (Vergleich: „✓ richtig leer gelassen“). (Hinweis „Vorschau für Lehrkräfte …“). Im freien Labor gibt es keine Freigabe. „Eigene Werte“ verlässt
 den geführten Modus. Reiter ohne Hook (z. B. `runden.modi`, `runden.fehler`, `hash.baukasten`, `analyse.vergleich`)
 zeigen bei Aufgabenwerten den neutralen Hinweis „Mit diesen Werten gibt es hier keinen Schritt-für-Schritt-Modus.
 Probier eigene Werte aus.“ (auch der Probelauf im Werkstatt-Baukasten). Damit E209 auch dann greift, wenn das Modell

@@ -141,11 +141,13 @@ const KRGefuehrt = (() => {
       let gut = 0;
       zeilen.forEach((z, j) => {
         const art = feldVon(j).art;
-        const ok = gleich(art, eintraege[j], richtig[j]);
+        // leerer richtiger Wert (Review-Fund 8): Zeile wird nicht gebraucht – richtig ist, sie leer zu lassen
+        const leer = richtig[j] === '';
+        const ok = leer ? !norm(art, eintraege[j]) : gleich(art, eintraege[j], richtig[j]);
         if (ok) gut += 1;
         z.classList.toggle('gefuehrt-richtig', ok);
         z.classList.toggle('gefuehrt-falsch', !ok);
-        z.querySelector('.gefuehrt-vergleich').textContent = ok ? '✓ richtig' : `✗ richtig wäre: ${richtig[j] ?? '–'}`;
+        z.querySelector('.gefuehrt-vergleich').textContent = ok ? (leer ? '✓ richtig leer gelassen' : '✓ richtig') : leer ? '✗ hier bleibt es leer' : `✗ richtig wäre: ${richtig[j] ?? '–'}`;
       });
       fazit.textContent = `Vergleich: ${gut} von ${n} Schritten stimmen mit deinen Einträgen überein.`;
     }

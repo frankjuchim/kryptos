@@ -705,10 +705,11 @@
       } catch {
         kas = { wiederholungen: [] };
       }
-      const anzahl = Math.min(3, kas.wiederholungen.length);
+      // Review-Fund 8: immer drei Folgen – die Zahl der Schritte verrät nicht, wie viele Wiederholungen es gibt
+      const anzahl = 3;
       const schritte = [];
       for (let j = 0; j < anzahl; j++) {
-        schritte.push({ text: `Folge ${j + 1}: Welche Buchstabenfolge findest du mehrfach?`, feld: { beschriftung: 'Folge', art: 'text' } });
+        schritte.push({ text: `Folge ${j + 1}: Welche Buchstabenfolge findest du mehrfach? (Gibt es keine weitere, lass die Felder leer.)`, feld: { beschriftung: 'Folge', art: 'text' } });
         schritte.push({ text: `Folge ${j + 1}: Position des ersten Vorkommens (ab 0)`, feld: { beschriftung: 'Position', art: 'zahl' } });
         schritte.push({ text: `Folge ${j + 1}: Position des nächsten Vorkommens (ab 0)`, feld: { beschriftung: 'Position', art: 'zahl' } });
         schritte.push({ text: `Folge ${j + 1}: Abstand der beiden Vorkommen`, feld: { beschriftung: 'Abstand', art: 'zahl' } });
@@ -726,7 +727,7 @@
           }
           leiste.markiere(pos);
         },
-        korrekt: () => kas.wiederholungen.slice(0, anzahl).flatMap((w) => [w.folge, String(w.positionen[0]), String(w.positionen[1]), String(w.abstaende[0])])
+        korrekt: () => Array.from({ length: anzahl }, (_, j) => kas.wiederholungen[j]).flatMap((w) => (w ? [w.folge, String(w.positionen[0]), String(w.positionen[1]), String(w.abstaende[0])] : ['', '', '', '']))
       };
     }
     function teiltexteHook(container, werte) {

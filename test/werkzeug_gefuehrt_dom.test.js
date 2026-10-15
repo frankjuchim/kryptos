@@ -340,10 +340,13 @@ test('k12_beispiel_hash_w5_l1_02', () => {
   // TEE: Rundentabelle, h vorher aus den Einträgen
   const w = geoeffnet('hash', { reiter: ['schritte'], text: 'tee' });
   assert.ok(hat(w, 'section.gefuehrt'));
+  // je Runde: w, 3 · h + w, h neu (Review-Fund 8: w trägt man selbst ein)
   BED.trage(w, 0, '20');
   BED.trage(w, 1, '20');
-  BED.gehe(w, 2);
-  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /3 · 20 \+ 5/, 'h vorher kommt aus dem Eintrag');
+  BED.trage(w, 2, '20');
+  BED.trage(w, 3, '5');
+  BED.gehe(w, 4);
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /3 · 20 \+ 5/, 'h vorher und w kommen aus den Einträgen');
 });
 
 test('k12_beispiel_keine_warnung_vor_freigabe_w4_l3_07', () => {
@@ -466,4 +469,44 @@ test('e209_w2_a_01_verschiebung_und_korrektur_nicht_verfuegbar (Review-Fund 4)',
   }
   const f = geoeffnet('vigenere', { reiter: ['verschiebung'], text: 'Rosenwasser aus dem Garten der Medici duftet suess', schluessellaenge: 4 });
   assert.ok(!hat(f, '.labor-nicht-verfuegbar'), 'eigener Text frei');
+});
+
+/* ---------- Review-Fund 8: keine Struktur-Hinweise im geführten Modus ---------- */
+
+const zahlZeilen = (w) => w.k.alle(w.flaeche, 'table.gefuehrt-tabelle tbody tr').length;
+test('struktur_euklid_feste_zeilenzahl (W4-L3-03)', () => {
+  const panel = (v) => oeffne('rsa', { voreinstellung: { reiter: ['euklid'], ...v }, umgebung: { ...S, gefuehrt: { aufgabe: 'W9-L1-01' } }, ruhig: true });
+  const a = panel({ p: 5, q: 11, e: 7 }); // 40, 7
+  const b = panel({ p: 7, q: 23, e: 7 }); // 132, 7
+  assert.ok(hat(a, 'section.gefuehrt') && hat(b, 'section.gefuehrt'));
+  assert.equal(zahlZeilen(a), zahlZeilen(b), 'Zeilenzahl hängt nicht von der Rechnung ab');
+  assert.equal(anzahl(a), anzahl(b), 'Schrittzahl hängt nicht von der Rechnung ab');
+  assert.doesNotMatch(b.k.text(b.flaeche), /Zeile \d+ \(b = 0\)/, 'keine Zeile „(b = 0)“ vor den Einträgen');
+});
+
+test('struktur_kasiski_feste_zahl_der_folgen', () => {
+  // geführt erzwungen (Panel): ein Text mit genau einer Wiederholung und einer ohne – gleiche Schrittzahl
+  const panel = (t) => oeffne('vigenere', { voreinstellung: { reiter: ['kasiski'], text: t }, umgebung: { ...S, gefuehrt: { aufgabe: 'W9-L1-01' } }, ruhig: true });
+  const eine = panel('ABCXYZQWEABCRTUMNO');
+  const keine = panel('QWERTZUIOPASDFGHJKLYXCVBNM');
+  assert.ok(hat(eine, 'section.gefuehrt') && hat(keine, 'section.gefuehrt'));
+  assert.equal(anzahl(eine), 12, 'drei Folgen je vier Schritte, auch bei nur einer Wiederholung');
+  assert.equal(anzahl(keine), 12, 'auch ohne Wiederholung');
+});
+
+test('struktur_hash_w_selbst_eintragen (W5-L1-02)', () => {
+  const w = geoeffnet('hash', { reiter: ['schritte'], text: 'tee' });
+  assert.ok(hat(w, 'section.gefuehrt'));
+  const zellen = w.k.alle(w.flaeche, 'table.gefuehrt-tabelle tbody td').map((td) => w.k.text(td).trim());
+  assert.ok(!zellen.includes('20') && !zellen.includes('5'), `w-Werte nicht vorgegeben (${zellen.join('|')})`);
+  assert.equal(anzahl(w), 9, 'je Buchstabe w, 3 · h + w, h neu');
+  assert.doesNotMatch(w.k.text(w.flaeche), /w = 20/);
+});
+
+test('struktur_leere_zeilen_im_vergleich (Vorschau)', () => {
+  const w = oeffne('rsa', { voreinstellung: { reiter: ['euklid'], p: 7, q: 23, e: 7 }, umgebung: { rolle: 'lehrkraft', modus: 'vorschau', gefuehrt: { aufgabe: 'W4-L3-03' } }, ruhig: true });
+  const t = w.k.text(w.flaeche);
+  assert.match(t, /richtig wäre: 132/);
+  assert.match(t, /richtig leer gelassen/, 'nicht gebrauchte Zeilen: leer ist richtig');
+  assert.match(t, /richtig wäre: 19\b/, 'd = 19');
 });

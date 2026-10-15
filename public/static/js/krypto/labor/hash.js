@@ -109,19 +109,20 @@
     function schritteHook(container, werte) {
       const n = normal(werte.text || '');
       const b = [...n].slice(0, 60);
-      const w = b.length ? Krypto.zahlen(b.join('')) : [];
+      // Review-Fund 8: w (A = 1 … Z = 26) trägt man selbst ein – es ist oft eine Lücke der Aufgabe (W5-L1-02 a)
       const tab = KRGefuehrt.raster(container, {
         zeilen: b.length,
         spalten: 4,
         caption: `Rundentabelle KRYPTOS-Hash für „${n}“: h ← (3 · h + w) mod 29, Start h = 0`,
         zeilenKopf: (i) => b[i],
         spaltenKopf: (j) => ['w', 'h vorher', '3 · h + w', 'h neu'][j],
-        inhalt: (i, j) => (j === 0 ? String(w[i]) : j === 1 && i === 0 ? '0' : null)
+        inhalt: (i, j) => (j === 1 && i === 0 ? '0' : null)
       });
       const schritte = [];
       b.forEach((x, i) => {
-        schritte.push({ text: (e) => `Runde ${i + 1}: ${x} (w = ${w[i]}): 3 · ${i === 0 ? 0 : oder(e[2 * i - 1])} + ${w[i]}`, feld: zf('3 · h + w') });
-        schritte.push({ text: (e) => `Runde ${i + 1}: h neu = ${oder(e[2 * i])} mod 29`, feld: zf('h neu') });
+        schritte.push({ text: `Runde ${i + 1}: Buchstabe ${x} – Zahl w (A = 1 … Z = 26)`, feld: zf('w') });
+        schritte.push({ text: (e) => `Runde ${i + 1}: 3 · ${i === 0 ? 0 : oder(e[3 * i - 1])} + ${oder(e[3 * i])}`, feld: zf('3 · h + w') });
+        schritte.push({ text: (e) => `Runde ${i + 1}: h neu = ${oder(e[3 * i + 1])} mod 29`, feld: zf('h neu') });
       });
       return {
         schritte,
@@ -129,14 +130,18 @@
           tab.leeren();
           e.forEach((x, j) => {
             if (!x) return;
-            const { q: zl, r: sp } = Krypto.teileMitRest(j, 2);
-            tab.eintrag(zl, sp + 2, x);
-            if (sp === 1 && zl + 1 < b.length) tab.eintrag(zl + 1, 1, x);
+            const { q: zl, r: sp } = Krypto.teileMitRest(j, 3);
+            tab.eintrag(zl, sp === 0 ? 0 : sp + 1, x);
+            if (sp === 2 && zl + 1 < b.length) tab.eintrag(zl + 1, 1, x);
           });
-          const { q: zl, r: sp } = Krypto.teileMitRest(i, 2);
-          tab.markiere(sp === 0 ? [[zl, 0], [zl, 1]] : [[zl, 2]]);
+          const { q: zl, r: sp } = Krypto.teileMitRest(i, 3);
+          tab.markiere(sp === 0 ? [] : sp === 1 ? [[zl, 0], [zl, 1]] : [[zl, 2]]);
+          tab.kopfMarke([zl], []);
         },
-        korrekt: () => Krypto.kryptosHash(n, { protokoll: true }).schritte.flatMap((s) => [String(s.summe), String(s.nachher)])
+        korrekt: () => {
+          const w = Krypto.zahlen(b.join(''));
+          return Krypto.kryptosHash(n, { protokoll: true }).schritte.flatMap((s, i) => [String(w[i]), String(s.summe), String(s.nachher)]);
+        }
       };
     }
     /** werte = { texte: [t1, t2] } – Summe, S, gewichtete Summe, G je Text */

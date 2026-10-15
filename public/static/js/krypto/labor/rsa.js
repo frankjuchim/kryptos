@@ -9,6 +9,7 @@
   const B = KRLaborBau;
   // eigene Beispielwerte (in keinem Material): p = 13, q = 19, e = 5, Klarzahl 20, Wort „hammer“ – M11: 11/17/3 traf
   // als Zahlenmenge {3, 17} die Angaben von W4-L2-04 (Erkenner)
+  const ZEILEN_EUKLID = 8; // feste Zeilenzahl der geführten Euklid-Tabelle (Review-Fund 8)
   const BEISPIEL = { p: 13, q: 19, e: 5, m: 20, text: 'hammer' };
   const REITER_TITEL = { rechenwerk: 'Rechenwerk', euklid: 'Euklid-Tabelle (Kür)', text: 'Text als Zahlen' };
   const MAX_PRIM = 47;
@@ -168,33 +169,40 @@
       };
     }
     /** werte = { phi, e, p, q } – erst φ aus p, q (Task 250: φ ist oft selbst gefragt, W4-L3-03), dann abwärts (q, r),
-        rückwärts (x, y), dann d; Zeile 1 rechnet mit dem eingetragenen φ */
+        rückwärts (x, y), dann d; Zeile 1 rechnet mit dem eingetragenen φ. Review-Fund 8: feste Zeilenzahl (ZEILEN, mehr nur
+        bei langen Rechnungen) – wo b = 0 wird, ergibt sich aus den eigenen Einträgen; nicht gebrauchte Zeilen bleiben leer. */
     function euklidHook(container, werte) {
       const { phi, e, p, q } = werte;
       const eu = Krypto.erweiterterEuklid(phi, e);
-      const n = eu.schritte.length;
-      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 6, caption: `Erweiterter Euklid für a = φ (aus deinem Eintrag), b = e = ${e}`, zeilenKopf: (i) => `Zeile ${i + 1}`, spaltenKopf: (j) => ['a', 'b', 'q', 'r', 'x', 'y'][j], inhalt: (i, j) => (i === 0 && j === 1 ? String(e) : null) });
+      const echt = eu.schritte.length;
+      const n = Math.max(ZEILEN_EUKLID, echt);
+      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 6, caption: `Erweiterter Euklid für a = φ (aus deinem Eintrag), b = e = ${e} – abwärts, bis b = 0 ist`, zeilenKopf: (i) => `Zeile ${i + 1}`, spaltenKopf: (j) => ['a', 'b', 'q', 'r', 'x', 'y'][j], inhalt: (i, j) => (i === 0 && j === 1 ? String(e) : null) });
       const schritte = [{ text: `φ(N) = (p − 1) · (q − 1) = ${p - 1} · ${q - 1}`, feld: zf('φ(N)') }];
       const ziel = [[0, 0]];
       const qIdx = [];
       const rIdx = [];
       const ab = (i, ein) => (i === 0 ? [oder(ein[0]), e] : [i === 1 ? e : oder(ein[rIdx[i - 2]]), oder(ein[rIdx[i - 1]])]);
+      /** Zeile, in der nach deinen Einträgen b = 0 steht (oder null) */
+      const ende = (ein) => {
+        for (let i = 0; i < n - 1; i++) if (String(ein[rIdx[i]] ?? '').trim() === '0') return i + 1;
+        return null;
+      };
       for (let i = 0; i < n - 1; i++) {
         qIdx.push(schritte.length);
-        schritte.push({ text: (ein) => `Abwärts, Zeile ${i + 1}: Wie oft passt b = ${ab(i, ein)[1]} in a = ${ab(i, ein)[0]}? (q)`, feld: zf('q') });
+        schritte.push({ text: (ein) => { const z = ende(ein); return z !== null && i >= z ? `Abwärts, Zeile ${i + 1}: nicht mehr nötig (b = 0 in Zeile ${z + 1}) – leer lassen` : `Abwärts, Zeile ${i + 1}: Wie oft passt b = ${ab(i, ein)[1]} in a = ${ab(i, ein)[0]}? (q)`; }, feld: zf('q') });
         ziel.push([i, 2]);
         rIdx.push(schritte.length);
-        schritte.push({ text: (ein) => `Abwärts, Zeile ${i + 1}: Rest r = ${ab(i, ein)[0]} − ${oder(ein[qIdx[i]])} · ${ab(i, ein)[1]}`, feld: zf('r') });
+        schritte.push({ text: (ein) => { const z = ende(ein); return z !== null && i >= z ? `Abwärts, Zeile ${i + 1}: leer lassen` : `Abwärts, Zeile ${i + 1}: Rest r = ${ab(i, ein)[0]} − ${oder(ein[qIdx[i]])} · ${ab(i, ein)[1]}`; }, feld: zf('r') });
         ziel.push([i, 3]);
       }
       const xIdx = [];
       const yIdx = [];
       for (let i = n - 1; i >= 0; i--) {
         xIdx[i] = schritte.length;
-        schritte.push({ text: i === n - 1 ? `Rückwärts, Zeile ${i + 1} (b = 0): Start x` : (ein) => `Rückwärts, Zeile ${i + 1}: x = y von unten = ${oder(ein[yIdx[i + 1]])}`, feld: zf('x') });
+        schritte.push({ text: (ein) => { const z = ende(ein); if (z === null) return `Rückwärts, Zeile ${i + 1}: x (in der Zeile mit b = 0 beginnst du mit x = 1, y = 0; Zeilen darunter bleiben leer)`; if (i > z) return `Rückwärts, Zeile ${i + 1}: leer lassen`; return i === z ? `Rückwärts, Zeile ${i + 1} (b = 0): Start x` : `Rückwärts, Zeile ${i + 1}: x = y von unten = ${oder(ein[yIdx[i + 1]])}`; }, feld: zf('x') });
         ziel.push([i, 4]);
         yIdx[i] = schritte.length;
-        schritte.push({ text: i === n - 1 ? `Rückwärts, Zeile ${i + 1} (b = 0): Start y` : (ein) => `Rückwärts, Zeile ${i + 1}: y = x − q · y von unten = ${oder(ein[xIdx[i + 1]])} − ${oder(ein[qIdx[i]])} · ${oder(ein[yIdx[i + 1]])}`, feld: zf('y') });
+        schritte.push({ text: (ein) => { const z = ende(ein); if (z === null) return `Rückwärts, Zeile ${i + 1}: y`; if (i > z) return `Rückwärts, Zeile ${i + 1}: leer lassen`; return i === z ? `Rückwärts, Zeile ${i + 1} (b = 0): Start y` : `Rückwärts, Zeile ${i + 1}: y = x − q · y von unten = ${oder(ein[xIdx[i + 1]])} − ${oder(ein[qIdx[i]])} · ${oder(ein[yIdx[i + 1]])}`; }, feld: zf('y') });
         ziel.push([i, 5]);
       }
       schritte.push({ text: (ein) => `d = y mod φ = ${oder(ein[yIdx[0]])} mod ${oder(ein[0])}`, feld: zf('d') });
@@ -204,19 +212,20 @@
         markiere(i, ein) {
           tab.leeren();
           ein.forEach((w, j) => w && ziel[j] && tab.eintrag(ziel[j][0], ziel[j][1], w));
-          // a, b der Zeilen ab 2 aus den Einträgen (b und r der Zeile darüber)
-          for (let z = 1; z < n; z++) {
-            const [a0, b0] = ab(z, ein);
-            tab.eintrag(z, 0, a0 === '…' ? '' : a0);
-            tab.eintrag(z, 1, b0 === '…' ? '' : b0);
+          // a, b der Zeilen ab 2 aus den Einträgen (b und r der Zeile darüber), nur bis zur Zeile mit b = 0
+          const z = ende(ein);
+          for (let r = 1; r < n && (z === null || r <= z); r++) {
+            const [a0, b0] = ab(r, ein);
+            tab.eintrag(r, 0, a0 === '…' ? '' : a0);
+            tab.eintrag(r, 1, b0 === '…' ? '' : b0);
           }
           const zl = ziel[i];
           tab.markiere(zl ? (zl[1] <= 3 ? [[zl[0], 0], [zl[0], 1]] : [[Math.min(n - 1, zl[0] + 1), 4], [Math.min(n - 1, zl[0] + 1), 5]]) : [[0, 5]]);
         },
         korrekt() {
           const aus = [String(phi)];
-          for (let i = 0; i < n - 1; i++) aus.push(String(eu.schritte[i].q), String(eu.schritte[i].r));
-          for (let i = n - 1; i >= 0; i--) aus.push(String(eu.schritte[i].x), String(eu.schritte[i].y));
+          for (let i = 0; i < n - 1; i++) aus.push(...(i < echt - 1 ? [String(eu.schritte[i].q), String(eu.schritte[i].r)] : ['', '']));
+          for (let i = n - 1; i >= 0; i--) aus.push(...(i < echt ? [String(eu.schritte[i].x), String(eu.schritte[i].y)] : ['', '']));
           aus.push(String(Krypto.mod(eu.y, phi)));
           return aus;
         }
