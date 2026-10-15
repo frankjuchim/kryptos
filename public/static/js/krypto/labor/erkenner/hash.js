@@ -8,6 +8,6 @@ KRErkenner.daten('hash', {
     '05565ea4','cf31212b'
   ],
   "schritte": [
-    '264d8fdb','2ac2ba45','6194c61c','ad19700b','d67b902d'
+    '264d8fdb','2ac2ba45','6194c61c','ad19700b'
   ]
 });

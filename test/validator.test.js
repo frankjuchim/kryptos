@@ -775,3 +775,18 @@ test('M10 Task 225: Block werkzeug mit den neuen ids und Wertelisten (E194)', ()
   assert.match(fehler({ id: 'verstecke', voreinstellung: { stelle: 0 } }).join(), /stelle/);
   for (const id of ['quadrat', 'signale', 'verstecke', 'enigma', 'analyse']) assert.deepEqual(fehler({ id }), [], id);
 });
+
+test('M11 (Task 250): geführte Panels – Hash-Schritte ohne Reiter-Hinweis; Schlüssel aus dem Aufgabentext kein Verrat', () => {
+  // geführt: Das Hash-Labor rechnet nicht vor (E203), der Reiter „schritte“ ist erlaubt
+  assert.doesNotMatch(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['schritte'], text: 'tee' }, gefuehrt: true, hinweis: 'Rechne selbst.' }).join(), /Reiter einschränken/);
+  // Kryptoanalyse-Level: Schlüssel steht als Angabe im Aufgabentext → kein Verrat (nur im geführten Panel)
+  const mitText = (vor, gefuehrt, md) => {
+    const w = levelMit({ rolle: 'kryptoanalyse' });
+    const a = aufgabe(w, w.levels.find((x) => x.id === 'W9-L1').aufgaben[0]);
+    a.inhalt = [{ t: 'text', md }, { t: 'werkzeug', id: 'skytale', voreinstellung: { reiter: ['ring'], ...vor }, ...(gefuehrt ? { gefuehrt: true, hinweis: 'Rechne selbst.' } : {}) }];
+    return levelHinweise(w).join();
+  };
+  assert.doesNotMatch(mitText({ text: 'mondhell', t: 3 }, true, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
+  assert.match(mitText({ text: 'mondhell', t: 3 }, false, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
+  assert.match(mitText({ text: 'mondhell', t: 4 }, true, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
+});

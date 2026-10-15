@@ -167,17 +167,18 @@
         }
       };
     }
-    /** werte = { phi, e } – erst abwärts (q, r), dann rückwärts (x, y), dann d */
+    /** werte = { phi, e, p, q } – erst φ aus p, q (Task 250: φ ist oft selbst gefragt, W4-L3-03), dann abwärts (q, r),
+        rückwärts (x, y), dann d; Zeile 1 rechnet mit dem eingetragenen φ */
     function euklidHook(container, werte) {
-      const { phi, e } = werte;
+      const { phi, e, p, q } = werte;
       const eu = Krypto.erweiterterEuklid(phi, e);
       const n = eu.schritte.length;
-      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 6, caption: `Erweiterter Euklid für a = φ = ${phi}, b = e = ${e}`, zeilenKopf: (i) => `Zeile ${i + 1}`, spaltenKopf: (j) => ['a', 'b', 'q', 'r', 'x', 'y'][j], inhalt: (i, j) => (i === 0 && j === 0 ? String(phi) : i === 0 && j === 1 ? String(e) : null) });
-      const schritte = [];
-      const ziel = [];
+      const tab = KRGefuehrt.raster(container, { zeilen: n, spalten: 6, caption: `Erweiterter Euklid für a = φ (aus deinem Eintrag), b = e = ${e}`, zeilenKopf: (i) => `Zeile ${i + 1}`, spaltenKopf: (j) => ['a', 'b', 'q', 'r', 'x', 'y'][j], inhalt: (i, j) => (i === 0 && j === 1 ? String(e) : null) });
+      const schritte = [{ text: `φ(N) = (p − 1) · (q − 1) = ${p - 1} · ${q - 1}`, feld: zf('φ(N)') }];
+      const ziel = [[0, 0]];
       const qIdx = [];
       const rIdx = [];
-      const ab = (i, ein) => (i === 0 ? [phi, e] : [i === 1 ? e : oder(ein[rIdx[i - 2]]), oder(ein[rIdx[i - 1]])]);
+      const ab = (i, ein) => (i === 0 ? [oder(ein[0]), e] : [i === 1 ? e : oder(ein[rIdx[i - 2]]), oder(ein[rIdx[i - 1]])]);
       for (let i = 0; i < n - 1; i++) {
         qIdx.push(schritte.length);
         schritte.push({ text: (ein) => `Abwärts, Zeile ${i + 1}: Wie oft passt b = ${ab(i, ein)[1]} in a = ${ab(i, ein)[0]}? (q)`, feld: zf('q') });
@@ -196,7 +197,7 @@
         schritte.push({ text: i === n - 1 ? `Rückwärts, Zeile ${i + 1} (b = 0): Start y` : (ein) => `Rückwärts, Zeile ${i + 1}: y = x − q · y von unten = ${oder(ein[xIdx[i + 1]])} − ${oder(ein[qIdx[i]])} · ${oder(ein[yIdx[i + 1]])}`, feld: zf('y') });
         ziel.push([i, 5]);
       }
-      schritte.push({ text: (ein) => `d = y mod φ = ${oder(ein[yIdx[0]])} mod ${phi}`, feld: zf('d') });
+      schritte.push({ text: (ein) => `d = y mod φ = ${oder(ein[yIdx[0]])} mod ${oder(ein[0])}`, feld: zf('d') });
       ziel.push(null);
       return {
         schritte,
@@ -213,7 +214,7 @@
           tab.markiere(zl ? (zl[1] <= 3 ? [[zl[0], 0], [zl[0], 1]] : [[Math.min(n - 1, zl[0] + 1), 4], [Math.min(n - 1, zl[0] + 1), 5]]) : [[0, 5]]);
         },
         korrekt() {
-          const aus = [];
+          const aus = [String(phi)];
           for (let i = 0; i < n - 1; i++) aus.push(String(eu.schritte[i].q), String(eu.schritte[i].r));
           for (let i = n - 1; i >= 0; i--) aus.push(String(eu.schritte[i].x), String(eu.schritte[i].y));
           aus.push(String(Krypto.mod(eu.y, phi)));
@@ -546,7 +547,7 @@
           return;
         }
         const { phi, e } = z;
-        if (erkenne('euklid', { zahlen: [z.p, z.q, e, phi] }, { phi, e })) return;
+        if (erkenne('euklid', { zahlen: [z.p, z.q, e, phi] }, { phi, e, p: z.p, q: z.q })) return;
         const eu = Krypto.erweiterterEuklid(phi, e);
         const d = Krypto.mod(eu.y, phi);
         z.euklid = { schritte: eu.schritte, ggt: eu.ggt, x: eu.x, y: eu.y, d };

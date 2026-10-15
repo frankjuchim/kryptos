@@ -329,7 +329,7 @@ test('Mini-Enigma: Stellungstafeln und Positionen von BACH (W3-L5-04) stimmen mi
 const TITEL_PANEL = { scheibe: 'Chiffrierscheibe', skytale: 'Skytale & Gitter', signale: 'Codes & Signale', quadrat: 'Polybios & Playfair', substitution: 'Substitutions-Werkbank', vigenere: 'Vigenère-Werkbank', haeufigkeit: 'Häufigkeits-Analysator', bitlupe: 'Bit-Lupe', runden: 'Runden-Labor', enigma: 'Enigma', modulo: 'Modulo-Uhr & Farbmischer', rsa: 'RSA-Rechenwerk', hash: 'Hash-Labor', signatur: 'Signatur- & Zertifikats-Simulator' };
 // Zahl der Panels je Welt laut Inventar (Plan M11: W0 19, W1 2, W2 18, Gast 1; W3 16, W4 14, W5 9, W6 7)
 const PANELS = { 0: 19, 1: 2, 2: 18, 8: 1, 3: 16, 4: 14, 5: 9, 6: 7 };
-const PANEL_WELTEN = [0, 1, 2, 8]; // Task 250: + 3, 4, 5, 6
+const PANEL_WELTEN = [0, 1, 2, 8, 3, 4, 5, 6];
 const gastSeed = () => JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'seed', 'gast', 'demo.json'), 'utf8'));
 for (const w of PANEL_WELTEN) {
   test(`werkzeug_panels_welt_${w} (Spec ↔ Seed)`, () => {

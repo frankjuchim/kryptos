@@ -1224,3 +1224,21 @@ Lauf ohne Fehler).
 | Produkt-Hash mod 13: rabe, bear, kai, mut, zoo | 11, 11, 8, 0, 0 | pruef_w5.py |
 | FEDER: gehzumtor (Material), kommtmorgen, mtmkomorgen, mnmmtmorgen, kommtmorgenx, unaufgefüllt | 30; 16 (80, 92, 72, 105; 349); 16; 16; 16; 18 (Fehlerwert) | pruef_w5.py |
 | Warm-up: KH(ja), S(ab)/S(ba), 2⁸ + 1, Vigenère e + C, 9 Personen | 2; 3/3; 257; G; 36/18 | pruef_w5.py |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W5-L1-02 | Hash-Labor | schritte | geführt |
+| W5-L1-04 | Hash-Labor | schritte | geführt |
+| W5-L1-05 | Hash-Labor | pruefsumme | geführt |
+| W5-L1-06 | Hash-Labor | schritte | geführt |
+| W5-L1-07 | Hash-Labor | kollision | frei |
+| W5-L2-04 | Signatur- & Zertifikats-Simulator | signatur | frei |
+| W5-L2-05 | Hash-Labor | schritte | geführt |
+| W5-L3-05 | Signatur- & Zertifikats-Simulator | zertifikat | frei |
+| W5-L3-07 | Signatur- & Zertifikats-Simulator | zertifikat | frei |

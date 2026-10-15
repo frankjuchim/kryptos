@@ -805,3 +805,19 @@ Skripte im Scratchpad `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525
 | Warm-up 03, 07, 11, 12 | (5 − 9) mod 26 = 22 → V; AB ∘ AB = AC; ZAHNRADX (t = 7) → ZXDARNHA; 1011 ⊕ 0110 = 1101; 3 · 9 = 27 ≡ 1 | level.py |
 | G-W6-1 Beispiel | standuhr (3, RITZEL) → SNHTD RAU → JVASH CET (Korrektur M8 E147; früher zahnradwerk, UHR) | M8: `shared/krypto.js` + Zwilling |
 | Probeklausur | siehe `SPEC_Kryptos_Pruefungen.md` §9 | kette.py |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W6-A-01 | Skytale & Gitter | ring | geführt |
+| W6-L1-03 | Chiffrierscheibe | scheibe | geführt |
+| W6-L1-04 | Vigenère-Werkbank | verschluesseln | geführt |
+| W6-L2-01 | Skytale & Gitter | ring | geführt |
+| W6-L2-02 | Vigenère-Werkbank | verschluesseln | geführt |
+| W6-L2-03 | Skytale & Gitter | ring | geführt |
+| W6-L2-04 | Skytale & Gitter | ring | geführt |

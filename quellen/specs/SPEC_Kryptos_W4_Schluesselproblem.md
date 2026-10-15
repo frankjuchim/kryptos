@@ -1002,3 +1002,26 @@ Caesar A = 1, Ordnung/Primitivwurzel, Euklid-Tabelle, Quadrierkette), `w4_pruef.
 | Boss: Potenz-Tausch (11, 2, 4, 3), Plus-Tausch (31, 12, A = 6, B = 21), Mal-Tausch (17, 5, A = 13, B = 16) | K = 4; a = 25, K = 15; a = 6, K = 11 | pruef_w4.py |
 | Papier-Boss Bote-Tausch (29, 8, 9, 13), Beispiel (2, 3), Inverses 8⁻¹ mod 29 | A = 14, B = 17, K = 8; Beispiel 16/24/19; 11 | pruef_w4.py |
 | Warm-up: XOR, Caesar w + 7, 3⁴ mod 7, DH (7, 3, 2, 4), Primitivwurzeln mod 7, 3⁻¹ mod 26, 2³ mod 15 | `1101 0101`, D, 4, 2/4/2, 3 ja/2 nein, 9, 8 | pruef_w4.py |
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W4-A-01 | Chiffrierscheibe | scheibe | geführt |
+| W4-L1-05 | Modulo-Uhr & Farbmischer | farbmischer | geführt |
+| W4-L1-06 | Modulo-Uhr & Farbmischer | tabelle, uhr | geführt |
+| W4-L1-08 | Bit-Lupe | xor | geführt |
+| W4-L2-04 | RSA-Rechenwerk | rechenwerk | geführt |
+| W4-L2-05 | RSA-Rechenwerk | rechenwerk | geführt |
+| W4-L2-07 | RSA-Rechenwerk | rechenwerk | geführt |
+| W4-L3-01 | RSA-Rechenwerk | euklid | geführt |
+| W4-L3-02 | RSA-Rechenwerk | euklid | geführt |
+| W4-L3-03 | RSA-Rechenwerk | euklid | geführt |
+| W4-L3-04 | Modulo-Uhr & Farbmischer | uhr | geführt |
+| W4-L3-05 | RSA-Rechenwerk | rechenwerk | geführt |
+| W4-L3-06 | RSA-Rechenwerk | rechenwerk | geführt |
+| W4-L3-07 | RSA-Rechenwerk | rechenwerk | geführt |

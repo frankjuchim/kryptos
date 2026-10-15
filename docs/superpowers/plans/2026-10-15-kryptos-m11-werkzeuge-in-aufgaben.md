@@ -764,10 +764,10 @@ geführt“); `test/hilfen_spec.js` (`WERKZEUG_AUFGABE`), `test/inhalte_spec.tes
 **Files:** wie 249 für `welt3.json` … `welt6.json`, Specs W3–W6, `k12_panels_welt_3_6`; vorhandene Blöcke W4-A-01, W4-L1-05,
 W4-L1-06, W4-L2-04, W4-L2-05, W5-L1-07 bekommen Aufgabenwerte, `gefuehrt` und `hinweis`.
 
-- [ ] **Step 1: Failing tests:** Abgleich (W3 16, W4 14, W5 9, W6 7 Panels), `k12_panels_welt_3_6`.
-- [ ] **Step 2–4:** FAIL → Seeds, Specs → `npm run pruefen` grün; Browser W3-L1-04, W3-L5-01, W4-L1-05, W4-L3-02, W5-L1-02,
+- [x] **Step 1: Failing tests:** Abgleich (W3 16, W4 14, W5 9, W6 7 Panels), `k12_panels_welt_3_6`.
+- [x] **Step 2–4:** FAIL → Seeds, Specs → `npm run pruefen` grün; Browser W3-L1-04, W3-L5-01, W4-L1-05, W4-L3-02, W5-L1-02,
   W6-L2-03.
-- [ ] **Step 5: Commit** `M11: Werkzeug-Panels in den Aufgaben der Welten 3–6 (Task 250)`
+- [x] **Step 5: Commit** `M11: Werkzeug-Panels in den Aufgaben der Welten 3–6 (Task 250)`
 
 ### Task 251: e2e Szenario 16 „Werkzeuge in den Aufgaben“ und Fotos (E228, Review Focus 1–5)
 

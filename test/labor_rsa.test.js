@@ -24,12 +24,13 @@ test('Warnungen: d = e, p = q, m ≥ N, Fixpunkt', () => {
   assert.equal(K.rsa.verschluesseln(11, 3, 55), 11);
   assert.match(v.text('.rsa-warnungen'), /Geheimzahl = Klarzahl/);
 });
-test('Entschlüsseln 37 mit d = 43, N = 77: Quadrierkette = modpow-Protokoll (7 Zeilen), Ergebnis 9', () => {
-  const w = oeffne('rsa', { voreinstellung: { p: 7, q: 11, e: 7 } });
+// eigene Werte (p = 5, q = 23, e = 3): 7/11/7 ist seit Task 250 Aufgabe W4-L3-06 und startet den geführten Modus
+test('Entschlüsseln 37 mit d = 59, N = 115: Quadrierkette = modpow-Protokoll (7 Zeilen), Ergebnis 63', () => {
+  const w = oeffne('rsa', { voreinstellung: { p: 5, q: 23, e: 3 } });
   w.k.klick(w.k.eins(w.flaeche, '.labor-richtung [data-richtung="ent"]'));
   w.k.tippe(w.k.eins(w.flaeche, 'input.rsa-m'), '37');
-  assert.equal(w.zustand().m, 9);
-  assert.equal(w.k.alle(w.flaeche, 'table.quadrierkette tbody tr').length, K.modpow(37, 43, 77, { protokoll: true }).schritte.length);
+  assert.equal(w.zustand().m, 63);
+  assert.equal(w.k.alle(w.flaeche, 'table.quadrierkette tbody tr').length, K.modpow(37, 59, 115, { protokoll: true }).schritte.length);
 });
 test('Eve-Modus: Probedivision mit Zähler; Euklid-Tabelle im Nachspiel; Text als Zahlen mit P5', () => {
   const w = oeffne('rsa', { voreinstellung: { p: 5, q: 11, e: 3 } });

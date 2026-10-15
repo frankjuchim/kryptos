@@ -1462,3 +1462,28 @@ Skripte: `/tmp/claude-0/-home-claude/f4e60f96-f75f-566c-b0f9-ee2525a146cf/scratc
 - **Welt 6:** darf KRYPTOS-16 und RM-16 (§0a, §6) als bekannte Verfahren voraussetzen; „Eves Chiffre“ sollte ein
   anderes Verfahren sein.
 - **Plattform:** `shared/krypto.js` muss §0a.6 (Testvektoren), Tabelle B und die Mini-Enigma-Tabelle reproduzieren.
+
+### Werkzeug-Panels in den Aufgaben (M11, D18)
+
+Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
+Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
+bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`).
+
+| Aufgabe | Werkzeug | Reiter | Modus |
+|---|---|---|---|
+| W3-A-01 | Bit-Lupe | doppelnutzung, zeichen | geführt |
+| W3-L1-02 | Bit-Lupe | xor | geführt |
+| W3-L1-04 | Bit-Lupe | xor | geführt |
+| W3-L1-05 | Bit-Lupe | doppelnutzung | geführt |
+| W3-L1-06 | Bit-Lupe | xor | geführt |
+| W3-L1-07 | Bit-Lupe | doppelnutzung | geführt |
+| W3-L2-03 | Runden-Labor | runden | geführt |
+| W3-L2-04 | Runden-Labor | runden | geführt |
+| W3-L2-05 | Runden-Labor | runden | geführt |
+| W3-L2-06 | Runden-Labor | lawine | geführt |
+| W3-L2-07 | Runden-Labor | fehler | frei |
+| W3-L3-05 | Vigenère-Werkbank | verschluesseln | geführt |
+| W3-L3-07 | Chiffrierscheibe | scheibe | geführt |
+| W3-L5-01 | Runden-Labor | enigma | geführt |
+| W3-L5-02 | Runden-Labor | enigma | geführt |
+| W3-L5-03 | Enigma | maschine | frei |

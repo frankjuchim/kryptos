@@ -294,7 +294,8 @@ function aufgabe(a, fa, wa, { data } = {}) {
     for (const b of alleBloecke(a, { erklaerung: false })) {
       if (b.t !== 'werkzeug' || b.id !== 'hash') continue;
       const reiter = istObjekt(b.voreinstellung) && Array.isArray(b.voreinstellung.reiter) ? b.voreinstellung.reiter : null;
-      if (!reiter || reiter.includes('schritte')) wa('inhalt', 'Hash-Labor rechnet KH Schritt für Schritt vor – Reiter einschränken (voreinstellung.reiter ohne „schritte“).');
+      // M11 (Task 250): im geführten Panel rechnet das Hash-Labor nicht vor (E203)
+      if (b.gefuehrt !== true && (!reiter || reiter.includes('schritte'))) wa('inhalt', 'Hash-Labor rechnet KH Schritt für Schritt vor – Reiter einschränken (voreinstellung.reiter ohne „schritte“).');
     }
   }
   // M11 (E217): Werkzeug-Blöcke mit erkannten Aufgabenwerten brauchen gefuehrt: true; späteres Werkzeug → Hinweis
@@ -481,6 +482,20 @@ function level(l, o, f, w, { data, aufgaben, opt }) {
   // Kryptoanalyse-Level: Werkzeug-Voreinstellung darf den Schlüssel nicht verraten (Delta §7.7)
   // M6 E73: zusätzlich vorgabe (substitution) und t (skytale, Ring); auch Voreinstellungen im Level-Feld werkzeug
   const verraet = (v) => istObjekt(v) && SCHLUESSEL_VERRAT.some((k) => Object.hasOwn(v, k));
+  // M11 (Task 250): im geführten Panel ist ein Schlüssel, der als Angabe im Aufgabentext steht, kein Verrat
+  const norm = (x) => String(x).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const ausText = (a, v) => {
+    const texte = [];
+    for (const b of alleBloecke(a, { erklaerung: false })) if ((b.t === 'text' || b.t === 'hinweis') && typeof b.md === 'string') texte.push(b.md);
+    for (const t of F.teile(a)) if (istObjekt(t.interaktion) && typeof t.interaktion.frage === 'string') texte.push(t.interaktion.frage);
+    const roh = texte.join('\n');
+    return SCHLUESSEL_VERRAT.filter((k) => Object.hasOwn(v, k)).every((k) => {
+      const w = v[k];
+      if (typeof w === 'number') return new RegExp(`(^|[^0-9])${w}([^0-9]|$)`).test(roh);
+      return typeof w === 'string' && norm(w).length > 0 && norm(roh).includes(norm(w));
+    });
+  };
+  const verraetBlock = (a, b) => verraet(b.voreinstellung) && !(b.gefuehrt === true && ausText(a, b.voreinstellung));
   if (l.rolle === 'kryptoanalyse') {
     for (const e of werkzeugListe) {
       if (istObjekt(e) && verraet(e.voreinstellung)) wl(`Level-Feld werkzeug: Voreinstellung verrät den Schlüssel (werkzeug „${e.id}“ in einem Kryptoanalyse-Level).`);
@@ -491,7 +506,7 @@ function level(l, o, f, w, { data, aufgaben, opt }) {
       const a = aufgaben.get(id);
       if (!istObjekt(a)) continue;
       for (const b of alleBloecke(a)) {
-        if (b.t === 'werkzeug' && verraet(b.voreinstellung)) {
+        if (b.t === 'werkzeug' && verraetBlock(a, b)) {
           wl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
         }
       }

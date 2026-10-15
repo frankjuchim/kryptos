@@ -17,7 +17,8 @@ test('angaben_aus_aufgaben', () => {
   assert.deepEqual(A('W0-L2-02').texte, ['IMOTQ']);
   assert.ok(A('W0-L2-02').schluessel.includes('k=12'));
   assert.ok(A('W2-L1-02').texte.includes('GONDEL') && A('W2-L1-02').schluessel.includes('BOTE'));
-  assert.deepEqual([...A('W4-L2-04').zahlen].sort((a, b) => a - b), [3, 5, 17]);
+  // Task 250: das Panel zeigt zusätzlich die Klarzahl m = 2 der Quadrierkette (sichtbare Angabe des Blocks)
+  assert.deepEqual([...A('W4-L2-04').zahlen].sort((a, b) => a - b), [2, 3, 5, 17]);
   assert.deepEqual(A('W3-L1-02').bits, ['01100011', '11010101']);
   // weitere Quellen: Fleißner-Löcher, Ring t, Warm-up, Boss, Gast
   assert.ok(A('W0-L1-07').schluessel.includes('loch=1,3;2,2;3,1;4,4'));
