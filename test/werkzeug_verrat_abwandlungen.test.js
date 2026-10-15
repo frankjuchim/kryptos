@@ -186,3 +186,27 @@ test('review_fund2_beispiele: Füllzeichen an kurzen Angaben', () => {
   ];
   for (const [wr, e, id] of faelle) assert.ok(E.erkannt(wr, e, S), `${id} ${wr} ${e.texte[0]}`);
 });
+
+test('k11b_haeppchen_mit_neuladen_alle_werkzeuge (Stücke zu 3 Zeichen, je Reiter zwei Fälle)', () => {
+  const je = {};
+  const fehlt = [];
+  let n = 0;
+  for (const { p, wr, e } of verrat()) {
+    if (e.texte.length !== 1 || !/^[A-Z]{9,}$/.test(E.FORM(e.texte[0]))) continue;
+    if ((je[wr] = (je[wr] || 0) + 1) > 2) continue;
+    const ablage = new Map();
+    const speicher = { lade: (id) => ablage.get(id) || null, speichere: (id, x) => ablage.set(id, x) };
+    const t = E.FORM(e.texte[0]).slice(0, 24);
+    let erkannt = false;
+    for (let i = 0; i < t.length && !erkannt; i += 3) {
+      const v = E.verlauf({ speicher }); // Neuladen: neuer Verlauf, derselbe Tab-Speicher
+      const stueck = { ...e, texte: [t.slice(i, i + 3)] };
+      v.merke(stueck);
+      erkannt = E.erkannt(wr, stueck, S, v);
+    }
+    n += 1;
+    if (!erkannt) fehlt.push(`${p.id} ${wr}`);
+  }
+  assert.ok(n >= 20, `${n} Fälle`);
+  assert.deepEqual(fehlt, [], `${fehlt.length} unerkannt`);
+});

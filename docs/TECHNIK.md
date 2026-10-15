@@ -2193,7 +2193,8 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     `/werkstatt`: Probelauf mit „boje“ (Umkehrung + Caesar 3) → neutraler Hinweis, kein Geheimtext. Ole B.: zweiter Tab
     startet Boss 0 → das offene Panel im ersten Tab zeigt „Während eines Boss-Kampfs ist das Labor geschlossen.“
     Lehrkraft-Vorschau W4-L2-04: Schritte mit den richtigen Werten (N = 51, d = 13). Gast: Demo-Aufgabe 1 geführt, ohne
-    Vergleich. Fotos kr-37 `aufgabe-panel-gefuehrt`, kr-38 `aufgabe-panel-seitenleiste`, kr-39 `aufgabe-panel-vergleich`.
+    Vergleich. Review nach M11: je Welt eine Aufgabe (W1-L1-07, W2-L1-02, W3-L1-04, W4-L2-04, W5-L1-02, W6-L2-03) ohne
+    Klartext bzw. Lösungszahl im Panel und ohne Orakel im ersten Schritt. Fotos kr-37 `aufgabe-panel-gefuehrt`, kr-38 `aufgabe-panel-seitenleiste`, kr-39 `aufgabe-panel-vergleich`.
 
 **Ende-zu-Ende mit dem echten Portal** (`test/e2e/portal.js`, `npm run e2e:portal`, Plan M9 Task 212, E155, E166; nicht in
 CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs archive --format=tar HEAD | tar -x -C

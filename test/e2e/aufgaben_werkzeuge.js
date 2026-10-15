@@ -122,6 +122,33 @@ async function szenario16(ctx) {
   assert.equal(await page.locator('.werkzeug-panel-flaeche section.gefuehrt[data-freigegeben]').count(), 0, 'W0-L1-05: kein Vergleich');
   assert.equal(await page.locator('.werkzeug-panel-flaeche .gefuehrt-vergleich').evaluateAll((l) => l.filter((x) => x.textContent.trim()).length), 0);
 
+  // Review nach M11: je Welt eine Aufgabe – kein Klartext bzw. keine Lösungszahl im Panel, kein Orakel im ersten Schritt
+  const JE_WELT = [
+    ['W1-L1-07', { texte: ['DIESTERNESTEHENHELL'], zahlen: [] }, false],
+    ['W2-L1-02', { texte: ['HCGHFZ'], zahlen: [] }, true],
+    ['W3-L1-04', { texte: [], bits: ['010001010100100101010011', '001011001000101001101111'], zahlen: ['69'] }, true],
+    ['W4-L2-04', { texte: [], zahlen: ['51', '32', '13'] }, true],
+    ['W5-L1-02', { texte: [], zahlen: ['20', '65', '26'] }, true],
+    ['W6-L2-03', { texte: ['LHTHPPMI', 'MDLOHLNE'], zahlen: [] }, true]
+  ];
+  for (const [id, loesung, gefuehrt] of JE_WELT) {
+    await aufgabe(page, ctx, id);
+    await aufklappen(page, { gefuehrt });
+    const t = N(await domText(page));
+    for (const x of loesung.texte) assert.ok(!t.includes(x), `${id}: „${x}“ im DOM`);
+    const bitsText = (await domText(page)).replace(/[^01]/g, '');
+    for (const b of loesung.bits || []) assert.ok(!bitsText.includes(b), `${id}: Lösungsbits im DOM`);
+    const zellen = await page.locator('.werkzeug-panel-flaeche table td').evaluateAll((l) => l.map((td) => td.textContent.trim()));
+    for (const z of loesung.zahlen) assert.ok(!zellen.includes(z), `${id}: Lösungszahl ${z} in einer Zelle`);
+    if (gefuehrt) {
+      const f = page.locator('.werkzeug-panel-flaeche input.gefuehrt-eintrag-feld');
+      await f.fill('1');
+      const z0 = await panelZustand(page);
+      await f.fill('7');
+      assert.deepEqual(await panelZustand(page), z0, `${id}: kein Orakel im ersten Schritt`);
+    }
+  }
+
   // 2) W4-L2-04 bei 1280 px: Seitenleiste rechts, Antwort links
   await page.setViewportSize({ width: 1280, height: 800 });
   await aufgabe(page, ctx, 'W4-L2-04');
