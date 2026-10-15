@@ -84,10 +84,10 @@ const KRLabor = (() => {
     return p;
   }
   /** Rahmen und Daten fürs Erkennen da? (M11: labor/erkenner.js und labor/erkenner/<id>.js) */
-  const erkennerDa = (id) => typeof KRErkenner !== 'undefined' && KRErkenner.hatDaten(id);
-  /** Werkzeug-Modul (und einmal labor/bausteine.js, danach labor/station.js – Plan M10 Task 224; M11 Task 242:
-      labor/erkenner.js und die Erkenner-Daten labor/erkenner/<id>.js) nachladen; Promise erfüllt, sobald das Modul
-      registriert ist. */
+  const erkennerDa = (id) => typeof KRErkenner !== 'undefined' && KRErkenner.hatDaten(id) && typeof KRGefuehrt !== 'undefined';
+  /** Werkzeug-Modul (und einmal labor/bausteine.js, danach labor/station.js – Plan M10 Task 224; M11 Tasks 242/243:
+      labor/erkenner.js, labor/gefuehrt.js und die Erkenner-Daten labor/erkenner/<id>.js) nachladen; Promise erfüllt,
+      sobald das Modul registriert ist. */
   function lade(id) {
     if (!NACH_ID.has(id)) return Promise.reject(new Error('Dieses Werkzeug gibt es nicht.'));
     const bauDa = () => typeof KRLaborBau !== 'undefined';
@@ -100,7 +100,8 @@ const KRLabor = (() => {
             if (!MODULE.has(id)) throw new Error('Werkzeug hat sich nicht registriert.');
           });
     const daten = () => (erkennerDa(id) ? modul() : skript(`${PFAD}erkenner/${id}.js${version()}`).then(modul));
-    const erkenner = () => (typeof KRErkenner !== 'undefined' ? daten() : skript(`${PFAD}erkenner.js${version()}`).then(daten));
+    const gefuehrt = () => (typeof KRGefuehrt !== 'undefined' ? daten() : skript(`${PFAD}gefuehrt.js${version()}`).then(daten));
+    const erkenner = () => (typeof KRErkenner !== 'undefined' ? gefuehrt() : skript(`${PFAD}erkenner.js${version()}`).then(gefuehrt));
     // synchron anhängen, was schon geht (kein Umweg über Mikroaufgaben)
     const nachBau = () => (stationDa() ? erkenner() : skript(`${PFAD}station.js${version()}`).then(erkenner));
     return bauDa() ? nachBau() : skript(`${PFAD}bausteine.js${version()}`).then(nachBau);

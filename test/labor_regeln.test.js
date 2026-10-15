@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const DIR = path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor');
 const SEED = path.join(__dirname, '..', 'seed');
-const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js', 'station.js', 'erkenner.js']);
+const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js', 'station.js', 'erkenner.js', 'gefuehrt.js']);
 const werkzeugModule = () => fs.readdirSync(DIR).filter((f) => f.endsWith('.js') && !RAHMEN.has(f));
 
 /** Kommentare und Text in String-/Template-Literalen entfernen, ${…}-Ausdrücke behalten. */
@@ -95,6 +95,14 @@ test('Rahmen station.js (Plan M10 E196): dieselben Verbote wie Werkzeuge, keine 
   }
   assert.doesNotMatch(src, /\bsetInterval\b/, 'station.js: kein setInterval');
   assert.doesNotMatch(src, /KRLabor\.registriere\(/, 'station.js registriert kein Werkzeug');
+});
+
+test('Rahmen gefuehrt.js (Plan M11 Task 243): dieselben Verbote, kein setInterval, keine Verfahrensrechnung', () => {
+  const src = ohneTexte(fs.readFileSync(path.join(DIR, 'gefuehrt.js'), 'utf8'));
+  for (const [muster, grund] of VERBOTEN) assert.deepEqual(src.split('\n').filter((z) => muster.test(z)), [], `gefuehrt.js: ${grund}`);
+  assert.doesNotMatch(src, /\bsetInterval\b/);
+  assert.doesNotMatch(src, /KRLabor\.registriere\(/);
+  assert.doesNotMatch(src, /Krypto\.(caesar|vigenere|skytale|playfair|polybios|modpow|xor|kryptosHash|rsa|gartenzaun|ring)\b/, 'keine Verfahrensrechnung im Rahmen');
 });
 
 test('Rahmen erkenner.js (Plan M11 Task 242): dieselben Verbote, Hash nur über Krypto.sha256, Daten nur Kennungen', () => {

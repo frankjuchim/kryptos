@@ -882,3 +882,61 @@ mark.markiert.wiederholung { font-weight: 700; }
 .mitm-werte { display: grid; gap: var(--a-1); }
 .mitm-scheitert:empty { display: none; }
 .sig-schalter { justify-self: start; }
+
+/* ---------- Geführter Modus (Plan M11 Task 243, E206): Schrittleiste, Eintragsfeld, Markierung, Vergleich ---------- */
+.gefuehrt {
+  display: grid;
+  gap: var(--a-3);
+  min-width: 0;
+  padding: var(--a-3);
+  border: 2px solid var(--akzent);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+}
+.gefuehrt-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--a-2); }
+.gefuehrt-titel { margin: 0; font-size: var(--h3); }
+.gefuehrt-titel::before { content: "⇢ "; color: var(--akzent); }
+.gefuehrt-hinweis, .gefuehrt-zaehler, .gefuehrt-fazit { margin: 0; }
+.gefuehrt-zaehler { font-weight: 700; overflow-wrap: anywhere; }
+.gefuehrt-mechanik { display: grid; gap: var(--a-2); min-width: 0; overflow-x: auto; }
+.gefuehrt-eingabe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
+.gefuehrt-eintrag-feld {
+  min-height: var(--ziel);
+  width: 12ch;
+  max-width: 100%;
+  padding: 0 var(--a-2);
+  border: 1.5px solid var(--linie);
+  border-radius: var(--r-knopf);
+  background: var(--papier);
+  color: var(--text);
+  font-family: var(--f-mono);
+  font-size: var(--gr-mono);
+}
+.gefuehrt-eintrag-feld[maxlength="1"] { width: 6ch; text-align: center; }
+.gefuehrt-knoepfe .knopf { min-height: var(--ziel); }
+.gefuehrt-liste { max-height: 16rem; overflow: auto; border: 1px solid var(--linie); border-radius: var(--r-knopf); }
+.gefuehrt-schritte { display: grid; gap: 2px; margin: 0; padding: var(--a-1); list-style: none; }
+.gefuehrt-schritt {
+  display: grid;
+  grid-template-columns: 1.4em minmax(0, 1fr) auto;
+  gap: var(--a-1) var(--a-2);
+  align-items: baseline;
+  padding: 2px var(--a-1);
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+}
+.gefuehrt-schritt.aktuell { border-color: var(--akzent); font-weight: 700; }
+.gefuehrt-zeiger { color: var(--akzent); }
+.gefuehrt-text { overflow-wrap: anywhere; }
+.gefuehrt-wert { font-family: var(--f-mono); }
+.gefuehrt-vergleich { grid-column: 2 / -1; font-size: .9rem; }
+.gefuehrt-vergleich:empty { display: none; }
+.gefuehrt-schritt.gefuehrt-richtig .gefuehrt-vergleich { color: var(--ok); }
+.gefuehrt-schritt.gefuehrt-falsch .gefuehrt-vergleich { color: var(--fehler); }
+/* Markierung der Eingabeseite des aktuellen Schritts: Rahmen + Symbol (Farbe nie einziges Signal) */
+.gefuehrt-mechanik .gefuehrt-markiert { outline: 3px solid var(--akzent); outline-offset: -2px; font-weight: 700; }
+.gefuehrt-mechanik .gefuehrt-markiert::after { content: " ◆"; font-size: .7em; }
+.gefuehrt-mechanik .gefuehrt-eintrag { font-family: var(--f-mono); }
+.gefuehrt-tabelle td, .gefuehrt-tabelle th { min-width: 2.2em; text-align: center; }
+.labor-nicht-verfuegbar { margin: var(--a-2) 0; }

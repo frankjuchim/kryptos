@@ -1,0 +1,196 @@
+/* Kryptos – Rahmen „geführter Modus“ der Labor-Werkzeuge (Plan M11 Task 243, E203, E206, E207, E210).
+   Das Werkzeug zeigt die Mechanik mit den Werten der Aufgabe, hebt nur den aktuellen Schritt hervor (Eingabeseite), die
+   Lernenden lesen bzw. rechnen jeden Schritt selbst und tragen ihn ein. Vor der Freigabe (Aufgabe gelöst oder Lösung
+   angesehen → KRGefuehrt.freigeben(aufgabeId)) steht kein Schrittergebnis im DOM, nichts wird bewertet oder eingefärbt,
+   hook.korrekt() wird nicht aufgerufen; Folgeschritte entstehen aus den Einträgen. Im freien Labor gibt es keine
+   Freigabe. Hook je Werkzeug (E207): gefuehrt(container, werte, umgebung) → { schritte: [{ text, feld: { beschriftung,
+   art: 'buchstabe'|'text'|'zahl'|'bits' } }], markiere(i, eintraege), korrekt() → string[], nachFreigabe?(richtig) }.
+   Einträge zeigt der Hook nur in Elementen mit der Klasse gefuehrt-eintrag (Prüfung „kein Orakel“).
+   Rahmen ohne Verfahrensrechnung (Normalisierung über Krypto.*), speichert nichts, kein setInterval. */
+'use strict';
+
+const KRGefuehrt = (() => {
+  const { h } = AQ;
+  const FREI = new Set(); // freigegebene Aufgaben (dieser Seitenaufruf)
+  const LAUF = new Set(); // laufende Instanzen
+
+  const HINWEIS_AUFGABE = 'Lies den markierten Schritt ab und trage dein Ergebnis ein. Rückmeldung bekommst du, wenn die Aufgabe gelöst ist.';
+  const HINWEIS_FREI = 'Lies den markierten Schritt ab und trage dein Ergebnis ein. Mit eigenen Werten rechnet das Werkzeug frei.';
+  const HINWEIS_VORSCHAU = 'Vorschau für Lehrkräfte: Die Lernenden sehen die richtigen Werte erst, wenn die Aufgabe gelöst ist.';
+
+  /** Eintrag normalisieren je Feldart (nur Darstellung/Vergleich) */
+  function norm(art, wert) {
+    const roh = String(wert ?? '').trim();
+    if (!roh) return '';
+    if (art === 'zahl') return roh.replace(/\s+/g, '').replace(/^\+/, '');
+    if (art === 'bits') return Krypto.normBits(roh).replace(/[^01]/g, '');
+    if (art === 'buchstabe') return Krypto.nurBuchstaben(roh).slice(-1);
+    return Krypto.normalisieren(roh);
+  }
+  const gleich = (art, a, b) => norm(art, a) !== '' && norm(art, a) === norm(art, b);
+
+  /**
+   * Geführten Modus in ziel starten. hook = gefuehrt-Funktion des Werkzeugs; o = { werte, umgebung, aufgabe,
+   * beiEigeneWerte, titel }. → { element, eintraege(), index(), gehe(i), schliesse(), freigegeben() }
+   */
+  function starte(ziel, hook, o = {}) {
+    const umgebung = o.umgebung || {};
+    const aufgabe = typeof o.aufgabe === 'string' && o.aufgabe ? o.aufgabe : null;
+    const vorschau = umgebung.rolle === 'lehrkraft';
+    const mechanik = h('div', { class: 'gefuehrt-mechanik' });
+    const h_ = typeof hook === 'function' ? hook(mechanik, o.werte || {}, umgebung) : hook;
+    const schritte = (h_ && Array.isArray(h_.schritte) ? h_.schritte : []).filter(Boolean);
+    const n = schritte.length;
+    const eintraege = schritte.map(() => '');
+    let i = 0;
+    let richtig = null; // nach der Freigabe: korrekt()
+    let zu = false;
+
+    const textVon = (j) => {
+      const t = schritte[j].text;
+      return String(typeof t === 'function' ? t(eintraege.slice()) : t ?? '');
+    };
+    const feldVon = (j) => schritte[j].feld || { beschriftung: 'Dein Eintrag', art: 'text' };
+    const zaehler = h('p', { class: 'gefuehrt-zaehler', 'aria-live': 'polite' });
+    const feldId = KRLaborBau.neueId('gefuehrt-feld');
+    const beschriftung = h('label', { for: feldId, class: 'gefuehrt-beschriftung' });
+    const feld = h('input', { type: 'text', id: feldId, class: 'gefuehrt-eintrag-feld', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'off' });
+    const zurueck = h('button', { type: 'button', class: 'knopf knopf-leise gefuehrt-zurueck' }, '◀ Zurück');
+    const weiter = h('button', { type: 'button', class: 'knopf knopf-zweit gefuehrt-weiter' }, 'Weiter ▶');
+    const liste = h('ol', { class: 'gefuehrt-schritte', 'aria-label': 'Schritte' });
+    const zeilen = schritte.map((_, j) =>
+      h('li', { class: 'gefuehrt-schritt' }, h('span', { class: 'gefuehrt-zeiger', 'aria-hidden': 'true' }), h('span', { class: 'gefuehrt-text' }), h('span', { class: 'gefuehrt-wert' }, h('span', { class: 'gefuehrt-eintrag' })), h('span', { class: 'gefuehrt-vergleich' }))
+    );
+    for (const z of zeilen) liste.appendChild(z);
+    const fazit = h('p', { class: 'gefuehrt-fazit', role: 'status' });
+    const eigene = typeof o.beiEigeneWerte === 'function' ? h('button', { type: 'button', class: 'knopf knopf-leise gefuehrt-eigene' }, 'Eigene Werte') : null;
+    const hinweis = h('p', { class: 'gefuehrt-hinweis text-2' }, vorschau ? HINWEIS_VORSCHAU : aufgabe ? HINWEIS_AUFGABE : HINWEIS_FREI);
+    const element = h(
+      'section',
+      { class: 'gefuehrt', 'data-modus': 'gefuehrt', 'aria-label': o.titel ? `Schritt für Schritt: ${o.titel}` : 'Schritt für Schritt' },
+      h('div', { class: 'gefuehrt-kopf' }, h('h3', { class: 'gefuehrt-titel' }, 'Schritt für Schritt'), eigene),
+      hinweis,
+      mechanik,
+      zaehler,
+      h('div', { class: 'gefuehrt-eingabe' }, beschriftung, feld),
+      h('div', { class: 'knopf-reihe gefuehrt-knoepfe' }, zurueck, weiter),
+      h('div', { class: 'gefuehrt-liste scroll-y' }, liste),
+      fazit
+    );
+
+    function zeige() {
+      if (!n) {
+        zaehler.textContent = 'Mit diesen Werten gibt es keine Schritte.';
+        feld.disabled = true;
+        zurueck.disabled = true;
+        weiter.disabled = true;
+        return;
+      }
+      const f = feldVon(i);
+      zaehler.textContent = `Schritt ${i + 1} von ${n}: ${textVon(i)}`;
+      beschriftung.textContent = f.beschriftung || 'Dein Eintrag';
+      feld.setAttribute('inputmode', f.art === 'zahl' || f.art === 'bits' ? 'numeric' : 'text');
+      if (f.art === 'buchstabe') feld.setAttribute('maxlength', '1');
+      else feld.removeAttribute('maxlength');
+      if (feld.value !== eintraege[i]) feld.value = eintraege[i];
+      zurueck.disabled = i <= 0;
+      weiter.disabled = i >= n - 1;
+      zeilen.forEach((z, j) => {
+        const an = j === i;
+        z.classList.toggle('aktuell', an);
+        if (an) z.setAttribute('aria-current', 'step');
+        else z.removeAttribute('aria-current');
+        z.querySelector('.gefuehrt-zeiger').textContent = an ? '▶' : '';
+        z.querySelector('.gefuehrt-text').textContent = `${j + 1}. ${textVon(j)}`;
+        z.querySelector('.gefuehrt-eintrag').textContent = eintraege[j] || '–';
+      });
+      if (typeof h_.markiere === 'function') h_.markiere(i, eintraege.slice());
+      if (richtig) vergleich();
+    }
+
+    function vergleich() {
+      let gut = 0;
+      zeilen.forEach((z, j) => {
+        const art = feldVon(j).art;
+        const ok = gleich(art, eintraege[j], richtig[j]);
+        if (ok) gut += 1;
+        z.classList.toggle('gefuehrt-richtig', ok);
+        z.classList.toggle('gefuehrt-falsch', !ok);
+        z.querySelector('.gefuehrt-vergleich').textContent = ok ? '✓ richtig' : `✗ richtig wäre: ${richtig[j] ?? '–'}`;
+      });
+      fazit.textContent = `Vergleich: ${gut} von ${n} Schritten stimmen mit deinen Einträgen überein.`;
+    }
+
+    function freigeben() {
+      if (zu || richtig || !h_ || typeof h_.korrekt !== 'function') return;
+      richtig = (h_.korrekt() || []).map((x) => String(x ?? ''));
+      element.dataset.freigegeben = 'ja';
+      hinweis.textContent = vorschau ? HINWEIS_VORSCHAU : 'Die Aufgabe ist gelöst – vergleiche deine Schritte mit den richtigen.';
+      vergleich();
+      if (typeof h_.nachFreigabe === 'function') h_.nachFreigabe(richtig.slice());
+    }
+
+    function gehe(j) {
+      if (!n) return;
+      i = Math.max(0, Math.min(n - 1, Number(j) || 0));
+      zeige();
+    }
+    feld.addEventListener('input', () => {
+      if (!n) return;
+      const art = feldVon(i).art;
+      eintraege[i] = art === 'buchstabe' ? norm(art, feld.value) : String(feld.value).slice(0, 80);
+      if (art === 'buchstabe' && feld.value !== eintraege[i]) feld.value = eintraege[i];
+      zeige();
+    });
+    feld.addEventListener('keydown', (e) => {
+      const anfang = typeof feld.selectionStart !== 'number' || feld.selectionStart === 0;
+      const ende = typeof feld.selectionEnd !== 'number' || feld.selectionEnd >= String(feld.value).length;
+      if ((e.key === 'ArrowLeft' && anfang) || (e.key === 'ArrowRight' && ende) || e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation(); // Tasten bleiben im Werkzeug (kein „Prüfen“ der Aufgabe)
+        gehe(i + (e.key === 'ArrowLeft' ? -1 : 1));
+        feld.focus();
+      }
+    });
+    zurueck.addEventListener('click', () => gehe(i - 1));
+    weiter.addEventListener('click', () => gehe(i + 1));
+    if (eigene) eigene.addEventListener('click', () => o.beiEigeneWerte());
+
+    ziel.appendChild(element);
+    const inst = {
+      aufgabe,
+      freigeben,
+      element,
+      eintraege: () => eintraege.slice(),
+      index: () => i,
+      gehe,
+      freigegeben: () => !!richtig,
+      schliesse() {
+        zu = true;
+        LAUF.delete(inst);
+        element.remove();
+      }
+    };
+    LAUF.add(inst);
+    zeige();
+    if (vorschau || (aufgabe && FREI.has(aufgabe))) freigeben();
+    return inst;
+  }
+
+  /** Aufgabe freigeben (gelöst oder Lösung angesehen): alle laufenden geführten Werkzeuge dieser Aufgabe vergleichen */
+  function freigeben(aufgabeId) {
+    if (typeof aufgabeId !== 'string' || !aufgabeId) return 0;
+    FREI.add(aufgabeId);
+    let n = 0;
+    for (const inst of [...LAUF]) {
+      if (inst.aufgabe === aufgabeId) {
+        inst.freigeben();
+        n += 1;
+      }
+    }
+    return n;
+  }
+  const freigegeben = (aufgabeId) => FREI.has(aufgabeId);
+
+  return { starte, freigeben, freigegeben, norm, HINWEIS_AUFGABE, HINWEIS_FREI };
+})();

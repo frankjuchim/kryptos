@@ -627,7 +627,7 @@ test('k11_boss_nur_als_kennung', () => { /* keine Boss-Angabe im Klartext in pub
   `KRLaborBau.erkenne(...) → 'frei'|'gefuehrt'|'nicht-verfuegbar'`; `hilfen_werkzeug_bediener.js`:
   `bediene(k, flaeche, wr, zustand)`, `gehe(k, flaeche, i)`, `trage(k, flaeche, i, wert)`.
 
-- [ ] **Step 1: Failing tests** in `test/labor_gefuehrt.test.js` mit einem Test-Hook (drei Schritte, `korrekt` als Spion):
+- [x] **Step 1: Failing tests** in `test/labor_gefuehrt.test.js` mit einem Test-Hook (drei Schritte, `korrekt` als Spion):
 
 ```js
 test('korrekt_erst_nach_freigabe', () => { /* starte, alle Schritte durchlaufen, Einträge setzen → Spion 0 Aufrufe; freigeben('X') → 1 Aufruf, Vergleich sichtbar */ });
@@ -641,8 +641,8 @@ test('lehrkraft_frei', () => { /* rolle lehrkraft → erkenne() === 'frei' */ })
 test('tastatur_schritte', () => { /* ←/→ wechseln den Schritt, Fokus bleibt im Eintragsfeld, aria-live nur „Schritt i von n“ */ });
 ```
 
-- [ ] **Step 2:** FAIL. **Step 3:** `gefuehrt.js`, `erkenne`, Verlauf in `station.js`, CSS.
-- [ ] **Step 4:** `npm run pruefen` grün. **Step 5: Commit** `M11: Rahmen „geführter Modus“ – Schrittleiste, Einträge, Freigabe nach dem Lösen, kein Orakel (Task 243)`
+- [x] **Step 2:** FAIL. **Step 3:** `gefuehrt.js`, `erkenne`, Verlauf in `station.js`, CSS.
+- [x] **Step 4:** `npm run pruefen` grün. **Step 5: Commit** `M11: Rahmen „geführter Modus“ – Schrittleiste, Einträge, Freigabe nach dem Lösen, kein Orakel (Task 243)`
 
 ### Task 244: Geführter Modus I – Scheibe, Skytale & Gitter, Polybios & Playfair, Vigenère, Häufigkeit (E207–E209, Review Focus 1, 2)
 

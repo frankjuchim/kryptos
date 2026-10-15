@@ -300,5 +300,35 @@ const KRLaborBau = (() => {
     return h('details', { class: `labor-details ${klasse}`.trim(), open: offen }, h('summary', null, titel), h('div', { class: 'labor-details-inhalt' }, inhalt));
   }
 
-  return { reiter, textfeld, zahl, richtung, ausgabe, ansager, hinweis, tabelle, details, neueId };
+  /* ---------- Erkenner (Plan M11 Task 243, E209, E210) ---------- */
+
+  const NICHT_VERFUEGBAR = 'Mit diesen Werten gibt es hier keinen Schritt-für-Schritt-Modus. Probier eigene Werte aus.';
+  const HINWEISE = new WeakMap(); // ort → angezeigter Hinweis „nicht verfügbar“
+  /**
+   * Vor jeder Ausgabe eines rechnenden Reiters: Eingaben in den Verlauf, dann fragen, ob der Erkenner Aufgabenwerte
+   * erkennt. Erkannt und o.gefuehrt (Funktion) → geführten Modus starten ('gefuehrt'); erkannt ohne geführten Modus →
+   * neutraler Hinweis in ort ('nicht-verfuegbar'), das Modul gibt dann nichts aus; sonst 'frei'. Lehrkraft: immer frei.
+   */
+  function erkenne(ort, wr, eingaben, umgebung, verlauf, o = {}) {
+    if (verlauf && typeof verlauf.merke === 'function') verlauf.merke(eingaben);
+    const alt = ort ? HINWEISE.get(ort) : null;
+    if (alt) {
+      alt.remove();
+      HINWEISE.delete(ort);
+    }
+    const E = typeof KRErkenner !== 'undefined' ? KRErkenner : null;
+    if (!E || !E.erkannt(wr, eingaben, umgebung, verlauf)) return 'frei';
+    if (typeof o.gefuehrt === 'function') {
+      o.gefuehrt();
+      return 'gefuehrt';
+    }
+    if (ort) {
+      const el = h('div', { class: 'labor-nicht-verfuegbar' }, hinweis('info', NICHT_VERFUEGBAR));
+      ort.appendChild(el);
+      HINWEISE.set(ort, el);
+    }
+    return 'nicht-verfuegbar';
+  }
+
+  return { reiter, textfeld, zahl, richtung, ausgabe, ansager, hinweis, tabelle, details, neueId, erkenne, NICHT_VERFUEGBAR };
 })();
