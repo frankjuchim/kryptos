@@ -101,7 +101,7 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 | Meilenstein | Was läuft |
 |---|---|
 | M0 Kern | Algo-Quest-Kern (2.8.2) übernommen, Fach-Listen Kryptos, Abweichungen in `docs/KERN_ABWEICHUNGEN.md` |
-| M1 Verbund | Anmeldung nur über das Portal (SSO, Ed25519), Verbund-API, Manifest `GET /api/plattform` (Vertrag v1.2), Dev-Portal |
+| M1 Verbund | Anmeldung nur über das Portal (SSO, Ed25519), Verbund-API, Manifest `GET /api/plattform` (Vertrag v1.2, seit 1.1.2 v1.3), Dev-Portal |
 | M2 Bibliothek | `public/static/js/shared/krypto.js` mit Python-Zwilling (`werkzeuge/krypto/`), Prüfwerte aller Materialien |
 | M3 Aufgabenformat | Krypto-Blöcke und -Interaktionen, Fallen-Diagnose P1–P10, Niveau gA/eA/Kür, Generatoren, Validator mit Neuberechnung |
 | M4 Oberfläche | Designsystem „Chronoskop“, Zeitleiste, Level, Boss, Warm-up, Profil, Lehrkraft-Ansicht, Themenseite, Gastmodus |
@@ -166,17 +166,22 @@ Vertragsprüfung, Neustart) und – bei Pull Requests nach `main` – `e2e` aus.
 
 ## 5. Verbund InfoLabs
 
-Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag
-[VERTRAG.md v1.2](https://github.com/frankjuchim/labs/blob/main/VERTRAG.md), angeschlossen nach
+Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag des Plattform-Verbunds:
+[https://github.com/frankjuchim/labs/blob/main/VERTRAG.md](https://github.com/frankjuchim/labs/blob/main/VERTRAG.md)
+(Version 1.3), angeschlossen nach
 [INTEGRATION.md](https://github.com/frankjuchim/labs/blob/main/docs/INTEGRATION.md):
 
-- Single Sign-on mit Ed25519-JWT (§5), Manifest `GET /api/plattform` (§7, `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`,
-  `urls.niveaus`), Verbund-API (§6: Löschen, Kursübersicht, Kursänderung).
+- Single Sign-on mit Ed25519-JWT (§5): Das Portal verlinkt Kryptos über `/sso/start`; jeder Wechsel aus dem Portal holt
+  ein frisches Token (auch mit bestehender Sitzung), damit neue oder geänderte Kurse sofort gelten. Manifest
+  `GET /api/plattform` (§7, `vertrag: "1.3"`, `niveaus: ["eA", "gA"]`, `urls.niveaus`, `urls.ssoStart`, Fähigkeiten nur
+  aus der Liste in §7), Verbund-API (§6: Löschen, Kursübersicht, Kursänderung – unbekannte Kurse werden angelegt).
+- Sicherheit (§9): Kryptos führt keinen Code und keine Abfragen von Schülerinnen und Schülern aus (Java läuft in der
+  externen Online-IDE, der Funkraum nimmt nur Whitelist-Text); Prüfantworten enthalten keine Lösungsdaten.
 - Anforderungsniveaus (§9): Kryptos ist für Grund- und Leistungskurs; die Niveau-Übersicht „Was ist für welches
   Niveau?“ steht ohne Anmeldung unter `/themen#niveaus` (Daten: `GET /api/niveaus`).
 - Konfiguration (§8): `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` (Inhalt von
   `/sso/schluessel.pem` des Portals), `PLATTFORM_ID=kryptos`, `PLATTFORM_URL=https://kryptos.frankjuchim.de`,
-  `AUTH_MODUS=portal`, dazu `SESSION_SECRET` (`VERTRAG_VERSION` nicht nötig; nur `1.2` erlaubt).
+  `AUTH_MODUS=portal`, dazu `SESSION_SECRET` (`VERTRAG_VERSION` nicht nötig; nur `1.3` erlaubt).
 - `src/jwt.js` und `scripts/vertrag_pruefen.js` unverändert aus `frankjuchim/labs`.
 - Nach dem Deploy: Superadmin trägt die Plattform im Portal unter „Plattformen“ ein, bestätigt
   `https://kryptos.frankjuchim.de/sso/ende` und schaltet die Lehrkräfte frei.
@@ -190,7 +195,7 @@ Kryptos baut **kein eigenes Login**. Verbindlich ist der Vertrag
 
 Weitere Wünsche an den Vertrag (Feld `niveau` in der Kursübersicht; Rang/`anteil` nur über Kern-/eA-Inhalte;
 Verzeichnis der Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` …) stehen als mögliche Vorschläge in
-`docs/VERTRAG_VORSCHLAEGE.md` und werden erst nach Aufnahme in den Vertrag umgesetzt; bis dahin gilt labs v1.2 (Rang und
+`docs/VERTRAG_VORSCHLAEGE.md` und werden erst nach Aufnahme in den Vertrag umgesetzt; bis dahin gilt labs v1.3 (Rang und
 `anteil` über alle sichtbaren Level-Aufgaben der freigeschalteten Welten).
 
 ## 6. Betrieb
@@ -227,7 +232,7 @@ Verzeichnis der Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` …) stehen 
 | `NODE_ENV` | `production` (aus dem Image): dann nur `https://`-Adressen (außer `localhost`) | nicht ändern |
 | `SEED_DIR`, `WELT_DATEIEN` | nur Entwicklung | nicht setzen |
 
-**Nicht setzen:** `VERTRAG_VERSION` (Standard und einzig erlaubter Wert `1.2`), `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+**Nicht setzen:** `VERTRAG_VERSION` (Standard und einzig erlaubter Wert `1.3`), `ADMIN_EMAIL`, `ADMIN_PASSWORD`
 (werden nicht gelesen – der Admin kommt vom Portal).
 
 ### 6.3 Startprüfung
@@ -245,7 +250,7 @@ ohne Start: `npm run konfig:pruefen` (gleiche Variablen, Exit 0 „✔ Konfigura
 | `PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel …` | privaten statt öffentlichen Schlüssel eingefügt |
 | `PORTAL_PUBLIC_KEY enthält einen unlesbaren Schlüssel.` / `… keinen Schlüssel …` | Schlüssel unvollständig kopiert |
 | `SESSION_SECRET fehlt oder ist kürzer als 32 Zeichen.` | Geheimnis zu kurz |
-| `VERTRAG_VERSION muss 1.2 sein …` | alte Einstellung – Variable löschen |
+| `VERTRAG_VERSION muss 1.3 sein …` | alte Einstellung (z. B. `1.2`) – Variable löschen |
 | `Kryptos unterstützt nur AUTH_MODUS=portal …` | `AUTH_MODUS` geändert – Variable löschen |
 | `DATA_DIR /app/data ist nicht beschreibbar (…)` | Persistent Directory gehört nicht dem Benutzer `node` |
 
@@ -255,10 +260,12 @@ ohne Start: `npm run konfig:pruefen` (gleiche Variablen, Exit 0 „✔ Konfigura
    `https://kryptos.frankjuchim.de` eintragen → „Manifest abrufen und eintragen“ → Ampel grün (Manifest und `/healthz`).
 2. Den Vorschlag für die Rücksprung-Adresse **`https://kryptos.frankjuchim.de/sso/ende`** bestätigen (zeichengenau).
 3. Unter „Lehrkräfte“ die Lehrkräfte für Kryptos **freischalten**.
-4. Als Lehrkraft einen Kurs mit Kryptos anlegen; als Schülerin bzw. Schüler beitreten und „Weiter zu Kryptos“ – die
-   Zeitleiste erscheint; als Lehrkraft über „Anmelden über InfoLabs“ auf Kryptos → Kursübersicht.
+4. Als Lehrkraft einen Kurs mit Kryptos anlegen; als Schülerin bzw. Schüler beitreten und „Weiter zu Kryptos“ (Link auf
+   `https://kryptos.frankjuchim.de/sso/start`) – die Zeitleiste erscheint; als Lehrkraft über „Anmelden über InfoLabs“
+   auf Kryptos → Kursübersicht.
 5. Kurs im Portal umbenennen → unter „Verbund-Aufträge“ steht der Auftrag auf „erledigt“, Kryptos zeigt den neuen Namen.
-6. Abschließend: `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de` → „erfüllt Vertrag v1.2 …“.
+6. Abschließend: `node scripts/vertrag_pruefen.js https://kryptos.frankjuchim.de` → „erfüllt Vertrag v1.3 …“, ohne
+   Hinweis „⚠“ (prüft auch, dass `/sso/start` ohne Anmeldung zum Portal weiterleitet).
 
 ### 6.5 Update und Sicherung
 
