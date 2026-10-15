@@ -2,7 +2,7 @@
 // Kern-Kandidat lab-kern: Verbund-API (Portal → Plattform, VERTRAG §6, TECHNIK §6.7–§6.8).
 //   POST /api/verbund/loeschen                  zweck „loeschen“         { sub } oder { kurs } → { geloescht: n }
 //   GET  /api/verbund/kurse/:kursId/uebersicht  zweck „kurs-uebersicht“  Kennzahlen (TECHNIK §6.8), 404 unbekannt
-//   POST /api/verbund/kurse/:kursId             zweck „kurs-aendern“     { name?, aktiv? } → { ok: true }
+//   POST /api/verbund/kurse/:kursId             zweck „kurs-aendern“     { name?, aktiv? } → { ok: true } (unbekannter Kurs → anlegen, v1.3)
 // Wird in app.js VOR dem allgemeinen API-Router eingehängt: keine Origin-Prüfung (serverseitige Aufrufe), Cache-Control:
 // no-store. Reihenfolge je Route: Tokenprüfung → Rate-Limit → JSON (100 kB) → Handler. Rate-Limits: gültige
 // Portal-Aufträge 600 je 10 Minuten (gesamt), abgelehnte Anfragen 120 je 10 Minuten je IP (danach 429) – eine Flut ohne
@@ -22,7 +22,7 @@ const istObjekt = (b) => !!b && typeof b === 'object' && !Array.isArray(b);
 /**
  * @param {object} o
  * @param {import('better-sqlite3').Database} o.db
- * @param {object} o.svc        Dienste (auswertung.kursUebersicht)
+ * @param {object} o.svc        Dienste (auswertung.kursUebersicht, kurse.anlegen)
  * @param {object} o.konfig     Verbund-Konfiguration (ladeKonfig)
  * @param {Function} o.now      Uhr (ms)
  * @param {Function} [o.szenarioBeenden]  (db, szenarioId, jetztIso) – beendet ein laufendes Funkraum-Szenario beim
@@ -115,7 +115,12 @@ function createVerbundRouter({ db, svc, konfig, now, szenarioBeenden }) {
     const jetzt = new Date(now()).toISOString();
     db.transaction(() => {
       const k = db.prepare('SELECT id, aktiv FROM kurse WHERE kurs_id = ?').get(kursId);
-      if (!k) return; // unbekannt: wird beim nächsten SSO angelegt
+      // Unbekannter Kurs (VERTRAG §6 ab v1.3): mit Standard-Einstellungen anlegen und 200 – sonst wiederholt das Portal den
+      // Auftrag. Ohne name vorläufig „Kurs k:<n>“; das erste SSO mit diesem Kurs setzt den Namen aus dem Token.
+      if (!k) {
+        svc.kurse.anlegen(kursId, name !== undefined ? name : `Kurs ${kursId}`, { aktiv: b.aktiv !== false });
+        return;
+      }
       if (name !== undefined) db.prepare('UPDATE kurse SET name = ?, updated_at = ? WHERE id = ?').run(name, jetzt, k.id);
       if (b.aktiv !== undefined) {
         db.prepare('UPDATE kurse SET aktiv = ?, updated_at = ? WHERE id = ?').run(b.aktiv ? 1 : 0, jetzt, k.id);

@@ -323,7 +323,7 @@ test('Kursübersicht: unbekannter Kurs → 404, falscher zweck → 401', async (
   assert.equal((await vb(app, 'get', `/api/verbund/kurse/${kid(k)}/uebersicht`, 'loeschen')).status, 401);
 });
 
-test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), aktiv:true entsperrt; unbekannter Kurs ohne Anlage', async () => {
+test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), aktiv:true entsperrt', async () => {
   const app = H.makeApp();
   const k = H.kurs(app, 'LK 13');
   const s = await H.schuelerClient(app, k, 'Mika R.');
@@ -341,10 +341,33 @@ test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), akt
     assert.equal((await aendern(body)).status, 400, JSON.stringify(body));
   }
   assert.equal((await vb(app, 'post', '/api/verbund/kurse/quatsch', 'kurs-aendern').send({ name: 'x' })).status, 400);
-  // unbekannter Kurs: ok, aber keine Anlage (kommt beim nächsten SSO)
+});
+
+test('v1.3 kurs-aendern für einen unbekannten Kurs → 200 { ok: true }, Kurs mit Standard-Einstellungen angelegt', async () => {
+  const { STANDARD_EINSTELLUNGEN } = require('../src/domain');
+  const app = H.makeApp();
+  const db = app.locals.db;
   const n = H.zaehle(app, 'kurse');
+  const r = await vb(app, 'post', '/api/verbund/kurse/k%3A424242', 'kurs-aendern').send({ name: '  Neu  ', aktiv: false });
+  assert.deepEqual([r.status, r.body], [200, { ok: true }]);
+  assert.equal(H.zaehle(app, 'kurse'), n + 1);
+  const k = db.prepare("SELECT * FROM kurse WHERE kurs_id = 'k:424242'").get();
+  assert.deepEqual([k.name, k.aktiv], ['Neu', 0], 'Name und aktiv aus dem Auftrag');
+  assert.match(k.board_schluessel, /^[A-Za-z0-9_-]{12}$/);
+  const e = app.locals.services.kurse.einstellungen(k.einstellungen);
+  const erwartet = app.locals.services.kurse.einstellungen(JSON.stringify(STANDARD_EINSTELLUNGEN));
+  assert.deepEqual(e, erwartet, 'Standard-Einstellungen wie beim SSO');
+  // ohne Body-Felder: aktiv, vorläufiger Name bis zum ersten SSO bzw. zur nächsten Umbenennung
+  assert.deepEqual((await vb(app, 'post', '/api/verbund/kurse/k%3A7', 'kurs-aendern').send({})).body, { ok: true });
+  const k7 = db.prepare("SELECT * FROM kurse WHERE kurs_id = 'k:7'").get();
+  assert.deepEqual([k7.name, k7.aktiv], ['Kurs k:7', 1]);
+  // zweiter Auftrag (Wiederholung) legt nichts doppelt an
   assert.deepEqual((await vb(app, 'post', '/api/verbund/kurse/k%3A424242', 'kurs-aendern').send({ name: 'Neu', aktiv: false })).body, { ok: true });
-  assert.equal(H.zaehle(app, 'kurse'), n);
+  assert.equal(H.zaehle(app, 'kurse'), n + 2);
+  // erstes SSO danach: Name aus dem Token, gesperrt bleibt gesperrt (aktiv steuert nur die Verbund-API)
+  await H.sso(app, { sub: 'l:5', rolle: 'lehrkraft', name: 'Frau Lehrer', kurse: [{ id: 'k:7', name: 'GK 12', rolle: 'lehrkraft' }, { id: 'k:424242', name: 'LK 13', rolle: 'lehrkraft' }] });
+  assert.deepEqual(db.prepare("SELECT name, aktiv FROM kurse WHERE kurs_id IN ('k:7', 'k:424242') ORDER BY kurs_id").all().map((x) => [x.name, x.aktiv]), [['LK 13', 0], ['GK 12', 1]]);
+  assert.equal(H.zaehle(app, 'kurse'), n + 2);
 });
 
 test('kurs-aendern aktiv:false: laufendes Funkraum-Szenario beendet (Inhalte gelöscht), offene Arena gelöscht', async () => {

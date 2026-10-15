@@ -729,7 +729,7 @@ aud: PLATTFORM_ID, maxDauerSek: 60 })`, dann `sub === 'portal'`, `zweck` gleich,
 |---|---|---|---|---|
 | `POST /api/verbund/loeschen` | `loeschen` | `{ "sub": "s:1042" }` **oder** `{ "kurs": "k:17" }` (genau eins, Format geprüft) | `200 { "geloescht": n }` – innerhalb der Anfrage erledigt, idempotent (zweites Mal `0`) | 400 (beides/keins/Format), 401 |
 | `GET /api/verbund/kurse/:kursId/uebersicht` | `kurs-uebersicht` | `:kursId` URL-kodiert (`k%3A17`, Express dekodiert) | §6.8 | 404 unbekannt, 401 |
-| `POST /api/verbund/kurse/:kursId` | `kurs-aendern` | `{ "name"?: "…" (1–80), "aktiv"?: bool }` | `200 { "ok": true }`; unbekannter Kurs: `200 { "ok": true }` ohne Anlage (wird beim nächsten SSO angelegt) | 400, 401 |
+| `POST /api/verbund/kurse/:kursId` | `kurs-aendern` | `{ "name"?: "…" (1–80), "aktiv"?: bool }` | `200 { "ok": true }`; unbekannter Kurs (v1.3): mit Standard-Einstellungen anlegen (`kurse.anlegen`, wie beim SSO §6.6 Schritt 2; `name` aus dem Auftrag, sonst vorläufig „Kurs k:<n>“ bis zum ersten SSO; `aktiv` aus dem Auftrag, Standard 1) und `200 { "ok": true }` – nie 404, sonst wiederholt das Portal den Auftrag | 400, 401 |
 
 `geloescht` = Anzahl gelöschter **Konten + Teilnahmen** (bei `sub`) bzw. **Kurse + Teilnahmen** (bei `kurs`). Umfang
 der Löschung: §7.3 (umfasst Funkraum und Arena). `aktiv: false` sperrt den Kurs: Schüler-API → 403 „Kryptos ist für
@@ -864,6 +864,7 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | Zusatz | Verbund-API: Flut ohne Token, danach gültiger Auftrag → 200; kaputtes JSON ohne Token → 401; `jti` nach echtem Neustart (zweite App-Instanz, gleiche DB-Datei) verbraucht | – |
 | Zusatz | Schüler ruft `/lehrer` auf → kein SSO-Kreis (Wächter `302 /spiel`, `/sso/ende` verwirft ziel der anderen Rolle) | – |
 | Zusatz | `kurs-aendern`: Name übernommen, `aktiv:false` sperrt Schüler-API (403), `true` entsperrt | – |
+| v1.3 | `kurs-aendern` für einen unbekannten Kurs | 200 `{ ok: true }`, Kurs mit Standard-Einstellungen angelegt (Name/aktiv aus dem Auftrag), Wiederholung legt nichts doppelt an |
 | Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.2`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
 | Zusatz | Niveau-Übersicht `GET /api/niveaus` und `/themen#niveaus` ohne Anmeldung; keine Lösungen/Kursdaten; nicht personalisiert; Katalog vor Plan (`test/niveaus.test.js`) | – |
 
