@@ -168,6 +168,19 @@ async function szenario15(ctx) {
       const ort = `/labor#/${id}${r ? ` (${r})` : ''} bei 360 px`;
       await keinQuerScrollen(page, ort);
       await ziele44(page, ort);
+      // M10-Review Fund 3: bei 360 px jede Taste und Buchse ganz sichtbar (kein verdecktes Weiterscrollen im Gehäuse)
+      const verdeckt = await page.evaluate(() => [...document.querySelectorAll('.werkzeug-flaeche .enigma-taste, .werkzeug-flaeche .enigma-buchse, .werkzeug-flaeche .enigma-lampe')].filter((el) => {
+        const r = el.getBoundingClientRect();
+        if (!r.width) return false;
+        for (let x = el.parentElement; x; x = x.parentElement) {
+          const s = getComputedStyle(x);
+          if (s.overflowX === 'visible') continue;
+          const k = x.getBoundingClientRect();
+          if (r.left < k.left - 1 || r.right > k.right + 1) return true;
+        }
+        return r.left < 0 || r.right > innerWidth;
+      }).map((el) => el.dataset.buchstabe));
+      assert.deepEqual(verdeckt, [], `${ort}: verdeckte Tasten/Buchsen/Lampen`);
       for (const schema of ['light', 'dark']) {
         await page.emulateMedia({ colorScheme: schema });
         await page.waitForTimeout(500); // Farbübergänge der Knöpfe auslaufen lassen

@@ -287,6 +287,8 @@
           f.unten.textContent = dreh(st[i], 1);
         });
       }
+      // Kabel neu zeichnen, wenn sich die Breite ändert (Reihen brechen bei schmalen Geräten um)
+      if (typeof addEventListener === 'function') addEventListener('resize', zeichneKabel);
       /** Kabel als Kurven zwischen den Buchsen (nur mit Layout, z. B. im Browser) */
       function zeichneKabel() {
         AQ.clear(kabelSvg);
@@ -464,7 +466,10 @@
       zeige();
       erklaerung.sage('Bereit', 'Drück die Tasten der Maschine. Zu jedem Tastendruck leuchtet eine Lampe.');
       return {
-        schliesse: () => nk.schliesse(),
+        schliesse: () => {
+          nk.schliesse();
+          if (typeof removeEventListener === 'function') removeEventListener('resize', zeichneKabel);
+        },
         zustand: () => ({})
       };
     }

@@ -702,6 +702,14 @@
 .enigma-lampe.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); box-shadow: 0 0 18px var(--mat-lampe-an); }
 .enigma-scroll { overflow-x: auto; min-width: 0; }
 .enigma-scroll > .enigma-tastatur, .enigma-scroll > .enigma-brett-teil { min-width: max-content; }
+/* M10-Review Fund 3: schmale Geräte – Tasten und Buchsen (≥ 44 px) brechen in Reihen um, statt seitlich verdeckt zu sein */
+@media (max-width: 560px) {
+  .enigma-scroll > .enigma-tastatur, .enigma-scroll > .enigma-brett-teil { min-width: 0; }
+  .enigma-tastatur .enigma-reihe, .enigma-steckerbrett .enigma-reihe { flex-wrap: wrap; gap: 4px; }
+  .enigma-tastatur, .enigma-steckerbrett { gap: 4px; }
+  .enigma-taste { width: var(--ziel); height: var(--ziel); }
+  .enigma-buchse { width: var(--ziel); }
+}
 .enigma-taste { width: max(var(--ziel), 2.9rem); height: max(var(--ziel), 2.9rem); padding: 0; border: 3px solid var(--mat-band); border-radius: 50%; background: var(--mat-gehaeuse); color: var(--mat-band); font: 700 1.05rem var(--f-mono); cursor: pointer; touch-action: manipulation; box-shadow: 0 3px 0 color-mix(in srgb, var(--mat-band) 40%, transparent); }
 .enigma-taste:active { transform: translateY(2px); box-shadow: none; }
 .enigma-taste:focus-visible, .enigma-buchse:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
