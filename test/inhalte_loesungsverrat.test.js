@@ -44,114 +44,14 @@ const CHIFFRE = require('../src/krypto/interaktionen/chiffre');
 
 const N = (t) => S.normalisiert(t);
 const json = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
-const kurz = (x) => typeof x === 'string' && [...x].length <= 2;
-// Layout-Angaben (Zahlen, die kein Inhalt sind)
-const LAYOUT = new Set(['breite', 'breiten', 'hoehe', 'stufe', 'punkte', 'version', 'groesse', 'schrift', 'anteil', 'nach', 'breite_cm', 'minuten', 'anzahl', 'block', 'basis', 'nr']);
-
-/** Rohtexte eines JSON-Werts. Listen aus Einzelzeichen (Zeilen, Zellen) zusätzlich als ein Stück; Playfair-/Polybios-
- * Quadrate mit Schlüssel ausgerechnet; Akten-Quadrate als ein Stück; bits-Zeilen einzeln. */
-function rohtexte(wert, { ohne = [] } = {}) {
-  const out = [];
-  (function lauf(x) {
-    if (typeof x === 'string') return out.push(x);
-    if (Array.isArray(x)) {
-      const flach = x.flat();
-      if (flach.length >= 2 && flach.every(kurz)) out.push(flach.join(''));
-      return x.forEach(lauf);
-    }
-    if (!x || typeof x !== 'object') return;
-    if (x.nur_loesung === true) return;
-    // Häufigkeitsdiagramm: der Text erscheint nur als Balken (Zählung), nie lesbar
-    if (x.t === 'haeufigkeit' && typeof x.text === 'string') return lauf({ ...x, text: undefined, t: undefined });
-    // Alphabet-/Quadratzeile mit „leer“: in der Schülerfassung leer gedruckt (kr_docx.py), Werte nur in der Lösung
-    if (x.leer === true) return;
-    if (x.t === 'quadrat' && (x.art === 'playfair' || x.art === 'polybios') && typeof x.schluessel === 'string' && !Array.isArray(x.zellen)) {
-      out.push(Krypto.quadrat(x.schluessel, { groesse: x.groesse || 5 }).join(''));
-    }
-    if (x.t === 'quadrat' && Array.isArray(x.zeilen) && x.zeilen.every((z) => typeof z === 'string')) out.push(x.zeilen.join(''));
-    for (const [k, v] of Object.entries(x)) {
-      if (ohne.includes(k) || k.startsWith('_')) continue;
-      if (typeof v === 'number') { if (!LAYOUT.has(k)) out.push(String(v)); continue; }
-      lauf(v);
-    }
-  })(wert);
-  return out;
-}
+// M11 Task 241: Helfer liegen in werkzeuge/krypto/prueflinge.js (auch für die Werkzeug-Verrat-Tests K11/K12)
+const P = require('../werkzeuge/krypto/prueflinge');
+const { rohtexte, stelle, woerterVon, zahlenVon, loesungsWerte, loesungen, zaehlt, bedeutend, werteAusLoesung, papierPruefungen, papierPrueflinge, NUR_LSG, quellDateien, beschriftungen, ohneNummerierung } = P;
+const HOCH = '⁰¹²³⁴⁵⁶⁷⁸⁹^';
+const sichtbar = (a, rolle) => { const s = P.sichtbar(a, rolle); return { kopf: s.kopf, teile: s.teile }; };
 
 /** Normalisierte Textstücke (wie bisher exportiert) */
 const stuecke = (wert, opts) => rohtexte(wert, opts).map(N).filter(Boolean);
-
-const woerterVon = (s) => String(s).split(/[^0-9A-Za-zÄÖÜäöüß]+/).map(N).filter(Boolean);
-// ganze Zahlen und Dezimalzahlen (Komma); nicht Teil von Kennungen (W3, P7), Potenzen (10²⁶, 15^4^) oder Datumsangaben
-const HOCH = '⁰¹²³⁴⁵⁶⁷⁸⁹^';
-const ZAHL = new RegExp(`(?<![\\d,.A-Za-z_])\\d+(?:,\\d+)?(?![\\d${HOCH}]|[,.]\\d)`, 'g');
-const zahlenVon = (s) => String(s).match(ZAHL) || [];
-const BITS = /[01]{4}(?:[  ·|_]*[01]{4})*/g;
-const bitsVon = (s) => (String(s).replace(/`/g, '').match(BITS) || []).map((b) => b.replace(/[^01]/g, '')).filter((b) => b.length >= 8);
-
-/** Fundstelle aus Rohtexten */
-function stelle(quelle, roh, extra = {}) {
-  return {
-    quelle, ...extra, roh,
-    stuecke: roh.map(N).filter(Boolean),
-    woerter: new Set(roh.flatMap(woerterVon)),
-    zahlen: roh.map(zahlenVon),
-    bits: roh.flatMap(bitsVon)
-  };
-}
-
-const istBits = (w) => /^[01][01\s]*$/.test(w) && w.replace(/\s/g, '').length >= 8;
-const istZahl = (w) => /^-?\d+(,\d+)?$/.test(w.trim());
-const bedeutend = (z) => z.includes(',') || z.replace(/\D/g, '').length >= 3;
-
-/** Lösungswerte einer Aufgabe: [{ teil, art: text|bits|zahl, wert }] */
-function loesungsWerte(a) {
-  const out = [];
-  const teile = [].concat(a.interaktion || []);
-  for (const [i, lo] of [].concat(a.loesung || []).entries()) {
-    if (!lo || typeof lo !== 'object') continue;
-    const ia = teile[i] || {};
-    // match: Lösung = ids der Kategorien (Begriffe, im Client sichtbar) – kein Lösungstext (Plan M8 Task 179)
-    if (ia.kind === 'match') continue;
-    // Klapplisten: die Lösung steht ohnehin als Option im Client (Plan M8 Task 178)
-    const auswahl = new Set(Object.entries(ia.felder || {}).filter(([, f]) => f && f.typ === 'auswahl').map(([id]) => id));
-    const luecken = [];
-    for (const [k, v] of Object.entries(lo)) {
-      if (k.startsWith('_') || ['richtig', 'zuordnung', 'reihenfolge'].includes(k) || auswahl.has(k)) continue;
-      const werte = (Array.isArray(v) ? v : [v]).filter((x) => typeof x === 'string' || typeof x === 'number').map(String);
-      const bitsFeld = ia.kind === 'bits-rechnen' || (ia.felder && ia.felder[k] && ia.felder[k].norm === 'bits');
-      for (const w of werte) out.push({ teil: i, feld: k, wert: w, bitsFeld });
-      if (Array.isArray(v) && typeof v[0] === 'string') luecken.push(v[0]);
-    }
-    // Lückenwerte hintereinander (Zeilen eines Quadrats, ein Alphabet) und Folgen kurzer Lückenwerte für sich
-    // (z. B. eine Lesereihenfolge 0 5 2 7 4 1 6 3 neben einem Zwischentext, Plan M8 E137)
-    if (luecken.length > 1 && !luecken.every(istZahl)) out.push({ teil: i, feld: '*', wert: luecken.join(''), folge: true });
-    let lauf = [];
-    for (const x of [...luecken, null]) {
-      if (x !== null && kurz(x)) { lauf.push(x); continue; }
-      if (lauf.length > 1 && lauf.length < luecken.length) out.push({ teil: i, feld: '*', wert: lauf.join(''), folge: true });
-      lauf = [];
-    }
-  }
-  return out.map((x) => {
-    const w = String(x.wert).trim();
-    if (istBits(w) || (x.bitsFeld && /^[01\s]+$/.test(w))) return { ...x, art: 'bits', n: w.replace(/\s/g, '') };
-    if (istZahl(w) && !x.folge) return { ...x, art: 'zahl', n: w.replace(/^-/, '') };
-    return { ...x, art: 'text', n: N(w) };
-  });
-}
-
-/** Lösungen (K1–K3) als normalisierte Liste – für den Muster-Test und andere Tests */
-function loesungen(a) {
-  return [...new Set(loesungsWerte(a).filter(zaehlt).map((x) => x.n))];
-}
-
-/** Zählt der Wert für K1–K3? */
-function zaehlt(x) {
-  if (x.art === 'bits') return x.n.length >= 8;
-  if (x.art === 'zahl') return bedeutend(x.n);
-  return x.n.length >= 4 && new Set(x.n).size >= 3 && !/^[01]+$/.test(x.n);
-}
 
 /** Steht der Wert x in der Fundstelle s? */
 function steht(x, s) {
@@ -176,17 +76,6 @@ function alsErgebnis(n, roh) {
   const ende = `(?![\\d${HOCH}]|[,.]\\d)`;
   const re = new RegExp(`[=≈→]\\s*\\**\\s*${e}${ende}|(?<![\\d,.])${e}\\s*=|\\*\\*${e}\\*\\*|^\\s*\\**${e}\\**\\s*$`);
   return roh.some((t) => re.test(String(t)));
-}
-
-/** Sichtbarer Teil einer Aufgabe (was der Server vor dem Lösen schickt): Kopf und je Teil die Interaktion */
-function sichtbar(a, rolle) {
-  const mitRolle = { ...a, _rolle: rolle };
-  const ein = (ia) => (ia && ia.kind === 'chiffre' ? CHIFFRE.oeffentlich(ia, { aufgabe: mitRolle }) : ia);
-  const teile = [].concat(a.interaktion || []).map(ein);
-  return {
-    kopf: rohtexte({ titel: a.titel, inhalt: a.inhalt }),
-    teile: teile.map((ia) => rohtexte(ia))
-  };
 }
 
 /** Schülertexte einer Welt: [Fundstelle mit aufgabe (id oder null)] */
@@ -216,20 +105,7 @@ function schuelertexte(welt) {
   return liste;
 }
 
-/* ---------- Papier-Materialien (Schülerfassungen): Akten je Block, Papier-Bosse, Probeklausuren, Folien ---------- */
-
 const MAT = path.join(S.WURZEL, 'quellen', 'material');
-/** Felder der Lösungs-/EH-Fassung (nie in der Schülerfassung, kr_docx.py) */
-const NUR_LSG = ['loesung', 'erwartung', 'alternativen', 'fehler', 'notenschluessel', 'notizen'];
-const quellDateien = (ordner, muster) => (fs.existsSync(ordner) ? fs.readdirSync(ordner).filter((x) => muster.test(x)).sort() : []);
-
-/** Papier-Prüfungen, die Lernende vor dem Lösen sehen: Papier-Bosse W0–W5 (ihre Welt) und die Probeklausuren (Welt 6, Stoff aller Welten) */
-function papierPruefungen() {
-  const out = [];
-  for (const w of S.WELTEN) for (const d of quellDateien(path.join(MAT, `W${w}`), /^boss_W\d\.json$/)) out.push({ datei: d, welt: w, q: json(path.join(MAT, `W${w}`, d)) });
-  for (const d of quellDateien(path.join(MAT, 'Pruefungen'), /Probeklausur.*\.json$/)) out.push({ datei: d, welt: 6, alle: true, q: json(path.join(MAT, 'Pruefungen', d)) });
-  return out;
-}
 
 /** Fundstellen einer Papier-Prüfung: Kopf, je Aufgabe das Material, je Teil Text und Material (Schülerfassung) */
 function pruefungsStellen({ datei, q }) {
@@ -274,92 +150,6 @@ function papierTexte(welt) {
   return liste;
 }
 
-/** Bewertungs-, Fach- und Füllwörter, die in Lösungen fett/kursiv betont werden (auch am Anfang einer Wendung) – kein Klar- oder Geheimtext */
-const BEWERTUNG = new Set(['nicht', 'dann', 'alle', 'beide', 'beiden', 'einem', 'viele', 'anderen', 'denselben', 'rechts', 'oberen', 'unteren',
-  'hinteren', 'nein', 'falsch', 'falschen', 'korrekt', 'richtig', 'gültig', 'ungültig', 'sicher', 'unsicher', 'prüfen', 'finden', 'existieren',
-  'paarweise', 'effektiven', 'teilerfremd', 'symmetrisch', 'asymmetrisch', 'monoalphabetisch', 'polyalphabetisch', 'permutationsinvariant',
-  'öffentlichen', 'privaten', 'nur', 'ihrem', 'mit', 'ein', 'eine', 'kein', 'genau', 'immer'].map(N));
-/** Feste Konstanten (Design §6: I_D, I_Z) – überall gegeben, kein Ergebnis */
-const KONSTANTEN = new Set(['0,076', '0,038']);
-const MARKE = /\*\*([^*]+?)\*\*|(?<![*\w])\*([^*\s][^*]*?)\*(?![*\w])|`([^`]+)`|==([^=]+)==/g;
-/**
- * Lösungswerte aus einem Lösungstext (Erwartungshorizont, Lösungskasten, Kartenrückseite): Bitfolgen (≥ 8 Bit), Zahlen
- * als Ergebnis (fett oder nach ≈; ≥ 3 Ziffern oder mit Komma – Zwischenrechnungen wie 13² = 169 zählen nicht), markierte Geheimtexte (GROSS) und Klartexte
- * (klein, ein Wort) sowie ganze Zellen in GROSS.
- */
-function werteAusLoesung(roh) {
-  const out = [];
-  const neu = (x) => { if (zaehlt(x) && !KONSTANTEN.has(x.n) && !out.some((o) => o.art === x.art && o.n === x.n)) out.push(x); };
-  for (const t of roh) {
-    const s = String(t);
-    for (const b of bitsVon(s)) if (/0/.test(b) && /1/.test(b)) neu({ art: 'bits', n: b });
-    // Zahlen ohne führende Null (0100 ist eine Bitgruppe)
-    for (const m of s.matchAll(new RegExp(`(?:≈\\s*\\**\\s*|\\*\\*)((?:0|[1-9]\\d*)(?:,\\d+)?)(?![\\d${HOCH}]|[,.]\\d)`, 'g'))) neu({ art: 'zahl', n: m[1] });
-    for (const m of s.matchAll(MARKE)) {
-      const v = (m[1] ?? m[2] ?? m[3] ?? m[4]).trim().replace(/^[„“"»]+|[“"«]+$/g, '').trim();
-      // „`ZIGNS HEGYW` → *diegaleere*“: links vom Pfeil steht die Eingabe
-      if (/^\s*→/.test(s.slice(m.index + m[0].length))) continue;
-      if (/^[01\s]+$/.test(v)) continue;
-      // Zahl, Geheimtext (GROSS) oder Klartext (klein, Design §6) – außer betonten Bewertungs- und Fachwörtern
-      if (/^(?:0|[1-9]\d*)(,\d+)?$/.test(v)) neu({ art: 'zahl', n: v });
-      else if (/^[A-ZÄÖÜ]+(?:\s[A-ZÄÖÜ]+)*$/.test(v)) neu({ art: 'text', n: N(v) });
-      else if (/^[a-zäöüß]+(?: [a-zäöüß]+)*$/.test(v) && !BEWERTUNG.has(N(v)) && !BEWERTUNG.has(N(v.split(' ')[0]))) neu({ art: 'text', n: N(v) });
-    }
-    if (/^\s*[A-Z]{4,}(?:\s[A-Z]+)*\s*$/.test(s)) neu({ art: 'text', n: N(s) });
-  }
-  return out;
-}
-
-/** Steht der Wert x schon im eigenen Text (dann ist er gegeben, keine Lösung)? – großzügig: auch als Teilstück */
-function gegeben(x, eigen) {
-  if (x.art === 'bits') return eigen.bits.some((b) => b.includes(x.n));
-  if (x.art === 'zahl') return eigen.zahlen.some((l) => l.includes(x.n));
-  return eigen.stuecke.some((t) => t.includes(x.n));
-}
-
-/**
- * Prüflinge aus Papier-Materialien: Teilaufgaben der Papier-Bosse und Probeklausuren, Warm-up-Karten, Aufträge und
- * Abi-Check-Teile der Akten – je { id, welt, alle, werte, ich (eigene Fundstellen), folien (Folien zählen) }.
- */
-function papierPrueflinge() {
-  const out = [];
-  const neu = (p, eigenRoh, loesungRoh) => {
-    const eigen = stelle('', eigenRoh);
-    out.push({ ...p, werte: werteAusLoesung(loesungRoh).filter((x) => !gegeben(x, eigen)) });
-  };
-  for (const pr of papierPruefungen()) {
-    const kopf = rohtexte({ titel: pr.q.titel, rahmen: pr.q.rahmen, hinweise: pr.q.hinweise }, { ohne: NUR_LSG });
-    for (const a of pr.q.aufgaben || []) {
-      for (const t of a.teile || []) {
-        const teil = `${a.nr || ''}${t.bez}`;
-        neu({ id: `${pr.datei} ${teil}`, welt: pr.welt, alle: pr.alle, folien: !pr.alle, ich: (s) => s.doc === pr.datei && s.teil === teil },
-          [...kopf, ...rohtexte({ text: t.text, material: t.material }, { ohne: NUR_LSG })], rohtexte(t.erwartung || []));
-      }
-    }
-  }
-  for (const w of S.WELTEN) {
-    for (const d of quellDateien(path.join(MAT, `W${w}`), /^warmup_W\d\.json$/)) {
-      for (const k of json(path.join(MAT, `W${w}`, d)).karten) {
-        neu({ id: k.id, welt: w, folien: true, ich: (s) => s.karte === k.id }, rohtexte([k.titel, k.aufgabe]), rohtexte(k.loesung));
-      }
-    }
-    for (const d of quellDateien(path.join(MAT, `W${w}`), /^akte_.*\.json$/)) {
-      json(path.join(MAT, `W${w}`, d)).bloecke.forEach((b, i) => {
-        if (b.t === 'auftrag' && b.loesung) {
-          neu({ id: `${d} Auftrag ${b.nr}`, welt: w, ich: (s) => s.doc === d && s.block === String(i) }, rohtexte(b, { ohne: NUR_LSG }), rohtexte(b.loesung));
-        }
-        if (b.t === 'abicheck') {
-          for (const t of b.teile || []) {
-            neu({ id: `${d} Abi-Check ${t.bez}`, welt: w, ich: (s) => s.doc === d && s.block === `${i}${t.bez}` },
-              rohtexte({ material: b.material, teil: t }, { ohne: NUR_LSG }), rohtexte(t.loesung || []));
-          }
-        }
-      });
-    }
-  }
-  return out;
-}
-
 /** Funde der Papier-Prüflinge (K1–K3 wie oben): Lösung in einem anderen Schülertext ihrer Welt (Probeklausur: aller Welten) */
 function papierFunde() {
   const texte = {};
@@ -375,36 +165,7 @@ function papierFunde() {
   return [...new Set(out)];
 }
 
-/** Nummerierung und ASCII-Konstanten aus einem Text entfernen (A = 1 … Z = 26, a = 1 … z = 26, A = 65) */
-const ohneNummerierung = (t) => String(t)
-  .replace(/(^|[^\p{L}])[A-Za-z]\s*=\s*\d+\s*…\s*[A-Za-z]\s*=\s*\d+/gu, '$1')
-  .replace(/[`'„“"]?[Aa][`'“"]?\s*=\s*(65|97)\b/g, '');
-
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-/**
- * Beschriftungen der Zahlen-Lücken einer Aufgabe: { feld: [Beschriftung] } – das Wort bzw. Zeichen direkt vor der Lücke
- * („d = [[d]]“, „φ(N) = [[phi]]“, „die [[die]]“, „43 = [[b1]] + …“) oder die Kopfzelle der Tabellenzeile („O | [[o_w]]“).
- */
-function beschriftungen(a) {
-  const out = {};
-  const neu = (f, b) => { if (b) (out[f] = out[f] || []).push(b); };
-  for (const t of rohtexte({ inhalt: a.inhalt, interaktion: a.interaktion })) {
-    for (const m of String(t).matchAll(/([\p{L}][\p{L}\p{N}]*|\d+)(?:\([^)]*\))?\s*[=:]?\s*\[\[([^\]]+)\]\]/gu)) neu(m[2], m[1]);
-  }
-  (function lauf(x) {
-    if (Array.isArray(x)) {
-      for (const z of x) {
-        if (Array.isArray(z) && typeof z[0] === 'string' && /\p{L}/u.test(z[0]) && !z[0].includes('[[')) {
-          for (const c of z.slice(1)) for (const m of String(c).matchAll(/^\[\[([^\]]+)\]\]$/g)) neu(m[1], z[0].trim());
-        }
-      }
-      return x.forEach(lauf);
-    }
-    if (x && typeof x === 'object') Object.values(x).forEach(lauf);
-  })(a.inhalt);
-  return out;
-}
 
 /** Steht „Beschriftung Wert“ (mit = oder :) in einem der Texte? Zahlen-Beschriftungen nur mit „=“ („43 = 32“). */
 function beschriftetIn(beschriftung, wert, texte) {

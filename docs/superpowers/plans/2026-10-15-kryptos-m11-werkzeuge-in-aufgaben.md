@@ -541,7 +541,7 @@ Modus): W4-L3-07 (`rsa.rechenwerk`, `z:6,7,11`), W6-L1-03 (`scheibe.text`, `t:EB
   `Zustand = { art: 'allgemein'|'angaben'|'katalog', bedienung, eingaben, ausAngaben, ausgaben: { art, wert, etikett? }[] }`;
   `OHNE_RECHNUNG: Record<wr, string>`; `wr` für alle Reiter der 16 Werkzeuge plus `'baukasten'`.
 
-- [ ] **Step 1: Failing tests** in `test/werkzeug_modelle.test.js`:
+- [x] **Step 1: Failing tests** in `test/werkzeug_modelle.test.js`:
 
 ```js
 test('angaben_aus_aufgaben', () => {
@@ -565,11 +565,11 @@ test('modell_gleich_werkzeug', () => { /* je wr: Modell-Ausgaben für BEISPIEL u
 test('modell_mini_enigma_rechnet_w3_l5', () => { /* runden.enigma, 'fade', Stellung A → CHEA (Befund) */ });
 ```
 
-- [ ] **Step 2:** `node --test test/werkzeug_modelle.test.js` → FAIL.
-- [ ] **Step 3:** `prueflinge.js` und `werkzeug_modelle.js` (nur `Krypto.*`; Bestandsaufnahme der Eingabefelder je Reiter als
+- [x] **Step 2:** `node --test test/werkzeug_modelle.test.js` → FAIL.
+- [x] **Step 3:** `prueflinge.js` und `werkzeug_modelle.js` (nur `Krypto.*`; Bestandsaufnahme der Eingabefelder je Reiter als
   Kopfkommentar).
-- [ ] **Step 4:** `npm test` grün; Inventar neu erzeugen, Abweichungen zur Plan-Tabelle im Bericht.
-- [ ] **Step 5: Commit** `M11: Prüflinge und Werkzeug-Modelle für den Verrat-Test (Task 241)`
+- [x] **Step 4:** `npm test` grün; Inventar neu erzeugen, Abweichungen zur Plan-Tabelle im Bericht.
+- [x] **Step 5: Commit** `M11: Prüflinge und Werkzeug-Modelle für den Verrat-Test (Task 241)`
 
 ### Task 242: Erkenner – Kern, Daten-Generator, K11 (E210–E213, E225)
 
