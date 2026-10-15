@@ -141,7 +141,8 @@ const FOTO_LISTE = [
   'aufgabe-hash-ziel', 'aufgabe-uhrwerk', 'boss-kampf', 'boss-auswertung', 'profil-artefakte', 'labor-scheibe',
   'labor-haeufigkeit', 'labor-runden', 'funkraum-team', 'funkraum-beamer', 'lehrkraft-funkraum-regie',
   'werkstatt-baukasten', 'arena-beamer', 'lehrkraft-kurse', 'lehrkraft-auswertung', 'lehrkraft-einstellungen',
-  'lehrkraft-materialien', 'verwaltung', 'themen-niveaus', 'datenschutz', 'gast-aufgabe', '360-aufgabe-w3', 'dunkel-zeitleiste'
+  'lehrkraft-materialien', 'verwaltung', 'themen-niveaus', 'datenschutz', 'gast-aufgabe', '360-aufgabe-w3', 'dunkel-zeitleiste',
+  'labor-skytale-stab', 'labor-quadrat-playfair', 'labor-signale-morse', 'labor-verstecke-brief', 'labor-enigma', 'labor-analyse'
 ];
 const fotoDatei = (name) => `kr-${String(FOTO_LISTE.indexOf(name) + 1).padStart(2, '0')}-${name}.png`;
 
@@ -201,6 +202,8 @@ async function ziele44(page, ort) {
         const s = getComputedStyle(el);
         if (s.visibility === 'hidden' || s.display === 'none') return false;
         if (el.closest('[hidden], dialog:not([open]), details:not([open]) > :not(summary)')) return false;
+        // WCAG 2.5.8 (Ausnahme „inline“): Buchstaben im Fließtext (Brief, Zeitung der Versteckten Botschaften, M10)
+        if (el.closest('[data-ziel-inline]')) return false;
         const r = el.getBoundingClientRect();
         return r.width > 0 && r.height > 0;
       })
@@ -258,6 +261,8 @@ async function kontraste(page, ort) {
     const gesehen = new Set();
     for (const el of document.querySelectorAll('body *')) {
       if (!el.offsetParent && getComputedStyle(el).position !== 'fixed') continue;
+      // Inhalt geschlossener <details> ist nicht gerendert (content-visibility), seine Farbübergänge laufen dort nicht
+      if (el.checkVisibility && !el.checkVisibility({ contentVisibilityAuto: true })) continue;
       if (!['', 'auto'].includes(el.getAttribute('aria-hidden') || '') || el.closest('[aria-hidden="true"]')) continue;
       if (!([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) || (el.matches('input, select, textarea') && el.value))) continue;
       const s = getComputedStyle(el);

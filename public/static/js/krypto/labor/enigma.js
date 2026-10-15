@@ -161,9 +161,9 @@
         h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Lampen'),
         lampenfeld,
         h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Tastatur'),
-        tastatur,
+        h('div', { class: 'enigma-scroll' }, tastatur), // schmal: Tasten bleiben 44 px, die Reihe scrollt (Plan M10 Task 232/237)
         h('p', { class: 'enigma-feldtitel enigma-mittig' }, 'Steckerbrett'),
-        brettTeil
+        h('div', { class: 'enigma-scroll' }, brettTeil)
       );
 
       /* rechte Spalte */

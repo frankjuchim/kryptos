@@ -937,15 +937,15 @@ W3 Kür (Enigma) unter `quellen/material/`, `materialien/Videos/00_Kryptos_Zeitr
 **Files:** Create `test/e2e/werkstatt.js`; Modify `test/e2e/e2e.js` (Szenario `15 Werkstatt-Werkzeuge` nach 14),
 `test/e2e/hilfen.js` (`FOTO_LISTE` += sechs Namen aus E191), `docs/screenshots/kr-31…36`.
 
-- [ ] **Step 1: Szenario schreiben** (zuerst rot, weil Fotos/Prüfungen fehlen): Schüler Mika R. (Kurs mit Welten 0–3), je
+- [x] **Step 1: Szenario schreiben** (zuerst rot, weil Fotos/Prüfungen fehlen): Schüler Mika R. (Kurs mit Welten 0–3), je
   neuem/geändertem Werkzeug: öffnen über das Raster, Handgriffe per Maus **und** Touch (`hasTouch`, Wischen über den
   Stempelkasten erzeugt nichts), Ergebnis gegen `Krypto.*` im Browser, Nachspiel (Einzelschritt), `keinQuerScrollen` bei
   360 px, `ziele44`, `kontraste` hell und dunkel, reduzierte Bewegung (`reducedMotion: 'reduce'`: keine laufenden Animationen,
   `document.getAnimations().length === 0` nach Handgriffen), Herkunftszeile sichtbar, keine Konsolen-/CSP-Fehler; Boss-Kampf
   starten → `/labor#/enigma` gesperrt; Gast-Scheibe; Lehrkraft sieht Playfair/Schlüsselraum ohne Welt-Freigabe.
-- [ ] **Step 2:** `E2E_NUR=15 npm run e2e` → FAIL, dann bis grün; danach **voller** Lauf `npm run e2e` (alle 15 Szenarien) grün,
+- [x] **Step 2:** `E2E_NUR=15 npm run e2e` → FAIL, dann bis grün; danach **voller** Lauf `npm run e2e` (alle 15 Szenarien) grün,
   Fotos ≤ 5 MB, alle Fotos per Read ansehen.
-- [ ] **Step 3: Commit** `M10: e2e Szenario 15 „Werkstatt-Werkzeuge“ mit Touch, 360 px, Kontrast, reduzierter Bewegung und Fotos kr-31…36 (Task 237)`
+- [x] **Step 3: Commit** `M10: e2e Szenario 15 „Werkstatt-Werkzeuge“ mit Touch, 360 px, Kontrast, reduzierter Bewegung und Fotos kr-31…36 (Task 237)`
 
 ### Task 238: Abschluss M10 – Doku, Version 1.1.0, Prüfung, Review (E199)
 

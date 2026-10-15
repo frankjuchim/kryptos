@@ -110,7 +110,15 @@
         ansehen.disabled = !z.vorhersage || z.gezeigt || !gt;
         AQ.clear(geheimOrt);
         geheimOrt.classList.toggle('verdeckt', !z.gezeigt);
-        if (gt) geheimOrt.appendChild(KRB.haeufigkeit({ quelle: 'text', text: gt, titel: 'Geheimtext', einheit: 'prozent' }));
+        if (gt) {
+          const diagramm = KRB.haeufigkeit({ quelle: 'text', text: gt, titel: 'Geheimtext', einheit: 'prozent' });
+          // verdeckt: weder lesbar noch per Tastatur oder Vorleser erreichbar (nur der Hinweis darunter)
+          if (!z.gezeigt) {
+            diagramm.setAttribute('aria-hidden', 'true');
+            diagramm.inert = true;
+          }
+          geheimOrt.appendChild(diagramm);
+        }
         if (!z.gezeigt) geheimOrt.appendChild(h('p', { class: 'analyse-verdeckt-text' }, 'noch verdeckt – erst vorhersagen'));
         geheimText.textContent = gt ? Krypto.gruppieren(gt) : '–';
         textInfo.textContent = `Untersucht: ${kt.length} Buchstaben${kt.length < 80 ? ' – unter 80 Buchstaben ist das Diagramm wenig aussagekräftig.' : ''}`;

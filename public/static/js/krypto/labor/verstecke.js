@@ -116,7 +116,7 @@
       const z = stand.nullchiffre;
       let gewaehlt = null; // gestempelter Buchstabe (Brief schreiben)
       const titel = h('p', { class: 'verstecke-brief-titel' }, 'Post für dich');
-      const koerper = h('p', { class: 'verstecke-brief-text' });
+      const koerper = h('p', { class: 'verstecke-brief-text', 'data-ziel-inline': 'ja' }); // Buchstaben im Fließtext (WCAG 2.5.8 inline)
       const brief = h('div', { class: 'verstecke-brief' }, h('span', { class: 'verstecke-marke', 'aria-hidden': 'true' }), h('span', { class: 'verstecke-lochung', 'aria-hidden': 'true' }), titel, koerper);
       const briefwahl = h('div', { class: 'verstecke-briefwahl', role: 'group', 'aria-label': 'Übungsbrief wählen' }, BEISPIEL.briefe.map((b, i) => h('button', { type: 'button', class: 'knopf knopf-leise', 'data-brief': String(i) }, `Brief ${i + 1} · ${b.stelle}. Buchstabe`)));
       const stempelTitel = h('p', { class: 'verstecke-feldtitel' }, '① Buchstaben stempeln, den du verstecken willst');
@@ -324,7 +324,7 @@
       const zeichen = []; // { el, pos: [Positionen in nurBuchstaben] }
       const blatt = h('div', { class: 'verstecke-zeitung' });
       const kopf = h('p', { class: 'verstecke-zeitung-kopf' }, 'Aus der Region');
-      const text = h('p', { class: 'verstecke-zeitung-text' });
+      const text = h('p', { class: 'verstecke-zeitung-text', 'data-ziel-inline': 'ja' }); // Buchstaben im Fließtext (WCAG 2.5.8 inline)
       const lupeInhalt = h('div', { class: 'verstecke-lupe-inhalt', 'aria-hidden': 'true' });
       const lupe = h('div', { class: 'verstecke-lupe', tabindex: '0', role: 'img', 'aria-label': 'Lupe: mit den Pfeiltasten bewegen' }, lupeInhalt);
       blatt.append(kopf, text, lupe);

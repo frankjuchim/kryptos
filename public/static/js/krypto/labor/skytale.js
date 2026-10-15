@@ -424,7 +424,7 @@
         const neu = bild;
         const meinLauf = lauf;
         const fehlt = neu.u * neu.L - roh.length;
-        erklaerung.sage('Band abwickeln', `${fehlt ? `${fehlt} leere Feld${fehlt > 1 ? 'er bekommen' : ' bekommt'} ein X, damit jede Runde gleich viele Buchstaben hat. ` : ''}Runde für Runde liegen die ${neu.u} Buchstaben einer Runde nun nebeneinander.`);
+        erklaerung.sage('Band abwickeln', `${fehlt ? `${fehlt > 1 ? `${fehlt} leere Felder bekommen` : 'Ein leeres Feld bekommt'} ein X, damit jede Runde gleich viele Buchstaben hat. ` : ''}Runde für Runde liegen die ${neu.u} Buchstaben einer Runde nun nebeneinander.`);
         if (AQ.ruhig()) return;
         // Ausgangslage: alle Buchstaben auf dem Stab (alte Lage), Bänder der Runden noch leer
         const vorher = neu.buchstaben.map((b) => (alt && alt.buchstaben[b.i] && b.i < Krypto.nurBuchstaben(z.text).length ? alt.buchstaben[b.i].stab : b.stab));

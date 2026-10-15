@@ -27,6 +27,7 @@ const funkraum = require('./funkraum');
 const arena = require('./arena');
 const lehrkraftBereich = require('./lehrkraft_bereich');
 const oeffentlich = require('./oeffentlich');
+const werkstatt = require('./werkstatt');
 
 const SZENARIEN = [
   ['1 Start → Zeitleiste', schueler.szenario1],
@@ -46,7 +47,8 @@ const SZENARIEN_ECHT = [
   ['11 Welten 0–2 mit den echten Seeds', inhalte.szenario11],
   ['12 Welten 3–6 spielbar', inhalteW36.szenario12],
   ['13 Lehrkraft-Bereich im Algo-Quest-Aufbau', lehrkraftBereich.szenario13],
-  ['14 Öffentlich und Verbund-Wege', oeffentlich.szenario14]
+  ['14 Öffentlich und Verbund-Wege', oeffentlich.szenario14],
+  ['15 Werkstatt-Werkzeuge', werkstatt.szenario15]
 ];
 
 const NUR = (process.env.E2E_NUR || '').split(',').map((x) => x.trim()).filter(Boolean);
@@ -91,7 +93,7 @@ async function main() {
     if (echt) await echt.beenden();
     await ctx.beenden();
   }
-  // Foto-Satz (Plan M9 Task 217): in docs/screenshots/ genau die 30 Fotos aus FOTO_LISTE, zusammen ≤ 5 MB
+  // Foto-Satz (Plan M9 Task 217): in docs/screenshots/ genau die 36 Fotos aus FOTO_LISTE (M10 Task 237: kr-31…36), zusammen ≤ 5 MB
   if (ok && process.env.E2E_FOTOS !== '0' && !NUR.length) {
     const fs = require('node:fs');
     const path = require('node:path');

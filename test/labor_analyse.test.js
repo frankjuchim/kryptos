@@ -17,10 +17,14 @@ test('Vergleich: erst Vorhersage, dann Ansehen; Histogramm = Krypto.haeufigkeite
   assert.equal(w.k.eins(w.flaeche, 'button.analyse-ansehen').disabled, true);
   assert.ok(w.k.eins(w.flaeche, '.analyse-geheim-histogramm').classList.contains('verdeckt'));
   assert.match(w.text('.analyse-geheim-histogramm'), /noch verdeckt/);
+  const verdeckt = w.k.eins(w.flaeche, '.analyse-geheim-histogramm').firstChild;
+  assert.equal(verdeckt.getAttribute('aria-hidden'), 'true', 'verdecktes Diagramm nicht vorgelesen');
+  assert.equal(verdeckt.inert, true, 'verdecktes Diagramm nicht per Tastatur erreichbar');
   w.k.klick(w.k.alle(w.flaeche, '.analyse-vorhersage button')[0]);
   w.k.klick(w.k.eins(w.flaeche, 'button.analyse-ansehen'));
   assert.equal(w.zustand().gezeigt, true);
   assert.equal(w.k.eins(w.flaeche, '.analyse-geheim-histogramm').classList.contains('verdeckt'), false);
+  assert.equal(w.k.eins(w.flaeche, '.analyse-geheim-histogramm').firstChild.getAttribute('aria-hidden'), null);
   // Säulen = Krypto.haeufigkeiten des Geheimtexts (Tabelle der Histogramm-Komponente)
   const { geheimtext, verfahren } = w.zustand();
   assert.equal(verfahren, 'skytale');

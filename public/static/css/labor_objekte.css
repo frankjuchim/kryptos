@@ -299,6 +299,7 @@
 }
 .pflug-tabelle { border-collapse: collapse; font-family: var(--f-mono); color: var(--mat-band-tinte); }
 .pflug-tabelle caption { text-align: left; }
+.pflug-tabelle th { background: transparent; } /* allgemeine Tabellenköpfe (dunkel) nicht auf dem Karopapier */
 .pflug-tabelle thead th { font: 700 .85rem var(--f-text); color: var(--mat-band-tinte); padding: 2px 0; min-width: 2.8rem; text-align: center; }
 .pflug-tabelle tbody th { font: 700 .8rem var(--f-text); color: var(--mat-band-tinte); padding-right: var(--a-2); text-align: right; }
 .pflug-weg .pflug-pfeil { font-size: 1.2rem; color: var(--mat-holz-dunkel); }
@@ -522,7 +523,7 @@
 .signale-schelle { fill: var(--mat-gehaeuse); }
 .signale-wand-schlag { fill: var(--mat-lampe-an); }
 .signale-wand-text { font: 700 18px var(--f-text); fill: var(--mat-band); }
-.signale-rohr { position: absolute; left: 0; top: 58%; width: 100%; height: 17%; border: 0; border-radius: 8px; background: transparent; cursor: pointer; touch-action: manipulation; }
+.signale-rohr { position: absolute; left: 0; top: 54%; width: 100%; height: 25%; min-height: var(--ziel); border: 0; border-radius: 8px; background: transparent; cursor: pointer; touch-action: manipulation; }
 .signale-quadrat { border-collapse: collapse; font-family: var(--f-mono); color: var(--mat-gehaeuse-tinte); }
 .signale-quadrat th { padding: 2px 6px; background: transparent; border: 0; font: 700 .85rem var(--f-text); color: var(--mat-lampe-an); }
 .signale-quadrat td { padding: 1px; }
@@ -689,7 +690,7 @@
 .enigma-walzenrad.dreht { animation: enigma-drehen .28s ease-out; }
 @keyframes enigma-drehen { from { transform: translateY(-8px); } }
 .enigma-fenster-knoepfe { display: grid; }
-.enigma-fenster-knoepfe button { min-width: 1.7rem; min-height: var(--ziel); border: 0; border-radius: 4px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, transparent); color: var(--mat-gehaeuse-tinte); cursor: pointer; }
+.enigma-fenster-knoepfe button { min-width: var(--ziel); min-height: var(--ziel); border: 0; border-radius: 4px; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, transparent); color: var(--mat-gehaeuse-tinte); cursor: pointer; }
 .enigma-fenster-info { min-width: 0; }
 @media (max-width: 480px) { .enigma-ukw-schild { display: none; } .enigma-walzenfach { gap: 6px; } }
 .enigma-fenster-fuss { display: flex; align-items: center; justify-content: center; gap: 4px; max-width: 5.6rem; font-size: .66rem; line-height: 1.2; text-align: center; opacity: .9; }
@@ -699,7 +700,9 @@
 .enigma-lampenfeld, .enigma-tastatur, .enigma-steckerbrett { display: grid; gap: clamp(3px, 1vw, 8px); }
 .enigma-lampe { display: grid; place-items: center; min-width: 0; width: clamp(1.7rem, 7.6vw, 2.6rem); aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--mat-gehaeuse-tinte) 12%, var(--mat-gehaeuse)); color: color-mix(in srgb, var(--mat-gehaeuse-tinte) 55%, transparent); font: 700 .95rem var(--f-mono); transition: background-color .15s, color .15s; }
 .enigma-lampe.an { background: var(--mat-lampe-an); color: var(--mat-band-tinte); box-shadow: 0 0 18px var(--mat-lampe-an); }
-.enigma-taste { width: clamp(1.9rem, 8.6vw, 2.9rem); height: max(var(--ziel), clamp(1.9rem, 8.6vw, 2.9rem)); min-width: 0; padding: 0; border: 3px solid var(--mat-band); border-radius: 50%; background: var(--mat-gehaeuse); color: var(--mat-band); font: 700 1.05rem var(--f-mono); cursor: pointer; touch-action: manipulation; box-shadow: 0 3px 0 color-mix(in srgb, var(--mat-band) 40%, transparent); }
+.enigma-scroll { overflow-x: auto; min-width: 0; }
+.enigma-scroll > .enigma-tastatur, .enigma-scroll > .enigma-brett-teil { min-width: max-content; }
+.enigma-taste { width: max(var(--ziel), 2.9rem); height: max(var(--ziel), 2.9rem); padding: 0; border: 3px solid var(--mat-band); border-radius: 50%; background: var(--mat-gehaeuse); color: var(--mat-band); font: 700 1.05rem var(--f-mono); cursor: pointer; touch-action: manipulation; box-shadow: 0 3px 0 color-mix(in srgb, var(--mat-band) 40%, transparent); }
 .enigma-taste:active { transform: translateY(2px); box-shadow: none; }
 .enigma-taste:focus-visible, .enigma-buchse:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
 .enigma-taste:disabled, .enigma-buchse:disabled { opacity: .5; cursor: default; }
@@ -707,7 +710,7 @@
 .enigma-kabel { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .enigma-brett-teil > .enigma-steckerbrett { position: relative; z-index: 1; }
 .enigma-kabelweg { fill: none; stroke-width: 3.5; stroke-linecap: round; opacity: .9; }
-.enigma-buchse { position: relative; display: grid; justify-items: center; gap: 1px; min-width: 0; width: clamp(1.8rem, 8.4vw, 2.8rem); min-height: var(--ziel); padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--mat-gehaeuse-tinte); cursor: pointer; touch-action: manipulation; }
+.enigma-buchse { position: relative; display: grid; justify-items: center; gap: 1px; min-width: var(--ziel); width: 2.8rem; min-height: var(--ziel); padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--mat-gehaeuse-tinte); cursor: pointer; touch-action: manipulation; }
 .enigma-buchse-b { padding: 0 3px; border-radius: 3px; background: var(--mat-gehaeuse); font: 600 .66rem var(--f-mono); }
 .enigma-buchse-loch { width: 1.5rem; height: .85rem; border-radius: 6px; background: radial-gradient(circle at 30% 50%, var(--nacht) 2.5px, transparent 3.5px), radial-gradient(circle at 70% 50%, var(--nacht) 2.5px, transparent 3.5px), color-mix(in srgb, var(--mat-gehaeuse-tinte) 22%, var(--mat-gehaeuse)); }
 .enigma-buchse-nr { position: absolute; right: 0; top: 0; padding: 0 2px; border-radius: 3px; background: var(--mat-gehaeuse); font: 700 .58rem var(--f-text); }
@@ -751,6 +754,7 @@
 .enigma-wahl button[aria-pressed="true"] { border-color: var(--hinweis); background: var(--hinweis-flaeche); }
 .enigma-weg { display: grid; gap: 2px; margin: 0; padding-left: 1.4em; font-family: var(--f-mono); font-size: .9rem; }
 .enigma-weg li { opacity: .55; }
+.enigma-weg li.text-2 { opacity: 1; } /* Hinweis ohne Auswahl: voller Kontrast */
 .enigma-weg li.an { opacity: 1; }
 .enigma-experimente { display: grid; gap: var(--a-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
 .enigma-experiment { display: grid; gap: var(--a-2); align-content: start; padding: var(--a-3); border: 1px solid var(--linie); border-radius: var(--r-karte); background: var(--karte); }
