@@ -4,7 +4,11 @@
 const D = require('./dom_attrappe');
 const Krypto = require('../public/static/js/shared/krypto.js');
 
-const BASIS = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js'];
+const fs = require('node:fs');
+const path = require('node:path');
+// M11: Erkenner und seine Daten (labor/erkenner/<id>.js) gehören zum Rahmen jedes Werkzeugs
+const ERKENNER = fs.readdirSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'erkenner')).filter((f) => f.endsWith('.js')).sort().map((f) => `krypto/labor/erkenner/${f}`);
+const BASIS = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/erkenner.js', ...ERKENNER];
 const ZEITRAFFER = 100;
 
 /** Werkzeug id im Attrappen-DOM öffnen. opt: { voreinstellung, umgebung, ruhig, zufall } */
@@ -27,4 +31,4 @@ function oeffne(id, opt = {}) {
   return { k, flaeche, ctrl, zustand, text, ohneLeer, reiter, Krypto };
 }
 
-module.exports = { oeffne, BASIS, ZEITRAFFER, Krypto };
+module.exports = { oeffne, BASIS, ZEITRAFFER, Krypto, ERKENNER_SKRIPTE: ['krypto/labor/erkenner.js', ...ERKENNER] };

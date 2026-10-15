@@ -83,21 +83,26 @@ const KRLabor = (() => {
     SKRIPTE.set(src, p);
     return p;
   }
-  /** Werkzeug-Modul (und einmal labor/bausteine.js, danach labor/station.js – Plan M10 Task 224) nachladen; Promise
-      erfüllt, sobald das Modul registriert ist. */
+  /** Rahmen und Daten fürs Erkennen da? (M11: labor/erkenner.js und labor/erkenner/<id>.js) */
+  const erkennerDa = (id) => typeof KRErkenner !== 'undefined' && KRErkenner.hatDaten(id);
+  /** Werkzeug-Modul (und einmal labor/bausteine.js, danach labor/station.js – Plan M10 Task 224; M11 Task 242:
+      labor/erkenner.js und die Erkenner-Daten labor/erkenner/<id>.js) nachladen; Promise erfüllt, sobald das Modul
+      registriert ist. */
   function lade(id) {
     if (!NACH_ID.has(id)) return Promise.reject(new Error('Dieses Werkzeug gibt es nicht.'));
     const bauDa = () => typeof KRLaborBau !== 'undefined';
     const stationDa = () => typeof KRStation !== 'undefined';
-    if (MODULE.has(id) && bauDa() && stationDa()) return Promise.resolve();
+    if (MODULE.has(id) && bauDa() && stationDa() && erkennerDa(id)) return Promise.resolve();
     const modul = () =>
       MODULE.has(id)
         ? Promise.resolve()
         : skript(`${PFAD}${id}.js${version()}`).then(() => {
             if (!MODULE.has(id)) throw new Error('Werkzeug hat sich nicht registriert.');
           });
+    const daten = () => (erkennerDa(id) ? modul() : skript(`${PFAD}erkenner/${id}.js${version()}`).then(modul));
+    const erkenner = () => (typeof KRErkenner !== 'undefined' ? daten() : skript(`${PFAD}erkenner.js${version()}`).then(daten));
     // synchron anhängen, was schon geht (kein Umweg über Mikroaufgaben)
-    const nachBau = () => (stationDa() ? modul() : skript(`${PFAD}station.js${version()}`).then(modul));
+    const nachBau = () => (stationDa() ? erkenner() : skript(`${PFAD}station.js${version()}`).then(erkenner));
     return bauDa() ? nachBau() : skript(`${PFAD}bausteine.js${version()}`).then(nachBau);
   }
 
@@ -246,7 +251,7 @@ const KRLabor = (() => {
       return steuer;
     }
     OFFEN.add(steuer);
-    if (MODULE.has(id) && typeof KRLaborBau !== 'undefined' && typeof KRStation !== 'undefined') {
+    if (MODULE.has(id) && typeof KRLaborBau !== 'undefined' && typeof KRStation !== 'undefined' && erkennerDa(id)) {
       starte();
       return steuer;
     }

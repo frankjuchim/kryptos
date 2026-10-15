@@ -243,6 +243,7 @@ test('KRLabor.lade: fehlt station.js, wird es nach bausteine.js und vor dem Modu
   D.fuehreAus(k, ['krypto/labor/station.js']);
   k.skriptEreignis('/static/js/krypto/labor/station.js', 'load');
   await k.ruhe();
+  // M11 Task 242: nach station.js kommen Erkenner und Erkenner-Daten (in BASIS schon geladen), dann das Modul
   assert.deepEqual(k.skripte.filter((s) => s.includes('/labor/')), ['/static/js/krypto/labor/station.js', '/static/js/krypto/labor/scheibe.js']);
 });
 

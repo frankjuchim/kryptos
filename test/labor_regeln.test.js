@@ -7,7 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const DIR = path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor');
 const SEED = path.join(__dirname, '..', 'seed');
-const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js', 'station.js']);
+const RAHMEN = new Set(['registry.js', 'seite.js', 'bausteine.js', 'station.js', 'erkenner.js']);
 const werkzeugModule = () => fs.readdirSync(DIR).filter((f) => f.endsWith('.js') && !RAHMEN.has(f));
 
 /** Kommentare und Text in String-/Template-Literalen entfernen, ${…}-Ausdrücke behalten. */
@@ -95,6 +95,21 @@ test('Rahmen station.js (Plan M10 E196): dieselben Verbote wie Werkzeuge, keine 
   }
   assert.doesNotMatch(src, /\bsetInterval\b/, 'station.js: kein setInterval');
   assert.doesNotMatch(src, /KRLabor\.registriere\(/, 'station.js registriert kein Werkzeug');
+});
+
+test('Rahmen erkenner.js (Plan M11 Task 242): dieselben Verbote, Hash nur über Krypto.sha256, Daten nur Kennungen', () => {
+  const src = ohneTexte(fs.readFileSync(path.join(DIR, 'erkenner.js'), 'utf8'));
+  for (const [muster, grund] of VERBOTEN) assert.deepEqual(src.split('\n').filter((z) => muster.test(z)), [], `erkenner.js: ${grund}`);
+  assert.doesNotMatch(src, /\bsetInterval\b/);
+  assert.doesNotMatch(src, /KRLabor\.registriere\(/);
+  assert.match(src, /Krypto\.sha256\(/);
+  assert.doesNotMatch(src, /crypto\.subtle|createHash/, 'kein eigener Hash');
+  const dir = path.join(DIR, 'erkenner');
+  for (const d of fs.readdirSync(dir)) {
+    const roh = fs.readFileSync(path.join(dir, d), 'utf8').replace(/^\/\*[\s\S]*?\*\//, '');
+    assert.match(roh, /KRErkenner\.daten\(/, d);
+    for (const m of roh.matchAll(/'([^']*)'/g)) if (m[1] !== d.replace(/\.js$/, '') && m[1] !== 'use strict') assert.match(m[1], /^[0-9a-f]{8}$/, `${d}: ${m[1]}`);
+  }
 });
 
 /** Wörter ≥ 5 Buchstaben (klein) aus einem Text (Review M6: Mindestlänge 5). */

@@ -584,7 +584,7 @@ test('modell_mini_enigma_rechnet_w3_l5', () => { /* runden.enigma, 'fade', Stell
 - Consumes: `prueflinge`, `angaben`, `istVerrat`, `AUSNAHMEN`, `MODELLE` (241).
 - Produces: `KRErkenner` (Abschnitt „Technik“), Daten-Dateien, `erkenner_bauen.js [--pruefen] [--bericht]`.
 
-- [ ] **Step 1: Failing tests** – `test/labor_erkenner.test.js`: `signaturen_text_fenster` (`'numra bouck'` →
+- [x] **Step 1: Failing tests** – `test/labor_erkenner.test.js`: `signaturen_text_fenster` (`'numra bouck'` →
   `t:NUMRA`, `t:UMRAB`, `t:BOUCK`), `kurze_angabe_nur_als_token` (`ave` erkennt `Ave!`, nicht `Sklave`), `paar_text_schluessel`
   (`gondel`+`BOTE` erkannt, `gondel`+`LUNA` nicht), `zahlen_teilmengen` ({3, 17, 5} erkannt, {3, 5, 7} nicht),
   `kennung_8_hex`, `lehrkraft_nie_erkannt`, `verlauf_ueber_neue_nachricht`, `daten_nur_kennungen`, `daten_ohne_loesungen`
@@ -608,10 +608,10 @@ test('k11_ausnahmen_begruendet', () => { /* AUSNAHMEN hat genau den Eintrag W0-L
 test('k11_boss_nur_als_kennung', () => { /* keine Boss-Angabe im Klartext in public/static/** */ });
 ```
 
-- [ ] **Step 2:** FAIL. **Step 3:** `erkenner.js` (UMD) und Generator (Ablauf „Technik“); D17-Liste `GESPERRT` als Einträge
+- [x] **Step 2:** FAIL. **Step 3:** `erkenner.js` (UMD) und Generator (Ablauf „Technik“); D17-Liste `GESPERRT` als Einträge
   `quadrat.*` übernehmen (Signatur = kürzestes Schlüsselwort laut `Krypto.quadrat`); `npm run labor:erkenner -- --bericht`
   (Einträge je Reiter, Prüflinge mit Verrat je Quelle) in den Commit-Text.
-- [ ] **Step 4:** `npm run pruefen` grün. **Step 5: Commit** `M11: Erkenner für Aufgabenwerte – Kern, Daten aus den Prüflingen, Test K11 (Task 242)`
+- [x] **Step 4:** `npm run pruefen` grün. **Step 5: Commit** `M11: Erkenner für Aufgabenwerte – Kern, Daten aus den Prüflingen, Test K11 (Task 242)`
 
 ### Task 243: Rahmen „Geführter Modus“ (`KRGefuehrt`) und Umschalten (E203, E206, E207, E210, Review Focus 1, 3)
 

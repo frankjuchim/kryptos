@@ -1,4 +1,5 @@
 'use strict';
+const { ERKENNER_SKRIPTE } = require('./hilfen_labor'); // M11: Erkenner + Daten gehören zum Labor-Rahmen
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
@@ -10,7 +11,7 @@ test('Labor-Seite M10 (E178, E193): Chips „Zusatz“ und „Kür“, Karte „
     { id: 'signale', titel: 'Codes & Signale', welt: 0, art: 'zusatz', frei: true, grund: null },
     { id: 'enigma', titel: 'Enigma', welt: 3, art: 'kuer', frei: false, grund: 'welt' }
   ];
-  const k = D.lade([...BASIS, 'shared/krypto.js', 'krypto/labor/registry.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge } } } });
+  const k = D.lade([...BASIS, 'shared/krypto.js', 'krypto/labor/registry.js', 'krypto/labor/bausteine.js', 'krypto/labor/station.js', ...ERKENNER_SKRIPTE, 'krypto/labor/seite.js'], { url: 'http://x.test/labor#/', fetch: { 'GET /api/sitzung': { status: 200, body: SITZUNG_S }, 'GET /api/labor': { status: 200, body: { boss: false, werkzeuge } } } });
   await k.ruhe();
   const haupt = k.document.getElementById('haupt');
   assert.match(k.text(k.eins(haupt, '.werkzeug-karte[href="#/signale"]')), /Zusatz/);
@@ -724,7 +725,7 @@ test('Gast: Demo-Aufgabe schickt Fehlversuche/Tipps mit, Werkzeug Scheibe frei',
 });
 
 test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigenere lädt nichts (M6 Task 126)', async () => {
-  const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/station.js', 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
+  const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/station.js', ...ERKENNER_SKRIPTE, 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
   await k.ruhe();
   assert.ok(k.eins(k.document, '.scheibe-drehknopf'));
   assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);

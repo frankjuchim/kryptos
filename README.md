@@ -151,6 +151,7 @@ npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, np
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)
 npm run labor:bilder           # Objektbilder der Werkstatt-Werkzeuge nach materialien/Bilder/Labor/ (Folien, Videos; M10 E192)
 npm run labor:sperre           # Sperrliste der Aufgaben-Schlüsselwörter für „Polybios & Playfair“ neu erzeugen (nach Änderungen an Seeds/Material)
+npm run labor:erkenner         # Erkenner-Daten (Kennungen der Aufgabenwerte) neu erzeugen – nach Änderungen an Seeds/Material (M11; --pruefen in npm run pruefen)
 npm start                      # Server wie im Image (braucht die Umgebungsvariablen aus Abschnitt 6)
 node scripts/vertrag_pruefen.js http://localhost:3000   # Manifest gegen den Vertrag prüfen
 ```

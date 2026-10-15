@@ -364,9 +364,14 @@ function angaben(p) {
   const bits = [];
   const bitfolgen = [];
   const verfahren = [];
+  const klartexte = new Set();
   const text = (t) => {
     const n = N(t);
-    if (n.length >= 2 && !/^[01]+$/.test(n) && !/^\d+$/.test(n)) texte.add(n);
+    if (n.length >= 2 && !/^[01]+$/.test(n) && !/^\d+$/.test(n)) {
+      texte.add(n);
+      // Klartext klein (Design §6): natürliche Sprache – allein nur als ganzer Text erkannt (kein Fehlalarm bei Wörtern)
+      if (/[a-zäöüß]/.test(String(t)) && !/[A-ZÄÖÜ]/.test(String(t))) klartexte.add(n);
+    }
   };
   const wort = (w) => {
     const n = Krypto.nurBuchstaben(String(w ?? ''));
@@ -398,9 +403,11 @@ function angaben(p) {
       const t = m[0];
       if (!t.includes(' ') && KEINE_ANGABE.has(t)) continue;
       if (t.length >= 3) text(t);
-      if (!t.includes(' ') && t.length >= 3) wort(t);
     }
+    // Schlüsselwörter: fett, nach „Schlüsselwort“, „Pendelwort“, „Quadrat“ …, GROSS in Klammern („Vigenère (LUNA)“)
     for (const m of s.matchAll(/\*\*([A-ZÄÖÜ]{2,})\*\*/g)) wort(m[1]);
+    for (const m of s.matchAll(/(?:Schlüsselworts?|Schlüsselwörter|Pendelworts?|Kennworts?|Quadrats?|Schlüssels?|Wortes|Salz)\s*(?::\s*)?(?:\*\*|`|„|")?([A-ZÄÖÜ][A-ZÄÖÜa-zäöüß]{1,24})/g)) if (m[1] === m[1].toUpperCase() || /[`„"*]/.test(s[m.index + m[0].length - m[1].length - 1] || '')) wort(m[1]);
+    for (const m of s.matchAll(/\(([A-ZÄÖÜ]{3,20})\)/g)) wort(m[1]);
     for (const m of s.matchAll(/(?<![\p{L}])([kuntKUNT])\s*=\s*(\d{1,2})(?!\d)/gu)) schluessel.add(`${SCHLUESSEL_BUCHSTABE[m[1].toLowerCase()]}=${m[2]}`);
     for (const m of s.matchAll(/Startstellung\s+([A-H])\b/g)) schluessel.add(`st=${m[1]}`);
     for (const m of s.matchAll(/Löcher[n]?\s*((?:\(\d,\s*\d\)[,\s]*(?:und\s*)?)+)/g)) {
@@ -418,7 +425,7 @@ function angaben(p) {
       if (Number.isSafeInteger(n) && n >= 2) zahlen.add(n);
     }
   }
-  return { texte: [...texte], schluessel: [...schluessel], zahlen: [...zahlen], bits: [...new Set(bits)], bitfolgen: [...new Set(bitfolgen)], verfahren };
+  return { texte: [...texte], klartexte: [...klartexte], schluessel: [...schluessel], zahlen: [...zahlen], bits: [...new Set(bits)], bitfolgen: [...new Set(bitfolgen)], verfahren };
 }
 
 /* ---------- Lösungskriterium (E225) ---------- */
@@ -455,6 +462,8 @@ function hashZiele(p) {
 function istVerrat(ausgaben, p) {
   const werte = p.werte || [];
   const folgen = zahlenFolgen(p);
+  // gegebene Zahlen der Aufgabe (eine Lösung, die schon dasteht – z. B. m = 3 beim Hin- und Rückweg – verrät nichts)
+  if (!p._gegeben) Object.defineProperty(p, '_gegeben', { value: new Set(angaben(p).zahlen.map(String)), enumerable: false });
   const ziele = hashZiele(p);
   for (const a of ausgaben || []) {
     if (!a) continue;
@@ -479,13 +488,16 @@ function istVerrat(ausgaben, p) {
       for (const x of werte) {
         if (x.art !== 'zahl') continue;
         if (bedeutend(x.n) && w.includes(x.n)) return { verrat: true, wert: x.n, regel: 'zahl' };
-        if (!bedeutend(x.n) && w === x.n && a.etikett && (x.etiketten || []).includes(a.etikett)) return { verrat: true, wert: x.n, regel: 'etikett' };
+        if (!bedeutend(x.n) && w === x.n && a.etikett && (x.etiketten || []).includes(a.etikett) && !p._gegeben.has(x.n)) return { verrat: true, wert: x.n, regel: 'etikett' };
       }
     } else if (a.art === 'folge') {
       const aus = (a.werte || []).map(String);
       for (const f of folgen) {
         for (let i = 0; i + 3 <= f.length; i++) {
-          const stueck = f.slice(i, i + 3).join('|');
+          const drei = f.slice(i, i + 3);
+          // triviale Folgen (1, 1, 1 oder 1, 2, 2) zählen nicht: mindestens ein Wert ≥ 10 oder drei verschiedene Werte
+          if (!drei.some((x) => x.replace(/\D/g, '').length >= 2) && new Set(drei).size < 3) continue;
+          const stueck = drei.join('|');
           for (let j = 0; j + 3 <= aus.length; j++) if (aus.slice(j, j + 3).join('|') === stueck) return { verrat: true, wert: stueck, regel: 'folge' };
         }
       }

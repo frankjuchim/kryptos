@@ -58,7 +58,7 @@ const buchstabenTexte = (A) => [...new Set(texte(A).map(nb).filter(Boolean))];
 const parameter = (A, p) => (A.schluessel || []).filter((s) => s.startsWith(`${p}=`)).map((s) => s.slice(p.length + 1));
 const zahlParameter = (A, p) => parameter(A, p).map(Number).filter(Number.isInteger);
 const woerter = (A) => [...new Set((A.schluessel || []).filter((s) => !s.includes('=')).map(nb).filter((w) => w.length >= 1 && w.length <= 20))];
-const zahlen = (A) => [...new Set((A.zahlen || []).filter((n) => Number.isSafeInteger(n) && n >= 0))].slice(0, 30);
+const zahlen = (A) => [...new Set((A.zahlen || []).filter((n) => Number.isSafeInteger(n) && n >= 0))].slice(0, 12);
 const bereich = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 const RICHTUNGEN = ['ver', 'ent'];
 /** ganze Bitfolgen der Angaben (Bytes in Folge, wie gegeben) und Texte als ASCII-Bits */
@@ -262,7 +262,16 @@ function* kasiskiZ(A) {
   }
 }
 
+const TEIL_CACHE = new Map();
 function teiltexteAus(t, k) {
+  const schl = `${k}|${t}`;
+  if (!TEIL_CACHE.has(schl)) {
+    if (TEIL_CACHE.size > 5000) TEIL_CACHE.clear();
+    TEIL_CACHE.set(schl, teiltexteRechne(t, k));
+  }
+  return TEIL_CACHE.get(schl);
+}
+function teiltexteRechne(t, k) {
   const teile = Krypto.teiltexte(t, k);
   const schaetzung = teile.map((x) => versuche(() => Krypto.verschiebungSchaetzen(x)));
   return { teile, schaetzung, vorschlag: schaetzung.map((x) => (x ? x.buchstabe : 'A')).join('') };
@@ -281,9 +290,19 @@ function* teiltexteZ(A) {
   }
 }
 
+const KOINZ_CACHE = new Map();
 function* koinzidenzZ(A) {
   for (const t of buchstabenTexte(A)) {
-    if (t.length < 2) continue;
+    if (KOINZ_CACHE.has(t)) { if (KOINZ_CACHE.get(t)) yield KOINZ_CACHE.get(t); continue; }
+    const z = koinzidenzRechne(t);
+    if (KOINZ_CACHE.size > 2000) KOINZ_CACHE.clear();
+    KOINZ_CACHE.set(t, z);
+    if (z) yield z;
+  }
+}
+function koinzidenzRechne(t) {
+  {
+    if (t.length < 2) return null;
     const br = Krypto.koinzidenzindexBruch(t);
     const ic = Krypto.koinzidenzindex(t);
     const aus = [T(br ? `${br.zaehler}/${br.nenner}` : ''), Z(komma(ic, 4), 'I'), Z(komma(ic, 3), 'I')];
@@ -291,7 +310,7 @@ function* koinzidenzZ(A) {
     if (t.length >= 30 && f !== null && f > 0) aus.push(Z(komma(f, 2), 'k'));
     const mittel = bereich(1, 20).map((k) => komma(versuche(() => Krypto.mittlererKoinzidenzindex(t, k)), 4)).filter(Boolean);
     for (const m of mittel) aus.push(Z(m));
-    yield zust('angaben', 'Koinzidenzindex', { texte: [t] }, true, aus);
+    return zust('angaben', 'Koinzidenzindex', { texte: [t] }, true, aus);
   }
 }
 
@@ -497,7 +516,7 @@ function* tripel(liste, f) {
 function* uhrZ(A) {
   const zs = zahlen(A).filter((n) => n <= ZAHL_MAX);
   yield* tripel(zs, function* (a, b, m) {
-    if (m < 2 || m > 200) return;
+    if (m < 2 || m > 200 || b > 200 || a > 1000) return;
     const kette = versuche(() => Krypto.modpow(a, b, m, { protokoll: true }));
     const potenzen = b >= 1 && b <= 40 ? bereich(1, b).map((x) => versuche(() => Krypto.modpow(a, x, m))) : [];
     yield zust('angaben', `uhr ${a},${b} mod ${m}`, { zahlen: [a, b, m] }, true, [
@@ -525,7 +544,7 @@ function* inversesZ(A) {
 function* farbmischerZ(A) {
   const zs = zahlen(A).filter((n) => n <= 1000);
   for (const p of zs.filter((x) => Krypto.istPrim(x))) for (const g of zs) for (const a of zs) for (const b of zs) {
-    if (g === p || a === b) continue;
+    if (g >= p || a === b || a >= p || b >= p || g < 2) continue;
     const AA = versuche(() => Krypto.modpow(g, a, p));
     const BB = versuche(() => Krypto.modpow(g, b, p));
     if (AA === null || BB === null) continue;
@@ -660,7 +679,12 @@ function exponent(text) {
   const m = /10([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/.exec(String(text ?? ''));
   return m ? [...m[1]].map((c) => HOCHZIFFER[c]).join('') : null;
 }
+let katalogCache = null;
 function* schluesselraumZ() {
+  if (!katalogCache) katalogCache = [...schluesselraumRechne()];
+  yield* katalogCache;
+}
+function* schluesselraumRechne() {
   // Katalog ohne Eingabe (nur Bandlänge 12–60 und Rechenleistung): jede angezeigte Zahl und Dauer
   const verfahren = [['caesar', {}], ['affin', {}], ['substitution', {}], ['playfair', {}], ['vigenere', { laenge: 6 }], ['fleissner', { groesse: 6 }], ['enigma', { kabel: 10 }]];
   for (const n of bereich(12, 60)) { verfahren.push(['skytale', { n }]); verfahren.push(['pfluegen', { n }]); }
@@ -717,7 +741,8 @@ function* baukastenZ(A) {
 
 /* ---------- Tabellen ---------- */
 
-const gen = (f) => ({ zustaende: (A) => [...f(A || {})] });
+// zustaende(A) liefert einen Generator (einmal durchlaufbar) – spart Speicher bei vielen Prüflingen
+const gen = (f) => ({ zustaende: (A) => f(A || {}) });
 const MODELLE = Object.freeze({
   'scheibe.scheibe': gen(caesarZustaende),
   'scheibe.text': gen(caesarZustaende),
