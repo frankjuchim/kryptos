@@ -271,14 +271,33 @@ test('T8 state fehlt / ≠ Cookie / ohne Cookie → 401 state; state-Cookie ist 
   assert.doesNotMatch(r3.text, /egal-aber/);
 });
 
+/** Rollenneutraler Text bei fehler=keine_berechtigung (INTEGRATION.md §3.2, ab Vertrag v1.3) – wörtlich. */
+const KEIN_ZUGANG = [
+  'Kein Zugang.',
+  'Diese Plattform ist für dieses Konto noch nicht freigeschaltet.',
+  'Schülerinnen und Schüler: Die Lehrkraft muss die Plattform im Portal für den Kurs freischalten.',
+  'Lehrkräfte: Die Freischaltung der Plattform erteilt die Administration im Portal; danach die Plattform beim Kurs ankreuzen.'
+];
+/** Text der Hauptkarte (h1 und Absätze) ohne Tags, Leerraum zusammengefasst. */
+const kartenTexte = (html) =>
+  [...(/<main[\s\S]*<\/main>/.exec(html) || [''])[0].matchAll(/<(h1|p)\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+
 test('T9 fehler=keine_berechtigung → 403 Seite, keine Sitzung; abgebrochen → 302 /?abgebrochen=1; anderer → 401 portal', async () => {
   const app = H.makeApp();
   const { r } = await ende(app, { fehler: 'keine_berechtigung' });
   assert.equal(r.status, 403);
-  assert.match(r.text, /nicht freigeschaltet/);
+  assert.equal(r.headers['x-kryptos-grund'], 'keine_berechtigung');
+  // v1.3: genau der rollenneutrale Text (die Plattform weiß hier nicht, wer anfragt), danach nur die Knöpfe
+  const texte = kartenTexte(r.text);
+  assert.deepEqual(texte.slice(0, 4), KEIN_ZUGANG);
+  assert.deepEqual(texte.slice(4), ['⌂ Zum Portal Gastmodus']);
+  assert.doesNotMatch(r.text, /\b(deine?|Ihr|Ihre)\b/, 'keine persönliche Anrede');
+  // Link zurück zum Portal = PORTAL_URL (kein Umweg), Gastmodus bleibt
+  assert.match(r.text, /<a class="knopf knopf-primaer" href="https:\/\/portal\.test\/">⌂ Zum Portal<\/a>/);
+  assert.doesNotMatch(r.text, /href="\/sso\/portal"/);
   assert.match(r.text, /href="\/gast"/);
-  assert.match(r.text, /href="\/sso\/portal"/);
   assert.equal(r.headers['referrer-policy'], 'no-referrer');
+  assert.match(r.headers['cache-control'], /no-store/);
   assert.deepEqual(sitzungsCookies(r), []);
   const { r: ab } = await ende(app, { fehler: 'abgebrochen' });
   assert.equal(ab.status, 302);
@@ -764,4 +783,117 @@ test('Seiten-Wächter M4: /labor für beide Rollen, Funkraum/Werkstatt nur Schü
   }
   await lk.get('/beamer/arena/x1').expect(404);
   await lk.get('/beamer/sonstwas/1').expect(404);
+});
+
+/* ---------- Vertrag v1.3 §5: Einstieg aus dem Portal (INTEGRATION.md §3.1, §3.2, §5) ---------- */
+
+const K17 = { id: 'k:17', name: 'LK Informatik 13', rolle: 'mitglied' };
+const K18 = { id: 'k:18', name: 'AG Krypto', rolle: 'mitglied' };
+/** Set-Cookie-Zeilen einer Antwort, die eine Sitzung setzen oder löschen (kr_s, kr_l). */
+const sitzungsZeilen = (r) => (r.headers['set-cookie'] || []).filter((x) => /^kr_[sl]=/.test(x));
+
+test('v1.3 /sso/start mit bestehender Sitzung → 302 zum Portal (nicht direkt auf ziel), Sitzung unangetastet', async () => {
+  const app = H.makeApp();
+  for (const [felder, ziel] of [[{}, '/spiel'], [LK, '/lehrer']]) {
+    const c = await H.sso(app, felder);
+    assert.equal((await c.get(ziel)).status, 200, `${ziel}: Sitzung besteht`);
+    const r = await c.get('/sso/start?ziel=' + encodeURIComponent(ziel));
+    assert.equal(r.status, 302);
+    const u = new URL(r.headers.location);
+    assert.equal(u.origin + u.pathname, 'https://portal.test/sso/autorisieren', 'zum Portal, nicht auf ziel');
+    assert.equal(u.searchParams.get('ziel'), ziel);
+    assert.match(u.searchParams.get('state'), /^[A-Za-z0-9_-]{22}$/);
+    assert.deepEqual(sitzungsZeilen(r), [], '/sso/start setzt oder löscht keine Sitzung');
+    assert.equal((await c.get(ziel)).status, 200, `${ziel}: Sitzung gilt weiter, bis ein neues Token geprüft ist`);
+  }
+});
+
+test('v1.3 bestehende Sitzung, danach Rücksprung mit ungültigem Token oder Fehler → 401/403, alte Sitzung gilt weiter', async () => {
+  const app = H.makeApp();
+  const c = await H.sso(app);
+  const vorher = (await c.get('/api/sitzung')).body;
+  assert.equal(vorher.rolle, 'schueler');
+  const verbraucht = H.ssoToken({ sub: 's:1042' }, { app });
+  // einmal gültig einlösen (anderer Client), danach ist es „wiederverwendet“
+  assert.equal((await ende(app, { token: verbraucht })).r.status, 302);
+  const faelle = [
+    ['signatur', 401, { key: FREMD.privateKey }],
+    ['aud', 401, { felder: { aud: 'algoquest' } }],
+    ['iss', 401, { felder: { iss: 'https://boese.example' } }],
+    ['dauer', 401, { felder: { exp: Math.floor(Date.now() / 1000) + 500 } }],
+    ['format', 401, { token: 'kein.gueltiges.token' }],
+    ['wiederverwendet', 401, { token: verbraucht }],
+    ['state', 401, { state: 'D'.repeat(22) }],
+    ['inhalt', 401, { felder: { sub: 's:1042', rolle: 'lehrkraft' } }],
+    ['keine_berechtigung', 403, { fehler: 'keine_berechtigung' }],
+    ['portal', 401, { fehler: 'unbekannt' }]
+  ];
+  for (const [grund, status, o] of faelle) {
+    const { r } = await ende(app, { client: c, ...o });
+    assert.equal(r.status, status, grund);
+    assert.equal(r.headers['x-kryptos-grund'], grund);
+    assert.deepEqual(sitzungsZeilen(r), [], `${grund}: Sitzung weder gesetzt noch gelöscht`);
+    assert.deepEqual((await c.get('/api/sitzung')).body, vorher, `${grund}: alte Sitzung gilt weiter`);
+    assert.equal((await c.get('/api/welten')).status, 200, grund);
+  }
+  // abgebrochen: zurück zur Startseite, Sitzung bleibt ebenfalls
+  const { r: ab } = await ende(app, { client: c, fehler: 'abgebrochen' });
+  assert.deepEqual([ab.status, ab.headers.location], [302, '/?abgebrochen=1']);
+  assert.deepEqual(sitzungsZeilen(ab), []);
+  assert.deepEqual((await c.get('/api/sitzung')).body, vorher);
+  // Lehrkraft-Sitzung bleibt bei einem ungültigen Schüler-Token ebenso erhalten (kein „anderes Cookie löschen“)
+  const lk = await H.sso(app, LK);
+  const { r } = await ende(app, { client: lk, key: FREMD.privateKey });
+  erwarteFehler(r, 401, 'signatur');
+  assert.equal((await lk.get('/api/lehrer/kurse')).status, 200);
+  // erst ein gültiges Token ersetzt die Sitzung
+  await H.sso(app, { sub: 's:2000', name: 'Mika R.' }, { client: c });
+  assert.equal((await c.get('/api/sitzung')).body.name, 'Mika R.');
+});
+
+test('v1.3 Schüler tritt im Portal einem zweiten Kurs bei, erneut /sso/start → Plattform kennt beide Kurse', async () => {
+  const app = H.makeApp();
+  const c = await H.sso(app, { kurse: [K17] });
+  assert.deepEqual((await c.get('/api/sitzung')).body.kurse.map((k) => k.id), ['k:17']);
+  // Wechsel aus dem Portal (Link auf /sso/start) mit bestehender Sitzung: neues Token mit beiden Kursen
+  await H.sso(app, { kurse: [K17, K18] }, { client: c, ziel: '/spiel' });
+  assert.deepEqual([c.antwort.status, c.antwort.headers.location], [302, '/spiel']);
+  const s = (await c.get('/api/sitzung')).body;
+  assert.deepEqual(s.kurse.map((k) => k.id).sort(), ['k:17', 'k:18']);
+  assert.ok(s.kurse.every((k) => k.aktiv === true));
+  assert.equal((await c.post('/api/sitzung/kurs').send({ kurs: 'k:17' })).status, 200, 'Kurswahl zwischen beiden Kursen');
+  assert.equal(zaehle(app, "SELECT COUNT(*) AS n FROM schueler WHERE sub = 's:1042' AND aktiv = 1"), 2);
+});
+
+test('v1.3 Kursabgleich: Mitgliedschaft entfernt → Team-, Funkraum- und Scoreboard-Teilnahme ruhen, Lernstand und Abzeichen bleiben', async () => {
+  const app = H.makeApp();
+  const db = app.locals.db;
+  const c = await H.sso(app, { kurse: [K17, K18] });
+  await H.sso(app, { sub: 's:2', name: 'Mika R.', kurse: [K17] });
+  const lk = await H.sso(app, { ...LK, kurse: [{ id: 'k:17', name: 'LK Informatik 13', rolle: 'lehrkraft' }] });
+  const kurs = db.prepare("SELECT id FROM kurse WHERE kurs_id = 'k:17'").get().id;
+  const lena = db.prepare("SELECT id FROM schueler WHERE sub = 's:1042' AND kurs_id = ?").get(kurs).id;
+  const mika = db.prepare("SELECT id FROM schueler WHERE sub = 's:2' AND kurs_id = ?").get(kurs).id;
+  await lk.put(`/api/lehrer/kurse/${kurs}/teams`).send({ teams: [{ nr: 1, name: 'Team Skytale', mitglieder: [lena, mika] }] }).expect(200);
+  db.prepare("INSERT INTO fortschritt (schueler_id, aufgabe_id, status, punkte, updated_at) VALUES (?, 'W9-L1-01', 'geloest', 10, ?)").run(lena, new Date().toISOString());
+  db.prepare("INSERT INTO abzeichen (schueler_id, schluessel, at) VALUES (?, 'erste_aufgabe', ?)").run(lena, new Date().toISOString());
+  // Lena verlässt k:17 im Portal; nächster Wechsel aus dem Portal (Token nur noch mit k:18)
+  await H.sso(app, { kurse: [K18] }, { client: c });
+  assert.equal(c.antwort.status, 302);
+  assert.equal(db.prepare('SELECT aktiv FROM schueler WHERE id = ?').get(lena).aktiv, 0, 'Teilnahme inaktiv');
+  assert.deepEqual((await c.get('/api/sitzung')).body.kurse.map((k) => [k.id, k.aktiv]), [['k:18', true], ['k:17', false]], 'k:17 nur noch als inaktiv');
+  assert.equal((await c.post('/api/sitzung/kurs').send({ kurs: 'k:17' })).status, 404, 'kein Zugang mehr zu k:17');
+  // Team: Lena erscheint nicht mehr (weder im Team noch „ohne Team“), die Zuordnung ruht
+  const t = (await lk.get(`/api/lehrer/kurse/${kurs}/teams`).expect(200)).body;
+  assert.deepEqual(t.teams[0].mitglieder.map((m) => m.name), ['Mika R.']);
+  assert.deepEqual(t.ohneTeam, []);
+  assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM team_mitglieder WHERE schueler_id = ?', lena), 1, 'Zuordnung bleibt gespeichert');
+  // Scoreboard der Lehrkraft ohne Lena; Lernstand und Abzeichen bleiben bis zur Löschung
+  assert.deepEqual((await lk.get(`/api/lehrer/kurse/${kurs}/scoreboard`)).body.liste.map((x) => x.name), ['Mika R.']);
+  assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM fortschritt WHERE schueler_id = ?', lena), 1);
+  assert.equal(zaehle(app, 'SELECT COUNT(*) AS n FROM abzeichen WHERE schueler_id = ?', lena), 1);
+  // wieder im Kurs (erneuter Beitritt) → dieselbe Teilnahme, Team-Zuordnung wieder sichtbar
+  await H.sso(app, { kurse: [K17, K18] }, { client: c });
+  const t2 = (await lk.get(`/api/lehrer/kurse/${kurs}/teams`).expect(200)).body;
+  assert.deepEqual(t2.teams[0].mitglieder.map((m) => m.name), ['Lena S.', 'Mika R.']);
 });

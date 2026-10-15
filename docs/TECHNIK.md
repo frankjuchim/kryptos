@@ -573,7 +573,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen); bei `NODE_ENV=production` nur `https://`, Ausnahme Rechnername `localhost`/`127.0.0.1`/`[::1]` (M9 E149), sonst Abbruch „PLATTFORM_URL muss im Betrieb mit https:// beginnen“ |
 | `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende; https-Regel wie `PLATTFORM_URL` (E149) |
 | `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; wird bereinigt (umgebende `"`/`'`, `\r` echt oder als Text, Leerzeichen am Rand – M9 E150); enthält er `PRIVATE KEY` → Abbruch „PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel – nur den öffentlichen Schlüssel des Portals eintragen“ (ohne Schlüsseltext); `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
-| `VERTRAG_VERSION` | `1.2` | nein (Std. `1.2`) | **nur `1.2`** (labs-Vertrag v1.2); jeder andere Wert (auch `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.2 sein …“ (auch im Testmodus). Der Wert schaltet nichts um – er verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.2"` |
+| `VERTRAG_VERSION` | `1.3` | nein (Std. `1.3`) | **nur `1.3`** (labs-Vertrag v1.3); jeder andere Wert (auch `1.2`, `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.3 sein …“ (auch im Testmodus und in `npm run konfig:pruefen`). Der Vertrag selbst kennt die Variable nicht (§8); sie schaltet nichts um – sie verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.3"` |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
 | `DATA_DIR` | `/app/data` | nein | DB `kryptos.db`; vor dem Öffnen der DB Schreibprobe (`pruefeDatenDir`: anlegen, `.schreibprobe` schreiben/löschen), sonst Abbruch „DATA_DIR … ist nicht beschreibbar (…)“ (M9 Review Focus 1, K45) |
@@ -594,6 +594,12 @@ Startabbrüche. `NODE_ENV=development`: Werte vom Entwicklungs-Portal (§16.4).
 
 ### 6.2 `GET /sso/start?ziel=<pfad>`
 
+**Ab Vertrag v1.3 (§5, INTEGRATION §3.1):** Das Portal verlinkt Kryptos immer über `/sso/start` (Manifest
+`urls.ssoStart`). Der Pfad braucht keine Anmeldung und startet den SSO-Ablauf **immer neu** – auch mit bestehender
+Sitzung (kein „schon angemeldet → weiter auf `ziel`“). Die Antwort setzt oder löscht keine Sitzung; die bestehende gilt
+weiter, bis `/sso/ende` ein neues Token vollständig geprüft hat (§6.3). So kennt Kryptos nach jedem Wechsel aus dem
+Portal die aktuellen Kurse (Test `test/sso.test.js`, „v1.3 …“).
+
 1. Rate-Limit 300 Anfragen/10 min je IP (Schulnetz = eine IP), sonst 429-Seite.
 2. `state = crypto.randomBytes(16).toString('base64url')` (22 Zeichen, erfüllt „≥ 22 aus A–Z a–z 0–9 - _“).
 3. Cookie **`kr_sso_state`** = `S.sign({ st: state, exp })`, Attribute `HttpOnly; SameSite=Lax; Secure` (wenn
@@ -612,7 +618,7 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | Schritt | Prüfung | Fehlerantwort |
 |---|---|---|
 | 1 | State-Cookie lesen (`S.verify`) und **sofort löschen**; fehlt er oder `S.safeEqual(cookie.st, query.state)` falsch. Ist das mitgeschickte Token gültig signiert (`jwt.pruefe` ok), wird seine `jti` trotzdem verbraucht (Schritt 4) – ein Token ist genau einmal verwendbar | `401`, Seite `fehler/anmeldung-fehlgeschlagen.html`, Kopf `X-Kryptos-Grund: state` |
-| 2 | `fehler=keine_berechtigung` | `403`, Seite `fehler/keine-berechtigung.html` („Kein Zugang – deine Lehrkraft hat Kryptos für deinen Kurs nicht freigeschaltet“, Links: Portal, Gastmodus) |
+| 2 | `fehler=keine_berechtigung` | `403`, Seite `fehler/keine-berechtigung.html` mit dem **rollenneutralen Text** aus INTEGRATION §3.2 (v1.3, wörtlich: „Kein Zugang. Diese Plattform ist für dieses Konto noch nicht freigeschaltet. Schülerinnen und Schüler: Die Lehrkraft muss die Plattform im Portal für den Kurs freischalten. Lehrkräfte: Die Freischaltung der Plattform erteilt die Administration im Portal; danach die Plattform beim Kurs ankreuzen.“ – die Plattform weiß hier nicht, wer anfragt); Links „⌂ Zum Portal“ direkt auf `PORTAL_URL/` (beim Ausliefern eingesetzt) und Gastmodus; keine Sitzung gesetzt oder geändert |
 | 2 | `fehler=abgebrochen` | `302` auf `/?abgebrochen=1` (Startseite zeigt Hinweis + Gastmodus) |
 | 2 | anderer `fehler` | `401` wie Schritt 1, Grund `portal` |
 | 3 | `jwt.pruefe(token, PORTAL_PUBLIC_KEY, { iss: PORTAL_URL, aud: PLATTFORM_ID, maxDauerSek: 120, jetztSek })` | `401`, Grund = `p.grund` (`format`, `alg`, `signatur`, `version`, `iss`, `aud`, `zeit`, `dauer`, `abgelaufen`, `jti`) |
@@ -623,12 +629,17 @@ geloggt (Fehler-Handler loggt für `/sso/*` nur `err.message`, nie `req.original
 | 8 | Sitzung setzen (§6.4), das jeweils **andere** Sitzungs-Cookie löschen (geteilte Tablets) | – |
 | 9 | `302` auf `ziel` (Regel wie §6.2.4; `/` → Schüler `/spiel`, Lehrkraft/Superadmin `/lehrer`). Ein `ziel`, das nicht zur Rolle passt, wird verworfen (→ Startseite der Rolle): Schüler nicht `/lehrer…`, `/beamer…`; Lehrkraft/Superadmin nicht `/spiel…`, `/funkraum…`, `/werkstatt…` (`/labor` ist für beide, §11.1) – sonst Weiterleitungsschleife über das SSO | – |
 
+**Bestehende Sitzung (v1.3):** Erst Schritt 8 setzt bzw. ersetzt eine Sitzung. Bei jedem Fehler in den Schritten 1–7
+(state, Signatur, `aud`, `iss`, Zeiten, wiederverwendet, Inhalt, `fehler=…`, Kurs gesperrt) setzt oder löscht die Antwort
+kein Sitzungs-Cookie (`kr_s`, `kr_l`) – eine bestehende Sitzung bleibt unverändert.
+
 Fehlerantworten bleiben **unter der `/sso/ende`-URL mit Status 401/403** (INTEGRATION.md §5 verlangt für T2–T8 ausdrücklich
 `401`, VERTRAG §5 „Fehlerseite statt Weiterleitung“); das Token ist dort schon verbraucht oder ungültig, die Seite wird
 wegen `Cache-Control: no-store` nicht gespeichert und gibt wegen `Referrer-Policy: no-referrer` keine URL weiter.
 Der Kopf `X-Kryptos-Grund` enthält nur die Grundkennung (für Tests und Fehlersuche), nie Token-Inhalte. Die drei
 Fehlerseiten sind **statische Dateien** (kein reflektierter Inhalt, CSP-konform); ihr Link „⌂ Zum Portal“ zeigt auf `GET /sso/portal`
-(302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt. Weitere Grundkennungen: `keine_berechtigung`
+(302 auf `PORTAL_URL/`), weil eine statische Seite `PORTAL_URL` nicht kennt – Ausnahme `keine-berechtigung.html`: `/sso/ende`
+setzt dort beim Ausliefern `PORTAL_URL/` direkt ein (HTML-maskiert, Wert aus der Konfiguration, nie aus der Anfrage). Weitere Grundkennungen: `keine_berechtigung`
 (Schritt 2), `kurs-gesperrt` (Schritt 7). Ohne vollständige Portal-Konfiguration antworten `/sso/start` und `/sso/ende`
 mit 503 (nur im Testmodus möglich).
 
@@ -694,6 +705,14 @@ Ablauf in `/sso/ende` (Schritt 6), alles in einer Transaktion:
    Lehrkraft-Listen (Spalte „Lehrkraft“ der Kursliste, nur Konten mit `rolle = 'lehrkraft'`) nicht erscheinen.
 5. Gleichnamige Schüler in einem Kurs sind erlaubt (Portal sichert Eindeutigkeit); Anzeige im Kurs nutzt `name`.
 
+**Entfernte Mitgliedschaft (VERTRAG §5, v1.3 ausdrücklich):** Fehlt ein Kurs im neuen Token, wird die Teilnahme nur
+**inaktiv** (`schueler.aktiv = 0`), nichts wird gelöscht. Folgen: kein Zugang mehr zu diesem Kurs (Sitzung, Kurswahl
+→ 404), nicht im Scoreboard, auf dem Beamer-Board und in „Erfolge“; in der Teamverwaltung erscheint die Teilnahme weder
+im Team noch unter „ohne Team“ – die Zeile in `team_mitglieder` **bleibt gespeichert** (ruhende Zuordnung), Funkraum
+und Arena zählen nur Teams mit aktiven Mitgliedern; Lernstand, Punkte, Rang und Abzeichen bleiben bis zur Löschung
+durch das Portal (§7.3) erhalten. Die Lehrkraft sieht die Teilnahme in Schülerliste, Auswertung und Urkunden als
+inaktiv gekennzeichnet. Steht der Kurs wieder im Token, wird **dieselbe** Teilnahme reaktiviert – samt Team-Zuordnung.
+
 ### 6.7 Verbund-API (Portal → Plattform)
 
 Router `/api/verbund` wird **vor** dem allgemeinen API-Router eingehängt (keine Origin-Prüfung, VERTRAG §6),
@@ -711,7 +730,7 @@ aud: PLATTFORM_ID, maxDauerSek: 60 })`, dann `sub === 'portal'`, `zweck` gleich,
 |---|---|---|---|---|
 | `POST /api/verbund/loeschen` | `loeschen` | `{ "sub": "s:1042" }` **oder** `{ "kurs": "k:17" }` (genau eins, Format geprüft) | `200 { "geloescht": n }` – innerhalb der Anfrage erledigt, idempotent (zweites Mal `0`) | 400 (beides/keins/Format), 401 |
 | `GET /api/verbund/kurse/:kursId/uebersicht` | `kurs-uebersicht` | `:kursId` URL-kodiert (`k%3A17`, Express dekodiert) | §6.8 | 404 unbekannt, 401 |
-| `POST /api/verbund/kurse/:kursId` | `kurs-aendern` | `{ "name"?: "…" (1–80), "aktiv"?: bool }` | `200 { "ok": true }`; unbekannter Kurs: `200 { "ok": true }` ohne Anlage (wird beim nächsten SSO angelegt) | 400, 401 |
+| `POST /api/verbund/kurse/:kursId` | `kurs-aendern` | `{ "name"?: "…" (1–80), "aktiv"?: bool }` | `200 { "ok": true }`; unbekannter Kurs (v1.3): mit Standard-Einstellungen anlegen (`kurse.anlegen`, wie beim SSO §6.6 Schritt 2; `name` aus dem Auftrag, sonst vorläufig „Kurs k:<n>“ bis zum ersten SSO; `aktiv` aus dem Auftrag, Standard 1) und `200 { "ok": true }` – nie 404, sonst wiederholt das Portal den Auftrag | 400, 401 |
 
 `geloescht` = Anzahl gelöschter **Konten + Teilnahmen** (bei `sub`) bzw. **Kurse + Teilnahmen** (bei `kurs`). Umfang
 der Löschung: §7.3 (umfasst Funkraum und Arena). `aktiv: false` sperrt den Kurs: Schüler-API → 403 „Kryptos ist für
@@ -741,7 +760,7 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
 
 ```json
 {
-  "vertrag": "1.2",
+  "vertrag": "1.3",
   "id": "kryptos",
   "name": "Kryptos",
   "titel": "Kryptos – Die Zeitreise der Geheimschriften",
@@ -767,9 +786,16 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
     { "nr": 6, "titel": "Die Zeitmaschine", "farbe": "#8A5F1A", "level": 3 }
   ],
   "faehigkeiten": ["gast", "themen", "lehrkraft-materialien", "boss", "training", "warmup", "scoreboard", "beamer",
-                   "urkunden", "fallen-profil", "labor", "funkraum", "arena", "niveau"]
+                   "urkunden", "fallen-profil"]
 }
 ```
+
+`faehigkeiten` (v1.3): **nur Namen aus der Liste in VERTRAG §7** (Test `test/verbund.test.js`). Nicht gemeldet:
+`sql-konsole` (Kryptos führt keinen Code und keine Abfragen von Schülerinnen und Schülern aus, §6.10) und `live` (der
+Funkraum nutzt Polling, keine Server-Sent Events, §12.4). Die früheren eigenen Namen `labor`, `funkraum`, `arena`,
+`niveau` entfallen; Kryptolabor, Funkraum und Arena nennt `beschreibung`, die Niveau-Übersicht `urls.niveaus`. Eigene
+Namen wären erst nach Aufnahme in §7 möglich (Vorschlag V3 in `docs/VERTRAG_VORSCHLAEGE.md`).
+`urls.ssoStart` = `/sso/start` (SOLL ab v1.3, Standard; das Portal verlinkt Kryptos überall darüber, §6.2).
 
 `umfang.aufgaben` = Level-Aufgaben + Boss-Pools, **beim Start aus dem Seed gezählt** (nie fest eintragen; Stand der Specs ca. 307 = 202 Level- + 105 Boss-Aufgaben; Archivfund-Aufgaben zählen nicht). `niveaus` (KANN, v1.2) =
 `["eA", "gA"]`, `urls.niveaus` (SOLL, v1.2) = `/themen#niveaus` (§6.10). Das Manifest enthält nie Kurs-, Schüler- oder
@@ -777,11 +803,34 @@ Lösungsdaten (Test).
 
 ### 6.10 Vertragsstand
 
-Verbindlich ist **labs `VERTRAG.md` v1.2** (Commit `3f48c5c`; Entscheidung der Lehrkraft vom 12.10.2026). Er überstimmt
-den früheren Kryptos-Entwurf „v1.2“ (jetzt Archiv in `docs/VERTRAG_VORSCHLAEGE.md`). Kryptos erfüllt v1.2 ohne
-MUSS-Abweichung:
+Verbindlich ist **labs `VERTRAG.md` v1.3** (Nebenversion, Commit `2b8803b`; v1.2 seit der Entscheidung der Lehrkraft vom
+12.10.2026, v1.3 seit Kryptos 1.1.2). Er überstimmt den früheren Kryptos-Entwurf „v1.2“ (jetzt Archiv in
+`docs/VERTRAG_VORSCHLAEGE.md`). Kryptos erfüllt v1.3 ohne MUSS-Abweichung:
 
-- **Manifest (§7):** `vertrag: "1.2"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
+- **Neu in v1.3 (§14):** Einstieg aus dem Portal über `/sso/start`, der immer neu startet; bestehende Sitzung erst nach
+  geprüftem Token ersetzt, bei Fehlern unverändert; Mitgliedschaften, die im Token fehlen, ruhen (§6.2, §6.3, §6.6).
+  `kurs-aendern` legt unbekannte Kurse an und antwortet 200 (§6.7). Rollenneutrale Seite bei `keine_berechtigung`
+  (§6.3). Manifest `vertrag: "1.3"`, `urls.ssoStart`, Fähigkeiten nur aus der Liste in §7 (§6.9). `vertrag_pruefen.js`
+  mit `pruefeSsoStart` (byte-gleich aus labs). §13.2 (eigene Codebasis zulässig) betrifft Kryptos nicht – es ist eine
+  Kopie von Algo Quest mit Naht-Regel (§3).
+- **Sicherheit (§9, Sandbox-Regel ab v1.3):** Kryptos führt **keinen Code und keine Abfragen** von Schülerinnen und
+  Schülern aus – die Regel „isoliert von der Plattform-Datenbank (eigener Prozess/Worker, flüchtige oder schreibgeschützte
+  Übungsdaten, Zeit- und Größenlimits)“ greift deshalb nicht, ein Umbau ist nicht nötig. Belege (Stand 1.1.2): Java-Code
+  schreiben die Lernenden in der **externen Online-IDE** (online-ide.de, Import-Dateien), Kryptos speichert davon nur
+  den Haken „erledigt“; alle Antworten im Lab, im Boss, im Trainingsplatz und im Gastmodus sind Daten (Text, Zahlen,
+  Auswahl), die `src/content/checker.js` bzw. die registrierten Interaktionen mit festen Regeln vergleichen; das
+  Kryptolabor rechnet nur im Browser über `Krypto.*` (kein Server, keine Speicherung, §10); der Funkraum nimmt nur
+  Whitelist-Text `^[A-Z0-9 ]{1,160}$`, Zahlen und Auswahl aus festen Listen an (§12.3); Werkstatt/Arena speichern
+  Baukasten-Bausteine aus festen Listen (§9.2), die `baukasten.pruefe` interpretiert – kein ausführbarer Code. In
+  `src/` und `public/static/js/` gibt es kein `eval`, kein `new Function`, kein `vm`, `child_process`,
+  `worker_threads` oder `Worker`; einziges `db.exec` sind die festen Migrationen in `src/db.js`; alle übrigen
+  SQL-Anweisungen sind vorbereitet und parametrisiert (Wächter-Test `test/sicherheit.test.js` „v1.3 §9 kein_fremdcode“).
+  **Prüfantworten ohne Lösungsdaten:** `POST /api/aufgaben/:id/pruefen` liefert bei falscher Antwort nur `ok`,
+  Zustand, Teil-Feedback (Wahrheitswerte je Feld/Zeichen/Bit, Anteil) und die Fallen-Diagnose – Lösung und Erklärung
+  erst nach dem Lösen bzw. Aufdecken (`inhalte.loesungsteil`). Test `test/sicherheit_loesungen.test.js`
+  „pruefantwort_falsch“: falsche Antworten zu allen Level-Aufgaben W0–W6 (≥ 180 geprüft), keine Lösung, Erklärung oder
+  Tipp in der Antwort (mit Selbsttest). Die Fähigkeit `sql-konsole` meldet Kryptos nicht.
+- **Manifest (§7):** `vertrag: "1.3"`, `niveaus: ["eA", "gA"]`, `urls.niveaus: "/themen#niveaus"`; `kurs` nennt beide
   Niveaus. `scripts/vertrag_pruefen.js` (byte-gleich aus labs) prüft beide Felder.
 - **Niveau-Übersicht (§9 MUSS, ohne Anmeldung):** Abschnitt `#niveaus` auf `/themen` (bis M4 schlicht, Skript
   `public/static/js/krypto/themen.js`, M4 Task 61) mit den Daten aus `GET /api/niveaus` (öffentlich, `src/krypto/niveauUebersicht.js`):
@@ -804,9 +853,10 @@ Der Vertrag lässt offen, ob freiwillige Inhalte (Ergänzung, Kür) in `anteil` 
 vertragsnähere Lesart (alle sichtbaren Level-Aufgaben). Die fachlich gewünschte Regel „nur Kern/eA“ (Design §3.2), das
 Feld `niveau` in der Kursübersicht, ein Verzeichnis der Fähigkeiten, Regeln für ausgetauschte Inhalte und die
 Präzisierung „Oberfläche“ stehen als **mögliche Vorschläge V1–V8** in `docs/VERTRAG_VORSCHLAEGE.md` und gelten erst nach
-Aufnahme in den Vertrag. SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes Designsystem statt
-Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit Naht-Regel). Die
-Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste).
+Aufnahme in den Vertrag (v1.3 hat eine Liste bekannter Fähigkeiten aufgenommen, aber ohne `labor`, `funkraum`, `arena`,
+`niveau` – V3 bleibt dafür offen). SOLL-Abweichungen mit Begründung im README: §9 „Oberfläche“ (eigenes Designsystem
+statt Hausfarben – Portal-Link, Kontraste, Touch-Ziele werden eingehalten), §13.3 (Kern als Kopie mit Naht-Regel).
+Fähigkeiten nur aus der Liste in §7 (v1.3, §6.9).
 
 ### 6.11 Superadmin und Gastmodus
 
@@ -827,7 +877,7 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | T6 | falsches `iss` | 401, `iss` |
 | T7 | wiederverwendet (zweites Mal, auch nach App-Neustart mit derselben DB) | 401, `wiederverwendet` |
 | T8 | state fehlt bzw. ≠ Cookie | 401, `state` |
-| T9 | `fehler=keine_berechtigung` / `fehler=abgebrochen` | 403-Seite bzw. 302 `/?abgebrochen=1`, **keine** Sitzung |
+| T9 | `fehler=keine_berechtigung` / `fehler=abgebrochen` | 403-Seite (v1.3: rollenneutraler Text wörtlich, Link auf `PORTAL_URL/`) bzw. 302 `/?abgebrochen=1`, **keine** Sitzung |
 | T10 | `ziel=//boese.example` (und `/\boese`, `https://…`) | Weiterleitung auf `/` bzw. Startseite der Rolle |
 | T11 | Verbund-API ohne Token / falsches `aud` / falscher `zweck` / `exp − iat > 60 s` / wiederverwendet / `sub ≠ portal` | 401 |
 | T12 | `loeschen` zweimal mit derselben `sub` | beide 200, zweites Mal `geloescht: 0` |
@@ -836,13 +886,19 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | Zusatz | Kursabgleich: zweites Token ohne Kurs A → Teilnahme A inaktiv, Lernstand bleibt; Kurs B neu | wie beschrieben |
 | Zusatz | `/sso/start`: state-Format, Cookie-Attribute, Weiterleitungs-URL zeichengenau | – |
 | Zusatz | Abmelden/Überall abmelden | Cookies gelöscht, `weiter`-URL |
+| v1.3 | `/sso/start` mit bestehender Sitzung (Schüler, Lehrkraft) | 302 zum Portal (nicht direkt auf `ziel`), keine Sitzungs-Cookies in der Antwort |
+| v1.3 | bestehende Sitzung, danach Rücksprung mit ungültigem Token (Signatur, `aud`, `iss`, Dauer, Format, wiederverwendet, state, Inhalt) bzw. `fehler=…` | 401/403, kein `kr_s`/`kr_l` in der Antwort, alte Sitzung gilt weiter |
+| v1.3 | Schüler tritt im Portal einem zweiten Kurs bei, erneut `/sso/start` | Plattform kennt beide Kurse (Sitzung, Kurswahl) |
+| v1.3 | Kursabgleich entfernt eine Mitgliedschaft | Teilnahme inaktiv, Team-Zuordnung ruht, Lernstand und Abzeichen bleiben; Wiederbeitritt reaktiviert |
 | Zusatz | `loeschen {kurs}` entfernt Kurs, Teilnahmen, Teams, Funkraum, Arena; `{sub}` entfernt Konto, Teilnahmen, Lernstand, Teammitgliedschaft, eigene Funkraum-Nachrichten und Arena-Versuche (§7.3) | Zählungen in allen Tabellen |
 | Zusatz | Kursübersicht: Format, keine Freitexte/Teamnamen; 404 unbekannt; `anteil` über die sichtbaren Level-Aufgaben der freigeschalteten Welten (Sichtbarkeit nach Niveau ab M3, `src/krypto/niveau.js`); kein Feld `niveau` | – |
 | Zusatz | state falsch mit gültigem Token → 401 `state`, `jti` verbraucht; 500 in `/sso/*` loggt nur die Meldung (nie Token/URL/Stack) | – |
 | Zusatz | Verbund-API: Flut ohne Token, danach gültiger Auftrag → 200; kaputtes JSON ohne Token → 401; `jti` nach echtem Neustart (zweite App-Instanz, gleiche DB-Datei) verbraucht | – |
 | Zusatz | Schüler ruft `/lehrer` auf → kein SSO-Kreis (Wächter `302 /spiel`, `/sso/ende` verwirft ziel der anderen Rolle) | – |
 | Zusatz | `kurs-aendern`: Name übernommen, `aktiv:false` sperrt Schüler-API (403), `true` entsperrt | – |
-| Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.2`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| v1.3 | `kurs-aendern` für einen unbekannten Kurs | 200 `{ ok: true }`, Kurs mit Standard-Einstellungen angelegt (Name/aktiv aus dem Auftrag), Wiederholung legt nichts doppelt an |
+| Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.3`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `urls.ssoStart = /sso/start`, `faehigkeiten` nur aus §7, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| v1.3 | `pruefeSsoStart(basis, manifest)` gegen die laufende App | keine Fehler, keine Hinweise (`/sso/start` ohne Anmeldung → 302 auf `PORTAL_URL/sso/autorisieren?plattform=kryptos…`); Docker-Nachbau und `e2e:portal` prüfen die Ausgabe von `vertrag_pruefen.js` ohne „⚠“ | – |
 | Zusatz | Niveau-Übersicht `GET /api/niveaus` und `/themen#niveaus` ohne Anmeldung; keine Lösungen/Kursdaten; nicht personalisiert; Katalog vor Plan (`test/niveaus.test.js`) | – |
 
 ---
@@ -2064,10 +2120,13 @@ CI, labs ist privat): `LABS_DIR=<Kopie von labs>` (z. B. `git -C /home/user/labs
 <scratch>/labs` und dort `npm ci` – labs selbst wird nie verändert); ohne `LABS_DIR` „übersprungen“, Exit 0. Portal
 (`src/server.js` der Kopie, `ERLAUBE_HTTP=1`, `TRUST_PROXY=0`) und Kryptos (`NODE_ENV=production`,
 `PLATTFORM_URL=http://localhost:<p>` – E149-Ausnahme, `PORTAL_PUBLIC_KEY` zur Startzeit des Tests von
-`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 →
+`<portal>/sso/schluessel.pem`) als Kindprozesse auf freien Ports; Ablauf nach INTEGRATION §6: `vertrag_pruefen.js` Exit 0 (ohne Hinweis „⚠“) →
 Admin trägt Kryptos ein (Ampel grün, Rücksprung `<kryptos>/sso/ende` bestätigt) → Lehrkraft „Frau M.“ fragt an, Freigabe
 und Freischaltung Kryptos, Kurs „Informatik LK 13“ → „Mika R.“ tritt mit Kurscode bei, „Weiter zu Kryptos“ → `/spiel`
-(Sitzung Mika, Kurs) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“) → `/lehrer` mit dem Kurs → Mika löst
+(Sitzung Mika, Kurs; v1.3: Link `href` = `<kryptos>/sso/start`) → Lehrkraft startet auf Kryptos („Anmelden über InfoLabs“)
+→ `/lehrer` mit dem Kurs → **v1.3:** „Ida K.“ tritt bei, wechselt zu Kryptos, tritt im Portal dem zweiten Kurs „AG
+Kryptologie“ bei und wechselt mit bestehender Kryptos-Sitzung erneut über „Weiter zu Kryptos“ → `/api/sitzung` nennt
+beide Kurse → Mika löst
 W0-L1-03 → Portal benennt den Kurs um (Kryptos zeigt den neuen Namen), „Lernstand auf Kryptos laden“ (Kennzahlen, kein
 persönlicher Code) → Mika aus dem Kurs entfernt → in `kryptos.db` keine Zeile mit Mikas `sub` oder Namen (außer dem
 Löschvermerk `loeschungen`), Verbund-Aufträge `kurs-aendern` und `loeschen` „erledigt“ → „Überall abmelden“ in Kryptos

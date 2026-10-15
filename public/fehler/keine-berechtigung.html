@@ -7,23 +7,23 @@
 <meta name="color-scheme" content="light dark">
 <title>Kein Zugang · Kryptos</title>
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/static/css/schriften.css?v=1.1.1">
-<link rel="stylesheet" href="/static/css/tokens.css?v=1.1.1">
-<link rel="stylesheet" href="/static/css/epochen.css?v=1.1.1">
-<link rel="stylesheet" href="/static/css/basis.css?v=1.1.1">
-<link rel="stylesheet" href="/static/css/komponenten.css?v=1.1.1">
-<script src="/static/js/common.js?v=1.1.1"></script>
-<script src="/static/js/krypto/oberflaeche.js?v=1.1.1"></script>
+<link rel="stylesheet" href="/static/css/schriften.css?v=1.1.2">
+<link rel="stylesheet" href="/static/css/tokens.css?v=1.1.2">
+<link rel="stylesheet" href="/static/css/epochen.css?v=1.1.2">
+<link rel="stylesheet" href="/static/css/basis.css?v=1.1.2">
+<link rel="stylesheet" href="/static/css/komponenten.css?v=1.1.2">
+<script src="/static/js/common.js?v=1.1.2"></script>
+<script src="/static/js/krypto/oberflaeche.js?v=1.1.2"></script>
 </head>
 <body class="seite-fehler">
 <a class="sprung" href="#haupt">Zum Inhalt springen</a>
 <!-- Statische Fehlerseite der Anmeldung über das Portal (TECHNIK §6.3) – ohne reflektierten Inhalt, ohne Seitenskript. -->
 <header class="kopf" id="kopf">
 <div class="kopf-innen">
-<a class="logo" href="/" aria-label="Kryptos – zur Startseite"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=1.1.1#logo-ring"></use></svg><span aria-hidden="true">KRYPTOS</span></a>
+<a class="logo" href="/" aria-label="Kryptos – zur Startseite"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=1.1.2#logo-ring"></use></svg><span aria-hidden="true">KRYPTOS</span></a>
 <div class="kopf-epoche"><i aria-hidden="true"></i><span>Archiv der verborgenen Schriften</span></div>
 <nav class="kopf-nav" aria-label="Wege">
-<a class="kopf-link" href="/sso/portal" aria-label="Zum Portal InfoLabs"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=1.1.1#i-portal"></use></svg><span class="lang">⌂ Zum Portal</span></a>
+<a class="kopf-link" href="/sso/portal" aria-label="Zum Portal InfoLabs"><svg aria-hidden="true" focusable="false"><use href="/static/img/icons.svg?v=1.1.2#i-portal"></use></svg><span class="lang">⌂ Zum Portal</span></a>
 <a class="kopf-link" href="/gast">Gastmodus</a>
 </nav>
 </div>
@@ -31,9 +31,11 @@
 <main id="haupt" tabindex="-1">
 <div class="wrap fehlerseite">
 <section class="karte stapel">
-<h1>Kein Zugang</h1>
-<p>Kein Zugang – deine Lehrkraft hat Kryptos für deinen Kurs nicht freigeschaltet. Ohne Anmeldung kannst du den Gastmodus ausprobieren.</p>
-<p class="text-2">Für Lehrkräfte: Kryptos ist für Ihr Konto im Portal noch nicht freigeschaltet. Die Freischaltung erfolgt im Portal InfoLabs.</p>
+<!-- Rollenneutraler Text nach INTEGRATION.md §3.2 (Vertrag v1.3) – wörtlich; /sso/ende ersetzt /sso/portal durch PORTAL_URL. -->
+<h1>Kein Zugang.</h1>
+<p>Diese Plattform ist für dieses Konto noch nicht freigeschaltet.</p>
+<p>Schülerinnen und Schüler: Die Lehrkraft muss die Plattform im Portal für den Kurs freischalten.</p>
+<p>Lehrkräfte: Die Freischaltung der Plattform erteilt die Administration im Portal; danach die Plattform beim Kurs ankreuzen.</p>
 <p class="knopf-reihe"><a class="knopf knopf-primaer" href="/sso/portal">⌂ Zum Portal</a> <a class="knopf knopf-zweit" href="/gast">Gastmodus</a></p>
 </section>
 </div>

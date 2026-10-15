@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const request = require('supertest');
 const H = require('./helpers');
-const { pruefeManifest } = require('../scripts/vertrag_pruefen');
+const { pruefeManifest, pruefeSsoStart } = require('../scripts/vertrag_pruefen');
 
 // Bis zu den eigenen Welten (M5) zählt das Manifest die Kern-Fixture Welt 9 (Zahlen aus der Fixture berechnet).
 const W = require('./fixtures/welt_beispiel.json');
@@ -14,7 +14,9 @@ const LEVEL_IDS = W.levels.flatMap((l) => l.aufgaben);
 /** Level-Punkte der Welt 9 (Bezugsmenge, labs v1.2: alle sichtbaren Level-Aufgaben) */
 const MAX = LEVEL_IDS.reduce((sum, id) => sum + (AUF.get(id).punkte ?? { 1: 10, 2: 20, 3: 30 }[AUF.get(id).stufe]), 0);
 const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
-const FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil', 'labor', 'funkraum', 'arena', 'niveau'];
+// Vertrag v1.3 §7: nur bekannte Fähigkeiten (Liste in §7); kein sql-konsole (kein Schüler-Code), kein live (Funkraum per Polling)
+const FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil'];
+const BEKANNTE_FAEHIGKEITEN = ['gast', 'themen', 'lehrkraft-materialien', 'boss', 'training', 'warmup', 'scoreboard', 'beamer', 'urkunden', 'fallen-profil', 'sql-konsole', 'live'];
 
 test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /healthz, CORS und Cache', async () => {
   const app = H.makeApp({ seedDir: SEED });
@@ -24,7 +26,7 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   const m = r.body;
   assert.deepEqual(pruefeManifest(m), []);
   assert.deepEqual(Object.keys(m), ['vertrag', 'id', 'name', 'titel', 'themenfeld', 'kurs', 'niveaus', 'beschreibung', 'farbe', 'version', 'basis', 'icon', 'urls', 'auth', 'umfang', 'welten', 'faehigkeiten']);
-  assert.equal(m.vertrag, '1.2', 'labs-Vertrag v1.2');
+  assert.equal(m.vertrag, '1.3', 'labs-Vertrag v1.3');
   assert.deepEqual(m.niveaus, ['eA', 'gA'], 'VERTRAG §7/§9: für eA und gA');
   assert.equal(m.id, 'kryptos');
   assert.equal(m.name, 'Kryptos');
@@ -40,7 +42,7 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   assert.deepEqual(m.umfang, { welten: 1, level: W.levels.length, aufgaben: LEVEL_IDS.length + W.boss.pool.length, bosse: 1 }, 'aus dem Katalog berechnet');
   assert.deepEqual(m.welten, [{ nr: 9, titel: 'Die Testwelt', farbe: '#5B6B7C', level: W.levels.length }]);
   assert.deepEqual(m.faehigkeiten, FAEHIGKEITEN);
-  for (const f of ['labor', 'funkraum', 'arena', 'niveau']) assert.ok(m.faehigkeiten.includes(f), f);
+  for (const f of m.faehigkeiten) assert.ok(BEKANNTE_FAEHIGKEITEN.includes(f), `${f}: kein Name aus Vertrag §7`);
   const h = (await request(app).get('/healthz')).body;
   assert.equal(h.version, m.version);
   // nie Kurs-, Schüler- oder Lösungsdaten
@@ -52,16 +54,16 @@ test('Manifest (TECHNIK §6.9): vertragsgemäß, Felder exakt, Version wie /heal
   for (const v of ['loesung', 'Mika', 'LK 13', 'kurscode']) assert.ok(!text.toLowerCase().includes(v.toLowerCase()), v);
 });
 
-test('Manifest: basis aus PLATTFORM_URL; VERTRAG_VERSION nur 1.2 (ältere Fassungen abgelehnt)', async () => {
+test('Manifest: basis aus PLATTFORM_URL; VERTRAG_VERSION nur 1.3 (ältere Fassungen abgelehnt)', async () => {
   const app = H.makeApp({ seedDir: SEED, plattformUrl: 'https://kryptos.example', portalUrl: 'https://portal.example' });
   const m = (await request(app).get('/api/plattform')).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.equal(m.vertrag, '1.2');
+  assert.equal(m.vertrag, '1.3');
   assert.deepEqual(m.niveaus, ['eA', 'gA']);
   assert.equal(m.basis, 'https://kryptos.example');
   assert.deepEqual(m.auth, { modus: 'portal', portal: 'https://portal.example', sso: true });
-  assert.equal((await request(H.makeApp({ seedDir: SEED, vertragVersion: '1.2' })).get('/api/plattform')).body.vertrag, '1.2');
-  assert.throws(() => H.makeApp({ vertragVersion: '1.1' }), /VERTRAG_VERSION muss 1\.2 sein/);
+  assert.equal((await request(H.makeApp({ seedDir: SEED, vertragVersion: '1.3' })).get('/api/plattform')).body.vertrag, '1.3');
+  for (const v of ['1.1', '1.2']) assert.throws(() => H.makeApp({ vertragVersion: v }), /VERTRAG_VERSION muss 1\.3 sein/, v);
 });
 
 test('Manifest: Umfang aus dem leeren Katalog (keine Welten) bleibt vertragsgemäß', async () => {
@@ -84,7 +86,29 @@ test('Manifest mit den echten Seeds W0–W6: Umfang aus dem Katalog (202 Level-A
 test('pruefeManifest erkennt Vertragsverstöße', () => {
   assert.ok(pruefeManifest(null).length);
   const f = pruefeManifest({ vertrag: '2.0', id: 'Algo Quest', urls: {}, auth: { modus: 'x', sso: true }, faehigkeiten: [] });
-  for (const teil of ['vertrag', 'id:', 'urls.gast', 'auth.modus', 'urls.ssoStart', '"gast"']) assert.ok(f.some((x) => x.includes(teil)), teil);
+  for (const teil of ['vertrag', 'id:', 'urls.gast', 'auth.modus', '"gast"']) assert.ok(f.some((x) => x.includes(teil)), teil);
+  // v1.3: urls.ssoStart ist SOLL (Standard /sso/start) – fehlt es, kein Fehler; ein ungültiger Pfad schon
+  assert.ok(!f.some((x) => x.includes('urls.ssoStart')));
+  assert.ok(pruefeManifest({ urls: { ssoStart: '//boese.example' } }).some((x) => x.includes('urls.ssoStart')));
+});
+
+test('v1.3 pruefeSsoStart gegen die laufende App: /sso/start ohne Anmeldung → 302 zum Portal, keine Fehler, keine Hinweise', async () => {
+  const app = H.makeApp({ seedDir: SEED });
+  const server = await new Promise((ok) => {
+    const s = app.listen(0, '127.0.0.1', () => ok(s));
+  });
+  try {
+    const basis = `http://127.0.0.1:${server.address().port}`;
+    const m = await (await fetch(basis + '/api/plattform')).json();
+    assert.deepEqual(pruefeManifest(m), []);
+    assert.equal(m.urls.ssoStart, '/sso/start');
+    assert.deepEqual(await pruefeSsoStart(basis, m), { fehler: [], hinweise: [] });
+    // Gegenprobe: ein Pfad, den es nicht gibt, ist ein Fehler (404)
+    const falsch = await pruefeSsoStart(basis, { ...m, urls: { ...m.urls, ssoStart: '/sso/gibt-es-nicht' } });
+    assert.equal(falsch.fehler.length, 1);
+  } finally {
+    await new Promise((ok) => server.close(ok));
+  }
 });
 
 /* ===================== Verbund-API (VERTRAG §6, TECHNIK §6.7–§6.8, §6.12 T11/T12) ===================== */
@@ -323,7 +347,7 @@ test('Kursübersicht: unbekannter Kurs → 404, falscher zweck → 401', async (
   assert.equal((await vb(app, 'get', `/api/verbund/kurse/${kid(k)}/uebersicht`, 'loeschen')).status, 401);
 });
 
-test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), aktiv:true entsperrt; unbekannter Kurs ohne Anlage', async () => {
+test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), aktiv:true entsperrt', async () => {
   const app = H.makeApp();
   const k = H.kurs(app, 'LK 13');
   const s = await H.schuelerClient(app, k, 'Mika R.');
@@ -341,10 +365,33 @@ test('kurs-aendern: Name übernommen, aktiv:false sperrt Schüler-API (403), akt
     assert.equal((await aendern(body)).status, 400, JSON.stringify(body));
   }
   assert.equal((await vb(app, 'post', '/api/verbund/kurse/quatsch', 'kurs-aendern').send({ name: 'x' })).status, 400);
-  // unbekannter Kurs: ok, aber keine Anlage (kommt beim nächsten SSO)
+});
+
+test('v1.3 kurs-aendern für einen unbekannten Kurs → 200 { ok: true }, Kurs mit Standard-Einstellungen angelegt', async () => {
+  const { STANDARD_EINSTELLUNGEN } = require('../src/domain');
+  const app = H.makeApp();
+  const db = app.locals.db;
   const n = H.zaehle(app, 'kurse');
+  const r = await vb(app, 'post', '/api/verbund/kurse/k%3A424242', 'kurs-aendern').send({ name: '  Neu  ', aktiv: false });
+  assert.deepEqual([r.status, r.body], [200, { ok: true }]);
+  assert.equal(H.zaehle(app, 'kurse'), n + 1);
+  const k = db.prepare("SELECT * FROM kurse WHERE kurs_id = 'k:424242'").get();
+  assert.deepEqual([k.name, k.aktiv], ['Neu', 0], 'Name und aktiv aus dem Auftrag');
+  assert.match(k.board_schluessel, /^[A-Za-z0-9_-]{12}$/);
+  const e = app.locals.services.kurse.einstellungen(k.einstellungen);
+  const erwartet = app.locals.services.kurse.einstellungen(JSON.stringify(STANDARD_EINSTELLUNGEN));
+  assert.deepEqual(e, erwartet, 'Standard-Einstellungen wie beim SSO');
+  // ohne Body-Felder: aktiv, vorläufiger Name bis zum ersten SSO bzw. zur nächsten Umbenennung
+  assert.deepEqual((await vb(app, 'post', '/api/verbund/kurse/k%3A7', 'kurs-aendern').send({})).body, { ok: true });
+  const k7 = db.prepare("SELECT * FROM kurse WHERE kurs_id = 'k:7'").get();
+  assert.deepEqual([k7.name, k7.aktiv], ['Kurs k:7', 1]);
+  // zweiter Auftrag (Wiederholung) legt nichts doppelt an
   assert.deepEqual((await vb(app, 'post', '/api/verbund/kurse/k%3A424242', 'kurs-aendern').send({ name: 'Neu', aktiv: false })).body, { ok: true });
-  assert.equal(H.zaehle(app, 'kurse'), n);
+  assert.equal(H.zaehle(app, 'kurse'), n + 2);
+  // erstes SSO danach: Name aus dem Token, gesperrt bleibt gesperrt (aktiv steuert nur die Verbund-API)
+  await H.sso(app, { sub: 'l:5', rolle: 'lehrkraft', name: 'Frau Lehrer', kurse: [{ id: 'k:7', name: 'GK 12', rolle: 'lehrkraft' }, { id: 'k:424242', name: 'LK 13', rolle: 'lehrkraft' }] });
+  assert.deepEqual(db.prepare("SELECT name, aktiv FROM kurse WHERE kurs_id IN ('k:7', 'k:424242') ORDER BY kurs_id").all().map((x) => [x.name, x.aktiv]), [['LK 13', 0], ['GK 12', 1]]);
+  assert.equal(H.zaehle(app, 'kurse'), n + 2);
 });
 
 test('kurs-aendern aktiv:false: laufendes Funkraum-Szenario beendet (Inhalte gelöscht), offene Arena gelöscht', async () => {

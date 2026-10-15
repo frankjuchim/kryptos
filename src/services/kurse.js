@@ -187,12 +187,24 @@ function createKurse(ctx) {
    * bleibt). Lehrkraft: kurs_lehrkraefte entsprechend; Superadmin: keine kurs_lehrkraefte-Zeilen (sieht alle Kurse).
    * Liefert die lokalen Kurs-ids der Token-Kurse.
    */
-  function upsertAusToken(sub, rolle, liste) {
+  /**
+   * Unbekannten Portal-Kurs mit Standard-Einstellungen anlegen (neuer Board-Schlüssel) – beim SSO (upsertAusToken) und
+   * bei kurs-aendern für einen unbekannten Kurs (VERTRAG §6 ab v1.3). Liefert die lokale id.
+   */
+  function anlegen(kursId, name, { aktiv = true } = {}) {
     const jetzt = iso();
     const standard = { ...STANDARD_EINSTELLUNGEN };
     for (const k of ENTFALLEN) delete standard[k];
+    return Number(
+      db
+        .prepare('INSERT INTO kurse (kurs_id, name, einstellungen, aktiv, board_schluessel, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(kursId, name, JSON.stringify(standard), aktiv ? 1 : 0, S.zufallsText(9), jetzt, jetzt).lastInsertRowid
+    );
+  }
+
+  function upsertAusToken(sub, rolle, liste) {
+    const jetzt = iso();
     const suche = db.prepare('SELECT id, name FROM kurse WHERE kurs_id = ?');
-    const neu = db.prepare('INSERT INTO kurse (kurs_id, name, einstellungen, aktiv, board_schluessel, created_at, updated_at) VALUES (?, ?, ?, 1, ?, ?, ?)');
     const umbenennen = db.prepare('UPDATE kurse SET name = ?, updated_at = ? WHERE id = ?');
     const ids = [];
     for (const k of liste) {
@@ -202,7 +214,7 @@ function createKurse(ctx) {
         if (r.name !== name) umbenennen.run(name, jetzt, r.id);
         ids.push(r.id);
       } else {
-        ids.push(Number(neu.run(k.id, name, JSON.stringify(standard), S.zufallsText(9), jetzt, jetzt).lastInsertRowid));
+        ids.push(anlegen(k.id, name));
       }
     }
     const idListe = JSON.stringify([...new Set(ids)]);
@@ -236,7 +248,7 @@ function createKurse(ctx) {
     db.prepare('UPDATE schueler SET last_active_at = ? WHERE id = ?').run(iso(), schuelerId);
   }
 
-  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, boardSchluesselNeu, aktiv, upsertAusToken };
+  return { einstellungen, kursAnsicht, kursRow, kursFuer, kursPerBoardSchluessel, kursListe, kursAendern, pruefeEinstellungen, boardSchluesselNeu, aktiv, upsertAusToken, anlegen };
 }
 
 module.exports = { createKurse };

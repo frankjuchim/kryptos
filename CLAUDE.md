@@ -35,20 +35,24 @@ Plattform-ID `kryptos`, Live-Ziel `https://kryptos.frankjuchim.de`, Mitglied des
 
 ## Verbund InfoLabs (verbindlich)
 
-- Vertrag: https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (**v1.2**; Entscheidung der Lehrkraft: verbindlich,
-  überstimmt den früheren Kryptos-Entwurf), Anschluss und Testfälle:
-  https://github.com/frankjuchim/labs/blob/main/docs/INTEGRATION.md.
+- Vertrag: https://github.com/frankjuchim/labs/blob/main/VERTRAG.md (**Version 1.3**; Entscheidung der Lehrkraft:
+  verbindlich, überstimmt den früheren Kryptos-Entwurf), Anschluss und Testfälle:
+  https://github.com/frankjuchim/labs/blob/main/docs/INTEGRATION.md (§3.1, §3.2, §4, §5).
+- v1.3: `/sso/start` startet immer neu (auch mit Sitzung; alte Sitzung erst nach geprüftem Token ersetzt, bei Fehlern
+  unverändert); fehlende Kurse im Token → Teilnahme ruht (Lernstand, Team-Zuordnung bleiben); `kurs-aendern` legt
+  unbekannte Kurse an (200); `keine_berechtigung` → rollenneutrale 403-Seite mit Link auf `PORTAL_URL`; Manifest-Fähigkeiten
+  nur aus §7; §9: kein Schüler-Code wird ausgeführt, Prüfantworten ohne Lösungsdaten (TECHNIK §6.10).
 - **Kein eigenes Login.** SSO mit Ed25519-JWT (§5), Manifest `GET /api/plattform` (§7, mit `niveaus: ["eA", "gA"]` und
   `urls.niveaus: "/themen#niveaus"`), Niveau-Übersicht ohne Anmeldung (§9: `/themen#niveaus`, Daten `GET /api/niveaus`),
   Verbund-API (§6: `/api/verbund/loeschen`, Kursübersicht, Kursänderung).
 - Konfiguration (§8): `PORTAL_URL=https://labs.frankjuchim.de`, `PORTAL_PUBLIC_KEY` = Inhalt von
   `https://labs.frankjuchim.de/sso/schluessel.pem`, `PLATTFORM_ID=kryptos`, `PLATTFORM_URL=https://kryptos.frankjuchim.de`,
-  `AUTH_MODUS=portal`, `SESSION_SECRET` (≥ 32 Zeichen); `VERTRAG_VERSION` weglassen (Standard und einzig erlaubter Wert `1.2`).
+  `AUTH_MODUS=portal`, `SESSION_SECRET` (≥ 32 Zeichen); `VERTRAG_VERSION` weglassen (Standard und einzig erlaubter Wert `1.3`).
 - `src/jwt.js` und `scripts/vertrag_pruefen.js` **byte-gleich** aus `frankjuchim/labs` kopieren (SHA-256-Test).
 - Nach dem Deploy trägt der Superadmin die Plattform im Portal unter „Plattformen“ ein, bestätigt die Rücksprung-Adresse
   `https://kryptos.frankjuchim.de/sso/ende` und schaltet Lehrkräfte frei.
 - **Abweichungen vom Vertrag nie still:** Änderungen als Text für VERTRAG.md vorschlagen (neue Version, Eintrag in §14) –
-  mögliche Vorschläge stehen in `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8). Bis zur Annahme gilt v1.2 vollständig (u. a.
+  mögliche Vorschläge stehen in `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8). Bis zur Annahme gilt v1.3 vollständig (u. a.
   Rang/`anteil` über alle sichtbaren Level-Aufgaben der freigeschalteten Welten inkl. Ergänzung/Kür, kein Feld `niveau`
   in der Kursübersicht).
 

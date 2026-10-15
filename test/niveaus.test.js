@@ -15,11 +15,11 @@ const SEED = path.join(__dirname, 'fixtures', 'seed_beispiel');
 const VERSION = require('../package.json').version;
 const summe = (z) => Object.values(z).reduce((s, n) => s + n, 0);
 
-test('Manifest v1.2: pruefeManifest leer, niveaus eA und gA, urls.niveaus auf /themen#niveaus, kurs nennt beide Niveaus', async () => {
+test('Manifest v1.3: pruefeManifest leer, niveaus eA und gA, urls.niveaus auf /themen#niveaus, kurs nennt beide Niveaus', async () => {
   const app = H.makeApp({ seedDir: SEED });
   const m = (await request(app).get('/api/plattform').expect(200)).body;
   assert.deepEqual(pruefeManifest(m), []);
-  assert.equal(m.vertrag, '1.2');
+  assert.equal(m.vertrag, '1.3');
   assert.deepEqual(m.niveaus, ['eA', 'gA']);
   assert.equal(m.urls.niveaus, '/themen#niveaus');
   assert.match(m.kurs, /eA und gA/);

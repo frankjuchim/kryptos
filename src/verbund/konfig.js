@@ -11,10 +11,11 @@ const { schluesselListe } = require('../jwt');
 
 const STANDARD_ID = 'kryptos';
 const ID_MUSTER = /^[a-z][a-z0-9-]{1,30}$/;
-// Verbindlich ist labs-VERTRAG.md v1.2 (Entscheidung der Lehrkraft, TECHNIK §6.10). Kryptos erfüllt nur diese Fassung
-// (Manifest mit niveaus/urls.niveaus, Niveau-Übersicht §9); jeder andere Wert bricht den Start ab, damit eine alte
-// Einstellung (z. B. VERTRAG_VERSION=1.1 aus früheren Anleitungen) nicht still ein anderes Verhalten verspricht.
-const VERTRAG_VERSION = '1.2';
+// Verbindlich ist labs-VERTRAG.md v1.3 (TECHNIK §6.10). Kryptos erfüllt nur diese Fassung (u. a. /sso/start startet
+// immer neu, kurs-aendern legt unbekannte Kurse an, Fähigkeiten nur aus §7); jeder andere Wert bricht den Start ab, damit
+// eine alte Einstellung (z. B. VERTRAG_VERSION=1.2 aus früheren Anleitungen) nicht still ein anderes Verhalten verspricht.
+// Der Vertrag selbst kennt die Variable nicht (§8) – am besten weglassen.
+const VERTRAG_VERSION = '1.3';
 
 function fehler(text) {
   return new Error(`Konfiguration: ${text}`);
@@ -84,7 +85,7 @@ function trustProxyWert(v) {
  * @param {object} env  Umgebung (process.env oder Testwerte)
  * @param {{ test?: boolean }} [o]  test: fehlende Pflichtwerte erlaubt (Konfiguration kommt aus createApp(opts))
  * @returns {{ plattformId: string, plattformUrl: string|null, portalUrl: string|null, portalPublicKey: string|null,
- *   schluessel: import('node:crypto').KeyObject[], sessionSecret: string, vertragVersion: '1.2',
+ *   schluessel: import('node:crypto').KeyObject[], sessionSecret: string, vertragVersion: '1.3',
  *   authModus: 'portal', dataDir: string, port: number, trustProxy: number|boolean|string }}
  */
 function ladeKonfig(env = process.env, { test = false } = {}) {

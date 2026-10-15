@@ -311,3 +311,32 @@ test('json_groesse (Fund Task 208): große JSON-Körper nur für Backup-Restore 
   assert.equal((await lk.post('/api/admin/katas/import').set('Content-Type', 'application/json').send(gross)).status, 413);
   assert.equal((await lk.post('/api/admin/katas/import').send({})).status, 403, 'kleiner Körper: Rechteprüfung wie bisher');
 });
+
+/* ---------- Vertrag v1.3 §9: keine Ausführung von Code oder Abfragen der Schülerinnen und Schüler ---------- */
+
+test('v1.3 §9 kein_fremdcode: Server und Oberfläche führen keinen Code und keine Abfragen aus (kein eval, new Function, vm, child_process, Worker)', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const WURZEL = path.join(__dirname, '..');
+  const dateien = ['src', path.join('public', 'static', 'js')].flatMap((d) =>
+    fs.readdirSync(path.join(WURZEL, d), { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => path.join(d, f))
+  );
+  assert.ok(dateien.length > 50, `Dateien: ${dateien.length}`);
+  const VERBOTEN = [
+    [/\beval\s*\(/, 'eval'],
+    [/\bnew\s+Function\s*\(|\bFunction\s*\(\s*['"`]/, 'new Function'],
+    [/require\(\s*['"](node:)?(vm|child_process|worker_threads|cluster)['"]\s*\)/, 'vm/child_process/worker_threads/cluster'],
+    [/\bnew\s+(Shared)?Worker\s*\(/, 'Worker'],
+    [/\bset(Timeout|Interval)\s*\(\s*['"`]/, 'setTimeout mit Text'],
+    [/\bimport\s*\(\s*[^'"\s]/, 'dynamischer Import mit berechnetem Pfad'] // JSDoc-Typen wie import('express') sind erlaubt
+  ];
+  const funde = [];
+  for (const d of dateien) {
+    const text = fs.readFileSync(path.join(WURZEL, d), 'utf8');
+    for (const [muster, name] of VERBOTEN) if (muster.test(text)) funde.push(`${d}: ${name}`);
+  }
+  assert.deepEqual(funde, []);
+  // Einziges db.exec: die festen Migrationen in src/db.js (kein Text aus Anfragen)
+  const exec = dateien.filter((d) => /\bdb\.exec\s*\(/.test(fs.readFileSync(path.join(WURZEL, d), 'utf8')));
+  assert.deepEqual(exec, [path.join('src', 'db.js')]);
+});

@@ -7,6 +7,11 @@
 > TECHNIK §6.1, §6.9, §6.10). Der frühere Kryptos-Entwurf „Version 1.2“ (unten, Teile A–H, **nur noch Archiv**) gilt
 > **nicht**: Nichts davon wird still umgesetzt, und keine Regel daraus geht dem labs-Vertrag vor. Die Datei hieß bis
 > dahin `docs/VERTRAG_VORSCHLAG_v1.2.md`.
+>
+> **Stand Kryptos 1.1.2:** Verbindlich ist inzwischen labs `VERTRAG.md` **Version 1.3** (Commit `2b8803b`, Nebenversion:
+> Einstieg über `/sso/start`, `kurs-aendern` legt unbekannte Kurse an, Sandbox-Regel §9, Liste bekannter Fähigkeiten in
+> §7). Kryptos erfüllt v1.3 (TECHNIK §6.10). Die Tabelle unten beschreibt v1.2; geändert hat sich für Kryptos nur die
+> Zeile „Fähigkeiten“ (siehe V3).
 
 ## Was labs v1.2 regelt und was daraus für Kryptos folgt
 
@@ -16,7 +21,7 @@
 | Niveau-Übersicht | §9 MUSS: ohne Anmeldung, welche Welten, Level, Aufgaben, Materialien für welches Niveau; `urls.niveaus` (SOLL) | `/themen#niveaus` (Seite) + `GET /api/niveaus` (Daten) |
 | `anteil` und Rangschwellen | §6/§9: Anteil an den **Level-Punkten der freigeschalteten Welten** – nichts zu Niveau, Ergänzung oder Kür | alle für den Kurs **sichtbaren** Level-Aufgaben der freigeschalteten Welten (Ergänzung und Kür zählen mit; eA-Aufgaben im gA-Kurs sind ausgeblendet) – TECHNIK §8.3 |
 | Kursübersicht | Format §6 ohne Feld `niveau` | **kein** Feld `niveau` |
-| Fähigkeiten | freie Liste | `labor`, `funkraum`, `arena`, `niveau` (freie Werte, kein Verzeichnis) |
+| Fähigkeiten | freie Liste (v1.3: Liste bekannter Namen in §7) | bis 1.1.1 `labor`, `funkraum`, `arena`, `niveau` (freie Werte); ab 1.1.2 nur Namen aus §7 |
 
 ## Mögliche Vorschläge für eine spätere Version (Abstimmung mit dem Portal)
 
@@ -32,7 +37,9 @@ Nicht übernommene Punkte des alten Entwurfs, die weiterhin sinnvoll wären. Sie
    Klärung vertragsnah mit allen sichtbaren Level-Aufgaben. Vorschlagstext für §9 „Vergleichbarkeit“: „Inhalte, die die
    Plattform als freiwillig kennzeichnet (Ergänzung, Kür), zählen in `punkte`, aber nicht in `anteil` und Rangschwellen.“
 3. **V3 – Verzeichnis der Fähigkeiten** (alter Teil B, §7.1) mit `labor`, `funkraum`, `arena`, `niveau`, damit das
-   Portal sie anzeigen kann.
+   Portal sie anzeigen kann. **Teilweise erledigt durch v1.3:** §7 nennt jetzt bekannte Fähigkeiten (u. a. `sql-konsole`,
+   `live`), aber nicht die vier Kryptos-Namen; Kryptos meldet sie deshalb seit 1.1.2 nicht mehr. Offen bleibt, sie in die
+   Liste aufzunehmen (Nebenversion).
 4. **V4 – Regeln für zwischen Konten ausgetauschte Inhalte** (alter Teil C: Kursgrenze, Whitelist, Ausblenden,
    Löschfristen 24 h/30 Tage, Einschluss in `loeschen`). Kryptos hält diese Regeln als **eigene, strengere** Festlegung
    ohnehin ein (TECHNIK §9, §12) – sie widersprechen dem Vertrag nicht.
@@ -42,7 +49,7 @@ Nicht übernommene Punkte des alten Entwurfs, die weiterhin sinnvoll wären. Sie
 7. **V7 – `vertrag_pruefen.js`** (alter Teil F): Prüfung der Fähigkeiten-Kennungen und `pruefeKursuebersicht`.
 8. **V8 – Kursniveau aus dem Portal** (offene Frage 2 unten): Portal führt LK/GK je Kurs und gibt es per `kurs-aendern` weiter.
 
-Eine neue Version würde frühestens **1.3** heißen; der Text unten müsste dafür an labs v1.2 angepasst werden (Teil A
+Eine neue Version würde (nach labs v1.3) frühestens **1.4** heißen; der Text unten müsste dafür an labs v1.2 angepasst werden (Teil A
 überschneidet sich mit dem angenommenen `niveaus`, das dort „gedacht für“ statt „je Kurs unterschieden“ bedeutet).
 
 ---
