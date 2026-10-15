@@ -112,6 +112,11 @@ Lehrkraft-Downloads ohne `verzeichnis.json`). `.gitkeep` landet im Image, wird a
   Die Server-Routen der Seiten bleiben unverändert. Kern-JS (`common.js`, `render.js`, `interact.js`, `aufgabe.js`,
   `shared/baum.js`) bleibt (nur K19). Der e2e-Durchlauf `test/e2e/e2e.js` (Algo-Quest-Oberfläche) lief bis M4 nicht; **M4 Task 66** ersetzt ihn (Art E) durch
   `test/e2e/{e2e,hilfen,schueler}.js` gegen App + Dev-Portal (Szenarien TECHNIK §15), Demo-Seed `test/e2e/seed/`.
+- **Effekte aus `common.js` (Nachtrag M11):** `AQ.effekt.schweben` hängt `div.schweben` an `body` an; die Regel dazu stand
+  nur in der entfernten `style.css`, der Text „+20“ erschien deshalb 1,6 s ungestylt unten links. `common.js` bleibt
+  unverändert (kein Kern-Diff); die Kryptos-Regel steht in `public/static/css/aufgaben.css` (fixiert, ohne Klicks, ohne
+  Animation unsichtbar, Animation `kr-schweben` nur ohne reduzierte Bewegung/„Bewegung aus“; Test `effekte_css.test.js`).
+  `AQ.effekt.funken` erzeugt Spans ohne Größe (ohne Regel unsichtbar, keine Störung) und bleibt ungestylt.
 - **Inhalte (Task 1):** `seed/` ohne Algo-Quest-Inhalte (leere Platzhalter).
 
 ## Werkzeuge aus Algo Quest (Art A, außerhalb der App)

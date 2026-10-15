@@ -331,10 +331,23 @@ button.zelle .klick-nr { min-height: 1em; text-align: center; font-size: .72rem;
 .sim-box .richtung { margin-bottom: 6px; font-size: .85rem; color: var(--text-2); }
 .loesung { font-weight: 700; }
 
+/* „+20“ über der Rückmeldung (AQ.effekt.schweben, an body angehängt, nach 1,6 s entfernt) – ohne Animation unsichtbar */
+.schweben {
+  position: fixed; z-index: 30; pointer-events: none; opacity: 0; transform: translate(-50%, 0);
+  font-family: var(--f-ueberschrift); font-weight: 700; font-size: 1.6rem; color: var(--messing-dunkel);
+  text-shadow: 0 1px 0 var(--papier), 0 0 10px var(--papier);
+}
+
 /* ---------- Bewegung (nur ohne reduzierte Bewegung und ohne „Bewegung aus“) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-bewegung="aus"]) .wackeln { animation: kr-wackeln .45s ease; }
   :root:not([data-bewegung="aus"]) .feedback.jubel { animation: kr-jubel .5s ease-out; }
+  :root:not([data-bewegung="aus"]) .schweben { animation: kr-schweben 1.4s ease-out forwards; }
+}
+@keyframes kr-schweben {
+  0% { opacity: 0; transform: translate(-50%, 8px) scale(.85); }
+  20% { opacity: 1; transform: translate(-50%, -8px) scale(1.05); }
+  100% { opacity: 0; transform: translate(-50%, -64px) scale(1); }
 }
 @keyframes kr-wackeln {
   20%, 60% { transform: translateX(-5px); }

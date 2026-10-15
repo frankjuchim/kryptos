@@ -221,6 +221,10 @@ Stempel federn 0,28 s. Bei `prefers-reduced-motion` oder „Bewegung aus“ im P
 sofort der Endzustand, Nachspielen nur im Einzelschritt (e2e Nr. 15 prüft `document.getAnimations()`). Ton ist ein
 eigener Schalter, Standard aus.
 
+**Punkte schweben (Nachtrag M11):** Beim Lösen steigt „+n“ in `--messing-dunkel` (Überschriftenschrift) 1,4 s über der
+Rückmeldung auf (`.schweben`, Animation `kr-schweben`); ohne Bewegung erscheint nichts (`AQ.ruhig()`, Regel ohne Animation
+unsichtbar).
+
 ## 7. Barrierefreiheit (WCAG 2.1 AA)
 
 Kontraste geprüft (§2), Fokus-Ring 3 px `--messing-hell` auf Tinte bzw. `--hinweis` auf Papier; alle Interaktionen per
