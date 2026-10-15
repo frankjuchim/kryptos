@@ -136,6 +136,24 @@
   {
    "layout": "inhalt",
    "abschnitt": "DS 1 · Skytale",
+   "titel": "Im Kryptolabor: der Stab",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Stab wählen, Buchstaben stempeln, Band abwickeln: Der **Umfang u** ist der Schlüssel."
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/skytale.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Skytale & Gitter“, Reiter Skytale; Nachspielen zeigt Schreiben und Lesen Schritt für Schritt."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
    "titel": "Die Sprache der Kryptologie",
    "inhalt": [
     {
@@ -310,6 +328,24 @@
     }
    ],
    "notizen": "F6 · 4 min Murmelrunde: „Ist Morsecode geheim?“ – „Ist ASCII eine Verschlüsselung?“ – „Und die Skytale?“\nErwartung: Morsecode steht im Lexikon, ASCII sogar in der Abitur-Anlage → nichts ist geheim. Bei der Skytale ist der Umfang geheim.\nLeitfrage für immer: „Was ist geheim?“ – Falle P5 (Codierung mit Verschlüsselung verwechseln). Rückbezug auf K2: Dort fiel das Wort „Code“."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Im Kryptolabor: Codes & Signale",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Rand = kurz, Fell = lang: Die Morsetafel ist **öffentlich** – eine Codierung, keine Verschlüsselung."
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/trommel.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Zusatzwerkzeug „Codes & Signale“ (Morse-Trommel, Klopfcode, Freimaurer); Ton nur mit Schalter."
   },
   {
    "layout": "zweispaltig",
@@ -570,6 +606,24 @@
    "notizen": "F8b · 2 min. Drehrichtung festlegen: **im Uhrzeigersinn**, Löcher in jeder Stellung zeilenweise (oben links → unten rechts) beschriften, Rest mit X (P4).\nStellung 1: (1,2) b, (2,1) o, (2,3) t, (4,4) e · Stellung 2: (1,3) n, (2,4) w, (3,3) a, (4,1) r · Stellung 3: (1,1) t, (3,2) e, (3,4) n, (4,3) a · Stellung 4: (1,4) m, (2,2) t, (3,1) o, (4,2) r → Raster TBNM / OTTW / OEAN / RRAE.\nEine Schablone ist nur brauchbar, wenn die vier Stellungen jedes Feld genau einmal freigeben (eA: es gibt 256 brauchbare). Danach Akte W0·1 (Aufträge 2–5, Schnelle 6–7; Schablone ausschneiden)."
   },
   {
+   "layout": "inhalt",
+   "abschnitt": "DS 1 · Skytale",
+   "titel": "Im Kryptolabor: die Schablone",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Stempeln füllt die Löcher **zeilenweise**, nach jeder Lage wird gedreht – „Abheben & ablesen“ zeigt das Raster."
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/schablone.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Skytale & Gitter“, Reiter Fleißner-Schablone; „Lochung ändern“ zeigt doppelt freie Felder rot."
+  },
+  {
    "layout": "falle",
    "abschnitt": "DS 1 · Skytale",
    "nr": "P4",
@@ -757,6 +811,24 @@
     }
    ],
    "notizen": "F13 · 1 min. „Monoalphabetisch“: e wird an jeder Stelle gleich ersetzt (das wird in Welt 1 zur Schwachstelle)."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "DS 2 · Caesar",
+   "titel": "Im Kryptolabor: die Chiffrierscheibe",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Innen drehen, außen antippen – der Buchstabe fliegt ins Band. **Die Scheibe bleibt fest, solange du schreibst.**"
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/scheibe.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Zeigen: Innenring ziehen, Klartext außen antippen, Nachspielen in Einzelschritten. Schlüssel = was unter dem a steht."
   },
   {
    "layout": "inhalt",

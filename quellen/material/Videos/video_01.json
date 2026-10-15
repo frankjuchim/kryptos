@@ -196,6 +196,48 @@
    ]
   },
   {
+   "titel": "Die Chiffrierscheibe im Kryptolabor",
+   "notizen": "[Kapitel: Das Caesar-Verfahren]\n\nREGIE: Auf die Nabe „a → D“ zeigen, dann einen Buchstaben außen und innen.\n\nSPRECHERTEXT: Im Kryptolabor gibt es dafür eine Chiffrierscheibe. Die innere Scheibe drehst du auf den Schlüssel: Unter dem a steht hier das D, also die Verschiebung drei. Dann suchst du außen den Klartextbuchstaben und liest direkt darunter innen den Geheimtextbuchstaben ab.",
+   "video": true,
+   "abschnitt": "Das Caesar-Verfahren",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "bild",
+       "pfad": "materialien/Bilder/Labor/scheibe_leer.png",
+       "alt": "Kryptolabor, Werkzeug „Chiffrierscheibe“: Messingscheibe mit Klartext außen, Papierscheibe mit Geheimtext innen, Nabe „a → D · Verschiebung 3“; unten rechts die Namensnennung.",
+       "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "AM OBJEKT",
+       "farbe": "hinweis",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "drehen: Schlüssel"
+        },
+        {
+         "t": "p",
+         "md": "außen: Klartext"
+        },
+        {
+         "t": "p",
+         "md": "innen: Geheimtext"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
    "titel": "Das Alphabet der Anlage: A = 1 … Z = 26",
    "notizen": "[Kapitel: Alphabet A = 1]\n\nREGIE: Mit dem Zeiger die Spalte A → G zeigen, dann auf T und U (hervorgehoben) zeigen.\n\nSPRECHERTEXT: Im Abitur bekommst du als Anlage eine Tabelle, in der jeder Buchstabe eine Zahl hat: A gleich eins, B gleich zwei, bis Z gleich sechsundzwanzig. Damit rechnen wir heute. Unser Schlüssel ist die Verschiebung k gleich sechs. Darunter siehst du das Geheimtextalphabet: Es ist einfach um sechs Stellen verrutscht. A wird zu G, B zu H und so weiter. Achtung, eine kleine Stolperfalle: Den Schlüssel schreibt man oft als Buchstaben. Der Schlüsselbuchstabe G bedeutet Verschiebung sechs – obwohl G in der Tabelle die Nummer sieben hat. Denn der Schlüsselbuchstabe A steht für Verschiebung null. Das ist Falle P1, die Zählbasis.",
    "video": true,

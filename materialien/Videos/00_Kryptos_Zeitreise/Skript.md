@@ -283,7 +283,28 @@ Am Ende jeder Epoche wartet der Boss: eine Abiturprobe mit acht Aufgaben in fün
 
 Im Kryptolabor findest du Werkzeuge wie die Chiffrierscheibe oder die Vigenère-Werkbank. Im Funkraum spielen wir im Unterricht live: Teams schicken sich Geheimbotschaften, ein Eve-Team lauscht und versucht zu knacken. Die Nachrichten bleiben im Kurs und werden danach gelöscht.
 
-### Folie 11 · 03:12 – Ränge, Artefakte, Abzeichen
+### Folie 11 · 03:12 – Werkzeuge zum Anfassen
+
+*Folientyp `bild` · Kapitel „Labor und Funkraum“ · ca. 30 s*
+
+**Folie:**
+
+Bild `materialien/Bilder/Labor/polybios.png` – Kryptolabor, Werkzeug „Polybios & Playfair“: Polybios-Quadrat auf Papier mit Ziffernköpfen, daneben das Panel „Aktueller Buchstabe“ mit Zahlenpaar; unten rechts die Namensnennung.
+
+Bildunterschrift: Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)
+
+> **Kasten · Am Objekt** (Messing)
+> - direkt antippen und drehen
+> - Nachspielen Schritt für Schritt
+> - Ideen von A. Bodendiek
+
+**Regie:** Auf Quadrat und Panel zeigen; Kasten rechts nach dem zweiten Satz einblenden.
+
+**Sprechertext:**
+
+Viele Werkzeuge im Kryptolabor sind Objekte zum Anfassen: das Polybios-Quadrat, die Skytale, die Chiffrierscheibe oder die Enigma. Du tippst direkt auf das Objekt, und mit Nachspielen siehst du jeden Schritt noch einmal in Ruhe. Die Ideen dafür stammen aus der Krypto-Werkstatt von A. Bodendiek.
+
+### Folie 12 · 03:42 – Ränge, Artefakte, Abzeichen
 
 *Folientyp `bild` · Kapitel „Ränge und Artefakte“ · ca. 17 s*
 
@@ -302,7 +323,7 @@ Im Kryptolabor findest du Werkzeuge wie die Chiffrierscheibe oder die Vigenère-
 
 Mit deinen Punkten steigst du auf – vom Lehrling bis zum Meister der Chiffren. Jeder besiegte Boss bringt ein Artefakt, von der Skytale bis zum Kern des Chronoskops. Und auf der Zeitleiste entsiegelt sich mit jeder Epoche ein Kapitel Kryptogeschichte.
 
-### Folie 12 · 03:30 – Gastmodus: ohne Anmeldung reinschnuppern
+### Folie 13 · 04:00 – Gastmodus: ohne Anmeldung reinschnuppern
 
 *Folientyp `punkte` · Kapitel „Gastmodus“ · ca. 10 s*
 
@@ -319,7 +340,7 @@ Mit deinen Punkten steigst du auf – vom Lehrling bis zum Meister der Chiffren.
 
 Noch kein Kurscode? Im Gastmodus unter kryptos punkt frankjuchim punkt de Schrägstrich gast probierst du sechs Demo-Aufgaben ohne Anmeldung aus. Gespeichert wird dort nichts.
 
-### Folie 13 · 03:40 – Probier es aus!
+### Folie 14 · 04:10 – Probier es aus!
 
 *Folientyp `pause` · ca. 15 s*
 
@@ -340,7 +361,7 @@ Jetzt du: Halte das Video an, melde dich an und notiere deinen Code. Dann weiter
 
 *(⏸ 3 s Denkpause – im Schnitt Einblendung „Video anhalten“; Auflösung auf der nächsten Folie)*
 
-### Folie 14 · 03:55 – Das nimmst du mit
+### Folie 15 · 04:25 – Das nimmst du mit
 
 *Folientyp `merke` · Kapitel „Zusammenfassung“ · ca. 12 s*
 
@@ -357,7 +378,7 @@ Jetzt du: Halte das Video an, melde dich an und notiere deinen Code. Dann weiter
 
 Kurz gesagt: anmelden über InfoLabs, Code notieren, weiter zu Kryptos. Tipps und Fehlversuche kosten etwas, die Fallen zeigen dir deine Stolpersteine, und jede Epoche endet mit einem Boss.
 
-### Folie 15 · 04:07 – Weiter im Lab
+### Folie 16 · 04:37 – Weiter im Lab
 
 *Folientyp `ende` · ca. 20 s*
 

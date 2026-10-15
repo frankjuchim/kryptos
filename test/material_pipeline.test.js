@@ -176,7 +176,8 @@ test('Erklärvideos: jede Bilddatei existiert, ist PNG, ≤ 1,5 MB und mindesten
     for (const { ort, b } of bildAngaben(v)) {
       if (b.t !== 'bild') continue;
       n++;
-      const datei = path.join(pfad, b.pfad);
+      // M10 Task 240: Objektbilder des Kryptolabors liegen zentral (Pfad relativ zum Repo, wie in video_folien.bildblock)
+      const datei = b.pfad.startsWith('materialien/') ? path.join(WURZEL, b.pfad) : path.join(pfad, b.pfad);
       assert.ok(fs.existsSync(datei), `${ordner} ${ort}: ${b.pfad} fehlt`);
       const kopf = fs.readFileSync(datei);
       assert.equal(kopf.subarray(1, 4).toString('latin1'), 'PNG', `${ordner} ${ort}: kein PNG`);
@@ -192,6 +193,10 @@ test('video_folien.bildblock: {"t":"bild","pfad":"bilder/a.png"} → Pfad relati
   const r = spawnSync('python3', ['-c', code], { cwd: WURZEL, encoding: 'utf8' });
   assert.equal(r.status, 0, r.stderr);
   assert.deepEqual(JSON.parse(r.stdout.trim().split('\n').pop()), { t: 'bild', pfad: 'materialien/Videos/01_Caesar_und_Modulo/bilder/a.png' });
+  // M10 Task 240: zentrale Objektbilder bleiben beim Repo-Pfad und tragen die Bildunterschrift weiter
+  const code2 = 'import sys, json; sys.path.insert(0, "werkzeuge/material"); import video_folien as V; print(json.dumps(V.bildblock({"t": "bild", "pfad": "materialien/Bilder/Labor/scheibe.png", "unterschrift": "U"}, {"nr": 1, "kurz": "Caesar_und_Modulo"})))';
+  const r2 = spawnSync('python3', ['-c', code2], { cwd: WURZEL, encoding: 'utf8' });
+  assert.deepEqual(JSON.parse(r2.stdout.trim().split('\n').pop()), { t: 'bild', pfad: 'materialien/Bilder/Labor/scheibe.png', unterschrift: 'U' });
 });
 
 // Plan M9 Task 214: Video-Folien aktuell, ohne Platzhalter, Kamera-Zone frei, Kontraste, Sprechertexte im Skript
@@ -210,7 +215,7 @@ test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkze
   const ordner = path.join(WURZEL, 'materialien', 'Bilder', 'Labor');
   const quellen = JSON.parse(fs.readFileSync(path.join(ordner, 'quellen.json'), 'utf8'));
   const pngs = fs.readdirSync(ordner).filter((f) => f.endsWith('.png')).sort();
-  const SOLL = ['brief', 'enigma', 'freimaurer', 'playfair', 'polybios', 'schablone', 'scheibe', 'skytale', 'stromweg', 'trommel'].map((n) => `${n}.png`);
+  const SOLL = ['brief', 'enigma', 'freimaurer', 'playfair', 'polybios', 'schablone', 'scheibe', 'scheibe_leer', 'skytale', 'stromweg', 'trommel'].map((n) => `${n}.png`);
   assert.deepEqual(pngs, SOLL);
   const bekannt = require('../src/krypto/werkzeuge.js').WERKZEUGE.map((w) => w.id);
   for (const f of pngs) {
@@ -223,4 +228,28 @@ test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkze
     assert.deepEqual([buf.readUInt32BE(16), buf.readUInt32BE(20)], [1600, 900], `${f}: Größe`);
   }
   assert.deepEqual(Object.keys(quellen.bilder).sort(), pngs, 'keine Einträge ohne Bild');
+});
+
+// Plan M10 Task 240 (L58): Objektbilder in Folien W0, W2, W3-Kür und Videos 00/01 – mit Namensnennung, nur aus quellen.json
+test('Labor-Objektbilder in Folien und Videos: Namensnennung „Ideen von A. Bodendiek“, Bilder nur aus quellen.json', () => {
+  const fs = require('node:fs');
+  const quellen = JSON.parse(fs.readFileSync(path.join(WURZEL, 'materialien', 'Bilder', 'Labor', 'quellen.json'), 'utf8')).bilder;
+  const funde = (x, aus = []) => {
+    if (Array.isArray(x)) x.forEach((e) => funde(e, aus));
+    else if (x && typeof x === 'object') {
+      if (typeof x.pfad === 'string' && x.pfad.includes('Bilder/Labor/')) aus.push(x);
+      Object.values(x).forEach((e) => funde(e, aus));
+    }
+    return aus;
+  };
+  const SOLL = { 'quellen/material/W0/praesentation_W0.json': 4, 'quellen/material/W2/praesentation_W2.json': 1, 'quellen/material/W3/praesentation_W3.json': 2, 'materialien/Videos/00_Kryptos_Zeitreise/video.json': 1, 'materialien/Videos/01_Caesar_und_Modulo/video.json': 1 };
+  for (const [datei, mindestens] of Object.entries(SOLL)) {
+    const bilder = funde(JSON.parse(fs.readFileSync(path.join(WURZEL, datei), 'utf8')));
+    assert.ok(bilder.length >= mindestens, `${datei}: ${bilder.length} Objektbilder`);
+    for (const b of bilder) {
+      assert.ok(quellen[path.basename(b.pfad)], `${datei}: ${b.pfad} steht in quellen.json`);
+      assert.match(String(b.unterschrift || ''), /Ideen von A\. Bodendiek/, `${datei}: ${b.pfad} mit Namensnennung`);
+      assert.ok(fs.existsSync(path.join(WURZEL, b.pfad)), `${b.pfad} vorhanden (Pfad relativ zum Repo)`);
+    }
+  }
 });

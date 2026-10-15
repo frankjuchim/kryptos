@@ -920,12 +920,17 @@ W3 Kür (Enigma) unter `quellen/material/`, `materialien/Videos/00_Kryptos_Zeitr
 `materialien/Videos/01_Caesar_und_Modulo/video.json`; neu gebaute `materialien/Welt*/1_Praesentation/*.pptx`,
 `materialien/Lehrkraft_PDF/…` (`npm run lehrkraft`), Video-Folien (`video_folien.py`); `test/material_pipeline.test.js`.
 
-- [ ] **Step 1: Failing test** – jede Folie mit einem Bild aus `materialien/Bilder/Labor/` trägt die Namensnennung
+- [x] **Step 1: Failing test** – jede Folie mit einem Bild aus `materialien/Bilder/Labor/` trägt die Namensnennung
   „Ideen von A. Bodendiek“ (Bildunterschrift/Quellenzeile); die Bilder stammen nur aus `quellen.json`.
-- [ ] **Step 2:** FAIL. **Step 3:** Quell-JSON ändern, `python3 werkzeuge/material/bauen.py <Quellliste>` (nie ohne Argumente),
+- [x] **Step 2:** FAIL. **Step 3:** Quell-JSON ändern, `python3 werkzeuge/material/bauen.py <Quellliste>` (nie ohne Argumente),
   `video_folien.py 00_Kryptos_Zeitreise 01_Caesar_und_Modulo`, PDFs rendern, `npm run lehrkraft`.
-- [ ] **Step 4:** Stichproben ansehen (je Präsentation die Folien mit Bild, hell, Lesbarkeit der Namensnennung), `npm run pruefen` grün.
-- [ ] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge in Folien W0/W2/W3-Kür und Videos 00/01 (L58, Task 240)`
+- [x] **Step 4:** Stichproben ansehen (je Präsentation die Folien mit Bild, hell, Lesbarkeit der Namensnennung), `npm run pruefen` grün.
+- [x] **Step 5: Commit** `M10: Objektbilder der Labor-Werkzeuge in Folien W0/W2/W3-Kür und Videos 00/01 (L58, Task 240)`
+- Umsetzung: neue Zusatzfolien direkt hinter der passenden Folie (W0: Stab, Codes & Signale, Schablone, Scheibe; W2: Playfair
+  hinter „Playfair-Regeln“) bzw. am Ende (W3: Kür Enigma und Stromweg), Block `bild` mit Bildunterschrift „Kryptolabor · Ideen
+  von A. Bodendiek (Krypto-Werkstatt)“ (neu in `kr_pptx.js`). Videos: 00 Folie 11 „Werkzeuge zum Anfassen“ (polybios.png),
+  01 Folie 5 „Die Chiffrierscheibe im Kryptolabor“ mit dem neuen Bild `scheibe_leer.png` (ohne Folienbeispiel); Bilder mit
+  Pfad `materialien/…` (neu in `video_folien.py`), Skript.md um die Folien ergänzt und neu nummeriert.
 
 ### Task 237: e2e Szenario 15 „Werkstatt-Werkzeuge“ und Fotos (E191, Review Focus 2–4)
 

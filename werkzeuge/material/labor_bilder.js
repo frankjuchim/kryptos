@@ -33,6 +33,11 @@ const BILDER = {
       for (const b of 'mango') await klick(p, `.scheibe-aussen [data-buchstabe="${b}"]`);
     }
   },
+  // ohne eigene Nachricht (nur k = 3) – für das Erklärvideo 01, damit kein Folienbeispiel im Video steht
+  'scheibe_leer.png': {
+    werkzeug: 'scheibe', reiter: 'scheibe', ausschnitt: '.scheibe-buehne',
+    async handgriffe() {}
+  },
   'skytale.png': {
     werkzeug: 'skytale', reiter: 'skytale', ausschnitt: '.stab-buehne',
     async handgriffe(p) {
@@ -111,6 +116,7 @@ async function main() {
     const leinwand = await neu();
     for (const [datei, b] of Object.entries(BILDER)) {
       await H.gehe(lk, `${ctx.basis}/labor#/${b.werkzeug}?reiter=${b.reiter}`);
+      await lk.reload(); // jedes Bild mit frisch geöffnetem Werkzeug (gleiche Route wie das vorige Bild)
       await lk.locator(b.ausschnitt).first().waitFor();
       await b.handgriffe(lk);
       await lk.waitForTimeout(400);

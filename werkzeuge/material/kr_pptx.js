@@ -246,6 +246,11 @@ class Setzer {
       const maxH = b._maxH || 4.9;
       if (bh > maxH) { bh = maxH; bw = bh / verh; }
       if (!dry) slide.addImage({ path: b._png, x: x + (w - bw) / 2, y, w: bw, h: bh, altText: b.alt || reinText(b.titel || t) });
+      // Bildunterschrift (Plan M10 Task 240: Namensnennung der Objektbilder aus dem Kryptolabor)
+      if (t === "bild" && b.unterschrift) {
+        if (!dry) slide.addText(reinText(b.unterschrift), { x, y: y + bh + 0.04, w, h: 0.3, fontSize: 12, italic: true, color: S.TEXT2, align: "center", margin: 0, isTextBox: true });
+        return bh + 0.36;
+      }
       return bh;
     }
     if (t === "hinweis" || t === "merke_klein") {

@@ -190,6 +190,24 @@
    "regie": "Stichpunkte nacheinander einblenden, den Kasten rechts zum Schluss."
   },
   {
+   "typ": "bild",
+   "titel": "Die Chiffrierscheibe im Kryptolabor",
+   "kapitel": "Das Caesar-Verfahren",
+   "bild": "scheibe",
+   "teilung": 8.4,
+   "kasten": {
+    "farbe": "hinweis",
+    "titel": "Am Objekt",
+    "text": [
+     "drehen: Schlüssel",
+     "außen: Klartext",
+     "innen: Geheimtext"
+    ]
+   },
+   "sprechertext": "Im Kryptolabor gibt es dafür eine Chiffrierscheibe. Die innere Scheibe drehst du auf den Schlüssel: Unter dem a steht hier das D, also die Verschiebung drei. Dann suchst du außen den Klartextbuchstaben und liest direkt darunter innen den Geheimtextbuchstaben ab.",
+   "regie": "Auf die Nabe „a → D“ zeigen, dann einen Buchstaben außen und innen."
+  },
+  {
    "typ": "alphabet",
    "titel": "Das Alphabet der Anlage: A = 1 … Z = 26",
    "kapitel": "Alphabet A = 1",
@@ -655,5 +673,13 @@
    "sprechertext": "Weiter geht es im Lab mit Level null Punkt zwei, Caesars Botschaft. Mit der Chiffrierscheibe im Kryptolabor kannst du jede Verschiebung ausprobieren. Im nächsten Video reisen wir nach Bagdad. Dort zeige ich dir, wie man ein Verfahren mit unvorstellbar vielen Schlüsseln trotzdem knackt. Bis dann im Archiv!"
   }
  ],
- "endcard": "Tinte mit Mäanderband (Welt 0); links Kachel „Nächstes Video: Häufigkeitsanalyse“ (Video 02), rechts Kachel „Playlist Kryptos“; Mitte unten „Weiter im Lab: Level 0.2“ mit QR-Code kryptos.frankjuchim.de; Kanal-Abo-Knopf. Kamera bleibt unten rechts."
+ "endcard": "Tinte mit Mäanderband (Welt 0); links Kachel „Nächstes Video: Häufigkeitsanalyse“ (Video 02), rechts Kachel „Playlist Kryptos“; Mitte unten „Weiter im Lab: Level 0.2“ mit QR-Code kryptos.frankjuchim.de; Kanal-Abo-Knopf. Kamera bleibt unten rechts.",
+ "bilder": {
+  "scheibe": {
+   "t": "bild",
+   "pfad": "materialien/Bilder/Labor/scheibe_leer.png",
+   "beschreibung": "Kryptolabor, Werkzeug „Chiffrierscheibe“: Messingscheibe mit Klartext außen, Papierscheibe mit Geheimtext innen, Nabe „a → D · Verschiebung 3“; unten rechts die Namensnennung.",
+   "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)"
+  }
+ }
 }

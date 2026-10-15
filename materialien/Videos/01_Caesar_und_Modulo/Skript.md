@@ -164,7 +164,28 @@ Kurz die Begriffe, die im Abitur zählen. Alice will Bob eine Nachricht schicken
 
 Das Caesar-Verfahren ist schnell erklärt: Jeder Buchstabe des Klartextes wird durch den Buchstaben ersetzt, der k Stellen weiter im Alphabet steht. Der römische Geschichtsschreiber Sueton berichtet, dass Caesar um drei Stellen verschoben hat – aus a wird D. Weil Buchstaben ersetzt werden, ist das eine Substitution. Würden wir die Buchstaben nur umstellen, wäre es eine Transposition. Und weil derselbe Klartextbuchstabe immer durch denselben Geheimtextbuchstaben ersetzt wird, heißt das Verfahren monoalphabetisch. Zur Schreibweise: Klartext schreiben wir klein, Geheimtext groß und in Fünfergruppen, ohne Leer- und Satzzeichen.
 
-### Folie 5 · 02:03 – Das Alphabet der Anlage: A = 1 … Z = 26
+### Folie 5 · 02:03 – Die Chiffrierscheibe im Kryptolabor
+
+*Folientyp `bild` · Kapitel „Das Caesar-Verfahren“ · ca. 30 s*
+
+**Folie:**
+
+Bild `materialien/Bilder/Labor/scheibe_leer.png` – Kryptolabor, Werkzeug „Chiffrierscheibe“: Messingscheibe mit Klartext außen, Papierscheibe mit Geheimtext innen, Nabe „a → D · Verschiebung 3“; unten rechts die Namensnennung.
+
+Bildunterschrift: Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)
+
+> **Kasten · Am Objekt** (Lapis (Hinweis))
+> - drehen: Schlüssel
+> - außen: Klartext
+> - innen: Geheimtext
+
+**Regie:** Auf die Nabe „a → D“ zeigen, dann einen Buchstaben außen und innen.
+
+**Sprechertext:**
+
+Im Kryptolabor gibt es dafür eine Chiffrierscheibe. Die innere Scheibe drehst du auf den Schlüssel: Unter dem a steht hier das D, also die Verschiebung drei. Dann suchst du außen den Klartextbuchstaben und liest direkt darunter innen den Geheimtextbuchstaben ab.
+
+### Folie 6 · 02:33 – Das Alphabet der Anlage: A = 1 … Z = 26
 
 *Folientyp `alphabet` · Kapitel „Alphabet A = 1“ · ca. 43 s*
 
@@ -186,7 +207,7 @@ Hervorgehoben: T, U
 
 Im Abitur bekommst du als Anlage eine Tabelle, in der jeder Buchstabe eine Zahl hat: A gleich eins, B gleich zwei, bis Z gleich sechsundzwanzig. Damit rechnen wir heute. Unser Schlüssel ist die Verschiebung k gleich sechs. Darunter siehst du das Geheimtextalphabet: Es ist einfach um sechs Stellen verrutscht. A wird zu G, B zu H und so weiter. Achtung, eine kleine Stolperfalle: Den Schlüssel schreibt man oft als Buchstaben. Der Schlüsselbuchstabe G bedeutet Verschiebung sechs – obwohl G in der Tabelle die Nummer sieben hat. Denn der Schlüsselbuchstabe A steht für Verschiebung null. Das ist Falle P1, die Zählbasis.
 
-### Folie 6 · 02:45 – Unser Beispiel: Treffpunkt am Brunnen
+### Folie 7 · 03:15 – Unser Beispiel: Treffpunkt am Brunnen
 
 *Folientyp `geheimtext` · Kapitel „Verschlüsseln“ · ca. 40 s*
 
@@ -214,7 +235,7 @@ Markiert: `Z` an Stelle 1 (t: 20 + 6 = 26) – Epochenakzent; `A` an Stelle 7 (u
 
 Jetzt verschlüsseln wir unseren Klartext: treffpunkt am brunnen – zusammengeschrieben, versteht sich. Erster Buchstabe: t hat die Nummer zwanzig. Plus sechs ergibt sechsundzwanzig, das ist Z. Dann r: achtzehn plus sechs gleich vierundzwanzig, also X. Das e: fünf plus sechs gleich elf, also K. Spannend wird es beim u: einundzwanzig plus sechs ergibt siebenundzwanzig. Einen siebenundzwanzigsten Buchstaben gibt es nicht. Wir fangen also vorne wieder an: siebenundzwanzig minus sechsundzwanzig gleich eins – das ist A. Am Ende schreiben wir den Geheimtext in Fünfergruppen – so verrät er nicht einmal, wo ein Wort aufhört.
 
-### Folie 7 · 03:25 – Modulo: Rechnen im Kreis
+### Folie 8 · 03:55 – Modulo: Rechnen im Kreis
 
 *Folientyp `punkte` · Kapitel „Modulo“ · ca. 39 s*
 
@@ -234,7 +255,7 @@ Jetzt verschlüsseln wir unseren Klartext: treffpunkt am brunnen – zusammenges
 
 Dieses Weiterzählen im Kreis heißt Modulo. a mod n ist der Rest bei der Division durch n. Du kennst das von der Uhr: Zehn Uhr plus fünf Stunden ist drei Uhr – fünfzehn mod zwölf ist drei. Genauso ist siebenundzwanzig mod sechsundzwanzig gleich eins. Aber aufgepasst: Sechsundzwanzig mod sechsundzwanzig ist null, denn es bleibt kein Rest. Und bei negativen Zahlen nimmst du den kleinsten nicht negativen Rest: Minus sechs mod sechsundzwanzig ist zwanzig, denn minus sechs plus sechsundzwanzig ergibt zwanzig. So ist es auch in den Ergänzenden Hinweisen zum Abitur festgelegt.
 
-### Folie 8 · 04:04 – Die Formel – sicher mit A = 1
+### Folie 9 · 04:34 – Die Formel – sicher mit A = 1
 
 *Folientyp `punkte` · Kapitel „Die Formel“ · ca. 46 s*
 
@@ -256,7 +277,7 @@ Dieses Weiterzählen im Kreis heißt Modulo. a mod n ist der Rest bei der Divisi
 
 Für Struktogramme und Begründungen brauchst du das Ganze als Formel. Mit A gleich eins lautet sie: c gleich p plus k minus eins, davon mod sechsundzwanzig, und dann plus eins. p ist die Nummer des Klartextbuchstabens, c die des Geheimtextbuchstabens. Das minus eins schiebt die Nummern auf null bis fünfundzwanzig, dort rechnet mod sauber im Kreis, und plus eins schiebt zurück. Beim t ergibt das sechsundzwanzig, also Z. Beim u ist der Rest null, plus eins macht eins, also A. Zum Entschlüsseln ziehst du k ab. Übrigens: Im Java-Programm in Level null Punkt drei rechnest du bewusst mit A gleich null – auch das gehört zu Falle P1.
 
-### Folie 9 · 04:51 – Falle P2: Modulo falsch
+### Folie 10 · 05:21 – Falle P2: Modulo falsch
 
 *Folientyp `falle` · Kapitel „Fallen beim Rechnen“ · ca. 42 s*
 
@@ -281,7 +302,7 @@ Regel: Nach jeder Rechnung prüfen: Liegt das Ergebnis zwischen 1 und 26?
 
 Hier liegt die häufigste Falle beim Rechnen: P2, Modulo falsch. Wer einfach p plus k mod sechsundzwanzig rechnet, bekommt beim t: sechsundzwanzig mod sechsundzwanzig gleich null. Einen Buchstaben mit der Nummer null gibt es aber nicht – gemeint ist Z. Genauso beim Entschlüsseln: Das A aus unserem Beispiel hat die Nummer eins, minus sechs ergibt minus fünf. Auch das ist kein Buchstabe. Du musst sechsundzwanzig addieren und landest bei einundzwanzig – beim u, mit dem wir angefangen haben. Mein Tipp: Prüfe nach jeder Rechnung, ob das Ergebnis zwischen eins und sechsundzwanzig liegt. Dann passiert dir das nicht.
 
-### Folie 10 · 05:32 – Jetzt du: Entschlüsseln!
+### Folie 11 · 06:02 – Jetzt du: Entschlüsseln!
 
 *Folientyp `pause` · Kapitel „Selbst ausprobieren“ · ca. 24 s*
 
@@ -306,7 +327,7 @@ Jetzt bist du dran. Eve hat diesen Geheimtext abgefangen – und ausnahmsweise k
 
 *(⏸ 6 s Denkpause – im Schnitt Einblendung „Video anhalten“; Auflösung auf der nächsten Folie)*
 
-### Folie 11 · 05:56 – Auflösung
+### Folie 12 · 06:26 – Auflösung
 
 *Folientyp `tabelle` · ca. 36 s*
 
@@ -339,7 +360,7 @@ Jetzt bist du dran. Eve hat diesen Geheimtext abgefangen – und ausnahmsweise k
 
 Die Auflösung. R hat die Nummer achtzehn, minus elf gleich sieben – das ist g. P: sechzehn minus elf gleich fünf, also e. So geht es weiter: h, e, i, m, b, o. Spannend wird es beim E: Fünf minus elf ist minus sechs. Plus sechsundzwanzig ergibt zwanzig, also t. Beim D genauso: vier minus elf ist minus sieben, plus sechsundzwanzig ergibt neunzehn, also s. Der Klartext lautet: geheimbotschaft. Wenn du an den markierten Stellen sechsundzwanzig addiert hast, hast du Falle P2 sicher umschifft.
 
-### Folie 12 · 06:32 – Falle P3: Umkehrung falsch
+### Folie 13 · 07:02 – Falle P3: Umkehrung falsch
 
 *Folientyp `falle` · ca. 33 s*
 
@@ -363,7 +384,7 @@ Regel: Entschlüsseln heißt umkehren: jeden Schritt rückwärts – bei mehrere
 
 Falle P3: Umkehrung falsch. Wer beim Entschlüsseln aus Gewohnheit plus elf rechnet, macht aus R P S P T den Unsinn c a d a e. Entschlüsseln heißt zurück verschieben, also minus k. Zurück um elf ist übrigens dasselbe wie vorwärts um fünfzehn – einmal ganz herum. Mach am Ende die Probe: Verschlüssele deinen Klartext noch einmal. Kommt wieder der Geheimtext heraus, stimmt alles. Und bei Verfahren mit mehreren Stufen gilt: alle Schritte rückwärts, in umgekehrter Reihenfolge.
 
-### Folie 13 · 07:05 – Brute Force: Eve probiert alle Schlüssel
+### Folie 14 · 07:35 – Brute Force: Eve probiert alle Schlüssel
 
 *Folientyp `tabelle` · Kapitel „Brute Force“ · ca. 34 s*
 
@@ -397,7 +418,7 @@ Abgefangen: `GTVAM PTVAX` – Schlüssel unbekannt. Entschlüsselt mit jeder Ver
 
 Was macht Eve, wenn sie den Schlüssel nicht kennt? Sie probiert einfach alle aus. Das nennt man einen Brute-Force-Angriff. Hier hat sie G T V A M P T V A X abgefangen. Sie entschlüsselt mit jeder möglichen Verschiebung und schaut, wo ein sinnvoller Klartext entsteht. Fast überall kommt Buchstabensalat heraus – nur bei k gleich neunzehn steht da: nachtwache. Mehr als fünfundzwanzig Versuche braucht sie nie. Von Hand dauert das ein paar Minuten, ein Computer schafft es im Augenblick.
 
-### Folie 14 · 07:39 – Schlüsselraum und Kerckhoffs-Prinzip
+### Folie 15 · 08:09 – Schlüsselraum und Kerckhoffs-Prinzip
 
 *Folientyp `punkte` · Kapitel „Sicherheit beurteilen“ · ca. 41 s*
 
@@ -419,7 +440,7 @@ Was macht Eve, wenn sie den Schlüssel nicht kennt? Sie probiert einfach alle au
 
 Damit können wir die Sicherheit beurteilen. Die Menge aller möglichen Schlüssel heißt Schlüsselraum. Bei Caesar sind das die Verschiebungen null bis fünfundzwanzig, also sechsundzwanzig Schlüssel. Die Verschiebung null ändert aber gar nichts – ein schwacher Schlüssel. Sinnvoll sind also fünfundzwanzig. Und das Verfahren einfach geheim halten? Dagegen spricht ein Grundsatz, den Auguste Kerckhoffs achtzehnhundertdreiundachtzig formuliert hat: Die Sicherheit darf nur vom Schlüssel abhängen, nicht davon, dass das Verfahren geheim bleibt. Verfahren sprechen sich nämlich herum. Zum Beurteilen im Abitur brauchst du drei Dinge: ein Kriterium, eine Begründung und ein klares Urteil – rechts für Caesar.
 
-### Folie 15 · 08:20 – Typische Fehler – und wie du sie vermeidest
+### Folie 16 · 08:50 – Typische Fehler – und wie du sie vermeidest
 
 *Folientyp `punkte` · Kapitel „Typische Fehler“ · ca. 30 s*
 
@@ -444,7 +465,7 @@ Damit können wir die Sicherheit beurteilen. Die Menge aller möglichen Schlüss
 
 Die Fallen im Überblick. P1: In der Anlage gilt A gleich eins, bei Verschiebungen und in Java zählst du ab null – lies also zuerst, wie das Material nummeriert. P2: Rest null heißt Z, negative Ergebnisse brauchen plus sechsundzwanzig. P3: Entschlüsseln heißt minus k. P5: Caesar ist eine monoalphabetische Substitution, keine Transposition. P7: fünfundzwanzig sinnvolle Schlüssel, nicht sechsundzwanzig. Und P10: Ein Urteil ohne Kriterium bringt keine Punkte. Rechts dein Abi-Check.
 
-### Folie 16 · 08:50 – Das nimmst du mit
+### Folie 17 · 09:20 – Das nimmst du mit
 
 *Folientyp `merke` · Kapitel „Zusammenfassung“ · ca. 26 s*
 
@@ -461,7 +482,7 @@ Die Fallen im Überblick. P1: In der Anlage gilt A gleich eins, bei Verschiebung
 
 Das nimmst du mit: Caesar ersetzt jeden Buchstaben durch den, der k Stellen weiter steht – eine monoalphabetische Substitution. Gerechnet wird mit A gleich eins bis Z gleich sechsundzwanzig, und jedes Ergebnis muss zwischen eins und sechsundzwanzig liegen. Modulo ist der kleinste nicht negative Rest, und entschlüsseln heißt zurück verschieben. Mit nur fünfundzwanzig sinnvollen Schlüsseln fällt Caesar jedem Brute-Force-Angriff zum Opfer.
 
-### Folie 17 · 09:16 – Weiter im Lab
+### Folie 18 · 09:46 – Weiter im Lab
 
 *Folientyp `ende` · ca. 20 s*
 

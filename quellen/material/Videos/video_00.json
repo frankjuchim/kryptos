@@ -505,6 +505,48 @@
    ]
   },
   {
+   "titel": "Werkzeuge zum Anfassen",
+   "notizen": "[Kapitel: Labor und Funkraum]\n\nREGIE: Auf Quadrat und Panel zeigen; Kasten rechts nach dem zweiten Satz einblenden.\n\nSPRECHERTEXT: Viele Werkzeuge im Kryptolabor sind Objekte zum Anfassen: das Polybios-Quadrat, die Skytale, die Chiffrierscheibe oder die Enigma. Du tippst direkt auf das Objekt, und mit Nachspielen siehst du jeden Schritt noch einmal in Ruhe. Die Ideen dafür stammen aus der Krypto-Werkstatt von A. Bodendiek.",
+   "video": true,
+   "abschnitt": "Labor und Funkraum",
+   "layout": "inhalt",
+   "inhalt": [
+    {
+     "t": "zweispaltig",
+     "anteil": 0.72,
+     "links": [
+      {
+       "t": "bild",
+       "pfad": "materialien/Bilder/Labor/polybios.png",
+       "alt": "Kryptolabor, Werkzeug „Polybios & Playfair“: Polybios-Quadrat auf Papier mit Ziffernköpfen, daneben das Panel „Aktueller Buchstabe“ mit Zahlenpaar; unten rechts die Namensnennung.",
+       "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)"
+      }
+     ],
+     "rechts": [
+      {
+       "t": "hinweis",
+       "kopf": "AM OBJEKT",
+       "farbe": "messing",
+       "inhalt": [
+        {
+         "t": "p",
+         "md": "direkt antippen und drehen"
+        },
+        {
+         "t": "p",
+         "md": "Nachspielen Schritt für Schritt"
+        },
+        {
+         "t": "p",
+         "md": "Ideen von A. Bodendiek"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
    "titel": "Ränge, Artefakte, Abzeichen",
    "notizen": "[Kapitel: Ränge und Artefakte]\n\nREGIE: Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden.\n\nSPRECHERTEXT: Mit deinen Punkten steigst du auf – vom Lehrling bis zum Meister der Chiffren. Jeder besiegte Boss bringt ein Artefakt, von der Skytale bis zum Kern des Chronoskops. Und auf der Zeitleiste entsiegelt sich mit jeder Epoche ein Kapitel Kryptogeschichte.",
    "video": true,

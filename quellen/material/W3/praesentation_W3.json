@@ -1154,6 +1154,42 @@
     }
    ],
    "notizen": "3 min. HA: Online-IDE KR_W3_ChiffrenWerkstatt (eA, bis DS 12), Akte W3·4 Rest, Boss W3 „Der Fernschreiber“ ist freigeschaltet.\nKür K2 (Mini-Enigma) jederzeit freischaltbar, keine Rangrelevanz.\nAusblick: Das Schlüsselproblem (One-Time-Pad und n(n − 1)/2 Schlüssel) eröffnet Welt 4."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Kür K2 · Die Enigma",
+   "titel": "Kür: die Enigma im Kryptolabor",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Tagesschlüssel einstellen, Tasten drücken, Lampen ablesen: Vor jedem Buchstaben dreht sich die rechte Walze."
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/enigma.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 3 min. Kür-Werkzeug „Enigma“, Reiter Maschine; Beispiel mit 10 Kabeln aus dem Tagesschlüssel."
+  },
+  {
+   "layout": "inhalt",
+   "abschnitt": "Kür K2 · Die Enigma",
+   "titel": "Kür: der Stromweg",
+   "inhalt": [
+    {
+     "t": "p",
+     "md": "Hinweg durchgezogen, Rückweg gestrichelt – die Umkehrwalze schickt den Strom **auf einem anderen Draht** zurück."
+    },
+    {
+     "t": "bild",
+     "pfad": "materialien/Bilder/Labor/stromweg.png",
+     "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+     "breite_folie": 7.4
+    }
+   ],
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 3 min. Reiter Innenleben; im Level K2 sichtbar, „Vorführen“ dort ausgeblendet."
   }
  ]
 }

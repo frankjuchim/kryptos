@@ -104,6 +104,12 @@
    "t": "bild",
    "pfad": "bilder/profil.png",
    "beschreibung": "Screenshot Profil: Rang-Abzeichen, Punkte, Reihe der sieben Artefakte (Skytale bis Chronoskop-Kern, gesperrte als Umriss), Abzeichen, Radar „Deine Fallen“ P1–P10."
+  },
+  "labor_objekt": {
+   "t": "bild",
+   "pfad": "materialien/Bilder/Labor/polybios.png",
+   "beschreibung": "Kryptolabor, Werkzeug „Polybios & Playfair“: Polybios-Quadrat auf Papier mit Ziffernköpfen, daneben das Panel „Aktueller Buchstabe“ mit Zahlenpaar; unten rechts die Namensnennung.",
+   "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)"
   }
  },
  "folien": [
@@ -367,6 +373,24 @@
    },
    "sprechertext": "Im Kryptolabor findest du Werkzeuge wie die Chiffrierscheibe oder die Vigenère-Werkbank. Im Funkraum spielen wir im Unterricht live: Teams schicken sich Geheimbotschaften, ein Eve-Team lauscht und versucht zu knacken. Die Nachrichten bleiben im Kurs und werden danach gelöscht.",
    "regie": "Auf die genannten Bildteile zeigen; Kasten rechts nach dem ersten Satz einblenden."
+  },
+  {
+   "typ": "bild",
+   "titel": "Werkzeuge zum Anfassen",
+   "kapitel": "Labor und Funkraum",
+   "bild": "labor_objekt",
+   "teilung": 8.4,
+   "kasten": {
+    "farbe": "messing",
+    "titel": "Am Objekt",
+    "text": [
+     "direkt antippen und drehen",
+     "Nachspielen Schritt für Schritt",
+     "Ideen von A. Bodendiek"
+    ]
+   },
+   "sprechertext": "Viele Werkzeuge im Kryptolabor sind Objekte zum Anfassen: das Polybios-Quadrat, die Skytale, die Chiffrierscheibe oder die Enigma. Du tippst direkt auf das Objekt, und mit Nachspielen siehst du jeden Schritt noch einmal in Ruhe. Die Ideen dafür stammen aus der Krypto-Werkstatt von A. Bodendiek.",
+   "regie": "Auf Quadrat und Panel zeigen; Kasten rechts nach dem zweiten Satz einblenden."
   },
   {
    "typ": "bild",

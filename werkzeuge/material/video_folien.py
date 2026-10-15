@@ -70,9 +70,13 @@ def bildblock(name, v):
     if t == "bild":
         # Bilddatei relativ zum Videoordner (Plan M9 Task 213, E156) → Pfad relativ zum Repo für bauen.py
         ordner = f"{int(v['nr']):02d}_{v['kurz']}"
-        block = {"t": "bild", "pfad": f"materialien/Videos/{ordner}/{b['pfad']}"}
+        # Objektbilder des Kryptolabors (Plan M10 Task 240) liegen zentral unter materialien/Bilder/Labor/
+        pfad = b["pfad"] if b["pfad"].startswith("materialien/") else f"materialien/Videos/{ordner}/{b['pfad']}"
+        block = {"t": "bild", "pfad": pfad}
         if b.get("beschreibung"):
             block["alt"] = b["beschreibung"]
+        if b.get("unterschrift"):
+            block["unterschrift"] = b["unterschrift"]
         return block
     return {"t": "platzhalter", "beschreibung": b.get("beschreibung", name)}
 
