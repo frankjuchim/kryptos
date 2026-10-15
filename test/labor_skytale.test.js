@@ -315,3 +315,24 @@ test('Fleißner: Stempeln füllt die Löcher zeilenweise, Drehen → Lage 2, Abh
   assert.equal(w.k.animiert.length, 0);
   assert.equal(w.text('p.werkzeug-herkunft'), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
 });
+
+test('Skytale (M10-Review Fund 2): beim Stempeln liegt jeder Buchstabe auf dem Stab wie in Krypto.skytaleRaster', () => {
+  const w = oeffne('skytale');
+  w.k.klick(w.k.eins(w.flaeche, '.stab-wahl button[data-u="3"]'));
+  const lage = () => {
+    const zeilen = [];
+    for (const el of w.k.alle(w.flaeche, 'svg.stab-objekt text.stab-buchstabe')) {
+      const z = Number(el.getAttribute('data-zeile'));
+      const c = Number(el.getAttribute('data-windung'));
+      (zeilen[z] = zeilen[z] || [])[c] = el.textContent;
+    }
+    return zeilen.map((z) => (z || []).join(''));
+  };
+  let text = '';
+  for (const b of 'ZEBRAS') {
+    stempeln(w, b);
+    text += b;
+    const soll = K.skytaleRaster(text, 3, { fuellzeichen: null }).filter((z) => z.length);
+    assert.deepEqual(lage().filter((z) => z.length), soll, `nach „${text}“`);
+  }
+});

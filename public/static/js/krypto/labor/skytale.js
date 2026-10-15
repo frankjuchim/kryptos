@@ -242,7 +242,8 @@
         const u = z.umfang;
         const ver = z.richtung === 'ver';
         const roh = Krypto.nurBuchstaben(z.text);
-        // ver: auf dem Stab bis zum Abwickeln (Zeilenlänge mindestens 4 wie in der Werkstatt), danach aufgefüllt
+        // ver: auf dem Stab bis zum Abwickeln, danach aufgefüllt. Zeilenlänge = ⌈n/u⌉ wie Krypto.skytaleRaster (M10-Review
+        // Fund 2: nicht „mindestens 4“ der Werkstatt – sonst zeigte der Stab eine andere Anordnung als das Abwickeln)
         const fertig = ver ? phase === 'band' : phase === 'gelesen';
         let zeichen = roh;
         let fuellAb = roh.length;
@@ -251,7 +252,7 @@
           if (r2.wert) zeichen = r2.wert.join('');
         }
         const n = zeichen.length;
-        const L = ver ? (fertig ? Math.max(1, Math.ceil(n / u)) : Math.max(4, Math.ceil(roh.length / u))) : Math.max(1, Math.ceil(n / u));
+        const L = Math.max(1, Math.ceil(n / u));
         const W = Math.min(STAB.maxWindungen, Math.max(4, L));
         const BW = (STAB.rechts - 34 - STAB.anfang) / (W + 1.3);
         const R = stabRadius(u);
@@ -375,7 +376,7 @@
             si = i;
           }
           const fuell = ver && fertig && i >= fuellAb;
-          const el = s('text', { class: `stab-buchstabe${fuell ? ' fuell' : ''}`, 'font-size': STAB.schrift }, zeichen[i]);
+          const el = s('text', { class: `stab-buchstabe${fuell ? ' fuell' : ''}`, 'font-size': STAB.schrift, 'data-zeile': String(rz), 'data-windung': String(c) }, zeichen[i]);
           const stab = c < W ? stabPos(rz, c) : null;
           const ziel = streifenPos(si);
           const aufDemStab = (ver ? !fertig : fertig) && stab;
