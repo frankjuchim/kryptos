@@ -140,6 +140,9 @@ def folie(f, v):
         return {**basis, "layout": "inhalt", "inhalt": mit_kasten(haupt, f.get("kasten"), f.get("teilung"))}
     if typ == "bild":
         haupt = [bildblock(f["bild"], v)]
+        if haupt[0]["t"] == "bild" and haupt[0].get("unterschrift"):
+            # Objektbild im Seitenverhältnis des Objekts (M10-Review Fund 7) + Unterschrift bleibt unter 5,3 Zoll Inhalt
+            haupt[0]["_maxH"] = 3.9 if f.get("text") else 4.6
         if f.get("text"):
             haupt.insert(0, {"t": "p", "md": f["text"]})
             if haupt[1]["t"] == "quadrat":

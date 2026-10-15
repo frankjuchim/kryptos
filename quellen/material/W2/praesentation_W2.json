@@ -1101,7 +1101,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/playfair.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Polybios & Playfair“, Reiter Playfair (ab Welt 2). Im Level 2.4 ist das Schlüsselwort fest; im freien Labor eigene Schlüsselwörter – Schlüsselwörter aus Aufgaben und Akten (z. B. RIALTO) baut das Werkzeug für Lernende nicht auf."

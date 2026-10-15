@@ -1168,7 +1168,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/enigma.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 3 min. Kür-Werkzeug „Enigma“, Reiter Maschine; Beispiel mit 10 Kabeln aus dem Tagesschlüssel."
@@ -1186,7 +1187,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/stromweg.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 3 min. Reiter Innenleben; im Level K2 sichtbar, „Vorführen“ dort ausgeblendet."

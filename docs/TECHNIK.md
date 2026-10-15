@@ -1348,7 +1348,7 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   Werkzeuge. Feld `art` der Registry (`kern` | `zusatz` | `kuer`): im Raster Chip „Zusatz“ (nicht im KC: `signale`,
   `verstecke`) bzw. „Kür“ (`enigma`), ebenso in der Werkzeug-Tabelle der Lehrkraft-Einstellungen. Jedes Werkstatt-Werkzeug
   zeigt unten die Herkunftszeile „Ideen von A. Bodendiek (Krypto-Werkstatt)“ (`KRStation.herkunft`, Test
-  `fremdcode.test.js`), auch im Funkraum und im Gastmodus.
+  `test/seiten.test.js` „Fremdcode (M10 E169)“), auch im Funkraum und im Gastmodus.
   **`KRStation`** (`labor/station.js`, gemeinsamer Rahmen der Objekt-Werkzeuge, rechnet nichts): `bewegung` (ms, schritt)
   (Easing `weich`, bei `AQ.ruhig()` sofort Endzustand), `flug` (fliegender Buchstabe, Ziel ist vorher schon beschrieben –
   schnelle Eingaben gehen nie verloren), `stempel` (Stempelkasten A–Z), `baender` (Klartext-/Geheimtext-Band, auch
@@ -2188,7 +2188,7 @@ dem ersten Live-Deploy.
 | T5 | ~~Lizenz der Atkinson-Hyperlegible-Fassung~~ – **erledigt**: OFL-1.1-Fassung aus `@fontsource/atkinson-hyperlegible` 5.3.0 („Copyright 2020 Braille Institute of America, Inc.“, M4 Task 43) | – |
 | T6 | ~~Vertrag v1.2~~ – **erledigt** (labs v1.2 verbindlich: `niveaus`, `urls.niveaus`, Niveau-Übersicht, `anteil` über alle sichtbaren Level-Punkte, kein `niveau` in der Kursübersicht – §6.10) | weitere Wünsche: `docs/VERTRAG_VORSCHLAEGE.md` (V1–V8) |
 | T7 | lab-kern | Hooks (§4) so bauen, dass sie in ein gemeinsames Repo wandern können (`docs/VERTRAG_VORSCHLAEGE.md` V6) |
-| T8 | Fremdcode „Krypto-Werkstatt“ | M6 ohne Fremdcode: `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry, Rechnung über `Krypto.*`. **Erlaubnis 14.10.2026, Übernahme M10 – erledigt (Kryptos 1.1.0)** (Plan M10 E167–E169): fünf neue Werkzeuge und zwei neu gestaltete (§10.1), Herkunfts-Kopf in jeder übernommenen Datei, sichtbare Namensnennung „Ideen von A. Bodendiek“ im Werkzeug, auf der Datenschutzseite und im README, je Datei mit Quelle und Kryptos-Commit in `docs/FREMDCODE.md` (Design O11, Test `fremdcode.test.js`); Rechnungen weiter nur über `Krypto.*` |
+| T8 | Fremdcode „Krypto-Werkstatt“ | M6 ohne Fremdcode: `KRLabor.nachspiel`, `KRLabor.alleSchluessel` (Plan M6 E67) als eigene Funktionen der Registry, Rechnung über `Krypto.*`. **Erlaubnis 14.10.2026, Übernahme M10 – erledigt (Kryptos 1.1.0)** (Plan M10 E167–E169): fünf neue Werkzeuge und zwei neu gestaltete (§10.1), Herkunfts-Kopf in jeder übernommenen Datei, sichtbare Namensnennung „Ideen von A. Bodendiek“ im Werkzeug, auf der Datenschutzseite und im README, je Datei mit Quelle und Kryptos-Commit in `docs/FREMDCODE.md` (Design O11, Test `test/seiten.test.js` „Fremdcode (M10 E169)“); Rechnungen weiter nur über `Krypto.*` |
 | T9 | Mallory-Zusatzrolle im Schlüsseltausch (W4 §9.3, eA, optional) | **offen** (Plan M7 offene Entscheidung 4): vorläufig nur als Papierkarte; „Mallory im Netz“ (W5) zeigt den Angriff digital |
 | T10 | Erstes Live-Deploy (M9) | **offen – Freigabe der Lehrkraft** (Plan M9 F1–F12): CapRover-App mit Persistent Directory und Variablen (README §6), grüner CI-Job `docker` auf dem PR, Merge nach `main`, Portal-Eintrag, Ende-zu-Ende live |
 | T11 | Datenschutzseite | **offen – Angaben der Schule** in `[…]` (Plan M9 L49) |

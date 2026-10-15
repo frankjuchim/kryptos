@@ -3,8 +3,10 @@
 /*
  * Objektbilder der Werkstatt-Werkzeuge für Folien und Videos (Plan M10 Task 236, E192): startet Kryptos mit den echten
  * Seeds und dem Dev-Portal (test/e2e/hilfen.js), meldet die Lehrkraft „Frau M.“ an, öffnet /labor#/<id>, führt ein paar
- * Handgriffe aus und fotografiert die Werkzeugfläche (ohne Kopfzeile, hell; Aufnahme mit deviceScaleFactor 2, Endbild mit 1). Das Foto wird auf
- * 1600 × 900 gesetzt, unten rechts mit der Herkunftszeile „Ideen von A. Bodendiek (Krypto-Werkstatt)“.
+ * Handgriffe aus und fotografiert die Werkzeugfläche (ohne Kopfzeile, hell; Aufnahme mit deviceScaleFactor 2, Endbild mit 1).
+ * M10-Review Fund 7: Das Endbild hat das Seitenverhältnis des Objekts (längste Seite 1600 px, schmaler Rand) – auf
+ * Folien und in Videos wird es so größer; die Namensnennung steht einmal als Bildunterschrift der Folie (Feld
+ * unterschrift), nicht mehr im Bild. Die Herkunft je Bild steht in quellen.json.
  * Aufruf: node werkzeuge/material/labor_bilder.js [ausgabeordner]   (Standard: materialien/Bilder/Labor)
  * Schreibt dazu quellen.json (Bild → Werkzeug, Reiter, Herkunft). Nur Pseudonyme, keine Codes.
  */
@@ -13,7 +15,9 @@ const path = require('node:path');
 const { chromium } = require('playwright-core');
 const H = require('../../test/e2e/hilfen');
 
-const GROESSE = { width: 1600, height: 900 };
+const GROESSE = { width: 1600, height: 900 }; // Aufnahme-Fenster
+const LANG = 1600; // längste Seite des Endbilds
+const RAND = 24;
 const HERKUNFT = 'Ideen von A. Bodendiek (Krypto-Werkstatt)';
 const ziel = path.resolve(process.argv[2] || path.join(H.WURZEL, 'materialien', 'Bilder', 'Labor'));
 
@@ -121,10 +125,13 @@ async function main() {
       await b.handgriffe(lk);
       await lk.waitForTimeout(400);
       const roh = await lk.locator(b.ausschnitt).first().screenshot();
-      await leinwand.setContent(`<html><body style="margin:0;width:1600px;height:900px;overflow:hidden;background:#FBF7EE;font-family:sans-serif">
-        <div style="position:absolute;inset:32px 32px 64px;display:flex;align-items:center;justify-content:center">
-          <img style="width:100%;height:100%;object-fit:contain" src="data:image/png;base64,${roh.toString('base64')}"></div>
-        <p style="position:absolute;right:36px;bottom:18px;margin:0;font-size:22px;color:#4A4A4A">${HERKUNFT}</p></body></html>`);
+      // Endbild im Seitenverhältnis des Ausschnitts (Aufnahme mit dsf 2 → halbe Pixel), längste Seite LANG
+      const [rw, rh] = [roh.readUInt32BE(16), roh.readUInt32BE(20)];
+      const f = (LANG - 2 * RAND) / Math.max(rw, rh);
+      const [bw, bh] = [Math.round(rw * f), Math.round(rh * f)];
+      await leinwand.setViewportSize({ width: bw + 2 * RAND, height: bh + 2 * RAND });
+      await leinwand.setContent(`<html><body style="margin:0;padding:${RAND}px;background:#FBF7EE;overflow:hidden">
+        <img style="display:block;width:${bw}px;height:${bh}px" src="data:image/png;base64,${roh.toString('base64')}"></body></html>`);
       await leinwand.waitForTimeout(100);
       await leinwand.screenshot({ path: path.join(ziel, datei) });
       quellen.bilder[datei] = { werkzeug: b.werkzeug, reiter: b.reiter, herkunft: HERKUNFT };

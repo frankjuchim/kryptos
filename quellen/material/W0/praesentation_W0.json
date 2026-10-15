@@ -146,7 +146,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/skytale.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Skytale & Gitter“, Reiter Skytale; Nachspielen zeigt Schreiben und Lesen Schritt für Schritt."
@@ -342,7 +343,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/trommel.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Zusatzwerkzeug „Codes & Signale“ (Morse-Trommel, Klopfcode, Freimaurer); Ton nur mit Schalter."
@@ -618,7 +620,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/schablone.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Skytale & Gitter“, Reiter Fleißner-Schablone; „Lochung ändern“ zeigt doppelt freie Felder rot."
@@ -825,7 +828,8 @@
      "t": "bild",
      "pfad": "materialien/Bilder/Labor/scheibe.png",
      "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
-     "breite_folie": 7.4
+     "breite_folie": 11,
+     "max_hoehe": 4.25
     }
    ],
    "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Zeigen: Innenring ziehen, Klartext außen antippen, Nachspielen in Einzelschritten. Schlüssel = was unter dem a steht."

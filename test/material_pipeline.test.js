@@ -210,7 +210,7 @@ test('video_folien.py --pruefen: acht Videos ohne Befund', { skip: ohnePptx, tim
 });
 
 // Plan M10 Task 236 (E192): Objektbilder der Werkstatt-Werkzeuge für Folien und Videos – Herkunft je Bild
-test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkzeug), 1600 × 900, ≤ 400 KB', () => {
+test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkzeug), längste Seite 1600 im Seitenverhältnis des Objekts, ≤ 700 KB', () => {
   const fs = require('node:fs');
   const ordner = path.join(WURZEL, 'materialien', 'Bilder', 'Labor');
   const quellen = JSON.parse(fs.readFileSync(path.join(ordner, 'quellen.json'), 'utf8'));
@@ -224,8 +224,11 @@ test('Labor-Objektbilder: jede PNG mit Eintrag in quellen.json (Herkunft, Werkze
     assert.equal(q.herkunft, 'Ideen von A. Bodendiek (Krypto-Werkstatt)', f);
     assert.ok(bekannt.includes(q.werkzeug), `${f}: Werkzeug ${q.werkzeug}`);
     const buf = fs.readFileSync(path.join(ordner, f));
-    assert.ok(buf.length <= 400 * 1024, `${f}: ${buf.length} Bytes`);
-    assert.deepEqual([buf.readUInt32BE(16), buf.readUInt32BE(20)], [1600, 900], `${f}: Größe`);
+    assert.ok(buf.length <= 700 * 1024, `${f}: ${buf.length} Bytes`);
+    // M10-Review Fund 7: kein 16:9-Rahmen mehr um hohe Objekte (Bild = Objekt + schmaler Rand), Namensnennung als Unterschrift
+    const [bw, bh] = [buf.readUInt32BE(16), buf.readUInt32BE(20)];
+    assert.equal(Math.max(bw, bh), 1600, `${f}: längste Seite`);
+    assert.ok(!(bw === 1600 && bh === 900), `${f}: nicht mehr im festen 16:9-Rahmen`);
   }
   assert.deepEqual(Object.keys(quellen.bilder).sort(), pngs, 'keine Einträge ohne Bild');
 });
@@ -249,6 +252,8 @@ test('Labor-Objektbilder in Folien und Videos: Namensnennung „Ideen von A. Bod
     for (const b of bilder) {
       assert.ok(quellen[path.basename(b.pfad)], `${datei}: ${b.pfad} steht in quellen.json`);
       assert.match(String(b.unterschrift || ''), /Ideen von A\. Bodendiek/, `${datei}: ${b.pfad} mit Namensnennung`);
+      // M10-Review Fund 7: beamertauglich groß (breite_folie ≥ 10 Zoll bzw. ohne Begrenzung)
+      if (datei.includes('praesentation')) assert.ok(!(b.breite_folie < 10), `${datei}: ${b.pfad} breite_folie ${b.breite_folie}`);
       assert.ok(fs.existsSync(path.join(WURZEL, b.pfad)), `${b.pfad} vorhanden (Pfad relativ zum Repo)`);
     }
   }

@@ -872,6 +872,10 @@ trommel,freimaurer,brief,enigma,stromweg}.png`, `materialien/Bilder/Labor/quelle
   1600 × 900-Leinwand (hell, `object-fit: contain`) gesetzt, Herkunftszeile unten rechts; Wörter der Handgriffe (mango, zebra,
   birne, kiwis, balkon, pinie …) stehen in keinem Material. `npm run labor:bilder` (README §4).
 
+**Korrektur nach dem M10-Review (Fund 7):** Die Objektbilder haben jetzt das Seitenverhältnis des Objekts (längste Seite
+1600 px, schmaler Rand, ≤ 700 KB) statt einer 16:9-Leinwand, und die Namensnennung steht nicht mehr im Bild, sondern
+einmal als Bildunterschrift der Folie bzw. des Videos (Folien: `breite_folie` 11, `max_hoehe` 4,25).
+
 ### Task 239: Werkzeug-Karte in Level 0.4 (Polybios) und 2.4 (Playfair) – Aufgaben ohne Lösungsverrat (L55 entschieden)
 
 Entscheidung der Lehrkraft (15.10.2026): „Kann man die Aufgabe so abändern, sodass das Tool genutzt werden kann?“ → Ja.

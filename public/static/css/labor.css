@@ -249,6 +249,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
 @media (min-width: 900px) { .scheibe-bereich { grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 1fr); } }
 .scheibe-formelteil, .scheibe-text { display: grid; gap: var(--a-3); min-width: 0; align-content: start; }
 .scheibe-formel { margin: 0; font-family: var(--f-mono); font-size: 1.05rem; overflow-wrap: anywhere; }
+.scheibe-formel.leer { font-family: var(--f-text); font-size: .95rem; color: var(--text-2); } /* Hinweis vor der ersten Rechnung (M10-Review Fund 7) */
 .scheibe-hinweis:empty { display: none; }
 .scheibe-leiste .scheibe-buchstabe {
   min-width: var(--ziel);

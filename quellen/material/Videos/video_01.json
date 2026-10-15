@@ -209,8 +209,9 @@
       {
        "t": "bild",
        "pfad": "materialien/Bilder/Labor/scheibe_leer.png",
-       "alt": "Kryptolabor, Werkzeug „Chiffrierscheibe“: Messingscheibe mit Klartext außen, Papierscheibe mit Geheimtext innen, Nabe „a → D · Verschiebung 3“; unten rechts die Namensnennung.",
-       "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)"
+       "alt": "Kryptolabor, Werkzeug „Chiffrierscheibe“: Messingscheibe mit Klartext außen, Papierscheibe mit Geheimtext innen, Nabe „a → D · Verschiebung 3“; Namensnennung als Bildunterschrift.",
+       "unterschrift": "Kryptolabor · Ideen von A. Bodendiek (Krypto-Werkstatt)",
+       "_maxH": 4.6
       }
      ],
      "rechts": [

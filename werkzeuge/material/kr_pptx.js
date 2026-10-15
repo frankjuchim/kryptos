@@ -243,7 +243,7 @@ class Setzer {
       const verh = b._verh || 0.6;
       let bw = Math.min(b.breite_folie || w, w);
       let bh = bw * verh;
-      const maxH = b._maxH || 4.9;
+      const maxH = b._maxH || b.max_hoehe || 4.9;
       if (bh > maxH) { bh = maxH; bw = bh / verh; }
       if (!dry) slide.addImage({ path: b._png, x: x + (w - bw) / 2, y, w: bw, h: bh, altText: b.alt || reinText(b.titel || t) });
       // Bildunterschrift (Plan M10 Task 240: Namensnennung der Objektbilder aus dem Kryptolabor)

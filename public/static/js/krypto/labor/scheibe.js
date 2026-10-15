@@ -136,7 +136,7 @@
         h('tbody', null, h('tr', { class: 'zahlen' }, nummernTitel, nummernZellen), h('tr', null, h('th', { scope: 'row' }, 'Geheimtext'), geheimZellen))
       )
     );
-    const formel = h('p', { class: 'scheibe-formel', 'aria-live': 'polite' }, 'Tippe einen Buchstaben der Leiste an – dann erscheint die Rechnung.');
+    const formel = h('p', { class: 'scheibe-formel leer', 'aria-live': 'polite' }, 'Tippe einen Buchstaben der Leiste an – dann erscheint die Rechnung.');
     const hinweisOrt = h('div', { class: 'scheibe-hinweis' });
 
     /* ---------- Anzeige ---------- */
@@ -177,6 +177,7 @@
     function zeigeFormel() {
       AQ.clear(hinweisOrt);
       if (!aktiv) return;
+      formel.classList.remove('leer');
       const c = Krypto.caesar(aktiv, k);
       const p = Krypto.wert(aktiv, basis);
       const cw = Krypto.wert(c, basis);

@@ -28,7 +28,10 @@ test('Scheibe: drehen per Tasten und Knöpfen (zyklisch), Leiste = Krypto.caesar
 
 test('Scheibe: Formel-Modus mit Falle P2, Basis A = 0', () => {
   const w = oeffne('scheibe', { voreinstellung: { k: 3 } });
+  // M10-Review Fund 7: der Hinweis vor der ersten Rechnung ist normaler Hinweistext (Klasse leer), keine Formel
+  assert.ok(w.k.eins(w.flaeche, '.scheibe-formel').classList.contains('leer'));
   w.k.klick(w.k.eins(w.flaeche, '.scheibe-buchstabe[data-buchstabe="W"]'));
+  assert.ok(!w.k.eins(w.flaeche, '.scheibe-formel').classList.contains('leer'));
   assert.match(w.text('.scheibe-formel'), /\(\(23 \+ 3 − 1\) mod 26\) \+ 1 = 26 → Z/);
   assert.match(w.text('.labor-hinweis'), /P2/);
   w.k.klick(w.k.eins(w.flaeche, '.labor-basis [data-basis="0"]'));

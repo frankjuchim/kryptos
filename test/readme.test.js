@@ -119,3 +119,11 @@ test('doku_readme: README §4.1 nennt M10 (1.1.0) und §8 die Werkstatt-Werkzeug
   const s8 = README.slice(README.indexOf('## 8. Lizenz und Quellen')); // letzter Abschnitt
   assert.match(s8, /Ideen von A\. Bodendiek/);
 });
+
+test('doku_testdateien (M10-Review Fund 7): jede in TECHNIK genannte Testdatei *.test.js gibt es', () => {
+  const da = new Set(fs.readdirSync(path.join(WURZEL, 'test')).filter((f) => f.endsWith('.test.js')));
+  const genannt = new Set([...TECHNIK.matchAll(/`(?:test\/)?([a-z0-9_]+\.test\.js)`/g)].map((m) => m[1]));
+  assert.ok(genannt.size > 20, 'Testdateien in TECHNIK gefunden');
+  const fehlt = [...genannt].filter((f) => !da.has(f));
+  assert.deepEqual(fehlt, [], 'in TECHNIK genannt, aber nicht vorhanden');
+});
