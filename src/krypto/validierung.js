@@ -482,23 +482,28 @@ function level(l, o, f, w, { data, aufgaben, opt }) {
   // Kryptoanalyse-Level: Werkzeug-Voreinstellung darf den Schlüssel nicht verraten (Delta §7.7)
   // M6 E73: zusätzlich vorgabe (substitution) und t (skytale, Ring); auch Voreinstellungen im Level-Feld werkzeug
   const verraet = (v) => istObjekt(v) && SCHLUESSEL_VERRAT.some((k) => Object.hasOwn(v, k));
-  // M11 (Task 250): im geführten Panel ist ein Schlüssel, der als Angabe im Aufgabentext steht, kein Verrat
-  const norm = (x) => String(x).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // M11 (Task 250), Review-Fund 5: im geführten Panel ist ein Schlüssel, der als Angabe im Aufgabentext steht, kein Verrat –
+  // Wörter nur als ganze Wörter ab zwei Zeichen (Folgen wie „0110 1001“ als ganze Wortfolge), Zahlen nur mit ihrem Namen
+  // („k = 5“, „t = 3“); Zuordnungen und Einstellungen (Objekte) nie
+  const woerter = (x) => String(x).split(/[^0-9A-Za-zÄÖÜäöüß]+/).filter(Boolean).map((w) => w.toUpperCase());
   const ausText = (a, v) => {
     const texte = [];
     for (const b of alleBloecke(a, { erklaerung: false })) if ((b.t === 'text' || b.t === 'hinweis') && typeof b.md === 'string') texte.push(b.md);
     for (const t of F.teile(a)) if (istObjekt(t.interaktion) && typeof t.interaktion.frage === 'string') texte.push(t.interaktion.frage);
     const roh = texte.join('\n');
+    const folge = ` ${woerter(roh).join(' ')} `;
     return SCHLUESSEL_VERRAT.filter((k) => Object.hasOwn(v, k)).every((k) => {
       const w = v[k];
-      if (typeof w === 'number') return new RegExp(`(^|[^0-9])${w}([^0-9]|$)`).test(roh);
-      return typeof w === 'string' && norm(w).length > 0 && norm(roh).includes(norm(w));
+      if (typeof w === 'number') return new RegExp(`(^|[^A-Za-z])${k}\\s*=\\s*${w}([^0-9]|$)`).test(roh);
+      if (typeof w !== 'string') return false;
+      const ws = woerter(w);
+      return ws.length > 0 && ws.join('').length >= 2 && folge.includes(` ${ws.join(' ')} `);
     });
   };
   const verraetBlock = (a, b) => verraet(b.voreinstellung) && !(b.gefuehrt === true && ausText(a, b.voreinstellung));
   if (l.rolle === 'kryptoanalyse') {
     for (const e of werkzeugListe) {
-      if (istObjekt(e) && verraet(e.voreinstellung)) wl(`Level-Feld werkzeug: Voreinstellung verrät den Schlüssel (werkzeug „${e.id}“ in einem Kryptoanalyse-Level).`);
+      if (istObjekt(e) && verraet(e.voreinstellung)) fl(`Level-Feld werkzeug: Voreinstellung verrät den Schlüssel (werkzeug „${e.id}“ in einem Kryptoanalyse-Level).`);
     }
   }
   if (l.rolle === 'kryptoanalyse' && Array.isArray(l.aufgaben) && aufgaben instanceof Map) {
@@ -507,7 +512,7 @@ function level(l, o, f, w, { data, aufgaben, opt }) {
       if (!istObjekt(a)) continue;
       for (const b of alleBloecke(a)) {
         if (b.t === 'werkzeug' && verraetBlock(a, b)) {
-          wl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
+          fl(`${id}: Voreinstellung verrät den Schlüssel (werkzeug „${b.id}“ in einem Kryptoanalyse-Level).`);
         }
       }
     }

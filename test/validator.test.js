@@ -428,7 +428,7 @@ test('Aufgaben-Hinweise: Nummerierung, Altbegriffe, Fünfergruppen, Kern-Bestand
   assert.match(hin(w), /doppelte Lösung nach Normalisierung/);
   w = basis();
   aufgabe(w, 'W9-L3-01').inhalt[2].voreinstellung = { text: 'IMQRH', schluessel: 'GEHEIMNIS' };
-  assert.match(hin(w), /verrät den Schlüssel/);
+  assert.match(fehlerVon(w).join(), /verrät den Schlüssel/, 'Review-Fund 5: Fehler statt Hinweis');
   assert.doesNotMatch(hin(basis()), /W9-L5-0[1-8].*Nummerierung/);
 });
 
@@ -715,8 +715,9 @@ test('M6: werkzeug-Voreinstellung reiter/richtung/modus geprüft, Level-Objekte,
   assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'vigenere', voreinstellung: { reiter: ['bigramme'] } }] })).join(), /reiter/);
   assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'zauberstab' }] })).join(), /unbekannt/);
   assert.match(levelFehler(levelMit({ werkzeug: [{ id: 'vigenere', extra: 1 }] })).join(), /werkzeug/);
-  assert.match(levelHinweise(levelMit({ rolle: 'kryptoanalyse' }, { t: 'werkzeug', id: 'substitution', voreinstellung: { vorgabe: { A: 'e' } } })).join(), /verrät den Schlüssel/);
-  assert.match(levelHinweise(levelMit({ rolle: 'kryptoanalyse', werkzeug: [{ id: 'skytale', voreinstellung: { t: 3 } }] })).join(), /verrät den Schlüssel/);
+  // Review-Fund 5: Verrat in Kryptoanalyse-Levels ist ein Fehler
+  assert.match(levelFehler(levelMit({ rolle: 'kryptoanalyse' }, { t: 'werkzeug', id: 'substitution', voreinstellung: { vorgabe: { A: 'e' } } })).join(), /verrät den Schlüssel/);
+  assert.match(levelFehler(levelMit({ rolle: 'kryptoanalyse', werkzeug: [{ id: 'skytale', voreinstellung: { t: 3 } }] })).join(), /verrät den Schlüssel/);
   assert.match(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash' }).join(), /Reiter einschränken/);
   assert.match(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine', 'schritte'] } }).join(), /Reiter einschränken/);
   assert.doesNotMatch(aufgabeHinweise({ kategorie: 'hash' }, { t: 'werkzeug', id: 'hash', voreinstellung: { reiter: ['lawine'] } }).join(), /Reiter einschränken/);
@@ -784,9 +785,26 @@ test('M11 (Task 250): geführte Panels – Hash-Schritte ohne Reiter-Hinweis; Sc
     const w = levelMit({ rolle: 'kryptoanalyse' });
     const a = aufgabe(w, w.levels.find((x) => x.id === 'W9-L1').aufgaben[0]);
     a.inhalt = [{ t: 'text', md }, { t: 'werkzeug', id: 'skytale', voreinstellung: { reiter: ['ring'], ...vor }, ...(gefuehrt ? { gefuehrt: true, hinweis: 'Rechne selbst.' } : {}) }];
-    return levelHinweise(w).join();
+    return levelFehler(w).join();
   };
   assert.doesNotMatch(mitText({ text: 'mondhell', t: 3 }, true, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
   assert.match(mitText({ text: 'mondhell', t: 3 }, false, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
   assert.match(mitText({ text: 'mondhell', t: 4 }, true, 'Eve verschlüsselt mondhell mit dem Ring, t = 3.'), /verrät den Schlüssel/);
+});
+
+test('Review-Fund 5: Schlüssel im Aufgabentext nur als ganzes Wort bzw. mit Namen (k = 5) – sonst Fehler', () => {
+  const mit = (id, vor, md) => {
+    const w = levelMit({ rolle: 'kryptoanalyse' });
+    const a = aufgabe(w, w.levels.find((x) => x.id === 'W9-L1').aufgaben[0]);
+    a.inhalt = [{ t: 'text', md }, { t: 'werkzeug', id, voreinstellung: vor, gefuehrt: true, hinweis: 'Rechne selbst.' }];
+    return levelFehler(w).join();
+  };
+  // W2-L2-06-Kopie: Schlüssel „T“ – ein einzelner Buchstabe steckt in jedem Text, gilt nie als Angabe
+  assert.match(mit('vigenere', { reiter: ['verschluesseln'], text: 'WBXDN KBXKX', schluessel: 'T' }, 'Entschlüssele den Text mit Teilen der Tabelle.'), /verrät den Schlüssel/);
+  // Wort nur als Teil eines anderen Worts („SAND“ in „SANDUHR“) zählt nicht
+  assert.match(mit('vigenere', { reiter: ['verschluesseln'], text: 'aaaa', schluessel: 'SAND', modus: 'pendel' }, 'Die SANDUHR läuft ab.'), /verrät den Schlüssel/);
+  assert.doesNotMatch(mit('vigenere', { reiter: ['verschluesseln'], text: 'aaaa', schluessel: 'SAND', modus: 'pendel' }, 'Pendelwort SAND, Klartext aaaa.'), /verrät den Schlüssel/);
+  // Zahl nur mit Namen: „k = 5“ ja, eine 5 irgendwo nein
+  assert.doesNotMatch(mit('scheibe', { reiter: ['scheibe'], text: 'EBJN', k: 5 }, 'Verschiebung k = 5, Geheimtext EBJN.'), /verrät den Schlüssel/);
+  assert.match(mit('scheibe', { reiter: ['scheibe'], text: 'EBJN', k: 5 }, 'Aufgabe 5: Geheimtext EBJN.'), /verrät den Schlüssel/);
 });
