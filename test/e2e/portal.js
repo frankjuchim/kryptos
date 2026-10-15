@@ -122,7 +122,8 @@ async function main() {
     /* 3. Vertragsprüfung gegen das laufende Kryptos */
     const vp = spawnSync(process.execPath, [path.join(H.WURZEL, 'scripts', 'vertrag_pruefen.js'), basis], { encoding: 'utf8', timeout: 30000 });
     assert.equal(vp.status, 0, vp.stdout + vp.stderr);
-    assert.match(vp.stdout, /erfüllt Vertrag v1\.2 .* Anmeldung: portal/);
+    assert.match(vp.stdout, /erfüllt Vertrag v1\.3 .* Anmeldung: portal/);
+    assert.doesNotMatch(vp.stdout, /⚠/, 'v1.3: keine Hinweise (SSO-Einstieg leitet zum Portal)');
 
     browser = await chromium.launch({ executablePath: H.chromiumPfad() });
     const seite = async (name) => {

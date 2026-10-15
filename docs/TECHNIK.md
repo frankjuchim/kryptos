@@ -573,7 +573,7 @@ Testvektoren aus §0a der Specs werden wörtlich in `test/krypto.test.js` und `w
 | `PLATTFORM_URL` | `https://kryptos.frankjuchim.de` | **ja** | ohne `/` am Ende; Rücksprung = `PLATTFORM_URL + '/sso/ende'` (zeichengenau wie im Portal eingetragen); bei `NODE_ENV=production` nur `https://`, Ausnahme Rechnername `localhost`/`127.0.0.1`/`[::1]` (M9 E149), sonst Abbruch „PLATTFORM_URL muss im Betrieb mit https:// beginnen“ |
 | `PORTAL_URL` | `https://labs.frankjuchim.de` | **ja** | = erwartetes `iss`; ohne `/` am Ende; https-Regel wie `PLATTFORM_URL` (E149) |
 | `PORTAL_PUBLIC_KEY` | PEM, einzeilig mit `\n` erlaubt, mehrere Blöcke erlaubt | **ja** | fest konfiguriert, nie zur Laufzeit geholt; wird bereinigt (umgebende `"`/`'`, `\r` echt oder als Text, Leerzeichen am Rand – M9 E150); enthält er `PRIVATE KEY` → Abbruch „PORTAL_PUBLIC_KEY enthält einen privaten Schlüssel – nur den öffentlichen Schlüssel des Portals eintragen“ (ohne Schlüsseltext); `jwt.schluesselListe()` muss ≥ 1 Schlüssel liefern |
-| `VERTRAG_VERSION` | `1.2` | nein (Std. `1.2`) | **nur `1.2`** (labs-Vertrag v1.2); jeder andere Wert (auch `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.2 sein …“ (auch im Testmodus). Der Wert schaltet nichts um – er verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.2"` |
+| `VERTRAG_VERSION` | `1.3` | nein (Std. `1.3`) | **nur `1.3`** (labs-Vertrag v1.3); jeder andere Wert (auch `1.2`, `1.1`) → Startabbruch „VERTRAG_VERSION muss 1.3 sein …“ (auch im Testmodus und in `npm run konfig:pruefen`). Der Vertrag selbst kennt die Variable nicht (§8); sie schaltet nichts um – sie verhindert nur, dass eine alte Einstellung still ein anderes Verhalten verspricht; am besten weglassen. Manifest `vertrag: "1.3"` |
 | `AUTH_MODUS` | `portal` | nein (Std. `portal`) | **nur `portal` erlaubt**; andere Werte → Startabbruch „Kryptos unterstützt nur AUTH_MODUS=portal“ |
 | `SESSION_SECRET` | ≥ 32 Zeichen | **ja** | fehlt/kürzer → Startabbruch (Algo Quest: nur Warnung – hier strenger, weil SSO-State-Cookie daran hängt) |
 | `DATA_DIR` | `/app/data` | nein | DB `kryptos.db`; vor dem Öffnen der DB Schreibprobe (`pruefeDatenDir`: anlegen, `.schreibprobe` schreiben/löschen), sonst Abbruch „DATA_DIR … ist nicht beschreibbar (…)“ (M9 Review Focus 1, K45) |
@@ -760,7 +760,7 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
 
 ```json
 {
-  "vertrag": "1.2",
+  "vertrag": "1.3",
   "id": "kryptos",
   "name": "Kryptos",
   "titel": "Kryptos – Die Zeitreise der Geheimschriften",
@@ -786,9 +786,16 @@ werden aus dem Katalog berechnet; hier Sollwerte nach Design §5):
     { "nr": 6, "titel": "Die Zeitmaschine", "farbe": "#8A5F1A", "level": 3 }
   ],
   "faehigkeiten": ["gast", "themen", "lehrkraft-materialien", "boss", "training", "warmup", "scoreboard", "beamer",
-                   "urkunden", "fallen-profil", "labor", "funkraum", "arena", "niveau"]
+                   "urkunden", "fallen-profil"]
 }
 ```
+
+`faehigkeiten` (v1.3): **nur Namen aus der Liste in VERTRAG §7** (Test `test/verbund.test.js`). Nicht gemeldet:
+`sql-konsole` (Kryptos führt keinen Code und keine Abfragen von Schülerinnen und Schülern aus, §6.10) und `live` (der
+Funkraum nutzt Polling, keine Server-Sent Events, §12.4). Die früheren eigenen Namen `labor`, `funkraum`, `arena`,
+`niveau` entfallen; Kryptolabor, Funkraum und Arena nennt `beschreibung`, die Niveau-Übersicht `urls.niveaus`. Eigene
+Namen wären erst nach Aufnahme in §7 möglich (Vorschlag V3 in `docs/VERTRAG_VORSCHLAEGE.md`).
+`urls.ssoStart` = `/sso/start` (SOLL ab v1.3, Standard; das Portal verlinkt Kryptos überall darüber, §6.2).
 
 `umfang.aufgaben` = Level-Aufgaben + Boss-Pools, **beim Start aus dem Seed gezählt** (nie fest eintragen; Stand der Specs ca. 307 = 202 Level- + 105 Boss-Aufgaben; Archivfund-Aufgaben zählen nicht). `niveaus` (KANN, v1.2) =
 `["eA", "gA"]`, `urls.niveaus` (SOLL, v1.2) = `/themen#niveaus` (§6.10). Das Manifest enthält nie Kurs-, Schüler- oder
@@ -866,7 +873,8 @@ Fähigkeiten `labor`, `funkraum`, `arena`, `niveau` sind zulässig (freie Liste)
 | Zusatz | Schüler ruft `/lehrer` auf → kein SSO-Kreis (Wächter `302 /spiel`, `/sso/ende` verwirft ziel der anderen Rolle) | – |
 | Zusatz | `kurs-aendern`: Name übernommen, `aktiv:false` sperrt Schüler-API (403), `true` entsperrt | – |
 | v1.3 | `kurs-aendern` für einen unbekannten Kurs | 200 `{ ok: true }`, Kurs mit Standard-Einstellungen angelegt (Name/aktiv aus dem Auftrag), Wiederholung legt nichts doppelt an |
-| Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.2`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| Zusatz | Manifest: `pruefeManifest(m)` leer, `vertrag = 1.3`, `niveaus = [eA, gA]`, `urls.niveaus = /themen#niveaus`, `urls.ssoStart = /sso/start`, `faehigkeiten` nur aus §7, `auth.modus = portal`, `sso = true`, Version = `/healthz` | – |
+| v1.3 | `pruefeSsoStart(basis, manifest)` gegen die laufende App | keine Fehler, keine Hinweise (`/sso/start` ohne Anmeldung → 302 auf `PORTAL_URL/sso/autorisieren?plattform=kryptos…`); Docker-Nachbau und `e2e:portal` prüfen die Ausgabe von `vertrag_pruefen.js` ohne „⚠“ | – |
 | Zusatz | Niveau-Übersicht `GET /api/niveaus` und `/themen#niveaus` ohne Anmeldung; keine Lösungen/Kursdaten; nicht personalisiert; Katalog vor Plan (`test/niveaus.test.js`) | – |
 
 ---

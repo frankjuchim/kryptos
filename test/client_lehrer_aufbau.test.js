@@ -166,7 +166,7 @@ test('Materialien wie Algo Quest: Titel, Warnhinweis, Tabelle Material · DS · 
 });
 
 test('Verwaltung wie Algo Quest: Lehrkräfte & Anfragen · Inhalte · Warm-up-Import · Backup & Verbund, danach Wartung; alte Hashes weitergeleitet', async () => {
-  const extra = { 'GET /api/plattform': { status: 200, body: { vertrag: '1.2', id: 'kryptos', version: '0.4.7', basis: 'https://kryptos.test', auth: { modus: 'portal', portal: 'https://portal.test', sso: true } } } };
+  const extra = { 'GET /api/plattform': { status: 200, body: { vertrag: '1.3', id: 'kryptos', version: '0.4.7', basis: 'https://kryptos.test', auth: { modus: 'portal', portal: 'https://portal.test', sso: true } } } };
   let k = lade('#/admin', extra, SITZUNG_A);
   await k.ruhe();
   assert.equal(k.text(k.eins(haupt(k), 'h1')), 'Verwaltung (Admin)');
@@ -190,7 +190,7 @@ test('Verwaltung wie Algo Quest: Lehrkräfte & Anfragen · Inhalte · Warm-up-Im
   await k.ruhe();
   const text = k.text(haupt(k));
   assert.match(text, /Verbund InfoLabs/);
-  assert.match(text, /Vertrag 1\.2/);
+  assert.match(text, /Vertrag 1\.3/);
   assert.ok(k.eins(haupt(k), 'a[href="/api/admin/backup"]'));
   assert.match(text, /Backup wiederherstellen/);
 });

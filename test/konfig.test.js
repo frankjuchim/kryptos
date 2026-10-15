@@ -27,7 +27,7 @@ test('gültige Konfiguration: Standardwerte und Felder', () => {
   assert.ok(k.schluessel[0] instanceof crypto.KeyObject);
   assert.match(k.portalPublicKey, /^-----BEGIN PUBLIC KEY-----/);
   assert.equal(k.sessionSecret, 's'.repeat(32));
-  assert.equal(k.vertragVersion, '1.2');
+  assert.equal(k.vertragVersion, '1.3');
   assert.equal(k.authModus, 'portal');
   assert.equal(k.port, 80);
   assert.equal(k.trustProxy, 1);
@@ -55,11 +55,12 @@ test('PLATTFORM_ID Format', () => {
   assert.throws(() => ladeKonfig({ ...gueltig, PLATTFORM_ID: 'Kryptos!' }), /PLATTFORM_ID/);
   assert.equal(ladeKonfig({ ...gueltig, PLATTFORM_ID: 'kryptos-test' }).plattformId, 'kryptos-test');
 });
-test('VERTRAG_VERSION: nur 1.2 (labs-Vertrag, Standard); 1.1 und andere Werte brechen ab – auch im Testmodus', () => {
-  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: '1.2' }).vertragVersion, '1.2');
-  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: undefined }).vertragVersion, '1.2');
+test('VERTRAG_VERSION: nur 1.3 (labs-Vertrag, Standard); 1.2, 1.1 und andere Werte brechen ab – auch im Testmodus', () => {
+  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: '1.3' }).vertragVersion, '1.3');
+  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: ' 1.3 ' }).vertragVersion, '1.3');
+  assert.equal(ladeKonfig({ ...gueltig, VERTRAG_VERSION: undefined }).vertragVersion, '1.3');
   for (const test of [false, true]) {
-    for (const v of ['1.1', '1.0', '1.3', '2.0']) assert.throws(() => ladeKonfig({ ...gueltig, VERTRAG_VERSION: v }, { test }), /VERTRAG_VERSION muss 1\.2 sein/, v);
+    for (const v of ['1.2', '1.1', '1.0', '1.4', '2.0']) assert.throws(() => ladeKonfig({ ...gueltig, VERTRAG_VERSION: v }, { test }), /VERTRAG_VERSION muss 1\.3 sein/, v);
   }
 });
 test('ADMIN_EMAIL/ADMIN_PASSWORD werden nicht gelesen', () => {
@@ -144,7 +145,7 @@ test('konfigZusammenfassung: keine Geheimnisse, Fingerabdruck je Schlüssel (E15
   assert.notEqual(z.fingerabdruecke[0], z.fingerabdruecke[1]);
   const erwartet = 'sha256:' + crypto.createHash('sha256').update(crypto.createPublicKey(SCHLUESSEL_1).export({ type: 'spki', format: 'der' })).digest('hex').slice(0, 16);
   assert.equal(z.fingerabdruecke[0], erwartet);
-  assert.equal(z.vertrag, '1.2');
+  assert.equal(z.vertrag, '1.3');
   assert.equal(z.dataDir, '/tmp/kr');
   assert.equal(z.port, 3000);
   const text = JSON.stringify(z);

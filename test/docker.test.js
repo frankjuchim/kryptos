@@ -374,7 +374,8 @@ test('Image-Nachbau: zweiter Start auf demselben DATA_DIR behält den Lernstand;
       // 3. Vertragsprüfung gegen den laufenden Nachbau
       const vp = spawnSync(process.execPath, [path.join(WURZEL, 'scripts', 'vertrag_pruefen.js'), server.basis], { encoding: 'utf8', timeout: 30000 });
       assert.equal(vp.status, 0, vp.stdout + vp.stderr);
-      assert.match(vp.stdout, /erfüllt Vertrag v1\.2 .* Anmeldung: portal/);
+      assert.match(vp.stdout, /erfüllt Vertrag v1\.3 .* Anmeldung: portal/);
+      assert.doesNotMatch(vp.stdout, /⚠/, 'v1.3: keine Hinweise (SSO-Einstieg leitet zum Portal)');
       const log = server.log();
       assert.ok(!log.includes(env.SESSION_SECRET) && !log.includes('BEGIN'), 'keine Geheimnisse im Log');
     } finally {
