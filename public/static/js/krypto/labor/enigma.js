@@ -232,7 +232,7 @@
           AQ.clear(p.knopf);
           p.knopf.append(h('b', null, n), h('span', { class: 'enigma-nabe', 'aria-hidden': 'true' }), h('small', null, `Kerbe ${Krypto.ENIGMA.WALZEN[n].kerbe}`));
           p.knopf.classList.toggle('bereit', !!z.gewaehlteWalze);
-          p.ringText.textContent = `Ring ${e.ringe[i]} ${zwei(e.ringe[i])}`;
+          p.ringText.textContent = `Ring ${e.ringe[i]} (${zwei(e.ringe[i])})`; // E176: wie am Gerät „A (01)“
         });
         for (const k of ukwKnoepfe) k.setAttribute('aria-pressed', String(k.dataset.ukw === e.ukw));
         ukwSchild.lastChild.textContent = e.ukw;
@@ -242,7 +242,7 @@
           f.mitte.textContent = b;
           f.unten.textContent = dreh(b, 1);
           f.titel.textContent = `Walze ${e.walzen[i]}`;
-          f.info.textContent = `Ring ${e.ringe[i]} · Kerbe ${Krypto.ENIGMA.WALZEN[e.walzen[i]].kerbe}`;
+          f.info.textContent = `Ring ${e.ringe[i]} (${zwei(e.ringe[i])}) · Kerbe ${Krypto.ENIGMA.WALZEN[e.walzen[i]].kerbe}`;
           f.kerbe.classList.toggle('an', b === Krypto.ENIGMA.WALZEN[e.walzen[i]].kerbe);
           f.el.setAttribute('aria-label', `Walze ${e.walzen[i]} ${PLATZ[i]}: Fenster ${b}`);
         });

@@ -160,3 +160,13 @@ test('Glossar und Hintergrund: Schlüsselraum aus der Bibliothek', () => {
   klick(w, '.enigma-glossar button[data-ziel="maschine"]');
   assert.equal(w.zustand().reiter, 'maschine');
 });
+
+test('Ringstellung wie am Gerät (E176, M10-Review Fund 5): „A (01)“ im Tagesschlüssel und am Walzenfenster', () => {
+  const w = oeffne('enigma');
+  const ringe = w.k.alle(w.flaeche, '.enigma-ring-text').map((x) => x.textContent);
+  assert.deepEqual(ringe, ['Ring A (01)', 'Ring A (01)', 'Ring A (01)']);
+  for (const f of w.k.alle(w.flaeche, '.enigma-fenster-info')) assert.match(f.textContent, /^Ring A \(01\) · Kerbe [A-Z]$/);
+  // Beispiel mit 10 Kabeln: Ringe BUL → B (02), U (21), L (12)
+  w.k.klick(w.k.eins(w.flaeche, 'button.enigma-beispiel'));
+  assert.deepEqual(w.k.alle(w.flaeche, '.enigma-fenster-info').map((f) => f.textContent.split(' · ')[0]), ['Ring B (02)', 'Ring U (21)', 'Ring L (12)']);
+});
