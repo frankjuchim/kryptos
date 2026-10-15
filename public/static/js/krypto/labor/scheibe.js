@@ -52,6 +52,11 @@
     let schreibSperre = null; // () => true, wenn der Schlüssel gerade nicht wechseln darf (Reiter Scheibe)
     let wennK = null;
     let zuletzt = null;
+    // M11 (E210, E214): Erkenner-Verlauf seit dem Öffnen; Panel startet geführt mit den Aufgabenwerten
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null; // laufender geführter Modus (KRGefuehrt)
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
 
     /* ---------- Scheibe (SVG nach der Werkstatt) ---------- */
     const messingId = B.neueId('scheibe-messing');
@@ -273,6 +278,9 @@
 
     let objekt = null; // Teile des Reiters „Scheibe“ (Bänder, Antippen)
     function schliesseTeile() {
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+      for (const z of [...aussenZeichen, ...innenZeichen]) z.seg.classList.remove('gefuehrt-markiert');
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
       if (alle) alle.schliesse();
@@ -388,6 +396,9 @@
           return;
         }
         if (nachricht.length >= MAX) return;
+        // M11: Aufgabenwerte erkennen, bevor etwas geschrieben wird (auch häppchenweise über den Verlauf)
+        const neuText = `${baender.text(0)}${richtung === 'ver' ? Krypto.klein(b) : b}`;
+        if (erkenneObjekt(neuText)) return;
         gewuenscht = null;
         const [ein, aus] = eintrag(b);
         aktiv = richtung === 'ver' ? b : Krypto.caesar(b, k, 'ent');
@@ -404,8 +415,14 @@
       }
       function aufTippen(t) {
         if (gesperrt) return;
+        if (erkenneObjekt(t)) return;
         gewuenscht = null;
         baender.setze([...Krypto.nurBuchstaben(t)].slice(0, MAX).map(eintrag));
+      }
+      /** true, wenn der Erkenner Aufgabenwerte sieht (dann läuft der geführte Modus) */
+      function erkenneObjekt(t) {
+        const e = { texte: [t], schluessel: [`k=${k}`] };
+        return B.erkenne(sperrHinweis, 'scheibe.scheibe', e, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt('scheibe', { text: t, k, richtung }) : null }) !== 'frei';
       }
       const klickAussen = (z) => () => {
         if (richtung === 'ver') schreibe(z.b, z.t);
@@ -501,7 +518,11 @@
           if (offenNachspiel) beendeNachspiel();
           for (const f of weg) f();
         },
-        baender
+        baender,
+        tippe(t) {
+          feld.setze(t);
+          aufTippen(t);
+        }
       };
     }
 
@@ -519,6 +540,13 @@
         zeigeScheibe(false);
       }
       function rechne() {
+        if (B.erkenne(aus.element.parentNode, 'scheibe.text', { texte: [text], schluessel: [`k=${k}`] }, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt('text', { text, k, richtung }) : null }) !== 'frei') {
+          ausgabeText = '';
+          aus.setze('');
+          if (nachspiel) nachspiel.schliesse();
+          nachspiel = null;
+          return;
+        }
         ausgabeText = Krypto.caesar(text, k, richtung);
         aus.setze(richtung === 'ver' ? Krypto.gruppieren(ausgabeText) : Krypto.klein(ausgabeText));
         if (nachspiel) nachspiel.schliesse();
@@ -552,7 +580,9 @@
       r.flaeche.append(feld.element, h('p', { class: 'text-2' }, 'Probiere alle 26 Verschiebungen. Welche Zeile ergibt einen sinnvollen Text? Das entscheidest du.'), ort);
       function liste() {
         if (alle) alle.schliesse();
+        alle = null;
         AQ.clear(ort);
+        if (B.erkenne(ort, 'scheibe.alle', { texte: [abgefangen] }, umgebung, erkVerlauf, {}) !== 'frei') return;
         const geheim = Krypto.nurBuchstaben(abgefangen);
         alle = KRLabor.alleSchluessel(ort, {
           titel: 'Alle Verschiebungen k = 0 … 25',
@@ -572,7 +602,81 @@
       return geheim || null;
     }
 
+    /* ---------- Geführter Modus (M11 Task 244, E208): Scheibe auf k der Aufgabe, nur der aktuelle Buchstabe markiert ---------- */
+    function scheibeHook(container, werte) {
+      const ri = werte.richtung === 'ent' ? 'ent' : 'ver';
+      const eingabe = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX);
+      const fest = Number.isInteger(werte.k) && werte.k >= 0 && werte.k <= 25;
+      if (fest) k = werte.k;
+      aktiv = null;
+      gesperrt = fest; // Schlüssel der Aufgabe: die Scheibe bleibt fest
+      zeigeScheibe(false);
+      hilfe.textContent = fest ? `🔒 Die Scheibe steht auf dem Schlüssel der Aufgabe (k = ${k}).` : 'Stelle den Schlüssel ein: Innenring ziehen oder mit den Pfeiltasten drehen.';
+      const band = KRGefuehrt.band(null, ri === 'ver' ? 'Dein Geheimtext' : 'Dein Klartext');
+      container.append(h('div', { class: 'scheibe-gefuehrt' }, scheibe, band.element));
+      return {
+        schritte: eingabe.map((b) => ({
+          text: ri === 'ver' ? `Klartextbuchstabe ${Krypto.klein(b)} – außen markiert` : `Geheimtextbuchstabe ${b} – innen markiert`,
+          feld: { beschriftung: ri === 'ver' ? 'Geheimtextbuchstabe (innen darunter)' : 'Klartextbuchstabe (außen darüber)', art: 'buchstabe' }
+        })),
+        markiere(i, eintraege) {
+          const b = eingabe[i];
+          for (const z of aussenZeichen) z.seg.classList.toggle('gefuehrt-markiert', ri === 'ver' && z.b === b);
+          for (const z of innenZeichen) z.seg.classList.toggle('gefuehrt-markiert', ri === 'ent' && z.b === b);
+          band.setze(eintraege.map((x) => (ri === 'ver' ? x : Krypto.klein(x))));
+        },
+        korrekt: () => eingabe.map((b) => (ri === 'ver' ? Krypto.caesar(b, k) : Krypto.klein(Krypto.caesar(b, k, 'ent'))))
+      };
+    }
+    const HOOKS = { scheibe: scheibeHook, text: scheibeHook };
+    function starteGefuehrt(id, werte) {
+      const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      zuletzt = id;
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Chiffrierscheibe',
+        beiEigeneWerte: () => eigeneWerte(id),
+        text: { beschriftung: werte.richtung === 'ent' ? 'Geheimtext' : 'Klartext', wert: werte.text || '', fokus, beiAenderung: (t) => neuMitText(id, t, werte) }
+      });
+    }
+    /** Text im geführten Modus geändert: neu prüfen – wieder geführt (Fokus im Textfeld) oder frei rechnen */
+    function neuMitText(id, t, werte) {
+      text = t;
+      if (Number.isInteger(werte.k)) k = werte.k;
+      richtung = werte.richtung === 'ent' ? 'ent' : 'ver';
+      gesperrt = false;
+      baue(id);
+      if (id === 'scheibe' && objekt && typeof objekt.tippe === 'function') objekt.tippe(t);
+      B.fokusAmEnde(r.flaeche);
+    }
+    /** „Eigene Werte“: geführten Modus verlassen, Aufgabenwerte leeren, frei rechnen (E206) */
+    function eigeneWerte(id) {
+      if (erkVerlauf) erkVerlauf.leeren();
+      fuehrung = null;
+      gesperrt = false;
+      text = '';
+      nachricht = [];
+      abgefangen = '';
+      hilfe.textContent = 'Innenring ziehen oder mit den Pfeiltasten drehen.';
+      baue(id);
+    }
+
     function baue(id) {
+      if (fuehrung && mitGefuehrt && HOOKS[id]) {
+        const w = { text: typeof v.text === 'string' ? v.text : '', k: Number.isInteger(v.k) ? v.k : undefined, richtung: v.richtung, ...(fuehrung.werte || {}) };
+        fuehrung = { aufgabe: fuehrung.aufgabe };
+        starteGefuehrt(id, w);
+        return;
+      }
+      if (gefuehrt) {
+        gefuehrt.schliesse();
+        gefuehrt = null;
+        gesperrt = false;
+      }
       const vorher = zuletzt;
       // Wechsel zu „Alle Verschiebungen“: der eigene Geheimtext (Text-Modus oder Scheibe) wird zum abgefangenen
       if (id === 'alle' && vorher === 'text' && richtung === 'ver' && ausgabeText) abgefangen = ausgabeText;

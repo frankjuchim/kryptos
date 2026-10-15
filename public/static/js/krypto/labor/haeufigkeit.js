@@ -42,11 +42,82 @@
     container.appendChild(wurzel);
 
     const buchstaben = () => Krypto.nurBuchstaben(text);
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
 
     function schliesseTeile() {
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
       feld.sperre(false);
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus; true = nichts ausgeben */
+    function erkenne(id, eingaben) {
+      return B.erkenne(r.flaeche, `haeufigkeit.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, { text, k }) : null }) !== 'frei';
+    }
+
+    /* ---------- Geführter Modus (M11 Task 244, E208): Positionsleiste bzw. selbst zählen ---------- */
+    const ALPHA = [...Krypto.ALPHABET];
+    function teiltexteHook(container, werte) {
+      const t = Krypto.nurBuchstaben(String(werte.text || '')).slice(0, 600);
+      const kk = Number.isInteger(werte.k) && werte.k >= 1 ? werte.k : 1;
+      const leiste = KRGefuehrt.leiste(container, t, { titel: `Text (Positionen ab 0), jede ${kk}. Stelle` });
+      const baender = Array.from({ length: kk }, (_, j) => KRGefuehrt.band(container, `Teiltext ${j + 1}`));
+      const positionen = [];
+      for (let j = 0; j < kk; j++) for (let p = j; p < t.length; p += kk) positionen.push({ j, p });
+      return {
+        schritte: positionen.map(({ j, p }) => ({ text: `Teiltext ${j + 1}: Buchstabe an Position ${p}`, feld: { beschriftung: 'Buchstabe', art: 'buchstabe' } })),
+        markiere(i, e) {
+          leiste.markiere([positionen[i].p]);
+          baender.forEach((bd, j) => bd.setze(positionen.map((x, n) => (x.j === j ? e[n] : null)).filter((x) => x !== null)));
+        },
+        korrekt: () => positionen.map(({ p }) => t[p])
+      };
+    }
+    function kennzahlenHook(container, werte) {
+      const t = Krypto.nurBuchstaben(String(werte.text || '')).slice(0, 600);
+      KRGefuehrt.leiste(container, t, { titel: `Text (n = ${t.length} Buchstaben, Positionen ab 0)` });
+      const tab = KRGefuehrt.raster(container, { zeilen: 1, spalten: 26, caption: 'Zähle jeden Buchstaben selbst', zeilenKopf: () => 'nᵢ', spaltenKopf: (x) => ALPHA[x] });
+      const schritte = ALPHA.map((b) => ({ text: `Wie oft kommt ${b} vor?`, feld: { beschriftung: `Anzahl n(${b})`, art: 'zahl' } }));
+      schritte.push({ text: 'Zähler: Σ nᵢ(nᵢ − 1) aus deinen Anzahlen', feld: { beschriftung: 'Σ nᵢ(nᵢ − 1)', art: 'zahl' } });
+      schritte.push({ text: `Nenner: n(n − 1) mit n = ${t.length}`, feld: { beschriftung: 'n(n − 1)', art: 'zahl' } });
+      schritte.push({ text: 'I = Zähler : Nenner (3 Nachkommastellen, mit Komma)', feld: { beschriftung: 'I', art: 'zahl' } });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.slice(0, 26).forEach((x, j) => x && tab.eintrag(0, j, x));
+          tab.kopfMarke([], i < 26 ? [i] : []);
+        },
+        korrekt() {
+          const hf = Krypto.haeufigkeiten(t);
+          const br = Krypto.koinzidenzindexBruch(t);
+          return [...ALPHA.map((b) => String(hf[b] || 0)), String(br ? br.zaehler : 0), String(br ? br.nenner : 0), komma(Krypto.koinzidenzindex(t) || 0, 3)];
+        }
+      };
+    }
+    const HOOKS = { teiltexte: teiltexteHook, kennzahlen: kennzahlenHook };
+    function starteGefuehrt(id, werte) {
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      zuletzt = id;
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Häufigkeits-Analysator',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          text = '';
+          feld.setze('');
+          baue(id);
+        }
+      });
     }
 
     /** Histogramm-Block (KRB) für einen Text mit den aktuellen Ansichts-Einstellungen. */
@@ -148,6 +219,7 @@
       const zs = B.zahl({ beschriftung: 'Start s', min: 1, max: k, wert: s, format: (x) => `s = ${x}`, beiWechsel: (x) => { s = x; zeige(); } });
       s = zs.wert();
       function zeige() {
+        if (erkenne('teiltexte', { texte: [text], schluessel: [`k=${k}`] })) return;
         const t = buchstaben();
         const teil = t.length ? Krypto.teiltexte(t, k)[s - 1] : '';
         AQ.mount(
@@ -163,6 +235,7 @@
 
     /* ---------- Kennzahlen (ab Welt 2, eA) ---------- */
     function baueKennzahlen() {
+      if (erkenne('kennzahlen', { texte: [text] })) return;
       const bruch = Krypto.koinzidenzindexBruch(text);
       if (!bruch) {
         r.flaeche.append(B.hinweis('info', 'Für den Koinzidenzindex braucht der Text mindestens zwei Buchstaben.'));
@@ -182,6 +255,12 @@
 
     let zuletzt = null;
     function baue(id) {
+      if (fuehrung && mitGefuehrt && HOOKS[id]) {
+        const w = { text, k, ...(fuehrung.werte || {}) };
+        fuehrung = { aufgabe: fuehrung.aufgabe };
+        starteGefuehrt(id, w);
+        return;
+      }
       schliesseTeile();
       AQ.clear(r.flaeche);
       zuletzt = id;

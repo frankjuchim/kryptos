@@ -31,7 +31,8 @@
     const modusErlaubt = (m) => KRLabor.erlaubt(`vigenere.modus.${m}`, umgebung);
     const mitText = typeof v.text === 'string';
     let text = mitText ? v.text.slice(0, MAX) : BEISPIEL.klartext;
-    let wort = mitText ? '' : BEISPIEL.schluessel;
+    // M11: Schlüsselwort auch aus der Voreinstellung (Aufgaben-Panel, E217)
+    let wort = typeof v.schluessel === 'string' ? Krypto.nurBuchstaben(v.schluessel).slice(0, 20) : mitText ? '' : BEISPIEL.schluessel;
     let modus = MODI.some((m) => m.id === v.modus) && modusErlaubt(v.modus) ? v.modus : 'vigenere';
     let richtung = v.richtung === 'ent' ? 'ent' : 'ver';
     let basis = 1;
@@ -45,11 +46,23 @@
     container.appendChild(wurzel);
 
     let analyseTimer = null; // Entprellung der Analyse-Eingabe (Review M6)
+    // M11 (E208–E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
     function schliesseTeile() {
       if (analyseTimer) clearTimeout(analyseTimer);
       analyseTimer = null;
       if (nachspiel) nachspiel.schliesse();
       nachspiel = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
+    }
+    /** Aufgabenwerte erkannt? → geführter Modus (Hook) bzw. Hinweis „nicht verfügbar“ in ort; true = nichts ausgeben */
+    function erkenne(id, eingaben, ort) {
+      const werte = { text, schluessel: wort, modus, richtung, k: A.st.k };
+      return B.erkenne(ort, `vigenere.${id}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt && HOOKS[id] ? () => starteGefuehrt(id, werte) : null }) !== 'frei';
     }
 
     /* ======================= Reiter 1: Quadrat ======================= */
@@ -277,6 +290,13 @@
       }
       function rechne() {
         zeigeInfo();
+        if (erkenne('verschluesseln', { texte: [text], schluessel: [Krypto.nurBuchstaben(wort)].filter(Boolean) }, info)) {
+          stand = { t: '', s: '', aus: '', strom: '' };
+          aus.setze('');
+          if (nachspiel) nachspiel.schliesse();
+          nachspiel = null;
+          return;
+        }
         try {
           stand = ergebnis();
         } catch (e) {
@@ -394,6 +414,12 @@
       const inhalt = h('div', { class: 'vg-inhalt' });
       r.flaeche.append(kopf.element, zeileOrt, inhalt);
       function zeichne() {
+        const mitK = ['teiltexte', 'verschiebung', 'korrektur'].includes(id);
+        if (erkenne(id, { texte: [text], schluessel: mitK ? [`k=${A.st.k}`] : [] }, inhalt)) {
+          AQ.clear(zeileOrt);
+          for (const x of [...inhalt.childNodes]) if (!x.classList || !x.classList.contains('labor-nicht-verfuegbar')) x.remove();
+          return;
+        }
         const b = A.berechne();
         const marken = id === 'kasiski' ? b.kas.wiederholungen.flatMap((w, i) => w.positionen.map((p) => ({ von: p, laenge: w.folge.length, art: ARTEN[Krypto.mod(i, 3)], klasse: 'wiederholung' }))) : [];
         AQ.mount(zeileOrt, b.t ? KRB.geheimtext(b.t, { positionen: true, kopieren: false, markiert: marken }) : h('p', { class: 'text-2' }, 'Gib oben einen Geheimtext ein.'));
@@ -626,7 +652,159 @@
       );
     }
 
+    /* ---------- Geführter Modus (M11 Task 244, E208): Zeile/Spalte der Tafel, Positionsleiste, Zählen ---------- */
+
+    function verschluesselnHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const md = MODI.some((m) => m.id === werte.modus) ? werte.modus : 'vigenere';
+      const s0 = Krypto.nurBuchstaben(String(werte.schluessel || '')).slice(0, 20) || 'A';
+      const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, 300);
+      const pendel = md === 'pendel' ? Krypto.pendelFolge(s0, Math.max(1, ein.length)) : null;
+      /** Schlüsselbuchstabe für Stelle i – Autokey entschlüsseln: aus deinen Einträgen (folgeAus) */
+      const schluesselBei = (i, e) => {
+        if (md === 'pendel') return pendel[i];
+        if (md === 'autokey') return i < s0.length ? s0[i] : ver ? ein[i - s0.length] : Krypto.nurBuchstaben(e[i - s0.length] || '') || '?';
+        return s0[Krypto.mod(i, s0.length)];
+      };
+      const porta = md === 'porta';
+      const tafel = porta
+        ? KRGefuehrt.raster(container, { zeilen: 13, spalten: 13, caption: 'Porta-Tafel: Zeile je Schlüsselpaar, Kopf = Klartext a–m', zeilenKopf: (zz) => BUCHSTABEN[2 * zz] + BUCHSTABEN[2 * zz + 1], spaltenKopf: (ss) => Krypto.klein(BUCHSTABEN[ss]), inhalt: (zz, ss) => Krypto.porta('ABCDEFGHIJKLM', BUCHSTABEN[2 * zz])[ss] })
+        : KRGefuehrt.raster(container, { zeilen: 26, spalten: 26, caption: 'Vigenère-Quadrat: Zeile = Schlüsselbuchstabe, Spalte = Klartextbuchstabe', zeilenKopf: (zz) => BUCHSTABEN[zz], spaltenKopf: (ss) => Krypto.klein(BUCHSTABEN[ss]), inhalt: (zz, ss) => Krypto.vigenere(BUCHSTABEN[ss], BUCHSTABEN[zz]) });
+      const band = KRGefuehrt.band(container, ver ? 'Dein Geheimtext' : 'Dein Klartext');
+      return {
+        schritte: ein.map((x, i) => ({
+          text: (e) => {
+            const sb = schluesselBei(i, e);
+            if (porta) return `Buchstabe ${ver ? Krypto.klein(x) : x}, Schlüssel ${sb}: Tafelzeile ${sb}`;
+            return ver ? `Klartext ${Krypto.klein(x)}, Schlüssel ${sb}: Zeile ${sb}, Spalte ${Krypto.klein(x)}` : `Geheimtext ${x}, Schlüssel ${sb}: in Zeile ${sb} suchen`;
+          },
+          feld: { beschriftung: ver ? 'Geheimtextbuchstabe' : 'Klartextbuchstabe', art: 'buchstabe' }
+        })),
+        markiere(i, eintraege) {
+          const sb = schluesselBei(i, eintraege);
+          const x = ein[i];
+          if (porta) {
+            const zeile = sb === '?' ? [] : [Krypto.teileMitRest(Krypto.wert(sb, 0), 2).q];
+            tafel.kopfMarke(zeile, Krypto.wert(x, 0) < 13 ? [Krypto.wert(x, 0)] : []);
+          } else tafel.kopfMarke(sb === '?' ? [] : [Krypto.wert(sb, 0)], ver ? [Krypto.wert(x, 0)] : []);
+          band.setze(eintraege.map((y) => (ver ? y : Krypto.klein(y))));
+        },
+        korrekt() {
+          const t = ein.join('');
+          const aus = md === 'autokey' ? Krypto.autokey(t, s0, ver ? 'ver' : 'ent') : porta ? Krypto.porta(t, s0, ver ? 'ver' : 'ent') : Krypto.vigenere(t, pendel || s0, ver ? 'ver' : 'ent');
+          return [...aus].map((y) => (ver ? y : Krypto.klein(y)));
+        }
+      };
+    }
+    function kasiskiHook(container, werte) {
+      const t = Krypto.nurBuchstaben(String(werte.text || '')).slice(0, 600);
+      const leiste = KRGefuehrt.leiste(container, t, { titel: 'Geheimtext (Positionen ab 0) – suche Folgen ab 3 Buchstaben, die mehrfach vorkommen' });
+      let kas = { wiederholungen: [] };
+      try {
+        kas = Krypto.kasiski(t, { min: 3 });
+      } catch {
+        kas = { wiederholungen: [] };
+      }
+      const anzahl = Math.min(3, kas.wiederholungen.length);
+      const schritte = [];
+      for (let j = 0; j < anzahl; j++) {
+        schritte.push({ text: `Folge ${j + 1}: Welche Buchstabenfolge findest du mehrfach?`, feld: { beschriftung: 'Folge', art: 'text' } });
+        schritte.push({ text: `Folge ${j + 1}: Position des ersten Vorkommens (ab 0)`, feld: { beschriftung: 'Position', art: 'zahl' } });
+        schritte.push({ text: `Folge ${j + 1}: Position des nächsten Vorkommens (ab 0)`, feld: { beschriftung: 'Position', art: 'zahl' } });
+        schritte.push({ text: `Folge ${j + 1}: Abstand der beiden Vorkommen`, feld: { beschriftung: 'Abstand', art: 'zahl' } });
+      }
+      return {
+        schritte,
+        markiere(i, e) {
+          // markiert werden nur Stellen aus deinen früheren Einträgen dieser Folge (keine automatische Suche)
+          const j = Krypto.teileMitRest(i, 4).q;
+          const folge = Krypto.nurBuchstaben(e[4 * j] || '');
+          const pos = [];
+          for (const k of [1, 2]) {
+            const p = Number(e[4 * j + k]);
+            if (4 * j + k < i && e[4 * j + k] !== '' && Number.isInteger(p) && p >= 0) for (let x = 0; x < Math.max(1, folge.length); x++) pos.push(p + x);
+          }
+          leiste.markiere(pos);
+        },
+        korrekt: () => kas.wiederholungen.slice(0, anzahl).flatMap((w) => [w.folge, String(w.positionen[0]), String(w.positionen[1]), String(w.abstaende[0])])
+      };
+    }
+    function teiltexteHook(container, werte) {
+      const t = Krypto.nurBuchstaben(String(werte.text || '')).slice(0, 600);
+      const k = Number.isInteger(werte.k) && werte.k >= 1 ? werte.k : 1;
+      const leiste = KRGefuehrt.leiste(container, t, { titel: `Geheimtext (Positionen ab 0), Schlüssellänge k = ${k}` });
+      const baender = Array.from({ length: k }, (_, j) => KRGefuehrt.band(container, `T${j + 1}`));
+      const positionen = [];
+      for (let j = 0; j < k; j++) for (let p = j; p < t.length; p += k) positionen.push({ j, p });
+      return {
+        schritte: positionen.map(({ j, p }) => ({ text: `Teiltext T${j + 1}: Buchstabe an Position ${p}`, feld: { beschriftung: 'Buchstabe', art: 'buchstabe' } })),
+        markiere(i, e) {
+          leiste.markiere([positionen[i].p]);
+          baender.forEach((bd, j) => bd.setze(positionen.map((x, n) => (x.j === j ? e[n] : null)).filter((x) => x !== null)));
+        },
+        korrekt: () => positionen.map(({ p }) => t[p])
+      };
+    }
+    function koinzidenzHook(container, werte) {
+      const t = Krypto.nurBuchstaben(String(werte.text || '')).slice(0, 600);
+      KRGefuehrt.leiste(container, t, { titel: `Text (n = ${t.length} Buchstaben, Positionen ab 0)` });
+      const alphabet = KRGefuehrt.raster(container, { zeilen: 1, spalten: 26, caption: 'Zähle jeden Buchstaben selbst', zeilenKopf: () => 'nᵢ', spaltenKopf: (ss) => BUCHSTABEN[ss] });
+      const schritte = BUCHSTABEN.map((b) => ({ text: `Wie oft kommt ${b} vor?`, feld: { beschriftung: `Anzahl n(${b})`, art: 'zahl' } }));
+      schritte.push({ text: 'Zähler: Σ nᵢ(nᵢ − 1) aus deinen Anzahlen', feld: { beschriftung: 'Σ nᵢ(nᵢ − 1)', art: 'zahl' } });
+      schritte.push({ text: `Nenner: n(n − 1) mit n = ${t.length}`, feld: { beschriftung: 'n(n − 1)', art: 'zahl' } });
+      schritte.push({ text: 'I = Zähler : Nenner (4 Nachkommastellen, mit Komma)', feld: { beschriftung: 'I', art: 'zahl' } });
+      return {
+        schritte,
+        markiere(i, e) {
+          alphabet.leeren();
+          e.slice(0, 26).forEach((x, j) => x && alphabet.eintrag(0, j, x));
+          alphabet.kopfMarke([], i < 26 ? [i] : []);
+        },
+        korrekt() {
+          const hf = Krypto.haeufigkeiten(t);
+          const br = Krypto.koinzidenzindexBruch(t);
+          return [...BUCHSTABEN.map((b) => String(hf[b] || 0)), String(br ? br.zaehler : 0), String(br ? br.nenner : 0), (Krypto.koinzidenzindex(t) || 0).toFixed(4).replace('.', ',')];
+        }
+      };
+    }
+    const HOOKS = { verschluesseln: verschluesselnHook, kasiski: kasiskiHook, teiltexte: teiltexteHook, koinzidenz: koinzidenzHook };
+    function starteGefuehrt(id, werte) {
+      const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
+      schliesseTeile();
+      AQ.clear(r.flaeche);
+      zuletzt = id;
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Vigenère-Werkbank',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          text = '';
+          wort = '';
+          baue(id);
+        },
+        text: {
+          beschriftung: id === 'verschluesseln' && werte.richtung !== 'ent' ? 'Klartext' : 'Geheimtext',
+          wert: werte.text || '',
+          fokus,
+          beiAenderung: (t) => {
+            text = t;
+            baue(id);
+            B.fokusAmEnde(r.flaeche);
+          }
+        }
+      });
+    }
+
     function baue(id) {
+      if (fuehrung && mitGefuehrt && HOOKS[id]) {
+        const w = { text, schluessel: wort, modus, richtung, k: A.st.k, ...(fuehrung.werte || {}) };
+        fuehrung = { aufgabe: fuehrung.aufgabe };
+        starteGefuehrt(id, w);
+        return;
+      }
       schliesseTeile();
       AQ.clear(r.flaeche);
       zuletzt = id;

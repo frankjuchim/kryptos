@@ -388,7 +388,7 @@ function angaben(p) {
     if (Number.isInteger(v.zeilen)) schluessel.add(`n=${v.zeilen}`);
     if (Number.isInteger(v.t)) schluessel.add(`t=${v.t}`);
     if (typeof v.stellung === 'string') schluessel.add(`st=${v.stellung}`);
-    if (Array.isArray(v.schablone)) schluessel.add(`loch=${v.schablone.map((x) => x.join(',')).join(';')}`);
+    if (Array.isArray(v.schablone)) schluessel.add(`loch=${v.schablone.map((x) => x.join(',')).sort().join(';')}`);
     for (const f of ['schluessel', 'schluesselwort', 'pendel', 'oben', 'unten']) if (typeof v[f] === 'string') wort(v[f]);
   }
   const roh = (p.einzeln || p.sichtbar || []).map(String);
@@ -412,7 +412,7 @@ function angaben(p) {
     for (const m of s.matchAll(/Startstellung\s+([A-H])\b/g)) schluessel.add(`st=${m[1]}`);
     for (const m of s.matchAll(/Löcher[n]?\s*((?:\(\d,\s*\d\)[,\s]*(?:und\s*)?)+)/g)) {
       const paare = [...m[1].matchAll(/\((\d),\s*(\d)\)/g)].map((x) => `${x[1]},${x[2]}`);
-      if (paare.length) schluessel.add(`loch=${paare.join(';')}`);
+      if (paare.length) schluessel.add(`loch=${paare.sort().join(';')}`);
     }
     for (const b of bitsVon(s)) {
       if (b.length % 8 === 0) bitfolgen.push(b);

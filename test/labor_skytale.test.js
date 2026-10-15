@@ -4,19 +4,22 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { oeffne, Krypto: K } = require('./hilfen_labor');
 
+// M11: eigene Werte – Aufgabenwerte (W0-L1-03, W6-L2-01) schalten das Werkzeug in den geführten Modus (Erkenner)
+const GEHEIM = K.skytale('wir zaehlen kerzen', 3);
+
 test('Skytale: Raster = Krypto.skytaleRaster, Ausgabe = Krypto.skytale, Füllzeichen gekennzeichnet', () => {
-  const w = oeffne('skytale', { voreinstellung: { text: 'wir halten den pass', umfang: 3 } });
+  const w = oeffne('skytale', { voreinstellung: { text: 'wir zaehlen kerzen', umfang: 3 } });
   const zellen = w.k.alle(w.flaeche, 'table.skytale-raster tbody tr').map((z) => w.k.alle(z, 'td').map((c) => w.k.text(c)).join('').toUpperCase()); // Klartext klein angezeigt
-  assert.deepEqual(zellen, K.skytaleRaster('wir halten den pass', 3));
+  assert.deepEqual(zellen, K.skytaleRaster('wir zaehlen kerzen', 3));
   // M10: eine Bedienung – das Ergebnis steht nach dem Abwickeln im Geheimtext-Band (gerechnet: zustand().ausgabe)
-  assert.equal(w.zustand().ausgabe, 'WTPIEARNSHDSAEXLNX');
+  assert.equal(w.zustand().ausgabe, GEHEIM);
   w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
-  assert.equal(w.ohneLeer('.station-baender output.geheim'), 'WTPIEARNSHDSAEXLNX');
+  assert.equal(w.ohneLeer('.station-baender output.geheim'), GEHEIM);
   assert.equal(w.k.alle(w.flaeche, 'table.skytale-raster td.fuell').length, 2);
   assert.ok(w.k.alle(w.flaeche, 'table.skytale-raster td.fuell').every((c) => c.getAttribute('title') === 'Füllzeichen'));
   assert.match(w.text('.skytale-zeilen-hinweis'), /Buchstaben unverändert: ✓/);
   w.k.taste(w.k.eins(w.flaeche, '.labor-zahl [role="spinbutton"]'), 'ArrowUp');
-  assert.equal(w.zustand().ausgabe, K.skytale('wir halten den pass', 4));
+  assert.equal(w.zustand().ausgabe, K.skytale('wir zaehlen kerzen', 4));
   w.k.klick(w.k.eins(w.flaeche, '.labor-zahl .zahl-minus'));
   assert.equal(w.zustand().umfang, 3, 'Stab dünner = −1');
   assert.equal(w.k.eins(w.flaeche, '.labor-zahl .zahl-minus').getAttribute('aria-label'), 'Stab dünner (u − 1)');
@@ -27,21 +30,21 @@ test('Skytale: Entschlüsseln mit unpassender Länge → Hinweis; alle Stäbe au
   const w = oeffne('skytale', { voreinstellung: { text: 'ABCDE ABCDE ABCDE ABCDE ABCDE', umfang: 4, richtung: 'ent' } });
   assert.match(w.text('.labor-hinweis'), /Länge 25 passt nicht zu u = 4/);
   assert.equal(w.zustand().ausgabe, '');
-  const v = oeffne('skytale', { voreinstellung: { text: 'WTPIE ARNSH DSAEX LNX', richtung: 'ent', umfang: 2 } });
+  const v = oeffne('skytale', { voreinstellung: { text: K.gruppieren(GEHEIM), richtung: 'ent', umfang: 2 } });
   v.k.klick(v.k.eins(v.flaeche, 'details.alle-staebe > summary'));
   const zeilen = v.k.alle(v.flaeche, '.alle-schluessel tr[data-schluessel]');
   assert.deepEqual(zeilen.map((z) => z.dataset.schluessel), ['2', '3', '4', '5', '6', '7', '8', '9', '10']);
-  assert.equal(v.k.text(zeilen[1].querySelector('td.ergebnis')).replace(/\s/g, ''), K.klein(K.skytale('WTPIEARNSHDSAEXLNX', 3, 'ent', { fuellzeichen: null })).slice(0, 20));
+  assert.equal(v.k.text(zeilen[1].querySelector('td.ergebnis')).replace(/\s/g, ''), K.klein(K.skytale(GEHEIM, 3, 'ent', { fuellzeichen: null })).slice(0, 20));
   assert.equal(v.k.alle(v.flaeche, '.richtig, [data-richtig]').length, 0);
   v.k.taste(v.k.eins(v.flaeche, '.labor-zahl [role="spinbutton"]'), 'ArrowUp');
-  assert.equal(v.zustand().ausgabe, K.skytale('WTPIEARNSHDSAEXLNX', 3, 'ent'));
+  assert.equal(v.zustand().ausgabe, K.skytale(GEHEIM, 3, 'ent'));
   v.k.klick(v.k.eins(v.flaeche, 'button.stab-abwickeln'));
-  assert.equal(v.ohneLeer('.station-baender output.klar'), K.klein(K.skytale('WTPIEARNSHDSAEXLNX', 3, 'ent')));
+  assert.equal(v.ohneLeer('.station-baender output.klar'), K.klein(K.skytale(GEHEIM, 3, 'ent')));
   assert.match(v.text('.skytale-info'), /s = 18 : 3 = 6/);
 });
 
 test('Skytale: Nachspiel schreibt Zeichen für Zeichen und liest Spalte für Spalte', () => {
-  const w = oeffne('skytale', { voreinstellung: { text: 'wir halten den pass', umfang: 3 } });
+  const w = oeffne('skytale', { voreinstellung: { text: 'wir zaehlen kerzen', umfang: 3 } });
   w.k.klick(w.k.eins(w.flaeche, 'button.station-nachspielen'));
   const leiste = w.k.eins(w.flaeche, '.nachspiel');
   assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-zaehler')), /von 24/, '18 Zeichen schreiben + 6 Spalten lesen');
@@ -121,9 +124,9 @@ test('Skytale & Gitter: Beispiel-Schablone gültig, Standardtext, keine Anfragen
 test('Ring (W6): Lesereihenfolge, nie gelesene Felder, Ausgabe = Krypto.ring; nur ab Welt 6', () => {
   const ohne = oeffne('skytale', { umgebung: { welten: [0, 1, 2] } });
   assert.equal(ohne.k.alle(ohne.flaeche, '[role="tab"][data-reiter="ring"]').length, 0);
-  const w = oeffne('skytale', { voreinstellung: { reiter: ['ring'], text: 'ZEITMASC', t: 5 } });
-  assert.match(w.text('ol.ring-folge'), /0\s*5\s*2\s*7\s*4\s*1\s*6\s*3/);
-  assert.equal(w.ohneLeer('output.labor-ausgabe'), 'ZAICMEST');
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['ring'], text: 'GLOCKENS', t: 3 } });
+  assert.match(w.text('ol.ring-folge'), /0\s*3\s*6\s*1\s*4\s*7\s*2\s*5/);
+  assert.equal(w.ohneLeer('output.labor-ausgabe'), K.ring('GLOCKENS', 3));
   w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'Home'); // t = 1
   w.k.taste(w.k.alle(w.flaeche, '.labor-zahl [role="spinbutton"]')[1], 'ArrowUp'); // t = 2
   assert.deepEqual(w.k.alle(w.flaeche, 'svg.skytale-ring .nie').map((x) => x.dataset.feld), ['1', '3', '5', '7']);
@@ -175,7 +178,7 @@ test('Skytale: Stabwahl, Stempeln, Abwickeln = Krypto.skytale', async () => {
 
 test('Skytale: Entschlüsseln – Geheimtext stempeln, aufwickeln und entlang des Stabs lesen', async () => {
   const w = oeffne('skytale', { voreinstellung: { richtung: 'ent', umfang: 3 } });
-  const geheim = K.skytale('wir halten den pass', 3);
+  const geheim = K.skytale('wir zaehlen kerzen', 3);
   stempeln(w, geheim);
   w.k.klick(w.k.eins(w.flaeche, 'button.stab-abwickeln'));
   await w.k.ruhe();
@@ -204,7 +207,7 @@ test('Skytale: ruhig ohne animate, nachspiel_sperrt_handgriffe', async () => {
   await w.k.ruhe();
   assert.equal(w.k.animiert.length, 0);
   assert.equal(w.ohneLeer('.station-baender output.geheim'), K.skytale('ruhe', 3));
-  const v = oeffne('skytale', { voreinstellung: { text: 'wir halten den pass', umfang: 3 } });
+  const v = oeffne('skytale', { voreinstellung: { text: 'wir zaehlen kerzen', umfang: 3 } });
   v.k.klick(v.k.eins(v.flaeche, 'button.station-nachspielen'));
   v.k.klick(v.k.eins(v.flaeche, '.nachspiel .nachspiel-abspielen'));
   assert.ok(v.k.alle(v.flaeche, 'button.station-stempel').every((b) => b.disabled), 'Stempel gesperrt');
@@ -213,7 +216,7 @@ test('Skytale: ruhig ohne animate, nachspiel_sperrt_handgriffe', async () => {
   assert.ok(v.k.alle(v.flaeche, 'button.station-stempel').every((b) => b.disabled), 'gesperrt, bis das Nachspiel beendet ist');
   v.k.klick(v.k.eins(v.flaeche, 'button.station-nachspiel-ende'));
   assert.ok(v.k.alle(v.flaeche, 'button.station-stempel').every((b) => !b.disabled));
-  assert.equal(v.zustand().text, 'wir halten den pass', 'Nachricht unverändert');
+  assert.equal(v.zustand().text, 'wir zaehlen kerzen', 'Nachricht unverändert');
 });
 
 test('Pflügen: Breite, Reihenfolge, Ausgabe', async () => {

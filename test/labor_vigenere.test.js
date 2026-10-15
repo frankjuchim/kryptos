@@ -74,12 +74,13 @@ test('Autokey-Entschlüsseln: Nachspiel baut den Strom Zeichen für Zeichen auf'
 test('Pendel und frei nur ab Welt 6; Pendel = Vigenère mit der Pendelfolge (W6)', () => {
   const ohne = oeffne('vigenere', { voreinstellung: { reiter: ['verschluesseln'] }, umgebung: { welten: [0, 1, 2] } });
   assert.deepEqual(ohne.k.alle(ohne.flaeche, '.vg-modus [data-modus]').map((b) => b.dataset.modus), ['vigenere', 'autokey', 'porta']);
-  const w = oeffne('vigenere', { voreinstellung: { reiter: ['verschluesseln'], modus: 'pendel', text: 'ZAICMESTHRNIFIEE' } });
-  w.k.tippe(w.k.eins(w.flaeche, 'input.vg-schluessel'), 'SAND');
-  assert.equal(w.ohneLeer('output.labor-ausgabe'), 'RAVFZEKTUUAIXIRH');
-  assert.match(w.text('.vg-pendel'), /SANDNA.*2L − 2 = 6/s);
+  // M11: eigene Werte (SAND und der Zwischentext aus W6 sind Aufgabenwerte – der Erkenner schaltete in den geführten Modus)
+  const w = oeffne('vigenere', { voreinstellung: { reiter: ['verschluesseln'], modus: 'pendel', text: 'GLOCKENTURMUHREN' } });
+  w.k.tippe(w.k.eins(w.flaeche, 'input.vg-schluessel'), 'MOND');
+  assert.equal(w.ohneLeer('output.labor-ausgabe'), K.vigenere('GLOCKENTURMUHREN', K.pendelFolge('MOND')));
+  assert.match(w.text('.vg-pendel'), /MONDNO.*2L − 2 = 6/s);
   w.k.klick(w.k.eins(w.flaeche, '.vg-modus [data-modus="frei"]'));
-  assert.equal(w.ohneLeer('output.labor-ausgabe'), K.vigenere('ZAICMESTHRNIFIEE', 'SAND'));
+  assert.equal(w.ohneLeer('output.labor-ausgabe'), K.vigenere('GLOCKENTURMUHREN', 'MOND'));
 });
 
 test('Reiter-Einschränkung aus der Level-Voreinstellung (Level 2.1, E70)', () => {

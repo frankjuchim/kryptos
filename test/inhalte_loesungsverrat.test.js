@@ -540,11 +540,13 @@ test('K10: Werkzeug-Karten im Level rechnen keine Lösung der Level-Aufgaben vor
   assert.ok(geprueft >= 10, `geprüfte Eingaben: ${geprueft}`);
 });
 
-test('K10 frei (M10-Review Fund 1): im freien Kryptolabor rechnet „Polybios & Playfair“ keine Lösung einer Aufgabe vor – Aufgaben-Schlüsselwörter gesperrt', () => {
+test('K10 frei (M10-Review Fund 1, M11 E211): im freien Kryptolabor rechnet „Polybios & Playfair“ keine Lösung einer Aufgabe vor – Aufgaben-Schlüsselwörter erkennt der Erkenner (geführter Aufbau)', () => {
   const quelle = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'quadrat.js'), 'utf8');
   const pfWort = /playfair:\s*'([A-Z]+)'/.exec(quelle)[1];
-  const gesperrt = new Set(require('../werkzeuge/krypto/quadrat_sperre.js').gespeichert(quelle).map((k) => Krypto.quadrat(k).join('')));
-  const frei = (w) => { try { return !gesperrt.has(Krypto.quadrat(w).join('')); } catch { return false; } };
+  const E = require('../public/static/js/krypto/labor/erkenner.js');
+  new Function('KRErkenner', fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'erkenner', 'quadrat.js'), 'utf8'))(E);
+  const { quadratSchluessel } = require('../werkzeuge/krypto/erkenner_bauen.js');
+  const frei = (w) => { try { Krypto.quadrat(w); } catch { return false; } return !['quadrat.polybios', 'quadrat.playfair'].some((wr) => E.erkannt(wr, { schluessel: [quadratSchluessel(w)] }, { rolle: 'schueler' })); };
   const norm = (t) => String(t).toUpperCase().replace(/[^A-Z0-9]/g, '');
   const versuche = (f) => { try { return f(); } catch { return null; } };
   let geprueft = 0;
@@ -574,7 +576,7 @@ test('K10 frei (M10-Review Fund 1): im freien Kryptolabor rechnet „Polybios & 
         if (felder.length) ziele.push(norm(felder.map(([, v]) => v[0]).join('')));
       }
       for (const wort of woerter) {
-        if (wort && !frei(wort)) { schluessel++; continue; } // gesperrt: das Werkzeug baut dieses Quadrat nicht
+        if (wort && !frei(wort)) { schluessel++; continue; } // erkannt: das Werkzeug baut dieses Quadrat nur geführt auf
         const ausgaben = [versuche(() => Krypto.quadrat(wort).join(''))];
         for (const x of eingaben) {
           ausgaben.push(versuche(() => Krypto.polybios(x, wort ? { schluessel: wort } : {})));
@@ -587,5 +589,5 @@ test('K10 frei (M10-Review Fund 1): im freien Kryptolabor rechnet „Polybios & 
       }
     }
   }
-  assert.ok(geprueft >= 20 && schluessel >= 6, `geprüft: ${geprueft} Eingaben, ${schluessel} gesperrte Schlüsselwörter`);
+  assert.ok(geprueft >= 20 && schluessel >= 6, `geprüft: ${geprueft} Eingaben, ${schluessel} erkannte Schlüsselwörter`);
 });

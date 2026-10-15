@@ -1,6 +1,6 @@
 {
   "name": "kryptos",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Kryptos – Die Zeitreise der Geheimschriften: Lernplattform Kryptologie (Informatik eA und gA, Niedersachsen) im Verbund InfoLabs",
   "private": true,
   "main": "src/server.js",
@@ -23,7 +23,6 @@
     "konfig:pruefen": "node src/verbund/konfig_pruefen.js",
     "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds && npm run abdeckung && node werkzeuge/krypto/erkenner_bauen.js --pruefen",
     "labor:bilder": "node werkzeuge/material/labor_bilder.js",
-    "labor:sperre": "node werkzeuge/krypto/quadrat_sperre.js",
     "labor:erkenner": "node werkzeuge/krypto/erkenner_bauen.js"
   },
   "engines": {

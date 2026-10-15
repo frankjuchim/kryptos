@@ -17,37 +17,41 @@ const text0 = (z) => (z.eingaben.texte || [])[0] || '';
 
 /** Voreinstellung je Reiter aus einem Modell-Zustand; danach optional nach(w) für Eingaben ohne Voreinstellung */
 const VOR = {
-  'scheibe.scheibe': (z) => ({ v: { reiter: ['scheibe'], k: zahlP(z, 'k'), richtung: richtungVon(z) }, nach: (w) => w.k.tippe(w.k.eins(w.flaeche, '.scheibe-tippen textarea'), K.klein(text0(z))) }),
+  'scheibe.scheibe': (z) => ({ v: { reiter: ['scheibe'], k: zahlP(z, 'k'), richtung: richtungVon(z) }, nach: (w) => { const f = w.k.alle(w.flaeche, '.scheibe-tippen textarea')[0]; if (f) w.k.tippe(f, K.klein(text0(z))); } }),
   'scheibe.text': (z) => ({ v: { reiter: ['text'], text: text0(z), k: zahlP(z, 'k'), richtung: richtungVon(z) } }),
   'scheibe.alle': (z) => ({ v: { reiter: ['alle'], text: text0(z) } }),
   'skytale.skytale': (z) => ({
     v: { reiter: ['skytale'], text: text0(z), umfang: zahlP(z, 'u') ?? 3, richtung: z.bedienung === 'alle Stäbe' ? 'ent' : richtungVon(z) },
     // Verschlüsseln: das Band abwickeln, dann steht der Geheimtext auf dem Band (Werkstatt-Bedienung)
-    nach: (w) => { const b = w.k.eins(w.flaeche, '.stab-abwickeln'); if (b && !b.disabled) w.k.klick(b); }
+    nach: (w) => { const b = w.k.alle(w.flaeche, '.stab-abwickeln')[0]; if (b && !b.disabled) w.k.klick(b); }
   }),
   'skytale.gartenzaun': (z) => ({ v: { reiter: ['gartenzaun'], text: text0(z), zeilen: zahlP(z, 'n'), richtung: richtungVon(z) } }),
   'skytale.pfluegen': (z) => ({
     v: { reiter: ['pfluegen'], text: text0(z), k: zahlP(z, 'k') ?? 5, richtung: z.bedienung === 'alle Zeilenlängen' ? 'ent' : richtungVon(z) },
-    nach: (w) => { const b = w.k.eins(w.flaeche, '.pflug-pfluegen'); if (b && !b.disabled) w.k.klick(b); }
+    nach: (w) => { const b = w.k.alle(w.flaeche, '.pflug-pfluegen')[0]; if (b && !b.disabled) w.k.klick(b); }
   }),
   'skytale.ring': (z) => ({ v: { reiter: ['ring'], text: text0(z), t: zahlP(z, 't'), richtung: richtungVon(z) } }),
   'skytale.fleissner': (z) => {
     const l = param(z, 'loch').split(';').map((p) => p.split(',').map(Number));
     return {
       v: { reiter: ['fleissner'], text: text0(z), schablone: l, groesse: Math.max(...l.flat()) <= 4 ? 4 : 6, richtung: richtungVon(z) },
-      nach: (w) => { const b = w.k.eins(w.flaeche, '.karton-abheben'); if (b && !b.disabled) w.k.klick(b); }
+      nach: (w) => { const b = w.k.alle(w.flaeche, '.karton-abheben')[0]; if (b && !b.disabled) w.k.klick(b); }
     };
   },
   'quadrat.polybios': (z) => ({ v: { reiter: ['polybios'], text: text0(z), richtung: richtungVon(z), ...(wort(z) ? { schluesselwort: wort(z) } : {}) } }),
   'quadrat.playfair': (z) => ({ v: { reiter: ['playfair'], text: text0(z), richtung: richtungVon(z), ...(wort(z) ? { schluesselwort: wort(z) } : {}) } }),
   'vigenere.verschluesseln': (z) => ({
     v: { reiter: ['verschluesseln'], text: text0(z), modus: z.bedienung.split(' ')[0], richtung: richtungVon(z) },
-    nach: (w) => w.k.tippe(w.k.eins(w.flaeche, 'input.vg-schluessel'), wort(z) || '')
+    nach: (w) => { const f = w.k.alle(w.flaeche, 'input.vg-schluessel')[0]; if (f) w.k.tippe(f, wort(z) || ''); }
   }),
   'vigenere.teiltexte': (z) => ({ v: { reiter: ['teiltexte'], text: text0(z), schluessellaenge: zahlP(z, 'k') } }),
   'vigenere.kasiski': (z) => ({ v: { reiter: ['kasiski'], text: text0(z) } }),
+  'vigenere.koinzidenz': (z) => ({ v: { reiter: ['koinzidenz'], text: text0(z) } }),
+  'vigenere.verschiebung': (z) => ({ v: { reiter: ['verschiebung'], text: text0(z), schluessellaenge: zahlP(z, 'k') } }),
+  'vigenere.korrektur': (z) => (wort(z) ? null : { v: { reiter: ['korrektur'], text: text0(z), schluessellaenge: zahlP(z, 'k') } }),
+  'haeufigkeit.kennzahlen': (z) => ({ v: { reiter: ['kennzahlen'], text: text0(z) } }),
   'haeufigkeit.teiltexte': (z) => ({ v: { reiter: ['teiltexte'], text: text0(z), teiltexte: zahlP(z, 'k') } }),
-  'runden.enigma': (z) => ({ v: { reiter: ['enigma'], stellung: param(z, 'st') }, nach: (w) => w.k.tippe(w.k.eins(w.flaeche, '.labor-textfeld textarea'), K.klein(text0(z))) }),
+  'runden.enigma': (z) => ({ v: { reiter: ['enigma'], stellung: param(z, 'st') }, nach: (w) => { const f = w.k.alle(w.flaeche, '.labor-textfeld textarea')[0]; if (f) w.k.tippe(f, K.klein(text0(z))); } }),
   'hash.schritte': (z) => ({ v: { reiter: ['schritte'], text: K.klein(text0(z)) } }),
   'bitlupe.xor': (z) => {
     const [a, b] = [z.eingaben.bitpaare.map((p) => p[0]).join(''), z.eingaben.bitpaare.map((p) => p[1]).join('')];
@@ -60,7 +64,9 @@ function bediene(wr, z, { umgebung = {}, ruhig = true } = {}) {
   const [id] = wr.split('.');
   const f = VOR[wr];
   if (!f) throw new Error(`Kein Bediener für ${wr}`);
-  const { v, nach } = f(z);
+  const r = f(z);
+  if (!r) throw new Error(`Zustand nicht bedienbar: ${wr} ${z.bedienung}`);
+  const { v, nach } = r;
   for (const k of Object.keys(v)) if (v[k] === undefined) delete v[k];
   const w = oeffne(id, { voreinstellung: v, umgebung, ruhig });
   if (nach) nach(w);
@@ -103,4 +109,13 @@ const FAELLE = {
   'bitlupe.xor': [{ angaben: A({ texte: ['OK'], bits: ['10100110'], bitfolgen: ['1010011001011010'] }), passt: (z) => z.bedienung === 'XOR otp' && z.eingaben.bitpaare[0][0] === '01001111' }]
 };
 
-module.exports = { bediene, gehe, trage, FAELLE, VOR };
+/** Lässt sich der Zustand über Voreinstellung/Felder eingeben? */
+const kannBedienen = (wr, z) => {
+  try {
+    return !!(VOR[wr] && VOR[wr](z));
+  } catch {
+    return false;
+  }
+};
+
+module.exports = { bediene, gehe, trage, FAELLE, VOR, kannBedienen };

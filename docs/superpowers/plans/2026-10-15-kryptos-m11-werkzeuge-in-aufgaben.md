@@ -658,7 +658,7 @@ test('tastatur_schritte', () => { /* ←/→ wechseln den Schritt, Fokus bleibt 
 **Interfaces:**
 - Consumes: Hook-Vertrag E207, `KRLaborBau.erkenne`, Bediener (243).
 
-- [ ] **Step 1: Failing tests** (K12, je Werkzeug): `k12_<id>_gefuehrt_ohne_loesung` (für jeden Prüfling, den der Erkenner
+- [x] **Step 1: Failing tests** (K12, je Werkzeug): `k12_<id>_gefuehrt_ohne_loesung` (für jeden Prüfling, den der Erkenner
   für dieses Werkzeug kennt: echtes Modul mit Schüler-Umgebung öffnen, Aufgabenwerte eingeben → Modus `gefuehrt`; alle
   Schritte ohne Einträge, mit Zufallseinträgen und – je Schritt – mit allen Werten des Alphabets bzw. 0/1 durchlaufen; der
   normalisierte Text der ganzen Fläche inkl. Attributen enthält keinen Lösungswert (E225), außer `AUSNAHMEN`);
@@ -668,10 +668,10 @@ test('tastatur_schritte', () => { /* ←/→ wechseln den Schritt, Fokus bleibt 
   `quadrat_gesperrtes_wort_wird_gefuehrt` (KORINTH → geführter Aufbau, nicht Meldung „gesperrt“);
   `eigene_werte_frei` (eigene Texte rechnen wie bisher, bestehende Labor-Tests unverändert grün);
   `brute_force_liste_w0_l2_04` (Ausnahme: `alle` mit `BLIZV …` zeigt 25 Zeilen).
-- [ ] **Step 2:** FAIL. **Step 3:** Hooks und Umschalten in den Modulen; Mechanik nach E208.
-- [ ] **Step 4:** `npm run pruefen` grün; Browser `/labor#/scheibe`, `#/skytale`, `#/quadrat`, `#/vigenere` mit Aufgaben- und
+- [x] **Step 2:** FAIL. **Step 3:** Hooks und Umschalten in den Modulen; Mechanik nach E208.
+- [x] **Step 4:** `npm run pruefen` grün; Browser `/labor#/scheibe`, `#/skytale`, `#/quadrat`, `#/vigenere` mit Aufgaben- und
   eigenen Werten (360/1280 px, hell/dunkel, reduzierte Bewegung, Tastatur).
-- [ ] **Step 5: Commit** `M11: Geführter Modus in Scheibe, Skytale & Gitter, Polybios & Playfair, Vigenère und Häufigkeit (Task 244)`
+- [x] **Step 5: Commit** `M11: Geführter Modus in Scheibe, Skytale & Gitter, Polybios & Playfair, Vigenère und Häufigkeit (Task 244)`
 
 ### Task 245: Geführter Modus II – Bit-Lupe, Runden-Labor, Modulo-Uhr, RSA, Hash; nicht verfügbare Reiter; Baukasten (E208, E209)
 

@@ -899,7 +899,7 @@ mark.markiert.wiederholung { font-weight: 700; }
 .gefuehrt-titel::before { content: "⇢ "; color: var(--akzent); }
 .gefuehrt-hinweis, .gefuehrt-zaehler, .gefuehrt-fazit { margin: 0; }
 .gefuehrt-zaehler { font-weight: 700; overflow-wrap: anywhere; }
-.gefuehrt-mechanik { display: grid; gap: var(--a-2); min-width: 0; overflow-x: auto; }
+.gefuehrt-mechanik { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-2); min-width: 0; overflow-x: auto; }
 .gefuehrt-eingabe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
 .gefuehrt-eintrag-feld {
   min-height: var(--ziel);
@@ -938,5 +938,16 @@ mark.markiert.wiederholung { font-weight: 700; }
 .gefuehrt-mechanik .gefuehrt-markiert { outline: 3px solid var(--akzent); outline-offset: -2px; font-weight: 700; }
 .gefuehrt-mechanik .gefuehrt-markiert::after { content: " ◆"; font-size: .7em; }
 .gefuehrt-mechanik .gefuehrt-eintrag { font-family: var(--f-mono); }
+.gefuehrt-tabellen-titel { margin: 0 0 var(--a-1); font-weight: 700; overflow-wrap: anywhere; }
 .gefuehrt-tabelle td, .gefuehrt-tabelle th { min-width: 2.2em; text-align: center; }
 .labor-nicht-verfuegbar { margin: var(--a-2) 0; }
+/* geführter Aufbau eines Quadrats (Polybios & Playfair, M11 Task 244) */
+.quadrat-wort-streifen .gefuehrt-zelle { display: inline-block; min-width: 1.6em; padding: 0 2px; text-align: center; font-family: var(--f-mono); }
+.quadrat-rest { overflow-wrap: anywhere; }
+.quadrat-rest-zeichen { display: inline-block; min-width: 1.2em; font-family: var(--f-mono); text-align: center; }
+.quadrat-rest-zeichen.benutzt { text-decoration: line-through; color: var(--text-2); }
+.scheibe-gefuehrt { display: grid; gap: var(--a-2); justify-items: center; }
+.scheibe-gefuehrt .scheibe { width: min(320px, 100%); }
+.gefuehrt-band { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
+.gefuehrt-band-titel { font-family: var(--f-text); font-weight: 700; }
+.gefuehrt-leiste td, .gefuehrt-leiste th { min-width: 1.8em; }

@@ -330,5 +330,16 @@ const KRLaborBau = (() => {
     return 'nicht-verfuegbar';
   }
 
-  return { reiter, textfeld, zahl, richtung, ausgabe, ansager, hinweis, tabelle, details, neueId, erkenne, NICHT_VERFUEGBAR };
+  /** Erstes Textfeld in ort fokussieren, Schreibmarke ans Ende (aufgeklappte details) – nach dem Umschalten weitertippen */
+  function fokusAmEnde(ort) {
+    const f = ort && (ort.querySelector('section.gefuehrt textarea.labor-eingabe') || ort.querySelector('textarea.labor-eingabe, input.labor-eingabe'));
+    if (!f) return false;
+    for (let el = f.parentNode; el && el !== ort; el = el.parentNode) if (el.localName === 'details') el.open = true;
+    f.focus();
+    const n = String(f.value).length;
+    if (typeof f.setSelectionRange === 'function') f.setSelectionRange(n, n);
+    return true;
+  }
+
+  return { reiter, textfeld, zahl, richtung, ausgabe, ansager, hinweis, tabelle, details, neueId, erkenne, fokusAmEnde, NICHT_VERFUEGBAR };
 })();

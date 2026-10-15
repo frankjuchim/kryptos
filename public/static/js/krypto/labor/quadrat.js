@@ -13,11 +13,8 @@
   const B = KRLaborBau;
   const S = KRStation;
   const BEISPIEL = { playfair: 'LEUCHTFEUER' }; // eigenes Schlüsselwort, in keinem Material
-  // Schlüsselwörter aus Aufgaben, Akten, Bossen, Warm-up und Videos (M10-Review Fund 1): Für Lernende baut das Werkzeug
-  // diese Quadrate nicht – sonst rechnete es Lösungen vor. Vergleich über das Quadrat (gleiches Quadrat = gesperrt).
-  // SPERRLISTE-START (erzeugt: node werkzeuge/krypto/quadrat_sperre.js – nicht von Hand ändern)
-  const GESPERRT = 'ATHEN BAD BAUM BCD BOTE BRIEFTAU CDE CEDF DAEC DAME DOGE DSCHIN EIS FERNSCHIB FUNKE GALER GONDEL HAND HELM KADI KAI KALIF KARL KOLBE KOMPAS KORINTH KRYPTOS LAGUNE LUN MURANO NEBL OHR PAYRUS PORT RAT RIALTO RIO RIV ROS ROSE ROT SCHERAZD SIEGL SMARGD SULTAN TAG TAL TAU THEBN TOR TURM VEL WACHS WOLF WUESTNID XOR YASMIN ZEDR ZEIL ZEIT ZEPLIN ZIFER ZUG ZUGVOEL'.split(' ');
-  // SPERRLISTE-ENDE
+  // M11 (E211): Die frühere Sperrliste D17 steckt jetzt in den Erkenner-Daten (labor/erkenner/quadrat.js). Ein Quadrat
+  // aus einer Aufgabe baut das Werkzeug geführt auf (die Lernenden tragen die Felder ein), statt es fertig zu zeigen.
   const REITER_TITEL = { polybios: 'Polybios', playfair: 'Playfair' };
   const MAX = 120; // Buchstaben je Nachricht
   const REGELN = {
@@ -38,16 +35,23 @@
     }
   }
 
-  let gesperrteQuadrate = null;
-  /** Ergibt das Wort ein Quadrat aus der Sperrliste? (nur über Krypto.quadrat; Lehrkraft: nie) */
-  function istGesperrt(wort, umgebung) {
-    if ((umgebung || {}).rolle === 'lehrkraft' || !wort) return false;
-    if (!gesperrteQuadrate) gesperrteQuadrate = new Set(GESPERRT.filter(Boolean).map((k) => Krypto.quadrat(k).join('')));
+  /** kürzestes Schlüsselwort desselben Quadrats (gleiches Quadrat = gleiche Signatur, D17) – nur über Krypto.quadrat */
+  function kuerzester(wort) {
+    if (!wort) return '';
+    let q;
     try {
-      return gesperrteQuadrate.has(Krypto.quadrat(wort).join(''));
+      q = Krypto.quadrat(wort).join('');
     } catch {
-      return false;
+      return wort;
     }
+    for (let n = 0; n <= 25; n++) {
+      try {
+        if (Krypto.quadrat(q.slice(0, n)).join('') === q) return q.slice(0, n);
+      } catch {
+        /* weiter */
+      }
+    }
+    return wort;
   }
 
   function oeffne(container, voreinstellung, umgebung) {
@@ -55,7 +59,7 @@
     const reiterListe = KRLabor.reiterFuer('quadrat', v, umgebung);
     const wortFrei = KRLabor.erlaubt('quadrat.schluesselwort', umgebung); // im Level 0.4/2.4 fest (L55)
     const vorRoh = wortFrei ? wortVon(v.schluesselwort) : null;
-    const vorWort = vorRoh && !istGesperrt(vorRoh, umgebung) ? vorRoh : null;
+    const vorWort = vorRoh || null;
     const vorRichtung = v.richtung === 'ent' ? 'ent' : 'ver';
     const stand = {
       polybios: { richtung: vorRichtung, wort: vorWort || '', liste: [] },
@@ -64,6 +68,17 @@
     const vorText = typeof v.text === 'string' ? v.text.slice(0, 200) : '';
     let gesperrt = false;
     let teil = null; // aktueller Reiter-Aufbau { schliesse, zustand }
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
+    /** Aufgabenwerte (Text, Schlüsselwort) erkannt? → geführter Modus und true */
+    function erkenne(id, text, ort) {
+      const z = stand[id];
+      const e = { texte: text ? [text] : [], schluessel: z.wort ? [kuerzester(z.wort)] : [] };
+      return B.erkenne(ort, `quadrat.${id}`, e, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt(id, { text: text || '', schluesselwort: z.wort, richtung: z.richtung }) : null }) !== 'frei';
+    }
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     const wurzel = h('div', { class: 'labor-werkzeug quadrat-werkzeug' }, r.element);
@@ -198,10 +213,6 @@
           hinweis.textContent = 'Mindestens 3 Buchstaben – ohne Schlüsselwort gäbe es kein Geheimnis.';
           return;
         }
-        if (istGesperrt(entwurf, umgebung)) {
-          hinweis.textContent = 'Dieses Schlüsselwort kann das Kryptolabor nicht verwenden. Denk dir ein eigenes aus.';
-          return;
-        }
         schliesse();
         beiNeu(entwurf);
       });
@@ -244,6 +255,8 @@
     function schliesseTeil() {
       if (teil) teil.schliesse();
       teil = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gefuehrt = null;
       gesperrt = false;
       S.sperre(r.flaeche, false);
     }
@@ -282,6 +295,7 @@
         standard: true,
         beiNeu: (w) => {
           z.wort = w;
+          if (erkenne('polybios', '', null)) return;
           zeichneBrett(true);
           erklaerung.sage(w ? 'Neues Quadrat' : 'Standardquadrat', w ? `Erst kommen die Buchstaben von ${w} (ohne Doppelte), dann der Rest des Alphabets.` : 'Das Quadrat ist wieder alphabetisch geordnet – das kennt jeder.');
         }
@@ -417,6 +431,7 @@
       function schreibe(b, von) {
         if (z.liste.length >= MAX) return;
         const [ein, aus] = eintrag(b);
+        if (erkenne('polybios', `${baender.text(0)}${ein}`, null)) return;
         baender.push(ein, aus);
         feld.setze(baender.text(0));
         const [zl, sp] = lage(br, b);
@@ -447,6 +462,7 @@
       function aufTippen(t) {
         if (gesperrt) return;
         offeneZeile = 0;
+        if (erkenne('polybios', t, null)) return;
         if (z.richtung === 'ver') {
           baender.setze([...Krypto.nurBuchstaben(t)].slice(0, MAX).map((b) => eintrag(b === 'J' ? 'I' : b)));
           return;
@@ -492,10 +508,14 @@
       });
 
       beschriften();
+      if (erkenne('polybios', naechsterText !== null ? naechsterText : z.liste.length ? baender.text(0) : ohneVorText ? '' : vorText, null)) return { schliesse() {}, zustand: () => ({ paar: null, regel: null }) };
       zeichneBrett(false);
       bereit = true;
       baender.setze(z.liste);
-      if (!z.liste.length && vorText && r.aktiv() === reiterListe[0]) {
+      if (naechsterText !== null) {
+        feld.setze(naechsterText);
+        aufTippen(naechsterText);
+      } else if (!z.liste.length && vorText && !ohneVorText && r.aktiv() === reiterListe[0]) {
         feld.setze(vorText);
         aufTippen(vorText);
       }
@@ -504,6 +524,10 @@
         schliesse() {
           klopfLauf += 1;
           nk.schliesse();
+        },
+        tippe(t) {
+          feld.setze(t);
+          aufTippen(t);
         },
         zustand: () => ({ paar: null, regel: null })
       };
@@ -540,6 +564,7 @@
         standard: false,
         beiNeu: (w) => {
           z.wort = w;
+          if (erkenne('playfair', '', null)) return;
           zeichneBrett(true);
           erklaerung.sage('Neues Schlüsselquadrat', `Erst kommen die Buchstaben von ${w} (ohne Doppelte, J als I), dann der Rest des Alphabets.`);
         }
@@ -676,6 +701,7 @@
       function fuehreAus(st, notiz, eingefuegt, von) {
         if (z.liste.length >= MAX) return;
         const e = eintrag(st, eingefuegt);
+        if (erkenne('playfair', `${baender.text(0)}${e[0]}`, null)) return;
         z.liste.push(e);
         baender.push(e[0], e[1]);
         feld.setze('');
@@ -770,6 +796,7 @@
           baender.leeren();
           return;
         }
+        if (erkenne('playfair', t, null)) return;
         try {
           const schritte = Krypto.playfairSchritte(t, z.wort, z.richtung).slice(0, MAX);
           const roh = Krypto.nurBuchstaben(t).replace(/J/g, 'I');
@@ -800,10 +827,14 @@
       }
 
       beschriften();
+      if (erkenne('playfair', naechsterText !== null ? naechsterText : z.liste.length ? baender.text(0) : ohneVorText ? '' : vorText, null)) return { schliesse() {}, zustand: () => ({ paar: null, regel: null }) };
       zeichneBrett(false);
       bereit = true;
       baender.setze(z.liste.map((e) => [e[0], e[1]]));
-      if (!z.liste.length && vorText && r.aktiv() === reiterListe[0]) {
+      if (naechsterText !== null) {
+        feld.setze(naechsterText);
+        aufTippen(naechsterText);
+      } else if (!z.liste.length && vorText && !ohneVorText && r.aktiv() === reiterListe[0]) {
         feld.setze(vorText);
         aufTippen(vorText);
       }
@@ -811,6 +842,10 @@
       return {
         schliesse() {
           nk.schliesse();
+        },
+        tippe(t) {
+          feld.setze(t);
+          aufTippen(t);
         },
         zustand() {
           const letzte = z.liste.length ? z.liste[z.liste.length - 1].schritt : null;
@@ -820,9 +855,166 @@
       };
     }
 
-    function baue(id) {
+    /* ---------- Geführter Modus (M11 Task 244, E208): Quadrat geführt aufbauen, aktueller Buchstabe bzw. aktuelles Paar ---------- */
+
+    const OHNE_J = [...Krypto.ALPHABET].filter((b) => b !== 'J');
+    /** Aufbau-Schritte eines Schlüsselquadrats: Schlüsselwort-Streifen (nächster Buchstabe markiert), Felder aus Einträgen */
+    function aufbau(container, wort) {
+      const eindeutig = [...new Set(Krypto.nurBuchstaben(wort).replace(/J/g, 'I'))];
+      const streifen = eindeutig.map((b) => h('span', { class: 'quadrat-wort-zeichen gefuehrt-zelle' }, b));
+      container.appendChild(h('p', { class: 'quadrat-wort-streifen' }, h('span', { class: 'quadrat-feldtitel' }, 'Schlüsselwort ohne Doppelte (J = I): '), streifen));
+      const rest = OHNE_J.map((b) => h('span', { class: 'quadrat-rest-zeichen' }, b));
+      // gestrichen wird aus deinen Einträgen (Klasse gefuehrt-eintrag: Darstellung der Einträge, kein Urteil)
+      container.appendChild(h('p', { class: 'quadrat-rest' }, h('span', { class: 'quadrat-feldtitel' }, 'Dann der Rest des Alphabets (ohne J) – deine benutzten Buchstaben sind gestrichen: '), h('span', { class: 'gefuehrt-eintrag quadrat-rest-liste' }, rest)));
+      const schritte = OHNE_J.map((_, i) => ({ text: i < eindeutig.length ? `Feld ${i + 1} (Zeile ${Krypto.teileMitRest(i, 5).q + 1}, Spalte ${Krypto.teileMitRest(i, 5).r + 1}): nächster Buchstabe des Schlüsselworts` : `Feld ${i + 1} (Zeile ${Krypto.teileMitRest(i, 5).q + 1}, Spalte ${Krypto.teileMitRest(i, 5).r + 1}): nächster noch nicht benutzter Buchstabe`, feld: { beschriftung: 'Buchstabe für das Feld', art: 'buchstabe' } }));
+      return {
+        schritte,
+        markiere(i, eintraege) {
+          streifen.forEach((sp, j) => sp.classList.toggle('gefuehrt-markiert', j === i));
+          const benutzt = new Set(eintraege.slice(0, 25).filter(Boolean));
+          rest.forEach((sp) => sp.classList.toggle('benutzt', benutzt.has(sp.textContent)));
+        },
+        korrekt: () => Krypto.quadrat(wort).join('').split('')
+      };
+    }
+    function polybiosHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const wort = wortVon(werte.schluesselwort) || '';
+      const auf = wort ? aufbau(container, wort) : null;
+      const n0 = auf ? 25 : 0;
+      const fest = wort ? null : Krypto.quadrat('');
+      const raster = KRGefuehrt.raster(container, { zeilen: 5, spalten: 5, caption: wort ? 'Dein Quadrat (Zeile, Spalte ab 1)' : 'Standardquadrat (Zeile, Spalte ab 1; I/J ein Feld)', inhalt: fest ? (zz, ss) => fest[zz][ss] : null });
+      const band = KRGefuehrt.band(container, ver ? 'Deine Zahlenpaare' : 'Dein Klartext');
+      const roh = String(werte.text || '');
+      const eingabe = ver ? [...Krypto.nurBuchstaben(roh).replace(/J/g, 'I')].slice(0, MAX) : (roh.replace(/[^1-5]/g, '').match(/[1-5]{2}/g) || []).slice(0, MAX);
+      const schritte = [...(auf ? auf.schritte : []), ...eingabe.map((x) => (ver ? { text: `Buchstabe ${Krypto.klein(x)}: Zeile und Spalte`, feld: { beschriftung: 'Zahlenpaar (Zeile, Spalte)', art: 'zahl' } } : { text: `Zahlenpaar ${x}: Zeile ${x[0]}, Spalte ${x[1]}`, feld: { beschriftung: 'Klartextbuchstabe', art: 'buchstabe' } }))];
+      const lageIn = (eintraege, b) => {
+        if (fest) {
+          for (let zz = 0; zz < 5; zz++) for (let ss = 0; ss < 5; ss++) if (fest[zz][ss] === b) return [zz, ss];
+          return null;
+        }
+        const j = eintraege.slice(0, 25).findIndex((x) => x === b);
+        return j >= 0 ? [Krypto.teileMitRest(j, 5).q, Krypto.teileMitRest(j, 5).r] : null;
+      };
+      return {
+        schritte,
+        markiere(i, eintraege) {
+          raster.leeren();
+          if (!fest) eintraege.slice(0, 25).forEach((x, j) => x && raster.eintrag(Krypto.teileMitRest(j, 5).q, Krypto.teileMitRest(j, 5).r, x));
+          if (auf) auf.markiere(i < 25 ? i : -1, eintraege);
+          raster.markiere([]);
+          raster.kopfMarke([], []);
+          if (i >= n0) {
+            const x = eingabe[i - n0];
+            if (ver) {
+              const l = lageIn(eintraege, x);
+              raster.markiere(l ? [l] : []);
+            } else raster.kopfMarke([Number(x[0]) - 1], [Number(x[1]) - 1]);
+          }
+          band.setze(eintraege.slice(n0).map((x) => (ver ? x : Krypto.klein(x))));
+        },
+        korrekt: () => [...(auf ? auf.korrekt() : []), ...eingabe.map((x) => (ver ? Krypto.polybios(x, wort ? { schluessel: wort } : {}) : Krypto.klein(Krypto.polybios(x, wort ? { schluessel: wort } : {}, 'ent'))))]
+      };
+    }
+    function playfairHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const wort = wortVon(werte.schluesselwort) || BEISPIEL.playfair;
+      const auf = aufbau(container, wort);
+      const raster = KRGefuehrt.raster(container, { zeilen: 5, spalten: 5, caption: 'Dein Schlüsselquadrat', zeilenKopf: () => '', spaltenKopf: () => '' });
+      const band = KRGefuehrt.band(container, ver ? 'Dein Geheimtext' : 'Dein Klartext');
+      const roh = Krypto.nurBuchstaben(String(werte.text || '')).replace(/J/g, 'I').slice(0, MAX);
+      let paare = [];
+      try {
+        paare = ver ? Krypto.playfairPaare(roh) : roh.match(/[A-Z]{2}/g) || [];
+      } catch {
+        paare = [];
+      }
+      const np = paare.length;
+      const schritte = [...auf.schritte];
+      // Verschlüsseln: Paare selbst bilden (Füllzeichen X), dann je Paar die Regel anwenden
+      if (ver) for (let j = 0; j < np; j++) schritte.push({ text: `Paar ${j + 1}: die nächsten zwei Buchstaben deiner Nachricht (gleiche trennt ein X, ein Rest bekommt ein X)`, feld: { beschriftung: 'Paar (zwei Buchstaben)', art: 'text' } });
+      for (let j = 0; j < np; j++) schritte.push({ text: ver ? `Paar ${j + 1} verschlüsseln: dein Paar aus Schritt ${25 + j + 1}` : `Geheimtextpaar ${paare[j]}`, feld: { beschriftung: ver ? 'Geheimtextpaar' : 'Klartextpaar', art: 'text' } });
+      const textLeiste = ver && roh ? KRGefuehrt.leiste(container, roh, { titel: 'Deine Nachricht (Positionen ab 0)' }) : null;
+      const lageIn = (eintraege, b) => {
+        const j = eintraege.slice(0, 25).findIndex((x) => x === b);
+        return j >= 0 ? [Krypto.teileMitRest(j, 5).q, Krypto.teileMitRest(j, 5).r] : null;
+      };
+      return {
+        schritte,
+        markiere(i, eintraege) {
+          raster.leeren();
+          eintraege.slice(0, 25).forEach((x, j) => x && raster.eintrag(Krypto.teileMitRest(j, 5).q, Krypto.teileMitRest(j, 5).r, x));
+          auf.markiere(i < 25 ? i : -1, eintraege);
+          raster.markiere([]);
+          if (textLeiste) textLeiste.markiere([]);
+          const start = ver ? 25 + np : 25;
+          if (i >= start) {
+            const j = i - start;
+            const paar = ver ? Krypto.nurBuchstaben(eintraege[25 + j] || '').replace(/J/g, 'I').slice(0, 2) : paare[j];
+            raster.markiere([...paar].map((b) => lageIn(eintraege, b)).filter(Boolean));
+          }
+          band.setze(eintraege.slice(start).map((x) => (ver ? Krypto.nurBuchstaben(x) : Krypto.klein(Krypto.nurBuchstaben(x)))));
+        },
+        korrekt() {
+          const erg = paare.map((p) => Krypto.playfairSchritte(p, wort, ver ? 'ver' : 'ent')[0].ergebnis);
+          return [...auf.korrekt(), ...(ver ? paare : []), ...erg.map((x) => (ver ? x : Krypto.klein(x)))];
+        }
+      };
+    }
+    const HOOKS = { polybios: polybiosHook, playfair: playfairHook };
+    function starteGefuehrt(id, werte) {
+      const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
+      if (teil) teil.schliesse();
+      teil = null;
+      if (gefuehrt) gefuehrt.schliesse();
+      gesperrt = false;
+      S.sperre(r.flaeche, false);
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Polybios & Playfair',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          stand.polybios.wort = '';
+          stand.playfair.wort = BEISPIEL.playfair;
+          stand[id].liste = [];
+          baue(id, { ohneText: true });
+        },
+        text: {
+          beschriftung: werte.richtung === 'ent' ? 'Geheimtext' : 'Klartext',
+          wert: werte.text || '',
+          fokus,
+          beiAenderung: (t) => {
+            fuehrung = null;
+            stand[id].liste = [];
+            naechsterText = t;
+            try {
+              baue(id, { ohneText: true });
+            } finally {
+              naechsterText = null;
+            }
+            B.fokusAmEnde(r.flaeche);
+          }
+        }
+      });
+      if (fokus && !werte.text) gefuehrt.element.querySelector('input.gefuehrt-eintrag-feld').focus();
+    }
+
+    let ohneVorText = false;
+    let naechsterText = null; // Text aus dem geführten Abschnitt (Weitertippen), solange neu gebaut wird
+    function baue(id, { ohneText = false } = {}) {
       schliesseTeil();
       AQ.clear(r.flaeche);
+      if (ohneText) ohneVorText = true;
+      if (fuehrung && mitGefuehrt && HOOKS[id]) {
+        const w = { text: vorText, schluesselwort: stand[id].wort, richtung: stand[id].richtung, ...(fuehrung.werte || {}) };
+        fuehrung = { aufgabe: fuehrung.aufgabe };
+        starteGefuehrt(id, w);
+        return;
+      }
       teil = id === 'playfair' ? bauePlayfair() : bauePolybios();
     }
     baue(r.aktiv());

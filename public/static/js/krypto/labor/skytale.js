@@ -59,6 +59,17 @@
     let beispiel = typeof v.text !== 'string';
     let teil = null; // { schliesse(), zustand() } des aktiven Reiters
     const timer = new Set();
+    // M11 (E208, E210, E214): Erkenner-Verlauf, Start im geführten Modus (Panel), laufender geführter Modus
+    const erkVerlauf = typeof KRErkenner !== 'undefined' ? KRErkenner.verlauf() : null;
+    let fuehrung = umgebung && umgebung.gefuehrt && typeof umgebung.gefuehrt === 'object' ? umgebung.gefuehrt : null;
+    let gefuehrt = null;
+    const mitGefuehrt = typeof KRGefuehrt !== 'undefined';
+    const lochSchluessel = () => `loch=${z.schablone.map((l) => l.join(',')).sort().join(';')}`;
+    /** Aufgabenwerte erkannt? → geführter Modus (Hook) und true; sonst false (frei rechnen) */
+    function erkenne(reiterId, eingaben, ort) {
+      const werte = { text: z.text, umfang: z.umfang, zeilen: z.zeilen, k: z.k, t: z.t, schablone: z.schablone.map((l) => l.slice()), groesse: z.groesse, richtung: z.richtung };
+      return B.erkenne(ort, `skytale.${reiterId}`, eingaben, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt(reiterId, werte) : null }) !== 'frei';
+    }
 
     const r = B.reiter(reiterListe.map((id) => ({ id, titel: REITER_TITEL[id] })), { aktiv: reiterListe[0], beiWechsel: baue });
     container.appendChild(h('div', { class: 'labor-werkzeug skytale-werkzeug' }, r.element));
@@ -552,6 +563,7 @@
         const u = z.umfang;
         const ein = Krypto.nurBuchstaben(z.text);
         const ver = z.richtung === 'ver';
+        if (erkenne('skytale', { texte: [z.text], schluessel: [`u=${u}`] }, meldung)) return;
         const erg = versuche(() => Krypto.skytale(z.text, u, z.richtung));
         let raster = null;
         if (erg.fehler) {
@@ -755,6 +767,7 @@
         const kk = z.k;
         const ver = z.richtung === 'ver';
         const ein = Krypto.nurBuchstaben(z.text);
+        if (erkenne('pfluegen', { texte: [z.text], schluessel: [`k=${kk}`] }, meldung)) return;
         const erg = versuche(() => Krypto.pfluegen(z.text, kk, z.richtung));
         if (erg.fehler) {
           setzeAusgabe(aus, '');
@@ -889,6 +902,10 @@
         for (const el of [zaunOrt, pruef, nsOrt]) AQ.clear(el);
         const ver = z.richtung === 'ver';
         const ein = Krypto.nurBuchstaben(z.text);
+        if (erkenne('gartenzaun', { texte: [z.text], schluessel: [`n=${z.zeilen}`] }, zaunOrt)) {
+          setzeAusgabe(aus, '');
+          return;
+        }
         const erg = versuche(() => Krypto.gartenzaun(z.text, z.zeilen, z.richtung));
         setzeAusgabe(aus, erg.wert || '');
         if (erg.fehler) zaunOrt.appendChild(B.hinweis('warnung', erg.fehler));
@@ -1243,6 +1260,7 @@
         else pruefung.appendChild(B.hinweis('warnung', `${p.fehler.join(' ')} Nur ${p.abgedeckt} von ${felder} Feldern werden frei – ungültig.`));
         const ein = Krypto.nurBuchstaben(z.text);
         raster = null;
+        if (gueltig && erkenne('fleissner', { texte: [z.text], schluessel: [lochSchluessel()] }, pruefung)) return;
         if (!gueltig) setzeAusgabe(aus, '');
         else {
           const erg = versuche(() => Krypto.fleissner(z.text, g, z.schablone, z.richtung));
@@ -1321,6 +1339,10 @@
         if (ns) ns.schliesse();
         ns = null;
         for (const el of [ringOrt, folgeOrt, meldung, nsOrt]) AQ.clear(el);
+        if (erkenne('ring', { texte: [z.text], schluessel: [`t=${z.t}`] }, meldung)) {
+          setzeAusgabe(aus, '');
+          return;
+        }
         const n = z.block;
         const { folge, nieGelesen } = Krypto.ringFolge(n, z.t);
         const umkehrbar = nieGelesen.length === 0;
@@ -1396,9 +1418,216 @@
       return { schliesse: () => ns && ns.schliesse() };
     }
 
+    /* ---------- Geführter Modus (M11 Task 244, E208): Raster in Aufgabengröße leer, Zielzelle markiert ---------- */
+
+    const zelleText = (ver, b) => (ver ? Krypto.klein(b) : b);
+    /** Schreib-Schritte: je Eingabebuchstabe die Zielzelle markieren, der Eintrag kommt hinein */
+    function schreibHook(container, { eingabe, ver, zeilen, spalten, zelle, caption, zeilenKopf, spaltenKopf, text }) {
+      const raster = KRGefuehrt.raster(container, { zeilen, spalten, caption, zeilenKopf, spaltenKopf });
+      return {
+        schritte: eingabe.map((b, i) => ({
+          text: text ? text(b, i) : `${ver ? 'Klartextbuchstabe' : 'Geheimtextbuchstabe'} ${zelleText(ver, b)} (Nr. ${i + 1}): in die markierte Zelle`,
+          feld: { beschriftung: 'Buchstabe in der markierten Zelle', art: 'buchstabe' }
+        })),
+        markiere(i, eintraege) {
+          raster.leeren();
+          eintraege.forEach((x, j) => {
+            if (x) raster.eintrag(...zelle(j), zelleText(ver, x));
+          });
+          raster.markiere([zelle(i)]);
+        },
+        korrekt: () => eingabe.map((b) => zelleText(ver, b))
+      };
+    }
+    function skytaleHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const u = ganz(werte.umfang, 2, 10, 3);
+      const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
+      const s = Math.max(1, Math.ceil(ein.length / u));
+      const eingabe = ver ? [...ein, ...Array(u * s - ein.length).fill('X')] : ein;
+      const pos = (i) => Krypto.teileMitRest(i, ver ? s : u);
+      return schreibHook(container, {
+        eingabe,
+        ver,
+        zeilen: u,
+        spalten: s,
+        zelle: (i) => (ver ? [pos(i).q, pos(i).r] : [pos(i).r, pos(i).q]),
+        caption: ver ? `Stab mit u = ${u}: Klartext zeilenweise schreiben (Füllzeichen X)` : `Stab mit u = ${u}: Geheimtext spaltenweise (Runde für Runde) eintragen`,
+        zeilenKopf: (zz) => `Zeile ${zz + 1}`,
+        spaltenKopf: (ss) => `Runde ${ss + 1}`
+      });
+    }
+    function zaunHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const n = ganz(werte.zeilen, 2, 8, 3);
+      const eingabe = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
+      const muster = Krypto.gartenzaunSchienen(eingabe.length, n);
+      // Zellen: verschlüsseln im Zickzack (Position p auf Schiene muster[p]); entschlüsseln Schiene für Schiene
+      const zickzack = muster.map((sch, p) => [sch, p]);
+      const reihe = zickzack.slice().sort(zeilenweise);
+      return schreibHook(container, {
+        eingabe,
+        ver,
+        zeilen: n,
+        spalten: eingabe.length,
+        zelle: (i) => (ver ? zickzack[i] : reihe[i]),
+        caption: ver ? `Zickzack über ${n} Schienen (Positionen ab 0)` : `Geheimtext Schiene für Schiene eintragen (${n} Schienen, Positionen ab 0)`,
+        zeilenKopf: (zz) => `Schiene ${zz + 1}`,
+        spaltenKopf: (ss) => String(ss)
+      });
+    }
+    function pfluegenHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const kk = ganz(werte.k, 2, 12, 5);
+      const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
+      const zeilenZahl = Math.max(1, Math.ceil(ein.length / kk));
+      const eingabe = ver ? [...ein, ...Array(zeilenZahl * kk - ein.length).fill('X')] : ein;
+      const nummern = Krypto.pfluegenReihenfolge(zeilenZahl, kk);
+      const weg = [];
+      nummern.forEach((zeile, zi) => zeile.forEach((nr, sp) => (weg[nr - 1] = [zi, sp])));
+      return schreibHook(container, {
+        eingabe,
+        ver,
+        zeilen: zeilenZahl,
+        spalten: kk,
+        zelle: (i) => (ver ? [Krypto.teileMitRest(i, kk).q, Krypto.teileMitRest(i, kk).r] : weg[i]),
+        caption: ver ? `Zeilen der Länge k = ${kk}: Klartext zeilenweise schreiben (Füllzeichen X)` : `Geheimtext entlang des Pflugwegs eintragen (k = ${kk})`,
+        zeilenKopf: (zz) => `Zeile ${zz + 1}`,
+        spaltenKopf: (ss) => `Spalte ${ss + 1}`
+      });
+    }
+    function fleissnerHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const g = werte.groesse === 6 ? 6 : GROESSE;
+      const loecher = lochListe(werte.schablone, g) || z.schablone.map((l) => l.slice());
+      const lagen = Krypto.fleissnerStellungen(g, loecher).map((l) => l.slice().sort(zeilenweise));
+      const reihenfolge = lagen.flat();
+      const lageVon = (i) => Krypto.teileMitRest(i, loecher.length).q + 1;
+      const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, g * g);
+      if (ver) {
+        const eingabe = [...ein, ...Array(Math.max(0, g * g - ein.length)).fill('X')];
+        return schreibHook(container, {
+          eingabe,
+          ver,
+          zeilen: g,
+          spalten: g,
+          zelle: (i) => [reihenfolge[i][0] - 1, reihenfolge[i][1] - 1],
+          caption: `Schablone ${g} × ${g}: Buchstaben durch die Löcher schreiben, nach jeder Lage 90° drehen`,
+          text: (b, i) => `Lage ${lageVon(i)}: ${Krypto.klein(b)} (Nr. ${i + 1}) durch das markierte Loch`
+        });
+      }
+      // Entschlüsseln: Geheimtext liegt zeilenweise im Raster, die Schablone zeigt Loch für Loch, was zu lesen ist
+      const raster = KRGefuehrt.raster(container, { zeilen: g, spalten: g, caption: `Geheimtext im Raster ${g} × ${g}: unter dem markierten Loch lesen`, inhalt: (zz, ss) => ein[zz * g + ss] || '' });
+      const band = KRGefuehrt.band(container, 'Dein Klartext');
+      return {
+        schritte: reihenfolge.map((l, i) => ({ text: `Lage ${lageVon(i)}, Loch (${l[0]},${l[1]})`, feld: { beschriftung: 'Buchstabe unter dem Loch', art: 'buchstabe' } })),
+        markiere(i, eintraege) {
+          raster.markiere([[reihenfolge[i][0] - 1, reihenfolge[i][1] - 1]]);
+          band.setze(eintraege.map((x) => Krypto.klein(x)));
+        },
+        korrekt: () => reihenfolge.map((l) => Krypto.klein(ein[(l[0] - 1) * g + (l[1] - 1)] || ''))
+      };
+    }
+    function ringHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const n = 8;
+      const t = ganz(werte.t, 1, n - 1, 3);
+      const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
+      const bloecke = Math.max(1, Math.ceil(ein.length / n));
+      const eingabe = ver ? [...ein, ...Array(bloecke * n - ein.length).fill('X')] : ein;
+      const folge = Krypto.ringFolge(n, t).folge;
+      const ergebnis = eingabe.length ? Krypto.ring(eingabe.join(''), t, ver ? 'ver' : 'ent', { block: n }) : '';
+      const leiste = !ver && eingabe.length ? KRGefuehrt.leiste(container, eingabe.join(''), { titel: 'Geheimtext (Positionen ab 0)' }) : null;
+      const raster = KRGefuehrt.raster(container, { zeilen: bloecke, spalten: n, caption: `Ring mit ${n} Feldern, Ringschritt t = ${t} (Felder ab 0)`, zeilenKopf: (b) => `Block ${b + 1}`, spaltenKopf: (f) => `Feld ${f}`, inhalt: ver ? (b, f) => Krypto.klein(eingabe[b * n + f] || '') : null });
+      const band = KRGefuehrt.band(container, ver ? 'Dein Geheimtext' : 'Dein Klartext');
+      const reihe = (e) => e.slice(0, n).map((x) => Number(x));
+      const schritte = [];
+      for (let j = 0; j < n; j++) schritte.push({ text: j === 0 ? 'Lesereihenfolge: Start bei Feld 0' : `Lesereihenfolge Nr. ${j}: dein Feld davor + ${t} (rund um den Ring)`, feld: { beschriftung: `Feld Nr. ${j}`, art: 'zahl' } });
+      eingabe.forEach((_, p) => schritte.push({
+        text: ver ? `Buchstabe ${p + 1} des Geheimtexts: Feld aus deiner Lesereihenfolge` : `Klartext Block ${Krypto.teileMitRest(p, n).q + 1}, Feld ${Krypto.teileMitRest(p, n).r}`,
+        feld: { beschriftung: ver ? 'Buchstabe im markierten Feld' : 'Geheimtextbuchstabe für das markierte Feld', art: 'buchstabe' }
+      }));
+      return {
+        schritte,
+        markiere(i, eintraege) {
+          const r2 = reihe(eintraege);
+          if (i < n) {
+            const vorher = i > 0 && eintraege[i - 1] !== '' && Number.isInteger(r2[i - 1]) && r2[i - 1] >= 0 && r2[i - 1] < n ? r2[i - 1] : null;
+            raster.markiere(i === 0 ? [[0, 0]] : vorher === null ? [] : [[0, vorher]]);
+            if (leiste) leiste.markiere([]);
+          } else {
+            const p = i - n;
+            const { q: b, r: f } = Krypto.teileMitRest(p, n);
+            if (ver) {
+              const feld = r2[f];
+              raster.markiere(eintraege[f] !== '' && Number.isInteger(feld) && feld >= 0 && feld < n ? [[b, feld]] : []);
+            } else {
+              // Entschlüsseln: Zielfeld f; der Geheimtextbuchstabe dazu steht an der Stelle deiner Reihenfolge mit Feld f
+              raster.markiere([[b, f]]);
+              const j = r2.findIndex((x, jj) => eintraege[jj] !== '' && x === f);
+              if (leiste) leiste.markiere(j >= 0 ? [b * n + j] : []);
+            }
+          }
+          if (!ver) {
+            raster.leeren();
+            eintraege.slice(n).forEach((x, p) => {
+              if (x) raster.eintrag(Krypto.teileMitRest(p, n).q, Krypto.teileMitRest(p, n).r, Krypto.klein(x));
+            });
+          }
+          band.setze(eintraege.slice(n).map((x) => (ver ? x : Krypto.klein(x))));
+        },
+        korrekt: () => [...folge.map(String), ...[...ergebnis].map((x) => (ver ? x : Krypto.klein(x)))]
+      };
+    }
+    const HOOKS = { skytale: skytaleHook, gartenzaun: zaunHook, pfluegen: pfluegenHook, fleissner: fleissnerHook, ring: ringHook };
+    function starteGefuehrt(id, werte) {
+      const wurzel = r.flaeche;
+      const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
+      if (teil && teil.schliesse) teil.schliesse();
+      teil = null;
+      for (const t of timer) clearTimeout(t);
+      timer.clear();
+      if (gefuehrt) gefuehrt.schliesse();
+      AQ.clear(r.flaeche);
+      gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
+        werte,
+        umgebung,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        titel: 'Skytale & Gitter',
+        beiEigeneWerte: () => {
+          if (erkVerlauf) erkVerlauf.leeren();
+          fuehrung = null;
+          z.text = '';
+          beispiel = false;
+          baue(id);
+        },
+        text: {
+          beschriftung: werte.richtung === 'ent' ? 'Geheimtext' : 'Klartext',
+          wert: werte.text || '',
+          fokus,
+          beiAenderung: (t) => {
+            z.text = t;
+            beispiel = false;
+            baue(id);
+            B.fokusAmEnde(r.flaeche);
+          }
+        }
+      });
+    }
+
     /* ---------- Reiterwechsel ---------- */
 
     function baue(id) {
+      if (gefuehrt) {
+        gefuehrt.schliesse();
+        gefuehrt = null;
+      }
+      if (fuehrung && mitGefuehrt && HOOKS[id]) {
+        const w = { text: z.text, umfang: z.umfang, zeilen: z.zeilen, k: z.k, t: z.t, schablone: z.schablone.map((l) => l.slice()), groesse: z.groesse, richtung: z.richtung, ...(fuehrung.werte || {}) };
+        fuehrung = { aufgabe: fuehrung.aufgabe };
+        starteGefuehrt(id, w);
+        return;
+      }
       if (teil && teil.schliesse) teil.schliesse();
       for (const t of timer) clearTimeout(t);
       timer.clear();
@@ -1414,6 +1643,8 @@
     return {
       schliesse() {
         if (teil && teil.schliesse) teil.schliesse();
+        if (gefuehrt) gefuehrt.schliesse();
+        gefuehrt = null;
         for (const t of timer) clearTimeout(t);
         timer.clear();
       },
