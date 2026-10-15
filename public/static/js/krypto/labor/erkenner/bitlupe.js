@@ -22,5 +22,8 @@ KRErkenner.daten('bitlupe', {
     'cc1674d8','cdac06b4','d0981fd3','d1f3ae4b','d2092306','d433df84','d6689c43','d73914ad','d7f9735d','dd61ccb4',
     'de49c9a7','e0babc63','e4d8f106','e642c88a','e940f6f1','e943a4b4','ed987856','f16066f1','f2914477','f3e7f239',
     'f769b9ec','f7d59b13','f8df8338','f974259d','f9fa71e9','fc12ae24','fd077549','fd0f2967','fea829da'
+  ],
+  "zeichen": [
+    '2ac2ba45','61dd2ac2','a0d34825'
   ]
 });

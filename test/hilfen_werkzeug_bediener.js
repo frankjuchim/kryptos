@@ -109,6 +109,7 @@ const VOR = {
   'hash.pruefsumme': (z) => (text0(z).length <= 30 ? { v: { reiter: ['pruefsumme'], text: K.klein(text0(z)) } } : null),
   'hash.baukasten': (z) => ({ v: { reiter: ['baukasten'], text: K.klein(text0(z)) } }),
   'analyse.vergleich': (z) => ({ v: { reiter: ['vergleich'] }, nach: (w) => w.k.tippe(w.k.alle(w.flaeche, '.analyse-eigen textarea')[0], K.klein(text0(z))) }),
+  'bitlupe.zeichen': (z) => ({ v: { reiter: ['zeichen'], text: text0(z) } }),
   'bitlupe.xor': (z) => {
     const [a, b] = [z.eingaben.bitpaare.map((p) => p[0]).join(''), z.eingaben.bitpaare.map((p) => p[1]).join('')];
     return { v: { reiter: ['xor'], text: K.bitsZuText(a), schluessel: b, schluesselart: 'bits', modus: z.bedienung.includes('otp') ? 'otp' : 'wiederholung' } };

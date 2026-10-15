@@ -765,7 +765,7 @@ const MODELLE = Object.freeze({
   'haeufigkeit.bigramme': gen(bigrammeZ),
   'haeufigkeit.teiltexte': gen(hTeiltexteZ),
   'haeufigkeit.kennzahlen': gen(kennzahlenZ),
-  'bitlupe.zeichen': gen(function* (A) { for (const t of texte(A)) if (t.length <= 24) yield zust('allgemein', 'Zeichen → Bits (Anlage)', { texte: [t] }, true, [BITS(asciiBits(t))]); }),
+  'bitlupe.zeichen': gen(function* (A) { for (const t of texte(A)) if (t.length <= 24) yield zust('angaben', 'Zeichen → Bits', { texte: [t] }, true, [{ ...BITS(asciiBits(t)), ausgerichtet: true }]); }), // Nachtrag M11: mit Aufgabentext gibt die Umwandlung die Lösung aus (W3-L1-04 a) → geführt
   'bitlupe.xor': gen(xorZ),
   'bitlupe.doppelnutzung': gen(doppelZ),
   'runden.runden': gen(rundenZ),
@@ -820,7 +820,7 @@ const GEFUEHRT = Object.freeze([
   'quadrat.polybios', 'quadrat.playfair',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
   'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
-  'bitlupe.xor', 'bitlupe.doppelnutzung',
+  'bitlupe.zeichen', 'bitlupe.xor', 'bitlupe.doppelnutzung',
   'runden.runden', 'runden.lawine', 'runden.enigma',
   'modulo.uhr', 'modulo.tabelle', 'modulo.inverses', 'modulo.farbmischer',
   'rsa.rechenwerk', 'rsa.euklid', 'rsa.text',

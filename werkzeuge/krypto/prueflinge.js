@@ -482,7 +482,10 @@ function istVerrat(ausgaben, p) {
       }
     } else if (a.art === 'bits') {
       const b = reineBits(a.wert);
-      for (const x of werte) if (x.art === 'bits' && x.n.length >= 8 && b.includes(x.n)) return { verrat: true, wert: x.n, regel: 'bits' };
+      // ausgerichtet (Zeichen → Bits): nur an Bytegrenzen – ein Byte mitten aus zwei Zeichen ist Zufall; ein einzelnes
+      // Zeichen (8 Bit) zählt nur, wenn der Text selbst nur dieses Zeichen ist (sonst „S“ in DOPPELSCHLOSS, W4-B-15)
+      const passt = (n) => (a.ausgerichtet ? (n.length >= 16 || b.length === n.length) && b.split('').some((_, i) => i % 8 === 0 && b.startsWith(n, i)) : b.includes(n));
+      for (const x of werte) if (x.art === 'bits' && x.n.length >= 8 && passt(x.n)) return { verrat: true, wert: x.n, regel: 'bits' };
     } else if (a.art === 'zahl') {
       const w = String(a.wert ?? '').trim().replace(/^-/, '');
       for (const x of werte) {

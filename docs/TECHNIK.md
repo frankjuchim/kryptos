@@ -1500,6 +1500,11 @@ sofort freigegeben (Hinweis „Vorschau für Lehrkräfte …“). Im freien Labo
 den geführten Modus. Reiter ohne Hook (z. B. `runden.modi`, `runden.fehler`, `hash.baukasten`, `analyse.vergleich`)
 zeigen bei Aufgabenwerten den neutralen Hinweis „Mit diesen Werten gibt es hier keinen Schritt-für-Schritt-Modus.
 Probier eigene Werte aus.“ (auch der Probelauf im Werkstatt-Baukasten).
+**Bit-Lupe „Zeichen → Bits“ geführt (Nachtrag M11):** Mit einem Aufgabentext zeigt der Reiter `zeichen` das Raster
+Zeichen · ASCII dezimal · Bits 1–4 · Bits 5–8; je Zeichen drei Schritte (ASCII-Wert laut Anlage, obere und untere vier
+Bits), markiert ist das Zeichen bzw. der eigene ASCII-Wert. Das Werkzeug-Modell zählt die Umwandlung als Angabe-Zustand;
+Bits gelten dort nur an Bytegrenzen und ein einzelnes Zeichen nur als ganzer Text (`ausgerichtet`, sonst Zufallstreffer
+wie „S“ in DOPPELSCHLOSS). W3-L1-04 öffnet die Bit-Lupe mit den Reitern `zeichen` und `xor`.
 **Erkenner (E210–E213).** Im freien Labor (und in Panels ohne `gefuehrt`) schaltet ein Werkzeug in den geführten Modus,
 sobald seine Eingaben Aufgabenwerte enthalten: `labor/erkenner.js` (global **`KRErkenner`**) kennt nur 8-stellige
 SHA-256-Kennungen von Signaturen der Angaben (`t:` Textfenster, `g:` ganzer Text, `s:` Schlüssel, `z:` Zahlenmengen,

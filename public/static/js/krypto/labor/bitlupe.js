@@ -165,7 +165,51 @@
         korrekt: () => a.map((x, j) => Krypto.xorBits(Krypto.byteZuBits(x), Krypto.byteZuBits(b[j])))
       };
     }
-    const HOOKS = { xor: xorHook, doppelnutzung: xorHook };
+    /** Nachtrag M11: Text → Bits geführt. werte = { text }: je Zeichen ASCII-Wert (Anlage), obere und untere vier Bits;
+        markiert wird das Zeichen bzw. der eigene ASCII-Wert (Eingabeseite), Werte nur aus den Einträgen */
+    function zeichenHook(container, werte) {
+      const zeichen = [];
+      for (const ch of [...String(werte.text || '')].slice(0, MAX)) {
+        try {
+          zeichen.push({ ch, n: Krypto.ascii(ch) });
+        } catch (e) {
+          if (!istKryptoFehler(e)) throw e;
+        }
+      }
+      const tab = KRGefuehrt.raster(container, {
+        zeilen: 4,
+        spalten: zeichen.length,
+        caption: 'Zeichen für Zeichen: ASCII-Wert laut Anlage, dann 8 Bit in zwei Vierergruppen',
+        zeilenKopf: (z) => ['Zeichen', 'ASCII dezimal', 'Bits 1–4', 'Bits 5–8'][z],
+        spaltenKopf: (j) => `Nr. ${j + 1}`,
+        inhalt: (z, j) => (z === 0 ? zeichenAnzeige(zeichen[j].ch) : null)
+      });
+      const schritte = [];
+      zeichen.forEach(({ ch }, j) => {
+        const c = zeichenAnzeige(ch);
+        schritte.push({ text: `Zeichen ${j + 1} „${c}“: ASCII-Wert laut Anlage`, feld: { beschriftung: `ASCII-Wert von „${c}“`, art: 'zahl' } });
+        schritte.push({ text: (ein) => `Zeichen ${j + 1}: ${ein[3 * j] || '…'} als 8 Bit – die oberen vier Bits (Wertigkeiten 128, 64, 32, 16)`, feld: { beschriftung: 'Bits 1–4', art: 'bits' } });
+        schritte.push({ text: (ein) => `Zeichen ${j + 1}: ${ein[3 * j] || '…'} als 8 Bit – die unteren vier Bits (Wertigkeiten 8, 4, 2, 1)`, feld: { beschriftung: 'Bits 5–8', art: 'bits' } });
+      });
+      return {
+        schritte,
+        markiere(i, e) {
+          tab.leeren();
+          e.forEach((x, k) => {
+            if (!x) return;
+            const { q: j, r: zl } = Krypto.teileMitRest(k, 3);
+            tab.eintrag(zl + 1, j, zl === 0 ? String(x).trim() : KRGefuehrt.norm('bits', x));
+          });
+          const { q: j, r: zl } = Krypto.teileMitRest(i, 3);
+          tab.markiere(zl === 0 ? [[0, j]] : [[1, j]]);
+        },
+        korrekt: () => zeichen.flatMap(({ n }) => {
+          const b = Krypto.byteZuBits(n);
+          return [String(n), b.slice(0, 4), b.slice(4)];
+        })
+      };
+    }
+    const HOOKS = { zeichen: zeichenHook, xor: xorHook, doppelnutzung: xorHook };
     // Angaben bleiben im geführten Modus änderbar: Name → Feld im freien Modus
     const FELD = { schluessel: 'input.xor-schluessel', c1: 'input.doppel-c1', c2: 'input.doppel-c2' };
     let fokusAngabe = null;
@@ -191,7 +235,8 @@
         beiEigeneWerte: () => {
           if (erkVerlauf) erkVerlauf.leeren();
           fuehrung = null;
-          if (id === 'xor') {
+          if (id === 'zeichen') text = '';
+          else if (id === 'xor') {
             text = '';
             schluessel = '';
           } else {
@@ -200,7 +245,7 @@
           }
           baue(id);
         },
-        felder: {
+        felder: id === 'zeichen' ? null : {
           felder: id === 'xor' ? [{ name: 'schluessel', beschriftung: 'Schlüssel', wert: schluessel, max: 300 }] : [{ name: 'c1', beschriftung: 'Geheimtext C1 (Hex)', wert: c1, max: 3 * MAX }, { name: 'c2', beschriftung: 'Geheimtext C2 (Hex)', wert: c2, max: 3 * MAX }],
           fokus: fokusFeld,
           beiAenderung: (w, name) => {
@@ -223,7 +268,7 @@
             }
           }
         },
-        text: id === 'xor'
+        text: id === 'xor' || id === 'zeichen'
           ? {
               beschriftung: `Text (bis ${MAX} Zeichen)`,
               wert: text,
@@ -270,6 +315,8 @@
       const hinweisOrt = h('div', { class: 'bitlupe-hinweis' });
       ort.append(feld.element, hinweisOrt, tabOrt, aus.element);
       function zeige() {
+        // Nachtrag M11: Aufgabentext → geführt (Text → Bits), sonst frei
+        if (erkenne('zeichen', { texte: [text] }, { text })) return;
         const zeilen = [];
         const bytes = [];
         let fehlt = 0;

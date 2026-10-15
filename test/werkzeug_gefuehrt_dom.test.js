@@ -301,6 +301,26 @@ test('k12_beispiel_bitlupe_w3_l1_02', () => {
   assert.ok(!K.normBits(w.k.text(w.flaeche)).includes('10110110'), 'kein Ergebnis 1011 0110');
 });
 
+test('k12_beispiel_bitlupe_zeichen_w3_l1_04 (Nachtrag M11)', () => {
+  // Text → Bits geführt: Zeichen → ASCII-Wert → obere/untere vier Bits; markiert wird nur die Eingabeseite
+  const w = geoeffnet('bitlupe', { reiter: ['zeichen'], text: 'EIS' });
+  assert.ok(hat(w, 'section.gefuehrt'), 'Aufgabenwerte EIS → geführt');
+  assert.equal(anzahl(w), 9, 'je Zeichen drei Schritte');
+  const flach = () => K.normBits(w.k.text(w.flaeche)).replace(/[^01]/g, '');
+  assert.ok(!flach().includes('01000101') && !/\b69\b/.test(w.k.text(w.flaeche)), 'weder Bits noch ASCII-Wert von E im DOM');
+  assert.equal(markiert(w).length, 1, 'Schritt 1: nur das Zeichen E markiert');
+  assert.equal(w.k.text(markiert(w)[0]).trim(), 'E');
+  BED.trage(w, 0, '69');
+  BED.gehe(w, 1);
+  assert.equal(markiert(w).length, 1, 'Schritt 2: nur der eigene ASCII-Wert markiert');
+  assert.equal(w.k.text(markiert(w)[0]).trim(), '69');
+  assert.ok(!flach().includes('0100'), 'obere vier Bits nicht vorgezeigt');
+  // eigener Text → frei mit Ausgabe
+  const f = geoeffnet('bitlupe', { reiter: ['zeichen'], text: 'Moos' });
+  assert.ok(!hat(f, 'section.gefuehrt'));
+  assert.ok(f.k.text(f.flaeche).replace(/\s/g, '').includes('01001101'), 'M = 0100 1101 frei angezeigt');
+});
+
 test('k12_beispiel_mini_enigma_w3_l5_01', () => {
   // FADE in Stellung A: Stufe für Stufe; keine Lampe vor der Freigabe, danach die richtige
   const w = panel('runden', { reiter: ['enigma'], stellung: 'A', text: 'FADE' }, 'W3-L5-01');

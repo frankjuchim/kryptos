@@ -106,3 +106,15 @@ test('gefuehrt_liste_gleich_server (M11 E217)', () => {
   // Validator (src/krypto/werkzeuge.js) und Modelle kennen dieselben Reiter mit geführtem Modus
   assert.deepEqual([...require('../src/krypto/werkzeuge').GEFUEHRT_REITER].sort(), [...require('../werkzeuge/krypto/werkzeug_modelle').GEFUEHRT].sort());
 });
+
+test('zeichen_bits_ausgerichtet (Nachtrag M11)', () => {
+  const z = (id, t) => M.MODELLE['bitlupe.zeichen'].zustaende({ ...P.angaben(pr(id)), texte: [t] }).find((x) => x.eingaben.texte[0] === t);
+  assert.equal(z('W3-L1-04', 'EIS').art, 'angaben', 'Zeichen → Bits mit Aufgabentext zählt');
+  assert.equal(P.istVerrat(z('W3-L1-04', 'EIS').ausgaben, pr('W3-L1-04')).verrat, true, 'EIS → Lösung a)');
+  // „S“ steckt als Byte in DOPPELSCHLOSS (W4-B-15: M = 0101 0011) – ein Zeichen in einem längeren Wort ist Zufall
+  const boss = ALLE.find((p) => p.id === 'W4-B-15');
+  assert.equal(P.istVerrat(M.MODELLE['bitlupe.zeichen'].zustaende(P.angaben(boss)).flatMap((x) => x.ausgaben), boss).verrat, false);
+  // nicht an der Bytegrenze: kein Verrat
+  assert.equal(P.istVerrat([{ art: 'bits', wert: '1010001010100100101010011', ausgerichtet: true }], pr('W3-L1-04')).verrat, false, 'um ein Bit verschoben');
+  assert.equal(P.istVerrat([{ art: 'bits', wert: '1010001010100100101010011' }], pr('W3-L1-04')).verrat, true, 'ohne Ausrichtung zählt jede Stelle');
+});

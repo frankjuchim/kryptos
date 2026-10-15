@@ -89,7 +89,7 @@ const GEFUEHRT_REITER = Object.freeze([
   'quadrat.polybios', 'quadrat.playfair',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
   'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
-  'bitlupe.xor', 'bitlupe.doppelnutzung',
+  'bitlupe.zeichen', 'bitlupe.xor', 'bitlupe.doppelnutzung',
   'runden.runden', 'runden.lawine', 'runden.enigma',
   'modulo.uhr', 'modulo.tabelle', 'modulo.inverses', 'modulo.farbmischer',
   'rsa.rechenwerk', 'rsa.euklid', 'rsa.text',
