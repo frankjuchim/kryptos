@@ -1519,7 +1519,12 @@ ist erlaubt; das Erkennen des Klartexts ist die Lernleistung (Ausnahme in `AUSNA
 geprüft – normalisiert (A–Z, 0–9) und als reine Buchstabenform (`Krypto.nurBuchstaben`, so rechnen die Werkzeuge):
 eingestreute Ziffern, Satz- und Leerzeichen sowie Groß/Klein umgehen den Erkenner nicht. Für die Chiffrierscheibe gibt es
 zusätzlich Viererfenster (`v:`; vier Zeichen eines Caesar-Geheimtexts verraten schon k), eingetragen nur aus Texten ab
-fünf Zeichen. **Neuladen:** Nach jeder Eingabe legt der Verlauf in `sessionStorage` (`kr-erkenner`, nur dieser Tab,
+fünf Zeichen. **Füllzeichen (Review-Fund 2):** Kurze Eingaben (bis 24 Zeichen) liefern zusätzlich Teilstücke aus 3–4
+Zeichen, die zusammen mit einem Schlüssel bzw. Bitschlüssel zählen („quizx“ mit k = 9, „faded“ mit Startstellung A), bei
+der Chiffrierscheibe aus Eingaben bis 6 Zeichen auch allein („FCAX“); ganze Texte zählen auch mit einem Füllzeichen davor
+oder dahinter; die Daten enthalten zusätzlich Zustände mit angehängtem bzw. vorangestelltem X. Ohne Schlüssel bleiben
+Füllzeichen an kurzen Angaben außerhalb der Scheibe eine Grenze (sonst schlügen Wörter wie „Kreis“ wegen „EIS“ an).
+**Neuladen:** Nach jeder Eingabe legt der Verlauf in `sessionStorage` (`kr-erkenner`, nur dieser Tab,
 `KRErkennerSpeicher` in `krypto/erkenner_speicher.js`, außerhalb der Labor-Module) die Fortsetzungen ab, die das Ende der
 Eingabe (Fenster − 1 bzw. − 2 Zeichen) zu einem erkannten Fenster ergänzen würden – Zeichen aus den Aufgabendaten, nie
 die Eingaben. Beginnt die nächste Eingabe nach dem Neuladen damit, gilt sie als erkannt; „Eigene Werte“ leert auch den

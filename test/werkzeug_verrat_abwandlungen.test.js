@@ -143,3 +143,46 @@ test('k11b_haeppchen_mit_neuladen (Speicher je Tab, nur Fortsetzungen aus den Au
   assert.equal(E.erkannt('scheibe.alle', { texte: ['WALD'] }, S, v), false);
   assert.ok([...ablage.values()].every((x) => Object.values(x).every((l) => !l.length)), 'eigener Text: keine Fortsetzung gespeichert');
 });
+
+/* ---------- Review-Fund 2: Füllzeichen vorn/hinten bei kurzen Angaben ---------- */
+
+/** Verrat-Zustände mit abgewandelten Angaben (das Modell rechnet die Abwandlung mit – nur echte Verrate zählen) */
+function verratMit(f) {
+  const out = [];
+  for (const p of P.prueflinge()) {
+    const A0 = P.angaben(p);
+    const A = { ...A0, texte: A0.texte.filter((t) => /^[A-Z]{2,12}$/.test(t)).map(f) };
+    if (!A.texte.length) continue;
+    for (const [wr, m] of Object.entries(M.MODELLE)) {
+      for (const z of m.zustaende(A)) {
+        if (z.art === 'allgemein' || z.art === 'katalog' || !B.nutztAngaben(z)) continue;
+        if (P.AUSNAHMEN.some((a) => a.aufgabe === p.id && a.wr === wr)) continue;
+        if (!(z.eingaben.texte || []).length || !P.istVerrat(z.ausgaben, p).verrat) continue;
+        // Füllzeichen gehören an den Text, nicht an den Schlüssel (das Modell probiert Texte auch als Schlüssel)
+        if ((z.eingaben.schluessel || []).some((k) => A.texte.includes(k))) continue;
+        // ohne Schlüssel (Bits) zählen Teilstücke nur bei der Chiffrierscheibe (Grenze, TECHNIK §10.3)
+        if (!(z.eingaben.schluessel || []).length && !(z.eingaben.bits || []).length && !wr.startsWith('scheibe.')) continue;
+        out.push({ p, wr, e: B.normalisiere(wr, z.eingaben) });
+      }
+    }
+  }
+  return out;
+}
+for (const [name, f] of Object.entries({ vorn: (t) => `X${t}`, hinten: (t) => `${t}X` })) {
+  test(`k11b_fuellzeichen_${name}_wird_erkannt`, () => {
+    const fehlt = [];
+    for (const { p, wr, e } of verratMit(f)) if (!E.erkannt(wr, e, S)) fehlt.push(`${p.id} ${wr}: ${JSON.stringify(e).slice(0, 80)}`);
+    assert.deepEqual(fehlt.slice(0, 15), [], `${fehlt.length} unerkannt`);
+  });
+}
+
+test('review_fund2_beispiele: Füllzeichen an kurzen Angaben', () => {
+  const faelle = [
+    ['scheibe.text', { texte: ['quizx'], schluessel: ['k=9'] }, 'W0-L2-03'],
+    ['scheibe.scheibe', { texte: ['xquiz'], schluessel: ['k=9'] }, 'W0-L2-03'],
+    ['runden.enigma', { texte: ['faded'], schluessel: ['st=A'] }, 'W3-L5-01'],
+    ['runden.enigma', { texte: ['HHEAA'], schluessel: ['st=A'] }, 'W3-L5-02'],
+    ['scheibe.alle', { texte: ['FCAX'] }, 'W0-L2-05']
+  ];
+  for (const [wr, e, id] of faelle) assert.ok(E.erkannt(wr, e, S), `${id} ${wr} ${e.texte[0]}`);
+});

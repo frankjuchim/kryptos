@@ -2,7 +2,8 @@
 'use strict';
 KRErkenner.daten('runden', {
   "enigma": [
-    '0caad801','2cb67aeb','3462c7b4','379af82b','3a1e9478','50bf2160','75eb976e','aadef0fb','b1834cd4','eff31819'
+    '0caad801','2cb67aeb','3462c7b4','375dbe87','379af82b','3a1e9478','50bf2160','75eb976e','aadef0fb','b1834cd4',
+    'eff31819'
   ],
   "fehler": [
     '023c2b1d','23d2618a','348a6d22','47b2793d','4f01bfd4','b146a16c','c0203259','c456a3c5','c6c118f5','f27d4476'

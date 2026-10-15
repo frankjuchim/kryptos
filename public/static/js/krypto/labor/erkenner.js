@@ -75,21 +75,45 @@
    * Alle Signaturen einer Eingabe. eingaben = { texte, schluessel, zahlen, bits, bitpaare } (alles optional).
    * wr („werkzeug.reiter“) bleibt für spätere Sonderregeln; die Signatur hängt nur von den Werten ab.
    */
-  function signaturen(wr, eingaben) {
+  function signaturen(wr, eingaben, o = {}) {
     const e = eingaben || {};
     const out = new Set();
     const texte = new Set();
     for (const t of e.texte || []) for (const s of textSignaturen(t, fensterFuer(wr))) texte.add(s);
     const schluessel = [...new Set((e.schluessel || []).map((s) => String(s).toUpperCase().replace(/[^A-Z0-9=,;]/g, '')).filter(Boolean))];
     const folgen = [...new Set((e.bits || []).map(bits).filter((b) => b.length >= 8))];
+    // Review-Fund 2: kurze Angaben mit Füllzeichen davor/dahinter („quizx“, „faded“) – Teilstücke aus 3–4 Zeichen kurzer
+    // Eingaben (bis 24 Zeichen) zählen zusammen mit einem Schlüssel bzw. Bitschlüssel, bei der Chiffrierscheibe aus ganz
+    // kurzen Eingaben (bis 6 Zeichen, Stücke aus 3 Zeichen) auch allein („FCAX“ in „Alle Verschiebungen“)
+    const teile = new Set();
+    for (const t of o.teile ? e.texte || [] : []) {
+      for (const n of formen(t)) {
+        if (n.length <= 3 || n.length > 24) continue;
+        for (let l = 3; l < FENSTER && l < n.length; l++) {
+          for (let i = 0; i + l <= n.length; i++) {
+            teile.add(`t:${n.slice(i, i + l)}`);
+            if (n.length <= 6 && fensterFuer(wr) < FENSTER) out.add(`t:${n.slice(i, i + l)}`);
+          }
+        }
+      }
+    }
+    // ganze Texte mit einem Füllzeichen vorn bzw. hinten (Klartexte werden allein nur als ganzer Text erkannt; mehr
+    // Zeichen nicht – sonst schlügen Wörter wie „tribunal“ wegen „tribun“ an)
+    for (const t of o.teile ? e.texte || [] : []) {
+      for (const n of formen(t)) {
+        if (n.length > MAX_TEXT) continue;
+        for (let a = 0; a <= 1; a++) for (let b = 0; b <= 1; b++) if ((a || b) && n.length - a - b >= FENSTER) texte.add(`g:${n.slice(a, n.length - b)}`);
+      }
+    }
+    const mitTeilen = [...texte, ...[...teile].filter((x) => !texte.has(x))];
     for (const t of texte) out.add(t);
     for (const s of schluessel) {
       out.add(`s:${s}`);
-      for (const t of texte) out.add(`${t}|s:${s}`);
+      for (const t of mitTeilen) out.add(`${t}|s:${s}`);
     }
     for (const b of folgen) {
       out.add(`b:${b}`);
-      for (const t of texte) out.add(`${t}|b:${b}`);
+      for (const t of mitTeilen) out.add(`${t}|b:${b}`);
     }
     for (let i = 0; i < folgen.length; i++) for (let j = i + 1; j < folgen.length; j++) out.add(`b:${[folgen[i], folgen[j]].sort().join('|b:')}`);
     for (const p of e.bitpaare || []) {
@@ -242,7 +266,7 @@
       v.binde(id);
       treffer = v.fortgesetzt(reiter, eingaben);
     }
-    if (!treffer) for (const s of signaturen(wr, e)) if (tab.has(kennung(s))) { treffer = true; break; }
+    if (!treffer) for (const s of signaturen(wr, e, { teile: true })) if (tab.has(kennung(s))) { treffer = true; break; }
     // Fortsetzungen immer sichern – auch nach einem Treffer geht es nach dem Neuladen weiter
     if (v && typeof v.sichere === 'function') v.sichere(reiter, tab, [...new Set((e.schluessel || []).map((s) => String(s).toUpperCase().replace(/[^A-Z0-9=,;]/g, '')).filter(Boolean))], fensterFuer(wr));
     return treffer;

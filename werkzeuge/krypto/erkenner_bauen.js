@@ -114,7 +114,11 @@ function eintragSignaturen(wr, z, klartexte = []) {
       return true;
     }).concat((e.texte || []).length && !(e.schluessel || []).length && !(e.bits || []).length ? nurText(e.texte) : []);
   }
-  return nurText(e.texte || []);
+  // Review-Fund 2: kurze Texte (unter einem Fenster) zusätzlich mit dem ausprobierten Schlüssel – so erkennt der Erkenner
+  // sie auch mit Füllzeichen davor/dahinter (Teilstücke zählen nur zusammen mit einem Schlüssel)
+  const kurz = (e.texte || []).filter((t) => E.FORM(t).length >= 3 && E.FORM(t).length < E.FENSTER);
+  const schl = (e.schluessel || []).map((s) => String(s).toUpperCase().replace(/[^A-Z0-9=,;]/g, '')).filter(Boolean);
+  return nurText(e.texte || []).concat(kurz.flatMap((t) => schl.map((s) => `t:${E.FORM(t)}|s:${s}`)));
 }
 
 /* ---------- frühere D17-Sperrliste: Quadrat-Schlüsselwörter aus Seeds, Materialien und Videos ---------- */
@@ -204,6 +208,22 @@ function bauen({ bericht = false } = {}) {
         }
         trage(wr, eintragSignaturen(wr, z, klartexteMitPaaren(A.klartexte)), p.quelle);
         (mitVerrat[p.quelle] = mitVerrat[p.quelle] || new Set()).add(p.id);
+      }
+    }
+    // Review-Fund 2: kurze Angaben mit einem Füllzeichen X davor bzw. dahinter (Skytale füllt selbst mit X auf) – nur
+    // Zustände mit Schlüssel bzw. Bits oder bei der Chiffrierscheibe (wie K11b)
+    for (const f of [(t) => `X${t}`, (t) => `${t}X`]) {
+      const texte = A.texte.filter((t) => /^[A-Z]{2,12}$/.test(t)).map(f);
+      if (!texte.length) continue;
+      const AF = { ...A, texte };
+      for (const [wr, m] of Object.entries(M.MODELLE)) {
+        for (const z of m.zustaende(AF)) {
+          if (z.art !== 'angaben' || ausnahme(p, wr) || !nutztAngaben(z) || !(z.eingaben.texte || []).length) continue;
+          if ((z.eingaben.schluessel || []).some((k) => AF.texte.includes(k))) continue;
+          if (!(z.eingaben.schluessel || []).length && !(z.eingaben.bits || []).length && !wr.startsWith('scheibe.')) continue;
+          if (!P.istVerrat(z.ausgaben, p).verrat) continue;
+          trage(wr, eintragSignaturen(wr, z, klartexteMitPaaren(A.klartexte).flatMap((k) => [k, `X${k}`, `${k}X`])), p.quelle);
+        }
       }
     }
     // zweite Stufe: Zwischentexte mit den Schlüsseln der Angaben (E224 (8))

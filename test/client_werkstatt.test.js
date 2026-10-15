@@ -431,6 +431,18 @@ test('K5: 401 mit Umleitung zum Portal löscht alle Werkstatt-Entwürfe (geteilt
   assert.equal(k.window.localStorage.getItem('kr-thema'), 'dunkel');
 });
 
+test('baukasten_probelauf_fuellzeichen (Review-Fund 2): xboje und bojex', async () => {
+  for (const t of ['xboje', 'bojex', 'bo1je']) {
+    const k = lade({ 'GET /api/arena': ARENA() });
+    await k.ruhe();
+    k.wert('KRWerkstatt').setzeStufen([{ typ: 'umkehrung' }, { typ: 'caesar', param: { k: 3 } }]);
+    k.tippe(k.eins(k.document, 'textarea.werkstatt-klartext'), t);
+    await k.ruhe();
+    assert.equal(k.eins(k.document, 'p.werkstatt-nicht-verfuegbar').hidden, false, t);
+    assert.doesNotMatch(k.text(k.document.body), /HMRE/i, `${t}: kein Geheimtext von boje`);
+  }
+});
+
 test('baukasten_probelauf_mit_aufgabenwerten_nicht_verfuegbar (M11, E209)', async () => {
   // W3-L3-04: Umkehrung + Caesar 3 mit „boje“ – der Probelauf zeigt keinen Geheimtext, sondern den neutralen Hinweis
   const k = lade({ 'GET /api/arena': ARENA() });
