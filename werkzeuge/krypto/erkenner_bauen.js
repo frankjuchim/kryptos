@@ -49,6 +49,15 @@ const HAND = Object.freeze([
   { aufgabe: 'W5-L1-06', wr: 'hash.passwort', eingaben: { texte: ['MWREGEN'] }, klar: true, grund: 'KH(mw + regen) = 18 beantwortet a)' }
 ]);
 
+/**
+ * E209 (Review-Fund 4): Reiter ohne geführten Modus, die mit Aufgabenwerten nicht verfügbar sind – sie bekommen die
+ * Angaben-Texte aller Prüflinge, auch wenn das Modell keinen Verrat findet (Enigma I: keine Aufgabe nennt eine
+ * Einstellung; Schlüsselraum, Signatur: keine Texteingabe; „Alle Verschiebungen“ deckt jeder Caesar-Verrat schon ab)
+ */
+const E209_TEXT = Object.freeze(['vigenere.verschiebung', 'vigenere.korrektur', 'hash.baukasten', 'analyse.vergleich', 'baukasten']);
+/** Angaben-Texte für E209: Geheimtexte (keine Klartexte, keine einzelnen Wörter wie VERSCHIEBUNG) ab 20 Buchstaben */
+const e209Texte = (A) => A.texte.filter((t) => Krypto.nurBuchstaben(t).length >= 20 && !A.klartexte.includes(Krypto.normalisieren(t)));
+
 /** Reiter, deren Ausgabe als Zwischentext in eine zweite Stufe geht (E224 (8): zwei Stufen verkettet) */
 const KETTE = new Set(['scheibe.text', 'vigenere.verschluesseln', 'skytale.ring', 'skytale.skytale', 'skytale.gartenzaun']);
 const MAX_ZWISCHEN = 40;
@@ -239,6 +248,15 @@ function bauen({ bericht = false } = {}) {
       }
     }
   }
+  // E209: alle Angaben-Texte (Ausnahme L60 bleibt frei)
+  for (const p of prueflinge) {
+    const A = P.angaben(p);
+    for (const wr of E209_TEXT) {
+      if (ausnahme(p, wr)) continue;
+      // nur als ganzer Text (Buchstabenform) – Fenster aus GROSS geschriebenem Deutsch träfen eigene Texte
+      for (const t of e209Texte(A)) trage(wr, [`g:${E.FORM(t)}`], 'e209');
+    }
+  }
   for (const x of HAND) trage(x.wr, eintragSignaturen(x.wr, { eingaben: { texte: [], schluessel: [], zahlen: [], bits: [], bitpaare: [], ...x.eingaben }, ausAngaben: true }, x.klar ? x.eingaben.texte : []), 'hand');
   // D17: Quadrat-Schlüsselwörter (Polybios und Playfair bauen diese Quadrate nur geführt auf)
   for (const w of d17Woerter()) for (const wr of ['quadrat.polybios', 'quadrat.playfair']) trage(wr, [`s:${quadratSchluessel(w)}`], 'd17');
@@ -293,4 +311,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { bauen, HAND, eintragSignaturen, quadratSchluessel, normalisiere, nutztAngaben, ZIEL };
+module.exports = { bauen, HAND, E209_TEXT, e209Texte, eintragSignaturen, quadratSchluessel, normalisiere, nutztAngaben, ZIEL };

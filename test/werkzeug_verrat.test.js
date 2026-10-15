@@ -127,3 +127,20 @@ test('umbau_werte (D18): W1-L1-04 b) 10¹² /s → e = 7, W6-L1-09 a) 26 · 25 �
   assert.deepEqual(w6.loesung.a, ['15600', '15.600']);
   assert.equal(26 * 25 * 24, 15600);
 });
+
+// Review-Fund 4 (E209): Reiter ohne geführten Modus sind mit jedem Angaben-Text nicht verfügbar – unabhängig davon, ob
+// das Modell gerade einen Verrat findet (W2-A-01: Original-Geheimtext in Verschiebung und Korrektur)
+test('k11_e209_alle_angaben_texte', () => {
+  const fehlt = [];
+  for (const p of P.prueflinge()) {
+    for (const t of B.e209Texte(P.angaben(p))) {
+      for (const wr of B.E209_TEXT) {
+        if (P.AUSNAHMEN.some((a) => a.aufgabe === p.id && a.wr === wr)) continue;
+        if (!E.erkannt(wr, { texte: [t] }, S)) fehlt.push(`${p.id} ${wr} ${t.slice(0, 30)}`);
+      }
+    }
+  }
+  assert.deepEqual(fehlt.slice(0, 15), [], `${fehlt.length} unerkannt`);
+  const w2 = P.angaben(P.prueflinge().find((p) => p.id === 'W2-A-01')).texte.find((t) => t.length > 50);
+  for (const wr of ['vigenere.verschiebung', 'vigenere.korrektur']) assert.ok(E.erkannt(wr, { texte: [w2] }, S), `W2-A-01 in ${wr}`);
+});

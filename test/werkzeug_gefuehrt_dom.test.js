@@ -457,3 +457,13 @@ function pruefePanels(welten) {
 }
 test('k12_panels_welt_0_2', () => pruefePanels([0, 1, 2, 8]));
 test('k12_panels_welt_3_6', () => pruefePanels([3, 4, 5, 6]));
+
+test('e209_w2_a_01_verschiebung_und_korrektur_nicht_verfuegbar (Review-Fund 4)', () => {
+  const t = P.angaben(P.prueflinge().find((p) => p.id === 'W2-A-01')).texte.find((x) => x.length > 50);
+  for (const r of ['verschiebung', 'korrektur']) {
+    const w = geoeffnet('vigenere', { reiter: [r], text: t, schluessellaenge: 4 });
+    assert.ok(hat(w, '.labor-nicht-verfuegbar'), `${r}: nicht verfügbar`);
+  }
+  const f = geoeffnet('vigenere', { reiter: ['verschiebung'], text: 'Rosenwasser aus dem Garten der Medici duftet suess', schluessellaenge: 4 });
+  assert.ok(!hat(f, '.labor-nicht-verfuegbar'), 'eigener Text frei');
+});

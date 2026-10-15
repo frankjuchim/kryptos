@@ -1499,7 +1499,10 @@ beim Laden einer schon gelösten Aufgabe); dann Spalte „✓ richtig“/„✗ 
 sofort freigegeben (Hinweis „Vorschau für Lehrkräfte …“). Im freien Labor gibt es keine Freigabe. „Eigene Werte“ verlässt
 den geführten Modus. Reiter ohne Hook (z. B. `runden.modi`, `runden.fehler`, `hash.baukasten`, `analyse.vergleich`)
 zeigen bei Aufgabenwerten den neutralen Hinweis „Mit diesen Werten gibt es hier keinen Schritt-für-Schritt-Modus.
-Probier eigene Werte aus.“ (auch der Probelauf im Werkstatt-Baukasten).
+Probier eigene Werte aus.“ (auch der Probelauf im Werkstatt-Baukasten). Damit E209 auch dann greift, wenn das Modell
+keinen unmittelbaren Verrat findet, tragen die Erkenner-Daten für `vigenere.verschiebung`, `vigenere.korrektur`,
+`hash.baukasten`, `analyse.vergleich` und den Baukasten jeden Geheimtext der Angaben ab 20 Buchstaben als ganzen Text
+ein (Review-Fund 4, z. B. W2-A-01; Test `k11_e209_alle_angaben_texte`).
 **Bit-Lupe „Zeichen → Bits“ geführt (Nachtrag M11):** Mit einem Aufgabentext zeigt der Reiter `zeichen` das Raster
 Zeichen · ASCII dezimal · Bits 1–4 · Bits 5–8; je Zeichen drei Schritte (ASCII-Wert laut Anlage, obere und untere vier
 Bits), markiert ist das Zeichen bzw. der eigene ASCII-Wert. Das Werkzeug-Modell zählt die Umwandlung als Angabe-Zustand;
