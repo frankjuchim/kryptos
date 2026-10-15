@@ -100,3 +100,8 @@ test('modell_mini_enigma_rechnet_w3_l5', () => {
   assert.ok(z.ausgaben.some((x) => K.normalisieren(x.wert) === 'CHEA'), 'fade → CHEA (Befund)');
   assert.equal(z.ausAngaben, true);
 });
+
+test('gefuehrt_liste_gleich_server (M11 E217)', () => {
+  // Validator (src/krypto/werkzeuge.js) und Modelle kennen dieselben Reiter mit geführtem Modus
+  assert.deepEqual([...require('../src/krypto/werkzeuge').GEFUEHRT_REITER].sort(), [...require('../werkzeuge/krypto/werkzeug_modelle').GEFUEHRT].sort());
+});

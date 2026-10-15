@@ -1389,6 +1389,7 @@ const KRLehrer = (() => {
 
   async function navigiere() {
     if (!(await verlassenErlaubt())) return;
+    if (typeof KRPanel !== 'undefined') KRPanel.schliesseAlle(); // M11 (E215)
     ungespeichert = null;
     adresse = location.hash || '#/';
     for (const fn of aufraeumer) {

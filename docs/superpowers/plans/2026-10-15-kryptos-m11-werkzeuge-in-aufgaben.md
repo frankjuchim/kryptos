@@ -722,7 +722,7 @@ den alten Werten (`grep -rn "10¹⁰\|1,3 · 10\|17 576\|17576" quellen/material
 - Consumes: `KRLabor.oeffne`, `sperreAlle`, `GRUND`, `KRGefuehrt.freigeben`, `ctx.laborUmgebung`, `ctx.laborFrisch`.
 - Produces: `KRPanel.panel`, `schliesseAlle`, `freigeben`, `offen` (Abschnitt „Technik“).
 
-- [ ] **Step 1: Failing tests** in `test/client_panel.test.js`: `panel_eingeklappt_laedt_nichts`,
+- [x] **Step 1: Failing tests** in `test/client_panel.test.js`: `panel_eingeklappt_laedt_nichts`,
   `panel_aufklappen_laedt_modul` (Fokus bleibt auf dem Schalter), `panel_startet_gefuehrt` (Block mit `gefuehrt` → Modus
   `gefuehrt` mit den Werten der Voreinstellung), `ein_offenes_werkzeug`, `panel_schliesst_bei_navigation`,
   `panel_boss_sperre`, `freigabe_nach_loesen` (vor `nachLoesen` kein Vergleich; danach genau einmal; nächste Aufgabe ohne),
@@ -730,9 +730,9 @@ den alten Werten (`grep -rn "10¹⁰\|1,3 · 10\|17 576\|17576" quellen/material
   Antwortfeld ändern das Werkzeug nicht), `labor_link_zweitlink`, `kein_panel_im_boss`, `gast_panel_scheibe`,
   `vorschau_sofort_freigegeben`. Validator: `gefuehrt_pflicht_bei_aufgabenwerten` (W0-L2-02 mit `text: 'IMOTQ', k: 12`
   ohne `gefuehrt` → Fehler), `gefuehrt_nur_mit_hook`, `hinweis_hoechstens_160`, `werkzeug_spaetere_welt_hinweis`.
-- [ ] **Step 2:** FAIL. **Step 3:** Umsetzung. **Step 4:** `npm run pruefen` grün; Browser: W4-L2-04 (heutiger Block,
+- [x] **Step 2:** FAIL. **Step 3:** Umsetzung. **Step 4:** `npm run pruefen` grün; Browser: W4-L2-04 (heutiger Block,
   vorläufig mit `gefuehrt`), Gast-Demo 1, Lehrkraft-Vorschau (360/768/1280 px, hell/dunkel, Tastatur).
-- [ ] **Step 5: Commit** `M11: Aufgaben-Panel „Werkzeug“ statt Dialog – geführt mit Freigabe nach dem Lösen, Seitenleiste ab 1100 px (Task 247)`
+- [x] **Step 5: Commit** `M11: Aufgaben-Panel „Werkzeug“ statt Dialog – geführt mit Freigabe nach dem Lösen, Seitenleiste ab 1100 px (Task 247)`
 
 ### Task 248: Level-Karten mit „Hier ausprobieren“ (E222)
 

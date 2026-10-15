@@ -8,7 +8,7 @@ const path = require('node:path');
 const C = require('../content/checker');
 const F = require('../content/format');
 const { FALLEN_IDS, NIVEAU_IDS } = require('../domain');
-const { WERKZEUG_IDS, SCHLUESSEL_VERRAT, werkzeug: werkzeugEintrag, pruefeVoreinstellung } = require('./werkzeuge');
+const { WERKZEUG_IDS, SCHLUESSEL_VERRAT, werkzeug: werkzeugEintrag, pruefeVoreinstellung, pruefeBlock } = require('./werkzeuge');
 const CHIFFRE = require('./interaktionen/chiffre');
 const N = require('./neuberechnung');
 const { FALLEN_PLAUSIBEL, FALLEN_AUSNAHMEN } = require('./fach');
@@ -296,6 +296,14 @@ function aufgabe(a, fa, wa, { data } = {}) {
       const reiter = istObjekt(b.voreinstellung) && Array.isArray(b.voreinstellung.reiter) ? b.voreinstellung.reiter : null;
       if (!reiter || reiter.includes('schritte')) wa('inhalt', 'Hash-Labor rechnet KH Schritt für Schritt vor – Reiter einschränken (voreinstellung.reiter ohne „schritte“).');
     }
+  }
+  // M11 (E217): Werkzeug-Blöcke mit erkannten Aufgabenwerten brauchen gefuehrt: true; späteres Werkzeug → Hinweis
+  const weltNr = /^W(\d)-/.exec(id);
+  for (const b of alleBloecke(a, { erklaerung: false })) {
+    if (b.t !== 'werkzeug' || !werkzeugEintrag(b.id)) continue;
+    const r = pruefeBlock(b, { aufgabe: id, welt: weltNr ? Number(weltNr[1]) : null });
+    for (const m of r.fehler.filter((x) => /Erkenner/.test(x))) fa('inhalt', `werkzeug „${b.id}“: ${m}`);
+    for (const m of r.hinweise) wa('inhalt', `werkzeug „${b.id}“: ${m}`);
   }
   // Kern-Bestandteile ohne Kryptos-Verwendung (Delta §1)
   const kern = new Set();

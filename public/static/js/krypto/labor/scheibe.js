@@ -637,7 +637,7 @@
       gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
         werte,
         umgebung,
-        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : (umgebung && typeof umgebung.aufgabe === 'string' && umgebung.aufgabe) || null,
         titel: 'Chiffrierscheibe',
         beiEigeneWerte: () => eigeneWerte(id),
         text: { beschriftung: werte.richtung === 'ent' ? 'Geheimtext' : 'Klartext', wert: werte.text || '', fokus, beiAenderung: (t) => neuMitText(id, t, werte) }

@@ -1592,7 +1592,7 @@
       gefuehrt = KRGefuehrt.starte(r.flaeche, HOOKS[id], {
         werte,
         umgebung,
-        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : null,
+        aufgabe: fuehrung && fuehrung.aufgabe ? fuehrung.aufgabe : (umgebung && typeof umgebung.aufgabe === 'string' && umgebung.aufgabe) || null,
         titel: 'Skytale & Gitter',
         beiEigeneWerte: () => {
           if (erkVerlauf) erkVerlauf.leeren();

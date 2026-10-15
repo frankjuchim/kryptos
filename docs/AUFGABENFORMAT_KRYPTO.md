@@ -473,12 +473,19 @@ als dunkle Felder mit Loch-Symbol; bei `stellungen` vier kleine Raster mit Drehp
 | Feld | Pflicht | Regel |
 |---|---|---|
 | `id` | **ja** | Werkzeug-id aus der Registry (§3 `werkzeug`) |
-| `titel` | nein | Knopftext (Std. „<Werkzeugname> öffnen“) |
+| `titel` | nein | Auftrag oben in der Panel-Fläche (z. B. „Zähle im Häufigkeits-Analysator“); der Schalter heißt immer „Werkzeug: <Werkzeugname>“ |
+| `gefuehrt` | nein | *(M11, E217)* `true`: das Panel startet im **geführten Modus** mit den Werten der `voreinstellung` (Schritt für Schritt, Vergleich erst nach dem Lösen bzw. Ansehen der Lösung). **Fehler**, wenn der Erkenner die Werte der Voreinstellung in einem Reiter mit geführtem Modus erkennt und `gefuehrt` fehlt (einzige Ausnahme W0-L2-04 „alle“, L60); **Fehler** bei Werkzeugen ohne geführten Modus (`substitution`, `signatur`, `signale`, `verstecke`, `enigma`, `analyse`). **Hinweis**, wenn ein Reiter mit diesen Werten „nicht verfügbar“ zeigt |
+| `hinweis` | nein | *(M11)* Text (1–160 Zeichen) im Fuß des Panels, z. B. „Lies alle 25 Zeilen – nur eine ergibt Deutsch.“ |
 | `voreinstellung` | nein | Objekt; erlaubte Schlüssel je Werkzeug in der Registry (TECHNIK §10.2: `text`, `ansicht`, `basis`, `k`, `schluessel`, `bits`, `p`, `g`, `reiter`, `richtung`, `modus`, `variante`, `stellung`, `a`, `t` …). **Fehler:** `reiter` keine nicht leere Liste ohne Dopplung aus den Reitern des Werkzeugs; `richtung` ≠ `ver`/`ent`; `modus` (vigenere, bitlupe), `variante` (runden) bzw. `schluesselart` (bitlupe: `text`, `hex`, `bits`) nicht aus der festen Liste. Bit-Lupe (M7 Task 153): `schluesselart` setzt die Schreibweise des Schlüssels im Reiter XOR (z. B. `{ "reiter": ["xor"], "modus": "otp", "schluesselart": "hex", "text": "…", "schluessel": "1D C0 …" }`), `c1`/`c2` belegen die Doppelnutzung vor (Hex, je ≤ 24 Byte); ungültige Werte zeigen im Werkzeug einen Hinweis und fallen auf den Standard zurück. **Validator-Hinweis**, wenn `schluessel`, `k`, `vorgabe` oder `t` in einer Aufgabe (oder im Level-Feld `werkzeug`) eines `kryptoanalyse`-Levels vorbelegt wird (verrät die Lösung); **Hinweis** „Reiter einschränken“, wenn eine Aufgabe der Kategorie `hash` das Hash-Labor ohne `reiter` oder mit dem Reiter `schritte` öffnet (rechnet KH vor, Plan M6 E75) |
 
-**Darstellung:** Karte „🧪 Im Kryptolabor“ mit Knopf; öffnet das Werkzeug in einem `<dialog>` über der Aufgabe
-(Fokusfalle, Esc schließt). Ist das Werkzeug im Kurs gesperrt: Karte ausgegraut „Deine Lehrkraft schaltet dieses
-Werkzeug später frei“. `reiter` schränkt die sichtbaren Reiter ein (erster = Start); Welt- und Niveau-Regeln der
+**Darstellung (M11, E214–E216):** Panel in der Aufgabe statt Dialog – Schalter „Werkzeug: <Name>“
+(`aria-expanded`, Chips Zusatz/Kür und „Schritt für Schritt“ bei `gefuehrt`), darunter die Fläche (`role=region`), die
+das Modul beim ersten Aufklappen lädt; Fuß mit `hinweis` und Zweitlink „Im Labor öffnen“. Höchstens ein offenes Werkzeug
+je Seite, Seitenwechsel schließt es (Einträge gehen verloren). Ab 1100 px steht die geöffnete Fläche als Seitenleiste
+rechts. Erkennt ein Werkzeug Aufgabenwerte, schaltet es auch ohne `gefuehrt` in den geführten Modus bzw. zeigt „nicht
+verfügbar“ (Erkenner, TECHNIK §10). Freigabe: Gelöst oder Lösung angesehen → das Werkzeug vergleicht die Schritte (auch
+beim Öffnen einer schon gelösten Aufgabe); die Lehrkraft-Vorschau zeigt die richtigen Werte sofort. Ist das Werkzeug im Kurs gesperrt: Karte ausgegraut „Deine Lehrkraft schaltet dieses
+Werkzeug später frei“ (Schalter deaktiviert). `reiter` schränkt die sichtbaren Reiter ein (erster = Start); Welt- und Niveau-Regeln der
 Reiter (TECHNIK §10.1/§10.3, Plan M6 E71) gelten zusätzlich – mit dem Level-Kontext der Aufgabe (z. B. Szene „MitM“ des
 Signatur-Simulators nie in Level W5-L3). Die Lehrkraft-Vorschau öffnet das Werkzeug ohne Einschränkung. **Im Boss-Kampf wird
 der Block nicht gerendert**; läuft ein Kampf, ist er auch in anderen Tabs gesperrt; in Boss-Pool-Aufgaben ist er ein

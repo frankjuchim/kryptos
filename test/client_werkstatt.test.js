@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 
 // M11 (Task 245): Erkenner mit den Baukasten-Daten wie in werkstatt.html
-const WERKSTATT = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'krypto/labor/erkenner.js', 'krypto/labor/erkenner/baukasten.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/bloecke.js', 'krypto/kopfzeile.js', 'krypto/werkstatt.js'];
+const WERKSTATT = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'krypto/labor/erkenner.js', 'krypto/labor/erkenner/baukasten.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/werkzeug_panel.js', 'krypto/bloecke.js', 'krypto/kopfzeile.js', 'krypto/werkstatt.js'];
 const SITZUNG = { status: 200, body: { rolle: 'schueler', name: 'Mika R.', kurs: { id: 'k:1', name: 'LK 13 (eA)', niveau: 'eA' }, kurse: [] } };
 const TEAM = { id: 1, nr: 1, name: 'Team Skytale' };
 const ARENA = (status = 'werkstatt', extra = {}) => ({ status: 200, body: { arena: { id: 4, status, angriffBis: null }, team: TEAM, eigene: null, teilnahme: 12, ...extra } });

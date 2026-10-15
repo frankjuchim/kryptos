@@ -5,7 +5,7 @@
 // Fehler = fe(meldung), Hinweis = we(meldung). Rechnen ausschließlich über public/static/js/shared/krypto.js.
 
 const K = require('../../public/static/js/shared/krypto');
-const { WERKZEUG_IDS, werkzeug, pruefeVoreinstellung } = require('./werkzeuge');
+const { WERKZEUG_IDS, werkzeug, pruefeVoreinstellung, pruefeBlockFelder } = require('./werkzeuge');
 
 const LUECKE = /^\[\[[A-Za-z0-9_-]{1,40}\]\]$/;
 const istObjekt = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
@@ -317,6 +317,7 @@ const werkzeugBlock = {
       if (!istObjekt(b.voreinstellung)) fe('voreinstellung muss ein Objekt sein.');
       else if (wz) pruefeVoreinstellung(wz, b.voreinstellung, fe); // Schlüssel, reiter, richtung, modus, variante (M6 E73)
     }
+    pruefeBlockFelder(b, fe); // M11 (E217): gefuehrt, hinweis
   }
 };
 

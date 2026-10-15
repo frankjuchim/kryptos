@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 
 const BASIS = ['common.js', 'krypto/oberflaeche.js', 'krypto/kopfzeile.js'];
-const LEHRER = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js'];
+const LEHRER = [...BASIS, 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/werkzeug_panel.js', 'krypto/bloecke.js', 'krypto/interaktionen.js', 'aufgabe.js', 'krypto/lehrer.js'];
 const LEHRER_ALLE = [...LEHRER, 'krypto/funkpoll.js', 'krypto/lehrer_funkraum.js', 'krypto/lehrer_arena.js'];
 const SITZUNG_L = { rolle: 'lehrkraft', name: 'Frau M.', kurse: [{ id: 'k:1', name: 'LK 13 (eA)', aktiv: true }], portal: 'https://portal.test' };
 const SITZUNG_A = { ...SITZUNG_L, rolle: 'superadmin', name: 'Admin' };

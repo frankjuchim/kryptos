@@ -5,7 +5,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 
-const SEITE = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/bloecke.js', 'krypto/labor/registry.js', 'krypto/kopfzeile.js', 'krypto/funkpoll.js', 'krypto/funknetz.js', 'krypto/funkraum_szenen.js', 'krypto/funkraum.js'];
+const SEITE = ['common.js', 'krypto/oberflaeche.js', 'shared/krypto.js', 'render.js', 'krypto/diagnose_chips.js', 'krypto/werkzeug_panel.js', 'krypto/bloecke.js', 'krypto/labor/registry.js', 'krypto/kopfzeile.js', 'krypto/funkpoll.js', 'krypto/funknetz.js', 'krypto/funkraum_szenen.js', 'krypto/funkraum.js'];
 const SITZUNG = { status: 200, body: { rolle: 'schueler', name: 'Mika R.', kurs: { id: 'k:1', name: 'LK 13 (eA)', niveau: 'eA' }, kurse: [] } };
 const TEAMS = [{ id: 1, nr: 1, name: 'Team Skytale', rolle: 'alice' }, { id: 2, nr: 2, name: 'Team Scheibe', rolle: 'bob' }, { id: 3, nr: 3, name: 'Team Quadrat', rolle: 'eve' }];
 const stand = (v, extra = {}) => ({ id: 7, typ: 'botenlauf', titel: 'Botenlauf', version: v, status: 'laeuft', phase: 'runde-1', phasen: ['runde-1', 'runde-2', 'runde-3', 'aufloesung'], ich: { team: TEAMS[0], rolle: 'alice', partner: 2 }, teams: TEAMS, nachrichten: [], ereignisse: [], anzeigen: { runde: 1 }, werkzeuge: [], boss: false, ...extra });

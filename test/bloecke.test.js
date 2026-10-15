@@ -71,3 +71,12 @@ test('werkzeug und haeufigkeit', () => {
   assert.match(meld([{ t: 'haeufigkeit', quelle: 'text', text: 'TCHTA TBTCG' }]).w, /P6/);
   assert.match(meld([{ t: 'haeufigkeit', quelle: 'werte', werte: { E: -1 } }]).f, /werte/);
 });
+
+test('werkzeug (M11 E217): gefuehrt, hinweis; erkannte Aufgabenwerte verlangen gefuehrt', () => {
+  assert.match(meld([{ t: 'werkzeug', id: 'scheibe', gefuehrt: 'ja' }]).f, /gefuehrt muss true oder false/);
+  assert.match(meld([{ t: 'werkzeug', id: 'substitution', gefuehrt: true }]).f, /keinen geführten Modus/);
+  assert.match(meld([{ t: 'werkzeug', id: 'scheibe', hinweis: 'x'.repeat(161) }]).f, /hinweis/);
+  assert.equal(meld([{ t: 'werkzeug', id: 'scheibe', gefuehrt: true, hinweis: 'Lies ab.', voreinstellung: { reiter: ['text'], text: 'IMOTQ', k: 12, richtung: 'ent' } }]).f, '');
+  assert.match(meld([{ t: 'werkzeug', id: 'scheibe', voreinstellung: { reiter: ['text'], text: 'IMOTQ', k: 12, richtung: 'ent' } }]).f, /gefuehrt: true ist Pflicht/);
+  assert.equal(meld([{ t: 'werkzeug', id: 'scheibe', voreinstellung: { reiter: ['text'], text: 'zinnober', k: 7 } }]).f, '', 'eigene Werte frei');
+});

@@ -76,10 +76,63 @@ function pruefeVoreinstellung(wz, v, fe) {
   if (Object.hasOwn(v, 'richtung') && wz.voreinstellung.includes('richtung') && !WERTE.richtung.includes(v.richtung)) {
     fe(`voreinstellung: richtung muss ${WERTE.richtung.join(' oder ')} sein.`);
   }
-  for (const k of ['modus', 'variante', 'schluesselart', 'groesse', 'ukw', 'stelle']) {
+  for (const k of ['modus', 'variante', 'schluesselart', 'groesse', 'ukw', 'stelle', 'op']) {
     const liste = WERTE[k][wz.id];
     if (liste && Object.hasOwn(v, k) && !liste.includes(v[k])) fe(`voreinstellung: ${k} muss ${liste.join(' | ')} sein.`);
   }
 }
 
-module.exports = { WERKZEUGE, WERKZEUG_IDS, ARTEN, WERTE, SCHLUESSEL_VERRAT, werkzeug, pruefeVoreinstellung };
+/** M11 (E208): Reiter mit geführtem Modus – gleich werkzeuge/krypto/werkzeug_modelle.js GEFUEHRT (Test) */
+const GEFUEHRT_REITER = Object.freeze([
+  'scheibe.scheibe', 'scheibe.text',
+  'skytale.skytale', 'skytale.gartenzaun', 'skytale.fleissner', 'skytale.pfluegen', 'skytale.ring',
+  'quadrat.polybios', 'quadrat.playfair',
+  'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
+  'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
+  'bitlupe.xor', 'bitlupe.doppelnutzung',
+  'runden.runden', 'runden.lawine', 'runden.enigma',
+  'modulo.uhr', 'modulo.tabelle', 'modulo.inverses', 'modulo.farbmischer',
+  'rsa.rechenwerk', 'rsa.euklid', 'rsa.text',
+  'hash.schritte', 'hash.pruefsumme', 'hash.passwort'
+]);
+const HINWEIS_MAX = 160;
+const hatHook = (id) => GEFUEHRT_REITER.some((r) => r.startsWith(`${id}.`));
+// E204 (L60): W0-L2-04 – „Alle Verschiebungen“ mit dem Geheimtext der Aufgabe ist erlaubt
+const AUSNAHMEN = Object.freeze([{ aufgabe: 'W0-L2-04', wr: 'scheibe.alle' }]);
+
+/** Felder gefuehrt und hinweis des Blocks werkzeug (E217); fe(meldung) je Fehler */
+function pruefeBlockFelder(b, fe) {
+  if (b.gefuehrt !== undefined) {
+    if (typeof b.gefuehrt !== 'boolean') fe('gefuehrt muss true oder false sein.');
+    else if (b.gefuehrt && werkzeug(b.id) && !hatHook(b.id)) fe(`gefuehrt: „${b.id}“ hat keinen geführten Modus (nur ${[...new Set(GEFUEHRT_REITER.map((r) => r.split('.')[0]))].join(', ')}).`);
+  }
+  if (b.hinweis !== undefined && (typeof b.hinweis !== 'string' || !b.hinweis.trim() || b.hinweis.length > HINWEIS_MAX)) fe(`hinweis muss ein Text mit 1–${HINWEIS_MAX} Zeichen sein.`);
+}
+
+/**
+ * Block werkzeug im Kontext der Aufgabe (E217): erkennt der Erkenner die Werte der Voreinstellung in einem Reiter mit
+ * geführtem Modus, ist gefuehrt: true Pflicht (außer E204); Werkzeug aus einer späteren Welt → Hinweis.
+ * → { fehler: [], hinweise: [] }
+ */
+function pruefeBlock(b, { aufgabe = null, welt = null } = {}) {
+  const fehler = [];
+  const hinweise = [];
+  const wz = werkzeug(b && b.id);
+  if (!wz) return { fehler: [`Werkzeug „${b && b.id}“ ist unbekannt.`], hinweise };
+  pruefeBlockFelder(b, (m) => fehler.push(m));
+  const v = b.voreinstellung && typeof b.voreinstellung === 'object' && !Array.isArray(b.voreinstellung) ? b.voreinstellung : null;
+  if (v) {
+    const { erkannteReiter } = require('./werkzeug_erkenner');
+    for (const r of erkannteReiter(wz, v)) {
+      const wr = `${wz.id}.${r}`;
+      if (AUSNAHMEN.some((x) => x.aufgabe === aufgabe && x.wr === wr)) continue;
+      if (GEFUEHRT_REITER.includes(wr)) {
+        if (b.gefuehrt !== true) fehler.push(`gefuehrt: Der Erkenner erkennt die Werte der Voreinstellung im Reiter „${r}“ – gefuehrt: true ist Pflicht (E217).`);
+      } else hinweise.push(`Reiter „${r}“: Mit diesen Werten zeigt das Werkzeug „nicht verfügbar“ – Reiter weglassen.`);
+    }
+  }
+  if (Number.isInteger(welt) && wz.welt > welt) hinweise.push(`Werkzeug „${wz.titel}“ gehört zu Welt ${wz.welt} – die Aufgabe liegt in Welt ${welt}.`);
+  return { fehler, hinweise };
+}
+
+module.exports = { WERKZEUGE, WERKZEUG_IDS, ARTEN, WERTE, SCHLUESSEL_VERRAT, GEFUEHRT_REITER, werkzeug, pruefeVoreinstellung, pruefeBlockFelder, pruefeBlock };

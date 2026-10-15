@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 const K = require('../public/static/js/shared/krypto.js');
 const W = require('./fixtures/welt_beispiel.json');
-const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js', 'krypto/interaktionen.js'];
+const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/werkzeug_panel.js', 'krypto/bloecke.js', 'krypto/interaktionen.js'];
 /** Aufgabe so, wie der Client sie bekommt (ohne Lösung/Erklärung). */
 function oeffentlich(id) {
   const a = structuredClone(W.aufgaben.find((x) => x.id === id));

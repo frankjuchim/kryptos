@@ -31,6 +31,70 @@ a.werkzeug-karte:hover { border-color: var(--akzent); }
 .werkzeug-art.art-zusatz { color: var(--niveau-ergaenzung); }
 .werkzeug-art.art-kuer { color: var(--niveau-kuer); }
 
+/* ---------- Aufgaben-Panel „Werkzeug“ (M11 Task 247, E214, E216) ---------- */
+.werkzeug-panel { display: grid; gap: var(--a-2); }
+.werkzeug-schalter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--a-1) var(--a-2);
+  width: 100%;
+  min-height: var(--ziel);
+  padding: var(--a-2) var(--a-4);
+  border: 1.5px solid var(--linie);
+  border-left: 6px solid var(--akzent);
+  border-radius: var(--r-knopf);
+  background: var(--karte);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.werkzeug-schalter:hover:not(:disabled) { border-color: var(--akzent); }
+.werkzeug-schalter:disabled { cursor: not-allowed; border-left-style: dashed; border-left-color: var(--linie); background: var(--papier); }
+.werkzeug-schalter-text { flex: 1 1 12rem; font-family: var(--f-ueberschrift); }
+.werkzeug-gefuehrt-chip { padding: 1px var(--a-2); border: 1.5px solid var(--akzent); border-radius: var(--r-chip); font-size: .78rem; }
+.werkzeug-pfeil { transition: transform .2s; }
+.werkzeug-schalter[aria-expanded="true"] .werkzeug-pfeil { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .werkzeug-pfeil { transition: none; } }
+.werkzeug-panel-flaeche {
+  display: grid;
+  gap: var(--a-3);
+  min-width: 0;
+  padding: var(--a-3);
+  border: 1.5px solid var(--linie);
+  border-top: 3px solid var(--akzent);
+  border-radius: var(--r-knopf);
+  background: var(--papier);
+  color: var(--text);
+}
+.werkzeug-panel-flaeche[hidden] { display: none; }
+.werkzeug-panel-kopf { display: flex; align-items: center; justify-content: space-between; gap: var(--a-2); }
+.werkzeug-auftrag { margin: 0; font-weight: 700; }
+.werkzeug-panel-inhalt { min-width: 0; }
+.werkzeug-panel-fuss { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--a-2); }
+.werkzeug-hinweis { margin: 0; flex: 1 1 14rem; }
+/* ab 1100 px: geöffnete Fläche als Seitenleiste rechts, der Inhalt rückt zur Seite (reines CSS) */
+@media (min-width: 1100px) {
+  .werkzeug-panel[data-offen] .werkzeug-panel-flaeche {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 15; /* unter der Kopfzeile (z 20): oben Platz für sie */
+    padding-top: calc(var(--a-4) + 66px);
+    width: min(46vw, 640px);
+    overflow: auto;
+    align-content: start;
+    border-radius: 0;
+    border-width: 0 0 0 1.5px;
+    border-top: 4px solid var(--akzent);
+    box-shadow: var(--schatten);
+  }
+  body:has(.werkzeug-panel[data-offen]) #haupt, body:has(.werkzeug-panel[data-offen]) .fuss { margin-right: min(46vw, 640px); }
+}
+
 /* ---------- Werkzeug-Dialog ---------- */
 dialog.werkzeug-dialog {
   width: min(960px, calc(100vw - 32px));

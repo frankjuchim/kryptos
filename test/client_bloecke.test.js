@@ -4,7 +4,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const D = require('./dom_attrappe');
 const K = require('../public/static/js/shared/krypto.js');
-const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/bloecke.js'];
+const SKRIPTE = ['common.js', 'shared/krypto.js', 'render.js', 'interact.js', 'krypto/oberflaeche.js', 'krypto/diagnose_chips.js', 'krypto/labor/registry.js', 'krypto/werkzeug_panel.js', 'krypto/bloecke.js'];
 function bau(b, ctx = {}, extraSkripte = []) {
   const k = D.lade([...SKRIPTE, ...extraSkripte]);
   const gaps = {};
@@ -199,35 +199,39 @@ test('schaubild: Liste mit Nummern und Pfeilen, Angreifer/CA markiert, Lücken a
   assert.ok(k.eins(el, 'svg .akteur-angreifer') && k.eins(el, 'svg .akteur-ca'));
   assert.equal(k.eins(el, 'svg.schaubild-svg').getAttribute('aria-hidden'), 'true');
 });
-test('werkzeug: Karte öffnet Dialog mit Fokusfalle; Boss rendert nichts; gesperrt mit Grund', () => {
+test('werkzeug: Panel statt Dialog (M11 E214) – klappt in der Aufgabe auf, lädt nach; Boss rendert nichts; gesperrt mit Grund', () => {
+  // M11 Task 247: Der Dialog (Fokusfalle, Escape) ist durch das Aufgaben-Panel ersetzt – Schalter mit aria-expanded,
+  // Fläche als region; Tests des Panels in test/client_panel.test.js
   let { k, el } = bau({ t: 'werkzeug', id: 'haeufigkeit', titel: 'Zähle im Häufigkeits-Analysator', voreinstellung: { text: 'ABC' } });
-  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
-  const d = k.eins(k.document, 'dialog.werkzeug-dialog');
-  assert.equal(d.hasAttribute('open'), true);
-  assert.match(k.text(d), /Häufigkeits-Analysator/);
+  const s = k.eins(el, 'button.werkzeug-schalter');
+  k.klick(s);
+  const d = k.eins(k.document, '.werkzeug-panel-flaeche');
+  assert.equal(d.hidden, false);
+  assert.equal(s.getAttribute('aria-expanded'), 'true');
+  assert.match(k.text(el), /Häufigkeits-Analysator/);
+  assert.match(k.text(d), /Zähle im Häufigkeits-Analysator/);
   assert.match(k.text(d), /Wird geladen/, 'Modul wird nachgeladen (M6 E72)');
   assert.ok(k.skripte.some((x) => /\/krypto\/labor\/bausteine\.js/.test(x)), 'erst die Bausteine, dann das Modul');
-  k.taste(d, 'Escape');
-  assert.equal(d.hasAttribute('open'), false);
+  k.klick(s);
+  assert.equal(d.hidden, true);
   assert.equal(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe' }, 0, { modus: 'boss' }), null);
   ({ k, el } = bau({ t: 'werkzeug', id: 'scheibe' }, { werkzeugFrei: () => false }));
   assert.ok(el.classList.contains('gesperrt'));
-  assert.equal(k.eins(el, 'button.werkzeug-oeffnen').disabled, true);
+  assert.equal(k.eins(el, 'button.werkzeug-schalter').disabled, true);
   assert.match(k.text(el), /Deine Lehrkraft schaltet dieses Werkzeug später frei/);
 });
-
 test('werkzeug: Block reicht ctx.laborUmgebung und Voreinstellung an KRLabor.dialog weiter (M6 Task 110)', () => {
   const { k, el } = bau({ t: 'werkzeug', id: 'vigenere', voreinstellung: { reiter: ['quadrat'] } }, { laborUmgebung: { rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] } });
-  k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
-  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
+  k.wert('globalThis.__dialog = []; KRLabor.oeffne = (id, v, f, u) => { __dialog.push([id, v, u]); return { schliesse() {} }; };');
+  k.klick(k.eins(el, 'button.werkzeug-schalter'));
   assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', { reiter: ['quadrat'] }, { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0, 1, 2] }]]);
 });
 test('werkzeug-Block: Dialog öffnet das nachgeladene Modul mit Voreinstellung und Kurs-Umgebung (M6 Task 125)', () => {
   const { k, el } = bau({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, { laborUmgebung: { modus: 'lab', rolle: 'schueler', niveau: 'gA', welten: [0] } }, ['krypto/labor/bausteine.js', 'krypto/labor/station.js', ...ERKENNER_SKRIPTE, 'krypto/labor/scheibe.js']);
-  const knopf = k.eins(el, 'button.werkzeug-oeffnen');
+  const knopf = k.eins(el, 'button.werkzeug-schalter');
   knopf.focus();
   k.klick(knopf);
-  const d = k.eins(k.document, 'dialog.werkzeug-dialog');
+  const d = k.eins(k.document, '.werkzeug-panel-flaeche');
   assert.equal(k.text(k.eins(d, '.scheibe-k')), 'k = 7');
   assert.equal(k.skripte.length, 0, 'Modul war schon geladen – nichts nachgeladen');
   k.taste(d, 'Escape');
@@ -235,8 +239,8 @@ test('werkzeug-Block: Dialog öffnet das nachgeladene Modul mit Voreinstellung u
 });
 test('werkzeug-Block in der Lehrkraft-Vorschau: Umgebung modus „vorschau“, Rolle Lehrkraft (M6 Task 125)', () => {
   const { k, el } = bau({ t: 'werkzeug', id: 'vigenere' }, { modus: 'vorschau', laborUmgebung: { modus: 'vorschau', rolle: 'lehrkraft' } });
-  k.wert('globalThis.__dialog = []; KRLabor.dialog = (id, v, u) => { __dialog.push([id, v, u]); };');
-  k.klick(k.eins(el, 'button.werkzeug-oeffnen'));
+  k.wert('globalThis.__dialog = []; KRLabor.oeffne = (id, v, f, u) => { __dialog.push([id, v, u]); return { schliesse() {} }; };');
+  k.klick(k.eins(el, 'button.werkzeug-schalter'));
   assert.deepEqual(k.roh(k.wert('__dialog')), [['vigenere', null, { modus: 'vorschau', rolle: 'lehrkraft' }]]);
 });
 test('Geheimtext-Zeile mit Markierungen: mark.markiert, Art als Klasse, Beschreibung über aria-describedby (M6 E86)', () => {

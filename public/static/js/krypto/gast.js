@@ -135,6 +135,7 @@ const KRGast = (() => {
     if (!r.gueltig()) return;
     const z = zaehler.get(id) || { fehlversuche: 0, tipps: 0, angesehen: false };
     zaehler.set(id, z);
+    if (z.angesehen) KRPanel.freigeben(id); // Lösung schon angesehen → Vergleich im Werkzeug (E218)
     const merke = (x) => {
       if (x && x.zustand) {
         z.fehlversuche = x.zustand.fehlversuche;
@@ -150,14 +151,17 @@ const KRGast = (() => {
       aufgabe: d.aufgabe,
       zustand: { ...d.zustand, fehlversuche: z.fehlversuche, tippsGenutzt: z.tipps },
       modus: 'gast',
-      zusatz: { werkzeugFrei, laborUmgebung: UMGEBUNG, laborFrisch: umgebungFrisch },
+      zusatz: { aufgabeId: d.aufgabe.id, werkzeugFrei, laborUmgebung: UMGEBUNG, laborFrisch: umgebungFrisch },
       anzeige: KRDiag.anzeige,
       pruefen: async (body) => merke(await api('POST', `${pfad}/pruefen`, { ...body, fehlversuche: z.fehlversuche, tipps: z.tipps, angesehen: z.angesehen })),
       tipp: async () => merke(await api('POST', `${pfad}/tipp`, { fehlversuche: z.fehlversuche, tipps: z.tipps })),
       aufdecken: async () => {
         z.angesehen = true;
-        return api('POST', `${pfad}/aufdecken`, {});
+        const x = await api('POST', `${pfad}/aufdecken`, {});
+        KRPanel.freigeben(d.aufgabe.id); // E218
+        return x;
       },
+      nachLoesen: () => KRPanel.freigeben(d.aufgabe.id),
       punkteText: (x) => (x.punkteErhalten ? `✔ Richtig! Mit Anmeldung gäbe es dafür ${x.punkteErhalten} ${x.punkteErhalten === 1 ? 'Punkt' : 'Punkte'}.` : '✔ Richtig!'),
       weiter: o.nachher ? { href: `#/schueler/aufgabe/${enc(o.nachher)}`, text: 'Nächste Aufgabe →' } : { href: '#/schueler', text: 'Zur Übersicht →' }
     });
@@ -335,6 +339,7 @@ const KRGast = (() => {
   }
 
   async function navigiere() {
+    KRPanel.schliesseAlle(); // M11 (E215)
     if (offen) {
       offen.schliesse();
       offen = null;

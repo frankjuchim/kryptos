@@ -199,6 +199,8 @@ const KRSpiel = (() => {
     const o = d.ort;
     const pfad = `/api/aufgaben/${enc(id)}`;
     epoche(await weltVon(o.welt));
+    // M11 (E218): gelöste bzw. angesehene Aufgabe → geführte Werkzeuge vergleichen sofort
+    if (d.zustand && d.zustand.status && d.zustand.status !== 'offen') KRPanel.freigeben(d.aufgabe.id);
     const ansicht = AQA.ansicht({
       aufgabe: d.aufgabe,
       zustand: d.zustand,
@@ -206,15 +208,20 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: { ...lab.laborUmgebung, level: o.level.id }, laborFrisch: (wid) => laborFrisch(wid, { level: o.level.id }) }, // Level-Kontext für Reiter-Regeln (MitM in W5-L3)
+      zusatz: { aufgabeId: d.aufgabe.id, werkzeugFrei: lab.werkzeugFrei, laborUmgebung: { ...lab.laborUmgebung, level: o.level.id }, laborFrisch: (wid) => laborFrisch(wid, { level: o.level.id }) }, // Level-Kontext für Reiter-Regeln (MitM in W5-L3)
       anzeige: KRDiag.anzeige,
       kursNiveau: w.niveau || (sitzung.kurs && sitzung.kurs.niveau) || 'eA',
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
       tipp: () => api('POST', `${pfad}/tipp`, {}),
-      aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
+      aufdecken: async () => {
+        const x = await api('POST', `${pfad}/aufdecken`, {});
+        KRPanel.freigeben(d.aufgabe.id); // Lösung angesehen → Vergleich im Werkzeug (E218)
+        return x;
+      },
       weiter: o.nachher ? { href: `#/aufgabe/${enc(o.nachher)}`, text: 'Nächste Aufgabe →' } : { href: `#/level/${enc(o.level.id)}`, text: 'Zurück zum Level →' },
       abzeichenToast,
       nachLoesen: (x) => {
+        KRPanel.freigeben(d.aufgabe.id); // gelöst → Vergleich im Werkzeug (E218)
         welten({ neu: true }).catch(() => {});
         if (x && x.punkteErhalten) KRKopf.rangNeu(); // Rang-Plakette sofort aktualisieren
       }
@@ -235,6 +242,7 @@ const KRSpiel = (() => {
     const [d, lab] = await Promise.all([api('GET', pfad), labor()]);
     if (!r.gueltig()) return;
     epoche(await weltVon(d.welt));
+    if (d.zustand && d.zustand.status && d.zustand.status !== 'offen') KRPanel.freigeben(d.aufgabe.id);
     const ansicht = AQA.ansicht({
       aufgabe: d.aufgabe,
       zustand: d.zustand,
@@ -242,16 +250,23 @@ const KRSpiel = (() => {
       muster: d.muster,
       erklaerung: d.erklaerung,
       modus: 'lab',
-      zusatz: { werkzeugFrei: lab.werkzeugFrei, laborUmgebung: lab.laborUmgebung, laborFrisch: (wid) => laborFrisch(wid) },
+      zusatz: { aufgabeId: d.aufgabe.id, werkzeugFrei: lab.werkzeugFrei, laborUmgebung: lab.laborUmgebung, laborFrisch: (wid) => laborFrisch(wid) },
       anzeige: KRDiag.anzeige,
       pruefen: (body) => api('POST', `${pfad}/pruefen`, body),
       tipp: () => api('POST', `${pfad}/tipp`, {}),
-      aufdecken: () => api('POST', `${pfad}/aufdecken`, {}),
+      aufdecken: async () => {
+        const x = await api('POST', `${pfad}/aufdecken`, {});
+        KRPanel.freigeben(d.aufgabe.id);
+        return x;
+      },
       punkteText: () => '✔ Entschlüsselt! (Archivfund – ohne Punkte)',
       ohnePunkte: 'Archivfund – ohne Punkte',
       kopfZusatz: h('span', { class: 'chip chip-neutral' }, 'Einstiegsrätsel der Epoche'),
       weiter: { href: `#/epoche/${d.welt.nr}`, text: 'Zur Epoche →' },
-      nachLoesen: () => welten({ neu: true }).catch(() => {})
+      nachLoesen: () => {
+        KRPanel.freigeben(d.aufgabe.id);
+        welten({ neu: true }).catch(() => {});
+      }
     });
     seite(
       d.titel || d.aufgabe.titel,
@@ -754,6 +769,7 @@ const KRSpiel = (() => {
   }
 
   async function navigiere() {
+    KRPanel.schliesseAlle(); // M11 (E215): Werkzeug-Panels schließen beim Seitenwechsel
     for (const fn of aufraeumer) {
       try {
         fn();
