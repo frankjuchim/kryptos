@@ -13,6 +13,11 @@
   const B = KRLaborBau;
   const S = KRStation;
   const BEISPIEL = { playfair: 'LEUCHTFEUER' }; // eigenes Schlüsselwort, in keinem Material
+  // Schlüsselwörter aus Aufgaben, Akten, Bossen, Warm-up und Videos (M10-Review Fund 1): Für Lernende baut das Werkzeug
+  // diese Quadrate nicht – sonst rechnete es Lösungen vor. Vergleich über das Quadrat (gleiches Quadrat = gesperrt).
+  // SPERRLISTE-START (erzeugt: node werkzeuge/krypto/quadrat_sperre.js – nicht von Hand ändern)
+  const GESPERRT = 'ATHEN BAD BAUM BCD BOTE BRIEFTAU CDE CEDF DAEC DAME DOGE DSCHIN EIS FERNSCHIB FUNKE GALER GONDEL HAND HELM KADI KAI KALIF KARL KOLBE KOMPAS KORINTH KRYPTOS LAGUNE LUN MURANO NEBL OHR PAYRUS PORT RAT RIALTO RIO RIV ROS ROSE ROT SCHERAZD SIEGL SMARGD SULTAN TAG TAL TAU THEBN TOR TURM VEL WACHS WOLF WUESTNID XOR YASMIN ZEDR ZEIL ZEIT ZEPLIN ZIFER ZUG ZUGVOEL'.split(' ');
+  // SPERRLISTE-ENDE
   const REITER_TITEL = { polybios: 'Polybios', playfair: 'Playfair' };
   const MAX = 120; // Buchstaben je Nachricht
   const REGELN = {
@@ -33,11 +38,24 @@
     }
   }
 
+  let gesperrteQuadrate = null;
+  /** Ergibt das Wort ein Quadrat aus der Sperrliste? (nur über Krypto.quadrat; Lehrkraft: nie) */
+  function istGesperrt(wort, umgebung) {
+    if ((umgebung || {}).rolle === 'lehrkraft' || !wort) return false;
+    if (!gesperrteQuadrate) gesperrteQuadrate = new Set(GESPERRT.filter(Boolean).map((k) => Krypto.quadrat(k).join('')));
+    try {
+      return gesperrteQuadrate.has(Krypto.quadrat(wort).join(''));
+    } catch {
+      return false;
+    }
+  }
+
   function oeffne(container, voreinstellung, umgebung) {
     const v = voreinstellung || {};
     const reiterListe = KRLabor.reiterFuer('quadrat', v, umgebung);
     const wortFrei = KRLabor.erlaubt('quadrat.schluesselwort', umgebung); // im Level 0.4/2.4 fest (L55)
-    const vorWort = wortFrei ? wortVon(v.schluesselwort) : null;
+    const vorRoh = wortFrei ? wortVon(v.schluesselwort) : null;
+    const vorWort = vorRoh && !istGesperrt(vorRoh, umgebung) ? vorRoh : null;
     const vorRichtung = v.richtung === 'ent' ? 'ent' : 'ver';
     const stand = {
       polybios: { richtung: vorRichtung, wort: vorWort || '', liste: [] },
@@ -123,7 +141,7 @@
      */
     function wortWerkbank(o) {
       if (!wortFrei) {
-        return { element: h('p', { class: 'quadrat-wort-fest text-2' }, 'Das Schlüsselwort ist im Level fest. Eigene Quadrate baust du im freien Kryptolabor.'), sperre() {}, schliesse() {} };
+        return { element: h('p', { class: 'quadrat-wort-fest text-2' }, 'Das Schlüsselwort ist im Level fest.'), sperre() {}, schliesse() {} };
       }
       return wortWerkbankFrei(o);
     }
@@ -178,6 +196,10 @@
       aufbauen.addEventListener('click', () => {
         if (entwurf.length < 3) {
           hinweis.textContent = 'Mindestens 3 Buchstaben – ohne Schlüsselwort gäbe es kein Geheimnis.';
+          return;
+        }
+        if (istGesperrt(entwurf, umgebung)) {
+          hinweis.textContent = 'Dieses Schlüsselwort kann das Kryptolabor nicht verwenden. Denk dir ein eigenes aus.';
           return;
         }
         schliesse();

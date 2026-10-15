@@ -1362,8 +1362,11 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   `vigenere.modus.frei` Welt 6 · `signatur.mitm` Welt 6, nie im Level W5-L3 · `quadrat.playfair` Welt 2 (rechnet sonst
   W2-L4 vor) · `analyse.schluesselraum` Welt 2 (rechnet sonst W1-L1-04 vor) · `analyse.verfahren.playfair` und
   `analyse.verfahren.vigenere` Welt 2 · `analyse.verfahren.enigma` Welt 3 · `enigma.vorfuehren` nie im Level W3-L5
-  (beantwortet W3-K2-03) · `quadrat.schluesselwort` nie in den Levels W0-L4/W2-L4 (Task 239: dort bleibt das Quadrat fest,
-  sonst rechnete das Werkzeug die Schlüsselwort-Aufgaben vor).
+  (beantwortet W3-K2-03) · `quadrat.schluesselwort` nie in den Levels W0-L4/W2-L4 (Task 239: dort bleibt das Quadrat fest).
+  **Sperrliste (M10-Review, D17):** Auch im freien Labor baut `quadrat` für Lernende kein Quadrat, das in einer Aufgabe,
+  Akte, einem Boss, einer Warm-up-Karte oder einem Video vorkommt (Konstante `GESPERRT` zwischen den Marken
+  `SPERRLISTE-START/-ENDE`, erzeugt mit `npm run labor:sperre`; Vergleich über `Krypto.quadrat`, also auch gleichwertige
+  Wörter; Lehrkraft frei). Test K10 prüft Level- und freien Kontext.
   **Level-Karten (Task 235, 239):** Level 0.4 `quadrat` [`polybios`], Level 2.4 zusätzlich `quadrat` [`playfair`], Kür 3.K2
   (W3-L5, SPEC W3 §K2) Runden-Labor [`enigma`] (Mini-Enigma) **und** Enigma [`maschine`, `innenleben`] – „Vorführen“ ist dort
   ausgeblendet. Lösungsverrat-Test K10 (`inhalte_loesungsverrat.test.js`): Werkzeug mit Level-Voreinstellung, angewandt

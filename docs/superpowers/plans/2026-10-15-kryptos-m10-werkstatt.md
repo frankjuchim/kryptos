@@ -904,6 +904,12 @@ falls Variante B), Materialien/Lehrerhinweise W0/W2 (Quell-JSON + `bauen.py` mit
 - [x] **Step 2:** FAIL. **Step 3:** Aufgaben/Spec/Seed/Prüfwerte/Material ändern. **Step 4:** `npm run pruefen` grün, Level-Seiten
   im Browser ansehen (Karte, Link `#/quadrat?reiter=…&level=…`).
 - [x] **Step 5: Commit** `M10: Werkzeug-Karte „Polybios & Playfair“ in Level 0.4 und 2.4, Aufgaben ohne Lösungsverrat umgebaut (L55, Task 239)`
+
+**Korrektur nach dem M10-Review (Fund 1, D17):** Task 239 hatte nur den Level-Kontext abgesichert; im freien Labor
+rechnete das Werkzeug mit den Aufgaben-Schlüsselwörtern (KORINTH, GALEERE, RIALTO, ATHEN) die Lösungen vor. Nachgezogen:
+Sperrliste der Aufgaben-Schlüsselwörter für Lernende (`npm run labor:sperre`, Vergleich über das Quadrat), Umbau W0-L4-05 b)
+und W2-L4-05 (Fehlersuche) sowie W2-L4-04 (Füllzeichen Q), Hinweis „Eigene Quadrate baust du im freien Kryptolabor“
+gestrichen, K10 auch im freien Kontext.
 - Umsetzung (Kombination aus Umbau und Variante B): Regel `quadrat.schluesselwort` { nichtImLevel: W0-L4, W2-L4 } – im Level
   kein Schlüsselwort-Editor (Polybios: Standardquadrat, Playfair: LEUCHTFEUER). Damit verraten KORINTH/ATHEN/GALEERE/RIALTO-
   Aufgaben nichts mehr; umgebaut wurden nur die drei Aufgaben, die das Werkzeug trotzdem vorrechnete: W0-L4-01 (Zählung ab 0,

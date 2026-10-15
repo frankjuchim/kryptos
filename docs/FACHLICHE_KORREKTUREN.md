@@ -214,4 +214,24 @@ Level-Aufgaben, keine Lösung ausgibt. Neue Werte mit `shared/krypto.js` und dem
 | W0-L4-01 | `rom` im Standardquadrat → `42 34 32` rechnet das Werkzeug direkt | Zählbasis ab 0: `31 23 21` → `rom` (Kopf `01234`, Falle P1 bleibt) |
 | W0-L4-02 | `44 42 34 24 11` → `troia` direkt | rückwärts nummeriert: `22 24 32 42 55` → `troia` (Kopf `54321`, Falle P4 bleibt) |
 | W2-L4-02 | Das Werkzeug teilt `gewitter` mit X in Paare (GE WI TX TE RX) | Füllzeichen Q: GE WI TQ TE RQ (Falle P4 bleibt) |
-| W0-L4-05, -07; W2-L4-01, -03, -04, -05 | mit eigenem Schlüsselwort (KORINTH, ATHEN, GALEERE, RIALTO) | kein Umbau: Schlüsselwort im Level fest |
+| W0-L4-05, -07; W2-L4-01, -03, -04, -05 | mit eigenem Schlüsselwort (KORINTH, ATHEN, GALEERE, RIALTO) | ~~kein Umbau: Schlüsselwort im Level fest~~ – unvollständig, siehe D17 (im freien Labor rechnete das Werkzeug sie vor) |
+
+**D17 – Schlüsselwort-Aufgaben 0.4/2.4 im freien Kryptolabor (M10-Review, Fund 1, 15.10.2026):** Die Regel
+`quadrat.schluesselwort` griff nur im Level-Kontext (`&level=`). Im freien Labor (`/labor#/quadrat?reiter=playfair`) baute
+das Werkzeug mit den Schlüsselwörtern der Aufgaben die Quadrate und rechnete Lösungen vor (RIALTO + `wasserweg` →
+XIQYUDIVBM = W2-L4-04; KORINTH + `sieg` → 44143234 = W0-L4-05 b); ebenso die Quadrate von W0-L4-05 a) und W2-L4-01 sowie
+W2-L4-03/-05). Korrektur in zwei Teilen (Entscheidung der Lehrkraft: Das Werkzeug darf helfen, nie die Antwort ausgeben):
+(1) **Sperrliste:** Für Lernende baut „Polybios & Playfair“ kein Quadrat, das in einer Aufgabe, einer Akte, einem Boss, einer
+Warm-up-Karte oder einem Video vorkommt – Vergleich über das Quadrat, also auch gleichwertige Wörter (RIALTOB, GALERE);
+Meldung ohne Hinweis auf die Aufgabe, Lehrkräfte frei. Die Liste erzeugt `npm run labor:sperre` aus Seeds und Material
+(Test: aktuell). (2) **Umbau** wie W0-L4-01/02 (Werkzeug als Hilfe, verlangt wird ein Schritt, den es nicht ausgibt);
+K10 prüft jetzt auch den freien Kontext. Werte mit `shared/krypto.js` und dem Python-Zwilling nachgerechnet
+(`W0-L4-05-paar`, `W2-lab-v17`, `W2-L4-05-paar`, `W2-L4-05-falsch`).
+
+| Aufgabe | Vorher | Korrektur |
+|---|---|---|
+| W0-L4-05 b) | Verschlüssele `sieg` (KORINTH) → `44 14 32 34` | Fehlersuche: Bote meldet `44 14 32 43` – Paar 4 falsch, richtig `34` (Zeile/Spalte vertauscht, P4) |
+| W2-L4-04 | `wasserweg` (RIALTO) → XIQYU DIVBM | Füllzeichen Q wie W2-L4-02: Paare WA SQ SE RW EG → XIUSU DIVBM (P4) |
+| W2-L4-05 | Entschlüssele HLIRO UUQTB AY → *kartenspiel* | Fehlersuche: notiert `ka rt en ns ie lx` – Paar 4 falsch, richtig SP (nach rechts statt links, P3) |
+| W0-L4-05 a), W2-L4-01, W2-L4-03 | Quadrat aufbauen bzw. Paare zuordnen | Teilschritt bleibt (Quadrat im Aufgabenblock, Werkzeug im Level mit festem eigenen Wort); KORINTH, GALEERE, RIALTO im Labor gesperrt |
+| Hinweis im Werkzeug | „Eigene Quadrate baust du im freien Kryptolabor.“ | gestrichen |

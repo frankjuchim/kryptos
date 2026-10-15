@@ -201,3 +201,47 @@ test('Level-Kontext 0.4/2.4 (M10 L55): Schlüsselwort fest – kein Editor, Vore
   const l = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'] }, umgebung: { level: 'W2-L4', rolle: 'lehrkraft' } });
   assert.equal(l.k.alle(l.flaeche, 'button.quadrat-wort-aendern').length, 1);
 });
+
+// ---- M10-Review Fund 1: Schlüsselwörter aus Aufgaben/Akten/Boss/Warm-up sind für Lernende gesperrt ----
+const SP = require('../werkzeuge/krypto/quadrat_sperre.js');
+const stempleWort = (w, wort) => {
+  w.k.klick(w.k.eins(w.flaeche, 'button.quadrat-wort-aendern'));
+  for (const b of wort) w.k.klick(w.k.eins(w.flaeche, `.quadrat-wort-editor button.station-stempel[data-buchstabe="${b}"]`));
+  w.k.klick(w.k.eins(w.flaeche, 'button.quadrat-wort-aufbauen'));
+};
+
+test('Sperrliste: aktuell zu Seeds/Material und enthält die Quadrate der Aufgaben (KORINTH, ATHEN, GALEERE, RIALTO, GONDEL, MURANO)', () => {
+  const liste = SP.sperrliste();
+  assert.deepEqual(SP.gespeichert(), liste, 'Sperrliste in quadrat.js veraltet – node werkzeuge/krypto/quadrat_sperre.js');
+  const quadrate = new Set(liste.map((k) => K.quadrat(k).join('')));
+  for (const w of ['KORINTH', 'ATHEN', 'GALEERE', 'RIALTO', 'GONDEL', 'MURANO']) assert.ok(quadrate.has(K.quadrat(w).join('')), `${w} gesperrt`);
+  assert.ok(!quadrate.has(K.quadrat('').join('')), 'Standardquadrat bleibt frei');
+  assert.ok(!quadrate.has(K.quadrat('LEUCHTFEUER').join('')), 'Beispielwort des Werkzeugs bleibt frei');
+});
+
+test('Sperre: Lernende bauen im freien Labor kein Quadrat aus einem Aufgaben-Schlüsselwort (auch gleichwertige Wörter); Lehrkraft schon', () => {
+  for (const [reiter, wort, vorher] of [['playfair', 'RIALTO', 'LEUCHTFEUER'], ['playfair', 'RIALTOB', 'LEUCHTFEUER'], ['playfair', 'GALERE', 'LEUCHTFEUER'], ['polybios', 'KORINTH', '']]) {
+    const w = oeffne('quadrat', { voreinstellung: { reiter: [reiter] } });
+    stempleWort(w, wort);
+    assert.equal(w.zustand().schluesselwort, vorher, `${wort}: Quadrat nicht aufgebaut`);
+    const hinweis = w.text('.quadrat-wort-hinweis');
+    assert.match(hinweis, /Schlüsselwort/, `${wort}: Hinweis`);
+    assert.doesNotMatch(hinweis, /Aufgabe|Level|Akte|Boss|RIALTO|KORINTH|GALE/i, 'Meldung ohne Hinweis auf die Aufgabe');
+  }
+  // Voreinstellung mit gesperrtem Wort (z. B. aus einem Link) wirkt für Lernende nicht
+  assert.equal(oeffne('quadrat', { voreinstellung: { reiter: ['playfair'], schluesselwort: 'RIALTO' } }).zustand().schluesselwort, 'LEUCHTFEUER');
+  assert.equal(oeffne('quadrat', { voreinstellung: { schluesselwort: 'KORINTH' } }).zustand().schluesselwort, '');
+  // eigenes Wort geht weiter
+  const e = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'] } });
+  stempleWort(e, 'MOOR');
+  assert.equal(e.zustand().schluesselwort, 'MOOR');
+  // Lehrkraft: frei
+  const l = oeffne('quadrat', { voreinstellung: { reiter: ['playfair'] }, umgebung: { rolle: 'lehrkraft' } });
+  stempleWort(l, 'RIALTO');
+  assert.equal(l.zustand().schluesselwort, 'RIALTO');
+});
+
+test('Level-Kontext: Hinweis ohne Verweis auf das freie Kryptolabor', () => {
+  const p = oeffne('quadrat', { voreinstellung: { reiter: ['polybios'] }, umgebung: { level: 'W0-L4' } });
+  assert.doesNotMatch(p.text('.quadrat-bedienung'), /freien Kryptolabor/);
+});

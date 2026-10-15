@@ -150,6 +150,7 @@ npm run konfig:pruefen         # Konfiguration aus den Umgebungsvariablen prüfe
 npm run akten -- --pruefen     # ebenso npm run loesungen, npm run lehrkraft, npm run workspaces; ohne --pruefen erzeugen (LibreOffice)
 npm run ide:pruefen            # Online-IDE-Prüfstand (Java 21)
 npm run labor:bilder           # Objektbilder der Werkstatt-Werkzeuge nach materialien/Bilder/Labor/ (Folien, Videos; M10 E192)
+npm run labor:sperre           # Sperrliste der Aufgaben-Schlüsselwörter für „Polybios & Playfair“ neu erzeugen (nach Änderungen an Seeds/Material)
 npm start                      # Server wie im Image (braucht die Umgebungsvariablen aus Abschnitt 6)
 node scripts/vertrag_pruefen.js http://localhost:3000   # Manifest gegen den Vertrag prüfen
 ```

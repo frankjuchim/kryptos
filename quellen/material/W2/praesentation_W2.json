@@ -1104,7 +1104,7 @@
      "breite_folie": 7.4
     }
    ],
-   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Polybios & Playfair“, Reiter Playfair (ab Welt 2). Im Level 2.4 ist das Schlüsselwort fest; eigene Schlüsselwörter im freien Labor."
+   "notizen": "Zusatzfolie (M10, L58): Objektbild aus dem Kryptolabor, erzeugt mit `npm run labor:bilder`. 2 min. Werkzeug „Polybios & Playfair“, Reiter Playfair (ab Welt 2). Im Level 2.4 ist das Schlüsselwort fest; im freien Labor eigene Schlüsselwörter – Schlüsselwörter aus Aufgaben und Akten (z. B. RIALTO) baut das Werkzeug für Lernende nicht auf."
   },
   {
    "layout": "inhalt",

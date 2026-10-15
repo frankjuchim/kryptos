@@ -778,3 +778,53 @@ test('K10: Werkzeug-Karten im Level rechnen keine Lösung der Level-Aufgaben vor
   }
   assert.ok(geprueft >= 10, `geprüfte Eingaben: ${geprueft}`);
 });
+
+test('K10 frei (M10-Review Fund 1): im freien Kryptolabor rechnet „Polybios & Playfair“ keine Lösung einer Aufgabe vor – Aufgaben-Schlüsselwörter gesperrt', () => {
+  const quelle = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'js', 'krypto', 'labor', 'quadrat.js'), 'utf8');
+  const pfWort = /playfair:\s*'([A-Z]+)'/.exec(quelle)[1];
+  const gesperrt = new Set(require('../werkzeuge/krypto/quadrat_sperre.js').gespeichert(quelle).map((k) => Krypto.quadrat(k).join('')));
+  const frei = (w) => { try { return !gesperrt.has(Krypto.quadrat(w).join('')); } catch { return false; } };
+  const norm = (t) => String(t).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const versuche = (f) => { try { return f(); } catch { return null; } };
+  let geprueft = 0;
+  let schluessel = 0;
+  for (const nr of [0, 1, 2, 3, 4, 5, 6]) {
+    const w = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'welten', `welt${nr}.json`), 'utf8'));
+    for (const a of w.aufgaben.filter((x) => !/-B-/.test(x.id))) { // Boss: Labor im Kampf gesperrt (Review Focus 1)
+      const roh = JSON.stringify([a.inhalt, a.interaktion]);
+      if (!/polybios|playfair|Quadrat|quadrat/.test(roh)) continue;
+      const teile = Array.isArray(a.interaktion) ? a.interaktion : [a.interaktion];
+      const loesungen = Array.isArray(a.loesung) ? a.loesung : [a.loesung];
+      // Schlüsselwörter der Aufgabe: Felder schluessel/oben/unten und Wörter nach „Schlüsselwort“/„Quadrat“
+      const woerter = new Set([pfWort, '']);
+      (function lauf(x) {
+        if (typeof x === 'string') { for (const m of x.matchAll(/(?:Schlüsselworts?|Quadrats?)\s*(?:\*\*|`|„)?([A-ZÄÖÜ]{3,})/g)) woerter.add(m[1]); return; }
+        if (Array.isArray(x)) return x.forEach(lauf);
+        if (x && typeof x === 'object') for (const [k, v] of Object.entries(x)) { if (/^(schluessel|oben|unten)$/.test(k) && typeof v === 'string') woerter.add(v); lauf(v); }
+      })([a.inhalt, a.interaktion]);
+      const eingaben = new Set();
+      for (const t of teile) if (t && typeof t.eingabe === 'string') eingaben.add(t.eingabe);
+      for (const m of JSON.stringify([a.inhalt, teile.map((t) => t && t.frage)]).matchAll(/`([^`]+)`/g)) eingaben.add(m[1]);
+      const ziele = [];
+      for (const lo of loesungen) {
+        if (!lo || typeof lo !== 'object') continue;
+        if (typeof lo.text === 'string') ziele.push(norm(lo.text));
+        const felder = Object.entries(lo).filter(([k, v]) => k !== 'text' && Array.isArray(v) && typeof v[0] === 'string');
+        if (felder.length) ziele.push(norm(felder.map(([, v]) => v[0]).join('')));
+      }
+      for (const wort of woerter) {
+        if (wort && !frei(wort)) { schluessel++; continue; } // gesperrt: das Werkzeug baut dieses Quadrat nicht
+        const ausgaben = [versuche(() => Krypto.quadrat(wort).join(''))];
+        for (const x of eingaben) {
+          ausgaben.push(versuche(() => Krypto.polybios(x, wort ? { schluessel: wort } : {})));
+          if (/^[\d\s]+$/.test(x)) ausgaben.push(versuche(() => Krypto.polybios(x.replace(/\s+/g, ''), wort ? { schluessel: wort } : {}, 'ent')));
+          if (wort.length >= 3) for (const r of ['ver', 'ent']) ausgaben.push(versuche(() => Krypto.playfair(x, wort, r)));
+          ausgaben.push(versuche(() => Krypto.playfairPaare(x).join('')));
+          geprueft++;
+        }
+        for (const aus of ausgaben.filter(Boolean).map(norm)) for (const z of ziele.filter((y) => y.length >= 4)) assert.ok(!aus.includes(z), `${a.id}: Werkzeug (frei, Schlüsselwort „${wort || 'Standard'}“) gibt die Lösung ${z} aus`);
+      }
+    }
+  }
+  assert.ok(geprueft >= 20 && schluessel >= 6, `geprüft: ${geprueft} Eingaben, ${schluessel} gesperrte Schlüsselwörter`);
+});

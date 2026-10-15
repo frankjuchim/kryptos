@@ -22,7 +22,8 @@
     "abdeckung": "node scripts/abdeckung.js",
     "konfig:pruefen": "node src/verbund/konfig_pruefen.js",
     "pruefen": "npm test && npm run validate && npm run krypto:pruefwerte && npm run krypto:seeds && npm run abdeckung",
-    "labor:bilder": "node werkzeuge/material/labor_bilder.js"
+    "labor:bilder": "node werkzeuge/material/labor_bilder.js",
+    "labor:sperre": "node werkzeuge/krypto/quadrat_sperre.js"
   },
   "engines": {
     "node": ">=20"
