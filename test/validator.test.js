@@ -808,3 +808,14 @@ test('Review-Fund 5: Schlüssel im Aufgabentext nur als ganzes Wort bzw. mit Nam
   assert.doesNotMatch(mit('scheibe', { reiter: ['scheibe'], text: 'EBJN', k: 5 }, 'Verschiebung k = 5, Geheimtext EBJN.'), /verrät den Schlüssel/);
   assert.match(mit('scheibe', { reiter: ['scheibe'], text: 'EBJN', k: 5 }, 'Aufgabe 5: Geheimtext EBJN.'), /verrät den Schlüssel/);
 });
+
+test('1.3.1: Schlüsselwort im Quadrat-Block der Aufgabe (ADFGVX) ist kein Verrat durch das geführte Panel', () => {
+  const mit = (quadrat) => {
+    const w = levelMit({ rolle: 'kryptoanalyse' });
+    const a = aufgabe(w, w.levels.find((x) => x.id === 'W9-L1').aufgaben[0]);
+    a.inhalt = [{ t: 'text', md: 'Wende Stufe 1 auf `post` an.' }, ...(quadrat ? [{ t: 'quadrat', art: 'polybios', groesse: 6, kopf: 'ADFGVX', schluessel: 'ZEPPELIN18', titel: 'ADFGVX-Quadrat (Schlüsselwort ZEPPELIN18)' }] : []), { t: 'werkzeug', id: 'quadrat', voreinstellung: { reiter: ['adfgvx'], text: 'post', schluesselwort: 'ZEPPELIN18', richtung: 'ver' }, gefuehrt: true, hinweis: 'Lies selbst ab.' }];
+    return levelFehler(w).join();
+  };
+  assert.doesNotMatch(mit(true), /verrät den Schlüssel/);
+  assert.match(mit(false), /verrät den Schlüssel/, 'ohne Quadrat-Block bleibt es ein Verrat');
+});

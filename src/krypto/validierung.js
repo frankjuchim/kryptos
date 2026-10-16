@@ -489,6 +489,8 @@ function level(l, o, f, w, { data, aufgaben, opt }) {
   const ausText = (a, v) => {
     const texte = [];
     for (const b of alleBloecke(a, { erklaerung: false })) if ((b.t === 'text' || b.t === 'hinweis') && typeof b.md === 'string') texte.push(b.md);
+    // 1.3.1: ein Quadrat-Block zeigt sein Schlüsselwort selbst (ADFGVX-Quadrat „ZEPPELIN18“) – das Panel verrät dann nichts Neues
+    for (const b of alleBloecke(a, { erklaerung: false })) if (b.t === 'quadrat') for (const f of ['schluessel', 'titel']) if (typeof b[f] === 'string') texte.push(b[f]);
     for (const t of F.teile(a)) if (istObjekt(t.interaktion) && typeof t.interaktion.frage === 'string') texte.push(t.interaktion.frage);
     const roh = texte.join('\n');
     const folge = ` ${woerter(roh).join(' ')} `;

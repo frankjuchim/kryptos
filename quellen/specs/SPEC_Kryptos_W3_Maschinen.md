@@ -1485,6 +1485,12 @@ bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js
 | W3-L2-07 | Runden-Labor | fehler | frei |
 | W3-L3-05 | Vigenère-Werkbank | verschluesseln | geführt |
 | W3-L3-07 | Chiffrierscheibe | scheibe | geführt |
+| W3-L3-06 | Polybios & Playfair | spalten | geführt |
+| W3-L4-01 | Polybios & Playfair | adfgvx | geführt |
+| W3-L4-02 | Polybios & Playfair | adfgvx | geführt |
+| W3-L4-03 | Polybios & Playfair | spalten | geführt |
+| W3-L4-04 | Polybios & Playfair | adfgvx | geführt |
+| W3-L4-06 | Polybios & Playfair | adfgvx | geführt |
 | W3-L5-01 | Runden-Labor | enigma | geführt |
 | W3-L5-02 | Runden-Labor | enigma | geführt |
 | W3-L5-03 | Enigma | maschine | frei |

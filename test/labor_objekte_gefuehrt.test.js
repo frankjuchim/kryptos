@@ -275,12 +275,9 @@ test('m12_mini_enigma_stromweg_als_objekt', () => {
 
 test('m12_inventar_objekt_an_jeder_passenden_aufgabe', () => {
   // Verfahren mit anschaulichem Objekt im Labor (Stab, Zaun, Karton, Scheibe, Quadrat, Vigenère-Quadrat, Mini-Enigma, Ring)
-  const OBJEKT = new Set(['skytale', 'gartenzaun', 'fleissner', 'caesar', 'polybios', 'playfair', 'vigenere', 'autokey', 'porta', 'mini_enigma', 'uhrwerk']);
-  // begründete Ausnahmen: ADFGVX-Quadrat 6 × 6 mit Kopf ADFGVX – das Polybios-Werkzeug kennt nur 5 × 5 mit Ziffern
-  const AUSNAHMEN = new Map([
-    ['W3-L4-01', 'ADFGVX 6 × 6'],
-    ['W3-L4-02', 'ADFGVX 6 × 6']
-  ]);
+  // 1.3.1: dazu ADFGVX (Quadrat 6 × 6) und Spaltentransposition (Spalten-Raster)
+  const OBJEKT = new Set(['skytale', 'gartenzaun', 'fleissner', 'caesar', 'polybios', 'playfair', 'vigenere', 'autokey', 'porta', 'mini_enigma', 'uhrwerk', 'adfgvx', 'spaltentransposition']);
+  const AUSNAHMEN = new Map(); // seit 1.3.1 keine (W3-L4-01/02: ADFGVX-Quadrat)
   const fehlt = [];
   for (let n = 0; n <= 6; n++) {
     const w = require(`../seed/welten/welt${n}.json`);
