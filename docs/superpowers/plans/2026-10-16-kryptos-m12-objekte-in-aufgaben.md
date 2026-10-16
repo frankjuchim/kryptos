@@ -76,3 +76,20 @@ Regeltest, 360 px ohne Querscrollen, Touch ≥ 44 px, `AQ.ruhig()`). K11, K11b, 
 - [x] TECHNIK §10.1/§10.3, AUFGABENFORMAT §7.7 (`offen`), DESIGNSYSTEM; Vorher/Nachher-Fotos 1280/360 im Scratchpad
   `m12/bilder/`; `node werkzeuge/version_setzen.js minor` → 1.3.0; `npm run pruefen`, `npm run e2e`, `npm run e2e:portal`.
 - [x] Commit `Kryptos 1.3.0: Objekte in den Aufgaben – Stab, Zaun, Karton, Ring geführt am Objekt (M12)`
+
+## Nachtrag 1.3.1 (16.10.2026, Folgeauftrag nach dem Deploy von 1.3.0)
+
+- [x] **Klartext nie in Fünfergruppen** (Anzeigefehler im Fleißner-Panel-Foto: Angabe „athen sende thilf e“): Angabe beim
+  Verschlüsseln klein mit den Wortgrenzen der Aufgabe, Live-Vorschau und Lösung im Zeilenfeld, Zuordnungs-Vorschau,
+  Live-Klartext der Substitutions-Werkbank am Stück; nur Geheimtext bleibt gruppiert (Tests `klartext_nie_in_fuenfergruppen`,
+  `labor_substitution`).
+- [x] **ADFGVX und Spalten** im Werkzeug „Polybios & Playfair“ (Reiter `adfgvx`, `spalten`, ab Welt 3): Quadrat 6 × 6 mit Kopf
+  A D F G V X, Spalten-Raster mit Schlüsselwort- und Rangzeile; geführt am Objekt (Feldart `zeichen`); Modelle
+  `quadrat.adfgvx`/`quadrat.spalten`, Signatur `q6=<36 Zeichen>`; Bibliothek unverändert (Spec-Vektoren schon in
+  `krypto.test.js`). Panels W3-L3-06, W3-L4-01/02/03/04/06. Validator: ein Quadrat-Block, der sein Schlüsselwort zeigt,
+  macht das Panel nicht zum Verrat.
+- [x] **Alphabet-Leiste** der Chiffrierscheibe (Reiter `leiste`): Schlüsselalphabet, Atbash gespiegelt, affiner
+  Rechenstreifen (A = 0) – Panels W0-L4-03, W1-L1-02/03, W1-L2-01/04. Ohne Objekt (begründet): W2-L4-06 Kreuzquadrat
+  (Anwenden einer fremden Regel ist die Lernleistung), W1-L1-01/05 (Alphabet bilden/Fixpunkte – die Leiste der Aufgabe ist
+  das Objekt).
+- [x] Version 1.3.1; `npm run pruefen`, `npm run e2e`, `npm run e2e:portal` grün.
