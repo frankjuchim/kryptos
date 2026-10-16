@@ -199,6 +199,8 @@ nie nur über Farbe.
 | `dialog`, `.dialog-fuss` | Rückfragen | Fokusfalle, Esc |
 | `.werkzeug-panel`, `.werkzeug-schalter`, `.werkzeug-panel-flaeche` | Werkzeug in der Aufgabe bzw. auf der Level-Karte (M11) | Schalter mit `aria-expanded`/`aria-controls`, Fläche `role=region`; ab 1100 px Seitenleiste rechts (`fixed`, `--schatten`), darunter im Fluss; Chip „Schritt für Schritt“ |
 | `section.gefuehrt`, `.gefuehrt-markiert`, `.gefuehrt-vergleich` | geführter Modus (M11) | nur die Eingabeseite des aktuellen Schritts markiert; ✓/✗ erst nach der Freigabe |
+| `.gefuehrt-mit-objekt`, `.stab-gefuehrt`, `.zaun-objekt`, `.fleissner-gefuehrt`, `.ring-gefuehrt`, `.stromweg-gefuehrt`, `.stab-gefuehrt-band` | Objekte im geführten Modus (M12) | das Objekt der Station steht als Erstes; Markierung in der Lampenfarbe (`--mat-lampe-an`), Einträge in Bandfeldern; Stab und Zaun scrollen auf schmalen Bildschirmen in ihrem Kasten |
+| `button.werkzeug-schalter` | Aufgaben-Panel (M12) | groß (≥ 56 px, Akzentrahmen, Schatten), Text „<Objekt> benutzen“ |
 | `.tabs`, `[role="tab"]` | Tab-Leiste (Lehrkraft) | Pfeiltasten, `aria-selected` |
 | `.laden`, `.leer-zustand`, `.fehler-box` | Zustände | Laden mit Drehung nur ohne reduzierte Bewegung |
 | `.tor`, `.tor-name`, `.tor-status` | Epochen-Tor der Zeitleiste | `.gesperrt` („noch verschlüsselt“), `.tor-neu` |

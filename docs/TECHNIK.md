@@ -1513,6 +1513,26 @@ Zeichen · ASCII dezimal · Bits 1–4 · Bits 5–8; je Zeichen drei Schritte (
 Bits), markiert ist das Zeichen bzw. der eigene ASCII-Wert. Das Werkzeug-Modell zählt die Umwandlung als Angabe-Zustand;
 Bits gelten dort nur an Bytegrenzen und ein einzelnes Zeichen nur als ganzer Text (`ausgerichtet`, sonst Zufallstreffer
 wie „S“ in DOPPELSCHLOSS). W3-L1-04 öffnet die Bit-Lupe mit den Reitern `zeichen` und `xor`.
+**Objekte im geführten Modus (M12, E230–E239).** Wo die Station ein anschauliches Objekt hat, wird **das Objekt selbst**
+Schritt für Schritt bedient – keine Ersatztabelle. Rahmen: Hook-Flag `objekt: true` (die Mechanik steht in
+`section.gefuehrt.gefuehrt-mit-objekt` als Erstes, vor den änderbaren Angaben) und viertes Hook-Argument
+`steuer = { trage(wert), index() }` (Eintrag am Objekt, z. B. per Stempelkasten, wie im Eingabefeld; danach weiter).
+**Skytale** (`stabGeruest` = Holz, Windungen, Klammer, gemeinsam mit der Station): ver – je Klartextbuchstabe (mit
+Füllzeichen X) leuchtet das nächste Feld auf dem Stab, gestempelt wird von dir; „Abwickeln“ je Runde: die Windung ist
+markiert, du liest deine u Buchstaben ab, das Band zeigt nur Einträge. ent – der Geheimtext ist aufgewickelt (Buchstaben
+im DOM in Geheimtext-Reihenfolge), je Zeile ein Schritt, markiert ist nur die Zeilenmarke; **bewusste Änderung** von M11
+Review Focus 2 (E235): Ablesen am Objekt ist erlaubt, der Klartext erscheint nie als zusammenhängende Zeichenkette (kein
+Ausgabefeld, kein Kopieren, keine Ansage). **Gartenzaun** (`svg.zaun-objekt`: Latten, Pfosten, Zickzack-Weg): ver
+Zickzack-Platz markiert, dann je Schiene ablesen; ent Schiene für Schiene einlegen, dann einmal im Zickzack lesen; Plätze
+im DOM in der Reihenfolge der Einträge. **Pflügen** auf dem Karopapier der Station (Pfeile der Spalten). **Fleißner**
+(`.karton.fleissner-gefuehrt`): Karton in der Lage des Schritts („▲ OBEN“ dreht mit), leuchtendes Loch, nach vier Lagen
+abgehoben und zeilenweise lesen; ent je Lage ein Schritt. **Ring** (`svg.ring-gefuehrt`): Ring ohne Sprungpfeile (die
+Pfeile wären die Lesereihenfolge), Lesereihenfolge aus Einträgen. **Mini-Enigma** (`svg.stromweg-gefuehrt`): Eingang
+(Angabe), sieben Stationen nur mit Einträgen, die aktuelle Station markiert, darunter die Verdrahtung; Lampe erst nach der
+Freigabe. Scheibe, Polybios/Playfair, Morse, Bit-Lupe zeigen ihr Objekt schon seit M10/M11. Auf schmalen Bildschirmen
+bleiben Stab und Zaun lesbar groß und scrollen in ihrem Kasten (`tabindex=0`), die Seite scrollt nicht quer. Tests:
+`test/labor_objekte_gefuehrt.test.js` (Objekt zuerst, keine `table.gefuehrt-tabelle`, Markierung, Einträge am Objekt,
+Inventar „jede Chiffre-Aufgabe mit passendem Objekt hat ein Panel“, Ausnahme W3-L4-01/02: ADFGVX 6 × 6), K11/K11b/K12.
 **Erkenner (E210–E213).** Im freien Labor (und in Panels ohne `gefuehrt`) schaltet ein Werkzeug in den geführten Modus,
 sobald seine Eingaben Aufgabenwerte enthalten: `labor/erkenner.js` (global **`KRErkenner`**) kennt nur 8-stellige
 SHA-256-Kennungen von Signaturen der Angaben (`t:` Textfenster, `g:` ganzer Text, `s:` Schlüssel, `z:` Zahlenmengen,
@@ -2184,12 +2204,14 @@ führt zum Entwickeln nur die genannten Szenarien aus (ohne Fotos).
     kr-31 `labor-skytale-stab`, kr-32 `labor-quadrat-playfair`, kr-33 `labor-signale-morse`, kr-34 `labor-verstecke-brief`,
     kr-35 `labor-enigma`, kr-36 `labor-analyse`.
 16. Werkzeuge in den Aufgaben (Plan M11 Task 251, E228; `aufgaben_werkzeuge.js`, nach Nr. 15): Frau M. schaltet im LK 13
-    alle Welten frei. Mika: W0-L1-04 – Panel eingeklappt, `labor/skytale.js` erst beim Aufklappen geladen; geführt, Raster
-    leer, genau die Zielzelle markiert, kein Klartext im DOM (Text, Attribute, Feldwerte); Schritt 1 mit allen 26 Buchstaben
-    → Klassen, Status, Vergleich, Fazit, Hinweis unverändert (kein Orakel), Einträge füllen das Raster; Enter im Panel prüft
+    alle Welten frei. Mika: W2-L1-02 – Panel eingeklappt, `labor/vigenere.js` erst beim Aufklappen geladen (M12: W0-Aufgaben
+    mit Werkstatt-Objekt sind `offen`); W0-L1-04 offen, „Skytale-Stab benutzen“, geführt am Holzstab (Geheimtext
+    aufgewickelt, eine Zeilenmarke markiert, keine Ersatztabelle), kein Klartext im DOM (Text, Attribute, Feldwerte); Zeile 1
+    mit richtigen und falschen Einträgen → Klassen, Status, Vergleich, Fazit, Hinweis unverändert (kein Orakel), Einträge
+    im Band „Dein Klartext“; Enter im Panel prüft
     nicht; richtig gelöst → Vergleich ✓/✗; W0-L1-05 danach ohne Vergleich. W4-L2-04 bei 1280 px: Seitenleiste (`fixed`)
     rechts neben dem Antwortfeld. W0-L2-04: Liste aller Verschiebungen erlaubt (L60). 360 px mit offenem Panel (W0-L2-02,
-    Schalter per Enter): kein Querscrollen, Touch-Ziele ≥ 44 px, Antwortfeld und „Prüfen“ erreichbar und nicht verdeckt
+    Schalter per Enter zu und wieder auf): kein Querscrollen, Touch-Ziele ≥ 44 px, Antwortfeld und „Prüfen“ erreichbar und nicht verdeckt
     (`elementFromPoint`), → wechselt den Schritt, reduzierte Bewegung ohne laufende Animation im Panel. Freies Labor:
     `/labor#/scheibe` mit IMOTQ, k = 12 häppchenweise → „Schritt für Schritt“, kein „wache“; eigener Text → frei.
     `/werkstatt`: Probelauf mit „boje“ (Umkehrung + Caesar 3) → neutraler Hinweis, kein Geheimtext. Ole B.: zweiter Tab

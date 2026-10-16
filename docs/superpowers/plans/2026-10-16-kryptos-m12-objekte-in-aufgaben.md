@@ -1,10 +1,10 @@
 # Kryptos M12 „Objekte in den Aufgaben“ – Detailplan (kurz)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans. Steps mit Checkboxen (`- [ ]`).
+> **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans. Steps mit Checkboxen (`- [x]`).
 > Nummerierung setzt M11 fort: Tasks **253–259**, Entscheidungen **E230–E239**, nächste Kern-Abweichung **K48**
 > (voraussichtlich ungenutzt), nächster Eintrag in `docs/FACHLICHE_KORREKTUREN.md`: **D19** (voraussichtlich ungenutzt).
 >
-> **Status: in Arbeit** (16.10.2026). Ausgangsstand: `feature/werkstatt-uebernahme` `689b5b6` = live **1.2.2**.
+> **Status: erledigt 16.10.2026 – Version 1.3.0** (Commits je Task, nicht gepusht). Erster e2e-Lauf: einmal Zeitüberschreitung in Szenario 4 (Laden von `/labor#/skytale`), Einzel- und Gesamtlauf danach grün. Ausgangsstand: `feature/werkstatt-uebernahme` `689b5b6` = live **1.2.2**.
 > ⚠️ `main` ist live (CapRover). **Kein Push, kein Merge, keine PRs.** Quellen nur lesend.
 
 **Auftrag der Lehrkraft (wörtlich):** „Die Tools, zum Beispiel das von Skytale ist immer noch nicht bei den Aufgaben
@@ -47,32 +47,32 @@ Regeltest, 360 px ohne Querscrollen, Touch ≥ 44 px, `AQ.ruhig()`). K11, K11b, 
 ## Tasks
 
 ### Task 253: Panel – Schalter „<Objekt> benutzen“, Feld `offen`
-- [ ] Tests rot: `werkzeug_panel.test.js` (Schaltertext aus Objektname je Reiter, `offen` öffnet und lädt sofort),
+- [x] Tests rot: `werkzeug_panel.test.js` (Schaltertext aus Objektname je Reiter, `offen` öffnet und lädt sofort),
   `bloecke.test.js` (`offen` muss Wahrheitswert sein), Seeds-Test (W0-Werkstatt-Aufgaben mit `offen: true`).
-- [ ] `KRPanel.objektName`, `offen`, CSS (groß), `src/krypto/werkzeuge.js` `pruefeBlockFelder`, Seeds W0, e2e Szenario 16.
-- [ ] Commit `M12 Task 253: Panel-Schalter „<Objekt> benutzen“ und Feld offen (W0-Werkstatt-Aufgaben aufgeklappt)`
+- [x] `KRPanel.objektName`, `offen`, CSS (groß), `src/krypto/werkzeuge.js` `pruefeBlockFelder`, Seeds W0, e2e Szenario 16.
+- [x] Commit `M12 Task 253: Panel-Schalter „<Objekt> benutzen“ und Feld offen (W0-Werkstatt-Aufgaben aufgeklappt)`
 
 ### Task 254: Skytale-Stab geführt
-- [ ] Tests rot (`labor_skytale.test.js`, `werkzeug_gefuehrt_dom.test.js`): geführt zeigt `svg.stab-objekt`, keine
+- [x] Tests rot (`labor_skytale.test.js`, `werkzeug_gefuehrt_dom.test.js`): geführt zeigt `svg.stab-objekt`, keine
   `table.gefuehrt-tabelle`; ver: nächstes Feld markiert, Stempel trägt ein, Phase 2 Windung markiert; ent: Geheimtext auf
   dem Stab in Geheimtext-Reihenfolge, Zeilenmarke markiert; K12 grün.
-- [ ] `gefuehrt.js` (E233), gemeinsame Stabzeichnung, neuer `skytaleHook`, CSS.
-- [ ] Commit `M12 Task 254: Skytale geführt am Holzstab (stempeln, abwickeln, entlang lesen)`
+- [x] `gefuehrt.js` (E233), gemeinsame Stabzeichnung, neuer `skytaleHook`, CSS.
+- [x] Commit `M12 Task 254: Skytale geführt am Holzstab (stempeln, abwickeln, entlang lesen)`
 
 ### Task 255: Gartenzaun und Pflügen geführt am Objekt
-- [ ] Tests rot → Hooks → grün. Commit `M12 Task 255: Gartenzaun und Pflügen geführt am Zaun bzw. Pflugfeld`
+- [x] Tests rot → Hooks → grün. Commit `M12 Task 255: Gartenzaun und Pflügen geführt am Zaun bzw. Pflugfeld`
 
 ### Task 256: Fleißner-Karton geführt
-- [ ] Tests rot → Hook → grün. Commit `M12 Task 256: Fleißner-Schablone geführt am Karton`
+- [x] Tests rot → Hook → grün. Commit `M12 Task 256: Fleißner-Schablone geführt am Karton`
 
 ### Task 257: Ring geführt
-- [ ] Tests rot → Hook → grün. Commit `M12 Task 257: Ring geführt am Ring ohne Sprungpfeile`
+- [x] Tests rot → Hook → grün. Commit `M12 Task 257: Ring geführt am Ring ohne Sprungpfeile`
 
 ### Task 258: Inventar und weitere Objekte
-- [ ] Inventar-Skript (Scratchpad `m12/inventar.js`); Mini-Enigma geführt am Stromweg; fehlende Panels ergänzen.
-- [ ] Commit `M12 Task 258: Inventar – Objekte an allen passenden Aufgaben`
+- [x] Inventar-Skript (Scratchpad `m12/inventar.js`); Mini-Enigma geführt am Stromweg; fehlende Panels ergänzen.
+- [x] Commit `M12 Task 258: Inventar – Objekte an allen passenden Aufgaben`
 
 ### Task 259: Doku, Fotos, Version 1.3.0
-- [ ] TECHNIK §10.1/§10.3, AUFGABENFORMAT §7.7 (`offen`), DESIGNSYSTEM; Vorher/Nachher-Fotos 1280/360 im Scratchpad
+- [x] TECHNIK §10.1/§10.3, AUFGABENFORMAT §7.7 (`offen`), DESIGNSYSTEM; Vorher/Nachher-Fotos 1280/360 im Scratchpad
   `m12/bilder/`; `node werkzeuge/version_setzen.js minor` → 1.3.0; `npm run pruefen`, `npm run e2e`, `npm run e2e:portal`.
-- [ ] Commit `Kryptos 1.3.0: Objekte in den Aufgaben – Stab, Zaun, Karton, Ring geführt am Objekt (M12)`
+- [x] Commit `Kryptos 1.3.0: Objekte in den Aufgaben – Stab, Zaun, Karton, Ring geführt am Objekt (M12)`

@@ -96,7 +96,7 @@ Scoreboard) wird aus AlgoQuest übernommen und nur über Hooks erweitert (Naht-R
 Kryptografische Rechnungen laufen über eine gemeinsame Bibliothek `public/static/js/shared/krypto.js` (Server und
 Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 
-### 4.1 Stand der Plattform (M0–M11, Version 1.2.0)
+### 4.1 Stand der Plattform (M0–M12, Version 1.3.0)
 
 | Meilenstein | Was läuft |
 |---|---|
@@ -114,6 +114,7 @@ Browser), gegengeprüft durch einen unabhängig geschriebenen Python-Zwilling.
 | M9 Abschluss | strenge Startprüfung der Konfiguration (`npm run konfig:pruefen`, Startzeile ohne Geheimnisse), Docker-Image ohne Schlüssel (CI-Job `docker`), Sicherheits-Review als Tests (Kopfzeilen, Cookies hinter dem Proxy, Routen-Inventar mit Rechten und Rate-Limits, Lösungsverrat-Crawler), Datenschutzseite mit Platzhaltern der Schule, e2e-Szenarien 13/14, Ende-zu-Ende mit dem Portal (`npm run e2e:portal`), Betriebsanleitung (Abschnitt 6) |
 | M10 Werkstatt-Werkzeuge (1.1.0) | Kryptolabor nach der Krypto-Werkstatt (Ideen von A. Bodendiek): Chiffrierscheibe und Skytale als Objekte (am Objekt schreiben, Stempelkasten, Bänder, Abwickeln; Reiter Pflügen, Fleißner-Karton auch 6 × 6) und fünf neue Werkzeuge – Polybios & Playfair, Codes & Signale (Morse-Trommel, Klopfcode, Freimaurer; Zusatz), Versteckte Botschaften (Nullchiffre, Punktmethode; Zusatz), Enigma (Maschine, Innenleben, Vorführen, Glossar; Kür) und Angreifer-Labor (Vorhersage, Schlüsselraum, Trainer, Angreifer-Blick); Reiter-Regeln gegen Lösungsverrat (u. a. Playfair und Schlüsselraum ab Welt 2, Schlüsselwort in Level 0.4/2.4 fest, Vorführen nicht in Kür 3.K2); Level-Karten 0.4, 2.4 und Kür 3.K2 (Runden-Labor mit Mini-Enigma **und** Enigma mit „Maschine“/„Innenleben“); Objektbilder in Folien W0/W2/W3-Kür und den Videos 00/01; e2e-Szenario 15 mit Touch, 360 px, Kontrast und reduzierter Bewegung |
 | M11 Werkzeuge in den Aufgaben (1.2.0) | Labor-Werkzeuge als aufklappbares Panel direkt in 85 Aufgaben (W0–W6) und der Gast-Demo sowie auf den Level-Karten („Hier ausprobieren“): gleiche Module, Voreinstellung und Reiter je Aufgabe, erst beim Aufklappen geladen, ab 1100 px als Seitenleiste neben dem Antwortfeld, „Im Labor öffnen“ als Zweitlink, im Boss kein Werkzeug; **geführter Modus** für Rechenaufgaben – die Mechanik zeigt die Aufgabenwerte, die Lernenden tragen jeden Schritt selbst ein, Rückmeldung erst nach dem Lösen (kein Orakel); im freien Labor schaltet ein Erkenner bei Aufgabenwerten in den geführten Modus (`npm run labor:erkenner`); Umbauten nach dem Inventar (D18), Ausnahme W0-L2-04 (Liste aller Verschiebungen), Tests K11/K12, e2e-Szenario 16 |
+| M12 Objekte in den Aufgaben (1.3.0) | Im geführten Modus wird das Objekt der Station selbst bedient statt einer Tabelle: Holzstab (stempeln, abwickeln bzw. entlang lesen), Gartenzaun (Zickzack, Schienen), Fleißner-Karton (Löcher, Drehen, Abheben), Pflugfeld, Ring ohne Sprungpfeile, Mini-Enigma als Stromweg; großer Schalter „<Objekt> benutzen“, W0-Aufgaben mit Werkstatt-Objekt sind beim Anzeigen aufgeklappt (`offen`); Bit-Lupe auch an W3-L1-01; Inventar-Test „jede Chiffre-Aufgabe mit passendem Objekt hat ein Panel“ |
 
 Noch offen: Freigabe der Lehrkraft und erstes Live-Deploy (Abschnitt 6), Angaben der Schule auf der Datenschutzseite.
 

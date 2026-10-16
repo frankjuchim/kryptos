@@ -151,10 +151,11 @@ test('doku_m11_technik: §10.1 Panel und Level-Karten, §10.3 geführter Modus/E
   assert.ok(!TECHNIK.includes('npm run labor:sperre'), 'TECHNIK: labor:sperre entfällt (E211)');
 });
 
-test('doku_m11_readme_design_plan: README §4.1 bis M11/1.2.0, Design §7.3 mit Panel und geführtem Modus, Gesamtplan M11 erledigt', () => {
+test('doku_m11_readme_design_plan: README §4.1 bis M12/1.3.0, Design §7.3 mit Panel und geführtem Modus, Gesamtplan M11 und M12 erledigt', () => {
   const s41 = abschnitt(README, '### 4.1', '\n## 5.');
-  assert.match(s41, /M0–M11, Version 1\.2\.0/);
+  assert.match(s41, /M0–M12, Version 1\.3\.0/);
   assert.match(s41, /\| M11 Werkzeuge in den Aufgaben \(1\.2\.0\) \|/);
+  assert.match(s41, /\| M12 Objekte in den Aufgaben \(1\.3\.0\) \|/);
   assert.ok(!README.includes('labor:sperre'), 'README: kein labor:sperre');
   assert.match(s41, /Szenarien 1–16, Fotos kr-01…39/);
   const DESIGN = lies('docs/superpowers/specs/2026-10-12-kryptos-design.md');
@@ -162,4 +163,5 @@ test('doku_m11_readme_design_plan: README §4.1 bis M11/1.2.0, Design §7.3 mit 
   for (const s of ['Panel', 'geführt', 'Rückmeldung erst', 'W0-L2-04']) assert.ok(d73.includes(s), `Design §7.3: ${s}`);
   const plan = lies('docs/superpowers/plans/2026-10-12-kryptos-plattform.md');
   assert.match(plan.split('\n').find((z) => z.startsWith('| **M11** |')), /\*\*erledigt .*Version 1\.2\.0\*\*/);
+  assert.match(plan.split('\n').find((z) => z.startsWith('| **M12** |')), /\*\*erledigt .*Version 1\.3\.0\*\*/);
 });
