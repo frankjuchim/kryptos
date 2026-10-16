@@ -1428,7 +1428,7 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   `funken`, `ungefaehr` (große Zahlen als „≈ 4,0 · 10²⁶“), `herkunft`. CSS der Objekte in `labor_objekte.css` (§11.3).
   **Alle Reiter-Regeln** (`REITER_REGELN`, Lehrkraft sieht immer alles): `haeufigkeit.teiltexte` Welt 2 ·
   `haeufigkeit.kennzahlen` Welt 2 + eA · `vigenere.koinzidenz` eA · `skytale.ring` Welt 6 · `vigenere.modus.pendel` und
-  `vigenere.modus.frei` Welt 6 · `signatur.mitm` Welt 6, nie im Level W5-L3 · `quadrat.playfair` Welt 2 (rechnet sonst
+  `vigenere.modus.frei` Welt 6 · `signatur.mitm` Welt 6, nie im Level W5-L3 · `quadrat.adfgvx` Welt 3 · `quadrat.spalten` Welt 3 (1.3.1: ADFGVX-Quadrat, Spalten-Raster) · `quadrat.playfair` Welt 2 (rechnet sonst
   W2-L4 vor) · `analyse.schluesselraum` Welt 2 (rechnet sonst W1-L1-04 vor) · `analyse.verfahren.playfair` und
   `analyse.verfahren.vigenere` Welt 2 · `analyse.verfahren.enigma` Welt 3 · `enigma.vorfuehren` nie im Level W3-L5
   (beantwortet W3-K2-03) · `quadrat.schluesselwort` nie in den Levels W0-L4/W2-L4 (Task 239: dort bleibt das Quadrat fest).
@@ -1445,7 +1445,7 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
 | id | Titel | Welt | Art | Reiter (Reihenfolge = Anzeige) | Voreinstellungs-Schlüssel | Gast |
 |---|---|---|---|---|---|---|
 | `skytale` | Skytale & Gitter | 0 | kern | `skytale`, `gartenzaun`, `fleissner`, `pfluegen`, `ring` | `text`, `umfang`, `zeilen`, `schablone`, `t`, `richtung`, `reiter`, **`groesse`** (4\|6), **`k`** (Pflügen) | – |
-| `scheibe` | Chiffrierscheibe | 0 | kern | `scheibe`, `text`, `alle` | `text`, `k`, `basis`, `richtung`, `reiter` | ✓ |
+| `scheibe` | Chiffrierscheibe | 0 | kern | `scheibe`, `text`, `alle`, `leiste` | `text`, `k`, `basis`, `richtung`, `reiter`, `alphabet`, `a`, `b` | ✓ |
 | `haeufigkeit` | Häufigkeits-Analysator | 1 | kern | `histogramm`, `bigramme`, `teiltexte`, `kennzahlen` | `text`, `ansicht`, `teiltexte`, `reiter` | – |
 | `substitution` | Substitutions-Werkbank | 1 | kern | – | `text`, `vorgabe` | – |
 | `vigenere` | Vigenère-Werkbank | 2 | kern | `quadrat`, `verschluesseln`, `kasiski`, `teiltexte`, `koinzidenz`, `verschiebung`, `korrektur` | `text`, `schluessel`, `schluessellaenge`, `modus` (`vigenere`\|`autokey`\|`porta`\|`pendel`\|`frei`), `richtung`, `reiter` | – |
@@ -1455,7 +1455,7 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
 | `rsa` | RSA-Rechenwerk | 4 | kern | `rechenwerk`, `euklid`, `text` | `p`, `q`, `e`, *`m`*, *`richtung`*, *`text`*, `reiter` | – |
 | `hash` | Hash-Labor | 5 | kern | `schritte`, `lawine`, `kollision`, `baukasten`, `passwort`, `pruefsumme` | `text`, *`text2`* (Prüfsummen), `reiter` | – |
 | `signatur` | Signatur- & Zertifikats-Simulator | 5 | kern | `signatur`, `zertifikat`, `mitm` | `szene`, `reiter` | – |
-| `quadrat` | Polybios & Playfair | 0 | kern | `polybios`, `playfair` | **`text`, `schluesselwort`, `richtung`, `reiter`** | – |
+| `quadrat` | Polybios & Playfair | 0 | kern | `polybios`, `playfair`, `adfgvx`, `spalten` | **`text`, `schluesselwort`, `schluessel`, `richtung`, `reiter`** | – |
 | `signale` | Codes & Signale | 0 | zusatz | `morse`, `klopfcode`, `freimaurer` | **`text`, `richtung`, `reiter`** | – |
 | `verstecke` | Versteckte Botschaften | 0 | zusatz | `nullchiffre`, `punkte` | **`text`, `stelle`** (1\|2\|3), **`reiter`** | – |
 | `enigma` | Enigma | 3 | kuer | `maschine`, `innenleben`, `vorfuehren`, `glossar` | **`einstellung`, `ukw`** (B\|C), **`reiter`** | – |
@@ -1532,7 +1532,20 @@ Pfeile wären die Lesereihenfolge), Lesereihenfolge aus Einträgen. **Mini-Enigm
 Freigabe. Scheibe, Polybios/Playfair, Morse, Bit-Lupe zeigen ihr Objekt schon seit M10/M11. Auf schmalen Bildschirmen
 bleiben Stab und Zaun lesbar groß und scrollen in ihrem Kasten (`tabindex=0`), die Seite scrollt nicht quer. Tests:
 `test/labor_objekte_gefuehrt.test.js` (Objekt zuerst, keine `table.gefuehrt-tabelle`, Markierung, Einträge am Objekt,
-Inventar „jede Chiffre-Aufgabe mit passendem Objekt hat ein Panel“, Ausnahme W3-L4-01/02: ADFGVX 6 × 6), K11/K11b/K12.
+Inventar „jede Chiffre-Aufgabe mit passendem Objekt hat ein Panel“), K11/K11b/K12.
+**Weitere Objekte (1.3.1).** „Polybios & Playfair“ hat ab Welt 3 die Reiter `adfgvx` (Quadrat 6 × 6 mit Kopf A D F G V X,
+Schlüsselwort mit Ziffern in `schluesselwort`, Stufe-2-Schlüssel in `schluessel`; frei: Zwischentext und Raster; geführt:
+Stufe 1 je Zeichen – Zeichen im Quadrat markiert, Paar selbst ablesen –, Rangfolge selbst nummerieren, Spalten in der
+eigenen Rangfolge lesen bzw. füllen (Länge bestimmen die Lernenden), Zeilen lesen, je Paar Zeilen- und Spaltenkopf
+markiert, Feldart `zeichen` = A–Z/0–9) und `spalten` (Spalten-Raster der Spaltentransposition). Erkenner-Signatur des
+Quadrats `q6=<36 Zeichen>`. Die Chiffrierscheibe hat den Reiter `leiste` (Alphabet-Leiste: Klartextalphabet über dem
+Geheimtextalphabet aus `alphabet` – Atbash als gespiegelte Leiste, Schlüsselalphabet –, bzw. affiner Rechenstreifen mit
+`a`, `b`, A = 0: je Buchstabe Zahl, Rechnung, mod 26, Buchstabe aus den eigenen Einträgen); Signaturen `alph=<26>` bzw.
+`a=…`, `b=…`. Panels: W0-L4-03, W1-L1-02/03, W1-L2-01/04, W3-L3-06, W3-L4-01/02/03/04/06. Ohne Objekt bleiben (begründet):
+W2-L4-06 Kreuzquadrat (eigenes Verfahren aus dem Material – Anwenden einer fremden Regel ist die Lernleistung, ein
+Werkzeug würde sie ausführen), W1-L1-01/05 (Alphabet bilden bzw. Fixpunkte zählen: die Alphabet-Leiste der Aufgabe ist das
+Objekt). Anzeige (1.3.1): Klartext klein und nie in Fünfergruppen (Angabe, Vorschau, Lösung, Zuordnung,
+Substitutions-Werkbank) – nur Geheimtext steht gruppiert.
 **Erkenner (E210–E213).** Im freien Labor (und in Panels ohne `gefuehrt`) schaltet ein Werkzeug in den geführten Modus,
 sobald seine Eingaben Aufgabenwerte enthalten: `labor/erkenner.js` (global **`KRErkenner`**) kennt nur 8-stellige
 SHA-256-Kennungen von Signaturen der Angaben (`t:` Textfenster, `g:` ganzer Text, `s:` Schlüssel, `z:` Zahlenmengen,
