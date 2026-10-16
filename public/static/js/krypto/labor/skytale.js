@@ -1431,27 +1431,8 @@
       return { schliesse: () => ns && ns.schliesse() };
     }
 
-    /* ---------- Geführter Modus (M11 Task 244, E208): Raster in Aufgabengröße leer, Zielzelle markiert ---------- */
+    /* ---------- Geführter Modus (M11 Task 244; M12 E233–E238): das Objekt der Station wird Schritt für Schritt bedient ---------- */
 
-    const zelleText = (ver, b) => (ver ? Krypto.klein(b) : b);
-    /** Schreib-Schritte: je Eingabebuchstabe die Zielzelle markieren, der Eintrag kommt hinein */
-    function schreibHook(container, { eingabe, ver, zeilen, spalten, zelle, caption, zeilenKopf, spaltenKopf, text }) {
-      const raster = KRGefuehrt.raster(container, { zeilen, spalten, caption, zeilenKopf, spaltenKopf });
-      return {
-        schritte: eingabe.map((b, i) => ({
-          text: text ? text(b, i) : `${ver ? 'Klartextbuchstabe' : 'Geheimtextbuchstabe'} ${zelleText(ver, b)} (Nr. ${i + 1}): in die markierte Zelle`,
-          feld: { beschriftung: 'Buchstabe in der markierten Zelle', art: 'buchstabe' }
-        })),
-        markiere(i, eintraege) {
-          raster.leeren();
-          eintraege.forEach((x, j) => {
-            if (x) raster.eintrag(...zelle(j), zelleText(ver, x));
-          });
-          raster.markiere([zelle(i)]);
-        },
-        korrekt: () => eingabe.map((b) => zelleText(ver, b))
-      };
-    }
     /**
      * Skytale geführt am Holzstab (M12 E234, E235). ver: je Klartextbuchstabe (mit Füllzeichen X) das nächste Feld auf dem
      * Stab markiert, gestempelt wird von dir (Stempelkasten oder Feld); danach „Abwickeln“ Runde für Runde: die Windung ist
@@ -1737,41 +1718,107 @@
         korrekt() {
           const t = eingabe.join('');
           const anzeige = eingabe.map((b) => (ver ? Krypto.klein(b) : b));
-          if (ver) return [...anzeige, ...stuecke(Krypto.pfluegen(t, kk, 'ver'), spaltenFolge.map(() => zeilenZahl))];
-          return [...anzeige, ...stuecke(Krypto.klein(Krypto.pfluegen(t, kk, 'ent')), zeilen.map(() => kk))];
+          const r = versuche(() => Krypto.pfluegen(t, kk, ver ? 'ver' : 'ent'));
+          const aus = r.fehler ? '' : r.wert;
+          if (ver) return [...anzeige, ...stuecke(aus, spaltenFolge.map(() => zeilenZahl))];
+          return [...anzeige, ...stuecke(Krypto.klein(aus), zeilen.map(() => kk))];
         }
       };
     }
-    function fleissnerHook(container, werte) {
+    /**
+     * Fleißner-Schablone geführt am Karton (M12 E237): der Karton liegt in der Lage des Schritts auf dem Gitter („▲ OBEN“
+     * dreht mit), nur die Löcher dieser Lage sind offen. ver: je Buchstabe das nächste Loch (Lage für Lage, je Lage
+     * zeilenweise) markiert, dein Buchstabe steht im Loch; nach 4 Lagen ist der Karton abgehoben und du liest Zeile für
+     * Zeile (Zeilenkopf markiert). ent: der Geheimtext liegt zeilenweise unter dem Karton, je Lage ein Schritt – du liest
+     * die Buchstaben in den offenen Löchern zeilenweise. Einträge nur im Karton bzw. im Band.
+     */
+    function fleissnerHook(container, werte, _umgebung, steuer) {
       const ver = werte.richtung !== 'ent';
       const g = werte.groesse === 6 ? 6 : GROESSE;
       const loecher = lochListe(werte.schablone, g) || z.schablone.map((l) => l.slice());
       const lagen = Krypto.fleissnerStellungen(g, loecher).map((l) => l.slice().sort(zeilenweise));
+      const anz = loecher.length;
       const reihenfolge = lagen.flat();
-      const lageVon = (i) => Krypto.teileMitRest(i, loecher.length).q + 1;
       const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, g * g);
-      if (ver) {
-        const eingabe = [...ein, ...Array(Math.max(0, g * g - ein.length)).fill('X')];
-        return schreibHook(container, {
-          eingabe,
-          ver,
-          zeilen: g,
-          spalten: g,
-          zelle: (i) => [reihenfolge[i][0] - 1, reihenfolge[i][1] - 1],
-          caption: `Schablone ${g} × ${g}: Buchstaben durch die Löcher schreiben, nach jeder Lage 90° drehen`,
-          text: (b, i) => `Lage ${lageVon(i)}: ${Krypto.klein(b)} (Nr. ${i + 1}) durch das markierte Loch`
-        });
+      const eingabe = ver ? [...ein, ...Array(Math.max(0, g * g - ein.length)).fill('X')] : ein;
+      const m = ver ? eingabe.length : 0;
+      const gruppen = Krypto.fleissnerDrehgruppen(g);
+      const symbol = (x) => (g === 4 ? SYMBOL[x] : String(x + 1));
+      const felder = [];
+      const zeilenKoepfe = [];
+      const zeilen = [];
+      for (let zz = 1; zz <= g; zz++) {
+        const th = h('th', { scope: 'row', 'data-zeile': String(zz) }, String(zz));
+        zeilenKoepfe.push(th);
+        const tds = [];
+        for (let ss = 1; ss <= g; ss++) {
+          const fest = ver ? '' : ein[(zz - 1) * g + (ss - 1)] || '';
+          const el = h('span', { class: 'fleissner-loch karton-feld', 'data-z': String(zz), 'data-s': String(ss) }, h('span', { class: 'loch-symbol', 'aria-hidden': 'true' }, symbol(gruppen[zz - 1][ss - 1])), h('span', { class: ver ? 'loch-zeichen gefuehrt-eintrag' : 'loch-zeichen' }, fest));
+          felder.push({ el, zz, ss });
+          tds.push(h('td', null, el));
+        }
+        zeilen.push(h('tr', null, th, tds));
       }
-      // Entschlüsseln: Geheimtext liegt zeilenweise im Raster, die Schablone zeigt Loch für Loch, was zu lesen ist
-      const raster = KRGefuehrt.raster(container, { zeilen: g, spalten: g, caption: `Geheimtext im Raster ${g} × ${g}: unter dem markierten Loch lesen`, inhalt: (zz, ss) => ein[zz * g + ss] || '' });
-      const band = KRGefuehrt.band(container, 'Dein Klartext');
+      const feldVon = (l) => felder.find((f) => f.zz === l[0] && f.ss === l[1]);
+      const kopfSp = Array.from({ length: g }, (_, i) => h('th', { scope: 'col' }, String(i + 1)));
+      const oben = h('span', { class: 'karton-oben' }, '▲ OBEN');
+      const karton = h('div', { class: 'schablone-flaeche karton fleissner-gefuehrt', 'data-lage': '1' }, oben, h('table', { class: `fleissner-schablone karton-groesse-${g}` }, h('caption', null, `Schablone ${g} × ${g} (Zeile, Spalte ab 1) auf dem Gitter`), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), kopfSp)), h('tbody', null, zeilen)), h('span', { class: 'karton-praegung', 'aria-hidden': 'true' }, 'Fleißner 1881'));
+      const lageText = h('p', { class: 'schablone-stellung' });
+      const stempel = ver ? gefuehrtStempel(steuer, 'Stempel: in das leuchtende Loch') : null;
+      const band = ver ? gefuehrtBand('Dein Geheimtext (abgehoben, Zeile für Zeile)', zeilen.map((_, i) => `Zeile ${i + 1}`), 'karton-gefuehrt-band') : gefuehrtBand('Dein Klartext (Lage für Lage)', lagen.map((_, i) => `Lage ${i + 1}`), 'karton-gefuehrt-band');
+      container.append(
+        ...[
+          h('p', { class: 'stab-gefuehrt-anleitung text-2' }, ver ? 'Schreib den Klartext durch die Löcher – Lage für Lage, je Lage zeilenweise; nach jeder Lage dreht der Karton um 90° im Uhrzeigersinn. Zum Schluss wird er abgehoben und du liest Zeile für Zeile.' : 'Der Geheimtext steht zeilenweise im Gitter. Leg den Karton auf und lies in jeder Lage die offenen Löcher zeilenweise.'),
+          h('div', { class: 'schablone-bereich' }, karton),
+          lageText,
+          stempel ? stempel.element : null,
+          band.element
+        ].filter(Boolean)
+      );
+      const lageVon = (i) => Krypto.teileMitRest(i, anz).q + 1;
+      const schritte = ver
+        ? [
+            ...eingabe.map((b, i) => ({ text: `Lage ${lageVon(i)}: ${i < ein.length ? Krypto.klein(b) : 'Füllzeichen x'} (Nr. ${i + 1}) durch das leuchtende Loch`, feld: { beschriftung: 'Buchstabe im Loch', art: 'buchstabe' } })),
+            ...zeilen.map((_, zi) => ({ text: `Abgehoben: Zeile ${zi + 1} von links nach rechts lesen`, feld: { beschriftung: `Zeile ${zi + 1}`, art: 'text' } }))
+          ]
+        : lagen.map((_, li) => ({ text: `Lage ${li + 1}: lies die offenen Löcher zeilenweise`, feld: { beschriftung: `Lage ${li + 1} (${anz} Buchstaben)`, art: 'text' } }));
       return {
-        schritte: reihenfolge.map((l, i) => ({ text: `Lage ${lageVon(i)}, Loch (${l[0]},${l[1]})`, feld: { beschriftung: 'Buchstabe unter dem Loch', art: 'buchstabe' } })),
-        markiere(i, eintraege) {
-          raster.markiere([[reihenfolge[i][0] - 1, reihenfolge[i][1] - 1]]);
-          band.setze(eintraege.map((x) => Krypto.klein(x)));
+        objekt: true,
+        schritte,
+        markiere(i, e) {
+          const ablesen = ver && i >= m;
+          const lage = ver ? (ablesen ? 1 : lageVon(i)) : i + 1;
+          karton.setAttribute('data-lage', String(lage));
+          karton.classList.toggle('abgehoben', ablesen);
+          lageText.textContent = ablesen ? 'Karton abgehoben' : `Lage ${lage} von 4`;
+          const offen = lagen[lage - 1];
+          for (const f of felder) {
+            f.el.classList.toggle('frei', !ablesen && offen.some((l) => l[0] === f.zz && l[1] === f.ss));
+            f.el.classList.remove('gefuehrt-markiert', 'naechst');
+          }
+          if (ver) {
+            felder.forEach((f) => (f.el.lastChild.textContent = ''));
+            eingabe.forEach((_, j) => {
+              const f = feldVon(reihenfolge[j]);
+              if (f && e[j]) f.el.lastChild.textContent = Krypto.klein(e[j]);
+            });
+            if (!ablesen) {
+              const f = feldVon(reihenfolge[i]);
+              f.el.classList.add('gefuehrt-markiert', 'naechst');
+            }
+            stempel.zeige(!ablesen);
+            band.setze(e.slice(m).map((x) => Krypto.nurBuchstaben(x || '')));
+          } else band.setze(e.map((x) => Krypto.klein(Krypto.nurBuchstaben(x || ''))));
+          oben.classList.toggle('gefuehrt-markiert', !ver);
+          zeilenKoepfe.forEach((th, zi) => th.classList.toggle('gefuehrt-markiert', ablesen && i - m === zi));
         },
-        korrekt: () => reihenfolge.map((l) => Krypto.klein(ein[(l[0] - 1) * g + (l[1] - 1)] || ''))
+        korrekt() {
+          const t = eingabe.join('');
+          const r = versuche(() => Krypto.fleissner(t, g, loecher, ver ? 'ver' : 'ent'));
+          const aus = r.fehler ? '' : r.wert;
+          if (ver) return [...eingabe.map((b) => Krypto.klein(b)), ...stuecke(aus, zeilen.map(() => g))];
+          return stuecke(Krypto.klein(aus), lagen.map(() => anz));
+        }
       };
     }
     function ringHook(container, werte) {

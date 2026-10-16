@@ -169,3 +169,49 @@ test('m12_pfluegen_auf_dem_karopapier', () => {
   if (!w.k.eins(w.flaeche, 'section.gefuehrt')) return; // eigene Werte: frei (nur Aufgabenwerte führen)
   objektZuerst(w, 'table.pflug-tabelle');
 });
+
+/* ---------- Task 256: Fleißner-Schablone am Karton ---------- */
+
+const L107 = { reiter: ['fleissner'], text: 'athen sendet hilfe', schablone: [[1, 3], [2, 2], [3, 1], [4, 4]], groesse: 4, richtung: 'ver' }; // W0-L1-07
+
+test('m12_fleissner_ver_durch_die_loecher', () => {
+  const w = panel('skytale', 'W0-L1-07', L107);
+  objektZuerst(w, '.karton.fleissner-gefuehrt');
+  assert.equal(anzahl(w), 16 + 4, '16 Buchstaben durch die Löcher, dann 4 Zeilen ablesen');
+  const karton = w.k.eins(w.flaeche, '.gefuehrt-mechanik .karton');
+  assert.equal(karton.getAttribute('data-lage'), '1');
+  const frei = w.k.alle(karton, '.fleissner-loch.frei');
+  assert.equal(frei.length, 4, 'vier Löcher in Lage 1');
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.deepEqual([m[0].getAttribute('data-z'), m[0].getAttribute('data-s')], ['1', '3'], 'erstes Loch zeilenweise');
+  w.k.klick(w.k.eins(w.flaeche, '.gefuehrt-mechanik .station-stempel[data-buchstabe="A"]'));
+  assert.equal(w.k.text(w.k.eins(karton, '.fleissner-loch[data-z="1"][data-s="3"] .gefuehrt-eintrag')), 'a');
+  BED.gehe(w, 4);
+  assert.equal(karton.getAttribute('data-lage'), '2', 'nach vier Buchstaben gedreht');
+  BED.gehe(w, 16);
+  assert.ok(karton.classList.contains('abgehoben'), 'zum Ablesen abgehoben');
+  const m2 = markiert(w);
+  assert.equal(m2.length, 1);
+  assert.equal(m2[0].getAttribute('data-zeile'), '1');
+  w.k.tippe(feld(w), 'dnai');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.karton-gefuehrt-band .gefuehrt-eintrag')[0]), 'DNAI');
+  assert.equal(w.k.alle(w.flaeche, 'table.gefuehrt-tabelle').length, 0);
+});
+
+test('m12_fleissner_ent_lage_fuer_lage', () => {
+  const geheim = K.fleissner('athensendethilfe', 4, L107.schablone, 'ver');
+  const w = panel('skytale', 'W9-L1-01', { ...L107, text: geheim, richtung: 'ent' });
+  objektZuerst(w, '.karton.fleissner-gefuehrt');
+  assert.equal(anzahl(w), 4, 'je Lage ein Schritt');
+  const karton = w.k.eins(w.flaeche, '.gefuehrt-mechanik .karton');
+  assert.equal(w.k.alle(karton, '.loch-zeichen').map((x) => w.k.text(x)).join(''), geheim, 'Geheimtext zeilenweise unter dem Karton');
+  BED.gehe(w, 2);
+  assert.equal(karton.getAttribute('data-lage'), '3');
+  assert.equal(markiert(w).length, 1);
+  BED.trage(w, 0, 'athe');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.karton-gefuehrt-band .gefuehrt-eintrag')[0]), 'athe');
+  ['athe', 'nsen', 'deth', 'ilfe'].forEach((x, i) => BED.trage(w, i, x));
+  w.k.wert('KRGefuehrt').freigeben('W9-L1-01');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-fazit')), /4 von 4/);
+});

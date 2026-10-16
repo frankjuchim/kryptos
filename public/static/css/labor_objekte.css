@@ -872,3 +872,10 @@
 .zaun-buchstabe { font: 700 22px var(--f-mono); fill: var(--mat-band-tinte); text-anchor: middle; dominant-baseline: central; }
 @media (prefers-reduced-motion: reduce) { .zaun-platz.gefuehrt-markiert .zaun-feld { animation: none; } }
 :root[data-bewegung="aus"] .zaun-platz.gefuehrt-markiert .zaun-feld { animation: none; }
+/* Fleißner geführt (E237): Karton ohne Stanzen, leuchtendes Loch, Zeilenkopf beim Ablesen */
+.karton.fleissner-gefuehrt .fleissner-loch { cursor: default; }
+.karton.fleissner-gefuehrt .fleissner-loch.gefuehrt-markiert { outline: none; box-shadow: 0 0 0 4px var(--mat-lampe-an), inset 0 3px 8px rgba(11, 20, 38, .35); }
+.karton.fleissner-gefuehrt .fleissner-loch.gefuehrt-markiert::after { content: none; }
+.karton.fleissner-gefuehrt th.gefuehrt-markiert { outline: 3px solid var(--mat-lampe-an); outline-offset: -2px; }
+.karton.fleissner-gefuehrt .karton-oben.gefuehrt-markiert { outline: none; color: var(--mat-holz-dunkel); }
+.karton.fleissner-gefuehrt .karton-oben.gefuehrt-markiert::after { content: none; }
