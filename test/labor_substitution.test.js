@@ -12,6 +12,7 @@ test('Werkbank: Live-Klartext = Krypto.teilsubstitution, Anzahl und Rang aus der
   w.k.tippe(feld(w, 'E'), 'd');
   w.k.tippe(feld(w, 'F'), 'i');
   assert.equal(w.text('.werkbank-klartext').replace(/\s/g, ''), K.teilsubstitution(G, { E: 'd', F: 'i' }));
+  assert.doesNotMatch(w.k.eins(w.flaeche, '.werkbank-klartext').textContent, /\s/, '1.3.1: Klartext nicht in Fünfergruppen');
   assert.equal(w.k.text(w.k.eins(w.flaeche, 'td.anzahl[data-geheim="A"]')), String(K.haeufigkeiten(G).A));
   assert.equal(w.k.text(w.k.eins(w.flaeche, 'td.rang[data-geheim="A"]')), String(K.rangfolge(G).indexOf('A') + 1));
   const fehlt = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find((c) => !G.includes(c));
@@ -81,6 +82,7 @@ test('Werkbank: Nachspiel „Verlauf“ zeigt den Zustand nach jeder Zuordnung',
   w.k.taste(leiste, 'ArrowRight');
   assert.match(w.k.text(w.k.eins(leiste, '.nachspiel-text')), /E ↦ d/);
   assert.equal(w.text('.verlauf-klartext').replace(/\s/g, ''), K.teilsubstitution(G, { E: 'd' }));
+  assert.doesNotMatch(w.text('.verlauf-klartext'), /\s/, '1.3.1: Klartext nicht in Fünfergruppen');
 });
 
 test('Werkbank: Funkraum-Haken entprellt (2 s), kein Speicher, keine Anfragen', async () => {

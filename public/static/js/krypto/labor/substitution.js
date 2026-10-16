@@ -176,9 +176,8 @@
       const live = text ? Krypto.teilsubstitution(text, zuordnung) : '';
       AQ.mount(
         klartext,
-        Krypto.gruppieren(live)
-          .split(' ')
-          .map((gr, i) => [i ? ' ' : null, h('span', { class: 'gruppe' }, [...gr].map((c) => (c === '·' ? c : h('b', { class: 'bekannt' }, c))))])
+        // 1.3.1: Klartext am Stück (nur Geheimtext steht in Fünfergruppen)
+        [...live].map((c) => (c === '·' ? c : h('b', { class: 'bekannt' }, c)))
       );
       const konflikte = konfliktGruppen();
       const imKonflikt = new Set(konflikte.flatMap(([, gs]) => gs));
@@ -255,7 +254,7 @@
         start: schritte.length - 1,
         schritte,
         zeige(_s, i) {
-          verlaufText.textContent = text ? Krypto.gruppieren(Krypto.teilsubstitution(text, verlauf[i].zuordnung)) : '';
+          verlaufText.textContent = text ? Krypto.teilsubstitution(text, verlauf[i].zuordnung) : '';
         },
         beiLauf(an) {
           for (const f of felder.values()) f.disabled = an;

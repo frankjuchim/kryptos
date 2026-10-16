@@ -126,7 +126,7 @@ const KRI = (() => {
       if (!vorschau) return;
       const v = String(zeile.value || '');
       const norm = Krypto.normalisieren(v);
-      vorschau.textContent = zahlen ? v.trim().split(/[\s,;]+/).filter(Boolean).join(' ') : Krypto.gruppieren(klarErgebnis ? norm.toLowerCase() : norm, 5);
+      vorschau.textContent = zahlen ? v.trim().split(/[\s,;]+/).filter(Boolean).join(' ') : klarErgebnis ? norm.toLowerCase() : Krypto.gruppieren(norm, 5); // Klartext am Stück (1.3.1)
     }
     /* ---------- Darstellung „zeichenweise“ ---------- */
     const kaestchen = [];
@@ -438,7 +438,7 @@ const KRI = (() => {
         const text = istObjekt(lo) && lo.text !== undefined ? lo.text : muster;
         if (text === undefined || text === null) return;
         if (zeile) {
-          zeile.value = zahlen ? String(text) : Krypto.gruppieren(Krypto.normalisieren(String(text)), 5);
+          zeile.value = zahlen ? String(text) : klarErgebnis ? Krypto.normalisieren(String(text)).toLowerCase() : Krypto.gruppieren(Krypto.normalisieren(String(text)), 5);
           zeile.classList.remove('ok', 'falsch');
           zeile.classList.add('loesung');
           zeichenFeedback.replaceChildren();
@@ -577,7 +577,7 @@ const KRI = (() => {
     function vorschauJetzt() {
       vorschauTimer = null;
       vorschauZuletzt = Date.now();
-      vorschau.textContent = `Klartext: ${Krypto.gruppieren(klartext(), 5)}`;
+      vorschau.textContent = `Klartext: ${klartext()}`;
     }
     /** Vorschau höchstens alle 400 ms (Screenreader-Ansage gedrosselt) */
     function vorschauSpaeter() {
@@ -710,7 +710,7 @@ const KRI = (() => {
         zeichne();
         if (vorschauTimer) clearTimeout(vorschauTimer);
         vorschauJetzt();
-        if (istObjekt(lo) && typeof lo.klartext === 'string') vorschau.textContent = `Klartext: ${Krypto.gruppieren(lo.klartext.toLowerCase(), 5)}`;
+        if (istObjekt(lo) && typeof lo.klartext === 'string') vorschau.textContent = `Klartext: ${lo.klartext.toLowerCase()}`;
       },
       sperren(an) {
         gesperrt = !!an;

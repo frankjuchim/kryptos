@@ -460,7 +460,7 @@ mark.markiert.art-c { text-decoration-style: dotted; }
    ====================================================================== */
 .werkbank-klartext-rahmen { display: grid; gap: var(--a-1); padding: var(--a-3) var(--a-4); border: 1.5px solid var(--linie); border-left: 6px solid var(--hinweis); border-radius: var(--r-knopf); background: var(--karte); }
 .werkbank-klartext-titel { font-size: .9rem; font-weight: 700; color: var(--text-2); }
-.werkbank-klartext, .verlauf-klartext { margin: 0; font-family: var(--f-mono); font-size: var(--gr-mono); letter-spacing: .12em; word-spacing: 1ch; overflow-wrap: anywhere; color: var(--text-2); }
+.werkbank-klartext, .verlauf-klartext { margin: 0; font-family: var(--f-mono); font-size: var(--gr-mono); letter-spacing: .12em; word-spacing: 1ch; overflow-wrap: anywhere; word-break: break-all; color: var(--text-2); }
 .werkbank-klartext .gruppe { white-space: nowrap; }
 /* bekannte Buchstaben: Lapis UND fett (Farbe nie einziges Signal) */
 .werkbank-klartext b.bekannt { color: var(--hinweis); font-weight: 700; }

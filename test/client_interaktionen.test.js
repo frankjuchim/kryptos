@@ -95,9 +95,9 @@ test('chiffre frei (fremdes Verfahren, W1-L3-01): Eingabe unverändert (Wortgren
   const ent = baue({ id: 'W9-L2-12', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ent', verfahren: { typ: 'frei', name: 'NOMEN-850' }, schluesselVerdeckt: true, eingabe: '3947H OWTOQ HQ005 862DK 35' } });
   assert.equal(k_text(ent, '.chiffre .geheimtext-gruppen'), '3947H OWTOQ HQ005 862DK 35');
   assert.doesNotMatch(ent.k.text(ent.k.eins(ent.c.el, '.chiffre-kopf')), /Schlüssel verdeckt/);
-  // andere Verfahren bleiben in Fünfergruppen
+  // 1.3.1: Klartext nie in Fünfergruppen (Konvention) – Wortgrenzen der Angabe, klein; Geheimtext bleibt gruppiert
   const caesar = baue({ id: 'W9-L2-13', inhalt: [], interaktion: { kind: 'chiffre', richtung: 'ver', verfahren: { typ: 'caesar', k: 3 }, eingabe: 'der wesir bringt' } });
-  assert.equal(caesar.k.alle(caesar.c.el, '.chiffre .geheimtext-gruppen .gruppe').map(caesar.k.text).join(' '), 'derwe sirbr ingt');
+  assert.equal(caesar.k.alle(caesar.c.el, '.chiffre .geheimtext-gruppen .gruppe').map(caesar.k.text).join(' '), 'der wesir bringt');
 });
 function k_text({ k, c }, sel) {
   return k.text(k.eins(c.el, sel)).replace(/\s+/g, ' ').trim();
@@ -561,4 +561,30 @@ test('Review M4 K8: Antwort-Kästchen zeigen das Ergebnis in der Konvention – 
   const css = fs.readFileSync(path.join(__dirname, '..', 'public', 'static', 'css', 'aufgaben.css'), 'utf8');
   assert.match(css, /\.kaestchen\.klar[^{]*\{[^}]*text-transform:\s*lowercase/);
   assert.match(css, /\.chiffre-zeile\.klar[^{]*\{[^}]*text-transform:\s*lowercase|\.kaestchen\.klar,\s*\.chiffre-zeile\.klar[^{]*\{[^}]*lowercase/);
+});
+
+/* ---------- 1.3.1: Klartext klein und nie in Fünfergruppen (nur Geheimtext gruppiert) ---------- */
+
+test('klartext_nie_in_fuenfergruppen: Angabe, Live-Vorschau, Lösung, Zuordnung', () => {
+  // Angabe beim Verschlüsseln: klein, Wortgrenzen wie im Seed, keine Fünfergruppen
+  const v = baue(oeffentlich('W9-L5-02'));
+  const ang = v.k.eins(v.c.el, '.klartext-zeile .geheimtext-gruppen');
+  assert.equal(v.k.text(ang).replace(/\s+/g, ' ').trim(), 'kanal ufer');
+  assert.deepEqual(v.k.alle(ang, '.gruppe').map((g) => v.k.text(g)), ['kanal', 'ufer']);
+  // Geheimtext (Entschlüsseln) bleibt GROSS in Fünfergruppen
+  const e = baue(oeffentlich('W9-L5-01'));
+  assert.deepEqual(e.k.alle(e.c.el, '.geheimtext .geheimtext-gruppen .gruppe').map((g) => e.k.text(g).replace(/\d/g, '')).slice(0, 2), ['CXYHU', 'ODHVV']);
+  // Zeilenfeld mit Klartext-Ergebnis: Vorschau und Lösung klein am Stück
+  const a = oeffentlich('W9-L5-05');
+  a.interaktion = { ...a.interaktion, richtung: 'ent', eingabe: 'NHQZS FIK' };
+  const z = baue(a);
+  z.k.tippe(z.k.eins(z.c.el, 'input.chiffre-zeile'), 'mitte rnacht');
+  assert.equal(z.k.text(z.k.eins(z.c.el, '.chiffre-zeile-vorschau')), 'mitternacht');
+  z.c.loesung({ text: 'MITTERNACHT' });
+  assert.equal(z.k.eins(z.c.el, 'input.chiffre-zeile').value, 'mitternacht');
+  // Zuordnung: Live-Klartext und Lösung ohne Fünfergruppen
+  const q = baue(oeffentlich('W9-L3-02'));
+  q.c.loesung({ zuordnung: W.aufgaben.find((x) => x.id === 'W9-L3-02').loesung.zuordnung, klartext: 'GEHEIMTREFFENIMKELLER' });
+  const vor = q.k.alle(q.c.el, '*').map((x) => q.k.text(x)).find((t) => /^Klartext: /.test(t));
+  assert.equal(vor, 'Klartext: geheimtreffenimkeller');
 });

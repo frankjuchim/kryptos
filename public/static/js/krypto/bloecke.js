@@ -47,6 +47,8 @@ const KRB = (() => {
     const gruppen = [];
     // unveraendert: Gruppen = Wörter bzw. Gruppen des Seeds (Zeilenumbruch zwischen ihnen wie bei Fünfergruppen)
     if (unveraendert) gruppen.push(...roh.split(/\s+/).filter(Boolean));
+    // 1.3.1: Klartext klein und nie in Fünfergruppen – Wortgrenzen wie in der Angabe (nur Geheimtext wird gruppiert)
+    else if (klar) gruppen.push(...String(text ?? '').split(/\s+/).map((w) => Krypto.normalisieren(w).toLowerCase()).filter(Boolean));
     else for (let i = 0; i < roh.length; i += n) gruppen.push(roh.slice(i, i + n));
     const name = klar ? 'Klartext' : 'Geheimtext';
     const sr = h('span', { class: 'sr' }, `${name}, buchstabiert: ${gruppen.map((g) => [...g.replace(/\s+/g, '')].join(' ')).join(', ')}`);
