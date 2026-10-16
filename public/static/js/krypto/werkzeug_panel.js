@@ -43,6 +43,8 @@ const KRPanel = (() => {
     scheibe: 'Chiffrierscheibe',
     'quadrat.polybios': 'Polybios-Quadrat',
     'quadrat.playfair': 'Playfair-Quadrat',
+    'quadrat.adfgvx': 'ADFGVX-Quadrat',
+    'quadrat.spalten': 'Spalten-Raster',
     'signale.morse': 'Morse-Tafel',
     'signale.klopfcode': 'Klopf-Gitter',
     'signale.freimaurer': 'Freimaurer-Gitter',

@@ -1027,3 +1027,18 @@ mark.markiert.wiederholung { font-weight: 700; }
 .enigma-stellung, .enigma-wege { margin: 0; }
 .enigma-wege { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .enigma-wege-titel { font-family: var(--f-text); font-weight: 700; }
+/* 1.3.1: ADFGVX-Quadrat 6 × 6 und Spalten-Raster (Werkzeug „Polybios & Playfair“, ab Welt 3) */
+.adfgvx-objekte { display: grid; gap: var(--a-3); }
+.adfgvx-quadrat, .spalten-raster { border-collapse: collapse; font-family: var(--f-mono); }
+.adfgvx-quadrat caption, .spalten-raster caption { caption-side: top; text-align: left; font-family: var(--f-text); font-size: .85rem; font-weight: 700; padding-bottom: var(--a-1); }
+.adfgvx-quadrat th, .spalten-raster th { min-width: 2.4rem; height: 2.4rem; font-weight: 700; color: var(--akzent); text-align: center; }
+.adfgvx-quadrat td, .spalten-raster td { min-width: 2.4rem; height: 2.4rem; border: 1.5px solid var(--linie); text-align: center; font-size: 1.15rem; font-weight: 700; background: var(--karte); }
+.spalten-raster tr.spalten-rang th { color: var(--text-2); font-size: .9rem; border-bottom: 2px solid var(--linie); }
+.spalten-raster tr.spalten-rang .gefuehrt-eintrag { color: var(--text); }
+.adfgvx-quadrat .gefuehrt-markiert, .spalten-raster .gefuehrt-markiert { outline: 3px solid var(--akzent); outline-offset: -3px; background: var(--hinweis-flaeche); }
+.quadrat-band6 { display: grid; gap: var(--a-1); }
+.quadrat-band6-titel { margin: 0; font-size: .85rem; font-weight: 700; }
+.quadrat-band6-teile { display: flex; flex-wrap: wrap; gap: var(--a-1); }
+.quadrat-band6-teil { display: inline-grid; gap: 2px; min-width: 2.6rem; padding: 2px var(--a-1); border: 1.5px solid var(--linie); border-radius: 4px; background: var(--karte); text-align: center; }
+.quadrat-band6-nr { font: 600 .7rem var(--f-text); color: var(--text-2); }
+.quadrat-band6-teil .gefuehrt-eintrag { min-height: 1.3em; font-weight: 700; overflow-wrap: anywhere; }

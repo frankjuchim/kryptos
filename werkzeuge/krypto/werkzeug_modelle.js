@@ -211,6 +211,38 @@ function* playfairZ(A) {
   }
 }
 
+/* 1.3.1: ADFGVX-Quadrat (Signatur q6=<36 Zeichen>) mit Stufe 1 allein oder ganz (Stufe-2-Schlüssel aus den Wörtern) und
+   Spaltentransposition (Wort aus den Angaben) – wie die Reiter „ADFGVX“ und „Spalten“ frei rechnen */
+const KOPF6 = 'ADFGVX';
+function* adfgvxZ(A) {
+  const qs = parameter(A, 'q6');
+  const ws = woerter(A);
+  for (const q of qs) {
+    for (const t of texte(A)) {
+      for (const r of RICHTUNGEN) {
+        const s1 = versuche(() => Krypto.polybios(t, { schluessel: q, kopf: KOPF6 }, r));
+        if (s1) yield zust('angaben', `${r} Stufe 1`, { texte: [t], schluessel: [`q6=${q}`] }, true, [T(s1)]);
+        for (const w of ws) {
+          const ganz = versuche(() => Krypto.adfgvx(t, q, w, r));
+          const zw = r === 'ver' ? s1 : versuche(() => Krypto.spaltentransposition(t, w, 'ent'));
+          if (ganz) yield zust('angaben', `${r} ${w}`, { texte: [t], schluessel: [`q6=${q}`, w] }, true, [T(ganz), T(zw)]);
+        }
+      }
+    }
+  }
+}
+function* spaltenZ(A) {
+  for (const t of buchstabenTexte(A)) {
+    for (const w of woerter(A)) {
+      if (w === t) continue;
+      for (const r of RICHTUNGEN) {
+        const aus = versuche(() => Krypto.spaltentransposition(t, w, r));
+        if (aus) yield zust('angaben', `${r} ${w}`, { texte: [t], schluessel: [w] }, true, [T(aus)]);
+      }
+    }
+  }
+}
+
 const VIG_MODI = ['vigenere', 'autokey', 'porta', 'pendel'];
 function vigRechne(t, s, modus, r) {
   const folge = modus === 'pendel' ? Krypto.pendelFolge(s) : s;
@@ -757,6 +789,8 @@ const MODELLE = Object.freeze({
   'skytale.ring': gen(ringZ),
   'quadrat.polybios': gen(polybiosZ),
   'quadrat.playfair': gen(playfairZ),
+  'quadrat.adfgvx': gen(adfgvxZ),
+  'quadrat.spalten': gen(spaltenZ),
   'vigenere.quadrat': gen(function* () { yield zust('allgemein', 'Vigenère-Tafel', {}, true, [T(Krypto.ALPHABET)]); }),
   'vigenere.verschluesseln': gen(vigenereZ),
   'vigenere.kasiski': gen(kasiskiZ),
@@ -820,7 +854,7 @@ const OHNE_RECHNUNG = Object.freeze({
 const GEFUEHRT = Object.freeze([
   'scheibe.scheibe', 'scheibe.text',
   'skytale.skytale', 'skytale.gartenzaun', 'skytale.fleissner', 'skytale.pfluegen', 'skytale.ring',
-  'quadrat.polybios', 'quadrat.playfair',
+  'quadrat.polybios', 'quadrat.playfair', 'quadrat.adfgvx', 'quadrat.spalten',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
   'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
   'bitlupe.zeichen', 'bitlupe.xor', 'bitlupe.doppelnutzung',

@@ -89,7 +89,7 @@ test('Registry M10: fünf neue Werkzeuge, art, Skytale mit Pflügen, Wertelisten
   assert.deepEqual(werkzeug('skytale').reiter, ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring']);
   for (const k of ['groesse', 'k']) assert.ok(werkzeug('skytale').voreinstellung.includes(k), k);
   const soll = {
-    quadrat: ['Polybios & Playfair', 0, ['polybios', 'playfair'], 'kern', ['text', 'schluesselwort', 'richtung', 'reiter']],
+    quadrat: ['Polybios & Playfair', 0, ['polybios', 'playfair', 'adfgvx', 'spalten'], 'kern', ['text', 'schluesselwort', 'schluessel', 'richtung', 'reiter']], // 1.3.1: ADFGVX, Spalten
     signale: ['Codes & Signale', 0, ['morse', 'klopfcode', 'freimaurer'], 'zusatz', ['text', 'richtung', 'reiter']],
     verstecke: ['Versteckte Botschaften', 0, ['nullchiffre', 'punkte'], 'zusatz', ['text', 'stelle', 'reiter']],
     enigma: ['Enigma', 3, ['maschine', 'innenleben', 'vorfuehren', 'glossar'], 'kuer', ['einstellung', 'ukw', 'reiter']],

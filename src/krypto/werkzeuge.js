@@ -24,7 +24,7 @@ const WERKZEUGE = Object.freeze([
   eintrag('hash', 'Hash-Labor', 5, ['text', 'text2', 'reiter'], ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme']),
   eintrag('signatur', 'Signatur- & Zertifikats-Simulator', 5, ['szene', 'reiter'], ['signatur', 'zertifikat', 'mitm']),
   // M10: Werkstatt-Stationen
-  eintrag('quadrat', 'Polybios & Playfair', 0, ['text', 'schluesselwort', 'richtung', 'reiter'], ['polybios', 'playfair']),
+  eintrag('quadrat', 'Polybios & Playfair', 0, ['text', 'schluesselwort', 'schluessel', 'richtung', 'reiter'], ['polybios', 'playfair', 'adfgvx', 'spalten']),
   eintrag('signale', 'Codes & Signale', 0, ['text', 'richtung', 'reiter'], ['morse', 'klopfcode', 'freimaurer'], false, 'zusatz'),
   eintrag('verstecke', 'Versteckte Botschaften', 0, ['text', 'stelle', 'reiter'], ['nullchiffre', 'punkte'], false, 'zusatz'),
   eintrag('enigma', 'Enigma', 3, ['einstellung', 'ukw', 'reiter'], ['maschine', 'innenleben', 'vorfuehren', 'glossar'], false, 'kuer'),
@@ -86,7 +86,7 @@ function pruefeVoreinstellung(wz, v, fe) {
 const GEFUEHRT_REITER = Object.freeze([
   'scheibe.scheibe', 'scheibe.text',
   'skytale.skytale', 'skytale.gartenzaun', 'skytale.fleissner', 'skytale.pfluegen', 'skytale.ring',
-  'quadrat.polybios', 'quadrat.playfair',
+  'quadrat.polybios', 'quadrat.playfair', 'quadrat.adfgvx', 'quadrat.spalten',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',
   'haeufigkeit.teiltexte', 'haeufigkeit.kennzahlen',
   'bitlupe.zeichen', 'bitlupe.xor', 'bitlupe.doppelnutzung',

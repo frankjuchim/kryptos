@@ -4,7 +4,7 @@
    angesehen → KRGefuehrt.freigeben(aufgabeId)) steht kein Schrittergebnis im DOM, nichts wird bewertet oder eingefärbt,
    hook.korrekt() wird nicht aufgerufen; Folgeschritte entstehen aus den Einträgen. Im freien Labor gibt es keine
    Freigabe. Hook je Werkzeug (E207): gefuehrt(container, werte, umgebung) → { schritte: [{ text, feld: { beschriftung,
-   art: 'buchstabe'|'text'|'zahl'|'bits' } }], markiere(i, eintraege), korrekt() → string[], nachFreigabe?(richtig) }.
+   art: 'buchstabe'|'zeichen'|'text'|'zahl'|'bits' } }], markiere(i, eintraege), korrekt() → string[], nachFreigabe?(richtig) }.
    Einträge zeigt der Hook nur in Elementen mit der Klasse gefuehrt-eintrag (Prüfung „kein Orakel“).
    M12 (E233): Hook-Flag objekt: true → die Mechanik (das Objekt der Station) steht als Erstes; viertes Hook-Argument
    steuer = { trage(wert), index() }: Eintrag am Objekt (Stempel, Klick) wie im Eingabefeld, danach weiter.
@@ -27,6 +27,7 @@ const KRGefuehrt = (() => {
     if (art === 'zahl') return roh.replace(/\s+/g, '').replace(/^\+/, '');
     if (art === 'bits') return Krypto.normBits(roh).replace(/[^01]/g, '');
     if (art === 'buchstabe') return Krypto.nurBuchstaben(roh).slice(-1);
+    if (art === 'zeichen') return Krypto.normalisieren(roh).slice(-1); // 1.3.1: ein Zeichen A–Z oder 0–9 (ADFGVX)
     return Krypto.normalisieren(roh);
   }
   const gleich = (art, a, b) => norm(art, a) !== '' && norm(art, a) === norm(art, b);
@@ -124,7 +125,7 @@ const KRGefuehrt = (() => {
       zaehler.textContent = `Schritt ${i + 1} von ${n}: ${textVon(i)}`;
       beschriftung.textContent = f.beschriftung || 'Dein Eintrag';
       feld.setAttribute('inputmode', f.art === 'zahl' || f.art === 'bits' ? 'numeric' : 'text');
-      if (f.art === 'buchstabe') feld.setAttribute('maxlength', '1');
+      if (f.art === 'buchstabe' || f.art === 'zeichen') feld.setAttribute('maxlength', '1');
       else feld.removeAttribute('maxlength');
       if (feld.value !== eintraege[i]) feld.value = eintraege[i];
       zurueck.disabled = i <= 0;
@@ -173,7 +174,7 @@ const KRGefuehrt = (() => {
     }
     function setzeEintrag(wert) {
       const art = feldVon(i).art;
-      eintraege[i] = art === 'buchstabe' ? norm(art, wert) : String(wert).slice(0, 80);
+      eintraege[i] = art === 'buchstabe' || art === 'zeichen' ? norm(art, wert) : String(wert).slice(0, 80);
       if (feld.value !== eintraege[i]) feld.value = eintraege[i];
     }
     feld.addEventListener('input', () => {

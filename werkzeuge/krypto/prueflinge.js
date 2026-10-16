@@ -390,6 +390,15 @@ function angaben(p) {
     if (typeof v.stellung === 'string') schluessel.add(`st=${v.stellung}`);
     if (Array.isArray(v.schablone)) schluessel.add(`loch=${v.schablone.map((x) => x.join(',')).sort().join(';')}`);
     for (const f of ['schluessel', 'schluesselwort', 'pendel', 'oben', 'unten']) if (typeof v[f] === 'string') wort(v[f]);
+    // 1.3.1: ADFGVX-Quadrat als ganzes (q6=<36 Zeichen>) – Kopf ADFGVX (Stufe 1) bzw. Verfahren adfgvx
+    const q6 = v.typ === 'adfgvx' && typeof v.quadrat === 'string' ? v.quadrat : v.kopf === 'ADFGVX' && typeof v.schluessel === 'string' ? v.schluessel : null;
+    if (q6 !== null) {
+      try {
+        schluessel.add(`q6=${Krypto.quadrat(q6, { groesse: 6 }).join('')}`);
+      } catch {
+        /* kein gültiges Quadrat */
+      }
+    }
   }
   const roh = (p.einzeln || p.sichtbar || []).map(String);
   for (const s of roh) {

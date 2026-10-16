@@ -12,10 +12,21 @@
   const { h, s } = AQ;
   const B = KRLaborBau;
   const S = KRStation;
-  const BEISPIEL = { playfair: 'LEUCHTFEUER' }; // eigenes Schlüsselwort, in keinem Material
+  // eigene Beispiele, in keinem Material (1.3.1: ADFGVX-Quadrat AMSEL3, Text, Spalten-Schlüssel ULME)
+  const BEISPIEL = { playfair: 'LEUCHTFEUER', wort6: 'AMSEL3', text6: 'nordwind', schluessel6: 'ULME', spalten: 'leuchtturm' };
   // M11 (E211): Die frühere Sperrliste D17 steckt jetzt in den Erkenner-Daten (labor/erkenner/quadrat.js). Ein Quadrat
   // aus einer Aufgabe baut das Werkzeug geführt auf (die Lernenden tragen die Felder ein), statt es fertig zu zeigen.
-  const REITER_TITEL = { polybios: 'Polybios', playfair: 'Playfair' };
+  const REITER_TITEL = { polybios: 'Polybios', playfair: 'Playfair', adfgvx: 'ADFGVX', spalten: 'Spalten' };
+  const KOPF6 = 'ADFGVX';
+  /** Schlüsselwort mit Ziffern (ADFGVX-Quadrat): A–Z, 0–9, höchstens 36 */
+  function wort36(x) {
+    if (typeof x !== 'string') return null;
+    try {
+      return Krypto.normalisieren(x).slice(0, 36);
+    } catch {
+      return null;
+    }
+  }
   const MAX = 120; // Buchstaben je Nachricht
   const REGELN = {
     rechteck: { titel: 'Rechteck', ver: 'Ecke in der eigenen Zeile', ent: 'Ecke in der eigenen Zeile' },
@@ -63,7 +74,10 @@
     const vorRichtung = v.richtung === 'ent' ? 'ent' : 'ver';
     const stand = {
       polybios: { richtung: vorRichtung, wort: vorWort || '', liste: [] },
-      playfair: { richtung: vorRichtung, wort: vorWort && vorWort.length >= 3 ? vorWort : BEISPIEL.playfair, liste: [] }
+      playfair: { richtung: vorRichtung, wort: vorWort && vorWort.length >= 3 ? vorWort : BEISPIEL.playfair, liste: [] },
+      // 1.3.1: Stufe-2-Schlüssel in voreinstellung.schluessel (Buchstaben); Quadrat-Schlüsselwort mit Ziffern
+      adfgvx: { richtung: vorRichtung, wort: wort36(v.schluesselwort) || BEISPIEL.wort6, schluessel: typeof v.schluessel === 'string' ? Krypto.nurBuchstaben(v.schluessel).slice(0, 12) : typeof v.text === 'string' ? '' : BEISPIEL.schluessel6, text: typeof v.text === 'string' ? v.text.slice(0, 200) : BEISPIEL.text6, liste: [], zwischen: '', ausgabe: '' },
+      spalten: { richtung: vorRichtung, wort: '', schluessel: typeof v.schluessel === 'string' ? Krypto.nurBuchstaben(v.schluessel).slice(0, 12) : BEISPIEL.schluessel6, text: typeof v.text === 'string' ? v.text.slice(0, 200) : BEISPIEL.spalten, liste: [], zwischen: '', ausgabe: '' }
     };
     const vorText = typeof v.text === 'string' ? v.text.slice(0, 200) : '';
     let gesperrt = false;
@@ -855,6 +869,167 @@
       };
     }
 
+    /* ---------- 1.3.1: ADFGVX-Quadrat 6 × 6 und Spalten-Raster (Spaltentransposition) als Objekte ---------- */
+
+    /** Signatur-Eingaben für den Erkenner: Quadrat als ganze 36 Zeichen (gleiches Quadrat = gleiche Kennung) */
+    function quadrat36(wort) {
+      try {
+        return Krypto.quadrat(wort || '', { groesse: 6 }).join('');
+      } catch {
+        return null;
+      }
+    }
+    function erkenne6(id, st) {
+      const schl = [];
+      if (id === 'adfgvx') {
+        const q = quadrat36(st.wort);
+        if (q) schl.push(`q6=${q}`);
+      }
+      if (st.schluessel) schl.push(st.schluessel);
+      const e = { texte: st.text ? [st.text] : [], schluessel: schl };
+      return B.erkenne(null, `quadrat.${id}`, e, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt(id, { text: st.text, schluesselwort: st.wort, schluessel: st.schluessel, richtung: st.richtung }) : null }) !== 'frei';
+    }
+    /** ADFGVX-Quadrat als Tabelle: Kopf A D F G V X oben (Spalten) und links (Zeilen). → { element, zelle(c), zeilenKopf, spaltenKopf } */
+    function adfgvxBrett(zeilen, titel) {
+      const zellen = new Map();
+      const zeilenKopf = [];
+      const spaltenKopf = [...KOPF6].map((k, sp) => h('th', { scope: 'col', 'data-spalte': String(sp) }, k));
+      const reihen = zeilen.map((zeile, z) => {
+        const th = h('th', { scope: 'row', 'data-zeile': String(z) }, KOPF6[z]);
+        zeilenKopf.push(th);
+        return h('tr', null, th, [...zeile].map((c, sp) => {
+          const td = h('td', { class: 'adfgvx-feld', 'data-zeichen': c, 'data-zeile': String(z), 'data-spalte': String(sp) }, c);
+          zellen.set(c, td);
+          return td;
+        }));
+      });
+      const element = h('div', { class: 'quadrat-papier adfgvx-papier' }, h('table', { class: 'adfgvx-quadrat' }, h('caption', null, titel), h('thead', null, h('tr', null, h('td', { class: 'ecke' }), spaltenKopf)), h('tbody', null, reihen)));
+      return { element, zelle: (c) => zellen.get(c) || null, zeilenKopf, spaltenKopf, zellen };
+    }
+    /**
+     * Spalten-Raster: Kopf = Schlüsselwort, darunter die Rangfolge (fest oder Einträge), zeilen × n Zellen (fester Inhalt
+     * oder span.gefuehrt-eintrag). → { element, wortKopf[], rangZelle[], zelle(z, sp), leeren() }
+     */
+    function spaltenRaster(wort, { zeilen, rang = null, inhalt = null, titel }) {
+      const n = wort.length;
+      const wortKopf = [...wort].map((b, sp) => h('th', { scope: 'col', 'data-spalte': String(sp) }, b));
+      const rangZelle = [...wort].map((_, sp) => h('th', { scope: 'col', 'data-spalte': String(sp) }, rang ? String(rang[sp]) : h('span', { class: 'gefuehrt-eintrag' })));
+      const zellen = Array.from({ length: zeilen }, (_, z) => Array.from({ length: n }, (_, sp) => {
+        const fest = inhalt ? inhalt(z, sp) : null;
+        return h('td', { 'data-zeile': String(z), 'data-spalte': String(sp) }, fest === null ? h('span', { class: 'gefuehrt-eintrag' }) : fest);
+      }));
+      const element = h(
+        'div',
+        { class: 'quadrat-papier spalten-papier scroll-x' },
+        h('table', { class: 'spalten-raster' }, h('caption', null, titel), h('thead', null, h('tr', { class: 'spalten-wort' }, wortKopf), h('tr', { class: 'spalten-rang' }, rangZelle)), h('tbody', null, zellen.map((r) => h('tr', null, r))))
+      );
+      return {
+        element,
+        wortKopf,
+        rangZelle,
+        zelle: (z, sp) => (zellen[z] && zellen[z][sp]) || null,
+        leeren() {
+          for (const r of zellen) for (const td of r) {
+            const e = td.querySelector('.gefuehrt-eintrag');
+            if (e) e.textContent = '';
+          }
+        }
+      };
+    }
+    /** Band unter dem Objekt: nur Einträge je Teil. → { element, setze(liste) } */
+    function band6(titel, namen, klasse) {
+      const eintraege = [];
+      const element = h(
+        'div',
+        { class: `quadrat-band6 ${klasse}`, role: 'group', 'aria-label': titel },
+        h('p', { class: 'quadrat-band6-titel' }, titel),
+        h('div', { class: 'quadrat-band6-teile' }, namen.map((nm) => {
+          const e = h('span', { class: 'gefuehrt-eintrag' });
+          eintraege.push(e);
+          return h('span', { class: 'quadrat-band6-teil' }, h('span', { class: 'quadrat-band6-nr' }, nm), e);
+        }))
+      );
+      return { element, setze: (liste) => eintraege.forEach((e, j) => (e.textContent = String((liste || [])[j] || ''))) };
+    }
+    /** Spaltenlängen bei L Zeichen und n Spalten (die ersten L mod n Spalten sind länger) – Darstellung des Rasters */
+    const spaltenLaengen = (L, n) => {
+      const { q, r: rest } = Krypto.teileMitRest(L, n);
+      return Array.from({ length: n }, (_, sp) => q + (sp < rest ? 1 : 0));
+    };
+
+    /** Reiter „ADFGVX“ bzw. „Spalten“ frei: Eingaben, Quadrat bzw. Raster, Ergebnis über Krypto.* */
+    function baueSechs(id) {
+      const st = stand[id];
+      if (naechsterText !== null) st.text = naechsterText;
+      const mitQuadrat = id === 'adfgvx';
+      const textFeld = B.textfeld({ beschriftung: 'Text (bis 200 Zeichen)', max: 200, wert: st.text, art: st.richtung === 'ver' ? 'klartext' : 'geheimtext', zeilen: 2, beiEingabe: (x) => { st.text = x; rechne(); } });
+      const ri = B.richtung({ wert: st.richtung, beiWechsel: (x) => { st.richtung = x; rechne(); } });
+      const wortFeld = mitQuadrat ? B.textfeld({ beschriftung: 'Schlüsselwort des Quadrats (A–Z, 0–9)', max: 36, wert: st.wort, art: 'frei', zeilen: 1, beiEingabe: (x) => { st.wort = wort36(x) || ''; rechne(); } }) : null;
+      const schlFeld = B.textfeld({ beschriftung: mitQuadrat ? 'Schlüsselwort der Stufe 2 (Spalten; leer = nur Stufe 1)' : 'Schlüsselwort (Spalten)', max: 12, wert: st.schluessel, art: 'frei', zeilen: 1, beiEingabe: (x) => { st.schluessel = Krypto.nurBuchstaben(x).slice(0, 12); rechne(); } });
+      const objektOrt = h('div', { class: 'adfgvx-objekte' });
+      const meldung = h('div');
+      const zwischen = mitQuadrat ? B.ausgabe({ beschriftung: 'Stufe 1: Zwischentext (Buchstabenpaare)', art: 'frei' }) : null;
+      const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: st.richtung === 'ver' ? 'geheimtext' : 'klartext' });
+      const soGehts = S.soGehts(null, mitQuadrat
+        ? ['Stufe 1: Jedes Zeichen wird zu Zeile und Spalte im Quadrat – zwei Buchstaben aus A, D, F, G, V, X.', 'Stufe 2: Den Zwischentext zeilenweise unter das Schlüsselwort schreiben, die Spalten in alphabetischer Reihenfolge des Schlüsselworts lesen.', 'Entschlüsseln: erst die Spalten zurück (Länge beachten), dann die Paare im Quadrat nachschlagen.']
+        : ['Text zeilenweise unter das Schlüsselwort schreiben (die letzte Zeile darf kürzer sein).', 'Die Spalten in alphabetischer Reihenfolge der Schlüsselbuchstaben von oben nach unten lesen.', 'Entschlüsseln: Spaltenlängen bestimmen, Spalten in dieser Reihenfolge füllen, zeilenweise lesen.']);
+      r.flaeche.append(h('div', { class: 'labor-kopf' }, textFeld.element, ri.element), h('div', { class: 'labor-steuer' }, wortFeld ? wortFeld.element : null, schlFeld.element), meldung, objektOrt, zwischen ? zwischen.element : null, aus.element, soGehts);
+      function rechne() {
+        AQ.clear(objektOrt);
+        AQ.clear(meldung);
+        st.zwischen = '';
+        st.ausgabe = '';
+        if (zwischen) zwischen.setze('');
+        aus.setze('');
+        if (erkenne6(id, st)) return;
+        const ver = st.richtung === 'ver';
+        const q = mitQuadrat ? quadrat36(st.wort) : null;
+        if (mitQuadrat && q) objektOrt.appendChild(adfgvxBrett(Krypto.quadrat(q, { groesse: 6 }), `ADFGVX-Quadrat (Schlüsselwort ${st.wort || '–'}; Zeilen links, Spalten oben)`).element);
+        const schl = st.schluessel;
+        const roh = mitQuadrat && !ver ? Krypto.normalisieren(st.text) : mitQuadrat ? Krypto.normalisieren(st.text) : Krypto.nurBuchstaben(st.text);
+        if (!roh) return;
+        const versuch = (fn) => {
+          try {
+            return fn();
+          } catch (e) {
+            if (e && e.name === 'KryptoFehler') {
+              meldung.appendChild(B.hinweis('warnung', e.message));
+              return null;
+            }
+            throw e;
+          }
+        };
+        let raster = null; // Text, der im Raster steht (zeilenweise)
+        if (mitQuadrat) {
+          if (ver) {
+            const z = versuch(() => Krypto.polybios(roh, { schluessel: q, kopf: KOPF6 }));
+            if (z === null) return;
+            st.zwischen = z;
+            raster = schl ? z : null;
+            st.ausgabe = schl ? versuch(() => Krypto.spaltentransposition(z, schl)) || '' : z;
+          } else {
+            const z = schl ? versuch(() => Krypto.spaltentransposition(roh, schl, 'ent')) : roh;
+            if (z === null) return;
+            st.zwischen = z;
+            raster = schl ? z : null;
+            st.ausgabe = versuch(() => Krypto.polybios(z, { schluessel: q, kopf: KOPF6 }, 'ent')) || '';
+          }
+        } else if (schl) {
+          raster = ver ? roh : versuch(() => Krypto.spaltentransposition(roh, schl, 'ent'));
+          st.ausgabe = ver ? versuch(() => Krypto.spaltentransposition(roh, schl)) || '' : raster || '';
+        }
+        if (raster && schl) {
+          const n = schl.length;
+          const zeilen = Krypto.teileMitRest(raster.length + n - 1, n).q;
+          objektOrt.appendChild(spaltenRaster(schl, { zeilen, rang: Krypto.spaltenReihenfolge(schl), inhalt: (z, sp) => raster[z * n + sp] || '', titel: `Raster unter ${schl}: Rangfolge der Buchstaben, Spalten nach Nummer lesen` }).element);
+        }
+        if (zwischen) zwischen.setze(Krypto.gruppieren(st.zwischen, 2));
+        aus.setze(st.ausgabe);
+      }
+      rechne();
+      return { schliesse() {}, zustand: () => ({ paar: null, regel: null }) };
+    }
+
     /* ---------- Geführter Modus (M11 Task 244, E208): Quadrat geführt aufbauen, aktueller Buchstabe bzw. aktuelles Paar ---------- */
 
     const OHNE_J = [...Krypto.ALPHABET].filter((b) => b !== 'J');
@@ -961,7 +1136,160 @@
         }
       };
     }
-    const HOOKS = { polybios: polybiosHook, playfair: playfairHook };
+    /**
+     * 1.3.1: ADFGVX bzw. Spaltentransposition geführt am Objekt. Quadrat 6 × 6 mit Kopf A D F G V X und Spalten-Raster
+     * unter dem Schlüsselwort. ver: Stufe 1 je Zeichen (Zeichen im Quadrat markiert, Paar selbst ablesen), dann die
+     * Rangfolge selbst nummerieren, das Raster füllt sich zeilenweise mit deinem Zwischentext, je Nummer eine Spalte lesen
+     * (Spaltenkopf laut deiner Rangfolge markiert). ent: Rangfolge, je Nummer eine Spalte füllen (Länge bestimmst du),
+     * Zeilen lesen, dann je Paar Zeile und Spalte im Quadrat (Köpfe markiert) – das Zeichen liest du selbst ab.
+     * Spalten-Reiter: ohne Quadrat, beim Verschlüsseln steht der Text der Angabe im Raster. Nur Einträge im DOM.
+     */
+    function sechsHook(mitQuadrat) {
+      return (container, werte) => {
+        const ver = werte.richtung !== 'ent';
+        const q = mitQuadrat ? quadrat36(wort36(werte.schluesselwort) || '') : null;
+        const schl = Krypto.nurBuchstaben(String(werte.schluessel || '')).slice(0, 12);
+        const n = schl.length;
+        const roh = String(werte.text || '');
+        const ein = mitQuadrat ? (ver ? Krypto.normalisieren(roh) : Krypto.normalisieren(roh).replace(/[^ADFGVX]/g, '')) : Krypto.nurBuchstaben(roh);
+        const eingabe = [...ein].slice(0, MAX);
+        const brett = mitQuadrat && q ? adfgvxBrett(Krypto.quadrat(q, { groesse: 6 }), 'ADFGVX-Quadrat (Zeilen links, Spalten oben)') : null;
+        // Schrittplan
+        const S1 = mitQuadrat && ver ? eingabe.length : 0; // Stufe 1 vor der Transposition
+        const L = mitQuadrat && ver ? 2 * eingabe.length : eingabe.length; // Zeichen im Raster
+        const R = n; // Rangfolge
+        const C = n; // Spalten
+        const Z = n && !ver ? 1 : 0; // Zeilen lesen (entschlüsseln)
+        const paareAngabe = mitQuadrat && !ver && !n ? eingabe.join('').match(/../g) || [] : [];
+        const P = mitQuadrat && !ver ? (n ? Krypto.teileMitRest(eingabe.length, 2).q : paareAngabe.length) : 0;
+        const a0 = S1;
+        const c0 = a0 + R;
+        const z0 = c0 + C;
+        const p0 = z0 + Z;
+        const zeilen = n ? Krypto.teileMitRest(L + n - 1, n).q : 0;
+        const raster = n
+          ? spaltenRaster(schl, { zeilen: Math.max(1, zeilen), inhalt: !mitQuadrat && ver ? (z, sp) => eingabe[z * n + sp] || '' : null, titel: `Raster unter ${schl} – die Rangfolge trägst du ein` })
+          : null;
+        const baender = [];
+        if (mitQuadrat && ver) baender.push(band6('Dein Zwischentext (Stufe 1)', eingabe.map((c) => c), 'adfgvx-gefuehrt-band'));
+        if (n) baender.push(band6(ver ? 'Dein Geheimtext (Spalte für Spalte)' : 'Deine Spalten (in deiner Rangfolge)', Array.from({ length: n }, (_, j) => `Nr. ${j + 1}`), 'spalten-gefuehrt-band'));
+        if (mitQuadrat && !ver) baender.push(band6('Dein Klartext', Array.from({ length: P }, (_, j) => String(j + 1)), 'adfgvx-gefuehrt-band adfgvx-klartext-band'));
+        if (!mitQuadrat && !ver) baender.push(band6('Dein Klartext (Zeile für Zeile gelesen)', ['Klartext'], 'spalten-gefuehrt-band'));
+        container.append(
+          ...[
+            h('p', { class: 'stab-gefuehrt-anleitung text-2' }, mitQuadrat ? (ver ? 'Stufe 1 am Quadrat: Such das Zeichen und lies Zeile und Spalte ab. Stufe 2 am Raster: Nummeriere die Spalten alphabetisch und lies sie in dieser Reihenfolge.' : 'Erst das Raster: Nummeriere die Spalten, füll sie in dieser Reihenfolge, lies die Zeilen. Dann am Quadrat: Zeile und Spalte jedes Paars, das Zeichen liest du ab.') : 'Am Raster: Nummeriere die Spalten alphabetisch nach dem Schlüsselwort und arbeite Spalte für Spalte in dieser Reihenfolge.'),
+            raster ? raster.element : null,
+            brett ? brett.element : null,
+            ...baender.map((b) => b.element)
+          ].filter(Boolean)
+        );
+        const schritte = [];
+        eingabe.slice(0, S1).forEach((c) => schritte.push({ text: `Stufe 1: ${/[0-9]/.test(c) ? c : Krypto.klein(c)} – Zeile und Spalte im Quadrat`, feld: { beschriftung: 'Buchstabenpaar (Zeile, Spalte)', art: 'text' } }));
+        for (let sp = 0; sp < R; sp++) schritte.push({ text: `Rangfolge: Spalte ${sp + 1} (${schl[sp]}) bekommt Nummer …`, feld: { beschriftung: `Nummer für ${schl[sp]}`, art: 'zahl' } });
+        for (let j = 0; j < C; j++) schritte.push({ text: ver ? `Spalte mit deiner Nummer ${j + 1} von oben nach unten lesen` : `Spalte mit deiner Nummer ${j + 1}: die nächsten Geheimtextzeichen von oben nach unten eintragen (Länge der Spalte beachten)`, feld: { beschriftung: `Spalte Nr. ${j + 1}`, art: 'text' } });
+        if (Z) schritte.push({ text: 'Raster zeilenweise lesen (Zwischentext)', feld: { beschriftung: 'Zwischentext', art: 'text' } });
+        for (let j = 0; j < P; j++) schritte.push({ text: `Paar ${j + 1}: Zeile und Spalte im Quadrat – welches Zeichen?`, feld: { beschriftung: 'Zeichen', art: 'zeichen' } });
+        const nurA = (x) => Krypto.normalisieren(String(x || '')).replace(/[^ADFGVX]/g, '');
+        const rangVon = (e) => e.slice(a0, a0 + R).map((x) => (/^\d+$/.test(String(x || '').trim()) ? Number(x) : null));
+        const spalteMitNr = (e, nr) => rangVon(e).findIndex((x) => x === nr);
+        const zwischenAusEintraegen = (e) => (Z ? nurA(e[z0]) : '');
+        return {
+          objekt: true,
+          schritte,
+          markiere(i, e) {
+            // Quadrat
+            if (brett) {
+              for (const td of brett.zellen.values()) td.classList.remove('gefuehrt-markiert');
+              for (const th of [...brett.zeilenKopf, ...brett.spaltenKopf]) th.classList.remove('gefuehrt-markiert');
+              if (i < S1) {
+                const td = brett.zelle(eingabe[i]);
+                if (td) td.classList.add('gefuehrt-markiert');
+              } else if (i >= p0) {
+                const j = i - p0;
+                const paar = n ? zwischenAusEintraegen(e).slice(2 * j, 2 * j + 2) : paareAngabe[j] || '';
+                if (paar.length === 2) {
+                  brett.zeilenKopf[KOPF6.indexOf(paar[0])].classList.add('gefuehrt-markiert');
+                  brett.spaltenKopf[KOPF6.indexOf(paar[1])].classList.add('gefuehrt-markiert');
+                }
+              }
+            }
+            // Raster
+            if (raster) {
+              raster.leeren();
+              raster.wortKopf.forEach((th) => th.classList.remove('gefuehrt-markiert'));
+              raster.rangZelle.forEach((th, sp) => {
+                const x = th.querySelector('.gefuehrt-eintrag');
+                if (x) x.textContent = String(e[a0 + sp] || '').trim();
+              });
+              if (mitQuadrat && ver) {
+                const z = e.slice(0, S1).map(nurA).join('');
+                [...z].forEach((c, k) => {
+                  const { q: zz, r: sp } = Krypto.teileMitRest(k, n);
+                  const td = raster.zelle(zz, sp);
+                  const x = td && td.querySelector('.gefuehrt-eintrag');
+                  if (x) x.textContent = c;
+                });
+              }
+              if (!ver) {
+                for (let j = 0; j < C; j++) {
+                  const sp = spalteMitNr(e, j + 1);
+                  if (sp < 0) continue;
+                  [...Krypto.normalisieren(String(e[c0 + j] || ''))].forEach((c, zz) => {
+                    const td = raster.zelle(zz, sp);
+                    const x = td && td.querySelector('.gefuehrt-eintrag');
+                    if (x) x.textContent = c;
+                  });
+                }
+              }
+              let sp = -1;
+              if (i >= a0 && i < c0) sp = i - a0;
+              else if (i >= c0 && i < z0) sp = spalteMitNr(e, i - c0 + 1);
+              if (sp >= 0) raster.wortKopf[sp].classList.add('gefuehrt-markiert');
+            }
+            // Bänder (nur Einträge)
+            let b = 0;
+            if (mitQuadrat && ver) baender[b++].setze(e.slice(0, S1).map(nurA));
+            if (n) baender[b++].setze(e.slice(c0, c0 + C).map((x) => Krypto.normalisieren(String(x || ''))));
+            if (mitQuadrat && !ver) baender[b++].setze(e.slice(p0, p0 + P).map((x) => Krypto.klein(Krypto.normalisieren(String(x || '')))));
+            if (!mitQuadrat && !ver) baender[b++].setze([Krypto.klein(Krypto.normalisieren(String(e[z0] || '')))]);
+          },
+          korrekt() {
+            const aus = [];
+            const t = eingabe.join('');
+            const opt = { schluessel: q || '', kopf: KOPF6 };
+            const stufe1 = mitQuadrat && ver ? eingabe.map((c) => Krypto.polybios(c, opt)) : [];
+            aus.push(...stufe1);
+            if (n) {
+              const rang = Krypto.spaltenReihenfolge(schl);
+              aus.push(...rang.map(String));
+              const imRaster = mitQuadrat && ver ? stufe1.join('') : t;
+              const geheim = ver ? Krypto.spaltentransposition(imRaster, schl) : t;
+              const laengen = spaltenLaengen(geheim.length, n);
+              let p = 0;
+              for (let nr = 1; nr <= n; nr++) {
+                const l = laengen[rang.indexOf(nr)];
+                aus.push(geheim.slice(p, p + l));
+                p += l;
+              }
+              if (Z) aus.push(Krypto.spaltentransposition(t, schl, 'ent'));
+            }
+            if (mitQuadrat && !ver) {
+              const zw = n ? Krypto.spaltentransposition(t, schl, 'ent') : paareAngabe.join('');
+              let klar = '';
+              try {
+                klar = Krypto.polybios(zw, opt, 'ent');
+              } catch {
+                klar = '';
+              }
+              aus.push(...Array.from({ length: P }, (_, j) => Krypto.klein(klar[j] || '')));
+            }
+            if (!mitQuadrat && !ver && n) aus.splice(aus.length - 1, 1, Krypto.klein(aus[aus.length - 1]));
+            return aus;
+          }
+        };
+      };
+    }
+    const HOOKS = { polybios: polybiosHook, playfair: playfairHook, adfgvx: sechsHook(true), spalten: sechsHook(false) };
     function starteGefuehrt(id, werte) {
       const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
       if (teil) teil.schliesse();
@@ -980,6 +1308,11 @@
           fuehrung = null;
           stand.polybios.wort = '';
           stand.playfair.wort = BEISPIEL.playfair;
+          stand.adfgvx.wort = BEISPIEL.wort6;
+          stand.adfgvx.schluessel = BEISPIEL.schluessel6;
+          stand.adfgvx.text = BEISPIEL.text6;
+          stand.spalten.schluessel = BEISPIEL.schluessel6;
+          stand.spalten.text = BEISPIEL.spalten;
           stand[id].liste = [];
           baue(id, { ohneText: true });
         },
@@ -1010,12 +1343,14 @@
       AQ.clear(r.flaeche);
       if (ohneText) ohneVorText = true;
       if (fuehrung && mitGefuehrt && HOOKS[id]) {
-        const w = { text: vorText, schluesselwort: stand[id].wort, richtung: stand[id].richtung, ...(fuehrung.werte || {}) };
+        const w = id === 'adfgvx' || id === 'spalten'
+          ? { text: stand[id].text, schluesselwort: stand[id].wort, schluessel: stand[id].schluessel, richtung: stand[id].richtung, ...(fuehrung.werte || {}) }
+          : { text: vorText, schluesselwort: stand[id].wort, richtung: stand[id].richtung, ...(fuehrung.werte || {}) };
         fuehrung = { aufgabe: fuehrung.aufgabe };
         starteGefuehrt(id, w);
         return;
       }
-      teil = id === 'playfair' ? bauePlayfair() : bauePolybios();
+      teil = id === 'playfair' ? bauePlayfair() : id === 'adfgvx' || id === 'spalten' ? baueSechs(id) : bauePolybios();
     }
     baue(r.aktiv());
 
@@ -1026,6 +1361,7 @@
       zustand() {
         const id = r.aktiv();
         const z = stand[id] || stand.polybios;
+        if (id === 'adfgvx' || id === 'spalten') return { reiter: id, richtung: z.richtung, schluesselwort: z.wort, schluessel: z.schluessel, eingabe: z.text, zwischen: z.zwischen, ausgabe: z.ausgabe, gesperrt };
         const extra = teil ? teil.zustand() : { paar: null, regel: null };
         return {
           reiter: id,

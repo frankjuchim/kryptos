@@ -25,7 +25,7 @@ const KRLabor = (() => {
       { id: 'hash', titel: 'Hash-Labor', welt: 5, reiter: ['schritte', 'lawine', 'kollision', 'baukasten', 'passwort', 'pruefsumme'] },
       { id: 'signatur', titel: 'Signatur- & Zertifikats-Simulator', welt: 5, reiter: ['signatur', 'zertifikat', 'mitm'] },
       // M10 (E177, E178): Werkstatt-Stationen (docs/FREMDCODE.md); art: kern | zusatz | kuer
-      { id: 'quadrat', titel: 'Polybios & Playfair', welt: 0, reiter: ['polybios', 'playfair'] },
+      { id: 'quadrat', titel: 'Polybios & Playfair', welt: 0, reiter: ['polybios', 'playfair', 'adfgvx', 'spalten'] },
       { id: 'signale', titel: 'Codes & Signale', welt: 0, reiter: ['morse', 'klopfcode', 'freimaurer'], art: 'zusatz' },
       { id: 'verstecke', titel: 'Versteckte Botschaften', welt: 0, reiter: ['nullchiffre', 'punkte'], art: 'zusatz' },
       { id: 'enigma', titel: 'Enigma', welt: 3, reiter: ['maschine', 'innenleben', 'vorfuehren', 'glossar'], art: 'kuer' },
@@ -122,6 +122,9 @@ const KRLabor = (() => {
     // M10 E180: Playfair rechnet W2-L4 vor, der Schlüsselraum W1-L1-04 (26! bei 10⁹/s) – erst ab Welt 2; Optionen der
     // Angreifer-Reiter nach Welt; die Vorführung „keine Fixpunkte“ beantwortet W3-K2-03 – nicht im Level-Kontext W3-L5
     'quadrat.playfair': Object.freeze({ welt: 2 }),
+    // 1.3.1: ADFGVX-Quadrat 6 × 6 und Spaltentransposition (W3 Maschinenzeitalter) erst ab Welt 3
+    'quadrat.adfgvx': Object.freeze({ welt: 3 }),
+    'quadrat.spalten': Object.freeze({ welt: 3 }),
     'analyse.schluesselraum': Object.freeze({ welt: 2 }),
     'analyse.verfahren.playfair': Object.freeze({ welt: 2 }),
     'analyse.verfahren.vigenere': Object.freeze({ welt: 2 }),
