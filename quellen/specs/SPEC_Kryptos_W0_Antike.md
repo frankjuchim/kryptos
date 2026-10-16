@@ -1774,6 +1774,7 @@ Holzstab (stempeln, abwickeln bzw. entlang lesen), Zaun (Zickzack, Schienen), Fl
 | W0-L3-05 | Chiffrierscheibe | scheibe | geführt |
 | W0-L4-01 | Polybios & Playfair | polybios | frei |
 | W0-L4-02 | Polybios & Playfair | polybios | frei |
+| W0-L4-03 | Chiffrierscheibe | leiste | geführt |
 | W0-L4-05 | Polybios & Playfair | polybios | frei |
 | W0-L4-07 | Polybios & Playfair | polybios | frei |
 | W8-L1-01 | Chiffrierscheibe | scheibe | geführt |

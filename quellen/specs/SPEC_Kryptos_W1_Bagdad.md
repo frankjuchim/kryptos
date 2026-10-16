@@ -959,4 +959,8 @@ bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js
 | Aufgabe | Werkzeug | Reiter | Modus |
 |---|---|---|---|
 | W1-A-01 | Substitutions-Werkbank | – | frei |
+| W1-L1-02 | Chiffrierscheibe | leiste | geführt |
+| W1-L1-03 | Chiffrierscheibe | leiste | geführt |
 | W1-L1-07 | Substitutions-Werkbank | – | frei |
+| W1-L2-01 | Chiffrierscheibe | leiste | geführt |
+| W1-L2-04 | Chiffrierscheibe | leiste | geführt |
