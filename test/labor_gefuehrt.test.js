@@ -185,3 +185,38 @@ test('freigabe_vorher_gesetzt', () => {
   k.wert('KRGefuehrt').starte(ziel, testHook(k, p), { werte: { text: 'QRS' }, umgebung: { rolle: 'schueler' }, aufgabe: 'W9-L1-02' });
   assert.equal(p.korrekt, 1, 'schon gelöste Aufgabe: Vergleich sofort');
 });
+
+/* ---------- M12 (E233): Objekt zuerst, Eintrag am Objekt (steuer.trage) ---------- */
+
+test('m12_objekt_steht_als_erstes', () => {
+  const k = D.lade(BASIS);
+  const ziel = k.document.createElement('div');
+  k.document.getElementById('haupt').appendChild(ziel);
+  const hook = (c) => ({ objekt: true, schritte: [{ text: 'a', feld: { art: 'buchstabe' } }], markiere() {}, korrekt: () => ['A'] });
+  k.wert('KRGefuehrt').starte(ziel, hook, { werte: {}, umgebung: { rolle: 'schueler' }, aufgabe: 'W9-L1-01', text: { beschriftung: 'Text', wert: 'abc', beiAenderung() {} } });
+  const kinder = [...k.eins(ziel, 'section.gefuehrt').children].map((x) => x.className);
+  assert.ok(kinder.indexOf('gefuehrt-mechanik') < kinder.findIndex((c) => /labor-textfeld/.test(c)), `Mechanik vor den Angaben: ${kinder.join(', ')}`);
+  assert.ok(k.eins(ziel, 'section.gefuehrt.gefuehrt-mit-objekt'));
+});
+
+test('m12_steuer_trage_wie_eingabefeld', () => {
+  const k = D.lade(BASIS);
+  const ziel = k.document.createElement('div');
+  k.document.getElementById('haupt').appendChild(ziel);
+  let steuer = null;
+  const hook = (c, w, u, st) => {
+    steuer = st;
+    return { schritte: [1, 2, 3].map((x) => ({ text: `s${x}`, feld: { art: 'buchstabe' } })), markiere() {}, korrekt: () => ['A', 'B', 'C'] };
+  };
+  const inst = k.wert('KRGefuehrt').starte(ziel, hook, { werte: {}, umgebung: { rolle: 'schueler' }, aufgabe: 'W9-L1-01' });
+  assert.equal(typeof steuer.trage, 'function');
+  steuer.trage('q');
+  assert.deepEqual(inst.eintraege(), ['Q', '', '']);
+  assert.equal(inst.index(), 1, 'weiter zum nächsten Schritt');
+  steuer.trage('r');
+  steuer.trage('s');
+  steuer.trage('t'); // letzter Schritt bleibt stehen, Eintrag ersetzt
+  assert.deepEqual(inst.eintraege(), ['Q', 'R', 'T']);
+  assert.equal(inst.index(), 2);
+  assert.equal(steuer.index(), 2);
+});

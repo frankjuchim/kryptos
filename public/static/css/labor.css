@@ -969,6 +969,7 @@ mark.markiert.wiederholung { font-weight: 700; }
 .gefuehrt-hinweis, .gefuehrt-zaehler, .gefuehrt-fazit { margin: 0; }
 .gefuehrt-zaehler { font-weight: 700; overflow-wrap: anywhere; }
 .gefuehrt-mechanik { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--a-2); min-width: 0; overflow-x: auto; }
+.gefuehrt-mit-objekt > .gefuehrt-mechanik { gap: var(--a-3); } /* M12 E233: das Objekt steht als Erstes */
 .gefuehrt-eingabe { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-2); }
 .gefuehrt-eintrag-feld {
   min-height: var(--ziel);

@@ -2,9 +2,10 @@
 /*
  * e2e – Szenario 16 „Werkzeuge in den Aufgaben“ (Plan M11 Task 251, E228, Review Focus 1–5) auf den echten Seeds:
  *  1. Mika R. (LK 13, Welten 0–6): W2-L1-02 – Panel eingeklappt, labor/vigenere.js erst nach dem Klick (M12: W0-Aufgaben
- *     mit Werkstatt-Objekt klappen von selbst auf – W0-L1-04 offen, Schalter „Skytale-Stab benutzen“); geführt,
- *     Raster leer, Zielzelle markiert, Einträge füllen das Raster, kein Klartext im DOM (Text und Attribute), Foto kr-37;
- *     Schritt 1 mit allen Buchstaben → Panel bis auf den Eintrag unverändert (kein Orakel). Aufgabe richtig lösen →
+ *     mit Werkstatt-Objekt klappen von selbst auf – W0-L1-04 offen, Schalter „Skytale-Stab benutzen“); geführt am
+ *     Holzstab (Geheimtext aufgewickelt, eine Zeilenmarke markiert, keine Ersatztabelle), kein Klartext im DOM (Text und
+ *     Attribute), Foto kr-37; Zeile 1 mit richtigen und falschen Einträgen → Panel bis auf den Eintrag unverändert (kein
+ *     Orakel), Einträge im Band „Dein Klartext“. Aufgabe richtig lösen →
  *     Vergleich ✓/✗, Foto kr-39; nächste Aufgabe (W0-L1-05) ohne Vergleich.
  *  2. W4-L2-04 bei 1280 px: Seitenleiste rechts, Antwortfeld links (Bounding Boxes), Foto kr-38. W0-L2-04: Brute-Force-Liste
  *     erlaubt (L60, 25 Zeilen k = 1 … 25 plus k = 0).
@@ -78,11 +79,12 @@ async function szenario16(ctx) {
   assert.match(await schalter.innerText(), /Skytale-Stab benutzen/);
   await page.locator('.werkzeug-panel-flaeche section.gefuehrt').waitFor();
   assert.equal(await schalter.getAttribute('aria-expanded'), 'true', 'W0-L1-04 offen');
-  const raster = page.locator('.werkzeug-panel-flaeche table.gefuehrt-tabelle tbody td');
-  const zellen = await raster.evaluateAll((l) => l.map((td) => td.textContent.trim()));
-  assert.ok(zellen.length >= 28, `Raster in Aufgabengröße (${zellen.length} Zellen)`);
-  assert.ok(zellen.every((t) => t === '' || t === '◆'), `Raster leer: ${zellen.filter((t) => t && t !== '◆').join(',')}`);
-  assert.equal(await page.locator('.werkzeug-panel-flaeche td.gefuehrt-markiert').count(), 1, 'genau die Zielzelle markiert');
+  // M12 (E235): der Geheimtext ist auf den Holzstab gewickelt – keine Ersatztabelle, Zeile für Zeile lesen
+  assert.equal(await page.locator('.werkzeug-panel-flaeche table.gefuehrt-tabelle').count(), 0, 'keine Ersatztabelle');
+  await page.locator('.werkzeug-panel-flaeche .gefuehrt-mechanik svg.stab-objekt').waitFor();
+  const aufStab = await page.locator('.werkzeug-panel-flaeche svg .stab-buchstabe').evaluateAll((l) => l.map((x) => x.textContent).join(''));
+  assert.equal(aufStab, 'NUMRABOUCKREHOGHSMEXCMNXHTFX', 'Geheimtext aufgewickelt (im DOM in Geheimtext-Reihenfolge)');
+  assert.equal(await page.locator('.werkzeug-panel-flaeche .gefuehrt-markiert').count(), 1, 'genau eine Zeilenmarke markiert');
   const loesung = 'NACHSCHUBKOMMTMORGENFRUEH';
   const ohneKlartext = async (ort) => {
     const t = N(await domText(page));
@@ -90,24 +92,17 @@ async function szenario16(ctx) {
   };
   await ohneKlartext('W0-L1-04 aufgeklappt');
 
-  // kein Orakel: Schritt 1 mit allen Buchstaben – nur der Eintrag ändert sich
+  // kein Orakel: Zeile 1 mit richtigen und falschen Einträgen – nur der Eintrag ändert sich
   const feld = page.locator('.werkzeug-panel-flaeche input.gefuehrt-eintrag-feld');
-  await feld.fill('A');
+  await feld.fill('a');
   const z0 = await panelZustand(page);
-  for (const b of 'BCDEFGHIJKLMNOPQRSTUVWXYZ') {
-    await feld.fill(b);
-    assert.deepEqual(await panelZustand(page), z0, `Schritt 1 mit „${b}“: Panel unverändert (kein Orakel)`);
-    assert.equal(await page.locator('.werkzeug-panel-flaeche td.gefuehrt-markiert').textContent().then((t) => t.includes(b)), true, `Eintrag ${b} im Raster`);
+  for (const x of ['nachsch', 'qqqqqqq', 'nach', 'z']) {
+    await feld.fill(x);
+    assert.deepEqual(await panelZustand(page), z0, `Zeile 1 mit „${x}“: Panel unverändert (kein Orakel)`);
+    assert.equal(await page.locator('.werkzeug-panel-flaeche .stab-gefuehrt-band .gefuehrt-eintrag').first().textContent(), x, `Eintrag ${x} im Band`);
   }
-  await ohneKlartext('W0-L1-04 nach 26 Einträgen');
-  // die ersten Buchstaben des Geheimtexts eintragen: das Raster füllt sich mit den Einträgen
-  for (const b of 'NUMRA') {
-    await feld.fill(b);
-    await page.locator('.werkzeug-panel-flaeche .gefuehrt-weiter').click();
-  }
-  const gefuellt = await raster.evaluateAll((l) => l.map((td) => td.textContent.replace('◆', '').trim()).filter(Boolean).join(''));
-  assert.equal(N(gefuellt).split('').sort().join(''), 'AMNRU', `Raster zeigt die Einträge (${gefuellt})`);
-  await page.locator('.werkzeug-panel-flaeche table.gefuehrt-tabelle').evaluate((el) => el.scrollIntoView({ block: 'start' }));
+  await feld.fill('nachsch');
+  await page.locator('.werkzeug-panel-flaeche .stab-bild').evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await foto(page, 'aufgabe-panel-gefuehrt');
   // Enter im Panel löst kein Prüfen aus
   await feld.focus();

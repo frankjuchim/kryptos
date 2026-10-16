@@ -6,6 +6,8 @@
    Freigabe. Hook je Werkzeug (E207): gefuehrt(container, werte, umgebung) → { schritte: [{ text, feld: { beschriftung,
    art: 'buchstabe'|'text'|'zahl'|'bits' } }], markiere(i, eintraege), korrekt() → string[], nachFreigabe?(richtig) }.
    Einträge zeigt der Hook nur in Elementen mit der Klasse gefuehrt-eintrag (Prüfung „kein Orakel“).
+   M12 (E233): Hook-Flag objekt: true → die Mechanik (das Objekt der Station) steht als Erstes; viertes Hook-Argument
+   steuer = { trage(wert), index() }: Eintrag am Objekt (Stempel, Klick) wie im Eingabefeld, danach weiter.
    Rahmen ohne Verfahrensrechnung (Normalisierung über Krypto.*), speichert nichts, kein setInterval. */
 'use strict';
 
@@ -40,7 +42,8 @@ const KRGefuehrt = (() => {
     const aufgabe = typeof o.aufgabe === 'string' && o.aufgabe ? o.aufgabe : null;
     const vorschau = umgebung.rolle === 'lehrkraft';
     const mechanik = h('div', { class: 'gefuehrt-mechanik' });
-    const h_ = typeof hook === 'function' ? hook(mechanik, o.werte || {}, umgebung) : hook;
+    const steuer = { trage: (wert) => trage(wert), index: () => i };
+    const h_ = typeof hook === 'function' ? hook(mechanik, o.werte || {}, umgebung, steuer) : hook;
     const schritte = (h_ && Array.isArray(h_.schritte) ? h_.schritte : []).filter(Boolean);
     const n = schritte.length;
     const eintraege = schritte.map(() => '');
@@ -92,14 +95,16 @@ const KRGefuehrt = (() => {
           })
         )
       : null;
+    const objekt = !!(h_ && h_.objekt === true);
     const element = h(
       'section',
-      { class: 'gefuehrt', 'data-modus': 'gefuehrt', 'aria-label': o.titel ? `Schritt für Schritt: ${o.titel}` : 'Schritt für Schritt' },
+      { class: `gefuehrt${objekt ? ' gefuehrt-mit-objekt' : ''}`, 'data-modus': 'gefuehrt', 'aria-label': o.titel ? `Schritt für Schritt: ${o.titel}` : 'Schritt für Schritt' },
       h('div', { class: 'gefuehrt-kopf' }, h('h3', { class: 'gefuehrt-titel' }, 'Schritt für Schritt'), eigene),
       hinweis,
+      objekt ? mechanik : null,
       textfeld ? textfeld.element : null,
       angabenElement,
-      mechanik,
+      objekt ? null : mechanik,
       zaehler,
       h('div', { class: 'gefuehrt-eingabe' }, beschriftung, feld),
       h('div', { class: 'knopf-reihe gefuehrt-knoepfe' }, zurueck, weiter),
@@ -166,13 +171,23 @@ const KRGefuehrt = (() => {
       i = Math.max(0, Math.min(n - 1, Number(j) || 0));
       zeige();
     }
+    function setzeEintrag(wert) {
+      const art = feldVon(i).art;
+      eintraege[i] = art === 'buchstabe' ? norm(art, wert) : String(wert).slice(0, 80);
+      if (feld.value !== eintraege[i]) feld.value = eintraege[i];
+    }
     feld.addEventListener('input', () => {
       if (!n) return;
-      const art = feldVon(i).art;
-      eintraege[i] = art === 'buchstabe' ? norm(art, feld.value) : String(feld.value).slice(0, 80);
-      if (art === 'buchstabe' && feld.value !== eintraege[i]) feld.value = eintraege[i];
+      setzeEintrag(feld.value);
       zeige();
     });
+    /** Eintrag am Objekt (M12 E233): wie getippt, dann weiter (letzter Schritt bleibt stehen) */
+    function trage(wert) {
+      if (!n || zu) return;
+      setzeEintrag(String(wert ?? ''));
+      if (i < n - 1) i += 1;
+      zeige();
+    }
     feld.addEventListener('keydown', (e) => {
       const anfang = typeof feld.selectionStart !== 'number' || feld.selectionStart === 0;
       const ende = typeof feld.selectionEnd !== 'number' || feld.selectionEnd >= String(feld.value).length;

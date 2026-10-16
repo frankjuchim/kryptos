@@ -141,6 +141,78 @@
       return { x: bogen(a.x, m.x, b.x, t), y: bogen(a.y, m.y, b.y, t), sx: mische(a.sx, b.sx, t), sy: mische(a.sy, b.sy, t), o: mische(a.o, b.o, t) };
     }
 
+    /**
+     * Holzstab (Seitenansicht) in svg zeichnen – Station und geführter Modus (M12 E234): Verläufe, Holz mit Maserung,
+     * W Windungen des Bands (Deckkraft dk(c)) und die Klammer am Bandanfang. Nur Darstellung.
+     * → { BW (Breite einer Windung), R, windungen: [g.stab-windung], stabPos(rz, c) → Lage eines Buchstabens }
+     */
+    function stabGeruest(svg, u, W, dk) {
+      const BW = (STAB.rechts - 34 - STAB.anfang) / (W + 1.3);
+      const R = stabRadius(u);
+      const { cy, winkel: A } = STAB;
+      const defs = s('defs');
+      const holzId = B.neueId('stab-holz');
+      const stirnId = B.neueId('stab-stirn');
+      const schattenId = B.neueId('stab-schatten');
+      const schattierungId = B.neueId('stab-band-schatten');
+      defs.append(
+        s('linearGradient', { id: holzId, x1: 0, y1: 0, x2: 0, y2: 1 }, ...[[0, 'dunkel'], [0.12, 'tief'], [0.3, 'mitte'], [0.4, 'hell'], [0.55, 'mitte'], [0.82, 'tief'], [1, 'dunkel']].map(([o, c]) => s('stop', { offset: o, class: `stab-holz-${c}` }))),
+        s('radialGradient', { id: stirnId, cx: 0.45, cy: 0.45, r: 0.6 }, s('stop', { offset: 0, class: 'stab-holz-hell' }), s('stop', { offset: 0.7, class: 'stab-holz-mitte' }), s('stop', { offset: 1, class: 'stab-holz-tief' })),
+        s('linearGradient', { id: schattierungId, gradientUnits: 'userSpaceOnUse', x1: 0, y1: cy - R, x2: 0, y2: cy + R }, ...[[0, 'dunkel', 0.5], [0.16, 'dunkel', 0.15], [0.3, 'licht', 0.25], [0.42, 'licht', 0], [0.7, 'dunkel', 0.08], [0.86, 'dunkel', 0.26], [1, 'dunkel', 0.55]].map(([o, c, a]) => s('stop', { offset: o, class: `stab-schatten-${c}`, 'stop-opacity': a }))),
+        s('filter', { id: schattenId, x: '-10%', y: '-20%', width: '120%', height: '150%' }, s('feDropShadow', { class: 'stab-schlagschatten', dx: 0, dy: 8, stdDeviation: 8 }))
+      );
+      svg.appendChild(defs);
+      // Holzstab
+      const { links: XL, rechts: XR, anfang: XB, rx: RX } = STAB;
+      const holz = s('g', { filter: `url(#${schattenId})` },
+        s('path', { class: 'stab-holzkoerper', d: `M ${XL} ${cy - R} L ${XR} ${cy - R} A ${RX} ${R} 0 0 1 ${XR} ${cy + R} L ${XL} ${cy + R} Z`, fill: `url(#${holzId})` })
+      );
+      const maser = s('g', { class: 'stab-maser' });
+      for (let i = 0; i < 15; i++) {
+        const f = -1.35 + i * (2.7 / 14);
+        const y0 = cy + R * Math.sin(f);
+        const amp = 2 + Krypto.mod(i * 37, 5);
+        const ph = Krypto.mod(i * 53, 100);
+        let d = '';
+        for (let x = XL; x <= XR + 4; x += 14) d += `${x === XL ? 'M' : 'L'} ${x} ${(y0 + amp * Math.sin((x + ph * 7) / (60 + Krypto.mod(i, 4) * 25)) * Math.cos(f)).toFixed(1)} `;
+        maser.appendChild(s('path', { d, class: Krypto.mod(i, 3) === 0 ? 'stark' : null }));
+      }
+      holz.append(maser, s('ellipse', { class: 'stab-stirnflaeche', cx: XL, cy, rx: RX, ry: R, fill: `url(#${stirnId})` }));
+      for (let i = 1; i < 6; i++) holz.appendChild(s('ellipse', { class: 'stab-ring', cx: XL + 1, cy: cy + 2, rx: (RX * i) / 6, ry: (R * i) / 6 }));
+      svg.appendChild(holz);
+      // Windungen des Bands (Seitenansicht schräg)
+      function windung(c) {
+        const l = [];
+        const rr = [];
+        for (let i = 0; i <= 24; i++) {
+          const f = -Math.PI / 2 + (i * Math.PI) / 24;
+          const t = (f + A) / (2 * A);
+          const x = XB + c * BW + t * BW;
+          const y = cy + R * Math.sin(f);
+          l.push(`${x.toFixed(1)} ${y.toFixed(1)}`);
+          rr.push(`${(x + BW).toFixed(1)} ${y.toFixed(1)}`);
+        }
+        return `M ${l.join(' L ')} L ${rr.reverse().join(' L ')} Z`;
+      }
+      const windungen = [];
+      for (let c = 0; c < W; c++) {
+        const d = windung(c);
+        const deckkraft = typeof dk === 'function' ? dk(c) : 1;
+        const g = s('g', { class: 'stab-windung', opacity: deckkraft }, s('path', { class: 'stab-band', d }), s('path', { class: 'stab-band-schatten', d, fill: `url(#${schattierungId})` }));
+        windungen.push(g);
+        svg.appendChild(g);
+      }
+      svg.appendChild(s('g', { class: 'stab-klammer', transform: `translate(${XB + BW * 0.35} ${cy}) scale(.8)` }, s('rect', { x: -16, y: -40, width: 32, height: 80, rx: 8 }), s('rect', { class: 'innen', x: -9, y: -30, width: 18, height: 60, rx: 5 })));
+      const stabPos = (rz, c) => {
+        const f = -A + ((rz + 0.5) * 2 * A) / u;
+        const t = (rz + 0.5) / u;
+        const cf = Math.cos(f);
+        const fs = Math.min(30, BW * 0.6, ((2 * A) / u) * R * 0.8);
+        return { x: XB + (c + 0.5) * BW + t * BW, y: cy + R * Math.sin(f), sx: fs / STAB.schrift, sy: (fs / STAB.schrift) * (0.35 + 0.65 * cf), o: 0.75 + 0.25 * cf };
+      };
+      return { BW, R, windungen, stabPos };
+    }
+
     function baueSkytale() {
       let alle = null;
       let lauf = 0; // laufende Animation (wird bei jeder Änderung neu gezählt)
@@ -265,63 +337,11 @@
         const n = zeichen.length;
         const L = Math.max(1, Math.ceil(n / u));
         const W = Math.min(STAB.maxWindungen, Math.max(4, L));
-        const BW = (STAB.rechts - 34 - STAB.anfang) / (W + 1.3);
-        const R = stabRadius(u);
-        const { cy, winkel: A } = STAB;
-        const defs = s('defs');
-        const holzId = B.neueId('stab-holz');
-        const stirnId = B.neueId('stab-stirn');
-        const schattenId = B.neueId('stab-schatten');
-        const schattierungId = B.neueId('stab-band-schatten');
-        defs.append(
-          s('linearGradient', { id: holzId, x1: 0, y1: 0, x2: 0, y2: 1 }, ...[[0, 'dunkel'], [0.12, 'tief'], [0.3, 'mitte'], [0.4, 'hell'], [0.55, 'mitte'], [0.82, 'tief'], [1, 'dunkel']].map(([o, c]) => s('stop', { offset: o, class: `stab-holz-${c}` }))),
-          s('radialGradient', { id: stirnId, cx: 0.45, cy: 0.45, r: 0.6 }, s('stop', { offset: 0, class: 'stab-holz-hell' }), s('stop', { offset: 0.7, class: 'stab-holz-mitte' }), s('stop', { offset: 1, class: 'stab-holz-tief' })),
-          s('linearGradient', { id: schattierungId, gradientUnits: 'userSpaceOnUse', x1: 0, y1: cy - R, x2: 0, y2: cy + R }, ...[[0, 'dunkel', 0.5], [0.16, 'dunkel', 0.15], [0.3, 'licht', 0.25], [0.42, 'licht', 0], [0.7, 'dunkel', 0.08], [0.86, 'dunkel', 0.26], [1, 'dunkel', 0.55]].map(([o, c, a]) => s('stop', { offset: o, class: `stab-schatten-${c}`, 'stop-opacity': a }))),
-          s('filter', { id: schattenId, x: '-10%', y: '-20%', width: '120%', height: '150%' }, s('feDropShadow', { class: 'stab-schlagschatten', dx: 0, dy: 8, stdDeviation: 8 }))
-        );
-        svg.appendChild(defs);
-        // Holzstab
-        const { links: XL, rechts: XR, anfang: XB, rx: RX } = STAB;
-        const holz = s('g', { filter: `url(#${schattenId})` },
-          s('path', { class: 'stab-holzkoerper', d: `M ${XL} ${cy - R} L ${XR} ${cy - R} A ${RX} ${R} 0 0 1 ${XR} ${cy + R} L ${XL} ${cy + R} Z`, fill: `url(#${holzId})` })
-        );
-        const maser = s('g', { class: 'stab-maser' });
-        for (let i = 0; i < 15; i++) {
-          const f = -1.35 + i * (2.7 / 14);
-          const y0 = cy + R * Math.sin(f);
-          const amp = 2 + Krypto.mod(i * 37, 5);
-          const ph = Krypto.mod(i * 53, 100);
-          let d = '';
-          for (let x = XL; x <= XR + 4; x += 14) d += `${x === XL ? 'M' : 'L'} ${x} ${(y0 + amp * Math.sin((x + ph * 7) / (60 + Krypto.mod(i, 4) * 25)) * Math.cos(f)).toFixed(1)} `;
-          maser.appendChild(s('path', { d, class: Krypto.mod(i, 3) === 0 ? 'stark' : null }));
-        }
-        holz.append(maser, s('ellipse', { class: 'stab-stirnflaeche', cx: XL, cy, rx: RX, ry: R, fill: `url(#${stirnId})` }));
-        for (let i = 1; i < 6; i++) holz.appendChild(s('ellipse', { class: 'stab-ring', cx: XL + 1, cy: cy + 2, rx: (RX * i) / 6, ry: (R * i) / 6 }));
-        svg.appendChild(holz);
-        // Windungen des Bands (Seitenansicht schräg)
-        function windung(c) {
-          const l = [];
-          const rr = [];
-          for (let i = 0; i <= 24; i++) {
-            const f = -Math.PI / 2 + (i * Math.PI) / 24;
-            const t = (f + A) / (2 * A);
-            const x = XB + c * BW + t * BW;
-            const y = cy + R * Math.sin(f);
-            l.push(`${x.toFixed(1)} ${y.toFixed(1)}`);
-            rr.push(`${(x + BW).toFixed(1)} ${y.toFixed(1)}`);
-          }
-          return `M ${l.join(' L ')} L ${rr.reverse().join(' L ')} Z`;
-        }
-        const windungen = [];
-        for (let c = 0; c < W; c++) {
-          const d = windung(c);
-          const deckkraft = ver ? (fertig ? 0 : c >= L ? 0.5 : 1) : fertig && c < L ? 1 : 0;
-          const g = s('g', { class: 'stab-windung', opacity: deckkraft }, s('path', { class: 'stab-band', d }), s('path', { class: 'stab-band-schatten', d, fill: `url(#${schattierungId})` }));
-          windungen.push(g);
-          svg.appendChild(g);
-        }
-        // Klammer am Bandanfang, Marke „Zeilenende“
-        svg.appendChild(s('g', { class: 'stab-klammer', transform: `translate(${XB + BW * 0.35} ${cy}) scale(.8)` }, s('rect', { x: -16, y: -40, width: 32, height: 80, rx: 8 }), s('rect', { class: 'innen', x: -9, y: -30, width: 18, height: 60, rx: 5 })));
+        // M12 (E234): Holz, Maserung, Windungen und Klammer zeichnet stabGeruest (auch im geführten Modus)
+        const { BW, R, windungen, stabPos } = stabGeruest(svg, u, W, (c) => (ver ? (fertig ? 0 : c >= L ? 0.5 : 1) : fertig && c < L ? 1 : 0));
+        const { cy } = STAB;
+        const { anfang: XB, rechts: XR } = STAB;
+        // Marke „Zeilenende“
         if (ver && !fertig) {
           const x = XB + Math.min(L, W) * BW + BW * 0.5;
           svg.append(s('line', { class: 'stab-zeilenende', x1: x, y1: cy - R - 8, x2: x, y2: cy + R + 8 }), s('text', { class: 'stab-zeilenende-text', x, y: cy - R - 14 }, 'Zeilenende'));
@@ -365,13 +385,6 @@
         svg.appendChild(streifen);
         svg.setAttribute('viewBox', `0 0 ${STAB.breite} ${Math.round(oben + zeilenStreifen * (ch + 30) + 8)}`);
         // Buchstaben
-        const stabPos = (rz, c) => {
-          const f = -A + ((rz + 0.5) * 2 * A) / u;
-          const t = (rz + 0.5) / u;
-          const cf = Math.cos(f);
-          const fs = Math.min(30, BW * 0.6, ((2 * A) / u) * R * 0.8);
-          return { x: XB + (c + 0.5) * BW + t * BW, y: cy + R * Math.sin(f), sx: fs / STAB.schrift, sy: (fs / STAB.schrift) * (0.35 + 0.65 * cf), o: 0.75 + 0.25 * cf };
-        };
         const buchstaben = [];
         for (let i = 0; i < n; i++) {
           let rz;
@@ -1439,23 +1452,117 @@
         korrekt: () => eingabe.map((b) => zelleText(ver, b))
       };
     }
-    function skytaleHook(container, werte) {
+    /**
+     * Skytale geführt am Holzstab (M12 E234, E235). ver: je Klartextbuchstabe (mit Füllzeichen X) das nächste Feld auf dem
+     * Stab markiert, gestempelt wird von dir (Stempelkasten oder Feld); danach „Abwickeln“ Runde für Runde: die Windung ist
+     * markiert, du liest deine u Buchstaben ab, das Band zeigt nur deine Einträge. ent: der Geheimtext ist aufgewickelt
+     * (Buchstaben im DOM in Geheimtext-Reihenfolge), je Zeile ein Schritt – markiert ist nur die Zeilenmarke am Stabanfang,
+     * du liest entlang des Stabs; Band „Dein Klartext“ aus Einträgen. Kein Ausgabefeld, nichts gerechnet vor der Freigabe.
+     */
+    function skytaleHook(container, werte, _umgebung, steuer) {
       const ver = werte.richtung !== 'ent';
       const u = ganz(werte.umfang, 2, 10, 3);
       const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
-      const s = Math.max(1, Math.ceil(ein.length / u));
-      const eingabe = ver ? [...ein, ...Array(u * s - ein.length).fill('X')] : ein;
-      const pos = (i) => Krypto.teileMitRest(i, ver ? s : u);
-      return schreibHook(container, {
-        eingabe,
-        ver,
-        zeilen: u,
-        spalten: s,
-        zelle: (i) => (ver ? [pos(i).q, pos(i).r] : [pos(i).r, pos(i).q]),
-        caption: ver ? `Stab mit u = ${u}: Klartext zeilenweise schreiben (Füllzeichen X)` : `Stab mit u = ${u}: Geheimtext spaltenweise (Runde für Runde) eintragen`,
-        zeilenKopf: (zz) => `Zeile ${zz + 1}`,
-        spaltenKopf: (ss) => `Runde ${ss + 1}`
+      const L = Math.max(1, Math.ceil(ein.length / u));
+      const n = ver ? u * L : ein.length;
+      const eingabe = ver ? [...ein, ...Array(n - ein.length).fill('X')] : ein;
+      const W = Math.max(4, L);
+      const svg = s('svg', { class: 'stab-objekt stab-gefuehrt', role: 'img', viewBox: `0 0 ${STAB.breite} ${STAB.cy + stabRadius(u) + 40}`, 'aria-label': ver ? `Holzstab mit Umfang ${u}: ${n} Felder für deine Stempel` : `Holzstab mit Umfang ${u}: der Geheimtext ist aufgewickelt, ${u} Zeilen entlang des Stabs` });
+      const g = stabGeruest(svg, u, W, (c) => (c < L ? 1 : 0.35));
+      const lage = (i) => {
+        const { q, r: rest } = Krypto.teileMitRest(i, ver ? L : u);
+        return ver ? { rz: q, c: rest } : { rz: rest, c: q };
+      };
+      const zeichen = eingabe.map((b, i) => {
+        const { rz, c } = lage(i);
+        const el = s('text', { class: ver ? 'stab-buchstabe gefuehrt-eintrag' : 'stab-buchstabe', 'font-size': STAB.schrift, 'data-zeile': String(rz), 'data-windung': String(c) }, ver ? '' : b);
+        lege(el, g.stabPos(rz, c));
+        svg.appendChild(el);
+        return el;
       });
+      // ver: Zeilenende und das nächste Feld; ent: Zeilenmarken am Stabanfang (eine je Zeile, markiert wird nur eine)
+      let naechst = null;
+      const marken = [];
+      if (ver) {
+        const x = STAB.anfang + L * g.BW + g.BW * 0.5;
+        svg.append(s('line', { class: 'stab-zeilenende', x1: x, y1: STAB.cy - g.R - 8, x2: x, y2: STAB.cy + g.R + 8 }), s('text', { class: 'stab-zeilenende-text', x, y: STAB.cy - g.R - 14 }, 'Zeilenende'));
+        naechst = s('rect', { class: 'stab-naechst', rx: 4 });
+        svg.appendChild(naechst);
+      } else {
+        for (let rz = 0; rz < u; rz++) {
+          const a = g.stabPos(rz, 0);
+          const e = g.stabPos(rz, L - 1);
+          const hoehe = a.sy * STAB.schrift * 1.5;
+          marken.push(
+            s('g', { class: 'stab-zeilenmarke', 'data-zeile': String(rz) },
+              s('rect', { class: 'stab-zeilen-streifen', x: a.x - g.BW * 0.45, y: a.y - hoehe / 2, width: e.x - a.x + g.BW * 0.9, height: hoehe, rx: 5 }),
+              s('text', { class: 'stab-zeilen-nr', x: STAB.links - 34, y: a.y }, String(rz + 1)))
+          );
+        }
+        // Marken vor den Buchstaben (darunter liegend), Nummern links vom Stab
+        for (const m of marken) svg.insertBefore(m, zeichen[0] || null);
+      }
+      // Band darunter: ver Runde für Runde (dein Geheimtext), ent Zeile für Zeile (dein Klartext) – nur Einträge
+      const teile = ver ? L : u;
+      const bandEintraege = [];
+      const band = h(
+        'div',
+        { class: 'stab-gefuehrt-band', role: 'group', 'aria-label': ver ? 'Abgewickeltes Band: dein Geheimtext' : 'Dein Klartext' },
+        h('p', { class: 'stab-gefuehrt-band-titel' }, ver ? 'Abgewickeltes Band (dein Geheimtext)' : 'Dein Klartext (Zeile für Zeile)'),
+        h('div', { class: 'stab-gefuehrt-band-teile' }, Array.from({ length: teile }, (_, j) => {
+          const e = h('span', { class: 'gefuehrt-eintrag' });
+          bandEintraege.push(e);
+          return h('span', { class: 'stab-gefuehrt-band-teil' }, h('span', { class: 'stab-gefuehrt-band-nr' }, ver ? `Runde ${j + 1}` : `Zeile ${j + 1}`), e);
+        }))
+      );
+      const stempel = ver ? S.stempel(null, (b) => steuer && steuer.trage(b), { beschriftung: 'Stempelkasten: auf den Stab' }) : null;
+      const stempelOrt = ver ? h('div', { class: 'stab-gefuehrt-stempel' }, h('span', { class: 'stab-feldtitel' }, 'Stempel: auf das leuchtende Feld'), stempel.element) : null;
+      container.append(
+        h('p', { class: 'stab-gefuehrt-anleitung text-2' }, ver ? `Stab mit Umfang u = ${u}: Stempel deinen Klartext zeilenweise auf den Stab – das leuchtende Feld kommt als Nächstes. Dann wickelst du ab und liest Runde für Runde.` : `Der Geheimtext ist auf einen Stab mit u = ${u} gewickelt. Lies Zeile für Zeile entlang des Stabs und trag sie ein.`),
+        ...[h('div', { class: 'stab-bild stab-bild-gefuehrt', tabindex: '0', role: 'group', 'aria-label': 'Holzstab (auf schmalen Bildschirmen seitlich verschiebbar)' }, svg), stempelOrt, band].filter(Boolean)
+      );
+      const schritte = ver
+        ? [
+            ...eingabe.map((b, i) => ({ text: i < ein.length ? `Stempel ${Krypto.klein(b)} (Buchstabe ${i + 1}) auf das leuchtende Feld` : `Füllzeichen x auf das leuchtende Feld (Feld ${i + 1})`, feld: { beschriftung: 'Buchstabe auf dem Stab', art: 'buchstabe' } })),
+            ...Array.from({ length: L }, (_, c) => ({ text: `Abwickeln: Runde ${c + 1} – lies die ${u} Buchstaben der markierten Windung von oben nach unten`, feld: { beschriftung: `Runde ${c + 1} (${u} Buchstaben)`, art: 'text' } }))
+          ]
+        : Array.from({ length: u }, (_, rz) => ({ text: `Zeile ${rz + 1}: lies entlang des Stabs von der Klammer nach rechts`, feld: { beschriftung: `Zeile ${rz + 1} (Klartext)`, art: 'text' } }));
+      return {
+        objekt: true,
+        schritte,
+        markiere(i, eintraege) {
+          if (ver) {
+            zeichen.forEach((el, j) => (el.textContent = eintraege[j] ? Krypto.klein(eintraege[j]) : ''));
+            const stempeln = i < n;
+            if (stempeln) {
+              const { rz, c } = lage(i);
+              const p = g.stabPos(rz, c);
+              naechst.setAttribute('x', (p.x - g.BW * 0.36).toFixed(1));
+              naechst.setAttribute('y', (p.y - p.sy * STAB.schrift * 0.75).toFixed(1));
+              naechst.setAttribute('width', (g.BW * 0.72).toFixed(1));
+              naechst.setAttribute('height', (p.sy * STAB.schrift * 1.5).toFixed(1));
+            }
+            naechst.classList.toggle('gefuehrt-markiert', stempeln);
+            naechst.classList.toggle('aus', !stempeln);
+            g.windungen.forEach((w, c) => {
+              w.setAttribute('data-windung', String(c));
+              w.classList.toggle('gefuehrt-markiert', !stempeln && c === i - n);
+            });
+            stempelOrt.hidden = !stempeln;
+            bandEintraege.forEach((e, c) => (e.textContent = Krypto.nurBuchstaben(eintraege[n + c] || '')));
+          } else {
+            marken.forEach((m, rz) => m.classList.toggle('gefuehrt-markiert', rz === i));
+            bandEintraege.forEach((e, rz) => (e.textContent = Krypto.klein(Krypto.nurBuchstaben(eintraege[rz] || ''))));
+          }
+        },
+        korrekt() {
+          if (ver) {
+            const geheim = Krypto.skytale(eingabe.join(''), u);
+            return [...eingabe.map((b) => Krypto.klein(b)), ...Array.from({ length: L }, (_, c) => geheim.slice(c * u, c * u + u))];
+          }
+          return Array.from({ length: u }, (_, rz) => Krypto.klein(eingabe.filter((_, i) => lage(i).rz === rz).join('')));
+        }
+      };
     }
     function zaunHook(container, werte) {
       const ver = werte.richtung !== 'ent';

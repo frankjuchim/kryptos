@@ -1,0 +1,113 @@
+'use strict';
+// M12 „Objekte in den Aufgaben“ (Plan Tasks 254–258, E233–E238): Im geführten Modus wird das Objekt der Station selbst
+// bedient – Holzstab, Zaun, Karton, Ring – statt einer Tabelle. Vor der Freigabe keine Lösung im DOM, kein Orakel (K12
+// prüft das zusätzlich für alle Prüflinge); hier: Objekt da, keine Ersatztabelle, Markierung, Einträge am Objekt.
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { oeffne, Krypto: K } = require('./hilfen_labor');
+const BED = require('./hilfen_werkzeug_bediener');
+
+const panel = (id, aufgabe, v) => oeffne(id, { voreinstellung: v, umgebung: { rolle: 'schueler', gefuehrt: { aufgabe } }, ruhig: true });
+const markiert = (w) => w.k.alle(w.flaeche, '.gefuehrt-mechanik .gefuehrt-markiert');
+const anzahl = (w) => Number(/von (\d+)/.exec(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')))[1]);
+const feld = (w) => w.k.eins(w.flaeche, 'input.gefuehrt-eintrag-feld');
+/** Texte und Attribute der Fläche, normalisiert A–Z */
+function alles(w) {
+  const t = [];
+  const lauf = (el) => {
+    if (el.nodeType === 3) t.push(el.textContent);
+    if (el.nodeType !== 1) return;
+    for (const n of el.getAttributeNames()) t.push(el.getAttribute(n));
+    el.childNodes.forEach(lauf);
+  };
+  lauf(w.flaeche);
+  return t.join(' ').toUpperCase().replace(/[^A-Z]/g, '');
+}
+/** Objekt zuerst: die Mechanik steht vor den Angaben, keine Ersatztabelle */
+function objektZuerst(w, sel) {
+  const s = w.k.eins(w.flaeche, 'section.gefuehrt.gefuehrt-mit-objekt');
+  assert.ok(s, 'geführt mit Objekt');
+  const kinder = [...s.children].map((x) => x.className);
+  assert.ok(kinder.indexOf('gefuehrt-mechanik') < kinder.findIndex((c) => /labor-textfeld/.test(c)), `Objekt vor den Angaben: ${kinder.join(', ')}`);
+  assert.ok(w.k.eins(w.flaeche, `.gefuehrt-mechanik ${sel}`), `Objekt ${sel} in der Mechanik`);
+  assert.equal(w.k.alle(w.flaeche, 'table.gefuehrt-tabelle').length, 0, 'keine Ersatztabelle');
+}
+
+/* ---------- Task 254: Skytale am Holzstab ---------- */
+
+const L103 = { reiter: ['skytale'], text: 'wir halten den pass', umfang: 3, richtung: 'ver' }; // W0-L1-03
+const L104 = { reiter: ['skytale'], text: 'NUMRA BOUCK REHOG HSMEX CMNXH TFX', umfang: 4, richtung: 'ent' }; // W0-L1-04
+
+test('m12_skytale_ver_stempeln_auf_den_stab', () => {
+  const w = panel('skytale', 'W0-L1-03', L103);
+  objektZuerst(w, 'svg.stab-objekt');
+  // 16 Buchstaben + 2 Füllzeichen auf dem Stab, dann 6 Runden abwickeln
+  assert.equal(anzahl(w), 18 + 6);
+  const felder = w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .stab-buchstabe.gefuehrt-eintrag');
+  assert.equal(felder.length, 18, 'ein Feld je Platz auf dem Stab');
+  assert.ok(felder.every((x) => w.k.text(x) === ''), 'Stab anfangs leer');
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.ok(m[0].classList.contains('stab-naechst'), 'nur das nächste Feld leuchtet');
+  // Stempeln trägt ein und geht weiter
+  const stempel = (b) => w.k.klick(w.k.eins(w.flaeche, `.gefuehrt-mechanik .station-stempel[data-buchstabe="${b}"]`));
+  stempel('W');
+  stempel('I');
+  assert.equal(w.k.text(felder[0]), 'w');
+  assert.equal(w.k.text(felder[1]), 'i');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /^Schritt 3 von 24/);
+  assert.equal(felder[1].getAttribute('data-zeile'), '0');
+  assert.equal(felder[1].getAttribute('data-windung'), '1');
+  assert.equal(felder[6].getAttribute('data-zeile'), '1', 'Zeile 2 beginnt nach 6 Feldern (L = ⌈18/3⌉)');
+  // Abwickeln: Runde 1 – die Windung ist markiert, Feld für die ganze Runde, Stempelkasten weg
+  BED.gehe(w, 18);
+  const m2 = markiert(w);
+  assert.equal(m2.length, 1);
+  assert.ok(m2[0].classList.contains('stab-windung'));
+  assert.equal(m2[0].getAttribute('data-windung'), '0');
+  assert.equal(feld(w).getAttribute('maxlength'), null, 'Runde als Text');
+  assert.equal(w.k.eins(w.flaeche, '.gefuehrt-mechanik .station-stempelkasten').closest('[hidden]') !== null, true, 'Stempel nur beim Stempeln');
+  w.k.tippe(feld(w), 'abc');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.stab-gefuehrt-band .gefuehrt-eintrag')[0]), 'ABC', 'Band zeigt nur deinen Eintrag');
+  // nichts gerechnet: ohne eigene Einträge kein Geheimtext
+  assert.ok(!alles(w).includes('WTPIEARNS'));
+});
+
+test('m12_skytale_ver_vergleich_nach_freigabe', () => {
+  const w = panel('skytale', 'W0-L1-03', L103);
+  const klar = 'WIRHALTENDENPASSXX';
+  [...klar].forEach((b, i) => BED.trage(w, i, b));
+  const geheim = K.skytale(klar, 3);
+  for (let c = 0; c < 6; c++) BED.trage(w, 18 + c, geheim.slice(c * 3, c * 3 + 3));
+  w.k.wert('KRGefuehrt').freigeben('W0-L1-03');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-fazit')), /24 von 24/);
+});
+
+test('m12_skytale_ent_aufgewickelt_entlang_lesen', () => {
+  const w = panel('skytale', 'W0-L1-04', L104);
+  objektZuerst(w, 'svg.stab-objekt');
+  assert.equal(anzahl(w), 4, 'eine Zeile je Schritt');
+  const fest = w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .stab-buchstabe').filter((x) => !x.classList.contains('gefuehrt-eintrag'));
+  assert.equal(fest.map((x) => w.k.text(x)).join(''), 'NUMRABOUCKREHOGHSMEXCMNXHTFX', 'Geheimtext aufgewickelt – im DOM in Geheimtext-Reihenfolge');
+  assert.equal(fest[1].getAttribute('data-zeile'), '1');
+  assert.equal(fest[4].getAttribute('data-windung'), '1');
+  assert.ok(!alles(w).includes('NACHSCHUB'), 'kein Klartext am Stück');
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.ok(m[0].classList.contains('stab-zeilenmarke'));
+  assert.equal(m[0].getAttribute('data-zeile'), '0');
+  w.k.tippe(feld(w), 'nachsch');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.stab-gefuehrt-band .gefuehrt-eintrag')[0]), 'nachsch', 'Band „Dein Klartext“ aus Einträgen');
+  BED.trage(w, 1, 'ubkommt');
+  BED.trage(w, 2, 'morgenf');
+  BED.trage(w, 3, 'ruehxxx');
+  w.k.wert('KRGefuehrt').freigeben('W0-L1-04');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-fazit')), /4 von 4/);
+});
+
+test('m12_skytale_frei_bleibt_station', () => {
+  // eigene Werte: die Station wie bisher (Stabwahl, Stempel, Abwickeln)
+  const w = oeffne('skytale', { voreinstellung: { reiter: ['skytale'], text: 'kiesel', umfang: 3 }, ruhig: true });
+  assert.ok(w.k.eins(w.flaeche, '.stab-station svg.stab-objekt'));
+  assert.equal(w.k.alle(w.flaeche, 'section.gefuehrt').length, 0);
+});

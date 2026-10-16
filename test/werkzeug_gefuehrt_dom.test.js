@@ -169,7 +169,8 @@ test('hervorhebung_nur_eingabeseite_scheibe', () => {
 });
 
 test('hervorhebung_nur_eingabeseite_skytale', () => {
-  // W0-L1-04: Entschlüsseln mit u = 4 – nur die Zielzelle des aktuellen Geheimtextbuchstabens, keine Zeile
+  // W0-L1-04: Entschlüsseln mit u = 4 – M12 (E235): der Geheimtext ist aufgewickelt, markiert ist nur die Marke der
+  // aktuellen Zeile am Stabanfang (wo du liest) – keine Tabellenzeile, kein Kopf
   const w = geoeffnet('skytale', { reiter: ['skytale'], text: 'NUMRA BOUCK REHOG HSMEX CMNXH TFX', umfang: 4, richtung: 'ent' });
   assert.ok(hat(w, 'section.gefuehrt'));
   assert.equal(markiert(w).length, 1);
@@ -251,7 +252,7 @@ test('weitertippen_nach_umschalten', () => {
   // nicht verloren gehen. Der Text bleibt im geführten Abschnitt änderbar, die Schritte wachsen mit.
   const GEHEIM = 'NUMRA BOUCK REHOG HSMEX CMNXH TFX';
   for (const [wr, v, n] of [
-    ['skytale', { reiter: ['skytale'], umfang: 4, richtung: 'ent' }, K.nurBuchstaben(GEHEIM).length],
+    ['skytale', { reiter: ['skytale'], umfang: 4, richtung: 'ent' }, 4], // M12 E235: je Zeile des Stabs ein Schritt
     ['scheibe', { reiter: ['text'], k: 12, richtung: 'ent' }, 5],
     ['vigenere', { reiter: ['verschluesseln'], schluessel: 'BOTE', richtung: 'ver' }, null],
     ['quadrat', { reiter: ['playfair'], schluesselwort: 'RIALTO', richtung: 'ver' }, null]
