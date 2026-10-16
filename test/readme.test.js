@@ -153,7 +153,7 @@ test('doku_m11_technik: §10.1 Panel und Level-Karten, §10.3 geführter Modus/E
 
 test('doku_m11_readme_design_plan: README §4.1 bis M12/1.3.0, Design §7.3 mit Panel und geführtem Modus, Gesamtplan M11 und M12 erledigt', () => {
   const s41 = abschnitt(README, '### 4.1', '\n## 5.');
-  assert.match(s41, /M0–M12, Version 1\.3\.0/);
+  assert.match(s41, /M0–M12, Version 1\.3\.\d/); // 1.3.1: Nachträge zu M12
   assert.match(s41, /\| M11 Werkzeuge in den Aufgaben \(1\.2\.0\) \|/);
   assert.match(s41, /\| M12 Objekte in den Aufgaben \(1\.3\.0\) \|/);
   assert.ok(!README.includes('labor:sperre'), 'README: kein labor:sperre');
