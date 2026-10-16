@@ -182,7 +182,7 @@ test('registriere() ist idempotent', () => { const R = require('../src/krypto');
 test('Werkzeug-Liste TECHNIK §10.2', () => {
   const W = require('../src/krypto/werkzeuge');
   assert.deepEqual(W.WERKZEUG_IDS, ['skytale', 'scheibe', 'haeufigkeit', 'substitution', 'vigenere', 'bitlupe', 'runden', 'modulo', 'rsa', 'hash', 'signatur', 'quadrat', 'signale', 'verstecke', 'enigma', 'analyse']); // M10 E177
-  assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis', 'richtung', 'reiter'], reiter: ['scheibe', 'text', 'alle'], gast: true, art: 'kern' }); // M6 E73, M10 E178
+  assert.deepEqual(W.werkzeug('scheibe'), { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, voreinstellung: ['text', 'k', 'basis', 'richtung', 'reiter', 'alphabet', 'a', 'b'], reiter: ['scheibe', 'text', 'alle', 'leiste'], gast: true, art: 'kern' }); // M6 E73, M10 E178, 1.3.1 Alphabet-Leiste
   assert.deepEqual(W.WERKZEUGE.filter((x) => x.gast).map((x) => x.id), ['scheibe']);
   assert.equal(W.werkzeug('zauberwuerfel'), null);
 });
