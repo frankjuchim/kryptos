@@ -1751,6 +1751,9 @@ Entschlüsselung wurde in beide Richtungen geprüft (Rundreise).
 Das Werkzeug steht als Panel am Ende der Aufgabe (Block `werkzeug`, AUFGABENFORMAT §7.7). **geführt**: startet mit den
 Aufgabenwerten Schritt für Schritt, Vergleich erst nach dem Lösen (E203); **frei**: eigene Werte, der Erkenner schaltet
 bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js` (`WERKZEUG_AUFGABE`). Die Zeile W8 gilt für den Gastmodus (`seed/gast/demo.json`).
+**M12 (E231–E238):** Alle W0-Panels mit Werkstatt-Objekt (Skytale & Gitter, Scheibe, Polybios, Morse) tragen `offen: true`
+und sind beim Anzeigen der Aufgabe aufgeklappt; der Schalter heißt „<Objekt> benutzen“. Geführt wird am Objekt selbst:
+Holzstab (stempeln, abwickeln bzw. entlang lesen), Zaun (Zickzack, Schienen), Fleißner-Karton (Löcher, Drehen, Abheben).
 
 | Aufgabe | Werkzeug | Reiter | Modus |
 |---|---|---|---|

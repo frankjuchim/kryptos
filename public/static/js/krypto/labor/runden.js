@@ -362,6 +362,28 @@
       const t = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, 40);
       const s0 = Number.isInteger(werte.stellung0) ? werte.stellung0 : 0;
       const stellungen = t.map((_, i) => Krypto.buchstabe(Krypto.mod(s0 + i, 8), 0));
+      // M12 (E239): der Stromweg als Bild steht als Erstes – Eingang (Angabe), sieben Stationen nur mit deinen Einträgen,
+      // die aktuelle Station markiert; die Lampe am Ende leuchtet erst nach der Freigabe
+      const ORT = (j) => (j < 3 ? [70 + 75 * j, 34] : j === 3 ? [295, 84] : [70 + 75 * (6 - j), 134]);
+      const svg = s('svg', { class: 'stromweg stromweg-gefuehrt', viewBox: '0 0 340 168', role: 'img', 'aria-label': 'Stromweg der Mini-Enigma: Eingang, sieben Stationen, Lampe' });
+      const linie = (a, b2, klasse) => svg.appendChild(s('line', { class: `strom ${klasse}`, x1: a[0], y1: a[1], x2: b2[0], y2: b2[1] }));
+      linie([20, 34], ORT(0), 'hin');
+      for (let j = 0; j < 6; j++) linie(ORT(j), ORT(j + 1), j < 3 ? 'hin' : 'rueck');
+      linie(ORT(6), [20, 134], 'rueck');
+      const eingang = s('text', { class: 'strom-ende strom-eingang', x: 14, y: 38, 'text-anchor': 'middle' });
+      const ausgang = s('text', { class: 'strom-ende strom-ausgang gefuehrt-eintrag', x: 14, y: 138, 'text-anchor': 'middle' });
+      svg.append(eingang, ausgang);
+      const stationen = STATIONEN.map((st, j) => {
+        const [x, y] = ORT(j);
+        const kreis = s('circle', { class: 'strom-station', cx: x, cy: y, r: 16, 'data-station': String(j + 1) });
+        const b2 = s('text', { class: 'strom-buchstabe gefuehrt-eintrag', x, y: y + 5, 'text-anchor': 'middle' });
+        svg.append(kreis, b2, s('text', { class: 'strom-nr', x, y: j <= 3 ? y - 21 : y + 30, 'text-anchor': 'middle' }, `${j + 1} ${st.split(':')[0]}`));
+        return { kreis, b2 };
+      });
+      const stellungText = h('p', { class: 'enigma-stellung' });
+      const wegeEintraege = t.map(() => h('span', { class: 'gefuehrt-eintrag' }));
+      const wege = h('p', { class: 'enigma-wege' }, h('span', { class: 'enigma-wege-titel' }, 'Deine Stromwege: '), t.flatMap((b, i) => [i ? ' · ' : '', `${b} → `, wegeEintraege[i]]));
+      container.append(h('figure', { class: 'stromweg-figur' }, svg), stellungText, wege);
       const verdr = KRGefuehrt.raster(container, {
         zeilen: 3,
         spalten: 8,
@@ -369,13 +391,6 @@
         zeilenKopf: (z) => ['Buchstabe', 'Walze W', 'Reflektor R'][z],
         spaltenKopf: (j) => ME[j],
         inhalt: (z, j) => [ME[j], SPEC_VERDRAHTUNG.walze[j], SPEC_VERDRAHTUNG.reflektor[j]][z]
-      });
-      const weg = KRGefuehrt.raster(container, {
-        zeilen: t.length,
-        spalten: 7,
-        caption: 'Stromweg: je Buchstabe sieben Stationen',
-        zeilenKopf: (i) => `${t[i]} (Stellung ${stellungen[i]})`,
-        spaltenKopf: (j) => String(j + 1)
       });
       const lampen = ME.map((b) => h('span', { class: 'lampe', 'data-lampe': b }, b));
       container.appendChild(h('div', { class: 'enigma-lampen', 'aria-hidden': 'true' }, lampen));
@@ -387,14 +402,18 @@
       const schritte = [];
       t.forEach((b, i) => STATIONEN.forEach((st, j) => schritte.push({ text: `Buchstabe ${i + 1} (${b}, Stellung ${stellungen[i]}, s = ${Krypto.wert(stellungen[i], 0)}): Station ${j + 1} ${st}`, feld: { beschriftung: `Station ${j + 1}`, art: 'buchstabe' } })));
       return {
+        objekt: true,
         schritte,
         markiere(i, e) {
-          weg.leeren();
-          e.forEach((x, j) => {
-            const { q, r: rest } = Krypto.teileMitRest(j, 7);
-            if (x) weg.eintrag(q, rest, x);
-          });
           const { q: n, r: j } = Krypto.teileMitRest(i, 7);
+          eingang.textContent = t[n] || '';
+          stellungText.textContent = `Buchstabe ${n + 1} von ${t.length}: Walze in Stellung ${stellungen[n]} (s = ${Krypto.wert(stellungen[n], 0)})`;
+          stationen.forEach((st, k) => {
+            st.b2.textContent = Krypto.nurBuchstaben(e[7 * n + k] || '');
+            st.kreis.classList.toggle('gefuehrt-markiert', k === j);
+          });
+          ausgang.textContent = Krypto.nurBuchstaben(e[7 * n + 6] || '');
+          wegeEintraege.forEach((x, k) => (x.textContent = e.slice(7 * k, 7 * k + 7).map((y) => Krypto.nurBuchstaben(y || '') || '·').join(' ')));
           const ein = j === 0 ? t[n] : Krypto.nurBuchstaben(e[i - 1] || '');
           const spalte = /^[A-H]$/.test(ein) ? Krypto.wert(ein, 0) : -1;
           const marken = [];

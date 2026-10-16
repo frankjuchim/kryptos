@@ -252,3 +252,48 @@ test('m12_ring_ent_felder_aus_eintraegen', () => {
   BED.trage(w, 8, 'm');
   assert.equal(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-mechanik svg .ring-feld[data-feld="0"] .gefuehrt-eintrag')), 'm', 'dein Klartextbuchstabe im Feld 0');
 });
+
+/* ---------- Task 258: Mini-Enigma am Stromweg ---------- */
+
+test('m12_mini_enigma_stromweg_als_objekt', () => {
+  const w = panel('runden', 'W3-L5-01', { reiter: ['enigma'], text: 'fade', stellung: 'A' });
+  const s = w.k.eins(w.flaeche, 'section.gefuehrt.gefuehrt-mit-objekt');
+  assert.ok(s, 'Objekt zuerst');
+  const svg = w.k.eins(w.flaeche, '.gefuehrt-mechanik svg.stromweg');
+  assert.ok(svg, 'Stromweg als Bild');
+  assert.equal(w.k.alle(svg, '.strom-station').length, 7);
+  assert.equal(w.k.alle(svg, '.strom-buchstabe.gefuehrt-eintrag').length, 7, 'Stationen nur mit deinen Einträgen');
+  assert.ok(w.k.alle(svg, '.strom-buchstabe.gefuehrt-eintrag').every((x) => w.k.text(x) === ''));
+  assert.equal(w.k.text(w.k.eins(svg, '.strom-eingang')), 'F', 'Eingang = Buchstabe der Angabe');
+  assert.equal(w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .gefuehrt-markiert').length, 1, 'nur die aktuelle Station');
+  w.k.tippe(feld(w), 'c');
+  assert.equal(w.k.text(w.k.alle(svg, '.strom-buchstabe.gefuehrt-eintrag')[0]), 'C');
+  assert.equal(w.k.alle(w.flaeche, '.lampe.leuchtet').length, 0, 'Lampe erst nach der Freigabe');
+});
+
+/* ---------- Task 258: Inventar – jede Chiffre-Aufgabe mit passendem Objekt hat ein Panel ---------- */
+
+test('m12_inventar_objekt_an_jeder_passenden_aufgabe', () => {
+  // Verfahren mit anschaulichem Objekt im Labor (Stab, Zaun, Karton, Scheibe, Quadrat, Vigenère-Quadrat, Mini-Enigma, Ring)
+  const OBJEKT = new Set(['skytale', 'gartenzaun', 'fleissner', 'caesar', 'polybios', 'playfair', 'vigenere', 'autokey', 'porta', 'mini_enigma', 'uhrwerk']);
+  // begründete Ausnahmen: ADFGVX-Quadrat 6 × 6 mit Kopf ADFGVX – das Polybios-Werkzeug kennt nur 5 × 5 mit Ziffern
+  const AUSNAHMEN = new Map([
+    ['W3-L4-01', 'ADFGVX 6 × 6'],
+    ['W3-L4-02', 'ADFGVX 6 × 6']
+  ]);
+  const fehlt = [];
+  for (let n = 0; n <= 6; n++) {
+    const w = require(`../seed/welten/welt${n}.json`);
+    for (const a of w.aufgaben) {
+      if (/-B-/.test(a.id)) continue; // Boss: Werkzeuge gesperrt
+      const v = a.interaktion && a.interaktion.verfahren && a.interaktion.verfahren.typ;
+      if (!OBJEKT.has(v) || AUSNAHMEN.has(a.id)) continue;
+      if (!(a.inhalt || []).some((b) => b.t === 'werkzeug')) fehlt.push(`${a.id} (${v})`);
+    }
+  }
+  assert.deepEqual(fehlt, []);
+  // neu in M12: W3-L1-01 „Zeichen werden Bits“ mit der Bit-Lupe (Zeichen ↔ Bits, geführt)
+  const w3 = require('../seed/welten/welt3.json').aufgaben.find((a) => a.id === 'W3-L1-01');
+  const b = w3.inhalt.find((x) => x.t === 'werkzeug');
+  assert.deepEqual([b.id, b.voreinstellung.reiter, b.gefuehrt], ['bitlupe', ['zeichen'], true]);
+});

@@ -1021,3 +1021,9 @@ mark.markiert.wiederholung { font-weight: 700; }
 .gefuehrt-band { margin: 0; font-family: var(--f-mono); overflow-wrap: anywhere; }
 .gefuehrt-band-titel { font-family: var(--f-text); font-weight: 700; }
 .gefuehrt-leiste td, .gefuehrt-leiste th { min-width: 1.8em; }
+/* M12 (E239): Mini-Enigma geführt – Stromweg als Objekt, aktuelle Station markiert */
+.stromweg-gefuehrt .strom-station.gefuehrt-markiert { stroke: var(--akzent); stroke-width: 4; outline: none; }
+.stromweg-gefuehrt .strom-eingang { fill: var(--akzent); }
+.enigma-stellung, .enigma-wege { margin: 0; }
+.enigma-wege { font-family: var(--f-mono); overflow-wrap: anywhere; }
+.enigma-wege-titel { font-family: var(--f-text); font-weight: 700; }

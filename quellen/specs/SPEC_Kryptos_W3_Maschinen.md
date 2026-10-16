@@ -1472,6 +1472,7 @@ bei Aufgabenwerten um (E210). Abgleich Spec ↔ Seed: `test/inhalte_spec.test.js
 | Aufgabe | Werkzeug | Reiter | Modus |
 |---|---|---|---|
 | W3-A-01 | Bit-Lupe | doppelnutzung, zeichen | geführt |
+| W3-L1-01 | Bit-Lupe | zeichen | geführt |
 | W3-L1-02 | Bit-Lupe | xor | geführt |
 | W3-L1-04 | Bit-Lupe | zeichen, xor | geführt |
 | W3-L1-05 | Bit-Lupe | doppelnutzung | geführt |

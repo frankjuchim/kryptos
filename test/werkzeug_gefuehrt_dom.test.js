@@ -329,10 +329,14 @@ test('k12_beispiel_mini_enigma_w3_l5_01', () => {
   assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-zaehler')), /von 28: Buchstabe 1 \(F, Stellung A, s = 0\): Station 1/);
   assert.equal(w.k.alle(w.flaeche, '.lampe.leuchtet').length, 0, 'keine Lampe vor der Freigabe');
   assert.ok(!K.normalisieren(w.k.text(w.flaeche)).includes('CHEA'));
-  // Hervorhebung nur der Eingabeseite: Station 1 markiert den Eingangsbuchstaben F in der Buchstabenzeile
-  const m = markiert(w);
+  // Hervorhebung nur der Eingabeseite: Station 1 markiert den Eingangsbuchstaben F in der Buchstabenzeile; M12 (E239):
+  // dazu im Stromweg-Bild die aktuelle Station (wohin dein Eintrag kommt, ohne Buchstaben)
+  const m = markiert(w).filter((x) => x.localName === 'td');
   assert.equal(m.length, 1);
   assert.equal(w.k.text(m[0]).replace(/[^A-H]/g, ''), 'F');
+  const st = markiert(w).filter((x) => x.localName !== 'td');
+  assert.deepEqual(st.map((x) => x.getAttribute('data-station')), ['1']);
+  assert.equal(w.k.text(st[0]), '');
   freigabe(w, 'W3-L5-01');
   assert.equal(w.k.alle(w.flaeche, '.lampe.leuchtet').length, 1, 'nach der Freigabe leuchtet die Lampe des Buchstabens');
 });
