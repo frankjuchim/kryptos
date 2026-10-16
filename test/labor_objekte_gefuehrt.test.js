@@ -215,3 +215,40 @@ test('m12_fleissner_ent_lage_fuer_lage', () => {
   w.k.wert('KRGefuehrt').freigeben('W9-L1-01');
   assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-fazit')), /4 von 4/);
 });
+
+/* ---------- Task 257: Ring ohne Sprungpfeile ---------- */
+
+test('m12_ring_ver_am_ring', () => {
+  const w = panel('skytale', 'W6-L2-01', { reiter: ['ring'], text: 'ZEITMASC', t: 5, richtung: 'ver' });
+  objektZuerst(w, 'svg.ring-gefuehrt');
+  assert.equal(w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .ring-feld').length, 8);
+  assert.equal(w.k.alle(w.flaeche, '.gefuehrt-mechanik .ring-sprung, .gefuehrt-mechanik line[marker-end]').length, 0, 'keine Sprungpfeile (wären die Lesereihenfolge)');
+  assert.equal(anzahl(w), 8 + 8);
+  // Schritt 1: Start bei Feld 0 markiert
+  let m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.equal(m[0].getAttribute('data-feld'), '0');
+  // Folgeschritt aus deinem Eintrag: Feld davor = dein Eintrag
+  BED.trage(w, 0, '0');
+  BED.trage(w, 1, '7'); // falsch eingetragen – markiert wird trotzdem dein Feld
+  BED.gehe(w, 2);
+  m = markiert(w);
+  assert.equal(m[0].getAttribute('data-feld'), '7');
+  // Buchstaben-Schritt: Feld aus deiner Lesereihenfolge
+  BED.gehe(w, 9);
+  m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.equal(m[0].getAttribute('data-feld'), '7', 'Nr. 1 deiner Reihenfolge');
+  w.k.tippe(feld(w), 'c');
+  assert.equal(w.k.text(w.k.eins(w.flaeche, '.ring-gefuehrt-band .gefuehrt-eintrag')).replace(/\s/g, ''), '·C······', 'Band: Buchstabe 2 ist deiner');
+});
+
+test('m12_ring_ent_felder_aus_eintraegen', () => {
+  const w = panel('skytale', 'W6-L2-04', { reiter: ['ring'], text: 'TVZLT LEA', t: 5, richtung: 'ent' });
+  objektZuerst(w, 'svg.ring-gefuehrt');
+  assert.equal(w.k.alle(w.flaeche, '.gefuehrt-mechanik .ring-sprung').length, 0);
+  // Geheimtext als Band mit Positionen, im DOM in Geheimtext-Reihenfolge
+  assert.equal(w.k.alle(w.flaeche, '.ring-geheim-zeichen').map((x) => w.k.text(x)).join(''), 'TVZLTLEA');
+  BED.trage(w, 8, 'm');
+  assert.equal(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-mechanik svg .ring-feld[data-feld="0"] .gefuehrt-eintrag')), 'm', 'dein Klartextbuchstabe im Feld 0');
+});

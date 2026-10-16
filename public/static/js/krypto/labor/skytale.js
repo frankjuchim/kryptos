@@ -1821,7 +1821,13 @@
         }
       };
     }
-    function ringHook(container, werte) {
+    /**
+     * Ring geführt am Ring (M12 E238): Kreis mit 8 Feldern (Nummern ab 0) wie in der Station, aber ohne Sprungpfeile – die
+     * Pfeile wären die Lesereihenfolge. Erst die Lesereihenfolge aus deinen Einträgen (markiert ist dein Feld davor), dann
+     * ver: Buchstabe für Buchstabe aus dem Feld deiner Reihenfolge (Klartext des Blocks in den Feldern); ent: der Geheimtext
+     * steht als Band mit Positionen darunter, dein Klartext kommt in das markierte Feld. Gezeigt wird der Block des Schritts.
+     */
+    function ringHook(container, werte, _umgebung, steuer) {
       const ver = werte.richtung !== 'ent';
       const n = 8;
       const t = ganz(werte.t, 1, n - 1, 3);
@@ -1829,45 +1835,75 @@
       const bloecke = Math.max(1, Math.ceil(ein.length / n));
       const eingabe = ver ? [...ein, ...Array(bloecke * n - ein.length).fill('X')] : ein;
       const folge = Krypto.ringFolge(n, t).folge;
-      const ergebnis = eingabe.length ? Krypto.ring(eingabe.join(''), t, ver ? 'ver' : 'ent', { block: n }) : '';
-      const leiste = !ver && eingabe.length ? KRGefuehrt.leiste(container, eingabe.join(''), { titel: 'Geheimtext (Positionen ab 0)' }) : null;
-      const raster = KRGefuehrt.raster(container, { zeilen: bloecke, spalten: n, caption: `Ring mit ${n} Feldern, Ringschritt t = ${t} (Felder ab 0)`, zeilenKopf: (b) => `Block ${b + 1}`, spaltenKopf: (f) => `Feld ${f}`, inhalt: ver ? (b, f) => Krypto.klein(eingabe[b * n + f] || '') : null });
-      const band = KRGefuehrt.band(container, ver ? 'Dein Geheimtext' : 'Dein Klartext');
-      const reihe = (e) => e.slice(0, n).map((x) => Number(x));
+      const M = 150;
+      const R = 108;
+      const pos = (f) => {
+        const w = ((f * 360) / n) * (Math.PI / 180);
+        return [M + R * Math.sin(w), M - R * Math.cos(w)];
+      };
+      const felder = Array.from({ length: n }, (_, f) => {
+        const [x, y] = pos(f);
+        const zeichen = s('text', { class: ver ? 'feld-zeichen' : 'feld-zeichen gefuehrt-eintrag', x, y: y - 4, 'text-anchor': 'middle', 'dominant-baseline': 'central' });
+        const g = s('g', { class: 'feld ring-feld', 'data-feld': String(f) }, s('circle', { cx: x, cy: y, r: 25 }), zeichen, s('text', { class: 'feld-nr', x, y: y + 14, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, String(f)));
+        return { g, zeichen };
+      });
+      const blockText = s('text', { class: 'ring-block-text', x: M, y: M, 'text-anchor': 'middle', 'dominant-baseline': 'central' });
+      const svg = s('svg', { class: 'skytale-ring ring-gefuehrt', viewBox: '0 0 300 300', role: 'img', 'aria-label': `Ring mit ${n} Feldern (ab 0), Ringschritt t = ${t}` }, s('circle', { class: 'ring-kreis', cx: M, cy: M, r: R }), blockText, felder.map((f) => f.g));
+      // ent: Geheimtext als Band mit Positionen (Geheimtext-Reihenfolge)
+      const geheim = ver ? null : eingabe.map((b, p) => h('span', { class: 'ring-geheim-feld', 'data-position': String(p) }, h('span', { class: 'ring-geheim-pos', 'aria-hidden': 'true' }, String(Krypto.teileMitRest(p, n).r)), h('span', { class: 'ring-geheim-zeichen' }, b)));
+      const reiheEintraege = Array.from({ length: n }, () => h('span', { class: 'gefuehrt-eintrag' }));
+      const reihe = h('p', { class: 'ring-reihe' }, h('span', { class: 'ring-reihe-titel' }, 'Deine Lesereihenfolge: '), reiheEintraege.flatMap((e, j) => (j ? [', ', e] : [e])));
+      const band = gefuehrtBand(ver ? 'Dein Geheimtext' : 'Dein Klartext', Array.from({ length: bloecke }, (_, b) => `Block ${b + 1}`), 'ring-gefuehrt-band');
+      const stempel = gefuehrtStempel(steuer, ver ? 'Stempel: Buchstabe aus dem markierten Feld' : 'Stempel: in das markierte Feld');
+      container.append(
+        ...[
+          h('p', { class: 'stab-gefuehrt-anleitung text-2' }, `Ring mit ${n} Feldern, Ringschritt t = ${t}: Zähl zuerst deine Lesereihenfolge (Feld davor + t, rund um den Ring). Dann ${ver ? 'liest du Feld für Feld in deiner Reihenfolge' : 'setzt du jeden Geheimtextbuchstaben in sein Feld zurück'}.`),
+          h('div', { class: 'ring-gefuehrt-bild' }, svg),
+          geheim ? h('p', { class: 'ring-geheim', 'aria-label': 'Geheimtext mit Positionen im Block (ab 0)' }, geheim) : null,
+          reihe,
+          stempel.element,
+          band.element
+        ].filter(Boolean)
+      );
+      const zahl = (x) => (x !== '' && /^\d+$/.test(String(x)) ? Number(x) : null);
       const schritte = [];
       for (let j = 0; j < n; j++) schritte.push({ text: j === 0 ? 'Lesereihenfolge: Start bei Feld 0' : `Lesereihenfolge Nr. ${j}: dein Feld davor + ${t} (rund um den Ring)`, feld: { beschriftung: `Feld Nr. ${j}`, art: 'zahl' } });
-      eingabe.forEach((_, p) => schritte.push({
-        text: ver ? `Buchstabe ${p + 1} des Geheimtexts: Feld aus deiner Lesereihenfolge` : `Klartext Block ${Krypto.teileMitRest(p, n).q + 1}, Feld ${Krypto.teileMitRest(p, n).r}`,
-        feld: { beschriftung: ver ? 'Buchstabe im markierten Feld' : 'Geheimtextbuchstabe für das markierte Feld', art: 'buchstabe' }
-      }));
+      eingabe.forEach((_, p) => {
+        const { q: b, r: f } = Krypto.teileMitRest(p, n);
+        schritte.push({
+          text: ver ? `Geheimtext Block ${b + 1}, Buchstabe ${f + 1}: aus dem Feld Nr. ${f} deiner Lesereihenfolge` : `Klartext Block ${b + 1}, Feld ${f}: der Geheimtextbuchstabe an der Stelle mit Feld ${f} in deiner Lesereihenfolge`,
+          feld: { beschriftung: ver ? 'Buchstabe im markierten Feld' : 'Buchstabe für das markierte Feld', art: 'buchstabe' }
+        });
+      });
+      const ergebnis = eingabe.length ? Krypto.ring(eingabe.join(''), t, ver ? 'ver' : 'ent', { block: n }) : '';
       return {
+        objekt: true,
         schritte,
-        markiere(i, eintraege) {
-          const r2 = reihe(eintraege);
-          if (i < n) {
-            const vorher = i > 0 && eintraege[i - 1] !== '' && Number.isInteger(r2[i - 1]) && r2[i - 1] >= 0 && r2[i - 1] < n ? r2[i - 1] : null;
-            raster.markiere(i === 0 ? [[0, 0]] : vorher === null ? [] : [[0, vorher]]);
-            if (leiste) leiste.markiere([]);
-          } else {
-            const p = i - n;
-            const { q: b, r: f } = Krypto.teileMitRest(p, n);
-            if (ver) {
-              const feld = r2[f];
-              raster.markiere(eintraege[f] !== '' && Number.isInteger(feld) && feld >= 0 && feld < n ? [[b, feld]] : []);
-            } else {
-              // Entschlüsseln: Zielfeld f; der Geheimtextbuchstabe dazu steht an der Stelle deiner Reihenfolge mit Feld f
-              raster.markiere([[b, f]]);
-              const j = r2.findIndex((x, jj) => eintraege[jj] !== '' && x === f);
-              if (leiste) leiste.markiere(j >= 0 ? [b * n + j] : []);
+        markiere(i, e) {
+          const r2 = e.slice(0, n).map(zahl);
+          const gueltig = (x) => Number.isInteger(x) && x >= 0 && x < n;
+          const b = i < n ? 0 : Krypto.teileMitRest(i - n, n).q;
+          blockText.textContent = bloecke > 1 ? `Block ${b + 1}` : '';
+          let ziel = null;
+          let lesePos = null;
+          if (i < n) ziel = i === 0 ? 0 : gueltig(r2[i - 1]) ? r2[i - 1] : null;
+          else {
+            const f = Krypto.teileMitRest(i - n, n).r;
+            if (ver) ziel = gueltig(r2[f]) ? r2[f] : null;
+            else {
+              ziel = f;
+              const j = r2.findIndex((x) => x === f);
+              lesePos = j >= 0 ? b * n + j : null;
             }
           }
-          if (!ver) {
-            raster.leeren();
-            eintraege.slice(n).forEach((x, p) => {
-              if (x) raster.eintrag(Krypto.teileMitRest(p, n).q, Krypto.teileMitRest(p, n).r, Krypto.klein(x));
-            });
-          }
-          band.setze(eintraege.slice(n).map((x) => (ver ? x : Krypto.klein(x))));
+          felder.forEach((x, f) => {
+            x.g.classList.toggle('gefuehrt-markiert', f === ziel);
+            x.zeichen.textContent = ver ? Krypto.klein(eingabe[b * n + f] || '') : Krypto.klein(e[n + b * n + f] || '');
+          });
+          if (geheim) geheim.forEach((x, p) => x.classList.toggle('gefuehrt-markiert', p === lesePos));
+          reiheEintraege.forEach((x, j) => (x.textContent = e[j] || '·'));
+          stempel.zeige(i >= n);
+          band.setze(Array.from({ length: bloecke }, (_, bb) => e.slice(n + bb * n, n + bb * n + n).map((x) => (x ? (ver ? x : Krypto.klein(x)) : '·')).join(' ')));
         },
         korrekt: () => [...folge.map(String), ...[...ergebnis].map((x) => (ver ? x : Krypto.klein(x)))]
       };
