@@ -13,7 +13,7 @@ const eintrag = (id, titel, welt, voreinstellung, reiter, gast = false, art = 'k
 
 const WERKZEUGE = Object.freeze([
   eintrag('skytale', 'Skytale & Gitter', 0, ['text', 'umfang', 'zeilen', 'schablone', 't', 'richtung', 'reiter', 'groesse', 'k'], ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring']),
-  eintrag('scheibe', 'Chiffrierscheibe', 0, ['text', 'k', 'basis', 'richtung', 'reiter'], ['scheibe', 'text', 'alle'], true),
+  eintrag('scheibe', 'Chiffrierscheibe', 0, ['text', 'k', 'basis', 'richtung', 'reiter', 'alphabet', 'a', 'b'], ['scheibe', 'text', 'alle', 'leiste'], true),
   eintrag('haeufigkeit', 'Häufigkeits-Analysator', 1, ['text', 'ansicht', 'teiltexte', 'reiter'], ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen']),
   eintrag('substitution', 'Substitutions-Werkbank', 1, ['text', 'vorgabe'], []),
   eintrag('vigenere', 'Vigenère-Werkbank', 2, ['text', 'schluessel', 'schluessellaenge', 'modus', 'richtung', 'reiter'], ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur']),
@@ -84,7 +84,7 @@ function pruefeVoreinstellung(wz, v, fe) {
 
 /** M11 (E208): Reiter mit geführtem Modus – gleich werkzeuge/krypto/werkzeug_modelle.js GEFUEHRT (Test) */
 const GEFUEHRT_REITER = Object.freeze([
-  'scheibe.scheibe', 'scheibe.text',
+  'scheibe.scheibe', 'scheibe.text', 'scheibe.leiste',
   'skytale.skytale', 'skytale.gartenzaun', 'skytale.fleissner', 'skytale.pfluegen', 'skytale.ring',
   'quadrat.polybios', 'quadrat.playfair', 'quadrat.adfgvx', 'quadrat.spalten',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',

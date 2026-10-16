@@ -51,6 +51,7 @@ const VOR = {
   },
   'quadrat.polybios': (z) => ({ v: { reiter: ['polybios'], text: text0(z), richtung: richtungVon(z), ...(wort(z) ? { schluesselwort: wort(z) } : {}) } }),
   'quadrat.playfair': (z) => ({ v: { reiter: ['playfair'], text: text0(z), richtung: richtungVon(z), ...(wort(z) ? { schluesselwort: wort(z) } : {}) } }),
+  'scheibe.leiste': (z) => (param(z, 'alph') ? { v: { reiter: ['leiste'], text: text0(z), richtung: richtungVon(z), alphabet: param(z, 'alph') } } : param(z, 'a') ? { v: { reiter: ['leiste'], text: text0(z), richtung: richtungVon(z), a: zahlP(z, 'a'), b: zahlP(z, 'b') ?? 0 } } : null),
   // 1.3.1: das Quadrat (36 Zeichen) als Schlüsselwort ergibt dasselbe Quadrat; Stufe-2-Schlüssel = Wort
   'quadrat.adfgvx': (z) => (param(z, 'q6') ? { v: { reiter: ['adfgvx'], text: text0(z), richtung: richtungVon(z), schluesselwort: param(z, 'q6'), schluessel: wort(z) || '' } } : null),
   'quadrat.spalten': (z) => (wort(z) ? { v: { reiter: ['spalten'], text: text0(z), richtung: richtungVon(z), schluessel: wort(z) } } : null),
@@ -160,6 +161,7 @@ const FAELLE = {
   'skytale.ring': [{ angaben: A({ texte: ['GLOCKENSPIEL'] }), passt: bed('ver t=3') }],
   'skytale.fleissner': [{ angaben: A({ texte: ['WACHWECHSELAMSUE'], schluessel: ['loch=1,1;1,3;2,4;3,2'] }), passt: (z) => z.bedienung.startsWith('ver ') }],
   'quadrat.polybios': [{ angaben: A({ texte: ['NEBELHORN'] }), passt: bed('ver') }],
+  'scheibe.leiste': [{ angaben: A({ texte: ['WIESEL'], schluessel: [`alph=${K.schluesselwortAlphabet('BIRKE')}`] }), passt: bed('ver alph') }, { angaben: A({ texte: ['MARDER'], schluessel: ['a=3', 'b=4'] }), passt: bed('ver affin') }],
   'quadrat.adfgvx': [{ angaben: A({ texte: ['KIRSCHBAUM'], schluessel: [`q6=${K.quadrat('DROSSEL5', { groesse: 6 }).join('')}`, 'LINDE'] }), passt: bed('ver LINDE') }, { angaben: A({ texte: ['TANNE2'], schluessel: [`q6=${K.quadrat('DROSSEL5', { groesse: 6 }).join('')}`] }), passt: bed('ver Stufe 1') }],
   'quadrat.spalten': [{ angaben: A({ texte: ['WALDWEG'], schluessel: ['LINDE'] }), passt: bed('ver LINDE') }],
   'quadrat.playfair': [{ angaben: A({ texte: ['MOEWENFLUG'], schluessel: ['LEUCHTFEUER'] }), passt: bed('ver LEUCHTFEUER') }, { angaben: A({ texte: ['KUPFERKESSEL'], schluessel: ['BERNSTEIN'] }), passt: bed('ver BERNSTEIN') }],

@@ -14,7 +14,7 @@ const KRLabor = (() => {
   const WERKZEUGE = Object.freeze(
     [
       { id: 'skytale', titel: 'Skytale & Gitter', welt: 0, reiter: ['skytale', 'gartenzaun', 'fleissner', 'pfluegen', 'ring'] },
-      { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, reiter: ['scheibe', 'text', 'alle'] },
+      { id: 'scheibe', titel: 'Chiffrierscheibe', welt: 0, reiter: ['scheibe', 'text', 'alle', 'leiste'] },
       { id: 'haeufigkeit', titel: 'Häufigkeits-Analysator', welt: 1, reiter: ['histogramm', 'bigramme', 'teiltexte', 'kennzahlen'] },
       { id: 'substitution', titel: 'Substitutions-Werkbank', welt: 1, reiter: [] },
       { id: 'vigenere', titel: 'Vigenère-Werkbank', welt: 2, reiter: ['quadrat', 'verschluesseln', 'kasiski', 'teiltexte', 'koinzidenz', 'verschiebung', 'korrektur'] },

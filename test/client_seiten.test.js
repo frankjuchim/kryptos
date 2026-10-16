@@ -728,7 +728,7 @@ test('Gast: #/labor/scheibe öffnet die Scheibe (Gast-Umgebung), #/labor/vigener
   const k = D.lade([...GAST, 'krypto/labor/bausteine.js', 'krypto/labor/station.js', ...ERKENNER_SKRIPTE, 'krypto/labor/scheibe.js'], { url: 'http://x.test/gast#/labor/scheibe', fetch: gastFetch({}), vorher: seiteGast });
   await k.ruhe();
   assert.ok(k.eins(k.document, '.scheibe-drehknopf'));
-  assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);
+  assert.deepEqual(k.alle(k.document, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle', 'leiste']); // 1.3.1: Alphabet-Leiste
   // M10 Task 226: Gast-Scheibe erbt Objekt, Bänder und Herkunftszeile
   assert.equal(k.text(k.eins(k.document, 'p.werkzeug-herkunft')), 'Ideen von A. Bodendiek (Krypto-Werkstatt)');
   k.klick(k.eins(k.document, '.scheibe-aussen [data-buchstabe="g"]'));

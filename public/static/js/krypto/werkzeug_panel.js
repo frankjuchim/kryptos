@@ -41,6 +41,7 @@ const KRPanel = (() => {
     'skytale.pfluegen': 'Pflugfeld',
     'skytale.ring': 'Ring',
     scheibe: 'Chiffrierscheibe',
+    'scheibe.leiste': 'Alphabet-Leiste',
     'quadrat.polybios': 'Polybios-Quadrat',
     'quadrat.playfair': 'Playfair-Quadrat',
     'quadrat.adfgvx': 'ADFGVX-Quadrat',

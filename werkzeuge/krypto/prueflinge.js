@@ -390,6 +390,20 @@ function angaben(p) {
     if (typeof v.stellung === 'string') schluessel.add(`st=${v.stellung}`);
     if (Array.isArray(v.schablone)) schluessel.add(`loch=${v.schablone.map((x) => x.join(',')).sort().join(';')}`);
     for (const f of ['schluessel', 'schluesselwort', 'pendel', 'oben', 'unten']) if (typeof v[f] === 'string') wort(v[f]);
+    // 1.3.1: Alphabet-Leiste – Geheimtextalphabet (Substitution, Atbash) und affiner Schlüssel
+    if (v.typ === 'atbash') schluessel.add(`alph=${[...Krypto.ALPHABET].reverse().join('')}`);
+    if (v.typ === 'substitution') {
+      try {
+        const g = typeof v.geheimalphabet === 'string' ? Krypto.nurBuchstaben(v.geheimalphabet) : typeof v.schluesselwort === 'string' ? Krypto.schluesselwortAlphabet(v.schluesselwort) : null;
+        if (g && g.length === 26) schluessel.add(`alph=${g}`);
+      } catch {
+        /* kein Alphabet */
+      }
+    }
+    if (v.typ === 'affin' && Number.isInteger(v.a)) {
+      schluessel.add(`a=${v.a}`);
+      schluessel.add(`b=${Number.isInteger(v.b) ? v.b : 0}`);
+    }
     // 1.3.1: ADFGVX-Quadrat als ganzes (q6=<36 Zeichen>) – Kopf ADFGVX (Stufe 1) bzw. Verfahren adfgvx
     const q6 = v.typ === 'adfgvx' && typeof v.quadrat === 'string' ? v.quadrat : v.kopf === 'ADFGVX' && typeof v.schluessel === 'string' ? v.schluessel : null;
     if (q6 !== null) {

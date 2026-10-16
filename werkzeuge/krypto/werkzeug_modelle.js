@@ -211,6 +211,26 @@ function* playfairZ(A) {
   }
 }
 
+/* 1.3.1: Alphabet-Leiste der Scheibe – Geheimtextalphabet (alph=…, Atbash immer) bzw. affin (a=…, b=…) */
+const SPIEGEL = [...Krypto.ALPHABET].reverse().join('');
+function* leisteZ(A) {
+  const alphs = [...new Set([...parameter(A, 'alph'), SPIEGEL])];
+  const as = zahlParameter(A, 'a');
+  const bs = zahlParameter(A, 'b');
+  for (const t of buchstabenTexte(A)) {
+    for (const r of RICHTUNGEN) {
+      for (const g of alphs) {
+        const aus = versuche(() => Krypto.substitution(t, g, r));
+        if (aus) yield zust('angaben', `${r} alph`, { texte: [t], schluessel: [`alph=${g}`] }, g !== SPIEGEL || parameter(A, 'alph').includes(g), [T(aus)]);
+      }
+      for (const a of as) for (const b of bs.length ? bs : [0]) {
+        const aus = versuche(() => Krypto.affin(t, a, b, r));
+        if (aus) yield zust('angaben', `${r} affin`, { texte: [t], schluessel: [`a=${a}`, `b=${b}`] }, true, [T(aus)]);
+      }
+    }
+  }
+}
+
 /* 1.3.1: ADFGVX-Quadrat (Signatur q6=<36 Zeichen>) mit Stufe 1 allein oder ganz (Stufe-2-Schlüssel aus den Wörtern) und
    Spaltentransposition (Wort aus den Angaben) – wie die Reiter „ADFGVX“ und „Spalten“ frei rechnen */
 const KOPF6 = 'ADFGVX';
@@ -782,6 +802,7 @@ const MODELLE = Object.freeze({
   'scheibe.scheibe': gen(caesarZustaende),
   'scheibe.text': gen(caesarZustaende),
   'scheibe.alle': gen(alleCaesar),
+  'scheibe.leiste': gen(leisteZ),
   'skytale.skytale': gen(skytaleZ),
   'skytale.gartenzaun': gen(zaunZ),
   'skytale.fleissner': gen(fleissnerZ),
@@ -852,7 +873,7 @@ const OHNE_RECHNUNG = Object.freeze({
 
 /** Reiter mit geführtem Modus (E208) – alle anderen rechnenden Reiter sind mit erkannten Werten nicht verfügbar (E209) */
 const GEFUEHRT = Object.freeze([
-  'scheibe.scheibe', 'scheibe.text',
+  'scheibe.scheibe', 'scheibe.text', 'scheibe.leiste',
   'skytale.skytale', 'skytale.gartenzaun', 'skytale.fleissner', 'skytale.pfluegen', 'skytale.ring',
   'quadrat.polybios', 'quadrat.playfair', 'quadrat.adfgvx', 'quadrat.spalten',
   'vigenere.verschluesseln', 'vigenere.kasiski', 'vigenere.teiltexte', 'vigenere.koinzidenz',

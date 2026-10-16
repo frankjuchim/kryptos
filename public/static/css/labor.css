@@ -1042,3 +1042,14 @@ mark.markiert.wiederholung { font-weight: 700; }
 .quadrat-band6-teil { display: inline-grid; gap: 2px; min-width: 2.6rem; padding: 2px var(--a-1); border: 1.5px solid var(--linie); border-radius: 4px; background: var(--karte); text-align: center; }
 .quadrat-band6-nr { font: 600 .7rem var(--f-text); color: var(--text-2); }
 .quadrat-band6-teil .gefuehrt-eintrag { min-height: 1.3em; font-weight: 700; overflow-wrap: anywhere; }
+/* 1.3.1: Alphabet-Leiste der Chiffrierscheibe (Schlüsselalphabet, Atbash gespiegelt, affiner Rechenstreifen) */
+.scheibe-leiste-papier { padding: var(--a-2); border-radius: var(--r-karte); background: var(--karte); border: 1.5px solid var(--linie); }
+.alphabet-leiste { border-collapse: collapse; font-family: var(--f-mono); }
+.alphabet-leiste caption { caption-side: top; text-align: left; font-family: var(--f-text); font-size: .85rem; font-weight: 700; padding-bottom: var(--a-1); }
+.alphabet-leiste th { padding-right: var(--a-2); font-family: var(--f-text); font-size: .8rem; text-align: right; white-space: nowrap; color: var(--text-2); }
+.alphabet-leiste td { min-width: 1.9rem; height: 2.1rem; border: 1px solid var(--linie); text-align: center; font-weight: 700; }
+.alphabet-leiste tr.leiste-zahl td { font-size: .8rem; color: var(--text-2); font-weight: 600; }
+.alphabet-leiste tr.leiste-geheim td { background: var(--papier-2); }
+.alphabet-leiste td.gefuehrt-markiert { outline: 3px solid var(--akzent); outline-offset: -3px; background: var(--hinweis-flaeche); }
+.leiste-modi { flex-wrap: wrap; }
+.leiste-modus[aria-pressed="true"] { border-color: var(--akzent); font-weight: 700; }

@@ -12,8 +12,8 @@
   const { h, s } = AQ;
   const B = KRLaborBau;
   const S = KRStation;
-  const BEISPIEL = { text: 'zinnober', geheimtext: 'HLNSZ WOPC' }; // eigene Wörter (Review M6), in keinem Material
-  const REITER_TITEL = { scheibe: 'Scheibe', text: 'Text-Modus', alle: 'Alle Verschiebungen' };
+  const BEISPIEL = { text: 'zinnober', geheimtext: 'HLNSZ WOPC', wort: 'BIRKE' }; // eigene Wörter (Review M6; 1.3.1 Leiste), in keinem Material
+  const REITER_TITEL = { scheibe: 'Scheibe', text: 'Text-Modus', alle: 'Alle Verschiebungen', leiste: 'Alphabet-Leiste' };
   const MITTE = 160;
   const SCHRITT = 360 / 26; // Grad je Rastung
   const BUCHSTABEN = [...Krypto.ALPHABET];
@@ -602,6 +602,169 @@
       return geheim || null;
     }
 
+    /* ---------- 1.3.1: Reiter „Alphabet-Leiste“ – Schlüsselalphabet, Atbash (gespiegelt), affiner Rechenstreifen ---------- */
+    const SPIEGEL = [...Krypto.ALPHABET].reverse().join('');
+    const gueltigesAlphabet = (x) => {
+      if (typeof x !== 'string') return null;
+      const g = Krypto.nurBuchstaben(x);
+      return g.length === 26 && new Set(g).size === 26 ? g : null;
+    };
+    const lst = {
+      alphabet: gueltigesAlphabet(v.alphabet),
+      a: Number.isInteger(v.a) ? v.a : null,
+      b: Number.isInteger(v.b) ? v.b : 0,
+      text: typeof v.text === 'string' ? v.text.slice(0, MAX) : BEISPIEL.text
+    };
+    lst.modus = lst.a !== null ? 'affin' : 'alphabet';
+    if (!lst.alphabet) lst.alphabet = Krypto.schluesselwortAlphabet(BEISPIEL.wort);
+    if (lst.a === null) lst.a = 3;
+    let leisteAusgabe = '';
+    /** Leiste als Tabelle: Zahlen (A = 0, nur affin), Klartext a–z, Geheimtextalphabet (nur Alphabet-Modus) */
+    function leisteTabelle({ alphabet, mitZahl, titel }) {
+      const zeile = (klasse, kopf, werte) => h('tr', { class: klasse }, h('th', { scope: 'row' }, kopf), werte);
+      return h(
+        'div',
+        { class: 'scheibe-leiste-papier scroll-x' },
+        h(
+          'table',
+          { class: 'alphabet-leiste' },
+          h('caption', null, titel),
+          h(
+            'tbody',
+            null,
+            mitZahl ? zeile('leiste-zahl', 'Zahl', BUCHSTABEN.map((b, i) => h('td', { 'data-buchstabe': b, 'data-zahl': String(i) }, String(i)))) : null,
+            zeile('leiste-klar', 'Klartext', BUCHSTABEN.map((b) => h('td', { 'data-buchstabe': b }, Krypto.klein(b)))),
+            alphabet ? zeile('leiste-geheim', 'Geheimtext', [...alphabet].map((b) => h('td', { 'data-buchstabe': b }, b))) : null
+          )
+        )
+      );
+    }
+    function baueLeiste() {
+      const modusKnoepfe = [
+        ['alphabet', 'Schlüsselalphabet'],
+        ['atbash', 'Atbash (gespiegelt)'],
+        ['affin', 'Affin (a · p + b)']
+      ].map(([id, titel]) => {
+        const k2 = h('button', { type: 'button', class: 'knopf knopf-leise leiste-modus', 'data-modus': id, 'aria-pressed': 'false' }, titel);
+        k2.addEventListener('click', () => {
+          if (id === 'atbash') {
+            lst.modus = 'alphabet';
+            lst.alphabet = SPIEGEL;
+          } else lst.modus = id;
+          rechne();
+        });
+        return k2;
+      });
+      const feld = B.textfeld({ beschriftung: 'Text (bis 200 Zeichen)', max: MAX, wert: lst.text, art: richtung === 'ver' ? 'klartext' : 'geheimtext', zeilen: 2, beiEingabe: (t) => { lst.text = t; rechne(); } });
+      const ri = B.richtung({ wert: richtung, beiWechsel: (x) => { richtung = x; rechne(); } });
+      const wort = B.textfeld({ beschriftung: 'Schlüsselwort (baut das Geheimtextalphabet)', max: 26, wert: '', art: 'frei', zeilen: 1, beiEingabe: (t) => { lst.alphabet = Krypto.nurBuchstaben(t) ? Krypto.schluesselwortAlphabet(t) : Krypto.ALPHABET; rechne(); } });
+      const aZahl = B.zahl({ beschriftung: 'Faktor a (teilerfremd zu 26)', min: 1, max: 25, wert: lst.a, beiWechsel: (x) => { lst.a = x; rechne(); } });
+      const bZahl = B.zahl({ beschriftung: 'Summand b', min: 0, max: 25, wert: lst.b, beiWechsel: (x) => { lst.b = x; rechne(); } });
+      const objektOrt = h('div', { class: 'scheibe-leiste-ort' });
+      const meldung = h('div');
+      const aus = B.ausgabe({ beschriftung: 'Ergebnis', art: 'frei' });
+      const affinTeil = h('div', { class: 'labor-steuer' }, aZahl.element, bZahl.element);
+      r.flaeche.append(h('div', { class: 'knopf-reihe leiste-modi', role: 'group', 'aria-label': 'Art der Leiste' }, modusKnoepfe), h('div', { class: 'labor-kopf' }, feld.element, ri.element), wort.element, affinTeil, meldung, objektOrt, aus.element);
+      function rechne() {
+        for (const k2 of modusKnoepfe) k2.setAttribute('aria-pressed', String(k2.dataset.modus === (lst.modus === 'affin' ? 'affin' : lst.alphabet === SPIEGEL ? 'atbash' : 'alphabet')));
+        wort.element.hidden = lst.modus === 'affin';
+        affinTeil.hidden = lst.modus !== 'affin';
+        AQ.clear(objektOrt);
+        AQ.clear(meldung);
+        leisteAusgabe = '';
+        aus.setze('');
+        const schl = lst.modus === 'affin' ? [`a=${lst.a}`, `b=${lst.b}`] : [`alph=${lst.alphabet}`];
+        if (B.erkenne(meldung, 'scheibe.leiste', { texte: [lst.text], schluessel: schl }, umgebung, erkVerlauf, { gefuehrt: mitGefuehrt ? () => starteGefuehrt('leiste', { text: lst.text, alphabet: lst.modus === 'affin' ? undefined : lst.alphabet, a: lst.modus === 'affin' ? lst.a : undefined, b: lst.modus === 'affin' ? lst.b : undefined, richtung }) : null }) !== 'frei') return;
+        objektOrt.appendChild(leisteTabelle(lst.modus === 'affin' ? { mitZahl: true, titel: `Rechenstreifen: A = 0 … Z = 25, c = (${lst.a} · p + ${lst.b}) mod 26` } : { alphabet: lst.alphabet, mitZahl: false, titel: lst.alphabet === SPIEGEL ? 'Atbash: das Alphabet gespiegelt (A ↔ Z)' : 'Klartextalphabet über dem Geheimtextalphabet' }));
+        try {
+          leisteAusgabe = lst.modus === 'affin' ? Krypto.affin(lst.text, lst.a, lst.b, richtung) : Krypto.substitution(lst.text, lst.alphabet, richtung);
+        } catch (e) {
+          if (!e || e.name !== 'KryptoFehler') throw e;
+          meldung.appendChild(B.hinweis('warnung', e.message));
+          return;
+        }
+        aus.setze(richtung === 'ver' ? Krypto.gruppieren(leisteAusgabe) : Krypto.klein(leisteAusgabe));
+      }
+      rechne();
+    }
+    /**
+     * Geführt an der Leiste: Alphabet-Modus – je Buchstabe die Spalte markiert (ver oben, ent unten), den Buchstaben liest
+     * du selbst ab; affin – Rechenstreifen, je Buchstabe vier Schritte (Zahl, Produkt bzw. a⁻¹ · (c − b), mod 26,
+     * Buchstabe), Folgeschritte aus deinen Einträgen. Einträge nur im Band.
+     */
+    function leisteHook(container, werte) {
+      const ver = werte.richtung !== 'ent';
+      const eingabe = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX);
+      const affin = Number.isInteger(werte.a);
+      const alphabet = affin ? null : gueltigesAlphabet(werte.alphabet) || Krypto.ALPHABET;
+      const a = affin ? werte.a : 1;
+      const b0 = affin && Number.isInteger(werte.b) ? werte.b : 0;
+      let ainv = null;
+      try {
+        ainv = affin ? Krypto.inverses(a, 26) : null;
+      } catch {
+        ainv = null;
+      }
+      const tabelle = leisteTabelle(affin ? { mitZahl: true, titel: `Rechenstreifen: A = 0 … Z = 25${ver ? `, c = (${a} · p + ${b0}) mod 26` : `, p = ${ainv ?? 'a⁻¹'} · (c − ${b0}) mod 26`}` } : { alphabet, mitZahl: false, titel: alphabet === SPIEGEL ? 'Atbash: das Alphabet gespiegelt (A ↔ Z)' : 'Klartextalphabet über dem Geheimtextalphabet' });
+      const band = KRGefuehrt.band(null, ver ? 'Dein Geheimtext' : 'Dein Klartext');
+      band.element.classList.add('leiste-gefuehrt-band');
+      container.append(h('p', { class: 'text-2 leiste-gefuehrt-anleitung' }, affin ? 'Rechne Buchstabe für Buchstabe am Rechenstreifen – jeden Zwischenwert trägst du selbst ein.' : ver ? 'Such den Klartextbuchstaben oben – darunter steht sein Geheimtextbuchstabe.' : 'Such den Geheimtextbuchstaben unten – darüber steht sein Klartextbuchstabe.'), tabelle, band.element);
+      const zellen = (klasse) => [...tabelle.querySelectorAll(`tr.${klasse} td`)];
+      const klar = zellen('leiste-klar');
+      const geheim = alphabet ? zellen('leiste-geheim') : [];
+      const zahlen = affin ? zellen('leiste-zahl') : [];
+      const zahl = (x) => (/^-?\d+$/.test(String(x || '').trim()) ? Number(String(x).trim()) : null);
+      const je = affin ? 4 : 1;
+      const schritte = [];
+      eingabe.forEach((c, j) => {
+        const z = (k2) => j * je + k2;
+        if (!affin) {
+          schritte.push({ text: ver ? `Klartextbuchstabe ${Krypto.klein(c)} – oben markiert` : `Geheimtextbuchstabe ${c} – unten markiert`, feld: { beschriftung: ver ? 'Geheimtextbuchstabe darunter' : 'Klartextbuchstabe darüber', art: 'buchstabe' } });
+          return;
+        }
+        schritte.push({ text: ver ? `${Krypto.klein(c)}: Zahl p (A = 0)` : `${c}: Zahl c (A = 0)`, feld: { beschriftung: ver ? 'p' : 'c', art: 'zahl' } });
+        schritte.push({ text: (e) => (ver ? `${a} · ${zahl(e[z(0)]) ?? 'p'} + ${b0} = ?` : `${ainv ?? 'a⁻¹'} · (${zahl(e[z(0)]) ?? 'c'} − ${b0}) = ?`), feld: { beschriftung: 'Ergebnis der Rechnung', art: 'zahl' } });
+        schritte.push({ text: (e) => `${zahl(e[z(1)]) ?? '…'} mod 26 = ?`, feld: { beschriftung: 'Rest (0 … 25)', art: 'zahl' } });
+        schritte.push({ text: (e) => `Buchstabe zur Zahl ${zahl(e[z(2)]) ?? '…'}`, feld: { beschriftung: ver ? 'Geheimtextbuchstabe' : 'Klartextbuchstabe', art: 'buchstabe' } });
+      });
+      return {
+        objekt: true,
+        schritte,
+        markiere(i, e) {
+          for (const td of [...klar, ...geheim, ...zahlen]) td.classList.remove('gefuehrt-markiert');
+          const { q: j, r: k2 } = Krypto.teileMitRest(i, je);
+          const c = eingabe[j];
+          if (!affin) {
+            const td = (ver ? klar : geheim).find((x) => x.dataset.buchstabe === c);
+            if (td) td.classList.add('gefuehrt-markiert');
+          } else if (k2 === 0) {
+            const td = klar.find((x) => x.dataset.buchstabe === c);
+            if (td) td.classList.add('gefuehrt-markiert');
+          } else if (k2 === 3) {
+            const n = zahl(e[j * je + 2]);
+            if (n !== null && n >= 0 && n <= 25) zahlen[n].classList.add('gefuehrt-markiert');
+          }
+          const buchstaben = eingabe.map((_, jj) => e[jj * je + je - 1] || '');
+          band.setze(buchstaben.map((x) => (ver ? x : Krypto.klein(x))));
+        },
+        korrekt() {
+          const aus = [];
+          eingabe.forEach((c) => {
+            if (!affin) {
+              const x = Krypto.substitution(c, alphabet, ver ? 'ver' : 'ent');
+              aus.push(ver ? x : Krypto.klein(x));
+              return;
+            }
+            const w = Krypto.wert(c, 0);
+            const roh = ver ? a * w + b0 : (ainv ?? 0) * (w - b0);
+            const m = Krypto.mod(roh, 26);
+            aus.push(String(w), String(roh), String(m), ver ? Krypto.buchstabe(m, 0) : Krypto.klein(Krypto.buchstabe(m, 0)));
+          });
+          return aus;
+        }
+      };
+    }
+
     /* ---------- Geführter Modus (M11 Task 244, E208): Scheibe auf k der Aufgabe, nur der aktuelle Buchstabe markiert ---------- */
     function scheibeHook(container, werte) {
       const ri = werte.richtung === 'ent' ? 'ent' : 'ver';
@@ -628,7 +791,7 @@
         korrekt: () => eingabe.map((b) => (ri === 'ver' ? Krypto.caesar(b, k) : Krypto.klein(Krypto.caesar(b, k, 'ent'))))
       };
     }
-    const HOOKS = { scheibe: scheibeHook, text: scheibeHook };
+    const HOOKS = { scheibe: scheibeHook, text: scheibeHook, leiste: leisteHook };
     function starteGefuehrt(id, werte) {
       const fokus = typeof document !== 'undefined' && document.activeElement && wurzel.contains(document.activeElement);
       schliesseTeile();
@@ -667,7 +830,7 @@
 
     function baue(id) {
       if (fuehrung && mitGefuehrt && HOOKS[id]) {
-        const w = { text: typeof v.text === 'string' ? v.text : '', k: Number.isInteger(v.k) ? v.k : undefined, richtung: v.richtung, ...(fuehrung.werte || {}) };
+        const w = { text: typeof v.text === 'string' ? v.text : '', k: Number.isInteger(v.k) ? v.k : undefined, richtung: v.richtung, alphabet: v.alphabet, a: v.a, b: v.b, ...(fuehrung.werte || {}) };
         fuehrung = { aufgabe: fuehrung.aufgabe };
         starteGefuehrt(id, w);
         return;
@@ -687,6 +850,7 @@
       if (id === 'scheibe') objekt = baueObjekt();
       else if (id === 'text') baueText();
       else if (id === 'alle') baueAlle();
+      else if (id === 'leiste') baueLeiste();
     }
     baue(r.aktiv());
 
@@ -705,7 +869,7 @@
           richtung,
           text,
           eingabe: amObjekt ? eingabe : text,
-          ausgabe: amObjekt ? ausgabe : Krypto.caesar(text, k, richtung),
+          ausgabe: r.aktiv() === 'leiste' ? leisteAusgabe : amObjekt ? ausgabe : Krypto.caesar(text, k, richtung),
           aktiv,
           gesperrt
         };

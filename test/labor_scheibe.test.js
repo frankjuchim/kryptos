@@ -84,7 +84,7 @@ test('Scheibe: Wechsel Text → Alle übernimmt die eigene Ausgabe als abgefange
 
 test('Scheibe im Gastmodus: alle Reiter, keine Anfragen, kein localStorage; reduzierte Bewegung ohne Animation', () => {
   const w = oeffne('scheibe', { umgebung: { modus: 'gast', rolle: null, niveau: null, welten: undefined }, ruhig: true });
-  assert.deepEqual(w.k.alle(w.flaeche, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle']);
+  assert.deepEqual(w.k.alle(w.flaeche, '[role="tab"]').map((t) => t.dataset.reiter), ['scheibe', 'text', 'alle', 'leiste']); // 1.3.1: Alphabet-Leiste
   w.k.taste(w.k.eins(w.flaeche, '.scheibe-drehknopf'), 'ArrowRight');
   assert.equal(w.k.eins(w.flaeche, 'g.scheibe-innen').classList.contains('animiert'), false);
   assert.deepEqual(w.k.anfragen, []);
