@@ -39,10 +39,10 @@ a.werkzeug-karte:hover { border-color: var(--akzent); }
   align-items: center;
   gap: var(--a-1) var(--a-2);
   width: 100%;
-  min-height: var(--ziel);
-  padding: var(--a-2) var(--a-4);
-  border: 1.5px solid var(--linie);
-  border-left: 6px solid var(--akzent);
+  min-height: 56px; /* M12 E231: groß und deutlich – „<Objekt> benutzen“ */
+  padding: var(--a-3) var(--a-4);
+  border: 2px solid var(--akzent);
+  border-left: 8px solid var(--akzent);
   border-radius: var(--r-knopf);
   background: var(--karte);
   color: var(--text);
@@ -53,7 +53,9 @@ a.werkzeug-karte:hover { border-color: var(--akzent); }
 }
 .werkzeug-schalter:hover:not(:disabled) { border-color: var(--akzent); }
 .werkzeug-schalter:disabled { cursor: not-allowed; border-left-style: dashed; border-left-color: var(--linie); background: var(--papier); }
-.werkzeug-schalter-text { flex: 1 1 12rem; font-family: var(--f-ueberschrift); }
+.werkzeug-schalter-text { flex: 1 1 12rem; font-family: var(--f-ueberschrift); font-size: 1.15rem; }
+.werkzeug-schalter .werkzeug-symbol { width: 1.6rem; height: 1.6rem; }
+.werkzeug-schalter[aria-expanded="false"]:not(:disabled) { box-shadow: var(--schatten); }
 .werkzeug-gefuehrt-chip { padding: 1px var(--a-2); border: 1.5px solid var(--akzent); border-radius: var(--r-chip); font-size: .78rem; }
 .werkzeug-pfeil { transition: transform .2s; }
 .werkzeug-schalter[aria-expanded="true"] .werkzeug-pfeil { transform: rotate(180deg); }

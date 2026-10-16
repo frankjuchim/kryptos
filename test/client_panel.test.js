@@ -27,7 +27,7 @@ test('panel_eingeklappt_laedt_nichts', () => {
   const { k, el } = bau([IMOTQ], {}, []);
   const s = schalter(k, el);
   assert.equal(s.getAttribute('aria-expanded'), 'false');
-  assert.match(k.text(s), /Werkzeug: Chiffrierscheibe/);
+  assert.match(k.text(s), /Chiffrierscheibe benutzen/); // M12 E231
   assert.match(k.text(el), /Schritt für Schritt/, 'Chip bei gefuehrt');
   const flaeche = k.document.getElementById(s.getAttribute('aria-controls'));
   assert.equal(flaeche.getAttribute('role'), 'region');
@@ -200,6 +200,63 @@ test('panel_schliesst_bei_navigation', async () => {
   await new Promise((r) => setTimeout(r, 5));
   await k.ruhe();
   assert.equal(k.wert('KRPanel').offen(), 0);
+});
+
+/* ---------- M12 (E231, E232): Schalter „<Objekt> benutzen“, Feld offen ---------- */
+
+test('m12_schalter_nennt_das_objekt', () => {
+  const P = (b) => {
+    const { k, el } = bau([b], {}, []);
+    return k.text(schalter(k, el));
+  };
+  assert.match(P({ t: 'werkzeug', id: 'skytale', voreinstellung: { reiter: ['skytale'] } }), /Skytale-Stab benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'skytale', voreinstellung: { reiter: ['gartenzaun'] } }), /Gartenzaun benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'skytale', voreinstellung: { reiter: ['fleissner'] } }), /Fleißner-Karton benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'skytale' }), /Skytale-Stab benutzen/, 'ohne Reiter: erster Reiter');
+  assert.match(P({ t: 'werkzeug', id: 'quadrat', voreinstellung: { reiter: ['polybios'] } }), /Polybios-Quadrat benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'signale', voreinstellung: { reiter: ['morse'] } }), /Morse-Tafel benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'runden', voreinstellung: { reiter: ['enigma'] } }), /Mini-Enigma benutzen/);
+  assert.match(P({ t: 'werkzeug', id: 'hash' }), /Hash-Labor benutzen/, 'sonst der Werkzeugname');
+});
+
+test('m12_offen_klappt_beim_anzeigen_auf', async () => {
+  const { k, el } = bau([{ t: 'werkzeug', id: 'scheibe', offen: true, voreinstellung: { k: 7 } }]);
+  await k.ruhe();
+  const s = schalter(k, el);
+  assert.equal(s.getAttribute('aria-expanded'), 'true');
+  assert.equal(k.text(k.eins(el, '.scheibe-k')), 'k = 7', 'Modul sofort geladen');
+  assert.ok(k.eins(el, '.werkzeug-panel.panel-offen-start'));
+  k.klick(s);
+  assert.equal(s.getAttribute('aria-expanded'), 'false', 'zuklappen geht weiter');
+  // ohne offen: eingeklappt
+  const z = bau([{ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }], {}, []);
+  await z.k.ruhe();
+  assert.equal(schalter(z.k, z.el).getAttribute('aria-expanded'), 'false');
+  assert.deepEqual(z.k.skripte, []);
+  // im Boss nie
+  assert.equal(bau([{ t: 'werkzeug', id: 'scheibe', offen: true }], { modus: 'boss' }, []).el.children.length, 0);
+});
+
+test('m12_offen_validator', () => {
+  const r = pruefeBlock({ t: 'werkzeug', id: 'scheibe', offen: 'ja' }, { aufgabe: 'W0-L2-01', welt: 0 });
+  assert.ok(r.fehler.some((f) => /offen muss true oder false/.test(f)), r.fehler.join(' | '));
+  assert.deepEqual(pruefeBlock({ t: 'werkzeug', id: 'scheibe', offen: true }, { aufgabe: 'W0-L2-01', welt: 0 }).fehler, []);
+});
+
+test('m12_w0_werkstatt_aufgaben_offen', () => {
+  // E232: alle W0-Aufgaben mit einem Werkstatt-Objekt (Skytale & Gitter, Scheibe, Polybios, Morse) klappen auf
+  const w = require('../seed/welten/welt0.json');
+  const fehlt = [];
+  let n = 0;
+  for (const a of w.aufgaben) {
+    for (const b of a.inhalt || []) {
+      if (b.t !== 'werkzeug') continue;
+      n += 1;
+      if (['skytale', 'scheibe', 'quadrat', 'signale'].includes(b.id) && b.offen !== true) fehlt.push(a.id);
+    }
+  }
+  assert.ok(n >= 19, `W0 hat ${n} Panels`);
+  assert.deepEqual(fehlt, []);
 });
 
 /* ---------- Validator (E217) ---------- */

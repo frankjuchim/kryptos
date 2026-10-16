@@ -1356,11 +1356,13 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   Karte), gesperrte Werkzeuge ausgegraut mit Grund. Hash-Navigation `/labor#/vigenere` öffnet ein Werkzeug als Vollseite
   (Kopfband in Epochenakzent, Werkzeugfläche Papier, Steuerleiste unten im Daumenbereich).
 - **In Aufgaben und auf Level-Seiten (M11, E214–E223):** Der Block `werkzeug` wird zum aufklappbaren **Panel**
-  (`werkzeug_panel.js`, global **`KRPanel`**: `panel(b, ctx, o)`, `schliesseAlle()`, `freigeben(aufgabeId)`, `offen()`).
-  Schalter `button.werkzeug-schalter[aria-expanded][aria-controls]` „Werkzeug: <Titel>“ (Chip „Schritt für Schritt“ bei
+  (`werkzeug_panel.js`, global **`KRPanel`**: `panel(b, ctx, o)`, `schliesseAlle()`, `freigeben(aufgabeId)`, `offen()`,
+  `objektName(id, voreinstellung)`). Großer Schalter `button.werkzeug-schalter[aria-expanded][aria-controls]` „<Objekt>
+  benutzen“ (M12 E231, z. B. „Skytale-Stab benutzen“; Level-Karte „Hier ausprobieren“; Chip „Schritt für Schritt“ bei
   `gefuehrt: true`), Fläche `section[role=region]` anfangs `hidden` mit Kopf (Name, „Schließen“), optionalem Auftrag
   (`titel`), Werkzeug und Fuß (`hinweis` des Blocks, Zweitlink „Im Labor öffnen“ mit `?reiter=…&level=…`). Das Modul lädt
-  erst beim ersten Aufklappen (`KRLabor.oeffne`, Freigaben vorher frisch über `ctx.laborFrisch`); höchstens ein offenes
+  erst beim ersten Aufklappen (`KRLabor.oeffne`, Freigaben vorher frisch über `ctx.laborFrisch`) – mit `offen: true` (M12
+  E232, W0-Aufgaben mit Werkstatt-Objekt) sofort nach dem Anzeigen der Aufgabe; höchstens ein offenes
   Panel je Seite, `schliesseAlle()` beim Seitenwechsel (Einträge gehen verloren, nichts wird gespeichert); Tasten bleiben im
   Panel (Enter prüft nie die Aufgabe); Esc klappt es zu, der Fokus kehrt auf den Schalter zurück. Ab 1100 px Breite steht die Fläche als **Seitenleiste** rechts (`position: fixed`,
   `#haupt` und Fuß rücken nach links, Antwortfeld bleibt sichtbar), darunter im Fluss unter dem Block. Im Boss-Kampf

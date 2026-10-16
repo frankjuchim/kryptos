@@ -1,10 +1,12 @@
 /* Kryptos – Aufgaben-Panel „Werkzeug“ (Plan M11 Task 247, E214–E218, E221). Statt eines Dialogs klappt das Werkzeug
-   in der Aufgabe auf: Schalter button[aria-expanded][aria-controls] „Werkzeug: <Titel>“, Fläche section[role=region]
+   in der Aufgabe auf: Schalter button[aria-expanded][aria-controls] „<Objekt> benutzen“ (M12 E231, z. B. „Skytale-Stab
+   benutzen“; objektName), Fläche section[role=region]
    (anfangs hidden), Fuß mit Hinweis und Zweitlink „Im Labor öffnen“. Das Modul lädt beim ersten Aufklappen
    (KRLabor.oeffne, Freigaben vorher frisch über ctx.laborFrisch). Mit gefuehrt: true startet es geführt mit den Werten
    der Voreinstellung (umgebung.gefuehrt = { aufgabe }); verglichen wird erst nach der Freigabe (KRPanel.freigeben →
    KRGefuehrt.freigeben, auch vor dem Laden gemerkt). Höchstens ein offenes Werkzeug je Seite; schliesseAlle beim
-   Seitenwechsel. Tasten bleiben im Panel, Esc klappt es zu. Texte nur als Textknoten, Lernende geduzt. Speichert nichts. */
+   Seitenwechsel. Tasten bleiben im Panel, Esc klappt es zu. Texte nur als Textknoten, Lernende geduzt. Speichert nichts.
+   M12 (E232): Block-Feld offen: true klappt das Panel beim Anzeigen auf (W0-Werkstatt-Aufgaben). */
 'use strict';
 
 const KRPanel = (() => {
@@ -30,6 +32,34 @@ const KRPanel = (() => {
     return n;
   }
   const offen = () => OFFEN.size;
+
+  // M12 (E231): anschauliches Objekt je Werkzeug und Reiter für den Schalter „<Objekt> benutzen“
+  const OBJEKT = Object.freeze({
+    'skytale.skytale': 'Skytale-Stab',
+    'skytale.gartenzaun': 'Gartenzaun',
+    'skytale.fleissner': 'Fleißner-Karton',
+    'skytale.pfluegen': 'Pflugfeld',
+    'skytale.ring': 'Ring',
+    scheibe: 'Chiffrierscheibe',
+    'quadrat.polybios': 'Polybios-Quadrat',
+    'quadrat.playfair': 'Playfair-Quadrat',
+    'signale.morse': 'Morse-Tafel',
+    'signale.klopfcode': 'Klopf-Gitter',
+    'signale.freimaurer': 'Freimaurer-Gitter',
+    'vigenere.quadrat': 'Vigenère-Quadrat',
+    'vigenere.verschluesseln': 'Vigenère-Quadrat',
+    bitlupe: 'Bit-Lupe',
+    'runden.enigma': 'Mini-Enigma',
+    'modulo.uhr': 'Modulo-Uhr',
+    'modulo.farbmischer': 'Farbmischer',
+    enigma: 'Enigma'
+  });
+  /** Name des Objekts für Werkzeug id und Voreinstellung (erster Reiter), sonst der Werkzeugname */
+  function objektName(id, voreinstellung) {
+    const w = typeof KRLabor !== 'undefined' ? KRLabor.werkzeug(id) : null;
+    const r = voreinstellung && Array.isArray(voreinstellung.reiter) && typeof voreinstellung.reiter[0] === 'string' ? voreinstellung.reiter[0] : w && w.reiter[0];
+    return OBJEKT[`${id}.${r}`] || OBJEKT[id] || (w ? w.titel : String(id ?? 'Werkzeug'));
+  }
 
   /** Link ins Labor mit Reitern und Level (wie die Level-Karten) */
   function laborLink(id, v, umgebung) {
@@ -63,7 +93,7 @@ const KRPanel = (() => {
       'button',
       { type: 'button', id: sId, class: 'werkzeug-schalter', 'aria-expanded': 'false', 'aria-controls': fId, disabled: !frei },
       KR.symbol('icons', 'i-labor', { klasse: 'werkzeug-symbol' }),
-      h('span', { class: 'werkzeug-schalter-text' }, typeof o.schalter === 'string' && o.schalter ? o.schalter : `Werkzeug: ${name}`),
+      h('span', { class: 'werkzeug-schalter-text' }, typeof o.schalter === 'string' && o.schalter ? o.schalter : `${objektName(b.id, b.voreinstellung)} benutzen`),
       chips,
       h('span', { class: 'werkzeug-pfeil', 'aria-hidden': 'true' }, '▾')
     );
@@ -81,7 +111,7 @@ const KRPanel = (() => {
     );
     const el = h(
       'div',
-      { class: 'werkzeug-panel' + (frei ? '' : ' gesperrt'), 'data-epoche': w ? String(w.welt) : null },
+      { class: 'werkzeug-panel' + (frei ? '' : ' gesperrt') + (b.offen === true && frei ? ' panel-offen-start' : ''), 'data-epoche': w ? String(w.welt) : null },
       schalter,
       frei ? null : h('p', { class: 'werkzeug-grund' }, 'Deine Lehrkraft schaltet dieses Werkzeug später frei.'),
       bereich
@@ -154,8 +184,14 @@ const KRPanel = (() => {
       if (OFFEN.has(eintrag)) eintrag.schliesse();
       else oeffne();
     });
+    // M12 (E232): offen – nach dem Einhängen der Aufgabe aufklappen (Mikroaufgabe; Navigation schließt vorher alle)
+    if (b.offen === true && frei) {
+      Promise.resolve().then(() => {
+        if (!OFFEN.has(eintrag) && !schalter.disabled) oeffne();
+      });
+    }
     return el;
   }
 
-  return { panel, schliesseAlle, freigeben, offen };
+  return { panel, schliesseAlle, freigeben, offen, objektName };
 })();

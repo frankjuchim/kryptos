@@ -1,7 +1,8 @@
 'use strict';
 /*
  * e2e – Szenario 16 „Werkzeuge in den Aufgaben“ (Plan M11 Task 251, E228, Review Focus 1–5) auf den echten Seeds:
- *  1. Mika R. (LK 13, Welten 0–6): W0-L1-04 – Panel eingeklappt, labor/skytale.js erst nach dem Klick; aufgeklappt geführt,
+ *  1. Mika R. (LK 13, Welten 0–6): W2-L1-02 – Panel eingeklappt, labor/vigenere.js erst nach dem Klick (M12: W0-Aufgaben
+ *     mit Werkstatt-Objekt klappen von selbst auf – W0-L1-04 offen, Schalter „Skytale-Stab benutzen“); geführt,
  *     Raster leer, Zielzelle markiert, Einträge füllen das Raster, kein Klartext im DOM (Text und Attribute), Foto kr-37;
  *     Schritt 1 mit allen Buchstaben → Panel bis auf den Eintrag unverändert (kein Orakel). Aufgabe richtig lösen →
  *     Vergleich ✓/✗, Foto kr-39; nächste Aufgabe (W0-L1-05) ohne Vergleich.
@@ -32,10 +33,11 @@ const domText = (page) =>
     return teile.join(' ');
   });
 
-/** Panel der Aufgabe aufklappen und warten, bis das Werkzeug steht */
+/** Panel der Aufgabe aufklappen (M12 E232: W0-Werkstatt-Aufgaben sind schon offen) und warten, bis das Werkzeug steht */
 async function aufklappen(page, { gefuehrt = true } = {}) {
   const s = page.locator('button.werkzeug-schalter').first();
-  await s.click();
+  await page.waitForTimeout(50);
+  if ((await s.getAttribute('aria-expanded')) !== 'true') await s.click();
   assert.equal(await s.getAttribute('aria-expanded'), 'true');
   if (gefuehrt) await page.locator('.werkzeug-panel-flaeche section.gefuehrt').waitFor();
   else await page.locator('.werkzeug-panel-inhalt > :not(.laden)').first().waitFor();
@@ -56,20 +58,26 @@ async function szenario16(ctx) {
   const lk = await kursId(lehrer.page, ctx, 'LK 13 (eA)');
   await einstellen(lehrer.page, ctx, lk, { welten: ALLE, boss: 'offen' });
 
-  // 1) W0-L1-04: eingeklappt, Laden erst beim Klick
+  // 1) W2-L1-02: eingeklappt, Laden erst beim Klick
   const { kontext, page } = await neueSeite(ctx, {}, 'Szenario 16 (Mika)');
   const anfragen = [];
   page.on('request', (r) => anfragen.push(r.url()));
   await anmelden(page, ctx, 'Mika R.', '/spiel');
   await kursWaehlen(page, 'LK 13 (eA)');
-  await aufgabe(page, ctx, 'W0-L1-04');
+  await aufgabe(page, ctx, 'W2-L1-02');
   const schalter = page.locator('button.werkzeug-schalter');
-  assert.equal(await schalter.count(), 1, 'W0-L1-04: ein Werkzeug-Panel');
+  assert.equal(await schalter.count(), 1, 'W2-L1-02: ein Werkzeug-Panel');
+  assert.match(await schalter.innerText(), /Vigenère-Quadrat benutzen/);
   assert.equal(await schalter.getAttribute('aria-expanded'), 'false', 'eingeklappt');
   assert.equal(await page.locator('.werkzeug-panel-flaeche').isHidden(), true);
-  assert.ok(!anfragen.some((u) => /\/labor\/skytale\.js/.test(u)), 'labor/skytale.js vor dem Klick nicht geladen');
+  assert.ok(!anfragen.some((u) => /\/labor\/vigenere\.js/.test(u)), 'labor/vigenere.js vor dem Klick nicht geladen');
   await aufklappen(page);
-  assert.ok(anfragen.some((u) => /\/labor\/skytale\.js/.test(u)), 'labor/skytale.js beim Aufklappen geladen');
+  assert.ok(anfragen.some((u) => /\/labor\/vigenere\.js/.test(u)), 'labor/vigenere.js beim Aufklappen geladen');
+  // W0-L1-04: Werkstatt-Objekt – von selbst aufgeklappt (M12 E232)
+  await aufgabe(page, ctx, 'W0-L1-04');
+  assert.match(await schalter.innerText(), /Skytale-Stab benutzen/);
+  await page.locator('.werkzeug-panel-flaeche section.gefuehrt').waitFor();
+  assert.equal(await schalter.getAttribute('aria-expanded'), 'true', 'W0-L1-04 offen');
   const raster = page.locator('.werkzeug-panel-flaeche table.gefuehrt-tabelle tbody td');
   const zellen = await raster.evaluateAll((l) => l.map((td) => td.textContent.trim()));
   assert.ok(zellen.length >= 28, `Raster in Aufgabengröße (${zellen.length} Zellen)`);
@@ -177,8 +185,11 @@ async function szenario16(ctx) {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await aufgabe(page, ctx, 'W0-L2-02');
+  await page.locator('.werkzeug-panel-flaeche section.gefuehrt').waitFor(); // offen (M12 E232)
   await page.locator('button.werkzeug-schalter').focus();
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter'); // zu …
+  assert.equal(await page.locator('button.werkzeug-schalter').getAttribute('aria-expanded'), 'false');
+  await page.keyboard.press('Enter'); // … und mit der Tastatur wieder auf
   await page.locator('.werkzeug-panel-flaeche section.gefuehrt').waitFor();
   await keinQuerScrollen(page, 'W0-L2-02 mit Panel bei 360 px');
   await ziele44(page, 'W0-L2-02 mit Panel bei 360 px');

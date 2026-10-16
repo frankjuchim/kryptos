@@ -100,12 +100,13 @@ const hatHook = (id) => GEFUEHRT_REITER.some((r) => r.startsWith(`${id}.`));
 // E204 (L60): W0-L2-04 – „Alle Verschiebungen“ mit dem Geheimtext der Aufgabe ist erlaubt
 const AUSNAHMEN = Object.freeze([{ aufgabe: 'W0-L2-04', wr: 'scheibe.alle' }]);
 
-/** Felder gefuehrt und hinweis des Blocks werkzeug (E217); fe(meldung) je Fehler */
+/** Felder gefuehrt, hinweis (E217) und offen (M12 E232) des Blocks werkzeug; fe(meldung) je Fehler */
 function pruefeBlockFelder(b, fe) {
   if (b.gefuehrt !== undefined) {
     if (typeof b.gefuehrt !== 'boolean') fe('gefuehrt muss true oder false sein.');
     else if (b.gefuehrt && werkzeug(b.id) && !hatHook(b.id)) fe(`gefuehrt: „${b.id}“ hat keinen geführten Modus (nur ${[...new Set(GEFUEHRT_REITER.map((r) => r.split('.')[0]))].join(', ')}).`);
   }
+  if (b.offen !== undefined && typeof b.offen !== 'boolean') fe('offen muss true oder false sein.'); // M12 (E232)
   if (b.hinweis !== undefined && (typeof b.hinweis !== 'string' || !b.hinweis.trim() || b.hinweis.length > HINWEIS_MAX)) fe(`hinweis muss ein Text mit 1–${HINWEIS_MAX} Zeichen sein.`);
 }
 
