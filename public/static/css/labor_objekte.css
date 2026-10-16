@@ -853,3 +853,22 @@
 .stab-gefuehrt-band-teil { display: inline-grid; gap: 2px; min-width: 3.2rem; padding: var(--a-1) var(--a-2); border-radius: 3px; background: var(--mat-band); color: var(--mat-band-tinte); text-align: center; }
 .stab-gefuehrt-band-nr { font: 600 .7rem var(--f-text); opacity: .75; }
 .stab-gefuehrt-band-teil .gefuehrt-eintrag { min-height: 1.4em; font: 700 1.05rem var(--f-mono); letter-spacing: .12em; overflow-wrap: anywhere; }
+/* Gartenzaun geführt (E236): Latten, Pfosten, Zickzack-Weg, Plätze */
+.zaun-bild { padding: var(--a-2); border-radius: var(--r-karte); background: var(--mat-gehaeuse); overflow-x: auto; overscroll-behavior-x: contain; }
+.zaun-objekt { display: block; width: 100%; min-width: 520px; height: auto; }
+.zaun-pfosten { fill: var(--mat-holz-dunkel); }
+.zaun-schiene { fill: var(--mat-holz); stroke: var(--mat-holz-dunkel); stroke-width: 2; }
+.zaun-schiene.schiene-2, .zaun-schiene.schiene-5 { fill: var(--mat-holz-hell); }
+.zaun-schiene.schiene-3, .zaun-schiene.schiene-6 { fill: var(--mat-messing); }
+.zaun-schienen-streifen { fill: transparent; }
+.zaun-schienenmarke.gefuehrt-markiert .zaun-schienen-streifen { fill: var(--mat-lampe-an); fill-opacity: .28; stroke: var(--mat-lampe-an); stroke-width: 3.5; }
+.zaun-schienen-nr { font: 700 22px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; dominant-baseline: central; }
+.zaun-schienenmarke.gefuehrt-markiert .zaun-schienen-nr { fill: var(--mat-lampe-an); }
+.zaun-pos { font: 600 12px var(--f-text); fill: var(--mat-gehaeuse-tinte); text-anchor: middle; opacity: .8; }
+.zaun-zickzack-linie { fill: none; stroke: var(--mat-gehaeuse-tinte); stroke-width: 2; stroke-dasharray: 5 6; opacity: .7; }
+.zaun-zickzack.gefuehrt-markiert .zaun-zickzack-linie { stroke: var(--mat-lampe-an); stroke-width: 4; opacity: 1; }
+.zaun-feld { fill: var(--mat-band); stroke: var(--mat-karton); stroke-width: 1.5; }
+.zaun-platz.gefuehrt-markiert .zaun-feld { stroke: var(--mat-lampe-an); stroke-width: 4.5; animation: station-blinken 1.1s ease-in-out infinite; }
+.zaun-buchstabe { font: 700 22px var(--f-mono); fill: var(--mat-band-tinte); text-anchor: middle; dominant-baseline: central; }
+@media (prefers-reduced-motion: reduce) { .zaun-platz.gefuehrt-markiert .zaun-feld { animation: none; } }
+:root[data-bewegung="aus"] .zaun-platz.gefuehrt-markiert .zaun-feld { animation: none; }

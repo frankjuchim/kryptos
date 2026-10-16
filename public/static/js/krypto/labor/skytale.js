@@ -1564,44 +1564,183 @@
         }
       };
     }
-    function zaunHook(container, werte) {
+    /** Stempelkasten im geführten Modus: trägt in den aktuellen Schritt ein (steuer.trage, M12 E233) */
+    function gefuehrtStempel(steuer, titel) {
+      const st = S.stempel(null, (b) => steuer && steuer.trage(b), { beschriftung: titel });
+      const element = h('div', { class: 'stab-gefuehrt-stempel' }, h('span', { class: 'stab-feldtitel' }, titel), st.element);
+      return { element, zeige: (an) => (element.hidden = !an) };
+    }
+    /** Band unter dem Objekt: nur Einträge (span.gefuehrt-eintrag) je Teil. → { element, setze(liste) } */
+    function gefuehrtBand(titel, namen, klasse) {
+      const eintraege = [];
+      const element = h(
+        'div',
+        { class: `stab-gefuehrt-band ${klasse}`, role: 'group', 'aria-label': titel },
+        h('p', { class: 'stab-gefuehrt-band-titel' }, titel),
+        h('div', { class: 'stab-gefuehrt-band-teile' }, namen.map((nm) => {
+          const e = h('span', { class: 'gefuehrt-eintrag' });
+          eintraege.push(e);
+          return h('span', { class: 'stab-gefuehrt-band-teil' }, h('span', { class: 'stab-gefuehrt-band-nr' }, nm), e);
+        }))
+      );
+      return { element, setze: (liste) => eintraege.forEach((e, j) => (e.textContent = String((liste || [])[j] || ''))) };
+    }
+    /** Teile der Länge laenge(j) aus einer Zeichenkette (nur für korrekt() nach der Freigabe) */
+    function stuecke(text, laengen) {
+      let p = 0;
+      return laengen.map((l) => {
+        const x = text.slice(p, p + l);
+        p += l;
+        return x;
+      });
+    }
+
+    /**
+     * Gartenzaun geführt am Zaun (M12 E236): Schienen als Holzlatten, Pfosten, gestrichelter Zickzack-Weg (Mechanik der
+     * Angaben). ver: je Klartextbuchstabe der Zickzack-Platz markiert, dein Buchstabe steht im Zaun; dann je Schiene die
+     * Schienenmarke markiert – du liest deine Buchstaben der Schiene ab (Band „Dein Geheimtext“). ent: Geheimtext Schiene
+     * für Schiene einlegen (Platz markiert), dann einmal im Zickzack lesen (Weg markiert). Plätze im DOM in der Reihenfolge
+     * deiner Einträge (nie Position für Position beim Entschlüsseln).
+     */
+    function zaunHook(container, werte, _umgebung, steuer) {
       const ver = werte.richtung !== 'ent';
       const n = ganz(werte.zeilen, 2, 8, 3);
       const eingabe = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
-      const muster = Krypto.gartenzaunSchienen(eingabe.length, n);
-      // Zellen: verschlüsseln im Zickzack (Position p auf Schiene muster[p]); entschlüsseln Schiene für Schiene
+      const m = eingabe.length;
+      const muster = Krypto.gartenzaunSchienen(m, n);
       const zickzack = muster.map((sch, p) => [sch, p]);
       const reihe = zickzack.slice().sort(zeilenweise);
-      return schreibHook(container, {
-        eingabe,
-        ver,
-        zeilen: n,
-        spalten: eingabe.length,
-        zelle: (i) => (ver ? zickzack[i] : reihe[i]),
-        caption: ver ? `Zickzack über ${n} Schienen (Positionen ab 0)` : `Geheimtext Schiene für Schiene eintragen (${n} Schienen, Positionen ab 0)`,
-        zeilenKopf: (zz) => `Schiene ${zz + 1}`,
-        spaltenKopf: (ss) => String(ss)
+      const ziel = (i) => (ver ? zickzack[i] : reihe[i]);
+      const DX = 44;
+      const X0 = 60;
+      const DY = 58;
+      const Y0 = 30;
+      const px = (p) => X0 + p * DX + DX / 2;
+      const py = (sch) => Y0 + sch * DY + DY / 2;
+      const breite = X0 + Math.max(1, m) * DX + 24;
+      const svg = s('svg', { class: 'zaun-objekt', role: 'img', viewBox: `0 0 ${breite} ${Y0 + n * DY + 12}`, 'aria-label': `Gartenzaun mit ${n} Schienen und ${m} Plätzen im Zickzack` });
+      for (let p = 0; p <= m; p += 4) svg.appendChild(s('rect', { class: 'zaun-pfosten', x: X0 + p * DX - 8, y: 6, width: 16, height: Y0 + n * DY, rx: 3 }));
+      const marken = Array.from({ length: n }, (_, i) =>
+        s('g', { class: 'zaun-schienenmarke', 'data-schiene': String(i) }, s('rect', { class: 'zaun-schienen-streifen', x: 4, y: py(i) - 21, width: breite - 8, height: 42, rx: 8 }), s('text', { class: 'zaun-schienen-nr', x: 24, y: py(i) }, String(i + 1)))
+      );
+      svg.append(...marken);
+      for (let i = 0; i < n; i++) svg.appendChild(s('rect', { class: `zaun-schiene schiene-${i + 1}`, x: X0 - 10, y: py(i) - 15, width: m * DX + 20, height: 30, rx: 6 }));
+      svg.appendChild(s('g', { class: 'zaun-positionen gefuehrt-positionen', 'aria-hidden': 'true' }, Array.from({ length: m }, (_, p) => s('text', { class: 'zaun-pos', x: px(p), y: Y0 - 14 }, String(p)))));
+      const weg = s('g', { class: 'zaun-zickzack' }, s('polyline', { class: 'zaun-zickzack-linie', points: zickzack.map(([sch, p]) => `${px(p)},${py(sch)}`).join(' ') }));
+      svg.appendChild(weg);
+      const plaetze = Array.from({ length: m }, (_, i) => {
+        const [sch, p] = ziel(i);
+        const e = s('text', { class: 'zaun-buchstabe gefuehrt-eintrag', x: px(p), y: py(sch) });
+        const g = s('g', { class: 'zaun-platz', 'data-schiene': String(sch), 'data-position': String(p) }, s('rect', { class: 'zaun-feld', x: px(p) - 17, y: py(sch) - 17, width: 34, height: 34, rx: 6 }), e);
+        svg.appendChild(g);
+        return { g, e };
       });
+      const stempel = gefuehrtStempel(steuer, ver ? 'Stempel: auf den markierten Platz im Zickzack' : 'Stempel: auf den markierten Platz der Schiene');
+      const band = ver ? gefuehrtBand('Dein Geheimtext (Schiene für Schiene)', Array.from({ length: n }, (_, i) => `Schiene ${i + 1}`), 'zaun-gefuehrt-band') : gefuehrtBand('Dein Klartext (im Zickzack gelesen)', ['Klartext'], 'zaun-gefuehrt-band');
+      container.append(
+        h('p', { class: 'stab-gefuehrt-anleitung text-2' }, ver ? `Zaun mit ${n} Schienen: Schreib den Klartext im Zickzack – der markierte Platz kommt als Nächstes. Dann liest du Schiene für Schiene.` : `Zaun mit ${n} Schienen: Leg den Geheimtext Schiene für Schiene auf die Plätze. Dann liest du im Zickzack.`),
+        h('div', { class: 'zaun-bild', tabindex: '0', role: 'group', 'aria-label': 'Gartenzaun (auf schmalen Bildschirmen seitlich verschiebbar)' }, svg),
+        stempel.element,
+        band.element
+      );
+      const schritte = eingabe.map((b, i) => ({
+        text: ver ? `Zickzack: ${Krypto.klein(b)} (Position ${i}) auf den markierten Platz` : `Geheimtextbuchstabe ${b} (Nr. ${i + 1}) auf den markierten Platz von Schiene ${ziel(i)[0] + 1}`,
+        feld: { beschriftung: 'Buchstabe auf dem Platz', art: 'buchstabe' }
+      }));
+      if (ver) for (let i = 0; i < n; i++) schritte.push({ text: `Schiene ${i + 1}: lies deine Buchstaben von links nach rechts`, feld: { beschriftung: `Schiene ${i + 1}`, art: 'text' } });
+      else schritte.push({ text: 'Lies im Zickzack: Position 0, 1, 2 … entlang des Wegs', feld: { beschriftung: 'Klartext', art: 'text' } });
+      return {
+        objekt: true,
+        schritte,
+        markiere(i, e) {
+          plaetze.forEach((x, j) => {
+            x.e.textContent = e[j] ? (ver ? Krypto.klein(e[j]) : e[j]) : '';
+            x.g.classList.toggle('gefuehrt-markiert', j === i);
+          });
+          marken.forEach((g, sch) => g.classList.toggle('gefuehrt-markiert', ver && i - m === sch));
+          weg.classList.toggle('gefuehrt-markiert', !ver && i >= m);
+          stempel.zeige(i < m);
+          band.setze(ver ? e.slice(m).map((x) => Krypto.nurBuchstaben(x || '')) : [Krypto.klein(Krypto.nurBuchstaben(e[m] || ''))]);
+        },
+        korrekt() {
+          const t = eingabe.join('');
+          if (ver) return [...eingabe.map((b) => Krypto.klein(b)), ...stuecke(Krypto.gartenzaun(t, n, 'ver'), Array.from({ length: n }, (_, i) => muster.filter((x) => x === i).length))];
+          return [...eingabe, Krypto.klein(Krypto.gartenzaun(t, n, 'ent'))];
+        }
+      };
     }
-    function pfluegenHook(container, werte) {
+    /**
+     * Pflügen geführt auf dem Karopapier (M12 E236, Zusatz): Tabelle der Station mit Pflugweg-Pfeilen. ver: Klartext
+     * zeilenweise schreiben (Feld markiert), dann je Spalte von rechts pflügen (Pfeil markiert, du liest ab); ent: Geheimtext
+     * entlang des Pflugwegs eintragen, dann Zeile für Zeile lesen. Einträge nur in den Zellen und im Band.
+     */
+    function pfluegenHook(container, werte, _umgebung, steuer) {
       const ver = werte.richtung !== 'ent';
       const kk = ganz(werte.k, 2, 12, 5);
       const ein = [...Krypto.nurBuchstaben(String(werte.text || ''))].slice(0, MAX_TEXT);
       const zeilenZahl = Math.max(1, Math.ceil(ein.length / kk));
       const eingabe = ver ? [...ein, ...Array(zeilenZahl * kk - ein.length).fill('X')] : ein;
+      const m = eingabe.length;
       const nummern = Krypto.pfluegenReihenfolge(zeilenZahl, kk);
       const weg = [];
       nummern.forEach((zeile, zi) => zeile.forEach((nr, sp) => (weg[nr - 1] = [zi, sp])));
-      return schreibHook(container, {
-        eingabe,
-        ver,
-        zeilen: zeilenZahl,
-        spalten: kk,
-        zelle: (i) => (ver ? [Krypto.teileMitRest(i, kk).q, Krypto.teileMitRest(i, kk).r] : weg[i]),
-        caption: ver ? `Zeilen der Länge k = ${kk}: Klartext zeilenweise schreiben (Füllzeichen X)` : `Geheimtext entlang des Pflugwegs eintragen (k = ${kk})`,
-        zeilenKopf: (zz) => `Zeile ${zz + 1}`,
-        spaltenKopf: (ss) => `Spalte ${ss + 1}`
+      const ziel = (i) => (ver ? [Krypto.teileMitRest(i, kk).q, Krypto.teileMitRest(i, kk).r] : weg[i]);
+      const zellen = [];
+      const pfeile = [];
+      const zeilenKoepfe = [];
+      for (let sp = 0; sp < kk; sp++) {
+        const hoch = Krypto.mod(kk - 1 - sp, 2) === 0;
+        pfeile.push(h('th', { scope: 'col', class: 'pflug-pfeil', 'data-spalte': String(sp), 'aria-label': `Spalte ${sp + 1}: ${hoch ? 'von unten nach oben' : 'von oben nach unten'}` }, hoch ? '↑' : '↓'));
+      }
+      const zeilen = Array.from({ length: zeilenZahl }, (_, zi) => {
+        const th = h('th', { scope: 'row', 'data-zeile': String(zi) }, `Z${zi + 1}`);
+        zeilenKoepfe.push(th);
+        const reihe = Array.from({ length: kk }, (_, sp) => {
+          const td = h('td', { 'data-zeile': String(zi), 'data-spalte': String(sp) }, h('span', { class: 'pflug-zeichen gefuehrt-eintrag' }));
+          zellen.push({ td, zi, sp });
+          return td;
+        });
+        return h('tr', null, th, reihe);
       });
+      const zelle = (zi, sp) => zellen.find((c) => c.zi === zi && c.sp === sp);
+      const tabelle = h(
+        'table',
+        { class: 'pflug-tabelle' },
+        h('caption', { class: 'sr' }, `Karopapier mit ${kk} Spalten: zeilenweise schreiben, von rechts spaltenweise pflügen`),
+        h('thead', null, h('tr', null, h('td', { class: 'ecke' }), Array.from({ length: kk }, (_, i) => h('th', { scope: 'col' }, String(i + 1)))), h('tr', { class: 'pflug-weg' }, h('td', { class: 'ecke' }), pfeile)),
+        h('tbody', null, zeilen)
+      );
+      const stempel = gefuehrtStempel(steuer, ver ? 'Stempel: in das markierte Feld' : 'Stempel: entlang des Pflugwegs');
+      const spaltenFolge = Array.from({ length: kk }, (_, j) => kk - 1 - j); // von rechts
+      const band = ver ? gefuehrtBand('Dein Geheimtext (Spalte für Spalte)', spaltenFolge.map((sp) => `Spalte ${sp + 1}`), 'pflug-gefuehrt-band') : gefuehrtBand('Dein Klartext (Zeile für Zeile)', zeilen.map((_, zi) => `Zeile ${zi + 1}`), 'pflug-gefuehrt-band');
+      container.append(h('div', { class: 'pflug-bild scroll-x' }, h('p', { class: 'pflug-titel' }, 'Karopapier'), h('div', { class: 'pflug-papier' }, tabelle)), stempel.element, band.element);
+      const schritte = eingabe.map((b, i) => ({ text: ver ? `${i < ein.length ? Krypto.klein(b) : 'Füllzeichen x'} (Nr. ${i + 1}) in das markierte Feld` : `Geheimtextbuchstabe ${b} (Nr. ${i + 1}) entlang des Pflugwegs in das markierte Feld`, feld: { beschriftung: 'Buchstabe im markierten Feld', art: 'buchstabe' } }));
+      if (ver) spaltenFolge.forEach((sp) => schritte.push({ text: `Pflügen: Spalte ${sp + 1} in Pfeilrichtung lesen`, feld: { beschriftung: `Spalte ${sp + 1}`, art: 'text' } }));
+      else zeilen.forEach((_, zi) => schritte.push({ text: `Zeile ${zi + 1} von links nach rechts lesen`, feld: { beschriftung: `Zeile ${zi + 1}`, art: 'text' } }));
+      return {
+        objekt: true,
+        schritte,
+        markiere(i, e) {
+          const [zz, ss] = i < m ? ziel(i) : [-1, -1];
+          zellen.forEach((c) => c.td.classList.remove('gefuehrt-markiert'));
+          eingabe.forEach((_, j) => {
+            const c = zelle(...ziel(j));
+            if (c) c.td.firstChild.textContent = e[j] ? (ver ? Krypto.klein(e[j]) : e[j]) : '';
+          });
+          const c = i < m ? zelle(zz, ss) : null;
+          if (c) c.td.classList.add('gefuehrt-markiert');
+          pfeile.forEach((th, sp) => th.classList.toggle('gefuehrt-markiert', ver && i >= m && spaltenFolge[i - m] === sp));
+          zeilenKoepfe.forEach((th, zi) => th.classList.toggle('gefuehrt-markiert', !ver && i - m === zi));
+          stempel.zeige(i < m);
+          band.setze(e.slice(m).map((x) => (ver ? Krypto.nurBuchstaben(x || '') : Krypto.klein(Krypto.nurBuchstaben(x || '')))));
+        },
+        korrekt() {
+          const t = eingabe.join('');
+          const anzeige = eingabe.map((b) => (ver ? Krypto.klein(b) : b));
+          if (ver) return [...anzeige, ...stuecke(Krypto.pfluegen(t, kk, 'ver'), spaltenFolge.map(() => zeilenZahl))];
+          return [...anzeige, ...stuecke(Krypto.klein(Krypto.pfluegen(t, kk, 'ent')), zeilen.map(() => kk))];
+        }
+      };
     }
     function fleissnerHook(container, werte) {
       const ver = werte.richtung !== 'ent';

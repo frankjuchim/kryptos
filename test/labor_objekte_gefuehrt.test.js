@@ -111,3 +111,61 @@ test('m12_skytale_frei_bleibt_station', () => {
   assert.ok(w.k.eins(w.flaeche, '.stab-station svg.stab-objekt'));
   assert.equal(w.k.alle(w.flaeche, 'section.gefuehrt').length, 0);
 });
+
+/* ---------- Task 255: Gartenzaun und Pflügen am Objekt ---------- */
+
+const L105 = { reiter: ['gartenzaun'], text: 'die mauer haelt stand', zeilen: 3, richtung: 'ver' }; // W0-L1-05
+const L106 = { reiter: ['gartenzaun'], text: 'BTNID NEWGO ESNUT RES', zeilen: 2, richtung: 'ent' }; // W0-L1-06
+
+test('m12_zaun_ver_zickzack_am_zaun', () => {
+  const w = panel('skytale', 'W0-L1-05', L105);
+  objektZuerst(w, 'svg.zaun-objekt');
+  assert.equal(w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .zaun-schiene').length, 3, 'drei Schienen');
+  assert.equal(anzahl(w), 18 + 3, '18 Buchstaben im Zickzack, dann 3 Schienen lesen');
+  const plaetze = w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .zaun-platz');
+  assert.equal(plaetze.length, 18);
+  assert.deepEqual(plaetze.slice(0, 5).map((p) => p.getAttribute('data-schiene')), ['0', '1', '2', '1', '0'], 'Zickzack');
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.equal(m[0].getAttribute('data-position'), '0');
+  w.k.klick(w.k.eins(w.flaeche, '.gefuehrt-mechanik .station-stempel[data-buchstabe="D"]'));
+  assert.equal(w.k.text(plaetze[0].querySelector('.gefuehrt-eintrag')), 'd', 'dein Buchstabe steht im Zaun');
+  assert.equal(markiert(w)[0].getAttribute('data-position'), '1');
+  BED.gehe(w, 18);
+  const m2 = markiert(w);
+  assert.equal(m2.length, 1);
+  assert.ok(m2[0].classList.contains('zaun-schienenmarke'));
+  assert.equal(m2[0].getAttribute('data-schiene'), '0');
+  w.k.tippe(feld(w), 'dah');
+  assert.equal(w.k.text(w.k.alle(w.flaeche, '.zaun-gefuehrt-band .gefuehrt-eintrag')[0]), 'DAH');
+  assert.ok(!alles(w).includes('DAHTNIMUR'));
+});
+
+test('m12_zaun_ent_schiene_fuer_schiene_dann_zickzack', () => {
+  const w = panel('skytale', 'W0-L1-06', L106);
+  objektZuerst(w, 'svg.zaun-objekt');
+  assert.equal(anzahl(w), 18 + 1, '18 Geheimtextbuchstaben einlegen, dann einmal im Zickzack lesen');
+  const m = markiert(w);
+  assert.equal(m.length, 1);
+  assert.equal(m[0].getAttribute('data-schiene'), '0');
+  assert.equal(m[0].getAttribute('data-position'), '0');
+  BED.gehe(w, 9);
+  assert.equal(markiert(w)[0].getAttribute('data-schiene'), '1', 'nach 9 Buchstaben die zweite Schiene');
+  assert.equal(markiert(w)[0].getAttribute('data-position'), '1');
+  BED.gehe(w, 18);
+  assert.ok(markiert(w)[0].classList.contains('zaun-zickzack'));
+  // Reihenfolge im DOM: Schiene für Schiene (wie eingelegt) – nie Position für Position
+  const k = K.nurBuchstaben('BTNID NEWGO ESNUT RES');
+  [...k].forEach((b, i) => BED.trage(w, i, b));
+  const dom = w.k.alle(w.flaeche, '.gefuehrt-mechanik svg .zaun-platz .gefuehrt-eintrag').map((x) => w.k.text(x)).join('');
+  assert.equal(dom, k, 'DOM-Reihenfolge = Einlege-Reihenfolge');
+  BED.trage(w, 18, 'botensindunterwegs');
+  w.k.wert('KRGefuehrt').freigeben('W0-L1-06');
+  assert.match(w.k.text(w.k.eins(w.flaeche, '.gefuehrt-fazit')), /19 von 19/);
+});
+
+test('m12_pfluegen_auf_dem_karopapier', () => {
+  const w = panel('skytale', 'W9-L1-01', { reiter: ['pfluegen'], text: 'zwiebelturm', k: 4, richtung: 'ver' });
+  if (!w.k.eins(w.flaeche, 'section.gefuehrt')) return; // eigene Werte: frei (nur Aufgabenwerte führen)
+  objektZuerst(w, 'table.pflug-tabelle');
+});

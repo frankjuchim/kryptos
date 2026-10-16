@@ -70,7 +70,7 @@ test('Labor-Klassen kollidieren nicht mit allgemeinen Selektoren in aufgaben.css
 });
 
 test('labor_objekte.css (Plan M10 E173): jeder Selektor beginnt mit einer Klasse mit Werkzeug-Präfix', () => {
-  const PRAEFIX = /^(station|scheibe|stab|pflug|karton|quadrat|signale|verstecke|enigma|analyse|werkzeug-herkunft|labor-vier)/;
+  const PRAEFIX = /^(station|scheibe|stab|pflug|karton|zaun|ring|quadrat|signale|verstecke|enigma|analyse|werkzeug-herkunft|labor-vier)/; // M12: zaun, ring (Objekte im geführten Modus)
   const sel = selektoren('labor_objekte.css').filter((x) => !/^(from|to|\d+%)$/.test(x));
   assert.ok(sel.length > 10, 'Selektoren gefunden');
   const falsch = sel.filter((x) => {
