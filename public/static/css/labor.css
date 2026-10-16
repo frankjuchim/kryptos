@@ -1027,15 +1027,15 @@ mark.markiert.wiederholung { font-weight: 700; }
 .enigma-stellung, .enigma-wege { margin: 0; }
 .enigma-wege { font-family: var(--f-mono); overflow-wrap: anywhere; }
 .enigma-wege-titel { font-family: var(--f-text); font-weight: 700; }
-/* 1.3.1: ADFGVX-Quadrat 6 × 6 und Spalten-Raster (Werkzeug „Polybios & Playfair“, ab Welt 3) */
+/* 1.3.1: ADFGVX-Quadrat 6 × 6 und Spalten-Raster (Werkzeug „Polybios & Playfair“, ab Welt 3) – auf dem Papier
+   (quadrat-papier) immer mit Material-Farben, auch im Dunkelmodus */
 .adfgvx-objekte { display: grid; gap: var(--a-3); }
-.adfgvx-quadrat, .spalten-raster { border-collapse: collapse; font-family: var(--f-mono); }
-.adfgvx-quadrat caption, .spalten-raster caption { caption-side: top; text-align: left; font-family: var(--f-text); font-size: .85rem; font-weight: 700; padding-bottom: var(--a-1); }
-.adfgvx-quadrat th, .spalten-raster th { min-width: 2.4rem; height: 2.4rem; font-weight: 700; color: var(--akzent); text-align: center; }
-.adfgvx-quadrat td, .spalten-raster td { min-width: 2.4rem; height: 2.4rem; border: 1.5px solid var(--linie); text-align: center; font-size: 1.15rem; font-weight: 700; background: var(--karte); }
-.spalten-raster tr.spalten-rang th { color: var(--text-2); font-size: .9rem; border-bottom: 2px solid var(--linie); }
-.spalten-raster tr.spalten-rang .gefuehrt-eintrag { color: var(--text); }
-.adfgvx-quadrat .gefuehrt-markiert, .spalten-raster .gefuehrt-markiert { outline: 3px solid var(--akzent); outline-offset: -3px; background: var(--hinweis-flaeche); }
+.adfgvx-quadrat, .spalten-raster { border-collapse: collapse; font-family: var(--f-mono); color: var(--mat-band-tinte); }
+.adfgvx-quadrat caption, .spalten-raster caption { caption-side: top; text-align: left; font-family: var(--f-text); font-size: .85rem; font-weight: 700; padding-bottom: var(--a-1); color: var(--mat-band-tinte); }
+.adfgvx-quadrat th, .spalten-raster th { min-width: 2.4rem; height: 2.4rem; font-weight: 700; color: var(--mat-band-tinte); background: transparent; text-align: center; }
+.adfgvx-quadrat td, .spalten-raster td { min-width: 2.4rem; height: 2.4rem; border: 1.5px solid var(--mat-karton); text-align: center; font-size: 1.15rem; font-weight: 700; color: var(--mat-band-tinte); background: var(--mat-band); }
+.spalten-raster tr.spalten-rang th { font-size: .9rem; border-bottom: 2px solid var(--mat-karton); }
+.adfgvx-quadrat .gefuehrt-markiert, .spalten-raster .gefuehrt-markiert { outline: 3px solid var(--mat-holz-dunkel); outline-offset: -3px; text-decoration: underline 3px; }
 .quadrat-band6 { display: grid; gap: var(--a-1); }
 .quadrat-band6-titel { margin: 0; font-size: .85rem; font-weight: 700; }
 .quadrat-band6-teile { display: flex; flex-wrap: wrap; gap: var(--a-1); }
