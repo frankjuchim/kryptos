@@ -1370,6 +1370,10 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   darunter im Fluss unter dem Block. Tablet hoch (768–959 px, Höhe ≥ 640 px): Ist die Antwort kompakt (Antwortteile
   zusammen ≤ 30 % der Höhe), kleben sie über der Knopfleiste (`.antwort-klebt`, mehrere übereinander), ein Lückentext vor
   dem Werkzeug klebt oben (`.antwort-klebt-oben`) – Werkzeug und Antwort stehen zugleich im Bild (e2e 16, Teil 3b).
+  Sprung-Knopf (1.3.3): Ohne Seitenleiste und ohne klebende Antwort schwebt `button.werkzeug-sprung` unten rechts (über der
+  Knopfleiste), sobald Werkzeug und Antwort nicht zugleich im Bild sind – „↓ Zur Antwort“ rollt die ganze Antwort in den
+  sichtbaren Bereich und setzt den Fokus ins erste leere Antwortfeld, „↑ Zum Werkzeug“ rollt zur Werkzeug-Fläche und
+  fokussiert sie (`tabindex=-1`); weich nur ohne reduzierte Bewegung; ausgeblendet, solange ein Eingabefeld den Fokus hat.
   Bei Touch rollt `KR` ein fokussiertes Eingabefeld, das die Bildschirmtastatur oder eine klebende Leiste verdeckt, in die Mitte. Im Boss-Kampf
   (`ctx.modus === 'boss'`) entsteht kein Panel. Level-Karten (Level-Feld `werkzeug`, `level.js`) bekommen dasselbe Panel
   mit dem Schalter „Hier ausprobieren“ ohne Zweitlink (die Karte verlinkt das Labor schon). Validator: Block `werkzeug` ist

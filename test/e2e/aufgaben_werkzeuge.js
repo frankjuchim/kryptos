@@ -12,7 +12,8 @@
  *  3. 360 px: kein Querscrollen, Antwort mit offenem Panel erreichbar, Touch-Ziele ≥ 44 px; Tastatur (Schalter mit Enter,
  *     Weiter mit →, Enter im Panel prüft nicht); reduzierte Bewegung ohne laufende Animationen.
  *     3b (1.3.2): Tablet mit Touch – hoch klebt die Antwort (W3-L4-02: Werkzeug und Antwort zugleich im Bild), quer ab
- *     960 px Seitenleiste neben der Antwort und unter der Kopfzeile.
+ *     960 px Seitenleiste neben der Antwort und unter der Kopfzeile. 1.3.3: dort kein Sprung-Knopf; W0-L2-04 bei 768 × 1024
+ *     (Antwort zu groß zum Kleben): „↓ Zur Antwort“ → Fokus im ersten leeren Antwortfeld, zurück mit „↑ Zum Werkzeug“.
  *  4. Ole B.: zweiter Tab startet den Boss-Kampf → das offene Panel im ersten Tab schließt mit Grund.
  *  5. Freies Labor: /labor#/scheibe mit IMOTQ (k = 12, häppchenweise getippt) → „Schritt für Schritt“, kein „wache“;
  *     eigener Text → frei. /werkstatt: Probelauf mit „boje“ (Umkehrung + Caesar 3) → neutraler Hinweis.
@@ -54,6 +55,13 @@ const panelZustand = (page) =>
     const text = (sel) => [...s.querySelectorAll(sel)].map((x) => x.textContent).join('|');
     return { klassen, frei: s.dataset.freigegeben || '', vergleich: text('.gefuehrt-vergleich'), fazit: text('.gefuehrt-fazit'), hinweis: text('.gefuehrt-hinweis'), live: text('[aria-live]:not(.gefuehrt-eintrag)') };
   });
+
+/** Zusatzbild für die Durchsicht (nicht im Foto-Satz): nur mit E2E_BILDER=<Ordner> */
+async function foto2(page, name) {
+  if (!process.env.E2E_BILDER) return;
+  await page.waitForTimeout(900); // weiches Rollen abwarten
+  await page.screenshot({ path: require('node:path').join(process.env.E2E_BILDER, `${name}.png`) });
+}
 
 async function szenario16(ctx) {
   const lehrer = await neueSeite(ctx, {}, 'Szenario 16 (Frau M.)');
@@ -287,9 +295,59 @@ async function szenario16(ctx) {
     assert.ok(lage.feldFrei, `${ort}: Antwortfeld nicht verdeckt`);
     if (w < 960) assert.ok(!lage.fest && lage.klebt, `${ort}: im Fluss, Antwort klebt`);
     else assert.ok(lage.fest && !lage.klebt && lage.nebeneinander && lage.panelUnterKopf, `${ort}: Seitenleiste neben der Antwort, unter der Kopfzeile (${JSON.stringify(lage)})`);
+    // 1.3.3: klebende Antwort bzw. Seitenleiste – kein Sprung-Knopf (oben und auf Höhe des Werkzeugs)
+    for (const y of [0, 600]) {
+      await t.page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), y);
+      await t.page.waitForTimeout(120);
+      assert.equal(await t.page.locator('button.werkzeug-sprung:visible').count(), 0, `${ort}: kein Sprung-Knopf (y ${y})`);
+    }
     // Zuklappen: Antwort klebt nicht mehr
     await t.page.locator('button.werkzeug-schalter').first().click();
     assert.equal(await t.page.locator('.antwort-klebt').count(), 0, `${ort}: zugeklappt klebt nichts`);
+    if (w === 768) {
+      // 1.3.3 Sprung-Knopf: W0-L2-04 (Liste aller Schlüssel, Antwort zu groß zum Kleben) – „↓ Zur Antwort“, Tippen rollt
+      // hin und setzt den Fokus ins erste leere Antwortfeld; dort zurück mit „↑ Zum Werkzeug“
+      await aufgabe(t.page, ctx, 'W0-L2-04');
+      await aufklappen(t.page, { gefuehrt: false });
+      await t.page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      const knopf = t.page.locator('button.werkzeug-sprung');
+      await knopf.waitFor({ state: 'visible' });
+      assert.match(await knopf.innerText(), /Zur Antwort/);
+      assert.equal(await knopf.getAttribute('aria-label'), 'Zur Antwort springen');
+      const kb = await knopf.boundingBox();
+      assert.ok(kb.width >= 44 && kb.height >= 44, `Sprung-Knopf ≥ 44 px (${Math.round(kb.width)}×${Math.round(kb.height)})`);
+      const leiste = await t.page.locator('.aktionen').boundingBox();
+      assert.ok(kb.y + kb.height <= leiste.y + 1, 'Sprung-Knopf über der Knopfleiste');
+      await foto2(t.page, 'sprung-vorher');
+      await knopf.tap();
+      await t.page.waitForFunction(() => {
+        const f = document.activeElement;
+        if (!f || !f.closest('.aufgabe-box > [role="group"]')) return false;
+        const r = f.getBoundingClientRect();
+        return r.top >= 0 && r.bottom <= innerHeight;
+      });
+      const fokus = await t.page.evaluate(() => ({ leer: !document.activeElement.value, tag: document.activeElement.localName }));
+      assert.ok(fokus.leer && ['input', 'textarea'].includes(fokus.tag), `Fokus im ersten leeren Antwortfeld (${JSON.stringify(fokus)})`);
+      await foto2(t.page, 'sprung-nachher');
+      // Fokus weg (Tastatur zu): an der Antwort bietet der Knopf den Weg zurück an
+      await t.page.evaluate(() => document.activeElement.blur());
+      await t.page.waitForFunction(() => {
+        const b = document.querySelector('button.werkzeug-sprung');
+        return b && !b.hidden && /Zum Werkzeug/.test(b.textContent);
+      });
+      // die ganze Antwort (Schlüssel und Klartext) steht über der Knopfleiste im Bild
+      const antwortGanz = await t.page.evaluate(() => {
+        const g = [...document.querySelectorAll('.aufgabe-box > [role="group"]')];
+        const leiste = document.querySelector('.aktionen').getBoundingClientRect();
+        return g[0].getBoundingClientRect().top >= 0 && g[g.length - 1].getBoundingClientRect().bottom <= leiste.top + 1;
+      });
+      assert.ok(antwortGanz, 'nach dem Sprung: ganze Antwort im Bild');
+      await foto2(t.page, 'sprung-zum-werkzeug');
+      await knopf.tap();
+      await t.page.waitForFunction(() => document.activeElement && document.activeElement.classList.contains('werkzeug-panel-flaeche'));
+      await keinQuerScrollen(t.page, 'W0-L2-04 mit Sprung-Knopf bei 768 × 1024');
+      await ziele44(t.page, 'W0-L2-04 mit Sprung-Knopf bei 768 × 1024');
+    }
     await t.kontext.close();
   }
 
