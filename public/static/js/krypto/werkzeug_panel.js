@@ -78,10 +78,123 @@ const KRPanel = (() => {
     }
     if (wurzel && wurzel.style) wurzel.style.setProperty('--antwort-hoehe', `${Math.round(summe)}px`);
   }
+  /*
+   * Sprung-Knopf (1.3.3, Entscheidung der Lehrkraft): Ohne Seitenleiste und ohne klebende Antwort liegen Werkzeug und
+   * Antwort oft weiter als eine Bildschirmhöhe auseinander (z. B. W0-L2-04, W0-L1-08). Dann schwebt unten rechts
+   * „↓ Zur Antwort“ bzw. „↑ Zum Werkzeug“ (button.werkzeug-sprung, labor.css): Antippen rollt hin und setzt den Fokus ins
+   * erste leere Antwortfeld bzw. auf die Werkzeug-Fläche. Sonst ist er versteckt.
+   */
+  let sprungKnopf = null;
+  let sprungZiel = null; // { art: 'antwort'|'werkzeug', panel }
+  const reduziert = () =>
+    (document.documentElement && document.documentElement.getAttribute('data-bewegung') === 'aus') || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function sprungKnopfHolen() {
+    if (sprungKnopf && sprungKnopf.isConnected !== false) return sprungKnopf;
+    sprungKnopf = h('button', { type: 'button', class: 'knopf werkzeug-sprung', hidden: true });
+    sprungKnopf.addEventListener('click', springe);
+    document.body.appendChild(sprungKnopf);
+    return sprungKnopf;
+  }
+  /** sichtbarer Bereich ohne die klebende Knopfleiste unten */
+  function sichtbarUnten() {
+    let unten = typeof innerHeight === 'number' && innerHeight > 0 ? innerHeight : 800;
+    const leiste = document.querySelector('.aktionen');
+    if (leiste && leiste.getBoundingClientRect && getComputedStyle(leiste).getPropertyValue('position') === 'sticky') {
+      const r = leiste.getBoundingClientRect();
+      if (r.height && r.top < unten) unten = r.top;
+    }
+    return unten;
+  }
+  /** Lage von Werkzeug und Antwort zum offenen Panel oder null (kein Knopf nötig/möglich) */
+  function sprungLage(p) {
+    const box = p && p.el && typeof p.el.closest === 'function' ? p.el.closest('.aufgabe-box') : null;
+    const flaeche = p && p.el ? p.el.querySelector('.werkzeug-panel-flaeche') : null;
+    if (!box || !flaeche || flaeche.hidden) return null;
+    if (getComputedStyle(flaeche).getPropertyValue('position') === 'fixed') return null; // Seitenleiste
+    if (box.querySelector('.antwort-klebt, .antwort-klebt-oben')) return null;
+    const ziel = antwortZu(p.el, box);
+    if (!ziel || !ziel.els.length) return null;
+    const unten = sichtbarUnten();
+    const fr = flaeche.getBoundingClientRect();
+    const erster = ziel.els[0].getBoundingClientRect();
+    const letzter = ziel.els[ziel.els.length - 1].getBoundingClientRect();
+    const antwortImBild = erster.top >= 0 && letzter.bottom <= unten;
+    const werkzeugSichtbar = Math.min(fr.bottom, unten) - Math.max(fr.top, 0);
+    // „im Bild“ = mindestens die Hälfte dessen, was vom Werkzeug auf den Bildschirm passt (nicht nur sein Fuß)
+    const werkzeugImBild = werkzeugSichtbar >= Math.min(fr.bottom - fr.top, unten) * 0.5;
+    if (antwortImBild && werkzeugImBild) return null;
+    if (antwortImBild) return { art: 'werkzeug', hoch: fr.top < 0, flaeche, ziel };
+    return { art: 'antwort', hoch: erster.top < 0, flaeche, ziel };
+  }
+  let sprungGeplant = false;
+  /** Eingabe fokussiert (Bildschirmtastatur offen)? Dann verdeckt kein schwebender Knopf das Feld */
+  function tippt() {
+    const a = document.activeElement;
+    return !!a && ['input', 'textarea', 'select'].includes(a.localName) && !['checkbox', 'radio', 'button'].includes((a.getAttribute('type') || '').toLowerCase());
+  }
+  function sprungPruefen() {
+    sprungZiel = null;
+    let lage = null;
+    if (!tippt()) for (const p of OFFEN) lage = lage || sprungLage(p);
+    if (!lage) {
+      if (sprungKnopf) sprungKnopf.hidden = true;
+      return;
+    }
+    const b = sprungKnopfHolen();
+    const pfeil = lage.hoch ? '↑' : '↓';
+    const zurAntwort = lage.art === 'antwort';
+    AQ.mount(b, h('span', { 'aria-hidden': 'true' }, pfeil), ` ${zurAntwort ? 'Zur Antwort' : 'Zum Werkzeug'}`);
+    b.setAttribute('aria-label', zurAntwort ? 'Zur Antwort springen' : 'Zum Werkzeug springen');
+    // über der klebenden Knopfleiste (Tablet), sonst 16 px über dem Rand
+    const vh = typeof innerHeight === 'number' && innerHeight > 0 ? innerHeight : 800;
+    b.style.setProperty('--sprung-unten', `${Math.max(16, Math.round(vh - sichtbarUnten() + 12))}px`);
+    b.hidden = false;
+    sprungZiel = lage;
+  }
+  function sprungSpaeter() {
+    if (sprungGeplant) return;
+    sprungGeplant = true;
+    const los = () => {
+      sprungGeplant = false;
+      sprungPruefen();
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(los);
+    else los();
+  }
+  function springe() {
+    const lage = sprungZiel;
+    if (!lage) return;
+    const verhalten = reduziert() ? 'auto' : 'smooth';
+    if (lage.art === 'antwort') {
+      const felder = lage.ziel.els.flatMap((x) => [...x.querySelectorAll('input, textarea, select')]).filter((f) => !f.disabled && !f.readOnly && !['checkbox', 'radio', 'button', 'hidden'].includes((f.getAttribute('type') || '').toLowerCase()));
+      const feld = felder.find((f) => !f.value) || felder[0];
+      // die ganze Antwort (alle Teile) mittig in den sichtbaren Bereich über der Knopfleiste, sonst ihren Anfang nach oben
+      const oben = lage.ziel.els[0].getBoundingClientRect().top;
+      const hoehe = lage.ziel.els[lage.ziel.els.length - 1].getBoundingClientRect().bottom - oben;
+      const unten = sichtbarUnten();
+      const ziel = hoehe <= unten - 32 ? Math.max(16, (unten - hoehe) / 2) : 16;
+      window.scrollBy({ top: oben - ziel, behavior: verhalten });
+      if (feld) feld.focus({ preventScroll: true });
+    } else {
+      lage.flaeche.scrollIntoView({ block: 'start', behavior: verhalten });
+      lage.flaeche.focus({ preventScroll: true });
+    }
+    sprungSpaeter();
+  }
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('scroll', sprungSpaeter, { passive: true });
+    window.addEventListener('resize', sprungSpaeter);
+  }
+  if (typeof document !== 'undefined' && document.addEventListener) {
+    document.addEventListener('focusin', sprungSpaeter);
+    document.addEventListener('focusout', sprungSpaeter);
+  }
+
   /** nach dem Einhängen messen (offen: true klappt schon vor dem Einhängen auf) */
   function antwortKlebenSpaeter(panelEl) {
     const los = () => {
       if (panelEl.dataset && panelEl.dataset.offen) antwortKleben(panelEl, true);
+      sprungPruefen();
     };
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(los);
     else los();
@@ -177,7 +290,7 @@ const KRPanel = (() => {
     const zu = h('button', { type: 'button', class: 'knopf knopf-leise werkzeug-zuklappen', 'aria-label': `Werkzeug ${name} schließen` }, KR.symbol('icons', 'i-schliessen'), h('span', { class: 'lang' }, 'Schließen'));
     const bereich = h(
       'section',
-      { id: fId, class: 'werkzeug-panel-flaeche', role: 'region', 'aria-labelledby': sId, hidden: true },
+      { id: fId, class: 'werkzeug-panel-flaeche', role: 'region', 'aria-labelledby': sId, tabindex: '-1', hidden: true },
       h('div', { class: 'werkzeug-panel-kopf' }, h('b', { class: 'werkzeug-name' }, name), zu),
       b.titel ? h('p', { class: 'werkzeug-auftrag' }, String(b.titel)) : null,
       flaeche,
@@ -216,6 +329,7 @@ const KRPanel = (() => {
         schalter.setAttribute('aria-expanded', 'false');
         OFFEN.delete(eintrag);
         antwortKleben(el, false);
+        sprungPruefen();
       }
     };
     function starte(umgebung) {

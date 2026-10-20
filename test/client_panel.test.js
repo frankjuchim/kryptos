@@ -392,3 +392,97 @@ test('panel_tablet_hoch_luecken_kleben_oben (1.3.2): Lückentext vor dem Werkzeu
   k.klick(s);
   assert.equal(text.classList.contains('antwort-klebt-oben'), false);
 });
+
+/*
+ * 1.3.3 (Entscheidung der Lehrkraft): Sprung-Knopf „↓ Zur Antwort“ / „↑ Zum Werkzeug“ – nur bei offenem Panel ohne
+ * Seitenleiste, wenn die Antwort nicht klebt und Werkzeug und Antwort nicht zugleich im Bild sind.
+ */
+function sprungAufbau({ panelRect, antwortRect, fest = false, klebt = false }) {
+  const k = D.lade([...SKRIPTE, ...LABOR, 'krypto/labor/scheibe.js']);
+  const box = k.document.createElement('div');
+  box.className = 'aufgabe-box';
+  const inhalt = k.document.createElement('div');
+  inhalt.className = 'inhalt';
+  inhalt.appendChild(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, 0, { modus: 'lab', aufgabeId: 'W9-L1-01' }));
+  box.appendChild(inhalt);
+  const antwort = k.document.createElement('div');
+  antwort.setAttribute('role', 'group');
+  const voll = k.document.createElement('input');
+  voll.value = 'K';
+  const leer = k.document.createElement('input');
+  antwort.appendChild(voll);
+  antwort.appendChild(leer);
+  box.appendChild(antwort);
+  k.document.body.appendChild(box);
+  const flaeche = k.eins(box, '.werkzeug-panel-flaeche');
+  const r = (x) => ({ ...x, left: 0, right: 300, width: 300, height: x.bottom - x.top });
+  flaeche.getBoundingClientRect = () => r(panelRect());
+  antwort.getBoundingClientRect = () => r(antwortRect());
+  if (fest) flaeche.style.setProperty('position', 'fixed');
+  const aufrufe = [];
+  k.window.scrollBy = (o) => aufrufe.push(['antwort', o]);
+  flaeche.scrollIntoView = (o) => aufrufe.push(['werkzeug', o]);
+  if (klebt) k.medien['(min-width: 768px) and (max-width: 959.98px) and (min-height: 640px)'] = true; // kompakte Antwort klebt
+  k.klick(k.eins(box, 'button.werkzeug-schalter'));
+  return { k, antwort, leer, flaeche, aufrufe };
+}
+const sprung = (k) => k.alle(k.document.body, 'button.werkzeug-sprung')[0] || null;
+const scrolle = async (k) => {
+  k.window.dispatchEvent(new k.window.Event('scroll'));
+  await k.ruhe();
+};
+
+test('panel_sprung_zur_antwort (1.3.3): Werkzeug im Bild, Antwort darunter → „↓ Zur Antwort“, Tippen rollt und fokussiert das erste leere Feld', async () => {
+  const { k, leer, aufrufe } = sprungAufbau({ panelRect: () => ({ top: 100, bottom: 1500 }), antwortRect: () => ({ top: 1600, bottom: 1700 }) });
+  await scrolle(k);
+  const b = sprung(k);
+  assert.ok(b && !b.hidden, 'Knopf sichtbar');
+  assert.match(k.text(b), /Zur Antwort/);
+  assert.match(b.getAttribute('aria-label'), /Antwort/);
+  k.klick(b);
+  assert.equal(aufrufe[0][0], 'antwort');
+  assert.equal(aufrufe[0][1].top, 1600 - 350, 'Antwort (100 px) mittig im sichtbaren Bereich (800 px)');
+  assert.equal(k.document.activeElement, leer, 'Fokus im ersten leeren Antwortfeld');
+});
+
+test('panel_sprung_zum_werkzeug (1.3.3): Antwort im Bild, Werkzeug darüber → „↑ Zum Werkzeug“, Tippen rollt zum Panel', async () => {
+  const { k, flaeche, aufrufe } = sprungAufbau({ panelRect: () => ({ top: -1500, bottom: -100 }), antwortRect: () => ({ top: 300, bottom: 400 }) });
+  await scrolle(k);
+  const b = sprung(k);
+  assert.ok(b && !b.hidden);
+  assert.match(k.text(b), /Zum Werkzeug/);
+  k.klick(b);
+  assert.equal(aufrufe[0][0], 'werkzeug');
+  assert.equal(k.document.activeElement, flaeche, 'Fokus auf dem Panel');
+});
+
+test('panel_sprung_nicht_noetig (1.3.3): beides im Bild, Seitenleiste, klebende Antwort oder Panel zu → kein Knopf', async () => {
+  const faelle = [
+    { name: 'beides im Bild', o: { panelRect: () => ({ top: 100, bottom: 500 }), antwortRect: () => ({ top: 550, bottom: 650 }) } },
+    { name: 'Seitenleiste', o: { fest: true, panelRect: () => ({ top: 0, bottom: 800 }), antwortRect: () => ({ top: 1600, bottom: 1700 }) } },
+    { name: 'klebt', o: { klebt: true, panelRect: () => ({ top: 100, bottom: 1500 }), antwortRect: () => ({ top: 1600, bottom: 1700 }) } }
+  ];
+  for (const f of faelle) {
+    const { k, antwort } = sprungAufbau(f.o);
+    await scrolle(k);
+    if (f.o.klebt) assert.ok(antwort.classList.contains('antwort-klebt'), 'Antwort klebt');
+    const b = sprung(k);
+    assert.ok(!b || b.hidden, f.name);
+  }
+  const { k } = sprungAufbau({ panelRect: () => ({ top: 100, bottom: 1500 }), antwortRect: () => ({ top: 1600, bottom: 1700 }) });
+  await scrolle(k);
+  assert.ok(!sprung(k).hidden);
+  k.klick(k.eins(k.document.body, 'button.werkzeug-schalter')); // zuklappen
+  await scrolle(k);
+  assert.ok(sprung(k).hidden, 'Panel zu → Knopf weg');
+});
+
+test('panel_sprung_bewegung (1.3.3): weiches Rollen nur ohne reduzierte Bewegung', async () => {
+  for (const [reduziert, erwartet] of [[false, 'smooth'], [true, 'auto']]) {
+    const { k, aufrufe } = sprungAufbau({ panelRect: () => ({ top: 100, bottom: 1500 }), antwortRect: () => ({ top: 1600, bottom: 1700 }) });
+    if (reduziert) k.medien['(prefers-reduced-motion: reduce)'] = true;
+    await scrolle(k);
+    k.klick(sprung(k));
+    assert.equal(aufrufe[0][1].behavior, erwartet, `reduziert ${reduziert}`);
+  }
+});

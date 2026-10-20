@@ -127,6 +127,29 @@ a.werkzeug-karte:hover { border-color: var(--akzent); }
   html:has(.antwort-klebt-oben) { scroll-padding-top: calc(1rem + var(--antwort-hoehe, 0px)); }
 }
 
+/* Sprung-Knopf (1.3.3): schwebt unten rechts, solange Werkzeug und Antwort nicht zugleich im Bild sind (KRPanel);
+   --sprung-unten hält ihn über der klebenden Knopfleiste. Tinte-Fläche in beiden Modi, Fokusring Messing hell. */
+.werkzeug-sprung {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(var(--sprung-unten, 16px) + env(safe-area-inset-bottom, 0px));
+  z-index: 16;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--a-1);
+  min-height: var(--ziel);
+  min-width: var(--ziel);
+  padding: var(--a-2) var(--a-4);
+  border: 2px solid var(--messing-hell);
+  border-radius: var(--r-chip);
+  background: var(--tinte);
+  color: var(--auf-tinte);
+  font-weight: 700;
+  box-shadow: var(--schatten);
+  --fokus: var(--messing-hell);
+}
+.werkzeug-sprung[hidden] { display: none; }
+
 /* ---------- Werkzeug-Dialog ---------- */
 dialog.werkzeug-dialog {
   width: min(960px, calc(100vw - 32px));
