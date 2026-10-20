@@ -11,7 +11,7 @@
  *     erlaubt (L60, 25 Zeilen k = 1 … 25 plus k = 0).
  *  3. 360 px: kein Querscrollen, Antwort mit offenem Panel erreichbar, Touch-Ziele ≥ 44 px; Tastatur (Schalter mit Enter,
  *     Weiter mit →, Enter im Panel prüft nicht); reduzierte Bewegung ohne laufende Animationen.
- *     3b (1.3.2): Tablet mit Touch – hoch klebt die Antwort (W3-L4-01: Werkzeug und Antwort zugleich im Bild), quer ab
+ *     3b (1.3.2): Tablet mit Touch – hoch klebt die Antwort (W3-L4-02: Werkzeug und Antwort zugleich im Bild), quer ab
  *     960 px Seitenleiste neben der Antwort und unter der Kopfzeile.
  *  4. Ole B.: zweiter Tab startet den Boss-Kampf → das offene Panel im ersten Tab schließt mit Grund.
  *  5. Freies Labor: /labor#/scheibe mit IMOTQ (k = 12, häppchenweise getippt) → „Schritt für Schritt“, kein „wache“;
@@ -252,9 +252,9 @@ async function szenario16(ctx) {
     const t = await neueSeite(ctx, { viewport: { width: w, height: hgt }, hasTouch: true, isMobile: true }, `Szenario 16 (Tablet ${w})`);
     await anmelden(t.page, ctx, 'Mika R.', '/spiel'); // Nia T. steht seit Szenario 12 im Boss-Kampf (Labor gesperrt)
     await kursWaehlen(t.page, 'LK 13 (eA)');
-    await aufgabe(t.page, ctx, 'W3-L4-01');
+    await aufgabe(t.page, ctx, 'W3-L4-02'); // W3-L4-01 hat Mika in Szenario 12 schon gelöst
     await aufklappen(t.page);
-    const ort = `W3-L4-01 bei ${w} × ${hgt}`;
+    const ort = `W3-L4-02 bei ${w} × ${hgt}`;
     await keinQuerScrollen(t.page, ort);
     await ziele44(t.page, ort);
     const lage = await t.page.evaluate(() => {
