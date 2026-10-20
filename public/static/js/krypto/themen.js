@@ -2,7 +2,11 @@
    Feste Anker: #welten (je Welt #welt-<nr>), #werkzeugkarten (Liste WK1–WK6 + Abitur-Anlage, K15), #niveaus („Was ist für welches Niveau?“, Daten GET /api/niveaus),
    #kategorien, #fallen (je Falle #fallen-P1 … #fallen-P10 – Ziel der Diagnose-Chips), #werkzeuge.
    Daten: GET /api/themen und GET /api/niveaus. Fehlt ein Abschnitt im HTML, wird er angelegt. Texte nur als Textknoten.
-   Kein externer Link auf die Krypto-Werkstatt, bis die Erlaubnis geklärt ist (Design O11, M4 Festlegung 7). */
+   Kein externer Link auf die Krypto-Werkstatt, bis die Erlaubnis geklärt ist (Design O11, M4 Festlegung 7).
+   Wie in den anderen Labs (Auftrag der Lehrkraft, 20.10.2026): Schüler erreichen die Seite über „Themen“ in der Kopfzeile; jede
+   Station (Level) hat „Üben →“ ins Level, Lehrkräfte „Vorschau →“ in die Aufgaben-Vorschau der Welt. Für Schüler zusätzlich
+   GET /api/welten: Stationen außerhalb des Kursniveaus (eA im gA-Kurs, gesperrte Kür) ohne Üben- und Akten-Link (der Server
+   liefert sie nicht, K40), Welten ohne Freischaltung ohne Üben-Link; Scoreboard-Link in der Kopfzeile wie auf /spiel. */
 'use strict';
 
 const KRThemen = (() => {
@@ -36,6 +40,27 @@ const KRThemen = (() => {
 
   /** Ohne Sitzung (gesetzt in start) sind nur Demo-PDFs frei abrufbar; alle anderen Links tragen Schloss und Zusatz. */
   let angemeldet = false;
+  let rolle = null;
+  /** Schüler: Stand des Kurses aus GET /api/welten → { frei: Map(welt → bool), sichtbar: Set(Level-id) }; sonst null */
+  let kurs = null;
+
+  /** Station im Kurs des Schülers? Ohne Kursdaten (Lehrkraft, Fehler) immer ja. */
+  const stationImKurs = (id) => !kurs || kurs.sichtbar.has(id);
+  const weltFrei = (nr) => !kurs || kurs.frei.get(nr) !== false;
+
+  /** Ziel von „Üben →“ bzw. „Vorschau →“ oder null (öffentlich, nicht im Kurs, Welt nicht freigeschaltet). */
+  function levelLink(l) {
+    if (rolle === 'lehrkraft' || rolle === 'superadmin') return `/lehrer#/vorschau/welt/${l.welt}`;
+    if (rolle !== 'schueler' || !stationImKurs(l.id) || !weltFrei(l.welt)) return null;
+    return `/spiel#/level/${encodeURIComponent(l.id)}`;
+  }
+
+  function uebenLink(l) {
+    const href = levelLink(l);
+    if (!href) return null;
+    const schueler = rolle === 'schueler';
+    return h('a', { class: 'themen-ueben', href, 'aria-label': schueler ? `Level ${l.nr || l.id} üben` : `Aufgaben-Vorschau Welt ${l.welt}` }, schueler ? 'Üben →' : 'Vorschau →');
+  }
   const gesperrt = (x) => !angemeldet && !x.demo;
 
   /** PDF-Link (Akte, Werkzeugkarte, weitere Akte): ohne Sitzung und nicht Demo mit Schloss (Textalternative) und „(nach der Anmeldung)“. */
@@ -53,17 +78,23 @@ const KRThemen = (() => {
   function akte(l) {
     const b = l.akte;
     if (!b) return null;
+    // K40: Akten außerhalb des Kursniveaus liefert der Server Schülern nicht aus – Titel ohne Link
+    if (!stationImKurs(l.id)) return h('span', { class: 'text-2' }, b.titel, ' – nicht in deinem Kurs');
     if (b.url) return pdfLink(b, [b.titel, ' (PDF)']);
     return h('span', { class: 'text-2' }, b.titel, ' – nach der Anmeldung');
   }
 
+  const dsText = (ds) => (!ds || !ds.length ? '' : ds.length === 1 ? `DS ${ds[0]}` : `DS ${ds.join(', ')}`);
+
   function weltAbschnitt(w) {
+    const gesperrt = rolle === 'schueler' && !weltFrei(w.nr);
     const attrs = { id: `welt-${w.nr}`, class: 'themen-welt karte', 'data-epoche': String(w.nr), 'aria-labelledby': `welt-${w.nr}-titel` };
     const sek = h(
       'section',
       attrs,
       h('h3', { id: `welt-${w.nr}-titel` }, istEpoche(w.nr) ? `Welt ${w.nr} · ${w.titel}` : w.titel),
       w.ds ? h('p', { class: 'text-2 klein' }, `Doppelstunden ${w.ds[0]}–${w.ds[1]}`) : null,
+      gesperrt ? h('p', { class: 'text-2 klein' }, 'In deinem Kurs noch nicht freigeschaltet – die Akten kannst du schon lesen.') : null,
       h(
         'ul',
         { class: 'themen-level' },
@@ -77,8 +108,9 @@ const KRThemen = (() => {
               { class: 'themen-level-rumpf' },
               h('span', { class: 'themen-level-titel' }, l.titel),
               chip(l.niveau),
-              h('span', { class: 'text-2 klein' }, `${l.aufgaben} ${l.aufgaben === 1 ? 'Aufgabe' : 'Aufgaben'}`),
-              akte(l)
+              h('span', { class: 'text-2 klein' }, [dsText(l.ds), `${l.aufgaben} ${l.aufgaben === 1 ? 'Aufgabe' : 'Aufgaben'}`].filter(Boolean).join(' · ')),
+              akte(l),
+              uebenLink({ ...l, welt: l.welt === undefined ? w.nr : l.welt })
             )
           )
         )
@@ -231,6 +263,17 @@ const KRThemen = (() => {
 
   const ortText = (o) => `Welt ${o.welt} · ${o.nr || o.id} ${o.titel}${o.anzahl > 1 ? ` (${o.anzahl})` : ''}`;
 
+  /** Orte eines Querschnitts: Stationen mit Ziel als Links (Schüler: nur im Kurs), sonst Text; getrennt durch „ · “ */
+  function orte(liste) {
+    const teile = [];
+    (liste || []).forEach((o, i) => {
+      if (i) teile.push(' · ');
+      const href = levelLink(o);
+      teile.push(href ? h('a', { class: 'themen-ort', href }, ortText(o)) : ortText(o));
+    });
+    return teile;
+  }
+
   function kategorien(d) {
     const liste = d.kategorien || [];
     mount(
@@ -240,7 +283,7 @@ const KRThemen = (() => {
             'ul',
             { class: 'themen-querschnitt' },
             liste.map((k) =>
-              h('li', { class: 'karte' }, h('b', null, KR.KATEGORIEN[k.kategorie] || k.kategorie), h('span', { class: 'text-2 klein' }, ` · ${k.anzahl} ${k.anzahl === 1 ? 'Aufgabe' : 'Aufgaben'}`), h('p', { class: 'klein' }, k.orte.map(ortText).join(' · ')))
+              h('li', { class: 'karte' }, h('b', null, KR.KATEGORIEN[k.kategorie] || k.kategorie), h('span', { class: 'text-2 klein' }, ` · ${k.anzahl} ${k.anzahl === 1 ? 'Aufgabe' : 'Aufgaben'}`), h('p', { class: 'klein' }, orte(k.orte)))
             )
           )
         : h('p', { class: 'text-2' }, 'Noch keine Aufgaben.')
@@ -260,7 +303,7 @@ const KRThemen = (() => {
             { id: `fallen-${f.p}`, class: 'karte falle-karte', 'aria-labelledby': `fallen-${f.p}-titel` },
             h('h3', { id: `fallen-${f.p}-titel` }, h('span', { class: 'chip chip-falle' }, f.p), ' ', f.titel || KR.FALLEN[f.p] || ''),
             f.text ? h('p', null, f.text) : null,
-            h('p', { class: 'text-2 klein' }, f.anzahl ? `${f.anzahl} ${f.anzahl === 1 ? 'Aufgabe übt' : 'Aufgaben üben'} diese Falle: ${(f.orte || []).map(ortText).join(' · ')}` : 'Noch keine Lab-Aufgabe zu dieser Falle.')
+            h('p', { class: 'text-2 klein' }, f.anzahl ? [`${f.anzahl} ${f.anzahl === 1 ? 'Aufgabe übt' : 'Aufgaben üben'} diese Falle: `, orte(f.orte)] : 'Noch keine Lab-Aufgabe zu dieser Falle.')
           )
         )
       )
@@ -295,9 +338,17 @@ const KRThemen = (() => {
   async function start() {
     KR.epoche(6);
     const sitzung = await AQ.api('GET', '/api/sitzung').catch(() => ({}));
-    const rolle = sitzung && ['schueler', 'lehrkraft', 'superadmin'].includes(sitzung.rolle) ? sitzung.rolle : null;
+    rolle = sitzung && ['schueler', 'lehrkraft', 'superadmin'].includes(sitzung.rolle) ? sitzung.rolle : null;
     angemeldet = !!rolle;
-    KRKopf.baue({ rolle, aktiv: rolle === 'schueler' ? null : 'themen', sitzung: sitzung || {} }); // Lehrkraft: „Themen“ in der Hauptnavigation
+    let scoreboard = false;
+    if (rolle === 'schueler') {
+      const w = await AQ.api('GET', '/api/welten').catch(() => null);
+      if (w && Array.isArray(w.welten)) {
+        scoreboard = !!w.scoreboard;
+        kurs = { frei: new Map(w.welten.map((x) => [x.nr, !!x.frei])), sichtbar: new Set(w.welten.flatMap((x) => (x.levels || []).map((l) => l.id))) };
+      }
+    }
+    KRKopf.baue({ rolle, aktiv: 'themen', sitzung: sitzung || {}, scoreboard }); // „Themen“ in der Hauptnavigation (Schüler und Lehrkraft)
     const laden = document.querySelector('#haupt > .laden');
     if (laden) laden.remove();
     niveauZiel();

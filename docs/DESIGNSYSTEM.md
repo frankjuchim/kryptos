@@ -153,7 +153,7 @@ Gelasio (metrisch = Georgia), `fonts-dejavu` als Rückfall; Consolas-Ersatz Inco
 
 | Komponente | Beschreibung |
 |---|---|
-| **Kopfzeile** | Tinte, links Logo (Ziffernring + „KRYPTOS“ in Fraunces, Sperrung 0,2 em), Mitte Epochenname mit Akzent-Punkt, rechts „⌂ Portal“, Labor, Funkraum (nur wenn aktiv, pulsierender Punkt), Profil-Rang-Badge, Menü |
+| **Kopfzeile** | Tinte, links Logo (Ziffernring + „KRYPTOS“ in Fraunces, Sperrung 0,2 em), Mitte Epochenname mit Akzent-Punkt, Bereiche (Schüler: Zeitleiste · Warm-up · Profil · Scoreboard · Themen; im Boss-Kampf fehlt nur das Labor), rechts „⌂ Portal“, Labor, Funkraum (nur wenn aktiv, pulsierender Punkt), Profil-Rang-Badge, Menü |
 | **Zeitleiste** | horizontale Achse −500 → heute auf `--nacht` (die ganze Startansicht der Schüler-Seite ist bewusst in beiden Modi „Nacht“, wie im Prototyp `#v-zeitleiste`; Epoche, Level und Aufgaben folgen dem hellen/dunklen Modus); sieben **Epochen-Tore** (Bogenform, 120 × 160 px) mit Ornament, Fortschrittsring in `--akzent-hell`, Boss-Siegel, Artefakt-Symbol; gesperrte Tore zeigen Geheimtext und „noch verschlüsselt“ |
 | **Entsiegeln-Animation** | Titel einer neu freigeschalteten Epoche entschlüsselt sich Buchstabe für Buchstabe (Caesar-Rotation pro Zeichen, 600 ms); bei `prefers-reduced-motion` sofort |
 | **Level-Karte (Akte)** | Papier, oben Epochenband 6 px, Aktenzeichen „Akte W2·2“ in Mono, Titel in Fraunces, Rollen-Chip 🛡/🔍, Niveau-Chip, Fortschritt „5/7“, Siegel bei 100 % |

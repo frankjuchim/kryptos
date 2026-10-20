@@ -823,7 +823,8 @@ a.karte-akte:hover, a.karte-link:hover { border-color: var(--akzent); }
 .themen-level li { display: grid; grid-template-columns: 3.5em minmax(0, 1fr); align-items: baseline; gap: var(--a-3); padding-block: var(--a-2); border-bottom: 1px solid var(--linie); }
 .themen-level-rumpf { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-3); min-width: 0; }
 .themen-level-titel { font-weight: 700; }
-.akte-link { display: inline-flex; align-items: center; gap: var(--a-1); min-height: var(--ziel); }
+.akte-link, .themen-ueben { display: inline-flex; align-items: center; gap: var(--a-1); min-height: var(--ziel); }
+.themen-ueben { font-weight: 700; padding-inline: var(--a-1); }
 .akte-link svg { width: 18px; height: 18px; }
 .akte-link svg.schloss { width: 1em; height: 1em; vertical-align: -0.125em; flex: none; }
 .themen-extras { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--a-1) var(--a-4); margin: 0; }

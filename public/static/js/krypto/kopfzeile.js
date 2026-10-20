@@ -1,6 +1,8 @@
 /* Kryptos – Kopfzeile (DESIGNSYSTEM §5, TECHNIK §11.2): Logo, Epoche, Bereiche je Rolle, Portal, Labor, Rang, Menü
    (Darstellung, Kurswahl, Abmelden). Keine eigene Anmeldung: öffentlich nur „Anmelden über InfoLabs“. Texte als
    Textknoten; alle Bedienelemente ≥ 44 px (CSS .kopf-link/.rang/.knopf).
+   Schüler wie in den anderen Labs: Zeitleiste · Warm-up · Profil · Scoreboard (wenn im Kurs an) · Themen, rechts Rang · Labor ·
+   Portal · Menü. Im Boss-Kampf verschwindet nur das Labor (laborLink); Themen ist öffentlich und ohne Lösungen.
    Lehrkraft/Admin mit gleichem Aufbau wie in den anderen Labs: Kurse · Aufgaben · Materialien · Themen ·
    Verwaltung (nur Admin) · Labor (Kryptos-Zusatz), rechts Portal · Name · Abmelden · Menü (Darstellung, Überall abmelden). */
 'use strict';
@@ -18,7 +20,8 @@ const KRKopf = (() => {
       ['zeitleiste', '/spiel#/', 'Zeitleiste'],
       ['warmup', '/spiel#/warmup', 'Warm-up'],
       ['profil', '/spiel#/profil', 'Profil'],
-      o.scoreboard ? ['scoreboard', '/spiel#/scoreboard', 'Scoreboard'] : null
+      o.scoreboard ? ['scoreboard', '/spiel#/scoreboard', 'Scoreboard'] : null,
+      ['themen', '/themen', 'Themen'] // wie in den anderen Labs: Themenübersicht mit allen Stationen und Akten (bleibt im Boss-Kampf)
     ],
     lehrkraft: (o) => [
       ['kurse', '/lehrer#/', 'Kurse'],

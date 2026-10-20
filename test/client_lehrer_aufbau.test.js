@@ -49,13 +49,35 @@ test('Kopfzeile Lehrkraft wie Algo Quest: Kurse · Aufgaben · Materialien · Th
   }
 });
 
-test('Kopfzeile Schüler bleibt: Labor rechts neben dem Portal, kein Themen-Link in der Hauptnavigation', () => {
+test('Kopfzeile Schüler wie Algo Quest: Zeitleiste · Warm-up · Profil · (Scoreboard) · Themen, Labor rechts neben dem Portal', () => {
+  for (const [scoreboard, erwartet] of [
+    [true, ['Zeitleiste', 'Warm-up', 'Profil', 'Scoreboard', 'Themen']],
+    [false, ['Zeitleiste', 'Warm-up', 'Profil', 'Themen']]
+  ]) {
+    const k = D.lade(BASIS, {});
+    k.wert('KRKopf').baue({ rolle: 'schueler', aktiv: 'themen', scoreboard, sitzung: { rolle: 'schueler', name: 'Mika R.', kurse: [], portal: 'https://portal.test' } });
+    const kopf = k.document.getElementById('kopf');
+    const nav = k.eins(kopf, 'nav.kopf-seiten');
+    assert.deepEqual(k.alle(nav, 'a').map((a) => k.text(a)), erwartet, `scoreboard ${scoreboard}`);
+    const themen = k.eins(nav, 'a[href="/themen"]');
+    assert.equal(themen.getAttribute('data-bereich'), 'themen');
+    assert.equal(themen.getAttribute('aria-current'), 'page', 'aktiver Bereich Themen');
+    assert.equal(k.alle(kopf, 'nav.kopf-seiten a[href="/labor"]').length, 0);
+    assert.ok(k.eins(kopf, '.kopf-nav a[href="/labor"]'));
+    assert.equal(k.alle(kopf, '.kopf-nav .kopf-name').length, 0);
+  }
+  // Boss-Kampf: nur das Labor verschwindet, Themen bleibt (öffentliche Übersicht ohne Lösungen)
   const k = D.lade(BASIS, {});
-  k.wert('KRKopf').baue({ rolle: 'schueler', aktiv: 'zeitleiste', sitzung: { rolle: 'schueler', name: 'Mika R.', kurse: [], portal: 'https://portal.test' } });
+  const kopfzeile = k.wert('KRKopf');
+  kopfzeile.baue({ rolle: 'schueler', aktiv: 'zeitleiste', sitzung: { rolle: 'schueler', name: 'Mika R.', kurse: [] } });
+  kopfzeile.laborLink(false);
   const kopf = k.document.getElementById('kopf');
-  assert.equal(k.alle(kopf, 'nav.kopf-seiten a[href="/labor"]').length, 0);
-  assert.ok(k.eins(kopf, '.kopf-nav a[href="/labor"]'));
-  assert.equal(k.alle(kopf, '.kopf-nav .kopf-name').length, 0);
+  assert.equal(k.alle(kopf, 'a[href="/labor"]').length, 0);
+  assert.ok(k.eins(kopf, 'nav.kopf-seiten a[href="/themen"]'));
+  // öffentlich unverändert: Themen · Gastmodus
+  const o = D.lade(BASIS, {});
+  o.wert('KRKopf').baue({ rolle: null, aktiv: 'themen', sitzung: {} });
+  assert.deepEqual(o.alle(o.document.getElementById('kopf'), 'nav.kopf-seiten a').map((a) => o.text(a)), ['Themen', 'Gastmodus']);
 });
 
 test('Kursliste wie Algo Quest: „Meine Kurse“ bzw. „Alle Kurse“, Spalten Kurs · Kurscode · (Lehrkraft) · Schüler · zuletzt aktiv, Öffnen-Knopf', async () => {

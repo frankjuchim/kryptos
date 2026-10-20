@@ -485,6 +485,61 @@ test('Themen: Akten- und Werkzeugkarten-Links ohne Sitzung mit Zusatz „(nach d
   await k.ruhe();
   for (const u of ['/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf', '/akten/Welt_9_Testwelt/KR_W9_Boss.pdf', '/akten/00_Werkzeugkarten/KR_WK1.pdf']) pruefe(k, u, false);
 });
+test('Themen als Schüler: Themen in der Kopfzeile aktiv, Stationen mit „Üben“ ins Level, Akten nach Kursniveau, kein Lösungs-Link', async () => {
+  const themen = {
+    welten: [
+      { nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', ds: [1, 2], levels: [
+        { id: 'W9-L1', welt: 9, nr: '1', titel: 'Blöcke', niveau: 'kern', ds: [1], aufgaben: 4, akte: { titel: 'Akte W9·1 – Blöcke', url: '/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf', demo: false } },
+        { id: 'W9-L2', welt: 9, nr: '2', titel: 'Friedman', niveau: 'eA', ds: [2], aufgaben: 3, akte: { titel: 'Akte W9·2 – Friedman', url: '/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf', demo: false } }
+      ], boss: { titel: 'Testboss', anzahl: 8, dauerMin: 25 }, training: [], warmup: 5, akten: [], weitere: [{ art: 'boss', titel: 'Papier-Boss: Test', url: '/akten/Welt_9_Testwelt/KR_W9_Boss.pdf', demo: false }, { art: 'warmup', titel: 'Warm-up-Karten Welt 9', url: '/akten/Welt_9_Testwelt/KR_W9_Warmup.pdf', demo: false }] },
+      { nr: 8, titel: 'Gesperrte Welt', farbe: '#5B6B7C', levels: [{ id: 'W8-L1', welt: 8, nr: '1', titel: 'Später', niveau: 'kern', aufgaben: 2, akte: null }], boss: null, training: [], warmup: 0, akten: [], weitere: [] }
+    ],
+    werkzeugkarten: [],
+    kategorien: [{ kategorie: 'begriffe', anzahl: 2, orte: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', welt: 9, anzahl: 1 }, { id: 'W9-L2', nr: '2', titel: 'Friedman', welt: 9, anzahl: 1 }] }],
+    fallen: [{ p: 'P3', titel: 'Umkehrung falsch', text: 'x', anzahl: 1, orte: [{ id: 'W9-L1', nr: '1', titel: 'Blöcke', welt: 9, anzahl: 1 }] }]
+  };
+  const welten = { scoreboard: true, niveau: 'gA', welten: [{ nr: 9, frei: true, levels: [{ id: 'W9-L1' }] }, { nr: 8, frei: false, levels: [{ id: 'W8-L1' }] }] };
+  const niveaus = { niveaus: ['eA', 'gA'], kategorien: [], welten: [], weitere: [] };
+  const lade = (sitzung, extra = {}) => D.lade([...BASIS, 'krypto/themen.js'], { url: 'http://x.test/themen', fetch: { 'GET /api/sitzung': { status: 200, body: sitzung }, 'GET /api/themen': { status: 200, body: themen }, 'GET /api/niveaus': { status: 200, body: niveaus }, ...extra } });
+  let k = lade({ rolle: 'schueler', name: 'Mika R.', kurse: [] }, { 'GET /api/welten': { status: 200, body: welten } });
+  await k.ruhe();
+  const kopf = k.document.getElementById('kopf');
+  assert.deepEqual(k.alle(kopf, 'nav.kopf-seiten a').map((a) => k.text(a)), ['Zeitleiste', 'Warm-up', 'Profil', 'Scoreboard', 'Themen']);
+  assert.equal(k.eins(kopf, 'nav.kopf-seiten a[href="/themen"]').getAttribute('aria-current'), 'page');
+  const w9 = k.document.getElementById('welt-9');
+  // Station im Kurs: Üben-Link ins Level, Akte als PDF
+  assert.ok(k.eins(w9, 'a[href="/spiel#/level/W9-L1"]'), 'Üben-Link W9-L1');
+  assert.ok(k.eins(w9, 'a[href="/akten/Welt_9_Testwelt/KR_W9_Akte1.pdf"]'));
+  // eA-Station im gA-Kurs: kein Link (Server antwortet 404), Hinweis statt PDF
+  assert.equal(k.alle(w9, 'a[href="/spiel#/level/W9-L2"]').length, 0);
+  assert.equal(k.alle(w9, 'a[href="/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf"]').length, 0);
+  assert.match(k.text(w9), /Akte W9·2 – Friedman/);
+  assert.match(k.text(w9), /nicht in deinem Kurs/);
+  // Papier-Boss und Warm-up-Karten als PDF
+  assert.ok(k.eins(w9, 'a[href="/akten/Welt_9_Testwelt/KR_W9_Boss.pdf"]'));
+  assert.ok(k.eins(w9, 'a[href="/akten/Welt_9_Testwelt/KR_W9_Warmup.pdf"]'));
+  // gesperrte Welt: kein Üben-Link, Hinweis
+  const w8 = k.document.getElementById('welt-8');
+  assert.equal(k.alle(w8, 'a[href="/spiel#/level/W8-L1"]').length, 0);
+  assert.match(k.text(w8), /noch nicht freigeschaltet/);
+  // Querschnitte verlinken nur Stationen im Kurs
+  assert.ok(k.eins(k.document.getElementById('kategorien'), 'a[href="/spiel#/level/W9-L1"]'));
+  assert.equal(k.alle(k.document.getElementById('kategorien'), 'a[href="/spiel#/level/W9-L2"]').length, 0);
+  assert.ok(k.eins(k.document.getElementById('fallen-P3'), 'a[href="/spiel#/level/W9-L1"]'));
+  // nie Lösungen
+  for (const a of k.alle(k.document.getElementById('haupt'), 'a')) assert.doesNotMatch(a.getAttribute('href') || '', /LSG|Loesung|_EH|lehrkraft\/dateien/i);
+  // ohne /api/welten (Fehler): alles verlinkt wie bisher, Kopfzeile ohne Scoreboard
+  k = lade({ rolle: 'schueler', name: 'Mika R.', kurse: [] });
+  await k.ruhe();
+  assert.deepEqual(k.alle(k.document.getElementById('kopf'), 'nav.kopf-seiten a').map((a) => k.text(a)), ['Zeitleiste', 'Warm-up', 'Profil', 'Themen']);
+  assert.ok(k.eins(k.document.getElementById('welt-9'), 'a[href="/akten/Welt_9_Testwelt/KR_W9_Akte2.pdf"]'));
+  // Lehrkraft: „Vorschau“ in die Aufgaben-Vorschau der Welt
+  k = lade({ rolle: 'lehrkraft', name: 'Frau M.', kurse: [] });
+  await k.ruhe();
+  assert.ok(k.eins(k.document.getElementById('welt-9'), 'a[href="/lehrer#/vorschau/welt/9"]'));
+  assert.equal(k.alle(k.document.getElementById('haupt'), 'a[href^="/spiel#"]').length, 0);
+  assert.ok(!k.anfragen.some((x) => x.pfad === '/api/welten'), 'Lehrkraft fragt /api/welten nicht');
+});
 test('Board: Liste, Welt-Fortschritt, Aktualisierung alle 20 s, 404-Hinweis', async () => {
   let n = 0;
   const k = D.lade([...BASIS, 'krypto/board.js'], { url: 'http://x.test/board/abcdefgh1234', fetch: { 'GET /api/board/abcdefgh1234': () => { n++; return { status: 200, body: { kurs: { name: 'LK 13 (eA)' }, schueler: 2, liste: [{ platz: 1, name: 'Mika R.', punkte: 50, rang: 'Schreiber' }, { platz: 2, name: 'Ida K.', punkte: 30, rang: 'Lehrling' }], welten: [{ nr: 9, titel: 'Testwelt', farbe: '#5B6B7C', anteil: 0.4 }], erfolge: [] } }; } } });
