@@ -144,6 +144,9 @@
 .menue-zeile { display: flex; gap: var(--a-2); align-items: center; }
 .menue-zeile select { min-height: var(--ziel); flex: 1; min-width: 0; background: var(--papier); color: var(--text); }
 .kopf-seiten { display: flex; align-items: center; gap: var(--a-1); }
+/* Tablet (1.3.2): einzeilig schrumpft nur der Epochen-Text; reicht die Zeile nicht, setzt KRKopf.anpassen() .kopf-zweizeilig */
+.kopf-innen > .logo, .kopf-innen > .kopf-seiten, .kopf-innen > .kopf-nav { flex-shrink: 0; }
+.kopf-link, .rang-text { white-space: nowrap; }
 .rang-ring { transform: rotate(-90deg); }
 .rang .ring-spur { fill: none; stroke: var(--tinte-3); stroke-width: 4; }
 .rang .ring-wert { fill: none; stroke: var(--messing-hell); stroke-width: 4; stroke-linecap: round; }
@@ -572,6 +575,11 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
 /* ---------- Responsiv ---------- */
 /* Lehrkraft/Admin: sechs Bereiche + Portal, Name, Abmelden – der Epochen-Text weicht, bevor er abgeschnitten wird */
 @media (max-width: 1320px) { .kopf-lehrkraft .kopf-epoche { display: none; } }
+/* .kopf-zweizeilig (gemessen in KRKopf.anpassen) wie unter 860 px: Bereiche als zweite Zeile */
+.kopf-zweizeilig .kopf-epoche { display: none; }
+.kopf-zweizeilig .kopf-innen { justify-content: space-between; gap: var(--a-2); flex-wrap: wrap; }
+.kopf-zweizeilig .kopf-seiten { order: 3; flex: 1 0 100%; overflow-x: auto; scrollbar-width: thin; }
+.kopf-zweizeilig .kopf-seiten .kopf-link { flex: none; }
 @media (max-width: 860px) {
   .kopf-epoche { display: none; }
   .kopf-innen { justify-content: space-between; gap: var(--a-2); flex-wrap: wrap; }
@@ -594,7 +602,9 @@ dialog::backdrop { background: color-mix(in srgb, var(--nacht) 60%, transparent)
 /* ==================== Schüler-Seite (M4 Tasks 57–60): Zeitleiste, Epoche, Level, Kurswahl ==================== */
 h1[tabindex="-1"]:focus { outline: none; } /* Fokus nach dem Routenwechsel (Screenreader), ohne Ring */
 .brotkrumen { display: flex; flex-wrap: wrap; align-items: center; gap: var(--a-1) var(--a-2); font-size: .9rem; color: var(--text-2); }
-.brotkrumen a { display: inline-flex; align-items: center; min-height: var(--ziel); }
+.brotkrumen a { display: inline-flex; align-items: center; justify-content: center; min-height: var(--ziel); min-width: var(--ziel); }
+/* Tablet (1.3.2): Links in Tabellenzellen (Fallen P1–P10 im Profil, Niveau-Tabelle, Aufgabenstatistik) als Touch-Ziel ≥ 44 px */
+td > a:not(.knopf), th > a:not(.knopf) { display: inline-flex; align-items: center; min-height: var(--ziel); min-width: var(--ziel); }
 .tinte .brotkrumen, .nacht .brotkrumen { color: var(--auf-tinte-2); }
 
 /* Fortschrittsbalken (AQ.progress) */

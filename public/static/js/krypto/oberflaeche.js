@@ -237,5 +237,43 @@ const KR = (() => {
     if (mq && typeof mq.addEventListener === 'function') mq.addEventListener('change', weltfarbeAnwenden);
   }
 
+  /*
+   * Bildschirmtastatur auf dem Tablet (1.3.2): Bei Touch-Bedienung rollt ein fokussiertes Eingabefeld, das nach dem
+   * Einblenden der Tastatur (sichtbarer Bereich = visualViewport) oder hinter den klebenden Leisten unten (Knopfleiste
+   * .aktionen, klebende Antwort .antwort-klebt) bzw. unter dem oben klebenden Lückentext (.antwort-klebt-oben) liegt, in
+   * die Mitte. Maus und Stift bleiben unberührt.
+   */
+  const TASTATUR_MS = 350;
+  function sichtbarUnten() {
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+    let unten = vv && vv.height ? vv.height + (vv.offsetTop || 0) : innerHeight;
+    for (const sel of ['.aktionen', '.antwort-klebt']) {
+      const el = document.querySelector(sel);
+      if (!el || !el.getBoundingClientRect) continue;
+      const pos = getComputedStyle(el).position || '';
+      if (pos !== 'sticky' && pos !== 'fixed') continue;
+      const r = el.getBoundingClientRect();
+      if (r.height && r.top < unten) unten = Math.min(unten, r.top);
+    }
+    return unten;
+  }
+  function tastaturFokus(e) {
+    const el = e.target;
+    const tag = el && el.localName;
+    const typ = el && el.getAttribute ? (el.getAttribute('type') || 'text').toLowerCase() : '';
+    if (!['input', 'textarea', 'select'].includes(tag) || (tag === 'input' && ['checkbox', 'radio', 'button', 'submit', 'range', 'color', 'file'].includes(typ))) return;
+    if (typeof matchMedia !== 'function' || !matchMedia('(pointer: coarse)').matches) return;
+    setTimeout(() => {
+      if (document.activeElement !== el || !el.getBoundingClientRect) return;
+      const r = el.getBoundingClientRect();
+      // in einer klebenden Leiste steht das Feld selbst unten – dann zählt nur der sichtbare Bereich
+      const unten = el.closest && el.closest('.aktionen, .antwort-klebt') ? (window.visualViewport ? window.visualViewport.height : innerHeight) : sichtbarUnten();
+      const kleber = document.querySelector('.antwort-klebt-oben');
+      const oben = kleber && !kleber.contains(el) && getComputedStyle(kleber).position === 'sticky' ? kleber.getBoundingClientRect().bottom : 0;
+      if (r.bottom > unten - 8 || r.top < oben) el.scrollIntoView({ block: 'center', inline: 'nearest' });
+    }, TASTATUR_MS);
+  }
+  document.addEventListener('focusin', tastaturFokus);
+
   return { VERSION, thema, bewegung, epoche, KATEGORIEN, FALLEN, RAENGE, WELTEN_KURZ, ORNAMENT, ornament, sprite, symbol, entsiegeln, zeitsprung, laden, fehler, zeitText, prozent };
 })();

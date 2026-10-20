@@ -128,3 +128,24 @@ test('Review M4 K4: Epochenanzeige im Kopf ohne aria-live (wechselt bei jeder Se
   const ep = k.eins(k.document.getElementById('kopf'), '.kopf-epoche');
   assert.equal(ep.getAttribute('aria-live'), null);
 });
+test('Tablet (1.3.2): Fokus auf ein verdecktes Eingabefeld bei Touch rollt es in die Mitte (Bildschirmtastatur), Maus nicht', async () => {
+  for (const [touch, rect, erwartet] of [
+    [true, { top: 2000, bottom: 2040 }, 1],
+    [true, { top: 200, bottom: 240 }, 0],
+    [false, { top: 2000, bottom: 2040 }, 0]
+  ]) {
+    const k = D.lade(['common.js'], {});
+    if (touch) k.medien['(pointer: coarse)'] = true;
+    D.fuehreAus(k, ['krypto/oberflaeche.js']);
+    const feld = k.document.createElement('input');
+    feld.setAttribute('type', 'text');
+    k.document.body.appendChild(feld);
+    const aufrufe = [];
+    feld.getBoundingClientRect = () => ({ ...rect, left: 0, right: 100, width: 100, height: rect.bottom - rect.top });
+    feld.scrollIntoView = (o) => aufrufe.push(o);
+    feld.focus();
+    await new Promise((r) => setTimeout(r, 450)); // Tastatur-Wartezeit 350 ms
+    assert.equal(aufrufe.length, erwartet, `touch ${touch}, top ${rect.top}`);
+    if (erwartet) assert.equal(aufrufe[0].block, 'center');
+  }
+});

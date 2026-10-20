@@ -153,8 +153,52 @@ const KRKopf = (() => {
     return det;
   }
 
-  /** Kopfzeile in #kopf bauen. rolle: 'schueler' | 'lehrkraft' | 'superadmin' | null (öffentlich). */
-  function baue({ rolle = null, aktiv = null, sitzung = {}, scoreboard = false } = {}) {
+  /**
+   * Zweizeilig, sobald eine Zeile nicht reicht (Tablet quer mit langer Schüler-Navigation, Funkraum-Punkt, langer Name):
+   * Bereiche als zweite Zeile wie unter 860 px. Gemessen wird ohne die Klasse (alle Teile schrumpfen nicht, nur der
+   * Epochen-Text); --kopf-hoehe am <html> für die Seitenleiste des Werkzeug-Panels (labor.css).
+   */
+  function anpassen() {
+    const kopf = typeof document !== 'undefined' && document.getElementById('kopf');
+    const innen = kopf && kopf.querySelector('.kopf-innen');
+    if (!innen) return;
+    kopf.classList.remove('kopf-zweizeilig');
+    if (innen.scrollWidth > innen.clientWidth + 1) kopf.classList.add('kopf-zweizeilig');
+    if (kopf.offsetHeight) document.documentElement.style.setProperty('--kopf-hoehe', `${kopf.offsetHeight}px`);
+  }
+  let anpassenGeplant = false;
+  function anpassenSpaeter() {
+    if (anpassenGeplant) return;
+    anpassenGeplant = true;
+    const los = () => {
+      anpassenGeplant = false;
+      anpassen();
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(los);
+    else setTimeout(los, 0);
+  }
+  if (typeof window !== 'undefined' && window.addEventListener) window.addEventListener('resize', anpassenSpaeter);
+  if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) document.fonts.ready.then(anpassenSpaeter).catch(() => {});
+
+  /** Scoreboard-Link nachtragen (Seiten ohne eigene Welten-Daten: Labor, Funkraum, Werkstatt, Datenschutz) */
+  function scoreboardNachtragen() {
+    AQ.api('GET', '/api/welten')
+      .then((w) => {
+        const nav = document.querySelector('#kopf nav.kopf-seiten');
+        if (!w || !w.scoreboard || !nav || nav.querySelector('[data-bereich="scoreboard"]')) return;
+        const a = link('/spiel#/scoreboard', 'Scoreboard');
+        a.setAttribute('data-bereich', 'scoreboard');
+        nav.insertBefore(a, nav.querySelector('[data-bereich="themen"]'));
+        anpassen();
+      })
+      .catch(() => {});
+  }
+
+  /**
+   * Kopfzeile in #kopf bauen. rolle: 'schueler' | 'lehrkraft' | 'superadmin' | null (öffentlich).
+   * scoreboard (Schüler): true/false aus den eigenen Welten-Daten der Seite; nicht angegeben → GET /api/welten.
+   */
+  function baue({ rolle = null, aktiv = null, sitzung = {}, scoreboard } = {}) {
     const kopf = document.getElementById('kopf');
     if (!kopf) return null;
     kopf.classList.add('kopf');
@@ -200,6 +244,8 @@ const KRKopf = (() => {
         rechts
       )
     );
+    if (rolle === 'schueler' && scoreboard === undefined) scoreboardNachtragen();
+    anpassen();
     if (rolle === 'schueler' && !rangGeladen) {
       rangGeladen = true;
       rangNeu();
@@ -271,6 +317,7 @@ const KRKopf = (() => {
     );
     el.setAttribute('aria-label', `Profil: Rang ${name}, ${KR.prozent(a)}`);
     el.hidden = false;
+    anpassen();
   }
 
   /** Funkraum-Punkt (M4 E33, M7 Task 151): Link mit pulsierendem Punkt nur, solange ein Szenario läuft. */
@@ -281,12 +328,14 @@ const KRKopf = (() => {
     const alt = nav.querySelector('a.funk');
     if (!an) {
       if (alt) alt.remove();
+      anpassen();
       return;
     }
     if (alt) return;
     const a = link('/funkraum', 'Funkraum', { symbol: 'i-funk', kurz: true, label: 'Funkraum – Szenario läuft', klasse: 'funk' });
     a.appendChild(h('span', { class: 'punkt-funk', 'aria-hidden': 'true' }));
     nav.insertBefore(a, nav.querySelector('.menue'));
+    anpassen();
   }
 
   /** Labor-Link ein-/ausblenden (Boss-Kampf: aus dem DOM entfernt, damit auch kein versteckter Link bleibt). */
@@ -294,6 +343,7 @@ const KRKopf = (() => {
     if (!laborEl) return;
     if (!an) {
       laborEl.remove();
+      anpassen();
       return;
     }
     if (laborEl.isConnected) return;
@@ -301,6 +351,7 @@ const KRKopf = (() => {
     if (!nav) return;
     const portal = [...nav.querySelectorAll('a.kopf-link')].find((a) => !a.classList.contains('funk'));
     nav.insertBefore(laborEl, portal || nav.querySelector('.menue'));
+    anpassen();
   }
 
   /** Aktiven Bereich (aria-current) nachträglich setzen – für Hash-Routen derselben Seite. */
@@ -311,5 +362,5 @@ const KRKopf = (() => {
     });
   }
 
-  return { baue, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv, entwuerfeLoeschen, _funkPruefe: funkPruefe };
+  return { baue, anpassen, epoche, rang, rangNeu, funkPunkt, laborLink, aktiv, entwuerfeLoeschen, _funkPruefe: funkPruefe };
 })();

@@ -80,6 +80,22 @@ test('Kopfzeile Schüler wie Algo Quest: Zeitleiste · Warm-up · Profil · (Sco
   assert.deepEqual(o.alle(o.document.getElementById('kopf'), 'nav.kopf-seiten a').map((a) => o.text(a)), ['Themen', 'Gastmodus']);
 });
 
+test('Kopfzeile Schüler ohne Angabe zum Scoreboard (Labor, Funkraum, Werkstatt): fragt GET /api/welten und ergänzt den Link vor Themen', async () => {
+  for (const [an, erwartet] of [
+    [true, ['Zeitleiste', 'Warm-up', 'Profil', 'Scoreboard', 'Themen']],
+    [false, ['Zeitleiste', 'Warm-up', 'Profil', 'Themen']]
+  ]) {
+    const k = D.lade(BASIS, { fetch: { 'GET /api/welten': { status: 200, body: { scoreboard: an, welten: [] } }, 'GET /api/profil': { status: 200, body: {} }, 'GET /api/funk': { status: 200, body: {} } } });
+    k.wert('KRKopf').baue({ rolle: 'schueler', aktiv: 'labor', sitzung: { rolle: 'schueler', name: 'Mika R.', kurse: [] } });
+    await k.ruhe();
+    assert.deepEqual(k.alle(k.document.getElementById('kopf'), 'nav.kopf-seiten a').map((a) => k.text(a)), erwartet, `scoreboard ${an}`);
+  }
+  // ausdrücklich angegeben (Spiel-Seite, Themen): keine zusätzliche Anfrage
+  const k = D.lade(BASIS, { fetch: { 'GET /api/profil': { status: 200, body: {} }, 'GET /api/funk': { status: 200, body: {} } } });
+  k.wert('KRKopf').baue({ rolle: 'schueler', aktiv: 'zeitleiste', scoreboard: false, sitzung: { rolle: 'schueler', name: 'Mika R.', kurse: [] } });
+  await k.ruhe();
+  assert.ok(!k.anfragen.some((x) => x.pfad === '/api/welten'));
+});
 test('Kursliste wie Algo Quest: „Meine Kurse“ bzw. „Alle Kurse“, Spalten Kurs · Kurscode · (Lehrkraft) · Schüler · zuletzt aktiv, Öffnen-Knopf', async () => {
   let k = lade('#/');
   await k.ruhe();
