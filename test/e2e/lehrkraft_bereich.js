@@ -79,7 +79,8 @@ async function szenario13(ctx) {
   await page.locator('#tab-inhalt', { hasText: 'Portal InfoLabs' }).waitFor();
   const qr = page.locator('img.qr');
   await qr.waitFor();
-  assert.ok(await qr.evaluate((img) => img.complete && img.naturalWidth > 0), 'QR-Code geladen');
+  // das Bild lädt nach networkidle gelegentlich noch (eigene Anfrage) – bis zu 5 s warten
+  assert.ok(await qr.evaluate((img) => (img.complete && img.naturalWidth > 0) || new Promise((ok) => { img.addEventListener('load', () => ok(img.naturalWidth > 0)); img.addEventListener('error', () => ok(false)); setTimeout(() => ok(img.complete && img.naturalWidth > 0), 5000); })), 'QR-Code geladen');
   const qrAntwort = await kontext.request.get(`${ctx.basis}${await qr.getAttribute('src')}`);
   assert.equal(qrAntwort.status(), 200);
   assert.match(qrAntwort.headers()['content-type'], /image\/svg\+xml/);
