@@ -191,7 +191,8 @@ async function szenario16(ctx) {
   await keinQuerScrollen(page, 'W0-L2-02 mit Panel bei 360 px');
   await ziele44(page, 'W0-L2-02 mit Panel bei 360 px');
   // im Panel (die Kopfleiste blendet beim Epochenwechsel nur ihre Randfarbe über – keine Bewegung)
-  const laufend = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.werkzeug-panel')).map((a) => `${a.animationName || a.transitionProperty || 'js'} @ ${a.effect && a.effect.target ? a.effect.target.className : '?'}`));
+  // Übergänge von 0,01 ms (basis.css bei reduzierter Bewegung) sind keine Bewegung – nur sie können hier kurz „laufen“
+  const laufend = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running' && a.effect && Number(a.effect.getComputedTiming().duration) > 1 && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.werkzeug-panel')).map((a) => `${a.animationName || a.transitionProperty || 'js'} @ ${a.effect && a.effect.target ? a.effect.target.className : '?'}`));
   assert.deepEqual(laufend, [], 'reduzierte Bewegung: keine laufenden Animationen');
   // Tastatur: Eintrag, → zum nächsten Schritt
   const feld2 = page.locator('.werkzeug-panel-flaeche input.gefuehrt-eintrag-feld');
