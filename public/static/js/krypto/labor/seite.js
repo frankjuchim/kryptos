@@ -192,7 +192,7 @@ const KRLaborSeite = (() => {
     daten = neu;
     if (id) vollseite(haupt, id, voreinstellungAus(id, abfrage), levelAus(abfrage));
     else raster(haupt, sitzung);
-    if (typeof haupt.focus === 'function') haupt.focus();
+    if (typeof haupt.focus === 'function') haupt.focus({ preventScroll: true }); // 1.3.2: Kopfzeile mit der Navigation bleibt im Bild (Tablet)
   }
 
   /** Rückkehr in den Tab: Freigaben neu; hat inzwischen ein Kampf begonnen, offenes Werkzeug schließen (mit Hinweis)
