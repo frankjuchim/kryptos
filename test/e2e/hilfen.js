@@ -219,6 +219,47 @@ async function ziele44(page, ort) {
 }
 
 /**
+ * Kopfzeile ohne Überlappung (1.3.2, Tablet quer): Logo, Bereiche und rechte Navigation überdecken sich nicht, kein
+ * Bedienelement ragt aus dem Bild, jeder Bereichs-Link einzeilig (≤ 52 px hoch).
+ */
+async function kopfzeileOk(page, ort) {
+  const f = await page.evaluate(() => {
+    const kopf = document.querySelector('#kopf');
+    if (!kopf) return [];
+    const teile = [kopf.querySelector('.logo'), ...kopf.querySelectorAll('.kopf-seiten > a, .kopf-nav > *')].filter((el) => el && el.getClientRects().length);
+    const box = (el) => el.getBoundingClientRect();
+    const name = (el) => `${el.tagName.toLowerCase()}.${[...el.classList].join('.')} „${(el.textContent || '').trim().slice(0, 16)}“`;
+    const aus = [];
+    // Bereiche dürfen in ihrer Zeile seitlich scrollen (overflow-x: auto) – gemessen wird nur, was sichtbar ist
+    const sichtbar = (el) => {
+      const r = box(el);
+      const nav = el.closest('.kopf-seiten');
+      if (!nav) return r;
+      const n = box(nav);
+      return { left: Math.max(r.left, n.left), right: Math.min(r.right, n.right), top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+    };
+    for (const el of teile) {
+      const r = sichtbar(el);
+      if (r.right <= r.left) continue;
+      if (r.left < -0.5 || r.right > innerWidth + 0.5) aus.push(`${name(el)} außerhalb (${Math.round(r.left)}–${Math.round(r.right)})`);
+      if (el.matches('.kopf-seiten > a') && box(el).height > 52) aus.push(`${name(el)} zweizeilig (${Math.round(box(el).height)} px)`);
+    }
+    for (let i = 0; i < teile.length; i++) {
+      for (let j = i + 1; j < teile.length; j++) {
+        const a = sichtbar(teile[i]);
+        const b = sichtbar(teile[j]);
+        if (a.right <= a.left || b.right <= b.left) continue;
+        const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+        const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        if (x > 1 && y > 1) aus.push(`${name(teile[i])} überdeckt ${name(teile[j])}`);
+      }
+    }
+    return aus;
+  });
+  if (f.length) throw new Error(`${ort}: Kopfzeile: ${f.slice(0, 4).join('; ')}`);
+}
+
+/**
  * Kontraste aller sichtbaren Texte (Review M4 W1): berechnete Textfarbe gegen den effektiven Hintergrund (Stapel der
  * Hintergrundfarben bis zur ersten deckenden Fläche, Deckkraft der Vorfahren eingerechnet). Soll ≥ 4,5 : 1, großer
  * Text (≥ 24 px oder fett ≥ 18,66 px) ≥ 3 : 1. Ausgenommen: deaktivierte Bedienelemente (WCAG 1.4.3), aria-hidden,
@@ -302,4 +343,4 @@ async function gehe(page, url) {
   await page.waitForLoadState('networkidle');
 }
 
-module.exports = { FOTO_LISTE, fotoDatei, chromiumPfad, freiePorts, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kontraste, gehe, RICHTIG, Krypto, WURZEL };
+module.exports = { FOTO_LISTE, fotoDatei, chromiumPfad, freiePorts, starte, anmelden, beobachte, foto, fotosLeeren, keinQuerScrollen, ziele44, kopfzeileOk, kontraste, gehe, RICHTIG, Krypto, WURZEL };

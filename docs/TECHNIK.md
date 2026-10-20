@@ -1364,8 +1364,13 @@ nächsten Zugriff (jede Arena-Route, Beamer-Polling), Wartungsjob als Rückfall 
   erst beim ersten Aufklappen (`KRLabor.oeffne`, Freigaben vorher frisch über `ctx.laborFrisch`) – mit `offen: true` (M12
   E232, W0-Aufgaben mit Werkstatt-Objekt) sofort nach dem Anzeigen der Aufgabe; höchstens ein offenes
   Panel je Seite, `schliesseAlle()` beim Seitenwechsel (Einträge gehen verloren, nichts wird gespeichert); Tasten bleiben im
-  Panel (Enter prüft nie die Aufgabe); Esc klappt es zu, der Fokus kehrt auf den Schalter zurück. Ab 1100 px Breite steht die Fläche als **Seitenleiste** rechts (`position: fixed`,
-  `#haupt` und Fuß rücken nach links, Antwortfeld bleibt sichtbar), darunter im Fluss unter dem Block. Im Boss-Kampf
+  Panel (Enter prüft nie die Aufgabe); Esc klappt es zu, der Fokus kehrt auf den Schalter zurück. Ab 960 px Breite (1.3.2, bis 1.3.1 ab 1100 px – damit auch
+  das Tablet quer 1024 × 768) steht die Fläche als **Seitenleiste** rechts (`position: fixed`, oben Platz für den sichtbaren
+  Teil der Kopfzeile über `--kopf-sichtbar`/`--kopf-hoehe`; `#haupt` und Fuß rücken nach links, Antwortfeld bleibt sichtbar),
+  darunter im Fluss unter dem Block. Tablet hoch (768–959 px, Höhe ≥ 640 px): Ist die Antwort kompakt (Antwortteile
+  zusammen ≤ 30 % der Höhe), kleben sie über der Knopfleiste (`.antwort-klebt`, mehrere übereinander), ein Lückentext vor
+  dem Werkzeug klebt oben (`.antwort-klebt-oben`) – Werkzeug und Antwort stehen zugleich im Bild (e2e 16, Teil 3b).
+  Bei Touch rollt `KR` ein fokussiertes Eingabefeld, das die Bildschirmtastatur oder eine klebende Leiste verdeckt, in die Mitte. Im Boss-Kampf
   (`ctx.modus === 'boss'`) entsteht kein Panel. Level-Karten (Level-Feld `werkzeug`, `level.js`) bekommen dasselbe Panel
   mit dem Schalter „Hier ausprobieren“ ohne Zweitlink (die Karte verlinkt das Labor schon). Validator: Block `werkzeug` ist
   letzter `inhalt`-Block (E219), `hinweis` ≤ 160 Zeichen in Du-Form, `gefuehrt` nur bei Werkzeugen mit Hook (`pruefeBlockFelder`).

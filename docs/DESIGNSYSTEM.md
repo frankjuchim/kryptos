@@ -147,6 +147,9 @@ Gelasio (metrisch = Georgia), `fonts-dejavu` als Rückfall; Consolas-Ersatz Inco
 - Radien: Karten 14 px, Knöpfe 10 px, Chips 999 px; Akten-Kästen 0 (Archivoptik, dafür doppelte Linie oben).
 - Schatten nur im Rahmen (`0 6px 24px rgba(11,20,38,.25)`), Inhalte flach.
 - Maximale Zeilenlänge Lesetext 72 ch; Plattform-Inhaltsbreite 1120 px; Tablet-first ab 768 px, Handy ab 360 px.
+- Tablets (1.3.2, e2e 9 mit Touch-Emulation): 768 × 1024, 1024 × 768, 820 × 1180, 1180 × 820, 800 × 1280 – kein Querscrollen,
+  Touch-Ziele ≥ 44 px (auch Links in Tabellenzellen und Brotkrümel), Kopfzeile ohne Überlappung: reicht eine Zeile nicht,
+  setzt `KRKopf.anpassen()` `.kopf-zweizeilig` (Bereiche als zweite Zeile wie unter 860 px), Bereichs-Links einzeilig.
 - Touch-Ziele ≥ 44 × 44 px.
 
 ## 5. Komponenten (Plattform)
@@ -197,7 +200,7 @@ nie nur über Farbe.
 | `.rueckmeldung` | Rückmeldung mit Rand + Symbol + Text | `.ok` (✓), `.falsch` (✗), `.info` (ℹ) |
 | `.toast`, `#toast` | kurze Meldung (`aria-live`) | `.err` |
 | `dialog`, `.dialog-fuss` | Rückfragen | Fokusfalle, Esc |
-| `.werkzeug-panel`, `.werkzeug-schalter`, `.werkzeug-panel-flaeche` | Werkzeug in der Aufgabe bzw. auf der Level-Karte (M11) | Schalter mit `aria-expanded`/`aria-controls`, Fläche `role=region`; ab 1100 px Seitenleiste rechts (`fixed`, `--schatten`), darunter im Fluss; Chip „Schritt für Schritt“ |
+| `.werkzeug-panel`, `.werkzeug-schalter`, `.werkzeug-panel-flaeche` | Werkzeug in der Aufgabe bzw. auf der Level-Karte (M11) | Schalter mit `aria-expanded`/`aria-controls`, Fläche `role=region`; ab 960 px Seitenleiste rechts (`fixed`, `--schatten`, 1.3.2; vorher 1100 px), darunter im Fluss; Tablet hoch: kompakte Antwort klebt über der Knopfleiste (`.antwort-klebt`), Lückentext davor oben (`.antwort-klebt-oben`), beide Karte mit 3-px-Akzentlinie und Schatten; Chip „Schritt für Schritt“ |
 | `section.gefuehrt`, `.gefuehrt-markiert`, `.gefuehrt-vergleich` | geführter Modus (M11) | nur die Eingabeseite des aktuellen Schritts markiert; ✓/✗ erst nach der Freigabe |
 | `.gefuehrt-mit-objekt`, `.stab-gefuehrt`, `.zaun-objekt`, `.fleissner-gefuehrt`, `.ring-gefuehrt`, `.stromweg-gefuehrt`, `.stab-gefuehrt-band` | Objekte im geführten Modus (M12) | das Objekt der Station steht als Erstes; Markierung in der Lampenfarbe (`--mat-lampe-an`), Einträge in Bandfeldern; Stab und Zaun scrollen auf schmalen Bildschirmen in ihrem Kasten |
 | `table.adfgvx-quadrat`, `table.spalten-raster`, `table.alphabet-leiste` | Objekte 1.3.1 | ADFGVX-Quadrat mit Kopf A D F G V X, Raster mit Schlüsselwort- und Rangzeile, Alphabet-Leiste (Klartext über Geheimtext bzw. Zahlen über Buchstaben); markiert wird mit Akzentrahmen |

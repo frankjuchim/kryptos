@@ -1,25 +1,33 @@
 'use strict';
 /*
- * e2e – Geräte, Dunkelmodus, Tastatur (TECHNIK §15 Nr. 9): jede Seite auf 1280 × 800, 768 × 1024 und 360 × 740 ohne
- * horizontales Scrollen, auf 768/360 Touch-Ziele ≥ 44 px; Beamer 1920 × 1080; Dunkelmodus; Tastatur-Durchlauf einer
- * Bit-Aufgabe nur mit keyboard.press und sichtbarem Fokusrahmen.
+ * e2e – Geräte, Dunkelmodus, Tastatur (TECHNIK §15 Nr. 9): jede Seite auf 1280 × 800, den Tablets (1.3.2: iPad hoch
+ * 768 × 1024 und quer 1024 × 768, 820 × 1180, 1180 × 820, Android 800 × 1280 – mit Touch-Emulation hasTouch/isMobile) und
+ * 360 × 740 ohne horizontales Scrollen, auf Tablet und Handy Touch-Ziele ≥ 44 px und eine Kopfzeile ohne Überlappung;
+ * Beamer 1920 × 1080; Dunkelmodus; Tastatur-Durchlauf einer Bit-Aufgabe nur mit keyboard.press und sichtbarem Fokusrahmen.
  */
 const assert = require('node:assert/strict');
-const { anmelden, foto, gehe, keinQuerScrollen, ziele44, kontraste } = require('./hilfen');
+const { anmelden, foto, gehe, keinQuerScrollen, ziele44, kontraste, kopfzeileOk } = require('./hilfen');
 const { neueSeite } = require('./schueler');
 
 const VIEWPORTS = [
   [1280, 800],
   [768, 1024],
+  [1024, 768],
+  [820, 1180],
+  [1180, 820],
+  [800, 1280],
   [360, 740]
 ];
+/** Tablet und Handy: Touch-Emulation (kein Hover, pointer: coarse) */
+const touch = (w) => w < 1280;
 
 /** Seite laden, Ruhe abwarten (Animationen/Polling), prüfen. */
 async function pruefeSeite(page, url, ort, breite) {
   await gehe(page, url);
   await page.waitForTimeout(150);
   await keinQuerScrollen(page, ort);
-  if (breite <= 768) await ziele44(page, ort);
+  if (touch(breite)) await ziele44(page, ort);
+  if (await page.locator('#kopf .kopf-innen').count()) await kopfzeileOk(page, ort);
 }
 
 async function szenario9(ctx) {
@@ -29,21 +37,25 @@ async function szenario9(ctx) {
   const schuelerSeiten = ['/spiel#/', '/spiel#/epoche/9', '/spiel#/level/W9-L5', '/spiel#/aufgabe/W9-L5-02', '/spiel#/aufgabe/W9-L3-01', '/spiel#/aufgabe/W9-L6-06', '/spiel#/profil', '/spiel#/scoreboard', '/spiel#/warmup', '/labor', '/funkraum', '/werkstatt'];
   const lehrerSeiten = ['/lehrer#/', `/lehrer#/kurs/${lk}/einstellungen`, `/lehrer#/kurs/${lk}/auswertung`, '/lehrer#/vorschau/welt/9', `/lehrer/urkunden?kurs=${lk}`, '/beamer/funkraum/1', '/labor#/skytale', '/labor#/vigenere', '/labor#/signatur']; // Labor als Lehrkraft: alle Reiter (M6 Task 128)
 
-  const pub = await neueSeite(ctx, {}, 'Szenario 9 (öffentlich)');
-  const mika = await neueSeite(ctx, {}, 'Szenario 9 (Mika)');
-  await anmelden(mika.page, ctx, 'Mika R.', '/spiel');
-  const frau = await neueSeite(ctx, {}, 'Szenario 9 (Frau M.)');
-  await anmelden(frau.page, ctx, 'Frau M.', '/lehrer');
-
+  let pub;
+  let mika;
+  let frau;
   for (const [w, hgt] of VIEWPORTS) {
-    for (const p of [pub.page, mika.page, frau.page]) await p.setViewportSize({ width: w, height: hgt });
-    for (const s of oeffentlich) await pruefeSeite(pub.page, ctx.basis + s, `${w} ${s}`, w);
+    const opt = { viewport: { width: w, height: hgt }, hasTouch: touch(w), isMobile: touch(w) };
+    pub = await neueSeite(ctx, opt, `Szenario 9 (öffentlich, ${w})`);
+    mika = await neueSeite(ctx, opt, `Szenario 9 (Mika, ${w})`);
+    await anmelden(mika.page, ctx, 'Mika R.', '/spiel');
+    frau = await neueSeite(ctx, opt, `Szenario 9 (Frau M., ${w})`);
+    await anmelden(frau.page, ctx, 'Frau M.', '/lehrer');
+    const ort = `${w}×${hgt}`;
+    for (const s of oeffentlich) await pruefeSeite(pub.page, ctx.basis + s, `${ort} ${s}`, w);
     for (const s of schuelerSeiten) {
-      await pruefeSeite(mika.page, ctx.basis + s, `${w} Mika ${s}`, w);
+      await pruefeSeite(mika.page, ctx.basis + s, `${ort} Mika ${s}`, w);
     }
     for (const s of lehrerSeiten) {
-      await pruefeSeite(frau.page, ctx.basis + s, `${w} Frau M. ${s}`, w);
+      await pruefeSeite(frau.page, ctx.basis + s, `${ort} Frau M. ${s}`, w);
     }
+    if (w !== 360) for (const x of [pub, mika, frau]) await x.kontext.close();
   }
 
   // Kontraste (Review M4 W1): alle Seiten hell und dunkel, ruhig (keine Einblendungen während der Messung)
