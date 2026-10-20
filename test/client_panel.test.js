@@ -345,3 +345,50 @@ test('level_karte_erkenner', async () => {
   assert.ok(k.eins(haupt, 'section.gefuehrt'), 'Mini-Enigma mit fade → geführt');
   assert.equal(k.alle(haupt, '.lampe.leuchtet').length, 0, 'keine Lampe');
 });
+
+test('panel_tablet_hoch_antwort_klebt (1.3.2): offenes Panel unter 960 px – die Antwort klebt über der Knopfleiste, beim Schließen nicht mehr', async () => {
+  const MQ = '(min-width: 768px) and (max-width: 959.98px) and (min-height: 640px)';
+  for (const tablet of [true, false]) {
+    const k = D.lade([...SKRIPTE, ...LABOR, 'krypto/labor/scheibe.js']);
+    if (tablet) k.medien[MQ] = true;
+    const box = k.document.createElement('div');
+    box.className = 'aufgabe-box';
+    const inhalt = k.document.createElement('div');
+    inhalt.appendChild(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, 0, { modus: 'lab', aufgabeId: 'W9-L1-01' }));
+    box.appendChild(inhalt);
+    const antwort = k.document.createElement('div');
+    antwort.setAttribute('role', 'group');
+    antwort.setAttribute('aria-label', 'Antwort');
+    box.appendChild(antwort);
+    k.document.body.appendChild(box);
+    const s = k.eins(box, 'button.werkzeug-schalter');
+    k.klick(s);
+    await k.ruhe();
+    assert.equal(antwort.classList.contains('antwort-klebt'), tablet, `offen, tablet ${tablet}`);
+    k.klick(s);
+    assert.equal(antwort.classList.contains('antwort-klebt'), false, 'geschlossen');
+  }
+});
+
+test('panel_tablet_hoch_luecken_kleben_oben (1.3.2): Lückentext vor dem Werkzeug (ohne Antwortteil) klebt oben', async () => {
+  const k = D.lade([...SKRIPTE, ...LABOR, 'krypto/labor/scheibe.js']);
+  k.medien['(min-width: 768px) and (max-width: 959.98px) and (min-height: 640px)'] = true;
+  const box = k.document.createElement('div');
+  box.className = 'aufgabe-box';
+  const inhalt = k.document.createElement('div');
+  inhalt.className = 'inhalt';
+  const text = k.document.createElement('div');
+  const luecke = k.document.createElement('input');
+  luecke.className = 'luecke';
+  text.appendChild(luecke);
+  inhalt.appendChild(text);
+  inhalt.appendChild(k.wert('AQR').block({ t: 'werkzeug', id: 'scheibe', voreinstellung: { k: 7 } }, 1, { modus: 'lab', aufgabeId: 'W9-L1-01' }));
+  box.appendChild(inhalt);
+  k.document.body.appendChild(box);
+  const s = k.eins(box, 'button.werkzeug-schalter');
+  k.klick(s);
+  await k.ruhe();
+  assert.ok(text.classList.contains('antwort-klebt-oben'));
+  k.klick(s);
+  assert.equal(text.classList.contains('antwort-klebt-oben'), false);
+});

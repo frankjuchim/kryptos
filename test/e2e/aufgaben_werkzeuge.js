@@ -11,6 +11,8 @@
  *     erlaubt (L60, 25 Zeilen k = 1 … 25 plus k = 0).
  *  3. 360 px: kein Querscrollen, Antwort mit offenem Panel erreichbar, Touch-Ziele ≥ 44 px; Tastatur (Schalter mit Enter,
  *     Weiter mit →, Enter im Panel prüft nicht); reduzierte Bewegung ohne laufende Animationen.
+ *     3b (1.3.2): Tablet mit Touch – hoch klebt die Antwort (W3-L4-01: Werkzeug und Antwort zugleich im Bild), quer ab
+ *     960 px Seitenleiste neben der Antwort und unter der Kopfzeile.
  *  4. Ole B.: zweiter Tab startet den Boss-Kampf → das offene Panel im ersten Tab schließt mit Grund.
  *  5. Freies Labor: /labor#/scheibe mit IMOTQ (k = 12, häppchenweise getippt) → „Schritt für Schritt“, kein „wache“;
  *     eigener Text → frei. /werkstatt: Probelauf mit „boje“ (Umkehrung + Caesar 3) → neutraler Hinweis.
@@ -242,6 +244,53 @@ async function szenario16(ctx) {
   await page.locator('p.werkstatt-nicht-verfuegbar').waitFor({ state: 'visible' });
   assert.ok(!N(await domText(page)).includes('HMRE'), 'Werkstatt: kein Geheimtext von boje');
   await kontext.close();
+
+  // 3b) Tablet (1.3.2) mit Touch: hoch (768 × 1024, 800 × 1280) klebt die kompakte Antwort über der Knopfleiste – Werkzeug
+  //     und Antwort zugleich im Bild, nichts verdeckt; quer (1024 × 768) Seitenleiste neben der Antwort, unter der Kopfzeile
+  for (const [w, hgt] of [[768, 1024], [800, 1280], [1024, 768]]) {
+    const t = await neueSeite(ctx, { viewport: { width: w, height: hgt }, hasTouch: true, isMobile: true }, `Szenario 16 (Tablet ${w})`);
+    await anmelden(t.page, ctx, 'Mika R.', '/spiel'); // Nia T. steht seit Szenario 12 im Boss-Kampf (Labor gesperrt)
+    await kursWaehlen(t.page, 'LK 13 (eA)');
+    await aufgabe(t.page, ctx, 'W3-L4-01');
+    await aufklappen(t.page);
+    const ort = `W3-L4-01 bei ${w} × ${hgt}`;
+    await keinQuerScrollen(t.page, ort);
+    await ziele44(t.page, ort);
+    const lage = await t.page.evaluate(() => {
+      const f = document.querySelector('.werkzeug-panel-flaeche');
+      const g = document.querySelector('.aufgabe-box > [role="group"]');
+      const fest = getComputedStyle(f).position === 'fixed';
+      if (!fest) {
+        const fr = f.getBoundingClientRect();
+        window.scrollTo({ top: fr.top + scrollY + Math.min(fr.height, innerHeight) / 2 - innerHeight / 2, behavior: 'instant' });
+      } else g.scrollIntoView({ block: 'center', behavior: 'instant' });
+      const gr = g.getBoundingClientRect();
+      const fr = f.getBoundingClientRect();
+      const feld = g.querySelector('input');
+      const fe = feld.getBoundingClientRect();
+      const oben = document.elementFromPoint(fe.left + fe.width / 2, fe.top + fe.height / 2);
+      const kopf = document.getElementById('kopf').getBoundingClientRect();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      const pk = document.querySelector('.werkzeug-panel-kopf').getBoundingClientRect();
+      return {
+        fest,
+        klebt: g.classList.contains('antwort-klebt'),
+        antwortImBild: gr.top >= 0 && gr.bottom <= innerHeight,
+        werkzeugImBild: Math.min(fr.bottom, innerHeight) - Math.max(fr.top, 0) > innerHeight * 0.3,
+        feldFrei: !!oben && (oben === feld || feld.contains(oben)),
+        nebeneinander: gr.right <= fr.left + 1,
+        panelUnterKopf: pk.top >= kopf.bottom - 1
+      };
+    });
+    assert.ok(lage.antwortImBild && lage.werkzeugImBild, `${ort}: Werkzeug und Antwort zugleich im Bild (${JSON.stringify(lage)})`);
+    assert.ok(lage.feldFrei, `${ort}: Antwortfeld nicht verdeckt`);
+    if (w < 960) assert.ok(!lage.fest && lage.klebt, `${ort}: im Fluss, Antwort klebt`);
+    else assert.ok(lage.fest && !lage.klebt && lage.nebeneinander && lage.panelUnterKopf, `${ort}: Seitenleiste neben der Antwort, unter der Kopfzeile (${JSON.stringify(lage)})`);
+    // Zuklappen: Antwort klebt nicht mehr
+    await t.page.locator('button.werkzeug-schalter').first().click();
+    assert.equal(await t.page.locator('.antwort-klebt').count(), 0, `${ort}: zugeklappt klebt nichts`);
+    await t.kontext.close();
+  }
 
   // 4) Ole B.: Boss-Kampf im zweiten Tab → offenes Panel schließt mit Grund
   const ole = await neueSeite(ctx, {}, 'Szenario 16 (Ole)');

@@ -33,6 +33,77 @@ const KRPanel = (() => {
   }
   const offen = () => OFFEN.size;
 
+  /*
+   * Tablet hoch (1.3.2, Auftrag der Lehrkraft „alle Ansichten gut mit dem Tablet“): Unter 960 px steht das offene Werkzeug
+   * im Fluss über der Antwort – bei hohen Werkzeugen lägen Werkzeug und Antwortfeld mehr als eine Bildschirmhöhe
+   * auseinander. Ist die Antwort kompakt (höchstens 30 % der Höhe, ein Antwortteil), klebt sie wie die Knopfleiste am
+   * unteren Rand (.antwort-klebt, labor.css), bis sie an ihrer eigenen Stelle steht; ein Lückentext vor dem Werkzeug
+   * klebt oben (.antwort-klebt-oben). Ab 960 px Seitenleiste (labor.css).
+   */
+  const TABLET_HOCH = '(min-width: 768px) and (max-width: 959.98px) and (min-height: 640px)';
+  const KLEBT = 'antwort-klebt'; // Antwort nach dem Werkzeug: klebt unten über der Knopfleiste
+  const KLEBT_OBEN = 'antwort-klebt-oben'; // Lückentext vor dem Werkzeug (z. B. RSA): klebt oben
+  /** Antwort zum Panel: die Antwortteile der Aufgabe (nach dem Inhalt) oder – ohne Antwortteil – der eine Block mit Lücken */
+  function antwortZu(panelEl, box) {
+    const teile = [...box.children].filter((x) => x.getAttribute && x.getAttribute('role') === 'group');
+    if (teile.length) return { els: teile, oben: false };
+    const inhalt = [...box.children].find((x) => x.classList && x.classList.contains('inhalt'));
+    if (!inhalt) return null;
+    const bloecke = [...inhalt.children];
+    const eigen = bloecke.findIndex((b) => b.contains(panelEl));
+    const luecken = bloecke.filter((b, i) => i !== eigen && b.querySelector('input.luecke, select.luecke'));
+    if (luecken.length !== 1 || eigen < 0) return null;
+    return { els: luecken, oben: bloecke.indexOf(luecken[0]) < eigen };
+  }
+  function antwortKleben(panelEl, an) {
+    const box = panelEl && typeof panelEl.closest === 'function' ? panelEl.closest('.aufgabe-box') : null;
+    if (!box) return;
+    for (const x of box.querySelectorAll(`.${KLEBT}, .${KLEBT_OBEN}`)) x.classList.remove(KLEBT, KLEBT_OBEN);
+    const wurzel = document.documentElement;
+    if (wurzel && wurzel.style) wurzel.style.removeProperty('--antwort-hoehe');
+    if (!an || typeof matchMedia !== 'function' || !matchMedia(TABLET_HOCH).matches) return;
+    const ziel = antwortZu(panelEl, box);
+    if (!ziel) return;
+    const hoehe = (x) => (x.getBoundingClientRect ? x.getBoundingClientRect().height || 0 : 0);
+    const summe = ziel.els.reduce((n, x) => n + hoehe(x), 0);
+    const vh = typeof innerHeight === 'number' && innerHeight > 0 ? innerHeight : 1024;
+    if (summe > vh * 0.3) return;
+    const leiste = document.querySelector('.aktionen');
+    let unten = leiste && leiste.getBoundingClientRect ? leiste.getBoundingClientRect().height || 0 : 0;
+    // mehrere Antwortteile (z. B. Schlüssel und Klartext) stapeln sich: jeder klebt über den folgenden
+    for (const t of [...ziel.els].reverse()) {
+      t.style.setProperty('--aktionen-hoehe', `${Math.round(unten)}px`);
+      unten += hoehe(t);
+      t.classList.add(ziel.oben ? KLEBT_OBEN : KLEBT);
+    }
+    if (wurzel && wurzel.style) wurzel.style.setProperty('--antwort-hoehe', `${Math.round(summe)}px`);
+  }
+  /** nach dem Einhängen messen (offen: true klappt schon vor dem Einhängen auf) */
+  function antwortKlebenSpaeter(panelEl) {
+    const los = () => {
+      if (panelEl.dataset && panelEl.dataset.offen) antwortKleben(panelEl, true);
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(los);
+    else los();
+  }
+  /** Seitenleiste (ab 960 px): oben nur so viel Platz, wie die Kopfzeile gerade sichtbar ist (--kopf-sichtbar) */
+  let kopfGeplant = false;
+  function kopfSichtbar() {
+    if (kopfGeplant || !OFFEN.size) return;
+    kopfGeplant = true;
+    const los = () => {
+      kopfGeplant = false;
+      const kopf = document.getElementById('kopf');
+      if (!kopf || !kopf.getBoundingClientRect) return;
+      document.documentElement.style.setProperty('--kopf-sichtbar', `${Math.max(0, Math.round(kopf.getBoundingClientRect().bottom))}px`);
+    };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(los);
+    else los();
+  }
+  if (typeof window !== 'undefined' && window.addEventListener) window.addEventListener('scroll', kopfSichtbar, { passive: true });
+  // Drehen des Tablets: neu entscheiden
+  if (typeof window !== 'undefined' && window.addEventListener) window.addEventListener('resize', () => OFFEN.forEach((p) => p.el && antwortKlebenSpaeter(p.el)));
+
   // M12 (E231): anschauliches Objekt je Werkzeug und Reiter für den Schalter „<Objekt> benutzen“
   const OBJEKT = Object.freeze({
     'skytale.skytale': 'Skytale-Stab',
@@ -134,6 +205,7 @@ const KRPanel = (() => {
     let steuer = null;
     let lauf = 0;
     const eintrag = {
+      el,
       schliesse() {
         lauf += 1;
         if (steuer) steuer.schliesse();
@@ -143,6 +215,7 @@ const KRPanel = (() => {
         delete el.dataset.offen;
         schalter.setAttribute('aria-expanded', 'false');
         OFFEN.delete(eintrag);
+        antwortKleben(el, false);
       }
     };
     function starte(umgebung) {
@@ -164,6 +237,8 @@ const KRPanel = (() => {
       el.dataset.offen = 'ja';
       bereich.hidden = false;
       schalter.setAttribute('aria-expanded', 'true');
+      antwortKlebenSpaeter(el);
+      kopfSichtbar();
       const meiner = ++lauf;
       if (typeof ctx.laborFrisch !== 'function') {
         starte(extra);
